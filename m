@@ -1,45 +1,38 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoADwtoiucHnIefwK/RmwJpjs8Y0wm4FrUnumiwpH3wuKBn3l/2Pwb9XZmbypMDi2dJ9ExU
-ARC-Seal: i=1; a=rsa-sha256; t=1525767449; cv=none;
+X-Google-Smtp-Source: AB8JxZq3fLIpZLVVbxpG2qx+/vg5pVVO0byQeevZnYK/wdxKUSlMpG2br1J+9BOT5h3qh37FMkeh
+ARC-Seal: i=1; a=rsa-sha256; t=1525767446; cv=none;
         d=google.com; s=arc-20160816;
-        b=ogrdl6VXbHWlacooAyDvoIs9+oupTUjIAdYHfIJtUOCrqjL2L7z07S+ccRJsvo9HPo
-         j78h9ove1BcQwdqz5otOix9KA7mPPBtFKBpIQ7VpYffn//H4e6w4ZYa3VpCndIRDY9BL
-         QCf/jd0iRFEUaigtJRc2mILYd+sMbzOE61Y4qUXcN22AkspEsnJapsd7PC6TkncD34Wa
-         QBIR+uJyscH3D9/hO8yx/RiRJhPMeZNwkxJHsCz7xFXC+ZXtv9pPyv0CRhBNEWH9GvZ+
-         v61WIPIkZlinhg/QgpLHF/Vbc/ncA8ekjXE7ZkIijdJ5Q3Lio8D4YV1kCEbBm4k7PNGt
-         zGdg==
+        b=gIdBZy1u0RN3iMMvnEONeCSlwxXf78fMMZVLdKtV6L/ttQi6SP/Ht6VEEuOCwetd4Q
+         DmgaVlaXC+dzAQSwmD42CDapqASTzjvARfaEE5n/oTHSs/aR4mb/nFWAREkFDZaTsuDy
+         6DCMmKOB7DxaPCbR6tpA+33ibLci2nFe/xVZGnhvogg1+cdnK5+X/5SMdiJaL0bzbUoa
+         One+32IJl2RdDXHs3Gf6AsT1qt0Y1pOXipYPa/KgQl90Gno1aAzbcyN7lzQGYx5z6AH8
+         Ql01gPgHATmEqYhlG09WRP49psjcSQu/N3959F8ax8Rqc5/8bIlxM5vBPIQn/uO1KZvu
+         DxhQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=oRpkKO++zJiNNq0AN4U60/KAzT/kNbejHcoXOnyqPlQ=;
-        b=fzCBaM3HpeecmZGo9b/c7ITfNj8gUoNytg/d8IYRFgR4q76mKp70vBlxQkE2jWUH51
-         Mr3GfeTLIZikLZPhZKBDALm6EMphTxDjk0wTCfheDKenUuLinxRaYw3tEz8shCLu2AYc
-         Gwu07sH+lpWm8WG2LNz521TzPQXHXrQhDI5jr3lEN02wBbsHIItU/+JVecp77D5ReMuC
-         ihfBABthPSf/gKCzgzzBnB4f2ehkSkszOnrtSULdNIDQimZhszWllt7fF6LOvVuwdOzA
-         UP6lyCL4czgOTJK6u56wIcOgYSrxWmAKw2HnvGhTsfGczbmAR2y7h6PEDkD40CgdC8UJ
-         v+wA==
+        bh=nyTBP1hVgmWd7og/wzKtxbR4i5Lo16LS2WcaKnJxARg=;
+        b=0makbcq9ZxIPK9mZefAB3wMtnGsXAbd83JniKYTOFrH38owlWXg4e/F/t7aTuAZcIe
+         COn3WHBpJqH8zjrn7fHzUkmCYGLfAFLSCo2SaTfjhd0kpukdENveHgN0IFg7DGVVyCR6
+         rMs93Z+SO6kd6HB20sXWvViVIdrClpYwrunMG3Jw5SOveEN/z2zWC/WkKlPBRssj8Qh1
+         5hdZSeesuJXSmpoFAfRPUxTD6S84o2QSqbrycXAIWQrBQs4GPzyq/63HnjnpUAO3olM/
+         /dxrlL565yy/RLdhAaip/eXOat7btWHMkXHE5J37Lqvp90CPHHPd+MXh3WL0zAP+Si+e
+         FHbA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=QBc50iJJ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=dEk19pqQ;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=QBc50iJJ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=dEk19pqQ;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	syzbot+9c0d616860575a73166a@syzkaller.appspotmail.com,
-	syzbot+4e9ae7fa46233396f64d@syzkaller.appspotmail.com,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.9 12/32] tracepoint: Do not warn on ENOMEM
-Date: Tue,  8 May 2018 10:10:52 +0200
-Message-Id: <20180508074010.792210274@linuxfoundation.org>
+	DaeRyong Jeong <threeearcat@gmail.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 11/32] ALSA: aloop: Add missing cable lock to ctl API callbacks
+Date: Tue,  8 May 2018 10:10:51 +0200
+Message-Id: <20180508074010.629946569@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074008.800421598@linuxfoundation.org>
 References: <20180508074008.800421598@linuxfoundation.org>
@@ -49,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882764347607574?=
-X-GMAIL-MSGID: =?utf-8?q?1599883129157999215?=
+X-GMAIL-THRID: =?utf-8?q?1599882797717667467?=
+X-GMAIL-MSGID: =?utf-8?q?1599883125566258966?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -58,58 +51,110 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit d66a270be3310d7aa132fec0cea77d3d32a0ff75 upstream.
+commit 76b3421b39bd610546931fc923edcf90c18fa395 upstream.
 
-Tracepoint should only warn when a kernel API user does not respect the
-required preconditions (e.g. same tracepoint enabled twice, or called
-to remove a tracepoint that does not exist).
+Some control API callbacks in aloop driver are too lazy to take the
+loopback->cable_lock and it results in possible races of cable access
+while it's being freed.  It eventually lead to a UAF, as reported by
+fuzzer recently.
 
-Silence warning in out-of-memory conditions, given that the error is
-returned to the caller.
+This patch covers such control API callbacks and add the proper mutex
+locks.
 
-This ensures that out-of-memory error-injection testing does not trigger
-warnings in tracepoint.c, which were seen by syzbot.
-
-Link: https://lkml.kernel.org/r/001a114465e241a8720567419a72@google.com
-Link: https://lkml.kernel.org/r/001a1140e0de15fc910567464190@google.com
-Link: http://lkml.kernel.org/r/20180315124424.32319-1-mathieu.desnoyers@efficios.com
-
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Jiri Olsa <jolsa@redhat.com>
-CC: Arnaldo Carvalho de Melo <acme@kernel.org>
-CC: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC: Namhyung Kim <namhyung@kernel.org>
-CC: stable@vger.kernel.org
-Fixes: de7b2973903c6 ("tracepoint: Use struct pointer instead of name hash for reg/unreg tracepoints")
-Reported-by: syzbot+9c0d616860575a73166a@syzkaller.appspotmail.com
-Reported-by: syzbot+4e9ae7fa46233396f64d@syzkaller.appspotmail.com
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/tracepoint.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/drivers/aloop.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -202,7 +202,7 @@ static int tracepoint_add_func(struct tr
- 			lockdep_is_held(&tracepoints_mutex));
- 	old = func_add(&tp_funcs, func, prio);
- 	if (IS_ERR(old)) {
--		WARN_ON_ONCE(1);
-+		WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
- 		return PTR_ERR(old);
- 	}
+--- a/sound/drivers/aloop.c
++++ b/sound/drivers/aloop.c
+@@ -832,9 +832,11 @@ static int loopback_rate_shift_get(struc
+ {
+ 	struct loopback *loopback = snd_kcontrol_chip(kcontrol);
+ 	
++	mutex_lock(&loopback->cable_lock);
+ 	ucontrol->value.integer.value[0] =
+ 		loopback->setup[kcontrol->id.subdevice]
+ 			       [kcontrol->id.device].rate_shift;
++	mutex_unlock(&loopback->cable_lock);
+ 	return 0;
+ }
  
-@@ -235,7 +235,7 @@ static int tracepoint_remove_func(struct
- 			lockdep_is_held(&tracepoints_mutex));
- 	old = func_remove(&tp_funcs, func);
- 	if (IS_ERR(old)) {
--		WARN_ON_ONCE(1);
-+		WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
- 		return PTR_ERR(old);
+@@ -866,9 +868,11 @@ static int loopback_notify_get(struct sn
+ {
+ 	struct loopback *loopback = snd_kcontrol_chip(kcontrol);
+ 	
++	mutex_lock(&loopback->cable_lock);
+ 	ucontrol->value.integer.value[0] =
+ 		loopback->setup[kcontrol->id.subdevice]
+ 			       [kcontrol->id.device].notify;
++	mutex_unlock(&loopback->cable_lock);
+ 	return 0;
+ }
+ 
+@@ -880,12 +884,14 @@ static int loopback_notify_put(struct sn
+ 	int change = 0;
+ 
+ 	val = ucontrol->value.integer.value[0] ? 1 : 0;
++	mutex_lock(&loopback->cable_lock);
+ 	if (val != loopback->setup[kcontrol->id.subdevice]
+ 				[kcontrol->id.device].notify) {
+ 		loopback->setup[kcontrol->id.subdevice]
+ 			[kcontrol->id.device].notify = val;
+ 		change = 1;
  	}
++	mutex_unlock(&loopback->cable_lock);
+ 	return change;
+ }
+ 
+@@ -893,15 +899,18 @@ static int loopback_active_get(struct sn
+ 			       struct snd_ctl_elem_value *ucontrol)
+ {
+ 	struct loopback *loopback = snd_kcontrol_chip(kcontrol);
+-	struct loopback_cable *cable = loopback->cables
+-			[kcontrol->id.subdevice][kcontrol->id.device ^ 1];
++	struct loopback_cable *cable;
++
+ 	unsigned int val = 0;
+ 
++	mutex_lock(&loopback->cable_lock);
++	cable = loopback->cables[kcontrol->id.subdevice][kcontrol->id.device ^ 1];
+ 	if (cable != NULL) {
+ 		unsigned int running = cable->running ^ cable->pause;
+ 
+ 		val = (running & (1 << SNDRV_PCM_STREAM_PLAYBACK)) ? 1 : 0;
+ 	}
++	mutex_unlock(&loopback->cable_lock);
+ 	ucontrol->value.integer.value[0] = val;
+ 	return 0;
+ }
+@@ -944,9 +953,11 @@ static int loopback_rate_get(struct snd_
+ {
+ 	struct loopback *loopback = snd_kcontrol_chip(kcontrol);
+ 	
++	mutex_lock(&loopback->cable_lock);
+ 	ucontrol->value.integer.value[0] =
+ 		loopback->setup[kcontrol->id.subdevice]
+ 			       [kcontrol->id.device].rate;
++	mutex_unlock(&loopback->cable_lock);
+ 	return 0;
+ }
+ 
+@@ -966,9 +977,11 @@ static int loopback_channels_get(struct
+ {
+ 	struct loopback *loopback = snd_kcontrol_chip(kcontrol);
+ 	
++	mutex_lock(&loopback->cable_lock);
+ 	ucontrol->value.integer.value[0] =
+ 		loopback->setup[kcontrol->id.subdevice]
+ 			       [kcontrol->id.device].channels;
++	mutex_unlock(&loopback->cable_lock);
+ 	return 0;
+ }
  
