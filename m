@@ -1,104 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753914AbeEHC4F (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 22:56:05 -0400
-Received: from regular1.263xmail.com ([211.150.99.139]:48465 "EHLO
+        id S1753924AbeEHC5D (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 22:57:03 -0400
+Received: from regular1.263xmail.com ([211.150.99.130]:55778 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753622AbeEHC4E (ORCPT
+        with ESMTP id S1753499AbeEHC5B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 22:56:04 -0400
-X-263anti-spam: KSV:0;
+        Mon, 7 May 2018 22:57:01 -0400
+X-263anti-spam: KSV:0;BIG:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: djw@t-chip.com.cn
-X-FST-TO: linux-rockchip@lists.infradead.org
-X-SENDER-IP: 59.33.107.187
-X-LOGIN-NAME: djw@t-chip.com.cn
-X-UNIQUE-TAG: <06e95ef40aa750cf23ee021b3f0dda6b>
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+X-IP-DOMAINF: 1
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: briannorris@chromium.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <42b51968b7b833dde4153423bdc55d6b>
 X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 7
-From: djw@t-chip.com.cn
-To: linux-rockchip@lists.infradead.org
-Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>,
-        linux-gpio@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v0 1/2] gpio: syscon: Add gpio-syscon for rk3328
-Date: Tue,  8 May 2018 10:48:23 +0800
-Message-Id: <1525747704-8537-2-git-send-email-djw@t-chip.com.cn>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525747704-8537-1-git-send-email-djw@t-chip.com.cn>
-References: <1525747704-8537-1-git-send-email-djw@t-chip.com.cn>
+X-DNS-TYPE: 0
+Message-ID: <5AF111F0.3030409@rock-chips.com>
+Date: Tue, 08 May 2018 10:56:48 +0800
+From: JeffyChen <jeffy.chen@rock-chips.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
+MIME-Version: 1.0
+To: Brian Norris <briannorris@chromium.org>
+CC: linux-kernel@vger.kernel.org, heiko@sntech.de,
+        linux-rockchip@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Doug Anderson <dianders@chromium.org>
+Subject: Re: [RESEND PATCH] pinctrl: rockchip: Disable interrupt when changing
+ it's capability
+References: <20180503065553.7762-1-jeffy.chen@rock-chips.com> <20180507221511.GA6448@rodete-desktop-imager.corp.google.com> <5AF0FF18.1050905@rock-chips.com> <20180508015623.GA61455@rodete-desktop-imager.corp.google.com> <5AF10C10.1070003@rock-chips.com>
+In-Reply-To: <5AF10C10.1070003@rock-chips.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Levin Du <djw@t-chip.com.cn>
+Hi Brian,
 
-In Rockchip RK3328 Soc, there's a output only gpio pin labeled
-`gpiomut_pmuio_iout`, which can be set by bit[1] of GRF_SOC_CON10.
-(bit[0] controls the enable state of the pin and defaults to enabled.)
+On 05/08/2018 10:31 AM, JeffyChen wrote:
+> Hi Brian,
+>
+> On 05/08/2018 09:56 AM, Brian Norris wrote:
+>> On Tue, May 08, 2018 at 09:36:24AM +0800, Jeffy Chen wrote:
+>>> On 05/08/2018 06:15 AM, Brian Norris wrote:
+>>>> On the other hand...this also implies there may be a race condition
+>>>> there, where we might lose an interrupt if there is an edge between the
+>>>> re-configuration of the polarity in rockchip_irq_demux() and the
+>>>> clearing/handling of the interrupt (handle_edge_irq() ->
+>>>> chip->irq_ack()). If we have an edge between there, then we might ack
+>>>> it, but leave the polarity such that we aren't ready for the next
+>>>> (inverted) edge.
+>>>
+>>> if let me guess, the unexpected irq we saw is the hardware trying to
+>>> avoid
+>>> losing irq? for example, we set a EDGE_RISING, and the hardware saw
+>>> the gpio
+>>> is already high, then though it might lost an irq, so fake one for safe?
+>>
+>> I won't pretend to know what the IC designers were doing, but I don't
+>> think that would resolve the problem I'm talking about. The sequence is
+>> something like:
+>> 1. EDGE_BOTH IRQ occurs (e.g., low to high)
+>> 2. reconfigure polarity in rockchip_irq_demux() (polarity=low)
+>> 3. continue to handle_edge_irq()
+>> 4. another HW edge occurs (e.g., high to low)
+>> 5. handle_edge_irq() (from 3) acks (clears) IRQ (before a subsequent
+>>     rockchip_irq_demux() gets a chance to run and flip the polarity)
+>> ...
+>>
+>> Now the polarity is still low, but the next trigger should be a
+>> low-to-high edge.
+>
+> oops, i see the problem.
+>
+> so what if we do these:
+> 1/ edge irq triggered
+> 2/ read gpio level
+> 3/ handle irq(ack irq)
+> 4/ toggle edge mode(with a while gpio level check)
+>
+> if the gpio changed in 2/ -> 3/, the 4/ will trigger an irq when writing
+> GPIO_INT_POLARITY(which is what we are trying to avoid in the set_type
+> case)
+>
+> but this would not work if i'm wrong about how the HW fake an irq when
+> changing POLARITY...
+>
+>
+> or maybe we could just check the gpio status again after
+> handle_edge_irq, and correct the polarity in this case
 
-This pin is used by the roc-rk3328-cc board to switch sdmmc io signal
-voltage between 1.8V and 3.3V, which is essential to the SD card UHS
-support.
+i saw the pinctrl-msm.c do this in the ack(),
 
-Signed-off-by: Levin Du <djw@t-chip.com.cn>
----
+and also at the end of set_type(), which might avoid another race in the 
+set_type()
 
- drivers/gpio/gpio-syscon.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
-
-diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
-index 537cec7..b69f65f 100644
---- a/drivers/gpio/gpio-syscon.c
-+++ b/drivers/gpio/gpio-syscon.c
-@@ -135,6 +135,34 @@ static const struct syscon_gpio_data clps711x_mctrl_gpio = {
- 	.dat_bit_offset	= 0x40 * 8 + 8,
- };
- 
-+static void rockchip_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			      int val)
-+{
-+	struct syscon_gpio_priv *priv = gpiochip_get_data(chip);
-+	unsigned int offs;
-+	u8 bit;
-+	u32 data;
-+	int ret;
-+
-+	offs = priv->dreg_offset + priv->data->dat_bit_offset + offset;
-+	bit = offs % SYSCON_REG_BITS;
-+	data = (val ? BIT(bit) : 0) | BIT(bit + 16);
-+	ret = regmap_write(priv->syscon,
-+			   (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE,
-+			   data);
-+	if (ret < 0)
-+		dev_err(chip->parent, "gpio write failed ret(%d)\n", ret);
-+}
-+
-+static const struct syscon_gpio_data rk3328_gpio_syscon10 = {
-+	/* Rockchip RK3328 GRF_SOC_CON10 Bits 0-1 */
-+	.compatible	= "rockchip,rk3328-grf",
-+	.flags		= GPIO_SYSCON_FEAT_OUT,
-+	.bit_count	= 2,
-+	.dat_bit_offset	= 0x0428 * 8,
-+	.set		= rockchip_gpio_set,
-+};
-+
- #define KEYSTONE_LOCK_BIT BIT(0)
- 
- static void keystone_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
-@@ -175,6 +203,10 @@ static const struct of_device_id syscon_gpio_ids[] = {
- 		.compatible	= "ti,keystone-dsp-gpio",
- 		.data		= &keystone_dsp_gpio,
- 	},
-+	{
-+		.compatible	= "rockchip,rk3328-gpio-syscon10",
-+		.data		= &rk3328_gpio_syscon10,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, syscon_gpio_ids);
--- 
-2.7.4
+>
+>>
+>>> i'll try to confirm it with IC guys.
+>>
+>> Brian
+>>
+>>
+>>
+>
