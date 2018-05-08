@@ -1,65 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755733AbeEHVPl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:15:41 -0400
-Received: from sauhun.de ([88.99.104.3]:59258 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751533AbeEHVPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:15:40 -0400
-Date: Tue, 8 May 2018 23:15:37 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: axxia: enable clock before calling clk_get_rate()
-Message-ID: <20180508211536.3lacmi4izgduaniy@ninjato>
-References: <20180430144929.ld6wjyyrorrj5kcr@agrajag.zerfleddert.de>
+        id S1755915AbeEHVTd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:19:33 -0400
+Received: from mail-io0-f171.google.com ([209.85.223.171]:44437 "EHLO
+        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755795AbeEHVT0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 17:19:26 -0400
+X-Google-Smtp-Source: AB8JxZohIBztqJAR9mY4uwPhtWyMWvC/jPpoKY5RqiiaIuFpPA8vh2+rJxBYd5tZ+nbS3AiWvfGDsA==
+Subject: Re: bug in tag handling in blk-mq?
+From: Jens Axboe <axboe@kernel.dk>
+To: Mike Galbraith <efault@gmx.de>,
+        Paolo Valente <paolo.valente@linaro.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+        linux-block <linux-block@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>
+References: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
+ <7760d23b-7a4c-a645-1c7a-da7569bb44dc@kernel.dk>
+ <84145CD7-B917-4B32-8A5C-310C1910DB71@linaro.org>
+ <1525755090.24338.1.camel@gmx.de> <1525768632.5208.4.camel@gmx.de>
+ <ffd0c030-43f8-0dbe-42b3-03bb9c410bea@kernel.dk>
+ <1525797766.5204.2.camel@gmx.de>
+ <3692ce7d-a767-72e6-65ae-6178b6c2e7d8@kernel.dk>
+Message-ID: <f04636df-3f97-6c16-f37b-d407e062b9e5@kernel.dk>
+Date: Tue, 8 May 2018 15:19:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="smmjfqopkswbny7v"
-Content-Disposition: inline
-In-Reply-To: <20180430144929.ld6wjyyrorrj5kcr@agrajag.zerfleddert.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <3692ce7d-a767-72e6-65ae-6178b6c2e7d8@kernel.dk>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 5/8/18 2:37 PM, Jens Axboe wrote:
+> On 5/8/18 10:42 AM, Mike Galbraith wrote:
+>> On Tue, 2018-05-08 at 08:55 -0600, Jens Axboe wrote:
+>>>
+>>> All the block debug files are empty...
+>>
+>> Sigh.  Take 2, this time cat debug files, having turned block tracing
+>> off before doing anything else (so trace bits in dmesg.txt should end
+>> AT the stall).
+> 
+> OK, that's better. What I see from the traces:
+> 
+> - You have regular IO and some non-fs IO (from scsi_execute()). This mix
+>   may be key.
+> 
+> - sdd has nothing pending, yet has 6 active waitqueues.
+> 
+> I'm going to see if I can reproduce this. Paolo, what kind of attempts
+> to reproduce this have you done?
 
---smmjfqopkswbny7v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No luck so far. Out of the patches you referenced, I can only find the
+shallow depth change, since that's in the parent of this email. Can
+you send those as well?
 
-On Mon, Apr 30, 2018 at 04:49:29PM +0200, Tobias Jordan wrote:
-> axxia_i2c_init() uses clk_get_rate() for idev->i2c_clk. clk_get_rate()
-> should only be called if the clock is enabled, so ensure that by moving
-> the clk_prepare_enable() call before the call to axxia_i2c_init().
->=20
-> Found by Linux Driver Verification project (linuxtesting.org).
->=20
-> Fixes: 08678b850cd0 ("i2c: axxia: Add I2C driver for AXM55xx")
-> Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+Perhaps also expand a bit on exactly what you are running. File system,
+mount options, etc.
 
-Applied to for-next, thanks!
-
-
---smmjfqopkswbny7v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlryE3gACgkQFA3kzBSg
-KbYSkQ//QsqjcnnA4Ik2bofaQ2Ug2XbkrPKrlmi5hx5MxVP3RVNmbB+5UNwUJ4P4
-tSI8QWqlv/UHmBDsp+PEC5+jMnSsR0Nt7dzrnxUiAge7fad9ILCp1pHODkDmwm5o
-6q29WT7UoyEGc/wvRnCo2k0OISoxNVdGBrxsNK8F7Mjkrhl55CsLvVpbvw1ij+Dh
-BEQky5fEoJNmAp0bDTcwDClKBXwKw3uomm4WSHh1boERD4jCjc5tTlzUSQpoJNUM
-4gEFq2W+Fh3GMJ88LyNUv4bRIdmu/d4MN4atE0WnONwhU6M20BiiZwmogHwmAzza
-dRSCum9k2dvFbzSVPyamLddSOQY0jnXGeUZq8wxzdcH5cZNHeHg209DDNckblm1V
-E+mxZVoQomP/dKPH7Lz8vWLABu4N/JH09GRBzmkAIKyyF//96CPeI/igyfq4NNtD
-OOqlVgWO2EZrBQtPcqsvQTYYm7kPbiZW2noJbq3AK/iTJOJymXcbL01yJaukUIAe
-n8QVWIkoFpF+GiAyas1mkcaUQRZ4oBDSgYS9dx/Qt4AJEwAhNLjK3dtfJztm0nn1
-lt2UQ5Sd2zfPqR2cKW2avlradjrZQGT67B2yuc5HLCLL7l/ROPfI1RGd9JnVg5XR
-YibhNj60gRapWJgm2d22UBN+8XJYWy52LwZJ95dRNXpQ3dq4vRM=
-=Do/k
------END PGP SIGNATURE-----
-
---smmjfqopkswbny7v--
+-- 
+Jens Axboe
