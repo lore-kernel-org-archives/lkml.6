@@ -1,75 +1,116 @@
-Return-Path: <tglx@linutronix.de>
-X-Google-Smtp-Source: AB8JxZrXTd+u1pake/M9BJnn9gf5zQoBUXS2kw5ZSffEDvHmpS5KJvMKAwgFWbp0s7PooTHaTP0C
-ARC-Seal: i=1; a=rsa-sha256; t=1526639925; cv=none;
+Return-Path: <lizhijian@cn.fujitsu.com>
+X-Google-Smtp-Source: AB8JxZrwQbYDsEa2S/pbYSBjHjYxQAQfE1sII6ejDBMV/bHXZMPpycC1ip8H0JL5F0UyR9U1fWtH
+ARC-Seal: i=1; a=rsa-sha256; t=1525770887; cv=none;
         d=google.com; s=arc-20160816;
-        b=Th/4RA7rlHLMynucmdC589d4SR/pUjdhPTsD+dSI+TVYTCtYcZE66+G34p1yng17ET
-         Zc9q7n4J9+M1DdWfzgZYdsqKusx/GbtnaT4+TzAMvQeVtXdmdEh4BocVL9hJMP6hYwZU
-         BExiw+rAi+bCQqtLIaZylF1BM0OTq7NqmSiIhdr0pQ6itjLngIda+Dp0aBkmBEA8udfM
-         3ptjnzYoWD6SHfdDZ52xI03IB6BDsxFJ2ho49dRnMQv+I+jhmTWfHHkWGJrWMBXV4e1t
-         h0PLawGA0lbfeU4oBK5UxgATML1QSxS92UsIaWgKH/u7Y09a8xvCK0XIlM6etzgDilLw
-         209g==
+        b=aaTugsO41CkDA8LSi6iDvyHX2o8ywB1UnXLPgsVOWsJv4EeVTsXf5x2nLiy9IHj4Z+
+         munIldEIj9mUSg2Ezjtu7ZsLzojWM7t3DH1+EeoewfEhjIbTwZQrzgX7c/tF6nEpL59t
+         ncU9ZIMgaZ+bql0u0yN9EafwfXzafOOzWUUTJEj2I/lAP3p5K9BvqVZa4xf19p7nIUFd
+         3JsKcIPmHxR5XXr9oBiJJ3K8jDxgQcf5KC8LJrXXsbNAa7EXQvvZatASwjgKuIGVy5MJ
+         JZ4E4+kOUe/3p0GEQhF8Xc60QsDqwaMn6NOQxDQmZud5cAv8TFfUKAQJB8z09cD+k/I3
+         SU0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:arc-authentication-results;
-        bh=vUEHOQRZFbFSFHoQy3ZValvCTKhGQYEsH265E+9tu9w=;
-        b=qchI0qJZMserOx2A91a9kIQOG6t4QI6Qnp1T/1E5bmvVtlRxY4JbLd6eYHywEBobzo
-         1TmJ/m/8OE8+HVH8TknNE1ULSLMBKL4eP9okM8UhAVR6LR/bLDYp2WuoPDZjvd2vY/WX
-         fHRhueOs9U5+yb0Q5XPtty6gLp45bKYzC3zVPoHgqEhKUbCfMAC3ucWwPJo/HP14tL9x
-         qbi8/KwePTm60rkHc2EYKQRQG3OrczYxyDYkY5EtXw4d462JS4qDSqCk5BNbq2hRICRX
-         VIDPAWm2405G364YDilbzIhthTsHYpXEvqro/RtepL6IUQYoO0IdAzA7p/WbS2wXF8dl
-         BIYA==
+        h=mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=M6ccYGZw9ak0UCZFmK8CafuIKhj1mwn3QGKDG9TFyhg=;
+        b=Da3S/s21pCL3242Be+hl6JZcOZ/yEfyFFN3YaT3LuBH1o0CrGO2XtDSaUwZRQ4yirS
+         V7qQ/tol/FbU7n7mZzWA5MLeAPxIMcxJxr6niVYF1n/XQSVUGo1HT8W/PtqSiNdODzTR
+         H+wRwdg3PJ9OQ0IVg9HudAVqvyqmbm2Lvtq4ZSwxesAUsQYVUnhFxGlQVIuUZtxF4LJ3
+         eaMn41OLVeZf958QRpvktjguEhQBYkMhw9oxRrFt26b1YSS57CQlV6scFjPaeMp1XB9j
+         YqmnvKAu0Lyiw6SlcEuuItqtpgoe+2UhoLKHt1irPWq8vDzsi4K3z7s1nykdCdBMWYie
+         g8CA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 146.0.238.70 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+       spf=pass (google.com: best guess record for domain of lizhijian@cn.fujitsu.com designates 183.91.158.132 as permitted sender) smtp.mailfrom=lizhijian@cn.fujitsu.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 146.0.238.70 as permitted sender) smtp.mailfrom=tglx@linutronix.de
-Date: Fri, 18 May 2018 12:38:39 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-cc: LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-    Linus Torvalds <torvalds@linux-foundation.org>,
-    Andy Lutomirsky <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-    Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bpetkov@suse.de>,
-    Greg KH <gregkh@linuxfoundation.org>, keescook@google.com,
-    hughd@google.com, Brian Gerst <brgerst@gmail.com>,
-    Denys Vlasenko <dvlasenk@redhat.com>, Rik van Riel <riel@redhat.com>,
-    Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-    Juergen Gross <jgross@suse.com>, David Laight <David.Laight@aculab.com>,
-    Eduardo Valentin <eduval@amazon.com>, aliguori@amazon.com,
-    Will Deacon <will.deacon@arm.com>, Vlastimil Babka <vbabka@suse.cz>,
-    daniel.gruss@iaik.tugraz.at, Ingo Molnar <mingo@kernel.org>,
-    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-    "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [patch V181 35/54] x86/entry: Align entry text section to PMD
- boundary
-In-Reply-To: <20180517155806.77k4zw5n3q6ia4yq@treble>
-Message-ID: <alpine.DEB.2.21.1805181232280.2172@nanos.tec.linutronix.de>
-References: <20171220213503.672610178@linutronix.de> <20171220215443.503537377@linutronix.de> <20180517155806.77k4zw5n3q6ia4yq@treble>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+       spf=pass (google.com: best guess record for domain of lizhijian@cn.fujitsu.com designates 183.91.158.132 as permitted sender) smtp.mailfrom=lizhijian@cn.fujitsu.com
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="39685155"
+From: Li Zhijian <lizhijian@cn.fujitsu.com>
+To: <shuah@kernel.org>, <linux-kselftest@vger.kernel.org>
+CC: <mingo@kernel.org>, <tglx@linutronix.de>, <gregkh@linuxfoundation.org>,
+	<pombredanne@nexb.com>, <ebiederm@xmission.com>, <luto@kernel.org>,
+	<dave.hansen@linux.intel.com>, <linux-kernel@vger.kernel.org>,
+	<philip.li@intel.com>, <leist.fnst@cn.fujitsu.com>, <zhijianx.li@intel.com>,
+	Li Zhijian <lizhijian@cn.fujitsu.com>
+Subject: [PATCH 1/2] tools/testing/selftests/x86: fix warning: "SEGV_PKUERR|SEGV_BNDERR" redefined
+Date: Tue, 8 May 2018 17:14:29 +0800
+Message-ID: <1525770870-19067-1-git-send-email-lizhijian@cn.fujitsu.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.45]
+X-yoursite-MailScanner-ID: 7754D4B34D23.A0D94
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: lizhijian@cn.fujitsu.com
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1587122604399937200?=
-X-GMAIL-MSGID: =?utf-8?q?1600797986341797413?=
+X-GMAIL-THRID: =?utf-8?q?1599886734267032257?=
+X-GMAIL-MSGID: =?utf-8?q?1599886734267032257?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 17 May 2018, Josh Poimboeuf wrote:
+SEGV_PKUERR and SEGV_BNDERR are defined since glibc-2.27
 
-> On Wed, Dec 20, 2017 at 10:35:38PM +0100, Thomas Gleixner wrote:
-> > From: Thomas Gleixner <tglx@linutronix.de>
-> > 
-> > The (irq)entry text must be visible in the user space page tables. To allow
-> > simple PMD based sharing, make the entry text PMD aligned.
-> > 
-> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> 
-> With my config, this patch adds 2.5M (+~25%) to the kernel text size.
-> Is there a more granular way to achieve this?
+fix the following issue:
+-------------------
+root@vm-lkp-nex04-4G-5 /usr/src/linux-selftests-x86_64-rhel-7.2-75bc37fefc4471e718ba8e651aa74673d4e0a9eb/tools/testing/selftests/x86# make
+gcc -m32 -o /usr/src/linux-selftests-x86_64-rhel-7.2-75bc37fefc4471e718ba8e651aa74673d4e0a9eb/tools/testing/selftests/x86/protection_keys_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 protection_keys.c -lrt -ldl -lm
+gcc -m64 -o /usr/src/linux-selftests-x86_64-rhel-7.2-75bc37fefc4471e718ba8e651aa74673d4e0a9eb/tools/testing/selftests/x86/protection_keys_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 protection_keys.c -lrt -ldl
+protection_keys.c:228:0: warning: "SEGV_BNDERR" redefined
+ #define SEGV_BNDERR     3  /* failed address bound checks */
+ ^
+In file included from /usr/include/signal.h:58:0,
+                 from protection_keys.c:33:
+/usr/include/bits/siginfo-consts.h:117:0: note: this is the location of the previous definition
+ #  define SEGV_BNDERR SEGV_BNDERR
+ ^
+protection_keys.c:229:0: warning: "SEGV_PKUERR" redefined
+ #define SEGV_PKUERR     4
+ ^
+In file included from /usr/include/signal.h:58:0,
+                 from protection_keys.c:33:
+/usr/include/bits/siginfo-consts.h:119:0: note: this is the location of the previous definition
+ #  define SEGV_PKUERR SEGV_PKUERR
+ ^
+protection_keys.c:228:0: warning: "SEGV_BNDERR" redefined
+ #define SEGV_BNDERR     3  /* failed address bound checks */
+ ^
+In file included from /usr/include/signal.h:58:0,
+                 from protection_keys.c:33:
+/usr/include/x86_64-linux-gnu/bits/siginfo-consts.h:117:0: note: this is the location of the previous definition
+ #  define SEGV_BNDERR SEGV_BNDERR
+ ^
+protection_keys.c:229:0: warning: "SEGV_PKUERR" redefined
+ #define SEGV_PKUERR     4
+ ^
+In file included from /usr/include/signal.h:58:0,
+                 from protection_keys.c:33:
+/usr/include/x86_64-linux-gnu/bits/siginfo-consts.h:119:0: note: this is the location of the previous definition
+ #  define SEGV_PKUERR SEGV_PKUERR
+ ^
+-------------------
 
-We could make it PTE granular with some effort, but that would make the
-whole PTI handling more complex. So not sure, if that's worth it.
+Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
+---
+ tools/testing/selftests/x86/protection_keys.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Thanks,
-
-	tglx
+diff --git a/tools/testing/selftests/x86/protection_keys.c b/tools/testing/selftests/x86/protection_keys.c
+index f15aa5a..757bb16 100644
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -225,8 +225,12 @@ void dump_mem(void *dumpme, int len_bytes)
+ 	}
+ }
+ 
+-#define SEGV_BNDERR     3  /* failed address bound checks */
+-#define SEGV_PKUERR     4
++#ifndef SEGV_BNDERR
++# define SEGV_BNDERR     3  /* failed address bound checks */
++#endif
++#ifndef SEGV_PKUERR
++# define SEGV_PKUERR     4
++#endif
+ 
+ static char *si_code_str(int si_code)
+ {
+-- 
+2.7.4
