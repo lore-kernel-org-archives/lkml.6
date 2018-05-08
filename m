@@ -1,26 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753512AbeEHAPV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 20:15:21 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55458 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752954AbeEHAPU (ORCPT
+        id S1753546AbeEHARD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 20:17:03 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:46954 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753149AbeEHARB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 20:15:20 -0400
-Subject: Re: [RFC] sched: Distinguish between idle_cpu calls based on desired
- effect
-To: Rohit Jain <rohit.k.jain@oracle.com>, matt@codeblueprint.co.uk,
-        peterz@infradead.org
-Cc: mingo@kernel.org, dhaval.giani@oracle.com, subhra.mazumdar@oracle.com,
-        steven.sistare@oracle.com, linux-kernel@vger.kernel.org
-References: <1525736477-8184-1-git-send-email-rohit.k.jain@oracle.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <366af1f5-9837-8a0c-3550-1a3d9a8e9de9@infradead.org>
-Date: Mon, 7 May 2018 17:15:16 -0700
+        Mon, 7 May 2018 20:17:01 -0400
+X-Google-Smtp-Source: AB8JxZrWHxMxXdaQS4jLVjz+LWeaBg89Hr2a7PnY47YQWwQ7oGhH1es4qXbNSnQfXNeBOQJZLqY6Vw==
+Subject: Re: [PATCH v2] MAINTAINERS: add keyword for devicetree overlay
+ notifiers
+From: Frank Rowand <frowand.list@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
+        Pantelis Antoniou <panto@antoniou-consulting.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kiszka <jan.kiszka@siemens.com>
+References: <1524879080-27111-1-git-send-email-frowand.list@gmail.com>
+Message-ID: <0d6a7e46-f659-ae6d-c25d-978f17aa2e63@gmail.com>
+Date: Mon, 7 May 2018 17:16:59 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1525736477-8184-1-git-send-email-rohit.k.jain@oracle.com>
+In-Reply-To: <1524879080-27111-1-git-send-email-frowand.list@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -28,50 +29,57 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/07/2018 04:41 PM, Rohit Jain wrote:
-> In commit 247f2f6f3c706b40b5f3886646f3eb53671258bf we distinguish
-> between idle_cpu when the vcpu is not running for scheduling threads.
-> However, idle_cpu function is used at other places for actually checking
-> whether the state of the CPU is idle or not. Hence splitting the use of
-> that function based on the desired return value.
+Hi Rob,
+
+Do you want to take this or should I route it through Andrew?
+
+-Frank
+
+
+On 04/27/18 18:31, frowand.list@gmail.com wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
 > 
-> Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
+> Devicetree overlay notifiers have a chance to potentially get
+> pointers into the overlay unflattened devicetree and overlay FDT.
+> The only protection against these pointers being accessed after
+> the underlying data has been released by kfree() is by source
+> code review of patches.  Add a keyword line to the devicetree
+> overlay maintainers entry to try to catch overlay notifier
+> related patches.
+> 
+> The keyword line is added to the devicetree overlay entry instead
+> of the devicetree entry so that not all maintainers will receive
+> the additional review traffic.  Add Frank Rowand (already a
+> maintainer in the devicetree entry) so that he will receive
+> the additional review traffic.
+> 
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 > ---
->  include/linux/sched.h |  1 +
->  kernel/sched/core.c   | 14 ++++++++++++++
->  kernel/sched/fair.c   | 20 ++++++++++----------
->  3 files changed, 25 insertions(+), 10 deletions(-)
 > 
-
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 71bdb86..171e160 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -4028,6 +4028,20 @@ int idle_cpu(int cpu)
->  		return 0;
->  #endif
+> changes from version 1:
+>    - removed extraneous "From:" tags at top of patch description
+> 
+> 
+>  MAINTAINERS | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 92be777d060a..aca3956694f8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10422,12 +10422,14 @@ F:	drivers/infiniband/ulp/opa_vnic
 >  
-> +	return 1;
-> +}
-> +
-> +/**
-> + * idle_cpu - is a given CPU idle for enqueuing work.
-
-    * available_idle_cpu -
-
-> + * @cpu: the processor in question.
-> + *
-> + * Return: 1 if the CPU is currently idle. 0 otherwise.
-> + */
-> +int available_idle_cpu(int cpu)
-> +{
-> +	if (!idle_cpu(cpu))
-> +		return 0;
-> +
->  	if (vcpu_is_preempted(cpu))
->  		return 0;
+>  OPEN FIRMWARE AND DEVICE TREE OVERLAYS
+>  M:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
+> +M:	Frank Rowand <frowand.list@gmail.com>
+>  L:	devicetree@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/dynamic-resolution-notes.txt
+>  F:	Documentation/devicetree/overlay-notes.txt
+>  F:	drivers/of/overlay.c
+>  F:	drivers/of/resolver.c
+> +K:	of_overlay_notifier_
 >  
-
-
--- 
-~Randy
+>  OPEN FIRMWARE AND FLATTENED DEVICE TREE
+>  M:	Rob Herring <robh+dt@kernel.org>
+> 
