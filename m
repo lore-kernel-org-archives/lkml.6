@@ -1,49 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932890AbeEHWgX (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 18:36:23 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43517 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754148AbeEHWgW (ORCPT
+        id S1756042AbeEHWjX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 18:39:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57790 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754148AbeEHWjW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 18:36:22 -0400
-From: Colin King <colin.king@canonical.com>
-To: Antonino Daplas <adaplas@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] video: fbdev: nvidia: fix spelling mistake: "scaleing" -> "scaling"
-Date: Tue,  8 May 2018 23:36:19 +0100
-Message-Id: <20180508223619.25557-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Tue, 8 May 2018 18:39:22 -0400
+Date: Tue, 8 May 2018 15:39:20 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] proc: test /proc/*/fd a bit (+ PF_KTHREAD is ABI!)
+Message-Id: <20180508153920.9e74e1ab86a8b10e8ddf09a0@linux-foundation.org>
+In-Reply-To: <20180505000414.GA15090@avx2>
+References: <20180505000414.GA15090@avx2>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sat, 5 May 2018 03:04:14 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
 
-Trivial fix to spelling mistake in module parameter description text
+> * Test lookup in /proc/self/fd.
+>   "map_files" lookup story showed that lookup is not that simple.
+> 
+> * Test that all those symlinks open the same file.
+>   Check with (st_dev, st_info).
+> 
+> * Test that kernel threads do not have anything in their /proc/*/fd/
+>   directory.
+> 
+> Now this is where things get interesting.
+> 
+> First, kernel threads aren't pinned by /proc/self or equivalent,
+> thus some "atomicity" is required.
+> 
+> Second, ->comm can contain whitespace and ')'.
+> No, they are not escaped.
+> 
+> Third, the only reliable way to check if process is kernel thread
+> appears to be field #9 in /proc/*/stat.
+> 
+> This field is struct task_struct::flags in decimal!
+> Check is done by testing PF_KTHREAD flags like we do in kernel.
+> 
+> 	PF_KTREAD value is a part of userspace ABI !!!
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/video/fbdev/nvidia/nvidia.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+erk.  Well if there's a need the we could export and support some
+stable interface.  I wonder how ps determines this.
 
-diff --git a/drivers/video/fbdev/nvidia/nvidia.c b/drivers/video/fbdev/nvidia/nvidia.c
-index 418a2d0d06a9..34521f52aa3b 100644
---- a/drivers/video/fbdev/nvidia/nvidia.c
-+++ b/drivers/video/fbdev/nvidia/nvidia.c
-@@ -1548,7 +1548,7 @@ MODULE_PARM_DESC(noaccel,
- 		 "(default=0)");
- module_param(noscale, int, 0);
- MODULE_PARM_DESC(noscale,
--		 "Disables screen scaleing. (0 or 1=disable) "
-+		 "Disables screen scaling. (0 or 1=disable) "
- 		 "(default=0, do scaling)");
- module_param(paneltweak, int, 0);
- MODULE_PARM_DESC(paneltweak,
--- 
-2.17.0
+
+> Other methods for determining kernel threadness are not reliable:
+> * RSS can be 0 if everything is swapped, even while reading
+>   from /proc/self.
+> 
+> * ->total_vm CAN BE ZERO if process is finishing
+> 
+> 	munmap(NULL, whole address space);
+> 
+> * /proc/*/maps and similar files can be empty because unmapping
+>   everything works. Read returning 0 can't distinguish between
+>   kernel thread and such suicide process.
+> 
