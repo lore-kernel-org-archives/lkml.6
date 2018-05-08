@@ -1,74 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754460AbeEHMk6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:40:58 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:52394 "EHLO
+        id S1754882AbeEHMmY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:42:24 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:52450 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752461AbeEHMkz (ORCPT
+        with ESMTP id S1752461AbeEHMmW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:40:55 -0400
-Date: Tue, 8 May 2018 13:40:33 +0100
+        Tue, 8 May 2018 08:42:22 -0400
+Date: Tue, 8 May 2018 13:42:00 +0100
 From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
-        kernel@pengutronix.de, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: [PATCH v6 2/6] ARM: imx6: register pm_power_off handler if
- "fsl,pmic-stby-poweroff" is set
-Message-ID: <20180508124033.GL16141@n2100.armlinux.org.uk>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180305102524.5905-3-o.rempel@pengutronix.de>
+To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: maxime.ripard@bootlin.com, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com, f.fainelli@gmail.com,
+        opendmb@gmail.com, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, clabbe.montjoie@gmail.com,
+        quentin.schulz@bootlin.com, thomas.petazzoni@bootlin.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 01/12] ARM: Allow this header to be included by
+ assembly files
+Message-ID: <20180508124200.GM16141@n2100.armlinux.org.uk>
+References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+ <20180504190545.5114-2-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180305102524.5905-3-o.rempel@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180504190545.5114-2-mylene.josserand@bootlin.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Mar 05, 2018 at 11:25:19AM +0100, Oleksij Rempel wrote:
-> One of the Freescale recommended sequences for power off with external
-> PMIC is the following:
-> ...
-> 3.  SoC is programming PMIC for power off when standby is asserted.
-> 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
+On Fri, May 04, 2018 at 09:05:34PM +0200, Mylène Josserand wrote:
+> From: Doug Berger <opendmb@gmail.com>
 > 
-> See:
-> http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-> page 5083
+> The constants defined in this file are equally useful in assembly and C
+> source files. The arm64 architecture version of this file allows
+> inclusion in both assembly and C source files, so this this commit adds
+> that capability to the arm architecture version so that the constants
+> don't need to be defined in multiple places.
 > 
-> This patch implements step 4. of this sequence.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-> index ecdf071653d4..24689260a2a5 100644
-> --- a/arch/arm/mach-imx/pm-imx6.c
-> +++ b/arch/arm/mach-imx/pm-imx6.c
-> @@ -604,6 +604,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
->  				   IMX6Q_GPR1_GINT);
->  }
->  
-> +static void imx6_pm_stby_poweroff(void)
-> +{
-> +	imx6_set_lpm(STOP_POWER_OFF);
-> +	cpu_suspend(0, imx6q_suspend_finish);
+> Signed-off-by: Doug Berger <opendmb@gmail.com>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
 
-Do you actually need to save the processor state etc here - the request
-is after all to power down the system and not to suspend.  Would calling
-imx6q_suspend_finish() directly work (and hence simplify the code) ?
+Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+
+Thanks.
+
+> ---
+>  arch/arm/include/asm/cputype.h | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/cputype.h b/arch/arm/include/asm/cputype.h
+> index cb546425da8a..e7632f536633 100644
+> --- a/arch/arm/include/asm/cputype.h
+> +++ b/arch/arm/include/asm/cputype.h
+> @@ -2,9 +2,6 @@
+>  #ifndef __ASM_ARM_CPUTYPE_H
+>  #define __ASM_ARM_CPUTYPE_H
+>  
+> -#include <linux/stringify.h>
+> -#include <linux/kernel.h>
+> -
+>  #define CPUID_ID	0
+>  #define CPUID_CACHETYPE	1
+>  #define CPUID_TCM	2
+> @@ -98,6 +95,11 @@
+>  /* Qualcomm implemented cores */
+>  #define ARM_CPU_PART_SCORPION		0x510002d0
+>  
+> +#ifndef __ASSEMBLY__
+> +
+> +#include <linux/stringify.h>
+> +#include <linux/kernel.h>
+> +
+>  extern unsigned int processor_id;
+>  
+>  #ifdef CONFIG_CPU_CP15
+> @@ -326,4 +328,6 @@ static inline int __attribute_const__ cpuid_feature_extract_field(u32 features,
+>  #define cpuid_feature_extract(reg, field) \
+>  	cpuid_feature_extract_field(read_cpuid_ext(reg), field)
+>  
+> +#endif /* __ASSEMBLY__ */
+> +
+>  #endif
+> -- 
+> 2.11.0
+> 
 
 -- 
 RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
