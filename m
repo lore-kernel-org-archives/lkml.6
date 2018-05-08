@@ -1,116 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933361AbeEHIqg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 04:46:36 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:53348 "EHLO extserv.mm-sol.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932297AbeEHIqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 04:46:32 -0400
-From: Todor Tomov <todor.tomov@linaro.org>
-To: sakari.ailus@iki.fi, mchehab@kernel.org, hverkuil@xs4all.nl,
-        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH v2] media: v4l: Add new 10-bit packed grayscale format
-Date: Tue,  8 May 2018 11:46:17 +0300
-Message-Id: <1525769177-6328-1-git-send-email-todor.tomov@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        id S933400AbeEHIu3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 04:50:29 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:46952 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932157AbeEHIu0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 04:50:26 -0400
+X-Google-Smtp-Source: AB8JxZrlynyar4lRDqNmRe/Aakd9Nvwt8OR1cb0fUEjWM71RqzP11jVA8bFCwEEGUDdbvtZzhxiX7Q==
+From: Lidong Chen <jemmy858585@gmail.com>
+X-Google-Original-From: Lidong Chen <lidongchen@tencent.com>
+To: dledford@redhat.com, jgg@ziepe.ca, akpm@linux-foundation.org,
+        qing.huang@oracle.com, leon@kernel.org, artemyko@mellanox.com,
+        dan.j.williams@intel.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        adido@mellanox.com, galsha@mellanox.com, aviadye@mellanox.com,
+        Lidong Chen <lidongchen@tencent.com>
+Subject: [PATCH v2] IB/umem: ib_ucontext already have tgid, remove pid from ib_umem structure
+Date: Tue,  8 May 2018 16:50:16 +0800
+Message-Id: <1525769416-14596-1-git-send-email-lidongchen@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new format will be called V4L2_PIX_FMT_Y10P.
-It is similar to the V4L2_PIX_FMT_SBGGR10P family formats
-but V4L2_PIX_FMT_Y10P is a grayscale format.
+The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
+If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
+exited, get_pid_task will return NULL, ib_umem_release does not decrease
+mm->pinned_vm. This patch fixes it by use tgid in ib_ucontext struct.
 
-Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+Signed-off-by: Lidong Chen <lidongchen@tencent.com>
 ---
-
-v2:
-- doc: improved bit-packed representation: added bit positions for LSB bits;
-- doc: improved bit-packed representation: added table column widths.
-
- Documentation/media/uapi/v4l/pixfmt-y10p.rst | 33 ++++++++++++++++++++++++++++
- Documentation/media/uapi/v4l/yuv-formats.rst |  1 +
- drivers/media/v4l2-core/v4l2-ioctl.c         |  1 +
- include/uapi/linux/videodev2.h               |  1 +
- 4 files changed, 36 insertions(+)
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-y10p.rst
-
-diff --git a/Documentation/media/uapi/v4l/pixfmt-y10p.rst b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
-new file mode 100644
-index 0000000..13b5713
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
-@@ -0,0 +1,33 @@
-+.. -*- coding: utf-8; mode: rst -*-
-+
-+.. _V4L2-PIX-FMT-Y10P:
-+
-+******************************
-+V4L2_PIX_FMT_Y10P ('Y10P')
-+******************************
-+
-+Grey-scale image as a MIPI RAW10 packed array
-+
-+
-+Description
-+===========
-+
-+This is a packed grey-scale image format with a depth of 10 bits per
-+pixel. Every four consecutive pixels are packed into 5 bytes. Each of
-+the first 4 bytes contain the 8 high order bits of the pixels, and
-+the 5th byte contains the 2 least significants bits of each pixel,
-+in the same order.
-+
-+**Bit-packed representation.**
-+
-+.. flat-table::
-+    :header-rows:  0
-+    :stub-columns: 0
-+    :widths: 8 8 8 8 64
-+
-+    * - Y'\ :sub:`00[9:2]`
-+      - Y'\ :sub:`01[9:2]`
-+      - Y'\ :sub:`02[9:2]`
-+      - Y'\ :sub:`03[9:2]`
-+      - Y'\ :sub:`03[1:0]`\ (bits 7--6) Y'\ :sub:`02[1:0]`\ (bits 5--4)
-+	Y'\ :sub:`01[1:0]`\ (bits 3--2) Y'\ :sub:`00[1:0]`\ (bits 1--0)
-diff --git a/Documentation/media/uapi/v4l/yuv-formats.rst b/Documentation/media/uapi/v4l/yuv-formats.rst
-index 3334ea4..9ab0592 100644
---- a/Documentation/media/uapi/v4l/yuv-formats.rst
-+++ b/Documentation/media/uapi/v4l/yuv-formats.rst
-@@ -29,6 +29,7 @@ to brightness information.
-     pixfmt-y10
-     pixfmt-y12
-     pixfmt-y10b
-+    pixfmt-y10p
-     pixfmt-y16
-     pixfmt-y16-be
-     pixfmt-y8i
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index de5d96d..dececea 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1147,6 +1147,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- 	case V4L2_PIX_FMT_Y16:		descr = "16-bit Greyscale"; break;
- 	case V4L2_PIX_FMT_Y16_BE:	descr = "16-bit Greyscale BE"; break;
- 	case V4L2_PIX_FMT_Y10BPACK:	descr = "10-bit Greyscale (Packed)"; break;
-+	case V4L2_PIX_FMT_Y10P:		descr = "10-bit Greyscale (MIPI Packed)"; break;
- 	case V4L2_PIX_FMT_Y8I:		descr = "Interleaved 8-bit Greyscale"; break;
- 	case V4L2_PIX_FMT_Y12I:		descr = "Interleaved 12-bit Greyscale"; break;
- 	case V4L2_PIX_FMT_Z16:		descr = "16-bit Depth"; break;
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 600877b..b24ab720 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -522,6 +522,7 @@ struct v4l2_pix_format {
+ [v2]
+ - use ib_ucontext tgid instread of tgid in ib_umem structure
  
- /* Grey bit-packed formats */
- #define V4L2_PIX_FMT_Y10BPACK    v4l2_fourcc('Y', '1', '0', 'B') /* 10  Greyscale bit-packed */
-+#define V4L2_PIX_FMT_Y10P    v4l2_fourcc('Y', '1', '0', 'P') /* 10  Greyscale, MIPI RAW10 packed */
+ drivers/infiniband/core/umem.c | 7 +------
+ include/rdma/ib_umem.h         | 1 -
+ 2 files changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+index 9a4e899..2b6c9b5 100644
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -119,7 +119,6 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+ 	umem->length     = size;
+ 	umem->address    = addr;
+ 	umem->page_shift = PAGE_SHIFT;
+-	umem->pid	 = get_task_pid(current, PIDTYPE_PID);
+ 	/*
+ 	 * We ask for writable memory if any of the following
+ 	 * access flags are set.  "Local write" and "remote write"
+@@ -132,7 +131,6 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+ 		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
  
- /* Palette formats */
- #define V4L2_PIX_FMT_PAL8    v4l2_fourcc('P', 'A', 'L', '8') /*  8  8-bit palette */
+ 	if (access & IB_ACCESS_ON_DEMAND) {
+-		put_pid(umem->pid);
+ 		ret = ib_umem_odp_get(context, umem, access);
+ 		if (ret) {
+ 			kfree(umem);
+@@ -148,7 +146,6 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+ 
+ 	page_list = (struct page **) __get_free_page(GFP_KERNEL);
+ 	if (!page_list) {
+-		put_pid(umem->pid);
+ 		kfree(umem);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+@@ -231,7 +228,6 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+ 	if (ret < 0) {
+ 		if (need_release)
+ 			__ib_umem_release(context->device, umem, 0);
+-		put_pid(umem->pid);
+ 		kfree(umem);
+ 	} else
+ 		current->mm->pinned_vm = locked;
+@@ -274,8 +270,7 @@ void ib_umem_release(struct ib_umem *umem)
+ 
+ 	__ib_umem_release(umem->context->device, umem, 1);
+ 
+-	task = get_pid_task(umem->pid, PIDTYPE_PID);
+-	put_pid(umem->pid);
++	task = get_pid_task(umem->context->tgid, PIDTYPE_PID);
+ 	if (!task)
+ 		goto out;
+ 	mm = get_task_mm(task);
+diff --git a/include/rdma/ib_umem.h b/include/rdma/ib_umem.h
+index 23159dd..a1fd638 100644
+--- a/include/rdma/ib_umem.h
++++ b/include/rdma/ib_umem.h
+@@ -48,7 +48,6 @@ struct ib_umem {
+ 	int                     writable;
+ 	int                     hugetlb;
+ 	struct work_struct	work;
+-	struct pid             *pid;
+ 	struct mm_struct       *mm;
+ 	unsigned long		diff;
+ 	struct ib_umem_odp     *odp_data;
 -- 
-2.7.4
+1.8.3.1
