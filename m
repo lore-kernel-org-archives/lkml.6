@@ -1,39 +1,37 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp3q1X79JIl7/OhxXyspVeSOh0Y5UG8OQQ3WJAlzIenxZi/SPDm9QGLQBG/c50Dj+PFrN3A
-ARC-Seal: i=1; a=rsa-sha256; t=1525767355; cv=none;
+X-Google-Smtp-Source: AB8JxZqtBf7PXpssGV/nm7+9A9aM51j6Wayc8Hj67sUaeITRR9g7WJBraLvzjT33w9g0IbwGTrc/
+ARC-Seal: i=1; a=rsa-sha256; t=1525767352; cv=none;
         d=google.com; s=arc-20160816;
-        b=dRYvHPkOkxEOCtZ16sNfb8KJ14CdMgf+xZ0aUvUX8toTzD26w0Y2tZ3pEwZ+LBHDHz
-         lo5EFF2ipmw3kkTjO3pOdwEjO4QG8LR1kl+NlnW+tU6/AvJJ02JF8jHqweHRTswgaN0O
-         LMQ0JzllhUe+W1PL5YrpdXXxf0kh9IiO2pmDlIvYeK+jmaciPP42TOQ4p+DpdpSirKIv
-         aWIQS0mkZVcwKtkXyiUHypWALV/PSydzJtxGWZgFFEtsdZnycqUumpPIJFQ81wvW9dCh
-         qJ+oJLgsNPb0FJUKmUrA/wGsXKe0YPEDFKlIPdMMFftTfcs1Nghk8W2TajB1qjsoN5hm
-         LVMA==
+        b=0VjIPoQ4RhKlTyYUhLCDUQajvVL51fZNFDpoDMz1Lz/yTYwIIv8F5tGR7hYczaV/TT
+         LEl7DdRhO9iqXR1Uzy5PzrYrN6qSg4kLmfnT7ltGDnJ/tehbpPGB2D5p+I2yaS60WrQu
+         VUXfr5dSJB6z1SM49NPkwU1v0mexUjHwjJCtSQAZVH6gX1Z8xZo8Rl/HezLJTt5H4gyB
+         c4XqyXQqE92ZFFaUbIY7hmhBrhcVCNfo9QeQ2SlG+PJobyYV4CyChOhBMB5qZgQfu3/K
+         rvjlWL5iKLxHZ+pHw812hMgIr0aQcbsgQQR/eoDH0vDQiovA5qQHdlJOHD2szU0l0ltR
+         KVdA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=mfmpYdcZyDVgjxCzlJm5NvfJneoBy0GSmRCYdnk9JFY=;
-        b=iOHzFkB01tFt8R3yDjXLYFj4wASmwe7SEGdbMImJWacLKo8mXgeNkG+2lpeasrpuVD
-         6LId0Q4skD1T89Jwr2Xg+SLqLFpzzZm3NNl0a8kqzKnDmp6FFq4dwrHMINWS5ljfBWig
-         iiOOWL9gQprNgwGgYMjKSTRkg6jg3Wvzhr3gVKnUhfEYy/iLGntRHVqNiYduhazidJ3r
-         aB/Ept4Tr9r8bdIgoamGviSPNP4yY0X+njT9ii+WXMkTzxgqEzZMZpO+wpyUvTDQDozR
-         ggYbKNS7+IN7fGQ3gmjVZXK1O7TaEGFkqzM/L3UJ3s5yVzUQOodzsupipv76O8+6Om88
-         3Qxw==
+        bh=5Ua9K449lrEKJDF9vQjGj1VAHniutc6mTNRhRCz/I4s=;
+        b=qq6SZBycq701VQLBdLX1LifdxCl45+50koubDYLC5/yW9KUIJogrbt9CIi1lQ7P+hD
+         p6F6QtoMFdo262Ot7WPl4MDA+y30y4lpAQuw67uhiwl+TPdg+lRTHEypoOXmI1lyc06t
+         /ShlnlC0udCnEzJ0vo9OlgxsdUr0bmUmbAayJ/eHFmd0PL2QIe9rLhEMzTE3XvyqqW96
+         lO7n3SKp8L6uJ0Hto/Z8WvVRbIxMqIY5sfQTcPaAXentjNOa9Q7OCOCfnJV1qpM9lOAq
+         nuyn9weKoQKSEPndE5j7onW6ti8kTiC1k7475JIBg4DyktiSEmTOWKDxNDOxJ2AcQejh
+         5fjg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=GcOrpo5B;
+       dkim=pass header.i=@kernel.org header.s=default header.b=sw+TH7aK;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=GcOrpo5B;
+       dkim=pass header.i=@kernel.org header.s=default header.b=sw+TH7aK;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dun Hum <bitter.taste@gmx.com>,
-	=?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-	"Darren Hart (VMware)" <dvhart@infradead.org>
-Subject: [PATCH 4.14 41/43] platform/x86: asus-wireless: Fix NULL pointer dereference
-Date: Tue,  8 May 2018 10:11:00 +0200
-Message-Id: <20180508074010.511106643@linuxfoundation.org>
+	Bin Liu <b-liu@ti.com>
+Subject: [PATCH 4.14 40/43] usb: musb: trace: fix NULL pointer dereference in musb_g_tx()
+Date: Tue,  8 May 2018 10:10:59 +0200
+Message-Id: <20180508074010.320357854@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
@@ -43,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882917093784507?=
-X-GMAIL-MSGID: =?utf-8?q?1599883031006135105?=
+X-GMAIL-THRID: =?utf-8?q?1599882913684302891?=
+X-GMAIL-MSGID: =?utf-8?q?1599883027725695655?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,90 +50,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: João Paulo Rechi Vita <jprvita@gmail.com>
+From: Bin Liu <b-liu@ti.com>
 
-commit 9f0a93de9139c2b0a59299cd36b61564522458f8 upstream.
+commit 9aea9b6cc78d2b99b23d84fb2e0bc6e464c6569e upstream.
 
-When the module is removed the led workqueue is destroyed in the remove
-callback, before the led device is unregistered from the led subsystem.
+The usb_request pointer could be NULL in musb_g_tx(), where the
+tracepoint call would trigger the NULL pointer dereference failure when
+parsing the members of the usb_request pointer.
 
-This leads to a NULL pointer derefence when the led device is
-unregistered automatically later as part of the module removal cleanup.
-Bellow is the backtrace showing the problem.
+Move the tracepoint call to where the usb_request pointer is already
+checked to solve the issue.
 
-  BUG: unable to handle kernel NULL pointer dereference at           (null)
-  IP: __queue_work+0x8c/0x410
-  PGD 0 P4D 0
-  Oops: 0000 [#1] SMP NOPTI
-  Modules linked in: ccm edac_mce_amd kvm_amd kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 joydev crypto_simd asus_nb_wmi glue_helper uvcvideo snd_hda_codec_conexant snd_hda_codec_generic snd_hda_codec_hdmi snd_hda_intel asus_wmi snd_hda_codec cryptd snd_hda_core sparse_keymap videobuf2_vmalloc arc4 videobuf2_memops snd_hwdep input_leds videobuf2_v4l2 ath9k psmouse videobuf2_core videodev ath9k_common snd_pcm ath9k_hw media fam15h_power ath k10temp snd_timer mac80211 i2c_piix4 r8169 mii mac_hid cfg80211 asus_wireless(-) snd soundcore wmi shpchp 8250_dw ip_tables x_tables amdkfd amd_iommu_v2 amdgpu radeon chash i2c_algo_bit drm_kms_helper syscopyarea serio_raw sysfillrect sysimgblt fb_sys_fops ahci ttm libahci drm video
-  CPU: 3 PID: 2177 Comm: rmmod Not tainted 4.15.0-5-generic #6+dev94.b4287e5bem1-Endless
-  Hardware name: ASUSTeK COMPUTER INC. X555DG/X555DG, BIOS 5.011 05/05/2015
-  RIP: 0010:__queue_work+0x8c/0x410
-  RSP: 0018:ffffbe8cc249fcd8 EFLAGS: 00010086
-  RAX: ffff992ac6810800 RBX: 0000000000000000 RCX: 0000000000000008
-  RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff992ac6400e18
-  RBP: ffffbe8cc249fd18 R08: ffff992ac6400db0 R09: 0000000000000000
-  R10: 0000000000000040 R11: ffff992ac6400dd8 R12: 0000000000002000
-  R13: ffff992abd762e00 R14: ffff992abd763e38 R15: 000000000001ebe0
-  FS:  00007f318203e700(0000) GS:ffff992aced80000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000000 CR3: 00000001c720e000 CR4: 00000000001406e0
-  Call Trace:
-   queue_work_on+0x38/0x40
-   led_state_set+0x2c/0x40 [asus_wireless]
-   led_set_brightness_nopm+0x14/0x40
-   led_set_brightness+0x37/0x60
-   led_trigger_set+0xfc/0x1d0
-   led_classdev_unregister+0x32/0xd0
-   devm_led_classdev_release+0x11/0x20
-   release_nodes+0x109/0x1f0
-   devres_release_all+0x3c/0x50
-   device_release_driver_internal+0x16d/0x220
-   driver_detach+0x3f/0x80
-   bus_remove_driver+0x55/0xd0
-   driver_unregister+0x2c/0x40
-   acpi_bus_unregister_driver+0x15/0x20
-   asus_wireless_driver_exit+0x10/0xb7c [asus_wireless]
-   SyS_delete_module+0x1da/0x2b0
-   entry_SYSCALL_64_fastpath+0x24/0x87
-  RIP: 0033:0x7f3181b65fd7
-  RSP: 002b:00007ffe74bcbe18 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-  RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f3181b65fd7
-  RDX: 000000000000000a RSI: 0000000000000800 RDI: 0000555ea2559258
-  RBP: 0000555ea25591f0 R08: 00007ffe74bcad91 R09: 000000000000000a
-  R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000003
-  R13: 00007ffe74bcae00 R14: 0000000000000000 R15: 0000555ea25591f0
-  Code: 01 00 00 02 0f 85 7d 01 00 00 48 63 45 d4 48 c7 c6 00 f4 fa 87 49 8b 9d 08 01 00 00 48 03 1c c6 4c 89 f7 e8 87 fb ff ff 48 85 c0 <48> 8b 3b 0f 84 c5 01 00 00 48 39 f8 0f 84 bc 01 00 00 48 89 c7
-  RIP: __queue_work+0x8c/0x410 RSP: ffffbe8cc249fcd8
-  CR2: 0000000000000000
-  ---[ end trace 7aa4f4a232e9c39c ]---
-
-Unregistering the led device on the remove callback before destroying the
-workqueue avoids this problem.
-
-https://bugzilla.kernel.org/show_bug.cgi?id=196097
-
-Reported-by: Dun Hum <bitter.taste@gmx.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Fixes: fc78003e5345 ("usb: musb: gadget: add usb-request tracepoints")
+Cc: stable@vger.kernel.org # v4.8+
+Signed-off-by: Bin Liu <b-liu@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/platform/x86/asus-wireless.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/musb/musb_gadget.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/platform/x86/asus-wireless.c
-+++ b/drivers/platform/x86/asus-wireless.c
-@@ -178,8 +178,10 @@ static int asus_wireless_remove(struct a
- {
- 	struct asus_wireless_data *data = acpi_driver_data(adev);
+--- a/drivers/usb/musb/musb_gadget.c
++++ b/drivers/usb/musb/musb_gadget.c
+@@ -442,7 +442,6 @@ void musb_g_tx(struct musb *musb, u8 epn
+ 	req = next_request(musb_ep);
+ 	request = &req->request;
  
--	if (data->wq)
-+	if (data->wq) {
-+		devm_led_classdev_unregister(&adev->dev, &data->led);
- 		destroy_workqueue(data->wq);
-+	}
- 	return 0;
- }
+-	trace_musb_req_tx(req);
+ 	csr = musb_readw(epio, MUSB_TXCSR);
+ 	musb_dbg(musb, "<== %s, txcsr %04x", musb_ep->end_point.name, csr);
  
+@@ -481,6 +480,8 @@ void musb_g_tx(struct musb *musb, u8 epn
+ 		u8	is_dma = 0;
+ 		bool	short_packet = false;
+ 
++		trace_musb_req_tx(req);
++
+ 		if (dma && (csr & MUSB_TXCSR_DMAENAB)) {
+ 			is_dma = 1;
+ 			csr |= MUSB_TXCSR_P_WZC_BITS;
