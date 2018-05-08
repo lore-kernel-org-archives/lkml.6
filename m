@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755608AbeEHSFM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 14:05:12 -0400
+        id S932261AbeEHSFT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 14:05:19 -0400
 Received: from mx2.suse.de ([195.135.220.15]:53884 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755488AbeEHSFK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 14:05:10 -0400
+        id S1755599AbeEHSFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 14:05:13 -0400
 From: Mark Fasheh <mfasheh@suse.de>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Mark Fasheh <mfasheh@suse.de>
-Subject: [PATCH 15/76] fs/autofs4: Use inode_sb() helper instead of inode->i_sb
-Date: Tue,  8 May 2018 11:03:35 -0700
-Message-Id: <20180508180436.716-16-mfasheh@suse.de>
+Subject: [PATCH 17/76] fs/bfs: Use inode_sb() helper instead of inode->i_sb
+Date: Tue,  8 May 2018 11:03:37 -0700
+Message-Id: <20180508180436.716-18-mfasheh@suse.de>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180508180436.716-1-mfasheh@suse.de>
 References: <20180508180436.716-1-mfasheh@suse.de>
@@ -22,112 +22,188 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mark Fasheh <mfasheh@suse.de>
 ---
- fs/autofs4/dev-ioctl.c |  2 +-
- fs/autofs4/root.c      | 20 ++++++++++----------
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ fs/bfs/dir.c   | 23 ++++++++++++-----------
+ fs/bfs/file.c  |  4 ++--
+ fs/bfs/inode.c | 16 +++++++++-------
+ 3 files changed, 23 insertions(+), 20 deletions(-)
 
-diff --git a/fs/autofs4/dev-ioctl.c b/fs/autofs4/dev-ioctl.c
-index b7c816f39404..6b28b01e5022 100644
---- a/fs/autofs4/dev-ioctl.c
-+++ b/fs/autofs4/dev-ioctl.c
-@@ -166,7 +166,7 @@ static struct autofs_sb_info *autofs_dev_ioctl_sbi(struct file *f)
- 
- 	if (f) {
- 		inode = file_inode(f);
--		sbi = autofs4_sbi(inode->i_sb);
-+		sbi = autofs4_sbi(inode_sb(inode));
+diff --git a/fs/bfs/dir.c b/fs/bfs/dir.c
+index ee832ca5f734..124c1eedb53c 100644
+--- a/fs/bfs/dir.c
++++ b/fs/bfs/dir.c
+@@ -38,14 +38,14 @@ static int bfs_readdir(struct file *f, struct dir_context *ctx)
+ 	if (ctx->pos & (BFS_DIRENT_SIZE - 1)) {
+ 		printf("Bad f_pos=%08lx for %s:%08lx\n",
+ 					(unsigned long)ctx->pos,
+-					dir->i_sb->s_id, dir->i_ino);
++					inode_sb(dir)->s_id, dir->i_ino);
+ 		return -EINVAL;
  	}
- 	return sbi;
- }
-diff --git a/fs/autofs4/root.c b/fs/autofs4/root.c
-index 82e8f6edfb48..41b0a0b73bce 100644
---- a/fs/autofs4/root.c
-+++ b/fs/autofs4/root.c
-@@ -513,7 +513,7 @@ static struct dentry *autofs4_lookup(struct inode *dir,
- 	if (dentry->d_name.len > NAME_MAX)
+ 
+ 	while (ctx->pos < dir->i_size) {
+ 		offset = ctx->pos & (BFS_BSIZE - 1);
+ 		block = BFS_I(dir)->i_sblock + (ctx->pos >> BFS_BSIZE_BITS);
+-		bh = sb_bread(dir->i_sb, block);
++		bh = sb_bread(inode_sb(dir), block);
+ 		if (!bh) {
+ 			ctx->pos += BFS_BSIZE - offset;
+ 			continue;
+@@ -81,7 +81,7 @@ static int bfs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ {
+ 	int err;
+ 	struct inode *inode;
+-	struct super_block *s = dir->i_sb;
++	struct super_block *s = inode_sb(dir);
+ 	struct bfs_sb_info *info = BFS_SB(s);
+ 	unsigned long ino;
+ 
+@@ -130,7 +130,7 @@ static struct dentry *bfs_lookup(struct inode *dir, struct dentry *dentry,
+ 	struct inode *inode = NULL;
+ 	struct buffer_head *bh;
+ 	struct bfs_dirent *de;
+-	struct bfs_sb_info *info = BFS_SB(dir->i_sb);
++	struct bfs_sb_info *info = BFS_SB(inode_sb(dir));
+ 
+ 	if (dentry->d_name.len > BFS_NAMELEN)
  		return ERR_PTR(-ENAMETOOLONG);
- 
--	sbi = autofs4_sbi(dir->i_sb);
-+	sbi = autofs4_sbi(inode_sb(dir));
- 
- 	pr_debug("pid = %u, pgrp = %u, catatonic = %d, oz_mode = %d\n",
- 		 current->pid, task_pgrp_nr(current), sbi->catatonic,
-@@ -553,7 +553,7 @@ static int autofs4_dir_symlink(struct inode *dir,
- 			       struct dentry *dentry,
- 			       const char *symname)
+@@ -140,7 +140,7 @@ static struct dentry *bfs_lookup(struct inode *dir, struct dentry *dentry,
+ 	if (bh) {
+ 		unsigned long ino = (unsigned long)le16_to_cpu(de->ino);
+ 		brelse(bh);
+-		inode = bfs_iget(dir->i_sb, ino);
++		inode = bfs_iget(inode_sb(dir), ino);
+ 		if (IS_ERR(inode)) {
+ 			mutex_unlock(&info->bfs_lock);
+ 			return ERR_CAST(inode);
+@@ -155,7 +155,7 @@ static int bfs_link(struct dentry *old, struct inode *dir,
+ 						struct dentry *new)
  {
--	struct autofs_sb_info *sbi = autofs4_sbi(dir->i_sb);
-+	struct autofs_sb_info *sbi = autofs4_sbi(inode_sb(dir));
- 	struct autofs_info *ino = autofs4_dentry_ino(dentry);
- 	struct autofs_info *p_ino;
- 	struct inode *inode;
-@@ -577,7 +577,7 @@ static int autofs4_dir_symlink(struct inode *dir,
+ 	struct inode *inode = d_inode(old);
+-	struct bfs_sb_info *info = BFS_SB(inode->i_sb);
++	struct bfs_sb_info *info = BFS_SB(inode_sb(inode));
+ 	int err;
  
- 	strcpy(cp, symname);
+ 	mutex_lock(&info->bfs_lock);
+@@ -180,7 +180,7 @@ static int bfs_unlink(struct inode *dir, struct dentry *dentry)
+ 	struct inode *inode = d_inode(dentry);
+ 	struct buffer_head *bh;
+ 	struct bfs_dirent *de;
+-	struct bfs_sb_info *info = BFS_SB(inode->i_sb);
++	struct bfs_sb_info *info = BFS_SB(inode_sb(inode));
  
--	inode = autofs4_get_inode(dir->i_sb, S_IFLNK | 0555);
-+	inode = autofs4_get_inode(inode_sb(dir), S_IFLNK | 0555);
- 	if (!inode) {
- 		kfree(cp);
- 		return -ENOMEM;
-@@ -614,7 +614,7 @@ static int autofs4_dir_symlink(struct inode *dir,
-  */
- static int autofs4_dir_unlink(struct inode *dir, struct dentry *dentry)
+ 	mutex_lock(&info->bfs_lock);
+ 	bh = bfs_find_entry(dir, dentry->d_name.name, dentry->d_name.len, &de);
+@@ -189,7 +189,7 @@ static int bfs_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ 	if (!inode->i_nlink) {
+ 		printf("unlinking non-existent file %s:%lu (nlink=%d)\n",
+-					inode->i_sb->s_id, inode->i_ino,
++					inode_sb(inode)->s_id, inode->i_ino,
+ 					inode->i_nlink);
+ 		set_nlink(inode, 1);
+ 	}
+@@ -225,7 +225,7 @@ static int bfs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	if (S_ISDIR(old_inode->i_mode))
+ 		return -EINVAL;
+ 
+-	info = BFS_SB(old_inode->i_sb);
++	info = BFS_SB(inode_sb(old_inode));
+ 
+ 	mutex_lock(&info->bfs_lock);
+ 	old_bh = bfs_find_entry(old_dir, 
+@@ -296,7 +296,7 @@ static int bfs_add_entry(struct inode *dir, const unsigned char *name,
+ 	sblock = BFS_I(dir)->i_sblock;
+ 	eblock = BFS_I(dir)->i_eblock;
+ 	for (block = sblock; block <= eblock; block++) {
+-		bh = sb_bread(dir->i_sb, block);
++		bh = sb_bread(inode_sb(dir), block);
+ 		if (!bh)
+ 			return -EIO;
+ 		for (off = 0; off < BFS_BSIZE; off += BFS_DIRENT_SIZE) {
+@@ -345,7 +345,8 @@ static struct buffer_head *bfs_find_entry(struct inode *dir,
+ 
+ 	while (block * BFS_BSIZE + offset < dir->i_size) {
+ 		if (!bh) {
+-			bh = sb_bread(dir->i_sb, BFS_I(dir)->i_sblock + block);
++			bh = sb_bread(inode_sb(dir),
++				      BFS_I(dir)->i_sblock + block);
+ 			if (!bh) {
+ 				block++;
+ 				continue;
+diff --git a/fs/bfs/file.c b/fs/bfs/file.c
+index 1476cdd90cfb..159ef9ebca2d 100644
+--- a/fs/bfs/file.c
++++ b/fs/bfs/file.c
+@@ -66,7 +66,7 @@ static int bfs_get_block(struct inode *inode, sector_t block,
  {
--	struct autofs_sb_info *sbi = autofs4_sbi(dir->i_sb);
-+	struct autofs_sb_info *sbi = autofs4_sbi(inode_sb(dir));
- 	struct autofs_info *ino = autofs4_dentry_ino(dentry);
- 	struct autofs_info *p_ino;
+ 	unsigned long phys;
+ 	int err;
+-	struct super_block *sb = inode->i_sb;
++	struct super_block *sb = inode_sb(inode);
+ 	struct bfs_sb_info *info = BFS_SB(sb);
+ 	struct bfs_inode_info *bi = BFS_I(inode);
  
-@@ -694,7 +694,7 @@ static void autofs_clear_leaf_automount_flags(struct dentry *dentry)
+@@ -122,7 +122,7 @@ static int bfs_get_block(struct inode *inode, sector_t block,
+ 	}
  
- static int autofs4_dir_rmdir(struct inode *dir, struct dentry *dentry)
+ 	if (bi->i_sblock) {
+-		err = bfs_move_blocks(inode->i_sb, bi->i_sblock, 
++		err = bfs_move_blocks(inode_sb(inode), bi->i_sblock, 
+ 						bi->i_eblock, phys);
+ 		if (err) {
+ 			dprintf("failed to move ino=%08lx -> fs corruption\n",
+diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
+index 9a69392f1fb3..8216f6b03fda 100644
+--- a/fs/bfs/inode.c
++++ b/fs/bfs/inode.c
+@@ -44,15 +44,17 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
+ 	if (!(inode->i_state & I_NEW))
+ 		return inode;
+ 
+-	if ((ino < BFS_ROOT_INO) || (ino > BFS_SB(inode->i_sb)->si_lasti)) {
+-		printf("Bad inode number %s:%08lx\n", inode->i_sb->s_id, ino);
++	if ((ino < BFS_ROOT_INO) || (ino > BFS_SB(inode_sb(inode))->si_lasti)) {
++		printf("Bad inode number %s:%08lx\n", inode_sb(inode)->s_id,
++		       ino);
+ 		goto error;
+ 	}
+ 
+ 	block = (ino - BFS_ROOT_INO) / BFS_INODES_PER_BLOCK + 1;
+-	bh = sb_bread(inode->i_sb, block);
++	bh = sb_bread(inode_sb(inode), block);
+ 	if (!bh) {
+-		printf("Unable to read inode %s:%08lx\n", inode->i_sb->s_id,
++		printf("Unable to read inode %s:%08lx\n",
++									inode_sb(inode)->s_id,
+ 									ino);
+ 		goto error;
+ 	}
+@@ -116,7 +118,7 @@ static struct bfs_inode *find_inode(struct super_block *sb, u16 ino, struct buff
+ 
+ static int bfs_write_inode(struct inode *inode, struct writeback_control *wbc)
  {
--	struct autofs_sb_info *sbi = autofs4_sbi(dir->i_sb);
-+	struct autofs_sb_info *sbi = autofs4_sbi(inode_sb(dir));
- 	struct autofs_info *ino = autofs4_dentry_ino(dentry);
- 	struct autofs_info *p_ino;
+-	struct bfs_sb_info *info = BFS_SB(inode->i_sb);
++	struct bfs_sb_info *info = BFS_SB(inode_sb(inode));
+ 	unsigned int ino = (u16)inode->i_ino;
+         unsigned long i_sblock;
+ 	struct bfs_inode *di;
+@@ -125,7 +127,7 @@ static int bfs_write_inode(struct inode *inode, struct writeback_control *wbc)
  
-@@ -733,7 +733,7 @@ static int autofs4_dir_rmdir(struct inode *dir, struct dentry *dentry)
- static int autofs4_dir_mkdir(struct inode *dir,
- 			     struct dentry *dentry, umode_t mode)
- {
--	struct autofs_sb_info *sbi = autofs4_sbi(dir->i_sb);
-+	struct autofs_sb_info *sbi = autofs4_sbi(inode_sb(dir));
- 	struct autofs_info *ino = autofs4_dentry_ino(dentry);
- 	struct autofs_info *p_ino;
- 	struct inode *inode;
-@@ -749,7 +749,7 @@ static int autofs4_dir_mkdir(struct inode *dir,
+         dprintf("ino=%08x\n", ino);
  
- 	autofs4_del_active(dentry);
+-	di = find_inode(inode->i_sb, ino, &bh);
++	di = find_inode(inode_sb(inode), ino, &bh);
+ 	if (IS_ERR(di))
+ 		return PTR_ERR(di);
  
--	inode = autofs4_get_inode(dir->i_sb, S_IFDIR | 0555);
-+	inode = autofs4_get_inode(inode_sb(dir), S_IFDIR | 0555);
- 	if (!inode)
- 		return -ENOMEM;
- 	d_add(dentry, inode);
-@@ -868,7 +868,7 @@ int is_autofs4_dentry(struct dentry *dentry)
- static int autofs4_root_ioctl_unlocked(struct inode *inode, struct file *filp,
- 				       unsigned int cmd, unsigned long arg)
- {
--	struct autofs_sb_info *sbi = autofs4_sbi(inode->i_sb);
-+	struct autofs_sb_info *sbi = autofs4_sbi(inode_sb(inode));
- 	void __user *p = (void __user *)arg;
+@@ -165,7 +167,7 @@ static void bfs_evict_inode(struct inode *inode)
+ 	unsigned long ino = inode->i_ino;
+ 	struct bfs_inode *di;
+ 	struct buffer_head *bh;
+-	struct super_block *s = inode->i_sb;
++	struct super_block *s = inode_sb(inode);
+ 	struct bfs_sb_info *info = BFS_SB(s);
+ 	struct bfs_inode_info *bi = BFS_I(inode);
  
- 	pr_debug("cmd = 0x%08x, arg = 0x%08lx, sbi = %p, pgrp = %u\n",
-@@ -905,11 +905,11 @@ static int autofs4_root_ioctl_unlocked(struct inode *inode, struct file *filp,
- 
- 	/* return a single thing to expire */
- 	case AUTOFS_IOC_EXPIRE:
--		return autofs4_expire_run(inode->i_sb,
-+		return autofs4_expire_run(inode_sb(inode),
- 					  filp->f_path.mnt, sbi, p);
- 	/* same as above, but can send multiple expires through pipe */
- 	case AUTOFS_IOC_EXPIRE_MULTI:
--		return autofs4_expire_multi(inode->i_sb,
-+		return autofs4_expire_multi(inode_sb(inode),
- 					    filp->f_path.mnt, sbi, p);
- 
- 	default:
 -- 
 2.15.1
