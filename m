@@ -1,39 +1,38 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpGKwsbwFBVvUSpGaJX+O4NDoRjR3Nbw34HRRPcuDe5zpINy7Tb1aX8lkEQ1Mc7iZweDzpF
-ARC-Seal: i=1; a=rsa-sha256; t=1525767136; cv=none;
+X-Google-Smtp-Source: AB8JxZqJv0IiNm2lu3qEjzXeH7PywEyE45lYMDtMlYtNrC0vi4U/fF2DKYYG/uU3ezInz1FC8gQu
+ARC-Seal: i=1; a=rsa-sha256; t=1525767133; cv=none;
         d=google.com; s=arc-20160816;
-        b=eryGaUiCtWPaJLPd43XlM78AGw7pg7EAcQvoTNlSY2OEMjBR93h7M8YIYeQLQLR6DN
-         SseHDjCCm2n/aZMTdmW7cUbldkzSreRnosKx+ICRWuUg1EZ1Idzxc2dE/8LsZWNMVGpp
-         D62/vTxvsUvgsp7zdiRPv1zqfDdrJDzzNdvf5cOVBQDY8gQszbNQugAkREw2Qnm11RWL
-         oP4YIqnASyyxDPGhdrKms6COQgXYFnDZMwiHoGt3fqlXwCynDkwj1lMD9daZYSgVBRP4
-         kQaIRjYxd/QW3lctEzhZ6UWReXAxEGvJIVgGFhtqhoqvdxUkmstcl+roLE9GD/jb7ubl
-         lxiA==
+        b=1JKpR8GwtLCyw0DegFOEtC5i0h8WZrRp6dQ268EvKkWazr8FNxxigz7MQSt+3NjXF7
+         64GGlfva9mdkBC21Sb6OzzdCCI3FPsk05zH2uoCpdRJnrYiunZQXaTkimXEsp8UOf6jx
+         PCIPbkifVMVu5mVYwA0z0UOPBAxUdm/lyQAvFhTXi+nI3X0KXlSaXAQ5Irt1p0hQykiz
+         ezM88+XLUnaFgOsi3x4gYz6355pzSk9RmjWZ4QY8a2iX2LJIQ17lLQhpstR29TzgfmZp
+         bmHJq4uxCLfgGt3Dp8X0RxYO/oFKblebomFNi53fjvCYTub5VO8pBwKsrHkxt9nDEjEN
+         3NEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=eBwkeKMwWn+dfrAwVBEfJzzhdZO9AAzT+OlN4wDwQo0=;
-        b=fQKImkoD5JQK+EItGDL3+stA6M2S2i5669anJzdPdIoBI1+tmHQzvfmQ8OzRyivq4w
-         PEC1qLAYhyJRSFUpw2SqhkW464h1romNnCfzO9whrFPdd5XTb8kvAyxj8V8/Cdy3mN5a
-         nByvhX/qujEHoaI8Oc4aPtGT2OR+CNL5zh0ASTFoueS1FxS484Pz3h74GCQBEsGb3fUr
-         0kVJFBbZnrvPXt4Do1N20jZSYEMmngl6Em27MFDekMISuKRVe9L0yDHqX/eU4A9d889q
-         MWKHgFa7SEExQUQ7wPs/fgcjwTJ1N8PrzHKXoGTtbkv7VSOJxJStil4FmpIjN/5WwRJX
-         vohA==
+        bh=r2x4VrelQzHlxMHnkmzHes7qtFyQXHIPF3izZlfjvvs=;
+        b=OwgclIK6dje7kyWKBlDFqkCQmhg0tpQk2l+KIFvX2iCcEOJLtzEuSBOn78p172NZqD
+         NAqwxYPqNI2ikttgJY5gMeTu+O9jBNUTlY3bnpoXVznHzQ78EJMl3TiUOYQBV9KF0RrI
+         hUk41K7xX2KB6g2QBT+kfxJ+KMEOlax0EvpIOl3dlN3l7ywoom00rHdj2C7StlGa+L5B
+         V5/Hk3smkWHmEF4Ez014KSdggOXySqudv9laE+e4nUp+zoxoMvbMPkZLMpqT90Q/aCQX
+         nucFqXymBMvCS2K5nghKMwQk0kVtgB0ODgQdTSh9YNGLukL/WvqepIOnnYRW4fDj2k8v
+         iUJA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=wwg9Q8ZO;
+       dkim=pass header.i=@kernel.org header.s=default header.b=JGoMVAGY;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=wwg9Q8ZO;
+       dkim=pass header.i=@kernel.org header.s=default header.b=JGoMVAGY;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Matthew Wilcox <mawilcox@microsoft.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Jeff Layton <jlayton@redhat.com>
-Subject: [PATCH 4.16 09/52] errseq: Always report a writeback error once
-Date: Tue,  8 May 2018 10:10:07 +0200
-Message-Id: <20180508073929.223263280@linuxfoundation.org>
+	DaeRyong Jeong <threeearcat@gmail.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.16 08/52] ALSA: aloop: Add missing cable lock to ctl API callbacks
+Date: Tue,  8 May 2018 10:10:06 +0200
+Message-Id: <20180508073929.113393774@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
 References: <20180508073928.058320984@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882801198490431?=
-X-GMAIL-MSGID: =?utf-8?q?1599882801198490431?=
+X-GMAIL-THRID: =?utf-8?q?1599882797717667467?=
+X-GMAIL-MSGID: =?utf-8?q?1599882797717667467?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,71 +51,110 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Matthew Wilcox <willy@infradead.org>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit b4678df184b314a2bd47d2329feca2c2534aa12b upstream.
+commit 76b3421b39bd610546931fc923edcf90c18fa395 upstream.
 
-The errseq_t infrastructure assumes that errors which occurred before
-the file descriptor was opened are of no interest to the application.
-This turns out to be a regression for some applications, notably Postgres.
+Some control API callbacks in aloop driver are too lazy to take the
+loopback->cable_lock and it results in possible races of cable access
+while it's being freed.  It eventually lead to a UAF, as reported by
+fuzzer recently.
 
-Before errseq_t, a writeback error would be reported exactly once (as
-long as the inode remained in memory), so Postgres could open a file,
-call fsync() and find out whether there had been a writeback error on
-that file from another process.
+This patch covers such control API callbacks and add the proper mutex
+locks.
 
-This patch changes the errseq infrastructure to report errors to all
-file descriptors which are opened after the error occurred, but before
-it was reported to any file descriptor.  This restores the user-visible
-behaviour.
-
-Cc: stable@vger.kernel.org
-Fixes: 5660e13d2fd6 ("fs: new infrastructure for writeback error handling and reporting")
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
+Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/errseq.c |   23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+ sound/drivers/aloop.c |   17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
---- a/lib/errseq.c
-+++ b/lib/errseq.c
-@@ -111,27 +111,22 @@ EXPORT_SYMBOL(errseq_set);
-  * errseq_sample() - Grab current errseq_t value.
-  * @eseq: Pointer to errseq_t to be sampled.
-  *
-- * This function allows callers to sample an errseq_t value, marking it as
-- * "seen" if required.
-+ * This function allows callers to initialise their errseq_t variable.
-+ * If the error has been "seen", new callers will not see an old error.
-+ * If there is an unseen error in @eseq, the caller of this function will
-+ * see it the next time it checks for an error.
-  *
-+ * Context: Any context.
-  * Return: The current errseq value.
-  */
- errseq_t errseq_sample(errseq_t *eseq)
+--- a/sound/drivers/aloop.c
++++ b/sound/drivers/aloop.c
+@@ -831,9 +831,11 @@ static int loopback_rate_shift_get(struc
  {
- 	errseq_t old = READ_ONCE(*eseq);
--	errseq_t new = old;
- 
--	/*
--	 * For the common case of no errors ever having been set, we can skip
--	 * marking the SEEN bit. Once an error has been set, the value will
--	 * never go back to zero.
--	 */
--	if (old != 0) {
--		new |= ERRSEQ_SEEN;
--		if (old != new)
--			cmpxchg(eseq, old, new);
--	}
--	return new;
-+	/* If nobody has seen this error yet, then we can be the first. */
-+	if (!(old & ERRSEQ_SEEN))
-+		old = 0;
-+	return old;
+ 	struct loopback *loopback = snd_kcontrol_chip(kcontrol);
+ 	
++	mutex_lock(&loopback->cable_lock);
+ 	ucontrol->value.integer.value[0] =
+ 		loopback->setup[kcontrol->id.subdevice]
+ 			       [kcontrol->id.device].rate_shift;
++	mutex_unlock(&loopback->cable_lock);
+ 	return 0;
  }
- EXPORT_SYMBOL(errseq_sample);
+ 
+@@ -865,9 +867,11 @@ static int loopback_notify_get(struct sn
+ {
+ 	struct loopback *loopback = snd_kcontrol_chip(kcontrol);
+ 	
++	mutex_lock(&loopback->cable_lock);
+ 	ucontrol->value.integer.value[0] =
+ 		loopback->setup[kcontrol->id.subdevice]
+ 			       [kcontrol->id.device].notify;
++	mutex_unlock(&loopback->cable_lock);
+ 	return 0;
+ }
+ 
+@@ -879,12 +883,14 @@ static int loopback_notify_put(struct sn
+ 	int change = 0;
+ 
+ 	val = ucontrol->value.integer.value[0] ? 1 : 0;
++	mutex_lock(&loopback->cable_lock);
+ 	if (val != loopback->setup[kcontrol->id.subdevice]
+ 				[kcontrol->id.device].notify) {
+ 		loopback->setup[kcontrol->id.subdevice]
+ 			[kcontrol->id.device].notify = val;
+ 		change = 1;
+ 	}
++	mutex_unlock(&loopback->cable_lock);
+ 	return change;
+ }
+ 
+@@ -892,15 +898,18 @@ static int loopback_active_get(struct sn
+ 			       struct snd_ctl_elem_value *ucontrol)
+ {
+ 	struct loopback *loopback = snd_kcontrol_chip(kcontrol);
+-	struct loopback_cable *cable = loopback->cables
+-			[kcontrol->id.subdevice][kcontrol->id.device ^ 1];
++	struct loopback_cable *cable;
++
+ 	unsigned int val = 0;
+ 
++	mutex_lock(&loopback->cable_lock);
++	cable = loopback->cables[kcontrol->id.subdevice][kcontrol->id.device ^ 1];
+ 	if (cable != NULL) {
+ 		unsigned int running = cable->running ^ cable->pause;
+ 
+ 		val = (running & (1 << SNDRV_PCM_STREAM_PLAYBACK)) ? 1 : 0;
+ 	}
++	mutex_unlock(&loopback->cable_lock);
+ 	ucontrol->value.integer.value[0] = val;
+ 	return 0;
+ }
+@@ -943,9 +952,11 @@ static int loopback_rate_get(struct snd_
+ {
+ 	struct loopback *loopback = snd_kcontrol_chip(kcontrol);
+ 	
++	mutex_lock(&loopback->cable_lock);
+ 	ucontrol->value.integer.value[0] =
+ 		loopback->setup[kcontrol->id.subdevice]
+ 			       [kcontrol->id.device].rate;
++	mutex_unlock(&loopback->cable_lock);
+ 	return 0;
+ }
+ 
+@@ -965,9 +976,11 @@ static int loopback_channels_get(struct
+ {
+ 	struct loopback *loopback = snd_kcontrol_chip(kcontrol);
+ 	
++	mutex_lock(&loopback->cable_lock);
+ 	ucontrol->value.integer.value[0] =
+ 		loopback->setup[kcontrol->id.subdevice]
+ 			       [kcontrol->id.device].channels;
++	mutex_unlock(&loopback->cable_lock);
+ 	return 0;
+ }
  
