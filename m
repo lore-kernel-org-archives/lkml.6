@@ -1,79 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753395AbeEHMeb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:34:31 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:52306 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751805AbeEHMea (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:34:30 -0400
-Date: Tue, 8 May 2018 13:34:08 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Antoine Tenart <antoine.tenart@bootlin.com>
-Cc: davem@davemloft.net, kishon@ti.com, gregory.clement@bootlin.com,
-        andrew@lunn.ch, jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next v2 06/13] phy: add 2.5G SGMII mode to the
- phy_mode enum
-Message-ID: <20180508123408.GK16141@n2100.armlinux.org.uk>
-References: <20180504135643.23466-1-antoine.tenart@bootlin.com>
- <20180504135643.23466-7-antoine.tenart@bootlin.com>
+        id S1754611AbeEHMej (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:34:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34586 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751805AbeEHMef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 08:34:35 -0400
+Date: Tue, 8 May 2018 07:34:32 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
+Cc: okaya@codeaurora.org, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>
+Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
+ (issued 65284 msec ago)
+Message-ID: <20180508123432.GJ161390@bhelgaas-glaptop.roam.corp.google.com>
+References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
+ <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
+ <43b8ab4a-f8ee-dc96-40ec-e6fdfedd8309@molgen.mpg.de>
+ <20180504024527.GE15790@bhelgaas-glaptop.roam.corp.google.com>
+ <aa72d3ba089c76449600c22b58a2cafe@codeaurora.org>
+ <20180504133327.GF15790@bhelgaas-glaptop.roam.corp.google.com>
+ <20180507213344.GA133147@bhelgaas-glaptop.roam.corp.google.com>
+ <903e7c20-fdd7-9cbf-debb-a90e70240c7c@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180504135643.23466-7-antoine.tenart@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <903e7c20-fdd7-9cbf-debb-a90e70240c7c@molgen.mpg.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 03:56:36PM +0200, Antoine Tenart wrote:
-> This patch adds one more generic PHY mode to the phy_mode enum, to allow
-> configuring generic PHYs to the 2.5G SGMII mode by using the set_mode
-> callback.
+On Tue, May 08, 2018 at 08:59:34AM +0200, Paul Menzel wrote:
+> Dear Bjorn,
 > 
-> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
-
-Hi,
-
-Would it be possible to get the 2.5G SGMII comphy support merged
-ahead of the rest of this series please - I don't think there's been
-any objections to it, and having it in mainline would then mean I can
-drop the Marvell Comphy code from my tree and transition to the bootlin
-Comphy code instead.
-
-Of course, the perfect solution would be to get the whole series merged,
-but I'm just thinking about the situation where we're still discussing
-points when the next merge window opens.
-
-Thanks.
-
-> ---
->  include/linux/phy/phy.h | 1 +
->  1 file changed, 1 insertion(+)
 > 
-> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-> index c9d14eeee7f5..9713aebdd348 100644
-> --- a/include/linux/phy/phy.h
-> +++ b/include/linux/phy/phy.h
-> @@ -36,6 +36,7 @@ enum phy_mode {
->  	PHY_MODE_USB_DEVICE_SS,
->  	PHY_MODE_USB_OTG,
->  	PHY_MODE_SGMII,
-> +	PHY_MODE_2500SGMII,
->  	PHY_MODE_10GKR,
->  	PHY_MODE_UFS_HS_A,
->  	PHY_MODE_UFS_HS_B,
-> -- 
-> 2.17.0
+> Am 07.05.2018 um 23:33 schrieb Bjorn Helgaas:
+> > On Fri, May 04, 2018 at 08:33:27AM -0500, Bjorn Helgaas wrote:
+> > > commit b0d6f2230e12c85ae3b65a854a53c67c7c1f6406
+> > > Author: Bjorn Helgaas <bhelgaas@google.com>
+> > > Date:   Thu May 3 18:39:38 2018 -0500
+> > > 
+> > >      PCI: pciehp: Add quirk for Intel Command Completed erratum
+> > >      The Intel CF118 erratum means the controller does not set the Command
+> > >      Completed bit unless writes to the Slot Command register change "Control"
+> > >      bits.  Command Completed is never set for writes that only change software
+> > >      notification "Enable" bits.  This results in timeouts like this:
+> > >        pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038 (issued 65284 msec ago)
+> > >      When this erratum is present, avoid these timeouts by marking commands
+> > >      "completed" immediately unless they change the "Control" bits.
+> > >      Here's the text of the erratum from the Intel document:
+> > >        CF118        PCIe Slot Status Register Command Completed bit not always
+> > >                     updated on any configuration write to the Slot Control
+> > >                     Register
+> > >        Problem:     For PCIe root ports (devices 0 - 10) supporting hot-plug,
+> > >                     the Slot Status Register (offset AAh) Command Completed
+> > >                     (bit[4]) status is updated under the following condition:
+> > >                     IOH will set Command Completed bit after delivering the new
+> > >                     commands written in the Slot Controller register (offset
+> > >                     A8h) to VPP. The IOH detects new commands written in Slot
+> > >                     Control register by checking the change of value for Power
+> > >                     Controller Control (bit[10]), Power Indicator Control
+> > >                     (bits[9:8]), Attention Indicator Control (bits[7:6]), or
+> > >                     Electromechanical Interlock Control (bit[11]) fields. Any
+> > >                     other configuration writes to the Slot Control register
+> > >                     without changing the values of these fields will not cause
+> > >                     Command Completed bit to be set.
+> > >                     The PCIe Base Specification Revision 2.0 or later describes
+> > >                     the “Slot Control Register” in section 7.8.10, as follows
+> > >                     (Reference section 7.8.10, Slot Control Register, Offset
+> > >                     18h). In hot-plug capable Downstream Ports, a write to the
+> > >                     Slot Control register must cause a hot-plug command to be
+> > >                     generated (see Section 6.7.3.2 for details on hot-plug
+> > >                     commands). A write to the Slot Control register in a
+> > >                     Downstream Port that is not hotplug capable must not cause a
+> > >                     hot-plug command to be executed.
+> > >                     The PCIe Spec intended that every write to the Slot Control
+> > >                     Register is a command and expected a command complete status
+> > >                     to abstract the VPP implementation specific nuances from the
+> > >                     OS software. IOH PCIe Slot Control Register implementation
+> > >                     is not fully conforming to the PCIe Specification in this
+> > >                     respect.
+> > >        Implication: Software checking on the Command Completed status after
+> > >                     writing to the Slot Control register may time out.
+> > >        Workaround:  Software can read the Slot Control register and compare the
+> > >                     existing and new values to determine if it should check the
+> > >                     Command Completed status after writing to the Slot Control
+> > >                     register.
+> > >      Link: http://www.intel.com/content/www/us/en/processors/xeon/xeon-e7-v2-spec-update.html
+> > >      Link: https://lkml.kernel.org/r/8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de
+> > >      Reported-by: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
+> > >      Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > 
+> > I applied this with Paul's tested-by on pci/hotplug for v4.18.
 > 
+> Thank you very much. Will this also be picked up by the stable Linux kernel
+> series?
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+I did not tag it for stable because I didn't think it was a serious enough
+problem, based on this from Documentation/process/stable-kernel-rules.rst:
+
+ - It must fix a problem that causes a build error (but not for things
+   marked CONFIG_BROKEN), an oops, a hang, data corruption, a real
+   security issue, or some "oh, that's not good" issue.  In short, something
+   critical.
+
+I know I'm on the conservative end of the stable-tagging spectrum, so maybe
+I could be convinced to add a stable tag.
+
+My impression was that this bug caused annoying messages and annoying
+delays of a couple seconds during shutdown and resume.  Is it more serious
+than that?
+
+Bjorn
