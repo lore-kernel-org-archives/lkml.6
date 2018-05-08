@@ -1,87 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753786AbeEHAh5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 20:37:57 -0400
-Received: from mail.efficios.com ([167.114.142.138]:38054 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752954AbeEHAh4 (ORCPT
+        id S1753846AbeEHAnW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 20:43:22 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55802 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753465AbeEHAnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 20:37:56 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 8B9F01BA67C
-Date: Mon, 7 May 2018 20:37:54 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: "Joel Fernandes, Google" <joel@joelfernandes.org>
-Cc: Joel Fernandes <joelaf@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        rostedt <rostedt@goodmis.org>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        fweisbec <fweisbec@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        baohong liu <baohong.liu@intel.com>,
-        vedang patel <vedang.patel@intel.com>,
-        kernel-team <kernel-team@android.com>
-Message-ID: <581097661.279.1525739874243.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180507214611.GB13787@joelaf.mtv.corp.google.com>
-References: <20180507204143.13061-1-joelaf@google.com> <20180507204143.13061-5-joelaf@google.com> <568999860.209.1525727141943.JavaMail.zimbra@efficios.com> <20180507214611.GB13787@joelaf.mtv.corp.google.com>
-Subject: Re: [PATCH RFC v6 4/5] tracepoint: Make rcuidle tracepoint callers
- use SRCU
+        Mon, 7 May 2018 20:43:19 -0400
+Subject: Re: [PATCH 6/7] psi: pressure stall information for CPU, memory, and
+ IO
+To: Johannes Weiner <hannes@cmpxchg.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
+        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+References: <20180507210135.1823-1-hannes@cmpxchg.org>
+ <20180507210135.1823-7-hannes@cmpxchg.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <024fba07-eece-3878-0924-ea9fd601542d@infradead.org>
+Date: Mon, 7 May 2018 17:42:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20180507210135.1823-7-hannes@cmpxchg.org>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2026 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_2031)
-Thread-Topic: tracepoint: Make rcuidle tracepoint callers use SRCU
-Thread-Index: 4UmjehCNl+iIobHzzsO6mekyemh1zg==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On May 7, 2018, at 5:46 PM, Joel Fernandes, Google joel@joelfernandes.org wrote:
-
-> On Mon, May 07, 2018 at 05:05:41PM -0400, Mathieu Desnoyers wrote:
->> ----- On May 7, 2018, at 4:41 PM, Joel Fernandes joelaf@google.com wrote:
->> [...]
->> > +extern struct srcu_struct tracepoint_srcu;
->> > +
->> > extern int
->> > tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
->> > extern int
->> > @@ -77,6 +80,9 @@ int unregister_tracepoint_module_notifier(struct
->> > notifier_block *nb)
->> >  */
->> > static inline void tracepoint_synchronize_unregister(void)
->> > {
->> > +#ifdef CONFIG_TRACEPOINTS
->> > +	synchronize_srcu(&tracepoint_srcu);
->> > +#endif
->> > 	synchronize_sched();
->> 
->> Why is this ifdef needed ?
+On 05/07/2018 02:01 PM, Johannes Weiner wrote:
 > 
-> tracepoint_srcu is defined in tracepoint.c so if we don't protect usage here, it
-> would cause a build error.
-
-Then we should ifdef the entire implementation of tracepoint_synchronize_unregister().
-There is no point in issuing synchronize_sched() when code invokes that
-function on a CONFIG_TRACEPOINTS=n config.
-
-Thanks,
-
-Mathieu
-
-
+> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+> ---
+>  Documentation/accounting/psi.txt |  73 ++++++
+>  include/linux/psi.h              |  27 ++
+>  include/linux/psi_types.h        |  84 ++++++
+>  include/linux/sched.h            |  10 +
+>  include/linux/sched/stat.h       |  10 +-
+>  init/Kconfig                     |  16 ++
+>  kernel/fork.c                    |   4 +
+>  kernel/sched/Makefile            |   1 +
+>  kernel/sched/core.c              |   3 +
+>  kernel/sched/psi.c               | 424 +++++++++++++++++++++++++++++++
+>  kernel/sched/sched.h             | 166 ++++++------
+>  kernel/sched/stats.h             |  91 ++++++-
+>  mm/compaction.c                  |   5 +
+>  mm/filemap.c                     |  15 +-
+>  mm/page_alloc.c                  |  10 +
+>  mm/vmscan.c                      |  13 +
+>  16 files changed, 859 insertions(+), 93 deletions(-)
+>  create mode 100644 Documentation/accounting/psi.txt
+>  create mode 100644 include/linux/psi.h
+>  create mode 100644 include/linux/psi_types.h
+>  create mode 100644 kernel/sched/psi.c
 > 
-> thanks,
-> 
-> - Joel
+> diff --git a/Documentation/accounting/psi.txt b/Documentation/accounting/psi.txt
+> new file mode 100644
+> index 000000000000..e051810d5127
+> --- /dev/null
+> +++ b/Documentation/accounting/psi.txt
+> @@ -0,0 +1,73 @@
+
+Looks good to me.
+
+
+> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+> new file mode 100644
+> index 000000000000..052c529a053b
+> --- /dev/null
+> +++ b/kernel/sched/psi.c
+> @@ -0,0 +1,424 @@
+> +/*
+> + * Measure workload productivity impact from overcommitting CPU, memory, IO
+> + *
+> + * Copyright (c) 2017 Facebook, Inc.
+> + * Author: Johannes Weiner <hannes@cmpxchg.org>
+> + *
+> + * Implementation
+> + *
+> + * Task states -- running, iowait, memstall -- are tracked through the
+> + * scheduler and aggregated into a system-wide productivity state. The
+> + * ratio between the times spent in productive states and delays tells
+> + * us the overall productivity of the workload.
+> + *
+> + * The ratio is tracked in decaying time averages over 10s, 1m, 5m
+> + * windows. Cumluative stall times are tracked and exported as well to
+
+               Cumulative
+
+> + * allow detection of latency spikes and custom time averaging.
+> + *
+> + * Multiple CPUs
+> + *
+> + * To avoid cache contention, times are tracked local to the CPUs. To
+> + * get a comprehensive view of a system or cgroup, we have to consider
+> + * the fact that CPUs could be unevenly loaded or even entirely idle
+> + * if the workload doesn't have enough threads. To avoid artifacts
+> + * caused by that, when adding up the global pressure ratio, the
+> + * CPU-local ratios are weighed according to their non-idle time:
+> + *
+> + *   Time the CPU had stalled tasks    Time the CPU was non-idle
+> + *   ------------------------------ * ---------------------------
+> + *                Walltime            Time all CPUs were non-idle
+> + */
+
+
+> +
+> +/**
+> + * psi_memstall_leave - mark the end of an memory stall section
+
+                                    end of a memory
+
+> + * @flags: flags to handle nested memdelay sections
+> + *
+> + * Marks the calling task as no longer stalled due to lack of memory.
+> + */
+> +void psi_memstall_leave(unsigned long *flags)
+> +{
+
+
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+~Randy
