@@ -1,86 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932745AbeEHQLc (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 12:11:32 -0400
-Received: from fieldses.org ([173.255.197.46]:50808 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932127AbeEHQLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 12:11:30 -0400
-Date: Tue, 8 May 2018 12:11:30 -0400
-From: "bfields@fieldses.org" <bfields@fieldses.org>
-To: Trond Myklebust <trondmy@hammer.space>
-Cc: "syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com"
-        <syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: general protection fault in encode_rpcb_string
-Message-ID: <20180508161130.GC6151@fieldses.org>
-References: <f4f5e80803d08f47b9056a0366dd@google.com>
- <20180417213308.GC18217@fieldses.org>
- <1524002074.63751.5.camel@hammer.space>
+        id S932648AbeEHQN6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 12:13:58 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:32886 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932737AbeEHQN4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 12:13:56 -0400
+X-Google-Smtp-Source: AB8JxZoP0VzGV2oIsvczpOlQKB9eYmMCvUwOcUlt9yLCBd59RwlhrWIuHtVsgyosl5P2qn+J1uPPJCQao/W+YLoXAkQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524002074.63751.5.camel@hammer.space>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <dc197d94-b39c-e8af-97c9-e73e815b21fe@arm.com>
+References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
+ <1525165857-11096-19-git-send-email-suzuki.poulose@arm.com>
+ <20180507202517.GC32594@xps15> <dc197d94-b39c-e8af-97c9-e73e815b21fe@arm.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Tue, 8 May 2018 10:13:54 -0600
+Message-ID: <CANLsYky5wUsYa4A5LrF2BZcUvOdOu2CjpAsF=gN4j_iJ4AGE=A@mail.gmail.com>
+Subject: Re: [PATCH v2 18/27] coresight: catu: Add support for scatter gather tables
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>, Rob Herring <robh@kernel.org>,
+        John Horley <john.horley@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "J. Bruce Fields" <bfields@redhat.com>
-Date: Tue, 8 May 2018 11:47:03 -0400
-Subject: [PATCH 2/2] sunrpc: convert unnecessary GFP_ATOMIC to GFP_NOFS
+On 8 May 2018 at 09:56, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
+> On 07/05/18 21:25, Mathieu Poirier wrote:
+>>
+>> On Tue, May 01, 2018 at 10:10:48AM +0100, Suzuki K Poulose wrote:
+>>>
+>>> This patch adds the support for setting up a SG table for use
+>>> by the CATU. We reuse the tmc_sg_table to represent the table/data
+>>> pages, even though the table format is different.
+>>>
+>
+> ...
+>
+>>>
+>>> diff --git a/drivers/hwtracing/coresight/coresight-catu.c
+>>> b/drivers/hwtracing/coresight/coresight-catu.c
+>>> index 2cd69a6..4cc2928 100644
+>>> --- a/drivers/hwtracing/coresight/coresight-catu.c
+>>> +++ b/drivers/hwtracing/coresight/coresight-catu.c
+>>> @@ -16,10 +16,419 @@
+>
+>
+> ...
+>
+>>> +
+>>> +/*
+>>> + * Update the valid bit for a given range of indices [start, end)
+>>> + * in the given table @table.
+>>> + */
+>>> +static inline void catu_update_state_range(cate_t *table, int start,
+>>> +                                                int end, int valid)
+>>
+>>
+>> Indentation
+>>
+>
+> ...
+>
+>>> +#ifdef CATU_DEBUG
+>>> +static void catu_dump_table(struct tmc_sg_table *catu_table)
+>>> +{
+>>> +       int i;
+>>> +       cate_t *table;
+>>> +       unsigned long table_end, buf_size, offset = 0;
+>>> +
+>>> +       buf_size = tmc_sg_table_buf_size(catu_table);
+>>> +       dev_dbg(catu_table->dev,
+>>> +               "Dump table %p, tdaddr: %llx\n",
+>>> +               catu_table, catu_table->table_daddr);
+>>> +
+>>> +       while (offset < buf_size) {
+>>> +               table_end = offset + SZ_1M < buf_size ?
+>>> +                           offset + SZ_1M : buf_size;
+>>> +               table = catu_get_table(catu_table, offset, NULL);
+>>> +               for (i = 0; offset < table_end; i++, offset +=
+>>> CATU_PAGE_SIZE)
+>>> +                       dev_dbg(catu_table->dev, "%d: %llx\n", i,
+>>> table[i]);
+>>> +               dev_dbg(catu_table->dev, "Prev : %llx, Next: %llx\n",
+>>> +                       table[CATU_LINK_PREV], table[CATU_LINK_NEXT]);
+>>> +               dev_dbg(catu_table->dev, "== End of sub-table ===");
+>>> +       }
+>>> +       dev_dbg(catu_table->dev, "== End of Table ===");
+>>> +}
+>>> +
+>>> +#else
+>>> +static inline void catu_dump_table(struct tmc_sg_table *catu_table)
+>>> +{
+>>> +}
+>>> +#endif
+>>
+>>
+>> I think this approach is better than peppering the code with #ifdefs as it
+>> was
+>> done for ETR.  Please fix that to replicate what you've done here.
+>>
+>
+> OK
+>
+>>> +
+>>> +/*
+>>> + * catu_populate_table : Populate the given CATU table.
+>>> + * The table is always populated as a circular table.
+>>> + * i.e, the "prev" link of the "first" table points to the "last"
+>>> + * table and the "next" link of the "last" table points to the
+>>> + * "first" table. The buffer should be made linear by calling
+>>> + * catu_set_table().
+>>> + */
+>>> +static void
+>>> +catu_populate_table(struct tmc_sg_table *catu_table)
+>>> +{
+>
+>
+> ...
+>
+>>> +       while (offset < buf_size) {
+>>> +               /*
+>>> +                * The @offset is always 1M aligned here and we have an
+>>> +                * empty table @table_ptr to fill. Each table can address
+>>> +                * upto 1MB data buffer. The last table may have fewer
+>>> +                * entries if the buffer size is not aligned.
+>>> +                */
+>>> +               last_offset = (offset + SZ_1M) < buf_size ?
+>>> +                             (offset + SZ_1M) : buf_size;
+>>> +               for (i = 0; offset < last_offset; i++) {
+>>> +
+>>> +                       data_daddr = catu_table->data_pages.daddrs[dpidx]
+>>> +
+>>> +                                    s_dpidx * CATU_PAGE_SIZE;
+>>> +#ifdef CATU_DEBUG
+>>> +                       dev_dbg(catu_table->dev,
+>>> +                               "[table %5d:%03d] 0x%llx\n",
+>>> +                               (offset >> 20), i, data_daddr);
+>>> +#endif
+>>
+>>
+>> I'm not a fan of adding #ifdefs in the code like this.  I think it is
+>> better to
+>> have a wrapper (that resolves to nothing if CATU_DEBUG is not defined) and
+>> handle the output in there.
+>>
+>
+>
+>>> +
+>>> +       catu_populate_table(catu_table);
+>>> +       /* Make the buf linear from offset 0 */
+>>> +       (void)catu_set_table(catu_table, 0, size);
+>>> +
+>>> +       dev_dbg(catu_dev,
+>>> +               "Setup table %p, size %ldKB, %d table pages\n",
+>>> +               catu_table, (unsigned long)size >> 10,  nr_tpages);
+>>
+>>
+>> I think this should also be wrapped in a special output debug function.
+>>
+>
+> I could do something like :
+>
+> #ifdef CATU_DEBUG
+> #define catu_dbg(fmt, ...)      dev_dbg(fmt, __VA_ARGS__)
+> #else
+> #define catu_dbg(fmt, ...)      do { } while (0)
+> #endif
+>
+> And use catu_dbg() for the sprinkled prints.
 
-It's OK to sleep here, we just don't want to recurse into the filesystem
-as this writeout could be waiting on this.
+Yes, that is exactly what I had in mind.
 
-As a next step: the documentation for GFP_NOFS says "Please try to avoid
-using this flag directly and instead use memalloc_nofs_{save,restore} to
-mark the whole scope which cannot/shouldn't recurse into the FS layer
-with a short explanation why. All allocation requests will inherit
-GFP_NOFS implicitly."
-
-But I'm not sure where to do this.  Should the workqueue could be
-arranging that for us in the case of workqueues created with
-WQ_MEM_RECLAIM?
-
-Reported-by: Trond Myklebust <trondmy@hammer.space>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
----
- net/sunrpc/rpcb_clnt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-On Tue, Apr 17, 2018 at 09:54:36PM +0000, Trond Myklebust wrote:
-> Yes, and we can probably convert it, and the other GFP_ATOMIC
-> allocations in the rpcbind client to use GFP_NOFS in order to improve
-> reliability.
-
-diff --git a/net/sunrpc/rpcb_clnt.c b/net/sunrpc/rpcb_clnt.c
-index 82c120e51d64..576e84a1adee 100644
---- a/net/sunrpc/rpcb_clnt.c
-+++ b/net/sunrpc/rpcb_clnt.c
-@@ -752,7 +752,7 @@ void rpcb_getport_async(struct rpc_task *task)
- 		goto bailout_nofree;
- 	}
- 
--	map = kzalloc(sizeof(struct rpcbind_args), GFP_ATOMIC);
-+	map = kzalloc(sizeof(struct rpcbind_args), GFP_NOFS);
- 	if (!map) {
- 		status = -ENOMEM;
- 		dprintk("RPC: %5u %s: no memory available\n",
-@@ -770,7 +770,7 @@ void rpcb_getport_async(struct rpc_task *task)
- 	case RPCBVERS_4:
- 	case RPCBVERS_3:
- 		map->r_netid = xprt->address_strings[RPC_DISPLAY_NETID];
--		map->r_addr = rpc_sockaddr2uaddr(sap, GFP_ATOMIC);
-+		map->r_addr = rpc_sockaddr2uaddr(sap, GFP_NOFS);
- 		if (!map->r_addr) {
- 			status = -ENOMEM;
- 			dprintk("RPC: %5u %s: no memory available\n",
--- 
-2.17.0
+>
+> Cheers
+> Suzuki
