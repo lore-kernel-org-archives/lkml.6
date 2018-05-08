@@ -1,39 +1,38 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqYZtQ5slepdi6NBPnDhRwdLkeFHolNK6ClekI4foEAIaIN5FVZnSGoKWyuBbahergbewJi
-ARC-Seal: i=1; a=rsa-sha256; t=1525767383; cv=none;
+X-Google-Smtp-Source: AB8JxZosGXzfIMw3KcYSRxKP5J+9PMVJF824e2/Y+17tBcOCAwAVpj1IuBghggfZzS0rwgB7z9VW
+ARC-Seal: i=1; a=rsa-sha256; t=1525767380; cv=none;
         d=google.com; s=arc-20160816;
-        b=i1dH1e9z1Y5YnaDOmjdk/9rDgFOdgPLonPs3G5Ke75ufQ89dsDAHImH+g8Frj794WS
-         nSx2s+gbNNGppRynePxatXer1I3y88xhCm/LAZJLQdtv2nWK8EPpD0nNubNPgdcoE/Jm
-         y9qQDH0WDsAKS7HeVDMoPyJbpwv0ByXzW2kSZkiKMr0zGjP1/yniOHINt67w2afiHXGj
-         sZS0M6ffmnMn8ufk5vMJy4LEbUjTjhNA8AQquVc0s4Jo+T1dzc2eVoWKDxhQvxZqIwaH
-         Sp3Cg586AAdo8Q4Go9U4KPQCZEXh2sxw5Y/cYmsCpkWi1X5FS2BHyzU4NXu67djimCTo
-         fiPQ==
+        b=QcJCNTmxEapMIgpIXV60bBLXdhM/s4Nt7YkbFATYIDHPh6PjIoGSVHit1oTGzc60ed
+         Nl/EtnH/kkj+6L8wTIX8VFsY9mwpa2ouUia0q5uMxl2g+Gx0mBQpjaE3ACs3sbkcaRvj
+         vDVFWeMEyDBSDjGP/t73tblmAOjXmKDWQCbHdkfJ9BChD/oINIdnNrIN3SITtrGFBQQO
+         cgsbNuXiW8gvQnGLP12gywN+x/QM4yOdg37oWuPufdRU9Mtcj+tad03kbLqiGX187+fc
+         VNiMHfAewJKOcfqEgW66kSG5u/zTxfzDG7N5s+SuDH6eYISGMw+Dna87AVosFueqILBu
+         DHtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=qeXDAzJIfDU8VFiiHLbOFJQ8JNTnhDIGQwlK6PsLHgo=;
-        b=dixVW2ipLK5mBydPIePIWmzM662LSCgRCE+z+D/2+Z8arekBk/+KGItaylc+apfyC0
-         G1dDU07sIEWlJyHJK7p5FzDWLutSHArSioioaL9ghfPkHiZOrK8iSOcd4hsqSRpoCooM
-         h1UMivWgVT6HrHWybUfeZ45f8P+I3QNw2SHoWyNF9/7zTyCQG8TVGOO8aMHh8JzuxzgV
-         YkxZpwSzH8DGy1b9BBISqC2xZtjkJP6SJ85qsrW7h9cN9L9g8VOq5aZzFC3G0v5AshtS
-         gLyEoxW36pk06qPJUko7HBGnf3XOof6h2feeHVyf6KzLzkeI9a0DTnuoijWpZyejBZ2+
-         MFoA==
+        bh=eXLlw5aZDfw+yYh/USXIyOsfgNRj3M7tuRK5rK65wh4=;
+        b=dr4C0Ms/A/jRkhDV67Igaqf7otaXCELy/8q7zqnoRi8O+XJdqTsgiopkozxp1fmHAF
+         0ydTkSRUHQ+mp8S/Ep7olhpJXqg7ZqkWtYmrBOShGAfQwJI2Jeh14TyOfb6Oy3xRflWk
+         3yEq3ZzNjfeii0JTe2Hv67RORh4k/RqEtMLYM3xUSmaPhDZCAoh4KBuWOZwztQJ4xVqP
+         C6Slpe2KPjSpzTLzX2Z4Xo/KqhCqrrtdh3/3g0Llvvob5sschtmQyGGc81sxTTgVs3EZ
+         0I9J6oTRCDdxe/QJLN596XIH85SbL9smMNM9Gtt/yZubjRCfxRDAyM0KQukbzaYp/Sv6
+         0eWA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=w0feZLli;
+       dkim=pass header.i=@kernel.org header.s=default header.b=W0wmFtyT;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=w0feZLli;
+       dkim=pass header.i=@kernel.org header.s=default header.b=W0wmFtyT;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mayank Rana <mrana@codeaurora.org>,
-	Jack Pham <jackp@codeaurora.org>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.14 35/43] usb: dwc3: gadget: Fix list_del corruption in dwc3_ep_dequeue
-Date: Tue,  8 May 2018 10:10:54 +0200
-Message-Id: <20180508074009.451735824@linuxfoundation.org>
+	Andrey Konovalov <andreyknvl@google.com>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 34/43] USB: serial: visor: handle potential invalid device configuration
+Date: Tue,  8 May 2018 10:10:53 +0200
+Message-Id: <20180508074009.257659065@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882897810276471?=
-X-GMAIL-MSGID: =?utf-8?q?1599883060015289256?=
+X-GMAIL-THRID: =?utf-8?q?1599882894176244438?=
+X-GMAIL-MSGID: =?utf-8?q?1599883056848028220?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,42 +51,113 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mayank Rana <mrana@codeaurora.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 96bd39df29c29d348d65311e5954c0b7d3a2a790 upstream.
+commit 4842ed5bfcb9daf6660537d70503c18d38dbdbb8 upstream.
 
-dwc3_ep_dequeue() waits for completion of End Transfer command using
-wait_event_lock_irq(), which will release the dwc3->lock while waiting
-and reacquire after completion. This allows a potential race condition
-with ep_disable() which also removes all requests from started_list
-and pending_list.
+If we get an invalid device configuration from a palm 3 type device, we
+might incorrectly parse things, and we have the potential to crash in
+"interesting" ways.
 
-The check for NULL r->trb should catch this but currently it exits to
-the wrong 'out1' label which calls dwc3_gadget_giveback(). Since its
-list entry was already removed, if CONFIG_DEBUG_LIST is enabled a
-'list_del corruption' bug is thrown since its next/prev pointers are
-already LIST_POISON1/2. If r->trb is NULL it should simply exit to
-'out0'.
+Fix this up by verifying the size of the configuration passed to us by
+the device, and only if it is correct, will we handle it.
 
-Fixes: cf3113d893d4 ("usb: dwc3: gadget: properly increment dequeue pointer on ep_dequeue")
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Mayank Rana <mrana@codeaurora.org>
-Signed-off-by: Jack Pham <jackp@codeaurora.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Note that this also fixes an information leak of slab data.
+
+Reported-by: Andrey Konovalov <andreyknvl@google.com>
+Reviewed-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[ johan: add comment about the info leak ]
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/gadget.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/serial/visor.c |   69 ++++++++++++++++++++++-----------------------
+ 1 file changed, 35 insertions(+), 34 deletions(-)
 
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -1444,7 +1444,7 @@ static int dwc3_gadget_ep_dequeue(struct
- 					dwc->lock);
+--- a/drivers/usb/serial/visor.c
++++ b/drivers/usb/serial/visor.c
+@@ -338,47 +338,48 @@ static int palm_os_3_probe(struct usb_se
+ 		goto exit;
+ 	}
  
- 			if (!r->trb)
--				goto out1;
-+				goto out0;
+-	if (retval == sizeof(*connection_info)) {
+-			connection_info = (struct visor_connection_info *)
+-							transfer_buffer;
+-
+-		num_ports = le16_to_cpu(connection_info->num_ports);
+-		for (i = 0; i < num_ports; ++i) {
+-			switch (
+-			   connection_info->connections[i].port_function_id) {
+-			case VISOR_FUNCTION_GENERIC:
+-				string = "Generic";
+-				break;
+-			case VISOR_FUNCTION_DEBUGGER:
+-				string = "Debugger";
+-				break;
+-			case VISOR_FUNCTION_HOTSYNC:
+-				string = "HotSync";
+-				break;
+-			case VISOR_FUNCTION_CONSOLE:
+-				string = "Console";
+-				break;
+-			case VISOR_FUNCTION_REMOTE_FILE_SYS:
+-				string = "Remote File System";
+-				break;
+-			default:
+-				string = "unknown";
+-				break;
+-			}
+-			dev_info(dev, "%s: port %d, is for %s use\n",
+-				serial->type->description,
+-				connection_info->connections[i].port, string);
+-		}
++	if (retval != sizeof(*connection_info)) {
++		dev_err(dev, "Invalid connection information received from device\n");
++		retval = -ENODEV;
++		goto exit;
+ 	}
+-	/*
+-	* Handle devices that report invalid stuff here.
+-	*/
++
++	connection_info = (struct visor_connection_info *)transfer_buffer;
++
++	num_ports = le16_to_cpu(connection_info->num_ports);
++
++	/* Handle devices that report invalid stuff here. */
+ 	if (num_ports == 0 || num_ports > 2) {
+ 		dev_warn(dev, "%s: No valid connect info available\n",
+ 			serial->type->description);
+ 		num_ports = 2;
+ 	}
  
- 			if (r->num_pending_sgs) {
- 				struct dwc3_trb *trb;
++	for (i = 0; i < num_ports; ++i) {
++		switch (connection_info->connections[i].port_function_id) {
++		case VISOR_FUNCTION_GENERIC:
++			string = "Generic";
++			break;
++		case VISOR_FUNCTION_DEBUGGER:
++			string = "Debugger";
++			break;
++		case VISOR_FUNCTION_HOTSYNC:
++			string = "HotSync";
++			break;
++		case VISOR_FUNCTION_CONSOLE:
++			string = "Console";
++			break;
++		case VISOR_FUNCTION_REMOTE_FILE_SYS:
++			string = "Remote File System";
++			break;
++		default:
++			string = "unknown";
++			break;
++		}
++		dev_info(dev, "%s: port %d, is for %s use\n",
++			serial->type->description,
++			connection_info->connections[i].port, string);
++	}
+ 	dev_info(dev, "%s: Number of ports: %d\n", serial->type->description,
+ 		num_ports);
+ 
