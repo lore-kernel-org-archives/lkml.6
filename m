@@ -1,100 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933027AbeEHPCV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:02:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932683AbeEHPCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 11:02:19 -0400
-Date: Wed, 9 May 2018 00:02:15 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-trace-users@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, shuah@kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH v7 00/16] tracing: probeevent: Improve fetcharg features
-Message-Id: <20180509000215.b4e907b419540d8c84abcdd9@kernel.org>
-In-Reply-To: <1525772835.npvwj0nws0.naveen@linux.ibm.com>
-References: <152465856498.26224.16969986455942749517.stgit@devbox>
-        <20180503181137.6d82d897@gandalf.local.home>
-        <20180505004828.9b75b6802472f09b0d2de5b8@kernel.org>
-        <20180504120642.354cdd1f@gandalf.local.home>
-        <20180505113803.45700179a93091b114ec6984@kernel.org>
-        <1525506231.y43xvmd3yw.naveen@linux.ibm.com>
-        <20180505233211.ecad929b13461f1e5f6427d2@kernel.org>
-        <1525680222.8nou0tzkkt.naveen@linux.ibm.com>
-        <20180507235317.fa04131c603dbe59ef78a829@kernel.org>
-        <1525772835.npvwj0nws0.naveen@linux.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S933051AbeEHPCf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 11:02:35 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:35474 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932916AbeEHPCd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 11:02:33 -0400
+X-Google-Smtp-Source: AB8JxZqHIW8fOyT1Z3U6hUE/AOY1nMFpHST8EuFoTkYPmtRRVuFTeJsu+Gwot8CZlCHirlvx7T5pKv2TZmYU82h+SxM=
+MIME-Version: 1.0
+In-Reply-To: <CAJfpegvV8r8Bp6c2gZYhX1pOqDGHPDmURB6+x=09uR1diERUSg@mail.gmail.com>
+References: <20180507083807.28792-1-mszeredi@redhat.com> <20180507083807.28792-16-mszeredi@redhat.com>
+ <CAOQ4uxhFzFFpF+ghACKTzzU_UrrJ3_+U6LwCOVXhgUyGe6=fVQ@mail.gmail.com> <CAJfpegvV8r8Bp6c2gZYhX1pOqDGHPDmURB6+x=09uR1diERUSg@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 8 May 2018 18:02:31 +0300
+Message-ID: <CAOQ4uxjyXLW3xHOtpjz0EnFGWk-TzEHTh5mdzH+jBbXDLpSRtQ@mail.gmail.com>
+Subject: Re: [PATCH v2 15/35] ovl: add ovl_fsync()
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 08 May 2018 15:41:11 +0530
-"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
+On Tue, May 8, 2018 at 5:57 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Tue, May 8, 2018 at 7:14 AM, Amir Goldstein <amir73il@gmail.com> wrote:
+>> On Mon, May 7, 2018 at 11:37 AM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+>>> Implement stacked fsync().
+>>>
+>>> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+>>> ---
+>>>  fs/overlayfs/file.c | 20 ++++++++++++++++++++
+>>>  1 file changed, 20 insertions(+)
+>>>
+>>> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+>>> index a7af56861aa5..419aa3f9967b 100644
+>>> --- a/fs/overlayfs/file.c
+>>> +++ b/fs/overlayfs/file.c
+>>> @@ -233,10 +233,30 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+>>>         return ret;
+>>>  }
+>>>
+>>> +static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+>>> +{
+>>> +       struct fd real;
+>>> +       const struct cred *old_cred;
+>>> +       int ret;
+>>> +
+>>
+>> Don't sync non-upper. same as ovl_dir_fsync()
+>
+> Ah, that was about EROFS returned by lower fsync, right?
+>
 
-> Masami Hiramatsu wrote:
-> > On Mon, 07 May 2018 13:41:53 +0530
-> > "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
-> >> >> 
-> >> >> I didn't understand that. Which code are you planning to remove? Can you 
-> >> >> please elaborate? I thought we still need to disable preemption in the 
-> >> >> ftrace handler.
-> >> > 
-> >> > Yes, kprobe_ftrace_handler itself must be run under preempt disabled
-> >> > because it depends on a per-cpu variable. What I will remove is the
-> >> > redundant preempt disable/enable_noresched (unbalanced) pair in the
-> >> > kprobe_ftrace_handler, and jprobe x86 ports which is no more used.
-> >> 
-> >> Won't that break out-of-tree users depending on returning a non-zero 
-> >> value to handle preemption differently? You seem to have alluded to it 
-> >> earlier in the mail chain above where you said that this is not just for 
-> >> jprobes (though it was added for jprobes as the main use case).
-> > 
-> > No, all users are in tree already (function override for bpf and error-injection).
-> 
-> Ok, so BPF error injection is a new user that can return a non-zero 
-> value from the pre handler. It looks like it can use KPROBES_ON_FTRACE 
-> too.
-> 
-> In that case, on function entry, we call into kprobe_ftrace_handler() 
-> which will call fei_kprobe_handler(), which can re-enable premption 
-> before returning 1. So, if you remove the additional 
-> prempt_disable()/enable_no_resched() in kprobe_ftrace_handler(), then it 
-> will become imbalanced, right?
+Yap. to reason to try and sync a lower file.
 
-Right. So we have to fix both at once. Please check the patch below.
-
-https://patchwork.kernel.org/patch/10386171/
-
-(Sorry, I missed to cc you...)
-
-> 
-> > And also, for changing execution path by using kprobes, user handler must call
-> > not only preempt_enable(), but also clear current_kprobe per-cpu variable which
-> > is not exported to kmodules.
-> 
-> Ok, good point. And that means we don't have any external users any 
-> more.
-
-Yes :)
-
-Thank you,
-
-> 
-> Thanks,
-> Naveen
-> 
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Thanks,
+Amir.
