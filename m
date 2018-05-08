@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753982AbeEHCWI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 22:22:08 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:1789 "EHLO
+        id S1753965AbeEHCWH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 22:22:07 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:3876 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753692AbeEHCVF (ORCPT
+        with ESMTP id S1753723AbeEHCVF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 7 May 2018 22:21:05 -0400
-X-UUID: 31b7192959f6469eba4d54c70df508b4-20180508
+X-UUID: dc2398411f5a4d168234ad3c349ada2c-20180508
 From: Bibby Hsieh <bibby.hsieh@mediatek.com>
 To: David Airlie <airlied@linux.ie>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -23,10 +23,12 @@ CC: Yingjoe Chen <yingjoe.chen@mediatek.com>,
         Mao Huang <littlecvr@chromium.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>
-Subject: [PATCH 0/7] drm/mediatek: support hdmi output for mt2701 and mt7623
-Date: Tue, 8 May 2018 10:20:50 +0800
-Message-ID: <20180508022057.29379-1-bibby.hsieh@mediatek.com>
+Subject: [PATCH 6/7] drm/mediatek: add a error return value when clock driver has been prepared
+Date: Tue, 8 May 2018 10:20:56 +0800
+Message-ID: <20180508022057.29379-7-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.12.5
+In-Reply-To: <20180508022057.29379-1-bibby.hsieh@mediatek.com>
+References: <20180508022057.29379-1-bibby.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK: N
@@ -34,34 +36,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bibby Hsieh (3):
-  drm/mediatek: implement connection from BLS to DPI0
-  drm/mediatek: add a error return value when clock driver has been
-    prepared
-  drm/mediatek: config component output by device node port
+DRM driver get the comp->clk by of_clk_get(), we only
+assign NULL to comp->clk when error happened, but do
+not return the error number.
 
-chunhui dai (4):
-  drm/mediatek: move dpi private data to device
-  drm/mediatek: fix to get right bridge for dpi encoder
-  drm/mediatek: add dpi driver for mt2701 and mt7623
-  drm/mediatek: add hdmi driver for different hardware
+Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/gpu/drm/mediatek/Makefile              |   4 +-
- drivers/gpu/drm/mediatek/mtk_dpi.c             | 125 +++++++---
- drivers/gpu/drm/mediatek/mtk_dpi_regs.h        |   2 +-
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c         |  14 +-
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c    |   2 +-
- drivers/gpu/drm/mediatek/mtk_drm_drv.c         |  38 ++-
- drivers/gpu/drm/mediatek/mtk_drm_drv.h         |   4 +-
- drivers/gpu/drm/mediatek/mtk_hdmi.c            |  88 +++++--
- drivers/gpu/drm/mediatek/mtk_hdmi.h            |  28 +++
- drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 157 +++++++++++++
- drivers/gpu/drm/mediatek/mtk_hdmi_regs.h       |   1 +
- drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 307 +++++++++++++++++++++++++
- drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c | 129 +----------
- 13 files changed, 716 insertions(+), 183 deletions(-)
- create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
- create mode 100644 drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+index 4672317e3ad1..d38a5303f8fc 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+@@ -283,7 +283,7 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
+ 	comp->irq = of_irq_get(node, 0);
+ 	comp->clk = of_clk_get(node, 0);
+ 	if (IS_ERR(comp->clk))
+-		comp->clk = NULL;
++		return PTR_ERR(comp->clk);
+ 
+ 	/* Only DMA capable components need the LARB property */
+ 	comp->larb_dev = NULL;
 -- 
 2.12.5
