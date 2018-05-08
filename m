@@ -1,96 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932133AbeEHSBx convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 14:01:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51146 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753062AbeEHSBw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 14:01:52 -0400
-Date: Tue, 08 May 2018 23:31:42 +0530
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH v7 00/16] tracing: probeevent: Improve fetcharg features
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-trace-users@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, shuah@kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-References: <152465856498.26224.16969986455942749517.stgit@devbox>
-        <20180503181137.6d82d897@gandalf.local.home>
-        <20180505004828.9b75b6802472f09b0d2de5b8@kernel.org>
-        <20180504120642.354cdd1f@gandalf.local.home>
-        <20180505113803.45700179a93091b114ec6984@kernel.org>
-        <1525506231.y43xvmd3yw.naveen@linux.ibm.com>
-        <20180505233211.ecad929b13461f1e5f6427d2@kernel.org>
-        <1525680222.8nou0tzkkt.naveen@linux.ibm.com>
-        <20180507235317.fa04131c603dbe59ef78a829@kernel.org>
-        <1525772835.npvwj0nws0.naveen@linux.ibm.com>
-        <20180509000215.b4e907b419540d8c84abcdd9@kernel.org>
-In-Reply-To: <20180509000215.b4e907b419540d8c84abcdd9@kernel.org>
-User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 18050818-0020-0000-0000-0000041A797A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050818-0021-0000-0000-000042AFB4A3
-Message-Id: <1525802391.f0r6zmk1g8.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-08_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=3 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=3
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805080173
+        id S1755247AbeEHSEv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 14:04:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53805 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751723AbeEHSEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 14:04:49 -0400
+From: Mark Fasheh <mfasheh@suse.de>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: [RFC][PATCH 0/76] vfs: 'views' for filesystems with more than one root
+Date: Tue,  8 May 2018 11:03:20 -0700
+Message-Id: <20180508180436.716-1-mfasheh@suse.de>
+X-Mailer: git-send-email 2.15.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masami Hiramatsu wrote:
-> On Tue, 08 May 2018 15:41:11 +0530
-> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
-> 
->> Masami Hiramatsu wrote:
->> > On Mon, 07 May 2018 13:41:53 +0530
->> > "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
->> >> >> 
->> >> >> I didn't understand that. Which code are you planning to remove? Can you 
->> >> >> please elaborate? I thought we still need to disable preemption in the 
->> >> >> ftrace handler.
->> >> > 
->> >> > Yes, kprobe_ftrace_handler itself must be run under preempt disabled
->> >> > because it depends on a per-cpu variable. What I will remove is the
->> >> > redundant preempt disable/enable_noresched (unbalanced) pair in the
->> >> > kprobe_ftrace_handler, and jprobe x86 ports which is no more used.
->> >> 
->> >> Won't that break out-of-tree users depending on returning a non-zero 
->> >> value to handle preemption differently? You seem to have alluded to it 
->> >> earlier in the mail chain above where you said that this is not just for 
->> >> jprobes (though it was added for jprobes as the main use case).
->> > 
->> > No, all users are in tree already (function override for bpf and error-injection).
->> 
->> Ok, so BPF error injection is a new user that can return a non-zero 
->> value from the pre handler. It looks like it can use KPROBES_ON_FTRACE 
->> too.
->> 
->> In that case, on function entry, we call into kprobe_ftrace_handler() 
->> which will call fei_kprobe_handler(), which can re-enable premption 
->> before returning 1. So, if you remove the additional 
->> prempt_disable()/enable_no_resched() in kprobe_ftrace_handler(), then it 
->> will become imbalanced, right?
-> 
-> Right. So we have to fix both at once. Please check the patch below.
-> 
-> https://patchwork.kernel.org/patch/10386171/
+Hi,
 
-Ah, so your intent was to change the semantics of how the pre handler 
-works! I missed that aspect. This now makes sense. Thanks for the 
-clarification.
+The VFS's super_block covers a variety of filesystem functionality. In
+particular we have a single structure representing both I/O and
+namespace domains.
 
-- Naveen
+There are requirements to de-couple this functionality. For example,
+filesystems with more than one root (such as btrfs subvolumes) can
+have multiple inode namespaces. This starts to confuse userspace when
+it notices multiple inodes with the same inode/device tuple on a
+filesystem.
+
+In addition, it's currently impossible for a filesystem subvolume to
+have a different security context from it's parent. If we could allow
+for subvolumes to optionally specify their own security context, we
+could use them as containers directly instead of having to go through
+an overlay.
+
+
+I ran into this particular problem with respect to Btrfs some years
+ago and sent out a very naive set of patches which were (rightfully)
+not incorporated:
+
+https://marc.info/?l=linux-btrfs&m=130074451403261&w=2
+https://marc.info/?l=linux-btrfs&m=130532890824992&w=2
+
+During the discussion, one question did come up - why can't
+filesystems like Btrfs use a superblock per subvolume? There's a
+couple of problems with that:
+
+- It's common for a single Btrfs filesystem to have thousands of
+  subvolumes. So keeping a superblock for each subvol in memory would
+  get prohibively expensive - imagine having 8000 copies of struct
+  super_block for a file system just because we wanted some separation
+  of say, s_dev.
+
+- Writeback would also have to walk all of these superblocks -
+  again not very good for system performance.
+
+- Anyone wanting to lock down I/O on a filesystem would have to freeze
+  all the superblocks. This goes for most things related to I/O really
+  - we simply can't afford to have the kernel walking thousands of
+  superblocks to sync a single fs.
+
+It's far more efficient then to pull those fields we need for a
+subvolume namespace into their own structure.
+
+
+The following patches attempt to fix this issue by introducing a
+structure, fs_view, which can be used to represent a 'view' into a
+filesystem. We can migrate super_block fields to this structure one at
+a time. Struct super_block gets a default view embedded into
+it. Inodes get a new field, i_view, which can be dereferenced to get
+the view that an inode belgongs to. By default, we point i_view to the
+view on struct super_block. That way existing filesystems don't have
+to do anything different.
+
+The patches are careful not to grow the size of struct inode.
+
+For the first patch series, we migrate s_dev over from struct
+super_block to struct fs_view. This fixes a long standing bug in how
+the kernel reports inode devices to userspace.
+
+The series follows an order:
+
+- We first introduce the fs_view structure and embed it into struct
+  super_block. As discussed, struct inode gets a pointer to the
+  fs_view, i_view. The only member on fs_view at this point is a
+  super_block * so that we can replace i_sb. A helper function is
+  provided to get to the super_block from a struct inode.
+
+- Convert the kernel to using our helper function to get to i_sb. This
+  is done on in a per-filesystem patch. The other parts of the kernel
+  referencing i_sb get their changes batched up in logical groupings.
+
+- Move s_dev from struct super_block to struct fs_view.
+
+- Convert the kernel from inode->i_sb->s_dev to the device from our
+  fs_view. In the end, these lines will look like inode_view(inode)->v_dev.
+
+- Add an fs_view struct to each Btrfs root, point inodes to that view
+  when we initialize them.
+
+
+The patches are available via git and are based off Linux
+v4.16. There's two branches, with identical code.
+
+- With the inode_sb() changeover patch broken out (as is sent here):
+
+https://github.com/markfasheh/linux fs_view-broken-out
+
+- With the inode_sb() changeover patch in one big change:
+
+https://github.com/markfasheh/linux fs_view
+
+
+Comments are appreciated.
+
+Thanks,
+  --Mark
