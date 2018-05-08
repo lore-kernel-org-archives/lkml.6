@@ -1,73 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755581AbeEHRo3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 13:44:29 -0400
-Received: from mga02.intel.com ([134.134.136.20]:58509 "EHLO mga02.intel.com"
+        id S1755609AbeEHRof (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 13:44:35 -0400
+Received: from fieldses.org ([173.255.197.46]:50958 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755122AbeEHRo0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 13:44:26 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,379,1520924400";
-   d="scan'208";a="56988514"
-Date: Tue, 8 May 2018 11:44:24 -0600
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        linux-nvdimm@lists.01.org
-Subject: Re: [PATCH 0/5] fix radix tree multi-order iteration race
-Message-ID: <20180508174424.GA12638@linux.intel.com>
-References: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
+        id S1755438AbeEHRoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 13:44:32 -0400
+Date: Tue, 8 May 2018 13:44:31 -0400
+From: Bruce Fields <bfields@fieldses.org>
+To: Chuck Lever <chucklever@gmail.com>
+Cc: Trond Myklebust <trondmy@hammer.space>,
+        "syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com"
+        <syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: general protection fault in encode_rpcb_string
+Message-ID: <20180508174431.GE6151@fieldses.org>
+References: <f4f5e80803d08f47b9056a0366dd@google.com>
+ <20180417213308.GC18217@fieldses.org>
+ <1524002074.63751.5.camel@hammer.space>
+ <20180508161529.GD6151@fieldses.org>
+ <4B24FAE4-C7E8-4D01-9808-B8F4E9E59D64@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <4B24FAE4-C7E8-4D01-9808-B8F4E9E59D64@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 01:24:25PM -0600, Ross Zwisler wrote:
-> The following series gets the radix tree test suite compiling again in
-> the current linux/master, adds a unit test which exposes a race in the
-> radix tree multi-order iteration code, and then fixes that race.
+On Tue, May 08, 2018 at 12:34:48PM -0400, Chuck Lever wrote:
 > 
-> This race was initially hit on a v4.15 based kernel and results in a GP
-> fault.  I've described the race in detail in patches 4 and 5.
 > 
-> The fix is simple and necessary, and I think it should be merged for
-> v4.17.
+> > On May 8, 2018, at 12:15 PM, bfields@fieldses.org wrote:
+> > 
+> > On Tue, Apr 17, 2018 at 09:54:36PM +0000, Trond Myklebust wrote:
+> >> Yes, and we can probably convert it, and the other GFP_ATOMIC
+> >> allocations in the rpcbind client to use GFP_NOFS in order to improve
+> >> reliability.
+> > 
+> > Chuck, I think the GFP_ATOMIC is unnecessary here as well?
+> > 
+> > --b.
+> > 
+> > diff --git a/net/sunrpc/xprtrdma/rpc_rdma.c b/net/sunrpc/xprtrdma/rpc_rdma.c
+> > index e8adad33d0bb..de90c6c90cde 100644
+> > --- a/net/sunrpc/xprtrdma/rpc_rdma.c
+> > +++ b/net/sunrpc/xprtrdma/rpc_rdma.c
+> > @@ -228,7 +228,7 @@ rpcrdma_convert_iovs(struct rpcrdma_xprt *r_xprt, struct xdr_buf *xdrbuf,
+> > 			/* XXX: Certain upper layer operations do
+> > 			 *	not provide receive buffer pages.
+> > 			 */
+> > -			*ppages = alloc_page(GFP_ATOMIC);
+> > +			*ppages = alloc_page(GFP_NOFS);
+> > 			if (!*ppages)
+> > 				return -EAGAIN;
+> > 		}
 > 
-> This tree has gotten positive build confirmation from the 0-day bot,
-> passes the updated radix tree test suite, xfstests, and the original
-> test that was hitting the race with the v4.15 based kernel.
-> 
-> Ross Zwisler (5):
->   radix tree test suite: fix mapshift build target
->   radix tree test suite: fix compilation issue
->   radix tree test suite: add item_delete_rcu()
->   radix tree test suite: multi-order iteration race
->   radix tree: fix multi-order iteration race
-> 
->  lib/radix-tree.c                      |  6 ++--
->  tools/include/linux/spinlock.h        |  3 +-
->  tools/testing/radix-tree/Makefile     |  6 ++--
->  tools/testing/radix-tree/multiorder.c | 63 +++++++++++++++++++++++++++++++++++
->  tools/testing/radix-tree/test.c       | 19 +++++++++++
->  tools/testing/radix-tree/test.h       |  3 ++
->  6 files changed, 91 insertions(+), 9 deletions(-)
-> 
-> -- 
-> 2.14.3
-> 
+> This code can't sleep, as I understand it. Caller is holding
+> the transport write lock. This logic was copied from
+> xdr_partial_copy_from_skb, which uses GFP_ATOMIC.
 
-Ping on this series.  Does anyone have any feedback?  Matthew?
+OK.
 
-I'd really like to get it into v4.17.
+> Recall that this is here because of GETACL. As I've stated in
+> the past, the correct solution is to ensure that these pages
+> are provided in every case by the upper layer, making this
+> alloc_page call site unnecessary.
 
-We can take it through the libnvdimm tree, if that's easiest.
+Got it.
+
+--b.
