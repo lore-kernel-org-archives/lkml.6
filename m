@@ -1,372 +1,272 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754024AbeEHDQs (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 23:16:48 -0400
-Received: from mx.socionext.com ([202.248.49.38]:7140 "EHLO mx.socionext.com"
+        id S1754051AbeEHDRv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 23:17:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753529AbeEHDQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 23:16:47 -0400
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH] ASoC: uniphier: add digital output volume for UniPhier sound system
-Date: Tue,  8 May 2018 12:16:39 +0900
-Message-Id: <20180508031639.24648-1-suzuki.katsuhiro@socionext.com>
-X-Mailer: git-send-email 2.17.0
+        id S1753896AbeEHDRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 23:17:50 -0400
+Date: Mon, 7 May 2018 20:17:48 -0700
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <yuchao0@huawei.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        chao@kernel.org
+Subject: Re: [PATCH v4] f2fs: fix to avoid race during access gc_thread
+ pointer
+Message-ID: <20180508031748.GB17507@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180507122659.86536-1-yuchao0@huawei.com>
+ <20180507213610.GC83867@jaegeuk-macbookpro.roam.corp.google.com>
+ <afc69260-b07d-107a-20e2-132c171ce85f@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <afc69260-b07d-107a-20e2-132c171ce85f@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds controllers for digital volume of PCM output. Volume
-effects simply linear, not dB scale as follows:
-  Gained PCM = Original * 0x4000 / Volume
+On 05/08, Chao Yu wrote:
+> On 2018/5/8 5:36, Jaegeuk Kim wrote:
+> > On 05/07, Chao Yu wrote:
+> >> Thread A			Thread B		Thread C
+> >> - f2fs_remount
+> >>  - stop_gc_thread
+> >> 				- f2fs_sbi_store
+> >> 							- issue_discard_thread
+> >>    sbi->gc_thread = NULL;
+> >> 				  sbi->gc_thread->gc_wake = 1
+> >> 							  access sbi->gc_thread->gc_urgent
+> >>
+> >> Previously, we allocate memory for sbi->gc_thread based on background
+> >> gc thread mount option, the memory can be released if we turn off
+> >> that mount option, but still there are several places access gc_thread
+> >> pointer without considering race condition, result in NULL point
+> >> dereference.
+> >>
+> >> In order to fix this issue, introduce gc_rwsem to exclude those operations.
+> >>
+> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> >> ---
+> >> v4:
+> >> - use introduced sbi.gc_rwsem lock instead of sb.s_umount.
+> > 
+> > We can use this first.
+> > 
+> >>From e62e8d3ece6ee8a4aeac8ffd6161d25851f8b3f0 Mon Sep 17 00:00:00 2001
+> > From: Jaegeuk Kim <jaegeuk@kernel.org>
+> > Date: Mon, 7 May 2018 14:22:40 -0700
+> > Subject: [PATCH] f2fs: introduce sbi->gc_mode to determine the policy
+> > 
+> > This is to avoid sbi->gc_thread pointer access.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/f2fs.h    |  8 ++++++++
+> >  fs/f2fs/gc.c      | 28 ++++++++++++----------------
+> >  fs/f2fs/gc.h      |  2 --
+> >  fs/f2fs/segment.c |  4 ++--
+> >  fs/f2fs/sysfs.c   | 33 +++++++++++++++++++++++++--------
+> >  5 files changed, 47 insertions(+), 28 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 80490a7991a7..779d8b26878c 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -1065,6 +1065,13 @@ enum {
+> >  	MAX_TIME,
+> >  };
+> >  
+> > +enum {
+> > +	GC_NORMAL,
+> > +	GC_IDLE_CB,
+> > +	GC_IDLE_GREEDY,
+> > +	GC_URGENT,
+> > +};
+> > +
+> >  enum {
+> >  	WHINT_MODE_OFF,		/* not pass down write hints */
+> >  	WHINT_MODE_USER,	/* try to pass down hints given by users */
+> > @@ -1193,6 +1200,7 @@ struct f2fs_sb_info {
+> >  	struct mutex gc_mutex;			/* mutex for GC */
+> >  	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
+> >  	unsigned int cur_victim_sec;		/* current victim section num */
+> > +	unsigned int gc_mode;			/* current GC state */
+> >  
+> >  	/* threshold for gc trials on pinned files */
+> >  	u64 gc_pin_file_threshold;
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index 9bb2ddbbed1e..7ec8ea75dfde 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -76,7 +76,7 @@ static int gc_thread_func(void *data)
+> >  		 * invalidated soon after by user update or deletion.
+> >  		 * So, I'd like to wait some time to collect dirty segments.
+> >  		 */
+> > -		if (gc_th->gc_urgent) {
+> > +		if (sbi->gc_mode == GC_URGENT) {
+> >  			wait_ms = gc_th->urgent_sleep_time;
+> >  			mutex_lock(&sbi->gc_mutex);
+> >  			goto do_gc;
+> > @@ -131,8 +131,6 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
+> >  	gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
+> >  	gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
+> >  
+> > -	gc_th->gc_idle = 0;
+> > -	gc_th->gc_urgent = 0;
+> >  	gc_th->gc_wake= 0;
+> >  
+> >  	sbi->gc_thread = gc_th;
+> > @@ -158,21 +156,19 @@ void stop_gc_thread(struct f2fs_sb_info *sbi)
+> >  	sbi->gc_thread = NULL;
+> >  }
+> >  
+> > -static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
+> > +static int select_gc_type(struct f2fs_sb_info *sbi, int gc_type)
+> >  {
+> >  	int gc_mode = (gc_type == BG_GC) ? GC_CB : GC_GREEDY;
+> >  
+> > -	if (!gc_th)
+> > -		return gc_mode;
+> > -
+> > -	if (gc_th->gc_idle) {
+> > -		if (gc_th->gc_idle == 1)
+> > -			gc_mode = GC_CB;
+> > -		else if (gc_th->gc_idle == 2)
+> > -			gc_mode = GC_GREEDY;
+> > -	}
+> > -	if (gc_th->gc_urgent)
+> > +	switch (sbi->gc_mode) {
+> > +	case GC_IDLE_CB:
+> > +		gc_mode = GC_CB;
+> > +		break;
+> > +	case GC_IDLE_GREEDY:
+> > +	case GC_URGENT:
+> >  		gc_mode = GC_GREEDY;
+> > +		break;
+> > +	}
+> >  	return gc_mode;
+> >  }
+> >  
+> > @@ -187,7 +183,7 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+> >  		p->max_search = dirty_i->nr_dirty[type];
+> >  		p->ofs_unit = 1;
+> >  	} else {
+> > -		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
+> > +		p->gc_mode = select_gc_type(sbi, gc_type);
+> >  		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
+> >  		p->max_search = dirty_i->nr_dirty[DIRTY];
+> >  		p->ofs_unit = sbi->segs_per_sec;
+> > @@ -195,7 +191,7 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+> >  
+> >  	/* we need to check every dirty segments in the FG_GC case */
+> >  	if (gc_type != FG_GC &&
+> > -			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
+> > +			(sbi->gc_mode != GC_URGENT) &&
+> >  			p->max_search > sbi->max_victim_search)
+> >  		p->max_search = sbi->max_victim_search;
+> >  
+> > diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+> > index b0045d4c8d1e..c8619e408009 100644
+> > --- a/fs/f2fs/gc.h
+> > +++ b/fs/f2fs/gc.h
+> > @@ -36,8 +36,6 @@ struct f2fs_gc_kthread {
+> >  	unsigned int no_gc_sleep_time;
+> >  
+> >  	/* for changing gc mode */
+> > -	unsigned int gc_idle;
+> > -	unsigned int gc_urgent;
+> >  	unsigned int gc_wake;
+> >  };
+> >  
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 503a98abdb2f..5a7ed06291e0 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -177,7 +177,7 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+> >  
+> >  	if (test_opt(sbi, LFS))
+> >  		return false;
+> > -	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+> > +	if (sbi->gc_mode == GC_URGENT)
+> >  		return true;
+> >  
+> >  	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
+> > @@ -1418,7 +1418,7 @@ static int issue_discard_thread(void *data)
+> >  		if (dcc->discard_wake)
+> >  			dcc->discard_wake = 0;
+> >  
+> > -		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+> > +		if (sbi->gc_mode == GC_URGENT)
+> >  			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
+> >  
+> >  		sb_start_intwrite(sbi->sb);
+> > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> > index 6d8d8f41e517..dd940d156af6 100644
+> > --- a/fs/f2fs/sysfs.c
+> > +++ b/fs/f2fs/sysfs.c
+> > @@ -248,16 +248,33 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+> >  	if (!strcmp(a->attr.name, "trim_sections"))
+> >  		return -EINVAL;
+> >  
+> > +	if (!strcmp(a->attr.name, "gc_urgent")) {
+> > +		if (t >= 1) {
+> > +			sbi->gc_mode = GC_URGENT;
+> > +			if (sbi->gc_thread) {
+> > +				wake_up_interruptible_all(
+> > +					&sbi->gc_thread->gc_wait_queue_head);
+> > +				wake_up_discard_thread(sbi, true);
+> > +			}
+> > +		} else {
+> > +			sbi->gc_mode = GC_NORMAL;
+> > +		}
+> > +		return count;
+> > +	}
+> > +	if (!strcmp(a->attr.name, "gc_idle")) {
+> > +		if (t == GC_IDLE_CB)
+> > +			sbi->gc_mode = GC_IDLE_CB;
+> > +		else if (t == GC_IDLE_GREEDY)
+> > +			sbi->gc_mode = GC_IDLE_GREEDY;
+> > +		else
+> > +			sbi->gc_mode = GC_NORMAL;
+> > +		return count;
+> > +	}
+> > +
+> >  	*ui = t;
+> >  
+> >  	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
+> >  		f2fs_reset_iostat(sbi);
+> > -	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
+> > -		sbi->gc_thread->gc_wake = 1;
+> > -		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
+> > -		wake_up_discard_thread(sbi, true);
+> > -	}
+> > -
+> >  	return count;
+> >  }
+> >  
+> > @@ -349,8 +366,8 @@ F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_urgent_sleep_time,
+> >  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_min_sleep_time, min_sleep_time);
+> >  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_max_sleep_time, max_sleep_time);
+> >  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
+> 
+> All above parameters will be accessed via '*ui = t;', in order to avoid that, we
+> need to move all gc_* configuration fields into sbi, so leaving f2fs_gc_kthread
+> all most empty.
 
-The value range of volume is from 0x0001 to 0xffff. 0x0000 works as
-mute. Initial value is 0x4000 (+0dB).
+What I said was to use down_read(&sbi->sb->s_umount); in sysfs.c on top of this.
 
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
----
- sound/soc/uniphier/aio-core.c |  58 ++++++++++++++
- sound/soc/uniphier/aio-cpu.c  | 140 ++++++++++++++++++++++++++++++++++
- sound/soc/uniphier/aio-reg.h  |  33 ++++++--
- sound/soc/uniphier/aio.h      |   7 ++
- 4 files changed, 233 insertions(+), 5 deletions(-)
-
-diff --git a/sound/soc/uniphier/aio-core.c b/sound/soc/uniphier/aio-core.c
-index e37b80921abb..638cb3fc5f7b 100644
---- a/sound/soc/uniphier/aio-core.c
-+++ b/sound/soc/uniphier/aio-core.c
-@@ -659,6 +659,64 @@ void aio_port_set_enable(struct uniphier_aio_sub *sub, int enable)
- 	}
- }
- 
-+/**
-+ * aio_port_get_volume - get volume of AIO port block
-+ * @sub: the AIO substream pointer
-+ *
-+ * Return: current volume, range is 0x0000 - 0xffff
-+ */
-+int aio_port_get_volume(struct uniphier_aio_sub *sub)
-+{
-+	struct regmap *r = sub->aio->chip->regmap;
-+	u32 v;
-+
-+	regmap_read(r, OPORTMXTYVOLGAINSTATUS(sub->swm->oport.map, 0), &v);
-+
-+	return FIELD_GET(OPORTMXTYVOLGAINSTATUS_CUR_MASK, v);
-+}
-+
-+/**
-+ * aio_port_set_volume - set volume of AIO port block
-+ * @sub: the AIO substream pointer
-+ * @vol: target volume, range is 0x0000 - 0xffff.
-+ *
-+ * Change digital volume and perfome fade-out/fade-in effect for specified
-+ * output slot of port. Gained PCM value can calculate as the following:
-+ *   Gained = Original * vol / 0x4000
-+ */
-+void aio_port_set_volume(struct uniphier_aio_sub *sub, int vol)
-+{
-+	struct regmap *r = sub->aio->chip->regmap;
-+	int oport_map = sub->swm->oport.map;
-+	int cur, diff, slope = 0, fs;
-+
-+	if (sub->swm->dir == PORT_DIR_INPUT)
-+		return;
-+
-+	cur = aio_port_get_volume(sub);
-+	diff = abs(vol - cur);
-+	fs = params_rate(&sub->params);
-+	if (fs)
-+		slope = diff / AUD_VOL_FADE_TIME * 1000 / fs;
-+	slope = max(1, slope);
-+
-+	regmap_update_bits(r, OPORTMXTYVOLPARA1(oport_map, 0),
-+			   OPORTMXTYVOLPARA1_SLOPEU_MASK, slope << 16);
-+	regmap_update_bits(r, OPORTMXTYVOLPARA2(oport_map, 0),
-+			   OPORTMXTYVOLPARA2_TARGET_MASK, vol);
-+
-+	if (cur < vol)
-+		regmap_update_bits(r, OPORTMXTYVOLPARA2(oport_map, 0),
-+				   OPORTMXTYVOLPARA2_FADE_MASK,
-+				   OPORTMXTYVOLPARA2_FADE_FADEIN);
-+	else
-+		regmap_update_bits(r, OPORTMXTYVOLPARA2(oport_map, 0),
-+				   OPORTMXTYVOLPARA2_FADE_MASK,
-+				   OPORTMXTYVOLPARA2_FADE_FADEOUT);
-+
-+	regmap_write(r, AOUTFADECTR0, BIT(oport_map));
-+}
-+
- /**
-  * aio_if_set_param - set parameters of AIO DMA I/F block
-  * @sub: the AIO substream pointer
-diff --git a/sound/soc/uniphier/aio-cpu.c b/sound/soc/uniphier/aio-cpu.c
-index 00b6441bf195..80daec17be25 100644
---- a/sound/soc/uniphier/aio-cpu.c
-+++ b/sound/soc/uniphier/aio-cpu.c
-@@ -32,6 +32,35 @@ static bool is_valid_pll(struct uniphier_aio_chip *chip, int pll_id)
- 	return chip->plls[pll_id].enable;
- }
- 
-+/**
-+ * find_volume - find volume supported HW port by HW port number
-+ * @chip: the AIO chip pointer
-+ * @oport_hw: HW port number, one of AUD_HW_XXXX
-+ *
-+ * Find AIO device from device list by HW port number. Volume feature is
-+ * available only in Output and PCM ports, this limitation comes from HW
-+ * specifications.
-+ *
-+ * Return: The pointer of AIO substream if successful, otherwise NULL on error.
-+ */
-+static struct uniphier_aio_sub *find_volume(struct uniphier_aio_chip *chip,
-+					    int oport_hw)
-+{
-+	int i;
-+
-+	for (i = 0; i < chip->num_aios; i++) {
-+		struct uniphier_aio_sub *sub = &chip->aios[i].sub[0];
-+
-+		if (!sub->swm)
-+			continue;
-+
-+		if (sub->swm->oport.hw == oport_hw)
-+			return sub;
-+	}
-+
-+	return NULL;
-+}
-+
- static bool match_spec(const struct uniphier_aio_spec *spec,
- 		       const char *name, int dir)
- {
-@@ -287,6 +316,7 @@ static int uniphier_aio_hw_params(struct snd_pcm_substream *substream,
- 	sub->setting = 1;
- 
- 	aio_port_reset(sub);
-+	aio_port_set_volume(sub, sub->vol);
- 	aio_src_reset(sub);
- 
- 	return 0;
-@@ -373,6 +403,8 @@ int uniphier_aio_dai_probe(struct snd_soc_dai *dai)
- 
- 		sub->swm = &spec->swm;
- 		sub->spec = spec;
-+
-+		sub->vol = AUD_VOL_INIT;
- 	}
- 
- 	aio_iecout_set_enable(aio->chip, true);
-@@ -449,8 +481,116 @@ int uniphier_aio_dai_resume(struct snd_soc_dai *dai)
- }
- EXPORT_SYMBOL_GPL(uniphier_aio_dai_resume);
- 
-+static int uniphier_aio_vol_info(struct snd_kcontrol *kcontrol,
-+				 struct snd_ctl_elem_info *uinfo)
-+{
-+	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-+	uinfo->count = 1;
-+	uinfo->value.integer.min = 0;
-+	uinfo->value.integer.max = AUD_VOL_MAX;
-+
-+	return 0;
-+}
-+
-+static int uniphier_aio_vol_get(struct snd_kcontrol *kcontrol,
-+				struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *comp = snd_soc_kcontrol_component(kcontrol);
-+	struct uniphier_aio_chip *chip = snd_soc_component_get_drvdata(comp);
-+	struct uniphier_aio_sub *sub;
-+	int oport_hw = kcontrol->private_value;
-+
-+	sub = find_volume(chip, oport_hw);
-+	if (!sub)
-+		return 0;
-+
-+	ucontrol->value.integer.value[0] = sub->vol;
-+
-+	return 0;
-+}
-+
-+static int uniphier_aio_vol_put(struct snd_kcontrol *kcontrol,
-+				struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *comp = snd_soc_kcontrol_component(kcontrol);
-+	struct uniphier_aio_chip *chip = snd_soc_component_get_drvdata(comp);
-+	struct uniphier_aio_sub *sub;
-+	int oport_hw = kcontrol->private_value;
-+
-+	sub = find_volume(chip, oport_hw);
-+	if (!sub)
-+		return 0;
-+
-+	if (sub->vol == ucontrol->value.integer.value[0])
-+		return 0;
-+	sub->vol = ucontrol->value.integer.value[0];
-+
-+	aio_port_set_volume(sub, sub->vol);
-+
-+	return 0;
-+}
-+
-+static const struct snd_kcontrol_new uniphier_aio_controls[] = {
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.name = "HPCMOUT1 Volume",
-+		.info = uniphier_aio_vol_info,
-+		.get = uniphier_aio_vol_get,
-+		.put = uniphier_aio_vol_put,
-+		.private_value = AUD_HW_HPCMOUT1,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.name = "PCMOUT1 Volume",
-+		.info = uniphier_aio_vol_info,
-+		.get = uniphier_aio_vol_get,
-+		.put = uniphier_aio_vol_put,
-+		.private_value = AUD_HW_PCMOUT1,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.name = "PCMOUT2 Volume",
-+		.info = uniphier_aio_vol_info,
-+		.get = uniphier_aio_vol_get,
-+		.put = uniphier_aio_vol_put,
-+		.private_value = AUD_HW_PCMOUT2,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.name = "PCMOUT3 Volume",
-+		.info = uniphier_aio_vol_info,
-+		.get = uniphier_aio_vol_get,
-+		.put = uniphier_aio_vol_put,
-+		.private_value = AUD_HW_PCMOUT3,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.name = "HIECOUT1 Volume",
-+		.info = uniphier_aio_vol_info,
-+		.get = uniphier_aio_vol_get,
-+		.put = uniphier_aio_vol_put,
-+		.private_value = AUD_HW_HIECOUT1,
-+	},
-+	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.name = "IECOUT1 Volume",
-+		.info = uniphier_aio_vol_info,
-+		.get = uniphier_aio_vol_get,
-+		.put = uniphier_aio_vol_put,
-+		.private_value = AUD_HW_IECOUT1,
-+	},
-+};
-+
- static const struct snd_soc_component_driver uniphier_aio_component = {
- 	.name = "uniphier-aio",
-+	.controls = uniphier_aio_controls,
-+	.num_controls = ARRAY_SIZE(uniphier_aio_controls),
- };
- 
- int uniphier_aio_probe(struct platform_device *pdev)
-diff --git a/sound/soc/uniphier/aio-reg.h b/sound/soc/uniphier/aio-reg.h
-index 511ea3c01847..45fdc6ae358a 100644
---- a/sound/soc/uniphier/aio-reg.h
-+++ b/sound/soc/uniphier/aio-reg.h
-@@ -169,6 +169,7 @@
- #define PBINMXPAUSECTR1(n)               (0x20208 + 0x40 * (n))
- 
- /* AOUT */
-+#define AOUTFADECTR0                     0x40020
- #define AOUTENCTR0                       0x40040
- #define AOUTENCTR1                       0x40044
- #define AOUTENCTR2                       0x40048
-@@ -179,6 +180,9 @@
- #define AOUTSRCRSTCTR1                   0x400c4
- #define AOUTSRCRSTCTR2                   0x400c8
- 
-+/* AOUT PCMOUT has 5 slots, slot0-3: D0-3, slot4: DMIX */
-+#define OPORT_SLOT_MAX                     5
-+
- /* AOUT(PCMOUTN) */
- #define OPORTMXCTR1(n)                   (0x42000 + 0x400 * (n))
- #define   OPORTMXCTR1_I2SLRSEL_MASK        (0x11 << 10)
-@@ -359,11 +363,30 @@
- #define   OPORTMXMASK_XCKMSK_ON            (0x0 << 0)
- #define   OPORTMXMASK_XCKMSK_OFF           (0x7 << 0)
- #define OPORTMXDEBUG(n)                  (0x420fc + 0x400 * (n))
--#define OPORTMXT0RSTCTR(n)               (0x4211c + 0x400 * (n))
--#define OPORTMXT1RSTCTR(n)               (0x4213c + 0x400 * (n))
--#define OPORTMXT2RSTCTR(n)               (0x4215c + 0x400 * (n))
--#define OPORTMXT3RSTCTR(n)               (0x4217c + 0x400 * (n))
--#define OPORTMXT4RSTCTR(n)               (0x4219c + 0x400 * (n))
-+#define OPORTMXTYVOLPARA1(n, m)          (0x42100 + 0x400 * (n) + 0x20 * (m))
-+#define   OPORTMXTYVOLPARA1_SLOPEU_MASK    GENMASK(31, 16)
-+#define OPORTMXTYVOLPARA2(n, m)          (0x42104 + 0x400 * (n) + 0x20 * (m))
-+#define   OPORTMXTYVOLPARA2_FADE_MASK      GENMASK(17, 16)
-+#define   OPORTMXTYVOLPARA2_FADE_NOOP      (0x0 << 16)
-+#define   OPORTMXTYVOLPARA2_FADE_FADEOUT   (0x1 << 16)
-+#define   OPORTMXTYVOLPARA2_FADE_FADEIN    (0x2 << 16)
-+#define   OPORTMXTYVOLPARA2_TARGET_MASK    GENMASK(15, 0)
-+#define OPORTMXTYVOLGAINSTATUS(n, m)     (0x42108 + 0x400 * (n) + 0x20 * (m))
-+#define   OPORTMXTYVOLGAINSTATUS_CUR_MASK  GENMASK(15, 0)
-+#define OPORTMXTYSLOTCTR(n, m)           (0x42114 + 0x400 * (n) + 0x20 * (m))
-+#define   OPORTMXTYSLOTCTR_SLOTSEL_MASK    GENMASK(11, 8)
-+#define   OPORTMXTYSLOTCTR_SLOTSEL_SLOT0   (0x8 << 8)
-+#define   OPORTMXTYSLOTCTR_SLOTSEL_SLOT1   (0x9 << 8)
-+#define   OPORTMXTYSLOTCTR_SLOTSEL_SLOT2   (0xa << 8)
-+#define   OPORTMXTYSLOTCTR_SLOTSEL_SLOT3   (0xb << 8)
-+#define   OPORTMXTYSLOTCTR_SLOTSEL_SLOT4   (0xc << 8)
-+#define   OPORTMXT0SLOTCTR_MUTEOFF_MASK    BIT(1)
-+#define   OPORTMXT0SLOTCTR_MUTEOFF_MUTE    (0x0 << 1)
-+#define   OPORTMXT0SLOTCTR_MUTEOFF_UNMUTE  (0x1 << 1)
-+#define OPORTMXTYRSTCTR(n, m)            (0x4211c + 0x400 * (n) + 0x20 * (m))
-+#define   OPORTMXT0RSTCTR_RST_MASK         BIT(1)
-+#define   OPORTMXT0RSTCTR_RST_OFF          (0x0 << 1)
-+#define   OPORTMXT0RSTCTR_RST_ON           (0x1 << 1)
- 
- #define SBF_(frame, shift)    (((frame) * 2 - 1) << shift)
- 
-diff --git a/sound/soc/uniphier/aio.h b/sound/soc/uniphier/aio.h
-index 52670126084f..aa89c2f6fa24 100644
---- a/sound/soc/uniphier/aio.h
-+++ b/sound/soc/uniphier/aio.h
-@@ -130,6 +130,10 @@ enum IEC61937_PC {
- #define AUD_PLLDIV_1_1    2
- #define AUD_PLLDIV_2_3    3
- 
-+#define AUD_VOL_INIT         0x4000 /* +0dB */
-+#define AUD_VOL_MAX          0xffff /* +6dB */
-+#define AUD_VOL_FADE_TIME    20 /* 20ms */
-+
- #define AUD_RING_SIZE            (128 * 1024)
- 
- #define AUD_MIN_FRAGMENT         4
-@@ -231,6 +235,7 @@ struct uniphier_aio_sub {
- 	/* For PCM audio */
- 	struct snd_pcm_substream *substream;
- 	struct snd_pcm_hw_params params;
-+	int vol;
- 
- 	/* For compress audio */
- 	struct snd_compr_stream *cstream;
-@@ -323,6 +328,8 @@ int aio_port_set_clk(struct uniphier_aio_sub *sub);
- int aio_port_set_param(struct uniphier_aio_sub *sub, int pass_through,
- 		       const struct snd_pcm_hw_params *params);
- void aio_port_set_enable(struct uniphier_aio_sub *sub, int enable);
-+int aio_port_get_volume(struct uniphier_aio_sub *sub);
-+void aio_port_set_volume(struct uniphier_aio_sub *sub, int vol);
- int aio_if_set_param(struct uniphier_aio_sub *sub, int pass_through);
- int aio_oport_set_stream_type(struct uniphier_aio_sub *sub,
- 			      enum IEC61937_PC pc);
--- 
-2.17.0
+> IMO, just merge my v1 patch is OK? since that patch makes better
+> encapsulation, so that background GC related parameter can still locate in
+> independent f2fs_gc_kthread structure rather in common f2fs_sb_info structure.
+> 
+> Thanks,
+> 
+> > -F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_idle, gc_idle);
+> > -F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_urgent, gc_urgent);
+> > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle, gc_mode);
+> > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_urgent, gc_mode);
+> >  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, reclaim_segments, rec_prefree_segments);
+> >  F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, max_small_discards, max_discards);
+> >  F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, discard_granularity, discard_granularity);
+> > 
