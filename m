@@ -1,100 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933011AbeEHPBg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:01:36 -0400
-Received: from ozlabs.org ([203.11.71.1]:37343 "EHLO ozlabs.org"
+        id S933027AbeEHPCV (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 11:02:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932683AbeEHO75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:59:57 -0400
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: linuxram@us.ibm.com
-Cc: mingo@redhat.com, linuxppc-dev@ozlabs.org, linux-mm@kvack.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org, dave.hansen@intel.com
-Subject: [PATCH 1/8] mm, powerpc, x86: define VM_PKEY_BITx bits if CONFIG_ARCH_HAS_PKEYS is enabled
-Date: Wed,  9 May 2018 00:59:41 +1000
-Message-Id: <20180508145948.9492-2-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180508145948.9492-1-mpe@ellerman.id.au>
-References: <20180508145948.9492-1-mpe@ellerman.id.au>
+        id S932683AbeEHPCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 11:02:19 -0400
+Date: Wed, 9 May 2018 00:02:15 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-trace-users@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, shuah@kernel.org,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v7 00/16] tracing: probeevent: Improve fetcharg features
+Message-Id: <20180509000215.b4e907b419540d8c84abcdd9@kernel.org>
+In-Reply-To: <1525772835.npvwj0nws0.naveen@linux.ibm.com>
+References: <152465856498.26224.16969986455942749517.stgit@devbox>
+        <20180503181137.6d82d897@gandalf.local.home>
+        <20180505004828.9b75b6802472f09b0d2de5b8@kernel.org>
+        <20180504120642.354cdd1f@gandalf.local.home>
+        <20180505113803.45700179a93091b114ec6984@kernel.org>
+        <1525506231.y43xvmd3yw.naveen@linux.ibm.com>
+        <20180505233211.ecad929b13461f1e5f6427d2@kernel.org>
+        <1525680222.8nou0tzkkt.naveen@linux.ibm.com>
+        <20180507235317.fa04131c603dbe59ef78a829@kernel.org>
+        <1525772835.npvwj0nws0.naveen@linux.ibm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ram Pai <linuxram@us.ibm.com>
+On Tue, 08 May 2018 15:41:11 +0530
+"Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
 
-VM_PKEY_BITx are defined only if CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
-is enabled. Powerpc also needs these bits. Hence lets define the
-VM_PKEY_BITx bits for any architecture that enables
-CONFIG_ARCH_HAS_PKEYS.
+> Masami Hiramatsu wrote:
+> > On Mon, 07 May 2018 13:41:53 +0530
+> > "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
+> >> >> 
+> >> >> I didn't understand that. Which code are you planning to remove? Can you 
+> >> >> please elaborate? I thought we still need to disable preemption in the 
+> >> >> ftrace handler.
+> >> > 
+> >> > Yes, kprobe_ftrace_handler itself must be run under preempt disabled
+> >> > because it depends on a per-cpu variable. What I will remove is the
+> >> > redundant preempt disable/enable_noresched (unbalanced) pair in the
+> >> > kprobe_ftrace_handler, and jprobe x86 ports which is no more used.
+> >> 
+> >> Won't that break out-of-tree users depending on returning a non-zero 
+> >> value to handle preemption differently? You seem to have alluded to it 
+> >> earlier in the mail chain above where you said that this is not just for 
+> >> jprobes (though it was added for jprobes as the main use case).
+> > 
+> > No, all users are in tree already (function override for bpf and error-injection).
+> 
+> Ok, so BPF error injection is a new user that can return a non-zero 
+> value from the pre handler. It looks like it can use KPROBES_ON_FTRACE 
+> too.
+> 
+> In that case, on function entry, we call into kprobe_ftrace_handler() 
+> which will call fei_kprobe_handler(), which can re-enable premption 
+> before returning 1. So, if you remove the additional 
+> prempt_disable()/enable_no_resched() in kprobe_ftrace_handler(), then it 
+> will become imbalanced, right?
 
-Reviewed-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Ram Pai <linuxram@us.ibm.com>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- arch/powerpc/include/asm/pkeys.h | 2 ++
- fs/proc/task_mmu.c               | 4 ++--
- include/linux/mm.h               | 9 +++++----
- 3 files changed, 9 insertions(+), 6 deletions(-)
+Right. So we have to fix both at once. Please check the patch below.
 
-diff --git a/arch/powerpc/include/asm/pkeys.h b/arch/powerpc/include/asm/pkeys.h
-index 0409c80c32c0..18ef59a9886d 100644
---- a/arch/powerpc/include/asm/pkeys.h
-+++ b/arch/powerpc/include/asm/pkeys.h
-@@ -26,6 +26,8 @@ extern u32 initial_allocation_mask; /* bits set for reserved keys */
- # define VM_PKEY_BIT2	VM_HIGH_ARCH_2
- # define VM_PKEY_BIT3	VM_HIGH_ARCH_3
- # define VM_PKEY_BIT4	VM_HIGH_ARCH_4
-+#elif !defined(VM_PKEY_BIT4)
-+# define VM_PKEY_BIT4	VM_HIGH_ARCH_4
- #endif
- 
- #define ARCH_VM_PKEY_FLAGS (VM_PKEY_BIT0 | VM_PKEY_BIT1 | VM_PKEY_BIT2 | \
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index c486ad4b43f0..541392a62608 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -673,13 +673,13 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
- 		[ilog2(VM_MERGEABLE)]	= "mg",
- 		[ilog2(VM_UFFD_MISSING)]= "um",
- 		[ilog2(VM_UFFD_WP)]	= "uw",
--#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
-+#ifdef CONFIG_ARCH_HAS_PKEYS
- 		/* These come out via ProtectionKey: */
- 		[ilog2(VM_PKEY_BIT0)]	= "",
- 		[ilog2(VM_PKEY_BIT1)]	= "",
- 		[ilog2(VM_PKEY_BIT2)]	= "",
- 		[ilog2(VM_PKEY_BIT3)]	= "",
--#endif
-+#endif /* CONFIG_ARCH_HAS_PKEYS */
- 	};
- 	size_t i;
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 1ac1f06a4be6..c6a6f2492c1b 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -228,15 +228,16 @@ extern unsigned int kobjsize(const void *objp);
- #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
- #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
- 
--#if defined(CONFIG_X86)
--# define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
--#if defined (CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS)
-+#ifdef CONFIG_ARCH_HAS_PKEYS
- # define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
- # define VM_PKEY_BIT0	VM_HIGH_ARCH_0	/* A protection key is a 4-bit value */
- # define VM_PKEY_BIT1	VM_HIGH_ARCH_1
- # define VM_PKEY_BIT2	VM_HIGH_ARCH_2
- # define VM_PKEY_BIT3	VM_HIGH_ARCH_3
--#endif
-+#endif /* CONFIG_ARCH_HAS_PKEYS */
-+
-+#if defined(CONFIG_X86)
-+# define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
- #elif defined(CONFIG_PPC)
- # define VM_SAO		VM_ARCH_1	/* Strong Access Ordering (powerpc) */
- #elif defined(CONFIG_PARISC)
+https://patchwork.kernel.org/patch/10386171/
+
+(Sorry, I missed to cc you...)
+
+> 
+> > And also, for changing execution path by using kprobes, user handler must call
+> > not only preempt_enable(), but also clear current_kprobe per-cpu variable which
+> > is not exported to kmodules.
+> 
+> Ok, good point. And that means we don't have any external users any 
+> more.
+
+Yes :)
+
+Thank you,
+
+> 
+> Thanks,
+> Naveen
+> 
+> 
+
+
 -- 
-2.14.1
+Masami Hiramatsu <mhiramat@kernel.org>
