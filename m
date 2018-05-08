@@ -1,151 +1,372 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753886AbeEHDPl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 23:15:41 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:53349 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753525AbeEHDPj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 23:15:39 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk, mingo@kernel.org,
-        paulmck@linux.vnet.ibm.com, keescook@chromium.org, riel@redhat.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
-        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Balbir Singh <balbir@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
-References: <20180502132026.GB16060@cmpxchg.org>
-        <87lgd1zww0.fsf_-_@xmission.com> <20180503133338.GA23401@redhat.com>
-        <87y3h0x0qg.fsf@xmission.com> <20180504142056.GA26151@redhat.com>
-        <87r2mrh4is.fsf@xmission.com> <20180504145435.GA26573@redhat.com>
-        <87y3gzfmjt.fsf@xmission.com> <20180504162209.GB26573@redhat.com>
-        <871serfk77.fsf@xmission.com> <20180507143358.GA3071@redhat.com>
-Date: Mon, 07 May 2018 22:15:27 -0500
-In-Reply-To: <20180507143358.GA3071@redhat.com> (Oleg Nesterov's message of
-        "Mon, 7 May 2018 16:33:58 +0200")
-Message-ID: <87vabyvnw0.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fFt6E-0004OQ-MA;;;mid=<87vabyvnw0.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.90.247.198;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18+1FnaO3I9Q7JIRHEWVpetGk4/NIQoP/g=
-X-SA-Exim-Connect-IP: 97.90.247.198
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Oleg Nesterov <oleg@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 304 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 2.6 (0.8%), b_tie_ro: 1.77 (0.6%), parse: 0.79 (0.3%),
-        extract_message_metadata: 3.5 (1.1%), get_uri_detail_list: 1.95 (0.6%),
-        tests_pri_-1000: 4.0 (1.3%), tests_pri_-950: 1.19 (0.4%), tests_pri_-900:
-        1.00 (0.3%), tests_pri_-400: 25 (8.3%), check_bayes: 24 (8.0%), b_tokenize: 9
-        (2.9%), b_tok_get_all: 8 (2.8%), b_comp_prob: 2.3 (0.8%), b_tok_touch_all:
-        2.9 (1.0%), b_finish: 0.54 (0.2%), tests_pri_0: 255 (83.8%),
-        check_dkim_signature: 0.64 (0.2%), check_dkim_adsp: 2.7 (0.9%),
-        tests_pri_500: 3.8 (1.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] memcg: Replace mm->owner with mm->memcg
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+        id S1754024AbeEHDQs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 23:16:48 -0400
+Received: from mx.socionext.com ([202.248.49.38]:7140 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753529AbeEHDQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 23:16:47 -0400
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+To: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Subject: [PATCH] ASoC: uniphier: add digital output volume for UniPhier sound system
+Date: Tue,  8 May 2018 12:16:39 +0900
+Message-Id: <20180508031639.24648-1-suzuki.katsuhiro@socionext.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oleg Nesterov <oleg@redhat.com> writes:
+This patch adds controllers for digital volume of PCM output. Volume
+effects simply linear, not dB scale as follows:
+  Gained PCM = Original * 0x4000 / Volume
 
-> On 05/04, Eric W. Biederman wrote:
->>
->> Oleg Nesterov <oleg@redhat.com> writes:
->>
->> > On 05/04, Eric W. Biederman wrote:
->> >>
->> >> Oleg Nesterov <oleg@redhat.com> writes:
->> >>
->> >> > I'd vote for the change in exec_mmap(). This way mm_init_memcg() can just
->> >> > nullify mm->memcg.
->> >>
->> >> There is at least one common path where we need the memory control group
->> >> properly initialized so memory allocations don't escape the memory
->> >> control group.
->> >>
->> >> do_execveat_common
->> >>    copy_strings
->> >>       get_arg_page
->> >>          get_user_pages_remote
->> >>             __get_user_pages_locked
->> >>                __get_user_pages
->> >>                   faultin_page
->> >>                      handle_mm_fault
->> >>                         count_memcg_event_mm
->> >>                         __handle_mm_fault
->> >>                           handle_pte_fault
->> >>                              do_anonymous_page
->> >>                                 mem_cgroup_try_charge
->
-> Ah yes, indeed.
->
->> mm_init_memcg is at the same point as mm_init_owner.  So my change did
->> not introduce any logic changes on when the memory control group became
->> valid.
->
-> Not sure, but perhaps I am all confused....
+The value range of volume is from 0x0001 to 0xffff. 0x0000 works as
+mute. Initial value is 0x4000 (+0dB).
 
-So.  In exec actions that are initiated while a process is calling exec
-can either logcially happen either before or after the exec.  That is
-the way these races are always resolved.  I don't see any reason
-for the memory control group to be any different.
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+---
+ sound/soc/uniphier/aio-core.c |  58 ++++++++++++++
+ sound/soc/uniphier/aio-cpu.c  | 140 ++++++++++++++++++++++++++++++++++
+ sound/soc/uniphier/aio-reg.h  |  33 ++++++--
+ sound/soc/uniphier/aio.h      |   7 ++
+ 4 files changed, 233 insertions(+), 5 deletions(-)
 
-Which means it is perfectly valid for a migration that technically
-happens in the middle of copy_strings to not show up until some time
-later in exec.
-
-This works because there are no user visible effects until exec
-completes.  If there are user visible effects they are bugs.
-
-That is all it takes to understand why my patch fixes things.
-
-It might make more sense to simply fail migration if task->in_execve.
-While perhaps the best solution that might introduce a user visible
-effect that we don't care about right now.
-
-> before your patch get_mem_cgroup_from_mm() looks at mm->owner == current
-> (in this case) and mem_cgroup_from_task() should return the correct memcg
-> even if execing task migrates after bprm_mm_init(). At least in the common
-> case when the old mm is not shared.
->
-> After your patch the memory allocations in copy_strings() won't be accounted
-> correctly, bprm->mm->memcg is wrong if this task migrates. And iiuc your recent
-> "[PATCH 2/2] memcg: Close the race between migration and installing bprm->mm as mm"
-> doesn't fix the problem.
->
-> No?
-
-The patch does solve the issue.  There should be nothing a userspace
-process can observe that should tell it where in the middle of exec
-such a migration happend so placing the migration at what from the
-kernel's perspective might be technically later should not be a problem.
-
-If it is a problem the issue is that there is a way to observe the
-difference.
-
-> Perhaps we can change get_mem_cgroup_from_mm() to use
-> mem_cgroup_from_css(current, memory_cgrp_id) if mm->memcg == NULL?
-
-Please God no.  Having any unnecessary special case is just going to
-confuse people and cause bugs.
-
-Plus as I have pointed out above that is not an issue.
-
-Eric
+diff --git a/sound/soc/uniphier/aio-core.c b/sound/soc/uniphier/aio-core.c
+index e37b80921abb..638cb3fc5f7b 100644
+--- a/sound/soc/uniphier/aio-core.c
++++ b/sound/soc/uniphier/aio-core.c
+@@ -659,6 +659,64 @@ void aio_port_set_enable(struct uniphier_aio_sub *sub, int enable)
+ 	}
+ }
+ 
++/**
++ * aio_port_get_volume - get volume of AIO port block
++ * @sub: the AIO substream pointer
++ *
++ * Return: current volume, range is 0x0000 - 0xffff
++ */
++int aio_port_get_volume(struct uniphier_aio_sub *sub)
++{
++	struct regmap *r = sub->aio->chip->regmap;
++	u32 v;
++
++	regmap_read(r, OPORTMXTYVOLGAINSTATUS(sub->swm->oport.map, 0), &v);
++
++	return FIELD_GET(OPORTMXTYVOLGAINSTATUS_CUR_MASK, v);
++}
++
++/**
++ * aio_port_set_volume - set volume of AIO port block
++ * @sub: the AIO substream pointer
++ * @vol: target volume, range is 0x0000 - 0xffff.
++ *
++ * Change digital volume and perfome fade-out/fade-in effect for specified
++ * output slot of port. Gained PCM value can calculate as the following:
++ *   Gained = Original * vol / 0x4000
++ */
++void aio_port_set_volume(struct uniphier_aio_sub *sub, int vol)
++{
++	struct regmap *r = sub->aio->chip->regmap;
++	int oport_map = sub->swm->oport.map;
++	int cur, diff, slope = 0, fs;
++
++	if (sub->swm->dir == PORT_DIR_INPUT)
++		return;
++
++	cur = aio_port_get_volume(sub);
++	diff = abs(vol - cur);
++	fs = params_rate(&sub->params);
++	if (fs)
++		slope = diff / AUD_VOL_FADE_TIME * 1000 / fs;
++	slope = max(1, slope);
++
++	regmap_update_bits(r, OPORTMXTYVOLPARA1(oport_map, 0),
++			   OPORTMXTYVOLPARA1_SLOPEU_MASK, slope << 16);
++	regmap_update_bits(r, OPORTMXTYVOLPARA2(oport_map, 0),
++			   OPORTMXTYVOLPARA2_TARGET_MASK, vol);
++
++	if (cur < vol)
++		regmap_update_bits(r, OPORTMXTYVOLPARA2(oport_map, 0),
++				   OPORTMXTYVOLPARA2_FADE_MASK,
++				   OPORTMXTYVOLPARA2_FADE_FADEIN);
++	else
++		regmap_update_bits(r, OPORTMXTYVOLPARA2(oport_map, 0),
++				   OPORTMXTYVOLPARA2_FADE_MASK,
++				   OPORTMXTYVOLPARA2_FADE_FADEOUT);
++
++	regmap_write(r, AOUTFADECTR0, BIT(oport_map));
++}
++
+ /**
+  * aio_if_set_param - set parameters of AIO DMA I/F block
+  * @sub: the AIO substream pointer
+diff --git a/sound/soc/uniphier/aio-cpu.c b/sound/soc/uniphier/aio-cpu.c
+index 00b6441bf195..80daec17be25 100644
+--- a/sound/soc/uniphier/aio-cpu.c
++++ b/sound/soc/uniphier/aio-cpu.c
+@@ -32,6 +32,35 @@ static bool is_valid_pll(struct uniphier_aio_chip *chip, int pll_id)
+ 	return chip->plls[pll_id].enable;
+ }
+ 
++/**
++ * find_volume - find volume supported HW port by HW port number
++ * @chip: the AIO chip pointer
++ * @oport_hw: HW port number, one of AUD_HW_XXXX
++ *
++ * Find AIO device from device list by HW port number. Volume feature is
++ * available only in Output and PCM ports, this limitation comes from HW
++ * specifications.
++ *
++ * Return: The pointer of AIO substream if successful, otherwise NULL on error.
++ */
++static struct uniphier_aio_sub *find_volume(struct uniphier_aio_chip *chip,
++					    int oport_hw)
++{
++	int i;
++
++	for (i = 0; i < chip->num_aios; i++) {
++		struct uniphier_aio_sub *sub = &chip->aios[i].sub[0];
++
++		if (!sub->swm)
++			continue;
++
++		if (sub->swm->oport.hw == oport_hw)
++			return sub;
++	}
++
++	return NULL;
++}
++
+ static bool match_spec(const struct uniphier_aio_spec *spec,
+ 		       const char *name, int dir)
+ {
+@@ -287,6 +316,7 @@ static int uniphier_aio_hw_params(struct snd_pcm_substream *substream,
+ 	sub->setting = 1;
+ 
+ 	aio_port_reset(sub);
++	aio_port_set_volume(sub, sub->vol);
+ 	aio_src_reset(sub);
+ 
+ 	return 0;
+@@ -373,6 +403,8 @@ int uniphier_aio_dai_probe(struct snd_soc_dai *dai)
+ 
+ 		sub->swm = &spec->swm;
+ 		sub->spec = spec;
++
++		sub->vol = AUD_VOL_INIT;
+ 	}
+ 
+ 	aio_iecout_set_enable(aio->chip, true);
+@@ -449,8 +481,116 @@ int uniphier_aio_dai_resume(struct snd_soc_dai *dai)
+ }
+ EXPORT_SYMBOL_GPL(uniphier_aio_dai_resume);
+ 
++static int uniphier_aio_vol_info(struct snd_kcontrol *kcontrol,
++				 struct snd_ctl_elem_info *uinfo)
++{
++	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
++	uinfo->count = 1;
++	uinfo->value.integer.min = 0;
++	uinfo->value.integer.max = AUD_VOL_MAX;
++
++	return 0;
++}
++
++static int uniphier_aio_vol_get(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_component *comp = snd_soc_kcontrol_component(kcontrol);
++	struct uniphier_aio_chip *chip = snd_soc_component_get_drvdata(comp);
++	struct uniphier_aio_sub *sub;
++	int oport_hw = kcontrol->private_value;
++
++	sub = find_volume(chip, oport_hw);
++	if (!sub)
++		return 0;
++
++	ucontrol->value.integer.value[0] = sub->vol;
++
++	return 0;
++}
++
++static int uniphier_aio_vol_put(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_soc_component *comp = snd_soc_kcontrol_component(kcontrol);
++	struct uniphier_aio_chip *chip = snd_soc_component_get_drvdata(comp);
++	struct uniphier_aio_sub *sub;
++	int oport_hw = kcontrol->private_value;
++
++	sub = find_volume(chip, oport_hw);
++	if (!sub)
++		return 0;
++
++	if (sub->vol == ucontrol->value.integer.value[0])
++		return 0;
++	sub->vol = ucontrol->value.integer.value[0];
++
++	aio_port_set_volume(sub, sub->vol);
++
++	return 0;
++}
++
++static const struct snd_kcontrol_new uniphier_aio_controls[] = {
++	{
++		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
++		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
++		.name = "HPCMOUT1 Volume",
++		.info = uniphier_aio_vol_info,
++		.get = uniphier_aio_vol_get,
++		.put = uniphier_aio_vol_put,
++		.private_value = AUD_HW_HPCMOUT1,
++	},
++	{
++		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
++		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
++		.name = "PCMOUT1 Volume",
++		.info = uniphier_aio_vol_info,
++		.get = uniphier_aio_vol_get,
++		.put = uniphier_aio_vol_put,
++		.private_value = AUD_HW_PCMOUT1,
++	},
++	{
++		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
++		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
++		.name = "PCMOUT2 Volume",
++		.info = uniphier_aio_vol_info,
++		.get = uniphier_aio_vol_get,
++		.put = uniphier_aio_vol_put,
++		.private_value = AUD_HW_PCMOUT2,
++	},
++	{
++		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
++		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
++		.name = "PCMOUT3 Volume",
++		.info = uniphier_aio_vol_info,
++		.get = uniphier_aio_vol_get,
++		.put = uniphier_aio_vol_put,
++		.private_value = AUD_HW_PCMOUT3,
++	},
++	{
++		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
++		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
++		.name = "HIECOUT1 Volume",
++		.info = uniphier_aio_vol_info,
++		.get = uniphier_aio_vol_get,
++		.put = uniphier_aio_vol_put,
++		.private_value = AUD_HW_HIECOUT1,
++	},
++	{
++		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
++		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
++		.name = "IECOUT1 Volume",
++		.info = uniphier_aio_vol_info,
++		.get = uniphier_aio_vol_get,
++		.put = uniphier_aio_vol_put,
++		.private_value = AUD_HW_IECOUT1,
++	},
++};
++
+ static const struct snd_soc_component_driver uniphier_aio_component = {
+ 	.name = "uniphier-aio",
++	.controls = uniphier_aio_controls,
++	.num_controls = ARRAY_SIZE(uniphier_aio_controls),
+ };
+ 
+ int uniphier_aio_probe(struct platform_device *pdev)
+diff --git a/sound/soc/uniphier/aio-reg.h b/sound/soc/uniphier/aio-reg.h
+index 511ea3c01847..45fdc6ae358a 100644
+--- a/sound/soc/uniphier/aio-reg.h
++++ b/sound/soc/uniphier/aio-reg.h
+@@ -169,6 +169,7 @@
+ #define PBINMXPAUSECTR1(n)               (0x20208 + 0x40 * (n))
+ 
+ /* AOUT */
++#define AOUTFADECTR0                     0x40020
+ #define AOUTENCTR0                       0x40040
+ #define AOUTENCTR1                       0x40044
+ #define AOUTENCTR2                       0x40048
+@@ -179,6 +180,9 @@
+ #define AOUTSRCRSTCTR1                   0x400c4
+ #define AOUTSRCRSTCTR2                   0x400c8
+ 
++/* AOUT PCMOUT has 5 slots, slot0-3: D0-3, slot4: DMIX */
++#define OPORT_SLOT_MAX                     5
++
+ /* AOUT(PCMOUTN) */
+ #define OPORTMXCTR1(n)                   (0x42000 + 0x400 * (n))
+ #define   OPORTMXCTR1_I2SLRSEL_MASK        (0x11 << 10)
+@@ -359,11 +363,30 @@
+ #define   OPORTMXMASK_XCKMSK_ON            (0x0 << 0)
+ #define   OPORTMXMASK_XCKMSK_OFF           (0x7 << 0)
+ #define OPORTMXDEBUG(n)                  (0x420fc + 0x400 * (n))
+-#define OPORTMXT0RSTCTR(n)               (0x4211c + 0x400 * (n))
+-#define OPORTMXT1RSTCTR(n)               (0x4213c + 0x400 * (n))
+-#define OPORTMXT2RSTCTR(n)               (0x4215c + 0x400 * (n))
+-#define OPORTMXT3RSTCTR(n)               (0x4217c + 0x400 * (n))
+-#define OPORTMXT4RSTCTR(n)               (0x4219c + 0x400 * (n))
++#define OPORTMXTYVOLPARA1(n, m)          (0x42100 + 0x400 * (n) + 0x20 * (m))
++#define   OPORTMXTYVOLPARA1_SLOPEU_MASK    GENMASK(31, 16)
++#define OPORTMXTYVOLPARA2(n, m)          (0x42104 + 0x400 * (n) + 0x20 * (m))
++#define   OPORTMXTYVOLPARA2_FADE_MASK      GENMASK(17, 16)
++#define   OPORTMXTYVOLPARA2_FADE_NOOP      (0x0 << 16)
++#define   OPORTMXTYVOLPARA2_FADE_FADEOUT   (0x1 << 16)
++#define   OPORTMXTYVOLPARA2_FADE_FADEIN    (0x2 << 16)
++#define   OPORTMXTYVOLPARA2_TARGET_MASK    GENMASK(15, 0)
++#define OPORTMXTYVOLGAINSTATUS(n, m)     (0x42108 + 0x400 * (n) + 0x20 * (m))
++#define   OPORTMXTYVOLGAINSTATUS_CUR_MASK  GENMASK(15, 0)
++#define OPORTMXTYSLOTCTR(n, m)           (0x42114 + 0x400 * (n) + 0x20 * (m))
++#define   OPORTMXTYSLOTCTR_SLOTSEL_MASK    GENMASK(11, 8)
++#define   OPORTMXTYSLOTCTR_SLOTSEL_SLOT0   (0x8 << 8)
++#define   OPORTMXTYSLOTCTR_SLOTSEL_SLOT1   (0x9 << 8)
++#define   OPORTMXTYSLOTCTR_SLOTSEL_SLOT2   (0xa << 8)
++#define   OPORTMXTYSLOTCTR_SLOTSEL_SLOT3   (0xb << 8)
++#define   OPORTMXTYSLOTCTR_SLOTSEL_SLOT4   (0xc << 8)
++#define   OPORTMXT0SLOTCTR_MUTEOFF_MASK    BIT(1)
++#define   OPORTMXT0SLOTCTR_MUTEOFF_MUTE    (0x0 << 1)
++#define   OPORTMXT0SLOTCTR_MUTEOFF_UNMUTE  (0x1 << 1)
++#define OPORTMXTYRSTCTR(n, m)            (0x4211c + 0x400 * (n) + 0x20 * (m))
++#define   OPORTMXT0RSTCTR_RST_MASK         BIT(1)
++#define   OPORTMXT0RSTCTR_RST_OFF          (0x0 << 1)
++#define   OPORTMXT0RSTCTR_RST_ON           (0x1 << 1)
+ 
+ #define SBF_(frame, shift)    (((frame) * 2 - 1) << shift)
+ 
+diff --git a/sound/soc/uniphier/aio.h b/sound/soc/uniphier/aio.h
+index 52670126084f..aa89c2f6fa24 100644
+--- a/sound/soc/uniphier/aio.h
++++ b/sound/soc/uniphier/aio.h
+@@ -130,6 +130,10 @@ enum IEC61937_PC {
+ #define AUD_PLLDIV_1_1    2
+ #define AUD_PLLDIV_2_3    3
+ 
++#define AUD_VOL_INIT         0x4000 /* +0dB */
++#define AUD_VOL_MAX          0xffff /* +6dB */
++#define AUD_VOL_FADE_TIME    20 /* 20ms */
++
+ #define AUD_RING_SIZE            (128 * 1024)
+ 
+ #define AUD_MIN_FRAGMENT         4
+@@ -231,6 +235,7 @@ struct uniphier_aio_sub {
+ 	/* For PCM audio */
+ 	struct snd_pcm_substream *substream;
+ 	struct snd_pcm_hw_params params;
++	int vol;
+ 
+ 	/* For compress audio */
+ 	struct snd_compr_stream *cstream;
+@@ -323,6 +328,8 @@ int aio_port_set_clk(struct uniphier_aio_sub *sub);
+ int aio_port_set_param(struct uniphier_aio_sub *sub, int pass_through,
+ 		       const struct snd_pcm_hw_params *params);
+ void aio_port_set_enable(struct uniphier_aio_sub *sub, int enable);
++int aio_port_get_volume(struct uniphier_aio_sub *sub);
++void aio_port_set_volume(struct uniphier_aio_sub *sub, int vol);
+ int aio_if_set_param(struct uniphier_aio_sub *sub, int pass_through);
+ int aio_oport_set_stream_type(struct uniphier_aio_sub *sub,
+ 			      enum IEC61937_PC pc);
+-- 
+2.17.0
