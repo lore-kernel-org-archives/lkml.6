@@ -1,127 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754223AbeEHNW7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 09:22:59 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:56207 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751400AbeEHNW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 09:22:58 -0400
-Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
- (issued 65284 msec ago)
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: okaya@codeaurora.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Wunner <lukas@wunner.de>
-References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
- <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
- <43b8ab4a-f8ee-dc96-40ec-e6fdfedd8309@molgen.mpg.de>
- <20180504024527.GE15790@bhelgaas-glaptop.roam.corp.google.com>
- <aa72d3ba089c76449600c22b58a2cafe@codeaurora.org>
- <20180504133327.GF15790@bhelgaas-glaptop.roam.corp.google.com>
- <20180507213344.GA133147@bhelgaas-glaptop.roam.corp.google.com>
- <903e7c20-fdd7-9cbf-debb-a90e70240c7c@molgen.mpg.de>
- <20180508123432.GJ161390@bhelgaas-glaptop.roam.corp.google.com>
-From: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
-Message-ID: <302b3ac9-b34f-c061-8c59-6b3b0c56b1f7@molgen.mpg.de>
-Date: Tue, 8 May 2018 15:22:54 +0200
+        id S1754754AbeEHNZM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 09:25:12 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:34890 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751874AbeEHNZK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 09:25:10 -0400
+Subject: Re: [PATCH] PCI/AER: add pcie TLP header information in the
+ tracepoint
+To: Steven Rostedt <rostedt@goodmis.org>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Alexandru Gagniuc <mr.nuke.me@gmail.com>
+References: <20180402154708.5032-1-thomas.tai@oracle.com>
+ <20180507222136.GD161390@bhelgaas-glaptop.roam.corp.google.com>
+ <20180508090756.57f38d17@gandalf.local.home>
+From: Thomas Tai <thomas.tai@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <a5578a08-2434-af48-7910-6f858e5477d6@oracle.com>
+Date: Tue, 8 May 2018 09:25:01 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180508123432.GJ161390@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <20180508090756.57f38d17@gandalf.local.home>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8886 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805080129
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Bjorn,
-
-
-Am 08.05.2018 um 14:34 schrieb Bjorn Helgaas:
-> On Tue, May 08, 2018 at 08:59:34AM +0200, Paul Menzel wrote:
-
->> Am 07.05.2018 um 23:33 schrieb Bjorn Helgaas:
->>> On Fri, May 04, 2018 at 08:33:27AM -0500, Bjorn Helgaas wrote:
->>>> commit b0d6f2230e12c85ae3b65a854a53c67c7c1f6406
->>>> Author: Bjorn Helgaas <bhelgaas@google.com>
->>>> Date:   Thu May 3 18:39:38 2018 -0500
->>>>
->>>>       PCI: pciehp: Add quirk for Intel Command Completed erratum
->>>>       The Intel CF118 erratum means the controller does not set the Command
->>>>       Completed bit unless writes to the Slot Command register change "Control"
->>>>       bits.  Command Completed is never set for writes that only change software
->>>>       notification "Enable" bits.  This results in timeouts like this:
->>>>         pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038 (issued 65284 msec ago)
->>>>       When this erratum is present, avoid these timeouts by marking commands
->>>>       "completed" immediately unless they change the "Control" bits.
->>>>       Here's the text of the erratum from the Intel document:
->>>>         CF118        PCIe Slot Status Register Command Completed bit not always
->>>>                      updated on any configuration write to the Slot Control
->>>>                      Register
->>>>         Problem:     For PCIe root ports (devices 0 - 10) supporting hot-plug,
->>>>                      the Slot Status Register (offset AAh) Command Completed
->>>>                      (bit[4]) status is updated under the following condition:
->>>>                      IOH will set Command Completed bit after delivering the new
->>>>                      commands written in the Slot Controller register (offset
->>>>                      A8h) to VPP. The IOH detects new commands written in Slot
->>>>                      Control register by checking the change of value for Power
->>>>                      Controller Control (bit[10]), Power Indicator Control
->>>>                      (bits[9:8]), Attention Indicator Control (bits[7:6]), or
->>>>                      Electromechanical Interlock Control (bit[11]) fields. Any
->>>>                      other configuration writes to the Slot Control register
->>>>                      without changing the values of these fields will not cause
->>>>                      Command Completed bit to be set.
->>>>                      The PCIe Base Specification Revision 2.0 or later describes
->>>>                      the “Slot Control Register” in section 7.8.10, as follows
->>>>                      (Reference section 7.8.10, Slot Control Register, Offset
->>>>                      18h). In hot-plug capable Downstream Ports, a write to the
->>>>                      Slot Control register must cause a hot-plug command to be
->>>>                      generated (see Section 6.7.3.2 for details on hot-plug
->>>>                      commands). A write to the Slot Control register in a
->>>>                      Downstream Port that is not hotplug capable must not cause a
->>>>                      hot-plug command to be executed.
->>>>                      The PCIe Spec intended that every write to the Slot Control
->>>>                      Register is a command and expected a command complete status
->>>>                      to abstract the VPP implementation specific nuances from the
->>>>                      OS software. IOH PCIe Slot Control Register implementation
->>>>                      is not fully conforming to the PCIe Specification in this
->>>>                      respect.
->>>>         Implication: Software checking on the Command Completed status after
->>>>                      writing to the Slot Control register may time out.
->>>>         Workaround:  Software can read the Slot Control register and compare the
->>>>                      existing and new values to determine if it should check the
->>>>                      Command Completed status after writing to the Slot Control
->>>>                      register.
->>>>       Link: http://www.intel.com/content/www/us/en/processors/xeon/xeon-e7-v2-spec-update.html
->>>>       Link: https://lkml.kernel.org/r/8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de
->>>>       Reported-by: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
->>>>       Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
->>>
->>> I applied this with Paul's tested-by on pci/hotplug for v4.18.
->>
->> Thank you very much. Will this also be picked up by the stable Linux kernel
->> series?
+[ ... ]
+>>> --- a/include/ras/ras_event.h
+>>> +++ b/include/ras/ras_event.h
+>>> @@ -298,30 +298,42 @@ TRACE_EVENT(non_standard_event,
+>>>   TRACE_EVENT(aer_event,
+>>>   	TP_PROTO(const char *dev_name,
+>>>   		 const u32 status,
+>>> -		 const u8 severity),
+>>> +		 const u8 severity,
+>>> +		 const u32 tlp_header_valid,
+>>> +		 struct aer_header_log_regs *tlp),
+>>>   
+>>> -	TP_ARGS(dev_name, status, severity),
+>>> +	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
+>>>   
+>>>   	TP_STRUCT__entry(
+>>>   		__string(	dev_name,	dev_name	)
+>>>   		__field(	u32,		status		)
+>>>   		__field(	u8,		severity	)
+>>> +		__field(	u32, 		tlp_header_valid)
 > 
-> I did not tag it for stable because I didn't think it was a serious enough
-> problem, based on this from Documentation/process/stable-kernel-rules.rst:
+> I'm guessing tlp_header_valid is just a boolean. It's after severity
+> which is just one byte long. Why not make this one byte as well,
+> otherwise you are wasting 3 bytes.
+
+Thanks Steven. Yes boolean is fine.
+
 > 
->   - It must fix a problem that causes a build error (but not for things
->     marked CONFIG_BROKEN), an oops, a hang, data corruption, a real
->     security issue, or some "oh, that's not good" issue.  In short, something
->     critical.
 > 
-> I know I'm on the conservative end of the stable-tagging spectrum, so maybe
-> I could be convinced to add a stable tag.
+>>> +		__array(	u32, 		buf, 4		)
+>>>   	),
+>>>   
+>>>   	TP_fast_assign(
+>>>   		__assign_str(dev_name, dev_name);
+>>>   		__entry->status		= status;
+>>>   		__entry->severity	= severity;
+>>> +		__entry->tlp_header_valid = tlp_header_valid;
 > 
-> My impression was that this bug caused annoying messages and annoying
-> delays of a couple seconds during shutdown and resume.  Is it more serious
-> than that?
+>>> +		__entry->buf[0] = tlp->dw0;
+>>> +		__entry->buf[1] = tlp->dw1;
+>>> +		__entry->buf[2] = tlp->dw2;
+>>> +		__entry->buf[3] = tlp->dw3;
+> 
+> Should this assignment be dependent on whether or not tlp_header_valid
+> is true? Could tlp be pointing to some random memory if it isn't? What
+> about:
 
-No, not more then that. But “oh, that’s not good” fits in my opinion. My 
-impression was, that’s how most stable patches get in.
+Good catch! will do so.
 
+> 
+> 	if ((__entry->tlp_header_valid = tlp_header_valid)) {
+> 		__entry->buf[0] = tlp->dw0;
+> 		__entry->buf[1] = tlp->dw1;
+> 		__entry->buf[2] = tlp->dw2;
+> 		__entry->buf[3] = tlp->dw3;
+> 	}
+> 
+> 
+>>>   	),
+>>>   
+>>> -	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
+>>> +	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
+>>>   		__get_str(dev_name),
+>>>   		__entry->severity == AER_CORRECTABLE ? "Corrected" :
+>>>   			__entry->severity == AER_FATAL ?
+>>>   			"Fatal" : "Uncorrected, non-fatal",
+>>>   		__entry->severity == AER_CORRECTABLE ?
+>>>   		__print_flags(__entry->status, "|", aer_correctable_errors) :
+>>> -		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
+>>> +		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
+>>> +		__entry->tlp_header_valid ?
+>>> +			__print_array(__entry->buf, 4, sizeof(unsigned int)) :
+> 
+> Note, "sizeof" will be shown in the format file that perf and trace-cmd
+> read to parse this event. They currently do not know how to parse that
+> (although I could add that in the future).
+> 
+> Since sizeof(unsigned int) is always 4 in Linux, just use 4.
 
-Kind regards,
+Yes, I will make the aboves changes and send out V2 patch. Thank you for 
+your time and comments.
 
-Paul
+Thomas
+
+> 
+> 			__print_array(__entry->buf, 4, 4)
+> 
+> -- Steve
+> 
+> 
+>>> +			"Not available")
+>>>   );
+>>>   
+>>>   /*
+>>> -- 
+>>> 2.14.1
+>>>    
+> 
