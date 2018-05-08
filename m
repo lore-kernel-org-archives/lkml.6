@@ -1,106 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932929AbeEHIc5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 04:32:57 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:38867 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932784AbeEHIcw (ORCPT
+        id S933196AbeEHIgA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 04:36:00 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44584 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932661AbeEHIf5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 04:32:52 -0400
-X-Google-Smtp-Source: AB8JxZpOpfYFVe+7hnnYPCn8aZ7jJMwS6II/JRDoVXDiSnwssVPPXzMy8ygX22UZYa8vuhnpTxsSRFsiY0lhUJswze0=
+        Tue, 8 May 2018 04:35:57 -0400
+X-Google-Smtp-Source: AB8JxZpALLFRWeHvpH3xQSonAB1EV+JgBb8gIM+4U5KSCq/nKUxklYLIR9sOj+C148fDeID6P8nQ8A==
+Subject: Re: [PATCH RFC] drivers: nvmem: Export nvmem_add_cells()
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linux-kernel@vger.kernel.org, andrew.smirnov@gmail.com
+References: <1525547507-1428-1-git-send-email-andrew@lunn.ch>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <e36b58db-d8e3-cd89-e7d3-adca01991732@linaro.org>
+Date: Tue, 8 May 2018 09:35:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180508063006.aicgwalirnkjmeuf@ziepe.ca>
-References: <1525356274-736-1-git-send-email-lidongchen@tencent.com>
- <20180503153310.GA9738@ziepe.ca> <CAOGPPbd8ysq3XDpa4TYQpWVMmpVo4NPhPw5NWyQS1OSc6rXjQQ@mail.gmail.com>
- <CAOGPPbenmtuFwCuGMFJDZrqK+D5atkhK+srm+2yX=+CAwgjPHQ@mail.gmail.com>
- <20180504182302.zunfryk2czge5adx@ziepe.ca> <CAOGPPbcF1m-ATdY-OCeXJDgsqXvn2-oD_OA8d3nyP_6YYd6ZMA@mail.gmail.com>
- <20180508063006.aicgwalirnkjmeuf@ziepe.ca>
-From: 858585 jemmy <jemmy858585@gmail.com>
-Date: Tue, 8 May 2018 16:32:51 +0800
-Message-ID: <CAOGPPbd3BgLqyjXPwcpoYOH2N_kN2j+SkeOhSie4FriB9TRosg@mail.gmail.com>
-Subject: Re: [PATCH] IB/umem: use tgid instead of pid in ib_umem structure
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: dledford@redhat.com, akpm@linux-foundation.org, qing.huang@oracle.com,
-        Leon Romanovsky <leon@kernel.org>, artemyko@mellanox.com,
-        dan.j.williams@intel.com, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, adido@mellanox.com,
-        Gal Shachaf <galsha@mellanox.com>,
-        Aviad Yehezkel <aviadye@mellanox.com>,
-        Lidong Chen <lidongchen@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1525547507-1428-1-git-send-email-andrew@lunn.ch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 8, 2018 at 2:30 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> On Mon, May 07, 2018 at 09:38:53AM +0800, 858585 jemmy wrote:
->> On Sat, May 5, 2018 at 2:23 AM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
->> > On Fri, May 04, 2018 at 04:51:15PM +0800, 858585 jemmy wrote:
->> >> On Fri, May 4, 2018 at 11:14 AM, 858585 jemmy <jemmy858585@gmail.com> wrote:
->> >> > On Thu, May 3, 2018 at 11:33 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
->> >> >> On Thu, May 03, 2018 at 10:04:34PM +0800, Lidong Chen wrote:
->> >> >>> The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
->> >> >>> If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
->> >> >>> exited, get_pid_task will return NULL, ib_umem_release does not decrease
->> >> >>> mm->pinned_vm. This patch fixes it by use tgid.
->> >> >>>
->> >> >>> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
->> >> >>>  drivers/infiniband/core/umem.c | 12 ++++++------
->> >> >>>  include/rdma/ib_umem.h         |  2 +-
->> >> >>>  2 files changed, 7 insertions(+), 7 deletions(-)
->> >> >>
->> >> >> Why are we even using a struct pid for this? Does anyone know?
->> >> >
->> >> > commit 87773dd56d5405ac28119fcfadacefd35877c18f add pid in ib_umem structure.
->> >> >
->> >> > and the comment has such information:
->> >> > Later a different process with a different mm_struct than the one that
->> >> > allocated the ib_umem struct
->> >> > ends up releasing it which results in decrementing the new processes
->> >> > mm->pinned_vm count past
->> >> > zero and wrapping.
->> >>
->> >> I think a different process should not have the permission to release ib_umem.
->> >> so maybe the reason is not a different process?
->> >> can ib_umem_release be invoked in interrupt context?
->> >
->> > We plan to restore fork support and add some way to share MRs between
->> > processes, so we must consider having a different process release the
->> > umem than acquired it.
->>
->> If restore fork support, what is the expected behavior?
->> If parent process pinned_vm is x, what is the child process pinned_vm
->> value after fork? It reset to zero now.
->> If the parent process call ibv_dereg_mr after fork, should the child
->> process decrease pinned_vm?
->> If the child process call  ibv_dereg_mr after fork, should the parent
->> process decrease pinned_vm?
->
-> If I recall the purpose of accessing the MM during de-register is to
-> undo the pinned pages change (pinned_vm) that register performed.
->
-> So, the semantic is simple, during deregister we must access excatly
-> the same MM that was used during register and undo the change to
-> pinned_vm.
->
-> The approach should be to find the most reliably way to hold a
-> reference to the MM that was used during register.
->
-> Apparently we can't just hold a ref on the mm (according to mm_get's
-> comment at least)
->
-> tgid is clearly a better indirect reference to the mm than pid (pid is
-> so obviously wrong)
->
-> But I am wondering why not just hold struct task here instead of tgid?
-> Isn't task->mm going to be more reliably than tgid->task->mm ??
-
-I think get_task_struct(current->group_leader) is also work.
-But I find ib_ucontext structure already have a tgid field, so I think this not
-necessary to ib_umem have tgid again. we can use ib_ucontext->tgid.
-
-I will send a v2 patch.
 
 
->
-> Jason
+On 05/05/18 20:11, Andrew Lunn wrote:
+> Not all platforms use device tree. It is useful to be able to add
+> cells to a NVMEM device from code. Export nvmem_add_cells() so making
+> this possible.
+> 
+> This required changing the parameters a bit, so that just the cells
+> and the number of cells are passed, not the whole nvmem config
+> structure.
+> 
+> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+
+> ---
+> 
+> This is an RFC.
+> 
+> I have an intel platform with an AT24 EEPROM. I want to make use of
+> nvmem, but don't have device tree to be able to specify cells. I have
+> an x86 platform driver which does:
+> 
+> struct nvmem_cell_info nameplate_cells[] = {
+>         {
+>                 .name = "checksum",
+>                 .offset = 2,
+>                 .bytes = 1,
+>         },
+>         {
+>                 .name = "part_number",
+>                 .offset = 11,
+>                 .bytes = 11,
+>         },
+> };
+> 
+>         err = nvmem_add_cells(nvmem, nameplate_cells,
+>                               ARRAY_SIZE(nameplate_cells));
+>         if (err) {
+>                 dev_err(dev, "Error adding cells to nameplate nvmem device\n");
+>                 return;
+>         }
+> 
+>         cell = nvmem_cell_get(NULL, "checksum");
+> 
+> 
+> drivers/nvmem/core.c           | 15 ++++++++-------
+>   include/linux/nvmem-provider.h | 11 +++++++++++
+>   2 files changed, 19 insertions(+), 7 deletions(-)
+> 
+
+
+Thanks Andrew for the patch,
+
+Overall the patch looks good to me,
+I would like to see some kernel doc for this new exported function
+
+Thanks,
+srini
