@@ -1,69 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754933AbeEHJq7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 05:46:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60994 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754763AbeEHJq5 (ORCPT
+        id S932323AbeEHJwa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 05:52:30 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:54553 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932067AbeEHJw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 05:46:57 -0400
-Date: Tue, 08 May 2018 15:16:43 +0530
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH v3 6/9] trace_uprobe: Support SDT markers having reference
- count (semaphore)
-To: Masami Hiramatsu <mhiramat@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: acme@kernel.org, akpm@linux-foundation.org,
-        alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
-        ananth@linux.vnet.ibm.com, corbet@lwn.net, dan.j.williams@intel.com,
-        fengguang.wu@intel.com, jglisse@redhat.com, jolsa@redhat.com,
-        kan.liang@intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        oleg@redhat.com, pc@us.ibm.com, peterz@infradead.org,
-        rostedt@goodmis.org, srikar@linux.vnet.ibm.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com
-References: <20180417043244.7501-1-ravi.bangoria@linux.vnet.ibm.com>
-        <20180417043244.7501-7-ravi.bangoria@linux.vnet.ibm.com>
-        <20180504134816.8633a157dd036489d9b0f1db@kernel.org>
-        <206e4a16-ae21-7da3-f752-853dc2f51947@linux.ibm.com>
-        <f3d066d2-a85a-bd21-d4f9-fc27e59135df@linux.ibm.com>
-        <20180508005651.45553d3cf72521481d16b801@kernel.org>
-In-Reply-To: <20180508005651.45553d3cf72521481d16b801@kernel.org>
-User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
+        Tue, 8 May 2018 05:52:29 -0400
+X-Google-Smtp-Source: AB8JxZrwQu0O8gHAwVJDs6p+r0ZljaOgP7tLrji32J6Pq05/HOQBK/OHJ4afLk+RLmCqwfaD0JIpPg==
+Subject: Re: [RFC PATCH 2/3] arcnet: com20020: Fixup missing SLOWARB bit
+To: "Tobin C. Harding" <tobin@apporbit.com>
+Cc: m.grzeschik@pengutronix.de, Andrea Greco <a.greco@4sigma.it>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180505213754.8400-1-andrea.greco.gapmilano@gmail.com>
+ <20180507025556.GG4197@eros>
+From: Andrea Greco <andrea.greco.gapmilano@gmail.com>
+Message-ID: <f17492c1-8565-2a69-22a8-c3abde0c7283@gmail.com>
+Date: Tue, 8 May 2018 11:52:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20180507025556.GG4197@eros>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 18050809-0008-0000-0000-000004F449E8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050809-0009-0000-0000-00001E888A7A
-Message-Id: <1525772725.o3tzigt8c3.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-08_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805080095
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masami Hiramatsu wrote:
-> On Mon, 7 May 2018 13:51:21 +0530
-> Ravi Bangoria <ravi.bangoria@linux.ibm.com> wrote:
+On 05/07/2018 04:55 AM, Tobin C. Harding wrote:
+> On Sat, May 05, 2018 at 11:37:54PM +0200, Andrea Greco wrote:
+>> From: Andrea Greco <a.greco@4sigma.it>
+>>
+>> If com20020 clock is major of 40Mhz SLOWARB bit is requested.
+>>
+>> Signed-off-by: Andrea Greco <a.greco@4sigma.it>
+>> ---
+>>   drivers/net/arcnet/com20020.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/net/arcnet/com20020.c b/drivers/net/arcnet/com20020.c
+>> index f09ea77dd6a8..abd32ed8ec9b 100644
+>> --- a/drivers/net/arcnet/com20020.c
+>> +++ b/drivers/net/arcnet/com20020.c
+>> @@ -102,6 +102,10 @@ int com20020_check(struct net_device *dev)
+>>   	lp->setup = lp->clockm ? 0 : (lp->clockp << 1);
+>>   	lp->setup2 = (lp->clockm << 4) | 8;
+>>   
+>> +	// If clock is major of 40Mhz, SLOWARB bit must be set
 > 
->> BTW, same issue exists for normal uprobe. If uprobe_mmap() fails,
->> there is no feedback to trace_uprobe and no warnigns in dmesg as
->> well !! There was a patch by Naveen to warn such failures in dmesg
->> but that didn't go in: https://lkml.org/lkml/2017/9/22/155
+> /* C89 style comments please :) */
 > 
-> Oops, that's a real bug. It seems the ball is in Naveen's hand.
-> Naveen, could you update it according to Oleg's comment, and resend it?
 
-Yes, I've had to put that series on the backburner. I will try and get 
-to it soon. Thanks for the reminder.
+Done
 
-- Naveen
+> 
+> Hope this helps,
+> Tobin.
+>
