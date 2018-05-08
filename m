@@ -1,114 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933026AbeEHWct (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 18:32:49 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:34881 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932133AbeEHWcs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 18:32:48 -0400
-X-Google-Smtp-Source: AB8JxZoqLbUQiTSwyk6/YKuP6KCwJ1X2waiMZ/zZxmkhxF/+a6odLA2g2uLzDsDPA/VEwaUNSigm6g==
-Date: Tue, 8 May 2018 15:32:44 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] input: gamecon: avoid using __set_bit() for
- capabilities
-Message-ID: <20180508223244.GC129015@dtor-ws>
-References: <20180331112143.18768-1-marcus.folkesson@gmail.com>
- <20180331112143.18768-3-marcus.folkesson@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180331112143.18768-3-marcus.folkesson@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S932820AbeEHWfP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 18:35:15 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:52830 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932133AbeEHWfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 18:35:14 -0400
+From: Andrew Lunn <andrew@lunn.ch>
+To: srinivas.kandagatla@linaro.org
+Cc: linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH v2] drivers: nvmem: Export nvmem_add_cells()
+Date: Wed,  9 May 2018 00:34:50 +0200
+Message-Id: <1525818890-28873-1-git-send-email-andrew@lunn.ch>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Mar 31, 2018 at 01:21:42PM +0200, Marcus Folkesson wrote:
-> input_set_capability() and input_set_abs_param() will do it for you.
-> 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+Not all platforms use device tree. It is useful to be able to add
+cells to a NVMEM device from code. Export nvmem_add_cells() so making
+this possible.
 
-Applied, thank you.
+This required changing the parameters a bit, so that just the cells
+and the number of cells are passed, not the whole nvmem config
+structure.
 
-> ---
->  drivers/input/joystick/gamecon.c | 26 ++++++++++++++------------
->  1 file changed, 14 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/input/joystick/gamecon.c b/drivers/input/joystick/gamecon.c
-> index 2ffb2e8bdc3b..e3a9ef3d5f5a 100644
-> --- a/drivers/input/joystick/gamecon.c
-> +++ b/drivers/input/joystick/gamecon.c
-> @@ -862,7 +862,7 @@ static int gc_setup_pad(struct gc *gc, int idx, int pad_type)
->  
->  	case GC_N64:
->  		for (i = 0; i < 10; i++)
-> -			__set_bit(gc_n64_btn[i], input_dev->keybit);
-> +			input_set_capability(input_dev, EV_KEY, gc_n64_btn[i]);
->  
->  		for (i = 0; i < 2; i++) {
->  			input_set_abs_params(input_dev, ABS_X + i, -127, 126, 0, 2);
-> @@ -879,26 +879,27 @@ static int gc_setup_pad(struct gc *gc, int idx, int pad_type)
->  		break;
->  
->  	case GC_SNESMOUSE:
-> -		__set_bit(BTN_LEFT, input_dev->keybit);
-> -		__set_bit(BTN_RIGHT, input_dev->keybit);
-> -		__set_bit(REL_X, input_dev->relbit);
-> -		__set_bit(REL_Y, input_dev->relbit);
-> +		input_set_capability(input_dev, EV_KEY, BTN_LEFT);
-> +		input_set_capability(input_dev, EV_KEY, BTN_RIGHT);
-> +		input_set_capability(input_dev, EV_REL, REL_X);
-> +		input_set_capability(input_dev, EV_REL, REL_Y);
->  		break;
->  
->  	case GC_SNES:
->  		for (i = 4; i < 8; i++)
-> -			__set_bit(gc_snes_btn[i], input_dev->keybit);
-> +			input_set_capability(input_dev, EV_KEY, gc_snes_btn[i]);
->  		/* fall through */
->  	case GC_NES:
->  		for (i = 0; i < 4; i++)
-> -			__set_bit(gc_snes_btn[i], input_dev->keybit);
-> +			input_set_capability(input_dev, EV_KEY, gc_snes_btn[i]);
->  		break;
->  
->  	case GC_MULTI2:
-> -		__set_bit(BTN_THUMB, input_dev->keybit);
-> +		input_set_capability(input_dev, EV_KEY, BTN_THUMB);
->  		/* fall through */
->  	case GC_MULTI:
-> -		__set_bit(BTN_TRIGGER, input_dev->keybit);
-> +		input_set_capability(input_dev, EV_KEY, BTN_TRIGGER);
-> +		/* fall through */
->  		break;
->  
->  	case GC_PSX:
-> @@ -906,15 +907,16 @@ static int gc_setup_pad(struct gc *gc, int idx, int pad_type)
->  			input_set_abs_params(input_dev,
->  					     gc_psx_abs[i], 4, 252, 0, 2);
->  		for (i = 0; i < 12; i++)
-> -			__set_bit(gc_psx_btn[i], input_dev->keybit);
-> +			input_set_capability(input_dev, EV_KEY, gc_psx_btn[i]);
-> +		break;
->  
->  		break;
->  
->  	case GC_DDR:
->  		for (i = 0; i < 4; i++)
-> -			__set_bit(gc_psx_ddr_btn[i], input_dev->keybit);
-> +			input_set_capability(input_dev, EV_KEY, gc_psx_ddr_btn[i]);
->  		for (i = 0; i < 12; i++)
-> -			__set_bit(gc_psx_btn[i], input_dev->keybit);
-> +			input_set_capability(input_dev, EV_KEY, gc_psx_btn[i]);
->  
->  		break;
->  	}
-> -- 
-> 2.16.2
-> 
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+---
+v2: Add documentation for nvmem_add_cells()
+---
+ drivers/nvmem/core.c           | 24 +++++++++++++++++-------
+ include/linux/nvmem-provider.h | 11 +++++++++++
+ 2 files changed, 28 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index b05aa8e81303..b1c95ef78544 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -353,18 +353,27 @@ static int nvmem_cell_info_to_nvmem_cell(struct nvmem_device *nvmem,
+ 	return 0;
+ }
+ 
+-static int nvmem_add_cells(struct nvmem_device *nvmem,
+-			   const struct nvmem_config *cfg)
++/**
++ * nvmem_add_cells() - Add cell information to an nvmem device
++ *
++ * @nvmem: nvmem device to add cells to.
++ * @info: nvmem cell info to add to the device
++ * @ncells: number of cells in info
++ *
++ * Return: 0 or negative error code on failure.
++ */
++int nvmem_add_cells(struct nvmem_device *nvmem,
++		    const struct nvmem_cell_info *info,
++		    int ncells)
+ {
+ 	struct nvmem_cell **cells;
+-	const struct nvmem_cell_info *info = cfg->cells;
+ 	int i, rval;
+ 
+-	cells = kcalloc(cfg->ncells, sizeof(*cells), GFP_KERNEL);
++	cells = kcalloc(ncells, sizeof(*cells), GFP_KERNEL);
+ 	if (!cells)
+ 		return -ENOMEM;
+ 
+-	for (i = 0; i < cfg->ncells; i++) {
++	for (i = 0; i < ncells; i++) {
+ 		cells[i] = kzalloc(sizeof(**cells), GFP_KERNEL);
+ 		if (!cells[i]) {
+ 			rval = -ENOMEM;
+@@ -380,7 +389,7 @@ static int nvmem_add_cells(struct nvmem_device *nvmem,
+ 		nvmem_cell_add(cells[i]);
+ 	}
+ 
+-	nvmem->ncells = cfg->ncells;
++	nvmem->ncells = ncells;
+ 	/* remove tmp array */
+ 	kfree(cells);
+ 
+@@ -393,6 +402,7 @@ static int nvmem_add_cells(struct nvmem_device *nvmem,
+ 
+ 	return rval;
+ }
++EXPORT_SYMBOL_GPL(nvmem_add_cells);
+ 
+ /*
+  * nvmem_setup_compat() - Create an additional binary entry in
+@@ -509,7 +519,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ 	}
+ 
+ 	if (config->cells)
+-		nvmem_add_cells(nvmem, config);
++		nvmem_add_cells(nvmem, config->cells, config->ncells);
+ 
+ 	return nvmem;
+ 
+diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
+index f89598bc4e1c..24def6ad09bb 100644
+--- a/include/linux/nvmem-provider.h
++++ b/include/linux/nvmem-provider.h
+@@ -77,6 +77,9 @@ struct nvmem_device *devm_nvmem_register(struct device *dev,
+ 
+ int devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem);
+ 
++int nvmem_add_cells(struct nvmem_device *nvmem,
++		    const struct nvmem_cell_info *info,
++		    int ncells);
+ #else
+ 
+ static inline struct nvmem_device *nvmem_register(const struct nvmem_config *c)
+@@ -99,6 +102,14 @@ static inline int
+ devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem)
+ {
+ 	return nvmem_unregister(nvmem);
++
++}
++
++static inline int nvmem_add_cells(struct nvmem_device *nvmem,
++				  const struct nvmem_cell_info *info,
++				  int ncells)
++{
++	return -ENOSYS;
+ }
+ 
+ #endif /* CONFIG_NVMEM */
 -- 
-Dmitry
+2.17.0
