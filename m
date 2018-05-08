@@ -1,131 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753941AbeEHCcG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 22:32:06 -0400
-Received: from mail-it0-f46.google.com ([209.85.214.46]:35651 "EHLO
-        mail-it0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753782AbeEHCcC (ORCPT
+        id S1753964AbeEHCcJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 22:32:09 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:43435 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753943AbeEHCcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 22:32:02 -0400
-X-Google-Smtp-Source: AB8JxZrtmczm3mKmee77uP3A+OxhShTEeqFyoxmIdqRbUFQBskac6Y5jDS0AbKiHY1zKEqFN0pg0tQ==
+        Mon, 7 May 2018 22:32:07 -0400
+X-Google-Smtp-Source: AB8JxZpXRKs6sEwUWjRwVUTz1UQzaeo+oMOBgxg212o0XfjutORPYz+6tp3f89LzQwuZjfxyjlzecg==
 From: Connor McAdams <conmanx360@gmail.com>
 Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
         <jeremy.lefaure@lse.epita.fr>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 00/13] ALSA: hda/ca0132: Patch Series for Recon3Di and Sound Blaster Z Support
-Date: Mon,  7 May 2018 22:31:08 -0400
-Message-Id: <1525746683-18535-1-git-send-email-conmanx360@gmail.com>
+Subject: [PATCH v4 02/13] ALSA: hda/ca0132: Add pincfg for SBZ + R3Di, add fp hp auto-detect
+Date: Mon,  7 May 2018 22:31:10 -0400
+Message-Id: <1525746683-18535-3-git-send-email-conmanx360@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525746683-18535-1-git-send-email-conmanx360@gmail.com>
+References: <1525746683-18535-1-git-send-email-conmanx360@gmail.com>
 To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds support for the Sound Blaster Z and the Recon3Di.
+This patch adds an unsolicited response tag for the front headphone
+panel which uses the same hp_callback as the rear headphone detection.
 
-In order to figure out how to get these cards to work, I made a program called
-QemuHDADump[1], which uses the trace function of qemu to see interactions with
-the memory mapped pci BAR space of the card being used in the virtual machine.
-With this, I obtain the CORB buffer location to get the command verbs, and then
-dump them each time the buffer rolls over. This program may be useful for fixing
-other HDA related driver issues where there is no documentation for the device.
+This patch also adds pincfgs for the R3Di and SBZ which were taken from
+the Windows driver. The pins are also defined in the function
+ca0132_config. Both the R3Di and SBZ are also given a max out channel
+value of 6 to handle 5.1 surround sound in later patches.
 
-So far, I have been able to get all features supported on the Sound Blaster Z
-and the Recon3Di. All output and input effects work, all inputs and outputs
-work, and just about anything else I can think of. I have also added new
-controls in order to select the new inputs and outputs, as well as controls to
-change the effect levels and presets.
+Signed-off-by: Connor McAdams <conmanx360@gmail.com>
+---
+ sound/pci/hda/patch_ca0132.c | 111 +++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 108 insertions(+), 3 deletions(-)
 
-I have also added the ability to use firmware taken from the Windows drivers of
-both the Sound Blaster Z and Recon3Di. I am trying to get into contact with
-Creative to get permission to redistribute these along with the current
-file included with the Chromebook, but they have not been very responsive.
-Luckily, the cards work with the Chromebook firmware just fine, although I
-believe there has to be a reason they have different firmware in Windows. I
-will not link to the firmwares here, but if you look up my thread on Creative
-Labs forums, you will find the link to download the firmwares there.
-
-I am willing to help get the other non-working cards such as the ZxR and the
-newer AE-5 working too, but I will need someone willing to run QemuHDADump in a
-virtual machine in order to get the commands.
-
-So, in summary:
--This patchset makes the cards work better than they did before (they really
- didn't work before)
-
--This patchset leaves the original chromebook related stuff alone.
-
-Thanks.
-
-[1] https://github.com/Conmanx360/QemuHDADump
-
-Bugs:
--------------------------------------------------------------------------------
-Recon3Di: (Reported by Mariusz Ceier)
-*******************
--Occasionally switching between rear and front mic breaks the input until
- computer is shutdown or put to sleep.
-
--Surround Sound works, but is inconsistent. Sometimes, just updating the volume
- fixes it, and sometimes, it requires a restart.
-
-Sound Blaster Z:
-*******************
--none that I'm aware of.
-
-
-Version changes:
--------------------------------------------------------------------------------
-v1:
-*******************
--Massive patch formatting failure, please ignore v1.
-
-v2:
-*******************
--Fixed patch formatting failure.
-
-v3:
-*******************
--Fixed mem_base unmap, instead of checking for QUIRK_SBZ on exit, have it check
- if the area is mapped, and if it is, unmap it. Also make it unmap after all
- other commands are finished.
-
--Change notification of failure to map mem_base from codec_dbg to codec_warn,
- and use codec_info to tell the user that their card might have been incorrectly
- identified as a Sound Blaster Z.
-
--Remove commented out commands in sbz_exit_chip function, only reintroduce them
- when their functions are defined.
-
-v4:
-*******************
--Split patch into smaller pieces.
-
--Added const to alt_out_presets array.
-
--Fixed command that was commented out and only put it in when
- it was actually used.
-
-
-Connor McAdams (13):
-  ALSA: hda/ca0132: R3Di and SBZ quirk entires + alt firmware loading
-  ALSA: hda/ca0132: Add pincfg for SBZ + R3Di, add fp hp auto-detect
-  ALSA: hda/ca0132: Add PCI region2 iomap for SBZ
-  ALSA: hda/ca0132: Add extra exit functions for R3Di and SBZ
-  ALSA: hda/ca0132: add extra init functions for r3di + sbz
-  ALSA: hda/ca0132: update core functions for sbz + r3di
-  ALSA: hda/ca0132: add dsp setup related commands for the sbz
-  ALSA: hda/ca0132: Add dsp setup + gpio functions for r3di
-  ALSA: hda/ca0132: add the ability to set src_id on scp commands
-  ALSA: hda/ca0132: add alt_select_in/out for R3Di + SBZ
-  ALSA: hda/ca0132: Add DSP Volume set and New mixers for SBZ + R3Di
-  ALSA: hda/ca0132: add ca0132_alt_set_vipsource
-  ALSA: hda/ca0132: Add new control changes for SBZ + R3Di
-
- sound/pci/hda/patch_ca0132.c | 3057 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 2941 insertions(+), 116 deletions(-)
-
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index 8346100..02238fe 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -723,6 +723,7 @@ struct ca0132_spec {
+ 	hda_nid_t shared_mic_nid;
+ 	hda_nid_t shared_out_nid;
+ 	hda_nid_t unsol_tag_hp;
++	hda_nid_t unsol_tag_front_hp; /* for desktop ca0132 codecs */
+ 	hda_nid_t unsol_tag_amic1;
+ 
+ 	/* chip access */
+@@ -785,6 +786,36 @@ static const struct hda_pintbl alienware_pincfgs[] = {
+ 	{}
+ };
+ 
++/* Sound Blaster Z pin configs taken from Windows Driver */
++static const struct hda_pintbl sbz_pincfgs[] = {
++	{ 0x0b, 0x01017010 }, /* Port G -- Lineout FRONT L/R */
++	{ 0x0c, 0x014510f0 }, /* SPDIF Out 1 */
++	{ 0x0d, 0x014510f0 }, /* Digital Out */
++	{ 0x0e, 0x01c510f0 }, /* SPDIF In */
++	{ 0x0f, 0x0221701f }, /* Port A -- BackPanel HP */
++	{ 0x10, 0x01017012 }, /* Port D -- Center/LFE or FP Hp */
++	{ 0x11, 0x01017014 }, /* Port B -- LineMicIn2 / Rear L/R */
++	{ 0x12, 0x01a170f0 }, /* Port C -- LineIn1 */
++	{ 0x13, 0x908700f0 }, /* What U Hear In*/
++	{ 0x18, 0x50d000f0 }, /* N/A */
++	{}
++};
++
++/* Recon3D integrated pin configs taken from Windows Driver */
++static const struct hda_pintbl r3di_pincfgs[] = {
++	{ 0x0b, 0x01014110 }, /* Port G -- Lineout FRONT L/R */
++	{ 0x0c, 0x014510f0 }, /* SPDIF Out 1 */
++	{ 0x0d, 0x014510f0 }, /* Digital Out */
++	{ 0x0e, 0x41c520f0 }, /* SPDIF In */
++	{ 0x0f, 0x0221401f }, /* Port A -- BackPanel HP */
++	{ 0x10, 0x01016011 }, /* Port D -- Center/LFE or FP Hp */
++	{ 0x11, 0x01011014 }, /* Port B -- LineMicIn2 / Rear L/R */
++	{ 0x12, 0x02a090f0 }, /* Port C -- LineIn1 */
++	{ 0x13, 0x908700f0 }, /* What U Hear In*/
++	{ 0x18, 0x500000f0 }, /* N/A */
++	{}
++};
++
+ static const struct snd_pci_quirk ca0132_quirks[] = {
+ 	SND_PCI_QUIRK(0x1028, 0x0685, "Alienware 15 2015", QUIRK_ALIENWARE),
+ 	SND_PCI_QUIRK(0x1028, 0x0688, "Alienware 17 2015", QUIRK_ALIENWARE),
+@@ -4503,6 +4534,10 @@ static void ca0132_init_unsol(struct hda_codec *codec)
+ 					    amic_callback);
+ 	snd_hda_jack_detect_enable_callback(codec, UNSOL_TAG_DSP,
+ 					    ca0132_process_dsp_response);
++	/* Front headphone jack detection */
++	if (spec->quirk == QUIRK_SBZ || spec->quirk == QUIRK_R3DI)
++		snd_hda_jack_detect_enable_callback(codec,
++			spec->unsol_tag_front_hp, hp_callback);
+ }
+ 
+ /*
+@@ -4684,9 +4719,14 @@ static void ca0132_config(struct hda_codec *codec)
+ 
+ 	spec->multiout.dac_nids = spec->dacs;
+ 	spec->multiout.num_dacs = 3;
+-	spec->multiout.max_channels = 2;
+ 
+-	if (spec->quirk == QUIRK_ALIENWARE) {
++	if (spec->quirk == QUIRK_NONE || spec->quirk == QUIRK_ALIENWARE)
++		spec->multiout.max_channels = 2;
++	else
++		spec->multiout.max_channels = 6;
++
++	switch (spec->quirk) {
++	case QUIRK_ALIENWARE:
+ 		codec_dbg(codec, "ca0132_config: QUIRK_ALIENWARE applied.\n");
+ 		snd_hda_apply_pincfgs(codec, alienware_pincfgs);
+ 
+@@ -4706,7 +4746,71 @@ static void ca0132_config(struct hda_codec *codec)
+ 		spec->input_pins[2] = 0x13;
+ 		spec->shared_mic_nid = 0x7;
+ 		spec->unsol_tag_amic1 = 0x11;
+-	} else {
++		break;
++	case QUIRK_SBZ:
++		codec_dbg(codec, "%s: QUIRK_SBZ applied.\n", __func__);
++		snd_hda_apply_pincfgs(codec, sbz_pincfgs);
++
++		spec->num_outputs = 2;
++		spec->out_pins[0] = 0x0B; /* Line out */
++		spec->out_pins[1] = 0x0F; /* Rear headphone out */
++		spec->out_pins[2] = 0x10; /* Front Headphone / Center/LFE*/
++		spec->out_pins[3] = 0x11; /* Rear surround */
++		spec->shared_out_nid = 0x2;
++		spec->unsol_tag_hp = spec->out_pins[1];
++		spec->unsol_tag_front_hp = spec->out_pins[2];
++
++		spec->adcs[0] = 0x7; /* Rear Mic / Line-in */
++		spec->adcs[1] = 0x8; /* Front Mic, but only if no DSP */
++		spec->adcs[2] = 0xa; /* what u hear */
++
++		spec->num_inputs = 2;
++		spec->input_pins[0] = 0x12; /* Rear Mic / Line-in */
++		spec->input_pins[1] = 0x13; /* What U Hear */
++		spec->shared_mic_nid = 0x7;
++		spec->unsol_tag_amic1 = spec->input_pins[0];
++
++		/* SPDIF I/O */
++		spec->dig_out = 0x05;
++		spec->multiout.dig_out_nid = spec->dig_out;
++		cfg->dig_out_pins[0] = 0x0c;
++		cfg->dig_outs = 1;
++		cfg->dig_out_type[0] = HDA_PCM_TYPE_SPDIF;
++		spec->dig_in = 0x09;
++		cfg->dig_in_pin = 0x0e;
++		cfg->dig_in_type = HDA_PCM_TYPE_SPDIF;
++		break;
++	case QUIRK_R3DI:
++		codec_dbg(codec, "%s: QUIRK_R3DI applied.\n", __func__);
++		snd_hda_apply_pincfgs(codec, r3di_pincfgs);
++
++		spec->num_outputs = 2;
++		spec->out_pins[0] = 0x0B; /* Line out */
++		spec->out_pins[1] = 0x0F; /* Rear headphone out */
++		spec->out_pins[2] = 0x10; /* Front Headphone / Center/LFE*/
++		spec->out_pins[3] = 0x11; /* Rear surround */
++		spec->shared_out_nid = 0x2;
++		spec->unsol_tag_hp = spec->out_pins[1];
++		spec->unsol_tag_front_hp = spec->out_pins[2];
++
++		spec->adcs[0] = 0x07; /* Rear Mic / Line-in */
++		spec->adcs[1] = 0x08; /* Front Mic, but only if no DSP */
++		spec->adcs[2] = 0x0a; /* what u hear */
++
++		spec->num_inputs = 2;
++		spec->input_pins[0] = 0x12; /* Rear Mic / Line-in */
++		spec->input_pins[1] = 0x13; /* What U Hear */
++		spec->shared_mic_nid = 0x7;
++		spec->unsol_tag_amic1 = spec->input_pins[0];
++
++		/* SPDIF I/O */
++		spec->dig_out = 0x05;
++		spec->multiout.dig_out_nid = spec->dig_out;
++		cfg->dig_out_pins[0] = 0x0c;
++		cfg->dig_outs = 1;
++		cfg->dig_out_type[0] = HDA_PCM_TYPE_SPDIF;
++		break;
++	default:
+ 		spec->num_outputs = 2;
+ 		spec->out_pins[0] = 0x0b; /* speaker out */
+ 		spec->out_pins[1] = 0x10; /* headphone out */
+@@ -4733,6 +4837,7 @@ static void ca0132_config(struct hda_codec *codec)
+ 		spec->dig_in = 0x09;
+ 		cfg->dig_in_pin = 0x0e;
+ 		cfg->dig_in_type = HDA_PCM_TYPE_SPDIF;
++		break;
+ 	}
+ }
+ 
 -- 
 2.7.4
