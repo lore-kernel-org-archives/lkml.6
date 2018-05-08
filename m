@@ -1,81 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933134AbeEHWti (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 18:49:38 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36565 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932133AbeEHWtg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 18:49:36 -0400
-X-Google-Smtp-Source: AB8JxZreHghbIM//YRXADLUkhIWbvX3XCyuZyRp7fopZ6ZHhBOlMi0I9fhi/3xNHMrJgjUK37H5jJQ==
-Date: Tue, 8 May 2018 15:49:33 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Mohammed Gamal <mgamal@redhat.com>
-Cc: netdev@vger.kernel.org, sthemmin@microsoft.com, haiyangz@microsoft.com,
-        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
-        vkuznets@redhat.com
-Subject: Re: [PATCH] hv_netvsc: Fix net device attach on older Windows hosts
-Message-ID: <20180508154933.1cf456ab@xeon-e3>
-In-Reply-To: <1525803471.4366.15.camel@redhat.com>
-References: <1525801247-27765-1-git-send-email-mgamal@redhat.com>
-        <20180508111323.1767fc0c@xeon-e3>
-        <1525803471.4366.15.camel@redhat.com>
+        id S933201AbeEHWtq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 18:49:46 -0400
+Received: from mga18.intel.com ([134.134.136.126]:34096 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932133AbeEHWtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 18:49:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,379,1520924400";
+   d="scan'208";a="39474051"
+Subject: Re: [PATCH 0/9] [v3] x86, pkeys: two protection keys bug fixes
+To: Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+References: <20180427174527.0031016C@viggo.jf.intel.com>
+ <20180428070553.yjlt22sb6ntcaqnc@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linuxram@us.ibm.com,
+        tglx@linutronix.de, mpe@ellerman.id.au, akpm@linux-foundation.org,
+        shuah@kernel.org, shakeelb@google.com
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Message-ID: <0bb50502-02f3-0eeb-b126-0345ec029145@intel.com>
+Date: Tue, 8 May 2018 15:49:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180428070553.yjlt22sb6ntcaqnc@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w48MnhZD020757
 
-On Tue, 08 May 2018 20:17:51 +0200
-Mohammed Gamal <mgamal@redhat.com> wrote:
-
-> On Tue, 2018-05-08 at 11:13 -0700, Stephen Hemminger wrote:
-> > On Tue,  8 May 2018 19:40:47 +0200
-> > Mohammed Gamal <mgamal@redhat.com> wrote:
-> >   
-> > > On older windows hosts the net_device instance is returned to
-> > > the caller of rndis_filter_device_add() without having the presence
-> > > bit set first. This would cause any subsequent calls to network
-> > > device
-> > > operations (e.g. MTU change, channel change) to fail after the
-> > > device
-> > > is detached once, returning -ENODEV.
-> > > 
-> > > Make sure we explicitly call netif_device_attach() before returning
-> > > the net_device instance to make sure the presence bit is set
-> > > 
-> > > Fixes: 7b2ee50c0cd5 ("hv_netvsc: common detach logic")
-> > > 
-> > > Signed-off-by: Mohammed Gamal <mgamal@redhat.com>
-> > > ---
-> > >  drivers/net/hyperv/rndis_filter.c | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/net/hyperv/rndis_filter.c
-> > > b/drivers/net/hyperv/rndis_filter.c
-> > > index 6b127be..09a3c1d 100644
-> > > --- a/drivers/net/hyperv/rndis_filter.c
-> > > +++ b/drivers/net/hyperv/rndis_filter.c
-> > > @@ -1287,8 +1287,10 @@ struct netvsc_device
-> > > *rndis_filter_device_add(struct hv_device *dev,
-> > >  		   rndis_device->hw_mac_adr,
-> > >  		   rndis_device->link_state ? "down" : "up");
-> > >  
-> > > -	if (net_device->nvsp_version < NVSP_PROTOCOL_VERSION_5)
-> > > +	if (net_device->nvsp_version < NVSP_PROTOCOL_VERSION_5) {
-> > > +		netif_device_attach(net);
-> > >  		return net_device;
-> > > +	}  
-> > 
-> > Yes, this looks right, but it might be easier to use goto existing
-> > exit
-> > path.
-> >   
+> 1)
 > 
-> I was just not sure if we should set max_chn and num_chn here. I will
-> modify the patch and resend.
+> Minor patch series organization requests:
+> 
+>  - please include the shortlog and diffstat in the cover letter in the future, as 
+>    it makes it easier to see the overall structure and makes it easier to reply to 
+>    certain commits as a group.
+
+Will do.
+
+>  - please capitalize commit titles as is usually done in arch/x86/ and change the 
+>    change the subsystem tags to the usual ones:
+> 
+> d76eeb1914c8: x86/pkeys: Override pkey when moving away from PROT_EXEC
+> f30f10248200: x86/pkeys/selftests: Add PROT_EXEC test
+> 0530ebfefcdc: x86/pkeys/selftests: Add allow faults on unknown keys
+> e81c40e33818: x86/pkeys/selftests: Factor out "instruction page"
+> 57042882631c: x86/pkeys/selftests: Fix pkey exhaustion test off-by-one
+> 6b833e9d3171: x86/pkeys/selftests: Fix pointer math
+> d16f12e3c4ca: x86/pkeys: Do not special case protection key 0
+> 1cb7691d0ee4: x86/pkeys/selftests: Add a test for pkey 0
+> 273ae5cde423: x86/pkeys/selftests: Save off 'prot' for allocations
+>
+>  - please re-order the series to first introduce a unit test which specifically 
+>    tests for the failure, ascertain that it indeed fails, and then apply the 
+>    kernel fix. I.e. please use the order I used above for future versions of this 
+>    patch-set.
+
+I can't _quite_ use this order, but I get your point and I'll do as you
+suggest, conceptually.
 
 
-On older code it was just a goto. At that point: num_chn = max_chn = 1
+> 2)
+> 
+> The new self-test you added does not fail overly nicely, it does the following on 
+> older kernels:
+...
+> I.e. x86 unit tests should never 'crash' in a way that suggests that the testing 
+> itself might be buggy - the crashes/failures should always be well controlled.
+
+I've tried to make this nicer.  I never abort() any more, for instance.
+
+> 3)
+> 
+> When the first kernel bug fix is applied but not the second, then I don't see the 
+> new PROT_EXEC test catching the bug:
+
+Thanks for catching this.  I forgot to add the test function to the
+pkey_tests[] array.  It's fixed up now.
+
+> 4)
+> 
+> In the above kernel that was missing the PROT_EXEC fix I was repeatedly running 
+> the 64-bit and 32-bit testcases as non-root and as root as well, until I got a 
+> hang in the middle of a 32-bit test running as root:
+
+I believe this is all my stupidity from not being careful about using
+signal-safe functions in the signal handlers.  There's no pretty
+solution for this, but I've at least made it stop hanging.  The fixes
+for that will be in the beginning of the next series.
