@@ -1,70 +1,169 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932111AbeEHJmr (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 05:42:47 -0400
-Received: from foss.arm.com ([217.140.101.70]:54992 "EHLO foss.arm.com"
+        id S932251AbeEHJng (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 05:43:36 -0400
+Received: from mga02.intel.com ([134.134.136.20]:28622 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754413AbeEHJmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 05:42:46 -0400
-Date: Tue, 8 May 2018 10:42:37 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-pm@vger.kernel.org, Pavan Kondeti <pkondeti@codeaurora.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to
- related_cpus unnecessarily"
-Message-ID: <20180508094237.GA3752@e108498-lin.cambridge.arm.com>
-References: <20180508073340.13114-1-dietmar.eggemann@arm.com>
- <20180508082242.bre6sjfvefhz6xc3@vireshk-i7>
- <8cf21b1a-ca6e-fed7-43c5-94c66ff5986b@arm.com>
+        id S1754344AbeEHJnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 05:43:35 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,377,1520924400";
+   d="scan'208";a="52461048"
+Date: Tue, 8 May 2018 17:44:06 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [RFC v3 4/5] virtio_ring: add event idx support in packed ring
+Message-ID: <20180508094406.qjlaism3hqy4hvjd@debian>
+References: <20180503044218-mutt-send-email-mst@kernel.org>
+ <20180503020949.5u3qz32gsk33z6vk@debian>
+ <9f0b4e37-63ff-42f9-f2e6-3747a19a0206@redhat.com>
+ <20180503135430.lbtvn4p4lyu3ksqo@debian>
+ <fbe06940-1618-5d34-7321-f4888c5dd1ee@redhat.com>
+ <12ede490-f674-2b89-d639-266b5fe15466@redhat.com>
+ <20180508064409.kcn6amhsxu7nkuuc@debian>
+ <34f2c690-7cb2-f9ea-2ce9-40f4ccb594c9@redhat.com>
+ <20180508091628.d7jzpopqopq4abhy@debian>
+ <122277c6-d103-e1f6-d695-4d64e6934a51@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8cf21b1a-ca6e-fed7-43c5-94c66ff5986b@arm.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <122277c6-d103-e1f6-d695-4d64e6934a51@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 08 May 2018 at 11:09:57 (+0200), Dietmar Eggemann wrote:
-> On 05/08/2018 10:22 AM, Viresh Kumar wrote:
-> > On 08-05-18, 08:33, Dietmar Eggemann wrote:
-> > > This reverts commit e2cabe48c20efb174ce0c01190f8b9c5f3ea1d13.
+On Tue, May 08, 2018 at 05:34:40PM +0800, Jason Wang wrote:
+> On 2018年05月08日 17:16, Tiwei Bie wrote:
+> > On Tue, May 08, 2018 at 03:16:53PM +0800, Jason Wang wrote:
+> > > On 2018年05月08日 14:44, Tiwei Bie wrote:
+> > > > On Tue, May 08, 2018 at 01:40:40PM +0800, Jason Wang wrote:
+> > > > > On 2018年05月08日 11:05, Jason Wang wrote:
+> > > > > > > Because in virtqueue_enable_cb_delayed(), we may set an
+> > > > > > > event_off which is bigger than new and both of them have
+> > > > > > > wrapped. And in this case, although new is smaller than
+> > > > > > > event_off (i.e. the third param -- old), new shouldn't
+> > > > > > > add vq->num, and actually we are expecting a very big
+> > > > > > > idx diff.
+> > > > > > Yes, so to calculate distance correctly between event and new, we just
+> > > > > > need to compare the warp counter and return false if it doesn't match
+> > > > > > without the need to try to add vq.num here.
+> > > > > > 
+> > > > > > Thanks
+> > > > > Sorry, looks like the following should work, we need add vq.num if
+> > > > > used_wrap_counter does not match:
+> > > > > 
+> > > > > static bool vhost_vring_packed_need_event(struct vhost_virtqueue *vq,
+> > > > >                         __u16 off_wrap, __u16 new,
+> > > > >                         __u16 old)
+> > > > > {
+> > > > >       bool wrap = off_wrap >> 15;
+> > > > >       int off = off_wrap & ~(1 << 15);
+> > > > >       __u16 d1, d2;
+> > > > > 
+> > > > >       if (wrap != vq->used_wrap_counter)
+> > > > >           d1 = new + vq->num - off - 1;
+> > > > Just to draw your attention (maybe you have already
+> > > > noticed this).
+> > > I miss this, thanks!
 > > > 
-> > > Lifting the restriction that the sugov kthread is bound to the
-> > > policy->related_cpus for a system with a slow switching cpufreq driver,
-> > > which is able to perform DVFS from any cpu (e.g. cpufreq-dt), is not
-> > > only not beneficial it also harms Enery-Aware Scheduling (EAS) on
-> > > systems with asymmetric cpu capacities (e.g. Arm big.LITTLE).
+> > > > In this case (i.e. wrap != vq->used_wrap_counter),
+> > > > it's also possible that (off < new) is true. Because,
+> > > > 
+> > > > when virtqueue_enable_cb_delayed_packed() is used,
+> > > > `off` is calculated in driver in a way like this:
+> > > > 
+> > > > 	off = vq->last_used_idx + bufs;
+> > > > 	if (off >= vq->vring_packed.num) {
+> > > > 		off -= vq->vring_packed.num;
+> > > > 		wrap_counter ^= 1;
+> > > > 	}
+> > > > 
+> > > > And when `new` (in vhost) is close to vq->num. The
+> > > > vq->last_used_idx + bufs (in driver) can be bigger
+> > > > than vq->vring_packed.num, and:
+> > > > 
+> > > > 1. `off` will wrap;
+> > > > 2. wrap counters won't match;
+> > > > 3. off < new;
+> > > > 
+> > > > And d1 (i.e. new + vq->num - off - 1) will be a value
+> > > > bigger than vq->num. I'm okay with this, although it's
+> > > > a bit weird.
 > > > 
-> > > The sugov kthread which does the update for the little cpus could
-> > > potentially run on a big cpu. It could prevent that the big cluster goes
-> > > into deeper idle states although all the tasks are running on the little
-> > > cluster.
+> > > So I'm considering something more compact by reusing vring_need_event() by
+> > > pretending a larger queue size and adding vq->num back when necessary:
+> > > 
+> > > static bool vhost_vring_packed_need_event(struct vhost_virtqueue *vq,
+> > >                        __u16 off_wrap, __u16 new,
+> > >                        __u16 old)
+> > > {
+> > >      bool wrap = vq->used_wrap_counter;
+> > If the wrap counter is obtained from the vq,
+> > I think `new` should also be obtained from
+> > the vq. Or the wrap counter should be carried
+> > in `new`.
 > > 
-> > I think the original patch did the right thing, but that doesn't suit
-> > everybody as you explained.
+> > >      int off = off_wrap & ~(1 << 15);
+> > >      __u16 d1, d2;
+> > > 
+> > >      if (new < old) {
+> > >          new += vq->num;
+> > >          wrap ^= 1;
+> > >      }
+> > > 
+> > >      if (wrap != off_wrap >> 15)
+> > >          off += vq->num;
+> > When `new` and `old` wraps, and `off` doesn't wrap,
+> > wrap != (off_wrap >> 15) will be true. In this case,
+> > `off` is bigger than `new`, and what we should do
+> > is `off -= vq->num` instead of `off += vq->num`.
+> 
+> If I understand this correctly, if we track old correctly, it won't happen
+> if guest driver behave correctly. That means it should only happen for a
+> buggy driver (e.g trying to move off_wrap back).
+
+If vhost is faster than virtio driver, I guess above
+case may happen. The `old` and `new` will be updated
+each time we want to notify the driver. If the driver
+is slower, `old` and `new` in vhost may wrap before
+the `off` which is set by driver wraps.
+
+Best regards,
+Tiwei Bie
+
+> 
+> Thanks
+> 
 > > 
-> > I wouldn't really revert the patch but fix my platform's cpufreq
-> > driver to set dvfs_possible_from_any_cpu = false, so that other
-> > platforms can still benefit from the original commit.
+> > Best regards,
+> > Tiwei Bie
+> > 
+> > >      return vring_need_event(off, new, old);
+> > > }
+> > > 
+> > > 
+> > > > Best regards,
+> > > > Tiwei Bie
+> > > > 
+> > > > >       else
+> > > > >           d1 = new - off - 1;
+> > > > > 
+> > > > >       if (new > old)
+> > > > >           d2 = new - old;
+> > > > >       else
+> > > > >           d2 = new + vq->num - old;
+> > > > > 
+> > > > >       return d1 < d2;
+> > > > > }
+> > > > > 
+> > > > > Thanks
+> > > > > 
 > 
-> This would make sure that the kthreads are bound to the correct set of cpus
-> for platforms with those cpufreq drivers (cpufreq-dt (h960), scmi-cpufreq,
-> scpi-cpufreq) but it will also change the logic (e.g.
-> sugov_should_update_freq() -> cpufreq_can_do_remote_dvfs()).
-> 
-> I'm still struggling to understand when a driver/platform should set
-> dvfs_possible_from_any_cpu to true and what the actual benefit would be.
-
-I assume it might be beneficial to have the kthread moving around freely
-in some cases, but since it is a SCHED_DEADLINE task now it can't really
-migrate anywhere anyway. So I'm not sure either if this commits still makes
-sense now. Or is there another use case for this ?
-
-Thanks,
-Quentin
