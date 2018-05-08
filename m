@@ -1,96 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753591AbeEHLOi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 07:14:38 -0400
-Received: from foss.arm.com ([217.140.101.70]:56524 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752347AbeEHLOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 07:14:37 -0400
-Date: Tue, 8 May 2018 12:14:31 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Rich Felker <dalias@libc.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 4/9] arm: Split breakpoint validation into "check" and
- "commit"
-Message-ID: <20180508111431.ue2zy2v2l3ob6t4h@lakrids.cambridge.arm.com>
-References: <1525634395-23380-1-git-send-email-frederic@kernel.org>
- <1525634395-23380-5-git-send-email-frederic@kernel.org>
- <20180508111323.mmjo4ky4txzi4gx4@lakrids.cambridge.arm.com>
+        id S1754254AbeEHLO4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 07:14:56 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34456 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751934AbeEHLOz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 07:14:55 -0400
+X-Google-Smtp-Source: AB8JxZoThyzaUkWDv3RhRwzuRSuapLHN/46YW2T15ghNdZDz0/5P4zFWImhext0ucE/fM97kNBgCXw==
+Date: Tue, 8 May 2018 16:44:51 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Quentin Perret <quentin.perret@arm.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-pm@vger.kernel.org,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to
+ related_cpus unnecessarily"
+Message-ID: <20180508111451.rmoi2rk3md6lhbvl@vireshk-i7>
+References: <20180508073340.13114-1-dietmar.eggemann@arm.com>
+ <20180508082242.bre6sjfvefhz6xc3@vireshk-i7>
+ <8cf21b1a-ca6e-fed7-43c5-94c66ff5986b@arm.com>
+ <20180508094526.ajyjrwytguhv4xpe@vireshk-i7>
+ <20180508100227.GB3752@e108498-lin.cambridge.arm.com>
+ <20180508103427.w2rq3vz3f66y4cxh@vireshk-i7>
+ <20180508110003.GC3752@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180508111323.mmjo4ky4txzi4gx4@lakrids.cambridge.arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180508110003.GC3752@e108498-lin.cambridge.arm.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 12:13:23PM +0100, Mark Rutland wrote:
-> Hi Frederick,
+On 08-05-18, 12:00, Quentin Perret wrote:
+> Right, I see your point. Now, with the current implementation, why should
+> we randomly force a CPU to manage the kthread of another ? IIUC deadline
+> should assign the kthreads to CPUs depending on the state of the system
+> when the task is created. So, from one boot to another, you could
+> theoretically end up with varying configurations, and varying power/perf
+> numbers.
 
-Argh, sorry for the typo -- I realise that K should not be there.
+Yeah, if it is fixed at boot then there is no good reason to push it
+to any other CPU. I agree.
 
-Mark.
-
-> On Sun, May 06, 2018 at 09:19:50PM +0200, Frederic Weisbecker wrote:
-> > The breakpoint code mixes up attribute check and commit into a single
-> > code entity. Therefore the validation may return an error due to
-> > incorrect atributes while still leaving halfway modified architecture
-> > breakpoint struct.
-> > 
-> > Prepare fox fixing this misdesign and separate both logics.
-> 
-> Could you elaborate on what the problem is? I would have expected that
-> when arch_build_bp_info() returns an error code, we wouldn't
-> subsequently use the arch_hw_breakpoint information. Where does that
-> happen?
-> 
-> I understand that there was a problem on x86 -- I'm just having
-> difficulty figuring it out.
-> 
-> I also see that the check and commit hooks have to duplicate a
-> reasonable amount of logic, e.g. the switch on bp->attr.type. Can we
-> instead refactor the existing arch_build_bp_info() hooks to use a
-> temporary arch_hw_breakpoint, and then struct assign it after all the
-> error cases, e.g.
-> 
-> static int arch_build_bp_info(struct perf_event *bp)
-> {
-> 	struct arch_hw_breakpoint hbp;
-> 	
-> 	if (some_condition(bp))
-> 		hbp->field = 0xf00;
-> 
-> 	switch (bp->attr.type) {
-> 	case FOO:
-> 		return -EINVAL;
-> 	case BAR:
-> 		hbp->other_field = 7;
-> 		break;
-> 	};
-> 
-> 	if (failure_case(foo))
-> 		return err;
-> 	
-> 	*counter_arch_bp(bp) = hbp;
-> }
-> 
-> ... or is that also problematic?
-> 
-> Thanks,
-> Mark.
+-- 
+viresh
