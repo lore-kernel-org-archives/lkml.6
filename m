@@ -1,59 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932911AbeEHO5I (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 10:57:08 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:45981 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932690AbeEHO5F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:57:05 -0400
-X-Google-Smtp-Source: AB8JxZrT+9jFXprwdYbQAH8wUOq+SmhzqOqiSimjl9sewW+TQRKt74i8YVnDMZo7l6igSbPMzozgABxk+edQGPNs7gg=
-MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <CAOQ4uxhFzFFpF+ghACKTzzU_UrrJ3_+U6LwCOVXhgUyGe6=fVQ@mail.gmail.com>
-References: <20180507083807.28792-1-mszeredi@redhat.com> <20180507083807.28792-16-mszeredi@redhat.com>
- <CAOQ4uxhFzFFpF+ghACKTzzU_UrrJ3_+U6LwCOVXhgUyGe6=fVQ@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 8 May 2018 16:57:04 +0200
-Message-ID: <CAJfpegvV8r8Bp6c2gZYhX1pOqDGHPDmURB6+x=09uR1diERUSg@mail.gmail.com>
-Subject: Re: [PATCH v2 15/35] ovl: add ovl_fsync()
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S932750AbeEHO75 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 10:59:57 -0400
+Received: from ozlabs.org ([203.11.71.1]:34845 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932679AbeEHO74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 10:59:56 -0400
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: linuxram@us.ibm.com
+Cc: mingo@redhat.com, linuxppc-dev@ozlabs.org, linux-mm@kvack.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org, dave.hansen@intel.com
+Subject: [PATCH 0/8] mm, x86, powerpc: Consolidate pkey code
+Date: Wed,  9 May 2018 00:59:40 +1000
+Message-Id: <20180508145948.9492-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 8, 2018 at 7:14 AM, Amir Goldstein <amir73il@gmail.com> wrote:
-> On Mon, May 7, 2018 at 11:37 AM, Miklos Szeredi <mszeredi@redhat.com> wrote:
->> Implement stacked fsync().
->>
->> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->> ---
->>  fs/overlayfs/file.c | 20 ++++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->>
->> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
->> index a7af56861aa5..419aa3f9967b 100644
->> --- a/fs/overlayfs/file.c
->> +++ b/fs/overlayfs/file.c
->> @@ -233,10 +233,30 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
->>         return ret;
->>  }
->>
->> +static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
->> +{
->> +       struct fd real;
->> +       const struct cred *old_cred;
->> +       int ret;
->> +
->
-> Don't sync non-upper. same as ovl_dir_fsync()
+This is a rework of Ram's series, which broke the build on both arches at
+various points due to the differing header dependencies.
 
-Ah, that was about EROFS returned by lower fsync, right?
+The actual pkey changes are basically the same, this just has some rework to
+get the headers cleaned up a bit beforehand.
 
-Thanks,
-Miklos
+If no one objects I'll ask Stephen to put these in a topic branch in
+linux-next, and I or someone else can merge them for 4.18.
+
+cheers
+
+
+Ram's original:
+  http://patchwork.ozlabs.org/patch/909066/
+  http://patchwork.ozlabs.org/patch/909067/
+  http://patchwork.ozlabs.org/patch/909068/
+
+
+
+Michael Ellerman (5):
+  mm/pkeys: Remove include of asm/mmu_context.h from pkeys.h
+  mm/pkeys, powerpc, x86: Provide an empty vma_pkey() in linux/pkeys.h
+  x86/pkeys: Move vma_pkey() into asm/pkeys.h
+  x86/pkeys: Add arch_pkeys_enabled()
+  mm/pkeys: Add an empty arch_pkeys_enabled()
+
+Ram Pai (3):
+  mm, powerpc, x86: define VM_PKEY_BITx bits if CONFIG_ARCH_HAS_PKEYS is
+    enabled
+  mm, powerpc, x86: introduce an additional vma bit for powerpc pkey
+  mm/pkeys, x86, powerpc: Display pkey in smaps if arch supports pkeys
+
+ arch/powerpc/include/asm/mmu_context.h |  5 -----
+ arch/powerpc/include/asm/pkeys.h       |  2 ++
+ arch/x86/include/asm/mmu_context.h     | 15 ---------------
+ arch/x86/include/asm/pkeys.h           | 13 +++++++++++++
+ arch/x86/kernel/setup.c                |  8 --------
+ fs/proc/task_mmu.c                     | 13 +++++++------
+ include/linux/mm.h                     | 12 +++++++-----
+ include/linux/pkeys.h                  | 13 +++++++++++--
+ 8 files changed, 40 insertions(+), 41 deletions(-)
+
+-- 
+2.14.1
