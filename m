@@ -1,78 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754297AbeEHDyY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 23:54:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51650 "EHLO mail.kernel.org"
+        id S1751170AbeEHEBc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 00:01:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754095AbeEHDyX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 23:54:23 -0400
-Date: Mon, 7 May 2018 20:54:21 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        chao@kernel.org
-Subject: Re: [PATCH] f2fs: fix to avoid race during access gc_thread pointer
-Message-ID: <20180508035421.GD17507@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180508033921.21703-1-yuchao0@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180508033921.21703-1-yuchao0@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+        id S1750710AbeEHEBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 00:01:30 -0400
+Date: Tue, 8 May 2018 13:01:27 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        shuah@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Subject: Re: [PATCH v7 00/16] tracing: probeevent: Improve fetcharg features
+Message-Id: <20180508130127.c9de04e9d9c93a90e9891ae0@kernel.org>
+In-Reply-To: <20180507113003.66045d18@gandalf.local.home>
+References: <152465856498.26224.16969986455942749517.stgit@devbox>
+        <20180503181137.6d82d897@gandalf.local.home>
+        <20180505004828.9b75b6802472f09b0d2de5b8@kernel.org>
+        <20180504120642.354cdd1f@gandalf.local.home>
+        <20180505113803.45700179a93091b114ec6984@kernel.org>
+        <20180506005143.7bd9030db298fcfbade73434@kernel.org>
+        <20180507113003.66045d18@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/08, Chao Yu wrote:
-> Thread A			Thread B
-> - f2fs_remount
->  - stop_gc_thread
-> 				- f2fs_sbi_store
->    sbi->gc_thread = NULL;
-> 				  access sbi->gc_thread->gc_*
-> 
-> Previously, we allocate memory for sbi->gc_thread based on background
-> gc thread mount option, the memory can be released if we turn off
-> that mount option, but still there are several places access gc_thread
-> pointer without considering race condition, result in NULL point
-> dereference.
-> 
-> In order to fix this issue, use sb->s_umount to exclude those operations.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/sysfs.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index f3c3fb4cbb0d..0aec4db7fa02 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -179,6 +179,7 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
->  	unsigned long t;
->  	unsigned int *ui;
->  	ssize_t ret;
-> +	bool gc_entry = (a->struct_type == GC_THREAD);
->  
->  	ptr = __struct_ptr(sbi, a->struct_type);
+On Mon, 7 May 2018 11:30:03 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-We need to cover __struct_ptr() here.
+> On Sun, 6 May 2018 00:51:43 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > OK, now I think it is a time to introduce new unified interface for dynamic events,
+> > tracefs/dynamic_events and make uprobe_events and kprobe_events as symbolic-links
+> > to the new interface file.
+> 
+> So basically make one file that does all the work?
+> 
+> I'm not sure we can keep the other files as symbolic links. Because we
+> don't want the kprobe_events showing up in the uprobe_events file, and
+> vice versa. We need to keep all this backward compatible.
 
->  	if (!ptr)
-> @@ -277,8 +278,14 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
->  		return count;
->  	}
->  
-> +	if (gc_entry)
-> +		down_read(&sbi->sb->s_umount);
-> +
->  	*ui = t;
->  
-> +	if (gc_entry)
-> +		up_read(&sbi->sb->s_umount);
-> +
->  	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
->  		f2fs_reset_iostat(sbi);
->  	return count;
-> -- 
-> 2.17.0.391.g1f1cddd558b5
+Good catch!
+Can't we check which file the user opened? If not, even though
+we can setup a filter in ops->open().
+
+> 
+> But I do like the idea of one file to rule them all, approach.
+
+Thanks!
+
+> 
+> -- Steve
+> 
+> 
+> > 
+> > Actually, there is no reason we split those 2 interfaces, since
+> > both have similar, but very clear syntax differences.
+> > 
+> > o Uprobe event definition
+> >   p[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a uprobe
+> >   r[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a return uprobe (uretprobe)
+> >   -:[GRP/]EVENT                           : Clear uprobe or uretprobe event
+> > 
+> > o Kprobe event definition
+> >   p[:[GRP/]EVENT] [MOD:]SYM[+offs]|MEMADDR [FETCHARGS]  : Set a probe
+> >   r[MAXACTIVE][:[GRP/]EVENT] [MOD:]SYM[+0] [FETCHARGS]  : Set a return probe
+> >   -:[GRP/]EVENT                                         : Clear a probe
+> > 
+> > At first, it is clear that those can share the parser. 2nd, it is easy to
+> > distinguish those, because Uprobe event must require the PATH which starts
+> > with '/', on the other hand, Kprobe event must NOT start with '/'.
+> > (both SYM and MOD will start with alphabet or '_', of course MEMADDR
+> > will start with digits)
+> > 
+> > If we can merge those to unified dynamic_events interface, I think
+> > 'f[:[GRP/]EVENT] SYM(CAST)' is also acceptable, since it is no more
+> > only for kprobe/uprobe. We can directly add some other dynamic
+> > events via dynamic_events interface. ;)
+> > 
+> > Thank you,
+> > 
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
