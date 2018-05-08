@@ -1,61 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753914AbeEHEvj convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 00:51:39 -0400
-Received: from mout.gmx.net ([212.227.15.18]:59757 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753540AbeEHEvh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 00:51:37 -0400
-Message-ID: <1525755090.24338.1.camel@gmx.de>
-Subject: Re: bug in tag handling in blk-mq?
-From: Mike Galbraith <efault@gmx.de>
-To: Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@lst.de>,
-        linux-block <linux-block@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>
-Date: Tue, 08 May 2018 06:51:30 +0200
-In-Reply-To: <84145CD7-B917-4B32-8A5C-310C1910DB71@linaro.org>
-References: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
-         <7760d23b-7a4c-a645-1c7a-da7569bb44dc@kernel.dk>
-         <84145CD7-B917-4B32-8A5C-310C1910DB71@linaro.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:Hk17jElSXyi3HID4jPtNsRXIU8VENqhwY5uDtTnkW3lo8viJ8B0
- 0D9GIbCVAW7ADkTcN49cKeXy0aQAgRKaSUTgba269wRuJsaEH0B9BtnFzPRJzHevfQC4+Xr
- eKwm65eplHYu6Mjwa7P4GO7EL/egBucqbI8s4GFsZS99PC2axmWx+yg7sPjnZzPLsu6NzZg
- XGdMacObyqfRYYRsVyJHg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:zbBiMfXGLS0=:vL+qb5+3xMCq6Wh4mjRzvY
- IXXk7deCuQbbkTY3d9EwHV+1xido9QM2x824wOAhCP8pEcE+ji83cseUImPeA4WsbAxWtW0td
- 6Xx8ZmHKuhNbYYEeowdfvnAHwWNj2p/EWX6L7ThqjBZgCg/JRycSHDtnwrx6QCtWQmjVmvaAZ
- H3cdfaASyNcbKd1w0Qt+g6MaJ8DcF6t5yzj/wC2baY2/WdaXMdTpiwd7L8SF7mUlLQieZrfpB
- xcBp5TveR+QSoFDKJeL/TAnq3MJLyiTzjeQgMD4ZI9OzcHikJGWfp/ByehX6A94KB5J7AlEcW
- xx5whA/kfoKRugBo51puZH7rRwrz/nBaKeNAyn3Y+LNcTsvgVYMo6UPH/34Fvv68ERAkgpAi0
- k3KQKyIlqQJl3cuDc4oI9B+T8YMaVd0dchJKfm+l/yq7IchXiN1s1er2eA1brwSvjgLLWVo/I
- /tcZUILGpnjPSvAAd9lXiW+fAYRascBk8xi1HENXKGd818atToBvG9cZ1QVAJT02QkGbItzeZ
- 3iFsW7PPV6z89IdXt15F3aMhUAl/ksRInPSUvT1GeuS7jNo+g0FGKRNi+h810pm9D/wVACvN1
- 3IaTALXv1an6Si/VMwjAH/C+R+TfGpM1SF19YL6DKbZWVjSEQkCvWAid8ar2o3xVw3jSmReNX
- CRkZcnM7dYTHIyFqanayKA5aW97GwQyn5ZvnFWhHPVabn/qDH+9VOKlwe5Ob3t4jU9IuFifOf
- k/T7SL+e5ripqnIpIDogJ+ekSStSM54U8QfTcz243yKU58BJCTKG/FT45GRnTYObeYelJ5jL/
- P7UVxZ0
+        id S1753886AbeEHEx2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 00:53:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34770 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbeEHExZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 00:53:25 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 08 May 2018 10:23:23 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] Add QCOM video clock controller driver
+In-Reply-To: <20180507171121.GA22656@rob-hp-laptop>
+References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
+ <152545146453.138124.2471609033510400995@swboyd.mtv.corp.google.com>
+ <09ac2bd5eab25cfc70a1c5dc7b0f90ed@codeaurora.org>
+ <20180507171121.GA22656@rob-hp-laptop>
+Message-ID: <8ac8a361a7dc69cce1e7498f1473bad8@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-05-07 at 20:02 +0200, Paolo Valente wrote:
+On 2018-05-07 22:41, Rob Herring wrote:
+> On Mon, May 07, 2018 at 04:16:53PM +0530, Amit Nischal wrote:
+>> On 2018-05-04 22:01, Stephen Boyd wrote:
+>> > Quoting Amit Nischal (2018-05-03 05:35:23)
+>> > > Changes in v1:
+>> > >    https://lkml.org/lkml/2018/4/24/545
+>> > > Addressed below review comments given by Rob
+>> > > - Change the compatible property as per '<vendor>,<soc>-<block>'
+>> > > format.
+>> > > - Add header definitions for resets and power-domain cells.
+>> >
+>> > You didn't add any reset definitions though?
+>> 
+>> We haven't added the reset definitions for videocc as there is no
+>> video reset client.
 > 
+> So? You don't know what resets there are?
 > 
-> > Is there a reproducer?
 
-Just building fat config kernels works for me.  It was highly non-
-deterministic, but reproduced quickly twice in a row with Paolos hack.
-  
-> Ok Mike, I guess it's your turn now, for at least a stack trace.
+We know the resets, but video driver doesn't do any block resets
+prior to accessing the video subsystem so that's the reason we do
+not want to expose the resets in videocc driver.
 
-Sure.  I'm deadlined ATM, but will get to it.
-
-	-Mike
+> Rob
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
