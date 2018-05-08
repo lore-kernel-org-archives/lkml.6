@@ -1,95 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755175AbeEHNB4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 09:01:56 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:42270 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754776AbeEHNBy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 09:01:54 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1754818AbeEHNDa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 09:03:30 -0400
+Received: from mout.perfora.net ([74.208.4.196]:52909 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753678AbeEHND2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 09:03:28 -0400
+Message-ID: <1525784582.6999.27.camel@ziswiler.com>
+Subject: Re: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
+ (plus such board on Iris)
+From: Marcel Ziswiler <marcel@ziswiler.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "stefan@agner.ch" <stefan@agner.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "dev@lynxeye.de" <dev@lynxeye.de>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Date: Tue, 08 May 2018 15:03:02 +0200
+In-Reply-To: <CAJKOXPetgqJgGHwdSzZeujM2KEDMWqffYMAJdBS3MXPd3Thb5w@mail.gmail.com>
+References: <1525360112-9893-1-git-send-email-krzk@kernel.org>
+         <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
+         <CAJKOXPeb+DmKVQ1uXkBOjaGMpxtPVFp54SBWm6h=+o30z9K3aQ@mail.gmail.com>
+         <1525428885.6296.18.camel@toradex.com>
+         <CAJKOXPetgqJgGHwdSzZeujM2KEDMWqffYMAJdBS3MXPd3Thb5w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Date: Tue, 08 May 2018 15:01:53 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: arm@kernel.org, arnd@arndb.de, linux@armlinux.org.uk,
-        ard.biesheuvel@linaro.org, nicolas.pitre@linaro.org,
-        marc.zyngier@arm.com, behanw@converseincode.com, keescook@chromium.org,
-        Bernhard.Rosenkranzer@linaro.org, mka@chromium.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2] bus: arm-cci: use asm unreachable
-In-Reply-To: <9925be9a-2e24-7ab4-4d7e-cb8f62c422e7@arm.com>
-References: <20180508113211.7026-1-stefan@agner.ch>
- <9925be9a-2e24-7ab4-4d7e-cb8f62c422e7@arm.com>
-Message-ID: <ec78df47e392cfae784bc492d0426152@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         MID_RHS_MATCH_FROM(0.00)[];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         ARC_NA(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[13];
-         DKIM_SIGNED(0.00)[];
-         BAYES_HAM(-3.00)[99.98%];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         TO_DN_SOME(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         RCVD_TLS_ALL(0.00)[]
+X-Provags-ID: V03:K1:2fd3QXjPdHQnxBB8K44Llo+EAIrwxP0z8WWrJlRv+KEn0QVmsum
+ hUw1Cpo0Q6e9eBhcNY0Mp6Ieu6EOs9HB1wPNB9K+rvedI2oazveWp4pF2PjDKJVsjwVwawo
+ 6+yIgIUolHNraOhXkVBG80kuldlUi70oxn+Pxidsn2HoqId0voEiNSPRKc5zZid7U+OS/C2
+ ZDb3y8RjAswx7VAOeaITA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:F2xCF09E9WE=:pNqqd7aOSz99zCpbJC5t/u
+ 30jbHw4L+vPqneOvPA713K6PZc0dDlZQwy81fsxbD6ExKvv1Er4MU0z04GEdcCBC/b2cHAr6q
+ er9s6z7vCKBNeunBiwSlS9mu72Y0kSLzbcYHd5I+6pYda3lgQga5XvR8DX5L3m+iLjx94BUo2
+ Swt7LpET9UckaNAUoRw1Z9OenwJCOdqXZDnMryxzEOrlnBvKzvpMhxbcLZdnlRH6UgFgPPRTt
+ hVZYPA8pBLRE7x0qjGNME1hDrk8Bek8KdU5/fYTiRvpfCF+bOnQg2Q3NTgNJu1doUrxoYKmP1
+ k+ocmzJEY4pIPxmhcRaPp328TeYXXaBSmDuxnM8MTZdUB6D5t4SCsGE8m6HZGt1LKXfAqqI2/
+ 3ADuAXwqX6wYuRDrs1fTMeqfyXcgXu4lV3Fct61fPJ9rEKU1srQOBSN/LjZIZFOfZjhBqNTk2
+ y4v9MDfw7qqoOyswVwZqoFjyVFThdO1HOZ1m3wXkZRDSsAa00JzkjCxt960CwghwUuHvKoB4k
+ 5KsUlImPiEfybH4BcPJl1IIMhtTzVLm1LnrnCjVx7XeDEI1sjA1qxGE2AVQQQqmc2QnELgr5w
+ HbJNi+dhxg3BDPHN8hPcRuBb4tibVj/hd9j00HTIqgKc+nnDeVsHEtIGuNxi7MQjmnG/Q+FLo
+ AANAtkw4BaNUSCLJGJEWLsGt6ElU/l8GQ9W28GqRwe6hVasEzu2GlvgbrTFSTkIRh8NEE05bW
+ qrgVpoTdQWq68DQi
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.05.2018 14:19, Robin Murphy wrote:
-> On 08/05/18 12:32, Stefan Agner wrote:
->> Mixing asm and C code is not recommended in a naked function by
->> gcc and leads to an error when using clang:
->>    drivers/bus/arm-cci.c:2107:2: error: non-ASM statement in naked
->>    function is not supported
->>          unreachable();
->>          ^
->>
->> While the function is marked __naked it actually properly return
->> in asm. There is no need for the unreachable() call.
+On Tue, 2018-05-08 at 14:35 +0200, Krzysztof Kozlowski wrote:
+> On Fri, May 4, 2018 at 12:14 PM, Marcel Ziswiler
+> <marcel.ziswiler@toradex.com> wrote:
+> > Hi Krzysztof
+> > 
+> > On Fri, 2018-05-04 at 12:03 +0200, Krzysztof Kozlowski wrote:
+> > > On Fri, May 4, 2018 at 11:19 AM, Stefan Agner <stefan@agner.ch>
+> > > wrote:
+> > > > On 03.05.2018 17:08, Krzysztof Kozlowski wrote:
+> > > > > Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512
+> > > > > MB
+> > > > > RAM
+> > > > > (with 1024 MB NAND) flavors.  Add support for the 256 MB
+> > > > > version
+> > > > > on Iris
+> > > > > evaluation board.
+> > > > 
+> > > > To we really need to specify memory size these days? I think
+> > > > all
+> > > > common
+> > > > boot loaders fill the memory node anyway.
+> > > > 
+> > > > arch/arm/boot/dts/imx6qdl-apalis.dtsi:
+> > > >         /* Will be filled by the bootloader */
+> > > >         memory@10000000 {
+> > > >                 reg = <0x10000000 0>;
+> > > >         };
+> > > > 
+> > > > 
+> > > > I think we should just rename tegra20-colibri-512.dtsi =>
+> > > > tegra20-colibri.dtsi and tegra20-iris-512.dts => tegra20-
+> > > > iris.dts
+> > > > to
+> > > > avoid confusion and add such an empty node.
+> > > 
+> > > Having memory node is requirement of DeviceTree specification (at
+> > > least one cpu and memory node). Of course if bootloader fills it,
+> > > then
+> > > we could assume that specification is satisfied... but what if
+> > > some
+> > > bootloader skips it? This creates quite specific dependency
+> > > between
+> > > kernel's DTS and bootloader.
+> > 
+> > Yes, no system boots without any boot loader e.g. initialising the
+> > memory and what not. So there are obviously quite specific
+> > dependencies.
 > 
-> The commit title is a bit out-of-date now (I guess it could just be
-> something like "remove unnecessary unreachable()" now), but the rest
-> looks OK to me - even GCC clearly doesn't expect anything beyond the
-> asm to be reachable anyway since the lack of epilogue includes the
-> lack of any compiler-generated return. I've checked that GCC 7.2
-> generates identical object files before and after, other than (for
-> obvious reasons) the line numbers generated by WANT_WARN_ON_SLOWPATH
-> for all the WARN()s appearing later in the file.
+> Sorry for late reply, I missed your emails because unfortunately
+> Google marks messages coming for Toradex as spam ("This message has a
+> from address in toradex.com but has failed toradex.com's required
+> tests for authentication.").
 
-Title: Oops, good catch! Will send a v3.
+Argh, I guess that happens if you have stubborn IT departments which
+still believe in M$. Sending via private email now.
 
-Thanks for checking gcc.
+> Therefore I did not include your comments
+> and sent v3.
 
---
-Stefan
+Yeah, I noticed that. It's forgiven, don't worry (;-p).
 
+> > > One safe solution would be to specify 256 MB memory node for both
+> > > boards and assume that bootloader will bump it to 512 MB for
+> > > specific
+> > > module.
+> > 
+> > Like I mentioned this actually used to be how it was done however
+> > lately it has been agreed that any boot loader anyway needs to do
+> > the
+> > device tree dance (e.g. even just loading and passing it).
 > 
-> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+> Then the safest way is to provide /memory node with 256 MB. If some
+> bootloader omits it (e.g. because it is too old or by any mistake)
+> the
+> FDT will be still usable with reduced memory in case of 512 board.
+
+Makes sense.
+
+> > > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > > > > 
+> > > > > ---
+> > > > > 
+> > > > > Changes since v1:
+> > > > > 1. Fix memory size in tegra20-colibri-256.dtsi (was working
+> > > > > fine
+> > > > > because
+> > > > >    my bootloader uses mem= argument).
+> > > > 
+> > > > What boot loader are you using? You even can omit mem= if your
+> > > > boot
+> > > > loader fills the memory node properly.
+> > > 
+> > > I use the one provided by vendor - Toradex. By default it passes
+> > > both
+> > > mem= and few other mem-like arguments (for FB and video
+> > > processor) to
+> > > command line. I believe it does not adjust the DTB itself because
+> > > Toradex prepared this bootloader for... 3.1 kernel without DTB. 7
+> > > years old kernel. :)
+> > 
+> > Remember our regular BSP is still based on NVIDIA's downstream
+> > Linux
+> > for Tegra aka L4T R16.5 based on Linux kernel 3.1.10 which does not
+> > even use any device tree yet.
 > 
->> Suggested-by: Russell King <linux@arm.linux.org.uk>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> Acked-by: Nicolas Pitre <nico@linaro.org>
->> ---
->>   drivers/bus/arm-cci.c | 2 --
->>   1 file changed, 2 deletions(-)
->>
->> diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
->> index 443e4c3fd357..b8184a903583 100644
->> --- a/drivers/bus/arm-cci.c
->> +++ b/drivers/bus/arm-cci.c
->> @@ -371,8 +371,6 @@ asmlinkage void __naked cci_enable_port_for_self(void)
->>   	[sizeof_struct_cpu_port] "i" (sizeof(struct cpu_port)),
->>   	[sizeof_struct_ace_port] "i" (sizeof(struct cci_ace_port)),
->>   	[offsetof_port_phys] "i" (offsetof(struct cci_ace_port, phys)) );
->> -
->> -	unreachable();
->>   }
->>     /**
->>
+> Yes, I noticed. I am trying to bring it fully on new kernels but no
+> huge successes so far... I'm stuck on NAND trying Lucas Stach's old
+> patchset.
+
+Yeah, for a while I kept his patch set alive as well. I believe 4.4 was
+still working fine passing all MTD tests. However, lately there were so
+many changes it all fell apart. About a month ago I spend a couple
+nights trying to get it running again but something is still not quite
+right. Yet have to sync with Stefan in my team who is much more
+knowledgeable about latest NAND development.
+
+> Best regards,
+> Krzysztof
+
+Cheers
+
+Marcel
