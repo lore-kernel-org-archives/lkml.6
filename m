@@ -1,57 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932225AbeEHNVD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 09:21:03 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:56821 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755193AbeEHNUX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 09:20:23 -0400
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <tony@atomide.com>
-CC: <bcousson@baylibre.com>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <j-keerthy@ti.com>
-Subject: [PATCH 3/4] ARM: dts: am437x-epos-evm: Fixup (again) tps65218 irq type
-Date: Tue, 8 May 2018 16:20:52 +0300
-Message-ID: <20180508132053.5471-4-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180508132053.5471-1-peter.ujfalusi@ti.com>
-References: <20180508132053.5471-1-peter.ujfalusi@ti.com>
+        id S1754223AbeEHNW7 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 09:22:59 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:56207 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751400AbeEHNW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 09:22:58 -0400
+Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
+ (issued 65284 msec ago)
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: okaya@codeaurora.org, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>
+References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
+ <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
+ <43b8ab4a-f8ee-dc96-40ec-e6fdfedd8309@molgen.mpg.de>
+ <20180504024527.GE15790@bhelgaas-glaptop.roam.corp.google.com>
+ <aa72d3ba089c76449600c22b58a2cafe@codeaurora.org>
+ <20180504133327.GF15790@bhelgaas-glaptop.roam.corp.google.com>
+ <20180507213344.GA133147@bhelgaas-glaptop.roam.corp.google.com>
+ <903e7c20-fdd7-9cbf-debb-a90e70240c7c@molgen.mpg.de>
+ <20180508123432.GJ161390@bhelgaas-glaptop.roam.corp.google.com>
+From: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
+Message-ID: <302b3ac9-b34f-c061-8c59-6b3b0c56b1f7@molgen.mpg.de>
+Date: Tue, 8 May 2018 15:22:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180508123432.GJ161390@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While the correct IRQ level fixed the WARN_ON(), but prevented the probe
-of tps65218 as GIC_SPI does not support LEVEL_LOW (?)
+Dear Bjorn,
 
-Use LEVEL_HIGH as it looks to be the accurate one since the INTn of TPS is
-connected to NMIn of the SoC.
 
-Fixes: 7a53a34622da ("ARM: dts: am437x-epos-evm: Correct tps65218 irq type")
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- arch/arm/boot/dts/am43x-epos-evm.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Am 08.05.2018 um 14:34 schrieb Bjorn Helgaas:
+> On Tue, May 08, 2018 at 08:59:34AM +0200, Paul Menzel wrote:
 
-diff --git a/arch/arm/boot/dts/am43x-epos-evm.dts b/arch/arm/boot/dts/am43x-epos-evm.dts
-index 7a5b06fb2cff..6502d3397653 100644
---- a/arch/arm/boot/dts/am43x-epos-evm.dts
-+++ b/arch/arm/boot/dts/am43x-epos-evm.dts
-@@ -595,7 +595,7 @@
- 	tps65218: tps65218@24 {
- 		reg = <0x24>;
- 		compatible = "ti,tps65218";
--		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_LOW>; /* NMIn */
-+		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>; /* NMIn */
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 
--- 
-Peter
+>> Am 07.05.2018 um 23:33 schrieb Bjorn Helgaas:
+>>> On Fri, May 04, 2018 at 08:33:27AM -0500, Bjorn Helgaas wrote:
+>>>> commit b0d6f2230e12c85ae3b65a854a53c67c7c1f6406
+>>>> Author: Bjorn Helgaas <bhelgaas@google.com>
+>>>> Date:   Thu May 3 18:39:38 2018 -0500
+>>>>
+>>>>       PCI: pciehp: Add quirk for Intel Command Completed erratum
+>>>>       The Intel CF118 erratum means the controller does not set the Command
+>>>>       Completed bit unless writes to the Slot Command register change "Control"
+>>>>       bits.  Command Completed is never set for writes that only change software
+>>>>       notification "Enable" bits.  This results in timeouts like this:
+>>>>         pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038 (issued 65284 msec ago)
+>>>>       When this erratum is present, avoid these timeouts by marking commands
+>>>>       "completed" immediately unless they change the "Control" bits.
+>>>>       Here's the text of the erratum from the Intel document:
+>>>>         CF118        PCIe Slot Status Register Command Completed bit not always
+>>>>                      updated on any configuration write to the Slot Control
+>>>>                      Register
+>>>>         Problem:     For PCIe root ports (devices 0 - 10) supporting hot-plug,
+>>>>                      the Slot Status Register (offset AAh) Command Completed
+>>>>                      (bit[4]) status is updated under the following condition:
+>>>>                      IOH will set Command Completed bit after delivering the new
+>>>>                      commands written in the Slot Controller register (offset
+>>>>                      A8h) to VPP. The IOH detects new commands written in Slot
+>>>>                      Control register by checking the change of value for Power
+>>>>                      Controller Control (bit[10]), Power Indicator Control
+>>>>                      (bits[9:8]), Attention Indicator Control (bits[7:6]), or
+>>>>                      Electromechanical Interlock Control (bit[11]) fields. Any
+>>>>                      other configuration writes to the Slot Control register
+>>>>                      without changing the values of these fields will not cause
+>>>>                      Command Completed bit to be set.
+>>>>                      The PCIe Base Specification Revision 2.0 or later describes
+>>>>                      the “Slot Control Register” in section 7.8.10, as follows
+>>>>                      (Reference section 7.8.10, Slot Control Register, Offset
+>>>>                      18h). In hot-plug capable Downstream Ports, a write to the
+>>>>                      Slot Control register must cause a hot-plug command to be
+>>>>                      generated (see Section 6.7.3.2 for details on hot-plug
+>>>>                      commands). A write to the Slot Control register in a
+>>>>                      Downstream Port that is not hotplug capable must not cause a
+>>>>                      hot-plug command to be executed.
+>>>>                      The PCIe Spec intended that every write to the Slot Control
+>>>>                      Register is a command and expected a command complete status
+>>>>                      to abstract the VPP implementation specific nuances from the
+>>>>                      OS software. IOH PCIe Slot Control Register implementation
+>>>>                      is not fully conforming to the PCIe Specification in this
+>>>>                      respect.
+>>>>         Implication: Software checking on the Command Completed status after
+>>>>                      writing to the Slot Control register may time out.
+>>>>         Workaround:  Software can read the Slot Control register and compare the
+>>>>                      existing and new values to determine if it should check the
+>>>>                      Command Completed status after writing to the Slot Control
+>>>>                      register.
+>>>>       Link: http://www.intel.com/content/www/us/en/processors/xeon/xeon-e7-v2-spec-update.html
+>>>>       Link: https://lkml.kernel.org/r/8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de
+>>>>       Reported-by: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
+>>>>       Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+>>>
+>>> I applied this with Paul's tested-by on pci/hotplug for v4.18.
+>>
+>> Thank you very much. Will this also be picked up by the stable Linux kernel
+>> series?
+> 
+> I did not tag it for stable because I didn't think it was a serious enough
+> problem, based on this from Documentation/process/stable-kernel-rules.rst:
+> 
+>   - It must fix a problem that causes a build error (but not for things
+>     marked CONFIG_BROKEN), an oops, a hang, data corruption, a real
+>     security issue, or some "oh, that's not good" issue.  In short, something
+>     critical.
+> 
+> I know I'm on the conservative end of the stable-tagging spectrum, so maybe
+> I could be convinced to add a stable tag.
+> 
+> My impression was that this bug caused annoying messages and annoying
+> delays of a couple seconds during shutdown and resume.  Is it more serious
+> than that?
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+No, not more then that. But “oh, that’s not good” fits in my opinion. My 
+impression was, that’s how most stable patches get in.
+
+
+Kind regards,
+
+Paul
