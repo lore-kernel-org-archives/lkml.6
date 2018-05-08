@@ -1,144 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932324AbeEHJJM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 05:09:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45884 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754233AbeEHJJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 05:09:11 -0400
-Date: Tue, 8 May 2018 11:08:58 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Jane Wan <Jane.Wan@nokia.com>
-Cc: miquel.raynal@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, richard@nod.at, marek.vasut@gmail.com,
-        yamada.masahiro@socionext.com, prabhakar.kushwaha@nxp.com,
-        shawnguo@kernel.org, jagdish.gediya@nxp.com,
-        shreeya.patel23498@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, ties.bos@nokia.com
-Subject: Re: [PATCH v3 2/2] mtd: rawnand: fsl_ifc: use bit-wise majority to
- recover the contents of ONFI parameter
-Message-ID: <20180508110858.7b1432f5@bbrezillon>
-In-Reply-To: <1525710855-8159-1-git-send-email-Jane.Wan@nokia.com>
-References: <1525710855-8159-1-git-send-email-Jane.Wan@nokia.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S932579AbeEHJJg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 05:09:36 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:59821 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754465AbeEHJJe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 05:09:34 -0400
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+CC: Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Andrei Vagin <avagin@openvz.org>, Michal Hocko <mhocko@suse.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Daniel Colascione <dancol@google.com>, Zi Yan <zi.yan@cs.rutgers.edu>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH -mm] mm, pagemap: Hide swap entry for unprivileged users
+Thread-Topic: [PATCH -mm] mm, pagemap: Hide swap entry for unprivileged users
+Thread-Index: AQHT5mvVWujS9GcLcU+EklToaBi6vaQk9EkA
+Date: Tue, 8 May 2018 09:07:34 +0000
+Message-ID: <20180508090734.GA27996@hori1.linux.bs1.fc.nec.co.jp>
+References: <20180508012745.7238-1-ying.huang@intel.com>
+In-Reply-To: <20180508012745.7238-1-ying.huang@intel.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <AAC608D4D314694BA2DE2476E4788BEB@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  7 May 2018 09:34:15 -0700
-Jane Wan <Jane.Wan@nokia.com> wrote:
-
-> Per ONFI specification (Rev. 4.0), if all parameter pages have invalid
-> CRC values, the bit-wise majority may be used to recover the contents of
-> the parameter pages from the parameter page copies present.
+On Tue, May 08, 2018 at 09:27:45AM +0800, Huang, Ying wrote:
+> From: Huang Ying <ying.huang@intel.com>
 > 
-> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
+> In ab676b7d6fbf ("pagemap: do not leak physical addresses to
+> non-privileged userspace"), the /proc/PID/pagemap is restricted to be
+> readable only by CAP_SYS_ADMIN to address some security issue.  In
+> 1c90308e7a77 ("pagemap: hide physical addresses from non-privileged
+> users"), the restriction is relieved to make /proc/PID/pagemap
+> readable, but hide the physical addresses for non-privileged users.
+> But the swap entries are readable for non-privileged users too.  This
+> has some security issues.  For example, for page under migrating, the
+> swap entry has physical address information.  So, in this patch, the
+> swap entries are hided for non-privileged users too.
+> 
+> Fixes: 1c90308e7a77 ("pagemap: hide physical addresses from non-privileged users")
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Cc: Andrei Vagin <avagin@openvz.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Jerome Glisse <jglisse@redhat.com>
+> Cc: Daniel Colascione <dancol@google.com>
+> Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-I never received patch 1 of this series. When you fix something in a
-commit, please resend the whole patchset, even if other patches haven't
-changed.
+Hi ying huang,
+
+This patch looks good to me.
+
+Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
 > ---
->  drivers/mtd/nand/raw/nand_base.c |   41 ++++++++++++++++++++++++++++++--------
->  1 file changed, 33 insertions(+), 8 deletions(-)
+>  fs/proc/task_mmu.c | 26 ++++++++++++++++----------
+>  1 file changed, 16 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index 72f3a89..48f2dec 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -5086,15 +5086,18 @@ static int nand_flash_detect_ext_param_page(struct nand_chip *chip,
->  	return ret;
->  }
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index a20c6e495bb2..ff947fdd7c71 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -1258,8 +1258,9 @@ static pagemap_entry_t pte_to_pagemap_entry(struct pagemapread *pm,
+>  		if (pte_swp_soft_dirty(pte))
+>  			flags |= PM_SOFT_DIRTY;
+>  		entry = pte_to_swp_entry(pte);
+> -		frame = swp_type(entry) |
+> -			(swp_offset(entry) << MAX_SWAPFILES_SHIFT);
+> +		if (pm->show_pfn)
+> +			frame = swp_type(entry) |
+> +				(swp_offset(entry) << MAX_SWAPFILES_SHIFT);
+>  		flags |= PM_SWAP;
+>  		if (is_migration_entry(entry))
+>  			page = migration_entry_to_page(entry);
+> @@ -1310,11 +1311,14 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+>  #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+>  		else if (is_swap_pmd(pmd)) {
+>  			swp_entry_t entry = pmd_to_swp_entry(pmd);
+> -			unsigned long offset = swp_offset(entry);
+> +			unsigned long offset;
 >  
-> +#define GET_BIT(bit, val)   (((val) >> (bit)) & 0x01)
-> +
->  /*
->   * Check if the NAND chip is ONFI compliant, returns 1 if it is, 0 otherwise.
->   */
->  static int nand_flash_detect_onfi(struct nand_chip *chip)
->  {
->  	struct mtd_info *mtd = nand_to_mtd(chip);
-> -	struct nand_onfi_params *p;
-> +	struct nand_onfi_params *p = NULL;
->  	char id[4];
-> -	int i, ret, val;
-> +	int i, ret, val, pagesize;
-> +	u8 *buf = NULL;
->  
->  	/* Try ONFI for unknown chip or LP */
->  	ret = nand_readid_op(chip, 0x20, id, sizeof(id));
-> @@ -5102,8 +5105,9 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  		return 0;
->  
->  	/* ONFI chip: allocate a buffer to hold its parameter page */
-> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
-> -	if (!p)
-> +	pagesize = sizeof(*p);
-> +	buf = kzalloc((pagesize * 3), GFP_KERNEL);
-
-Not sure why you have to add a new buf variable here, and pagesize is
-not needed either, just use sizeof(*p) directly.
-
-> +	if (!buf)
->  		return -ENOMEM;
->  
->  	ret = nand_read_param_page_op(chip, 0, NULL, 0);
-> @@ -5113,7 +5117,8 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  	}
->  
->  	for (i = 0; i < 3; i++) {
-> -		ret = nand_read_data_op(chip, p, sizeof(*p), true);
-> +		p = (struct nand_onfi_params *)&buf[i*pagesize];
-> +		ret = nand_read_data_op(chip, p, pagesize, true);
->  		if (ret) {
->  			ret = 0;
->  			goto free_onfi_param_page;
-> @@ -5126,8 +5131,27 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  	}
->  
->  	if (i == 3) {
-> -		pr_err("Could not find valid ONFI parameter page; aborting\n");
-> -		goto free_onfi_param_page;
-> +		int j, k, l;
-> +		u8 v, m;
-> +
-> +		pr_err("Could not find valid ONFI parameter page\n");
-> +		pr_info("Recover ONFI params with bit-wise majority\n");
-> +		for (j = 0; j < pagesize; j++) {
-> +			v = 0;
-> +			for (k = 0; k < 8; k++) {
-> +				m = 0;
-> +				for (l = 0; l < 3; l++)
-> +					m += GET_BIT(k, buf[l*pagesize + j]);
-> +				if (m > 1)
-> +					v |= BIT(k);
+> -			offset += (addr & ~PMD_MASK) >> PAGE_SHIFT;
+> -			frame = swp_type(entry) |
+> -				(offset << MAX_SWAPFILES_SHIFT);
+> +			if (pm->show_pfn) {
+> +				offset = swp_offset(entry) +
+> +					((addr & ~PMD_MASK) >> PAGE_SHIFT);
+> +				frame = swp_type(entry) |
+> +					(offset << MAX_SWAPFILES_SHIFT);
 > +			}
-> +			((u8 *)p)[j] = v;
-> +		}
-
-Can you move the bit-wise majority code in a separate function?
-
-> +		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) !=
-> +				le16_to_cpu(p->crc)) {
-> +			pr_err("ONFI parameter recovery failed, aborting\n");
-> +			goto free_onfi_param_page;
-> +		}
->  	}
->  
->  	/* Check version */
-> @@ -5220,7 +5244,8 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  	       sizeof(p->vendor));
->  
->  free_onfi_param_page:
-> -	kfree(p);
-> +	if (buf != NULL)
-> +		kfree(buf);
-
-kfree() already handles the buf == NULL case, no need to check it here.
-
->  	return ret;
->  }
->  
+>  			flags |= PM_SWAP;
+>  			if (pmd_swp_soft_dirty(pmd))
+>  				flags |= PM_SOFT_DIRTY;
+> @@ -1332,10 +1336,12 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+>  			err = add_to_pagemap(addr, &pme, pm);
+>  			if (err)
+>  				break;
+> -			if (pm->show_pfn && (flags & PM_PRESENT))
+> -				frame++;
+> -			else if (flags & PM_SWAP)
+> -				frame += (1 << MAX_SWAPFILES_SHIFT);
+> +			if (pm->show_pfn) {
+> +				if (flags & PM_PRESENT)
+> +					frame++;
+> +				else if (flags & PM_SWAP)
+> +					frame += (1 << MAX_SWAPFILES_SHIFT);
+> +			}
+>  		}
+>  		spin_unlock(ptl);
+>  		return err;
+> -- 
+> 2.17.0
+> 
+> 
