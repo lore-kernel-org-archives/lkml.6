@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753909AbeEHCc1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 22:32:27 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:39861 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754018AbeEHCcW (ORCPT
+        id S1754059AbeEHCce (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 22:32:34 -0400
+Received: from mail-it0-f53.google.com ([209.85.214.53]:51967 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754025AbeEHCc1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 22:32:22 -0400
-X-Google-Smtp-Source: AB8JxZpNLrvXD0j1hAnpeEwHafgBR40+8S3dAflN0bqNz2ZhOZzsvmqC9vDmEPiyRL+kGH/1Tu+2YA==
+        Mon, 7 May 2018 22:32:27 -0400
+X-Google-Smtp-Source: AB8JxZqImZcEW8AGyRJzLh1m+K9WuXAOC3mwJ30GZ6eITWJZMkqA64TTKEIQSZ5VWDi+QIrTv7R5ug==
 From: Connor McAdams <conmanx360@gmail.com>
 Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
         <jeremy.lefaure@lse.epita.fr>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 09/13] ALSA: hda/ca0132: add the ability to set src_id on scp commands
-Date: Mon,  7 May 2018 22:31:17 -0400
-Message-Id: <1525746683-18535-10-git-send-email-conmanx360@gmail.com>
+Subject: [PATCH v4 11/13] ALSA: hda/ca0132: Add DSP Volume set and New mixers for SBZ + R3Di
+Date: Mon,  7 May 2018 22:31:19 -0400
+Message-Id: <1525746683-18535-12-git-send-email-conmanx360@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525746683-18535-1-git-send-email-conmanx360@gmail.com>
 References: <1525746683-18535-1-git-send-email-conmanx360@gmail.com>
@@ -25,180 +25,272 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the ability to change the src_id on scp commands, which
-is used in the dsp setup of the Recon3Di and the Sound Blaster Z. It
-also makes sure to maintain backwards compatibility with the older
-dspio_set_uint_param function, and sets it's src to the default 0x20.
+Adds lookup table for floating point decibel volume, and new functions
+to allow for setting the decibel level on the DSP.
 
 Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 ---
- sound/pci/hda/patch_ca0132.c | 86 +++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 74 insertions(+), 12 deletions(-)
+ sound/pci/hda/patch_ca0132.c | 203 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 202 insertions(+), 1 deletion(-)
 
 diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 7a9d505..878bbf7 100644
+index 2a42faf..311df61 100644
 --- a/sound/pci/hda/patch_ca0132.c
 +++ b/sound/pci/hda/patch_ca0132.c
-@@ -1579,8 +1579,8 @@ static int dspio_send_scp_message(struct hda_codec *codec,
-  * Returns zero or a negative error code.
-  */
- static int dspio_scp(struct hda_codec *codec,
--		int mod_id, int req, int dir, void *data, unsigned int len,
--		void *reply, unsigned int *reply_len)
-+		int mod_id, int src_id, int req, int dir, const void *data,
-+		unsigned int len, void *reply, unsigned int *reply_len)
- {
- 	int status = 0;
- 	struct scp_msg scp_send, scp_reply;
-@@ -1604,7 +1604,7 @@ static int dspio_scp(struct hda_codec *codec,
- 		return -EINVAL;
+@@ -537,6 +537,31 @@ static const struct ca0132_alt_out_set alt_out_presets[] = {
  	}
+ };
  
--	scp_send.hdr = make_scp_header(mod_id, 0x20, (dir == SCP_GET), req,
-+	scp_send.hdr = make_scp_header(mod_id, src_id, (dir == SCP_GET), req,
- 				       0, 0, 0, len/sizeof(unsigned int));
- 	if (data != NULL && len > 0) {
- 		len = min((unsigned int)(sizeof(scp_send.data)), len);
-@@ -1661,15 +1661,24 @@ static int dspio_scp(struct hda_codec *codec,
-  * Set DSP parameters
-  */
- static int dspio_set_param(struct hda_codec *codec, int mod_id,
--			int req, void *data, unsigned int len)
-+			int src_id, int req, const void *data, unsigned int len)
- {
--	return dspio_scp(codec, mod_id, req, SCP_SET, data, len, NULL, NULL);
-+	return dspio_scp(codec, mod_id, src_id, req, SCP_SET, data, len, NULL,
-+			NULL);
- }
- 
- static int dspio_set_uint_param(struct hda_codec *codec, int mod_id,
--			int req, unsigned int data)
-+			int req, const unsigned int data)
- {
--	return dspio_set_param(codec, mod_id, req, &data, sizeof(unsigned int));
-+	return dspio_set_param(codec, mod_id, 0x20, req, &data,
-+			sizeof(unsigned int));
-+}
++/*
++ * DSP volume setting structs. Req 1 is left volume, req 2 is right volume,
++ * and I don't know what the third req is, but it's always zero. I assume it's
++ * some sort of update or set command to tell the DSP there's new volume info.
++ */
++#define DSP_VOL_OUT 0
++#define DSP_VOL_IN  1
 +
-+static int dspio_set_uint_param_no_source(struct hda_codec *codec, int mod_id,
-+			int req, const unsigned int data)
-+{
-+	return dspio_set_param(codec, mod_id, 0x00, req, &data,
-+			sizeof(unsigned int));
- }
++struct ct_dsp_volume_ctl {
++	hda_nid_t vnid;
++	int mid; /* module ID*/
++	unsigned int reqs[3]; /* scp req ID */
++};
++
++static struct ct_dsp_volume_ctl ca0132_alt_vol_ctls[] = {
++	{ .vnid = VNID_SPK,
++	  .mid = 0x32,
++	  .reqs = {3, 4, 2}
++	},
++	{ .vnid = VNID_MIC,
++	  .mid = 0x37,
++	  .reqs = {2, 3, 1}
++	}
++};
++
+ enum hda_cmd_vendor_io {
+ 	/* for DspIO node */
+ 	VENDOR_DSPIO_SCP_WRITE_DATA_LOW      = 0x000,
+@@ -3248,6 +3273,24 @@ static unsigned int ca0132_capture_pcm_delay(struct hda_pcm_stream *info,
+ 	  .tlv = { .c = ca0132_volume_tlv }, \
+ 	  .private_value = HDA_COMPOSE_AMP_VAL(nid, channel, 0, dir) }
  
++/*
++ * Creates a mixer control that uses defaults of HDA_CODEC_VOL except for the
++ * volume put, which is used for setting the DSP volume. This was done because
++ * the ca0132 functions were taking too much time and causing lag.
++ */
++#define CA0132_ALT_CODEC_VOL_MONO(xname, nid, channel, dir) \
++	{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, \
++	  .name = xname, \
++	  .subdevice = HDA_SUBDEV_AMP_FLAG, \
++	  .access = SNDRV_CTL_ELEM_ACCESS_READWRITE | \
++			SNDRV_CTL_ELEM_ACCESS_TLV_READ | \
++			SNDRV_CTL_ELEM_ACCESS_TLV_CALLBACK, \
++	  .info = snd_hda_mixer_amp_volume_info, \
++	  .get = snd_hda_mixer_amp_volume_get, \
++	  .put = ca0132_alt_volume_put, \
++	  .tlv = { .c = snd_hda_mixer_amp_tlv }, \
++	  .private_value = HDA_COMPOSE_AMP_VAL(nid, channel, 0, dir) }
++
+ #define CA0132_CODEC_MUTE_MONO(xname, nid, channel, dir) \
+ 	{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, \
+ 	  .name = xname, \
+@@ -3260,9 +3303,40 @@ static unsigned int ca0132_capture_pcm_delay(struct hda_pcm_stream *info,
+ /* stereo */
+ #define CA0132_CODEC_VOL(xname, nid, dir) \
+ 	CA0132_CODEC_VOL_MONO(xname, nid, 3, dir)
++#define CA0132_ALT_CODEC_VOL(xname, nid, dir) \
++	CA0132_ALT_CODEC_VOL_MONO(xname, nid, 3, dir)
+ #define CA0132_CODEC_MUTE(xname, nid, dir) \
+ 	CA0132_CODEC_MUTE_MONO(xname, nid, 3, dir)
+ 
++/* lookup tables */
++/*
++ * Lookup table with decibel values for the DSP. When volume is changed in
++ * Windows, the DSP is also sent the dB value in floating point. In Windows,
++ * these values have decimal points, probably because the Windows driver
++ * actually uses floating point. We can't here, so I made a lookup table of
++ * values -90 to 9. -90 is the lowest decibel value for both the ADC's and the
++ * DAC's, and 9 is the maximum.
++ */
++static const unsigned int float_vol_db_lookup[] = {
++0xC2B40000, 0xC2B20000, 0xC2B00000, 0xC2AE0000, 0xC2AC0000, 0xC2AA0000,
++0xC2A80000, 0xC2A60000, 0xC2A40000, 0xC2A20000, 0xC2A00000, 0xC29E0000,
++0xC29C0000, 0xC29A0000, 0xC2980000, 0xC2960000, 0xC2940000, 0xC2920000,
++0xC2900000, 0xC28E0000, 0xC28C0000, 0xC28A0000, 0xC2880000, 0xC2860000,
++0xC2840000, 0xC2820000, 0xC2800000, 0xC27C0000, 0xC2780000, 0xC2740000,
++0xC2700000, 0xC26C0000, 0xC2680000, 0xC2640000, 0xC2600000, 0xC25C0000,
++0xC2580000, 0xC2540000, 0xC2500000, 0xC24C0000, 0xC2480000, 0xC2440000,
++0xC2400000, 0xC23C0000, 0xC2380000, 0xC2340000, 0xC2300000, 0xC22C0000,
++0xC2280000, 0xC2240000, 0xC2200000, 0xC21C0000, 0xC2180000, 0xC2140000,
++0xC2100000, 0xC20C0000, 0xC2080000, 0xC2040000, 0xC2000000, 0xC1F80000,
++0xC1F00000, 0xC1E80000, 0xC1E00000, 0xC1D80000, 0xC1D00000, 0xC1C80000,
++0xC1C00000, 0xC1B80000, 0xC1B00000, 0xC1A80000, 0xC1A00000, 0xC1980000,
++0xC1900000, 0xC1880000, 0xC1800000, 0xC1700000, 0xC1600000, 0xC1500000,
++0xC1400000, 0xC1300000, 0xC1200000, 0xC1100000, 0xC1000000, 0xC0E00000,
++0xC0C00000, 0xC0A00000, 0xC0800000, 0xC0400000, 0xC0000000, 0xBF800000,
++0x00000000, 0x3F800000, 0x40000000, 0x40400000, 0x40800000, 0x40A00000,
++0x40C00000, 0x40E00000, 0x41000000, 0x41100000
++};
++
+ /* The following are for tuning of products */
+ #ifdef ENABLE_TUNING_CONTROLS
+ 
+@@ -4629,6 +4703,41 @@ static int ca0132_switch_put(struct snd_kcontrol *kcontrol,
  /*
-@@ -1681,8 +1690,9 @@ static int dspio_alloc_dma_chan(struct hda_codec *codec, unsigned int *dma_chan)
- 	unsigned int size = sizeof(dma_chan);
- 
- 	codec_dbg(codec, "     dspio_alloc_dma_chan() -- begin\n");
--	status = dspio_scp(codec, MASTERCONTROL, MASTERCONTROL_ALLOC_DMA_CHAN,
--			SCP_GET, NULL, 0, dma_chan, &size);
-+	status = dspio_scp(codec, MASTERCONTROL, 0x20,
-+			MASTERCONTROL_ALLOC_DMA_CHAN, SCP_GET, NULL, 0,
-+			dma_chan, &size);
- 
- 	if (status < 0) {
- 		codec_dbg(codec, "dspio_alloc_dma_chan: SCP Failed\n");
-@@ -1711,8 +1721,9 @@ static int dspio_free_dma_chan(struct hda_codec *codec, unsigned int dma_chan)
- 	codec_dbg(codec, "     dspio_free_dma_chan() -- begin\n");
- 	codec_dbg(codec, "dspio_free_dma_chan: chan=%d\n", dma_chan);
- 
--	status = dspio_scp(codec, MASTERCONTROL, MASTERCONTROL_ALLOC_DMA_CHAN,
--			   SCP_SET, &dma_chan, sizeof(dma_chan), NULL, &dummy);
-+	status = dspio_scp(codec, MASTERCONTROL, 0x20,
-+			MASTERCONTROL_ALLOC_DMA_CHAN, SCP_SET, &dma_chan,
-+			sizeof(dma_chan), NULL, &dummy);
- 
- 	if (status < 0) {
- 		codec_dbg(codec, "dspio_free_dma_chan: SCP Failed\n");
-@@ -3226,7 +3237,7 @@ static int tuning_ctl_set(struct hda_codec *codec, hda_nid_t nid,
- 			break;
- 
- 	snd_hda_power_up(codec);
--	dspio_set_param(codec, ca0132_tuning_ctls[i].mid,
-+	dspio_set_param(codec, ca0132_tuning_ctls[i].mid, 0x20,
- 			ca0132_tuning_ctls[i].req,
- 			&(lookup[idx]), sizeof(unsigned int));
- 	snd_hda_power_down(codec);
-@@ -4612,6 +4623,27 @@ static void ca0132_refresh_widget_caps(struct hda_codec *codec)
-  * Recon3Di r3di_setup_defaults sub functions.
+  * Volume related
   */
- 
-+static void r3di_dsp_scp_startup(struct hda_codec *codec)
++/*
++ * Sets the internal DSP decibel level to match the DAC for output, and the
++ * ADC for input. Currently only the SBZ sets dsp capture volume level, and
++ * all alternative codecs set DSP playback volume.
++ */
++static void ca0132_alt_dsp_volume_put(struct hda_codec *codec, hda_nid_t nid)
 +{
-+	unsigned int tmp;
++	struct ca0132_spec *spec = codec->spec;
++	unsigned int dsp_dir;
++	unsigned int lookup_val;
 +
-+	tmp = 0x00000000;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0A, tmp);
++	if (nid == VNID_SPK)
++		dsp_dir = DSP_VOL_OUT;
++	else
++		dsp_dir = DSP_VOL_IN;
 +
-+	tmp = 0x00000001;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0B, tmp);
++	lookup_val = spec->vnode_lvol[nid - VNODE_START_NID];
 +
-+	tmp = 0x00000004;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
++	dspio_set_uint_param(codec,
++		ca0132_alt_vol_ctls[dsp_dir].mid,
++		ca0132_alt_vol_ctls[dsp_dir].reqs[0],
++		float_vol_db_lookup[lookup_val]);
 +
-+	tmp = 0x00000005;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
++	lookup_val = spec->vnode_rvol[nid - VNODE_START_NID];
 +
-+	tmp = 0x00000000;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
++	dspio_set_uint_param(codec,
++		ca0132_alt_vol_ctls[dsp_dir].mid,
++		ca0132_alt_vol_ctls[dsp_dir].reqs[1],
++		float_vol_db_lookup[lookup_val]);
 +
++	dspio_set_uint_param(codec,
++		ca0132_alt_vol_ctls[dsp_dir].mid,
++		ca0132_alt_vol_ctls[dsp_dir].reqs[2], FLOAT_ZERO);
 +}
 +
- static void r3di_dsp_initial_mic_setup(struct hda_codec *codec)
+ static int ca0132_volume_info(struct snd_kcontrol *kcontrol,
+ 			      struct snd_ctl_elem_info *uinfo)
  {
- 	unsigned int tmp;
-@@ -4729,6 +4761,34 @@ static void sbz_chipio_startup_data(struct hda_codec *codec)
- 	mutex_unlock(&spec->chipio_mutex);
+@@ -4730,6 +4839,51 @@ static int ca0132_volume_put(struct snd_kcontrol *kcontrol,
+ 	return changed;
  }
  
 +/*
-+ * Sound Blaster Z uses these after DSP is loaded. Weird SCP commands
-+ * without a 0x20 source like normal.
++ * This function is the same as the one above, because using an if statement
++ * inside of the above volume control for the DSP volume would cause too much
++ * lag. This is a lot more smooth.
 + */
-+static void sbz_dsp_scp_startup(struct hda_codec *codec)
++static int ca0132_alt_volume_put(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
 +{
-+	unsigned int tmp;
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct ca0132_spec *spec = codec->spec;
++	hda_nid_t nid = get_amp_nid(kcontrol);
++	int ch = get_amp_channels(kcontrol);
++	long *valp = ucontrol->value.integer.value;
++	hda_nid_t vnid = 0;
++	int changed = 1;
 +
-+	tmp = 0x00000003;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
++	switch (nid) {
++	case 0x02:
++		vnid = VNID_SPK;
++		break;
++	case 0x07:
++		vnid = VNID_MIC;
++		break;
++	}
 +
-+	tmp = 0x00000000;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0A, tmp);
++	/* store the left and right volume */
++	if (ch & 1) {
++		spec->vnode_lvol[vnid - VNODE_START_NID] = *valp;
++		valp++;
++	}
++	if (ch & 2) {
++		spec->vnode_rvol[vnid - VNODE_START_NID] = *valp;
++		valp++;
++	}
 +
-+	tmp = 0x00000001;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0B, tmp);
++	snd_hda_power_up(codec);
++	ca0132_alt_dsp_volume_put(codec, vnid);
++	mutex_lock(&codec->control_mutex);
++	changed = snd_hda_mixer_amp_volume_put(kcontrol, ucontrol);
++	mutex_unlock(&codec->control_mutex);
++	snd_hda_power_down(codec);
 +
-+	tmp = 0x00000004;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
-+
-+	tmp = 0x00000005;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
-+
-+	tmp = 0x00000000;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
-+
++	return changed;
 +}
 +
- static void sbz_dsp_initial_mic_setup(struct hda_codec *codec)
+ static int ca0132_volume_tlv(struct snd_kcontrol *kcontrol, int op_flag,
+ 			     unsigned int size, unsigned int __user *tlv)
  {
- 	unsigned int tmp;
-@@ -4807,6 +4867,7 @@ static void r3di_setup_defaults(struct hda_codec *codec)
- 	if (spec->dsp_state != DSP_DOWNLOADED)
- 		return;
+@@ -4849,6 +5003,39 @@ static struct snd_kcontrol_new ca0132_mixer[] = {
+ 	{ } /* end */
+ };
  
-+	r3di_dsp_scp_startup(codec);
++/*
++ * SBZ specific control mixer. Removes auto-detect for mic, and adds surround
++ * controls. Also sets both the Front Playback and Capture Volume controls to
++ * alt so they set the DSP's decibel level.
++ */
++static struct snd_kcontrol_new sbz_mixer[] = {
++	CA0132_ALT_CODEC_VOL("Front Playback Volume", 0x02, HDA_OUTPUT),
++	CA0132_CODEC_MUTE("Front Playback Switch", VNID_SPK, HDA_OUTPUT),
++	CA0132_ALT_CODEC_VOL("Capture Volume", 0x07, HDA_INPUT),
++	CA0132_CODEC_MUTE("Capture Switch", VNID_MIC, HDA_INPUT),
++	HDA_CODEC_VOLUME("What U Hear Capture Volume", 0x0a, 0, HDA_INPUT),
++	HDA_CODEC_MUTE("What U Hear Capture Switch", 0x0a, 0, HDA_INPUT),
++	CA0132_CODEC_MUTE_MONO("HP/Speaker Auto Detect Playback Switch",
++				VNID_HP_ASEL, 1, HDA_OUTPUT),
++	{ } /* end */
++};
++
++/*
++ * Same as the Sound Blaster Z, except doesn't use the alt volume for capture
++ * because it doesn't set decibel levels for the DSP for capture.
++ */
++static struct snd_kcontrol_new r3di_mixer[] = {
++	CA0132_ALT_CODEC_VOL("Front Playback Volume", 0x02, HDA_OUTPUT),
++	CA0132_CODEC_MUTE("Front Playback Switch", VNID_SPK, HDA_OUTPUT),
++	CA0132_CODEC_VOL("Capture Volume", VNID_MIC, HDA_INPUT),
++	CA0132_CODEC_MUTE("Capture Switch", VNID_MIC, HDA_INPUT),
++	HDA_CODEC_VOLUME("What U Hear Capture Volume", 0x0a, 0, HDA_INPUT),
++	HDA_CODEC_MUTE("What U Hear Capture Switch", 0x0a, 0, HDA_INPUT),
++	CA0132_CODEC_MUTE_MONO("HP/Speaker Auto Detect Playback Switch",
++				VNID_HP_ASEL, 1, HDA_OUTPUT),
++	{ } /* end */
++};
++
+ static int ca0132_build_controls(struct hda_codec *codec)
+ {
+ 	struct ca0132_spec *spec = codec->spec;
+@@ -6562,7 +6749,21 @@ static int patch_ca0132(struct hda_codec *codec)
  
- 	r3di_dsp_initial_mic_setup(codec);
+ 	spec->dsp_state = DSP_DOWNLOAD_INIT;
+ 	spec->num_mixers = 1;
+-	spec->mixers[0] = ca0132_mixer;
++
++	/* Set which mixers each quirk uses. */
++	switch (spec->quirk) {
++	case QUIRK_SBZ:
++		spec->mixers[0] = sbz_mixer;
++		snd_hda_codec_set_name(codec, "Sound Blaster Z");
++		break;
++	case QUIRK_R3DI:
++		spec->mixers[0] = r3di_mixer;
++		snd_hda_codec_set_name(codec, "Recon3Di");
++		break;
++	default:
++		spec->mixers[0] = ca0132_mixer;
++		break;
++	}
  
-@@ -4851,6 +4912,7 @@ static void sbz_setup_defaults(struct hda_codec *codec)
- 	if (spec->dsp_state != DSP_DOWNLOADED)
- 		return;
- 
-+	sbz_dsp_scp_startup(codec);
- 
- 	sbz_init_analog_mics(codec);
- 
+ 	/* Setup whether or not to use alt functions */
+ 	switch (spec->quirk) {
 -- 
 2.7.4
