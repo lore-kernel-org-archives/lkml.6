@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932419AbeEHVUg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:20:36 -0400
-Received: from mail-eopbgr50127.outbound.protection.outlook.com ([40.107.5.127]:19200
+        id S932632AbeEHVU5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:20:57 -0400
+Received: from mail-eopbgr50093.outbound.protection.outlook.com ([40.107.5.93]:14240
         "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932133AbeEHVUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:20:32 -0400
+        id S932460AbeEHVUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 17:20:49 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=jane.wan@nokia.com;
 From: Jane Wan <Jane.Wan@nokia.com>
@@ -17,10 +17,12 @@ To: Boris.Brezillon@bootlin.com, miquel.raynal@bootlin.com,
         jagdish.gediya@nxp.com, shreeya.patel23498@gmail.com
 Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
         ties.bos@nokia.com, Jane Wan <Jane.Wan@nokia.com>
-Subject: [PATCH v4 1/2] mtd: rawnand: fsl_ifc: fix FSL NAND driver to read all ONFI parameter pages
-Date: Tue,  8 May 2018 14:19:53 -0700
-Message-Id: <1525814394-30067-1-git-send-email-Jane.Wan@nokia.com>
+Subject: [PATCH v4 2/2] mtd: rawnand: use bit-wise majority to recover the contents of ONFI parameter
+Date: Tue,  8 May 2018 14:19:54 -0700
+Message-Id: <1525814394-30067-2-git-send-email-Jane.Wan@nokia.com>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1525814394-30067-1-git-send-email-Jane.Wan@nokia.com>
+References: <1525814394-30067-1-git-send-email-Jane.Wan@nokia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [131.228.32.160]
@@ -30,46 +32,47 @@ X-ClientProxiedBy: VI1PR04CA0091.eurprd04.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:(109105607167333);BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989080)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(8990040)(2017052603328)(7193020);SRVR:VI1PR07MB1614;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1614;3:kxfOVSHhIf53pl+HIhk8PMlfA3ip6Waxl/5TYg3/9Er+WwCB6ZokHKJjw+/zsqZgjWh3Qwnv++403gh7NZPqLpxkALjvbI6oOvPYiO3htl/Pdhbz+e/0y4tKKyjwQ4x/tH5iMWd/93fOtwV9ngCDtB5GpCfgZr1bJFyBt/XG9dl3qL8LCTqhVEpCCoxdtiqBMxlK1Hz2DjY2usrGgu8uY5qg0yRo2ebx62su7Qc5B1MKH4V8YfylLhfrKw5ohAeYbiTQtO2OEZncUlFewQdcTKtHScP/nmjogmc/yJ1mDdk=;25:usb0OBhdtLQpc3YUR029KwXruwlytnwUFlXncn5kmWHFhyPuATZKWQgE2lAabxMZgLxNcbvrbMwAm179e1o6rcBnvbs7m9455l33Vi3EXYFUOrtA8DHg4i0eUS18S+zVmfaNSdIe7LgjgAt2ikoKdDfbqFP5pNTM842KVbJUcSy+AxUuBAirkRynVXCQOGUblokyQtgNfwHZHyPsovTuLh5NqO7VEf1/znPkCJEH7lz5CXB/X+smV7S+Qej3VeLv8KqF4kDn/AlY/VlS0J/uK3TylHooXtynqv206+sB8QHcrkYxgjdQ2vAlIdKaB5PMF+TFn1UNuhAuDTpyj+utbA==;31:WpVXkX4yAwhwo2t3dL/RsHXB0SIg9YO0eJo7i04YTT46GiQQIJISS6Zlvx4ab395kVj4lzQJvuouDLVwXPhIk2U/gMqVq6+EjdJwu+zId3Q5gjq+t6TaszPaxdk1LW/R1FSThfbSPuR1a2x4pGspPz5vQQsXpRvdtZBGDf2G2thzmPsbt3HSUuGqkwTf0N31XXg2rMDslfZsl8tjsN1+bDL6UPjIAI/eO+FZ1myvJT0=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1614;3:2BAE5R2XrOwY9bIiKQNDES/eue4KfDHKz4HgpkA64dWSmdpz2h5NpnA78mqa7STu7w+VfwBeFQH7P5bSwtos7QptNYWHt7YXFeD3sXWAL91/5u9DQLvMBXkvcdyN/C1mysA2Ej9hfCFWg1dmUx3Hg/Ld/S6ptmqkPAaZyD5FylkemK9M3X0hwIIUkhKUy0Q6skScV1vj9KcZtpV98xvCrc9D2zT8gPvswxsbziVmga5mBgRfsSgMe3kxEiU6/fi48snW1YZq8aJcRgurQKB3dN23+3956PS0MC60nu+17Ik=;25:6PObiia03BU2uJFqsZJBT99n0gfZZ/BKpnW26gokV+qW7V/kEkh+NT1b6APWr13lk3CVhXeC0SvgjHPQBQf1ncBszKeeD17pOLgKKKX6PS/KOIH3mJWiO81H1PUftjqSetahamiYoEkhm7Loz4AxV0Mx2uv1MlbzxZr1fl7rpnT3+4X084FVygtRvvqSnkBHACfV4QJKd9NVHKZ8Y+TQ/ldSe9MnWJbe+MHIx5IbnsAG0RuHpFeGQ3BfPjOcCf85rej3LVG2IyWMNNzSogL96/LfQ9CU1hnh0CFUqsX1TMf0rpnEeh9w7d/jKfgIabZXHTv0eN5CvW5QJ/hXrwn09w==;31:dV8vzIrFsjVnx3Dyt52bsej2GgZEEGYP+NPbsF6vm4uiGGr2XPzN++TRtcoSFxW7BrfFER5kOzyT+UYh3ZcMTuPrVgvtJoZOGNHzxlfZnd1+g/eVuU2EIxI8yv1L/09bf0i1Vx/0B4S6yyLbqG+YK2XbrGETs6SM/nQQQEd7/snKrKV2f2Ehu+vzh/PxhQRJQI6bW3ELvgl5K4SbfnAIjjTcbG8uGGql8ip2pgYjK3E=
 X-MS-TrafficTypeDiagnostic: VI1PR07MB1614:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1614;20:YG1mPjBaU3sLNcJQbdnR6PDVhBAFlaJwwHZFVZt7ElKpugpYafIM6w53bF3W2a0xz2MfdWaYHpXWd8pJiInGMhh9no4NO9hFELUoGWGa4ahbrJ1c/ot6iYnW5UFL6fyRM79ETGJmkYgGw+Oa33bFWBcmixhwMRhg1tiRfFYF2fsMd/GblpFh9lcs9c6bQKxRVpeBHFTlBI2azD1nmb8D1gZkXiluNCxWNday8EpeVO/xYupvs2JJdDitPnv5IvZpgruDjdCxWwGddGjGpPvxP5TKvBHXXMQbWNFSNLeMF2WD3x0iAkI5mfXwyZqOoZe/TOR0eV8/FIMedx4Lk+xxoLd0M+u/Dw0lnk7ZwET2GAQjbNeG5wY15FPnapCxkIDZm/2rYLV885KLbXkXFSyRZbWZXd4S5Y1Xub1LqyqnvsBemfaAOYKtZPNCSZJIrHBp5KobCfj2XrZyu8FLOfZj69oCxkTGi+aROdQiCqwpu/baeiMw9EuSuS62ytgPz0xG;4:yTxvB6Gx2GpmzEhGvKTvBTS+Ud2DNXKzCTy+vohFkgvdOe/aYwgohK/jZAUIEaTRvvdhi2MrcEvr/U1vnsNwGRwEI3RpRf9pZ5n5a9BK0wKnVSwTJAmXyxx6maRpKnTsRS6gojbbJpyAlNt9gn8/b3PE6IsONuu01lXcrkBxDwV2TsZ5TsRyso56oZjh7k9va19phMVSMfRJIAhw3+xY8d+D2rX2H8dce+DnTGe0QV5DtyxcNW8+NvCqcrmZgHz7s3TSiAqab3G+TRxDtV79H7CLlpIGTjjYpOjx9C+BDLNbFNFNPF7KE5auXS1oulbjFXC1EZa6LsYsVnrBu3xARkd0bSLU9QCf/oQccle7VEI=
-X-Microsoft-Antispam-PRVS: <VI1PR07MB1614598418C55AF80CA071DE819A0@VI1PR07MB1614.eurprd07.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1614;20:uHKmWS22Hg3vHlOUcXAhMqgw3vyvKe0uYX+3n8bvjsx7kGdRgRhv+MCGpEBXFZ7jg2clbzk4nOnN0zXGhvay9eV8sZDM2rkzbYx2LwXDByCJnewkVEDx8e3Ic0IJ9AagV1ektT32IUumSfdn1GOzBeqm0ai3fjQoIp+xlxMZK4Pje9H73VJyP3e5As6KsmY1xEtedUhvALqBOGgVQ2igilyWSqILatV2al9tRCElyi2AAiNI/fjFvquweDfXWwZUABWvALkyjO9PWZ8zm5ktSwqfC+GLA+oxIx5Gkng5e3GDyvWEpCrxwBwlHgQQmCUs4Yfa8p5o73zINDrM61xUMEJ8nyo2cvA5eeb1bUai7cgzH1Z0VDAxZdeFHvvpIJ8saLNkOvz3dYfQCg9j1HtJdjKnNnmCt+vX4bPfNQgvjsVt8L+EBIRyBkqu5i0/z3IKaHRZBMhWmr/EbCSYuBQDzOn6O93KsszeEam5DaHzQkG2l8YAwhO1Xw2IAZfnyeVQ;4:FA/BcBk4iSkms3CYiAJ+vujgqxUGnq69lYBGk3E2v6A3kFeDDzvjYi/eAsp+GzFUrl9S/W2kzj2lMhcEX3jMkdL/QduO9awBNzj4M+pjI9cZr0UzeLqbmRAbF7cwrcpqlh5W1GHPYhig9ghMVxOubg1rbpfOiC6n0nDDyDHEPIELojVyqdgV/CiQT01qAvmZ3f0KHuCw1GBpmBU42K8pdG85cM+seFgxIuKir5g5/nWdc+PUGW5MqDZoWS4Wy7YbtFAPtA/YcKX9H7hEN5rueOBgL6cjK6bLzFMrxNoTLpreNIB+gec9uIYb1FnGiW92nFqjmPm7PaT83EMKymM4Qjk2M7oUyjmvvNlQPSEA924=
+X-Microsoft-Antispam-PRVS: <VI1PR07MB1614E4A934BE17B9CEE5B516819A0@VI1PR07MB1614.eurprd07.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(82608151540597)(109105607167333);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231254)(11241501184)(806099)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:VI1PR07MB1614;BCL:0;PCL:0;RULEID:;SRVR:VI1PR07MB1614;
 X-Forefront-PRVS: 0666E15D35
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(366004)(39860400002)(376002)(346002)(199004)(189003)(81166006)(8676002)(81156014)(66066001)(47776003)(7736002)(68736007)(6512007)(486006)(476003)(956004)(97736004)(8936002)(25786009)(50226002)(305945005)(2616005)(186003)(8656006)(4326008)(50466002)(53936002)(51416003)(86362001)(39060400002)(52116002)(2906002)(26005)(6506007)(36756003)(16526019)(386003)(6666003)(48376002)(6486002)(6116002)(5660300001)(4720700003)(316002)(107886003)(105586002)(3846002)(16586007)(106356001)(478600001)(7416002)(921003)(1121003)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB1614;H:cobuntu-jwan.gainspeed.nsn-rdnet.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR07MB1614;23:eVDuXgoOT62Qigui0T2HSTlzkN4iyGJeyB66Ytol+?=
- =?us-ascii?Q?Inx5c83aqRBTEUnrYOreJ7VuRI0XwGIlj10BprCilG6RFNONsYRfg/5C6pOn?=
- =?us-ascii?Q?J0fobe0pDcKoRObmbcCKKobTXjq+3yZ57XrRbl90OWuwhSepgvABJfqVefcq?=
- =?us-ascii?Q?6Sv+5BC8DyIYd+ZLJvkogu7g16Ret83tdiZbxfNBJHhsXtIaUMExVI2ZiNvi?=
- =?us-ascii?Q?/nepoivukBs8p6HEueuPH06L2JEp40Ftza4pKoqmSO4zeHI67Dqa3w7KsKd8?=
- =?us-ascii?Q?E139T0OwZfqo2hVfdckimil5Mc1n1j8z3CbbUBUUWdFOe6Xs4H96S2rJsTDi?=
- =?us-ascii?Q?3vBZZjvLwodHAssuR8/AueMnhCTjy3GoRVKqsYEFXX50xrRzzGQhFNRq42qn?=
- =?us-ascii?Q?qjSDbl9PU5DIZq1cbH8X3Zl2SaYx/1FqC0ewkCanU7HNkAPOCkNR1KmSfQ5A?=
- =?us-ascii?Q?qocx2q4piHyp7yaZIgwfsO471OVEix/buufk+n6sf2l4Lj2aUrVRNdP5el7v?=
- =?us-ascii?Q?Hymw9WKJZTPb9sGUydLiyQNmmNUpA/KPgyZXQTrHkNk8BGCMt11uPKFAmMjx?=
- =?us-ascii?Q?It8guTQGVnRfcON9Del74hVvsLHYH1LdIzDj+TE9Cak66kfmY33aT6bcS1Ep?=
- =?us-ascii?Q?HCU19JroXW5DrOWoEUkkJlEUH/VpqYzJ9pf5Xp438Dv7Htd1bAOUCMkSnuUV?=
- =?us-ascii?Q?Xd63dWPap+YNIsO53mjO0dNvQOx+h/PBofa7irRaV5Hq1RWkLWjKmzqDikN5?=
- =?us-ascii?Q?qPojcz+sJjKipCMTcLvZkjXYLXjBYEAXLm8AEkmsITuYLOpCDBIkNmyjh1ad?=
- =?us-ascii?Q?y4oTp/7rDACI+mwW1kQ1uOe9kIs3DEYIUBZKXh6QojxQPv4sH/GDUyaCYMxV?=
- =?us-ascii?Q?ZKzJbHKSsSYRyWRJMtGzWshIXcPn8pB2EcFxRfEmBDX3dHw9I9RtfKnG5o8O?=
- =?us-ascii?Q?/xE8zsds9lYR20pGg4PNMC7FPf72dQAWYkynJA1ws/yJmC8FWlBGFPCyN7mB?=
- =?us-ascii?Q?nSOIeTvqduq6n4qjasgufLMQT6l5ojzinN8Wp687cI29oJP92LfT1pGm+udN?=
- =?us-ascii?Q?KfMkBUiow0b2QNLD/kM7+TRKg0vQyd/IuZ0iYC+TU7mWfOP462lfbNI9ssLe?=
- =?us-ascii?Q?Tma1m7IZ9RZq/A+XH3VqIiprPCDYZicsU0CkUUYmsnr6ZJWCh2i7w/qXqyUV?=
- =?us-ascii?Q?BpuUC83yZHaooka2p8CZ2zgpSrpoEK5Uohxc1Y+ASAL2PlYbWPaues7MrOYw?=
- =?us-ascii?Q?M4hosXvmHyb+jvFKL1eQKC9x2jQmt0YeQhD3TeB?=
-X-Microsoft-Antispam-Message-Info: s7DHC70Ym4rpvovFlpTK7Bf8TR5DiFaQBB1aOU+k/IXNz40eMigxrA3uF//aEKd31Od4/ISBSuANzBAWxkpIwMzumfYnPVTxU1QLSXtzXq+YhmMWxWk7J8vj7DUIMSwvi5WpqK+alEFXMWeRf/2GMCPn1O9xradYRC8UHNBAFpVWGhlLKN0PakOSuHcfhnycpqkCN5g1N/R7yqqI4yxOitMMWmjB4yWNfw8T0HoowJs=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1614;6:MkaL5/6xgKM9kKJqDRg3zSlf+PBrGRpxgBADwMTRys/BO8LYhuxMTWxuYij673oJiUdNPEVHd9pSPI/Atxc9rxQg4aSuvvvmb8KfJML2nmRSrvZPJDGpD/ZmT376JHYzxKaP/yJKoFNT9xNFYASmmsR9+asr8ZXBAk3xHRlw6a3Ai3G/pQLEyy354MhYW7EMaXcT3TzlXF8LMXhuulYLidiw6eFmup/NnVwnuTNDPBevNTnbREtlduoZN6VnzCHtHk4bR1i8XFZBC34X/S7qkHgZrKuLdjC1TdLS9drLzGz1qNohKF5QuatEWbOMx6f2doCUYhqYoiaeWdVbVn48uBMARQ09p0qj1QewF2/3KHsaaqpOcEzlrEA1wSkBBFNiKVxxskXGUUYG12sGwmNZlXQ8DMczC29P6qIJgA+hKKyfFzmOcY42U4Au8//uemtQDCvo/WtnmySRFaTzIcO/FQ==;5:3GgtIJ9Wyn8hkMC2JjnuEPRLAauB0Rdk59LVMRrsNI278cdQ4+miPtcLn16wIGFxGeqbs5qnCRpoofu4yrfuptGXldC/lwWSlZvw2a98iPkwJDgyH8TwXsqvI9K5NCzZnrF3RqAL9KQSwIBtRJo2IqhQS5l9urMRRGyh/rwr7n8=;24:f7pPcC7dXzWnxs4Qt9vfHs7MVOuhCkdaM52UIHUFNQrnvzf3fe+WU54NqyoGu9bUkJkDIyIgWIuXGNhxZJFCeHJQ7w5TMQseu8jQAf6xj2Q=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(39380400002)(366004)(39860400002)(376002)(346002)(199004)(189003)(81166006)(8676002)(81156014)(446003)(66066001)(47776003)(7736002)(68736007)(6512007)(486006)(476003)(956004)(97736004)(8936002)(25786009)(11346002)(50226002)(305945005)(2616005)(186003)(8656006)(4326008)(50466002)(53936002)(51416003)(86362001)(39060400002)(52116002)(2906002)(59450400001)(26005)(6506007)(36756003)(16526019)(386003)(6666003)(48376002)(6486002)(76176011)(6116002)(5660300001)(4720700003)(316002)(107886003)(105586002)(3846002)(16586007)(106356001)(478600001)(7416002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB1614;H:cobuntu-jwan.gainspeed.nsn-rdnet.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR07MB1614;23:1jcIS2QGobGtrvl8NrtXburd/L3D4ZiXBlZw3WEj4?=
+ =?us-ascii?Q?ErD8yAd1/7gvZwNN5ZmvP9rVze16W8yeVYkKK92ASTEirOBcOMFjt+nL6gB0?=
+ =?us-ascii?Q?ngnu4XzbWV1Drdb2d/GeVmjrQcyTEqP3PHHMirbQ0kXUzrp7EYKSHa0J3o3Q?=
+ =?us-ascii?Q?ddSlVGvroRDS4Qu4lfClNNqA4aVY9xONn2ZUr1XmBl4DboyLtlRP9X17PKaN?=
+ =?us-ascii?Q?k+3SGGWvnkdgqXbqycjdW82aRuwCcRpQGioLrN0GsSGCBftPcyk000C7sI4O?=
+ =?us-ascii?Q?nudlcZ05ycTiTFd4ii1vV/GMO5KgxgNIlIbBTKbm7+V9Q9Pofa+70kAwVJO6?=
+ =?us-ascii?Q?0COFzZ+ixi8PP7paKXDOgovKUqaNQwZFPKqHk2PNm2e7GAhYq4yaUi6t0jgL?=
+ =?us-ascii?Q?B8HVUIVN8Rsb9MTiOE/XWeDmkGynzj0UObhuAClB/qXaHF5g6PZCWXLjlwTR?=
+ =?us-ascii?Q?tz1laJPKM1P0DdsHIo04TxqXkkyW8ccmT8j1bJFxnFb//jji3ivVYDwYc1V4?=
+ =?us-ascii?Q?LG3a3nShzbzSzmZP5hAd7Z8D6ANLfLVAj63/UpBbXDGOAb8GetV7YyhlAdYI?=
+ =?us-ascii?Q?WOMWfPspkWkUd5dOxTR/Kjpw3QetjlbXoTCmtyRhXS1BeHwUm3+fYgV0+PAk?=
+ =?us-ascii?Q?F27oNkVuIv1o/YHgj0bwedJGU644mEHYmm2Wq5vLadQVzZa/2bDMmwBl7iVs?=
+ =?us-ascii?Q?qaSeDgW4zrDKwg/hyvFSB4ibDxS1sQ5EE7hVW6FvpAzYXl2Mgpi9gu+uuYin?=
+ =?us-ascii?Q?cBcO9FpoSCMx86QEjzngivn4jI0HlHN82sLsoq2VTa2tPWzakC7XlzTlZK77?=
+ =?us-ascii?Q?MIstVysR6Ee0/MNkMJ5cQZVahhXMC0PokJdDASE4EIH2PazcZrozr4BaC6Hp?=
+ =?us-ascii?Q?lqqIrQ5lYigZRveVaL1EMS4a0Wzl85kuwO0uoWu7zo1236/SdSpDmtbepaB/?=
+ =?us-ascii?Q?9NGBpxLQKDKkulhHgf5nfMmzXY4nB4sN9MzAA73FYbiW49Tz6ys8uQ6RMm/W?=
+ =?us-ascii?Q?LDUU5ur72r6tSN8WANdOuUhvjg8B6tkKJ6hWG1Ajl9ilb9zShIMRe4ZVW6HN?=
+ =?us-ascii?Q?w6hZF6MTeHb4xooTKGhike/Z1C0EVu66XAQ49qGVa6lrnA5CS8ClHuLwODJp?=
+ =?us-ascii?Q?SrDo8MqR6aG+jEiGNCGsMsjYRGbZjBVWCn3D1YXtn4rAKHkUipfVM32Mz86z?=
+ =?us-ascii?Q?M9aEnmAlKZZOEiWGZNrbD+j6gpgrPT4FxSPr4woeAAhIFkcQhhAfBKyMPt9/?=
+ =?us-ascii?Q?Qmood/xr2OzMehrhJIDvDPpHNq0f4h+yer4LEhp1HJTuUG/hci8Sqx8TmsJC?=
+ =?us-ascii?Q?KE5PZ1mJn4Sm3WqOZzlCG9dBtPVVHUPmAd47ufcvV7o?=
+X-Microsoft-Antispam-Message-Info: S641d9ko0kXSNa98K2B+V2SxaavXpSM1GeZv6DNIdJ8LBx1wGripzkdeJ/IpLCdLMLI2eFGynHsLEHZ3RHPC8eK/hwUfVVhrbSewz+Q6MwJ3iF3azNLLe/fzDzUnxq0/wCd/zRLX57SJjaZNnpupnVpxdlcXz8TN1mBPfuKV0V3gkPpbv5jYQ3W3Z6V1q4ygoIJRRVxTOvJyqMJgqyVqVGCXgT/MSRp+0acTT6egyDc=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1614;6:eGRHe9TuJUqeIiUsea/zFudWksRXhY5Eaf+7t/79mAXijrjMWEg2yaSrHLAFBX2VHCMfo5QsA/glS1kT0m48ykvw4hxF11aAIXXi9DePUEEK07dBDOl0GqGOKVujLW8EMvu3l68RdAxgqAdwtMC16WSIspY4M1lJAWfiZCrmSsgDh168jjP6Fu7Pqf0GtTfz6RFmSNzIOeXCFkj0HfkAg7924LVE8V+a1Ex3PZ1xeiSeAYKpjIDshfaY4PWGTVU0uYynGBC4Dgb+o5MKA1XFthlvnYX93xP9U10q6BhB9bMjercKBkc5yhvITS/kgcSEYP1XUq17mpBvry1vyiy7P+jYPO3WTQL7elrhxj1McXoqQlzxGQG3Wiw5NPR7Sr299mfUFCtmdNXs6penZelGSYPGoLQilQY99X4srnfJet8x8Zic6ODoqW7A3zhUKGxAWI2IntbnPQ7p6ediWxBfRQ==;5:RtIimFMQQ6nV1xEV/Cst7ftlrlshGanncb7uEdeFzrehYO2afHj3XiEV316v/0QbUR85Xuma8Ho5G8Abr0Foo4oKNpetM5l3EQNyN8ZqNiTbmOaap4Ypu1XY3LDdAvSwil27wfWr3vAnNJCpjNuD7y/eIsKyp5016fqUPd0L3O8=;24:EvDwQc0rdG7gEH/Dw6zeke4GGG2LuqOkca+1X28/UCVsv8PXxF2LOwILO8EXhpxHK4FE484Bv10PdiRyRP1XuuRwXbZkwc22DTrXs5fd6Bk=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1614;7:JT1C8DzZVo2DMIHa5V6UUm9fSter9RAqH9TdVxOqZW47v7mWlLeF/tbPM65Z6Gft/sNV38qMTTIXZIsqAoLi5isq2hx6ovC8bgEwUBJPuVw3G93mMMts110NxwIWBBBWG2TqPd1Kn5rjp8JPV5rH7Zlt/k+0hJ+BvgUYGUqaG+W9XYl93OZYlpCX8O8ImV21rUQ/EC5X8UuNWBYozlNcIFflG/d55i4ZfWvycpn9upsZ1AMl8BpNzhqxCvi+BNxb
-X-MS-Office365-Filtering-Correlation-Id: 443c2511-3fee-49a3-d38e-08d5b529859c
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR07MB1614;7:y2JrTmWJ/CF5PLxxM2mmo5YNr0NU5DzAQcbrYwPiDq+caO8ZpYxAW1hx6RCa/jjQFu3zHGlH+SkHNyVEgECXGTlNbTt7x0h0ilC/jvy6Ko8MRy+wv9jprPKJQEAKRytKLZmgLQo0mYSCldOGf0eRHzY3bP8R91k9ibPiCuYIw7qGPLUrx6DDVcnPO4ERPgA9IoVyWCN6Yb/9RyVcZozZPmuEDLZQlPCMGL9dYq36if4/0E6Yn0LniGndktbi7/9g
+X-MS-Office365-Filtering-Correlation-Id: 2e74da2b-04a1-41c0-3b3d-08d5b5298fce
 X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2018 21:20:25.3463 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 443c2511-3fee-49a3-d38e-08d5b529859c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2018 21:20:42.4203 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e74da2b-04a1-41c0-3b3d-08d5b5298fce
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 5d471751-9675-428d-917b-70f44f9630b0
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB1614
@@ -77,52 +80,99 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Per ONFI specification (Rev. 4.0), if the CRC of the first parameter page
-read is not valid, the host should read redundant parameter page copies.
-Fix FSL NAND driver to read the two redundant copies which are mandatory
-in the specification.
+Per ONFI specification (Rev. 4.0), if all parameter pages have invalid
+CRC values, the bit-wise majority may be used to recover the contents of
+the parameter pages from the parameter page copies present.
 
 Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
 ---
- drivers/mtd/nand/raw/fsl_ifc_nand.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/mtd/nand/raw/nand_base.c |   49 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 44 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/fsl_ifc_nand.c b/drivers/mtd/nand/raw/fsl_ifc_nand.c
-index 61aae02..98aac1f 100644
---- a/drivers/mtd/nand/raw/fsl_ifc_nand.c
-+++ b/drivers/mtd/nand/raw/fsl_ifc_nand.c
-@@ -342,9 +342,16 @@ static void fsl_ifc_cmdfunc(struct mtd_info *mtd, unsigned int command,
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 72f3a89..dfc341c 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -5086,6 +5086,38 @@ static int nand_flash_detect_ext_param_page(struct nand_chip *chip,
+ 	return ret;
+ }
  
- 	case NAND_CMD_READID:
- 	case NAND_CMD_PARAM: {
-+		/*
-+		 * For READID, read 8 bytes that are currently used.
-+		 * For PARAM, read all 3 copies of 256-bytes pages.
-+		 */
-+		int len = 8;
- 		int timing = IFC_FIR_OP_RB;
--		if (command == NAND_CMD_PARAM)
-+		if (command == NAND_CMD_PARAM) {
- 			timing = IFC_FIR_OP_RBCD;
-+			len = 256 * 3;
++#define GET_BIT(bit, val)   (((val) >> (bit)) & 0x01)
++
++/*
++ * Recover NAND parameter page with bit-wise majority
++ */
++static int onfi_recover_param(struct nand_onfi_params *p, int pages)
++{
++	int i, j, k;
++	u8 v, m;
++	u8 *buf;
++
++	buf = (u8 *)p;
++	for (i = 0; i < sizeof(*p); i++) {
++		v = 0;
++		for (j = 0; j < 8; j++) {
++			m = 0;
++			for (k = 0; k < pages; k++)
++				m += GET_BIT(j, buf[k*sizeof(*p) + i]);
++			if (m > pages/2)
++				v |= BIT(j);
 +		}
++		((u8 *)p)[i] = v;
++	}
++
++	if (onfi_crc16(ONFI_CRC_BASE, (u8 *)p, 254) ==
++			le16_to_cpu(p->crc)) {
++		return 1;
++	}
++
++	return 0;
++}
++
+ /*
+  * Check if the NAND chip is ONFI compliant, returns 1 if it is, 0 otherwise.
+  */
+@@ -5102,7 +5134,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+ 		return 0;
  
- 		ifc_out32((IFC_FIR_OP_CW0 << IFC_NAND_FIR0_OP0_SHIFT) |
- 			  (IFC_FIR_OP_UA  << IFC_NAND_FIR0_OP1_SHIFT) |
-@@ -354,12 +361,8 @@ static void fsl_ifc_cmdfunc(struct mtd_info *mtd, unsigned int command,
- 			  &ifc->ifc_nand.nand_fcr0);
- 		ifc_out32(column, &ifc->ifc_nand.row3);
+ 	/* ONFI chip: allocate a buffer to hold its parameter page */
+-	p = kzalloc(sizeof(*p), GFP_KERNEL);
++	p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
+ 	if (!p)
+ 		return -ENOMEM;
  
--		/*
--		 * although currently it's 8 bytes for READID, we always read
--		 * the maximum 256 bytes(for PARAM)
--		 */
--		ifc_out32(256, &ifc->ifc_nand.nand_fbcr);
--		ifc_nand_ctrl->read_bytes = 256;
-+		ifc_out32(len, &ifc->ifc_nand.nand_fbcr);
-+		ifc_nand_ctrl->read_bytes = len;
+@@ -5113,21 +5145,28 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+ 	}
  
- 		set_addr(mtd, 0, 0, 0);
- 		fsl_ifc_run_command(mtd);
+ 	for (i = 0; i < 3; i++) {
+-		ret = nand_read_data_op(chip, p, sizeof(*p), true);
++		ret = nand_read_data_op(chip, &p[i], sizeof(*p), true);
+ 		if (ret) {
+ 			ret = 0;
+ 			goto free_onfi_param_page;
+ 		}
+ 
+-		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) ==
++		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)&p[i], 254) ==
+ 				le16_to_cpu(p->crc)) {
++			if (i)
++				memcpy(p, &p[i], sizeof(*p));
+ 			break;
+ 		}
+ 	}
+ 
+ 	if (i == 3) {
+-		pr_err("Could not find valid ONFI parameter page; aborting\n");
+-		goto free_onfi_param_page;
++		pr_err("Could not find valid ONFI parameter page\n");
++		pr_info("Recover ONFI params with bit-wise majority\n");
++		ret = onfi_recover_param(p, 3);
++		if (ret == 0) {
++			pr_err("ONFI parameter recovery failed, aborting\n");
++			goto free_onfi_param_page;
++		}
+ 	}
+ 
+ 	/* Check version */
 -- 
 1.7.9.5
