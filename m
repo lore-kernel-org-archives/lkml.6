@@ -1,71 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753685AbeEHAVL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 20:21:11 -0400
-Received: from ozlabs.org ([203.11.71.1]:35153 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753660AbeEHAVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 20:21:09 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 8 May 2018 10:21:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fernando Fernandez Mancera <ffmancera@riseup.net>
-Subject: Re: linux-next: build warning after merge of the netfilter-next
- tree
-Message-ID: <20180508102101.768d5c52@canb.auug.org.au>
-In-Reply-To: <20180507105519.1d34f19e@canb.auug.org.au>
-References: <20180507105519.1d34f19e@canb.auug.org.au>
+        id S1753725AbeEHAV1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 20:21:27 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39868 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753705AbeEHAVY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 20:21:24 -0400
+Subject: Re: [PATCH v2 21/24] selftests: memfd: return Kselftest Skip code for
+ skipped tests
+To: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        akpm@linux-foundation.org, marcandre.lureau@redhat.com,
+        lizhijian@cn.fujitsu.com
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180507230116.27652-1-shuah@kernel.org>
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <c1ad2960-7294-4370-a7b6-06a709bf247d@oracle.com>
+Date: Mon, 7 May 2018 17:20:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/DRyahoiRLh3pKKmFXe7CPkb"; protocol="application/pgp-signature"
+In-Reply-To: <20180507230116.27652-1-shuah@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8886 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805080001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/DRyahoiRLh3pKKmFXe7CPkb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 05/07/2018 04:01 PM, Shuah Khan (Samsung OSG) wrote:
+> When memfd test is skipped because of unmet dependencies and/or unsupported
+> configuration, it returns non-zero value which is treated as a fail by the
+> Kselftest framework. This leads to false negative result even when the test
+> could not be run.
+> 
+> Change it to return kselftest skip code when a test gets skipped to clearly
+> report that the test could not be run.
+> 
+> Added an explicit check for root user at the start of memfd hugetlbfs test
+> and return skip code if a non-root user attempts to run it.
+> 
+> In addition, return skip code when not enough huge pages are available to
+> run the test.
+> 
+> Kselftest framework SKIP code is 4 and the framework prints appropriate
+> messages to indicate that the test is skipped.
+> 
+> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 
-Hi all,
+Thanks for making the changes!
 
-On Mon, 7 May 2018 10:55:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the netfilter-next tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->=20
-> ./usr/include/linux/netfilter/nf_osf.h:25: found __[us]{8,16,32,64} type =
-without #include <linux/types.h>
->=20
-> Introduced by commit
->=20
->   bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure=
- from xt_osf")
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 
-This warning now occurs after the merge of the net-next tree.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/DRyahoiRLh3pKKmFXe7CPkb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrw7W0ACgkQAVBC80lX
-0Gx8WwgAoQEm9540+l+yDdKza3hAvDXzRRnaA5Ie/W9ttfsz2xjbBgrV3nax1pZq
-tfi5UmrnoBicN9bpCCQ8AWFXQhqim5KhePVU3LfCCyHSwcOlJbOSnda6aAQxVrhN
-3LdEWFbLdQilRpJb7+FbacLmLTbU3y6vbwMe13pemB+m/F9lLH+sLdXBjW7ADWv5
-/ZDI3TJ40ynmjBGOfjJHTuQaKktZDNuDQXOMcoOz110jK4LU1y1LSV743iB3CnCD
-DZD1h8+bqaCCELhhtFsY13p5ESjRPixh2wd+QIIlJ66emH3nWr7sDYKohFd/f2h6
-2y3EXvPS03/Rj4K+SsAlte2/liiEpg==
-=t49L
------END PGP SIGNATURE-----
-
---Sig_/DRyahoiRLh3pKKmFXe7CPkb--
+-- 
+Mike Kravetz
+> ---
+> 
+> Changes since v1:
+> -- addressed review comments on v1
+> -- Fixed a regression in v1 that changed the behavior to require root
+>    for all tests not just the hugetlbfs test.
+> 
+>  tools/testing/selftests/memfd/run_tests.sh | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/memfd/run_tests.sh b/tools/testing/selftests/memfd/run_tests.sh
+> index c2d41ed81b24..2013f195e623 100755
+> --- a/tools/testing/selftests/memfd/run_tests.sh
+> +++ b/tools/testing/selftests/memfd/run_tests.sh
+> @@ -1,6 +1,9 @@
+>  #!/bin/bash
+>  # please run as root
+>  
+> +# Kselftest framework requirement - SKIP code is 4.
+> +ksft_skip=4
+> +
+>  #
+>  # Normal tests requiring no special resources
+>  #
+> @@ -29,12 +32,13 @@ if [ -n "$freepgs" ] && [ $freepgs -lt $hpages_test ]; then
+>  	nr_hugepgs=`cat /proc/sys/vm/nr_hugepages`
+>  	hpages_needed=`expr $hpages_test - $freepgs`
+>  
+> +	if [ $UID != 0 ]; then
+> +		echo "Please run memfd with hugetlbfs test as root"
+> +		exit $ksft_skip
+> +	fi
+> +
+>  	echo 3 > /proc/sys/vm/drop_caches
+>  	echo $(( $hpages_needed + $nr_hugepgs )) > /proc/sys/vm/nr_hugepages
+> -	if [ $? -ne 0 ]; then
+> -		echo "Please run this test as root"
+> -		exit 1
+> -	fi
+>  	while read name size unit; do
+>  		if [ "$name" = "HugePages_Free:" ]; then
+>  			freepgs=$size
+> @@ -53,7 +57,7 @@ if [ $freepgs -lt $hpages_test ]; then
+>  	fi
+>  	printf "Not enough huge pages available (%d < %d)\n" \
+>  		$freepgs $needpgs
+> -	exit 1
+> +	exit $ksft_skip
+>  fi
+>  
+>  #
+> 
