@@ -1,112 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932812AbeEHXCB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 19:02:01 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:39083 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755620AbeEHXB7 (ORCPT
+        id S932887AbeEHXDA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 19:03:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33064 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755529AbeEHXC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 19:01:59 -0400
-X-Google-Smtp-Source: AB8JxZq29RDKCsiXMnwEcMUi/lrbT/pfGOOwiopPA5Udn47TSRHKlFawvPfUcRI7yKjbS+p4x9vcEA==
-From: Rajat Jain <rajatja@google.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, Rajat Jain <rajatja@google.com>,
-        Keith Busch <keith.busch@intel.com>, Vidya Sagar <vidyas@nvidia.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Frederick Lawler <fred@fredlawl.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mayurkumar.patel@intel.com
-Cc: rajatxjain@gmail.com
-Subject: [PATCH] pci/aspm: Remove CONFIG_PCIEASPM_DEBUG
-Date: Tue,  8 May 2018 16:01:48 -0700
-Message-Id: <20180508230148.121852-1-rajatja@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Tue, 8 May 2018 19:02:59 -0400
+Date: Tue, 8 May 2018 16:02:57 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+        "Steven J . Hill" <steven.hill@cavium.com>,
+        Tejun Heo <htejun@gmail.com>, Christoph Lameter <cl@linux.com>
+Subject: Re: [PATCH REPOST] Revert mm/vmstat.c: fix vmstat_update()
+ preemption BUG
+Message-Id: <20180508160257.6e19707ccf1dabe5ec9e8847@linux-foundation.org>
+In-Reply-To: <513014a0-a149-5141-a5a0-9b0a4ce9a8d8@suse.cz>
+References: <20180504104451.20278-1-bigeasy@linutronix.de>
+        <513014a0-a149-5141-a5a0-9b0a4ce9a8d8@suse.cz>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the linux kernel disables ASPM when a device is
-removed from the kernel. But it is not enabled again when
-a new device is added on that slot even if it was originally
-enabled (by the BIOS) when the system booted up (assuming
-POLICY_DEFAULT).
+On Mon, 7 May 2018 09:31:05 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
 
-This was earlier discussed here:
-https://www.spinics.net/lists/linux-pci/msg60212.html
+> In any case I agree that the revert should be done immediately even
+> before fixing the underlying bug. The preempt_disable/enable doesn't
+> prevent the bug, it only prevents the debugging code from actually
+> reporting it! Note that it's debugging code (CONFIG_DEBUG_PREEMPT) that
+> production kernels most likely don't have enabled, so we are not even
+> helping them not crash (while allowing possible data corruption).
 
-And some suggestions from Bjorn here:
-https://www.spinics.net/lists/linux-pci/msg60541.html
+Grumble.
 
-This patch picks up one of the suggestion, to remove the
-CONFIG_PCIEASPM_DEBUG and thus make the code always
-avilable. This provides control to userspace to control
-ASPM on a per slot / device basis using sysfs interface.
+I don't see much benefit in emitting warnings into end-users' logs for
+bugs which we already know about.
 
-Signed-off-by: Rajat Jain <rajatja@google.com>
----
- drivers/pci/pci.h        | 5 -----
- drivers/pci/pcie/Kconfig | 8 --------
- drivers/pci/pcie/aspm.c  | 2 --
- 3 files changed, 15 deletions(-)
+The only thing this buys us is that people will hassle us if we forget
+to fix the bug, and how pathetic is that?  I mean, we may as well put
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index 023f7cf25bff..383d92a6b0fb 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -365,13 +365,8 @@ static inline void pcie_aspm_pm_state_change(struct pci_dev *pdev) { }
- static inline void pcie_aspm_powersave_config_link(struct pci_dev *pdev) { }
- #endif
- 
--#ifdef CONFIG_PCIEASPM_DEBUG
- void pcie_aspm_create_sysfs_dev_files(struct pci_dev *pdev);
- void pcie_aspm_remove_sysfs_dev_files(struct pci_dev *pdev);
--#else
--static inline void pcie_aspm_create_sysfs_dev_files(struct pci_dev *pdev) { }
--static inline void pcie_aspm_remove_sysfs_dev_files(struct pci_dev *pdev) { }
--#endif
- 
- #ifdef CONFIG_PCIE_PTM
- void pci_ptm_init(struct pci_dev *dev);
-diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
-index b12e28b3d8f9..089b9f559d88 100644
---- a/drivers/pci/pcie/Kconfig
-+++ b/drivers/pci/pcie/Kconfig
-@@ -46,14 +46,6 @@ config PCIEASPM
- 
- 	  When in doubt, say Y.
- 
--config PCIEASPM_DEBUG
--	bool "Debug PCI Express ASPM"
--	depends on PCIEASPM
--	default n
--	help
--	  This enables PCI Express ASPM debug support. It will add per-device
--	  interface to control ASPM.
--
- choice
- 	prompt "Default ASPM policy"
- 	default PCIEASPM_DEFAULT
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index c687c817b47d..8ffc13d42baa 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -1161,7 +1161,6 @@ static int pcie_aspm_get_policy(char *buffer, const struct kernel_param *kp)
- module_param_call(policy, pcie_aspm_set_policy, pcie_aspm_get_policy,
- 	NULL, 0644);
- 
--#ifdef CONFIG_PCIEASPM_DEBUG
- static ssize_t link_state_show(struct device *dev,
- 		struct device_attribute *attr,
- 		char *buf)
-@@ -1264,7 +1263,6 @@ void pcie_aspm_remove_sysfs_dev_files(struct pci_dev *pdev)
- 		sysfs_remove_file_from_group(&pdev->dev.kobj,
- 			&dev_attr_clk_ctl.attr, power_group);
- }
--#endif
- 
- static int __init pcie_aspm_disable(char *str)
- {
--- 
-2.17.0.441.gb46fe60e1d-goog
+	printk("don't forget to fix the vmstat_update() bug!\n");
+
+into start_kernel().
