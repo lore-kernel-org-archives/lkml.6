@@ -1,59 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933141AbeEHQtu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 12:49:50 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:52589 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932606AbeEHQts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 12:49:48 -0400
-Date: Tue, 8 May 2018 18:49:44 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Dan Murphy <dmurphy@ti.com>
-Cc: f.fainelli@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: phy: DP83811: Add support for the phy
-Message-ID: <20180508164944.GE2888@lunn.ch>
-References: <20180508141105.23867-1-dmurphy@ti.com>
- <1b6877db-61cf-101a-054e-9c1fbe95a813@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b6877db-61cf-101a-054e-9c1fbe95a813@ti.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S933144AbeEHQ4g (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 12:56:36 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41925 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932606AbeEHQ4e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 12:56:34 -0400
+X-Google-Smtp-Source: AB8JxZoLcNb1pneSVulpgxmP8t6FPMKcOiO7cZAGP+eX/1DFcx0tBU+YAxqvprLCBKHzVuPHBLCiHw==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1] memory: tegra: Register SMMU after MC driver became ready
+Date: Tue,  8 May 2018 19:55:30 +0300
+Message-Id: <20180508165530.12746-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 10:56:55AM -0500, Dan Murphy wrote:
-> All
-> 
-> On 05/08/2018 09:11 AM, Dan Murphy wrote:
-> > Add support for the DP83811 phy by extending
-> > the DP83822 driver to recognize the PHY IDs.
-> > 
-> > The DP83811 supports both rgmii and sgmii interfaces.
-> > There are 2 part numbers for this the DP83811R does not
-> > reliably support the SGMII interface but the DP83811S will.
-> > 
-> > There is not a way to differentiate these parts from the
-> > hardware or register set.  So this is controlled via the DT
-> > to indicate which phy mode is required.  Or the part can be
-> > strapped to a certain interface.
-> > 
-> > Data sheet can be found here:
-> > http://www.ti.com/product/DP83TC811S-Q1/description
-> > http://www.ti.com/product/DP83TC811R-Q1/description
-> > 
-> 
-> I am withdrawing this patch for comment.
-> Some of the future features have varying register definitions between the DP83811
-> and DP83822
+Memory Controller driver invokes SMMU driver registration and MC's
+registers mapping is shared with SMMU. This mapping goes away if MC
+driver probing fails after SMMU registration.
 
-Hi Dan
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/memory/tegra/mc.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-It might be worth talking to the ASIC engineers and the
-test/qualification engineers. There are sometime undocumented
-registers for testing. You might be able to identify the exact device
-from these registers.
-
-     Andrew
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index 49dd7ad1459f..22ec959db7d3 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -692,15 +692,6 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_SMMU)) {
+-		mc->smmu = tegra_smmu_probe(&pdev->dev, mc->soc->smmu, mc);
+-		if (IS_ERR(mc->smmu)) {
+-			dev_err(&pdev->dev, "failed to probe SMMU: %ld\n",
+-				PTR_ERR(mc->smmu));
+-			return PTR_ERR(mc->smmu);
+-		}
+-	}
+-
+ 	err = tegra_mc_reset_setup(mc);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to register reset controller: %d\n",
+@@ -726,6 +717,15 @@ static int tegra_mc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_SMMU)) {
++		mc->smmu = tegra_smmu_probe(&pdev->dev, mc->soc->smmu, mc);
++		if (IS_ERR(mc->smmu)) {
++			dev_err(&pdev->dev, "failed to probe SMMU: %ld\n",
++				PTR_ERR(mc->smmu));
++			return PTR_ERR(mc->smmu);
++		}
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.17.0
