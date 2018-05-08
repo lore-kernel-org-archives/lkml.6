@@ -1,14 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755581AbeEHTOM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 15:14:12 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:60412 "EHLO ale.deltatee.com"
+        id S1755647AbeEHTPM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 15:15:12 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:60454 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751464AbeEHTOJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 15:14:09 -0400
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>
+        id S1755472AbeEHTPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 15:15:10 -0400
+To: Alex Williamson <alex.williamson@redhat.com>,
+        Bjorn Helgaas <helgaas@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
         linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
@@ -18,28 +17,25 @@ Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
         Dan Williams <dan.j.williams@intel.com>,
         =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
 References: <20180423233046.21476-1-logang@deltatee.com>
- <20180423233046.21476-5-logang@deltatee.com>
- <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
- <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
- <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
- <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
+ <20180507232346.GI161390@bhelgaas-glaptop.roam.corp.google.com>
+ <20180508105759.7dbaa8fe@w520.home>
 From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
-Date: Tue, 8 May 2018 13:13:40 -0600
+Message-ID: <7d06df03-18ee-97c7-595e-0b25c43a6f3d@deltatee.com>
+Date: Tue, 8 May 2018 13:14:53 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
+In-Reply-To: <20180508105759.7dbaa8fe@w520.home>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, alex.williamson@redhat.com, helgaas@kernel.org, christian.koenig@amd.com
+X-SA-Exim-Rcpt-To: christian.koenig@amd.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org, alex.williamson@redhat.com
 X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
+Subject: Re: [PATCH v4 00/14] Copy Offload in NVMe Fabrics with P2P PCI Memory
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -48,16 +44,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 08/05/18 10:50 AM, Christian König wrote:
-> E.g. transactions are initially send to the root complex for 
-> translation, that's for sure. But at least for AMD GPUs the root complex 
-> answers with the translated address which is then cached in the device.
-> 
-> So further transactions for the same address range then go directly to 
-> the destination.
+On 08/05/18 10:57 AM, Alex Williamson wrote:
+> AIUI from previously questioning this, the change is hidden behind a
+> build-time config option and only custom kernels or distros optimized
+> for this sort of support would enable that build option.  I'm more than
+> a little dubious though that we're not going to have a wave of distros
+> enabling this only to get user complaints that they can no longer make
+> effective use of their devices for assignment due to the resulting span
+> of the IOMMU groups, nor is there any sort of compromise, configure
+> the kernel for p2p or device assignment, not both.  Is this really such
+> a unique feature that distro users aren't going to be asking for both
+> features?  Thanks,
 
-Sounds like you are referring to Address Translation Services (ATS).
-This is quite separate from ACS and, to my knowledge, isn't widely
-supported by switch hardware.
+I think it is. But it sounds like the majority want this to be a command
+line option. So we will look at doing that for v5.
 
 Logan
