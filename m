@@ -1,155 +1,241 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932371AbeEHJCM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 05:02:12 -0400
-Received: from mail-wm0-f49.google.com ([74.125.82.49]:39945 "EHLO
-        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754210AbeEHJCK (ORCPT
+        id S1754786AbeEHJDa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 05:03:30 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42416 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754232AbeEHJDX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 05:02:10 -0400
-X-Google-Smtp-Source: AB8JxZrMuDMLM/P+NfElcpks4Go1ijDcsXPecTr4yurERnv0R9a/hGNeP7N8u7L6gv1wvjaFzV0LKA==
-Date: Tue, 8 May 2018 11:02:02 +0200
-From: Alexandru Moise <00moses.alexander00@gmail.com>
-To: monis@mellanox.com, dledford@redhat.com, jgg@ziepe.ca,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yanjun.zhu@oracle.com
-Subject: [PATCH v4] nvmet,rxe: defer ip datagram sending to tasklet
-Message-ID: <20180508090202.GA1690@gmail.com>
+        Tue, 8 May 2018 05:03:23 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180508090320euoutp0259cc0bcbbe4bfc1c040c965abc8e926e~sn_nfo2SO0136601366euoutp02a
+X-AuditID: cbfec7f5-f95739c0000028a9-fc-5af167d7bf94
+Subject: Re: [PATCH v2 26/26] drm/bridge: establish a link between the
+ bridge supplier and consumer
+To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Peter Senna Tschudin <peter.senna@collabora.com>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <4284b38f-2c1e-1abd-8a0f-b3b6c90ceeed@samsung.com>
+Date: Tue, 8 May 2018 11:03:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <9751c1c5-f2fa-f24e-64f3-71019f253332@axentia.se>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUxTVxjOuefcD6oll+sHJ042Lc7gEmWoS07iVH7sx/2xz2w/tEvQKjdV
+        x1d6Bcc2J+uctDCdIJu0FGsjonNLIHQg1EFNTcoKMtYhKDigG2QUtSqTOpAx1svVjH/P+7zP
+        c57nTQ4HhTCzgtufc1Ay5RiydIwGNfmnu9ffNE7oXx5wJ5HjPwcoYrZEaGL2dTDksytNLJlr
+        KoPkRvQBQxxjXYC0hDwx7o+7NKkuP0zKh08iUmq10CQ8FETkq5G7kHR317Oky3yPJdayGpY0
+        jPTRpMzbxZIej4MhPZ8HAWkcv0+Rv0JzkFR2t1HENdGIyPf+eNJZWweJ+egmMjj0EyKtPicg
+        d0ajNBlzTUEyWB+Lrzw1zpDrvVdRerL4zdUqVqwqCiKx58RxSpwdu4nE5sEaILY+PovE0kc+
+        KLbYB2MSi40WGy5ZGfG3vh8Z8fLjEC2eCbwjDpe2U6K75oh4NOBFb2O95tVMKWt/gWRK3bZb
+        s++LiWo6z77uQ9+TOqoI9K8qAXEc5jdjx5k/QQnQcAJ/EeCAuZVSh0mAb7S4aUUl8I8Ado2/
+        8czReWIGqaILAJ+vcLPqEAG4uT4Ss3PcEl7CF3vTFMNSfjv+um98/lXIn9Ngf/EoqywYfh2e
+        dfczCtby27AzcgoqXsSvwR7/mwq9jN+BzWPTrCpJwAHbKFJwXEzueXJsvhzkX8CXIw6o4kQ8
+        MOqcz8K8Nw6XWesYtfVruPPh35SKl+A77T+wKl6J51qcT/mPcX/YjFSzBeDhmeKn5i34WnuQ
+        VsrBWOk6T6pKb8U1bS6g0JiPx7ciCWqHeFzedBqqtBZbjgmqejUe7mqEKk7E53+JMidBsn3B
+        ZfYF19gXXGP/P/csQJdAopQvZxsleVOOdGiDbMiW83OMG/bmZjeA2P/v/Lc92gza/tnjAzwH
+        dIu1U3kP9QJtKJALs30Ac1C3VJucNKEXtJmGwo8kU+4uU36WJPvAcxzSJWozUj7VC7zRcFD6
+        QJLyJNOzLcXFrSgCi2jr1hdHbIcmt/96wPigo9q7p+q0N32oduY91uEs35W7SmbDsCKlwDcy
+        kNnTcLu6yh+u/K43LX1qjaUiGCp0J3SsvCXMLp8u+PLw7i1vuZo/qbcWl6QOlZwLGTI27rSt
+        /Tbl9WvP2y78vpaJJk2uP6BZzbz/7iv3lqdmZQhFtQNzi3VI3mdIewmaZMN/52BLzPsDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxiHc+5Xb5k114rpCcmmqSZMjZWCwIth1WTJcpYZP7Il22oWrXBT
+        3GhL7i1GnFMsbKFFUSQYKR/VhWnicDoQlCJCalJkDBtkdkEtECFBBqjVCAo4LVQT/nvyO7/n
+        fXOSl6fVs2wcv9dqFyWrKVvLxTBd/3eE1gXNYWNC6NxyOHa7kwJH0QQLDt9fHBxpaVLAm6ZS
+        Gv558YSDqpFuBM2D3kj2cIyF6pM/wcmBEwwUO4tYeNTfw8DxoTEaAoHLCuh2jCvAWVqrgPqh
+        IAulbd0K6PVWcdBb0IOgcfQxBc8G39BwOnCDgrPhRgbq/Iuh69wlGhyFSRDqv8VAq8+D4L/h
+        FyyMnH1JQ+hyZP3pslEO/r7bzmxeSU61VypIZX4PQ3pLjlHk9ci/DLkWqkWkdfIMQ4qf+2jS
+        7A5FKkUVLKm/4OTIg+B1jlydHGRJTecOMlDcQZGG2sOksLON2Y6NunTJlmsXV2TZZPsn2p16
+        SNTp00CXuCFNp09K/W5jYrJ2vSE9U8zeu0+U1ht267J+DlezOe7V+33Tl6h81LfChZQ8Fjbg
+        rpIZxoVieLXwG8Ke8QIm+qDBLZ4JOspL8WzQxUVLYwg31dTNl5YKIvY//xPNcaywCZcHR6k5
+        poXfY/CVR5aoUE3hof7C+UmcsBq/bujj5lglGLBnoiyS8zwjrMJe/9a5eJnwDe4PPHtXWYI7
+        K4bndykjde/0L2x0fjyerblDR3k5vjpR9Y41+N6whzqB1O4FunuB4l6guBcoZxBzAcWKubLF
+        bJETdbLJIudazboMm6UeRS6vyf/qyjXkevylDwk80i5Svcx5alSzpn1ynsWHME9rY1UrPwwb
+        1apMU94BUbLtknKzRdmHkiN/K6XjlmXYIndste/SJ+tTIU2fmpSalAJajSqQkGdUC2aTXfxB
+        FHNE6b1H8cq4fOTd/umvX1AftI5npq8jW1+Vf69v/DFnz8zBjz0PPzpcrqlYvMVQFi75TGnN
+        3qh1TV2vM0ufrz2q6VuyZjDDbpDK2IsJf/jvMsr95J6NchnGbh2oyi/6etHooYGvjE+mpuPK
+        nSm1sc6nTsf9hovfBg7FO6G5sf2I76CBO99yfltKzU0tI2eZ9GtoSTa9BcnTQ9CPAwAA
+X-CMS-MailID: 20180508090318eucas1p143626115dee65f196a598affd6c312ca
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180508090318eucas1p143626115dee65f196a598affd6c312ca
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180504135358epcas3p2bd9c2f5c9a8295152f2c96fdbb2ea8b1
+X-RootMTR: 20180504135358epcas3p2bd9c2f5c9a8295152f2c96fdbb2ea8b1
+References: <20180504135212.26977-1-peda@axentia.se>
+        <CGME20180504135358epcas3p2bd9c2f5c9a8295152f2c96fdbb2ea8b1@epcas3p2.samsung.com>
+        <20180504135212.26977-27-peda@axentia.se>
+        <4cdcd215-8caf-e045-a478-f438f128c9f2@samsung.com>
+        <9751c1c5-f2fa-f24e-64f3-71019f253332@axentia.se>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This addresses 3 separate problems:
+On 07.05.2018 15:43, Peter Rosin wrote:
+> On 2018-05-07 14:59, Andrzej Hajda wrote:
+>> On 04.05.2018 15:52, Peter Rosin wrote:
+>>> If the bridge supplier is unbound, this will bring the bridge consumer
+>>> down along with the bridge. Thus, there will no longer linger any
+>>> dangling pointers from the bridge consumer (the drm_device) to some
+>>> non-existent bridge supplier.
+>> I understand rationales behind this patch, but it is another step into
+>> making drm_dev one big driver with subcomponents, where drm will work
+>> only if every subcomponent is working/loaded.
+> The step is very small IMHO. Just a device-link, which is very easy to
+> remove once whatever other solution is ready.
+>
+>>                                               Do we need to go this way?
+> If the drivers expect the parts to be there, and there is no other safety
+> net in place if they are not, what is the (short-term) alternative?
+>
+>> In case of many platforms such approach results in display turned on
+>> very late on boot for example due to late initialization of some
+>> regulator exposed by some i2c device, which is used by hdmi bridge. And
+>> this hdmi bridge is just to provide alternative(rarely used) display
+>> path, the main display path would work anyway.
+> This patch does not contribute to any late init and any such delay is not
+> affected by this. At all.
+>
+>> So the main question to drm maintainers is about evolution of bridges,
+>> if drm_bridges should become mandatory components of drm device or they
+>> could be added/removed dynamically?
+> That is a much bigger question than this patch/series. Conflating the
+> two is not fair IMHO. You could run this very same argument for every
+> driver that gets added, since any additional driver will just make it
+> harder to make everything dynamic. Should we stop development right
+> away?
+>
+> Besides, as long as the drm devices are in fact acting as big static
+> drivers (built from smaller parts), 
 
-1. When using NVME over Fabrics we may end up sending IP
-packets in interrupt context, we should defer this work
-to a tasklet.
+not true
 
-[   50.939957] WARNING: CPU: 3 PID: 0 at kernel/softirq.c:161 __local_bh_enable_ip+0x1f/0xa0
-[   50.942602] CPU: 3 PID: 0 Comm: swapper/3 Kdump: loaded Tainted: G        W         4.17.0-rc3-ARCH+ #104
-[   50.945466] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-[   50.948163] RIP: 0010:__local_bh_enable_ip+0x1f/0xa0
-[   50.949631] RSP: 0018:ffff88009c183900 EFLAGS: 00010006
-[   50.951029] RAX: 0000000080010403 RBX: 0000000000000200 RCX: 0000000000000001
-[   50.952636] RDX: 0000000000000000 RSI: 0000000000000200 RDI: ffffffff817e04ec
-[   50.954278] RBP: ffff88009c183910 R08: 0000000000000001 R09: 0000000000000614
-[   50.956000] R10: ffffea00021d5500 R11: 0000000000000001 R12: ffffffff817e04ec
-[   50.957779] R13: 0000000000000000 R14: ffff88009566f400 R15: ffff8800956c7000
-[   50.959402] FS:  0000000000000000(0000) GS:ffff88009c180000(0000) knlGS:0000000000000000
-[   50.961552] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   50.963798] CR2: 000055c4ec0ccac0 CR3: 0000000002209001 CR4: 00000000000606e0
-[   50.966121] Call Trace:
-[   50.966845]  <IRQ>
-[   50.967497]  __dev_queue_xmit+0x62d/0x690
-[   50.968722]  dev_queue_xmit+0x10/0x20
-[   50.969894]  neigh_resolve_output+0x173/0x190
-[   50.971244]  ip_finish_output2+0x2b8/0x370
-[   50.972527]  ip_finish_output+0x1d2/0x220
-[   50.973785]  ? ip_finish_output+0x1d2/0x220
-[   50.975010]  ip_output+0xd4/0x100
-[   50.975903]  ip_local_out+0x3b/0x50
-[   50.976823]  rxe_send+0x74/0x120
-[   50.977702]  rxe_requester+0xe3b/0x10b0
-[   50.978881]  ? ip_local_deliver_finish+0xd1/0xe0
-[   50.980260]  rxe_do_task+0x85/0x100
-[   50.981386]  rxe_run_task+0x2f/0x40
-[   50.982470]  rxe_post_send+0x51a/0x550
-[   50.983591]  nvmet_rdma_queue_response+0x10a/0x170
-[   50.985024]  __nvmet_req_complete+0x95/0xa0
-[   50.986287]  nvmet_req_complete+0x15/0x60
-[   50.987469]  nvmet_bio_done+0x2d/0x40
-[   50.988564]  bio_endio+0x12c/0x140
-[   50.989654]  blk_update_request+0x185/0x2a0
-[   50.990947]  blk_mq_end_request+0x1e/0x80
-[   50.991997]  nvme_complete_rq+0x1cc/0x1e0
-[   50.993171]  nvme_pci_complete_rq+0x117/0x120
-[   50.994355]  __blk_mq_complete_request+0x15e/0x180
-[   50.995988]  blk_mq_complete_request+0x6f/0xa0
-[   50.997304]  nvme_process_cq+0xe0/0x1b0
-[   50.998494]  nvme_irq+0x28/0x50
-[   50.999572]  __handle_irq_event_percpu+0xa2/0x1c0
-[   51.000986]  handle_irq_event_percpu+0x32/0x80
-[   51.002356]  handle_irq_event+0x3c/0x60
-[   51.003463]  handle_edge_irq+0x1c9/0x200
-[   51.004473]  handle_irq+0x23/0x30
-[   51.005363]  do_IRQ+0x46/0xd0
-[   51.006182]  common_interrupt+0xf/0xf
-[   51.007129]  </IRQ>
+> this should be considered a bug-fix
+> that will prevent dereference of stale pointers.
+>
+> Or will some other solution appear and magically make all bridges and
+> drm drivers capable of dynamic reconfiguration in the next few weeks?
+> Yeah, right...
 
-2. Work must always be offloaded to tasklet for rxe_post_send_kernel()
-when using NVMEoF in order to solve lock ordering between neigh->ha_lock
-seqlock and the nvme queue lock:
+You are not changing single driver, you are changing framework and it
+affects all the drivers using it, being more cautious about such patches
+seems quite natural.
 
-[   77.833783]  Possible interrupt unsafe locking scenario:
-[   77.833783]
-[   77.835831]        CPU0                    CPU1
-[   77.837129]        ----                    ----
-[   77.838313]   lock(&(&n->ha_lock)->seqcount);
-[   77.839550]                                local_irq_disable();
-[   77.841377]                                lock(&(&nvmeq->q_lock)->rlock);
-[   77.843222]                                lock(&(&n->ha_lock)->seqcount);
-[   77.845178]   <Interrupt>
-[   77.846298]     lock(&(&nvmeq->q_lock)->rlock);
-[   77.847986]
-[   77.847986]  *** DEADLOCK ***
+Anyway, I have realized that since drm_bridge_detach will remove the
+link, so with properly written dynamic bridge removal, your patch should
+not be a blocker.
 
-3. Same goes for the lock ordering between sch->q.lock and nvme queue lock:
+Regards
+Andrzej
 
-[   47.634271]  Possible interrupt unsafe locking scenario:
-[   47.634271]
-[   47.636452]        CPU0                    CPU1
-[   47.637861]        ----                    ----
-[   47.639285]   lock(&(&sch->q.lock)->rlock);
-[   47.640654]                                local_irq_disable();
-[   47.642451]                                lock(&(&nvmeq->q_lock)->rlock);
-[   47.644521]                                lock(&(&sch->q.lock)->rlock);
-[   47.646480]   <Interrupt>
-[   47.647263]     lock(&(&nvmeq->q_lock)->rlock);
-[   47.648492]
-[   47.648492]  *** DEADLOCK ***
-
-Using NVMEoF after this patch seems to finally be stable, without it,
-rxe eventually deadlocks the whole system and causes RCU stalls.
-
-Signed-off-by: Alexandru Moise <00moses.alexander00@gmail.com>
----
-v3->v4: only force rxe_post_send_kernel() to always offload work to
-tasklet, suggestion from Zhu Yanjun. Tested this and it seems OK.
-
- drivers/infiniband/sw/rxe/rxe_verbs.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
-
-diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.c b/drivers/infiniband/sw/rxe/rxe_verbs.c
-index 2cb52fd48cf1..73a00a1c06f6 100644
---- a/drivers/infiniband/sw/rxe/rxe_verbs.c
-+++ b/drivers/infiniband/sw/rxe/rxe_verbs.c
-@@ -761,7 +761,6 @@ static int rxe_post_send_kernel(struct rxe_qp *qp, struct ib_send_wr *wr,
- 	unsigned int mask;
- 	unsigned int length = 0;
- 	int i;
--	int must_sched;
- 
- 	while (wr) {
- 		mask = wr_opcode_mask(wr->opcode, qp);
-@@ -791,14 +790,7 @@ static int rxe_post_send_kernel(struct rxe_qp *qp, struct ib_send_wr *wr,
- 		wr = wr->next;
- 	}
- 
--	/*
--	 * Must sched in case of GSI QP because ib_send_mad() hold irq lock,
--	 * and the requester call ip_local_out_sk() that takes spin_lock_bh.
--	 */
--	must_sched = (qp_type(qp) == IB_QPT_GSI) ||
--			(queue_count(qp->sq.queue) > 1);
--
--	rxe_run_task(&qp->req.task, must_sched);
-+	rxe_run_task(&qp->req.task, 1);
- 	if (unlikely(qp->req.state == QP_STATE_ERROR))
- 		rxe_run_task(&qp->comp.task, 1);
- 
--- 
-2.17.0
+>
+> Cheers,
+> Peter
+>
+>> Regards
+>> Andrzej
+>>
+>>
+>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+>>> ---
+>>>  drivers/gpu/drm/drm_bridge.c | 18 ++++++++++++++++++
+>>>  include/drm/drm_bridge.h     |  2 ++
+>>>  2 files changed, 20 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+>>> index 78d186b6831b..0259f0a3ff27 100644
+>>> --- a/drivers/gpu/drm/drm_bridge.c
+>>> +++ b/drivers/gpu/drm/drm_bridge.c
+>>> @@ -26,6 +26,7 @@
+>>>  #include <linux/mutex.h>
+>>>  
+>>>  #include <drm/drm_bridge.h>
+>>> +#include <drm/drm_device.h>
+>>>  #include <drm/drm_encoder.h>
+>>>  
+>>>  #include "drm_crtc_internal.h"
+>>> @@ -127,12 +128,25 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+>>>  	if (bridge->dev)
+>>>  		return -EBUSY;
+>>>  
+>>> +	if (encoder->dev->dev != bridge->odev) {
+>>> +		bridge->link = device_link_add(encoder->dev->dev,
+>>> +					       bridge->odev, 0);
+>>> +		if (!bridge->link) {
+>>> +			dev_err(bridge->odev, "failed to link bridge to %s\n",
+>>> +				dev_name(encoder->dev->dev));
+>>> +			return -EINVAL;
+>>> +		}
+>>> +	}
+>>> +
+>>>  	bridge->dev = encoder->dev;
+>>>  	bridge->encoder = encoder;
+>>>  
+>>>  	if (bridge->funcs->attach) {
+>>>  		ret = bridge->funcs->attach(bridge);
+>>>  		if (ret < 0) {
+>>> +			if (bridge->link)
+>>> +				device_link_del(bridge->link);
+>>> +			bridge->link = NULL;
+>>>  			bridge->dev = NULL;
+>>>  			bridge->encoder = NULL;
+>>>  			return ret;
+>>> @@ -159,6 +173,10 @@ void drm_bridge_detach(struct drm_bridge *bridge)
+>>>  	if (bridge->funcs->detach)
+>>>  		bridge->funcs->detach(bridge);
+>>>  
+>>> +	if (bridge->link)
+>>> +		device_link_del(bridge->link);
+>>> +	bridge->link = NULL;
+>>> +
+>>>  	bridge->dev = NULL;
+>>>  }
+>>>  
+>>> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+>>> index b656e505d11e..804189c63a4c 100644
+>>> --- a/include/drm/drm_bridge.h
+>>> +++ b/include/drm/drm_bridge.h
+>>> @@ -261,6 +261,7 @@ struct drm_bridge_timings {
+>>>   * @list: to keep track of all added bridges
+>>>   * @timings: the timing specification for the bridge, if any (may
+>>>   * be NULL)
+>>> + * @link: drm consumer <-> bridge supplier
+>>>   * @funcs: control functions
+>>>   * @driver_private: pointer to the bridge driver's internal context
+>>>   */
+>>> @@ -271,6 +272,7 @@ struct drm_bridge {
+>>>  	struct drm_bridge *next;
+>>>  	struct list_head list;
+>>>  	const struct drm_bridge_timings *timings;
+>>> +	struct device_link *link;
+>>>  
+>>>  	const struct drm_bridge_funcs *funcs;
+>>>  	void *driver_private;
+>>
+>
+>
+>
