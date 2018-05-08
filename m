@@ -1,146 +1,202 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525791902; cv=none;
+Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZp31xnWbcBvXY1cWqeG9zEKYWzU2fwu0VXpdCSUVk5HPhAPlUaJjG7meTG4SqbYI1ozvxEG
+ARC-Seal: i=1; a=rsa-sha256; t=1525767386; cv=none;
         d=google.com; s=arc-20160816;
-        b=YR4FQ9DoaRPl6e52pGiVB1QtRxpo9ohzzopMtpx+Y+KZgcG3zsJi7jCneyIZMmkTP6
-         uRRud0lz34ptX82hUmeUhgDyY1rttdyh9v6Zgy4+JfsOEQIFkruTO4APnuY3R9TaP1T0
-         SeWGiiz9aF4KPeVHEXCw2DCB2vksZYn0SNBLb0WRU5JlvnlMQTexUG+e/e7eo5wUpnq8
-         KM/Mu3RMuhPOPeV/H6UmPP9tI503hAkZCPrOgptevWKzD4R3XbSiiumd5WxcHiEiO24x
-         1E19rOpPUHNf6ZKyrkYF5qiYgQDDmh0XDe4XmIUcgYeMXnGCCuk9Y17tGIc2uLQdX6ob
-         we+A==
+        b=DLv3dUEgKYFKjoN5SJXUQ0zhZH2OCz9lVVy6SvQ6DM0o1I/a+z7HQPeNaubXhfXxaK
+         LX7h5W+B1AopGpUyfKUGjKwwECypRdkpmuYKtYkebQ0/jYdqk1Vo7O4t46v1kYRSIWMu
+         Nyif+c6kNyeuvjL6frY3DAZ/kxnAYQc5cOWDATXx+DJrD1HbJM+bY5+Y1PQ1FYJTGezI
+         tgvx+gQXSIFWpYUn9ppaEozS1eMse5xDM0aY26Nuqa+z7g+cuxmMf+/DBQT2I4YracFW
+         he62C4j+WjRIyoYrhsFDoJ/Pkh91R4AQzr2aAP+Q45se2QDKi9C7IQBqjLWGe57aSzl2
+         z7/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=VesxlB7Vbt0s6Xq0XKB8pjGL68nw1ids869A/aHXhXA=;
-        b=YYWdaAaoWiWIPDzycUkMSeVfU3dB4Wij6p22tNQB4gF6OitF+v1T52akUTxo0dWOUf
-         TiQwGe3L3r60vZXMDV6JjUrjNjLbZnPDpaIcRMpfafpcD7PM+s52q55h7jdU0Cj4qZru
-         hrAK48ZNJQr3DlVrWZ3L4lSOAsZllJe/zvWODDLOdO2azV+NaHgBYHk4f7LRcSu3+7Eg
-         6kgu6guGv5Nm19WDAbMo0PjsNNNRy2FMTPaQFJZgvCRU31bAakLWRvzbr69i3XuOPGm9
-         alnadGJ7okBs5YDtIMzgD1Hot7grE3SHnQY+Lt5OHbe47n5679+8YC6UiZv8TalLCohk
-         koqw==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=RlaksRLEXRGN1dHM4D0KCjx8VKpwZXTtk8XucOBPovc=;
+        b=EYlt2p83pf7UZbKAIt90/NQdK/l+l2hkTNFF+5IhzEuZ/MxcHWwM9vwKddFU1RaAt+
+         UfXicRjjnnFCuDTTkXBqRwBhDvArKmN8tNfFrZ2bxAkMymdDjF5jr34vW/1iBeIm0Kwd
+         HYgek8Jwfr1VSk2XQ4/VWA90whjziittLOUTnD0LfiHX5UMKEm/4mrSbASUCTFhuaF8Z
+         kghgRz7gGbnZi8wXvjXudu0nKQg5EOdA16sn+YRqNtYmI9lFgG7hABo5pkCvF4T3SCnK
+         JMnFFuZTrqaacbdcYAHnp7iYd259Y9Rst82WmrbTwI2cFRdmBvUOpZPU++lugXull2rZ
+         /+dw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       dkim=pass header.i=@kernel.org header.s=default header.b=a5IIaZs8;
+       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZq+Im8s4Uwl8c1hVUE/HRGyY0LP9a9S/13VMXlFFnzQ5D3YjEKztIG8JXfxMzRb7iZN/sk+bQ==
-Message-ID: <5af1bc9d.1c69fb81.4944e.b595@mx.google.com>
-Date: Tue, 08 May 2018 08:05:01 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.14.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.14.39-44-gc5a9c8283a69
+       dkim=pass header.i=@kernel.org header.s=default header.b=a5IIaZs8;
+       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Don Hiatt <don.hiatt@intel.com>,
+	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Dennis Dalessandro <dennis.dalessandro@intel.com>,
+	Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.14 26/43] IB/hfi1: Fix handling of FECN marked multicast packet
+Date: Tue,  8 May 2018 10:10:45 +0200
+Message-Id: <20180508074008.159103365@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 00/43] 4.14.40-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599882950858871392?=
-X-GMAIL-MSGID: =?utf-8?q?1599908770116386070?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1599882813049072132?=
+X-GMAIL-MSGID: =?utf-8?q?1599883062892173727?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.14.y boot: 114 boots: 2 failed, 104 passed with 5 offline=
-, 3 conflicts (v4.14.39-44-gc5a9c8283a69)
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.39-44-gc5a9c8283a69/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.39-44-gc5a9c8283a69/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.39-44-gc5a9c8283a69
-Git Commit: c5a9c8283a6928d22ddc589157213f4f331fca76
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 56 unique boards, 23 SoC families, 15 builds out of 185
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-Boot Regressions Detected:
+commit f59fb9e05109b836230813e45f71c9ecc2d5dbe6 upstream.
 
-arm:
+The code for handling a marked UD packet unconditionally returns the
+dlid in the header of the FECN marked packet.  This is not correct
+for multicast packets where the DLID is in the multicast range.
 
-    multi_v7_defconfig:
-        am335x-boneblack:
-            lab-collabora: new failure (last pass: v4.14.39-4-g5ce1e4d96025)
+The subsequent attempt to send the CNP with the multicast lid will
+cause the chip to halt the ack send context because the source
+lid doesn't match the chip programming.   The send context will
+be halted and flush any other pending packets in the pio ring causing
+the CNP to not be sent.
 
-    tegra_defconfig:
-        tegra124-jetson-tk1:
-            lab-mhart: new failure (last pass: v4.14.39-4-g5ce1e4d96025)
+A part of investigating the fix, it was determined that the 16B work
+broke the FECN routine badly with inconsistent use of 16 bit and 32 bits
+types for lids and pkeys.  Since the port's source lid was correctly 32
+bits the type mixmatches need to be dealt with at the same time as
+fixing the CNP header issue.
 
-arm64:
+Fix these issues by:
+- Using the ports lid for as the SLID for responding to FECN marked UD
+  packets
+- Insure pkey is always 16 bit in this and subordinate routines
+- Insure lids are 32 bits in this and subordinate routines
 
-    defconfig:
-        apq8016-sbc:
-            lab-mhart: new failure (last pass: v4.14.39-4-g5ce1e4d96025)
-        meson-gxl-s905x-khadas-vim:
-            lab-baylibre: failing since 12 days (last pass: v4.14.26-140-g2=
-a1700a4929f - first fail: v4.14.36-184-g3cd53e436ee2)
-
-x86:
-
-    x86_64_defconfig:
-        x86-atom330:
-            lab-mhart: new failure (last pass: v4.14.39-4-g5ce1e4d96025)
-
-Boot Failures Detected:
-
-arm64:
-
-    defconfig
-        apq8016-sbc: 1 failed lab
-
-x86:
-
-    x86_64_defconfig
-        x86-atom330: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    multi_v7_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-    qcom_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-
-Conflicting Boot Failures Detected: (These likely are not failures as other=
- labs are reporting PASS. Needs review.)
-
-arm:
-
-    tegra_defconfig:
-        tegra124-jetson-tk1:
-            lab-collabora: PASS
-            lab-mhart: FAIL
-            lab-baylibre-seattle: PASS
-
-    multi_v7_defconfig:
-        am335x-boneblack:
-            lab-collabora: FAIL
-            lab-baylibre-seattle: PASS
-
-arm64:
-
-    defconfig:
-        meson-gxl-s905x-khadas-vim:
-            lab-baylibre-seattle: PASS
-            lab-baylibre: FAIL
+Cc: <stable@vger.kernel.org> # 4.14.x
+Fixes: 88733e3b8450 ("IB/hfi1: Add 16B UD support")
+Reviewed-by: Don Hiatt <don.hiatt@intel.com>
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ drivers/infiniband/hw/hfi1/driver.c |   19 +++++++++++++++----
+ drivers/infiniband/hw/hfi1/hfi.h    |    8 ++++----
+ drivers/infiniband/hw/hfi1/ud.c     |    4 ++--
+ 3 files changed, 21 insertions(+), 10 deletions(-)
+
+--- a/drivers/infiniband/hw/hfi1/driver.c
++++ b/drivers/infiniband/hw/hfi1/driver.c
+@@ -437,31 +437,43 @@ void hfi1_process_ecn_slowpath(struct rv
+ 			       bool do_cnp)
+ {
+ 	struct hfi1_ibport *ibp = to_iport(qp->ibqp.device, qp->port_num);
++	struct hfi1_pportdata *ppd = ppd_from_ibp(ibp);
+ 	struct ib_other_headers *ohdr = pkt->ohdr;
+ 	struct ib_grh *grh = pkt->grh;
+ 	u32 rqpn = 0, bth1;
+-	u16 pkey, rlid, dlid = ib_get_dlid(pkt->hdr);
++	u16 pkey;
++	u32 rlid, slid, dlid = 0;
+ 	u8 hdr_type, sc, svc_type;
+ 	bool is_mcast = false;
+ 
++	/* can be called from prescan */
+ 	if (pkt->etype == RHF_RCV_TYPE_BYPASS) {
+ 		is_mcast = hfi1_is_16B_mcast(dlid);
+ 		pkey = hfi1_16B_get_pkey(pkt->hdr);
+ 		sc = hfi1_16B_get_sc(pkt->hdr);
++		dlid = hfi1_16B_get_dlid(pkt->hdr);
++		slid = hfi1_16B_get_slid(pkt->hdr);
+ 		hdr_type = HFI1_PKT_TYPE_16B;
+ 	} else {
+ 		is_mcast = (dlid > be16_to_cpu(IB_MULTICAST_LID_BASE)) &&
+ 			   (dlid != be16_to_cpu(IB_LID_PERMISSIVE));
+ 		pkey = ib_bth_get_pkey(ohdr);
+ 		sc = hfi1_9B_get_sc5(pkt->hdr, pkt->rhf);
++		dlid = ib_get_dlid(pkt->hdr);
++		slid = ib_get_slid(pkt->hdr);
+ 		hdr_type = HFI1_PKT_TYPE_9B;
+ 	}
+ 
+ 	switch (qp->ibqp.qp_type) {
++	case IB_QPT_UD:
++		dlid = ppd->lid;
++		rlid = slid;
++		rqpn = ib_get_sqpn(pkt->ohdr);
++		svc_type = IB_CC_SVCTYPE_UD;
++		break;
+ 	case IB_QPT_SMI:
+ 	case IB_QPT_GSI:
+-	case IB_QPT_UD:
+-		rlid = ib_get_slid(pkt->hdr);
++		rlid = slid;
+ 		rqpn = ib_get_sqpn(pkt->ohdr);
+ 		svc_type = IB_CC_SVCTYPE_UD;
+ 		break;
+@@ -486,7 +498,6 @@ void hfi1_process_ecn_slowpath(struct rv
+ 					      dlid, rlid, sc, grh);
+ 
+ 	if (!is_mcast && (bth1 & IB_BECN_SMASK)) {
+-		struct hfi1_pportdata *ppd = ppd_from_ibp(ibp);
+ 		u32 lqpn = bth1 & RVT_QPN_MASK;
+ 		u8 sl = ibp->sc_to_sl[sc];
+ 
+--- a/drivers/infiniband/hw/hfi1/hfi.h
++++ b/drivers/infiniband/hw/hfi1/hfi.h
+@@ -1523,13 +1523,13 @@ void set_link_ipg(struct hfi1_pportdata
+ void process_becn(struct hfi1_pportdata *ppd, u8 sl, u32 rlid, u32 lqpn,
+ 		  u32 rqpn, u8 svc_type);
+ void return_cnp(struct hfi1_ibport *ibp, struct rvt_qp *qp, u32 remote_qpn,
+-		u32 pkey, u32 slid, u32 dlid, u8 sc5,
++		u16 pkey, u32 slid, u32 dlid, u8 sc5,
+ 		const struct ib_grh *old_grh);
+ void return_cnp_16B(struct hfi1_ibport *ibp, struct rvt_qp *qp,
+-		    u32 remote_qpn, u32 pkey, u32 slid, u32 dlid,
++		    u32 remote_qpn, u16 pkey, u32 slid, u32 dlid,
+ 		    u8 sc5, const struct ib_grh *old_grh);
+ typedef void (*hfi1_handle_cnp)(struct hfi1_ibport *ibp, struct rvt_qp *qp,
+-				u32 remote_qpn, u32 pkey, u32 slid, u32 dlid,
++				u32 remote_qpn, u16 pkey, u32 slid, u32 dlid,
+ 				u8 sc5, const struct ib_grh *old_grh);
+ 
+ /* We support only two types - 9B and 16B for now */
+@@ -2431,7 +2431,7 @@ static inline void hfi1_make_16b_hdr(str
+ 		((slid >> OPA_16B_SLID_SHIFT) << OPA_16B_SLID_HIGH_SHIFT);
+ 	lrh2 = (lrh2 & ~OPA_16B_DLID_MASK) |
+ 		((dlid >> OPA_16B_DLID_SHIFT) << OPA_16B_DLID_HIGH_SHIFT);
+-	lrh2 = (lrh2 & ~OPA_16B_PKEY_MASK) | (pkey << OPA_16B_PKEY_SHIFT);
++	lrh2 = (lrh2 & ~OPA_16B_PKEY_MASK) | ((u32)pkey << OPA_16B_PKEY_SHIFT);
+ 	lrh2 = (lrh2 & ~OPA_16B_L4_MASK) | l4;
+ 
+ 	hdr->lrh[0] = lrh0;
+--- a/drivers/infiniband/hw/hfi1/ud.c
++++ b/drivers/infiniband/hw/hfi1/ud.c
+@@ -630,7 +630,7 @@ int hfi1_lookup_pkey_idx(struct hfi1_ibp
+ }
+ 
+ void return_cnp_16B(struct hfi1_ibport *ibp, struct rvt_qp *qp,
+-		    u32 remote_qpn, u32 pkey, u32 slid, u32 dlid,
++		    u32 remote_qpn, u16 pkey, u32 slid, u32 dlid,
+ 		    u8 sc5, const struct ib_grh *old_grh)
+ {
+ 	u64 pbc, pbc_flags = 0;
+@@ -688,7 +688,7 @@ void return_cnp_16B(struct hfi1_ibport *
+ }
+ 
+ void return_cnp(struct hfi1_ibport *ibp, struct rvt_qp *qp, u32 remote_qpn,
+-		u32 pkey, u32 slid, u32 dlid, u8 sc5,
++		u16 pkey, u32 slid, u32 dlid, u8 sc5,
+ 		const struct ib_grh *old_grh)
+ {
+ 	u64 pbc, pbc_flags = 0;
