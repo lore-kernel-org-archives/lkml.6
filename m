@@ -1,57 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755069AbeEHNSV (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 09:18:21 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:33930 "EHLO mail5.wrs.com"
+        id S1755129AbeEHNT1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 09:19:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53371 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751952AbeEHNST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 09:18:19 -0400
-Subject: Re: KMSAN: uninit-value in strcmp
-To: David Miller <davem@davemloft.net>,
-        <syzbot+df0257c92ffd4fcc58cd@syzkaller.appspotmail.com>
-CC: <jon.maloy@ericsson.com>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>,
-        <tipc-discussion@lists.sourceforge.net>
-References: <00000000000059f907056b519603@google.com>
- <20180503.152213.740988890883315228.davem@davemloft.net>
-From: Ying Xue <ying.xue@windriver.com>
-Message-ID: <cb60d6f0-4e32-b360-d1f2-032ee7777fcd@windriver.com>
-Date: Tue, 8 May 2018 21:12:14 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754601AbeEHNT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 09:19:26 -0400
+Date: Tue, 8 May 2018 15:19:14 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com, f.fainelli@gmail.com,
+        opendmb@gmail.com, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, clabbe.montjoie@gmail.com,
+        quentin.schulz@bootlin.com, thomas.petazzoni@bootlin.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 00/12] Sunxi: Add SMP support on A83T
+Message-ID: <20180508131914.6sy7cd6urnfg3tam@flea>
+References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20180503.152213.740988890883315228.davem@davemloft.net>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [128.224.155.90]
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/04/2018 03:22 AM, David Miller wrote:
-> From: syzbot <syzbot+df0257c92ffd4fcc58cd@syzkaller.appspotmail.com>
-> Date: Thu, 03 May 2018 11:44:02 -0700
-> 
->> Call Trace:
->>  __dump_stack lib/dump_stack.c:17 [inline]
->>  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
->>  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
->>  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
->>  strcmp+0xf7/0x160 lib/string.c:329
->>  tipc_nl_node_get_link+0x220/0x6f0 net/tipc/node.c:1881
->>  genl_family_rcv_msg net/netlink/genetlink.c:599 [inline]
-> 
-> Hmmm, TIPC_NL_LINK_GET uses tipc_nl_policy, which has a proper nesting
-> entry for TIPC_NLA_LINK.  I wonder how the code goes about validating
-> TIPC_NLA_LINK_NAME in such a case?  Does it?
-> 
-> This may be the problem.
+Hi,
 
-David, you are right. This is absolutely a real bug. As you said, we
-didn't validate TIPC_NLA_LINK_NAME attribute in tipc_nl_node_get_link()
-at all.
-
-I will submit a patch to fix the issue soon.
-
+On Fri, May 04, 2018 at 09:05:33PM +0200, Mylène Josserand wrote:
+> Hello everyone,
 > 
+> This is a V9 of my series that adds SMP support for Allwinner sun8i-a83t.
+> Based on sunxi's tree, sunxi/for-next branch.
+> Depends on a patch from Doug Berger that allows to include the "cpu-type"
+> header on assembly files that I included in my series (patch 01).
+
+I applied the patches, with the remarks done by Russell on v8 fixed,
+and the function sun8i_a83t_cntvoff_init made static.
+
+> The difference with the v8 is just that the machine is renamed in sun8i-a83t
+> (see patch 07), according to Maxime's review.
+
+The machine name hasn't changed, and the name sun8i-a83t still doesn't
+make much sense. I've fixed it as well.
+
+Thanks,
+Maxime
+
+-- 
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
