@@ -1,137 +1,76 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3450219-1525816201-2-3259549475540243678
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES encafr,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525816200; b=C1sw3oIxzKhPKDn2PvHDMAFIOlxZk1Wl7Lx1QM+xRqH9fccgrY
-    02aSJQBWRvm+jyFvF2cafaOtg6fuPDuJdmQKBwMZfQxdBM5QHv4VSE3jd3WG8Q5L
-    ULi7CrhA8TXk5GZxHzy5DAdFoygT2iqKB24yCFbb31YVujUggAX0E36OdPnsgzyO
-    GUON/Pv5+N9CZG/+qpEQSx4r7JC7aP8sEu5CeYGXAxHgKWROFrWKyLpTRMu5Zp2U
-    0rC9ZUkOPX5UymqL6huIjhf8qgnzILqFZ30Zo7P/Ud0RxDIGzL0Az3M1WjbXuker
-    z/M2+Pf/q9fw2bKZuWayIALsF6he1HweNhFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525816200; bh=lAGgu
-    fJclkE6C27T8U9X6QnFiFDkfK0vFKbDa6L5Pe4=; b=VUEE2vTNasHHqmo7TNlWK
-    BhfXh4dgNzcfuWBUyUI8Lvlh6+CCe81u5TrT3K9sSEK02S1PG/BNgLURkHKiy/tf
-    woLqD0AK9HuT5U3Mlql9NKB+zxlSNbj+Sz4KswS0V/H1qCQdiyApGhxD6VHSX0bo
-    iUcG7YCMKlXrbPfCqoi7FSy49vVziCZdzj+WHqKbu05RmEzYi1AFTbXtu3FPGGRN
-    /KeHO7M2uMaJQ3gYA1qHEkM1j5gvFwxFexuMJuVhKpMY0J99IPbh/3xeCvdfppFf
-    1Tffnqsp7b8Cet0X7V+B+9ezbIoUKrA3LH/ANpgPjqbSPhOj6Sqx80bDVUhNGGmI
-    w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=canonical.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=canonical.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfN03juWo6kleUqVEjPjC4gPH1wXS+GmeOpZ8TGdQ7kFX/hdagZeLJFYZFC9kjr1u8aSkn6R8SiyiJcYETXWXbHaSUyLt5IzHfaN2j073j4dFZFmijDOn
-    JZtsyauHdpA5t2anA1QExHt8bmyjqYIE2DSv+F7Nb5+9U3rkGbD3ShuG5msjuvYGhRJkawCiQ8CcX1O4uu5t/CQYNgfuqmX/IfjHi1KhEW1lNBZ7xc9YV3pR
-    oKsbS8xSSugfMIZrsxwz8g==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DfNHnWVPAAAA:8 a=DDOyTI_5AAAA:8
-    a=RNu_ZaEUwNt9dBp4LCYA:9 a=CjuIK1q_8ugA:10 a=rjTVMONInIDnV1a_A2c_:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Colin King <colin.king@canonical.com>
-To: "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>,
- Stephen Hemminger <sthemmin@microsoft.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Bjorn Helgaas <bhelgaas@google.com>, devel@linuxdriverproject.org,
- linux-pci@vger.kernel.org
-Subject: [PATCH] PCI: hv: fix spelling mistake: "reqquest" -> "request"
-Date: Tue,  8 May 2018 22:49:46 +0100
-Message-Id: <20180508214946.19772-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+Return-Path: <shuah@kernel.org>
+X-Google-Smtp-Source: AB8JxZpk9yozwypHPa+C8Rr4ku3/ftyQg+GPkItdWOzmM8WdE5rhDxFFGStwz35RLi1uLqW36n2E
+ARC-Seal: i=1; a=rsa-sha256; t=1525811250; cv=none;
+        d=google.com; s=arc-20160816;
+        b=zmCv8g63m5HkkNO65oD7niZjHXZrBh6daelLIk/jlhWIlB/YLkx1QAi1cTmCOzOQcE
+         BWlZU3nXkqipgKL0ItIIZxKwRte5T774D09aNtcpmKKUxPATIuGL3WbpF6LPhAdhxR3u
+         qsRZL6TW3f9quGoPOVkzDJthdAeDz++6lC8VYThUtEG8p/MLS7v0xi6BnaunXrXbNx6W
+         W3oFQfcvQC/pjINJcA1FoX0VIQWwezNKp6wqleZ81Gqteo7Xxj4KLsjUfPkEXiljbWZ2
+         TFwQzrNyRapHNKdIRWctBJiZS2fHaXOSShW4j0EzSQq9aRlx5T39LUjlazsFoUmuA07q
+         JVQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=Wagr70+VFrpHjOlEn++qQPgx9o6vJITdjws7afP+5KM=;
+        b=x5CROg0jB/Z/hA7tJzMDaWkyWjuW04tL+95yvuMVliUlVBnzxYfTwDlqOrtjqV0Swr
+         NsIhft7Z8C4zLPO/djcJB5j52Jeg4/0VgvTT6Q5PlhiUOYC2Xs9O4dWLxtjF2RBBzWRr
+         NsDb+gZzXr9pSr/znh9zyU9HTDulW2vwrpflw4VLqB8WG2fY2kF1q7h3eCyY2TWeJaAV
+         ww48/XxU0EX+AIyeVFF5RqVA1o9ONloCLAIZsTpqqMbbG8JhkFM6oSN8LLgrGeOyIGIX
+         iNulk9yqS/ueG9xvmb5G8toJ1omRYY5g94Rkj8Gkv/ItN4DGTCrBxk4Kct1bSLhqMwLN
+         hgLA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning shuah@kernel.org does not designate 64.68.200.34 as permitted sender) smtp.mailfrom=shuah@kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning shuah@kernel.org does not designate 64.68.200.34 as permitted sender) smtp.mailfrom=shuah@kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Subject: Re: [PATCH] selftests/intel_pstate: Improve test, minor fixes
+To: =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>,
+ shuahkh@osg.samsung.com, linux-kselftest@vger.kernel.org
+Cc: Kate Stewart <kstewart@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Philippe Ombredanne <pombredanne@nexb.com>, Thomas Meyer <thomas@m3y3r.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ open list <linux-kernel@vger.kernel.org>, Shuah Khan <shuah@kernel.org>
+References: <1523398277-2066-1-git-send-email-daniel.diaz@linaro.org>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <00379a47-e35b-c5a3-2f94-4fa3b90921e9@kernel.org>
+Date: Tue, 8 May 2018 14:27:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1523398277-2066-1-git-send-email-daniel.diaz@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597398910011233262?=
+X-GMAIL-MSGID: =?utf-8?q?1599929058366349862?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On 04/10/2018 04:11 PM, Daniel Díaz wrote:
+> A few changes improve the overall usability of the test:
+> * fix a hard-coded maximum frequency (3300),
+> * don't adjust the CPU frequency if only evaluating results,
+> * fix a comparison for multiple frequencies.
+> 
+> A symptom of that last issue looked like this:
+>   ./run.sh: line 107: [: too many arguments
+>   ./run.sh: line 110: 3099
+>   3099
+>   3100-3100: syntax error in expression (error token is \"3099
+>   3100-3100\")
+> 
+> Because a check will count how many differente frequencies
+> there are among the CPUs of the system, and after they are
+> tallied another read is performed, which might produce
+> different results.
+> 
+> Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
 
-Trivial fix to spelling mistake in dev_err error message
+Applied to linux-kselftest fixes for 4.17-rc5
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/pci/host/pci-hyperv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
-index 50cdefe3f6d3..7e93b4ffb162 100644
---- a/drivers/pci/host/pci-hyperv.c
-+++ b/drivers/pci/host/pci-hyperv.c
-@@ -2071,7 +2071,7 @@ static int hv_pci_protocol_negotiation(struct hv_device *hdev)
- 				VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
- 		if (ret) {
- 			dev_err(&hdev->device,
--				"PCI Pass-through VSP failed sending version reqquest: %#x",
-+				"PCI Pass-through VSP failed sending version request: %#x",
- 				ret);
- 			goto exit;
- 		}
--- 
-2.17.0
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+thanks,
+-- Shuah
