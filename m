@@ -1,135 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932318AbeEHRUp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 13:20:45 -0400
-Received: from mail-io0-f173.google.com ([209.85.223.173]:39532 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932204AbeEHRUo (ORCPT
+        id S1755408AbeEHRWB (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 13:22:01 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:25809 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932734AbeEHRVX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 13:20:44 -0400
-X-Google-Smtp-Source: AB8JxZoi+9IdM3qPPRFDDvC1RYMnB0h1n7vQ3ctbxabkTfPMWmNHKFr9j1FuQ4R/g5ULzU1Mpp/s3Q==
-From: Connor McAdams <conmanx360@gmail.com>
-Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
-        <jeremy.lefaure@lse.epita.fr>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 00/13] ALSA: hda/ca0132: Patch Series for Recon3Di and Sound Blaster Z Support
-Date: Tue,  8 May 2018 13:20:00 -0400
-Message-Id: <1525800015-2920-1-git-send-email-conmanx360@gmail.com>
-X-Mailer: git-send-email 2.7.4
-To: unlisted-recipients:; (no To-header on input)
+        Tue, 8 May 2018 13:21:23 -0400
+Subject: Re: [PATCH] net: phy: DP83811: Add support for the phy
+To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20180508141105.23867-1-dmurphy@ti.com>
+ <1b6877db-61cf-101a-054e-9c1fbe95a813@ti.com> <20180508164944.GE2888@lunn.ch>
+ <f4cfe325-f462-e965-3bd8-629acf460fbf@ti.com>
+ <cc5acc63-bcb5-2bda-9c9d-fd18e0a7740a@gmail.com>
+From: Dan Murphy <dmurphy@ti.com>
+Message-ID: <078e57c2-ee72-6709-1a3f-ab85dccc50c5@ti.com>
+Date: Tue, 8 May 2018 12:21:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <cc5acc63-bcb5-2bda-9c9d-fd18e0a7740a@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds support for the Sound Blaster Z and the Recon3Di.
+Florian
 
-In order to figure out how to get these cards to work, I made a program called
-QemuHDADump[1], which uses the trace function of qemu to see interactions with
-the memory mapped pci BAR space of the card being used in the virtual machine.
-With this, I obtain the CORB buffer location to get the command verbs, and then
-dump them each time the buffer rolls over. This program may be useful for fixing
-other HDA related driver issues where there is no documentation for the device.
+On 05/08/2018 12:14 PM, Florian Fainelli wrote:
+> On 05/08/2018 10:13 AM, Dan Murphy wrote:
+>> Andrew
+>>
+>> On 05/08/2018 11:49 AM, Andrew Lunn wrote:
+>>> On Tue, May 08, 2018 at 10:56:55AM -0500, Dan Murphy wrote:
+>>>> All
+>>>>
+>>>> On 05/08/2018 09:11 AM, Dan Murphy wrote:
+>>>>> Add support for the DP83811 phy by extending
+>>>>> the DP83822 driver to recognize the PHY IDs.
+>>>>>
+>>>>> The DP83811 supports both rgmii and sgmii interfaces.
+>>>>> There are 2 part numbers for this the DP83811R does not
+>>>>> reliably support the SGMII interface but the DP83811S will.
+>>>>>
+>>>>> There is not a way to differentiate these parts from the
+>>>>> hardware or register set.  So this is controlled via the DT
+>>>>> to indicate which phy mode is required.  Or the part can be
+>>>>> strapped to a certain interface.
+>>>>>
+>>>>> Data sheet can be found here:
+>>>>> http://www.ti.com/product/DP83TC811S-Q1/description
+>>>>> http://www.ti.com/product/DP83TC811R-Q1/description
+>>>>>
+>>>>
+>>>> I am withdrawing this patch for comment.
+>>>> Some of the future features have varying register definitions between the DP83811
+>>>> and DP83822
+>>>
+>>> Hi Dan
+>>>
+>>> It might be worth talking to the ASIC engineers and the
+>>> test/qualification engineers. There are sometime undocumented
+>>> registers for testing. You might be able to identify the exact device
+>>> from these registers.
+>>>
+>>
+>> Thanks.  I talked to them prior to submitting this patch about determining which part is on the board.
+>> I will ping them again and poke a little harder.
+>>
+>> It turns out that we will probably need a new driver for this part anyway as there are
+>> additional features that need to be supported that the 811 just does not support.
+>>
+>> They want to support Master/Slave configurations.
+>> The 822 supports fiber and eee while the 811 does not.
+>> The 811 supports the IEEE802.3bw specific fields in MMD1 and MMD3, which are not in the 822.
+>> The 811 does not support auto-negotiation on the MDI so all the auto-neg registers are invalid for the 811 but are valid for the 822.
+>>
+>> Our Customer engineers felt that combining these two devices into a single driver may confuse the customer.
+> 
+> Why? Having a single Kconfig option to enable and "automatically"
+> gaining support for new hardware is nice.
+> 
 
-So far, I have been able to get all features supported on the Sound Blaster Z
-and the Recon3Di. All output and input effects work, all inputs and outputs
-work, and just about anything else I can think of. I have also added new
-controls in order to select the new inputs and outputs, as well as controls to
-change the effect levels and presets.
+I do agree that it is nice to have.  But with additional features or lack of features the driver source will get pretty messy
+differentiating between devices.
 
-I have also added the ability to use firmware taken from the Windows drivers of
-both the Sound Blaster Z and Recon3Di. I am trying to get into contact with
-Creative to get permission to redistribute these along with the current
-file included with the Chromebook, but they have not been very responsive.
-Luckily, the cards work with the Chromebook firmware just fine, although I
-believe there has to be a reason they have different firmware in Windows. I
-will not link to the firmwares here, but if you look up my thread on Creative
-Labs forums, you will find the link to download the firmwares there.
+What I added was just the basic if 811 & SGMII check.
 
-I am willing to help get the other non-working cards such as the ZxR and the
-newer AE-5 working too, but I will need someone willing to run QemuHDADump in a
-virtual machine in order to get the commands.
-
-So, in summary:
--This patchset makes the cards work better than they did before (they really
- didn't work before)
-
--This patchset leaves the original chromebook related stuff alone.
-
-Thanks.
-
-[1] https://github.com/Conmanx360/QemuHDADump
-
-Bugs:
--------------------------------------------------------------------------------
-Recon3Di: (Reported by Mariusz Ceier)
-*******************
--Occasionally switching between rear and front mic breaks the input until
- computer is shutdown or put to sleep.
-
--Surround Sound works, but is inconsistent. Sometimes, just updating the volume
- fixes it, and sometimes, it requires a restart.
-
-Sound Blaster Z:
-*******************
--none that I'm aware of.
-
-
-Version changes:
--------------------------------------------------------------------------------
-v1:
-*******************
--Massive patch formatting failure, please ignore v1.
-
-v2:
-*******************
--Fixed patch formatting failure.
-
-v3:
-*******************
--Fixed mem_base unmap, instead of checking for QUIRK_SBZ on exit, have it check
- if the area is mapped, and if it is, unmap it. Also make it unmap after all
- other commands are finished.
-
--Change notification of failure to map mem_base from codec_dbg to codec_warn,
- and use codec_info to tell the user that their card might have been incorrectly
- identified as a Sound Blaster Z.
-
--Remove commented out commands in sbz_exit_chip function, only reintroduce them
- when their functions are defined.
-
-v4:
-*******************
--Split patch into smaller pieces.
-
--Added const to alt_out_presets array.
-
--Fixed command that was commented out and only put it in when
- it was actually used.
-
-v5:
-*******************
--Fixed issue identified by kbuild test robot, where patch 12 didn't compile
- individually.
-
-Connor McAdams (13):
-  ALSA: hda/ca0132: R3Di and SBZ quirk entires + alt firmware loading
-  ALSA: hda/ca0132: Add pincfg for SBZ + R3Di, add fp hp auto-detect
-  ALSA: hda/ca0132: Add PCI region2 iomap for SBZ
-  ALSA: hda/ca0132: Add extra exit functions for R3Di and SBZ
-  ALSA: hda/ca0132: add extra init functions for r3di + sbz
-  ALSA: hda/ca0132: update core functions for sbz + r3di
-  ALSA: hda/ca0132: add dsp setup related commands for the sbz
-  ALSA: hda/ca0132: Add dsp setup + gpio functions for r3di
-  ALSA: hda/ca0132: add the ability to set src_id on scp commands
-  ALSA: hda/ca0132: add alt_select_in/out for R3Di + SBZ
-  ALSA: hda/ca0132: Add DSP Volume set and New mixers for SBZ + R3Di
-  ALSA: hda/ca0132: add ca0132_alt_set_vipsource
-  ALSA: hda/ca0132: Add new control changes for SBZ + R3Di
-
- sound/pci/hda/patch_ca0132.c | 3057 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 2941 insertions(+), 116 deletions(-)
+Dan 
 
 -- 
-2.7.4
+------------------
+Dan Murphy
