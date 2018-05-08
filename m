@@ -1,72 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755371AbeEHPrF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:47:05 -0400
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:44809 "EHLO
-        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932111AbeEHPrD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 11:47:03 -0400
-X-Google-Smtp-Source: AB8JxZp4Ot6WLDN8yFvXPHEwdM5Wg3Y9o0/hXo/mAAE81jhBiXeRfHPPk/wbdXDAl4ojCtKS0T/h41HL4ubH61D0Uqc=
+        id S932400AbeEHPsl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 11:48:41 -0400
+Received: from foss.arm.com ([217.140.101.70]:60258 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755041AbeEHPsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 11:48:40 -0400
+Subject: Re: [PATCH v2 10/27] dts: bindings: Restrict coresight tmc-etr
+ scatter-gather mode
+To: Rob Herring <robh@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        John Horley <john.horley@arm.com>,
+        Mathieu Poirier <matheiu.poirier@linaro.org>,
+        devicetree@vger.kernel.org
+References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
+ <1525165857-11096-11-git-send-email-suzuki.poulose@arm.com>
+ <20180501131300.GA31425@rob-hp-laptop>
+ <CANLsYkwozU7QC5EeEy46KrEd4X7J9S69SiNg8-GhSSuMkhQrBw@mail.gmail.com>
+ <CAL_JsqJDTx2UWN7VdsvDctyXw_rco6Q8NmoWQ5EBx6uhwJu=0Q@mail.gmail.com>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <514f69b1-2219-aa83-dfe8-09c26ed4f5b1@arm.com>
+Date: Tue, 8 May 2018 16:48:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
-References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
- <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com> <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
-From: Daniel Drake <drake@endlessm.com>
-Date: Tue, 8 May 2018 09:47:01 -0600
-Message-ID: <CAD8Lp46b+-B=xqSAqB+zV4xF6SRUGs46FkydS37UEuqav_jNog@mail.gmail.com>
-Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Cc: Chris Chiu <chiu@endlessm.com>, Jian-Hong Pan <jian-hong@endlessm.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Adrian Salido <salidoa@google.com>,
-        Jason Gerecke <killertofu@gmail.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAL_JsqJDTx2UWN7VdsvDctyXw_rco6Q8NmoWQ5EBx6uhwJu=0Q@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 8, 2018 at 8:31 AM, Jarkko Nikula
-<jarkko.nikula@linux.intel.com> wrote:
->> Some update, we can make the touchpad work by simply modifying the
->> clk_rate of spt_i2c_info from 120000000 to 133000000 in intel-lpss-pci.c for
->> specific PCI ID 8086:a368 ~ a36a (CoffeeLake). Is the clock setting different
->> for the CoffeeLake series?
+On 04/05/18 23:56, Rob Herring wrote:
+> On Thu, May 3, 2018 at 3:32 PM, Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
+>> On 1 May 2018 at 07:13, Rob Herring <robh@kernel.org> wrote:
+>>> On Tue, May 01, 2018 at 10:10:40AM +0100, Suzuki K Poulose wrote:
+>>>> We are about to add the support for ETR builtin scatter-gather mode
+>>>> for dealing with large amount of trace buffers. However, on some of
+>>>> the platforms, using the ETR SG mode can lock up the system due to
+>>>> the way the ETR is connected to the memory subsystem.
+>>>>
+>>>> In SG mode, the ETR performs READ from the scatter-gather table to
+>>>> fetch the next page and regular WRITE of trace data. If the READ
+>>>> operation doesn't complete(due to the memory subsystem issues,
+>>>> which we have seen on a couple of platforms) the trace WRITE
+>>>> cannot proceed leading to issues. So, we by default do not
+>>>> use the SG mode, unless it is known to be safe on the platform.
+>>>> We define a DT property for the TMC node to specify whether we
+>>>> have a proper SG mode.
+
+
+>>>> ---
+>>>>   Documentation/devicetree/bindings/arm/coresight.txt | 3 +++
+>>>>   drivers/hwtracing/coresight/coresight-tmc.c         | 8 +++++++-
+>>>>   2 files changed, 10 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
+>>>> index cdd84d0..7c0c8f0 100644
+>>>> --- a/Documentation/devicetree/bindings/arm/coresight.txt
+>>>> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
+>>>> @@ -88,6 +88,9 @@ its hardware characteristcs.
+>>>>        * arm,buffer-size: size of contiguous buffer space for TMC ETR
+>>>>         (embedded trace router)
+>>>>
+>>>> +     * scatter-gather: boolean. Indicates that the TMC-ETR can safely
+>>>> +       use the SG mode on this system.
+>>>> +
+>>>
+>>> Needs a vendor prefix.
+>>>
 >>
-> Hmm.. at quick look it looks like to be 133 MHz but I want to double check first from other specs. I'm also wondering why it results 600 kHz instead of expected 133/120 * 400 kHz = 443 kHz. Need to check timing parameters too.
+>> Thinking further on this, do we need to make it device specific as
+>> well - something like "arm,etr-scatter-gather"?  That way we don't
+>> have to redefine "scatter-gather" for other ARM devices if they happen
+>> to need the same property but for different reasons.
+> 
+> No. If we had a bunch of cases, then we'd probably want to have just
+> 'scatter-gather'.
 
-Thanks for looking at this. I believe we tried 133MHz just because
-some other platforms in the file have the clock at that speed.
+Does it mean "arm,scatter-gather" ? If we ever wanted to add the device
+specific information, I would prefer to go with "arm,tmc-scatter-gather"
+and not "etr-scatter-gather". They both could mean different things.
 
-In the original/shipped setup, the scope shows the SDA clock is
-running at ~635kHz (rather than the intended 400kHz) and the debug
-logs from the kernel producing that waveform shows that HCNT=105 and
-LCNT=191
+> 
+> BTW, if SG had already been supported, then I'd say this is a quirk
+> and we should invert this property. Otherwise, you'd be disabling once
+> enabled SG and require working platforms to update their dtb. Of
+> course, I shouldn't really let the state of an OS driver influence the
+> DT binding.
+> 
 
-105+191=296 parent clock ticks per cycle
+The SG support is added with this series. So, the OS has never made use
+of the feature.
 
-At 635kHz, a single clock cycle is 1575ns. What is the speed of the
-parent clock if it ticks 296 times in 1575ns? I calculate this to be
-187960000Hz and further experiments indicate that clk_rate=187960000
-also makes the touchpad work. Unfortunately we don't have easy access
-to the scope to measure the effect on the waveform.
-
-Also through experimentation we tried i2c-sda-falling-time-ns=400ns
-(increasing from the default of 300ns) in order to make the HCNT
-increase to 117. This also makes the touchpad work.
-
-Please let us know if we can help further in finding an upstream fix
-for this issue.
-
-Thanks
-Daniel
+Suzuki
