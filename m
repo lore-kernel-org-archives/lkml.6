@@ -1,59 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754292AbeEHGrs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 02:47:48 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45989 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754081AbeEHGrq (ORCPT
+        id S1754406AbeEHGsN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 02:48:13 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:13602 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754257AbeEHGsL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 02:47:46 -0400
-X-Google-Smtp-Source: AB8JxZrS9zsey3WYYuzJJhAQXBTYUKpBilW+8fMEgef6CE/la3FzP7jFFAXGaOmnVZCdiQaJ7oYihg==
-Subject: Re: [PATCH] net: 8390: Fix possible data races in __ei_get_stats
-To: Eric Dumazet <eric.dumazet@gmail.com>, davem@davemloft.net,
-        fthain@telegraphics.com.au, joe@perches.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180507140809.28847-1-baijiaju1990@gmail.com>
- <e48345b4-fe9f-d267-777b-6a51baba0307@gmail.com>
- <d4de4f6c-c697-fde5-9d31-d8792621bfb5@gmail.com>
- <c336fdb9-4865-4729-d34b-84dd0bfc9af5@gmail.com>
- <6fe51782-2169-53c8-9bac-1715262e716d@gmail.com>
- <dddbec3f-4b63-3e70-d857-4980135d6f31@gmail.com>
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <bde101fd-2bd1-ddc8-ebeb-4145963e95d1@gmail.com>
-Date: Tue, 8 May 2018 14:47:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <dddbec3f-4b63-3e70-d857-4980135d6f31@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Tue, 8 May 2018 02:48:11 -0400
+X-UUID: 8e7d3b16251e458b929384b809a3717f-20180508
+Message-ID: <1525762084.14468.20.camel@mtkswgap22>
+Subject: Re: [PATCH v1 6/7] Bluetooth: hci_mediatek: Add protocol support
+ for MediaTek serial devices
+From: Sean Wang <sean.wang@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>
+CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        Johan Hedberg <johan.hedberg@gmail.com>, <devicetree@vger.kernel.org>,
+        <linux-bluetooth@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Tue, 8 May 2018 14:48:04 +0800
+In-Reply-To: <A7391E5D-2945-415B-8AB1-8DFBF2E65878@holtmann.org>
+References: <cover.1522736996.git.sean.wang@mediatek.com>
+         <f0e0a0b7f1dc3845dc6eafb4ccd60284d1675f8d.1522736996.git.sean.wang@mediatek.com>
+         <A7391E5D-2945-415B-8AB1-8DFBF2E65878@holtmann.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+MIME-Version: 1.0
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Marcel
+
+On Tue, 2018-04-03 at 12:27 +0200, Marcel Holtmann wrote:
+> Hi Sean,
+> 
+
+[ ... ]
+
+> > +
+> > +static int mtk_wmt_cmd_sync(struct hci_uart *hu, u8 opcode, u8 flag, u16 plen,
+> > +			    const void *param)
+> > +{
+> > +	struct mtk_bt_dev *btdev = hu->priv;
+> > +	struct hci_command_hdr *hhdr;
+> > +	struct hci_acl_hdr *ahdr;
+> > +	struct mtk_wmt_hdr *whdr;
+> > +	struct sk_buff *skb;
+> > +	int ret = 0;
+> > +
+> > +	init_completion(&btdev->wmt_cmd);
+> > +
+> > +	skb = bt_skb_alloc(plen + MTK_WMT_CMD_SIZE, GFP_KERNEL);
+> > +	if (!skb)
+> > +		return -ENOMEM;
+> > +
+> > +	/*
+> > +	 * WMT data is carried in either ACL or HCI format with op code as
+> > +	 * 0xfc6f and followed by a WMT header and its actual payload.
+> > +	 */
+> 
+> Please use net subsystem comment style.
+> 
+> > +	switch (opcode) {
+> > +	case MTK_WMT_PATCH_DWNLD:
+> > +		ahdr = skb_put(skb, HCI_ACL_HDR_SIZE);
+> > +		ahdr->handle = cpu_to_le16(0xfc6f);
+> > +		ahdr->dlen   = cpu_to_le16(plen + MTK_WMT_HDR_SIZE);
+> > +		break;
+> > +	default:
+> > +		hhdr = skb_put(skb, HCI_COMMAND_HDR_SIZE);
+> > +		hhdr->opcode = cpu_to_le16(0xfc6f);
+> > +		hhdr->plen = plen + MTK_WMT_HDR_SIZE;
+> > +		break;
+> > +	}
+> > +
+> > +	hci_skb_pkt_type(skb) = opcode == MTK_WMT_PATCH_DWNLD ?
+> > +				HCI_ACLDATA_PKT : HCI_COMMAND_PKT;
+> 
+> Why not move that into the switch statement above.
+> 
+> > +
+> > +	/* Start to build a WMT header and its actual payload. */
+> > +	whdr = skb_put(skb, MTK_WMT_HDR_SIZE);
+> > +	whdr->dir = 1;
+> > +	whdr->op = opcode;
+> > +	whdr->dlen = cpu_to_le16(plen + 1);
+> > +	whdr->flag = flag;
+> > +	skb_put_data(skb, param, plen);
+> > +
+> > +	mtk_enqueue(hu, skb);
+> > +	hci_uart_tx_wakeup(hu);
+> > +
+> > +	/*
+> > +	 * Waiting a WMT event response, while we must take care in case of
+> > +	 * failures for the wait.
+> > +	 */
+> > +	ret = wait_for_completion_interruptible_timeout(&btdev->wmt_cmd, HZ);
+> > +
+> > +	return ret > 0 ? 0 : ret < 0 ? ret : -ETIMEDOUT;
+> > +}
+> 
+> All in all I am not convinced that this is super clean. I get that we need something special for having this in the ACL data packets, but for the standard HCI command I prefer that __hci_cmd_sync is used. I addition, it seems that patch download is the only special case and that happens before at the setup stage. So we could make things special for that. I need to understand this a bit better. Can I get a btmon -w trace.log file from the whole init procedure.
+> 
+
+While i was trying to rewrite the driver based on btuart.c. you posted
+on RFC, I used __hci_cmd_sync_ev to replace such kinds of SoC specific
+hci command sending which I've done previously with mtk_wmt_cmd_sync.
+
+However, eventually, I got a cmd_timer timeout whose message printed
+on console as "Bluetooth: hci0: command 0xfc6f tx timeout".
+
+The mtk soc specific cmd/event I posted below, I dumped directly in
+driver, always uses cmd as opcode 0xfc6f, and its event id as 0xe4.
+
+It appears to the event id is not standard and thus it cannot cancel the
+cmd timer when the special hci event is being handled. This way can we
+can still use __hci_cmd_sync api ?
+                         
+[    4.896200] hci tx: 00000000: 01 6f fc 05 01 07 01 00 04    
+[    4.904671] hci rx: 00000000: e4 05 02 07 01 00
+00                             
+[    4.912859] Bluetooth: hci0 event 0xe4
 
 
-On 2018/5/8 13:04, Eric Dumazet wrote:
->
-> On 05/07/2018 07:16 PM, Jia-Ju Bai wrote:
->
->> Yes, "&dev->stats" will not change, because it is a fixed address.
->> But the field data in "dev->stats" is changed (rx_frame_errors, rx_crc_errors and rx_missed_errors).
->> So if the driver returns "&dev->stats" without lock protection (like on line 858), the field data value of this return value can be the changed field data value or unchanged field data value.
->
-> We do not care.
->
-> This function can be called by multiple cpus at the same time.
->
-> As soon as one cpu returns from it, another cpu can happily modify dev->stats.ANYFIELD.
->
-> Your patch fixes nothing at all.
->
-
-Okay, thanks.
-I also find that my patch does not work...
-
-
-Best wishes,
-Jia-Ju Bai
+buildroot login: [    6.914509] Bluetooth: hci0: command 0xfc6f tx
+timeout
+[    6.919831] hci tx: 00000000: 01 6f fc 06 01 06 02 00 00
+01                    .o........
+[    7.006631] hci rx: 00000000: e4 05 02 06 01 00
+00                             .......
+[    7.014821] Bluetooth: hci0 event 0xe4
