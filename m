@@ -1,29 +1,29 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AB8JxZruMnUuYhzlj6jqevITgAygTO1zabU7S0w5ySeTOJ0DLhbXSGPInEEvqyY2gO4p1hz84oW4
-ARC-Seal: i=1; a=rsa-sha256; t=1525803190; cv=none;
+X-Google-Smtp-Source: AB8JxZonS2vf8ws2hYLdt3J2uK07mRXbQurLCEC2fW3bKxfkdCwfQ5MgePL8YNbN4xJQ7xlLtHHp
+ARC-Seal: i=1; a=rsa-sha256; t=1525803188; cv=none;
         d=google.com; s=arc-20160816;
-        b=RAUmx+fvaYbaPd+zqb+3gLBELmtozdYMgnkXo96NfYupFN8AIgssqDy1h5vZFPumHz
-         LrVW6REz9kJOetg5/2WXPmLi5zCqYUOwySZW8ma1onJo//+HpWe/mNo6e9W8tIuw9ir/
-         BY+yKHsRjXK2gtiJetJefGlQxOoNL2VX/alqijnMJx8wWzMCKnrff5LaPBh87Bc2nYQ5
-         c/7t7SXSxb+XbH0SPUqiOaOhIvEK3c7DU1wmFlVzL4LkscC/xU1qEDz2oL4Uio/z+6Uc
-         J0B0sLa3l9r88alTFomB26c26+jv1uiAjCjFx5UFeJ9Yyzyh8oQ2n9YQPqj/XbvwBF8q
-         JIqA==
+        b=OteGHS6PvszKERkKM+Nh+WGZwuHNgtc3C0JXHvMegM8+Jb2XxcRUs32uT4z90grk5/
+         bCOFovy+xbVBa21ePBEZE4ThCzu5tVuMfUP+BTqceU5UH2At40/I9/ANtHzGCL4EXEgG
+         6q45NRklSHQ2lOx3PQtU1ewmBgfzbrGwE4UM4yMcMYj3jLdHwJDnjTLdkfpt5eCZpQUH
+         I18AxYgcVylS/L/14qhPmYnXFWj02AQwtdqVVY8T2afiZc5BcYQioFMJv7vE0joDj/3O
+         jj24oAw91OBrgDZG9ztQm6V4Qq+G8eB/sJgQgOre64+7Ei0hFpsMBdgZRxaIvtkYEi+Y
+         Plkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=BxrQTlXE/rbdfk9UYBocWWQBdSqLVLIhbWDnrD/4L3o=;
-        b=aSdUmhbvd3LiY0mL/htQ9P9xKQTkdN9lQJUQ/7xLRF4Dsy8h+nG5HQ3kebfR1YcxjB
-         skYWngvoYQa9AGPWHbbepYqTNJE9GZywABd68j8BTJJRKI6VoPHPe9eXTY3fMktkJp4b
-         45sX+xp8e+ydhBpGoybGiyfO6MMGSRqvzLOPugJ+7IKWm2ikK3GypBYHe6IhIdB6m120
-         f/KC930p3dL75gB+RVk9RUUDaP7YWO1Cu5zdINEhMJc6RJYJOdIy/sNJUY1jA31ZdiLC
-         XQKxD/n5OZmvcdnOo0SKqqzz8BP3uWd5ecjh9/XVVj/PrzO8WD1jARQizWPN+sCOS30V
-         Rmvg==
+        bh=thDGmiSEgsfD0HT/FueSeMjWTK6am/vAIi3Nm/wWb3E=;
+        b=QnvHCaod0eyWwfX9e4v2cH+NoGT5sDqYCKmElPtuUDSZgJ09EkTkFWCNxk4Twem13L
+         zaN4l+V+tV3OTjdTew3XR68doXySDUsGXbt1omUPgVbg+tIJX2DiN6fSj1ZSQLQJOni2
+         YkqfjwnJGg5IpzxaL6RdkvmionIXQh5/FQQdBdFZLx6HI4iGEzs0AZscMqc6MF7dJaAk
+         Nc/GZKpR+DgrG9fUcxiIoWgPXHBbRq4csj+gYSKijYiYnrHrAqOyEoF0inPMFLGqjr7s
+         2GOnVb9FEBsx/OBwl/6c5URZjeZpRguafjCb/11KOJiaVfrI+U2cR1s5c2foS+eVYYYO
+         mAZA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=GlYxvr34;
+       dkim=pass header.i=@kernel.org header.s=default header.b=rGuPLQ8d;
        spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=GlYxvr34;
+       dkim=pass header.i=@kernel.org header.s=default header.b=rGuPLQ8d;
        spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -74,64 +74,47 @@ Cc: akpm@linux-foundation.org,
 	linux-scsi@vger.kernel.org,
 	linux-wireless@vger.kernel.org,
 	netdev@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v6 11/13] Documentation: fix few typos and clarifications for the firmware loader
-Date: Tue,  8 May 2018 11:12:45 -0700
-Message-Id: <20180508181247.19431-12-mcgrof@kernel.org>
+	"Luis R . Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH v6 10/13] ath10k: re-enable the firmware fallback mechanism for testmode
+Date: Tue,  8 May 2018 11:12:44 -0700
+Message-Id: <20180508181247.19431-11-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508181247.19431-1-mcgrof@kernel.org>
 References: <20180508181247.19431-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599920605966512508?=
-X-GMAIL-MSGID: =?utf-8?q?1599920605966512508?=
+X-GMAIL-THRID: =?utf-8?q?1599920604331366809?=
+X-GMAIL-MSGID: =?utf-8?q?1599920604331366809?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fix a few typos, and clarify a few sentences.
+From: Andres Rodriguez <andresx7@gmail.com>
 
+The ath10k testmode uses request_firmware_direct() in order to avoid
+producing firmware load warnings. Disabling the fallback mechanism was a
+side effect of disabling warnings.
+
+We now have a new API that allows us to avoid warnings while keeping the
+fallback mechanism enabled. So use that instead.
+
+Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
+Acked-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- Documentation/driver-api/firmware/fallback-mechanisms.rst | 5 +++--
- Documentation/driver-api/firmware/firmware_cache.rst      | 4 ++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/wireless/ath/ath10k/testmode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/driver-api/firmware/fallback-mechanisms.rst b/Documentation/driver-api/firmware/fallback-mechanisms.rst
-index f353783ae0be..a39323ef7d29 100644
---- a/Documentation/driver-api/firmware/fallback-mechanisms.rst
-+++ b/Documentation/driver-api/firmware/fallback-mechanisms.rst
-@@ -83,7 +83,7 @@ and a file upload firmware into:
-   * /sys/$DEVPATH/data
+diff --git a/drivers/net/wireless/ath/ath10k/testmode.c b/drivers/net/wireless/ath/ath10k/testmode.c
+index 568810b41657..c24ee616833c 100644
+--- a/drivers/net/wireless/ath/ath10k/testmode.c
++++ b/drivers/net/wireless/ath/ath10k/testmode.c
+@@ -157,7 +157,7 @@ static int ath10k_tm_fetch_utf_firmware_api_1(struct ath10k *ar,
+ 		 ar->hw_params.fw.dir, ATH10K_FW_UTF_FILE);
  
- To upload firmware you will echo 1 onto the loading file to indicate
--you are loading firmware. You then cat the firmware into the data file,
-+you are loading firmware. You then write the firmware into the data file,
- and you notify the kernel the firmware is ready by echo'ing 0 onto
- the loading file.
+ 	/* load utf firmware image */
+-	ret = request_firmware_direct(&fw_file->firmware, filename, ar->dev);
++	ret = firmware_request_nowarn(&fw_file->firmware, filename, ar->dev);
+ 	ath10k_dbg(ar, ATH10K_DBG_TESTMODE, "testmode fw request '%s': %d\n",
+ 		   filename, ret);
  
-@@ -136,7 +136,8 @@ by kobject uevents. This is specially exacerbated due to the fact that most
- distributions today disable CONFIG_FW_LOADER_USER_HELPER_FALLBACK.
- 
- Refer to do_firmware_uevent() for details of the kobject event variables
--setup. Variables passwdd with a kobject add event:
-+setup. The variables currently passed to userspace with a "kobject add"
-+event are:
- 
- * FIRMWARE=firmware name
- * TIMEOUT=timeout value
-diff --git a/Documentation/driver-api/firmware/firmware_cache.rst b/Documentation/driver-api/firmware/firmware_cache.rst
-index 2210e5bfb332..c2e69d9c6bf1 100644
---- a/Documentation/driver-api/firmware/firmware_cache.rst
-+++ b/Documentation/driver-api/firmware/firmware_cache.rst
-@@ -29,8 +29,8 @@ Some implementation details about the firmware cache setup:
- * If an asynchronous call is used the firmware cache is only set up for a
-   device if if the second argument (uevent) to request_firmware_nowait() is
-   true. When uevent is true it requests that a kobject uevent be sent to
--  userspace for the firmware request. For details refer to the Fackback
--  mechanism documented below.
-+  userspace for the firmware request through the sysfs fallback mechanism
-+  if the firmware file is not found.
- 
- * If the firmware cache is determined to be needed as per the above two
-   criteria the firmware cache is setup by adding a devres entry for the
 -- 
 2.17.0
