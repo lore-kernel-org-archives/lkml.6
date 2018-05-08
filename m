@@ -1,190 +1,339 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2771586-1526394893-2-10171622764336772107
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526394892; b=UsqAl0yWkLf5JXhEJ//54mocsGdwZgmksFnhMdHOH9TEhbC82V
-    PNBlJtgjQhbRiPAIrmTZQ9AEc4XdgF3TXv67wRg86fvPtIb2FFnLCjHBwPDBBkl7
-    qYJlcS03J/nz029BWCH70DoQK+c0CPjqYcY6PgQ72SlDzJ6/tfX5a3kuwjXoNn8O
-    mQk5a0+QKterGD6fw5K7uh9AMLKHwpoiVABpvYOYKEsdGB7G6PQsLyAEoGgwrt23
-    /fIoxUliF5NSbxavkIazuJ3Uc8ZTNZh7E9+yasisCJ/dyudhgmXzc0HaGyjvOBbg
-    KTqu4EehIsB2YjC1vrgizp8W4LVXUzAh/pXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :mime-version:content-type:sender:list-id; s=fm2; t=1526394892;
-    bh=LCY4b+A6nfYbeuucwDb/bjq4Nv8mF7Cq4uIBo+6lnok=; b=XQy7ndJiIe4L
-    sz7BioRcIlDNFz/R5pqap+s4iJvbRLDZ25qH6pqxP+/h0EFcnzaGZN9kOS9RR41s
-    RzxdU+sUPtPaPZsNwMNPIhdBU2779isrqybZOtTjUj7LE2umt7xdN7RdgR+Dlg1P
-    rrKJAEF3RFqkI1evyXrAi4OZPNiLUVKWtW0KUcbMXPcvCH1OdsW40qSh0oD28a7k
-    MI2Lx656wQ/EpjpkrHprpry8uulg6MNfWgrigc9X8z4B1YoiAhXtcRPtaJ3T9M+3
-    CyvchgYAyd7nbwj660KFuilc39vXTm6RQ9OzPA3/EIGndRag9FzMCgGJWLHhBZcs
-    47o8EcTb2w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-    header.d=kernel.org header.i=@kernel.org header.b=gMDXJ8/E x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-      header.d=kernel.org header.i=@kernel.org header.b=gMDXJ8/E x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNwYFsfoSmsPA6zRbeApkG1DPK8oTO4DXjQtLweN6Flj6PP1NZCKofsRp6Gm5c02KtuxehGjc4QPU5jd3CgW4OntV2QpS41inrXTSaIPuKjuTY9MPq7+
-    7RkpzD5T4iUTYuA+qbaKibBDbklWZLoCEJdovn45kVXtJKSB0+2RuOJW+XOBwWAKYhkrWh9yY4SMK8nHheppvjQe4ywdYs8NfO08cRrjdhd1v+LA39xpeeaK
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=NEAV23lmAAAA:8 a=QP9oiXLwJZUBrUhRCQcA:9
-    a=n0kzNNOx_tKw_JiW:21 a=TKVPlpMM1pJKbZ4_:21 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753389AbeEOOeu (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 15 May 2018 10:34:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52354 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752850AbeEOOet (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Tue, 15 May 2018 10:34:49 -0400
-Date: Tue, 15 May 2018 16:34:32 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: linux-usb@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: usbutils 010 release
-Message-ID: <20180515143432.GA19432@kroah.com>
+Return-Path: <andreyknvl@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525800068; cv=none;
+        d=google.com; s=arc-20160816;
+        b=AqPNsflg9pNfVFQfLRR3soEPX5OrD36YbqhNxKZWB/FqnWkcZVlelwbrZn3UNw5vBc
+         pxQpUTsMzRx6ROh0Jw9CSBFrFa6sK6hdzMF5gXNJl+6ATzDTh4f55LTpHOUg2BYkzLTA
+         MSigHyLGFcugC3vD6o547ZhIDstMD3xDXtGmoSlU/nzz0XXkVIFf6YbWU4T1L7XuW8Wd
+         VaoMHCH3USvxzgE5pe9MLa/WwUfDkdSaoq7suYye8Yy4efj6CS5hFYVrEiuqW0tInKMd
+         kkYsovDP+n/kR5Kl+95svmtjWJ0i8zQ8qt5gmrKbXJQE0rQ+2NuoKvQzkajmuxm++qPd
+         4s9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:dkim-signature:arc-authentication-results;
+        bh=XE+5lX2m7eNN/D4RPX4K6rW9HZtJY7IVCD4yymwd9Ug=;
+        b=tZd6l5cQZonPDezN15QWJHuS8QOza4H6IEYhh0tAagRKev0LO0PjYu9uVCq08hD134
+         J9YMdXc+xIuPtdLxudEMpNdJnB+zWQf4my+Ubxv6x/dDDz25u4j7NpUz1vNyUcjbLi/C
+         KSgRi2JEmoI95XRjwFhyJIaOXzkGlLkr4tGpXNfDKWNe5JiE02z7GhnVMVk1m77zi1gt
+         uUp582gkdoMA3fa2dmA9oBQ/ZLXub7NEtm1Ciq7QkE2R22Qh9Rr8J1z1SmHx3Gw/4IPS
+         01uXvfYVCyworLdicS23T1ryVRVSSjFQqd8RCIcG4xMrIgdP2xQ4+5RHhwFgtlvYMbJg
+         Bq5g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=j101eF77;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=j101eF77;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AB8JxZr68nVDd961WLTcKPY3HT9uK9pFR1f1EOqPBLNVx75eq3M9qTDTfieEBU4sOUax9aab7dpFUA==
+From: Andrey Konovalov <andreyknvl@google.com>
+To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
+	Alexander Potapenko <glider@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Christopher Li <sparse@chrisli.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	Michal Marek <michal.lkml@markovi.net>,
+	Andrey Konovalov <andreyknvl@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Yury Norov <ynorov@caviumnetworks.com>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Kristina Martsenko <kristina.martsenko@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Punit Agrawal <punit.agrawal@arm.com>,
+	Dave Martin <dave.martin@arm.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	James Morse <james.morse@arm.com>,
+	Michael Weiser <michael.weiser@gmx.de>,
+	Julien Thierry <julien.thierry@arm.com>,
+	Tyler Baicar <tbaicar@codeaurora.org>,
+	"Eric W . Biederman" <ebiederm@xmission.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Sandipan Das <sandipan@linux.vnet.ibm.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Paul Lawrence <paullawrence@google.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Jan Kara <jack@suse.cz>,
+	Ross Zwisler <ross.zwisler@linux.intel.com>,
+	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+	Matthew Wilcox <mawilcox@microsoft.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Souptick Joarder <jrdr.linux@gmail.com>,
+	Hugh Dickins <hughd@google.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Laura Abbott <labbott@redhat.com>,
+	Boris Brezillon <boris.brezillon@bootlin.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Pintu Agarwal <pintu.ping@gmail.com>,
+	Doug Berger <opendmb@gmail.com>,
+	Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+	Mike Rapoport <rppt@linux.vnet.ibm.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Pavel Tatashin <pasha.tatashin@oracle.com>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	kasan-dev@googlegroups.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sparse@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kbuild@vger.kernel.org
+Cc: Kostya Serebryany <kcc@google.com>,
+	Evgeniy Stepanov <eugenis@google.com>,
+	Lee Smith <Lee.Smith@arm.com>,
+	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+	Jacob Bramley <Jacob.Bramley@arm.com>,
+	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+	Kees Cook <keescook@google.com>,
+	Jann Horn <jannh@google.com>,
+	Mark Brand <markbrand@google.com>,
+	Chintan Pandya <cpandya@codeaurora.org>
+Subject: [PATCH v1 00/16] khwasan: kernel hardware assisted address sanitizer
+Date: Tue,  8 May 2018 19:20:46 +0200
+Message-Id: <cover.1525798753.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.5 (2018-04-13)
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599917332640225435?=
+X-GMAIL-MSGID: =?utf-8?q?1599917332640225435?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hey, a new version of usbutils?  It's not October, what's happening?
+This patchset adds a new mode to KASAN [1], which is called KHWASAN
+(Kernel HardWare assisted Address SANitizer). There's still some work to
+do and there are a few TODOs in the code, so I'm publishing this as an RFC
+to collect some initial feedback.
 
-Yes, I'm breaking with the "normal" slow release schedule of a new
-usbutils release every year or so with a new release today.  The 010
-release is now out at kernel.org and github.
+The plan is to implement HWASan [2] for the kernel with the incentive,
+that it's going to have comparable to KASAN performance, but in the same
+time consume much less memory, trading that off for somewhat imprecise
+bug detection and being supported only for arm64.
 
-There's been a number of new descriptors that are correctly parsed, many
-thanks to Michael Drake for that.  Also, the biggest change, and the one
-that drove this release, is the conversion of the lsusb.py script to
-python3, allowing some distros to finally drop python2 from their list
-of requirements.
+The overall idea of the approach used by KHWASAN is the following:
 
-Other than that, a number of small fixes and updates, and lots of
-housekeeping (SPDX and copyright notices everywhere, the repo is now
-'reuse lint' clean, and there is a SPDX bill-of-materials file.)
+1. By using the Top Byte Ignore arm64 CPU feature, we can store pointer
+   tags in the top byte of each kernel pointer.
 
-Full details of all changes are in the shortlog below.
+2. Using shadow memory, we can store memory tags for each chunk of kernel
+   memory.
 
-The package can be downloaded from kernel.org:
-        http://www.kernel.org/pub/linux/utils/usb/usbutils/
+3. On each memory allocation, we can generate a random tag, embed it into
+   the returned pointer and set the memory tags that correspond to this
+   chunk of memory to the same value.
 
-The source tree for usbutils can be found on both kernel.org and
-github.com if you want to fork it and send us changes easier:
-	http://git.kernel.org/?p=linux/kernel/git/gregkh/usbutils.git
-	http://github.com/gregkh/usbutils/tree/master
+4. By using compiler instrumentation, before each memory access we can add
+   a check that the pointer tag matches the tag of the memory that is being
+   accessed.
 
-thanks,
+5. On a tag mismatch we report an error.
 
-greg k-h
+[1] https://www.kernel.org/doc/html/latest/dev-tools/kasan.html
 
------------
+[2] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
 
-Aurelien Jarno (2):
-      usbreset.c: add missing <stdlib.h> include
-      Do not create and install usbutils.pc
 
-Greg Kroah-Hartman (32):
-      fix dump_videocontrol_interface for unitialized variable usage
-      Add correct SPDX license identifiers to all files
-      Add SPDX identifiers on files that did not have a specific license.
-      wTotalLength should be printed as a hex number
-      usbmisc: fix up some strncpy() issues
-      lsusb-t: fix up error with readlink()
-      lsusb.py.in: add proper SPDX license identifier
-      usb-devices: reword the copyright identifier
-      LICENSES: move the GPL 2 license to the LICENSES directory
-      LICENSES/GPL-3.0.txt: add the file
-      lsusb.h: add copyright notice
-      lsusb-t: add copyright info
-      bom.spdx: Add bill of materials file in SPDX format.
-      ChangeLog: remove it.
-      AUTHORS: remove file
-      do_release: drop file
-      NEWS: add SPDX header and comment
-      autogen.sh: add SPDX and copyright header
-      list.h: add copyright information
-      travis-autogen.sh: add SPDX and copyright information.
-      INSTALL: remove the file, it's boiler-plate
-      configure.ac: add SPDX and copyright
-      man pages: add SPDX and copyright information
-      Makefile.am: add SPDX and copyright information
-      .gitmodules: add SPDX and copyright lines
-      lsusb.py.in: fix up Copyright strings
-      usbreset.c: add Alan's copyright
-      .travis.yml: add correct SPDX and copyright notices
-      bom.spdx: update with latest copyright and SPDX identifier additions
-      README.md: move the README file to markdown
-      README.md: fix fomatting
-      bom.spdx: upate with README -> README.md change
+====== Technical details
 
-Lukas Nykryn (1):
-      lsusb.py: convert to python3
+KHWASAN is implemented in a very similar way to KASAN. This patchset
+essentially does the following:
 
-Michael Drake (11):
-      lsusb: Split subtype mapping out of AudioControl interface handling.
-      lsusb: Add declarative definitions for UAC1 and UAC2 descriptors.
-      lsusb: Add code to dump descriptor data using descriptor definition.
-      lsusb: Switch to descriptor-definition based dump for UAC1 and UAC2.
-      lsusb: Add descriptor definitions for UAC3.
-      lsusb: Add initial support for USB Audio Device Class 3.
-      lsusb: Add descriptor definition for USB3 BOS Configuration Summary.
-      lsusb: Dump USB3 BOS Configuration Summary Descriptor.
-      lsusb: Squash Wpointer-compare warning.
-      lsusb: Remove unused function.
-      lsusb: Fix array entry count for variable sized entries.
+1. TCR_TBI1 is set to enable Top Byte Ignore.
 
-Robby Workman (1):
-      Makefile.am: Include usbreset.c in the release tarball
+2. Shadow memory is used (with a different scale, 1:16, so each shadow
+   byte corresponds to 16 bytes of kernel memory) to store memory tags.
 
-Torleiv Sundre (1):
-      lsusb: Dump UVC Stream based payload descriptor.
+3. All slab objects are aligned to shadow scale, which is 16 bytes.
 
+4. All pointers returned from the slab allocator are tagged with a random
+   tag and the corresponding shadow memory is poisoned with the same value.
+
+5. Compiler instrumentation is used to insert tag checks. Either by
+   calling callbacks or by inlining them (CONFIG_KASAN_OUTLINE and
+   CONFIG_KASAN_INLINE flags are reused).
+
+6. When a tag mismatch is detected in callback instrumentation mode
+   KHWASAN simply prints a bug report. In case of inline instrumentation,
+   clang inserts a brk instruction, and KHWASAN has it's own brk handler,
+   which reports the bug.
+
+7. The memory in between slab objects is marked with a reserved tag, and
+   acts as a redzone.
+
+8. When a slab object is freed it's marked with a reserved tag.
+
+Bug detection is imprecise for two reasons:
+
+1. We won't catch some small out-of-bounds accesses, that fall into the
+   same shadow cell, as the last byte of a slab object.
+
+2. We only have 1 byte to store tags, which means we have a 1/256
+   probability of a tag match for an incorrect access (actually even
+   slightly less due to reserved tag values).
+
+Despite that there's a particular type of bugs that KHWASAN can detect
+compared to KASAN: use-after-free after the object has been allocated by
+someone else.
+
+
+====== Benchmarks
+
+The following numbers were collected on Odroid C2 board. Both KASAN and
+KHWASAN were used in inline instrumentation mode.
+
+Boot time [1]:
+* ~1.7 sec for clean kernel
+* ~5.0 sec for KASAN
+* ~5.0 sec for KHWASAN
+
+Slab memory usage after boot [2]:
+* ~40 kb for clean kernel
+* ~105 kb + 1/8th shadow ~= 118 kb for KASAN
+* ~47 kb + 1/16th shadow ~= 50 kb for KHWASAN
+
+Network performance [3]:
+* 8.33 Gbits/sec for clean kernel
+* 3.17 Gbits/sec for KASAN
+* 2.85 Gbits/sec for KHWASAN
+
+Note, that KHWASAN (compared to KASAN) doesn't require quarantine.
+
+[1] Time before the ext4 driver is initialized.
+[2] Measured as `cat /proc/meminfo | grep Slab`.
+[3] Measured as `iperf -s & iperf -c 127.0.0.1 -t 30`.
+
+
+====== Some notes
+
+A few notes:
+
+1. The patchset can be found here:
+   https://github.com/xairy/kasan-prototype/tree/khwasan
+
+2. Building requires a recent LLVM version (r330044 or later).
+
+3. Stack instrumentation is not supported yet and will be added later.
+
+
+====== Changes
+
+Changes in v1:
+- Rebased onto 4.17-rc4.
+- Updated benchmarking stats.
+- Documented compiler version requirements, memory usage and slowdown.
+- Dropped kvm patches, as clang + arm64 + kvm is completely broken [1].
+
+Changes in RFC v3:
+- Renamed CONFIG_KASAN_CLASSIC and CONFIG_KASAN_TAGS to
+  CONFIG_KASAN_GENERIC and CONFIG_KASAN_HW respectively.
+- Switch to -fsanitize=kernel-hwaddress instead of -fsanitize=hwaddress.
+- Removed unnecessary excessive shadow initialization.
+- Removed khwasan_enabled flag (it’s not needed since KHWASAN is
+  initialized before any slab caches are used).
+- Split out kasan_report.c and khwasan_report.c from report.c.
+- Moved more common KASAN and KHWASAN functions to common.c.
+- Added tagging to pagealloc.
+- Rebased onto 4.17-rc1.
+- Temporarily dropped patch that adds kvm support (arm64 + kvm + clang
+  combo is broken right now [1]).
+
+Changes in RFC v2:
+- Removed explicit casts to u8 * for kasan_mem_to_shadow() calls.
+- Introduced KASAN_TCR_FLAGS for setting the TCR_TBI1 flag.
+- Added a comment regarding the non-atomic RMW sequence in
+  khwasan_random_tag().
+- Made all tag related functions accept const void *.
+- Untagged pointers in __kimg_to_phys, which is used by virt_to_phys.
+- Untagged pointers in show_ptr in fault handling logic.
+- Untagged pointers passed to KVM.
+- Added two reserved tag values: 0xFF and 0xFE.
+- Used the reserved tag 0xFF to disable validity checking (to resolve the
+  issue with pointer tag being lost after page_address + kmap usage).
+- Used the reserved tag 0xFE to mark redzones and freed objects.
+- Added mnemonics for esr manipulation in KHWASAN brk handler.
+- Added a comment about the -recover flag.
+- Some minor cleanups and fixes.
+- Rebased onto 3215b9d5 (4.16-rc6+).
+- Tested on real hardware (Odroid C2 board).
+- Added better benchmarks.
+
+[1] https://lkml.org/lkml/2018/4/19/775
+
+Andrey Konovalov (16):
+  khwasan, mm: change kasan hooks signatures
+  khwasan: move common kasan and khwasan code to common.c
+  khwasan: add CONFIG_KASAN_GENERIC and CONFIG_KASAN_HW
+  khwasan, arm64: adjust shadow size for CONFIG_KASAN_HW
+  khwasan: initialize shadow to 0xff
+  khwasan, arm64: untag virt address in __kimg_to_phys
+  khwasan, arm64: fix up fault handling logic
+  khwasan: add tag related helper functions
+  khwasan, arm64: enable top byte ignore for the kernel
+  khwasan, mm: perform untagged pointers comparison in krealloc
+  khwasan: split out kasan_report.c from report.c
+  khwasan: add bug reporting routines
+  khwasan: add hooks implementation
+  khwasan, arm64: add brk handler for inline instrumentation
+  khwasan, mm, arm64: tag non slab memory allocated via pagealloc
+  khwasan: update kasan documentation
+
+ Documentation/dev-tools/kasan.rst      | 213 +++++----
+ arch/arm64/Kconfig                     |   1 +
+ arch/arm64/Makefile                    |   2 +-
+ arch/arm64/include/asm/brk-imm.h       |   2 +
+ arch/arm64/include/asm/memory.h        |  35 +-
+ arch/arm64/include/asm/pgtable-hwdef.h |   1 +
+ arch/arm64/kernel/traps.c              |  69 ++-
+ arch/arm64/mm/fault.c                  |   3 +
+ arch/arm64/mm/kasan_init.c             |  18 +-
+ arch/arm64/mm/proc.S                   |   8 +-
+ include/linux/compiler-clang.h         |   5 +-
+ include/linux/compiler-gcc.h           |   4 +
+ include/linux/compiler.h               |   3 +-
+ include/linux/kasan.h                  |  84 +++-
+ include/linux/mm.h                     |  29 ++
+ include/linux/page-flags-layout.h      |  10 +
+ lib/Kconfig.kasan                      |  76 +++-
+ mm/cma.c                               |   1 +
+ mm/kasan/Makefile                      |   9 +-
+ mm/kasan/common.c                      | 577 +++++++++++++++++++++++++
+ mm/kasan/kasan.c                       | 489 +--------------------
+ mm/kasan/kasan.h                       |  94 +++-
+ mm/kasan/kasan_report.c                | 155 +++++++
+ mm/kasan/khwasan.c                     | 163 +++++++
+ mm/kasan/khwasan_report.c              |  60 +++
+ mm/kasan/report.c                      | 271 +++---------
+ mm/page_alloc.c                        |   1 +
+ mm/slab.c                              |  12 +-
+ mm/slab.h                              |   2 +-
+ mm/slab_common.c                       |   6 +-
+ mm/slub.c                              |  18 +-
+ scripts/Makefile.kasan                 |  27 +-
+ 32 files changed, 1606 insertions(+), 842 deletions(-)
+ create mode 100644 mm/kasan/common.c
+ create mode 100644 mm/kasan/kasan_report.c
+ create mode 100644 mm/kasan/khwasan.c
+ create mode 100644 mm/kasan/khwasan_report.c
+
+-- 
+2.17.0.441.gb46fe60e1d-goog
