@@ -1,106 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755479AbeEHQV2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 12:21:28 -0400
-Received: from foss.arm.com ([217.140.101.70]:60592 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755384AbeEHQV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 12:21:26 -0400
-Subject: Re: [PATCH v2 19/27] coresight: catu: Plug in CATU as a backend for
- ETR buffer
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mike.leach@linaro.org, robert.walker@arm.com, mark.rutland@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com, sudeep.holla@arm.com,
-        frowand.list@gmail.com, robh@kernel.org, john.horley@arm.com
-References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
- <1525165857-11096-20-git-send-email-suzuki.poulose@arm.com>
- <20180507220249.GA22194@xps15>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <6145aae1-8d0c-2720-5e3b-bcbd4d4ddb58@arm.com>
-Date: Tue, 8 May 2018 17:21:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180507220249.GA22194@xps15>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S932878AbeEHQV4 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 12:21:56 -0400
+Received: from smtp2.provo.novell.com ([137.65.250.81]:56397 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755528AbeEHQVy (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 8 May 2018 12:21:54 -0400
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave@stgolabs.net, Davidlohr Bueso <dbueso@suse.de>
+Subject: [PATCH 4/6] net: Update netstamp_needed static key to modern api
+Date: Tue,  8 May 2018 09:07:01 -0700
+Message-Id: <20180508160703.8125-5-dave@stgolabs.net>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180508160703.8125-1-dave@stgolabs.net>
+References: <20180508160703.8125-1-dave@stgolabs.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/05/18 23:02, Mathieu Poirier wrote:
-> On Tue, May 01, 2018 at 10:10:49AM +0100, Suzuki K Poulose wrote:
->> Now that we can use a CATU with a scatter gather table, add support
->> for the TMC ETR to make use of the connected CATU in translate mode.
->> This is done by adding CATU as new buffer mode. CATU's SLADDR must
->> always be 4K aligned. Thus the INADDR (base VA) is always 1M aligned
->> and we adjust the DBA for the ETR to align to the "offset" within
->> the 1MB page.
+No changes in refcount semantics -- key init is false; replace
 
+static_key_slow_inc|dec   with   static_branch_inc|dec
+static_key_false          with   static_branch_unlikely
 
->> diff --git a/drivers/hwtracing/coresight/coresight-catu.h b/drivers/hwtracing/coresight/coresight-catu.h
->> index cd58d6f..b673a73 100644
->> --- a/drivers/hwtracing/coresight/coresight-catu.h
->> +++ b/drivers/hwtracing/coresight/coresight-catu.h
->> @@ -29,6 +29,32 @@
+Added a '_key' suffix to netstamp_needed, for better self
+documentation.
 
->>   
->> +extern const struct etr_buf_operations etr_catu_buf_ops;
->> +
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+---
+ net/core/dev.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
->> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
->> index 25e7feb..41dde0a 100644
->> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
->> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
->> @@ -941,6 +941,9 @@ static const struct etr_buf_operations etr_sg_buf_ops = {
->>   static const struct etr_buf_operations *etr_buf_ops[] = {
->>   	[ETR_MODE_FLAT] = &etr_flat_buf_ops,
->>   	[ETR_MODE_ETR_SG] = &etr_sg_buf_ops,
->> +#ifdef CONFIG_CORESIGHT_CATU
->> +	[ETR_MODE_CATU] = &etr_catu_buf_ops,
->> +#endif
-
-...
-
->>   static inline int tmc_etr_mode_alloc_buf(int mode,
->> @@ -953,6 +956,9 @@ static inline int tmc_etr_mode_alloc_buf(int mode,
->>   	switch (mode) {
->>   	case ETR_MODE_FLAT:
->>   	case ETR_MODE_ETR_SG:
->> +#ifdef CONFIG_CORESIGHT_CATU
->> +	case ETR_MODE_CATU:
->> +#endif
-> 
-> I really wish we could avoid doing something like this (and the above) but every
-> alternate solution I come up with is either uglier or on par with it...
-> Unless someone comes up with a bright idea we'll simply have to let it be.
-
-We could do a little trick in the coresight-catu.h :
-
-#ifdef CONFIG_CORESIGHT_CATU
-extern struct etr_buf_operations etr_catu_buf_ops;
-#else
-static struct etr_buf_opertaions etr_catu_buf_ops;
-#endif
-
-And then add the following check to get rid of the #ifdef above in tmc_etr_mode_alloc_buf().
-
-		if (etr_buf_ops[mode]->alloc)
-			rc = etr_buf_ops[mode]->alloc(drvdata, etr_buf, node, pages);
-
->>   		rc = etr_buf_ops[mode]->alloc(drvdata, etr_buf, node, pages);
-
-> 
-> While looking for a solution I noticed that tmc_etr_get_catu_device()
-> could be moved to coresight-catu.h.  That way we wouldn't have to include
-> coresight-catu.h every time coresight-tmc.h is present in a file.
-
-Yes, we could do that. I don't remember if there was a specific reason behind it.
-May be it is a left over from the rebases and how the CATU link was evolved. I
-will clean it up.
-
-
-Cheers
-Suzuki
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 64483afb7b90..668be88b5308 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -1786,7 +1786,7 @@ void net_dec_egress_queue(void)
+ EXPORT_SYMBOL_GPL(net_dec_egress_queue);
+ #endif
+ 
+-static struct static_key netstamp_needed __read_mostly;
++static DEFINE_STATIC_KEY_FALSE(netstamp_needed_key);
+ #ifdef HAVE_JUMP_LABEL
+ static atomic_t netstamp_needed_deferred;
+ static atomic_t netstamp_wanted;
+@@ -1797,9 +1797,9 @@ static void netstamp_clear(struct work_struct *work)
+ 
+ 	wanted = atomic_add_return(deferred, &netstamp_wanted);
+ 	if (wanted > 0)
+-		static_key_enable(&netstamp_needed);
++		static_branch_enable(&netstamp_needed_key);
+ 	else
+-		static_key_disable(&netstamp_needed);
++		static_branch_disable(&netstamp_needed_key);
+ }
+ static DECLARE_WORK(netstamp_work, netstamp_clear);
+ #endif
+@@ -1819,7 +1819,7 @@ void net_enable_timestamp(void)
+ 	atomic_inc(&netstamp_needed_deferred);
+ 	schedule_work(&netstamp_work);
+ #else
+-	static_key_slow_inc(&netstamp_needed);
++	static_branch_inc(&netstamp_needed_key);
+ #endif
+ }
+ EXPORT_SYMBOL(net_enable_timestamp);
+@@ -1839,7 +1839,7 @@ void net_disable_timestamp(void)
+ 	atomic_dec(&netstamp_needed_deferred);
+ 	schedule_work(&netstamp_work);
+ #else
+-	static_key_slow_dec(&netstamp_needed);
++	static_branch_dec(&netstamp_needed_key);
+ #endif
+ }
+ EXPORT_SYMBOL(net_disable_timestamp);
+@@ -1847,15 +1847,15 @@ EXPORT_SYMBOL(net_disable_timestamp);
+ static inline void net_timestamp_set(struct sk_buff *skb)
+ {
+ 	skb->tstamp = 0;
+-	if (static_key_false(&netstamp_needed))
++	if (static_branch_unlikely(&netstamp_needed_key))
+ 		__net_timestamp(skb);
+ }
+ 
+-#define net_timestamp_check(COND, SKB)			\
+-	if (static_key_false(&netstamp_needed)) {		\
+-		if ((COND) && !(SKB)->tstamp)	\
+-			__net_timestamp(SKB);		\
+-	}						\
++#define net_timestamp_check(COND, SKB)				\
++	if (static_branch_unlikely(&netstamp_needed_key)) {	\
++		if ((COND) && !(SKB)->tstamp)			\
++			__net_timestamp(SKB);			\
++	}							\
+ 
+ bool is_skb_forwardable(const struct net_device *dev, const struct sk_buff *skb)
+ {
+-- 
+2.13.6
