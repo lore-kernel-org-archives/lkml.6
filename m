@@ -1,103 +1,139 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525789501; cv=none;
-        d=google.com; s=arc-20160816;
-        b=n2rBSIOCCDRv4sYiIlcZbPboAMiR8QmwYNAtgYpRDegwvBXYKWfEzkcs0lbK/REFId
-         fxWJ+6GS3/ukQONJS3YiXOhc59zJVJNqADlFUhuSAgwuwyM3rotY8ZuOxao7RT4n8ZnU
-         s15ea13CpsiRLW2QyZ1v6dRS3iI9nBrvN+3bb0t9xqzvraiDSu7QX7fZOV6ANazvVIzC
-         GVa/ewcm/8gx8Nq9Yzjdvz3K1j8JSVqGUyt3ZfGV+sagOEn5dlSObwDKg/AntfK8o5wA
-         7jeTpBq9EpGuJmE9XFwxlEcPGq2iI/cY0KEBtT1lWD8XQGIzU55RDC+q82q5TCGqieXH
-         v2eQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=bhee0qmqCA6Wj9BtSpeAyfqDIoY4/uT2iH4uthEWIAA=;
-        b=vFbcPcCBTudSMWuLE59Sl0WuEb4d11lChv/wILqj/SlvpVxY4IPACRlxg9d7U2vTI8
-         U29xSCYrg6E/AnbXBwBCGdGrklLlmnhW7/1a/kIbrtUj8KNA1SmiFyX65f7Saz0WxER5
-         Zf2Pdr7VzZHkbZEho9ahYNVfgWF/nEb4T9/TFOVhGF+wmIjCZfOmJDZn6I/ProGDcvcc
-         uFk9Zu5yHG7W6DCddzoFK0TCUiwn4gww4ArZGtuH6ILbMgoOCPDM88pgkuVrzTiXaEBj
-         vb/KhM0TNWnZgpC+ASN9t64mtR8eFyHS0ajkvI2UBbZRmO8GAjv9Vprl+glECSLWmxli
-         GZuA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZpK7KuCa3eUvBePkJ9qZ4CUOv1mzTXYJzYGwjWVkWViUz6wSjLwyEcmiCZTT77qvRut+L66gw==
-Message-ID: <5af1b33c.0ab81c0a.b2308.4161@mx.google.com>
-Date: Tue, 08 May 2018 07:25:00 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.9.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.9.98-33-g6e28bacfe4aa
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2483311-1525767574-2-622253880715964348
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525767574; b=ib/Ub3MKAV+cGoL6nvuUiaHgIoYJOZauH2hMRwczXH6lQJQ+nM
+    EVrl+fH6e5PR25fQWbUXHGK09RsRzIoNR8k1IuNiETlDYfZRg0h/E27Itz9ruNC5
+    H36ia6QRODSdshUMeGNkru5at4Kw/ZWKmmHkCmjwEsHqdAmGqxV6FEIknmQB9mT6
+    V5NEVq0DHy1YuSA4Omq2EAa59rB6uGqp+jpV3oIKMdopP7xFIKMKCq7so085yYod
+    TW/2lgUO84u2sF2m5tp11AwwKQUvnNkSYcViGO7sFAM+juzWnEGrJBA1GxsBWkMh
+    mFqNTF7tyzCtBfFSPW8sWhZnOkxDHP8E75PA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1525767574; bh=lFJVJC3zwsPEoTRAUEbqc4UJG+SThG
+    ZCw+TqzahzPbk=; b=Nc/oBisp8MiUqYuIs1NBiXiJ8rMzNceEGjcQm5kSEMzqsZ
+    fV1DLNBdfMWuNrykVsIqJvKdlgCOzjk++ccl3rgodhRxqvd6Ni0v1oerhlhVXRtr
+    VAsNtWXOhtnXIwPQhqmKDAFCmMB+wMyU86LQZa+xzhHnQZFR4FRS5xjIffJxswuQ
+    YbIY+Chmi6x6sSw0M6rRjfcMlt8vZCeVNMzsTgEXQaCYMLkufBdBlaSQ941Saf8/
+    3MV6/kwhYYNsTQeZVLMrW2AkLcZHek3DzY31D23JHK5uMSVa3S3ScWLsNtiSV6Vy
+    DpFrlOCQOkRXafUTgZRojyqxjTuovsy26tSBvQZA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=GZAKyKoY x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=GZAKyKoY x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfKAAi00OnY0h8R6HNvlfgUCkmKib65UtEy9LJV7YphF+x54giBqMlPQN5kITRDC3CJEVZLq0dS55/3hmflQSDBHRZUhMR1lrRpUYV9lMA8GRK0piVRHn
+    bX3IKWikjEqUMCKK86Iymbh4ihYaGjJiiitAx2365QEKc3iBxA9atNLsFMpEAnLPsvV+358IeUfjQc/pBzg6rRfuE3wBxqZrwXbY176QpZ6WgG/ebHaIQKlr
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=sozttTNsAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=qJmR7GpmW-rew7waPYMA:9
+    a=QEXdDO2ut3YA:10 a=aeg5Gbbo78KNqacMgKqU:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933018AbeEHIRz (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 8 May 2018 04:17:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51378 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932999AbeEHIRx (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 8 May 2018 04:17:53 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>
+Subject: [PATCH 4.9 29/32] usb: musb: host: fix potential NULL pointer dereference
+Date: Tue,  8 May 2018 10:11:09 +0200
+Message-Id: <20180508074013.359992903@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074008.800421598@linuxfoundation.org>
 References: <20180508074008.800421598@linuxfoundation.org>
-Subject: Re: [PATCH 4.9 00/32] 4.9.99-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599883077500588538?=
-X-GMAIL-MSGID: =?utf-8?q?1599906252588827812?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.9.y boot: 103 boots: 0 failed, 97 passed with 5 offline, =
-1 conflict (v4.9.98-33-g6e28bacfe4aa)
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.9.y/kernel/v4.9.98-33-g6e28bacfe4aa/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
-/kernel/v4.9.98-33-g6e28bacfe4aa/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.9.y
-Git Describe: v4.9.98-33-g6e28bacfe4aa
-Git Commit: 6e28bacfe4aa523ece3838a9d50e7612d41be723
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 48 unique boards, 22 SoC families, 16 builds out of 183
+From: Bin Liu <b-liu@ti.com>
 
-Boot Regressions Detected:
+commit 2b63f1329df2cd814c1f8353fae4853ace6521d1 upstream.
 
-arm:
+musb_start_urb() doesn't check the pass-in parameter if it is NULL.  But
+in musb_bulk_nak_timeout() the parameter passed to musb_start_urb() is
+returned from first_qh(), which could be NULL.
 
-    multi_v7_defconfig:
-        tegra124-jetson-tk1:
-            lab-mhart: new failure (last pass: v4.9.98-8-g5918d4b6b7ff)
+So wrap the musb_start_urb() call here with a if condition check to
+avoid the potential NULL pointer dereference.
 
-Offline Platforms:
-
-arm:
-
-    multi_v7_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-    qcom_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-
-    multi_v7_defconfig:
-        tegra124-jetson-tk1:
-            lab-collabora: PASS
-            lab-mhart: FAIL
-            lab-baylibre-seattle: PASS
+Fixes: f283862f3b5c ("usb: musb: NAK timeout scheme on bulk TX endpoint")
+Cc: stable@vger.kernel.org # v3.7+
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ drivers/usb/musb/musb_host.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -1023,7 +1023,9 @@ static void musb_bulk_nak_timeout(struct
+ 			/* set tx_reinit and schedule the next qh */
+ 			ep->tx_reinit = 1;
+ 		}
+-		musb_start_urb(musb, is_in, next_qh);
++
++		if (next_qh)
++			musb_start_urb(musb, is_in, next_qh);
+ 	}
+ }
+ 
