@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932716AbeEHRX3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 13:23:29 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:34101 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932538AbeEHRVC (ORCPT
+        id S1755422AbeEHRXq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 13:23:46 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:45733 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932481AbeEHRU6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 13:21:02 -0400
-X-Google-Smtp-Source: AB8JxZqagQiGtYhj8hgy7GzuI4BdBJP11h82QVAl75d35A6snczWjvgPLOxjBFNxWIibtSIHeM8nRQ==
+        Tue, 8 May 2018 13:20:58 -0400
+X-Google-Smtp-Source: AB8JxZqR1YUaec8N6FM2gHpqRS0kJmO0CT/sKppe7CRT61G+6W+ZutEBzDBDFGR1Un59zLJaNouDzw==
 From: Connor McAdams <conmanx360@gmail.com>
 Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
         <jeremy.lefaure@lse.epita.fr>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 08/13] ALSA: hda/ca0132: Add dsp setup + gpio functions for r3di
-Date: Tue,  8 May 2018 13:20:08 -0400
-Message-Id: <1525800015-2920-9-git-send-email-conmanx360@gmail.com>
+Subject: [PATCH v5 06/13] ALSA: hda/ca0132: update core functions for sbz + r3di
+Date: Tue,  8 May 2018 13:20:06 -0400
+Message-Id: <1525800015-2920-7-git-send-email-conmanx360@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525800015-2920-1-git-send-email-conmanx360@gmail.com>
 References: <1525800015-2920-1-git-send-email-conmanx360@gmail.com>
@@ -25,215 +25,311 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds dsp setup functions for Recon3Di as well as the GPIO functions
-specific to it.
+This patch updates core functions to accommodate the Sound Blaster Z and
+Recon3Di by changing which functions they use. It also adds the ability
+to enable/disable streams.
 
 Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 ---
- sound/pci/hda/patch_ca0132.c | 149 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 148 insertions(+), 1 deletion(-)
+ sound/pci/hda/patch_ca0132.c | 176 +++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 153 insertions(+), 23 deletions(-)
 
 diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 37609bd..7a9d505 100644
+index 5002311..31c9d42 100644
 --- a/sound/pci/hda/patch_ca0132.c
 +++ b/sound/pci/hda/patch_ca0132.c
-@@ -2904,6 +2904,76 @@ static void ca0132_gpio_setup(struct hda_codec *codec)
- }
- 
- /*
-+ * GPIO control functions for the Recon3D integrated.
-+ */
+@@ -770,6 +770,13 @@ struct ca0132_spec {
+ 	 * switching, and other unknown commands.
+ 	 */
+ 	void __iomem *mem_base;
 +
-+enum r3di_gpio_bit {
-+	/* Bit 1 - Switch between front/rear mic. 0 = rear, 1 = front */
-+	R3DI_MIC_SELECT_BIT = 1,
-+	/* Bit 2 - Switch between headphone/line out. 0 = Headphone, 1 = Line */
-+	R3DI_OUT_SELECT_BIT = 2,
 +	/*
-+	 * I dunno what this actually does, but it stays on until the dsp
-+	 * is downloaded.
++	 * Whether or not to use the alt functions like alt_select_out,
++	 * alt_select_in, etc. Only used on desktop codecs for now, because of
++	 * surround sound support.
 +	 */
-+	R3DI_GPIO_DSP_DOWNLOADING = 3,
-+	/*
-+	 * Same as above, no clue what it does, but it comes on after the dsp
-+	 * is downloaded.
-+	 */
-+	R3DI_GPIO_DSP_DOWNLOADED = 4
-+};
-+
-+enum r3di_mic_select {
-+	/* Set GPIO bit 1 to 0 for rear mic */
-+	R3DI_REAR_MIC = 0,
-+	/* Set GPIO bit 1 to 1 for front microphone*/
-+	R3DI_FRONT_MIC = 1
-+};
-+
-+enum r3di_out_select {
-+	/* Set GPIO bit 2 to 0 for headphone */
-+	R3DI_HEADPHONE_OUT = 0,
-+	/* Set GPIO bit 2 to 1 for speaker */
-+	R3DI_LINE_OUT = 1
-+};
-+enum r3di_dsp_status {
-+	/* Set GPIO bit 3 to 1 until DSP is downloaded */
-+	R3DI_DSP_DOWNLOADING = 0,
-+	/* Set GPIO bit 4 to 1 once DSP is downloaded */
-+	R3DI_DSP_DOWNLOADED = 1
-+};
-+
-+static void r3di_gpio_dsp_status_set(struct hda_codec *codec,
-+		enum r3di_dsp_status dsp_status)
-+{
-+	unsigned int cur_gpio;
-+
-+	/* Get the current GPIO Data setup */
-+	cur_gpio = snd_hda_codec_read(codec, 0x01, 0, AC_VERB_GET_GPIO_DATA, 0);
-+
-+	switch (dsp_status) {
-+	case R3DI_DSP_DOWNLOADING:
-+		cur_gpio |= (1 << R3DI_GPIO_DSP_DOWNLOADING);
-+		snd_hda_codec_write(codec, codec->core.afg, 0,
-+				AC_VERB_SET_GPIO_DATA, cur_gpio);
-+		break;
-+	case R3DI_DSP_DOWNLOADED:
-+		/* Set DOWNLOADING bit to 0. */
-+		cur_gpio &= ~(1 << R3DI_GPIO_DSP_DOWNLOADING);
-+
-+		snd_hda_codec_write(codec, codec->core.afg, 0,
-+				AC_VERB_SET_GPIO_DATA, cur_gpio);
-+
-+		cur_gpio |= (1 << R3DI_GPIO_DSP_DOWNLOADED);
-+		break;
-+	}
-+
-+	snd_hda_codec_write(codec, codec->core.afg, 0,
-+			    AC_VERB_SET_GPIO_DATA, cur_gpio);
-+}
-+
-+/*
-  * PCM callbacks
-  */
- static int ca0132_playback_pcm_prepare(struct hda_pcm_stream *hinfo,
-@@ -4539,6 +4609,30 @@ static void ca0132_refresh_widget_caps(struct hda_codec *codec)
++	bool use_alt_functions;
+ };
+ 
+ /*
+@@ -1110,6 +1117,42 @@ static void chipio_set_control_param(struct hda_codec *codec,
  }
  
  /*
-+ * Recon3Di r3di_setup_defaults sub functions.
++ * Set chip parameters through the chip I/O widget. NO MUTEX.
 + */
-+
-+static void r3di_dsp_initial_mic_setup(struct hda_codec *codec)
++static void chipio_set_control_param_no_mutex(struct hda_codec *codec,
++		enum control_param_id param_id, int param_val)
 +{
-+	unsigned int tmp;
++	int val;
 +
-+	/* Mic 1 Setup */
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICIN1, SR_96_000);
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICOUT1, SR_96_000);
-+	/* This ConnPointID is unique to Recon3Di. Haven't seen it elsewhere */
-+	chipio_set_conn_rate(codec, 0x0F, SR_96_000);
-+	tmp = FLOAT_ONE;
-+	dspio_set_uint_param(codec, 0x80, 0x00, tmp);
-+
-+	/* Mic 2 Setup, even though it isn't connected on SBZ */
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICIN2, SR_96_000);
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICOUT2, SR_96_000);
-+	chipio_set_conn_rate(codec, 0x0F, SR_96_000);
-+	tmp = FLOAT_ZERO;
-+	dspio_set_uint_param(codec, 0x80, 0x01, tmp);
-+}
-+
-+/*
-  * Initialize Sound Blaster Z analog microphones.
-  */
- static void sbz_init_analog_mics(struct hda_codec *codec)
-@@ -4700,6 +4794,50 @@ static void ca0132_setup_defaults(struct hda_codec *codec)
- }
- 
- /*
-+ * Setup default parameters for Recon3Di DSP.
-+ */
-+
-+static void r3di_setup_defaults(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+	unsigned int tmp;
-+	int num_fx;
-+	int idx, i;
-+
-+	if (spec->dsp_state != DSP_DOWNLOADED)
-+		return;
-+
-+
-+	r3di_dsp_initial_mic_setup(codec);
-+
-+	/*remove DSP headroom*/
-+	tmp = FLOAT_ZERO;
-+	dspio_set_uint_param(codec, 0x96, 0x3C, tmp);
-+
-+	/* set WUH source */
-+	tmp = FLOAT_TWO;
-+	dspio_set_uint_param(codec, 0x31, 0x00, tmp);
-+	chipio_set_conn_rate(codec, MEM_CONNID_WUH, SR_48_000);
-+
-+	/* Set speaker source? */
-+	dspio_set_uint_param(codec, 0x32, 0x00, tmp);
-+
-+	r3di_gpio_dsp_status_set(codec, R3DI_DSP_DOWNLOADED);
-+
-+	/* Setup effect defaults */
-+	num_fx = OUT_EFFECTS_COUNT + IN_EFFECTS_COUNT + 1;
-+	for (idx = 0; idx < num_fx; idx++) {
-+		for (i = 0; i <= ca0132_effects[idx].params; i++) {
-+			dspio_set_uint_param(codec,
-+					ca0132_effects[idx].mid,
-+					ca0132_effects[idx].reqs[i],
-+					ca0132_effects[idx].def_vals[i]);
++	if ((param_id < 32) && (param_val < 8)) {
++		val = (param_val << 5) | (param_id);
++		snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
++				    VENDOR_CHIPIO_PARAM_SET, val);
++	} else {
++		if (chipio_send(codec, VENDOR_CHIPIO_STATUS, 0) == 0) {
++			snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
++					    VENDOR_CHIPIO_PARAM_EX_ID_SET,
++					    param_id);
++			snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
++					    VENDOR_CHIPIO_PARAM_EX_VALUE_SET,
++					    param_val);
 +		}
 +	}
-+
 +}
 +
 +/*
-  * Setup default parameters for the Sound Blaster Z DSP. A lot more going on
-  * than the Chromebook setup.
++ * Enable/Disable audio stream.
++ */
++static void chipio_set_stream_control(struct hda_codec *codec,
++				int streamid, int enable)
++{
++	chipio_set_control_param_no_mutex(codec,
++			CONTROL_PARAM_STREAM_ID, streamid);
++	chipio_set_control_param_no_mutex(codec,
++			CONTROL_PARAM_STREAM_CONTROL, enable);
++}
++
++/*
+  * Set sampling rate of the connection point.
   */
-@@ -5397,6 +5535,7 @@ static void ca0132_alt_init(struct hda_codec *codec)
- 		codec_dbg(codec, "R3DI alt_init");
- 		ca0132_gpio_init(codec);
- 		ca0132_gpio_setup(codec);
-+		r3di_gpio_dsp_status_set(codec, R3DI_DSP_DOWNLOADING);
- 		r3di_pre_dsp_setup(codec);
- 		snd_hda_sequence_write(codec, spec->chip_init_verbs);
- 		snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0, 0x6FF, 0xC4);
-@@ -5445,21 +5584,29 @@ static int ca0132_init(struct hda_codec *codec)
- 	ca0132_init_unsol(codec);
- 	ca0132_init_params(codec);
- 	ca0132_init_flags(codec);
+ static void chipio_set_conn_rate(struct hda_codec *codec,
+@@ -2627,14 +2670,16 @@ static int dspxfr_image(struct hda_codec *codec,
+  */
+ static void dspload_post_setup(struct hda_codec *codec)
+ {
++	struct ca0132_spec *spec = codec->spec;
+ 	codec_dbg(codec, "---- dspload_post_setup ------\n");
++	if (!spec->use_alt_functions) {
++		/*set DSP speaker to 2.0 configuration*/
++		chipio_write(codec, XRAM_XRAM_INST_OFFSET(0x18), 0x08080080);
++		chipio_write(codec, XRAM_XRAM_INST_OFFSET(0x19), 0x3f800000);
+ 
+-	/*set DSP speaker to 2.0 configuration*/
+-	chipio_write(codec, XRAM_XRAM_INST_OFFSET(0x18), 0x08080080);
+-	chipio_write(codec, XRAM_XRAM_INST_OFFSET(0x19), 0x3f800000);
+-
+-	/*update write pointer*/
+-	chipio_write(codec, XRAM_XRAM_INST_OFFSET(0x29), 0x00000002);
++		/*update write pointer*/
++		chipio_write(codec, XRAM_XRAM_INST_OFFSET(0x29), 0x00000002);
++	}
+ }
+ 
+ /**
+@@ -3523,7 +3568,7 @@ static int ca0132_voicefx_set(struct hda_codec *codec, int enable)
+ static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val)
+ {
+ 	struct ca0132_spec *spec = codec->spec;
+-	unsigned int on;
++	unsigned int on, tmp;
+ 	int num_fx = OUT_EFFECTS_COUNT + IN_EFFECTS_COUNT;
+ 	int err = 0;
+ 	int idx = nid - EFFECT_START_NID;
+@@ -3547,6 +3592,39 @@ static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val)
+ 		/* Voice Focus applies to 2-ch Mic, Digital Mic */
+ 		if ((nid == VOICE_FOCUS) && (spec->cur_mic_type != DIGITAL_MIC))
+ 			val = 0;
 +
- 	snd_hda_sequence_write(codec, spec->base_init_verbs);
- 
- 	if (spec->quirk != QUIRK_NONE)
- 		ca0132_alt_init(codec);
- 
- 	ca0132_download_dsp(codec);
++		/* If Voice Focus on SBZ, set to two channel. */
++		if ((nid == VOICE_FOCUS) && (spec->quirk == QUIRK_SBZ)) {
++			if (spec->effects_switch[CRYSTAL_VOICE -
++						 EFFECT_START_NID]) {
 +
- 	ca0132_refresh_widget_caps(codec);
- 
- 	if (spec->quirk == QUIRK_SBZ)
- 		writew(0x0107, spec->mem_base + 0x320);
- 
--	if (spec->quirk != QUIRK_SBZ) {
-+	switch (spec->quirk) {
-+	case QUIRK_R3DI:
-+		r3di_setup_defaults(codec);
-+		break;
-+	case QUIRK_NONE:
-+	case QUIRK_ALIENWARE:
- 		ca0132_setup_defaults(codec);
- 		ca0132_init_analog_mic2(codec);
- 		ca0132_init_dmic(codec);
-+		break;
++				if (spec->effects_switch[VOICE_FOCUS -
++							 EFFECT_START_NID]) {
++					tmp = FLOAT_TWO;
++					val = 1;
++				} else
++					tmp = FLOAT_ONE;
++
++				dspio_set_uint_param(codec, 0x80, 0x00, tmp);
++			}
++		}
++		/*
++		 * For SBZ noise reduction, there's an extra command
++		 * to module ID 0x47. No clue why.
++		 */
++		if ((nid == NOISE_REDUCTION) && (spec->quirk == QUIRK_SBZ)) {
++			if (spec->effects_switch[CRYSTAL_VOICE -
++						 EFFECT_START_NID]) {
++				if (spec->effects_switch[NOISE_REDUCTION -
++							 EFFECT_START_NID])
++					tmp = FLOAT_ONE;
++				else
++					tmp = FLOAT_ZERO;
++			} else
++				tmp = FLOAT_ZERO;
++
++			dspio_set_uint_param(codec, 0x47, 0x00, tmp);
++		}
  	}
  
- 	for (i = 0; i < spec->num_outputs; i++)
+ 	codec_dbg(codec, "ca0132_effect_set: nid=0x%x, val=%ld\n",
+@@ -4181,12 +4259,16 @@ static int ca0132_build_pcms(struct hda_codec *codec)
+ 	info->stream[SNDRV_PCM_STREAM_CAPTURE].substreams = 1;
+ 	info->stream[SNDRV_PCM_STREAM_CAPTURE].nid = spec->adcs[0];
+ 
+-	info = snd_hda_codec_pcm_new(codec, "CA0132 Analog Mic-In2");
+-	if (!info)
+-		return -ENOMEM;
+-	info->stream[SNDRV_PCM_STREAM_CAPTURE] = ca0132_pcm_analog_capture;
+-	info->stream[SNDRV_PCM_STREAM_CAPTURE].substreams = 1;
+-	info->stream[SNDRV_PCM_STREAM_CAPTURE].nid = spec->adcs[1];
++	/* With the DSP enabled, desktops don't use this ADC. */
++	if (spec->use_alt_functions) {
++		info = snd_hda_codec_pcm_new(codec, "CA0132 Analog Mic-In2");
++		if (!info)
++			return -ENOMEM;
++		info->stream[SNDRV_PCM_STREAM_CAPTURE] =
++			ca0132_pcm_analog_capture;
++		info->stream[SNDRV_PCM_STREAM_CAPTURE].substreams = 1;
++		info->stream[SNDRV_PCM_STREAM_CAPTURE].nid = spec->adcs[1];
++	}
+ 
+ 	info = snd_hda_codec_pcm_new(codec, "CA0132 What U Hear");
+ 	if (!info)
+@@ -4441,12 +4523,32 @@ static void ca0132_setup_defaults(struct hda_codec *codec)
+  */
+ static void ca0132_init_flags(struct hda_codec *codec)
+ {
+-	chipio_set_control_flag(codec, CONTROL_FLAG_IDLE_ENABLE, 0);
+-	chipio_set_control_flag(codec, CONTROL_FLAG_PORT_A_COMMON_MODE, 0);
+-	chipio_set_control_flag(codec, CONTROL_FLAG_PORT_D_COMMON_MODE, 0);
+-	chipio_set_control_flag(codec, CONTROL_FLAG_PORT_A_10KOHM_LOAD, 0);
+-	chipio_set_control_flag(codec, CONTROL_FLAG_PORT_D_10KOHM_LOAD, 0);
+-	chipio_set_control_flag(codec, CONTROL_FLAG_ADC_C_HIGH_PASS, 1);
++	struct ca0132_spec *spec = codec->spec;
++
++	if (spec->use_alt_functions) {
++		chipio_set_control_flag(codec, CONTROL_FLAG_DSP_96KHZ, 1);
++		chipio_set_control_flag(codec, CONTROL_FLAG_DAC_96KHZ, 1);
++		chipio_set_control_flag(codec, CONTROL_FLAG_ADC_B_96KHZ, 1);
++		chipio_set_control_flag(codec, CONTROL_FLAG_ADC_C_96KHZ, 1);
++		chipio_set_control_flag(codec, CONTROL_FLAG_SRC_RATE_96KHZ, 1);
++		chipio_set_control_flag(codec, CONTROL_FLAG_IDLE_ENABLE, 0);
++		chipio_set_control_flag(codec, CONTROL_FLAG_SPDIF2OUT, 0);
++		chipio_set_control_flag(codec,
++				CONTROL_FLAG_PORT_D_10KOHM_LOAD, 0);
++		chipio_set_control_flag(codec,
++				CONTROL_FLAG_PORT_A_10KOHM_LOAD, 1);
++	} else {
++		chipio_set_control_flag(codec, CONTROL_FLAG_IDLE_ENABLE, 0);
++		chipio_set_control_flag(codec,
++				CONTROL_FLAG_PORT_A_COMMON_MODE, 0);
++		chipio_set_control_flag(codec,
++				CONTROL_FLAG_PORT_D_COMMON_MODE, 0);
++		chipio_set_control_flag(codec,
++				CONTROL_FLAG_PORT_A_10KOHM_LOAD, 0);
++		chipio_set_control_flag(codec,
++				CONTROL_FLAG_PORT_D_10KOHM_LOAD, 0);
++		chipio_set_control_flag(codec, CONTROL_FLAG_ADC_C_HIGH_PASS, 1);
++	}
+ }
+ 
+ /*
+@@ -4454,6 +4556,16 @@ static void ca0132_init_flags(struct hda_codec *codec)
+  */
+ static void ca0132_init_params(struct hda_codec *codec)
+ {
++	struct ca0132_spec *spec = codec->spec;
++
++	if (spec->use_alt_functions) {
++		chipio_set_conn_rate(codec, MEM_CONNID_WUH, SR_48_000);
++		chipio_set_conn_rate(codec, 0x0B, SR_48_000);
++		chipio_set_control_param(codec, CONTROL_PARAM_SPDIF1_SOURCE, 0);
++		chipio_set_control_param(codec, 0, 0);
++		chipio_set_control_param(codec, CONTROL_PARAM_VIP_SOURCE, 0);
++	}
++
+ 	chipio_set_control_param(codec, CONTROL_PARAM_PORTA_160OHM_GAIN, 6);
+ 	chipio_set_control_param(codec, CONTROL_PARAM_PORTD_160OHM_GAIN, 6);
+ }
+@@ -4554,7 +4666,8 @@ static void ca0132_download_dsp(struct hda_codec *codec)
+ 			spec->dsp_state = DSP_DOWNLOADED;
+ 	}
+ 
+-	if (spec->dsp_state == DSP_DOWNLOADED)
++	/* For codecs using alt functions, this is already done earlier */
++	if (spec->dsp_state == DSP_DOWNLOADED && (!spec->use_alt_functions))
+ 		ca0132_set_dsp_msr(codec, true);
+ }
+ 
+@@ -4601,7 +4714,7 @@ static void ca0132_init_unsol(struct hda_codec *codec)
+ 	snd_hda_jack_detect_enable_callback(codec, UNSOL_TAG_DSP,
+ 					    ca0132_process_dsp_response);
+ 	/* Front headphone jack detection */
+-	if (spec->quirk == QUIRK_SBZ || spec->quirk == QUIRK_R3DI)
++	if (spec->use_alt_functions)
+ 		snd_hda_jack_detect_enable_callback(codec,
+ 			spec->unsol_tag_front_hp, hp_callback);
+ }
+@@ -4794,12 +4907,16 @@ static void sbz_gpio_shutdown_commands(struct hda_codec *codec, int dir,
+ 
+ static void sbz_exit_chip(struct hda_codec *codec)
+ {
++	chipio_set_stream_control(codec, 0x03, 0);
++	chipio_set_stream_control(codec, 0x04, 0);
+ 
+ 	/* Mess with GPIO */
+ 	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, -1);
+ 	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x05);
+ 	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x01);
+ 
++	chipio_set_stream_control(codec, 0x14, 0);
++	chipio_set_stream_control(codec, 0x0C, 0);
+ 
+ 	chipio_set_conn_rate(codec, 0x41, SR_192_000);
+ 	chipio_set_conn_rate(codec, 0x91, SR_192_000);
+@@ -4810,6 +4927,7 @@ static void sbz_exit_chip(struct hda_codec *codec)
+ 	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x07);
+ 	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x06);
+ 
++	chipio_set_stream_control(codec, 0x0C, 0);
+ 
+ 	chipio_set_control_param(codec, 0x0D, 0x24);
+ 
+@@ -5027,7 +5145,7 @@ static int ca0132_init(struct hda_codec *codec)
+ 
+ 	init_input(codec, cfg->dig_in_pin, spec->dig_in);
+ 
+-	if (spec->quirk == QUIRK_ALIENWARE || spec->quirk == QUIRK_NONE) {
++	if (!spec->use_alt_functions) {
+ 		snd_hda_sequence_write(codec, spec->chip_init_verbs);
+ 		snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
+ 			    VENDOR_CHIPIO_PARAM_EX_ID_SET, 0x0D);
+@@ -5112,7 +5230,7 @@ static void ca0132_config(struct hda_codec *codec)
+ 	spec->multiout.dac_nids = spec->dacs;
+ 	spec->multiout.num_dacs = 3;
+ 
+-	if (spec->quirk == QUIRK_NONE || spec->quirk == QUIRK_ALIENWARE)
++	if (!spec->use_alt_functions)
+ 		spec->multiout.max_channels = 2;
+ 	else
+ 		spec->multiout.max_channels = 6;
+@@ -5314,10 +5432,22 @@ static int patch_ca0132(struct hda_codec *codec)
+ 			spec->quirk = QUIRK_NONE;
+ 		}
+ 	}
++
+ 	spec->dsp_state = DSP_DOWNLOAD_INIT;
+ 	spec->num_mixers = 1;
+ 	spec->mixers[0] = ca0132_mixer;
+ 
++	/* Setup whether or not to use alt functions */
++	switch (spec->quirk) {
++	case QUIRK_SBZ:
++	case QUIRK_R3DI:
++		spec->use_alt_functions = true;
++		break;
++	default:
++		spec->use_alt_functions = false;
++		break;
++	}
++
+ 	spec->base_init_verbs = ca0132_base_init_verbs;
+ 	spec->base_exit_verbs = ca0132_base_exit_verbs;
+ 
 -- 
 2.7.4
