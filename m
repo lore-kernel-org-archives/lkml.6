@@ -1,112 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753581AbeEHBH2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 21:07:28 -0400
-Received: from ozlabs.org ([203.11.71.1]:40927 "EHLO ozlabs.org"
+        id S1753605AbeEHBLi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 21:11:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753108AbeEHBH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 21:07:26 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 8 May 2018 11:07:16 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>, Christoph Hellwig <hch@lst.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nipun Gupta <nipun.gupta@nxp.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh@kernel.org>, Dave Airlie <airlied@linux.ie>
-Subject: linux-next: build failure after merge of the drm-intel tree
-Message-ID: <20180508110716.53dfef41@canb.auug.org.au>
+        id S1753505AbeEHBLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 21:11:36 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/k0hUUyUdcszqUbV+EP9.O15"; protocol="application/pgp-signature"
+To: Amit Nischal <anischal@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525690220-26525-2-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Amit Nischal <anischal@codeaurora.org>
+References: <1525690220-26525-1-git-send-email-anischal@codeaurora.org>
+ <1525690220-26525-2-git-send-email-anischal@codeaurora.org>
+Message-ID: <152574189516.138124.5711696582182066656@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v7 1/3] clk: qcom: Configure the RCGs to a safe source as needed
+Date: Mon, 07 May 2018 18:11:35 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w481BhT7003030
 
---Sig_/k0hUUyUdcszqUbV+EP9.O15
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Quoting Amit Nischal (2018-05-07 03:50:18)
+> For some root clock generators, there could be child branches which are
+> controlled by an entity other than application processor subsystem. For
+> such RCGs, as per application processor subsystem clock driver, all of
+> its downstream clocks are disabled and RCG is in disabled state but in
+> reality downstream clocks can be left enabled before.
+> 
+> So in this scenario, when RCG is disabled as per clock driver's point of
+> view and when rate scaling request comes before downstream clock enable
+> request, then RCG fails to update its configuration because in reality
+> RCG is on and it expects its new source to already be in enable state but
+> in reality new source is off. In order to avoid having the RCG to go into
+> an invalid state, add support to update the CFG, M, N and D registers
+> during set_rate() without configuration update and defer the actual RCG
+> configuration update to be done during clk_enable() as at this point of
+> time, both its new parent and safe source will be already enabled and RCG
+> can safely switch to new parent.
+> 
+> During clk_disable() request, configure it to safe source as both its
+> parents, safe source and current parent will be enabled and RCG can
+> safely execute a switch.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+> ---
 
-Hi all,
+Applied to clk-next. I squashed some style fixups and logic
+simplifications in too.
 
-After merging the drm-intel tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
 
-drivers/gpu/drm/xen/xen_drm_front.c: In function 'xen_drv_probe':
-drivers/gpu/drm/xen/xen_drm_front.c:740:10: error: 'struct bus_type' has no=
- member named 'force_dma'
-  dev->bus->force_dma =3D true;
-          ^~
-drivers/gpu/drm/xen/xen_drm_front.c:742:8: error: too few arguments to func=
-tion 'of_dma_configure'
-  ret =3D of_dma_configure(dev, NULL);
-        ^~~~~~~~~~~~~~~~
-In file included from drivers/gpu/drm/xen/xen_drm_front.c:16:0:
-include/linux/of_device.h:58:5: note: declared here
- int of_dma_configure(struct device *dev,
-     ^~~~~~~~~~~~~~~~
-
-Caused by commit
-
-  c575b7eeb89f ("drm/xen-front: Add support for Xen PV display frontend")
-
-interacting with commit
-
-  3d6ce86ee794 ("drivers: remove force dma flag from buses")
-
-from the dma-mapping tree.
-
-I have added the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 8 May 2018 11:02:24 +1000
-Subject: [PATCH] drm/xen-front: merge fix for "drivers: remove force dma fl=
-ag from buses"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/xen/xen_drm_front.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_=
-drm_front.c
-index 1b0ea9ac330e..0e486cb1c10c 100644
---- a/drivers/gpu/drm/xen/xen_drm_front.c
-+++ b/drivers/gpu/drm/xen/xen_drm_front.c
-@@ -737,9 +737,8 @@ static int xen_drv_probe(struct xenbus_device *xb_dev,
- 	 * is not correct: to fix this call of_dma_configure() with a NULL
- 	 * node to set default DMA ops.
- 	 */
--	dev->bus->force_dma =3D true;
- 	dev->coherent_dma_mask =3D DMA_BIT_MASK(32);
--	ret =3D of_dma_configure(dev, NULL);
-+	ret =3D of_dma_configure(dev, NULL, true);
- 	if (ret < 0) {
- 		DRM_ERROR("Cannot setup DMA ops, ret %d", ret);
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 6827ab32c82c..e63911cbfef9 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -797,7 +797,6 @@ static int clk_rcg2_set_force_enable(struct clk_hw *hw)
+ 	const char *name = clk_hw_get_name(hw);
+ 	int ret, count;
+ 
+-	/* Force enable bit */
+ 	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
+ 				 CMD_ROOT_EN, CMD_ROOT_EN);
+ 	if (ret)
+@@ -808,12 +807,10 @@ static int clk_rcg2_set_force_enable(struct clk_hw *hw)
+ 		if (clk_rcg2_is_enabled(hw))
+ 			return 0;
+ 
+-		/* Delay for 1usec and retry polling the status bit */
+ 		udelay(1);
+ 	}
+-	if (!count)
+-		pr_err("%s: RCG did not turn on\n", name);
+ 
++	pr_err("%s: RCG did not turn on\n", name);
+ 	return -ETIMEDOUT;
+ }
+ 
+@@ -821,7 +818,6 @@ static int clk_rcg2_clear_force_enable(struct clk_hw *hw)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 
+-	/* Clear force enable bit */
+ 	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
+ 					CMD_ROOT_EN, 0);
+ }
+@@ -832,9 +828,6 @@ clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, const struct freq_tbl *f)
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	int ret;
+ 
+-	if (!f)
+-		return -EINVAL;
+-
+ 	ret = clk_rcg2_set_force_enable(hw);
+ 	if (ret)
  		return ret;
---=20
-2.17.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/k0hUUyUdcszqUbV+EP9.O15
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrw+EQACgkQAVBC80lX
-0GwnEggAigTGbaLZ40fM73MkHEMVZLhrBEMvHQ2Ir4FIpihoR+14WIxIPHlzsp7t
-XbgSaxEqVwKShEWs7QV02Py3f3qPlAOr+5eLY395KIxYy1pVfYcNK9/huhWws5ec
-wapfCUIAS3wOduguokR/55DbfXkwN68bOYtrdUK7CdkS10Q7kV5iwE0wyf/loJwi
-HK3VjqXmlzJda7dIVf7EbCYjPdbnHqXL26mNE99ahDdWpW5Nwm8SfpkeAocr9cx3
-4/jV88dxJ36lXE1j1EXOQ6OVmykCFRlsc7U1wOXfuSAIppNqc08ZgIDTsgbT2jEa
-1oPWy8i6zz8wm4Lbb0J8B0iXlG1O2w==
-=KvmS
------END PGP SIGNATURE-----
-
---Sig_/k0hUUyUdcszqUbV+EP9.O15--
+@@ -858,10 +851,9 @@ static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	/*
+ 	 * In case clock is disabled, update the CFG, M, N and D registers
+-	 * and do not hit the update bit of CMD register.
++	 * and don't hit the update bit of CMD register.
+ 	 */
+ 	if (!__clk_is_enabled(hw->clk))
+-		/* Skip the configuration update */
+ 		return __clk_rcg2_configure(rcg, f);
+ 
+ 	return clk_rcg2_shared_force_enable_clear(hw, f);
+@@ -879,8 +871,8 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+ 	int ret;
+ 
+ 	/*
+-	 * Set the update bit only.
+-	 * As required configuration has been already written in set_rate() op.
++	 * Set the update bit because required configuration has already
++	 * been written in set_rate() op.
+ 	 */
+ 	ret = clk_rcg2_set_force_enable(hw);
+ 	if (ret)
+@@ -899,8 +891,8 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+ 	u32 cfg;
+ 
+ 	/*
+-	 * Store current configuration as switching to safe source
+-	 * would clear the SRC and DIV of CFG register.
++	 * Store current configuration as switching to safe source would clear
++	 * the SRC and DIV of CFG register.
+ 	 */
+ 	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
+ 
+@@ -915,7 +907,7 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+ 	clk_rcg2_set_force_enable(hw);
+ 
+ 	regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
+-				rcg->safe_src_index << CFG_SRC_SEL_SHIFT);
++		     rcg->safe_src_index << CFG_SRC_SEL_SHIFT);
+ 
+ 	update_config(rcg);
+ 
