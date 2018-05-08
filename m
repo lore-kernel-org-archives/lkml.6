@@ -1,71 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753507AbeEHAE5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 20:04:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35440 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752954AbeEHAE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 20:04:56 -0400
-Subject: Re: [PATCH v7 3/4] ipc: Allow boot time extension of IPCMNI from 32k
- to 2M
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>, Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>, tglx@linutronix.de, arnd@arndb.de,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-References: <1525726752-29281-1-git-send-email-longman@redhat.com>
- <1525726752-29281-4-git-send-email-longman@redhat.com>
- <20180507231704.GX27853@wotan.suse.de>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <39507091-da19-64d7-7888-c307f4dc4670@redhat.com>
-Date: Mon, 7 May 2018 20:04:54 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1753499AbeEHAI4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 20:08:56 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33818 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752954AbeEHAIy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 20:08:54 -0400
+X-Google-Smtp-Source: AB8JxZoDODHjyyOQxuVf5RnoomQYuCo78IQ5F3cC5oZm8fvDKTC2K+PndpT9EfYiWzkAVWvGB2AVXF94PIHNSNTs4Ls=
 MIME-Version: 1.0
-In-Reply-To: <20180507231704.GX27853@wotan.suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <20180507213305.kfxabgkdvf7xwt7m@valkosipuli.retiisi.org.uk>
+References: <20180425213044.1535393-1-arnd@arndb.de> <2922276.lKgGZtlCEW@avalon>
+ <20180507131906.rdvcmvim5gvi5odk@valkosipuli.retiisi.org.uk>
+ <CAK8P3a2+Xi8VF7B40zev1CT55HCNE92+MsPEiaGj7tOXEV57dg@mail.gmail.com> <20180507213305.kfxabgkdvf7xwt7m@valkosipuli.retiisi.org.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 7 May 2018 20:08:53 -0400
+X-Google-Sender-Auth: CRGUMaDb4d57fIkqj6BC4lf247g
+Message-ID: <CAK8P3a3k5VMmZWuqqgCRTTgE4Ffct_reVJi5Tt8hkvTUUaDFow@mail.gmail.com>
+Subject: Re: [PATCH] [RESEND] [media] omap3isp: support 64-bit version of omap3isp_stat_data
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/07/2018 07:17 PM, Luis R. Rodriguez wrote:
-> On Mon, May 07, 2018 at 04:59:11PM -0400, Waiman Long wrote:
->> diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
->> index 49f9bf4..d62335f 100644
->> --- a/ipc/ipc_sysctl.c
->> +++ b/ipc/ipc_sysctl.c
->> @@ -120,7 +120,8 @@ static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
->>  static int zero;
->>  static int one = 1;
->>  static int int_max = INT_MAX;
->> -static int ipc_mni = IPCMNI;
->> +int ipc_mni __read_mostly = IPCMNI;
->> +int ipc_mni_shift __read_mostly = IPCMNI_SHIFT;
->>  
->>  static struct ctl_table ipc_kern_table[] = {
->>  	{
-> Is use of ipc_mni and ipc_mni_shift a hot path? As per Christoph Lameter,
-> its use should be reserved for data that is actually used frequently in hot
-> paths, and typically this was done after performance traces reveal contention
-> because a neighboring variable was frequently written to [0]. These would also
-> be tightly packed, to reduce the number of cachelines needed to execute a
-> critical path, so we should be selective about what variables use it.
+On Mon, May 7, 2018 at 5:33 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
+> On Mon, May 07, 2018 at 04:36:45PM -0400, Arnd Bergmann wrote:
+>> On Mon, May 7, 2018 at 9:19 AM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
+>> > On Mon, May 07, 2018 at 04:17:32PM +0300, Laurent Pinchart wrote:
+>> >> On Thursday, 26 April 2018 00:30:10 EEST Arnd Bergmann wrote:
+>> >> > +int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
+>> >> > +                                   struct omap3isp_stat_data_time32 *data)
+>> >> > +{
+>> >> > +   struct omap3isp_stat_data data64;
+>> >> > +   int ret;
+>> >> > +
+>> >> > +   ret = omap3isp_stat_request_statistics(stat, &data64);
+>> >> > +
+>> >> > +   data->ts.tv_sec = data64.ts.tv_sec;
+>> >> > +   data->ts.tv_usec = data64.ts.tv_usec;
+>> >> > +   memcpy(&data->buf, &data64.buf, sizeof(*data) - sizeof(data->ts));
+>> >> > +
+>> >> > +   return ret;
+>> >>
+>> >> We could return immediately after omap3isp_stat_request_statistics() if the
+>> >> function fails, but that's no big deal, the error path is clearly a cold path.
+>>
+>> I looked at it again and briefly thought that it would leak kernel stack
+>> data in my version and changing it would be required to avoid that,
+>> but I do see now that the absence of the INFO_FL_ALWAYS_COPY
+>> flag makes it safe after all.
+>>
+>> I agree that returning early here would be nicer here, I'll leave it up to
+>> Sakari to fold in that change if he likes.
 >
-> Your commit log does not describe why you'd use __read_mostly here. It would
-> be useful if it did.
+> I agree with the change; actually the data64 struct will be left untouched
+> if there's an error so changing this doesn't seem to make a difference.
+> Private IOCTLs have always_copy == false, so the argument struct isn't
+> copied back to the kernel.
 >
-> [0] https://lkml.kernel.org/r/alpine.DEB.2.11.1504301343190.28879@gentwo.org
-I used __read_mostly to reduce the performance impact of transitioning
-from a constant to a variable. But you are right, their use are probably
-not in a hot path. So even the use of regular variables shouldn't show
-any noticeable performance difference. I can take that out in the my
-next version after I gather enough feedback.
+> The diff is here. Let me know if something went wrong...
+>
+> diff --git a/drivers/media/platform/omap3isp/ispstat.c b/drivers/media/platform/omap3isp/ispstat.c
+> index dfee8eaf2226..47353fee26c3 100644
+> --- a/drivers/media/platform/omap3isp/ispstat.c
+> +++ b/drivers/media/platform/omap3isp/ispstat.c
+> @@ -519,12 +519,14 @@ int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
+>         int ret;
+>
+>         ret = omap3isp_stat_request_statistics(stat, &data64);
+> +       if (ret)
+> +               return ret;
+>
+>         data->ts.tv_sec = data64.ts.tv_sec;
+>         data->ts.tv_usec = data64.ts.tv_usec;
+>         memcpy(&data->buf, &data64.buf, sizeof(*data) - sizeof(data->ts));
+>
+> -       return ret;
+> +       return 0;
+>  }
 
-Cheers,
-Longman
+Yes, that's exactly what I had in mind. Thanks for fixing it up!
+
+      Arnd
