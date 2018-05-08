@@ -1,132 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754408AbeEHHvp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 03:51:45 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:54054 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753987AbeEHHvn (ORCPT
+        id S1754506AbeEHHxA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 03:53:00 -0400
+Received: from mail-pf0-f172.google.com ([209.85.192.172]:46647 "EHLO
+        mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754009AbeEHHw6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 03:51:43 -0400
-X-Google-Smtp-Source: AB8JxZpJ+quhRR9mvoM8WknGuRW7ekEe9gpHCefxNgARfgOQ0yDPwO65m13W4w9hOqCdvm1LLwDJ3g==
-Date: Tue, 8 May 2018 09:51:39 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-rockchip@lists.infradead.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org,
-        Vincent Abriou <vincent.abriou@st.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] drm/sti: do not remove the drm_bridge that was never
- added
-Message-ID: <20180508075139.GM28661@phenom.ffwll.local>
-Mail-Followup-To: Peter Rosin <peda@axentia.se>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-rockchip@lists.infradead.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org,
-        Vincent Abriou <vincent.abriou@st.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20180502074025.12421-1-peda@axentia.se>
- <20180502074025.12421-2-peda@axentia.se>
- <20180503090648.GG12521@phenom.ffwll.local>
- <bd8d12f7-0c71-c96b-80fa-54de7de39511@axentia.se>
- <20180507133929.GG12521@phenom.ffwll.local>
- <d378241f-7420-bbaf-c447-18cdfd4f9dd3@axentia.se>
- <7f79c109-6b0f-000e-569b-1f702e0006d3@axentia.se>
+        Tue, 8 May 2018 03:52:58 -0400
+X-Google-Smtp-Source: AB8JxZrgNfU8Mg2UI2zxs34er/MEcjqKHCncvxxi241UldiPDZI2PXSetTkQQDtO9uhlbpc02uI9WNgSZz0TOj2es0Y=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7f79c109-6b0f-000e-569b-1f702e0006d3@axentia.se>
-X-Operating-System: Linux phenom 4.15.0-3-amd64 
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <d7c8e0eb-61ed-1aad-6faa-82a0ef8c25b8@sandeen.net>
+References: <f403043cbe8414177d0568e81405@google.com> <20180403043854.GL1150@dastard>
+ <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
+ <20180405213844.GE23861@dastard> <20180406161053.GF7500@magnolia>
+ <CACT4Y+aaEOffkFA-B-hMzwzSiQwVpkPrc2udC087a55OTnkS4g@mail.gmail.com>
+ <95c1400b-94f2-1af4-2d5d-c61c274c28ff@sandeen.net> <CACT4Y+aiwgRg5pk+N7bq9HYpgumTFyqG6-y3EZ8pWkq9-uB1aA@mail.gmail.com>
+ <9f8d657c-7f42-7bd9-4477-6c3addf16dee@sandeen.net> <CACT4Y+bUx4jw83Ux7w9URL9bCy1ERLaVGTTwvA9Fe_UtLFeqCw@mail.gmail.com>
+ <d7c8e0eb-61ed-1aad-6faa-82a0ef8c25b8@sandeen.net>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 8 May 2018 09:52:36 +0200
+Message-ID: <CACT4Y+YNRt5YSrOYKKFUP25jodpK0xeZhysSGoz2UaiGs_Gx=A@mail.gmail.com>
+Subject: Re: WARNING: bad unlock balance in xfs_iunlock
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 04:24:43PM +0200, Peter Rosin wrote:
-> On 2018-05-07 15:59, Peter Rosin wrote:
-> > On 2018-05-07 15:39, Daniel Vetter wrote:
-> >> On Thu, May 03, 2018 at 11:12:21PM +0200, Peter Rosin wrote:
-> >>> On 2018-05-03 11:06, Daniel Vetter wrote:
-> >>>> On Wed, May 02, 2018 at 09:40:23AM +0200, Peter Rosin wrote:
-> >>>>> The more natural approach would perhaps be to add an drm_bridge_add,
-> >>>>> but there are several other bridges that never call drm_bridge_add.
-> >>>>> Just removing the drm_bridge_remove is the easier fix.
-> >>>>>
-> >>>>> Signed-off-by: Peter Rosin <peda@axentia.se>
-> >>>>
-> >>>> This mess is much bigger. There's 2 pairs of bridge functions:
-> >>>>
-> >>>> - drm_bridge_attach/detach. Those are meant to be called by the overall
-> >>>>   drm driver to connect/disconnect a drm_bridge.
-> >>>>
-> >>>> - drm_bridge_add/remove. These are supposed to be called by the bridge
-> >>>>   driver itself to register/unregister itself. Maybe we should rename
-> >>>>   them, since the same issue happens with drm_panel, with the same
-> >>>>   confusion.
-> >>>>
-> >>>> I thought someone was working on a cleanup series to fix this mess, but I
-> >>>> didn't find anything.
-> >>>
-> >>> Ok, I just spotted the imbalance and didn't really dig into what
-> >>> actually happens in these error paths. Now that I have done so I
-> >>> believe that the removed drm_bridge_remove calls causes NULL
-> >>> dereferences if/when the error paths are triggered.
-> >>>
-> >>> So, I don't think this can wait for some bigger cleanup.
-> >>>
-> >>> drm_bridge_remove calls list_del_init calls __list_del_entry calls
-> >>> __list_del with NULL in both prev and next since the list member
-> >>> is never initialized. prev and next are dereferenced by __list_del
-> >>> and you have *boom*
-> >>>
-> >>> I recommend adding the tag
-> >>>
-> >>> Fixes: 84601dbdea36 ("drm: sti: rework init sequence")
-> >>>
-> >>> so that stable picks this one up.
-> >>
-> >> I just wanted to correct your commit message text - the correct solution
-> >> is definitely _not_ for sti here to call drm_bridge_add.
-> > 
-> > Ah, I see what you mean. Do you want me to respin?
-> 
-> Hold on, no I don't agree. sti_hda.c does create a bridge for it's own
-> internal use. It does not drm_bridge_add it, because all that ever does
-> is adding the bridge to the global lost of bridges. But since this is
-> a bridge for internal use, there is little point in calling drm_bridge_add,
-> the driver currently gains nothing by doing so.
-> 
-> But, drm_bridge_add might be a good place to put common stuff for every
-> bridge in the system, so it might be worthwhile to start requiring all
-> bridges to be drm_bridge_add-ed. And IMHO, it would not be wrong to have
-> the sti-hda driver call drm_bridge_add on the bridge it creates.
-> 
-> Do you really think it is actively wrong to call drm_bridge_add for
-> internal bridges such as this?
+On Mon, Apr 30, 2018 at 5:14 PM, Eric Sandeen <sandeen@sandeen.net> wrote:
+> On 4/30/18 9:02 AM, Dmitry Vyukov wrote:
+>> On Mon, Apr 30, 2018 at 3:49 PM, Eric Sandeen <sandeen@sandeen.net> wrote:
+>
+> ...
+>
+>>>> It just extracted kernel source file name that looked relevant
+>>>> to this crash and run get_maintainers.pl on it.
+>>>> Also the image can contain dynamically generated data, which makes it
+>>>> impossible to have as a file at all.
+>>>
+>>> I guess I'm not sure what this means, can you explain?
+>>
+>> Say, a value that we generally pass to close system call is not static
+>> and can't be dumped to a static file. It's whatever a previous open
+>> system call has returned. Inside of the program we memorize the return
+>> value of open in a variable and then pass it to close. This generally
+>> stands for all system calls. Say, an image can contain an uid, and
+>> that uid can be obtained from a system call too.
+>
+> Ok, but that's the syscall side.  You are operating on a static xfs image,
+> correct?  We're only asking for the actual filesystem you're operating
+> against.
 
-If we want to share bridge init code, then I think we need a
-drm_bridge_init(). Not overload drm_bridge_add (which really should be
-drm_bridge_register I think, but oh well, it's at least consistent with
-drm_panel_add).
--Daniel
+Not necessary. Image can be dynamically generate too, all inputs to
+kernel are generally dynamically generated.
 
-> 
-> Cheers,
-> Peter
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> (When I say "image" I am talking only about the filesystem itself, not any
+> other syzkaller state)
+
+OK, let's do it this way. For the first 10 bugs, ask me, and I will do
+it manually.
+I am all for automation. And syzbot is already more automated than
+most kernel testing systems. But, as I said, this is really
+not-trivial, large amount of work, and is specific to one out of
+dozens of kernel subsystems.
+
+
+> Ok, backing up more: When you are testing against an xfs filesystem image, where
+> does that image come from?  How is it generated?  A quick look at the syzkaller
+> tree didn't make that clear to me.
+>
+> the xfs.repro file you provided at
+> https://drive.google.com/file/d/1jzhGGe5SBJcqfsjxCLHoh4Kazke1oTfC/view
+>
+> is strange, it doesn't even contain AGF blocks; they aren't fuzzed or corrupted,
+> they are completely zeroed out.  I don't know if that's part of the fuzzing,
+> or what - what steps led to that image?
+>
+> Or put another way, how did you arrive at the fs image values in the reproducer,
+> i.e.:
+
+Currently they are completely random, nobody taught syzkaller about AGFs, etc.
+
+> oid loop()
+> {
+>   memcpy((void*)0x20000000, "xfs", 4);
+>   memcpy((void*)0x20000100, "./file0", 8);
+>   *(uint64_t*)0x20000200 = 0x20010000;
+>   memcpy((void*)0x20010000,
+>          "\x58\x46\x53\x42\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00"
+>          "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9f\x98"
+>          "\x99\xff\xcb\xa1\x4e\xe6\xad\x52\x08\x20\x67\x09\xed\x75\x00\x00\x00"
+>          "\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x35\xe0\x00\x00\x00\x00"
+>          "\x00\x00\x35\xe1\x00\x00\x00\x00\x00\x00\x35\xe2\x00\x00\x00\x01\x00"
+>          "\x00\x10\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x03\x55\xb4\xa4"
+>          "\x02\x00\x01\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+>          "\x00\x0c\x09\x08\x04\x0c\x00\x00\x19\x00\x00\x00\x00\x00\x00\x00\x40"
+>          "\x00\x00\x00\x00\x00\x00\x00\x3d\x00\x00\x00\x00\x00\x00\x0c\xa3\x00"
+>          "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+>          "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00"
+>          "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x02\x02",
+>          204);
+>
+> ...
+>
+> The in-memory xfs filesystem it constructs is damaged, is that an intentional
+> part of the fuzzing during the test?
+
+Yes, invalid inputs is part of testing.
