@@ -1,38 +1,40 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZq2KNSJCmRGZT+9GY+Evjbg8a+WA5h77B6R3WP91WOSWkilHJZR6SAH7kfjnd9v6bGDrLi2
-ARC-Seal: i=1; a=rsa-sha256; t=1525767340; cv=none;
+X-Google-Smtp-Source: AB8JxZqQZM8n+fZ/nHorc0pY5ICqiZl7rgBrTL4aEnqsEThKz4E8Bhkr0lHPVvH3wY0EmeWLrtAO
+ARC-Seal: i=1; a=rsa-sha256; t=1525767337; cv=none;
         d=google.com; s=arc-20160816;
-        b=ipzXEeBDtx5UFbJ/OxiT5chvRq/0icP1KzrBFY6rOvWLTUXxXLW5BV0j0eSQd/M83X
-         rWOZd51TPb+p666Q+fN75znh6sU2Fp/xg1Av/7+FQ19cNmFxZ7o12L68wibeT6S0aSXV
-         QQThtN2kg3EeK1a0fmvT7i31sqYGA5+yVsIXJyH5zmVtMXpDf7Vn1rpWgA8O0AIfwAnG
-         soDP7fF7l5VFuh34gi34DZfAxNKkSDxL96JPSHHQsiWpYrOlXpFU6Rd+zEm4trgyalN3
-         SYTD7qTO5GsAZj+wRCbQyZUvyBWXwgNoB33D3KM7lBjNIad+iNZPWdH1jiaj0D1ihSUk
-         ZxoQ==
+        b=01QMCQWS2DVDRF4lC/kGZwScZyUjvqV5IgLqfGDn2HLUCOmj2UNK9iv0RdbSVDlNja
+         8PG4uz2QkxKeev9pkVtjM6SOm1xH5yjuOtatSv0Aw9zt9Rg2WPrqPTWLp3e4cBUa2Yzo
+         eVvDuoL5wbM5mjBfTyNzpK7wvDoI0Sfj/ppjQ6F20UBG+OIDonL3JYi0YsYWg2NOVw4p
+         SL8PRub1XQSxuAlw9rm6BZfC0alxIhqXe1Mrk0tfYOw07tjHFXEXVnSDlubncf0K6iFf
+         CVWeJ3xndbZe62gN7wlLVV6popUZF5sUMznoYvpZVig7gRzNhJMDgwo4Q8pc9AuWVPRA
+         oXJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=SoTTAAFq756LtDnV1QVdD+e4e7pTFl1IaYWo9eMPxsk=;
-        b=MKSS5g6DWfWHRCfZs4F3jyJa63ldHxk3ZHveVVGs8W66qOk60KvwYgEdx+3yoDI0qu
-         dePSoD4xV1O4pArpTawVBRHifRKD2IioQvA993cdRV1fuinVv33/WMI/0YD7iZEZAVWD
-         F2ErVN19bBonEbNGkm3gz5d3AjtnsyPt3iT0L5kmkgTPmdYQe+aUoVo1K9OqU8jc/iJn
-         8voFEc0/SBV2VwvzeoshLcKo6k1owVCx5FYywPa2dmjlG8DgZzkeMi6dxwkS+Rht99/R
-         ElA9CjGr4KGXwyE4PP4VFNTs4BkkoRbHjskkE9KMwWBMmSFm086sAG91wNuH5NRIKEt6
-         Ix7g==
+        bh=cCB+DjMnZEaEMenU3PKr+Hzo4iUhGGo/HwedaVUTJ38=;
+        b=pHuhzo7EQRSjXV9uixMA5QWMcS+UMZDkB+uYHssqXcq2Om5woF+EkMNrynS/OYO6dx
+         YOqF3gTzDrDPMlwJ8W5wBFoAuLTuoognuEWhloPCiaRJ3zMshXGeVYWe1t8EUnnpH6js
+         cTvL5yQKCc2yC2UgywO2IqjJP8n0ti2QDWBBEXMkAAnsccwN656607Sw6vE0sJsQbUIO
+         qJ5mEFCKs4Etk55JJpFMG9irE3wHQxzs/W8eFSg1IAwt+spIE7j41uiGBAQPWlH4t6X/
+         ezmVJH0KBSWOU4UUhUE/1M7LKHm31yukxuE/dAP17eWsih9twuKL8orcgBaV4Z+QCMlp
+         O9Yg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=0sk13WIr;
+       dkim=pass header.i=@kernel.org header.s=default header.b=qWdWPftt;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=0sk13WIr;
+       dkim=pass header.i=@kernel.org header.s=default header.b=qWdWPftt;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Elvinas <elvinas@veikia.lt>
-Subject: [PATCH 4.14 36/43] USB: Accept bulk endpoints with 1024-byte maxpacket
-Date: Tue,  8 May 2018 10:10:55 +0200
-Message-Id: <20180508074009.622170242@linuxfoundation.org>
+	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Dennis Dalessandro <dennis.dalessandro@intel.com>,
+	Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.14 27/43] IB/hfi1: Fix loss of BECN with AHG
+Date: Tue,  8 May 2018 10:10:46 +0200
+Message-Id: <20180508074008.296447207@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882900535348958?=
-X-GMAIL-MSGID: =?utf-8?q?1599883014902422587?=
+X-GMAIL-THRID: =?utf-8?q?1599882816352442145?=
+X-GMAIL-MSGID: =?utf-8?q?1599883011926698832?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,40 +53,123 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-commit fb5ee84ea72c5f1b6cabdd1c9d6e8648995ca7c6 upstream.
+commit 0a0bcb046b2f0c15b89f8c1b08ad3de601a83c66 upstream.
 
-Some non-compliant high-speed USB devices have bulk endpoints with a
-1024-byte maxpacket size.  Although such endpoints don't work with
-xHCI host controllers, they do work with EHCI controllers.  We used to
-accept these invalid sizes (with a warning), but we no longer do
-because of an unintentional change introduced by commit aed9d65ac327
-("USB: validate wMaxPacketValue entries in endpoint descriptors").
+AHG may be armed to use the stored header, which by design is limited
+to edits in the PSN/A 32 bit word (bth2).
 
-This patch restores the old behavior, so that people with these
-peculiar devices can use them without patching their kernels by hand.
+When the code is trying to send a BECN, the use of the stored header
+will lose the BECN bit.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Suggested-by: Elvinas <elvinas@veikia.lt>
-Fixes: aed9d65ac327 ("USB: validate wMaxPacketValue entries in endpoint descriptors")
-CC: <stable@vger.kernel.org>
+Fix by avoiding AHG when getting ready to send a BECN. This is
+accomplished by always claiming the packet is not a middle packet which
+is an AHG precursor.  BECNs are not a normal case and this should not
+hurt AHG optimizations.
+
+Cc: <stable@vger.kernel.org> # 4.14.x
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/config.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/ruc.c |   50 +++++++++++++++++++++++++++++++--------
+ 1 file changed, 40 insertions(+), 10 deletions(-)
 
---- a/drivers/usb/core/config.c
-+++ b/drivers/usb/core/config.c
-@@ -191,7 +191,9 @@ static const unsigned short full_speed_m
- static const unsigned short high_speed_maxpacket_maxes[4] = {
- 	[USB_ENDPOINT_XFER_CONTROL] = 64,
- 	[USB_ENDPOINT_XFER_ISOC] = 1024,
--	[USB_ENDPOINT_XFER_BULK] = 512,
-+
-+	/* Bulk should be 512, but some devices use 1024: we will warn below */
-+	[USB_ENDPOINT_XFER_BULK] = 1024,
- 	[USB_ENDPOINT_XFER_INT] = 1024,
- };
- static const unsigned short super_speed_maxpacket_maxes[4] = {
+--- a/drivers/infiniband/hw/hfi1/ruc.c
++++ b/drivers/infiniband/hw/hfi1/ruc.c
+@@ -745,6 +745,20 @@ static inline void hfi1_make_ruc_bth(str
+ 	ohdr->bth[2] = cpu_to_be32(bth2);
+ }
+ 
++/**
++ * hfi1_make_ruc_header_16B - build a 16B header
++ * @qp: the queue pair
++ * @ohdr: a pointer to the destination header memory
++ * @bth0: bth0 passed in from the RC/UC builder
++ * @bth2: bth2 passed in from the RC/UC builder
++ * @middle: non zero implies indicates ahg "could" be used
++ * @ps: the current packet state
++ *
++ * This routine may disarm ahg under these situations:
++ * - packet needs a GRH
++ * - BECN needed
++ * - migration state not IB_MIG_MIGRATED
++ */
+ static inline void hfi1_make_ruc_header_16B(struct rvt_qp *qp,
+ 					    struct ib_other_headers *ohdr,
+ 					    u32 bth0, u32 bth2, int middle,
+@@ -789,6 +803,12 @@ static inline void hfi1_make_ruc_header_
+ 	else
+ 		middle = 0;
+ 
++	if (qp->s_flags & RVT_S_ECN) {
++		qp->s_flags &= ~RVT_S_ECN;
++		/* we recently received a FECN, so return a BECN */
++		becn = true;
++		middle = 0;
++	}
+ 	if (middle)
+ 		build_ahg(qp, bth2);
+ 	else
+@@ -796,11 +816,6 @@ static inline void hfi1_make_ruc_header_
+ 
+ 	bth0 |= pkey;
+ 	bth0 |= extra_bytes << 20;
+-	if (qp->s_flags & RVT_S_ECN) {
+-		qp->s_flags &= ~RVT_S_ECN;
+-		/* we recently received a FECN, so return a BECN */
+-		becn = 1;
+-	}
+ 	hfi1_make_ruc_bth(qp, ohdr, bth0, bth1, bth2);
+ 
+ 	if (!ppd->lid)
+@@ -818,6 +833,20 @@ static inline void hfi1_make_ruc_header_
+ 			  pkey, becn, 0, l4, priv->s_sc);
+ }
+ 
++/**
++ * hfi1_make_ruc_header_9B - build a 9B header
++ * @qp: the queue pair
++ * @ohdr: a pointer to the destination header memory
++ * @bth0: bth0 passed in from the RC/UC builder
++ * @bth2: bth2 passed in from the RC/UC builder
++ * @middle: non zero implies indicates ahg "could" be used
++ * @ps: the current packet state
++ *
++ * This routine may disarm ahg under these situations:
++ * - packet needs a GRH
++ * - BECN needed
++ * - migration state not IB_MIG_MIGRATED
++ */
+ static inline void hfi1_make_ruc_header_9B(struct rvt_qp *qp,
+ 					   struct ib_other_headers *ohdr,
+ 					   u32 bth0, u32 bth2, int middle,
+@@ -853,6 +882,12 @@ static inline void hfi1_make_ruc_header_
+ 	else
+ 		middle = 0;
+ 
++	if (qp->s_flags & RVT_S_ECN) {
++		qp->s_flags &= ~RVT_S_ECN;
++		/* we recently received a FECN, so return a BECN */
++		bth1 |= (IB_BECN_MASK << IB_BECN_SHIFT);
++		middle = 0;
++	}
+ 	if (middle)
+ 		build_ahg(qp, bth2);
+ 	else
+@@ -860,11 +895,6 @@ static inline void hfi1_make_ruc_header_
+ 
+ 	bth0 |= pkey;
+ 	bth0 |= extra_bytes << 20;
+-	if (qp->s_flags & RVT_S_ECN) {
+-		qp->s_flags &= ~RVT_S_ECN;
+-		/* we recently received a FECN, so return a BECN */
+-		bth1 |= (IB_BECN_MASK << IB_BECN_SHIFT);
+-	}
+ 	hfi1_make_ruc_bth(qp, ohdr, bth0, bth1, bth2);
+ 
+ 	if (!ppd->lid)
