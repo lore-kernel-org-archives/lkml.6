@@ -1,171 +1,172 @@
-Return-Path: <wulf@rock-chips.com>
-X-Google-Smtp-Source: AB8JxZo51FSqGJ3xQL7YBXJK2kHdpfiUtJ2p8PPjVrTpDwm0+rIRPSGk7yzjnv6yDt1+jenDx2cj
-ARC-Seal: i=1; a=rsa-sha256; t=1526030828; cv=none;
-        d=google.com; s=arc-20160816;
-        b=WRWABgWohd1FYAo2Cvi8dqjgUdk5IA4/I4kDB/AxooCWWl+h12AseTzx3daNl21cUQ
-         UM1ISolEk55guXkF6HqA79CLTSUVJJFrlhynC/VJLqSP1DCydUm+vZfayZdWcZIKVqmX
-         PPDQvH2LcKYS5R4iG7/f/tssXTSFmRJ1C+zSK0tXTVzj9yPb+ElYrpeA/DeVKYuFSrtr
-         VWZ1YkmJRi3TCXwsP0bHsDohoO1b2e0L/kGte8kveCeKLYCciNsx3UoumxsJ4N0UXl+u
-         4xucR4DUuFjPba+LIuYdR2mL7E2cz/R++VhhHeWZMpjHigkONlDqPtw2gFciqt4P8ntG
-         P4Sg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=y3lxbBelTSNH/Q5u2B+ZE29IXXrU4i3C3ECr/m0XZNw=;
-        b=cftW7GoFiP9+6jQoA5HdKsDa7V21gkahoES3NvsDxKVqCZVKDVr8pl725W2B+KqzoM
-         WJWO/Xr23E4i1NewpOZL31AWrnIONdkuBQoSxZTNUB7P9R1086Lnt+cOb/zQa9u1Q3AX
-         RjoGmYx+GZjqZb6gM6x8iU3exqazHxbrCdgviKnFqBkOkcNISTHjpsANOWPLIhVvNIcs
-         VgwVdAH5oyjFQkim9fnOA5MVYs7ln6cszKGpCPFn/ZJLg7uzkja04KGbq2qLmF1vAw1B
-         UWqWUO8XurZfAzMAMAwvAwf+VpUr2Ipj9IbiQZQpLFCGgLqOYtel2iBfa8qxNystUTS+
-         eMwQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of wulf@rock-chips.com designates 211.150.80.14 as permitted sender) smtp.mailfrom=wulf@rock-chips.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of wulf@rock-chips.com designates 211.150.80.14 as permitted sender) smtp.mailfrom=wulf@rock-chips.com
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2036687-1525748968-2-12995012008348748165
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, RCVD_IN_SORBS_WEB 1.5, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525748967; b=ch0eBZh/uTGlVcJ+N6kNqWQVouHuEVjuMT+lx6r5DjJ60noWNu
+    wPaRSw3Chaoh6o7gF0njXyCC2QqB42JYX3HHj4NSvcPOJ6V7vscEgt8XL6dn4oke
+    yoKfqQZ4kAoB1V5aEQeu04Bt3TQ+5xcuNNVwCUuAqLhp/g4kACcYuJ2ckiy235+R
+    yolyB4xIr6KeHS91TSYzCDzcNSd6rYt3SO5lhut5/sNOmbY23H3abhw2NKJpy1c9
+    RVl48JtV04Q9XOCtteSpF28BK7C0xInwbbExFXgTHwrzQDx2Okp8XfneTVUvNlJF
+    EQzoPRjA4DWAdqO+7zsLGk/G3ToOq2F2PXsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525748967; bh=
+    rkBKEz4P55AkURRLg/E0Vv2tAbJMb/xlDAJAqBIb0LE=; b=j1qrJ3CEC9YQWMG4
+    Y3ATzkIc3awlDxr4YfSyIoigHVk3Iwn3Rsv5cYyWiN1dHeQOCIlh4TvEamcDK5yF
+    PaI/Ta4DdTFnkcH3X4OUAg8YCukIXvYTv4/X788fyDC9y9YRMT7qnF99aHXwEahK
+    YV+aYXEe9Mhka8/eki8i9ijQ1qkVFsXXvgROPrc6d5Y2xGOhIOYLnlruZ24ju5FU
+    mQFFMpfkBfe16BC3i4F93k4ZeFeSs7+jnkbjwGHyPmfQQf6dpvzZZ3Bg3qwJxE7s
+    n69xCclKlzI/iYUF/u1aU5+hdciyKv7l4TuUk56edEt/EYbdEMj7YSNEAcCSjgYR
+    lZbP9A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=rock-chips.com header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=rock-chips.com header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfJp3aRXpjwAIDgNYD1nVLxMZK9kZkf9CycMExbJAVEcKocScTgcFRFagpOozxWVV5bF07wrDALYIvm8J/r42ppS8+cmDxYvf6dlCSXoDWCRZFyBPsBbO
+    Behc7xkXkqCsizXzky4JhgJ8vm7Xj/Le+/6iVLqsMPxh8d/KT71ecz6mkApczPloNIKSmViC/i6pHTd9aAk+/Swe7w024tlb7sNx6RoEqG1BtxqhHgg6n0hs
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=4_-BN3WEXhEA:10 a=VUJBJC2UJ8kA:10
+    a=s8YR1HE3AAAA:8 a=VwQbUJbxAAAA:8 a=ZvVp6P6bRAB-60_p9RoA:9
+    a=OKuXXkLbgm8jtzLI:21 a=peugBkb-4IPNGEnD:21 a=x8gzFH9gYPwA:10
+    a=jGH_LyMDp9YhSvY-UuyI:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754096AbeEHDI7 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 7 May 2018 23:08:59 -0400
+Received: from regular1.263xmail.com ([211.150.99.132]:58017 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753896AbeEHDI4 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 7 May 2018 23:08:56 -0400
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-KSVirus-check: 0
 X-ABS-CHECKED: 4
-X-IP-DOMAINF: 1
-X-RL-SENDER: wulf@rock-chips.com
-X-FST-TO: milesschofield@aopen.com
+X-RL-SENDER: william.wu@rock-chips.com
+X-FST-TO: hminas@synopsys.com
 X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: wulf@rock-chips.com
-X-UNIQUE-TAG: <aa500f6fe005f08c93475bbf3d37fc0a>
+X-LOGIN-NAME: william.wu@rock-chips.com
+X-UNIQUE-TAG: <b187848c152f14142abda23b9f072b32>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
-Subject: Re: [PATCH v3 1/2] usb: dwc2: alloc dma aligned buffer for isoc split
- in
-To: Doug Anderson <dianders@google.com>
-Cc: William Wu <william.wu@rock-chips.com>, hminas@synopsys.com,
- felipe.balbi@linux.intel.com, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,
- Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
- =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
- LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org,
- "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
- Frank Wang <frank.wang@rock-chips.com>, =?UTF-8?B?6buE5rab?=
- <huangtao@rock-chips.com>, "daniel.meng" <daniel.meng@rock-chips.com>,
- John Youn <John.Youn@synopsys.com>, =?UTF-8?B?546L5b6B5aKe?=
- <wzz@rock-chips.com>, zsq@rock-chips.com, =?UTF-8?B?6Kix5ZiJ6YqY?=
- <Allen.Hsu@quantatw.com>, Stan Tsui <StanTsui@aopen.com>,
- =?UTF-8?B?U3BydWNlIFd1ICjlkLPlu7rli7Mp?= <Spruce.Wu@quantatw.com>,
- Martin Tsai <Martin.Tsai@quantatw.com>, Kevin Hsueh
- <Kevin.Shai@quantatw.com>, =?UTF-8?B?TW9uLUplciBXdSAo5ZCz5a2f5ZOyKQ==?=
- <Mon-Jer.Wu@quantatw.com>, =?UTF-8?B?Q2xhdWQgQ2hhbmcgKOW8teaBreeviSk=?=
- <Claud.Chang@quantatw.com>, =?UTF-8?B?U2FuIExpbiAo5p6X5bu66I+xKQ==?=
- <San.Lin@quantatw.com>, Ren Kuo <Ren.Kuo@quantatw.com>,
- "David H.T. Wang" <davidhtwang@aopen.com>, Fong Lin <fonglin@aopen.com>,
- Steven Cheng <stevencheng@aopen.com>, Tom Chen <tomchen@aopen.com>,
- Don Chang <donchang@aopen.com>, milesschofield@aopen.com
+From: William Wu <william.wu@rock-chips.com>
+To: hminas@synopsys.com, felipe.balbi@linux.intel.com,
+        gregkh@linuxfoundation.org
+Cc: sergei.shtylyov@cogentembedded.com, heiko@sntech.de,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, frank.wang@rock-chips.com,
+        huangtao@rock-chips.com, dianders@google.com,
+        daniel.meng@rock-chips.com, John.Youn@synopsys.com,
+        william.wu@rock-chips.com, wzz@rock-chips.com, zsq@rock-chips.com,
+        Allen.Hsu@quantatw.com, StanTsui@AOPEN.com, Spruce.Wu@quantatw.com,
+        Martin.Tsai@quantatw.com, Kevin.Shai@quantatw.com,
+        Mon-Jer.Wu@quantatw.com, Claud.Chang@quantatw.com,
+        San.Lin@quantatw.com, Ren.Kuo@quantatw.com, davidhtwang@aopen.com,
+        fonglin@aopen.com, stevencheng@aopen.com, tomchen@aopen.com,
+        donchang@aopen.com, milesschofield@aopen.com
+Subject: [PATCH v3 2/2] usb: dwc2: fix isoc split in transfer with no data
+Date: Tue,  8 May 2018 11:07:26 +0800
+Message-Id: <1525748846-7767-3-git-send-email-william.wu@rock-chips.com>
+X-Mailer: git-send-email 2.0.0
+In-Reply-To: <1525748846-7767-1-git-send-email-william.wu@rock-chips.com>
 References: <1525748846-7767-1-git-send-email-william.wu@rock-chips.com>
- <1525748846-7767-2-git-send-email-william.wu@rock-chips.com>
- <CAD=FV=VKBVp++gPXzYN0N46NVarPNWqs1YZjfcd7twkU25WNyQ@mail.gmail.com>
- <f2e0fba2-da0b-38ba-6e25-3da9ccf1e4ee@rock-chips.com>
- <CAD=FV=W0Aufw1=UH2eZjb4cpiLjt9ty49CrUOdM5B2wF+WoY-A@mail.gmail.com>
- <196bd304-3c6b-91b6-1743-50d6d13fc5a5@rock-chips.com>
- <CAD=FV=Xsa9MAw==_Oi28B69oqZehwL2JTwEzjKAnH5PS5wKC_A@mail.gmail.com>
-From: wlf <wulf@rock-chips.com>
-Message-ID: <3768eb42-98c4-5bd0-a796-5ba36d03cd35@rock-chips.com>
-Date: Fri, 11 May 2018 17:26:59 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAD=FV=Xsa9MAw==_Oi28B69oqZehwL2JTwEzjKAnH5PS5wKC_A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599863711876607151?=
-X-GMAIL-MSGID: =?utf-8?q?1600159301580589441?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Dear Doug,
+If isoc split in transfer with no data (the length of DATA0
+packet is zero), we can't simply return immediately. Because
+the DATA0 can be the first transaction or the second transaction
+for the isoc split in transaction. If the DATA0 packet with no
+data is in the first transaction, we can return immediately.
+But if the DATA0 packet with no data is in the second transaction
+of isoc split in transaction sequence, we need to increase the
+qtd->isoc_frame_index and giveback urb to device driver if needed,
+otherwise, the MDATA packet will be lost.
+
+A typical test case is that connect the dwc2 controller with an
+usb hs Hub (GL852G-12), and plug an usb fs audio device (Plantronics
+headset) into the downstream port of Hub. Then use the usb mic
+to record, we can find noise when playback.
+
+In the case, the isoc split in transaction sequence like this:
+
+- SSPLIT IN transaction
+- CSPLIT IN transaction
+  - MDATA packet (176 bytes)
+- CSPLIT IN transaction
+  - DATA0 packet (0 byte)
+
+This patch use both the length of DATA0 and qtd->isoc_split_offset
+to check if the DATA0 is in the second transaction.
+
+Signed-off-by: William Wu <william.wu@rock-chips.com>
+---
+Changes in v3:
+- Remove "qtd->isoc_split_offset = 0" in the if test
+
+Changes in v2:
+- Modify the commit message
+
+ drivers/usb/dwc2/hcd_intr.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/usb/dwc2/hcd_intr.c b/drivers/usb/dwc2/hcd_intr.c
+index ba6fd852..3003594 100644
+--- a/drivers/usb/dwc2/hcd_intr.c
++++ b/drivers/usb/dwc2/hcd_intr.c
+@@ -930,9 +930,8 @@ static int dwc2_xfercomp_isoc_split_in(struct dwc2_hsotg *hsotg,
+ 	frame_desc = &qtd->urb->iso_descs[qtd->isoc_frame_index];
+ 	len = dwc2_get_actual_xfer_length(hsotg, chan, chnum, qtd,
+ 					  DWC2_HC_XFER_COMPLETE, NULL);
+-	if (!len) {
++	if (!len && !qtd->isoc_split_offset) {
+ 		qtd->complete_split = 0;
+-		qtd->isoc_split_offset = 0;
+ 		return 0;
+ 	}
+ 
+-- 
+2.0.0
 
 
-在 2018年05月11日 04:59, Doug Anderson 写道:
-> Hi,
->
-> On Wed, May 9, 2018 at 1:55 AM, wlf <wulf@rock-chips.com> wrote:
->>>>>> +       } else if (hsotg->params.host_dma) {
->>>>> Are you sure this is "else if"?  Can't you have descriptor DMA enabled
->>>>> in the controller and still need to do a normal DMA transfer if you
->>>>> plug in a hub?  Seems like this should be just "if".
->>>> Sorry, I don't understand the case "have descriptor DMA enabled in the
->>>> controller and still need to do a normal DMA transfer". But maybe it
->>>> still
->>>> has another problem if just use "if" here, because it will create kmem
->>>> caches for Slave mode which actually doesn't need aligned DMA buf.
->>> So right now your code looks like:
->>>
->>> if (hsotg->params.dma_desc_enable ||
->>>       hsotg->params.dma_desc_fs_enable) {
->>>       ...
->>>       ...
->>> } else if (hsotg->params.host_dma) {
->>>      ...
->>> }
->>>
->>>
->>> I've never played much with "descriptor DMA" on dwc2 because every
->>> time I enabled it (last I tried was years ago) a whole bunch of
->>> peripherals stopped working and I didn't dig (I just left it off).
->>> Thus, I'm no expert on descriptor DMA.  ...that being said, my
->>> understanding is that if you enable descriptor DMA in the controller
->>> then it will enable a smarter DMA mode for some of the transfers.
->>> IIRC Descriptor DMA mode specifically can't handle splits.  Is my
->>> memory correct there?  Presumably that means that when you enable
->>> descriptor DMA in the controller the driver will automatically fall
->>> back to normal Address DMA mode if things get too complicated.  When
->>> it falls back to Address DMA mode, presumably dwc2_hcd_init() won't
->>> get called again.  That means that any data structures that are needed
->>> for Address DMA need to be allocated in dwc2_hcd_init() even if
->>> descriptor DMA is enabled because we might need to fall back to
->>> Address DMA.
->>>
->>> Thus, I'm suggesting changing the code to:
->>>
->>> if (hsotg->params.dma_desc_enable ||
->>>       hsotg->params.dma_desc_fs_enable) {
->>>       ...
->>>       ...
->>> }
->>>
->>> if (hsotg->params.host_dma) {
->>>      ...
->>> }
->>>
->>>
->>> ...as I said, I'm no expert and I could just be confused.  If
->>> something I say seems wrong please correct me.
->> Ah, I got it. Thanks for your detailed explanation. Although I don't know if
->> it's possible that dwc2 driver automatically fall back to normal Address DMA
->> mode when desc DMA work abnormally with split, I agree with your suggestion.
->> I'll fix it in V4 patch.
-> Hmm, I guess you're right.  I did a quick search and I can't find any
-> evidence of a fallback like this.  Maybe I dreamed that.  I found some
-> old comment in the commit history that said:
-I think you're right. I find that it's possible to fall back to Address 
-DMA mode if desc DMA initialization failure. The error case is：in 
-dwc2_hcd_init(),  if it fails to create dwc2 generic desc cache or dwc2 
-hs isoc desc cache, then it will disable desc DMA and fall back to 
-Address DMA mode.
->
-> /*
->   * Disable descriptor dma mode by default as the HW can support
->   * it, but does not support it for SPLIT transactions.
->   * Disable it for FS devices as well.
->   */
->
-> ...and it looks there's currently nobody using descriptor DMA anyway
-> (assuming I read the code correctly).  It does seem like people were
-> ever going to turn it on then it would have to be dynamic as I was
-> dreaming it was...
-Yes, the dwc2 desc DMA mode can't support split transaction. So few 
-people use desc DMA mode for OTG Host mode. BTW, I find that the latest 
-code enable desc DMA mode by default for the OTG peripheral mode if the 
-dwc2 hardware support desc DMA.
->
