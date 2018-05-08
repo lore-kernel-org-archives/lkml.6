@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756110AbeEHSce (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 14:32:34 -0400
+        id S932593AbeEHSFf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 14:05:35 -0400
 Received: from mx2.suse.de ([195.135.220.15]:53874 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932493AbeEHSFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 14:05:35 -0400
+        id S932457AbeEHSFb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 14:05:31 -0400
 From: Mark Fasheh <mfasheh@suse.de>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Mark Fasheh <mfasheh@suse.de>
-Subject: [PATCH 32/76] fs/f2fs: Use inode_sb() helper instead of inode->i_sb
-Date: Tue,  8 May 2018 11:03:52 -0700
-Message-Id: <20180508180436.716-33-mfasheh@suse.de>
+Subject: [PATCH 30/76] fs/ext2: Use inode_sb() helper instead of inode->i_sb
+Date: Tue,  8 May 2018 11:03:50 -0700
+Message-Id: <20180508180436.716-31-mfasheh@suse.de>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180508180436.716-1-mfasheh@suse.de>
 References: <20180508180436.716-1-mfasheh@suse.de>
@@ -22,427 +22,804 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mark Fasheh <mfasheh@suse.de>
 ---
- fs/f2fs/data.c     |  6 +++---
- fs/f2fs/f2fs.h     |  2 +-
- fs/f2fs/file.c     | 36 ++++++++++++++++++------------------
- fs/f2fs/inline.c   |  4 ++--
- fs/f2fs/inode.c    |  6 +++---
- fs/f2fs/namei.c    | 11 ++++++-----
- fs/f2fs/recovery.c | 11 ++++++-----
- fs/f2fs/super.c    |  6 +++---
- fs/f2fs/trace.c    |  7 ++++---
- fs/f2fs/xattr.c    |  4 ++--
- 10 files changed, 48 insertions(+), 45 deletions(-)
+ fs/ext2/balloc.c     | 10 +++----
+ fs/ext2/dir.c        | 32 ++++++++++----------
+ fs/ext2/file.c       |  6 ++--
+ fs/ext2/ialloc.c     | 16 +++++-----
+ fs/ext2/inode.c      | 82 +++++++++++++++++++++++++++-------------------------
+ fs/ext2/ioctl.c      |  4 +--
+ fs/ext2/namei.c      | 14 ++++-----
+ fs/ext2/xattr.c      | 59 ++++++++++++++++++-------------------
+ fs/ext2/xattr_user.c |  4 +--
+ 9 files changed, 115 insertions(+), 112 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 7578ed1a85e0..f3e29f386f6e 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1129,7 +1129,7 @@ static int __get_data_block(struct inode *inode, sector_t iblock,
- 
- 	err = f2fs_map_blocks(inode, &map, create, flag);
- 	if (!err) {
--		map_bh(bh, inode->i_sb, map.m_pblk);
-+		map_bh(bh, inode_sb(inode), map.m_pblk);
- 		bh->b_state = (bh->b_state & ~F2FS_MAP_FLAGS) | map.m_flags;
- 		bh->b_size = (u64)map.m_len << inode->i_blkbits;
- 	}
-@@ -1225,7 +1225,7 @@ static int f2fs_xattr_fiemap(struct inode *inode,
- 		get_node_info(sbi, xnid, &ni);
- 
- 		phys = (__u64)blk_to_logical(inode, ni.blk_addr);
--		len = inode->i_sb->s_blocksize;
-+		len = inode_sb(inode)->s_blocksize;
- 
- 		f2fs_put_page(page, 1);
- 
-@@ -2272,7 +2272,7 @@ static int f2fs_write_end(struct file *file,
- static int check_direct_IO(struct inode *inode, struct iov_iter *iter,
- 			   loff_t offset)
+diff --git a/fs/ext2/balloc.c b/fs/ext2/balloc.c
+index 33db13365c5e..0ac54114ea9a 100644
+--- a/fs/ext2/balloc.c
++++ b/fs/ext2/balloc.c
+@@ -413,7 +413,7 @@ void ext2_init_block_alloc_info(struct inode *inode)
  {
--	unsigned blocksize_mask = inode->i_sb->s_blocksize - 1;
-+	unsigned blocksize_mask = inode_sb(inode)->s_blocksize - 1;
- 
- 	if (offset & blocksize_mask)
- 		return -EINVAL;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 6300ac5bcbe4..504c84b68636 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1331,7 +1331,7 @@ static inline struct f2fs_sb_info *F2FS_SB(struct super_block *sb)
- 
- static inline struct f2fs_sb_info *F2FS_I_SB(struct inode *inode)
- {
--	return F2FS_SB(inode->i_sb);
-+	return F2FS_SB(inode_sb(inode));
- }
- 
- static inline struct f2fs_sb_info *F2FS_M_SB(struct address_space *mapping)
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 672a542e5464..837333b9153d 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -58,7 +58,7 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 		goto err;
- 	}
- 
--	sb_start_pagefault(inode->i_sb);
-+	sb_start_pagefault(inode_sb(inode));
- 
- 	f2fs_bug_on(sbi, f2fs_has_inline_data(inode));
- 
-@@ -117,7 +117,7 @@ static int f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- out_sem:
- 	up_read(&F2FS_I(inode)->i_mmap_sem);
- out:
--	sb_end_pagefault(inode->i_sb);
-+	sb_end_pagefault(inode_sb(inode));
- 	f2fs_update_time(sbi, REQ_TIME);
- err:
- 	return block_page_mkwrite_return(err);
-@@ -211,7 +211,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 		.for_reclaim = 0,
- 	};
- 
--	if (unlikely(f2fs_readonly(inode->i_sb)))
-+	if (unlikely(f2fs_readonly(inode_sb(inode))))
- 		return 0;
- 
- 	trace_f2fs_sync_file_enter(inode);
-@@ -259,7 +259,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
- 
- 	if (cp_reason) {
- 		/* all the dirty node pages should be flushed for POR */
--		ret = f2fs_sync_fs(inode->i_sb, 1);
-+		ret = f2fs_sync_fs(inode_sb(inode), 1);
- 
- 		/*
- 		 * We've secured consistency through sync_fs. Following pino
-@@ -365,7 +365,7 @@ static bool __found_offset(block_t blkaddr, pgoff_t dirty, pgoff_t pgofs,
- static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
- {
- 	struct inode *inode = file->f_mapping->host;
--	loff_t maxbytes = inode->i_sb->s_maxbytes;
-+	loff_t maxbytes = inode_sb(inode)->s_maxbytes;
- 	struct dnode_of_data dn;
- 	pgoff_t pgofs, end_offset, dirty;
- 	loff_t data_ofs = offset;
-@@ -437,7 +437,7 @@ static loff_t f2fs_seek_block(struct file *file, loff_t offset, int whence)
- static loff_t f2fs_llseek(struct file *file, loff_t offset, int whence)
- {
- 	struct inode *inode = file->f_mapping->host;
--	loff_t maxbytes = inode->i_sb->s_maxbytes;
-+	loff_t maxbytes = inode_sb(inode)->s_maxbytes;
- 
- 	switch (whence) {
- 	case SEEK_SET:
-@@ -569,7 +569,7 @@ static int truncate_partial_data_page(struct inode *inode, u64 from,
- int truncate_blocks(struct inode *inode, u64 from, bool lock)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
--	unsigned int blocksize = inode->i_sb->s_blocksize;
-+	unsigned int blocksize = inode_sb(inode)->s_blocksize;
- 	struct dnode_of_data dn;
- 	pgoff_t free_from;
- 	int count = 0, err = 0;
-@@ -676,7 +676,7 @@ int f2fs_getattr(const struct path *path, struct kstat *stat,
- 	unsigned int flags;
- 
- 	if (f2fs_has_extra_attr(inode) &&
--			f2fs_sb_has_inode_crtime(inode->i_sb) &&
-+			f2fs_sb_has_inode_crtime(inode_sb(inode)) &&
- 			F2FS_FITS_IN_INODE(ri, fi->i_extra_isize, i_crtime)) {
- 		stat->result_mask |= STATX_BTIME;
- 		stat->btime.tv_sec = fi->i_crtime.tv_sec;
-@@ -722,13 +722,13 @@ static void __setattr_copy(struct inode *inode, const struct iattr *attr)
- 		inode->i_gid = attr->ia_gid;
- 	if (ia_valid & ATTR_ATIME)
- 		inode->i_atime = timespec_trunc(attr->ia_atime,
--						inode->i_sb->s_time_gran);
-+						inode_sb(inode)->s_time_gran);
- 	if (ia_valid & ATTR_MTIME)
- 		inode->i_mtime = timespec_trunc(attr->ia_mtime,
--						inode->i_sb->s_time_gran);
-+						inode_sb(inode)->s_time_gran);
- 	if (ia_valid & ATTR_CTIME)
- 		inode->i_ctime = timespec_trunc(attr->ia_ctime,
--						inode->i_sb->s_time_gran);
-+						inode_sb(inode)->s_time_gran);
- 	if (ia_valid & ATTR_MODE) {
- 		umode_t mode = attr->ia_mode;
- 
-@@ -1891,7 +1891,7 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- static int f2fs_ioc_fitrim(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
+ 	struct ext2_inode_info *ei = EXT2_I(inode);
+ 	struct ext2_block_alloc_info *block_i;
 -	struct super_block *sb = inode->i_sb;
 +	struct super_block *sb = inode_sb(inode);
- 	struct request_queue *q = bdev_get_queue(sb->s_bdev);
- 	struct fstrim_range range;
- 	int ret;
-@@ -1938,7 +1938,7 @@ static int f2fs_ioc_set_encryption_policy(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
  
--	if (!f2fs_sb_has_crypto(inode->i_sb))
-+	if (!f2fs_sb_has_crypto(inode_sb(inode)))
- 		return -EOPNOTSUPP;
+ 	block_i = kmalloc(sizeof(*block_i), GFP_NOFS);
+ 	if (block_i) {
+@@ -455,7 +455,7 @@ void ext2_discard_reservation(struct inode *inode)
+ 	struct ext2_inode_info *ei = EXT2_I(inode);
+ 	struct ext2_block_alloc_info *block_i = ei->i_block_alloc_info;
+ 	struct ext2_reserve_window_node *rsv;
+-	spinlock_t *rsv_lock = &EXT2_SB(inode->i_sb)->s_rsv_window_lock;
++	spinlock_t *rsv_lock = &EXT2_SB(inode_sb(inode))->s_rsv_window_lock;
  
- 	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
-@@ -1948,7 +1948,7 @@ static int f2fs_ioc_set_encryption_policy(struct file *filp, unsigned long arg)
- 
- static int f2fs_ioc_get_encryption_policy(struct file *filp, unsigned long arg)
- {
--	if (!f2fs_sb_has_crypto(file_inode(filp)->i_sb))
-+	if (!f2fs_sb_has_crypto(inode_sb(file_inode(filp))))
- 		return -EOPNOTSUPP;
- 	return fscrypt_ioctl_get_policy(filp, (void __user *)arg);
+ 	if (!block_i)
+ 		return;
+@@ -464,7 +464,7 @@ void ext2_discard_reservation(struct inode *inode)
+ 	if (!rsv_is_empty(&rsv->rsv_window)) {
+ 		spin_lock(rsv_lock);
+ 		if (!rsv_is_empty(&rsv->rsv_window))
+-			rsv_window_remove(inode->i_sb, rsv);
++			rsv_window_remove(inode_sb(inode), rsv);
+ 		spin_unlock(rsv_lock);
+ 	}
  }
-@@ -1959,7 +1959,7 @@ static int f2fs_ioc_get_encryption_pwsalt(struct file *filp, unsigned long arg)
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	int err;
- 
--	if (!f2fs_sb_has_crypto(inode->i_sb))
-+	if (!f2fs_sb_has_crypto(inode_sb(inode)))
- 		return -EOPNOTSUPP;
- 
- 	if (uuid_is_nonzero(sbi->raw_super->encrypt_pw_salt))
-@@ -2290,10 +2290,10 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+@@ -484,7 +484,7 @@ void ext2_free_blocks (struct inode * inode, unsigned long block,
+ 	unsigned long bit;
+ 	unsigned long i;
+ 	unsigned long overflow;
+-	struct super_block * sb = inode->i_sb;
++	struct super_block * sb = inode_sb(inode);
+ 	struct ext2_sb_info * sbi = EXT2_SB(sb);
+ 	struct ext2_group_desc * desc;
+ 	struct ext2_super_block * es = sbi->s_es;
+@@ -1255,7 +1255,7 @@ ext2_fsblk_t ext2_new_blocks(struct inode *inode, ext2_fsblk_t goal,
  	int ret;
  
- 	if (file_in->f_path.mnt != file_out->f_path.mnt ||
--				src->i_sb != dst->i_sb)
-+				inode_sb(src) != inode_sb(dst))
- 		return -EXDEV;
+ 	*errp = -ENOSPC;
+-	sb = inode->i_sb;
++	sb = inode_sb(inode);
  
--	if (unlikely(f2fs_readonly(src->i_sb)))
-+	if (unlikely(f2fs_readonly(inode_sb(src))))
- 		return -EROFS;
- 
- 	if (!S_ISREG(src->i_mode) || !S_ISREG(dst->i_mode))
-@@ -2644,7 +2644,7 @@ static int f2fs_ioc_fsgetxattr(struct file *filp, unsigned long arg)
- 	fa.fsx_xflags = f2fs_iflags_to_xflags(fi->i_flags &
- 				(FS_FL_USER_VISIBLE | FS_PROJINHERIT_FL));
- 
--	if (f2fs_sb_has_project_quota(inode->i_sb))
-+	if (f2fs_sb_has_project_quota(inode_sb(inode)))
- 		fa.fsx_projid = (__u32)from_kprojid(&init_user_ns,
- 							fi->i_projid);
- 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 90e38d8ea688..eb8b1a085974 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -294,7 +294,7 @@ bool recover_inline_data(struct inode *inode, struct page *npage)
- struct f2fs_dir_entry *find_in_inline_dir(struct inode *dir,
- 			struct fscrypt_name *fname, struct page **res_page)
+ 	/*
+ 	 * Check quota for allocation of this block.
+diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
+index 3b8114def693..b9565d7b86e8 100644
+--- a/fs/ext2/dir.c
++++ b/fs/ext2/dir.c
+@@ -63,7 +63,7 @@ static inline __le16 ext2_rec_len_to_disk(unsigned len)
+  */
+ static inline unsigned ext2_chunk_size(struct inode *inode)
  {
--	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
-+	struct f2fs_sb_info *sbi = F2FS_SB(inode_sb(dir));
- 	struct qstr name = FSTR_TO_QSTR(&fname->disk_name);
- 	struct f2fs_dir_entry *de;
- 	struct f2fs_dentry_ptr d;
-@@ -674,7 +674,7 @@ int f2fs_inline_data_fiemap(struct inode *inode,
- 	ilen -= start;
+-	return inode->i_sb->s_blocksize;
++	return inode_sb(inode)->s_blocksize;
+ }
  
- 	get_node_info(F2FS_I_SB(inode), inode->i_ino, &ni);
--	byteaddr = (__u64)ni.blk_addr << inode->i_sb->s_blocksize_bits;
-+	byteaddr = (__u64)ni.blk_addr << inode_sb(inode)->s_blocksize_bits;
- 	byteaddr += (char *)inline_data_addr(inode, ipage) -
- 					(char *)F2FS_INODE(ipage);
- 	err = fiemap_fill_next_extent(fieinfo, start, byteaddr, ilen, flags);
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 205add3d0f3a..4bc24cf161d3 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -195,7 +195,7 @@ static int do_read_inode(struct inode *inode)
+ static inline void ext2_put_page(struct page *page)
+@@ -115,7 +115,7 @@ static int ext2_commit_chunk(struct page *page, loff_t pos, unsigned len)
+ static bool ext2_check_page(struct page *page, int quiet)
+ {
+ 	struct inode *dir = page->mapping->host;
+-	struct super_block *sb = dir->i_sb;
++	struct super_block *sb = inode_sb(dir);
+ 	unsigned chunk_size = ext2_chunk_size(dir);
+ 	char *kaddr = page_address(page);
+ 	u32 max_inumber = le32_to_cpu(EXT2_SB(sb)->s_es->s_inodes_count);
+@@ -277,7 +277,7 @@ static unsigned char ext2_type_by_mode[S_IFMT >> S_SHIFT] = {
+ static inline void ext2_set_de_type(ext2_dirent *de, struct inode *inode)
+ {
+ 	umode_t mode = inode->i_mode;
+-	if (EXT2_HAS_INCOMPAT_FEATURE(inode->i_sb, EXT2_FEATURE_INCOMPAT_FILETYPE))
++	if (EXT2_HAS_INCOMPAT_FEATURE(inode_sb(inode), EXT2_FEATURE_INCOMPAT_FILETYPE))
+ 		de->file_type = ext2_type_by_mode[(mode & S_IFMT)>>S_SHIFT];
+ 	else
+ 		de->file_type = 0;
+@@ -288,7 +288,7 @@ ext2_readdir(struct file *file, struct dir_context *ctx)
+ {
+ 	loff_t pos = ctx->pos;
+ 	struct inode *inode = file_inode(file);
+-	struct super_block *sb = inode->i_sb;
++	struct super_block *sb = inode_sb(inode);
+ 	unsigned int offset = pos & ~PAGE_MASK;
+ 	unsigned long n = pos >> PAGE_SHIFT;
+ 	unsigned long npages = dir_pages(inode);
+@@ -392,8 +392,8 @@ struct ext2_dir_entry_2 *ext2_find_entry (struct inode *dir,
+ 			kaddr += ext2_last_byte(dir, n) - reclen;
+ 			while ((char *) de <= kaddr) {
+ 				if (de->rec_len == 0) {
+-					ext2_error(dir->i_sb, __func__,
+-						"zero-length directory entry");
++					ext2_error(inode_sb(dir), __func__,
++						   "zero-length directory entry");
+ 					ext2_put_page(page);
+ 					goto out;
+ 				}
+@@ -409,10 +409,10 @@ struct ext2_dir_entry_2 *ext2_find_entry (struct inode *dir,
+ 			n = 0;
+ 		/* next page is past the blocks we've got */
+ 		if (unlikely(n > (dir->i_blocks >> (PAGE_SHIFT - 9)))) {
+-			ext2_error(dir->i_sb, __func__,
+-				"dir %lu size %lld exceeds block count %llu",
+-				dir->i_ino, dir->i_size,
+-				(unsigned long long)dir->i_blocks);
++			ext2_error(inode_sb(dir), __func__,
++				   "dir %lu size %lld exceeds block count %llu",
++				   dir->i_ino, dir->i_size,
++				   (unsigned long long)dir->i_blocks);
+ 			goto out;
+ 		}
+ 	} while (n != start);
+@@ -524,8 +524,8 @@ int ext2_add_link (struct dentry *dentry, struct inode *inode)
+ 				goto got_it;
+ 			}
+ 			if (de->rec_len == 0) {
+-				ext2_error(dir->i_sb, __func__,
+-					"zero-length directory entry");
++				ext2_error(inode_sb(dir), __func__,
++					   "zero-length directory entry");
+ 				err = -EIO;
+ 				goto out_unlock;
+ 			}
+@@ -594,8 +594,8 @@ int ext2_delete_entry (struct ext2_dir_entry_2 * dir, struct page * page )
  
- 	/* Check if ino is within scope */
- 	if (check_nid_range(sbi, inode->i_ino)) {
--		f2fs_msg(inode->i_sb, KERN_ERR, "bad inode number: %lu",
-+		f2fs_msg(inode_sb(inode), KERN_ERR, "bad inode number: %lu",
- 			 (unsigned long) inode->i_ino);
- 		WARN_ON(1);
- 		return -EINVAL;
-@@ -522,7 +522,7 @@ void f2fs_evict_inode(struct inode *inode)
- 	remove_ino_entry(sbi, inode->i_ino, UPDATE_INO);
- 	remove_ino_entry(sbi, inode->i_ino, FLUSH_INO);
+ 	while ((char*)de < (char*)dir) {
+ 		if (de->rec_len == 0) {
+-			ext2_error(inode->i_sb, __func__,
+-				"zero-length directory entry");
++			ext2_error(inode_sb(inode), __func__,
++				   "zero-length directory entry");
+ 			err = -EIO;
+ 			goto out;
+ 		}
+@@ -686,8 +686,8 @@ int ext2_empty_dir (struct inode * inode)
  
--	sb_start_intwrite(inode->i_sb);
-+	sb_start_intwrite(inode_sb(inode));
- 	set_inode_flag(inode, FI_NO_ALLOC);
- 	i_size_write(inode, 0);
- retry:
-@@ -552,7 +552,7 @@ void f2fs_evict_inode(struct inode *inode)
- 	if (err)
- 		update_inode_page(inode);
- 	dquot_free_inode(inode);
--	sb_end_intwrite(inode->i_sb);
-+	sb_end_intwrite(inode_sb(inode));
- no_delete:
- 	dquot_drop(inode);
+ 		while ((char *)de <= kaddr) {
+ 			if (de->rec_len == 0) {
+-				ext2_error(inode->i_sb, __func__,
+-					"zero-length directory entry");
++				ext2_error(inode_sb(inode), __func__,
++					   "zero-length directory entry");
+ 				printk("kaddr=%p, de=%p\n", kaddr, de);
+ 				goto not_empty;
+ 			}
+diff --git a/fs/ext2/file.c b/fs/ext2/file.c
+index 09640220fda8..b7279d6ad130 100644
+--- a/fs/ext2/file.c
++++ b/fs/ext2/file.c
+@@ -95,7 +95,7 @@ static int ext2_dax_fault(struct vm_fault *vmf)
+ 	int ret;
  
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index b68e7b03959f..17a171d258cb 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -32,7 +32,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
- 	int xattr_size = 0;
+ 	if (vmf->flags & FAULT_FLAG_WRITE) {
+-		sb_start_pagefault(inode->i_sb);
++		sb_start_pagefault(inode_sb(inode));
+ 		file_update_time(vmf->vma->vm_file);
+ 	}
+ 	down_read(&ei->dax_sem);
+@@ -104,7 +104,7 @@ static int ext2_dax_fault(struct vm_fault *vmf)
+ 
+ 	up_read(&ei->dax_sem);
+ 	if (vmf->flags & FAULT_FLAG_WRITE)
+-		sb_end_pagefault(inode->i_sb);
++		sb_end_pagefault(inode_sb(inode));
+ 	return ret;
+ }
+ 
+@@ -151,7 +151,7 @@ static int ext2_release_file (struct inode * inode, struct file * filp)
+ int ext2_fsync(struct file *file, loff_t start, loff_t end, int datasync)
+ {
+ 	int ret;
+-	struct super_block *sb = file->f_mapping->host->i_sb;
++	struct super_block *sb = inode_sb(file->f_mapping->host);
+ 
+ 	ret = generic_file_fsync(file, start, end, datasync);
+ 	if (ret == -EIO)
+diff --git a/fs/ext2/ialloc.c b/fs/ext2/ialloc.c
+index 6484199b35d1..549a0e7efec1 100644
+--- a/fs/ext2/ialloc.c
++++ b/fs/ext2/ialloc.c
+@@ -103,7 +103,7 @@ static void ext2_release_inode(struct super_block *sb, int group, int dir)
+  */
+ void ext2_free_inode (struct inode * inode)
+ {
+-	struct super_block * sb = inode->i_sb;
++	struct super_block * sb = inode_sb(inode);
+ 	int is_directory;
+ 	unsigned long ino;
+ 	struct buffer_head *bitmap_bh;
+@@ -177,19 +177,19 @@ static void ext2_preread_inode(struct inode *inode)
+ 	if (bdi_write_congested(bdi))
+ 		return;
+ 
+-	block_group = (inode->i_ino - 1) / EXT2_INODES_PER_GROUP(inode->i_sb);
+-	gdp = ext2_get_group_desc(inode->i_sb, block_group, NULL);
++	block_group = (inode->i_ino - 1) / EXT2_INODES_PER_GROUP(inode_sb(inode));
++	gdp = ext2_get_group_desc(inode_sb(inode), block_group, NULL);
+ 	if (gdp == NULL)
+ 		return;
+ 
+ 	/*
+ 	 * Figure out the offset within the block group inode table
+ 	 */
+-	offset = ((inode->i_ino - 1) % EXT2_INODES_PER_GROUP(inode->i_sb)) *
+-				EXT2_INODE_SIZE(inode->i_sb);
++	offset = ((inode->i_ino - 1) % EXT2_INODES_PER_GROUP(inode_sb(inode))) *
++				EXT2_INODE_SIZE(inode_sb(inode));
+ 	block = le32_to_cpu(gdp->bg_inode_table) +
+-				(offset >> EXT2_BLOCK_SIZE_BITS(inode->i_sb));
+-	sb_breadahead(inode->i_sb, block);
++				(offset >> EXT2_BLOCK_SIZE_BITS(inode_sb(inode)));
++	sb_breadahead(inode_sb(inode), block);
+ }
+ 
+ /*
+@@ -443,7 +443,7 @@ struct inode *ext2_new_inode(struct inode *dir, umode_t mode,
+ 	struct ext2_sb_info *sbi;
  	int err;
  
--	inode = new_inode(dir->i_sb);
-+	inode = new_inode(inode_sb(dir));
+-	sb = dir->i_sb;
++	sb = inode_sb(dir);
+ 	inode = new_inode(sb);
  	if (!inode)
  		return ERR_PTR(-ENOMEM);
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index 9b2ac55ac34f..47b7129f2db7 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -48,7 +48,7 @@ static int __ext2_write_inode(struct inode *inode, int do_sync);
+ static inline int ext2_inode_is_fast_symlink(struct inode *inode)
+ {
+ 	int ea_blocks = EXT2_I(inode)->i_file_acl ?
+-		(inode->i_sb->s_blocksize >> 9) : 0;
++		(inode_sb(inode)->s_blocksize >> 9) : 0;
  
-@@ -380,7 +380,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	f2fs_dentry_kunmap(dir, page);
- 	f2fs_put_page(page, 0);
+ 	return (S_ISLNK(inode->i_mode) &&
+ 		inode->i_blocks - ea_blocks == 0);
+@@ -84,7 +84,7 @@ void ext2_evict_inode(struct inode * inode)
+ 	truncate_inode_pages_final(&inode->i_data);
  
--	inode = f2fs_iget(dir->i_sb, ino);
-+	inode = f2fs_iget(inode_sb(dir), ino);
- 	if (IS_ERR(inode)) {
- 		err = PTR_ERR(inode);
- 		goto out;
-@@ -400,7 +400,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	if (f2fs_encrypted_inode(dir) &&
- 	    (S_ISDIR(inode->i_mode) || S_ISLNK(inode->i_mode)) &&
- 	    !fscrypt_has_permitted_context(dir, inode)) {
--		f2fs_msg(inode->i_sb, KERN_WARNING,
-+		f2fs_msg(inode_sb(inode), KERN_WARNING,
- 			 "Inconsistent encryption contexts: %lu/%lu",
- 			 dir->i_ino, inode->i_ino);
- 		err = -EPERM;
-@@ -492,7 +492,8 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
+ 	if (want_delete) {
+-		sb_start_intwrite(inode->i_sb);
++		sb_start_intwrite(inode_sb(inode));
+ 		/* set dtime */
+ 		EXT2_I(inode)->i_dtime	= get_seconds();
+ 		mark_inode_dirty(inode);
+@@ -107,7 +107,7 @@ void ext2_evict_inode(struct inode * inode)
  
--	err = fscrypt_prepare_symlink(dir, symname, len, dir->i_sb->s_blocksize,
-+	err = fscrypt_prepare_symlink(dir, symname, len,
-+				      inode_sb(dir)->s_blocksize,
- 				      &disk_link);
- 	if (err)
- 		return err;
-@@ -1125,7 +1126,7 @@ static const char *f2fs_encrypted_get_link(struct dentry *dentry,
- 		return ERR_CAST(page);
- 
- 	target = fscrypt_get_symlink(inode, page_address(page),
--				     inode->i_sb->s_blocksize, done);
-+				     inode_sb(inode)->s_blocksize, done);
- 	put_page(page);
- 	return target;
+ 	if (want_delete) {
+ 		ext2_free_inode(inode);
+-		sb_end_intwrite(inode->i_sb);
++		sb_end_intwrite(inode_sb(inode));
+ 	}
  }
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 337f3363f48f..060d8259224d 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -147,7 +147,8 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
- 		goto out_unmap_put;
  
- 	if (de) {
--		einode = f2fs_iget_retry(inode->i_sb, le32_to_cpu(de->ino));
-+		einode = f2fs_iget_retry(inode_sb(inode),
-+					 le32_to_cpu(de->ino));
- 		if (IS_ERR(einode)) {
- 			WARN_ON(1);
- 			err = PTR_ERR(einode);
-@@ -188,7 +189,7 @@ static int recover_dentry(struct inode *inode, struct page *ipage,
- 		name = "<encrypted>";
+@@ -147,7 +147,7 @@ static inline int verify_chain(Indirect *from, Indirect *to)
+  *
+  *	Note: function doesn't find node addresses, so no IO is needed. All
+  *	we need to know is the capacity of indirect blocks (taken from the
+- *	inode->i_sb).
++ *	inode_sb(inode)).
+  */
+ 
+ /*
+@@ -163,8 +163,8 @@ static inline int verify_chain(Indirect *from, Indirect *to)
+ static int ext2_block_to_path(struct inode *inode,
+ 			long i_block, int offsets[4], int *boundary)
+ {
+-	int ptrs = EXT2_ADDR_PER_BLOCK(inode->i_sb);
+-	int ptrs_bits = EXT2_ADDR_PER_BLOCK_BITS(inode->i_sb);
++	int ptrs = EXT2_ADDR_PER_BLOCK(inode_sb(inode));
++	int ptrs_bits = EXT2_ADDR_PER_BLOCK_BITS(inode_sb(inode));
+ 	const long direct_blocks = EXT2_NDIR_BLOCKS,
+ 		indirect_blocks = ptrs,
+ 		double_blocks = (1 << (ptrs_bits * 2));
+@@ -172,8 +172,8 @@ static int ext2_block_to_path(struct inode *inode,
+ 	int final = 0;
+ 
+ 	if (i_block < 0) {
+-		ext2_msg(inode->i_sb, KERN_WARNING,
+-			"warning: %s: block < 0", __func__);
++		ext2_msg(inode_sb(inode), KERN_WARNING,
++			 "warning: %s: block < 0", __func__);
+ 	} else if (i_block < direct_blocks) {
+ 		offsets[n++] = i_block;
+ 		final = direct_blocks;
+@@ -193,8 +193,8 @@ static int ext2_block_to_path(struct inode *inode,
+ 		offsets[n++] = i_block & (ptrs - 1);
+ 		final = ptrs;
+ 	} else {
+-		ext2_msg(inode->i_sb, KERN_WARNING,
+-			"warning: %s: block is too big", __func__);
++		ext2_msg(inode_sb(inode), KERN_WARNING,
++			 "warning: %s: block is too big", __func__);
+ 	}
+ 	if (boundary)
+ 		*boundary = final - 1 - (i_block & (ptrs - 1));
+@@ -237,7 +237,7 @@ static Indirect *ext2_get_branch(struct inode *inode,
+ 				 Indirect chain[4],
+ 				 int *err)
+ {
+-	struct super_block *sb = inode->i_sb;
++	struct super_block *sb = inode_sb(inode);
+ 	Indirect *p = chain;
+ 	struct buffer_head *bh;
+ 
+@@ -312,9 +312,10 @@ static ext2_fsblk_t ext2_find_near(struct inode *inode, Indirect *ind)
+ 	 * It is going to be referred from inode itself? OK, just put it into
+ 	 * the same cylinder group then.
+ 	 */
+-	bg_start = ext2_group_first_block_no(inode->i_sb, ei->i_block_group);
++	bg_start = ext2_group_first_block_no(inode_sb(inode),
++					     ei->i_block_group);
+ 	colour = (current->pid % 16) *
+-			(EXT2_BLOCKS_PER_GROUP(inode->i_sb) / 16);
++			(EXT2_BLOCKS_PER_GROUP(inode_sb(inode)) / 16);
+ 	return bg_start + colour;
+ }
+ 
+@@ -477,7 +478,7 @@ static int ext2_alloc_branch(struct inode *inode,
+ 			int indirect_blks, int *blks, ext2_fsblk_t goal,
+ 			int *offsets, Indirect *branch)
+ {
+-	int blocksize = inode->i_sb->s_blocksize;
++	int blocksize = inode_sb(inode)->s_blocksize;
+ 	int i, n = 0;
+ 	int err = 0;
+ 	struct buffer_head *bh;
+@@ -500,7 +501,7 @@ static int ext2_alloc_branch(struct inode *inode,
+ 		 * and set the pointer to new one, then send
+ 		 * parent to disk.
+ 		 */
+-		bh = sb_getblk(inode->i_sb, new_blocks[n-1]);
++		bh = sb_getblk(inode_sb(inode), new_blocks[n-1]);
+ 		if (unlikely(!bh)) {
+ 			err = -ENOMEM;
+ 			goto failed;
+@@ -738,7 +739,7 @@ static int ext2_get_blocks(struct inode *inode,
+ 		 * We must unmap blocks before zeroing so that writeback cannot
+ 		 * overwrite zeros with stale data from block device page cache.
+ 		 */
+-		clean_bdev_aliases(inode->i_sb->s_bdev,
++		clean_bdev_aliases(inode_sb(inode)->s_bdev,
+ 				   le32_to_cpu(chain[depth-1].key),
+ 				   count);
+ 		/*
+@@ -746,9 +747,9 @@ static int ext2_get_blocks(struct inode *inode,
+ 		 * so that it's not found by another thread before it's
+ 		 * initialised
+ 		 */
+-		err = sb_issue_zeroout(inode->i_sb,
+-				le32_to_cpu(chain[depth-1].key), count,
+-				GFP_NOFS);
++		err = sb_issue_zeroout(inode_sb(inode),
++				       le32_to_cpu(chain[depth-1].key), count,
++				       GFP_NOFS);
+ 		if (err) {
+ 			mutex_unlock(&ei->truncate_mutex);
+ 			goto cleanup;
+@@ -787,7 +788,7 @@ int ext2_get_block(struct inode *inode, sector_t iblock,
+ 	if (ret <= 0)
+ 		return ret;
+ 
+-	map_bh(bh_result, inode->i_sb, bno);
++	map_bh(bh_result, inode_sb(inode), bno);
+ 	bh_result->b_size = (ret << inode->i_blkbits);
+ 	if (new)
+ 		set_buffer_new(bh_result);
+@@ -804,7 +805,7 @@ static int ext2_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	unsigned int blkbits = inode->i_blkbits;
+ 	unsigned long first_block = offset >> blkbits;
+ 	unsigned long max_blocks = (length + (1 << blkbits) - 1) >> blkbits;
+-	struct ext2_sb_info *sbi = EXT2_SB(inode->i_sb);
++	struct ext2_sb_info *sbi = EXT2_SB(inode_sb(inode));
+ 	bool new = false, boundary = false;
+ 	u32 bno;
+ 	int ret;
+@@ -815,7 +816,7 @@ static int ext2_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 		return ret;
+ 
+ 	iomap->flags = 0;
+-	iomap->bdev = inode->i_sb->s_bdev;
++	iomap->bdev = inode_sb(inode)->s_bdev;
+ 	iomap->offset = (u64)first_block << blkbits;
+ 	iomap->dax_dev = sbi->s_daxdev;
+ 
+@@ -955,7 +956,7 @@ ext2_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ #ifdef CONFIG_FS_DAX
+ 	if (dax_mapping(mapping)) {
+ 		return dax_writeback_mapping_range(mapping,
+-						   mapping->host->i_sb->s_bdev,
++						   inode_sb(mapping->host)->s_bdev,
+ 						   wbc);
+ 	}
+ #endif
+@@ -1142,21 +1143,22 @@ static void ext2_free_branches(struct inode *inode, __le32 *p, __le32 *q, int de
+ 	unsigned long nr;
+ 
+ 	if (depth--) {
+-		int addr_per_block = EXT2_ADDR_PER_BLOCK(inode->i_sb);
++		int addr_per_block = EXT2_ADDR_PER_BLOCK(inode_sb(inode));
+ 		for ( ; p < q ; p++) {
+ 			nr = le32_to_cpu(*p);
+ 			if (!nr)
+ 				continue;
+ 			*p = 0;
+-			bh = sb_bread(inode->i_sb, nr);
++			bh = sb_bread(inode_sb(inode), nr);
+ 			/*
+ 			 * A read failure? Report error and clear slot
+ 			 * (should be rare).
+ 			 */ 
+ 			if (!bh) {
+-				ext2_error(inode->i_sb, "ext2_free_branches",
+-					"Read failure, inode=%ld, block=%ld",
+-					inode->i_ino, nr);
++				ext2_error(inode_sb(inode),
++				           "ext2_free_branches",
++				           "Read failure, inode=%ld, block=%ld",
++				           inode->i_ino, nr);
+ 				continue;
+ 			}
+ 			ext2_free_branches(inode,
+@@ -1176,7 +1178,7 @@ static void __ext2_truncate_blocks(struct inode *inode, loff_t offset)
+ {
+ 	__le32 *i_data = EXT2_I(inode)->i_data;
+ 	struct ext2_inode_info *ei = EXT2_I(inode);
+-	int addr_per_block = EXT2_ADDR_PER_BLOCK(inode->i_sb);
++	int addr_per_block = EXT2_ADDR_PER_BLOCK(inode_sb(inode));
+ 	int offsets[4];
+ 	Indirect chain[4];
+ 	Indirect *partial;
+@@ -1184,8 +1186,8 @@ static void __ext2_truncate_blocks(struct inode *inode, loff_t offset)
+ 	int n;
+ 	long iblock;
+ 	unsigned blocksize;
+-	blocksize = inode->i_sb->s_blocksize;
+-	iblock = (offset + blocksize-1) >> EXT2_BLOCK_SIZE_BITS(inode->i_sb);
++	blocksize = inode_sb(inode)->s_blocksize;
++	iblock = (offset + blocksize-1) >> EXT2_BLOCK_SIZE_BITS(inode_sb(inode));
+ 
+ #ifdef CONFIG_FS_DAX
+ 	WARN_ON(!rwsem_is_locked(&ei->dax_sem));
+@@ -1300,7 +1302,7 @@ static int ext2_setsize(struct inode *inode, loff_t newsize)
+ 		error = iomap_zero_range(inode, newsize,
+ 					 PAGE_ALIGN(newsize) - newsize, NULL,
+ 					 &ext2_iomap_ops);
+-	} else if (test_opt(inode->i_sb, NOBH))
++	} else if (test_opt(inode_sb(inode), NOBH))
+ 		error = nobh_truncate_page(inode->i_mapping,
+ 				newsize, ext2_get_block);
  	else
- 		name = raw_inode->i_name;
--	f2fs_msg(inode->i_sb, KERN_NOTICE,
-+	f2fs_msg(inode_sb(inode), KERN_NOTICE,
- 			"%s: ino = %x, name = %s, dir = %lx, err = %d",
- 			__func__, ino_of_node(ipage), name,
- 			IS_ERR(dir) ? 0 : dir->i_ino, err);
-@@ -232,9 +233,9 @@ static void recover_inode(struct inode *inode, struct page *page)
+@@ -1384,7 +1386,7 @@ void ext2_set_inode_flags(struct inode *inode)
+ 		inode->i_flags |= S_NOATIME;
+ 	if (flags & EXT2_DIRSYNC_FL)
+ 		inode->i_flags |= S_DIRSYNC;
+-	if (test_opt(inode->i_sb, DAX) && S_ISREG(inode->i_mode))
++	if (test_opt(inode_sb(inode), DAX) && S_ISREG(inode->i_mode))
+ 		inode->i_flags |= S_DAX;
+ }
+ 
+@@ -1408,7 +1410,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+ 	ei = EXT2_I(inode);
+ 	ei->i_block_alloc_info = NULL;
+ 
+-	raw_inode = ext2_get_inode(inode->i_sb, ino, &bh);
++	raw_inode = ext2_get_inode(inode_sb(inode), ino, &bh);
+ 	if (IS_ERR(raw_inode)) {
+ 		ret = PTR_ERR(raw_inode);
+  		goto bad_inode;
+@@ -1417,7 +1419,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+ 	inode->i_mode = le16_to_cpu(raw_inode->i_mode);
+ 	i_uid = (uid_t)le16_to_cpu(raw_inode->i_uid_low);
+ 	i_gid = (gid_t)le16_to_cpu(raw_inode->i_gid_low);
+-	if (!(test_opt (inode->i_sb, NO_UID32))) {
++	if (!(test_opt (inode_sb(inode), NO_UID32))) {
+ 		i_uid |= le16_to_cpu(raw_inode->i_uid_high) << 16;
+ 		i_gid |= le16_to_cpu(raw_inode->i_gid_high) << 16;
+ 	}
+@@ -1469,7 +1471,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+ 	ei->i_dtime = 0;
+ 	inode->i_generation = le32_to_cpu(raw_inode->i_generation);
+ 	ei->i_state = 0;
+-	ei->i_block_group = (ino - 1) / EXT2_INODES_PER_GROUP(inode->i_sb);
++	ei->i_block_group = (ino - 1) / EXT2_INODES_PER_GROUP(inode_sb(inode));
+ 	ei->i_dir_start_lookup = 0;
+ 
+ 	/*
+@@ -1481,7 +1483,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+ 
+ 	if (S_ISREG(inode->i_mode)) {
+ 		inode->i_op = &ext2_file_inode_operations;
+-		if (test_opt(inode->i_sb, NOBH)) {
++		if (test_opt(inode_sb(inode), NOBH)) {
+ 			inode->i_mapping->a_ops = &ext2_nobh_aops;
+ 			inode->i_fop = &ext2_file_operations;
+ 		} else {
+@@ -1491,7 +1493,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+ 	} else if (S_ISDIR(inode->i_mode)) {
+ 		inode->i_op = &ext2_dir_inode_operations;
+ 		inode->i_fop = &ext2_dir_operations;
+-		if (test_opt(inode->i_sb, NOBH))
++		if (test_opt(inode_sb(inode), NOBH))
+ 			inode->i_mapping->a_ops = &ext2_nobh_aops;
+ 		else
+ 			inode->i_mapping->a_ops = &ext2_aops;
+@@ -1504,7 +1506,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+ 		} else {
+ 			inode->i_op = &ext2_symlink_inode_operations;
+ 			inode_nohighmem(inode);
+-			if (test_opt(inode->i_sb, NOBH))
++			if (test_opt(inode_sb(inode), NOBH))
+ 				inode->i_mapping->a_ops = &ext2_nobh_aops;
+ 			else
+ 				inode->i_mapping->a_ops = &ext2_aops;
+@@ -1531,7 +1533,7 @@ struct inode *ext2_iget (struct super_block *sb, unsigned long ino)
+ static int __ext2_write_inode(struct inode *inode, int do_sync)
+ {
+ 	struct ext2_inode_info *ei = EXT2_I(inode);
+-	struct super_block *sb = inode->i_sb;
++	struct super_block *sb = inode_sb(inode);
+ 	ino_t ino = inode->i_ino;
+ 	uid_t uid = i_uid_read(inode);
+ 	gid_t gid = i_gid_read(inode);
+diff --git a/fs/ext2/ioctl.c b/fs/ext2/ioctl.c
+index 0367c0039e68..d927a865d13e 100644
+--- a/fs/ext2/ioctl.c
++++ b/fs/ext2/ioctl.c
+@@ -113,7 +113,7 @@ long ext2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return ret;
+ 	}
+ 	case EXT2_IOC_GETRSVSZ:
+-		if (test_opt(inode->i_sb, RESERVATION)
++		if (test_opt(inode_sb(inode), RESERVATION)
+ 			&& S_ISREG(inode->i_mode)
+ 			&& ei->i_block_alloc_info) {
+ 			rsv_window_size = ei->i_block_alloc_info->rsv_window_node.rsv_goal_size;
+@@ -122,7 +122,7 @@ long ext2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		return -ENOTTY;
+ 	case EXT2_IOC_SETRSVSZ: {
+ 
+-		if (!test_opt(inode->i_sb, RESERVATION) ||!S_ISREG(inode->i_mode))
++		if (!test_opt(inode_sb(inode), RESERVATION) ||!S_ISREG(inode->i_mode))
+ 			return -ENOTTY;
+ 
+ 		if (!inode_owner_or_capable(inode))
+diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
+index e078075dc66f..2e5f7d3d371b 100644
+--- a/fs/ext2/namei.c
++++ b/fs/ext2/namei.c
+@@ -66,9 +66,9 @@ static struct dentry *ext2_lookup(struct inode * dir, struct dentry *dentry, uns
+ 	ino = ext2_inode_by_name(dir, &dentry->d_name);
+ 	inode = NULL;
+ 	if (ino) {
+-		inode = ext2_iget(dir->i_sb, ino);
++		inode = ext2_iget(inode_sb(dir), ino);
+ 		if (inode == ERR_PTR(-ESTALE)) {
+-			ext2_error(dir->i_sb, __func__,
++			ext2_error(inode_sb(dir), __func__,
+ 					"deleted inode referenced: %lu",
+ 					(unsigned long) ino);
+ 			return ERR_PTR(-EIO);
+@@ -108,7 +108,7 @@ static int ext2_create (struct inode * dir, struct dentry * dentry, umode_t mode
+ 		return PTR_ERR(inode);
+ 
+ 	inode->i_op = &ext2_file_inode_operations;
+-	if (test_opt(inode->i_sb, NOBH)) {
++	if (test_opt(inode_sb(inode), NOBH)) {
+ 		inode->i_mapping->a_ops = &ext2_nobh_aops;
+ 		inode->i_fop = &ext2_file_operations;
+ 	} else {
+@@ -126,7 +126,7 @@ static int ext2_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 		return PTR_ERR(inode);
+ 
+ 	inode->i_op = &ext2_file_inode_operations;
+-	if (test_opt(inode->i_sb, NOBH)) {
++	if (test_opt(inode_sb(inode), NOBH)) {
+ 		inode->i_mapping->a_ops = &ext2_nobh_aops;
+ 		inode->i_fop = &ext2_file_operations;
+ 	} else {
+@@ -164,7 +164,7 @@ static int ext2_mknod (struct inode * dir, struct dentry *dentry, umode_t mode,
+ static int ext2_symlink (struct inode * dir, struct dentry * dentry,
+ 	const char * symname)
+ {
+-	struct super_block * sb = dir->i_sb;
++	struct super_block * sb = inode_sb(dir);
+ 	int err = -ENAMETOOLONG;
+ 	unsigned l = strlen(symname)+1;
+ 	struct inode * inode;
+@@ -185,7 +185,7 @@ static int ext2_symlink (struct inode * dir, struct dentry * dentry,
+ 		/* slow symlink */
+ 		inode->i_op = &ext2_symlink_inode_operations;
+ 		inode_nohighmem(inode);
+-		if (test_opt(inode->i_sb, NOBH))
++		if (test_opt(inode_sb(inode), NOBH))
+ 			inode->i_mapping->a_ops = &ext2_nobh_aops;
+ 		else
+ 			inode->i_mapping->a_ops = &ext2_aops;
+@@ -254,7 +254,7 @@ static int ext2_mkdir(struct inode * dir, struct dentry * dentry, umode_t mode)
+ 
+ 	inode->i_op = &ext2_dir_inode_operations;
+ 	inode->i_fop = &ext2_dir_operations;
+-	if (test_opt(inode->i_sb, NOBH))
++	if (test_opt(inode_sb(inode), NOBH))
+ 		inode->i_mapping->a_ops = &ext2_nobh_aops;
  	else
- 		name = F2FS_INODE(page)->i_name;
+ 		inode->i_mapping->a_ops = &ext2_aops;
+diff --git a/fs/ext2/xattr.c b/fs/ext2/xattr.c
+index 62d9a659a8ff..613cfcae7b48 100644
+--- a/fs/ext2/xattr.c
++++ b/fs/ext2/xattr.c
+@@ -73,7 +73,8 @@
+ #ifdef EXT2_XATTR_DEBUG
+ # define ea_idebug(inode, f...) do { \
+ 		printk(KERN_DEBUG "inode %s:%ld: ", \
+-			inode->i_sb->s_id, inode->i_ino); \
++			inode_sb(inode)->s_id,
++		       inode->i_ino); \
+ 		printk(f); \
+ 		printk("\n"); \
+ 	} while (0)
+@@ -122,7 +123,7 @@ const struct xattr_handler *ext2_xattr_handlers[] = {
+ 	NULL
+ };
  
--	f2fs_msg(inode->i_sb, KERN_NOTICE,
--		"recover_inode: ino = %x, name = %s, inline = %x",
--			ino_of_node(page), name, raw->i_inline);
-+	f2fs_msg(inode_sb(inode), KERN_NOTICE,
-+		 "recover_inode: ino = %x, name = %s, inline = %x",
-+		 ino_of_node(page), name, raw->i_inline);
- }
+-#define EA_BLOCK_CACHE(inode)	(EXT2_SB(inode->i_sb)->s_ea_block_cache)
++#define EA_BLOCK_CACHE(inode)	(EXT2_SB(inode_sb(inode))->s_ea_block_cache)
  
- static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 8173ae688814..76cc211194c8 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -776,13 +776,13 @@ static int f2fs_drop_inode(struct inode *inode)
- 			/* should remain fi->extent_tree for writepage */
- 			f2fs_destroy_extent_node(inode);
+ static inline const struct xattr_handler *
+ ext2_xattr_handler(int name_index)
+@@ -169,7 +170,7 @@ ext2_xattr_get(struct inode *inode, int name_index, const char *name,
+ 	if (!EXT2_I(inode)->i_file_acl)
+ 		goto cleanup;
+ 	ea_idebug(inode, "reading block %d", EXT2_I(inode)->i_file_acl);
+-	bh = sb_bread(inode->i_sb, EXT2_I(inode)->i_file_acl);
++	bh = sb_bread(inode_sb(inode), EXT2_I(inode)->i_file_acl);
+ 	error = -EIO;
+ 	if (!bh)
+ 		goto cleanup;
+@@ -178,9 +179,9 @@ ext2_xattr_get(struct inode *inode, int name_index, const char *name,
+ 	end = bh->b_data + bh->b_size;
+ 	if (HDR(bh)->h_magic != cpu_to_le32(EXT2_XATTR_MAGIC) ||
+ 	    HDR(bh)->h_blocks != cpu_to_le32(1)) {
+-bad_block:	ext2_error(inode->i_sb, "ext2_xattr_get",
+-			"inode %ld: bad block %d", inode->i_ino,
+-			EXT2_I(inode)->i_file_acl);
++bad_block:	ext2_error(inode_sb(inode), "ext2_xattr_get",
++			     "inode %ld: bad block %d", inode->i_ino,
++			     EXT2_I(inode)->i_file_acl);
+ 		error = -EIO;
+ 		goto cleanup;
+ 	}
+@@ -207,8 +208,8 @@ bad_block:	ext2_error(inode->i_sb, "ext2_xattr_get",
+ 	if (entry->e_value_block != 0)
+ 		goto bad_block;
+ 	size = le32_to_cpu(entry->e_value_size);
+-	if (size > inode->i_sb->s_blocksize ||
+-	    le16_to_cpu(entry->e_value_offs) + size > inode->i_sb->s_blocksize)
++	if (size > inode_sb(inode)->s_blocksize ||
++	    le16_to_cpu(entry->e_value_offs) + size > inode_sb(inode)->s_blocksize)
+ 		goto bad_block;
  
--			sb_start_intwrite(inode->i_sb);
-+			sb_start_intwrite(inode_sb(inode));
- 			f2fs_i_size_write(inode, 0);
- 
- 			if (F2FS_HAS_BLOCKS(inode))
- 				f2fs_truncate(inode);
- 
--			sb_end_intwrite(inode->i_sb);
-+			sb_end_intwrite(inode_sb(inode));
- 
- 			spin_lock(&inode->i_lock);
- 			atomic_dec(&inode->i_count);
-@@ -1805,7 +1805,7 @@ static int f2fs_set_context(struct inode *inode, const void *ctx, size_t len,
- static unsigned f2fs_max_namelen(struct inode *inode)
+ 	if (ext2_xattr_cache_insert(ea_block_cache, bh))
+@@ -259,7 +260,7 @@ ext2_xattr_list(struct dentry *dentry, char *buffer, size_t buffer_size)
+ 	if (!EXT2_I(inode)->i_file_acl)
+ 		goto cleanup;
+ 	ea_idebug(inode, "reading block %d", EXT2_I(inode)->i_file_acl);
+-	bh = sb_bread(inode->i_sb, EXT2_I(inode)->i_file_acl);
++	bh = sb_bread(inode_sb(inode), EXT2_I(inode)->i_file_acl);
+ 	error = -EIO;
+ 	if (!bh)
+ 		goto cleanup;
+@@ -268,9 +269,9 @@ ext2_xattr_list(struct dentry *dentry, char *buffer, size_t buffer_size)
+ 	end = bh->b_data + bh->b_size;
+ 	if (HDR(bh)->h_magic != cpu_to_le32(EXT2_XATTR_MAGIC) ||
+ 	    HDR(bh)->h_blocks != cpu_to_le32(1)) {
+-bad_block:	ext2_error(inode->i_sb, "ext2_xattr_list",
+-			"inode %ld: bad block %d", inode->i_ino,
+-			EXT2_I(inode)->i_file_acl);
++bad_block:	ext2_error(inode_sb(inode), "ext2_xattr_list",
++			     "inode %ld: bad block %d", inode->i_ino,
++			     EXT2_I(inode)->i_file_acl);
+ 		error = -EIO;
+ 		goto cleanup;
+ 	}
+@@ -363,7 +364,7 @@ int
+ ext2_xattr_set(struct inode *inode, int name_index, const char *name,
+ 	       const void *value, size_t value_len, int flags)
  {
- 	return S_ISLNK(inode->i_mode) ?
--			inode->i_sb->s_blocksize : F2FS_NAME_LEN;
-+			inode_sb(inode)->s_blocksize : F2FS_NAME_LEN;
- }
- 
- static const struct fscrypt_operations f2fs_cryptops = {
-diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
-index a1fcd00bbb2b..235a3bca1f5f 100644
---- a/fs/f2fs/trace.c
-+++ b/fs/f2fs/trace.c
-@@ -74,7 +74,8 @@ void f2fs_trace_pid(struct page *page)
- 	f2fs_radix_tree_insert(&pids, pid, current);
- 
- 	trace_printk("%3x:%3x %4x %-16s\n",
--			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
-+			MAJOR(inode_sb(inode)->s_dev),
-+			MINOR(inode_sb(inode)->s_dev),
- 			pid, current->comm);
- out:
- 	mutex_unlock(&pids_lock);
-@@ -95,8 +96,8 @@ void f2fs_trace_ios(struct f2fs_io_info *fio, int flush)
- 	inode = fio->page->mapping->host;
- 	pid = page_private(fio->page);
- 
--	major = MAJOR(inode->i_sb->s_dev);
--	minor = MINOR(inode->i_sb->s_dev);
-+	major = MAJOR(inode_sb(inode)->s_dev);
-+	minor = MINOR(inode_sb(inode)->s_dev);
- 
- 	if (last_io.major == major && last_io.minor == minor &&
- 			last_io.pid == pid &&
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index ae2dfa709f5d..9d445f4f5d8b 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -29,7 +29,7 @@ static int f2fs_xattr_generic_get(const struct xattr_handler *handler,
- 		struct dentry *unused, struct inode *inode,
- 		const char *name, void *buffer, size_t size)
+-	struct super_block *sb = inode->i_sb;
++	struct super_block *sb = inode_sb(inode);
+ 	struct buffer_head *bh = NULL;
+ 	struct ext2_xattr_header *header = NULL;
+ 	struct ext2_xattr_entry *here, *last;
+@@ -627,7 +628,7 @@ static int
+ ext2_xattr_set2(struct inode *inode, struct buffer_head *old_bh,
+ 		struct ext2_xattr_header *header)
  {
--	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-+	struct f2fs_sb_info *sbi = F2FS_SB(inode_sb(inode));
- 
- 	switch (handler->flags) {
- 	case F2FS_XATTR_INDEX_USER:
-@@ -54,7 +54,7 @@ static int f2fs_xattr_generic_set(const struct xattr_handler *handler,
- 		const char *name, const void *value,
- 		size_t size, int flags)
+-	struct super_block *sb = inode->i_sb;
++	struct super_block *sb = inode_sb(inode);
+ 	struct buffer_head *new_bh = NULL;
+ 	int error;
+ 	struct mb_cache *ea_block_cache = EA_BLOCK_CACHE(inode);
+@@ -762,32 +763,32 @@ void
+ ext2_xattr_delete_inode(struct inode *inode)
  {
--	struct f2fs_sb_info *sbi = F2FS_SB(inode->i_sb);
-+	struct f2fs_sb_info *sbi = F2FS_SB(inode_sb(inode));
+ 	struct buffer_head *bh = NULL;
+-	struct ext2_sb_info *sbi = EXT2_SB(inode->i_sb);
++	struct ext2_sb_info *sbi = EXT2_SB(inode_sb(inode));
  
- 	switch (handler->flags) {
- 	case F2FS_XATTR_INDEX_USER:
+ 	down_write(&EXT2_I(inode)->xattr_sem);
+ 	if (!EXT2_I(inode)->i_file_acl)
+ 		goto cleanup;
+ 
+ 	if (!ext2_data_block_valid(sbi, EXT2_I(inode)->i_file_acl, 0)) {
+-		ext2_error(inode->i_sb, "ext2_xattr_delete_inode",
+-			"inode %ld: xattr block %d is out of data blocks range",
+-			inode->i_ino, EXT2_I(inode)->i_file_acl);
++		ext2_error(inode_sb(inode), "ext2_xattr_delete_inode",
++			   "inode %ld: xattr block %d is out of data blocks range",
++			   inode->i_ino, EXT2_I(inode)->i_file_acl);
+ 		goto cleanup;
+ 	}
+ 
+-	bh = sb_bread(inode->i_sb, EXT2_I(inode)->i_file_acl);
++	bh = sb_bread(inode_sb(inode), EXT2_I(inode)->i_file_acl);
+ 	if (!bh) {
+-		ext2_error(inode->i_sb, "ext2_xattr_delete_inode",
+-			"inode %ld: block %d read error", inode->i_ino,
+-			EXT2_I(inode)->i_file_acl);
++		ext2_error(inode_sb(inode), "ext2_xattr_delete_inode",
++			   "inode %ld: block %d read error", inode->i_ino,
++			   EXT2_I(inode)->i_file_acl);
+ 		goto cleanup;
+ 	}
+ 	ea_bdebug(bh, "b_count=%d", atomic_read(&(bh->b_count)));
+ 	if (HDR(bh)->h_magic != cpu_to_le32(EXT2_XATTR_MAGIC) ||
+ 	    HDR(bh)->h_blocks != cpu_to_le32(1)) {
+-		ext2_error(inode->i_sb, "ext2_xattr_delete_inode",
+-			"inode %ld: bad block %d", inode->i_ino,
+-			EXT2_I(inode)->i_file_acl);
++		ext2_error(inode_sb(inode), "ext2_xattr_delete_inode",
++			   "inode %ld: bad block %d", inode->i_ino,
++			   EXT2_I(inode)->i_file_acl);
+ 		goto cleanup;
+ 	}
+ 	lock_buffer(bh);
+@@ -910,11 +911,11 @@ ext2_xattr_cache_find(struct inode *inode, struct ext2_xattr_header *header)
+ 	while (ce) {
+ 		struct buffer_head *bh;
+ 
+-		bh = sb_bread(inode->i_sb, ce->e_value);
++		bh = sb_bread(inode_sb(inode), ce->e_value);
+ 		if (!bh) {
+-			ext2_error(inode->i_sb, "ext2_xattr_cache_find",
+-				"inode %ld: block %ld read error",
+-				inode->i_ino, (unsigned long) ce->e_value);
++			ext2_error(inode_sb(inode), "ext2_xattr_cache_find",
++				   "inode %ld: block %ld read error",
++				   inode->i_ino, (unsigned long) ce->e_value);
+ 		} else {
+ 			lock_buffer(bh);
+ 			/*
+diff --git a/fs/ext2/xattr_user.c b/fs/ext2/xattr_user.c
+index c243a3b4d69d..e2ca8f4829b1 100644
+--- a/fs/ext2/xattr_user.c
++++ b/fs/ext2/xattr_user.c
+@@ -22,7 +22,7 @@ ext2_xattr_user_get(const struct xattr_handler *handler,
+ 		    struct dentry *unused, struct inode *inode,
+ 		    const char *name, void *buffer, size_t size)
+ {
+-	if (!test_opt(inode->i_sb, XATTR_USER))
++	if (!test_opt(inode_sb(inode), XATTR_USER))
+ 		return -EOPNOTSUPP;
+ 	return ext2_xattr_get(inode, EXT2_XATTR_INDEX_USER,
+ 			      name, buffer, size);
+@@ -34,7 +34,7 @@ ext2_xattr_user_set(const struct xattr_handler *handler,
+ 		    const char *name, const void *value,
+ 		    size_t size, int flags)
+ {
+-	if (!test_opt(inode->i_sb, XATTR_USER))
++	if (!test_opt(inode_sb(inode), XATTR_USER))
+ 		return -EOPNOTSUPP;
+ 
+ 	return ext2_xattr_set(inode, EXT2_XATTR_INDEX_USER,
 -- 
 2.15.1
