@@ -1,112 +1,224 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932962AbeEHPdO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:33:14 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:62374 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753635AbeEHPdJ (ORCPT
+        id S933035AbeEHPdW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 11:33:22 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:54037 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932977AbeEHPdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 11:33:09 -0400
-Subject: Re: [PATCH v2 1/2] dt: bindings: lm3601x: Introduce the lm3601x
- driver
-To: Dan Murphy <dmurphy@ti.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>
-References: <20180508141704.24271-1-dmurphy@ti.com>
-From: "Andrew F. Davis" <afd@ti.com>
-Message-ID: <554b283f-7c27-e2de-3052-e5119dba9396@ti.com>
-Date: Tue, 8 May 2018 10:32:59 -0500
+        Tue, 8 May 2018 11:33:20 -0400
+Subject: Re: [PATCH] selftests/memfd: move common code into common.c
+To: Anders Roxell <anders.roxell@linaro.org>,
+        David Herrmann <dh.herrmann@gmail.com>
+Cc: linux-kselftest@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>
+References: <20180417085936.19512-1-anders.roxell@linaro.org>
+ <CADYN=9L47uYKQqZVz91EDHNd0aWXrTPc_tbdAZHBeWLKTHgcTA@mail.gmail.com>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <9a6dda41-1cbd-d01f-4161-19112712f2e7@kernel.org>
+Date: Tue, 8 May 2018 09:33:03 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180508141704.24271-1-dmurphy@ti.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CADYN=9L47uYKQqZVz91EDHNd0aWXrTPc_tbdAZHBeWLKTHgcTA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/08/2018 09:17 AM, Dan Murphy wrote:
-> Introduce the device tree bindings for the lm3601x
-> family of LED torch, flash and IR drivers.
+Hi David,
+
+On 05/08/2018 03:38 AM, Anders Roxell wrote:
+> On 17 April 2018 at 10:59, Anders Roxell <anders.roxell@linaro.org> wrote:
+>> Remove code duplication, in the current code, we move common code for
+>> memfd to common.c.
+>>
+>> The duplicate functions got added in commit 87b2d44026e0 ("selftests:
+>> add memfd/sealing page-pinning tests")
+>>
+>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+
+Okay pull in this patch. I will queue this up for 4.18-rc1. 
+Let me know if you have any objections.
+
+>> ---
+>>  tools/testing/selftests/memfd/common.c     | 37 +++++++++++++++++++
+>>  tools/testing/selftests/memfd/common.h     |  4 ++
+>>  tools/testing/selftests/memfd/fuse_test.c  | 43 +---------------------
+>>  tools/testing/selftests/memfd/memfd_test.c | 37 -------------------
+>>  4 files changed, 43 insertions(+), 78 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/memfd/common.c b/tools/testing/selftests/memfd/common.c
+>> index 8eb3d75f6e60..fee1f07828a3 100644
+>> --- a/tools/testing/selftests/memfd/common.c
+>> +++ b/tools/testing/selftests/memfd/common.c
+>> @@ -44,3 +44,40 @@ int sys_memfd_create(const char *name, unsigned int flags)
+>>
+>>         return syscall(__NR_memfd_create, name, flags);
+>>  }
+>> +
+>> +unsigned int mfd_assert_get_seals(int fd)
+>> +{
+>> +       int r;
+>> +
+>> +       r = fcntl(fd, F_GET_SEALS);
+>> +       if (r < 0) {
+>> +               printf("GET_SEALS(%d) failed: %m\n", fd);
+>> +               abort();
+>> +       }
+>> +
+>> +       return (unsigned int)r;
+>> +}
+>> +
+>> +void mfd_assert_add_seals(int fd, unsigned int seals)
+>> +{
+>> +       int r;
+>> +       unsigned int s;
+>> +
+>> +       s = mfd_assert_get_seals(fd);
+>> +       r = fcntl(fd, F_ADD_SEALS, seals);
+>> +       if (r < 0) {
+>> +               printf("ADD_SEALS(%d, %u -> %u) failed: %m\n", fd, s, seals);
+>> +               abort();
+>> +       }
+>> +}
+>> +
+>> +void mfd_assert_has_seals(int fd, unsigned int seals)
+>> +{
+>> +       unsigned int s;
+>> +
+>> +       s = mfd_assert_get_seals(fd);
+>> +       if (s != seals) {
+>> +               printf("%u != %u = GET_SEALS(%d)\n", seals, s, fd);
+>> +               abort();
+>> +       }
+>> +}
+>> diff --git a/tools/testing/selftests/memfd/common.h b/tools/testing/selftests/memfd/common.h
+>> index 522d2c630bd8..5c778d15e8c7 100644
+>> --- a/tools/testing/selftests/memfd/common.h
+>> +++ b/tools/testing/selftests/memfd/common.h
+>> @@ -6,4 +6,8 @@ extern int hugetlbfs_test;
+>>  unsigned long default_huge_page_size(void);
+>>  int sys_memfd_create(const char *name, unsigned int flags);
+>>
+>> +void mfd_assert_add_seals(int fd, unsigned int seals);
+>> +void mfd_assert_has_seals(int fd, unsigned int seals);
+>> +unsigned int mfd_assert_get_seals(int fd);
+>> +
+>>  #endif
+>> diff --git a/tools/testing/selftests/memfd/fuse_test.c b/tools/testing/selftests/memfd/fuse_test.c
+>> index b018e835737d..231714615861 100644
+>> --- a/tools/testing/selftests/memfd/fuse_test.c
+>> +++ b/tools/testing/selftests/memfd/fuse_test.c
+>> @@ -60,49 +60,10 @@ static int mfd_assert_new(const char *name, loff_t sz, unsigned int flags)
+>>         return fd;
+>>  }
+>>
+>> -static __u64 mfd_assert_get_seals(int fd)
+>> +static int mfd_busy_add_seals(int fd, unsigned int seals)
+>>  {
+>>         long r;
+>> -
+>> -       r = fcntl(fd, F_GET_SEALS);
+>> -       if (r < 0) {
+>> -               printf("GET_SEALS(%d) failed: %m\n", fd);
+>> -               abort();
+>> -       }
+>> -
+>> -       return r;
+>> -}
+>> -
+>> -static void mfd_assert_has_seals(int fd, __u64 seals)
+>> -{
+>> -       __u64 s;
+>> -
+>> -       s = mfd_assert_get_seals(fd);
+>> -       if (s != seals) {
+>> -               printf("%llu != %llu = GET_SEALS(%d)\n",
+>> -                      (unsigned long long)seals, (unsigned long long)s, fd);
+>> -               abort();
+>> -       }
+>> -}
+>> -
+>> -static void mfd_assert_add_seals(int fd, __u64 seals)
+>> -{
+>> -       long r;
+>> -       __u64 s;
+>> -
+>> -       s = mfd_assert_get_seals(fd);
+>> -       r = fcntl(fd, F_ADD_SEALS, seals);
+>> -       if (r < 0) {
+>> -               printf("ADD_SEALS(%d, %llu -> %llu) failed: %m\n",
+>> -                      fd, (unsigned long long)s, (unsigned long long)seals);
+>> -               abort();
+>> -       }
+>> -}
+>> -
+>> -static int mfd_busy_add_seals(int fd, __u64 seals)
+>> -{
+>> -       long r;
+>> -       __u64 s;
+>> +       unsigned int s;
+>>
+>>         r = fcntl(fd, F_GET_SEALS);
+>>         if (r < 0)
+>> diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
+>> index 10baa1652fc2..527789de69b5 100644
+>> --- a/tools/testing/selftests/memfd/memfd_test.c
+>> +++ b/tools/testing/selftests/memfd/memfd_test.c
+>> @@ -67,43 +67,6 @@ static void mfd_fail_new(const char *name, unsigned int flags)
+>>         }
+>>  }
+>>
+>> -static unsigned int mfd_assert_get_seals(int fd)
+>> -{
+>> -       int r;
+>> -
+>> -       r = fcntl(fd, F_GET_SEALS);
+>> -       if (r < 0) {
+>> -               printf("GET_SEALS(%d) failed: %m\n", fd);
+>> -               abort();
+>> -       }
+>> -
+>> -       return (unsigned int)r;
+>> -}
+>> -
+>> -static void mfd_assert_has_seals(int fd, unsigned int seals)
+>> -{
+>> -       unsigned int s;
+>> -
+>> -       s = mfd_assert_get_seals(fd);
+>> -       if (s != seals) {
+>> -               printf("%u != %u = GET_SEALS(%d)\n", seals, s, fd);
+>> -               abort();
+>> -       }
+>> -}
+>> -
+>> -static void mfd_assert_add_seals(int fd, unsigned int seals)
+>> -{
+>> -       int r;
+>> -       unsigned int s;
+>> -
+>> -       s = mfd_assert_get_seals(fd);
+>> -       r = fcntl(fd, F_ADD_SEALS, seals);
+>> -       if (r < 0) {
+>> -               printf("ADD_SEALS(%d, %u -> %u) failed: %m\n", fd, s, seals);
+>> -               abort();
+>> -       }
+>> -}
+>> -
+>>  static void mfd_fail_add_seals(int fd, unsigned int seals)
+>>  {
+>>         int r;
+>> --
+>> 2.17.0
+>>
 > 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
+> Ping.
 > 
-> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
-> 
->  .../devicetree/bindings/leds/leds-lm3601x.txt | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-> new file mode 100644
-> index 000000000000..38cdabf6ca7e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-> @@ -0,0 +1,51 @@
-> +* Texas Instruments - lm3601x Single-LED Flash Driver
-> +
-> +The LM3601X are ultra-small LED flash drivers that
-> +provides a high level of adjustability.
-> +
-> +Required properties:
-> +	- compatible : Can be one of the following
-> +		"ti,lm3601x"
 
-
-No wildcard compatibles, drop this.
-
-
-> +		"ti,lm36010"
-> +		"ti,lm36011"
-> +	- reg : I2C slave address
-> +	- #address-cells : 1
-> +	- #size-cells : 0
-> +
-> +Required child properties:
-> +	- reg : 0 - Indicates to support and register a torch interface
-> +		1 - Indicates to support and register a strobe interface
-> +		2 - Indicates to support and register an ir interface
-> +
-> +Optional child properties:
-> +	- label : see Documentation/devicetree/bindings/leds/common.txt
-> +
-
-
-Relative path might work better here.
-
-
-> +Example:
-> +led-controller@64 {
-> +	compatible = "ti,lm3601x";
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	reg = <0x64>;
-> +
-> +	led@0 {
-> +		reg = <0>;
-> +		label = "white:torch";
-> +		led-max-microamp=<10000>;
-> +	};
-> +
-> +	led@1 {
-> +		reg = <1>;
-> +		label = "white:strobe";
-> +		flash-max-microamp=<10000>;
-> +		flash-max-timeout-us=<800>;
-> +	};
-> +
-> +	led@2 {
-> +		reg = <2>;
-> +		label = "invisible:ir";
-> +	};
-> +}
-> +
-> +For more product information please see the links below:
-> +http://www.ti.com/product/LM36010
-> +http://www.ti.com/product/LM36011
-> 
+thanks,
+-- Shuah
