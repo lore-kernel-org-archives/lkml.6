@@ -1,101 +1,324 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756002AbeEHVfP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:35:15 -0400
-Received: from mail-eopbgr670115.outbound.protection.outlook.com ([40.107.67.115]:35900
-        "EHLO CAN01-TO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755716AbeEHVfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:35:12 -0400
-From: "Stephen  Bates" <sbates@raithlin.com>
-To: Jerome Glisse <jglisse@redhat.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-CC: Alex Williamson <alex.williamson@redhat.com>,
-        =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
-        "Bjorn Helgaas" <helgaas@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-Thread-Topic: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-Thread-Index: AQHT21soiBVnp6SJuEuLCiH6kBzTLKQk+zIAgACHcYCAAJmxAIAABkiAgAAoBgCAAAW2gIAAA0YAgAAHvYCAAAGOgIAACKoA//+n/4A=
-Date: Tue, 8 May 2018 21:35:08 +0000
-Message-ID: <F2F18B0F-8083-4A2C-AD21-58E460F5FD1B@raithlin.com>
-References: <20180423233046.21476-5-logang@deltatee.com>
- <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
- <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
- <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
- <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
- <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
- <20180508133407.57a46902@w520.home>
- <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
- <20180508141331.7cd737cb@w520.home>
- <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
- <20180508205005.GC15608@redhat.com>
-In-Reply-To: <20180508205005.GC15608@redhat.com>
-Accept-Language: en-CA, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.d.0.180505
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sbates@raithlin.com;
-x-originating-ip: [70.65.250.31]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;YTXPR0101MB0829;7:7CFm4cKRlQikXp+OtDANQpb8DL2AMkKGzAXheauQO1bmMVYqXGgat1ehrfK8M6NX1bZwjAAuAYAcI9q3QGFU6CG+qDp/xQA+0IIbpVA8qB3Ag4AE6Bs3ZKWWbeLZZu12kp0NVwf7JWjOLTWeXLpkhi6VsFxrfiuoxYJUpXdb+xzIN+PUDwBd8OoU0hX5L5MKgQhs5kxYHfSHSQCIPJ676+4vWx5ky5Mwb9yDVzlUmFckCbmPrvG1SFYLxG10t+l+
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:YTXPR0101MB0829;
-x-ms-traffictypediagnostic: YTXPR0101MB0829:
-x-microsoft-antispam-prvs: <YTXPR0101MB08296D21144EE739C1197095AA9A0@YTXPR0101MB0829.CANPRD01.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(149027)(150027)(6041310)(20161123562045)(2016111802025)(20161123560045)(20161123564045)(20161123558120)(6043046)(6072148)(201708071742011);SRVR:YTXPR0101MB0829;BCL:0;PCL:0;RULEID:;SRVR:YTXPR0101MB0829;
-x-forefront-prvs: 0666E15D35
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39830400003)(346002)(39380400002)(396003)(366004)(189003)(199004)(5660300001)(5250100002)(2906002)(33656002)(36756003)(3280700002)(25786009)(26005)(93886005)(110136005)(316002)(53936002)(66066001)(54906003)(58126008)(3660700001)(82746002)(186003)(6116002)(3846002)(4326008)(229853002)(8666007)(86362001)(102836004)(6246003)(6506007)(6436002)(97736004)(8936002)(478600001)(83716003)(2900100001)(106356001)(305945005)(105586002)(14454004)(99286004)(6486002)(68736007)(7736002)(8676002)(81156014)(81166006)(486006)(476003)(6512007)(2616005)(11346002)(7416002)(76176011)(446003)(59450400001);DIR:OUT;SFP:1102;SCL:1;SRVR:YTXPR0101MB0829;H:YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:3;A:1;
-x-microsoft-antispam-message-info: XP5ErPwqynH6qVAQz/yvhexkAziKe+7J9Gj6051Wd8FhHc4jDYhVg1NhwLREOkhGcMnGhcojWLrUdzTs0qgoRonAnjMWK5E36IzaJiqiVb7N4uRvsnfL/NO+Yi+SrCPoSTZkHeMxZlAf2iK3dD5qvkZkHpVquItPA2teu8MTI21G7UjAa5bXCOFFQhbW59nv
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A03863A98E0E564E87464F30DC62598A@CANPRD01.PROD.OUTLOOK.COM>
+        id S1755943AbeEHVj2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:39:28 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:46001 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755734AbeEHVj0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 17:39:26 -0400
+X-ME-Sender: <xms:DRnyWisIBjdwvI4fNhtDo7nmMD9Po2zZicvvcubNTxgYELdGY2dGsw>
+Date: Wed, 9 May 2018 07:39:21 +1000
+From: "Tobin C. Harding" <tobin@apporbit.com>
+To: Andrea Greco <andrea.greco.gapmilano@gmail.com>
+Cc: m.grzeschik@pengutronix.de, Andrea Greco <a.greco@4sigma.it>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/3] arcnet: com20020: Add memory map of com20020
+Message-ID: <20180508213921.GC7517@eros>
+References: <20180505213448.8180-1-andrea.greco.gapmilano@gmail.com>
+ <20180507025503.GF4197@eros>
+ <710123d5-c012-5d8f-1c9c-d197f341e702@gmail.com>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 6ef1c870-4af7-4922-c9ab-08d5b52b921a
-X-OriginatorOrg: raithlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ef1c870-4af7-4922-c9ab-08d5b52b921a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2018 21:35:08.1149
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB0829
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <710123d5-c012-5d8f-1c9c-d197f341e702@gmail.com>
+X-Mailer: Mutt 1.5.24 (2015-08-30)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w48LZIhL013647
 
-Hi Jerome
+On Tue, May 08, 2018 at 11:36:51AM +0200, Andrea Greco wrote:
+> On 05/07/2018 04:55 AM, Tobin C. Harding wrote:
+> >On Sat, May 05, 2018 at 11:34:45PM +0200, Andrea Greco wrote:
+> >>From: Andrea Greco <a.greco@4sigma.it>
+> >
+> >Hi Andrea,
+> >
+> >Here are some (mostly stylistic) suggestions to help you get your driver merged.
+> >
+> >>Add support for com20022I/com20020, memory mapped chip version.
+> >>Support bus: Intel 80xx and Motorola 68xx.
+> >>Bus size: Only 8 bit bus size is supported.
+> >>Added related device tree bindings
+> >>
+> >>Signed-off-by: Andrea Greco <a.greco@4sigma.it>
+> >>---
+> >>  .../devicetree/bindings/net/smsc-com20020.txt      |  23 +++
+> >>  drivers/net/arcnet/Kconfig                         |  12 +-
+> >>  drivers/net/arcnet/Makefile                        |   1 +
+> >>  drivers/net/arcnet/arcdevice.h                     |  27 ++-
+> >>  drivers/net/arcnet/com20020-membus.c               | 191 +++++++++++++++++++++
+> >>  drivers/net/arcnet/com20020.c                      |   9 +-
+> >>  6 files changed, 253 insertions(+), 10 deletions(-)
+> >>  create mode 100644 Documentation/devicetree/bindings/net/smsc-com20020.txt
+> >>  create mode 100644 drivers/net/arcnet/com20020-membus.c
+> >>
+> >>diff --git a/Documentation/devicetree/bindings/net/smsc-com20020.txt b/Documentation/devicetree/bindings/net/smsc-com20020.txt
+> >>new file mode 100644
+> >>index 000000000000..39c5b19c55af
+> >>--- /dev/null
+> >>+++ b/Documentation/devicetree/bindings/net/smsc-com20020.txt
+> >>@@ -0,0 +1,23 @@
+> >>+SMSC com20020, com20022I
+> >>+
+> >>+timeout: Arcnet timeout, checkout datashet
+> >>+clockp: Clock Prescaler, checkout datashet
+> >>+clockm: Clock multiplier, checkout datasheet
+> >>+
+> >>+phy-reset-gpios: Chip reset ppin
+> >>+phy-irq-gpios: Chip irq pin
+> 
+> ppin Corrected by my-self.
+> 
+> >>+
+> >>+com20020_A@0 {
+> >>+    compatible = "smsc,com20020";
+> >>+
+> >>+	timeout	= <0x3>;
+> >>+	backplane = <0x0>;
+> >>+
+> >>+	clockp = <0x0>;
+> >>+	clockm = <0x3>;
+> >>+
+> >>+	phy-reset-gpios = <&gpio3 21 GPIO_ACTIVE_LOW>;
+> >>+	phy-irq-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
+> >>+
+> >>+	status = "okay";
+> >>+};
+> >>diff --git a/drivers/net/arcnet/Kconfig b/drivers/net/arcnet/Kconfig
+> >>index 39bd16f3f86d..d39faf45be1e 100644
+> >>--- a/drivers/net/arcnet/Kconfig
+> >>+++ b/drivers/net/arcnet/Kconfig
+> >>@@ -3,7 +3,7 @@
+> >>  #
+> >>  menuconfig ARCNET
+> >>-	depends on NETDEVICES && (ISA || PCI || PCMCIA)
+> >>+	depends on NETDEVICES
+> >>  	tristate "ARCnet support"
+> >>  	---help---
+> >>  	  If you have a network card of this type, say Y and check out the
+> >>@@ -129,5 +129,15 @@ config ARCNET_COM20020_CS
+> >>  	  To compile this driver as a module, choose M here: the module will be
+> >>  	  called com20020_cs.  If unsure, say N.
+> >>+config ARCNET_COM20020_MEMORY_BUS
+> >>+	bool "Support for COM20020 on external memory"
+> >>+	depends on ARCNET_COM20020 && !(ARCNET_COM20020_PCI || ARCNET_COM20020_ISA || ARCNET_COM20020_CS)
+> >>+	help
+> >>+	  Say Y here if on your custom board mount com20020 or friends.
+> >>+
+> >>+	  Com20022I support arcnet bus 10Mbitps.
+> >>+	  This driver support only 8bit
+> >
+> >This driver only supports 8bit bus size.
+> >
+> >>         	    	 	       , and DMA is not supported is attached on your board at external interface bus.
+> >
+> >This bit does not make sense, sorry.
+> Removed description,
+> 
+> Proposal for v2:
+> Say Y here if your custom board mount com20020 chipset or friends.
+> Supported Chipset: com20020, com20022, com20022I-3v3.
+> If unsure, say N.
 
->    I think there is confusion here, Alex properly explained the scheme
->   PCIE-device do a ATS request to the IOMMU which returns a valid
->    translation for a virtual address. Device can then use that address
->    directly without going through IOMMU for translation.
+If you don't mind me doing review I'll do so again on v2 and comment then.
 
-This makes sense and to be honest I now understand ATS and its interaction with ACS a lot better than I did 24 hours ago ;-).
+> >>+	  Supported bus Intel80xx / Motorola 68xx.
+> >>+	  This driver not work with other com20020 module: PCI or PCMCIA compiled as [M].
+> >
+> >I'm not sure exactly what you want to say here, perhaps:
+> >
+> >   	  This driver does not work with other com20020 modules compiled
+> >	  as PCI or PCMCIA [M].
+> 
+> About this, all removed from kconfig
+> For PCI, PCMCIA, checkout downside
+> 
+> >>  endif # ARCNET
+> >>diff --git a/drivers/net/arcnet/Makefile b/drivers/net/arcnet/Makefile
+> >>index 53525e8ea130..19425c1e06f4 100644
+> >>--- a/drivers/net/arcnet/Makefile
+> >>+++ b/drivers/net/arcnet/Makefile
+> >>@@ -14,3 +14,4 @@ obj-$(CONFIG_ARCNET_COM20020) += com20020.o
+> >>  obj-$(CONFIG_ARCNET_COM20020_ISA) += com20020-isa.o
+> >>  obj-$(CONFIG_ARCNET_COM20020_PCI) += com20020-pci.o
+> >>  obj-$(CONFIG_ARCNET_COM20020_CS) += com20020_cs.o
+> >>+obj-$(CONFIG_ARCNET_COM20020_MEMORY_BUS) += com20020-membus.o
+> >>diff --git a/drivers/net/arcnet/arcdevice.h b/drivers/net/arcnet/arcdevice.h
+> >>index d09b2b46ab63..16c608269cca 100644
+> >>--- a/drivers/net/arcnet/arcdevice.h
+> >>+++ b/drivers/net/arcnet/arcdevice.h
+> >>@@ -201,7 +201,7 @@ struct ArcProto {
+> >>  	void (*rx)(struct net_device *dev, int bufnum,
+> >>  		   struct archdr *pkthdr, int length);
+> >>  	int (*build_header)(struct sk_buff *skb, struct net_device *dev,
+> >>-			    unsigned short ethproto, uint8_t daddr);
+> >>+				unsigned short ethproto, uint8_t daddr);
+> >
+> >   +			    unsigned short ethproto, uint8_t daddr);
+> >
+> >Please use Linux coding style style, parameters continuing on separate
+> >line are aligned with opening parenthesis.
+> >
+> >>  	/* these functions return '1' if the skb can now be freed */
+> >>  	int (*prepare_tx)(struct net_device *dev, struct archdr *pkt,
+> >>@@ -326,9 +326,9 @@ struct arcnet_local {
+> >>  		void (*recontrigger) (struct net_device * dev, int enable);
+> >>  		void (*copy_to_card)(struct net_device *dev, int bufnum,
+> >>-				     int offset, void *buf, int count);
+> >>+					 int offset, void *buf, int count);
+> >>  		void (*copy_from_card)(struct net_device *dev, int bufnum,
+> >>-				       int offset, void *buf, int count);
+> >>+					   int offset, void *buf, int count);
+> >>  	} hw;
+> >>  	void __iomem *mem_start;	/* pointer to ioremap'ed MMIO */
+> >>@@ -360,7 +360,7 @@ struct net_device *alloc_arcdev(const char *name);
+> >>  int arcnet_open(struct net_device *dev);
+> >>  int arcnet_close(struct net_device *dev);
+> >>  netdev_tx_t arcnet_send_packet(struct sk_buff *skb,
+> >>-			       struct net_device *dev);
+> >>+				   struct net_device *dev);
+> >>  void arcnet_timeout(struct net_device *dev);
+> 
+> Not required modification then all removed.
+> 
+> >>  /* I/O equivalents */
+> >>@@ -371,7 +371,23 @@ void arcnet_timeout(struct net_device *dev);
+> >>  #define BUS_ALIGN  1
+> >>  #endif
+> >>-/* addr and offset allow register like names to define the actual IO  address.
+> >>+#ifdef CONFIG_ARCNET_COM20020_MEMORY_BUS
+> >>+#define arcnet_inb(addr, offset)					\
+> >>+	ioread8((void __iomem *)(addr) + BUS_ALIGN * (offset))
+> >>+
+> >>+#define arcnet_outb(value, addr, offset)				\
+> >>+	iowrite8(value, (void __iomem *)(addr) + BUS_ALIGN * (offset))
+> >>+
+> >>+#define arcnet_insb(addr, offset, buffer, count)			\
+> >>+	ioread8_rep((void __iomem *)					\
+> >>+	(addr) + BUS_ALIGN * (offset), buffer, count)
+> >>+
+> >>+#define arcnet_outsb(addr, offset, buffer, count)			\
+> >>+	iowrite8_rep((void __iomem *)					\
+> >>+	(addr) + BUS_ALIGN * (offset), buffer, count)
+> >>+#else
+> >>+/**
+> >>+ * addr and offset allow register like names to define the actual IO  address.
+> >>   * A configuration option multiplies the offset for alignment.
+> >>   */
+> >>  #define arcnet_inb(addr, offset)					\
+> >>@@ -388,6 +404,7 @@ void arcnet_timeout(struct net_device *dev);
+> >>  	readb((addr) + (offset))
+> >>  #define arcnet_writeb(value, addr, offset)				\
+> >>  	writeb(value, (addr) + (offset))
+> >>+#endif
+> >>  #endif				/* __KERNEL__ */
+> >>  #endif				/* _LINUX_ARCDEVICE_H */
+> 
+> 
+> This is most important part where a suggestion will be very appreciated.
+> This part define how arcnet drivers read and write over physical.
+> The old driver can always use readb/writeb and friends, this driver rise big
+> kernel panic.
+> 
+> This driver make a ioreamp with: devm_ioremap.
+> Then, for r/w operation i use ioread8/iowrite8 and friends.
+> 
+> My quickly solution was make a ugly #ifdef.
+> 
+> With #ifndef all other driver implementation could not be used together
+> this driver, because break, how driver write over physical.
+> A proposal could be add a read/write callback to arcdevice.h struct hw.
+> 
+> PROS:
+> Every driver fill this callback, this is a solution.
+> 
+> CONS:
+> This solution require a small change for all com20020 driver
+> implementations. I don't dispose of all hardware for make a accurate
+> test. I could only test memory bus version.
+> 
+> Any other ideas, will be very appreciated.
 
->    ATS is implemented by the IOMMU not by the device (well device implement
->    the client side of it). Also ATS is meaningless without something like
->    PASID as far as i know.
-    
-I think it's the client side that is what is important to us. Not many EPs support ATS today and it's not clear if many will in the future.  So assuming we want to do p2pdma between devices (some of) which do NOT support ATS how best do we handle the ACS issue? Disabling the IOMMU seems a bit strong to me given this impacts all the PCI domains in the system and not just the domain we wish to do P2P on.
+I had a bit of a think about this for you.  Can I start by saying I am
+not an overly experienced driver developer (or kernel developer for that
+matter) so please take all suggestions with this in mind.
 
-Stephen
+Instead of using ifdef's to define arnet_inb/outb() what if you define a
+set of functions arnet_readb(), arnet_writeb() etc and use them after
+you have done the memory map.  (I had to look up the difference between
+readb() and inb() so if this suggestion is complete garbage please
+ignore me.)
+
+Also while reading com20020-membus.c I saw a few more changes that you
+can use if you so please.  Here is a patch with comments added
+
+diff --git a/drivers/net/arcnet/com20020-membus.c b/drivers/net/arcnet/com20020-membus.c
+index 9eead734a3cf..9f3d9b8d9d1f 100644
+--- a/drivers/net/arcnet/com20020-membus.c
++++ b/drivers/net/arcnet/com20020-membus.c
+@@ -39,7 +39,7 @@ static int com20020_probe(struct platform_device *pdev)
+        struct net_device *dev;
+        struct arcnet_local *lp;
+        struct resource res, *iores;
+-       int ret, phy_reset, err;
++       int ret, phy_reset;
+
+This function uses 'ret', 'err', and 'phy_reset' for return value.  I
+see what you are getting at by using 'phy_reset' but I don't see the
+value in having both 'err' and 'ret' in the same function.
+
+        u32 timeout, backplane, clockp, clockm;
+        void __iomem *ioaddr;
+ 
+@@ -47,8 +47,9 @@ static int com20020_probe(struct platform_device *pdev)
+ 
+        iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+-       if (of_address_to_resource(np, 0, &res))
+-               return -EINVAL;
++       ret = of_address_to_resource(np, 0, &res);
++       if (ret)
++               return ret;
+ 
+of_address_to_resource() returns -EINVAL on error so we can return it
+and maintain program logic.  I see other places intree however that
+call of_address_to_resource() as you have done.
+
+        ret = of_property_read_u32(np, "timeout", &timeout);
+        if (ret) {
+@@ -77,16 +78,17 @@ static int com20020_probe(struct platform_device *pdev)
+        phy_reset = of_get_named_gpio(np, "phy-reset-gpios", 0);
+        if (phy_reset == -EPROBE_DEFER) {
+                return phy_reset;
+-       } else if (!gpio_is_valid(phy_reset)) {
++       }
+
+No need for else statement after 'return' (golang linter complains about
+this so I always notice it :)
+
++       if (!gpio_is_valid(phy_reset)) {
+                dev_err(&pdev->dev, "phy-reset-gpios not valid !");
+-               return 0;
++               return 0;       /* why return 0 after calling dev_err() */
+
+(Added code comment so it would show up in patch.)  I couldn't
+understand why this returns 0 here.  Is it what you meant to do?
+
+        }
+ 
+-       err = devm_gpio_request_one(&pdev->dev, phy_reset, GPIOF_OUT_INIT_LOW,
++       ret = devm_gpio_request_one(&pdev->dev, phy_reset, GPIOF_OUT_INIT_LOW,
+                                    "arcnet-phy-reset");
+-       if (err) {
+-               dev_err(&pdev->dev, "failed to get phy-reset-gpios: %d\n", err);
+-               return err;
+
+Already commented on above.
+
+
+Hope this helps,
+Tobin.
