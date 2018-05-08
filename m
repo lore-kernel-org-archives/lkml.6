@@ -1,92 +1,38 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2483311-1525767131-2-7180816456634205973
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525767130; b=fd3SV6+tDSJ4gRB5xoaL45PIADpBre4Ln3GxWqr/2FoYmKJY8A
-    p0f+JJiYhaADnPeScTSzGSo+pC5BOD7e7MsU/IQ5KH6p1PkVYgkzLqXXkAIsJXwv
-    eJVFyW2mxMdWw+lhBD1yynUjxysE5SSC5Gt+EhgopJ+3n37qFwQGGVu7O0yn2y05
-    2w24hJ1S4tatPtZInnIVyOysYhIx264CivqGNCpFrLis4UNwKzkevzN0rVIBXsr1
-    vtWVIDtx0lbqsJs1tnqGdjikKjODaSX2YSC1cQxMCgWyhyT15/QQOJmlX1WkK5i1
-    38eC7M+XDUolz/iqkMJhGh7/QKNjT3CXMh6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525767130; bh=nwnRXKJ/PIxAqPBvyBFU9y1KldZc3W
-    fChLWmExP6bU0=; b=S8pOBZEc20ZHHqixhaWLJmsMRMJB0UiZWOsZFHcaw/l03X
-    n9WQhByjuayH0P/HSIZsbrN+wP0+cIu7Tud3AnMfE8GpYrToD1PiMZ5G8ursp75Y
-    dUZTns2/NFNr+NVALDCmaMwh9igJ77mJU21T2wCt1TCPWNCXOr7yNpBQ8Pw7LNfk
-    Kpv99Wn5nbtGhL/4XGmrXP8frrMTXlsDlfUuB9iWFKZLiC6h1FdxOdE5wHfC9y43
-    GuippmIS9+gAYc1OfzPdTCehOfAC5ekJ4GCZixctQpRbLFo1tb3jOXsThAu5ChTJ
-    hfXpkbn9O1XOD7Wu4dllyNOXNKYl1VbglJxiu47A==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=pmeUNRvr x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=pmeUNRvr x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJYxkTzc5hk21ZmOlRHzabfoGpzTWv7mb4tP3ebyzUO/OvW1t1w1pGFVn22/t/J52nqJ6zxQoFK6FXMyNnfC72nsKK3WVPud09ryoe1nJAr7ROqVD6Zg
-    sfzVdzPZBAuUqUmypz9uZHKoXPd4IMAuE7j0BXPLuD+AxDClucJs7+nLFMPOmcPc5jyKmD15i3GlfTCIbN/FnAV9H3EcpR4Gs+rF+hWl/UsstS+Ci2GJGDFJ
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8 a=a8odm4thDjT3yH3-VcoA:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754570AbeEHIMG (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 8 May 2018 04:12:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754343AbeEHIME (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 8 May 2018 04:12:04 -0400
+Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZqWJe8iZzY+sq5DDZD0GnADy4vfzu/9hj7vgEfrZfnKGlIecbn1V2wB2iWf6IHIx7fM++qg
+ARC-Seal: i=1; a=rsa-sha256; t=1525767130; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ZY6r2V6kU4k1CyjGFeuOh3+gvGEOVTXUaoqX415reTO2cVlB3zrb/vDFqPvmpLNfdn
+         pu0nNHbepA7KqFqOTiPiQJlWttG5ZVbxaLmzXUF+g8zf31hBdL+447Mmc7RwJePaGt2Y
+         jAxQXQ66xeZOa3KUD3CxT3jgdhboeLkb0O9kx/rB9i+Nhc9tazSvhJvclS+T5qM9vdmp
+         gKaPShYgjct9f9gvV+Kc3uT1mu6kM/J4cYLooumzA9X36FowqgNCZ9pwzYefy5b0yveE
+         pYMG4P3fQxeBSg/H4mhaoLb9jb9TM6m9QeqZC8uy2fY13hkV/TaKSfAbgcf3l5GCHTfZ
+         5GBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=byJPUyF9BNaU/W1J6eU2iGje5WM10k6pkn68KiuzObs=;
+        b=qR9yKvZ4t6ONZKqJdA7xAxD0iCWXL1eyt9KRcez89QsWUW6BfGF4mvDeXiVeN9Uvoh
+         vb3USQA+tLPv6se1GwTLsxf292OJ/ryNBl2eFxrSyjx9FZi/KUmrm56T1EqOAWjCsLuf
+         F8muj1ktfwjGYxkW0xI5MI+dvFfmGYZY/ntXXSEiSHWWtDPhdffgywaYIutGYjPh0pQ5
+         xb8r/3+piLbsBteu+d2lrnoay6yXcW4HmRfvFqlT2jpne93X7yoTyv2SG89rIP9c/ckF
+         MuyatiN7EYm+y7+SBGfLTVq1pkPTAaI5oRvno0yYNn6iD6HZ7lM533su1S9DuPrhVqQ/
+         UFEQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=TlRkwZ+b;
+       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=TlRkwZ+b;
+       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, DaeRyong Jeong <threeearcat@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 05/52] ALSA: seq: Fix races at MIDI encoding in snd_virmidi_output_trigger()
-Date: Tue,  8 May 2018 10:10:03 +0200
-Message-Id: <20180508073928.749948928@linuxfoundation.org>
+	stable@vger.kernel.org,
+	Robert Rosengren <robert.rosengren@axis.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.16 07/52] ALSA: aloop: Mark paused device as inactive
+Date: Tue,  8 May 2018 10:10:05 +0200
+Message-Id: <20180508073928.969981342@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
 References: <20180508073928.058320984@linuxfoundation.org>
@@ -94,9 +40,10 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1599882794600699949?=
+X-GMAIL-MSGID: =?utf-8?q?1599882794600699949?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -104,51 +51,57 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Robert Rosengren <robert.rosengren@axis.com>
 
-commit 8f22e52528cc372b218b5f100457469615c733ce upstream.
+commit 306a4f3ca7f3c7dfa473ebd19d66e40e59d99734 upstream.
 
-The sequencer virmidi code has an open race at its output trigger
-callback: namely, virmidi keeps only one event packet for processing
-while it doesn't protect for concurrent output trigger calls.
+Show paused ALSA aloop device as inactive, i.e. the control
+"PCM Slave Active" set as false. Notification sent upon state change.
 
-snd_virmidi_output_trigger() tries to process the previously
-unfinished event before starting encoding the given MIDI stream, but
-this is done without any lock.  Meanwhile, if another rawmidi stream
-starts the output trigger, this proceeds further, and overwrites the
-event package that is being processed in another thread.  This
-eventually corrupts and may lead to the invalid memory access if the
-event type is like SYSEX.
+This makes it possible for client capturing from aloop device to know if
+data is expected. Without it the client expects data even if playback
+is paused.
 
-The fix is just to move the spinlock to cover both the pending event
-and the new stream.
-
-The bug was spotted by a new fuzzer, RaceFuzzer.
-
-BugLink: http://lkml.kernel.org/r/20180426045223.GA15307@dragonet.kaist.ac.kr
-Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
-Cc: <stable@vger.kernel.org>
+Signed-off-by: Robert Rosengren <robert.rosengren@axis.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/seq/seq_virmidi.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/drivers/aloop.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/sound/core/seq/seq_virmidi.c
-+++ b/sound/core/seq/seq_virmidi.c
-@@ -174,12 +174,12 @@ static void snd_virmidi_output_trigger(s
- 			}
- 			return;
- 		}
-+		spin_lock_irqsave(&substream->runtime->lock, flags);
- 		if (vmidi->event.type != SNDRV_SEQ_EVENT_NONE) {
- 			if (snd_seq_kernel_client_dispatch(vmidi->client, &vmidi->event, in_atomic(), 0) < 0)
--				return;
-+				goto out;
- 			vmidi->event.type = SNDRV_SEQ_EVENT_NONE;
- 		}
--		spin_lock_irqsave(&substream->runtime->lock, flags);
- 		while (1) {
- 			count = __snd_rawmidi_transmit_peek(substream, buf, sizeof(buf));
- 			if (count <= 0)
+--- a/sound/drivers/aloop.c
++++ b/sound/drivers/aloop.c
+@@ -296,6 +296,8 @@ static int loopback_trigger(struct snd_p
+ 		cable->pause |= stream;
+ 		loopback_timer_stop(dpcm);
+ 		spin_unlock(&cable->lock);
++		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
++			loopback_active_notify(dpcm);
+ 		break;
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+@@ -304,6 +306,8 @@ static int loopback_trigger(struct snd_p
+ 		cable->pause &= ~stream;
+ 		loopback_timer_start(dpcm);
+ 		spin_unlock(&cable->lock);
++		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
++			loopback_active_notify(dpcm);
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -892,9 +896,11 @@ static int loopback_active_get(struct sn
+ 			[kcontrol->id.subdevice][kcontrol->id.device ^ 1];
+ 	unsigned int val = 0;
+ 
+-	if (cable != NULL)
+-		val = (cable->running & (1 << SNDRV_PCM_STREAM_PLAYBACK)) ?
+-									1 : 0;
++	if (cable != NULL) {
++		unsigned int running = cable->running ^ cable->pause;
++
++		val = (running & (1 << SNDRV_PCM_STREAM_PLAYBACK)) ? 1 : 0;
++	}
+ 	ucontrol->value.integer.value[0] = val;
+ 	return 0;
+ }
