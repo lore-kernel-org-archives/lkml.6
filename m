@@ -1,283 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932376AbeEHJyu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 05:54:50 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55182 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932154AbeEHJyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 05:54:47 -0400
-Subject: Re: [PATCH 4/3] dma-debug: remove CONFIG_HAVE_DMA_API_DEBUG
-To: Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
-Cc: linux-arch@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Michal Simek <monstr@monstr.eu>, linux-snps-arc@lists.infradead.org,
-        linux-c6x-dev@linux-c6x.org, linux-parisc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org,
-        openrisc@lists.librecores.org, Greentime Hu <green.hu@gmail.com>,
-        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, Vincent Chen <deanbo422@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20180424140235.9125-1-hch@lst.de> <20180427155342.GA9232@lst.de>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <cfc6ac1e-56b7-0211-afa3-86865a01667d@arm.com>
-Date: Tue, 8 May 2018 10:54:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932395AbeEHJ4a (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 05:56:30 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44742 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932069AbeEHJ43 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 05:56:29 -0400
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+To: Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH  09/17] powerpc: make __ioremap_caller() common to PPC32 and PPC64
+In-Reply-To: <457781f2de403852ba2a60257c3d9aca75c4d2c8.1525435203.git.christophe.leroy@c-s.fr>
+References: <cover.1525435203.git.christophe.leroy@c-s.fr> <457781f2de403852ba2a60257c3d9aca75c4d2c8.1525435203.git.christophe.leroy@c-s.fr>
+Date: Tue, 08 May 2018 15:26:20 +0530
 MIME-Version: 1.0
-In-Reply-To: <20180427155342.GA9232@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18050809-0044-0000-0000-000005504A69
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050809-0045-0000-0000-000028918ACF
+Message-Id: <87lgcusc6z.fsf@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-08_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805080095
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/04/18 16:53, Christoph Hellwig wrote:
-> There is no arch specific code required for dma-debug, so there is no
-> need to opt into the support either.
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-Makes sense, and a purely negative diffstat is always pleasing :)
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 > ---
->   .../io/dma-api-debug/arch-support.txt         | 31 -------------------
->   arch/Kconfig                                  |  3 --
->   arch/arm/Kconfig                              |  1 -
->   arch/arm64/Kconfig                            |  1 -
->   arch/c6x/Kconfig                              |  1 -
->   arch/ia64/Kconfig                             |  1 -
->   arch/microblaze/Kconfig                       |  1 -
->   arch/mips/Kconfig                             |  1 -
->   arch/powerpc/Kconfig                          |  1 -
->   arch/riscv/Kconfig                            |  1 -
->   arch/s390/Kconfig                             |  1 -
->   arch/sh/Kconfig                               |  1 -
->   arch/sparc/Kconfig                            |  1 -
->   arch/x86/Kconfig                              |  1 -
->   arch/xtensa/Kconfig                           |  1 -
->   lib/Kconfig.debug                             |  1 -
->   16 files changed, 48 deletions(-)
->   delete mode 100644 Documentation/features/io/dma-api-debug/arch-support.txt
-> 
-> diff --git a/Documentation/features/io/dma-api-debug/arch-support.txt b/Documentation/features/io/dma-api-debug/arch-support.txt
-> deleted file mode 100644
-> index e438ed675623..000000000000
-> --- a/Documentation/features/io/dma-api-debug/arch-support.txt
-> +++ /dev/null
-> @@ -1,31 +0,0 @@
-> -#
-> -# Feature name:          dma-api-debug
-> -#         Kconfig:       HAVE_DMA_API_DEBUG
-> -#         description:   arch supports DMA debug facilities
-> -#
-> -    -----------------------
-> -    |         arch |status|
-> -    -----------------------
-> -    |       alpha: | TODO |
-> -    |         arc: | TODO |
-> -    |         arm: |  ok  |
-> -    |       arm64: |  ok  |
-> -    |         c6x: |  ok  |
-> -    |       h8300: | TODO |
-> -    |     hexagon: | TODO |
-> -    |        ia64: |  ok  |
-> -    |        m68k: | TODO |
-> -    |  microblaze: |  ok  |
-> -    |        mips: |  ok  |
-> -    |       nios2: | TODO |
-> -    |    openrisc: | TODO |
-> -    |      parisc: | TODO |
-> -    |     powerpc: |  ok  |
-> -    |        s390: |  ok  |
-> -    |          sh: |  ok  |
-> -    |       sparc: |  ok  |
-> -    |          um: | TODO |
-> -    |   unicore32: | TODO |
-> -    |         x86: |  ok  |
-> -    |      xtensa: |  ok  |
-> -    -----------------------
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 8e0d665c8d53..f07a1a99e5db 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -278,9 +278,6 @@ config HAVE_CLK
->   	  The <linux/clk.h> calls support software clock gating and
->   	  thus are a key power management tool on many systems.
->   
-> -config HAVE_DMA_API_DEBUG
-> -	bool
+>  arch/powerpc/include/asm/book3s/64/pgtable.h |   1 +
+>  arch/powerpc/mm/ioremap.c                    | 126 +++++++--------------------
+>  2 files changed, 34 insertions(+), 93 deletions(-)
+>
+> diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+> index c5c6ead06bfb..2bebdd8302cb 100644
+> --- a/arch/powerpc/include/asm/book3s/64/pgtable.h
+> +++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+> @@ -18,6 +18,7 @@
+>  #define _PAGE_RO		0
+>  #define _PAGE_USER		0
+>  #define _PAGE_HWWRITE		0
+> +#define _PAGE_COHERENT		0
+
+This is something I was trying to avoid when I split the headers. We do
+support _PAGE_USER it is !_PAGE_PRIVILEGED. It gets really confusing
+when we have these conflicting names because we are trying to make code
+common across platforms.
+
+
+>  
+>  #define _PAGE_EXEC		0x00001 /* execute permission */
+>  #define _PAGE_WRITE		0x00002 /* write access allowed */
+> diff --git a/arch/powerpc/mm/ioremap.c b/arch/powerpc/mm/ioremap.c
+> index 65d611d44d38..59be5dfcb3e9 100644
+> --- a/arch/powerpc/mm/ioremap.c
+> +++ b/arch/powerpc/mm/ioremap.c
+> @@ -33,95 +33,6 @@ unsigned long ioremap_bot;
+>  unsigned long ioremap_bot = IOREMAP_BASE;
+>  #endif
+>  
+> -#ifdef CONFIG_PPC32
 > -
->   config HAVE_HW_BREAKPOINT
->   	bool
->   	depends on PERF_EVENTS
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 676977bdfe33..c43f5bb55ac8 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -60,7 +60,6 @@ config ARM
->   	select HAVE_CONTEXT_TRACKING
->   	select HAVE_C_RECORDMCOUNT
->   	select HAVE_DEBUG_KMEMLEAK
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_DMA_CONTIGUOUS if MMU
->   	select HAVE_DYNAMIC_FTRACE if (!XIP_KERNEL) && !CPU_ENDIAN_BE32 && MMU
->   	select HAVE_DYNAMIC_FTRACE_WITH_REGS if HAVE_DYNAMIC_FTRACE
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index db51b6445744..b25ed7834f6c 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -105,7 +105,6 @@ config ARM64
->   	select HAVE_CONTEXT_TRACKING
->   	select HAVE_DEBUG_BUGVERBOSE
->   	select HAVE_DEBUG_KMEMLEAK
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_DMA_CONTIGUOUS
->   	select HAVE_DYNAMIC_FTRACE
->   	select HAVE_EFFICIENT_UNALIGNED_ACCESS
-> diff --git a/arch/c6x/Kconfig b/arch/c6x/Kconfig
-> index c6b4dd1418b4..8c088b96e372 100644
-> --- a/arch/c6x/Kconfig
-> +++ b/arch/c6x/Kconfig
-> @@ -10,7 +10,6 @@ config C6X
->   	select GENERIC_ATOMIC64
->   	select GENERIC_IRQ_SHOW
->   	select HAVE_ARCH_TRACEHOOK
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_MEMBLOCK
->   	select SPARSE_IRQ
->   	select IRQ_DOMAIN
-> diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-> index 9485b5490eca..2067289fad4a 100644
-> --- a/arch/ia64/Kconfig
-> +++ b/arch/ia64/Kconfig
-> @@ -29,7 +29,6 @@ config IA64
->   	select HAVE_FUNCTION_TRACER
->   	select TTY
->   	select HAVE_ARCH_TRACEHOOK
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_MEMBLOCK
->   	select HAVE_MEMBLOCK_NODE_MAP
->   	select HAVE_VIRT_CPU_ACCOUNTING
-> diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-> index 3817a3e2146c..d14782100088 100644
-> --- a/arch/microblaze/Kconfig
-> +++ b/arch/microblaze/Kconfig
-> @@ -19,7 +19,6 @@ config MICROBLAZE
->   	select HAVE_ARCH_HASH
->   	select HAVE_ARCH_KGDB
->   	select HAVE_DEBUG_KMEMLEAK
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_DYNAMIC_FTRACE
->   	select HAVE_FTRACE_MCOUNT_RECORD
->   	select HAVE_FUNCTION_GRAPH_TRACER
-> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> index 0f619b8c0e9e..2dcdc13cd65d 100644
-> --- a/arch/mips/Kconfig
-> +++ b/arch/mips/Kconfig
-> @@ -42,7 +42,6 @@ config MIPS
->   	select HAVE_C_RECORDMCOUNT
->   	select HAVE_DEBUG_KMEMLEAK
->   	select HAVE_DEBUG_STACKOVERFLOW
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_DMA_CONTIGUOUS
->   	select HAVE_DYNAMIC_FTRACE
->   	select HAVE_EXIT_THREAD
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 1887f8f86a77..268fd46fc3c7 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -181,7 +181,6 @@ config PPC
->   	select HAVE_CONTEXT_TRACKING		if PPC64
->   	select HAVE_DEBUG_KMEMLEAK
->   	select HAVE_DEBUG_STACKOVERFLOW
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_DYNAMIC_FTRACE
->   	select HAVE_DYNAMIC_FTRACE_WITH_REGS	if MPROFILE_KERNEL
->   	select HAVE_EBPF_JIT			if PPC64
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 17212ba54ee3..95e2da34aaad 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -23,7 +23,6 @@ config RISCV
->   	select GENERIC_ATOMIC64 if !64BIT || !RISCV_ISA_A
->   	select HAVE_MEMBLOCK
->   	select HAVE_MEMBLOCK_NODE_MAP
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_DMA_CONTIGUOUS
->   	select HAVE_GENERIC_DMA_COHERENT
->   	select IRQ_DOMAIN
-> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-> index b794a2ab6d15..6a64287ec1da 100644
-> --- a/arch/s390/Kconfig
-> +++ b/arch/s390/Kconfig
-> @@ -130,7 +130,6 @@ config S390
->   	select HAVE_CMPXCHG_LOCAL
->   	select HAVE_COPY_THREAD_TLS
->   	select HAVE_DEBUG_KMEMLEAK
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_DMA_CONTIGUOUS
->   	select DMA_DIRECT_OPS
->   	select HAVE_DYNAMIC_FTRACE
-> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-> index 9417f70e008e..7d521926041e 100644
-> --- a/arch/sh/Kconfig
-> +++ b/arch/sh/Kconfig
-> @@ -13,7 +13,6 @@ config SUPERH
->   	select HAVE_OPROFILE
->   	select HAVE_GENERIC_DMA_COHERENT
->   	select HAVE_ARCH_TRACEHOOK
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_PERF_EVENTS
->   	select HAVE_DEBUG_BUGVERBOSE
->   	select ARCH_HAVE_CUSTOM_GPIO_H
-> diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-> index c1cfc17eb504..435dbc033afe 100644
-> --- a/arch/sparc/Kconfig
-> +++ b/arch/sparc/Kconfig
-> @@ -25,7 +25,6 @@ config SPARC
->   	select RTC_CLASS
->   	select RTC_DRV_M48T59
->   	select RTC_SYSTOHC
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_ARCH_JUMP_LABEL if SPARC64
->   	select GENERIC_IRQ_SHOW
->   	select ARCH_WANT_IPC_PARSE_VERSION
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index aad35c568681..3eeca48a146b 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -135,7 +135,6 @@ config X86
->   	select HAVE_C_RECORDMCOUNT
->   	select HAVE_DEBUG_KMEMLEAK
->   	select HAVE_DEBUG_STACKOVERFLOW
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_DMA_CONTIGUOUS
->   	select HAVE_DYNAMIC_FTRACE
->   	select HAVE_DYNAMIC_FTRACE_WITH_REGS
-> diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-> index c921e8bccdc8..17df332269b2 100644
-> --- a/arch/xtensa/Kconfig
-> +++ b/arch/xtensa/Kconfig
-> @@ -19,7 +19,6 @@ config XTENSA
->   	select HAVE_ARCH_KASAN if MMU
->   	select HAVE_CC_STACKPROTECTOR
->   	select HAVE_DEBUG_KMEMLEAK
-> -	select HAVE_DMA_API_DEBUG
->   	select HAVE_DMA_CONTIGUOUS
->   	select HAVE_EXIT_THREAD
->   	select HAVE_FUNCTION_TRACER
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 685ed2dd4384..d5175eb7b917 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1634,7 +1634,6 @@ config PROVIDE_OHCI1394_DMA_INIT
->   
->   config DMA_API_DEBUG
->   	bool "Enable debugging of DMA-API usage"
-> -	depends on HAVE_DMA_API_DEBUG
->   	select NEED_DMA_MAP_STATE
->   	help
->   	  Enable this option to debug the use of the DMA API by device drivers.
-> 
+> -void __iomem *
+> -__ioremap_caller(phys_addr_t addr, unsigned long size, unsigned long flags,
+> -		 void *caller)
+> -{
+> -	unsigned long v, i;
+> -	phys_addr_t p;
+> -	int err;
+> -
+> -	/* Make sure we have the base flags */
+> -	if ((flags & _PAGE_PRESENT) == 0)
+> -		flags |= pgprot_val(PAGE_KERNEL);
+> -
+> -	/* Non-cacheable page cannot be coherent */
+> -	if (flags & _PAGE_NO_CACHE)
+> -		flags &= ~_PAGE_COHERENT;
+> -
+> -	/*
+> -	 * Choose an address to map it to.
+> -	 * Once the vmalloc system is running, we use it.
+> -	 * Before then, we use space going up from IOREMAP_BASE
+> -	 * (ioremap_bot records where we're up to).
+> -	 */
+> -	p = addr & PAGE_MASK;
+> -	size = PAGE_ALIGN(addr + size) - p;
+> -
+> -	/*
+> -	 * If the address lies within the first 16 MB, assume it's in ISA
+> -	 * memory space
+> -	 */
+> -	if (p < 16*1024*1024)
+> -		p += _ISA_MEM_BASE;
+> -
+> -#ifndef CONFIG_CRASH_DUMP
+> -	/*
+> -	 * Don't allow anybody to remap normal RAM that we're using.
+> -	 * mem_init() sets high_memory so only do the check after that.
+> -	 */
+> -	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
+> -	    page_is_ram(__phys_to_pfn(p))) {
+> -		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
+> -		       (unsigned long long)p, __builtin_return_address(0));
+> -		return NULL;
+> -	}
+> -#endif
+> -
+> -	if (size == 0)
+> -		return NULL;
+> -
+> -	/*
+> -	 * Is it already mapped?  Perhaps overlapped by a previous
+> -	 * mapping.
+> -	 */
+> -	v = p_block_mapped(p);
+> -	if (v)
+> -		goto out;
+> -
+> -	if (slab_is_available()) {
+> -		struct vm_struct *area;
+> -		area = get_vm_area_caller(size, VM_IOREMAP, caller);
+> -		if (area == 0)
+> -			return NULL;
+> -		area->phys_addr = p;
+> -		v = (unsigned long) area->addr;
+> -	} else {
+> -		v = ioremap_bot;
+> -		ioremap_bot += size;
+> -	}
+> -
+> -	/*
+> -	 * Should check if it is a candidate for a BAT mapping
+> -	 */
+> -
+> -	err = 0;
+> -	for (i = 0; i < size && err == 0; i += PAGE_SIZE)
+> -		err = map_kernel_page(v+i, p+i, flags);
+> -	if (err) {
+> -		if (slab_is_available())
+> -			vunmap((void *)v);
+> -		return NULL;
+> -	}
+> -
+> -out:
+> -	return (void __iomem *) (v + ((unsigned long)addr & ~PAGE_MASK));
+> -}
+> -
+> -#else
+> -
+>  /**
+>   * __ioremap_at - Low level function to establish the page tables
+>   *                for an IO mapping
+> @@ -135,6 +46,10 @@ void __iomem * __ioremap_at(phys_addr_t pa, void *ea, unsigned long size,
+>  	if ((flags & _PAGE_PRESENT) == 0)
+>  		flags |= pgprot_val(PAGE_KERNEL);
+>  
+> +	/* Non-cacheable page cannot be coherent */
+> +	if (flags & _PAGE_NO_CACHE)
+> +		flags &= ~_PAGE_COHERENT;
+> +
+>  	/* We don't support the 4K PFN hack with ioremap */
+>  	if (flags & H_PAGE_4K_PFN)
+>  		return NULL;
+> @@ -187,6 +102,33 @@ void __iomem * __ioremap_caller(phys_addr_t addr, unsigned long size,
+>  	if ((size == 0) || (paligned == 0))
+>  		return NULL;
+>  
+> +	/*
+> +	 * If the address lies within the first 16 MB, assume it's in ISA
+> +	 * memory space
+> +	 */
+> +	if (IS_ENABLED(CONFIG_PPC32) && paligned < 16*1024*1024)
+> +		paligned += _ISA_MEM_BASE;
+> +
+> +	/*
+> +	 * Don't allow anybody to remap normal RAM that we're using.
+> +	 * mem_init() sets high_memory so only do the check after that.
+> +	 */
+> +	if (!IS_ENABLED(CONFIG_CRASH_DUMP) &&
+> +	    slab_is_available() && (paligned < virt_to_phys(high_memory)) &&
+> +	    page_is_ram(__phys_to_pfn(paligned))) {
+> +		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
+> +		       (u64)paligned, __builtin_return_address(0));
+> +		return NULL;
+> +	}
+> +
+> +	/*
+> +	 * Is it already mapped?  Perhaps overlapped by a previous
+> +	 * mapping.
+> +	 */
+> +	ret = (void __iomem *)p_block_mapped(paligned);
+> +	if (ret)
+> +		goto out;
+> +
+>  	if (slab_is_available()) {
+>  		struct vm_struct *area;
+>  
+> @@ -205,14 +147,12 @@ void __iomem * __ioremap_caller(phys_addr_t addr, unsigned long size,
+>  		if (ret)
+>  			ioremap_bot += size;
+>  	}
+> -
+> +out:
+>  	if (ret)
+> -		ret += addr & ~PAGE_MASK;
+> +		ret += (unsigned long)addr & ~PAGE_MASK;
+>  	return ret;
+>  }
+>  
+> -#endif
+> -
+>  /*
+>   * Unmap an IO region and remove it from imalloc'd list.
+>   * Access to IO memory should be serialized by driver.
+> -- 
+> 2.13.3
