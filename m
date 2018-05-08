@@ -1,131 +1,146 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3049930-1525796498-2-5961527239198581826
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525796498; b=f2kpM4NR/0ZIrOij2f6MJkWGC9Otn/rsahO7yoAYU7bveXyba2
-    cGfQdoFyzV9aTCFm+CgjxZJeFRWjrg9l881i131D6s5VuobEkcRoX9OfgGR+8q3q
-    OXYcppwOMZYtLQ7tJqqyrljIKU0NF6NsOQDXwF+mJmY5+jGkPozg7eozXkxAzKrk
-    ufo0Fg/XgOBwg5mn4lCd7Kp5WBgdXPYn1ho2vTLi5S85ecGVwPg0IiKsyGUgLeHb
-    +udRb/3FwWhlkWCWaYaK71bKXgZJlH6ejmVyl0Mrmc1sPa4+RL0/Ns2BKeyHV9jR
-    rgqmBtyT8/ZK4O1ubZI4fSyqk4Nt0O8n6lJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1525796498; bh=kR7ufXSol95k1pSiBjphmTBL8KG9QL
-    PsQGWLrnERm1g=; b=nq2RcnRDySu98ph5k0sm7MDr2+s88laROj3kFZzREW1SRk
-    dfjOZiFmM8qJYn3RskFr6V59bCwhiiDGZ0UwJKbdpkdRLD3tpDndqK6EkPTjkaMO
-    VFNQhfAgVPPWw+z9T8ONHyycwAHXUK+863S3ZiebT1++YOD1ZZQx0LY80mQgyWv/
-    rBS+4ml6rxmTT21kOqQy8ufSywe+KMUc7axLuwKiMt8VqAz0jishxXxSkQmOr9pX
-    9beAtVD0WeabmlWLJSTmYrHUcs4V6WMKiQkOdpyUDIvuwSqxwGO2bxJgCq6DugFY
-    Eyn3WmZNVkKspBEAH9OaaMjwicCgCdSVseOH3qPw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=roeck-us.net header.i=@roeck-us.net header.b=lyxlyiRV
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=roeck-us.net header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=roeck-us.net header.i=@roeck-us.net header.b=lyxlyiRV
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=roeck-us.net;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=roeck-us.net header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAN2asEwCzBatfbM9IrKLPyfBJK8INS85Cvoy1LLP0+DnY1mEIhs4ZwhGpChjaBWUiH50PGZgTZaPFUUGXfKIgui+ZH6I8IuhhCV5hExla7+WTQ/iVC2
-    Xvk0o68WYVAFNz3nGqIlEPj16QZ5DFESoZIRD93mbPHvt9u/6ys5RWQET16cZ9QfOdg5fIyRuyxJp11KMAp/cV+mYVWmKDCM4RSlveUzwNZkvz1Xs0nlHR/5
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=9+rZDBEiDlHhcck0kWbJtElFXBc=:19
-    a=kj9zAlcOel0A:10 a=bdhgAJw2s1sA:10 a=VUJBJC2UJ8kA:10 a=YWtRXzOXAAAA:8
-    a=HoCkWmlCV56ydFt2py0A:9 a=CjuIK1q_8ugA:10 a=eX-Bu5Fvq_kA:10
-    a=XosyFl2cby_8ldcV-F0Q:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755483AbeEHQVh (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 8 May 2018 12:21:37 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:40032 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755384AbeEHQVf (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 8 May 2018 12:21:35 -0400
-Date: Tue, 8 May 2018 09:21:32 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.14 00/43] 4.14.40-stable review
-Message-ID: <20180508162132.GB18520@roeck-us.net>
-References: <20180508074003.984433784@linuxfoundation.org>
+Return-Path: <bot@kernelci.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1525791902; cv=none;
+        d=google.com; s=arc-20160816;
+        b=YR4FQ9DoaRPl6e52pGiVB1QtRxpo9ohzzopMtpx+Y+KZgcG3zsJi7jCneyIZMmkTP6
+         uRRud0lz34ptX82hUmeUhgDyY1rttdyh9v6Zgy4+JfsOEQIFkruTO4APnuY3R9TaP1T0
+         SeWGiiz9aF4KPeVHEXCw2DCB2vksZYn0SNBLb0WRU5JlvnlMQTexUG+e/e7eo5wUpnq8
+         KM/Mu3RMuhPOPeV/H6UmPP9tI503hAkZCPrOgptevWKzD4R3XbSiiumd5WxcHiEiO24x
+         1E19rOpPUHNf6ZKyrkYF5qiYgQDDmh0XDe4XmIUcgYeMXnGCCuk9Y17tGIc2uLQdX6ob
+         we+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
+         :mime-version:date:message-id:arc-authentication-results;
+        bh=VesxlB7Vbt0s6Xq0XKB8pjGL68nw1ids869A/aHXhXA=;
+        b=YYWdaAaoWiWIPDzycUkMSeVfU3dB4Wij6p22tNQB4gF6OitF+v1T52akUTxo0dWOUf
+         TiQwGe3L3r60vZXMDV6JjUrjNjLbZnPDpaIcRMpfafpcD7PM+s52q55h7jdU0Cj4qZru
+         hrAK48ZNJQr3DlVrWZ3L4lSOAsZllJe/zvWODDLOdO2azV+NaHgBYHk4f7LRcSu3+7Eg
+         6kgu6guGv5Nm19WDAbMo0PjsNNNRy2FMTPaQFJZgvCRU31bAakLWRvzbr69i3XuOPGm9
+         alnadGJ7okBs5YDtIMzgD1Hot7grE3SHnQY+Lt5OHbe47n5679+8YC6UiZv8TalLCohk
+         koqw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+X-Google-Smtp-Source: AB8JxZq+Im8s4Uwl8c1hVUE/HRGyY0LP9a9S/13VMXlFFnzQ5D3YjEKztIG8JXfxMzRb7iZN/sk+bQ==
+Message-ID: <5af1bc9d.1c69fb81.4944e.b595@mx.google.com>
+Date: Tue, 08 May 2018 08:05:01 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-4.14.y
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.14.39-44-gc5a9c8283a69
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+References: <20180508074003.984433784@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 00/43] 4.14.40-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org
+From: kernelci.org bot <bot@kernelci.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
+ shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
+ lkft-triage@lists.linaro.org, stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599882950858871392?=
+X-GMAIL-MSGID: =?utf-8?q?1599908770116386070?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 08, 2018 at 10:10:19AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.40 release.
-> There are 43 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu May 10 07:39:32 UTC 2018.
-> Anything received after that time might be too late.
-> 
+stable-rc/linux-4.14.y boot: 114 boots: 2 failed, 104 passed with 5 offline=
+, 3 conflicts (v4.14.39-44-gc5a9c8283a69)
 
-Build results:
-	total: 146 pass: 146 fail: 0
-Qemu test results:
-	total: 141 pass: 141 fail: 0
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.14.y/kernel/v4.14.39-44-gc5a9c8283a69/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
+y/kernel/v4.14.39-44-gc5a9c8283a69/
 
-Details are available at http://kerneltests.org/builders/.
+Tree: stable-rc
+Branch: linux-4.14.y
+Git Describe: v4.14.39-44-gc5a9c8283a69
+Git Commit: c5a9c8283a6928d22ddc589157213f4f331fca76
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 56 unique boards, 23 SoC families, 15 builds out of 185
 
-Guenter
+Boot Regressions Detected:
+
+arm:
+
+    multi_v7_defconfig:
+        am335x-boneblack:
+            lab-collabora: new failure (last pass: v4.14.39-4-g5ce1e4d96025)
+
+    tegra_defconfig:
+        tegra124-jetson-tk1:
+            lab-mhart: new failure (last pass: v4.14.39-4-g5ce1e4d96025)
+
+arm64:
+
+    defconfig:
+        apq8016-sbc:
+            lab-mhart: new failure (last pass: v4.14.39-4-g5ce1e4d96025)
+        meson-gxl-s905x-khadas-vim:
+            lab-baylibre: failing since 12 days (last pass: v4.14.26-140-g2=
+a1700a4929f - first fail: v4.14.36-184-g3cd53e436ee2)
+
+x86:
+
+    x86_64_defconfig:
+        x86-atom330:
+            lab-mhart: new failure (last pass: v4.14.39-4-g5ce1e4d96025)
+
+Boot Failures Detected:
+
+arm64:
+
+    defconfig
+        apq8016-sbc: 1 failed lab
+
+x86:
+
+    x86_64_defconfig
+        x86-atom330: 1 failed lab
+
+Offline Platforms:
+
+arm:
+
+    multi_v7_defconfig:
+        qcom-apq8064-cm-qs600: 1 offline lab
+        qcom-apq8064-ifc6410: 1 offline lab
+
+    qcom_defconfig:
+        qcom-apq8064-cm-qs600: 1 offline lab
+        qcom-apq8064-ifc6410: 1 offline lab
+
+arm64:
+
+    defconfig:
+        apq8016-sbc: 1 offline lab
+
+Conflicting Boot Failures Detected: (These likely are not failures as other=
+ labs are reporting PASS. Needs review.)
+
+arm:
+
+    tegra_defconfig:
+        tegra124-jetson-tk1:
+            lab-collabora: PASS
+            lab-mhart: FAIL
+            lab-baylibre-seattle: PASS
+
+    multi_v7_defconfig:
+        am335x-boneblack:
+            lab-collabora: FAIL
+            lab-baylibre-seattle: PASS
+
+arm64:
+
+    defconfig:
+        meson-gxl-s905x-khadas-vim:
+            lab-baylibre-seattle: PASS
+            lab-baylibre: FAIL
+
+---
+For more info write to <info@kernelci.org>
