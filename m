@@ -1,69 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755915AbeEHVTd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:19:33 -0400
-Received: from mail-io0-f171.google.com ([209.85.223.171]:44437 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755795AbeEHVT0 (ORCPT
+        id S1755968AbeEHVU1 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:20:27 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:40168 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755544AbeEHVUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:19:26 -0400
-X-Google-Smtp-Source: AB8JxZohIBztqJAR9mY4uwPhtWyMWvC/jPpoKY5RqiiaIuFpPA8vh2+rJxBYd5tZ+nbS3AiWvfGDsA==
-Subject: Re: bug in tag handling in blk-mq?
-From: Jens Axboe <axboe@kernel.dk>
-To: Mike Galbraith <efault@gmx.de>,
-        Paolo Valente <paolo.valente@linaro.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-        linux-block <linux-block@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>
-References: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
- <7760d23b-7a4c-a645-1c7a-da7569bb44dc@kernel.dk>
- <84145CD7-B917-4B32-8A5C-310C1910DB71@linaro.org>
- <1525755090.24338.1.camel@gmx.de> <1525768632.5208.4.camel@gmx.de>
- <ffd0c030-43f8-0dbe-42b3-03bb9c410bea@kernel.dk>
- <1525797766.5204.2.camel@gmx.de>
- <3692ce7d-a767-72e6-65ae-6178b6c2e7d8@kernel.dk>
-Message-ID: <f04636df-3f97-6c16-f37b-d407e062b9e5@kernel.dk>
-Date: Tue, 8 May 2018 15:19:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 8 May 2018 17:20:24 -0400
+X-Google-Smtp-Source: AB8JxZrTqSxok07WSAppAmQgqX1kYh63mzJPnO6SEp9oxS6Ci0/x/X6tBwMZaJ2jWvF5k0zsXroT2QS3/AjnUqfkBRk=
 MIME-Version: 1.0
-In-Reply-To: <3692ce7d-a767-72e6-65ae-6178b6c2e7d8@kernel.dk>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <a8398da8-2f69-5694-69d6-224b547a378a@huawei.com>
+References: <1522480343-37669-1-git-send-email-xieyisheng1@huawei.com>
+ <3699960.UXjPS91TgB@aspire.rjw.lan> <a8398da8-2f69-5694-69d6-224b547a378a@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 8 May 2018 23:20:23 +0200
+X-Google-Sender-Auth: VEE3xCpQOBUAnSiNXqzc-5fFKUg
+Message-ID: <CAJZ5v0h4DLNBJz1QmgmCitj2_UfMBLxboZ2i9rpFZ4+qZPf+eA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] PCI ACPI: Avoid panic when PCI IO resource's size
+ is not page aligned
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Bjorn Helgaas <bhelgaas@google.com>, Len Brown <lenb@kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <guohanjun@huawei.com>, Jon Masters <jcm@redhat.com>,
+        Toshi Kani <toshi.kani@hpe.com>, tanxiaojun@huawei.com,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Hanjun Guo <hanjun.guo@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/8/18 2:37 PM, Jens Axboe wrote:
-> On 5/8/18 10:42 AM, Mike Galbraith wrote:
->> On Tue, 2018-05-08 at 08:55 -0600, Jens Axboe wrote:
->>>
->>> All the block debug files are empty...
->>
->> Sigh.  Take 2, this time cat debug files, having turned block tracing
->> off before doing anything else (so trace bits in dmesg.txt should end
->> AT the stall).
-> 
-> OK, that's better. What I see from the traces:
-> 
-> - You have regular IO and some non-fs IO (from scsi_execute()). This mix
->   may be key.
-> 
-> - sdd has nothing pending, yet has 6 active waitqueues.
-> 
-> I'm going to see if I can reproduce this. Paolo, what kind of attempts
-> to reproduce this have you done?
+On Mon, May 7, 2018 at 10:06 AM, Yisheng Xie <xieyisheng1@huawei.com> wrote:
+>
+>
+> On 2018/5/1 17:28, Rafael J. Wysocki wrote:
+>>>  drivers/acpi/pci_root.c | 2 +-
+>>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>>> >
+>>> > diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+>>> > index 6fc204a..b758ca3 100644
+>>> > --- a/drivers/acpi/pci_root.c
+>>> > +++ b/drivers/acpi/pci_root.c
+>>> > @@ -746,7 +746,7 @@ static void acpi_pci_root_remap_iospace(struct resource_entry *entry)
+>>> >            goto err;
+>>> >
+>>> >    res->start = port;
+>>> > -  res->end = port + length - 1;
+>>> > +  res->end = PAGE_ALIGN(port + length) - 1;
+>> Shouldn't pci_remap_iospace() sanitize its arguments instead?
+>
+> Yeah, I thought that pci_remap_iospace() will be called at many place, and presently I
+> had not seen any problem at other place except acpi_pci_root_remap_iospace(). Anyway,
+> sanitize arguments in pci_remap_iospace() can resolve the problem more thoroughly, but
+> should more common, right?
+>
+> Therefore, is the follow change ok from your point of view?
+>
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index e597655..8607298 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3527,6 +3527,9 @@ int pci_remap_iospace(const struct resource *res, phys_addr_t phys_addr)
+>         if (res->end > IO_SPACE_LIMIT)
+>                 return -EINVAL;
+>
+> +       if (!PAGE_ALIGNED(vaddr) || !PAGE_ALIGNED(resource_size(res)))
+> +               return -EINVAL;
+> +
+>         return ioremap_page_range(vaddr, vaddr + resource_size(res), phys_addr,
+>                                   pgprot_device(PAGE_KERNEL));
+>  #else
 
-No luck so far. Out of the patches you referenced, I can only find the
-shallow depth change, since that's in the parent of this email. Can
-you send those as well?
-
-Perhaps also expand a bit on exactly what you are running. File system,
-mount options, etc.
-
--- 
-Jens Axboe
+I'd rather apply PAGE_ALIGN() to the arguments of ioremap_page_range()
+and call it anyway.  It will fail if the mapping cannot be created.
