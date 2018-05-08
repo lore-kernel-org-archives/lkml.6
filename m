@@ -1,70 +1,75 @@
-Return-Path: <samuel.thibault@ens-lyon.org>
-X-Google-Smtp-Source: AB8JxZrsb9GAKoEkQ1nhyD8+KizajfBmf/mpEta6ItRUOPSNbpxnxJjMtwTgv+iY+mMBeKSdSDOV
-ARC-Seal: i=1; a=rsa-sha256; t=1525788266; cv=none;
+Return-Path: <baijiaju1990@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525770408; cv=none;
         d=google.com; s=arc-20160816;
-        b=h6nVhmvAWNGBEZjM647tmgrVMu/clCpbdp4cXwDLw/IeqyMOv5Xx/103z/bs1MCKXO
-         wSeTnnNR4Sv5yXR9PGiSB2HoK2ngCep8ZU1JjKCyvFCuJOxIkVoZ+JGL6jrnVd8JnY1Z
-         sEpTf+C35dULnXm/OmoUn2aimADL9msWvQbrBjeZbhHMpNV3W58AObwZ3W7bO+wsoe9Q
-         lup3YC7yAEZnHjL17RVhPXBOQxcuIMK2lAHFZvFhFuAZrnatXW8dqlYseDjwaVnFzuQC
-         YL7DTR6G+3/Vr4wg4StbWVf+sAEFtCVTVdM6tq+ZDKPmvrBSgqIsrQKzi5ePsZlvz4K1
-         qSZQ==
+        b=NjI3fpmVrunW0MtqdadXIqTn3HHbd/es+l8SH+8d3aasMHWFZBgGKOzasNqSJ2I1Lu
+         /TZqJSQ4CwDL39R7dWZWlPusiHQ/WPG/cQM5LgVyXpgdQV7XZpSIsNlFMf5mjakVUtY7
+         hsDVASO8H7pNlQd16J4l1JWFGoM0CzlbcgQtplbabdySKclFP/TjfcrjbeNawQS5hFLq
+         kShHVYiMvkljehe9yoWxSg7gpjEv/B22UxKVsoeOHCEyoqhsDj+qXzY86vJaftS8V7z+
+         Y5+TnYGkmwW/nSciRQRVk3Zhoi1bV91dkTvvdywgBMEzhMfUhSmOE4B4rN5Ml4/NpOMX
+         DCDQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:organization:in-reply-to:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:arc-authentication-results;
-        bh=NbdUEcVWa6lytMX4X3CHxtsODUqtgcvbbQThZ4sWf6o=;
-        b=Fi2tsEDirm4cVQiP/iNDPvpRm1MHJeP9uRPwD/8XUlReDRN3GWLDmE2FML6DbIEx4F
-         qZrwEaJM1x63+Bq3hv4Om+PvkINIOIAwAI+6Vl1LhmdITC5/EfXYhYboIRhMuYKq5qUH
-         +FHG4J0HHKWVQlGdnG93k6UuTN4klpz1mCjfWLdOfOnKenCDZhQbYarAlsuCwqgZfr1f
-         N/2NbWVMV2wBdRihjbxCKFQLzMfUrnPPcWBzeC5VzqV3MDYvCZ8azrctI3fRFF3cB+dr
-         QAaeSV/8k1qUNPx2G7DBkT2rxPVMlEPEmk30HSZQ1xKjeqLE5VeOcbnNgv9bx2IXSQ6S
-         x/8w==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=lZCTNsYiE+droQiYeJWtssiD0JCUWQy57jGyZYntK8g=;
+        b=MgMnSQf9K2CBN4+6Iy3I2yOUNVp1KSlWLi3eWUn9QjD9cbXSPlAjjnUHPDyl3MhQfw
+         PiOG7lnuH+sF512+pVTQIBAayqUqGqwIG8X1mL5pgYJGkZfCwcDGl5qqhsKzYGE29jEb
+         j69dlhJUvLxzukS2zQTB8BYPjpMaofxj04CKoH2FN8SgOlc3IT79o5SBjPlLv3P3L2oJ
+         MNj1xlUzwAyTTxuBPlUhAnmBq/FlLyfHpoUdBwFLRhg90tJ2TJeKKg1MJVhSyqBjk9a6
+         Dm1olVbs+bS80EyNZro6TVaEM2dfGjku5D1QCwxAugYkKxYeKCuiDab0rqD3Jc26foAX
+         d45g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 2a0c:e300::1 is neither permitted nor denied by domain of samuel.thibault@ens-lyon.org) smtp.mailfrom=samuel.thibault@ens-lyon.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DZxsSsiQ;
+       spf=pass (google.com: domain of baijiaju1990@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=baijiaju1990@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 2a0c:e300::1 is neither permitted nor denied by domain of samuel.thibault@ens-lyon.org) smtp.mailfrom=samuel.thibault@ens-lyon.org
-Date: Tue, 8 May 2018 16:04:24 +0200
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: w.d.hubbs@gmail.com, chris@the-brannons.com, kirk@reisers.ca,
-	devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-	speakup@linux-speakup.org
-Subject: Re: [PATCHv2] staging: speakup: Add pause command used on switching
- to graphical mode
-Message-ID: <20180508140424.u3z3vp6ctjdiskse@var.youpi.perso.aquilenet.fr>
-Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
-	Greg KH <gregkh@linuxfoundation.org>, w.d.hubbs@gmail.com,
-	chris@the-brannons.com, kirk@reisers.ca, devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org, speakup@linux-speakup.org
-References: <20180507201427.hv5xncif3afs5roj@var.youpi.perso.aquilenet.fr>
- <20180508113131.GA6218@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180508113131.GA6218@kroah.com>
-Organization: I am not organized
-User-Agent: NeoMutt/20170113 (1.7.2)
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DZxsSsiQ;
+       spf=pass (google.com: domain of baijiaju1990@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=baijiaju1990@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZrdXNOPzfVuBDEEKMRDTzxuGsbOa1vOEhnAER68H/FRXvTRfXh9IlFWazSFKkukKq+QAMSrtw==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: gregkh@linuxfoundation.org,
+	arve@android.com,
+	tkjos@android.com,
+	maco@android.com
+Cc: devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] android: binder: Fix a possible data race in binder_alloc_mmap_handler
+Date: Tue,  8 May 2018 17:06:39 +0800
+Message-Id: <20180508090639.14275-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599837643714047366?=
-X-GMAIL-MSGID: =?utf-8?q?1599904957436479536?=
+X-GMAIL-THRID: =?utf-8?q?1599886231521179884?=
+X-GMAIL-MSGID: =?utf-8?q?1599886231521179884?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Greg KH, le mar. 08 mai 2018 13:31:31 +0200, a ecrit:
-> On Mon, May 07, 2018 at 10:14:27PM +0200, Samuel Thibault wrote:
-> > For software speech syntheses to be able to manage concurrent audio card
-> > access, they need to know when speakup stops emitting text to be spoken
-> > because the console has switched to graphical mode.  This introduces a
-> > PAUSE command to do so.
-> > 
-> > Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
-> > 
-> > ---
-> > Difference from v1: fix codestyle issues.
-> 
-> I already applied the v1 version, can you just send a patch for the
-> coding style fixes?
+The write operations to "alloc->buffer" are protected by
+the lock on line 679 and 730, but the read operation to
+this data on line 712 is not protected by the lock.
+Thus, there may exist a data race for "alloc->buffer".
 
-Yes, sure, will do.
+To fix this data race, the read operation to "alloc->buffer" 
+should be also protected by the lock.
 
-Samuel
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/android/binder_alloc.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index 5a426c877dfb..596acc3a84e4 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -709,7 +709,9 @@ int binder_alloc_mmap_handler(struct binder_alloc *alloc,
+ 		goto err_alloc_buf_struct_failed;
+ 	}
+ 
++	mutex_lock(&binder_alloc_mmap_lock);
+ 	buffer->data = alloc->buffer;
++	mutex_unlock(&binder_alloc_mmap_lock);
+ 	list_add(&buffer->entry, &alloc->buffers);
+ 	buffer->free = 1;
+ 	binder_insert_free_buffer(alloc, buffer);
+-- 
+2.17.0
