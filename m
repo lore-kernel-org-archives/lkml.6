@@ -1,31 +1,31 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525800068; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1525800103; cv=none;
         d=google.com; s=arc-20160816;
-        b=AqPNsflg9pNfVFQfLRR3soEPX5OrD36YbqhNxKZWB/FqnWkcZVlelwbrZn3UNw5vBc
-         pxQpUTsMzRx6ROh0Jw9CSBFrFa6sK6hdzMF5gXNJl+6ATzDTh4f55LTpHOUg2BYkzLTA
-         MSigHyLGFcugC3vD6o547ZhIDstMD3xDXtGmoSlU/nzz0XXkVIFf6YbWU4T1L7XuW8Wd
-         VaoMHCH3USvxzgE5pe9MLa/WwUfDkdSaoq7suYye8Yy4efj6CS5hFYVrEiuqW0tInKMd
-         kkYsovDP+n/kR5Kl+95svmtjWJ0i8zQ8qt5gmrKbXJQE0rQ+2NuoKvQzkajmuxm++qPd
-         4s9A==
+        b=pBtMxfEMoIfbtqqa1BYTIwkGyZ1OXcgIPmCsKc2VLXUEBcEaEStU4dv3BneAE4+oSx
+         4Rpbi2CpnQDiKviMv1xYh5qiEI1I8NT7FBTNVLizRVAjV0IlAxIRbUFqcQ6HAhfb6ive
+         XTBupC5x3jcvPB88BxRPfqwiYXWPGhF92V3ThYwH+0xFU+yf/jTlGKKGd2E3R0XfW527
+         8RxqAYYTa3V1WaX676+FrvBwfsb8wUgL0lXI/Pejkp0cvT8gdDmtv5Y1FFsEmgKY8FcA
+         jGKfLJWfonKIposJlvrZsSN355P/nYdc2/yDVp7yYBqv7ES7y6f8GjFOqHL25eph6McY
+         KpiQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:dkim-signature:arc-authentication-results;
-        bh=XE+5lX2m7eNN/D4RPX4K6rW9HZtJY7IVCD4yymwd9Ug=;
-        b=tZd6l5cQZonPDezN15QWJHuS8QOza4H6IEYhh0tAagRKev0LO0PjYu9uVCq08hD134
-         J9YMdXc+xIuPtdLxudEMpNdJnB+zWQf4my+Ubxv6x/dDDz25u4j7NpUz1vNyUcjbLi/C
-         KSgRi2JEmoI95XRjwFhyJIaOXzkGlLkr4tGpXNfDKWNe5JiE02z7GhnVMVk1m77zi1gt
-         uUp582gkdoMA3fa2dmA9oBQ/ZLXub7NEtm1Ciq7QkE2R22Qh9Rr8J1z1SmHx3Gw/4IPS
-         01uXvfYVCyworLdicS23T1ryVRVSSjFQqd8RCIcG4xMrIgdP2xQ4+5RHhwFgtlvYMbJg
-         Bq5g==
+        h=references:in-reply-to:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=WxTOEBx4FXQOPjleNHHMRe1GUaKfRs7dEFiIBmVN9Qc=;
+        b=GAAi9BcYdbHv6MeZ3hZA5PIC8l4HwMyHfbQa8+Y58CDw7825elZXgWy6UG2KA3pvl0
+         u0gXCKQBe+kUzPGMypv8FkNRKmFLNVeR4e0JOZ6M9zB2iVk0Ydk6otDkRafiSMXTzXLv
+         fIsy7JegOCrainIHU6NSo1BrkM8yKYOoP2zO3FIRxJYqTXXKfNO8pRlJX2jW8CRPX795
+         QfvegARkSCEgFm0Unf1bVxvHl+jiu3OoThtgX60VG6NcuF0/JUgm3+cHmJfhIcPt9RpM
+         GK5MhPArrscPhkOnvTfLfRS3tnjpyzL4SprTQsIoa89XGQ1LUhnOwByLFvnkXIaU/ijX
+         fMdQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=j101eF77;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=aXqwr+eu;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=j101eF77;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=aXqwr+eu;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AB8JxZr68nVDd961WLTcKPY3HT9uK9pFR1f1EOqPBLNVx75eq3M9qTDTfieEBU4sOUax9aab7dpFUA==
+X-Google-Smtp-Source: AB8JxZq+qUZ2UjijWMKDAeikV7fA8skN10L3NYQw/t47oBfE3fOfO5UIHO10/NTJc1Snhn6MalS9WA==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	Alexander Potapenko <glider@google.com>,
@@ -107,233 +107,222 @@ Cc: Kostya Serebryany <kcc@google.com>,
 	Jann Horn <jannh@google.com>,
 	Mark Brand <markbrand@google.com>,
 	Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v1 00/16] khwasan: kernel hardware assisted address sanitizer
-Date: Tue,  8 May 2018 19:20:46 +0200
-Message-Id: <cover.1525798753.git.andreyknvl@google.com>
+Subject: [PATCH v1 15/16] khwasan, mm, arm64: tag non slab memory allocated via pagealloc
+Date: Tue,  8 May 2018 19:21:01 +0200
+Message-Id: <52d2542323262ede3510754bb07cbc1ed8c347b0.1525798754.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1525798753.git.andreyknvl@google.com>
+References: <cover.1525798753.git.andreyknvl@google.com>
+In-Reply-To: <cover.1525798753.git.andreyknvl@google.com>
+References: <cover.1525798753.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599917332640225435?=
-X-GMAIL-MSGID: =?utf-8?q?1599917332640225435?=
+X-GMAIL-THRID: =?utf-8?q?1599917369470122405?=
+X-GMAIL-MSGID: =?utf-8?q?1599917369470122405?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patchset adds a new mode to KASAN [1], which is called KHWASAN
-(Kernel HardWare assisted Address SANitizer). There's still some work to
-do and there are a few TODOs in the code, so I'm publishing this as an RFC
-to collect some initial feedback.
+KWHASAN doesn't check memory accesses through pointers tagged with 0xff.
+When page_address is used to get pointer to memory that corresponds to
+some page, the tag of the resulting pointer gets set to 0xff, even though
+the allocated memory might have been tagged differently.
 
-The plan is to implement HWASan [2] for the kernel with the incentive,
-that it's going to have comparable to KASAN performance, but in the same
-time consume much less memory, trading that off for somewhat imprecise
-bug detection and being supported only for arm64.
+For slab pages it's impossible to recover the correct tag to return from
+page_address, since the page might contain multiple slab objects tagged
+with different values, and we can't know in advance which one of them is
+going to get accessed. For non slab pages however, we can recover the tag
+in page_address, since the whole page was marked with the same tag.
 
-The overall idea of the approach used by KHWASAN is the following:
+This patch adds tagging to non slab memory allocated with pagealloc. To
+set the tag of the pointer returned from page_address, the tag gets stored
+to page->flags when the memory gets allocated.
 
-1. By using the Top Byte Ignore arm64 CPU feature, we can store pointer
-   tags in the top byte of each kernel pointer.
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ arch/arm64/include/asm/memory.h   | 11 +++++++++++
+ include/linux/mm.h                | 29 +++++++++++++++++++++++++++++
+ include/linux/page-flags-layout.h | 10 ++++++++++
+ mm/cma.c                          |  1 +
+ mm/kasan/common.c                 | 15 +++++++++++++--
+ mm/page_alloc.c                   |  1 +
+ 6 files changed, 65 insertions(+), 2 deletions(-)
 
-2. Using shadow memory, we can store memory tags for each chunk of kernel
-   memory.
-
-3. On each memory allocation, we can generate a random tag, embed it into
-   the returned pointer and set the memory tags that correspond to this
-   chunk of memory to the same value.
-
-4. By using compiler instrumentation, before each memory access we can add
-   a check that the pointer tag matches the tag of the memory that is being
-   accessed.
-
-5. On a tag mismatch we report an error.
-
-[1] https://www.kernel.org/doc/html/latest/dev-tools/kasan.html
-
-[2] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
-
-
-====== Technical details
-
-KHWASAN is implemented in a very similar way to KASAN. This patchset
-essentially does the following:
-
-1. TCR_TBI1 is set to enable Top Byte Ignore.
-
-2. Shadow memory is used (with a different scale, 1:16, so each shadow
-   byte corresponds to 16 bytes of kernel memory) to store memory tags.
-
-3. All slab objects are aligned to shadow scale, which is 16 bytes.
-
-4. All pointers returned from the slab allocator are tagged with a random
-   tag and the corresponding shadow memory is poisoned with the same value.
-
-5. Compiler instrumentation is used to insert tag checks. Either by
-   calling callbacks or by inlining them (CONFIG_KASAN_OUTLINE and
-   CONFIG_KASAN_INLINE flags are reused).
-
-6. When a tag mismatch is detected in callback instrumentation mode
-   KHWASAN simply prints a bug report. In case of inline instrumentation,
-   clang inserts a brk instruction, and KHWASAN has it's own brk handler,
-   which reports the bug.
-
-7. The memory in between slab objects is marked with a reserved tag, and
-   acts as a redzone.
-
-8. When a slab object is freed it's marked with a reserved tag.
-
-Bug detection is imprecise for two reasons:
-
-1. We won't catch some small out-of-bounds accesses, that fall into the
-   same shadow cell, as the last byte of a slab object.
-
-2. We only have 1 byte to store tags, which means we have a 1/256
-   probability of a tag match for an incorrect access (actually even
-   slightly less due to reserved tag values).
-
-Despite that there's a particular type of bugs that KHWASAN can detect
-compared to KASAN: use-after-free after the object has been allocated by
-someone else.
-
-
-====== Benchmarks
-
-The following numbers were collected on Odroid C2 board. Both KASAN and
-KHWASAN were used in inline instrumentation mode.
-
-Boot time [1]:
-* ~1.7 sec for clean kernel
-* ~5.0 sec for KASAN
-* ~5.0 sec for KHWASAN
-
-Slab memory usage after boot [2]:
-* ~40 kb for clean kernel
-* ~105 kb + 1/8th shadow ~= 118 kb for KASAN
-* ~47 kb + 1/16th shadow ~= 50 kb for KHWASAN
-
-Network performance [3]:
-* 8.33 Gbits/sec for clean kernel
-* 3.17 Gbits/sec for KASAN
-* 2.85 Gbits/sec for KHWASAN
-
-Note, that KHWASAN (compared to KASAN) doesn't require quarantine.
-
-[1] Time before the ext4 driver is initialized.
-[2] Measured as `cat /proc/meminfo | grep Slab`.
-[3] Measured as `iperf -s & iperf -c 127.0.0.1 -t 30`.
-
-
-====== Some notes
-
-A few notes:
-
-1. The patchset can be found here:
-   https://github.com/xairy/kasan-prototype/tree/khwasan
-
-2. Building requires a recent LLVM version (r330044 or later).
-
-3. Stack instrumentation is not supported yet and will be added later.
-
-
-====== Changes
-
-Changes in v1:
-- Rebased onto 4.17-rc4.
-- Updated benchmarking stats.
-- Documented compiler version requirements, memory usage and slowdown.
-- Dropped kvm patches, as clang + arm64 + kvm is completely broken [1].
-
-Changes in RFC v3:
-- Renamed CONFIG_KASAN_CLASSIC and CONFIG_KASAN_TAGS to
-  CONFIG_KASAN_GENERIC and CONFIG_KASAN_HW respectively.
-- Switch to -fsanitize=kernel-hwaddress instead of -fsanitize=hwaddress.
-- Removed unnecessary excessive shadow initialization.
-- Removed khwasan_enabled flag (it’s not needed since KHWASAN is
-  initialized before any slab caches are used).
-- Split out kasan_report.c and khwasan_report.c from report.c.
-- Moved more common KASAN and KHWASAN functions to common.c.
-- Added tagging to pagealloc.
-- Rebased onto 4.17-rc1.
-- Temporarily dropped patch that adds kvm support (arm64 + kvm + clang
-  combo is broken right now [1]).
-
-Changes in RFC v2:
-- Removed explicit casts to u8 * for kasan_mem_to_shadow() calls.
-- Introduced KASAN_TCR_FLAGS for setting the TCR_TBI1 flag.
-- Added a comment regarding the non-atomic RMW sequence in
-  khwasan_random_tag().
-- Made all tag related functions accept const void *.
-- Untagged pointers in __kimg_to_phys, which is used by virt_to_phys.
-- Untagged pointers in show_ptr in fault handling logic.
-- Untagged pointers passed to KVM.
-- Added two reserved tag values: 0xFF and 0xFE.
-- Used the reserved tag 0xFF to disable validity checking (to resolve the
-  issue with pointer tag being lost after page_address + kmap usage).
-- Used the reserved tag 0xFE to mark redzones and freed objects.
-- Added mnemonics for esr manipulation in KHWASAN brk handler.
-- Added a comment about the -recover flag.
-- Some minor cleanups and fixes.
-- Rebased onto 3215b9d5 (4.16-rc6+).
-- Tested on real hardware (Odroid C2 board).
-- Added better benchmarks.
-
-[1] https://lkml.org/lkml/2018/4/19/775
-
-Andrey Konovalov (16):
-  khwasan, mm: change kasan hooks signatures
-  khwasan: move common kasan and khwasan code to common.c
-  khwasan: add CONFIG_KASAN_GENERIC and CONFIG_KASAN_HW
-  khwasan, arm64: adjust shadow size for CONFIG_KASAN_HW
-  khwasan: initialize shadow to 0xff
-  khwasan, arm64: untag virt address in __kimg_to_phys
-  khwasan, arm64: fix up fault handling logic
-  khwasan: add tag related helper functions
-  khwasan, arm64: enable top byte ignore for the kernel
-  khwasan, mm: perform untagged pointers comparison in krealloc
-  khwasan: split out kasan_report.c from report.c
-  khwasan: add bug reporting routines
-  khwasan: add hooks implementation
-  khwasan, arm64: add brk handler for inline instrumentation
-  khwasan, mm, arm64: tag non slab memory allocated via pagealloc
-  khwasan: update kasan documentation
-
- Documentation/dev-tools/kasan.rst      | 213 +++++----
- arch/arm64/Kconfig                     |   1 +
- arch/arm64/Makefile                    |   2 +-
- arch/arm64/include/asm/brk-imm.h       |   2 +
- arch/arm64/include/asm/memory.h        |  35 +-
- arch/arm64/include/asm/pgtable-hwdef.h |   1 +
- arch/arm64/kernel/traps.c              |  69 ++-
- arch/arm64/mm/fault.c                  |   3 +
- arch/arm64/mm/kasan_init.c             |  18 +-
- arch/arm64/mm/proc.S                   |   8 +-
- include/linux/compiler-clang.h         |   5 +-
- include/linux/compiler-gcc.h           |   4 +
- include/linux/compiler.h               |   3 +-
- include/linux/kasan.h                  |  84 +++-
- include/linux/mm.h                     |  29 ++
- include/linux/page-flags-layout.h      |  10 +
- lib/Kconfig.kasan                      |  76 +++-
- mm/cma.c                               |   1 +
- mm/kasan/Makefile                      |   9 +-
- mm/kasan/common.c                      | 577 +++++++++++++++++++++++++
- mm/kasan/kasan.c                       | 489 +--------------------
- mm/kasan/kasan.h                       |  94 +++-
- mm/kasan/kasan_report.c                | 155 +++++++
- mm/kasan/khwasan.c                     | 163 +++++++
- mm/kasan/khwasan_report.c              |  60 +++
- mm/kasan/report.c                      | 271 +++---------
- mm/page_alloc.c                        |   1 +
- mm/slab.c                              |  12 +-
- mm/slab.h                              |   2 +-
- mm/slab_common.c                       |   6 +-
- mm/slub.c                              |  18 +-
- scripts/Makefile.kasan                 |  27 +-
- 32 files changed, 1606 insertions(+), 842 deletions(-)
- create mode 100644 mm/kasan/common.c
- create mode 100644 mm/kasan/kasan_report.c
- create mode 100644 mm/kasan/khwasan.c
- create mode 100644 mm/kasan/khwasan_report.c
-
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index f206273469b5..9ec78a44c5ff 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -304,7 +304,18 @@ static inline void *phys_to_virt(phys_addr_t x)
+ #define __virt_to_pgoff(kaddr)	(((u64)(kaddr) & ~PAGE_OFFSET) / PAGE_SIZE * sizeof(struct page))
+ #define __page_to_voff(kaddr)	(((u64)(kaddr) & ~VMEMMAP_START) * PAGE_SIZE / sizeof(struct page))
+ 
++#ifndef CONFIG_KASAN_HW
+ #define page_to_virt(page)	((void *)((__page_to_voff(page)) | PAGE_OFFSET))
++#else
++#define page_to_virt(page)	({					\
++	unsigned long __addr =						\
++		((__page_to_voff(page)) | PAGE_OFFSET);			\
++	if (!PageSlab((struct page *)page))				\
++		__addr = KASAN_SET_TAG(__addr, page_kasan_tag(page));	\
++	((void *)__addr);						\
++})
++#endif
++
+ #define virt_to_page(vaddr)	((struct page *)((__virt_to_pgoff(vaddr)) | VMEMMAP_START))
+ 
+ #define _virt_addr_valid(kaddr)	pfn_valid((((u64)(kaddr) & ~PAGE_OFFSET) \
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1ac1f06a4be6..d6d596824803 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -770,6 +770,7 @@ int finish_mkwrite_fault(struct vm_fault *vmf);
+ #define NODES_PGOFF		(SECTIONS_PGOFF - NODES_WIDTH)
+ #define ZONES_PGOFF		(NODES_PGOFF - ZONES_WIDTH)
+ #define LAST_CPUPID_PGOFF	(ZONES_PGOFF - LAST_CPUPID_WIDTH)
++#define KASAN_TAG_PGOFF		(LAST_CPUPID_PGOFF - KASAN_TAG_WIDTH)
+ 
+ /*
+  * Define the bit shifts to access each section.  For non-existent
+@@ -780,6 +781,7 @@ int finish_mkwrite_fault(struct vm_fault *vmf);
+ #define NODES_PGSHIFT		(NODES_PGOFF * (NODES_WIDTH != 0))
+ #define ZONES_PGSHIFT		(ZONES_PGOFF * (ZONES_WIDTH != 0))
+ #define LAST_CPUPID_PGSHIFT	(LAST_CPUPID_PGOFF * (LAST_CPUPID_WIDTH != 0))
++#define KASAN_TAG_PGSHIFT	(KASAN_TAG_PGOFF * (KASAN_TAG_WIDTH != 0))
+ 
+ /* NODE:ZONE or SECTION:ZONE is used to ID a zone for the buddy allocator */
+ #ifdef NODE_NOT_IN_PAGE_FLAGS
+@@ -802,6 +804,7 @@ int finish_mkwrite_fault(struct vm_fault *vmf);
+ #define NODES_MASK		((1UL << NODES_WIDTH) - 1)
+ #define SECTIONS_MASK		((1UL << SECTIONS_WIDTH) - 1)
+ #define LAST_CPUPID_MASK	((1UL << LAST_CPUPID_SHIFT) - 1)
++#define KASAN_TAG_MASK		((1UL << KASAN_TAG_WIDTH) - 1)
+ #define ZONEID_MASK		((1UL << ZONEID_SHIFT) - 1)
+ 
+ static inline enum zone_type page_zonenum(const struct page *page)
+@@ -1021,6 +1024,32 @@ static inline bool cpupid_match_pid(struct task_struct *task, int cpupid)
+ }
+ #endif /* CONFIG_NUMA_BALANCING */
+ 
++#ifdef CONFIG_KASAN_HW
++static inline u8 page_kasan_tag(const struct page *page)
++{
++	return (page->flags >> KASAN_TAG_PGSHIFT) & KASAN_TAG_MASK;
++}
++
++static inline void page_kasan_tag_set(struct page *page, u8 tag)
++{
++	page->flags &= ~(KASAN_TAG_MASK << KASAN_TAG_PGSHIFT);
++	page->flags |= (tag & KASAN_TAG_MASK) << KASAN_TAG_PGSHIFT;
++}
++
++static inline void page_kasan_tag_reset(struct page *page)
++{
++	page_kasan_tag_set(page, 0xff);
++}
++#else
++static inline u8 page_kasan_tag(const struct page *page)
++{
++	return 0xff;
++}
++
++static inline void page_kasan_tag_set(struct page *page, u8 tag) { }
++static inline void page_kasan_tag_reset(struct page *page) { }
++#endif
++
+ static inline struct zone *page_zone(const struct page *page)
+ {
+ 	return &NODE_DATA(page_to_nid(page))->node_zones[page_zonenum(page)];
+diff --git a/include/linux/page-flags-layout.h b/include/linux/page-flags-layout.h
+index 7ec86bf31ce4..8dbad17664c2 100644
+--- a/include/linux/page-flags-layout.h
++++ b/include/linux/page-flags-layout.h
+@@ -82,6 +82,16 @@
+ #define LAST_CPUPID_WIDTH 0
+ #endif
+ 
++#ifdef CONFIG_KASAN_HW
++#define KASAN_TAG_WIDTH 8
++#if SECTIONS_WIDTH+NODES_WIDTH+ZONES_WIDTH+LAST_CPUPID_WIDTH+KASAN_TAG_WIDTH \
++	> BITS_PER_LONG - NR_PAGEFLAGS
++#error "KASAN: not enough bits in page flags for tag"
++#endif
++#else
++#define KASAN_TAG_WIDTH 0
++#endif
++
+ /*
+  * We are going to use the flags for the page to node mapping if its in
+  * there.  This includes the case where there is no node, so it is implicit.
+diff --git a/mm/cma.c b/mm/cma.c
+index aa40e6c7b042..f657db289bba 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -526,6 +526,7 @@ struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
+ 	}
+ 
+ 	trace_cma_alloc(pfn, page, count, align);
++	page_kasan_tag_reset(page);
+ 
+ 	if (ret && !(gfp_mask & __GFP_NOWARN)) {
+ 		pr_err("%s: alloc failed, req-size: %zu pages, ret: %d\n",
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index 0654bf97257b..7cd4a4e8c3be 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -207,8 +207,18 @@ void kasan_unpoison_stack_above_sp_to(const void *watermark)
+ 
+ void kasan_alloc_pages(struct page *page, unsigned int order)
+ {
++#ifdef CONFIG_KASAN_GENERIC
+ 	if (likely(!PageHighMem(page)))
+ 		kasan_unpoison_shadow(page_address(page), PAGE_SIZE << order);
++#else
++	if (!PageSlab(page)) {
++		u8 tag = random_tag();
++
++		kasan_poison_shadow(page_address(page), PAGE_SIZE << order,
++					tag);
++		page_kasan_tag_set(page, tag);
++	}
++#endif
+ }
+ 
+ void kasan_free_pages(struct page *page, unsigned int order)
+@@ -433,6 +443,7 @@ void *kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags)
+ #else
+ 	tag = random_tag();
+ 	kasan_poison_shadow(ptr, redzone_start - (unsigned long)ptr, tag);
++	page_kasan_tag_set(page, tag);
+ #endif
+ 	kasan_poison_shadow((void *)redzone_start, redzone_end - redzone_start,
+ 		KASAN_PAGE_REDZONE);
+@@ -462,7 +473,7 @@ void kasan_poison_kfree(void *ptr, unsigned long ip)
+ 	page = virt_to_head_page(ptr);
+ 
+ 	if (unlikely(!PageSlab(page))) {
+-		if (reset_tag(ptr) != page_address(page)) {
++		if (ptr != page_address(page)) {
+ 			kasan_report_invalid_free(ptr, ip);
+ 			return;
+ 		}
+@@ -475,7 +486,7 @@ void kasan_poison_kfree(void *ptr, unsigned long ip)
+ 
+ void kasan_kfree_large(void *ptr, unsigned long ip)
+ {
+-	if (reset_tag(ptr) != page_address(virt_to_head_page(ptr)))
++	if (ptr != page_address(virt_to_head_page(ptr)))
+ 		kasan_report_invalid_free(ptr, ip);
+ 	/* The object will be poisoned by page_alloc. */
+ }
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 905db9d7962f..54df9c852c6e 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1179,6 +1179,7 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
+ 	init_page_count(page);
+ 	page_mapcount_reset(page);
+ 	page_cpupid_reset_last(page);
++	page_kasan_tag_reset(page);
+ 
+ 	INIT_LIST_HEAD(&page->lru);
+ #ifdef WANT_PAGE_VIRTUAL
 -- 
 2.17.0.441.gb46fe60e1d-goog
