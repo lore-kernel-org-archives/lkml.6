@@ -1,115 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752257AbeEHKyj (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 06:54:39 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:9498 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbeEHKyg (ORCPT
+        id S1752399AbeEHK42 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 06:56:28 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:38637 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752252AbeEHK4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 06:54:36 -0400
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 08 May 2018 03:54:35 -0700
-Date: Tue, 8 May 2018 13:54:31 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-CC: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] clk: tegra: Add quirk for getting CDEV1/2 clocks
-Message-ID: <20180508105431.GS6835@tbergstrom-lnx.Nvidia.com>
-References: <20180503225537.20748-1-digetx@gmail.com>
- <20180503225537.20748-5-digetx@gmail.com>
+        Tue, 8 May 2018 06:56:24 -0400
+X-Google-Smtp-Source: AB8JxZqY+pANC0q5u0kxPRwH1grZVLtdR1Nwlwd3k5x8XI9k0hsf0AW+Ko7JuqQsg4klxsq/vjslhw==
+Date: Tue, 8 May 2018 19:56:12 +0900
+From: Minchan Kim <minchan@kernel.org>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v10 12/25] mm: cache some VMA fields in the vm_fault
+ structure
+Message-ID: <20180508105612.GC8209@rodete-desktop-imager.corp.google.com>
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523975611-15978-13-git-send-email-ldufour@linux.vnet.ibm.com>
+ <20180423074221.GE114098@rodete-desktop-imager.corp.google.com>
+ <cd27f249-6c78-ccbb-c8f4-a8d8f7a3cd60@linux.vnet.ibm.com>
+ <20180503154211.GA180804@rodete-laptop-imager.corp.google.com>
+ <580c2760-2157-61fe-01ff-f928516fa23f@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180503225537.20748-5-digetx@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.21.24.170]
-X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To UKMAIL101.nvidia.com
- (10.26.138.13)
+In-Reply-To: <580c2760-2157-61fe-01ff-f928516fa23f@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 01:55:36AM +0300, Dmitry Osipenko wrote:
-> CDEV1 and CDEV2 clocks are a bit special case, their parent clock is
-> created by the pinctrl driver. It should be possible for clk user to
-> request these clocks before pinctrl driver got probed and hence user will
-> get an orphaned clock. That might be undesirable because user expects
-> parent clock to be enabled by the child, so let's return EPROBE_DEFER
-> until parent clock appear.
+On Fri, May 04, 2018 at 11:10:54AM +0200, Laurent Dufour wrote:
+> On 03/05/2018 17:42, Minchan Kim wrote:
+> > On Thu, May 03, 2018 at 02:25:18PM +0200, Laurent Dufour wrote:
+> >> On 23/04/2018 09:42, Minchan Kim wrote:
+> >>> On Tue, Apr 17, 2018 at 04:33:18PM +0200, Laurent Dufour wrote:
+> >>>> When handling speculative page fault, the vma->vm_flags and
+> >>>> vma->vm_page_prot fields are read once the page table lock is released. So
+> >>>> there is no more guarantee that these fields would not change in our back
+> >>>> They will be saved in the vm_fault structure before the VMA is checked for
+> >>>> changes.
+> >>>
+> >>> Sorry. I cannot understand.
+> >>> If it is changed under us, what happens? If it's critical, why cannot we
+> >>> check with seqcounter?
+> >>> Clearly, I'm not understanding the logic here. However, it's a global
+> >>> change without CONFIG_SPF so I want to be more careful.
+> >>> It would be better to describe why we need to sanpshot those values
+> >>> into vm_fault rather than preventing the race.
+> >>
+> >> The idea is to go forward processing the page fault using the VMA's fields
+> >> values saved in the vm_fault structure. Then once the pte are locked, the
+> >> vma->sequence_counter is checked again and if something has changed in our back
+> >> the speculative page fault processing is aborted.
+> > 
+> > Sorry, still I don't understand why we should capture some fields to vm_fault.
+> > If we found vma->seq_cnt is changed under pte lock, can't we just bail out and
+> > fallback to classic fault handling?
+> > 
+> > Maybe, I'm missing something clear now. It would be really helpful to understand
+> > if you give some exmaple.
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/clk/tegra/clk.c | 34 +++++++++++++++++++++++++++++++++-
->  1 file changed, 33 insertions(+), 1 deletion(-)
+> I'd rather say that I was not clear enough ;)
 > 
-> diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-> index ba923f0d5953..04cbe7e9eff3 100644
-> --- a/drivers/clk/tegra/clk.c
-> +++ b/drivers/clk/tegra/clk.c
-> @@ -298,6 +298,38 @@ static struct reset_controller_dev rst_ctlr = {
->  	.of_reset_n_cells = 1,
->  };
->  
-> +static struct clk *tegra_of_clk_src_onecell_get(struct of_phandle_args *clkspec,
-> +						void *data)
-> +{
-> +	struct clk_hw *parent_hw;
-> +	struct clk_hw *hw;
-> +	struct clk *clk;
-> +	const char *name;
-> +
-> +	clk = of_clk_src_onecell_get(clkspec, data);
-> +	if (IS_ERR(clk))
-> +		return clk;
-> +
-> +	name = __clk_get_name(clk);
-> +
-> +	/*
-> +	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
-> +	 * clock is created by the pinctrl driver. It is possible for clk user
-> +	 * to request these clocks before pinctrl driver got probed and hence
-> +	 * user will get an orphaned clock. That might be undesirable because
-> +	 * user may expect parent clock to be enabled by the child.
-> +	 */
-> +	if (!strcmp(name, "cdev1") || !strcmp(name, "cdev2")) {
-> +		hw = __clk_get_hw(clk);
-> +
-> +		parent_hw = clk_hw_get_parent(hw);
-> +		if (!parent_hw)
-> +			return ERR_PTR(-EPROBE_DEFER);
-> +	}
-> +
-> +	return clk;
-> +}
-> +
-
-Rather than retrieving the struct clk * and comparing the names, you can use
-the DT ID in  clkspec->args[0] and compare against TEGRA20_CLK_CDEV1 and
-TEGRA20_CLK_CDEV2.
-
-Peter.
-
->  void __init tegra_add_of_provider(struct device_node *np)
->  {
->  	int i;
-> @@ -314,7 +346,7 @@ void __init tegra_add_of_provider(struct device_node *np)
->  
->  	clk_data.clks = clks;
->  	clk_data.clk_num = clk_num;
-> -	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-> +	of_clk_add_provider(np, tegra_of_clk_src_onecell_get, &clk_data);
->  
->  	rst_ctlr.of_node = np;
->  	rst_ctlr.nr_resets = periph_banks * 32 + num_special_reset;
-> -- 
-> 2.17.0
+> Here is the point, when we deal with a speculative page fault, the mmap_sem is
+> not taken, so parallel VMA's changes can occurred. When a VMA change is done
+> which will impact the page fault processing, we assumed that the VMA sequence
+> counter will be changed.
 > 
+> In the page fault processing, at the time the PTE is locked, we checked the VMA
+> sequence counter to detect changes done in our back. If no change is detected
+> we can continue further. But this doesn't prevent the VMA to not be changed in
+> our back while the PTE is locked. So VMA's fields which are used while the PTE
+> is locked must be saved to ensure that we are using *static* values.
+> This is important since the PTE changes will be made on regards to these VMA
+> fields and they need to be consistent. This concerns the vma->vm_flags and
+> vma->vm_page_prot VMA fields.
+> 
+> I hope I make this clear enough this time.
+
+It's more clear at this point. Please include such nice explanation in description.
+Now, I am wondering how you synchronize those static value and vma's seqcount.
+It must be in next patchset. I hope to grab a time to read it, asap.
+
+Thanks.
