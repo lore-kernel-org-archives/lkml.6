@@ -1,125 +1,70 @@
-Return-Path: <mchehab@smtp.s-opensource.com>
-X-Google-Smtp-Source: AB8JxZrN8J/jHy/ruqOPEzL4elBYgyKh6c6viF1B3Sgjv6tDwdxXHmw00LZkC2m5w4tSehXLTtHL
-ARC-Seal: i=1; a=rsa-sha256; t=1525685768; cv=none;
+Return-Path: <corbet@lwn.net>
+X-Google-Smtp-Source: AB8JxZr09/oWenqIQtbVhIMX91yW68iUnIQ5HZjCHFWEo8339hptVdoW2qE0X/RbiivLGt8B/R0G
+ARC-Seal: i=1; a=rsa-sha256; t=1525795200; cv=none;
         d=google.com; s=arc-20160816;
-        b=Hl9/fyM35CJFWUALVMn3eoCW/MLbSFwIsi31JbgGv2EOdqAgYZkIGoAQnHadv5J/9d
-         gkhypYrBDKrQibkoKKpVDeVUUBYPgYB7i1QwD7/Ee9umw3ZVTqfTysGLd+NCu8AN3V/E
-         rfgUILP6lWoYWZu738qHgkDBpesZb8FZDyAiXN2uB+CF7Uow6XRBriRNa0k2B2Gp2Wqd
-         jZyT/sASwY7a2FVW9c61Edc6pHwpFPAQypY7sqULo4mArA6a2VvR7qP29DQOafzbozId
-         QAZD+K93OHL5RC69mEleSKEhQ2as0aaylTn6Cr/lWPlIWTB4m6sxBvzzrUPPzcRetBfq
-         aTNw==
+        b=tM2Tr2tzRzxtfSxKsh8Qvmq7fQ028mq/ol0NkRi48KBzJt0qp9PN2IloxAYiRghhxV
+         tXJCNycu7VJRE/BUcoygM57VGXwoMGc5SOsjP+Q3C0xEWBmj0WVdTVeROksSL1WUxLgY
+         IoMClt6Li6OKdAZhDonBgvBhP3unbcKRuaKjPY6aJgR+crVVLrVAuxdji5DdcJoRJTvm
+         DBtsvDCeDIbhY9v3mWK9ayVchj5ofxOz5RxCMQgUqdM0Z9+DW0S3FpFYLsLp/FLgQEHT
+         J8yt5srLLxuloF7KOVf09j++S+ffCGa2o6RqdhCbnmBQgukup9AiC4vtMRETs2QUT2wG
+         vzcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=sender:references:in-reply-to:references:in-reply-to:message-id
-         :date:subject:cc:to:from:arc-authentication-results;
-        bh=g7P7FUw4MURw0WySFJ9B/4x0mAfXdW2SDCfPdx/6SGM=;
-        b=WnFmz/4KhWtggNGyDXWUUeNL4BFQ7xODTE6RTeEFt9Am7HRNSO73tRD36tu4cxjf6J
-         xCCPzkiXOkC/tnHP6VYTkTCUxA39X6dJQLr442jQ7N96lwMdZnpcsmXdkCZtnvpBdmFC
-         y6KcHhXWjHVp3sP9pQ9CH56+Vr8otY1azu/yBVPA5EIt7X2Tlhcmz6Jjv5JFq+VxcB/+
-         WkkjcpwwkLWzqO95kHE/Z1uNcLQtAONlLZpg+0jPd9oVWxZdx4ErWdsiPt+2z+i/s/Pw
-         ciesHrW1uYSd1FxfUzopUZKnpnzuJhj6QTYS3qjyvmhl+/apNezhJCXe5TygL6MmBikS
-         cgNQ==
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=JdHFl8WqvMcukET/5Ft8ujrgpio/nU0yA1OzbZ1GSWQ=;
+        b=hSZKHqQpJCMJUkbEhVVl3jufkg9Ki41OmX7nrmE2/Cr1byc6DcAgL1fZajnPt9ZRxM
+         1BhKfYcgICX2jkW19gFfAJod3khJfgJgCyUilJrBEtwFXiAyK8zKN9bsnIz/aObbL2oH
+         opxYTmGQ0eIhD7ZMPdW3FeXWQ3mY7ZAmo8EW09gYJOIs7Zk3Es4UiPJJbTuZjv9+RJf4
+         EvJDR3WPm+bYuivHNJR983RuqrqZfruTijnZUIMfafsv68kPmcDarzObFFYDxh+ApXdf
+         eCdVvm54NVDe/LrPOzh6Bnoqs421zjbY+rWGI6LZCJqT7yyaSaZk4Pa6AINV6oPsCPEw
+         ip8A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 64.30.133.232 is neither permitted nor denied by best guess record for domain of mchehab@smtp.s-opensource.com) smtp.mailfrom=mchehab@smtp.s-opensource.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       spf=pass (google.com: domain of corbet@lwn.net designates 45.79.88.28 as permitted sender) smtp.mailfrom=corbet@lwn.net
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 64.30.133.232 is neither permitted nor denied by best guess record for domain of mchehab@smtp.s-opensource.com) smtp.mailfrom=mchehab@smtp.s-opensource.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Vinod Koul <vinod.koul@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Sanyog Kale <sanyog.r.kale@intel.com>,
-	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Sagar Dharia <sdharia@codeaurora.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-	Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-	Kees Cook <keescook@chromium.org>,
-	linux-crypto@vger.kernel.org
-Subject: [PATCH 03/18] docs: */index.rst: Add newer documents to their respective index.rst
-Date: Mon,  7 May 2018 06:35:39 -0300
-Message-Id: <e6852448ac11e827f86dab1e183b82af6a320559.1525684985.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1525684985.git.mchehab+samsung@kernel.org>
+       spf=pass (google.com: domain of corbet@lwn.net designates 45.79.88.28 as permitted sender) smtp.mailfrom=corbet@lwn.net
+Date: Tue, 8 May 2018 09:59:55 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho
+ Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Herbert Xu
+ <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+ Linus Walleij <linus.walleij@linaro.org>, Vinod Koul
+ <vinod.koul@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thierry Reding <treding@nvidia.com>, Sanyog Kale <sanyog.r.kale@intel.com>,
+ Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>, Sagar Dharia
+ <sdharia@codeaurora.org>, Ingo Molnar <mingo@kernel.org>, Jeff Kirsher
+ <jeffrey.t.kirsher@intel.com>, Konstantin Ryabitsev
+ <konstantin@linuxfoundation.org>, Kees Cook <keescook@chromium.org>,
+ linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 03/18] docs: */index.rst: Add newer documents to their
+ respective index.rst
+Message-ID: <20180508095955.64791a73@lwn.net>
+In-Reply-To: <e6852448ac11e827f86dab1e183b82af6a320559.1525684985.git.mchehab+samsung@kernel.org>
 References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-In-Reply-To: <cover.1525684985.git.mchehab+samsung@kernel.org>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-Sender: Mauro Carvalho Chehab <mchehab@smtp.s-opensource.com>
+	<e6852448ac11e827f86dab1e183b82af6a320559.1525684985.git.mchehab+samsung@kernel.org>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599797480361597979?=
-X-GMAIL-MSGID: =?utf-8?q?1599797480361597979?=
+X-GMAIL-MSGID: =?utf-8?q?1599912228490884823?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-A number of new docs were added, but they're currently not on
-the index.rst from the session they're supposed to be, causing
-Sphinx warnings.
+On Mon,  7 May 2018 06:35:39 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-Add them.
+> A number of new docs were added, but they're currently not on
+> the index.rst from the session they're supposed to be, causing
+> Sphinx warnings.
+> 
+> Add them.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/crypto/index.rst     | 1 +
- Documentation/driver-api/index.rst | 1 +
- Documentation/process/index.rst    | 1 +
- Documentation/security/index.rst   | 2 ++
- 4 files changed, 5 insertions(+)
+I've applied this one, thanks.
 
-diff --git a/Documentation/crypto/index.rst b/Documentation/crypto/index.rst
-index 94c4786f2573..c4ff5d791233 100644
---- a/Documentation/crypto/index.rst
-+++ b/Documentation/crypto/index.rst
-@@ -20,5 +20,6 @@ for cryptographic use cases, as well as programming examples.
-    architecture
-    devel-algos
-    userspace-if
-+   crypto_engine
-    api
-    api-samples
-diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
-index 6d8352c0f354..3ac51c94f97b 100644
---- a/Documentation/driver-api/index.rst
-+++ b/Documentation/driver-api/index.rst
-@@ -18,6 +18,7 @@ available subsections can be seen below.
-    infrastructure
-    pm/index
-    device-io
-+   device_connection
-    dma-buf
-    device_link
-    message-based
-diff --git a/Documentation/process/index.rst b/Documentation/process/index.rst
-index 1c9fe657ed01..37bd0628b6ee 100644
---- a/Documentation/process/index.rst
-+++ b/Documentation/process/index.rst
-@@ -52,6 +52,7 @@ lack of a better place.
-    adding-syscalls
-    magic-number
-    volatile-considered-harmful
-+   clang-format
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
-index 298a94a33f05..85492bfca530 100644
---- a/Documentation/security/index.rst
-+++ b/Documentation/security/index.rst
-@@ -9,5 +9,7 @@ Security Documentation
-    IMA-templates
-    keys/index
-    LSM
-+   LSM-sctp
-+   SELinux-sctp
-    self-protection
-    tpm/index
--- 
-2.17.0
+jon
