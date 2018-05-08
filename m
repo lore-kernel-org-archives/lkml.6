@@ -1,137 +1,95 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-681467-1526297960-2-4454200337860667203
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526297960; b=nJzC+U3bPl7ll/eBrZVZEAxP8uenhdeKdNljEu6CkzsNLVMjs6
-    gzC+4ROnD210qCm74SObHDuejCbtI46HEw/ygtCExo24uEQnlY0r14haI/Wba9ln
-    jWu8AIkiP+/0UKmA03KyPxGdWLqGhuUOxmnIAmkV8e5FHLvg07/gLHORueuki/ay
-    np2/RNpVk2RHM7DV+rA2PinOBmZDzUHGADFyU6ASQYgq/SV9gO/jcahB5PruOv2t
-    gt+Kh3gGHcG993XNJzj1gwobCbNVmd/ScBaLmHUZGxFWSM5h8hHUQ3PahE9Vv0NQ
-    iceRUI3X3qmfPedUDdjL5EbI7wOTpkfzKYdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526297960; bh=QiXSTDpT1ySf7IrP74C0+BEl5F+LIT
-    PDQQXKVWG395U=; b=HlRLOtzrt8tNFU75++3uVQY0FbxpAS17uApG0Rmb/Jnk6y
-    /RKKsSaAtKtCub0V+t07c8+v8K7aM0W0VMRhel6gN7RxNOhOfZXKpZzY6KbFN34S
-    3YciQzNxHd7CnXBzfbMzCdsjO9qLvc4YXGv77zX2ANtiFu6hKULh0sz6StzkPa7A
-    wQ+vJ/cPJBjPXqcmmYkZW1E1DVXVZ/I1jXJBMMBlZ41K66T+m8orf74LEl87KFuw
-    hZzjYBkDT4ef1mcR+CM8w6ufZaBL1UFfZK3bTxsDrTcAo0KmGeMsDFCLyoFOxkGY
-    zElwa+ClWBcnc/CqYGXMp2Q1oixFxgNdIBHkDsPw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-    header.d=kernel.org header.i=@kernel.org header.b=dUch3yCO x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-      header.d=kernel.org header.i=@kernel.org header.b=dUch3yCO x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAiSO26WZiaYXp7B++xV9eSyVSstw7oYZxqAkVT3JCr7Fj0w+zfd93GjJFv9vUeUD9JANNT5b/wRRdgoKGX3+kIWjCcm5GMeJfx2vXozTd/rdnX+xkUF
-    rBL3164Hs3t5gHokOytKdqkx1HfC8Ssmsy33AYosTn35wi3bpsmHzAEMX5sIWc76bvxIyhgkdvR3HH+0M4R6wDC3PvGu1Iqtg2mvijbodQQso3TGRi4mecu+
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=IpJZQVW2AAAA:8 a=ag1SF4gXAAAA:8 a=VwQbUJbxAAAA:8 a=cldpNQUxMpDYN8E9lNUA:9
-    a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10 a=IawgGOuG5U0WyFbmm1f5:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752148AbeENLjR (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 07:39:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751402AbeENLjQ (ORCPT <rfc822;linux-serial@vger.kernel.org>);
-        Mon, 14 May 2018 07:39:16 -0400
-Date: Mon, 14 May 2018 13:38:59 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-sh@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525761901; cv=none;
+        d=google.com; s=arc-20160816;
+        b=boS6Ye1/unPFtmBfWXg75xGSgaGgIJaaCUgm/VCIPlWFcKZbzV7RSFziqEYlsqCJz0
+         ppno7aGmK1ZyhtpEjbpANAjxRQtCEa+YucJ5/9BN/zZWaItQBxtBuNDVpu1DHUdWlvux
+         qtB21Vgm5j4zWaSo2SGhJCvUyeb+EjdKQalX69tIPvmivKYirR6Hv1aSda5TM6ooLUF/
+         sLB+02JtygGMvmDcFukZ8ww22UZPmu8WYYB73XoLgm8SZXVFTfhC4L+RDlvRlnKD/V5f
+         UJ9Mxi1V6tKGjXfILhSFIPOLuek7XPzCo7B+cEVTvNKgCRmjb074iu+lPo/HuJRp7YvN
+         8d+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=bWTvOrmkiEo41fi1ZxZs8fzTjbwhpvUvhdvAMut74so=;
+        b=VM6qQ7ly14nSufAIzbZmQ6YdRZoS/S+p71UvDMmrSvo/fRXihYaNZKM39QuCD/Vw97
+         MUAZICu5b7xYvMO1WfsNIsvVemzSxPiqzuV7zHqfxcbe1v+bq+jnkLIOKV6oEbWg0c0E
+         Qxq+qt5U7Yf0odPw6uPt7RNqYC9SoDHZ60RrpHnPcve0IVk78XD1q9w48HfzKWdhwCAh
+         20k46taxk06OszdsMKzmqmXI1HAl9Rufl1Y5f2/IuN9l0q3JvzrbQI1iR7ji5HmTuTla
+         dS3qqoYuvP1VtIRgFzd8XfSu5eXyEVE/j+H3RMS07YBsbV5zFLw1UaWd/agP8MniqzX6
+         EjYQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ly46Sfwk;
+       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Ly46Sfwk;
+       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
+X-Google-Smtp-Source: AB8JxZoixFDXhK1JIn53wE2PFJUTlzSRIcTlEgso02mWuUpm91GqOqY3adjeCEBYqah5+5umwuo/zeGEgUnqqmPg9JQ=
+MIME-Version: 1.0
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <20180504132731.14574-3-brgl@bgdev.pl>
+References: <20180504132731.14574-1-brgl@bgdev.pl> <20180504132731.14574-3-brgl@bgdev.pl>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 8 May 2018 08:45:01 +0200
+X-Google-Sender-Auth: Vou791H-HjiFoJBQvRHMWl_2AKs
+Message-ID: <CAMuHMdXbTkOHAGFBAz16zV1NKmejzy1SpO7LuqZUmsasVf0-jg@mail.gmail.com>
 Subject: Re: [PATCH v3 2/3] platform: move the early platform device support
  to arch/sh
-Message-ID: <20180514113859.GA6358@kroah.com>
-References: <20180504132731.14574-1-brgl@bgdev.pl>
- <20180504132731.14574-3-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180504132731.14574-3-brgl@bgdev.pl>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+	David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Rutland <mark.rutland@arm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Peter Rosin <peda@axentia.se>,
+	Jiri Slaby <jslaby@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Magnus Damm <magnus.damm@gmail.com>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599540264442967177?=
+X-GMAIL-MSGID: =?utf-8?q?1599877312016794252?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, May 04, 2018 at 03:27:30PM +0200, Bartosz Golaszewski wrote:
+Hi Bartosz,
+
+On Fri, May 4, 2018 at 3:27 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
+>
 > SuperH is the only user of the current implementation of early platform
 > device support. We want to introduce a more robust approach to early
 > probing. As the first step - move all the current early platform code
 > to arch/sh.
-> 
+>
 > In order not to export internal drivers/base functions to arch code for
 > this temporary solution - copy the two needed routines for driver
 > matching from drivers/base/platform.c to arch/sh/drivers/platform_early.c.
-> 
+>
 > Also: call early_platform_cleanup() from subsys_initcall() so that it's
 > called after all early devices are probed.
-> 
+>
 > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>  drivers/clocksource/sh_cmt.c           |   7 +
+>  drivers/clocksource/sh_mtu2.c          |   7 +
+>  drivers/clocksource/sh_tmu.c           |   8 +
+>  drivers/tty/serial/sh-sci.c            |   7 +-
+>  include/linux/platform_device.h        |  64 +----
+
+The parts used on contemporary ARM/ARM64 Renesas SoCs look fine to me, so
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
