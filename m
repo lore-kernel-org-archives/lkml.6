@@ -1,121 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933031AbeEHIpQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 04:45:16 -0400
-Received: from mx.socionext.com ([202.248.49.38]:12383 "EHLO mx.socionext.com"
+        id S933361AbeEHIqg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 04:46:36 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:53348 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932358AbeEHIpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 04:45:11 -0400
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-To: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Cc: Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Subject: [PATCH] ASoC: uniphier: evea: use DAPM to change source of line-in
-Date: Tue,  8 May 2018 17:45:09 +0900
-Message-Id: <20180508084509.21616-1-suzuki.katsuhiro@socionext.com>
-X-Mailer: git-send-email 2.17.0
+        id S932297AbeEHIqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 04:46:32 -0400
+From: Todor Tomov <todor.tomov@linaro.org>
+To: sakari.ailus@iki.fi, mchehab@kernel.org, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Todor Tomov <todor.tomov@linaro.org>
+Subject: [PATCH v2] media: v4l: Add new 10-bit packed grayscale format
+Date: Tue,  8 May 2018 11:46:17 +0300
+Message-Id: <1525769177-6328-1-git-send-email-todor.tomov@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch replaces mixer switch to DAPM one for changing audio source
-of line-in.
+The new format will be called V4L2_PIX_FMT_Y10P.
+It is similar to the V4L2_PIX_FMT_SBGGR10P family formats
+but V4L2_PIX_FMT_Y10P is a grayscale format.
 
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- sound/soc/uniphier/evea.c | 55 +++++++++++++++++++++++----------------
- 1 file changed, 33 insertions(+), 22 deletions(-)
 
-diff --git a/sound/soc/uniphier/evea.c b/sound/soc/uniphier/evea.c
-index 73fd6730095c..f9c10165fbc1 100644
---- a/sound/soc/uniphier/evea.c
-+++ b/sound/soc/uniphier/evea.c
-@@ -54,8 +54,21 @@ struct evea_priv {
- 	int switch_hp;
- };
- 
-+static const char * const linsw1_sel1_text[] = {
-+	"LIN1", "LIN2", "LIN3"
-+};
+v2:
+- doc: improved bit-packed representation: added bit positions for LSB bits;
+- doc: improved bit-packed representation: added table column widths.
+
+ Documentation/media/uapi/v4l/pixfmt-y10p.rst | 33 ++++++++++++++++++++++++++++
+ Documentation/media/uapi/v4l/yuv-formats.rst |  1 +
+ drivers/media/v4l2-core/v4l2-ioctl.c         |  1 +
+ include/uapi/linux/videodev2.h               |  1 +
+ 4 files changed, 36 insertions(+)
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-y10p.rst
+
+diff --git a/Documentation/media/uapi/v4l/pixfmt-y10p.rst b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
+new file mode 100644
+index 0000000..13b5713
+--- /dev/null
++++ b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
+@@ -0,0 +1,33 @@
++.. -*- coding: utf-8; mode: rst -*-
 +
-+static SOC_ENUM_SINGLE_DECL(linsw1_sel1_enum,
-+	ALINSW1, ALINSW1_SEL1_SHIFT,
-+	linsw1_sel1_text);
++.. _V4L2-PIX-FMT-Y10P:
 +
-+static const struct snd_kcontrol_new linesw1_mux[] = {
-+	SOC_DAPM_ENUM("Line In 1 Source", linsw1_sel1_enum),
-+};
++******************************
++V4L2_PIX_FMT_Y10P ('Y10P')
++******************************
 +
- static const struct snd_soc_dapm_widget evea_widgets[] = {
--	SND_SOC_DAPM_ADC("ADC", "Capture", SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_ADC("ADC", NULL, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_MUX("Line In 1 Mux", SND_SOC_NOPM, 0, 0, linesw1_mux),
- 	SND_SOC_DAPM_INPUT("LIN1_LP"),
- 	SND_SOC_DAPM_INPUT("LIN1_RP"),
- 	SND_SOC_DAPM_INPUT("LIN2_LP"),
-@@ -63,7 +76,9 @@ static const struct snd_soc_dapm_widget evea_widgets[] = {
- 	SND_SOC_DAPM_INPUT("LIN3_LP"),
- 	SND_SOC_DAPM_INPUT("LIN3_RP"),
- 
--	SND_SOC_DAPM_DAC("DAC", "Playback", SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_DAC("DAC HP", NULL, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_DAC("DAC LO1", NULL, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_DAC("DAC LO2", NULL, SND_SOC_NOPM, 0, 0),
- 	SND_SOC_DAPM_OUTPUT("HP1_L"),
- 	SND_SOC_DAPM_OUTPUT("HP1_R"),
- 	SND_SOC_DAPM_OUTPUT("LO2_L"),
-@@ -71,17 +86,22 @@ static const struct snd_soc_dapm_widget evea_widgets[] = {
- };
- 
- static const struct snd_soc_dapm_route evea_routes[] = {
--	{ "ADC", NULL, "LIN1_LP" },
--	{ "ADC", NULL, "LIN1_RP" },
--	{ "ADC", NULL, "LIN2_LP" },
--	{ "ADC", NULL, "LIN2_RP" },
--	{ "ADC", NULL, "LIN3_LP" },
--	{ "ADC", NULL, "LIN3_RP" },
--
--	{ "HP1_L", NULL, "DAC" },
--	{ "HP1_R", NULL, "DAC" },
--	{ "LO2_L", NULL, "DAC" },
--	{ "LO2_R", NULL, "DAC" },
-+	{ "Line In 1", NULL, "ADC" },
-+	{ "ADC", NULL, "Line In 1 Mux" },
-+	{ "Line In 1 Mux", "LIN1", "LIN1_LP" },
-+	{ "Line In 1 Mux", "LIN1", "LIN1_RP" },
-+	{ "Line In 1 Mux", "LIN2", "LIN2_LP" },
-+	{ "Line In 1 Mux", "LIN2", "LIN2_RP" },
-+	{ "Line In 1 Mux", "LIN3", "LIN3_LP" },
-+	{ "Line In 1 Mux", "LIN3", "LIN3_RP" },
++Grey-scale image as a MIPI RAW10 packed array
 +
-+	{ "DAC HP", NULL, "Headphone 1" },
-+	{ "DAC LO1", NULL, "Line Out 1" },
-+	{ "DAC LO2", NULL, "Line Out 2" },
-+	{ "HP1_L", NULL, "DAC HP" },
-+	{ "HP1_R", NULL, "DAC HP" },
-+	{ "LO2_L", NULL, "DAC LO2" },
-+	{ "LO2_R", NULL, "DAC LO2" },
- };
++
++Description
++===========
++
++This is a packed grey-scale image format with a depth of 10 bits per
++pixel. Every four consecutive pixels are packed into 5 bytes. Each of
++the first 4 bytes contain the 8 high order bits of the pixels, and
++the 5th byte contains the 2 least significants bits of each pixel,
++in the same order.
++
++**Bit-packed representation.**
++
++.. flat-table::
++    :header-rows:  0
++    :stub-columns: 0
++    :widths: 8 8 8 8 64
++
++    * - Y'\ :sub:`00[9:2]`
++      - Y'\ :sub:`01[9:2]`
++      - Y'\ :sub:`02[9:2]`
++      - Y'\ :sub:`03[9:2]`
++      - Y'\ :sub:`03[1:0]`\ (bits 7--6) Y'\ :sub:`02[1:0]`\ (bits 5--4)
++	Y'\ :sub:`01[1:0]`\ (bits 3--2) Y'\ :sub:`00[1:0]`\ (bits 1--0)
+diff --git a/Documentation/media/uapi/v4l/yuv-formats.rst b/Documentation/media/uapi/v4l/yuv-formats.rst
+index 3334ea4..9ab0592 100644
+--- a/Documentation/media/uapi/v4l/yuv-formats.rst
++++ b/Documentation/media/uapi/v4l/yuv-formats.rst
+@@ -29,6 +29,7 @@ to brightness information.
+     pixfmt-y10
+     pixfmt-y12
+     pixfmt-y10b
++    pixfmt-y10p
+     pixfmt-y16
+     pixfmt-y16-be
+     pixfmt-y8i
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index de5d96d..dececea 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1147,6 +1147,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 	case V4L2_PIX_FMT_Y16:		descr = "16-bit Greyscale"; break;
+ 	case V4L2_PIX_FMT_Y16_BE:	descr = "16-bit Greyscale BE"; break;
+ 	case V4L2_PIX_FMT_Y10BPACK:	descr = "10-bit Greyscale (Packed)"; break;
++	case V4L2_PIX_FMT_Y10P:		descr = "10-bit Greyscale (MIPI Packed)"; break;
+ 	case V4L2_PIX_FMT_Y8I:		descr = "Interleaved 8-bit Greyscale"; break;
+ 	case V4L2_PIX_FMT_Y12I:		descr = "Interleaved 12-bit Greyscale"; break;
+ 	case V4L2_PIX_FMT_Z16:		descr = "16-bit Depth"; break;
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 600877b..b24ab720 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -522,6 +522,7 @@ struct v4l2_pix_format {
  
- static void evea_set_power_state_on(struct evea_priv *evea)
-@@ -280,16 +300,7 @@ static int evea_set_switch_hp(struct snd_kcontrol *kcontrol,
- 	return evea_update_switch_hp(evea);
- }
+ /* Grey bit-packed formats */
+ #define V4L2_PIX_FMT_Y10BPACK    v4l2_fourcc('Y', '1', '0', 'B') /* 10  Greyscale bit-packed */
++#define V4L2_PIX_FMT_Y10P    v4l2_fourcc('Y', '1', '0', 'P') /* 10  Greyscale, MIPI RAW10 packed */
  
--static const char * const linsw1_sel1_text[] = {
--	"LIN1", "LIN2", "LIN3"
--};
--
--static SOC_ENUM_SINGLE_DECL(linsw1_sel1_enum,
--	ALINSW1, ALINSW1_SEL1_SHIFT,
--	linsw1_sel1_text);
--
- static const struct snd_kcontrol_new evea_controls[] = {
--	SOC_ENUM("Line Capture Source", linsw1_sel1_enum),
- 	SOC_SINGLE_BOOL_EXT("Line Capture Switch", 0,
- 			    evea_get_switch_lin, evea_set_switch_lin),
- 	SOC_SINGLE_BOOL_EXT("Line Playback Switch", 0,
+ /* Palette formats */
+ #define V4L2_PIX_FMT_PAL8    v4l2_fourcc('P', 'A', 'L', '8') /*  8  8-bit palette */
 -- 
-2.17.0
+2.7.4
