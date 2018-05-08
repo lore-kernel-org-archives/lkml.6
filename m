@@ -1,141 +1,407 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2771174-1527006517-2-12160639753211169141
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527006517; b=KY2UBfTeYxGt+82KN8yKWfZUYK5x2sLAUgBO1P1kNDdCL9ylKM
-    yA27ILP6udW4qLcn7chGl6H1UaIb16wTir7K9gLDS1MI/2ZOqGNyrZs2NNG2VpRL
-    qOoIuttK6WpzEhAV3bUi3UgvTP3lnZ6z9XYBy8qhDKYcRItWJYeYB6OtuYGFBFf3
-    dKv/0BMKg7iXs5usEDr5EXL7TKsXOByX+zEqPaCkRpCGi3mf1NdWBTNCqm0ImS+T
-    waxYxd6Q/tKMi9Z3eXE8OOlKa18xUx2lMxCnsbp6SE3Z3ccJPfGVttKflDJclHN8
-    A80Ibat6qingiaS9ybBU8XPkZkQcPbSht2dA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527006517;
-    bh=2dT6MqF3koZE05LYHRnLnkSI3of41O5c1Ipd7bAjlhs=; b=iRwTm3szJ3Ga
-    yG6Pfa+sTGmVM7IWr1CaWGebgXki6OuHj270RQrBlUoNV/ZFgjdeH8MJK4hEJeC1
-    wrhsHqrY/9OABri1xG0w/gqwdX7jcXGfeh/MKOu3zzfCuggFHapkkl84umVbK9aq
-    frrYsRfb0bpMs8+sdHyWiOSQE3IQGBONbdU9KWMjvRyPDxZkWwql+BbgrzKUselI
-    Gi76tYFtH1mZrboi4zQAdPzcLVIqBOsLnHpD15QMDBrGFXePUhvI2lhLZpWvgsfT
-    I9D3w/H8PwUP1745211tyRnuMgpbMKC2krzs1x7pEpgD0iw6dcMsMOEz0+jwU0Hk
-    7oJNY9ScqQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nvidia.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=nvidia.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=nvidia.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=nvidia.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG4XrpiiyHIvOt0aR64GPVzxP1ou1T0UH44SJPIBRSsKTFoZbljkRyUJqVoKaNZV0ENSc8a4lsNI6Q0yfqf6WhNJwAFsW3AnyT0pbwXCFjWpFL72eRFo
-    Rg3+SGc8Wpaqf1zCxLKP2sE9/aLnqLkOJsu9OaUXfapXRcL41C3RO/SP/WB6POKHVLrurEQQSoCt0H5cnUGo+V13qi0UEbW5XW/Ijaa85zr3MZ1Zl5bQy625
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=4Zbj-4zmMWkA:10 a=IkcTkHD0fZMA:10
-    a=VUJBJC2UJ8kA:10 a=Ikd4Dj_1AAAA:8 a=VwQbUJbxAAAA:8 a=vb2Ji17uwYWtfcF2XEoA:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751278AbeEVQ2e (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 22 May 2018 12:28:34 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:14136 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751269AbeEVQ2d (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Tue, 22 May 2018 12:28:33 -0400
+Return-Path: <mperttunen@nvidia.com>
+X-Google-Smtp-Source: AB8JxZor/R9kZgf3wjBHkrUE82hKT+Nk8lgomV6sU1KOnC+go9W9evT6Q2LMqsh14jFNHRKf1d5Q
+ARC-Seal: i=1; a=rsa-sha256; t=1525780177; cv=none;
+        d=google.com; s=arc-20160816;
+        b=GsyUTwCdtrAhMLYM6aqNzvnSWlFKG2kvvcIX9DIJ91RLKyF1d/CvsvW/gZxBJuOHfQ
+         HcSsfOJvLCRF3V+1+CKV8QvivZPXTrebb7tg3SKJ1CifZdRWigSYU5Y1wTyEqBuTFUgC
+         dw+0+Hq1TqL0TAl7ZSPFwxaJT1aNDLjLnOw+VYVkSIUKoyufLIsIwOMjFDjef/OTOYON
+         5my2Uyh2k/4BGXrwMPaieNWdS9et5bsFpG5aNQm6yDC7VePYpTaYtKPl/ngwdgbAaF/H
+         qsaxkAq0oW1fW/vg5yoUuvdI+MM2D7N7J/85/ESILBRystu9Ets/8w6+VOWGvZIc3d8x
+         cVGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:arc-authentication-results;
+        bh=eBXAnSD+2bXMyAWHMiNHczD3808RZGv0EZ3FgTEYyjI=;
+        b=WN02sQoKXCNpY5xFsLWONpOKgztBI0Det7X5kp9FFNcAE0ueOqpFU4yOSrktun0gQX
+         kj3fwPuf2i736ULG+x+4ZreTRhwc6dzOlHxdje37YwkUor4BqBPYC9RLEPYt3DOlK3Q4
+         bEAZd4+PB5A/KZKOqNmVR2jmsprcRqGuCxTazHCKw+hyGrtLrIfJrO90XDpeMWDPlI6T
+         3mKus/Fj/jhBSKTzDEnoJCnKgb5vl05FCCKn3oEmgqZV0pv5omjzb5a/+5zSP/j+caU1
+         K5bISdNTJ0OkkEP78Xrk7SZrtBd8LuQdH/ktoYVjTeLaVd6xjiol2S23fIDRTvnY/rUv
+         6LOQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of mperttunen@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=mperttunen@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of mperttunen@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=mperttunen@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 22 May 2018 09:28:32 -0700
-Subject: Re: [PATCH 7/8] arm64: tegra: Add nodes for tcu on Tegra194
-To: Mikko Perttunen <mperttunen@nvidia.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <jassisinghbrar@gmail.com>,
-        <gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>
+	by hqpgpgate102.nvidia.com on Tue, 08 May 2018 04:49:31 -0700
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <jassisinghbrar@gmail.com>,
+	<gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>
 CC: <araza@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
+	<linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	"Mikko Perttunen" <mperttunen@nvidia.com>
+Subject: [PATCH 5/8] mailbox: tegra-hsp: Add support for shared mailboxes
+Date: Tue, 8 May 2018 14:44:00 +0300
+Message-ID: <20180508114403.14499-6-mperttunen@nvidia.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180508114403.14499-1-mperttunen@nvidia.com>
 References: <20180508114403.14499-1-mperttunen@nvidia.com>
- <20180508114403.14499-8-mperttunen@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <295c8125-6cdc-92b6-d0d7-01bf6ba0f8bd@nvidia.com>
-Date: Tue, 22 May 2018 17:28:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20180508114403.14499-8-mperttunen@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Content-Type: text/plain
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599896475595898000?=
+X-GMAIL-MSGID: =?utf-8?q?1599896475595898000?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The Tegra HSP block supports 'shared mailboxes' that are simple 32-bit
+registers consisting of a FULL bit in MSB position and 31 bits of data.
+The hardware can be configured to trigger interrupts when a mailbox
+is empty or full. Add support for these shared mailboxes to the HSP
+driver.
 
-On 08/05/18 12:44, Mikko Perttunen wrote:
-> Add nodes required for communication through the Tegra Combined UART.
-> This includes the AON HSP instance, addition of shared interrupts
-> for the TOP0 HSP instance, and finally the TCU node itself. Also
-> mark the HSP instances as compatible to tegra194-hsp, as the hardware
-> is not identical but is compatible to tegra186-hsp.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 34 +++++++++++++++++++++++++++++---
->   1 file changed, 31 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> index 6d699815a84f..d7f780b06fe2 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> @@ -217,10 +217,31 @@
->   		};
->   
->   		hsp_top0: hsp@3c00000 {
-> -			compatible = "nvidia,tegra186-hsp";
-> +			compatible = "nvidia,tegra194-hsp", "nvidia,tegra186-hsp";
+The initial use for the mailboxes is the Tegra Combined UART. For this
+purpose, we use interrupts to receive data, and spinning to wait for
+the transmit mailbox to be emptied to minimize unnecessary overhead.
 
-I might be wrong, but I think we may need to update the binding doc 
-compatibility property for hsp. For example see 
-'Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-flowctrl.txt'.
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/mailbox/tegra-hsp.c | 216 +++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 193 insertions(+), 23 deletions(-)
 
-Cheers
-Jon
-
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index 16eb970f2c9f..77bc8ed7ef15 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -21,6 +21,11 @@
+ 
+ #include <dt-bindings/mailbox/tegra186-hsp.h>
+ 
++#include "mailbox.h"
++
++#define HSP_INT0_IE		0x100
++#define HSP_INT_IR		0x304
++
+ #define HSP_INT_DIMENSIONING	0x380
+ #define HSP_nSM_SHIFT		0
+ #define HSP_nSS_SHIFT		4
+@@ -34,6 +39,8 @@
+ #define HSP_DB_RAW	0x8
+ #define HSP_DB_PENDING	0xc
+ 
++#define HSP_SM_SHRD_MBOX	0x0
++
+ #define HSP_DB_CCPLEX		1
+ #define HSP_DB_BPMP		3
+ #define HSP_DB_MAX		7
+@@ -68,6 +75,18 @@ struct tegra_hsp_db_map {
+ 	unsigned int index;
+ };
+ 
++struct tegra_hsp_mailbox {
++	struct tegra_hsp_channel channel;
++	unsigned int index;
++	bool sending;
++};
++
++static inline struct tegra_hsp_mailbox *
++channel_to_mailbox(struct tegra_hsp_channel *channel)
++{
++	return container_of(channel, struct tegra_hsp_mailbox, channel);
++}
++
+ struct tegra_hsp_soc {
+ 	const struct tegra_hsp_db_map *map;
+ };
+@@ -77,6 +96,7 @@ struct tegra_hsp {
+ 	struct mbox_controller mbox;
+ 	void __iomem *regs;
+ 	unsigned int doorbell_irq;
++	unsigned int shared_irq;
+ 	unsigned int num_sm;
+ 	unsigned int num_as;
+ 	unsigned int num_ss;
+@@ -85,6 +105,7 @@ struct tegra_hsp {
+ 	spinlock_t lock;
+ 
+ 	struct list_head doorbells;
++	struct tegra_hsp_mailbox *mailboxes;
+ };
+ 
+ static inline struct tegra_hsp *
+@@ -189,6 +210,35 @@ static irqreturn_t tegra_hsp_doorbell_irq(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
++static irqreturn_t tegra_hsp_shared_irq(int irq, void *data)
++{
++	struct tegra_hsp_mailbox *mb;
++	struct tegra_hsp *hsp = data;
++	unsigned long bit, mask;
++	u32 value;
++
++	mask = tegra_hsp_readl(hsp, HSP_INT_IR);
++	/* Only interested in FULL interrupts */
++	mask &= 0xff << 8;
++
++	for_each_set_bit(bit, &mask, 16) {
++		unsigned int mb_i = bit % 8;
++
++		mb = &hsp->mailboxes[mb_i];
++
++		if (!mb->sending) {
++			value = tegra_hsp_channel_readl(&mb->channel,
++							HSP_SM_SHRD_MBOX);
++			value &= ~BIT(31);
++			mbox_chan_received_data(mb->channel.chan, &value);
++			tegra_hsp_channel_writel(&mb->channel, value,
++						 HSP_SM_SHRD_MBOX);
++		}
++	}
++
++	return IRQ_HANDLED;
++}
++
+ static struct tegra_hsp_channel *
+ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
+ 			  unsigned int master, unsigned int index)
+@@ -277,15 +327,58 @@ static void tegra_hsp_doorbell_shutdown(struct tegra_hsp_doorbell *db)
+ 	spin_unlock_irqrestore(&hsp->lock, flags);
+ }
+ 
++static int tegra_hsp_mailbox_startup(struct tegra_hsp_mailbox *mb)
++{
++	struct tegra_hsp *hsp = mb->channel.hsp;
++	u32 value;
++
++	mb->channel.chan->txdone_method = TXDONE_BY_BLOCK;
++
++	/* Route FULL interrupt to external IRQ 0 */
++	value = tegra_hsp_readl(hsp, HSP_INT0_IE);
++	value |= BIT(mb->index + 8);
++	tegra_hsp_writel(hsp, value, HSP_INT0_IE);
++
++	return 0;
++}
++
++static int tegra_hsp_mailbox_shutdown(struct tegra_hsp_mailbox *mb)
++{
++	struct tegra_hsp *hsp = mb->channel.hsp;
++	u32 value;
++
++	value = tegra_hsp_readl(hsp, HSP_INT0_IE);
++	value &= ~BIT(mb->index + 8);
++	tegra_hsp_writel(hsp, value, HSP_INT0_IE);
++
++	return 0;
++}
++
+ static int tegra_hsp_send_data(struct mbox_chan *chan, void *data)
+ {
+ 	struct tegra_hsp_channel *channel = chan->con_priv;
+-	struct tegra_hsp_doorbell *db;
++	struct tegra_hsp_mailbox *mailbox;
++	uint32_t value;
+ 
+ 	switch (channel->type) {
+ 	case TEGRA_HSP_MBOX_TYPE_DB:
+-		db = channel_to_doorbell(channel);
+-		tegra_hsp_channel_writel(&db->channel, 1, HSP_DB_TRIGGER);
++		tegra_hsp_channel_writel(channel, 1, HSP_DB_TRIGGER);
++		return 0;
++	case TEGRA_HSP_MBOX_TYPE_SM:
++		mailbox = channel_to_mailbox(channel);
++		mailbox->sending = true;
++
++		value = *(uint32_t *)data;
++		/* Mark mailbox full */
++		value |= BIT(31);
++
++		tegra_hsp_channel_writel(channel, value, HSP_SM_SHRD_MBOX);
++
++		while (tegra_hsp_channel_readl(channel, HSP_SM_SHRD_MBOX)
++		               & BIT(31))
++			cpu_relax();
++
++		return 0;
+ 	}
+ 
+ 	return -EINVAL;
+@@ -298,6 +391,8 @@ static int tegra_hsp_startup(struct mbox_chan *chan)
+ 	switch (channel->type) {
+ 	case TEGRA_HSP_MBOX_TYPE_DB:
+ 		return tegra_hsp_doorbell_startup(channel_to_doorbell(channel));
++	case TEGRA_HSP_MBOX_TYPE_SM:
++		return tegra_hsp_mailbox_startup(channel_to_mailbox(channel));
+ 	}
+ 
+ 	return -EINVAL;
+@@ -311,6 +406,9 @@ static void tegra_hsp_shutdown(struct mbox_chan *chan)
+ 	case TEGRA_HSP_MBOX_TYPE_DB:
+ 		tegra_hsp_doorbell_shutdown(channel_to_doorbell(channel));
+ 		break;
++	case TEGRA_HSP_MBOX_TYPE_SM:
++		tegra_hsp_mailbox_shutdown(channel_to_mailbox(channel));
++		break;
+ 	}
+ }
+ 
+@@ -364,7 +462,16 @@ static struct mbox_chan *of_tegra_hsp_xlate(struct mbox_controller *mbox,
+ 
+ 	switch (type) {
+ 	case TEGRA_HSP_MBOX_TYPE_DB:
+-		return tegra_hsp_doorbell_xlate(hsp, param);
++		if (hsp->doorbell_irq)
++			return tegra_hsp_doorbell_xlate(hsp, param);
++		else
++			return ERR_PTR(-EINVAL);
++
++	case TEGRA_HSP_MBOX_TYPE_SM:
++		if (hsp->shared_irq && param < hsp->num_sm)
++			return hsp->mailboxes[param].channel.chan;
++		else
++			return ERR_PTR(-EINVAL);
+ 
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+@@ -403,6 +510,31 @@ static int tegra_hsp_add_doorbells(struct tegra_hsp *hsp)
+ 	return 0;
+ }
+ 
++static int tegra_hsp_add_mailboxes(struct tegra_hsp *hsp, struct device *dev)
++{
++	int i;
++
++	hsp->mailboxes = devm_kcalloc(dev, hsp->num_sm, sizeof(*hsp->mailboxes),
++				      GFP_KERNEL);
++	if (!hsp->mailboxes)
++		return -ENOMEM;
++
++	for (i = 0; i < hsp->num_sm; i++) {
++		struct tegra_hsp_mailbox *mb = &hsp->mailboxes[i];
++
++		mb->index = i;
++		mb->sending = false;
++
++		mb->channel.hsp = hsp;
++		mb->channel.type = TEGRA_HSP_MBOX_TYPE_SM;
++		mb->channel.regs = hsp->regs + SZ_64K + i * SZ_32K;
++		mb->channel.chan = &hsp->mbox.chans[i];
++		mb->channel.chan->con_priv = &mb->channel;
++	}
++
++	return 0;
++}
++
+ static int tegra_hsp_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_hsp *hsp;
+@@ -431,14 +563,19 @@ static int tegra_hsp_probe(struct platform_device *pdev)
+ 	hsp->num_si = (value >> HSP_nSI_SHIFT) & HSP_nINT_MASK;
+ 
+ 	err = platform_get_irq_byname(pdev, "doorbell");
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to get doorbell IRQ: %d\n", err);
+-		return err;
+-	}
++	if (err < 0)
++		hsp->doorbell_irq = 0;
++	else
++		hsp->doorbell_irq = err;
+ 
+-	hsp->doorbell_irq = err;
++	err = platform_get_irq_byname(pdev, "shared0");
++	if (err < 0)
++		hsp->shared_irq = 0;
++	else
++		hsp->shared_irq = err;
+ 
+ 	hsp->mbox.of_xlate = of_tegra_hsp_xlate;
++	/* First nSM are reserved for mailboxes */
+ 	hsp->mbox.num_chans = 32;
+ 	hsp->mbox.dev = &pdev->dev;
+ 	hsp->mbox.txdone_irq = false;
+@@ -451,10 +588,22 @@ static int tegra_hsp_probe(struct platform_device *pdev)
+ 	if (!hsp->mbox.chans)
+ 		return -ENOMEM;
+ 
+-	err = tegra_hsp_add_doorbells(hsp);
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to add doorbells: %d\n", err);
+-		return err;
++	if (hsp->doorbell_irq) {
++		err = tegra_hsp_add_doorbells(hsp);
++		if (err < 0) {
++			dev_err(&pdev->dev, "failed to add doorbells: %d\n",
++			        err);
++			return err;
++		}
++	}
++
++	if (hsp->shared_irq) {
++		err = tegra_hsp_add_mailboxes(hsp, &pdev->dev);
++		if (err < 0) {
++			dev_err(&pdev->dev, "failed to add mailboxes: %d\n",
++			        err);
++			goto remove_doorbells;
++		}
+ 	}
+ 
+ 	platform_set_drvdata(pdev, hsp);
+@@ -462,20 +611,40 @@ static int tegra_hsp_probe(struct platform_device *pdev)
+ 	err = mbox_controller_register(&hsp->mbox);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "failed to register mailbox: %d\n", err);
+-		tegra_hsp_remove_doorbells(hsp);
+-		return err;
++		goto remove_doorbells;
+ 	}
+ 
+-	err = devm_request_irq(&pdev->dev, hsp->doorbell_irq,
+-			       tegra_hsp_doorbell_irq, IRQF_NO_SUSPEND,
+-			       dev_name(&pdev->dev), hsp);
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to request doorbell IRQ#%u: %d\n",
+-			hsp->doorbell_irq, err);
+-		return err;
++	if (hsp->doorbell_irq) {
++		err = devm_request_irq(&pdev->dev, hsp->doorbell_irq,
++				       tegra_hsp_doorbell_irq, IRQF_NO_SUSPEND,
++				       dev_name(&pdev->dev), hsp);
++		if (err < 0) {
++			dev_err(&pdev->dev,
++			        "failed to request doorbell IRQ#%u: %d\n",
++				hsp->doorbell_irq, err);
++			return err;
++		}
++	}
++
++	if (hsp->shared_irq) {
++		err = devm_request_irq(&pdev->dev, hsp->shared_irq,
++				       tegra_hsp_shared_irq, 0,
++				       dev_name(&pdev->dev), hsp);
++		if (err < 0) {
++			dev_err(&pdev->dev,
++				"failed to request shared0 IRQ%u: %d\n",
++				hsp->shared_irq, err);
++			return err;
++		}
+ 	}
+ 
+ 	return 0;
++
++remove_doorbells:
++	if (hsp->doorbell_irq)
++		tegra_hsp_remove_doorbells(hsp);
++
++	return err;
+ }
+ 
+ static int tegra_hsp_remove(struct platform_device *pdev)
+@@ -483,7 +652,8 @@ static int tegra_hsp_remove(struct platform_device *pdev)
+ 	struct tegra_hsp *hsp = platform_get_drvdata(pdev);
+ 
+ 	mbox_controller_unregister(&hsp->mbox);
+-	tegra_hsp_remove_doorbells(hsp);
++	if (hsp->doorbell_irq)
++		tegra_hsp_remove_doorbells(hsp);
+ 
+ 	return 0;
+ }
 -- 
-nvpublic
+2.16.1
