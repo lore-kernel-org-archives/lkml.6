@@ -1,124 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756502AbeEHSla (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 14:41:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53809 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754386AbeEHSEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 14:04:50 -0400
-From: Mark Fasheh <mfasheh@suse.de>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        Mark Fasheh <mfasheh@suse.de>
-Subject: [PATCH 01/76] vfs: Introduce struct fs_view
-Date: Tue,  8 May 2018 11:03:21 -0700
-Message-Id: <20180508180436.716-2-mfasheh@suse.de>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180508180436.716-1-mfasheh@suse.de>
-References: <20180508180436.716-1-mfasheh@suse.de>
+        id S1755386AbeEHSsJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 14:48:09 -0400
+Received: from smtprelay0030.hostedemail.com ([216.40.44.30]:54693 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932621AbeEHSsH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 14:48:07 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:967:973:981:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1543:1593:1594:1711:1730:1747:1777:1792:1801:2393:2525:2559:2564:2682:2685:2828:2859:2895:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:4605:5007:6119:7903:8526:9025:9040:10004:10394:10400:10848:11026:11232:11473:11658:11914:12043:12048:12050:12438:12555:12663:12679:12740:12760:12895:12986:13095:13439:14096:14097:14180:14181:14659:14721:21060:21080:21347:21433:21451:21611:21627:30029:30030:30054:30070:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:23,LUA_SUMMARY:none
+X-HE-Tag: sleep07_29830ac1cdb38
+X-Filterd-Recvd-Size: 4099
+Message-ID: <e671945494d54cdcf65c6d2af9f9f69d65fb2583.camel@perches.com>
+Subject: Re: [PATCH v5 1/2] iommu - Enable debugfs exposure of IOMMU driver
+ internals
+From: Joe Perches <joe@perches.com>
+To: "Hook, Gary" <ghook@amd.com>, kbuild test robot <lkp@intel.com>,
+        Gary R Hook <gary.hook@amd.com>
+Cc: kbuild-all@01.org, iommu@lists.linux-foundation.org, joro@8bytes.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 08 May 2018 11:48:03 -0700
+In-Reply-To: <a9600652-f087-5d8f-ff0b-80200d570591@amd.com>
+References: <152572332370.3235.16541462864315443906.stgit@sosxen2.amd.com>
+         <201805080700.Jm8moLQz%fengguang.wu@intel.com>
+         <a9600652-f087-5d8f-ff0b-80200d570591@amd.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We want to de-couple some items from struct super_block, in particular those
-that provide a 'fiew' into an fs.
+On Tue, 2018-05-08 at 12:08 -0500, Hook, Gary wrote:
+> On 5/7/2018 6:47 PM, kbuild test robot wrote:
+> > Hi Gary,
+> > 
+> 
+> I imagine these questions have been asked before, so I'll ask for
+> forgiveness up front.
+> 
+> 
+> > Thank you for the patch! Yet something to improve:
+> > 
+> > [auto build test ERROR on iommu/next]
+> > [also build test ERROR on v4.17-rc4 next-20180507]
+> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> > 
+> > url:    https://github.com/0day-ci/linux/commits/Gary-R-Hook/iommu-Enable-debugfs-exposure-of-IOMMU-driver-internals/20180508-062918
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git next
+> > config: x86_64-randconfig-x016-201818 (attached as .config)
+> > compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+> > reproduce:
+> >          # save the attached .config to linux build tree
+> >          make ARCH=x86_64
+> 
+> Is the gcc 7 compiler now a requirement to build the kernel? Or only to 
+> run krobot tests?
+> 
+> Is this the earliest version of the compiler that can be used? I'm still 
+> using 4.8 and 5.4, which seems to suffice for the kernel.
+> 
+> Googling about this has been fruitless.
+> 
+> > 
+> > All error/warnings (new ones prefixed by >>):
+> > 
+> >     In file included from include/linux/intel-iommu.h:32:0,
+> >                      from drivers/gpu/drm/i915/i915_drv.h:41,
+> >                      from drivers/gpu/drm/i915/i915_oa_bxt.c:31:
+> >     include/linux/iommu.h: In function 'iommu_debugfs_new_driver_dir':
+> > > > include/linux/iommu.h:706:8: error: parameter name omitted
+> > 
+> >      struct dentry *iommu_debugfs_new_driver_dir(char *) {};
+> >             ^~~~~~
+> >     In file included from include/linux/intel-iommu.h:32:0,
+> >                      from drivers/gpu/drm/i915/i915_drv.h:41,
+> >                      from drivers/gpu/drm/i915/i915_oa_bxt.c:31:
+> > > > include/linux/iommu.h:706:8: warning: control reaches end of non-void function [-Wreturn-type]
+> > 
+> >      struct dentry *iommu_debugfs_new_driver_dir(char *) {};
+> >             ^~~~~~
+> > 
+> > vim +706 include/linux/iommu.h
+> > 
+> >     700	
+> >     701	#ifdef CONFIG_IOMMU_DEBUGFS
+> >     702	void iommu_debugfs_setup(void);
+> >     703	struct dentry *iommu_debugfs_new_driver_dir(char *);
+> >     704	#else
+> >     705	static inline void iommu_debugfs_setup(void) {}
+> >   > 706	struct dentry *iommu_debugfs_new_driver_dir(char *) {};
+> >     707	#endif
+> >     708	
+> 
+> I have no problems with adding parameter names. But 
+> scripts/checkpatch.pl doesn't seem to check for this, nor require it. 
+> Should checkpatch be updated?
 
-Introduce a small struct, fs_view to contain these fields. This first patch
-has a mostly empty fs_view. We do however, link it into the VFS:
+I'm pretty sure that's not feasible.
 
-Each super_block gets a default fs_view which is filled in via the
-usual superblock intialization methods.
+And when the compiler tells you you've stuffed up some
+syntactical bit, why should checkpatch duplicate the
+output error message too?
 
-struct inode is updated to point to an fs_view structure via a new
-'i_view' pointer, which replaces i_sb.
+btw:  That's an unnecessary ; at the end of that non-void
+function and it should probably be something like:
 
-A filesystem can now optionally provide their own fs_view to point i_view
-to.
-
-So we don't lose our link from inode to superblock, fs_view gets
-an embedded super_block pointer. A helper function, inode_sb() is
-introduced to make getting the superblock from an inode less clunky.
-
-Filesystems need no functional changes, and the only additional memory
-usage here is the added pointer on struct super_block.
-
-Signed-off-by: Mark Fasheh <mfasheh@suse.de>
----
- fs/inode.c         |  2 +-
- fs/super.c         |  1 +
- include/linux/fs.h | 21 ++++++++++++++++++++-
- 3 files changed, 22 insertions(+), 2 deletions(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index ef362364d396..4f08fdc2c60f 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -133,7 +133,7 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
- 	static const struct file_operations no_open_fops = {.open = no_open};
- 	struct address_space *const mapping = &inode->i_data;
- 
--	inode->i_sb = sb;
-+	inode->i_view = &sb->s_view;
- 	inode->i_blkbits = sb->s_blocksize_bits;
- 	inode->i_flags = 0;
- 	atomic_set(&inode->i_count, 1);
-diff --git a/fs/super.c b/fs/super.c
-index 672538ca9831..5258a57d410a 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -245,6 +245,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
- 	s->s_op = &default_op;
- 	s->s_time_gran = 1000000000;
- 	s->cleancache_poolid = CLEANCACHE_NO_POOL;
-+	s->s_view.v_sb = s;
- 
- 	s->s_shrink.seeks = DEFAULT_SEEKS;
- 	s->s_shrink.scan_objects = super_cache_scan;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c6baf767619e..4561cb9156d4 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -580,7 +580,7 @@ struct inode {
- #endif
- 
- 	const struct inode_operations	*i_op;
--	struct super_block	*i_sb;
-+	struct fs_view		*i_view;
- 	struct address_space	*i_mapping;
- 
- #ifdef CONFIG_SECURITY
-@@ -1340,6 +1340,24 @@ struct sb_writers {
- 	struct percpu_rw_semaphore	rw_sem[SB_FREEZE_LEVELS];
- };
- 
-+/*
-+ * "View" into a filesystem. Allows us to abstract out those
-+ * superblock fields which change between the roots on a given
-+ * filesystem. Most filesystems can ignore this - inodes are pointed
-+ * to the default view 's_view' during initialization.
-+ *
-+ * A file system with multiple roots should allocate a view structure
-+ * per root and point each inodes view pointer to it in iget.
-+ */
-+struct fs_view {
-+	struct super_block	*v_sb;
-+};
-+
-+static inline struct super_block *inode_sb(const struct inode *inode)
-+{
-+	return inode->i_view->v_sb;
-+}
-+
- struct super_block {
- 	struct list_head	s_list;		/* Keep this first */
- 	dev_t			s_dev;		/* search index; _not_ kdev_t */
-@@ -1358,6 +1376,7 @@ struct super_block {
- 	struct rw_semaphore	s_umount;
- 	int			s_count;
- 	atomic_t		s_active;
-+	struct fs_view		s_view;		/* default view into the fs */
- #ifdef CONFIG_SECURITY
- 	void                    *s_security;
- #endif
--- 
-2.15.1
+static inline struct dentry *iommu_debugfs_new_driver_dir(char *dir)
+{
+	return NULL;
+}
