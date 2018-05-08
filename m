@@ -1,96 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933201AbeEHWtq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 18:49:46 -0400
-Received: from mga18.intel.com ([134.134.136.126]:34096 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932133AbeEHWtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 18:49:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,379,1520924400";
-   d="scan'208";a="39474051"
-Subject: Re: [PATCH 0/9] [v3] x86, pkeys: two protection keys bug fixes
-To: Ingo Molnar <mingo@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-References: <20180427174527.0031016C@viggo.jf.intel.com>
- <20180428070553.yjlt22sb6ntcaqnc@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linuxram@us.ibm.com,
-        tglx@linutronix.de, mpe@ellerman.id.au, akpm@linux-foundation.org,
-        shuah@kernel.org, shakeelb@google.com
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Message-ID: <0bb50502-02f3-0eeb-b126-0345ec029145@intel.com>
-Date: Tue, 8 May 2018 15:49:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180428070553.yjlt22sb6ntcaqnc@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S932699AbeEHWwA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 18:52:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59266 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754148AbeEHWv7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 18:51:59 -0400
+Date: Tue, 8 May 2018 15:51:58 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-kernel@vger.kernel.org, aryabinin@virtuozzo.com,
+        dvyukov@google.com, mingo@redhat.com, peterz@infradead.org
+Subject: Re: [PATCH 2/3] kcov: prefault the kcov_area
+Message-Id: <20180508155158.7e6a789d950bcaf957c8c3bf@linux-foundation.org>
+In-Reply-To: <20180504135535.53744-3-mark.rutland@arm.com>
+References: <20180504135535.53744-1-mark.rutland@arm.com>
+        <20180504135535.53744-3-mark.rutland@arm.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 1)
-> 
-> Minor patch series organization requests:
-> 
->  - please include the shortlog and diffstat in the cover letter in the future, as 
->    it makes it easier to see the overall structure and makes it easier to reply to 
->    certain commits as a group.
+On Fri,  4 May 2018 14:55:34 +0100 Mark Rutland <mark.rutland@arm.com> wrote:
 
-Will do.
-
->  - please capitalize commit titles as is usually done in arch/x86/ and change the 
->    change the subsystem tags to the usual ones:
+> On many architectures the vmalloc area is lazily faulted in upon first
+> access. This is problematic for KCOV, as __sanitizer_cov_trace_pc
+> accesses the (vmalloc'd) kcov_area, and fault handling code may be
+> instrumented. If an access to kcov_area faults, this will result in
+> mutual recursion through the fault handling code and
+> __sanitizer_cov_trace_pc(), eventually leading to stack corruption
+> and/or overflow.
 > 
-> d76eeb1914c8: x86/pkeys: Override pkey when moving away from PROT_EXEC
-> f30f10248200: x86/pkeys/selftests: Add PROT_EXEC test
-> 0530ebfefcdc: x86/pkeys/selftests: Add allow faults on unknown keys
-> e81c40e33818: x86/pkeys/selftests: Factor out "instruction page"
-> 57042882631c: x86/pkeys/selftests: Fix pkey exhaustion test off-by-one
-> 6b833e9d3171: x86/pkeys/selftests: Fix pointer math
-> d16f12e3c4ca: x86/pkeys: Do not special case protection key 0
-> 1cb7691d0ee4: x86/pkeys/selftests: Add a test for pkey 0
-> 273ae5cde423: x86/pkeys/selftests: Save off 'prot' for allocations
+> We can avoid this by faulting in the kcov_area before
+> __sanitizer_cov_trace_pc() is permitted to access it. Once it has been
+> faulted in, it will remain present in the process page tables, and will
+> not fault again.
+> 
+> ...
 >
->  - please re-order the series to first introduce a unit test which specifically 
->    tests for the failure, ascertain that it indeed fails, and then apply the 
->    kernel fix. I.e. please use the order I used above for future versions of this 
->    patch-set.
+> --- a/kernel/kcov.c
+> +++ b/kernel/kcov.c
+> @@ -324,6 +324,17 @@ static int kcov_close(struct inode *inode, struct file *filep)
+>  	return 0;
+>  }
+>  
+> +static void kcov_fault_in_area(struct kcov *kcov)
 
-I can't _quite_ use this order, but I get your point and I'll do as you
-suggest, conceptually.
+It would be nice to have a comment here explaining why the function
+exists.
 
+umm, this?
 
-> 2)
-> 
-> The new self-test you added does not fail overly nicely, it does the following on 
-> older kernels:
-...
-> I.e. x86 unit tests should never 'crash' in a way that suggests that the testing 
-> itself might be buggy - the crashes/failures should always be well controlled.
+--- a/kernel/kcov.c~kcov-prefault-the-kcov_area-fix-fix
++++ a/kernel/kcov.c
+@@ -324,6 +324,10 @@ static int kcov_close(struct inode *inod
+ 	return 0;
+ }
+ 
++/*
++ * fault in a lazily-faulted vmalloc area, to avoid recursion issues if the
++ * vmalloc fault handler itself is instrumented.
++ */
+ static void kcov_fault_in_area(struct kcov *kcov)
+ {
+ 	unsigned long stride = PAGE_SIZE / sizeof(unsigned long);
 
-I've tried to make this nicer.  I never abort() any more, for instance.
-
-> 3)
-> 
-> When the first kernel bug fix is applied but not the second, then I don't see the 
-> new PROT_EXEC test catching the bug:
-
-Thanks for catching this.  I forgot to add the test function to the
-pkey_tests[] array.  It's fixed up now.
-
-> 4)
-> 
-> In the above kernel that was missing the PROT_EXEC fix I was repeatedly running 
-> the 64-bit and 32-bit testcases as non-root and as root as well, until I got a 
-> hang in the middle of a 32-bit test running as root:
-
-I believe this is all my stupidity from not being careful about using
-signal-safe functions in the signal handlers.  There's no pretty
-solution for this, but I've at least made it stop hanging.  The fixes
-for that will be in the beginning of the next series.
+> +{
+> +	unsigned long stride = PAGE_SIZE / sizeof(unsigned long);
+> +	unsigned long *area = kcov->area;
+> +	unsigned long offset;
+> +
+> +	for (offset = 0; offset < kcov->size; offset += stride) {
+> +		READ_ONCE(area[offset]);
+> +	}
+> +}
