@@ -1,68 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932231AbeEHJ2t (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 05:28:49 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:49281 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932125AbeEHJ2n (ORCPT
+        id S1754807AbeEHJaW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 05:30:22 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53637 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754457AbeEHJaU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 05:28:43 -0400
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net, linux-can@vger.kernel.org, kernel@pengutronix.de,
-        Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>,
-        linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 1/7] can: dev: increase bus-off message severity
-Date: Tue,  8 May 2018 11:28:25 +0200
-Message-Id: <20180508092831.28247-2-mkl@pengutronix.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180508092831.28247-1-mkl@pengutronix.de>
-References: <20180508092831.28247-1-mkl@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:205:1d::14
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Tue, 8 May 2018 05:30:20 -0400
+X-Google-Smtp-Source: AB8JxZr8/APfYAMkzK5QkA+7SSU41wOYXu+rH6w/Fv5V2Qr9OBpEvoMtKom+AeOQ3XVz3Phz3xWFXQ==
+Subject: Re: [PATCH] nvmem: properly handle returned value nvmem_reg_read
+To: Mathieu Malaterre <malat@debian.org>
+Cc: linux-kernel@vger.kernel.org
+References: <20180505202450.26630-1-malat@debian.org>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <86ae1cf5-8145-63f1-1464-973aeb056103@linaro.org>
+Date: Tue, 8 May 2018 10:30:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20180505202450.26630-1-malat@debian.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Thanks for the patch,
 
-bus-off is usually caused by hardware malfunction or configuration error
-(baud rate mismatch) and causes a complete loss of communication.
+On 05/05/18 21:24, Mathieu Malaterre wrote:
+> Function nvmem_reg_read can return a non zero value indicating an error.
+> This returned value must be read and error propagated to
+> nvmem_cell_prepare_write_buffer. Silence the following gcc warning (W=1):
+> 
+>    drivers/nvmem/core.c:1093:9: warning: variable ‘rc’ set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>   drivers/nvmem/core.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index b05aa8e81303..f34f2363925a 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -1107,6 +1107,8 @@ static void *nvmem_cell_prepare_write_buffer(struct nvmem_cell *cell,
+>   
+>   		/* setup the first byte with lsb bits from nvmem */
+>   		rc = nvmem_reg_read(nvmem, cell->offset, &v, 1);
+> +		if (rc)
+> +			goto err;
+>   		*b++ |= GENMASK(bit_offset - 1, 0) & v;
+>   
+>   		/* setup rest of the byte if any */
+> @@ -1125,11 +1127,16 @@ static void *nvmem_cell_prepare_write_buffer(struct nvmem_cell *cell,
+>   		/* setup the last byte with msb bits from nvmem */
+>   		rc = nvmem_reg_read(nvmem,
+>   				    cell->offset + cell->bytes - 1, &v, 1);
+> +		if (rc)
+> +			goto err;
+>   		*p |= GENMASK(7, (nbits + bit_offset) % BITS_PER_BYTE) & v;
+>   
+>   	}
+>   
+>   	return buf;
+> +err:
+> +	kfree(buf);
+> +	return NULL;
+You should return an error pointer here, not NULL.
 
-Increase the "bus-off" message's severity from netdev_dbg() to
-netdev_info() to make it visible to the user.
+thanks,
+srini
 
-A can interface going into bus-off is similar in severity to ethernet's
-"Link is Down" message, which is also printed at info level.
 
-It is debatable whether the the "restarted" message should also be
-changed to netdev_info() to make the interface state changes
-comprehensible from the kernel log. I have chosen to keep the
-"restarted" message at dbg for now as the "bus-off" message should be
-enough for the user to notice and investigate the problem.
-
-Signed-off-by: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
-Cc: linux-can@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
- drivers/net/can/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/can/dev.c b/drivers/net/can/dev.c
-index b1779566c5bb..3c71f1cb205f 100644
---- a/drivers/net/can/dev.c
-+++ b/drivers/net/can/dev.c
-@@ -605,7 +605,7 @@ void can_bus_off(struct net_device *dev)
- {
- 	struct can_priv *priv = netdev_priv(dev);
- 
--	netdev_dbg(dev, "bus-off\n");
-+	netdev_info(dev, "bus-off\n");
- 
- 	netif_carrier_off(dev);
- 
--- 
-2.17.0
+>   }
+>   
+>   /**
+> 
