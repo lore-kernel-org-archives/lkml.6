@@ -1,39 +1,38 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoPaOOgyb8FIeqg/32foVShzQSg/xDNuU3oZj7/MsM4g+kdtdxidlAZqBm2OBPEY9tzuXit
-ARC-Seal: i=1; a=rsa-sha256; t=1525767202; cv=none;
+X-Google-Smtp-Source: AB8JxZopbRb2ri0WVg2zTRC5qkmdL4bAwbbUqMicbg5AHJWRe43x3Pvdge8mJvh2FLzjCRa2R05/
+ARC-Seal: i=1; a=rsa-sha256; t=1525767199; cv=none;
         d=google.com; s=arc-20160816;
-        b=fM38ZK9tPSKiof50ilMQ0oX2CkiKW8WTWQ75k9C6XkCKkX082j0Zd57mXQGJYqpEja
-         c/XHli4AbBZESjIdAqTe2E7eo8kCsSnUxqaySZndh5Vf4NCLxBOfSUu3Tpu9NC3tDx+F
-         W+e0hcgOFLjCc4PuHM2rL52FSW09IJ9rMNNsdKiJYdB/tyy5yWfLakco/v8bXbcC5g9K
-         3LAZZZYSIQzmvTHKhWls4JcOOYXRryZHlvr5XSv2d5G2eN6gXzdIkQg/vslknsMOUbQ/
-         8IdrrE5mcW94guoG6QcJuEfIpdnq8QhQVgKRektw9jSNJsZq03IQ0AkmSpX2naAiiR3t
-         yU7Q==
+        b=cbdfHBaV8vjc8uoYSQ3Au7lhosZoaIWKhZsmVcJmeeau5MyOyul9uMyU06J23oSe+j
+         42jd9YFgxw1K2AIy+O7Fh4RSgIQ/Qgq8T7smry30BVLoUjNNq4EiQWWTEJFc1SFptd5d
+         Ok6rjmSB58SDaQJMO+Biwir5SJJ3OxlKjSecwvMFYEFcOhBTLu5Og4oD9k/6W/o2Jnof
+         7ErtyctypsO5Q9gSAkmcq6HfNQBul6zSC6c1fEv8bwDJRWbW2KPz/WxSM5Wx5ACB35iq
+         ha0th6TfBTU7IoQUb2bZ2miAaiJGdkJ5v2AOHGI+eE/5xQUWLZpdXw8flF+4zCRoHgmu
+         wChA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=IE/LeA+OqzGPROPH7XPPXLs6CtLgUSNa+MSg6TgHUnk=;
-        b=GFDiVk/yYjzvRVj2sZnckhW61rTp+V9SSIb1G77TYykPXMndcGD2pq6fhvDzSF9Wr9
-         YWX2A5u4HpBmXJZXxttSe9J+9hywNg8BS1T9AlFPEJTseY0/HTE+G13oJIfmMeXdOIvk
-         PAB3Ps6GAzXq8OvadAD8nUk+WBGsS0VIyKw22ME2L7Zpk4M3V4TAa0cLWx3O1Psr8N8d
-         f+J4LhxhKBLvQjRNsXKhBtp+9krOwY8ko43jrCCw1ZS8OdCdT36ZgAYTiHmcrTpkuRS3
-         GFUygGt19Q8bua9/nGxY/G+JZM26Rp4WA/VA1TIkvwXlfGpf6h5bP2Kg8Z8jUm2QOH+f
-         B5Fw==
+        bh=IOkU0cXI1cjYzQ0wRNFr433Gb1XRG86j5ZPMwqhTkBg=;
+        b=YlsLyfHx5w/mN9p3SkEsh4ZpaQHyq9lrIUAxCVAzEXG1reSjcmLHBF47SG3Y1XrPZd
+         CJHLMcOL/SnncbpTmlJKZNRjBfET7cARJwrnkt74etdPlpUwSVIeJ+np34fw4Uf/i2Hl
+         nucRDSs4rE5ex9L4KOT5mK1a5MU0HLlYGPIxURe8hgsk+NWHZ3ICe8iyq2r8ivalnenc
+         cvgHYaytDbIdJ+3SOOjTRLEYB56CFrEMUfix9i/VWI9rboOBqWZTE/zkuX3Xuqq9bQ/y
+         c3zFUbA9t6wwN2q8fGzVfRQ8iUoYpa1oEsWiwiwB4K3soMi9ORGqhKRsGTDKhYoZTNZG
+         fdSw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=JVXHmU3w;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Bhz4wFrG;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=JVXHmU3w;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Bhz4wFrG;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Mario Limonciello <mario.limonciello@dell.com>,
-	"Darren Hart (VMware)" <dvhart@infradead.org>
-Subject: [PATCH 4.16 44/52] platform/x86: Kconfig: Fix dell-laptop dependency chain.
-Date: Tue,  8 May 2018 10:10:42 +0200
-Message-Id: <20180508073934.347293397@linuxfoundation.org>
+	Guenter Roeck <linux@roeck-us.net>,
+	Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 4.16 35/52] xhci: Fix use-after-free in xhci_free_virt_device
+Date: Tue,  8 May 2018 10:10:33 +0200
+Message-Id: <20180508073933.026701928@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
 References: <20180508073928.058320984@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882869901119872?=
-X-GMAIL-MSGID: =?utf-8?q?1599882869901119872?=
+X-GMAIL-THRID: =?utf-8?q?1599882866914229413?=
+X-GMAIL-MSGID: =?utf-8?q?1599882866914229413?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,47 +51,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mario Limonciello <mario.limonciello@dell.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 7fe3fa3b5ec8e75389cce4bf5d052a52e6198d59 upstream.
+commit 44a182b9d17765514fa2b1cc911e4e65134eef93 upstream.
 
-As reported by Randy Dunlap:
->> WARNING: unmet direct dependencies detected for DELL_SMBIOS
->>   Depends on [m]: X86 [=y] && X86_PLATFORM_DEVICES [=y]
->>	&& (DCDBAS [=m] ||
->> DCDBAS [=m]=n) && (ACPI_WMI [=n] || ACPI_WMI [=n]=n)
->>   Selected by [y]:
->>   - DELL_LAPTOP [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y]
->> && DMI [=y]
->> && BACKLIGHT_CLASS_DEVICE [=y] && (ACPI_VIDEO [=n] ||
->>	ACPI_VIDEO [=n]=n)
->> && (RFKILL [=n] || RFKILL [=n]=n) && SERIO_I8042 [=y]
->>
+KASAN found a use-after-free in xhci_free_virt_device+0x33b/0x38e
+where xhci_free_virt_device() sets slot id to 0 if udev exists:
+if (dev->udev && dev->udev->slot_id)
+	dev->udev->slot_id = 0;
 
-Right now it's possible to set dell laptop to compile in but this
-causes dell-smbios to compile in which breaks if dcdbas is a module.
+dev->udev will be true even if udev is freed because dev->udev is
+not set to NULL.
 
-Dell laptop shouldn't select dell-smbios anymore, but depend on it.
+set dev->udev pointer to NULL in xhci_free_dev()
 
-Fixes: 32d7b19bad96 (platform/x86: dell-smbios: Resolve dependency error on DCDBAS)
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+The original patch went to stable so this fix needs to be applied
+there as well.
+
+Fixes: a400efe455f7 ("xhci: zero usb device slot_id member when disabling and freeing a xhci slot")
+Cc: <stable@vger.kernel.org>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/platform/x86/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/host/xhci.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -154,7 +154,7 @@ config DELL_LAPTOP
- 	depends on ACPI_VIDEO || ACPI_VIDEO = n
- 	depends on RFKILL || RFKILL = n
- 	depends on SERIO_I8042
--	select DELL_SMBIOS
-+	depends on DELL_SMBIOS
- 	select POWER_SUPPLY
- 	select LEDS_CLASS
- 	select NEW_LEDS
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -3548,6 +3548,7 @@ static void xhci_free_dev(struct usb_hcd
+ 		del_timer_sync(&virt_dev->eps[i].stop_cmd_timer);
+ 	}
+ 	xhci_debugfs_remove_slot(xhci, udev->slot_id);
++	virt_dev->udev = NULL;
+ 	ret = xhci_disable_slot(xhci, udev->slot_id);
+ 	if (ret)
+ 		xhci_free_virt_device(xhci, udev->slot_id);
