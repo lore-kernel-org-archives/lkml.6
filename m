@@ -1,147 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754431AbeEHGyl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 02:54:41 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:43608 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754257AbeEHGyj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 02:54:39 -0400
-X-Google-Smtp-Source: AB8JxZqqfSagPiETQb7/W8qynvidm40QVHTMNzELOzdE3dfLAz7EG7bbGSA3Rh/B+6DSD+IU894Ccw==
-Date: Tue, 8 May 2018 12:24:35 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Claudio Scordino <claudio@evidence.eu.com>
-Cc: linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Joel Fernandes <joelaf@google.com>, linux-pm@vger.kernel.org
-Subject: Re: [RFC PATCH] sched/cpufreq/schedutil: handling urgent frequency
- requests
-Message-ID: <20180508065435.bcht6dyb3rpp6gk5@vireshk-i7>
-References: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
+        id S1754498AbeEHG7j (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 02:59:39 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:52021 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754479AbeEHG7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 02:59:38 -0400
+Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
+ (issued 65284 msec ago)
+To: Bjorn Helgaas <helgaas@kernel.org>, okaya@codeaurora.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>
+References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
+ <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
+ <43b8ab4a-f8ee-dc96-40ec-e6fdfedd8309@molgen.mpg.de>
+ <20180504024527.GE15790@bhelgaas-glaptop.roam.corp.google.com>
+ <aa72d3ba089c76449600c22b58a2cafe@codeaurora.org>
+ <20180504133327.GF15790@bhelgaas-glaptop.roam.corp.google.com>
+ <20180507213344.GA133147@bhelgaas-glaptop.roam.corp.google.com>
+From: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
+Message-ID: <903e7c20-fdd7-9cbf-debb-a90e70240c7c@molgen.mpg.de>
+Date: Tue, 8 May 2018 08:59:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20180507213344.GA133147@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07-05-18, 16:43, Claudio Scordino wrote:
-> At OSPM, it was mentioned the issue about urgent CPU frequency requests
-> arriving when a frequency switch is already in progress.
-> 
-> Besides the various issues (physical time for switching frequency,
-> on-going kthread activity, etc.) one (minor) issue is the kernel
-> "forgetting" such request, thus waiting the next switch time for
-> recomputing the needed frequency and behaving accordingly.
-> 
-> This patch makes the kthread serve any urgent request occurred during
-> the previous frequency switch. It introduces a specific flag, only set
-> when the SCHED_DEADLINE scheduling class increases the CPU utilization,
-> aiming at decreasing the likelihood of a deadline miss.
-> 
-> Indeed, some preliminary tests in critical conditions (i.e.
-> SCHED_DEADLINE tasks with short periods) have shown reductions of more
-> than 10% of the average number of deadline misses. On the other hand,
-> the increase in terms of energy consumption when running SCHED_DEADLINE
-> tasks (not yet measured) is likely to be not negligible (especially in
-> case of critical scenarios like "ramp up" utilizations).
-> 
-> The patch is meant as follow-up discussion after OSPM.
-> 
-> Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
-> CC: Viresh Kumar <viresh.kumar@linaro.org>
-> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> CC: Peter Zijlstra <peterz@infradead.org>
-> CC: Ingo Molnar <mingo@redhat.com>
-> CC: Patrick Bellasi <patrick.bellasi@arm.com>
-> CC: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Luca Abeni <luca.abeni@santannapisa.it>
-> CC: Joel Fernandes <joelaf@google.com>
-> CC: linux-pm@vger.kernel.org
-> ---
->  kernel/sched/cpufreq_schedutil.c | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index d2c6083..4de06b0 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -41,6 +41,7 @@ struct sugov_policy {
->  	bool			work_in_progress;
->  
->  	bool			need_freq_update;
-> +	bool			urgent_freq_update;
->  };
->  
->  struct sugov_cpu {
-> @@ -92,6 +93,14 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
->  	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
->  		return false;
->  
-> +	/*
-> +	 * Continue computing the new frequency. In case of work_in_progress,
-> +	 * the kthread will resched a change once the current transition is
-> +	 * finished.
-> +	 */
-> +	if (sg_policy->urgent_freq_update)
-> +		return true;
-> +
->  	if (sg_policy->work_in_progress)
->  		return false;
->  
-> @@ -121,6 +130,9 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
->  	sg_policy->next_freq = next_freq;
->  	sg_policy->last_freq_update_time = time;
->  
-> +	if (sg_policy->work_in_progress)
-> +		return;
-> +
->  	if (policy->fast_switch_enabled) {
->  		next_freq = cpufreq_driver_fast_switch(policy, next_freq);
->  		if (!next_freq)
-> @@ -274,7 +286,7 @@ static inline bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu) { return false; }
->  static inline void ignore_dl_rate_limit(struct sugov_cpu *sg_cpu, struct sugov_policy *sg_policy)
->  {
->  	if (cpu_util_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->util_dl)
-> -		sg_policy->need_freq_update = true;
-> +		sg_policy->urgent_freq_update = true;
->  }
->  
->  static void sugov_update_single(struct update_util_data *hook, u64 time,
-> @@ -383,8 +395,11 @@ static void sugov_work(struct kthread_work *work)
->  	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
->  
->  	mutex_lock(&sg_policy->work_lock);
-> -	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
-> +	do {
-> +		sg_policy->urgent_freq_update = false;
-> +		__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
->  				CPUFREQ_RELATION_L);
+Dear Bjorn,
 
-If we are going to solve this problem, then maybe instead of the added
-complexity and a new flag we can look for need_freq_update flag at this location
-and re-calculate the next frequency if required.
 
-> +	} while (sg_policy->urgent_freq_update);
->  	mutex_unlock(&sg_policy->work_lock);
->  
->  	sg_policy->work_in_progress = false;
-> @@ -673,6 +688,7 @@ static int sugov_start(struct cpufreq_policy *policy)
->  	sg_policy->next_freq			= UINT_MAX;
->  	sg_policy->work_in_progress		= false;
->  	sg_policy->need_freq_update		= false;
-> +	sg_policy->urgent_freq_update		= false;
->  	sg_policy->cached_raw_freq		= 0;
->  
->  	for_each_cpu(cpu, policy->cpus) {
-> -- 
-> 2.7.4
+Am 07.05.2018 um 23:33 schrieb Bjorn Helgaas:
+> On Fri, May 04, 2018 at 08:33:27AM -0500, Bjorn Helgaas wrote:
+>> commit b0d6f2230e12c85ae3b65a854a53c67c7c1f6406
+>> Author: Bjorn Helgaas <bhelgaas@google.com>
+>> Date:   Thu May 3 18:39:38 2018 -0500
+>>
+>>      PCI: pciehp: Add quirk for Intel Command Completed erratum
+>>      
+>>      The Intel CF118 erratum means the controller does not set the Command
+>>      Completed bit unless writes to the Slot Command register change "Control"
+>>      bits.  Command Completed is never set for writes that only change software
+>>      notification "Enable" bits.  This results in timeouts like this:
+>>      
+>>        pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038 (issued 65284 msec ago)
+>>      
+>>      When this erratum is present, avoid these timeouts by marking commands
+>>      "completed" immediately unless they change the "Control" bits.
+>>      
+>>      Here's the text of the erratum from the Intel document:
+>>      
+>>        CF118        PCIe Slot Status Register Command Completed bit not always
+>>                     updated on any configuration write to the Slot Control
+>>                     Register
+>>      
+>>        Problem:     For PCIe root ports (devices 0 - 10) supporting hot-plug,
+>>                     the Slot Status Register (offset AAh) Command Completed
+>>                     (bit[4]) status is updated under the following condition:
+>>                     IOH will set Command Completed bit after delivering the new
+>>                     commands written in the Slot Controller register (offset
+>>                     A8h) to VPP. The IOH detects new commands written in Slot
+>>                     Control register by checking the change of value for Power
+>>                     Controller Control (bit[10]), Power Indicator Control
+>>                     (bits[9:8]), Attention Indicator Control (bits[7:6]), or
+>>                     Electromechanical Interlock Control (bit[11]) fields. Any
+>>                     other configuration writes to the Slot Control register
+>>                     without changing the values of these fields will not cause
+>>                     Command Completed bit to be set.
+>>      
+>>                     The PCIe Base Specification Revision 2.0 or later describes
+>>                     the “Slot Control Register” in section 7.8.10, as follows
+>>                     (Reference section 7.8.10, Slot Control Register, Offset
+>>                     18h). In hot-plug capable Downstream Ports, a write to the
+>>                     Slot Control register must cause a hot-plug command to be
+>>                     generated (see Section 6.7.3.2 for details on hot-plug
+>>                     commands). A write to the Slot Control register in a
+>>                     Downstream Port that is not hotplug capable must not cause a
+>>                     hot-plug command to be executed.
+>>      
+>>                     The PCIe Spec intended that every write to the Slot Control
+>>                     Register is a command and expected a command complete status
+>>                     to abstract the VPP implementation specific nuances from the
+>>                     OS software. IOH PCIe Slot Control Register implementation
+>>                     is not fully conforming to the PCIe Specification in this
+>>                     respect.
+>>      
+>>        Implication: Software checking on the Command Completed status after
+>>                     writing to the Slot Control register may time out.
+>>      
+>>        Workaround:  Software can read the Slot Control register and compare the
+>>                     existing and new values to determine if it should check the
+>>                     Command Completed status after writing to the Slot Control
+>>                     register.
+>>      
+>>      Link: http://www.intel.com/content/www/us/en/processors/xeon/xeon-e7-v2-spec-update.html
+>>      Link: https://lkml.kernel.org/r/8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de
+>>      Reported-by: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
+>>      Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> I applied this with Paul's tested-by on pci/hotplug for v4.18.
 
--- 
-viresh
+Thank you very much. Will this also be picked up by the stable Linux 
+kernel series?
+
+[…]
+
+
+Kind regards,
+
+Paul
