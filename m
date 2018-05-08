@@ -1,89 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753499AbeEHAI4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 20:08:56 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33818 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752954AbeEHAIy (ORCPT
+        id S1753512AbeEHAPV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 20:15:21 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55458 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752954AbeEHAPU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 20:08:54 -0400
-X-Google-Smtp-Source: AB8JxZoDODHjyyOQxuVf5RnoomQYuCo78IQ5F3cC5oZm8fvDKTC2K+PndpT9EfYiWzkAVWvGB2AVXF94PIHNSNTs4Ls=
+        Mon, 7 May 2018 20:15:20 -0400
+Subject: Re: [RFC] sched: Distinguish between idle_cpu calls based on desired
+ effect
+To: Rohit Jain <rohit.k.jain@oracle.com>, matt@codeblueprint.co.uk,
+        peterz@infradead.org
+Cc: mingo@kernel.org, dhaval.giani@oracle.com, subhra.mazumdar@oracle.com,
+        steven.sistare@oracle.com, linux-kernel@vger.kernel.org
+References: <1525736477-8184-1-git-send-email-rohit.k.jain@oracle.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <366af1f5-9837-8a0c-3550-1a3d9a8e9de9@infradead.org>
+Date: Mon, 7 May 2018 17:15:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180507213305.kfxabgkdvf7xwt7m@valkosipuli.retiisi.org.uk>
-References: <20180425213044.1535393-1-arnd@arndb.de> <2922276.lKgGZtlCEW@avalon>
- <20180507131906.rdvcmvim5gvi5odk@valkosipuli.retiisi.org.uk>
- <CAK8P3a2+Xi8VF7B40zev1CT55HCNE92+MsPEiaGj7tOXEV57dg@mail.gmail.com> <20180507213305.kfxabgkdvf7xwt7m@valkosipuli.retiisi.org.uk>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 7 May 2018 20:08:53 -0400
-X-Google-Sender-Auth: CRGUMaDb4d57fIkqj6BC4lf247g
-Message-ID: <CAK8P3a3k5VMmZWuqqgCRTTgE4Ffct_reVJi5Tt8hkvTUUaDFow@mail.gmail.com>
-Subject: Re: [PATCH] [RESEND] [media] omap3isp: support 64-bit version of omap3isp_stat_data
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1525736477-8184-1-git-send-email-rohit.k.jain@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 7, 2018 at 5:33 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> On Mon, May 07, 2018 at 04:36:45PM -0400, Arnd Bergmann wrote:
->> On Mon, May 7, 2018 at 9:19 AM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
->> > On Mon, May 07, 2018 at 04:17:32PM +0300, Laurent Pinchart wrote:
->> >> On Thursday, 26 April 2018 00:30:10 EEST Arnd Bergmann wrote:
->> >> > +int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
->> >> > +                                   struct omap3isp_stat_data_time32 *data)
->> >> > +{
->> >> > +   struct omap3isp_stat_data data64;
->> >> > +   int ret;
->> >> > +
->> >> > +   ret = omap3isp_stat_request_statistics(stat, &data64);
->> >> > +
->> >> > +   data->ts.tv_sec = data64.ts.tv_sec;
->> >> > +   data->ts.tv_usec = data64.ts.tv_usec;
->> >> > +   memcpy(&data->buf, &data64.buf, sizeof(*data) - sizeof(data->ts));
->> >> > +
->> >> > +   return ret;
->> >>
->> >> We could return immediately after omap3isp_stat_request_statistics() if the
->> >> function fails, but that's no big deal, the error path is clearly a cold path.
->>
->> I looked at it again and briefly thought that it would leak kernel stack
->> data in my version and changing it would be required to avoid that,
->> but I do see now that the absence of the INFO_FL_ALWAYS_COPY
->> flag makes it safe after all.
->>
->> I agree that returning early here would be nicer here, I'll leave it up to
->> Sakari to fold in that change if he likes.
->
-> I agree with the change; actually the data64 struct will be left untouched
-> if there's an error so changing this doesn't seem to make a difference.
-> Private IOCTLs have always_copy == false, so the argument struct isn't
-> copied back to the kernel.
->
-> The diff is here. Let me know if something went wrong...
->
-> diff --git a/drivers/media/platform/omap3isp/ispstat.c b/drivers/media/platform/omap3isp/ispstat.c
-> index dfee8eaf2226..47353fee26c3 100644
-> --- a/drivers/media/platform/omap3isp/ispstat.c
-> +++ b/drivers/media/platform/omap3isp/ispstat.c
-> @@ -519,12 +519,14 @@ int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
->         int ret;
->
->         ret = omap3isp_stat_request_statistics(stat, &data64);
-> +       if (ret)
-> +               return ret;
->
->         data->ts.tv_sec = data64.ts.tv_sec;
->         data->ts.tv_usec = data64.ts.tv_usec;
->         memcpy(&data->buf, &data64.buf, sizeof(*data) - sizeof(data->ts));
->
-> -       return ret;
-> +       return 0;
->  }
+On 05/07/2018 04:41 PM, Rohit Jain wrote:
+> In commit 247f2f6f3c706b40b5f3886646f3eb53671258bf we distinguish
+> between idle_cpu when the vcpu is not running for scheduling threads.
+> However, idle_cpu function is used at other places for actually checking
+> whether the state of the CPU is idle or not. Hence splitting the use of
+> that function based on the desired return value.
+> 
+> Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
+> ---
+>  include/linux/sched.h |  1 +
+>  kernel/sched/core.c   | 14 ++++++++++++++
+>  kernel/sched/fair.c   | 20 ++++++++++----------
+>  3 files changed, 25 insertions(+), 10 deletions(-)
+> 
 
-Yes, that's exactly what I had in mind. Thanks for fixing it up!
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 71bdb86..171e160 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -4028,6 +4028,20 @@ int idle_cpu(int cpu)
+>  		return 0;
+>  #endif
+>  
+> +	return 1;
+> +}
+> +
+> +/**
+> + * idle_cpu - is a given CPU idle for enqueuing work.
 
-      Arnd
+    * available_idle_cpu -
+
+> + * @cpu: the processor in question.
+> + *
+> + * Return: 1 if the CPU is currently idle. 0 otherwise.
+> + */
+> +int available_idle_cpu(int cpu)
+> +{
+> +	if (!idle_cpu(cpu))
+> +		return 0;
+> +
+>  	if (vcpu_is_preempted(cpu))
+>  		return 0;
+>  
+
+
+-- 
+~Randy
