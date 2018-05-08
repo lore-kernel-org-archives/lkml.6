@@ -1,39 +1,38 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpnkVzMlvjk9dJ18Qj9iuIvtEuEukGnJ6gCVaqy5qbVjIqwBspW/GL0xJRq+a8zXN3rL6Bo
-ARC-Seal: i=1; a=rsa-sha256; t=1525767479; cv=none;
+X-Google-Smtp-Source: AB8JxZrUbeH/1mOgDSZlnGYseldTpLu3fjaujROgc94SGhAsy5zIHUqF7/nDWCG4Npoj8FH11++A
+ARC-Seal: i=1; a=rsa-sha256; t=1525767471; cv=none;
         d=google.com; s=arc-20160816;
-        b=pFcwmOG89J79Ix1w3V1TRb5tp8ICHyKmg36IVuLn+VPdFpjz/IEetsiTwe7SKfcVOD
-         RBGhB4vvRXgAdHonsRk7AiuBceV6e83q1GF789sIMHx6gaBXIhNevIoc2aIUNlT7m5jD
-         hErNbZQkzMEuEBkz7fRTKxJ5/ZBecrtIIQX1zQMWtOS7Q3CxgfWGfK8mmil50/LR0dko
-         hbMww0c+ilKcD0T3+Xx5avBwGHXRSCUyzMXLDm6xtWtwN2lULF8sNIgIbOVxuRisC9W2
-         NsH5lLrBflnUGH63ZSXLWAEvchjRr3uNwtJSsot5fEk888DaSgIwDlRZ78ZuuZjEPgqo
-         pCjA==
+        b=XgTUMJTDaT0pX91Cydi7Lq8qsUfvN/QB0IbCGjg1Cp3T7ZF4jApero0tZ57jG7cAOQ
+         vdgGU9B+Rvs2oBvf5ddI/rcrdcGPgAAnVxJ1u9ciSLjumKWT+Y8MT4p/njnS+eVm+hSp
+         kjdk3MdFyILDQPTafnfFUI8LybRLcM7WiHux+QKKrS89sp7juXCBzQ6e6BOjvi50t7Og
+         w+zZ9QaAQtX37D6Es4mZS1SWpuoNGXu3aszkjMKrICWGXCFFiIouG/3d8kH08NxE+wLy
+         p5mr0vvGI7M31ryYqEKVGuz2nk5x1mjtXMCSACw0OpKM2t7c++mb69UjxepP6uERAEGZ
+         LEgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=yT6PjXwaQz3pH+AsqGL0IRiaaPbmldBClN3aTSEZ+3I=;
-        b=m6tMS9N+jEbOpov8I/KsDzAkJxvW4tRgZYYRFk7rtkNiK+iNlgAKZ9SLaYkn/1CJhU
-         PEEk+VRus+BbQKxh6koseH+XNZWvqnFAEul/HP9/Nm+aGt1LA87j2zADyZozvdPhDq9p
-         EhLchpj09hjdWdZEkV6axqsCd+sju3SV4G9MKYV8gj/MgZnHYyIhJ+BUT7DkwD4eXcwP
-         2mBPwD9wNUD4s5Xs/3q2U2l66szhYOwgB9IPYuV/GolqPcoVkETQObp5u2IMdfQK8rGE
-         fZZCvM8ji0jb5N+AUVUaC9MKAWFsoCPuzvnmemKNP48PHfyhBHFOpbBl/3tTPRenJnSa
-         hwgg==
+        bh=xBmVRsyZZpvueGna5ztE50x6JwJdbtF1e72bAqM4AXE=;
+        b=G+26ceqMICpjaGwXpcQN4bLXnfrhyuMyFmuqF/GnuJr9HvnNjLynYsqV/LHUVP+MNf
+         6yfiqr0wFmL0MWkR/pTQfnKGMC/+w52F5JBcNZ9j5NGS6kYI1P0CC43YL/ytDKlRYEXV
+         82ss5f0oYkr34J9S4G68Dcck0+XurG+RqAVKrKcq0RoL5a1WsvU/TbRBFqjeCORBHIc8
+         t9u0M23e5xjPTimtrYCNxCwXJ5WU+TwTkVme38ykPABP7m9lsMpPvWLZQDzlrza++0Di
+         Dl9SoLkhA4uEfrxM/5pGfdtdkRRbCcggKUPpKQZTaatprW/V+391J5o/9rVYlIUZEwHC
+         EZSw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=c2SEg94C;
+       dkim=pass header.i=@kernel.org header.s=default header.b=j6LMJfK/;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=c2SEg94C;
+       dkim=pass header.i=@kernel.org header.s=default header.b=j6LMJfK/;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Dun Hum <bitter.taste@gmx.com>,
-	=?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-	"Darren Hart (VMware)" <dvhart@infradead.org>
-Subject: [PATCH 4.9 31/32] platform/x86: asus-wireless: Fix NULL pointer dereference
-Date: Tue,  8 May 2018 10:11:11 +0200
-Message-Id: <20180508074013.793716869@linuxfoundation.org>
+	=?UTF-8?q?SZ=20Lin=20 ?= <sz.lin@moxa.com>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 28/32] USB: serial: option: adding support for ublox R410M
+Date: Tue,  8 May 2018 10:11:08 +0200
+Message-Id: <20180508074013.219992824@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074008.800421598@linuxfoundation.org>
 References: <20180508074008.800421598@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882917093784507?=
-X-GMAIL-MSGID: =?utf-8?q?1599883161066037658?=
+X-GMAIL-THRID: =?utf-8?q?1599882907525716192?=
+X-GMAIL-MSGID: =?utf-8?q?1599883151323912865?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,90 +51,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: João Paulo Rechi Vita <jprvita@gmail.com>
+From: SZ Lin (林上智) <sz.lin@moxa.com>
 
-commit 9f0a93de9139c2b0a59299cd36b61564522458f8 upstream.
+commit 4205cb01f6e9ef2ae6daa7be4e8ac1edeb4c9d64 upstream.
 
-When the module is removed the led workqueue is destroyed in the remove
-callback, before the led device is unregistered from the led subsystem.
+This patch adds support for ublox R410M PID 0x90b2 USB modem to option
+driver, this module supports LTE Cat M1 / NB1.
 
-This leads to a NULL pointer derefence when the led device is
-unregistered automatically later as part of the module removal cleanup.
-Bellow is the backtrace showing the problem.
+Interface layout:
+0: QCDM/DIAG
+1: ADB
+2: AT
+3: RMNET
 
-  BUG: unable to handle kernel NULL pointer dereference at           (null)
-  IP: __queue_work+0x8c/0x410
-  PGD 0 P4D 0
-  Oops: 0000 [#1] SMP NOPTI
-  Modules linked in: ccm edac_mce_amd kvm_amd kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 joydev crypto_simd asus_nb_wmi glue_helper uvcvideo snd_hda_codec_conexant snd_hda_codec_generic snd_hda_codec_hdmi snd_hda_intel asus_wmi snd_hda_codec cryptd snd_hda_core sparse_keymap videobuf2_vmalloc arc4 videobuf2_memops snd_hwdep input_leds videobuf2_v4l2 ath9k psmouse videobuf2_core videodev ath9k_common snd_pcm ath9k_hw media fam15h_power ath k10temp snd_timer mac80211 i2c_piix4 r8169 mii mac_hid cfg80211 asus_wireless(-) snd soundcore wmi shpchp 8250_dw ip_tables x_tables amdkfd amd_iommu_v2 amdgpu radeon chash i2c_algo_bit drm_kms_helper syscopyarea serio_raw sysfillrect sysimgblt fb_sys_fops ahci ttm libahci drm video
-  CPU: 3 PID: 2177 Comm: rmmod Not tainted 4.15.0-5-generic #6+dev94.b4287e5bem1-Endless
-  Hardware name: ASUSTeK COMPUTER INC. X555DG/X555DG, BIOS 5.011 05/05/2015
-  RIP: 0010:__queue_work+0x8c/0x410
-  RSP: 0018:ffffbe8cc249fcd8 EFLAGS: 00010086
-  RAX: ffff992ac6810800 RBX: 0000000000000000 RCX: 0000000000000008
-  RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffff992ac6400e18
-  RBP: ffffbe8cc249fd18 R08: ffff992ac6400db0 R09: 0000000000000000
-  R10: 0000000000000040 R11: ffff992ac6400dd8 R12: 0000000000002000
-  R13: ffff992abd762e00 R14: ffff992abd763e38 R15: 000000000001ebe0
-  FS:  00007f318203e700(0000) GS:ffff992aced80000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000000 CR3: 00000001c720e000 CR4: 00000000001406e0
-  Call Trace:
-   queue_work_on+0x38/0x40
-   led_state_set+0x2c/0x40 [asus_wireless]
-   led_set_brightness_nopm+0x14/0x40
-   led_set_brightness+0x37/0x60
-   led_trigger_set+0xfc/0x1d0
-   led_classdev_unregister+0x32/0xd0
-   devm_led_classdev_release+0x11/0x20
-   release_nodes+0x109/0x1f0
-   devres_release_all+0x3c/0x50
-   device_release_driver_internal+0x16d/0x220
-   driver_detach+0x3f/0x80
-   bus_remove_driver+0x55/0xd0
-   driver_unregister+0x2c/0x40
-   acpi_bus_unregister_driver+0x15/0x20
-   asus_wireless_driver_exit+0x10/0xb7c [asus_wireless]
-   SyS_delete_module+0x1da/0x2b0
-   entry_SYSCALL_64_fastpath+0x24/0x87
-  RIP: 0033:0x7f3181b65fd7
-  RSP: 002b:00007ffe74bcbe18 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-  RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f3181b65fd7
-  RDX: 000000000000000a RSI: 0000000000000800 RDI: 0000555ea2559258
-  RBP: 0000555ea25591f0 R08: 00007ffe74bcad91 R09: 000000000000000a
-  R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000003
-  R13: 00007ffe74bcae00 R14: 0000000000000000 R15: 0000555ea25591f0
-  Code: 01 00 00 02 0f 85 7d 01 00 00 48 63 45 d4 48 c7 c6 00 f4 fa 87 49 8b 9d 08 01 00 00 48 03 1c c6 4c 89 f7 e8 87 fb ff ff 48 85 c0 <48> 8b 3b 0f 84 c5 01 00 00 48 39 f8 0f 84 bc 01 00 00 48 89 c7
-  RIP: __queue_work+0x8c/0x410 RSP: ffffbe8cc249fcd8
-  CR2: 0000000000000000
-  ---[ end trace 7aa4f4a232e9c39c ]---
-
-Unregistering the led device on the remove callback before destroying the
-workqueue avoids this problem.
-
-https://bugzilla.kernel.org/show_bug.cgi?id=196097
-
-Reported-by: Dun Hum <bitter.taste@gmx.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
-Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/platform/x86/asus-wireless.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/serial/option.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/platform/x86/asus-wireless.c
-+++ b/drivers/platform/x86/asus-wireless.c
-@@ -145,8 +145,10 @@ static int asus_wireless_remove(struct a
- {
- 	struct asus_wireless_data *data = acpi_driver_data(adev);
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -236,6 +236,8 @@ static void option_instat_callback(struc
+ /* These Quectel products use Qualcomm's vendor ID */
+ #define QUECTEL_PRODUCT_UC20			0x9003
+ #define QUECTEL_PRODUCT_UC15			0x9090
++/* These u-blox products use Qualcomm's vendor ID */
++#define UBLOX_PRODUCT_R410M			0x90b2
+ /* These Yuga products use Qualcomm's vendor ID */
+ #define YUGA_PRODUCT_CLM920_NC5			0x9625
  
--	if (data->wq)
-+	if (data->wq) {
-+		devm_led_classdev_unregister(&adev->dev, &data->led);
- 		destroy_workqueue(data->wq);
-+	}
- 	return 0;
- }
- 
+@@ -1068,6 +1070,9 @@ static const struct usb_device_id option
+ 	/* Yuga products use Qualcomm vendor ID */
+ 	{ USB_DEVICE(QUALCOMM_VENDOR_ID, YUGA_PRODUCT_CLM920_NC5),
+ 	  .driver_info = RSVD(1) | RSVD(4) },
++	/* u-blox products using Qualcomm vendor ID */
++	{ USB_DEVICE(QUALCOMM_VENDOR_ID, UBLOX_PRODUCT_R410M),
++	  .driver_info = RSVD(1) | RSVD(3) },
+ 	/* Quectel products using Quectel vendor ID */
+ 	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EC21),
+ 	  .driver_info = RSVD(4) },
