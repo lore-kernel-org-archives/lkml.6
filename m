@@ -1,118 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933171AbeEHXcJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 19:32:09 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:34120 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754148AbeEHXcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 19:32:07 -0400
-To: Alex Williamson <alex.williamson@redhat.com>,
-        Stephen Bates <sbates@raithlin.com>
-Cc: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-References: <20180423233046.21476-1-logang@deltatee.com>
- <20180423233046.21476-5-logang@deltatee.com>
- <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
- <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
- <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
- <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
- <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
- <20180508133407.57a46902@w520.home>
- <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
- <20180508141331.7cd737cb@w520.home>
- <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
- <20180508144341.0441b676@w520.home>
- <a524127a-3557-3dff-971c-dfe94ba5a01c@deltatee.com>
- <20180508152631.50fd583c@w520.home>
- <354F7407-0DC7-470C-B9AA-74FDF9C46B08@raithlin.com>
- <20180508160336.0935ddde@w520.home>
- <20905682-9440-7d4b-0260-99d3dc794c3d@deltatee.com>
- <C3CEE4DB-A001-4E4C-B9B9-4B160E4C5367@raithlin.com>
- <20180508171150.0e8fd291@w520.home>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <0a0a1782-04b2-c571-63c7-bfff68312946@deltatee.com>
-Date: Tue, 8 May 2018 17:31:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S933235AbeEHXip (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 19:38:45 -0400
+Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:2612 "EHLO
+        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755853AbeEHXio (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 19:38:44 -0400
+Date: Wed, 9 May 2018 09:38:40 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Mark Fasheh <mfasheh@suse.de>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [RFC][PATCH 0/76] vfs: 'views' for filesystems with more than
+ one root
+Message-ID: <20180508233840.GM10363@dastard>
+References: <20180508180436.716-1-mfasheh@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20180508171150.0e8fd291@w520.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org, christian.koenig@amd.com, sbates@raithlin.com, alex.williamson@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180508180436.716-1-mfasheh@suse.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 08, 2018 at 11:03:20AM -0700, Mark Fasheh wrote:
+> Hi,
+> 
+> The VFS's super_block covers a variety of filesystem functionality. In
+> particular we have a single structure representing both I/O and
+> namespace domains.
+> 
+> There are requirements to de-couple this functionality. For example,
+> filesystems with more than one root (such as btrfs subvolumes) can
+> have multiple inode namespaces. This starts to confuse userspace when
+> it notices multiple inodes with the same inode/device tuple on a
+> filesystem.
 
+Devil's Advocate - I'm not looking at the code, I'm commenting on
+architectural issues I see here.
 
-On 08/05/18 05:11 PM, Alex Williamson wrote:
-> On to the implementation details... I already mentioned the BDF issue
-> in my other reply.  If we had a way to persistently identify a device,
-> would we specify the downstream points at which we want to disable ACS
-> or the endpoints that we want to connect?  The latter has a problem
-> that the grouping upstream of an endpoint is already set by the time we
-> discover the endpoint, so we might need to unwind to get the grouping
-> correct.  The former might be more difficult for users to find the
-> necessary nodes, but easier for the kernel to deal with during
-> discovery.  
+The XFS subvolume work I've been doing explicitly uses a superblock
+per subvolume. That's because subvolumes are designed to be
+completely independent of the backing storage - they know nothing
+about the underlying storage except to share a BDI for writeback
+purposes and write to whatever block device the remapping layer
+gives them at IO time.  Hence XFS subvolumes have (at this point)
+their own unique s_dev, on-disk format configuration, journal, space
+accounting, etc. i.e. They are fully independent filesystems in
+their own right, and as such we do not have multiple inode
+namespaces per superblock.
 
-I was envisioning the former with kernel helping by printing a dmesg in
-certain circumstances to help with figuring out which devices need to be
-specified. Specifying a list of endpoints on the command line and having
-the kernel try to figure out which downstream ports need to be adjusted
-while we are in the middle of enumerating the bus is, like you said, a
-nightmare.
+So this doesn't sound like a "subvolume problem" - it's a "how do we
+sanely support multiple independent namespaces per superblock"
+problem. AFAICT, this same problem exists with bind mounts and mount
+namespaces - they are effectively multiple roots on a single
+superblock, but it's done at the vfsmount level and so the
+superblock knows nothing about them.
 
-> A runtime, sysfs approach has some benefits here,
-> especially in identifying the device assuming we're ok with leaving
-> the persistence problem to userspace tools.  I'm still a little fond of
-> the idea of exposing an acs_flags attribute for devices in sysfs where
-> a write would do a soft unplug and re-add of all affected devices to
-> automatically recreate the proper grouping.  Any dynamic change in
-> routing and grouping would require all DMA be re-established anyway and
-> a soft hotplug seems like an elegant way of handling it.  Thanks,
+So this kinda feel like there's still a impedence mismatch between
+btrfs subvolumes being mounted as subtrees on the underlying root
+vfsmount rather than being created as truly independent vfs
+namespaces that share a superblock. To put that as a question: why
+aren't btrfs subvolumes vfsmounts in their own right, and the unique
+information subvolume information get stored in (or obtained from)
+the vfsmount?
 
-This approach sounds like it has a lot more issues to contend with:
+> In addition, it's currently impossible for a filesystem subvolume to
+> have a different security context from it's parent. If we could allow
+> for subvolumes to optionally specify their own security context, we
+> could use them as containers directly instead of having to go through
+> an overlay.
 
-For starters, a soft unplug/re-add of all the devices behind a switch is
-going to be difficult if a lot of those devices have had drivers
-installed and their respective resources are now mounted or otherwise in
-use.
+Again, XFS subvolumes don't have this problem. So really we need to
+frame this discussion in terms of supporting multiple namespaces
+within a superblock sanely, not subvolumes.
 
-Then, do we have to redo a the soft-replace every time we change the ACS
-bit for every downstream port? That could mean you have to do dozens
-soft-replaces before you have all the ACS bits set which means you have
-a storm of drivers being added and removed.
+> I ran into this particular problem with respect to Btrfs some years
+> ago and sent out a very naive set of patches which were (rightfully)
+> not incorporated:
+> 
+> https://marc.info/?l=linux-btrfs&m=130074451403261&w=2
+> https://marc.info/?l=linux-btrfs&m=130532890824992&w=2
+> 
+> During the discussion, one question did come up - why can't
+> filesystems like Btrfs use a superblock per subvolume? There's a
+> couple of problems with that:
+> 
+> - It's common for a single Btrfs filesystem to have thousands of
+>   subvolumes. So keeping a superblock for each subvol in memory would
+>   get prohibively expensive - imagine having 8000 copies of struct
+>   super_block for a file system just because we wanted some separation
+>   of say, s_dev.
 
-This would require some kind of fancy custom setup software that runs at
-just the right time in the boot sequence or a lot of work on the users
-part to unbind all the resources, setup the ACS bits and then rebind
-everything (assuming the soft re-add doesn't rebind it every time you
-adjust one ACS bit). Ugly.
+That's no different to using individual overlay mounts for the
+thousands of containers that are on the system. This doesn't seem to
+be a major problem...
 
-IMO, if we need to do the sysfs approach then we need to be able to
-adjust the groups dynamically in a sensible way and not through the
-large hammer that is soft-replaces. I think this would be great but I
-don't think we will be tackling that with this patch set.
+> - Writeback would also have to walk all of these superblocks -
+>   again not very good for system performance.
 
-Logan
+Background writeback is backing device focussed, not superblock
+focussed. It will only iterate the superblocks that have dirty
+inodes on the bdi writeback lists, not all the superblocks on the
+bdi. IOWs, this isn't a major problem except for sync() operations
+that iterate superblocks.....
+
+> - Anyone wanting to lock down I/O on a filesystem would have to
+> freeze all the superblocks. This goes for most things related to
+> I/O really - we simply can't afford to have the kernel walking
+> thousands of superblocks to sync a single fs.
+
+Not with XFS subvolumes. Freezing the underlying parent filesystem
+will effectively stop all IO from the mounted subvolumes by freezing
+remapping calls before IO. Sure, those subvolumes aren't in a
+consistent state, but we don't freeze userspace so none of the
+application data is ever in a consistent state when filesystems are
+frozen.
+
+So, again, I'm not sure there's /subvolume/ problem here. There's
+definitely a "freeze heirarchy" problem, but that already exists and
+it's something we talked about at LSFMM because we need to solve it
+for reliable hibernation.
+
+> It's far more efficient then to pull those fields we need for a
+> subvolume namespace into their own structure.
+
+I'm not convinced yet - it still feels like it's the wrong layer to
+be solving the multiple namespace per superblock problem....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
