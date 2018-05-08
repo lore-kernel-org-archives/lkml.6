@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756309AbeEHSii (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 14:38:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53891 "EHLO mx2.suse.de"
+        id S1756353AbeEHSjE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 14:39:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53884 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755478AbeEHSFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 14:05:06 -0400
+        id S1755474AbeEHSFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 14:05:05 -0400
 From: Mark Fasheh <mfasheh@suse.de>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Mark Fasheh <mfasheh@suse.de>
-Subject: [PATCH 12/76] fs/adfs: Use inode_sb() helper instead of inode->i_sb
-Date: Tue,  8 May 2018 11:03:32 -0700
-Message-Id: <20180508180436.716-13-mfasheh@suse.de>
+Subject: [PATCH 11/76] fs/9p: Use inode_sb() helper instead of inode->i_sb
+Date: Tue,  8 May 2018 11:03:31 -0700
+Message-Id: <20180508180436.716-12-mfasheh@suse.de>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180508180436.716-1-mfasheh@suse.de>
 References: <20180508180436.716-1-mfasheh@suse.de>
@@ -22,74 +22,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mark Fasheh <mfasheh@suse.de>
 ---
- fs/adfs/dir.c   | 6 +++---
- fs/adfs/inode.c | 8 ++++----
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ fs/9p/acl.c            |  3 ++-
+ fs/9p/v9fs.h           |  2 +-
+ fs/9p/vfs_inode.c      |  8 ++++----
+ fs/9p/vfs_inode_dotl.c | 14 +++++++-------
+ 4 files changed, 14 insertions(+), 13 deletions(-)
 
-diff --git a/fs/adfs/dir.c b/fs/adfs/dir.c
-index 29444c83da48..e28357fcb2d4 100644
---- a/fs/adfs/dir.c
-+++ b/fs/adfs/dir.c
-@@ -20,7 +20,7 @@ static int
- adfs_readdir(struct file *file, struct dir_context *ctx)
+diff --git a/fs/9p/acl.c b/fs/9p/acl.c
+index 082d227fa56b..ccd91eb83725 100644
+--- a/fs/9p/acl.c
++++ b/fs/9p/acl.c
+@@ -266,7 +266,8 @@ static int v9fs_xattr_set_acl(const struct xattr_handler *handler,
+ 		if (IS_ERR(acl))
+ 			return PTR_ERR(acl);
+ 		else if (acl) {
+-			retval = posix_acl_valid(inode->i_sb->s_user_ns, acl);
++			retval = posix_acl_valid(inode_sb(inode)->s_user_ns,
++						 acl);
+ 			if (retval)
+ 				goto err_out;
+ 		}
+diff --git a/fs/9p/v9fs.h b/fs/9p/v9fs.h
+index 982e017acadb..9e27ef7ebeaa 100644
+--- a/fs/9p/v9fs.h
++++ b/fs/9p/v9fs.h
+@@ -171,7 +171,7 @@ extern struct inode *v9fs_inode_from_fid_dotl(struct v9fs_session_info *v9ses,
+ 
+ static inline struct v9fs_session_info *v9fs_inode2v9ses(struct inode *inode)
  {
- 	struct inode *inode = file_inode(file);
--	struct super_block *sb = inode->i_sb;
-+	struct super_block *sb = inode_sb(inode);
- 	const struct adfs_dir_ops *ops = ADFS_SB(sb)->s_dir;
- 	struct object_info obj;
- 	struct adfs_dir dir;
-@@ -128,7 +128,7 @@ adfs_match(const struct qstr *name, struct object_info *obj)
- static int
- adfs_dir_lookup_byname(struct inode *inode, const struct qstr *name, struct object_info *obj)
- {
--	struct super_block *sb = inode->i_sb;
-+	struct super_block *sb = inode_sb(inode);
- 	const struct adfs_dir_ops *ops = ADFS_SB(sb)->s_dir;
- 	struct adfs_dir dir;
- 	int ret;
-@@ -271,7 +271,7 @@ adfs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
- 		 * This only returns NULL if get_empty_inode
- 		 * fails.
+-	return (inode->i_sb->s_fs_info);
++	return (inode_sb(inode)->s_fs_info);
+ }
+ 
+ static inline struct v9fs_session_info *v9fs_dentry2v9ses(struct dentry *dentry)
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index bdabb2765d1b..fb6220552fc6 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -690,7 +690,7 @@ v9fs_create(struct v9fs_session_info *v9ses, struct inode *dir,
+ 		/*
+ 		 * instantiate inode and assign the unopened fid to the dentry
  		 */
--		inode = adfs_iget(dir->i_sb, &obj);
-+		inode = adfs_iget(inode_sb(dir), &obj);
- 		if (inode)
- 			error = 0;
+-		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
++		inode = v9fs_get_new_inode_from_fid(v9ses, fid, inode_sb(dir));
+ 		if (IS_ERR(inode)) {
+ 			err = PTR_ERR(inode);
+ 			p9_debug(P9_DEBUG_VFS,
+@@ -820,9 +820,9 @@ struct dentry *v9fs_vfs_lookup(struct inode *dir, struct dentry *dentry,
+ 	 * inode. But with cache disabled, lookup should do this.
+ 	 */
+ 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE)
+-		inode = v9fs_get_inode_from_fid(v9ses, fid, dir->i_sb);
++		inode = v9fs_get_inode_from_fid(v9ses, fid, inode_sb(dir));
+ 	else
+-		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
++		inode = v9fs_get_new_inode_from_fid(v9ses, fid, inode_sb(dir));
+ 	if (IS_ERR(inode)) {
+ 		p9_client_clunk(fid);
+ 		return ERR_CAST(inode);
+@@ -1425,7 +1425,7 @@ int v9fs_refresh_inode(struct p9_fid *fid, struct inode *inode)
+ 	 * because we may have cached data
+ 	 */
+ 	i_size = inode->i_size;
+-	v9fs_stat2inode(st, inode, inode->i_sb);
++	v9fs_stat2inode(st, inode, inode_sb(inode));
+ 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE)
+ 		inode->i_size = i_size;
+ 	spin_unlock(&inode->i_lock);
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index 7f6ae21a27b3..ed462264239c 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -318,7 +318,7 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
+ 		fid = NULL;
+ 		goto error;
  	}
-diff --git a/fs/adfs/inode.c b/fs/adfs/inode.c
-index 8dbd36f5e581..c946b072ef7f 100644
---- a/fs/adfs/inode.c
-+++ b/fs/adfs/inode.c
-@@ -23,9 +23,9 @@ adfs_get_block(struct inode *inode, sector_t block, struct buffer_head *bh,
- 		if (block >= inode->i_blocks)
- 			goto abort_toobig;
+-	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
++	inode = v9fs_get_new_inode_from_fid(v9ses, fid, inode_sb(dir));
+ 	if (IS_ERR(inode)) {
+ 		err = PTR_ERR(inode);
+ 		p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n", err);
+@@ -435,7 +435,7 @@ static int v9fs_vfs_mkdir_dotl(struct inode *dir,
  
--		block = __adfs_block_map(inode->i_sb, inode->i_ino, block);
-+		block = __adfs_block_map(inode_sb(inode), inode->i_ino, block);
- 		if (block)
--			map_bh(bh, inode->i_sb, block);
-+			map_bh(bh, inode_sb(inode), block);
- 		return 0;
- 	}
- 	/* don't support allocation of blocks yet */
-@@ -299,7 +299,7 @@ int
- adfs_notify_change(struct dentry *dentry, struct iattr *attr)
- {
- 	struct inode *inode = d_inode(dentry);
--	struct super_block *sb = inode->i_sb;
-+	struct super_block *sb = inode_sb(inode);
- 	unsigned int ia_valid = attr->ia_valid;
- 	int error;
- 	
-@@ -354,7 +354,7 @@ adfs_notify_change(struct dentry *dentry, struct iattr *attr)
-  */
- int adfs_write_inode(struct inode *inode, struct writeback_control *wbc)
- {
--	struct super_block *sb = inode->i_sb;
-+	struct super_block *sb = inode_sb(inode);
- 	struct object_info obj;
- 	int ret;
+ 	/* instantiate inode and assign the unopened fid to the dentry */
+ 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE) {
+-		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
++		inode = v9fs_get_new_inode_from_fid(v9ses, fid, inode_sb(dir));
+ 		if (IS_ERR(inode)) {
+ 			err = PTR_ERR(inode);
+ 			p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n",
+@@ -453,7 +453,7 @@ static int v9fs_vfs_mkdir_dotl(struct inode *dir,
+ 		 * inode with stat. We need to get an inode
+ 		 * so that we can set the acl with dentry
+ 		 */
+-		inode = v9fs_get_inode(dir->i_sb, mode, 0);
++		inode = v9fs_get_inode(inode_sb(dir), mode, 0);
+ 		if (IS_ERR(inode)) {
+ 			err = PTR_ERR(inode);
+ 			goto error;
+@@ -723,7 +723,7 @@ v9fs_vfs_symlink_dotl(struct inode *dir, struct dentry *dentry,
+ 		}
  
+ 		/* instantiate inode and assign the unopened fid to dentry */
+-		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
++		inode = v9fs_get_new_inode_from_fid(v9ses, fid, inode_sb(dir));
+ 		if (IS_ERR(inode)) {
+ 			err = PTR_ERR(inode);
+ 			p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n",
+@@ -736,7 +736,7 @@ v9fs_vfs_symlink_dotl(struct inode *dir, struct dentry *dentry,
+ 		err = 0;
+ 	} else {
+ 		/* Not in cached mode. No need to populate inode with stat */
+-		inode = v9fs_get_inode(dir->i_sb, S_IFLNK, 0);
++		inode = v9fs_get_inode(inode_sb(dir), S_IFLNK, 0);
+ 		if (IS_ERR(inode)) {
+ 			err = PTR_ERR(inode);
+ 			goto error;
+@@ -864,7 +864,7 @@ v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
+ 
+ 	/* instantiate inode and assign the unopened fid to the dentry */
+ 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE) {
+-		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
++		inode = v9fs_get_new_inode_from_fid(v9ses, fid, inode_sb(dir));
+ 		if (IS_ERR(inode)) {
+ 			err = PTR_ERR(inode);
+ 			p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n",
+@@ -881,7 +881,7 @@ v9fs_vfs_mknod_dotl(struct inode *dir, struct dentry *dentry, umode_t omode,
+ 		 * Not in cached mode. No need to populate inode with stat.
+ 		 * socket syscall returns a fd, so we need instantiate
+ 		 */
+-		inode = v9fs_get_inode(dir->i_sb, mode, rdev);
++		inode = v9fs_get_inode(inode_sb(dir), mode, rdev);
+ 		if (IS_ERR(inode)) {
+ 			err = PTR_ERR(inode);
+ 			goto error;
 -- 
 2.15.1
