@@ -1,158 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756118AbeEHWYQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 18:24:16 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:40966 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755658AbeEHWYO (ORCPT
+        id S932605AbeEHWYh (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 18:24:37 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43366 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756021AbeEHWYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 18:24:14 -0400
-Subject: Re: [PATCH V2] PCI/AER: add pcie TLP header information in the
- tracepoint
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mr.nuke.me@gmail.com
-References: <1525809420-30576-1-git-send-email-thomas.tai@oracle.com>
- <1525809420-30576-2-git-send-email-thomas.tai@oracle.com>
- <20180508170739.1436c873@gandalf.local.home>
-From: Thomas Tai <thomas.tai@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <df99a2ad-8cbb-9e29-4f5e-79b46b57ddd1@oracle.com>
-Date: Tue, 8 May 2018 18:24:06 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 8 May 2018 18:24:35 -0400
+From: Colin King <colin.king@canonical.com>
+To: Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>, linux-sctp@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] sctp: fix spelling mistake: "max_retans" -> "max_retrans"
+Date: Tue,  8 May 2018 23:24:28 +0100
+Message-Id: <20180508222428.24874-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <20180508170739.1436c873@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=981
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805080207
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Trivial fix to spelling mistake in error string
 
-On 2018-05-08 05:07 PM, Steven Rostedt wrote:
-> On Tue,  8 May 2018 15:57:00 -0400
-> Thomas Tai <thomas.tai@oracle.com> wrote:
-> 
->> When a PCIe AER occurs, the TLP header information is
->> printed in the kernel message but it is missing from
->> the tracepoint. A userspace program can use this information
->> in the tracepoint to better analyze problems.
->>
->> To enable the tracepoint:
->> echo 1 > /sys/kernel/debug/tracing/events/ras/aer_event/enable
->>
->> Example tracepoint output:
->> cat /sys/kernel/debug/tracing/trace
->> aer_event: 0000:01:00.0
->> PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
->> TLP Header={0x0,0x1,0x2,0x3}
->>
->> Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
->> ---
->>   drivers/pci/pcie/aer/aerdrv_errprint.c |  4 ++--
->>   include/ras/ras_event.h                | 22 ++++++++++++++++++----
->>   2 files changed, 20 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
->> index cfc89dd..fd49a8d 100644
->> --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
->> +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
->> @@ -189,7 +189,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->>   		pci_err(dev, "  Error of this Agent(%04x) is reported first\n", id);
->>   
->>   	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
->> -			info->severity);
->> +			info->severity, info->tlp_header_valid, &info->tlp);
->>   }
->>   
->>   void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
->> @@ -249,6 +249,6 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
->>   		__print_tlp_header(dev, &aer->header_log);
->>   
->>   	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
->> -			aer_severity);
->> +			aer_severity, tlp_header_valid, &aer->header_log);
->>   }
->>   #endif
->> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
->> index 9c68986..f73b168 100644
->> --- a/include/ras/ras_event.h
->> +++ b/include/ras/ras_event.h
->> @@ -298,30 +298,44 @@
->>   TRACE_EVENT(aer_event,
->>   	TP_PROTO(const char *dev_name,
->>   		 const u32 status,
->> -		 const u8 severity),
->> +		 const u8 severity,
->> +		 const u8 tlp_header_valid,
->> +		 struct aer_header_log_regs *tlp),
->>   
->> -	TP_ARGS(dev_name, status, severity),
->> +	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
->>   
->>   	TP_STRUCT__entry(
->>   		__string(	dev_name,	dev_name	)
->>   		__field(	u32,		status		)
->>   		__field(	u8,		severity	)
->> +		__field(	u8, 		tlp_header_valid)
->> +		__array(	u32, 		tlp_header, 4	)
->>   	),
->>   
->>   	TP_fast_assign(
->>   		__assign_str(dev_name, dev_name);
->>   		__entry->status		= status;
->>   		__entry->severity	= severity;
->> +		__entry->tlp_header_valid = tlp_header_valid;
->> +		if (__entry->tlp_header_valid) {
-> 
-> Although the compiler will probably optimize it anyway, but you
-> probably should have it be:
-> 
-> 		if (tlp_header_valid) {
-> 
-> because why add the extra dereference.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/sctp/sm_make_chunk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks Steven, good thinking. Will change and send v3.
-
-Thomas
-
-
-
-> 
->> +			__entry->tlp_header[0] = tlp->dw0;
->> +			__entry->tlp_header[1] = tlp->dw1;
->> +			__entry->tlp_header[2] = tlp->dw2;
->> +			__entry->tlp_header[3] = tlp->dw3;
->> +		}
->>   	),
->>   
->> -	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
->> +	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
->>   		__get_str(dev_name),
->>   		__entry->severity == AER_CORRECTABLE ? "Corrected" :
->>   			__entry->severity == AER_FATAL ?
->>   			"Fatal" : "Uncorrected, non-fatal",
->>   		__entry->severity == AER_CORRECTABLE ?
->>   		__print_flags(__entry->status, "|", aer_correctable_errors) :
->> -		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
->> +		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
->> +		__entry->tlp_header_valid ?
->> +			__print_array(__entry->tlp_header, 4, 4) :
->> +			"Not available")
-> 
-> The rest looks fine to me.
-> 
-> -- Steve
-> 
->>   );
->>   
->>   /*
-> 
+diff --git a/net/sctp/sm_make_chunk.c b/net/sctp/sm_make_chunk.c
+index 4d7b3ccea078..4a4fd1971255 100644
+--- a/net/sctp/sm_make_chunk.c
++++ b/net/sctp/sm_make_chunk.c
+@@ -1131,7 +1131,7 @@ struct sctp_chunk *sctp_make_violation_max_retrans(
+ 					const struct sctp_association *asoc,
+ 					const struct sctp_chunk *chunk)
+ {
+-	static const char error[] = "Association exceeded its max_retans count";
++	static const char error[] = "Association exceeded its max_retrans count";
+ 	size_t payload_len = sizeof(error) + sizeof(struct sctp_errhdr);
+ 	struct sctp_chunk *retval;
+ 
+-- 
+2.17.0
