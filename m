@@ -1,98 +1,296 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755408AbeEHRWB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 13:22:01 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:25809 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932734AbeEHRVX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S932739AbeEHRVX (ORCPT <rfc822;w@1wt.eu>);
         Tue, 8 May 2018 13:21:23 -0400
-Subject: Re: [PATCH] net: phy: DP83811: Add support for the phy
-To: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180508141105.23867-1-dmurphy@ti.com>
- <1b6877db-61cf-101a-054e-9c1fbe95a813@ti.com> <20180508164944.GE2888@lunn.ch>
- <f4cfe325-f462-e965-3bd8-629acf460fbf@ti.com>
- <cc5acc63-bcb5-2bda-9c9d-fd18e0a7740a@gmail.com>
-From: Dan Murphy <dmurphy@ti.com>
-Message-ID: <078e57c2-ee72-6709-1a3f-ab85dccc50c5@ti.com>
-Date: Tue, 8 May 2018 12:21:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <cc5acc63-bcb5-2bda-9c9d-fd18e0a7740a@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Received: from mail-io0-f195.google.com ([209.85.223.195]:41411 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932204AbeEHRVK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 13:21:10 -0400
+X-Google-Smtp-Source: AB8JxZqYnMPkn4ALk6Bhk78uRlbdQUpU9lZJ8GB7T3IhhZOxil6mQbMWm6SjH87MBt8uc2VzfZX8FQ==
+From: Connor McAdams <conmanx360@gmail.com>
+Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
+        <jeremy.lefaure@lse.epita.fr>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 11/13] ALSA: hda/ca0132: Add DSP Volume set and New mixers for SBZ + R3Di
+Date: Tue,  8 May 2018 13:20:11 -0400
+Message-Id: <1525800015-2920-12-git-send-email-conmanx360@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525800015-2920-1-git-send-email-conmanx360@gmail.com>
+References: <1525800015-2920-1-git-send-email-conmanx360@gmail.com>
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Florian
+Adds lookup table for floating point decibel volume, and new functions
+to allow for setting the decibel level on the DSP.
 
-On 05/08/2018 12:14 PM, Florian Fainelli wrote:
-> On 05/08/2018 10:13 AM, Dan Murphy wrote:
->> Andrew
->>
->> On 05/08/2018 11:49 AM, Andrew Lunn wrote:
->>> On Tue, May 08, 2018 at 10:56:55AM -0500, Dan Murphy wrote:
->>>> All
->>>>
->>>> On 05/08/2018 09:11 AM, Dan Murphy wrote:
->>>>> Add support for the DP83811 phy by extending
->>>>> the DP83822 driver to recognize the PHY IDs.
->>>>>
->>>>> The DP83811 supports both rgmii and sgmii interfaces.
->>>>> There are 2 part numbers for this the DP83811R does not
->>>>> reliably support the SGMII interface but the DP83811S will.
->>>>>
->>>>> There is not a way to differentiate these parts from the
->>>>> hardware or register set.  So this is controlled via the DT
->>>>> to indicate which phy mode is required.  Or the part can be
->>>>> strapped to a certain interface.
->>>>>
->>>>> Data sheet can be found here:
->>>>> http://www.ti.com/product/DP83TC811S-Q1/description
->>>>> http://www.ti.com/product/DP83TC811R-Q1/description
->>>>>
->>>>
->>>> I am withdrawing this patch for comment.
->>>> Some of the future features have varying register definitions between the DP83811
->>>> and DP83822
->>>
->>> Hi Dan
->>>
->>> It might be worth talking to the ASIC engineers and the
->>> test/qualification engineers. There are sometime undocumented
->>> registers for testing. You might be able to identify the exact device
->>> from these registers.
->>>
->>
->> Thanks.  I talked to them prior to submitting this patch about determining which part is on the board.
->> I will ping them again and poke a little harder.
->>
->> It turns out that we will probably need a new driver for this part anyway as there are
->> additional features that need to be supported that the 811 just does not support.
->>
->> They want to support Master/Slave configurations.
->> The 822 supports fiber and eee while the 811 does not.
->> The 811 supports the IEEE802.3bw specific fields in MMD1 and MMD3, which are not in the 822.
->> The 811 does not support auto-negotiation on the MDI so all the auto-neg registers are invalid for the 811 but are valid for the 822.
->>
->> Our Customer engineers felt that combining these two devices into a single driver may confuse the customer.
-> 
-> Why? Having a single Kconfig option to enable and "automatically"
-> gaining support for new hardware is nice.
-> 
+Signed-off-by: Connor McAdams <conmanx360@gmail.com>
+---
+ sound/pci/hda/patch_ca0132.c | 203 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 202 insertions(+), 1 deletion(-)
 
-I do agree that it is nice to have.  But with additional features or lack of features the driver source will get pretty messy
-differentiating between devices.
-
-What I added was just the basic if 811 & SGMII check.
-
-Dan 
-
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index 2a42faf..311df61 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -537,6 +537,31 @@ static const struct ca0132_alt_out_set alt_out_presets[] = {
+ 	}
+ };
+ 
++/*
++ * DSP volume setting structs. Req 1 is left volume, req 2 is right volume,
++ * and I don't know what the third req is, but it's always zero. I assume it's
++ * some sort of update or set command to tell the DSP there's new volume info.
++ */
++#define DSP_VOL_OUT 0
++#define DSP_VOL_IN  1
++
++struct ct_dsp_volume_ctl {
++	hda_nid_t vnid;
++	int mid; /* module ID*/
++	unsigned int reqs[3]; /* scp req ID */
++};
++
++static struct ct_dsp_volume_ctl ca0132_alt_vol_ctls[] = {
++	{ .vnid = VNID_SPK,
++	  .mid = 0x32,
++	  .reqs = {3, 4, 2}
++	},
++	{ .vnid = VNID_MIC,
++	  .mid = 0x37,
++	  .reqs = {2, 3, 1}
++	}
++};
++
+ enum hda_cmd_vendor_io {
+ 	/* for DspIO node */
+ 	VENDOR_DSPIO_SCP_WRITE_DATA_LOW      = 0x000,
+@@ -3248,6 +3273,24 @@ static unsigned int ca0132_capture_pcm_delay(struct hda_pcm_stream *info,
+ 	  .tlv = { .c = ca0132_volume_tlv }, \
+ 	  .private_value = HDA_COMPOSE_AMP_VAL(nid, channel, 0, dir) }
+ 
++/*
++ * Creates a mixer control that uses defaults of HDA_CODEC_VOL except for the
++ * volume put, which is used for setting the DSP volume. This was done because
++ * the ca0132 functions were taking too much time and causing lag.
++ */
++#define CA0132_ALT_CODEC_VOL_MONO(xname, nid, channel, dir) \
++	{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, \
++	  .name = xname, \
++	  .subdevice = HDA_SUBDEV_AMP_FLAG, \
++	  .access = SNDRV_CTL_ELEM_ACCESS_READWRITE | \
++			SNDRV_CTL_ELEM_ACCESS_TLV_READ | \
++			SNDRV_CTL_ELEM_ACCESS_TLV_CALLBACK, \
++	  .info = snd_hda_mixer_amp_volume_info, \
++	  .get = snd_hda_mixer_amp_volume_get, \
++	  .put = ca0132_alt_volume_put, \
++	  .tlv = { .c = snd_hda_mixer_amp_tlv }, \
++	  .private_value = HDA_COMPOSE_AMP_VAL(nid, channel, 0, dir) }
++
+ #define CA0132_CODEC_MUTE_MONO(xname, nid, channel, dir) \
+ 	{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, \
+ 	  .name = xname, \
+@@ -3260,9 +3303,40 @@ static unsigned int ca0132_capture_pcm_delay(struct hda_pcm_stream *info,
+ /* stereo */
+ #define CA0132_CODEC_VOL(xname, nid, dir) \
+ 	CA0132_CODEC_VOL_MONO(xname, nid, 3, dir)
++#define CA0132_ALT_CODEC_VOL(xname, nid, dir) \
++	CA0132_ALT_CODEC_VOL_MONO(xname, nid, 3, dir)
+ #define CA0132_CODEC_MUTE(xname, nid, dir) \
+ 	CA0132_CODEC_MUTE_MONO(xname, nid, 3, dir)
+ 
++/* lookup tables */
++/*
++ * Lookup table with decibel values for the DSP. When volume is changed in
++ * Windows, the DSP is also sent the dB value in floating point. In Windows,
++ * these values have decimal points, probably because the Windows driver
++ * actually uses floating point. We can't here, so I made a lookup table of
++ * values -90 to 9. -90 is the lowest decibel value for both the ADC's and the
++ * DAC's, and 9 is the maximum.
++ */
++static const unsigned int float_vol_db_lookup[] = {
++0xC2B40000, 0xC2B20000, 0xC2B00000, 0xC2AE0000, 0xC2AC0000, 0xC2AA0000,
++0xC2A80000, 0xC2A60000, 0xC2A40000, 0xC2A20000, 0xC2A00000, 0xC29E0000,
++0xC29C0000, 0xC29A0000, 0xC2980000, 0xC2960000, 0xC2940000, 0xC2920000,
++0xC2900000, 0xC28E0000, 0xC28C0000, 0xC28A0000, 0xC2880000, 0xC2860000,
++0xC2840000, 0xC2820000, 0xC2800000, 0xC27C0000, 0xC2780000, 0xC2740000,
++0xC2700000, 0xC26C0000, 0xC2680000, 0xC2640000, 0xC2600000, 0xC25C0000,
++0xC2580000, 0xC2540000, 0xC2500000, 0xC24C0000, 0xC2480000, 0xC2440000,
++0xC2400000, 0xC23C0000, 0xC2380000, 0xC2340000, 0xC2300000, 0xC22C0000,
++0xC2280000, 0xC2240000, 0xC2200000, 0xC21C0000, 0xC2180000, 0xC2140000,
++0xC2100000, 0xC20C0000, 0xC2080000, 0xC2040000, 0xC2000000, 0xC1F80000,
++0xC1F00000, 0xC1E80000, 0xC1E00000, 0xC1D80000, 0xC1D00000, 0xC1C80000,
++0xC1C00000, 0xC1B80000, 0xC1B00000, 0xC1A80000, 0xC1A00000, 0xC1980000,
++0xC1900000, 0xC1880000, 0xC1800000, 0xC1700000, 0xC1600000, 0xC1500000,
++0xC1400000, 0xC1300000, 0xC1200000, 0xC1100000, 0xC1000000, 0xC0E00000,
++0xC0C00000, 0xC0A00000, 0xC0800000, 0xC0400000, 0xC0000000, 0xBF800000,
++0x00000000, 0x3F800000, 0x40000000, 0x40400000, 0x40800000, 0x40A00000,
++0x40C00000, 0x40E00000, 0x41000000, 0x41100000
++};
++
+ /* The following are for tuning of products */
+ #ifdef ENABLE_TUNING_CONTROLS
+ 
+@@ -4629,6 +4703,41 @@ static int ca0132_switch_put(struct snd_kcontrol *kcontrol,
+ /*
+  * Volume related
+  */
++/*
++ * Sets the internal DSP decibel level to match the DAC for output, and the
++ * ADC for input. Currently only the SBZ sets dsp capture volume level, and
++ * all alternative codecs set DSP playback volume.
++ */
++static void ca0132_alt_dsp_volume_put(struct hda_codec *codec, hda_nid_t nid)
++{
++	struct ca0132_spec *spec = codec->spec;
++	unsigned int dsp_dir;
++	unsigned int lookup_val;
++
++	if (nid == VNID_SPK)
++		dsp_dir = DSP_VOL_OUT;
++	else
++		dsp_dir = DSP_VOL_IN;
++
++	lookup_val = spec->vnode_lvol[nid - VNODE_START_NID];
++
++	dspio_set_uint_param(codec,
++		ca0132_alt_vol_ctls[dsp_dir].mid,
++		ca0132_alt_vol_ctls[dsp_dir].reqs[0],
++		float_vol_db_lookup[lookup_val]);
++
++	lookup_val = spec->vnode_rvol[nid - VNODE_START_NID];
++
++	dspio_set_uint_param(codec,
++		ca0132_alt_vol_ctls[dsp_dir].mid,
++		ca0132_alt_vol_ctls[dsp_dir].reqs[1],
++		float_vol_db_lookup[lookup_val]);
++
++	dspio_set_uint_param(codec,
++		ca0132_alt_vol_ctls[dsp_dir].mid,
++		ca0132_alt_vol_ctls[dsp_dir].reqs[2], FLOAT_ZERO);
++}
++
+ static int ca0132_volume_info(struct snd_kcontrol *kcontrol,
+ 			      struct snd_ctl_elem_info *uinfo)
+ {
+@@ -4730,6 +4839,51 @@ static int ca0132_volume_put(struct snd_kcontrol *kcontrol,
+ 	return changed;
+ }
+ 
++/*
++ * This function is the same as the one above, because using an if statement
++ * inside of the above volume control for the DSP volume would cause too much
++ * lag. This is a lot more smooth.
++ */
++static int ca0132_alt_volume_put(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct ca0132_spec *spec = codec->spec;
++	hda_nid_t nid = get_amp_nid(kcontrol);
++	int ch = get_amp_channels(kcontrol);
++	long *valp = ucontrol->value.integer.value;
++	hda_nid_t vnid = 0;
++	int changed = 1;
++
++	switch (nid) {
++	case 0x02:
++		vnid = VNID_SPK;
++		break;
++	case 0x07:
++		vnid = VNID_MIC;
++		break;
++	}
++
++	/* store the left and right volume */
++	if (ch & 1) {
++		spec->vnode_lvol[vnid - VNODE_START_NID] = *valp;
++		valp++;
++	}
++	if (ch & 2) {
++		spec->vnode_rvol[vnid - VNODE_START_NID] = *valp;
++		valp++;
++	}
++
++	snd_hda_power_up(codec);
++	ca0132_alt_dsp_volume_put(codec, vnid);
++	mutex_lock(&codec->control_mutex);
++	changed = snd_hda_mixer_amp_volume_put(kcontrol, ucontrol);
++	mutex_unlock(&codec->control_mutex);
++	snd_hda_power_down(codec);
++
++	return changed;
++}
++
+ static int ca0132_volume_tlv(struct snd_kcontrol *kcontrol, int op_flag,
+ 			     unsigned int size, unsigned int __user *tlv)
+ {
+@@ -4849,6 +5003,39 @@ static struct snd_kcontrol_new ca0132_mixer[] = {
+ 	{ } /* end */
+ };
+ 
++/*
++ * SBZ specific control mixer. Removes auto-detect for mic, and adds surround
++ * controls. Also sets both the Front Playback and Capture Volume controls to
++ * alt so they set the DSP's decibel level.
++ */
++static struct snd_kcontrol_new sbz_mixer[] = {
++	CA0132_ALT_CODEC_VOL("Front Playback Volume", 0x02, HDA_OUTPUT),
++	CA0132_CODEC_MUTE("Front Playback Switch", VNID_SPK, HDA_OUTPUT),
++	CA0132_ALT_CODEC_VOL("Capture Volume", 0x07, HDA_INPUT),
++	CA0132_CODEC_MUTE("Capture Switch", VNID_MIC, HDA_INPUT),
++	HDA_CODEC_VOLUME("What U Hear Capture Volume", 0x0a, 0, HDA_INPUT),
++	HDA_CODEC_MUTE("What U Hear Capture Switch", 0x0a, 0, HDA_INPUT),
++	CA0132_CODEC_MUTE_MONO("HP/Speaker Auto Detect Playback Switch",
++				VNID_HP_ASEL, 1, HDA_OUTPUT),
++	{ } /* end */
++};
++
++/*
++ * Same as the Sound Blaster Z, except doesn't use the alt volume for capture
++ * because it doesn't set decibel levels for the DSP for capture.
++ */
++static struct snd_kcontrol_new r3di_mixer[] = {
++	CA0132_ALT_CODEC_VOL("Front Playback Volume", 0x02, HDA_OUTPUT),
++	CA0132_CODEC_MUTE("Front Playback Switch", VNID_SPK, HDA_OUTPUT),
++	CA0132_CODEC_VOL("Capture Volume", VNID_MIC, HDA_INPUT),
++	CA0132_CODEC_MUTE("Capture Switch", VNID_MIC, HDA_INPUT),
++	HDA_CODEC_VOLUME("What U Hear Capture Volume", 0x0a, 0, HDA_INPUT),
++	HDA_CODEC_MUTE("What U Hear Capture Switch", 0x0a, 0, HDA_INPUT),
++	CA0132_CODEC_MUTE_MONO("HP/Speaker Auto Detect Playback Switch",
++				VNID_HP_ASEL, 1, HDA_OUTPUT),
++	{ } /* end */
++};
++
+ static int ca0132_build_controls(struct hda_codec *codec)
+ {
+ 	struct ca0132_spec *spec = codec->spec;
+@@ -6562,7 +6749,21 @@ static int patch_ca0132(struct hda_codec *codec)
+ 
+ 	spec->dsp_state = DSP_DOWNLOAD_INIT;
+ 	spec->num_mixers = 1;
+-	spec->mixers[0] = ca0132_mixer;
++
++	/* Set which mixers each quirk uses. */
++	switch (spec->quirk) {
++	case QUIRK_SBZ:
++		spec->mixers[0] = sbz_mixer;
++		snd_hda_codec_set_name(codec, "Sound Blaster Z");
++		break;
++	case QUIRK_R3DI:
++		spec->mixers[0] = r3di_mixer;
++		snd_hda_codec_set_name(codec, "Recon3Di");
++		break;
++	default:
++		spec->mixers[0] = ca0132_mixer;
++		break;
++	}
+ 
+ 	/* Setup whether or not to use alt functions */
+ 	switch (spec->quirk) {
 -- 
-------------------
-Dan Murphy
+2.7.4
