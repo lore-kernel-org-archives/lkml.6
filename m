@@ -1,85 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933196AbeEHIgA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 04:36:00 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:44584 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932661AbeEHIf5 (ORCPT
+        id S933246AbeEHIhH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 04:37:07 -0400
+Received: from mail-wr0-f179.google.com ([209.85.128.179]:36697 "EHLO
+        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932618AbeEHIhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 04:35:57 -0400
-X-Google-Smtp-Source: AB8JxZpALLFRWeHvpH3xQSonAB1EV+JgBb8gIM+4U5KSCq/nKUxklYLIR9sOj+C148fDeID6P8nQ8A==
-Subject: Re: [PATCH RFC] drivers: nvmem: Export nvmem_add_cells()
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: linux-kernel@vger.kernel.org, andrew.smirnov@gmail.com
-References: <1525547507-1428-1-git-send-email-andrew@lunn.ch>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <e36b58db-d8e3-cd89-e7d3-adca01991732@linaro.org>
-Date: Tue, 8 May 2018 09:35:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 8 May 2018 04:37:02 -0400
+X-Google-Smtp-Source: AB8JxZqbhgoYupN31AkU8xMOBZU/pcRytYaKdxHwtgawW5eMrH9PrN2WaG4zkndXNam17Se/TySBxg==
+Date: Tue, 8 May 2018 09:36:58 +0100
+From: Daniel Thompson <daniel.thompson@linaro.org>
+To: kgunda@codeaurora.org
+Cc: Jingoo Han <jingoohan1@gmail.com>, bjorn.andersson@linaro.org,
+        "'Lee Jones'" <lee.jones@linaro.org>,
+        "'Jacek Anaszewski'" <jacek.anaszewski@gmail.com>,
+        "'Pavel Machek'" <pavel@ucw.cz>, "'Rob Herring'" <robh+dt@kernel.org>,
+        "'Mark Rutland'" <mark.rutland@arm.com>,
+        "'Bartlomiej Zolnierkiewicz'" <b.zolnierkie@samsung.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V2 1/5] backlight: qcom-wled: Rename pm8941-wled.c to
+ qcom-wled.c
+Message-ID: <20180508083658.mc7x7izthxjrv5ey@holly.lan>
+References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
+ <1525342352-25072-2-git-send-email-kgunda@codeaurora.org>
+ <000201d3e3c0$4cdf87a0$e69e96e0$@gmail.com>
+ <a9faa8c2866f44b46c3733c8165f6bae@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1525547507-1428-1-git-send-email-andrew@lunn.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a9faa8c2866f44b46c3733c8165f6bae@codeaurora.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 07, 2018 at 11:26:59AM +0530, kgunda@codeaurora.org wrote:
+> Hi Jingoo Han,
+> Thanks for the response.
+> 
+> Thanks,
+> Kiran
+> On 2018-05-04 21:25, Jingoo Han wrote:
+> > On Thursday, May 3, 2018 6:12 AM, Kiran Gunda wrote:
+> > 
+> > If you really want someone to review your patch, please add more
+> > detailed
+> > explanations.
+> > 
+> > 1. Please add 0th patch.
+> I have already added the 0th patch (cover letter). Following is the subject
+> for the same.
+> forwarding the same to you.
+> [PATCH V2 0/5] backlight: qcom-wled: Support for QCOM wled driver
+
+Perhaps you should interpret Jingoo's comment as a request to improve
+the To: and Cc: list on the 0th patch the next time you circulate it.
+
+Many maintainers configure their mailers to give patches where they are
+in the To: or Cc: list special treatment so it confusing when a series
+arrives with a spartan set of recipients for the 0th patch (and doubly
+confusing when every patch in the set targets the same driver).
 
 
-On 05/05/18 20:11, Andrew Lunn wrote:
-> Not all platforms use device tree. It is useful to be able to add
-> cells to a NVMEM device from code. Export nvmem_add_cells() so making
-> this possible.
-> 
-> This required changing the parameters a bit, so that just the cells
-> and the number of cells are passed, not the whole nvmem config
-> structure.
-> 
-> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-
-> ---
-> 
-> This is an RFC.
-> 
-> I have an intel platform with an AT24 EEPROM. I want to make use of
-> nvmem, but don't have device tree to be able to specify cells. I have
-> an x86 platform driver which does:
-> 
-> struct nvmem_cell_info nameplate_cells[] = {
->         {
->                 .name = "checksum",
->                 .offset = 2,
->                 .bytes = 1,
->         },
->         {
->                 .name = "part_number",
->                 .offset = 11,
->                 .bytes = 11,
->         },
-> };
-> 
->         err = nvmem_add_cells(nvmem, nameplate_cells,
->                               ARRAY_SIZE(nameplate_cells));
->         if (err) {
->                 dev_err(dev, "Error adding cells to nameplate nvmem device\n");
->                 return;
->         }
-> 
->         cell = nvmem_cell_get(NULL, "checksum");
-> 
-> 
-> drivers/nvmem/core.c           | 15 ++++++++-------
->   include/linux/nvmem-provider.h | 11 +++++++++++
->   2 files changed, 19 insertions(+), 7 deletions(-)
-> 
-
-
-Thanks Andrew for the patch,
-
-Overall the patch looks good to me,
-I would like to see some kernel doc for this new exported function
-
-Thanks,
-srini
+Daniel.
