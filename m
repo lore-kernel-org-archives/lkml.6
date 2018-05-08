@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932855AbeEHPAA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:00:00 -0400
-Received: from ozlabs.org ([203.11.71.1]:35025 "EHLO ozlabs.org"
+        id S932974AbeEHPAv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 11:00:51 -0400
+Received: from ozlabs.org ([203.11.71.1]:44627 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932679AbeEHO76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:59:58 -0400
+        id S932679AbeEHPAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 11:00:02 -0400
 From: Michael Ellerman <mpe@ellerman.id.au>
 To: linuxram@us.ibm.com
 Cc: mingo@redhat.com, linuxppc-dev@ozlabs.org, linux-mm@kvack.org,
         x86@kernel.org, linux-kernel@vger.kernel.org, dave.hansen@intel.com
-Subject: [PATCH 2/8] mm, powerpc, x86: introduce an additional vma bit for powerpc pkey
-Date: Wed,  9 May 2018 00:59:42 +1000
-Message-Id: <20180508145948.9492-3-mpe@ellerman.id.au>
+Subject: [PATCH 7/8] mm/pkeys: Add an empty arch_pkeys_enabled()
+Date: Wed,  9 May 2018 00:59:47 +1000
+Message-Id: <20180508145948.9492-8-mpe@ellerman.id.au>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180508145948.9492-1-mpe@ellerman.id.au>
 References: <20180508145948.9492-1-mpe@ellerman.id.au>
@@ -20,51 +20,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ram Pai <linuxram@us.ibm.com>
+Add an empty arch_pkeys_enabled() in linux/pkeys.h for the
+CONFIG_ARCH_HAS_PKEYS=n case.
 
-Currently only 4bits are allocated in the vma flags to hold 16
-keys. This is sufficient for x86. PowerPC  supports  32  keys,
-which needs 5bits. This patch allocates an  additional bit.
+Split out of a patch by Ram Pai <linuxram@us.ibm.com>.
 
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Balbir Singh <bsingharora@gmail.com>
-Signed-off-by: Ram Pai <linuxram@us.ibm.com>
-[mpe: Fold in #if VM_PKEY_BIT4 as noticed by Dave Hansen]
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- fs/proc/task_mmu.c | 3 +++
- include/linux/mm.h | 3 ++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ include/linux/pkeys.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 541392a62608..c2163606e6fb 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -679,6 +679,9 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
- 		[ilog2(VM_PKEY_BIT1)]	= "",
- 		[ilog2(VM_PKEY_BIT2)]	= "",
- 		[ilog2(VM_PKEY_BIT3)]	= "",
-+#if VM_PKEY_BIT4
-+		[ilog2(VM_PKEY_BIT4)]	= "",
-+#endif
- #endif /* CONFIG_ARCH_HAS_PKEYS */
- 	};
- 	size_t i;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c6a6f2492c1b..abfd758ff83a 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -231,9 +231,10 @@ extern unsigned int kobjsize(const void *objp);
- #ifdef CONFIG_ARCH_HAS_PKEYS
- # define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
- # define VM_PKEY_BIT0	VM_HIGH_ARCH_0	/* A protection key is a 4-bit value */
--# define VM_PKEY_BIT1	VM_HIGH_ARCH_1
-+# define VM_PKEY_BIT1	VM_HIGH_ARCH_1	/* on x86 and 5-bit value on ppc64   */
- # define VM_PKEY_BIT2	VM_HIGH_ARCH_2
- # define VM_PKEY_BIT3	VM_HIGH_ARCH_3
-+# define VM_PKEY_BIT4	VM_HIGH_ARCH_4
- #endif /* CONFIG_ARCH_HAS_PKEYS */
+diff --git a/include/linux/pkeys.h b/include/linux/pkeys.h
+index 946cb773b79f..2955ba976048 100644
+--- a/include/linux/pkeys.h
++++ b/include/linux/pkeys.h
+@@ -39,6 +39,11 @@ static inline int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+ 	return 0;
+ }
  
- #if defined(CONFIG_X86)
++static inline bool arch_pkeys_enabled(void)
++{
++	return false;
++}
++
+ static inline void copy_init_pkru_to_fpregs(void)
+ {
+ }
 -- 
 2.14.1
