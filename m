@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932083AbeEHMPF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:15:05 -0400
-Received: from foss.arm.com ([217.140.101.70]:57502 "EHLO foss.arm.com"
+        id S932164AbeEHMPL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:15:11 -0400
+Received: from foss.arm.com ([217.140.101.70]:57530 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754851AbeEHMPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:15:03 -0400
+        id S932124AbeEHMPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 08:15:08 -0400
 From: Marc Zyngier <marc.zyngier@arm.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>
@@ -14,9 +14,9 @@ Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/9] genirq/msi: Limit level-triggered MSI to platform devices
-Date: Tue,  8 May 2018 13:14:31 +0100
-Message-Id: <20180508121438.11301-3-marc.zyngier@arm.com>
+Subject: [PATCH v2 5/9] irqdomain: Let irq_find_host default to DOMAIN_BUS_WIRED
+Date: Tue,  8 May 2018 13:14:34 +0100
+Message-Id: <20180508121438.11301-6-marc.zyngier@arm.com>
 X-Mailer: git-send-email 2.14.2
 In-Reply-To: <20180508121438.11301-1-marc.zyngier@arm.com>
 References: <20180508121438.11301-1-marc.zyngier@arm.com>
@@ -24,71 +24,44 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nobody would be insane enough to try and use level triggered
-MSIs on PCI, but let's make sure it doesn't happen. Also,
-let's mandate that the irqchip backing the platform MSI domain
-is providing the IRQCHIP_SUPPORTS_LEVEL_MSI flag.
+At the beginning of times, irq_find_host() was simple. Each device node
+implemented at most one irq domain, and we were happy. Over time, things
+have become more complex, and we now have nodes implementing a plurality
+of domains, tagged by "bus_token".
+
+Crutially, users of irq_find_host() all expect the most basic domain
+to be returned, and not any other domain such as a bus-specific MSI
+domain.
+
+So let's change irq_find_host() to first look for a DOMAIN_BUS_WIRED
+domain, and only if this fails fallback to DOMAIN_BUS_ANY. Note that
+this is consistent with what irq_create_fwspec_mapping is already
+doing, see 530cbe100ef7 ("irqdomain: Allow domain lookup with
+DOMAIN_BUS_WIRED token").
 
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- drivers/base/platform-msi.c     | 3 +++
- drivers/bus/fsl-mc/fsl-mc-msi.c | 2 ++
- drivers/pci/msi.c               | 3 +++
- include/linux/irq.h             | 1 +
- 4 files changed, 9 insertions(+)
+ include/linux/irqdomain.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/platform-msi.c b/drivers/base/platform-msi.c
-index 8e22073aeeed..60d6cc618f1c 100644
---- a/drivers/base/platform-msi.c
-+++ b/drivers/base/platform-msi.c
-@@ -101,6 +101,9 @@ static void platform_msi_update_chip_ops(struct msi_domain_info *info)
- 		chip->irq_set_affinity = msi_domain_set_affinity;
- 	if (!chip->irq_write_msi_msg)
- 		chip->irq_write_msi_msg = platform_msi_write_msg;
-+	if (WARN_ON((info->flags & MSI_FLAG_LEVEL_CAPABLE) &&
-+		    !(chip->flags & IRQCHIP_SUPPORTS_LEVEL_MSI)))
-+		info->flags &= ~MSI_FLAG_LEVEL_CAPABLE;
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index 48c7e86bb556..dccfa65aee96 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -301,7 +301,13 @@ static inline struct irq_domain *irq_find_matching_host(struct device_node *node
+ 
+ static inline struct irq_domain *irq_find_host(struct device_node *node)
+ {
+-	return irq_find_matching_host(node, DOMAIN_BUS_ANY);
++	struct irq_domain *d;
++
++	d = irq_find_matching_host(node, DOMAIN_BUS_WIRED);
++	if (!d)
++		d = irq_find_matching_host(node, DOMAIN_BUS_ANY);
++
++	return d;
  }
  
- static void platform_msi_free_descs(struct device *dev, int base, int nvec)
-diff --git a/drivers/bus/fsl-mc/fsl-mc-msi.c b/drivers/bus/fsl-mc/fsl-mc-msi.c
-index ec35e255b496..8b9c66d7c4ff 100644
---- a/drivers/bus/fsl-mc/fsl-mc-msi.c
-+++ b/drivers/bus/fsl-mc/fsl-mc-msi.c
-@@ -163,6 +163,8 @@ struct irq_domain *fsl_mc_msi_create_irq_domain(struct fwnode_handle *fwnode,
- {
- 	struct irq_domain *domain;
- 
-+	if (WARN_ON((info->flags & MSI_FLAG_LEVEL_CAPABLE)))
-+		info->flags &= ~MSI_FLAG_LEVEL_CAPABLE;
- 	if (info->flags & MSI_FLAG_USE_DEF_DOM_OPS)
- 		fsl_mc_msi_update_dom_ops(info);
- 	if (info->flags & MSI_FLAG_USE_DEF_CHIP_OPS)
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index 30250631efe7..f45b74fcc059 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -1434,6 +1434,9 @@ struct irq_domain *pci_msi_create_irq_domain(struct fwnode_handle *fwnode,
- {
- 	struct irq_domain *domain;
- 
-+	if (WARN_ON(info->flags & MSI_FLAG_LEVEL_CAPABLE))
-+		info->flags &= ~MSI_FLAG_LEVEL_CAPABLE;
-+
- 	if (info->flags & MSI_FLAG_USE_DEF_DOM_OPS)
- 		pci_msi_domain_update_dom_ops(info);
- 	if (info->flags & MSI_FLAG_USE_DEF_CHIP_OPS)
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 65916a305f3d..b2067083aa94 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -512,6 +512,7 @@ enum {
- 	IRQCHIP_SKIP_SET_WAKE		= (1 <<  4),
- 	IRQCHIP_ONESHOT_SAFE		= (1 <<  5),
- 	IRQCHIP_EOI_THREADED		= (1 <<  6),
-+	IRQCHIP_SUPPORTS_LEVEL_MSI	= (1 <<  7),
- };
- 
- #include <linux/irqdesc.h>
+ /**
 -- 
 2.14.2
