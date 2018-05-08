@@ -1,171 +1,228 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-311249-1525674818-2-10220287146768187522
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525674817; b=buq0xMyoeBgEDJWBu+CflU5ic5aO7MaEP/haQilEKF6EUZQGx7
-    J/IQ+EK0pnQOEm0+XajeiSWR6zJP8SS8Saxmqq/zZG6TjvZ+cTanc/dFIYR2o527
-    ylQZgfRWm6MgkGKyKFw+mKeTbuLUd5gPzjUwshsW3q1+uDdMblrBALV7uj/TQgQz
-    AbUgZBiBj/WuRgMrM75RZOVXys+2mSwLpSWKjBcTQ31atjXMsEGP7XH7OFt/qovW
-    Qv/NOn9P/d6xrocFtmGt+aLjaggHNjb+jB/0G3QW4KulwCLb0L4F/RAUd9t/sB1X
-    nQDTdoJRrMc5U34WPVDoOadRx/a0E+Hagotg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525674817; bh=QmpuY
-    RJ95XiZ/PMSz2vy0WYDcM7JO1snydALrKarNtI=; b=NVOy98ViWxVIPcUxepoXg
-    e6NfcCO8rlt8Rk4DNar4iyWZ27T1KiDqm6D9EHdH4ay7KXPwo3X3R/zONES1Icn0
-    kcMJy5ti98Ayj/DeOwEBZ1LchOtWwbK7j0TB/343ez7ubxJS3ENxABzH6Xpn0COk
-    AWUKkPSI6kcW/jFyMSrSKRJtllToMG/nPBiDjgWjh5HxZvb7LpHEfP8R+seocdsL
-    pme2pKn/No7po0w2PWpZ3Zqs6YsoZ7lw2F02Ye4BGGZQzfcgBM1VaTr/8eHgqrrX
-    UtZsaqL+FyUAapqV/z0fIK5kj+Uy6IBOexCXYnTZx7Ku8nLJ3koNdwyeVHnwKfEy
-    w==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=redhat.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=redhat.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK7mHxjywZ1vSkaEwM74z8rhUg6pRU92RmC+XgFKD55IdNEyuYuCstvC0HBdBh6aZBCucFON89fLpenfy4kSMhZdpvdr1rOu71um7MxStAhkcxa2FvJ0
-    5ujINyOu+PPJDAU+5KcTPwRNVktbzU2NpboDG2JPx4FF/03lgaHKZiTJBvS6W31nCDE91BCP12vGTV62DcyS4QKkFxbmL2PnIFpPCs6E2ARDaMt5fRfBUoTU
-    vMvgM3pt4rDIAzRD0y0img==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=20KFwNOVAAAA:8 a=Z4Rwk6OoAAAA:8
-    a=zd2uoN0lAAAA:8 a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=lq52kGoOkO8qgVZK7kcA:9
-    a=QEXdDO2ut3YA:10 a=HkZW87K1Qel5hWWM3VKY:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Baoquan He <bhe@redhat.com>
-To: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- robh+dt@kernel.org, dan.j.williams@intel.com, nicolas.pitre@linaro.org,
- josh@joshtriplett.org, fengguang.wu@intel.com, bp@suse.de
-Subject: [PATCH v4 2/3] resource: add walk_system_ram_res_rev()
-Date: Mon,  7 May 2018 14:32:23 +0800
-Message-Id: <20180507063224.24229-3-bhe@redhat.com>
-In-Reply-To: <20180507063224.24229-1-bhe@redhat.com>
-References: <20180507063224.24229-1-bhe@redhat.com>
+Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZoMwQXFpwYClWTX8p2rWhJTmofkrR+2zYg2cnN8sYWI/+UoCiiArIpsuAbqDKOVt5M6pZWr
+ARC-Seal: i=1; a=rsa-sha256; t=1525767400; cv=none;
+        d=google.com; s=arc-20160816;
+        b=z8+RWG8hw9i1/hMUw7juGfOstnFRTgARZChzuU45GGOivi+5m2/0TJtEerPjWRHOUL
+         4D2m8Ndq3pAysKkNTLGFSq6vOu4JtrkoeIbYR3YFzEkpChqNEnc7BUwGlgQuIkTCqTh0
+         3cUVghNmoXpwtcqAPg+aJAVUEWN2b3saVgGS86lcLHGRHTBaWmcro7dFdzXGNTyi1PXc
+         VGtdhI8bZm9G7+lBt/96UQ0Yf0n3wdyedwt5g77EuWuES7+uzPwJLiVCdwDT1BXjKrEx
+         jHcqiY/5Hlz5TWc0QDrqGR53Aoly7oLzo/LuF/LAI9TajVtaGUcYZwHfSJqJ+5h38miv
+         +ydw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:user-agent:mime-version:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=Sy6X7s8sr+hXZfqFEh4gOqoSvSXfatJFtDzxFGP+54k=;
+        b=gNBjsM6WPDv0T794yUGG3CEkExr4BWP5xozm9cjxMN7c1dVOm7bntjJ6RGMqt9AMFh
+         i5iZhoCHQ4dWdI33PtxYyVL1qsscfO+4NNP8UlFEISvK+pyvO+rvciyPPnuR/Zm2R4E0
+         pnXm1EhZaTf6gs0hhxDjQEpEnGnPIVKDT2g7uh26zMbqkwniOduclYFT82k2gq7t5HOk
+         6mEH81g5acKhOT6LBet8fUdzwDk0AjqkshcpOHtOoHX6DrH7y9DjXtfjFwIy8ujbiQV3
+         hkLuhreN77wYFba/kEWqG9486aVn2FqPwy6zXQW3hNqRsroMShcKLXll/nN4tMFs7hWm
+         1vvw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=NI6HGwOE;
+       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=NI6HGwOE;
+       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	ben.hutchings@codethink.co.uk,
+	lkft-triage@lists.linaro.org,
+	stable@vger.kernel.org
+Subject: [PATCH 4.9 00/32] 4.9.99-stable review
+Date: Tue,  8 May 2018 10:10:40 +0200
+Message-Id: <20180508074008.800421598@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: brijesh.singh@amd.com, devicetree@vger.kernel.org, airlied@linux.ie,
- linux-pci@vger.kernel.org, richard.weiyang@gmail.com, keith.busch@intel.com,
- jcmvbkbc@gmail.com, baiyaowei@cmss.chinamobile.com, frowand.list@gmail.com,
- lorenzo.pieralisi@arm.com, sthemmin@microsoft.com, Baoquan He <bhe@redhat.com>,
- linux-nvdimm@lists.01.org, patrik.r.jakobsson@gmail.com,
- linux-input@vger.kernel.org, gustavo@padovan.org, dyoung@redhat.com,
- vgoyal@redhat.com, thomas.lendacky@amd.com, haiyangz@microsoft.com,
- maarten.lankhorst@linux.intel.com, jglisse@redhat.com, seanpaul@chromium.org,
- bhelgaas@google.com, tglx@linutronix.de, yinghai@kernel.org,
- jonathan.derrick@intel.com, chris@zankel.net, monstr@monstr.eu,
- linux-parisc@vger.kernel.org, gregkh@linuxfoundation.org,
- dmitry.torokhov@gmail.com, kexec@lists.infradead.org, ebiederm@xmission.com,
- devel@linuxdriverproject.org, davem@davemloft.net
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.99-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.9.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.9.99-rc1
+X-KernelTest-Deadline: 2018-05-10T07:40+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1599883077500588538?=
+X-GMAIL-MSGID: =?utf-8?q?1599883077500588538?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-VGhpcyBmdW5jdGlvbiwgYmVpbmcgYSB2YXJpYW50IG9mIHdhbGtfc3lzdGVtX3JhbV9yZXMoKSBp
-bnRyb2R1Y2VkIGluCmNvbW1pdCA4Yzg2ZTcwYWNlYWQgKCJyZXNvdXJjZTogcHJvdmlkZSBuZXcg
-ZnVuY3Rpb25zIHRvIHdhbGsgdGhyb3VnaApyZXNvdXJjZXMiKSwgd2Fsa3MgdGhyb3VnaCBhIGxp
-c3Qgb2YgYWxsIHRoZSByZXNvdXJjZXMgb2YgU3lzdGVtIFJBTQppbiByZXZlcnNlZCBvcmRlciwg
-aS5lLiwgZnJvbSBoaWdoZXIgdG8gbG93ZXIuCgpJdCB3aWxsIGJlIHVzZWQgaW4ga2V4ZWNfZmls
-ZSBjb2RlLgoKU2lnbmVkLW9mZi1ieTogQmFvcXVhbiBIZSA8YmhlQHJlZGhhdC5jb20+CkNjOiBB
-bmRyZXcgTW9ydG9uIDxha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnPgpDYzogVGhvbWFzIEdsZWl4
-bmVyIDx0Z2x4QGxpbnV0cm9uaXguZGU+CkNjOiBCcmlqZXNoIFNpbmdoIDxicmlqZXNoLnNpbmdo
-QGFtZC5jb20+CkNjOiAiSsOpcsO0bWUgR2xpc3NlIiA8amdsaXNzZUByZWRoYXQuY29tPgpDYzog
-Qm9yaXNsYXYgUGV0a292IDxicEBzdXNlLmRlPgpDYzogVG9tIExlbmRhY2t5IDx0aG9tYXMubGVu
-ZGFja3lAYW1kLmNvbT4KQ2M6IFdlaSBZYW5nIDxyaWNoYXJkLndlaXlhbmdAZ21haWwuY29tPgot
-LS0KIGluY2x1ZGUvbGludXgvaW9wb3J0LmggfCAgMyArKysKIGtlcm5lbC9yZXNvdXJjZS5jICAg
-ICAgfCA0MCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiAyIGZpbGVz
-IGNoYW5nZWQsIDQzIGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L2lv
-cG9ydC5oIGIvaW5jbHVkZS9saW51eC9pb3BvcnQuaAppbmRleCAyMjVkMTNkMzUwMGEuLjVmMmNm
-YjQ2MGExNCAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9pb3BvcnQuaAorKysgYi9pbmNsdWRl
-L2xpbnV4L2lvcG9ydC5oCkBAIC0yNzgsNiArMjc4LDkgQEAgZXh0ZXJuIGludAogd2Fsa19zeXN0
-ZW1fcmFtX3Jlcyh1NjQgc3RhcnQsIHU2NCBlbmQsIHZvaWQgKmFyZywKIAkJICAgIGludCAoKmZ1
-bmMpKHN0cnVjdCByZXNvdXJjZSAqLCB2b2lkICopKTsKIGV4dGVybiBpbnQKK3dhbGtfc3lzdGVt
-X3JhbV9yZXNfcmV2KHU2NCBzdGFydCwgdTY0IGVuZCwgdm9pZCAqYXJnLAorCQkJaW50ICgqZnVu
-Yykoc3RydWN0IHJlc291cmNlICosIHZvaWQgKikpOworZXh0ZXJuIGludAogd2Fsa19pb21lbV9y
-ZXNfZGVzYyh1bnNpZ25lZCBsb25nIGRlc2MsIHVuc2lnbmVkIGxvbmcgZmxhZ3MsIHU2NCBzdGFy
-dCwgdTY0IGVuZCwKIAkJICAgIHZvaWQgKmFyZywgaW50ICgqZnVuYykoc3RydWN0IHJlc291cmNl
-ICosIHZvaWQgKikpOwogCmRpZmYgLS1naXQgYS9rZXJuZWwvcmVzb3VyY2UuYyBiL2tlcm5lbC9y
-ZXNvdXJjZS5jCmluZGV4IDRmNTYwOTkxYzEzMC4uNmM1MTliMDZlM2Q2IDEwMDY0NAotLS0gYS9r
-ZXJuZWwvcmVzb3VyY2UuYworKysgYi9rZXJuZWwvcmVzb3VyY2UuYwpAQCAtMjMsNiArMjMsOCBA
-QAogI2luY2x1ZGUgPGxpbnV4L3Bmbi5oPgogI2luY2x1ZGUgPGxpbnV4L21tLmg+CiAjaW5jbHVk
-ZSA8bGludXgvcmVzb3VyY2VfZXh0Lmg+CisjaW5jbHVkZSA8bGludXgvc3RyaW5nLmg+CisjaW5j
-bHVkZSA8bGludXgvdm1hbGxvYy5oPgogI2luY2x1ZGUgPGFzbS9pby5oPgogCiAKQEAgLTQ3NSw2
-ICs0NzcsNDQgQEAgaW50IHdhbGtfc3lzdGVtX3JhbV9yZXModTY0IHN0YXJ0LCB1NjQgZW5kLCB2
-b2lkICphcmcsCiB9CiAKIC8qCisgKiBUaGlzIGZ1bmN0aW9uLCBiZWluZyBhIHZhcmlhbnQgb2Yg
-d2Fsa19zeXN0ZW1fcmFtX3JlcygpLCBjYWxscyB0aGUgQGZ1bmMKKyAqIGNhbGxiYWNrIGFnYWlu
-c3QgYWxsIG1lbW9yeSByYW5nZXMgb2YgdHlwZSBTeXN0ZW0gUkFNIHdoaWNoIGFyZSBtYXJrZWQg
-YXMKKyAqIElPUkVTT1VSQ0VfU1lTVEVNX1JBTSBhbmQgSU9SRVNPVUNFX0JVU1kgaW4gcmV2ZXJz
-ZWQgb3JkZXIsIGkuZS4sIGZyb20KKyAqIGhpZ2hlciB0byBsb3dlci4KKyAqLworaW50IHdhbGtf
-c3lzdGVtX3JhbV9yZXNfcmV2KHU2NCBzdGFydCwgdTY0IGVuZCwgdm9pZCAqYXJnLAorCQkJCWlu
-dCAoKmZ1bmMpKHN0cnVjdCByZXNvdXJjZSAqLCB2b2lkICopKQoreworCXVuc2lnbmVkIGxvbmcg
-ZmxhZ3M7CisJc3RydWN0IHJlc291cmNlICpyZXM7CisJaW50IHJldCA9IC0xOworCisJZmxhZ3Mg
-PSBJT1JFU09VUkNFX1NZU1RFTV9SQU0gfCBJT1JFU09VUkNFX0JVU1k7CisKKwlyZWFkX2xvY2so
-JnJlc291cmNlX2xvY2spOworCWxpc3RfZm9yX2VhY2hfZW50cnlfcmV2ZXJzZShyZXMsICZpb21l
-bV9yZXNvdXJjZS5jaGlsZCwgc2libGluZykgeworCQlpZiAoc3RhcnQgPj0gZW5kKQorCQkJYnJl
-YWs7CisJCWlmICgocmVzLT5mbGFncyAmIGZsYWdzKSAhPSBmbGFncykKKwkJCWNvbnRpbnVlOwor
-CQlpZiAocmVzLT5kZXNjICE9IElPUkVTX0RFU0NfTk9ORSkKKwkJCWNvbnRpbnVlOworCQlpZiAo
-cmVzLT5lbmQgPCBzdGFydCkKKwkJCWJyZWFrOworCisJCWlmICgocmVzLT5lbmQgPj0gc3RhcnQp
-ICYmIChyZXMtPnN0YXJ0IDwgZW5kKSkgeworCQkJcmV0ID0gKCpmdW5jKShyZXMsIGFyZyk7CisJ
-CQlpZiAocmV0KQorCQkJCWJyZWFrOworCQl9CisJCWVuZCA9IHJlcy0+c3RhcnQgLSAxOworCisJ
-fQorCXJlYWRfdW5sb2NrKCZyZXNvdXJjZV9sb2NrKTsKKwlyZXR1cm4gcmV0OworfQorCisvKgog
-ICogVGhpcyBmdW5jdGlvbiBjYWxscyB0aGUgQGZ1bmMgY2FsbGJhY2sgYWdhaW5zdCBhbGwgbWVt
-b3J5IHJhbmdlcywgd2hpY2gKICAqIGFyZSByYW5nZXMgbWFya2VkIGFzIElPUkVTT1VSQ0VfTUVN
-IGFuZCBJT1JFU09VQ0VfQlVTWS4KICAqLwotLSAKMi4xMy42CgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZlbCBtYWlsaW5nIGxpc3QKZGV2ZWxAbGlu
-dXhkcml2ZXJwcm9qZWN0Lm9yZwpodHRwOi8vZHJpdmVyZGV2LmxpbnV4ZHJpdmVycHJvamVjdC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcml2ZXJkZXYtZGV2ZWwK
+This is the start of the stable review cycle for the 4.9.99 release.
+There are 32 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
+
+Responses should be made by Thu May 10 07:39:44 UTC 2018.
+Anything received after that time might be too late.
+
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.99-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.9.99-rc1
+
+Heiko Carstens <heiko.carstens@de.ibm.com>
+    s390/facilites: use stfle_fac_list array size for MAX_FACILITY_BIT
+
+João Paulo Rechi Vita <jprvita@gmail.com>
+    platform/x86: asus-wireless: Fix NULL pointer dereference
+
+Bin Liu <b-liu@ti.com>
+    usb: musb: trace: fix NULL pointer dereference in musb_g_tx()
+
+Bin Liu <b-liu@ti.com>
+    usb: musb: host: fix potential NULL pointer dereference
+
+SZ Lin (林上智) <sz.lin@moxa.com>
+    USB: serial: option: adding support for ublox R410M
+
+Johan Hovold <johan@kernel.org>
+    USB: serial: option: reimplement interface masking
+
+Alan Stern <stern@rowland.harvard.edu>
+    USB: Accept bulk endpoints with 1024-byte maxpacket
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    USB: serial: visor: handle potential invalid device configuration
+
+Ben Hutchings <ben.hutchings@codethink.co.uk>
+    test_firmware: fix setting old custom fw path back on exit, second try
+
+Sean Paul <seanpaul@chromium.org>
+    drm/bridge: vga-dac: Fix edid memory leak
+
+Thomas Hellstrom <thellstrom@vmware.com>
+    drm/vmwgfx: Fix a buffer object leak
+
+Sebastian Sanchez <sebastian.sanchez@intel.com>
+    IB/hfi1: Fix NULL pointer dereference when invalid num_vls is used
+
+Danit Goldberg <danitg@mellanox.com>
+    IB/mlx5: Use unlimited rate when static rate is not supported
+
+SZ Lin (林上智) <sz.lin@moxa.com>
+    NET: usb: qmi_wwan: add support for ublox R410M PID 0x90b2
+
+Leon Romanovsky <leonro@mellanox.com>
+    RDMA/mlx5: Protect from shift operand overflow
+
+Roland Dreier <roland@purestorage.com>
+    RDMA/ucma: Allow resolving address w/o specifying source address
+
+Raju Rangoju <rajur@chelsio.com>
+    RDMA/cxgb4: release hw resources on device removal
+
+Darrick J. Wong <darrick.wong@oracle.com>
+    xfs: prevent creating negative-sized file via INSERT_RANGE
+
+Vittorio Gambaletta (VittGam) <linuxbugs@vittgam.net>
+    Input: atmel_mxt_ts - add touchpad button mapping for Samsung Chromebook Pro
+
+Dmitry Torokhov <dmitry.torokhov@gmail.com>
+    Input: leds - fix out of bound access
+
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+    tracepoint: Do not warn on ENOMEM
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: aloop: Add missing cable lock to ctl API callbacks
+
+Robert Rosengren <robert.rosengren@axis.com>
+    ALSA: aloop: Mark paused device as inactive
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: seq: Fix races at MIDI encoding in snd_virmidi_output_trigger()
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: pcm: Check PCM state at xfern compat ioctl
+
+Kristian Evensen <kristian.evensen@gmail.com>
+    USB: serial: option: Add support for Quectel EP06
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    serial: imx: ensure UCR3 and UFCR are setup correctly
+
+LEROY Christophe <christophe.leroy@c-s.fr>
+    crypto: talitos - fix IPsec cipher in length
+
+Marc Zyngier <marc.zyngier@arm.com>
+    arm/arm64: KVM: Add PSCI version selection API
+
+Teng Qin <qinteng@fb.com>
+    bpf: map_get_next_key to return first key on NULL
+
+Tejun Heo <tj@kernel.org>
+    percpu: include linux/sched.h for cond_resched()
+
+Tan Xiaojun <tanxiaojun@huawei.com>
+    perf/core: Fix the perf_cpu_time_max_percent check
+
+
+-------------
+
+Diffstat:
+
+ Documentation/virtual/kvm/api.txt                 |   9 +-
+ Documentation/virtual/kvm/arm/psci.txt            |  30 ++
+ Makefile                                          |   4 +-
+ arch/arm/include/asm/kvm_host.h                   |   3 +
+ arch/arm/include/uapi/asm/kvm.h                   |   6 +
+ arch/arm/kvm/guest.c                              |  13 +
+ arch/arm/kvm/psci.c                               |  60 +++
+ arch/arm64/include/asm/kvm_host.h                 |   3 +
+ arch/arm64/include/uapi/asm/kvm.h                 |   6 +
+ arch/arm64/kvm/guest.c                            |  14 +-
+ arch/s390/include/asm/facility.h                  |   2 +-
+ drivers/crypto/talitos.c                          |  41 +-
+ drivers/gpu/drm/bridge/dumb-vga-dac.c             |   4 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c               |   1 +
+ drivers/infiniband/core/ucma.c                    |   2 +-
+ drivers/infiniband/hw/cxgb4/device.c              |   9 +-
+ drivers/infiniband/hw/cxgb4/iw_cxgb4.h            |   4 +
+ drivers/infiniband/hw/cxgb4/resource.c            |  26 +-
+ drivers/infiniband/hw/hfi1/init.c                 |   2 +
+ drivers/infiniband/hw/hfi1/pcie.c                 |   3 -
+ drivers/infiniband/hw/mlx5/qp.c                   |  22 +-
+ drivers/input/input-leds.c                        |   8 +-
+ drivers/input/touchscreen/atmel_mxt_ts.c          |   9 +
+ drivers/net/usb/qmi_wwan.c                        |   1 +
+ drivers/platform/x86/asus-wireless.c              |   4 +-
+ drivers/tty/serial/imx.c                          |  14 +-
+ drivers/usb/core/config.c                         |   4 +-
+ drivers/usb/musb/musb_gadget.c                    |   3 +-
+ drivers/usb/musb/musb_host.c                      |   4 +-
+ drivers/usb/serial/option.c                       | 448 ++++++++--------------
+ drivers/usb/serial/visor.c                        |  69 ++--
+ fs/xfs/xfs_file.c                                 |  14 +-
+ include/kvm/arm_psci.h                            |  16 +-
+ kernel/bpf/arraymap.c                             |   2 +-
+ kernel/bpf/hashtab.c                              |   9 +-
+ kernel/bpf/syscall.c                              |  20 +-
+ kernel/events/core.c                              |   2 +-
+ kernel/tracepoint.c                               |   4 +-
+ mm/percpu.c                                       |   1 +
+ sound/core/pcm_compat.c                           |   2 +
+ sound/core/seq/seq_virmidi.c                      |   4 +-
+ sound/drivers/aloop.c                             |  29 +-
+ tools/testing/selftests/firmware/fw_filesystem.sh |   6 +-
+ 43 files changed, 530 insertions(+), 407 deletions(-)
