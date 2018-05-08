@@ -1,116 +1,61 @@
-Return-Path: <lizhijian@cn.fujitsu.com>
-X-Google-Smtp-Source: AB8JxZrwQbYDsEa2S/pbYSBjHjYxQAQfE1sII6ejDBMV/bHXZMPpycC1ip8H0JL5F0UyR9U1fWtH
-ARC-Seal: i=1; a=rsa-sha256; t=1525770887; cv=none;
+Return-Path: <dave.hansen@intel.com>
+X-Google-Smtp-Source: AB8JxZrQ+N9XcFlvxJBhb/iGMdYwTl7aLRQaRdZ/jmmBbyNA/kp4hffz6U0296W51Ca1aBvIe0OW
+ARC-Seal: i=1; a=rsa-sha256; t=1525796755; cv=none;
         d=google.com; s=arc-20160816;
-        b=aaTugsO41CkDA8LSi6iDvyHX2o8ywB1UnXLPgsVOWsJv4EeVTsXf5x2nLiy9IHj4Z+
-         munIldEIj9mUSg2Ezjtu7ZsLzojWM7t3DH1+EeoewfEhjIbTwZQrzgX7c/tF6nEpL59t
-         ncU9ZIMgaZ+bql0u0yN9EafwfXzafOOzWUUTJEj2I/lAP3p5K9BvqVZa4xf19p7nIUFd
-         3JsKcIPmHxR5XXr9oBiJJ3K8jDxgQcf5KC8LJrXXsbNAa7EXQvvZatASwjgKuIGVy5MJ
-         JZ4E4+kOUe/3p0GEQhF8Xc60QsDqwaMn6NOQxDQmZud5cAv8TFfUKAQJB8z09cD+k/I3
-         SU0w==
+        b=RxgebgZxki7DRgIataGd/O4NABcz7rjvwEi55gt4bgiYvxEsKtYTbqNL194V21UYqv
+         XqKVunv6w5tCXi6tqGMoM2/kVSCG4aVy8kqp3bHDB9By2797OQhWyDrAq8JHqYFK4OBG
+         mS4iIU7MRtm+uT5JRBBfI+WPggaz8AO/YaNEgyu24fSVIFPlpVftAhRbmVFuhU3U3Js9
+         EaHgAGdkEN24Wm1tlV8N/m9b9gB5cpfo4RNAozccuGpL2i7ufUMxB1neyZFG/FM5ySQn
+         4SRSMhw3fV43f73K2bX1nOu+JWSoAvfUg06DC3MR/zHR5lPLyWuStdMcUc61o/wwPWx4
+         yksw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:subject:cc:to:from
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:openpgp:from:cc:references:to:subject
          :arc-authentication-results;
-        bh=M6ccYGZw9ak0UCZFmK8CafuIKhj1mwn3QGKDG9TFyhg=;
-        b=Da3S/s21pCL3242Be+hl6JZcOZ/yEfyFFN3YaT3LuBH1o0CrGO2XtDSaUwZRQ4yirS
-         V7qQ/tol/FbU7n7mZzWA5MLeAPxIMcxJxr6niVYF1n/XQSVUGo1HT8W/PtqSiNdODzTR
-         H+wRwdg3PJ9OQ0IVg9HudAVqvyqmbm2Lvtq4ZSwxesAUsQYVUnhFxGlQVIuUZtxF4LJ3
-         eaMn41OLVeZf958QRpvktjguEhQBYkMhw9oxRrFt26b1YSS57CQlV6scFjPaeMp1XB9j
-         YqmnvKAu0Lyiw6SlcEuuItqtpgoe+2UhoLKHt1irPWq8vDzsi4K3z7s1nykdCdBMWYie
-         g8CA==
+        bh=vFc1DXu/bHyGq7D3fbzryCsdmClNMX4TDb+GAgb/i0U=;
+        b=U/D9yeRMF4x+6uqCxIqj7e63f4qA895rHc/hGwP8FBoBYeQsiGyZ1tabJAuo+gB3ku
+         ocTgm71EdPL012zWoE1F4lnSiZCplf+4gcUJ1c5eac96MgW0KkZn2GOXugZ+A1yPAr/j
+         gbrzlFFd/XDx2YIbpjX3yUk6YM3eh2OUySIBY7fzb0ZfSpM9/jpzuuywqWkjVdduhIJ5
+         AbRsFhmWXXT5jt5nm1YbLK6H0Qyi+VAjvnwISuKZPxbf/33+tHsz7S5PQmYgbHKsGRTv
+         IMGWdP29Rbuw57AwgqymD38DE+pr7ueb46s6Zr3jqr1TeljEEazni6wt+ds9kq/Nsuw0
+         Tzbg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of lizhijian@cn.fujitsu.com designates 183.91.158.132 as permitted sender) smtp.mailfrom=lizhijian@cn.fujitsu.com
+       spf=pass (google.com: domain of dave.hansen@intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=dave.hansen@intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of lizhijian@cn.fujitsu.com designates 183.91.158.132 as permitted sender) smtp.mailfrom=lizhijian@cn.fujitsu.com
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="39685155"
-From: Li Zhijian <lizhijian@cn.fujitsu.com>
-To: <shuah@kernel.org>, <linux-kselftest@vger.kernel.org>
-CC: <mingo@kernel.org>, <tglx@linutronix.de>, <gregkh@linuxfoundation.org>,
-	<pombredanne@nexb.com>, <ebiederm@xmission.com>, <luto@kernel.org>,
-	<dave.hansen@linux.intel.com>, <linux-kernel@vger.kernel.org>,
-	<philip.li@intel.com>, <leist.fnst@cn.fujitsu.com>, <zhijianx.li@intel.com>,
-	Li Zhijian <lizhijian@cn.fujitsu.com>
-Subject: [PATCH 1/2] tools/testing/selftests/x86: fix warning: "SEGV_PKUERR|SEGV_BNDERR" redefined
-Date: Tue, 8 May 2018 17:14:29 +0800
-Message-ID: <1525770870-19067-1-git-send-email-lizhijian@cn.fujitsu.com>
-X-Mailer: git-send-email 2.7.4
+       spf=pass (google.com: domain of dave.hansen@intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=dave.hansen@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,379,1520924400";
+   d="scan'208";a="39653095"
+Subject: Re: [PATCH 1/2] tools/testing/selftests/x86: fix warning:
+ "SEGV_PKUERR|SEGV_BNDERR" redefined
+To: Li Zhijian <lizhijian@cn.fujitsu.com>, shuah@kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <1525770870-19067-1-git-send-email-lizhijian@cn.fujitsu.com>
+Cc: mingo@kernel.org, tglx@linutronix.de, gregkh@linuxfoundation.org,
+ pombredanne@nexb.com, ebiederm@xmission.com, luto@kernel.org,
+ linux-kernel@vger.kernel.org, philip.li@intel.com,
+ leist.fnst@cn.fujitsu.com, zhijianx.li@intel.com
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Message-ID: <8f91739f-5d63-e6c9-7bf9-4c970237bcf8@intel.com>
+Date: Tue, 8 May 2018 09:25:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.226.45]
-X-yoursite-MailScanner-ID: 7754D4B34D23.A0D94
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: lizhijian@cn.fujitsu.com
+In-Reply-To: <1525770870-19067-1-git-send-email-lizhijian@cn.fujitsu.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599886734267032257?=
-X-GMAIL-MSGID: =?utf-8?q?1599886734267032257?=
+X-GMAIL-MSGID: =?utf-8?q?1599913858914150361?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-SEGV_PKUERR and SEGV_BNDERR are defined since glibc-2.27
+On 05/08/2018 02:14 AM, Li Zhijian wrote:
+> SEGV_PKUERR and SEGV_BNDERR are defined since glibc-2.27
 
-fix the following issue:
--------------------
-root@vm-lkp-nex04-4G-5 /usr/src/linux-selftests-x86_64-rhel-7.2-75bc37fefc4471e718ba8e651aa74673d4e0a9eb/tools/testing/selftests/x86# make
-gcc -m32 -o /usr/src/linux-selftests-x86_64-rhel-7.2-75bc37fefc4471e718ba8e651aa74673d4e0a9eb/tools/testing/selftests/x86/protection_keys_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 protection_keys.c -lrt -ldl -lm
-gcc -m64 -o /usr/src/linux-selftests-x86_64-rhel-7.2-75bc37fefc4471e718ba8e651aa74673d4e0a9eb/tools/testing/selftests/x86/protection_keys_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 protection_keys.c -lrt -ldl
-protection_keys.c:228:0: warning: "SEGV_BNDERR" redefined
- #define SEGV_BNDERR     3  /* failed address bound checks */
- ^
-In file included from /usr/include/signal.h:58:0,
-                 from protection_keys.c:33:
-/usr/include/bits/siginfo-consts.h:117:0: note: this is the location of the previous definition
- #  define SEGV_BNDERR SEGV_BNDERR
- ^
-protection_keys.c:229:0: warning: "SEGV_PKUERR" redefined
- #define SEGV_PKUERR     4
- ^
-In file included from /usr/include/signal.h:58:0,
-                 from protection_keys.c:33:
-/usr/include/bits/siginfo-consts.h:119:0: note: this is the location of the previous definition
- #  define SEGV_PKUERR SEGV_PKUERR
- ^
-protection_keys.c:228:0: warning: "SEGV_BNDERR" redefined
- #define SEGV_BNDERR     3  /* failed address bound checks */
- ^
-In file included from /usr/include/signal.h:58:0,
-                 from protection_keys.c:33:
-/usr/include/x86_64-linux-gnu/bits/siginfo-consts.h:117:0: note: this is the location of the previous definition
- #  define SEGV_BNDERR SEGV_BNDERR
- ^
-protection_keys.c:229:0: warning: "SEGV_PKUERR" redefined
- #define SEGV_PKUERR     4
- ^
-In file included from /usr/include/signal.h:58:0,
-                 from protection_keys.c:33:
-/usr/include/x86_64-linux-gnu/bits/siginfo-consts.h:119:0: note: this is the location of the previous definition
- #  define SEGV_PKUERR SEGV_PKUERR
- ^
--------------------
 
-Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
----
- tools/testing/selftests/x86/protection_keys.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/x86/protection_keys.c b/tools/testing/selftests/x86/protection_keys.c
-index f15aa5a..757bb16 100644
---- a/tools/testing/selftests/x86/protection_keys.c
-+++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -225,8 +225,12 @@ void dump_mem(void *dumpme, int len_bytes)
- 	}
- }
- 
--#define SEGV_BNDERR     3  /* failed address bound checks */
--#define SEGV_PKUERR     4
-+#ifndef SEGV_BNDERR
-+# define SEGV_BNDERR     3  /* failed address bound checks */
-+#endif
-+#ifndef SEGV_PKUERR
-+# define SEGV_PKUERR     4
-+#endif
- 
- static char *si_code_str(int si_code)
- {
--- 
-2.7.4
+Acked-by: Dave Hansen <dave.hansen@intel.com>
