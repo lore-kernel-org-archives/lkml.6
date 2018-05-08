@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755849AbeEHSGQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 14:06:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54202 "EHLO mx2.suse.de"
+        id S1755898AbeEHSME (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 14:12:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54243 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755806AbeEHSGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 14:06:11 -0400
+        id S1755835AbeEHSGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 14:06:15 -0400
 From: Mark Fasheh <mfasheh@suse.de>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Mark Fasheh <mfasheh@suse.de>
-Subject: [PATCH 57/76] fs/orangefs: Use inode_sb() helper instead of inode->i_sb
-Date: Tue,  8 May 2018 11:04:17 -0700
-Message-Id: <20180508180436.716-58-mfasheh@suse.de>
+Subject: [PATCH 60/76] fs/qnx4: Use inode_sb() helper instead of inode->i_sb
+Date: Tue,  8 May 2018 11:04:20 -0700
+Message-Id: <20180508180436.716-61-mfasheh@suse.de>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180508180436.716-1-mfasheh@suse.de>
 References: <20180508180436.716-1-mfasheh@suse.de>
@@ -22,95 +22,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mark Fasheh <mfasheh@suse.de>
 ---
- fs/orangefs/file.c            |  2 +-
- fs/orangefs/namei.c           | 12 ++++++++----
- fs/orangefs/orangefs-kernel.h |  8 ++++----
- 3 files changed, 13 insertions(+), 9 deletions(-)
+ fs/qnx4/dir.c   | 2 +-
+ fs/qnx4/inode.c | 4 ++--
+ fs/qnx4/namei.c | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
-index 0d228cd087e6..123a0c5b4a22 100644
---- a/fs/orangefs/file.c
-+++ b/fs/orangefs/file.c
-@@ -722,7 +722,7 @@ static int orangefs_lock(struct file *filp, int cmd, struct file_lock *fl)
- {
- 	int rc = -EINVAL;
+diff --git a/fs/qnx4/dir.c b/fs/qnx4/dir.c
+index a6ee23aadd28..c0e764ce79dd 100644
+--- a/fs/qnx4/dir.c
++++ b/fs/qnx4/dir.c
+@@ -31,7 +31,7 @@ static int qnx4_readdir(struct file *file, struct dir_context *ctx)
  
--	if (ORANGEFS_SB(file_inode(filp)->i_sb)->flags & ORANGEFS_OPT_LOCAL_LOCK) {
-+	if (ORANGEFS_SB(inode_sb(file_inode(filp)))->flags & ORANGEFS_OPT_LOCAL_LOCK) {
- 		if (cmd == F_GETLK) {
- 			rc = 0;
- 			posix_test_lock(filp, fl);
-diff --git a/fs/orangefs/namei.c b/fs/orangefs/namei.c
-index 6e3134e6d98a..79b76f8f0ba8 100644
---- a/fs/orangefs/namei.c
-+++ b/fs/orangefs/namei.c
-@@ -60,7 +60,8 @@ static int orangefs_create(struct inode *dir,
- 	ref = new_op->downcall.resp.create.refn;
- 	op_release(new_op);
+ 	while (ctx->pos < inode->i_size) {
+ 		blknum = qnx4_block_map(inode, ctx->pos >> QNX4_BLOCK_SIZE_BITS);
+-		bh = sb_bread(inode->i_sb, blknum);
++		bh = sb_bread(inode_sb(inode), blknum);
+ 		if (bh == NULL) {
+ 			printk(KERN_ERR "qnx4_readdir: bread failed (%ld)\n", blknum);
+ 			return 0;
+diff --git a/fs/qnx4/inode.c b/fs/qnx4/inode.c
+index 3d46fe302fcb..2b5e5b18e084 100644
+--- a/fs/qnx4/inode.c
++++ b/fs/qnx4/inode.c
+@@ -60,7 +60,7 @@ static int qnx4_get_block( struct inode *inode, sector_t iblock, struct buffer_h
+ 	phys = qnx4_block_map( inode, iblock );
+ 	if ( phys ) {
+ 		// logical block is before EOF
+-		map_bh(bh, inode->i_sb, phys);
++		map_bh(bh, inode_sb(inode), phys);
+ 	}
+ 	return 0;
+ }
+@@ -94,7 +94,7 @@ unsigned long qnx4_block_map( struct inode *inode, long iblock )
+ 		while ( --nxtnt > 0 ) {
+ 			if ( ix == 0 ) {
+ 				// read next xtnt block.
+-				bh = sb_bread(inode->i_sb, i_xblk - 1);
++				bh = sb_bread(inode_sb(inode), i_xblk - 1);
+ 				if ( !bh ) {
+ 					QNX4DEBUG((KERN_ERR "qnx4: I/O error reading xtnt block [%ld])\n", i_xblk - 1));
+ 					return -EIO;
+diff --git a/fs/qnx4/namei.c b/fs/qnx4/namei.c
+index eca27878079d..3a84a8f6c6a7 100644
+--- a/fs/qnx4/namei.c
++++ b/fs/qnx4/namei.c
+@@ -67,7 +67,7 @@ static struct buffer_head *qnx4_find_entry(int len, struct inode *dir,
+ 		if (!bh) {
+ 			block = qnx4_block_map(dir, blkofs);
+ 			if (block)
+-				bh = sb_bread(dir->i_sb, block);
++				bh = sb_bread(inode_sb(dir), block);
+ 			if (!bh) {
+ 				blkofs++;
+ 				continue;
+@@ -113,7 +113,7 @@ struct dentry * qnx4_lookup(struct inode *dir, struct dentry *dentry, unsigned i
+ 	}
+ 	brelse(bh);
  
--	inode = orangefs_new_inode(dir->i_sb, dir, S_IFREG | mode, 0, &ref);
-+	inode = orangefs_new_inode(inode_sb(dir), dir, S_IFREG | mode, 0,
-+				   &ref);
- 	if (IS_ERR(inode)) {
- 		gossip_err("%s: Failed to allocate inode for file :%pd:\n",
- 			   __func__,
-@@ -192,7 +193,8 @@ static struct dentry *orangefs_lookup(struct inode *dir, struct dentry *dentry,
- 
- 	orangefs_set_timeout(dentry);
- 
--	inode = orangefs_iget(dir->i_sb, &new_op->downcall.resp.lookup.refn);
-+	inode = orangefs_iget(inode_sb(dir),
-+			      &new_op->downcall.resp.lookup.refn);
- 	if (IS_ERR(inode)) {
- 		gossip_debug(GOSSIP_NAME_DEBUG,
- 			"error %ld from iget\n", PTR_ERR(inode));
-@@ -320,7 +322,8 @@ static int orangefs_symlink(struct inode *dir,
- 	ref = new_op->downcall.resp.sym.refn;
- 	op_release(new_op);
- 
--	inode = orangefs_new_inode(dir->i_sb, dir, S_IFLNK | mode, 0, &ref);
-+	inode = orangefs_new_inode(inode_sb(dir), dir, S_IFLNK | mode, 0,
-+				   &ref);
- 	if (IS_ERR(inode)) {
- 		gossip_err
- 		    ("*** Failed to allocate orangefs symlink inode\n");
-@@ -391,7 +394,8 @@ static int orangefs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode
- 	ref = new_op->downcall.resp.mkdir.refn;
- 	op_release(new_op);
- 
--	inode = orangefs_new_inode(dir->i_sb, dir, S_IFDIR | mode, 0, &ref);
-+	inode = orangefs_new_inode(inode_sb(dir), dir, S_IFDIR | mode, 0,
-+				   &ref);
- 	if (IS_ERR(inode)) {
- 		gossip_err("*** Failed to allocate orangefs dir inode\n");
- 		ret = PTR_ERR(inode);
-diff --git a/fs/orangefs/orangefs-kernel.h b/fs/orangefs/orangefs-kernel.h
-index eebbaece85ef..c006a3f6dedd 100644
---- a/fs/orangefs/orangefs-kernel.h
-+++ b/fs/orangefs/orangefs-kernel.h
-@@ -325,11 +325,11 @@ static inline int is_root_handle(struct inode *inode)
- 	gossip_debug(GOSSIP_DCACHE_DEBUG,
- 		     "%s: root handle: %pU, this handle: %pU:\n",
- 		     __func__,
--		     &ORANGEFS_SB(inode->i_sb)->root_khandle,
-+		     &ORANGEFS_SB(inode_sb(inode))->root_khandle,
- 		     get_khandle_from_ino(inode));
- 
--	if (ORANGEFS_khandle_cmp(&(ORANGEFS_SB(inode->i_sb)->root_khandle),
--			     get_khandle_from_ino(inode)))
-+	if (ORANGEFS_khandle_cmp(&(ORANGEFS_SB(inode_sb(inode))->root_khandle),
-+				 get_khandle_from_ino(inode)))
- 		return 0;
- 	else
- 		return 1;
-@@ -513,7 +513,7 @@ int service_operation(struct orangefs_kernel_op_s *op,
- 		      int flags);
- 
- #define get_interruptible_flag(inode) \
--	((ORANGEFS_SB(inode->i_sb)->flags & ORANGEFS_OPT_INTR) ? \
-+	((ORANGEFS_SB(inode_sb(inode))->flags & ORANGEFS_OPT_INTR) ? \
- 		ORANGEFS_OP_INTERRUPTIBLE : 0)
- 
- #define fill_default_sys_attrs(sys_attr, type, mode)			\
+-	foundinode = qnx4_iget(dir->i_sb, ino);
++	foundinode = qnx4_iget(inode_sb(dir), ino);
+ 	if (IS_ERR(foundinode)) {
+ 		QNX4DEBUG((KERN_ERR "qnx4: lookup->iget -> error %ld\n",
+ 			   PTR_ERR(foundinode)));
 -- 
 2.15.1
