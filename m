@@ -1,142 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752014AbeEHLkT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 07:40:19 -0400
-Received: from out2-4.antispamcloud.com ([185.201.17.4]:41246 "EHLO
-        out2-4.antispamcloud.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750953AbeEHLkR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 07:40:17 -0400
-Subject: Re: [PATCH] i2c-mux-pca954x: Force reset on probe if available
-To: Peter Rosin <peda@axentia.se>, <linux-i2c@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>
-References: <1525174932-8865-1-git-send-email-mike.looijmans@topic.nl>
- <bc56d669-b02f-a017-844d-e095bbbcb7cd@axentia.se>
-From: Mike Looijmans <mike.looijmans@topic.nl>
-Organization: TOPIC
-Message-ID: <350e9638-1127-c0e5-290b-9d04725c1b8e@topic.nl>
-Date: Tue, 8 May 2018 10:06:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754971AbeEHLuD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 07:50:03 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:37762 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754954AbeEHLuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 07:50:01 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org
+Cc: djw@t-chip.com.cn, linux-gpio@vger.kernel.org,
+        Wayne Chou <zxf@t-chip.com.cn>,
+        Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v0 1/2] gpio: syscon: Add gpio-syscon for rk3328
+Date: Tue, 08 May 2018 13:49:46 +0200
+Message-ID: <2356128.gufDZceMBS@phil>
+In-Reply-To: <1525747704-8537-2-git-send-email-djw@t-chip.com.cn>
+References: <1525747704-8537-1-git-send-email-djw@t-chip.com.cn> <1525747704-8537-2-git-send-email-djw@t-chip.com.cn>
 MIME-Version: 1.0
-In-Reply-To: <bc56d669-b02f-a017-844d-e095bbbcb7cd@axentia.se>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [192.168.80.121]
-X-EXCLAIMER-MD-CONFIG: 9833cda7-5b21-4d34-9a38-8d025ddc3664
-X-EXCLAIMER-MD-BIFURCATION-INSTANCE: 0
-X-Originating-IP: 37.74.225.130
-X-AntiSpamCloud-Domain: topic.nl
-X-AntiSpamCloud-Username: 37.74.225.128/28
-Authentication-Results: antispamcloud.com; auth=pass smtp.auth=37.74.225.128/28@topic.nl
-X-AntiSpamCloud-Outgoing-Class: ham
-X-AntiSpamCloud-Outgoing-Evidence: Combined (0.01)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5kff78GQ2dm+dtVswiS7xj5602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvOzJhQy2NDFGsix86toyVARW12I64/euOWoYaRdUZk/FrBwefi0WOKb4AQAQbeIc48YiV
- 9sWmsIC3ZKongzWBR5l8LN00Y2guNhbTSbk1sIe8sxU0alJN8Y+Bl/gqiQIMUzHUm0lJbYkeZwLL
- yB+ImZP3v5bFq1kV5Dm1eZbZ64/5yTYeHGzfo9M4riUkxDEBCeJWpqZnwzbogARaL7Y5zHUqrD2H
- h0PgN4CWVaxBDBCsUq/ts5X+VOOIoWbZgu14buioDYSM7BP/T+iyRkhWETdUlUP9KMdHy6A+AXAC
- hWVcFH81NtRjycgUFQO/43UBzZANJ1ObAEQEIjYWPINVnHx8uNFFxCRwPG/5Ix4UZh/3U3JFpO2+
- hqJR1ejSjXiONziVSGV4bErVxdg/cKJHDVO6CT9M1stWoUTybRqU5J7031/E3ahF5MMcDI7KdpjQ
- KdaTqzXGcmYQIgNNcKSD7+YhEWyJzIkwSFAW0Pw8uiKe79Ir/Me7RAJ5cVVkcq6aIt2zYvPTd+DT
- pPBZoZwGv5FNt788cua0rXdHmSXTDWpZ077qdJpX6gYgMjbQL07AHOTwwuxo5FQjTor5cZsOzt1v
- T/FFd4XwrbZZ2PROSnBqU7iHsZt7y5STv39682PeyRrtz0kWtl+UH6z76SGp53IXjVmRL8Ub6tnz
- DXC+MEASrFforEA8S32jXIGkcSEmdhSz3VORPhMVvRNiu1/gdeEM09UW0zdwIQBgzumUacr24sMh
- oZLb2Pf3I93/xU1mGSG7X+t1TW39Ja77LGPpOwDuKj1v8GygT97cRB7OREWWgXQb9W4Kqgrdo/ql
- HQwR13y8PA9Lp4X/t4iYwnhqk8Dz5sxganERTDb5w3Vi3NQvJBPvPDjBPaowofdkfHH45mUVrBsP
- GnNiJ83AD/4JscB0VTS+bY/ezHW1Vxxj2dVmij+LWN5wSjEXHInOcrrTK6FoDhG9UZ8skhW6R1E8
- jSo=
-X-Report-Abuse-To: spam@quarantine2.antispamcloud.com
+Content-Type: multipart/mixed; boundary="nextPart2893046.DzjenlKqZX"
+Content-Transfer-Encoding: 7Bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-﻿On 08-05-18 08:36, Peter Rosin wrote:
-> On 2018-05-01 13:42, Mike Looijmans wrote:
->> Instead of just hogging the reset GPIO into deactivated state, activate and
->> then de-activate the reset. This allows for better recovery if the CPU was
->> reset halfway through an I2C transaction for example.
+This is a multi-part message in MIME format.
+
+--nextPart2893046.DzjenlKqZX
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+
+Hi Levin,
+
+Am Dienstag, 8. Mai 2018, 04:48:23 CEST schrieb djw@t-chip.com.cn:
+> From: Levin Du <djw@t-chip.com.cn>
 > 
-> I can't see any problems with this, and a reset at load time can certainly
-> be a benefit. Some questions below though...
+> In Rockchip RK3328 Soc, there's a output only gpio pin labeled
+> `gpiomut_pmuio_iout`, which can be set by bit[1] of GRF_SOC_CON10.
+> (bit[0] controls the enable state of the pin and defaults to enabled.)
 > 
-> Cheers,
-> Peter
+> This pin is used by the roc-rk3328-cc board to switch sdmmc io signal
+> voltage between 1.8V and 3.3V, which is essential to the SD card UHS
+> support.
 > 
->> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
->> ---
->>   drivers/i2c/muxes/i2c-mux-pca954x.c | 12 ++++++++++--
->>   1 file changed, 10 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/i2c/muxes/i2c-mux-pca954x.c b/drivers/i2c/muxes/i2c-mux-pca954x.c
->> index 09bafd3..13e10d0 100644
->> --- a/drivers/i2c/muxes/i2c-mux-pca954x.c
->> +++ b/drivers/i2c/muxes/i2c-mux-pca954x.c
->> @@ -36,6 +36,7 @@
->>    */
->>   
->>   #include <linux/device.h>
->> +#include <linux/delay.h>
->>   #include <linux/gpio/consumer.h>
->>   #include <linux/i2c.h>
->>   #include <linux/i2c-mux.h>
->> @@ -389,10 +390,17 @@ static int pca954x_probe(struct i2c_client *client,
->>   	i2c_set_clientdata(client, muxc);
->>   	data->client = client;
->>   
->> -	/* Get the mux out of reset if a reset GPIO is specified. */
->> -	gpio = devm_gpiod_get_optional(&client->dev, "reset", GPIOD_OUT_LOW);
->> +	/* Reset the mux if a reset GPIO is specified. */
->> +	gpio = devm_gpiod_get_optional(&client->dev, "reset", GPIOD_OUT_HIGH);
->>   	if (IS_ERR(gpio))
->>   		return PTR_ERR(gpio);
->> +	if (gpio) {
->> +		/* Datasheet specifies a 4 ns reset-low time */
->> +		udelay(1);
+> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+
+Thanks for investigating that special pin.
+
+Please also add a devicetree-binding document under
+Documentation/devicetree/bindings/gpio.
+
+And I do have some more suggestions below.
+
+
+> ---
 > 
-> ndelay(4) ?
+>  drivers/gpio/gpio-syscon.c | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 > 
+> diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+> index 537cec7..b69f65f 100644
+> --- a/drivers/gpio/gpio-syscon.c
+> +++ b/drivers/gpio/gpio-syscon.c
+> @@ -135,6 +135,34 @@ static const struct syscon_gpio_data clps711x_mctrl_gpio = {
+>  	.dat_bit_offset	= 0x40 * 8 + 8,
+>  };
+>  
+> +static void rockchip_gpio_set(struct gpio_chip *chip, unsigned int offset,
+> +			      int val)
+> +{
+> +	struct syscon_gpio_priv *priv = gpiochip_get_data(chip);
+> +	unsigned int offs;
+> +	u8 bit;
+> +	u32 data;
+> +	int ret;
+> +
+> +	offs = priv->dreg_offset + priv->data->dat_bit_offset + offset;
+> +	bit = offs % SYSCON_REG_BITS;
+> +	data = (val ? BIT(bit) : 0) | BIT(bit + 16);
+> +	ret = regmap_write(priv->syscon,
+> +			   (offs / SYSCON_REG_BITS) * SYSCON_REG_SIZE,
+> +			   data);
+> +	if (ret < 0)
+> +		dev_err(chip->parent, "gpio write failed ret(%d)\n", ret);
+> +}
+> +
+> +static const struct syscon_gpio_data rk3328_gpio_syscon10 = {
+> +	/* Rockchip RK3328 GRF_SOC_CON10 Bits 0-1 */
+> +	.compatible	= "rockchip,rk3328-grf",
 
-I have several reasons for making it much much longer:
-- A true 4ns pulse might not make it through the GPIO controller (on some 
-chips, the GPIO controller runs at 1/10th of the CPU speed or even less)
-- Board designers tend to treat RESET signals as "DC", so a 250MHz pulse might 
-not make it through. There may be level converters and open-drain drives in 
-the signal path as well.
-- I've only looked it op on a few chips, others may have different values
+please drop the compatible above, include the attached patch before
+this one and follow the things I'll will outline in the devicetree patch
+shortly :-)
 
-I think best is to just remove the comment line, it doesn't really help.
-
->> +		gpiod_set_value_cansleep(gpio, 0);
->> +		/* Datasheet specifies a 500 ns reset recovery time */
->> +		udelay(1);
-> 
-> ndelay(500) ?
-
-Similar reasons as above.
-
-> 
->> +	}
->>   
->>   	match = of_match_device(of_match_ptr(pca954x_of_match), &client->dev);
->>   	if (match)
->>
-> 
+Patch for getting the syscon frome the parent is compile-tested only
+so please double-check that I didn't mess up anything.
 
 
+> +	.flags		= GPIO_SYSCON_FEAT_OUT,
+> +	.bit_count	= 2,
+> +	.dat_bit_offset	= 0x0428 * 8,
+> +	.set		= rockchip_gpio_set,
+> +};
+> +
+>  #define KEYSTONE_LOCK_BIT BIT(0)
+>  
+>  static void keystone_gpio_set(struct gpio_chip *chip, unsigned offset, int val)
+> @@ -175,6 +203,10 @@ static const struct of_device_id syscon_gpio_ids[] = {
+>  		.compatible	= "ti,keystone-dsp-gpio",
+>  		.data		= &keystone_dsp_gpio,
+>  	},
+> +	{
+> +		.compatible	= "rockchip,rk3328-gpio-syscon10",
 
-Kind regards,
+rockchip,rk3328-gpio-mute [the naming from the TRM] could
+be a more suitable naming?
 
-Mike Looijmans
-System Expert
 
-TOPIC Products
-Materiaalweg 4, NL-5681 RJ Best
-Postbus 440, NL-5680 AK Best
-Telefoon: +31 (0) 499 33 69 79
-E-mail: mike.looijmans@topicproducts.com
-Website: www.topicproducts.com
+Heiko
+--nextPart2893046.DzjenlKqZX
+Content-Disposition: attachment; filename="0001-gpio-syscon-allow-fetching-syscon-from-parent-node.patch"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/x-patch; charset="UTF-8"; name="0001-gpio-syscon-allow-fetching-syscon-from-parent-node.patch"
 
-Please consider the environment before printing this e-mail
+>From 8894fdd9fc4ad90abec32336cc2e528d49abf887 Mon Sep 17 00:00:00 2001
+From: Heiko Stuebner <heiko@sntech.de>
+Date: Tue, 8 May 2018 13:33:37 +0200
+Subject: [PATCH] gpio: syscon: allow fetching syscon from parent node
+
+Syscon nodes can be a simple-mfd and the syscon-users then be declared
+as children of this node. That way the parent-child structure can be
+better represented for devices that are fully embedded in the syscon.
+
+Therefore allow getting the syscon from the parent if neither
+a special compatible nor a gpio,syscon-dev property is defined.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/gpio/gpio-syscon.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+index 537cec7583fc..7325b864f52a 100644
+--- a/drivers/gpio/gpio-syscon.c
++++ b/drivers/gpio/gpio-syscon.c
+@@ -205,6 +205,8 @@ static int syscon_gpio_probe(struct platform_device *pdev)
+ 	} else {
+ 		priv->syscon =
+ 			syscon_regmap_lookup_by_phandle(np, "gpio,syscon-dev");
++		if (IS_ERR(priv->syscon) && np->parent)
++			priv->syscon = syscon_node_to_regmap(np->parent);
+ 		if (IS_ERR(priv->syscon))
+ 			return PTR_ERR(priv->syscon);
+ 
+-- 
+2.16.2
+
+
+--nextPart2893046.DzjenlKqZX--
