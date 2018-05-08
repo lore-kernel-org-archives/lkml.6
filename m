@@ -1,131 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932579AbeEHJJg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 05:09:36 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:59821 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754465AbeEHJJe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 05:09:34 -0400
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-CC: Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Andrei Vagin <avagin@openvz.org>, Michal Hocko <mhocko@suse.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Daniel Colascione <dancol@google.com>, Zi Yan <zi.yan@cs.rutgers.edu>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH -mm] mm, pagemap: Hide swap entry for unprivileged users
-Thread-Topic: [PATCH -mm] mm, pagemap: Hide swap entry for unprivileged users
-Thread-Index: AQHT5mvVWujS9GcLcU+EklToaBi6vaQk9EkA
-Date: Tue, 8 May 2018 09:07:34 +0000
-Message-ID: <20180508090734.GA27996@hori1.linux.bs1.fc.nec.co.jp>
-References: <20180508012745.7238-1-ying.huang@intel.com>
-In-Reply-To: <20180508012745.7238-1-ying.huang@intel.com>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.51.8.80]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <AAC608D4D314694BA2DE2476E4788BEB@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        id S932760AbeEHJKE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 05:10:04 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54662 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932308AbeEHJKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 05:10:02 -0400
+Subject: Re: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to
+ related_cpus unnecessarily"
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-pm@vger.kernel.org,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>
+References: <20180508073340.13114-1-dietmar.eggemann@arm.com>
+ <20180508082242.bre6sjfvefhz6xc3@vireshk-i7>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <8cf21b1a-ca6e-fed7-43c5-94c66ff5986b@arm.com>
+Date: Tue, 8 May 2018 11:09:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+In-Reply-To: <20180508082242.bre6sjfvefhz6xc3@vireshk-i7>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 09:27:45AM +0800, Huang, Ying wrote:
-> From: Huang Ying <ying.huang@intel.com>
+On 05/08/2018 10:22 AM, Viresh Kumar wrote:
+> On 08-05-18, 08:33, Dietmar Eggemann wrote:
+>> This reverts commit e2cabe48c20efb174ce0c01190f8b9c5f3ea1d13.
+>>
+>> Lifting the restriction that the sugov kthread is bound to the
+>> policy->related_cpus for a system with a slow switching cpufreq driver,
+>> which is able to perform DVFS from any cpu (e.g. cpufreq-dt), is not
+>> only not beneficial it also harms Enery-Aware Scheduling (EAS) on
+>> systems with asymmetric cpu capacities (e.g. Arm big.LITTLE).
+>>
+>> The sugov kthread which does the update for the little cpus could
+>> potentially run on a big cpu. It could prevent that the big cluster goes
+>> into deeper idle states although all the tasks are running on the little
+>> cluster.
 > 
-> In ab676b7d6fbf ("pagemap: do not leak physical addresses to
-> non-privileged userspace"), the /proc/PID/pagemap is restricted to be
-> readable only by CAP_SYS_ADMIN to address some security issue.  In
-> 1c90308e7a77 ("pagemap: hide physical addresses from non-privileged
-> users"), the restriction is relieved to make /proc/PID/pagemap
-> readable, but hide the physical addresses for non-privileged users.
-> But the swap entries are readable for non-privileged users too.  This
-> has some security issues.  For example, for page under migrating, the
-> swap entry has physical address information.  So, in this patch, the
-> swap entries are hided for non-privileged users too.
+> I think the original patch did the right thing, but that doesn't suit
+> everybody as you explained.
 > 
-> Fixes: 1c90308e7a77 ("pagemap: hide physical addresses from non-privileged users")
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> Cc: Andrei Vagin <avagin@openvz.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Jerome Glisse <jglisse@redhat.com>
-> Cc: Daniel Colascione <dancol@google.com>
-> Cc: Zi Yan <zi.yan@cs.rutgers.edu>
-> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> I wouldn't really revert the patch but fix my platform's cpufreq
+> driver to set dvfs_possible_from_any_cpu = false, so that other
+> platforms can still benefit from the original commit.
 
-Hi ying huang,
+This would make sure that the kthreads are bound to the correct set of 
+cpus for platforms with those cpufreq drivers (cpufreq-dt (h960), 
+scmi-cpufreq, scpi-cpufreq) but it will also change the logic (e.g. 
+sugov_should_update_freq() -> cpufreq_can_do_remote_dvfs()).
 
-This patch looks good to me.
-
-Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-
-> ---
->  fs/proc/task_mmu.c | 26 ++++++++++++++++----------
->  1 file changed, 16 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index a20c6e495bb2..ff947fdd7c71 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1258,8 +1258,9 @@ static pagemap_entry_t pte_to_pagemap_entry(struct pagemapread *pm,
->  		if (pte_swp_soft_dirty(pte))
->  			flags |= PM_SOFT_DIRTY;
->  		entry = pte_to_swp_entry(pte);
-> -		frame = swp_type(entry) |
-> -			(swp_offset(entry) << MAX_SWAPFILES_SHIFT);
-> +		if (pm->show_pfn)
-> +			frame = swp_type(entry) |
-> +				(swp_offset(entry) << MAX_SWAPFILES_SHIFT);
->  		flags |= PM_SWAP;
->  		if (is_migration_entry(entry))
->  			page = migration_entry_to_page(entry);
-> @@ -1310,11 +1311,14 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
->  #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
->  		else if (is_swap_pmd(pmd)) {
->  			swp_entry_t entry = pmd_to_swp_entry(pmd);
-> -			unsigned long offset = swp_offset(entry);
-> +			unsigned long offset;
->  
-> -			offset += (addr & ~PMD_MASK) >> PAGE_SHIFT;
-> -			frame = swp_type(entry) |
-> -				(offset << MAX_SWAPFILES_SHIFT);
-> +			if (pm->show_pfn) {
-> +				offset = swp_offset(entry) +
-> +					((addr & ~PMD_MASK) >> PAGE_SHIFT);
-> +				frame = swp_type(entry) |
-> +					(offset << MAX_SWAPFILES_SHIFT);
-> +			}
->  			flags |= PM_SWAP;
->  			if (pmd_swp_soft_dirty(pmd))
->  				flags |= PM_SOFT_DIRTY;
-> @@ -1332,10 +1336,12 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
->  			err = add_to_pagemap(addr, &pme, pm);
->  			if (err)
->  				break;
-> -			if (pm->show_pfn && (flags & PM_PRESENT))
-> -				frame++;
-> -			else if (flags & PM_SWAP)
-> -				frame += (1 << MAX_SWAPFILES_SHIFT);
-> +			if (pm->show_pfn) {
-> +				if (flags & PM_PRESENT)
-> +					frame++;
-> +				else if (flags & PM_SWAP)
-> +					frame += (1 << MAX_SWAPFILES_SHIFT);
-> +			}
->  		}
->  		spin_unlock(ptl);
->  		return err;
-> -- 
-> 2.17.0
-> 
-> 
+I'm still struggling to understand when a driver/platform should set 
+dvfs_possible_from_any_cpu to true and what the actual benefit would be.
