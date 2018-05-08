@@ -1,44 +1,42 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqxRyPgjczedZxIiekJKmmrt54NRODL2b2tT8pWv1MDKcLlSNrnJzaYBNAJzGytt7/PAW4M
-ARC-Seal: i=1; a=rsa-sha256; t=1525767361; cv=none;
+X-Google-Smtp-Source: AB8JxZpKIysY6v84P3iP10Vw7DhDtvxW98HGOXnvjfWzxqcPZDAR+xPbUGKtnqi6GPnHRdvofc7l
+ARC-Seal: i=1; a=rsa-sha256; t=1525767358; cv=none;
         d=google.com; s=arc-20160816;
-        b=VG5fGYqu9dnKfzYr9oQ0f72GXXJojyk8AGI+cFTmwni+ncKhxY94XzUbnOTSM6TBAR
-         p5DxcJw1Q2x7URbRRWDfkkIUbnAyLC1mPKJaajNId3nIo+ADmuojXkpYQ0vvoFd0NgnU
-         D5YKdp4Lvzwr3FPDZ+yPZiMrZD5tagmKEqazgJnk5a2EhaaQYz8nEolBB2Mfw+IuWD77
-         wxHXT8TShceCzYVQmAVnzj3PcgvCE/s20GDcvbVxA0G3YuRqSn7XCEA6zRfSnJXFNEmG
-         NgwXuvKjCMnXolV5cDpvvpQlAvm6+6KfAxNxd5Gy5qY1WkneAOWz6K+UIiYSkCnbDeJy
-         TYQw==
+        b=Xb1nRIQT2qsjnbXDOGeaKX2ijrfivO1HhPVsoTM4MW8F7V/DkGfDgq8o31jbzru12O
+         xwKowJSqP317vMymsMaIV9zlCyEw2r9JaA3aOurv/z9k56GpAAjWYzzJ8ME1rJ47Js+0
+         Kh9Phrreqyo5lGXNXBxDH0vQ5CLApr5bkxQu0XcYUMYnWD+X6TEOuqQWrrAkZesXdik7
+         fQ2ZlLLBVeXqF9eClCJIlzJg0yS45bWsh8X2d5R2XP2pHKvgSDzNbk86sgEybFBnii+w
+         3VGsM0Wg7KPNzoHN7e024eprZk2QR08TQ9a2HmGnPnlNtp0Sxiii3bbsvAqjq3jj7Wly
+         EEJQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=YeUmZmBbol59koKKxxZ04kaw6KPY8u6a/QG3yGrRGtQ=;
-        b=rEbbO7zwfLtUACar0UhHsZwg1J1hi0IihVZpy4nuZ3/8lmDRRulbwdh2au7uFcoUR/
-         I+Se+A4qZmPBgoz5Eo34nsX7wxEt6Q8mbUiILLDyS7aylQQ2XXGSkgTzaxE2ZlY7hBi8
-         PzEW4qIf8yebof0boYrPX+D5oDI+tJmDFnS9SeP04nWJtJGbsp09udao1iMQprA9zrb3
-         h6us1/xSKADpn/8zMjZv5w6NYnl6XEpCg6ORHAhtzOx0qhXcQ71QZjFCWKJ2f9+TuHbC
-         X96ni+cFkbCZo4QOBn0uyPMDi5/tMs7PUFieX53n4wDvMs/UdWF111chH1PyKQ3RYxpz
-         b6vA==
+        bh=RzUFLi0RFPh4QSaGJccWWiPrIAUdl1T9eQOeOkr369U=;
+        b=Tkyj4o1ULAptQFwSBbqgtRCPTKKYUKfpZm5tKAojxvGXgonbYsfCZ41ilfcqAG9fZM
+         8bbMh/CQrQbVlQMF0zZsfFlfMB1StWKy7+8P0XdIn8rJvHqF6J/mJ4zNt/B4Ax8bbbjK
+         A6b3YC83B3JcmhjiaSYFb0pqabz8vBdsFUm4aO2XE2wTw6jHKWNc6pyITg07vWxNhhHW
+         4baByLHC7G7o3yO6R6iuOp739y5UIVarLQHjJDTplGnckeJly6QKFPUVUm/FvPMRLa0r
+         QauMyrHwlVOZ1SXrmE1uRoa1VUKwp/HT0XQOt4HLASBePucTgZml4UlD9IdqURWJM5Z7
+         eWeg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=DTwr3LOl;
+       dkim=pass header.i=@kernel.org header.s=default header.b=YA04jYbM;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=DTwr3LOl;
+       dkim=pass header.i=@kernel.org header.s=default header.b=YA04jYbM;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Howard McLauchlan <hmclauchlan@fb.com>,
-	Josef Bacik <jbacik@fb.com>,
-	Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Song Liu <songliubraving@fb.com>,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.14 43/43] tracing: Fix bad use of igrab in trace_uprobe.c
-Date: Tue,  8 May 2018 10:11:02 +0200
-Message-Id: <20180508074010.840311863@linuxfoundation.org>
+	Agustin Vega-Frias <agustinv@codeaurora.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jason Cooper <jason@lakedaemon.net>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	timur@codeaurora.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 4.14 42/43] irqchip/qcom: Fix check for spurious interrupts
+Date: Tue,  8 May 2018 10:11:01 +0200
+Message-Id: <20180508074010.706606097@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
@@ -48,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882923525854548?=
-X-GMAIL-MSGID: =?utf-8?q?1599883037195823846?=
+X-GMAIL-THRID: =?utf-8?q?1599882882129701424?=
+X-GMAIL-MSGID: =?utf-8?q?1599883034124430488?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,147 +55,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Song Liu <songliubraving@fb.com>
+From: Agustin Vega-Frias <agustinv@codeaurora.org>
 
-commit 0c92c7a3c5d416f47b32c5f20a611dfeca5d5f2e upstream.
+commit 1bc2463cee92ef0e2034c813d5e511adeb58b5fd upstream.
 
-As Miklos reported and suggested:
+When the interrupts for a combiner span multiple registers it must be
+checked if any interrupts have been asserted on each register before
+checking for spurious interrupts.
 
-  This pattern repeats two times in trace_uprobe.c and in
-  kernel/events/core.c as well:
+Checking each register seperately leads to false positive warnings.
 
-      ret = kern_path(filename, LOOKUP_FOLLOW, &path);
-      if (ret)
-          goto fail_address_parse;
+[ tglx: Massaged changelog ]
 
-      inode = igrab(d_inode(path.dentry));
-      path_put(&path);
-
-  And it's wrong.  You can only hold a reference to the inode if you
-  have an active ref to the superblock as well (which is normally
-  through path.mnt) or holding s_umount.
-
-  This way unmounting the containing filesystem while the tracepoint is
-  active will give you the "VFS: Busy inodes after unmount..." message
-  and a crash when the inode is finally put.
-
-  Solution: store path instead of inode.
-
-This patch fixes two instances in trace_uprobe.c. struct path is added to
-struct trace_uprobe to keep the inode and containing mount point
-referenced.
-
-Link: http://lkml.kernel.org/r/20180423172135.4050588-1-songliubraving@fb.com
-
-Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
-Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
+Fixes: f20cc9b00c7b ("irqchip/qcom: Add IRQ combiner driver")
+Signed-off-by: Agustin Vega-Frias <agustinv@codeaurora.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: timur@codeaurora.org
+Cc: linux-arm-kernel@lists.infradead.org
 Cc: stable@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Howard McLauchlan <hmclauchlan@fb.com>
-Cc: Josef Bacik <jbacik@fb.com>
-Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Acked-by: Miklos Szeredi <mszeredi@redhat.com>
-Reported-by: Miklos Szeredi <miklos@szeredi.hu>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Link: https://lkml.kernel.org/r/1525184090-26143-1-git-send-email-agustinv@codeaurora.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_uprobe.c |   24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+ drivers/irqchip/qcom-irq-combiner.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -55,6 +55,7 @@ struct trace_uprobe {
- 	struct list_head		list;
- 	struct trace_uprobe_filter	filter;
- 	struct uprobe_consumer		consumer;
-+	struct path			path;
- 	struct inode			*inode;
- 	char				*filename;
- 	unsigned long			offset;
-@@ -287,7 +288,7 @@ static void free_trace_uprobe(struct tra
- 	for (i = 0; i < tu->tp.nr_args; i++)
- 		traceprobe_free_probe_arg(&tu->tp.args[i]);
+--- a/drivers/irqchip/qcom-irq-combiner.c
++++ b/drivers/irqchip/qcom-irq-combiner.c
+@@ -1,4 +1,4 @@
+-/* Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
++/* Copyright (c) 2015-2018, The Linux Foundation. All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 and
+@@ -68,7 +68,7 @@ static void combiner_handle_irq(struct i
  
--	iput(tu->inode);
-+	path_put(&tu->path);
- 	kfree(tu->tp.call.class->system);
- 	kfree(tu->tp.call.name);
- 	kfree(tu->filename);
-@@ -361,7 +362,6 @@ end:
- static int create_trace_uprobe(int argc, char **argv)
- {
- 	struct trace_uprobe *tu;
--	struct inode *inode;
- 	char *arg, *event, *group, *filename;
- 	char buf[MAX_EVENT_NAME_LEN];
- 	struct path path;
-@@ -369,7 +369,6 @@ static int create_trace_uprobe(int argc,
- 	bool is_delete, is_return;
- 	int i, ret;
- 
--	inode = NULL;
- 	ret = 0;
- 	is_delete = false;
- 	is_return = false;
-@@ -435,21 +434,16 @@ static int create_trace_uprobe(int argc,
- 	}
- 	/* Find the last occurrence, in case the path contains ':' too. */
- 	arg = strrchr(argv[1], ':');
--	if (!arg) {
--		ret = -EINVAL;
--		goto fail_address_parse;
--	}
-+	if (!arg)
-+		return -EINVAL;
- 
- 	*arg++ = '\0';
- 	filename = argv[1];
- 	ret = kern_path(filename, LOOKUP_FOLLOW, &path);
- 	if (ret)
--		goto fail_address_parse;
--
--	inode = igrab(d_inode(path.dentry));
--	path_put(&path);
-+		return ret;
- 
--	if (!inode || !S_ISREG(inode->i_mode)) {
-+	if (!d_is_reg(path.dentry)) {
- 		ret = -EINVAL;
- 		goto fail_address_parse;
- 	}
-@@ -488,7 +482,7 @@ static int create_trace_uprobe(int argc,
- 		goto fail_address_parse;
- 	}
- 	tu->offset = offset;
--	tu->inode = inode;
-+	tu->path = path;
- 	tu->filename = kstrdup(filename, GFP_KERNEL);
- 
- 	if (!tu->filename) {
-@@ -556,7 +550,7 @@ error:
- 	return ret;
- 
- fail_address_parse:
--	iput(inode);
-+	path_put(&path);
- 
- 	pr_info("Failed to parse address or file.\n");
- 
-@@ -935,6 +929,7 @@ probe_event_enable(struct trace_uprobe *
- 		goto err_flags;
- 
- 	tu->consumer.filter = filter;
-+	tu->inode = d_real_inode(tu->path.dentry);
- 	ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
- 	if (ret)
- 		goto err_buffer;
-@@ -980,6 +975,7 @@ probe_event_disable(struct trace_uprobe
- 	WARN_ON(!uprobe_filter_is_empty(&tu->filter));
- 
- 	uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
-+	tu->inode = NULL;
- 	tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
- 
- 	uprobe_buffer_disable();
+ 		bit = readl_relaxed(combiner->regs[reg].addr);
+ 		status = bit & combiner->regs[reg].enabled;
+-		if (!status)
++		if (bit && !status)
+ 			pr_warn_ratelimited("Unexpected IRQ on CPU%d: (%08x %08lx %p)\n",
+ 					    smp_processor_id(), bit,
+ 					    combiner->regs[reg].enabled,
