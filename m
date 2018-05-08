@@ -1,95 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754500AbeEHHyx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 03:54:53 -0400
-Received: from mail-pl0-f44.google.com ([209.85.160.44]:43341 "EHLO
-        mail-pl0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754135AbeEHHyv (ORCPT
+        id S1754556AbeEHHzk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 03:55:40 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:32997 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754269AbeEHHzi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 03:54:51 -0400
-X-Google-Smtp-Source: AB8JxZrt9UwCZvk8FYKbaSPoV/QDA1DYTnceDWXNBAK68gXj1NFV9OjTe9MPIl8Lru3bCJNlHT8Ei0ka2XZf7FCQSGI=
+        Tue, 8 May 2018 03:55:38 -0400
+X-Google-Smtp-Source: AB8JxZrK3C/ri+GhUFeCWfeMa7r/P/n/tcglnpK4OOaD5NOVk4c7peOdx2CS9hDnMQlCSYqi7DbIfuDACec27EquQXM=
 MIME-Version: 1.0
-In-Reply-To: <d7c8e0eb-61ed-1aad-6faa-82a0ef8c25b8@sandeen.net>
-References: <f403043cbe8414177d0568e81405@google.com> <20180403043854.GL1150@dastard>
- <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
- <20180405213844.GE23861@dastard> <20180406161053.GF7500@magnolia>
- <CACT4Y+aaEOffkFA-B-hMzwzSiQwVpkPrc2udC087a55OTnkS4g@mail.gmail.com>
- <95c1400b-94f2-1af4-2d5d-c61c274c28ff@sandeen.net> <CACT4Y+aiwgRg5pk+N7bq9HYpgumTFyqG6-y3EZ8pWkq9-uB1aA@mail.gmail.com>
- <9f8d657c-7f42-7bd9-4477-6c3addf16dee@sandeen.net> <CACT4Y+bUx4jw83Ux7w9URL9bCy1ERLaVGTTwvA9Fe_UtLFeqCw@mail.gmail.com>
- <d7c8e0eb-61ed-1aad-6faa-82a0ef8c25b8@sandeen.net>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 8 May 2018 09:54:30 +0200
-Message-ID: <CACT4Y+bKL9SWm-_t1SKC6amAGsWUTLkt0b6SpMN22P-O+ofVSA@mail.gmail.com>
-Subject: Re: WARNING: bad unlock balance in xfs_iunlock
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        syzkaller <syzkaller@googlegroups.com>
+In-Reply-To: <1523943962-25415-1-git-send-email-wanpengli@tencent.com>
+References: <1523943962-25415-1-git-send-email-wanpengli@tencent.com>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Tue, 8 May 2018 15:55:37 +0800
+Message-ID: <CANRm+CzEdE2xMWju56g8jPVAHQ7BTue_=CV+zP6_46dpfb3Kgg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] KVM: VMX: Allow to disable ioport intercept per-VM by userspace
+To: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Tim Shearer <tshearer@advaoptical.com>,
+        Liran Alon <liran.alon@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w487tkcF028571
 
-On Mon, Apr 30, 2018 at 5:14 PM, Eric Sandeen <sandeen@sandeen.net> wrote:
-> On 4/30/18 9:02 AM, Dmitry Vyukov wrote:
->> On Mon, Apr 30, 2018 at 3:49 PM, Eric Sandeen <sandeen@sandeen.net> wrote:
+2018-04-17 13:45 GMT+08:00 Wanpeng Li <kernellwp@gmail.com>:
+> Tim Shearer reported that "There is a guest which is running a packet
+> forwarding app based on the DPDK (dpdk.org). The packet receive routine
+> writes to 0xc070 using glibc's "outw_p" function which does an additional
+> write to I/O port 0x80. It does this write for every packet that's
+> received, causing a flood of KVM userspace context switches". He uses
+> mpstat to observe a CPU performing L2 packet forwarding on a pinned
+> guest vCPU, the guest time is 95 percent when allowing I/O port 0x80
+> bypass, however, it is 65.78 percent when I/O port 0x80 bypss is
+> disabled.
 >
-> ...
+> This patchset introduces per-VM I/O permission bitmaps, the userspace
+> can disable the ioport intercept when they are more concern the
+> performance than the security.
 >
->>>> It just extracted kernel source file name that looked relevant
->>>> to this crash and run get_maintainers.pl on it.
->>>> Also the image can contain dynamically generated data, which makes it
->>>> impossible to have as a file at all.
->>>
->>> I guess I'm not sure what this means, can you explain?
->>
->> Say, a value that we generally pass to close system call is not static
->> and can't be dumped to a static file. It's whatever a previous open
->> system call has returned. Inside of the program we memorize the return
->> value of open in a variable and then pass it to close. This generally
->> stands for all system calls. Say, an image can contain an uid, and
->> that uid can be obtained from a system call too.
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Tim Shearer <tshearer@advaoptical.com>
+> Cc: Liran Alon <liran.alon@oracle.com>
 >
-> Ok, but that's the syscall side.  You are operating on a static xfs image,
-> correct?  We're only asking for the actual filesystem you're operating
-> against.
->
-> (When I say "image" I am talking only about the filesystem itself, not any
-> other syzkaller state)
->
-> ...
->
->>> That was not at all clear to me.  I thought when syzkaller was telling us
->>> "on upstream commit XYZ," it meant that it had identified commit XYZ as bad.
->>> I'm not sure if anyone else made that mistake, but  perhaps you could also clarify
->>> the bug report text in this regard?
->>
->> Suggestions are welcome. Currently it says "syzbot hit the following
->> crash on upstream commit SHA1", which was supposed to mean just the
->> state of the source tree when the crash happened. But I am not a
->> native speaker, so perhaps I am saying not what I intend to say.
->>
->> There are also suggestions on report format improvement from +Ted
->> currently in works:
->> https://github.com/google/syzkaller/issues/565#issuecomment-380792942
->> Not sure if they make this distinction 100% clear, though.
->
-> Maybe I was the only one who misunderstood, but something like
->
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> HEAD:           f5c754d63d06 mm/swap_state.c: make bool enable_vma_readahead and swap_vma_readahead()
->
-> to make it clear that it has not identified that commit as the culprit, it's
-> just the head of the tree you were testing?  (I think I have the correct git
-> nomenclature ...)
 
+Hi Paolo,
 
-This is done now, you can see example of new format here:
+Did you send the patch to glibc or the patchset still can be considered?
 
-https://lkml.org/lkml/2018/5/8/36
+Regards,
+Wanpeng Li
 
-It says "HEAD commit" and also "syzbot engineers can be reached at <email>".
+> Wanpeng Li (3):
+>   KVM: VMX: Introduce per-VM I/O permission bitmaps
+>   KVM: X86: Allow userspace to disable ioport intercept
+>   KVM: VMX: Allow I/O port 0x80 bypass when userspace prefer
+>
+>  Documentation/virtual/kvm/api.txt | 11 +++++++++++
+>  arch/x86/include/asm/kvm_host.h   |  2 ++
+>  arch/x86/kvm/vmx.c                | 41 ++++++++++++++++++++++++++++++++++++---
+>  arch/x86/kvm/x86.c                |  5 +++++
+>  include/uapi/linux/kvm.h          |  1 +
+>  5 files changed, 57 insertions(+), 3 deletions(-)
+>
+> --
+> 2.7.4
+>
