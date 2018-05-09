@@ -1,124 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933753AbeEIFbB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 01:31:01 -0400
-Received: from mta-p1.oit.umn.edu ([134.84.196.201]:35622 "EHLO
-        mta-p1.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933383AbeEIFbA (ORCPT
+        id S1756050AbeEIFjE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 01:39:04 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:32983 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752478AbeEIFjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 01:31:00 -0400
-X-Google-Smtp-Source: AB8JxZqr0S1Kxo+hfsy3aC9FmHqbIG4wQIkruv1ym6rrb2oRvZv0JbgJ/K+IQtTZ/JiiTmYL2RFcFwxuAI9A9ZltnEg=
+        Wed, 9 May 2018 01:39:00 -0400
+X-Google-Smtp-Source: AB8JxZqHIG7dqgMuWvCLtgmzB0AQf2BbxxGPuvtaWCwE2j9GlmDpa4toQNn455KH9e7XAC6hl/l3+w==
+Date: Tue, 8 May 2018 22:40:54 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: dccp@vger.kernel.org, Gerrit Renker <gerrit@erg.abdn.ac.uk>,
+        syzbot <syzbot+99858724c0ba555a12ea@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        "Gustavo A . R . Silva" <garsilva@embeddedor.com>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: BUG: please report to dccp@vger.kernel.org => prev = 0, last = 0
+ at net/dccp/ccids/lib/packet_history.c:LINE/tfrc_rx_his
+Message-ID: <20180509054054.GF711@sol.localdomain>
+References: <000000000000fedad9056b7f07ce@google.com>
+ <20180509050509.GE711@sol.localdomain>
+ <CACT4Y+b7A89ZbBUktiDjBRAtedQHMO2pZqcB4QJSM8vG8NgkGw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1525548766-13017-1-git-send-email-wang6495@umn.edu>
-References: <1525548766-13017-1-git-send-email-wang6495@umn.edu>
-From: Wenwen Wang <wang6495@umn.edu>
-Date: Wed, 9 May 2018 00:30:18 -0500
-X-Gmail-Original-Message-ID: <CAAa=b7dm5zLsDHB69sNPvFkWwOjF6UV-pekEFmgrtKNod-XYSg@mail.gmail.com>
-Message-ID: <CAAa=b7dm5zLsDHB69sNPvFkWwOjF6UV-pekEFmgrtKNod-XYSg@mail.gmail.com>
-Subject: Re: [PATCH] isdn: eicon: fix a missing-check bug
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, Armin Schindler <mac@melware.de>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        "open list:ISDN SUBSYSTEM" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+b7A89ZbBUktiDjBRAtedQHMO2pZqcB4QJSM8vG8NgkGw@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On Wed, May 09, 2018 at 07:23:41AM +0200, 'Dmitry Vyukov' via syzkaller-bugs wrote:
+> On Wed, May 9, 2018 at 7:05 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> > On Sat, May 05, 2018 at 05:57:02PM -0700, syzbot wrote:
+> >> Hello,
+> >>
+> >> syzbot found the following crash on:
+> >>
+> >> HEAD commit:    c1c07416cdd4 Merge tag 'kbuild-fixes-v4.17' of git://git.k..
+> >> git tree:       upstream
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=13d5de47800000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=5a1dc06635c10d27
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=99858724c0ba555a12ea
+> >> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> >> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=170afde7800000
+> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=141b4be7800000
+> >>
+> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >> Reported-by: syzbot+99858724c0ba555a12ea@syzkaller.appspotmail.com
+> >>
+> >> random: sshd: uninitialized urandom read (32 bytes read)
+> >> random: sshd: uninitialized urandom read (32 bytes read)
+> >> random: sshd: uninitialized urandom read (32 bytes read)
+> >> random: sshd: uninitialized urandom read (32 bytes read)
+> >> BUG: please report to dccp@vger.kernel.org => prev = 0, last = 0 at
+> >> net/dccp/ccids/lib/packet_history.c:425/tfrc_rx_hist_sample_rtt()
+> >> CPU: 0 PID: 4495 Comm: syz-executor551 Not tainted 4.17.0-rc3+ #34
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >> Google 01/01/2011
+> >> Call Trace:
+> >>  <IRQ>
+> >>  __dump_stack lib/dump_stack.c:77 [inline]
+> >>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+> >>  tfrc_rx_hist_sample_rtt.cold.3+0x54/0x5c
+> >> net/dccp/ccids/lib/packet_history.c:422
+> >>  ccid3_hc_rx_packet_recv+0x5c8/0xed0 net/dccp/ccids/ccid3.c:765
+> >>  ccid_hc_rx_packet_recv net/dccp/ccid.h:185 [inline]
+> >>  dccp_deliver_input_to_ccids+0xf0/0x280 net/dccp/input.c:180
+> >>  dccp_rcv_established+0x87/0xb0 net/dccp/input.c:378
+> >>  dccp_v4_do_rcv+0x153/0x180 net/dccp/ipv4.c:654
+> >>  sk_backlog_rcv include/net/sock.h:909 [inline]
+> >>  __sk_receive_skb+0x3a2/0xd60 net/core/sock.c:513
+> >>  dccp_v4_rcv+0x10e5/0x1f3f net/dccp/ipv4.c:875
+> >>  ip_local_deliver_finish+0x2e3/0xd80 net/ipv4/ip_input.c:215
+> >>  NF_HOOK include/linux/netfilter.h:288 [inline]
+> >>  ip_local_deliver+0x1e1/0x720 net/ipv4/ip_input.c:256
+> >>  dst_input include/net/dst.h:450 [inline]
+> >>  ip_rcv_finish+0x81b/0x2200 net/ipv4/ip_input.c:396
+> >>  NF_HOOK include/linux/netfilter.h:288 [inline]
+> >>  ip_rcv+0xb70/0x143d net/ipv4/ip_input.c:492
+> >>  __netif_receive_skb_core+0x26f5/0x3630 net/core/dev.c:4592
+> >>  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4657
+> >>  process_backlog+0x219/0x760 net/core/dev.c:5337
+> >>  napi_poll net/core/dev.c:5735 [inline]
+> >>  net_rx_action+0x7b7/0x1930 net/core/dev.c:5801
+> >>  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+> >>  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1046
+> >>  </IRQ>
+> >>  do_softirq.part.17+0x14d/0x190 kernel/softirq.c:329
+> >>  do_softirq arch/x86/include/asm/preempt.h:23 [inline]
+> >>  __local_bh_enable_ip+0x1ec/0x230 kernel/softirq.c:182
+> >>  local_bh_enable include/linux/bottom_half.h:32 [inline]
+> >>  rcu_read_unlock_bh include/linux/rcupdate.h:728 [inline]
+> >>  ip_finish_output2+0xab2/0x1840 net/ipv4/ip_output.c:231
+> >>  ip_finish_output+0x828/0xf80 net/ipv4/ip_output.c:317
+> >>  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
+> >>  ip_output+0x21b/0x850 net/ipv4/ip_output.c:405
+> >>  dst_output include/net/dst.h:444 [inline]
+> >>  ip_local_out+0xc5/0x1b0 net/ipv4/ip_output.c:124
+> >>  ip_queue_xmit+0x9d7/0x1f70 net/ipv4/ip_output.c:504
+> >>  dccp_transmit_skb+0x999/0x12e0 net/dccp/output.c:142
+> >>  dccp_xmit_packet+0x250/0x790 net/dccp/output.c:281
+> >>  dccp_write_xmit+0x190/0x1f0 net/dccp/output.c:363
+> >>  dccp_sendmsg+0x8c7/0x1020 net/dccp/proto.c:818
+> >>  inet_sendmsg+0x19f/0x690 net/ipv4/af_inet.c:798
+> >>  sock_sendmsg_nosec net/socket.c:629 [inline]
+> >>  sock_sendmsg+0xd5/0x120 net/socket.c:639
+> >>  ___sys_sendmsg+0x525/0x940 net/socket.c:2117
+> >>  __sys_sendmmsg+0x240/0x6f0 net/socket.c:2212
+> >>  __do_sys_sendmmsg net/socket.c:2241 [inline]
+> >>  __se_sys_sendmmsg net/socket.c:2238 [inline]
+> >>  __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2238
+> >>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+> >>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >> RIP: 0033:0x445d09
+> >> RSP: 002b:00007f3c7eff5d88 EFLAGS: 00000293 ORIG_RAX: 0000000000000133
+> >> RAX: ffffffffffffffda RBX: 00000000006dac40 RCX: 0000000000445d09
+> >> RDX: 0000000000000001 RSI: 000000
+> >>
+> >>
+> >> ---
+> >> This bug is generated by a bot. It may contain errors.
+> >> See https://goo.gl/tpsmEJ for more information about syzbot.
+> >> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >>
+> >> syzbot will keep track of this bug report.
+> >> If you forgot to add the Reported-by tag, once the fix for this bug is
+> >> merged
+> >> into any tree, please reply to this email with:
+> >> #syz fix: exact-commit-title
+> >> If you want to test a patch for this bug, please reply with:
+> >> #syz test: git://repo/address.git branch
+> >> and provide the patch inline or as an attachment.
+> >> To mark this as a duplicate of another syzbot report, please reply with:
+> >> #syz dup: exact-subject-of-another-report
+> >
+> > There's already a bug report with this title, this one just had a few characters
+> > truncated from the end.  Dmitry, is that intentional?  The other one is
+> > https://groups.google.com/forum/#!msg/syzkaller-bugs/u5nq3PdPkIc/bBFjKHXPAgAJ:
+> >
+> > #syz dup: BUG: please report to dc...@vger.kernel.org => prev = 0, last = 0 at net/dccp/ccids/lib/packet_history.c:LINE/tfrc_rx_hist_sample_rtt()
+> 
+> I think this happened when we started truncating kernel crash titles
+> to 120 columns, so it's intentional.
+> However, the dup command did not pass. It's hard to understand who
+> received what today, but this suggests that somebody altered email in
+> the command to dc...@vger.kernel.org:
+> https://groups.google.com/forum/message/raw?msg=syzkaller-bugs/GMndq4-h7BI/VIz4aBEOAwAJ
+> We can also mark the old one as invalid.
+> 
 
-Could you please review this patch? We need a confirmation because we
-are working on an approaching deadline.
+Ah, that was my fault -- I must have copied the bug title from the
+syzkaller-bugs Google Groups page, which had mangled the email address in the
+bug title.  The actual title was:
 
-Thanks!
-Wenwen
-
-On Sat, May 5, 2018 at 2:32 PM, Wenwen Wang <wang6495@umn.edu> wrote:
-> In divasmain.c, the function divas_write() firstly invokes the function
-> diva_xdi_open_adapter() to open the adapter that matches with the adapter
-> number provided by the user, and then invokes the function diva_xdi_write()
-> to perform the write operation using the matched adapter. The two functions
-> diva_xdi_open_adapter() and diva_xdi_write() are located in diva.c.
->
-> In diva_xdi_open_adapter(), the user command is copied to the object 'msg'
-> from the userspace pointer 'src' through the function pointer 'cp_fn',
-> which eventually calls copy_from_user() to do the copy. Then, the adapter
-> number 'msg.adapter' is used to find out a matched adapter from the
-> 'adapter_queue'. A matched adapter will be returned if it is found.
-> Otherwise, NULL is returned to indicate the failure of the verification on
-> the adapter number.
->
-> As mentioned above, if a matched adapter is returned, the function
-> diva_xdi_write() is invoked to perform the write operation. In this
-> function, the user command is copied once again from the userspace pointer
-> 'src', which is the same as the 'src' pointer in diva_xdi_open_adapter() as
-> both of them are from the 'buf' pointer in divas_write(). Similarly, the
-> copy is achieved through the function pointer 'cp_fn', which finally calls
-> copy_from_user(). After the successful copy, the corresponding command
-> processing handler of the matched adapter is invoked to perform the write
-> operation.
->
-> It is obvious that there are two copies here from userspace, one is in
-> diva_xdi_open_adapter(), and one is in diva_xdi_write(). Plus, both of
-> these two copies share the same source userspace pointer, i.e., the 'buf'
-> pointer in divas_write(). Given that a malicious userspace process can race
-> to change the content pointed by the 'buf' pointer, this can pose potential
-> security issues. For example, in the first copy, the user provides a valid
-> adapter number to pass the verification process and a valid adapter can be
-> found. Then the user can modify the adapter number to an invalid number.
-> This way, the user can bypass the verification process of the adapter
-> number and inject inconsistent data.
->
-> To avoid such issues, this patch adds a check after the second copy in the
-> function diva_xdi_write(). If the adapter number is not equal to the one
-> obtained in the first copy, (-4) will be returned to divas_write(), which
-> will then return an error code -EINVAL.
->
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-> ---
->  drivers/isdn/hardware/eicon/diva.c      | 6 +++++-
->  drivers/isdn/hardware/eicon/divasmain.c | 3 +++
->  2 files changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/isdn/hardware/eicon/diva.c b/drivers/isdn/hardware/eicon/diva.c
-> index 944a7f3..46cbf76 100644
-> --- a/drivers/isdn/hardware/eicon/diva.c
-> +++ b/drivers/isdn/hardware/eicon/diva.c
-> @@ -440,6 +440,7 @@ diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
->                int length, divas_xdi_copy_from_user_fn_t cp_fn)
->  {
->         diva_os_xdi_adapter_t *a = (diva_os_xdi_adapter_t *) adapter;
-> +       diva_xdi_um_cfg_cmd_t *p;
->         void *data;
->
->         if (a->xdi_mbox.status & DIVA_XDI_MBOX_BUSY) {
-> @@ -461,7 +462,10 @@ diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
->
->         length = (*cp_fn) (os_handle, data, src, length);
->         if (length > 0) {
-> -               if ((*(a->interface.cmd_proc))
-> +               p = (diva_xdi_um_cfg_cmd_t *) data;
-> +               if (a->controller != (int)p->adapter) {
-> +                       length = -4;
-> +               } else if ((*(a->interface.cmd_proc))
->                     (a, (diva_xdi_um_cfg_cmd_t *) data, length)) {
->                         length = -3;
->                 }
-> diff --git a/drivers/isdn/hardware/eicon/divasmain.c b/drivers/isdn/hardware/eicon/divasmain.c
-> index b9980e8..a03c658 100644
-> --- a/drivers/isdn/hardware/eicon/divasmain.c
-> +++ b/drivers/isdn/hardware/eicon/divasmain.c
-> @@ -614,6 +614,9 @@ static ssize_t divas_write(struct file *file, const char __user *buf,
->         case -3:
->                 ret = -ENXIO;
->                 break;
-> +       case -4:
-> +               ret = -EINVAL;
-> +               break;
->         }
->         DBG_TRC(("write: ret %d", ret));
->         return (ret);
-> --
-> 2.7.4
->
+#syz dup: BUG: please report to dccp@vger.kernel.org => prev = 0, last = 0 at net/dccp/ccids/lib/packet_history.c:LINE/tfrc_rx_hist_sample_rtt()
