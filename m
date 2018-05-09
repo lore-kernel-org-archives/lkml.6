@@ -1,72 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965671AbeEIRB6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:01:58 -0400
-Received: from mail-it0-f42.google.com ([209.85.214.42]:50537 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935516AbeEIRBz (ORCPT
+        id S965695AbeEIRCI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:02:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56518 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965673AbeEIRCF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 13:01:55 -0400
-X-Google-Smtp-Source: AB8JxZpTBho4Ly/txyOGdWQ/8OrxNgRgDEZwfr8mSg6TsRG4avB2JmKczmxDql9t6XPv+e6f78714Q==
-Subject: Re: bug in tag handling in blk-mq?
-To: Mike Galbraith <efault@gmx.de>,
-        Paolo Valente <paolo.valente@linaro.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-        linux-block <linux-block@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>
-References: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
- <7760d23b-7a4c-a645-1c7a-da7569bb44dc@kernel.dk>
- <84145CD7-B917-4B32-8A5C-310C1910DB71@linaro.org>
- <1525755090.24338.1.camel@gmx.de> <1525768632.5208.4.camel@gmx.de>
- <ffd0c030-43f8-0dbe-42b3-03bb9c410bea@kernel.dk>
- <1525797766.5204.2.camel@gmx.de>
- <3692ce7d-a767-72e6-65ae-6178b6c2e7d8@kernel.dk>
- <f04636df-3f97-6c16-f37b-d407e062b9e5@kernel.dk>
- <57952405-bdeb-f4e4-1aef-a7c0a8a68674@kernel.dk>
- <1525839089.15732.1.camel@gmx.de>
- <ce5ee556-9552-6ffd-7578-7b3b983c07bf@kernel.dk>
- <1525885030.15732.6.camel@gmx.de>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <1e51eb57-6d9b-a53c-9cd6-2adfc86b21b5@kernel.dk>
-Date: Wed, 9 May 2018 11:01:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <1525885030.15732.6.camel@gmx.de>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 9 May 2018 13:02:05 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 32AFE601D9
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From: Lina Iyer <ilina@codeaurora.org>
+To: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, mka@chromium.org, rplsssn@codeaurora.org,
+        Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v8 00/10] drivers/qcom: add RPMH communication support
+Date: Wed,  9 May 2018 11:01:49 -0600
+Message-Id: <20180509170159.29682-1-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/9/18 10:57 AM, Mike Galbraith wrote:
-> On Wed, 2018-05-09 at 09:18 -0600, Jens Axboe wrote:
->> On 5/8/18 10:11 PM, Mike Galbraith wrote:
->>> On Tue, 2018-05-08 at 19:09 -0600, Jens Axboe wrote:
->>>>
->>>> Alright, I managed to reproduce it. What I think is happening is that
->>>> BFQ is limiting the inflight case to something less than the wake
->>>> batch for sbitmap, which can lead to stalls. I don't have time to test
->>>> this tonight, but perhaps you can give it a go when you are back at it.
->>>> If not, I'll try tomorrow morning.
->>>>
->>>> If this is the issue, I can turn it into a real patch. This is just to
->>>> confirm that the issue goes away with the below.
->>>
->>> Confirmed.  Impressive high speed bug stomping.
->>
->> Well, that's good news. Can I get you to try this patch?
-> 
-> Sure thing.  The original hang (minus provocation patch) being
-> annoyingly non-deterministic, this will (hopefully) take a while.
+Changes in v8:
+- Bounds check for cmd_cache
+- Describe interrupts to other DRVs in DT bindings
+- Rebase on top of 4.17-rc3
 
-You can verify with the provocation patch as well first, if you wish.
-Just need to hand-apply since it'll conflict with this patch in
-bfq. But it's a trivial resolve.
+Changes in v7:
+- Rename 'm' and 'n' and use tcs_id and cmd_id instead
+- Bug fix in find_match() and other review comments from Matthias
+- Spinlock around get_rpmh_ctrlr()
+- DT documentation example fixes
+- Rebase on top of 4.16-rc2
 
--- 
-Jens Axboe
+Changes in v6:
+- Remove tasklet in rpmh-rsc.c
+- Remove rpmh_client and use struct device * instead
+- Variable changes and bug fixes
+- DT binding changes to describe all DRVs in the RSC
+- Documentation and comment fixes
+
+Changes in v5:
+- Add Reviewed-by tags
+- Rebase on top of 4.16
+
+Changes in v4:
+- Rename variables as suggested by Stephen and Evan
+- Lot of minor syntax and style fixes
+- Fix FTRACE compilation error
+- Improve doc comments and DT description
+
+Changes in v3:
+- Address Steven's comments in FTRACE
+- Fix DT documentation as suggested by Rob H
+- Fix error handling in IRQ handler as suggested by Evan
+- Remove locks in rpmh_flush()
+- Improve comments
+
+Changes in v2:
+- Added sleep/wake, async and batch requests support
+- Addressed Bjorn's comments
+- Private FTRACE for drivers/soc/qcom as suggested by Steven
+- Sparse checked on these patches
+- Use SPDX license commenting sytle
+
+This set of patches add the ability for platform drivers to make use of shared
+resources in newer Qualcomm SoCs like SDM845. Resources that are shared between
+multiple processors in a SoC are generally controlled by a dedicated remote
+processor. The remote processor (Resource Power Manager or RPM in previous QCOM
+SoCs) receives requests for resource state from other processors using the
+shared resource, aggregates the request and applies the result on the shared
+resource. SDM845 advances this concept and uses h/w (hardened I/P) blocks for
+aggregating requests and applying the result on the resource. The resources
+could be clocks, regulators or bandwidth requests for buses. This new
+architecture is called RPM-hardened or RPMH in short.
+
+Since this communication mechanism is completely hardware driven without a
+processor intervention on the remote end, existing mechanisms like RPM-SMD are
+no longer useful. Also, there is no serialization of data or is data is written
+to a shared memory in this new format. The data used is different, unsigned 32
+bits are used for representing an address, data and header. Each resource's
+property is a unique u32 address and have pre-defined set of property specific
+valid values. A request that comprises of <header, addr, data> is sent by
+writing to a set of registers from Linux and transmitted to the remote slave
+through an internal bus. The remote end aggregates this request along with
+requests from other processors for the <addr> and applies the result.
+
+The hardware block that houses this functionality is called Resource State
+Coordinator or RSC. Inside the RSC are set of slots for sending RPMH requests
+called Trigger Commands Sets (TCS). The set of patches are for writing the
+requests into these TCSes and sending them to hardened IP blocks.
+
+The driver design is split into two components. The RSC driver housed in
+rpmh-rsc.c and the set of library functions in rpmh.c that frame the request and
+transmit it using the controller. This first set of patches allow a simple
+synchronous request to be made by the platform drivers. Future patches will add
+more functionality that cater to complex drivers and use cases.
+
+Please consider reviewing this patchset.
+
+v1: https://www.spinics.net/lists/devicetree/msg210980.html
+v2: https://lkml.org/lkml/2018/2/15/852
+v3: https://lkml.org/lkml/2018/3/2/801
+v4: https://lkml.org/lkml/2018/3/9/979
+v5: https://lkml.org/lkml/2018/4/5/480
+v6: https://lkml.org/lkml/2018/4/19/914
+v7: https://lkml.org/lkml/2018/5/2/779
+
+Lina Iyer (10):
+  drivers: qcom: rpmh-rsc: add RPMH controller for QCOM SoCs
+  dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
+  drivers: qcom: rpmh-rsc: log RPMH requests in FTRACE
+  drivers: qcom: rpmh: add RPMH helper functions
+  drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
+  drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
+  drivers: qcom: rpmh: cache sleep/wake state requests
+  drivers: qcom: rpmh: allow requests to be sent asynchronously
+  drivers: qcom: rpmh: add support for batch RPMH request
+  drivers: qcom: rpmh-rsc: allow active requests from wake TCS
+
+ .../devicetree/bindings/soc/qcom/rpmh-rsc.txt | 137 ++++
+ drivers/soc/qcom/Kconfig                      |  10 +
+ drivers/soc/qcom/Makefile                     |   4 +
+ drivers/soc/qcom/rpmh-internal.h              |  83 +++
+ drivers/soc/qcom/rpmh-rsc.c                   | 683 ++++++++++++++++++
+ drivers/soc/qcom/rpmh.c                       | 585 +++++++++++++++
+ drivers/soc/qcom/trace-rpmh.h                 |  82 +++
+ include/dt-bindings/soc/qcom,rpmh-rsc.h       |  14 +
+ include/soc/qcom/rpmh.h                       |  51 ++
+ include/soc/qcom/tcs.h                        |  56 ++
+ 10 files changed, 1705 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+ create mode 100644 drivers/soc/qcom/rpmh-internal.h
+ create mode 100644 drivers/soc/qcom/rpmh-rsc.c
+ create mode 100644 drivers/soc/qcom/rpmh.c
+ create mode 100644 drivers/soc/qcom/trace-rpmh.h
+ create mode 100644 include/dt-bindings/soc/qcom,rpmh-rsc.h
+ create mode 100644 include/soc/qcom/rpmh.h
+ create mode 100644 include/soc/qcom/tcs.h
+
+--
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
