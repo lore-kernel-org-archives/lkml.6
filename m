@@ -1,190 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933715AbeEIG3n (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 02:29:43 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40915 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933043AbeEIG3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 02:29:41 -0400
-Subject: Re: [PATCH] Kirin-PCIe: Add kirin pcie msi feature.
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <songxiaowei@hisilicon.com>, <wangbinghui@hisilicon.com>,
-        <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <xuwei5@hisilicon.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <dimitrysh@google.com>, <guodong.xu@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        "Jianguo Sun" <sunjianguo1@huawei.com>,
-        Shawn Guo <shawn.guo@linaro.org>, <suzhuangluan@hisilicon.com>,
-        <kongfei@hisilicon.com>
-References: <1525763028-107417-1-git-send-email-chenyao11@huawei.com>
- <20180508125658.GK161390@bhelgaas-glaptop.roam.corp.google.com>
-From: Yao Chen <chenyao11@huawei.com>
-Message-ID: <a9f05f3d-9c5c-472b-73be-f37c41bd71be@huawei.com>
-Date: Wed, 9 May 2018 14:28:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S933736AbeEIGbU (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 02:31:20 -0400
+Received: from www62.your-server.de ([213.133.104.62]:37505 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933043AbeEIGbS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 02:31:18 -0400
+Subject: Re: linux-next: manual merge of the bpf-next tree with the s390 tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Networking <netdev@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        David Miller <davem@davemloft.net>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180508102638.1e19b7f2@canb.auug.org.au>
+ <20180509142154.73ff5772@canb.auug.org.au>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <537b8dd9-798e-f5d2-2595-cd0adfd1123c@iogearbox.net>
+Date: Wed, 9 May 2018 08:31:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <20180508125658.GK161390@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180509142154.73ff5772@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.30.91]
-X-CFilter-Loop: Reflected
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018/5/8 20:56, Bjorn Helgaas wrote:
-> [+cc Stanimir, Jianguo, Shawn for qcom, histb comments below]
+On 05/09/2018 06:21 AM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Tue, May 08, 2018 at 03:03:48PM +0800, Yao Chen wrote:
->> This patch adds kirin pcie msi feature.
-> 
-> Thanks for the patch!  Please update your subject and changelog like this:
-> 
->   PCI: kirin: Add MSI support
-> 
->   Add support for MSI.
-> 
-> You can figure out what style to use for the subject by running:
-> 
->   git log --oneline drivers/pci/dwc/pcie-kirin.c
-> 
-> Then follow the existing style.
-> 
-
-Ok, I will update the style of subject and changelog.
-
->> Signed-off-by: Yao Chen <chenyao11@huawei.com>
->> ---
->>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi |  2 ++
->>  drivers/pci/dwc/pcie-kirin.c              | 38 +++++++++++++++++++++++++++++++
->>  2 files changed, 40 insertions(+)
+> On Tue, 8 May 2018 10:26:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >>
->> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
->> index ec3eb8e..4ef684f 100644
->> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
->> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
->> @@ -872,6 +872,8 @@
->>  				  0x0 0x02000000>;
->>  			num-lanes = <1>;
->>  			#interrupt-cells = <1>;
->> +			interrupts = <0 283 4>;
->> +			interrupts-names = "msi";
->>  			interrupt-map-mask = <0xf800 0 0 7>;
->>  			interrupt-map = <0x0 0 0 1
->>  					 &gic GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
->> diff --git a/drivers/pci/dwc/pcie-kirin.c b/drivers/pci/dwc/pcie-kirin.c
->> index d2970a0..2319c9c 100644
->> --- a/drivers/pci/dwc/pcie-kirin.c
->> +++ b/drivers/pci/dwc/pcie-kirin.c
->> @@ -426,9 +426,28 @@ static int kirin_pcie_establish_link(struct pcie_port *pp)
->>  	return 0;
->>  }
->>  
->> +static irqreturn_t kirin_pcie_msi_irq_handler(int irq, void *arg)
->> +{
->> +	struct pcie_port *pp = arg;
->> +
->> +	return dw_handle_msi_irq(pp);
->> +}
->> +
->> +static void kirin_pcie_msi_init(struct pcie_port *pp)
->> +{
->> +	dw_pcie_msi_init(pp);
->> +}
->> +
->> +static void kirin_pcie_enable_interrupts(struct pcie_port *pp)
->> +{
->> +	if (IS_ENABLED(CONFIG_PCI_MSI))
->> +		kirin_pcie_msi_init(pp);
->> +}
->> +
->>  static int kirin_pcie_host_init(struct pcie_port *pp)
->>  {
->>  	kirin_pcie_establish_link(pp);
->> +	kirin_pcie_enable_interrupts(pp);
->>  
->>  	return 0;
->>  }
->> @@ -448,6 +467,25 @@ static int kirin_pcie_host_init(struct pcie_port *pp)
->>  static int __init kirin_add_pcie_port(struct dw_pcie *pci,
->>  				      struct platform_device *pdev)
->>  {
->> +	int ret;
->> +
->> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
->> +		pci->pp.msi_irq = platform_get_irq(pdev, 0);
->> +		if (!pci->pp.msi_irq) {
->> +			dev_err(&pdev->dev, "failed to get msi irq\n");
-> 
-> s/msi irq/MSI IRQ/
-> 
->> +			return -ENODEV;
->> +		}
->> +		ret = devm_request_irq(&pdev->dev, pci->pp.msi_irq,
->> +				       kirin_pcie_msi_irq_handler,
->> +				       IRQF_SHARED | IRQF_NO_THREAD,
->> +				       "kirin_pcie_msi", &pci->pp);
->> +		if (ret) {
->> +			dev_err(&pdev->dev, "failed to request msi irq\n");
-> 
-> s/msi irq/MSI IRQ/
-> Also, please include the IRQ number (pci->pp.msi_irq) in the message.
-> 
-Ok, I will add msi_irq message.
-
->> +			return ret;
->> +		}
->> +	}
->> +
->> +	pci->pp.root_bus_nr = -1;
-> 
-> Setting root_bus_nr looks like an unrelated change that should be in a
-> separate patch.
-> 
-> But I'm not sure why you need to set root_bus_nr at all, since
-> dw_pcie_host_init() always sets it.
-> 
-> Some other callers of dw_pcie_host_init() do set it:
-> 
->   exynos_add_pcie_port()
->   imx6_add_pcie_port()
->   armada8k_add_pcie_port()
->   artpec6_add_pcie_port()
->   dw_plat_add_pcie_port()
->   histb_pcie_probe()
->   qcom_pcie_probe()
->   spear13xx_add_pcie_port()
-> 
-> But I don't see *why* any of these need to set it.  If they don't need to
-> set it, they shouldn't.
-> 
-> And it would be nice if histb and qcom followed the structure and naming
-> conventions of the other drivers, i.e., they should have
-> histb_add_pcie_port() and qcom_add_pcie_port().
-> 
-
-You're right, "pci->pp.root_bus_nr = -1;" is truly unnecessary. I will delete it.
-
->>  	pci->pp.ops = &kirin_pcie_host_ops;
->>  
->>  	return dw_pcie_host_init(&pci->pp);
->> -- 
->> 1.9.1
+>> Today's linux-next merge of the bpf-next tree got a conflict in:
 >>
+>>   arch/s390/net/bpf_jit.S
 >>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>> between commit:
+>>
+>>   de5cb6eb514e ("s390: use expoline thunks in the BPF JIT")
+>>
+>> from the s390 tree and commit:
+>>
+>>   e1cf4befa297 ("bpf, s390x: remove ld_abs/ld_ind")
+>>
+>> from the bpf-next tree.
+>>
+>> I fixed it up (I just removed the file as the latter does) and can
+>> carry the fix as necessary. This is now fixed as far as linux-next is
+>> concerned, but any non trivial conflicts should be mentioned to your
+>> upstream maintainer when your tree is submitted for merging.  You may
+>> also want to consider cooperating with the maintainer of the conflicting
+>> tree to minimise any particularly complex conflicts.
 > 
-> .
-> 
-Thanks,
-Yao
+> This is now a conflict between the net-next and s390 trees.
+
+Right, bpf-next merged as usual into net-next two days ago; so same
+resolution applies.
