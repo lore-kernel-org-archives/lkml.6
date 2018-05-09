@@ -1,76 +1,92 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525851097; cv=none;
+Return-Path: <mattst88@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525834694; cv=none;
         d=google.com; s=arc-20160816;
-        b=o9vA6IxCFYsHRCSntYOEApq1OTn4Cpa99yOk4enaDFO8R9nsySWiyGiiNo2TigG8vU
-         oSVgnmTTmKmMmSmwWB/7234A5SAqyoo2PgbJuS9q+TXJ1Szw9iprp47/ek6kzchBYFDo
-         8fXLPxIRtbBgy/9bsRrGMn96pg7ChQ+fbhA4PImvfTookGytheBq40fbB/ViCbrNYt4N
-         Fraa8YDnuICzpcbYB1PiCqFy/CvK7hvwdZzQmixsFTyla8vR7R4Uzg7p80fBobil6X/Q
-         7I1asjE+CSr44VYy8ir38LrEgOyBj6eM0m4jnxUSbJHWbT5oHa+RULDZVycK2kh3xBHG
-         UeSg==
+        b=FtfNTx4H1ZdS/AM+TA1WBDCgLjgZcJ7EZIuVUMVaq4ZetZ0cWeMCS/YB9DyfdQlU/f
+         l/efcssCzr3Y28UN63C2uZ2NM4moZjyuFwy5zzdv0U4Sxefulj3Vh5k8djYpq6ko8+bi
+         i+G2+qc1awl5/4RHm087rJ2tEH2S5DcQjqnqvATxDc+ntplr8lg8/FGMoMp/MATK9uyB
+         uLnBtKS1/QvIi/v7Qpbv3S+fJ61LhSOJGyjp2zTBaHJDhoNO86fQwz3/GtZLWyaL2WNX
+         CgkL/GcP9YvGpVGh6MmAlXmceouNT1EB9kmpcjy9JbScKRjJU01t5/AjUpo+/dNzhvFu
+         S5nA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
          :mime-version:dkim-signature:arc-authentication-results;
-        bh=wUdEt2yzfwXah83S1HIUtrvWpRroLoQuJtW1DBHdEMU=;
-        b=PjpyKSbAXV5DsVW/Sd/XCUFroUjFfU4X16VdYqymjr711b9oTKatC1u5ynsomTsbUc
-         FGfa1B/LjQV/dXDxMNkjEOxNYZviHbOqzCH6PrD9xYLCkuV5VWn7OaY9v6K7sQ7Iwf6W
-         k8ftkzYhSlQLnCfuePcaRaCeEgDlPSuo2o9xzxRy567aL69ou7osqMZtPSIVzkTYmZof
-         30dh5T0O0LYFO7unPJVvqfU9H3awKZB5r0omyQLyTZgwDVL5gy9TjTnzxRo4XKciPjP6
-         jHm64sfdvyWzoDSG2wBst+eC2OAYpEVAhM90Ij8eRpuH7FZRyjmozXuZvkjFjPEv3aqa
-         NsFw==
+        bh=3V6078sTNyE6vRCKAWqQM8IE+8J6mVjwWpraQzprASc=;
+        b=OUrSvP2cz0WOtkxNikZL55YcePFQud08NXKIrC87yCoxlslCyn0CEMOIK+rOFdlssv
+         FiMjPgRk1sGJU6YIyzz5e9HzCSTJMEWYzLbF08U8+MsfjWL+VNb5xSRP3/L1c9r2y00g
+         ewqm8/qssp24kscGpJoSIa1tlxWil0ajbseQUvrdJXnJgES8q/ZRTMsRR8gCireYoTAQ
+         sdQ6Fmec05ZSRG5+bHuypmwIFTds2RcD5PHUqQenyiQtXVZ7x4ZQf9gonAZi3+yQeqEp
+         7JKhVu9pSy3SYXySeasNoxHfQ2nIJS5kFttVfLJulntSbLVQOX0R/+5Tncx7rBSA3Oh7
+         wVAw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tkSU2FPd;
-       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=etS+ZdS9;
+       spf=pass (google.com: domain of mattst88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mattst88@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tkSU2FPd;
-       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
-X-Google-Smtp-Source: AB8JxZrsoLCEA2gAul/2SmlCBQBtClSGXkz8535JbLdY5JSXdLQdJgNqJUUBd2O3sXtDymVRUA3GohjTnyoB0pmKgmM=
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=etS+ZdS9;
+       spf=pass (google.com: domain of mattst88@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=mattst88@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZpXaTGT+T1CTInDOcMKZb+2xu0dhyQEYldHiaJkonYV3TY45K+qw3eW0YAZ61aCyxp1y5MpB4a6JM0U8IAtSKE=
 MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <5af2492f.1c69fb81.a0c3b.4ef6SMTPIN_ADDED_MISSING@mx.google.com>
-References: <5af2492f.1c69fb81.a0c3b.4ef6SMTPIN_ADDED_MISSING@mx.google.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 9 May 2018 09:31:36 +0200
-X-Google-Sender-Auth: tDVykt1e_V4Nyo3JSAMS2Q5_Z6s
-Message-ID: <CAMuHMdUMxbA5+tX6ALnxQQfWc6taE8SJONSmC+cvf400D3bpsg@mail.gmail.com>
-Subject: Re: [PATCH v2] nubus: Call bus_register unconditionally
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-m68k <linux-m68k@lists.linux-m68k.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <2fd54f7c-ff73-5935-a253-c924f4373cc6@codeaurora.org>
+References: <1523917017-28084-1-git-send-email-okaya@codeaurora.org>
+ <b9d845ad-62af-d300-53d9-2b62f5da6c44@codeaurora.org> <2fd54f7c-ff73-5935-a253-c924f4373cc6@codeaurora.org>
+From: Matt Turner <mattst88@gmail.com>
+Date: Tue, 8 May 2018 19:57:53 -0700
+Message-ID: <CAEdQ38GY9ZtNqOt1ZSetwZjyKAokY6-qEVy1t+t=_FEqx+-+zQ@mail.gmail.com>
+Subject: Re: [PATCH] alpha: io: reorder barriers to guarantee writeX() and
+ iowriteX() ordering #2
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: linux-alpha <linux-alpha@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Timur Tabi <timur@codeaurora.org>, sulrich@codeaurora.org,
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Richard Henderson <rth@twiddle.net>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Philippe Ombredanne <pombredanne@nexb.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Kate Stewart <kstewart@linuxfoundation.org>,
+	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599946498073404911?=
-X-GMAIL-MSGID: =?utf-8?q?1599970840856684816?=
+X-GMAIL-THRID: =?utf-8?q?1597942817277668063?=
+X-GMAIL-MSGID: =?utf-8?q?1599953641089474983?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 9, 2018 at 3:04 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> Loading a NuBus driver module on a non-NuBus machine triggers the
-> BUG_ON(!drv->bus->p) in driver_register(), because bus_register() was
-> not called, because it is conditional on MACH_IS_MAC.
+On Fri, Apr 20, 2018 at 9:20 AM, Sinan Kaya <okaya@codeaurora.org> wrote:
+> Hi Matt,
 >
-> Fix the crash by calling bus_register() unconditionally. Call it from
-> a postcore_initcall(), like other busses do.
+> On 4/17/2018 2:43 PM, Sinan Kaya wrote:
+>> On 4/16/2018 6:16 PM, Sinan Kaya wrote:
+>>> memory-barriers.txt has been updated with the following requirement.
+>>>
+>>> "When using writel(), a prior wmb() is not needed to guarantee that the
+>>> cache coherent memory writes have completed before writing to the MMIO
+>>> region."
+>>>
+>>> Current writeX() and iowriteX() implementations on alpha are not
+>>> satisfying this requirement as the barrier is after the register write.
+>>>
+>>> Move mb() in writeX() and iowriteX() functions to guarantee that HW
+>>> observes memory changes before performing register operations.
+>>>
+>>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+>>> Reported-by: Arnd Bergmann <arnd@arndb.de>
+>>> ---
+>>>  arch/alpha/kernel/io.c | 14 +++++++-------
+>>>  1 file changed, 7 insertions(+), 7 deletions(-)
+>>
+>> Sorry for catching this late but this also needs to go to 4.17 after
+>> review.
+>>
+>> I missed the writel() implementation on arch/alpha/kernel/io.c file
+>> on my first patch.
+>>
 >
-> Hence, the bus type is available for device_register(), which happens
-> in a subsys initcall, and for driver_register(), which happens in a
-> device or module initcall.
+> Can you also queue this for 4.17?
 >
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reported-by: Michael Schmitz <schmitzmic@gmail.com>
-> Tested-by: Stan Johnson <userm57@yahoo.com>
-> Fixes: 7f86c765a6a2 ("nubus: Add support for the driver model")
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+> There are already drivers checked into 4.17 that dropped the unnecessary
+> barriers.
+>
+> I really hate to see Alpha broken because of this.
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Yes, I will pick it up for 4.17.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks for the patch.
