@@ -1,75 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965234AbeEIPrc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:47:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35882 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964907AbeEIPr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:47:28 -0400
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Stephen Bates <sbates@raithlin.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20180423233046.21476-1-logang@deltatee.com>
- <20180423233046.21476-5-logang@deltatee.com>
- <CAPcyv4g+5N_n03J-VhmJfrr60Sqk95ZapLKBkwSsGvV4nQ+ZRw@mail.gmail.com>
- <64C231F5-DE36-415F-B308-3A423B0BBACB@raithlin.com>
- <15433946-f7f5-f610-4e80-380fb59920e5@redhat.com>
- <3C9FB262-A93C-4C8F-B1E0-85C6D6F78BC2@raithlin.com>
- <c5f30ced-7bbf-9420-db1a-72519fc78b3a@redhat.com>
- <20180508180157.7c7b393f@w520.home>
-From: Don Dutile <ddutile@redhat.com>
-Message-ID: <f0d25e16-1201-1fc5-334f-4205abc95500@redhat.com>
-Date: Wed, 9 May 2018 11:47:31 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S965166AbeEIPqu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:46:50 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:21800 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965067AbeEIPqp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 11:46:45 -0400
+From: Amelie Delaunay <amelie.delaunay@st.com>
+To: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+CC: <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Amelie Delaunay <amelie.delaunay@st.com>
+Subject: [PATCH v2 0/3] Introduce STM32MP1 RTC
+Date: Wed, 9 May 2018 17:46:07 +0200
+Message-ID: <1525880770-22263-1-git-send-email-amelie.delaunay@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180508180157.7c7b393f@w520.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.201.20.5]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-09_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/08/2018 08:01 PM, Alex Williamson wrote:
-> On Tue, 8 May 2018 19:06:17 -0400
-> Don Dutile <ddutile@redhat.com> wrote:
->> On 05/08/2018 05:27 PM, Stephen  Bates wrote:
->>> As I understand it VMs need to know because VFIO passes IOMMU
->>> grouping up into the VMs. So if a IOMMU grouping changes the VM's
->>> view of its PCIe topology changes. I think we even have to be
->>> cognizant of the fact the OS running on the VM may not even support
->>> hot-plug of PCI devices.
->> Alex:
->> Really? IOMMU groups are created by the kernel, so don't know how
->> they would be passed into the VMs, unless indirectly via  PCI(e)
->> layout. At best, twiddling w/ACS enablement (emulation) would cause
->> VMs to see different IOMMU groups, but again, VMs are not the
->> security point/level, the host/HV's are.
-> 
-> Correct, the VM has no concept of the host's IOMMU groups, only the
-> hypervisor knows about the groups, but really only to the extent of
-> which device belongs to which group and whether the group is viable.
-> Any runtime change to grouping though would require DMA mapping
-> updates, which I don't see how we can reasonably do with drivers,
-> vfio-pci or native host drivers, bound to the affected devices.  Thanks,
-> 
-> Alex
-> 
-A change in iommu groups would/could require a device remove/add cycle to get an updated DMA-mapping (yet-another-overused-term: iommu 'domain').
+This series introduces STM32MP1 RTC.
+On STM32MP1:
+- two clocks are needed, plck and rtc_ck;
+- to wakeup the system, a wakeup alarm interrupt is needed;
+- some registers or bits have moved, but the operation is the same;
+- the Backup Domain Protection (DBP) is not managed by RTC driver.
+
+---
+Changes in v2:
+* One compatible per line in bindings file
+* Remove unnecessary comment under rtc_ck as this clock is required for all
+* Remove interrupts-extended and add stm32mp1 rtc alarm wakeup interrupt in
+  interrupts property description
+
+Amelie Delaunay (3):
+  rtc: stm32: rework register management to prepare other version of RTC
+  dt-bindings: rtc: update stm32-rtc documentation for stm32mp1 rtc
+  rtc: stm32: add stm32mp1 rtc support
+
+ .../devicetree/bindings/rtc/st,stm32-rtc.txt       |  27 +-
+ drivers/rtc/rtc-stm32.c                            | 272 ++++++++++++++++-----
+ 2 files changed, 228 insertions(+), 71 deletions(-)
+
+-- 
+2.7.4
