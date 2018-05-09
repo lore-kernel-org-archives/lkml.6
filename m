@@ -1,130 +1,85 @@
-Return-Path: <poza@qualcomm.com>
-X-Google-Smtp-Source: AB8JxZqkztemi32Nk2kNzim3MsxZude8XxPZaLGBmysvtFTuRPNdoHLlLeYNwTOgVGV2hC87fPP7
-ARC-Seal: i=1; a=rsa-sha256; t=1525323844; cv=none;
+Return-Path: <ahiliation@yahoo.co.in>
+X-Google-Smtp-Source: AB8JxZqLsfeARUYRCX0nrT7He9Cw37gZDSkMmSrAKoTpAPG1QUAizt2zhZ+xYEqdcucp2LBfFEdg
+ARC-Seal: i=1; a=rsa-sha256; t=1525904273; cv=none;
         d=google.com; s=arc-20160816;
-        b=DRyMG5CmO9f3E6vn9/lt6H6xaf9nN6UD29sh9jt69or5EerYLQ1hToft2S4E4GuZa9
-         dBi7R7KRbaQ78FDbGcODxVRapGotpkzoZIAN6xJ64B9ryCKaesXbWiGacPemZzuz1lQz
-         MrRask+JGJD5dGSppVqOga/JtYXTOQ6L/xP5Wq03KIaMj1d3GrSnQLbIUkQZyvFp5lhA
-         mNFM7q8FrZn3rquHz/lbXYQS+wBKEbwReK5LWcx1CcHLELnn6CrxxVLoTWYwTdiy2oTA
-         N5RWDLND3rCtsAgAQkp0fYEaYf89ygAUEUlc21HziEtIwLN34cGrDBzFQZQ3VvTmpC7W
-         t2zA==
+        b=NJNYm1ovaSd1Di45LxAF03GbEFGHuRtL6a/27LCtZhHEUrojD7lNRrOq9GVD0CKPsp
+         O0BS+arh6/i1D7iRznvoJH5duZ+4+MFB8zar8S8o5m8EpapEqugCTn1UebsPl/0u8BbP
+         zaBSf+Q/2F9p7pje6wxa3gKkTt7CKjwTl20HiE+dfxy+Qo7EcfyqGKsKK2gIgtlvenFa
+         8s5cKWdznSWllALO2rEDTyjkM298+413HtXYn3TqBa7+xuGuFy7EZ3VQFlD40aC1zjGf
+         jZHsU1C5hsQix0WU+cFRI3gPcvCZoXdxQkPf3MK2htevHF0zBEc4mKt1+EvKOaCywMC3
+         ynOg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=dfM8WENALZ/j4fnGw+U7fw68kx1Hxgo2f7PBlgdlzkQ=;
-        b=ZjMv2hH2PvMsfGKQCcBdLkxlKobyxOWaJ33Syfrli2pkvs/pGZWw5qkWCrsQFedVW1
-         ZA+Tou6zT5ZzPsJRzf9KVrWT0CsTj/Bk7LZH2cU9xZdOg0/GEi0RjtT8IRwiQlIYiqbQ
-         O662jtbOxpsE60xUhVYNzLb+wXo1tTAo3Dgf8Fsz2Zh2zGroeFr0xQNokmp5irFg30g3
-         Oz+icrbLB6NKgHsB8xF8MELkz3UQAdOIulCWY9NqalzYRSaoQDVhFIFQpyAgYPzf7gC4
-         9zidv2d4Bw36njTzzf3ps4XbBp4bhjjHcTvWhfzrd3vUoKfUAqfX1kvP46vD3Kp2KNOi
-         Dk9Q==
+        bh=3gkvGRU/2ijuD4UVo68Xazv62f6W46nJPJ79/BR6Ubc=;
+        b=iO2i4BXxXumdZvuxzBNSq6AYDpZ8+T8f8nJHmlJqn1EUI6aice+7UySUTGrYPBx+xn
+         PzYQ9r2KNUXZh37h3ecoq4ykqOQWOXkc5WV8hJzyHcYbGViSRXyk7JjMFsK2XH7viCIU
+         VDiCoJ1l63wtOQDAGSlcRgAKnd1cyE8SzMdqaxtJ285nda4tgHm6ligsW9WNCWoV049d
+         ph5VzM3ZuE6oj03u1/IVlrVzUqtcOg28mperbyGqhAyICT0q5VsFwQVX02IpF+kU4+cN
+         p4LbuejgM1XX/GBUk12ZB370EAYwwJWdPMMfS6oaG1WlyvZhgU3pDD0JGhw+Bc3iF9Kr
+         ae6A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.251 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+       dkim=pass header.i=@yahoo.co.in header.s=s2048 header.b=Oxkl/NjB;
+       spf=pass (google.com: domain of ahiliation@yahoo.co.in designates 106.10.241.141 as permitted sender) smtp.mailfrom=ahiliation@yahoo.co.in;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=yahoo.co.in
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.251 as permitted sender) smtp.mailfrom=poza@qualcomm.com
-X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="434431840"
-X-IronPort-AV: E=McAfee;i="5900,7806,8881"; a="76178774"
-From: Oza Pawandeep <poza@codeaurora.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-pci@vger.kernel.org,
+       dkim=pass header.i=@yahoo.co.in header.s=s2048 header.b=Oxkl/NjB;
+       spf=pass (google.com: domain of ahiliation@yahoo.co.in designates 106.10.241.141 as permitted sender) smtp.mailfrom=ahiliation@yahoo.co.in;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=yahoo.co.in
+X-YMail-OSG: F1cELi8VM1lIacYsiTNSyVfBAG7oIxvT6mahGHc.O7PJSql1sXYJmbsjKasgOzW
+ M8j6g7dSqizpiKty85ADR5RRG0BR7s4UTaAeUrUVpNaqHQh5TZ85DBr8Im4nKG5y7472ZNVXMFZ3
+ pEOHVL1vwKvEWpYjSK6ID5qjBRK90KwwoHqzKYYd8OgQhmrBcgXRCqzyvjVOf7uL80G05wsu7bDx
+ 2fx.Z7XxnlQnBWftG8tap8nj76afywoJylF1asCS9F7WvcdxcibXrUiIldliY46o0P8kEvD66Xs6
+ PcUlxhqCRSKRFxlRqM8NClGMQqxPbveNB8cjoH4ffj0xDNqJ.1LNmxqybIlPy74JVLaUCX_n8PWf
+ TwXXuORqe4MKY6U.dwvyKbqK2w40BfXbLZxRgDzqL5ks6dG3AjrdEHvZi36OjoyQWoTyyYc7mgk8
+ BBM3VPmhl5n7RLaFb6wSxt5J7Fwtnj32pOlhLCU4ws_XYJ_mknpEK_0oWtITuqFfje9lR1NTxQdp
+ ZZBzozwSJvh5IsyXWeVUOoD4.IeLeToRA3FIYM7I6YMx47GYC0A--
+From: Jeffrin Jose T <ahiliation@yahoo.co.in>
+To: shuah@kernel.org,
+	kstewart@linuxfoundation.org,
+	daniel.diaz@linaro.org,
+	pombredanne@nexb.com,
+	gregkh@linuxfoundation.org,
+	thomas@m3y3r.de
+Cc: linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Dongdong Liu <liudongdong3@huawei.com>,
-	Keith Busch <keith.busch@intel.com>,
-	Wei Zhang <wzhang@fb.com>,
-	Sinan Kaya <okaya@codeaurora.org>,
-	Timur Tabi <timur@codeaurora.org>
-Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH v15 4/9] PCI/AER: Rename error recovery to generic PCI naming
-Date: Thu,  3 May 2018 01:03:53 -0400
-Message-Id: <1525323838-1735-5-git-send-email-poza@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525323838-1735-1-git-send-email-poza@codeaurora.org>
-References: <1525323838-1735-1-git-send-email-poza@codeaurora.org>
+	Jeffrin Jose T <ahiliation@yahoo.co.in>,
+	Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+Subject: [PATCH] selftests: intel_pstate: Fixes for the testing script run.sh
+Date: Thu, 10 May 2018 03:47:33 +0530
+Message-Id: <20180509221733.15182-1-ahiliation@yahoo.co.in>
+X-Mailer: git-send-email 2.17.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599417976033110998?=
-X-GMAIL-MSGID: =?utf-8?q?1599417976033110998?=
+X-GMAIL-THRID: =?utf-8?q?1600026599814016657?=
+X-GMAIL-MSGID: =?utf-8?q?1600026599814016657?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch renames error recovery to generic name with pcie prefix
+fix for notification of permission requirement to run test.
+fix for exit status value for test skipped.
 
-Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+---
+ tools/testing/selftests/intel_pstate/run.sh | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index cec9d8c..22a9589 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -353,6 +353,9 @@ static inline resource_size_t pci_resource_alignment(struct pci_dev *dev,
+diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
+index c670359becc6..74983f74a9a1 100755
+--- a/tools/testing/selftests/intel_pstate/run.sh
++++ b/tools/testing/selftests/intel_pstate/run.sh
+@@ -30,6 +30,13 @@
  
- void pci_enable_acs(struct pci_dev *dev);
+ EVALUATE_ONLY=0
  
-+/* PCI error reporting and recovery */
-+void pcie_do_recovery(struct pci_dev *dev, int severity);
++msg="skip all tests:"
 +
- bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
- #ifdef CONFIG_PCIEASPM
- void pcie_aspm_init_link_state(struct pci_dev *pdev);
-diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
-index 655d4e8..be4ee3b 100644
---- a/drivers/pci/pcie/aer/aerdrv_core.c
-+++ b/drivers/pci/pcie/aer/aerdrv_core.c
-@@ -475,7 +475,7 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
- 	return status;
- }
- 
--static pci_ers_result_t do_fatal_recovery(struct pci_dev *dev, int severity)
-+static pci_ers_result_t pcie_do_fatal_recovery(struct pci_dev *dev, int severity)
- {
- 	struct pci_dev *udev;
- 	struct pci_bus *parent;
-@@ -514,7 +514,7 @@ static pci_ers_result_t do_fatal_recovery(struct pci_dev *dev, int severity)
- }
- 
- /**
-- * do_recovery - handle nonfatal/fatal error recovery process
-+ * pcie_do_recovery - handle nonfatal/fatal error recovery process
-  * @dev: pointer to a pci_dev data structure of agent detecting an error
-  * @severity: error severity type
-  *
-@@ -522,13 +522,13 @@ static pci_ers_result_t do_fatal_recovery(struct pci_dev *dev, int severity)
-  * error detected message to all downstream drivers within a hierarchy in
-  * question and return the returned code.
-  */
--static void do_recovery(struct pci_dev *dev, int severity)
-+void pcie_do_recovery(struct pci_dev *dev, int severity)
- {
- 	pci_ers_result_t status;
- 	enum pci_channel_state state;
- 
- 	if (severity == AER_FATAL) {
--		status = do_fatal_recovery(dev, severity);
-+		status = pcie_do_fatal_recovery(dev, severity);
- 		if (status != PCI_ERS_RESULT_RECOVERED)
- 			goto failed;
- 		return;
-@@ -600,7 +600,7 @@ static void handle_error_source(struct pcie_device *aerdev,
- 			pci_write_config_dword(dev, pos + PCI_ERR_COR_STATUS,
- 					info->status);
- 	} else
--		do_recovery(dev, info->severity);
-+		pcie_do_recovery(dev, info->severity);
- }
- 
- #ifdef CONFIG_ACPI_APEI_PCIEAER
-@@ -665,7 +665,7 @@ static void aer_recover_work_func(struct work_struct *work)
- 		}
- 		cper_print_aer(pdev, entry.severity, entry.regs);
- 		if (entry.severity != AER_CORRECTABLE)
--			do_recovery(pdev, entry.severity);
-+			pcie_do_recovery(pdev, entry.severity);
- 		pci_dev_put(pdev);
- 	}
- }
++if [ $UID != 0 ] && [ $EVALUATE_ONLY == 0 ]; then
++    echo $msg please run this as root >&2
++    exit $ksft_skip
++fi
++
+ if ! uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ | grep -q x86; then
+ 	echo "$0 # Skipped: Test can only run on x86 architectures."
+ 	exit 0
 -- 
-2.7.4
+2.17.0
