@@ -1,71 +1,89 @@
-Return-Path: <jpoimboe@redhat.com>
-X-Google-Smtp-Source: AB8JxZpSXpTYFMsYEblvWpC9mMqC1Mect+lwJW/8RoGn45cUaO22yU8WN7+ZJsPmHagdH34UWr8W
-ARC-Seal: i=1; a=rsa-sha256; t=1525879421; cv=none;
+Return-Path: <linux_dti@icloud.com>
+X-Google-Smtp-Source: AB8JxZpDkDq24KiE2HOQPcJaf4Uwvd5/d0V7Sq0o9fxGInwcj61dfQEKuSZ8ieIzlSkcSQI4NS0L
+ARC-Seal: i=1; a=rsa-sha256; t=1525893378; cv=none;
         d=google.com; s=arc-20160816;
-        b=eVNwO2dztprJQfAMCgQTKjEeyJprOEcO6HrbUrZHIf7tfOtK3XPxLX/Yt1w1EIws57
-         QowRspNa03UwX2pDjzrtgMfk1J33iDOeuvI2aHeJ73Dq5sE8WlB/EV2WpzFn0jxGUrEa
-         hon+97mBWWlYRV9hle2Bs3fkVouc/4MSiq+PXPPPcP7TBonbG6ipvusWV7F7DnlOCK71
-         07mxqWvwG6v6zOIsW9ttP9SoZ1ZerEIWgidA/CP02MTv7NB6kEqVsvNzsiqgfYwr9Bx/
-         CG6hV3XSsRx31xCKcFYxuRAVakKnYqss5MJyLXyKmp9vPD8e/CMaJJ/f/fZ/e84FA7SB
-         2btQ==
+        b=do/bSA1HOhOu5MLxc/WSA6O31s9b1esV3ntzB19JJYk8ru4Iks/39j8pDOOLwoqxNh
+         K1BPAGx1ccrhZ3wSudiBErjfVNue+PsnonwqzozI37UuiBk7KwpFQsl6mawZaSGNOlMK
+         5UTIjwaHVT7m9lY6rJF9elhSX6QrRK7Zh1Gw82NgtbJ+c/R64M/pxZyNv2PrZQ88jKbB
+         yGYAqpZvN7zoeGDRhF2ViYARzL3Xd1G9khfvDSb+q3Ls+9wA998OKBV04YLFOnw6yBQH
+         Xpd7g5nubfppCDPkgtOOr7guEYZnq4AyN3FvhoEskyKtgl3j5HyOtSWmSrDbAhIvtpUe
+         A/9g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=66w/dgjgbRM/0kxh9hwSgm8Zvk+k6TQDK5aFn6BWoU0=;
-        b=zbelHp7zxaUd8M5KFd77L1mxjOShy8rJJG7hrBjNA0JkprnMY6y70M4jWtV94cKofJ
-         wa1h07TWGHmtXK7BK4D5BQ+ffkJ8tYRRNzx+UzFfLzHbqVTuw05vx2j/V3PjP/uuvEy3
-         sdD9eiBIX/i5WrBpr96HPXeKXKpwdYsW4fx0nr0VgxNdqNHL51osQZ45uj4E3ZxmYgG3
-         KolIZ4IxbaVsGUeszjqYJZWpeE3FXhQIzwTKm0yl1vsxKPpmcFmpKBF7jzSiBdCPzp6O
-         20oR1WXjUP1xnflUCsMLbTrspKhJEJ8TxZVX6n3DLVpxIsd+UWo1Q3fkYluWucimNM98
-         mi0w==
+         :mail-followup-to:message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=YTYYyPEPiFmmhxoWG1xGm3I8V7qNsSd0p8mBW3/6R5A=;
+        b=00Y+XBTFtNYgpoyrq7uCgM3rgrdPR3+66dBDiAfKTX/jeVb9s9vqQ4qj0mqBz5WC3j
+         pVf0HiWKnmfl6yYScCMy8m81Wl4JDPmHp8kkrLkkqG0OU7vyKYkYGNxhgTmkVWDLhmgS
+         9RXs9e4rDnR06N/foVONX4BJXqEUl4AvRY5nBEW1LGnqzL8YvtXNfANSHUwcXb4XPCuh
+         T1jYWeAZ0j15UW7QRtcDnCfdBWStVVAfCRAI7gRqUt2DyRi0tB8axVvjnw0SP9vOC2tB
+         M7o2LgPCs4CXEXHBzcVnv1Ed7yMAsTPhEAXX0T7/YGm2G0aOY0PBw2H13yePiWCLHObx
+         4QaQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jpoimboe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@icloud.com header.s=04042017 header.b=DAdpZRcx;
+       spf=pass (google.com: domain of linux_dti@icloud.com designates 17.58.37.18 as permitted sender) smtp.mailfrom=linux_dti@icloud.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=icloud.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jpoimboe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Wed, 9 May 2018 10:23:39 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: damian <linux_dti@icloud.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	damian <damian.tometzki@icloud.com>, peterz@infradead.org,
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+       dkim=pass header.i=@icloud.com header.s=04042017 header.b=DAdpZRcx;
+       spf=pass (google.com: domain of linux_dti@icloud.com designates 17.58.37.18 as permitted sender) smtp.mailfrom=linux_dti@icloud.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=icloud.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,,
+ definitions=2018-05-09_07:,, signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
+ clxscore=1015 suspectscore=0 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1707230000 definitions=main-1805090181
+Date: Wed, 09 May 2018 21:15:58 +0200
+From: damian <linux_dti@icloud.com>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, peterz@infradead.org,
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 Subject: Re: Kernel build with gcc 8 a lot of warnings
-Message-ID: <20180509152339.mszrivslsrrkkoq6@treble>
+Message-id: <20180509191557.GA1969@zrhn9910b>
+Mail-followup-to: Josh Poimboeuf <jpoimboe@redhat.com>,
+ Greg KH <gregkh@linuxfoundation.org>, peterz@infradead.org,
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 References: <20180505192112.GA18728@zrhn9910b>
- <20180507045453.leou4zypnlcck4vr@treble>
- <20180508055126.GA18724@kroah.com>
- <20180508133226.uwjbx44fwlxgyzu5@treble>
- <20180508142515.GA16111@kroah.com>
+ <20180507045453.leou4zypnlcck4vr@treble> <20180508055126.GA18724@kroah.com>
+ <20180508133226.uwjbx44fwlxgyzu5@treble> <20180508142515.GA16111@kroah.com>
  <20180508143241.5kz4poxcdhajjorl@treble>
- <20180509034646.7qftdvummkz7b2pi@treble>
- <20180509073503.GA2116@zrhn9910b>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180509073503.GA2116@zrhn9910b>
-User-Agent: NeoMutt/20180323
+ <20180509034646.7qftdvummkz7b2pi@treble> <20180509073503.GA2116@zrhn9910b>
+ <20180509152339.mszrivslsrrkkoq6@treble>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+Content-disposition: inline
+In-reply-to: <20180509152339.mszrivslsrrkkoq6@treble>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1599903094060891144?=
-X-GMAIL-MSGID: =?utf-8?q?1600000540256713890?=
+X-GMAIL-MSGID: =?utf-8?q?1600015175300971022?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 09, 2018 at 09:35:04AM +0200, damian wrote:
-> Hi Josh,
+On Wed, 09. May 10:23, Josh Poimboeuf wrote:
+> On Wed, May 09, 2018 at 09:35:04AM +0200, damian wrote:
+> > Hi Josh,
+> > 
+> > i tested the patch on my maschine it works fine. 
+> > 
+> > Best regards
+> > Damian
 > 
-> i tested the patch on my maschine it works fine. 
+> Thanks.  0-day found a few more issues.  The latest patches are at:
 > 
-> Best regards
-> Damian
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux objtool-gcc8
+> 
+> Waiting for 0-day to run them again, then I'll be submitting them
+> shortly after.
+> 
+> -- 
+> Josh
 
-Thanks.  0-day found a few more issues.  The latest patches are at:
+Hi Josh,
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux objtool-gcc8
+my test was successfull.
 
-Waiting for 0-day to run them again, then I'll be submitting them
-shortly after.
-
--- 
-Josh
+regards
+Damian
+ 
