@@ -1,47 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934390AbeEIJKV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:10:21 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58855 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934195AbeEIJKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:10:20 -0400
-Subject: Re: [PATCH] swiotlb: Update the comment of swiotlb
-To: Christoph Hellwig <hch@lst.de>
-References: <1525691185-55657-1-git-send-email-xieyisheng1@huawei.com>
- <20180509073838.GA20874@lst.de>
-CC: <konrad.wilk@oracle.com>, <mingo@kernel.org>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <b6246d95-7d9c-2904-6298-9c5ca3506a5f@huawei.com>
-Date: Wed, 9 May 2018 17:08:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
+        id S934472AbeEIJK0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:10:26 -0400
+Received: from www381.your-server.de ([78.46.137.84]:55578 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934195AbeEIJKX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 05:10:23 -0400
+Subject: Re: Using LIBIIO sending DATA to DAC and capturing the output from
+ DAC
+To: Randy Dunlap <rdunlap@infradead.org>, jarul <joearul09@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+References: <1525828377261-0.post@n7.nabble.com>
+ <e455a341-49eb-c9c3-89aa-3e090bdd8898@infradead.org>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <804ea1be-1f2b-d95c-ee59-0552ed1f17d1@metafoo.de>
+Date: Wed, 9 May 2018 11:10:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180509073838.GA20874@lst.de>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <e455a341-49eb-c9c3-89aa-3e090bdd8898@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+X-Authenticated-Sender: lars@metafoo.de
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+Same question was also posted on the ADI support forums, we'll discuss it
+there since this is a ADI product specific question.
 
-On 2018/5/9 15:38, Christoph Hellwig wrote:
-> Thanks,
+See https://ez.analog.com/thread/106116
+
+On 05/09/2018 03:14 AM, Randy Dunlap wrote:
+> [adding linux-iio mailing list]
 > 
-> applied to the dma-mapping tree.
-
-Thanks
-
-BTW, should lib/swiotlb.c also add to DMA MAPPING HELPERS, or
-add yourself as a maintainer of SWIOTLB SUBSYSTEM ? It will make
-get_maintainer.pl get you :)
-
-Thanks
-Yisheng
+> On 05/08/2018 06:12 PM, jarul wrote:
+>> I would like to ask a question and if anybody can answer my question, I would
+>> very much appreciate.
+>>
+>> I am using Z706 and AD9361. I have setup the SD card image on the server
+>> side and I have a client machine which is a Linux machine. I am using
+>> ad9361-iiostream file where I send my data using sin and cos function to DAC
+>> and try to get the output from DAC. If I send the random number which does
+>> not exceed 2047, do the left shift 4 bit and send the data to DAC. It
+>> creates a nice waveform file and the waveform can be seen on oscilloscope
+>> clearly.  Using random number I can get the output from DAC. However, when I
+>> send the sin and cos function, the output from DAC can not be captured or I
+>> get just 0 and one single value as output.
+>>
+>> I have used iio_channel_read_raw function to capture the output else
+>> iio_channel_read function to capture the output from DAC. I want to capture
+>> the DAC output and then send the output to ADC and finally I want to capture
+>> the ADC output to compare the digital data on both side.
+>>
+>> Can any export or whoever is familiar with the subject libiio can answer my
+>> question. Thanks a lot.
+>>
+>>
+>>
+>> --
+>> Sent from: http://linux-kernel.2935.n7.nabble.com/
 > 
-> .
 > 
