@@ -1,50 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935029AbeEIM7d (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:59:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41772 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934689AbeEIM7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:59:32 -0400
-Date: Wed, 9 May 2018 08:59:29 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180509085929.180d1a93@gandalf.local.home>
-In-Reply-To: <20180509120050.eyuprdh75grhdsh4@pathway.suse.cz>
-References: <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
-        <20180420101751.6c1c70e8@gandalf.local.home>
-        <20180420145720.hb7bbyd5xbm5je32@pathway.suse.cz>
-        <20180420111307.44008fc7@gandalf.local.home>
-        <20180423103232.k23yulv2e7fah42r@pathway.suse.cz>
-        <20180423073603.6b3294ba@gandalf.local.home>
-        <20180423124502.423fb57thvbf3zet@pathway.suse.cz>
-        <20180425053146.GA25288@jagdpanzerIV>
-        <20180426094211.okftwdzgfn72rik3@pathway.suse.cz>
-        <20180427102245.GA591@jagdpanzerIV>
-        <20180509120050.eyuprdh75grhdsh4@pathway.suse.cz>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S934980AbeEIM7A (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:59:00 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55338 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934328AbeEIM6B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 08:58:01 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org, ulf.hansson@linaro.org, heiko@sntech.de,
+        linux-pm@vger.kernel.org, dbasehore@chromium.org,
+        linux-kernel@vger.kernel.org, dianders@google.com, groeck@chromium.org,
+        kernel@collabora.com, hl@rock-chips.com,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v4 4/6] dt-bindings: devfreq: rk3399_dmc: move interrupts to be optional.
+Date: Wed,  9 May 2018 14:57:46 +0200
+Message-Id: <20180509125749.31318-5-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180509125749.31318-1-enric.balletbo@collabora.com>
+References: <20180509125749.31318-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 May 2018 14:00:50 +0200
-Petr Mladek <pmladek@suse.com> wrote:
+In ATF we already wait for DDR DVFS finish, so move the interrupts properties
+to be optional.
 
-> IMHO, if con->write() wants to add more than 1000 (or 100 or whatever
-> sane limit) new lines then something is really wrong and we should
-> stop it. It is that simple.
-> 
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
 
-+1
+Changes in v4:
+- [4/6] Add Reviewed-by Rob Herring.
 
--- Steve
+Changes in v3:
+- [4/6] Move interrupts to be optional instead of remove.
+
+Changes in v2:
+- [4/6] Add Reviewed-by Chanwoo Choi.
+
+ .../devicetree/bindings/devfreq/rk3399_dmc.txt         | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
+index e0030a139383..0ec68141f85a 100644
+--- a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
++++ b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
+@@ -5,10 +5,6 @@ Required properties:
+ - devfreq-events:	 Node to get DDR loading, Refer to
+ 			 Documentation/devicetree/bindings/devfreq/event/
+ 			 rockchip-dfi.txt
+-- interrupts:		 The CPU interrupt number. The interrupt specifier
+-			 format depends on the interrupt controller.
+-			 It should be a DCF interrupt. When DDR DVFS finishes
+-			 a DCF interrupt is triggered.
+ - clocks:		 Phandles for clock specified in "clock-names" property
+ - clock-names :		 The name of clock used by the DFI, must be
+ 			 "pclk_ddr_mon";
+@@ -17,6 +13,12 @@ Required properties:
+ - center-supply:	 DMC supply node.
+ - status:		 Marks the node enabled/disabled.
+ 
++Optional properties:
++- interrupts:		 The CPU interrupt number. The interrupt specifier
++			 format depends on the interrupt controller.
++			 It should be a DCF interrupt. When DDR DVFS finishes
++			 a DCF interrupt is triggered.
++
+ Following properties relate to DDR timing:
+ 
+ - rockchip,dram_speed_bin :	  Value reference include/dt-bindings/clock/rk3399-ddr.h,
+-- 
+2.17.0
