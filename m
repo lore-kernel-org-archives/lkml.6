@@ -1,61 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934796AbeEIMEK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:04:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43832 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751052AbeEIMEI (ORCPT
+        id S934874AbeEIMEr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:04:47 -0400
+Received: from s3.sipsolutions.net ([144.76.63.242]:43670 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751052AbeEIMEp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:04:08 -0400
-Date: Wed, 9 May 2018 09:04:00 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
+        Wed, 9 May 2018 08:04:45 -0400
+Message-ID: <1525867473.6910.10.camel@sipsolutions.net>
+Subject: Re: [PATCH 09/18] net: mac80211.h: fix a bad comment line
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Cc: Kalle Valo <kvalo@codeaurora.org>,
         Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
         "David S. Miller" <davem@davemloft.net>,
         linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 09/18] net: mac80211.h: fix a bad comment line
-Message-ID: <20180509090400.0156c0c8@vento.lan>
-In-Reply-To: <1525696706.6049.7.camel@sipsolutions.net>
+Date: Wed, 09 May 2018 14:04:33 +0200
+In-Reply-To: <20180509090400.0156c0c8@vento.lan>
 References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-        <cover.1525684985.git.mchehab+samsung@kernel.org>
-        <1b14ef4f63547c86c544e112b74acfff2b41f4af.1525684985.git.mchehab+samsung@kernel.org>
-        <87fu334p5v.fsf@purkki.adurom.net>
-        <1525696706.6049.7.camel@sipsolutions.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+         <cover.1525684985.git.mchehab+samsung@kernel.org>
+         <1b14ef4f63547c86c544e112b74acfff2b41f4af.1525684985.git.mchehab+samsung@kernel.org>
+         <87fu334p5v.fsf@purkki.adurom.net>
+         <1525696706.6049.7.camel@sipsolutions.net>
+         <20180509090400.0156c0c8@vento.lan>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 07 May 2018 14:38:26 +0200
-Johannes Berg <johannes@sipsolutions.net> escreveu:
-
-> On Mon, 2018-05-07 at 15:37 +0300, Kalle Valo wrote:
-> > Mauro Carvalho Chehab <mchehab+samsung@kernel.org> writes:
-> >   
-> > > Sphinx produces a lot of errors like this:
-> > > 	./include/net/mac80211.h:2083: warning: bad line:  >
+On Wed, 2018-05-09 at 09:04 -0300, Mauro Carvalho Chehab wrote:
+> Em Mon, 07 May 2018 14:38:26 +0200
+> Johannes Berg <johannes@sipsolutions.net> escreveu:
+> 
+> > On Mon, 2018-05-07 at 15:37 +0300, Kalle Valo wrote:
+> > > Mauro Carvalho Chehab <mchehab+samsung@kernel.org> writes:
+> > >   
+> > > > Sphinx produces a lot of errors like this:
+> > > > 	./include/net/mac80211.h:2083: warning: bad line:  >
+> > > > 
+> > > > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
 > > > 
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
+> > > Randy already submitted a similar patch:
+> > > 
+> > > https://patchwork.kernel.org/patch/10367275/
+> > > 
+> > > But it seems Johannes has not applied that yet.  
 > > 
-> > Randy already submitted a similar patch:
+> > Yeah, I've been super busy preparing for the plugfest.
 > > 
-> > https://patchwork.kernel.org/patch/10367275/
-> > 
-> > But it seems Johannes has not applied that yet.  
+> > I'll make a pass over all the patches as soon as I can, hopefully today
+> > or tomorrow.
 > 
-> Yeah, I've been super busy preparing for the plugfest.
-> 
-> I'll make a pass over all the patches as soon as I can, hopefully today
-> or tomorrow.
+> Thanks. I'll drop it from my patchset, assuming that you'll
+> be applying Randy's version or mine via your tree.
 
-Thanks. I'll drop it from my patchset, assuming that you'll
-be applying Randy's version or mine via your tree.
+Right, I did, just need to send a pull request.
 
-Thanks,
-Mauro
+johannes
