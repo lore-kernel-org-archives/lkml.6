@@ -1,120 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934226AbeEIKVT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 06:21:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38552 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933819AbeEIKVR (ORCPT
+        id S934266AbeEIKVp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 06:21:45 -0400
+Received: from smtp03.citrix.com ([162.221.156.55]:16799 "EHLO
+        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934038AbeEIKVo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 06:21:17 -0400
-Date: Wed, 9 May 2018 12:21:00 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
-        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
-        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
-        Daniel Walker <danielwa@cisco.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
-Subject: Re: [PATCH 6/7] psi: pressure stall information for CPU, memory, and
- IO
-Message-ID: <20180509102100.GN12217@hirez.programming.kicks-ass.net>
-References: <20180507210135.1823-1-hannes@cmpxchg.org>
- <20180507210135.1823-7-hannes@cmpxchg.org>
+        Wed, 9 May 2018 06:21:44 -0400
+X-IronPort-AV: E=Sophos;i="5.49,381,1520899200";
+   d="scan'208";a="54081116"
+From: Roger Pau Monne <roger.pau@citrix.com>
+To: <linux-kernel@vger.kernel.org>
+CC: Roger Pau Monne <roger.pau@citrix.com>
+Subject: [PATCH v2 0/3] xen/pvh: Dom0 support
+Date: Wed, 9 May 2018 11:21:26 +0100
+Message-ID: <20180509102129.14832-1-roger.pau@citrix.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180507210135.1823-7-hannes@cmpxchg.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 05:01:34PM -0400, Johannes Weiner wrote:
-> +/**
-> + * psi_memstall_enter - mark the beginning of a memory stall section
-> + * @flags: flags to handle nested sections
-> + *
-> + * Marks the calling task as being stalled due to a lack of memory,
-> + * such as waiting for a refault or performing reclaim.
-> + */
-> +void psi_memstall_enter(unsigned long *flags)
-> +{
-> +	struct rq_flags rf;
-> +	struct rq *rq;
-> +
-> +	*flags = current->flags & PF_MEMSTALL;
-> +	if (*flags)
-> +		return;
-> +	/*
-> +	 * PF_MEMSTALL setting & accounting needs to be atomic wrt
-> +	 * changes to the task's scheduling state, otherwise we can
-> +	 * race with CPU migration.
-> +	 */
-> +	local_irq_disable();
-> +	rq = this_rq();
-> +	raw_spin_lock(&rq->lock);
-> +	rq_pin_lock(rq, &rf);
+Hello,
 
-Given that churn in sched.h, you seen rq_lock() and friends.
+The following patches enable booting a PVH Dom0. So far I've only tested
+them in my test box, so I expect more issues will show up as this gets
+further testing. In any case, this is the bare minimum to get a PVH Dom0
+working.
 
-Either write this like:
+In order to test them Xen 4.11 RC or plain master/staging should be
+used. Compile a Linux kernel with this patches and PVH support and add
+dom0=pvh to the Xen command line. The following message will be
+displayed during Dom0 boot by the Linux kernel if PVH mode is used:
 
-	local_irq_disable();
-	rq = this_rq();
-	rq_lock(rq, &rf);
+"Booting paravirtualized kernel on Xen PVH"
 
-Or instroduce "rq = this_rq_lock_irq()", which we could also use in
-do_sched_yield().
+Thanks, Roger.
 
-> +	update_rq_clock(rq);
-> +
-> +	current->flags |= PF_MEMSTALL;
-> +	psi_task_change(current, rq_clock(rq), 0, TSK_MEMSTALL);
-> +
-> +	rq_unpin_lock(rq, &rf);
-> +	raw_spin_unlock(&rq->lock);
-> +	local_irq_enable();
+Roger Pau Monne (3):
+  xen/pvh: enable and set default MTRR type
+  xen/store: do not store local values in xen_start_info
+  xen: share start flags between PV and PVH
 
-That's called rq_unlock_irq().
+ arch/arm/xen/enlighten.c          | 7 ++++---
+ arch/x86/xen/enlighten.c          | 7 +++++++
+ arch/x86/xen/enlighten_pv.c       | 1 +
+ arch/x86/xen/enlighten_pvh.c      | 4 ++++
+ drivers/xen/xenbus/xenbus_probe.c | 5 ++---
+ include/xen/xen.h                 | 4 +++-
+ 6 files changed, 21 insertions(+), 7 deletions(-)
 
-> +}
-> +
-> +/**
-> + * psi_memstall_leave - mark the end of an memory stall section
-> + * @flags: flags to handle nested memdelay sections
-> + *
-> + * Marks the calling task as no longer stalled due to lack of memory.
-> + */
-> +void psi_memstall_leave(unsigned long *flags)
-> +{
-> +	struct rq_flags rf;
-> +	struct rq *rq;
-> +
-> +	if (*flags)
-> +		return;
-> +	/*
-> +	 * PF_MEMSTALL clearing & accounting needs to be atomic wrt
-> +	 * changes to the task's scheduling state, otherwise we could
-> +	 * race with CPU migration.
-> +	 */
-> +	local_irq_disable();
-> +	rq = this_rq();
-> +	raw_spin_lock(&rq->lock);
-> +	rq_pin_lock(rq, &rf);
-> +
-> +	update_rq_clock(rq);
-> +
-> +	current->flags &= ~PF_MEMSTALL;
-> +	psi_task_change(current, rq_clock(rq), TSK_MEMSTALL, 0);
-> +
-> +	rq_unpin_lock(rq, &rf);
-> +	raw_spin_unlock(&rq->lock);
-> +	local_irq_enable();
-> +}
-
-Idem.
+-- 
+2.17.0
