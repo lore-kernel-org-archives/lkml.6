@@ -1,80 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965520AbeEIVJX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 17:09:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39105 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964896AbeEIVJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 17:09:22 -0400
-Date: Wed, 9 May 2018 23:09:20 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, linux-mm@kvack.org, mgorman@techsingularity.net,
-        mingo@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        fengguang.wu@intel.com, dennisszhou@gmail.com
-Subject: Re: [PATCH] mm: allow deferred page init for vmemmap only
-Message-ID: <20180509210920.GZ32366@dhcp22.suse.cz>
-References: <20180509191713.23794-1-pasha.tatashin@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509191713.23794-1-pasha.tatashin@oracle.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S965450AbeEIVOz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 17:14:55 -0400
+Received: from mail2.candelatech.com ([208.74.158.173]:39628 "EHLO
+        mail2.candelatech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964849AbeEIVOx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 17:14:53 -0400
+From: greearb@candelatech.com
+To: linux-kernel@vger.kernel.org
+Cc: peterz@infradead.org, mingo@redhat.com,
+        Ben Greear <greearb@candelatech.com>
+Subject: [PATCH] lockdep:  Change __lock_acquire to __lock_acquire_lockdep
+Date: Wed,  9 May 2018 14:14:42 -0700
+Message-Id: <1525900482-31661-1-git-send-email-greearb@candelatech.com>
+X-Mailer: git-send-email 2.4.11
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 09-05-18 15:17:13, Pavel Tatashin wrote:
-> It is unsafe to do virtual to physical translations before mm_init() is
-> called if struct page is needed in order to determine the memory section
-> number (see SECTION_IN_PAGE_FLAGS). This is because only in mm_init() we
-> initialize struct pages for all the allocated memory when deferred struct
-> pages are used.
-> 
-> My recent fix exposed this problem, because it greatly reduced number of
-> pages that are initialized before mm_init(), but the problem existed even
-> before my fix, as Fengguang Wu found.
-> 
-> Since FLATMEM is already disallowed for deferred struct pages, it makes
-> sense to allow deferred struct pages only on systems with
-> SPARSEMEM_VMEMMAP.
+From: Ben Greear <greearb@candelatech.com>
 
-This doesn't really explain why CONFIG_SPARSMEM or DISCONTIG has the
-problem.
+This should make it easier to notice one is using lockdep when
+looking at 'perf top' and related output.
 
-> The problems are discussed in these threads:
-> http://lkml.kernel.org/r/20180418135300.inazvpxjxowogyge@wfg-t540p.sh.intel.com
-> http://lkml.kernel.org/r/20180419013128.iurzouiqxvcnpbvz@wfg-t540p.sh.intel.com
-> http://lkml.kernel.org/r/20180426202619.2768-1-pasha.tatashin@oracle.com
+Signed-off-by: Ben Greear <greearb@candelatech.com>
+---
+ kernel/locking/lockdep.c | 30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
-Using references is good but there should be a highlevel summary in the
-chaneglog as well.
-
-> Fixes: 3a80a7fa7989 ("mm: meminit: initialise a subset of struct pages if CONFIG_DEFERRED_STRUCT_PAGE_INIT is set")
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> ---
->  mm/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index d5004d82a1d6..1cd32d67ca30 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -635,7 +635,7 @@ config DEFERRED_STRUCT_PAGE_INIT
->  	bool "Defer initialisation of struct pages to kthreads"
->  	default n
->  	depends on NO_BOOTMEM
-> -	depends on !FLATMEM
-> +	depends on SPARSEMEM_VMEMMAP
->  	help
->  	  Ordinarily all struct pages are initialised during early boot in a
->  	  single thread. On very large machines this can take a considerable
-> -- 
-> 2.17.0
-> 
-
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 89b5f83..818fc8b 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -3283,10 +3283,13 @@ static int __lock_is_held(const struct lockdep_map *lock, int read);
+  * This gets called for every mutex_lock*()/spin_lock*() operation.
+  * We maintain the dependency maps and validate the locking attempt:
+  */
+-static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+-			  int trylock, int read, int check, int hardirqs_off,
+-			  struct lockdep_map *nest_lock, unsigned long ip,
+-			  int references, int pin_count)
++static int __lock_acquire_lockdep(struct lockdep_map *lock,
++				  unsigned int subclass,
++				  int trylock, int read, int check,
++				  int hardirqs_off,
++				  struct lockdep_map *nest_lock,
++				  unsigned long ip,
++				  int references, int pin_count)
+ {
+ 	struct task_struct *curr = current;
+ 	struct lock_class *class = NULL;
+@@ -3564,13 +3567,14 @@ static int reacquire_held_locks(struct task_struct *curr, unsigned int depth,
+ 	struct held_lock *hlock;
+ 
+ 	for (hlock = curr->held_locks + idx; idx < depth; idx++, hlock++) {
+-		if (!__lock_acquire(hlock->instance,
+-				    hlock_class(hlock)->subclass,
+-				    hlock->trylock,
+-				    hlock->read, hlock->check,
+-				    hlock->hardirqs_off,
+-				    hlock->nest_lock, hlock->acquire_ip,
+-				    hlock->references, hlock->pin_count))
++		if (!__lock_acquire_lockdep(hlock->instance,
++					    hlock_class(hlock)->subclass,
++					    hlock->trylock,
++					    hlock->read, hlock->check,
++					    hlock->hardirqs_off,
++					    hlock->nest_lock, hlock->acquire_ip,
++					    hlock->references,
++					    hlock->pin_count))
+ 			return 1;
+ 	}
+ 	return 0;
+@@ -3917,8 +3921,8 @@ void lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ 
+ 	current->lockdep_recursion = 1;
+ 	trace_lock_acquire(lock, subclass, trylock, read, check, nest_lock, ip);
+-	__lock_acquire(lock, subclass, trylock, read, check,
+-		       irqs_disabled_flags(flags), nest_lock, ip, 0, 0);
++	__lock_acquire_lockdep(lock, subclass, trylock, read, check,
++			       irqs_disabled_flags(flags), nest_lock, ip, 0, 0);
+ 	current->lockdep_recursion = 0;
+ 	raw_local_irq_restore(flags);
+ }
 -- 
-Michal Hocko
-SUSE Labs
+2.4.11
