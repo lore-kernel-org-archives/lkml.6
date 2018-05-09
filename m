@@ -1,62 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934459AbeEIJt2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:49:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42866 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934097AbeEIJtZ (ORCPT
+        id S934529AbeEIJu5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:50:57 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:53966 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934142AbeEIJuw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:49:25 -0400
-Date: Wed, 9 May 2018 11:49:06 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
-        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
-        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
-        Daniel Walker <danielwa@cisco.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
-Subject: Re: [PATCH 5/7] sched: loadavg: make calc_load_n() public
-Message-ID: <20180509094906.GI12217@hirez.programming.kicks-ass.net>
-References: <20180507210135.1823-1-hannes@cmpxchg.org>
- <20180507210135.1823-6-hannes@cmpxchg.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180507210135.1823-6-hannes@cmpxchg.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Wed, 9 May 2018 05:50:52 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w499oiPO018127
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/4] modpost: remove redundant is_vmlinux() test
+Date: Wed,  9 May 2018 18:50:39 +0900
+Message-Id: <1525859440-29583-3-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525859440-29583-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1525859440-29583-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 05:01:33PM -0400, Johannes Weiner wrote:
-> +static inline unsigned long
-> +fixed_power_int(unsigned long x, unsigned int frac_bits, unsigned int n)
-> +{
-> +	unsigned long result = 1UL << frac_bits;
-> +
-> +	if (n) {
-> +		for (;;) {
-> +			if (n & 1) {
-> +				result *= x;
-> +				result += 1UL << (frac_bits - 1);
-> +				result >>= frac_bits;
-> +			}
-> +			n >>= 1;
-> +			if (!n)
-> +				break;
-> +			x *= x;
-> +			x += 1UL << (frac_bits - 1);
-> +			x >>= frac_bits;
-> +		}
-> +	}
-> +
-> +	return result;
-> +}
+The second test of is_vmlinux() is redundant.
 
-No real objection; but that does look a wee bit fat for an inline I
-suppose.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ scripts/mod/modpost.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 8606b6c..9e70a6a 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1971,8 +1971,7 @@ static void read_symbols(char *modname)
+ 		handle_modversions(mod, &info, sym, symname);
+ 		handle_moddevtable(mod, &info, sym, symname);
+ 	}
+-	if (!is_vmlinux(modname) ||
+-	     (is_vmlinux(modname) && vmlinux_section_warnings))
++	if (!is_vmlinux(modname) || vmlinux_section_warnings)
+ 		check_sec_ref(mod, modname, &info);
+ 
+ 	version = get_modinfo(&info, "version");
+-- 
+2.7.4
