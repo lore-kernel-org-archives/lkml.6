@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965570AbeEIQ0W (ORCPT <rfc822;w@1wt.eu>);
+        id S965588AbeEIQ0Y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:26:24 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7663 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965532AbeEIQ0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 9 May 2018 12:26:22 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:42813 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965513AbeEIQ0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:26:17 -0400
 From: Salil Mehta <salil.mehta@huawei.com>
 To: <davem@davemloft.net>
 CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>
-Subject: [PATCH net-next 3/4] net: hns3: fix for cleaning ring problem
-Date: Wed, 9 May 2018 17:24:40 +0100
-Message-ID: <20180509162441.18068-4-salil.mehta@huawei.com>
+Subject: [PATCH net-next 1/4] net: hns3: Fix for setting mac address when resetting
+Date: Wed, 9 May 2018 17:24:38 +0100
+Message-ID: <20180509162441.18068-2-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20180509162441.18068-1-salil.mehta@huawei.com>
 References: <20180509162441.18068-1-salil.mehta@huawei.com>
@@ -28,78 +28,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yunsheng Lin <linyunsheng@huawei.com>
 
-The head or tail in hardware is not longer valid when resetting,
-current hns3_clear_all_ring use them to clean the ring, which
-will cause problem during resetting.
+When hns3_init_mac_addr is called during reset process, it will
+get the mac address from NCL_CONFIG and set it to hardware. If
+user has changed the mac address, then the mac address set by
+user is lost during resetting.
 
-This patch fixes it by using next_to_use and next_to_clean in
-the ring struct.
+This patch fixes it by not getting the mac address from NCL_CONFIG
+when resetting.
 
-Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
+Fixes: 424eb834a9be ("net: hns3: Unified HNS3 {VF|PF} Ethernet Driver for hip08 SoC")
 Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 34 ++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index bd8e14b..4031174 100644
+index 729bcab..a55c8f515 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -3203,9 +3203,35 @@ static void hns3_recover_hw_addr(struct net_device *ndev)
- 		hns3_nic_mc_sync(ndev, ha->addr);
+@@ -3046,13 +3046,13 @@ int hns3_uninit_all_ring(struct hns3_nic_priv *priv)
  }
  
--static void hns3_drop_skb_data(struct hns3_enet_ring *ring, struct sk_buff *skb)
-+static void hns3_clear_tx_ring(struct hns3_enet_ring *ring)
+ /* Set mac addr if it is configured. or leave it to the AE driver */
+-static void hns3_init_mac_addr(struct net_device *netdev)
++static void hns3_init_mac_addr(struct net_device *netdev, bool init)
  {
--	dev_kfree_skb_any(skb);
-+	if (!HNAE3_IS_TX_RING(ring))
-+		return;
-+
-+	while (ring->next_to_clean != ring->next_to_use) {
-+		hns3_free_buffer_detach(ring, ring->next_to_clean);
-+		ring_ptr_move_fw(ring, next_to_clean);
-+	}
-+}
-+
-+static void hns3_clear_rx_ring(struct hns3_enet_ring *ring)
-+{
-+	if (HNAE3_IS_TX_RING(ring))
-+		return;
-+
-+	while (ring->next_to_use != ring->next_to_clean) {
-+		/* When a buffer is not reused, it's memory has been
-+		 * freed in hns3_handle_rx_bd or will be freed by
-+		 * stack, so only need to unmap the buffer here.
-+		 */
-+		if (!ring->desc_cb[ring->next_to_use].reuse_flag) {
-+			hns3_unmap_buffer(ring,
-+					  &ring->desc_cb[ring->next_to_use]);
-+			ring->desc_cb[ring->next_to_use].dma = 0;
-+		}
-+
-+		ring_ptr_move_fw(ring, next_to_use);
-+	}
- }
+ 	struct hns3_nic_priv *priv = netdev_priv(netdev);
+ 	struct hnae3_handle *h = priv->ae_handle;
+ 	u8 mac_addr_temp[ETH_ALEN];
  
- static void hns3_clear_all_ring(struct hnae3_handle *h)
-@@ -3219,13 +3245,13 @@ static void hns3_clear_all_ring(struct hnae3_handle *h)
- 		struct hns3_enet_ring *ring;
- 
- 		ring = priv->ring_data[i].ring;
--		hns3_clean_tx_ring(ring, ring->desc_num);
-+		hns3_clear_tx_ring(ring);
- 		dev_queue = netdev_get_tx_queue(ndev,
- 						priv->ring_data[i].queue_index);
- 		netdev_tx_reset_queue(dev_queue);
- 
- 		ring = priv->ring_data[i + h->kinfo.num_tqps].ring;
--		hns3_clean_rx_ring(ring, ring->desc_num, hns3_drop_skb_data);
-+		hns3_clear_rx_ring(ring);
+-	if (h->ae_algo->ops->get_mac_addr) {
++	if (h->ae_algo->ops->get_mac_addr && init) {
+ 		h->ae_algo->ops->get_mac_addr(h, mac_addr_temp);
+ 		ether_addr_copy(netdev->dev_addr, mac_addr_temp);
  	}
- }
+@@ -3106,7 +3106,7 @@ static int hns3_client_init(struct hnae3_handle *handle)
+ 	handle->kinfo.netdev = netdev;
+ 	handle->priv = (void *)priv;
+ 
+-	hns3_init_mac_addr(netdev);
++	hns3_init_mac_addr(netdev, true);
+ 
+ 	hns3_set_default_feature(netdev);
+ 
+@@ -3353,7 +3353,7 @@ static int hns3_reset_notify_init_enet(struct hnae3_handle *handle)
+ 	struct hns3_nic_priv *priv = netdev_priv(netdev);
+ 	int ret;
+ 
+-	hns3_init_mac_addr(netdev);
++	hns3_init_mac_addr(netdev, false);
+ 	hns3_nic_set_rx_mode(netdev);
+ 	hns3_recover_hw_addr(netdev);
  
 -- 
 2.7.4
