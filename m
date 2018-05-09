@@ -1,103 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934756AbeEIMAy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:00:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50359 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751052AbeEIMAx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:00:53 -0400
-Date: Wed, 9 May 2018 14:00:50 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, Peter Zijlstra <peterz@infradead.org>,
-        Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] printk: Ratelimit messages printed by console drivers
-Message-ID: <20180509120050.eyuprdh75grhdsh4@pathway.suse.cz>
-References: <20180420140157.2nx5nkojj7l2y7if@pathway.suse.cz>
- <20180420101751.6c1c70e8@gandalf.local.home>
- <20180420145720.hb7bbyd5xbm5je32@pathway.suse.cz>
- <20180420111307.44008fc7@gandalf.local.home>
- <20180423103232.k23yulv2e7fah42r@pathway.suse.cz>
- <20180423073603.6b3294ba@gandalf.local.home>
- <20180423124502.423fb57thvbf3zet@pathway.suse.cz>
- <20180425053146.GA25288@jagdpanzerIV>
- <20180426094211.okftwdzgfn72rik3@pathway.suse.cz>
- <20180427102245.GA591@jagdpanzerIV>
+        id S934820AbeEIMBF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:01:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42172 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751052AbeEIMBC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 08:01:02 -0400
+Date: Wed, 9 May 2018 09:00:57 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Hartmut Knaack <knaack.h@gmx.de>, Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
+Subject: Re: [PATCH 15/18] iio: iio.h: use nested struct support on
+ kernel-doc markup
+Message-ID: <20180509090057.23051846@vento.lan>
+In-Reply-To: <20180507180803.21e967b2@archlinux>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+        <1a31240699b1b6ee089b5b36889ab27ae14ad94e.1525684985.git.mchehab+samsung@kernel.org>
+        <20180507180803.21e967b2@archlinux>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180427102245.GA591@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2018-04-27 19:22:45, Sergey Senozhatsky wrote:
-> On (04/26/18 11:42), Petr Mladek wrote:
-> [..]
-> > Honestly, I do not believe that console drivers are like Scheherazade.
-> > They are not able to make up long interesting stories. Let's say that
-> > lockdep splat has more than 100 lines but it can happen only once.
-> > Let's say that WARNs have about 40 lines. I somehow doubt that we
-> > could ever see 10 different WARN calls from one con->write() call.
+Em Mon, 7 May 2018 18:08:03 +0100
+Jonathan Cameron <jic23@kernel.org> escreveu:
+
+> On Mon,  7 May 2018 06:35:51 -0300
+> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 > 
-> The problem here is that it takes a human being with IQ to tell what's
-> repetitive, what's useless and what's not.
-> 
-> 	vprintk(...)
-> 	{
-> 		if (!__ratelimit())
-> 			return;
-> 	}
-> 
-> has zero IQ to make such decisions.
-
-You make it too complicated. Also it seems that you repeatedly
-hide the fact that con->write() context is recursive. Just try to add
-printk() into call_console_drivers() and see what happens.
-
-IMHO, if con->write() wants to add more than 1000 (or 100 or whatever
-sane limit) new lines then something is really wrong and we should
-stop it. It is that simple.
-
-
-> > > But we first need a real reason. Right now it looks to me like
-> > > we have "a solution" to a problem which we have never witnessed.
+> > Solve those Sphinx warnings:
 > > 
-> > I am trying to find a "simple" and generic solution for the problem
-> > reported by Tejun:
-> [..]
-> > 1. Console is IPMI emulated serial console.  Super slow.  Also
-> >    netconsole is in use.
-> > 2. System runs out of memory, OOM triggers.
-> > 3. OOM handler is printing out OOM debug info.
-> > 4. While trying to emit the messages for netconsole, the network stack
-> >    / driver tries to allocate memory and then fail, which in turn
-> >    triggers allocation failure or other warning messages.  printk was
-> >    already flushing, so the messages are queued on the ring.
-> > 5. OOM handler keeps flushing but 4 repeats and the queue is never
-> >    shrinking.  Because OOM handler is trapped in printk flushing, it
-> >    never manages to free memory and no one else can enter OOM path
-> >    either, so the system is trapped in this state.
-> > </paste>
+> >     ./include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.sign' not described in 'iio_chan_spec'
+> >     ./include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.realbits' not described in 'iio_chan_spec'
+> >     ./include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.storagebits' not described in 'iio_chan_spec'
+> >     ./include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.shift' not described in 'iio_chan_spec'
+> >     ./include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.repeat' not described in 'iio_chan_spec'
+> >     ./include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.endianness' not described in 'iio_chan_spec'
+> > 
+> >     ./include/linux/iio/iio.h:191: WARNING: Unexpected indentation.
+> >     ./include/linux/iio/iio.h:192: WARNING: Block quote ends without a blank line; unexpected unindent.
+> >     ./include/linux/iio/iio.h:198: WARNING: Definition list ends without a blank line; unexpected unindent.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
+> Great thanks.  I couldn't figure out how to do this last time
+> I looked at it.
 
-IMHO, we do not need to chase down this particular problem. It was
-already "solved" by the commit 400e22499dd92613821 ("mm: don't warn
-about allocations which stall for too long").
+Support for nested structs were only recently introduced :-)
 
-It was just an example. I wanted to make con->write() generally safe.
-I thought that the problem (recursion) was clear enough.
+> 
+> Applied to the togreg branch of iio.git and pushed out as testing for
+> the autobuilders to ignore it.
 
-
-> Yes, and that's why I want to take a look at the logs/backtraces.
-
-If you want more cases to analyze, fair enough. I do not have any
-at hands. It is not an urgent issue for me and I am not going to
-spend more time on this.
-
-Best Regards,
-Petr
+Thanks!
+Mauro
