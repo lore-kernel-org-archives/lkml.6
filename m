@@ -1,119 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933543AbeEICVs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 22:21:48 -0400
-Received: from regular1.263xmail.com ([211.150.99.132]:35649 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932579AbeEICVq (ORCPT
+        id S933608AbeEIC21 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 22:28:27 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:26175 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932526AbeEIC2Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 22:21:46 -0400
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-X-IP-DOMAINF: 1
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: dianders@chromium.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <a8af9026733d0f37ac786003f0728949>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Message-ID: <5AF25B2E.8080901@rock-chips.com>
-Date: Wed, 09 May 2018 10:21:34 +0800
-From: JeffyChen <jeffy.chen@rock-chips.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
-MIME-Version: 1.0
-To: Doug Anderson <dianders@chromium.org>,
-        Brian Norris <briannorris@chromium.org>
-CC: LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RESEND PATCH] pinctrl: rockchip: Disable interrupt when changing
- it's capability
-References: <20180503065553.7762-1-jeffy.chen@rock-chips.com> <20180507221511.GA6448@rodete-desktop-imager.corp.google.com> <5AF0FF18.1050905@rock-chips.com> <20180508015623.GA61455@rodete-desktop-imager.corp.google.com> <CAD=FV=W_v+aoNT09k-2exVABTFzOp0heY-XWcLi95uPisZhiGQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=W_v+aoNT09k-2exVABTFzOp0heY-XWcLi95uPisZhiGQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Tue, 8 May 2018 22:28:25 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180509022823epoutp01cac09fc30ca228f5448b0ab53b9204db~s2PD49Grx0340003400epoutp01b
+X-AuditID: b6c32a47-bc7ff70000001011-27-5af25cc4bcd9
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="utf-8"
+Message-id: <5AF25CC3.1010902@samsung.com>
+Date: Wed, 09 May 2018 11:28:19 +0900
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To: John Stultz <john.stultz@linaro.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Leo Yan <leo.yan@linaro.org>, Jean Wangtao <kevin.wangtao@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: Userland breakage from
+ "Modify the device name as devfreq(X) for sysfs"
+In-reply-to: <CALAqxLVJekViPWi4kh2JOQ46XXtTv2-2BXOe9O8AvfnvX9Z+Sw@mail.gmail.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGKsWRmVeSWpSXmKPExsWy7bCmqe6RmE9RBqv2sFo0L17PZnHmt67F
+        rO3H2S3ONr1ht5i89RKbxeVdc9gsbjeuYHNg97hzbQ+bx/65a9g9+rasYvT4vEkugCUq1SYj
+        NTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6AAlhbLEnFKg
+        UEBicbGSvp1NUX5pSapCRn5xia1StKGhkZ6hgbmekRGQNo61MjIFKklIzbj5+xxrwTLpih2H
+        mlgaGFeIdTFyckgImEi8mTuVsYuRi0NIYAejxJ/7m1ghnO+MEs0vjrLBVE2ds5UFIrGBUWL6
+        wVOMIAleAUGJH5PvASU4OJgF5CWOXMoGCTMLaEq8+DIJqv4uo0Tr9r9gNbwCWhJbFhWC1LAI
+        qEpMfLaaCcRmAwrvf3EDbBe/gKLE1R+PwcaLCkRI7Jz/jR3EFhGok+i/1M8EMpNZYBqjRM+9
+        N2BFwgJhEpe/XQJr5hQIluhefpYJ4ugjbBLLP6ZC2C4Sjz/+Z4awhSVeHd/CDmFLSzxbtRHs
+        fQmBdkaJ9r3zmCGcKYwS567fg5pkLPFsYRcTxGt8Eh2H/7KDfCMhwCvR0SYEUeIhcXf1LEYI
+        21Hi55GnTBDfL2GU2HekgX0Co9wspACbhQiwWUgBtoCReRWjWGpBcW56arFRgbFecWJucWle
+        ul5yfu4mRnCa03LfwbjtnM8hRgEORiUeXomdH6OEWBPLiitzDzFKcDArifDKGn+KEuJNSays
+        Si3Kjy8qzUktPsRoCgzwicxSosn5wBScVxJvaGpkbGxsYWpuaWxgqSTO2+B7JkpIID2xJDU7
+        NbUgtQimj4mDU6qBsXWbkdnLB3eCNPy9I1JkFXimvDH7yVv/atYrqTPHGKUreupunhVQ1m/g
+        +WI8yTVSONPxHsf8S/f+HfJz7OhVfiXkcm+Of5/OjbO3Kk7smBmokGE6JTfz5y2p6B2XKldp
+        KJ14n7Ss+2mRgdIOj+6qbfpdtpWFy55M3vE+c4LslKf9PcqPNzY8VGIpzkg01GIuKk4EACgt
+        6aiJAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOLMWRmVeSWpSXmKPExsVy+t9jQd3DMZ+iDLbvM7VoXryezeLMb12L
+        WduPs1ucbXrDbjF56yU2i8u75rBZ3G5cwebA7nHn2h42j/1z17B79G1ZxejxeZNcAEsUl01K
+        ak5mWWqRvl0CV8bN3+dYC5ZJV+w41MTSwLhCrIuRk0NCwERi6pytLF2MXBxCAusYJc6tuMME
+        kuAVEJT4MfkeUIKDg1lAXuLIpWwIU11iypRciPL7jBJ9Eyezg8R5BbQktiwqBOlkEVCVmPhs
+        NdgUNqDw/hc32EBsfgFFias/HjOClIsKREh0n6gEGSMi0MAosfT8PmYQh1lgGqNEz+/HYM3C
+        AmESl79dYoNYtgzotu2PwBKcAsES3R82Mk1gFJiF5NRZCKfOQjh1ASPzKkbJ1ILi3PTcYqMC
+        o7zUcr3ixNzi0rx0veT83E2MwODedlirfwfj4yXxhxgFOBiVeHgldn6MEmJNLCuuzD3EKMHB
+        rCTCK2v8KUqINyWxsiq1KD++qDQntfgQozQHi5I4L3/+sUghgfTEktTs1NSC1CKYLBMHp1QD
+        o07ll3YOI7dZTS+rLnStazPoZ73e/fhOpujPfT2em+/618x0/3Hj6Jrtz34dtIzIkJbKYDgS
+        nfKoKeF3w8aZhodf+ZgcfXom8X7GEhvbsyrxqveCX/IsEzvrqMN+w+Cn5CbeuXsZVZ76qsb8
+        WOA/TeZG2uODsy2kVbb4Mk8+tTVbuW+1z8wDKkosxRmJhlrMRcWJAH2uB4JqAgAA
+X-CMS-MailID: 20180509022819epcas2p126700f186f0679b990dd7ab5f0702e53
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180508231744epcas2p1251a2e35591e9d2624337d4c8f1d6974
+X-RootMTR: 20180508231744epcas2p1251a2e35591e9d2624337d4c8f1d6974
+References: <CGME20180508231744epcas2p1251a2e35591e9d2624337d4c8f1d6974@epcas2p1.samsung.com>
+        <CALAqxLVJekViPWi4kh2JOQ46XXtTv2-2BXOe9O8AvfnvX9Z+Sw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug,
+Hi John,
 
-On 05/09/2018 03:46 AM, Doug Anderson wrote:
-> One note is that in the case Brian points at (where we need to
-> simulate EDGE_BOTH by swapping edges) we purposely ignored the TRM and
-> we needed to do that to avoid losing interrupts.  For details, see
-> commit 53b1bfc76df2 ("pinctrl: rockchip: Avoid losing interrupts when
-> supporting both edges").  We did this because:
->
-> 1. We believed that the IP block in Rockchip SoCs has nearly the same
-> logic as "gpio-dwapb.c" and that's what "gpio-dwapb.c" did.
->
+On 2018년 05월 09일 08:17, John Stultz wrote:
+> Hey folks,
+>   I wanted to bring up an issue we've recently tripped over, which was
+> caused by 4585fbcb5331f ("PM / devfreq: Modify the device name as
+> devfreq(X) for sysfs").
+>    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=4585fbcb5331fc910b7e553ad3efd0dd7b320d14
+> 
+> That patch replaced paths like:
+>    /sys/class/devfreq/ddr_devfreq/min_freq
+> and
+>   /sys/class/devfreq/e82c0000.mali/min_freq
+> 
+> With
+>   /sys/class/devfreq/devfreq(0)/min_freq
+> and
+>   /sys/class/devfreq/devfreq(1)/min_freq
+> 
+> 
+> This broke userspace we have that needs to work on 4.4, 4.9 and 4.14 (and on).
 
-hmm, but i saw the gpio-dwapb.c actually toggle trigger after handle 
-irq, which might avoid the race Brian mentioned:
-+               generic_handle_irq(gpio_irq);
-+               irq_status &= ~BIT(hwirq);
-+
-+               if ((irq_get_trigger_type(gpio_irq) & IRQ_TYPE_SENSE_MASK)
-+                       == IRQ_TYPE_EDGE_BOTH)
-+                       dwapb_toggle_trigger(gpio, hwirq);
+Firstly, I'm sorry to make some problem on userland.
+
+> 
+> I wanted to try to ask to understand more about the rational for this
+> patch, as it doesn't make much sense to me, particularly as now it is
+> less obvious as to which path is for which device  - and more
+> worrisome it could change depending on initialization order.
+
+Some linux framework used the their own prefix under "/sys/class/"
+for device such as input/pwm/hwmon/regulator and so on.
+(But, some linux framework used the device name directly without any changes)
+
+I thought that devfreq better to use use the consistent name.
+If user wanted to access the specific device with device name,
+the user can access the path of '/sys/devices/platform/...'.
+
+[Example on Exynos5433-based TM2 board]
+root@localhost:~# ls -al /sys/class/devfreq
+total 0
+drwxr-xr-x  2 root root 0 Jul 26 04:49 .
+drwxr-xr-x 50 root root 0 Jan  1  1970 ..
+lrwxrwxrwx  1 root root 0 Jul 26 04:49 devfreq0 -> ../../devices/platform/soc/soc:bus0/devfreq/devfreq0
+lrwxrwxrwx  1 root root 0 Jul 26 04:49 devfreq1 -> ../../devices/platform/soc/soc:bus1/devfreq/devfreq1
+(skip)
+
+- User can access the devfreq device with specific device name.
+root@localhost:/sys/devices/platform/soc/soc:bus0/devfreq/devfreq0# pwd
+/sys/devices/platform/soc/soc:bus0/devfreq/devfreq0
+
+root@localhost:/sys/devices/platform/soc/soc:bus0/devfreq/devfreq0# ls
+available_frequencies  device    min_freq          subsystem    uevent
+available_governors    governor  polling_interval  target_freq
+cur_freq               max_freq  power             trans_stat
+
+root@localhost:/sys/devices/platform/soc/soc:bus0/devfreq/devfreq0# cat min_freq 
+160000000
 
 
-and i also saw ./qcom/pinctrl-msm.c do the 
-toggle(msm_gpio_update_dual_edge_pos) at the end of 
-msm_gpio_irq_set_type and msm_gpio_irq_ack, that seems can avoid the 
-polarity races too.
+But, there is one of my mistake. The /sys/class/devfreq/devfreq(X)
+doesn't have the 'name' attribute. So, the user cannot find the required
+device. It is my mistake. I'll add the 'name' attribute as following:
+- /sys/class/devfreq/devfreqX/name
 
-> 2. We were actually losing real interrupts and this was the only way
-> we could figure out how to fix it.
->
-> When I tested that back in the day I was fairly convinced that we
-> weren't losing any interrupts in the EDGE_BOTH case after my fix, but
-> I certainly could have messed up.
->
->
-> For the EDGE_BOTH case it was important not to lose an interrupt
-> because, as you guys are talking about, we could end up configured the
-> wrong way.  I think in your case where you're just picking one
-> polarity losing an interrupt shouldn't matter since it's undefined
-> exactly if an edge happens while you're in the middle of executing
-> rockchip_irq_set_type().  Is that right?
+> 
+> Unfortunately, this wasn't noticed very quickly, as the patch has been
+> upstream now for some time.  But I wanted to better understand why
+> this change was made, and see if we might consider reverting it, or
+> alternatively consider provide multiple sysfs links (both dev_name and
+> devfreq(N)) so that we can preserve compatibility?
 
-right, so we now have 2 cases: rockchip_irq_demux/ rockchip_irq_set_type
+Unfortunately, there are no frameworks which provide the both dev_name and
+[defined prefix](N) link under /sys/class/. I'm not sure this way.
 
-if i'm right about the spurious irq(only happen when set rising for a 
-high gpio, or set falling for a low gpio), then:
+As you comment, devfreq(number) is not fixed as the initialization order.
+After adding the 'name' attribute, the user can find the specific device.
 
-1/ rockchip_irq_demux
-it's important to not losing irqs in this case, maybe we can
-
-a) ack irq
-b) update polarity for edge both irq
-
-we don't need to disable irq in b), since we would not hit the spurious 
-irq cases here(always check gpio level to toggle it)
+How about using the 'name' attribute to find the device
+after adding new 'name' attribute when access device through /sys/class?
 
 
-2/ rockchip_irq_set_type
-it's important to not having spurious irqs
-
-so we can disable irq during changing polarity only in these case:
-((rising && gpio is heigh) || (falling && gpio is low))
-
-i'm still confirming the spurious irq with IC guys.
-
->
->
-> -Doug
->
->
->
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
