@@ -1,125 +1,100 @@
-Return-Path: <bgoswami@codeaurora.org>
-X-Google-Smtp-Source: AB8JxZrbp9UOPZIMo+sKKKsuocZpEtuQkTFQfxa9mM8QOvr8GhoERCcRLbdph7U181fxtgVJOAbD
-ARC-Seal: i=1; a=rsa-sha256; t=1526370249; cv=none;
+Return-Path: <srinivas.kandagatla@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1525870841; cv=none;
         d=google.com; s=arc-20160816;
-        b=XUjAITAvHPNtD0XF20KLCRfmhCZfvGXbqwUb8oARPpG/D5xCgNHsOt2XY3TQbCGXFc
-         PdTZJ+J20wQKB6uVIOZXw6JKl6lZ5hu+AqX0qJPNkGokn4upt8CH9mV8HKGwBcor/OC1
-         rYhG1cboUli+xKAUYsEGBnURE6rTi0iE428qYY55bbCZYZBajZEGF549sQE5boss/oSW
-         80LYXmDTDcB78URmjzI97a66C4nxh4VoZTub8nobMFZF9Gd3HV3AXLH+WKP6TSx5vGVX
-         5xrSeZn6Zej0if0K2PtateSfdelbLC/6VguQi4zX9r123dtexcpgzh25hNMwXqTXG0cs
-         bYlQ==
+        b=JG1GgVz7mUTgDO2Du2P7EiD4GDsilbIaXURkoh5JQE4quwJqeu1um6zVaf4x2U8n4W
+         sH+JLH5vBoHG7/Kjs/spkjgTl2g8TB8c0tX6JTjLXbazlVmUqFx/CenfxRTblpsOfRC7
+         H23+MVo7W/hWQCfFDyCd21lTT8LirJ9Z0wI+/rbUOHJNCVKSVpuExR8jeKt4OQ8YWsfO
+         69mDPyfuEMYANihaUL+8I1VVtgnFlakxvfjUy3SCa+zI0H5tkp3JI+di2B1dQ2/ntc/8
+         jWVUTc/NKYWFJIzWX0Itck9D0GSu84uuC0hjRt62fPW3mYhuQvOrf/Qr836HHIbcBTwH
+         rOjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:from:references:cc:to:subject:dmarc-filter
-         :dkim-signature:dkim-signature:arc-authentication-results;
-        bh=6FeOXHPq/s1ubGI6pwcZ9HtisbyeCwLA3W3/B1G8sFs=;
-        b=bBNMrJRbjlBEIRilDzqGx/mA52GlsPd67TdSbMvcJBcFMcUQ1R1mUP8QFLBxcrBZem
-         Lizr5NF+QUqjtxWnFphHlua48a/dcVOGEB9DBi1eoOOaiL8wUdJA2n5Ef8Aou3/eiE9c
-         CYnRBVvGYaluM1EXAbwR9mGWMKRRENsOT/JFjz6PWUkpKBv1MOtgg+3jZsQIqg7S++4V
-         DPIaeGPpQOkVxIhdTMXri4n6j04FWwLrsAEyhD8pjbRR0OHZhhipQ5NPOngWNEY/ExAd
-         sAEra5YcDOeY4qbgOesx5bGyvpMCCiqbbfD6WLeg9r3CeLlBImvsuFtDzBD6xklTFj+H
-         Bntg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=7QY0Jir7FHjo2znovGpIiqHvAm6kI7ZR8Aut4xTvvzU=;
+        b=mklt+VEJOFz9FcALRJSbB3kJeDTboVR7hHb5iGVOd6/w1SnvS/dGZA6rfuZ5zp003z
+         8GYgxWQBIW7S98wdFiZF56WQtf4qT64aBbLke5r4mQpbJnjEgWNbm8DksavOEnLJpMMl
+         7Bq7VHpiXGV8lkWhbB1wJzDDZq6MI1vTPwWU+4ECQCaiiEH3pRPdus5GUVzIEbstLQXD
+         YykXGUL0jYQxKp/Sb2lgOvY5h6/42VWC0c0KD3UbPhNwTtnHgdCEZrEKGsTFAwoNtVYP
+         TckSkh5H5us1zufAcCcAyKT+yAMvqctfHsIZJ4AwP+DZg5db1DybvJyAij7fhJ6G+o4C
+         p+rw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=NdR9gIdI;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=drrW10iA;
-       spf=pass (google.com: domain of bgoswami@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=bgoswami@codeaurora.org
+       dkim=pass header.i=@linaro.org header.s=google header.b=jqJgakEL;
+       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=NdR9gIdI;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=drrW10iA;
-       spf=pass (google.com: domain of bgoswami@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=bgoswami@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B79A660A00
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgoswami@codeaurora.org
-Subject: Re: [PATCH v8 08/24] ASoC: qdsp6: q6core: Add q6core driver
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- andy.gross@linaro.org, broonie@kernel.org, linux-arm-msm@vger.kernel.org,
- alsa-devel@alsa-project.org, robh+dt@kernel.org
-Cc: gregkh@linuxfoundation.org, david.brown@linaro.org, mark.rutland@arm.com,
- lgirdwood@gmail.com, plai@codeaurora.org, tiwai@suse.com, perex@perex.cz,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
- spatakok@qti.qualcomm.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=jqJgakEL;
+       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZqy+RuNT8LNJbWfRLvabAeJxa+bVLQlmo83dRY5eoBYZTXv9KS4TnFrwiSz2E4b4DC0EYqO2Q==
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: andy.gross@linaro.org,
+	broonie@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	robh+dt@kernel.org,
+	bgoswami@codeaurora.org
+Cc: gregkh@linuxfoundation.org,
+	david.brown@linaro.org,
+	mark.rutland@arm.com,
+	lgirdwood@gmail.com,
+	plai@codeaurora.org,
+	tiwai@suse.com,
+	perex@perex.cz,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	rohkumar@qti.qualcomm.com,
+	spatakok@qti.qualcomm.com,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v8 03/24] ASoC: qdsp6: dt-bindings: Add q6core dt bindings
+Date: Wed,  9 May 2018 13:56:14 +0100
+Message-Id: <20180509125635.5653-4-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180509125635.5653-1-srinivas.kandagatla@linaro.org>
 References: <20180509125635.5653-1-srinivas.kandagatla@linaro.org>
- <20180509125635.5653-9-srinivas.kandagatla@linaro.org>
-From: Banajit Goswami <bgoswami@codeaurora.org>
-Message-ID: <fa023436-fa6b-5ed1-85b2-8d144bd37afa@codeaurora.org>
-Date: Tue, 15 May 2018 00:44:05 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180509125635.5653-9-srinivas.kandagatla@linaro.org>
-Content-Type: multipart/alternative;
- boundary="------------81A9B949EA32259B24578391"
-Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599263616340654821?=
-X-GMAIL-MSGID: =?utf-8?q?1600515210363526654?=
+X-GMAIL-THRID: =?utf-8?q?1599991543212419255?=
+X-GMAIL-MSGID: =?utf-8?q?1599991543212419255?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------81A9B949EA32259B24578391
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+This patch add DT bindings for Q6CORE DSP module.
 
-
-On 5/9/2018 5:56 AM, Srinivas Kandagatla wrote:
-> This patch adds support to core apr service, which is used to query
-> status of other static and dynamic services on the dsp.
->
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
-> ---
->   sound/soc/qcom/Kconfig        |   4 +
->   sound/soc/qcom/qdsp6/Makefile |   1 +
->   sound/soc/qcom/qdsp6/q6core.c | 380 ++++++++++++++++++++++++++++++++++++++++++
->   sound/soc/qcom/qdsp6/q6core.h |  15 ++
->   4 files changed, 400 insertions(+)
->   create mode 100644 sound/soc/qcom/qdsp6/q6core.c
->   create mode 100644 sound/soc/qcom/qdsp6/q6core.h
-Acked-by: Banajit Goswami <bgoswami@codeaurora.org>
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
-
---------------81A9B949EA32259B24578391
-Content-Type: text/html; charset=utf-8
-Content-Transfer-Encoding: 7bit
-
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  </head>
-  <body text="#000000" bgcolor="#FFFFFF">
-    <br>
-    <div class="moz-cite-prefix">On 5/9/2018 5:56 AM, Srinivas
-      Kandagatla wrote:<br>
-    </div>
-    <blockquote type="cite"
-      cite="mid:20180509125635.5653-9-srinivas.kandagatla@linaro.org">
-      <pre wrap="">This patch adds support to core apr service, which is used to query
-status of other static and dynamic services on the dsp.
-
-Signed-off-by: Srinivas Kandagatla <a class="moz-txt-link-rfc2396E" href="mailto:srinivas.kandagatla@linaro.org">&lt;srinivas.kandagatla@linaro.org&gt;</a>
-Reviewed-and-tested-by: Rohit kumar <a class="moz-txt-link-rfc2396E" href="mailto:rohitkr@codeaurora.org">&lt;rohitkr@codeaurora.org&gt;</a>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
 ---
- sound/soc/qcom/Kconfig        |   4 +
- sound/soc/qcom/qdsp6/Makefile |   1 +
- sound/soc/qcom/qdsp6/q6core.c | 380 ++++++++++++++++++++++++++++++++++++++++++
- sound/soc/qcom/qdsp6/q6core.h |  15 ++
- 4 files changed, 400 insertions(+)
- create mode 100644 sound/soc/qcom/qdsp6/q6core.c
- create mode 100644 sound/soc/qcom/qdsp6/q6core.h
-</pre>
-    </blockquote>
-    Acked-by: Banajit Goswami <a class="moz-txt-link-rfc2396E"
-      href="mailto:bgoswami@codeaurora.org">&lt;bgoswami@codeaurora.org&gt;</a>
-    <pre class="moz-signature" cols="72">-- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project</pre>
-  </body>
-</html>
+ .../devicetree/bindings/sound/qcom,q6core.txt       | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6core.txt
 
---------------81A9B949EA32259B24578391--
+diff --git a/Documentation/devicetree/bindings/sound/qcom,q6core.txt b/Documentation/devicetree/bindings/sound/qcom,q6core.txt
+new file mode 100644
+index 000000000000..7f36ff8bec18
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/qcom,q6core.txt
+@@ -0,0 +1,21 @@
++Qualcomm ADSP Core service binding
++
++Q6CORE is one of the APR audio service on Q6DSP.
++Please refer to qcom,apr.txt for details of the common apr service bindings
++used by the apr service device.
++
++- but must contain the following property:
++
++- compatible:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "qcom,q6core-v<MAJOR-NUMBER>.<MINOR-NUMBER>".
++		   Or "qcom,q6core" where the version number can be queried
++		   from DSP.
++		   example "qcom,q6core-v2.0"
++
++= EXAMPLE
++q6core@3 {
++	compatible = "qcom,q6core";
++	reg = <APR_SVC_ADSP_CORE>;
++};
+-- 
+2.16.2
