@@ -1,149 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934320AbeEIIkQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:40:16 -0400
-Received: from mga14.intel.com ([192.55.52.115]:19284 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934279AbeEIIkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:40:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
-   d="scan'208";a="52769819"
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Shaohua Li <shli@kernel.org>,
-        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: [PATCH -mm -V2 18/21] mm, THP, swap: Support PMD swap mapping in mincore()
-Date: Wed,  9 May 2018 16:38:43 +0800
-Message-Id: <20180509083846.14823-19-ying.huang@intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180509083846.14823-1-ying.huang@intel.com>
-References: <20180509083846.14823-1-ying.huang@intel.com>
+        id S934345AbeEIIkl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:40:41 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40686 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934310AbeEIIkP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 04:40:15 -0400
+Date: Wed, 9 May 2018 17:39:51 +0900
+From: Mark Brown <broonie@kernel.org>
+To: "Du, Changbin" <changbin.du@intel.com>
+Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
+        rostedt@goodmis.org, rdunlap@infradead.org, x86@kernel.org,
+        lgirdwood@gmail.com, arnd@arndb.de, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] regulator: add dummy function
+ of_find_regulator_by_node
+Message-ID: <20180509083951.GV13402@sirena.org.uk>
+References: <1525566016-30172-1-git-send-email-changbin.du@intel.com>
+ <1525566016-30172-3-git-send-email-changbin.du@intel.com>
+ <20180509082114.GQ13402@sirena.org.uk>
+ <20180509081341.ahx7xuqs366gmqaf@intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="udzYTtuEmHLUHegf"
+Content-Disposition: inline
+In-Reply-To: <20180509081341.ahx7xuqs366gmqaf@intel.com>
+X-Cookie: Advancement in position.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huang Ying <ying.huang@intel.com>
 
-During mincore(), for PMD swap mapping, swap cache will be looked up.
-If the resulting page isn't compound page, the PMD swap mapping will
-be split and fallback to PTE swap mapping processing.
+--udzYTtuEmHLUHegf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Shaohua Li <shli@kernel.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Zi Yan <zi.yan@cs.rutgers.edu>
----
- mm/mincore.c | 37 +++++++++++++++++++++++++++++++------
- 1 file changed, 31 insertions(+), 6 deletions(-)
+On Wed, May 09, 2018 at 04:13:42PM +0800, Du, Changbin wrote:
+> On Wed, May 09, 2018 at 05:21:14PM +0900, Mark Brown wrote:
 
-diff --git a/mm/mincore.c b/mm/mincore.c
-index a66f2052c7b1..897dd2c187e8 100644
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -48,7 +48,8 @@ static int mincore_hugetlb(pte_t *pte, unsigned long hmask, unsigned long addr,
-  * and is up to date; i.e. that no page-in operation would be required
-  * at this time if an application were to map and access this page.
-  */
--static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
-+static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff,
-+				  bool *compound)
- {
- 	unsigned char present = 0;
- 	struct page *page;
-@@ -86,6 +87,8 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
- #endif
- 	if (page) {
- 		present = PageUptodate(page);
-+		if (compound)
-+			*compound = PageCompound(page);
- 		put_page(page);
- 	}
- 
-@@ -103,7 +106,8 @@ static int __mincore_unmapped_range(unsigned long addr, unsigned long end,
- 
- 		pgoff = linear_page_index(vma, addr);
- 		for (i = 0; i < nr; i++, pgoff++)
--			vec[i] = mincore_page(vma->vm_file->f_mapping, pgoff);
-+			vec[i] = mincore_page(vma->vm_file->f_mapping,
-+					      pgoff, NULL);
- 	} else {
- 		for (i = 0; i < nr; i++)
- 			vec[i] = 0;
-@@ -127,14 +131,36 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 	pte_t *ptep;
- 	unsigned char *vec = walk->private;
- 	int nr = (end - addr) >> PAGE_SHIFT;
-+	swp_entry_t entry;
- 
- 	ptl = pmd_trans_huge_lock(pmd, vma);
- 	if (ptl) {
--		memset(vec, 1, nr);
-+		unsigned char val = 1;
-+		bool compound;
-+
-+		if (thp_swap_supported() && is_swap_pmd(*pmd)) {
-+			entry = pmd_to_swp_entry(*pmd);
-+			if (!non_swap_entry(entry)) {
-+				val = mincore_page(swap_address_space(entry),
-+						   swp_offset(entry),
-+						   &compound);
-+				/*
-+				 * The huge swap cluster has been
-+				 * split under us
-+				 */
-+				if (!compound) {
-+					__split_huge_swap_pmd(vma, addr, pmd);
-+					spin_unlock(ptl);
-+					goto fallback;
-+				}
-+			}
-+		}
-+		memset(vec, val, nr);
- 		spin_unlock(ptl);
- 		goto out;
- 	}
- 
-+fallback:
- 	if (pmd_trans_unstable(pmd)) {
- 		__mincore_unmapped_range(addr, end, vma, vec);
- 		goto out;
-@@ -150,8 +176,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 		else if (pte_present(pte))
- 			*vec = 1;
- 		else { /* pte is a swap entry */
--			swp_entry_t entry = pte_to_swp_entry(pte);
--
-+			entry = pte_to_swp_entry(pte);
- 			if (non_swap_entry(entry)) {
- 				/*
- 				 * migration or hwpoison entries are always
-@@ -161,7 +186,7 @@ static int mincore_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
- 			} else {
- #ifdef CONFIG_SWAP
- 				*vec = mincore_page(swap_address_space(entry),
--						    swp_offset(entry));
-+						    swp_offset(entry), NULL);
- #else
- 				WARN_ON(1);
- 				*vec = 1;
--- 
-2.16.1
+> > Please do not submit new versions of already applied patches, please
+> > submit incremental updates to the existing code.  Modifying existing
+> > commits creates problems for other users building on top of those
+> > commits so it's best practice to only change pubished git commits if
+> > absolutely essential.
+
+> Hmm, I saw your merging notification too late. Let me refresh the series. Sorry
+> for confusing.
+
+No problem, just wanted to make sure I wasn't missing any updates from
+this new version.
+
+--udzYTtuEmHLUHegf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrys9YACgkQJNaLcl1U
+h9DCCAf/VP6rHeYQnotzPDF2V8drlbz4lnUv8HqZlc3BYUzCICzPWc5VAfEmVymP
+AzhWSBahraHfBfN4rfb/CGrmLNscjKn8zqrGZnoBARM1oloAKZiohRnHQVrrYJZ2
+g4cmTgQaXCv2+FdyEc4zr97eeM33gPQoWoIeOC+pO2Fmk+zSAfudKEvtwxCbLE+U
+Lx4xNH9F8CatF2VxaZuPwUfKCOh6e7uZJmHFac97NQeEYsOb95M7HKah1A77wolW
+VNvqqomOOWiztnqgd3pqGCABA/i+DwTQY+p6K+y+S43KT8zux/79x2aZgqSs/njQ
+9A4q/dG1CRplf7issZr/s1plZW0Tfg==
+=hROQ
+-----END PGP SIGNATURE-----
+
+--udzYTtuEmHLUHegf--
