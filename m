@@ -1,127 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966011AbeEIXZI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 19:25:08 -0400
-Received: from mail-pl0-f45.google.com ([209.85.160.45]:35026 "EHLO
-        mail-pl0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965949AbeEIXZF (ORCPT
+        id S966003AbeEIXbE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 19:31:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53526 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965408AbeEIXbD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 19:25:05 -0400
-X-Google-Smtp-Source: AB8JxZqEhOpbgW3LllKHJ3PBmLfSI7dO18Qr8ZqQDYwMPpPC1gMpmluHd51RAj01qzGgF3CJR8hR7g==
-Date: Wed, 9 May 2018 16:25:03 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, rplsssn@codeaurora.org
-Subject: Re: [PATCH v8 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
- requests to TCS
-Message-ID: <20180509232503.GJ19594@google.com>
-References: <20180509170159.29682-1-ilina@codeaurora.org>
- <20180509170159.29682-6-ilina@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180509170159.29682-6-ilina@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 9 May 2018 19:31:03 -0400
+Date: Wed, 9 May 2018 16:31:01 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Jia He <hejianet@gmail.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: [PATCH v2] mm/ksm: ignore STABLE_FLAG of rmap_item->address in
+ rmap_walk_ksm
+Message-Id: <20180509163101.02f23de1842a822c61fc68ff@linux-foundation.org>
+In-Reply-To: <1525403506-6750-1-git-send-email-hejianet@gmail.com>
+References: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
+        <1525403506-6750-1-git-send-email-hejianet@gmail.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lina,
+On Fri,  4 May 2018 11:11:46 +0800 Jia He <hejianet@gmail.com> wrote:
 
-On Wed, May 09, 2018 at 11:01:54AM -0600, Lina Iyer wrote:
-> Sleep and wake requests are sent when the application processor
-> subsystem of the SoC is entering deep sleep states like in suspend.
-> These requests help lower the system power requirements when the
-> resources are not in use.
+> In our armv8a server(QDF2400), I noticed lots of WARN_ON caused by PAGE_SIZE
+> unaligned for rmap_item->address under memory pressure tests(start 20 guests
+> and run memhog in the host).
 > 
-> Sleep and wake requests are written to the TCS slots but are not
-> triggered at the time of writing. The TCS are triggered by the firmware
-> after the last of the CPUs has executed its WFI. Since these requests
-> may come in different batches of requests, it is the job of this
-> controller driver to find and arrange the requests into the available
-> TCSes.
+> ...
 > 
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> Reviewed-by: Evan Green <evgreen@chromium.org>
+> In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
+> then the start and end in handle_hva_to_gpa might not be PAGE_SIZE aligned.
+> Thus it will cause exceptions in handle_hva_to_gpa on arm64.
 > 
-> ---
->
-> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-> index c0edf3850147..b5894b001ae1 100644
-> --- a/drivers/soc/qcom/rpmh-rsc.c
-> +++ b/drivers/soc/qcom/rpmh-rsc.c
->
-> <snip>
->
-> +static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
-> +		      int len)
-> +{
-> +	int i, j;
-> +
-> +	/* Check for already cached commands */
-> +	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
-> +		if (tcs->cmd_cache[i] != cmd[0].addr)
-> +			continue;
-> +		if (i + len >= MAX_TCS_SLOTS)
-> +			goto seq_err;
+> This patch fixes it by ignoring(not removing) the low bits of address when
+> doing rmap_walk_ksm.
+> 
+> Signed-off-by: jia.he@hxt-semitech.com
 
-The command cache can have less than MAX_TCS_SLOTS slot:
+I assumed you wanted this patch to be committed as
+From:jia.he@hxt-semitech.com rather than From:hejianet@gmail.com, so I
+made that change.  Please let me know if this was inappropriate.
 
-static int rpmh_probe_tcs_config(struct platform_device *pdev,
-				 struct rsc_drv *drv)
-{
-	...
-	tcs->cmd_cache = devm_kcalloc(&pdev->dev,
-				      tcs->num_tcs * ncpt, sizeof(u32),
-				      GFP_KERNEL);
-	...
-}
+You can do this yourself by adding an explicit From: line to the very
+start of the patch's email text.
 
-So the condition needs to be:
-
-if (i + len >= tcs->num_tcs * tcs->ncpt)
-
-> +static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
-> +		      int *tcs_id, int *cmd_id)
-> +{
-> +	int slot, offset;
-> +	int i = 0;
-> +
-> +	/* Find if we already have the msg in our TCS */
-> +	slot = find_match(tcs, msg->cmds, msg->num_cmds);
-> +	if (slot >= 0)
-> +		goto copy_data;
-> +
-> +	/* Do over, until we can fit the full payload in a TCS */
-> +	do {
-> +		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
-> +						  i, msg->num_cmds, 0);
-> +		if (slot == MAX_TCS_SLOTS)
-> +			return -ENOMEM;
-
-Like above, use 'tcs->num_tcs * tcs->ncpt' as maximum instead of
-MAX_TCS_SLOTS.
-
-> +static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
-> +{
-> +	struct tcs_group *tcs;
-> +	int tcs_id = 0, cmd_id = 0;
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	tcs = get_tcs_for_msg(drv, msg);
-> +	if (IS_ERR(tcs))
-> +		return PTR_ERR(tcs);
-> +
-> +	spin_lock_irqsave(&tcs->lock, flags);
-> +	/* find the m-th TCS and the n-th position in the TCS to write to */
-
-The comment still refers to the old names 'm' and 'n'.
-
-Thanks
-
-Matthias
+Also, a storm of WARN_ONs is pretty poor behaviour.  Is that the only
+misbehaviour which this bug causes?  Do you think the fix should be
+backported into earlier kernels?
