@@ -1,195 +1,233 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2688196-1525778861-2-352286007841546111
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, T_TVD_MIME_EPI 0.01,
-  UNPARSEABLE_RELAY 0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: to='utf-8', plain='iso-8859-1'
-X-Attached: signature.asc
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525778861; b=G4vd/dInjzNsFcvPisfhIm0sivO258QGqtGSbRFSbl7gxEEVhr
-    Oq1PxFKGo710erNiNOL44JVUFkzA4HR4tkBAp7eYcelv+AfOamlVQUr4MJVBXAG0
-    LpkP1yRCK/7viYKF3bhePvikpMRodaDtOW2BQ01zr8YpgDC1b7cp2nZZnytFdwwf
-    PyTFxcV7iR1BpCjxQMVzFhyyzQF2BHuLqdZSrunnN016NV07nMuL3LoTxRSZpTOP
-    Y4o84MBLq/DEinNwZv3yNfprYBDICPAFqihypd1XHHErJqb2ax0eadhCpqZwd1zY
-    cEFkJ4fl8xerk9AgpKrOfm1GqtsQuGMQpCeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1525778861; bh=H5zAaM3HxOVYk5AX3l40VTt7+xbpj3
-    OAz68ORupz8Hk=; b=EsHjbxDSQKLi1IH9EuvV60CB+AB872WnDpU+JwWG9kzyWj
-    NtWZ6cwEQEfo+bGBqxOHm5OWzwhpohOPYsSlv7cWooXcAOZ+BsxrCYPtQwunJEBy
-    Ab8gVkR+t/wNMGUg6Y2syJrDK6i9oID7yXNKspQjGL0eOjQpF5iOqj3jZ3dBsoFj
-    hpxAqOH6BbcukmopK0ItWyEy5w+U9YwhxIhv798w4fMvaT74f65SoUJEiQDltn+O
-    nQHx/0KbCobJd5K6WPOsqvEGmdZ0LyGN1z1agVCExoe8HUeP3QZUza+A1YW030Av
-    I0HSO1JW+39XjvLv4VJImKNIuOYXsixWHla1Zh9g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=collabora.co.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=collabora.co.uk header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-49 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=collabora.co.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=collabora.co.uk header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-49 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBBKTs1l9u7Qn+rcIgdXCAD7/bNcysUAFanVA4/PtxhATXu7dvP7VI3PXe1Ozb9WnisGYBhAe+fRxFAL3IBCp54k4ZX/7jHxa+ZzeprCwow2IMfYdg6u
-    CIru94SBWIpEU0YWtnbz/KuaWmvYqEcexMIiZJJy28tPPH6OHYrUN9tFP8yyPbzExFHbdb4O5nGNlyj48TyluGwUxBGIRMg61rFdyTWuADokQMcbDw6LCyvL
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=OScXe70xAAAA:8
-    a=gvl4HP8tAAAA:8 a=mdlK15DMS1IgFMbIYgMA:9 a=wPNLvfGTeEIA:10
-    a=8PuYA7KgI3u8WY-0hsAA:9 a=ONNS8QRKHyMA:10 a=VwQbUJbxAAAA:8
-    a=_3iAN5dmJPxjh_Nw_akA:9 a=x8gzFH9gYPwA:10 a=X7_D5SgixhGjaE2bLVSS:22
-    a=tRkgsvjveJ3YVe9fnr1q:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754697AbeEHL1b (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 8 May 2018 07:27:31 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48218 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754540AbeEHL1a (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Tue, 8 May 2018 07:27:30 -0400
-Date: Tue, 8 May 2018 13:27:26 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] serial: imx: cleanup imx_uart_disable_dma()
-Message-ID: <20180508112726.nyxrebcuwwdq5npy@earth.universe>
-References: <20180507213610.17330-1-sebastian.reichel@collabora.co.uk>
- <20180507213610.17330-2-sebastian.reichel@collabora.co.uk>
- <20180508064047.v7wz7b4t5ta55hv7@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hldlbuxw4kvqlosc"
-Content-Disposition: inline
-In-Reply-To: <20180508064047.v7wz7b4t5ta55hv7@pengutronix.de>
-User-Agent: NeoMutt/20180323
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Return-Path: <ulf.hansson@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1525861079; cv=none;
+        d=google.com; s=arc-20160816;
+        b=cRW6FDjxpK0hyyeKcTF1STmF7zFascEJP4Bmf4FAqMmBgSDKCEaBQKU6YDUlU8K+5r
+         +xXnGnA9yn5q5e4tJ00S5yQ4My9EjqTPG6l/ZVgiLgfDbhksn+hifw6TNyZdsZI2HoaM
+         KRcSwp0nX8lC+xUTXtSGMXfWiHX5p89JxMnLPd56mirVdMsEY3k2swJT0g5LhWXY9s2c
+         EpUlMpauOZnRx721eCYg+SOjK/9VBdWYVTdByxrfOjKubrpHWZd+fR9djYHmpzng1pcR
+         VJQuvsDqW6FRdunnLtbGRbjLeMPDwTu1pgHTTekqWWEooYXD9wT3F9MUHGwHFI4Gp4Ca
+         BPBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=jOQhUOLjDdH0w+vRxjijRDeLfTyJmZYgqA72ZUPe2TE=;
+        b=W5OU7vQk1juv1bRht3PVwWxwz1oi9ewBFYFtz/9CS8uk7ZCi5G0uXGTa2tYadz+a75
+         p3omLlgiKkQYN/W/AkYzHlFe9RxdPYudhpyXrMF5F8nlcuWEd3nf1efYUVoB81pcmrM7
+         PRAC01R8ZM94I2PExH0psXJmatUXB955Px6nYNajbBOoUh4rmmsulAbeJwXxOOoH83Ek
+         2ZW8PFEytSwkRn7wWPFieGkQXsNA/4MVYxmqzxk+fWPjOoARAUBwWZSYyRZKz2KsPP85
+         GngNr83lImZnJOzdPUkcZfg1IsPv8Hhn6vFls9UZoSMnXKwRFZ/tv5UAPzjw2azFRXfq
+         Po+A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=KADfCqzy;
+       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=KADfCqzy;
+       spf=pass (google.com: domain of ulf.hansson@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ulf.hansson@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZqyzF0INhN2ap+2/rpOYXzpkpGE3lNLS/MfHAJvb1BBcrFP78ro9MzDIYbJiQtSE48wzFO/aA==
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-pm@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Vinod Koul <vinod.koul@intel.com>,
+	Sanyog Kale <sanyog.r.kale@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Wolfram Sang <wsa@the-dreams.de>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH V2 05/11] PM / Domains: Allow a better error handling of dev_pm_domain_attach()
+Date: Wed,  9 May 2018 12:17:52 +0200
+Message-Id: <1525861072-29150-1-git-send-email-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599981306924872058?=
+X-GMAIL-MSGID: =?utf-8?q?1599981306924872058?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The callers of dev_pm_domain_attach() currently checks the returned error
+code for -EPROBE_DEFER and needs to ignore other error codes. This is an
+unnecessary limitation, which also leads to a rather strange behaviour in
+the error path.
 
---hldlbuxw4kvqlosc
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Address this limitation, by changing the return codes from
+acpi_dev_pm_attach() and genpd_dev_pm_attach(). More precisely, let them
+return 0, when no PM domain is needed for the device and then return 1, in
+case the device was successfully attached to its PM domain. In this way,
+dev_pm_domain_attach(), gets a better understanding of what happens in the
+attach attempts and also allowing its caller to better act on real errors
+codes.
 
-Hi,
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
 
-On Tue, May 08, 2018 at 08:40:47AM +0200, Uwe Kleine-K=F6nig wrote:
-> On Mon, May 07, 2018 at 11:36:09PM +0200, Sebastian Reichel wrote:
-> > Remove unrelated CTSC/CTS disabling from imx_uart_disable_dma() and
-> > move it to imx_uart_shutdown(), which is the only user of the DMA
-> > disabling function. This should not change the driver's behaviour,
-> > but improves readability. After this change imx_uart_disable_dma()
-> > does the reverse thing of imx_uart_enable_dma().
-> >=20
-> > Suggested-by: Nandor Han <nandor.han@ge.com>
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-> > ---
-> >  drivers/tty/serial/imx.c | 9 ++-------
-> >  1 file changed, 2 insertions(+), 7 deletions(-)
-> >=20
-> > diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-> > index c2fc6bef7a6f..3ca767b1162a 100644
-> > --- a/drivers/tty/serial/imx.c
-> > +++ b/drivers/tty/serial/imx.c
-> > @@ -1291,18 +1291,13 @@ static void imx_uart_enable_dma(struct imx_port=
- *sport)
-> > =20
-> >  static void imx_uart_disable_dma(struct imx_port *sport)
-> >  {
-> > -	u32 ucr1, ucr2;
-> > +	u32 ucr1;
-> > =20
-> >  	/* clear UCR1 */
-> >  	ucr1 =3D imx_uart_readl(sport, UCR1);
-> >  	ucr1 &=3D ~(UCR1_RXDMAEN | UCR1_TXDMAEN | UCR1_ATDMAEN);
-> >  	imx_uart_writel(sport, ucr1, UCR1);
-> > =20
-> > -	/* clear UCR2 */
-> > -	ucr2 =3D imx_uart_readl(sport, UCR2);
-> > -	ucr2 &=3D ~(UCR2_CTSC | UCR2_CTS | UCR2_ATEN);
-> > -	imx_uart_writel(sport, ucr2, UCR2);
-> > -
-> >  	imx_uart_setup_ufcr(sport, TXTL_DEFAULT, RXTL_DEFAULT);
-> > =20
-> >  	sport->dma_is_enabled =3D 0;
-> > @@ -1447,7 +1442,7 @@ static void imx_uart_shutdown(struct uart_port *p=
-ort)
-> > =20
-> >  	spin_lock_irqsave(&sport->port.lock, flags);
-> >  	ucr2 =3D imx_uart_readl(sport, UCR2);
-> > -	ucr2 &=3D ~(UCR2_TXEN | UCR2_ATEN);
-> > +	ucr2 &=3D ~(UCR2_TXEN | UCR2_CTSC | UCR2_CTS | UCR2_ATEN);
-> >  	imx_uart_writel(sport, ucr2, UCR2);
-> >  	spin_unlock_irqrestore(&sport->port.lock, flags);
->=20
-> While this doesn't change behaviour (which is of course good and
-> intended here) I wonder if changing RTS is right here.
->=20
-> According to Documentation/serial/driver it is not.
+Changes in v2:
+	- Return 0 from the inline variant of dev_pm_domain_attach(), to make
+	sure probing still works when CONFIG_PM is unset.
 
-Yes, looks like it should be removed completly. I suggest to keep
-this in two different patches (move UCR2 handling first, then remove
-RTS handling), so that we end up with simple and comprehensible patches.
+---
+ drivers/acpi/device_pm.c    |  6 +++---
+ drivers/base/power/common.c |  7 ++++---
+ drivers/base/power/domain.c | 19 ++++++++++---------
+ include/linux/acpi.h        |  2 +-
+ include/linux/pm_domain.h   |  4 ++--
+ 5 files changed, 20 insertions(+), 18 deletions(-)
 
--- Sebastian
-
---hldlbuxw4kvqlosc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrxiZsACgkQ2O7X88g7
-+poXtg//egmX9sHgOFQsEbqhN3iiif0GU620EGZbtomR7qc21ZeQIa8EqUtmiXDS
-ewuMWpAI/Ew0zWGv+BytTXOAtlaWE4P2oSK24jjVudhnoCm/ouBLrJWTKCrnIbYw
-gYpxmpz9gKKfKseRjESy7b9DPAgS9KywabtS8/bNCcwvkEhiakgbSeUn5Uax+GaE
-H/d21E6FqU10uLnQqCGfFoezksXG5mrMxlrC9/Wy+mvzfctmBPwmZJ4MLnaeFEdo
-I6jktQ7kbxDwI9Lw5Tcs2RBNlZuNMh6DhvQrtYcUxjdyis4Z6+rIY761Znat4mwK
-7Yz9e/k2kMawuk2ODEXXhEzHDdF0rKk4Tt5wxIDEmv8f7N1g2tQgx0zTzgj3JWT1
-tWJy8sBT7Lh4DVxynm8BsFNPCi81yO0rH3hKMjnR19LsDtTIRhfoufXAmEKorbM7
-W8acLGCSaNT0ZDEqCzKZGdPMvsq+o/CJ6iZiiUC9K2ZjXAav7m3p5TEbjXbL3GHU
-sTDxdvK2MGqJG2Vj2dAG2VfuLyyTO/uegp9jT2jxSSvfgndJovp0IgMxAsvoLuyQ
-4f4nuMOx491Z1TOPAhszcKfExw73Ak36Zoc5dm73XrfvWRwq1XtK+38igIHvuG6V
-Z8xThKK+OeIU24ktiD2Fv6wIwsM9J6Y7ciGrjAxhYpEOxAIAIlw=
-=9R1O
------END PGP SIGNATURE-----
-
---hldlbuxw4kvqlosc--
+diff --git a/drivers/acpi/device_pm.c b/drivers/acpi/device_pm.c
+index d006300..a7c2673 100644
+--- a/drivers/acpi/device_pm.c
++++ b/drivers/acpi/device_pm.c
+@@ -1257,7 +1257,7 @@ int acpi_dev_pm_attach(struct device *dev, bool power_on)
+ 	struct acpi_device *adev = ACPI_COMPANION(dev);
+ 
+ 	if (!adev)
+-		return -ENODEV;
++		return 0;
+ 
+ 	/*
+ 	 * Only attach the power domain to the first device if the
+@@ -1265,7 +1265,7 @@ int acpi_dev_pm_attach(struct device *dev, bool power_on)
+ 	 * management twice.
+ 	 */
+ 	if (!acpi_device_is_first_physical_node(adev, dev))
+-		return -EBUSY;
++		return 0;
+ 
+ 	acpi_add_pm_notifier(adev, dev, acpi_pm_notify_work_func);
+ 	dev_pm_domain_set(dev, &acpi_general_pm_domain);
+@@ -1275,7 +1275,7 @@ int acpi_dev_pm_attach(struct device *dev, bool power_on)
+ 	}
+ 
+ 	dev->pm_domain->detach = acpi_dev_pm_detach;
+-	return 0;
++	return 1;
+ }
+ EXPORT_SYMBOL_GPL(acpi_dev_pm_attach);
+ #endif /* CONFIG_PM */
+diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
+index f3cf61f..5e4b481 100644
+--- a/drivers/base/power/common.c
++++ b/drivers/base/power/common.c
+@@ -98,7 +98,8 @@ EXPORT_SYMBOL_GPL(dev_pm_put_subsys_data);
+  * Callers must ensure proper synchronization of this function with power
+  * management callbacks.
+  *
+- * Returns 0 on successfully attached PM domain or negative error code.
++ * Returns 0 on successfully attached PM domain and when it found that the
++ * device don't need a PM domain, else a negative error code.
+  */
+ int dev_pm_domain_attach(struct device *dev, bool power_on)
+ {
+@@ -108,10 +109,10 @@ int dev_pm_domain_attach(struct device *dev, bool power_on)
+ 		return -EEXIST;
+ 
+ 	ret = acpi_dev_pm_attach(dev, power_on);
+-	if (ret)
++	if (!ret)
+ 		ret = genpd_dev_pm_attach(dev);
+ 
+-	return ret;
++	return ret < 0 ? ret : 0;
+ }
+ EXPORT_SYMBOL_GPL(dev_pm_domain_attach);
+ 
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index b816adb..455ecea 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2180,10 +2180,11 @@ static void genpd_dev_pm_sync(struct device *dev)
+  * Parse device's OF node to find a PM domain specifier. If such is found,
+  * attaches the device to retrieved pm_domain ops.
+  *
+- * Returns 0 on successfully attached PM domain or negative error code. Note
+- * that if a power-domain exists for the device, but it cannot be found or
+- * turned on, then return -EPROBE_DEFER to ensure that the device is not
+- * probed and to re-try again later.
++ * Returns 1 on successfully attached PM domain, 0 when the device don't need a
++ * PM domain or a negative error code in case of failures. Note that if a
++ * power-domain exists for the device, but it cannot be found or turned on,
++ * then return -EPROBE_DEFER to ensure that the device is not probed and to
++ * re-try again later.
+  */
+ int genpd_dev_pm_attach(struct device *dev)
+ {
+@@ -2192,12 +2193,12 @@ int genpd_dev_pm_attach(struct device *dev)
+ 	int ret;
+ 
+ 	if (!dev->of_node)
+-		return -ENODEV;
++		return 0;
+ 
+ 	ret = of_parse_phandle_with_args(dev->of_node, "power-domains",
+ 					"#power-domain-cells", 0, &pd_args);
+ 	if (ret < 0)
+-		return ret;
++		return 0;
+ 
+ 	mutex_lock(&gpd_list_lock);
+ 	pd = genpd_get_from_provider(&pd_args);
+@@ -2218,7 +2219,7 @@ int genpd_dev_pm_attach(struct device *dev)
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(dev, "failed to add to PM domain %s: %d",
+ 				pd->name, ret);
+-		goto out;
++		return ret;
+ 	}
+ 
+ 	dev->pm_domain->detach = genpd_dev_pm_detach;
+@@ -2230,8 +2231,8 @@ int genpd_dev_pm_attach(struct device *dev)
+ 
+ 	if (ret)
+ 		genpd_remove_device(pd, dev);
+-out:
+-	return ret ? -EPROBE_DEFER : 0;
++
++	return ret ? -EPROBE_DEFER : 1;
+ }
+ EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
+ 
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index 15bfb15..c01675b 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -899,7 +899,7 @@ static inline int acpi_subsys_runtime_suspend(struct device *dev) { return 0; }
+ static inline int acpi_subsys_runtime_resume(struct device *dev) { return 0; }
+ static inline int acpi_dev_pm_attach(struct device *dev, bool power_on)
+ {
+-	return -ENODEV;
++	return 0;
+ }
+ #endif
+ 
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 04dbef9..ab18548 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -280,7 +280,7 @@ static inline int of_genpd_parse_idle_states(struct device_node *dn,
+ 
+ static inline int genpd_dev_pm_attach(struct device *dev)
+ {
+-	return -ENODEV;
++	return 0;
+ }
+ 
+ static inline
+@@ -297,7 +297,7 @@ extern void dev_pm_domain_set(struct device *dev, struct dev_pm_domain *pd);
+ #else
+ static inline int dev_pm_domain_attach(struct device *dev, bool power_on)
+ {
+-	return -ENODEV;
++	return 0;
+ }
+ static inline void dev_pm_domain_detach(struct device *dev, bool power_off) {}
+ static inline void dev_pm_domain_set(struct device *dev,
+-- 
+2.7.4
