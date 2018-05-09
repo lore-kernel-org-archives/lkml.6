@@ -1,24 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935128AbeEINTJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 09:19:09 -0400
-Received: from osg.samsung.com ([64.30.133.232]:55689 "EHLO osg.samsung.com"
+        id S935257AbeEINTT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 09:19:19 -0400
+Received: from osg.samsung.com ([64.30.133.232]:50888 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934898AbeEINTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 09:19:06 -0400
+        id S935207AbeEINTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 09:19:17 -0400
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH v2 01/11] docs: can.rst: fix a footnote reference
-Date: Wed,  9 May 2018 10:18:44 -0300
-Message-Id: <d2f616d096addfe5bc8d561831b832cb1fcbb397.1525870886.git.mchehab+samsung@kernel.org>
+        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: [PATCH v2 02/11] docs: admin-guide: add cgroup-v2 documentation
+Date: Wed,  9 May 2018 10:18:45 -0300
+Message-Id: <1a62d2ec4d1eef268dd2256a1e2673df994bee5e.1525870886.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1525870886.git.mchehab+samsung@kernel.org>
 References: <cover.1525870886.git.mchehab+samsung@kernel.org>
@@ -28,46 +26,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As stated at:
-	http://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#footnotes
+The cgroup-v2.txt is already in ReST format. So, move it to the
+admin-guide, where it belongs.
 
-A footnote should contain either a number, a reference or
-an auto number, e. g.:
-        [1], [#f1] or [#].
-
-While using [*] accidentaly works for html, it fails for other
-document outputs. In particular, it causes an error with LaTeX
-output, causing all books after networking to not be built.
-
-So, replace it by a valid syntax.
-
-Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Li Zefan <lizefan@huawei.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/networking/can.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/00-INDEX                                     | 2 --
+ Documentation/{cgroup-v2.txt => admin-guide/cgroup-v2.rst} | 0
+ Documentation/admin-guide/index.rst                        | 1 +
+ 3 files changed, 1 insertion(+), 2 deletions(-)
+ rename Documentation/{cgroup-v2.txt => admin-guide/cgroup-v2.rst} (100%)
 
-diff --git a/Documentation/networking/can.rst b/Documentation/networking/can.rst
-index d23c51abf8c6..2fd0b51a8c52 100644
---- a/Documentation/networking/can.rst
-+++ b/Documentation/networking/can.rst
-@@ -164,7 +164,7 @@ The Linux network devices (by default) just can handle the
- transmission and reception of media dependent frames. Due to the
- arbitration on the CAN bus the transmission of a low prio CAN-ID
- may be delayed by the reception of a high prio CAN frame. To
--reflect the correct [*]_ traffic on the node the loopback of the sent
-+reflect the correct [#f1]_ traffic on the node the loopback of the sent
- data has to be performed right after a successful transmission. If
- the CAN network interface is not capable of performing the loopback for
- some reason the SocketCAN core can do this task as a fallback solution.
-@@ -175,7 +175,7 @@ networking behaviour for CAN applications. Due to some requests from
- the RT-SocketCAN group the loopback optionally may be disabled for each
- separate socket. See sockopts from the CAN RAW sockets in :ref:`socketcan-raw-sockets`.
+diff --git a/Documentation/00-INDEX b/Documentation/00-INDEX
+index a50d2380b6fb..2754fe83f0d4 100644
+--- a/Documentation/00-INDEX
++++ b/Documentation/00-INDEX
+@@ -80,8 +80,6 @@ cdrom/
+ 	- directory with information on the CD-ROM drivers that Linux has.
+ cgroup-v1/
+ 	- cgroups v1 features, including cpusets and memory controller.
+-cgroup-v2.txt
+-	- cgroups v2 features, including cpusets and memory controller.
+ cma/
+ 	- Continuous Memory Area (CMA) debugfs interface.
+ conf.py
+diff --git a/Documentation/cgroup-v2.txt b/Documentation/admin-guide/cgroup-v2.rst
+similarity index 100%
+rename from Documentation/cgroup-v2.txt
+rename to Documentation/admin-guide/cgroup-v2.rst
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+index 52eb3408f9a0..48d70af11652 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -48,6 +48,7 @@ configure specific aspects of kernel behavior to your liking.
+    :maxdepth: 1
  
--.. [*] you really like to have this when you're running analyser
-+.. [#f1] you really like to have this when you're running analyser
-        tools like 'candump' or 'cansniffer' on the (same) node.
- 
- 
+    initrd
++   cgroup-v2
+    serial-console
+    braille-console
+    parport
 -- 
 2.17.0
