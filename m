@@ -1,30 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934021AbeEIJcK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:32:10 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43364 "EHLO
+        id S934104AbeEIJcl (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:32:41 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44218 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933783AbeEIJcI (ORCPT
+        with ESMTP id S933783AbeEIJci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:32:08 -0400
+        Wed, 9 May 2018 05:32:38 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        alsa-devel@alsa-project.org, Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, John Hsu <KCHSU0@nuvoton.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: uniphier: evea: use DAPM to change source of line-in" to the asoc tree
-In-Reply-To: <20180508084509.21616-1-suzuki.katsuhiro@socionext.com>
-Message-Id: <20180509093158.8D18044007A@finisterre.ee.mobilebroadband>
-Date: Wed,  9 May 2018 10:31:58 +0100 (BST)
+Subject: Applied "ASoC: nau8824: fix spelling mistake: "semaphone" -> "semaphore"" to the asoc tree
+In-Reply-To: <20180508224155.26486-1-colin.king@canonical.com>
+Message-Id: <20180509093220.B2DF944007A@finisterre.ee.mobilebroadband>
+Date: Wed,  9 May 2018 10:32:20 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: uniphier: evea: use DAPM to change source of line-in
+   ASoC: nau8824: fix spelling mistake: "semaphone" -> "semaphore"
 
 has been applied to the asoc tree at
 
@@ -49,108 +49,37 @@ to this mail.
 Thanks,
 Mark
 
->From e5ba319882d78030b054dee4eeaf758340b2756f Mon Sep 17 00:00:00 2001
-From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-Date: Tue, 8 May 2018 17:45:09 +0900
-Subject: [PATCH] ASoC: uniphier: evea: use DAPM to change source of line-in
+>From 2ce7eb258999e5c510a1f828123e61df2ece2dd7 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Tue, 8 May 2018 23:41:55 +0100
+Subject: [PATCH] ASoC: nau8824: fix spelling mistake: "semaphone" ->
+ "semaphore"
 
-This patch replaces mixer switch to DAPM one for changing audio source
-of line-in.
+Trivial fix to spelling mistake in dev_warn messages
 
-Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/uniphier/evea.c | 55 +++++++++++++++++++++++----------------
- 1 file changed, 33 insertions(+), 22 deletions(-)
+ sound/soc/codecs/nau8824.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/uniphier/evea.c b/sound/soc/uniphier/evea.c
-index 73fd6730095c..f9c10165fbc1 100644
---- a/sound/soc/uniphier/evea.c
-+++ b/sound/soc/uniphier/evea.c
-@@ -54,8 +54,21 @@ struct evea_priv {
- 	int switch_hp;
- };
+diff --git a/sound/soc/codecs/nau8824.c b/sound/soc/codecs/nau8824.c
+index 76502c090654..6bd14453f06e 100644
+--- a/sound/soc/codecs/nau8824.c
++++ b/sound/soc/codecs/nau8824.c
+@@ -205,11 +205,11 @@ static int nau8824_sema_acquire(struct nau8824 *nau8824, long timeout)
+ 	if (timeout) {
+ 		ret = down_timeout(&nau8824->jd_sem, timeout);
+ 		if (ret < 0)
+-			dev_warn(nau8824->dev, "Acquire semaphone timeout\n");
++			dev_warn(nau8824->dev, "Acquire semaphore timeout\n");
+ 	} else {
+ 		ret = down_interruptible(&nau8824->jd_sem);
+ 		if (ret < 0)
+-			dev_warn(nau8824->dev, "Acquire semaphone fail\n");
++			dev_warn(nau8824->dev, "Acquire semaphore fail\n");
+ 	}
  
-+static const char * const linsw1_sel1_text[] = {
-+	"LIN1", "LIN2", "LIN3"
-+};
-+
-+static SOC_ENUM_SINGLE_DECL(linsw1_sel1_enum,
-+	ALINSW1, ALINSW1_SEL1_SHIFT,
-+	linsw1_sel1_text);
-+
-+static const struct snd_kcontrol_new linesw1_mux[] = {
-+	SOC_DAPM_ENUM("Line In 1 Source", linsw1_sel1_enum),
-+};
-+
- static const struct snd_soc_dapm_widget evea_widgets[] = {
--	SND_SOC_DAPM_ADC("ADC", "Capture", SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_ADC("ADC", NULL, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_MUX("Line In 1 Mux", SND_SOC_NOPM, 0, 0, linesw1_mux),
- 	SND_SOC_DAPM_INPUT("LIN1_LP"),
- 	SND_SOC_DAPM_INPUT("LIN1_RP"),
- 	SND_SOC_DAPM_INPUT("LIN2_LP"),
-@@ -63,7 +76,9 @@ static const struct snd_soc_dapm_widget evea_widgets[] = {
- 	SND_SOC_DAPM_INPUT("LIN3_LP"),
- 	SND_SOC_DAPM_INPUT("LIN3_RP"),
- 
--	SND_SOC_DAPM_DAC("DAC", "Playback", SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_DAC("DAC HP", NULL, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_DAC("DAC LO1", NULL, SND_SOC_NOPM, 0, 0),
-+	SND_SOC_DAPM_DAC("DAC LO2", NULL, SND_SOC_NOPM, 0, 0),
- 	SND_SOC_DAPM_OUTPUT("HP1_L"),
- 	SND_SOC_DAPM_OUTPUT("HP1_R"),
- 	SND_SOC_DAPM_OUTPUT("LO2_L"),
-@@ -71,17 +86,22 @@ static const struct snd_soc_dapm_widget evea_widgets[] = {
- };
- 
- static const struct snd_soc_dapm_route evea_routes[] = {
--	{ "ADC", NULL, "LIN1_LP" },
--	{ "ADC", NULL, "LIN1_RP" },
--	{ "ADC", NULL, "LIN2_LP" },
--	{ "ADC", NULL, "LIN2_RP" },
--	{ "ADC", NULL, "LIN3_LP" },
--	{ "ADC", NULL, "LIN3_RP" },
--
--	{ "HP1_L", NULL, "DAC" },
--	{ "HP1_R", NULL, "DAC" },
--	{ "LO2_L", NULL, "DAC" },
--	{ "LO2_R", NULL, "DAC" },
-+	{ "Line In 1", NULL, "ADC" },
-+	{ "ADC", NULL, "Line In 1 Mux" },
-+	{ "Line In 1 Mux", "LIN1", "LIN1_LP" },
-+	{ "Line In 1 Mux", "LIN1", "LIN1_RP" },
-+	{ "Line In 1 Mux", "LIN2", "LIN2_LP" },
-+	{ "Line In 1 Mux", "LIN2", "LIN2_RP" },
-+	{ "Line In 1 Mux", "LIN3", "LIN3_LP" },
-+	{ "Line In 1 Mux", "LIN3", "LIN3_RP" },
-+
-+	{ "DAC HP", NULL, "Headphone 1" },
-+	{ "DAC LO1", NULL, "Line Out 1" },
-+	{ "DAC LO2", NULL, "Line Out 2" },
-+	{ "HP1_L", NULL, "DAC HP" },
-+	{ "HP1_R", NULL, "DAC HP" },
-+	{ "LO2_L", NULL, "DAC LO2" },
-+	{ "LO2_R", NULL, "DAC LO2" },
- };
- 
- static void evea_set_power_state_on(struct evea_priv *evea)
-@@ -280,16 +300,7 @@ static int evea_set_switch_hp(struct snd_kcontrol *kcontrol,
- 	return evea_update_switch_hp(evea);
- }
- 
--static const char * const linsw1_sel1_text[] = {
--	"LIN1", "LIN2", "LIN3"
--};
--
--static SOC_ENUM_SINGLE_DECL(linsw1_sel1_enum,
--	ALINSW1, ALINSW1_SEL1_SHIFT,
--	linsw1_sel1_text);
--
- static const struct snd_kcontrol_new evea_controls[] = {
--	SOC_ENUM("Line Capture Source", linsw1_sel1_enum),
- 	SOC_SINGLE_BOOL_EXT("Line Capture Switch", 0,
- 			    evea_get_switch_lin, evea_set_switch_lin),
- 	SOC_SINGLE_BOOL_EXT("Line Playback Switch", 0,
+ 	return ret;
 -- 
 2.17.0
