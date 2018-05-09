@@ -1,48 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934352AbeEIJHe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:07:34 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51674 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934085AbeEIJHc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:07:32 -0400
-From: Colin King <colin.king@canonical.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [media] cx231xx: Fix spelling mistake: "senario" -> "scenario"
-Date: Wed,  9 May 2018 10:07:31 +0100
-Message-Id: <20180509090731.11275-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S934390AbeEIJKV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:10:21 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58855 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934195AbeEIJKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 05:10:20 -0400
+Subject: Re: [PATCH] swiotlb: Update the comment of swiotlb
+To: Christoph Hellwig <hch@lst.de>
+References: <1525691185-55657-1-git-send-email-xieyisheng1@huawei.com>
+ <20180509073838.GA20874@lst.de>
+CC: <konrad.wilk@oracle.com>, <mingo@kernel.org>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <b6246d95-7d9c-2904-6298-9c5ca3506a5f@huawei.com>
+Date: Wed, 9 May 2018 17:08:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180509073838.GA20874@lst.de>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Christoph,
 
-Trivial fix to spelling mistake in dev_err message.
+On 2018/5/9 15:38, Christoph Hellwig wrote:
+> Thanks,
+> 
+> applied to the dma-mapping tree.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c b/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c
-index 5bc74149fcb9..746c34ab0ec8 100644
---- a/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-pcb-cfg.c
-@@ -769,7 +769,7 @@ int initialize_cx231xx(struct cx231xx *dev)
- 			break;
- 		default:
- 			dev_err(dev->dev,
--				"bad senario!!!!!\nconfig_info=%x\n",
-+				"bad scenario!!!!!\nconfig_info=%x\n",
- 				config_info & SELFPOWER_MASK);
- 			return -ENODEV;
- 		}
--- 
-2.17.0
+BTW, should lib/swiotlb.c also add to DMA MAPPING HELPERS, or
+add yourself as a maintainer of SWIOTLB SUBSYSTEM ? It will make
+get_maintainer.pl get you :)
+
+Thanks
+Yisheng
+> 
+> .
+> 
