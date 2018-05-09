@@ -1,97 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964804AbeEIS11 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 14:27:27 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:39740 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933577AbeEIS10 (ORCPT
+        id S964907AbeEIS2W (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 14:28:22 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:59560 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964828AbeEIS2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 14:27:26 -0400
-X-Google-Smtp-Source: AB8JxZpR49ifXcsNWKeXPg4rznNETEyDDbbCXbVa6G+Sq1SO2oPtIwVeB7YwT2M3njybIBD4Cig8Bg==
-Subject: Re: [PATCH 03/13] overflow.h: Add allocation size calculation helpers
-To: Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kernel-hardening@lists.openwall.com
-References: <20180509004229.36341-1-keescook@chromium.org>
- <20180509004229.36341-4-keescook@chromium.org>
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <b481bbb2-758f-dcd3-3e1a-8b3137081614@rasmusvillemoes.dk>
-Date: Wed, 9 May 2018 20:27:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180509004229.36341-4-keescook@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 9 May 2018 14:28:20 -0400
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: [PATCH v2 3/4] rtc: ds1307: add offset sysfs for mt41txx chips.
+Date: Wed,  9 May 2018 20:28:11 +0200
+Message-Id: <20180509182812.17646-3-giulio.benetti@micronovasrl.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180509182812.17646-1-giulio.benetti@micronovasrl.com>
+References: <20180509182812.17646-1-giulio.benetti@micronovasrl.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-09 02:42, Kees Cook wrote:
-> In preparation for replacing unchecked overflows for memory allocations,
-> this creates helpers for the 3 most common calculations:
-> 
-> array_size(a, b): 2-dimensional array
-> array3_size(a, b, c): 2-dimensional array
+m41txx chips can hold a calibration value to get correct clock bias.
+If positive offset is passed, it means adding 512 cycles(@32.768Hz)
+every tick(1s).
+If negative offset is passed, it means subtracting 256 cycles(@32.768Hz)
+every tick(1s).
 
-yeah... complete confusion...
+Add offset handling (ranging between (-31) and 31) via sysfs.
 
-> +/**
-> + * array_size() - Calculate size of 2-dimensional array.
-> + *
-> + * @a: dimension one
-> + * @b: dimension two
-> + *
-> + * Calculates size of 2-dimensional array: @a * @b.
-> + *
-> + * Returns: number of bytes needed to represent the array or SIZE_MAX on
-> + * overflow.
-> + */
-> +static inline __must_check size_t array_size(size_t a, size_t b)
-> +{
-> +	size_t bytes;
-> +
-> +	if (check_mul_overflow(a, b, &bytes))
-> +		return SIZE_MAX;
-> +
-> +	return bytes;
-> +}
-> +
-> +/**
-> + * array3_size() - Calculate size of 3-dimensional array.
-> + *
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+---
+V1 => V2: changed "calibration" from dt property to rtc sysfs offset
+ drivers/rtc/rtc-ds1307.c | 70 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-...IDGI. array_size is/will most often be used to calculate the size of
-a one-dimensional array, count*elemsize, accessed as foo[i]. Won't a
-three-factor product usually be dim1*dim2*elemsize, i.e. 2-dimensional,
-accessed (because C is lame) as foo[i*dim2 + j]?
-
-> +/**
-> + * struct_size() - Calculate size of structure with trailing array.
-> + * @p: Pointer to the structure.
-> + * @member: Name of the array member.
-> + * @n: Number of elements in the array.
-> + *
-> + * Calculates size of memory needed for structure @p followed by an
-> + * array of @n @member elements.
-> + *
-> + * Return: number of bytes needed or SIZE_MAX on overflow.
-> + */
-> +#define struct_size(p, member, n)					\
-> +	__ab_c_size(n,							\
-> +		    sizeof(*(p)->member) + __must_be_array((p)->member),\
-> +		    offsetof(typeof(*(p)), member))
-> +
-> +
-
-struct s { int a; char b; char c[]; } has sizeof > offsetof(c), so for
-small enough n, we end up allocating less than sizeof(struct s). And the
-caller might reasonably do memset(s, 0, sizeof(*s)) to initialize all
-members before c. In practice our allocators round up to a multiple of
-8, so I don't think it's a big problem, but some sanitizer might
-complain. But I do think you should make that addend sizeof() instead of
-offsetof().
-
-Rasmus
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index 0ab0c166da83..33895668b363 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -114,6 +114,16 @@ enum ds_type {
+ #	define RX8025_BIT_VDET		0x40
+ #	define RX8025_BIT_XST		0x20
+ 
++#define M41TXX_REG_CONTROL	0x07
++#	define M41TXX_BIT_OUT		0x80
++#	define M41TXX_BIT_FT		0x40
++#	define M41TXX_BIT_CALIB_SIGN	0x20
++#	define M41TXX_M_CALIBRATION	0x1f
++
++/* Min and max values supported with 'offset' interface by M41TXX */
++#define M41TXX_MIN_OFFSET	(-31)
++#define M41TXX_MAX_OFFSET	(31)
++
+ struct ds1307 {
+ 	enum ds_type		type;
+ 	unsigned long		flags;
+@@ -146,6 +156,9 @@ struct chip_desc {
+ 
+ static int ds1307_get_time(struct device *dev, struct rtc_time *t);
+ static int ds1307_set_time(struct device *dev, struct rtc_time *t);
++static int ds1337_read_alarm(struct device *dev, struct rtc_wkalrm *t);
++static int ds1337_set_alarm(struct device *dev, struct rtc_wkalrm *t);
++static int ds1307_alarm_irq_enable(struct device *dev, unsigned int enabled);
+ static u8 do_trickle_setup_ds1339(struct ds1307 *, u32 ohms, bool diode);
+ static irqreturn_t rx8130_irq(int irq, void *dev_id);
+ static int rx8130_read_alarm(struct device *dev, struct rtc_wkalrm *t);
+@@ -155,6 +168,8 @@ static irqreturn_t mcp794xx_irq(int irq, void *dev_id);
+ static int mcp794xx_read_alarm(struct device *dev, struct rtc_wkalrm *t);
+ static int mcp794xx_set_alarm(struct device *dev, struct rtc_wkalrm *t);
+ static int mcp794xx_alarm_irq_enable(struct device *dev, unsigned int enabled);
++static int m41txx_rtc_read_offset(struct device *dev, long *offset);
++static int m41txx_rtc_set_offset(struct device *dev, long offset);
+ 
+ static const struct rtc_class_ops rx8130_rtc_ops = {
+ 	.read_time      = ds1307_get_time,
+@@ -172,6 +187,16 @@ static const struct rtc_class_ops mcp794xx_rtc_ops = {
+ 	.alarm_irq_enable = mcp794xx_alarm_irq_enable,
+ };
+ 
++static const struct rtc_class_ops m41txx_rtc_ops = {
++	.read_time      = ds1307_get_time,
++	.set_time       = ds1307_set_time,
++	.read_alarm	= ds1337_read_alarm,
++	.set_alarm	= ds1337_set_alarm,
++	.alarm_irq_enable = ds1307_alarm_irq_enable,
++	.read_offset	= m41txx_rtc_read_offset,
++	.set_offset	= m41txx_rtc_set_offset,
++};
++
+ static const struct chip_desc chips[last_ds_type] = {
+ 	[ds_1307] = {
+ 		.nvram_offset	= 8,
+@@ -227,10 +252,17 @@ static const struct chip_desc chips[last_ds_type] = {
+ 		.irq_handler = rx8130_irq,
+ 		.rtc_ops = &rx8130_rtc_ops,
+ 	},
++	[m41t0] = {
++		.rtc_ops	= &m41txx_rtc_ops,
++	},
++	[m41t00] = {
++		.rtc_ops	= &m41txx_rtc_ops,
++	},
+ 	[m41t11] = {
+ 		/* this is battery backed SRAM */
+ 		.nvram_offset	= 8,
+ 		.nvram_size	= 56,
++		.rtc_ops	= &m41txx_rtc_ops,
+ 	},
+ 	[mcp794xx] = {
+ 		.alarm		= 1,
+@@ -972,6 +1004,44 @@ static int mcp794xx_alarm_irq_enable(struct device *dev, unsigned int enabled)
+ 				  enabled ? MCP794XX_BIT_ALM0_EN : 0);
+ }
+ 
++static int m41txx_rtc_read_offset(struct device *dev, long *offset)
++{
++	struct ds1307 *ds1307 = dev_get_drvdata(dev);
++	unsigned int ctrl_reg;
++	u8 val;
++
++	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
++
++	val = ctrl_reg & M41TXX_M_CALIBRATION;
++
++	/* check if positive */
++	if (ctrl_reg & M41TXX_BIT_CALIB_SIGN)
++		*offset = val;
++	else
++		*offset = -val;
++
++	return 0;
++}
++
++static int m41txx_rtc_set_offset(struct device *dev, long offset)
++{
++	struct ds1307 *ds1307 = dev_get_drvdata(dev);
++	unsigned int ctrl_reg;
++
++	if ((offset < M41TXX_MIN_OFFSET) || (offset > M41TXX_MAX_OFFSET))
++		return -ERANGE;
++
++	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
++
++	ctrl_reg &= ~M41TXX_M_CALIBRATION;
++	ctrl_reg |= abs(offset) & M41TXX_M_CALIBRATION;
++
++	if (offset >= 0)
++		ctrl_reg |= M41TXX_BIT_CALIB_SIGN;
++
++	return regmap_write(ds1307->regmap, M41TXX_REG_CONTROL,	ctrl_reg);
++}
++
+ /*----------------------------------------------------------------------*/
+ 
+ static int ds1307_nvram_read(void *priv, unsigned int offset, void *val,
+-- 
+2.17.0
