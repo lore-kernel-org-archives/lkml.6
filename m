@@ -1,108 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933959AbeEIIPc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:15:32 -0400
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:53187 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933860AbeEIIP2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:15:28 -0400
-X-Google-Smtp-Source: AB8JxZr5Mj+FoMRY176ml1jviJZwWWS/gG/T6/WznAOTN57awt3aZOPb1tiqatLZO7FnVxvOA59A5w==
-Subject: Re: [PATCH 10/28] venus: vdec: call session_continue in insufficient
- event
-To: Vikash Garodia <vgarodia@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-media-owner@vger.kernel.org
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
- <20180424124436.26955-11-stanimir.varbanov@linaro.org>
- <85963ca3e12f4d71f2bc2db7d601d4b2@codeaurora.org>
- <c349eca0-2227-75f3-111c-9980336896d1@linaro.org>
- <5cfb0fc9e54763712799e9adf5770dac@codeaurora.org>
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <4c66fc5c-87fb-3c0e-06c1-6e5c23bc138c@linaro.org>
-Date: Wed, 9 May 2018 11:15:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S933971AbeEIIQW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:16:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60400 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933715AbeEIIQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 04:16:18 -0400
+Date: Wed, 9 May 2018 10:16:15 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Andrei Vagin <avagin@openvz.org>, Jerome Glisse <jglisse@redhat.com>,
+        Daniel Colascione <dancol@google.com>, Zi Yan <zi.yan@cs.rutgers.edu>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH -mm] mm, pagemap: Hide swap entry for unprivileged users
+Message-ID: <20180509081615.GF32366@dhcp22.suse.cz>
+References: <20180508012745.7238-1-ying.huang@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <5cfb0fc9e54763712799e9adf5770dac@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180508012745.7238-1-ying.huang@intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vikash,
-
-On 05/04/2018 02:09 PM, Vikash Garodia wrote:
-> Hi Stanimir,
+On Tue 08-05-18 09:27:45, Huang, Ying wrote:
+> From: Huang Ying <ying.huang@intel.com>
 > 
-> On 2018-05-03 17:06, Stanimir Varbanov wrote:
->> Hi Vikash,
->>
->> Thanks for the comments!
->>
->> On  2.05.2018 09:26, Vikash Garodia wrote:
->>> Hello Stanimir,
->>>
->>> On 2018-04-24 18:14, Stanimir Varbanov wrote:
->>>> Call session_continue for Venus 4xx version even when the event
->>>> says that the buffer resources are not sufficient. Leaving a
->>>> comment with more information about the workaround.
->>>>
->>>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->>>> ---
->>>>  drivers/media/platform/qcom/venus/vdec.c | 8 ++++++++
->>>>  1 file changed, 8 insertions(+)
->>>>
->>>> diff --git a/drivers/media/platform/qcom/venus/vdec.c
->>>> b/drivers/media/platform/qcom/venus/vdec.c
->>>> index c45452634e7e..91c7384ff9c8 100644
->>>> --- a/drivers/media/platform/qcom/venus/vdec.c
->>>> +++ b/drivers/media/platform/qcom/venus/vdec.c
->>>> @@ -873,6 +873,14 @@ static void vdec_event_notify(struct venus_inst
->>>> *inst, u32 event,
->>>>
->>>>              dev_dbg(dev, "event not sufficient resources (%ux%u)\n",
->>>>                  data->width, data->height);
->>>> +            /*
->>>> +             * Workaround: Even that the firmware send and event for
->>>> +             * insufficient buffer resources it is safe to call
->>>> +             * session_continue because actually the event says that
->>>> +             * the number of capture buffers is lower.
->>>> +             */
->>>> +            if (IS_V4(core))
->>>> +                hfi_session_continue(inst);
->>>>              break;
->>>>          case HFI_EVENT_RELEASE_BUFFER_REFERENCE:
->>>>              venus_helper_release_buf_ref(inst, data->tag);
->>>
->>> Insufficient event from video firmware could be sent either,
->>> 1. due to insufficient buffer resources
->>> 2. due to lower capture buffers
->>>
->>> It cannot be assumed that the event received by the host is due to
->>> lower capture
->>> buffers. Incase the buffer resource is insufficient, let say there is
->>> a bitstream
->>> resolution switch from 720p to 1080p, capture buffers needs to be
->>> reallocated.
->>
->> I agree with you. I will rework this part and call session_continue
->> only for case #2.
-> 
-> Even if the capture buffers are lower, driver should consider
-> reallocation of capture
-> buffers with required higher count. Without this, it may happen that for
-> a given video
-> frame, the decoded output will not be generated.
+> In ab676b7d6fbf ("pagemap: do not leak physical addresses to
+> non-privileged userspace"), the /proc/PID/pagemap is restricted to be
+> readable only by CAP_SYS_ADMIN to address some security issue.  In
+> 1c90308e7a77 ("pagemap: hide physical addresses from non-privileged
+> users"), the restriction is relieved to make /proc/PID/pagemap
+> readable, but hide the physical addresses for non-privileged users.
+> But the swap entries are readable for non-privileged users too.  This
+> has some security issues.  For example, for page under migrating, the
+> swap entry has physical address information.  So, in this patch, the
+> swap entries are hided for non-privileged users too.
 
-Thanks for the comments, I realized that this workaround is not needed
-anymore, so I will drop the patch.
+Migration entries are quite ephemeral so I am not sure how this could be
+abused. But I do agree that hiding swap entries make some sense from
+consistency POV
+
+> Fixes: 1c90308e7a77 ("pagemap: hide physical addresses from non-privileged users")
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Cc: Andrei Vagin <avagin@openvz.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Jerome Glisse <jglisse@redhat.com>
+> Cc: Daniel Colascione <dancol@google.com>
+> Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+> ---
+>  fs/proc/task_mmu.c | 26 ++++++++++++++++----------
+>  1 file changed, 16 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index a20c6e495bb2..ff947fdd7c71 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -1258,8 +1258,9 @@ static pagemap_entry_t pte_to_pagemap_entry(struct pagemapread *pm,
+>  		if (pte_swp_soft_dirty(pte))
+>  			flags |= PM_SOFT_DIRTY;
+>  		entry = pte_to_swp_entry(pte);
+> -		frame = swp_type(entry) |
+> -			(swp_offset(entry) << MAX_SWAPFILES_SHIFT);
+> +		if (pm->show_pfn)
+> +			frame = swp_type(entry) |
+> +				(swp_offset(entry) << MAX_SWAPFILES_SHIFT);
+>  		flags |= PM_SWAP;
+>  		if (is_migration_entry(entry))
+>  			page = migration_entry_to_page(entry);
+> @@ -1310,11 +1311,14 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+>  #ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+>  		else if (is_swap_pmd(pmd)) {
+>  			swp_entry_t entry = pmd_to_swp_entry(pmd);
+> -			unsigned long offset = swp_offset(entry);
+> +			unsigned long offset;
+>  
+> -			offset += (addr & ~PMD_MASK) >> PAGE_SHIFT;
+> -			frame = swp_type(entry) |
+> -				(offset << MAX_SWAPFILES_SHIFT);
+> +			if (pm->show_pfn) {
+> +				offset = swp_offset(entry) +
+> +					((addr & ~PMD_MASK) >> PAGE_SHIFT);
+> +				frame = swp_type(entry) |
+> +					(offset << MAX_SWAPFILES_SHIFT);
+> +			}
+>  			flags |= PM_SWAP;
+>  			if (pmd_swp_soft_dirty(pmd))
+>  				flags |= PM_SOFT_DIRTY;
+> @@ -1332,10 +1336,12 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+>  			err = add_to_pagemap(addr, &pme, pm);
+>  			if (err)
+>  				break;
+> -			if (pm->show_pfn && (flags & PM_PRESENT))
+> -				frame++;
+> -			else if (flags & PM_SWAP)
+> -				frame += (1 << MAX_SWAPFILES_SHIFT);
+> +			if (pm->show_pfn) {
+> +				if (flags & PM_PRESENT)
+> +					frame++;
+> +				else if (flags & PM_SWAP)
+> +					frame += (1 << MAX_SWAPFILES_SHIFT);
+> +			}
+>  		}
+>  		spin_unlock(ptl);
+>  		return err;
+> -- 
+> 2.17.0
+> 
 
 -- 
-regards,
-Stan
+Michal Hocko
+SUSE Labs
