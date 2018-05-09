@@ -1,62 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965565AbeEIQkI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:40:08 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:46876 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934647AbeEIQkG (ORCPT
+        id S965584AbeEIQkW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:40:22 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:35437 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934647AbeEIQkV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:40:06 -0400
-X-IronPort-AV: E=Sophos;i="5.49,382,1520924400";
-   d="scan'208";a="13756570"
-Subject: Re: support for non-uniform SPI NOR flash memories
-To: Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@microchip.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
-        <richard@nod.at>
-CC: <linux-mtd@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-References: <5bc6ab91-9ae3-28b1-2110-452f58fee8c7@microchip.com>
- <e9218dcf-dce6-a009-70ec-33d0cac5bc4d@gmail.com>
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
-Message-ID: <b7cbad40-8340-0a8f-e539-932b777757d8@microchip.com>
-Date: Wed, 9 May 2018 19:40:03 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 9 May 2018 12:40:21 -0400
+X-Google-Smtp-Source: AB8JxZrGKe2nu+uzWDZRx2Fv4jacu41a/nbhT7k67oWapSgl7G2WBb4kLTR33/DkqUmcD8RWDpO6Uw==
+Date: Wed, 9 May 2018 19:40:17 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        mhocko@suse.com
+Subject: Re: [PATCH] elf: don't hash userspace addresses
+Message-ID: <20180509164017.GB16034@avx2>
+References: <20180504212308.GA7564@avx2>
+ <201805050931.FEG18215.tFJOFLHOFVSOQM@I-love.SAKURA.ne.jp>
+ <20180505123201.GA10847@avx2>
+ <201805052219.AGC56242.LFVFQHOOOJFSMt@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <e9218dcf-dce6-a009-70ec-33d0cac5bc4d@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <201805052219.AGC56242.LFVFQHOOOJFSMt@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, May 05, 2018 at 10:19:43PM +0900, Tetsuo Handa wrote:
+> Alexey Dobriyan wrote:
+> > On Sat, May 05, 2018 at 09:31:50AM +0900, Tetsuo Handa wrote:
+> > > Alexey Dobriyan wrote:
+> > > > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> > > > ---
+> > > > 
+> > > >  fs/binfmt_elf.c |    4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > 
+> > > > --- a/fs/binfmt_elf.c
+> > > > +++ b/fs/binfmt_elf.c
+> > > > @@ -379,8 +379,8 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
+> > > >  
+> > > >  	if ((type & MAP_FIXED_NOREPLACE) &&
+> > > >  	    PTR_ERR((void *)map_addr) == -EEXIST)
+> > > > -		pr_info("%d (%s): Uhuuh, elf segment at %px requested but the memory is mapped already\n",
+> > > > -			task_pid_nr(current), current->comm, (void *)addr);
+> > > > +		pr_info("%d (%s): Uhuuh, elf segment at %lx requested but the memory is mapped already\n",
+> > > > +			task_pid_nr(current), current->comm, addr);
+> > > 
+> > > "%px" does not hash. For what reason you replace %px with %lx ?
+> > 
+> > Duh. There is no reason to use non-standard %px.
+> > 
+> 
+> See the comment for pointer() function in lib/vsprintf.c .
+> In Linux kernel world, various extension for %p is supported.
 
-On 05/07/2018 08:14 PM, Marek Vasut wrote:
-> But indeed there are -- to my knowledge -- no flashes with interleaved
-> erase blocks. And yes, there could be improvement in erasing exactly the
-> required chunk of flash with a fitting opcode:)
-
-Thanks Marek.
-
-Other improvement would be to minimize the amount of erase() calls by
-using the best sequence of erase type commands depending on alignment.
-But this will increase the number of queries.
-
-I've read again the Sector Map section of the JEDECB standard and it
-looks like "overlaid" regions are possible. Here's an example that I
-found there:
-
-Bottom: 8x 4KB sectors at bottom (only 4KB erase supported),
-         1x overlaid 64KB sector at bottom (only 64KB erase supported),
-         511 uniform 64KB sectors (only 64KB erase supported)
-
-That's interesting, when one wants to erase the overlaid 64KB sector, I
-guess that the 8x 4KB sectors will be erased too.
-
-I'm still studying this, I'll try to come with a proposal in the next
-few days.
-
-Cheers,
-ta
+%p has this funny property: scanf(printf("%p", ptr)) does not equal %p
+because small pointer will become (null) or (errptr) or whatever is
+decided in recent vsnprintf thread, therefore the less %p is used
+the better.
