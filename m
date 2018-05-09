@@ -1,104 +1,106 @@
-Return-Path: <alexei.starovoitov@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525482061; cv=none;
+Return-Path: <ebiggers3@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525851361; cv=none;
         d=google.com; s=arc-20160816;
-        b=ZqBdbm21q1WDk4k7HoyH+hO8toPIXQ4TNhtHI8LhZXXjBggfpM5hzWJiQv4zXUOCtR
-         PM2rKxg6aGMNy1WWBTCF06RNMdUJRMzxkEpfWkpttWA0qzynXY+nUrYNgzXFux9asRS2
-         Dfr+mqvgYcrsj99Xs09oR3Vt1aMbBnFyJK66mW/KtyOQfltBfjUHQqE84JIyCFpaaXcW
-         fkBC3LrbLTeKvq3lEURK35Pm3sobFa7iW+fgof2r5DHcRAOtmJXP8qUqgZbuM6zmPCR/
-         wUPonF8+hivE6ZKff627CXXsT3MsSkzMwpepTrdge82H4H3tdfTO0f5+Nq+uhsmiN9HR
-         wwRA==
+        b=mwuKJZXIV7aHWTE5JjnM5YiTOl8DM/8G8scpL3sNPlbPZuMFvdBUbIPxt/goZojwU8
+         Tki5D8QMiV9eQJ6z3pGPDt6jIftADTLwSFpeQTvdHSvVK0qhiIvCTfIX7iJJqVPDtOOR
+         Ot41KVu5I6Z1D2zQ9WZUx6Q9Ho4H/v51n47gtQdnZQXN0zizUpM1eAnlL1fKWDsAob4d
+         JEUCgCaTGSz5uAGFGBjnZvRKUUbudyyHQ7SuxN3SlRTZcyjnM8JdwrSxMz8QR0eKz+EF
+         T4b41kXX+94nsWXPSBMdsEHOwVmOygcvR2WoSklt7CTekN4Ym0y1JAUqVNha7+sCK5/D
+         2igQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-transfer-encoding
          :content-disposition:mime-version:references:message-id:subject:cc
          :to:from:date:dkim-signature:arc-authentication-results;
-        bh=3CyNBKwTx1k6VI7SWCX/1OJmHh/WQQE8oT2jjstU1Gk=;
-        b=EQQNhsvrxJ7ReV+Arra26UXRRmHw+LUAyQMhOMltLjsYNYmM+MYllC4+IqeyThE+kh
-         hqRNAs4R1qy/F8FLxH/29kbrO5huIhiLSexi6SYXSQ/6v+gtUQDHUnVl6yTyHCYcUYMy
-         hJ2BqYgrOkAssZoHr1YgpFqlT40tXEBVfGjwRePBPMHQdvzBJTp5fXFCnHUySlvDZ4nt
-         rWNqWRng6N/N0AZgXAMXbFLH1dkJJhmWEDRqiHL+EmB2KQaagLJL4RXUqqiwd5X11LAy
-         2NZUufybGw/+lyMiQsbR3yb7dSNwEgl15ZnE+/QX+5hyYzSMnL68zni75bVsgRp9tILz
-         8ehQ==
+        bh=J6ZFtrEgtk/aaUaPrdt1hCQtgGzR6HolDuq680c8N40=;
+        b=y9a+qkJ6lrMt0NxX70dmCvLzeBnXSoM8XeChVbnKeBctIbydljk7N/3oDF8P3GnEph
+         VwLuHzbjlEK8ZrtZUugXBc18QG4BeMHnUTIBOo6q+JYNsE1onkoEbfP9SjhlZT4Kzp25
+         y4e64sMfqo+D0s70Zux+iaS99dNrR0n8vId+6qVTcKfYMLCp7AWXmBUMv4NR5heDYZ4m
+         gR+T8nw4kmpan1iUAPsCXPWUDYzPv6hSjig+3l7vuzr79Xop5XjUSwD4dZawGfK7/iOY
+         kUe4GxVliiNPRyRufyX08sanur3r0RMnBFqRDogSjRF9stwdbF969SlINT61UtcE9MAZ
+         XgZA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HkWdZENe;
-       spf=pass (google.com: domain of alexei.starovoitov@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=alexei.starovoitov@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=EQ47f0F3;
+       spf=pass (google.com: domain of ebiggers3@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ebiggers3@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=HkWdZENe;
-       spf=pass (google.com: domain of alexei.starovoitov@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=alexei.starovoitov@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=EQ47f0F3;
+       spf=pass (google.com: domain of ebiggers3@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ebiggers3@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZqK0YTKfKol2SC+F18agcDFQp5I0mAxoyelCLvlisNgkSWfay5CcxdO3qRkDMMS1dBsWg2iZA==
-Date: Fri, 4 May 2018 18:00:58 -0700
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: Edward Cree <ecree@solarflare.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, davem@davemloft.net,
-	daniel@iogearbox.net, torvalds@linux-foundation.org,
-	gregkh@linuxfoundation.org, luto@amacapital.net,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@fb.com
-Subject: Re: [PATCH v2 net-next 2/4] net: add skeleton of bpfilter kernel
- module
-Message-ID: <20180505010056.are63gsmf7yrlxpe@ast-mbp>
-References: <20180503043604.1604587-1-ast@kernel.org>
- <20180503043604.1604587-3-ast@kernel.org>
- <c0ad0d12-418f-8dfd-ed2c-92e36316310b@solarflare.com>
+X-Google-Smtp-Source: AB8JxZrC7qPPP2H+4BNg1yJjZIuDBXSKP1/ld3r8ecpN9lHtmq5CIdAylzBdvG6PpgawtLZefO2yug==
+Date: Wed, 9 May 2018 00:37:54 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Eric Dumazet <edumazet@google.com>,
+	syzbot <syzbot+71d74a5406d02057d559@syzkaller.appspotmail.com>,
+	alexander.deucher@amd.com, Andrey Konovalov <andreyknvl@google.com>,
+	Anoob Soman <anoob.soman@citrix.com>, chris@chris-wilson.co.uk,
+	David Miller <davem@davemloft.net>, elena.reshetova@intel.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <keescook@chromium.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Mike Maloney <maloney@google.com>, mchehab@kernel.org,
+	netdev <netdev@vger.kernel.org>, rami.rosen@intel.com,
+	Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+	syzkaller-bugs@googlegroups.com,
+	Willem de Bruijn <willemb@google.com>
+Subject: Re: KASAN: use-after-free Read in __dev_queue_xmit
+Message-ID: <20180509073754.GG711@sol.localdomain>
+References: <94eb2c0ce3aa27cfa40561ec2dc3@google.com>
+ <CANn89iLEt2e0X-zj0f_05R-oN7sX7fKUWbNz_DJSeKXJMSwUBQ@mail.gmail.com>
+ <1515048794.131759.4.camel@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c0ad0d12-418f-8dfd-ed2c-92e36316310b@solarflare.com>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <1515048794.131759.4.camel@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599416225694736469?=
-X-GMAIL-MSGID: =?utf-8?q?1599583878285895013?=
+X-GMAIL-THRID: =?utf-8?q?1588636556567233283?=
+X-GMAIL-MSGID: =?utf-8?q?1599971116734668365?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 03, 2018 at 03:23:55PM +0100, Edward Cree wrote:
-> On 03/05/18 05:36, Alexei Starovoitov wrote:
-> > bpfilter.ko consists of bpfilter_kern.c (normal kernel module code)
-> > and user mode helper code that is embedded into bpfilter.ko
-> >
-> > The steps to build bpfilter.ko are the following:
-> > - main.c is compiled by HOSTCC into the bpfilter_umh elf executable file
-> > - with quite a bit of objcopy and Makefile magic the bpfilter_umh elf file
-> >   is converted into bpfilter_umh.o object file
-> >   with _binary_net_bpfilter_bpfilter_umh_start and _end symbols
-> >   Example:
-> >   $ nm ./bld_x64/net/bpfilter/bpfilter_umh.o
-> >   0000000000004cf8 T _binary_net_bpfilter_bpfilter_umh_end
-> >   0000000000004cf8 A _binary_net_bpfilter_bpfilter_umh_size
-> >   0000000000000000 T _binary_net_bpfilter_bpfilter_umh_start
-> > - bpfilter_umh.o and bpfilter_kern.o are linked together into bpfilter.ko
-> >
-> > bpfilter_kern.c is a normal kernel module code that calls
-> > the fork_usermode_blob() helper to execute part of its own data
-> > as a user mode process.
-> >
-> > Notice that _binary_net_bpfilter_bpfilter_umh_start - end
-> > is placed into .init.rodata section, so it's freed as soon as __init
-> > function of bpfilter.ko is finished.
-> > As part of __init the bpfilter.ko does first request/reply action
-> > via two unix pipe provided by fork_usermode_blob() helper to
-> > make sure that umh is healthy. If not it will kill it via pid.
-> >
-> > Later bpfilter_process_sockopt() will be called from bpfilter hooks
-> > in get/setsockopt() to pass iptable commands into umh via bpfilter.ko
-> >
-> > If admin does 'rmmod bpfilter' the __exit code bpfilter.ko will
-> > kill umh as well.
-> >
-> > Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-...
-> > +static void stop_umh(void)
-> > +{
-> > +	if (bpfilter_process_sockopt) {
-> I worry about locking here.  Is it possible for two calls to
->  bpfilter_process_sockopt() to run in parallel, both fail, and thus both
->  call stop_umh()?  And if both end up calling shutdown_umh(), we double
->  fput().
+On Wed, Jan 03, 2018 at 10:53:14PM -0800, Eric Dumazet wrote:
+> On Wed, 2018-01-03 at 21:13 -0800, Eric Dumazet wrote:
+> > Note: all commands must start from beginning of the line in the email body.
+> > 
+> > I guess skb_probe_transport_header() should be hardened to reject malicious
+> > packets given by user space, instead of being gentle.
+> 
+> Although bug triggered for this particular repro is in flow dissector
+> :/
+> 
+> I will test :
+> 
+> diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
+> index 15ce300637650e17fcab7e378b20fe7972686d46..544bddf08e13c7f6e47aadc737244c9ba5af56b2 100644
+> --- a/net/core/flow_dissector.c
+> +++ b/net/core/flow_dissector.c
+> @@ -976,8 +976,8 @@ bool __skb_flow_dissect(const struct sk_buff *skb,
+>  out_good:
+>         ret = true;
+>  
+> -       key_control->thoff = (u16)nhoff;
+>  out:
+> +       key_control->thoff = min_t(u16, nhoff, skb ? skb->len : hlen);
+>         key_basic->n_proto = proto;
+>         key_basic->ip_proto = ip_proto;
+>  
+> @@ -985,7 +985,6 @@ bool __skb_flow_dissect(const struct sk_buff *skb,
+>  
+>  out_bad:
+>         ret = false;
+> -       key_control->thoff = min_t(u16, nhoff, skb ? skb->len : hlen);
+>         goto out;
+>  }
+>  EXPORT_SYMBOL(__skb_flow_dissect);
 
-I thought iptables sockopt is serialized earlier. Nope.
-We need to grab the mutex to access these pipes.
-Will fix.
+Fix for this was commit d0c081b49137cd:
 
-Thanks for spelling nits. Will fix as well.
+#syz fix: flow_dissector: properly cap thoff field
+
+But a crash with the same signature is still occurring, so it should eventually
+get reported again.  C reproducer is here, it works on Linus' tree (commit
+036db8bd963): https://syzkaller.appspot.com/text?tag=ReproC&x=105b1ae7800000
+
+- Eric
