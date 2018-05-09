@@ -1,142 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965596AbeEITis (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 15:38:48 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:34559 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964944AbeEITiq (ORCPT
+        id S965630AbeEITmA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 15:42:00 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:35640 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964850AbeEITl6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 15:38:46 -0400
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-mm@kvack.org,
-        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 1/8] bdi: use refcount_t for reference counting instead atomic_t
-Date: Wed,  9 May 2018 21:36:38 +0200
-Message-Id: <20180509193645.830-2-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180509193645.830-1-bigeasy@linutronix.de>
-References: <20180509193645.830-1-bigeasy@linutronix.de>
+        Wed, 9 May 2018 15:41:58 -0400
+X-Google-Smtp-Source: AB8JxZrmbQnOiuJbnEgQ3hvj/K5ecYXMOZQg/HEs42SEE466ycac7ZrvCOUkL1Hip/7hbMB8u8kC1A==
+Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
+ controller driver
+To: Pavel Machek <pavel@ucw.cz>, Baolin Wang <baolin.wang@linaro.org>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, xiaotong.lu@spreadtrum.com,
+        broonie@kernel.org, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
+ <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
+ <20180509142539.GB25131@amd>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
+Date: Wed, 9 May 2018 21:40:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180509142539.GB25131@amd>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-refcount_t type and corresponding API should be used instead of atomic_t wh=
-en
-the variable is used as a reference counter. This allows to avoid accidental
-refcounter overflows that might lead to use-after-free situations.
+Hi,
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- include/linux/backing-dev-defs.h |  3 ++-
- include/linux/backing-dev.h      |  4 ++--
- mm/backing-dev.c                 | 12 ++++++------
- 3 files changed, 10 insertions(+), 9 deletions(-)
+On 05/09/2018 04:25 PM, Pavel Machek wrote:
+> On Tue 2018-05-08 13:39:45, Baolin Wang wrote:
+>> From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+>>
+>> This patch adds Spreadtrum SC27xx PMIC series breathing light controller
+>> driver, which can support 3 LEDs. Each LED can work at normal PWM mode
+>> and breathing mode.
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> new file mode 100644
+>> index 0000000..22166fb
+>> --- /dev/null
+>> +++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> @@ -0,0 +1,19 @@
+>> +What:		/sys/class/leds/<led>/rise_time
+>> +What:		/sys/class/leds/<led>/high_time
+>> +What:		/sys/class/leds/<led>/fall_time
+>> +What:		/sys/class/leds/<led>/low_time
+>> +Date:		May 2018
+>> +KernelVersion:	4.18
+>> +Contact:	Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+>> +Description:
+>> +		Set the pattern generator rise, high, fall and low
+>> +		times (0..63). It's unit is 0.125s, it should be > 0.
+>> +
+>> +		1 - 125 ms
+>> +		2 - 250 ms
+>> +		3 - 375 ms
+>> +		...
+>> +		...
+>> +		...
+>> +		62 - 7.75 s
+>> +		63 - 7.875 s
+> 
+> How does this interact with triggers? With manually setting
+> brightness? Are the pattern generators independend for the LEDs?
+> 
+> Can you generate white breathing pattern? If so, how?
+> 
+> How do you select between normal and breathing modes?
+> 
+> I'd specify times in miliseconds or something, this is way too
+> hardware specific.
 
-diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-d=
-efs.h
-index 0bd432a4d7bd..81c75934ca5b 100644
---- a/include/linux/backing-dev-defs.h
-+++ b/include/linux/backing-dev-defs.h
-@@ -12,6 +12,7 @@
- #include <linux/timer.h>
- #include <linux/workqueue.h>
- #include <linux/kref.h>
-+#include <linux/refcount.h>
-=20
- struct page;
- struct device;
-@@ -76,7 +77,7 @@ enum wb_reason {
-  */
- struct bdi_writeback_congested {
- 	unsigned long state;		/* WB_[a]sync_congested flags */
--	atomic_t refcnt;		/* nr of attached wb's and blkg */
-+	refcount_t refcnt;		/* nr of attached wb's and blkg */
-=20
- #ifdef CONFIG_CGROUP_WRITEBACK
- 	struct backing_dev_info *__bdi;	/* the associated bdi, set to NULL
-diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-index 72ca0f3d39f3..c28a47cbe355 100644
---- a/include/linux/backing-dev.h
-+++ b/include/linux/backing-dev.h
-@@ -404,13 +404,13 @@ static inline bool inode_cgwb_enabled(struct inode *i=
-node)
- static inline struct bdi_writeback_congested *
- wb_congested_get_create(struct backing_dev_info *bdi, int blkcg_id, gfp_t =
-gfp)
- {
--	atomic_inc(&bdi->wb_congested->refcnt);
-+	refcount_inc(&bdi->wb_congested->refcnt);
- 	return bdi->wb_congested;
- }
-=20
- static inline void wb_congested_put(struct bdi_writeback_congested *conges=
-ted)
- {
--	if (atomic_dec_and_test(&congested->refcnt))
-+	if (refcount_dec_and_test(&congested->refcnt))
- 		kfree(congested);
- }
-=20
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 7441bd93b732..7984a872073e 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -450,10 +450,10 @@ wb_congested_get_create(struct backing_dev_info *bdi,=
- int blkcg_id, gfp_t gfp)
- 	if (new_congested) {
- 		/* !found and storage for new one already allocated, insert */
- 		congested =3D new_congested;
--		new_congested =3D NULL;
- 		rb_link_node(&congested->rb_node, parent, node);
- 		rb_insert_color(&congested->rb_node, &bdi->cgwb_congested_tree);
--		goto found;
-+		spin_unlock_irqrestore(&cgwb_lock, flags);
-+		return congested;
- 	}
-=20
- 	spin_unlock_irqrestore(&cgwb_lock, flags);
-@@ -463,13 +463,13 @@ wb_congested_get_create(struct backing_dev_info *bdi,=
- int blkcg_id, gfp_t gfp)
- 	if (!new_congested)
- 		return NULL;
-=20
--	atomic_set(&new_congested->refcnt, 0);
-+	refcount_set(&new_congested->refcnt, 1);
- 	new_congested->__bdi =3D bdi;
- 	new_congested->blkcg_id =3D blkcg_id;
- 	goto retry;
-=20
- found:
--	atomic_inc(&congested->refcnt);
-+	refcount_inc(&congested->refcnt);
- 	spin_unlock_irqrestore(&cgwb_lock, flags);
- 	kfree(new_congested);
- 	return congested;
-@@ -486,7 +486,7 @@ void wb_congested_put(struct bdi_writeback_congested *c=
-ongested)
- 	unsigned long flags;
-=20
- 	local_irq_save(flags);
--	if (!atomic_dec_and_lock(&congested->refcnt, &cgwb_lock)) {
-+	if (!refcount_dec_and_lock(&congested->refcnt, &cgwb_lock)) {
- 		local_irq_restore(flags);
- 		return;
- 	}
-@@ -794,7 +794,7 @@ static int cgwb_bdi_init(struct backing_dev_info *bdi)
- 	if (!bdi->wb_congested)
- 		return -ENOMEM;
-=20
--	atomic_set(&bdi->wb_congested->refcnt, 1);
-+	refcount_set(&bdi->wb_congested->refcnt, 1);
-=20
- 	err =3D wb_init(&bdi->wb, bdi, 1, GFP_KERNEL);
- 	if (err) {
---=20
-2.17.0
+Agreed.
+
+> Now... functionality like this is common between many LED
+> controllers. N900 could do this kind of "breathing", too, and it also
+> supports other patterns.
+> 
+> I believe we need interface common between different LED controllers.
+> 
+> And I guess it would be easiest if you dropped this part from initial
+> merge.
+
+I disagree here. We already had the same discussion at the occasion
+of the patch [0] and it turned out to be a dead-end [1]. Now we have
+neither the driver nor the generic pattern interface.
+
+We also already have some older LED class drivers that implement custom
+pattern interfaces (e.g. drivers/leds/leds-lm3533.c) and the same
+approach can be applied in this case.
+
+Regarding interaction with triggers - we could disable pattern
+on setting any trigger and return -EBUSY from the pattern
+interface if led_cdev->trigger is not NULL.
+
+[0] https://lkml.org/lkml/2017/3/23/33
+[1] https://lkml.org/lkml/2017/11/15/27
+
+-- 
+Best regards,
+Jacek Anaszewski
