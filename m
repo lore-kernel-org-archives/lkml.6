@@ -1,114 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756409AbeEIOAQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 10:00:16 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:17679 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756430AbeEIOAO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 10:00:14 -0400
-Subject: Re: [PATCH] net: phy: DP83TC811: Introduce support for the DP83TC811
- phy
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <f.fainelli@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180509120559.12725-1-dmurphy@ti.com>
- <20180509134315.GE14276@lunn.ch>
- <382b9d52-7cfd-ae37-244a-32c7245cb27e@ti.com>
- <20180509135826.GG14276@lunn.ch>
-From: Dan Murphy <dmurphy@ti.com>
-Message-ID: <4542e548-90fc-a8fa-f6b9-3bf3bd32a6e9@ti.com>
-Date: Wed, 9 May 2018 09:00:03 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1756412AbeEIOCx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 10:02:53 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59055 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934630AbeEIOCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 10:02:52 -0400
+Date: Wed, 9 May 2018 16:02:40 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: NeilBrown <neil@brown.name>, Marek Vasut <marek.vasut@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFC] mtd: spi-nor: honour max_message_size for spi-nor
+ writes.
+Message-ID: <20180509160240.23ef11f2@bbrezillon>
+In-Reply-To: <87efj1kw9u.fsf@notabene.neil.brown.name>
+References: <87efj1kw9u.fsf@notabene.neil.brown.name>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180509135826.GG14276@lunn.ch>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew
+On Fri, 27 Apr 2018 16:18:05 +1000
+NeilBrown <neil@brown.name> wrote:
 
-On 05/09/2018 08:58 AM, Andrew Lunn wrote:
-> On Wed, May 09, 2018 at 08:50:58AM -0500, Dan Murphy wrote:
->> Andrew
->>
->> Thanks for the review
->>
->> On 05/09/2018 08:43 AM, Andrew Lunn wrote:
->>>> +static int dp83811_config_aneg(struct phy_device *phydev)
->>>> +{
->>>> +	int err;
->>>> +	int value;
->>>> +
->>>> +	value = phy_read(phydev, MII_DP83811_SGMII_CTRL);
->>>> +	if (phydev->autoneg == AUTONEG_ENABLE) {
->>>> +		err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
->>>> +				(DP83811_SGMII_AUTO_NEG_EN | value));
->>>> +		if (err < 0)
->>>> +			return err;
->>>> +	} else {
->>>> +		err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
->>>> +				(~DP83811_SGMII_AUTO_NEG_EN & value));
->>>> +		if (err < 0)
->>>> +			return err;
->>>> +	}
->>>> +
->>>
->>> Hi Dan
->>>
->>> You say SGMII is unreliable on one of these devices. Should you check
->>> phydev->interface before enabling SGMII autoneg?
->>
->>
->> If SGMII enable bit(12) is not set in the device then setting auto neg has no affect on the device.
+> Hi,
+>  I've labeled this an RFC because I'm really not sure about removing the
+>  error path from spi_nor_write() -- maybe that really matters.  But on
+>  my hardware, performing multiple small spi writes to the flash seems
+>  to work.
 > 
-> Ah, O.K. Maybe add a comment about this.
+>  The spi driver is drivers/staging/mt7621-spi.  Possibly this needs to
+>  use DMA instead of a FIFO (assuming the hardware can) - or maybe
+>  drivers/spi/spi-mt65xx.c can be made to work on this hardware, though
+>  that is for an ARM SOC and mt7621 is a MIPS SOC.
 > 
-
-I will add the check it will be clearer if written in code and explicit as opposed to explaining it.
-
-Dan
-
->>>> +
->>>> +static int dp83811_config_init(struct phy_device *phydev)
->>>> +{
->>>> +	int err;
->>>> +	int value;
->>>> +
->>>> +	err = genphy_config_init(phydev);
->>>> +	if (err < 0)
->>>> +		return err;
->>>> +
->>>> +	if (phydev->interface == PHY_INTERFACE_MODE_SGMII) {
->>>> +		value = phy_read(phydev, MII_DP83811_SGMII_CTRL);
->>>> +		if (!(value & DP83811_SGMII_EN)) {
->>>> +			err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
->>>> +					(DP83811_SGMII_EN | value));
->>>> +			if (err < 0)
->>>> +				return err;
->>>> +		} else {
->>>> +			err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
->>>> +				(~DP83811_SGMII_EN & value));
->>>> +			if (err < 0)
->>>> +				return err;
->>>> +		}
->>>
->>> This looks to be a duplicate of dp83811_config_aneg()?
->>
->> It is almost the same but this function sets bit 12 and aneg function sets bit 13.
->> We can have SGMII with or without auto neg.
+>  I note that openwrt has similar patches:
+>   target/linux/generic/pending-4.14/450-mtd-spi-nor-allow-NOR-driver-to-write-fewer-bytes-th.patch
 > 
-> Yep, i missed the difference.
+>  They also change the spi driver to do a short write, rather
+>  than change m25p80 to request a short write.
 > 
->      Andrew
+>  Is there something horribly wrong with this?
+
+Marek, any opinion on this patch?
+
 > 
-
-
--- 
-------------------
-Dan Murphy
+> Thanks,
+> NeilBrown
+> 
+> -----------------------8<------------------------
+> 
+> m25p80 honours max_message_size and max_transfer_size
+> for reads, but not for writes.
+> I have a driver that has a max message size of 36 bytes
+> (command, address, 32 bytes data, all places in a FIFO
+> in the controller).
+> This requires m25p80_write() to honour the size limits.
+> For that to work, spi-nor needs to quietly accept partial
+> writes.
+> 
+> With this, I can successfully re-flash my device.
+> 
+> Signed-off-by: NeilBrown <neil@brown.name>
+> ---
+>  drivers/mtd/devices/m25p80.c  | 3 ++-
+>  drivers/mtd/spi-nor/spi-nor.c | 7 -------
+>  2 files changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
+> index a4e18f6aaa33..7ded13507604 100644
+> --- a/drivers/mtd/devices/m25p80.c
+> +++ b/drivers/mtd/devices/m25p80.c
+> @@ -117,7 +117,8 @@ static ssize_t m25p80_write(struct spi_nor *nor, loff_t to, size_t len,
+>  
+>  	t[data_idx].tx_buf = buf;
+>  	t[data_idx].tx_nbits = data_nbits;
+> -	t[data_idx].len = len;
+> +	t[data_idx].len = min3(len, spi_max_transfer_size(spi),
+> +			       spi_max_message_size(spi) - cmd_sz);
+>  	spi_message_add_tail(&t[data_idx], &m);
+>  
+>  	ret = spi_sync(spi, &m);
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 42ae9a1529bb..cfa15f2801ad 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -1445,13 +1445,6 @@ static int spi_nor_write(struct mtd_info *mtd, loff_t to, size_t len,
+>  			goto write_err;
+>  		*retlen += written;
+>  		i += written;
+> -		if (written != page_remain) {
+> -			dev_err(nor->dev,
+> -				"While writing %zu bytes written %zd bytes\n",
+> -				page_remain, written);
+> -			ret = -EIO;
+> -			goto write_err;
+> -		}
+>  	}
+>  
+>  write_err:
