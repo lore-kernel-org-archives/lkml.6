@@ -1,126 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965506AbeEIQ2n (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:28:43 -0400
-Received: from mail.monom.org ([188.138.9.77]:52434 "EHLO mail.monom.org"
+        id S965516AbeEIQ3n (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:29:43 -0400
+Received: from bues.ch ([80.190.117.144]:37986 "EHLO bues.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965012AbeEIQ2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:28:42 -0400
-From: Daniel Wagner <wagi@monom.org>
-Subject: [ANNOUNCE] 4.4.131-rt148
-Date: Wed, 09 May 2018 18:18:49 +0200
-To: LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Daniel Wagner <daniel.wagner@siemens.com>, tom.zanussi@linux.intel.com
-Message-Id: <20180509162840.7BB9D500C4B@mail.monom.org>
+        id S934914AbeEIQ3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 12:29:41 -0400
+Date: Wed, 9 May 2018 18:27:56 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: Matt Redfearn <matt.redfearn@mips.com>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJl?= =?UTF-8?B?Y2tp?= <zajec5@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Regression caused by commit 882164a4a928
+Message-ID: <20180509182756.6f36cc05@wiggum>
+In-Reply-To: <372d149c-c34c-56a0-4e1a-5ab2c1e16e73@mips.com>
+References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
+        <372d149c-c34c-56a0-4e1a-5ab2c1e16e73@mips.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/J1WK1fb.oUu4_Zwymfp9gqq"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello RT Folks!
+--Sig_/J1WK1fb.oUu4_Zwymfp9gqq
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-I'm pleased to announce the 4.4.131-rt148 stable release.
+On Wed, 9 May 2018 13:55:43 +0100
+Matt Redfearn <matt.redfearn@mips.com> wrote:
 
-This release add the missing stable-rt patches from Sebastian. With
-this the v4.4-rt tree should contain all stable-rt patches. Let me
-knonw if I missed anything.
+> Hi Larry
+>=20
+> On 07/05/18 16:44, Larry Finger wrote:
+> > Matt,
+> >=20
+> > Although commit 882164a4a928 ("ssb: Prevent build of PCI host features=
+=20
+> > in module") appeared to be harmless, it leads to complete failure of=20
+> > drivers b43. and b43legacy, and likely affects b44 as well. The problem=
+=20
+> > is that CONFIG_SSB_PCIHOST is undefined, which prevents the compilation=
+=20
+> > of the code that controls the PCI cores of the device. See=20
+> > https://bugzilla.redhat.com/show_bug.cgi?id=3D1572349 for details. =20
+>=20
+> Sorry for the breakage :-/
+>=20
+> >=20
+> > As the underlying errors ("pcibios_enable_device" undefined, and=20
+> > "register_pci_controller" undefined) do not appear on the architectures=
+=20
+> > that I have tested (x86_64, x86, and ppc), I suspect something in the=20
+> > arch-specific code for your setup (MIPS?). As I have no idea on how to=
+=20
+> > fix that problem, would the following patch work for you?
+> >=20
+> > diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
+> > index 9371651d8017..3743533c8057 100644
+> > --- a/drivers/ssb/Kconfig
+> > +++ b/drivers/ssb/Kconfig
+> > @@ -117,7 +117,7 @@ config SSB_SERIAL
+> >=20
+> >  =C2=A0config SSB_DRIVER_PCICORE_POSSIBLE
+> >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on SSB_PCIHOST && SSB =3D=
+ y
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on SSB_PCIHOST && (SSB =
+=3D y || !MIPS)
+> >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default y
+> >=20
+> >  =C2=A0config SSB_DRIVER_PCICORE =20
+>=20
+> I believe that the problem stems from these drivers being used for some=20
+> wireless AP functionality built into some MIPS based SoCs. The Kconfig=20
+> rules sort out building this additional functionality when configured=20
+> for MIPS (in a round about sort of way), but it allowed it even when SSB=
+=20
+> is a module, leading to build failures. My patch was intended to prevent=
+=20
+> that.
+>=20
+> There was a similar issue in the same Kconfig file, introduced by=20
+> c5611df96804 and fixed by a9e6d44ddecc. It was fixed the same way as you=
+=20
+> suggest. I've tested the above patch and it does work for MIPS=20
+> (preventing the PCICORE being built into the module).
+>=20
+> Tested-by: Matt Redfearn <matt.redfearn@mips.com>
 
-You can get this release via the git tree at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+Could you please try this?
 
-  branch: v4.4-rt
-  Head SHA1: d103ae2fc7d8e8a3a713dab5eabd6e4e3a1488b3
+config SSB_DRIVER_PCICORE_POSSIBLE
+	depends on SSB_PCIHOST
 
-Or to build 4.4.131-rt148 directly, the following patches should be applied:
-
-  http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.xz
-
-  http://www.kernel.org/pub/linux/kernel/v4.x/patch-4.4.131.xz
-
-  http://www.kernel.org/pub/linux/kernel/projects/rt/4.4/patch-4.4.131-rt148.patch.xz
+config SSB_PCICORE_HOSTMODE
+	depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS && (SSB =3D y) && PCI_DRI=
+VERS_LEGACY
 
 
-You can also build from 4.4.131-rt147 by applying the incremental patch:
+The affected API pcibios_enable_device() and register_pci_controller()
+is only used in HOSTMODE. So I think it makes sense to make HOSTMODE
+depend on SSB=3Dy and PCI_DRIVERS_LEGACY.
 
-  http://www.kernel.org/pub/linux/kernel/projects/rt/4.4/incr/patch-4.4.131-rt147-rt148.patch.xz
+PCICore itself does not use the API, if hostmode is disabled.
 
-Enjoy!
-   Daniel
+--=20
+Michael
 
-Changes from v4.4.131-rt147:
----
-Daniel Wagner (1):
-      Linux 4.4.131-rt148
+--Sig_/J1WK1fb.oUu4_Zwymfp9gqq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Sebastian Andrzej Siewior (2):
-      alarmtimer: Prevent live lock in alarm_cancel()
-      posix-timers: move the rcu head out of the union
+-----BEGIN PGP SIGNATURE-----
 
----
- include/linux/posix-timers.h | 2 +-
- kernel/time/alarmtimer.c     | 2 +-
- kernel/time/posix-timers.c   | 4 ++--
- localversion-rt              | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
----
-diff --git a/include/linux/posix-timers.h b/include/linux/posix-timers.h
-index 907f3fd191ac..e2e43c61f6a1 100644
---- a/include/linux/posix-timers.h
-+++ b/include/linux/posix-timers.h
-@@ -92,8 +92,8 @@ struct k_itimer {
- 			struct alarm alarmtimer;
- 			ktime_t interval;
- 		} alarm;
--		struct rcu_head rcu;
- 	} it;
-+	struct rcu_head rcu;
- };
- 
- struct k_clock {
-diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
-index 6fcc367ad531..9d5eac2c9275 100644
---- a/kernel/time/alarmtimer.c
-+++ b/kernel/time/alarmtimer.c
-@@ -392,7 +392,7 @@ int alarm_cancel(struct alarm *alarm)
- 		int ret = alarm_try_to_cancel(alarm);
- 		if (ret >= 0)
- 			return ret;
--		cpu_relax();
-+		hrtimer_wait_for_timer(&alarm->timer);
- 	}
- }
- EXPORT_SYMBOL_GPL(alarm_cancel);
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index 48ca053dae2e..0808e2ae49bf 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -567,7 +567,7 @@ static struct k_itimer * alloc_posix_timer(void)
- 
- static void k_itimer_rcu_free(struct rcu_head *head)
- {
--	struct k_itimer *tmr = container_of(head, struct k_itimer, it.rcu);
-+	struct k_itimer *tmr = container_of(head, struct k_itimer, rcu);
- 
- 	kmem_cache_free(posix_timers_cache, tmr);
- }
-@@ -584,7 +584,7 @@ static void release_posix_timer(struct k_itimer *tmr, int it_id_set)
- 	}
- 	put_pid(tmr->it_pid);
- 	sigqueue_free(tmr->sigq);
--	call_rcu(&tmr->it.rcu, k_itimer_rcu_free);
-+	call_rcu(&tmr->rcu, k_itimer_rcu_free);
- }
- 
- static struct k_clock *clockid_to_kclock(const clockid_t id)
-diff --git a/localversion-rt b/localversion-rt
-index d3fa072b6b43..857407b62668 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt147
-+-rt148
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlrzIYwACgkQ9TK+HZCN
+iw6zzRAAgYc6Piwo4UWmkEWzoAMnu/5X3HX1DoYkSAIvMnGokm/Gi27JkFRap9HW
+syIze0IFGCOTTb9Z0LIiZfrpn4m4vjSrCaNCmBBXdexfhLIDWfjy5sDv76rhAffj
+h6orCkbOWBoJ2Bpz/tnSYAhD+HO2kDLV9UmgHdhaUnZRGl8ciPcsJggpyNQa7+rd
+gsupykZvm459wdx380Dptmu3fdKlu7HAXEwWUNGOOzg4U9+Er3Zyb29+GyPkO1uI
+ueN3T2NlB77LgfziPiGyFw+0EqzUaWlvS1gAXapZVsx8S9FgO1WDhHe3bBJHE30F
+eoJNAJxJFKOyTjWNxppAJICEePxXr889jogTKWkxBJYxn/mRINCV1mNJ/dZS3AQm
+yIg1gfegntvV9vhw9uLAc0+tX/FDTs5ibkCm8S+PJcRd/s153qfA5eaqccChFpOO
++d2dbbyxTG5TnxO3wdM0v3LsoaZYai0vbRaKApoLADeqpkoSlCYEbaLcEY2W+kKr
+6xzGis2FjeXzSuSjdExvezkBsTKdDmQlpLGLNTpRoDFJIboPrP0WXTMVnO1ZXQUu
+KrsAFyda5Xzld8dz1J4pDzYksu4vPTetuJeyvcMtReq2U+3CMjoRHR1k49qetQeG
+6ITHKhpQXynmVmlDAwLN2PbQfDHhkP/Zif50rl2K75nc2TNO/Ks=
+=tofR
+-----END PGP SIGNATURE-----
+
+--Sig_/J1WK1fb.oUu4_Zwymfp9gqq--
