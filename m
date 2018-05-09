@@ -1,27 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965039AbeEIPQO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:16:14 -0400
-Received: from smtprelay0141.hostedemail.com ([216.40.44.141]:34163 "EHLO
+        id S965027AbeEIPQN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:16:13 -0400
+Received: from smtprelay0046.hostedemail.com ([216.40.44.46]:55443 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S964903AbeEIPQJ (ORCPT
+        by vger.kernel.org with ESMTP id S964963AbeEIPQG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:16:09 -0400
+        Wed, 9 May 2018 11:16:06 -0400
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:4:41:69:355:379:541:800:960:968:973:982:988:989:1260:1345:1359:1437:1605:1730:1747:1777:1792:2198:2199:2393:2559:2562:2904:3138:3139:3140:3141:3142:3165:3865:3867:3868:3871:4250:4321:4605:5007:6119:6261:7875:7903:9010:9040:10004:10848:11026:11473:11657:11658:11914:12043:12048:12296:12438:12555:12679:12683:12733:12737:12895:14110:14394:21080:21433:21451:21611:21627:21740:30029:30045:30046:30054:30070:30079:30080,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: pail59_8ca312c66fa31
-X-Filterd-Recvd-Size: 17583
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:1:41:69:355:379:541:800:960:968:973:988:989:1260:1345:1359:1437:1605:1730:1747:1777:1792:2198:2199:2393:2559:2562:2638:2902:3138:3139:3140:3141:3142:3865:3867:3870:3871:3872:4321:4398:4605:5007:6117:6119:6261:7875:7903:8603:8957:9038:10004:10848:11026:11473:11658:11914:12043:12296:12438:12555:12679:12683:12895:12986:13972:14110:14394:21080:21433:21451:21627:30012:30045:30046:30054:30070,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: brain53_8c5ed9318f325
+X-Filterd-Recvd-Size: 13374
 From: Joe Perches <joe@perches.com>
-To: Selvin Xavier <selvin.xavier@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Somnath Kotur <somnath.kotur@broadcom.com>,
-        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
-Cc: x86@kernel.org, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] infiniband: qplib_fp: Use dev_fmt
-Date: Wed,  9 May 2018 08:15:50 -0700
-Message-Id: <51c5082a4add7520b4fac54e58ca26a8156bf5e8.1525878372.git.joe@perches.com>
+To: Corey Minyard <minyard@acm.org>
+Cc: x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: [PATCH 5/6] ipmi: Convert printk(KERN_<level> to pr_<level>(
+Date: Wed,  9 May 2018 08:15:49 -0700
+Message-Id: <6ded88aac897dfb05803f81acdb31146315fd372.1525878372.git.joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <cover.1525878372.git.joe@perches.com>
 References: <cover.1525878372.git.joe@perches.com>
@@ -29,460 +26,336 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the embedded dev_<level> uses to use the new dev_fmt
-prefix and remove the prefix from the formats.
+Use the more common logging style.
 
 Miscellanea:
 
-o Add missing terminating newlines to avoid possible interleaving
+o Convert old style continuation printks without KERN_CONT to pr_cont
+o Coalesce formats
 o Realign arguments
+o Remove unnecessary casts
 
 Signed-off-by: Joe Perches <joe@perches.com>
 ---
- drivers/infiniband/hw/bnxt_re/qplib_fp.c | 125 ++++++++++++++-----------------
- 1 file changed, 57 insertions(+), 68 deletions(-)
+ drivers/char/ipmi/ipmi_bt_sm.c   | 64 +++++++++++++++++++---------------------
+ drivers/char/ipmi/ipmi_devintf.c | 11 ++++---
+ drivers/char/ipmi/ipmi_kcs_sm.c  |  4 +--
+ drivers/char/ipmi/ipmi_smic_sm.c | 26 +++++++---------
+ 4 files changed, 48 insertions(+), 57 deletions(-)
 
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_fp.c b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-index 3a78faba8d91..cbe6dbea9ab6 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
-@@ -36,6 +36,8 @@
-  * Description: Fast Path Operators
-  */
+diff --git a/drivers/char/ipmi/ipmi_bt_sm.c b/drivers/char/ipmi/ipmi_bt_sm.c
+index fd4ea8d87d4b..95cfa20456e6 100644
+--- a/drivers/char/ipmi/ipmi_bt_sm.c
++++ b/drivers/char/ipmi/ipmi_bt_sm.c
+@@ -221,11 +221,11 @@ static int bt_start_transaction(struct si_sm_data *bt,
+ 		return IPMI_NOT_IN_MY_STATE_ERR;
  
-+#define dev_fmt(fmt) "QPLIB: " fmt
-+
- #include <linux/interrupt.h>
- #include <linux/spinlock.h>
- #include <linux/sched.h>
-@@ -70,8 +72,7 @@ static void __bnxt_qplib_add_flush_qp(struct bnxt_qplib_qp *qp)
- 	rcq = qp->rcq;
+ 	if (bt_debug & BT_DEBUG_MSG) {
+-		printk(KERN_WARNING "BT: +++++++++++++++++ New command\n");
+-		printk(KERN_WARNING "BT: NetFn/LUN CMD [%d data]:", size - 2);
++		pr_warn("BT: +++++++++++++++++ New command\n");
++		pr_warn("BT: NetFn/LUN CMD [%d data]:", size - 2);
+ 		for (i = 0; i < size; i ++)
+-			printk(" %02x", data[i]);
+-		printk("\n");
++			pr_cont(" %02x", data[i]);
++		pr_cont("\n");
+ 	}
+ 	bt->write_data[0] = size + 1;	/* all data plus seq byte */
+ 	bt->write_data[1] = *data;	/* NetFn/LUN */
+@@ -266,10 +266,10 @@ static int bt_get_result(struct si_sm_data *bt,
+ 		memcpy(data + 2, bt->read_data + 4, msg_len - 2);
  
- 	if (!qp->sq.flushed) {
--		dev_dbg(&scq->hwq.pdev->dev,
--			"QPLIB: FP: Adding to SQ Flush list = %p",
-+		dev_dbg(&scq->hwq.pdev->dev, "FP: Adding to SQ Flush list = %p\n",
- 			qp);
- 		bnxt_qplib_cancel_phantom_processing(qp);
- 		list_add_tail(&qp->sq_flush, &scq->sqf_head);
-@@ -79,8 +80,7 @@ static void __bnxt_qplib_add_flush_qp(struct bnxt_qplib_qp *qp)
+ 	if (bt_debug & BT_DEBUG_MSG) {
+-		printk(KERN_WARNING "BT: result %d bytes:", msg_len);
++		pr_warn("BT: result %d bytes:", msg_len);
+ 		for (i = 0; i < msg_len; i++)
+-			printk(" %02x", data[i]);
+-		printk("\n");
++			pr_cont(" %02x", data[i]);
++		pr_cont("\n");
  	}
- 	if (!qp->srq) {
- 		if (!qp->rq.flushed) {
--			dev_dbg(&rcq->hwq.pdev->dev,
--				"QPLIB: FP: Adding to RQ Flush list = %p",
-+			dev_dbg(&rcq->hwq.pdev->dev, "FP: Adding to RQ Flush list = %p\n",
- 				qp);
- 			list_add_tail(&qp->rq_flush, &rcq->rqf_head);
- 			qp->rq.flushed = true;
-@@ -161,7 +161,7 @@ static void bnxt_qpn_cqn_sched_task(struct work_struct *work)
- 		spin_lock_bh(&cq->compl_lock);
- 		if (atomic_read(&cq->arm_state) && nq->cqn_handler) {
- 			dev_dbg(&nq->pdev->dev,
--				"%s:Trigger cq  = %p event nq = %p\n",
-+				"%s: Trigger cq  = %p event nq = %p\n",
- 				__func__, cq, nq);
- 			nq->cqn_handler(nq, cq);
- 		}
-@@ -206,8 +206,7 @@ static int bnxt_qplib_alloc_qp_hdr_buf(struct bnxt_qplib_res *res,
- 					&qp->sq_hdr_buf_map, GFP_KERNEL);
- 		if (!qp->sq_hdr_buf) {
- 			rc = -ENOMEM;
--			dev_err(&res->pdev->dev,
--				"QPLIB: Failed to create sq_hdr_buf");
-+			dev_err(&res->pdev->dev, "Failed to create sq_hdr_buf\n");
- 			goto fail;
- 		}
- 	}
-@@ -220,8 +219,7 @@ static int bnxt_qplib_alloc_qp_hdr_buf(struct bnxt_qplib_res *res,
- 						    GFP_KERNEL);
- 		if (!qp->rq_hdr_buf) {
- 			rc = -ENOMEM;
--			dev_err(&res->pdev->dev,
--				"QPLIB: Failed to create rq_hdr_buf");
-+			dev_err(&res->pdev->dev, "Failed to create rq_hdr_buf\n");
- 			goto fail;
- 		}
- 	}
-@@ -276,8 +274,7 @@ static void bnxt_qplib_service_nq(unsigned long data)
- 			if (!nq->cqn_handler(nq, (cq)))
- 				num_cqne_processed++;
- 			else
--				dev_warn(&nq->pdev->dev,
--					 "QPLIB: cqn - type 0x%x not handled",
-+				dev_warn(&nq->pdev->dev, "cqn - type 0x%x not handled\n",
- 					 type);
- 			spin_unlock_bh(&cq->compl_lock);
- 			break;
-@@ -297,16 +294,14 @@ static void bnxt_qplib_service_nq(unsigned long data)
- 					      nqsrqe->event))
- 				num_srqne_processed++;
- 			else
--				dev_warn(&nq->pdev->dev,
--					 "QPLIB: SRQ event 0x%x not handled",
-+				dev_warn(&nq->pdev->dev, "SRQ event 0x%x not handled\n",
- 					 nqsrqe->event);
- 			break;
- 		}
- 		case NQ_BASE_TYPE_DBQ_EVENT:
- 			break;
- 		default:
--			dev_warn(&nq->pdev->dev,
--				 "QPLIB: nqe with type = 0x%x not handled",
-+			dev_warn(&nq->pdev->dev, "nqe with type = 0x%x not handled\n",
- 				 type);
- 			break;
- 		}
-@@ -393,7 +388,7 @@ int bnxt_qplib_enable_nq(struct pci_dev *pdev, struct bnxt_qplib_nq *nq,
- 	rc = request_irq(nq->vector, bnxt_qplib_nq_irq, 0, nq->name, nq);
- 	if (rc) {
- 		dev_err(&nq->pdev->dev,
--			"Failed to request IRQ for NQ: %#x", rc);
-+			"Failed to request IRQ for NQ: %#x\n", rc);
- 		goto fail;
- 	}
+ 	return msg_len;
+ }
+@@ -280,8 +280,7 @@ static int bt_get_result(struct si_sm_data *bt,
+ static void reset_flags(struct si_sm_data *bt)
+ {
+ 	if (bt_debug)
+-		printk(KERN_WARNING "IPMI BT: flag reset %s\n",
+-					status2txt(BT_STATUS));
++		pr_warn("IPMI BT: flag reset %s\n", status2txt(BT_STATUS));
+ 	if (BT_STATUS & BT_H_BUSY)
+ 		BT_CONTROL(BT_H_BUSY);	/* force clear */
+ 	BT_CONTROL(BT_CLR_WR_PTR);	/* always reset */
+@@ -307,14 +306,13 @@ static void drain_BMC2HOST(struct si_sm_data *bt)
+ 	BT_CONTROL(BT_B2H_ATN);		/* some BMCs are stubborn */
+ 	BT_CONTROL(BT_CLR_RD_PTR);	/* always reset */
+ 	if (bt_debug)
+-		printk(KERN_WARNING "IPMI BT: stale response %s; ",
+-			status2txt(BT_STATUS));
++		pr_warn("IPMI BT: stale response %s; ", status2txt(BT_STATUS));
+ 	size = BMC2HOST;
+ 	for (i = 0; i < size ; i++)
+ 		BMC2HOST;
+ 	BT_CONTROL(BT_H_BUSY);		/* now clear */
+ 	if (bt_debug)
+-		printk("drained %d bytes\n", size + 1);
++		pr_cont("drained %d bytes\n", size + 1);
+ }
  
-@@ -401,8 +396,7 @@ int bnxt_qplib_enable_nq(struct pci_dev *pdev, struct bnxt_qplib_nq *nq,
- 	cpumask_set_cpu(nq_idx, &nq->mask);
- 	rc = irq_set_affinity_hint(nq->vector, &nq->mask);
- 	if (rc) {
--		dev_warn(&nq->pdev->dev,
--			 "QPLIB: set affinity failed; vector: %d nq_idx: %d\n",
-+		dev_warn(&nq->pdev->dev, "set affinity failed; vector: %d nq_idx: %d\n",
- 			 nq->vector, nq_idx);
+ static inline void write_all_bytes(struct si_sm_data *bt)
+@@ -322,11 +320,11 @@ static inline void write_all_bytes(struct si_sm_data *bt)
+ 	int i;
+ 
+ 	if (bt_debug & BT_DEBUG_MSG) {
+-		printk(KERN_WARNING "BT: write %d bytes seq=0x%02X",
++		pr_warn("BT: write %d bytes seq=0x%02X",
+ 			bt->write_count, bt->seq);
+ 		for (i = 0; i < bt->write_count; i++)
+-			printk(" %02x", bt->write_data[i]);
+-		printk("\n");
++			pr_cont(" %02x", bt->write_data[i]);
++		pr_cont("\n");
+ 	}
+ 	for (i = 0; i < bt->write_count; i++)
+ 		HOST2BMC(bt->write_data[i]);
+@@ -346,8 +344,7 @@ static inline int read_all_bytes(struct si_sm_data *bt)
+ 
+ 	if (bt->read_count < 4 || bt->read_count >= IPMI_MAX_MSG_LENGTH) {
+ 		if (bt_debug & BT_DEBUG_MSG)
+-			printk(KERN_WARNING "BT: bad raw rsp len=%d\n",
+-				bt->read_count);
++			pr_warn("BT: bad raw rsp len=%d\n", bt->read_count);
+ 		bt->truncated = 1;
+ 		return 1;	/* let next XACTION START clean it up */
+ 	}
+@@ -358,13 +355,12 @@ static inline int read_all_bytes(struct si_sm_data *bt)
+ 	if (bt_debug & BT_DEBUG_MSG) {
+ 		int max = bt->read_count;
+ 
+-		printk(KERN_WARNING "BT: got %d bytes seq=0x%02X",
+-			max, bt->read_data[2]);
++		pr_warn("BT: got %d bytes seq=0x%02X", max, bt->read_data[2]);
+ 		if (max > 16)
+ 			max = 16;
+ 		for (i = 0; i < max; i++)
+-			printk(KERN_CONT " %02x", bt->read_data[i]);
+-		printk(KERN_CONT "%s\n", bt->read_count == max ? "" : " ...");
++			pr_cont(" %02x", bt->read_data[i]);
++		pr_cont("%s\n", bt->read_count == max ? "" : " ...");
  	}
  
-@@ -636,7 +630,7 @@ int bnxt_qplib_post_srq_recv(struct bnxt_qplib_srq *srq,
+ 	/* per the spec, the (NetFn[1], Seq[2], Cmd[3]) tuples must match */
+@@ -374,10 +370,10 @@ static inline int read_all_bytes(struct si_sm_data *bt)
+ 			return 1;
  
- 	spin_lock(&srq_hwq->lock);
- 	if (srq->start_idx == srq->last_idx) {
--		dev_err(&srq_hwq->pdev->dev, "QPLIB: FP: SRQ (0x%x) is full!",
-+		dev_err(&srq_hwq->pdev->dev, "FP: SRQ (0x%x) is full!\n",
- 			srq->id);
- 		rc = -EINVAL;
- 		spin_unlock(&srq_hwq->lock);
-@@ -1298,7 +1292,7 @@ int bnxt_qplib_query_qp(struct bnxt_qplib_res *res, struct bnxt_qplib_qp *qp)
- 		}
- 	}
- 	if (i == res->sgid_tbl.max)
--		dev_warn(&res->pdev->dev, "QPLIB: SGID not found??");
-+		dev_warn(&res->pdev->dev, "SGID not found??\n");
+ 	if (bt_debug & BT_DEBUG_MSG)
+-		printk(KERN_WARNING "IPMI BT: bad packet: "
+-		"want 0x(%02X, %02X, %02X) got (%02X, %02X, %02X)\n",
+-		bt->write_data[1] | 0x04, bt->write_data[2], bt->write_data[3],
+-		bt->read_data[1],  bt->read_data[2],  bt->read_data[3]);
++		pr_warn("IPMI BT: bad packet: want 0x(%02X, %02X, %02X) got (%02X, %02X, %02X)\n",
++			bt->write_data[1] | 0x04, bt->write_data[2],
++			bt->write_data[3],
++			bt->read_data[1],  bt->read_data[2],  bt->read_data[3]);
+ 	return 0;
+ }
  
- 	qp->ah.hop_limit = sb->hop_limit;
- 	qp->ah.traffic_class = sb->traffic_class;
-@@ -1502,7 +1496,7 @@ int bnxt_qplib_post_send(struct bnxt_qplib_qp *qp,
- 		if (qp->state == CMDQ_MODIFY_QP_NEW_STATE_ERR) {
- 			sch_handler = true;
- 			dev_dbg(&sq->hwq.pdev->dev,
--				"%s Error QP. Scheduling for poll_cq\n",
-+				"%s: Error QP. Scheduling for poll_cq\n",
- 				__func__);
- 			goto queue_err;
- 		}
-@@ -1510,7 +1504,7 @@ int bnxt_qplib_post_send(struct bnxt_qplib_qp *qp,
+@@ -400,7 +396,7 @@ static enum si_sm_result error_recovery(struct si_sm_data *bt,
+ 		break;
+ 	}
  
- 	if (bnxt_qplib_queue_full(sq)) {
- 		dev_err(&sq->hwq.pdev->dev,
--			"QPLIB: prod = %#x cons = %#x qdepth = %#x delta = %#x",
-+			"prod = %#x cons = %#x qdepth = %#x delta = %#x\n",
- 			sq->hwq.prod, sq->hwq.cons, sq->hwq.max_elements,
- 			sq->q_full_delta);
- 		rc = -ENOMEM;
-@@ -1535,7 +1529,7 @@ int bnxt_qplib_post_send(struct bnxt_qplib_qp *qp,
- 		/* Copy the inline data */
- 		if (wqe->inline_len > BNXT_QPLIB_SWQE_MAX_INLINE_LENGTH) {
- 			dev_warn(&sq->hwq.pdev->dev,
--				 "QPLIB: Inline data length > 96 detected");
-+				 "Inline data length > 96 detected\n");
- 			data_len = BNXT_QPLIB_SWQE_MAX_INLINE_LENGTH;
- 		} else {
- 			data_len = wqe->inline_len;
-@@ -1750,7 +1744,7 @@ int bnxt_qplib_post_send(struct bnxt_qplib_qp *qp,
- 			queue_work(qp->scq->nq->cqn_wq, &nq_work->work);
- 		} else {
- 			dev_err(&sq->hwq.pdev->dev,
--				"QPLIB: FP: Failed to allocate SQ nq_work!");
-+				"FP: Failed to allocate SQ nq_work!\n");
- 			rc = -ENOMEM;
- 		}
- 	}
-@@ -1789,13 +1783,13 @@ int bnxt_qplib_post_recv(struct bnxt_qplib_qp *qp,
- 	if (qp->state == CMDQ_MODIFY_QP_NEW_STATE_ERR) {
- 		sch_handler = true;
- 		dev_dbg(&rq->hwq.pdev->dev,
--			"%s Error QP. Scheduling for poll_cq\n",
-+			"%s: Error QP. Scheduling for poll_cq\n",
- 			__func__);
- 		goto queue_err;
- 	}
- 	if (bnxt_qplib_queue_full(rq)) {
--		dev_err(&rq->hwq.pdev->dev,
--			"QPLIB: FP: QP (0x%x) RQ is full!", qp->id);
-+		dev_err(&rq->hwq.pdev->dev, "FP: QP (0x%x) RQ is full!\n",
-+			qp->id);
- 		rc = -EINVAL;
- 		goto done;
- 	}
-@@ -1844,7 +1838,7 @@ int bnxt_qplib_post_recv(struct bnxt_qplib_qp *qp,
- 			queue_work(qp->rcq->nq->cqn_wq, &nq_work->work);
- 		} else {
- 			dev_err(&rq->hwq.pdev->dev,
--				"QPLIB: FP: Failed to allocate RQ nq_work!");
-+				"FP: Failed to allocate RQ nq_work!\n");
- 			rc = -ENOMEM;
- 		}
- 	}
-@@ -1906,7 +1900,7 @@ int bnxt_qplib_create_cq(struct bnxt_qplib_res *res, struct bnxt_qplib_cq *cq)
+-	printk(KERN_WARNING "IPMI BT: %s in %s %s ", 	/* open-ended line */
++	pr_warn("IPMI BT: %s in %s %s ", 	/* open-ended line */
+ 		reason, STATE2TXT, STATUS2TXT);
  
- 	if (!cq->dpi) {
- 		dev_err(&rcfw->pdev->dev,
--			"QPLIB: FP: CREATE_CQ failed due to NULL DPI");
-+			"FP: CREATE_CQ failed due to NULL DPI\n");
+ 	/*
+@@ -409,20 +405,20 @@ static enum si_sm_result error_recovery(struct si_sm_data *bt,
+ 	 */
+ 	(bt->error_retries)++;
+ 	if (bt->error_retries < bt->BT_CAP_retries) {
+-		printk("%d retries left\n",
++		pr_cont("%d retries left\n",
+ 			bt->BT_CAP_retries - bt->error_retries);
+ 		bt->state = BT_STATE_RESTART;
+ 		return SI_SM_CALL_WITHOUT_DELAY;
+ 	}
+ 
+-	printk(KERN_WARNING "failed %d retries, sending error response\n",
+-	       bt->BT_CAP_retries);
++	pr_warn("failed %d retries, sending error response\n",
++		bt->BT_CAP_retries);
+ 	if (!bt->nonzero_status)
+-		printk(KERN_ERR "IPMI BT: stuck, try power cycle\n");
++		pr_err("IPMI BT: stuck, try power cycle\n");
+ 
+ 	/* this is most likely during insmod */
+ 	else if (bt->seq <= (unsigned char)(bt->BT_CAP_retries & 0xFF)) {
+-		printk(KERN_WARNING "IPMI: BT reset (takes 5 secs)\n");
++		pr_warn("IPMI: BT reset (takes 5 secs)\n");
+ 		bt->state = BT_STATE_RESET1;
+ 		return SI_SM_CALL_WITHOUT_DELAY;
+ 	}
+@@ -458,7 +454,7 @@ static enum si_sm_result bt_event(struct si_sm_data *bt, long time)
+ 	status = BT_STATUS;
+ 	bt->nonzero_status |= status;
+ 	if ((bt_debug & BT_DEBUG_STATES) && (bt->state != last_printed)) {
+-		printk(KERN_WARNING "BT: %s %s TO=%ld - %ld \n",
++		pr_warn("BT: %s %s TO=%ld - %ld\n",
+ 			STATE2TXT,
+ 			STATUS2TXT,
+ 			bt->timeout,
+@@ -636,10 +632,10 @@ static enum si_sm_result bt_event(struct si_sm_data *bt, long time)
+ 			bt->BT_CAP_req2rsp = BT_CAP[6] * USEC_PER_SEC;
+ 			bt->BT_CAP_retries = BT_CAP[7];
+ 		} else
+-			printk(KERN_WARNING "IPMI BT: using default values\n");
++			pr_warn("IPMI BT: using default values\n");
+ 		if (!bt->BT_CAP_outreqs)
+ 			bt->BT_CAP_outreqs = 1;
+-		printk(KERN_WARNING "IPMI BT: req2rsp=%ld secs retries=%d\n",
++		pr_warn("IPMI BT: req2rsp=%ld secs retries=%d\n",
+ 			bt->BT_CAP_req2rsp / USEC_PER_SEC, bt->BT_CAP_retries);
+ 		bt->timeout = bt->BT_CAP_req2rsp;
+ 		return SI_SM_CALL_WITHOUT_DELAY;
+diff --git a/drivers/char/ipmi/ipmi_devintf.c b/drivers/char/ipmi/ipmi_devintf.c
+index 1a486aec99b6..effab11887ca 100644
+--- a/drivers/char/ipmi/ipmi_devintf.c
++++ b/drivers/char/ipmi/ipmi_devintf.c
+@@ -818,8 +818,7 @@ static void ipmi_new_smi(int if_num, struct device *device)
+ 
+ 	entry = kmalloc(sizeof(*entry), GFP_KERNEL);
+ 	if (!entry) {
+-		printk(KERN_ERR "ipmi_devintf: Unable to create the"
+-		       " ipmi class device link\n");
++		pr_err("ipmi_devintf: Unable to create the ipmi class device link\n");
+ 		return;
+ 	}
+ 	entry->dev = dev;
+@@ -861,18 +860,18 @@ static int __init init_ipmi_devintf(void)
+ 	if (ipmi_major < 0)
  		return -EINVAL;
- 	}
- 	req.dpi = cpu_to_le32(cq->dpi->dpi);
-@@ -2146,7 +2140,7 @@ static int do_wa9060(struct bnxt_qplib_qp *qp, struct bnxt_qplib_cq *cq,
- 						 *  comes back
- 						 */
- 						dev_dbg(&cq->hwq.pdev->dev,
--							"FP:Got Phantom CQE");
-+							"FP:Got Phantom CQE\n");
- 						sq->condition = false;
- 						sq->single = true;
- 						rc = 0;
-@@ -2163,7 +2157,7 @@ static int do_wa9060(struct bnxt_qplib_qp *qp, struct bnxt_qplib_cq *cq,
- 			peek_raw_cq_cons++;
- 		}
- 		dev_err(&cq->hwq.pdev->dev,
--			"Should not have come here! cq_cons=0x%x qp=0x%x sq cons sw=0x%x hw=0x%x",
-+			"Should not have come here! cq_cons=0x%x qp=0x%x sq cons sw=0x%x hw=0x%x\n",
- 			cq_cons, qp->id, sw_sq_cons, cqe_sq_cons);
- 		rc = -EINVAL;
- 	}
-@@ -2186,18 +2180,15 @@ static int bnxt_qplib_cq_process_req(struct bnxt_qplib_cq *cq,
- 	qp = (struct bnxt_qplib_qp *)((unsigned long)
- 				      le64_to_cpu(hwcqe->qp_handle));
- 	if (!qp) {
--		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: FP: Process Req qp is NULL");
-+		dev_err(&cq->hwq.pdev->dev, "FP: Process Req qp is NULL\n");
- 		return -EINVAL;
- 	}
- 	sq = &qp->sq;
  
- 	cqe_sq_cons = HWQ_CMP(le16_to_cpu(hwcqe->sq_cons_idx), &sq->hwq);
- 	if (cqe_sq_cons > sq->hwq.max_elements) {
--		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: FP: CQ Process req reported ");
--		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: sq_cons_idx 0x%x which exceeded max 0x%x",
-+		dev_err(&cq->hwq.pdev->dev, "FP: CQ Process req reported\n");
-+		dev_err(&cq->hwq.pdev->dev, "sq_cons_idx 0x%x which exceeded max 0x%x\n",
- 			cqe_sq_cons, sq->hwq.max_elements);
- 		return -EINVAL;
- 	}
-@@ -2236,9 +2227,9 @@ static int bnxt_qplib_cq_process_req(struct bnxt_qplib_cq *cq,
- 		    hwcqe->status != CQ_REQ_STATUS_OK) {
- 			cqe->status = hwcqe->status;
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Processed Req ");
-+				"FP: CQ Processed Req\n");
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: wr_id[%d] = 0x%llx with status 0x%x",
-+				"wr_id[%d] = 0x%llx with status 0x%x\n",
- 				sw_sq_cons, cqe->wr_id, cqe->status);
- 			cqe++;
- 			(*budget)--;
-@@ -2304,7 +2295,7 @@ static int bnxt_qplib_cq_process_res_rc(struct bnxt_qplib_cq *cq,
- 	qp = (struct bnxt_qplib_qp *)((unsigned long)
- 				      le64_to_cpu(hwcqe->qp_handle));
- 	if (!qp) {
--		dev_err(&cq->hwq.pdev->dev, "QPLIB: process_cq RC qp is NULL");
-+		dev_err(&cq->hwq.pdev->dev, "process_cq RC qp is NULL\n");
- 		return -EINVAL;
- 	}
- 	if (qp->rq.flushed) {
-@@ -2330,9 +2321,9 @@ static int bnxt_qplib_cq_process_res_rc(struct bnxt_qplib_cq *cq,
- 			return -EINVAL;
- 		if (wr_id_idx > srq->hwq.max_elements) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Process RC ");
-+				"FP: CQ Process RC\n");
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: wr_id idx 0x%x exceeded SRQ max 0x%x",
-+				"wr_id idx 0x%x exceeded SRQ max 0x%x\n",
- 				wr_id_idx, srq->hwq.max_elements);
- 			return -EINVAL;
- 		}
-@@ -2345,9 +2336,9 @@ static int bnxt_qplib_cq_process_res_rc(struct bnxt_qplib_cq *cq,
- 		rq = &qp->rq;
- 		if (wr_id_idx > rq->hwq.max_elements) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Process RC ");
-+				"FP: CQ Process RC\n");
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: wr_id idx 0x%x exceeded RQ max 0x%x",
-+				"wr_id idx 0x%x exceeded RQ max 0x%x\n",
- 				wr_id_idx, rq->hwq.max_elements);
- 			return -EINVAL;
- 		}
-@@ -2383,7 +2374,7 @@ static int bnxt_qplib_cq_process_res_ud(struct bnxt_qplib_cq *cq,
- 	qp = (struct bnxt_qplib_qp *)((unsigned long)
- 				      le64_to_cpu(hwcqe->qp_handle));
- 	if (!qp) {
--		dev_err(&cq->hwq.pdev->dev, "QPLIB: process_cq UD qp is NULL");
-+		dev_err(&cq->hwq.pdev->dev, "process_cq UD qp is NULL\n");
- 		return -EINVAL;
- 	}
- 	if (qp->rq.flushed) {
-@@ -2413,9 +2404,9 @@ static int bnxt_qplib_cq_process_res_ud(struct bnxt_qplib_cq *cq,
+-	printk(KERN_INFO "ipmi device interface\n");
++	pr_info("ipmi device interface\n");
  
- 		if (wr_id_idx > srq->hwq.max_elements) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Process UD ");
-+				"FP: CQ Process UD\n");
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: wr_id idx 0x%x exceeded SRQ max 0x%x",
-+				"wr_id idx 0x%x exceeded SRQ max 0x%x\n",
- 				wr_id_idx, srq->hwq.max_elements);
- 			return -EINVAL;
- 		}
-@@ -2428,9 +2419,9 @@ static int bnxt_qplib_cq_process_res_ud(struct bnxt_qplib_cq *cq,
- 		rq = &qp->rq;
- 		if (wr_id_idx > rq->hwq.max_elements) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Process UD ");
-+				"FP: CQ Process UD\n");
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: wr_id idx 0x%x exceeded RQ max 0x%x",
-+				"wr_id idx 0x%x exceeded RQ max 0x%x\n",
- 				wr_id_idx, rq->hwq.max_elements);
- 			return -EINVAL;
- 		}
-@@ -2483,7 +2474,7 @@ static int bnxt_qplib_cq_process_res_raweth_qp1(struct bnxt_qplib_cq *cq,
- 				      le64_to_cpu(hwcqe->qp_handle));
- 	if (!qp) {
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: process_cq Raw/QP1 qp is NULL");
-+			"process_cq Raw/QP1 qp is NULL\n");
- 		return -EINVAL;
- 	}
- 	if (qp->rq.flushed) {
-@@ -2517,14 +2508,14 @@ static int bnxt_qplib_cq_process_res_raweth_qp1(struct bnxt_qplib_cq *cq,
- 		srq = qp->srq;
- 		if (!srq) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: SRQ used but not defined??");
-+				"FP: SRQ used but not defined??\n");
- 			return -EINVAL;
- 		}
- 		if (wr_id_idx > srq->hwq.max_elements) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Process Raw/QP1 ");
-+				"FP: CQ Process Raw/QP1\n");
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: wr_id idx 0x%x exceeded SRQ max 0x%x",
-+				"wr_id idx 0x%x exceeded SRQ max 0x%x\n",
- 				wr_id_idx, srq->hwq.max_elements);
- 			return -EINVAL;
- 		}
-@@ -2537,9 +2528,9 @@ static int bnxt_qplib_cq_process_res_raweth_qp1(struct bnxt_qplib_cq *cq,
- 		rq = &qp->rq;
- 		if (wr_id_idx > rq->hwq.max_elements) {
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: FP: CQ Process Raw/QP1 RQ wr_id ");
-+				"FP: CQ Process Raw/QP1 RQ wr_id\n");
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: ix 0x%x exceeded RQ max 0x%x",
-+				"ix 0x%x exceeded RQ max 0x%x\n",
- 				wr_id_idx, rq->hwq.max_elements);
- 			return -EINVAL;
- 		}
-@@ -2574,14 +2565,14 @@ static int bnxt_qplib_cq_process_terminal(struct bnxt_qplib_cq *cq,
- 	/* Check the Status */
- 	if (hwcqe->status != CQ_TERMINAL_STATUS_OK)
- 		dev_warn(&cq->hwq.pdev->dev,
--			 "QPLIB: FP: CQ Process Terminal Error status = 0x%x",
-+			 "FP: CQ Process Terminal Error status = 0x%x\n",
- 			 hwcqe->status);
- 
- 	qp = (struct bnxt_qplib_qp *)((unsigned long)
- 				      le64_to_cpu(hwcqe->qp_handle));
- 	if (!qp) {
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: FP: CQ Process terminal qp is NULL");
-+			"FP: CQ Process terminal qp is NULL\n");
- 		return -EINVAL;
+ 	ipmi_class = class_create(THIS_MODULE, "ipmi");
+ 	if (IS_ERR(ipmi_class)) {
+-		printk(KERN_ERR "ipmi: can't register device class\n");
++		pr_err("ipmi: can't register device class\n");
+ 		return PTR_ERR(ipmi_class);
  	}
  
-@@ -2597,9 +2588,9 @@ static int bnxt_qplib_cq_process_terminal(struct bnxt_qplib_cq *cq,
- 
- 	if (cqe_cons > sq->hwq.max_elements) {
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: FP: CQ Process terminal reported ");
-+			"FP: CQ Process terminal reported\n");
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: sq_cons_idx 0x%x which exceeded max 0x%x",
-+			"sq_cons_idx 0x%x which exceeded max 0x%x\n",
- 			cqe_cons, sq->hwq.max_elements);
- 		goto do_rq;
- 	}
-@@ -2647,9 +2638,9 @@ static int bnxt_qplib_cq_process_terminal(struct bnxt_qplib_cq *cq,
- 		goto done;
- 	} else if (cqe_cons > rq->hwq.max_elements) {
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: FP: CQ Processed terminal ");
-+			"FP: CQ Processed terminal\n");
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: reported rq_cons_idx 0x%x exceeds max 0x%x",
-+			"reported rq_cons_idx 0x%x exceeds max 0x%x\n",
- 			cqe_cons, rq->hwq.max_elements);
- 		goto done;
- 	}
-@@ -2678,7 +2669,7 @@ static int bnxt_qplib_cq_process_cutoff(struct bnxt_qplib_cq *cq,
- 	/* Check the Status */
- 	if (hwcqe->status != CQ_CUTOFF_STATUS_OK) {
- 		dev_err(&cq->hwq.pdev->dev,
--			"QPLIB: FP: CQ Process Cutoff Error status = 0x%x",
-+			"FP: CQ Process Cutoff Error status = 0x%x\n",
- 			hwcqe->status);
- 		return -EINVAL;
- 	}
-@@ -2699,15 +2690,13 @@ int bnxt_qplib_process_flush_list(struct bnxt_qplib_cq *cq,
- 	spin_lock_irqsave(&cq->flush_lock, flags);
- 	list_for_each_entry(qp, &cq->sqf_head, sq_flush) {
- 		dev_dbg(&cq->hwq.pdev->dev,
--			"QPLIB: FP: Flushing SQ QP= %p",
--			qp);
-+			"FP: Flushing SQ QP= %p\n", qp);
- 		__flush_sq(&qp->sq, qp, &cqe, &budget);
+ 	rv = register_chrdev(ipmi_major, DEVICE_NAME, &ipmi_fops);
+ 	if (rv < 0) {
+ 		class_destroy(ipmi_class);
+-		printk(KERN_ERR "ipmi: can't get major %d\n", ipmi_major);
++		pr_err("ipmi: can't get major %d\n", ipmi_major);
+ 		return rv;
  	}
  
- 	list_for_each_entry(qp, &cq->rqf_head, rq_flush) {
- 		dev_dbg(&cq->hwq.pdev->dev,
--			"QPLIB: FP: Flushing RQ QP= %p",
--			qp);
-+			"FP: Flushing RQ QP= %p\n", qp);
- 		__flush_rq(&qp->rq, qp, &cqe, &budget);
+@@ -884,7 +883,7 @@ static int __init init_ipmi_devintf(void)
+ 	if (rv) {
+ 		unregister_chrdev(ipmi_major, DEVICE_NAME);
+ 		class_destroy(ipmi_class);
+-		printk(KERN_WARNING "ipmi: can't register smi watcher\n");
++		pr_warn("ipmi: can't register smi watcher\n");
+ 		return rv;
  	}
- 	spin_unlock_irqrestore(&cq->flush_lock, flags);
-@@ -2775,7 +2764,7 @@ int bnxt_qplib_poll_cq(struct bnxt_qplib_cq *cq, struct bnxt_qplib_cqe *cqe,
- 			goto exit;
- 		default:
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: process_cq unknown type 0x%lx",
-+				"process_cq unknown type 0x%lx\n",
- 				hw_cqe->cqe_type_toggle &
- 				CQ_BASE_CQE_TYPE_MASK);
- 			rc = -EINVAL;
-@@ -2788,7 +2777,7 @@ int bnxt_qplib_poll_cq(struct bnxt_qplib_cq *cq, struct bnxt_qplib_cqe *cqe,
- 			 * next one
- 			 */
- 			dev_err(&cq->hwq.pdev->dev,
--				"QPLIB: process_cqe error rc = 0x%x", rc);
-+				"process_cqe error rc = 0x%x\n", rc);
- 		}
- 		raw_cons++;
+ 
+diff --git a/drivers/char/ipmi/ipmi_kcs_sm.c b/drivers/char/ipmi/ipmi_kcs_sm.c
+index f4ea9f47230a..2e7cda08b079 100644
+--- a/drivers/char/ipmi/ipmi_kcs_sm.c
++++ b/drivers/char/ipmi/ipmi_kcs_sm.c
+@@ -274,8 +274,8 @@ static int start_kcs_transaction(struct si_sm_data *kcs, unsigned char *data,
+ 	if (kcs_debug & KCS_DEBUG_MSG) {
+ 		printk(KERN_DEBUG "start_kcs_transaction -");
+ 		for (i = 0; i < size; i++)
+-			printk(" %02x", (unsigned char) (data [i]));
+-		printk("\n");
++			pr_cont(" %02x", data[i]);
++		pr_cont("\n");
  	}
+ 	kcs->error_retries = 0;
+ 	memcpy(kcs->write_data, data, size);
+diff --git a/drivers/char/ipmi/ipmi_smic_sm.c b/drivers/char/ipmi/ipmi_smic_sm.c
+index 466a5aac5298..b6225bba2532 100644
+--- a/drivers/char/ipmi/ipmi_smic_sm.c
++++ b/drivers/char/ipmi/ipmi_smic_sm.c
+@@ -132,8 +132,8 @@ static int start_smic_transaction(struct si_sm_data *smic,
+ 	if (smic_debug & SMIC_DEBUG_MSG) {
+ 		printk(KERN_DEBUG "start_smic_transaction -");
+ 		for (i = 0; i < size; i++)
+-			printk(" %02x", (unsigned char) data[i]);
+-		printk("\n");
++			pr_cont(" %02x", data[i]);
++		pr_cont("\n");
+ 	}
+ 	smic->error_retries = 0;
+ 	memcpy(smic->write_data, data, size);
+@@ -154,8 +154,8 @@ static int smic_get_result(struct si_sm_data *smic,
+ 	if (smic_debug & SMIC_DEBUG_MSG) {
+ 		printk(KERN_DEBUG "smic_get result -");
+ 		for (i = 0; i < smic->read_pos; i++)
+-			printk(" %02x", smic->read_data[i]);
+-		printk("\n");
++			pr_cont(" %02x", smic->read_data[i]);
++		pr_cont("\n");
+ 	}
+ 	if (length < smic->read_pos) {
+ 		smic->read_pos = length;
+@@ -212,8 +212,7 @@ static inline void start_error_recovery(struct si_sm_data *smic, char *reason)
+ 	(smic->error_retries)++;
+ 	if (smic->error_retries > SMIC_MAX_ERROR_RETRIES) {
+ 		if (smic_debug & SMIC_DEBUG_ENABLE)
+-			printk(KERN_WARNING
+-			       "ipmi_smic_drv: smic hosed: %s\n", reason);
++			pr_warn("ipmi_smic_drv: smic hosed: %s\n", reason);
+ 		smic->state = SMIC_HOSED;
+ 	} else {
+ 		smic->write_count = smic->orig_write_count;
+@@ -326,8 +325,7 @@ static enum si_sm_result smic_event(struct si_sm_data *smic, long time)
+ 	if (smic->state != SMIC_IDLE) {
+ 		if (smic_debug & SMIC_DEBUG_STATES)
+ 			printk(KERN_DEBUG
+-			       "smic_event - smic->smic_timeout = %ld,"
+-			       " time = %ld\n",
++			       "smic_event - smic->smic_timeout = %ld, time = %ld\n",
+ 			       smic->smic_timeout, time);
+ 		/*
+ 		 * FIXME: smic_event is sometimes called with time >
+@@ -347,9 +345,7 @@ static enum si_sm_result smic_event(struct si_sm_data *smic, long time)
+ 
+ 	status = read_smic_status(smic);
+ 	if (smic_debug & SMIC_DEBUG_STATES)
+-		printk(KERN_DEBUG
+-		       "smic_event - state = %d, flags = 0x%02x,"
+-		       " status = 0x%02x\n",
++		printk(KERN_DEBUG "smic_event - state = %d, flags = 0x%02x, status = 0x%02x\n",
+ 		       smic->state, flags, status);
+ 
+ 	switch (smic->state) {
+@@ -440,8 +436,8 @@ static enum si_sm_result smic_event(struct si_sm_data *smic, long time)
+ 		data = read_smic_data(smic);
+ 		if (data != 0) {
+ 			if (smic_debug & SMIC_DEBUG_ENABLE)
+-				printk(KERN_DEBUG
+-				       "SMIC_WRITE_END: data = %02x\n", data);
++				printk(KERN_DEBUG "SMIC_WRITE_END: data = %02x\n",
++				       data);
+ 			start_error_recovery(smic,
+ 					     "state = SMIC_WRITE_END, "
+ 					     "data != SUCCESS");
+@@ -520,8 +516,8 @@ static enum si_sm_result smic_event(struct si_sm_data *smic, long time)
+ 		/* data register holds an error code */
+ 		if (data != 0) {
+ 			if (smic_debug & SMIC_DEBUG_ENABLE)
+-				printk(KERN_DEBUG
+-				       "SMIC_READ_END: data = %02x\n", data);
++				printk(KERN_DEBUG "SMIC_READ_END: data = %02x\n",
++				       data);
+ 			start_error_recovery(smic,
+ 					     "state = SMIC_READ_END, "
+ 					     "data != SUCCESS");
 -- 
 2.15.0
