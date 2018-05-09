@@ -1,66 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934472AbeEIJK0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:10:26 -0400
-Received: from www381.your-server.de ([78.46.137.84]:55578 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934195AbeEIJKX (ORCPT
+        id S934451AbeEIJMT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:12:19 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38068 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934085AbeEIJMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:10:23 -0400
-Subject: Re: Using LIBIIO sending DATA to DAC and capturing the output from
- DAC
-To: Randy Dunlap <rdunlap@infradead.org>, jarul <joearul09@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-References: <1525828377261-0.post@n7.nabble.com>
- <e455a341-49eb-c9c3-89aa-3e090bdd8898@infradead.org>
-From: Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <804ea1be-1f2b-d95c-ee59-0552ed1f17d1@metafoo.de>
-Date: Wed, 9 May 2018 11:10:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <e455a341-49eb-c9c3-89aa-3e090bdd8898@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: lars@metafoo.de
+        Wed, 9 May 2018 05:12:18 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Kai Chieh Chuang <kaichieh.chuang@mediatek.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: fix return value check in mt6351_codec_driver_probe()" to the asoc tree
+In-Reply-To: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
+Message-Id: <20180509091150.77D5C44007A@finisterre.ee.mobilebroadband>
+Date: Wed,  9 May 2018 10:11:50 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Same question was also posted on the ADI support forums, we'll discuss it
-there since this is a ADI product specific question.
+The patch
 
-See https://ez.analog.com/thread/106116
+   ASoC: fix return value check in mt6351_codec_driver_probe()
 
-On 05/09/2018 03:14 AM, Randy Dunlap wrote:
-> [adding linux-iio mailing list]
-> 
-> On 05/08/2018 06:12 PM, jarul wrote:
->> I would like to ask a question and if anybody can answer my question, I would
->> very much appreciate.
->>
->> I am using Z706 and AD9361. I have setup the SD card image on the server
->> side and I have a client machine which is a Linux machine. I am using
->> ad9361-iiostream file where I send my data using sin and cos function to DAC
->> and try to get the output from DAC. If I send the random number which does
->> not exceed 2047, do the left shift 4 bit and send the data to DAC. It
->> creates a nice waveform file and the waveform can be seen on oscilloscope
->> clearly.  Using random number I can get the output from DAC. However, when I
->> send the sin and cos function, the output from DAC can not be captured or I
->> get just 0 and one single value as output.
->>
->> I have used iio_channel_read_raw function to capture the output else
->> iio_channel_read function to capture the output from DAC. I want to capture
->> the DAC output and then send the output to ADC and finally I want to capture
->> the ADC output to compare the digital data on both side.
->>
->> Can any export or whoever is familiar with the subject libiio can answer my
->> question. Thanks a lot.
->>
->>
->>
->> --
->> Sent from: http://linux-kernel.2935.n7.nabble.com/
-> 
-> 
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From aaa730ca3f88f535dc12e2f0ff575f70f516841b Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Mon, 7 May 2018 01:39:45 +0000
+Subject: [PATCH] ASoC: fix return value check in mt6351_codec_driver_probe()
+
+In case of error, the function dev_get_regmap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
+
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/mt6351.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/codecs/mt6351.c b/sound/soc/codecs/mt6351.c
+index e739f078fec5..f73dcd753584 100644
+--- a/sound/soc/codecs/mt6351.c
++++ b/sound/soc/codecs/mt6351.c
+@@ -1472,8 +1472,8 @@ static int mt6351_codec_driver_probe(struct platform_device *pdev)
+ 	priv->dev = &pdev->dev;
+ 
+ 	priv->regmap = dev_get_regmap(pdev->dev.parent, NULL);
+-	if (IS_ERR(priv->regmap))
+-		return PTR_ERR(priv->regmap);
++	if (!priv->regmap)
++		return -ENODEV;
+ 
+ 	dev_dbg(priv->dev, "%s(), dev name %s\n",
+ 		__func__, dev_name(&pdev->dev));
+-- 
+2.17.0
