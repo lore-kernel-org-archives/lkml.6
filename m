@@ -1,127 +1,411 @@
 Return-Path: <jpoimboe@redhat.com>
-X-Google-Smtp-Source: AB8JxZppZ0nTh281gp0k2nSBOGUvL3BKrEZ5LR2koaBUc1Yk+esHsAdlDAsQaM0YCgFfACorNkdy
-ARC-Seal: i=1; a=rsa-sha256; t=1525789964; cv=none;
+X-Google-Smtp-Source: AB8JxZppOZsHaBkHUkqieoWi57GczWU0dHWpYsqn76HiUI+FY6lwOQYAS6avXPKHFdyNnhYavH9O
+ARC-Seal: i=1; a=rsa-sha256; t=1525837609; cv=none;
         d=google.com; s=arc-20160816;
-        b=P+5FsfURPWBd6IIdTnOd7hlgu8+EkzPLhOsb8p4lth4/BE9SQvw7N7Z2RzVx5DNFd2
-         rKndiGsJ/QgX/98KkPLobx6YrAkyFJ9rhcz9WRtIP39QgkuxEq9R7TxHf44ZqLZA5T/W
-         cmnVJM7lhMo3Oey838a/2G7SrBwXt9rGyqH6HogEZ0kZUIKPtvAW0eNweAPjeS/kYUhY
-         DMC4xDAY1uHDXqoxggblYH9H+EPlalb9Sgke4Rj3U8MduxTpNwaGwnhxSFQ3i5JQmCnL
-         2ORbG7uwQnmvUbuEr/uuzRzAnuObTcfKdnUmUAV9s3NbcIfVZRFWqphv/1idbUXWR97K
-         w5zw==
+        b=xY3xmQFxladDKQj1sgX89AJWxSuf7ZqVd0wSBYjGuqJf0QVWo++F4MMF8BgeMK9AUy
+         4vtYXHhDgKpBqldgIRr6fUUYi4nS3HrNMmcIuGbDsCV7W63PzdYv+/qs6de2wiza23F8
+         ZPqsjtgnXudMHZ+cqhOf2F6OIqOO/nm2wVaIajJGaXlq1+ulOqtY5s9dNQ0KVDZFVdmi
+         Ka7lJhGxjj2aIw4lCus403gv/NWbIxCBB23PM611axZuBznkmFkJtFEj2wmVmA+fX2JZ
+         XnOnyMrs/g/JCNgBMl1JWqPVvMJJIQzqV8iu9N1q4FDubZ3TUGHCi4vl9icLiWc4H2Kb
+         Iz7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=U+CM46/Ow6t31F3ir6ECYPkVUlmtfk9m0lqEK2qoDII=;
-        b=wVTD9Y8ESzK0l1/KC3Fiq7ZJQM3/EekvaduwqI1O/qJcRbyiAvGLvaYa+5D7CT55Om
-         akWNtMF+ttUoJY3ICWPJNvf7cydQCIE0W/cno3N+x9PhSrP/9TJt0xSs/Utrg5DNcwPX
-         VucOPA31TtYcc2gtUC1RzEQrY4mLQdB1UANnamS/Y2mjvYhp4ZzBiaWlVFmcxrcj6sis
-         5Zw9WJCpQCTh8qT7LQaZsgOXApD5yWr4pJgnLKRNX7grR9i0+5Cfdpd+fT6iJpb4Rho+
-         bvM+DONcex3+qUbE3cpxc4B1E9Dc5tW3RF7AQWlg389XAYxZYhpoWmrn4szxZUnppq7E
-         ztUw==
+        bh=4AR2MNijliDRLYF+EPt73WooLvasQtTrMPv6bPv+TD0=;
+        b=QiF8uFMqNplinPITA2P8QVaxZyhg/6AUXnJ2j0I3XNsDzKwcV358oHLmPKY0ARsPya
+         /D1UiTfSgbIyZ+bBBMVbIt9u4hIcxpm+iCTdA0gTQhgY7mZoQkN5fglh/2ChwXamZG8V
+         rL7AZKBCWdDyesSlv29EQfqirw4+N7KZHlxAVrUQvQAzENIWhBmZ73/kdlelTXCTq8zj
+         TL1x/fqBvCNJvcH2Aacdxrw3aoJUHLq8mRKn51JOdVMAsDogNiOHo5F/W/m5+h0ikoYP
+         gmVLuuJiXdIgihexWYgA9QCHKMiFVdxkDs5gVdL8c/VSK95zFycg1UBIgSUZZXu0WDO6
+         NVpg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of jpoimboe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of jpoimboe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Tue, 8 May 2018 09:32:41 -0500
+Date: Tue, 8 May 2018 22:46:46 -0500
 From: Josh Poimboeuf <jpoimboe@redhat.com>
 To: Greg KH <gregkh@linuxfoundation.org>
 Cc: damian <damian.tometzki@icloud.com>, peterz@infradead.org,
 	linux-kernel@vger.kernel.org
 Subject: Re: Kernel build with gcc 8 a lot of warnings
-Message-ID: <20180508143241.5kz4poxcdhajjorl@treble>
+Message-ID: <20180509034646.7qftdvummkz7b2pi@treble>
 References: <20180505192112.GA18728@zrhn9910b>
  <20180507045453.leou4zypnlcck4vr@treble>
  <20180508055126.GA18724@kroah.com>
  <20180508133226.uwjbx44fwlxgyzu5@treble>
  <20180508142515.GA16111@kroah.com>
+ <20180508143241.5kz4poxcdhajjorl@treble>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180508142515.GA16111@kroah.com>
+In-Reply-To: <20180508143241.5kz4poxcdhajjorl@treble>
 User-Agent: NeoMutt/20180323
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1599903094060891144?=
-X-GMAIL-MSGID: =?utf-8?q?1599906737569140237?=
+X-GMAIL-MSGID: =?utf-8?q?1599956696695263955?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 08, 2018 at 04:25:15PM +0200, Greg KH wrote:
-> On Tue, May 08, 2018 at 08:34:47AM -0500, Josh Poimboeuf wrote:
-> > On Tue, May 08, 2018 at 07:51:26AM +0200, Greg KH wrote:
-> > > On Sun, May 06, 2018 at 11:54:53PM -0500, Josh Poimboeuf wrote:
-> > > > On Sat, May 05, 2018 at 09:21:12PM +0200, damian wrote:
-> > > > > Helllo together,
-> > > > > 
-> > > > > Hello everybody,
-> > > > > 
-> > > > > is something special to note when kernel build with gcc 8? I receive various warnings from the objtool:
-> > > > > With GCC 7 works all fine.
-> > > > > 
-> > > > > kernel/cgroup/cgroup.o: warning: objtool: parse_cgroup_root_flags()+0x40: sibling call from callable instruction with modified stack frame
-> > > > > kernel/cgroup/cgroup.o: warning: objtool: cgroup_addrm_files()+0x2a3: sibling call from callable instruction with modified stack frame
-> > > > > kernel/cgroup/cgroup.o: warning: objtool: cgroup_apply_control_enable()+0x20b: sibling call from callable instruction with modified stack frame
-> > > > > kernel/cgroup/cgroup.o: warning: objtool: rebind_subsystems()+0x296: sibling call from callable instruction with modified stack frame
-> > > > > kernel/cgroup/cgroup.o: warning: objtool: cgroup_sk_alloc_disable()+0x10: sibling call from callable instruction with modified stack frame
-> > > > > kernel/cgroup/cgroup.o: warning: objtool: parse_cgroup_root_flags.cold.45()+0xa: call without frame pointer save/setup
-> > > > > kernel/cgroup/cgroup.o: warning: objtool: cgroup_addrm_files.cold.46()+0x17: call without frame pointer save/setup
-> > > > > kernel/cgroup/cgroup.o: warning: objtool: cgroup_apply_control_enable.cold.47()+0x24: call without frame pointer save/setup
-> > > > > kernel/cgroup/cgroup.o: warning: objtool: rebind_subsystems.cold.48()+0x10: call without frame pointer save/setup
-> > > > > kernel/cgroup/cgroup.o: warning: objtool: cgroup_sk_alloc_disable.cold.49()+0x7: call without frame pointer save/setup
-> > > > >   CC      kernel/cgroup/stat.o
-> > > > >   CC [M]  arch/x86/kvm/../../../virt/kvm/kvm_main.o
-> > > > > arch/x86/kernel/acpi/boot.o: warning: objtool: acpi_register_lapic()+0x10: sibling call from callable instruction with modified stack frame
-> > > > > arch/x86/kernel/acpi/boot.o: warning: objtool: acpi_map_cpu()+0x2c: sibling call from callable instruction with modified stack frame
-> > > > > arch/x86/kernel/acpi/boot.o: warning: objtool: acpi_register_lapic.cold.6()+0x7: call without frame pointer save/setup
-> > > > > arch/x86/kernel/acpi/boot.o: warning: objtool: acpi_map_cpu.cold.7()+0x7: call without frame pointer save/setup
-> > > > 
-> > > > Thanks, this is a known issue with GCC 8 that I haven't gotten a chance
-> > > > to fix yet.  They're related to the fact that GCC 8 is splitting out
-> > > > 'unlikely' code into 'cold' subfunctions in .text.unlikely.
-> > > > 
-> > > > I've got some old patches that fix it.  Now that GCC 8 is out, I'll need
-> > > > get the patches dusted off and cleaned up for merging.
-> > > 
-> > > Any pointers to these patches?  Archi linux just changed their default
-> > > compiler to gcc 8 and now I'm seeing this in my local builds :(
-> > 
-> > I'm still dusting the code off, but this fixes most of the warnings.
-> > The rest of the code should hopefully be ready soon.
-> > 
-> > From: Josh Poimboeuf <jpoimboe@redhat.com>
-> > Subject: [PATCH] objtool: Detect GCC 8 cold subfunctions
-> > 
-> > GCC 8 moves a lot of unlikely code out of line to "cold" subfunctions in
-> > .text.unlikely.  Properly detect the new subfunctions and treat them as
-> > extensions of the original functions.
-> > 
-> > This fixes a bunch of warnings like:
-> > 
-> >   kernel/cgroup/cgroup.o: warning: objtool: parse_cgroup_root_flags()+0x33: sibling call from callable instruction with modified stack frame
-> >   kernel/cgroup/cgroup.o: warning: objtool: cgroup_addrm_files()+0x290: sibling call from callable instruction with modified stack frame
-> >   kernel/cgroup/cgroup.o: warning: objtool: cgroup_apply_control_enable()+0x25b: sibling call from callable instruction with modified stack frame
-> >   kernel/cgroup/cgroup.o: warning: objtool: rebind_subsystems()+0x325: sibling call from callable instruction with modified stack frame
-> > 
-> > Reported-by: Arnd Bergmann <arnd@arndb.de>
-> > Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> > ---
-> >  tools/objtool/check.c | 7 ++++---
-> >  tools/objtool/elf.c   | 3 +++
-> >  tools/objtool/elf.h   | 1 +
-> >  3 files changed, 8 insertions(+), 3 deletions(-)
+On Tue, May 08, 2018 at 09:32:41AM -0500, Josh Poimboeuf wrote:
+> On Tue, May 08, 2018 at 04:25:15PM +0200, Greg KH wrote:
+> > Much nicer, thanks for the patch, seems to build things "quieter" now.
+> > For the other warnings, they are "safe" to ignore, right?  It's just
+> > objtool checking to see if all is ok, but the result should be fine no
+> > matter what, right?
 > 
-> <snip>
-> 
-> Much nicer, thanks for the patch, seems to build things "quieter" now.
-> For the other warnings, they are "safe" to ignore, right?  It's just
-> objtool checking to see if all is ok, but the result should be fine no
-> matter what, right?
+> Yeah, from what I can tell, there's nothing catastrophic in the rest of
+> the warnings.  Worst case, the ORC unwinder might get confused in a few
+> places.
 
-Yeah, from what I can tell, there's nothing catastrophic in the rest of
-the warnings.  Worst case, the ORC unwinder might get confused in a few
-places.
+FWIW, here's the latest version of the patch.  This fixes all the
+warnings on my config at least.  I'll be sending it to -tip soon if it
+survives 0-day testing.
 
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH] objtool: Detect GCC 8 cold subfunctions
+
+GCC 8 moves a lot of unlikely code out of line to "cold" subfunctions in
+.text.unlikely.  Properly detect the new subfunctions and treat them as
+extensions of the original functions.
+
+This fixes a bunch of warnings like:
+
+  kernel/cgroup/cgroup.o: warning: objtool: parse_cgroup_root_flags()+0x33: sibling call from callable instruction with modified stack frame
+  kernel/cgroup/cgroup.o: warning: objtool: cgroup_addrm_files()+0x290: sibling call from callable instruction with modified stack frame
+  kernel/cgroup/cgroup.o: warning: objtool: cgroup_apply_control_enable()+0x25b: sibling call from callable instruction with modified stack frame
+  kernel/cgroup/cgroup.o: warning: objtool: rebind_subsystems()+0x325: sibling call from callable instruction with modified stack frame
+
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ tools/objtool/check.c | 104 +++++++++++++++++++++++++-----------------
+ tools/objtool/elf.c   |  42 ++++++++++++++++-
+ tools/objtool/elf.h   |   2 +
+ 3 files changed, 104 insertions(+), 44 deletions(-)
+
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 264522d4e4af..ee72958d3464 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -59,6 +59,31 @@ static struct instruction *next_insn_same_sec(struct objtool_file *file,
+ 	return next;
+ }
+ 
++static struct instruction *next_insn_same_func(struct objtool_file *file,
++					       struct instruction *insn)
++{
++	struct instruction *next = list_next_entry(insn, list);
++	struct symbol *func = insn->func;
++
++	if (!func)
++		return NULL;
++
++	if (&next->list != &file->insn_list && next->func == func)
++		return next;
++
++	/* Check if we're already in the subfunction: */
++	if (func == func->cfunc)
++		return NULL;
++
++	/* Move to the subfunction: */
++	return find_insn(file, func->cfunc->sec, func->cfunc->offset);
++}
++
++#define func_for_each_insn_all(file, func, insn)			\
++	for (insn = find_insn(file, func->sec, func->offset);		\
++	     insn;							\
++	     insn = next_insn_same_func(file, insn))
++
+ #define func_for_each_insn(file, func, insn)				\
+ 	for (insn = find_insn(file, func->sec, func->offset);		\
+ 	     insn && &insn->list != &file->insn_list &&			\
+@@ -149,10 +174,14 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
+ 			if (!strcmp(func->name, global_noreturns[i]))
+ 				return 1;
+ 
+-	if (!func->sec)
++	if (!func->len)
+ 		return 0;
+ 
+-	func_for_each_insn(file, func, insn) {
++	insn = find_insn(file, func->sec, func->offset);
++	if (!insn->func)
++		return 0;
++
++	func_for_each_insn_all(file, func, insn) {
+ 		empty = false;
+ 
+ 		if (insn->type == INSN_RETURN)
+@@ -167,28 +196,17 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
+ 	 * case, the function's dead-end status depends on whether the target
+ 	 * of the sibling call returns.
+ 	 */
+-	func_for_each_insn(file, func, insn) {
+-		if (insn->sec != func->sec ||
+-		    insn->offset >= func->offset + func->len)
+-			break;
+-
++	func_for_each_insn_all(file, func, insn) {
+ 		if (insn->type == INSN_JUMP_UNCONDITIONAL) {
+ 			struct instruction *dest = insn->jump_dest;
+-			struct symbol *dest_func;
+ 
+ 			if (!dest)
+ 				/* sibling call to another file */
+ 				return 0;
+ 
+-			if (dest->sec != func->sec ||
+-			    dest->offset < func->offset ||
+-			    dest->offset >= func->offset + func->len) {
+-				/* local sibling call */
+-				dest_func = find_symbol_by_offset(dest->sec,
+-								  dest->offset);
+-				if (!dest_func)
+-					continue;
++			if (dest->func && dest->func->pfunc != insn->func->pfunc) {
+ 
++				/* local sibling call */
+ 				if (recursion == 5) {
+ 					/*
+ 					 * Infinite recursion: two functions
+@@ -199,7 +217,7 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
+ 					return 0;
+ 				}
+ 
+-				return __dead_end_function(file, dest_func,
++				return __dead_end_function(file, dest->func,
+ 							   recursion + 1);
+ 			}
+ 		}
+@@ -426,7 +444,7 @@ static void add_ignores(struct objtool_file *file)
+ 			if (!ignore_func(file, func))
+ 				continue;
+ 
+-			func_for_each_insn(file, func, insn)
++			func_for_each_insn_all(file, func, insn)
+ 				insn->ignore = true;
+ 		}
+ 	}
+@@ -786,30 +804,28 @@ static int add_special_section_alts(struct objtool_file *file)
+ 	return ret;
+ }
+ 
+-static int add_switch_table(struct objtool_file *file, struct symbol *func,
+-			    struct instruction *insn, struct rela *table,
+-			    struct rela *next_table)
++static int add_switch_table(struct objtool_file *file, struct instruction *insn,
++			    struct rela *table, struct rela *next_table)
+ {
+ 	struct rela *rela = table;
+ 	struct instruction *alt_insn;
+ 	struct alternative *alt;
++	struct symbol *pfunc = insn->func->pfunc;
++	unsigned int prev_offset = 0;
+ 
+ 	list_for_each_entry_from(rela, &file->rodata->rela->rela_list, list) {
+ 		if (rela == next_table)
+ 			break;
+ 
+-		if (rela->sym->sec != insn->sec ||
+-		    rela->addend <= func->offset ||
+-		    rela->addend >= func->offset + func->len)
++		if (prev_offset && rela->offset != prev_offset + sizeof(long))
+ 			break;
+ 
+-		alt_insn = find_insn(file, insn->sec, rela->addend);
+-		if (!alt_insn) {
+-			WARN("%s: can't find instruction at %s+0x%x",
+-			     file->rodata->rela->name, insn->sec->name,
+-			     rela->addend);
+-			return -1;
+-		}
++		alt_insn = find_insn(file, rela->sym->sec, rela->addend);
++		if (!alt_insn)
++			break;
++
++		if (alt_insn->func->pfunc != pfunc)
++			break;
+ 
+ 		alt = malloc(sizeof(*alt));
+ 		if (!alt) {
+@@ -819,6 +835,13 @@ static int add_switch_table(struct objtool_file *file, struct symbol *func,
+ 
+ 		alt->insn = alt_insn;
+ 		list_add_tail(&alt->list, &insn->alts);
++		prev_offset = rela->offset;
++	}
++
++	if (!prev_offset) {
++		WARN_FUNC("can't find switch jump table",
++			  insn->sec, insn->offset);
++		return -1;
+ 	}
+ 
+ 	return 0;
+@@ -947,7 +970,7 @@ static int add_func_switch_tables(struct objtool_file *file,
+ 	struct rela *rela, *prev_rela = NULL;
+ 	int ret;
+ 
+-	func_for_each_insn(file, func, insn) {
++	func_for_each_insn_all(file, func, insn) {
+ 		if (!last)
+ 			last = insn;
+ 
+@@ -978,8 +1001,7 @@ static int add_func_switch_tables(struct objtool_file *file,
+ 		 * the beginning of another switch table in the same function.
+ 		 */
+ 		if (prev_jump) {
+-			ret = add_switch_table(file, func, prev_jump, prev_rela,
+-					       rela);
++			ret = add_switch_table(file, prev_jump, prev_rela, rela);
+ 			if (ret)
+ 				return ret;
+ 		}
+@@ -989,7 +1011,7 @@ static int add_func_switch_tables(struct objtool_file *file,
+ 	}
+ 
+ 	if (prev_jump) {
+-		ret = add_switch_table(file, func, prev_jump, prev_rela, NULL);
++		ret = add_switch_table(file, prev_jump, prev_rela, NULL);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -1753,15 +1775,13 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
+ 	while (1) {
+ 		next_insn = next_insn_same_sec(file, insn);
+ 
+-
+-		if (file->c_file && func && insn->func && func != insn->func) {
++		if (file->c_file && func && insn->func && func != insn->func->pfunc) {
+ 			WARN("%s() falls through to next function %s()",
+ 			     func->name, insn->func->name);
+ 			return 1;
+ 		}
+ 
+-		if (insn->func)
+-			func = insn->func;
++		func = insn->func ? insn->func->pfunc : NULL;
+ 
+ 		if (func && insn->ignore) {
+ 			WARN_FUNC("BUG: why am I validating an ignored function?",
+@@ -1782,7 +1802,7 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
+ 
+ 				i = insn;
+ 				save_insn = NULL;
+-				func_for_each_insn_continue_reverse(file, func, i) {
++				func_for_each_insn_continue_reverse(file, insn->func, i) {
+ 					if (i->save) {
+ 						save_insn = i;
+ 						break;
+@@ -1869,7 +1889,7 @@ static int validate_branch(struct objtool_file *file, struct instruction *first,
+ 		case INSN_JUMP_UNCONDITIONAL:
+ 			if (insn->jump_dest &&
+ 			    (!func || !insn->jump_dest->func ||
+-			     func == insn->jump_dest->func)) {
++			     insn->jump_dest->func->pfunc == func)) {
+ 				ret = validate_branch(file, insn->jump_dest,
+ 						      state);
+ 				if (ret)
+@@ -2064,7 +2084,7 @@ static int validate_functions(struct objtool_file *file)
+ 
+ 	for_each_sec(file, sec) {
+ 		list_for_each_entry(func, &sec->symbol_list, list) {
+-			if (func->type != STT_FUNC)
++			if (func->type != STT_FUNC || func->pfunc != func)
+ 				continue;
+ 
+ 			insn = find_insn(file, sec, func->offset);
+diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
+index c1c338661699..4e60e105583e 100644
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -79,6 +79,19 @@ struct symbol *find_symbol_by_offset(struct section *sec, unsigned long offset)
+ 	return NULL;
+ }
+ 
++struct symbol *find_symbol_by_name(struct elf *elf, const char *name)
++{
++	struct section *sec;
++	struct symbol *sym;
++
++	list_for_each_entry(sec, &elf->sections, list)
++		list_for_each_entry(sym, &sec->symbol_list, list)
++			if (!strcmp(sym->name, name))
++				return sym;
++
++	return NULL;
++}
++
+ struct symbol *find_symbol_containing(struct section *sec, unsigned long offset)
+ {
+ 	struct symbol *sym;
+@@ -203,10 +216,11 @@ static int read_sections(struct elf *elf)
+ 
+ static int read_symbols(struct elf *elf)
+ {
+-	struct section *symtab;
+-	struct symbol *sym;
++	struct section *symtab, *sec;
++	struct symbol *sym, *pfunc;
+ 	struct list_head *entry, *tmp;
+ 	int symbols_nr, i;
++	char *coldstr;
+ 
+ 	symtab = find_section_by_name(elf, ".symtab");
+ 	if (!symtab) {
+@@ -281,6 +295,30 @@ static int read_symbols(struct elf *elf)
+ 		hash_add(sym->sec->symbol_hash, &sym->hash, sym->idx);
+ 	}
+ 
++	/* Create parent/child links for any cold subfunctions */
++	list_for_each_entry(sec, &elf->sections, list) {
++		list_for_each_entry(sym, &sec->symbol_list, list) {
++			if (sym->type != STT_FUNC)
++				continue;
++			sym->pfunc = sym->cfunc = sym;
++			coldstr = strstr(sym->name, ".cold.");
++			if (coldstr) {
++				coldstr[0] = '\0';
++				pfunc = find_symbol_by_name(elf, sym->name);
++				coldstr[0] = '.';
++
++				if (!pfunc) {
++					WARN("%s(): can't find parent function",
++					     sym->name);
++					goto err;
++				}
++
++				sym->pfunc = pfunc;
++				pfunc->cfunc = sym;
++			}
++		}
++	}
++
+ 	return 0;
+ 
+ err:
+diff --git a/tools/objtool/elf.h b/tools/objtool/elf.h
+index d86e2ff14466..de5cd2ddded9 100644
+--- a/tools/objtool/elf.h
++++ b/tools/objtool/elf.h
+@@ -61,6 +61,7 @@ struct symbol {
+ 	unsigned char bind, type;
+ 	unsigned long offset;
+ 	unsigned int len;
++	struct symbol *pfunc, *cfunc;
+ };
+ 
+ struct rela {
+@@ -86,6 +87,7 @@ struct elf {
+ struct elf *elf_open(const char *name, int flags);
+ struct section *find_section_by_name(struct elf *elf, const char *name);
+ struct symbol *find_symbol_by_offset(struct section *sec, unsigned long offset);
++struct symbol *find_symbol_by_name(struct elf *elf, const char *name);
+ struct symbol *find_symbol_containing(struct section *sec, unsigned long offset);
+ struct rela *find_rela_by_dest(struct section *sec, unsigned long offset);
+ struct rela *find_rela_by_dest_range(struct section *sec, unsigned long offset,
 -- 
-Josh
+2.17.0
