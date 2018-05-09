@@ -1,119 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935610AbeEIUbU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 16:31:20 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:34728 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935558AbeEIUbR (ORCPT
+        id S965261AbeEIUdz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 16:33:55 -0400
+Received: from mail-pg0-f54.google.com ([74.125.83.54]:45498 "EHLO
+        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935230AbeEIUdx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 16:31:17 -0400
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Cc: jgross@suse.com, Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH v2 2/2] xen/PVH: Make GDT selectors PVH-specific
-Date: Wed,  9 May 2018 16:33:18 -0400
-Message-Id: <20180509203318.2611-3-boris.ostrovsky@oracle.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180509203318.2611-1-boris.ostrovsky@oracle.com>
-References: <20180509203318.2611-1-boris.ostrovsky@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8888 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=626
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805090191
+        Wed, 9 May 2018 16:33:53 -0400
+X-Google-Smtp-Source: AB8JxZrRxvUQ8zMeOJpz4u2mX3pGXzefXARR0tNoZwWL4+7SnyhLn4HUTkwDzgLpm745gbvBEp37QXE7MSAk+s5FLck=
+MIME-Version: 1.0
+In-Reply-To: <1525768634.2885.11.camel@realtek.com>
+References: <CA+A7VXX+z8FrDhzW2BQ6AGMJ=_j_53wkUL_YNgkreEbWSh+jCw@mail.gmail.com>
+ <afdf0498-c0a9-936c-0c9b-1b6da6eb5957@lwfinger.net> <CA+A7VXWjWaSSUiX3h_rpFXrSwtUkynKR9tpvnsSe=DZrC+mF-Q@mail.gmail.com>
+ <059b40f0-b8e2-b55f-92d5-a859ba4204a4@lwfinger.net> <CA+A7VXUUsZHD2gr9TBcV6jZBOPGZv7_vK-wWZ0MvGgiCnAiUgQ@mail.gmail.com>
+ <5B2DA6FDDF928F4E855344EE0A5C39D13BEC14C0@RTITMBSV07.realtek.com.tw>
+ <1525240713.3735.3.camel@realtek.com> <CA+A7VXWywjTVeb3DTjVMVTUw-vjAjD+3XTuVNk8S=8D7W=MkPQ@mail.gmail.com>
+ <1525768634.2885.11.camel@realtek.com>
+From: =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Date: Wed, 9 May 2018 13:33:11 -0700
+Message-ID: <CA+A7VXWhi24iw=TpoWQe6AY-pyvF6-C03dc+AN9kXeLPhLni+g@mail.gmail.com>
+Subject: Re: RTL8723BE performance regression
+To: Pkshih <pkshih@realtek.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>,
+        "jprvita@endlessm.com" <jprvita@endlessm.com>,
+        Birming Chiu <birming@realtek.com>,
+        "drake@endlessm.com" <drake@endlessm.com>,
+        Chaoming_Li <chaoming_li@realsil.com.cn>,
+        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
+        =?UTF-8?B?6I6K5b2l5a6j?= <yhchuang@realtek.com>,
+        "derosier@gmail.com" <derosier@gmail.com>,
+        Steven Ting <steventing@realtek.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux@endlessm.com" <linux@endlessm.com>, Shaofu <shaofu@realtek.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w49KY1ls002859
 
-We don't need to share PVH GDT layout with other GDTs, especially
-since we now have a PVH-speciific entry (for stack canary segment).
+On Tue, May 8, 2018 at 1:37 AM, Pkshih <pkshih@realtek.com> wrote:
+> On Mon, 2018-05-07 at 14:49 -0700, João Paulo Rechi Vita wrote:
+>> On Tue, May 1, 2018 at 10:58 PM, Pkshih <pkshih@realtek.com> wrote:
+>> > On Wed, 2018-05-02 at 05:44 +0000, Pkshih wrote:
+>> >>
+>> >> > -----Original Message-----
+>> >> > From: João Paulo Rechi Vita [mailto:jprvita@gmail.com]
+>> >> > Sent: Wednesday, May 02, 2018 6:41 AM
+>> >> > To: Larry Finger
+>> >> > Cc: Steve deRosier; 莊彥宣; Pkshih; Birming Chiu; Shaofu; Steven Ting; Chaoming_Li; Kalle Valo;
+>> >> > linux-wireless; Network Development; LKML; Daniel Drake; João Paulo Rechi Vita; linux@endless
+>> m.c
+>> >> om
+>> >> > Subject: Re: RTL8723BE performance regression
+>> >> >
+>> >> > On Tue, Apr 3, 2018 at 7:51 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
+>> >> > > On 04/03/2018 09:37 PM, João Paulo Rechi Vita wrote:
+>> >> > >>
+>> >> > >> On Tue, Apr 3, 2018 at 7:28 PM, Larry Finger <Larry.Finger@lwfinger.net>
+>> >> > >> wrote:
+>> >> > >>
+>> >> > >> (...)
+>> >> > >>
+>> >> > >>> As the antenna selection code changes affected your first bisection, do
+>> >> > >>> you
+>> >> > >>> have one of those HP laptops with only one antenna and the incorrect
+>> >> > >>> coding
+>> >> > >>> in the FUSE?
+>> >> > >>
+>> >> > >>
+>> >> > >> Yes, that is why I've been passing ant_sel=1 during my tests -- this
+>> >> > >> was needed to achieve a good performance in the past, before this
+>> >> > >> regression. I've also opened the laptop chassis and confirmed the
+>> >> > >> antenna cable is plugged to the connector labeled with "1" on the
+>> >> > >> card.
+>> >> > >>
+>> >> > >>> If so, please make sure that you still have the same signal
+>> >> > >>> strength for good and bad cases. I have tried to keep the driver and the
+>> >> > >>> btcoex code in sync, but there may be some combinations of antenna
+>> >> > >>> configuration and FUSE contents that cause the code to fail.
+>> >> > >>>
+>> >> > >>
+>> >> > >> What is the recommended way to monitor the signal strength?
+>> >> > >
+>> >> > >
+>> >> > > The btcoex code is developed for multiple platforms by a different group
+>> >> > > than the Linux driver. I think they made a change that caused ant_sel to
+>> >> > > switch from 1 to 2. At least numerous comments at
+>> >> > > github.com/lwfinger/rtlwifi_new claimed they needed to make that change.
+>> >> > >
+>> >> > > Mhy recommended method is to verify the wifi device name with "iw dev". Then
+>> >> > > using that device
+>> >> > >
+>> >> > > sudo iw dev <dev_name> scan | egrep "SSID|signal"
+>> >> > >
+>> >> >
+>> >> > I have confirmed that the performance regression is indeed tied to
+>> >> > signal strength: on the good cases signal was between -16 and -8 dBm,
+>> >> > whereas in bad cases signal was always between -50 to - 40 dBm. I've
+>> >> > also switched to testing bandwidth in controlled LAN environment using
+>> >> > iperf3, as suggested by Steve deRosier, with the DUT being the only
+>> >> > machine connected to the 2.4 GHz radio and the machine running the
+>> >> > iperf3 server connected via ethernet.
+>> >> >
+>> >>
+>> >> We have new experimental results in commit af8a41cccf8f46 ("rtlwifi: cleanup
+>> >> 8723be ant_sel definition"). You can use the above commit and do the same
+>> >> experiments (with ant_sel=0, 1 and 2) in your side, and then share your results.
+>> >> Since performance is tied to signal strength, you can only share signal strength.
+>> >>
+>> >
+>> > Please pay attention to cold reboot once ant_sel is changed.
+>> >
+>>
+>> I've tested the commit mentioned above and it fixes the problem on top
+>> of v4.16 (in addition to the latest wireless-drivers-next also been
+>> fixed as it already contains such commit). On v4.15, we also need the
+>> following commits before "af8a41cccf8f rtlwifi: cleanup 8723be ant_sel
+>> definition" to have a good performance again:
+>>
+>>   874e837d67d0 rtlwifi: fill FW version and subversion
+>>   a44709bba70f rtlwifi: btcoex: Add power_on_setting routine
+>>   40d9dd4f1c5d rtlwifi: btcoex: Remove global variables from btcoex
+>
+> v4.15 isn't longterm version and had been EOL.
+>
 
-Define PVH's own selectors.
+Right, but this is a performace regression in comparison to v4.11, so
+if "af8a41cccf8f rtlwifi: cleanup 8723be ant_sel definition" is marked
+for stable, shouldn't these other patches be brought as well? All
+releases since v4.11 are probably affected, but honestly I don't have
+a strong understanding of how the stable trees operate in situations
+like this.
 
-(As a side effect of this change we are also fixing improper
-reference to __KERNEL_CS)
+>>
+>> Surprisingly, it seems forcing ant_sel=1 is not needed anymore on
+>> these machines, as the shown by the numbers bellow (ant_sel=0 means
+>> that actually no parameter was passed to the module). I have powered
+>> off the machine and done a cold boot for every test. It seems
+>> something have changed in the antenna auto-selection code since v4.11,
+>> the latest point where I could confirm we definitely need to force
+>> ant_sel=1. I've been trying to understand what causes this difference,
+>> but haven't made progress on that so far, so any suggestions are
+>> appreciated (we are trying to decide if we can confidently drop the
+>> downstream DMI quirks for these specific machines).
+>>
+> I think your rtl8723be module programed correct efuse content, so it
+> works properly with ant_sel=0, and quirk isn't required for your
+> machine.
+>
+>>   w-d-n ant_sel=0: -14.00 dBm,  69.5 Mbps -> good
+>>   w-d-n ant_sel=1: -10.00 dBm,  41.1 Mbps -> good
+>>   w-d-n ant_sel=2: -44.00 dBm,   607 kbps -> bad
+>>
+>>   v4.16 ant_sel=0: -12.00 dBm,  63.0 Mbps -> good
+>>   v4.16 ant_sel=1: - 8.00 dBm,  69.0 Mbps -> good
+>>   v4.16 ant_sel=2: -50.00 dBm,   224 kbps -> bad
+>>
+>>   v4.15 ant_sel=0: - 8.00 dBm,  33.0 Mbps -> good
+>>   v4.15 ant_sel=1: -10.00 dBm,  38.1 Mbps -> good
+>>   v4.15 ant_sel=2: -48.00 dBm,   206 kbps -> bad
+>>
+>
+> With your results, the efuse content is programmed as one or two antenna
+> on AUX path.
+>
 
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
----
- arch/x86/xen/xen-pvh.S | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+With v4.11 I had good performance results on this very same machine
+(thus same efuse contents) only when passing ant_sel=1, so there has
+to be some change on the code that parses the efuse contents and
+decides which antenna will be used.
 
-diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/xen/xen-pvh.S
-index 22d43eb..da8589f 100644
---- a/arch/x86/xen/xen-pvh.S
-+++ b/arch/x86/xen/xen-pvh.S
-@@ -54,7 +54,11 @@
-  * charge of setting up it's own stack, GDT and IDT.
-  */
- 
--#define PVH_GDT_ENTRY_CANARY	4
-+#define PVH_GDT_ENTRY_CS	1
-+#define PVH_GDT_ENTRY_DS	2
-+#define PVH_GDT_ENTRY_CANARY	3
-+#define PVH_CS_SEL		(PVH_GDT_ENTRY_CS * 8)
-+#define PVH_DS_SEL		(PVH_GDT_ENTRY_DS * 8)
- #define PVH_CANARY_SEL		(PVH_GDT_ENTRY_CANARY * 8)
- 
- ENTRY(pvh_start_xen)
-@@ -62,7 +66,7 @@ ENTRY(pvh_start_xen)
- 
- 	lgdt (_pa(gdt))
- 
--	mov $(__BOOT_DS),%eax
-+	mov $PVH_DS_SEL,%eax
- 	mov %eax,%ds
- 	mov %eax,%es
- 	mov %eax,%ss
-@@ -107,7 +111,7 @@ ENTRY(pvh_start_xen)
- 	mov %eax, %cr0
- 
- 	/* Jump to 64-bit mode. */
--	ljmp $__KERNEL_CS, $_pa(1f)
-+	ljmp $PVH_CS_SEL, $_pa(1f)
- 
- 	/* 64-bit entry point. */
- 	.code64
-@@ -130,13 +134,13 @@ ENTRY(pvh_start_xen)
- 	or $(X86_CR0_PG | X86_CR0_PE), %eax
- 	mov %eax, %cr0
- 
--	ljmp $__BOOT_CS, $1f
-+	ljmp $PVH_CS_SEL, $1f
- 1:
- 	call xen_prepare_pvh
- 	mov $_pa(pvh_bootparams), %esi
- 
- 	/* startup_32 doesn't expect paging and PAE to be on. */
--	ljmp $__BOOT_CS, $_pa(2f)
-+	ljmp $PVH_CS_SEL, $_pa(2f)
- 2:
- 	mov %cr0, %eax
- 	and $~X86_CR0_PG, %eax
-@@ -145,7 +149,7 @@ ENTRY(pvh_start_xen)
- 	and $~X86_CR4_PAE, %eax
- 	mov %eax, %cr4
- 
--	ljmp $__BOOT_CS, $_pa(startup_32)
-+	ljmp $PVH_CS_SEL, $_pa(startup_32)
- #endif
- END(pvh_start_xen)
- 
-@@ -157,13 +161,12 @@ gdt:
- 	.word 0
- gdt_start:
- 	.quad 0x0000000000000000            /* NULL descriptor */
--	.quad 0x0000000000000000            /* reserved */
- #ifdef CONFIG_X86_64
--	.quad GDT_ENTRY(0xa09a, 0, 0xfffff) /* __KERNEL_CS */
-+	.quad GDT_ENTRY(0xa09a, 0, 0xfffff) /* PVH_CS_SEL */
- #else
--	.quad GDT_ENTRY(0xc09a, 0, 0xfffff) /* __KERNEL_CS */
-+	.quad GDT_ENTRY(0xc09a, 0, 0xfffff) /* PVH_CS_SEL */
- #endif
--	.quad GDT_ENTRY(0xc092, 0, 0xfffff) /* __KERNEL_DS */
-+	.quad GDT_ENTRY(0xc092, 0, 0xfffff) /* PVH_DS_SEL */
- 	.quad GDT_ENTRY(0x4090, 0, 0x18)    /* PVH_CANARY_SEL */
- gdt_end:
- 
--- 
-2.9.3
+--
+João Paulo Rechi Vita
+http://about.me/jprvita
