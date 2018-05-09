@@ -1,125 +1,258 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756170AbeEIHMa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 03:12:30 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46651 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755888AbeEIHM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 03:12:28 -0400
-Date: Wed, 9 May 2018 09:12:26 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Paul Kocialkowski <contact@paulk.fr>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>
-Subject: Re: [PATCH v4 1/3] drm/panel: Add RGB666 variant of Innolux AT070TN90
-Message-ID: <20180509071226.ivh4s3wtczg2u7zw@flea>
-References: <20180507220413.21990-1-contact@paulk.fr>
+        id S1756190AbeEIHOd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 03:14:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57914 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755826AbeEIHOb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 03:14:31 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="erirrsr4rgg7d5ew"
-Content-Disposition: inline
-In-Reply-To: <20180507220413.21990-1-contact@paulk.fr>
-User-Agent: NeoMutt/20180323
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 09 May 2018 12:44:29 +0530
+From: kgunda@codeaurora.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH V1 5/5] backlight: qcom-wled: Add auto string detection
+ logic
+In-Reply-To: <20180507181044.GE2259@tuxbook-pro>
+References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
+ <1525341432-15818-6-git-send-email-kgunda@codeaurora.org>
+ <20180507181044.GE2259@tuxbook-pro>
+Message-ID: <abe98bd822f8c7bab80f9ec9afb34d9b@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-05-07 23:40, Bjorn Andersson wrote:
+> On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
+> 
+> [..]
+>> +
+>> +#define WLED_AUTO_DETECT_OVP_COUNT		5
+>> +#define WLED_AUTO_DETECT_CNT_DLY_US		HZ /* 1 second */
+>> +static bool wled_auto_detection_required(struct wled *wled)
+> 
+> So cfg.auto_detection_enabled is set, but we didn't have a fault during
+> wled_auto_detection_at_init(), which I presume indicates that the boot
+> loader configured the strings appropriately (or didn't enable the BL).
+> Then first time we try to enable the backlight we will hit the ovp irq,
+> which will  enter here a few times to figure out that the strings are
+> incorrectly configured and then we will do the same thing that would
+> have been done if we probed with a fault.
+> 
+> This is convoluted!
+> 
+> If auto-detection is a feature allowing the developer to omit the 
+> string
+> configuration then just do the auto detection explicitly in probe when
+> the developer did so and then never do it again.
+> 
+As explained in the previous patch, the auto-detection is needed later,
+because are also cases where one/more of the connected LED string of the
+display-backlight is malfunctioning (because of damage) and requires the
+damaged string to be turned off to prevent the complete panel and/or 
+board
+from being damaged.
+>> +{
+>> +	s64 elapsed_time_us;
+>> +
+>> +	if (*wled->version == WLED_PM8941)
+>> +		return false;
+>> +	/*
+>> +	 * Check if the OVP fault was an occasional one
+>> +	 * or if it's firing continuously, the latter qualifies
+>> +	 * for an auto-detection check.
+>> +	 */
+>> +	if (!wled->auto_detection_ovp_count) {
+>> +		wled->start_ovp_fault_time = ktime_get();
+>> +		wled->auto_detection_ovp_count++;
+>> +	} else {
+>> +		elapsed_time_us = ktime_us_delta(ktime_get(),
+>> +						 wled->start_ovp_fault_time);
+>> +		if (elapsed_time_us > WLED_AUTO_DETECT_CNT_DLY_US)
+>> +			wled->auto_detection_ovp_count = 0;
+>> +		else
+>> +			wled->auto_detection_ovp_count++;
+>> +
+>> +		if (wled->auto_detection_ovp_count >=
+>> +				WLED_AUTO_DETECT_OVP_COUNT) {
+>> +			wled->auto_detection_ovp_count = 0;
+>> +			return true;
+>> +		}
+>> +	}
+>> +
+>> +	return false;
+>> +}
+>> +
+>> +static int wled_auto_detection_at_init(struct wled *wled)
+>> +{
+>> +	int rc;
+>> +	u32 fault_status = 0, rt_status = 0;
+>> +
+>> +	if (*wled->version == WLED_PM8941)
+>> +		return 0;
+> 
+> cfg.auto_detection_enabled will be false in this case, so there's no
+> need for the extra check.
+> 
+Ok. I will remove it in the next series.
+>> +
+>> +	if (!wled->cfg.auto_detection_enabled)
+>> +		return 0;
+>> +
+>> +	rc = regmap_read(wled->regmap,
+>> +			 wled->ctrl_addr + WLED3_CTRL_REG_INT_RT_STS,
+>> +			 &rt_status);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to read RT status rc=%d\n", rc);
+>> +		return rc;
+>> +	}
+>> +
+>> +	rc = regmap_read(wled->regmap,
+>> +			 wled->ctrl_addr + WLED3_CTRL_REG_FAULT_STATUS,
+>> +			 &fault_status);
+>> +	if (rc < 0) {
+>> +		pr_err("Failed to read fault status rc=%d\n", rc);
+>> +		return rc;
+>> +	}
+>> +
+>> +	if ((rt_status & WLED3_CTRL_REG_OVP_FAULT_STATUS) ||
+>> +	    (fault_status & WLED3_CTRL_REG_OVP_FAULT_BIT)) {
+> 
+> So this would only happen if the boot loader set an invalid string
+> configuration, as we have yet to enable the module here?
+> 
+Yes.
+>> +		mutex_lock(&wled->lock);
+>> +		rc = wled_auto_string_detection(wled);
+>> +		if (!rc)
+>> +			wled->auto_detection_done = true;
+>> +		mutex_unlock(&wled->lock);
+>> +	}
+>> +
+>> +	return rc;
+>> +}
+>> +
+>> +static void handle_ovp_fault(struct wled *wled)
+>> +{
+>> +	if (!wled->cfg.auto_detection_enabled)
+> 
+> As this is the only reason for requesting the ovp_irq, how about just
+> not requesting it in this case?
+> 
+This is also needed for information purpose if there is any other reason
+and also discussing with HW systems what needs to do if the OVP keep on 
+triggering.
+>> +		return;
+>> +
+>> +	mutex_lock(&wled->lock);
+>> +	if (wled->ovp_irq > 0 && !wled->ovp_irq_disabled) {
+> 
+> The logic here is unnecessary, the only way handle_ovp_fault() is ever
+> executed is if wled_ovp_irq_handler() was called, which is a really 
+> good
+> indication that ovp_irq is valid and !ovp_irq_disabled. So this is
+> always going to be entered.
+> 
+Ok. I will remove this logic in the next series.
+>> +		disable_irq_nosync(wled->ovp_irq);
+>> +		wled->ovp_irq_disabled = true;
+>> +	}
+>> +
+>> +	if (wled_auto_detection_required(wled))
+>> +		wled_auto_string_detection(wled);
+>> +
+>> +	if (wled->ovp_irq > 0 && wled->ovp_irq_disabled) {
+> 
+> Again, ovp_irq is valid and we entered the function with either
+> ovp_irq_disabled = true due to some bug or it was set to true above. So
+> this check is useless - which renders ovp_irq_disabled unnecessary as
+> well.
+> 
+Ok. I will remove it in the next series.
+>> +		enable_irq(wled->ovp_irq);
+>> +		wled->ovp_irq_disabled = false;
+>> +	}
+>> +	mutex_unlock(&wled->lock);
+>> +}
+>> +
+>>  static irqreturn_t wled_ovp_irq_handler(int irq, void *_wled)
+>>  {
+>>  	struct wled *wled = _wled;
+>> @@ -413,6 +706,9 @@ static irqreturn_t wled_ovp_irq_handler(int irq, 
+>> void *_wled)
+>>  		dev_dbg(wled->dev, "WLED OVP fault detected, int_sts=%x fault_sts= 
+>> %x\n",
+>>  			int_sts, fault_sts);
+>> 
+>> +	if (fault_sts & WLED3_CTRL_REG_OVP_FAULT_BIT)
+>> +		handle_ovp_fault(wled);
+> 
+> Just inline handle_ovp_fault() here and make things less "generic".
+> 
+Sure. Will do it in the next series.
+>> +
+>>  	return IRQ_HANDLED;
+>>  }
+>> 
+>> @@ -575,6 +871,10 @@ static int wled4_setup(struct wled *wled)
+>>  		return rc;
+>>  	}
+>> 
+>> +	rc = wled_auto_detection_at_init(wled);
+>> +	if (rc < 0)
+>> +		return rc;
+>> +
+>>  	if (wled->cfg.external_pfet) {
+>>  		/* Unlock the secure register access */
+>>  		rc = regmap_write(wled->regmap, wled->ctrl_addr +
+>> @@ -602,6 +902,7 @@ static int wled4_setup(struct wled *wled)
+>>  	.enabled_strings = 0xf,
+>>  	.cabc = false,
+>>  	.external_pfet = true,
+>> +	.auto_detection_enabled = false,
+>>  };
+>> 
+>>  static const u32 wled3_boost_i_limit_values[] = {
+>> @@ -785,6 +1086,7 @@ static int wled_configure(struct wled *wled)
+>>  		{ "qcom,ext-gen", &cfg->ext_gen, },
+>>  		{ "qcom,cabc", &cfg->cabc, },
+>>  		{ "qcom,external-pfet", &cfg->external_pfet, },
+>> +		{ "qcom,auto-string-detection", &cfg->auto_detection_enabled, },
+>>  	};
+> 
+> So afaict the auto detect logic is triggered by two things:
+> 
+> * Boot loader enabled backlight with an invalid string configuration,
+>   which will make wled_auto_detection_at_init() do the detection.
+> 
+> * Once we the driver tries to enable the module, ovp faults will start
+>   arriving and we will trigger the auto detection.
+> 
+> But I think you can integrate this in a much more direct way. If the
+> module is enabled and there are no faults you should be able to just
+> read the config from the hardware (if auto detect is enabled!) and if
+> the module is not enabled you can just call auto detect from probe().
+> 
+> This will give you flicker free "auto detection" in the event that the
+> boot loader did its job and very clean logic in the other cases.
+> 
+Sure. I will improve this logic in the next series.
 
---erirrsr4rgg7d5ew
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, May 08, 2018 at 12:04:11AM +0200, Paul Kocialkowski wrote:
-> This adds timings for the RGB666 variant of the Innolux AT070TN90 panel,
-> as found on the Ainol AW1 tablet.
->=20
-> The panel also supports RGB888 output. When RGB666 mode is used instead,
-> the two extra lanes per component are grounded.
->=20
-> In the future, it might become necessary to introduce a dedicated
-> device-tree property to specify the bus format to use instead of the
-> default one for the panel. This will allow supporting different bus
-> formats for the same panel modes.
->=20
-> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> ---
->  drivers/gpu/drm/panel/panel-simple.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel=
-/panel-simple.c
-> index cbf1ab404ee7..32e30d5a8f08 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -1063,6 +1063,29 @@ static const struct panel_desc innolux_at043tn24 =
-=3D {
->  	.bus_flags =3D DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_POSEDGE,
->  };
-> =20
-> +static const struct drm_display_mode innolux_at070tn90_mode =3D {
-> +	.clock =3D 40000,
-> +	.hdisplay =3D 800,
-> +	.hsync_start =3D 800 + 112,
-> +	.hsync_end =3D 800 + 112 + 1,
-> +	.htotal =3D 800 + 112 + 1 + 87,
-> +	.vdisplay =3D 480,
-> +	.vsync_start =3D 480 + 141,
-> +	.vsync_end =3D 480 + 141 + 1,
-> +	.vtotal =3D 480 + 141 + 1 + 38,
-> +	.vrefresh =3D 60,
-> +};
-> +
-> +static const struct panel_desc innolux_at070tn90 =3D {
-> +	.modes =3D &innolux_at070tn90_mode,
-> +	.num_modes =3D 1,
-> +	.size =3D {
-> +		.width =3D 154,
-> +		.height =3D 86,
-> +	},
-> +	.bus_format =3D MEDIA_BUS_FMT_RGB666_1X18,
-> +};
-> +
-
-I'm not really convinced this is the right approach. You said it
-yourself, the panel is using a 24-bits interface, and you just happen
-to have a tablet that routed it using a 18-bits interface instead.
-
-That doesn't belong in the driver, especially associated to the
-compatible, but where the routing is described: in the device
-tree. And given that the panel interface is a 24 bits panel, if we
-were to have a default, we should have this one, and not the one
-fitting your use case.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---erirrsr4rgg7d5ew
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlryn1oACgkQ0rTAlCFN
-r3RvdA/7BjX0ZueUchmHOJAEt91UXR+Bl8/G1+pc49m/euGXRQLAUccK/ynKcPxy
-UrF0BPaPE3S7uC7LQhb13xhwU03POzId6BlCkXCs1ykkTKnKxc/PQN/fg1Pq2Tz8
-QWkSgsjgS2FAAFUqXQOukIVXJVtKbFg0VD4PgVAmHyes+7Mut51qzFCsvNBC+6eK
-DCODof1H4DtkNncQup2q8gjTNqWWjpwVz3JTQc91qYjwKEKHSCkdZcRsFx3dfm0u
-1ReVaKfXx0SVKDv303PV6d2QNfpDVBfWsfQwIoHqWvQyitsW0prqzSWwADZegRs0
-6k76x0+2Z3QqObCm0wppCFdl/2s6QZ8Oz1vOqhga46sAUVdKRiZr+qjJXIxdqmCP
-xu/7GY3TW0GQM/Sjfuvnc8iyAxP4DUEMZP0kCd6Yz8zhomBnGuT2bGM1kPc5LdCm
-CNtJP7f/PK1+XsmWcWiuM+2U90HFuwHPx1XNuRlXBtIJls4jAYpORtEzf3WCwgbr
-rBU0oUTxDqFxyvxO0t8CfeQqRgroOiQ5tNjWTylTHhY9yq+xc+R0FPbQmusUPuto
-k1l/FW577R3jl3zpcFifwxnbp9AFkNH1QMEFugpC9UtVKKTkH73r0mLhowQa94xf
-FVaO2mnhLtY+axqo/9ppQTub4tZEF3gV3+3XoGmj4ulcy5o40C8=
-=1Qnq
------END PGP SIGNATURE-----
-
---erirrsr4rgg7d5ew--
+> Regards,
+> Bjorn
+> --
+> To unsubscribe from this list: send the line "unsubscribe 
+> linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
