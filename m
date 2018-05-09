@@ -1,58 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934844AbeEIM54 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:57:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41046 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934328AbeEIM5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:57:55 -0400
-Date: Wed, 9 May 2018 07:57:52 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sinan Kaya <okaya@codeaurora.org>
-Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
- (issued 65284 msec ago)
-Message-ID: <20180509125752.GA234395@bhelgaas-glaptop.roam.corp.google.com>
-References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
- <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
- <20180509114124.GA20639@wunner.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509114124.GA20639@wunner.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S934901AbeEIM6A (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:58:00 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55262 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934328AbeEIM55 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 08:57:57 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org, ulf.hansson@linaro.org, heiko@sntech.de,
+        linux-pm@vger.kernel.org, dbasehore@chromium.org,
+        linux-kernel@vger.kernel.org, dianders@google.com, groeck@chromium.org,
+        kernel@collabora.com, hl@rock-chips.com,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v4 0/6] devfreq: rk3399_dmc: improve rk3399_dmc driver and it's documentation
+Date: Wed,  9 May 2018 14:57:42 +0200
+Message-Id: <20180509125749.31318-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 01:41:24PM +0200, Lukas Wunner wrote:
-> On Fri, Apr 27, 2018 at 02:22:07PM -0500, Bjorn Helgaas wrote:
-> > Sinan mooted the idea of using a "no-wait" path of sending the "don't
-> > generate hotplug interrupts" command.  I think we should work on this
-> > idea a little more.  If we're shutting down the whole system, I can't
-> > believe there's much value in *anything* we do in the pciehp_remove()
-> > path.
-> > 
-> > Maybe we should just get rid of pciehp_remove() (and probably
-> > pcie_port_remove_service() and the other service driver remove methods)
-> > completely.  That dates from when the service drivers could be modules that
-> > could be potentially unloaded, but unloading them hasn't been possible for
-> > years.
-> 
-> Every Thunderbolt device contains a PCIe switch with at least one
-> (downstream) hotplug port, so pciehp_remove() is executed on unplug
-> of a Thunderbolt device and the assumption that it's unnecessary
-> simply because it's builtin isn't correct.
+Dear all,
 
-I agree that simply being builtin isn't a sufficient argument for getting
-rid of pciehp_remove().
+These patches is an attempt to improve a little bit the rk3399_dmc
+driver and it's documentation in order to have all in a better shape for
+a future work I am doing. My final intention is add ddrfreq support for
+rockchip drm driver, but the patches for this are still
+work-in-progress. So let's start with this first patchset that is
+basically some fixes/improvements for the rk3399_dmc driver.
 
-But if we do need pciehp_remove(), we should be able to make a rational
-case for why that is.  If we're about to turn off the power, it's not
-obvious why we would need to deallocate memory, remove sysfs stuff, etc.
-If we need to configure the hardware to make it easier for a kexec'd
-kernel, that's a possible argument but we should make it explicit.
+The patches apply on top of current 4.17-rc3.
 
-Bjorn
+Best regards,
+ Enric
+
+Changes in v4:
+- [4/6] Add Reviewed-by Rob Herring.
+- [6/6] Introduce this new patch that fixes some spelling.
+
+Changes in v3:
+- [1/5] Add Reviewed-by Rob Herring.
+- [2/5] Add Reviewed-by Rob Herring.
+- [4/6] Move interrupts to be optional instead of remove.
+
+Changes in v2:
+- [1/6] Add Acked-by MyungJoo Ham.
+- [2/6] Improved commit message.
+- [2/6] Rename ddr.h to rk3399-ddr.h because is SoC specific.
+- [3/6] Add Reviewed-by Chanwoo Choi
+- [4/6] Add Reviewed-by Chanwoo Choi.
+- [5/6] Add Acked-by MyungJoo Ham.
+- [5/6] Add Reviewed-by Chanwoo Choi.
+- [6/6] Removed this patch from this series.
+
+Enric Balletbo i Serra (4):
+  dt-bindings: clock: add rk3399 DDR3 standard speed bins.
+  devfreq: rk3399_dmc: remove wait for dcf irq event.
+  dt-bindings: devfreq: rk3399_dmc: move interrupts to be optional.
+  devfreq: rk3399_dmc: fix spelling mistakes.
+
+Lin Huang (1):
+  devfreq: rk3399_dmc: do not print error when get supply and clk defer.
+
+Nick Milner (1):
+  dt-bindings: devfreq: rk3399_dmc: improve binding documentation.
+
+ .../bindings/devfreq/rk3399_dmc.txt           | 213 +++++++++---------
+ drivers/devfreq/rk3399_dmc.c                  |  71 ++----
+ include/dt-bindings/clock/rk3399-ddr.h        |  56 +++++
+ 3 files changed, 178 insertions(+), 162 deletions(-)
+ create mode 100644 include/dt-bindings/clock/rk3399-ddr.h
+
+-- 
+2.17.0
