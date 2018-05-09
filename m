@@ -1,62 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751052AbeEIMXJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:23:09 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55105 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932318AbeEIMXH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:23:07 -0400
-From: Colin King <colin.king@canonical.com>
-To: Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] netfilter: nf_tables: fix memory leak on error exit return
-Date: Wed,  9 May 2018 13:22:56 +0100
-Message-Id: <20180509122256.16859-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S934234AbeEIMY5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:24:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53017 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932318AbeEIMY4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 08:24:56 -0400
+Date: Wed, 9 May 2018 14:24:54 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+Cc: Tony Luck <tony.luck@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, tiantao6@huawei.com,
+        LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
+Subject: Re: fd3e45436660 ("ACPI / NUMA: ia64: Parse all entries of SRAT
+ memory affinity table")
+Message-ID: <20180509122454.GR32366@dhcp22.suse.cz>
+References: <20180411104832.GF23400@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180411104832.GF23400@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed 11-04-18 12:48:32, Michal Hocko wrote:
+> Hi,
+> my attention was brought to the %subj commit and either I am missing
+> something or the patch is quite dubious. What is it actually trying to
+> fix? If a BIOS/FW provides more memblocks than the limit then we would
+> get misleading numa topology (numactl -H output) but is the situation
+> much better with it applied? Numa init code will refuse to init more
+> memblocks than the limit and falls back to dummy_numa_init (AFAICS)
+> which will break the topology again and numactl -H will have a
+> misleading output anyway.
+> 
+> So why is the patch an improvement at all?
 
-Currently the -EBUSY error return path is not free'ing resources
-allocated earlier, leaving a memory leak. Fix this by exiting via the
-error exit label err5 that performs the necessary resource clean
-up.
-
-Detected by CoverityScan, CID#1432975 ("Resource leak")
-
-Fixes: 9744a6fcefcb ("netfilter: nf_tables: check if same extensions are set when adding elements")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- net/netfilter/nf_tables_api.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 6422eba367cf..a3d77aa0f752 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -4098,8 +4098,10 @@ static int nft_add_set_elem(struct nft_ctx *ctx, struct nft_set *set,
- 			if (nft_set_ext_exists(ext, NFT_SET_EXT_DATA) ^
- 			    nft_set_ext_exists(ext2, NFT_SET_EXT_DATA) ||
- 			    nft_set_ext_exists(ext, NFT_SET_EXT_OBJREF) ^
--			    nft_set_ext_exists(ext2, NFT_SET_EXT_OBJREF))
--				return -EBUSY;
-+			    nft_set_ext_exists(ext2, NFT_SET_EXT_OBJREF)) {
-+				err = -EBUSY;
-+				goto err5;
-+			}
- 			if ((nft_set_ext_exists(ext, NFT_SET_EXT_DATA) &&
- 			     nft_set_ext_exists(ext2, NFT_SET_EXT_DATA) &&
- 			     memcmp(nft_set_ext_data(ext),
+ping? I would be tempted to simply revert the patch as a wrong fix.
 -- 
-2.17.0
+Michal Hocko
+SUSE Labs
