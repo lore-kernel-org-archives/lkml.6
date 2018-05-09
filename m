@@ -1,119 +1,136 @@
-Return-Path: <jeffrin@rajagiritech.edu.in>
-ARC-Seal: i=1; a=rsa-sha256; t=1525876079; cv=none;
+Return-Path: <david@redhat.com>
+X-Google-Smtp-Source: AB8JxZrdUDd4ev8wX2el+hjhPuznh8pJ9NCCN9S6QlzKl5Vj/FFYRvcvPyNdHLwDXetPz/363SGt
+ARC-Seal: i=1; a=rsa-sha256; t=1525875291; cv=none;
         d=google.com; s=arc-20160816;
-        b=ulzFSMjySLn3JS96LYADEtPG0pv87vNE/qsBfjgEgfEplAAy1pbvwjaiFN4sOfMDiO
-         e9dRf4AXLUcjWCtNltNB7SL8QrtJVHcMuvq306x4EkcC8UYFeUrfDMtIfOCs6kC+efsq
-         zaMuuHCeHGy8S/IE6Kgu/u5GUFt7jAOrmvAj5ENDynakX2sGsJ7TwzeqAkc21A4J5KyG
-         sLZSBbH2GP9GOdNgteeuTdm/ZWmppsbYiDu5gGSzzN7zN2TL9qJ+4nMeeMvNeXZU9FxY
-         QwV5TeLjZ34SaDAWg/1jjk7t0QS9ubqx+p0H5ejlljhAvXRF4/ba58tJ/xjsp9Kwwyxn
-         wVJA==
+        b=kaIVlRH14YbU7Q80uZvgScCE/3vBc9YXKkRRVUqtK8/Giyq18cuAPmkblfv9JmpNnM
+         HqL7EZvUkRLnjjL5vRLit9tVrcYQf2SqGFEQX1mMC8mT4lmtu143G8Yjiwa9kr2lj5yw
+         MzxHbVwAjJXkAvJFvT3HrPppvZDAGBfgzdplLHfOCLBS981be9Ast8S7vSDrV2hnWBeS
+         36kTx2VScws75WZYeNgknc4BRP07VBY4iPI/0EhdmofsMBXIZhJHlq5Ifh1gYAg4d2q9
+         EiJ3/mnA6EgurvMExxam4t9h3M6kSH1rsuekNwhGBkGGge77g3R4E3qrKhMc7R1q8k/b
+         JM4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=wGRsaFg2ri/g3PYz8tej+Ke4ENs8ciabKoWuCrxgXRc=;
-        b=zqCLZFGHEQxqwVSawPEn70yJJMuc7WarvgzYLX4wNF9boJb1T104/U7lTjr24BMaEc
-         Yh3ipUwFnEzELK024Mry7TuwbyGT48037Tbz3GiCTzwNVQ9jjFyjMYGyZPzOS7xn7lIO
-         iTekiQjxQRtF7LI2FFVfO0K0Zzsc/5jhJDfDVw9Z5rTvjxYWAvrKisczswH9/WmexzbX
-         QClEMij79ay24cxLPeqUMJoU67aiUM/8MPXAtGEgQNaQmDYArKXtyOPEx4gNUKfEJXMZ
-         3INtplG5JPHH8ArY9eW0hXDD5KQFSjl12VJubc25qBS/qz05ueT3IEq5q3w77VDmwQL6
-         dM6A==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:organization:from:references:cc:to
+         :subject:arc-authentication-results;
+        bh=qPtVi2SQn6YbsXxVwlF/cJzk77St/fc3G/46MOfpOHg=;
+        b=bFj3HGtMze+GPMMUlwUZ1uHLhOArm0C89tzpTfwKVv5X4dE/ku5jNK+PR/XGixs55h
+         w1aBU1shGtPKuOquSt4ArxMi2UQ7UVNYWqj4YIhG4hDglcoSMBxUzA2eFeir3yIlcAqb
+         Ridg0/YG3aGjRIRHiKSaGJcTidx7L5Mri5P6hYfRxkAvAj6L8EP29rywK6NYThuoKclQ
+         JSwbe/dB1a/VPVWZNqGj6J+wmvlzWwjmX4wANKaq5zPLJI0/2ZwCq3UPuKUCbtcB5HsV
+         eM9XapoqcT9ZB+xHhyKQqM1FLwg5rhIQzDoKhNvSp7rljXzEnA9DVv6UOyWXjPMLRb1X
+         eehA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@rajagiritech-edu-in.20150623.gappssmtp.com header.s=20150623 header.b=1NOl/jbw;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of jeffrin@rajagiritech.edu.in) smtp.mailfrom=jeffrin@rajagiritech.edu.in
+       spf=pass (google.com: domain of david@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=david@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@rajagiritech-edu-in.20150623.gappssmtp.com header.s=20150623 header.b=1NOl/jbw;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of jeffrin@rajagiritech.edu.in) smtp.mailfrom=jeffrin@rajagiritech.edu.in
-X-Google-Smtp-Source: AB8JxZpg42Kw2ntMvkIRYCGCWXHYuRCrdsXQW1tHr5zSoQjlPmjZyXEbLVhIolnUjettj3BMA+LpBdhaiuR5jVUop74=
+       spf=pass (google.com: domain of david@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=david@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+Subject: Re: [PATCH RCFv2 0/7] mm: online/offline 4MB chunks controlled by
+ device driver
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Balbir Singh <bsingharora@gmail.com>, Baoquan He <bhe@redhat.com>,
+ Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Dan Williams <dan.j.williams@intel.com>, Dave Young <dyoung@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hari Bathini <hbathini@linux.vnet.ibm.com>, Huang Ying
+ <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>,
+ Ingo Molnar <mingo@kernel.org>, Jan Kara <jack@suse.cz>,
+ =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>, Juergen Gross <jgross@suse.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Matthew Wilcox <mawilcox@microsoft.com>, Mel Gorman <mgorman@suse.de>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Miles Chen <miles.chen@mediatek.com>, Paul Mackerras <paulus@samba.org>,
+ Pavel Tatashin <pasha.tatashin@oracle.com>,
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ Rashmica Gupta <rashmica.g@gmail.com>, Reza Arbab
+ <arbab@linux.vnet.ibm.com>, Souptick Joarder <jrdr.linux@gmail.com>,
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>
+References: <20180430094236.29056-1-david@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <ce2abc0b-8b6c-0a9a-30a5-31c185b5f8f8@redhat.com>
+Date: Wed, 9 May 2018 16:14:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <f19c0a3f-a881-fbb4-ed0b-bf20bda730cf@kernel.org>
-References: <20180429191226.14242-1-ahiliation@yahoo.co.in>
- <62c2484a-b8fe-513c-a9c7-dff1f3f3979a@kernel.org> <f19c0a3f-a881-fbb4-ed0b-bf20bda730cf@kernel.org>
-From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Date: Wed, 9 May 2018 19:57:57 +0530
-Message-ID: <CAG=yYw=4yKar6DocK1Ng00_KyNkC9pXjnTj67BGcD1n5107cnQ@mail.gmail.com>
-Subject: Re: [PATCH] selftests:intel_pstate: fixes typical crash of a testing
- script for Intel P-State driver
-To: Shuah Khan <shuah@kernel.org>
-Cc: Jeffrin Jose T <ahiliation@yahoo.co.in>, Kate Stewart <kstewart@linuxfoundation.org>,
-	daniel.diaz@linaro.org, Philippe Ombredanne <pombredanne@nexb.com>, gregkh@linuxfoundation.org,
-	thomas@m3y3r.de, linux-kselftest@vger.kernel.org,
-	lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180430094236.29056-1-david@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599109031684062016?=
-X-GMAIL-MSGID: =?utf-8?q?1599997035184005599?=
+X-GMAIL-THRID: =?utf-8?q?1599163715332859080?=
+X-GMAIL-MSGID: =?utf-8?q?1599996209642238571?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-hello  Shuah,
+On 30.04.2018 11:42, David Hildenbrand wrote:
+> I am right now working on a paravirtualized memory device ("virtio-mem").
+> These devices control a memory region and the amount of memory available
+> via it. Memory will not be indicated/added/onlined via ACPI and friends,
+> the device driver is responsible for it.
+> 
+> When the device driver starts up, it will add and online the requested
+> amount of memory from its assigned physical memory region. On request, it can
+> add (online) either more memory or try to remove (offline) memory. As it
+> will be a virtio module, we also want to be able to have it as a loadable
+> kernel module.
+> 
+> Such a device can be thought of like a "resizable DIMM" or a "huge
+> number of 4MB DIMMS" that can be automatically managed.
+> 
+> As we want to be able to add/remove small chunks of memory to a VM without
+> fragmenting guest memory ("it's not what the guest pays for" and "what if
+> the hypervisor wants to sue huge pages"), it looks like we can do that
+> under Linux in a 4MB granularity by using online_pages()/offline_pages()
+> 
+> We add a segment and online only 4MB blocks of it on demand. So the other
+> memory might not be accessible. For kdump and offlining code, we have to
+> mark pages as offline before a new segment is visible to the system (e.g.
+> as these pages might not be backed by real memory in the hypervisor).
+> 
+> This is not a balloon driver. Main differences:
+> - We can add more memory to a VM without having to use mixture of
+>   technologies - e.g. ACPI for plugging, balloon for unplugging (in contrast
+>   to virtio-balloon).
+> - The device is responsible for its own memory only - will not inflate on
+>   any system memory. (in contrast to all balloons)
+> - Works on a coarser granularity (e.g. 4MB because that's what we can
+>   online/offline in Linux). We are not using the buddy allocator when unplugging
+>   but really search for chunks of memory we can offline. We actually
+>   can support arbitrary block sizes. (in contrast to all balloons)
+> - That's why we don't fragment guest memory.
+> - A device can belong to exactly one NUMA node. This way we can online/offline
+>   memory in a fine granularity NUMA aware. Even if the guest does not even
+>   know how to spell NUMA. (in contrast to all balloons)
+> - Architectures that don't have proper memory hotplug interfaces (e.g. s390x)
+>   get memory hotplug support. I have a prototype for s390x.
+> - Once all 4MB chunks of a memory block are offline, we can remove the
+>   memory block and therefore the struct pages. (in contrast to all balloons)
+> 
+> This essentially allows us to add/remove 4MB chunks to/from a VM. Especially
+> without caring about the future when adding memory ("If I add a 128GB DIMM
+> I can only unplug 128GB again") or running into limits ("If I want my VM to
+> grow to 4TB, I have to plug at least 16GB per DIMM").
+> 
+> Future work:
+>  - Performance improvements
+>  - Be smarter about which blocks to offline first (e.g. free ones)
+>  - Automatically manage assignemnt to NORMAL/MOVABLE zone to make
+>    unplug more likely to succeed.
+> 
+> I will post the next prototype of virtio-mem shortly.
+> 
 
-i had  later send another version of that patch.
-anyway thank you  daniel for your effort
-
-thank you both.
-
-
-
-On Wed, May 9, 2018 at 1:51 AM, Shuah Khan <shuah@kernel.org> wrote:
-> On 05/04/2018 01:47 PM, Shuah Khan wrote:
->> On 04/29/2018 01:12 PM, Jeffrin Jose T wrote:
->>>  Testing script for Intel P-State driver crashes during
->>>  the run.  this patch fixes that crash and produce typical results.
->>>
->>> Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
->>>
->>> ---
->>>  tools/testing/selftests/intel_pstate/run.sh | 7 +++++--
->>>  1 file changed, 5 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
->>> index c670359becc6..cd32aca8806f 100755
->>> --- a/tools/testing/selftests/intel_pstate/run.sh
->>> +++ b/tools/testing/selftests/intel_pstate/run.sh
->>> @@ -27,6 +27,7 @@
->>>  # and the test will error out in those cases.  The result.X file can be checked
->>>  # for consistency and modified to remove the extra MHz values.  The result.X
->>>  # files can be re-evaluated by setting EVALUATE_ONLY to 1 below.
->>> +#set -xv
->>>
->>>  EVALUATE_ONLY=0
->>>
->>> @@ -101,12 +102,13 @@ cpupower frequency-set -g powersave --max=${max_freq}MHz >& /dev/null
->>>  echo "Target      Actual      Difference     MSR(0x199)     max_perf_pct"
->>>  for freq in `seq $max_freq -100 $min_freq`
->>>  do
->>> -    result_freq=$(cat /tmp/result.${freq} | grep "cpu MHz" | awk ' { print $4 } ' | awk -F "." ' { print $1 } ')
->>> +       result_freq=$(cat /tmp/result.${freq} | grep "cpu MHz" \
->>>         | awk '{print $4}' | awk -F "." '{print $1}')
->>> +    result_freq=$(echo $result_freq | head -n1 | cut -d " " -f1)
->>>      msr=$(cat /tmp/result.${freq} | grep "msr" | awk ' { print $3 } ')
->>>      max_perf_pct=$(cat /tmp/result.${freq} | grep "max_perf_pct" | awk ' { print $2 } ' )
->>> -    if [ $result_freq -eq $freq ]; then
->>> +    if (( "$result_freq" == "$freq" ))
->>> +    then
->>>              echo " $freq        $result_freq             0          $msr         $(($max_perf_pct*3300))"
->>>      else
->>>              echo " $freq        $result_freq          $(($result_freq-$freq))          $msr          $(($max_perf_pct*$max_freq))"
->>>
->>
->> Thanks. I will get this into 4.17-rc5
->>
->> -- Shuah
->>
->
-> This patch didn't apply. In any case Daniel Diaz sent in a patch a coupld of weeks ago
-> which did apply and fixes the same problem.
->
-> I applied Daniel's patch to linux-kselftest fixes for 4.17-rc5
->
-> https://lists.linaro.org/pipermail/linux-kselftest-mirror/2018-April/000858.html
->
-> thank you both.
->
-> -- Shuah
-
-
+If there are no further comments, I'll send a v1 (!RFC) version, along
+with the virtio-mem prototype after rebasing (assuming that nothing
+breaks :) ).
 
 -- 
-software engineer
-rajagiri school of engineering and technology
+
+Thanks,
+
+David / dhildenb
