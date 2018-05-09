@@ -1,85 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965409AbeEIVbs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 17:31:48 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36645 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964953AbeEIVbq (ORCPT
+        id S965247AbeEIVfK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 17:35:10 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:46456 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964984AbeEIVfI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 17:31:46 -0400
-X-Google-Smtp-Source: AB8JxZpny2kXR0GHzXV/862aSj7cnUMeDJH5i+oTdyfxOusytf7zmS7PvJ+wYgoxosDoHLz9lwsX1g==
-Date: Wed, 9 May 2018 14:31:43 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, Sekhar Nori <nsekhar@ti.com>,
-        David Lechner <david@lechnology.com>, Suman Anna <s-anna@ti.com>,
-        Aparna Balasubramanian <aparnab@ti.com>,
-        Kevin Hilman <khilman@kernel.org>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 1/3] remoteproc/davinci: add the missing retval check for
- clk_enable()
-Message-ID: <20180509213143.GA29093@builder>
-References: <20180502095659.3626-1-brgl@bgdev.pl>
- <20180502095659.3626-2-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180502095659.3626-2-brgl@bgdev.pl>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Wed, 9 May 2018 17:35:08 -0400
+X-Google-Smtp-Source: AB8JxZp7DV0cSlYRiQy6a7nk5l4SS+Nea0fsi8H3Cj4LNRn9MNfeRHU9/ejM98UNdAktZABeMJjzNQ==
+From: Douglas Anderson <dianders@chromium.org>
+To: andy.gross@linaro.org
+Cc: bjorn.andersson@linaro.org, rnayak@codeaurora.org,
+        evgreen@chromium.org, ilina@codeaurora.org, swboyd@chromium.org,
+        Douglas Anderson <dianders@chromium.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, David Brown <david.brown@linaro.org>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        linux-soc@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] arm64: dts: sdm845: Add command DB node
+Date: Wed,  9 May 2018 14:34:39 -0700
+Message-Id: <20180509213439.165623-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 02 May 02:56 PDT 2018, Bartosz Golaszewski wrote:
+Add command DB node based on the bindings example.
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The davinci platform is being switched to using the common clock
-> framework, where clk_enable() can fail. Add the return value check.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> Acked-by: Suman Anna <s-anna@ti.com>
-> Reviewed-by: David Lechner <david@lechnology.com>
-> Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-Hi Bartosz,
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-All three patches applied to rproc-next.
-
-Regards,
-Bjorn
-
-> ---
->  drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-> index bf3b9034c319..2b24291337b7 100644
-> --- a/drivers/remoteproc/da8xx_remoteproc.c
-> +++ b/drivers/remoteproc/da8xx_remoteproc.c
-> @@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
->  	struct device *dev = rproc->dev.parent;
->  	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
->  	struct clk *dsp_clk = drproc->dsp_clk;
-> +	int ret;
->  
->  	/* hw requires the start (boot) address be on 1KB boundary */
->  	if (rproc->bootaddr & 0x3ff) {
-> @@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
->  
->  	writel(rproc->bootaddr, drproc->bootreg);
->  
-> -	clk_enable(dsp_clk);
-> +	ret = clk_enable(dsp_clk);
-> +	if (ret) {
-> +		dev_err(dev, "clk_enable() failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
->  	davinci_clk_reset_deassert(dsp_clk);
->  
->  	return 0;
-> -- 
-> 2.17.0
-> 
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 486ace9a9e8b..7b5f2b3982a3 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -21,6 +21,18 @@
+ 		reg = <0 0x80000000 0 0>;
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		reserved-memory@85fe0000 {
++			compatible = "qcom,cmd-db";
++			reg = <0x0 0x85fe0000 0x0 0x20000>;
++			no-map;
++		};
++	};
++
+ 	cpus {
+ 		#address-cells = <2>;
+ 		#size-cells = <0>;
+-- 
+2.17.0.441.gb46fe60e1d-goog
