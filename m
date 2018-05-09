@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964907AbeEIS2W (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 14:28:22 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:59560 "EHLO
+        id S964947AbeEIS2f (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 14:28:35 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:59614 "EHLO
         mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964828AbeEIS2U (ORCPT
+        with ESMTP id S935486AbeEIS2V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 14:28:20 -0400
+        Wed, 9 May 2018 14:28:21 -0400
 Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
         reason="pass (just generated, assumed good)" header.d=micronovasrl.com
 X-Spam-Flag: NO
@@ -16,9 +16,9 @@ To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
 Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-rtc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Giulio Benetti <giulio.benetti@micronovasrl.com>
-Subject: [PATCH v2 3/4] rtc: ds1307: add offset sysfs for mt41txx chips.
-Date: Wed,  9 May 2018 20:28:11 +0200
-Message-Id: <20180509182812.17646-3-giulio.benetti@micronovasrl.com>
+Subject: [PATCH v2 4/4] rtc: ds1307: add freq_test sysfs attribute to check tick on m41txx
+Date: Wed,  9 May 2018 20:28:12 +0200
+Message-Id: <20180509182812.17646-4-giulio.benetti@micronovasrl.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180509182812.17646-1-giulio.benetti@micronovasrl.com>
 References: <20180509182812.17646-1-giulio.benetti@micronovasrl.com>
@@ -26,139 +26,128 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-m41txx chips can hold a calibration value to get correct clock bias.
-If positive offset is passed, it means adding 512 cycles(@32.768Hz)
-every tick(1s).
-If negative offset is passed, it means subtracting 256 cycles(@32.768Hz)
-every tick(1s).
+On m41txx you can enable open-drain OUT pin to check if offset is ok.
+Enabling OUT pin with freq_test attribute, OUT pin will tick 512 times
+faster than 1s tick base.
 
-Add offset handling (ranging between (-31) and 31) via sysfs.
+Enable or Disable FT bit on CONTROL register if freq_test is 1 or 0.
 
 Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 ---
-V1 => V2: changed "calibration" from dt property to rtc sysfs offset
- drivers/rtc/rtc-ds1307.c | 70 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+V1 => V2: change frequency test from dt property to dev sysfs attribute
+ drivers/rtc/rtc-ds1307.c | 86 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 86 insertions(+)
 
 diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-index 0ab0c166da83..33895668b363 100644
+index 33895668b363..da71000101da 100644
 --- a/drivers/rtc/rtc-ds1307.c
 +++ b/drivers/rtc/rtc-ds1307.c
-@@ -114,6 +114,16 @@ enum ds_type {
- #	define RX8025_BIT_VDET		0x40
- #	define RX8025_BIT_XST		0x20
- 
-+#define M41TXX_REG_CONTROL	0x07
-+#	define M41TXX_BIT_OUT		0x80
-+#	define M41TXX_BIT_FT		0x40
-+#	define M41TXX_BIT_CALIB_SIGN	0x20
-+#	define M41TXX_M_CALIBRATION	0x1f
-+
-+/* Min and max values supported with 'offset' interface by M41TXX */
-+#define M41TXX_MIN_OFFSET	(-31)
-+#define M41TXX_MAX_OFFSET	(31)
-+
- struct ds1307 {
- 	enum ds_type		type;
- 	unsigned long		flags;
-@@ -146,6 +156,9 @@ struct chip_desc {
- 
- static int ds1307_get_time(struct device *dev, struct rtc_time *t);
- static int ds1307_set_time(struct device *dev, struct rtc_time *t);
-+static int ds1337_read_alarm(struct device *dev, struct rtc_wkalrm *t);
-+static int ds1337_set_alarm(struct device *dev, struct rtc_wkalrm *t);
-+static int ds1307_alarm_irq_enable(struct device *dev, unsigned int enabled);
- static u8 do_trickle_setup_ds1339(struct ds1307 *, u32 ohms, bool diode);
- static irqreturn_t rx8130_irq(int irq, void *dev_id);
- static int rx8130_read_alarm(struct device *dev, struct rtc_wkalrm *t);
-@@ -155,6 +168,8 @@ static irqreturn_t mcp794xx_irq(int irq, void *dev_id);
- static int mcp794xx_read_alarm(struct device *dev, struct rtc_wkalrm *t);
- static int mcp794xx_set_alarm(struct device *dev, struct rtc_wkalrm *t);
- static int mcp794xx_alarm_irq_enable(struct device *dev, unsigned int enabled);
-+static int m41txx_rtc_read_offset(struct device *dev, long *offset);
-+static int m41txx_rtc_set_offset(struct device *dev, long offset);
- 
- static const struct rtc_class_ops rx8130_rtc_ops = {
- 	.read_time      = ds1307_get_time,
-@@ -172,6 +187,16 @@ static const struct rtc_class_ops mcp794xx_rtc_ops = {
- 	.alarm_irq_enable = mcp794xx_alarm_irq_enable,
- };
- 
-+static const struct rtc_class_ops m41txx_rtc_ops = {
-+	.read_time      = ds1307_get_time,
-+	.set_time       = ds1307_set_time,
-+	.read_alarm	= ds1337_read_alarm,
-+	.set_alarm	= ds1337_set_alarm,
-+	.alarm_irq_enable = ds1307_alarm_irq_enable,
-+	.read_offset	= m41txx_rtc_read_offset,
-+	.set_offset	= m41txx_rtc_set_offset,
-+};
-+
- static const struct chip_desc chips[last_ds_type] = {
- 	[ds_1307] = {
- 		.nvram_offset	= 8,
-@@ -227,10 +252,17 @@ static const struct chip_desc chips[last_ds_type] = {
- 		.irq_handler = rx8130_irq,
- 		.rtc_ops = &rx8130_rtc_ops,
- 	},
-+	[m41t0] = {
-+		.rtc_ops	= &m41txx_rtc_ops,
-+	},
-+	[m41t00] = {
-+		.rtc_ops	= &m41txx_rtc_ops,
-+	},
- 	[m41t11] = {
- 		/* this is battery backed SRAM */
- 		.nvram_offset	= 8,
- 		.nvram_size	= 56,
-+		.rtc_ops	= &m41txx_rtc_ops,
- 	},
- 	[mcp794xx] = {
- 		.alarm		= 1,
-@@ -972,6 +1004,44 @@ static int mcp794xx_alarm_irq_enable(struct device *dev, unsigned int enabled)
- 				  enabled ? MCP794XX_BIT_ALM0_EN : 0);
+@@ -1042,6 +1042,67 @@ static int m41txx_rtc_set_offset(struct device *dev, long offset)
+ 	return regmap_write(ds1307->regmap, M41TXX_REG_CONTROL,	ctrl_reg);
  }
  
-+static int m41txx_rtc_read_offset(struct device *dev, long *offset)
++static ssize_t freq_test_store(struct device *dev,
++			       struct device_attribute *attr,
++			       const char *buf, size_t count)
 +{
 +	struct ds1307 *ds1307 = dev_get_drvdata(dev);
++	unsigned long freq_test = 0;
 +	unsigned int ctrl_reg;
-+	u8 val;
++	int retval;
++
++	retval = kstrtoul(buf, 10, &freq_test);
++	if ((retval < 0) || (retval > 1)) {
++		dev_err(dev, "Failed to store RTC Frequency Test attribute\n");
++		return -EINVAL;
++	}
 +
 +	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
 +
-+	val = ctrl_reg & M41TXX_M_CALIBRATION;
-+
-+	/* check if positive */
-+	if (ctrl_reg & M41TXX_BIT_CALIB_SIGN)
-+		*offset = val;
++	if (freq_test)
++		ctrl_reg |= M41TXX_BIT_FT;
 +	else
-+		*offset = -val;
++		ctrl_reg &= ~M41TXX_BIT_FT;
 +
-+	return 0;
++	retval = regmap_write(ds1307->regmap, M41TXX_REG_CONTROL, ctrl_reg);
++
++	return retval ? retval : count;
 +}
 +
-+static int m41txx_rtc_set_offset(struct device *dev, long offset)
++static ssize_t freq_test_show(struct device *dev,
++				    struct device_attribute *attr, char *buf)
 +{
 +	struct ds1307 *ds1307 = dev_get_drvdata(dev);
++	int freq_test = 0;
 +	unsigned int ctrl_reg;
-+
-+	if ((offset < M41TXX_MIN_OFFSET) || (offset > M41TXX_MAX_OFFSET))
-+		return -ERANGE;
 +
 +	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
 +
-+	ctrl_reg &= ~M41TXX_M_CALIBRATION;
-+	ctrl_reg |= abs(offset) & M41TXX_M_CALIBRATION;
++	if (ctrl_reg & M41TXX_BIT_FT)
++		freq_test = true;
++	else
++		freq_test = false;
 +
-+	if (offset >= 0)
-+		ctrl_reg |= M41TXX_BIT_CALIB_SIGN;
++	if ((freq_test < 0) || (freq_test > 1)) {
++		dev_err(dev, "Failed to read RTC Frequency Test\n");
++		sprintf(buf, "0\n");
++		return freq_test;
++	}
 +
-+	return regmap_write(ds1307->regmap, M41TXX_REG_CONTROL,	ctrl_reg);
++	return sprintf(buf, "%d\n", freq_test);
 +}
++
++static DEVICE_ATTR_RW(freq_test);
++
++static struct attribute *rtc_calib_attrs[] = {
++	&dev_attr_freq_test.attr,
++	NULL,
++};
++
++static const struct attribute_group rtc_calib_attr_group = {
++	.attrs		= rtc_calib_attrs,
++};
 +
  /*----------------------------------------------------------------------*/
  
  static int ds1307_nvram_read(void *priv, unsigned int offset, void *val,
+@@ -1455,6 +1516,13 @@ static const struct regmap_config regmap_config = {
+ 	.val_bits = 8,
+ };
+ 
++static void rtc_calib_remove_sysfs_group(void *_dev)
++{
++	struct device *dev = _dev;
++
++	sysfs_remove_group(&dev->kobj, &rtc_calib_attr_group);
++}
++
+ static int ds1307_probe(struct i2c_client *client,
+ 			const struct i2c_device_id *id)
+ {
+@@ -1783,6 +1851,24 @@ static int ds1307_probe(struct i2c_client *client,
+ 	if (err)
+ 		return err;
+ 
++	/* Export sysfs entries */
++	err = sysfs_create_group(&(&client->dev)->kobj, &rtc_calib_attr_group);
++	if (err) {
++		dev_err(&client->dev, "Failed to create sysfs group: %d\n",
++			err);
++		return err;
++	}
++
++	err = devm_add_action_or_reset(&client->dev,
++				       rtc_calib_remove_sysfs_group,
++				       &client->dev);
++	if (err) {
++		dev_err(&client->dev,
++			"Failed to add sysfs cleanup action: %d\n",
++			err);
++		return err;
++	}
++
+ 	if (chip->nvram_size) {
+ 		struct nvmem_config nvmem_cfg = {
+ 			.name = "ds1307_nvram",
 -- 
 2.17.0
