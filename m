@@ -1,73 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965492AbeEIQWZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:22:25 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:47200 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965034AbeEIQWV (ORCPT
+        id S965495AbeEIQZJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:25:09 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46146 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965034AbeEIQZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:22:21 -0400
-Subject: Re: [PATCH] ixgbe: fix memory leak on ipsec allocation
-To: Colin King <colin.king@canonical.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180509135848.20530-1-colin.king@canonical.com>
-From: Shannon Nelson <shannon.nelson@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <4adefe2d-dcae-f310-18cd-5e3269b8b593@oracle.com>
-Date: Wed, 9 May 2018 09:22:10 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 9 May 2018 12:25:08 -0400
+Date: Wed, 9 May 2018 19:24:51 +0300
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Michal Hocko <mhocko@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: vmalloc with GFP_NOFS
+References: <20180424162712.GL17484@dhcp22.suse.cz>
+ <20180424183536.GF30619@thunk.org>
+ <20180424192542.GS17484@dhcp22.suse.cz>
+ <20180509134222.GU32366@dhcp22.suse.cz>
+ <20180509151351.GA4111@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20180509135848.20530-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805090153
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509151351.GA4111@magnolia>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18050916-0008-0000-0000-000004F4D8C0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050916-0009-0000-0000-00001E892248
+Message-Id: <20180509162451.GA5303@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-09_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805090153
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/9/2018 6:58 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, May 09, 2018 at 08:13:51AM -0700, Darrick J. Wong wrote:
+> On Wed, May 09, 2018 at 03:42:22PM +0200, Michal Hocko wrote:
+> > On Tue 24-04-18 13:25:42, Michal Hocko wrote:
+> > [...]
+> > > > As a suggestion, could you take
+> > > > documentation about how to convert to the memalloc_nofs_{save,restore}
+> > > > scope api (which I think you've written about e-mails at length
+> > > > before), and put that into a file in Documentation/core-api?
+> > > 
+> > > I can.
+> > 
+> > Does something like the below sound reasonable/helpful?
+> > ---
+> > =================================
+> > GFP masks used from FS/IO context
+> > =================================
+> > 
+> > :Date: Mapy, 2018
+> > :Author: Michal Hocko <mhocko@kernel.org>
+> > 
+> > Introduction
+> > ============
+> > 
+> > FS resp. IO submitting code paths have to be careful when allocating
 > 
-> The error clean up path kfree's adapter->ipsec and should be
-> instead kfree'ing ipsec. Fix this.  Also, the err1 error exit path
-> does not need to kfree ipsec because this failure path was for
-> the failed allocation of ipsec.
+> Not sure what 'FS resp. IO' means here -- 'FS and IO' ?
 > 
-> Detected by CoverityScan, CID#146424 ("Resource Leak")
+> (Or is this one of those things where this looks like plain English text
+> but in reality it's some sort of markup that I'm not so familiar with?)
 > 
-> Fixes: 63a67fe229ea ("ixgbe: add ipsec offload add and remove SA")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Confused because I've seen 'resp.' used as shorthand for
+> 'responsible'...
+> 
+> > memory to prevent from potential recursion deadlocks caused by direct
+> > memory reclaim calling back into the FS/IO path and block on already
+> > held resources (e.g. locks). Traditional way to avoid this problem
+> 
+> 'The traditional way to avoid this deadlock problem...'
+> 
+> > is to clear __GFP_FS resp. __GFP_IO (note the later implies clearing
+> > the first as well) in the gfp mask when calling an allocator. GFP_NOFS
+> > resp. GFP_NOIO can be used as shortcut.
+> > 
+> > This has been the traditional way to avoid deadlocks since ages. It
+> 
+> I think this sentence is a little redundant with the previous sentence,
+> you could chop it out and join this paragraph to the one before it.
+> 
+> > turned out though that above approach has led to abuses when the restricted
+> > gfp mask is used "just in case" without a deeper consideration which leads
+> > to problems because an excessive use of GFP_NOFS/GFP_NOIO can lead to
+> > memory over-reclaim or other memory reclaim issues.
+> > 
+> > New API
+> > =======
+> > 
+> > Since 4.12 we do have a generic scope API for both NOFS and NOIO context
+> > ``memalloc_nofs_save``, ``memalloc_nofs_restore`` resp. ``memalloc_noio_save``,
+> > ``memalloc_noio_restore`` which allow to mark a scope to be a critical
+> > section from the memory reclaim recursion into FS/IO POV. Any allocation
+> > from that scope will inherently drop __GFP_FS resp. __GFP_IO from the given
+> > mask so no memory allocation can recurse back in the FS/IO.
+> > 
+> > FS/IO code then simply calls the appropriate save function right at
+> > the layer where a lock taken from the reclaim context (e.g. shrinker)
+> > is taken and the corresponding restore function when the lock is
 
-Yep, thanks, good catch.
+Seems like the second "is taken" got there by mistake
 
-Acked-by: Shannon Nelson <shannon.nelson@oracle.com>
-
-
-> ---
->   drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> > released. All that ideally along with an explanation what is the reclaim
+> > context for easier maintenance.
+> > 
+> > What about __vmalloc(GFP_NOFS)
+> > ==============================
+> > 
+> > vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
+> > GFP_KERNEL allocations deep inside the allocator which are quit non-trivial
 > 
-> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-> index 41af2b81e960..195c0b65eee2 100644
-> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-> @@ -919,8 +919,8 @@ void ixgbe_init_ipsec_offload(struct ixgbe_adapter *adapter)
->   	kfree(ipsec->ip_tbl);
->   	kfree(ipsec->rx_tbl);
->   	kfree(ipsec->tx_tbl);
-> +	kfree(ipsec);
->   err1:
-> -	kfree(adapter->ipsec);
->   	netdev_err(adapter->netdev, "Unable to allocate memory for SA tables");
->   }
->   
+> ...which are quite non-trivial...
 > 
+> > to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
+> > almost always a bug. The good news is that the NOFS/NOIO semantic can be
+> > achieved by the scope api.
+> > 
+> > In the ideal world, upper layers should already mark dangerous contexts
+> > and so no special care is required and vmalloc should be called without
+> > any problems. Sometimes if the context is not really clear or there are
+> > layering violations then the recommended way around that is to wrap ``vmalloc``
+> > by the scope API with a comment explaining the problem.
+> 
+> Otherwise looks ok to me based on my understanding of how all this is
+> supposed to work...
+> 
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> --D
+> 
+> > -- 
+> > Michal Hocko
+> > SUSE Labs
+> 
+
+-- 
+Sincerely yours,
+Mike.
