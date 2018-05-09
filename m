@@ -1,81 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756630AbeEIONF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 10:13:05 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:54640 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756555AbeEIONB (ORCPT
+        id S1756555AbeEIOOV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 10:14:21 -0400
+Received: from mail-pg0-f49.google.com ([74.125.83.49]:41521 "EHLO
+        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756494AbeEIOOS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 10:13:01 -0400
+        Wed, 9 May 2018 10:14:18 -0400
+X-Google-Smtp-Source: AB8JxZpF+EK7C0nTl6CFnqKuBdPt6vZbfbqh9fH7CR3HScIfshUlDe6IppnGEzuVCbmAZ9tF+dFPH0hUPOfCUWmW0Lw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date: Wed, 09 May 2018 16:12:59 +0200
-From: Stefan Agner <stefan@agner.ch>
-To: Jacky Bai <ping.bai@nxp.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
-        mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
-In-Reply-To: <HE1PR04MB3113135433766196E708685887990@HE1PR04MB3113.eurprd04.prod.outlook.com>
-References: <20180418124908.3079-1-stefan@agner.ch>
- <20180502073807.GE3443@dragon> <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
- <HE1PR04MB311395765D3DC03D5960DBA3879A0@HE1PR04MB3113.eurprd04.prod.outlook.com>
- <4188ee25bd5179b57d09e4624dcfbfbb@agner.ch>
- <152580354289.138124.13657232356773397650@swboyd.mtv.corp.google.com>
- <HE1PR04MB3113135433766196E708685887990@HE1PR04MB3113.eurprd04.prod.outlook.com>
-Message-ID: <ae5b239a57bd7e3f3e62cc23a1c3788e@agner.ch>
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-0.10 / 15.00];
-         MID_RHS_MATCH_FROM(0.00)[];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         ARC_NA(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[9];
-         TO_DN_SOME(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         RCVD_TLS_ALL(0.00)[]
+In-Reply-To: <20180509135528.GE28388@thunk.org>
+References: <f403043cbe8414177d0568e81405@google.com> <20180403043854.GL1150@dastard>
+ <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
+ <CACT4Y+aQZ8KbU1C-sJ2PUKn_788SEKQpYGjoLaRDJrP9vXjs-A@mail.gmail.com>
+ <20180501225159.GY23861@dastard> <CACT4Y+YZYHG=MyujDdTLxO=cn7Yz34vv6WKVjWr3Jvo1YTk0HA@mail.gmail.com>
+ <20180509005011.GP23861@dastard> <20180509135528.GE28388@thunk.org>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 9 May 2018 16:13:57 +0200
+Message-ID: <CACT4Y+abNg4z24yghDGkwq6h5trumGsm1HDZqyoghe8PJJ-7Uw@mail.gmail.com>
+Subject: Re: WARNING: bad unlock balance in xfs_iunlock
+To: "Theodore Y. Ts'o" <tytso@mit.edu>, Dave Chinner <david@fromorbit.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.05.2018 03:26, Jacky Bai wrote:
->> Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
+On Wed, May 9, 2018 at 3:55 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>>>> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5719304272084992
+>>>> syzkaller reproducer:
+>>>> https://syzkaller.appspot.com/x/repro.syz?id=5767783983874048
+>>>
+>>> What a mess. A hand built, hopelessly broken filesystem image made
+>>> up of hex dumps, written into a mmap()d region of memory, then
+>>> copied into a tmpfs file and mounted with the loop device.
+>>>
+>>> Engineers that can debug broken filesystems don't grow on trees.  If
+>>> we are to have any hope of understanding what the hell this test is
+>>> doing, the bot needs to supply us with a copy of the built
+>>> filesystem image the test uses. We need to be able to point forensic
+>>> tools at the image to decode all the structures into human readable
+>>> format - if we are forced to do that by hand or jump through hoops
+>>> to create our own filesystem image than I'm certainly not going to
+>>> waste time looking at these reports...
 >>
->> Quoting Stefan Agner (2018-05-08 06:20:03)
->> > On 08.05.2018 09:32, Jacky Bai wrote:
->> > >
->> > > I have tried two 6ULL board, I don't meet such issue. System can
->> > > boot up successfully with commit 6f9575e55632 included.
->> > > Anyway, the change in this patch is ok for me. it is no harm to the
->> > > BUS clock change flow.
->> >
->> > Hm, that is interesting, maybe it is because we use a different SKU?
->> > Or maybe bootloader?
->> >
->> > I tested here with a 800 MHz clocked variant on a Colibri iMX6ULL
->> > using U-Boot 2016.11.
->> >
+>> Hi Dave,
 >>
->> I'll throw this into fixes today because it fixes something to be useful. It's still
->> interesting to see what's different between the two setups though.
-> 
-> Thanks. 
-> 
-> I will find some 800MHz parts and have a try with different bootloader later.
-> Will let you know, when I have some results.
-> 
+>> Here is the image:
+>> https://drive.google.com/file/d/1jzhGGe5SBJcqfsjxCLHoh4Kazke1oTfC/view
+>
+> A suggestion --- insteading of forcing human beings --- either
+> overworked file system developers, or understaffed fuzzing tool teams,
+> to have to manually pull out the file system image out from the C
+> repro, if it's too hard to add a link where the file system iamge can
+> be downloaded from the Syzkaller web application --- how about adding
+> an option to the C repro template which causes it to dump the image to
+> a file and then immediately exit?
 
-FWIW, I tried two SKUs here:
-MCIMX6Z2DVM05AA (528Mhz)
-MCIMX6Z2CVM08AA (800MHz)
+Hi Ted,
 
-Both run at 396MHz in U-Boot, and both freeze and the same location.
-
---
-Stefan
+That's what I proposed above:
+https://groups.google.com/d/msg/syzkaller-bugs/KJNNTgTdg_g/NRxarDcYBgAJ
+But I did not get response yet.
