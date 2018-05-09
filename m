@@ -1,207 +1,195 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1405515-1526330235-2-16304293191190533949
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-823031-1525891573-2-7356590063024417592
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526330234; b=kAX6PM7uTzObCjJuQQS4p6/COO5EabbJsNBrctNp6TN6eT7zIN
-    Ve9UJQbGxXiSrdV/haOvWq3ya/Xo9Sc3kT+dUwuWWScYrGRKg021ZT2B1+91ohcj
-    T+QK73l812XlRMIVz9e7GWKpGZCCYy0mxlhrmtWA/XVxhQ5797s9hr4hS54syaR/
-    l6yg4DAmkShvjFHgOagkRu+YewnRnsb7gzGDQAL+KbfLT4JE3KWf4bsq9HuhYwjN
-    seSxETli+NtLEXrXT1ZShr8WYYZDZVVdtZ7DSmRWCeW4cpe18/gS8k1PPNPzxMwh
-    0tGS4rppMEWaoh1rG+Hud6VKN4C0qY57KWug==
+    1525891572; b=nWrztUBW3gdotvVL72fiaXjjn0tbKzxKGxn5Z+ALkmDkUDjD9w
+    xw3TMSjvFtu/wlttcxJCxjEToiEMmx8fGbGI0EAsWL63N4VzgFP02Twarbowm0AS
+    zMNn5IRA1iJb9CE6dbMaRKYpY6lDxxxeXvt720fSEi9JasHegX5uV+if2mQl5pQh
+    x8DqfECWI4cJ/KRTm4GaDR01Gp51Ut6B+w0mFLz6J4HnNrPcVymJg1BxX1m1Y1VP
+    /0Mi6LTAwUNsWz+7pTrgQJPIZDIDsbX7Sp6knqAvKdsS3az2NRRanTBzL7gkpKX2
+    y4efYpjbq1aAa/NMfYN2mwgMHH2zQbL1hnNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc
-    :content-transfer-encoding:content-type:sender; s=fm2; t=
-    1526330234; bh=rRJlslS+Z7rSev0sktmLcMBQISXWvfjLxAi7RttaBv0=; b=b
-    WXjEWEU55zLq3dYtrVthoti5t4Sgf9YTggn21f1uUSvZJhqllxTPDc8V5cQqYVX5
-    2ish9Ka+EqsamkK72aIUHdBzoGUT435B40fG2MJ6qmbQswMlamndQzLaHXJJIh8P
-    vKiuP51wHdfoIV7asFHuimN3CY8i/KnlIH+/U+wYdDTOgiZoLC9BMJXOvtlkncxt
-    5V25hsasNU37Al65l8TsHxsdm9jnaqj5czJv16vsO+vcAWqAFJHuJW3eqxnB67tI
-    O4ucBOi8+j4A4jKkGXDXpMYAsPQsTIj9wavBSMbSzItExIRBmEG6syAfrcgVoGNC
-    G9ypPCkSNBWRj01C9XW/Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1525891572; bh=VCVvx2kAV5bGp3v9+c0fQRHYn9mWpJ
+    sYv81dC3DOIFk=; b=cBhmxBkwo7wf2FN9DeRZnM+JUxBlDy0QYpOYt6kbpDRWum
+    YHeZh1DvnO6QRYt1K+RlKPLfnJlTAJYUGAQePZjqsvTyYt2b8199N9sWkzoaowxH
+    tk3IWNwP/V0hBA46cMFPERnK6FHe379SF+efN+JafpxgQsi2RXNKWSaq1wJE3Uf5
+    Nki1HvFqpn1/kDd22ZNFQfJrL/hDxEzSKXuAoi1QuyQgXwkszQ/l4ktF+cNyDCVO
+    aBBq3G5HHc6Qo28sULTNNY7lyWIqMC9xGc4JC2wdhwr5W7VYQn4N6N0oeuCj5ITi
+    20s1ZScoihRQ4sFjZYtdf6HS5fK2ebRekOTpaFvw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=silver.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=YChgpNv3;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=redhat.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-51 state=0
-Authentication-Results: mx5.messagingengine.com;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=silver.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=YChgpNv3;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=redhat.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-51 state=0
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfP6VGIlL/apicsgjYEVFEXres6iNZgZdaVOiQfRX/Wk/LmUG1ENOHj9v2bk498SmvDksRv6D/jCwYAlE2O9cEHQ7UeadpFPbX5pMFMIUO0G3VfOUJrEz
-    qOr5TwuLiYzLJrC7wTDn45+Dk21eN7wKHnr2V85Ps9meRlyvOu1cnpD7ZSIiI9aSpW851nGlHpk3Q444Rg6fyrEXSVmOCB4PpmTVliTVoFcqRjmOe8tUobel
-    iDtLVyusylFy6cKi9czwKw==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10
-    a=4_-BN3WEXhEA:10 a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=aD1W39H_AAAA:20 a=hSkVLCK3AAAA:8
-    a=DDOyTI_5AAAA:8 a=qAwoOFCS0FheIpX7DygA:9 a=CjuIK1q_8ugA:10 a=W7bAngp8pZcA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=cQPPKAXgyycSBL8etih5:22 a=_BcfOz0m4U4ohdxiHPKc:22
-    cc=dsc
+X-CM-Envelope: MS4wfJA4vykP5eowVsiBhM0K6KSBxLvditkL+Qe05dDqtZP/PMFAhGgorM65mzqL/rsRQwuuLMgSSFpF/nX09wR/c22NR2EFsi2ZEj9VYkWI//rbZdf8zoOo
+    z3QhDAUuSk6fCNQF7SOfKO9/Af+aXuKoo2ryFE31HBenl1NjMFALU/9P7BnN+XxwyXULkmtXFTXE9B+nYVoLlJP8msDLRii+8Icpu4l1Kl7HiFpvp/SXh6K5
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=meVymXHHAAAA:8 a=VwQbUJbxAAAA:8 a=XRH7TU2YvASs1ZvYd64A:9 a=CjuIK1q_8ugA:10
+    a=2JgSa4NbpEOStq-L5dxp:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AB8JxZrI2os3sHjbJfsJbYev++0MygMWwdUxG9Lov8TdhCMcOtg6I/Pch4ft/b4vW8FkoWayHdQkTQ==
-Subject: Re: WARNING in ion_buffer_destroy
-To: Dmitry Vyukov <dvyukov@google.com>
-References: <001a1144928eca24f605625fd8f9@google.com>
- <ee1d01fc-a6a4-9480-9755-b6f25304d08b@redhat.com>
- <CACT4Y+b2Q86dQxsd9_9casAsE9jE8ef87E9WEdKFCYxLkT0Z8A@mail.gmail.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <70de9c10-d7ce-a95b-1bf1-724f9dacaa8c@redhat.com>
-Date: Mon, 14 May 2018 13:37:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S935240AbeEISqJ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 9 May 2018 14:46:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934980AbeEISqJ (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 9 May 2018 14:46:09 -0400
+Date: Wed, 9 May 2018 14:46:05 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jingjie Jiang <jingjie.jiang@oracle.com>,
+        Mukesh Rathor <mukesh.rathor@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] tracing/x86/xen: Remove zero data size trace events
+ trace_xen_mmu_flush_tlb{_all}
+Message-ID: <20180509144605.5a220327@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+b2Q86dQxsd9_9casAsE9jE8ef87E9WEdKFCYxLkT0Z8A@mail.gmail.com>
-Content-Language: en-US
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
- Todd Kjos <tkjos@android.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
- LKML <linux-kernel@vger.kernel.org>,
- =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
- syzbot <syzbot+cd8bcd40cb049efa2770@syzkaller.appspotmail.com>,
- Martijn Coenen <maco@android.com>, Sumit Semwal <sumit.semwal@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/09/2018 11:59 PM, Dmitry Vyukov wrote:
-> On Wed, Jan 10, 2018 at 7:14 PM, Laura Abbott <labbott@redhat.com> wrote:
->> On 01/09/2018 02:58 PM, syzbot wrote:
->>>
->>> Hello,
->>>
->>> syzkaller hit the following crash on
->>> 06d41862286aa7bc634a1dd9e6e7e96f925ef30a
->>> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
->>> compiler: gcc (GCC) 7.1.1 20170620
->>> .config is attached
->>> Raw console output is attached.
->>> C reproducer is attached
->>> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
->>> for information about syzkaller reproducers
->>>
->>>
->>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->>> Reported-by: syzbot+cd8bcd40cb049efa2770@syzkaller.appspotmail.com
->>> It will help syzbot understand when the bug is fixed. See footer for
->>> details.
->>> If you forward the report, please keep this part and the footer.
->>>
->>> audit: type=1400 audit(1515538424.230:7): avc:  denied  { map } for
->>> pid=3499 comm="syzkaller239906" path="/root/syzkaller239906633" dev="sda1"
->>> ino=16481 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
->>> tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
->>> WARNING: CPU: 0 PID: 1467 at drivers/staging/android/ion/ion.c:122
->>> ion_buffer_destroy+0xd4/0x190 drivers/staging/android/ion/ion.c:122
->>> Kernel panic - not syncing: panic_on_warn set ...
->>>
->>> CPU: 0 PID: 1467 Comm: ion_system_heap Not tainted
->>> 4.15.0-rc7-next-20180109+ #92
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->>> Google 01/01/2011
->>> Call Trace:
->>>    __dump_stack lib/dump_stack.c:17 [inline]
->>>    dump_stack+0x194/0x257 lib/dump_stack.c:53
->>>    panic+0x1e4/0x41c kernel/panic.c:183
->>>    __warn+0x1dc/0x200 kernel/panic.c:547
->>>    report_bug+0x211/0x2d0 lib/bug.c:184
->>>    fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
->>>    fixup_bug arch/x86/kernel/traps.c:247 [inline]
->>>    do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
->>>    do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
->>>    invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1079
->>> RIP: 0010:ion_buffer_destroy+0xd4/0x190
->>> drivers/staging/android/ion/ion.c:122
->>> RSP: 0018:ffff8801d3a9fd28 EFLAGS: 00010293
->>> RAX: ffff8801d39ee700 RBX: ffff8801c00e57c0 RCX: ffffffff8415d2a4
->>> RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8801d5ada5b8
->>> RBP: ffff8801d3a9fd50 R08: 0000000000000000 R09: 1ffff1003a753f8a
->>> R10: ffff8801d3a9fc18 R11: 0000000000000000 R12: ffffffff86e4c980
->>> R13: ffff8801d5ada580 R14: ffff8801c00e57e0 R15: 0000000000000001
->>>    ion_heap_deferred_free+0x290/0x650
->>> drivers/staging/android/ion/ion_heap.c:236
->>>    kthread+0x33c/0x400 kernel/kthread.c:238
->>>    ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:524
->>> Dumping ftrace buffer:
->>>      (ftrace buffer empty)
->>> Kernel Offset: disabled
->>> Rebooting in 86400 seconds..
->>
->>
->> This is catching that a buffer was freed with an existing kernel
->> map still present. The problem is this can easily be triggered from
->> userspace by calling DMA_BUF_SYNC_START without calling
->> DMA_BUF_SYNC_END. It's clearly not appropriate for userspace to
->> be able to trigger a warning so I'll see about switching this to
->> a pr_warn_once.
-> 
-> Hi Laura,
-> 
-> Any updates on this?
-> 
 
-I thought I had sent a fix for this but I guess not. I'll see about
-getting one out.
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Thanks,
-Laura
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Doing an audit of trace events, I discovered two trace events in the xen
+subsystem that use a hack to create zero data size trace events. This is not
+what trace events are for. Trace events add memory footprint overhead, and
+if all you need to do is see if a function is hit or not, simply make that
+function noinline and use function tracer filtering.
+
+Worse yet, the hack used was:
+
+ __array(char, x, 0)
+
+Which creates a static string of zero in length. There's assumptions about
+such constructs in ftrace that this is a dynamic string that is nul
+terminated. This is not the case with these tracepoints and can cause
+problems in various parts of ftrace.
+
+Nuke the trace events!
+
+Cc: stable@vger.kernel.org
+Fixes: 95a7d76897c1e ("xen/mmu: Use Xen specific TLB flush instead of the generic one.")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ arch/x86/xen/mmu.c         |  4 +---
+ arch/x86/xen/mmu_pv.c      |  4 +---
+ include/trace/events/xen.h | 16 ----------------
+ 3 files changed, 2 insertions(+), 22 deletions(-)
+
+diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
+index d33e7dbe3129..2d76106788a3 100644
+--- a/arch/x86/xen/mmu.c
++++ b/arch/x86/xen/mmu.c
+@@ -42,13 +42,11 @@ xmaddr_t arbitrary_virt_to_machine(void *vaddr)
+ }
+ EXPORT_SYMBOL_GPL(arbitrary_virt_to_machine);
+ 
+-static void xen_flush_tlb_all(void)
++static noinline void xen_flush_tlb_all(void)
+ {
+ 	struct mmuext_op *op;
+ 	struct multicall_space mcs;
+ 
+-	trace_xen_mmu_flush_tlb_all(0);
+-
+ 	preempt_disable();
+ 
+ 	mcs = xen_mc_entry(sizeof(*op));
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index 486c0a34d00b..2c30cabfda90 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -1310,13 +1310,11 @@ unsigned long xen_read_cr2_direct(void)
+ 	return this_cpu_read(xen_vcpu_info.arch.cr2);
+ }
+ 
+-static void xen_flush_tlb(void)
++static noinline void xen_flush_tlb(void)
+ {
+ 	struct mmuext_op *op;
+ 	struct multicall_space mcs;
+ 
+-	trace_xen_mmu_flush_tlb(0);
+-
+ 	preempt_disable();
+ 
+ 	mcs = xen_mc_entry(sizeof(*op));
+diff --git a/include/trace/events/xen.h b/include/trace/events/xen.h
+index 7dd8f34c37df..fdcf88bcf0ea 100644
+--- a/include/trace/events/xen.h
++++ b/include/trace/events/xen.h
+@@ -352,22 +352,6 @@ DECLARE_EVENT_CLASS(xen_mmu_pgd,
+ DEFINE_XEN_MMU_PGD_EVENT(xen_mmu_pgd_pin);
+ DEFINE_XEN_MMU_PGD_EVENT(xen_mmu_pgd_unpin);
+ 
+-TRACE_EVENT(xen_mmu_flush_tlb_all,
+-	    TP_PROTO(int x),
+-	    TP_ARGS(x),
+-	    TP_STRUCT__entry(__array(char, x, 0)),
+-	    TP_fast_assign((void)x),
+-	    TP_printk("%s", "")
+-	);
+-
+-TRACE_EVENT(xen_mmu_flush_tlb,
+-	    TP_PROTO(int x),
+-	    TP_ARGS(x),
+-	    TP_STRUCT__entry(__array(char, x, 0)),
+-	    TP_fast_assign((void)x),
+-	    TP_printk("%s", "")
+-	);
+-
+ TRACE_EVENT(xen_mmu_flush_tlb_one_user,
+ 	    TP_PROTO(unsigned long addr),
+ 	    TP_ARGS(addr),
+-- 
+2.13.6
