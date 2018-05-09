@@ -1,75 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935502AbeEIRuD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:50:03 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50730 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933555AbeEIRuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 13:50:00 -0400
-Date: Wed, 9 May 2018 13:49:53 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Stephen Bates <sbates@raithlin.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-Message-ID: <20180509174952.GC4140@redhat.com>
-References: <20180508133407.57a46902@w520.home>
- <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
- <20180508141331.7cd737cb@w520.home>
- <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
- <20180508205005.GC15608@redhat.com>
- <7FFB9603-DF9F-4441-82E9-46037CB6C0DE@raithlin.com>
- <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
- <1775CC56-4651-422F-953A-18E024D3717C@raithlin.com>
- <20180509160722.GB4140@redhat.com>
- <366A8132-B88A-40F7-BDE3-DA542E45FC0C@raithlin.com>
+        id S935305AbeEIR7C (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:59:02 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:35421 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935147AbeEIR7A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 13:59:00 -0400
+X-Google-Smtp-Source: AB8JxZo11s3TBWTG7cxAzy7++4dTZ/arv60au4nAb9tQ0nGKASM+RRh70LF0msLEjN4XMTn+nzHT1V57iwrRrYD0Ra4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <366A8132-B88A-40F7-BDE3-DA542E45FC0C@raithlin.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180509113446.GA18549@bombadil.infradead.org>
+References: <20180509004229.36341-1-keescook@chromium.org> <20180509004229.36341-5-keescook@chromium.org>
+ <20180509113446.GA18549@bombadil.infradead.org>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 9 May 2018 10:58:57 -0700
+X-Google-Sender-Auth: CqgmZbHkBH80G4xG-VckBG0gz78
+Message-ID: <CAGXu5j+PT2O6RTnUJvV-m1PKT6RebY2s-0V=19V3tt+VGJrKvQ@mail.gmail.com>
+Subject: Re: [PATCH 04/13] mm: Use array_size() helpers for kmalloc()
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 04:30:32PM +0000, Stephen  Bates wrote:
-> Hi Jerome
-> 
-> > Now inside that page table you can point GPU virtual address
-> > to use GPU memory or use system memory. Those system memory entry can
-> > also be mark as ATS against a given PASID.
->     
-> Thanks. This all makes sense. 
-> 
-> But do you have examples of this in a kernel driver (if so can you point me too it) or is this all done via user-space? Based on my grepping of the kernel code I see zero EP drivers using in-kernel ATS functionality right now...
-> 
+On Wed, May 9, 2018 at 4:34 AM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Tue, May 08, 2018 at 05:42:20PM -0700, Kees Cook wrote:
+>> @@ -499,6 +500,8 @@ static __always_inline void *kmalloc_large(size_t size, gfp_t flags)
+>>   */
+>>  static __always_inline void *kmalloc(size_t size, gfp_t flags)
+>>  {
+>> +     if (size == SIZE_MAX)
+>> +             return NULL;
+>>       if (__builtin_constant_p(size)) {
+>>               if (size > KMALLOC_MAX_CACHE_SIZE)
+>>                       return kmalloc_large(size, flags);
+>
+> I don't like the add-checking-to-every-call-site part of this patch.
+> Fine, the compiler will optimise it away if it can calculate it at compile
+> time, but there are a lot of situations where it can't.  You aren't
+> adding any safety by doing this; trying to allocate SIZE_MAX bytes is
+> guaranteed to fail, and it doesn't need to fail quickly.
 
-As it is tie to PASID this is done using IOMMU so looks for caller
-of amd_iommu_bind_pasid() or intel_svm_bind_mm() in GPU the existing
-user is the AMD GPU driver see:
+Fun bit of paranoia: I added early checks to devm_kmalloc() too in
+another patch after 0-day started yelling about other things, and this
+morning while removing the SIZE_MAX checks based on your feedback, I
+discovered:
 
-drivers/gpu/drm/amd/
-drivers/gpu/drm/amd/amdkfd/
-drivers/gpu/drm/amd/amdgpu/
+void * devm_kmalloc(struct device *dev, size_t size, gfp_t gfp)
+{
+        struct devres *dr;
 
-Lot of codes there. The GPU code details do not really matter for
-this discussions thought. You do not need to do much to use PASID.
+        /* use raw alloc_dr for kmalloc caller tracing */
+        dr = alloc_dr(devm_kmalloc_release, size, gfp, dev_to_node(dev));
+...
 
-Cheers,
-Jérôme
+static __always_inline struct devres * alloc_dr(dr_release_t release,
+                                               size_t size, gfp_t gfp, int nid)
+{
+       size_t tot_size = sizeof(struct devres) + size;
+        struct devres *dr;
+
+        dr = kmalloc_node_track_caller(tot_size, gfp, nid);
+...
+
+which is exactly the pattern I was worried about: SIZE_MAX plus some
+small number would overflow. :(
+
+So, I've added an explicit overflow check in devm_kmalloc() now.
+
+Thoughts: making {struct,array,array3}_size() return "SIZE_MAX -
+something" could help for generic cases (like above), but it might
+still be possible in a buggy situation for an attacker to choose
+factors that do NOT overflow, but reach something like "SIZE_MAX - 1"
+and then the later addition will wrap it around. I'm leaning towards
+doing it anyway, though, since not all factors in a given bug may have
+very high granularity, giving us better protection than SIZE_MAX.
+
+However, since now we're separating overflow checking from saturation
+(i.e. we could calculate a non-overflowing value that lands in the
+saturation zone), we can't sanely to the check_*_overflow() cases,
+since the "saturated" results from array_size() aren't SIZE_MAX any
+more...
+
+I can't decide which is a safer failure case...
+
+> Hmm.  I wonder why we have the kmalloc/__kmalloc "optimisation"
+> in kmalloc_array, but not kcalloc.  Bet we don't really need it in
+> kmalloc_array.  I'll do some testing.
+
+Not sure; my new patches drop it entirely since they're redefining
+*calloc() and *_array*() with the helpers now...
+
+I'll send a v2 shortly (without the treewide changes, since those are
+huge and only changed slightly with some 0-day noticed glitches).
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
