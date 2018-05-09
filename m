@@ -1,100 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965413AbeEITcE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 15:32:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:32804 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964850AbeEITcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 15:32:03 -0400
-Date: Wed, 9 May 2018 19:32:00 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [PATCH v7 1/4] ipc: IPCMNI limit check for msgmni and shmmni
-Message-ID: <20180509193200.GU27853@wotan.suse.de>
-References: <1525726752-29281-1-git-send-email-longman@redhat.com>
- <1525726752-29281-2-git-send-email-longman@redhat.com>
- <20180507223910.GW27853@wotan.suse.de>
- <edcc0a97-fbec-f511-36d2-fea0e123b4ee@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <edcc0a97-fbec-f511-36d2-fea0e123b4ee@redhat.com>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+        id S965494AbeEITeF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 15:34:05 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:33658 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965426AbeEITeC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 15:34:02 -0400
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: [PATCH v3 2/4] rtc: ds1307: support m41t11 variant
+Date: Wed,  9 May 2018 21:33:53 +0200
+Message-Id: <20180509193355.49466-2-giulio.benetti@micronovasrl.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180509193355.49466-1-giulio.benetti@micronovasrl.com>
+References: <20180509193355.49466-1-giulio.benetti@micronovasrl.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 07:57:12PM -0400, Waiman Long wrote:
-> On 05/07/2018 06:39 PM, Luis R. Rodriguez wrote:
-> > On Mon, May 07, 2018 at 04:59:09PM -0400, Waiman Long wrote:
-> >> A user can write arbitrary integer values to msgmni and shmmni sysctl
-> >> parameters without getting error, but the actual limit is really
-> >> IPCMNI (32k). This can mislead users as they think they can get a
-> >> value that is not real.
-> >>
-> >> The right limits are now set for msgmni and shmmni so that the users
-> >> will become aware if they set a value outside of the acceptable range.
-> >>
-> >> Signed-off-by: Waiman Long <longman@redhat.com>
-> >> ---
-> >>  ipc/ipc_sysctl.c | 7 +++++--
-> >>  1 file changed, 5 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
-> >> index 8ad93c2..f87cb29 100644
-> >> --- a/ipc/ipc_sysctl.c
-> >> +++ b/ipc/ipc_sysctl.c
-> >> @@ -99,6 +99,7 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
-> >>  static int zero;
-> >>  static int one = 1;
-> >>  static int int_max = INT_MAX;
-> >> +static int ipc_mni = IPCMNI;
-> >>  
-> >>  static struct ctl_table ipc_kern_table[] = {
-> >>  	{
-> >> @@ -120,7 +121,9 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
-> >>  		.data		= &init_ipc_ns.shm_ctlmni,
-> >>  		.maxlen		= sizeof(init_ipc_ns.shm_ctlmni),
-> >>  		.mode		= 0644,
-> >> -		.proc_handler	= proc_ipc_dointvec,
-> >> +		.proc_handler	= proc_ipc_dointvec_minmax,
-> >> +		.extra1		= &zero,
-> >> +		.extra2		= &ipc_mni,
-> >>  	},
-> >>  	{
-> >>  		.procname	= "shm_rmid_forced",
-> >> @@ -147,7 +150,7 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
-> >>  		.mode		= 0644,
-> >>  		.proc_handler	= proc_ipc_dointvec_minmax,
-> >>  		.extra1		= &zero,
-> >> -		.extra2		= &int_max,
-> >> +		.extra2		= &ipc_mni,
-> >>  	},
-> >>  	{
-> >>  		.procname	= "auto_msgmni",
-> >> -- 
-> >> 1.8.3.1
-> > It seems negative values are not allowed, if true then having
-> > a caller to use proc_douintvec_minmax() would help with ensuring
-> > no invalid negative input values are used as well.
-> >
-> >   Luis
-> 
-> Negative value doesn't mean sense here. So it is true that we can use
-> proc_douintvec_minmax() instead. However, the data types themselves are
-> defined as "int". So I think it is better to keep using
-> proc_dointvec_minmax() to be consistent with the data type.
+The m41t11 variant is very similar to the already supported m41t00 and
+m41t0, but it has also 56 bytes of NVRAM.
 
-Huh, no... If you *know* the valid values *are* only positive, the right
-thing to do is to then *change* the data type. Tons of odd bugs can creep
-up because of these stupid things.
+Add it to driver taking into account NVRAM section.
 
-  Luis
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+---
+ .../devicetree/bindings/rtc/rtc-ds1307.txt         |  1 +
+ drivers/rtc/rtc-ds1307.c                           | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
+index d28d6e7f6ae8..ce6469c1a516 100644
+--- a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
++++ b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
+@@ -13,6 +13,7 @@ Required properties:
+ 	"maxim,ds3231",
+ 	"st,m41t0",
+ 	"st,m41t00",
++	"st,m41t11",
+ 	"microchip,mcp7940x",
+ 	"microchip,mcp7941x",
+ 	"pericom,pt7c4338",
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index 32aadcbc377f..0ab0c166da83 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -44,6 +44,7 @@ enum ds_type {
+ 	ds_3231,
+ 	m41t0,
+ 	m41t00,
++	m41t11,
+ 	mcp794xx,
+ 	rx_8025,
+ 	rx_8130,
+@@ -226,6 +227,11 @@ static const struct chip_desc chips[last_ds_type] = {
+ 		.irq_handler = rx8130_irq,
+ 		.rtc_ops = &rx8130_rtc_ops,
+ 	},
++	[m41t11] = {
++		/* this is battery backed SRAM */
++		.nvram_offset	= 8,
++		.nvram_size	= 56,
++	},
+ 	[mcp794xx] = {
+ 		.alarm		= 1,
+ 		/* this is battery backed SRAM */
+@@ -248,6 +254,7 @@ static const struct i2c_device_id ds1307_id[] = {
+ 	{ "ds3231", ds_3231 },
+ 	{ "m41t0", m41t0 },
+ 	{ "m41t00", m41t00 },
++	{ "m41t11", m41t11 },
+ 	{ "mcp7940x", mcp794xx },
+ 	{ "mcp7941x", mcp794xx },
+ 	{ "pt7c4338", ds_1307 },
+@@ -304,6 +311,10 @@ static const struct of_device_id ds1307_of_match[] = {
+ 		.compatible = "st,m41t00",
+ 		.data = (void *)m41t00
+ 	},
++	{
++		.compatible = "st,m41t11",
++		.data = (void *)m41t11
++	},
+ 	{
+ 		.compatible = "microchip,mcp7940x",
+ 		.data = (void *)mcp794xx
+@@ -346,6 +357,7 @@ static const struct acpi_device_id ds1307_acpi_ids[] = {
+ 	{ .id = "DS3231", .driver_data = ds_3231 },
+ 	{ .id = "M41T0", .driver_data = m41t0 },
+ 	{ .id = "M41T00", .driver_data = m41t00 },
++	{ .id = "M41T11", .driver_data = m41t11 },
+ 	{ .id = "MCP7940X", .driver_data = mcp794xx },
+ 	{ .id = "MCP7941X", .driver_data = mcp794xx },
+ 	{ .id = "PT7C4338", .driver_data = ds_1307 },
+@@ -1574,6 +1586,7 @@ static int ds1307_probe(struct i2c_client *client,
+ 	case ds_1307:
+ 	case m41t0:
+ 	case m41t00:
++	case m41t11:
+ 		/* clock halted?  turn it on, so clock can tick. */
+ 		if (tmp & DS1307_BIT_CH) {
+ 			regmap_write(ds1307->regmap, DS1307_REG_SECS, 0);
+@@ -1639,6 +1652,7 @@ static int ds1307_probe(struct i2c_client *client,
+ 	case ds_1340:
+ 	case m41t0:
+ 	case m41t00:
++	case m41t11:
+ 		/*
+ 		 * NOTE: ignores century bits; fix before deploying
+ 		 * systems that will run through year 2100.
+-- 
+2.17.0
