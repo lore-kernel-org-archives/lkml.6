@@ -1,68 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934844AbeEILrN (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 07:47:13 -0400
-Received: from mga14.intel.com ([192.55.52.115]:26332 "EHLO mga14.intel.com"
+        id S934857AbeEILrT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 07:47:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48887 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934758AbeEILp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 07:45:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
-   d="scan'208";a="54446014"
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH RFC 14/19] perf buildid-cache: kcore_copy: Calculate offset from phnum
-Date: Wed,  9 May 2018 14:43:43 +0300
-Message-Id: <1525866228-30321-15-git-send-email-adrian.hunter@intel.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
-References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        id S934758AbeEILrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 07:47:16 -0400
+Date: Wed, 9 May 2018 13:47:12 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Huaisheng HS1 Ye <yehs1@lenovo.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
+        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "penguin-kernel@I-love.SAKURA.ne.jp"
+        <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
+        Ocean HY1 He <hehy1@lenovo.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Subject: Re: [External] [RFC PATCH v1 3/6] mm, zone_type: create ZONE_NVM and
+ fill into GFP_ZONE_TABLE
+Message-ID: <20180509114712.GP32366@dhcp22.suse.cz>
+References: <1525746628-114136-1-git-send-email-yehs1@lenovo.com>
+ <1525746628-114136-4-git-send-email-yehs1@lenovo.com>
+ <HK2PR03MB1684653383FFEDAE9B41A548929A0@HK2PR03MB1684.apcprd03.prod.outlook.com>
+ <ce3a6f37-3b13-0c35-6895-35156c7a290c@infradead.org>
+ <HK2PR03MB16847B78265A033C7310DDCB92990@HK2PR03MB1684.apcprd03.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <HK2PR03MB16847B78265A033C7310DDCB92990@HK2PR03MB1684.apcprd03.prod.outlook.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to add more program headers, calculate offset from the
-number of phdrs.
+On Wed 09-05-18 04:22:10, Huaisheng HS1 Ye wrote:
+> 
+> > On 05/07/2018 07:33 PM, Huaisheng HS1 Ye wrote:
+> > > diff --git a/mm/Kconfig b/mm/Kconfig
+> > > index c782e8f..5fe1f63 100644
+> > > --- a/mm/Kconfig
+> > > +++ b/mm/Kconfig
+> > > @@ -687,6 +687,22 @@ config ZONE_DEVICE
+> > >
+> > > +config ZONE_NVM
+> > > +	bool "Manage NVDIMM (pmem) by memory management (EXPERIMENTAL)"
+> > > +	depends on NUMA && X86_64
+> > 
+> > Hi,
+> > I'm curious why this depends on NUMA. Couldn't it be useful in non-NUMA
+> > (i.e., UMA) configs?
+> > 
+> I wrote these patches with two sockets testing platform, and there are two DDRs and two NVDIMMs have been installed to it.
+> So, for every socket it has one DDR and one NVDIMM with it. Here is memory region from memblock, you can get its distribution.
+> 
+>  435 [    0.000000] Zone ranges:
+>  436 [    0.000000]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+>  437 [    0.000000]   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
+>  438 [    0.000000]   Normal   [mem 0x0000000100000000-0x00000046bfffffff]
+>  439 [    0.000000]   NVM      [mem 0x0000000440000000-0x00000046bfffffff]
+>  440 [    0.000000]   Device   empty
+>  441 [    0.000000] Movable zone start for each node
+>  442 [    0.000000] Early memory node ranges
+>  443 [    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009ffff]
+>  444 [    0.000000]   node   0: [mem 0x0000000000100000-0x00000000a69c2fff]
+>  445 [    0.000000]   node   0: [mem 0x00000000a7654000-0x00000000a85eefff]
+>  446 [    0.000000]   node   0: [mem 0x00000000ab399000-0x00000000af3f6fff]
+>  447 [    0.000000]   node   0: [mem 0x00000000af429000-0x00000000af7fffff]
+>  448 [    0.000000]   node   0: [mem 0x0000000100000000-0x000000043fffffff]	Normal 0
+>  449 [    0.000000]   node   0: [mem 0x0000000440000000-0x000000237fffffff]	NVDIMM 0
+>  450 [    0.000000]   node   1: [mem 0x0000002380000000-0x000000277fffffff]	Normal 1
+>  451 [    0.000000]   node   1: [mem 0x0000002780000000-0x00000046bfffffff]	NVDIMM 1
+> 
+> If we disable NUMA, there is a result as Normal an NVDIMM zones will be overlapping with each other.
+> Current mm treats all memory regions equally, it divides zones just by size, like 16M for DMA, 4G for DMA32, and others above for Normal.
+> The spanned range of all zones couldn't be overlapped.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/util/symbol-elf.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
-index 3a177c245683..2e8d89d64166 100644
---- a/tools/perf/util/symbol-elf.c
-+++ b/tools/perf/util/symbol-elf.c
-@@ -1682,7 +1682,7 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 	struct kcore kcore;
- 	struct kcore extract;
- 	int idx = 0, err = -1;
--	off_t offset = page_size, sz, modules_offset = 0;
-+	off_t offset, sz, modules_offset = 0;
- 	struct kcore_copy_info kci = { .stext = 0, };
- 	char kcore_filename[PATH_MAX];
- 	char extract_filename[PATH_MAX];
-@@ -1710,6 +1710,10 @@ int kcore_copy(const char *from_dir, const char *to_dir)
- 	if (kcore__copy_hdr(&kcore, &extract, kci.phnum))
- 		goto out_extract_close;
- 
-+	offset = gelf_fsize(extract.elf, ELF_T_EHDR, 1, EV_CURRENT) +
-+		 gelf_fsize(extract.elf, ELF_T_PHDR, kci.phnum, EV_CURRENT);
-+	offset = round_up(offset, page_size);
-+
- 	if (kcore__add_phdr(&extract, idx++, offset, kci.kernel_map.addr,
- 			    kci.kernel_map.len))
- 		goto out_extract_close;
+No, this is not correct. Zones can overlap.
 -- 
-1.9.1
+Michal Hocko
+SUSE Labs
