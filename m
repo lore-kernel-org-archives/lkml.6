@@ -1,58 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964851AbeEIRt2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:49:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32888 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933555AbeEIRt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 13:49:27 -0400
-Date: Wed, 9 May 2018 13:49:23 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, mka@chromium.org, rplsssn@codeaurora.org
-Subject: Re: [PATCH v8 03/10] drivers: qcom: rpmh-rsc: log RPMH requests in
- FTRACE
-Message-ID: <20180509134923.1e315a7c@gandalf.local.home>
-In-Reply-To: <20180509170159.29682-4-ilina@codeaurora.org>
-References: <20180509170159.29682-1-ilina@codeaurora.org>
-        <20180509170159.29682-4-ilina@codeaurora.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S935502AbeEIRuD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:50:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50730 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933555AbeEIRuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 13:50:00 -0400
+Date: Wed, 9 May 2018 13:49:53 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Stephen Bates <sbates@raithlin.com>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+Message-ID: <20180509174952.GC4140@redhat.com>
+References: <20180508133407.57a46902@w520.home>
+ <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
+ <20180508141331.7cd737cb@w520.home>
+ <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
+ <20180508205005.GC15608@redhat.com>
+ <7FFB9603-DF9F-4441-82E9-46037CB6C0DE@raithlin.com>
+ <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
+ <1775CC56-4651-422F-953A-18E024D3717C@raithlin.com>
+ <20180509160722.GB4140@redhat.com>
+ <366A8132-B88A-40F7-BDE3-DA542E45FC0C@raithlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <366A8132-B88A-40F7-BDE3-DA542E45FC0C@raithlin.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  9 May 2018 11:01:52 -0600
-Lina Iyer <ilina@codeaurora.org> wrote:
-
-> Log sent RPMH requests and interrupt responses in FTRACE.
-
-Has this changed since the last time I reviewed it? If not, please add
-the: Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-to you patch queue.
-
--- Steve
-
+On Wed, May 09, 2018 at 04:30:32PM +0000, Stephen  Bates wrote:
+> Hi Jerome
 > 
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> ---
+> > Now inside that page table you can point GPU virtual address
+> > to use GPU memory or use system memory. Those system memory entry can
+> > also be mark as ATS against a given PASID.
+>     
+> Thanks. This all makes sense. 
 > 
-> Changes in v7:
-> 	- varible name changes and white space
+> But do you have examples of this in a kernel driver (if so can you point me too it) or is this all done via user-space? Based on my grepping of the kernel code I see zero EP drivers using in-kernel ATS functionality right now...
 > 
-> Changes in v6:
-> 	- struct tcs_response was removed. Fix in trace as well.
-> Changes in v4:
-> 	- fix compilation issues, use __assign_str
-> 	- use %#x instead of 0x%08x
-> Changes in v3:
-> 	- Use __string() instead of char *
-> 	- fix TRACE_INCLUDE_PATH
-> ---
+
+As it is tie to PASID this is done using IOMMU so looks for caller
+of amd_iommu_bind_pasid() or intel_svm_bind_mm() in GPU the existing
+user is the AMD GPU driver see:
+
+drivers/gpu/drm/amd/
+drivers/gpu/drm/amd/amdkfd/
+drivers/gpu/drm/amd/amdgpu/
+
+Lot of codes there. The GPU code details do not really matter for
+this discussions thought. You do not need to do much to use PASID.
+
+Cheers,
+Jérôme
