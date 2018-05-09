@@ -1,176 +1,154 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-617204-1525882604-2-12892811634977739276
+X-Cyrus-Session-Id: sloti22d1t05-823031-1525893596-2-8981230001189797390
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525882604; b=hMBdiSJD5mPZfOImf1OAlg1gXQMj3YG1XO3hcXltu0omv4+5fn
-    dlOu7Iy5108qvybX/HvF9iCTPDxQFlvK02tWcW8e/de4nPvtC0T96C9jxInjOOk5
-    v5q/8k7bOgriB1fhrYSTAiiiaFcpqVMNM9PVYaPbYvlyRvNudiNMi8N9BsdiawAu
-    P3MjeNbG/deAyLuHktXNO4OXMg4akbaIxnu74gDTdAdHfSA0qNY8Zet3ktjRX33y
-    o8b+UnkD57fBY+L8WsPuV1e2vUmbPRCD5yyeq8GHdHlEFUMgtWw6WQ+sX8T/7ydr
-    QBZAHG8HZV2wlhxrjaKl9FIHn0l0trGSk02A==
+    1525893596; b=bKz9dulSxKP2hkKVZqFGB8iVTPozlyJgWS5BpymRenskELuzru
+    pqA1X798N3sUS9pTO9PQkXjSWKb59Oo5gNWV+v1Uum0HPOr6zGJbG0PluNMw8HJK
+    ERMfG7AYQBjIvwGdEXXLUlzzEhj8rOsgTCO0NmeRpbA2vWKEZv0IgYcw4yfarMay
+    sasQKRMyFB++D55TwOGLUeSqljwI6Ul11igGAJd0txUNvTH75oVktSmcoYTEE45j
+    W2QEkhldQBId4sltUVVJrN3+/zHQwd3FVGPyHw0bKn/j3eequ27WATNotZIAvtlZ
+    OPBIUUBeDpiNmlXqldQkMNLuizK/Ci2kaoFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1525882604; bh=O1trRM/LZOXfPXHzDcawVzpRqy1WzmDwpV5G6onAPp
-    c=; b=OhbWhXsrm5g2LcqzVnjCN4Yv0hyqLg0GOXfAc1vgtMfnRFfQQEFozeVZG6
-    sLJ1/7RnIo1PL7iHPPnwoSOGcfwN1l5sgB2jn1kGOnRAjCLY6YgyD+CB8UCoS27G
-    HEHMmwFc5+PvA7r/IekEkvZomFya2lrv+mqnIl0NBuhwxzyWiNE3K6CPNKgjmIkD
-    jCtz8rNXQKJaA8QVAuJRJ2/6ErQ7iTw8NVdmTUX+zLyhu26bXV84b3H0Fxh3DUdJ
-    Agrudu9xCcx+vI84zOw/OR2IFgBR/4VmeA+Kg548JOYcK58hRDmmMvNQxM+fCI3O
-    MqlnYF6Qp2VCUouDs5kgYZEer4/w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=paul-moore-com.20150623.gappssmtp.com
-    header.i=@paul-moore-com.20150623.gappssmtp.com header.b=NepuzZJV
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
+    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
+    :message-id:references:mime-version:content-type:sender:list-id;
+    s=fm2; t=1525893596; bh=gywN3Lm10neVyvae6o1toP7gup0nC37KxCvtjg1
+    QK2k=; b=REvqcM8Swoav7MwUDued4ex34+W/4PLWIpRPW8I2QoaeB8FMUiwmgCO
+    4HzwJdv5idPHr9GeqA7lQgE2qCCx3KGoIAn7kLgKtmRdlqkXy+AhbT/hUO2DuxBk
+    A0Xu6ikCOHtnMjHNBk78X1u1ct60eV++uMIRexkdlEfB+IVK19GeGN8NyRg7dn4D
+    AgCGMAeau50ZZJRWY3IteAIIs8Y+tT0vOQXQEfn43o6LLoGYg0PJQrqEqZce2BME
+    heJ3nq01ztClPgAeQ6X50BR2nUfyys6ysLYFPNt7JUwOdy/CL/huxo7QGah6Apbr
+    NQWtOf8UZChNX5elQ0C3Mtm1/m8/RbA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=namei.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=oMykxSED;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=paul-moore.com header.result=pass
-    header_is_org_domain=yes;
+    header.domain=namei.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=paul-moore-com.20150623.gappssmtp.com
-      header.i=@paul-moore-com.20150623.gappssmtp.com header.b=NepuzZJV
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=paul-moore.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=namei.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=oMykxSED;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=paul-moore.com header.result=pass
-      header_is_org_domain=yes;
+      header.domain=namei.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLnEgGPjPR5NkqI8m45ZLpDXYUguorVG3tfl1e97zd4X19wETkZFoUKnEkeWz3IQWqOwYL2AAS87lLgx2lh21tgrBEKcZzx2CEEvWwJd99XwNRLRLsjr
-    XWUS7BfUigBA39MuJoljGp4qjxh+9xg2DLt92sekQtIfCR/ry/421Q8Qo6IjUatGP08UxFIwIE7B8Xrfwbrsd6CttBzsUG0NZ90pVanv4BVW2CVUvfoJgCgi
-    gcG02uv8ECMa4viod5EeKg==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=lEFUVsbgnicA:10 a=IkcTkHD0fZMA:10
-    a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8 a=xVhDTqbCAAAA:8 a=VwQbUJbxAAAA:8
-    a=ofn-0FctOEMOKXMUYoEA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
-    a=GrmWmAYt4dzCMttCBZOh:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfBXM5lX//cWiSp0nXYRhSLyc2pVJr+MiBb4n++OZ+AHbn+wKOHZK4pTuViNKllWV5a5NRTlHSiccuyjEdfaJL0/l0wnrXtEkmdnao6BV8m6O3p4rb63z
+    MKNuQ+HR2/0qRJrd4lJQUFqYBSiWgSp+yt98OfoQwXz1lp02FIXzGLP5in7aEX4rHL8h0QIzdmQ0KdO+5SaPjRjE6d75GRnar8SbRuJZPCZLQIZziMYFyTAp
+    mTdWhrjVrR1PiJxvUlq28A==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=oOTyUqYRAAAA:8 a=D19gQVrFAAAA:8 a=20KFwNOVAAAA:8 a=K6HrmWtEAAAA:8
+    a=hBqU3vQJAAAA:8 a=UGG5zPGqAAAA:8 a=pGLkceISAAAA:8 a=cm27Pg_UAAAA:8
+    a=VwQbUJbxAAAA:8 a=NoVLVvp6mdNuD1_LbXQA:9 a=D0PdExiY3ip0vbQm:21
+    a=CmhA1kjc5XGd_jNF:21 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
+    a=gC6dlE560Mj-nRUNeoyZ:22 a=W4TVW4IDbPiebHqcZpNg:22 a=yV38gEssg_2GhkhKF82i:22
+    a=WLjMIN4s_96MqnBbPenP:22 a=17ibUXfGiVyGqR_YBevW:22 a=xmb-EsYY8bH0VWELuYED:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965157AbeEIQQm (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 9 May 2018 12:16:42 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:36111 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965034AbeEIQQl (ORCPT
+        id S965265AbeEITTx (ORCPT <rfc822;linux@kroah.com>);
+        Wed, 9 May 2018 15:19:53 -0400
+Received: from namei.org ([65.99.196.166]:59956 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965017AbeEITTw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 May 2018 12:16:41 -0400
-X-Google-Smtp-Source: AB8JxZq1ENnHNnY9LSKPcJGNRgEuXTfiln/7lQgNaNnz/n+TyHPqD+2YgRaxMlOmmPLLqaTYKzeYOgV/JY3gjSD+agg=
-MIME-Version: 1.0
-X-Originating-IP: [68.177.129.184]
-In-Reply-To: <cover.1525466167.git.rgb@redhat.com>
-References: <cover.1525466167.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 9 May 2018 11:53:57 -0400
-Message-ID: <CAHC9VhRY-hhBb+Kg19Cfy87MSHseUO40j9PC8wsdmHQmcV0zDQ@mail.gmail.com>
-Subject: Re: [PATCH ghak81 RFC V1 0/5] audit: group task params
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        Wed, 9 May 2018 15:19:52 -0400
+Date: Thu, 10 May 2018 05:19:31 +1000 (AEST)
+From: James Morris <jmorris@namei.org>
+To: Kees Cook <keescook@chromium.org>
+cc: Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Eric Biggers <ebiggers3@gmail.com>
+Subject: Re: [PATCH v3 1/3] big key: get rid of stack array allocation
+In-Reply-To: <CAGXu5jLL7NeX+zUNqcYW_LDF87CPg-5Z4R5+FZ5uPDT-sTisng@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1805100519200.12749@namei.org>
+References: <20180424202639.19830-1-tycho@tycho.ws> <CAGXu5jLL7NeX+zUNqcYW_LDF87CPg-5Z4R5+FZ5uPDT-sTisng@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, May 4, 2018 at 4:54 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Group the audit parameters for each task into one structure.
-> In particular, remove the loginuid and sessionid values and the audit
-> context pointer from the task structure, replacing them with an audit
-> task information structure to contain them.  Use access functions to
-> access audit values.
->
-> Note:  Use static allocation of the audit task information structure
-> initially.  Dynamic allocation was considered and attempted, but isn't
-> ready yet.  Static allocation has the limitation that future audit task
-> information structure changes would cause a visible change to the rest
-> of the kernel, whereas dynamic allocation would mostly hide any future
-> changes.
->
-> The first four access normalization patches could stand alone.
+On Tue, 8 May 2018, Kees Cook wrote:
 
-I agree that the first four patches have some standalone value, and
-since we are currently at -rc4, did you want to post another patchset
-of just those four patches with feedback incorporated?  I imagine that
-should be quick work, and that way they aren't help up with any
-problems/discussion regarding the take_struct changes.
+> On Tue, Apr 24, 2018 at 1:26 PM, Tycho Andersen <tycho@tycho.ws> wrote:
+> > We're interested in getting rid of all of the stack allocated arrays in the
+> > kernel [1]. This patch simply hardcodes the iv length to match that of the
+> > hardcoded cipher.
+> >
+> > [1]: https://lkml.org/lkml/2018/3/7/621
+> >
+> > v2: hardcode the length of the nonce to be the GCM AES IV length, and do a
+> >     sanity check in init(), Eric Biggers
+> > v3: * remember to free big_key_aead when sanity check fails
+> >     * define a constant for big key IV size so it can be changed along side
+> >       the algorithm in the code
+> >
+> > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> > CC: David Howells <dhowells@redhat.com>
+> > CC: James Morris <jmorris@namei.org>
+> > CC: "Serge E. Hallyn" <serge@hallyn.com>
+> > CC: Jason A. Donenfeld <Jason@zx2c4.com>
+> > CC: Eric Biggers <ebiggers3@gmail.com>
+> 
+> Please consider this and patches 2 and 3:
+> 
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> 
+> James, are these something you can take into your tree?
 
-> Passes audit-testsuite.
->
-> Richard Guy Briggs (5):
->   audit: normalize loginuid read access
->   audit: convert sessionid unset to a macro
->   audit: use inline function to get audit context
->   audit: use inline function to set audit context
->   audit: collect audit task parameters
->
->  MAINTAINERS                          |  2 +-
->  include/linux/audit.h                | 30 ++++++++++---
->  include/linux/audit_task.h           | 31 ++++++++++++++
->  include/linux/sched.h                |  6 +--
->  include/net/xfrm.h                   |  4 +-
->  include/uapi/linux/audit.h           |  1 +
->  init/init_task.c                     |  8 +++-
->  kernel/audit.c                       |  4 +-
->  kernel/audit_watch.c                 |  2 +-
->  kernel/auditsc.c                     | 82 ++++++++++++++++++------------------
->  kernel/fork.c                        |  2 +-
->  net/bridge/netfilter/ebtables.c      |  2 +-
->  net/core/dev.c                       |  2 +-
->  net/netfilter/x_tables.c             |  2 +-
->  net/netlabel/netlabel_user.c         |  2 +-
->  security/integrity/ima/ima_api.c     |  2 +-
->  security/integrity/integrity_audit.c |  2 +-
->  security/lsm_audit.c                 |  2 +-
->  security/selinux/hooks.c             |  4 +-
->  security/selinux/selinuxfs.c         |  6 +--
->  security/selinux/ss/services.c       | 12 +++---
->  21 files changed, 129 insertions(+), 79 deletions(-)
->  create mode 100644 include/linux/audit_task.h
->
-> --
-> 1.8.3.1
->
-
-
+> 
+> Thanks!
+> 
+> -Kees
+> 
+> > ---
+> >  security/keys/big_key.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/security/keys/big_key.c b/security/keys/big_key.c
+> > index 933623784ccd..2806e70d7f8f 100644
+> > --- a/security/keys/big_key.c
+> > +++ b/security/keys/big_key.c
+> > @@ -22,6 +22,7 @@
+> >  #include <keys/user-type.h>
+> >  #include <keys/big_key-type.h>
+> >  #include <crypto/aead.h>
+> > +#include <crypto/gcm.h>
+> >
+> >  struct big_key_buf {
+> >         unsigned int            nr_pages;
+> > @@ -85,6 +86,7 @@ struct key_type key_type_big_key = {
+Sure!
 
 -- 
-paul moore
-www.paul-moore.com
+James Morris
+<jmorris@namei.org>
+
