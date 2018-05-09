@@ -1,224 +1,142 @@
-Return-Path: <mchehab+samsung@kernel.org>
-X-Google-Smtp-Source: AB8JxZrquEn62cpcuhTxn9NVn22OAwtp8PunKh5hJL8CbYJbP/wnDqR6bVWRSZT9YpqlPBmodjeI
-ARC-Seal: i=1; a=rsa-sha256; t=1525890133; cv=none;
+Return-Path: <stern+5af46fa8@rowland.harvard.edu>
+X-Google-Smtp-Source: AB8JxZqqIQkvLZKqqqhf+ULvJwWe89BA7THVOEJwYJ4bn87c1QhjsrGZ42HhJWqsqNkmN8+SYFr3
+ARC-Seal: i=1; a=rsa-sha256; t=1525893069; cv=none;
         d=google.com; s=arc-20160816;
-        b=0Bj32FNUv71TNBsaR8QjaW1zRRI8FDFy+mrN3f126XWhy7h5RA9la3NUQKG72Wwtvw
-         RR7rgukwVuGKIn/o41UlvqtphjC2C0EkKa0ezArDPmzltRVwBmRonO3+zefRcj4n+2kg
-         Oxpmrf8/iyXyN2kLtABB3/tKnMc27KUvTt/G1tYh5tP/zY9D/ixnjocPhIO3fKvgzsvz
-         Libc251Vc3bZei0Ajxmd19Ro3KICOeSFlUB8Q/D+N55uxG5Pm0UnmBgpjXYU6BKF+E1H
-         MIgD1pluyCXBZ2pM0AKEN6xbw6GHI3nhpdTEM55MCHuY4EiPb9dpJOfmIHGqadLdZCzx
-         drMw==
+        b=TvcWMEVAYMTsljPyGKH+BWGadx753WjX5Sp4NCvZRuXvbilUcKrytkQ4rv4axehHv8
+         j5e4WX1A4VQycLGqZLQTHeTC7C7tcebUPIgkMA2+irC41xnSM+cNfJDWQ9rT8WbKQ+qY
+         jzTROK6vBnIKQNl7v1Uuba7rmUUQusxDmXvjEcZTH91iGXXeU8H5rSHHYSz1XuKsxScd
+         7P4UN+uua/VlcLbOGifvpIxZmznjNmMJgZWFMxetSA8c5Er3ry9BcLsvBkSLaX/c03Qc
+         ga0do4zJc2UZrSU20BfWy35aMDAsj7lvvzPLtlPFmqOS6egiZrt4hwpzaK7hy9kLdOd6
+         442w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:dkim-signature
+        h=mime-version:message-id:in-reply-to:subject:cc:to:from:date
          :arc-authentication-results;
-        bh=tS35XzSrO4YDR5Y/EbH7x4uhwIvXWgeAvSG+/62ycuA=;
-        b=n00Dzdms1awfEJNfB+RjsV6zSK80gTGVep4IHom33l0B+MxTLDeNse8No0ditfX+B0
-         fqwCZ5onqQfdljAqoYtny/pWKrJ4cBnoApakrNffS5u3E+128VXNi610mmRbxdUd8f9C
-         ozp/Rh4KjjkwBoHNpAGE1sQLGIbH41K3iwr4pjZysYX2Rj+0eUEoRhgApzJ40t3SttHF
-         WDDI4OxjKQrs0HnFxIhlZPeX+jdFaJEc+m6H2WC/sNM7EmMAa5Glgu27gkEm9/hFIOIq
-         pgDLTxbfOUW3T0CYJb615hasnaMN2hSasP5kXf1lvOUoYac3z8DxCwY+bMGlicRUkf0Q
-         Z42Q==
+        bh=k5M9ZbLPskahdyKF3oB1wnE5kp6y19m1l7BmoGJo7Vg=;
+        b=paEAbs9EHnPUGQCVgiHdD2MZJxZ5jsoYiOLQmHZmbZRKeT+k6D6ZNnrDxZmn7WKjZl
+         uAC5BIzorHCyB68mlb4tkWgxxR7YFK7I2pyZ2tjrM+u3N1hu9URcnufa7lRxvc+ug3AN
+         kk2vscmwzFJHy4Rsr6nPkZkvEfWjUMBYFYMpbXsLsOIQ4lw6LKugFex8o3De2c17o3Br
+         avQEpY1UogoYkkPkE2KJNFLStynMs5vEcsgItMdQSb9lUItnZIrI+UyV9AWIfuX5Eypl
+         EKM54g5jaHkmkuXCkDpzaugLWs5K2w7u12Zy72+o3ZkwCCou0/yK5o1gn6niQixs8lYw
+         s9mA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=YkUazGTh;
-       spf=softfail (google.com: domain of transitioning mchehab+samsung@kernel.org does not designate 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=mchehab+samsung@kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       spf=neutral (google.com: 192.131.102.54 is neither permitted nor denied by best guess record for domain of stern+5af46fa8@rowland.harvard.edu) smtp.mailfrom=stern+5af46fa8@rowland.harvard.edu
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=YkUazGTh;
-       spf=softfail (google.com: domain of transitioning mchehab+samsung@kernel.org does not designate 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=mchehab+samsung@kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Date: Wed, 9 May 2018 15:20:45 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>, Mauro Carvalho
- Chehab <mchehab@infradead.org>, linux-kernel@vger.kernel.org, Jonathan
- Corbet <corbet@lwn.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob
- Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Linus
- Walleij <linus.walleij@linaro.org>, Ananth N Mavinakayanahalli
- <ananth@linux.vnet.ibm.com>, Anil S Keshavamurthy
- <anil.s.keshavamurthy@intel.com>, "David S. Miller" <davem@davemloft.net>,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Poirier
- <mathieu.poirier@linaro.org>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Harry Wei <harryxiyou@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Michal Simek
- <monstr@monstr.eu>, Jeff Dike <jdike@addtoit.com>, Richard Weinberger
- <richard@nod.at>, Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
- <hpa@zytor.com>, x86@kernel.org, Chris Zankel <chris@zankel.net>, Max
- Filippov <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>, David Howells
- <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>, Herbert Xu
- <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie
- <airlied@linux.ie>, Gustavo Padovan <gustavo@padovan.org>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Sean Paul
- <seanpaul@chromium.org>, Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
- Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>, Kent
- Overstreet <kent.overstreet@gmail.com>, Malcolm Priestley
- <tvboxspy@gmail.com>, Antoine Jacquet <royale@zerezo.com>, Sudip Mukherjee
- <sudipm.mukherjee@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, "Paul
- E. McKenney" <paulmck@linux.vnet.ibm.com>, Josh Triplett
- <josh@joshtriplett.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Juergen Gross
- <jgross@suse.com>, Li Zefan <lizefan@huawei.com>, Paul Moore
- <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>, Eric Paris
- <eparis@parisplace.org>, James Morris <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
- <tiwai@suse.com>, Alan Stern <stern@rowland.harvard.edu>, Peter Zijlstra
- <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin
- <npiggin@gmail.com>, Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget
- <luc.maranget@inria.fr>, Akira Yokosawa <akiyks@gmail.com>, Arnaldo
- Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@redhat.com>, Namhyung
- Kim <namhyung@kernel.org>, linux-input@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@zh-kernel.org,
- user-mode-linux-devel@lists.sourceforge.net,
- user-mode-linux-user@lists.sourceforge.net, linux-xtensa@linux-xtensa.org,
- linux-block@vger.kernel.org, keyrings@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-clk@vger.kernel.org,
- dri-devel@lists.freedesktop.org, patches@opensource.cirrus.com,
- linux-bcache@vger.kernel.org, linux-usb@vger.kernel.org,
- devel@driverdev.osuosl.org, xen-devel@lists.xenproject.org,
- cgroups@vger.kernel.org, selinux@tycho.nsa.gov,
- linux-security-module@vger.kernel.org, alsa-devel@alsa-project.org
+       spf=neutral (google.com: 192.131.102.54 is neither permitted nor denied by best guess record for domain of stern+5af46fa8@rowland.harvard.edu) smtp.mailfrom=stern+5af46fa8@rowland.harvard.edu
+Date: Wed, 9 May 2018 15:11:07 -0400 (EDT)
+From: Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+cc: Andrea Parri <parri.andrea@gmail.com>,
+    Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+    Mauro Carvalho Chehab <mchehab@infradead.org>,
+     <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+    Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+    Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+    Linus Walleij <linus.walleij@linaro.org>,
+    Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+    Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+    "David S. Miller" <davem@davemloft.net>,
+    Masami Hiramatsu <mhiramat@kernel.org>,
+    Mathieu Poirier <mathieu.poirier@linaro.org>,
+    Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+    Harry Wei <harryxiyou@gmail.com>, Russell King <linux@armlinux.org.uk>,
+    Catalin Marinas <catalin.marinas@arm.com>,
+    Will Deacon <will.deacon@arm.com>, Michal Simek <monstr@monstr.eu>,
+    Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+    Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>,
+    Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+     <x86@kernel.org>, Chris Zankel <chris@zankel.net>,
+    Max Filippov <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+    David Howells <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>,
+    Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>,
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+    Michael Turquette <mturquette@baylibre.com>,
+    Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
+    Gustavo Padovan <gustavo@padovan.org>,
+    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+    Sean Paul <seanpaul@chromium.org>,
+    Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
+    Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>,
+    Kent Overstreet <kent.overstreet@gmail.com>,
+    Malcolm Priestley <tvboxspy@gmail.com>,
+    Antoine Jacquet <royale@zerezo.com>,
+    Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+    Steven Rostedt <rostedt@goodmis.org>,
+    "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+    Josh Triplett <josh@joshtriplett.org>,
+    Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+    Lai Jiangshan <jiangshanlai@gmail.com>,
+    Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+    Juergen Gross <jgross@suse.com>, Li Zefan <lizefan@huawei.com>,
+    Paul Moore <paul@paul-moore.com>, Stephen Smalley <sds@tycho.nsa.gov>,
+    Eric Paris <eparis@parisplace.org>, James Morris <jmorris@namei.org>,
+    "Serge E. Hallyn" <serge@hallyn.com>, Jaroslav Kysela <perex@perex.cz>,
+    Takashi Iwai <tiwai@suse.com>, Peter Zijlstra <peterz@infradead.org>,
+    Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
+    Jade Alglave <j.alglave@ucl.ac.uk>, Luc Maranget <luc.maranget@inria.fr>,
+    Akira Yokosawa <akiyks@gmail.com>,
+    Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+    Namhyung Kim <namhyung@kernel.org>,  <linux-input@vger.kernel.org>,
+     <devicetree@vger.kernel.org>,  <linux-gpio@vger.kernel.org>,
+     <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@zh-kernel.org>,
+     <user-mode-linux-devel@lists.sourceforge.net>,
+     <user-mode-linux-user@lists.sourceforge.net>,
+     <linux-xtensa@linux-xtensa.org>,  <linux-block@vger.kernel.org>,
+     <keyrings@vger.kernel.org>,  <linux-crypto@vger.kernel.org>,
+     <linux-clk@vger.kernel.org>,  <dri-devel@lists.freedesktop.org>,
+     <patches@opensource.cirrus.com>,  <linux-bcache@vger.kernel.org>,
+     <linux-usb@vger.kernel.org>,  <devel@driverdev.osuosl.org>,
+     <xen-devel@lists.xenproject.org>,  <cgroups@vger.kernel.org>,
+     <selinux@tycho.nsa.gov>,  <linux-security-module@vger.kernel.org>,
+     <alsa-devel@alsa-project.org>
 Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
-Message-ID: <20180509152045.722f0c51@vento.lan>
-In-Reply-To: <20180509171501.GA17405@andrea>
-References: <cover.1525870886.git.mchehab+samsung@kernel.org>
-	<e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
-	<20180509171501.GA17405@andrea>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+In-Reply-To: <20180509152045.722f0c51@vento.lan>
+Message-ID: <Pine.LNX.4.44L0.1805091509100.1391-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599992730865491295?=
-X-GMAIL-MSGID: =?utf-8?q?1600011772894781123?=
+X-GMAIL-MSGID: =?utf-8?q?1600014851361472802?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Em Wed, 9 May 2018 19:15:01 +0200
-Andrea Parri <parri.andrea@gmail.com> escreveu:
+On Wed, 9 May 2018, Mauro Carvalho Chehab wrote:
 
-> On Wed, May 09, 2018 at 10:18:52AM -0300, Mauro Carvalho Chehab wrote:
-> > As we move stuff around, some doc references are broken. Fix some of
-> > them via this script:
-> > 	./scripts/documentation-file-ref-check --fix-rst
+> Em Wed, 9 May 2018 19:15:01 +0200
+> Andrea Parri <parri.andrea@gmail.com> escreveu:
+
+> > >  tools/memory-model/README                     | 10 +++++-----  
 > > 
-> > Manually checked if the produced result is valid, removing a few
-> > false-positives.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
+> > As mentioned in the previous thread, I am for keeping the current
+> > references: the REAMDE is listing the doc files, as well as other
+> > files in tools/memory-model/, relatively to that directory.
 > 
-> Thank you again for doing this,
+> Yeah, at least this hunk deserves some rework, as now some
+> references are Documentation/.../foo, while others are just
+> bar.
 > 
+> As on (almost) all other places (except for tools/memory-model/README),
+> the references are always from the main directory, I would make all
+> patches there also relative to main dir. If you're afraid of
+> not being too clearer, we could prefix all of them with something
+> like:
 > 
-> > ---
-> >  .../admin-guide/kernel-parameters.txt         |  4 ++--
-> >  .../bindings/input/rotary-encoder.txt         |  2 +-
-> >  Documentation/driver-api/gpio/consumer.rst    |  2 +-
-> >  Documentation/kprobes.txt                     |  4 ++--
-> >  Documentation/trace/coresight.txt             |  2 +-
-> >  Documentation/trace/events.rst                |  2 +-
-> >  Documentation/trace/ftrace-uses.rst           |  2 +-
-> >  Documentation/trace/histogram.txt             |  2 +-
-> >  Documentation/trace/intel_th.rst              |  2 +-
-> >  Documentation/trace/tracepoint-analysis.rst   |  6 +++---
-> >  Documentation/translations/ja_JP/howto.rst    |  4 ++--
-> >  .../translations/zh_CN/magic-number.txt       |  4 ++--
-> >  .../zh_CN/video4linux/omap3isp.txt            |  4 ++--
-> >  MAINTAINERS                                   | 20 +++++++++----------
-> >  arch/Kconfig                                  |  2 +-
-> >  arch/arm/include/asm/cacheflush.h             |  2 +-
-> >  arch/arm64/include/asm/cacheflush.h           |  2 +-
-> >  arch/microblaze/include/asm/cacheflush.h      |  2 +-
-> >  arch/um/Kconfig.um                            |  2 +-
-> >  arch/unicore32/include/asm/cacheflush.h       |  2 +-
-> >  arch/x86/entry/vsyscall/vsyscall_64.c         |  2 +-
-> >  arch/xtensa/include/asm/cacheflush.h          |  4 ++--
-> >  block/Kconfig                                 |  2 +-
-> >  certs/Kconfig                                 |  2 +-
-> >  crypto/asymmetric_keys/asymmetric_type.c      |  2 +-
-> >  crypto/asymmetric_keys/signature.c            |  2 +-
-> >  drivers/char/Kconfig                          |  2 +-
-> >  drivers/clk/clk.c                             |  4 ++--
-> >  drivers/clk/ingenic/cgu.h                     |  2 +-
-> >  drivers/gpu/vga/Kconfig                       |  2 +-
-> >  drivers/gpu/vga/vgaarb.c                      |  2 +-
-> >  drivers/input/joystick/Kconfig                | 10 +++++-----
-> >  drivers/input/joystick/iforce/Kconfig         |  2 +-
-> >  drivers/input/joystick/walkera0701.c          |  2 +-
-> >  drivers/input/misc/Kconfig                    |  4 ++--
-> >  drivers/input/misc/rotary_encoder.c           |  2 +-
-> >  drivers/input/mouse/Kconfig                   |  6 +++---
-> >  drivers/input/mouse/alps.c                    |  2 +-
-> >  drivers/input/touchscreen/wm97xx-core.c       |  2 +-
-> >  drivers/lightnvm/pblk-rb.c                    |  2 +-
-> >  drivers/md/bcache/Kconfig                     |  2 +-
-> >  drivers/md/bcache/btree.c                     |  2 +-
-> >  drivers/md/bcache/extents.c                   |  2 +-
-> >  drivers/media/dvb-core/dvb_ringbuffer.c       |  2 +-
-> >  drivers/media/pci/meye/Kconfig                |  2 +-
-> >  drivers/media/platform/pxa_camera.c           |  4 ++--
-> >  .../soc_camera/sh_mobile_ceu_camera.c         |  2 +-
-> >  drivers/media/radio/Kconfig                   |  2 +-
-> >  drivers/media/radio/si470x/Kconfig            |  2 +-
-> >  drivers/media/usb/dvb-usb-v2/lmedm04.c        |  2 +-
-> >  drivers/media/usb/zr364xx/Kconfig             |  2 +-
-> >  drivers/parport/Kconfig                       |  6 +++---
-> >  drivers/staging/media/bcm2048/TODO            |  2 +-
-> >  include/keys/asymmetric-subtype.h             |  2 +-
-> >  include/keys/asymmetric-type.h                |  2 +-
-> >  include/linux/assoc_array.h                   |  2 +-
-> >  include/linux/assoc_array_priv.h              |  2 +-
-> >  include/linux/circ_buf.h                      |  2 +-
-> >  include/linux/ftrace.h                        |  2 +-
-> >  include/linux/rculist_nulls.h                 |  2 +-
-> >  include/uapi/linux/prctl.h                    |  2 +-
-> >  include/xen/interface/io/kbdif.h              |  2 +-
-> >  kernel/cgroup/cpuset.c                        |  2 +-
-> >  kernel/trace/Kconfig                          | 16 +++++++--------
-> >  lib/Kconfig                                   |  2 +-
-> >  security/selinux/hooks.c                      |  2 +-
-> >  sound/core/Kconfig                            |  4 ++--
-> >  sound/drivers/Kconfig                         |  4 ++--
-> >  sound/pci/Kconfig                             | 10 +++++-----
-> >  tools/include/uapi/linux/prctl.h              |  2 +-
-> >  tools/lib/api/fs/fs.c                         |  2 +-
-
-
-> >  tools/memory-model/README                     | 10 +++++-----  
+> 	${LINUX}/tools/memory-model/...
 > 
-> As mentioned in the previous thread, I am for keeping the current
-> references: the REAMDE is listing the doc files, as well as other
-> files in tools/memory-model/, relatively to that directory.
+> just like some DT binding files do:
+> 
+> 	Documentation/devicetree/bindings/sound/audio-graph-card.txt:see ${LINUX}/Documentation/devicetree/bindings/graph.txt
+> 
+> A bonus of doing that is that the broken reference detect script can
+> keep parsing it without changes (well, it wouldn't be hard to make
+> it also accept a relative file, but doing that just due to 
+> tools/memory-model/README seems overkill).
+> 
+> Another advantage is that it would allow to easily add references
+> there from the main kernel Documentation, if needed in the future,
+> without messing with local x non-local relative namespace.
 
-Yeah, at least this hunk deserves some rework, as now some
-references are Documentation/.../foo, while others are just
-bar.
+How about changing the relative references so that something like
+Documentation/recipes.txt becomes ./Documentation/recipes.txt?
 
-As on (almost) all other places (except for tools/memory-model/README),
-the references are always from the main directory, I would make all
-patches there also relative to main dir. If you're afraid of
-not being too clearer, we could prefix all of them with something
-like:
-
-	${LINUX}/tools/memory-model/...
-
-just like some DT binding files do:
-
-	Documentation/devicetree/bindings/sound/audio-graph-card.txt:see ${LINUX}/Documentation/devicetree/bindings/graph.txt
-
-A bonus of doing that is that the broken reference detect script can
-keep parsing it without changes (well, it wouldn't be hard to make
-it also accept a relative file, but doing that just due to 
-tools/memory-model/README seems overkill).
-
-Another advantage is that it would allow to easily add references
-there from the main kernel Documentation, if needed in the future,
-without messing with local x non-local relative namespace.
-
-Regards,
-Mauro
+Alan Stern
