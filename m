@@ -1,41 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756177AbeEIGsh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 02:48:37 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:58855 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755704AbeEIGsf (ORCPT
+        id S1756196AbeEIGyy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 02:54:54 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43131 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755704AbeEIGyw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 02:48:35 -0400
-X-ME-Sender: <xms:w5nyWvc8eWSznpt_2RY5_-8czMVGeNPy9UQi6ZA3vZVcj2ZuzEy8Og>
-Date: Wed, 9 May 2018 16:48:31 +1000
-From: "Tobin C. Harding" <tobin@apporbit.com>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, Armin Schindler <mac@melware.de>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        "open list:ISDN SUBSYSTEM" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] isdn: eicon: fix a missing-check bug
-Message-ID: <20180509064831.GA10497@eros>
-References: <1525548766-13017-1-git-send-email-wang6495@umn.edu>
- <CAAa=b7dm5zLsDHB69sNPvFkWwOjF6UV-pekEFmgrtKNod-XYSg@mail.gmail.com>
+        Wed, 9 May 2018 02:54:52 -0400
+X-Google-Smtp-Source: AB8JxZqHvqOEN9kXTbzMg6hN1wE8bCtVOWnR6RYbHnTUu1b1oHFzmEUr2dbNL6wwjkBntyBEfPbfow==
+Date: Wed, 9 May 2018 12:24:49 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Joel Fernandes <joelaf@google.com>, linux-pm@vger.kernel.org
+Subject: Re: [RFC PATCH] sched/cpufreq/schedutil: handling urgent frequency
+ requests
+Message-ID: <20180509065449.c5zotxqmuyatjgfd@vireshk-i7>
+References: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
+ <20180508065435.bcht6dyb3rpp6gk5@vireshk-i7>
+ <20180509045425.GA158882@joelaf.mtv.corp.google.com>
+ <20180509064530.GA1681@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAAa=b7dm5zLsDHB69sNPvFkWwOjF6UV-pekEFmgrtKNod-XYSg@mail.gmail.com>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180509064530.GA1681@localhost.localdomain>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 12:30:18AM -0500, Wenwen Wang wrote:
-> Hello
-> 
-> Could you please review this patch? We need a confirmation because we
-> are working on an approaching deadline.
+On 09-05-18, 08:45, Juri Lelli wrote:
+> On 08/05/18 21:54, Joel Fernandes wrote:
+> Isn't this potentially introducing unneeded irq pressure (and doing the
+> whole wakeup the kthread thing), while the already active kthread could
+> simply handle multiple back-to-back requests before going to sleep?
 
-I didn't know 'we' had deadlines :)
+And then we may need more instances of the work item and need to store
+a different value of next_freq with each work item, as we can't use
+the common one anymore as there would be races around accessing it ?
 
-
-	Tobin
+-- 
+viresh
