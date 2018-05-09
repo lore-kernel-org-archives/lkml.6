@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934647AbeEILpY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 07:45:24 -0400
+        id S934758AbeEILtM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 07:49:12 -0400
 Received: from mga14.intel.com ([192.55.52.115]:26332 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934376AbeEILpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 07:45:20 -0400
+        id S934508AbeEILpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 07:45:08 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
-   d="scan'208";a="54445894"
+   d="scan'208";a="54445849"
 From: Adrian Hunter <adrian.hunter@intel.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -21,9 +21,9 @@ Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH RFC 05/19] perf tools: Use the _stest symbol to identify the kernel map when loading kcore
-Date: Wed,  9 May 2018 14:43:34 +0300
-Message-Id: <1525866228-30321-6-git-send-email-adrian.hunter@intel.com>
+Subject: [PATCH RFC 02/19] kallsyms, x86: Export addresses of syscall trampolines
+Date: Wed,  9 May 2018 14:43:31 +0300
+Message-Id: <1525866228-30321-3-git-send-email-adrian.hunter@intel.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
 References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
@@ -32,51 +32,116 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The first symbol is not necessarily in the kernel text.  Instead of using
-the first symbol, use the _stest symbol to identify the kernel map when
-loading kcore.
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-This allows for the introduction of symbols to identify the x86_64 KPTI
-entry trampolines.
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 ---
- tools/perf/util/symbol.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ arch/x86/mm/cpu_entry_area.c | 23 +++++++++++++++++++++++
+ kernel/kallsyms.c            | 28 +++++++++++++++++++++++++++-
+ 2 files changed, 50 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index f48dc157c2bd..4a39f4d0a174 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -1149,7 +1149,7 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
- 	bool is_64_bit;
- 	int err, fd;
- 	char kcore_filename[PATH_MAX];
--	struct symbol *sym;
-+	u64 stext;
+diff --git a/arch/x86/mm/cpu_entry_area.c b/arch/x86/mm/cpu_entry_area.c
+index b45f5aaefd74..d1da5cf4b2de 100644
+--- a/arch/x86/mm/cpu_entry_area.c
++++ b/arch/x86/mm/cpu_entry_area.c
+@@ -2,6 +2,7 @@
  
- 	if (!kmaps)
- 		return -EINVAL;
-@@ -1198,13 +1198,13 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
- 		old_map = next;
+ #include <linux/spinlock.h>
+ #include <linux/percpu.h>
++#include <linux/kallsyms.h>
+ 
+ #include <asm/cpu_entry_area.h>
+ #include <asm/pgtable.h>
+@@ -150,6 +151,28 @@ static void __init setup_cpu_entry_area(int cpu)
+ 	percpu_setup_debug_store(cpu);
+ }
+ 
++#ifdef CONFIG_X86_64
++int arch_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
++		     char *name)
++{
++	unsigned int cpu, ncpu;
++
++	if (symnum >= num_possible_cpus())
++		return -EINVAL;
++
++	for (cpu = cpumask_first(cpu_possible_mask), ncpu = 0;
++	     cpu < num_possible_cpus() && ncpu < symnum;
++	     cpu = cpumask_next(cpu, cpu_possible_mask), ncpu++)
++		;
++
++	*value = (unsigned long)&get_cpu_entry_area(cpu)->entry_trampoline;
++	*type = 't';
++	strlcpy(name, "__entry_SYSCALL_64_trampoline", KSYM_NAME_LEN);
++
++	return 0;
++}
++#endif
++
+ static __init void setup_cpu_entry_area_ptes(void)
+ {
+ #ifdef CONFIG_X86_32
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index eda4b0222dab..ebe6befac47e 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -432,6 +432,7 @@ int sprint_backtrace(char *buffer, unsigned long address)
+ /* To avoid using get_symbol_offset for every symbol, we carry prefix along. */
+ struct kallsym_iter {
+ 	loff_t pos;
++	loff_t pos_arch_end;
+ 	loff_t pos_mod_end;
+ 	loff_t pos_ftrace_mod_end;
+ 	unsigned long value;
+@@ -443,9 +444,29 @@ struct kallsym_iter {
+ 	int show_value;
+ };
+ 
++int __weak arch_get_kallsym(unsigned int symnum, unsigned long *value,
++			    char *type, char *name)
++{
++	return -EINVAL;
++}
++
++static int get_ksymbol_arch(struct kallsym_iter *iter)
++{
++	int ret = arch_get_kallsym(iter->pos - kallsyms_num_syms,
++				   &iter->value, &iter->type,
++				   iter->name);
++
++	if (ret < 0) {
++		iter->pos_arch_end = iter->pos;
++		return 0;
++	}
++
++	return 1;
++}
++
+ static int get_ksymbol_mod(struct kallsym_iter *iter)
+ {
+-	int ret = module_get_kallsym(iter->pos - kallsyms_num_syms,
++	int ret = module_get_kallsym(iter->pos - iter->pos_arch_end,
+ 				     &iter->value, &iter->type,
+ 				     iter->name, iter->module_name,
+ 				     &iter->exported);
+@@ -501,6 +522,7 @@ static void reset_iter(struct kallsym_iter *iter, loff_t new_pos)
+ 	iter->nameoff = get_symbol_offset(new_pos);
+ 	iter->pos = new_pos;
+ 	if (new_pos == 0) {
++		iter->pos_arch_end = 0;
+ 		iter->pos_mod_end = 0;
+ 		iter->pos_ftrace_mod_end = 0;
  	}
+@@ -510,6 +532,10 @@ static int update_iter_mod(struct kallsym_iter *iter, loff_t pos)
+ {
+ 	iter->pos = pos;
  
--	/* Find the kernel map using the first symbol */
--	sym = dso__first_symbol(dso);
--	list_for_each_entry(new_map, &md.maps, node) {
--		if (sym && sym->start >= new_map->start &&
--		    sym->start < new_map->end) {
--			replacement_map = new_map;
--			break;
-+	/* Find the kernel map using the '_stext' symbol */
-+	if (!kallsyms__get_function_start(kallsyms_filename, "_stext", &stext)) {
-+		list_for_each_entry(new_map, &md.maps, node) {
-+			if (stext >= new_map->start && stext < new_map->end) {
-+				replacement_map = new_map;
-+				break;
-+			}
- 		}
- 	}
- 
++	if ((!iter->pos_arch_end || iter->pos_arch_end > pos) &&
++	    get_ksymbol_arch(iter))
++		return 1;
++
+ 	if ((!iter->pos_mod_end || iter->pos_mod_end > pos) &&
+ 	    get_ksymbol_mod(iter))
+ 		return 1;
 -- 
 1.9.1
