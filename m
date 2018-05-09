@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965799AbeEIRHb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:07:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54740 "EHLO mail.kernel.org"
+        id S935545AbeEIRI0 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:08:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935495AbeEIRH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 13:07:29 -0400
-Date: Wed, 9 May 2018 14:07:17 -0300
+        id S935512AbeEIRIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 13:08:24 -0400
+Date: Wed, 9 May 2018 14:08:09 -0300
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
@@ -17,238 +17,86 @@ Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH RFC 07/19] perf tools: Workaround missing maps for x86_64
- KPTI entry trampolines
-Message-ID: <20180509170717.GI13491@kernel.org>
+Subject: Re: [PATCH RFC 06/19] perf tools: Fix kernel_start for KPTI on x86_64
+Message-ID: <20180509170809.GJ13491@kernel.org>
 References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
- <1525866228-30321-8-git-send-email-adrian.hunter@intel.com>
+ <1525866228-30321-7-git-send-email-adrian.hunter@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1525866228-30321-8-git-send-email-adrian.hunter@intel.com>
+In-Reply-To: <1525866228-30321-7-git-send-email-adrian.hunter@intel.com>
 X-Url: http://acmel.wordpress.com
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, May 09, 2018 at 02:43:36PM +0300, Adrian Hunter escreveu:
-> On x86_64 the KPTI entry trampolines are not in the kernel map created by
-> perf tools. That results in the addresses having no symbols and prevents
-> annotation. It also causes Intel PT to have decoding errors at the
-> trampoline addresses. Workaround that by creating maps for the trampolines.
-> At present the kernel does not export information revealing where the
-> trampolines are. Until that happens, the addresses are hardcoded.
+Em Wed, May 09, 2018 at 02:43:35PM +0300, Adrian Hunter escreveu:
+> On x86_64, KPTI entry trampolines are less than the start of kernel text,
+> but still above 2^63. So leave kernel_start = 1ULL << 63 for x86_64.
 > 
 > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 > ---
->  tools/perf/util/machine.c | 104 ++++++++++++++++++++++++++++++++++++++++++++++
->  tools/perf/util/machine.h |   3 ++
->  tools/perf/util/symbol.c  |  12 +++---
->  3 files changed, 114 insertions(+), 5 deletions(-)
+>  tools/perf/util/machine.c | 16 +++++++++++++++-
+>  tools/perf/util/machine.h |  2 ++
+>  2 files changed, 17 insertions(+), 1 deletion(-)
 > 
 > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> index 22047ff3cf2a..1bf15aa0b099 100644
+> index 72a351613d85..22047ff3cf2a 100644
 > --- a/tools/perf/util/machine.c
 > +++ b/tools/perf/util/machine.c
-> @@ -851,6 +851,110 @@ static int machine__get_running_kernel_start(struct machine *machine,
+> @@ -2296,6 +2296,15 @@ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
 >  	return 0;
 >  }
 >  
-> +struct special_kernal_map {
-
-s/kernal/kernel/
-
-And "special"?
-
-> +	u64 start;
-> +	u64 end;
-> +	u64 pgoff;
-> +};
-> +
-> +static int machine__create_special_kernel_map(struct machine *machine,
-> +					      struct dso *kernel,
-> +					      struct special_kernal_map *sm)
-> +{
-> +	struct kmap *kmap;
-> +	struct map *map;
-> +
-> +	map = map__new2(sm->start, kernel);
-> +	if (!map)
-> +		return -1;
-> +
-> +	map->end   = sm->end;
-> +	map->pgoff = sm->pgoff;
-> +
-> +	kmap = map__kmap(map);
-> +
-> +	kmap->kmaps = &machine->kmaps;
-> +
-> +	map_groups__insert(&machine->kmaps, map);
-> +
-> +	pr_debug2("Added special kernel map %" PRIx64 "-%" PRIx64 "\n",
-> +		  map->start, map->end);
-> +
-> +	map__put(map);
-> +
-> +	return 0;
-> +}
-> +
-> +static u64 find_entry_trampoline(struct dso *dso)
-> +{
-> +	struct {
-> +		const char *name;
-> +		u64 addr;
-> +	} syms[] = {
-> +		/* Duplicates are removed so lookup all aliases */
-> +		{"_entry_trampoline", 0},
-> +		{"__entry_trampoline_start", 0},
-> +		{"entry_SYSCALL_64_trampoline", 0},
-
-We've been using named initializers consistently, so please change this
-to:
-
-	struct {
-		const char *name;
-		u64	   addr;
-	} syms[] = {
-		{ .name = "_entry_trampoline", },
-		{ .name = "__entry_trampoline_start", },
-		{ .name = "entry_SYSCALL_64_trampoline", },
-	},
-
-Also why do you have to lookup to all of them to them use just the first
-found? I.e. you say they are aliases, why not return the first symbol
-found, i.e. the above would be reduced to:
-
-	const char *syms[] = {
-		"_entry_trampoline",
-		"__entry_trampoline_start",
-		"entry_SYSCALL_64_trampoline",
-	},
-
-And then:
-
-	struct symbol *sym = dso__first_symbol(dso);
-	unsigned int i;
-
-	for (; sym; sym = dso__next_symbol(sym)) {
-		if (sym->binding != STB_GLOBAL)
-			continue;
-		for (i = 0; i < ARRAY_SIZE(syms); i++) {
-			if (!strcmp(sym->name, syms[i].name))
-				return sym->start;
-		}
-	}
-
-	return 0;
-
-> +	};
-> +	struct symbol *sym = dso__first_symbol(dso);
-> +	unsigned int i;
-> +
-> +	for (; sym; sym = dso__next_symbol(sym)) {
-> +		if (sym->binding != STB_GLOBAL)
-> +			continue;
-> +		for (i = 0; i < ARRAY_SIZE(syms); i++) {
-> +			if (!strcmp(sym->name, syms[i].name))
-> +				syms[i].addr = sym->start;
-> +		}
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(syms); i++) {
-> +		if (syms[i].addr)
-> +			return syms[i].addr;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
 > +/*
-> + * These values can be used for kernels that do not have symbols for the entry
-> + * trampolines in kallsyms.
+> + * Compares the raw arch string. N.B. see instead perf_env__arch() if a
+> + * normalized arch is needed.
 > + */
-> +#define X86_64_CPU_ENTRY_AREA_PER_CPU	0xfffffe0000000000ULL
-> +#define X86_64_CPU_ENTRY_AREA_SIZE	0x2c000
-> +#define X86_64_ENTRY_TRAMPOLINE		0x6000
-> +
-> +/* Map x86_64 KPTI entry trampolines */
-> +int machine__map_x86_64_entry_trampolines(struct machine *machine,
-> +					  struct dso *kernel)
+> +bool machine__is(struct machine *machine, const char *arch)
 > +{
-> +	u64 pgoff = find_entry_trampoline(kernel);
-> +	int nr_cpus_avail = 0, cpu;
-> +
-> +	if (!pgoff)
-> +		return 0;
-> +
-> +	if (machine->env)
-> +		nr_cpus_avail = machine->env->nr_cpus_avail;
-> +
-> +	/* Add a 1 page map for each CPU's entry trampoline */
-> +	for (cpu = 0; cpu < nr_cpus_avail; cpu++) {
-> +		u64 va = X86_64_CPU_ENTRY_AREA_PER_CPU +
-> +			 cpu * X86_64_CPU_ENTRY_AREA_SIZE +
-> +			 X86_64_ENTRY_TRAMPOLINE;
-> +		struct special_kernal_map sm = {
-> +			.start = va,
-> +			.end   = va + page_size,
-> +			.pgoff = pgoff,
-> +		};
-> +
-> +		if (machine__create_special_kernel_map(machine, kernel, &sm) < 0)
-> +			return -1;
-> +	}
-> +
-> +	return 0;
+> +	return machine->env && !strcmp(machine->env->arch, arch);
 > +}
 > +
->  static int
->  __machine__create_kernel_maps(struct machine *machine, struct dso *kernel)
+
+Please make machine__is(NULL) return false, to reduce boilerplate in
+callers:
+
+bool machine__is(struct machine *machine, const char *arch)
+{
+	return machine && machine->env && !strcmp(machine->env->arch, arch);
+}
+
+
+>  int machine__get_kernel_start(struct machine *machine)
 >  {
+>  	struct map *map = machine__kernel_map(machine);
+> @@ -2312,7 +2321,12 @@ int machine__get_kernel_start(struct machine *machine)
+>  	machine->kernel_start = 1ULL << 63;
+>  	if (map) {
+>  		err = map__load(map);
+> -		if (!err)
+> +		/*
+> +		 * On x86_64, KPTI entry trampolines are less than the
+> +		 * start of kernel text, but still above 2^63. So leave
+> +		 * kernel_start = 1ULL << 63 for x86_64.
+> +		 */
+> +		if (!err && !machine__is(machine, "x86_64"))
+>  			machine->kernel_start = map->start;
+>  	}
+>  	return err;
 > diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-> index b31d33b5aa2a..6e1c63d3a625 100644
+> index 388fb4741c54..b31d33b5aa2a 100644
 > --- a/tools/perf/util/machine.h
 > +++ b/tools/perf/util/machine.h
-> @@ -267,4 +267,7 @@ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
->   */
->  char *machine__resolve_kernel_addr(void *vmachine, unsigned long long *addrp, char **modp);
+> @@ -188,6 +188,8 @@ static inline bool machine__is_host(struct machine *machine)
+>  	return machine ? machine->pid == HOST_KERNEL_ID : false;
+>  }
 >  
-> +int machine__map_x86_64_entry_trampolines(struct machine *machine,
-> +					  struct dso *kernel);
+> +bool machine__is(struct machine *machine, const char *arch);
 > +
->  #endif /* __PERF_MACHINE_H */
-> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-> index 4a39f4d0a174..c3a1a89a61cb 100644
-> --- a/tools/perf/util/symbol.c
-> +++ b/tools/perf/util/symbol.c
-> @@ -1490,20 +1490,22 @@ int dso__load(struct dso *dso, struct map *map)
->  		goto out;
->  	}
+>  struct thread *__machine__findnew_thread(struct machine *machine, pid_t pid, pid_t tid);
+>  struct thread *machine__findnew_thread(struct machine *machine, pid_t pid, pid_t tid);
 >  
-> +	if (map->groups && map->groups->machine)
-> +		machine = map->groups->machine;
-> +	else
-> +		machine = NULL;
-> +
->  	if (dso->kernel) {
->  		if (dso->kernel == DSO_TYPE_KERNEL)
->  			ret = dso__load_kernel_sym(dso, map);
->  		else if (dso->kernel == DSO_TYPE_GUEST_KERNEL)
->  			ret = dso__load_guest_kernel_sym(dso, map);
->  
-> +		if (machine && machine__is(machine, "x86_64"))
-> +			machine__map_x86_64_entry_trampolines(machine, dso);
->  		goto out;
->  	}
->  
-> -	if (map->groups && map->groups->machine)
-> -		machine = map->groups->machine;
-> -	else
-> -		machine = NULL;
-> -
->  	dso->adjust_symbols = 0;
->  
->  	if (perfmap) {
 > -- 
 > 1.9.1
