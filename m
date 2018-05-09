@@ -1,115 +1,131 @@
-Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqJY0UuXkVBgltt+77yJ4ZnEnHKdUWeYAsGgU78SGdO5tEHF6OlS8m5/7HwrmS1+RViWmyK
-ARC-Seal: i=1; a=rsa-sha256; t=1525767101; cv=none;
+Return-Path: <fthain@telegraphics.com.au>
+X-Google-Smtp-Source: AB8JxZpMEUO3qTFIRNa5Q8aBWfVk0uVswAsTXr4jUbSLe5JAf+LIMQQqw2dGmUiCDU00XwelHrVO
+ARC-Seal: i=1; a=rsa-sha256; t=1525827882; cv=none;
         d=google.com; s=arc-20160816;
-        b=UjOYH2shmpvN+llNbpl9w4b3ivH4bWWkiLJxzWkGGSqV0HkJFuMrkuTxHsUkjGr1kV
-         419xFccBtRZVcUUco3uSomdC2OTDbmuxvNz/XZJ6kgGJmvIFM5THWOFQU4O4ecXjaJB3
-         nnpVnRpdJwLBVM+lu1K2Pgy5sPwUBEOXhQIqDsAN2vQ4QebUgVxIzrOEmbrGIAITQvQL
-         qsuPmVjWGQpCVk5dLueBZ8bmQzk2a3fyczjGNcyDYcvMjCdT9MygYF9jTcXQtxrF9fiB
-         EasZXfOlbH+ajsuKEphNPcf+WwwPcaVWHgNWjW5Fip1EDLAkL38ibRNAKkzI9rXEz6cr
-         igfA==
+        b=xloE9YD1ryn8P/ZTiBEjM4urjtcDPK+h8oP/0OJAuA/73+ooq8DPkcmoWI5cl9MwM+
+         /0pQufkXxnO455rSTaDLq8RN6G4Bszmee9wUF+TvuLs5SvnXaOcg1j1JK5liyx/wC/5F
+         MARGsekyz2ZYUNjKQpFgdASYDP95c1lfD2kRaoZraXIj2xga0z6GESlNUMsAaCESAVqr
+         LLFHjcbTsdBmHnv//xSaRZB/fATskOxKZw01PX4cUMYRkBbTa3AU/C7Fem0UX7SM2itf
+         yuWeMgzGt+NaVE5rMYp+B/AqJwipNxiMrPxPaP7NBm4foJEE/tk4t129EUpKFCUIKUtH
+         n2WQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=tzNxe/PGAWuvni1irATmMN61Z5xQh6PAKRe007dkuZg=;
-        b=TDYzu1+HJuAy/O+2b4+1MormXyg6dm/Ksye36GFBnpztQhdai801GT34LPlq4Mp/pN
-         9p75C63O/COgTtJmt2VM8qiMBTQOw5HugtWXoUUwoqEhtMPAhNeL4aGqyBf1Op0aJJG/
-         MwzXOGILnSEPhV4yIA0f9WgEyK94ebcvvnp+Uuvao6zk26TnTXn2pABm/BZODsjM6wOt
-         f+4bxCgeXAGjLCHSnSccOGLO46deBIXgBIKMOrQDN54LcFw4GYdmc2K0h/iJ069WscxD
-         +fJvHD/v4rwsX0F1a3qGYuCWrxW2ZEkIfsu6HIhq12XQIYWGuTRZN9CwxKUCKOD1KN7q
-         1Avw==
+        h=resent-message-id:resent-subject:resent-to:resent-from:resent-date
+         :subject:from:cc:to:date:message-id:arc-authentication-results;
+        bh=+bhYWF+FFP3sMU+CQzvSBLxS7Xtjn8k42FrCIZOQ3dc=;
+        b=HBT8GT+zVkTyK+ukLddhfxp3zVyzl62ABS9MqwgBXsOZLUkQFuYLX3bKVgx/0kfJjs
+         koToL0+eSTEviIc7n4B4gblFgmFgWD7C1tgNZq0cugbW5K4d31eeLe/eQtk8Uu7wWx2x
+         neBYZHvCCizur75oM6mNx/7t9ULbJXBe93dXYm/6A7eixTkf+Lr02cyRQS5cVyDU3iWS
+         zfunC8KvTevE0bCuRe8pY8XqZySfIGjb8MpqKrqwMZGRv2k5qPoPK83WvGY4hTjSWAHT
+         oMMBKVqG45+ApcclsfzK6uY/46Xv6MVdO56gldJHO3r9UXBBmC3bI11njyOEujg//0WG
+         LbMA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=aI9toV+/;
-       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
+       spf=pass (google.com: best guess record for domain of fthain@telegraphics.com.au designates 98.124.60.144 as permitted sender) smtp.mailfrom=fthain@telegraphics.com.au
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=aI9toV+/;
-       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+       spf=pass (google.com: best guess record for domain of fthain@telegraphics.com.au designates 98.124.60.144 as permitted sender) smtp.mailfrom=fthain@telegraphics.com.au
+Message-Id: <5af2492a.1c69fb81.4c7ec.4cbaSMTPIN_ADDED_MISSING@mx.google.com>
+Date: Wed, 09 May 2018 11:04:48 +1000
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	syzbot+9c0d616860575a73166a@syzkaller.appspotmail.com,
-	syzbot+4e9ae7fa46233396f64d@syzkaller.appspotmail.com,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.16 10/52] tracepoint: Do not warn on ENOMEM
-Date: Tue,  8 May 2018 10:10:08 +0200
-Message-Id: <20180508073929.363979577@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
-References: <20180508073928.058320984@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+    linux-m68k@lists.linux-m68k.org,
+    linux-kernel@vger.kernel.org
+From: Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH v2] nubus: Call bus_register unconditionally
+ReSent-Date: Wed, 9 May 2018 11:04:40 +1000 (AEST)
+ReSent-From: fthain@telegraphics.com.au
+ReSent-To: geert@linux-m68k.org, gregkh@linuxfoundation.org,
+    linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+ReSent-Subject: [PATCH v2] nubus: Call bus_register unconditionally
+ReSent-Message-ID: <alpine.LNX.2.21.1805091104400.8@nippy.intranet>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882764347607574?=
-X-GMAIL-MSGID: =?utf-8?q?1599882764347607574?=
+X-GMAIL-THRID: =?utf-8?q?1599946498073404911?=
+X-GMAIL-MSGID: =?utf-8?q?1599946498073404911?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+Loading a NuBus driver module on a non-NuBus machine triggers the
+BUG_ON(!drv->bus->p) in driver_register(), because bus_register() was
+not called, because it is conditional on MACH_IS_MAC.
 
-------------------
+Fix the crash by calling bus_register() unconditionally. Call it from
+a postcore_initcall(), like other busses do.
 
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Hence, the bus type is available for device_register(), which happens
+in a subsys initcall, and for driver_register(), which happens in a
+device or module initcall.
 
-commit d66a270be3310d7aa132fec0cea77d3d32a0ff75 upstream.
-
-Tracepoint should only warn when a kernel API user does not respect the
-required preconditions (e.g. same tracepoint enabled twice, or called
-to remove a tracepoint that does not exist).
-
-Silence warning in out-of-memory conditions, given that the error is
-returned to the caller.
-
-This ensures that out-of-memory error-injection testing does not trigger
-warnings in tracepoint.c, which were seen by syzbot.
-
-Link: https://lkml.kernel.org/r/001a114465e241a8720567419a72@google.com
-Link: https://lkml.kernel.org/r/001a1140e0de15fc910567464190@google.com
-Link: http://lkml.kernel.org/r/20180315124424.32319-1-mathieu.desnoyers@efficios.com
-
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Jiri Olsa <jolsa@redhat.com>
-CC: Arnaldo Carvalho de Melo <acme@kernel.org>
-CC: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC: Namhyung Kim <namhyung@kernel.org>
-CC: stable@vger.kernel.org
-Fixes: de7b2973903c6 ("tracepoint: Use struct pointer instead of name hash for reg/unreg tracepoints")
-Reported-by: syzbot+9c0d616860575a73166a@syzkaller.appspotmail.com
-Reported-by: syzbot+4e9ae7fa46233396f64d@syzkaller.appspotmail.com
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Michael Schmitz <schmitzmic@gmail.com>
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Fixes: 7f86c765a6a2 ("nubus: Add support for the driver model")
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- kernel/tracepoint.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changed since v1:
+- Improved commit log entry.
+- The device_register(&nubus_parent) stays in the subsys initcall.
+---
+ drivers/nubus/bus.c   | 19 +++++++------------
+ drivers/nubus/nubus.c |  2 +-
+ include/linux/nubus.h |  2 +-
+ 3 files changed, 9 insertions(+), 14 deletions(-)
 
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -207,7 +207,7 @@ static int tracepoint_add_func(struct tr
- 			lockdep_is_held(&tracepoints_mutex));
- 	old = func_add(&tp_funcs, func, prio);
- 	if (IS_ERR(old)) {
--		WARN_ON_ONCE(1);
-+		WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
- 		return PTR_ERR(old);
- 	}
+diff --git a/drivers/nubus/bus.c b/drivers/nubus/bus.c
+index d306c348c857..a59b6c4bb5b8 100644
+--- a/drivers/nubus/bus.c
++++ b/drivers/nubus/bus.c
+@@ -63,20 +63,15 @@ static struct device nubus_parent = {
+ 	.init_name	= "nubus",
+ };
  
-@@ -239,7 +239,7 @@ static int tracepoint_remove_func(struct
- 			lockdep_is_held(&tracepoints_mutex));
- 	old = func_remove(&tp_funcs, func);
- 	if (IS_ERR(old)) {
--		WARN_ON_ONCE(1);
-+		WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
- 		return PTR_ERR(old);
- 	}
+-int __init nubus_bus_register(void)
++static int __init nubus_bus_register(void)
+ {
+-	int err;
+-
+-	err = device_register(&nubus_parent);
+-	if (err)
+-		return err;
+-
+-	err = bus_register(&nubus_bus_type);
+-	if (!err)
+-		return 0;
++	return bus_register(&nubus_bus_type);
++}
++postcore_initcall(nubus_bus_register);
  
+-	device_unregister(&nubus_parent);
+-	return err;
++int __init nubus_parent_device_register(void)
++{
++	return device_register(&nubus_parent);
+ }
+ 
+ static void nubus_device_release(struct device *dev)
+diff --git a/drivers/nubus/nubus.c b/drivers/nubus/nubus.c
+index 4621ff98138c..bb0d63a44f41 100644
+--- a/drivers/nubus/nubus.c
++++ b/drivers/nubus/nubus.c
+@@ -875,7 +875,7 @@ static int __init nubus_init(void)
+ 		return 0;
+ 
+ 	nubus_proc_init();
+-	err = nubus_bus_register();
++	err = nubus_parent_device_register();
+ 	if (err)
+ 		return err;
+ 	nubus_scan_bus();
+diff --git a/include/linux/nubus.h b/include/linux/nubus.h
+index 6e8200215321..eba50b057f6f 100644
+--- a/include/linux/nubus.h
++++ b/include/linux/nubus.h
+@@ -163,7 +163,7 @@ void nubus_seq_write_rsrc_mem(struct seq_file *m,
+ unsigned char *nubus_dirptr(const struct nubus_dirent *nd);
+ 
+ /* Declarations relating to driver model objects */
+-int nubus_bus_register(void);
++int nubus_parent_device_register(void);
+ int nubus_device_register(struct nubus_board *board);
+ int nubus_driver_register(struct nubus_driver *ndrv);
+ void nubus_driver_unregister(struct nubus_driver *ndrv);
+-- 
+2.16.1
