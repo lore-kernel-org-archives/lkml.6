@@ -1,59 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933941AbeEIJye (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:54:34 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:56401 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933810AbeEIJyc (ORCPT
+        id S1756230AbeEIJ7v (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:59:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54398 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755400AbeEIJ7s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:54:32 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Laszlo Toth <laszlth@gmail.com>
-Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ACPI: add missing newline to printk
-Date: Wed, 09 May 2018 11:54:06 +0200
-Message-ID: <89768760.ar4GnIqtnF@aspire.rjw.lan>
-In-Reply-To: <20180410171038.GA4189@laszlth>
-References: <20180410171038.GA4189@laszlth>
+        Wed, 9 May 2018 05:59:48 -0400
+Date: Wed, 9 May 2018 11:59:38 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
+        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+Subject: Re: [PATCH 6/7] psi: pressure stall information for CPU, memory, and
+ IO
+Message-ID: <20180509095938.GJ12217@hirez.programming.kicks-ass.net>
+References: <20180507210135.1823-1-hannes@cmpxchg.org>
+ <20180507210135.1823-7-hannes@cmpxchg.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507210135.1823-7-hannes@cmpxchg.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, April 10, 2018 7:10:38 PM CEST Laszlo Toth wrote:
-> ...and restore reverse xmas tree while at it.
-> 
-> Signed-off-by: Laszlo Toth <laszlth@gmail.com>
-> ---
->  drivers/acpi/reboot.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/reboot.c b/drivers/acpi/reboot.c
-> index 71769fd..6fa9c2a 100644
-> --- a/drivers/acpi/reboot.c
-> +++ b/drivers/acpi/reboot.c
-> @@ -8,8 +8,8 @@ void acpi_reboot(void)
->  {
->  	struct acpi_generic_address *rr;
->  	struct pci_bus *bus0;
-> -	u8 reset_value;
->  	unsigned int devfn;
-> +	u8 reset_value;
->  
->  	if (acpi_disabled)
->  		return;
-> @@ -40,7 +40,7 @@ void acpi_reboot(void)
->  		/* Form PCI device/function pair. */
->  		devfn = PCI_DEVFN((rr->address >> 32) & 0xffff,
->  				  (rr->address >> 16) & 0xffff);
-> -		printk(KERN_DEBUG "Resetting with ACPI PCI RESET_REG.");
-> +		printk(KERN_DEBUG "Resetting with ACPI PCI RESET_REG.\n");
->  		/* Write the value that resets us. */
->  		pci_bus_write_config_byte(bus0, devfn,
->  				(rr->address & 0xffff), reset_value);
-> 
+On Mon, May 07, 2018 at 05:01:34PM -0400, Johannes Weiner wrote:
+> diff --git a/include/linux/psi_types.h b/include/linux/psi_types.h
+> new file mode 100644
+> index 000000000000..b22b0ffc729d
+> --- /dev/null
+> +++ b/include/linux/psi_types.h
+> @@ -0,0 +1,84 @@
+> +#ifndef _LINUX_PSI_TYPES_H
+> +#define _LINUX_PSI_TYPES_H
+> +
+> +#include <linux/types.h>
+> +
+> +#ifdef CONFIG_PSI
+> +
+> +/* Tracked task states */
+> +enum psi_task_count {
+> +	NR_RUNNING,
+> +	NR_IOWAIT,
+> +	NR_MEMSTALL,
+> +	NR_PSI_TASK_COUNTS,
+> +};
+> +
+> +/* Task state bitmasks */
+> +#define TSK_RUNNING	(1 << NR_RUNNING)
+> +#define TSK_IOWAIT	(1 << NR_IOWAIT)
+> +#define TSK_MEMSTALL	(1 << NR_MEMSTALL)
+> +
+> +/* Resources that workloads could be stalled on */
+> +enum psi_res {
+> +	PSI_CPU,
+> +	PSI_MEM,
+> +	PSI_IO,
+> +	NR_PSI_RESOURCES,
+> +};
+> +
+> +/* Pressure states for a group of tasks */
+> +enum psi_state {
+> +	PSI_NONE,		/* No stalled tasks */
+> +	PSI_SOME,		/* Stalled tasks & working tasks */
+> +	PSI_FULL,		/* Stalled tasks & no working tasks */
+> +	NR_PSI_STATES,
+> +};
+> +
+> +struct psi_resource {
+> +	/* Current pressure state for this resource */
+> +	enum psi_state state;
+> +
+> +	/* Start of current state (cpu_clock) */
+> +	u64 state_start;
+> +
+> +	/* Time sampling buckets for pressure states (ns) */
+> +	u64 times[NR_PSI_STATES - 1];
 
-Applied, thanks!
+Fails to explain why no FULL.
+
+> +};
+> +
+> +struct psi_group_cpu {
+> +	/* States of the tasks belonging to this group */
+> +	unsigned int tasks[NR_PSI_TASK_COUNTS];
+> +
+
+AFAICT there's a hole here, that would fit the @nonidle member. Which
+also avoids the later hole generated by it.
+
+> +	/* Per-resource pressure tracking in this group */
+> +	struct psi_resource res[NR_PSI_RESOURCES];
+> +
+> +	/* There are runnable or D-state tasks */
+> +	bool nonidle;
+
+Mandatory complaint about using _Bool in composites goes here.
+
+> +	/* Start of current non-idle state (cpu_clock) */
+> +	u64 nonidle_start;
+> +
+> +	/* Time sampling bucket for non-idle state (ns) */
+> +	u64 nonidle_time;
+> +};
+> +
+> +struct psi_group {
+> +	struct psi_group_cpu *cpus;
+> +
+> +	struct delayed_work clock_work;
+> +	unsigned long period_expires;
+> +
+> +	u64 some[NR_PSI_RESOURCES];
+> +	u64 full[NR_PSI_RESOURCES];
+> +
+> +	unsigned long avg_some[NR_PSI_RESOURCES][3];
+> +	unsigned long avg_full[NR_PSI_RESOURCES][3];
+> +};
