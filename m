@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934133AbeEIIjO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:39:14 -0400
-Received: from mga01.intel.com ([192.55.52.88]:40122 "EHLO mga01.intel.com"
+        id S934161AbeEIIjY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:39:24 -0400
+Received: from mga11.intel.com ([192.55.52.93]:63119 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933715AbeEIIjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:39:08 -0400
+        id S933715AbeEIIjS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 04:39:18 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
-   d="scan'208";a="52769517"
+   d="scan'208";a="52769560"
 From: "Huang, Ying" <ying.huang@intel.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -23,9 +23,9 @@ Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: [PATCH -mm -V2 03/21] mm, THP, swap: Support PMD swap mapping in swap_duplicate()
-Date: Wed,  9 May 2018 16:38:28 +0800
-Message-Id: <20180509083846.14823-4-ying.huang@intel.com>
+Subject: [PATCH -mm -V2 05/21] mm, THP, swap: Support PMD swap mapping in free_swap_and_cache()/swap_free()
+Date: Wed,  9 May 2018 16:38:30 +0800
+Message-Id: <20180509083846.14823-6-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180509083846.14823-1-ying.huang@intel.com>
 References: <20180509083846.14823-1-ying.huang@intel.com>
@@ -35,67 +35,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huang Ying <ying.huang@intel.com>
 
-To support to swapin the THP as a whole, we need to create PMD swap
-mapping during swapout, and maintain PMD swap mapping count.  This
-patch implements the support to increase the PMD swap mapping
-count (for swapout, fork, etc.)  and set SWAP_HAS_CACHE flag (for
-swapin, etc.) for a huge swap cluster in swap_duplicate() function
-family.  Although it only implements a part of the design of the swap
-reference count with PMD swap mapping, the whole design is described
-as follow to make it easy to understand the patch and the whole
-picture.
+When a PMD swap mapping is removed from a huge swap cluster, for
+example, unmap a memory range mapped with PMD swap mapping, etc,
+free_swap_and_cache() will be called to decrease the reference count
+to the huge swap cluster.  free_swap_and_cache() may also free or
+split the huge swap cluster, and free the corresponding THP in swap
+cache if necessary.  swap_free() is similar, and shares most
+implementation with free_swap_and_cache().  This patch revises
+free_swap_and_cache() and swap_free() to implement this.
 
-A huge swap cluster is used to hold the contents of a swapouted THP.
-After swapout, a PMD page mapping to the THP will become a PMD
-swap mapping to the huge swap cluster via a swap entry in PMD.  While
-a PTE page mapping to a subpage of the THP will become the PTE swap
-mapping to a swap slot in the huge swap cluster via a swap entry in
-PTE.
+If the swap cluster has been split already, for example, because of
+failing to allocate a THP during swapin, we just decrease one from the
+reference count of all swap slots.
 
-If there is no PMD swap mapping and the corresponding THP is removed
-from the page cache (reclaimed), the huge swap cluster will be split
-and become a normal swap cluster.
-
-The count (cluster_count()) of the huge swap cluster is
-SWAPFILE_CLUSTER (= HPAGE_PMD_NR) + PMD swap mapping count.  Because
-all swap slots in the huge swap cluster are mapped by PTE or PMD, or
-has SWAP_HAS_CACHE bit set, the usage count of the swap cluster is
-HPAGE_PMD_NR.  And the PMD swap mapping count is recorded too to make
-it easy to determine whether there are remaining PMD swap mappings.
-
-The count in swap_map[offset] is the sum of PTE and PMD swap mapping
-count.  This means when we increase the PMD swap mapping count, we
-need to increase swap_map[offset] for all swap slots inside the swap
-cluster.  An alternative choice is to make swap_map[offset] to record
-PTE swap map count only, given we have recorded PMD swap mapping count
-in the count of the huge swap cluster.  But this need to increase
-swap_map[offset] when splitting the PMD swap mapping, that may fail
-because of memory allocation for swap count continuation.  That is
-hard to dealt with.  So we choose current solution.
-
-The PMD swap mapping to a huge swap cluster may be split when unmap a
-part of PMD mapping etc.  That is easy because only the count of the
-huge swap cluster need to be changed.  When the last PMD swap mapping
-is gone and SWAP_HAS_CACHE is unset, we will split the huge swap
-cluster (clear the huge flag).  This makes it easy to reason the
-cluster state.
-
-A huge swap cluster will be split when splitting the THP in swap
-cache, or failing to allocate THP during swapin, etc.  But when
-splitting the huge swap cluster, we will not try to split all PMD swap
-mappings, because we haven't enough information available for that
-sometimes.  Later, when the PMD swap mapping is duplicated or swapin,
-etc, the PMD swap mapping will be split and fallback to the PTE
-operation.
-
-When a THP is added into swap cache, the SWAP_HAS_CACHE flag will be
-set in the swap_map[offset] of all swap slots inside the huge swap
-cluster backing the THP.  This huge swap cluster will not be split
-unless the THP is split even if its PMD swap mapping count dropped to
-0.  Later, when the THP is removed from swap cache, the SWAP_HAS_CACHE
-flag will be cleared in the swap_map[offset] of all swap slots inside
-the huge swap cluster.  And this huge swap cluster will be split if
-its PMD swap mapping count is 0.
+Otherwise, we will decrease one from the reference count of all swap
+slots and the PMD swap mapping count in cluster_count().  When the
+corresponding THP isn't in swap cache, if PMD swap mapping count
+becomes 0, the huge swap cluster will be split, and if all swap count
+becomes 0, the huge swap cluster will be freed.  When the corresponding
+THP is in swap cache, if every swap_map[offset] == SWAP_HAS_CACHE, we
+will try to delete the THP from swap cache.  Which will cause the THP
+and the huge swap cluster be freed.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -110,493 +70,366 @@ Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 ---
- include/linux/huge_mm.h |   5 +
- include/linux/swap.h    |   9 +-
- mm/memory.c             |   2 +-
- mm/rmap.c               |   2 +-
- mm/swapfile.c           | 287 +++++++++++++++++++++++++++++++++---------------
- 5 files changed, 213 insertions(+), 92 deletions(-)
+ arch/s390/mm/pgtable.c |   2 +-
+ include/linux/swap.h   |   9 ++--
+ kernel/power/swap.c    |   4 +-
+ mm/madvise.c           |   2 +-
+ mm/memory.c            |   4 +-
+ mm/shmem.c             |   6 +--
+ mm/swapfile.c          | 114 +++++++++++++++++++++++++++++++++++++++++++------
+ 7 files changed, 116 insertions(+), 25 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index a8a126259bc4..0d0cfddbf4b7 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -79,6 +79,11 @@ extern struct kobj_attribute shmem_enabled_attr;
- #define HPAGE_PMD_ORDER (HPAGE_PMD_SHIFT-PAGE_SHIFT)
- #define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
+diff --git a/arch/s390/mm/pgtable.c b/arch/s390/mm/pgtable.c
+index 4f2b65d01a70..2bb82ad677ec 100644
+--- a/arch/s390/mm/pgtable.c
++++ b/arch/s390/mm/pgtable.c
+@@ -646,7 +646,7 @@ static void ptep_zap_swap_entry(struct mm_struct *mm, swp_entry_t entry)
  
-+static inline bool thp_swap_supported(void)
-+{
-+	return IS_ENABLED(CONFIG_THP_SWAP);
-+}
-+
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- #define HPAGE_PMD_SHIFT PMD_SHIFT
- #define HPAGE_PMD_SIZE	((1UL) << HPAGE_PMD_SHIFT)
+ 		dec_mm_counter(mm, mm_counter(page));
+ 	}
+-	free_swap_and_cache(entry);
++	free_swap_and_cache(entry, false);
+ }
+ 
+ void ptep_zap_unused(struct mm_struct *mm, unsigned long addr,
 diff --git a/include/linux/swap.h b/include/linux/swap.h
-index f73eafcaf4e9..57aa655ab27d 100644
+index 57aa655ab27d..7ed2c727c9b6 100644
 --- a/include/linux/swap.h
 +++ b/include/linux/swap.h
-@@ -451,8 +451,8 @@ extern swp_entry_t get_swap_page_of_type(int);
- extern int get_swap_pages(int n, bool cluster, swp_entry_t swp_entries[]);
- extern int add_swap_count_continuation(swp_entry_t, gfp_t);
+@@ -453,9 +453,9 @@ extern int add_swap_count_continuation(swp_entry_t, gfp_t);
  extern void swap_shmem_alloc(swp_entry_t);
--extern int swap_duplicate(swp_entry_t);
--extern int swapcache_prepare(swp_entry_t);
-+extern int swap_duplicate(swp_entry_t *entry, bool cluster);
-+extern int swapcache_prepare(swp_entry_t entry, bool cluster);
- extern void swap_free(swp_entry_t);
+ extern int swap_duplicate(swp_entry_t *entry, bool cluster);
+ extern int swapcache_prepare(swp_entry_t entry, bool cluster);
+-extern void swap_free(swp_entry_t);
++extern void swap_free(swp_entry_t entry, bool cluster);
  extern void swapcache_free_entries(swp_entry_t *entries, int n);
- extern int free_swap_and_cache(swp_entry_t);
-@@ -510,7 +510,8 @@ static inline void show_swap_cache_info(void)
+-extern int free_swap_and_cache(swp_entry_t);
++extern int free_swap_and_cache(swp_entry_t entry, bool cluster);
+ extern int swap_type_of(dev_t, sector_t, struct block_device **);
+ extern unsigned int count_swap_pages(int, int);
+ extern sector_t map_swap_page(struct page *, struct block_device **);
+@@ -509,7 +509,8 @@ static inline void show_swap_cache_info(void)
+ {
  }
  
- #define free_swap_and_cache(e) ({(is_migration_entry(e) || is_device_private_entry(e));})
--#define swapcache_prepare(e) ({(is_migration_entry(e) || is_device_private_entry(e));})
-+#define swapcache_prepare(e, c)						\
+-#define free_swap_and_cache(e) ({(is_migration_entry(e) || is_device_private_entry(e));})
++#define free_swap_and_cache(e, c)					\
 +	({(is_migration_entry(e) || is_device_private_entry(e)); })
+ #define swapcache_prepare(e, c)						\
+ 	({(is_migration_entry(e) || is_device_private_entry(e)); })
  
- static inline int add_swap_count_continuation(swp_entry_t swp, gfp_t gfp_mask)
- {
-@@ -521,7 +522,7 @@ static inline void swap_shmem_alloc(swp_entry_t swp)
- {
- }
- 
--static inline int swap_duplicate(swp_entry_t swp)
-+static inline int swap_duplicate(swp_entry_t *swp, bool cluster)
- {
+@@ -527,7 +528,7 @@ static inline int swap_duplicate(swp_entry_t *swp, bool cluster)
  	return 0;
  }
+ 
+-static inline void swap_free(swp_entry_t swp)
++static inline void swap_free(swp_entry_t swp, bool cluster)
+ {
+ }
+ 
+diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+index 11b4282c2d20..0dec99decde1 100644
+--- a/kernel/power/swap.c
++++ b/kernel/power/swap.c
+@@ -182,7 +182,7 @@ sector_t alloc_swapdev_block(int swap)
+ 	offset = swp_offset(get_swap_page_of_type(swap));
+ 	if (offset) {
+ 		if (swsusp_extents_insert(offset))
+-			swap_free(swp_entry(swap, offset));
++			swap_free(swp_entry(swap, offset), false);
+ 		else
+ 			return swapdev_block(swap, offset);
+ 	}
+@@ -206,7 +206,7 @@ void free_all_swap_pages(int swap)
+ 		ext = rb_entry(node, struct swsusp_extent, node);
+ 		rb_erase(node, &swsusp_extents);
+ 		for (offset = ext->start; offset <= ext->end; offset++)
+-			swap_free(swp_entry(swap, offset));
++			swap_free(swp_entry(swap, offset), false);
+ 
+ 		kfree(ext);
+ 	}
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 4d3c922ea1a1..d180000c626b 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -349,7 +349,7 @@ static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
+ 			if (non_swap_entry(entry))
+ 				continue;
+ 			nr_swap--;
+-			free_swap_and_cache(entry);
++			free_swap_and_cache(entry, false);
+ 			pte_clear_not_present_full(mm, addr, pte, tlb->fullmm);
+ 			continue;
+ 		}
 diff --git a/mm/memory.c b/mm/memory.c
-index 345e562a138d..f012d77e1488 100644
+index f012d77e1488..835111148dad 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -951,7 +951,7 @@ copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 		swp_entry_t entry = pte_to_swp_entry(pte);
+@@ -1376,7 +1376,7 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
+ 			page = migration_entry_to_page(entry);
+ 			rss[mm_counter(page)]--;
+ 		}
+-		if (unlikely(!free_swap_and_cache(entry)))
++		if (unlikely(!free_swap_and_cache(entry, false)))
+ 			print_bad_pte(vma, addr, ptent, NULL);
+ 		pte_clear_not_present_full(mm, addr, pte, tlb->fullmm);
+ 	} while (pte++, addr += PAGE_SIZE, addr != end);
+@@ -3047,7 +3047,7 @@ int do_swap_page(struct vm_fault *vmf)
+ 	}
+ 	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
  
- 		if (likely(!non_swap_entry(entry))) {
--			if (swap_duplicate(entry) < 0)
-+			if (swap_duplicate(&entry, false) < 0)
- 				return entry.val;
+-	swap_free(entry);
++	swap_free(entry, false);
+ 	if (mem_cgroup_swap_full(page) ||
+ 	    (vma->vm_flags & VM_LOCKED) || PageMlocked(page))
+ 		try_to_free_swap(page);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 4d8a6f8e571f..df5bc74f1cb9 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -676,7 +676,7 @@ static int shmem_free_swap(struct address_space *mapping,
+ 	xa_unlock_irq(&mapping->i_pages);
+ 	if (old != radswap)
+ 		return -ENOENT;
+-	free_swap_and_cache(radix_to_swp_entry(radswap));
++	free_swap_and_cache(radix_to_swp_entry(radswap), false);
+ 	return 0;
+ }
  
- 			/* make sure dst_mm is on swapoff's mmlist. */
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 6db729dc4c50..5f45d6325c40 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1556,7 +1556,7 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 				break;
- 			}
+@@ -1211,7 +1211,7 @@ static int shmem_unuse_inode(struct shmem_inode_info *info,
+ 			spin_lock_irq(&info->lock);
+ 			info->swapped--;
+ 			spin_unlock_irq(&info->lock);
+-			swap_free(swap);
++			swap_free(swap, false);
+ 		}
+ 	}
+ 	return error;
+@@ -1750,7 +1750,7 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
  
--			if (swap_duplicate(entry) < 0) {
-+			if (swap_duplicate(&entry, false) < 0) {
- 				set_pte_at(mm, address, pvmw.pte, pteval);
- 				ret = false;
- 				page_vma_mapped_walk_done(&pvmw);
+ 		delete_from_swap_cache(page);
+ 		set_page_dirty(page);
+-		swap_free(swap);
++		swap_free(swap, false);
+ 
+ 	} else {
+ 		if (vma && userfaultfd_missing(vma)) {
 diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 5a280972bd87..7e1c5082d326 100644
+index ed1fec275d2f..819f5fd6918e 100644
 --- a/mm/swapfile.c
 +++ b/mm/swapfile.c
-@@ -49,6 +49,9 @@ static bool swap_count_continued(struct swap_info_struct *, pgoff_t,
- 				 unsigned char);
- static void free_swap_count_continuations(struct swap_info_struct *);
- static sector_t map_swap_entry(swp_entry_t, struct block_device**);
-+static int add_swap_count_continuation_locked(struct swap_info_struct *si,
-+					      unsigned long offset,
-+					      struct page *page);
- 
- DEFINE_SPINLOCK(swap_lock);
- static unsigned int nr_swapfiles;
-@@ -319,6 +322,11 @@ static inline void unlock_cluster_or_swap_info(struct swap_info_struct *si,
- 		spin_unlock(&si->lock);
+@@ -885,7 +885,7 @@ static int scan_swap_map_slots(struct swap_info_struct *si,
  }
  
-+static inline bool is_cluster_offset(unsigned long offset)
+ #ifdef CONFIG_THP_SWAP
+-static int swap_alloc_cluster(struct swap_info_struct *si, swp_entry_t *slot)
++static int __swap_alloc_cluster(struct swap_info_struct *si, swp_entry_t *slot)
+ {
+ 	unsigned long idx;
+ 	struct swap_cluster_info *ci;
+@@ -911,7 +911,7 @@ static int swap_alloc_cluster(struct swap_info_struct *si, swp_entry_t *slot)
+ 	return 1;
+ }
+ 
+-static void swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
++static void __swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
+ {
+ 	unsigned long offset = idx * SWAPFILE_CLUSTER;
+ 	struct swap_cluster_info *ci;
+@@ -924,11 +924,15 @@ static void swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
+ 	swap_range_free(si, offset, SWAPFILE_CLUSTER);
+ }
+ #else
+-static int swap_alloc_cluster(struct swap_info_struct *si, swp_entry_t *slot)
++static int __swap_alloc_cluster(struct swap_info_struct *si, swp_entry_t *slot)
+ {
+ 	VM_WARN_ON_ONCE(1);
+ 	return 0;
+ }
++
++static void __swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
 +{
-+	return !(offset % SWAPFILE_CLUSTER);
 +}
-+
- static inline bool cluster_list_empty(struct swap_cluster_list *list)
- {
- 	return cluster_is_null(&list->head);
-@@ -1166,16 +1174,14 @@ struct swap_info_struct *get_swap_device(swp_entry_t entry)
- 	return NULL;
- }
+ #endif /* CONFIG_THP_SWAP */
  
--static unsigned char __swap_entry_free(struct swap_info_struct *p,
--				       swp_entry_t entry, unsigned char usage)
-+static unsigned char __swap_entry_free_locked(struct swap_info_struct *p,
-+					      struct swap_cluster_info *ci,
-+					      unsigned long offset,
-+					      unsigned char usage)
- {
--	struct swap_cluster_info *ci;
--	unsigned long offset = swp_offset(entry);
- 	unsigned char count;
- 	unsigned char has_cache;
- 
--	ci = lock_cluster_or_swap_info(p, offset);
--
- 	count = p->swap_map[offset];
- 
- 	has_cache = count & SWAP_HAS_CACHE;
-@@ -1203,6 +1209,17 @@ static unsigned char __swap_entry_free(struct swap_info_struct *p,
- 	usage = count | has_cache;
- 	p->swap_map[offset] = usage ? : SWAP_HAS_CACHE;
- 
-+	return usage;
-+}
-+
-+static unsigned char __swap_entry_free(struct swap_info_struct *p,
-+				       swp_entry_t entry, unsigned char usage)
-+{
-+	struct swap_cluster_info *ci;
-+	unsigned long offset = swp_offset(entry);
-+
-+	ci = lock_cluster_or_swap_info(p, offset);
-+	usage = __swap_entry_free_locked(p, ci, offset, usage);
- 	unlock_cluster_or_swap_info(p, ci);
- 
- 	return usage;
-@@ -3444,32 +3461,12 @@ void si_swapinfo(struct sysinfo *val)
- 	spin_unlock(&swap_lock);
- }
- 
--/*
-- * Verify that a swap entry is valid and increment its swap map count.
-- *
-- * Returns error code in following case.
-- * - success -> 0
-- * - swp_entry is invalid -> EINVAL
-- * - swp_entry is migration entry -> EINVAL
-- * - swap-cache reference is requested but there is already one. -> EEXIST
-- * - swap-cache reference is requested but the entry is not used. -> ENOENT
-- * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
-- */
--static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
-+static int __swap_duplicate_locked(struct swap_info_struct *p,
-+				   unsigned long offset, unsigned char usage)
- {
--	struct swap_info_struct *p;
--	struct swap_cluster_info *ci;
--	unsigned long offset;
- 	unsigned char count;
- 	unsigned char has_cache;
--	int err = -EINVAL;
--
--	p = get_swap_device(entry);
--	if (!p)
--		goto out;
--
--	offset = swp_offset(entry);
--	ci = lock_cluster_or_swap_info(p, offset);
-+	int err = 0;
- 
- 	count = p->swap_map[offset];
- 
-@@ -3479,12 +3476,11 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
- 	 */
- 	if (unlikely(swap_count(count) == SWAP_MAP_BAD)) {
- 		err = -ENOENT;
--		goto unlock_out;
-+		goto out;
+ static unsigned long scan_swap_map(struct swap_info_struct *si,
+@@ -996,7 +1000,7 @@ int get_swap_pages(int n_goal, bool cluster, swp_entry_t swp_entries[])
+ 		}
+ 		if (cluster) {
+ 			if (!(si->flags & SWP_FILE))
+-				n_ret = swap_alloc_cluster(si, swp_entries);
++				n_ret = __swap_alloc_cluster(si, swp_entries);
+ 		} else
+ 			n_ret = scan_swap_map_slots(si, SWAP_HAS_CACHE,
+ 						    n_goal, swp_entries);
+@@ -1215,8 +1219,10 @@ static unsigned char __swap_entry_free_locked(struct swap_info_struct *p,
+ 				count = SWAP_MAP_MAX | COUNT_CONTINUED;
+ 			else
+ 				count = SWAP_MAP_MAX;
+-		} else
++		} else {
++			VM_BUG_ON(!count);
+ 			count--;
++		}
  	}
  
- 	has_cache = count & SWAP_HAS_CACHE;
- 	count &= ~SWAP_HAS_CACHE;
--	err = 0;
- 
- 	if (usage == SWAP_HAS_CACHE) {
- 
-@@ -3511,11 +3507,39 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
- 
- 	p->swap_map[offset] = count | has_cache;
- 
--unlock_out:
-+out:
-+	return err;
-+}
-+
-+/*
-+ * Verify that a swap entry is valid and increment its swap map count.
-+ *
-+ * Returns error code in following case.
-+ * - success -> 0
-+ * - swp_entry is invalid -> EINVAL
-+ * - swp_entry is migration entry -> EINVAL
-+ * - swap-cache reference is requested but there is already one. -> EEXIST
-+ * - swap-cache reference is requested but the entry is not used. -> ENOENT
-+ * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
-+ */
-+static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
-+{
-+	struct swap_info_struct *p;
-+	struct swap_cluster_info *ci;
-+	unsigned long offset;
-+	int err = -EINVAL;
-+
-+	p = get_swap_device(entry);
-+	if (!p)
-+		goto out;
-+
-+	offset = swp_offset(entry);
-+	ci = lock_cluster_or_swap_info(p, offset);
-+	err = __swap_duplicate_locked(p, offset, usage);
- 	unlock_cluster_or_swap_info(p, ci);
-+
-+	put_swap_device(p);
- out:
--	if (p)
--		put_swap_device(p);
- 	return err;
- }
- 
-@@ -3528,6 +3552,81 @@ void swap_shmem_alloc(swp_entry_t entry)
- 	__swap_duplicate(entry, SWAP_MAP_SHMEM);
+ 	usage = count | has_cache;
+@@ -1255,17 +1261,90 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
+ 	swap_range_free(p, offset, 1);
  }
  
 +#ifdef CONFIG_THP_SWAP
-+static int __swap_duplicate_cluster(swp_entry_t *entry, unsigned char usage)
++static unsigned char swap_free_cluster(struct swap_info_struct *si,
++				       swp_entry_t entry)
 +{
-+	struct swap_info_struct *si;
 +	struct swap_cluster_info *ci;
-+	unsigned long offset;
-+	unsigned char *map;
-+	int i, err = 0;
++	unsigned long offset = swp_offset(entry);
++	unsigned int count, i, free_entries = 0, cache_only = 0;
++	unsigned char *map, ret = 1;
 +
-+	si = get_swap_device(*entry);
-+	if (!si) {
-+		err = -EINVAL;
-+		goto out;
-+	}
-+	offset = swp_offset(*entry);
 +	ci = lock_cluster(si, offset);
-+	if (cluster_is_free(ci)) {
-+		err = -ENOENT;
-+		goto unlock;
-+	}
-+	if (!cluster_is_huge(ci)) {
-+		err = -ENOTDIR;
-+		goto unlock;
-+	}
 +	VM_BUG_ON(!is_cluster_offset(offset));
-+	VM_BUG_ON(cluster_count(ci) < SWAPFILE_CLUSTER);
-+	map = si->swap_map + offset;
-+	if (usage == SWAP_HAS_CACHE) {
-+		if (map[0] & SWAP_HAS_CACHE) {
-+			err = -EEXIST;
-+			goto unlock;
++	/* Cluster has been split, free each swap entries in cluster */
++	if (!cluster_is_huge(ci)) {
++		unlock_cluster(ci);
++		for (i = 0; i < SWAPFILE_CLUSTER; i++, entry.val++) {
++			if (!__swap_entry_free(si, entry, 1)) {
++				free_entries++;
++				free_swap_slot(entry);
++			}
 +		}
-+		for (i = 0; i < SWAPFILE_CLUSTER; i++) {
-+			VM_BUG_ON(map[i] & SWAP_HAS_CACHE);
-+			map[i] |= SWAP_HAS_CACHE;
-+		}
-+	} else {
-+		for (i = 0; i < SWAPFILE_CLUSTER; i++) {
-+retry:
-+			err = __swap_duplicate_locked(si, offset + i, 1);
-+			if (err == -ENOMEM) {
-+				struct page *page;
-+
-+				page = alloc_page(GFP_ATOMIC | __GFP_HIGHMEM);
-+				err = add_swap_count_continuation_locked(
-+					si, offset + i, page);
-+				if (err) {
-+					*entry = swp_entry(si->type, offset+i);
-+					goto undup;
-+				}
-+				goto retry;
-+			} else if (err)
-+				goto undup;
-+		}
-+		cluster_set_count(ci, cluster_count(ci) + 1);
++		return !(free_entries == SWAPFILE_CLUSTER);
 +	}
-+unlock:
++	count = cluster_count(ci) - 1;
++	VM_BUG_ON(count < SWAPFILE_CLUSTER);
++	cluster_set_count(ci, count);
++	map = si->swap_map + offset;
++	for (i = 0; i < SWAPFILE_CLUSTER; i++) {
++		if (map[i] == 1) {
++			map[i] = SWAP_MAP_BAD;
++			free_entries++;
++		} else if (__swap_entry_free_locked(si, ci, offset + i, 1) ==
++			   SWAP_HAS_CACHE)
++			cache_only++;
++	}
++	VM_BUG_ON(free_entries && (count != SWAPFILE_CLUSTER ||
++				   (map[0] & SWAP_HAS_CACHE)));
++	if (free_entries == SWAPFILE_CLUSTER)
++		memset(map, SWAP_HAS_CACHE, SWAPFILE_CLUSTER);
++	else if (!cluster_swapcount(ci) && !(map[0] & SWAP_HAS_CACHE))
++		cluster_clear_huge(ci);
 +	unlock_cluster(ci);
-+	put_swap_device(si);
-+out:
-+	return err;
-+undup:
-+	for (i--; i >= 0; i--)
-+		__swap_entry_free_locked(
-+			si, ci, offset + i, 1);
-+	goto unlock;
++	if (free_entries == SWAPFILE_CLUSTER) {
++		spin_lock(&si->lock);
++		mem_cgroup_uncharge_swap(entry, SWAPFILE_CLUSTER);
++		__swap_free_cluster(si, offset / SWAPFILE_CLUSTER);
++		spin_unlock(&si->lock);
++		ret = 0;
++	} else if (free_entries) {
++		ci = lock_cluster(si, offset);
++		for (i = 0; i < SWAPFILE_CLUSTER; i++, entry.val++) {
++			if (map[i] == SWAP_MAP_BAD) {
++				map[i] = SWAP_HAS_CACHE;
++				unlock_cluster(ci);
++				free_swap_slot(entry);
++				ci = lock_cluster(si, offset);
++			}
++		}
++		unlock_cluster(ci);
++	} else if (cache_only == SWAPFILE_CLUSTER)
++		ret = SWAP_HAS_CACHE;
++
++	return ret;
 +}
 +#else
-+static inline int __swap_duplicate_cluster(swp_entry_t *entry,
-+					   unsigned char usage)
++static inline unsigned char swap_free_cluster(struct swap_info_struct *si,
++					      swp_entry_t entry)
 +{
 +	return 0;
 +}
 +#endif
 +
  /*
-  * Increase reference count of swap entry by 1.
-  * Returns 0 for success, or -ENOMEM if a swap_count_continuation is required
-@@ -3535,12 +3634,15 @@ void swap_shmem_alloc(swp_entry_t entry)
-  * if __swap_duplicate() fails for another reason (-EINVAL or -ENOENT), which
-  * might occur if a page table entry has got corrupted.
+  * Caller has made sure that the swap device corresponding to entry
+  * is still around or has not been recycled.
   */
--int swap_duplicate(swp_entry_t entry)
-+int swap_duplicate(swp_entry_t *entry, bool cluster)
+-void swap_free(swp_entry_t entry)
++void swap_free(swp_entry_t entry, bool cluster)
  {
- 	int err = 0;
+ 	struct swap_info_struct *p;
  
--	while (!err && __swap_duplicate(entry, 1) == -ENOMEM)
--		err = add_swap_count_continuation(entry, GFP_ATOMIC);
-+	if (thp_swap_supported() && cluster)
-+		return __swap_duplicate_cluster(entry, 1);
-+
-+	while (!err && __swap_duplicate(*entry, 1) == -ENOMEM)
-+		err = add_swap_count_continuation(*entry, GFP_ATOMIC);
- 	return err;
+ 	p = _swap_info_get(entry);
+ 	if (p) {
+-		if (!__swap_entry_free(p, entry, 1))
++		if (thp_swap_supported() && cluster)
++			swap_free_cluster(p, entry);
++		else if (!__swap_entry_free(p, entry, 1))
+ 			free_swap_slot(entry);
+ 	}
  }
- 
-@@ -3552,9 +3654,12 @@ int swap_duplicate(swp_entry_t entry)
-  * -EBUSY means there is a swap cache.
-  * Note: return code is different from swap_duplicate().
+@@ -1326,7 +1405,7 @@ static void swapcache_free_cluster(swp_entry_t entry)
+ 	if (free_entries == SWAPFILE_CLUSTER) {
+ 		spin_lock(&si->lock);
+ 		mem_cgroup_uncharge_swap(entry, SWAPFILE_CLUSTER);
+-		swap_free_cluster(si, idx);
++		__swap_free_cluster(si, idx);
+ 		spin_unlock(&si->lock);
+ 	} else if (free_entries) {
+ 		for (i = 0; i < SWAPFILE_CLUSTER; i++, entry.val++) {
+@@ -1730,7 +1809,7 @@ int try_to_free_swap(struct page *page)
+  * Free the swap entry like above, but also try to
+  * free the page cache entry if it is the last user.
   */
--int swapcache_prepare(swp_entry_t entry)
-+int swapcache_prepare(swp_entry_t entry, bool cluster)
+-int free_swap_and_cache(swp_entry_t entry)
++int free_swap_and_cache(swp_entry_t entry, bool cluster)
  {
--	return __swap_duplicate(entry, SWAP_HAS_CACHE);
-+	if (thp_swap_supported() && cluster)
-+		return __swap_duplicate_cluster(&entry, SWAP_HAS_CACHE);
-+	else
-+		return __swap_duplicate(entry, SWAP_HAS_CACHE);
- }
+ 	struct swap_info_struct *p;
+ 	struct page *page = NULL;
+@@ -1741,7 +1820,8 @@ int free_swap_and_cache(swp_entry_t entry)
  
- struct swap_info_struct *swp_swap_info(swp_entry_t entry)
-@@ -3584,51 +3689,13 @@ pgoff_t __page_file_index(struct page *page)
- }
- EXPORT_SYMBOL_GPL(__page_file_index);
- 
--/*
-- * add_swap_count_continuation - called when a swap count is duplicated
-- * beyond SWAP_MAP_MAX, it allocates a new page and links that to the entry's
-- * page of the original vmalloc'ed swap_map, to hold the continuation count
-- * (for that entry and for its neighbouring PAGE_SIZE swap entries).  Called
-- * again when count is duplicated beyond SWAP_MAP_MAX * SWAP_CONT_MAX, etc.
-- *
-- * These continuation pages are seldom referenced: the common paths all work
-- * on the original swap_map, only referring to a continuation page when the
-- * low "digit" of a count is incremented or decremented through SWAP_MAP_MAX.
-- *
-- * add_swap_count_continuation(, GFP_ATOMIC) can be called while holding
-- * page table locks; if it fails, add_swap_count_continuation(, GFP_KERNEL)
-- * can be called after dropping locks.
-- */
--int add_swap_count_continuation(swp_entry_t entry, gfp_t gfp_mask)
-+static int add_swap_count_continuation_locked(struct swap_info_struct *si,
-+					      unsigned long offset,
-+					      struct page *page)
- {
--	struct swap_info_struct *si;
--	struct swap_cluster_info *ci;
- 	struct page *head;
--	struct page *page;
- 	struct page *list_page;
--	pgoff_t offset;
- 	unsigned char count;
--	int ret = 0;
--
--	/*
--	 * When debugging, it's easier to use __GFP_ZERO here; but it's better
--	 * for latency not to zero a page while GFP_ATOMIC and holding locks.
--	 */
--	page = alloc_page(gfp_mask | __GFP_HIGHMEM);
--
--	si = get_swap_device(entry);
--	if (!si) {
--		/*
--		 * An acceptable race has occurred since the failing
--		 * __swap_duplicate(): the swap device may be swapoff
--		 */
--		goto outer;
--	}
--	spin_lock(&si->lock);
--
--	offset = swp_offset(entry);
--
--	ci = lock_cluster(si, offset);
- 
- 	count = si->swap_map[offset] & ~SWAP_HAS_CACHE;
- 
-@@ -3638,13 +3705,11 @@ int add_swap_count_continuation(swp_entry_t entry, gfp_t gfp_mask)
- 		 * will race to add swap count continuation: we need to avoid
- 		 * over-provisioning.
- 		 */
--		goto out;
-+		return 0;
+ 	p = _swap_info_get(entry);
+ 	if (p) {
+-		count = __swap_entry_free(p, entry, 1);
++		count = cluster ? swap_free_cluster(p, entry) :
++			__swap_entry_free(p, entry, 1);
+ 		if (count == SWAP_HAS_CACHE &&
+ 		    !swap_page_trans_huge_swapped(p, entry)) {
+ 			page = find_get_page(swap_address_space(entry),
+@@ -1750,7 +1830,7 @@ int free_swap_and_cache(swp_entry_t entry)
+ 				put_page(page);
+ 				page = NULL;
+ 			}
+-		} else if (!count)
++		} else if (!count && !cluster)
+ 			free_swap_slot(entry);
+ 	}
+ 	if (page) {
+@@ -1914,7 +1994,7 @@ static int unuse_pte(struct vm_area_struct *vma, pmd_t *pmd,
+ 	}
+ 	set_pte_at(vma->vm_mm, addr, pte,
+ 		   pte_mkold(mk_pte(page, vma->vm_page_prot)));
+-	swap_free(entry);
++	swap_free(entry, false);
+ 	/*
+ 	 * Move the page to the active list so it is not
+ 	 * immediately swapped out again after swapon.
+@@ -2353,6 +2433,16 @@ int try_to_unuse(unsigned int type, bool frontswap,
  	}
  
--	if (!page) {
--		ret = -ENOMEM;
--		goto out;
--	}
-+	if (!page)
-+		return -ENOMEM;
- 
- 	/*
- 	 * We are fortunate that although vmalloc_to_page uses pte_offset_map,
-@@ -3692,7 +3757,57 @@ int add_swap_count_continuation(swp_entry_t entry, gfp_t gfp_mask)
- 	page = NULL;			/* now it's attached, don't free it */
- out_unlock_cont:
- 	spin_unlock(&si->cont_lock);
--out:
-+	if (page)
-+		__free_page(page);
-+	return 0;
-+}
-+
-+/*
-+ * add_swap_count_continuation - called when a swap count is duplicated
-+ * beyond SWAP_MAP_MAX, it allocates a new page and links that to the entry's
-+ * page of the original vmalloc'ed swap_map, to hold the continuation count
-+ * (for that entry and for its neighbouring PAGE_SIZE swap entries).  Called
-+ * again when count is duplicated beyond SWAP_MAP_MAX * SWAP_CONT_MAX, etc.
-+ *
-+ * These continuation pages are seldom referenced: the common paths all work
-+ * on the original swap_map, only referring to a continuation page when the
-+ * low "digit" of a count is incremented or decremented through SWAP_MAP_MAX.
-+ *
-+ * add_swap_count_continuation(, GFP_ATOMIC) can be called while holding
-+ * page table locks; if it fails, add_swap_count_continuation(, GFP_KERNEL)
-+ * can be called after dropping locks.
-+ */
-+int add_swap_count_continuation(swp_entry_t entry, gfp_t gfp_mask)
-+{
-+	struct swap_info_struct *si;
-+	struct swap_cluster_info *ci;
-+	struct page *page;
-+	unsigned long offset;
-+	int ret = 0;
+ 	mmput(start_mm);
 +
 +	/*
-+	 * When debugging, it's easier to use __GFP_ZERO here; but it's better
-+	 * for latency not to zero a page while GFP_ATOMIC and holding locks.
++	 * Swap entries may be marked as SWAP_MAP_BAD temporarily in
++	 * swap_free_cluster() before being freed really.
++	 * find_next_to_unuse() will skip these swap entries, that is
++	 * OK.  But we need to wait until they are freed really.
 +	 */
-+	page = alloc_page(gfp_mask | __GFP_HIGHMEM);
++	while (!retval && READ_ONCE(si->inuse_pages))
++		schedule_timeout_uninterruptible(1);
 +
-+	si = get_swap_device(entry);
-+	if (!si) {
-+		/*
-+		 * An acceptable race has occurred since the failing
-+		 * __swap_duplicate(): the swap device may be swapoff
-+		 */
-+		goto outer;
-+	}
-+	spin_lock(&si->lock);
-+
-+	offset = swp_offset(entry);
-+
-+	ci = lock_cluster(si, offset);
-+
-+	ret = add_swap_count_continuation_locked(si, offset, page);
-+	page = NULL;
-+
- 	unlock_cluster(ci);
- 	spin_unlock(&si->lock);
- 	put_swap_device(si);
+ 	return retval;
+ }
+ 
 -- 
 2.16.1
