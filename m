@@ -1,148 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964932AbeEIPPg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:15:36 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:35802 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935265AbeEIPPe (ORCPT
+        id S964989AbeEIPP6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:15:58 -0400
+Received: from smtprelay0173.hostedemail.com ([216.40.44.173]:55414 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935265AbeEIPP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:15:34 -0400
-Date: Wed, 9 May 2018 08:13:51 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: vmalloc with GFP_NOFS
-Message-ID: <20180509151351.GA4111@magnolia>
-References: <20180424162712.GL17484@dhcp22.suse.cz>
- <20180424183536.GF30619@thunk.org>
- <20180424192542.GS17484@dhcp22.suse.cz>
- <20180509134222.GU32366@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509134222.GU32366@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805090143
+        Wed, 9 May 2018 11:15:56 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:69:355:379:541:960:968:973:988:989:1260:1345:1437:1534:1542:1711:1730:1747:1777:1792:1801:2393:2559:2562:3138:3139:3140:3141:3142:3353:3865:3866:3867:3868:3871:3872:3874:4250:4605:5007:6119:6261:8660:9038:10004:10848:11026:11658:11914:12043:12296:12679:12683:12895:13095:13148:13161:13229:13230:14096:14394:14721:21080:21433:21451:21627:30054,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
+X-HE-Tag: hole64_8af1f0ebe0c0b
+X-Filterd-Recvd-Size: 2680
+From: Joe Perches <joe@perches.com>
+To: openipmi-developer@lists.sourceforge.net, linux-rdma@vger.kernel.org
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] treewide: Add and use dev_fmt similar to pr_fmt
+Date: Wed,  9 May 2018 08:15:44 -0700
+Message-Id: <cover.1525878372.git.joe@perches.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 03:42:22PM +0200, Michal Hocko wrote:
-> On Tue 24-04-18 13:25:42, Michal Hocko wrote:
-> [...]
-> > > As a suggestion, could you take
-> > > documentation about how to convert to the memalloc_nofs_{save,restore}
-> > > scope api (which I think you've written about e-mails at length
-> > > before), and put that into a file in Documentation/core-api?
-> > 
-> > I can.
-> 
-> Does something like the below sound reasonable/helpful?
-> ---
-> =================================
-> GFP masks used from FS/IO context
-> =================================
-> 
-> :Date: Mapy, 2018
-> :Author: Michal Hocko <mhocko@kernel.org>
-> 
-> Introduction
-> ============
-> 
-> FS resp. IO submitting code paths have to be careful when allocating
+The pr_fmt mechanism exists for pr_<level> logging message prefixing,
+but no similar capability exists for dev_<level> message prefixing.
 
-Not sure what 'FS resp. IO' means here -- 'FS and IO' ?
+Many uses of dev_<level> have an embedded prefix for logging output.
 
-(Or is this one of those things where this looks like plain English text
-but in reality it's some sort of markup that I'm not so familiar with?)
+So add a similar dev_fmt macro that can automatically prefix the
+dev_<level> logging output.
 
-Confused because I've seen 'resp.' used as shorthand for
-'responsible'...
+Rename the existing dev_<level> functions to _dev_<level> and add new
+macros that call _dev_<level> with the desired prefix if defined.
 
-> memory to prevent from potential recursion deadlocks caused by direct
-> memory reclaim calling back into the FS/IO path and block on already
-> held resources (e.g. locks). Traditional way to avoid this problem
+The new default #define for dev_fmt is blank.
 
-'The traditional way to avoid this deadlock problem...'
+Convert ipmi and infiniband to use this mechanism.
 
-> is to clear __GFP_FS resp. __GFP_IO (note the later implies clearing
-> the first as well) in the gfp mask when calling an allocator. GFP_NOFS
-> resp. GFP_NOIO can be used as shortcut.
-> 
-> This has been the traditional way to avoid deadlocks since ages. It
+Miscellanea:
 
-I think this sentence is a little redundant with the previous sentence,
-you could chop it out and join this paragraph to the one before it.
+o x86/early-quirks uses an internal macro for #define dev_err which conflicts
+ with the existing dev_err macro, so rename it.
 
-> turned out though that above approach has led to abuses when the restricted
-> gfp mask is used "just in case" without a deeper consideration which leads
-> to problems because an excessive use of GFP_NOFS/GFP_NOIO can lead to
-> memory over-reclaim or other memory reclaim issues.
-> 
-> New API
-> =======
-> 
-> Since 4.12 we do have a generic scope API for both NOFS and NOIO context
-> ``memalloc_nofs_save``, ``memalloc_nofs_restore`` resp. ``memalloc_noio_save``,
-> ``memalloc_noio_restore`` which allow to mark a scope to be a critical
-> section from the memory reclaim recursion into FS/IO POV. Any allocation
-> from that scope will inherently drop __GFP_FS resp. __GFP_IO from the given
-> mask so no memory allocation can recurse back in the FS/IO.
-> 
-> FS/IO code then simply calls the appropriate save function right at
-> the layer where a lock taken from the reclaim context (e.g. shrinker)
-> is taken and the corresponding restore function when the lock is
-> released. All that ideally along with an explanation what is the reclaim
-> context for easier maintenance.
-> 
-> What about __vmalloc(GFP_NOFS)
-> ==============================
-> 
-> vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
-> GFP_KERNEL allocations deep inside the allocator which are quit non-trivial
+Joe Perches (6):
+  x86/early-quirks: Rename duplicate define of dev_err
+  device: Add #define dev_fmt similar to #define pr_fmt
+  ipmi: msghandler: Add and use pr_fmt and dev_fmt, remove PFX
+  ipmi: Use more common logging styles
+  ipmi: Convert printk(KERN_<level> to pr_<level>(
+  infiniband: qplib_fp: Use dev_fmt
 
-...which are quite non-trivial...
+ arch/x86/kernel/early-quirks.c           |   8 +-
+ drivers/base/core.c                      |  12 +--
+ drivers/char/ipmi/ipmi_bt_sm.c           |  64 ++++++++--------
+ drivers/char/ipmi/ipmi_devintf.c         |  11 ++-
+ drivers/char/ipmi/ipmi_kcs_sm.c          |   4 +-
+ drivers/char/ipmi/ipmi_msghandler.c      |  53 +++++++------
+ drivers/char/ipmi/ipmi_poweroff.c        |  67 ++++++++---------
+ drivers/char/ipmi/ipmi_si_hardcode.c     |   9 ++-
+ drivers/char/ipmi/ipmi_si_hotmod.c       |  17 +++--
+ drivers/char/ipmi/ipmi_si_intf.c         |  22 +++---
+ drivers/char/ipmi/ipmi_si_pci.c          |  12 +--
+ drivers/char/ipmi/ipmi_si_platform.c     |  20 ++---
+ drivers/char/ipmi/ipmi_smic_sm.c         |  26 +++----
+ drivers/char/ipmi/ipmi_ssif.c            |  73 +++++++++---------
+ drivers/char/ipmi/ipmi_watchdog.c        |  52 +++++++------
+ drivers/infiniband/hw/bnxt_re/qplib_fp.c | 125 ++++++++++++++-----------------
+ include/linux/device.h                   | 103 ++++++++++++++-----------
+ 17 files changed, 330 insertions(+), 348 deletions(-)
 
-> to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
-> almost always a bug. The good news is that the NOFS/NOIO semantic can be
-> achieved by the scope api.
-> 
-> In the ideal world, upper layers should already mark dangerous contexts
-> and so no special care is required and vmalloc should be called without
-> any problems. Sometimes if the context is not really clear or there are
-> layering violations then the recommended way around that is to wrap ``vmalloc``
-> by the scope API with a comment explaining the problem.
-
-Otherwise looks ok to me based on my understanding of how all this is
-supposed to work...
-
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
-> -- 
-> Michal Hocko
-> SUSE Labs
+-- 
+2.15.0
