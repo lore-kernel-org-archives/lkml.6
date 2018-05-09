@@ -1,269 +1,85 @@
-Return-Path: <parri.andrea@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525893642; cv=none;
+Return-Path: <mchehab@smtp.s-opensource.com>
+X-Google-Smtp-Source: AB8JxZrKxvWkGNzJ3qIsAm2Ze1Bgx7ZoAAKNkRVFQspPEPzQYUfP2yVbzziUAkn4MQKps4mNaD6Y
+ARC-Seal: i=1; a=rsa-sha256; t=1525871952; cv=none;
         d=google.com; s=arc-20160816;
-        b=dMTlcJ4BnJrFkHDUJOFFRYn0AF4IkuCcuWV/K4m5aIj6zhcSZD7ZdzsxawTqLVAY9R
-         yJ5e6q4ys3zFEPCYpio4PGvQ6ZSh5JGiXabzXivFIbFQ4yr5/OUtVpVk4nrseuImM5p+
-         nqCGnMa4u79EpvrZtZxa4kQIJFRj49IALnzZdjkjLGxj2l7H3noTQF+/LasJ7wUctLBf
-         Nvhzub6UokjEL7W4ZKstPwehQ7yGyM8qP2aflQMbD8gTwfEffAQjqozchHDHNJlESxTF
-         fnXgy8IA1e1Qk0t5vP5JL9uzMVQmpqGhKYrTC9fNDq6LM+K6NhEirAKZL7IcZJjoY7sw
-         XWSg==
+        b=v3YzzxhVB/7IrcFATmBqN2IJn4zvbC1fJT4Ac3s4MuxbVHPliI8u2KhJDlE3c77GGv
+         QUN595IH66iMuRCeWsVnImHCl5rJMW7ymp8RXOcF3tK4hWOfcOcuPmm6SQOzTuP0aILu
+         f8mgfUH9p1iwleyqL7DzAz9kV5jmxMxLJ4Ycmy83sKV4KDP9eeKYK/TaqpZTH71XV/Dz
+         Cvem/4pdXdjJ/zEDBz2P74I3pzp88fs4fQrYZWeX8yRhxoWRQ/W5GfTgBAKaDm+u3WH1
+         1mukPzlIycCgY/oRr+CrP/gJHxDdgPBZII42q8ynZ9iPO+rHbmoQk3V7FEmCIUj8Y2N6
+         vB8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=zA8jm8mRK40RNVUdlCbbPB1q0lsQIRkz4tcfn5CsVJk=;
-        b=JQrIvfrQejHLHJvOXjo5VFlhDtrUfpvMomoW2JuIoyGtBebpL2YJdNQtKfjrDJuo53
-         YJnkuf65JJ5VzOtExU/wD3ObMsOvVqyaEKjY6KNT63Zp04Qyhr/5zOXJrIA170IQIBye
-         aZKDtSyBJQcgNQrMHgs6WivIRN1aZNqCX2nlsj+Jt1f4uISDGdbJzUsSQQolzf5cAVka
-         TWhGOaB25ljnMdjj1wK0cAXEpB/uQAgDaN1uXE+m73q77xCkJXpEAtInMYGAZC18VNuQ
-         oR9LuARGabaJRi6E0AcnLF8l6t2xpoiBm5yz0pdIf4Iid/LfUPBrMiDVAq0d7dJjjdC7
-         9bHQ==
+        h=sender:references:in-reply-to:references:in-reply-to:message-id
+         :date:subject:cc:to:from:arc-authentication-results;
+        bh=AcfUei1mDJ2eK1VuAio9VjImOqztKhVeimJf3DL9bI8=;
+        b=iQf4w3mV8la4/oMvhbHOkWP6sLpMYFua+S9047khbPebDybNiX5TrZIr3JezRARc4h
+         /u3IgnWvf+oeT1RF0Z03b2b3RYMiPweb2Yh1csKfftoI06R/ZD+xpgN04lwsjcw2JaKd
+         C35QYszZmjcgbkhrf0l5GOvz2asm4f63vxgvbXWMLdDM6E1fdAb9qwH1f4ojV7KW5I5m
+         zYDp18MNfXqGO2sPXfLX+8QsAkbon+YUHwK8I4ry09Z10j1CvxQU/L5V/FhQQQgKB3TB
+         wutHp6j9LxyrJyqWGD0/GrqNXo6tQ/fl329fTSf5FgJ+rHovEFTrtSGujvDHVt8obmBi
+         NhBQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tmMUv321;
-       spf=pass (google.com: domain of parri.andrea@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=parri.andrea@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=neutral (google.com: 64.30.133.232 is neither permitted nor denied by best guess record for domain of mchehab@smtp.s-opensource.com) smtp.mailfrom=mchehab@smtp.s-opensource.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=tmMUv321;
-       spf=pass (google.com: domain of parri.andrea@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=parri.andrea@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZoeMmN9DOHee8GhxWeQjVn42l+T2KvauU+Xd4PRQjqUeZDgqexRxLaVgiVkB0GeD03Bpa7VMA==
-Date: Wed, 9 May 2018 21:20:32 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+       spf=neutral (google.com: 64.30.133.232 is neither permitted nor denied by best guess record for domain of mchehab@smtp.s-opensource.com) smtp.mailfrom=mchehab@smtp.s-opensource.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
 	Mauro Carvalho Chehab <mchehab@infradead.org>,
-	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Harry Wei <harryxiyou@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, Michal Simek <monstr@monstr.eu>,
-	Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-	Guan Xuetao <gxt@pku.edu.cn>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	x86@kernel.org, Chris Zankel <chris@zankel.net>,
-	Max Filippov <jcmvbkbc@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-	David Howells <dhowells@redhat.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Gustavo Padovan <gustavo@padovan.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Sean Paul <seanpaul@chromium.org>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-	Matias Bjorling <mb@lightnvm.io>, Michael Lyle <mlyle@lyle.org>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Malcolm Priestley <tvboxspy@gmail.com>,
-	Antoine Jacquet <royale@zerezo.com>,
-	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Juergen Gross <jgross@suse.com>, Li Zefan <lizefan@huawei.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <sds@tycho.nsa.gov>,
-	Eric Paris <eparis@parisplace.org>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@zh-kernel.org,
-	user-mode-linux-devel@lists.sourceforge.net,
-	user-mode-linux-user@lists.sourceforge.net,
-	linux-xtensa@linux-xtensa.org, linux-block@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	patches@opensource.cirrus.com, linux-bcache@vger.kernel.org,
-	linux-usb@vger.kernel.org, devel@driverdev.osuosl.org,
-	xen-devel@lists.xenproject.org, cgroups@vger.kernel.org,
-	selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
-	alsa-devel@alsa-project.org
-Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
-Message-ID: <20180509192032.GA2788@andrea>
+	linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Kees Cook <keescook@chromium.org>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v2 04/11] docs: dell_rbu.txt: fix location of request_firmware
+Date: Wed,  9 May 2018 10:18:47 -0300
+Message-Id: <d38353ac67cd5925bcb31bf3ee4daeb433b6e8f5.1525870886.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <cover.1525870886.git.mchehab+samsung@kernel.org>
 References: <cover.1525870886.git.mchehab+samsung@kernel.org>
- <e959f23d6f6905ee606fadfda13e2bb37deed017.1525870886.git.mchehab+samsung@kernel.org>
- <20180509171501.GA17405@andrea>
- <20180509152045.722f0c51@vento.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509152045.722f0c51@vento.lan>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <cover.1525870886.git.mchehab+samsung@kernel.org>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+Sender: Mauro Carvalho Chehab <mchehab@smtp.s-opensource.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599992730865491295?=
-X-GMAIL-MSGID: =?utf-8?q?1600015452277686082?=
+X-GMAIL-THRID: =?utf-8?q?1599992708616890541?=
+X-GMAIL-MSGID: =?utf-8?q?1599992708616890541?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 09, 2018 at 03:20:45PM -0300, Mauro Carvalho Chehab wrote:
-> Em Wed, 9 May 2018 19:15:01 +0200
-> Andrea Parri <parri.andrea@gmail.com> escreveu:
-> 
-> > On Wed, May 09, 2018 at 10:18:52AM -0300, Mauro Carvalho Chehab wrote:
-> > > As we move stuff around, some doc references are broken. Fix some of
-> > > them via this script:
-> > > 	./scripts/documentation-file-ref-check --fix-rst
-> > > 
-> > > Manually checked if the produced result is valid, removing a few
-> > > false-positives.
-> > > 
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
-> > 
-> > Thank you again for doing this,
-> > 
-> > 
-> > > ---
-> > >  .../admin-guide/kernel-parameters.txt         |  4 ++--
-> > >  .../bindings/input/rotary-encoder.txt         |  2 +-
-> > >  Documentation/driver-api/gpio/consumer.rst    |  2 +-
-> > >  Documentation/kprobes.txt                     |  4 ++--
-> > >  Documentation/trace/coresight.txt             |  2 +-
-> > >  Documentation/trace/events.rst                |  2 +-
-> > >  Documentation/trace/ftrace-uses.rst           |  2 +-
-> > >  Documentation/trace/histogram.txt             |  2 +-
-> > >  Documentation/trace/intel_th.rst              |  2 +-
-> > >  Documentation/trace/tracepoint-analysis.rst   |  6 +++---
-> > >  Documentation/translations/ja_JP/howto.rst    |  4 ++--
-> > >  .../translations/zh_CN/magic-number.txt       |  4 ++--
-> > >  .../zh_CN/video4linux/omap3isp.txt            |  4 ++--
-> > >  MAINTAINERS                                   | 20 +++++++++----------
-> > >  arch/Kconfig                                  |  2 +-
-> > >  arch/arm/include/asm/cacheflush.h             |  2 +-
-> > >  arch/arm64/include/asm/cacheflush.h           |  2 +-
-> > >  arch/microblaze/include/asm/cacheflush.h      |  2 +-
-> > >  arch/um/Kconfig.um                            |  2 +-
-> > >  arch/unicore32/include/asm/cacheflush.h       |  2 +-
-> > >  arch/x86/entry/vsyscall/vsyscall_64.c         |  2 +-
-> > >  arch/xtensa/include/asm/cacheflush.h          |  4 ++--
-> > >  block/Kconfig                                 |  2 +-
-> > >  certs/Kconfig                                 |  2 +-
-> > >  crypto/asymmetric_keys/asymmetric_type.c      |  2 +-
-> > >  crypto/asymmetric_keys/signature.c            |  2 +-
-> > >  drivers/char/Kconfig                          |  2 +-
-> > >  drivers/clk/clk.c                             |  4 ++--
-> > >  drivers/clk/ingenic/cgu.h                     |  2 +-
-> > >  drivers/gpu/vga/Kconfig                       |  2 +-
-> > >  drivers/gpu/vga/vgaarb.c                      |  2 +-
-> > >  drivers/input/joystick/Kconfig                | 10 +++++-----
-> > >  drivers/input/joystick/iforce/Kconfig         |  2 +-
-> > >  drivers/input/joystick/walkera0701.c          |  2 +-
-> > >  drivers/input/misc/Kconfig                    |  4 ++--
-> > >  drivers/input/misc/rotary_encoder.c           |  2 +-
-> > >  drivers/input/mouse/Kconfig                   |  6 +++---
-> > >  drivers/input/mouse/alps.c                    |  2 +-
-> > >  drivers/input/touchscreen/wm97xx-core.c       |  2 +-
-> > >  drivers/lightnvm/pblk-rb.c                    |  2 +-
-> > >  drivers/md/bcache/Kconfig                     |  2 +-
-> > >  drivers/md/bcache/btree.c                     |  2 +-
-> > >  drivers/md/bcache/extents.c                   |  2 +-
-> > >  drivers/media/dvb-core/dvb_ringbuffer.c       |  2 +-
-> > >  drivers/media/pci/meye/Kconfig                |  2 +-
-> > >  drivers/media/platform/pxa_camera.c           |  4 ++--
-> > >  .../soc_camera/sh_mobile_ceu_camera.c         |  2 +-
-> > >  drivers/media/radio/Kconfig                   |  2 +-
-> > >  drivers/media/radio/si470x/Kconfig            |  2 +-
-> > >  drivers/media/usb/dvb-usb-v2/lmedm04.c        |  2 +-
-> > >  drivers/media/usb/zr364xx/Kconfig             |  2 +-
-> > >  drivers/parport/Kconfig                       |  6 +++---
-> > >  drivers/staging/media/bcm2048/TODO            |  2 +-
-> > >  include/keys/asymmetric-subtype.h             |  2 +-
-> > >  include/keys/asymmetric-type.h                |  2 +-
-> > >  include/linux/assoc_array.h                   |  2 +-
-> > >  include/linux/assoc_array_priv.h              |  2 +-
-> > >  include/linux/circ_buf.h                      |  2 +-
-> > >  include/linux/ftrace.h                        |  2 +-
-> > >  include/linux/rculist_nulls.h                 |  2 +-
-> > >  include/uapi/linux/prctl.h                    |  2 +-
-> > >  include/xen/interface/io/kbdif.h              |  2 +-
-> > >  kernel/cgroup/cpuset.c                        |  2 +-
-> > >  kernel/trace/Kconfig                          | 16 +++++++--------
-> > >  lib/Kconfig                                   |  2 +-
-> > >  security/selinux/hooks.c                      |  2 +-
-> > >  sound/core/Kconfig                            |  4 ++--
-> > >  sound/drivers/Kconfig                         |  4 ++--
-> > >  sound/pci/Kconfig                             | 10 +++++-----
-> > >  tools/include/uapi/linux/prctl.h              |  2 +-
-> > >  tools/lib/api/fs/fs.c                         |  2 +-
-> 
-> 
-> > >  tools/memory-model/README                     | 10 +++++-----  
-> > 
-> > As mentioned in the previous thread, I am for keeping the current
-> > references: the REAMDE is listing the doc files, as well as other
-> > files in tools/memory-model/, relatively to that directory.
-> 
-> Yeah, at least this hunk deserves some rework, as now some
-> references are Documentation/.../foo, while others are just
-> bar.
-> 
-> As on (almost) all other places (except for tools/memory-model/README),
-> the references are always from the main directory, I would make all
-> patches there also relative to main dir. If you're afraid of
-> not being too clearer, we could prefix all of them with something
-> like:
+commit 5d6d1ddd2730 ("firmware: move firmware loader into its own directory")
+and other commits renamed the old firmware_class.c file and split it
+into separate files, but documentation was not changed accordingly,
+causing Sphinx errors.
 
-Actually, another place is (consistently):
+Fixes for other files were already applied but dell_rbu.txt remains
+pointing to the old location.
 
-   tools/memory-model/litmus-tests/README
+Fixes: 5d6d1ddd2730 ("firmware: move firmware loader into its own directory")
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ Documentation/dell_rbu.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Sorry, but we are not going to replace:
-
-  ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
-
-with
-
-   tools/memory-model/litmus-tests/README/ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
-
-or
-
-   ${LINUX}/tools/memory-model/litmus-tests/README/ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
-
-(for the obvious reason; and if you're thinking at "just rename the test"
- I anticipate a long discussion on naming schemes and related tools ...).
-
-  Andrea
-
-
-> 
-> 	${LINUX}/tools/memory-model/...
-> 
-> just like some DT binding files do:
-> 
-> 	Documentation/devicetree/bindings/sound/audio-graph-card.txt:see ${LINUX}/Documentation/devicetree/bindings/graph.txt
-> 
-> A bonus of doing that is that the broken reference detect script can
-> keep parsing it without changes (well, it wouldn't be hard to make
-> it also accept a relative file, but doing that just due to 
-> tools/memory-model/README seems overkill).
-> 
-> Another advantage is that it would allow to easily add references
-> there from the main kernel Documentation, if needed in the future,
-> without messing with local x non-local relative namespace.
-> 
-> Regards,
-> Mauro
+diff --git a/Documentation/dell_rbu.txt b/Documentation/dell_rbu.txt
+index 0fdb6aa2704c..befeff80e7ec 100644
+--- a/Documentation/dell_rbu.txt
++++ b/Documentation/dell_rbu.txt
+@@ -121,8 +121,8 @@ read back the image downloaded.
+ 
+ .. note::
+ 
+-   This driver requires a patch for firmware_class.c which has the modified
+-   request_firmware_nowait function.
++   This driver requires a patch for drivers/base/firmware_loader/main.c
++   which has the modified request_firmware_nowait() function.
+ 
+    Also after updating the BIOS image a user mode application needs to execute
+    code which sends the BIOS update request to the BIOS. So on the next reboot
+-- 
+2.17.0
