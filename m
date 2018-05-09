@@ -1,59 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934640AbeEIMhT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:37:19 -0400
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:37430 "EHLO
-        mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932875AbeEIMhQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:37:16 -0400
-X-Google-Smtp-Source: AB8JxZr53d/xHDGN2+HQ2Z9ejsbHd5BWhGoEmX1WOFcit+TdChSetr5rkPQ8R6NF06b2CaNHL5W7hWLt+ljXaxnKGhc=
+        id S934689AbeEIMiT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:38:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37956 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932875AbeEIMiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 08:38:17 -0400
+Date: Wed, 9 May 2018 08:38:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Thomas Tai <thomas.tai@oracle.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mr.nuke.me@gmail.com
+Subject: Re: [PATCH V3 1/1] PCI/AER: add pcie TLP header information in the
+ tracepoint
+Message-ID: <20180509083814.149e8d8f@gandalf.local.home>
+In-Reply-To: <1525820696-31967-2-git-send-email-thomas.tai@oracle.com>
+References: <1525820696-31967-1-git-send-email-thomas.tai@oracle.com>
+        <1525820696-31967-2-git-send-email-thomas.tai@oracle.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180509122454.GR32366@dhcp22.suse.cz>
-References: <20180411104832.GF23400@dhcp22.suse.cz> <20180509122454.GR32366@dhcp22.suse.cz>
-From: Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date: Wed, 9 May 2018 18:07:16 +0530
-Message-ID: <CAKTKpr5uPuZUHBnQtDwpGA_d=WTx_5O2SF_+WStO6OMVNe77QQ@mail.gmail.com>
-Subject: Re: fd3e45436660 ("ACPI / NUMA: ia64: Parse all entries of SRAT
- memory affinity table")
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Tony Luck <tony.luck@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, tiantao6@huawei.com,
-        LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal
+On Tue,  8 May 2018 19:04:56 -0400
+Thomas Tai <thomas.tai@oracle.com> wrote:
 
+> When a PCIe AER occurs, the TLP header information is
+> printed in the kernel message but it is missing from
+> the tracepoint. A userspace program can use this information
+> in the tracepoint to better analyze problems.
+> 
+> To enable the tracepoint:
+> echo 1 > /sys/kernel/debug/tracing/events/ras/aer_event/enable
+> 
+> Example tracepoint output:
+> cat /sys/kernel/debug/tracing/trace
+> aer_event: 0000:01:00.0
+> PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
+> TLP Header={0x0,0x1,0x2,0x3}
+> 
+> Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
+> ---
 
-On Wed, May 9, 2018 at 5:54 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> On Wed 11-04-18 12:48:32, Michal Hocko wrote:
->> Hi,
->> my attention was brought to the %subj commit and either I am missing
->> something or the patch is quite dubious. What is it actually trying to
->> fix? If a BIOS/FW provides more memblocks than the limit then we would
->> get misleading numa topology (numactl -H output) but is the situation
->> much better with it applied? Numa init code will refuse to init more
->> memblocks than the limit and falls back to dummy_numa_init (AFAICS)
->> which will break the topology again and numactl -H will have a
->> misleading output anyway.
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-IIRC, the MEMBLOCK beyond max limit getting dropped from visible
-memory(partial drop from a node).
-this patch removed any upper limit on memblocks and allowed to parse
-all entries of SRAT.
-
->>
->> So why is the patch an improvement at all?
->
-> ping? I would be tempted to simply revert the patch as a wrong fix.
-> --
-> Michal Hocko
-> SUSE Labs
-
-thanks
-Ganapat
-sorry, somehow, i have missed your previous email
+-- Steve
