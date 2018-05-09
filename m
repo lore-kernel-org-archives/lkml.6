@@ -1,195 +1,134 @@
-Return-Path: <gladkov.alexey@gmail.com>
-X-Google-Smtp-Source: AB8JxZq88RMcB6YBs5zI5RRzGaUDtwDErldloSaU2RixjiYjO1htFx0Dj/By75+JwlS+jglwPU8A
-ARC-Seal: i=1; a=rsa-sha256; t=1526031906; cv=none;
-        d=google.com; s=arc-20160816;
-        b=LxvU7NXRJIe7DLaep9p5jrmiLp9aeuEWVJ5wRCqJuOnZNTl9CgSNqvg9ugvVQCdlEY
-         SDOZbc5dlRjZTN5vyCRw/A/krrYAJHsRfy3T8Ghmv/zSNDjj1niyAjA0xn8Re7//rZ7V
-         iiRXlatPNUTrVh8xZFGXTTHjO9lV/m1J/KqO0PmlicKS9Hl1kZx6LPN/8H7qpCpmJ1Et
-         0XU7fwb3P2x47FJTa6ER64tubEd9Lze9Tbp0NwX/+wxOMrtjwBfH1StlPbZkgxmnlFhb
-         Z+dFRZJNsePIcHaeQhMBJiLiT+6j07TViiF/Bk0mQV59uL32kSfnlpvI6kJmQ7tZWP2n
-         suOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :arc-authentication-results;
-        bh=y+wglGTRmkq6wNFgTQEL3gL6VCKmlF12aktH9CyRLj4=;
-        b=NmKR4ONLzjLdJX067YCPBnpDDkilePLdlA3JsqJtKb3qsDX22rD3hjmoGBI4x9KD2r
-         JqttH7V8pjgSSTylxVJNLZ1Gqn0UcLCRwHWsoyjDsnVNIz5YqHmDi/VHKDahOlKCh+Gt
-         mHYQ8H5TXR3+l6un3MqPN88woOKNpGTgQ198B8OjqtAWoEbLOlPdBQnC59gJTYjv6CE7
-         jRsU9KPkLl6FwIdQzXzg6z0AUwX8Xyyfzrp5DZUIdxgrbnzh6tqar3Cvg9fILvLL6UV5
-         PsH732lm/IDzpV+bE23JnMk6va4S0j40Rb+6izt+ST8FRSAvPpE3Z+Bq9eToIgGugQQE
-         3jTA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning gladkov.alexey@gmail.com does not designate 5.9.28.80 as permitted sender) smtp.mailfrom=gladkov.alexey@gmail.com;
-       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning gladkov.alexey@gmail.com does not designate 5.9.28.80 as permitted sender) smtp.mailfrom=gladkov.alexey@gmail.com;
-       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Date: Fri, 11 May 2018 11:35:08 +0200
-From: Alexey Gladkov <gladkov.alexey@gmail.com>
-To: Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-hardening@lists.openwall.com,
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Akinobu Mita <akinobu.mita@gmail.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Jeff Layton <jlayton@poochiereds.net>,
-	Ingo Molnar <mingo@kernel.org>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	aniel Micay <danielmicay@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, bfields@fieldses.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>, solar@openwall.com,
-	"Dmitry V. Levin" <ldv@altlinux.org>,
-	Djalal Harouni <tixxdz@gmail.com>
-Subject: [PATCH v5 2/7] proc: move /proc/{self|thread-self} dentries to
- proc_fs_info
-Message-ID: <20180511093508.GA1107@comp-core-i7-2640m-0182e6>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-198351-1525860792-2-5903517363974387612
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, RCVD_IN_SORBS_WEB 1.5, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525860792; b=bzQIHdXhWSyuptoZFg6XagLAi1++uqOikXnIzox+10IyR7HWjt
+    0MvnjGgGKx6K4X4tPDTkz72sIEJlHiBkVSiVz63YcpyGK01x1RzV4JrPxID7sOxs
+    I5bG04vh0SSRJwtc9JXxy0LZ2JkmW9cZkYRF9MURIMzkNjnggbmaZN5SMPhsaAhl
+    aNd4FwvNbvuffLHgfm5sfRqmWwU6+8rSHo63RfiZqt5L6064418/DScxcYgjSYPx
+    YOV8ElRJgko5Qo2+oLB+fLm7aWsp1Q2YZ5REt3jgggMxpudj+1cWt6W7twMFzYrj
+    pHE85u1a6zFb9vqwyE6WZN5iKgkrUM9NFucg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525860792; bh=hkd/nIOoTmg5MAS1I7TCYcEeFZEgHQ
+    wr++sRbglh1m8=; b=L0+sX5O9gV2/Rl6Z1mBHdFvbCmKXrNTDnwzptgyybTFCSC
+    m4AYSiZfiZm/Teak2y8Tzg6ulCkukMcjANsgDCa5Q8GBtDB5kWkQGhXBylMDLFf/
+    38Ra066vwv37iwNIKOBcn1Z5Ys19I4EVTLGXNOCMS6HkKDE+OVPjTdSfUF6Ipps9
+    ehACJX29Wmjzg4Hwjxfu4/DU1D4ZO8P5NSr04OlTMBQMra/yE+4sEzW3KywVMjeR
+    bNOlPngIoa4/IRfiO1FdttE06DOshDKMUR0hXM6mYRRQv0CDYu0nyegBYjqe7lm7
+    htx04+zC3i2Qi8UlgK+wt+o2UvAI3AbkeM4CoMvA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=rock-chips.com header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=rock-chips.com header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfNFP4+/9gIUy5igrr8qjTElwvU1LpW0K3N16EuW5EoljXQcazjXCEMGcJOsAlGNDAm9L/Hvf0WwBuM7MHkKvanbpnt/6nLI0M8/e5AyDEsCy9H7btkWY
+    tWpt4n5L63+RpRg04w3u9YDj8WAIhKdyAwdQw1PGP4KsQY3t0FBT2/W5Rro4FsjWHptFR8xiU2oCfXikZtg0AxJxFxgQj85fTGhxTaPocoNkB8ETuRwmzGK5
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=4_-BN3WEXhEA:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=0Qkj4BVdLmVWEne4eYYA:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S933968AbeEIKMY (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 9 May 2018 06:12:24 -0400
+Received: from regular1.263xmail.com ([211.150.99.139]:39747 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932215AbeEIKMX (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 9 May 2018 06:12:23 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: william.wu@rock-chips.com
+X-FST-TO: hminas@synopsys.com
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: william.wu@rock-chips.com
+X-UNIQUE-TAG: <89b4113af024d7b078dad8c96ea1259f>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: William Wu <william.wu@rock-chips.com>
+To: hminas@synopsys.com, felipe.balbi@linux.intel.com,
+        gregkh@linuxfoundation.org
+Cc: sergei.shtylyov@cogentembedded.com, heiko@sntech.de,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, frank.wang@rock-chips.com,
+        huangtao@rock-chips.com, dianders@google.com,
+        daniel.meng@rock-chips.com, John.Youn@synopsys.com,
+        william.wu@rock-chips.com, wzz@rock-chips.com, zsq@rock-chips.com,
+        Allen.Hsu@quantatw.com, StanTsui@AOPEN.com, Spruce.Wu@quantatw.com,
+        Martin.Tsai@quantatw.com, Kevin.Shai@quantatw.com,
+        Mon-Jer.Wu@quantatw.com, Claud.Chang@quantatw.com,
+        San.Lin@quantatw.com, Ren.Kuo@quantatw.com, davidhtwang@aopen.com,
+        fonglin@aopen.com, stevencheng@aopen.com, tomchen@aopen.com,
+        donchang@aopen.com, milesschofield@aopen.com
+Subject: [PATCH v4 0/2] usb: dwc2: fix isoc split in transfer issue
+Date: Wed,  9 May 2018 18:10:59 +0800
+Message-Id: <1525860661-18619-1-git-send-email-william.wu@rock-chips.com>
+X-Mailer: git-send-email 2.0.0
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600160432330336597?=
-X-GMAIL-MSGID: =?utf-8?q?1600160432330336597?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Djalal Harouni <tixxdz@gmail.com>
+This patch fix dma unaligned problem and data lost problem for
+isoc split in transfer.
 
-This is a preparation patch that moves /proc/{self|thread-self} dentries
-to be stored inside procfs fs_info struct instead of making them per pid
-namespace. Since we want to support multiple procfs instances we need to
-make sure that these dentries are also per-superblock instead of
-per-pidns, unmounting a private procfs won't clash with other procfs
-mounts.
+Test on rk3288 platform, use an usb hs Hub (GL852G-12) and an usb
+fs audio device (Plantronics headset) to capture and playback.
 
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
----
- fs/proc/base.c                | 4 ++--
- fs/proc/root.c                | 8 ++++----
- fs/proc/self.c                | 3 +--
- fs/proc/thread_self.c         | 5 ++---
- include/linux/pid_namespace.h | 4 +---
- include/linux/proc_fs.h       | 2 ++
- 6 files changed, 12 insertions(+), 14 deletions(-)
+William Wu (2):
+  usb: dwc2: alloc dma aligned buffer for isoc split in
+  usb: dwc2: fix isoc split in transfer with no data
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 99a0f24..e0c2afc 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -3252,13 +3252,13 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
- 		return 0;
- 
- 	if (pos == TGID_OFFSET - 2) {
--		struct inode *inode = d_inode(ns->proc_self);
-+		struct inode *inode = d_inode(fs_info->proc_self);
- 		if (!dir_emit(ctx, "self", 4, inode->i_ino, DT_LNK))
- 			return 0;
- 		ctx->pos = pos = pos + 1;
- 	}
- 	if (pos == TGID_OFFSET - 1) {
--		struct inode *inode = d_inode(ns->proc_thread_self);
-+		struct inode *inode = d_inode(fs_info->proc_thread_self);
- 		if (!dir_emit(ctx, "thread-self", 11, inode->i_ino, DT_LNK))
- 			return 0;
- 		ctx->pos = pos = pos + 1;
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index 5d4c454..184c42b 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -162,10 +162,10 @@ static void proc_kill_sb(struct super_block *sb)
- 	struct proc_fs_info *fs_info = proc_sb(sb);
- 	struct pid_namespace *ns = (struct pid_namespace *)fs_info->pid_ns;
- 
--	if (ns->proc_self)
--		dput(ns->proc_self);
--	if (ns->proc_thread_self)
--		dput(ns->proc_thread_self);
-+	if (fs_info->proc_self)
-+		dput(fs_info->proc_self);
-+	if (fs_info->proc_thread_self)
-+		dput(fs_info->proc_thread_self);
- 	kill_anon_super(sb);
- 	put_pid_ns(ns);
- 	kfree(fs_info);
-diff --git a/fs/proc/self.c b/fs/proc/self.c
-index 3f2a88f..9ad3c55 100644
---- a/fs/proc/self.c
-+++ b/fs/proc/self.c
-@@ -38,7 +38,6 @@ int proc_setup_self(struct super_block *s)
- {
- 	struct inode *root_inode = d_inode(s->s_root);
- 	struct proc_fs_info *fs_info = proc_sb(s);
--	struct pid_namespace *ns = fs_info->pid_ns;
- 	struct dentry *self;
- 
- 	inode_lock(root_inode);
-@@ -65,7 +64,7 @@ int proc_setup_self(struct super_block *s)
- 		pr_err("proc_fill_super: can't allocate /proc/self\n");
- 		return PTR_ERR(self);
- 	}
--	ns->proc_self = self;
-+	fs_info->proc_self = self;
- 	return 0;
- }
- 
-diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
-index e80dd79..8db3503 100644
---- a/fs/proc/thread_self.c
-+++ b/fs/proc/thread_self.c
-@@ -37,7 +37,6 @@ static unsigned thread_self_inum __ro_after_init;
- int proc_setup_thread_self(struct super_block *s)
- {
- 	struct proc_fs_info *fs_info = proc_sb(s);
--	struct pid_namespace *ns = fs_info->pid_ns;
- 	struct inode *root_inode = d_inode(s->s_root);
- 	struct dentry *thread_self;
- 
-@@ -62,10 +61,10 @@ int proc_setup_thread_self(struct super_block *s)
- 	}
- 	inode_unlock(root_inode);
- 	if (IS_ERR(thread_self)) {
--		pr_err("proc_fill_super: can't allocate /proc/thread_self\n");
-+		pr_err("proc_fill_super: can't allocate /proc/thread-self\n");
- 		return PTR_ERR(thread_self);
- 	}
--	ns->proc_thread_self = thread_self;
-+	fs_info->proc_thread_self = thread_self;
- 	return 0;
- }
- 
-diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
-index 49538b1..f91a8bf 100644
---- a/include/linux/pid_namespace.h
-+++ b/include/linux/pid_namespace.h
-@@ -31,9 +31,7 @@ struct pid_namespace {
- 	unsigned int level;
- 	struct pid_namespace *parent;
- #ifdef CONFIG_PROC_FS
--	struct vfsmount *proc_mnt;
--	struct dentry *proc_self;
--	struct dentry *proc_thread_self;
-+	struct vfsmount *proc_mnt; /* Internal proc mounted during each new pidns */
- #endif
- #ifdef CONFIG_BSD_PROCESS_ACCT
- 	struct fs_pin *bacct;
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 7c8cf3c..5e461f6 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -11,6 +11,8 @@
- 
- struct proc_fs_info {
- 	struct pid_namespace *pid_ns;
-+	struct dentry *proc_self; /* For /proc/self */
-+	struct dentry *proc_thread_self; /* For /proc/thread-self/ */
- };
- 
- struct proc_dir_entry;
+ drivers/usb/dwc2/core.h      |  3 ++
+ drivers/usb/dwc2/hcd.c       | 87 ++++++++++++++++++++++++++++++++++++++++++--
+ drivers/usb/dwc2/hcd.h       |  8 ++++
+ drivers/usb/dwc2/hcd_intr.c  | 11 +++++-
+ drivers/usb/dwc2/hcd_queue.c |  3 ++
+ 5 files changed, 106 insertions(+), 6 deletions(-)
+
 -- 
-2.10.5
+2.0.0
+
+
