@@ -1,74 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965484AbeEIVlV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 17:41:21 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:40492 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965428AbeEIVlS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 17:41:18 -0400
-X-Google-Smtp-Source: AB8JxZq9xflKKmcf7puMEzyabkHcPWqHTRTpd7K+Am/EMJBEZ0SL2vlN1wn0LaoxR0+MqWrPS0Mr8Q==
-Date: Wed, 9 May 2018 14:41:14 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: andy.gross@linaro.org, rnayak@codeaurora.org, evgreen@chromium.org,
-        ilina@codeaurora.org, swboyd@chromium.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, David Brown <david.brown@linaro.org>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        linux-soc@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: sdm845: Add command DB node
-Message-ID: <20180509214114.GH14924@minitux>
-References: <20180509213439.165623-1-dianders@chromium.org>
+        id S965602AbeEIVqe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 17:46:34 -0400
+Received: from mail.ad5gb.com ([68.66.207.225]:46236 "EHLO ad5gb.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965206AbeEIVqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 17:46:33 -0400
+From: randy@ad5gb.com
+Message-Id: <201805092054.w49KsrAe011435@server.ad5gb.com>
+Date: Wed, 09 May 2018 15:54:53 -0500
+To: linux-kernel@vger.kernel.org
+Subject: Possible scsi_mod.blk-mq problem
+User-Agent: Heirloom mailx 12.5 7/5/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509213439.165623-1-dianders@chromium.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 09 May 14:34 PDT 2018, Douglas Anderson wrote:
+I'm just following the directions I found about submitting a possible bug report.
+The Bugzilla reference can be found here:
 
-> Add command DB node based on the bindings example.
-> 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+https://bugzilla.kernel.org/show_bug.cgi?id=199663
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
-> 
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 486ace9a9e8b..7b5f2b3982a3 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -21,6 +21,18 @@
->  		reg = <0 0x80000000 0 0>;
->  	};
->  
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		reserved-memory@85fe0000 {
-> +			compatible = "qcom,cmd-db";
-> +			reg = <0x0 0x85fe0000 0x0 0x20000>;
-> +			no-map;
-> +		};
-> +	};
-> +
->  	cpus {
->  		#address-cells = <2>;
->  		#size-cells = <0>;
-> -- 
-> 2.17.0.441.gb46fe60e1d-goog
-> 
+Thanks
