@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965888AbeEITtJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 15:49:09 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45554 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965567AbeEITtH (ORCPT
+        id S965909AbeEITub (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 15:50:31 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:46814 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965454AbeEITu2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 15:49:07 -0400
-X-Google-Smtp-Source: AB8JxZr9wt/toxuYs5COrbn0n679GyHeBgyIHKSBsfdQEYknj8H3648wB6MT0fgAfR72Y5G5G7O6hrkHpLfkj+hlBpI=
+        Wed, 9 May 2018 15:50:28 -0400
+X-Google-Smtp-Source: AB8JxZqSmGx064PwgBQvqiLwJ3hai3rxFBVmLrM1iQMFOSTwKiXTfEIGbj2JLfKm9VnpsWgFBPrCHn1OG84+33URk6A=
 MIME-Version: 1.0
-In-Reply-To: <20180428222155.20242-1-colin.king@canonical.com>
-References: <20180428222155.20242-1-colin.king@canonical.com>
+In-Reply-To: <fe695f10-eb1b-f6f4-ae02-c2f12225992c@amd.com>
+References: <20180502144316.32056-1-colin.king@canonical.com> <fe695f10-eb1b-f6f4-ae02-c2f12225992c@amd.com>
 From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 9 May 2018 15:49:05 -0400
-Message-ID: <CADnq5_MUEPZpZswjr+0B8M5NSfWJdqCAgKZ1qgrT2aD98FPsCA@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/powerplay: fix spelling mistake: "contruct" -> "construct"
-To: Colin King <colin.king@canonical.com>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+Date: Wed, 9 May 2018 15:50:26 -0400
+Message-ID: <CADnq5_OEzKSnXWbVaAUDnfK-uinyQGh16K-2iAduYNj6+vXRHA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: clean up assignment of amdgpu_crtc
+To: Harry Wentland <harry.wentland@amd.com>
+Cc: Colin King <colin.king@canonical.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
         David Zhou <David1.Zhou@amd.com>, David Airlie <airlied@linux.ie>,
-        Rex Zhu <Rex.Zhu@amd.com>,
         amd-gfx list <amd-gfx@lists.freedesktop.org>,
         Maling list - DRI developers
         <dri-devel@lists.freedesktop.org>,
@@ -28,52 +29,48 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Apr 28, 2018 at 6:21 PM, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, May 2, 2018 at 11:04 AM, Harry Wentland <harry.wentland@amd.com> wrote:
+> On 2018-05-02 10:43 AM, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The declaration of pointer amdgpu_crtc has a redundant assignment to
+>> amdgpu_crtc. Clean this up by removing it.
+>>
+>> Detected by CoverityScan, CID#1460299 ("Evaluation order violation")
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 >
-> Trivial fix to spelling mistake in PP_ASSERT_WITH_CODE message text
+> Looks like i goofed. Thanks for fixing this.
 >
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
 
-Applied.  thanks!
+
+Applied.  Thanks!
 
 Alex
 
-> ---
->  drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c   | 2 +-
->  drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-> index 26fbeafc3c96..726994cf03ea 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-> @@ -1229,7 +1229,7 @@ static int smu7_enable_dpm_tasks(struct pp_hwmgr *hwmgr)
+> Harry
 >
->                 tmp_result = smu7_construct_voltage_tables(hwmgr);
->                 PP_ASSERT_WITH_CODE((0 == tmp_result),
-> -                               "Failed to contruct voltage tables!",
-> +                               "Failed to construct voltage tables!",
->                                 result = tmp_result);
->         }
->         smum_initialize_mc_reg_table(hwmgr);
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-> index 7cbb56ba6fab..ced1c2aab7a9 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_hwmgr.c
-> @@ -2829,7 +2829,7 @@ static int vega10_enable_dpm_tasks(struct pp_hwmgr *hwmgr)
->
->         tmp_result = vega10_construct_voltage_tables(hwmgr);
->         PP_ASSERT_WITH_CODE(!tmp_result,
-> -                       "Failed to contruct voltage tables!",
-> +                       "Failed to construct voltage tables!",
->                         result = tmp_result);
->
->         tmp_result = vega10_init_smc_table(hwmgr);
-> --
-> 2.17.0
->
+>> ---
+>>  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> index 1dd1142246c2..2beb8821e19e 100644
+>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> @@ -3773,7 +3773,7 @@ static void remove_stream(struct amdgpu_device *adev,
+>>  static int get_cursor_position(struct drm_plane *plane, struct drm_crtc *crtc,
+>>                              struct dc_cursor_position *position)
+>>  {
+>> -     struct amdgpu_crtc *amdgpu_crtc = amdgpu_crtc = to_amdgpu_crtc(crtc);
+>> +     struct amdgpu_crtc *amdgpu_crtc = to_amdgpu_crtc(crtc);
+>>       int x, y;
+>>       int xorigin = 0, yorigin = 0;
+>>
+>>
 > _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
