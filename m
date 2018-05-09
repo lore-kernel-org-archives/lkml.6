@@ -1,85 +1,91 @@
 Return-Path: <lurodriguez@suse.de>
-X-Google-Smtp-Source: AB8JxZoYFkN3mzZsTIPlSA71WJgOo3LwnWyVWXtw00rnqvkF8L6U14rFXPVA1L8H9jqooN/cecXM
-ARC-Seal: i=1; a=rsa-sha256; t=1525915470; cv=none;
+X-Google-Smtp-Source: AB8JxZrqFU3mwefLdgghdOyeDONNEWmORlkJ9omLYroV0EtEmgwuUEfYpjxoy/qXTTPgp66wXhDL
+ARC-Seal: i=1; a=rsa-sha256; t=1525827882; cv=none;
         d=google.com; s=arc-20160816;
-        b=SqXHEoYFr4V4tRTdAF+XTiIH5pWUSNjI3v/sWqewornFW3dzIgstj+lGVuaK9rr16l
-         ZuQWEgC+toddyhG5RBgZIrHhcOHoBx99FyxcaXOZJmRI6OtZ6bT0Q+G7Xgxzti0F8yx/
-         1G3i7hn0Wa1BHT1TV5ZHsebdJ1zdFuF2GCDxv2QBUtPrlAtLPZuD5+7ZNoWOPUixkj75
-         rA0xdk4JWBJcCq4o/tvDXl6gzHasO2cjGO50ZAAWH/FNimgBGvcushasUSRs0natAEPO
-         ax/HSIlyw6LL03YOLDYi7fro8ORj/G/98wBWZ1ORItOqt/zaYHAObZnf379Ern0mJ72w
-         /BPQ==
+        b=It+I2pFvtKO6+HcFnhULVzFK8Umfxxgf6oe+0ISLuT3WYeDe2i2eCwNXv1nqN+cfct
+         JdXo/Vv9JClEhMk1C4Z5duMBFiwx5a0Cc2//CGz1/j1TyWG3Za0HNRgAM/CMs4N6sOR7
+         FawRYyo3b2eeNUdXsHu+f2kv2YHFJWO07k81ajUHSDRobUEgpQnokUv0DmPNCgTmsOf+
+         WVejCg7M2yHHx6cokcJabPuju3poionuuaW28/JjRawme929rnwGYdmk40B1GicZHCTR
+         1y/zTdxWAGfoFtzCNqe4y6m940LYT/g43qODp5E8fC0JRwWOSHNan0+T0OiGgId2wcNz
+         r1Qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=Dd+X8/LkaRVxyLxe8vv2H/sdQH9uP5f9/jXtFzs8Ax0=;
-        b=Xm81xcRec6ygbnAxVf4EI1f2/ea7sxhFa0MkBGrCzc0twYva1HsQvip4+LvdVGLsCW
-         wJSWy9Ja5tztfyZmuJXsMpOTInhid+UciMEHduPafA67bKS0jeUUeyR1Hx4KPnvwbjHm
-         w+4dAdV3u+jdmIKqrrQ6Vb4SdT/FDiozA7s2fs5kwBjbSl81cTgvXF/YX6tc3VyOz6Wa
-         BvLAFlUcJiIhUb/y+fK64AQk+fjC7m+qB5dJsUKcdB0DKRxNjjbz/RsC/SQ3X1j7QNmb
-         EM0wU7dOp1Y9mAXDTs9u9V7BtJ3PF/+tw6BbmViHjDK66zd78aoeW+raXGema/xB9/IU
-         +0vw==
+        bh=lUYmrenrPAq3Bp52Xs0y/iQGCXmD/qa3EsVSB53ep80=;
+        b=nIxa21LGFVVb/DTjOPVB2UZ13pmHpqvFb8fvmMatsTy68r0OIzCb0WywpICFD0QPSQ
+         uJe0cJ1yGcvVucun6G0w0YNwbifbSFBf/HuEV3EZ8VXnhcL2cb1NRpNxtleYzlv7WKfH
+         UNeezeA8F2+Lngp5EvwezqJphFiWhqYLKwwv6gSwx00u8AGSTfeaUBt0wMzKiWniTjU3
+         4uqjpi2gWEYLwhQUhSrgCXYaMw7q7OsbPfSuhY+ygenMvJFFh5Hb6DSvwv/zN5ETHsZT
+         p48YFf9ixCdtXwk8LOxeezMlmzJeeHpgCl2CEfV8hWNQu6fkj8Im8RUwSy6/BJ5Zvsjn
+         56AA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Date: Thu, 10 May 2018 01:24:26 +0000
+Date: Wed, 9 May 2018 01:04:38 +0000
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Matthew Wilcox <mawilcox@microsoft.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-	Linux MM <linux-mm@kvack.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-m68k <linux-m68k@lists.linux-m68k.org>
+To: Matthew Wilcox <willy@infradead.org>, Tony Luck <tony.luck@intel.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, arnd@arndb.de,
+	gregkh@linuxfoundation.org, linux-arch@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>,
+	linux-ia64@vger.kernel.org
 Subject: Re: [PATCH] mm: provide a fallback for PAGE_KERNEL_RO for
  architectures
-Message-ID: <20180510012426.GA27853@wotan.suse.de>
+Message-ID: <20180509010438.GM27853@wotan.suse.de>
 References: <20180428001526.22475-1-mcgrof@kernel.org>
- <CAMuHMdUpc6=j62E7Xrcid6tKU5FRUZsiSVK7J=KD09epQ=9xfA@mail.gmail.com>
- <20180502151113.GB27853@wotan.suse.de>
+ <20180428031810.GA14566@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180502151113.GB27853@wotan.suse.de>
+In-Reply-To: <20180428031810.GA14566@bombadil.infradead.org>
 User-Agent: Mutt/1.6.0 (2016-04-01)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598946836077947117?=
-X-GMAIL-MSGID: =?utf-8?q?1600038340720972460?=
+X-GMAIL-MSGID: =?utf-8?q?1599946497494670661?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 02, 2018 at 03:11:13PM +0000, Luis R. Rodriguez wrote:
-> On Wed, May 02, 2018 at 12:08:57PM +0200, Geert Uytterhoeven wrote:
-> > Hi Luis,
+On Fri, Apr 27, 2018 at 08:18:10PM -0700, Matthew Wilcox wrote:
+> On Fri, Apr 27, 2018 at 05:15:26PM -0700, Luis R. Rodriguez wrote:
+> > Some architectures do not define PAGE_KERNEL_RO, best we can do
+> > for them is to provide a fallback onto PAGE_KERNEL. Remove the
+> > hack from the firmware loader and move it onto the asm-generic
+> > header, and document while at it the affected architectures
+> > which do not have a PAGE_KERNEL_RO:
 > > 
-> > On Sat, Apr 28, 2018 at 2:15 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> > > Some architectures do not define PAGE_KERNEL_RO, best we can do
-> > > for them is to provide a fallback onto PAGE_KERNEL. Remove the
-> > > hack from the firmware loader and move it onto the asm-generic
-> > > header, and document while at it the affected architectures
-> > > which do not have a PAGE_KERNEL_RO:
-> > >
-> > >   o alpha
-> > >   o ia64
-> > >   o m68k
-> > >   o mips
-> > >   o sparc64
-> > >   o sparc
-> > >
-> > > Blessed-by: 0-day
-> > > Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-> > 
-> > I believe the "best we can do" is to add the missing definitions for the
-> > architectures where the hardware does support it?
+> >   o alpha
+> >   o ia64
+> >   o m68k
+> >   o mips
+> >   o sparc64
+> >   o sparc
 > 
-> True, but we cannot wait for every architecture to implement a feature to then
-> such generics upstream, 
+> ia64 doesn't have it?
+> 
+> *fx: riffles through architecture book*
+> 
+> That seems like an oversight of the Linux port.  Tony, Fenghua, any thoughts?
 
-Come to think of it your point was the wording. I changed it to not be as misleading.
+Poke *Tony, Fenghua* ?
+
+> (also, Luis, maybe move the PAGE_KERNEL_EXEC fallback the same way you
+> moved the PAGE_KERNEL_RO fallback?)
+
+Done. Will queue in the generic PAGE_KERNEL_EXEC patch to my series.
+
+> --- >8 ---
+> 
+> ia64: Add PAGE_KERNEL_RO and PAGE_KERNEL_EXEC
+> 
+> The rest of the kernel was falling back to simple PAGE_KERNEL pages; using
+> PAGE_KERNEL_RO and PAGE_KERNEL_EXEC provide better protection against
+> unintended writes.
+> 
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+
+Nice, should I queue this into my series as well?
 
   Luis
