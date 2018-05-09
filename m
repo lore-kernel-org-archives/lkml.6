@@ -1,53 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753192AbeEIFF2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 01:05:28 -0400
-Received: from verein.lst.de ([213.95.11.211]:40974 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750903AbeEIFF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 01:05:27 -0400
-Date: Wed, 9 May 2018 07:08:55 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoph Hellwig <hch@lst.de>, Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nipun Gupta <nipun.gupta@nxp.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm-intel tree
-Message-ID: <20180509050855.GA18469@lst.de>
-References: <20180508110716.53dfef41@canb.auug.org.au> <20180509150255.38a5b1cc@canb.auug.org.au>
+        id S1755629AbeEIFGE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 01:06:04 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52348 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753150AbeEIFGD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 01:06:03 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509150255.38a5b1cc@canb.auug.org.au>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 09 May 2018 10:36:01 +0530
+From: kgunda@codeaurora.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH V1 4/5] backlight: qcom-wled: Add support for OVP
+ interrupt handling
+In-Reply-To: <20180508171936.GK2259@tuxbook-pro>
+References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
+ <1525341432-15818-5-git-send-email-kgunda@codeaurora.org>
+ <20180507172152.GD2259@tuxbook-pro>
+ <3736480b2712e2dd401fed0a635a25d7@codeaurora.org>
+ <20180508171936.GK2259@tuxbook-pro>
+Message-ID: <9757b8fbcdd55cb72a42451270b3cb33@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 03:02:55PM +1000, Stephen Rothwell wrote:
-> > -	ret = of_dma_configure(dev, NULL);
-> > +	ret = of_dma_configure(dev, NULL, true);
-> >  	if (ret < 0) {
-> >  		DRM_ERROR("Cannot setup DMA ops, ret %d", ret);
-> >  		return ret;
-> > -- 
-> > 2.17.0
+On 2018-05-08 22:49, Bjorn Andersson wrote:
+> On Tue 08 May 05:26 PDT 2018, kgunda@codeaurora.org wrote:
 > 
-> This is now needed for the merge of the drm and dma-mapping trees.
-
-FYI, because the dma_configure change touch so much code and the author
-wants to base more work on it it actually is in a guranteed stable
-branch with just those patches:
-
-    git://git.infradead.org/users/hch/dma-mapping.git dma-configure
-
-Gitweb:
-
-    http://git.infradead.org/users/hch/dma-mapping.git/shortlog/refs/heads/dma-configure
-  
-Feel free to pull this into the drm tree.
+>> On 2018-05-07 22:51, Bjorn Andersson wrote:
+>> > On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
+> [..]
+>> > > @@ -220,7 +255,12 @@ static int wled_module_enable(struct wled
+>> > > *wled, int val)
+>> > >  				WLED3_CTRL_REG_MOD_EN,
+>> > >  				WLED3_CTRL_REG_MOD_EN_MASK,
+>> > >  				WLED3_CTRL_REG_MOD_EN_MASK);
+>> > > -	return rc;
+>> > > +	if (rc < 0)
+>> > > +		return rc;
+>> > > +
+>> > > +	schedule_delayed_work(&wled->ovp_work, WLED_SOFT_START_DLY_US);
+>> >
+>> > Do you really want to delay the work on disable?
+>> >
+>> > Wouldn't it be better to use a delay worker for the enablement and in
+>> > the disable case you cancel the work and just disable_irq() directly
+>> > here.
+>> >
+>> Sure. Will do it in the next series.
+>> > But more importantly, if this is only related to auto detection, do you
+>> > really want to enable/disable the ovp_irq after you have detected the
+>> > string configuration?
+>> >
+>> Ok. This is used for the genuine OVP detection and for the auto 
+>> detection as
+>> well.
+> 
+> What is the expected outcome of detecting an OVP condition, outside 
+> auto
+> detection?
+> 
+Ok... Out side auto detection, it is used for information purpose. I 
+think it is
+okay to ignore enable/disable the ovp_irq after auto detection is done.
+> Regards,
+> Bjorn
