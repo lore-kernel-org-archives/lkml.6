@@ -1,69 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934367AbeEIIlY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:41:24 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:43655 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934022AbeEIIlU (ORCPT
+        id S934383AbeEIIld (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:41:33 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50406 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934244AbeEIIl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:41:20 -0400
-X-Google-Smtp-Source: AB8JxZp6/CHp9u2rcQxusYOZ9rwMePdOSi1MZk82gnhcCd/Q7ziHoWW6DWTD0nE2B3xuBRSIkV3+sw==
-From: Juri Lelli <juri.lelli@redhat.com>
-To: rafael.j.wysocki@intel.com, peterz@infradead.org
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>
-Subject: [PATCH] kernel/sched/cpufreq_schedutil: remove stale comment
-Date: Wed,  9 May 2018 10:40:51 +0200
-Message-Id: <20180509084051.12107-1-juri.lelli@redhat.com>
-X-Mailer: git-send-email 2.14.3
+        Wed, 9 May 2018 04:41:29 -0400
+Date: Wed, 9 May 2018 10:41:20 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH 13/18] wait: wait.h: Get rid of a kernel-doc/Sphinx
+ warnings
+Message-ID: <20180509084120.GF12217@hirez.programming.kicks-ass.net>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+ <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After commit 794a56ebd9a57 ("sched/cpufreq: Change the worker kthread to
-SCHED_DEADLINE") schedutil kthreads are "ignored" for a clock frequency
-selection point of view, so the potential corner case for RT tasks is not
-possible at all now.
+On Mon, May 07, 2018 at 06:35:49AM -0300, Mauro Carvalho Chehab wrote:
+> The flow diagram should be inside a code-block to avoid those
+> warnings:
+> 	./include/linux/wait.h:110: WARNING: Block quote ends without a blank line; unexpected unindent.
+> 	./include/linux/wait.h:113: WARNING: Unexpected indentation.
+> 	./include/linux/wait.h:115: WARNING: Block quote ends without a blank line; unexpected unindent.
+> 
+> This is easily done by using "::" instead of just ":".
 
-Remove the stale comment mentioning it.
+And I'll voice my objection once again. This makes a regular comment
+worse. This rst stuff is utter shit for making normal text files less
+readable in your favourite text editor.
 
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Claudio Scordino <claudio@evidence.eu.com>
-Cc: Luca Abeni <luca.abeni@santannapisa.it>
----
- kernel/sched/cpufreq_schedutil.c | 13 -------------
- 1 file changed, 13 deletions(-)
+If this gets merged, I'll simply remove that spurious ':' the next time
+I'm near that comment.
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index d2c6083304b4..23ef19070137 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -396,19 +396,6 @@ static void sugov_irq_work(struct irq_work *irq_work)
- 
- 	sg_policy = container_of(irq_work, struct sugov_policy, irq_work);
- 
--	/*
--	 * For RT tasks, the schedutil governor shoots the frequency to maximum.
--	 * Special care must be taken to ensure that this kthread doesn't result
--	 * in the same behavior.
--	 *
--	 * This is (mostly) guaranteed by the work_in_progress flag. The flag is
--	 * updated only at the end of the sugov_work() function and before that
--	 * the schedutil governor rejects all other frequency scaling requests.
--	 *
--	 * There is a very rare case though, where the RT thread yields right
--	 * after the work_in_progress flag is cleared. The effects of that are
--	 * neglected for now.
--	 */
- 	kthread_queue_work(&sg_policy->worker, &sg_policy->work);
- }
- 
--- 
-2.14.3
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  include/linux/wait.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/wait.h b/include/linux/wait.h
+> index d9f131ecf708..d907ed761a7f 100644
+> --- a/include/linux/wait.h
+> +++ b/include/linux/wait.h
+> @@ -101,7 +101,7 @@ init_waitqueue_func_entry(struct wait_queue_entry *wq_entry, wait_queue_func_t f
+>   * lead to sporadic and non-obvious failure.
+>   *
+>   * Use either while holding wait_queue_head::lock or when used for wakeups
+> - * with an extra smp_mb() like:
+> + * with an extra smp_mb() like::
+>   *
+>   *      CPU0 - waker                    CPU1 - waiter
+>   *
+> -- 
+> 2.17.0
+> 
