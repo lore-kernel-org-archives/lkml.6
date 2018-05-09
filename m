@@ -1,77 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934283AbeEIItQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:49:16 -0400
-Received: from mga01.intel.com ([192.55.52.88]:40122 "EHLO mga01.intel.com"
+        id S934338AbeEIItY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:49:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34707 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934094AbeEIIjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:39:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
-   d="scan'208";a="52769494"
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Shaohua Li <shli@kernel.org>,
-        Hugh Dickins <hughd@google.com>, Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: [PATCH -mm -V2 02/21] mm, THP, swap: Make CONFIG_THP_SWAP depends on CONFIG_SWAP
-Date: Wed,  9 May 2018 16:38:27 +0800
-Message-Id: <20180509083846.14823-3-ying.huang@intel.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180509083846.14823-1-ying.huang@intel.com>
-References: <20180509083846.14823-1-ying.huang@intel.com>
+        id S934147AbeEIItT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 04:49:19 -0400
+Date: Wed, 9 May 2018 10:49:16 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Minchan Kim <minchan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>
+Subject: Re: [PATCH] mm/memblock: print memblock_remove
+Message-ID: <20180509084916.GK32366@dhcp22.suse.cz>
+References: <20180508104223.8028-1-minchan@kernel.org>
+ <20180509081214.GE32366@dhcp22.suse.cz>
+ <20180509081825.GA220810@rodete-desktop-imager.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509081825.GA220810@rodete-desktop-imager.corp.google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huang Ying <ying.huang@intel.com>
+On Wed 09-05-18 17:18:25, Minchan Kim wrote:
+> On Wed, May 09, 2018 at 10:12:14AM +0200, Michal Hocko wrote:
+> > On Tue 08-05-18 19:42:23, Minchan Kim wrote:
+> > > memblock_remove report is useful to see why MemTotal of /proc/meminfo
+> > > between two kernels makes difference.
+> > > 
+> > > Signed-off-by: Minchan Kim <minchan@kernel.org>
+> > > ---
+> > >  mm/memblock.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > > 
+> > > diff --git a/mm/memblock.c b/mm/memblock.c
+> > > index 5228f594b13c..03d48d8835ba 100644
+> > > --- a/mm/memblock.c
+> > > +++ b/mm/memblock.c
+> > > @@ -697,6 +697,11 @@ static int __init_memblock memblock_remove_range(struct memblock_type *type,
+> > >  
+> > >  int __init_memblock memblock_remove(phys_addr_t base, phys_addr_t size)
+> > >  {
+> > > +	phys_addr_t end = base + size - 1;
+> > > +
+> > > +	memblock_dbg("memblock_remove: [%pa-%pa] %pS\n",
+> > > +		     &base, &end, (void *)_RET_IP_);
+> > 
+> > Other callers of memblock_dbg use %pF. Is there any reason to be
+> > different here?
+> 
+> checkpatch hit me.
+> 
+> WARNING: Deprecated vsprintf pointer extension '%pF' - use %pS instead
+> #24: FILE: mm/memblock.c:702:
+> +       memblock_dbg("memblock_remove: [%pa-%pa] %pF\n",
+> +                    &base, &end, (void *)_RET_IP_);
 
-It's unreasonable to optimize swapping for THP without basic swapping
-support.  And this will cause build errors when THP_SWAP functions are
-defined in swapfile.c and called elsewhere.
-
-The comments are fixed too to reflect the latest progress.
-
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Shaohua Li <shli@kernel.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Zi Yan <zi.yan@cs.rutgers.edu>
----
- mm/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/mm/Kconfig b/mm/Kconfig
-index f27a60d982ff..1c44a75ac3ff 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -420,10 +420,9 @@ config ARCH_WANTS_THP_SWAP
- 
- config THP_SWAP
- 	def_bool y
--	depends on TRANSPARENT_HUGEPAGE && ARCH_WANTS_THP_SWAP
-+	depends on TRANSPARENT_HUGEPAGE && ARCH_WANTS_THP_SWAP && SWAP
- 	help
- 	  Swap transparent huge pages in one piece, without splitting.
--	  XXX: For now this only does clustered swap space allocation.
- 
- 	  For selection by architectures with reasonable THP sizes.
- 
+OK, I see. Then we probably need some mass replacement as well. Anyway
+Acked-by: Michal Hocko <mhocko@suse.com>
+for this one.
 -- 
-2.16.1
+Michal Hocko
+SUSE Labs
