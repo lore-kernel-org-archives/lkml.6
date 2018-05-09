@@ -1,67 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934826AbeEIMWZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:22:25 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55370 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932318AbeEIMWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:22:23 -0400
-Date: Wed, 9 May 2018 14:22:21 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 16/18] mtd: rawnand.h: use nested union kernel-doc
- markups
-Message-ID: <20180509142221.0fef7d1f@bbrezillon>
-In-Reply-To: <20180509091034.58dadd12@vento.lan>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-        <39d8d4f0e0ff5a06be0303f7f4f2eac5fb45b9ca.1525684985.git.mchehab+samsung@kernel.org>
-        <20180507114650.171edcc2@bbrezillon>
-        <20180507083232.5a084ba7@vento.lan>
-        <20180509091034.58dadd12@vento.lan>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751052AbeEIMXJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:23:09 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:55105 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932318AbeEIMXH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 08:23:07 -0400
+From: Colin King <colin.king@canonical.com>
+To: Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] netfilter: nf_tables: fix memory leak on error exit return
+Date: Wed,  9 May 2018 13:22:56 +0100
+Message-Id: <20180509122256.16859-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 May 2018 09:10:34 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Hi Boris,
-> 
-> Em Mon, 7 May 2018 08:32:32 -0300
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> escreveu:
-> 
-> > Hi Boris,
-> > 
-> > Em Mon, 7 May 2018 11:46:50 +0200
-> > Boris Brezillon <boris.brezillon@bootlin.com> escreveu:  
-> 
-> > > Is there a simple
-> > > way we can get rid of the warning we have when not describing timings
-> > > but all of its fields?    
-> > 
-> > There's no direct way. It won't be hard to add a way to do it,
-> > like applying the enclosed patch with ends by declaring timings as:
-> > 
-> > 	* @timings:	 -- undescribed --
-> > 
-> > IMHO, this is uglier.  
-> 
-> Didn't hear from you.
+Currently the -EBUSY error return path is not free'ing resources
+allocated earlier, leaving a memory leak. Fix this by exiting via the
+error exit label err5 that performs the necessary resource clean
+up.
 
-I replied just a few minutes ago ;).
+Detected by CoverityScan, CID#1432975 ("Resource leak")
 
-> What do you prefer for me to do with regards to
-> this patch? 
+Fixes: 9744a6fcefcb ("netfilter: nf_tables: check if same extensions are set when adding elements")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/netfilter/nf_tables_api.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Will queue the initial patch to nand/next (I can also queue it to the
-fixes branch if you prefer).
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 6422eba367cf..a3d77aa0f752 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -4098,8 +4098,10 @@ static int nft_add_set_elem(struct nft_ctx *ctx, struct nft_set *set,
+ 			if (nft_set_ext_exists(ext, NFT_SET_EXT_DATA) ^
+ 			    nft_set_ext_exists(ext2, NFT_SET_EXT_DATA) ||
+ 			    nft_set_ext_exists(ext, NFT_SET_EXT_OBJREF) ^
+-			    nft_set_ext_exists(ext2, NFT_SET_EXT_OBJREF))
+-				return -EBUSY;
++			    nft_set_ext_exists(ext2, NFT_SET_EXT_OBJREF)) {
++				err = -EBUSY;
++				goto err5;
++			}
+ 			if ((nft_set_ext_exists(ext, NFT_SET_EXT_DATA) &&
+ 			     nft_set_ext_exists(ext2, NFT_SET_EXT_DATA) &&
+ 			     memcmp(nft_set_ext_data(ext),
+-- 
+2.17.0
