@@ -1,93 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965633AbeEIQpK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:45:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:46874 "EHLO foss.arm.com"
+        id S965644AbeEIQpr (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:45:47 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:38978 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964989AbeEIQpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:45:09 -0400
-Date: Wed, 9 May 2018 17:45:05 +0100
-From: Brian Starkey <brian.starkey@arm.com>
-To: Ezequiel Garcia <ezequiel@collabora.com>
-Cc: linux-media@vger.kernel.org, kernel@collabora.com,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-Subject: Re: [PATCH v9 11/15] vb2: add in-fence support to QBUF
-Message-ID: <20180509164504.GB23664@e107564-lin.cambridge.arm.com>
-References: <20180504200612.8763-1-ezequiel@collabora.com>
- <20180504200612.8763-12-ezequiel@collabora.com>
- <20180509103639.GC39838@e107564-lin.cambridge.arm.com>
- <fca78137c285eff268b0319ca752014c9f4e76fc.camel@collabora.com>
+        id S935232AbeEIQpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 12:45:43 -0400
+To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Stephen Bates <sbates@raithlin.com>,
+        Jerome Glisse <jglisse@redhat.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+References: <20180423233046.21476-5-logang@deltatee.com>
+ <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
+ <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
+ <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
+ <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
+ <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
+ <20180508133407.57a46902@w520.home>
+ <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
+ <20180508141331.7cd737cb@w520.home>
+ <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
+ <20180508205005.GC15608@redhat.com>
+ <7FFB9603-DF9F-4441-82E9-46037CB6C0DE@raithlin.com>
+ <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <4e0d0b96-ab02-2662-adf3-fa956efd294c@deltatee.com>
+Date: Wed, 9 May 2018 10:45:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <fca78137c285eff268b0319ca752014c9f4e76fc.camel@collabora.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: benh@kernel.crashing.org, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org, alex.williamson@redhat.com, jglisse@redhat.com, sbates@raithlin.com, christian.koenig@amd.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 01:03:15PM -0300, Ezequiel Garcia wrote:
->On Wed, 2018-05-09 at 11:36 +0100, Brian Starkey wrote:
->
->[..]
->> > @@ -203,9 +215,14 @@ static void __fill_v4l2_buffer(struct vb2_buffer *vb, void *pb)
->> > 	b->timestamp = ns_to_timeval(vb->timestamp);
->> > 	b->timecode = vbuf->timecode;
->> > 	b->sequence = vbuf->sequence;
->> > -	b->fence_fd = 0;
->> > 	b->reserved = 0;
->> >
->> > +	b->fence_fd = 0;
->>
->> I didn't understand why we're returning 0 instead of -1. Actually the
->> doc in patch 10 seems to say it will be -1 or 0 depending on whether
->> we set one of the fence flags? I'm not sure:
->>
->>     For all other ioctls V4L2 sets this field to -1 if
->>     ``V4L2_BUF_FLAG_IN_FENCE`` and/or ``V4L2_BUF_FLAG_OUT_FENCE`` are set,
->>     otherwise this field is set to 0 for backward compatibility.
->>
->
->Well, I think that for backwards compatibility (userspace not knowing
->about fence_fd field), we should return 0, unless the flags are explicitly
->set.
->
->That is what the doc says and it sounds sane.
 
-On the line below where you snipped, is this:
 
-+      if (vb->in_fence)
-+              b->flags |= V4L2_BUF_FLAG_IN_FENCE;
-+      else
-+              b->flags &= ~V4L2_BUF_FLAG_IN_FENCE;
+On 09/05/18 07:40 AM, Christian König wrote:
+> The key takeaway is that when any device has ATS enabled you can't 
+> disable ACS without breaking it (even if you unplug and replug it).
 
-If the "if (vb->in_fence)" condition is true, then the flag is set,
-and the fence_fd field is 0. I think that's the opposite of what the
-doc says:
+I don't follow how you came to this conclusion...
+ The ACS bits we'd be turning off are the ones that force TLPs addressed
+at a peer to go to the RC. However, ATS translation packets will be
+addressed to an untranslated address which a switch will not identify as
+a peer address so it should send upstream regardless the state of the
+ACS Req/Comp redirect bits.
 
-    For all other ioctls V4L2 sets this field to -1 if
-    ``V4L2_BUF_FLAG_IN_FENCE`` and/or ``V4L2_BUF_FLAG_OUT_FENCE`` are set,
-    otherwise this field is set to 0 for backward compatibility.
+Once the translation comes back, the ATS endpoint should send the TLP to
+the peer address with the AT packet type and it will be directed to the
+peer provided the Direct Translated bit is set (or the redirect bits are
+unset).
 
-V4L2_BUF_FLAG_IN_FENCE is set, therefore the doc says V4L2 will set
-this field to -1. (Or at least the comment should be made less
-ambiguous).
+I can't see how turning off the Req/Comp redirect bits could break
+anything except for the isolation they provide.
 
->
->The bits are implemented in patch 12, but as I mentioned in my reply to
->patch 10, I will move it to patch 10, for consistency.
-
-Yeah as you say, it looks like you change this behaviour in path 12,
-so I'm not totally sure which is right or expected. But consistency is
-good :-)
-
--Brian
-
->
->Thanks,
->Eze
+Logan
