@@ -1,186 +1,128 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-539398-1525878597-2-15816345512652548303
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525878596; b=eTqshnzlQMvmEbr1Yx/R5A0L6iswHG+aL9Yt+dfjasvPgVwgYQ
-    zwClGKZ/Q4sxcDqNRHyExwFT+va0kmNHAX4QhxeOLsRPo5suT9tLR9/YUSA+34vU
-    C5YdIJz5mPDzq9vCmM/6vq4RYMMjaPD1pfXByLvy/Sa50+4iPPh+x3W/x5wjI491
-    M1E1HLKsZqO9gNn/4kbnuY2Q/GyE4AqSfRFBABgf456eDEQr8rcrJYA4+yaqZpMM
-    CEmUgOgmIf/0mrMDU31oQGK3mPtZ6lXAd7TvAVzCO/t4p/B2AVM0j7ZXzYTl5q9g
-    2usE4M5nXjKG/HNCVon7Xry8Sma4Ku2d8sYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1525878596; bh=/r6DzH54CiTW8qJhCA7+hVY4eqzj+1
-    2ETn1Xe7dGscA=; b=dg1gM+5zzZH/ReD/UVCizaN+R0pWYxR5Ys6ViLIIRPZDHu
-    8Yj4E7A30RQ53DlUB68kyAZDxQdRoQQqcwUyPAmSv1/eoQOAMDv3Edkm3zO3E6qh
-    jmlwz1mKkyr1nMtIbudl+3+iPN/qnBOLePubudajVyb6FzMxUDgGhHP41hqQT5Yr
-    zfQLn/jf27zVaYtSZ+2XWhfI6u3NtnBdVdgr7hr63nTgYGrJYrmC4vVj/pGzW4+a
-    e0IjZyGtPYQgJgIH9SXMZoYmxE1GhKwxD6TLEPEQML6HmrhKiJa3IilKs6cfQbC8
-    4K12g5EeVi9qLT+BAIehYTCN5uMNZQpx9BGOkVGg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.intel.com header.result=pass
-    header_org.domain=intel.com header_org.result=pass
-    header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.intel.com header.result=pass
-      header_org.domain=intel.com header_org.result=pass
-      header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHGWQtwe/HG7gImc8EJttV182KfcWR8iV0lSeVrdkLaAIbhivRCJEYF1MatYIUs100XfMWDo4ne1M95jMVdxtpQSvnn6XptWTOs88Im1z1bPnJS+HdNz
-    CCV9ST/qSXldAFdNlUENa/UAJI6wWHuGfQfp28THLYObIa27HNK9cESnor67HU/fDuaqj49P984Wos/7W1iRRgX0eDvf2sJYKEiUoLl+D2k+pse1ltfAgZ3p
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=95H62BSV9jZzOz3ZCT0A:9 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964815AbeEIPJr (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 9 May 2018 11:09:47 -0400
-Received: from mga11.intel.com ([192.55.52.93]:14855 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935065AbeEIPJn (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 9 May 2018 11:09:43 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
-   d="scan'208";a="54492399"
-Date: Wed, 9 May 2018 09:09:38 -0600
-From: Ross Zwisler <ross.zwisler@linux.intel.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>, linux-nvdimm@lists.01.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5/5] radix tree: fix multi-order iteration race
-Message-ID: <20180509150938.GA3814@linux.intel.com>
-References: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
- <20180503192430.7582-6-ross.zwisler@linux.intel.com>
- <20180509124611.6hoa743z4qrx6bgc@quack2.suse.cz>
+Return-Path: <linux+gregkh=linuxfoundation.org@armlinux.org.uk>
+X-Google-Smtp-Source: AB8JxZouPiXFuRLQGiWH2/sP46F0bivdQmMrwRTEdePo9ryG53VJhWD8s7QMD5w2WyF/uA/+yfZD
+ARC-Seal: i=1; a=rsa-sha256; t=1525862408; cv=none;
+        d=google.com; s=arc-20160816;
+        b=UHgvke/pedfFSmfmADOSRLDRjHJiFMYKz5HCbTm0pT9AmLPj0IDhrIQ4TteaQg9mFe
+         MFdtNh4wqMvcK1ErQ/8fdy3Z3mfBC05me+EceOzgWxaUtcKtagVmUOwj8BZXxGD6dbpI
+         2hBvadr1fkzWjDUmg3Viw4wjS/WDl2qCzGaR9xDzA+ciuSwdGyuOM0/dO5QNYPWx8BBh
+         330egI20mCOlgTXhzqY8PaEUROqZCNaLZVpAp7wJJuchz2+34pcyPMjYGJuGQmHSZaEv
+         LGFPNYjUZznJI4usPsk+ECkMl0yGgG3U3jLu9yxHyYSTRXZRcRdebU2Z6UC6I76P2KLT
+         DNCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=sender:user-agent:in-reply-to:content-disposition:mime-version
+         :references:message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=kPHHFKvBzk4l/Bmgofs7DhvyZ+zUOY/f2IGD2sCNkWs=;
+        b=bx5CMxWgit4yx4pgr1HZdEbC2J3UQSpX8No61lUUewtxD/6Pgla6rMitQfgbr6t5bN
+         j2N7FVfjA7uMhgFSZnMAmobQKz+bPKUOVA69RV1ZZKlBJxMkokEYrfer4m476erklroH
+         mWH+vGcZkeijX7JPHy1qPq3Za/+ZQP9lyWgi3+HgCSWWnECJabUTz/ZRPyMnCMI3Rcwv
+         NcbfrOVvZa9HkeAYWNY5HfjBmWEkL23zYSIyDXc9ExhoseBdDdGGjrYZ8jWeMm2q/g0r
+         bE4YA0oQY+/8nSaFNIKblbjbBJuPOTsiarxWZ3qMYNROHlSgTHCZnLtBp+mJQQdXgIBu
+         +s0A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@armlinux.org.uk header.s=pandora-2014 header.b=LU5SowOr;
+       spf=pass (google.com: best guess record for domain of linux+gregkh=linuxfoundation.org@armlinux.org.uk designates 2001:4d48:ad52:3201:214:fdff:fe10:1be6 as permitted sender) smtp.mailfrom=linux+gregkh=linuxfoundation.org@armlinux.org.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=armlinux.org.uk
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@armlinux.org.uk header.s=pandora-2014 header.b=LU5SowOr;
+       spf=pass (google.com: best guess record for domain of linux+gregkh=linuxfoundation.org@armlinux.org.uk designates 2001:4d48:ad52:3201:214:fdff:fe10:1be6 as permitted sender) smtp.mailfrom=linux+gregkh=linuxfoundation.org@armlinux.org.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=armlinux.org.uk
+Date: Wed, 9 May 2018 11:39:54 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Adrian Salido <salidoa@google.com>,
+	Nicolai Stange <nstange@suse.de>,
+	Sasha Levin <Alexander.Levin@microsoft.com>,
+	Todd Kjos <tkjos@android.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] ARM: amba: Fix race condition with driver_override
+Message-ID: <20180509103954.GR16141@n2100.armlinux.org.uk>
+References: <1523366506-19832-1-git-send-email-geert+renesas@glider.be>
+ <1523366506-19832-3-git-send-email-geert+renesas@glider.be>
+ <20180425160645.GA16732@kroah.com>
+ <CAMuHMdUVowxjG0Q=DGie_JjPqfz3UBDikvLnZ6_86jbcJMKqyQ@mail.gmail.com>
+ <20180426070410.GM14025@kroah.com>
+ <CAMuHMdWLCQoHzuW1UZNP9gdRV3EE6_yPcdyX1NDy65q7Nt4tZw@mail.gmail.com>
+ <20180426083542.GA31073@kroah.com>
+ <CAMuHMdWO+C3g4T_rPbcyPFgVpqubjj4HZ++O+P7d0VYYFP0xWA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180509124611.6hoa743z4qrx6bgc@quack2.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+In-Reply-To: <CAMuHMdWO+C3g4T_rPbcyPFgVpqubjj4HZ++O+P7d0VYYFP0xWA@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+Sender: Russell King - ARM Linux <linux@armlinux.org.uk>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597365566189003865?=
+X-GMAIL-MSGID: =?utf-8?q?1599982700600689062?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 09, 2018 at 02:46:11PM +0200, Jan Kara wrote:
-> On Thu 03-05-18 13:24:30, Ross Zwisler wrote:
-> > Fix a race in the multi-order iteration code which causes the kernel to hit
-> > a GP fault.  This was first seen with a production v4.15 based kernel
-> > (4.15.6-300.fc27.x86_64) utilizing a DAX workload which used order 9 PMD
-> > DAX entries.
-> > 
-> > The race has to do with how we tear down multi-order sibling entries when
-> > we are removing an item from the tree.  Remember for example that an order
-> > 2 entry looks like this:
-> > 
-> > struct radix_tree_node.slots[] = [entry][sibling][sibling][sibling]
-> > 
-> > where 'entry' is in some slot in the struct radix_tree_node, and the three
-> > slots following 'entry' contain sibling pointers which point back to
-> > 'entry.'
-> > 
-> > When we delete 'entry' from the tree, we call :
-> >   radix_tree_delete()
-> >     radix_tree_delete_item()
-> >       __radix_tree_delete()
-> >         replace_slot()
-> > 
-> > replace_slot() first removes the siblings in order from the first to the
-> > last, then at then replaces 'entry' with NULL.  This means that for a brief
-> > period of time we end up with one or more of the siblings removed, so:
-> > 
-> > struct radix_tree_node.slots[] = [entry][NULL][sibling][sibling]
-> > 
-> > This causes an issue if you have a reader iterating over the slots in the
-> > tree via radix_tree_for_each_slot() while only under
-> > rcu_read_lock()/rcu_read_unlock() protection.  This is a common case in
-> > mm/filemap.c.
-> > 
-> > The issue is that when __radix_tree_next_slot() => skip_siblings() tries to
-> > skip over the sibling entries in the slots, it currently does so with an
-> > exact match on the slot directly preceding our current slot.  Normally this
-> > works:
-> >                                     V preceding slot
-> > struct radix_tree_node.slots[] = [entry][sibling][sibling][sibling]
-> >                                             ^ current slot
-> > 
-> > This lets you find the first sibling, and you skip them all in order.
-> > 
-> > But in the case where one of the siblings is NULL, that slot is skipped and
-> > then our sibling detection is interrupted:
-> > 
-> >                                            V preceding slot
-> > struct radix_tree_node.slots[] = [entry][NULL][sibling][sibling]
-> >                                                   ^ current slot
-> > 
-> > This means that the sibling pointers aren't recognized since they point all
-> > the way back to 'entry', so we think that they are normal internal radix
-> > tree pointers.  This causes us to think we need to walk down to a struct
-> > radix_tree_node starting at the address of 'entry'.
-> > 
-> > In a real running kernel this will crash the thread with a GP fault when
-> > you try and dereference the slots in your broken node starting at 'entry'.
-> > 
-> > We fix this race by fixing the way that skip_siblings() detects sibling
-> > nodes.  Instead of testing against the preceding slot we instead look for
-> > siblings via is_sibling_entry() which compares against the position of the
-> > struct radix_tree_node.slots[] array.  This ensures that sibling entries
-> > are properly identified, even if they are no longer contiguous with the
-> > 'entry' they point to.
-> > 
-> > Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
-> > Reported-by: CR, Sapthagirish <sapthagirish.cr@intel.com>
-> > Fixes: commit 148deab223b2 ("radix-tree: improve multiorder iterators")
-> > Cc: <stable@vger.kernel.org>
+On Thu, Apr 26, 2018 at 10:45:49AM +0200, Geert Uytterhoeven wrote:
+> Hi Greg,
 > 
-> Looks good to me. You can add:
+> On Thu, Apr 26, 2018 at 10:35 AM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Thu, Apr 26, 2018 at 09:40:08AM +0200, Geert Uytterhoeven wrote:
+> >> On Thu, Apr 26, 2018 at 9:04 AM, Greg Kroah-Hartman
+> >> <gregkh@linuxfoundation.org> wrote:
+> >> > On Wed, Apr 25, 2018 at 07:53:06PM +0200, Geert Uytterhoeven wrote:
+> >> >> On Wed, Apr 25, 2018 at 6:06 PM, Greg Kroah-Hartman
+> >> >> <gregkh@linuxfoundation.org> wrote:
+> >> >> > On Tue, Apr 10, 2018 at 03:21:44PM +0200, Geert Uytterhoeven wrote:
+> >> >> >> The driver_override implementation is susceptible to a race condition
+> >> >> >> when different threads are reading vs storing a different driver
+> >> >> >> override.  Add locking to avoid this race condition.
+> >> >> >>
+> >> >> >> Cfr. commits 6265539776a0810b ("driver core: platform: fix race
+> >> >> >> condition with driver_override") and 9561475db680f714 ("PCI: Fix race
+> >> >> >> condition with driver_override").
+> >> >> >>
+> >> >> >> Fixes: 3cf385713460eb2b ("ARM: 8256/1: driver coamba: add device binding path 'driver_override'")
+> >> >> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> >> >> Reviewed-by: Todd Kjos <tkjos@google.com>
+> >> >> >> Cc: stable <stable@vger.kernel.org>
+> >> >>
+> >> >> > As this should go to stable kernels, I've fixed it up to apply without
+> >> >> > patch 1 as that's not a real "fix" that anyone needs...
+> >> >> >
+> >> >> > Please try to remember to put fixes first, and then "trivial" things
+> >> >> > later on in a series.
+> >> >>
+> >> >> I did it on purpose, as the fix is much more ugly without patch 1 applied.
+> >> >> Can't you just take patch 1, too? More consistency is always nice, even for
+> >> >> stable ;-)
+> >> >
+> >> > Consistency is nice, but when you have bug fixes that rely on "trivial"
+> >> > patches, it's usually not nice :(
+> >> >
+> >> > I already committed patch 2 to my tree without 1, so let's leave it
+> >> > as-is for now.
+> >>
+> >> Unfortunately the version you committed is buggy: the race condition
+> >> also covers the NULL check removed by the trivial patch you skipped,
+> >> so now you can get inconsistent behavior (no output or "(null)") on the
+> >> same running kernel version...
+> >>
+> >> Please revert and apply both. Thanks!
+> >
+> > Ugh, you are right, sorry about that.
+> >
+> > I've reverted the offending patch, and added them in the correct order
+> > now, I should have listened to you :)
 > 
-> Reviewed-by: Jan Kara <jack@suse.cz>
+> Np, issue detected and fixed.
+> Thanks!
 
-Thank you for the review, Jan.
+So what about the patches you submitted to the patch system - should
+I pick those up or not?
+
+Please don't ask other maintainers to take patches that have been
+submitted to the patch system without first changing their status,
+they're liable to get applied anyway.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
