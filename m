@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965633AbeEITiu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 15:38:50 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:34562 "EHLO
+        id S965740AbeEITjk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 15:39:40 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34578 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965097AbeEITiq (ORCPT
+        with ESMTP id S965602AbeEITiu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 15:38:46 -0400
+        Wed, 9 May 2018 15:38:50 -0400
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To: linux-kernel@vger.kernel.org
 Cc: tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
@@ -14,9 +14,9 @@ Cc: tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
         Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
         Anna-Maria Gleixner <anna-maria@linutronix.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 2/8] userns: use refcount_t for reference counting instead atomic_t
-Date: Wed,  9 May 2018 21:36:39 +0200
-Message-Id: <20180509193645.830-3-bigeasy@linutronix.de>
+Subject: [PATCH 6/8] userns: Use irqsave variant of refcount_dec_and_lock()
+Date: Wed,  9 May 2018 21:36:43 +0200
+Message-Id: <20180509193645.830-7-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180509193645.830-1-bigeasy@linutronix.de>
 References: <20180509193645.830-1-bigeasy@linutronix.de>
@@ -26,88 +26,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-refcount_t type and corresponding API should be used instead of atomic_t wh=
-en
-the variable is used as a reference counter. This allows to avoid accidental
-refcounter overflows that might lead to use-after-free situations.
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
+The irqsave variant of refcount_dec_and_lock handles irqsave/restore when
+taking/releasing the spin lock. With this variant the call of
+local_irq_save/restore is no longer required.
+
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+[bigeasy: s@atomic_dec_and_lock@refcount_dec_and_lock@g ]
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- include/linux/sched/user.h | 5 +++--
- kernel/user.c              | 8 ++++----
- 2 files changed, 7 insertions(+), 6 deletions(-)
+ kernel/user.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/include/linux/sched/user.h b/include/linux/sched/user.h
-index 96fe289c4c6e..39ad98c09c58 100644
---- a/include/linux/sched/user.h
-+++ b/include/linux/sched/user.h
-@@ -4,6 +4,7 @@
-=20
- #include <linux/uidgid.h>
- #include <linux/atomic.h>
-+#include <linux/refcount.h>
- #include <linux/ratelimit.h>
-=20
- struct key;
-@@ -12,7 +13,7 @@ struct key;
-  * Some day this will be a full-fledged user tracking system..
-  */
- struct user_struct {
--	atomic_t __count;	/* reference count */
-+	refcount_t __count;	/* reference count */
- 	atomic_t processes;	/* How many processes does this user have? */
- 	atomic_t sigpending;	/* How many pending signals does this user have? */
- #ifdef CONFIG_FANOTIFY
-@@ -59,7 +60,7 @@ extern struct user_struct root_user;
- extern struct user_struct * alloc_uid(kuid_t);
- static inline struct user_struct *get_uid(struct user_struct *u)
- {
--	atomic_inc(&u->__count);
-+	refcount_inc(&u->__count);
- 	return u;
- }
- extern void free_uid(struct user_struct *);
 diff --git a/kernel/user.c b/kernel/user.c
-index 36288d840675..5f65ef195259 100644
+index 5f65ef195259..0df9b1640b2a 100644
 --- a/kernel/user.c
 +++ b/kernel/user.c
-@@ -96,7 +96,7 @@ static DEFINE_SPINLOCK(uidhash_lock);
-=20
- /* root_user.__count is 1, for init task cred */
- struct user_struct root_user =3D {
--	.__count	=3D ATOMIC_INIT(1),
-+	.__count	=3D REFCOUNT_INIT(1),
- 	.processes	=3D ATOMIC_INIT(1),
- 	.sigpending	=3D ATOMIC_INIT(0),
- 	.locked_shm     =3D 0,
-@@ -123,7 +123,7 @@ static struct user_struct *uid_hash_find(kuid_t uid, st=
-ruct hlist_head *hashent)
-=20
- 	hlist_for_each_entry(user, hashent, uidhash_node) {
- 		if (uid_eq(user->uid, uid)) {
--			atomic_inc(&user->__count);
-+			refcount_inc(&user->__count);
- 			return user;
- 		}
- 	}
-@@ -170,7 +170,7 @@ void free_uid(struct user_struct *up)
+@@ -169,11 +169,8 @@ void free_uid(struct user_struct *up)
+ 	if (!up)
  		return;
 =20
- 	local_irq_save(flags);
--	if (atomic_dec_and_lock(&up->__count, &uidhash_lock))
-+	if (refcount_dec_and_lock(&up->__count, &uidhash_lock))
+-	local_irq_save(flags);
+-	if (refcount_dec_and_lock(&up->__count, &uidhash_lock))
++	if (refcount_dec_and_lock_irqsave(&up->__count, &uidhash_lock, &flags))
  		free_user(up, flags);
- 	else
- 		local_irq_restore(flags);
-@@ -191,7 +191,7 @@ struct user_struct *alloc_uid(kuid_t uid)
- 			goto out_unlock;
+-	else
+-		local_irq_restore(flags);
+ }
 =20
- 		new->uid =3D uid;
--		atomic_set(&new->__count, 1);
-+		refcount_set(&new->__count, 1);
- 		ratelimit_state_init(&new->ratelimit, HZ, 100);
- 		ratelimit_set_flags(&new->ratelimit, RATELIMIT_MSG_ON_RELEASE);
-=20
+ struct user_struct *alloc_uid(kuid_t uid)
 --=20
 2.17.0
