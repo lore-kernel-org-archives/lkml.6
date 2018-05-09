@@ -1,147 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965534AbeEIQbT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:31:19 -0400
-Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:46182 "EHLO
-        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934914AbeEIQbS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:31:18 -0400
-Date: Wed, 9 May 2018 17:31:15 +0100
-From: Mel Gorman <mgorman@techsingularity.net>
-To: mingo@kernel.org, peterz@infradead.org
-Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        torvalds@linux-foundation.org, tglx@linutronix.de, hpa@zytor.com,
-        efault@gmx.de, linux-kernel@vger.kernel.org, matt@codeblueprint.co.uk,
-        ggherdovich@suse.cz, mpe@ellerman.id.au
-Subject: [PATCH] Revert "sched/numa: Delay retrying placement for automatic
- NUMA balance after wake_affine()"
-Message-ID: <20180509163115.6fnnyeg4vdm2ct4v@techsingularity.net>
+        id S965487AbeEIQdM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:33:12 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46650 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933573AbeEIQdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 12:33:11 -0400
+Date: Wed, 9 May 2018 17:33:01 +0100
+From: Brian Starkey <brian.starkey@arm.com>
+To: Ezequiel Garcia <ezequiel@collabora.com>
+Cc: linux-media@vger.kernel.org, kernel@collabora.com,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+Subject: Re: [PATCH v9 10/15] vb2: add explicit fence user API
+Message-ID: <20180509163300.GA23664@e107564-lin.cambridge.arm.com>
+References: <20180504200612.8763-1-ezequiel@collabora.com>
+ <20180504200612.8763-11-ezequiel@collabora.com>
+ <20180509103353.GA39838@e107564-lin.cambridge.arm.com>
+ <e52f72ea1fdf491dd10a9a40bbced6d3bad66f7b.camel@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <e52f72ea1fdf491dd10a9a40bbced6d3bad66f7b.camel@collabora.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 7347fc87dfe6b7315e74310ee1243dc222c68086.
+On Wed, May 09, 2018 at 12:52:26PM -0300, Ezequiel Garcia wrote:
+>On Wed, 2018-05-09 at 11:33 +0100, Brian Starkey wrote:
+>> Hi Ezequiel,
+>>
+>> On Fri, May 04, 2018 at 05:06:07PM -0300, Ezequiel Garcia wrote:
+>> > From: Gustavo Padovan <gustavo.padovan@collabora.com>
+>> >
+>> > Turn the reserved2 field into fence_fd that we will use to send
+>> > an in-fence to the kernel or return an out-fence from the kernel to
+>> > userspace.
+>> >
+>> > Two new flags were added, V4L2_BUF_FLAG_IN_FENCE, that should be used
+>> > when sending an in-fence to the kernel to be waited on, and
+>> > V4L2_BUF_FLAG_OUT_FENCE, to ask the kernel to give back an out-fence.
+>> >
+>> > v7: minor fixes on the Documentation (Hans Verkuil)
+>> >
+>> > v6: big improvement on doc (Hans Verkuil)
+>> >
+>> > v5: - keep using reserved2 field for cpia2
+>> >    - set fence_fd to 0 for now, for compat with userspace(Mauro)
+>> >
+>> > v4: make it a union with reserved2 and fence_fd (Hans Verkuil)
+>> >
+>> > v3: make the out_fence refer to the current buffer (Hans Verkuil)
+>> >
+>> > v2: add documentation
+>> >
+>> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+>> > ---
+>> > Documentation/media/uapi/v4l/buffer.rst         | 45 +++++++++++++++++++++++--
+>> > drivers/media/common/videobuf2/videobuf2-v4l2.c |  2 +-
+>> > drivers/media/v4l2-core/v4l2-compat-ioctl32.c   |  4 +--
+>> > include/uapi/linux/videodev2.h                  |  8 ++++-
+>> > 4 files changed, 52 insertions(+), 7 deletions(-)
+>> >
+>> > diff --git a/Documentation/media/uapi/v4l/buffer.rst b/Documentation/media/uapi/v4l/buffer.rst
+>> > index e2c85ddc990b..be9719cf5745 100644
+>> > --- a/Documentation/media/uapi/v4l/buffer.rst
+>> > +++ b/Documentation/media/uapi/v4l/buffer.rst
+>> > @@ -301,10 +301,22 @@ struct v4l2_buffer
+>> > 	elements in the ``planes`` array. The driver will fill in the
+>> > 	actual number of valid elements in that array.
+>> >     * - __u32
+>> > -      - ``reserved2``
+>> > +      - ``fence_fd``
+>> >       -
+>> > -      - A place holder for future extensions. Drivers and applications
+>> > -	must set this to 0.
+>> > +      - Used to communicate a fence file descriptors from userspace to kernel
+>> > +	and vice-versa. On :ref:`VIDIOC_QBUF <VIDIOC_QBUF>` when sending
+>> > +	an in-fence for V4L2 to wait on, the ``V4L2_BUF_FLAG_IN_FENCE`` flag must
+>> > +	be used and this field set to the fence file descriptor of the in-fence.
+>> > +	If the in-fence is not valid ` VIDIOC_QBUF`` returns an error.
+>> > +
+>> > +        To get an out-fence back from V4L2 the ``V4L2_BUF_FLAG_OUT_FENCE``
+>> > +	must be set, the kernel will return the out-fence file descriptor in
+>> > +	this field. If it fails to create the out-fence ``VIDIOC_QBUF` returns
+>> > +        an error.
+>> > +
+>> > +	For all other ioctls V4L2 sets this field to -1 if
+>> > +	``V4L2_BUF_FLAG_IN_FENCE`` and/or ``V4L2_BUF_FLAG_OUT_FENCE`` are set,
+>> > +	otherwise this field is set to 0 for backward compatibility.
+>> >     * - __u32
+>> >       - ``reserved``
+>> >       -
+>> > @@ -648,6 +660,33 @@ Buffer Flags
+>> >       - Start Of Exposure. The buffer timestamp has been taken when the
+>> > 	exposure of the frame has begun. This is only valid for the
+>> > 	``V4L2_BUF_TYPE_VIDEO_CAPTURE`` buffer type.
+>> > +    * .. _`V4L2-BUF-FLAG-IN-FENCE`:
+>> > +
+>> > +      - ``V4L2_BUF_FLAG_IN_FENCE``
+>> > +      - 0x00200000
+>> > +      - Ask V4L2 to wait on the fence passed in the ``fence_fd`` field. The
+>> > +	buffer won't be queued to the driver until the fence signals. The order
+>> > +	in which buffers are queued is guaranteed to be preserved, so any
+>> > +	buffers queued after this buffer will also be blocked until this fence
+>> > +	signals. This flag must be set before calling ``VIDIOC_QBUF``. For
+>> > +	other ioctls the driver just reports the value of the flag.
+>> > +
+>> > +        If the fence signals the flag is cleared and not reported anymore.
+>> > +	If the fence is not valid ``VIDIOC_QBUF`` returns an error.
+>> > +
+>> > +
+>> > +    * .. _`V4L2-BUF-FLAG-OUT-FENCE`:
+>> > +
+>> > +      - ``V4L2_BUF_FLAG_OUT_FENCE``
+>> > +      - 0x00400000
+>> > +      - Request for a fence to be attached to the buffer. The driver will fill
+>> > +	in the out-fence fd in the ``fence_fd`` field when :ref:`VIDIOC_QBUF
+>> > +	<VIDIOC_QBUF>` returns. This flag must be set before calling
+>> > +	``VIDIOC_QBUF``. For other ioctls the driver just reports the value of
+>> > +	the flag.
+>> > +
+>> > +        If the creation of the out-fence fails ``VIDIOC_QBUF`` returns an
+>> > +	error.
+>> >
+>>
+>> I commented similarly on some of the old patch-sets, and it's a minor
+>> thing, but I still think the ordering of this series is off. It's
+>> strange/wrong to me document all this behaviour, and expose the flags
+>> to userspace, when the functionality isn't implemented yet.
+>>
+>> If I apply this patch to the kernel, then the kernel doesn't do what
+>> the (newly added) kernel-doc says it will.
+>>
+>
+>This has never been a problem, and it has always been the canonical
+>way of doing things.
+>
+>First the required macros, stubs, documentation and interfaces are added,
+>and then they are implemented.
 
-Srikar Dronamra pointed out that while the commit in question did show
-a performance improvement on ppc64, it did so at the cost of disabling
-active CPU migration by automatic NUMA balancing which was not the intent.
-The issue was that a serious flaw in the logic failed to ever active balance
-if SD_WAKE_AFFINE was disabled on scheduler domains. Even when it's enabled,
-the logic is still bizarre and against the original intent.
+If you say so, I don't know what sets the standard but that seems
+kinda backwards.
 
-Investigation showed that fixing the patch in either the way he suggested,
-using the correct comparison for jiffies values or introducing a new
-numa_migrate_deferred variable in task_struct all perform similarly to a
-revert with a mix of gains and losses depending on the workload, machine
-and socket count.
+I'd expect the "flick the switch, expose to userspace" to always be
+the last thing, but I'm happy to be shown examples to the contrary.
 
-The original intent of the commit was to handle a problem whereby
-wake_affine, idle balancing and automatic NUMA balancing disagree on the
-appropriate placement for a task. This was particularly true for cases where
-a single task was a massive waker of tasks but where wake_wide logic did
-not apply.  This was particularly noticeable when a futex (a barrier) woke
-all worker threads and tried pulling the wakees to the waker nodes. In that
-specific case, it could be handled by tuning MPI or openMP appropriately,
-but the behavior is not illogical and was worth attempting to fix. However,
-the approach was wrong. Given that we're at rc4 and a fix is not obvious,
-it's better to play safe, revert this commit and retry later.
+>
+>I see no reason to go berserk here, unless you see an actual problem?
+>Or something actually broken?
+>
 
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- kernel/sched/fair.c | 57 +----------------------------------------------------
- 1 file changed, 1 insertion(+), 56 deletions(-)
+The only "broken" thing, is as I said - I can apply this patch to a
+kernel (any kernel, because there's no dependencies in the code), and
+it won't do what the kernel-doc says it will.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 54dc31e7ab9b..f43627c6bb3d 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1854,7 +1854,6 @@ static int task_numa_migrate(struct task_struct *p)
- static void numa_migrate_preferred(struct task_struct *p)
- {
- 	unsigned long interval = HZ;
--	unsigned long numa_migrate_retry;
- 
- 	/* This task has no NUMA fault statistics yet */
- 	if (unlikely(p->numa_preferred_nid == -1 || !p->numa_faults))
-@@ -1862,18 +1861,7 @@ static void numa_migrate_preferred(struct task_struct *p)
- 
- 	/* Periodically retry migrating the task to the preferred node */
- 	interval = min(interval, msecs_to_jiffies(p->numa_scan_period) / 16);
--	numa_migrate_retry = jiffies + interval;
--
--	/*
--	 * Check that the new retry threshold is after the current one. If
--	 * the retry is in the future, it implies that wake_affine has
--	 * temporarily asked NUMA balancing to backoff from placement.
--	 */
--	if (numa_migrate_retry > p->numa_migrate_retry)
--		return;
--
--	/* Safe to try placing the task on the preferred node */
--	p->numa_migrate_retry = numa_migrate_retry;
-+	p->numa_migrate_retry = jiffies + interval;
- 
- 	/* Success if task is already running on preferred CPU */
- 	if (task_node(p) == p->numa_preferred_nid)
-@@ -5922,48 +5910,6 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
- 	return this_eff_load < prev_eff_load ? this_cpu : nr_cpumask_bits;
- }
- 
--#ifdef CONFIG_NUMA_BALANCING
--static void
--update_wa_numa_placement(struct task_struct *p, int prev_cpu, int target)
--{
--	unsigned long interval;
--
--	if (!static_branch_likely(&sched_numa_balancing))
--		return;
--
--	/* If balancing has no preference then continue gathering data */
--	if (p->numa_preferred_nid == -1)
--		return;
--
--	/*
--	 * If the wakeup is not affecting locality then it is neutral from
--	 * the perspective of NUMA balacing so continue gathering data.
--	 */
--	if (cpu_to_node(prev_cpu) == cpu_to_node(target))
--		return;
--
--	/*
--	 * Temporarily prevent NUMA balancing trying to place waker/wakee after
--	 * wakee has been moved by wake_affine. This will potentially allow
--	 * related tasks to converge and update their data placement. The
--	 * 4 * numa_scan_period is to allow the two-pass filter to migrate
--	 * hot data to the wakers node.
--	 */
--	interval = max(sysctl_numa_balancing_scan_delay,
--			 p->numa_scan_period << 2);
--	p->numa_migrate_retry = jiffies + msecs_to_jiffies(interval);
--
--	interval = max(sysctl_numa_balancing_scan_delay,
--			 current->numa_scan_period << 2);
--	current->numa_migrate_retry = jiffies + msecs_to_jiffies(interval);
--}
--#else
--static void
--update_wa_numa_placement(struct task_struct *p, int prev_cpu, int target)
--{
--}
--#endif
--
- static int wake_affine(struct sched_domain *sd, struct task_struct *p,
- 		       int this_cpu, int prev_cpu, int sync)
- {
-@@ -5979,7 +5925,6 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
- 	if (target == nr_cpumask_bits)
- 		return prev_cpu;
- 
--	update_wa_numa_placement(p, prev_cpu, target);
- 	schedstat_inc(sd->ttwu_move_affine);
- 	schedstat_inc(p->se.statistics.nr_wakeups_affine);
- 	return target;
+Maybe I'm crazy, but shouldn't comments at least be correct at the
+point where they are added, even if they become incorrect later
+through neglect?
+
+Cheers,
+-Brian
+
+>The only thing I can think of is that we should return fence_fd -1
+>if the flags are set. We could do it on this patch, and be consistent
+>with userspace.
+>
+>Regards,
+>Eze
