@@ -1,64 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934840AbeEIMJ2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:09:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51267 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934641AbeEIMJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:09:27 -0400
-Date: Wed, 9 May 2018 14:09:26 +0200 (CEST)
-From: Jiri Kosina <jkosina@suse.cz>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] HID fixes for 4.17
-Message-ID: <nycvar.YFH.7.76.1805091404320.27054@cbobk.fhfr.pm>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S934902AbeEIMJp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:09:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40888 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934641AbeEIMJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 08:09:41 -0400
+Date: Wed, 9 May 2018 08:09:17 -0400
+From: Richard Guy Briggs <rgb@redhat.com>
+To: "Tobin C. Harding" <tobin@apporbit.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, Steve Grubb <sgrubb@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH ghak81 RFC V1 4/5] audit: use inline function to set
+ audit context
+Message-ID: <20180509120917.xz3ggtloq523wqzh@madcap2.tricolour.ca>
+References: <cover.1525466167.git.rgb@redhat.com>
+ <2f0566af8ccafdaf400a3d002cb4aef9b80e44cf.1525466167.git.rgb@redhat.com>
+ <20180509020700.GE7517@eros>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509020700.GE7517@eros>
+User-Agent: NeoMutt/20171027
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On 2018-05-09 12:07, Tobin C. Harding wrote:
+> On Fri, May 04, 2018 at 04:54:37PM -0400, Richard Guy Briggs wrote:
+> > Recognizing that the audit context is an internal audit value, use an
+> > access function to set the audit context pointer for the task
+> > rather than reaching directly into the task struct to set it.
+> > 
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> >  include/linux/audit.h | 8 ++++++++
+> >  kernel/auditsc.c      | 6 +++---
+> >  kernel/fork.c         | 2 +-
+> >  3 files changed, 12 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > index 93e4c61..dba0d45 100644
+> > --- a/include/linux/audit.h
+> > +++ b/include/linux/audit.h
+> > @@ -235,6 +235,10 @@ extern void __audit_inode_child(struct inode *parent,
+> >  extern void __audit_seccomp(unsigned long syscall, long signr, int code);
+> >  extern void __audit_ptrace(struct task_struct *t);
+> >  
+> > +static inline void audit_set_context(struct task_struct *task, struct audit_context *ctx)
+> > +{
+> > +	task->audit_context = ctx;
+> > +}
+> >  static inline struct audit_context *audit_context(struct task_struct *task)
+> >  {
+> >  	return task->audit_context;
+> > @@ -472,6 +476,10 @@ static inline bool audit_dummy_context(void)
+> >  {
+> >  	return true;
+> >  }
+> > +static inline void audit_set_context(struct task_struct *task, struct audit_context *ctx)
+> > +{
+> > +	task->audit_context = ctx;
+> > +}
+> 
+> If audit_context is an internal audit value why do we set it when
+> CONFIG_AUDITSYSCALL is not set?
 
-please pull from
+Agreed, that is unnecessary, but harmless since it won't be called, or
+will be called with a value of NULL.  That has been fixed in my dynamic
+allocation patchset since not even the audit_task_info struct is
+available to assign the value.  It is now an empty function like the
+rest.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git for-linus
+> Tobin.
 
-to receive -rc fixes for 4.17 for HID subsystem:
+- RGB
 
-=====
-- quirk for Toshiba Click Mini L9W-B, from Hans de Goede
-- intel-ish-hid and wacom error handling (device freeing) path fixes from 
-  Arvind Yadav
-- memory corruption fix in intel-ish-hid driver from Hans de Goede
-- a few new device ID additions to hid-lenovo from Peter Ganzhorn
-=====
-
-Thanks.
-
-----------------------------------------------------------------
-Arvind Yadav (2):
-      HID: wacom: Release device resource data obtained by devres_alloc()
-      HID: intel-ish-hid: use put_device() instead of kfree()
-
-Hans de Goede (3):
-      HID: intel_ish-hid: Move header size check to inside the loop
-      HID: intel_ish-hid: Stop using a static local buffer in get_report()
-      HID: i2c-hid: Add RESEND_REPORT_DESCR quirk for Toshiba Click Mini L9W-B
-
-Peter Ganzhorn (1):
-      HID: lenovo: Add support for IBM/Lenovo Scrollpoint mice
-
- drivers/hid/Kconfig                          |  7 +++---
- drivers/hid/hid-ids.h                        |  9 +++++++
- drivers/hid/hid-lenovo.c                     | 36 ++++++++++++++++++++++++++++
- drivers/hid/i2c-hid/i2c-hid.c                |  2 ++
- drivers/hid/intel-ish-hid/ishtp-hid-client.c | 36 +++++++++++++---------------
- drivers/hid/intel-ish-hid/ishtp/bus.c        |  2 +-
- drivers/hid/wacom_sys.c                      |  4 +++-
- 7 files changed, 71 insertions(+), 25 deletions(-)
-
--- 
-Jiri Kosina
-SUSE Labs
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
