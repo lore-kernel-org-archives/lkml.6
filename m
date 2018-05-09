@@ -1,56 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934983AbeEIOVf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 10:21:35 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:48108 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932701AbeEIOVe (ORCPT
+        id S935029AbeEIOZa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 10:25:30 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58147 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933887AbeEIOZ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 10:21:34 -0400
-Date: Wed, 9 May 2018 10:21:18 -0400
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Yisheng Xie <xieyisheng1@huawei.com>, mingo@kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] swiotlb: Update the comment of swiotlb
-Message-ID: <20180509142118.GA27814@char.us.oracle.com>
-References: <1525691185-55657-1-git-send-email-xieyisheng1@huawei.com>
- <20180509073838.GA20874@lst.de>
- <b6246d95-7d9c-2904-6298-9c5ca3506a5f@huawei.com>
- <20180509113957.GA25787@lst.de>
+        Wed, 9 May 2018 10:25:28 -0400
+Date: Wed, 9 May 2018 16:25:26 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: jacek.anaszewski@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        xiaotong.lu@spreadtrum.com, broonie@kernel.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: Add SC27xx breathing light
+ controller documentation
+Message-ID: <20180509142526.GA25131@amd>
+References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="0OAP2g/MAC+5xKAE"
 Content-Disposition: inline
-In-Reply-To: <20180509113957.GA25787@lst.de>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=794
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805090136
+In-Reply-To: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 01:39:57PM +0200, Christoph Hellwig wrote:
-> On Wed, May 09, 2018 at 05:08:30PM +0800, Yisheng Xie wrote:
-> > Hi Christoph,
-> > 
-> > On 2018/5/9 15:38, Christoph Hellwig wrote:
-> > > Thanks,
-> > > 
-> > > applied to the dma-mapping tree.
-> > 
-> > Thanks
-> > 
-> > BTW, should lib/swiotlb.c also add to DMA MAPPING HELPERS, or
-> > add yourself as a maintainer of SWIOTLB SUBSYSTEM ? It will make
-> > get_maintainer.pl get you :)
-> 
-> Konrad is the maintainer, but due to me touching the file a lot
-> lately I keep merging the patches for now.  But anything non-trivial
-> absolutely requires an Ack from Konrad.
 
-<nods>
+--0OAP2g/MAC+5xKAE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for pulling this in your tree.
+Hi!
+
+> This patch adds the binding documentation for Spreadtrum SC27xx series
+> breathing light controller, which supports 3 outputs: red LED, green
+> LED and blue LED.
+>=20
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+> Changes since v1:
+>  - Change the compatible string to be one explicit SoC name.
+>  - Change the child node name.
+>  - Change to be upper case for the first character.
+> ---
+>  .../devicetree/bindings/leds/leds-sc27xx-bltc.txt  |   41 ++++++++++++++=
+++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-sc27xx-bl=
+tc.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt =
+b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+> new file mode 100644
+> index 0000000..b3de7fc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+> @@ -0,0 +1,41 @@
+> +LEDs connected to Spreadtrum SC27XX PMIC breathing light controller
+> +
+> +The SC27xx breathing light controller supports to 3 outputs:
+> +red LED, green LED and blue LED. Each LED can work at normal
+> +PWM mode or breath light mode.
+
+> +Required properties:
+> +- compatible: Should be "sprd,sc2731-bltc".
+
+If this is for 2731, I'd say so in the title and the filename...?
+
+> +- #address-cells: Must be 1.
+> +- #size-cells: Must be 0.
+> +- reg: Specify controller address.
+
+the controller...
+
+> +Required child properties:
+> +- reg: Number of LED line (could be from 0 to 2).
+
+Uff. "Port this LED is connected to"?
+
+With that fixed...
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--0OAP2g/MAC+5xKAE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrzBNYACgkQMOfwapXb+vJAuQCgvcB9K0kKr4+5DMMuDIbDRnsS
+g00AoK8sAt+IgvgozXJ3/+Y5F/Xd59wK
+=n0xY
+-----END PGP SIGNATURE-----
+
+--0OAP2g/MAC+5xKAE--
