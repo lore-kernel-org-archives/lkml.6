@@ -1,92 +1,641 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934451AbeEIIyh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:54:37 -0400
-Received: from mail-eopbgr40059.outbound.protection.outlook.com ([40.107.4.59]:4176
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934082AbeEIIyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:54:33 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=petrm@mellanox.com;
-From: Petr Machata <petrm@mellanox.com>
-To: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@savoirfairelinux.com>, <jiri@mellanox.com>,
-        <idosch@mellanox.com>, <ivecera@redhat.com>, <davem@davemloft.net>,
-        <stephen@networkplumber.org>, <andrew@lunn.ch>, <f.fainelli@gmail.com>,
-        <nikolay@cumulusnetworks.com>, <bridge@lists.linux-foundation.org>
-Subject: Re: [PATCH net-next] net: dsa: fix added_by_user switchdev notification
-In-Reply-To: <20180509030312.29548-1-vivien.didelot@savoirfairelinux.com>
-        (Vivien Didelot's message of "Tue, 8 May 2018 23:03:12 -0400")
-References: <20180509030312.29548-1-vivien.didelot@savoirfairelinux.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-Date: Wed, 09 May 2018 11:54:06 +0300
-Message-ID: <wihmux96wgh.fsf@dev-r-vrt-156.mtr.labs.mlnx>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [37.142.13.130]
-X-ClientProxiedBy: VI1PR09CA0054.eurprd09.prod.outlook.com
- (2603:10a6:802:28::22) To DB7PR05MB4188.eurprd05.prod.outlook.com
- (2603:10a6:5:18::29)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DB7PR05MB4188;
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR05MB4188;3:+mxPus2+kwBdRsvfWEpJG4E/vYvW24J0SBcrkXQD2xdRIdLW4T4LTKq7UCEc0HL+X7SVnONv185nC2pArV5791p7vIJoDVxcuGhuApmfspOKe2T8ugL8NRayRHZ9bXEm3WMzpwzQUDZKU9UOAmAFLhJ7pTtTCSTpxG+lks/u94opgVKIljSfcbA8GKzaXDS9Iy4HgE+7Lzm3/gv6UFeMQ4uJFNaamaMMq9ZhUlrFcQw/dbiTtnSFXydGPZnpL8wu;25:z6CtZ0HlhoAvUEP9byp7C3eiK7GiPgMhq/rgPb45VlQ7DbEWFg+s9vi/lpVDXKsHTnMc41LbBubyRv1vBLYV/XBaYtnoB+jER3LeZlXJKApE68ImlzEvuV5YfmVUYH/BerTP1V1s072rg9db9ISK3NXXFNsM+lJUPGQhUV3ANvV9GjLs6o19TsDwuzdI3/GnVlPewO3FIua/tqHQrxPo4txMPNSb6S0VPoW7C95Bccg/hC0sgzxitBS60q8Dy6LHmxoCKF+XrqvO9PGZanm6n3Z5AYStuRMJ7w8t1jpRoHl6R/tx3dr7MYJS+59kkg6R1DCa2MoUlZgBNYtwZ/SUjw==;31:v5EFLUprjUYB3LjbcsrI/FmBSqj7xzlesILQNWcB+JKC6vnw8kAOU63PWB4sCygRtbxCy1wMZAdi4i8FW26IiH0AzRmbxVLiVyUJ5F3LYKD9eLYRanOI14lWCUEZEBfgKNgWJalOIzzTU4CGuc9UbSB0yQQTuhNRhJl18LxjuSag7J/w1W4lorZe+DhDuG0v5mMzS4mwE/jsFMHCyvdE096h6Ueykx6suE6RqlEacQA=
-X-MS-TrafficTypeDiagnostic: DB7PR05MB4188:
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR05MB4188;20:oglWx8/Gq712eCAW+T+hh9/f1tuqegchNAXcFXEBYdEY4uch8YmXIDEsv5E0WzfrWSv68OPXYOsjvMLKay7wJiS0+mIvihw/ZPfLFHIEVm7awF3GD4XkMo0zY6kKkzHv+tfFwlVLuvjvqnY/h/6xbX8hqucX+zgLMFrz5wANsxzpHB6H3N1on76wmf8LYNdV/yKBdMhWjFwe8YCFkG9tJ6VVL0cEWEHsLIH6Q/X4Mxvva5QgorMCzDxjejp26N9+q8az37rmS2HSDrtJMfAWuJpKgUKQz0WFdIT79hI6FBtFz9moJbCgy/LyfG7mCZm7Z9ymOx0CP5cDG5Rqv1wfKYYMXvAfmO1fsMlHxajhXq2oRdkHAX/RMsJBz3ZNVAPsRGwT9CwdSqBZh0aEgzsXyzksoBbAY9s68zbZzgCuTwdf3QCPRwLEW0bANCm0Del9qshPVc4S7AbL3yBf3EA7c/NK4xDRU6AX3L4vIEDGmrFC1ozTBZBGz5DCsbSNWooE;4:POJiOeFQUiP5tL/MkCsGs78FZ1VAYf2ddbfd/AsbIi5ULs+CS9rEEPDFrdJ8weVMDsgi4+AmQTKK4FOtl9Wmp95v7zsPKGf7ALtUxqZs7mF8QSJcwQrU6tuQZPFBOV2KoJbGWT4Gu3owyLbqNuiDW79okWnZTzZQ5l/HyDry2RTHVUxnXw0Tj0T4D16FtB1i/pWL2wmC2ilANCskUC5Q1MkX9JmiWJDpn4TxumG/CjD7EHCbAGHKv5b24RBb7RDT/7NQOHGXLHMqROLBR4hZWg==
-X-Microsoft-Antispam-PRVS: <DB7PR05MB418863F72185936EE605FF59DB990@DB7PR05MB4188.eurprd05.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:DB7PR05MB4188;BCL:0;PCL:0;RULEID:;SRVR:DB7PR05MB4188;
-X-Forefront-PRVS: 0667289FF8
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(346002)(366004)(39380400002)(189003)(199004)(6246003)(25786009)(26005)(6116002)(76176011)(386003)(97736004)(58126008)(229853002)(51416003)(52116002)(6506007)(478600001)(7696005)(4326008)(558084003)(956004)(11346002)(54906003)(39060400002)(446003)(316002)(50466002)(6666003)(486006)(16586007)(48376002)(6916009)(476003)(8676002)(86362001)(105586002)(47776003)(2906002)(53936002)(106356001)(9686003)(3846002)(66066001)(81156014)(81166006)(186003)(305945005)(5660300001)(8936002)(7736002)(16526019)(68736007)(55016002)(7416002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR05MB4188;H:dev-r-vrt-156.mtr.labs.mlnx;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB7PR05MB4188;23:i7pFTRbuGL6D17GGIOdNXBWL5DbkvHyUIEs3faNSh?=
- =?us-ascii?Q?nb1snEE3JIavHb8NIzV5+NUo8OK3m3Z/BpswxVndSHq4+zDcS0QXobScaO/h?=
- =?us-ascii?Q?d4NghE07lplYDASAP9Zhq2pykjRJ00nF7GgcjxMESXP/wcw5Gm/wuE/YlWLY?=
- =?us-ascii?Q?z7U3t/lO26ncUmJ/kCdOiWUYjCD+PttimWKzxRRvRQNfaYjvFwrmSh3tMKin?=
- =?us-ascii?Q?K70wVzP7m1v6J9tJl+SsWV4XNpfdg40RYhmhkOnnl/nZf3xMLqhRc1PGYtAA?=
- =?us-ascii?Q?QuEMTcqbYjvxxTc13LdvONg0b3zcfWRFaZWMN4srDFCtBlN+w4U/xixpUpB1?=
- =?us-ascii?Q?odvQQbkhyJEEd0b1KkLR1308RoKKQiX8n/bdEHgQofLXlKmTRIrJP4OWiUtj?=
- =?us-ascii?Q?Cs1NDGfVy85Ssgr11SLkl1NfOkz+wCbtdbsJaOhoHv5qX4za5M81J3WQk+Q7?=
- =?us-ascii?Q?gm4tbRsWIKp96GXazc1NoaQn8jenbQA0remu0RY9/OPEb3N5pQD7QWEg375p?=
- =?us-ascii?Q?i3nqtZBY1xyUhlixHPgHlhoNaRCw/6NVbFGJ0R13CvPZUFprCDT9pbR8hJ0M?=
- =?us-ascii?Q?MXqv4m4N1OVmFG2UTjfQm/l9xPDb2zTbWMomgRnVYjMZWNjN/KFmda6u5W6v?=
- =?us-ascii?Q?zXflr26ow3IfbJmpiWfMS9QscnbClAeVU8BkbUopbGh7b0sMl6OhfgvLqcjN?=
- =?us-ascii?Q?A2IgEx8Okq6hZ2HBi37AxsoW0BbdXyri7XWRS8SslreV3AjkC7l3IwDUQGVC?=
- =?us-ascii?Q?LyXk2Cn57RslgK+3hFCDdJ7ZCDzvF+qKNHlcy6IH+2YtSyn66Qrs5xso+9FN?=
- =?us-ascii?Q?j5/1ZcR2QpdDzLP8l7dsGUbJ2YAzGdA5Pc+dXQGdmuWibwrHk/opxzY+zVzZ?=
- =?us-ascii?Q?Z/pFcnBaYd9chMBbYTjrS33B+9HsBbUq4C8hrtdTV+kP6dOBmiNTg/gxPf7n?=
- =?us-ascii?Q?4j98CxM/yHetMOZLF74WagNgKN4XzXTN6l45pK4AnPfKloP9pyIeFobjUVKK?=
- =?us-ascii?Q?tGoK4Vej/bjdD4l4S0+5H3lyYZa8XZs0+LJbEfi83AjFv+zq/4GmkTdRZtH4?=
- =?us-ascii?Q?B9YoVEQ2p05u5d0IjRv8ogkuD0v7YirALTIZgSIEZIbkwwf2wOOjWX4BtYPQ?=
- =?us-ascii?Q?c73W8a5UMTB84rtIT8QXesgd7ick3DPvu+ZX417TFO/9BLgbQUrcXvXln8IY?=
- =?us-ascii?Q?i0TROwCrvqzcov5Bbhr1cgyTFK/zIyfXkWtNallPvZ2Kma8+yNF7K4fqUGsn?=
- =?us-ascii?Q?Z6odYHteCtj9Dj1r5JSOuVf6b6BMHodVFktbwYObQLdNbovEwbjP7u6yxs3v?=
- =?us-ascii?B?Zz09?=
-X-Microsoft-Antispam-Message-Info: HBP1HzKUhcfIw3iJskKgxM3KKtREDGqHX3RpcRzwM16cSeJy6ROA6ymWJPrXconWEx7Ks02TWlUrNxK/NuamV8CcseNTEItHQJ6z7umwC6hM9Nd8tEB1+j7zcY+GyIGf+CXNX+fR7sMbZkAHQiehkP+aEABSPrmQvpacXZptrh5aGu7lMPvySq13McveZpbp
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR05MB4188;6:8C6QsIb9u559KXLw88coEHwGwaQMAdoRvPBERsqYWx3qY4UJzHEF+TizFrVY8bxvCTsya9h9Nj8AUsoVNxz8fg0s6aTSEmY+bGRqR3IBrNVFSxzYh8zJWvHsAb+SQplhpxHf3LQX2JwGVey3NmlykgIJkExCTcH1eI+YVq+41OoIU1nSVssaeNVG/dX2/Ck4k1Epv1TCOenqqxLgDaPJ4XuJwNDuYp3u8E959b2pn5cYdOUatIOtJGZSUrUQSi9bfzKk/syno3W14hSW5pss1XjgHW3PG/Rz3OQOqlbGazYmDMQAcO81sbRHeXJ61yOEvSLIYSiqFa5tr0P0ltK2iCaV3C8TKeelyhCJ6hr/cRmXK9uPT4Ry4+VPB6i3ffR77krZ+0dhXPqUkhVgKOOME949m8Lk1BXTLquJ8LJpUHHBT2tOjkQW5ylsV+5TwR6A/7Iw5bR0mHhJoVEbyEIzzw==;5:2eoT7d0PGayXyWX5sZRJbkbeS13fc433IEXj0R3+vb/XyBnQfjvtNkk8PE9kqyF+WvMBYTtJUeaL86Dc1bP/1cFmmoB0EQNsqQViQH0zhTCAQwDmUczJVS1akP23VYmcKKv2QdTUm5u2jAPeVFARzeRSfJPkQjHNnt1ey40aaDM=;24:Xd1rLmsaljD1yMR5HPpTtxdQQuDckjdJETXN8NKXAVoDgsF0cOZXQgUmUNXNusVDfZqtun9zPMz5LVYD5wC89kB0k2TB20dvOrvZH1VAM0w=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR05MB4188;7:rj5gZWBv4G8LvdaDi/lGb/MDnKpF9MYLJQPIQiudMHgMfd6RvcXlB2In6N8E/JFacuqmmZ4L7G2ZHszkNimcFqGJMXiheJEAXhslG77wzs+GwwGSi3mwQptyOnRq4fJSQClX83cMJ66xtxGIrZprKZTuRrRbjgImF0l6Pql8eHj7jsVdI4hWynF7ZT2nhL711kdZoHNXZ66FR+XazSpHKZ+UmTrTjw8VQfbkjzMLWszO/0F8HjxG+pEmD8vdgL7+
-X-MS-Office365-Filtering-Correlation-Id: f25744ab-ef68-4c23-8693-08d5b58a7972
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2018 08:54:26.7331
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f25744ab-ef68-4c23-8693-08d5b58a7972
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR05MB4188
+        id S934387AbeEIIyT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:54:19 -0400
+Received: from mga03.intel.com ([134.134.136.65]:31336 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934187AbeEIIxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 04:53:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
+   d="scan'208";a="227055166"
+From: Aaron Lu <aaron.lu@intel.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Tariq Toukan <tariqt@mellanox.com>
+Subject: [RFC v3 PATCH 3/5] mm/rmqueue_bulk: alloc without touching individual page structure
+Date: Wed,  9 May 2018 16:54:48 +0800
+Message-Id: <20180509085450.3524-4-aaron.lu@intel.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180509085450.3524-1-aaron.lu@intel.com>
+References: <20180509085450.3524-1-aaron.lu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vivien Didelot <vivien.didelot@savoirfairelinux.com> writes:
+Profile on Intel Skylake server shows the most time consuming part
+under zone->lock on allocation path is accessing those to-be-returned
+page's "struct page" on the free_list inside zone->lock. One explanation
+is, different CPUs are releasing pages to the head of free_list and
+those page's 'struct page' may very well be cache cold for the allocating
+CPU when it grabs these pages from free_list' head. The purpose here
+is to avoid touching these pages one by one inside zone->lock.
 
-> @petr I expect the same issue with Rocker, but I haven't tested it.
+One idea is, we just take the requested number of pages off free_list
+with something like list_cut_position() and then adjust nr_free of
+free_area accordingly inside zone->lock and other operations like
+clearing PageBuddy flag for these pages are done outside of zone->lock.
 
-Yeah, pretty sure. Such an obvious bug, sorry about that :-/
-I'll send a rocker patch later today.
+list_cut_position() needs to know where to cut, that's what the new
+'struct cluster' meant to provide. All pages on order 0's free_list
+belongs to a cluster so when a number of pages is needed, the cluster
+to which head page of free_list belongs is checked and then tail page
+of the cluster could be found. With tail page, list_cut_position() can
+be used to drop the cluster off free_list. The 'struct cluster' also has
+'nr' to tell how many pages this cluster has so nr_free of free_area can
+be adjusted inside the lock too.
 
-Thanks,
-Petr
+This caused a race window though: from the moment zone->lock is dropped
+till these pages' PageBuddy flags get cleared, these pages are not in
+buddy but still have PageBuddy flag set.
+
+This doesn't cause problems for users that access buddy pages through
+free_list. But there are other users, like move_freepages() which is
+used to move a pageblock pages from one migratetype to another in
+fallback allocation path, will test PageBuddy flag of a page derived
+from PFN. The end result could be that for pages in the race window,
+they are moved back to free_list of another migratetype. For this
+reason, a synchronization function zone_wait_cluster_alloc() is
+introduced to wait till all pages are in correct state. This function
+is meant to be called with zone->lock held, so after this function
+returns, we do not need to worry about new pages becoming racy state.
+
+Another user is compaction, where it will scan a pageblock for
+migratable candidates. In this process, pages derived from PFN will
+be checked for PageBuddy flag to decide if it is a merge skipped page.
+To avoid a racy page getting merged back into buddy, the
+zone_wait_and_disable_cluster_alloc() function is introduced to:
+1 disable clustered allocation by increasing zone->cluster.disable_depth;
+2 wait till the race window pass by calling zone_wait_cluster_alloc().
+This function is also meant to be called with zone->lock held so after
+it returns, all pages are in correct state and no more cluster alloc
+will be attempted till zone_enable_cluster_alloc() is called to decrease
+zone->cluster.disable_depth.
+
+The two patches could eliminate zone->lock contention entirely but at
+the same time, pgdat->lru_lock contention rose to 82%. Final performance
+increased about 8.3%.
+
+Suggested-by: Ying Huang <ying.huang@intel.com>
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+---
+ include/linux/mm_types.h |   2 +
+ include/linux/mmzone.h   |  35 ++++++
+ mm/compaction.c          |   4 +
+ mm/internal.h            |  34 ++++++
+ mm/page_alloc.c          | 288 +++++++++++++++++++++++++++++++++++++++++++++--
+ 5 files changed, 355 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 17c5604e6ec0..9eb19448424a 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -86,6 +86,8 @@ struct page {
+ 		void *s_mem;			/* slab first object */
+ 		atomic_t compound_mapcount;	/* first tail page */
+ 		/* page_deferred_list().next	 -- second tail page */
++
++		struct cluster *cluster;	/* order 0 cluster this page belongs to */
+ 	};
+ 
+ 	/* Second double word */
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 32699b2dc52a..aed70d887648 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -356,6 +356,40 @@ enum zone_type {
+ 
+ #ifndef __GENERATING_BOUNDS_H
+ 
++struct cluster {
++	struct page     *tail;  /* tail page of the cluster */
++	int             nr;     /* how many pages are in this cluster */
++};
++
++struct order0_cluster {
++	/* order 0 cluster array, dynamically allocated */
++	struct cluster *array;
++	/*
++	 * order 0 cluster array length, also used to indicate if cluster
++	 * allocation is enabled for this zone(cluster allocation is disabled
++	 * for small zones whose batch size is smaller than 1, like DMA zone)
++	 */
++	int             len;
++	/*
++	 * smallest position from where we search for an
++	 * empty cluster from the cluster array
++	 */
++	int		zero_bit;
++	/* bitmap used to quickly locate an empty cluster from cluster array */
++	unsigned long   *bitmap;
++
++	/* disable cluster allocation to avoid new pages becoming racy state. */
++	unsigned long	disable_depth;
++
++	/*
++	 * used to indicate if there are pages allocated in cluster mode
++	 * still in racy state. Caller with zone->lock held could use helper
++	 * function zone_wait_cluster_alloc() to wait all such pages to exit
++	 * the race window.
++	 */
++	atomic_t        in_progress;
++};
++
+ struct zone {
+ 	/* Read-mostly fields */
+ 
+@@ -460,6 +494,7 @@ struct zone {
+ 
+ 	/* free areas of different sizes */
+ 	struct free_area	free_area[MAX_ORDER];
++	struct order0_cluster	cluster;
+ 
+ 	/* zone flags, see below */
+ 	unsigned long		flags;
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 004416312092..4714da6a4938 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -1599,6 +1599,8 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
+ 
+ 	migrate_prep_local();
+ 
++	zone_wait_and_disable_cluster_alloc(zone);
++
+ 	while ((ret = compact_finished(zone, cc)) == COMPACT_CONTINUE) {
+ 		int err;
+ 
+@@ -1697,6 +1699,8 @@ static enum compact_result compact_zone(struct zone *zone, struct compact_contro
+ 			zone->compact_cached_free_pfn = free_pfn;
+ 	}
+ 
++	zone_enable_cluster_alloc(zone);
++
+ 	count_compact_events(COMPACTMIGRATE_SCANNED, cc->total_migrate_scanned);
+ 	count_compact_events(COMPACTFREE_SCANNED, cc->total_free_scanned);
+ 
+diff --git a/mm/internal.h b/mm/internal.h
+index eeec12740dc2..e3f209f8fb39 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -560,12 +560,46 @@ static inline bool can_skip_merge(struct zone *zone, int order)
+ 	if (order)
+ 		return false;
+ 
++	/*
++	 * Clustered allocation is only disabled when high-order pages
++	 * are needed, e.g. in compaction and CMA alloc, so we should
++	 * also skip merging in that case.
++	 */
++	if (zone->cluster.disable_depth)
++		return false;
++
+ 	return true;
+ }
++
++static inline void zone_wait_cluster_alloc(struct zone *zone)
++{
++	while (atomic_read(&zone->cluster.in_progress))
++		cpu_relax();
++}
++
++static inline void zone_wait_and_disable_cluster_alloc(struct zone *zone)
++{
++	unsigned long flags;
++	spin_lock_irqsave(&zone->lock, flags);
++	zone->cluster.disable_depth++;
++	zone_wait_cluster_alloc(zone);
++	spin_unlock_irqrestore(&zone->lock, flags);
++}
++
++static inline void zone_enable_cluster_alloc(struct zone *zone)
++{
++	unsigned long flags;
++	spin_lock_irqsave(&zone->lock, flags);
++	zone->cluster.disable_depth--;
++	spin_unlock_irqrestore(&zone->lock, flags);
++}
+ #else /* CONFIG_COMPACTION */
+ static inline bool can_skip_merge(struct zone *zone, int order)
+ {
+ 	return false;
+ }
++static inline void zone_wait_cluster_alloc(struct zone *zone) {}
++static inline void zone_wait_and_disable_cluster_alloc(struct zone *zone) {}
++static inline void zone_enable_cluster_alloc(struct zone *zone) {}
+ #endif  /* CONFIG_COMPACTION */
+ #endif	/* __MM_INTERNAL_H */
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 0a7988d9935d..64afb26064ed 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -707,6 +707,82 @@ static inline void set_page_order(struct page *page, unsigned int order)
+ 	__SetPageBuddy(page);
+ }
+ 
++static inline struct cluster *new_cluster(struct zone *zone, int nr,
++						struct page *tail)
++{
++	struct order0_cluster *cluster = &zone->cluster;
++	int n = find_next_zero_bit(cluster->bitmap, cluster->len, cluster->zero_bit);
++	if (n == cluster->len) {
++		printk_ratelimited("node%d zone %s cluster used up\n",
++				zone->zone_pgdat->node_id, zone->name);
++		return NULL;
++	}
++	cluster->zero_bit = n;
++	set_bit(n, cluster->bitmap);
++	cluster->array[n].nr = nr;
++	cluster->array[n].tail = tail;
++	return &cluster->array[n];
++}
++
++static inline struct cluster *add_to_cluster_common(struct page *page,
++			struct zone *zone, struct page *neighbor)
++{
++	struct cluster *c;
++
++	if (neighbor) {
++		int batch = this_cpu_ptr(zone->pageset)->pcp.batch;
++		c = neighbor->cluster;
++		if (c && c->nr < batch) {
++			page->cluster = c;
++			c->nr++;
++			return c;
++		}
++	}
++
++	c = new_cluster(zone, 1, page);
++	if (unlikely(!c))
++		return NULL;
++
++	page->cluster = c;
++	return c;
++}
++
++/*
++ * Add this page to the cluster where the previous head page belongs.
++ * Called after page is added to free_list(and becoming the new head).
++ */
++static inline void add_to_cluster_head(struct page *page, struct zone *zone,
++				       int order, int mt)
++{
++	struct page *neighbor;
++
++	if (order || !zone->cluster.len)
++		return;
++
++	neighbor = page->lru.next == &zone->free_area[0].free_list[mt] ?
++		   NULL : list_entry(page->lru.next, struct page, lru);
++	add_to_cluster_common(page, zone, neighbor);
++}
++
++/*
++ * Add this page to the cluster where the previous tail page belongs.
++ * Called after page is added to free_list(and becoming the new tail).
++ */
++static inline void add_to_cluster_tail(struct page *page, struct zone *zone,
++				       int order, int mt)
++{
++	struct page *neighbor;
++	struct cluster *c;
++
++	if (order || !zone->cluster.len)
++		return;
++
++	neighbor = page->lru.prev == &zone->free_area[0].free_list[mt] ?
++		   NULL : list_entry(page->lru.prev, struct page, lru);
++	c = add_to_cluster_common(page, zone, neighbor);
++	c->tail = page;
++}
++
+ static inline void add_to_buddy_common(struct page *page, struct zone *zone,
+ 					unsigned int order)
+ {
+@@ -726,6 +802,7 @@ static inline void add_to_buddy_head(struct page *page, struct zone *zone,
+ {
+ 	add_to_buddy_common(page, zone, order);
+ 	list_add(&page->lru, &zone->free_area[order].free_list[mt]);
++	add_to_cluster_head(page, zone, order, mt);
+ }
+ 
+ static inline void add_to_buddy_tail(struct page *page, struct zone *zone,
+@@ -733,6 +810,7 @@ static inline void add_to_buddy_tail(struct page *page, struct zone *zone,
+ {
+ 	add_to_buddy_common(page, zone, order);
+ 	list_add_tail(&page->lru, &zone->free_area[order].free_list[mt]);
++	add_to_cluster_tail(page, zone, order, mt);
+ }
+ 
+ static inline void rmv_page_order(struct page *page)
+@@ -741,9 +819,29 @@ static inline void rmv_page_order(struct page *page)
+ 	set_page_private(page, 0);
+ }
+ 
++/* called before removed from free_list */
++static inline void remove_from_cluster(struct page *page, struct zone *zone)
++{
++	struct cluster *c = page->cluster;
++	if (!c)
++		return;
++
++	page->cluster = NULL;
++	c->nr--;
++	if (!c->nr) {
++		int bit = c - zone->cluster.array;
++		c->tail = NULL;
++		clear_bit(bit, zone->cluster.bitmap);
++		if (bit < zone->cluster.zero_bit)
++			zone->cluster.zero_bit = bit;
++	} else if (page == c->tail)
++		c->tail = list_entry(page->lru.prev, struct page, lru);
++}
++
+ static inline void remove_from_buddy(struct page *page, struct zone *zone,
+ 					unsigned int order)
+ {
++	remove_from_cluster(page, zone);
+ 	list_del(&page->lru);
+ 	zone->free_area[order].nr_free--;
+ 	rmv_page_order(page);
+@@ -2129,6 +2227,17 @@ static int move_freepages(struct zone *zone,
+ 	if (num_movable)
+ 		*num_movable = 0;
+ 
++	/*
++	 * Cluster alloced pages may have their PageBuddy flag unclear yet
++	 * after dropping zone->lock in rmqueue_bulk() and steal here could
++	 * move them back to free_list. So it's necessary to wait till all
++	 * those pages have their flags properly cleared.
++	 *
++	 * We do not need to disable cluster alloc though since we already
++	 * held zone->lock and no allocation could happen.
++	 */
++	zone_wait_cluster_alloc(zone);
++
+ 	for (page = start_page; page <= end_page;) {
+ 		if (!pfn_valid_within(page_to_pfn(page))) {
+ 			page++;
+@@ -2153,8 +2262,10 @@ static int move_freepages(struct zone *zone,
+ 		}
+ 
+ 		order = page_order(page);
++		remove_from_cluster(page, zone);
+ 		list_move(&page->lru,
+ 			  &zone->free_area[order].free_list[migratetype]);
++		add_to_cluster_head(page, zone, order, migratetype);
+ 		page += 1 << order;
+ 		pages_moved += 1 << order;
+ 	}
+@@ -2303,7 +2414,9 @@ static void steal_suitable_fallback(struct zone *zone, struct page *page,
+ 
+ single_page:
+ 	area = &zone->free_area[current_order];
++	remove_from_cluster(page, zone);
+ 	list_move(&page->lru, &area->free_list[start_type]);
++	add_to_cluster_head(page, zone, current_order, start_type);
+ }
+ 
+ /*
+@@ -2564,6 +2677,145 @@ __rmqueue(struct zone *zone, unsigned int order, int migratetype)
+ 	return page;
+ }
+ 
++static int __init zone_order0_cluster_init(void)
++{
++	struct zone *zone;
++
++	for_each_zone(zone) {
++		int len, mt, batch;
++		unsigned long flags;
++		struct order0_cluster *cluster;
++
++		if (!managed_zone(zone))
++			continue;
++
++		/* no need to enable cluster allocation for batch<=1 zone */
++		preempt_disable();
++		batch = this_cpu_ptr(zone->pageset)->pcp.batch;
++		preempt_enable();
++		if (batch <= 1)
++			continue;
++
++		cluster = &zone->cluster;
++		/* FIXME: possible overflow of int type */
++		len = DIV_ROUND_UP(zone->managed_pages, batch);
++		cluster->array = vzalloc(len * sizeof(struct cluster));
++		if (!cluster->array)
++			return -ENOMEM;
++		cluster->bitmap = vzalloc(DIV_ROUND_UP(len, BITS_PER_LONG) *
++				sizeof(unsigned long));
++		if (!cluster->bitmap)
++			return -ENOMEM;
++
++		spin_lock_irqsave(&zone->lock, flags);
++		cluster->len = len;
++		for (mt = 0; mt < MIGRATE_PCPTYPES; mt++) {
++			struct page *page;
++			list_for_each_entry_reverse(page,
++					&zone->free_area[0].free_list[mt], lru)
++				add_to_cluster_head(page, zone, 0, mt);
++		}
++		spin_unlock_irqrestore(&zone->lock, flags);
++	}
++
++	return 0;
++}
++subsys_initcall(zone_order0_cluster_init);
++
++static inline int __rmqueue_bulk_cluster(struct zone *zone, unsigned long count,
++						struct list_head *list, int mt)
++{
++	struct list_head *head = &zone->free_area[0].free_list[mt];
++	int nr = 0;
++
++	while (nr < count) {
++		struct page *head_page;
++		struct list_head *tail, tmp_list;
++		struct cluster *c;
++		int bit;
++
++		head_page = list_first_entry_or_null(head, struct page, lru);
++		if (!head_page || !head_page->cluster)
++			break;
++
++		c = head_page->cluster;
++		tail = &c->tail->lru;
++
++		/* drop the cluster off free_list and attach to list */
++		list_cut_position(&tmp_list, head, tail);
++		list_splice_tail(&tmp_list, list);
++
++		nr += c->nr;
++		zone->free_area[0].nr_free -= c->nr;
++
++		/* this cluster is empty now */
++		c->tail = NULL;
++		c->nr = 0;
++		bit = c - zone->cluster.array;
++		clear_bit(bit, zone->cluster.bitmap);
++		if (bit < zone->cluster.zero_bit)
++			zone->cluster.zero_bit = bit;
++	}
++
++	return nr;
++}
++
++static inline int rmqueue_bulk_cluster(struct zone *zone, unsigned int order,
++				unsigned long count, struct list_head *list,
++				int migratetype)
++{
++	int alloced;
++	struct page *page;
++
++	/*
++	 * Cluster alloc races with merging so don't try cluster alloc when we
++	 * can't skip merging. Note that can_skip_merge() keeps the same return
++	 * value from here till all pages have their flags properly processed,
++	 * i.e. the end of the function where in_progress is incremented, even
++	 * we have dropped the lock in the middle because the only place that
++	 * can change can_skip_merge()'s return value is compaction code and
++	 * compaction needs to wait on in_progress.
++	 */
++	if (!can_skip_merge(zone, 0))
++		return 0;
++
++	/* Cluster alloc is disabled, mostly compaction is already in progress */
++	if (zone->cluster.disable_depth)
++		return 0;
++
++	/* Cluster alloc is disabled for this zone */
++	if (unlikely(!zone->cluster.len))
++		return 0;
++
++	alloced = __rmqueue_bulk_cluster(zone, count, list, migratetype);
++	if (!alloced)
++		return 0;
++
++	/*
++	 * Cache miss on page structure could slow things down
++	 * dramatically so accessing these alloced pages without
++	 * holding lock for better performance.
++	 *
++	 * Since these pages still have PageBuddy set, there is a race
++	 * window between now and when PageBuddy is cleared for them
++	 * below. Any operation that would scan a pageblock and check
++	 * PageBuddy(page), e.g. compaction, will need to wait till all
++	 * such pages are properly processed. in_progress is used for
++	 * such purpose so increase it now before dropping the lock.
++	 */
++	atomic_inc(&zone->cluster.in_progress);
++	spin_unlock(&zone->lock);
++
++	list_for_each_entry(page, list, lru) {
++		rmv_page_order(page);
++		page->cluster = NULL;
++		set_pcppage_migratetype(page, migratetype);
++	}
++	atomic_dec(&zone->cluster.in_progress);
++
++	return alloced;
++}
++
+ /*
+  * Obtain a specified number of elements from the buddy allocator, all under
+  * a single hold of the lock, for efficiency.  Add them to the supplied list.
+@@ -2573,17 +2825,23 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
+ 			unsigned long count, struct list_head *list,
+ 			int migratetype)
+ {
+-	int i, alloced = 0;
++	int i, alloced;
++	struct page *page, *tmp;
+ 
+ 	spin_lock(&zone->lock);
+-	for (i = 0; i < count; ++i) {
+-		struct page *page = __rmqueue(zone, order, migratetype);
++	alloced = rmqueue_bulk_cluster(zone, order, count, list, migratetype);
++	if (alloced > 0) {
++		if (alloced >= count)
++			goto out;
++		else
++			spin_lock(&zone->lock);
++	}
++
++	for (; alloced < count; alloced++) {
++		page = __rmqueue(zone, order, migratetype);
+ 		if (unlikely(page == NULL))
+ 			break;
+ 
+-		if (unlikely(check_pcp_refill(page)))
+-			continue;
+-
+ 		/*
+ 		 * Split buddy pages returned by expand() are received here in
+ 		 * physical page order. The page is added to the tail of
+@@ -2595,7 +2853,18 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
+ 		 * pages are ordered properly.
+ 		 */
+ 		list_add_tail(&page->lru, list);
+-		alloced++;
++	}
++	spin_unlock(&zone->lock);
++
++out:
++	i = alloced;
++	list_for_each_entry_safe(page, tmp, list, lru) {
++		if (unlikely(check_pcp_refill(page))) {
++			list_del(&page->lru);
++			alloced--;
++			continue;
++		}
++
+ 		if (is_migrate_cma(get_pcppage_migratetype(page)))
+ 			__mod_zone_page_state(zone, NR_FREE_CMA_PAGES,
+ 					      -(1 << order));
+@@ -2608,7 +2877,6 @@ static int rmqueue_bulk(struct zone *zone, unsigned int order,
+ 	 * pages added to the pcp list.
+ 	 */
+ 	__mod_zone_page_state(zone, NR_FREE_PAGES, -(i << order));
+-	spin_unlock(&zone->lock);
+ 	return alloced;
+ }
+ 
+@@ -7893,6 +8161,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
+ 	unsigned long outer_start, outer_end;
+ 	unsigned int order;
+ 	int ret = 0;
++	struct zone *zone = page_zone(pfn_to_page(start));
+ 
+ 	struct compact_control cc = {
+ 		.nr_migratepages = 0,
+@@ -7935,6 +8204,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
+ 	if (ret)
+ 		return ret;
+ 
++	zone_wait_and_disable_cluster_alloc(zone);
+ 	/*
+ 	 * In case of -EBUSY, we'd like to know which page causes problem.
+ 	 * So, just fall through. test_pages_isolated() has a tracepoint
+@@ -8017,6 +8287,8 @@ int alloc_contig_range(unsigned long start, unsigned long end,
+ done:
+ 	undo_isolate_page_range(pfn_max_align_down(start),
+ 				pfn_max_align_up(end), migratetype);
++
++	zone_enable_cluster_alloc(zone);
+ 	return ret;
+ }
+ 
+-- 
+2.14.3
