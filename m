@@ -1,119 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753230AbeEIFDC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 01:03:02 -0400
-Received: from ozlabs.org ([203.11.71.1]:35527 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750903AbeEIFDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 01:03:01 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 9 May 2018 15:02:55 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christoph Hellwig <hch@lst.de>, Dave Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nipun Gupta <nipun.gupta@nxp.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm-intel tree
-Message-ID: <20180509150255.38a5b1cc@canb.auug.org.au>
-In-Reply-To: <20180508110716.53dfef41@canb.auug.org.au>
-References: <20180508110716.53dfef41@canb.auug.org.au>
+        id S1755704AbeEIFDV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 01:03:21 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:41466 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbeEIFDP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 01:03:15 -0400
+X-Google-Smtp-Source: AB8JxZrDC3nuPVXLc8WIIJ4Wio9R0PTw1BmmhBp7+HUPIMIY3AkUVDhiYkNK19UChU1b6irIs0W1JQ==
+Date: Tue, 8 May 2018 22:05:09 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: dccp@vger.kernel.org, Gerrit Renker <gerrit@erg.abdn.ac.uk>
+Cc: syzbot <syzbot+99858724c0ba555a12ea@syzkaller.appspotmail.com>,
+        davem@davemloft.net, garsilva@embeddedor.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: BUG: please report to dccp@vger.kernel.org => prev = 0, last = 0
+ at net/dccp/ccids/lib/packet_history.c:LINE/tfrc_rx_his
+Message-ID: <20180509050509.GE711@sol.localdomain>
+References: <000000000000fedad9056b7f07ce@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/KgYm4F6hqbL=bzBEBhDHv1q"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000fedad9056b7f07ce@google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/KgYm4F6hqbL=bzBEBhDHv1q
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Tue, 8 May 2018 11:07:16 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the drm-intel tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> drivers/gpu/drm/xen/xen_drm_front.c: In function 'xen_drv_probe':
-> drivers/gpu/drm/xen/xen_drm_front.c:740:10: error: 'struct bus_type' has =
-no member named 'force_dma'
->   dev->bus->force_dma =3D true;
->           ^~
-> drivers/gpu/drm/xen/xen_drm_front.c:742:8: error: too few arguments to fu=
-nction 'of_dma_configure'
->   ret =3D of_dma_configure(dev, NULL);
->         ^~~~~~~~~~~~~~~~
-> In file included from drivers/gpu/drm/xen/xen_drm_front.c:16:0:
-> include/linux/of_device.h:58:5: note: declared here
->  int of_dma_configure(struct device *dev,
->      ^~~~~~~~~~~~~~~~
->=20
-> Caused by commit
->=20
->   c575b7eeb89f ("drm/xen-front: Add support for Xen PV display frontend")
->=20
-> interacting with commit
->=20
->   3d6ce86ee794 ("drivers: remove force dma flag from buses")
->=20
-> from the dma-mapping tree.
->=20
-> I have added the following merge fix patch:
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 8 May 2018 11:02:24 +1000
-> Subject: [PATCH] drm/xen-front: merge fix for "drivers: remove force dma =
-flag from buses"
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+On Sat, May 05, 2018 at 05:57:02PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    c1c07416cdd4 Merge tag 'kbuild-fixes-v4.17' of git://git.k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13d5de47800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5a1dc06635c10d27
+> dashboard link: https://syzkaller.appspot.com/bug?extid=99858724c0ba555a12ea
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=170afde7800000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=141b4be7800000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+99858724c0ba555a12ea@syzkaller.appspotmail.com
+> 
+> random: sshd: uninitialized urandom read (32 bytes read)
+> random: sshd: uninitialized urandom read (32 bytes read)
+> random: sshd: uninitialized urandom read (32 bytes read)
+> random: sshd: uninitialized urandom read (32 bytes read)
+> BUG: please report to dccp@vger.kernel.org => prev = 0, last = 0 at
+> net/dccp/ccids/lib/packet_history.c:425/tfrc_rx_hist_sample_rtt()
+> CPU: 0 PID: 4495 Comm: syz-executor551 Not tainted 4.17.0-rc3+ #34
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  <IRQ>
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>  tfrc_rx_hist_sample_rtt.cold.3+0x54/0x5c
+> net/dccp/ccids/lib/packet_history.c:422
+>  ccid3_hc_rx_packet_recv+0x5c8/0xed0 net/dccp/ccids/ccid3.c:765
+>  ccid_hc_rx_packet_recv net/dccp/ccid.h:185 [inline]
+>  dccp_deliver_input_to_ccids+0xf0/0x280 net/dccp/input.c:180
+>  dccp_rcv_established+0x87/0xb0 net/dccp/input.c:378
+>  dccp_v4_do_rcv+0x153/0x180 net/dccp/ipv4.c:654
+>  sk_backlog_rcv include/net/sock.h:909 [inline]
+>  __sk_receive_skb+0x3a2/0xd60 net/core/sock.c:513
+>  dccp_v4_rcv+0x10e5/0x1f3f net/dccp/ipv4.c:875
+>  ip_local_deliver_finish+0x2e3/0xd80 net/ipv4/ip_input.c:215
+>  NF_HOOK include/linux/netfilter.h:288 [inline]
+>  ip_local_deliver+0x1e1/0x720 net/ipv4/ip_input.c:256
+>  dst_input include/net/dst.h:450 [inline]
+>  ip_rcv_finish+0x81b/0x2200 net/ipv4/ip_input.c:396
+>  NF_HOOK include/linux/netfilter.h:288 [inline]
+>  ip_rcv+0xb70/0x143d net/ipv4/ip_input.c:492
+>  __netif_receive_skb_core+0x26f5/0x3630 net/core/dev.c:4592
+>  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4657
+>  process_backlog+0x219/0x760 net/core/dev.c:5337
+>  napi_poll net/core/dev.c:5735 [inline]
+>  net_rx_action+0x7b7/0x1930 net/core/dev.c:5801
+>  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+>  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1046
+>  </IRQ>
+>  do_softirq.part.17+0x14d/0x190 kernel/softirq.c:329
+>  do_softirq arch/x86/include/asm/preempt.h:23 [inline]
+>  __local_bh_enable_ip+0x1ec/0x230 kernel/softirq.c:182
+>  local_bh_enable include/linux/bottom_half.h:32 [inline]
+>  rcu_read_unlock_bh include/linux/rcupdate.h:728 [inline]
+>  ip_finish_output2+0xab2/0x1840 net/ipv4/ip_output.c:231
+>  ip_finish_output+0x828/0xf80 net/ipv4/ip_output.c:317
+>  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
+>  ip_output+0x21b/0x850 net/ipv4/ip_output.c:405
+>  dst_output include/net/dst.h:444 [inline]
+>  ip_local_out+0xc5/0x1b0 net/ipv4/ip_output.c:124
+>  ip_queue_xmit+0x9d7/0x1f70 net/ipv4/ip_output.c:504
+>  dccp_transmit_skb+0x999/0x12e0 net/dccp/output.c:142
+>  dccp_xmit_packet+0x250/0x790 net/dccp/output.c:281
+>  dccp_write_xmit+0x190/0x1f0 net/dccp/output.c:363
+>  dccp_sendmsg+0x8c7/0x1020 net/dccp/proto.c:818
+>  inet_sendmsg+0x19f/0x690 net/ipv4/af_inet.c:798
+>  sock_sendmsg_nosec net/socket.c:629 [inline]
+>  sock_sendmsg+0xd5/0x120 net/socket.c:639
+>  ___sys_sendmsg+0x525/0x940 net/socket.c:2117
+>  __sys_sendmmsg+0x240/0x6f0 net/socket.c:2212
+>  __do_sys_sendmmsg net/socket.c:2241 [inline]
+>  __se_sys_sendmmsg net/socket.c:2238 [inline]
+>  __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2238
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x445d09
+> RSP: 002b:00007f3c7eff5d88 EFLAGS: 00000293 ORIG_RAX: 0000000000000133
+> RAX: ffffffffffffffda RBX: 00000000006dac40 RCX: 0000000000445d09
+> RDX: 0000000000000001 RSI: 000000
+> 
+> 
 > ---
->  drivers/gpu/drm/xen/xen_drm_front.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xe=
-n_drm_front.c
-> index 1b0ea9ac330e..0e486cb1c10c 100644
-> --- a/drivers/gpu/drm/xen/xen_drm_front.c
-> +++ b/drivers/gpu/drm/xen/xen_drm_front.c
-> @@ -737,9 +737,8 @@ static int xen_drv_probe(struct xenbus_device *xb_dev,
->  	 * is not correct: to fix this call of_dma_configure() with a NULL
->  	 * node to set default DMA ops.
->  	 */
-> -	dev->bus->force_dma =3D true;
->  	dev->coherent_dma_mask =3D DMA_BIT_MASK(32);
-> -	ret =3D of_dma_configure(dev, NULL);
-> +	ret =3D of_dma_configure(dev, NULL, true);
->  	if (ret < 0) {
->  		DRM_ERROR("Cannot setup DMA ops, ret %d", ret);
->  		return ret;
-> --=20
-> 2.17.0
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
 
-This is now needed for the merge of the drm and dma-mapping trees.
---=20
-Cheers,
-Stephen Rothwell
+There's already a bug report with this title, this one just had a few characters
+truncated from the end.  Dmitry, is that intentional?  The other one is
+https://groups.google.com/forum/#!msg/syzkaller-bugs/u5nq3PdPkIc/bBFjKHXPAgAJ:
 
---Sig_/KgYm4F6hqbL=bzBEBhDHv1q
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+#syz dup: BUG: please report to dc...@vger.kernel.org => prev = 0, last = 0 at net/dccp/ccids/lib/packet_history.c:LINE/tfrc_rx_hist_sample_rtt()
 
------BEGIN PGP SIGNATURE-----
+Anyway, this is apparently a DCCP bug, and as I posted on the other thread it's
+easily reproducible with the following program.  Gerrit, are you still the DCCP
+maintainer, or is the MAINTAINERS file outdated?
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrygP8ACgkQAVBC80lX
-0Gxhwgf/T7Nc4rfcR5P7lf9exue4dBbXIfSn+uGfH+69hBX/mxk8TqNto57cvzF3
-14T35gjljpqLqPq6aodcDcPSeEIt/TPMDDLUWD54xhUQBY93jNnTWUjPIZ8Og6Th
-3xm4y6Zi4prGInvjAqVMGyV41+TUQExUE5KSXkM47MQai0j4LXtevHn2dqWO2WcN
-txeGMMqCkB9qpjUKM1QxLG68Pce4BAh59ZzxSQw8dLHxPPC1ln96Q0K6pl9KKx3a
-xf8Od8+DDUFc1PmhEcWWCksW1QXWYrD6BEGhNq5/dSLP3FM8Dx80F68XrrnAj8tZ
-h2HmzMwzXL30uV/gMT56Mh6EHFbmkw==
-=mWda
------END PGP SIGNATURE-----
+	#include <linux/dccp.h>
+	#include <linux/in.h>
+	#include <sys/socket.h>
+	#include <sys/wait.h>
+	#include <unistd.h>
 
---Sig_/KgYm4F6hqbL=bzBEBhDHv1q--
+	int main()
+	{
+		struct sockaddr_in addr = { .sin_family = AF_INET };
+		socklen_t addrlen = sizeof(addr);
+		int fd;
+
+		while (fork())
+			wait(NULL);
+		fd = socket(AF_INET, SOCK_DCCP, 0);
+		bind(fd, (void *)&addr, addrlen);
+		getsockname(fd, (void *)&addr, &addrlen);
+		listen(fd, 100);
+		if (fork()) {
+			fd = socket(AF_INET, SOCK_DCCP, 0);
+			setsockopt(fd, SOL_DCCP, DCCP_SOCKOPT_CCID, "\x03", 1);
+			connect(fd, (void *)&addr, sizeof(addr));
+		} else {
+			fd = accept(fd, NULL, 0);
+		}
+		for (int i = 0; i < 1000; i++)
+			write(fd, "X", 1);
+	}
+
+- Eric
