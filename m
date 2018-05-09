@@ -1,309 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965940AbeEITuz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 15:50:55 -0400
-Received: from mail-pg0-f52.google.com ([74.125.83.52]:45820 "EHLO
-        mail-pg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965753AbeEITuw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 15:50:52 -0400
-X-Google-Smtp-Source: AB8JxZp1qEjxl1s19UW4asBbFOP/FsS3j57oZPKdvWVs0mshvL8e84SpWfogKufcOWJsSBtk//gzpA==
-Subject: Re: bug in tag handling in blk-mq?
-To: Mike Galbraith <efault@gmx.de>,
-        Paolo Valente <paolo.valente@linaro.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-        linux-block <linux-block@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>
-References: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
- <7760d23b-7a4c-a645-1c7a-da7569bb44dc@kernel.dk>
- <84145CD7-B917-4B32-8A5C-310C1910DB71@linaro.org>
- <1525755090.24338.1.camel@gmx.de> <1525768632.5208.4.camel@gmx.de>
- <ffd0c030-43f8-0dbe-42b3-03bb9c410bea@kernel.dk>
- <1525797766.5204.2.camel@gmx.de>
- <3692ce7d-a767-72e6-65ae-6178b6c2e7d8@kernel.dk>
- <f04636df-3f97-6c16-f37b-d407e062b9e5@kernel.dk>
- <57952405-bdeb-f4e4-1aef-a7c0a8a68674@kernel.dk>
- <1525839089.15732.1.camel@gmx.de>
- <ce5ee556-9552-6ffd-7578-7b3b983c07bf@kernel.dk>
- <1525885030.15732.6.camel@gmx.de>
- <1e51eb57-6d9b-a53c-9cd6-2adfc86b21b5@kernel.dk>
- <1525890708.11382.1.camel@gmx.de>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <2b65d736-aef8-5da1-96ad-c86a931d59eb@kernel.dk>
-Date: Wed, 9 May 2018 13:50:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S965934AbeEITvm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 15:51:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965532AbeEITvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 15:51:41 -0400
+X-Google-Smtp-Source: AB8JxZrLRexN9D6jSl7wQf8sIAZ4H6eOleGzNVYO4woJKFxKHgmmUgjOz8IWW3TQazpMHcxyG83fNr7kc4+LkCw2fhE=
 MIME-Version: 1.0
-In-Reply-To: <1525890708.11382.1.camel@gmx.de>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1525634395-23380-1-git-send-email-frederic@kernel.org>
+ <1525634395-23380-5-git-send-email-frederic@kernel.org> <20180508111323.mmjo4ky4txzi4gx4@lakrids.cambridge.arm.com>
+ <20180509113257.hl6frl424trdt2em@lakrids.cambridge.arm.com>
+In-Reply-To: <20180509113257.hl6frl424trdt2em@lakrids.cambridge.arm.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Wed, 09 May 2018 19:51:28 +0000
+X-Gmail-Original-Message-ID: <CALCETrVswHMf2YxqBN-EczKUcQ8ShpKgL02b9HJ9LCLycGEHOw@mail.gmail.com>
+Message-ID: <CALCETrVswHMf2YxqBN-EczKUcQ8ShpKgL02b9HJ9LCLycGEHOw@mail.gmail.com>
+Subject: Re: [PATCH 4/9] arm: Split breakpoint validation into "check" and "commit"
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, Rich Felker <dalias@libc.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/9/18 12:31 PM, Mike Galbraith wrote:
-> On Wed, 2018-05-09 at 11:01 -0600, Jens Axboe wrote:
->> On 5/9/18 10:57 AM, Mike Galbraith wrote:
->>
->>>>> Confirmed.  Impressive high speed bug stomping.
->>>>
->>>> Well, that's good news. Can I get you to try this patch?
->>>
->>> Sure thing.  The original hang (minus provocation patch) being
->>> annoyingly non-deterministic, this will (hopefully) take a while.
->>
->> You can verify with the provocation patch as well first, if you wish.
-> 
-> Done, box still seems fine.
+On Wed, May 9, 2018 at 4:33 AM Mark Rutland <mark.rutland@arm.com> wrote:
 
-Omar had some (valid) complaints, can you try this one as well? You
-can also find it as a series here:
+> On Tue, May 08, 2018 at 12:13:23PM +0100, Mark Rutland wrote:
+> > Hi Frederick,
+> >
+> > On Sun, May 06, 2018 at 09:19:50PM +0200, Frederic Weisbecker wrote:
+> > > The breakpoint code mixes up attribute check and commit into a single
+> > > code entity. Therefore the validation may return an error due to
+> > > incorrect atributes while still leaving halfway modified architecture
+> > > breakpoint struct.
+> > >
+> > > Prepare fox fixing this misdesign and separate both logics.
+> >
+> > Could you elaborate on what the problem is? I would have expected that
+> > when arch_build_bp_info() returns an error code, we wouldn't
+> > subsequently use the arch_hw_breakpoint information. Where does that
+> > happen?
 
-http://git.kernel.dk/cgit/linux-block/log/?h=bfq-cleanups
+>  From digging, I now see that this is a problem when
+> modify_user_hw_breakpoint() is called on an existing breakpoint. It
+> would be nice to mention that in the commit message.
 
-I'll repost the series shortly, need to check if it actually builds and
-boots.
+> > I also see that the check and commit hooks have to duplicate a
+> > reasonable amount of logic, e.g. the switch on bp->attr.type. Can we
+> > instead refactor the existing arch_build_bp_info() hooks to use a
+> > temporary arch_hw_breakpoint, and then struct assign it after all the
+> > error cases, > e.g.
+> >
+> > static int arch_build_bp_info(struct perf_event *bp)
+> > {
+> >       struct arch_hw_breakpoint hbp;
+> >
+> >       if (some_condition(bp))
+> >               hbp->field = 0xf00;
+> >
+> >       switch (bp->attr.type) {
+> >       case FOO:
+> >               return -EINVAL;
+> >       case BAR:
+> >               hbp->other_field = 7;
+> >               break;
+> >       };
+> >
+> >       if (failure_case(foo))
+> >               return err;
+> >
+> >       *counter_arch_bp(bp) = hbp;
+> > }
+> >
+> > ... or is that also problematic?
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index ebc264c87a09..cba6e82153a2 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -487,46 +487,6 @@ static struct request *bfq_choose_req(struct bfq_data *bfqd,
- }
- 
- /*
-- * See the comments on bfq_limit_depth for the purpose of
-- * the depths set in the function.
-- */
--static void bfq_update_depths(struct bfq_data *bfqd, struct sbitmap_queue *bt)
--{
--	bfqd->sb_shift = bt->sb.shift;
--
--	/*
--	 * In-word depths if no bfq_queue is being weight-raised:
--	 * leaving 25% of tags only for sync reads.
--	 *
--	 * In next formulas, right-shift the value
--	 * (1U<<bfqd->sb_shift), instead of computing directly
--	 * (1U<<(bfqd->sb_shift - something)), to be robust against
--	 * any possible value of bfqd->sb_shift, without having to
--	 * limit 'something'.
--	 */
--	/* no more than 50% of tags for async I/O */
--	bfqd->word_depths[0][0] = max((1U<<bfqd->sb_shift)>>1, 1U);
--	/*
--	 * no more than 75% of tags for sync writes (25% extra tags
--	 * w.r.t. async I/O, to prevent async I/O from starving sync
--	 * writes)
--	 */
--	bfqd->word_depths[0][1] = max(((1U<<bfqd->sb_shift) * 3)>>2, 1U);
--
--	/*
--	 * In-word depths in case some bfq_queue is being weight-
--	 * raised: leaving ~63% of tags for sync reads. This is the
--	 * highest percentage for which, in our tests, application
--	 * start-up times didn't suffer from any regression due to tag
--	 * shortage.
--	 */
--	/* no more than ~18% of tags for async I/O */
--	bfqd->word_depths[1][0] = max(((1U<<bfqd->sb_shift) * 3)>>4, 1U);
--	/* no more than ~37% of tags for sync writes (~20% extra tags) */
--	bfqd->word_depths[1][1] = max(((1U<<bfqd->sb_shift) * 6)>>4, 1U);
--}
--
--/*
-  * Async I/O can easily starve sync I/O (both sync reads and sync
-  * writes), by consuming all tags. Similarly, storms of sync writes,
-  * such as those that sync(2) may trigger, can starve sync reads.
-@@ -535,25 +495,11 @@ static void bfq_update_depths(struct bfq_data *bfqd, struct sbitmap_queue *bt)
-  */
- static void bfq_limit_depth(unsigned int op, struct blk_mq_alloc_data *data)
- {
--	struct blk_mq_tags *tags = blk_mq_tags_from_data(data);
- 	struct bfq_data *bfqd = data->q->elevator->elevator_data;
--	struct sbitmap_queue *bt;
- 
- 	if (op_is_sync(op) && !op_is_write(op))
- 		return;
- 
--	if (data->flags & BLK_MQ_REQ_RESERVED) {
--		if (unlikely(!tags->nr_reserved_tags)) {
--			WARN_ON_ONCE(1);
--			return;
--		}
--		bt = &tags->breserved_tags;
--	} else
--		bt = &tags->bitmap_tags;
--
--	if (unlikely(bfqd->sb_shift != bt->sb.shift))
--		bfq_update_depths(bfqd, bt);
--
- 	data->shallow_depth =
- 		bfqd->word_depths[!!bfqd->wr_busy_queues][op_is_sync(op)];
- 
-@@ -5105,6 +5051,66 @@ void bfq_put_async_queues(struct bfq_data *bfqd, struct bfq_group *bfqg)
- 	__bfq_put_async_bfqq(bfqd, &bfqg->async_idle_bfqq);
- }
- 
-+/*
-+ * See the comments on bfq_limit_depth for the purpose of
-+ * the depths set in the function. Return minimum shallow depth we'll use.
-+ */
-+static unsigned int bfq_update_depths(struct bfq_data *bfqd,
-+				      struct sbitmap_queue *bt)
-+{
-+	unsigned int i, j, min_shallow = UINT_MAX;
-+
-+	bfqd->sb_shift = bt->sb.shift;
-+
-+	/*
-+	 * In-word depths if no bfq_queue is being weight-raised:
-+	 * leaving 25% of tags only for sync reads.
-+	 *
-+	 * In next formulas, right-shift the value
-+	 * (1U<<bfqd->sb_shift), instead of computing directly
-+	 * (1U<<(bfqd->sb_shift - something)), to be robust against
-+	 * any possible value of bfqd->sb_shift, without having to
-+	 * limit 'something'.
-+	 */
-+	/* no more than 50% of tags for async I/O */
-+	bfqd->word_depths[0][0] = max((1U<<bfqd->sb_shift)>>1, 1U);
-+	/*
-+	 * no more than 75% of tags for sync writes (25% extra tags
-+	 * w.r.t. async I/O, to prevent async I/O from starving sync
-+	 * writes)
-+	 */
-+	bfqd->word_depths[0][1] = max(((1U<<bfqd->sb_shift) * 3)>>2, 1U);
-+
-+	/*
-+	 * In-word depths in case some bfq_queue is being weight-
-+	 * raised: leaving ~63% of tags for sync reads. This is the
-+	 * highest percentage for which, in our tests, application
-+	 * start-up times didn't suffer from any regression due to tag
-+	 * shortage.
-+	 */
-+	/* no more than ~18% of tags for async I/O */
-+	bfqd->word_depths[1][0] = max(((1U<<bfqd->sb_shift) * 3)>>4, 1U);
-+	/* no more than ~37% of tags for sync writes (~20% extra tags) */
-+	bfqd->word_depths[1][1] = max(((1U<<bfqd->sb_shift) * 6)>>4, 1U);
-+
-+	for (i = 0; i < 2; i++)
-+		for (j = 0; j < 2; j++)
-+			min_shallow = min(min_shallow, bfqd->word_depths[i][j]);
-+
-+	return min_shallow;
-+}
-+
-+static int bfq_init_hctx(struct blk_mq_hw_ctx *hctx, unsigned int index)
-+{
-+	struct bfq_data *bfqd = hctx->queue->elevator->elevator_data;
-+	struct blk_mq_tags *tags = hctx->sched_tags;
-+	unsigned int min_shallow;
-+
-+	min_shallow = bfq_update_depths(bfqd, &tags->bitmap_tags);
-+	sbitmap_queue_shallow_depth(&tags->bitmap_tags, min_shallow);
-+	return 0;
-+}
-+
- static void bfq_exit_queue(struct elevator_queue *e)
- {
- 	struct bfq_data *bfqd = e->elevator_data;
-@@ -5526,6 +5532,7 @@ static struct elevator_type iosched_bfq_mq = {
- 		.requests_merged	= bfq_requests_merged,
- 		.request_merged		= bfq_request_merged,
- 		.has_work		= bfq_has_work,
-+		.init_hctx		= bfq_init_hctx,
- 		.init_sched		= bfq_init_queue,
- 		.exit_sched		= bfq_exit_queue,
- 	},
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 4e9d83594cca..64630caaf27e 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -360,9 +360,11 @@ static struct request *blk_mq_get_request(struct request_queue *q,
- 
- 		/*
- 		 * Flush requests are special and go directly to the
--		 * dispatch list.
-+		 * dispatch list. Don't include reserved tags in the
-+		 * limiting, as it isn't useful.
- 		 */
--		if (!op_is_flush(op) && e->type->ops.mq.limit_depth)
-+		if (!op_is_flush(op) && e->type->ops.mq.limit_depth &&
-+		    !(data->flags & BLK_MQ_REQ_RESERVED))
- 			e->type->ops.mq.limit_depth(op, data);
- 	}
- 
-diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
-index 841585f6e5f2..99059789f45f 100644
---- a/include/linux/sbitmap.h
-+++ b/include/linux/sbitmap.h
-@@ -164,6 +164,17 @@ static inline void sbitmap_free(struct sbitmap *sb)
- void sbitmap_resize(struct sbitmap *sb, unsigned int depth);
- 
- /**
-+ * sbitmap_queue_shallow_depth() - Inform sbitmap about shallow depth changes
-+ * @sbq: Bitmap queue in question
-+ * @depth: Shallow depth limit
-+ *
-+ * Due to how sbitmap does batched wakes, if a user of sbitmap updates the
-+ * shallow depth, then we might need to update our batched wake counts.
-+ *
-+ */
-+void sbitmap_queue_shallow_depth(struct sbitmap_queue *sbq, unsigned int depth);
-+
-+/**
-  * sbitmap_get() - Try to allocate a free bit from a &struct sbitmap.
-  * @sb: Bitmap to allocate from.
-  * @alloc_hint: Hint for where to start searching for a free bit.
-diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-index e6a9c06ec70c..a4fb48e4c26b 100644
---- a/lib/sbitmap.c
-+++ b/lib/sbitmap.c
-@@ -327,7 +327,8 @@ int sbitmap_queue_init_node(struct sbitmap_queue *sbq, unsigned int depth,
- }
- EXPORT_SYMBOL_GPL(sbitmap_queue_init_node);
- 
--void sbitmap_queue_resize(struct sbitmap_queue *sbq, unsigned int depth)
-+static void sbitmap_queue_update_batch_wake(struct sbitmap_queue *sbq,
-+					    unsigned int depth)
- {
- 	unsigned int wake_batch = sbq_calc_wake_batch(depth);
- 	int i;
-@@ -342,6 +343,11 @@ void sbitmap_queue_resize(struct sbitmap_queue *sbq, unsigned int depth)
- 		for (i = 0; i < SBQ_WAIT_QUEUES; i++)
- 			atomic_set(&sbq->ws[i].wait_cnt, 1);
- 	}
-+}
-+
-+void sbitmap_queue_resize(struct sbitmap_queue *sbq, unsigned int depth)
-+{
-+	sbitmap_queue_update_batch_wake(sbq, depth);
- 	sbitmap_resize(&sbq->sb, depth);
- }
- EXPORT_SYMBOL_GPL(sbitmap_queue_resize);
-@@ -403,6 +409,17 @@ int __sbitmap_queue_get_shallow(struct sbitmap_queue *sbq,
- }
- EXPORT_SYMBOL_GPL(__sbitmap_queue_get_shallow);
- 
-+/*
-+ * User has limited the shallow depth to 'depth', update batch wake counts
-+ * if depth is smaller than the sbitmap_queue depth
-+ */
-+void sbitmap_queue_shallow_depth(struct sbitmap_queue *sbq, unsigned int depth)
-+{
-+	if (depth < sbq->sb.depth)
-+		sbitmap_queue_update_batch_wake(sbq, depth);
-+}
-+EXPORT_SYMBOL_GPL(sbitmap_queue_shallow_depth);
-+
- static struct sbq_wait_state *sbq_wake_ptr(struct sbitmap_queue *sbq)
- {
- 	int i, wake_index;
+> IIUC, this *would* work, but it is a little opaque.
 
--- 
-Jens Axboe
+> Perhaps we could explicitly pass the temporary arch_hw_breakpoint in,
+> and have the core code struct-assign it after checking for errors?
+
+Hmm, maybe.  OTOH, I'm not really convinced that arch_hw_breakpoint is even
+needed.  x86 at least could probably just regenerate the DRn and DR7 bits
+on the fly as needed rather than caching them with basically no loss in
+performance.  I completely agree that reducing duplication would be nice.
