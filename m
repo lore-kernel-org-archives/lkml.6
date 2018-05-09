@@ -1,121 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933934AbeEILDg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 07:03:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41200 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933685AbeEILDe (ORCPT
+        id S934099AbeEILIB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 07:08:01 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52286 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756022AbeEILH7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 07:03:34 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1787360C66
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vinmenon@codeaurora.org
-Subject: Re: [PATCH 6/7] psi: pressure stall information for CPU, memory, and
- IO
-To: Johannes Weiner <hannes@cmpxchg.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org,
-        cgroups@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Wed, 9 May 2018 07:07:59 -0400
+Date: Wed, 9 May 2018 13:07:36 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
         Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
         Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
         Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
         xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
         Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
         Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+Subject: Re: [PATCH 7/7] psi: cgroup support
+Message-ID: <20180509110736.GR12217@hirez.programming.kicks-ass.net>
 References: <20180507210135.1823-1-hannes@cmpxchg.org>
- <20180507210135.1823-7-hannes@cmpxchg.org>
-From: Vinayak Menon <vinmenon@codeaurora.org>
-Message-ID: <87060553-2e09-2e2a-13a2-a91345d6df30@codeaurora.org>
-Date: Wed, 9 May 2018 16:33:24 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ <20180507210135.1823-8-hannes@cmpxchg.org>
 MIME-Version: 1.0
-In-Reply-To: <20180507210135.1823-7-hannes@cmpxchg.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507210135.1823-8-hannes@cmpxchg.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 07, 2018 at 05:01:35PM -0400, Johannes Weiner wrote:
+> --- a/kernel/sched/psi.c
+> +++ b/kernel/sched/psi.c
+> @@ -260,6 +260,18 @@ void psi_task_change(struct task_struct *task, u64 now, int clear, int set)
+>  	task->psi_flags |= set;
+>  
+>  	psi_group_update(&psi_system, cpu, now, clear, set);
+> +
+> +#ifdef CONFIG_CGROUPS
+> +       cgroup = task->cgroups->dfl_cgrp;
+> +       while (cgroup && (parent = cgroup_parent(cgroup))) {
+> +               struct psi_group *group;
+> +
+> +               group = cgroup_psi(cgroup);
+> +               psi_group_update(group, cpu, now, clear, set);
+> +
+> +               cgroup = parent;
+> +       }
+> +#endif
+>  }
 
-On 5/8/2018 2:31 AM, Johannes Weiner wrote:
-> +static void psi_group_update(struct psi_group *group, int cpu, u64 now,
-> +			     unsigned int clear, unsigned int set)
-> +{
-> +	enum psi_state state = PSI_NONE;
-> +	struct psi_group_cpu *groupc;
-> +	unsigned int *tasks;
-> +	unsigned int to, bo;
-> +
-> +	groupc = per_cpu_ptr(group->cpus, cpu);
-> +	tasks = groupc->tasks;
-> +
-> +	/* Update task counts according to the set/clear bitmasks */
-> +	for (to = 0; (bo = ffs(clear)); to += bo, clear >>= bo) {
-> +		int idx = to + (bo - 1);
-> +
-> +		if (tasks[idx] == 0 && !psi_bug) {
-> +			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d idx=%d tasks=[%u %u %u %u]\n",
-> +					cpu, idx, tasks[0], tasks[1],
-> +					tasks[2], tasks[3]);
-> +			psi_bug = 1;
-> +		}
-> +		tasks[idx]--;
-> +	}
-> +	for (to = 0; (bo = ffs(set)); to += bo, set >>= bo)
-> +		tasks[to + (bo - 1)]++;
-> +
-> +	/* Time in which tasks wait for the CPU */
-> +	state = PSI_NONE;
-> +	if (tasks[NR_RUNNING] > 1)
-> +		state = PSI_SOME;
-> +	time_state(&groupc->res[PSI_CPU], state, now);
-> +
-> +	/* Time in which tasks wait for memory */
-> +	state = PSI_NONE;
-> +	if (tasks[NR_MEMSTALL]) {
-> +		if (!tasks[NR_RUNNING] ||
-> +		    (cpu_curr(cpu)->flags & PF_MEMSTALL))
-> +			state = PSI_FULL;
-> +		else
-> +			state = PSI_SOME;
-> +	}
-> +	time_state(&groupc->res[PSI_MEM], state, now);
-> +
-> +	/* Time in which tasks wait for IO */
-> +	state = PSI_NONE;
-> +	if (tasks[NR_IOWAIT]) {
-> +		if (!tasks[NR_RUNNING])
-> +			state = PSI_FULL;
-> +		else
-> +			state = PSI_SOME;
-> +	}
-> +	time_state(&groupc->res[PSI_IO], state, now);
-> +
-> +	/* Time in which tasks are non-idle, to weigh the CPU in summaries */
-> +	if (groupc->nonidle)
-> +		groupc->nonidle_time += now - groupc->nonidle_start;
-> +	groupc->nonidle = tasks[NR_RUNNING] ||
-> +		tasks[NR_IOWAIT] || tasks[NR_MEMSTALL];
-> +	if (groupc->nonidle)
-> +		groupc->nonidle_start = now;
-> +
-> +	/* Kick the stats aggregation worker if it's gone to sleep */
-> +	if (!delayed_work_pending(&group->clock_work))
-
-This causes a crash when the work is scheduled before system_wq is up. In my case when the first
-schedule was called from kthreadd. And I had to do this to make it work.
-if (keventd_up() && !delayed_work_pending(&group->clock_work))
-
-> +		schedule_delayed_work(&group->clock_work, MY_LOAD_FREQ);
-> +}
-> +
-> +void psi_task_change(struct task_struct *task, u64 now, int clear, int set)
-> +{
-> +	struct cgroup *cgroup, *parent;
-
-unused variables
-
-Thanks,
-Vinayak
+TJ fixed needing that for stats at some point, why can't you do the
+same?
