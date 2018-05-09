@@ -1,76 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965410AbeEIQHg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:07:36 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:44544 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965208AbeEIQHc (ORCPT
+        id S935455AbeEIQI2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:08:28 -0400
+Received: from mail-pl0-f42.google.com ([209.85.160.42]:34553 "EHLO
+        mail-pl0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933409AbeEIQI1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:07:32 -0400
-Date: Wed, 9 May 2018 18:07:27 +0200
-From: Sam Ravnborg <sam@ravnborg.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: linux-kbuild@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Joe Perches <joe@perches.com>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/8] export.h: remove code for prefixing symbols with
- underscore
-Message-ID: <20180509160727.GA7459@ravnborg.org>
-References: <1525850632-10921-1-git-send-email-yamada.masahiro@socionext.com>
- <1525850632-10921-6-git-send-email-yamada.masahiro@socionext.com>
+        Wed, 9 May 2018 12:08:27 -0400
+X-Google-Smtp-Source: AB8JxZrg6QtvkFgKuaAvgn4L4O1hxm3rTRn0ZnuH50KIIX5fCmXR/Z4J/Mr2p51F6yQ+ZcqjLYv5UQ==
+Subject: Re: [RFC][PATCH 00/13] Provide saturating helpers for allocation
+To: Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-hardening@lists.openwall.com
+References: <20180509004229.36341-1-keescook@chromium.org>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <4baffc55-510e-96d3-3487-5ea09f993a0c@redhat.com>
+Date: Wed, 9 May 2018 09:08:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525850632-10921-6-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=QZlIQPTv c=1 sm=1 tr=0
-        a=ddpE2eP9Sid01c7MzoqXPA==:117 a=ddpE2eP9Sid01c7MzoqXPA==:17
-        a=kj9zAlcOel0A:10 a=c-n4J4-pAAAA:8 a=idjVBUkO-wjWtF39dhMA:9
-        a=CjuIK1q_8ugA:10 a=L0NDqeB7ZLmQzAogN4cw:22
+In-Reply-To: <20180509004229.36341-1-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro
-
-On Wed, May 09, 2018 at 04:23:49PM +0900, Masahiro Yamada wrote:
-> CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX was selected by BLACKFIN, METAG.
-> They were removed by commit 4ba66a976072 ("arch: remove blackfin port"),
-> commit bb6fb6dfcc17 ("metag: Remove arch/metag/"), respectively.
+On 05/08/2018 05:42 PM, Kees Cook wrote:
+> This is a stab at providing three new helpers for allocation size
+> calculation:
 > 
-> No more architecture enables CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX.
-> Clean up the export.h headers.  I am keeping VMLINUX_SYMBOL() and
-> VMLINUX_SYMBOL_STR() because they are widely used.
+> struct_size(), array_size(), and array3_size().
 > 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> diff --git a/include/linux/export.h b/include/linux/export.h
-> index 1a1dfdb..b768d6d 100644
-> --- a/include/linux/export.h
-> +++ b/include/linux/export.h
-> @@ -10,14 +10,8 @@
->   * hackers place grumpy comments in header files.
->   */
->  
-> -/* Some toolchains use a `_' prefix for all user symbols. */
-> -#ifdef CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX
-> -#define __VMLINUX_SYMBOL(x) _##x
-> -#define __VMLINUX_SYMBOL_STR(x) "_" #x
-> -#else
->  #define __VMLINUX_SYMBOL(x) x
->  #define __VMLINUX_SYMBOL_STR(x) #x
-> -#endif
->  
->  /* Indirect, so macros are expanded before pasting. */
->  #define VMLINUX_SYMBOL(x) __VMLINUX_SYMBOL(x)
+> These are implemented on top of Rasmus's overflow checking functions,
+> and the last 8 patches are all treewide conversions of open-coded
+> multiplications into the various combinations of the helper functions.
+> 
+> -Kees
+> 
+> 
+Obvious question (that might indicate this deserves documentation?)
 
-Since we no longer need any expansion, then the indirection
-seems unnessesary.
+What's the difference between
 
-I think we can reduce this to just:
-#define VMLINUX_SYMBOL(x) x
+kmalloc_array(cnt, sizeof(struct blah), GFP_KERNEL);
 
-Likewise for __VMLINUX_SYMBOL_STR
+and
 
-	Sam
+kmalloc(array_size(cnt, struct blah), GFP_KERNEL);
+
+
+and when would you use one over the other?
+
+Thanks,
+Laura
