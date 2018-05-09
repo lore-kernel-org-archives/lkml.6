@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935263AbeEIRdo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:33:44 -0400
-Received: from vern.gendns.com ([206.190.152.46]:51914 "EHLO vern.gendns.com"
+        id S965455AbeEIRdj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:33:39 -0400
+Received: from vern.gendns.com ([206.190.152.46]:51967 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935539AbeEIR1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S935560AbeEIR1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 9 May 2018 13:27:02 -0400
 From: David Lechner <david@lechnology.com>
 To: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
@@ -16,9 +16,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Adam Ford <aford173@gmail.com>, linux-kernel@vger.kernel.org,
         David Lechner <david@lechnology.com>
-Subject: [PATCH v10 05/27] ARM: davinci: da830: add new clock init using common clock framework
-Date: Wed,  9 May 2018 12:25:44 -0500
-Message-Id: <20180509172606.29387-6-david@lechnology.com>
+Subject: [PATCH v10 13/27] ARM: davinci: remove CONFIG_DAVINCI_RESET_CLOCKS
+Date: Wed,  9 May 2018 12:25:52 -0500
+Message-Id: <20180509172606.29387-14-david@lechnology.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180509172606.29387-1-david@lechnology.com>
 References: <20180509172606.29387-1-david@lechnology.com>
@@ -36,181 +36,84 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the new board-specific clock init in mach-davinci/da830.c
-using the new common clock framework drivers.
+The common clock framework will take care of disabling unused clocks when
+we switch from the legacy davinci clocks and having this enabled will
+cause compile errors after we switch, so remove it now.
 
-The #ifdefs are needed to prevent compile errors until the entire
-ARCH_DAVINCI is converted.
-
-Also clean up the #includes since we are adding some here.
-
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: David Lechner <david@lechnology.com>
+Reviewed-by: Sekhar Nori <nsekhar@ti.com>
 ---
 
 v10 changes:
 - none
 
 v9 changes:
-- register PLL in da830_init_time() instead of as platform device so that we
-  get the correct timer0 clock for davinci_timer_init()
+- none
 
 v8 changes:
 - none
 
 v7 changes:
-- add clock platform device declarations
-- register platform devices instead of registering clocks directly
-- clkdev lookup is moved to drivers/clk
-- add davinci prefix to commit description
+- none
 
 v6 changes:
-- add blank lines between function calls
-- include da8xx_register_cfgchip()
+- none
 
 
- arch/arm/mach-davinci/board-da830-evm.c    |  2 +
- arch/arm/mach-davinci/da830.c              | 70 ++++++++++++++++++++--
- arch/arm/mach-davinci/include/mach/da8xx.h |  1 +
- 3 files changed, 67 insertions(+), 6 deletions(-)
+ arch/arm/mach-davinci/Kconfig               | 12 ------------
+ arch/arm/mach-davinci/common.c              |  1 -
+ arch/arm/mach-davinci/include/mach/common.h |  6 ------
+ 3 files changed, 19 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-index 14a6fc061744..74df37821abe 100644
---- a/arch/arm/mach-davinci/board-da830-evm.c
-+++ b/arch/arm/mach-davinci/board-da830-evm.c
-@@ -557,6 +557,8 @@ static __init void da830_evm_init(void)
- 	struct davinci_soc_info *soc_info = &davinci_soc_info;
- 	int ret;
+diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
+index 05c3eecf47cb..ba9912b4dfab 100644
+--- a/arch/arm/mach-davinci/Kconfig
++++ b/arch/arm/mach-davinci/Kconfig
+@@ -231,18 +231,6 @@ config DAVINCI_MUX_WARNINGS
+ 	  to change the pin multiplexing setup. When there are no warnings
+ 	  printed, it's safe to deselect DAVINCI_MUX for your product.
  
-+	da830_register_clocks();
-+
- 	ret = da830_register_gpio();
- 	if (ret)
- 		pr_warn("%s: GPIO init failed: %d\n", __func__, ret);
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 0b17e5a22e5e..8a79e245db1f 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -8,23 +8,27 @@
-  * is licensed "as is" without any warranty of any kind, whether express
-  * or implied.
-  */
-+#include <linux/clk-provider.h>
-+#include <linux/clk/davinci.h>
- #include <linux/gpio.h>
- #include <linux/init.h>
--#include <linux/clk.h>
- #include <linux/platform_data/gpio-davinci.h>
+-config DAVINCI_RESET_CLOCKS
+-	bool "Reset unused clocks during boot"
+-	depends on ARCH_DAVINCI
+-	help
+-	  Say Y if you want to reset unused clocks during boot.
+-	  This option saves power, but assumes all drivers are
+-	  using the clock framework. Broken drivers that do not
+-	  yet use clock framework may not work with this option.
+-	  If you are booting from another operating system, you
+-	  probably do not want this option enabled until your
+-	  device drivers work properly.
+-
+ endmenu
  
- #include <asm/mach/map.h>
- 
--#include "psc.h"
--#include <mach/irqs.h>
--#include <mach/cputype.h>
- #include <mach/common.h>
--#include <mach/time.h>
-+#include <mach/cputype.h>
- #include <mach/da8xx.h>
-+#include <mach/irqs.h>
-+#include <mach/time.h>
- 
--#include "clock.h"
- #include "mux.h"
- 
-+#ifndef CONFIG_COMMON_CLK
-+#include "clock.h"
-+#include "psc.h"
-+#endif
-+
- /* Offsets of the 8 compare registers on the da830 */
- #define DA830_CMP12_0		0x60
- #define DA830_CMP12_1		0x64
-@@ -37,6 +41,7 @@
- 
- #define DA830_REF_FREQ		24000000
- 
-+#ifndef CONFIG_COMMON_CLK
- static struct pll_data pll0_data = {
- 	.num		= 1,
- 	.phys_base	= DA8XX_PLL0_BASE,
-@@ -432,6 +437,7 @@ static struct clk_lookup da830_clks[] = {
- 	CLK(NULL,		"rmii",		&rmii_clk),
- 	CLK(NULL,		NULL,		NULL),
- };
-+#endif
- 
- /*
-  * Device specific mux setup
-@@ -1223,6 +1229,58 @@ void __init da830_init(void)
- 
- void __init da830_init_time(void)
+ endif
+diff --git a/arch/arm/mach-davinci/common.c b/arch/arm/mach-davinci/common.c
+index bcb6a7ba84e9..e03f95ccd95c 100644
+--- a/arch/arm/mach-davinci/common.c
++++ b/arch/arm/mach-davinci/common.c
+@@ -118,5 +118,4 @@ void __init davinci_common_init(const struct davinci_soc_info *soc_info)
+ void __init davinci_init_late(void)
  {
-+#ifdef CONFIG_COMMON_CLK
-+	void __iomem *pll;
-+	struct clk *clk;
-+
-+	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA830_REF_FREQ);
-+
-+	pll = ioremap(DA8XX_PLL0_BASE, SZ_4K);
-+
-+	da830_pll_init(NULL, pll, NULL);
-+
-+	clk = clk_get(NULL, "timer0");
-+
-+	davinci_timer_init(clk);
-+#else
- 	davinci_clk_init(da830_clks);
- 	davinci_timer_init(&timerp64_0_clk);
-+#endif
-+}
-+
-+static struct resource da830_psc0_resources[] = {
-+	{
-+		.start	= DA8XX_PSC0_BASE,
-+		.end	= DA8XX_PSC0_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device da830_psc0_device = {
-+	.name		= "da830-psc0",
-+	.id		= -1,
-+	.resource	= da830_psc0_resources,
-+	.num_resources	= ARRAY_SIZE(da830_psc0_resources),
-+};
-+
-+static struct resource da830_psc1_resources[] = {
-+	{
-+		.start	= DA8XX_PSC1_BASE,
-+		.end	= DA8XX_PSC1_BASE + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+};
-+
-+static struct platform_device da830_psc1_device = {
-+	.name		= "da830-psc1",
-+	.id		= -1,
-+	.resource	= da830_psc1_resources,
-+	.num_resources	= ARRAY_SIZE(da830_psc1_resources),
-+};
-+
-+void __init da830_register_clocks(void)
-+{
-+	/* PLL is registered in da830_init_time() */
-+	platform_device_register(&da830_psc0_device);
-+	platform_device_register(&da830_psc1_device);
+ 	davinci_cpufreq_init();
+-	davinci_clk_disable_unused();
  }
-diff --git a/arch/arm/mach-davinci/include/mach/da8xx.h b/arch/arm/mach-davinci/include/mach/da8xx.h
-index 9fd6d0125762..64861ac6a9d4 100644
---- a/arch/arm/mach-davinci/include/mach/da8xx.h
-+++ b/arch/arm/mach-davinci/include/mach/da8xx.h
-@@ -89,6 +89,7 @@ extern unsigned int da850_max_speed;
+diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
+index 5f45d0ac66a8..ded8f5f42725 100644
+--- a/arch/arm/mach-davinci/include/mach/common.h
++++ b/arch/arm/mach-davinci/include/mach/common.h
+@@ -83,12 +83,6 @@ extern void davinci_common_init(const struct davinci_soc_info *soc_info);
+ extern void davinci_init_ide(void);
+ void davinci_init_late(void);
  
- void da830_init(void);
- void da830_init_time(void);
-+void da830_register_clocks(void);
- 
- void da850_init(void);
- void da850_init_time(void);
+-#ifdef CONFIG_DAVINCI_RESET_CLOCKS
+-int davinci_clk_disable_unused(void);
+-#else
+-static inline int davinci_clk_disable_unused(void) { return 0; }
+-#endif
+-
+ #ifdef CONFIG_CPU_FREQ
+ int davinci_cpufreq_init(void);
+ #else
 -- 
 2.17.0
