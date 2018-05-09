@@ -1,68 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756555AbeEIOOV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 10:14:21 -0400
-Received: from mail-pg0-f49.google.com ([74.125.83.49]:41521 "EHLO
-        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756494AbeEIOOS (ORCPT
+        id S1756600AbeEIOOo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 10:14:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39342 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751000AbeEIOOm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 10:14:18 -0400
-X-Google-Smtp-Source: AB8JxZpF+EK7C0nTl6CFnqKuBdPt6vZbfbqh9fH7CR3HScIfshUlDe6IppnGEzuVCbmAZ9tF+dFPH0hUPOfCUWmW0Lw=
+        Wed, 9 May 2018 10:14:42 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180509135528.GE28388@thunk.org>
-References: <f403043cbe8414177d0568e81405@google.com> <20180403043854.GL1150@dastard>
- <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
- <CACT4Y+aQZ8KbU1C-sJ2PUKn_788SEKQpYGjoLaRDJrP9vXjs-A@mail.gmail.com>
- <20180501225159.GY23861@dastard> <CACT4Y+YZYHG=MyujDdTLxO=cn7Yz34vv6WKVjWr3Jvo1YTk0HA@mail.gmail.com>
- <20180509005011.GP23861@dastard> <20180509135528.GE28388@thunk.org>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 9 May 2018 16:13:57 +0200
-Message-ID: <CACT4Y+abNg4z24yghDGkwq6h5trumGsm1HDZqyoghe8PJJ-7Uw@mail.gmail.com>
-Subject: Re: WARNING: bad unlock balance in xfs_iunlock
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, Dave Chinner <david@fromorbit.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Wed, 09 May 2018 19:44:41 +0530
+From: Vikash Garodia <vgarodia@codeaurora.org>
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-media-owner@vger.kernel.org
+Subject: Re: [PATCH 08/28] venus: hfi_venus: add suspend function for 4xx
+ version
+In-Reply-To: <ce03189a-b56e-e73e-852f-1ad10d4c8bd3@linaro.org>
+References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+ <20180424124436.26955-9-stanimir.varbanov@linaro.org>
+ <8f26cd748f283043b32da05b39f29348@codeaurora.org>
+ <ce03189a-b56e-e73e-852f-1ad10d4c8bd3@linaro.org>
+Message-ID: <4bb351351a9725db42bf06da1e778290@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 3:55 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
->>>> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5719304272084992
->>>> syzkaller reproducer:
->>>> https://syzkaller.appspot.com/x/repro.syz?id=5767783983874048
->>>
->>> What a mess. A hand built, hopelessly broken filesystem image made
->>> up of hex dumps, written into a mmap()d region of memory, then
->>> copied into a tmpfs file and mounted with the loop device.
->>>
->>> Engineers that can debug broken filesystems don't grow on trees.  If
->>> we are to have any hope of understanding what the hell this test is
->>> doing, the bot needs to supply us with a copy of the built
->>> filesystem image the test uses. We need to be able to point forensic
->>> tools at the image to decode all the structures into human readable
->>> format - if we are forced to do that by hand or jump through hoops
->>> to create our own filesystem image than I'm certainly not going to
->>> waste time looking at these reports...
->>
->> Hi Dave,
->>
->> Here is the image:
->> https://drive.google.com/file/d/1jzhGGe5SBJcqfsjxCLHoh4Kazke1oTfC/view
->
-> A suggestion --- insteading of forcing human beings --- either
-> overworked file system developers, or understaffed fuzzing tool teams,
-> to have to manually pull out the file system image out from the C
-> repro, if it's too hard to add a link where the file system iamge can
-> be downloaded from the Syzkaller web application --- how about adding
-> an option to the C repro template which causes it to dump the image to
-> a file and then immediately exit?
+Hi Stanimir,
 
-Hi Ted,
+On 2018-05-09 16:45, Stanimir Varbanov wrote:
+> Hi Vikash,
+> 
+> On 05/02/2018 09:07 AM, vgarodia@codeaurora.org wrote:
+>> Hello Stanimir,
+>> 
+>> On 2018-04-24 18:14, Stanimir Varbanov wrote:
+>>> This adds suspend (power collapse) function with slightly
+>>> different order of calls comparing with Venus 3xx.
+>>> 
+>>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>>> ---
+>>>  drivers/media/platform/qcom/venus/hfi_venus.c | 52
+>>> +++++++++++++++++++++++++++
+>>>  1 file changed, 52 insertions(+)
+>>> 
+>>> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c
+>>> b/drivers/media/platform/qcom/venus/hfi_venus.c
+>>> index 53546174aab8..f61d34bf61b4 100644
+>>> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
+>>> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
+>>> @@ -1443,6 +1443,55 @@ static int venus_suspend_1xx(struct venus_core
+>>> *core)
+>>>      return 0;
+>>>  }
+>>> 
+>>> +static int venus_suspend_4xx(struct venus_core *core)
+>>> +{
+>>> +    struct venus_hfi_device *hdev = to_hfi_priv(core);
+>>> +    struct device *dev = core->dev;
+>>> +    u32 val;
+>>> +    int ret;
+>>> +
+>>> +    if (!hdev->power_enabled || hdev->suspended)
+>>> +        return 0;
+>>> +
+>>> +    mutex_lock(&hdev->lock);
+>>> +    ret = venus_is_valid_state(hdev);
+>>> +    mutex_unlock(&hdev->lock);
+>>> +
+>>> +    if (!ret) {
+>>> +        dev_err(dev, "bad state, cannot suspend\n");
+>>> +        return -EINVAL;
+>>> +    }
+>>> +
+>>> +    ret = venus_prepare_power_collapse(hdev, false);
+>>> +    if (ret) {
+>>> +        dev_err(dev, "prepare for power collapse fail (%d)\n", ret);
+>>> +        return ret;
+>>> +    }
+>>> +
+>>> +    ret = readl_poll_timeout(core->base + CPU_CS_SCIACMDARG0, val,
+>>> +                 val & CPU_CS_SCIACMDARG0_PC_READY,
+>>> +                 POLL_INTERVAL_US, 100000);
+>>> +    if (ret) {
+>>> +        dev_err(dev, "Polling power collapse ready timed out\n");
+>>> +        return ret;
+>>> +    }
+>>> +
+>>> +    mutex_lock(&hdev->lock);
+>>> +
+>>> +    ret = venus_power_off(hdev);
+>>> +    if (ret) {
+>>> +        dev_err(dev, "venus_power_off (%d)\n", ret);
+>>> +        mutex_unlock(&hdev->lock);
+>>> +        return ret;
+>>> +    }
+>>> +
+>>> +    hdev->suspended = true;
+>>> +
+>>> +    mutex_unlock(&hdev->lock);
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>>  static int venus_suspend_3xx(struct venus_core *core)
+>>>  {
+>>>      struct venus_hfi_device *hdev = to_hfi_priv(core);
+>>> @@ -1507,6 +1556,9 @@ static int venus_suspend(struct venus_core 
+>>> *core)
+>>>      if (core->res->hfi_version == HFI_VERSION_3XX)
+>>>          return venus_suspend_3xx(core);
+>>> 
+>>> +    if (core->res->hfi_version == HFI_VERSION_4XX)
+>>> +        return venus_suspend_4xx(core);
+>>> +
+>>>      return venus_suspend_1xx(core);
+>>>  }
+>> 
+>> Let me brief on the power collapse sequence for Venus_4xx
+>> 1. Host checks for ARM9 and Video core to be idle.
+>>    This can be done by checking for WFI bit (bit 0) in CPU status
+>> register for ARM9 and by checking bit 30 in Control status reg for 
+>> video
+>> core/s.
+>> 2. Host then sends command to ARM9 to prepare for power collapse.
+>> 3. Host then checks for WFI bit and PC_READY bit before withdrawing
+>> going for power off.
+>> 
+>> As per this patch, host is preparing for power collapse without 
+>> checking
+>> for #1.
+>> Update the code to handle #3.
+> 
+> This looks similar to suspend for Venus 3xx. Can you confirm that the
+> sequence of checks for 4xx is the same as 3xx?
 
-That's what I proposed above:
-https://groups.google.com/d/msg/syzkaller-bugs/KJNNTgTdg_g/NRxarDcYBgAJ
-But I did not get response yet.
+Do you mean the driver implementation for Suspend Venus 3xx or the 
+hardware
+expectation for Venus 3xx ? If hardware expectation wise, the sequence 
+is
+same for 3xx and 4xx.
+In the suspend implementation for 3xx, i see that the host just reads 
+the WFI
+and idle status bits, but does not validate those bit value before 
+preparing
+Venus for power collapse. Sequence #2 and #3 is followed for Venus 3xx
+implementation.
