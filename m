@@ -1,121 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756199AbeEIHVp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 03:21:45 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:17556 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1755826AbeEIHVn (ORCPT
+        id S1756209AbeEIHYt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 03:24:49 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:50567 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755400AbeEIHYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 03:21:43 -0400
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-To: Alexandre TORGUE <alexandre.torgue@st.com>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Rob Herring <robh@kernel.org>
-CC: Alessandro Zummo <a.zummo@towertech.it>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/4] dt-bindings: rtc: update stm32-rtc documentation for
- st,syscfg property
-Thread-Topic: [PATCH 3/4] dt-bindings: rtc: update stm32-rtc documentation for
- st,syscfg property
-Thread-Index: AQHT1+Fn4tx9/DtxBUOu3CUc7ROmuqQT1dSAgAqakICAALSbAIAH1kWA
-Date: Wed, 9 May 2018 07:21:00 +0000
-Message-ID: <bf861b1b-5a55-e144-5999-b41d9d2cea8b@st.com>
-References: <1524144103-21432-1-git-send-email-amelie.delaunay@st.com>
- <1524144103-21432-4-git-send-email-amelie.delaunay@st.com>
- <20180427025803.mn32y5xle2p6knn6@rob-hp-laptop>
- <20180503205351.GE10960@piout.net>
- <a2cbe252-c957-103d-aae1-4a8fce9116fa@st.com>
-In-Reply-To: <a2cbe252-c957-103d-aae1-4a8fce9116fa@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8813105358D8D047AEABABC37D977E2C@st.com>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-09_02:,,
- signatures=0
+        Wed, 9 May 2018 03:24:46 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w497O36F028852
+X-Nifty-SrcIP: [153.142.97.92]
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+To: linux-kbuild@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 3/8] kallsyms: remove symbol prefix support
+Date: Wed,  9 May 2018 16:23:47 +0900
+Message-Id: <1525850632-10921-4-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525850632-10921-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1525850632-10921-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w497LpZO017582
 
-Hi,
+CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX was selected by BLACKFIN, METAG.
+They were removed by commit 4ba66a976072 ("arch: remove blackfin port"),
+commit bb6fb6dfcc17 ("metag: Remove arch/metag/"), respectively.
 
-On 05/04/2018 09:40 AM, Alexandre Torgue wrote:
-> Hi Alexandre,
-> 
-> On 05/03/2018 10:53 PM, Alexandre Belloni wrote:
->> Amelie,
->>
->> On 26/04/2018 21:58:03-0500, Rob Herring wrote:
->>> On Thu, Apr 19, 2018 at 03:21:42PM +0200, Amelie Delaunay wrote:
->>>> RTC driver should not be aware of the PWR registers offset and bits
->>>> position. Furthermore, we can imagine that Disable Backup Protection 
->>>> (DBP)
->>>> relative register and bit mask could change depending on the SoC. So 
->>>> this
->>>> patch moves st,syscfg property from single pwrcfg phandle to pwrcfg
->>>> phandle/offset/mask triplet.
->>>>
->>>> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
->>>> ---
->>>>   Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt | 10 
->>>> ++++++----
->>>>   1 file changed, 6 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt 
->>>> b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
->>>> index a66692a..00f8b5d 100644
->>>> --- a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
->>>> +++ b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
->>>> @@ -14,8 +14,10 @@ Required properties:
->>>>       It is required only on stm32h7.
->>>>   - interrupt-parent: phandle for the interrupt controller.
->>>>   - interrupts: rtc alarm interrupt.
->>>> -- st,syscfg: phandle for pwrcfg, mandatory to disable/enable backup 
->>>> domain
->>>> -  (RTC registers) write protection.
->>>> +- st,syscfg: phandle/offset/mask triplet. The phandle to pwrcfg 
->>>> used to
->>>> +  access control register at offset, and change the dbp (Disable 
->>>> Backup
->>>> +  Protection) bit represented by the mask, mandatory to 
->>>> disable/enable backup
->>>> +  domain (RTC registers) write protection.
->>>
->>> It's fine to add this, but you are breaking compatibility in the driver
->>> with existing DTBs by requiring these new fields.
->>>
->>
->> I'm fine with that change but I would like confirmation that this has
->> been well thought. Maybe Maxime or Alexandre could give their ack.
->>
-> 
-> It's a good thing to remove PWR registers information from RTC driver. 
-> My only concern was the compatibility with old DT but we can accept it. 
-> Indeed, Kernel will continue to boot fine, only RTC will not probe if we 
-> use old DT.
-> 
-> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> 
-> Regards
-> alex
+No more architecture enables CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX,
+hence the --symbol-prefix option is unnecessary.
 
-I am going to send a series to update st,syscfg property in 
-stm32f429/stm32f746/stm32h743 RTC node.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Thanks,
-Amelie
+ scripts/kallsyms.c      | 47 +++++++++++------------------------------------
+ scripts/link-vmlinux.sh |  4 ----
+ 2 files changed, 11 insertions(+), 40 deletions(-)
+
+diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+index 5abfbf1..8041762 100644
+--- a/scripts/kallsyms.c
++++ b/scripts/kallsyms.c
+@@ -62,7 +62,6 @@ static struct sym_entry *table;
+ static unsigned int table_size, table_cnt;
+ static int all_symbols = 0;
+ static int absolute_percpu = 0;
+-static char symbol_prefix_char = '\0';
+ static int base_relative = 0;
+ 
+ int token_profit[0x10000];
+@@ -75,7 +74,6 @@ unsigned char best_table_len[256];
+ static void usage(void)
+ {
+ 	fprintf(stderr, "Usage: kallsyms [--all-symbols] "
+-			"[--symbol-prefix=<prefix char>] "
+ 			"[--base-relative] < in.map > out.S\n");
+ 	exit(1);
+ }
+@@ -113,28 +111,22 @@ static int check_symbol_range(const char *sym, unsigned long long addr,
+ 
+ static int read_symbol(FILE *in, struct sym_entry *s)
+ {
+-	char str[500];
+-	char *sym, stype;
++	char sym[500], stype;
+ 	int rc;
+ 
+-	rc = fscanf(in, "%llx %c %499s\n", &s->addr, &stype, str);
++	rc = fscanf(in, "%llx %c %499s\n", &s->addr, &stype, sym);
+ 	if (rc != 3) {
+-		if (rc != EOF && fgets(str, 500, in) == NULL)
++		if (rc != EOF && fgets(sym, 500, in) == NULL)
+ 			fprintf(stderr, "Read error or end of file.\n");
+ 		return -1;
+ 	}
+-	if (strlen(str) > KSYM_NAME_LEN) {
++	if (strlen(sym) > KSYM_NAME_LEN) {
+ 		fprintf(stderr, "Symbol %s too long for kallsyms (%zu vs %d).\n"
+ 				"Please increase KSYM_NAME_LEN both in kernel and kallsyms.c\n",
+-			str, strlen(str), KSYM_NAME_LEN);
++			sym, strlen(sym), KSYM_NAME_LEN);
+ 		return -1;
+ 	}
+ 
+-	sym = str;
+-	/* skip prefix char */
+-	if (symbol_prefix_char && str[0] == symbol_prefix_char)
+-		sym++;
+-
+ 	/* Ignore most absolute/undefined (?) symbols. */
+ 	if (strcmp(sym, "_text") == 0)
+ 		_text = s->addr;
+@@ -155,7 +147,7 @@ static int read_symbol(FILE *in, struct sym_entry *s)
+ 		 is_arm_mapping_symbol(sym))
+ 		return -1;
+ 	/* exclude also MIPS ELF local symbols ($L123 instead of .L123) */
+-	else if (str[0] == '$')
++	else if (sym[0] == '$')
+ 		return -1;
+ 	/* exclude debugging symbols */
+ 	else if (stype == 'N' || stype == 'n')
+@@ -163,14 +155,14 @@ static int read_symbol(FILE *in, struct sym_entry *s)
+ 
+ 	/* include the type field in the symbol name, so that it gets
+ 	 * compressed together */
+-	s->len = strlen(str) + 1;
++	s->len = strlen(sym) + 1;
+ 	s->sym = malloc(s->len + 1);
+ 	if (!s->sym) {
+ 		fprintf(stderr, "kallsyms failure: "
+ 			"unable to allocate required amount of memory\n");
+ 		exit(EXIT_FAILURE);
+ 	}
+-	strcpy((char *)s->sym + 1, str);
++	strcpy((char *)s->sym + 1, sym);
+ 	s->sym[0] = stype;
+ 
+ 	s->percpu_absolute = 0;
+@@ -233,11 +225,6 @@ static int symbol_valid(struct sym_entry *s)
+ 	int i;
+ 	char *sym_name = (char *)s->sym + 1;
+ 
+-	/* skip prefix char */
+-	if (symbol_prefix_char && *sym_name == symbol_prefix_char)
+-		sym_name++;
+-
+-
+ 	/* if --all-symbols is not specified, then symbols outside the text
+ 	 * and inittext sections are discarded */
+ 	if (!all_symbols) {
+@@ -302,15 +289,9 @@ static void read_map(FILE *in)
+ 
+ static void output_label(char *label)
+ {
+-	if (symbol_prefix_char)
+-		printf(".globl %c%s\n", symbol_prefix_char, label);
+-	else
+-		printf(".globl %s\n", label);
++	printf(".globl %s\n", label);
+ 	printf("\tALGN\n");
+-	if (symbol_prefix_char)
+-		printf("%c%s:\n", symbol_prefix_char, label);
+-	else
+-		printf("%s:\n", label);
++	printf("%s:\n", label);
+ }
+ 
+ /* uncompress a compressed symbol. When this function is called, the best table
+@@ -768,13 +749,7 @@ int main(int argc, char **argv)
+ 				all_symbols = 1;
+ 			else if (strcmp(argv[i], "--absolute-percpu") == 0)
+ 				absolute_percpu = 1;
+-			else if (strncmp(argv[i], "--symbol-prefix=", 16) == 0) {
+-				char *p = &argv[i][16];
+-				/* skip quote */
+-				if ((*p == '"' && *(p+2) == '"') || (*p == '\'' && *(p+2) == '\''))
+-					p++;
+-				symbol_prefix_char = *p;
+-			} else if (strcmp(argv[i], "--base-relative") == 0)
++			else if (strcmp(argv[i], "--base-relative") == 0)
+ 				base_relative = 1;
+ 			else
+ 				usage();
+diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
+index 9045823..4bf811c 100755
+--- a/scripts/link-vmlinux.sh
++++ b/scripts/link-vmlinux.sh
+@@ -121,10 +121,6 @@ kallsyms()
+ 	info KSYM ${2}
+ 	local kallsymopt;
+ 
+-	if [ -n "${CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX}" ]; then
+-		kallsymopt="${kallsymopt} --symbol-prefix=_"
+-	fi
+-
+ 	if [ -n "${CONFIG_KALLSYMS_ALL}" ]; then
+ 		kallsymopt="${kallsymopt} --all-symbols"
+ 	fi
+-- 
+2.7.4
