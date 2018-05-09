@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934217AbeEIIji (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:39:38 -0400
+        id S934246AbeEIIjs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:39:48 -0400
 Received: from mga11.intel.com ([192.55.52.93]:63119 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934205AbeEIIjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:39:35 -0400
+        id S934205AbeEIIjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 04:39:46 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
-   d="scan'208";a="52769648"
+   d="scan'208";a="52769688"
 From: "Huang, Ying" <ying.huang@intel.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -23,9 +23,9 @@ Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: [PATCH -mm -V2 10/21] mm, THP, swap: Support to count THP swapin and its fallback
-Date: Wed,  9 May 2018 16:38:35 +0800
-Message-Id: <20180509083846.14823-11-ying.huang@intel.com>
+Subject: [PATCH -mm -V2 13/21] mm, THP, swap: Support PMD swap mapping in madvise_free()
+Date: Wed,  9 May 2018 16:38:38 +0800
+Message-Id: <20180509083846.14823-14-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180509083846.14823-1-ying.huang@intel.com>
 References: <20180509083846.14823-1-ying.huang@intel.com>
@@ -35,9 +35,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huang Ying <ying.huang@intel.com>
 
-2 new /proc/vmstat fields are added, "thp_swapin" and
-"thp_swapin_fallback" to count swapin a THP from swap device as a
-whole and fallback to normal page swapin.
+When madvise_free() found a PMD swap mapping, if only part of the huge
+swap cluster is operated on, the PMD swap mapping will be split and
+fallback to PTE swap mapping processing.  Otherwise, if all huge swap
+cluster is operated on, free_swap_and_cache() will be called to
+decrease the PMD swap mapping count and probably free the swap space
+and the THP in swap cache too.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -52,125 +55,100 @@ Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 ---
- Documentation/vm/transhuge.rst | 10 +++++++++-
- include/linux/vm_event_item.h  |  2 ++
- mm/huge_memory.c               |  4 +++-
- mm/page_io.c                   | 15 ++++++++++++---
- mm/vmstat.c                    |  2 ++
- 5 files changed, 28 insertions(+), 5 deletions(-)
+ mm/huge_memory.c | 50 +++++++++++++++++++++++++++++++++++---------------
+ mm/madvise.c     |  2 +-
+ 2 files changed, 36 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/vm/transhuge.rst b/Documentation/vm/transhuge.rst
-index 2c6867fca6ff..a87b1d880cd4 100644
---- a/Documentation/vm/transhuge.rst
-+++ b/Documentation/vm/transhuge.rst
-@@ -360,10 +360,18 @@ thp_swpout
- 	piece without splitting.
- 
- thp_swpout_fallback
--	is incremented if a huge page has to be split before swapout.
-+	is incremented if a huge page is split before swapout.
- 	Usually because failed to allocate some continuous swap space
- 	for the huge page.
- 
-+thp_swpin
-+	is incremented every time a huge page is swapin in one piece
-+	without splitting.
-+
-+thp_swpin_fallback
-+	is incremented if a huge page is split during swapin.  Usually
-+	because failed to allocate a huge page.
-+
- As the system ages, allocating huge pages may be expensive as the
- system uses memory compaction to copy data around memory to free a
- huge page for use. There are some counters in ``/proc/vmstat`` to help
-diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
-index 5c7f010676a7..7b438548a78e 100644
---- a/include/linux/vm_event_item.h
-+++ b/include/linux/vm_event_item.h
-@@ -88,6 +88,8 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
- 		THP_ZERO_PAGE_ALLOC_FAILED,
- 		THP_SWPOUT,
- 		THP_SWPOUT_FALLBACK,
-+		THP_SWPIN,
-+		THP_SWPIN_FALLBACK,
- #endif
- #ifdef CONFIG_MEMORY_BALLOON
- 		BALLOON_INFLATE,
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index de6a32226121..7f4442e064b5 100644
+index 26f15fe99931..2f6786425249 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -1667,8 +1667,10 @@ int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
- 				/* swapoff occurs under us */
- 				} else if (ret == -EINVAL)
- 					ret = 0;
--				else
-+				else {
-+					count_vm_event(THP_SWPIN_FALLBACK);
- 					goto fallback;
-+				}
- 			}
- 			delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
- 			goto out;
-diff --git a/mm/page_io.c b/mm/page_io.c
-index b41cf9644585..96277058681e 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -347,6 +347,15 @@ int __swap_writepage(struct page *page, struct writeback_control *wbc,
+@@ -1845,6 +1845,15 @@ static inline void __split_huge_swap_pmd(struct vm_area_struct *vma,
+ }
+ #endif
+ 
++static inline void zap_deposited_table(struct mm_struct *mm, pmd_t *pmd)
++{
++	pgtable_t pgtable;
++
++	pgtable = pgtable_trans_huge_withdraw(mm, pmd);
++	pte_free(mm, pgtable);
++	mm_dec_nr_ptes(mm);
++}
++
+ /*
+  * Return true if we do MADV_FREE successfully on entire pmd page.
+  * Otherwise, return false.
+@@ -1865,15 +1874,35 @@ bool madvise_free_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		goto out_unlocked;
+ 
+ 	orig_pmd = *pmd;
+-	if (is_huge_zero_pmd(orig_pmd))
+-		goto out;
+-
+ 	if (unlikely(!pmd_present(orig_pmd))) {
+-		VM_BUG_ON(thp_migration_supported() &&
+-				  !is_pmd_migration_entry(orig_pmd));
+-		goto out;
++		swp_entry_t entry = pmd_to_swp_entry(orig_pmd);
++
++		if (is_migration_entry(entry)) {
++			VM_BUG_ON(!thp_migration_supported());
++			goto out;
++		} else if (thp_swap_supported() && !non_swap_entry(entry)) {
++			/* If part of THP is discarded */
++			if (next - addr != HPAGE_PMD_SIZE) {
++				unsigned long haddr = addr & HPAGE_PMD_MASK;
++
++				__split_huge_swap_pmd(vma, haddr, pmd);
++				goto out;
++			}
++			free_swap_and_cache(entry, true);
++			pmd_clear(pmd);
++			zap_deposited_table(mm, pmd);
++			if (current->mm == mm)
++				sync_mm_rss(mm);
++			add_mm_counter(mm, MM_SWAPENTS, -HPAGE_PMD_NR);
++			ret = true;
++			goto out;
++		} else
++			VM_BUG_ON(1);
+ 	}
+ 
++	if (is_huge_zero_pmd(orig_pmd))
++		goto out;
++
+ 	page = pmd_page(orig_pmd);
+ 	/*
+ 	 * If other processes are mapping this page, we couldn't discard
+@@ -1919,15 +1948,6 @@ bool madvise_free_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
  	return ret;
  }
  
-+static inline void count_swpin_vm_event(struct page *page)
-+{
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	if (unlikely(PageTransHuge(page)))
-+		count_vm_event(THP_SWPIN);
-+#endif
-+	count_vm_events(PSWPIN, hpage_nr_pages(page));
-+}
-+
- int swap_readpage(struct page *page, bool synchronous)
+-static inline void zap_deposited_table(struct mm_struct *mm, pmd_t *pmd)
+-{
+-	pgtable_t pgtable;
+-
+-	pgtable = pgtable_trans_huge_withdraw(mm, pmd);
+-	pte_free(mm, pgtable);
+-	mm_dec_nr_ptes(mm);
+-}
+-
+ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		 pmd_t *pmd, unsigned long addr)
  {
- 	struct bio *bio;
-@@ -370,7 +379,7 @@ int swap_readpage(struct page *page, bool synchronous)
+diff --git a/mm/madvise.c b/mm/madvise.c
+index d180000c626b..e03e85a20fb4 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -321,7 +321,7 @@ static int madvise_free_pte_range(pmd_t *pmd, unsigned long addr,
+ 	unsigned long next;
  
- 		ret = mapping->a_ops->readpage(swap_file, page);
- 		if (!ret)
--			count_vm_event(PSWPIN);
-+			count_swpin_vm_event(page);
- 		return ret;
- 	}
+ 	next = pmd_addr_end(addr, end);
+-	if (pmd_trans_huge(*pmd))
++	if (pmd_trans_huge(*pmd) || is_swap_pmd(*pmd))
+ 		if (madvise_free_huge_pmd(tlb, vma, pmd, addr, next))
+ 			goto next;
  
-@@ -381,7 +390,7 @@ int swap_readpage(struct page *page, bool synchronous)
- 			unlock_page(page);
- 		}
- 
--		count_vm_event(PSWPIN);
-+		count_swpin_vm_event(page);
- 		return 0;
- 	}
- 
-@@ -400,7 +409,7 @@ int swap_readpage(struct page *page, bool synchronous)
- 	get_task_struct(current);
- 	bio->bi_private = current;
- 	bio_set_op_attrs(bio, REQ_OP_READ, 0);
--	count_vm_event(PSWPIN);
-+	count_swpin_vm_event(page);
- 	bio_get(bio);
- 	qc = submit_bio(bio);
- 	while (synchronous) {
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index a2b9518980ce..dfe83d74f713 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1263,6 +1263,8 @@ const char * const vmstat_text[] = {
- 	"thp_zero_page_alloc_failed",
- 	"thp_swpout",
- 	"thp_swpout_fallback",
-+	"thp_swpin",
-+	"thp_swpin_fallback",
- #endif
- #ifdef CONFIG_MEMORY_BALLOON
- 	"balloon_inflate",
 -- 
 2.16.1
