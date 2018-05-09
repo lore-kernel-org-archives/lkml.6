@@ -1,70 +1,87 @@
-Return-Path: <chunfeng.yun@mediatek.com>
-X-Google-Smtp-Source: AB8JxZqPEG/8GgAzzlytYBWjtGBm1isXAkupcU+oa3NlVBLJE8+8wtcMDAh7yx8vFmK4k/12Ykt8
-ARC-Seal: i=1; a=rsa-sha256; t=1525865771; cv=none;
+Return-Path: <felipe.balbi@linux.intel.com>
+X-Google-Smtp-Source: AB8JxZoftVKhkJMkprcbH0o3vfWRAzDD45UX5iNIJh22AYSYciJbREix12L6NV0VLEaaXpHoaxoO
+ARC-Seal: i=1; a=rsa-sha256; t=1525865685; cv=none;
         d=google.com; s=arc-20160816;
-        b=sa4JhUevhiL1F/mo6+hlrrtTO/BVTHHr69K1PKZvXifHZyNaNH4DRtrwIx99+m//9T
-         jZnzpJgMCV48G65i4z0kVkRBdagr8WZCpyjcXSChzgZOe76LWc12+bkpzGWHqekNVfrF
-         dUI/YSjGQa+Js+1UddCozNYG9FupnI5RiQ6d3zZ0X37Yk0KkXU6oIm7k2vE5T0IhLd8O
-         5Y+HR2dzc4J86oMsfC1wkaAEFQ3bo2N7ElJZ+YMNGpcrqLcKHIqLdO/gj8RZOYF1Z+Sw
-         J2HxrqBm+3bqHxn/Y90k1uGWBtLbF3kB+mRasirjKJgqQ++0yHaafUNGxVW7gk4rv86i
-         bhkA==
+        b=LLieOnbpS8Fcv1xNj9sTaCxu40U0QUS9lXrBjL9MUe9Dgr/ndhm1Xf1xmRzeS+uhmc
+         Mlexc70WTVoqE4mRtr4G85FEo5BX1NvB4U98UrYW9vIrjF5T0IUlvJ9gsvjAznBmhfwS
+         65f4Tb105cEmpWXSyz+Xs07bBbAoVUX1ynk1GSE8v8jrfjuArczCZz1Y/hJfwRBY0zt7
+         +PA6cMA9XjCIGQoepHrhmk/SHnMaEfRwiEs3MooKHb+xm2krNQvb+fgTXKiHpHFw6R+S
+         bW09Uc6DzTI0o99fHTizWIXnoAsQKduO540K4NpMPy26Qm1ZwrVbP0n3QozfzR2ls0WF
+         6cDw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=TM/fvOfDgJ66A9g6kkvxNsZ4i4YcdfM2tP8i04PNqQ0=;
-        b=Y/iG5/ho4KZoPbnh6i/vfMmNwVbAUbR0blUTaPpJMoTWIM8f2Du0mT2UP6UVy3iFOu
-         +Z4FZewk+BmMFUyEFN3OX0GIo132f6x5Rxh5Zt3/jwMRqdBm9zyhMrFv/2vtdhsRaa58
-         FM3Beq0uKQh8BO7qaK16+yTfrQfI87LH+wqVftLDL8X967tcEEZCH6NVxe3/QXaxXZVh
-         3dwq5x7V5S4Ni4pHoDSHCiKtwRkoZqlQAjJfXF/5OWdaW0md3Fx18kBqgdsH6i5TbvMg
-         vs62cj9qsnfCEn4ANRpGWxyY070fOmufAY0/wc50kKhiHRQENvRatie5PdsUgr4NIS5B
-         yLog==
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:arc-authentication-results;
+        bh=ulLZSAxHnvooZk1oZB0zHsY+o3fnuFjqoDXisNd+iXo=;
+        b=YdTghGhpniKx+juAhE1sJsICUlTD22c13mF26YAzuM7q9Vl1XwOd4+4DvepFfPmHEG
+         6vck+yieWCajpMUD0c0ZPrThnrC5TJ5u0uXKQXnnXWkLCBnWvMVpkomkOEmmK5jcspSI
+         lKnHIE7IcdjrwSO3U3GPfBstkm3fvJ1E1LklnYzS3I6KjS/n7Fy4Vxg74QHisVHegKhV
+         vCDjZGldEdrE0Pqr7l6ldqRCZa490uamyWSHnReJxh2AcVQBOwTQ8WjOnQHTTkzQTlTv
+         ZeQv8JOzXRM0t64abbZRo5U38MQN8l8JmaqM6YZ5varkGP+YtuJ5F4RMOvEnyErkpvpc
+         USfw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of chunfeng.yun@mediatek.com designates 1.203.163.81 as permitted sender) smtp.mailfrom=chunfeng.yun@mediatek.com
+       spf=pass (google.com: best guess record for domain of felipe.balbi@linux.intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=felipe.balbi@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of chunfeng.yun@mediatek.com designates 1.203.163.81 as permitted sender) smtp.mailfrom=chunfeng.yun@mediatek.com
-X-UUID: 2eb52b308edf4afa9c7e26bb51cb0733-20180509
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi
-	<felipe.balbi@linux.intel.com>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Chunfeng Yun
-	<chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-Subject: [PATCH] usb: gadget: composite: fill bcdUSB as 0x0320 for SuperSpeed or higher speeds
-Date: Wed, 9 May 2018 19:29:16 +0800
-Message-ID: <69cc710fa8b7d18c494c9f482fd2b8e6fb7c0c94.1525865206.git.chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+       spf=pass (google.com: best guess record for domain of felipe.balbi@linux.intel.com designates 134.134.136.100 as permitted sender) smtp.mailfrom=felipe.balbi@linux.intel.com
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
+   d="asc'?scan'208";a="227040771"
+From: Felipe Balbi <felipe.balbi@linux.intel.com>
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, Chunfeng Yun <chunfeng.yun@mediatek.com>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] usb: gadget: composite: fill bcdUSB as 0x0320 for SuperSpeed or higher speeds
+In-Reply-To: <69cc710fa8b7d18c494c9f482fd2b8e6fb7c0c94.1525865206.git.chunfeng.yun@mediatek.com>
+References: <69cc710fa8b7d18c494c9f482fd2b8e6fb7c0c94.1525865206.git.chunfeng.yun@mediatek.com>
+Date: Wed, 09 May 2018 14:33:13 +0300
+Message-ID: <8736z1kqrq.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1599986136874105880?=
-X-GMAIL-MSGID: =?utf-8?q?1599986227089452801?=
+X-GMAIL-MSGID: =?utf-8?q?1599986136874105880?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The USB3CV version 2.1.80 (March 26, 2018) requires all devices
-( gen1, gen2, single lane, dual lane) to return the value of 0x0320
-in the bcdUSB field
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
----
- drivers/usb/gadget/composite.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
-index 63a7cb8..f242c2b 100644
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -1601,7 +1601,7 @@ static int fill_ext_prop(struct usb_configuration *c, int interface, u8 *buf)
- 				cdev->gadget->ep0->maxpacket;
- 			if (gadget_is_superspeed(gadget)) {
- 				if (gadget->speed >= USB_SPEED_SUPER) {
--					cdev->desc.bcdUSB = cpu_to_le16(0x0310);
-+					cdev->desc.bcdUSB = cpu_to_le16(0x0320);
- 					cdev->desc.bMaxPacketSize0 = 9;
- 				} else {
- 					cdev->desc.bcdUSB = cpu_to_le16(0x0210);
--- 
-1.9.1
+Hi,
+
+Chunfeng Yun <chunfeng.yun@mediatek.com> writes:
+> The USB3CV version 2.1.80 (March 26, 2018) requires all devices
+> ( gen1, gen2, single lane, dual lane) to return the value of 0x0320
+> in the bcdUSB field
+
+this sounds really odd. What happens when I get a USB 3.1 compliant
+device off-the-shelf and run it through USB3CV? will it fail now?
+
+Care to share a screenshot or the raw html of the test result?
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlry3HkACgkQzL64meEa
+mQZVhw//c8t4VTHKlwox/tPXPbndtR4FkwXphjHcAuuOELFYCjxYaP9aG+7WTqYr
+7GdOsC+FkGagg0qJ6XQ1thV1pAZ9y/onGmCYnCpEyOXHFO0UVBz60/ooRt2eeLqc
+Akk/Obl92v5vGG2Nh5u3cNOIgMovp6g56K4it2Gu3kTuuORQIqcx6bwNqwahKf4R
+7X3gZ+pSVWvq0s0TpYeAYrDIzHKoIuXnCJJlVBaqDpf8gNUbzAg1nw9kKuNkVupy
+cGSHfgTDIhnd3/cHwNluHbyGRAwPDMUs1ERqUAyoUVweFoKM1Y8zd0NzXIkhPzgP
+J3cXHCIKrtdy4RsbwpVkTZRlFN7UjNaTRCUDQHENfmwzIHR3pn9tOnkLTp6cjClI
+Pwj+Ni6G+CWGA6+KCwpI/8aUakyTd2fsue+X64bSslI+mjc24nTtii3rLD+oNevF
+MLETaiAlU6Xn4YhCAfv/A/LzxxTUHqQnEJlBlqAnZO+9hVBQ+jL1DuM2BqgrNUoL
+mb1m9yLHYasbQ6iJPjDegqO4M+A/nLNS6SY/2e4wc0uwI7CXP5P3eQGp6H57GxF2
+XtGUYQhSTjyj6qs89uicNRsy70v52E3BzFBWw2lmVikqrU9HiD3VC7cJCK5/n3ZN
+IaxwIsiIpRKpWxoSvl/Vd6B3+FDIeiu6tfJTHcGirDdRFlS1E6M=
+=yC5H
+-----END PGP SIGNATURE-----
+--=-=-=--
