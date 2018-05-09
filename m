@@ -1,101 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965187AbeEIPuY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:50:24 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54770 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965103AbeEIPqq (ORCPT
+        id S965161AbeEIPvz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:51:55 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40351 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935402AbeEIPvy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:46:46 -0400
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC: <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH v2 2/3] dt-bindings: rtc: update stm32-rtc documentation for stm32mp1 rtc
-Date: Wed, 9 May 2018 17:46:09 +0200
-Message-ID: <1525880770-22263-3-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525880770-22263-1-git-send-email-amelie.delaunay@st.com>
-References: <1525880770-22263-1-git-send-email-amelie.delaunay@st.com>
+        Wed, 9 May 2018 11:51:54 -0400
+X-Google-Smtp-Source: AB8JxZo1Zss5V6X/LtKxPEyGsd+XuWv6WTqYSLb8sqe1yM+m++8DYXLCOAoRhm1D3GlX0pTpx/9oQw==
+Date: Wed, 9 May 2018 09:51:50 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        coresight@lists.linaro.org
+Subject: Re: [PATCH v2 1/2] perf cs-etm: Support unknown_thread in
+ cs_etm_auxtrace
+Message-ID: <20180509155150.GC25559@xps15>
+References: <1525839312-20544-1-git-send-email-leo.yan@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-09_06:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525839312-20544-1-git-send-email-leo.yan@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RTC embedded in stm32mp1 SoC is slightly different from stm32h7 one, it
-doesn't require to disable backup domain write protection, and rtc_ck
-parent clock assignment isn't allowed.
-To sum up, stm32mp1 RTC requires 2 clocks, pclk and rtc_ck, and an RTC
-alarm interrupt.
+On Wed, May 09, 2018 at 12:15:11PM +0800, Leo Yan wrote:
+> CoreSight doesn't allocate thread structure for unknown_thread in etm
+> auxtrace, so unknown_thread is NULL pointer.  If the perf data doesn't
+> contain valid tid and then cs_etm__mem_access() uses unknown_thread
+> instead as thread handler, this results in segmentation fault when
+> thread__find_addr_map() accesses thread handler.
+> 
+> This commit creates new thread data which is used by unknown_thread, so
+> CoreSight tracing can roll back to use unknown_thread if perf data
+> doesn't include valid thread info.  This commit also releases thread
+> data for initialization failure case and for normal auxtrace free flow.
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
----
- .../devicetree/bindings/rtc/st,stm32-rtc.txt       | 27 ++++++++++++++++------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+Hi Leo,
 
-diff --git a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
-index 00f8b5d..c920e27 100644
---- a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
-+++ b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
-@@ -1,25 +1,29 @@
- STM32 Real Time Clock
- 
- Required properties:
--- compatible: can be either "st,stm32-rtc" or "st,stm32h7-rtc", depending on
--  the device is compatible with stm32(f4/f7) or stm32h7.
-+- compatible: can be one of the following:
-+  - "st,stm32-rtc" for devices compatible with stm32(f4/f7).
-+  - "st,stm32h7-rtc" for devices compatible with stm32h7.
-+  - "st,stm32mp1-rtc" for devices compatible with stm32mp1.
- - reg: address range of rtc register set.
- - clocks: can use up to two clocks, depending on part used:
-   - "rtc_ck": RTC clock source.
--    It is required on stm32(f4/f7) and stm32h7.
-   - "pclk": RTC APB interface clock.
-     It is not present on stm32(f4/f7).
--    It is required on stm32h7.
-+    It is required on stm32(h7/mp1).
- - clock-names: must be "rtc_ck" and "pclk".
--    It is required only on stm32h7.
-+    It is required on stm32(h7/mp1).
- - interrupt-parent: phandle for the interrupt controller.
--- interrupts: rtc alarm interrupt.
-+    It is required on stm32(f4/f7/h7).
-+- interrupts: rtc alarm interrupt. On stm32mp1, a second interrupt is required
-+  for rtc alarm wakeup interrupt.
- - st,syscfg: phandle/offset/mask triplet. The phandle to pwrcfg used to
-   access control register at offset, and change the dbp (Disable Backup
-   Protection) bit represented by the mask, mandatory to disable/enable backup
-   domain (RTC registers) write protection.
-+    It is required on stm32(f4/f7/h7).
- 
--Optional properties (to override default rtc_ck parent clock):
-+Optional properties (to override default rtc_ck parent clock on stm32(f4/f7/h7):
- - assigned-clocks: reference to the rtc_ck clock entry.
- - assigned-clock-parents: phandle of the new parent clock of rtc_ck.
- 
-@@ -48,3 +52,12 @@ Example:
- 		interrupt-names = "alarm";
- 		st,syscfg = <&pwrcfg 0x00 0x100>;
- 	};
-+
-+	rtc: rtc@5c004000 {
-+		compatible = "st,stm32mp1-rtc";
-+		reg = <0x5c004000 0x400>;
-+		clocks = <&rcc RTCAPB>, <&rcc RTC>;
-+		clock-names = "pclk", "rtc_ck";
-+		interrupts-extended = <&intc GIC_SPI 3 IRQ_TYPE_NONE>,
-+				      <&exti 19 1>;
-+	};
--- 
-2.7.4
+Arnaldo maintains the perf tools and he receives dozens of patches every day.
+If his name is not the first one to appear on the "To:" list, it is unlikely
+that his email filters will catch your patches.
+
+Mathieu
+
+> 
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>  tools/perf/util/cs-etm.c | 24 ++++++++++++++++++++++--
+>  1 file changed, 22 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> index 6533b1a..69f21de 100644
+> --- a/tools/perf/util/cs-etm.c
+> +++ b/tools/perf/util/cs-etm.c
+> @@ -239,6 +239,7 @@ static void cs_etm__free(struct perf_session *session)
+>  	for (i = 0; i < aux->num_cpu; i++)
+>  		zfree(&aux->metadata[i]);
+>  
+> +	thread__zput(aux->unknown_thread);
+>  	zfree(&aux->metadata);
+>  	zfree(&aux);
+>  }
+> @@ -1355,6 +1356,23 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+>  	etm->auxtrace.free = cs_etm__free;
+>  	session->auxtrace = &etm->auxtrace;
+>  
+> +	etm->unknown_thread = thread__new(999999999, 999999999);
+> +	if (!etm->unknown_thread)
+> +		goto err_free_queues;
+> +
+> +	/*
+> +	 * Initialize list node so that at thread__zput() we can avoid
+> +	 * segmentation fault at list_del_init().
+> +	 */
+> +	INIT_LIST_HEAD(&etm->unknown_thread->node);
+> +
+> +	err = thread__set_comm(etm->unknown_thread, "unknown", 0);
+> +	if (err)
+> +		goto err_delete_thread;
+> +
+> +	if (thread__init_map_groups(etm->unknown_thread, etm->machine))
+> +		goto err_delete_thread;
+> +
+>  	if (dump_trace) {
+>  		cs_etm__print_auxtrace_info(auxtrace_info->priv, num_cpu);
+>  		return 0;
+> @@ -1369,16 +1387,18 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+>  
+>  	err = cs_etm__synth_events(etm, session);
+>  	if (err)
+> -		goto err_free_queues;
+> +		goto err_delete_thread;
+>  
+>  	err = auxtrace_queues__process_index(&etm->queues, session);
+>  	if (err)
+> -		goto err_free_queues;
+> +		goto err_delete_thread;
+>  
+>  	etm->data_queued = etm->queues.populated;
+>  
+>  	return 0;
+>  
+> +err_delete_thread:
+> +	thread__zput(etm->unknown_thread);
+>  err_free_queues:
+>  	auxtrace_queues__free(&etm->queues);
+>  	session->auxtrace = NULL;
+> -- 
+> 2.7.4
+> 
