@@ -1,84 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965630AbeEIRBp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:01:45 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:37683 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934820AbeEIRBn (ORCPT
+        id S965671AbeEIRB6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:01:58 -0400
+Received: from mail-it0-f42.google.com ([209.85.214.42]:50537 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935516AbeEIRBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 13:01:43 -0400
-X-Google-Smtp-Source: AB8JxZrcKKGEDYQsTF4T9QHTdV0iBrRo6+9jf5XnWTYl6MKkfmcYhLaKGs3YxEW/W81cc7qQL+6vd9FnAolpZPXdrfc=
+        Wed, 9 May 2018 13:01:55 -0400
+X-Google-Smtp-Source: AB8JxZpTBho4Ly/txyOGdWQ/8OrxNgRgDEZwfr8mSg6TsRG4avB2JmKczmxDql9t6XPv+e6f78714Q==
+Subject: Re: bug in tag handling in blk-mq?
+To: Mike Galbraith <efault@gmx.de>,
+        Paolo Valente <paolo.valente@linaro.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+        linux-block <linux-block@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>
+References: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
+ <7760d23b-7a4c-a645-1c7a-da7569bb44dc@kernel.dk>
+ <84145CD7-B917-4B32-8A5C-310C1910DB71@linaro.org>
+ <1525755090.24338.1.camel@gmx.de> <1525768632.5208.4.camel@gmx.de>
+ <ffd0c030-43f8-0dbe-42b3-03bb9c410bea@kernel.dk>
+ <1525797766.5204.2.camel@gmx.de>
+ <3692ce7d-a767-72e6-65ae-6178b6c2e7d8@kernel.dk>
+ <f04636df-3f97-6c16-f37b-d407e062b9e5@kernel.dk>
+ <57952405-bdeb-f4e4-1aef-a7c0a8a68674@kernel.dk>
+ <1525839089.15732.1.camel@gmx.de>
+ <ce5ee556-9552-6ffd-7578-7b3b983c07bf@kernel.dk>
+ <1525885030.15732.6.camel@gmx.de>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <1e51eb57-6d9b-a53c-9cd6-2adfc86b21b5@kernel.dk>
+Date: Wed, 9 May 2018 11:01:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <4baffc55-510e-96d3-3487-5ea09f993a0c@redhat.com>
-References: <20180509004229.36341-1-keescook@chromium.org> <4baffc55-510e-96d3-3487-5ea09f993a0c@redhat.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 9 May 2018 10:01:41 -0700
-X-Google-Sender-Auth: eHxeIp7CI8-ltxdgKBOlK_0xX4s
-Message-ID: <CAGXu5jKXq7--CYgp8Q+k00RjjGJY+o71RMr51NPuWS1eM0KX1w@mail.gmail.com>
-Subject: Re: [RFC][PATCH 00/13] Provide saturating helpers for allocation
-To: Laura Abbott <labbott@redhat.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1525885030.15732.6.camel@gmx.de>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 9:08 AM, Laura Abbott <labbott@redhat.com> wrote:
-> On 05/08/2018 05:42 PM, Kees Cook wrote:
+On 5/9/18 10:57 AM, Mike Galbraith wrote:
+> On Wed, 2018-05-09 at 09:18 -0600, Jens Axboe wrote:
+>> On 5/8/18 10:11 PM, Mike Galbraith wrote:
+>>> On Tue, 2018-05-08 at 19:09 -0600, Jens Axboe wrote:
+>>>>
+>>>> Alright, I managed to reproduce it. What I think is happening is that
+>>>> BFQ is limiting the inflight case to something less than the wake
+>>>> batch for sbitmap, which can lead to stalls. I don't have time to test
+>>>> this tonight, but perhaps you can give it a go when you are back at it.
+>>>> If not, I'll try tomorrow morning.
+>>>>
+>>>> If this is the issue, I can turn it into a real patch. This is just to
+>>>> confirm that the issue goes away with the below.
+>>>
+>>> Confirmed.  Impressive high speed bug stomping.
 >>
->> This is a stab at providing three new helpers for allocation size
->> calculation:
->>
->> struct_size(), array_size(), and array3_size().
->>
->> These are implemented on top of Rasmus's overflow checking functions,
->> and the last 8 patches are all treewide conversions of open-coded
->> multiplications into the various combinations of the helper functions.
->>
->> -Kees
->>
->>
-> Obvious question (that might indicate this deserves documentation?)
->
-> What's the difference between
->
-> kmalloc_array(cnt, sizeof(struct blah), GFP_KERNEL);
->
-> and
->
-> kmalloc(array_size(cnt, struct blah), GFP_KERNEL);
->
->
-> and when would you use one over the other?
+>> Well, that's good news. Can I get you to try this patch?
+> 
+> Sure thing.  The original hang (minus provocation patch) being
+> annoyingly non-deterministic, this will (hopefully) take a while.
 
-If I'm understanding the intentions here, the next set of treewide
-changes would be to remove *calloc() and *_array() in favor of using
-the array_size() helper. (i.e. reducing proliferation of allocator
-helpers in favor of using the *_size() helpers.
-
-There are, however, some cases that don't map well to
-{struct,array,array3}_size(), specifically cases of additions in
-finding a count. For example, stuff like:
-
-kmalloc(sizeof(header) + sizeof(trailing_array) * (count + SOMETHING), gfp...)
-
-This gets currently mapped to:
-
-kmalloc(struct_size(header, trailing_array, (count + SOMETHING), gfp...)
-
-But we run the risk in some cases of having even the addition
-overflow. I think we need to have a "saturating add" too. Something
-like:
-
-kmalloc(struct_size(header, trailing_array, sat_add(count, SOMETHING), gfp...)
-
-It's a bit ugly, but it would cover nearly all the remaining cases...
-
--Kees
+You can verify with the provocation patch as well first, if you wish.
+Just need to hand-apply since it'll conflict with this patch in
+bfq. But it's a trivial resolve.
 
 -- 
-Kees Cook
-Pixel Security
+Jens Axboe
