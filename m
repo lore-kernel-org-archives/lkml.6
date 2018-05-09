@@ -1,150 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756161AbeEIGp1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 02:45:27 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:42193 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755889AbeEIGpY (ORCPT
+        id S1756190AbeEIGph (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 02:45:37 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46108 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755889AbeEIGpf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 02:45:24 -0400
-X-Original-SENDERIP: 156.147.1.127
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-From: Byungchul Park <byungchul.park@lge.com>
-To: peterz@infradead.org, mingo@kernel.org, rostedt@goodmis.org
-Cc: tglx@linutronix.de, raistlin@linux.it, linux-kernel@vger.kernel.org,
-        juri.lelli@gmail.com, bristot@redhat.com, kernel-team@lge.com
-Subject: [RESEND PATCH v11 2/2] sched/rt: Add support for SD_PREFER_SIBLING on find_lowest_rq()
-Date: Wed,  9 May 2018 15:44:23 +0900
-Message-Id: <1525848263-10958-3-git-send-email-byungchul.park@lge.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525848263-10958-1-git-send-email-byungchul.park@lge.com>
-References: <1525848263-10958-1-git-send-email-byungchul.park@lge.com>
+        Wed, 9 May 2018 02:45:35 -0400
+X-Google-Smtp-Source: AB8JxZpc5kfOuCuftM4YK1CtuVvh0BqmQl0fxZh+sg2uPwRDCueLfKrFIU2kO+ux4kk/t3E1BsnAog==
+Date: Wed, 9 May 2018 08:45:30 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Joel Fernandes <joel@joelfernandes.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Joel Fernandes <joelaf@google.com>, linux-pm@vger.kernel.org
+Subject: Re: [RFC PATCH] sched/cpufreq/schedutil: handling urgent frequency
+ requests
+Message-ID: <20180509064530.GA1681@localhost.localdomain>
+References: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
+ <20180508065435.bcht6dyb3rpp6gk5@vireshk-i7>
+ <20180509045425.GA158882@joelaf.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509045425.GA158882@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It would be better to try to check other siblings first if
-SD_PREFER_SIBLING is flaged when pushing tasks - migration.
+On 08/05/18 21:54, Joel Fernandes wrote:
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/sched/rt.c | 80 ++++++++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 77 insertions(+), 3 deletions(-)
+[...]
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 979b734..a32e36d 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1618,12 +1618,35 @@ static struct task_struct *pick_highest_pushable_task(struct rq *rq, int cpu)
- 
- static DEFINE_PER_CPU(cpumask_var_t, local_cpu_mask);
- 
-+/*
-+ * Find the first cpu in: mask & sd & ~prefer
-+ */
-+static int find_cpu(const struct cpumask *mask,
-+		    const struct sched_domain *sd,
-+		    const struct sched_domain *prefer)
-+{
-+	const struct cpumask *sds = sched_domain_span(sd);
-+	const struct cpumask *ps  = prefer ? sched_domain_span(prefer) : NULL;
-+	int cpu;
-+
-+	for_each_cpu(cpu, mask) {
-+		if (!cpumask_test_cpu(cpu, sds))
-+			continue;
-+		if (ps && cpumask_test_cpu(cpu, ps))
-+			continue;
-+		break;
-+	}
-+
-+	return cpu;
-+}
-+
- static int find_lowest_rq(struct task_struct *task)
- {
--	struct sched_domain *sd;
-+	struct sched_domain *sd, *prefer = NULL;
- 	struct cpumask *lowest_mask = this_cpu_cpumask_var_ptr(local_cpu_mask);
- 	int this_cpu = smp_processor_id();
- 	int cpu      = task_cpu(task);
-+	int fallback_cpu = -1;
- 
- 	/* Make sure the mask is initialized first */
- 	if (unlikely(!lowest_mask))
-@@ -1668,9 +1691,37 @@ static int find_lowest_rq(struct task_struct *task)
- 				return this_cpu;
- 			}
- 
--			best_cpu = cpumask_first_and(lowest_mask,
--						     sched_domain_span(sd));
-+			/*
-+			 * If a cpu exists that is in the lowest_mask and
-+			 * the current sd span, but not in the prefer sd
-+			 * span, then that becomes our choice.
-+			 *
-+			 * Of course, the lowest possible cpu is already
-+			 * under consideration through lowest_mask.
-+			 */
-+			best_cpu = find_cpu(lowest_mask, sd, prefer);
-+
- 			if (best_cpu < nr_cpu_ids) {
-+				/*
-+				 * If current domain is SD_PREFER_SIBLING
-+				 * flaged, we have to try to check other
-+				 * siblings first.
-+				 */
-+				if (sd->flags & SD_PREFER_SIBLING) {
-+					prefer = sd;
-+
-+					/*
-+					 * fallback_cpu should be one
-+					 * in the closest domain among
-+					 * SD_PREFER_SIBLING domains,
-+					 * in case that more than one
-+					 * SD_PREFER_SIBLING domains
-+					 * exist in the hierachy.
-+					 */
-+					if (fallback_cpu == -1)
-+						fallback_cpu = best_cpu;
-+					continue;
-+				}
- 				rcu_read_unlock();
- 				return best_cpu;
- 			}
-@@ -1679,6 +1730,29 @@ static int find_lowest_rq(struct task_struct *task)
- 	rcu_read_unlock();
- 
- 	/*
-+	 * If fallback_cpu is valid, all our guesses failed *except* for
-+	 * SD_PREFER_SIBLING domain. Now, we can return the fallback cpu.
-+	 *
-+	 * XXX: Consider the following example, 4 cores SMT2 system:
-+	 *
-+	 *    LLC [0       -        7]
-+	 *    SMT [0 1][2 3][4 5][6 7]
-+	 *         o x  o x  x x  x x
-+	 *
-+	 *    where 'o': occupied and 'x': empty.
-+	 *
-+	 * A wakeup on cpu0 will exclude cpu1 and choose cpu3, since
-+	 * cpu1 is in a SD_PREFER_SIBLING sd and cpu3 is not. However,
-+	 * in this case, cpu4 would have been a better choice, since
-+	 * cpu3 is a (SMT) thread of an already loaded core.
-+	 *
-+	 * Doing it 'right' is difficult and expensive. The current
-+	 * solution is an acceptable approximation.
-+	 */
-+	if (fallback_cpu != -1)
-+		return fallback_cpu;
-+
-+	/*
- 	 * And finally, if there were no matches within the domains
- 	 * just give the caller *something* to work with from the compatible
- 	 * locations.
--- 
-1.9.1
+> Just for discussion sake, is there any need for work_in_progress? If we can
+> queue multiple work say kthread_queue_work can handle it, then just queuing
+> works whenever they are available should be Ok and the kthread loop can
+> handle them. __cpufreq_driver_target is also protected by the work lock if
+> there is any concern that can have races... only thing is rate-limiting of
+> the requests, but we are doing a rate limiting, just not for the "DL
+> increased utilization" type requests (which I don't think we are doing at the
+> moment for urgent DL requests anyway).
+> 
+> Following is an untested diff to show the idea. What do you think?
+> 
+> thanks,
+> 
+> - Joel
+> 
+> ----8<---
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index d2c6083304b4..862634ff4bf3 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -38,7 +38,6 @@ struct sugov_policy {
+>  	struct			mutex work_lock;
+>  	struct			kthread_worker worker;
+>  	struct task_struct	*thread;
+> -	bool			work_in_progress;
+>  
+>  	bool			need_freq_update;
+>  };
+> @@ -92,16 +91,8 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+>  	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+>  		return false;
+>  
+> -	if (sg_policy->work_in_progress)
+> -		return false;
+> -
+>  	if (unlikely(sg_policy->need_freq_update)) {
+>  		sg_policy->need_freq_update = false;
+> -		/*
+> -		 * This happens when limits change, so forget the previous
+> -		 * next_freq value and force an update.
+> -		 */
+> -		sg_policy->next_freq = UINT_MAX;
+>  		return true;
+>  	}
+>  
+> @@ -129,7 +120,6 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
+>  		policy->cur = next_freq;
+>  		trace_cpu_frequency(next_freq, smp_processor_id());
+>  	} else {
+> -		sg_policy->work_in_progress = true;
+>  		irq_work_queue(&sg_policy->irq_work);
+
+Isn't this potentially introducing unneeded irq pressure (and doing the
+whole wakeup the kthread thing), while the already active kthread could
+simply handle multiple back-to-back requests before going to sleep?
+
+Best,
+
+- Juri
