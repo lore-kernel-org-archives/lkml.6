@@ -1,24 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965018AbeEIPQF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:16:05 -0400
-Received: from smtprelay0128.hostedemail.com ([216.40.44.128]:40378 "EHLO
+        id S965039AbeEIPQO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:16:14 -0400
+Received: from smtprelay0141.hostedemail.com ([216.40.44.141]:34163 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S964995AbeEIPQB (ORCPT
+        by vger.kernel.org with ESMTP id S964903AbeEIPQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:16:01 -0400
+        Wed, 9 May 2018 11:16:09 -0400
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:2:41:69:355:379:541:800:960:966:968:973:988:989:1042:1260:1345:1359:1437:1535:1605:1730:1747:1777:1792:2196:2198:2199:2200:2393:2538:2559:2562:2892:2902:3138:3139:3140:3141:3142:3865:3866:3867:3868:3870:3871:3872:4050:4119:4250:4321:4384:4385:4395:5007:6119:6261:7903:8784:8957:9153:9592:10004:10848:11026:11232:11473:11658:11914:12043:12296:12438:12555:12679:12683:12895:13972:14394:21080:21212:21324:21433:21451:21611:21627:21740:30012:30019:30051:30054:30067:30070:30075:30080,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
-X-HE-Tag: coast68_8bad99c2fd916
-X-Filterd-Recvd-Size: 8788
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:4:41:69:355:379:541:800:960:968:973:982:988:989:1260:1345:1359:1437:1605:1730:1747:1777:1792:2198:2199:2393:2559:2562:2904:3138:3139:3140:3141:3142:3165:3865:3867:3868:3871:4250:4321:4605:5007:6119:6261:7875:7903:9010:9040:10004:10848:11026:11473:11657:11658:11914:12043:12048:12296:12438:12555:12679:12683:12733:12737:12895:14110:14394:21080:21433:21451:21611:21627:21740:30029:30045:30046:30054:30070:30079:30080,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: pail59_8ca312c66fa31
+X-Filterd-Recvd-Size: 17583
 From: Joe Perches <joe@perches.com>
-To: Corey Minyard <minyard@acm.org>
-Cc: x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        openipmi-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] ipmi: msghandler: Add and use pr_fmt and dev_fmt, remove PFX
-Date: Wed,  9 May 2018 08:15:47 -0700
-Message-Id: <7d811e7a91743911469514c9e76ebc3c94336f91.1525878372.git.joe@perches.com>
+To: Selvin Xavier <selvin.xavier@broadcom.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
+Cc: x86@kernel.org, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 6/6] infiniband: qplib_fp: Use dev_fmt
+Date: Wed,  9 May 2018 08:15:50 -0700
+Message-Id: <51c5082a4add7520b4fac54e58ca26a8156bf5e8.1525878372.git.joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <cover.1525878372.git.joe@perches.com>
 References: <cover.1525878372.git.joe@perches.com>
@@ -26,211 +29,460 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Standardize the prefixing of output messages using the pr_fmt and dev_fmt
-mechanisms instead of a separate #define PFX
+Convert the embedded dev_<level> uses to use the new dev_fmt
+prefix and remove the prefix from the formats.
 
 Miscellanea:
 
-o Because this message prefix is very long, use a non-standard define
-  of #define pr_fmt(fmt) "%s" fmt, "IPMI message handler: "
-  which removes ~170 bytes of object code in an x86-64 defconfig with ipmi
-  (with even more object code reduction on 32 bit compilations)
+o Add missing terminating newlines to avoid possible interleaving
+o Realign arguments
 
 Signed-off-by: Joe Perches <joe@perches.com>
 ---
- drivers/char/ipmi/ipmi_msghandler.c | 53 +++++++++++++++++--------------------
- 1 file changed, 25 insertions(+), 28 deletions(-)
+ drivers/infiniband/hw/bnxt_re/qplib_fp.c | 125 ++++++++++++++-----------------
+ 1 file changed, 57 insertions(+), 68 deletions(-)
 
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index 946bfcb1eeee..db81f1e51bb9 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -11,6 +11,9 @@
-  * Copyright 2002 MontaVista Software Inc.
+diff --git a/drivers/infiniband/hw/bnxt_re/qplib_fp.c b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
+index 3a78faba8d91..cbe6dbea9ab6 100644
+--- a/drivers/infiniband/hw/bnxt_re/qplib_fp.c
++++ b/drivers/infiniband/hw/bnxt_re/qplib_fp.c
+@@ -36,6 +36,8 @@
+  * Description: Fast Path Operators
   */
  
-+#define pr_fmt(fmt) "%s" fmt, "IPMI message handler: "
-+#define dev_fmt pr_fmt
++#define dev_fmt(fmt) "QPLIB: " fmt
 +
- #include <linux/module.h>
- #include <linux/errno.h>
- #include <linux/poll.h>
-@@ -30,8 +33,6 @@
- #include <linux/workqueue.h>
- #include <linux/uuid.h>
+ #include <linux/interrupt.h>
+ #include <linux/spinlock.h>
+ #include <linux/sched.h>
+@@ -70,8 +72,7 @@ static void __bnxt_qplib_add_flush_qp(struct bnxt_qplib_qp *qp)
+ 	rcq = qp->rcq;
  
--#define PFX "IPMI message handler: "
--
- #define IPMI_DRIVER_VERSION "39.2"
- 
- static struct ipmi_recv_msg *ipmi_alloc_recv_msg(void);
-@@ -1490,8 +1491,7 @@ int ipmi_set_gets_events(struct ipmi_user *user, bool val)
- 			list_move_tail(&msg->link, &msgs);
- 		intf->waiting_events_count = 0;
- 		if (intf->event_msg_printed) {
--			dev_warn(intf->si_dev,
--				 PFX "Event queue no longer full\n");
-+			dev_warn(intf->si_dev, "Event queue no longer full\n");
- 			intf->event_msg_printed = 0;
+ 	if (!qp->sq.flushed) {
+-		dev_dbg(&scq->hwq.pdev->dev,
+-			"QPLIB: FP: Adding to SQ Flush list = %p",
++		dev_dbg(&scq->hwq.pdev->dev, "FP: Adding to SQ Flush list = %p\n",
+ 			qp);
+ 		bnxt_qplib_cancel_phantom_processing(qp);
+ 		list_add_tail(&qp->sq_flush, &scq->sqf_head);
+@@ -79,8 +80,7 @@ static void __bnxt_qplib_add_flush_qp(struct bnxt_qplib_qp *qp)
+ 	}
+ 	if (!qp->srq) {
+ 		if (!qp->rq.flushed) {
+-			dev_dbg(&rcq->hwq.pdev->dev,
+-				"QPLIB: FP: Adding to RQ Flush list = %p",
++			dev_dbg(&rcq->hwq.pdev->dev, "FP: Adding to RQ Flush list = %p\n",
+ 				qp);
+ 			list_add_tail(&qp->rq_flush, &rcq->rqf_head);
+ 			qp->rq.flushed = true;
+@@ -161,7 +161,7 @@ static void bnxt_qpn_cqn_sched_task(struct work_struct *work)
+ 		spin_lock_bh(&cq->compl_lock);
+ 		if (atomic_read(&cq->arm_state) && nq->cqn_handler) {
+ 			dev_dbg(&nq->pdev->dev,
+-				"%s:Trigger cq  = %p event nq = %p\n",
++				"%s: Trigger cq  = %p event nq = %p\n",
+ 				__func__, cq, nq);
+ 			nq->cqn_handler(nq, cq);
  		}
- 
-@@ -2289,16 +2289,15 @@ static void bmc_device_id_handler(struct ipmi_smi *intf,
- 			|| (msg->msg.netfn != IPMI_NETFN_APP_RESPONSE)
- 			|| (msg->msg.cmd != IPMI_GET_DEVICE_ID_CMD)) {
- 		dev_warn(intf->si_dev,
--			 PFX "invalid device_id msg: addr_type=%d netfn=%x cmd=%x\n",
--			msg->addr.addr_type, msg->msg.netfn, msg->msg.cmd);
-+			 "invalid device_id msg: addr_type=%d netfn=%x cmd=%x\n",
-+			 msg->addr.addr_type, msg->msg.netfn, msg->msg.cmd);
- 		return;
- 	}
- 
- 	rv = ipmi_demangle_device_id(msg->msg.netfn, msg->msg.cmd,
- 			msg->msg.data, msg->msg.data_len, &intf->bmc->fetch_id);
- 	if (rv) {
--		dev_warn(intf->si_dev,
--			 PFX "device id demangle failed: %d\n", rv);
-+		dev_warn(intf->si_dev, "device id demangle failed: %d\n", rv);
- 		intf->bmc->dyn_id_set = 0;
- 	} else {
- 		/*
-@@ -3131,8 +3130,7 @@ static int __ipmi_bmc_register(struct ipmi_smi *intf,
- 		mutex_unlock(&bmc->dyn_mutex);
- 
- 		dev_info(intf->si_dev,
--			 "ipmi: interfacing existing BMC (man_id: 0x%6.6x,"
--			 " prod_id: 0x%4.4x, dev_id: 0x%2.2x)\n",
-+			 "interfacing existing BMC (man_id: 0x%6.6x, prod_id: 0x%4.4x, dev_id: 0x%2.2x)\n",
- 			 bmc->id.manufacturer_id,
- 			 bmc->id.product_id,
- 			 bmc->id.device_id);
-@@ -3171,7 +3169,7 @@ static int __ipmi_bmc_register(struct ipmi_smi *intf,
- 		rv = platform_device_register(&bmc->pdev);
- 		if (rv) {
- 			dev_err(intf->si_dev,
--				PFX " Unable to register bmc device: %d\n",
-+				"Unable to register bmc device: %d\n",
- 				rv);
- 			goto out_list_del;
+@@ -206,8 +206,7 @@ static int bnxt_qplib_alloc_qp_hdr_buf(struct bnxt_qplib_res *res,
+ 					&qp->sq_hdr_buf_map, GFP_KERNEL);
+ 		if (!qp->sq_hdr_buf) {
+ 			rc = -ENOMEM;
+-			dev_err(&res->pdev->dev,
+-				"QPLIB: Failed to create sq_hdr_buf");
++			dev_err(&res->pdev->dev, "Failed to create sq_hdr_buf\n");
+ 			goto fail;
  		}
-@@ -3189,8 +3187,7 @@ static int __ipmi_bmc_register(struct ipmi_smi *intf,
- 	 */
- 	rv = sysfs_create_link(&intf->si_dev->kobj, &bmc->pdev.dev.kobj, "bmc");
- 	if (rv) {
--		dev_err(intf->si_dev,
--			PFX "Unable to create bmc symlink: %d\n", rv);
-+		dev_err(intf->si_dev, "Unable to create bmc symlink: %d\n", rv);
- 		goto out_put_bmc;
+ 	}
+@@ -220,8 +219,7 @@ static int bnxt_qplib_alloc_qp_hdr_buf(struct bnxt_qplib_res *res,
+ 						    GFP_KERNEL);
+ 		if (!qp->rq_hdr_buf) {
+ 			rc = -ENOMEM;
+-			dev_err(&res->pdev->dev,
+-				"QPLIB: Failed to create rq_hdr_buf");
++			dev_err(&res->pdev->dev, "Failed to create rq_hdr_buf\n");
+ 			goto fail;
+ 		}
+ 	}
+@@ -276,8 +274,7 @@ static void bnxt_qplib_service_nq(unsigned long data)
+ 			if (!nq->cqn_handler(nq, (cq)))
+ 				num_cqne_processed++;
+ 			else
+-				dev_warn(&nq->pdev->dev,
+-					 "QPLIB: cqn - type 0x%x not handled",
++				dev_warn(&nq->pdev->dev, "cqn - type 0x%x not handled\n",
+ 					 type);
+ 			spin_unlock_bh(&cq->compl_lock);
+ 			break;
+@@ -297,16 +294,14 @@ static void bnxt_qplib_service_nq(unsigned long data)
+ 					      nqsrqe->event))
+ 				num_srqne_processed++;
+ 			else
+-				dev_warn(&nq->pdev->dev,
+-					 "QPLIB: SRQ event 0x%x not handled",
++				dev_warn(&nq->pdev->dev, "SRQ event 0x%x not handled\n",
+ 					 nqsrqe->event);
+ 			break;
+ 		}
+ 		case NQ_BASE_TYPE_DBQ_EVENT:
+ 			break;
+ 		default:
+-			dev_warn(&nq->pdev->dev,
+-				 "QPLIB: nqe with type = 0x%x not handled",
++			dev_warn(&nq->pdev->dev, "nqe with type = 0x%x not handled\n",
+ 				 type);
+ 			break;
+ 		}
+@@ -393,7 +388,7 @@ int bnxt_qplib_enable_nq(struct pci_dev *pdev, struct bnxt_qplib_nq *nq,
+ 	rc = request_irq(nq->vector, bnxt_qplib_nq_irq, 0, nq->name, nq);
+ 	if (rc) {
+ 		dev_err(&nq->pdev->dev,
+-			"Failed to request IRQ for NQ: %#x", rc);
++			"Failed to request IRQ for NQ: %#x\n", rc);
+ 		goto fail;
  	}
  
-@@ -3199,8 +3196,8 @@ static int __ipmi_bmc_register(struct ipmi_smi *intf,
- 	intf->my_dev_name = kasprintf(GFP_KERNEL, "ipmi%d", intf_num);
- 	if (!intf->my_dev_name) {
- 		rv = -ENOMEM;
--		dev_err(intf->si_dev,
--			PFX "Unable to allocate link from BMC: %d\n", rv);
-+		dev_err(intf->si_dev, "Unable to allocate link from BMC: %d\n",
-+			rv);
- 		goto out_unlink1;
+@@ -401,8 +396,7 @@ int bnxt_qplib_enable_nq(struct pci_dev *pdev, struct bnxt_qplib_nq *nq,
+ 	cpumask_set_cpu(nq_idx, &nq->mask);
+ 	rc = irq_set_affinity_hint(nq->vector, &nq->mask);
+ 	if (rc) {
+-		dev_warn(&nq->pdev->dev,
+-			 "QPLIB: set affinity failed; vector: %d nq_idx: %d\n",
++		dev_warn(&nq->pdev->dev, "set affinity failed; vector: %d nq_idx: %d\n",
+ 			 nq->vector, nq_idx);
  	}
  
-@@ -3209,8 +3206,8 @@ static int __ipmi_bmc_register(struct ipmi_smi *intf,
- 	if (rv) {
- 		kfree(intf->my_dev_name);
- 		intf->my_dev_name = NULL;
--		dev_err(intf->si_dev,
--			PFX "Unable to create symlink to bmc: %d\n", rv);
-+		dev_err(intf->si_dev, "Unable to create symlink to bmc: %d\n",
-+			rv);
- 		goto out_free_my_dev_name;
+@@ -636,7 +630,7 @@ int bnxt_qplib_post_srq_recv(struct bnxt_qplib_srq *srq,
+ 
+ 	spin_lock(&srq_hwq->lock);
+ 	if (srq->start_idx == srq->last_idx) {
+-		dev_err(&srq_hwq->pdev->dev, "QPLIB: FP: SRQ (0x%x) is full!",
++		dev_err(&srq_hwq->pdev->dev, "FP: SRQ (0x%x) is full!\n",
+ 			srq->id);
+ 		rc = -EINVAL;
+ 		spin_unlock(&srq_hwq->lock);
+@@ -1298,7 +1292,7 @@ int bnxt_qplib_query_qp(struct bnxt_qplib_res *res, struct bnxt_qplib_qp *qp)
+ 		}
+ 	}
+ 	if (i == res->sgid_tbl.max)
+-		dev_warn(&res->pdev->dev, "QPLIB: SGID not found??");
++		dev_warn(&res->pdev->dev, "SGID not found??\n");
+ 
+ 	qp->ah.hop_limit = sb->hop_limit;
+ 	qp->ah.traffic_class = sb->traffic_class;
+@@ -1502,7 +1496,7 @@ int bnxt_qplib_post_send(struct bnxt_qplib_qp *qp,
+ 		if (qp->state == CMDQ_MODIFY_QP_NEW_STATE_ERR) {
+ 			sch_handler = true;
+ 			dev_dbg(&sq->hwq.pdev->dev,
+-				"%s Error QP. Scheduling for poll_cq\n",
++				"%s: Error QP. Scheduling for poll_cq\n",
+ 				__func__);
+ 			goto queue_err;
+ 		}
+@@ -1510,7 +1504,7 @@ int bnxt_qplib_post_send(struct bnxt_qplib_qp *qp,
+ 
+ 	if (bnxt_qplib_queue_full(sq)) {
+ 		dev_err(&sq->hwq.pdev->dev,
+-			"QPLIB: prod = %#x cons = %#x qdepth = %#x delta = %#x",
++			"prod = %#x cons = %#x qdepth = %#x delta = %#x\n",
+ 			sq->hwq.prod, sq->hwq.cons, sq->hwq.max_elements,
+ 			sq->q_full_delta);
+ 		rc = -ENOMEM;
+@@ -1535,7 +1529,7 @@ int bnxt_qplib_post_send(struct bnxt_qplib_qp *qp,
+ 		/* Copy the inline data */
+ 		if (wqe->inline_len > BNXT_QPLIB_SWQE_MAX_INLINE_LENGTH) {
+ 			dev_warn(&sq->hwq.pdev->dev,
+-				 "QPLIB: Inline data length > 96 detected");
++				 "Inline data length > 96 detected\n");
+ 			data_len = BNXT_QPLIB_SWQE_MAX_INLINE_LENGTH;
+ 		} else {
+ 			data_len = wqe->inline_len;
+@@ -1750,7 +1744,7 @@ int bnxt_qplib_post_send(struct bnxt_qplib_qp *qp,
+ 			queue_work(qp->scq->nq->cqn_wq, &nq_work->work);
+ 		} else {
+ 			dev_err(&sq->hwq.pdev->dev,
+-				"QPLIB: FP: Failed to allocate SQ nq_work!");
++				"FP: Failed to allocate SQ nq_work!\n");
+ 			rc = -ENOMEM;
+ 		}
+ 	}
+@@ -1789,13 +1783,13 @@ int bnxt_qplib_post_recv(struct bnxt_qplib_qp *qp,
+ 	if (qp->state == CMDQ_MODIFY_QP_NEW_STATE_ERR) {
+ 		sch_handler = true;
+ 		dev_dbg(&rq->hwq.pdev->dev,
+-			"%s Error QP. Scheduling for poll_cq\n",
++			"%s: Error QP. Scheduling for poll_cq\n",
+ 			__func__);
+ 		goto queue_err;
+ 	}
+ 	if (bnxt_qplib_queue_full(rq)) {
+-		dev_err(&rq->hwq.pdev->dev,
+-			"QPLIB: FP: QP (0x%x) RQ is full!", qp->id);
++		dev_err(&rq->hwq.pdev->dev, "FP: QP (0x%x) RQ is full!\n",
++			qp->id);
+ 		rc = -EINVAL;
+ 		goto done;
+ 	}
+@@ -1844,7 +1838,7 @@ int bnxt_qplib_post_recv(struct bnxt_qplib_qp *qp,
+ 			queue_work(qp->rcq->nq->cqn_wq, &nq_work->work);
+ 		} else {
+ 			dev_err(&rq->hwq.pdev->dev,
+-				"QPLIB: FP: Failed to allocate RQ nq_work!");
++				"FP: Failed to allocate RQ nq_work!\n");
+ 			rc = -ENOMEM;
+ 		}
+ 	}
+@@ -1906,7 +1900,7 @@ int bnxt_qplib_create_cq(struct bnxt_qplib_res *res, struct bnxt_qplib_cq *cq)
+ 
+ 	if (!cq->dpi) {
+ 		dev_err(&rcfw->pdev->dev,
+-			"QPLIB: FP: CREATE_CQ failed due to NULL DPI");
++			"FP: CREATE_CQ failed due to NULL DPI\n");
+ 		return -EINVAL;
+ 	}
+ 	req.dpi = cpu_to_le32(cq->dpi->dpi);
+@@ -2146,7 +2140,7 @@ static int do_wa9060(struct bnxt_qplib_qp *qp, struct bnxt_qplib_cq *cq,
+ 						 *  comes back
+ 						 */
+ 						dev_dbg(&cq->hwq.pdev->dev,
+-							"FP:Got Phantom CQE");
++							"FP:Got Phantom CQE\n");
+ 						sq->condition = false;
+ 						sq->single = true;
+ 						rc = 0;
+@@ -2163,7 +2157,7 @@ static int do_wa9060(struct bnxt_qplib_qp *qp, struct bnxt_qplib_cq *cq,
+ 			peek_raw_cq_cons++;
+ 		}
+ 		dev_err(&cq->hwq.pdev->dev,
+-			"Should not have come here! cq_cons=0x%x qp=0x%x sq cons sw=0x%x hw=0x%x",
++			"Should not have come here! cq_cons=0x%x qp=0x%x sq cons sw=0x%x hw=0x%x\n",
+ 			cq_cons, qp->id, sw_sq_cons, cqe_sq_cons);
+ 		rc = -EINVAL;
+ 	}
+@@ -2186,18 +2180,15 @@ static int bnxt_qplib_cq_process_req(struct bnxt_qplib_cq *cq,
+ 	qp = (struct bnxt_qplib_qp *)((unsigned long)
+ 				      le64_to_cpu(hwcqe->qp_handle));
+ 	if (!qp) {
+-		dev_err(&cq->hwq.pdev->dev,
+-			"QPLIB: FP: Process Req qp is NULL");
++		dev_err(&cq->hwq.pdev->dev, "FP: Process Req qp is NULL\n");
+ 		return -EINVAL;
+ 	}
+ 	sq = &qp->sq;
+ 
+ 	cqe_sq_cons = HWQ_CMP(le16_to_cpu(hwcqe->sq_cons_idx), &sq->hwq);
+ 	if (cqe_sq_cons > sq->hwq.max_elements) {
+-		dev_err(&cq->hwq.pdev->dev,
+-			"QPLIB: FP: CQ Process req reported ");
+-		dev_err(&cq->hwq.pdev->dev,
+-			"QPLIB: sq_cons_idx 0x%x which exceeded max 0x%x",
++		dev_err(&cq->hwq.pdev->dev, "FP: CQ Process req reported\n");
++		dev_err(&cq->hwq.pdev->dev, "sq_cons_idx 0x%x which exceeded max 0x%x\n",
+ 			cqe_sq_cons, sq->hwq.max_elements);
+ 		return -EINVAL;
+ 	}
+@@ -2236,9 +2227,9 @@ static int bnxt_qplib_cq_process_req(struct bnxt_qplib_cq *cq,
+ 		    hwcqe->status != CQ_REQ_STATUS_OK) {
+ 			cqe->status = hwcqe->status;
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: FP: CQ Processed Req ");
++				"FP: CQ Processed Req\n");
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: wr_id[%d] = 0x%llx with status 0x%x",
++				"wr_id[%d] = 0x%llx with status 0x%x\n",
+ 				sw_sq_cons, cqe->wr_id, cqe->status);
+ 			cqe++;
+ 			(*budget)--;
+@@ -2304,7 +2295,7 @@ static int bnxt_qplib_cq_process_res_rc(struct bnxt_qplib_cq *cq,
+ 	qp = (struct bnxt_qplib_qp *)((unsigned long)
+ 				      le64_to_cpu(hwcqe->qp_handle));
+ 	if (!qp) {
+-		dev_err(&cq->hwq.pdev->dev, "QPLIB: process_cq RC qp is NULL");
++		dev_err(&cq->hwq.pdev->dev, "process_cq RC qp is NULL\n");
+ 		return -EINVAL;
+ 	}
+ 	if (qp->rq.flushed) {
+@@ -2330,9 +2321,9 @@ static int bnxt_qplib_cq_process_res_rc(struct bnxt_qplib_cq *cq,
+ 			return -EINVAL;
+ 		if (wr_id_idx > srq->hwq.max_elements) {
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: FP: CQ Process RC ");
++				"FP: CQ Process RC\n");
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: wr_id idx 0x%x exceeded SRQ max 0x%x",
++				"wr_id idx 0x%x exceeded SRQ max 0x%x\n",
+ 				wr_id_idx, srq->hwq.max_elements);
+ 			return -EINVAL;
+ 		}
+@@ -2345,9 +2336,9 @@ static int bnxt_qplib_cq_process_res_rc(struct bnxt_qplib_cq *cq,
+ 		rq = &qp->rq;
+ 		if (wr_id_idx > rq->hwq.max_elements) {
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: FP: CQ Process RC ");
++				"FP: CQ Process RC\n");
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: wr_id idx 0x%x exceeded RQ max 0x%x",
++				"wr_id idx 0x%x exceeded RQ max 0x%x\n",
+ 				wr_id_idx, rq->hwq.max_elements);
+ 			return -EINVAL;
+ 		}
+@@ -2383,7 +2374,7 @@ static int bnxt_qplib_cq_process_res_ud(struct bnxt_qplib_cq *cq,
+ 	qp = (struct bnxt_qplib_qp *)((unsigned long)
+ 				      le64_to_cpu(hwcqe->qp_handle));
+ 	if (!qp) {
+-		dev_err(&cq->hwq.pdev->dev, "QPLIB: process_cq UD qp is NULL");
++		dev_err(&cq->hwq.pdev->dev, "process_cq UD qp is NULL\n");
+ 		return -EINVAL;
+ 	}
+ 	if (qp->rq.flushed) {
+@@ -2413,9 +2404,9 @@ static int bnxt_qplib_cq_process_res_ud(struct bnxt_qplib_cq *cq,
+ 
+ 		if (wr_id_idx > srq->hwq.max_elements) {
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: FP: CQ Process UD ");
++				"FP: CQ Process UD\n");
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: wr_id idx 0x%x exceeded SRQ max 0x%x",
++				"wr_id idx 0x%x exceeded SRQ max 0x%x\n",
+ 				wr_id_idx, srq->hwq.max_elements);
+ 			return -EINVAL;
+ 		}
+@@ -2428,9 +2419,9 @@ static int bnxt_qplib_cq_process_res_ud(struct bnxt_qplib_cq *cq,
+ 		rq = &qp->rq;
+ 		if (wr_id_idx > rq->hwq.max_elements) {
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: FP: CQ Process UD ");
++				"FP: CQ Process UD\n");
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: wr_id idx 0x%x exceeded RQ max 0x%x",
++				"wr_id idx 0x%x exceeded RQ max 0x%x\n",
+ 				wr_id_idx, rq->hwq.max_elements);
+ 			return -EINVAL;
+ 		}
+@@ -2483,7 +2474,7 @@ static int bnxt_qplib_cq_process_res_raweth_qp1(struct bnxt_qplib_cq *cq,
+ 				      le64_to_cpu(hwcqe->qp_handle));
+ 	if (!qp) {
+ 		dev_err(&cq->hwq.pdev->dev,
+-			"QPLIB: process_cq Raw/QP1 qp is NULL");
++			"process_cq Raw/QP1 qp is NULL\n");
+ 		return -EINVAL;
+ 	}
+ 	if (qp->rq.flushed) {
+@@ -2517,14 +2508,14 @@ static int bnxt_qplib_cq_process_res_raweth_qp1(struct bnxt_qplib_cq *cq,
+ 		srq = qp->srq;
+ 		if (!srq) {
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: FP: SRQ used but not defined??");
++				"FP: SRQ used but not defined??\n");
+ 			return -EINVAL;
+ 		}
+ 		if (wr_id_idx > srq->hwq.max_elements) {
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: FP: CQ Process Raw/QP1 ");
++				"FP: CQ Process Raw/QP1\n");
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: wr_id idx 0x%x exceeded SRQ max 0x%x",
++				"wr_id idx 0x%x exceeded SRQ max 0x%x\n",
+ 				wr_id_idx, srq->hwq.max_elements);
+ 			return -EINVAL;
+ 		}
+@@ -2537,9 +2528,9 @@ static int bnxt_qplib_cq_process_res_raweth_qp1(struct bnxt_qplib_cq *cq,
+ 		rq = &qp->rq;
+ 		if (wr_id_idx > rq->hwq.max_elements) {
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: FP: CQ Process Raw/QP1 RQ wr_id ");
++				"FP: CQ Process Raw/QP1 RQ wr_id\n");
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: ix 0x%x exceeded RQ max 0x%x",
++				"ix 0x%x exceeded RQ max 0x%x\n",
+ 				wr_id_idx, rq->hwq.max_elements);
+ 			return -EINVAL;
+ 		}
+@@ -2574,14 +2565,14 @@ static int bnxt_qplib_cq_process_terminal(struct bnxt_qplib_cq *cq,
+ 	/* Check the Status */
+ 	if (hwcqe->status != CQ_TERMINAL_STATUS_OK)
+ 		dev_warn(&cq->hwq.pdev->dev,
+-			 "QPLIB: FP: CQ Process Terminal Error status = 0x%x",
++			 "FP: CQ Process Terminal Error status = 0x%x\n",
+ 			 hwcqe->status);
+ 
+ 	qp = (struct bnxt_qplib_qp *)((unsigned long)
+ 				      le64_to_cpu(hwcqe->qp_handle));
+ 	if (!qp) {
+ 		dev_err(&cq->hwq.pdev->dev,
+-			"QPLIB: FP: CQ Process terminal qp is NULL");
++			"FP: CQ Process terminal qp is NULL\n");
+ 		return -EINVAL;
  	}
  
-@@ -3294,7 +3291,7 @@ static void guid_handler(struct ipmi_smi *intf, struct ipmi_recv_msg *msg)
- 	if (msg->msg.data_len < 17) {
- 		bmc->dyn_guid_set = 0;
- 		dev_warn(intf->si_dev,
--			 PFX "The GUID response from the BMC was too short, it was %d but should have been 17.  Assuming GUID is not available.\n",
-+			 "The GUID response from the BMC was too short, it was %d but should have been 17.  Assuming GUID is not available.\n",
- 			 msg->msg.data_len);
- 		goto out;
+@@ -2597,9 +2588,9 @@ static int bnxt_qplib_cq_process_terminal(struct bnxt_qplib_cq *cq,
+ 
+ 	if (cqe_cons > sq->hwq.max_elements) {
+ 		dev_err(&cq->hwq.pdev->dev,
+-			"QPLIB: FP: CQ Process terminal reported ");
++			"FP: CQ Process terminal reported\n");
+ 		dev_err(&cq->hwq.pdev->dev,
+-			"QPLIB: sq_cons_idx 0x%x which exceeded max 0x%x",
++			"sq_cons_idx 0x%x which exceeded max 0x%x\n",
+ 			cqe_cons, sq->hwq.max_elements);
+ 		goto do_rq;
  	}
-@@ -3418,7 +3415,7 @@ channel_handler(struct ipmi_smi *intf, struct ipmi_recv_msg *msg)
- 		if (rv) {
- 			/* Got an error somehow, just give up. */
- 			dev_warn(intf->si_dev,
--				 PFX "Error sending channel information for channel %d: %d\n",
-+				 "Error sending channel information for channel %d: %d\n",
- 				 intf->curr_channel, rv);
- 
- 			intf->channel_list = intf->wchannels + set;
-@@ -4311,7 +4308,7 @@ static int handle_read_event_rsp(struct ipmi_smi *intf,
- 		 * message.
- 		 */
- 		dev_warn(intf->si_dev,
--			 PFX "Event queue full, discarding incoming events\n");
-+			 "Event queue full, discarding incoming events\n");
- 		intf->event_msg_printed = 1;
+@@ -2647,9 +2638,9 @@ static int bnxt_qplib_cq_process_terminal(struct bnxt_qplib_cq *cq,
+ 		goto done;
+ 	} else if (cqe_cons > rq->hwq.max_elements) {
+ 		dev_err(&cq->hwq.pdev->dev,
+-			"QPLIB: FP: CQ Processed terminal ");
++			"FP: CQ Processed terminal\n");
+ 		dev_err(&cq->hwq.pdev->dev,
+-			"QPLIB: reported rq_cons_idx 0x%x exceeds max 0x%x",
++			"reported rq_cons_idx 0x%x exceeds max 0x%x\n",
+ 			cqe_cons, rq->hwq.max_elements);
+ 		goto done;
  	}
- 
-@@ -4330,7 +4327,7 @@ static int handle_bmc_rsp(struct ipmi_smi *intf,
- 	recv_msg = (struct ipmi_recv_msg *) msg->user_data;
- 	if (recv_msg == NULL) {
- 		dev_warn(intf->si_dev,
--			 "IPMI message received with no owner. This could be because of a malformed message, or because of a hardware error.  Contact your hardware vender for assistance\n");
-+			 "IPMI message received with no owner. This could be because of a malformed message, or because of a hardware error.  Contact your hardware vendor for assistance.\n");
- 		return 0;
+@@ -2678,7 +2669,7 @@ static int bnxt_qplib_cq_process_cutoff(struct bnxt_qplib_cq *cq,
+ 	/* Check the Status */
+ 	if (hwcqe->status != CQ_CUTOFF_STATUS_OK) {
+ 		dev_err(&cq->hwq.pdev->dev,
+-			"QPLIB: FP: CQ Process Cutoff Error status = 0x%x",
++			"FP: CQ Process Cutoff Error status = 0x%x\n",
+ 			hwcqe->status);
+ 		return -EINVAL;
  	}
- 
-@@ -4366,7 +4363,7 @@ static int handle_one_recv_msg(struct ipmi_smi *intf,
- 	if (msg->rsp_size < 2) {
- 		/* Message is too small to be correct. */
- 		dev_warn(intf->si_dev,
--			 PFX "BMC returned to small a message for netfn %x cmd %x, got %d bytes\n",
-+			 "BMC returned too small a message for netfn %x cmd %x, got %d bytes\n",
- 			 (msg->data[0] >> 2) | 1, msg->data[1], msg->rsp_size);
- 
- 		/* Generate an error response for the message. */
-@@ -4381,7 +4378,7 @@ static int handle_one_recv_msg(struct ipmi_smi *intf,
- 		 * marginally correct.
- 		 */
- 		dev_warn(intf->si_dev,
--			 PFX "BMC returned incorrect response, expected netfn %x cmd %x, got netfn %x cmd %x\n",
-+			 "BMC returned incorrect response, expected netfn %x cmd %x, got netfn %x cmd %x\n",
- 			 (msg->data[0] >> 2) | 1, msg->data[1],
- 			 msg->rsp[0] >> 2, msg->rsp[1]);
- 
-@@ -5271,16 +5268,16 @@ static int ipmi_init_msghandler(void)
- 
- 	rv = driver_register(&ipmidriver.driver);
- 	if (rv) {
--		pr_err(PFX "Could not register IPMI driver\n");
-+		pr_err("Could not register IPMI driver\n");
- 		return rv;
+@@ -2699,15 +2690,13 @@ int bnxt_qplib_process_flush_list(struct bnxt_qplib_cq *cq,
+ 	spin_lock_irqsave(&cq->flush_lock, flags);
+ 	list_for_each_entry(qp, &cq->sqf_head, sq_flush) {
+ 		dev_dbg(&cq->hwq.pdev->dev,
+-			"QPLIB: FP: Flushing SQ QP= %p",
+-			qp);
++			"FP: Flushing SQ QP= %p\n", qp);
+ 		__flush_sq(&qp->sq, qp, &cqe, &budget);
  	}
  
--	pr_info("ipmi message handler version " IPMI_DRIVER_VERSION "\n");
-+	pr_info("version %s\n", IPMI_DRIVER_VERSION);
- 
- #ifdef CONFIG_IPMI_PROC_INTERFACE
- 	proc_ipmi_root = proc_mkdir("ipmi", NULL);
- 	if (!proc_ipmi_root) {
--	    pr_err(PFX "Unable to create IPMI proc dir");
-+	    pr_err("Unable to create IPMI proc dir\n");
- 	    driver_unregister(&ipmidriver.driver);
- 	    return -ENOMEM;
+ 	list_for_each_entry(qp, &cq->rqf_head, rq_flush) {
+ 		dev_dbg(&cq->hwq.pdev->dev,
+-			"QPLIB: FP: Flushing RQ QP= %p",
+-			qp);
++			"FP: Flushing RQ QP= %p\n", qp);
+ 		__flush_rq(&qp->rq, qp, &cqe, &budget);
  	}
-@@ -5336,10 +5333,10 @@ static void __exit cleanup_ipmi(void)
- 	/* Check for buffer leaks. */
- 	count = atomic_read(&smi_msg_inuse_count);
- 	if (count != 0)
--		pr_warn(PFX "SMI message count %d at exit\n", count);
-+		pr_warn("SMI message count %d at exit\n", count);
- 	count = atomic_read(&recv_msg_inuse_count);
- 	if (count != 0)
--		pr_warn(PFX "recv message count %d at exit\n", count);
-+		pr_warn("recv message count %d at exit\n", count);
- }
- module_exit(cleanup_ipmi);
- 
+ 	spin_unlock_irqrestore(&cq->flush_lock, flags);
+@@ -2775,7 +2764,7 @@ int bnxt_qplib_poll_cq(struct bnxt_qplib_cq *cq, struct bnxt_qplib_cqe *cqe,
+ 			goto exit;
+ 		default:
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: process_cq unknown type 0x%lx",
++				"process_cq unknown type 0x%lx\n",
+ 				hw_cqe->cqe_type_toggle &
+ 				CQ_BASE_CQE_TYPE_MASK);
+ 			rc = -EINVAL;
+@@ -2788,7 +2777,7 @@ int bnxt_qplib_poll_cq(struct bnxt_qplib_cq *cq, struct bnxt_qplib_cqe *cqe,
+ 			 * next one
+ 			 */
+ 			dev_err(&cq->hwq.pdev->dev,
+-				"QPLIB: process_cqe error rc = 0x%x", rc);
++				"process_cqe error rc = 0x%x\n", rc);
+ 		}
+ 		raw_cons++;
+ 	}
 -- 
 2.15.0
