@@ -1,82 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935593AbeEISqR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 14:46:17 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:60438 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935563AbeEISqN (ORCPT
+        id S964956AbeEISth (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 14:49:37 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:33839 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935467AbeEIStf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 14:46:13 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.899
-Subject: Re: [PATCH v2 4/4] rtc: ds1307: add freq_test sysfs attribute to
- check tick on m41txx
-To: a.zummo@towertech.it, alexandre.belloni@bootlin.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180509182812.17646-1-giulio.benetti@micronovasrl.com>
- <20180509182812.17646-4-giulio.benetti@micronovasrl.com>
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <de96728f-c5c6-0d2e-4814-21105c0683ed@micronovasrl.com>
-Date: Wed, 9 May 2018 20:46:09 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 9 May 2018 14:49:35 -0400
+X-Google-Smtp-Source: AB8JxZqOYWw1tJBt9Gb4uu2uwMczm06iHlGm44+DhdyvwhaGVoUlny+6GY+U4T0LoaKwrxPoDjcMw9u3B3wY4aJDTEo=
 MIME-Version: 1.0
-In-Reply-To: <20180509182812.17646-4-giulio.benetti@micronovasrl.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <b481bbb2-758f-dcd3-3e1a-8b3137081614@rasmusvillemoes.dk>
+References: <20180509004229.36341-1-keescook@chromium.org> <20180509004229.36341-4-keescook@chromium.org>
+ <b481bbb2-758f-dcd3-3e1a-8b3137081614@rasmusvillemoes.dk>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 9 May 2018 11:49:33 -0700
+X-Google-Sender-Auth: 2Q_dtZqgC8JhnTyC66QDL_Tfv0w
+Message-ID: <CAGXu5jJFdDOJAxN+zsRmCMRRQd=rLR6Qpo8pbeBtUmsM32Gh+Q@mail.gmail.com>
+Subject: Re: [PATCH 03/13] overflow.h: Add allocation size calculation helpers
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry everybody,
+On Wed, May 9, 2018 at 11:27 AM, Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+> On 2018-05-09 02:42, Kees Cook wrote:
+>> In preparation for replacing unchecked overflows for memory allocations,
+>> this creates helpers for the 3 most common calculations:
+>>
+>> array_size(a, b): 2-dimensional array
+>> array3_size(a, b, c): 2-dimensional array
+>
+> yeah... complete confusion...
+>
+>> +/**
+>> + * array_size() - Calculate size of 2-dimensional array.
+>> + *
+>> + * @a: dimension one
+>> + * @b: dimension two
+>> + *
+>> + * Calculates size of 2-dimensional array: @a * @b.
+>> + *
+>> + * Returns: number of bytes needed to represent the array or SIZE_MAX on
+>> + * overflow.
+>> + */
+>> +static inline __must_check size_t array_size(size_t a, size_t b)
+>> +{
+>> +     size_t bytes;
+>> +
+>> +     if (check_mul_overflow(a, b, &bytes))
+>> +             return SIZE_MAX;
+>> +
+>> +     return bytes;
+>> +}
+>> +
+>> +/**
+>> + * array3_size() - Calculate size of 3-dimensional array.
+>> + *
+>
+> ...IDGI. array_size is/will most often be used to calculate the size of
+> a one-dimensional array, count*elemsize, accessed as foo[i]. Won't a
+> three-factor product usually be dim1*dim2*elemsize, i.e. 2-dimensional,
+> accessed (because C is lame) as foo[i*dim2 + j]?
 
-Il 09/05/2018 20:28, Giulio Benetti ha scritto:
->   static int ds1307_probe(struct i2c_client *client,
->   			const struct i2c_device_id *id)
->   {
-> @@ -1783,6 +1851,24 @@ static int ds1307_probe(struct i2c_client *client,
->   	if (err)
->   		return err;
->   
-> +	/* Export sysfs entries */
-> +	err = sysfs_create_group(&(&client->dev)->kobj, &rtc_calib_attr_group);
-> +	if (err) {
-> +		dev_err(&client->dev, "Failed to create sysfs group: %d\n",
-> +			err);
-> +		return err;
-> +	}
-> +
-> +	err = devm_add_action_or_reset(&client->dev,
-> +				       rtc_calib_remove_sysfs_group,
-> +				       &client->dev);
-> +	if (err) {
-> +		dev_err(&client->dev,
-> +			"Failed to add sysfs cleanup action: %d\n",
-> +			err);
-> +		return err;
-> +	}
-> +
->   	if (chip->nvram_size) {
->   		struct nvmem_config nvmem_cfg = {
->   			.name = "ds1307_nvram",
-> 
+I was thinking of byte addressing, not object addressing. I can
+rewrite this to be less confusing.
 
-Adding sysfs must be done only for mt41xx series.
-I correct and submit V3 patchest.
-Sorry again.
+>> +/**
+>> + * struct_size() - Calculate size of structure with trailing array.
+>> + * @p: Pointer to the structure.
+>> + * @member: Name of the array member.
+>> + * @n: Number of elements in the array.
+>> + *
+>> + * Calculates size of memory needed for structure @p followed by an
+>> + * array of @n @member elements.
+>> + *
+>> + * Return: number of bytes needed or SIZE_MAX on overflow.
+>> + */
+>> +#define struct_size(p, member, n)                                    \
+>> +     __ab_c_size(n,                                                  \
+>> +                 sizeof(*(p)->member) + __must_be_array((p)->member),\
+>> +                 offsetof(typeof(*(p)), member))
+>> +
+>> +
+>
+> struct s { int a; char b; char c[]; } has sizeof > offsetof(c), so for
+> small enough n, we end up allocating less than sizeof(struct s). And the
+> caller might reasonably do memset(s, 0, sizeof(*s)) to initialize all
+> members before c. In practice our allocators round up to a multiple of
+> 8, so I don't think it's a big problem, but some sanitizer might
+> complain. But I do think you should make that addend sizeof() instead of
+> offsetof().
+
+Erg. Yeah, I think we'd best "round up". Besides the "< sizeof()" vs
+memset() case you mention, another pattern I've seen is doing stuff
+like:
+
+array = (array_type *)(thing + 1);
+
+So if padding somehow caused us to under-allocate, we'll get it wrong there too.
+
+I'll change this to be strictly sizeof(*(p)).
+
+(Though it might be nice to enforce that "member" is at the end of the
+structure, though, otherwise this could be misused for struct s { int
+a; char c[2]; char b[]; } ... )
+
+-Kees
 
 -- 
-Giulio Benetti
-CTO
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale ¤ 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+Kees Cook
+Pixel Security
