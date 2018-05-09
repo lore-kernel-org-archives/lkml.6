@@ -1,156 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965273AbeEIPxv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:53:51 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56400 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964950AbeEIPxu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:53:50 -0400
-Message-ID: <e52f72ea1fdf491dd10a9a40bbced6d3bad66f7b.camel@collabora.com>
-Subject: Re: [PATCH v9 10/15] vb2: add explicit fence user API
-From: Ezequiel Garcia <ezequiel@collabora.com>
-To: Brian Starkey <brian.starkey@arm.com>
-Cc: linux-media@vger.kernel.org, kernel@collabora.com,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-Date: Wed, 09 May 2018 12:52:26 -0300
-In-Reply-To: <20180509103353.GA39838@e107564-lin.cambridge.arm.com>
-References: <20180504200612.8763-1-ezequiel@collabora.com>
-         <20180504200612.8763-11-ezequiel@collabora.com>
-         <20180509103353.GA39838@e107564-lin.cambridge.arm.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
+        id S965281AbeEIPzy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:55:54 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34880 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964984AbeEIPzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 11:55:52 -0400
+Date: Wed, 9 May 2018 17:55:39 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Jane Wan <Jane.Wan@nokia.com>
+Cc: miquel.raynal@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, richard@nod.at, marek.vasut@gmail.com,
+        yamada.masahiro@socionext.com, prabhakar.kushwaha@nxp.com,
+        shawnguo@kernel.org, jagdish.gediya@nxp.com,
+        shreeya.patel23498@gmail.com, ties.bos@nokia.com,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] mtd: rawnand: fsl_ifc: fix FSL NAND driver to
+ read all ONFI parameter pages
+Message-ID: <20180509175539.5791831e@bbrezillon>
+In-Reply-To: <1525814394-30067-1-git-send-email-Jane.Wan@nokia.com>
+References: <1525814394-30067-1-git-send-email-Jane.Wan@nokia.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-09 at 11:33 +0100, Brian Starkey wrote:
-> Hi Ezequiel,
+On Tue,  8 May 2018 14:19:53 -0700
+Jane Wan <Jane.Wan@nokia.com> wrote:
+
+> Per ONFI specification (Rev. 4.0), if the CRC of the first parameter page
+> read is not valid, the host should read redundant parameter page copies.
+> Fix FSL NAND driver to read the two redundant copies which are mandatory
+> in the specification.
 > 
-> On Fri, May 04, 2018 at 05:06:07PM -0300, Ezequiel Garcia wrote:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.com>
-> > 
-> > Turn the reserved2 field into fence_fd that we will use to send
-> > an in-fence to the kernel or return an out-fence from the kernel to
-> > userspace.
-> > 
-> > Two new flags were added, V4L2_BUF_FLAG_IN_FENCE, that should be used
-> > when sending an in-fence to the kernel to be waited on, and
-> > V4L2_BUF_FLAG_OUT_FENCE, to ask the kernel to give back an out-fence.
-> > 
-> > v7: minor fixes on the Documentation (Hans Verkuil)
-> > 
-> > v6: big improvement on doc (Hans Verkuil)
-> > 
-> > v5: - keep using reserved2 field for cpia2
-> >    - set fence_fd to 0 for now, for compat with userspace(Mauro)
-> > 
-> > v4: make it a union with reserved2 and fence_fd (Hans Verkuil)
-> > 
-> > v3: make the out_fence refer to the current buffer (Hans Verkuil)
-> > 
-> > v2: add documentation
-> > 
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-> > ---
-> > Documentation/media/uapi/v4l/buffer.rst         | 45 +++++++++++++++++++++++--
-> > drivers/media/common/videobuf2/videobuf2-v4l2.c |  2 +-
-> > drivers/media/v4l2-core/v4l2-compat-ioctl32.c   |  4 +--
-> > include/uapi/linux/videodev2.h                  |  8 ++++-
-> > 4 files changed, 52 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/Documentation/media/uapi/v4l/buffer.rst b/Documentation/media/uapi/v4l/buffer.rst
-> > index e2c85ddc990b..be9719cf5745 100644
-> > --- a/Documentation/media/uapi/v4l/buffer.rst
-> > +++ b/Documentation/media/uapi/v4l/buffer.rst
-> > @@ -301,10 +301,22 @@ struct v4l2_buffer
-> > 	elements in the ``planes`` array. The driver will fill in the
-> > 	actual number of valid elements in that array.
-> >     * - __u32
-> > -      - ``reserved2``
-> > +      - ``fence_fd``
-> >       -
-> > -      - A place holder for future extensions. Drivers and applications
-> > -	must set this to 0.
-> > +      - Used to communicate a fence file descriptors from userspace to kernel
-> > +	and vice-versa. On :ref:`VIDIOC_QBUF <VIDIOC_QBUF>` when sending
-> > +	an in-fence for V4L2 to wait on, the ``V4L2_BUF_FLAG_IN_FENCE`` flag must
-> > +	be used and this field set to the fence file descriptor of the in-fence.
-> > +	If the in-fence is not valid ` VIDIOC_QBUF`` returns an error.
-> > +
-> > +        To get an out-fence back from V4L2 the ``V4L2_BUF_FLAG_OUT_FENCE``
-> > +	must be set, the kernel will return the out-fence file descriptor in
-> > +	this field. If it fails to create the out-fence ``VIDIOC_QBUF` returns
-> > +        an error.
-> > +
-> > +	For all other ioctls V4L2 sets this field to -1 if
-> > +	``V4L2_BUF_FLAG_IN_FENCE`` and/or ``V4L2_BUF_FLAG_OUT_FENCE`` are set,
-> > +	otherwise this field is set to 0 for backward compatibility.
-> >     * - __u32
-> >       - ``reserved``
-> >       -
-> > @@ -648,6 +660,33 @@ Buffer Flags
-> >       - Start Of Exposure. The buffer timestamp has been taken when the
-> > 	exposure of the frame has begun. This is only valid for the
-> > 	``V4L2_BUF_TYPE_VIDEO_CAPTURE`` buffer type.
-> > +    * .. _`V4L2-BUF-FLAG-IN-FENCE`:
-> > +
-> > +      - ``V4L2_BUF_FLAG_IN_FENCE``
-> > +      - 0x00200000
-> > +      - Ask V4L2 to wait on the fence passed in the ``fence_fd`` field. The
-> > +	buffer won't be queued to the driver until the fence signals. The order
-> > +	in which buffers are queued is guaranteed to be preserved, so any
-> > +	buffers queued after this buffer will also be blocked until this fence
-> > +	signals. This flag must be set before calling ``VIDIOC_QBUF``. For
-> > +	other ioctls the driver just reports the value of the flag.
-> > +
-> > +        If the fence signals the flag is cleared and not reported anymore.
-> > +	If the fence is not valid ``VIDIOC_QBUF`` returns an error.
-> > +
-> > +
-> > +    * .. _`V4L2-BUF-FLAG-OUT-FENCE`:
-> > +
-> > +      - ``V4L2_BUF_FLAG_OUT_FENCE``
-> > +      - 0x00400000
-> > +      - Request for a fence to be attached to the buffer. The driver will fill
-> > +	in the out-fence fd in the ``fence_fd`` field when :ref:`VIDIOC_QBUF
-> > +	<VIDIOC_QBUF>` returns. This flag must be set before calling
-> > +	``VIDIOC_QBUF``. For other ioctls the driver just reports the value of
-> > +	the flag.
-> > +
-> > +        If the creation of the out-fence fails ``VIDIOC_QBUF`` returns an
-> > +	error.
-> > 
+> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
+
+Applied.
+
+Thanks,
+
+Boris
+
+> ---
+>  drivers/mtd/nand/raw/fsl_ifc_nand.c |   17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
 > 
-> I commented similarly on some of the old patch-sets, and it's a minor
-> thing, but I still think the ordering of this series is off. It's
-> strange/wrong to me document all this behaviour, and expose the flags
-> to userspace, when the functionality isn't implemented yet.
-> 
-> If I apply this patch to the kernel, then the kernel doesn't do what
-> the (newly added) kernel-doc says it will.
-> 
-
-This has never been a problem, and it has always been the canonical
-way of doing things.
-
-First the required macros, stubs, documentation and interfaces are added,
-and then they are implemented.
-
-I see no reason to go berserk here, unless you see an actual problem?
-Or something actually broken?
-
-The only thing I can think of is that we should return fence_fd -1
-if the flags are set. We could do it on this patch, and be consistent
-with userspace.
-
-Regards,
-Eze
+> diff --git a/drivers/mtd/nand/raw/fsl_ifc_nand.c b/drivers/mtd/nand/raw/fsl_ifc_nand.c
+> index 61aae02..98aac1f 100644
+> --- a/drivers/mtd/nand/raw/fsl_ifc_nand.c
+> +++ b/drivers/mtd/nand/raw/fsl_ifc_nand.c
+> @@ -342,9 +342,16 @@ static void fsl_ifc_cmdfunc(struct mtd_info *mtd, unsigned int command,
+>  
+>  	case NAND_CMD_READID:
+>  	case NAND_CMD_PARAM: {
+> +		/*
+> +		 * For READID, read 8 bytes that are currently used.
+> +		 * For PARAM, read all 3 copies of 256-bytes pages.
+> +		 */
+> +		int len = 8;
+>  		int timing = IFC_FIR_OP_RB;
+> -		if (command == NAND_CMD_PARAM)
+> +		if (command == NAND_CMD_PARAM) {
+>  			timing = IFC_FIR_OP_RBCD;
+> +			len = 256 * 3;
+> +		}
+>  
+>  		ifc_out32((IFC_FIR_OP_CW0 << IFC_NAND_FIR0_OP0_SHIFT) |
+>  			  (IFC_FIR_OP_UA  << IFC_NAND_FIR0_OP1_SHIFT) |
+> @@ -354,12 +361,8 @@ static void fsl_ifc_cmdfunc(struct mtd_info *mtd, unsigned int command,
+>  			  &ifc->ifc_nand.nand_fcr0);
+>  		ifc_out32(column, &ifc->ifc_nand.row3);
+>  
+> -		/*
+> -		 * although currently it's 8 bytes for READID, we always read
+> -		 * the maximum 256 bytes(for PARAM)
+> -		 */
+> -		ifc_out32(256, &ifc->ifc_nand.nand_fbcr);
+> -		ifc_nand_ctrl->read_bytes = 256;
+> +		ifc_out32(len, &ifc->ifc_nand.nand_fbcr);
+> +		ifc_nand_ctrl->read_bytes = len;
+>  
+>  		set_addr(mtd, 0, 0, 0);
+>  		fsl_ifc_run_command(mtd);
