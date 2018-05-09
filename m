@@ -1,31 +1,31 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525870851; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1525870847; cv=none;
         d=google.com; s=arc-20160816;
-        b=DTBM+2wmGzkF3Phf3jQgElhSsGEfQ34+71R6rLhrbD2VZVRnKq7u5Jetug1XmswQWt
-         AQ+x7JShND1MUZcgRJ0MqJK7DqVhv1g/z4K/gxIMdO45OAw2TCG2+UVO5/CwJpduf/k5
-         iCjglt70n6YQbrbMu3eNdYzTPMlfl5ahIIkwiBdnbIAQ6zw1HV7io2CfG8EgO/MzWNQz
-         Q+6emGV/GTjzQtZndErWlnGjjK6d8n8SOxq7dT7DYtzcXWXEL8L3UzBP52H2HChYdm7X
-         xbakjuDFBALcgvDdn3O9mc+HMydv1Z/+kUGM4kD015sDMZLR/uTwG+xWdk3T8NAqvGlX
-         y40w==
+        b=ochDzhjWcKu+SNNUuWAjNoU7DF4Pno2GSdnPrxl+x6d5AYoTPfWS4QHz8neHlCxwZb
+         RyL8ouUfS7+KFS943PkgMWtQ9L/mSrH6g/CovIsiJoEfZaWlHQSPoWAok/E9xOFAbL9r
+         ZISYWLMs5GFKkUYRIL8Yt42FYy0CsKv6SA5r5JIfaKXZOcWrzbqffqNqttMbI3d47RNq
+         U03/5cNaE5wuPcPe9r87yxXx+ObFg8A8CLk1LzY5twRHel3waU8EIkZKNHVFhMDeOqSg
+         /g/P8NYVOIdvOeKzz4ZPl9xWJj6Je9hr8RDtJJWNCHrii1aOx8Doi5KLDGnCEpToLAKa
+         2PWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=o9zSY8uqSnrmkD1RIMV/wGVazTSDuQFxf06zYOLNSI8=;
-        b=YpCCSQZN6Tp/P2ilmiJLFlRpF9WbMy7lIlXdsoILIenSGSE8wZGj95fFY/9eaGqXLb
-         jPbc5Ds1XQ8O6xqGK7jBkXzSrTC1EEgrHtbpYon9BXX9pLTxOnlgyQHTwT/UGq5M9+q7
-         Hpys6F3gxCej5vXueb5N2AllQaGQRO/KITDdTSMT2CGKMVnSLTv+ENjLWyoKUFTlAZXQ
-         asB7sdFzNpNVq0yEE2WJnlGxhEjjy3KKG3vWYJpavSRH98eXoPdOwjWPPu21nScgHOZJ
-         GXpdYaLX6KL5Do4jgwP/qeyuTffIrIp9IOoh21R+VxoWFgO10TfyGtnkTlfVrxSz+n3o
-         z01w==
+        bh=SEaPn35ZZl8I6zHF4xDhTBrYNDHE5N1K8nSZ9klOq5A=;
+        b=hS9zC3FMSTG6dwdOhju7eGu+PSGGI0dE8JEXnwAxah24wiiSphEaUVvQKARyBAsTe+
+         9CiFBBNP3BNZHIu88aU7O2wEWOebuJDlIppTkw0J1D867xZSsPrZ/PMkDjEBck4fJgSL
+         KWQ/sGTJFf01gksI9/ffmLZnH2Ks+hfmArPt4Iq8f6r5PrF83ZSUGyJ8arnxQCRzeLDU
+         YtWsCJcU04WwJDFzs2IzAsjTp+Kp0tWEoBGle+DdEx+t+GozfnKGiUy8LTVRC6n1fDbI
+         uH7F99nGGDv6RbzYnI2j2dr+9e5INGpcCEXL3aFXxxs9c2C8/ZTZdtqONgI6S5RZxdJj
+         g2Xw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=VQnoa86P;
+       dkim=pass header.i=@linaro.org header.s=google header.b=X3hvTbRT;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=VQnoa86P;
+       dkim=pass header.i=@linaro.org header.s=google header.b=X3hvTbRT;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZrqiTZzIkKRGnHD24mRJexq2aQiItcWIU7bBaZfPgERrBSfDLdggrtsA1NIWj9xdyj76wxiDA==
+X-Google-Smtp-Source: AB8JxZoOrmdbsNRv5Wzm3H5dkpxBdiUCipCjnHA7t1kCxXW2shdx/Q99Jq74CitMGvwHNnUQ0u3p9A==
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To: andy.gross@linaro.org,
 	broonie@kernel.org,
@@ -46,241 +46,236 @@ Cc: gregkh@linuxfoundation.org,
 	rohkumar@qti.qualcomm.com,
 	spatakok@qti.qualcomm.com,
 	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v8 10/24] ASoC: qdsp6: qdafe: Add SLIMBus port Support
-Date: Wed,  9 May 2018 13:56:21 +0100
-Message-Id: <20180509125635.5653-11-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v8 07/24] ASoC: qdsp6: q6common: Add qdsp6 helper functions
+Date: Wed,  9 May 2018 13:56:18 +0100
+Message-Id: <20180509125635.5653-8-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180509125635.5653-1-srinivas.kandagatla@linaro.org>
 References: <20180509125635.5653-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599991553725833217?=
-X-GMAIL-MSGID: =?utf-8?q?1599991553725833217?=
+X-GMAIL-THRID: =?utf-8?q?1599991549574886288?=
+X-GMAIL-MSGID: =?utf-8?q?1599991549574886288?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch adds support to 6 SLIMBus AFE ports, which are used as
-backend dais.
+This patch adds some common helper functions like translating dsp error
+to linux error codes and channel mappings etc.
+
+These functions are used in all the following qdsp6 drivers.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
 Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
 ---
- sound/soc/qcom/qdsp6/q6afe.c | 129 +++++++++++++++++++++++++++++++++++++++++++
- sound/soc/qcom/qdsp6/q6afe.h |  14 +++++
- 2 files changed, 143 insertions(+)
+ sound/soc/qcom/Kconfig              | 13 ++++++++
+ sound/soc/qcom/Makefile             |  3 ++
+ sound/soc/qcom/qdsp6/Makefile       |  1 +
+ sound/soc/qcom/qdsp6/q6dsp-common.c | 66 +++++++++++++++++++++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6dsp-common.h | 24 ++++++++++++++
+ sound/soc/qcom/qdsp6/q6dsp-errno.h  | 51 ++++++++++++++++++++++++++++
+ 6 files changed, 158 insertions(+)
+ create mode 100644 sound/soc/qcom/qdsp6/Makefile
+ create mode 100644 sound/soc/qcom/qdsp6/q6dsp-common.c
+ create mode 100644 sound/soc/qcom/qdsp6/q6dsp-common.h
+ create mode 100644 sound/soc/qcom/qdsp6/q6dsp-errno.h
 
-diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
-index ec35ed1ffede..1de5c941b11e 100644
---- a/sound/soc/qcom/qdsp6/q6afe.c
-+++ b/sound/soc/qcom/qdsp6/q6afe.c
-@@ -27,9 +27,45 @@
- #define AFE_PARAM_ID_HDMI_CONFIG	0x00010210
- #define AFE_MODULE_AUDIO_DEV_INTERFACE	0x0001020C
+diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
+index 3cc252e55468..b44a9fcd7ed3 100644
+--- a/sound/soc/qcom/Kconfig
++++ b/sound/soc/qcom/Kconfig
+@@ -40,3 +40,16 @@ config SND_SOC_APQ8016_SBC
+           Support for Qualcomm Technologies LPASS audio block in
+           APQ8016 SOC-based systems.
+           Say Y if you want to use audio devices on MI2S.
++
++config SND_SOC_QDSP6_COMMON
++	tristate
++
++config SND_SOC_QDSP6
++	tristate "SoC ALSA audio driver for QDSP6"
++	depends on QCOM_APR && HAS_DMA
++	select SND_SOC_QDSP6_COMMON
++	help
++	 To add support for MSM QDSP6 Soc Audio.
++	 This will enable sound soc platform specific
++	 audio drivers. This includes q6asm, q6adm,
++	 q6afe interfaces to DSP using apr.
+diff --git a/sound/soc/qcom/Makefile b/sound/soc/qcom/Makefile
+index d5280355c24f..0276717917c0 100644
+--- a/sound/soc/qcom/Makefile
++++ b/sound/soc/qcom/Makefile
+@@ -16,3 +16,6 @@ snd-soc-apq8016-sbc-objs := apq8016_sbc.o
  
-+#define AFE_PARAM_ID_CDC_SLIMBUS_SLAVE_CFG 0x00010235
+ obj-$(CONFIG_SND_SOC_STORM) += snd-soc-storm.o
+ obj-$(CONFIG_SND_SOC_APQ8016_SBC) += snd-soc-apq8016-sbc.o
 +
-+#define AFE_PARAM_ID_SLIMBUS_CONFIG    0x00010212
++#DSP lib
++obj-$(CONFIG_SND_SOC_QDSP6) += qdsp6/
+diff --git a/sound/soc/qcom/qdsp6/Makefile b/sound/soc/qcom/qdsp6/Makefile
+new file mode 100644
+index 000000000000..accebdb49306
+--- /dev/null
++++ b/sound/soc/qcom/qdsp6/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_SND_SOC_QDSP6_COMMON) += q6dsp-common.o
+diff --git a/sound/soc/qcom/qdsp6/q6dsp-common.c b/sound/soc/qcom/qdsp6/q6dsp-common.c
+new file mode 100644
+index 000000000000..d393003492c7
+--- /dev/null
++++ b/sound/soc/qcom/qdsp6/q6dsp-common.c
+@@ -0,0 +1,66 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2011-2017, The Linux Foundation. All rights reserved.
++// Copyright (c) 2018, Linaro Limited
 +
- /* Port IDs */
- #define AFE_API_VERSION_HDMI_CONFIG	0x1
- #define AFE_PORT_ID_MULTICHAN_HDMI_RX	0x100E
++#include "q6dsp-common.h"
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/string.h>
++#include <linux/errno.h>
 +
-+#define AFE_API_VERSION_SLIMBUS_CONFIG 0x1
-+
-+/* SLIMbus Rx port on channel 0. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_0_RX      0x4000
-+/* SLIMbus Tx port on channel 0. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_0_TX      0x4001
-+/* SLIMbus Rx port on channel 1. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_1_RX      0x4002
-+/* SLIMbus Tx port on channel 1. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_1_TX      0x4003
-+/* SLIMbus Rx port on channel 2. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_2_RX      0x4004
-+/* SLIMbus Tx port on channel 2. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_2_TX      0x4005
-+/* SLIMbus Rx port on channel 3. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_3_RX      0x4006
-+/* SLIMbus Tx port on channel 3. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_3_TX      0x4007
-+/* SLIMbus Rx port on channel 4. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_4_RX      0x4008
-+/* SLIMbus Tx port on channel 4. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_4_TX      0x4009
-+/* SLIMbus Rx port on channel 5. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_5_RX      0x400a
-+/* SLIMbus Tx port on channel 5. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_5_TX      0x400b
-+/* SLIMbus Rx port on channel 6. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_6_RX      0x400c
-+/* SLIMbus Tx port on channel 6. */
-+#define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_6_TX      0x400d
-+
- #define TIMEOUT_MS 1000
- #define AFE_CMD_RESP_AVAIL	0
- #define AFE_CMD_RESP_NONE	1
-@@ -80,8 +116,53 @@ struct afe_param_id_hdmi_multi_chan_audio_cfg {
- 	u16 reserved;
- } __packed;
- 
-+struct afe_param_id_slimbus_cfg {
-+	u32                  sb_cfg_minor_version;
-+/* Minor version used for tracking the version of the SLIMBUS
-+ * configuration interface.
-+ * Supported values: #AFE_API_VERSION_SLIMBUS_CONFIG
-+ */
-+
-+	u16                  slimbus_dev_id;
-+/* SLIMbus hardware device ID, which is required to handle
-+ * multiple SLIMbus hardware blocks.
-+ * Supported values: - #AFE_SLIMBUS_DEVICE_1 - #AFE_SLIMBUS_DEVICE_2
-+ */
-+	u16                  bit_width;
-+/* Bit width of the sample.
-+ * Supported values: 16, 24
-+ */
-+	u16                  data_format;
-+/* Data format supported by the SLIMbus hardware. The default is
-+ * 0 (#AFE_SB_DATA_FORMAT_NOT_INDICATED), which indicates the
-+ * hardware does not perform any format conversions before the data
-+ * transfer.
-+ */
-+	u16                  num_channels;
-+/* Number of channels.
-+ * Supported values: 1 to #AFE_PORT_MAX_AUDIO_CHAN_CNT
-+ */
-+	u8  shared_ch_mapping[AFE_PORT_MAX_AUDIO_CHAN_CNT];
-+/* Mapping of shared channel IDs (128 to 255) to which the
-+ * master port is to be connected.
-+ * Shared_channel_mapping[i] represents the shared channel assigned
-+ * for audio channel i in multichannel audio data.
-+ */
-+	u32              sample_rate;
-+/* Sampling rate of the port.
-+ * Supported values:
-+ * - #AFE_PORT_SAMPLE_RATE_8K
-+ * - #AFE_PORT_SAMPLE_RATE_16K
-+ * - #AFE_PORT_SAMPLE_RATE_48K
-+ * - #AFE_PORT_SAMPLE_RATE_96K
-+ * - #AFE_PORT_SAMPLE_RATE_192K
-+ */
-+} __packed;
-+
-+
- union afe_port_config {
- 	struct afe_param_id_hdmi_multi_chan_audio_cfg hdmi_multi_ch;
-+	struct afe_param_id_slimbus_cfg           slim_cfg;
- } __packed;
- 
- struct q6afe_port {
-@@ -110,6 +191,20 @@ struct afe_port_map {
- 
- static struct afe_port_map port_maps[AFE_PORT_MAX] = {
- 	[HDMI_RX] = { AFE_PORT_ID_MULTICHAN_HDMI_RX, HDMI_RX, 1, 1},
-+	[SLIMBUS_0_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_0_RX,
-+				SLIMBUS_0_RX, 1, 1},
-+	[SLIMBUS_1_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_1_RX,
-+				SLIMBUS_1_RX, 1, 1},
-+	[SLIMBUS_2_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_2_RX,
-+				SLIMBUS_2_RX, 1, 1},
-+	[SLIMBUS_3_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_3_RX,
-+				SLIMBUS_3_RX, 1, 1},
-+	[SLIMBUS_4_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_4_RX,
-+				SLIMBUS_4_RX, 1, 1},
-+	[SLIMBUS_5_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_5_RX,
-+				SLIMBUS_5_RX, 1, 1},
-+	[SLIMBUS_6_RX] = { AFE_PORT_ID_SLIMBUS_MULTI_CHAN_6_RX,
-+				SLIMBUS_6_RX, 1, 1},
- };
- 
- static struct q6afe_port *afe_find_port(struct q6afe *afe, int token)
-@@ -323,6 +418,31 @@ int q6afe_port_stop(struct q6afe_port *port)
- }
- EXPORT_SYMBOL_GPL(q6afe_port_stop);
- 
-+/**
-+ * q6afe_slim_port_prepare() - Prepare slim afe port.
-+ *
-+ * @port: Instance of afe port
-+ * @cfg: SLIM configuration for the afe port
-+ *
-+ */
-+void q6afe_slim_port_prepare(struct q6afe_port *port,
-+			     struct q6afe_slim_cfg *cfg)
++int q6dsp_map_channels(u8 ch_map[PCM_MAX_NUM_CHANNEL], int ch)
 +{
-+	union afe_port_config *pcfg = &port->port_cfg;
++	memset(ch_map, 0, PCM_MAX_NUM_CHANNEL);
 +
-+	pcfg->slim_cfg.sb_cfg_minor_version = AFE_API_VERSION_SLIMBUS_CONFIG;
-+	pcfg->slim_cfg.sample_rate = cfg->sample_rate;
-+	pcfg->slim_cfg.bit_width = cfg->bit_width;
-+	pcfg->slim_cfg.num_channels = cfg->num_channels;
-+	pcfg->slim_cfg.data_format = cfg->data_format;
-+	pcfg->slim_cfg.shared_ch_mapping[0] = cfg->ch_mapping[0];
-+	pcfg->slim_cfg.shared_ch_mapping[1] = cfg->ch_mapping[1];
-+	pcfg->slim_cfg.shared_ch_mapping[2] = cfg->ch_mapping[2];
-+	pcfg->slim_cfg.shared_ch_mapping[3] = cfg->ch_mapping[3];
-+
-+}
-+EXPORT_SYMBOL_GPL(q6afe_slim_port_prepare);
-+
- /**
-  * q6afe_hdmi_port_prepare() - Prepare hdmi afe port.
-  *
-@@ -426,6 +546,15 @@ struct q6afe_port *q6afe_port_get_from_id(struct device *dev, int id)
- 	case AFE_PORT_ID_MULTICHAN_HDMI_RX:
- 		cfg_type = AFE_PARAM_ID_HDMI_CONFIG;
- 		break;
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_0_RX:
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_1_RX:
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_2_RX:
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_3_RX:
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_4_RX:
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_5_RX:
-+	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_6_RX:
-+		cfg_type = AFE_PARAM_ID_SLIMBUS_CONFIG;
++	switch (ch) {
++	case 1:
++		ch_map[0] = PCM_CHANNEL_FC;
 +		break;
- 	default:
- 		dev_err(dev, "Invalid port id 0x%x\n", port_id);
- 		return ERR_PTR(-EINVAL);
-diff --git a/sound/soc/qcom/qdsp6/q6afe.h b/sound/soc/qcom/qdsp6/q6afe.h
-index 3bd991a7c42d..5659966c6b1e 100644
---- a/sound/soc/qcom/qdsp6/q6afe.h
-+++ b/sound/soc/qcom/qdsp6/q6afe.h
-@@ -11,6 +11,9 @@
- #define MSM_AFE_PORT_TYPE_TX 1
- #define AFE_MAX_PORTS AFE_PORT_MAX
- 
-+#define AFE_MAX_CHAN_COUNT	8
-+#define AFE_PORT_MAX_AUDIO_CHAN_CNT	0x8
++	case 2:
++		ch_map[0] = PCM_CHANNEL_FL;
++		ch_map[1] = PCM_CHANNEL_FR;
++		break;
++	case 3:
++		ch_map[0] = PCM_CHANNEL_FL;
++		ch_map[1] = PCM_CHANNEL_FR;
++		ch_map[2] = PCM_CHANNEL_FC;
++		break;
++	case 4:
++		ch_map[0] = PCM_CHANNEL_FL;
++		ch_map[1] = PCM_CHANNEL_FR;
++		ch_map[2] = PCM_CHANNEL_LS;
++		ch_map[3] = PCM_CHANNEL_RS;
++		break;
++	case 5:
++		ch_map[0] = PCM_CHANNEL_FL;
++		ch_map[1] = PCM_CHANNEL_FR;
++		ch_map[2] = PCM_CHANNEL_FC;
++		ch_map[3] = PCM_CHANNEL_LS;
++		ch_map[4] = PCM_CHANNEL_RS;
++		break;
++	case 6:
++		ch_map[0] = PCM_CHANNEL_FL;
++		ch_map[1] = PCM_CHANNEL_FR;
++		ch_map[2] = PCM_CHANNEL_LFE;
++		ch_map[3] = PCM_CHANNEL_FC;
++		ch_map[4] = PCM_CHANNEL_LS;
++		ch_map[5] = PCM_CHANNEL_RS;
++		break;
++	case 8:
++		ch_map[0] = PCM_CHANNEL_FL;
++		ch_map[1] = PCM_CHANNEL_FR;
++		ch_map[2] = PCM_CHANNEL_LFE;
++		ch_map[3] = PCM_CHANNEL_FC;
++		ch_map[4] = PCM_CHANNEL_LS;
++		ch_map[5] = PCM_CHANNEL_RS;
++		ch_map[6] = PCM_CHANNEL_LB;
++		ch_map[7] = PCM_CHANNEL_RB;
++		break;
++	default:
++		return -EINVAL;
++	}
 +
- struct q6afe_hdmi_cfg {
- 	u16                  datatype;
- 	u16                  channel_allocation;
-@@ -18,8 +21,17 @@ struct q6afe_hdmi_cfg {
- 	u16                  bit_width;
- };
- 
-+struct q6afe_slim_cfg {
-+	u32	sample_rate;
-+	u16	bit_width;
-+	u16	data_format;
-+	u16	num_channels;
-+	u8	ch_mapping[AFE_MAX_CHAN_COUNT];
-+};
++	return 0;
++}
++EXPORT_SYMBOL_GPL(q6dsp_map_channels);
++MODULE_LICENSE("GPL v2");
+diff --git a/sound/soc/qcom/qdsp6/q6dsp-common.h b/sound/soc/qcom/qdsp6/q6dsp-common.h
+new file mode 100644
+index 000000000000..01094d108b8a
+--- /dev/null
++++ b/sound/soc/qcom/qdsp6/q6dsp-common.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +
- struct q6afe_port_config {
- 	struct q6afe_hdmi_cfg hdmi;
-+	struct q6afe_slim_cfg slim;
- };
- 
- struct q6afe_port;
-@@ -31,5 +43,7 @@ void q6afe_port_put(struct q6afe_port *port);
- int q6afe_get_port_id(int index);
- void q6afe_hdmi_port_prepare(struct q6afe_port *port,
- 			    struct q6afe_hdmi_cfg *cfg);
-+void q6afe_slim_port_prepare(struct q6afe_port *port,
-+			  struct q6afe_slim_cfg *cfg);
- 
- #endif /* __Q6AFE_H__ */
++#ifndef __Q6DSP_COMMON_H__
++#define __Q6DSP_COMMON_H__
++
++#include <linux/kernel.h>
++
++#define PCM_MAX_NUM_CHANNEL  8
++#define PCM_CHANNEL_NULL 0
++
++#define PCM_CHANNEL_FL    1	/* Front left channel. */
++#define PCM_CHANNEL_FR    2	/* Front right channel. */
++#define PCM_CHANNEL_FC    3	/* Front center channel. */
++#define PCM_CHANNEL_LS   4	/* Left surround channel. */
++#define PCM_CHANNEL_RS   5	/* Right surround channel. */
++#define PCM_CHANNEL_LFE  6	/* Low frequency effect channel. */
++#define PCM_CHANNEL_CS   7	/* Center surround channel; Rear center ch */
++#define PCM_CHANNEL_LB   8	/* Left back channel; Rear left channel. */
++#define PCM_CHANNEL_RB   9	/* Right back channel; Rear right channel. */
++#define PCM_CHANNELS   10	/* Top surround channel. */
++
++int q6dsp_map_channels(u8 ch_map[PCM_MAX_NUM_CHANNEL], int ch);
++
++#endif /* __Q6DSP_COMMON_H__ */
+diff --git a/sound/soc/qcom/qdsp6/q6dsp-errno.h b/sound/soc/qcom/qdsp6/q6dsp-errno.h
+new file mode 100644
+index 000000000000..1ec00ff8c1d2
+--- /dev/null
++++ b/sound/soc/qcom/qdsp6/q6dsp-errno.h
+@@ -0,0 +1,51 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef __Q6DSP_ERR_NO_H__
++#define __Q6DSP_ERR_NO_H__
++#include <linux/kernel.h>
++
++/* Success. The operation completed with no errors. */
++#define ADSP_EOK          0x00000000
++/* General failure. */
++#define ADSP_EFAILED      0x00000001
++/* Bad operation parameter. */
++#define ADSP_EBADPARAM    0x00000002
++/* Unsupported routine or operation. */
++#define ADSP_EUNSUPPORTED 0x00000003
++/* Unsupported version. */
++#define ADSP_EVERSION     0x00000004
++/* Unexpected problem encountered. */
++#define ADSP_EUNEXPECTED  0x00000005
++/* Unhandled problem occurred. */
++#define ADSP_EPANIC       0x00000006
++/* Unable to allocate resource. */
++#define ADSP_ENORESOURCE  0x00000007
++/* Invalid handle. */
++#define ADSP_EHANDLE      0x00000008
++/* Operation is already processed. */
++#define ADSP_EALREADY     0x00000009
++/* Operation is not ready to be processed. */
++#define ADSP_ENOTREADY    0x0000000A
++/* Operation is pending completion. */
++#define ADSP_EPENDING     0x0000000B
++/* Operation could not be accepted or processed. */
++#define ADSP_EBUSY        0x0000000C
++/* Operation aborted due to an error. */
++#define ADSP_EABORTED     0x0000000D
++/* Operation preempted by a higher priority. */
++#define ADSP_EPREEMPTED   0x0000000E
++/* Operation requests intervention to complete. */
++#define ADSP_ECONTINUE    0x0000000F
++/* Operation requests immediate intervention to complete. */
++#define ADSP_EIMMEDIATE   0x00000010
++/* Operation is not implemented. */
++#define ADSP_ENOTIMPL     0x00000011
++/* Operation needs more data or resources. */
++#define ADSP_ENEEDMORE    0x00000012
++/* Operation does not have memory. */
++#define ADSP_ENOMEMORY    0x00000014
++/* Item does not exist. */
++#define ADSP_ENOTEXIST    0x00000015
++/* Max count for adsp error code sent to HLOS*/
++
++#endif /*__Q6DSP_ERR_NO_H__ */
 -- 
 2.16.2
