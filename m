@@ -1,39 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965063AbeEITFm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 15:05:42 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:53857 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964827AbeEITFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 15:05:40 -0400
-Date: Wed, 9 May 2018 21:05:36 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@savoirfairelinux.com, davem@davemloft.net, f.fainelli@gmail.com
-Subject: Re: [PATCH net-next 1/3] net: dsa: mv88e6xxx: add a cascade port op
-Message-ID: <20180509190536.GD21718@lunn.ch>
-References: <20180509153851.10207-1-vivien.didelot@savoirfairelinux.com>
- <20180509153851.10207-2-vivien.didelot@savoirfairelinux.com>
+        id S965458AbeEIT3H (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 15:29:07 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41221 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964931AbeEIT3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 15:29:06 -0400
+Subject: Re: [PATCH] x86: pad assembly functions with INT3
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+References: <20180507213755.GA32406@avx2>
+ <EF6BC538-EED3-4718-8AD2-DA2F60B580B1@zytor.com>
+ <20180509165517.GD16034@avx2>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <5682ec5f-5d95-4028-ecc5-99f92bcadd14@zytor.com>
+Date: Wed, 9 May 2018 12:28:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509153851.10207-2-vivien.didelot@savoirfairelinux.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180509165517.GD16034@avx2>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 11:38:49AM -0400, Vivien Didelot wrote:
-> Only the 88E6185 family has bits 15:12 Cascade Port bits in the Global
-> Control 2 register. Hence inconsistent values are actually written in
-> this register for other families.
+On 05/09/18 09:55, Alexey Dobriyan wrote:
+> On Mon, May 07, 2018 at 02:41:14PM -0700, hpa@zytor.com wrote:
+>>> -#define __ALIGN		.p2align 4, 0x90
+>>> +#define __ALIGN		.p2align 4, 0xCC
+>>
+>> Acked-by: H. Peter Anvin <h.peter.anvin@in tel.com>
 > 
-> Add a .set_cascade_port operation to isolate the 88E6185 case, and call
-> it from the device mapping setup function.
+> Thanks!
 > 
-> Signed-off-by: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+> If someone knows how to control _compiler_ inter-function padding,
+> please tell.
+> 
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+I think I have a gcc feature enhancement request for that. It can't be
+done without gcc's knowledge of when a fallthrough is happening (I
+presume you took that into account in your patch set.)
 
-    Andrew
+	-hpa
