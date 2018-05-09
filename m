@@ -1,120 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935587AbeEIUNR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 16:13:17 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:40224 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934932AbeEIUNP (ORCPT
+        id S965000AbeEIUbS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 16:31:18 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:34726 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934932AbeEIUbQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 16:13:15 -0400
-X-Google-Smtp-Source: AB8JxZqx8Mnoq/rWx0QhgPTGOYrnaLHY8+dFz8yZZF81hAhAbb7qxCMECBe93BHfTBH/8wpDI6X3og==
-Date: Wed, 9 May 2018 22:13:06 +0200
-From: Daniel Scheller <d.scheller.oss@gmail.com>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][media-next] media: ddbridge: avoid out-of-bounds write
- on array demod_in_use
-Message-ID: <20180509221306.708c2d52@lt530>
-In-Reply-To: <c7ea26b7-d743-f2bd-fd0d-41421ae2778d@canonical.com>
-References: <20180507230842.28409-1-colin.king@canonical.com>
-        <20180508123836.0b5c2f7f@lt530>
-        <c7ea26b7-d743-f2bd-fd0d-41421ae2778d@canonical.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 9 May 2018 16:31:16 -0400
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc: jgross@suse.com, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH v2 1/2] xen/PVH: Set up GS segment for stack canary
+Date: Wed,  9 May 2018 16:33:17 -0400
+Message-Id: <20180509203318.2611-2-boris.ostrovsky@oracle.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180509203318.2611-1-boris.ostrovsky@oracle.com>
+References: <20180509203318.2611-1-boris.ostrovsky@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8888 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=914
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805090191
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Colin,
+We are making calls to C code (e.g. xen_prepare_pvh()) which may use
+stack canary (stored in GS segment).
 
-Am Tue, 8 May 2018 11:39:56 +0100
-schrieb Colin Ian King <colin.king@canonical.com>:
+(We have to set the segment base to @canary at runtime just like
+head_32.S does, from where the code fragment is taken)
 
-> On 08/05/18 11:38, Daniel Scheller wrote:
-> > Hi Colin,
-> > 
-> > Am Tue,  8 May 2018 00:08:42 +0100
-> > schrieb Colin King <colin.king@canonical.com>:
-> >   
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> In function stop there is a check to see if state->demod is a stopped
-> >> value of 0xff, however, later on, array demod_in_use is indexed with
-> >> this value causing an out-of-bounds write error.  Avoid this by only
-> >> writing to array demod_in_use if state->demod is not set to the stopped
-> >> sentinal value for this specific corner case.  Also, replace the magic
-> >> value 0xff with DEMOD_STOPPED to make code more readable.
-> >>
-> >> Detected by CoverityScan, CID#1468550 ("Out-of-bounds write")
-> >>
-> >> Fixes: daeeb1319e6f ("media: ddbridge: initial support for MCI-based MaxSX8 cards")
-> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> >> ---
-> >>  drivers/media/pci/ddbridge/ddbridge-mci.c | 11 +++++++----
-> >>  1 file changed, 7 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/media/pci/ddbridge/ddbridge-mci.c b/drivers/media/pci/ddbridge/ddbridge-mci.c
-> >> index a85ff3e6b919..1f5ed53c8d35 100644
-> >> --- a/drivers/media/pci/ddbridge/ddbridge-mci.c
-> >> +++ b/drivers/media/pci/ddbridge/ddbridge-mci.c
-> >> @@ -20,6 +20,8 @@
-> >>  #include "ddbridge-io.h"
-> >>  #include "ddbridge-mci.h"
-> >>  
-> >> +#define DEMOD_STOPPED	(0xff)
-> >> +
-> >>  static LIST_HEAD(mci_list);
-> >>  
-> >>  static const u32 MCLK = (1550000000 / 12);
-> >> @@ -193,7 +195,7 @@ static int stop(struct dvb_frontend *fe)
-> >>  	u32 input = state->tuner;
-> >>  
-> >>  	memset(&cmd, 0, sizeof(cmd));
-> >> -	if (state->demod != 0xff) {
-> >> +	if (state->demod != DEMOD_STOPPED) {
-> >>  		cmd.command = MCI_CMD_STOP;
-> >>  		cmd.demod = state->demod;
-> >>  		mci_cmd(state, &cmd, NULL);
-> >> @@ -209,10 +211,11 @@ static int stop(struct dvb_frontend *fe)
-> >>  	state->base->tuner_use_count[input]--;
-> >>  	if (!state->base->tuner_use_count[input])
-> >>  		mci_set_tuner(fe, input, 0);
-> >> -	state->base->demod_in_use[state->demod] = 0;
-> >> +	if (state->demod != DEMOD_STOPPED)
-> >> +		state->base->demod_in_use[state->demod] = 0;
-> >>  	state->base->used_ldpc_bitrate[state->nr] = 0;
-> >> -	state->demod = 0xff;
-> >> -	state->base->assigned_demod[state->nr] = 0xff;
-> >> +	state->demod = DEMOD_STOPPED;
-> >> +	state->base->assigned_demod[state->nr] = DEMOD_STOPPED;
-> >>  	state->base->iq_mode = 0;
-> >>  	mutex_unlock(&state->base->tuner_lock);
-> >>  	state->started = 0;  
-> > 
-> > Thanks for the patch, or - better - pointing this out. While it's
-> > unlikely this will ever be an issue, I'm fine with changing the code
-> > like that, but I'd prefer to change it a bit differently (ie.
-> > DEMOD_STOPPED should be DEMOD_UNUSED, and I'd add defines for max.
-> > tuners and use/compare against them).  
-> 
-> Sounds like a good idea.
-> 
-> > 
-> > I'll send out a different patch that will cover the potential
-> > coverityscan problem throughout the end of the week.  
-> 
-> Great. Thanks!
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+---
+ arch/x86/xen/xen-pvh.S | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-JFYI, patch sent as part of a few other fixes and up at linux-media
-patchwork:
-
-https://patchwork.linuxtv.org/patch/49403/
-
-Best regards,
-Daniel Scheller
+diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/xen/xen-pvh.S
+index e1a5fbe..22d43eb 100644
+--- a/arch/x86/xen/xen-pvh.S
++++ b/arch/x86/xen/xen-pvh.S
+@@ -54,6 +54,9 @@
+  * charge of setting up it's own stack, GDT and IDT.
+  */
+ 
++#define PVH_GDT_ENTRY_CANARY	4
++#define PVH_CANARY_SEL		(PVH_GDT_ENTRY_CANARY * 8)
++
+ ENTRY(pvh_start_xen)
+ 	cld
+ 
+@@ -64,6 +67,17 @@ ENTRY(pvh_start_xen)
+ 	mov %eax,%es
+ 	mov %eax,%ss
+ 
++	/* Set base address in stack canary descriptor. */
++	movl _pa(gdt_start),%eax
++	movl $_pa(canary),%ecx
++	movw %cx, (PVH_GDT_ENTRY_CANARY * 8) + 0(%eax)
++	shrl $16, %ecx
++	movb %cl, (PVH_GDT_ENTRY_CANARY * 8) + 2(%eax)
++	movb %ch, (PVH_GDT_ENTRY_CANARY * 8) + 5(%eax)
++
++	mov $PVH_CANARY_SEL,%eax
++	mov %eax,%gs
++
+ 	/* Stash hvm_start_info. */
+ 	mov $_pa(pvh_start_info), %edi
+ 	mov %ebx, %esi
+@@ -150,9 +164,12 @@ gdt_start:
+ 	.quad GDT_ENTRY(0xc09a, 0, 0xfffff) /* __KERNEL_CS */
+ #endif
+ 	.quad GDT_ENTRY(0xc092, 0, 0xfffff) /* __KERNEL_DS */
++	.quad GDT_ENTRY(0x4090, 0, 0x18)    /* PVH_CANARY_SEL */
+ gdt_end:
+ 
+-	.balign 4
++	.balign 16
++canary:
++	.fill 24, 1, 0
+ early_stack:
+ 	.fill 256, 1, 0
+ early_stack_end:
 -- 
-https://github.com/herrnst
+2.9.3
