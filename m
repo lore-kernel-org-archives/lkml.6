@@ -1,292 +1,213 @@
-Return-Path: <ruslan.bilovol@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525903874; cv=none;
-        d=google.com; s=arc-20160816;
-        b=NBDe5dN2wqyM29ZeDmazXxH875HFkb8BV+5hrombEfsuYMFk1PJZl6fDH+wRLyOAWv
-         L8b0uojQxBTjiAdTXrdyyj0juB91zmVrQj5eaJp9JkuG5dAKgUT9R+4NX2vpkNhpWJgs
-         X9Ph1n1HmLiO7CMBx8CFx8mkphe+0rTm/InoJdGuALUdxHZNw9QVkPQdhpyHBwuAWVhz
-         iqz9+75OFGxOuztin5uQMmZDFRgho8sxW1zG0lU+XA+3tNbC/+pi8pnl+iTh6T9MhHY7
-         KlSniBwVn3gzZXdzWEnCNs0OJXlKycIeaSkS3sq4uAwOX1/GtJ4/1GpdE4PhiH57P6FD
-         RuWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=IeQSXC5YXaG5inp5oRMEEoVCRoJvQHqb1d7BcXVU9jQ=;
-        b=AeOKDvtnJFjIgnYsEe6kbhp/O/XLFNpZp1WjJm32YKqc2t0ZC95xPENhvPChNs1uic
-         jzOZ1YWl6ljyx0Ed6Pw/PS3A9PpBwWxvykuVadGL2xVSxjk2AJwMuV5ou6DDbPpUzkV7
-         9Wi72o05YMduU03a5Cl/H0WxihjNff2jYT7mAzhHbwFhVVpJehnx7UlnA96AQKox933F
-         Ea6vXDfkzk+Xb8YBakBCO8p8eEagTAfZHcdfyuy+zJfam+/ryf+cUWaeMbpaH0DiFMON
-         nyMZM+/f+ExpA9SyXDp4KGBim/AdqM3gKP9uocARamDmt3nosKndeg1rGgzB682Y+T4V
-         qC/Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=upujpKWw;
-       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=upujpKWw;
-       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZr7UMZ6/ECHXwNPsxErslu5XxzDBT7kbKbaeWfsJnyOgsg3vhuhLwHN+ovekWu4s/RqqYGkjg9njP0PY/dWG/I=
-MIME-Version: 1.0
-In-Reply-To: <52c0eb21-0a69-7a2b-da8a-2d33ad4e11d2@codethink.co.uk>
-References: <20180424172445.31928-2-jorge.sanjuan@codethink.co.uk>
- <20180427170649.27334-1-jorge.sanjuan@codethink.co.uk> <CAB=otbRKf57D52VRZgE=4XCLYaT9xE7eNsyLrBqmaghgB7LCfQ@mail.gmail.com>
- <52c0eb21-0a69-7a2b-da8a-2d33ad4e11d2@codethink.co.uk>
-From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
-Date: Thu, 10 May 2018 01:11:13 +0300
-Message-ID: <CAB=otbRqvHPsqbgqV2_Z9c3nf73AFNrcNhV_se_Hn26TbYHfww@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] ALSA: usb-audio: UAC3. Add support for mixer unit.
-To: Jorge <jorge.sanjuan@codethink.co.uk>
-Cc: Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-970685-1525898702-2-8302356584351431722
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525898701; b=iJRvfrCAEgHa6KZMD/jerVj3AjrISupe3dD5v3VHuDQxvQpRJj
+    MPgn+6INfHWqdpQI4W7sGLdtqFjUhPkYj5TkMwYOkw2Z6wBR2Ht3dHnvlyXXFSRx
+    GEb+o8NC2/ed3ndEhazmcwaNtcNHi7t0XiF5NAJmFii8yBcBk3Hr9EKYBHajbVJr
+    61EiXWQlCnGbFLFSc6YXIhtEyZHfkRDXhnsGZeB9DKT1wRN1qBC3VHLVSJAs0peP
+    TRTE4iIVEnU7BpQ52MfOYlGlF2SPTXCpLx4cbWp7hiq2rAjNGzp5K2NWkoaQ+AK5
+    ai2D8OmjnRWkX9rWsKI6855MWMX8ZBKM5fJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525898701; bh=JpR9Gl5pqTkvCf05pdxZcoUpe1T9Sf
+    yoCNOXq26bQx4=; b=jUXbz4Or5untlEURmgmqoIUxj7O4B+gMQ9OYOGcAGuUbzB
+    QOZ1gi1RqAzw6GfJvSN95q4xBTzQEHeBftwcdUWhD7UTNDYCzSyExQ/4aI9FN6wF
+    wdLpFJngH3008H0Ltyd/sTnEuOW1LvWqzW31LJgRrTNtEcmHXxZPwTwjiEEbIx49
+    p90avUJ5a180PTkx9d/uMChwWBAzOiIHBuDnoKfW7cFMgknO0ojl29toBJCPcL+f
+    arx5kGNSBslrOl1faQ2OAS9sO3krRE8zzAOCt7GtsjwQ6NcDDFYkE+q5u2FUF1R+
+    u5d1DnFXA+RJ1UMtgZr4+TiLup6IBBrhgwW73zrA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=chromium.org header.i=@chromium.org header.b=Rf81FNBa
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=EML3DVJ7;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=chromium.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=chromium.org header.i=@chromium.org header.b=Rf81FNBa
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=EML3DVJ7;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=chromium.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfMXr9dQUtfzZz/sncuvpWMjKLyNgqwpBQEmta+Ugob1eLQsVOMAwhZw531OHW0aKqbqSwwSOPkEkZoC2wbgc9Y7BBHX69Q00HsJJqbElSwJFYBSZyrAP
+    iH8bT7sFZVODD4g4IZcW58gTADmfr2NLMjTH4K9GH09pUjKYpwpCa8h3BtZzC3jrjwGdtIMJ4SVsq4h0RjbpKsuYOqpMDI7FUHnY9v6TZb1nr04y0WdIrZF9
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
+    a=cm27Pg_UAAAA:8 a=OLL_FvSJAAAA:8 a=VwQbUJbxAAAA:8 a=GjtXIiNx2l-0IVn_ssMA:9
+    a=Ec-IJR0R58AA:10 a=x8gzFH9gYPwA:10 a=AWcnj_ag4PAA:10
+    a=xmb-EsYY8bH0VWELuYED:22 a=oIrB72frpwYPwTMnlWqB:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S964793AbeEIUo6 (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 9 May 2018 16:44:58 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:40719 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935475AbeEIUo5 (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Wed, 9 May 2018 16:44:57 -0400
+X-Google-Smtp-Source: AB8JxZoVvSPuZIrcNpykAzm/K/Llax6QSoXnJ6KcC+qeUN75QR2SRP/2zcZazRUjmBzufenBETkZ/Q==
+From: Evan Green <evgreen@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        Doug Anderson <dianders@chromium.org>
+Cc: Evan Green <evgreen@chromium.org>
+Subject: [PATCH] tty: serial: msm_geni_serial: Fix TX infinite loop
+Date: Wed,  9 May 2018 13:44:29 -0700
+Message-Id: <20180509204429.62778-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.13.5
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598285487518505397?=
-X-GMAIL-MSGID: =?utf-8?q?1600026181265324933?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 8, 2018 at 12:43 PM, Jorge <jorge.sanjuan@codethink.co.uk> wrote:
->
->
-> On 04/05/18 01:57, Ruslan Bilovol wrote:
->>
->> On Fri, Apr 27, 2018 at 8:06 PM, Jorge Sanjuan
->> <jorge.sanjuan@codethink.co.uk> wrote:
->>>
->>> This adds support for the MIXER UNIT in UAC3. All the information
->>> is obtained from the (HIGH CAPABILITY) Cluster's header. We don't
->>> read the rest of the logical cluster to obtain the channel config
->>> as that wont make any difference in the current mixer behaviour.
->>>
->>> The name of the mixer unit is not yet requested as there is not
->>> support for the UAC3 Class Specific String requests.
->>>
->>> Tested in an UAC3 device working as a HEADSET with a basic mixer
->>> unit (same as the one in the BADD spec) with no controls.
->>
->>
->> So, after deeper looking into the code and after testing this patch,
->> in your usecase (mixer with no controls) you'll never execute
->> build_mixer_unit_ctl(), correct? So did you try to just fix issues with
->> incorrect parsing of mixer unit descriptor?
->>
->>>
->>> Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
->>> ---
->>>   include/uapi/linux/usb/audio.h | 19 +++++++--
->>>   sound/usb/mixer.c              | 88
->>> ++++++++++++++++++++++++++++++++++++++----
->>>   2 files changed, 97 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/include/uapi/linux/usb/audio.h
->>> b/include/uapi/linux/usb/audio.h
->>> index 3a78e7145689..13d98e6e0db1 100644
->>> --- a/include/uapi/linux/usb/audio.h
->>> +++ b/include/uapi/linux/usb/audio.h
->>> @@ -285,9 +285,22 @@ static inline __u8
->>> uac_mixer_unit_iChannelNames(struct uac_mixer_unit_descriptor
->>>   static inline __u8 *uac_mixer_unit_bmControls(struct
->>> uac_mixer_unit_descriptor *desc,
->>>                                                int protocol)
->>>   {
->>> -       return (protocol == UAC_VERSION_1) ?
->>> -               &desc->baSourceID[desc->bNrInPins + 4] :
->>> -               &desc->baSourceID[desc->bNrInPins + 6];
->>> +       switch (protocol) {
->>> +       case UAC_VERSION_1:
->>> +               return &desc->baSourceID[desc->bNrInPins + 4];
->>> +       case UAC_VERSION_2:
->>> +               return &desc->baSourceID[desc->bNrInPins + 6];
->>> +       case UAC_VERSION_3:
->>> +               return &desc->baSourceID[desc->bNrInPins + 2];
->>> +       default:
->>> +               return NULL;
->>> +       }
->>> +}
->>> +
->>> +static inline __u16 uac3_mixer_unit_wClusterDescrID(struct
->>> uac_mixer_unit_descriptor *desc)
->>> +{
->>> +       return (desc->baSourceID[desc->bNrInPins + 1] << 8) |
->>> +               desc->baSourceID[desc->bNrInPins];
->>>   }
->>>
->>>   static inline __u8 uac_mixer_unit_iMixer(struct
->>> uac_mixer_unit_descriptor *desc)
->>> diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
->>> index 301ad61ed426..3503f4840ec3 100644
->>> --- a/sound/usb/mixer.c
->>> +++ b/sound/usb/mixer.c
->>> @@ -719,6 +719,66 @@ static int get_term_name(struct mixer_build *state,
->>> struct usb_audio_term *iterm
->>>   }
->>>
->>>   /*
->>> + * Get logical cluster information for UAC3 devices.
->>> + */
->>> +static int get_cluster_channels_v3(struct mixer_build *state, unsigned
->>> int cluster_id)
->>> +{
->>> +       struct uac3_cluster_header_descriptor c_header;
->>> +       int err;
->>> +
->>> +       err = snd_usb_ctl_msg(state->chip->dev,
->>> +                       usb_rcvctrlpipe(state->chip->dev, 0),
->>> +                       UAC3_CS_REQ_HIGH_CAPABILITY_DESCRIPTOR,
->>> +                       USB_RECIP_INTERFACE | USB_TYPE_CLASS |
->>> USB_DIR_IN,
->>> +                       cluster_id,
->>> +                       snd_usb_ctrl_intf(state->chip),
->>> +                       &c_header, sizeof(c_header));
->>> +       if (err < 0)
->>> +               goto error;
->>> +       if (err != sizeof(c_header)) {
->>> +               err = -EIO;
->>> +               goto error;
->>> +       }
->>> +
->>> +       return c_header.bNrChannels;
->>> +
->>> +error:
->>> +       usb_audio_err(state->chip, "cannot request logical cluster ID: %d
->>> (err: %d)\n", cluster_id, err);
->>> +       return err;
->>> +}
->>> +
->>> +/*
->>> + * Get number of channels for a Mixer Unit.
->>> + */
->>> +static int uac_mixer_unit_get_channels(struct mixer_build *state,
->>> +                                      struct uac_mixer_unit_descriptor
->>> *desc)
->>> +{
->>> +       int mu_channels;
->>> +
->>> +       if (desc->bLength < 11)
->>> +               return -EINVAL;
->>> +       if (!desc->bNrInPins)
->>> +               return -EINVAL;
->>> +
->>> +       switch (state->mixer->protocol) {
->>> +       case UAC_VERSION_1:
->>> +       case UAC_VERSION_2:
->>> +       default:
->>> +               mu_channels = uac_mixer_unit_bNrChannels(desc);
->>> +               break;
->>> +       case UAC_VERSION_3:
->>> +               mu_channels = get_cluster_channels_v3(state,
->>> +                               uac3_mixer_unit_wClusterDescrID(desc));
->>> +               break;
->>> +       }
->>> +
->>> +       if (!mu_channels)
->>> +               return -EINVAL;
->>> +
->>> +       return mu_channels;
->>> +}
->>> +
->>> +/*
->>>    * parse the source unit recursively until it reaches to a terminal
->>>    * or a branched unit.
->>>    */
->>> @@ -865,6 +925,18 @@ static int check_input_term(struct mixer_build
->>> *state, int id,
->>>                                  term->name =
->>> le16_to_cpu(d->wClockSourceStr);
->>>                                  return 0;
->>>                          }
->>> +                       case UAC3_MIXER_UNIT: {
->>> +                               struct uac_mixer_unit_descriptor *d = p1;
->>> +
->>> +                               err = uac_mixer_unit_get_channels(state,
->>> d);
->>> +                               if (err < 0)
->>> +                                       return err;
->>> +
->>> +                               term->channels = err;
->>> +                               term->type = d->bDescriptorSubtype << 16;
->>> /* virtual type */
->>> +
->>> +                               return 0;
->>> +                       }
->>>                          default:
->>>                                  return -ENODEV;
->>>                          }
->>> @@ -1797,11 +1869,10 @@ static int parse_audio_feature_unit(struct
->>> mixer_build *state, int unitid,
->>>    */
->>>   static void build_mixer_unit_ctl(struct mixer_build *state,
->>>                                   struct uac_mixer_unit_descriptor *desc,
->>> -                                int in_pin, int in_ch, int unitid,
->>> -                                struct usb_audio_term *iterm)
->>> +                                int in_pin, int in_ch, int num_outs,
->>> +                                int unitid, struct usb_audio_term
->>> *iterm)
->>>   {
->>>          struct usb_mixer_elem_info *cval;
->>> -       unsigned int num_outs = uac_mixer_unit_bNrChannels(desc);
->>>          unsigned int i, len;
->>>          struct snd_kcontrol *kctl;
->>>          const struct usbmix_name_map *map;
->>> @@ -1878,14 +1949,17 @@ static int parse_audio_mixer_unit(struct
->>> mixer_build *state, int unitid,
->>>          int input_pins, num_ins, num_outs;
->>>          int pin, ich, err;
->>>
->>> -       if (desc->bLength < 11 || !(input_pins = desc->bNrInPins) ||
->>> -           !(num_outs = uac_mixer_unit_bNrChannels(desc))) {
->>> +       err = uac_mixer_unit_get_channels(state, desc);
->>> +       if (err < 0) {
->>>                  usb_audio_err(state->chip,
->>>                                "invalid MIXER UNIT descriptor %d\n",
->>>                                unitid);
->>> -               return -EINVAL;
->>> +               return err;
->>>          }
->>>
->>> +       num_outs = err;
->>> +       input_pins = desc->bNrInPins;
->>> +
->>>          num_ins = 0;
->>>          ich = 0;
->>>          for (pin = 0; pin < input_pins; pin++) {
->>> @@ -1912,7 +1986,7 @@ static int parse_audio_mixer_unit(struct
->>> mixer_build *state, int unitid,
->>>                                  }
->>>                          }
->>>                          if (ich_has_controls)
->>> -                               build_mixer_unit_ctl(state, desc, pin,
->>> ich,
->>> +                               build_mixer_unit_ctl(state, desc, pin,
->>> ich, num_outs,
->>>                                                       unitid, &iterm);
->>
->>
->> So with current sources we will never reach this place. In your
->> usecase (mixer with no
->> controls) it obviously won't go inside.
->> However, I created a mixer with controls but still
->> build_mixer_unit_ctl() isn't executed.
->> This is because UAC3 input terminal parsing always returns 0 channels,
->> this is
->> what still needs to be implemented (see comment "REVISIT: UAC3 IT doesn't
->> have channels/cfg" in check_input_term)
->
->
-> Thanks for testing this!
->
-> I missed that one with the number of input channels. Regarding the "REVISIT:
-> UAC3 IT doesn't have channels/cfg" comment, we can easily fix that using the
-> helper function I added in this patch for reading the logical cluster's
-> number of channels `get_cluster_channels_v3`. The channel config bitmap I
-> don't see it being used at all so parsing iterm.channels should be enough.
-> Any thoughts?
->
+The GENI serial driver handled transmit by leaving stuff in the
+common circular buffer until it had completely caught up to the head,
+then clearing it out all at once. This is a suboptimal way to do
+transmit, as it leaves data in the circular buffer that could be
+freed. Moreover, the logic implementing it is wrong, and it is easy to
+get into a situation where the UART infinitely writes out the same buffer.
 
-I looked into the sources, it seems you are right, we need only number of
-channels to proceed with mixer unit created.
+I could reproduce infinite serial output of the same buffer by running
+dmesg, then hitting Ctrl-C. I believe what happened is xmit_size was
+something large, marching towards a larger value. Then the generic OS
+code flushed out the buffer and replaced it with two characters. Now the
+xmit_size is a large value marching towards a small value, which it wasn't
+expecting. The driver subtracts xmit_size (very large) from
+uart_circ_chars_pending (2), underflows, and repeats ad nauseum. The
+locking isn't wrong here, as the locks are held whenever the buffer is
+manipulated, it's just that the driver wasn't expecting the buffer to be
+flushed out from underneath it in between transmits.
 
-I can hack your patch and test it in a few days, or feel free to send v4
+This change reworks transmit to grab what it can from the circular buffer,
+and then update ->tail, both fixing the underflow and freeing up space
+for a smoother circular experience.
 
-Thanks,
-Ruslan
+Signed-off-by: Evan Green <evgreen@chromium.org>
+---
+
+Note: This patch applies on top of Karthik's series of 8 fixup patches,
+which seem basically ready to go, at:
+
+https://www.spinics.net/lists/linux-arm-msm/msg36561.html
+
+Karthik had some concerns here in that apparently he had done it the way it
+was on purpose in order to avoid a watchdog timeout with very large kernel
+logs. Doug's and my best interpretation of his explanation is that maybe the
+UART is so fast, and the FIFO is potentially only 16 bytes wide, so by the
+time the data has been loaded up into the FIFO and the interrupt handler
+returns, the UART has finished and the interrupt fires again immediately.
+His original solution works because the buffer fills up completely,
+and handle_tx calls stop_tx and uart_write_wakeup, which usually happens to
+take enough time to let the interrupting core schedule something.
+
+The old way this driver was doing it, artificially letting the circular buffer
+balloon up and eventually pop, still seems like the wrong approach to me.
+Perhaps this means that DMA mode should be considered, or a threaded irq,
+or at least a larger FIFO. Or perhaps smaller kernel logs.
+
+ drivers/tty/serial/qcom_geni_serial.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index 9d773a991369..f296a62bd811 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -98,7 +98,6 @@ struct qcom_geni_serial_port {
+ 	enum geni_se_xfer_mode xfer_mode;
+ 	bool setup;
+ 	int (*handle_rx)(struct uart_port *uport, u32 bytes, bool drop);
+-	unsigned int xmit_size;
+ 	unsigned int baud;
+ 	unsigned int tx_bytes_pw;
+ 	unsigned int rx_bytes_pw;
+@@ -462,7 +461,6 @@ static void qcom_geni_serial_stop_tx(struct uart_port *uport)
+ 		writel_relaxed(0, uport->membase +
+ 				     SE_GENI_TX_WATERMARK_REG);
+ 	}
+-	port->xmit_size = 0;
+ 	writel_relaxed(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
+ 	status = readl_relaxed(uport->membase + SE_GENI_STATUS);
+ 	/* Possible stop tx is called multiple times. */
+@@ -592,16 +590,13 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport)
+ 	chunk = uart_circ_chars_pending(xmit);
+ 	status = readl_relaxed(uport->membase + SE_GENI_TX_FIFO_STATUS);
+ 	/* Both FIFO and framework buffer are drained */
+-	if (chunk == port->xmit_size && !status) {
+-		port->xmit_size = 0;
+-		uart_circ_clear(xmit);
++	if (!chunk && !status) {
+ 		qcom_geni_serial_stop_tx(uport);
+ 		goto out_write_wakeup;
+ 	}
+-	chunk -= port->xmit_size;
+ 
+ 	avail = (port->tx_fifo_depth - port->tx_wm) * port->tx_bytes_pw;
+-	tail = (xmit->tail + port->xmit_size) & (UART_XMIT_SIZE - 1);
++	tail = xmit->tail;
+ 	chunk = min3((size_t)chunk, (size_t)(UART_XMIT_SIZE - tail), avail);
+ 	if (!chunk)
+ 		goto out_write_wakeup;
+@@ -622,14 +617,16 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport)
+ 		iowrite32_rep(uport->membase + SE_GENI_TX_FIFOn, buf, 1);
+ 
+ 		i += tx_bytes;
+-		tail = (tail + tx_bytes) & (UART_XMIT_SIZE - 1);
++		tail += tx_bytes;
+ 		uport->icount.tx += tx_bytes;
+ 		remaining -= tx_bytes;
+ 	}
++
++	xmit->tail = tail & (UART_XMIT_SIZE - 1);
+ 	qcom_geni_serial_poll_tx_done(uport);
+-	port->xmit_size += chunk;
+ out_write_wakeup:
+-	uart_write_wakeup(uport);
++	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
++		uart_write_wakeup(uport);
+ }
+ 
+ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
+-- 
+2.17.0.441.gb46fe60e1d-goog
+
