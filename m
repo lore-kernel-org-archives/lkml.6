@@ -1,117 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964956AbeEISth (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 14:49:37 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:33839 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935467AbeEIStf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 14:49:35 -0400
-X-Google-Smtp-Source: AB8JxZqOYWw1tJBt9Gb4uu2uwMczm06iHlGm44+DhdyvwhaGVoUlny+6GY+U4T0LoaKwrxPoDjcMw9u3B3wY4aJDTEo=
-MIME-Version: 1.0
-In-Reply-To: <b481bbb2-758f-dcd3-3e1a-8b3137081614@rasmusvillemoes.dk>
-References: <20180509004229.36341-1-keescook@chromium.org> <20180509004229.36341-4-keescook@chromium.org>
- <b481bbb2-758f-dcd3-3e1a-8b3137081614@rasmusvillemoes.dk>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 9 May 2018 11:49:33 -0700
-X-Google-Sender-Auth: 2Q_dtZqgC8JhnTyC66QDL_Tfv0w
-Message-ID: <CAGXu5jJFdDOJAxN+zsRmCMRRQd=rLR6Qpo8pbeBtUmsM32Gh+Q@mail.gmail.com>
-Subject: Re: [PATCH 03/13] overflow.h: Add allocation size calculation helpers
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S964949AbeEISvI convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 14:51:08 -0400
+Received: from smtp1-3.goneo.de ([85.220.129.32]:33663 "EHLO smtp1-3.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935528AbeEISvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 14:51:06 -0400
+X-Spam-Flag: NO
+X-Spam-Score: -2.773
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH 13/18] wait: wait.h: Get rid of a kernel-doc/Sphinx
+ warnings
+From: Markus Heiser <markus.heiser@darmarit.de>
+In-Reply-To: <20180509123540.083b61d2@lwn.net>
+Date: Wed, 9 May 2018 20:50:56 +0200
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <B01BA9C9-2EB8-4B02-A78A-21CACC78143B@darmarit.de>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+ <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
+ <20180509084120.GF12217@hirez.programming.kicks-ass.net>
+ <20180509084518.247650e2@lwn.net>
+ <20180509152026.GA12198@hirez.programming.kicks-ass.net>
+ <20180509123540.083b61d2@lwn.net>
+To: Peter Zijlstra <peterz@infradead.org>
+X-Mailer: Apple Mail (2.3273)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 11:27 AM, Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
-> On 2018-05-09 02:42, Kees Cook wrote:
->> In preparation for replacing unchecked overflows for memory allocations,
->> this creates helpers for the 3 most common calculations:
->>
->> array_size(a, b): 2-dimensional array
->> array3_size(a, b, c): 2-dimensional array
->
-> yeah... complete confusion...
->
->> +/**
->> + * array_size() - Calculate size of 2-dimensional array.
->> + *
->> + * @a: dimension one
->> + * @b: dimension two
->> + *
->> + * Calculates size of 2-dimensional array: @a * @b.
->> + *
->> + * Returns: number of bytes needed to represent the array or SIZE_MAX on
->> + * overflow.
->> + */
->> +static inline __must_check size_t array_size(size_t a, size_t b)
->> +{
->> +     size_t bytes;
->> +
->> +     if (check_mul_overflow(a, b, &bytes))
->> +             return SIZE_MAX;
->> +
->> +     return bytes;
->> +}
->> +
->> +/**
->> + * array3_size() - Calculate size of 3-dimensional array.
->> + *
->
-> ...IDGI. array_size is/will most often be used to calculate the size of
-> a one-dimensional array, count*elemsize, accessed as foo[i]. Won't a
-> three-factor product usually be dim1*dim2*elemsize, i.e. 2-dimensional,
-> accessed (because C is lame) as foo[i*dim2 + j]?
 
-I was thinking of byte addressing, not object addressing. I can
-rewrite this to be less confusing.
+> Am 09.05.2018 um 20:35 schrieb Jonathan Corbet <corbet@lwn.net>:
+> 
+>> Why should I care for people not using text editors to write code?
 
->> +/**
->> + * struct_size() - Calculate size of structure with trailing array.
->> + * @p: Pointer to the structure.
->> + * @member: Name of the array member.
->> + * @n: Number of elements in the array.
->> + *
->> + * Calculates size of memory needed for structure @p followed by an
->> + * array of @n @member elements.
->> + *
->> + * Return: number of bytes needed or SIZE_MAX on overflow.
->> + */
->> +#define struct_size(p, member, n)                                    \
->> +     __ab_c_size(n,                                                  \
->> +                 sizeof(*(p)->member) + __must_be_array((p)->member),\
->> +                 offsetof(typeof(*(p)), member))
->> +
->> +
->
-> struct s { int a; char b; char c[]; } has sizeof > offsetof(c), so for
-> small enough n, we end up allocating less than sizeof(struct s). And the
-> caller might reasonably do memset(s, 0, sizeof(*s)) to initialize all
-> members before c. In practice our allocators round up to a multiple of
-> 8, so I don't think it's a big problem, but some sanitizer might
-> complain. But I do think you should make that addend sizeof() instead of
-> offsetof().
+Eh? .. why must readers write code?
 
-Erg. Yeah, I think we'd best "round up". Besides the "< sizeof()" vs
-memset() case you mention, another pattern I've seen is doing stuff
-like:
+We have rules how to write kernel-doc markup since the beginning of the century.
+If you do not want to contribute kernel-doc markups, then just leave it, change
+your comment start-tag to
 
-array = (array_type *)(thing + 1);
+ /*
 
-So if padding somehow caused us to under-allocate, we'll get it wrong there too.
+and feel free to type what ever you want. Sorry, but this discussion is superfluous.
 
-I'll change this to be strictly sizeof(*(p)).
-
-(Though it might be nice to enforce that "member" is at the end of the
-structure, though, otherwise this could be misused for struct s { int
-a; char c[2]; char b[]; } ... )
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+-- Markus -
