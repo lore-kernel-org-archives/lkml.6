@@ -1,451 +1,79 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525176641; cv=none;
+Return-Path: <bgoswami@codeaurora.org>
+X-Google-Smtp-Source: AB8JxZr3wU7Sr5mmXPTo2+3AVDHtO+cBhm7LHKvvOZsrcg3ArsffCZHrzZiXyKfAfuA2t3rZHKPh
+ARC-Seal: i=1; a=rsa-sha256; t=1525840193; cv=none;
         d=google.com; s=arc-20160816;
-        b=B4gcV7VTM1PRjjpNSsU0QNJfm0lJQwRPe86+L0HIirC5cPPisrbw7Nt0IkVqDJD+kp
-         4LYrc4ria9u2Iyzp4Lla6hQqkqDAvuF6m2Xx9P0itRBSJSPK89Po6NshB9t63+JyITqd
-         XgvBaGAl3ZksohQ6yWCZ6ceJoVHxeEhj8T9c4FGNpbJuX5w2F832iso8I9lwwK4ts8VL
-         e0gsvH6ZNP1Al7iEAtDWIHWUpXA5CKeskgb7gur1Hc/F9cle4WvtYEuRc7EvCV47Rmhr
-         WOwrmSN/qUuigMstRtL9qTw7PsBY8db+BNMAmhC2NCwzGT/rYWYcUBFfCPyomkmBxMF+
-         krZg==
+        b=XOAEKR9pA3BZugGnIogQxYJ0ThFh+ukvT9eVxIHJNbEk20tXhIITtOpQc37DnOIDAs
+         mnobgBadH5lSjT2bo9dXqVjpN8M8kXxuS+iB+7fQE3Avd8ycoYJh/kJ5zIEwnAi4gK2M
+         66XQnSjv+i1joASIf4ml+/UdnpRuE5543t/0NbnkjlkkMS0PHSicDkCAE5VTU7LUX2Ur
+         v/sf3PdtVQWyZmQYeNJhG811ALdj/4OyHbvw2dtdiTwxkVP+7owxERXEnHBnwpo9WQ1w
+         gqjYMAcBUyU9kOYiwZs2JZvBhasD6Ovvh97A4xMZc9OiW7Sd9WxdiK39XNNYskCD0Hqa
+         ofSg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=O+KJBlZsnP+IMMf5ADUvQnfPbQO5TeyroHKahBC5hYk=;
-        b=Vw5vzt5Nuk2jrJGPSsVqD//0iNx1Ztz/qkmLUPgJplj02VlYDJFJf14hS0QUWrXO4N
-         opFDcSg1FqdR+7LPGrhLO99uhsljLWLht13MzO8wQdvZaf2o2bNQT2q5KMAUmyHIOUFe
-         OBvtV/AHAvybzDiAE2KWFh29nKaXJDjwcMMS11fdGZImX0D8lmgFgJClEHFqain0jfcs
-         Xmi0ZInJAAzW8M3wGun2c+AhfBI1RWCyN3hYHkIbX3idA1yqPi04mVT/eNw58kFVpeTs
-         HivWxbkJWGZDw2JQ57OZoCJ9KiAAheqawe2Zow4v3FmXOIrkHKtneqwR/50rVTqWMwin
-         Iwlg==
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=Mx0VZMPSXFqaGJXhdzxjiBCQkvXKgQZm8M4pBV8wjKk=;
+        b=0gOO/kusyvTMx4FvSLcPH6v9t3Xbqh6B6guan7Yitti21ozGqTlgkeKJv4RJDbNOaB
+         4CmUuNDurEDWurJMIPfpOcvAo3dTX1uBTSSBqJQv0gHGOl1CBEYZXlwmzUZ0niO2tnPr
+         OnOKjHuw0S58eNVDziJh6NaBAZIoNbETNg+1K80GuVWM8WbOmbJMtGkauTgYn6m0pAGJ
+         i3RzV05rmQic2y46KbhQGs9s4K4pa0Erp3S5vVe3eA/eSPfRVAQyLUM2JD9Rjbjz5+dm
+         o1IpLLKiYQIqU7Tlb/d8ch0MwpZGydAmptl70UwQgxwvvHtnOyjpYPmChJMJsYRsYQ4D
+         AN4A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Me4/ieuj;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=AgL1gdab;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=ZVZMq1dh;
+       spf=pass (google.com: domain of bgoswami@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=bgoswami@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Me4/ieuj;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZoJlpqxDRPYfcwafRMNfYuDlKGHXfZ19wtGKW7roWIhMQS4HCoCNpdY6SYXy+uGVPr/XK8aKg==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: andy.gross@linaro.org,
-	broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	robh+dt@kernel.org,
-	bgoswami@codeaurora.org
-Cc: gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v7 12/24] ASoC: qdsp6: q6afe: Add support to MI2S sysclks
-Date: Tue,  1 May 2018 13:08:08 +0100
-Message-Id: <20180501120820.11016-13-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180501120820.11016-1-srinivas.kandagatla@linaro.org>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=AgL1gdab;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=ZVZMq1dh;
+       spf=pass (google.com: domain of bgoswami@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=bgoswami@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 91BE76022C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgoswami@codeaurora.org
+Subject: Re: [PATCH v7 12/24] ASoC: qdsp6: q6afe: Add support to MI2S sysclks
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ andy.gross@linaro.org, broonie@kernel.org, linux-arm-msm@vger.kernel.org,
+ alsa-devel@alsa-project.org, robh+dt@kernel.org
+Cc: gregkh@linuxfoundation.org, david.brown@linaro.org, mark.rutland@arm.com,
+ lgirdwood@gmail.com, plai@codeaurora.org, tiwai@suse.com, perex@perex.cz,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
+ spatakok@qti.qualcomm.com
 References: <20180501120820.11016-1-srinivas.kandagatla@linaro.org>
+ <20180501120820.11016-13-srinivas.kandagatla@linaro.org>
+From: Banajit Goswami <bgoswami@codeaurora.org>
+Message-ID: <5e4cd4a7-c375-4b92-f28b-f34900a828a8@codeaurora.org>
+Date: Tue, 8 May 2018 21:29:50 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180501120820.11016-13-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599263622353025330?=
-X-GMAIL-MSGID: =?utf-8?q?1599263622353025330?=
+X-GMAIL-MSGID: =?utf-8?q?1599959406924610145?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch adds support to LPASS Bit clock, LPASS Digital
-core clock and OSR clock. These clocks are required for both
-MI2S and PCM setup.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
----
- sound/soc/qcom/qdsp6/q6afe.c | 171 +++++++++++++++++++++++++++++++++++++++++--
- sound/soc/qcom/qdsp6/q6afe.h | 131 +++++++++++++++++++++++++++++++++
- 2 files changed, 295 insertions(+), 7 deletions(-)
+On 5/1/2018 5:08 AM, Srinivas Kandagatla wrote:
+> This patch adds support to LPASS Bit clock, LPASS Digital
+> core clock and OSR clock. These clocks are required for both
+> MI2S and PCM setup.
+>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
+> ---
+>   sound/soc/qcom/qdsp6/q6afe.c | 171 +++++++++++++++++++++++++++++++++++++++++--
+>   sound/soc/qcom/qdsp6/q6afe.h | 131 +++++++++++++++++++++++++++++++++
+>   2 files changed, 295 insertions(+), 7 deletions(-)
+>
+>
+Acked-by: Banajit Goswami <bgoswami@codeaurora.org>
 
-diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
-index ceb18aaa5af4..c2af806fbb93 100644
---- a/sound/soc/qcom/qdsp6/q6afe.c
-+++ b/sound/soc/qcom/qdsp6/q6afe.c
-@@ -33,6 +33,9 @@
- 
- #define AFE_PARAM_ID_CDC_SLIMBUS_SLAVE_CFG 0x00010235
- 
-+#define AFE_PARAM_ID_LPAIF_CLK_CONFIG	0x00010238
-+#define AFE_PARAM_ID_INT_DIGITAL_CDC_CLK_CONFIG	0x00010239
-+
- #define AFE_PARAM_ID_SLIMBUS_CONFIG    0x00010212
- #define AFE_PARAM_ID_I2S_CONFIG	0x0001020D
- 
-@@ -66,6 +69,11 @@
- #define AFE_PORT_ID_MULTICHAN_HDMI_RX	0x100E
- 
- #define AFE_API_VERSION_SLIMBUS_CONFIG 0x1
-+/* Clock set API version */
-+#define AFE_API_VERSION_CLOCK_SET 1
-+#define Q6AFE_LPASS_CLK_CONFIG_API_VERSION	0x1
-+#define AFE_MODULE_CLOCK_SET		0x0001028F
-+#define AFE_PARAM_ID_CLOCK_SET		0x00010290
- 
- /* SLIMbus Rx port on channel 0. */
- #define AFE_PORT_ID_SLIMBUS_MULTI_CHAN_0_RX      0x4000
-@@ -142,6 +150,13 @@ struct afe_port_param_data_v2 {
- 	u16 reserved;
- } __packed;
- 
-+struct afe_svc_cmd_set_param {
-+	uint32_t payload_size;
-+	uint32_t payload_address_lsw;
-+	uint32_t payload_address_msw;
-+	uint32_t mem_map_handle;
-+} __packed;
-+
- struct afe_port_cmd_set_param_v2 {
- 	u16 port_id;
- 	u16 payload_size;
-@@ -202,6 +217,23 @@ struct afe_param_id_slimbus_cfg {
-  */
- } __packed;
- 
-+struct afe_clk_cfg {
-+	u32                  i2s_cfg_minor_version;
-+	u32                  clk_val1;
-+	u32                  clk_val2;
-+	u16                  clk_src;
-+	u16                  clk_root;
-+	u16                  clk_set_mode;
-+	u16                  reserved;
-+} __packed;
-+
-+struct afe_digital_clk_cfg {
-+	u32                  i2s_cfg_minor_version;
-+	u32                  clk_val;
-+	u16                  clk_root;
-+	u16                  reserved;
-+} __packed;
-+
- struct afe_param_id_i2s_cfg {
- 	u32	i2s_cfg_minor_version;
- 	u16	bit_width;
-@@ -219,6 +251,16 @@ union afe_port_config {
- 	struct afe_param_id_i2s_cfg	i2s_cfg;
- } __packed;
- 
-+
-+struct afe_clk_set {
-+	uint32_t clk_set_minor_version;
-+	uint32_t clk_id;
-+	uint32_t clk_freq_in_hz;
-+	uint16_t clk_attri;
-+	uint16_t clk_root;
-+	uint32_t enable;
-+};
-+
- struct q6afe_port {
- 	wait_queue_head_t wait;
- 	union afe_port_config port_cfg;
-@@ -230,13 +272,6 @@ struct q6afe_port {
- 	struct list_head	node;
- };
- 
--struct afe_audioif_config_command {
--	struct apr_hdr hdr;
--	struct afe_port_cmd_set_param_v2 param;
--	struct afe_port_param_data_v2 pdata;
--	union afe_port_config pcfg;
--} __packed;
--
- struct afe_port_map {
- 	int port_id;
- 	int token;
-@@ -394,6 +429,54 @@ static int afe_apr_send_pkt(struct q6afe *afe, struct apr_pkt *pkt,
- 	return ret;
- }
- 
-+static int q6afe_port_set_param(struct q6afe_port *port, void *data,
-+				int param_id, int module_id, int psize)
-+{
-+	struct afe_svc_cmd_set_param *param;
-+	struct afe_port_param_data_v2 *pdata;
-+	struct q6afe *afe = port->afe;
-+	struct apr_pkt *pkt;
-+	u16 port_id = port->id;
-+	int ret, pkt_size;
-+	void *p, *pl;
-+
-+	pkt_size = APR_HDR_SIZE + sizeof(*param) + sizeof(*pdata) + psize;
-+	p = kzalloc(pkt_size, GFP_KERNEL);
-+	if (!p)
-+		return -ENOMEM;
-+
-+	pkt = p;
-+	param = p + APR_HDR_SIZE;
-+	pdata = p + APR_HDR_SIZE + sizeof(*param);
-+	pl = p + APR_HDR_SIZE + sizeof(*param) + sizeof(*pdata);
-+	memcpy(pl, data, psize);
-+
-+	pkt->hdr.hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
-+					   APR_HDR_LEN(APR_HDR_SIZE),
-+					   APR_PKT_VER);
-+	pkt->hdr.pkt_size = pkt_size;
-+	pkt->hdr.src_port = 0;
-+	pkt->hdr.dest_port = 0;
-+	pkt->hdr.token = port->token;
-+	pkt->hdr.opcode = AFE_SVC_CMD_SET_PARAM;
-+
-+	param->payload_size = sizeof(*pdata) + psize;
-+	param->payload_address_lsw = 0x00;
-+	param->payload_address_msw = 0x00;
-+	param->mem_map_handle = 0x00;
-+	pdata->module_id = module_id;
-+	pdata->param_id = param_id;
-+	pdata->param_size = psize;
-+
-+	ret = afe_apr_send_pkt(afe, pkt, port);
-+	if (ret)
-+		dev_err(afe->dev, "AFE enable for port 0x%x failed %d\n",
-+		       port_id, ret);
-+
-+	kfree(pkt);
-+	return ret;
-+}
-+
- static int q6afe_port_set_param_v2(struct q6afe_port *port, void *data,
- 				   int param_id, int psize)
- {
-@@ -443,6 +526,80 @@ static int q6afe_port_set_param_v2(struct q6afe_port *port, void *data,
- 	return ret;
- }
- 
-+static int q6afe_set_lpass_clock(struct q6afe_port *port,
-+				 struct afe_clk_cfg *cfg)
-+{
-+	return q6afe_port_set_param_v2(port, cfg,
-+				       AFE_PARAM_ID_LPAIF_CLK_CONFIG,
-+				       sizeof(*cfg));
-+}
-+
-+static int q6afe_set_lpass_clock_v2(struct q6afe_port *port,
-+				 struct afe_clk_set *cfg)
-+{
-+	return q6afe_port_set_param(port, cfg, AFE_PARAM_ID_CLOCK_SET,
-+				    AFE_MODULE_CLOCK_SET, sizeof(*cfg));
-+}
-+
-+static int q6afe_set_digital_codec_core_clock(struct q6afe_port *port,
-+					      struct afe_digital_clk_cfg *cfg)
-+{
-+	return q6afe_port_set_param_v2(port, cfg,
-+				       AFE_PARAM_ID_INT_DIGITAL_CDC_CLK_CONFIG,
-+				       sizeof(*cfg));
-+}
-+
-+int q6afe_port_set_sysclk(struct q6afe_port *port, int clk_id,
-+			  int clk_src, int clk_root,
-+			  unsigned int freq, int dir)
-+{
-+	struct afe_clk_cfg ccfg = {0,};
-+	struct afe_clk_set cset = {0,};
-+	struct afe_digital_clk_cfg dcfg = {0,};
-+	int ret;
-+
-+	switch (clk_id) {
-+	case LPAIF_DIG_CLK:
-+		dcfg.i2s_cfg_minor_version = AFE_API_VERSION_I2S_CONFIG;
-+		dcfg.clk_val = freq;
-+		dcfg.clk_root = clk_root;
-+		ret = q6afe_set_digital_codec_core_clock(port, &dcfg);
-+		break;
-+	case LPAIF_BIT_CLK:
-+		ccfg.i2s_cfg_minor_version = AFE_API_VERSION_I2S_CONFIG;
-+		ccfg.clk_val1 = freq;
-+		ccfg.clk_src = clk_src;
-+		ccfg.clk_root = clk_root;
-+		ccfg.clk_set_mode = Q6AFE_LPASS_MODE_CLK1_VALID;
-+		ret = q6afe_set_lpass_clock(port, &ccfg);
-+		break;
-+
-+	case LPAIF_OSR_CLK:
-+		ccfg.i2s_cfg_minor_version = AFE_API_VERSION_I2S_CONFIG;
-+		ccfg.clk_val2 = freq;
-+		ccfg.clk_src = clk_src;
-+		ccfg.clk_root = clk_root;
-+		ccfg.clk_set_mode = Q6AFE_LPASS_MODE_CLK2_VALID;
-+		ret = q6afe_set_lpass_clock(port, &ccfg);
-+		break;
-+	case Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT ... Q6AFE_LPASS_CLK_ID_INT_MCLK_1:
-+		cset.clk_set_minor_version = AFE_API_VERSION_CLOCK_SET;
-+		cset.clk_id = clk_id;
-+		cset.clk_freq_in_hz = freq;
-+		cset.clk_attri = clk_src;
-+		cset.clk_root = clk_root;
-+		cset.enable = !!freq;
-+		ret = q6afe_set_lpass_clock_v2(port, &cset);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(q6afe_port_set_sysclk);
-+
- /**
-  * q6afe_port_stop() - Stop a afe port
-  *
-diff --git a/sound/soc/qcom/qdsp6/q6afe.h b/sound/soc/qcom/qdsp6/q6afe.h
-index 3cb3bb4985a9..5ca54a9bdfd5 100644
---- a/sound/soc/qcom/qdsp6/q6afe.h
-+++ b/sound/soc/qcom/qdsp6/q6afe.h
-@@ -16,6 +16,134 @@
- #define AFE_MAX_CHAN_COUNT	8
- #define AFE_PORT_MAX_AUDIO_CHAN_CNT	0x8
- 
-+#define Q6AFE_LPASS_CLK_SRC_INTERNAL 1
-+#define Q6AFE_LPASS_CLK_ROOT_DEFAULT 0
-+
-+#define LPAIF_DIG_CLK	1
-+#define LPAIF_BIT_CLK	2
-+#define LPAIF_OSR_CLK	3
-+
-+/* Clock ID for Primary I2S IBIT */
-+#define Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT                          0x100
-+/* Clock ID for Primary I2S EBIT */
-+#define Q6AFE_LPASS_CLK_ID_PRI_MI2S_EBIT                          0x101
-+/* Clock ID for Secondary I2S IBIT */
-+#define Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT                          0x102
-+/* Clock ID for Secondary I2S EBIT */
-+#define Q6AFE_LPASS_CLK_ID_SEC_MI2S_EBIT                          0x103
-+/* Clock ID for Tertiary I2S IBIT */
-+#define Q6AFE_LPASS_CLK_ID_TER_MI2S_IBIT                          0x104
-+/* Clock ID for Tertiary I2S EBIT */
-+#define Q6AFE_LPASS_CLK_ID_TER_MI2S_EBIT                          0x105
-+/* Clock ID for Quartnery I2S IBIT */
-+#define Q6AFE_LPASS_CLK_ID_QUAD_MI2S_IBIT                         0x106
-+/* Clock ID for Quartnery I2S EBIT */
-+#define Q6AFE_LPASS_CLK_ID_QUAD_MI2S_EBIT                         0x107
-+/* Clock ID for Speaker I2S IBIT */
-+#define Q6AFE_LPASS_CLK_ID_SPEAKER_I2S_IBIT                       0x108
-+/* Clock ID for Speaker I2S EBIT */
-+#define Q6AFE_LPASS_CLK_ID_SPEAKER_I2S_EBIT                       0x109
-+/* Clock ID for Speaker I2S OSR */
-+#define Q6AFE_LPASS_CLK_ID_SPEAKER_I2S_OSR                        0x10A
-+
-+/* Clock ID for QUINARY  I2S IBIT */
-+#define Q6AFE_LPASS_CLK_ID_QUI_MI2S_IBIT			0x10B
-+/* Clock ID for QUINARY  I2S EBIT */
-+#define Q6AFE_LPASS_CLK_ID_QUI_MI2S_EBIT			0x10C
-+/* Clock ID for SENARY  I2S IBIT */
-+#define Q6AFE_LPASS_CLK_ID_SEN_MI2S_IBIT			0x10D
-+/* Clock ID for SENARY  I2S EBIT */
-+#define Q6AFE_LPASS_CLK_ID_SEN_MI2S_EBIT			0x10E
-+/* Clock ID for INT0 I2S IBIT  */
-+#define Q6AFE_LPASS_CLK_ID_INT0_MI2S_IBIT                       0x10F
-+/* Clock ID for INT1 I2S IBIT  */
-+#define Q6AFE_LPASS_CLK_ID_INT1_MI2S_IBIT                       0x110
-+/* Clock ID for INT2 I2S IBIT  */
-+#define Q6AFE_LPASS_CLK_ID_INT2_MI2S_IBIT                       0x111
-+/* Clock ID for INT3 I2S IBIT  */
-+#define Q6AFE_LPASS_CLK_ID_INT3_MI2S_IBIT                       0x112
-+/* Clock ID for INT4 I2S IBIT  */
-+#define Q6AFE_LPASS_CLK_ID_INT4_MI2S_IBIT                       0x113
-+/* Clock ID for INT5 I2S IBIT  */
-+#define Q6AFE_LPASS_CLK_ID_INT5_MI2S_IBIT                       0x114
-+/* Clock ID for INT6 I2S IBIT  */
-+#define Q6AFE_LPASS_CLK_ID_INT6_MI2S_IBIT                       0x115
-+
-+/* Clock ID for QUINARY MI2S OSR CLK  */
-+#define Q6AFE_LPASS_CLK_ID_QUI_MI2S_OSR                         0x116
-+
-+/* Clock ID for Primary PCM IBIT */
-+#define Q6AFE_LPASS_CLK_ID_PRI_PCM_IBIT                           0x200
-+/* Clock ID for Primary PCM EBIT */
-+#define Q6AFE_LPASS_CLK_ID_PRI_PCM_EBIT                           0x201
-+/* Clock ID for Secondary PCM IBIT */
-+#define Q6AFE_LPASS_CLK_ID_SEC_PCM_IBIT                           0x202
-+/* Clock ID for Secondary PCM EBIT */
-+#define Q6AFE_LPASS_CLK_ID_SEC_PCM_EBIT                           0x203
-+/* Clock ID for Tertiary PCM IBIT */
-+#define Q6AFE_LPASS_CLK_ID_TER_PCM_IBIT                           0x204
-+/* Clock ID for Tertiary PCM EBIT */
-+#define Q6AFE_LPASS_CLK_ID_TER_PCM_EBIT                           0x205
-+/* Clock ID for Quartery PCM IBIT */
-+#define Q6AFE_LPASS_CLK_ID_QUAD_PCM_IBIT                          0x206
-+/* Clock ID for Quartery PCM EBIT */
-+#define Q6AFE_LPASS_CLK_ID_QUAD_PCM_EBIT                          0x207
-+/* Clock ID for Quinary PCM IBIT */
-+#define Q6AFE_LPASS_CLK_ID_QUIN_PCM_IBIT                          0x208
-+/* Clock ID for Quinary PCM EBIT */
-+#define Q6AFE_LPASS_CLK_ID_QUIN_PCM_EBIT                          0x209
-+/* Clock ID for QUINARY PCM OSR  */
-+#define Q6AFE_LPASS_CLK_ID_QUI_PCM_OSR                            0x20A
-+
-+/** Clock ID for Primary TDM IBIT */
-+#define Q6AFE_LPASS_CLK_ID_PRI_TDM_IBIT                           0x200
-+/** Clock ID for Primary TDM EBIT */
-+#define Q6AFE_LPASS_CLK_ID_PRI_TDM_EBIT                           0x201
-+/** Clock ID for Secondary TDM IBIT */
-+#define Q6AFE_LPASS_CLK_ID_SEC_TDM_IBIT                           0x202
-+/** Clock ID for Secondary TDM EBIT */
-+#define Q6AFE_LPASS_CLK_ID_SEC_TDM_EBIT                           0x203
-+/** Clock ID for Tertiary TDM IBIT */
-+#define Q6AFE_LPASS_CLK_ID_TER_TDM_IBIT                           0x204
-+/** Clock ID for Tertiary TDM EBIT */
-+#define Q6AFE_LPASS_CLK_ID_TER_TDM_EBIT                           0x205
-+/** Clock ID for Quartery TDM IBIT */
-+#define Q6AFE_LPASS_CLK_ID_QUAD_TDM_IBIT                          0x206
-+/** Clock ID for Quartery TDM EBIT */
-+#define Q6AFE_LPASS_CLK_ID_QUAD_TDM_EBIT                          0x207
-+/** Clock ID for Quinary TDM IBIT */
-+#define Q6AFE_LPASS_CLK_ID_QUIN_TDM_IBIT                          0x208
-+/** Clock ID for Quinary TDM EBIT */
-+#define Q6AFE_LPASS_CLK_ID_QUIN_TDM_EBIT                          0x209
-+/** Clock ID for Quinary TDM OSR */
-+#define Q6AFE_LPASS_CLK_ID_QUIN_TDM_OSR                           0x20A
-+
-+/* Clock ID for MCLK1 */
-+#define Q6AFE_LPASS_CLK_ID_MCLK_1                                 0x300
-+/* Clock ID for MCLK2 */
-+#define Q6AFE_LPASS_CLK_ID_MCLK_2                                 0x301
-+/* Clock ID for MCLK3 */
-+#define Q6AFE_LPASS_CLK_ID_MCLK_3                                 0x302
-+/* Clock ID for MCLK4 */
-+#define Q6AFE_LPASS_CLK_ID_MCLK_4                                 0x304
-+/* Clock ID for Internal Digital Codec Core */
-+#define Q6AFE_LPASS_CLK_ID_INTERNAL_DIGITAL_CODEC_CORE            0x303
-+/* Clock ID for INT MCLK0 */
-+#define Q6AFE_LPASS_CLK_ID_INT_MCLK_0                             0x305
-+/* Clock ID for INT MCLK1 */
-+#define Q6AFE_LPASS_CLK_ID_INT_MCLK_1                             0x306
-+
-+/* Clock attribute for invalid use (reserved for internal usage) */
-+#define Q6AFE_LPASS_CLK_ATTRIBUTE_INVALID		0x0
-+/* Clock attribute for no couple case */
-+#define Q6AFE_LPASS_CLK_ATTRIBUTE_COUPLE_NO		0x1
-+/* Clock attribute for dividend couple case */
-+#define Q6AFE_LPASS_CLK_ATTRIBUTE_COUPLE_DIVIDEND	0x2
-+/* Clock attribute for divisor couple case */
-+#define Q6AFE_LPASS_CLK_ATTRIBUTE_COUPLE_DIVISOR	0x3
-+/* Clock attribute for invert and no couple case */
-+#define Q6AFE_LPASS_CLK_ATTRIBUTE_INVERT_COUPLE_NO	0x4
-+
- struct q6afe_hdmi_cfg {
- 	u16                  datatype;
- 	u16                  channel_allocation;
-@@ -59,4 +187,7 @@ void q6afe_slim_port_prepare(struct q6afe_port *port,
- 			  struct q6afe_slim_cfg *cfg);
- int q6afe_i2s_port_prepare(struct q6afe_port *port, struct q6afe_i2s_cfg *cfg);
- 
-+int q6afe_port_set_sysclk(struct q6afe_port *port, int clk_id,
-+			  int clk_src, int clk_root,
-+			  unsigned int freq, int dir);
- #endif /* __Q6AFE_H__ */
 -- 
-2.16.2
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
