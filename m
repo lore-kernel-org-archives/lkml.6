@@ -1,164 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965495AbeEIQZJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:25:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46146 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965034AbeEIQZI (ORCPT
+        id S965509AbeEIQZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:25:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40630 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965339AbeEIQZy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:25:08 -0400
-Date: Wed, 9 May 2018 19:24:51 +0300
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Michal Hocko <mhocko@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: vmalloc with GFP_NOFS
-References: <20180424162712.GL17484@dhcp22.suse.cz>
- <20180424183536.GF30619@thunk.org>
- <20180424192542.GS17484@dhcp22.suse.cz>
- <20180509134222.GU32366@dhcp22.suse.cz>
- <20180509151351.GA4111@magnolia>
+        Wed, 9 May 2018 12:25:54 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 074D8605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Wed, 9 May 2018 10:25:52 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: edubezval@gmail.com, rui.zhang@intel.com, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Ram Chandrasekar <rkumbako@codeaurora.org>
+Subject: Re: [PATCH] drivers: thermal: step_wise: add support for hysteresis
+Message-ID: <20180509162552.GE4698@codeaurora.org>
+References: <20180507175408.2154-1-ilina@codeaurora.org>
+ <20180508020453.GH19313@mai>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180509151351.GA4111@magnolia>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18050916-0008-0000-0000-000004F4D8C0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050916-0009-0000-0000-00001E892248
-Message-Id: <20180509162451.GA5303@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-09_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805090153
+In-Reply-To: <20180508020453.GH19313@mai>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 08:13:51AM -0700, Darrick J. Wong wrote:
-> On Wed, May 09, 2018 at 03:42:22PM +0200, Michal Hocko wrote:
-> > On Tue 24-04-18 13:25:42, Michal Hocko wrote:
-> > [...]
-> > > > As a suggestion, could you take
-> > > > documentation about how to convert to the memalloc_nofs_{save,restore}
-> > > > scope api (which I think you've written about e-mails at length
-> > > > before), and put that into a file in Documentation/core-api?
-> > > 
-> > > I can.
-> > 
-> > Does something like the below sound reasonable/helpful?
-> > ---
-> > =================================
-> > GFP masks used from FS/IO context
-> > =================================
-> > 
-> > :Date: Mapy, 2018
-> > :Author: Michal Hocko <mhocko@kernel.org>
-> > 
-> > Introduction
-> > ============
-> > 
-> > FS resp. IO submitting code paths have to be careful when allocating
-> 
-> Not sure what 'FS resp. IO' means here -- 'FS and IO' ?
-> 
-> (Or is this one of those things where this looks like plain English text
-> but in reality it's some sort of markup that I'm not so familiar with?)
-> 
-> Confused because I've seen 'resp.' used as shorthand for
-> 'responsible'...
-> 
-> > memory to prevent from potential recursion deadlocks caused by direct
-> > memory reclaim calling back into the FS/IO path and block on already
-> > held resources (e.g. locks). Traditional way to avoid this problem
-> 
-> 'The traditional way to avoid this deadlock problem...'
-> 
-> > is to clear __GFP_FS resp. __GFP_IO (note the later implies clearing
-> > the first as well) in the gfp mask when calling an allocator. GFP_NOFS
-> > resp. GFP_NOIO can be used as shortcut.
-> > 
-> > This has been the traditional way to avoid deadlocks since ages. It
-> 
-> I think this sentence is a little redundant with the previous sentence,
-> you could chop it out and join this paragraph to the one before it.
-> 
-> > turned out though that above approach has led to abuses when the restricted
-> > gfp mask is used "just in case" without a deeper consideration which leads
-> > to problems because an excessive use of GFP_NOFS/GFP_NOIO can lead to
-> > memory over-reclaim or other memory reclaim issues.
-> > 
-> > New API
-> > =======
-> > 
-> > Since 4.12 we do have a generic scope API for both NOFS and NOIO context
-> > ``memalloc_nofs_save``, ``memalloc_nofs_restore`` resp. ``memalloc_noio_save``,
-> > ``memalloc_noio_restore`` which allow to mark a scope to be a critical
-> > section from the memory reclaim recursion into FS/IO POV. Any allocation
-> > from that scope will inherently drop __GFP_FS resp. __GFP_IO from the given
-> > mask so no memory allocation can recurse back in the FS/IO.
-> > 
-> > FS/IO code then simply calls the appropriate save function right at
-> > the layer where a lock taken from the reclaim context (e.g. shrinker)
-> > is taken and the corresponding restore function when the lock is
+Hi Daniel,
 
-Seems like the second "is taken" got there by mistake
+On Tue, May 08 2018 at 20:04 -0600, Daniel Lezcano wrote:
+>On Mon, May 07, 2018 at 11:54:08AM -0600, Lina Iyer wrote:
+>> From: Ram Chandrasekar <rkumbako@codeaurora.org>
+>>
+>> From: Ram Chandrasekar <rkumbako@codeaurora.org>
+>>
+>> Step wise governor increases the mitigation level when the temperature
+>> goes above a threshold and will decrease the mitigation when the
+>> temperature falls below the threshold. If it were a case, where the
+>> temperature hovers around a threshold, the mitigation will be applied
+>> and removed at every iteration. This reaction to the temperature is
+>> inefficient for performance.
+>>
+>> The use of hysteresis temperature could avoid this ping-pong of
+>> mitigation by relaxing the mitigation to happen only when the
+>> temperature goes below this lower hysteresis value.
+>
+>I don't disagree with this but the ping-pong around a temperature is usually
+>avoided with a P-I-D computation which is implemented with the IPA governor.
+>Wouldn't be more interesting to add the power numbers like some other
+>platforms, so the IPA could be used?
+>
+Possibly. But we have had better thermal performance for our hardware, with
+stepwise and custom governor. Much of the mitigation happens through the
+firmware and hardware. The stepwise governor works well for us.
 
-> > released. All that ideally along with an explanation what is the reclaim
-> > context for easier maintenance.
-> > 
-> > What about __vmalloc(GFP_NOFS)
-> > ==============================
-> > 
-> > vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
-> > GFP_KERNEL allocations deep inside the allocator which are quit non-trivial
-> 
-> ...which are quite non-trivial...
-> 
-> > to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
-> > almost always a bug. The good news is that the NOFS/NOIO semantic can be
-> > achieved by the scope api.
-> > 
-> > In the ideal world, upper layers should already mark dangerous contexts
-> > and so no special care is required and vmalloc should be called without
-> > any problems. Sometimes if the context is not really clear or there are
-> > layering violations then the recommended way around that is to wrap ``vmalloc``
-> > by the scope API with a comment explaining the problem.
-> 
-> Otherwise looks ok to me based on my understanding of how all this is
-> supposed to work...
-> 
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> 
-> --D
-> 
-> > -- 
-> > Michal Hocko
-> > SUSE Labs
-> 
+>You will probably have better results with the IPA than changing the step-wise
+>governor behavior (which may potentially impact other users).
+>
+This should not impact others who have not implemented the
+->get_trip_hyst method.
 
--- 
-Sincerely yours,
-Mike.
+Thanks,
+Lina
