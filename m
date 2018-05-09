@@ -1,86 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935207AbeEISHX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 14:07:23 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:46832 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933490AbeEISHV (ORCPT
+        id S935542AbeEISLM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 14:11:12 -0400
+Received: from mail.efficios.com ([167.114.142.138]:39402 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935246AbeEISLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 14:07:21 -0400
-X-Google-Smtp-Source: AB8JxZr/ETvR4p6/j48cf5nWHcZRjO6QNn5OYq48MMDK2DP4vlC/j7jqIej/Lx2s8k2W8rIbsMFJGqNID+nmhamiy8Q=
+        Wed, 9 May 2018 14:11:10 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 503A01B73A6
+Date: Wed, 9 May 2018 14:11:09 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: lttng-dev <lttng-dev@lists.lttng.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <502098485.209.1525889469176.JavaMail.zimbra@efficios.com>
+Subject: [RELEASE] LTTng-modules 2.10.6 (Linux kernel tracer)
 MIME-Version: 1.0
-In-Reply-To: <fea0a346-6f36-ff8c-f036-13f22dfb9bfe@rasmusvillemoes.dk>
-References: <20180509004229.36341-1-keescook@chromium.org> <20180509004229.36341-5-keescook@chromium.org>
- <20180509113446.GA18549@bombadil.infradead.org> <fea0a346-6f36-ff8c-f036-13f22dfb9bfe@rasmusvillemoes.dk>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 9 May 2018 11:07:20 -0700
-X-Google-Sender-Auth: j5OPLfJOXdsPPg5OS_BYXIn08-g
-Message-ID: <CAGXu5j+ds=4tKM=GwzgfpA0YheUSX30pTbQqXg0gKUniOeDzww@mail.gmail.com>
-Subject: Re: [PATCH 04/13] mm: Use array_size() helpers for kmalloc()
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2026 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_2031)
+Thread-Index: r5XC6O6gHhAFnph0d8hGUhpM4pGBQA==
+Thread-Topic: LTTng-modules 2.10.6 (Linux kernel tracer)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 11:00 AM, Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
-> On 2018-05-09 13:34, Matthew Wilcox wrote:
->> On Tue, May 08, 2018 at 05:42:20PM -0700, Kees Cook wrote:
->>> @@ -499,6 +500,8 @@ static __always_inline void *kmalloc_large(size_t size, gfp_t flags)
->>>   */
->>>  static __always_inline void *kmalloc(size_t size, gfp_t flags)
->>>  {
->>> +    if (size == SIZE_MAX)
->>> +            return NULL;
->>>      if (__builtin_constant_p(size)) {
->>>              if (size > KMALLOC_MAX_CACHE_SIZE)
->>>                      return kmalloc_large(size, flags);
->>
->> I don't like the add-checking-to-every-call-site part of this patch.
->> Fine, the compiler will optimise it away if it can calculate it at compile
->> time, but there are a lot of situations where it can't.  You aren't
->> adding any safety by doing this; trying to allocate SIZE_MAX bytes is
->> guaranteed to fail, and it doesn't need to fail quickly.
->
-> Yeah, agree that we don't want to add a size check to all callers,
-> including those where the size doesn't even come from one of the new
-> *_size helpers; that just adds bloat. It's true that the overflow case
-> does not have to fail quickly, but I was worried that the saturating
-> helpers would end up making gcc emit a cmov instruction, thus stalling
-> the regular path. But it seems that it actually ends up doing a forward
-> jump, sets %rdi to SIZE_MAX, then jumps back to the call of __kmalloc,
-> so it should be ok.
+Hi,
 
-Okay, consensus is to remove new SIZE_MAX checks, then?
+This is a bugfix release of the LTTng modules stable-2.10 series.
+It provides Linux kernel tracing capability to the LTTng tracer toolset.
 
-> With __builtin_constant_p(size) && size == SIZE_MAX, gcc could be smart
-> enough to elide those two instructions and have the jo go directly to
-> the caller's error handling, but at least gcc 5.4 doesn't seem to be
-> that smart. So let's just omit that part for now.
->
-> But in case of the kmalloc_array functions, with a direct call of
-> __builtin_mul_overflow(), gcc does combine the "return NULL" with the
-> callers error handling, thus avoiding the six byte "%rdi = -1; jmp
-> back;" thunk. That, along with the churn factor, might be an argument
-> for leaving the current callers of *_array alone. But if we are going to
-> keep those longer-term, we might as well convert kmalloc(a, b) into
-> kmalloc_array(a, b) instead of kmalloc(array_size(a, b)). In any case, I
-> do see the usefulness of the struct_size helper, and agree that we
-> definitely should not introduce a new *_struct variant that needs to be
-> implemented in all families.
+Enjoy!
 
-I'd like to drop *calloc() and *_array() to simplify APIs (and improve
-developer sanity). Are you suggesting we should not use the overflow
-helpers in kmalloc_array(), instead leaving the existing open-coded
-overflow check?
+Mathieu
 
--Kees
+Project website: http://lttng.org
+Documentation: http://lttng.org/docs
+Download link: http://lttng.org/download
+
+Changelog:
+
+2018-05-09 (Lost Sock Memorial Day) LTTng modules 2.10.6
+        * Fix: update RCU instrumentation for 4.17
+        * Fix: sunrpc instrumentation for 4.17
+        * Fix: use struct reclaim_stat in mm_vmscan_lru_shrink_inactive for 4.17
+        * Fix: Add gfp_flags arg to mm_vmscan_kswapd_wake for 4.17
+        * Update: kvm instrumentation for ubuntu 4.13.0-38
+        * Fix: update kvm instrumentation for Ubuntu 3.13.0-144
+        * Fix: btrfs instrumentation namespacing
+        * Cleanup: comment about CONFIG_HOTPLUG_CPU ifdef
+        * Fix: do not use CONFIG_HOTPLUG_CPU for the new hotplug API
+        * Fix: update kvm instrumentation for 4.1.50+
+        * Use the memory pool instead of kmalloc
+        * Create a memory pool for temporary tracepoint probes storage
+        * Fix: use proper pid_ns in the process statedump
+        * Fix: add variable quoting to shell scripts
+        * Update: kvm instrumentation for fedora 4.14.13-300
+        * Fix: Add Fedora version macros
+        * Fix: update btrfs instrumentation for SuSE 4.4.114-92
+        * Fix: update block instrumentation for SuSE 4.4.114-92
+        * Fix: update rcu instrumentation for v4.16
+        * Fix: update vmscan instrumentation for v4.16
+        * Fix: update timer instrumentation on 4.16 and 4.14-rt
+        * Update kvm instrumentation for debian kernel 4.14.0-3
+
 
 -- 
-Kees Cook
-Pixel Security
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
