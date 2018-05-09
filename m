@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965855AbeEIRSy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:18:54 -0400
-Received: from mga12.intel.com ([192.55.52.136]:63856 "EHLO mga12.intel.com"
+        id S935549AbeEIRS6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:18:58 -0400
+Received: from mga09.intel.com ([134.134.136.24]:7000 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965240AbeEIRSv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 13:18:51 -0400
+        id S935088AbeEIRSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 13:18:54 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,382,1520924400";
-   d="scan'208";a="52900932"
-Subject: [PATCH 04/13] x86/pkeys/selftests: Avoid printf-in-signal deadlocks
+   d="scan'208";a="40511721"
+Subject: [PATCH 07/13] x86/pkeys/selftests: Add PROT_EXEC test
 To: linux-kernel@vger.kernel.org
 Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
         linuxram@us.ibm.com, tglx@linutronix.de, dave.hansen@intel.com,
         mpe@ellerman.id.au, mingo@kernel.org, akpm@linux-foundation.org,
         shuah@kernel.org
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Wed, 09 May 2018 10:13:44 -0700
+Date: Wed, 09 May 2018 10:13:48 -0700
 References: <20180509171336.76636D88@viggo.jf.intel.com>
 In-Reply-To: <20180509171336.76636D88@viggo.jf.intel.com>
-Message-Id: <20180509171344.C53FD2F3@viggo.jf.intel.com>
+Message-Id: <20180509171348.9EEE4BEF@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -29,10 +29,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-printf() and friends are unusable in signal handlers.  They deadlock.
-The pkey selftest does not do any normal printing in signal handlers,
-only extra debugging.  So, just print the format string so we get
-*some* output when debugging.
+Under the covers, implement executable-only memory with
+protection keys when userspace calls mprotect(PROT_EXEC).
+
+But, we did not have a selftest for that.  Now we do.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Ram Pai <linuxram@us.ibm.com>
@@ -44,49 +44,68 @@ Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Shuah Khan <shuah@kernel.org>
 ---
 
- b/tools/testing/selftests/x86/pkey-helpers.h |   20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
+ b/tools/testing/selftests/x86/protection_keys.c |   44 ++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff -puN tools/testing/selftests/x86/pkey-helpers.h~pkeys-selftests-avoid-print-in-signal-deadlocks tools/testing/selftests/x86/pkey-helpers.h
---- a/tools/testing/selftests/x86/pkey-helpers.h~pkeys-selftests-avoid-print-in-signal-deadlocks	2018-05-09 09:20:19.738698404 -0700
-+++ b/tools/testing/selftests/x86/pkey-helpers.h	2018-05-09 09:20:19.742698404 -0700
-@@ -26,30 +26,26 @@ static inline void sigsafe_printf(const
- {
- 	va_list ap;
- 
--	va_start(ap, format);
- 	if (!dprint_in_signal) {
-+		va_start(ap, format);
- 		vprintf(format, ap);
-+		va_end(ap);
- 	} else {
- 		int ret;
--		int len = vsnprintf(dprint_in_signal_buffer,
--				    DPRINT_IN_SIGNAL_BUF_SIZE,
--				    format, ap);
- 		/*
--		 * len is amount that would have been printed,
--		 * but actual write is truncated at BUF_SIZE.
-+		 * No printf() functions are signal-safe.
-+		 * They deadlock easily. Write the format
-+		 * string to get some output, even if
-+		 * incomplete.
- 		 */
--		if (len > DPRINT_IN_SIGNAL_BUF_SIZE)
--			len = DPRINT_IN_SIGNAL_BUF_SIZE;
--		ret = write(1, dprint_in_signal_buffer, len);
-+		ret = write(1, format, strlen(format));
- 		if (ret < 0)
--			abort();
-+			exit(1);
- 	}
--	va_end(ap);
+diff -puN tools/testing/selftests/x86/protection_keys.c~pkeys-selftests-prot_exec tools/testing/selftests/x86/protection_keys.c
+--- a/tools/testing/selftests/x86/protection_keys.c~pkeys-selftests-prot_exec	2018-05-09 09:20:21.273698400 -0700
++++ b/tools/testing/selftests/x86/protection_keys.c	2018-05-09 09:20:21.276698400 -0700
+@@ -1288,6 +1288,49 @@ void test_executing_on_unreadable_memory
+ 	expected_pk_fault(pkey);
  }
- #define dprintf_level(level, args...) do {	\
- 	if (level <= DEBUG_LEVEL)		\
- 		sigsafe_printf(args);		\
--	fflush(NULL);				\
- } while (0)
- #define dprintf0(args...) dprintf_level(0, args)
- #define dprintf1(args...) dprintf_level(1, args)
+ 
++void test_implicit_mprotect_exec_only_memory(int *ptr, u16 pkey)
++{
++	void *p1;
++	int scratch;
++	int ptr_contents;
++	int ret;
++
++	dprintf1("%s() start\n", __func__);
++
++	p1 = get_pointer_to_instructions();
++	lots_o_noops_around_write(&scratch);
++	ptr_contents = read_ptr(p1);
++	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
++
++	/* Use a *normal* mprotect(), not mprotect_pkey(): */
++	ret = mprotect(p1, PAGE_SIZE, PROT_EXEC);
++	pkey_assert(!ret);
++
++	dprintf2("pkru: %x\n", rdpkru());
++
++	/* Make sure this is an *instruction* fault */
++	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
++	lots_o_noops_around_write(&scratch);
++	do_not_expect_pk_fault("executing on PROT_EXEC memory");
++	ptr_contents = read_ptr(p1);
++	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
++	expected_pk_fault(UNKNOWN_PKEY);
++
++	/*
++	 * Put the memory back to non-PROT_EXEC.  Should clear the
++	 * exec-only pkey off the VMA and allow it to be readable
++	 * again.  Go to PROT_NONE first to check for a kernel bug
++	 * that did not clear the pkey when doing PROT_NONE.
++	 */
++	ret = mprotect(p1, PAGE_SIZE, PROT_NONE);
++	pkey_assert(!ret);
++
++	ret = mprotect(p1, PAGE_SIZE, PROT_READ|PROT_EXEC);
++	pkey_assert(!ret);
++	ptr_contents = read_ptr(p1);
++	do_not_expect_pk_fault("plain read on recently PROT_EXEC area");
++}
++
+ void test_mprotect_pkey_on_unsupported_cpu(int *ptr, u16 pkey)
+ {
+ 	int size = PAGE_SIZE;
+@@ -1312,6 +1355,7 @@ void (*pkey_tests[])(int *ptr, u16 pkey)
+ 	test_kernel_gup_of_access_disabled_region,
+ 	test_kernel_gup_write_to_write_disabled_region,
+ 	test_executing_on_unreadable_memory,
++	test_implicit_mprotect_exec_only_memory,
+ 	test_ptrace_of_child,
+ 	test_pkey_syscalls_on_non_allocated_pkey,
+ 	test_pkey_syscalls_bad_args,
 _
