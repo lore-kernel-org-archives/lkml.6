@@ -1,153 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756600AbeEIOOo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 10:14:44 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39342 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbeEIOOm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 10:14:42 -0400
+        id S934972AbeEIOQV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 10:16:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35904 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933743AbeEIOQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 10:16:17 -0400
+Date: Wed, 9 May 2018 16:13:34 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: vmalloc with GFP_NOFS
+Message-ID: <20180509141333.onn7rbaitzspjmsa@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Michal Hocko <mhocko@kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
+        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20180424162712.GL17484@dhcp22.suse.cz>
+ <20180424183536.GF30619@thunk.org>
+ <20180424192542.GS17484@dhcp22.suse.cz>
+ <20180509134222.GU32366@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Wed, 09 May 2018 19:44:41 +0530
-From: Vikash Garodia <vgarodia@codeaurora.org>
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-media-owner@vger.kernel.org
-Subject: Re: [PATCH 08/28] venus: hfi_venus: add suspend function for 4xx
- version
-In-Reply-To: <ce03189a-b56e-e73e-852f-1ad10d4c8bd3@linaro.org>
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
- <20180424124436.26955-9-stanimir.varbanov@linaro.org>
- <8f26cd748f283043b32da05b39f29348@codeaurora.org>
- <ce03189a-b56e-e73e-852f-1ad10d4c8bd3@linaro.org>
-Message-ID: <4bb351351a9725db42bf06da1e778290@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509134222.GU32366@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stanimir,
-
-On 2018-05-09 16:45, Stanimir Varbanov wrote:
-> Hi Vikash,
+On Wed, May 09, 2018 at 03:42:22PM +0200, Michal Hocko wrote:
+> On Tue 24-04-18 13:25:42, Michal Hocko wrote:
+> [...]
+> > > As a suggestion, could you take
+> > > documentation about how to convert to the memalloc_nofs_{save,restore}
+> > > scope api (which I think you've written about e-mails at length
+> > > before), and put that into a file in Documentation/core-api?
+> > 
+> > I can.
 > 
-> On 05/02/2018 09:07 AM, vgarodia@codeaurora.org wrote:
->> Hello Stanimir,
->> 
->> On 2018-04-24 18:14, Stanimir Varbanov wrote:
->>> This adds suspend (power collapse) function with slightly
->>> different order of calls comparing with Venus 3xx.
->>> 
->>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
->>> ---
->>>  drivers/media/platform/qcom/venus/hfi_venus.c | 52
->>> +++++++++++++++++++++++++++
->>>  1 file changed, 52 insertions(+)
->>> 
->>> diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c
->>> b/drivers/media/platform/qcom/venus/hfi_venus.c
->>> index 53546174aab8..f61d34bf61b4 100644
->>> --- a/drivers/media/platform/qcom/venus/hfi_venus.c
->>> +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
->>> @@ -1443,6 +1443,55 @@ static int venus_suspend_1xx(struct venus_core
->>> *core)
->>>      return 0;
->>>  }
->>> 
->>> +static int venus_suspend_4xx(struct venus_core *core)
->>> +{
->>> +    struct venus_hfi_device *hdev = to_hfi_priv(core);
->>> +    struct device *dev = core->dev;
->>> +    u32 val;
->>> +    int ret;
->>> +
->>> +    if (!hdev->power_enabled || hdev->suspended)
->>> +        return 0;
->>> +
->>> +    mutex_lock(&hdev->lock);
->>> +    ret = venus_is_valid_state(hdev);
->>> +    mutex_unlock(&hdev->lock);
->>> +
->>> +    if (!ret) {
->>> +        dev_err(dev, "bad state, cannot suspend\n");
->>> +        return -EINVAL;
->>> +    }
->>> +
->>> +    ret = venus_prepare_power_collapse(hdev, false);
->>> +    if (ret) {
->>> +        dev_err(dev, "prepare for power collapse fail (%d)\n", ret);
->>> +        return ret;
->>> +    }
->>> +
->>> +    ret = readl_poll_timeout(core->base + CPU_CS_SCIACMDARG0, val,
->>> +                 val & CPU_CS_SCIACMDARG0_PC_READY,
->>> +                 POLL_INTERVAL_US, 100000);
->>> +    if (ret) {
->>> +        dev_err(dev, "Polling power collapse ready timed out\n");
->>> +        return ret;
->>> +    }
->>> +
->>> +    mutex_lock(&hdev->lock);
->>> +
->>> +    ret = venus_power_off(hdev);
->>> +    if (ret) {
->>> +        dev_err(dev, "venus_power_off (%d)\n", ret);
->>> +        mutex_unlock(&hdev->lock);
->>> +        return ret;
->>> +    }
->>> +
->>> +    hdev->suspended = true;
->>> +
->>> +    mutex_unlock(&hdev->lock);
->>> +
->>> +    return 0;
->>> +}
->>> +
->>>  static int venus_suspend_3xx(struct venus_core *core)
->>>  {
->>>      struct venus_hfi_device *hdev = to_hfi_priv(core);
->>> @@ -1507,6 +1556,9 @@ static int venus_suspend(struct venus_core 
->>> *core)
->>>      if (core->res->hfi_version == HFI_VERSION_3XX)
->>>          return venus_suspend_3xx(core);
->>> 
->>> +    if (core->res->hfi_version == HFI_VERSION_4XX)
->>> +        return venus_suspend_4xx(core);
->>> +
->>>      return venus_suspend_1xx(core);
->>>  }
->> 
->> Let me brief on the power collapse sequence for Venus_4xx
->> 1. Host checks for ARM9 and Video core to be idle.
->>    This can be done by checking for WFI bit (bit 0) in CPU status
->> register for ARM9 and by checking bit 30 in Control status reg for 
->> video
->> core/s.
->> 2. Host then sends command to ARM9 to prepare for power collapse.
->> 3. Host then checks for WFI bit and PC_READY bit before withdrawing
->> going for power off.
->> 
->> As per this patch, host is preparing for power collapse without 
->> checking
->> for #1.
->> Update the code to handle #3.
-> 
-> This looks similar to suspend for Venus 3xx. Can you confirm that the
-> sequence of checks for 4xx is the same as 3xx?
+> Does something like the below sound reasonable/helpful?
 
-Do you mean the driver implementation for Suspend Venus 3xx or the 
-hardware
-expectation for Venus 3xx ? If hardware expectation wise, the sequence 
-is
-same for 3xx and 4xx.
-In the suspend implementation for 3xx, i see that the host just reads 
-the WFI
-and idle status bits, but does not validate those bit value before 
-preparing
-Venus for power collapse. Sequence #2 and #3 is followed for Venus 3xx
-implementation.
+Sounds good to me and matches how we've been using the vmalloc/nofs so
+far.
