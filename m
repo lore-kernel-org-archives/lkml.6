@@ -1,80 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934594AbeEIJSc (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:18:32 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54314 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934203AbeEIJS3 (ORCPT
+        id S934671AbeEIJTQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:19:16 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51960 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934332AbeEIJTN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:18:29 -0400
-X-Google-Smtp-Source: AB8JxZpBI2FXa1DnYYxvFUPLBY3AIOXR50czh4u2hyNxdXmUn1jcJ9XbeACHkiB3xL2901nwqUMlOQ==
-From: Alexander Potapenko <glider@google.com>
-To: dave.hansen@linux.intel.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, mka@chromium.org,
-        dvyukov@google.com, md@google.com
-Subject: [PATCH v3] x86/boot/64/clang: Use fixup_pointer() to access '__supported_pte_mask'
-Date: Wed,  9 May 2018 11:18:22 +0200
-Message-Id: <20180509091822.191810-1-glider@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Wed, 9 May 2018 05:19:13 -0400
+From: Colin King <colin.king@canonical.com>
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/i915/dp: fix spelling mistake: "seqeuncer" -> "sequencer"
+Date: Wed,  9 May 2018 10:19:08 +0100
+Message-Id: <20180509091908.13804-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang builds with defconfig started crashing after commit fb43d6cb91ef
-("x86/mm: Do not auto-massage page protections")
-This was caused by introducing a new global access in __startup_64().
+From: Colin Ian King <colin.king@canonical.com>
 
-Code in __startup_64() can be relocated during execution, but the compiler
-doesn't have to generate PC-relative relocations when accessing globals
-from that function. Clang actually does not generate them, which leads
-to boot-time crashes. To work around this problem, every global pointer
-must be adjusted using fixup_pointer().
+Trivial fix to spelling mistake in WARN warning message text
 
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Fixes: fb43d6cb91ef ("x86/mm: Do not auto-massage page protections")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- v3: removed unnecessary cast
- v2: better patch description, added a comment to __startup_64()
----
- arch/x86/kernel/head64.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i915/intel_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 0c408f8c4ed4..5ea28e9a0250 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -104,6 +104,13 @@ static bool __head check_la57_support(unsigned long physaddr)
- }
- #endif
+diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+index dde92e4af5d3..914389f67458 100644
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -513,7 +513,7 @@ vlv_power_sequencer_kick(struct intel_dp *intel_dp)
+ 	uint32_t DP;
  
-+
-+/* Code in __startup_64() can be relocated during execution, but the compiler
-+ * doesn't have to generate PC-relative relocations when accessing globals from
-+ * that function. Clang actually does not generate them, which leads to
-+ * boot-time crashes. To work around this problem, every global pointer must
-+ * be adjusted using fixup_pointer().
-+ */
- unsigned long __head __startup_64(unsigned long physaddr,
- 				  struct boot_params *bp)
- {
-@@ -113,6 +120,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
- 	p4dval_t *p4d;
- 	pudval_t *pud;
- 	pmdval_t *pmd, pmd_entry;
-+	pteval_t *mask_ptr;
- 	bool la57;
- 	int i;
- 	unsigned int *next_pgt_ptr;
-@@ -196,7 +204,8 @@ unsigned long __head __startup_64(unsigned long physaddr,
- 
- 	pmd_entry = __PAGE_KERNEL_LARGE_EXEC & ~_PAGE_GLOBAL;
- 	/* Filter out unsupported __PAGE_KERNEL_* bits: */
--	pmd_entry &= __supported_pte_mask;
-+	mask_ptr = fixup_pointer(&__supported_pte_mask, physaddr);
-+	pmd_entry &= *mask_ptr;
- 	pmd_entry += sme_get_me_mask();
- 	pmd_entry +=  physaddr;
+ 	if (WARN(I915_READ(intel_dp->output_reg) & DP_PORT_EN,
+-		 "skipping pipe %c power seqeuncer kick due to port %c being active\n",
++		 "skipping pipe %c power sequencer kick due to port %c being active\n",
+ 		 pipe_name(pipe), port_name(intel_dig_port->base.port)))
+ 		return;
  
 -- 
-2.17.0.441.gb46fe60e1d-goog
+2.17.0
