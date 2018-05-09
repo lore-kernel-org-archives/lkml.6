@@ -1,21 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934266AbeEIKVp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 06:21:45 -0400
+        id S934315AbeEIKVs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 06:21:48 -0400
 Received: from smtp03.citrix.com ([162.221.156.55]:16799 "EHLO
         SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934038AbeEIKVo (ORCPT
+        with ESMTP id S934038AbeEIKVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 06:21:44 -0400
+        Wed, 9 May 2018 06:21:46 -0400
 X-IronPort-AV: E=Sophos;i="5.49,381,1520899200";
-   d="scan'208";a="54081116"
+   d="scan'208";a="54081117"
 From: Roger Pau Monne <roger.pau@citrix.com>
 To: <linux-kernel@vger.kernel.org>
-CC: Roger Pau Monne <roger.pau@citrix.com>
-Subject: [PATCH v2 0/3] xen/pvh: Dom0 support
-Date: Wed, 9 May 2018 11:21:26 +0100
-Message-ID: <20180509102129.14832-1-roger.pau@citrix.com>
+CC: Roger Pau Monne <roger.pau@citrix.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, <xen-devel@lists.xenproject.org>
+Subject: [PATCH v2 1/3] xen/pvh: enable and set default MTRR type
+Date: Wed, 9 May 2018 11:21:27 +0100
+Message-ID: <20180509102129.14832-2-roger.pau@citrix.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180509102129.14832-1-roger.pau@citrix.com>
+References: <20180509102129.14832-1-roger.pau@citrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
@@ -23,34 +27,47 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On PVH MTRR is not initialized by the firmware (because there's no
+firmware), so the kernel is started with MTRR disabled which means all
+memory accesses are UC.
 
-The following patches enable booting a PVH Dom0. So far I've only tested
-them in my test box, so I expect more issues will show up as this gets
-further testing. In any case, this is the bare minimum to get a PVH Dom0
-working.
+So far there have been no issues (ie: slowdowns) caused by this
+because PVH only supported DomU mode without passed-through devices,
+so Xen was using WB as the default memory type instead of UC.
 
-In order to test them Xen 4.11 RC or plain master/staging should be
-used. Compile a Linux kernel with this patches and PVH support and add
-dom0=pvh to the Xen command line. The following message will be
-displayed during Dom0 boot by the Linux kernel if PVH mode is used:
+Fix this by enabling MTRR and setting the default type to WB. Linux
+will use PAT to set the actual memory cache attributes.
 
-"Booting paravirtualized kernel on Xen PVH"
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+---
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: xen-devel@lists.xenproject.org
+---
+ arch/x86/xen/enlighten_pvh.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thanks, Roger.
-
-Roger Pau Monne (3):
-  xen/pvh: enable and set default MTRR type
-  xen/store: do not store local values in xen_start_info
-  xen: share start flags between PV and PVH
-
- arch/arm/xen/enlighten.c          | 7 ++++---
- arch/x86/xen/enlighten.c          | 7 +++++++
- arch/x86/xen/enlighten_pv.c       | 1 +
- arch/x86/xen/enlighten_pvh.c      | 4 ++++
- drivers/xen/xenbus/xenbus_probe.c | 5 ++---
- include/xen/xen.h                 | 4 +++-
- 6 files changed, 21 insertions(+), 7 deletions(-)
-
+diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
+index aa1c6a6831a9..e039d1809809 100644
+--- a/arch/x86/xen/enlighten_pvh.c
++++ b/arch/x86/xen/enlighten_pvh.c
+@@ -6,6 +6,7 @@
+ #include <asm/io_apic.h>
+ #include <asm/hypervisor.h>
+ #include <asm/e820/api.h>
++#include <asm/mtrr.h>
+ #include <asm/x86_init.h>
+ 
+ #include <asm/xen/interface.h>
+@@ -98,6 +99,8 @@ void __init xen_prepare_pvh(void)
+ 
+ 	xen_pvh = 1;
+ 
++	wrmsr_safe(MSR_MTRRdefType, 0x800 | MTRR_TYPE_WRBACK, 0);
++
+ 	msr = cpuid_ebx(xen_cpuid_base() + 2);
+ 	pfn = __pa(hypercall_page);
+ 	wrmsr_safe(msr, (u32)pfn, (u32)(pfn >> 32));
 -- 
 2.17.0
