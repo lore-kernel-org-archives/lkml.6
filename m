@@ -1,112 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965806AbeEIWEB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 18:04:01 -0400
-Received: from mail.manjaro.org ([176.9.38.148]:51234 "EHLO manjaro.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965450AbeEIWD7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 18:03:59 -0400
-Subject: Re: [ANNOUNCE] v4.16.7-rt1
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-References: <20180503162934.b2ly6jz4a5tydaag@linutronix.de>
-From: Bernhard Landauer <oberon@manjaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=oberon@manjaro.org; prefer-encrypt=mutual; keydata=
- xsBNBFWiTO0BCADp2m6vJC6HqqA5fbl5c9TfoYZ+7Gc3c+yAsw6eCanyWOE34HXDAGkHDiPO
- zMLbUy0bNsS7jJvjxremNmFuDgXxDZZ5Xslgwj32X6PhcfexVPI0IlceZCQlthXRrsxwMFol
- oYYxVlsrpp/z++dJQ+8pb3yQ90c/TE+hiQdZZRLhXz8w+NIgLpKXb5fRkQQ9VfSpv5jCeUNL
- E/gG7ECkTVQrBUMEAFqSkOXq0PdVptJrC3hjWZGmjdCA4I515Tm6T5QqPKWRyaoG/w57dFc9
- Aq3ExZ19Txtxf6H/0wKDZa53fRGjYaQUuJzZYhhzC6JETPZARbzDe86FEjpQlwa23gW1ABEB
- AAHNJkJlcm5oYXJkIExhbmRhdWVyIDxvYmVyb25AbWFuamFyby5vcmc+wsB3BBMBCAAhBQJV
- okztAhsDBQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJENrTshFmPKJoDyUH/iMOmPfFdE22
- 4mw3WYvtEXBryv42ATeLTxdGMzAaDZCZreGtc0NGsaYcIe4csT8/ON1Y8I60vIfp4lk0VvK5
- N0G85922sHT969v7bEUmN8xSG2dhAgsuqZReQD80JVpFez9KU599dPPX7DaVFXz5JvzlKYMQ
- RJOiLP6N+pdMiBbG9DXetxBBmr4IqM964NDJwLH3SNEzjQUr+8DxRi5pTWu1UKDnW2y5z2qP
- EEtYr8SJT3qy1gctsq1JYG2H/fLMEIXcZm/lBMfq8H2IQLyHm/WumkJKfTOmgMlbGVkzFT9W
- XxjPtQ+p50Aa79ti2wbZKYXLcy3NuFxbBGhNnOSYjlnOwE0EVaJM7QEIAMFIlWIATFKmAIz+
- kXJDdCV6Yfy2ptEphN0iaU6mj4jcBdaBcUzpDFSE1z5R6LqGyZ59DVsxW4Dk85CLrpY5+qGU
- FmtWwLD8LniXRUG385r/QD9aMP2b86WKfkK2cTCt81I3907N5shS2Ypq1dRrQhr7P6Wj0Cla
- r1nZWcnqV9dvwRnhMtKM3sZ2+120qRPiIVRnShAJ9OqUYStGUpk1h+W60Nt+cnFLPLc6wGD2
- QvLIv6Lk+Gonzq/yKDNbLArIlkECUBcu9NbDnsp7SGNGTuP1zP7ofvxEabfCLOrH9H8c0hlF
- QfiB1v6lqvGsb+al0H7szpN9e9H+5QtteAhPKisAEQEAAcLAXwQYAQgACQUCVaJM7QIbDAAK
- CRDa07IRZjyiaB/bCADaMnHznD5HY0FqMJciZzFtbZxLHsbGFEJx+RRGmo8AKx5hODNA+D4o
- blwkzafgbPnqACiLP9lt3y7eUZyKG61ZHOjREjRQvyBjc4O4YcGq1AcLzWbEzaq9ZJkALCC+
- 84mHvsKzUzK+w8X4iJAmp4pwUBf4mKLrf7qMr1v3erYzdi71/qaTCesMKZ++GTQTjPEgiA0K
- LOmOiQMO2YkO8tqO6FJ2RU2zS/LGSaImfDUIU6Dvw19De2em793bSogTWdhS8P2jk60wj7h0
- xX7uevNZ1IIdD51gMQzgHF1bMj7QT4oSmFLLZJdYGItkODdblxSS8Dy6DumXbZLDoA+/XJ7W
-Message-ID: <2d6d2b49-07ce-7125-6086-91a4b6826f4f@manjaro.org>
-Date: Wed, 9 May 2018 23:45:31 +0200
+        id S965840AbeEIWEL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 18:04:11 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47040 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935307AbeEIWEH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 18:04:07 -0400
+Date: Wed, 9 May 2018 15:02:31 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: vmalloc with GFP_NOFS
+Message-ID: <20180509220231.GD25312@magnolia>
+References: <20180424162712.GL17484@dhcp22.suse.cz>
+ <20180424183536.GF30619@thunk.org>
+ <20180424192542.GS17484@dhcp22.suse.cz>
+ <20180509134222.GU32366@dhcp22.suse.cz>
+ <20180509151351.GA4111@magnolia>
+ <20180509210447.GX32366@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180503162934.b2ly6jz4a5tydaag@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509210447.GX32366@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8888 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805090205
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/05/18 18:29, Sebastian Andrzej Siewior wrote:
-> Dear RT folks!
->
-> I'm pleased to announce the v4.16.7-rt1 patch set. 
->
-> Changes since v4.14.39-rt28:
->
->   - Rebase to v4.16
->
->   - The queue went through a big cleanup and reordering, so the patches
->     which belong together are not scattered all over the place.
->
->     The sections at the front of the series are patches which are either
->     upstream already (4.17), queued in a maintainer tree for 4.18, posted
->     and under discussion or just ready to be posted.
->
->   - A large section covers the recent rework of the *_nort/*_rt()
->     wrappers. Instead of trying to argue them upstream they have been made
->     obsolete by refactoring the code in which they have been used. There
->     are a few hard to solve leftovers, but non of them should survive.
->
->   - The cpu_chill() related try-lock-loop in dcache has been replaced
->     with a rework avoiding the loop. The rework was joint work by Al
->     Viro and John Ogness.
->
->     There are still a few cpu_chill() instances which are going to be
->     tackled in the next weeks.
->
->   - The AT91 timer patches have been mostly replaced with the "TCB timer
->     driver" patches by Alexandre Belloni.
->
->   - The latest version of the latency tracer patches which is aimed for 4.18
->     has been incorporated.
->
-> You can get this release via the git tree at:
->
->     git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v4.16.7-rt1
->
-> The RT patch against v4.16.7 can be found here:
->
->     https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.16/older/patch-4.16.7-rt1.patch.xz
->
-> The split quilt queue is available at:
->
->     https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.16/older/patches-4.16.7-rt1.tar.xz
->
-> Sebastian
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rt-users" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Wed, May 09, 2018 at 11:04:47PM +0200, Michal Hocko wrote:
+> On Wed 09-05-18 08:13:51, Darrick J. Wong wrote:
+> > On Wed, May 09, 2018 at 03:42:22PM +0200, Michal Hocko wrote:
+> > > On Tue 24-04-18 13:25:42, Michal Hocko wrote:
+> > > [...]
+> > > > > As a suggestion, could you take
+> > > > > documentation about how to convert to the memalloc_nofs_{save,restore}
+> > > > > scope api (which I think you've written about e-mails at length
+> > > > > before), and put that into a file in Documentation/core-api?
+> > > > 
+> > > > I can.
+> > > 
+> > > Does something like the below sound reasonable/helpful?
+> > > ---
+> > > =================================
+> > > GFP masks used from FS/IO context
+> > > =================================
+> > > 
+> > > :Date: Mapy, 2018
+> > > :Author: Michal Hocko <mhocko@kernel.org>
+> > > 
+> > > Introduction
+> > > ============
+> > > 
+> > > FS resp. IO submitting code paths have to be careful when allocating
+> > 
+> > Not sure what 'FS resp. IO' means here -- 'FS and IO' ?
+> > 
+> > (Or is this one of those things where this looks like plain English text
+> > but in reality it's some sort of markup that I'm not so familiar with?)
+> > 
+> > Confused because I've seen 'resp.' used as shorthand for
+> > 'responsible'...
+> 
+> Well, I've tried to cover both. Filesystem and IO code paths which
+> allocate while in sensitive context. IO submission is kinda clear but I
+> am not sure what a general term for filsystem code paths would be. I
+> would be greatful for any hints here.
 
-When compiling 4.16.7-rt1 with gcc 8.1.0 I see tons of these warnings:
+"Code paths in the filesystem and IO stacks must be careful when
+allocating memory to prevent recursion deadlocks caused by direct memory
+reclaim calling back into the FS or IO paths and blocking on already
+held resources (e.g. locks)." ?
 
-warning: objtool: mISDN_FsmEvent()+0x27: sibling call from callable
-instruction with modified stack frame
+--D
 
-Any ideas what to make of these?
-
-regards
-Bernhard
+> 
+> > 
+> > > memory to prevent from potential recursion deadlocks caused by direct
+> > > memory reclaim calling back into the FS/IO path and block on already
+> > > held resources (e.g. locks). Traditional way to avoid this problem
+> > 
+> > 'The traditional way to avoid this deadlock problem...'
+> 
+> Done
+> 
+> > > is to clear __GFP_FS resp. __GFP_IO (note the later implies clearing
+> > > the first as well) in the gfp mask when calling an allocator. GFP_NOFS
+> > > resp. GFP_NOIO can be used as shortcut.
+> > > 
+> > > This has been the traditional way to avoid deadlocks since ages. It
+> > 
+> > I think this sentence is a little redundant with the previous sentence,
+> > you could chop it out and join this paragraph to the one before it.
+> 
+> OK
+> 
+> > 
+> > > turned out though that above approach has led to abuses when the restricted
+> > > gfp mask is used "just in case" without a deeper consideration which leads
+> > > to problems because an excessive use of GFP_NOFS/GFP_NOIO can lead to
+> > > memory over-reclaim or other memory reclaim issues.
+> > > 
+> > > New API
+> > > =======
+> > > 
+> > > Since 4.12 we do have a generic scope API for both NOFS and NOIO context
+> > > ``memalloc_nofs_save``, ``memalloc_nofs_restore`` resp. ``memalloc_noio_save``,
+> > > ``memalloc_noio_restore`` which allow to mark a scope to be a critical
+> > > section from the memory reclaim recursion into FS/IO POV. Any allocation
+> > > from that scope will inherently drop __GFP_FS resp. __GFP_IO from the given
+> > > mask so no memory allocation can recurse back in the FS/IO.
+> > > 
+> > > FS/IO code then simply calls the appropriate save function right at
+> > > the layer where a lock taken from the reclaim context (e.g. shrinker)
+> > > is taken and the corresponding restore function when the lock is
+> > > released. All that ideally along with an explanation what is the reclaim
+> > > context for easier maintenance.
+> > > 
+> > > What about __vmalloc(GFP_NOFS)
+> > > ==============================
+> > > 
+> > > vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
+> > > GFP_KERNEL allocations deep inside the allocator which are quit non-trivial
+> > 
+> > ...which are quite non-trivial...
+> 
+> fixed
+> 
+> > > to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
+> > > almost always a bug. The good news is that the NOFS/NOIO semantic can be
+> > > achieved by the scope api.
+> > > 
+> > > In the ideal world, upper layers should already mark dangerous contexts
+> > > and so no special care is required and vmalloc should be called without
+> > > any problems. Sometimes if the context is not really clear or there are
+> > > layering violations then the recommended way around that is to wrap ``vmalloc``
+> > > by the scope API with a comment explaining the problem.
+> > 
+> > Otherwise looks ok to me based on my understanding of how all this is
+> > supposed to work...
+> > 
+> > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> 
+> Thanks for your review!
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
