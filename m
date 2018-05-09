@@ -1,68 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965221AbeEIPrV (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:47:21 -0400
-Received: from mga12.intel.com ([192.55.52.136]:58345 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964907AbeEIPrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:47:19 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,382,1520924400";
-   d="scan'208";a="39660950"
-From: "Wang, Wei W" <wei.w.wang@intel.com>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        "Liu, Jingqi" <jingqi.liu@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-CC: "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] KVM: x86: Expose CLDEMOTE CPU feature to guest VM
-Thread-Topic: [PATCH] KVM: x86: Expose CLDEMOTE CPU feature to guest VM
-Thread-Index: AQHT4oTLOU3sQTG4s0eXcQx3kjuFvqQj9i6AgACgHgCAAjbjAIAAsqRw
-Date: Wed, 9 May 2018 15:47:15 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F73952628B@SHSMSX101.ccr.corp.intel.com>
-References: <1525406146-54791-1-git-send-email-jingqi.liu@intel.com>
- <a799d2b8-9d75-0969-a98f-be5d96314dbb@redhat.com>
- <09D68D4CF52CAF489B702DEBDD12D3D35269A68D@SHSMSX103.ccr.corp.intel.com>
- <a7b69935-8a91-2109-c3a2-e44fea3091fd@redhat.com>
-In-Reply-To: <a7b69935-8a91-2109-c3a2-e44fea3091fd@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMmIzZDFiZDktMjllMC00ZGZhLWIxZmMtYjI1ZmEwODg1NmY2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6ImY1K0NIQUdcL2FUQ3BnenBSTXU0OURqdzdKSzRcL3VlSGI3R2hrRkRtTjdNUT0ifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
+        id S965234AbeEIPrc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:47:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35882 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964907AbeEIPr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 11:47:28 -0400
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Stephen Bates <sbates@raithlin.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180423233046.21476-1-logang@deltatee.com>
+ <20180423233046.21476-5-logang@deltatee.com>
+ <CAPcyv4g+5N_n03J-VhmJfrr60Sqk95ZapLKBkwSsGvV4nQ+ZRw@mail.gmail.com>
+ <64C231F5-DE36-415F-B308-3A423B0BBACB@raithlin.com>
+ <15433946-f7f5-f610-4e80-380fb59920e5@redhat.com>
+ <3C9FB262-A93C-4C8F-B1E0-85C6D6F78BC2@raithlin.com>
+ <c5f30ced-7bbf-9420-db1a-72519fc78b3a@redhat.com>
+ <20180508180157.7c7b393f@w520.home>
+From: Don Dutile <ddutile@redhat.com>
+Message-ID: <f0d25e16-1201-1fc5-334f-4205abc95500@redhat.com>
+Date: Wed, 9 May 2018 11:47:31 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <20180508180157.7c7b393f@w520.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w49FlSFT019426
 
-On Wednesday, May 9, 2018 7:52 PM, Paolo Bonzini wrote:
-> On 08/05/2018 04:03, Liu, Jingqi wrote:
-> > Hi Paolo,
-> > Thanks.
-> > Will you help to modify the Signed-off-by chain ?
-> > Or do I need to submit the second version after modifying the Signed-off-
-> by chain ?
+On 05/08/2018 08:01 PM, Alex Williamson wrote:
+> On Tue, 8 May 2018 19:06:17 -0400
+> Don Dutile <ddutile@redhat.com> wrote:
+>> On 05/08/2018 05:27 PM, Stephen  Bates wrote:
+>>> As I understand it VMs need to know because VFIO passes IOMMU
+>>> grouping up into the VMs. So if a IOMMU grouping changes the VM's
+>>> view of its PCIe topology changes. I think we even have to be
+>>> cognizant of the fact the OS running on the VM may not even support
+>>> hot-plug of PCI devices.
+>> Alex:
+>> Really? IOMMU groups are created by the kernel, so don't know how
+>> they would be passed into the VMs, unless indirectly via  PCI(e)
+>> layout. At best, twiddling w/ACS enablement (emulation) would cause
+>> VMs to see different IOMMU groups, but again, VMs are not the
+>> security point/level, the host/HV's are.
 > 
-> Can you explain your role and Wei Wang's in the development of the patch?
+> Correct, the VM has no concept of the host's IOMMU groups, only the
+> hypervisor knows about the groups, but really only to the extent of
+> which device belongs to which group and whether the group is viable.
+> Any runtime change to grouping though would require DMA mapping
+> updates, which I don't see how we can reasonably do with drivers,
+> vfio-pci or native host drivers, bound to the affected devices.  Thanks,
 > 
-
-Hi Paolo,
-
-Thanks for reviewing our patches.
-Jingqi is the owner of the patches, I'm just an assistant. You could adjust the order or change mine to reviewed-by.
-
-Best,
-Wei
+> Alex
+> 
+A change in iommu groups would/could require a device remove/add cycle to get an updated DMA-mapping (yet-another-overused-term: iommu 'domain').
