@@ -1,145 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933709AbeEIDnY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 23:43:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59368 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932115AbeEIDnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 23:43:22 -0400
-Subject: Re: [RFC v3 4/5] virtio_ring: add event idx support in packed ring
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-References: <20180503044218-mutt-send-email-mst@kernel.org>
- <20180503020949.5u3qz32gsk33z6vk@debian>
- <9f0b4e37-63ff-42f9-f2e6-3747a19a0206@redhat.com>
- <20180503135430.lbtvn4p4lyu3ksqo@debian>
- <fbe06940-1618-5d34-7321-f4888c5dd1ee@redhat.com>
- <12ede490-f674-2b89-d639-266b5fe15466@redhat.com>
- <20180508064409.kcn6amhsxu7nkuuc@debian>
- <34f2c690-7cb2-f9ea-2ce9-40f4ccb594c9@redhat.com>
- <20180508091628.d7jzpopqopq4abhy@debian>
- <122277c6-d103-e1f6-d695-4d64e6934a51@redhat.com>
- <20180508094406.qjlaism3hqy4hvjd@debian>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <a57be153-cdcc-3bdc-4f9b-2148df19a264@redhat.com>
-Date: Wed, 9 May 2018 11:43:15 +0800
+        id S933723AbeEIDns (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 23:43:48 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43014 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932115AbeEIDnq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 23:43:46 -0400
+X-Google-Smtp-Source: AB8JxZogjGflFIIR2hjtu7Int0/YBMhQAUqMoK6uzxcxtKOX3fwU5UX7uG+yi5wfgaR9ZXWzv4NBow==
+Subject: Re: [PATCH] hwmon: (aspeed-pwm-tacho) Use 24MHz clock
+To: Lei YU <mine260309@gmail.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Hardware Monitoring <linux-hwmon@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1525772367-20627-1-git-send-email-mine260309@gmail.com>
+ <8a801894-4293-d2e8-4673-3d9ff5c2a5bb@roeck-us.net>
+ <CAARXrtmO=wsPK6bfO0E7fvAkqEJUV1kQSYK1gWXkUhmKytq42A@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Message-ID: <c5770e4a-9445-d4ef-cc1f-a7a84599c4a1@roeck-us.net>
+Date: Tue, 8 May 2018 20:43:43 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180508094406.qjlaism3hqy4hvjd@debian>
+In-Reply-To: <CAARXrtmO=wsPK6bfO0E7fvAkqEJUV1kQSYK1gWXkUhmKytq42A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018年05月08日 17:44, Tiwei Bie wrote:
-> On Tue, May 08, 2018 at 05:34:40PM +0800, Jason Wang wrote:
->> On 2018年05月08日 17:16, Tiwei Bie wrote:
->>> On Tue, May 08, 2018 at 03:16:53PM +0800, Jason Wang wrote:
->>>> On 2018年05月08日 14:44, Tiwei Bie wrote:
->>>>> On Tue, May 08, 2018 at 01:40:40PM +0800, Jason Wang wrote:
->>>>>> On 2018年05月08日 11:05, Jason Wang wrote:
->>>>>>>> Because in virtqueue_enable_cb_delayed(), we may set an
->>>>>>>> event_off which is bigger than new and both of them have
->>>>>>>> wrapped. And in this case, although new is smaller than
->>>>>>>> event_off (i.e. the third param -- old), new shouldn't
->>>>>>>> add vq->num, and actually we are expecting a very big
->>>>>>>> idx diff.
->>>>>>> Yes, so to calculate distance correctly between event and new, we just
->>>>>>> need to compare the warp counter and return false if it doesn't match
->>>>>>> without the need to try to add vq.num here.
->>>>>>>
->>>>>>> Thanks
->>>>>> Sorry, looks like the following should work, we need add vq.num if
->>>>>> used_wrap_counter does not match:
->>>>>>
->>>>>> static bool vhost_vring_packed_need_event(struct vhost_virtqueue *vq,
->>>>>>                          __u16 off_wrap, __u16 new,
->>>>>>                          __u16 old)
->>>>>> {
->>>>>>        bool wrap = off_wrap >> 15;
->>>>>>        int off = off_wrap & ~(1 << 15);
->>>>>>        __u16 d1, d2;
->>>>>>
->>>>>>        if (wrap != vq->used_wrap_counter)
->>>>>>            d1 = new + vq->num - off - 1;
->>>>> Just to draw your attention (maybe you have already
->>>>> noticed this).
->>>> I miss this, thanks!
->>>>
->>>>> In this case (i.e. wrap != vq->used_wrap_counter),
->>>>> it's also possible that (off < new) is true. Because,
->>>>>
->>>>> when virtqueue_enable_cb_delayed_packed() is used,
->>>>> `off` is calculated in driver in a way like this:
->>>>>
->>>>> 	off = vq->last_used_idx + bufs;
->>>>> 	if (off >= vq->vring_packed.num) {
->>>>> 		off -= vq->vring_packed.num;
->>>>> 		wrap_counter ^= 1;
->>>>> 	}
->>>>>
->>>>> And when `new` (in vhost) is close to vq->num. The
->>>>> vq->last_used_idx + bufs (in driver) can be bigger
->>>>> than vq->vring_packed.num, and:
->>>>>
->>>>> 1. `off` will wrap;
->>>>> 2. wrap counters won't match;
->>>>> 3. off < new;
->>>>>
->>>>> And d1 (i.e. new + vq->num - off - 1) will be a value
->>>>> bigger than vq->num. I'm okay with this, although it's
->>>>> a bit weird.
->>>> So I'm considering something more compact by reusing vring_need_event() by
->>>> pretending a larger queue size and adding vq->num back when necessary:
->>>>
->>>> static bool vhost_vring_packed_need_event(struct vhost_virtqueue *vq,
->>>>                         __u16 off_wrap, __u16 new,
->>>>                         __u16 old)
->>>> {
->>>>       bool wrap = vq->used_wrap_counter;
->>> If the wrap counter is obtained from the vq,
->>> I think `new` should also be obtained from
->>> the vq. Or the wrap counter should be carried
->>> in `new`.
+On 05/08/2018 08:18 PM, Lei YU wrote:
+> On Tue, May 8, 2018 at 9:51 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+>> No mixed C/C++ comments in hwmon drivers.
+>>
+>>>          aspeed_set_clock_source(priv->regmap, 0);
+>>> +       priv->clk_freq = 24000000;
 >>>
->>>>       int off = off_wrap & ~(1 << 15);
->>>>       __u16 d1, d2;
->>>>
->>>>       if (new < old) {
->>>>           new += vq->num;
->>>>           wrap ^= 1;
->>>>       }
->>>>
->>>>       if (wrap != off_wrap >> 15)
->>>>           off += vq->num;
->>> When `new` and `old` wraps, and `off` doesn't wrap,
->>> wrap != (off_wrap >> 15) will be true. In this case,
->>> `off` is bigger than `new`, and what we should do
->>> is `off -= vq->num` instead of `off += vq->num`.
->> If I understand this correctly, if we track old correctly, it won't happen
->> if guest driver behave correctly. That means it should only happen for a
->> buggy driver (e.g trying to move off_wrap back).
-> If vhost is faster than virtio driver, I guess above
-> case may happen. The `old` and `new` will be updated
-> each time we want to notify the driver. If the driver
-> is slower, `old` and `new` in vhost may wrap before
-> the `off` which is set by driver wraps.
->
-> Best regards,
-> Tiwei Bie
->
+>>
+>>
+>> Are you saying that clk_get_rate() is wrong ? Anyway, if the DT is bad, it
+>> should be fixed.
+> Nope, clk_get_rate() is OK.
+> The reason I make this change is because the PWM supports two types of clock
+> source, the 24MHz or the clock from memory controller.
+> If the DT uses 24MHz clock, this code is OK.
+> But if the DT configs this pwm to use mclk (memory controller clk), this piece
+> of code becomes wrong, because the code
+> `aspeed_set_clock_source(priv->regmap, 0)` configs the device to use the 24MHz
+> clock.
+> So no matter what DT configs the clk, this driver *always* uses 24MHz clock.
+> 
+> That's why I want to make this change.
+> 
+>> I am not a friend of hacking drivers to fix up bad DTs, and much less so
+>> without explanation.
+>> Plus, how do we know that the next chip supported by the driver doesn't have
+>> a 32MHz clock ?
+> This driver currently supports ast2400 and ast2500, and they both use 24MHz
+> clock.
+> In case future device uses a different clock, we can update this code, right?
+> 
 
-Oh, right.
+I am not going to accept this change, period. This is not one, it is five steps
+backward. If "aspeed_set_clock_source(priv->regmap, 0)" changes the clock speed,
+or the clock source, read it later, and attach to the correct clock. If that
+doesn't work, fix the problem in the clock subsystem. Hacking the driver is just
+plain wrong.
 
-But the code still work (in this case new - event_idx - 1 will 
-underflow). (And I admit it still looks ugly).
+Also, if the idea in DT is to provide a different clock to the watchdog on purpose,
+maybe the call to "aspeed_set_clock_source(priv->regmap, 0)" is wrong.
 
-Thanks
+Guenter
+
+>> Really, please fix the DT.
+> Sure, I will send patch to config the clock to use fixed 24MHz clock as well.
+> 
+>>
+>> Guenter
+>>
+>>>          aspeed_create_type(priv);
+>>>
+>>
+>>
+> 
