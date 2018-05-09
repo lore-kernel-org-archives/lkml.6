@@ -1,190 +1,221 @@
-Return-Path: <mgautam@codeaurora.org>
-X-Google-Smtp-Source: AB8JxZr5AduODnjxrsXgVW9tEHiG9copSEJkc2AthaSzW5wCAijIB+xk0UTOoj5yoMaMLlHqFBHk
-ARC-Seal: i=1; a=rsa-sha256; t=1525887581; cv=none;
-        d=google.com; s=arc-20160816;
-        b=rjczxnN3DrpeiiD5duayMZkUX9QrvsestboxQHOpp1fFE+Uui/ICEHHx5Wv9a3elJA
-         t09+yCQ0PeQunQJZDJ/w5fnCP3y8GQANiu53oT4sYUQaCxuEvTYYNSo1JiPE+7W9HTAC
-         2HPvGgOZZHKaxc2ox6l0HB+HcfjDjwMA74VhOS1uChRtYpCs+FzUMlYwQyQ1rwhRoyQh
-         YqTC1CWU+tI/3mfgHvgVOCblH8NdzyE9bYxQPcDaxL08E99d521iWtmmaTr+ecxfxmAa
-         5iaA1FKHWoCN1nozx+BaPPTxi80p014YtG7RTa0YA6fcwRpCzTMLPxT3NupeeoYIthNN
-         Hu7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=k5KVkIfbTYb1zbKpBNGRGNxuuZ4O/GUojstlKcmJuBA=;
-        b=WmesiXr8+P6xIXHF6UZMRtQQI/llAyRwLgVY4wKxiZhJdtVKX8Q21U9g5on+9cvERx
-         9tbeRtFQ6VnUdst4wAwAtptS4ZZ1Ba62eP0FkknSrMXtsZmtJLoyltgbodaVoGXDx09C
-         atR+kKke0EoukRsUuKwqdAJ3uCKW0VLv5NZ973kxkdI0ELRwadUn9TX9oJ9eCb7KCW8r
-         uifAZYh8LkqNLr5bbw6reqXWENim3SW0SEPI/NdLnAccm29pntczUnYZZ4DT8SmnQ/4y
-         BSbUxJ+IpDkTGxEIOJVJoTvi4olnTc0KRBcoZlzEmRifB6lgXFbnne3OE7VMoDgPj9wQ
-         6NOw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Jb6crTsw;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=BQj04oZc;
-       spf=pass (google.com: domain of mgautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=mgautam@codeaurora.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Jb6crTsw;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=BQj04oZc;
-       spf=pass (google.com: domain of mgautam@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=mgautam@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F281160712
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
-From: Manu Gautam <mgautam@codeaurora.org>
-To: balbi@kernel.org,
-	robh@kernel.org,
-	andy.gross@linaro.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Manu Gautam <mgautam@codeaurora.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v4 1/3] dt-bindings: usb: Update documentation for Qualcomm DWC3 driver
-Date: Wed,  9 May 2018 23:09:19 +0530
-Message-Id: <1525887562-2687-2-git-send-email-mgautam@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525887562-2687-1-git-send-email-mgautam@codeaurora.org>
-References: <1525887562-2687-1-git-send-email-mgautam@codeaurora.org>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-680809-1525886415-2-5784712763828615124
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525886415; b=FZHCTaVWE3Qx93rDEwmzW9xfumSbWW2x3m6DCBox95mFCRK8jc
+    w9lkVU9WGV8Qwu6/jLLozJpcDSlsynfu2735b4CBRnbgNmV9xAzSr7CIVKXBpond
+    npnsP8XemA47lp3O8ENEMzMBeQFy5G7DqqAHjmTgdzyjK4U2ajJ82TCyIYhVHpsI
+    mkg1JyhDucQhpifa5WpLPlXv1SO4ZIQhMWzsuuR/nJqRElQGC1xZUdDHSJlzXMQ0
+    9EfGOCTSliCOEjiciLa/P4Uy/aDjc0U2Q+nmRnYbEHa6iQsLxIvs8ihC7qmcWJWw
+    ZLPkwxQ97u4LPgT49qhUK1grI8aun3ws1xPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:from:date:references
+    :in-reply-to:message-id:sender:list-id; s=fm2; t=1525886415; bh=
+    /XiA5eadDpm+1c83WTmG0fote4PdZrEd1hQ35DrJ/DY=; b=jFUJrXAlEZq3goXJ
+    Gdfkcj6iqW4EdlG5pcVZ7pcEP+VQqBclW9ePClV9IcU33PyrEqtZUIto8umrtreJ
+    Yp+H3pVvCvMJan1A/FzCdizFaQ8ufjt4CdIg+YhB7eX923LDyPCL0SPPJPsT23qk
+    U4OGxhcfod7yKW3q8mEQCDdvVinbeaM6NNLQN8KeXxCOlJkeBD3lL5ufScMRh20i
+    aF7rsFUfQF2GEozIGKKoNgojuslhQsgg+CknBskdWy4lH5UYoPdk5rPbtyY90Wwd
+    XxEDe+hI2OGUBlp5yQ2mRJlA/YTtLHfC/KyC4i8GlOyKAuYDKYFjakNYAGm+5kKF
+    wQDjQQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linux.intel.com header.result=pass
+    header_org.domain=intel.com header_org.result=pass
+    header_is_org_domain=no;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linux.intel.com header.result=pass
+      header_org.domain=intel.com header_org.result=pass
+      header_is_org_domain=no;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLZw5pWOf+sp7pyonZBPQg0NAF7i/qTr7t4t3VHUrukmo1Mum4ITCy4G2ZD4lkLLus39GM3QHaBL1wLuW/wuYt7Ffl9jLwYh1mU5YcX+mG8lL652GP/r
+    KPxqZCXHeixZPZST3eYDhlj9G/5LFsQ7L0ynBAoMs2FjG284uvJ5DgYy0pFqfM0QfAV554H18HbYd7hr9bBZ46SenNP0V6jmTLpCKoFFEf1HM3W6TWo6BMZb
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
+    a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=Z4Rwk6OoAAAA:8
+    a=WexYMCiOe6C4khrCuiUA:9 a=AjGcO6oz07-iQ99wixmX:22 a=HkZW87K1Qel5hWWM3VKY:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S965881AbeEIRUB (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 9 May 2018 13:20:01 -0400
+Received: from mga07.intel.com ([134.134.136.100]:29736 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935535AbeEIRS5 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 9 May 2018 13:18:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,382,1520924400";
+   d="scan'208";a="39684411"
+Subject: [PATCH 09/13] x86/pkeys: Override pkey when moving away from PROT_EXEC
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        shakeelb@google.com, stable@vger.kernel.org, linuxram@us.ibm.com,
+        tglx@linutronix.de, dave.hansen@intel.com, mpe@ellerman.id.au,
+        mingo@kernel.org, akpm@linux-foundation.org, shuah@kernel.org
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Wed, 09 May 2018 10:13:51 -0700
+References: <20180509171336.76636D88@viggo.jf.intel.com>
+In-Reply-To: <20180509171336.76636D88@viggo.jf.intel.com>
+Message-Id: <20180509171351.084C5A71@viggo.jf.intel.com>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600009096482728225?=
-X-GMAIL-MSGID: =?utf-8?q?1600009096482728225?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Existing documentation has lot of incorrect information as it
-was originally added for a driver that no longer exists.
 
-Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+
+I got a bug report that the following code (roughly) was
+causing a SIGSEGV:
+
+	mprotect(ptr, size, PROT_EXEC);
+	mprotect(ptr, size, PROT_NONE);
+	mprotect(ptr, size, PROT_READ);
+	*ptr = 100;
+
+The problem is hit when the mprotect(PROT_EXEC)
+is implicitly assigned a protection key to the VMA, and made
+that key ACCESS_DENY|WRITE_DENY.  The PROT_NONE mprotect()
+failed to remove the protection key, and the PROT_NONE->
+PROT_READ left the PTE usable, but the pkey still in place
+and left the memory inaccessible.
+
+To fix this, we ensure that we always "override" the pkee
+at mprotect() if the VMA does not have execute-only
+permissions, but the VMA has the execute-only pkey.
+
+We had a check for PROT_READ/WRITE, but it did not work
+for PROT_NONE.  This entirely removes the PROT_* checks,
+which ensures that PROT_NONE now works.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Fixes: 62b5f7d013f ("mm/core, x86/mm/pkeys: Add execute-only protection keys support")
+Reported-by: Shakeel Butt <shakeelb@google.com>
+Cc: stable@vger.kernel.org
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Shuah Khan <shuah@kernel.org>
 ---
- .../devicetree/bindings/usb/qcom,dwc3.txt          | 85 ++++++++++++++++------
- 1 file changed, 63 insertions(+), 22 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.txt b/Documentation/devicetree/bindings/usb/qcom,dwc3.txt
-index bc8a2fa..95afdcf 100644
---- a/Documentation/devicetree/bindings/usb/qcom,dwc3.txt
-+++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.txt
-@@ -1,54 +1,95 @@
- Qualcomm SuperSpeed DWC3 USB SoC controller
+ b/arch/x86/include/asm/pkeys.h |   12 +++++++++++-
+ b/arch/x86/mm/pkeys.c          |   21 +++++++++++----------
+ 2 files changed, 22 insertions(+), 11 deletions(-)
+
+diff -puN arch/x86/include/asm/pkeys.h~pkeys-abandon-exec-only-pkey-more-aggressively arch/x86/include/asm/pkeys.h
+--- a/arch/x86/include/asm/pkeys.h~pkeys-abandon-exec-only-pkey-more-aggressively	2018-05-09 09:20:22.295698398 -0700
++++ b/arch/x86/include/asm/pkeys.h	2018-05-09 09:20:22.300698398 -0700
+@@ -2,6 +2,8 @@
+ #ifndef _ASM_X86_PKEYS_H
+ #define _ASM_X86_PKEYS_H
  
- Required properties:
--- compatible:	should contain "qcom,dwc3"
-+- compatible:		Compatible list, contains
-+			"qcom,dwc3"
-+			"qcom,msm8996-dwc3" for msm8996 SOC.
-+			"qcom,sdm845-dwc3" for sdm845 SOC.
-+- reg:			Offset and length of register set for QSCRATCH wrapper
-+- power-domains:	specifies a phandle to PM domain provider node
- - clocks:		A list of phandle + clock-specifier pairs for the
- 				clocks listed in clock-names
--- clock-names:	Should contain the following:
-+- clock-names:		Should contain the following:
-   "core"		Master/Core clock, have to be >= 125 MHz for SS
- 				operation and >= 60MHz for HS operation
-+  "mock_utmi"		Mock utmi clock needed for ITP/SOF generation in
-+				host mode. Its frequency should be 19.2MHz.
-+  "sleep"		Sleep clock, used for wakeup when USB3 core goes
-+				into low power mode (U3).
- 
- Optional clocks:
--  "iface"		System bus AXI clock.  Not present on all platforms
--  "sleep"		Sleep clock, used when USB3 core goes into low
--				power mode (U3).
-+  "iface"		System bus AXI clock.
-+			Not present on "qcom,msm8996-dwc3" compatible.
-+  "cfg_noc"		System Config NOC clock.
-+			Not present on "qcom,msm8996-dwc3" compatible.
-+- assigned-clocks:	Should be:
-+				MOCK_UTMI_CLK
-+				MASTER_CLK
-+- assigned-clock-rates: Should be:
-+                                19.2Mhz (192000000) for MOCK_UTMI_CLK
-+                                >=125Mhz (125000000) for MASTER_CLK in SS mode
-+                                >=60Mhz (60000000) for MASTER_CLK in HS mode
++#define ARCH_DEFAULT_PKEY	0
 +
-+Optional properties:
-+- resets:		Phandle to reset control that resets core and wrapper.
-+- interrupts:		specifies interrupts from controller wrapper used
-+			to wakeup from low power/susepnd state.	Must contain
-+			one or more entry for interrupt-names property
-+- interrupt-names:	Must include the following entries:
-+			- "hs_phy_irq": The interrupt that is asserted when a
-+			   wakeup event is received on USB2 bus
-+			- "ss_phy_irq": The interrupt that is asserted when a
-+			   wakeup event is received on USB3 bus
-+			- "dm_hs_phy_irq" and "dp_hs_phy_irq": Separate
-+			   interrupts for any wakeup event on DM and DP lines
-+- qcom,select-utmi-as-pipe-clk: if present, disable USB3 pipe_clk requirement.
-+				Used when dwc3 operates without SSPHY and only
-+				HS/FS/LS modes are supported.
+ #define arch_max_pkey() (boot_cpu_has(X86_FEATURE_OSPKE) ? 16 : 1)
  
- Required child node:
- A child node must exist to represent the core DWC3 IP block. The name of
- the node is not important. The content of the node is defined in dwc3.txt.
+ extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+@@ -15,7 +17,7 @@ extern int __execute_only_pkey(struct mm
+ static inline int execute_only_pkey(struct mm_struct *mm)
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_OSPKE))
+-		return 0;
++		return ARCH_DEFAULT_PKEY;
  
- Phy documentation is provided in the following places:
--Documentation/devicetree/bindings/phy/qcom-dwc3-usb-phy.txt
-+Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt   - USB3 QMP PHY
-+Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt - USB2 QUSB2 PHY
- 
- Example device nodes:
- 
- 		hs_phy: phy@100f8800 {
--			compatible = "qcom,dwc3-hs-usb-phy";
--			reg = <0x100f8800 0x30>;
--			clocks = <&gcc USB30_0_UTMI_CLK>;
--			clock-names = "ref";
--			#phy-cells = <0>;
--
-+			compatible = "qcom,qusb2-v2-phy";
-+			...
- 		};
- 
- 		ss_phy: phy@100f8830 {
--			compatible = "qcom,dwc3-ss-usb-phy";
--			reg = <0x100f8830 0x30>;
--			clocks = <&gcc USB30_0_MASTER_CLK>;
--			clock-names = "ref";
--			#phy-cells = <0>;
--
-+			compatible = "qcom,qmp-v3-usb3-phy";
-+			...
- 		};
- 
--		usb3_0: usb30@0 {
-+		usb3_0: usb30@a6f8800 {
- 			compatible = "qcom,dwc3";
-+			reg = <0xa6f8800 0x400>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
--			clocks = <&gcc USB30_0_MASTER_CLK>;
--			clock-names = "core";
--
- 			ranges;
- 
-+			interrupts = <0 131 0>, <0 486 0>, <0 488 0>, <0 489 0>;
-+			interrupt-names = "hs_phy_irq", "ss_phy_irq",
-+				  "dm_hs_phy_irq", "dp_hs_phy_irq";
+ 	return __execute_only_pkey(mm);
+ }
+@@ -56,6 +58,14 @@ bool mm_pkey_is_allocated(struct mm_stru
+ 		return false;
+ 	if (pkey >= arch_max_pkey())
+ 		return false;
++	/*
++	 * The exec-only pkey is set in the allocation map, but
++	 * is not available to any of the user interfaces like
++	 * mprotect_pkey().
++	 */
++	if (pkey == mm->context.execute_only_pkey)
++		return false;
 +
-+			clocks = <&gcc GCC_USB30_PRIM_MASTER_CLK>,
-+				<&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-+				<&gcc GCC_USB30_PRIM_SLEEP_CLK>;
-+			clock-names = "core", "mock_utmi", "sleep";
-+
-+			assigned-clocks = <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-+					  <&gcc GCC_USB30_PRIM_MASTER_CLK>;
-+			assigned-clock-rates = <19200000>, <133000000>;
-+
-+			resets = <&gcc GCC_USB30_PRIM_BCR>;
-+			reset-names = "core_reset";
-+			power-domains = <&gcc USB30_PRIM_GDSC>;
-+			qcom,select-utmi-as-pipe-clk;
+ 	return mm_pkey_allocation_map(mm) & (1U << pkey);
+ }
  
- 			dwc3@10000000 {
- 				compatible = "snps,dwc3";
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+diff -puN arch/x86/mm/pkeys.c~pkeys-abandon-exec-only-pkey-more-aggressively arch/x86/mm/pkeys.c
+--- a/arch/x86/mm/pkeys.c~pkeys-abandon-exec-only-pkey-more-aggressively	2018-05-09 09:20:22.297698398 -0700
++++ b/arch/x86/mm/pkeys.c	2018-05-09 09:20:22.301698398 -0700
+@@ -94,26 +94,27 @@ int __arch_override_mprotect_pkey(struct
+ 	 */
+ 	if (pkey != -1)
+ 		return pkey;
+-	/*
+-	 * Look for a protection-key-drive execute-only mapping
+-	 * which is now being given permissions that are not
+-	 * execute-only.  Move it back to the default pkey.
+-	 */
+-	if (vma_is_pkey_exec_only(vma) &&
+-	    (prot & (PROT_READ|PROT_WRITE))) {
+-		return 0;
+-	}
++
+ 	/*
+ 	 * The mapping is execute-only.  Go try to get the
+ 	 * execute-only protection key.  If we fail to do that,
+ 	 * fall through as if we do not have execute-only
+-	 * support.
++	 * support in this mm.
+ 	 */
+ 	if (prot == PROT_EXEC) {
+ 		pkey = execute_only_pkey(vma->vm_mm);
+ 		if (pkey > 0)
+ 			return pkey;
++	} else if (vma_is_pkey_exec_only(vma)) {
++		/*
++		 * Protections are *not* PROT_EXEC, but the mapping
++		 * is using the exec-only pkey.  This mapping was
++		 * PROT_EXEC and will no longer be.  Move back to
++		 * the default pkey.
++		 */
++		return ARCH_DEFAULT_PKEY;
+ 	}
++
+ 	/*
+ 	 * This is a vanilla, non-pkey mprotect (or we failed to
+ 	 * setup execute-only), inherit the pkey from the VMA we
+_
