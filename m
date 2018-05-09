@@ -1,101 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934035AbeEIIUl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:20:41 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7247 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933882AbeEIIUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:20:35 -0400
-From: Yao Chen <chenyao11@huawei.com>
-To: <songxiaowei@hisilicon.com>, <wangbinghui@hisilicon.com>,
-        <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <xuwei5@hisilicon.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
-CC: <dimitrysh@google.com>, <guodong.xu@linaro.org>,
-        <chenyao11@huawei.com>, <suzhuangluan@hisilicon.com>,
-        <kongfei@hisilicon.com>
-Subject: [PATCH v2 1/2] PCI: kirin: Add MSI support
-Date: Wed, 9 May 2018 16:20:11 +0800
-Message-ID: <1525854012-24228-2-git-send-email-chenyao11@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525854012-24228-1-git-send-email-chenyao11@huawei.com>
-References: <1525854012-24228-1-git-send-email-chenyao11@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.143.148.75]
-X-CFilter-Loop: Reflected
+        id S934055AbeEIIVN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:21:13 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34119 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933959AbeEIIVK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 04:21:10 -0400
+X-Google-Smtp-Source: AB8JxZqAGZddmmJ1gzOr222qBjISdhTWFAMnrm4sDZiz5wmGv1l0ZASMUGcrdhIlfY6Kg1vS/7NxQg==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc: xiaotong.lu@spreadtrum.com, baolin.wang@linaro.org, broonie@kernel.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] dt-bindings: leds: Add SC27xx breathing light controller documentation
+Date: Wed,  9 May 2018 16:21:00 +0800
+Message-Id: <79934a1cf0b75920c982d60481a647fbb5c4c687.1525851574.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for MSI.
+This patch adds the binding documentation for Spreadtrum SC27xx series
+breathing light controller, which supports 3 outputs: red LED, green
+LED and blue LED.
 
-Signed-off-by: Yao Chen <chenyao11@huawei.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/pci/dwc/pcie-kirin.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+Changes since v2:
+ - Add reviewed-tag from Rob.
 
-diff --git a/drivers/pci/dwc/pcie-kirin.c b/drivers/pci/dwc/pcie-kirin.c
-index d2970a0..4328efe 100644
---- a/drivers/pci/dwc/pcie-kirin.c
-+++ b/drivers/pci/dwc/pcie-kirin.c
-@@ -426,9 +426,28 @@ static int kirin_pcie_establish_link(struct pcie_port *pp)
- 	return 0;
- }
- 
-+static irqreturn_t kirin_pcie_msi_irq_handler(int irq, void *arg)
-+{
-+	struct pcie_port *pp = arg;
+Changes since v1:
+ - Change the compatible string to be one explicit SoC name.
+ - Change the child node name.
+ - Change to be upper case for the first character.
+---
+ .../devicetree/bindings/leds/leds-sc27xx-bltc.txt  |   41 ++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+new file mode 100644
+index 0000000..b3de7fc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+@@ -0,0 +1,41 @@
++LEDs connected to Spreadtrum SC27XX PMIC breathing light controller
 +
-+	return dw_handle_msi_irq(pp);
-+}
++The SC27xx breathing light controller supports to 3 outputs:
++red LED, green LED and blue LED. Each LED can work at normal
++PWM mode or breath light mode.
 +
-+static void kirin_pcie_msi_init(struct pcie_port *pp)
-+{
-+	dw_pcie_msi_init(pp);
-+}
++Required properties:
++- compatible: Should be "sprd,sc2731-bltc".
++- #address-cells: Must be 1.
++- #size-cells: Must be 0.
++- reg: Specify controller address.
 +
-+static void kirin_pcie_enable_interrupts(struct pcie_port *pp)
-+{
-+	if (IS_ENABLED(CONFIG_PCI_MSI))
-+		kirin_pcie_msi_init(pp);
-+}
++Required child properties:
++- reg: Number of LED line (could be from 0 to 2).
 +
- static int kirin_pcie_host_init(struct pcie_port *pp)
- {
- 	kirin_pcie_establish_link(pp);
-+	kirin_pcie_enable_interrupts(pp);
- 
- 	return 0;
- }
-@@ -448,6 +467,26 @@ static int kirin_pcie_host_init(struct pcie_port *pp)
- static int __init kirin_add_pcie_port(struct dw_pcie *pci,
- 				      struct platform_device *pdev)
- {
-+	int ret;
++Optional child properties:
++- label: See Documentation/devicetree/bindings/leds/common.txt.
 +
-+	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-+		pci->pp.msi_irq = platform_get_irq(pdev, 0);
-+		if (!pci->pp.msi_irq) {
-+			dev_err(&pdev->dev, "failed to get msi irq[%d]\n",
-+				pci->pp.msi_irq);
-+			return -ENODEV;
-+		}
-+		ret = devm_request_irq(&pdev->dev, pci->pp.msi_irq,
-+				       kirin_pcie_msi_irq_handler,
-+				       IRQF_SHARED | IRQF_NO_THREAD,
-+				       "kirin_pcie_msi", &pci->pp);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to request msi irq[%d]\n",
-+				pci->pp.msi_irq);
-+			return ret;
-+		}
-+	}
++Examples:
 +
- 	pci->pp.ops = &kirin_pcie_host_ops;
- 
- 	return dw_pcie_host_init(&pci->pp);
++led-controller@200 {
++	compatible = "sprd,sc2731-bltc";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x200>;
++
++	led@0 {
++		label = "red";
++		reg = <0x0>;
++	};
++
++	led@1 {
++		label = "green";
++		reg = <0x1>;
++	};
++
++	led@2 {
++		label = "blue";
++		reg = <0x2>;
++	};
++};
 -- 
-1.9.1
+1.7.9.5
