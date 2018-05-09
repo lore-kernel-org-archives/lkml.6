@@ -1,60 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934834AbeEIMCI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:02:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42224 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755541AbeEIMCH (ORCPT
+        id S934692AbeEIMCf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:02:35 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:46824 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934721AbeEIMCc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:02:07 -0400
-Date: Wed, 9 May 2018 09:02:01 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Michael Jamet <michael.jamet@intel.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 06/18] docs: core-api: add cgroup-v2 documentation
-Message-ID: <20180509090201.145572f1@vento.lan>
-In-Reply-To: <20180508095114.0da69ef3@lwn.net>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-        <b45083a64578b661cabadcf99d509e7def7c21a5.1525684985.git.mchehab+samsung@kernel.org>
-        <20180508095114.0da69ef3@lwn.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 9 May 2018 08:02:32 -0400
+X-Google-Smtp-Source: AB8JxZqdi4sRFXPoEZ5BLnM5JfSiUq/xPc6TQI2q3OVlCpKCgrCWV5+hjX0Zb6J0c2yWdRBtwVy4mQ==
+From: Niklas Cassel <niklas.cassel@linaro.org>
+To: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc: linux-pci@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: qcom-apq8064: use correct pci address for address translation
+Date: Wed,  9 May 2018 14:01:34 +0200
+Message-Id: <20180509120135.25940-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, 8 May 2018 09:51:14 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+For PCI, the second and third cell in ranges specifies the upper and
+lower target address for address translation. This target address will
+be used to program the internal address translation unit (iATU).
 
-> On Mon,  7 May 2018 06:35:42 -0300
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-> 
-> > The cgroup-v2.txt is already in ReST format. So, move it to the
-> > core-api guide, where it belongs.
-> > 
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
-> 
-> Honestly, this seems to me like sysadmin material, so I think it should
-> go into the admin guide instead.
-> 
-> Actually, looking at the patch, it seems you agree - it's just the
-> changelog that's wrong :)
+The current device tree configuration will program the iATU to translate
+CPU accesses to 0x08000000 to PCI address 0x0 (with TLP type MEM).
+The device tree configuration also specifies that CPU acesses to
+0x0fe00000 will be translated to PCI address 0x0 (with TLP type I/O).
 
-Yeah, wrong cut-and-paste. Sorry for that.
+We cannot have both I/O space and memory space at PCI address 0x0.
 
-> I could fix that, but it should probably be posted with a CC to Tejun
-> first.
+The PCI code already uses the CPU address when assigning addresses to
+memory BARs, so for memory space the PCI address should be the same as
+the CPU address. This also matches how all other device trees using
+snps,dw-pcie are configured.
 
-I'll repost it c/c to cgroup maintainers with the right
-description.
+The existing configuration appears to work, even if it is incorrect.
+For some reason the iATU doesn't obey the existing configuration,
+and doesn't translate CPU accesses from 0x08000000 to PCI address 0x0.
 
-Thanks,
-Mauro
+The reason why the existing configuration works at all is probably
+because the default behavior, when there is no match, is to use the
+untranslated address. This happens to work for memory space, since
+it's a 1:1 mapping. However, instead of relying on this behavior,
+let's configure the iATU correctly.
+
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+---
+ arch/arm/boot/dts/qcom-apq8064.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+index 5341a39c0392..148cf7e565f6 100644
+--- a/arch/arm/boot/dts/qcom-apq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+@@ -1417,7 +1417,7 @@
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+ 			ranges = <0x81000000 0 0 0x0fe00000 0 0x00100000   /* I/O */
+-				  0x82000000 0 0 0x08000000 0 0x07e00000>; /* memory */
++				  0x82000000 0 0x08000000 0x08000000 0 0x07e00000>; /* memory */
+ 			interrupts = <GIC_SPI 238 IRQ_TYPE_NONE>;
+ 			interrupt-names = "msi";
+ 			#interrupt-cells = <1>;
+-- 
+2.17.0
