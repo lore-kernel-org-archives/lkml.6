@@ -1,63 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933944AbeEIIFS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:05:18 -0400
-Received: from mail-ot0-f175.google.com ([74.125.82.175]:41262 "EHLO
-        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753339AbeEIIFK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:05:10 -0400
-X-Google-Smtp-Source: AB8JxZo0XXl6pg1Zg0uL6IJbAzFycl86Y38a1ri8tb4jNx8tXWAfRo+pqO/uVt2XKL9E+XEB8EurWIgJ3/r/An6fr1o=
-MIME-Version: 1.0
-In-Reply-To: <20180509070113.GB52784@joelaf.mtv.corp.google.com>
-References: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
- <20180508065435.bcht6dyb3rpp6gk5@vireshk-i7> <20180509045425.GA158882@joelaf.mtv.corp.google.com>
- <20180509064530.GA1681@localhost.localdomain> <20180509065449.c5zotxqmuyatjgfd@vireshk-i7>
- <20180509070113.GB52784@joelaf.mtv.corp.google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 9 May 2018 10:05:09 +0200
-X-Google-Sender-Auth: mldvmnP5vG1BsKAeM-Kj_2cs1oc
-Message-ID: <CAJZ5v0hNgvd=0dKstXRsbHhtrc6m+ugS5kjPOq2B8k55ioX0MA@mail.gmail.com>
-Subject: Re: [RFC PATCH] sched/cpufreq/schedutil: handling urgent frequency requests
-To: Joel Fernandes <joel@joelfernandes.org>,
-        Juri Lelli <juri.lelli@redhat.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-        Claudio Scordino <claudio@evidence.eu.com>,
+        id S1756088AbeEIIFw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:05:52 -0400
+Received: from ozlabs.org ([203.11.71.1]:57409 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753176AbeEIIFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 04:05:49 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 9 May 2018 18:05:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dan Williams <dan.j.williams@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mike Rapoport <rppt@linux.vnet.ibm.com>
+Subject: linux-next: manual merge of the nvdimm tree with the jc_docs tree
+Message-ID: <20180509180539.57a360e7@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CFTcfMTfJTvKN5E_E/+YXpl"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 9:01 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Wed, May 09, 2018 at 12:24:49PM +0530, Viresh Kumar wrote:
->> On 09-05-18, 08:45, Juri Lelli wrote:
->> > On 08/05/18 21:54, Joel Fernandes wrote:
->> > Isn't this potentially introducing unneeded irq pressure (and doing the
->> > whole wakeup the kthread thing), while the already active kthread could
->> > simply handle multiple back-to-back requests before going to sleep?
->>
->> And then we may need more instances of the work item and need to store
->> a different value of next_freq with each work item, as we can't use
->> the common one anymore as there would be races around accessing it ?
->
-> Exactly. I think it also doesn't make sense to over write an already
-> committed request either so better to store them separate (?). After the
-> "commit", that previous request is done..
+--Sig_/CFTcfMTfJTvKN5E_E/+YXpl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Why is it?
+Hi Dan,
 
-In the non-fast-switch case the "commit" only means queuing up an
-irq_work.  Which BTW is one of the reasons for having work_in_progress
-even if your kthread can handle multiple work items in one go.
+Today's linux-next merge of the nvdimm tree got a conflict in:
 
-You may try to clear work_in_progress in sugov_irq_work() instead of
-in sugov_work(), though.
+  mm/hmm.c
 
-BTW, I'm not sure if the comment in sugov_irq_work() still applies.  Juri?
+between commit:
+
+  ad56b738c5dd ("docs/vm: rename documentation files to .rst")
+
+from the jc_docs tree and commit:
+
+  737b47a6db70 ("mm, dev_pagemap: introduce CONFIG_DEV_PAGEMAP_OPS")
+
+from the nvdimm tree.
+
+I fixed it up (the latter removed the comment modified by the former,
+so I just did that) and can carry the fix as necessary. This is now
+fixed as far as linux-next is concerned, but any non trivial conflicts
+should be mentioned to your upstream maintainer when your tree is
+submitted for merging. You may also want to consider cooperating with
+the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/CFTcfMTfJTvKN5E_E/+YXpl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlryq9MACgkQAVBC80lX
+0GzqBAgAmIQuKqmX3EhZvCh7xwT4qmOnxSQcpkqfx4MmaJ/eOF01+lomAkQ159I1
+qJx9VQyQJ5rV5vj/VDVBM4SDSqWrR/GH3Vy2Jh3PZGtVqh6mogDMFlAv32O8yMZr
+RDnFw3q27v5zCl0vLtJ9Us+cD5it7D9jqnkR3a0nSDsXCNOnOrpDDgShlmmEUCwI
+K3HJuakwhoW3is2w9nqGylulkTB9XG3y2amx2M3uSZ3vG7q4SScH0vNA/LRuRxj1
+rNmui0+UzG5nC6oU6h5YStilneWEmcOSp5gPaTbCA3MTNKDI+bPZFQLiz739atFw
+8RnHAn8R8HlMPVRhTCwvl7hV6Pfaqw==
+=SJX8
+-----END PGP SIGNATURE-----
+
+--Sig_/CFTcfMTfJTvKN5E_E/+YXpl--
