@@ -1,183 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933697AbeEIFYF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 01:24:05 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:45207 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933457AbeEIFYD (ORCPT
+        id S933716AbeEIF3g (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 01:29:36 -0400
+Received: from mta-p4.oit.umn.edu ([134.84.196.204]:52776 "EHLO
+        mta-p4.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933457AbeEIF3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 01:24:03 -0400
-X-Google-Smtp-Source: AB8JxZpf2fv1EhX5SPzmnqZG33O4qVD6mGMMV30njcP+EqJdB6TphU2Cky4xNLQdLkM8wR1mY46kBks4dLb8f3xvYp4=
+        Wed, 9 May 2018 01:29:35 -0400
+X-Google-Smtp-Source: AB8JxZqnk+hu39WJzwODSmv53uBuaCSZ4sKGFMBpgX3l0U2IgTQQEOe/NW8MamYbPLUMKdysFnioaLOgOXJarUFY5UE=
 MIME-Version: 1.0
-In-Reply-To: <20180509050509.GE711@sol.localdomain>
-References: <000000000000fedad9056b7f07ce@google.com> <20180509050509.GE711@sol.localdomain>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 9 May 2018 07:23:41 +0200
-Message-ID: <CACT4Y+b7A89ZbBUktiDjBRAtedQHMO2pZqcB4QJSM8vG8NgkGw@mail.gmail.com>
-Subject: Re: BUG: please report to dccp@vger.kernel.org => prev = 0, last = 0
- at net/dccp/ccids/lib/packet_history.c:LINE/tfrc_rx_his
-To: Eric Biggers <ebiggers3@gmail.com>
-Cc: dccp@vger.kernel.org, Gerrit Renker <gerrit@erg.abdn.ac.uk>,
-        syzbot <syzbot+99858724c0ba555a12ea@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        "Gustavo A . R . Silva" <garsilva@embeddedor.com>,
-        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+In-Reply-To: <1525501896-8235-1-git-send-email-wang6495@umn.edu>
+References: <1525501896-8235-1-git-send-email-wang6495@umn.edu>
+From: Wenwen Wang <wang6495@umn.edu>
+Date: Wed, 9 May 2018 00:28:53 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7dx5kfBzD+CTxMsonRj8c5mA5QRAud8PmfZJ0fYxh_cYw@mail.gmail.com>
+Message-ID: <CAAa=b7dx5kfBzD+CTxMsonRj8c5mA5QRAud8PmfZJ0fYxh_cYw@mail.gmail.com>
+Subject: Re: [PATCH] scsi: mpt3sas: fix a missing-check bug
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani
+        <suganath-prabu.subramani@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)"
+        <MPT-FusionLinux.pdl@broadcom.com>,
+        "open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)"
+        <linux-scsi@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 7:05 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> On Sat, May 05, 2018 at 05:57:02PM -0700, syzbot wrote:
->> Hello,
->>
->> syzbot found the following crash on:
->>
->> HEAD commit:    c1c07416cdd4 Merge tag 'kbuild-fixes-v4.17' of git://git.k..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=13d5de47800000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=5a1dc06635c10d27
->> dashboard link: https://syzkaller.appspot.com/bug?extid=99858724c0ba555a12ea
->> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=170afde7800000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=141b4be7800000
->>
->> IMPORTANT: if you fix the bug, please add the following tag to the commit:
->> Reported-by: syzbot+99858724c0ba555a12ea@syzkaller.appspotmail.com
->>
->> random: sshd: uninitialized urandom read (32 bytes read)
->> random: sshd: uninitialized urandom read (32 bytes read)
->> random: sshd: uninitialized urandom read (32 bytes read)
->> random: sshd: uninitialized urandom read (32 bytes read)
->> BUG: please report to dccp@vger.kernel.org => prev = 0, last = 0 at
->> net/dccp/ccids/lib/packet_history.c:425/tfrc_rx_hist_sample_rtt()
->> CPU: 0 PID: 4495 Comm: syz-executor551 Not tainted 4.17.0-rc3+ #34
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->> Google 01/01/2011
->> Call Trace:
->>  <IRQ>
->>  __dump_stack lib/dump_stack.c:77 [inline]
->>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->>  tfrc_rx_hist_sample_rtt.cold.3+0x54/0x5c
->> net/dccp/ccids/lib/packet_history.c:422
->>  ccid3_hc_rx_packet_recv+0x5c8/0xed0 net/dccp/ccids/ccid3.c:765
->>  ccid_hc_rx_packet_recv net/dccp/ccid.h:185 [inline]
->>  dccp_deliver_input_to_ccids+0xf0/0x280 net/dccp/input.c:180
->>  dccp_rcv_established+0x87/0xb0 net/dccp/input.c:378
->>  dccp_v4_do_rcv+0x153/0x180 net/dccp/ipv4.c:654
->>  sk_backlog_rcv include/net/sock.h:909 [inline]
->>  __sk_receive_skb+0x3a2/0xd60 net/core/sock.c:513
->>  dccp_v4_rcv+0x10e5/0x1f3f net/dccp/ipv4.c:875
->>  ip_local_deliver_finish+0x2e3/0xd80 net/ipv4/ip_input.c:215
->>  NF_HOOK include/linux/netfilter.h:288 [inline]
->>  ip_local_deliver+0x1e1/0x720 net/ipv4/ip_input.c:256
->>  dst_input include/net/dst.h:450 [inline]
->>  ip_rcv_finish+0x81b/0x2200 net/ipv4/ip_input.c:396
->>  NF_HOOK include/linux/netfilter.h:288 [inline]
->>  ip_rcv+0xb70/0x143d net/ipv4/ip_input.c:492
->>  __netif_receive_skb_core+0x26f5/0x3630 net/core/dev.c:4592
->>  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4657
->>  process_backlog+0x219/0x760 net/core/dev.c:5337
->>  napi_poll net/core/dev.c:5735 [inline]
->>  net_rx_action+0x7b7/0x1930 net/core/dev.c:5801
->>  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
->>  do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1046
->>  </IRQ>
->>  do_softirq.part.17+0x14d/0x190 kernel/softirq.c:329
->>  do_softirq arch/x86/include/asm/preempt.h:23 [inline]
->>  __local_bh_enable_ip+0x1ec/0x230 kernel/softirq.c:182
->>  local_bh_enable include/linux/bottom_half.h:32 [inline]
->>  rcu_read_unlock_bh include/linux/rcupdate.h:728 [inline]
->>  ip_finish_output2+0xab2/0x1840 net/ipv4/ip_output.c:231
->>  ip_finish_output+0x828/0xf80 net/ipv4/ip_output.c:317
->>  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
->>  ip_output+0x21b/0x850 net/ipv4/ip_output.c:405
->>  dst_output include/net/dst.h:444 [inline]
->>  ip_local_out+0xc5/0x1b0 net/ipv4/ip_output.c:124
->>  ip_queue_xmit+0x9d7/0x1f70 net/ipv4/ip_output.c:504
->>  dccp_transmit_skb+0x999/0x12e0 net/dccp/output.c:142
->>  dccp_xmit_packet+0x250/0x790 net/dccp/output.c:281
->>  dccp_write_xmit+0x190/0x1f0 net/dccp/output.c:363
->>  dccp_sendmsg+0x8c7/0x1020 net/dccp/proto.c:818
->>  inet_sendmsg+0x19f/0x690 net/ipv4/af_inet.c:798
->>  sock_sendmsg_nosec net/socket.c:629 [inline]
->>  sock_sendmsg+0xd5/0x120 net/socket.c:639
->>  ___sys_sendmsg+0x525/0x940 net/socket.c:2117
->>  __sys_sendmmsg+0x240/0x6f0 net/socket.c:2212
->>  __do_sys_sendmmsg net/socket.c:2241 [inline]
->>  __se_sys_sendmmsg net/socket.c:2238 [inline]
->>  __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2238
->>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->> RIP: 0033:0x445d09
->> RSP: 002b:00007f3c7eff5d88 EFLAGS: 00000293 ORIG_RAX: 0000000000000133
->> RAX: ffffffffffffffda RBX: 00000000006dac40 RCX: 0000000000445d09
->> RDX: 0000000000000001 RSI: 000000
->>
->>
->> ---
->> This bug is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this bug report.
->> If you forgot to add the Reported-by tag, once the fix for this bug is
->> merged
->> into any tree, please reply to this email with:
->> #syz fix: exact-commit-title
->> If you want to test a patch for this bug, please reply with:
->> #syz test: git://repo/address.git branch
->> and provide the patch inline or as an attachment.
->> To mark this as a duplicate of another syzbot report, please reply with:
->> #syz dup: exact-subject-of-another-report
->
-> There's already a bug report with this title, this one just had a few characters
-> truncated from the end.  Dmitry, is that intentional?  The other one is
-> https://groups.google.com/forum/#!msg/syzkaller-bugs/u5nq3PdPkIc/bBFjKHXPAgAJ:
->
-> #syz dup: BUG: please report to dc...@vger.kernel.org => prev = 0, last = 0 at net/dccp/ccids/lib/packet_history.c:LINE/tfrc_rx_hist_sample_rtt()
+Hello
 
-I think this happened when we started truncating kernel crash titles
-to 120 columns, so it's intentional.
-However, the dup command did not pass. It's hard to understand who
-received what today, but this suggests that somebody altered email in
-the command to dc...@vger.kernel.org:
-https://groups.google.com/forum/message/raw?msg=syzkaller-bugs/GMndq4-h7BI/VIz4aBEOAwAJ
-We can also mark the old one as invalid.
+Could you please review this patch? We need a confirmation because we
+are working on an approaching deadline.
 
+Thanks!
+Wenwen
 
-> Anyway, this is apparently a DCCP bug, and as I posted on the other thread it's
-> easily reproducible with the following program.  Gerrit, are you still the DCCP
-> maintainer, or is the MAINTAINERS file outdated?
+On Sat, May 5, 2018 at 1:31 AM, Wenwen Wang <wang6495@umn.edu> wrote:
+> In _ctl_ioctl_main(), 'ioctl_header' is first copied from the userspace
+> pointer 'arg'. 'ioctl_header.ioc_number' is then verified by
+> _ctl_verify_adapter(). If the verification is failed, an error code -ENODEV
+> is returned. Otherwise, the verification result, i.e., the MPT3SAS adapter
+> that matches with the 'ioctl_header.ioc_number', is saved to 'ioc'. Later
+> on, if the 'cmd' is MPT3COMMAND, the whole ioctl command struct is copied
+> again from the userspace pointer 'arg' and saved to 'karg'. Then the
+> function _ctl_do_mpt_command() is invoked to execute the command with the
+> adapter 'ioc' and 'karg' as inputs.
 >
->         #include <linux/dccp.h>
->         #include <linux/in.h>
->         #include <sys/socket.h>
->         #include <sys/wait.h>
->         #include <unistd.h>
+> Given that the pointer 'arg' resides in userspace, a malicious userspace
+> process can race to change the 'ioc_number' between the two copies, which
+> will cause inconsistency issues, potentially security issues since an
+> inconsistent adapter could be used with the command struct 'karg' as inputs
+> of _ctl_do_mpt_command(). Moreover, the user can potentially provide a
+> valid 'ioc_number' to pass the verification, and then modify it to an
+> invalid 'ioc_number'. That means, an invalid 'ioc_number' can potentially
+> bypass the verification check.
 >
->         int main()
->         {
->                 struct sockaddr_in addr = { .sin_family = AF_INET };
->                 socklen_t addrlen = sizeof(addr);
->                 int fd;
+> To fix this issue, we need to recheck the 'ioc_number' copied after the
+> second copy to make sure it is not changed since the first copy.
 >
->                 while (fork())
->                         wait(NULL);
->                 fd = socket(AF_INET, SOCK_DCCP, 0);
->                 bind(fd, (void *)&addr, addrlen);
->                 getsockname(fd, (void *)&addr, &addrlen);
->                 listen(fd, 100);
->                 if (fork()) {
->                         fd = socket(AF_INET, SOCK_DCCP, 0);
->                         setsockopt(fd, SOL_DCCP, DCCP_SOCKOPT_CCID, "\x03", 1);
->                         connect(fd, (void *)&addr, sizeof(addr));
->                 } else {
->                         fd = accept(fd, NULL, 0);
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> ---
+>  drivers/scsi/mpt3sas/mpt3sas_ctl.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+> index d3cb387..0c140c7 100644
+> --- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+> +++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+> @@ -2388,6 +2388,11 @@ _ctl_ioctl_main(struct file *file, unsigned int cmd, void __user *arg,
+>                         break;
 >                 }
->                 for (int i = 0; i < 1000; i++)
->                         write(fd, "X", 1);
->         }
 >
-> - Eric
+> +               if (karg.hdr.ioc_number != ioctl_header.ioc_number) {
+> +                       ret = -EINVAL;
+> +                       break;
+> +               }
+> +
+>                 if (_IOC_SIZE(cmd) == sizeof(struct mpt3_ioctl_command)) {
+>                         uarg = arg;
+>                         ret = _ctl_do_mpt_command(ioc, karg, &uarg->mf);
+> --
+> 2.7.4
+>
