@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933989AbeEIKBa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 06:01:30 -0400
-Received: from mail-sn1nam01on0053.outbound.protection.outlook.com ([104.47.32.53]:31886
+        id S934194AbeEIKBg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 06:01:36 -0400
+Received: from mail-sn1nam01on0061.outbound.protection.outlook.com ([104.47.32.61]:3232
         "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755400AbeEIKB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 06:01:27 -0400
+        id S933824AbeEIKBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 06:01:30 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Akshu.Agrawal@amd.com;
 From: Akshu Agrawal <akshu.agrawal@amd.com>
@@ -15,10 +15,12 @@ Cc: djkurtz@chromium.org, akshu.agrawal@amd.com, Alexander.Deucher@amd.com,
         airlied@redhat.com, Shaoyun.Liu@amd.com, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, rjw@rjwysocki.net, lenb@kernel.org,
         linux-acpi@vger.kernel.org
-Subject: [PATCH v3 0/2] Add support for general system clock on ST AMD platform
-Date: Wed,  9 May 2018 17:58:59 +0800
-Message-Id: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+Subject: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
+Date: Wed,  9 May 2018 17:59:00 +0800
+Message-Id: <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
+References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [202.56.249.162]
@@ -28,46 +30,47 @@ X-ClientProxiedBy: MA1PR0101CA0061.INDPRD01.PROD.OUTLOOK.COM
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:MW2PR12MB2364;
-X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2364;3:hoDJlr8rCQUpKXP9kEALNJ5Sv5vz5AlzchgOfXN2sQoFMjlscPFGYYfw0FDVHldWG63rqMaaZO60EWCkxwfSnk6ajdssN/2U8PkjN5ZDYq3nG4S7FLoj+6bmhVnaTBN5L0brYTik10zTRfAH7/rGTLpzQoAcZRieAuz2yj4cBX9POZgtcMs8fS+RSKx3b5PafagaS0CR3oojrl5jz35SW8WzHtl/cBMPTCU355GYQfqHt7tnJUW7UhEFYg9HD4bj;25:J58pbzpVl+cwA4S1aemtHZZ8iy1l6GjB6Ofb1ItHSbrQU3eJ4nNLmmnY07FFBG3rwtypCoPmWNhx4ls47I+TAiL2MPvycQsx5zgQHKqU3dpcNxfUw6PDJjxYwUWAEf8tW8aLihr0JdNG07pKOluwRoEPrQl/8S42iOOXqfFLVS1XzcqiTwUYoqLVH2jpI0rEArV3cKSzRYqdvojLaqrpqdXYLLg2iB1RqH1UYqfEjvIHFJpkD88I5iWoPxTspPU4TwIZn03W85WslLvszTY2ZKRbziUYf+b5D8juW+a3uLgMo/dtRn7Hw655H01NnoIvRvVNddt+ZS51duVVlpwIpA==;31:Naruoibi3pNai7Rib5N7YXMGz+CGIK5o2Sz8ivRuL363S93U/EBpbUQPqkTTmP5R/6A75GqFyJRkpv96w5G9hpAZsD0RZDBVJI+n7/9M2I+sjNC/rYP1vCHGWwob+OGNl7Q1aEGw4OV6RFALH5XAunfO7GJavlYfNW3XG0w8JYsOhjxZ0PaG6dcZSt7W/PA+RJc5NZMUX3lz9uhVGmKZTD2aHEud46gj94M0PAPghlY=
+X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2364;3:giue4uiKtMmuHL9n4YbMWWfPNyU7P8xkcwMLG8bgfB6jhge80K4Yt+8uwZvVQOSR/KQPRhLLLUHdz6G6crIx1q3wPSUtTyxKVwiuFBYd1KCjpQFoa0y2qFpznWI6vcpWQiqcySG7lO+EvD1RP4SdqHST85Q82sR6w3fduyF+Qnszn6lC2fbAC1NqPAJ8T286X2MTnkDL5LNC6VmkXE2R/ve2UmNACtBMI2qWfjTACozSQcdLz6vZOTGP4yO0IBjr;25:VTVAi3Mr/ZAEkGsjpj1/tV77D8vZQVRN+CgTgPDhgcGL4zYiDOnCrFJM72aVYQ4wCx7ukgrW3cDyVwLj1irQH206fQN2aW+yck9tmpzwkf6+ufq7ba/EsCe77cTARmmzPkVChxykTaEEOGMbZaXzuN6Er6iRNR+5uAZkdlxOMP+4pU4qAeBqxNC3MUekPZbpdfFuT7VOk6wEKwc/Kh1ldp1j646wmBYS1sUlzMdHnRCjcH5RvT8CLTrBUcfPq+UXE0nwz42lymH1MNm80/qht/TJNqMm2XriZEziwNg1SzHAcTSGSbDDIMTjb3qn0i26omBkaY4Zo8pjCcxx0rZGsg==;31:cCpCcdeQCd17tomVRjBqjNWSyBXm2TBc7LxC67LJpdJYes5TNx+TB/YCMiucCZMtK6hdjmiZmnq63U+dDhFNIQ4FsdlWReR0VKJok5iM6uWAfHxhnBOfZli73haXpQYDnYsL1yzGNDJfSAkwK475Gc2iLjdXfDRVlCcO4iAZbGPXPloXlUxrmbUEzZFPSEoLtDjyO+z1KJpPcWkHAaUEfoMuJ1vkelAmgFMyTcrD2vw=
 X-MS-TrafficTypeDiagnostic: MW2PR12MB2364:
-X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2364;20:tq2CV5l+6AGAmkKpKlUJVQGmEkEx5Cyjc5KF+QDR/tNyPk3ztsNlAPMchg4vPwO+/TusXY8W82VG6I5vvAKqZtgpBfRXiFjVC7oApTu/RRoPwiHi7vs0eAXKqIwLkpBvK05SpNMunYgkQX5bMwAMQW4YrOGOSp5Fn4ip6mDvMovwWt7e2g1hzvZz0aHte8myAdgPMqE0PztPjhlD9nxRQyC0aiV0EnCb5hu4wMPIFep0cEcdxOTaJ50ssqZzeAhafCmByCYYV//7VNrkALwhzMRp/Ego/KVuAUPl6qhUmVy2PQ2x+xYwwuIyyfSOd6u+mkRS8RYwYEB5s6Anox4XIk1ue0KWClSy76lF3Ns5APbD3ve08jOkGe5g/FdfXnerhIznsZtPjYzCi6PX7GZhnvDrO7eWP/EiCUvgONd7pKf5WvA0WJQsCuornQLoGPRE8rLbsu0M9WsN90SOIkeDw8BT3oP6FNVvdd5IwqLR23uszTjP9uugnJ/h+wZvLyzX;4:I1csIR56y5iOH2cvY7NztHW1Y+OppZZcHwQo2/AjOgTaN1OHkPZ6URt3QxhZ/aSFBduNUIMBUUOL0JHILV2KcEVqVe98QWoVsULhyXHxs3xs8mrVKhWI3QN8SccfFiYpadsmKnN5LO7+wg3Zx3VFGakA/BFVv8XretDLJHyGG36iLnsYHRiV6MO2lAH+MYUyEI0HBvkMC+9yHKliQU/cRLNTIdfPU0BNm+ONUF2mR4qM0M1uDZF4m2nVh+gPmKQhwBr8jgiumznxJLgBbqF7vg==
-X-Microsoft-Antispam-PRVS: <MW2PR12MB2364FF82CE4DDCEA534FC8FDF8990@MW2PR12MB2364.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2364;20:nQBY2UQukQjBruSrWcSCPQPSycY1xObMDXtawCSec9Bs3g6UldMe/oh+Z9iQdZH6SO3u9Fx2q6uDmaR3G3URP5P8+FV55nbl0zGaJMOPmGV8WrANw+q3WEpFTuhe4Nu40jNQ1Kb3q9ekqsI647YA1kcotmTLvYEjFTfnzpr8tnYeDr+U43/0uQTqUunnz2iMRJl3f39v0iTEAjB0LLnuqaEusFHAlwkM6aDTWSEDzKf2FAFRxu4WVRurmJTBi+O3HS3La5luNRiNmXf2YLBkjw6HTq1nvNNmbEbXwbpE8sTaEnx5ji+tzggbSq4I4RWM1ecpeabj016KYyTqJg7KcEUW5pewveXcJorc5f33eTbR7Ch5YdASkQSUgJSxzOM7PZxexFcZzGbBG9Gh49xqFaYmrfUoFf9JONS6a55Vm1tyXO0ABc2Oy9d8jHMuEZKD4gnXFsuHT0GlHkuqtzruAOLBJy6ioIBa997RBd5zOsDv/ZL3weg0M1hjZAi33kbh;4:hD6SiA7ko2SKgPlY1JTtVP1BG2XotDHgOXu+bgxbiGXjb4yqpTkUNu4qRiLh3Do6LpGNmmcz9skqChHGqCguUt09wVvP+6cUPJWLXOpRx/AWRoCo+0fKFS6aBhs3V6KVsSg1Nv1llKPDC6m1nRG1rZe8X6YDRKwlrTm+D7rIa3M9GSlXbfiOL5QNYvg4XNqcPI0FCNTjiZc3kjFrobnvgFZJ76WmolXcPuMcY/w+UCBOo5+ssZt2zr+4ep+45lXaA8OjhuAi0K6lMixps9uha7BZJT/NwhiP4EV7qgZBJPamoWLmmhNWXBlS1uLarIDa
+X-Microsoft-Antispam-PRVS: <MW2PR12MB23645ED0CCE6D08BA6362AA1F8990@MW2PR12MB2364.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MW2PR12MB2364;BCL:0;PCL:0;RULEID:;SRVR:MW2PR12MB2364;
 X-Forefront-PRVS: 0667289FF8
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(396003)(366004)(376002)(346002)(54534003)(189003)(199004)(316002)(16526019)(305945005)(7736002)(53936002)(59450400001)(68736007)(16586007)(25786009)(50226002)(956004)(105586002)(186003)(109986005)(2616005)(53416004)(476003)(486006)(26005)(51416003)(386003)(8936002)(8676002)(81156014)(44832011)(7696005)(3846002)(86362001)(6486002)(52116002)(81166006)(4326008)(478600001)(66066001)(6666003)(36756003)(72206003)(48376002)(1671002)(50466002)(106356001)(97736004)(6116002)(2906002)(47776003)(5660300001)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:MW2PR12MB2364;H:akshu-HP-EliteBook-745-G2.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MW2PR12MB2364;23:zIG5h0h1jdssM3G75LZOBhEdnn9o14eUT0FXmHYVm?=
- =?us-ascii?Q?esgPJVNRyUQBIDA0ijLwyy5dJiIp6CA9YnNrprQe9eHpnXbyq/z9jYw3smWT?=
- =?us-ascii?Q?lFhmZZzJtZE1+k+CrKmjbco8B5oL55JKtBJOBJYCdS9NTFCVFp05nlFJLK+z?=
- =?us-ascii?Q?dtWltqc/2me8FKijnFFwkJ8CcJ5n15HaRVTJEqc29f0orksWHO/ZxM/BuFeJ?=
- =?us-ascii?Q?mcqLP29HlLgvew1laATPUimTPx55nFtK+xUIFQLaQQt7/M+/l2yxJBsIWFFg?=
- =?us-ascii?Q?ABsK70ST40Kiho3mucWDchxZidIGNoBMgygJE5ikynMQ+zv9L7Dg37qzcvqZ?=
- =?us-ascii?Q?t124qwQEuUWL/sWqPgSsocF3BIgim8id0Srcco8JzBRAdhE82qxVsmj9MzOS?=
- =?us-ascii?Q?KQXpnrMsjwyqS/KFD300JF2in58AqArdd9Zbz5VQAQGtH/xkNs0Ec+L37DDh?=
- =?us-ascii?Q?waVN7LX4Uv6EBgtoioQetHX8NEYOJhKrI4/gP72aVP7Na6KH9J1+RsOcbFsq?=
- =?us-ascii?Q?zC0qQhLrjTDVuSJUghWJJDh7PLvaMh4OyJ8yZRSfojRw21OXvER7E7TjxVPj?=
- =?us-ascii?Q?+y+HaW/lfEQVQGMxR8leVwwq9XjscUqHSV9TH4hyXzS6nIDjX5ySnQDYoJ5f?=
- =?us-ascii?Q?GUVCYjy45zxkihwFe0NELgoWZkjdyHJa/QDtXFFw0uJIEMQ7TBB246W+94ls?=
- =?us-ascii?Q?DQaiY8JXPFkbX9lImcoKdVd1wuMQ9VoNTMEzP0Re+HSMnGHlyLH6Ue5XLuye?=
- =?us-ascii?Q?51d62ZCndYp8pfqwOqnB8rAI2cQMIs7MPvQRP/xKtFByQ0fn/tX6pdqfTbyR?=
- =?us-ascii?Q?jWodTFOjetAbVPKG3XbYoDp9ePbK3RdIsCOZf1FWXAoVnelEEepGh9267sB+?=
- =?us-ascii?Q?FvyIwU87J7l+GxPl15ixGyK3kCjSlmoLqGxkFXXNInp4K2TPQf11Lm0nEWiW?=
- =?us-ascii?Q?UiUgXBtjVIesScejH+fEGs8EPvKDXk5EUeoOcUKtpRKN49Z4gL8GJoTp6Hiu?=
- =?us-ascii?Q?/5PeMyR9R4ddnrLVm6KVp8O4ou0HMGcGoqqNWvxoVh1z6QjaztQ9UChpZW56?=
- =?us-ascii?Q?vkF+lETxe07ObeqeFF6s/oGCQPQpySLEpJ6UZV1pIYFvCeYXGCSxuLrLl7w5?=
- =?us-ascii?Q?M/GTjezN8SAx/9+Z5Q/staxJwiDfDf2kFj3BKzlHPpD+/vPOJ8d4cdwQv1ez?=
- =?us-ascii?Q?9+a+vm2QG/cnKEAu7fWV6MnGIrNGBPPlZ6ZxQXaQ6vP8rGar1RYQhWEwi4kr?=
- =?us-ascii?Q?seNcylllC+bGQ6JNCs=3D?=
-X-Microsoft-Antispam-Message-Info: 0MVaOPj5tYbs5XS4WKe0qdDVpv3DPVuQChDV3z/TLaiM2hm+C/MxtHt/ufq97xq0zfn08oBxA77aJvF5+eXtfGZi0EwFf6+tgn/sFUqVz9mBWUH1q3Rsx/VRXEohcCjZHlHsgT9czUFuTzesjG940H3iRqyvgW12sKQgqHL41M+SCvjBv6djv3TOKH84eHji
-X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2364;6:rIpfQCr7v+tqwlRh1usotVFeLJ47LBVnDWrQ2Uw81CrThu6ZIZKDAkgJ8bFrydk1lVFwVb7iqJXnfIPomrdsUc7LFuewBOJo5PKSJ5WMRcoRVjSs3i5GxHH8U3TyLcgl070YQEL1JULYZCHFi840eVLCOPSOHPQQdsNTrChSQtDBBNuGjLgzLFq1kwyobawslgNN0tIvIW1C/aJN2bLcZaqNH+7Um4BJK3cga62UgRU6CdAgZTwr7oU99OR3O/vW01KPOuup3HqsE6JiVvhiA+DGF/xU3aR1OHla6Ja9Ir7wRyO8kqk6lnWtIKJbYTXc5tjW+k23IqTGTLOCqpFW7Pn+8kQ+edZxZZjthY0eq6shgo7yLkTKOHl4ozVH7aTHCUKLHccsVDsmSEPNkRv3JA9bguZFo1ujQuSVhK1tP0SNMll8tKgbXpMgRpl2yJaLqTMAvtFZXudvw4NorJdrtQ==;5:pX04+gKnCrFrqjg+hNRJNfxHaEtqsb7yXATozsNB+iKwJDM6LSQHVtaHfjGJpDcn5V9VvCwrr/WhH6i8c0eKqVohwv+Yz9D+WTln4Uu+0TuxY7TczeOycAnyqtuLJixBtG9X6ppoIH9rgralq3/v1H8jhHTYF/TZmRoYI7kNF/A=;24:gr6ZxG1Rm1us7b44PsT/+bikgnDWVq3R0vxzd6z8PvYMvSnIh6u8CB/d4jJSlUng0d8cZhPP8stj2Z35iBFokAPKn34wSzqpNVaDZjn///k=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(39380400002)(396003)(366004)(376002)(346002)(189003)(199004)(316002)(16526019)(305945005)(7736002)(53936002)(446003)(59450400001)(68736007)(16586007)(25786009)(50226002)(956004)(105586002)(186003)(109986005)(76176011)(2616005)(53416004)(476003)(486006)(26005)(51416003)(386003)(8936002)(8676002)(11346002)(81156014)(44832011)(7696005)(3846002)(86362001)(6486002)(52116002)(81166006)(4326008)(478600001)(66066001)(6666003)(36756003)(72206003)(48376002)(1671002)(50466002)(106356001)(97736004)(6116002)(2906002)(47776003)(5660300001)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:MW2PR12MB2364;H:akshu-HP-EliteBook-745-G2.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MW2PR12MB2364;23:PrM1l5LBrcVwG3EU5jPMnVIFBIGI36T4c+yfgM/Nm?=
+ =?us-ascii?Q?XuiAuUKjzSIJvAIk3gLxNZBgSQ9Su9GUVvXeMCIpNV6qq9fvoQ3QuW9wwXsz?=
+ =?us-ascii?Q?chycFq1M0Rvw6Wriygi26IjIo5Wi3tXhc2hn4wK5hwViJG4+qSE/GztRKWs6?=
+ =?us-ascii?Q?WljBTDzMXXPgWO1l0Aq6TZAS/3eJsOMvxr8RvtjBTO/xCilLuq44Kdva43j7?=
+ =?us-ascii?Q?7cxt8JD6PJjHSLxVh5vtuL/dMxpq2WKSBwb5q8pfMw2o9CbX67Q8/DNoDyOp?=
+ =?us-ascii?Q?acfr9w2YcFLqhHUsfQaaGVSUCT2iudGP0TTLhM3pktfzoUe2F8dGI+AKamlf?=
+ =?us-ascii?Q?gp17e3TvB8KXEIwCt0nM1iNtkLoCM8hJ3C35okVdXuaeoyntUFOEQVx/TrYG?=
+ =?us-ascii?Q?Cxk1g6QokxQ9RtzfuB1oayAoaTx9ohSssMmLsWjU79b0JeL8b2x7+G/Z1HIe?=
+ =?us-ascii?Q?VlrZa9NkYSdYhgtwVn43Eee24sr0BlNlgo5Xkd4hkWQNaCGvO87D9jpEwTzN?=
+ =?us-ascii?Q?lly6VABhg9SGVmbIeBkhtJ6mS60Z5I/bkEkPD3JJjFU9Sapu4I8KkF+VzSMo?=
+ =?us-ascii?Q?53RidmwduNebahNy0mag8Ls7fSqkCPrvde37Zi/3Cap8FB+DsJR6ZEqHzAFc?=
+ =?us-ascii?Q?lAAA0ANEtBywzhmKsBkw94+36L2I/HdGjTkSKW+utCs6ORmkUb6RrqxO9+7u?=
+ =?us-ascii?Q?9ybk8aXAnQqeRUP/maFdwDhoQ2zwPJS8ultXJEy8aXmmAmJz9AD0EPgmGwUm?=
+ =?us-ascii?Q?JXMuUQWKnqZgesIWjlRxx80Zaz+4BHXljHDudMPKVVnpjcxyoMWVqjfLqzCC?=
+ =?us-ascii?Q?cEe3mZ2vlaIDpySiQjI5hIj0fTZa4YDF2gsHVyFkYObN5JSMg1ZbRtR6yD8X?=
+ =?us-ascii?Q?X6m+lDZ/4YUcPyujT6wPeNxteDaeHm8Rs0uuIv8mhs5x/eEmmmuZ+rOFAew0?=
+ =?us-ascii?Q?S7/wFGAF6DAEn3B2yrKzGkorRuYec+m0VJQ2UEBHBXCQ+ARS8ozz5DDqgf2X?=
+ =?us-ascii?Q?8Fbs5PRuiMxRzH3HCKoSteDSdrkS4Uot5Z5QWwII4pDxwJ6tACGbYL25TLES?=
+ =?us-ascii?Q?4GPx8l8hvmC8F+B4x6YP/t4Dt8trI4yc64lo6oMLpBgoEmWYKvPaOPJ/uBDp?=
+ =?us-ascii?Q?DBVjQlO52p7SLDeP4a4SqGCfgbtJv/yMZmATgj89NLTAKTT9bQnB3i8aDqVr?=
+ =?us-ascii?Q?jlyWRmB7+oabtlzsMkP7zRj0/k3QsAZww+ant6ac0fSxiTlVAokYgQ33lbY/?=
+ =?us-ascii?Q?jRJAS2SndzmLh6URjFaXZakX/b9/v3nMbExPrEmxYJeMJc1gDA93gFI47PtW?=
+ =?us-ascii?B?QT09?=
+X-Microsoft-Antispam-Message-Info: ayT5Oq2jgoH7G3Gqr0fnbbEASVfcnT1+iGyVU8J25imQB6tfyYmnywHHoQ75Iyf4Yi5YAb3uiArtT7k4vUTyjHrf+rY9ieYQT8p/ui21vkYlxu3ZleG07S+LnLfNad6ajVt28UUABoXKyHUvqsstNYkZOdtZ1ofHJo/pYWvgw+Useg0yvpj/iGWna7/pT/Lr
+X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2364;6:hEb1prhtcvectm7XLQmGwekyJKvET74HPGolhjBWEbS+7YOWDGtw4wU30+xqkOaF2o2bO+6BpJjMBjxQ+1pbK43yNd1rvsVC8D7yrkCTgTO0EgEqs/VTdFNl69RkV/qYHtVIko+YjROK06XKZUQ4xCoCa7TvPIB93xofq9uTB7RPSMFHFvczRRdrw9/k5e7bUKAgDqP5KuNFVMaavrl55Hl+bDv1yMhSc92HBuGCvDtLIwEQV8Kz5etwaqEU/qyX5wRQOl2640Wr8GpRVkyOVjCD39hf4jw5xwmA/RzZpAnfTR/IO34ORguMPWQxJdkZMANWSzCK2IYacr4vLrUQXgOGabRvIhis3BU4eceo3ldEGRx1HMF1k7nyodGXT3HzcRloDWgtmcadCWbcv8PPEs+gWivxlsxCpfukZW6p4QIKh7PBQr2Rrml2fSNU9giyDZ5D5WwinfTTt8vNa6wMMQ==;5:Rbi2saC5OA4iUv7IZBugRQeK4XILX0AF9BvnrJVpqJjjtv2PTuwNpISAPPwsfflWygc8bNEl59WdOTuiFjVG44nGjGbqhl4NbyfJkTJ5HvwCCd4ci7R7h6TuvJtBBJjw4wSSgOK3rdV7lzJXf99Gh5vXvlsoVQkloeUEnw4KV9c=;24:jqkfW8XOHLJZ5q6CIv65RSqeqQ14QG2o3HWRg6xjo4/IiLz4ZmB/JJs4SL2iqL3wO+Rabwnf62YkQhQ3VP8Z0FVsoGiAj8iJUHybr4l4RTg=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2364;7:Sfccgif4IW15haxmHwo5UdXn3KAI67cDHSs+rwLT+pCi0nZ4aECy10+mHqdGosTRKwz7V86sEnJnXI8LN0oqVHbTOamdB7qQ01aqXRcxmkAyty7xk838WBurlvhgYpcjWUa/Mf59b5mswDF6YGDSebUgwXsgClGCpMPTWslEBI5cYjiAKdPFXsFIjG6MtxEkj0d37jDwddePHcmvc6DiqX3awIDxhKKmPslh9iUzMXCrBcww0jCoetFLttq2FNa6;20:18Nxg3FQJXsbpeq3symqVKk0ko6JT+86nnoqKx/4DviKcf3KjAxAbn7Vn5evvvPiOvjSaRGfHgimgfkGX39OKFP3/oZnrJIiPdzDYmRohISpd/hsXeQZqpKBmkD26TFPn9HDBYEEX2q5ux/dEQzR7K6U2HgZiL4l5VaYygzFHbZPIqTX6HvUTDdidGeytDc3uynxD/uDPVq/iAu0WeDNsTAuxCjPIJ9I41Sqc9rq8+Oi+WOy1JpfA+2EK6N/m+1v
-X-MS-Office365-Filtering-Correlation-Id: a28e30db-bffa-4fa8-20a6-08d5b593d2be
+X-Microsoft-Exchange-Diagnostics: 1;MW2PR12MB2364;7:/hKi9Zciye/2ILvGjuQQyZsz/vQk4/IIL+f0Vg6zoRcQrx4DV6lEU3mSyUEkqMG0EQAQ3VHDKwqRAt5NokPQflOPfCOY62W9bU7v9qq/glgaFXzvRwd6qUlplSyo82135wReHtzmpx022Syo8pR48IlVpR9t2YzgUAFa4jYZIt6et9G2U0bx92zXuElX/fQH9SQUPMMGWn75YI01Xh6Rw+V66bXVH3cJNeJKgyANNDvdY9VRBd4IagF/f2b9HXx7;20:T8GxTDIk9Fs8b8/YWvHMy6LF+xWwkvCaqcFR1qZJKf4y2Suj00Ce95Fbhf8Y1+zn9yJPDjSsbt5EAz62CaKd8Kul/72cOn6Rnq4fioJrjJm4BYzgj6sipBMmj5mVHicV+RUoiGDgnpCO3e/vPltMafAeM96cF+K30guFJfI06gJIefLOJRtH1IZ12imht0PxIJ4n0YBQqw6Qf/PAbaOb9oRh0EHgfT9BM7XMzB5Q0myyLxmkClqYX+e7JpdZ8Rkf
+X-MS-Office365-Filtering-Correlation-Id: a4b26360-2d76-4133-f3fc-08d5b593d4f7
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2018 10:01:21.1413 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a28e30db-bffa-4fa8-20a6-08d5b593d2be
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2018 10:01:24.8913 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4b26360-2d76-4133-f3fc-08d5b593d4f7
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR12MB2364
@@ -76,33 +79,138 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AMD ST/CZ platform provides a general system clock which can be used
-by any driver. Registration of this clock will done in clk-st driver.
-While the ACPI misc device will create the required MMIO mappings
-and pass the same to the clk-st driver. The clk-st driver will
-use the address to enable/disable and set frequency.
+Stoney SoC provides oscout clock. This clock can support 25Mhz and
+48Mhz of frequency.
+The clock is available for general system use.
 
-Changelog:
-v2:
-  clk: x86: Add ST oscout platform clock: v3->v4 unregister clk_hw
-  ACPI: APD: Add AMD misc clock handler support: No change (v2)
-v3:
-  clk: x86: Add ST oscout platform clock:
-		v4->v5 use static array, change license
-  ACPI: APD: Add AMD misc clock handler support:
-		v2->v3 use devm_ioremap, fix warning
-
-Akshu Agrawal (2):
-  clk: x86: Add ST oscout platform clock
-  ACPI: APD: Add AMD misc clock handler support
-
- drivers/acpi/acpi_apd.c              | 50 ++++++++++++++++++++
- drivers/clk/x86/Makefile             |  1 +
- drivers/clk/x86/clk-st.c             | 88 ++++++++++++++++++++++++++++++++++++
- include/linux/platform_data/clk-st.h | 35 ++++++++++++++
- 4 files changed, 174 insertions(+)
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+---
+v2: config change, added SPDX tag and used clk_hw_register_.
+v3: Fix kbuild warning for checking of NULL pointer
+v4: unregister clk_hw in driver remove, add .suppress_bind_attrs
+v5: Fix license, used static array
+ drivers/clk/x86/Makefile             |  3 +-
+ drivers/clk/x86/clk-st.c             | 77 ++++++++++++++++++++++++++++++++++++
+ include/linux/platform_data/clk-st.h | 17 ++++++++
+ 3 files changed, 96 insertions(+), 1 deletion(-)
  create mode 100644 drivers/clk/x86/clk-st.c
  create mode 100644 include/linux/platform_data/clk-st.h
 
+diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
+index 1367afb..00303bc 100644
+--- a/drivers/clk/x86/Makefile
++++ b/drivers/clk/x86/Makefile
+@@ -1,3 +1,4 @@
++obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
++obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)	+= clk-st.o
+ clk-x86-lpss-objs		:= clk-lpt.o
+ obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
+-obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
+diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
+new file mode 100644
+index 0000000..fb62f39
+--- /dev/null
++++ b/drivers/clk/x86/clk-st.c
+@@ -0,0 +1,77 @@
++// SPDX-License-Identifier: MIT
++/*
++ * clock framework for AMD Stoney based clocks
++ *
++ * Copyright 2018 Advanced Micro Devices, Inc.
++ */
++
++#include <linux/clk.h>
++#include <linux/clkdev.h>
++#include <linux/clk-provider.h>
++#include <linux/platform_data/clk-st.h>
++#include <linux/platform_device.h>
++
++/* Clock Driving Strength 2 register */
++#define CLKDRVSTR2	0x28
++/* Clock Control 1 register */
++#define MISCCLKCNTL1	0x40
++/* Auxiliary clock1 enable bit */
++#define OSCCLKENB	2
++/* 25Mhz auxiliary output clock freq bit */
++#define OSCOUT1CLK25MHZ	16
++
++#define ST_CLK_48M	0
++#define ST_CLK_25M	1
++#define ST_CLK_MUX	2
++#define ST_CLK_GATE	3
++#define ST_MAX_CLKS	4
++
++static const char * const clk_oscout1_parents[] = { "clk48MHz", "clk25MHz" };
++static struct clk_hw *hws[ST_MAX_CLKS];
++
++static int st_clk_probe(struct platform_device *pdev)
++{
++	struct st_clk_data *st_data;
++
++	st_data = dev_get_platdata(&pdev->dev);
++	if (!st_data || !st_data->base)
++		return -EINVAL;
++
++	hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz", NULL, 0,
++						     48000000);
++	hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz", NULL, 0,
++						     25000000);
++
++	hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
++		clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
++		0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
++
++	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
++
++	hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
++		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
++		CLK_GATE_SET_TO_DISABLE, NULL);
++
++	clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
++
++	return 0;
++}
++
++static int st_clk_remove(struct platform_device *pdev)
++{
++	int i;
++
++	for (i = 0; i < ST_MAX_CLKS; i++)
++		clk_hw_unregister(hws[i]);
++	return 0;
++}
++
++static struct platform_driver st_clk_driver = {
++	.driver = {
++		.name = "clk-st",
++		.suppress_bind_attrs = true,
++	},
++	.probe = st_clk_probe,
++	.remove = st_clk_remove,
++};
++builtin_platform_driver(st_clk_driver);
+diff --git a/include/linux/platform_data/clk-st.h b/include/linux/platform_data/clk-st.h
+new file mode 100644
+index 0000000..7cdb6a4
+--- /dev/null
++++ b/include/linux/platform_data/clk-st.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: MIT */
++/*
++ * clock framework for AMD Stoney based clock
++ *
++ * Copyright 2018 Advanced Micro Devices, Inc.
++ */
++
++#ifndef __CLK_ST_H
++#define __CLK_ST_H
++
++#include <linux/compiler.h>
++
++struct st_clk_data {
++	void __iomem *base;
++};
++
++#endif /* __CLK_ST_H */
 -- 
 1.9.1
