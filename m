@@ -1,68 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935497AbeEIQfQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:35:16 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:48278 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935485AbeEIQfM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:35:12 -0400
-Subject: Re: [RFC] sched: Distinguish between idle_cpu calls based on desired
- effect
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: matt@codeblueprint.co.uk, mingo@kernel.org, dhaval.giani@oracle.com,
-        subhra.mazumdar@oracle.com, steven.sistare@oracle.com,
-        linux-kernel@vger.kernel.org
-References: <1525736477-8184-1-git-send-email-rohit.k.jain@oracle.com>
- <20180509085105.GG12217@hirez.programming.kicks-ass.net>
-From: Rohit Jain <rohit.k.jain@oracle.com>
-Message-ID: <64ec7411-8d88-5531-72e2-8ac69f163b76@oracle.com>
-Date: Wed, 9 May 2018 09:34:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S965544AbeEIQjp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:39:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39862 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934647AbeEIQjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 12:39:44 -0400
+Date: Wed, 9 May 2018 18:39:40 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Alexei Starovoitov <ast@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Francis Deslauriers <francis.deslauriers@efficios.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Borislav Petkov <bp@suse.de>, Yonghong Song <yhs@fb.com>
+Subject: Re: [PATCH 2/2] uprobes: x86: Prohibit probing on MOV SS instruction
+Message-ID: <20180509163939.GA26347@redhat.com>
+References: <152587066475.17316.3035446966107675608.stgit@devbox>
+ <152587072544.17316.5950935243917346341.stgit@devbox>
 MIME-Version: 1.0
-In-Reply-To: <20180509085105.GG12217@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=996
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805090155
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152587072544.17316.5950935243917346341.stgit@devbox>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
-
-
-On 05/09/2018 01:51 AM, Peter Zijlstra wrote:
-> On Mon, May 07, 2018 at 04:41:17PM -0700, Rohit Jain wrote:
->> In commit 247f2f6f3c706b40b5f3886646f3eb53671258bf we distinguish
->> between idle_cpu when the vcpu is not running for scheduling threads.
->> However, idle_cpu function is used at other places for actually checking
->> whether the state of the CPU is idle or not. Hence splitting the use of
->> that function based on the desired return value.
-> Yes, that looks OK.
-
-Great! Let me change the comment and send out v2.
-
+On 05/09, Masami Hiramatsu wrote:
 >
-> for your gitconfig:
->
-> [core]
-> 	abbrev = 12
-> [alias]
->          one = show -s --pretty='format:%h (\"%s\")'
->
-> $ git one 247f2f6f3c706b40b5f3886646f3eb53671258bf
-> 247f2f6f3c70 ("sched/core: Don't schedule threads on pre-empted vCPUs")
->
-> which gives the normal commit quote style.
->
+> Since MOV SS and POP SS instructions will delay the exceptions
+> until the next instruction is executed, we should not do
+> single-stepping on it by uprobes.
+...
+> --- a/arch/x86/kernel/uprobes.c
+> +++ b/arch/x86/kernel/uprobes.c
+> @@ -299,6 +299,10 @@ static int uprobe_init_insn(struct arch_uprobe *auprobe, struct insn *insn, bool
+>  	if (is_prefix_bad(insn))
+>  		return -ENOTSUPP;
+>  
+> +	/* We should not singlestep on the exception masking instructions */
+> +	if (insn_masking_exception(insn))
+> +		return -ENOTSUPP;
 
-Thanks! updated :)
-
-Regards,
-Rohit
+Acked-by: Oleg Nesterov <oleg@redhat.com>
