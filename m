@@ -1,245 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935436AbeEIPk6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:40:58 -0400
-Received: from mail.savoirfairelinux.com ([208.88.110.44]:36154 "EHLO
-        mail.savoirfairelinux.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935397AbeEIPjs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:39:48 -0400
-From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel@savoirfairelinux.com,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com
-Subject: [PATCH net-next 3/3] net: dsa: mv88e6xxx: add RMU disable op
-Date: Wed,  9 May 2018 11:38:51 -0400
-Message-Id: <20180509153851.10207-4-vivien.didelot@savoirfairelinux.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180509153851.10207-1-vivien.didelot@savoirfairelinux.com>
-References: <20180509153851.10207-1-vivien.didelot@savoirfairelinux.com>
+        id S965157AbeEIPlu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:41:50 -0400
+Received: from mail-eopbgr660097.outbound.protection.outlook.com ([40.107.66.97]:15543
+        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935397AbeEIPlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 11:41:47 -0400
+From: "Stephen  Bates" <sbates@raithlin.com>
+To: =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
+        "Jerome Glisse" <jglisse@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+CC: Alex Williamson <alex.williamson@redhat.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+Thread-Topic: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+Thread-Index: AQHT21soiBVnp6SJuEuLCiH6kBzTLKQk+zIAgACHcYCAAJmxAIAABkiAgAAoBgCAAAW2gIAAA0YAgAAHvYCAAAGOgIAACKoAgACuAYCAAGxLgP//vUwA
+Date: Wed, 9 May 2018 15:41:44 +0000
+Message-ID: <1775CC56-4651-422F-953A-18E024D3717C@raithlin.com>
+References: <20180423233046.21476-5-logang@deltatee.com>
+ <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
+ <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
+ <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
+ <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
+ <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
+ <20180508133407.57a46902@w520.home>
+ <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
+ <20180508141331.7cd737cb@w520.home>
+ <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
+ <20180508205005.GC15608@redhat.com>
+ <7FFB9603-DF9F-4441-82E9-46037CB6C0DE@raithlin.com>
+ <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
+In-Reply-To: <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.d.0.180505
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=sbates@raithlin.com;
+x-originating-ip: [70.65.250.31]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;YTOPR0101MB1964;7:no9J8QesCWwfsX6xY3a5C5mq/FoXxngR8DoaQSl7JyhoiSswRYTAbr0IbJsXlo3rSKfC2zmAItdv/BBFztyCMuWHDxF+ez1rj1nVWGUvDwAeU94yJezze/R4gvPrc+pn1DTKf90kL+2aYNOTIAbNdHVl5IElk+w4s/ES3wbiVXDrt55jB/uNy4LBhHoHvvlcpAZXAFeuwDSo40/FaL7CeTOfRus8SxZvbP5MX3sWF3zkRXN4KqXco3pnh7y3h/O4
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(2017052603328)(7153060)(7193020);SRVR:YTOPR0101MB1964;
+x-ms-traffictypediagnostic: YTOPR0101MB1964:
+x-microsoft-antispam-prvs: <YTOPR0101MB1964A2451E64E166DDF3B2A7AA990@YTOPR0101MB1964.CANPRD01.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231254)(944501410)(52105095)(3002001)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(2016111802025)(6072148)(6043046)(201708071742011);SRVR:YTOPR0101MB1964;BCL:0;PCL:0;RULEID:;SRVR:YTOPR0101MB1964;
+x-forefront-prvs: 0667289FF8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(39830400003)(366004)(39380400002)(396003)(199004)(189003)(4326008)(81156014)(81166006)(7416002)(8936002)(5660300001)(6506007)(3846002)(305945005)(6246003)(8676002)(7736002)(66066001)(486006)(186003)(25786009)(110136005)(36756003)(97736004)(83716003)(99286004)(6512007)(53936002)(82746002)(5250100002)(33656002)(86362001)(6486002)(476003)(11346002)(2906002)(446003)(316002)(76176011)(93886005)(6436002)(2900100001)(26005)(3660700001)(59450400001)(229853002)(58126008)(102836004)(54906003)(6116002)(14454004)(105586002)(8666007)(3280700002)(478600001)(2616005)(68736007)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:YTOPR0101MB1964;H:YTOPR0101MB2043.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: Z5yIwRvSTOtsUObDtnGA+PvTLY4U6XYy7EfsQGp5rhys/vv1HOapGAkjV4v8cBfpQXd16HJyydCT4rHLoREPGbOaPY5RMp41KjyLVy1Db41NjXDcld3yhQLoWp7Vu27rvq18yrtRZa/QsvruPP5Q8xTReVDSLAfdvQQYWJTdkp9GaK4ZTrPwXb/bMZcJw7Ac
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <215EC96ED56B2D49A092AB3D81AEB91E@CANPRD01.PROD.OUTLOOK.COM>
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: fbdb0ec1-a6e2-4f22-c389-08d5b5c35e7a
+X-OriginatorOrg: raithlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbdb0ec1-a6e2-4f22-c389-08d5b5c35e7a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2018 15:41:45.0209
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTOPR0101MB1964
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w49FftPZ016094
 
-The RMU mode bits moved a lot within the Global Control 2 register of
-the Marvell switch families. Add an .rmu_disable op to support at least
-3 known alternatives.
+Christian
 
-Signed-off-by: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
----
- drivers/net/dsa/mv88e6xxx/chip.c    | 24 ++++++++++++++++++++++++
- drivers/net/dsa/mv88e6xxx/chip.h    |  3 +++
- drivers/net/dsa/mv88e6xxx/global1.c | 18 ++++++++++++++++++
- drivers/net/dsa/mv88e6xxx/global1.h | 20 ++++++++++++++++++++
- 4 files changed, 65 insertions(+)
+>    Interesting point, give me a moment to check that. That finally makes 
+>    all the hardware I have standing around here valuable :)
+    
+Yes. At the very least it provides an initial standards based path for P2P DMAs across RPs which is something we have discussed on this list in the past as being desirable.
 
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
-index b4e27f9fd3af..9c3cb6079b40 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -1069,6 +1069,14 @@ static int mv88e6xxx_trunk_setup(struct mv88e6xxx_chip *chip)
- 	return 0;
- }
- 
-+static int mv88e6xxx_rmu_setup(struct mv88e6xxx_chip *chip)
-+{
-+	if (chip->info->ops->rmu_disable)
-+		return chip->info->ops->rmu_disable(chip);
-+
-+	return 0;
-+}
-+
- static int mv88e6xxx_pot_setup(struct mv88e6xxx_chip *chip)
- {
- 	if (chip->info->ops->pot_clear)
-@@ -2263,6 +2271,10 @@ static int mv88e6xxx_setup(struct dsa_switch *ds)
- 	if (err)
- 		goto unlock;
- 
-+	err = mv88e6xxx_rmu_setup(chip);
-+	if (err)
-+		goto unlock;
-+
- 	err = mv88e6xxx_rsvd2cpu_setup(chip);
- 	if (err)
- 		goto unlock;
-@@ -2530,6 +2542,7 @@ static const struct mv88e6xxx_ops mv88e6085_ops = {
- 	.ppu_enable = mv88e6185_g1_ppu_enable,
- 	.ppu_disable = mv88e6185_g1_ppu_disable,
- 	.reset = mv88e6185_g1_reset,
-+	.rmu_disable = mv88e6085_g1_rmu_disable,
- 	.vtu_getnext = mv88e6352_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6352_g1_vtu_loadpurge,
- };
-@@ -2587,6 +2600,7 @@ static const struct mv88e6xxx_ops mv88e6097_ops = {
- 	.mgmt_rsvd2cpu = mv88e6352_g2_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6085_g1_rmu_disable,
- 	.vtu_getnext = mv88e6352_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6352_g1_vtu_loadpurge,
- };
-@@ -2814,6 +2828,7 @@ static const struct mv88e6xxx_ops mv88e6172_ops = {
- 	.mgmt_rsvd2cpu = mv88e6352_g2_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6352_g1_rmu_disable,
- 	.vtu_getnext = mv88e6352_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6352_g1_vtu_loadpurge,
- 	.serdes_power = mv88e6352_serdes_power,
-@@ -2886,6 +2901,7 @@ static const struct mv88e6xxx_ops mv88e6176_ops = {
- 	.mgmt_rsvd2cpu = mv88e6352_g2_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6352_g1_rmu_disable,
- 	.vtu_getnext = mv88e6352_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6352_g1_vtu_loadpurge,
- 	.serdes_power = mv88e6352_serdes_power,
-@@ -2951,6 +2967,7 @@ static const struct mv88e6xxx_ops mv88e6190_ops = {
- 	.mgmt_rsvd2cpu = mv88e6390_g1_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6390_g1_rmu_disable,
- 	.vtu_getnext = mv88e6390_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6390_g1_vtu_loadpurge,
- 	.serdes_power = mv88e6390_serdes_power,
-@@ -2987,6 +3004,7 @@ static const struct mv88e6xxx_ops mv88e6190x_ops = {
- 	.mgmt_rsvd2cpu = mv88e6390_g1_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6390_g1_rmu_disable,
- 	.vtu_getnext = mv88e6390_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6390_g1_vtu_loadpurge,
- 	.serdes_power = mv88e6390_serdes_power,
-@@ -3023,6 +3041,7 @@ static const struct mv88e6xxx_ops mv88e6191_ops = {
- 	.mgmt_rsvd2cpu = mv88e6390_g1_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6390_g1_rmu_disable,
- 	.vtu_getnext = mv88e6390_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6390_g1_vtu_loadpurge,
- 	.serdes_power = mv88e6390_serdes_power,
-@@ -3060,6 +3079,7 @@ static const struct mv88e6xxx_ops mv88e6240_ops = {
- 	.mgmt_rsvd2cpu = mv88e6352_g2_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6352_g1_rmu_disable,
- 	.vtu_getnext = mv88e6352_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6352_g1_vtu_loadpurge,
- 	.serdes_power = mv88e6352_serdes_power,
-@@ -3098,6 +3118,7 @@ static const struct mv88e6xxx_ops mv88e6290_ops = {
- 	.mgmt_rsvd2cpu = mv88e6390_g1_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6390_g1_rmu_disable,
- 	.vtu_getnext = mv88e6390_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6390_g1_vtu_loadpurge,
- 	.serdes_power = mv88e6390_serdes_power,
-@@ -3314,6 +3335,7 @@ static const struct mv88e6xxx_ops mv88e6352_ops = {
- 	.mgmt_rsvd2cpu = mv88e6352_g2_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6352_g1_rmu_disable,
- 	.vtu_getnext = mv88e6352_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6352_g1_vtu_loadpurge,
- 	.serdes_power = mv88e6352_serdes_power,
-@@ -3357,6 +3379,7 @@ static const struct mv88e6xxx_ops mv88e6390_ops = {
- 	.mgmt_rsvd2cpu = mv88e6390_g1_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6390_g1_rmu_disable,
- 	.vtu_getnext = mv88e6390_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6390_g1_vtu_loadpurge,
- 	.serdes_power = mv88e6390_serdes_power,
-@@ -3397,6 +3420,7 @@ static const struct mv88e6xxx_ops mv88e6390x_ops = {
- 	.mgmt_rsvd2cpu = mv88e6390_g1_mgmt_rsvd2cpu,
- 	.pot_clear = mv88e6xxx_g2_pot_clear,
- 	.reset = mv88e6352_g1_reset,
-+	.rmu_disable = mv88e6390_g1_rmu_disable,
- 	.vtu_getnext = mv88e6390_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6390_g1_vtu_loadpurge,
- 	.serdes_power = mv88e6390_serdes_power,
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.h b/drivers/net/dsa/mv88e6xxx/chip.h
-index 62234c2287a2..a1bedb0a888b 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.h
-+++ b/drivers/net/dsa/mv88e6xxx/chip.h
-@@ -432,6 +432,9 @@ struct mv88e6xxx_ops {
- 
- 	/* Interface to the AVB/PTP registers */
- 	const struct mv88e6xxx_avb_ops *avb_ops;
-+
-+	/* Remote Management Unit operations */
-+	int (*rmu_disable)(struct mv88e6xxx_chip *chip);
- };
- 
- struct mv88e6xxx_irq_ops {
-diff --git a/drivers/net/dsa/mv88e6xxx/global1.c b/drivers/net/dsa/mv88e6xxx/global1.c
-index 89c6330c53eb..244ee1ff9edc 100644
---- a/drivers/net/dsa/mv88e6xxx/global1.c
-+++ b/drivers/net/dsa/mv88e6xxx/global1.c
-@@ -373,6 +373,24 @@ int mv88e6185_g1_set_cascade_port(struct mv88e6xxx_chip *chip, int port)
- 	return mv88e6xxx_g1_ctl2_mask(chip, mask, port << __bf_shf(mask));
- }
- 
-+int mv88e6085_g1_rmu_disable(struct mv88e6xxx_chip *chip)
-+{
-+	return mv88e6xxx_g1_ctl2_mask(chip, MV88E6085_G1_CTL2_P10RM |
-+				      MV88E6085_G1_CTL2_RM_ENABLE, 0);
-+}
-+
-+int mv88e6352_g1_rmu_disable(struct mv88e6xxx_chip *chip)
-+{
-+	return mv88e6xxx_g1_ctl2_mask(chip, MV88E6352_G1_CTL2_RMU_MODE_MASK,
-+				      MV88E6352_G1_CTL2_RMU_MODE_DISABLED);
-+}
-+
-+int mv88e6390_g1_rmu_disable(struct mv88e6xxx_chip *chip)
-+{
-+	return mv88e6xxx_g1_ctl2_mask(chip, MV88E6390_G1_CTL2_RMU_MODE_MASK,
-+				      MV88E6390_G1_CTL2_RMU_MODE_DISABLED);
-+}
-+
- int mv88e6390_g1_stats_set_histogram(struct mv88e6xxx_chip *chip)
- {
- 	u16 val;
-diff --git a/drivers/net/dsa/mv88e6xxx/global1.h b/drivers/net/dsa/mv88e6xxx/global1.h
-index 8b043e813761..e186a026e1b1 100644
---- a/drivers/net/dsa/mv88e6xxx/global1.h
-+++ b/drivers/net/dsa/mv88e6xxx/global1.h
-@@ -207,6 +207,22 @@
- #define MV88E6185_G1_CTL2_CASCADE_PORT_MASK	0xf000
- #define MV88E6185_G1_CTL2_CASCADE_PORT_NONE	0xe000
- #define MV88E6185_G1_CTL2_CASCADE_PORT_MULTI	0xf000
-+#define MV88E6352_G1_CTL2_RMU_MODE_MASK		0x3000
-+#define MV88E6352_G1_CTL2_RMU_MODE_DISABLED	0x0000
-+#define MV88E6352_G1_CTL2_RMU_MODE_PORT_4	0x1000
-+#define MV88E6352_G1_CTL2_RMU_MODE_PORT_5	0x2000
-+#define MV88E6352_G1_CTL2_RMU_MODE_PORT_6	0x3000
-+#define MV88E6085_G1_CTL2_DA_CHECK		0x4000
-+#define MV88E6085_G1_CTL2_P10RM			0x2000
-+#define MV88E6085_G1_CTL2_RM_ENABLE		0x1000
-+#define MV88E6352_G1_CTL2_DA_CHECK		0x0800
-+#define MV88E6390_G1_CTL2_RMU_MODE_MASK		0x0700
-+#define MV88E6390_G1_CTL2_RMU_MODE_PORT_0	0x0000
-+#define MV88E6390_G1_CTL2_RMU_MODE_PORT_1	0x0100
-+#define MV88E6390_G1_CTL2_RMU_MODE_PORT_9	0x0200
-+#define MV88E6390_G1_CTL2_RMU_MODE_PORT_10	0x0300
-+#define MV88E6390_G1_CTL2_RMU_MODE_ALL_DSA	0x0600
-+#define MV88E6390_G1_CTL2_RMU_MODE_DISABLED	0x0700
- #define MV88E6XXX_G1_CTL2_DEVICE_NUMBER_MASK	0x001f
- 
- /* Offset 0x1D: Stats Operation Register */
-@@ -257,6 +273,10 @@ int mv88e6390_g1_mgmt_rsvd2cpu(struct mv88e6xxx_chip *chip);
- 
- int mv88e6185_g1_set_cascade_port(struct mv88e6xxx_chip *chip, int port);
- 
-+int mv88e6085_g1_rmu_disable(struct mv88e6xxx_chip *chip);
-+int mv88e6352_g1_rmu_disable(struct mv88e6xxx_chip *chip);
-+int mv88e6390_g1_rmu_disable(struct mv88e6xxx_chip *chip);
-+
- int mv88e6xxx_g1_set_device_number(struct mv88e6xxx_chip *chip, int index);
- 
- int mv88e6xxx_g1_atu_set_learn2all(struct mv88e6xxx_chip *chip, bool learn2all);
--- 
-2.17.0
+BTW I am trying to understand how an ATS capable EP function determines when to perform an ATS Translation Request (ATS TR). Is there an upstream example of the driver for your APU that uses ATS? If so, can you provide a pointer to it. Do you provide some type of entry in the submission queues for commands going to the APU to indicate if the address associated with a specific command should be translated using ATS or not? Or do you simply enable ATS and then all addresses passed to your APU that miss the local cache result in a ATS TR?
+
+Your feedback would be useful and I initiate discussions within the NVMe community on where we might go with ATS...
+
+Thanks
+
+Stephen
