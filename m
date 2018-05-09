@@ -1,81 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934475AbeEILwS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 07:52:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49940 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934272AbeEILwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 07:52:16 -0400
-Subject: Re: [PATCH] KVM: x86: Expose CLDEMOTE CPU feature to guest VM
-To: "Liu, Jingqi" <jingqi.liu@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Cc: "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wang, Wei W" <wei.w.wang@intel.com>
-References: <1525406146-54791-1-git-send-email-jingqi.liu@intel.com>
- <a799d2b8-9d75-0969-a98f-be5d96314dbb@redhat.com>
- <09D68D4CF52CAF489B702DEBDD12D3D35269A68D@SHSMSX103.ccr.corp.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
- UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
- AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
- sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
- FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
- VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
- Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
- znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
- IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
- du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
- dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
- utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
- Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
- wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
- fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
- 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
- zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
- oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
- uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
- plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
- HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
- 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
- iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
- 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
- /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
- 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <a7b69935-8a91-2109-c3a2-e44fea3091fd@redhat.com>
-Date: Wed, 9 May 2018 13:52:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <09D68D4CF52CAF489B702DEBDD12D3D35269A68D@SHSMSX103.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S934565AbeEILwb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 07:52:31 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:39432 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934502AbeEILw2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 07:52:28 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180509115226epoutp01aa9e3b0202a4e5f708e083aef6fa8e50~s97ig0koW0345803458epoutp01R
+X-AuditID: b6c32a4a-a79ff700000010d4-f8-5af2e0f93899
+From: Satendra Singh Thakur <satendra.t@samsung.com>
+To: daniel@ffwll.ch, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Cc: sst2005@gmail.com, Satendra Singh Thakur <satendra.t@samsung.com>
+Subject: Re: [PATCH 00/13] drm/kms/mode: using helper func
+ drm_display_mode_to/from_videomode for calculating timing parameters
+Date: Wed,  9 May 2018 17:22:05 +0530
+Message-Id: <1525866725-16685-1-git-send-email-satendra.t@samsung.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525777110-11378-1-git-send-email-satendra.t@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0WSeUwTURDG83a32wWtri3EsVFsNl6o1LZpYVHridp4hWiiSY3BDbwASlvs
+        tngkKp6BqngHrcTghVYjGMRbPECteCEBQRJFIiQYD4xFiFeiXRfifzPf+33vm0yGIdXbaC2T
+        6fRgt1PI4uhI6kp1bGzcj9aQ3XCskOL/XNlH8g3dX2i++Gg/vrytUcHX3yii+fqtdYg/XHub
+        4PO/+Wn+Qu12ij/zpImcFmmr7CmmbNf9b5S2tzuDhO3SqU22gopzyNZVHpNM2/HkDCykYbcO
+        O1NdaZnOdCs3b3HKzBRLvMEYZ0zkEzidU3BgK5c0PzludmZWeDBOlyNkecNSsiCK3IQpk90u
+        rwfrMlyix8otMxpNeqMhQW8ymfRmy/KJJksYWYEzGosaiOy7I9e+u7ooF50f5kMRDLBmaGuv
+        o3woklGzNxFcq33S24QQfLoXpCRKzfYg6Ho1pM+R295IyFAlgkrfA6XcdCM4WF1BShQdpjqK
+        Diukhyh2OwEFW+poH2IYkp0Fp4tGSbqG3YxgS6ADSTrFjoTShhmSV8XOhp+3e2g5LQaan+f/
+        +zOCnQMHTl2mJS+wFTR8u/9OIXmBTYIj/iiZ18CHYIVSrrXQ1VnZy29F0Fp6XCk3uxDk5T/s
+        pabCtoN3KXm4WCi7MUGWrfDixW6FVJPsANj9q52Qs1SQt0MtIyMg8L6a7Mv6XexTyLUNasoP
+        EHI9HZ51XqTlBfkRBDvLlHvRcP//tGKEzqEhOFt0pGPRkm1y4jV6UXCIXme6PtXlKEf/LnDs
+        3Guo5Pn8KsQyiOuvgutf7WqFkCOuc1QhYEguSjXvdciuVqUJ69ZjtyvF7c3CYhWyhBe7j9RG
+        p7rC9+z0pBjNiQZzfHyC0WBINHODVc01LXY1my548CqMs7G7z0cwEdpc5L+zIHfXz1uaDaE1
+        3paSp4MCqZtOXAzUGwqrA1rdse47jg0l9pxbk1oGPmL3JyzxfP8Y8ye6Q5kYaG1aejTm4dXP
+        wviFo6uWH2mK5mo0GrLk7P1FNau5Zp2dsLETk2aU9isQx3wpGzg07/TSk22mQ6Fh4wqD9MvW
+        PY/xScNG6/7VKzlKzBCMY0m3KPwFTXA7/pcDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKLMWRmVeSWpSXmKPExsWy7bCSvO73B5+iDPZutbH4v20is8WVr+/Z
+        LBbM5rbY9Pgaq8XlXXPYLC43X2S0mHF+H5NF55dZbBZrz7eyWCw/fZ3Zgctj77cFLB47Z91l
+        97jffZzJY/OSeo++LasYPT5vkgtgi+KySUnNySxLLdK3S+DKuDbnClPBAdWKR9uDGhhXy3Yx
+        cnJICJhINDy5xtTFyMUhJLCbUeL8olUsEAkpiWVvtrFB2MISK/89Z4co+swo8en0W2aQBBtQ
+        9/M5M1hBEiICvUwSj1ZvYAdJMAu4S9yb8wvMFhaol7h6qBVoBQcHi4CqxLorTiBhXgE3iV/7
+        vkEtkJO4ea4TbCYnUOvkJVvB4kJANedXHGSfwMi3gJFhFaNkakFxbnpusWGBUV5quV5xYm5x
+        aV66XnJ+7iZGcGBqae1gPHEi/hCjAAejEg+vxM6PUUKsiWXFlbmHGCU4mJVEeL3vfIoS4k1J
+        rKxKLcqPLyrNSS0+xCjNwaIkziuffyxSSCA9sSQ1OzW1ILUIJsvEwSnVwDiL1yTOeyXTt3n7
+        fH6Wzfxz5Fxr/CTVoPCVXH9FOMPubYiXlSjiU5i9yfpIzhWF/+xLk8rjttecbeoVyNY/eCpN
+        d2r95Y9mhaYVhkrRSV/zb3RUhhb/sl92835f7Ozyx3feZSvopU6u5pC3l5m4Yml1d8Sd6s49
+        s6KdjnWbTrCtvRdonWtqqcRSnJFoqMVcVJwIAL5iwAZIAgAA
+X-CMS-MailID: 20180509115224epcas5p1c958418bc36fd224e8d36b9511c5beea
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180509115224epcas5p1c958418bc36fd224e8d36b9511c5beea
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180509115224epcas5p1c958418bc36fd224e8d36b9511c5beea
+X-RootMTR: 20180509115224epcas5p1c958418bc36fd224e8d36b9511c5beea
+References: <1525777110-11378-1-git-send-email-satendra.t@samsung.com>
+        <CGME20180509115224epcas5p1c958418bc36fd224e8d36b9511c5beea@epcas5p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/05/2018 04:03, Liu, Jingqi wrote:
-> Hi Paolo,
-> Thanks. 
-> Will you help to modify the Signed-off-by chain ?
-> Or do I need to submit the second version after modifying the Signed-off-by chain ?
+On Thu, May 08, 2018 at 16:28:30 +0530, Satendra Singh Thakur wrote:
+> On Thu, May 07, 2018 at 15:46:02 +0200, Daniel Vetter wrote:
+> > On Thu, May 03, 2018 at 01:53:55PM +0530, Satendra Singh Thakur wrote:
+> > > 1.There is a function in drm-core to calculate display timing parameters:
+> > > horizontal front porch, back porch, sync length,
+> > > vertical front porch, back porch, sync length and
+> > > clock in Hz.
+> > > However, some drivers are still calculating these parameters themselves.
+> > > Therefore, there is a duplication of the code.
+> > > This patch series replaces this redundant code with the function
+> > > drm_display_mode_to_videomode.
+> > > This removes nearly 100 redundant lines from the related drivers.
+> > > 2.For some drivers (sun4i) the reverse helper
+> > > drm_display_mode_from_videomode is used.
+> > > 3.For some drivers it replaces arithmatic operators (*, /) with shifting
+> > > operators (>>, <<).
+> > > 4.For some drivers DRM_MODE_FLAG_* are replaced with DISPLAY_FLAGS_* flags.
+> > > 5.These changes apply to following crtc and encoder drivers:
+> > > atmel-hlcdc
+> > > bridge-tc358767
+> > > exynos-dsi
+> > > fsl-dcu
+> > > gma500-mdfld_dsi_dpi
+> > > hisilicon-kirin_dsi, ade
+> > > meson-encoder
+> > > pl111-display
+> > > sun4i-tv
+> > > ti lcdc
+> > > tegra dc
+> > > mediatek dpi dsi
+> > > bridge-adv7533
+> > 
+> > The drm_mode_to_videomode helper is meant for interop between drm and v4l,
+> > which have different internal structures to represent modes.
+> > 
+> > For drivers that only use drm I think the better option would be to add
+> > these fields to struct drm_display_mode as another set of crtc_* values
+> > (the computed values are stored in crtc_ prefixed members). And compute
+> > front/back porch in drm_mode_set_crtcinfo.
+> > 
+> > Then we can use these new drm_display_mode->crtc_h|vfront|back_porch
+> > fields in all the drivers you're changing. This way you avoid having to
+> > change all the drm drivers to use v4l #defines.
+> > 
+> > Thanks,
+> > Daniel
+>
+> Hi Daniel,
+> Thanks for the comments.
+> I will look into it.
+> 
+> Thanks
+> -Satendra
 
-Can you explain your role and Wei Wang's in the development of the patch?
+Hi Daniel,
+Thanks for the comments.
+Please find below my understanding in this direction.
 
-Thanks,
+1. Currently struct videomode is being used in 50 drm drivers and 14 fbdev drivers.
+   Since, it's already being used by so many drm drivers, that is the reason 
+   these fbdev objects (struct videmode and func drm_display_mode_to_videomode) were used in this patch series.
 
-Paolo
+2. Anyway, if fbdev related objects (struct/func) are not encouraged in drm drivers, then we may add 
+   h/v front/back porches in struct drm_display_mode as adviced by you.
+
+3. We can calculate these params in func drm_mode_set_crtcinfo at the end of it.
+   int drm_mode_set_crtcinfo ()
+   {
+   .
+   .
+   crtc_hfront_porch = crtc_hsync_start - crtc_hdisplay;
+   crtc_vfront_porch = crtc_vsync_start - crtc_vdisplay; 
+   .
+   .
+   crtc_clock_hz = crtc_clock*1000;
+   };
+
+4. Normally mode is programmed in HW in following callbacks of crtc and encoder drivers
+   -mode_set
+   -mode_set_nofb
+   -atomic_enable
+
+   
+   Normally drm_mode_set_crtcinfo is used in
+   -mode_fixup callbacks (CBs) 
+   of encoder and crtc drivers.
+
+   if mode_fixup CBs are called before mode_set CBs then
+   drm_mode_set_crtcinfo is right place to calculate sync/porch params. 
+   We can use crtc_hfront/back_porches directly and program them to HW
+   in above mentioned callbacks.
+   
+   int my_mode_set () 
+   {
+   	REG_WRITE(crtc_hfront_porch);
+        REG_WRITE(crtc_hback_porch);
+        .
+        .
+   } 	
+
+ 6.  However, if these params are being modified after calling drm_set_crtcinfo as mentioned below:
+
+   bool amdgpu_atombios_encoder_mode_fixup(struct drm_encoder *encoder,
+				 const struct drm_display_mode *mode,
+				 struct drm_display_mode *adjusted_mode)
+   {
+	struct amdgpu_encoder *amdgpu_encoder = to_amdgpu_encoder(encoder);
+
+	/* set the active encoder to connector routing */
+	amdgpu_encoder_set_active_device(encoder);
+	***drm_mode_set_crtcinfo(adjusted_mode, 0);****
+
+	/* hw bug */
+	if ((mode->flags & DRM_MODE_FLAG_INTERLACE)
+	    && (mode->crtc_vsync_start < (mode->crtc_vdisplay + 2)))
+		adjusted_mode->crtc_vsync_start = adjusted_mode->crtc_vdisplay + 2;
+
+  Then we may need to define new func like
+
+  void drm_calc_hv_porches_sync()
+  {
+   crtc_hfront_porch = crtc_hsync_start - crtc_hdisplay;
+   crtc_vfront_porch = crtc_vsync_start - crtc_vdisplay; 
+   .
+   . 
+   crtc_clock_hz = crtc_clock*1000;
+  }  and call this func in mode_set*, atomic_enable CBS before programming the HW with this mode.
+
+  
+  Should I create patches around this idea ?
+  Please let me know your comments. 
+
+
+Thanks
+-Satendra
