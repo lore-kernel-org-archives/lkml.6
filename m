@@ -1,120 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933643AbeEICgu (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 22:36:50 -0400
-Received: from exmail.andestech.com ([59.124.169.137]:29487 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932115AbeEICgt (ORCPT
+        id S933658AbeEICkR (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 22:40:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45985 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933457AbeEICkP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 22:36:49 -0400
-Date: Wed, 9 May 2018 10:36:05 +0800
-From: Alan Kao <alankao@andestech.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-CC: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        "Ingo Molnar" <mingo@redhat.com>,
-        Greentime Hu <greentime@andestech.com>, Zong Li <zong@andestech.com>
-Subject: Re: [PATCH] riscv/ftrace: Fix the problem modules cannot find _mcount
-Message-ID: <20180509023605.GB7303@andestech.com>
-References: <1525749717-384-1-git-send-email-alankao@andestech.com>
- <20180508091142.12b5231a@gandalf.local.home>
+        Tue, 8 May 2018 22:40:15 -0400
+X-Google-Smtp-Source: AB8JxZrrjUQphNJdfNfq8rmEldsE4gZ+42IroVXoC9Yj4LcqvO4zrG8Yq+fiI/AQXIo6uHvH4CXMt6DpWTSfNX8grRY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180508091142.12b5231a@gandalf.local.home>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.0.1.85]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w492S5kQ096948
+In-Reply-To: <CAFv23QmkLiuFA6C4YFsO3hoTEE--2bT4H2uxaMqoY30G4_QJGw@mail.gmail.com>
+References: <1523273714-17264-1-git-send-email-acelan.kao@canonical.com>
+ <1523273714-17264-2-git-send-email-acelan.kao@canonical.com>
+ <20180409123910.GB31060@lunn.ch> <20180409.105039.310935818370762783.davem@davemloft.net>
+ <CAFv23Q=QYastpgLxHiwr_PSdoeWfEjiNp6x2F9kM5EYhRee2hA@mail.gmail.com> <CAFv23QmkLiuFA6C4YFsO3hoTEE--2bT4H2uxaMqoY30G4_QJGw@mail.gmail.com>
+From: AceLan Kao <acelan.kao@canonical.com>
+Date: Wed, 9 May 2018 10:40:13 +0800
+Message-ID: <CAFv23Qn1-5nHcFsk3egcL+OpKtujv4rkyXxa-Qht4eV4z6cbCA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] alx: add disable_wol paramenter
+To: David Miller <davem@davemloft.net>
+Cc: Andrew Lunn <andrew@lunn.ch>, James Cliburn <jcliburn@gmail.com>,
+        Chris Snook <chris.snook@gmail.com>, rakesh@tuxera.com,
+        netdev@vger.kernel.org,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Emily Chien <emily.chien@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 09:11:42AM -0400, Steven Rostedt wrote:
-> On Tue, 8 May 2018 11:21:57 +0800
-> Alan Kao <alankao@andestech.com> wrote:
-> 
-> > Enabling ftrace and module support at the same time fails the kernel
-> > build process, because modules cannot find the _mcount symbol.  This
-> > patch fixes this issue.
-> 
-> I think you have a much bigger issue.
+Hi,
+
+I didn't get any response around one month.
+I'm still here hoping you can consider accepting the WoL patch.
+
+Without that patch, people have no chance to bump into the issue and
+have no chance to fix it.
+Moreover, it leads to the dkms package be spreaded around, and it'll
+become a more annoying issue when UEFI secure boot is enabled[1].
+Please re-consider it to enable WoL again and set it to disable by default,
+so that we/user have a chance to examine the feature and have a chance
+to find out a read fix for it.
+Thanks.
+
+1. https://bugzilla.kernel.org/show_bug.cgi?id=61651
+
+Best regards,
+AceLan Kao.
+
+2018-04-24 11:45 GMT+08:00 AceLan Kao <acelan.kao@canonical.com>:
+> Hi,
 >
-
-Yes, we do, but not this one.  Let me state more detail later.
- 
-> > 
-> > Signed-off-by: Alan Kao <alankao@andestech.com>
-> > Cc: Greentime Hu <greentime@andestech.com>
-> > Cc: Zong Li <zong@andestech.com>
-> > ---
-> >  arch/riscv/kernel/mcount.S | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/riscv/kernel/mcount.S b/arch/riscv/kernel/mcount.S
-> > index ce9bdc57a2a1..5721624886a1 100644
-> > --- a/arch/riscv/kernel/mcount.S
-> > +++ b/arch/riscv/kernel/mcount.S
-> > @@ -126,5 +126,5 @@ do_trace:
-> >  	RESTORE_ABI_STATE
-> >  	ret
-> >  ENDPROC(_mcount)
-> > -EXPORT_SYMBOL(_mcount)
-> >  #endif
-> > +EXPORT_SYMBOL(_mcount)
-> 
-> How does this work? How do you export _mcount if _mcount isn't even
-> defined?
-
-_mcount is defined.
-
-This EXPORT_SYMBOL and the _mcount body was inside a
-"#ifndef CONFIG_DYNAMIC_FTRACE" section, so if the config has dynamic ftrace
-disabled, _mcount is visible.
-
-For the dynamic ftrace case, there is a code snippet in this file:
-
-> ENTRY(ftrace_stub)
-> #ifdef CONFIG_DYNAMIC_FTRACE         
->       .global _mcount
->       .set    _mcount, ftrace_stub
-> #endif
->        ret 
-> ENDPROC(ftrace_stub)
-
-so the _mcount symbol is visible in the kernel, but not for modules.
-As a result, a module build always fails, because _mcount is neither exported,
-nor aliased to a defined symbol.
-
-That's the simple purpose of this patch:  we just want to eliminate the errors
-during the kernel build process.
-
-> 
-> -- Steve
-
-Talking about some bigger issues here, there will be twofold.
-
-1. This patch lacks call-site collecting mechanism.
-
-This feature requires a pattern check in recordmcount.pl.  With this,
-section __mcount_loc is properly constructed, and the call-sites will be
-registered during the loading stage.
-
-However, the loading will then fail at the first try of make_nop, due to
-the instruction check.  This is thus the second issue.
-
-
-2. The instruction check for kernel texts is not applicable to module texts.
-
-The check expects a call instruction to _mcount, but here it is a call to
-the .plt section of the module.  After referencing the implementation of arm64,
-I think it would need much more work to have make_nop's and make_call's behavior
-right.
-
-
-Quick summary: This patch ensures that a kernel build will not fail because of
-the _mcount-missing problem.  But ftrace cannot trace loading modules for now
-due to the stated reasons.
-
-Thanks,
-Alan Kao
+> May I know the final decision of this patch?
+> Thanks.
+>
+> Best regards,
+> AceLan Kao.
+>
+> 2018-04-10 10:40 GMT+08:00 AceLan Kao <acelan.kao@canonical.com>:
+>> The problem is I don't have a machine with that wakeup issue, and I
+>> need WoL feature.
+>> Instead of spreading "alx with WoL" dkms package everywhere, I would
+>> like to see it's supported in the driver and is disabled by default.
+>>
+>> Moreover, the wakeup issue may come from old Atheros chips, or result
+>> from buggy BIOS.
+>> With the WoL has been removed from the driver, no one will report
+>> issue about that, and we don't have any chance to find a fix for it.
+>>
+>> Adding this feature back is not covering a paper on the issue, it
+>> makes people have a chance to examine this feature.
+>>
+>> 2018-04-09 22:50 GMT+08:00 David Miller <davem@davemloft.net>:
+>>> From: Andrew Lunn <andrew@lunn.ch>
+>>> Date: Mon, 9 Apr 2018 14:39:10 +0200
+>>>
+>>>> On Mon, Apr 09, 2018 at 07:35:14PM +0800, AceLan Kao wrote:
+>>>>> The WoL feature was reported broken and will lead to
+>>>>> the system resume immediately after suspending.
+>>>>> This symptom is not happening on every system, so adding
+>>>>> disable_wol option and disable WoL by default to prevent the issue from
+>>>>> happening again.
+>>>>
+>>>>>  const char alx_drv_name[] = "alx";
+>>>>>
+>>>>> +/* disable WoL by default */
+>>>>> +bool disable_wol = 1;
+>>>>> +module_param(disable_wol, bool, 0);
+>>>>> +MODULE_PARM_DESC(disable_wol, "Disable Wake on Lan feature");
+>>>>> +
+>>>>
+>>>> Hi AceLan
+>>>>
+>>>> This seems like you are papering over the cracks. And module
+>>>> parameters are not liked.
+>>>>
+>>>> Please try to find the real problem.
+>>>
+>>> Agreed.
