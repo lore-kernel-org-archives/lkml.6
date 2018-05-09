@@ -1,44 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965080AbeEIPSr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:18:47 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:12498 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935296AbeEIPSo (ORCPT
+        id S965105AbeEIPTD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:19:03 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33506 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935389AbeEIPSx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:18:44 -0400
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH 0/2] ARM: dts: stm32: update rtc st,syscfg
-Date: Wed, 9 May 2018 17:18:12 +0200
-Message-ID: <1525879094-19562-1-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 9 May 2018 11:18:53 -0400
+X-Google-Smtp-Source: AB8JxZo92iTKXOsUTaaQ5u8MZppK2hKsKiH0xqPnTx56fWvj2nZS0JfhdDhbZiYKqlroFCTIkOP/fMSEc3XcZcK4TDA=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-09_06:,,
- signatures=0
+X-Originating-IP: [68.177.129.184]
+In-Reply-To: <20180509013415.sohoc2jbofdqqw5v@madcap2.tricolour.ca>
+References: <cover.1525466167.git.rgb@redhat.com> <91fd13c7a66718dc827d299fa101883e5d0a864f.1525466167.git.rgb@redhat.com>
+ <20180509013415.sohoc2jbofdqqw5v@madcap2.tricolour.ca>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 9 May 2018 11:18:50 -0400
+Message-ID: <CAHC9VhSgDwAg5AOzyy7HV9pUiT+uVOVGB3i=1xsYBUn6Co7itQ@mail.gmail.com>
+Subject: Re: [PATCH ghak81 RFC V1 2/5] audit: convert sessionid unset to a macro
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>,
+        David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the lastest STM32 RTC driver updates, it is mandatory to define
-pwrcfg control register and DBP (Disable Backup Protection) bit through
-st,syscfg property. This patchset updates RTC nodes on stm32f429 and
-stm32f746 accordingly.
+On Tue, May 8, 2018 at 9:34 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2018-05-04 16:54, Richard Guy Briggs wrote:
+>> Use a macro, "AUDIT_SID_UNSET", to replace each instance of
+>> initialization and comparison to an audit session ID.
+>>
+>> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+>
+> There's a minor issue with this patch, adding a header include to
+> init/init_task.c in this patch and removing it from patch 5.  That'll be
+> in the next revision.
 
-Amelie Delaunay (2):
-  ARM: dts: stm32: update rtc st,syscfg property on stm32f429
-  ARM: dts: stm32: update rtc st,syscfg property on stm32f746
+Okay, thanks for the heads-up.  FWIW, this patch looks reasonable in
+principle; changing magic numbers to macros/constants is almost always
+a step in the right direction.
 
- arch/arm/boot/dts/stm32f429.dtsi | 2 +-
- arch/arm/boot/dts/stm32f746.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> I have dynamic allocation working, so that has a good chance of
+> appearing  too.
+
+I'll comment on that in your patch 0, I just want to get through the
+rest of the patches first.
+
+>> ---
+>>  include/linux/audit.h      | 2 +-
+>>  include/net/xfrm.h         | 2 +-
+>>  include/uapi/linux/audit.h | 1 +
+>>  init/init_task.c           | 2 +-
+>>  kernel/auditsc.c           | 4 ++--
+>>  5 files changed, 6 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/include/linux/audit.h b/include/linux/audit.h
+>> index 75d5b03..5f86f7c 100644
+>> --- a/include/linux/audit.h
+>> +++ b/include/linux/audit.h
+>> @@ -513,7 +513,7 @@ static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
+>>  }
+>>  static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
+>>  {
+>> -     return -1;
+>> +     return AUDIT_SID_UNSET;
+>>  }
+>>  static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
+>>  { }
+>> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+>> index a872379..fcce8ee 100644
+>> --- a/include/net/xfrm.h
+>> +++ b/include/net/xfrm.h
+>> @@ -751,7 +751,7 @@ static inline void xfrm_audit_helper_usrinfo(bool task_valid,
+>>                                           audit_get_loginuid(current) :
+>>                                           INVALID_UID);
+>>       const unsigned int ses = task_valid ? audit_get_sessionid(current) :
+>> -             (unsigned int) -1;
+>> +             AUDIT_SID_UNSET;
+>>
+>>       audit_log_format(audit_buf, " auid=%u ses=%u", auid, ses);
+>>       audit_log_task_context(audit_buf);
+>> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+>> index 4e61a9e..04f9bd2 100644
+>> --- a/include/uapi/linux/audit.h
+>> +++ b/include/uapi/linux/audit.h
+>> @@ -465,6 +465,7 @@ struct audit_tty_status {
+>>  };
+>>
+>>  #define AUDIT_UID_UNSET (unsigned int)-1
+>> +#define AUDIT_SID_UNSET ((unsigned int)-1)
+>>
+>>  /* audit_rule_data supports filter rules with both integer and string
+>>   * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
+>> diff --git a/init/init_task.c b/init/init_task.c
+>> index 3ac6e75..c788f91 100644
+>> --- a/init/init_task.c
+>> +++ b/init/init_task.c
+>> @@ -119,7 +119,7 @@ struct task_struct init_task
+>>       .thread_node    = LIST_HEAD_INIT(init_signals.thread_head),
+>>  #ifdef CONFIG_AUDITSYSCALL
+>>       .loginuid       = INVALID_UID,
+>> -     .sessionid      = (unsigned int)-1,
+>> +     .sessionid      = AUDIT_SID_UNSET,
+>>  #endif
+>>  #ifdef CONFIG_PERF_EVENTS
+>>       .perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
+>> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+>> index f3817d0..6e3ceb9 100644
+>> --- a/kernel/auditsc.c
+>> +++ b/kernel/auditsc.c
+>> @@ -2050,7 +2050,7 @@ static void audit_log_set_loginuid(kuid_t koldloginuid, kuid_t kloginuid,
+>>  int audit_set_loginuid(kuid_t loginuid)
+>>  {
+>>       struct task_struct *task = current;
+>> -     unsigned int oldsessionid, sessionid = (unsigned int)-1;
+>> +     unsigned int oldsessionid, sessionid = AUDIT_SID_UNSET;
+>>       kuid_t oldloginuid;
+>>       int rc;
+>>
+>> @@ -2064,7 +2064,7 @@ int audit_set_loginuid(kuid_t loginuid)
+>>       /* are we setting or clearing? */
+>>       if (uid_valid(loginuid)) {
+>>               sessionid = (unsigned int)atomic_inc_return(&session_id);
+>> -             if (unlikely(sessionid == (unsigned int)-1))
+>> +             if (unlikely(sessionid == AUDIT_SID_UNSET))
+>>                       sessionid = (unsigned int)atomic_inc_return(&session_id);
+>>       }
+>>
+>> --
+>> 1.8.3.1
+>>
+>> --
+>> Linux-audit mailing list
+>> Linux-audit@redhat.com
+>> https://www.redhat.com/mailman/listinfo/linux-audit
+>
+> - RGB
+>
+> --
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> IRC: rgb, SunRaycer
+> Voice: +1.647.777.2635, Internal: (81) 32635
+>
+> --
+> Linux-audit mailing list
+> Linux-audit@redhat.com
+> https://www.redhat.com/mailman/listinfo/linux-audit
+
+
 
 -- 
-2.7.4
+paul moore
+www.paul-moore.com
