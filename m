@@ -1,98 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965550AbeEIQmT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:42:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60494 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935232AbeEIQmR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:42:17 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CECBB60712
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Wed, 9 May 2018 10:42:15 -0600
-From: Lina Iyer <ilina@codeaurora.org>
-To: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org
-Subject: Re: [PATCH v8 0/2]  drivers/qcom: add Command DB support
-Message-ID: <20180509164215.GF4698@codeaurora.org>
-References: <20180410175724.7165-1-ilina@codeaurora.org>
+        id S965617AbeEIQm5 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:42:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51688 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965588AbeEIQm4 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 12:42:56 -0400
+Date: Wed, 9 May 2018 13:42:51 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jin Yao <yao.jin@linux.intel.com>
+Cc: jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH] perf annotate: Display multiple events for --stdio
+Message-ID: <20180509164251.GH13491@kernel.org>
+References: <1525881435-4092-1-git-send-email-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180410175724.7165-1-ilina@codeaurora.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1525881435-4092-1-git-send-email-yao.jin@linux.intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy, David,
+Em Wed, May 09, 2018 at 11:57:15PM +0800, Jin Yao escreveu:
+> When we perform following command lines:
+> 
+> perf record -e "{cycles,branches}" ./div
+> perf annotate main --stdio
+> 
+> Only shows one event "cycles" and the displaying format is not correct.
+> 
+>  Percent         |      Source code & Disassembly of div for cycles (44550 samples)
+> -----------------------------------------------------------------------------------
 
-These patches have been reviewed by our peers and have recieved no
-further comments in the past few weeks. Would you consider merging this
-in your trees?
+Please indent command output (two spaces before all lines) to avoid
+scripts breaking due to mistaking lines starting with --- as the end of
+the patch.
 
-Thanks,
-Lina
+Applying.
 
+- Arnaldo
 
-On Tue, Apr 10 2018 at 11:57 -0600, Lina Iyer wrote:
->Changes since v7:
->	- Add reviewed-by tags
->	- Fix example
->
->Changes since v6:
->        - Fix 'reg' property
->        - Add reviewed-by tags
->
->Changes since v5:
->        - Remove indirection of command db start address
->        - Rebase on top of 4.16
->
->Changes since v4:
->        - Address comments from Stephen and Bjorn
->
->These patches add support for reading a shared memory database in the newer
->QCOM SoCs called Command DB. With the new architecture on SDM845, shared
->resources like clocks, regulators etc., have dynamic properties. These
->properties may change based on external components, board configurations or
->available feature set. A remote processor detects these parameters and fills up
->the database with the resource and available state information. Platform
->drivers that need these shared resources will need to query this database to
->get the address and properties and vote for the state.
->
->The information in the database is static. The database is read-only memory
->location that is available for Linux. A pre-defined string is used as a key into
->an entry in the database. Generally, platform drivers query the database only
->at init to get the information they need.
->
->[v1]: https://www.spinics.net/lists/linux-arm-msm/msg32462.html
->[v2]: https://lkml.org/lkml/2018/2/8/588
->[v3]: https://lkml.org/lkml/2018/2/16/842
->[v4]: https://patchwork.kernel.org/patch/10242935/
->[v5]: https://lkml.org/lkml/2018/3/14/787
->[v6]: https://lkml.org/lkml/2018/4/5/451
->[v7]: https://lkml.org/lkml/2018/4/6/756
->
->Lina Iyer (2):
->  drivers: qcom: add command DB driver
->  dt-bindings: introduce Command DB for QCOM SoCs
->
-> .../bindings/reserved-memory/qcom,cmd-db.txt       |  37 +++
-> drivers/of/platform.c                              |   1 +
-> drivers/soc/qcom/Kconfig                           |   9 +
-> drivers/soc/qcom/Makefile                          |   1 +
-> drivers/soc/qcom/cmd-db.c                          | 310 +++++++++++++++++++++
-> include/soc/qcom/cmd-db.h                          |  45 +++
-> 6 files changed, 403 insertions(+)
-> create mode 100644 Documentation/devicetree/bindings/reserved-memory/qcom,cmd-db.txt
-> create mode 100644 drivers/soc/qcom/cmd-db.c
-> create mode 100644 include/soc/qcom/cmd-db.h
->
->--
->The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->a Linux Foundation Collaborative Project
->
+>                  :
+>                  :
+>                  :
+>                  :            Disassembly of section .text:
+>                  :
+>                  :            00000000004004b0 <main>:
+>                  :            main():
+>                  :
+>                  :                    return i;
+>                  :            }
+>                  :
+>                  :            int main(void)
+>                  :            {
+>     0.00 :   4004b0:       push   %rbx
+>                  :                    int i;
+>                  :                    int flag;
+>                  :                    volatile double x = 1212121212, y = 121212;
+>                  :
+>                  :                    s_randseed = time(0);
+>     0.00 :   4004b1:       xor    %edi,%edi
+>                  :                    srand(s_randseed);
+>     0.00 :   4004b3:       mov    $0x77359400,%ebx
+>                  :
+>                  :                    return i;
+>                  :            }
+>                  :
+> 
+> The issue is the value of nr_percent is hardcoded to 1.
+> This patch fixes it.
+> 
+> With this patch, the output is:
+> 
+>  Percent         |      Source code & Disassembly of div for cycles (44550 samples)
+> -----------------------------------------------------------------------------------
+>                  :
+>                  :
+>                  :
+>                  :            Disassembly of section .text:
+>                  :
+>                  :            00000000004004b0 <main>:
+>                  :            main():
+>                  :
+>                  :                    return i;
+>                  :            }
+>                  :
+>                  :            int main(void)
+>                  :            {
+>     0.00    0.00 :   4004b0:       push   %rbx
+>                  :                    int i;
+>                  :                    int flag;
+>                  :                    volatile double x = 1212121212, y = 121212;
+>                  :
+>                  :                    s_randseed = time(0);
+>     0.00    0.00 :   4004b1:       xor    %edi,%edi
+>                  :                    srand(s_randseed);
+>     0.00    0.00 :   4004b3:       mov    $0x77359400,%ebx
+>                  :
+>                  :                    return i;
+>                  :            }
+> 
+> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> ---
+>  tools/perf/util/annotate.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+> index 536ee14..5d74a30 100644
+> --- a/tools/perf/util/annotate.c
+> +++ b/tools/perf/util/annotate.c
+> @@ -1263,6 +1263,9 @@ annotation_line__print(struct annotation_line *al, struct symbol *sym, u64 start
+>  				max_percent = sample->percent;
+>  		}
+>  
+> +		if (al->samples_nr > nr_percent)
+> +			nr_percent = al->samples_nr;
+> +
+>  		if (max_percent < min_pcnt)
+>  			return -1;
+>  
+> -- 
+> 2.7.4
