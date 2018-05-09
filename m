@@ -1,50 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934394AbeEILl1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 07:41:27 -0400
-Received: from bmailout2.hostsharing.net ([83.223.90.240]:34551 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933832AbeEILl0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 07:41:26 -0400
-Date: Wed, 9 May 2018 13:41:24 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sinan Kaya <okaya@codeaurora.org>
-Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
- (issued 65284 msec ago)
-Message-ID: <20180509114124.GA20639@wunner.de>
-References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
- <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
+        id S934383AbeEILnq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 07:43:46 -0400
+Received: from ozlabs.org ([203.11.71.1]:33259 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933832AbeEILnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 07:43:45 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Wed, 9 May 2018 21:43:41 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: linux-next: Signed-off-by missing for commits in the thermal tree
+Message-ID: <20180509214341.1d490677@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6y1WxWGFFE1sCTC830RL8g6"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 02:22:07PM -0500, Bjorn Helgaas wrote:
-> Sinan mooted the idea of using a "no-wait" path of sending the "don't
-> generate hotplug interrupts" command.  I think we should work on this
-> idea a little more.  If we're shutting down the whole system, I can't
-> believe there's much value in *anything* we do in the pciehp_remove()
-> path.
-> 
-> Maybe we should just get rid of pciehp_remove() (and probably
-> pcie_port_remove_service() and the other service driver remove methods)
-> completely.  That dates from when the service drivers could be modules that
-> could be potentially unloaded, but unloading them hasn't been possible for
-> years.
+--Sig_/6y1WxWGFFE1sCTC830RL8g6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Every Thunderbolt device contains a PCIe switch with at least one
-(downstream) hotplug port, so pciehp_remove() is executed on unplug
-of a Thunderbolt device and the assumption that it's unnecessary
-simply because it's builtin isn't correct.
+Hi Zhang,
 
-Thanks,
+Commits
 
-Lukas
+  a2ace598c00a ("thermal: exynos: Reading temperature makes sense only when=
+ TMU is turned on")
+  f9cd6a904e6e ("thermal: exynos: Propagate error value from tmu_read()")
+
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/6y1WxWGFFE1sCTC830RL8g6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlry3u0ACgkQAVBC80lX
+0GxERwf/WvjO5TL1qR9yVxGf+BMoIVbhaA7qwslel1k94mN7QNERgt1OIF1NSZkl
+TtyoNnNP1TSt4ZW+HBDDsCJoewTuKjX0BbIhpdkBo4GSZG9HAH3wgfux8v9VDR1j
+M+2qQsk5H9CaLnFY1uzpMFz24foS7FxdGIhzlBDLJbzLgz5r1JefhoQfeE1GPM3c
+jztwfaCqUsjgysq1nEwivp/nuW7j5lBJl9vBxPJ0WYbW/etXty1RAsdddrt7QITW
+lSwmMcEIdyLeHmdrJNc367Ub0ipT2nGWsEEPdNcEcmS4gRKKpWK7hxS78MJ//jfY
+o5/s7z+q+wbjQAR7ZELD0xP1aCwfrg==
+=qOM9
+-----END PGP SIGNATURE-----
+
+--Sig_/6y1WxWGFFE1sCTC830RL8g6--
