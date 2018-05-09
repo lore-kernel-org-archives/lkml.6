@@ -1,70 +1,297 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934404AbeEIKWH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 06:22:07 -0400
-Received: from smtp03.citrix.com ([162.221.156.55]:16799 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934288AbeEIKVr (ORCPT
+        id S934129AbeEIKWz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 06:22:55 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34406 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933824AbeEIKWx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 06:21:47 -0400
-X-IronPort-AV: E=Sophos;i="5.49,381,1520899200";
-   d="scan'208";a="54081120"
-From: Roger Pau Monne <roger.pau@citrix.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Roger Pau Monne <roger.pau@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, <xen-devel@lists.xenproject.org>
-Subject: [PATCH v2 2/3] xen/store: do not store local values in xen_start_info
-Date: Wed, 9 May 2018 11:21:28 +0100
-Message-ID: <20180509102129.14832-3-roger.pau@citrix.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180509102129.14832-1-roger.pau@citrix.com>
-References: <20180509102129.14832-1-roger.pau@citrix.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+        Wed, 9 May 2018 06:22:53 -0400
+X-Google-Smtp-Source: AB8JxZobtmtRtRFW0srtcmmz15+HXnC4vT9QwBPKdPIAeiLWWzCFMNeDfjE1FOYCDiZ0FqfnJTZL1g==
+From: Lin Huang <hl@rock-chips.com>
+To: seanpaul@chromium.org, airlied@linux.ie, zyw@rock-chips.com
+Cc: dianders@chromium.org, briannorris@chromium.org,
+        linux-rockchip@lists.infradead.org, heiko@sntech.de,
+        daniel.vetter@intel.com, jani.nikula@linux.intel.com,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, eballetbo@gmail.com,
+        Lin Huang <hl@rock-chips.com>
+Subject: [PATCH v2 1/4] drm/rockchip: add transfer function for cdn-dp
+Date: Wed,  9 May 2018 18:22:41 +0800
+Message-Id: <1525861364-26323-1-git-send-email-hl@rock-chips.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's no need to store the xenstore page or event channel in
-xen_start_info if they are locally initialized.
+From: Chris Zhong <zyw@rock-chips.com>
 
-This also fixes PVH local xenstore initialization due to the lack of
-xen_start_info in that case.
+We may support training outside firmware, so we need support
+dpcd read/write to get the message or do some setting with
+display.
 
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
+Signed-off-by: Chris Zhong <zyw@rock-chips.com>
+Signed-off-by: Lin Huang <hl@rock-chips.com>
 ---
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: xen-devel@lists.xenproject.org
----
- drivers/xen/xenbus/xenbus_probe.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
-index ec9eb4fba59c..f2088838f690 100644
---- a/drivers/xen/xenbus/xenbus_probe.c
-+++ b/drivers/xen/xenbus/xenbus_probe.c
-@@ -710,7 +710,7 @@ static int __init xenstored_local_init(void)
- 	if (!page)
- 		goto out_err;
+Changes in v2: 
+- update patch following Enric suggest
+
+ drivers/gpu/drm/rockchip/cdn-dp-core.c | 55 ++++++++++++++++++++++++----
+ drivers/gpu/drm/rockchip/cdn-dp-core.h |  1 +
+ drivers/gpu/drm/rockchip/cdn-dp-reg.c  | 67 ++++++++++++++++++++++++++++++----
+ drivers/gpu/drm/rockchip/cdn-dp-reg.h  | 14 ++++++-
+ 4 files changed, 120 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+index c6fbdcd..cce64c1 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+@@ -176,8 +176,8 @@ static int cdn_dp_get_sink_count(struct cdn_dp_device *dp, u8 *sink_count)
+ 	u8 value;
  
--	xen_store_gfn = xen_start_info->store_mfn = virt_to_gfn((void *)page);
-+	xen_store_gfn = virt_to_gfn((void *)page);
+ 	*sink_count = 0;
+-	ret = cdn_dp_dpcd_read(dp, DP_SINK_COUNT, &value, 1);
+-	if (ret)
++	ret = drm_dp_dpcd_read(&dp->aux, DP_SINK_COUNT, &value, 1);
++	if (ret < 0)
+ 		return ret;
  
- 	/* Next allocate a local port which xenstored can bind to */
- 	alloc_unbound.dom        = DOMID_SELF;
-@@ -722,8 +722,7 @@ static int __init xenstored_local_init(void)
- 		goto out_err;
+ 	*sink_count = DP_GET_SINK_COUNT(value);
+@@ -374,9 +374,9 @@ static int cdn_dp_get_sink_capability(struct cdn_dp_device *dp)
+ 	if (!cdn_dp_check_sink_connection(dp))
+ 		return -ENODEV;
  
- 	BUG_ON(err);
--	xen_store_evtchn = xen_start_info->store_evtchn =
--		alloc_unbound.port;
-+	xen_store_evtchn = alloc_unbound.port;
+-	ret = cdn_dp_dpcd_read(dp, DP_DPCD_REV, dp->dpcd,
+-			       DP_RECEIVER_CAP_SIZE);
+-	if (ret) {
++	ret = drm_dp_dpcd_read(&dp->aux, DP_DPCD_REV, dp->dpcd,
++			       sizeof(dp->dpcd));
++	if (ret < 0) {
+ 		DRM_DEV_ERROR(dp->dev, "Failed to get caps %d\n", ret);
+ 		return ret;
+ 	}
+@@ -582,8 +582,8 @@ static bool cdn_dp_check_link_status(struct cdn_dp_device *dp)
+ 	if (!port || !dp->link.rate || !dp->link.num_lanes)
+ 		return false;
  
- 	return 0;
+-	if (cdn_dp_dpcd_read(dp, DP_LANE0_1_STATUS, link_status,
+-			     DP_LINK_STATUS_SIZE)) {
++	if (drm_dp_dpcd_read_link_status(&dp->aux, link_status) !=
++	    DP_LINK_STATUS_SIZE) {
+ 		DRM_ERROR("Failed to get link status\n");
+ 		return false;
+ 	}
+@@ -1012,6 +1012,40 @@ static int cdn_dp_pd_event(struct notifier_block *nb,
+ 	return NOTIFY_DONE;
+ }
  
++static ssize_t cdn_dp_aux_transfer(struct drm_dp_aux *aux,
++				   struct drm_dp_aux_msg *msg)
++{
++	struct cdn_dp_device *dp = container_of(aux, struct cdn_dp_device, aux);
++	int ret;
++	u8 status;
++
++	switch (msg->request & ~DP_AUX_I2C_MOT) {
++	case DP_AUX_NATIVE_WRITE:
++	case DP_AUX_I2C_WRITE:
++	case DP_AUX_I2C_WRITE_STATUS_UPDATE:
++		ret = cdn_dp_dpcd_write(dp, msg->address, msg->buffer,
++					msg->size);
++		break;
++	case DP_AUX_NATIVE_READ:
++	case DP_AUX_I2C_READ:
++		ret = cdn_dp_dpcd_read(dp, msg->address, msg->buffer,
++				       msg->size);
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	status = cdn_dp_get_aux_status(dp);
++	if (status == AUX_STATUS_ACK)
++		msg->reply = DP_AUX_NATIVE_REPLY_ACK;
++	else if (status == AUX_STATUS_NACK)
++		msg->reply = DP_AUX_NATIVE_REPLY_NACK;
++	else if (status == AUX_STATUS_DEFER)
++		msg->reply = DP_AUX_NATIVE_REPLY_DEFER;
++
++	return ret;
++}
++
+ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+ {
+ 	struct cdn_dp_device *dp = dev_get_drvdata(dev);
+@@ -1030,6 +1064,13 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
+ 	dp->active = false;
+ 	dp->active_port = -1;
+ 	dp->fw_loaded = false;
++	dp->aux.name = "DP-AUX";
++	dp->aux.transfer = cdn_dp_aux_transfer;
++	dp->aux.dev = dev;
++
++	ret = drm_dp_aux_register(&dp->aux);
++	if (ret)
++		return ret;
+ 
+ 	INIT_WORK(&dp->event_work, cdn_dp_pd_event_work);
+ 
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.h b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+index f57e296..46159b2 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-core.h
++++ b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+@@ -78,6 +78,7 @@ struct cdn_dp_device {
+ 	struct platform_device *audio_pdev;
+ 	struct work_struct event_work;
+ 	struct edid *edid;
++	struct drm_dp_aux aux;
+ 
+ 	struct mutex lock;
+ 	bool connected;
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+index eb3042c..afdfda0 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+@@ -221,7 +221,11 @@ static int cdn_dp_reg_write_bit(struct cdn_dp_device *dp, u16 addr,
+ 				   sizeof(field), field);
+ }
+ 
+-int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
++/*
++ * Returns the number of bytes transferred on success, or a negative error
++ * code on failure. -ETIMEDOUT is returned if mailbox message not send success;
++ */
++ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
+ {
+ 	u8 msg[5], reg[5];
+ 	int ret;
+@@ -247,24 +251,40 @@ int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
+ 		goto err_dpcd_read;
+ 
+ 	ret = cdn_dp_mailbox_read_receive(dp, data, len);
++	if (!ret)
++		return len;
+ 
+ err_dpcd_read:
++	DRM_DEV_ERROR(dp->dev, "dpcd read failed: %d\n", ret);
+ 	return ret;
+ }
+ 
+-int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
++#define CDN_AUX_HEADER_SIZE	5
++#define CDN_AUX_MSG_SIZE	20
++/*
++ * Returns the number of bytes transferred on success, or a negative error
++ * code on failure. -ETIMEDOUT is returned if mailbox message not send success;
++ * -EINVAL is return if get the wrong data size after message send.
++ */
++ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
+ {
+-	u8 msg[6], reg[5];
++	u8 msg[CDN_AUX_MSG_SIZE + CDN_AUX_HEADER_SIZE];
++	u8 reg[CDN_AUX_HEADER_SIZE];
+ 	int ret;
+ 
+-	msg[0] = 0;
+-	msg[1] = 1;
++	if (WARN_ON(len > CDN_AUX_MSG_SIZE) || WARN_ON(len <= 0))
++		return -EINVAL;
++
++	msg[0] = (len >> 8) & 0xff;
++	msg[1] = len & 0xff;
+ 	msg[2] = (addr >> 16) & 0xff;
+ 	msg[3] = (addr >> 8) & 0xff;
+ 	msg[4] = addr & 0xff;
+-	msg[5] = value;
++
++	memcpy(msg + CDN_AUX_HEADER_SIZE, data, len);
++
+ 	ret = cdn_dp_mailbox_send(dp, MB_MODULE_ID_DP_TX, DPTX_WRITE_DPCD,
+-				  sizeof(msg), msg);
++				  CDN_AUX_HEADER_SIZE + len, msg);
+ 	if (ret)
+ 		goto err_dpcd_write;
+ 
+@@ -277,8 +297,12 @@ int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
+ 	if (ret)
+ 		goto err_dpcd_write;
+ 
+-	if (addr != (reg[2] << 16 | reg[3] << 8 | reg[4]))
++	if ((len != (reg[0] << 8 | reg[1])) ||
++	    (addr != (reg[2] << 16 | reg[3] << 8 | reg[4]))) {
+ 		ret = -EINVAL;
++	} else {
++		return len;
++	}
+ 
+ err_dpcd_write:
+ 	if (ret)
+@@ -286,6 +310,33 @@ int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
+ 	return ret;
+ }
+ 
++int cdn_dp_get_aux_status(struct cdn_dp_device *dp)
++{
++	u8 status;
++	int ret;
++
++	ret = cdn_dp_mailbox_send(dp, MB_MODULE_ID_DP_TX,
++				  DPTX_GET_LAST_AUX_STAUS, 0, NULL);
++	if (ret)
++		goto err_get_hpd;
++
++	ret = cdn_dp_mailbox_validate_receive(dp, MB_MODULE_ID_DP_TX,
++					      DPTX_GET_LAST_AUX_STAUS,
++					      sizeof(status));
++	if (ret)
++		goto err_get_hpd;
++
++	ret = cdn_dp_mailbox_read_receive(dp, &status, sizeof(status));
++	if (ret)
++		goto err_get_hpd;
++
++	return status;
++
++err_get_hpd:
++	DRM_DEV_ERROR(dp->dev, "get aux status failed: %d\n", ret);
++	return ret;
++}
++
+ int cdn_dp_load_firmware(struct cdn_dp_device *dp, const u32 *i_mem,
+ 			 u32 i_size, const u32 *d_mem, u32 d_size)
+ {
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.h b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
+index c4bbb4a83..6580b11 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-reg.h
++++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
+@@ -328,6 +328,13 @@
+ #define GENERAL_BUS_SETTINGS            0x03
+ #define GENERAL_TEST_ACCESS             0x04
+ 
++/* AUX status*/
++#define AUX_STATUS_ACK			0
++#define AUX_STATUS_NACK			1
++#define AUX_STATUS_DEFER			2
++#define AUX_STATUS_SINK_ERROR		3
++#define AUX_STATUS_BUS_ERROR		4
++
+ #define DPTX_SET_POWER_MNG			0x00
+ #define DPTX_SET_HOST_CAPABILITIES		0x01
+ #define DPTX_GET_EDID				0x02
+@@ -469,8 +476,11 @@ int cdn_dp_set_host_cap(struct cdn_dp_device *dp, u8 lanes, bool flip);
+ int cdn_dp_event_config(struct cdn_dp_device *dp);
+ u32 cdn_dp_get_event(struct cdn_dp_device *dp);
+ int cdn_dp_get_hpd_status(struct cdn_dp_device *dp);
+-int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value);
+-int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len);
++ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr,
++			  u8 *data, u16 len);
++ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr,
++			 u8 *data, u16 len);
++int cdn_dp_get_aux_status(struct cdn_dp_device *dp);
+ int cdn_dp_get_edid_block(void *dp, u8 *edid,
+ 			  unsigned int block, size_t length);
+ int cdn_dp_train_link(struct cdn_dp_device *dp);
 -- 
-2.17.0
+2.7.4
