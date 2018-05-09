@@ -1,84 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965958AbeEIXLE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 19:11:04 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:38510 "EHLO extserv.mm-sol.com"
+        id S965982AbeEIXQo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 19:16:44 -0400
+Received: from ozlabs.org ([203.11.71.1]:44817 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965426AbeEIXLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 19:11:02 -0400
-Subject: Re: [PATCH] Kirin-PCIe: Add kirin pcie msi feature.
-To: Shawn Guo <shawn.guo@linaro.org>, Bjorn Helgaas <helgaas@kernel.org>
-Cc: Yao Chen <chenyao11@huawei.com>, songxiaowei@hisilicon.com,
-        wangbinghui@hisilicon.com, lorenzo.pieralisi@arm.com,
-        bhelgaas@google.com, xuwei5@hisilicon.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        dimitrysh@google.com, guodong.xu@linaro.org,
-        Jianguo Sun <sunjianguo1@huawei.com>
-References: <1525763028-107417-1-git-send-email-chenyao11@huawei.com>
- <20180508125658.GK161390@bhelgaas-glaptop.roam.corp.google.com>
- <20180509045151.GA24899@dragon>
-From: Stanimir Varbanov <svarbanov@mm-sol.com>
-Message-ID: <058ea1c5-6be1-43ec-0bfe-08231717b7e1@mm-sol.com>
-Date: Thu, 10 May 2018 02:10:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S965796AbeEIXQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 19:16:42 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 10 May 2018 09:16:34 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the samsung-krzk tree with the
+ dma-mapping tree
+Message-ID: <20180510091634.7fb3aaf2@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20180509045151.GA24899@dragon>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WW99soGBEf=QXqtwQTt8NWj"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+--Sig_/WW99soGBEf=QXqtwQTt8NWj
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On  9.05.2018 07:51, Shawn Guo wrote:
-> Hi Bjorn,
-> 
-> On Tue, May 08, 2018 at 07:56:58AM -0500, Bjorn Helgaas wrote:
-> ...
->>> +			return ret;
->>> +		}
->>> +	}
->>> +
->>> +	pci->pp.root_bus_nr = -1;
->>
->> Setting root_bus_nr looks like an unrelated change that should be in a
->> separate patch.
->>
->> But I'm not sure why you need to set root_bus_nr at all, since
->> dw_pcie_host_init() always sets it.
->>
->> Some other callers of dw_pcie_host_init() do set it:
->>
->>    exynos_add_pcie_port()
->>    imx6_add_pcie_port()
->>    armada8k_add_pcie_port()
->>    artpec6_add_pcie_port()
->>    dw_plat_add_pcie_port()
->>    histb_pcie_probe()
->>    qcom_pcie_probe()
->>    spear13xx_add_pcie_port()
->>
->> But I don't see *why* any of these need to set it.  If they don't need to
->> set it, they shouldn't.
-> 
-> Mostly it's a blind copy of unnecessary code.  I tested histb driver
-> by dropping the line, and did not see anything broken.  I will cook up
-> a series to remove the code from all above drivers, and copy
-> corresponding driver owner to comment.
-> 
->> And it would be nice if histb and qcom followed the structure and naming
->> conventions of the other drivers, i.e., they should have
->> histb_add_pcie_port() and qcom_add_pcie_port().
-> 
-> I can create a patch for histb driver, but will leave qcom one to
-> Stanimir to decide.
+Hi Krzysztof,
 
-Thanks, will see what can be done.
+Today's linux-next merge of the samsung-krzk tree got a conflict in:
 
-regards,
-Stan
+  arch/arm/mach-exynos/Kconfig
+
+between commit:
+
+  4965a68780c5 ("arch: define the ARCH_DMA_ADDR_T_64BIT config symbol in li=
+b/Kconfig")
+
+from the dma-mapping tree and commit:
+
+  c5deb598089c ("ARM: exynos: Remove support for Exynos5440")
+
+from the samsung-krzk tree.
+
+I fixed it up (the latter removed the whole section modified by
+the former, so I just removed the section) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/WW99soGBEf=QXqtwQTt8NWj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrzgVIACgkQAVBC80lX
+0GwcTQf/bzNuHHKkZ+W/c17Gj4ti/CCEn4Vgy2z84XnbdGkf/AbMO1uiqrGxG3bb
+gUq2mQ7AGxWqmDsZ37rEv+4VMWuqiIQDpRQBwGbqWK4uNGedUktHQPovTnqSewpv
+RIL0qRNtDv8ZbpOP9AQHcFqmKlbwCLQuZgeWW+eaHG1TzksEeake9Zj2ENsUswqv
+1Z1Y0++LHwfV8mU9mqv+ie0Zc+dYDh3FGenV+VQExKSmPlyx/wlOfv9DHY9w9w9U
+XJ8FidvR4sr3D5b/tCBCI2z/4Tu2Qt/E9f1LaBq44vvF5BD/urzR5BEfyQpl4ijr
+YhUTq6cLu2QhqWmiM1q4Bh/s64oYuw==
+=rjMY
+-----END PGP SIGNATURE-----
+
+--Sig_/WW99soGBEf=QXqtwQTt8NWj--
