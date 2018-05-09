@@ -1,37 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934169AbeEIJdU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:33:20 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45316 "EHLO
+        id S934212AbeEIJd3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:33:29 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45586 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934048AbeEIJdR (ORCPT
+        with ESMTP id S934048AbeEIJd0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:33:17 -0400
+        Wed, 9 May 2018 05:33:26 -0400
 From: Mark Brown <broonie@kernel.org>
-To: Wei Yongjun <weiyongjun1@huawei.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Kai Chieh Chuang <kaichieh.chuang@mediatek.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: fix return value check in mt6351_codec_driver_probe()" to the asoc tree
-In-Reply-To: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
-Message-Id: <20180509093238.98F9244007A@finisterre.ee.mobilebroadband>
-Date: Wed,  9 May 2018 10:32:38 +0100 (BST)
+To: Ondrej Jirman <megous@megous.com>
+Cc: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh@kernel.org>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>,
+        linux-kernel@vger.kernel.org
+Subject: Applied "regulator: add binding for the SY8106A voltage regulator" to the regulator tree
+In-Reply-To: <20180423144657.63264-2-icenowy@aosc.io>
+Message-Id: <20180509093259.62E4644007A@finisterre.ee.mobilebroadband>
+Date: Wed,  9 May 2018 10:32:59 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: fix return value check in mt6351_codec_driver_probe()
+   regulator: add binding for the SY8106A voltage regulator
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -52,35 +52,55 @@ to this mail.
 Thanks,
 Mark
 
->From aaa730ca3f88f535dc12e2f0ff575f70f516841b Mon Sep 17 00:00:00 2001
-From: Wei Yongjun <weiyongjun1@huawei.com>
-Date: Mon, 7 May 2018 01:39:45 +0000
-Subject: [PATCH] ASoC: fix return value check in mt6351_codec_driver_probe()
+>From 32aba834f2a9fe126ff5e624371113ac1defa06e Mon Sep 17 00:00:00 2001
+From: Ondrej Jirman <megous@megous.com>
+Date: Mon, 7 May 2018 20:29:40 +0800
+Subject: [PATCH] regulator: add binding for the SY8106A voltage regulator
 
-In case of error, the function dev_get_regmap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+SY8106A is an I2C-controlled adjustable voltage regulator made by
+Silergy Corp.
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Add its device tree binding.
+
+Signed-off-by: Ondrej Jirman <megous@megous.com>
+[Icenowy: Change commit message and slight fixes]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/mt6351.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../bindings/regulator/sy8106a-regulator.txt  | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
 
-diff --git a/sound/soc/codecs/mt6351.c b/sound/soc/codecs/mt6351.c
-index e739f078fec5..f73dcd753584 100644
---- a/sound/soc/codecs/mt6351.c
-+++ b/sound/soc/codecs/mt6351.c
-@@ -1472,8 +1472,8 @@ static int mt6351_codec_driver_probe(struct platform_device *pdev)
- 	priv->dev = &pdev->dev;
- 
- 	priv->regmap = dev_get_regmap(pdev->dev.parent, NULL);
--	if (IS_ERR(priv->regmap))
--		return PTR_ERR(priv->regmap);
-+	if (!priv->regmap)
-+		return -ENODEV;
- 
- 	dev_dbg(priv->dev, "%s(), dev name %s\n",
- 		__func__, dev_name(&pdev->dev));
+diff --git a/Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt b/Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
+new file mode 100644
+index 000000000000..39a8ca73f572
+--- /dev/null
++++ b/Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
+@@ -0,0 +1,23 @@
++SY8106A Voltage regulator
++
++Required properties:
++- compatible: Must be "silergy,sy8106a"
++- reg: I2C slave address - must be <0x65>
++- silergy,fixed-microvolt - the voltage when I2C regulating is disabled (set
++  by external resistor like a fixed voltage)
++
++Any property defined as part of the core regulator binding, defined in
++./regulator.txt, can also be used.
++
++Example:
++
++	sy8106a {
++		compatible = "silergy,sy8106a";
++		reg = <0x65>;
++		regulator-name = "sy8106a-vdd";
++		silergy,fixed-microvolt = <1200000>;
++		regulator-min-microvolt = <1000000>;
++		regulator-max-microvolt = <1400000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
 -- 
 2.17.0
