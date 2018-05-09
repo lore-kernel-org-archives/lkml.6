@@ -1,87 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756606AbeEIOMj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 10:12:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59448 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756594AbeEIOMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 10:12:37 -0400
-Date: Wed, 9 May 2018 16:12:25 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Jane Wan <Jane.Wan@nokia.com>
-Cc: miquel.raynal@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, richard@nod.at, marek.vasut@gmail.com,
-        yamada.masahiro@socionext.com, prabhakar.kushwaha@nxp.com,
-        shawnguo@kernel.org, jagdish.gediya@nxp.com,
-        shreeya.patel23498@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, ties.bos@nokia.com
-Subject: Re: [PATCH v4 1/2] mtd: rawnand: fsl_ifc: fix FSL NAND driver to
- read all ONFI parameter pages
-Message-ID: <20180509161225.218fe332@bbrezillon>
-In-Reply-To: <1525814394-30067-1-git-send-email-Jane.Wan@nokia.com>
-References: <1525814394-30067-1-git-send-email-Jane.Wan@nokia.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1756615AbeEIOMz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 10:12:55 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:56684 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756555AbeEIOMu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 10:12:50 -0400
+Subject: Re: [PATCH V3 1/1] PCI/AER: add pcie TLP header information in the
+ tracepoint
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mr.nuke.me@gmail.com
+References: <1525820696-31967-1-git-send-email-thomas.tai@oracle.com>
+ <1525820696-31967-2-git-send-email-thomas.tai@oracle.com>
+ <20180509083814.149e8d8f@gandalf.local.home>
+From: Thomas Tai <thomas.tai@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <f3248367-f702-2dba-5406-a1ba275e198a@oracle.com>
+Date: Wed, 9 May 2018 10:12:42 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180509083814.149e8d8f@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=754
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805090134
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  8 May 2018 14:19:53 -0700
-Jane Wan <Jane.Wan@nokia.com> wrote:
 
-> Per ONFI specification (Rev. 4.0), if the CRC of the first parameter page
-> read is not valid, the host should read redundant parameter page copies.
-> Fix FSL NAND driver to read the two redundant copies which are mandatory
-> in the specification.
+
+On 2018-05-09 08:38 AM, Steven Rostedt wrote:
+> On Tue,  8 May 2018 19:04:56 -0400
+> Thomas Tai <thomas.tai@oracle.com> wrote:
 > 
-> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
-
-I'm gonna take this patch, but I'd like to make it clear: this is the
-last time I accept fixes touching fsl_ifc_cmdfunc() for bugs that could
-have been addressed by switching to ->exec_op() (note that I had a look
-at a freescale datasheet, and I'm now 100% sure this driver can be
-converted to ->exec_op()).
-
-> ---
->  drivers/mtd/nand/raw/fsl_ifc_nand.c |   17 ++++++++++-------
->  1 file changed, 10 insertions(+), 7 deletions(-)
+>> When a PCIe AER occurs, the TLP header information is
+>> printed in the kernel message but it is missing from
+>> the tracepoint. A userspace program can use this information
+>> in the tracepoint to better analyze problems.
+>>
+>> To enable the tracepoint:
+>> echo 1 > /sys/kernel/debug/tracing/events/ras/aer_event/enable
+>>
+>> Example tracepoint output:
+>> cat /sys/kernel/debug/tracing/trace
+>> aer_event: 0000:01:00.0
+>> PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
+>> TLP Header={0x0,0x1,0x2,0x3}
+>>
+>> Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
+>> ---
 > 
-> diff --git a/drivers/mtd/nand/raw/fsl_ifc_nand.c b/drivers/mtd/nand/raw/fsl_ifc_nand.c
-> index 61aae02..98aac1f 100644
-> --- a/drivers/mtd/nand/raw/fsl_ifc_nand.c
-> +++ b/drivers/mtd/nand/raw/fsl_ifc_nand.c
-> @@ -342,9 +342,16 @@ static void fsl_ifc_cmdfunc(struct mtd_info *mtd, unsigned int command,
->  
->  	case NAND_CMD_READID:
->  	case NAND_CMD_PARAM: {
-> +		/*
-> +		 * For READID, read 8 bytes that are currently used.
-> +		 * For PARAM, read all 3 copies of 256-bytes pages.
-> +		 */
-> +		int len = 8;
->  		int timing = IFC_FIR_OP_RB;
-> -		if (command == NAND_CMD_PARAM)
-> +		if (command == NAND_CMD_PARAM) {
->  			timing = IFC_FIR_OP_RBCD;
-> +			len = 256 * 3;
-> +		}
->  
->  		ifc_out32((IFC_FIR_OP_CW0 << IFC_NAND_FIR0_OP0_SHIFT) |
->  			  (IFC_FIR_OP_UA  << IFC_NAND_FIR0_OP1_SHIFT) |
-> @@ -354,12 +361,8 @@ static void fsl_ifc_cmdfunc(struct mtd_info *mtd, unsigned int command,
->  			  &ifc->ifc_nand.nand_fcr0);
->  		ifc_out32(column, &ifc->ifc_nand.row3);
->  
-> -		/*
-> -		 * although currently it's 8 bytes for READID, we always read
-> -		 * the maximum 256 bytes(for PARAM)
-> -		 */
-> -		ifc_out32(256, &ifc->ifc_nand.nand_fbcr);
-> -		ifc_nand_ctrl->read_bytes = 256;
-> +		ifc_out32(len, &ifc->ifc_nand.nand_fbcr);
-> +		ifc_nand_ctrl->read_bytes = len;
->  
->  		set_addr(mtd, 0, 0, 0);
->  		fsl_ifc_run_command(mtd);
+> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+Thank you very much Steven.
+
+-Thomas
+
+> 
+> -- Steve
+> 
