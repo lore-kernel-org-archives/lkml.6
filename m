@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933312AbeEIAmm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 20:42:42 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:36434 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932475AbeEIAml (ORCPT
+        id S933559AbeEIArm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 20:47:42 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36829 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932475AbeEIAmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 20:42:41 -0400
-X-Google-Smtp-Source: AB8JxZq+1cd9h2Iu2geiWXeoy6buXWBqLBJHuUM3jeMZVeE06fXlIoZK+VxlIFki6YyUOW8Al4n8Ig==
+        Tue, 8 May 2018 20:42:43 -0400
+X-Google-Smtp-Source: AB8JxZr05m9z1shJLA71eajJK3IXVEQ0zU6qwEBEAXzAxleu0yc4lXQ7ndqfxlGQM615//0THGp2gg==
 From: Kees Cook <keescook@chromium.org>
 To: Matthew Wilcox <mawilcox@microsoft.com>
 Cc: Kees Cook <keescook@chromium.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         kernel-hardening@lists.openwall.com
-Subject: [PATCH 04/13] mm: Use array_size() helpers for kmalloc()
-Date: Tue,  8 May 2018 17:42:20 -0700
-Message-Id: <20180509004229.36341-5-keescook@chromium.org>
+Subject: [PATCH 03/13] overflow.h: Add allocation size calculation helpers
+Date: Tue,  8 May 2018 17:42:19 -0700
+Message-Id: <20180509004229.36341-4-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180509004229.36341-1-keescook@chromium.org>
 References: <20180509004229.36341-1-keescook@chromium.org>
@@ -24,98 +24,140 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of open-coded multiplication, use the new array_size() helper
-to detect overflow in kmalloc()-family functions.
+In preparation for replacing unchecked overflows for memory allocations,
+this creates helpers for the 3 most common calculations:
 
+array_size(a, b): 2-dimensional array
+array3_size(a, b, c): 2-dimensional array
+struct_size(ptr, member, n): struct followed by n-many trailing members
+
+Each of these return SIZE_MAX on overflow instead of wrapping around.
+
+(Additionally renames a variable named "array_size" to avoid future
+collision.)
+
+Co-developed-by: Matthew Wilcox <mawilcox@microsoft.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/slab.h | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ drivers/md/dm-table.c    | 10 +++---
+ include/linux/overflow.h | 74 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 79 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 81ebd71f8c03..d03e0726e136 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -13,6 +13,7 @@
- #define	_LINUX_SLAB_H
- 
- #include <linux/gfp.h>
-+#include <linux/overflow.h>
- #include <linux/types.h>
- #include <linux/workqueue.h>
- 
-@@ -499,6 +500,8 @@ static __always_inline void *kmalloc_large(size_t size, gfp_t flags)
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 0589a4da12bb..caa51dd351b6 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -548,14 +548,14 @@ static int adjoin(struct dm_table *table, struct dm_target *ti)
+  * On the other hand, dm-switch needs to process bulk data using messages and
+  * excessive use of GFP_NOIO could cause trouble.
   */
- static __always_inline void *kmalloc(size_t size, gfp_t flags)
+-static char **realloc_argv(unsigned *array_size, char **old_argv)
++static char **realloc_argv(unsigned *size, char **old_argv)
  {
-+	if (size == SIZE_MAX)
-+		return NULL;
- 	if (__builtin_constant_p(size)) {
- 		if (size > KMALLOC_MAX_CACHE_SIZE)
- 			return kmalloc_large(size, flags);
-@@ -539,6 +542,8 @@ static __always_inline unsigned int kmalloc_size(unsigned int n)
+ 	char **argv;
+ 	unsigned new_size;
+ 	gfp_t gfp;
  
- static __always_inline void *kmalloc_node(size_t size, gfp_t flags, int node)
- {
-+	if (size == SIZE_MAX)
-+		return NULL;
- #ifndef CONFIG_SLOB
- 	if (__builtin_constant_p(size) &&
- 		size <= KMALLOC_MAX_CACHE_SIZE && !(flags & GFP_DMA)) {
-@@ -624,11 +629,13 @@ int memcg_update_all_caches(int num_memcgs);
-  */
- static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
- {
--	if (size != 0 && n > SIZE_MAX / size)
-+	size_t bytes = array_size(n, size);
+-	if (*array_size) {
+-		new_size = *array_size * 2;
++	if (*size) {
++		new_size = *size * 2;
+ 		gfp = GFP_KERNEL;
+ 	} else {
+ 		new_size = 8;
+@@ -563,8 +563,8 @@ static char **realloc_argv(unsigned *array_size, char **old_argv)
+ 	}
+ 	argv = kmalloc(new_size * sizeof(*argv), gfp);
+ 	if (argv) {
+-		memcpy(argv, old_argv, *array_size * sizeof(*argv));
+-		*array_size = new_size;
++		memcpy(argv, old_argv, *size * sizeof(*argv));
++		*size = new_size;
+ 	}
+ 
+ 	kfree(old_argv);
+diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+index c8890ec358a7..76ff298e97b7 100644
+--- a/include/linux/overflow.h
++++ b/include/linux/overflow.h
+@@ -202,4 +202,78 @@
+ 
+ #endif /* COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW */
+ 
++/**
++ * array_size() - Calculate size of 2-dimensional array.
++ *
++ * @a: dimension one
++ * @b: dimension two
++ *
++ * Calculates size of 2-dimensional array: @a * @b.
++ *
++ * Returns: number of bytes needed to represent the array or SIZE_MAX on
++ * overflow.
++ */
++static inline __must_check size_t array_size(size_t a, size_t b)
++{
++	size_t bytes;
 +
-+	if (bytes == SIZE_MAX)
- 		return NULL;
- 	if (__builtin_constant_p(n) && __builtin_constant_p(size))
--		return kmalloc(n * size, flags);
--	return __kmalloc(n * size, flags);
-+		return kmalloc(bytes, flags);
-+	return __kmalloc(bytes, flags);
- }
- 
- /**
-@@ -639,7 +646,9 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
-  */
- static inline void *kcalloc(size_t n, size_t size, gfp_t flags)
- {
--	return kmalloc_array(n, size, flags | __GFP_ZERO);
-+	size_t bytes = array_size(n, size);
++	if (check_mul_overflow(a, b, &bytes))
++		return SIZE_MAX;
 +
-+	return kmalloc(bytes, flags | __GFP_ZERO);
- }
- 
- /*
-@@ -657,16 +666,22 @@ extern void *__kmalloc_track_caller(size_t, gfp_t, unsigned long);
- static inline void *kmalloc_array_node(size_t n, size_t size, gfp_t flags,
- 				       int node)
- {
--	if (size != 0 && n > SIZE_MAX / size)
-+	size_t bytes = array_size(n, size);
++	return bytes;
++}
 +
-+	if (bytes == SIZE_MAX)
- 		return NULL;
- 	if (__builtin_constant_p(n) && __builtin_constant_p(size))
--		return kmalloc_node(n * size, flags, node);
--	return __kmalloc_node(n * size, flags, node);
-+		return kmalloc_node(bytes, flags, node);
-+	return __kmalloc_node(bytes, flags, node);
- }
- 
- static inline void *kcalloc_node(size_t n, size_t size, gfp_t flags, int node)
- {
--	return kmalloc_array_node(n, size, flags | __GFP_ZERO, node);
-+	size_t bytes = array_size(n, size);
++/**
++ * array3_size() - Calculate size of 3-dimensional array.
++ *
++ * @a: dimension one
++ * @b: dimension two
++ * @c: dimension three
++ *
++ * Calculates size of 3-dimensional array: @a * @b * @c.
++ *
++ * Returns: number of bytes needed to represent the array or SIZE_MAX on
++ * overflow.
++ */
++static inline __must_check size_t array3_size(size_t a, size_t b, size_t c)
++{
++	size_t bytes;
 +
-+	if (bytes == SIZE_MAX)
-+		return NULL;
-+	return kmalloc_node(bytes, flags | __GFP_ZERO, node);
- }
- 
- 
++	if (check_mul_overflow(a, b, &bytes))
++		return SIZE_MAX;
++	if (check_mul_overflow(bytes, c, &bytes))
++		return SIZE_MAX;
++
++	return bytes;
++}
++
++static inline __must_check size_t __ab_c_size(size_t n, size_t size, size_t c)
++{
++	size_t bytes;
++
++	if (check_mul_overflow(n, size, &bytes))
++		return SIZE_MAX;
++	if (check_add_overflow(bytes, c, &bytes))
++		return SIZE_MAX;
++
++	return bytes;
++}
++
++/**
++ * struct_size() - Calculate size of structure with trailing array.
++ * @p: Pointer to the structure.
++ * @member: Name of the array member.
++ * @n: Number of elements in the array.
++ *
++ * Calculates size of memory needed for structure @p followed by an
++ * array of @n @member elements.
++ *
++ * Return: number of bytes needed or SIZE_MAX on overflow.
++ */
++#define struct_size(p, member, n)					\
++	__ab_c_size(n,							\
++		    sizeof(*(p)->member) + __must_be_array((p)->member),\
++		    offsetof(typeof(*(p)), member))
++
++
+ #endif /* __LINUX_OVERFLOW_H */
 -- 
 2.17.0
