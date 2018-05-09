@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933672AbeEIBga (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 21:36:30 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:39185 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933461AbeEIBeU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S933470AbeEIBeU (ORCPT <rfc822;w@1wt.eu>);
         Tue, 8 May 2018 21:34:20 -0400
-X-Google-Smtp-Source: AB8JxZr+dYlvkGFoVTT2KQhBLEyS8svDCwG8Dfj2Ol6yJDmJVaK9JVWTIdJa9sG6HLNbA59ktbE6vg==
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:39177 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933384AbeEIBeR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 21:34:17 -0400
+X-Google-Smtp-Source: AB8JxZqxwOfBPbgc/Xd1VBkVo72H35ZEwJTEQUI1/fPTSd8YWm+1/uxvAkGA/vavIT582wu32kKM2A==
 From: Kent Overstreet <kent.overstreet@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
         Ingo Molnar <mingo@kernel.org>
 Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 03/10] block: Add bioset_init()/bioset_exit()
-Date: Tue,  8 May 2018 21:33:51 -0400
-Message-Id: <20180509013358.16399-4-kent.overstreet@gmail.com>
+Subject: [PATCH 01/10] mempool: Add mempool_init()/mempool_exit()
+Date: Tue,  8 May 2018 21:33:49 -0400
+Message-Id: <20180509013358.16399-2-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180509013358.16399-1-kent.overstreet@gmail.com>
 References: <20180509013358.16399-1-kent.overstreet@gmail.com>
@@ -23,163 +23,226 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similarly to mempool_init()/mempool_exit(), take a pointer indirection
-out of allocation/freeing by allowing biosets to be embedded in other
-structs.
+Allows mempools to be embedded in other structs, getting rid of a
+pointer indirection from allocation fastpaths.
+
+mempool_exit() is safe to call on an uninitialized but zeroed mempool.
 
 Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
 ---
- block/bio.c         | 93 +++++++++++++++++++++++++++++++--------------
- include/linux/bio.h |  2 +
- 2 files changed, 67 insertions(+), 28 deletions(-)
+ include/linux/mempool.h |  34 +++++++++++++
+ mm/mempool.c            | 108 ++++++++++++++++++++++++++++++----------
+ 2 files changed, 115 insertions(+), 27 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 360e9bcea5..980befd919 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1856,21 +1856,83 @@ int biovec_init_pool(mempool_t *pool, int pool_entries)
- 	return mempool_init_slab_pool(pool, pool_entries, bp->slab);
- }
+diff --git a/include/linux/mempool.h b/include/linux/mempool.h
+index b51f5c430c..0c964ac107 100644
+--- a/include/linux/mempool.h
++++ b/include/linux/mempool.h
+@@ -25,6 +25,18 @@ typedef struct mempool_s {
+ 	wait_queue_head_t wait;
+ } mempool_t;
  
--void bioset_free(struct bio_set *bs)
-+/*
-+ * bioset_exit - exit a bioset initialized with bioset_init()
-+ *
-+ * May be called on a zeroed but uninitialized bioset (i.e. allocated with
-+ * kzalloc()).
-+ */
-+void bioset_exit(struct bio_set *bs)
- {
- 	if (bs->rescue_workqueue)
- 		destroy_workqueue(bs->rescue_workqueue);
-+	bs->rescue_workqueue = NULL;
- 
- 	mempool_exit(&bs->bio_pool);
- 	mempool_exit(&bs->bvec_pool);
- 
- 	bioset_integrity_free(bs);
--	bio_put_slab(bs);
-+	if (bs->bio_slab)
-+		bio_put_slab(bs);
-+	bs->bio_slab = NULL;
-+}
-+EXPORT_SYMBOL(bioset_exit);
- 
-+void bioset_free(struct bio_set *bs)
++static inline bool mempool_initialized(mempool_t *pool)
 +{
-+	bioset_exit(bs);
- 	kfree(bs);
++	return pool->elements != NULL;
++}
++
++void mempool_exit(mempool_t *pool);
++int mempool_init_node(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
++		      mempool_free_t *free_fn, void *pool_data,
++		      gfp_t gfp_mask, int node_id);
++int mempool_init(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
++		 mempool_free_t *free_fn, void *pool_data);
++
+ extern mempool_t *mempool_create(int min_nr, mempool_alloc_t *alloc_fn,
+ 			mempool_free_t *free_fn, void *pool_data);
+ extern mempool_t *mempool_create_node(int min_nr, mempool_alloc_t *alloc_fn,
+@@ -43,6 +55,14 @@ extern void mempool_free(void *element, mempool_t *pool);
+  */
+ void *mempool_alloc_slab(gfp_t gfp_mask, void *pool_data);
+ void mempool_free_slab(void *element, void *pool_data);
++
++static inline int
++mempool_init_slab_pool(mempool_t *pool, int min_nr, struct kmem_cache *kc)
++{
++	return mempool_init(pool, min_nr, mempool_alloc_slab,
++			    mempool_free_slab, (void *) kc);
++}
++
+ static inline mempool_t *
+ mempool_create_slab_pool(int min_nr, struct kmem_cache *kc)
+ {
+@@ -56,6 +76,13 @@ mempool_create_slab_pool(int min_nr, struct kmem_cache *kc)
+  */
+ void *mempool_kmalloc(gfp_t gfp_mask, void *pool_data);
+ void mempool_kfree(void *element, void *pool_data);
++
++static inline int mempool_init_kmalloc_pool(mempool_t *pool, int min_nr, size_t size)
++{
++	return mempool_init(pool, min_nr, mempool_kmalloc,
++			    mempool_kfree, (void *) size);
++}
++
+ static inline mempool_t *mempool_create_kmalloc_pool(int min_nr, size_t size)
+ {
+ 	return mempool_create(min_nr, mempool_kmalloc, mempool_kfree,
+@@ -68,6 +95,13 @@ static inline mempool_t *mempool_create_kmalloc_pool(int min_nr, size_t size)
+  */
+ void *mempool_alloc_pages(gfp_t gfp_mask, void *pool_data);
+ void mempool_free_pages(void *element, void *pool_data);
++
++static inline int mempool_init_page_pool(mempool_t *pool, int min_nr, int order)
++{
++	return mempool_init(pool, min_nr, mempool_alloc_pages,
++			    mempool_free_pages, (void *)(long)order);
++}
++
+ static inline mempool_t *mempool_create_page_pool(int min_nr, int order)
+ {
+ 	return mempool_create(min_nr, mempool_alloc_pages, mempool_free_pages,
+diff --git a/mm/mempool.c b/mm/mempool.c
+index 5c9dce3471..df90ace400 100644
+--- a/mm/mempool.c
++++ b/mm/mempool.c
+@@ -137,6 +137,28 @@ static void *remove_element(mempool_t *pool, gfp_t flags)
+ 	return element;
  }
- EXPORT_SYMBOL(bioset_free);
  
 +/**
-+ * bioset_init - Initialize a bio_set
-+ * @pool_size:	Number of bio and bio_vecs to cache in the mempool
-+ * @front_pad:	Number of bytes to allocate in front of the returned bio
-+ * @flags:	Flags to modify behavior, currently %BIOSET_NEED_BVECS
-+ *              and %BIOSET_NEED_RESCUER
++ * mempool_destroy - exit a mempool initialized with mempool_init()
++ * @pool:      pointer to the memory pool which was initialized with
++ *             mempool_init().
 + *
-+ * Similar to bioset_create(), but initializes a passed-in bioset instead of
-+ * separately allocating it.
++ * Free all reserved elements in @pool and @pool itself.  This function
++ * only sleeps if the free_fn() function sleeps.
++ *
++ * May be called on a zeroed but uninitialized mempool (i.e. allocated with
++ * kzalloc()).
 + */
-+int bioset_init(struct bio_set *bs,
-+		unsigned int pool_size,
-+		unsigned int front_pad,
-+		int flags)
++void mempool_exit(mempool_t *pool)
 +{
-+	unsigned int back_pad = BIO_INLINE_VECS * sizeof(struct bio_vec);
-+
-+	bs->front_pad = front_pad;
-+
-+	spin_lock_init(&bs->rescue_lock);
-+	bio_list_init(&bs->rescue_list);
-+	INIT_WORK(&bs->rescue_work, bio_alloc_rescue);
-+
-+	bs->bio_slab = bio_find_or_create_slab(front_pad + back_pad);
-+	if (!bs->bio_slab)
-+		return -ENOMEM;
-+
-+	if (mempool_init_slab_pool(&bs->bio_pool, pool_size, bs->bio_slab))
-+		goto bad;
-+
-+	if ((flags & BIOSET_NEED_BVECS) &&
-+	    biovec_init_pool(&bs->bvec_pool, pool_size))
-+		goto bad;
-+
-+	if (!(flags & BIOSET_NEED_RESCUER))
-+		return 0;
-+
-+	bs->rescue_workqueue = alloc_workqueue("bioset", WQ_MEM_RECLAIM, 0);
-+	if (!bs->rescue_workqueue)
-+		goto bad;
-+
-+	return 0;
-+bad:
-+	bioset_exit(bs);
-+	return -ENOMEM;
++	while (pool->curr_nr) {
++		void *element = remove_element(pool, GFP_KERNEL);
++		pool->free(element, pool->pool_data);
++	}
++	kfree(pool->elements);
++	pool->elements = NULL;
 +}
-+EXPORT_SYMBOL(bioset_init);
++EXPORT_SYMBOL(mempool_exit);
 +
  /**
-  * bioset_create  - Create a bio_set
-  * @pool_size:	Number of bio and bio_vecs to cache in the mempool
-@@ -1895,43 +1957,18 @@ struct bio_set *bioset_create(unsigned int pool_size,
- 			      unsigned int front_pad,
- 			      int flags)
+  * mempool_destroy - deallocate a memory pool
+  * @pool:      pointer to the memory pool which was allocated via
+@@ -150,15 +172,65 @@ void mempool_destroy(mempool_t *pool)
+ 	if (unlikely(!pool))
+ 		return;
+ 
+-	while (pool->curr_nr) {
+-		void *element = remove_element(pool, GFP_KERNEL);
+-		pool->free(element, pool->pool_data);
+-	}
+-	kfree(pool->elements);
++	mempool_exit(pool);
+ 	kfree(pool);
+ }
+ EXPORT_SYMBOL(mempool_destroy);
+ 
++int mempool_init_node(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
++		      mempool_free_t *free_fn, void *pool_data,
++		      gfp_t gfp_mask, int node_id)
++{
++	spin_lock_init(&pool->lock);
++	pool->min_nr	= min_nr;
++	pool->pool_data = pool_data;
++	pool->alloc	= alloc_fn;
++	pool->free	= free_fn;
++	init_waitqueue_head(&pool->wait);
++
++	pool->elements = kmalloc_array_node(min_nr, sizeof(void *),
++					    gfp_mask, node_id);
++	if (!pool->elements)
++		return -ENOMEM;
++
++	/*
++	 * First pre-allocate the guaranteed number of buffers.
++	 */
++	while (pool->curr_nr < pool->min_nr) {
++		void *element;
++
++		element = pool->alloc(gfp_mask, pool->pool_data);
++		if (unlikely(!element)) {
++			mempool_exit(pool);
++			return -ENOMEM;
++		}
++		add_element(pool, element);
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL(mempool_init_node);
++
++/**
++ * mempool_init - initialize a memory pool
++ * @min_nr:    the minimum number of elements guaranteed to be
++ *             allocated for this pool.
++ * @alloc_fn:  user-defined element-allocation function.
++ * @free_fn:   user-defined element-freeing function.
++ * @pool_data: optional private data available to the user-defined functions.
++ *
++ * Like mempool_create(), but initializes the pool in (i.e. embedded in another
++ * structure).
++ */
++int mempool_init(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
++		 mempool_free_t *free_fn, void *pool_data)
++{
++	return mempool_init_node(pool, min_nr, alloc_fn, free_fn,
++				 pool_data, GFP_KERNEL, NUMA_NO_NODE);
++
++}
++EXPORT_SYMBOL(mempool_init);
++
+ /**
+  * mempool_create - create a memory pool
+  * @min_nr:    the minimum number of elements guaranteed to be
+@@ -186,35 +258,17 @@ mempool_t *mempool_create_node(int min_nr, mempool_alloc_t *alloc_fn,
+ 			       gfp_t gfp_mask, int node_id)
  {
--	unsigned int back_pad = BIO_INLINE_VECS * sizeof(struct bio_vec);
- 	struct bio_set *bs;
- 
- 	bs = kzalloc(sizeof(*bs), GFP_KERNEL);
- 	if (!bs)
+ 	mempool_t *pool;
++
+ 	pool = kzalloc_node(sizeof(*pool), gfp_mask, node_id);
+ 	if (!pool)
  		return NULL;
- 
--	bs->front_pad = front_pad;
--
--	spin_lock_init(&bs->rescue_lock);
--	bio_list_init(&bs->rescue_list);
--	INIT_WORK(&bs->rescue_work, bio_alloc_rescue);
--
--	bs->bio_slab = bio_find_or_create_slab(front_pad + back_pad);
--	if (!bs->bio_slab) {
-+	if (bioset_init(bs, pool_size, front_pad, flags)) {
- 		kfree(bs);
+-	pool->elements = kmalloc_array_node(min_nr, sizeof(void *),
+-				      gfp_mask, node_id);
+-	if (!pool->elements) {
++
++	if (mempool_init_node(pool, min_nr, alloc_fn, free_fn, pool_data,
++			      gfp_mask, node_id)) {
+ 		kfree(pool);
  		return NULL;
  	}
+-	spin_lock_init(&pool->lock);
+-	pool->min_nr = min_nr;
+-	pool->pool_data = pool_data;
+-	init_waitqueue_head(&pool->wait);
+-	pool->alloc = alloc_fn;
+-	pool->free = free_fn;
  
--	if (mempool_init_slab_pool(&bs->bio_pool, pool_size, bs->bio_slab))
--		goto bad;
+-	/*
+-	 * First pre-allocate the guaranteed number of buffers.
+-	 */
+-	while (pool->curr_nr < pool->min_nr) {
+-		void *element;
 -
--	if ((flags & BIOSET_NEED_BVECS) &&
--	    biovec_init_pool(&bs->bvec_pool, pool_size))
--		goto bad;
--
--	if (!(flags & BIOSET_NEED_RESCUER))
--		return bs;
--
--	bs->rescue_workqueue = alloc_workqueue("bioset", WQ_MEM_RECLAIM, 0);
--	if (!bs->rescue_workqueue)
--		goto bad;
--
- 	return bs;
--bad:
--	bioset_free(bs);
--	return NULL;
+-		element = pool->alloc(gfp_mask, pool->pool_data);
+-		if (unlikely(!element)) {
+-			mempool_destroy(pool);
+-			return NULL;
+-		}
+-		add_element(pool, element);
+-	}
+ 	return pool;
  }
- EXPORT_SYMBOL(bioset_create);
- 
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 720f7261d0..fa3cf94a50 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -406,6 +406,8 @@ static inline struct bio *bio_next_split(struct bio *bio, int sectors,
- 	return bio_split(bio, sectors, gfp, bs);
- }
- 
-+extern int bioset_init(struct bio_set *, unsigned int, unsigned int, int flags);
-+extern void bioset_exit(struct bio_set *);
- extern struct bio_set *bioset_create(unsigned int, unsigned int, int flags);
- enum {
- 	BIOSET_NEED_BVECS = BIT(0),
+ EXPORT_SYMBOL(mempool_create_node);
 -- 
 2.17.0
