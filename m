@@ -1,69 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932802AbeEIACC (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 20:02:02 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38808 "EHLO mx1.redhat.com"
+        id S933316AbeEIAO2 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 20:14:28 -0400
+Received: from anholt.net ([50.246.234.109]:53694 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754148AbeEIACA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 20:02:00 -0400
-Date: Tue, 8 May 2018 18:01:57 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Don Dutile <ddutile@redhat.com>
-Cc: Stephen Bates <sbates@raithlin.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        =?UTF-8?B?SsOpcsO0?= =?UTF-8?B?bWU=?= Glisse
-        <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all
- devices behind switches
-Message-ID: <20180508180157.7c7b393f@w520.home>
-In-Reply-To: <c5f30ced-7bbf-9420-db1a-72519fc78b3a@redhat.com>
-References: <20180423233046.21476-1-logang@deltatee.com>
-        <20180423233046.21476-5-logang@deltatee.com>
-        <CAPcyv4g+5N_n03J-VhmJfrr60Sqk95ZapLKBkwSsGvV4nQ+ZRw@mail.gmail.com>
-        <64C231F5-DE36-415F-B308-3A423B0BBACB@raithlin.com>
-        <15433946-f7f5-f610-4e80-380fb59920e5@redhat.com>
-        <3C9FB262-A93C-4C8F-B1E0-85C6D6F78BC2@raithlin.com>
-        <c5f30ced-7bbf-9420-db1a-72519fc78b3a@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S933175AbeEIAO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 20:14:27 -0400
+From: Eric Anholt <eric@anholt.net>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: [PATCH] drm: Fix render node numbering regression from control node removal.
+Date: Tue,  8 May 2018 17:14:25 -0700
+Message-Id: <20180509001425.12574-1-eric@anholt.net>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 8 May 2018 19:06:17 -0400
-Don Dutile <ddutile@redhat.com> wrote:
-> On 05/08/2018 05:27 PM, Stephen  Bates wrote:
-> > As I understand it VMs need to know because VFIO passes IOMMU
-> > grouping up into the VMs. So if a IOMMU grouping changes the VM's
-> > view of its PCIe topology changes. I think we even have to be
-> > cognizant of the fact the OS running on the VM may not even support
-> > hot-plug of PCI devices.  
-> Alex:
-> Really? IOMMU groups are created by the kernel, so don't know how
-> they would be passed into the VMs, unless indirectly via  PCI(e)
-> layout. At best, twiddling w/ACS enablement (emulation) would cause
-> VMs to see different IOMMU groups, but again, VMs are not the
-> security point/level, the host/HV's are.
+drm_minor_alloc() does multiplication on this enum, so the removal
+ended up moving render nodes down from 128 base to 64.  This caused
+Mesa's surfaceless backend to be unable to open the render nodes,
+since it was still looking up at 128.
 
-Correct, the VM has no concept of the host's IOMMU groups, only the
-hypervisor knows about the groups, but really only to the extent of
-which device belongs to which group and whether the group is viable.
-Any runtime change to grouping though would require DMA mapping
-updates, which I don't see how we can reasonably do with drivers,
-vfio-pci or native host drivers, bound to the affected devices.  Thanks,
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Fixes: 0d49f303e8a7 ("drm: remove all control node code")
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Sean Paul <seanpaul@chromium.org>
+---
+ include/drm/drm_file.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Alex
+diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
+index 99ab50cbab00..69b0a8b57502 100644
+--- a/include/drm/drm_file.h
++++ b/include/drm/drm_file.h
+@@ -49,6 +49,7 @@ struct device;
+ 
+ enum drm_minor_type {
+ 	DRM_MINOR_PRIMARY,
++	DRM_MINOR_CONTROL,
+ 	DRM_MINOR_RENDER,
+ };
+ 
+-- 
+2.17.0
