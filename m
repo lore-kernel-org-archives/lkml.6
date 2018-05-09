@@ -1,69 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756615AbeEIOMz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 10:12:55 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56684 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756555AbeEIOMu (ORCPT
+        id S1756630AbeEIONF (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 10:13:05 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:54640 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756555AbeEIONB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 10:12:50 -0400
-Subject: Re: [PATCH V3 1/1] PCI/AER: add pcie TLP header information in the
- tracepoint
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mr.nuke.me@gmail.com
-References: <1525820696-31967-1-git-send-email-thomas.tai@oracle.com>
- <1525820696-31967-2-git-send-email-thomas.tai@oracle.com>
- <20180509083814.149e8d8f@gandalf.local.home>
-From: Thomas Tai <thomas.tai@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <f3248367-f702-2dba-5406-a1ba275e198a@oracle.com>
-Date: Wed, 9 May 2018 10:12:42 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 9 May 2018 10:13:01 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180509083814.149e8d8f@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=754
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805090134
+Date: Wed, 09 May 2018 16:12:59 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Jacky Bai <ping.bai@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
+        mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
+In-Reply-To: <HE1PR04MB3113135433766196E708685887990@HE1PR04MB3113.eurprd04.prod.outlook.com>
+References: <20180418124908.3079-1-stefan@agner.ch>
+ <20180502073807.GE3443@dragon> <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
+ <HE1PR04MB311395765D3DC03D5960DBA3879A0@HE1PR04MB3113.eurprd04.prod.outlook.com>
+ <4188ee25bd5179b57d09e4624dcfbfbb@agner.ch>
+ <152580354289.138124.13657232356773397650@swboyd.mtv.corp.google.com>
+ <HE1PR04MB3113135433766196E708685887990@HE1PR04MB3113.eurprd04.prod.outlook.com>
+Message-ID: <ae5b239a57bd7e3f3e62cc23a1c3788e@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-0.10 / 15.00];
+         MID_RHS_MATCH_FROM(0.00)[];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         ARC_NA(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[9];
+         TO_DN_SOME(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         RCVD_TLS_ALL(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018-05-09 08:38 AM, Steven Rostedt wrote:
-> On Tue,  8 May 2018 19:04:56 -0400
-> Thomas Tai <thomas.tai@oracle.com> wrote:
-> 
->> When a PCIe AER occurs, the TLP header information is
->> printed in the kernel message but it is missing from
->> the tracepoint. A userspace program can use this information
->> in the tracepoint to better analyze problems.
+On 09.05.2018 03:26, Jacky Bai wrote:
+>> Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
 >>
->> To enable the tracepoint:
->> echo 1 > /sys/kernel/debug/tracing/events/ras/aer_event/enable
+>> Quoting Stefan Agner (2018-05-08 06:20:03)
+>> > On 08.05.2018 09:32, Jacky Bai wrote:
+>> > >
+>> > > I have tried two 6ULL board, I don't meet such issue. System can
+>> > > boot up successfully with commit 6f9575e55632 included.
+>> > > Anyway, the change in this patch is ok for me. it is no harm to the
+>> > > BUS clock change flow.
+>> >
+>> > Hm, that is interesting, maybe it is because we use a different SKU?
+>> > Or maybe bootloader?
+>> >
+>> > I tested here with a 800 MHz clocked variant on a Colibri iMX6ULL
+>> > using U-Boot 2016.11.
+>> >
 >>
->> Example tracepoint output:
->> cat /sys/kernel/debug/tracing/trace
->> aer_event: 0000:01:00.0
->> PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
->> TLP Header={0x0,0x1,0x2,0x3}
->>
->> Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
->> ---
+>> I'll throw this into fixes today because it fixes something to be useful. It's still
+>> interesting to see what's different between the two setups though.
 > 
-> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-Thank you very much Steven.
-
--Thomas
-
+> Thanks. 
 > 
-> -- Steve
+> I will find some 800MHz parts and have a try with different bootloader later.
+> Will let you know, when I have some results.
 > 
+
+FWIW, I tried two SKUs here:
+MCIMX6Z2DVM05AA (528Mhz)
+MCIMX6Z2CVM08AA (800MHz)
+
+Both run at 396MHz in U-Boot, and both freeze and the same location.
+
+--
+Stefan
