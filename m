@@ -1,106 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934212AbeEIJd3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:33:29 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45586 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934048AbeEIJd0 (ORCPT
+        id S933983AbeEIJjg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:39:36 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:39547 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933758AbeEIJje (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:33:26 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Ondrej Jirman <megous@megous.com>
-Cc: Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh@kernel.org>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>,
-        linux-kernel@vger.kernel.org
-Subject: Applied "regulator: add binding for the SY8106A voltage regulator" to the regulator tree
-In-Reply-To: <20180423144657.63264-2-icenowy@aosc.io>
-Message-Id: <20180509093259.62E4644007A@finisterre.ee.mobilebroadband>
-Date: Wed,  9 May 2018 10:32:59 +0100 (BST)
+        Wed, 9 May 2018 05:39:34 -0400
+X-Google-Smtp-Source: AB8JxZoJTsdbv+D2alR8RUEt2SdG0aj7AiY+PWdo0zmRQ2er2Iwiu/XpF3BBmeMOnEx6CM3clqvtew==
+Date: Wed, 9 May 2018 02:39:32 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [RFC PATCH] sched/cpufreq/schedutil: handling urgent frequency
+ requests
+Message-ID: <20180509093932.GE76874@joelaf.mtv.corp.google.com>
+References: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
+ <20180508065435.bcht6dyb3rpp6gk5@vireshk-i7>
+ <20180509045425.GA158882@joelaf.mtv.corp.google.com>
+ <20180509064530.GA1681@localhost.localdomain>
+ <20180509080644.GA76874@joelaf.mtv.corp.google.com>
+ <CAJZ5v0iFZ5+6BQCism-o8bnOxD8KveueJ5CT58F9uH_7_pYOXQ@mail.gmail.com>
+ <20180509085116.GC76874@joelaf.mtv.corp.google.com>
+ <CAJZ5v0jKUQ5MeR4dKvyWTgH7vY+vVOmTN+yzP8xWut3KTaYx4A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0jKUQ5MeR4dKvyWTgH7vY+vVOmTN+yzP8xWut3KTaYx4A@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Wed, May 09, 2018 at 11:06:24AM +0200, Rafael J. Wysocki wrote:
+> On Wed, May 9, 2018 at 10:51 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> > On Wed, May 09, 2018 at 10:30:37AM +0200, Rafael J. Wysocki wrote:
+> >> On Wed, May 9, 2018 at 10:06 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> >> > On Wed, May 09, 2018 at 08:45:30AM +0200, Juri Lelli wrote:
+> >> >> On 08/05/18 21:54, Joel Fernandes wrote:
+> >> >>
+> >> >> [...]
+> >> >>
+> >> >> > Just for discussion sake, is there any need for work_in_progress? If we can
+> >> >> > queue multiple work say kthread_queue_work can handle it, then just queuing
+> >> >> > works whenever they are available should be Ok and the kthread loop can
+> >> >> > handle them. __cpufreq_driver_target is also protected by the work lock if
+> >> >> > there is any concern that can have races... only thing is rate-limiting of
+> >> >> > the requests, but we are doing a rate limiting, just not for the "DL
+> >> >> > increased utilization" type requests (which I don't think we are doing at the
+> >> >> > moment for urgent DL requests anyway).
+> >> >> >
+> >> >> > Following is an untested diff to show the idea. What do you think?
+> >> >> >
+> >> >> > thanks,
+> >> >> >
+> >> >> > - Joel
+> >> >> >
+> >> >> > ----8<---
+> >> >> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> >> >> > index d2c6083304b4..862634ff4bf3 100644
+> >> >> > --- a/kernel/sched/cpufreq_schedutil.c
+> >> >> > +++ b/kernel/sched/cpufreq_schedutil.c
+> >> >> > @@ -38,7 +38,6 @@ struct sugov_policy {
+> >> >> >     struct                  mutex work_lock;
+> >> >> >     struct                  kthread_worker worker;
+> >> >> >     struct task_struct      *thread;
+> >> >> > -   bool                    work_in_progress;
+> >> >> >
+> >> >> >     bool                    need_freq_update;
+> >> >> >  };
+> >> >> > @@ -92,16 +91,8 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> >> >> >         !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+> >> >> >             return false;
+> >> >> >
+> >> >> > -   if (sg_policy->work_in_progress)
+> >> >> > -           return false;
+> >> >> > -
+> >> >> >     if (unlikely(sg_policy->need_freq_update)) {
+> >> >> >             sg_policy->need_freq_update = false;
+> >> >> > -           /*
+> >> >> > -            * This happens when limits change, so forget the previous
+> >> >> > -            * next_freq value and force an update.
+> >> >> > -            */
+> >> >> > -           sg_policy->next_freq = UINT_MAX;
+> >> >> >             return true;
+> >> >> >     }
+> >> >> >
+> >> >> > @@ -129,7 +120,6 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
+> >> >> >             policy->cur = next_freq;
+> >> >> >             trace_cpu_frequency(next_freq, smp_processor_id());
+> >> >> >     } else {
+> >> >> > -           sg_policy->work_in_progress = true;
+> >> >> >             irq_work_queue(&sg_policy->irq_work);
+> >> >>
+> >> >> Isn't this potentially introducing unneeded irq pressure (and doing the
+> >> >> whole wakeup the kthread thing), while the already active kthread could
+> >> >> simply handle multiple back-to-back requests before going to sleep?
+> >> >
+> >> > How about this? Will use the latest request, and also doesn't do unnecessary
+> >> > irq_work_queue:
+> >> >
+> >> > (untested)
+> >> > -----8<--------
+> >> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> >> > index d2c6083304b4..6a3e42b01f52 100644
+> >> > --- a/kernel/sched/cpufreq_schedutil.c
+> >> > +++ b/kernel/sched/cpufreq_schedutil.c
+> >> > @@ -38,7 +38,7 @@ struct sugov_policy {
+> >> >         struct                  mutex work_lock;
+> >> >         struct                  kthread_worker worker;
+> >> >         struct task_struct      *thread;
+> >> > -       bool                    work_in_progress;
+> >> > +       bool                    work_in_progress; /* Has kthread been kicked */
+> >> >
+> >> >         bool                    need_freq_update;
+> >> >  };
+> >> > @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> >> >             !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+> >> >                 return false;
+> >> >
+> >> > -       if (sg_policy->work_in_progress)
+> >> > -               return false;
+> >> > -
+> >>
+> >> Why this change?
+> >>
+> >> Doing the below is rather pointless if work_in_progress is set, isn't it?
+> >
+> > The issue being discussed is that if a work was already in progress, then new
+> > frequency updates will be dropped. So say even if DL increased in
+> > utilization, nothing will happen because if work_in_progress = true and
+> > need_freq_update = true, we would skip an update.  In this diff, I am
+> > allowing the frequency request to be possible while work_in_progress is true.
+> > In the end the latest update will be picked.
+> 
+> I'm not sure if taking new requests with the irq_work in flight is a good idea.
 
-   regulator: add binding for the SY8106A voltage regulator
+That's the point of the original $SUBJECT patch posted by Claudio :) In that
+you can see if urgent_request, then work_in_progress isn't checked.
 
-has been applied to the regulator tree at
+Also I don't see why we cannot do this with this small tweak as in my diff.
+It solves a real problem seen with frequency updates done with the
+slow-switch as we discussed at OSPM.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+But let me know if I missed your point or something ;)
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> 
+> >>
+> >> You'll drop the results of it on the floor going forward anyway then AFAICS.
+> >
+> > Why?
+> 
+> Because you cannot queue up a new irq_work before the previous one is complete?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+We are not doing that. If you see in my diff, I am not queuing an irq_work if
+one was already queued. What we're allowing is an update to next_freq. We
+still use work_in_progress but don't use it to ban all incoming update
+requests as done previously. Instead we use work_in_progress to make sure
+that we dont unnecessarily increase the irq pressure and have excessive wake
+ups (as Juri suggested).
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+I can clean it up and post it as a patch next week after some testing incase
+that's less confusing.
+This week I'm actually on vacation and the diff was pure vacation hacking ;-)
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+thanks,
 
-Thanks,
-Mark
-
->From 32aba834f2a9fe126ff5e624371113ac1defa06e Mon Sep 17 00:00:00 2001
-From: Ondrej Jirman <megous@megous.com>
-Date: Mon, 7 May 2018 20:29:40 +0800
-Subject: [PATCH] regulator: add binding for the SY8106A voltage regulator
-
-SY8106A is an I2C-controlled adjustable voltage regulator made by
-Silergy Corp.
-
-Add its device tree binding.
-
-Signed-off-by: Ondrej Jirman <megous@megous.com>
-[Icenowy: Change commit message and slight fixes]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../bindings/regulator/sy8106a-regulator.txt  | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
-
-diff --git a/Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt b/Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
-new file mode 100644
-index 000000000000..39a8ca73f572
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
-@@ -0,0 +1,23 @@
-+SY8106A Voltage regulator
-+
-+Required properties:
-+- compatible: Must be "silergy,sy8106a"
-+- reg: I2C slave address - must be <0x65>
-+- silergy,fixed-microvolt - the voltage when I2C regulating is disabled (set
-+  by external resistor like a fixed voltage)
-+
-+Any property defined as part of the core regulator binding, defined in
-+./regulator.txt, can also be used.
-+
-+Example:
-+
-+	sy8106a {
-+		compatible = "silergy,sy8106a";
-+		reg = <0x65>;
-+		regulator-name = "sy8106a-vdd";
-+		silergy,fixed-microvolt = <1200000>;
-+		regulator-min-microvolt = <1000000>;
-+		regulator-max-microvolt = <1400000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
--- 
-2.17.0
+- Joel
