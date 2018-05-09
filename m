@@ -1,559 +1,471 @@
-Return-Path: <tkjos@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525885027; cv=none;
+Return-Path: <elliott@hpe.com>
+X-Google-Smtp-Source: AB8JxZrjCpAIXKFN4IM8FBK+O1+o+JiulQq4N2QwaX5hHqauf/MmXNRGTH+amJmwtD5ti4qZyNaM
+ARC-Seal: i=1; a=rsa-sha256; t=1525881332; cv=none;
         d=google.com; s=arc-20160816;
-        b=LhWbLGO9FZjNIqMwbmFU9CsyEf7GK9dinLafLDybsROyJunj+vVLwGN7BWV6Md9Dv+
-         kMGGfN5fQvihUjMvV5rHB5Odi/td+nwGvB8nAbLevOCJPvWVp+sst0RL9B/iXKWdRXcW
-         vspdbBnQkDopq+Fe4NUs+hFxoHuABJMZmxocVGfcHOYSCCimXpKw7309MUc+fRn6EYkC
-         b7viL5V/5xArQokCZSvLO4PpRfu3iZE7xDbl6FmcvGAoXwIaBvksRxGBp8tSVZyv1Bkd
-         gV5Tnl9lOpQdZZDoZ/gReQ+LceaxwnDJwsKV8dKaFJg544dVJ+1zALfWzv3KpJ4OPEKt
-         uVtA==
+        b=MFmVik2Dk2f8gkz6ael6S7K9hk339YUKXXViFXP1s+yeN5YJAe3KUwah4ws0NMHH3N
+         zihP47UqCxv0ZJd7+2L1JeDv4Y5bzld0jC4IdGoFasv7Bat21wD0u87LQYJ4rkN66ls3
+         R2wrmMi72ODRkwt602Yj5CFP4ymBqTr6PZarnxBgCNIXZwO6pkOzi650iPVleQc5VxN8
+         76celIMypRhXNBwAEQYze5VjfppjxJoyTFqtDp8azJ6Ua9ugIkwd5LMnvHt+MKrAa/XA
+         rYQEckkTL8zp1R2StWA1fafY2PzvyWCsRDfgNne+0NcCoH2QbqeEoztay760KBVro/Oz
+         TzyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=IhJG/BCVjDKr6ui5CISUsMQnC4Bvf925KdLVUpPcBMM=;
-        b=QYwzowhy3kh4LhBf23vKKMZ2ektYlecr1aEDOzqEt5RxomwlWotappMYBBe/Mv+usb
-         XPIRpr1iRard7BzJr3pO/6RF7yBl+y5GooS48rcvP6s/Nt79sAVUWH/LJ0pBmTNNQv1S
-         6UkE5l9Xzlx5A0HjfiuMCYuPjmS5PLP4jbMG376Kn+RvGkP2Vc9FA1QjVLC7nriDv2VX
-         e9/tsYOtzrh+I9OoLBFBbusjLeUmSQ/asWSKhGlUgii/8yRCPxxKE5B1uQREw9WTeyxb
-         ijyLjy4bDu35iG6570EEaqzZttvU7YzekrkGpyypFJYG7A52dBGbM0kbpqZLVgsXwuRJ
-         QEyg==
+        h=mime-version:content-transfer-encoding:spamdiagnosticmetadata
+         :spamdiagnosticoutput:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:cc:to
+         :from:arc-authentication-results;
+        bh=cIgy/cE2reAjOw5HF9Dgo+Kb8IGVLPnDRWKCsKpcNEc=;
+        b=p4De1q2hkEouYBcEswlCHzH6BtEJUIdesztxM9jH6/fHodHnco9ZeuMgZCL7dO8x9q
+         T0eIL0TVtIw5fYf9uJFxqPNheXloA9MlP/OW6zNVHWr+66gdLla0qDEw+7WtgJxA6aV8
+         dzoeeF66NIRZXo7bE3mrCaBqABE+p77AdyrFLQjhagz7FGZH/2vAnKKsLw/wgk/zUmU2
+         kTEDyJplSR5E0WVyxbhCvTQ4hAAB5oq/ZvCndgbjHZnjij+3hT0GZPLpQ8j4hPVdnP7B
+         0exRnE6t3oRqwmgeta8RiZ50/4Bshq/G7BKyuYNEgkN/1XvjiF4UnTtQiRuT9FvsmXle
+         /nzw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=VsWME1X4;
-       spf=pass (google.com: domain of tkjos@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=tkjos@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       spf=pass (google.com: best guess record for domain of elliott@hpe.com designates 15.233.44.26 as permitted sender) smtp.mailfrom=elliott@hpe.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=VsWME1X4;
-       spf=pass (google.com: domain of tkjos@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=tkjos@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AB8JxZo5n/dnQQUWcTK3gXomz3wuGsV2xWPnegpnDwO/atS+1ONYoTf2x8sQ+yy+XswhXh9Q3/daojrIepB2777C/ZQ=
+       spf=pass (google.com: best guess record for domain of elliott@hpe.com designates 15.233.44.26 as permitted sender) smtp.mailfrom=elliott@hpe.com
+From: "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
+To: Aishwarya Pant <aishpant@gmail.com>, Dan Williams
+	<dan.j.williams@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "Len
+ Brown" <lenb@kernel.org>, "linux-nvdimm@lists.01.org"
+	<linux-nvdimm@lists.01.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, Greg KH
+	<gregkh@linuxfoundation.org>
+CC: Julia Lawall <julia.lawall@lip6.fr>
+Subject: RE: [PATCH v2] acpi: nfit: document sysfs interface
+Thread-Topic: [PATCH v2] acpi: nfit: document sysfs interface
+Thread-Index: AQHTrKWMEm54VYSfZkK2YKx2iNdV1KQn8pbA
+Date: Wed, 9 May 2018 15:54:55 +0000
+Message-ID: <AT5PR8401MB116920E461A2489D1DA52CB6AB990@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+References: <20180223125448.GA16909@mordor.localdomain>
+In-Reply-To: <20180223125448.GA16909@mordor.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=elliott@hpe.com;
+x-originating-ip: [15.211.195.7]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AT5PR8401MB0627;7:DNIVX7aTrIYANHKyaCb6Skzxlq4rXy1C1mB+DBUNjwb3NP63ZOXPMx38WMqC+mN/Lti6j/DXvvQ78JmMHXx7qdrUtIdQMypyhajVs61KIxG3XK6BAJblaAlg5M2dMy0nry/C8fZu/0rtWN9tvWavpzVvxPs/304ZVZBkAm5NQ2DChSc861nVHl43KnAzMwDHr+GNt6M7KTBUigFNwhcgx9wdAEcpyHOtRsWeGSNTbM8RwSqkAX/NSy+degnbkSOM
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989080)(4534165)(4627221)(201703031133081)(201702281549075)(8990040)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB0627;
+x-ms-traffictypediagnostic: AT5PR8401MB0627:
+x-microsoft-antispam-prvs: <AT5PR8401MB0627215000AC8CF862E4F60AAB990@AT5PR8401MB0627.NAMPRD84.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(166708455590820)(9452136761055)(85827821059158)(162533806227266)(176295241369792)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231254)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:AT5PR8401MB0627;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB0627;
+x-forefront-prvs: 0667289FF8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(39860400002)(376002)(39380400002)(366004)(40224003)(20264003)(50944005)(13464003)(189003)(199004)(106356001)(81166006)(2501003)(5250100002)(8676002)(81156014)(14454004)(7416002)(6436002)(8936002)(305945005)(33656002)(105586002)(3660700001)(3280700002)(446003)(229853002)(74316002)(486006)(476003)(68736007)(66066001)(11346002)(53546011)(966005)(6506007)(110136005)(5660300001)(102836004)(2201001)(7696005)(76176011)(478600001)(53366004)(4326008)(97736004)(53376002)(59450400001)(39060400002)(186003)(2906002)(316002)(26005)(6306002)(6246003)(25786009)(86362001)(55016002)(53936002)(575784001)(9686003)(3846002)(7736002)(6116002)(99286004)(2900100001);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB0627;H:AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: yA1zoUTWVXI5zOrAZkiA780Ei3eJfayP7iBgJI91t7V0q4v10uN3PUozy/4aWA/vdQNH2ltYhPA+0FqRTTs3T74V0ZBOI9Vg8T5aL9lNx3eWvxrs4UD7+sJkGIethcsRFduea03AI4hiqiEOMnHRX0wu/ac6BUWuS1q7eXHPvGS0vmBr0tX/J+CG//+dyJ6u
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <000000000000194520056affab14@google.com> <20180509075715.GH711@sol.localdomain>
-In-Reply-To: <20180509075715.GH711@sol.localdomain>
-From: Todd Kjos <tkjos@google.com>
-Date: Wed, 09 May 2018 16:56:55 +0000
-Message-ID: <CAHRSSEwAjrxZLRa3tPhjvz2MFiqVbCysTTgp6oKc=3Pcr1b2JQ@mail.gmail.com>
-Subject: Re: possible deadlock in vfs_fallocate
-To: Eric Biggers <ebiggers3@gmail.com>, Joel Fernandes <joelaf@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	"open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>, linux-fsdevel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>, syzkaller-bugs@googlegroups.com,
-	syzbot+148c2885d71194f18d28@syzkaller.appspotmail.com
-Content-Type: multipart/alternative; boundary="000000000000fc84f1056bc8ca6d"
+X-MS-Office365-Filtering-Correlation-Id: 7419905a-8528-4105-09c8-08d5b5c5358a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7419905a-8528-4105-09c8-08d5b5c5358a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2018 15:54:55.3136
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB0627
+X-OriginatorOrg: hpe.com
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1599972333084763095?=
-X-GMAIL-MSGID: =?utf-8?q?1600006418581588183?=
+X-GMAIL-THRID: =?utf-8?q?1593196408980037383?=
+X-GMAIL-MSGID: =?utf-8?q?1600002544040016008?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---000000000000fc84f1056bc8ca6d
-Content-Type: text/plain; charset="UTF-8"
 
-+Joel Fernandes <joelaf@google.com>
 
-On Wed, May 9, 2018 at 12:55 AM Eric Biggers <ebiggers3@gmail.com> wrote:
+> -----Original Message-----
+> From: Linux-nvdimm [mailto:linux-nvdimm-bounces@lists.01.org] On Behalf O=
+f
+> Aishwarya Pant
+> Sent: Friday, February 23, 2018 6:55 AM
+> To: Dan Williams <dan.j.williams@intel.com>; Rafael J. Wysocki
+> <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>; linux-
+> nvdimm@lists.01.org; linux-acpi@vger.kernel.org; linux-
+> kernel@vger.kernel.org; Jonathan Corbet <corbet@lwn.net>; Greg KH
+> <gregkh@linuxfoundation.org>
+> Cc: Julia Lawall <julia.lawall@lip6.fr>
+> Subject: [PATCH v2] acpi: nfit: document sysfs interface
+>=20
+> This is an attempt to document the nfit sysfs interface. The
+> descriptions have been collected from git commit logs and the ACPI
+> specification 6.2.
+>=20
+> Signed-off-by: Aishwarya Pant <aishpant@gmail.com>
+> ---
+> Changes in v2:
+> - Add descriptions for range_index and ecc_unit_size
+> - Edit various descriptions as suggested
+>=20
+>  Documentation/ABI/testing/sysfs-bus-nfit | 233
+> +++++++++++++++++++++++++++++++
+>  1 file changed, 233 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-nfit
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-bus-nfit
+> b/Documentation/ABI/testing/sysfs-bus-nfit
+> new file mode 100644
+> index 000000000000..619eb8ca0f99
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-nfit
+> @@ -0,0 +1,233 @@
+> +For all of the nmem device attributes under nfit/*, see the 'NVDIMM
+> Firmware
+> +Interface Table (NFIT)' section in the ACPI specification
+> +(http://www.uefi.org/specifications) for more details.
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/serial
+> +Date:		Jun, 2015
+> +KernelVersion:	v4.2
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) Serial number of the NVDIMM (non-volatile dual in-line
+> +		memory module), assigned by the module vendor.
 
-> [+ashmem maintainers]
->
-> On Sun, Apr 29, 2018 at 10:00:03AM -0700, syzbot wrote:
-> > Hello,
-> >
-> > syzbot hit the following crash on upstream commit
-> > cdface5209349930ae1b51338763c8e029971b97 (Sun Apr 29 03:07:21 2018 +0000)
-> > Merge tag 'for_linus_stable' of
-> > git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4
-> > syzbot dashboard link:
-> > https://syzkaller.appspot.com/bug?extid=148c2885d71194f18d28
-> >
-> > C reproducer:
-> https://syzkaller.appspot.com/x/repro.c?id=5054004375584768
-> > syzkaller reproducer:
-> > https://syzkaller.appspot.com/x/repro.syz?id=6438048191479808
-> > Raw console output:
-> > https://syzkaller.appspot.com/x/log.txt?id=5404215203594240
-> > Kernel config:
-> > https://syzkaller.appspot.com/x/.config?id=7043958930931867332
-> > compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the
-> commit:
-> > Reported-by: syzbot+148c2885d71194f18d28@syzkaller.appspotmail.com
-> > It will help syzbot understand when the bug is fixed. See footer for
-> > details.
-> > If you forward the report, please keep this part and the footer.
-> >
-> > random: sshd: uninitialized urandom read (32 bytes read)
-> > random: sshd: uninitialized urandom read (32 bytes read)
-> > random: sshd: uninitialized urandom read (32 bytes read)
-> >
-> > ======================================================
-> > WARNING: possible circular locking dependency detected
-> > 4.17.0-rc2+ #23 Not tainted
-> > ------------------------------------------------------
-> > syz-executor715/4492 is trying to acquire lock:
-> >         (ptrval) (sb_writers#6){.+.+}, at: file_start_write
-> > include/linux/fs.h:2718 [inline]
-> >         (ptrval) (sb_writers#6){.+.+}, at: vfs_fallocate+0x5be/0x8d0
-> > fs/open.c:318
-> >
-> > but task is already holding lock:
-> >         (ptrval) (ashmem_mutex){+.+.}, at: ashmem_shrink_scan+0xac/0x560
-> > drivers/staging/android/ashmem.c:440
-> >
-> > which lock already depends on the new lock.
-> >
-> >
-> > the existing dependency chain (in reverse order) is:
-> >
-> > -> #3 (ashmem_mutex){+.+.}:
-> >        __mutex_lock_common kernel/locking/mutex.c:756 [inline]
-> >        __mutex_lock+0x16d/0x17f0 kernel/locking/mutex.c:893
-> >        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
-> >        ashmem_mmap+0x53/0x460 drivers/staging/android/ashmem.c:361
-> >        call_mmap include/linux/fs.h:1789 [inline]
-> >        mmap_region+0xd13/0x1820 mm/mmap.c:1723
-> >        do_mmap+0xc79/0x11d0 mm/mmap.c:1494
-> >        do_mmap_pgoff include/linux/mm.h:2237 [inline]
-> >        vm_mmap_pgoff+0x1fb/0x2a0 mm/util.c:357
-> >        ksys_mmap_pgoff+0x4c9/0x640 mm/mmap.c:1544
-> >        __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
-> >        __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
-> >        __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
-> >        do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-> >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >
-> > -> #2 (&mm->mmap_sem){++++}:
-> >        __might_fault+0x155/0x1e0 mm/memory.c:4555
-> >        _copy_to_user+0x30/0x110 lib/usercopy.c:25
-> >        copy_to_user include/linux/uaccess.h:155 [inline]
-> >        filldir+0x1ea/0x3a0 fs/readdir.c:196
-> >        dir_emit_dot include/linux/fs.h:3378 [inline]
-> >        dir_emit_dots include/linux/fs.h:3389 [inline]
-> >        dcache_readdir+0x13a/0x620 fs/libfs.c:192
-> >        iterate_dir+0x4b0/0x5d0 fs/readdir.c:51
-> >        __do_sys_getdents fs/readdir.c:231 [inline]
-> >        __se_sys_getdents fs/readdir.c:212 [inline]
-> >        __x64_sys_getdents+0x293/0x4e0 fs/readdir.c:212
-> >        do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-> >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >
-> > -> #1 (&sb->s_type->i_mutex_key#11){++++}:
-> >        down_write+0x87/0x120 kernel/locking/rwsem.c:70
-> >        inode_lock include/linux/fs.h:713 [inline]
-> >        do_last fs/namei.c:3274 [inline]
-> >        path_openat+0x123b/0x4e20 fs/namei.c:3501
-> >        do_filp_open+0x249/0x350 fs/namei.c:3535
-> >        do_sys_open+0x56f/0x740 fs/open.c:1093
-> >        __do_sys_open fs/open.c:1111 [inline]
-> >        __se_sys_open fs/open.c:1106 [inline]
-> >        __x64_sys_open+0x7e/0xc0 fs/open.c:1106
-> >        do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-> >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >
-> > -> #0 (sb_writers#6){.+.+}:
-> >        lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
-> >        percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36
-> > [inline]
-> >        percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
-> >        __sb_start_write+0x1e9/0x300 fs/super.c:1385
-> >        file_start_write include/linux/fs.h:2718 [inline]
-> >        vfs_fallocate+0x5be/0x8d0 fs/open.c:318
-> >        ashmem_shrink_scan+0x1f1/0x560
-> drivers/staging/android/ashmem.c:447
-> >        ashmem_ioctl+0x3bf/0x13a0 drivers/staging/android/ashmem.c:789
-> >        vfs_ioctl fs/ioctl.c:46 [inline]
-> >        file_ioctl fs/ioctl.c:500 [inline]
-> >        do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
-> >        ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-> >        __do_sys_ioctl fs/ioctl.c:708 [inline]
-> >        __se_sys_ioctl fs/ioctl.c:706 [inline]
-> >        __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
-> >        do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-> >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >
-> > other info that might help us debug this:
-> >
-> > Chain exists of:
-> >   sb_writers#6 --> &mm->mmap_sem --> ashmem_mutex
-> >
-> >  Possible unsafe locking scenario:
-> >
-> >        CPU0                    CPU1
-> >        ----                    ----
-> >   lock(ashmem_mutex);
-> >                                lock(&mm->mmap_sem);
-> >                                lock(ashmem_mutex);
-> >   lock(sb_writers#6);
-> >
-> >  *** DEADLOCK ***
-> >
-> > 1 lock held by syz-executor715/4492:
-> >  #0:         (ptrval) (ashmem_mutex){+.+.}, at:
-> > ashmem_shrink_scan+0xac/0x560 drivers/staging/android/ashmem.c:440
-> >
-> > stack backtrace:
-> > CPU: 1 PID: 4492 Comm: syz-executor715 Not tainted 4.17.0-rc2+ #23
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > Google 01/01/2011
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-> >  print_circular_bug.isra.36.cold.54+0x1bd/0x27d
-> > kernel/locking/lockdep.c:1223
-> >  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-> >  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-> >  validate_chain kernel/locking/lockdep.c:2417 [inline]
-> >  __lock_acquire+0x343e/0x5140 kernel/locking/lockdep.c:3431
-> >  lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
-> >  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36
-> [inline]
-> >  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
-> >  __sb_start_write+0x1e9/0x300 fs/super.c:1385
-> >  file_start_write include/linux/fs.h:2718 [inline]
-> >  vfs_fallocate+0x5be/0x8d0 fs/open.c:318
-> >  ashmem_shrink_scan+0x1f1/0x560 drivers/staging/android/ashmem.c:447
-> >  ashmem_ioctl+0x3bf/0x13a0 drivers/staging/android/ashmem.c:789
-> >  vfs_ioctl fs/ioctl.c:46 [inline]
-> >  file_ioctl fs/ioctl.c:500 [inline]
-> >  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
-> >  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-> >  __do_sys_ioctl fs/ioctl.c:708 [inline]
-> >  __se_sys_ioctl fs/ioctl.c:706 [inline]
-> >  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
-> >  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-> >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x440179
-> > RSP: 002b:00007ffc165d4a28 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
-> > RAX: ffffffffffffffda RBX: 6873612f7665642f RCX: 0000000000440179
-> > RDX: 0000000000000000 RSI: 000000000000770a RDI: 0000000000000004
-> > RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
-> > R10: 0000000000000004 R11: 0000000000000217 R12: 00000000004016a0
-> > R13: 0000000000401730 R14: 0000000000000000 R15: 0000000000000000
-> > random: crng init done
-> >
-> >
-> > ---
-> > This bug is generated by a dumb bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for details.
-> > Direct all questions to syzkaller@googlegroups.com.
-> >
-> > syzbot will keep track of this bug report.
-> > If you forgot to add the Reported-by tag, once the fix for this bug is
-> > merged
-> > into any tree, please reply to this email with:
-> > #syz fix: exact-commit-title
-> > If you want to test a patch for this bug, please reply with:
-> > #syz test: git://repo/address.git branch
-> > and provide the patch inline or as an attachment.
-> > To mark this as a duplicate of another syzbot report, please reply with:
-> > #syz dup: exact-subject-of-another-report
-> > If it's a one-off invalid bug report, please reply with:
-> > #syz invalid
-> > Note: if the crash happens again, it will cause creation of a new bug
-> > report.
-> > Note: all commands must start from beginning of the line in the email
-> body.
->
-> Looks like yet another locking bug in ashmem.  ashmem_mutex normally ranks
-> below
-> mmap_sem, but ashmem_shrink_scan() inverts that order, via the
-> file_start_write() in vfs_fallocate().
->
-> - Eric
->
+The endianness should be indicated.=20
 
---000000000000fc84f1056bc8ca6d
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+After some churn, I think it is always presented as big-endian now
+(originally printed using the CPU's native endianness).
 
-<div dir=3D"ltr"><a class=3D"gmail_plusreply" id=3D"plusReplyChip-0" href=
-=3D"mailto:joelaf@google.com" tabindex=3D"-1">+Joel Fernandes</a>=C2=A0<br>=
-</div><br><div class=3D"gmail_quote"><div dir=3D"ltr">On Wed, May 9, 2018 a=
-t 12:55 AM Eric Biggers &lt;<a href=3D"mailto:ebiggers3@gmail.com">ebiggers=
-3@gmail.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=
-=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex">[+ashmem=
- maintainers]<br>
-<br>
-On Sun, Apr 29, 2018 at 10:00:03AM -0700, syzbot wrote:<br>
-&gt; Hello,<br>
-&gt; <br>
-&gt; syzbot hit the following crash on upstream commit<br>
-&gt; cdface5209349930ae1b51338763c8e029971b97 (Sun Apr 29 03:07:21 2018 +00=
-00)<br>
-&gt; Merge tag &#39;for_linus_stable&#39; of<br>
-&gt; git://<a href=3D"http://git.kernel.org/pub/scm/linux/kernel/git/tytso/=
-ext4" rel=3D"noreferrer" target=3D"_blank">git.kernel.org/pub/scm/linux/ker=
-nel/git/tytso/ext4</a><br>
-&gt; syzbot dashboard link:<br>
-&gt; <a href=3D"https://syzkaller.appspot.com/bug?extid=3D148c2885d71194f18=
-d28" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.appspot.com/bug=
-?extid=3D148c2885d71194f18d28</a><br>
-&gt; <br>
-&gt; C reproducer: <a href=3D"https://syzkaller.appspot.com/x/repro.c?id=3D=
-5054004375584768" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.ap=
-pspot.com/x/repro.c?id=3D5054004375584768</a><br>
-&gt; syzkaller reproducer:<br>
-&gt; <a href=3D"https://syzkaller.appspot.com/x/repro.syz?id=3D643804819147=
-9808" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.appspot.com/x/=
-repro.syz?id=3D6438048191479808</a><br>
-&gt; Raw console output:<br>
-&gt; <a href=3D"https://syzkaller.appspot.com/x/log.txt?id=3D54042152035942=
-40" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.appspot.com/x/lo=
-g.txt?id=3D5404215203594240</a><br>
-&gt; Kernel config:<br>
-&gt; <a href=3D"https://syzkaller.appspot.com/x/.config?id=3D70439589309318=
-67332" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.appspot.com/x=
-/.config?id=3D7043958930931867332</a><br>
-&gt; compiler: gcc (GCC) 8.0.1 20180413 (experimental)<br>
-&gt; <br>
-&gt; IMPORTANT: if you fix the bug, please add the following tag to the com=
-mit:<br>
-&gt; Reported-by: <a href=3D"mailto:syzbot%2B148c2885d71194f18d28@syzkaller=
-.appspotmail.com" target=3D"_blank">syzbot+148c2885d71194f18d28@syzkaller.a=
-ppspotmail.com</a><br>
-&gt; It will help syzbot understand when the bug is fixed. See footer for<b=
-r>
-&gt; details.<br>
-&gt; If you forward the report, please keep this part and the footer.<br>
-&gt; <br>
-&gt; random: sshd: uninitialized urandom read (32 bytes read)<br>
-&gt; random: sshd: uninitialized urandom read (32 bytes read)<br>
-&gt; random: sshd: uninitialized urandom read (32 bytes read)<br>
-&gt; <br>
-&gt; =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D<br>
-&gt; WARNING: possible circular locking dependency detected<br>
-&gt; 4.17.0-rc2+ #23 Not tainted<br>
-&gt; ------------------------------------------------------<br>
-&gt; syz-executor715/4492 is trying to acquire lock:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(ptrval) (sb_writers#6){.+.+}, at: fi=
-le_start_write<br>
-&gt; include/linux/fs.h:2718 [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(ptrval) (sb_writers#6){.+.+}, at: vf=
-s_fallocate+0x5be/0x8d0<br>
-&gt; fs/open.c:318<br>
-&gt; <br>
-&gt; but task is already holding lock:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(ptrval) (ashmem_mutex){+.+.}, at: as=
-hmem_shrink_scan+0xac/0x560<br>
-&gt; drivers/staging/android/ashmem.c:440<br>
-&gt; <br>
-&gt; which lock already depends on the new lock.<br>
-&gt; <br>
-&gt; <br>
-&gt; the existing dependency chain (in reverse order) is:<br>
-&gt; <br>
-&gt; -&gt; #3 (ashmem_mutex){+.+.}:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __mutex_lock_common kernel/locking/mutex.c:=
-756 [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __mutex_lock+0x16d/0x17f0 kernel/locking/mu=
-tex.c:893<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 mutex_lock_nested+0x16/0x20 kernel/locking/=
-mutex.c:908<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 ashmem_mmap+0x53/0x460 drivers/staging/andr=
-oid/ashmem.c:361<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 call_mmap include/linux/fs.h:1789 [inline]<=
-br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 mmap_region+0xd13/0x1820 mm/mmap.c:1723<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 do_mmap+0xc79/0x11d0 mm/mmap.c:1494<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 do_mmap_pgoff include/linux/mm.h:2237 [inli=
-ne]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 vm_mmap_pgoff+0x1fb/0x2a0 mm/util.c:357<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 ksys_mmap_pgoff+0x4c9/0x640 mm/mmap.c:1544<=
-br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __do_sys_mmap arch/x86/kernel/sys_x86_64.c:=
-100 [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __se_sys_mmap arch/x86/kernel/sys_x86_64.c:=
-91 [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/s=
-ys_x86_64.c:91<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 do_syscall_64+0x1b1/0x800 arch/x86/entry/co=
-mmon.c:287<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 entry_SYSCALL_64_after_hwframe+0x49/0xbe<br=
->
-&gt; <br>
-&gt; -&gt; #2 (&amp;mm-&gt;mmap_sem){++++}:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __might_fault+0x155/0x1e0 mm/memory.c:4555<=
-br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 _copy_to_user+0x30/0x110 lib/usercopy.c:25<=
-br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 copy_to_user include/linux/uaccess.h:155 [i=
-nline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 filldir+0x1ea/0x3a0 fs/readdir.c:196<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 dir_emit_dot include/linux/fs.h:3378 [inlin=
-e]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 dir_emit_dots include/linux/fs.h:3389 [inli=
-ne]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 dcache_readdir+0x13a/0x620 fs/libfs.c:192<b=
-r>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 iterate_dir+0x4b0/0x5d0 fs/readdir.c:51<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __do_sys_getdents fs/readdir.c:231 [inline]=
-<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __se_sys_getdents fs/readdir.c:212 [inline]=
-<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __x64_sys_getdents+0x293/0x4e0 fs/readdir.c=
-:212<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 do_syscall_64+0x1b1/0x800 arch/x86/entry/co=
-mmon.c:287<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 entry_SYSCALL_64_after_hwframe+0x49/0xbe<br=
->
-&gt; <br>
-&gt; -&gt; #1 (&amp;sb-&gt;s_type-&gt;i_mutex_key#11){++++}:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 down_write+0x87/0x120 kernel/locking/rwsem.=
-c:70<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 inode_lock include/linux/fs.h:713 [inline]<=
-br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 do_last fs/namei.c:3274 [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 path_openat+0x123b/0x4e20 fs/namei.c:3501<b=
-r>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 do_filp_open+0x249/0x350 fs/namei.c:3535<br=
->
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 do_sys_open+0x56f/0x740 fs/open.c:1093<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __do_sys_open fs/open.c:1111 [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __se_sys_open fs/open.c:1106 [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __x64_sys_open+0x7e/0xc0 fs/open.c:1106<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 do_syscall_64+0x1b1/0x800 arch/x86/entry/co=
-mmon.c:287<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 entry_SYSCALL_64_after_hwframe+0x49/0xbe<br=
->
-&gt; <br>
-&gt; -&gt; #0 (sb_writers#6){.+.+}:<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 lock_acquire+0x1dc/0x520 kernel/locking/loc=
-kdep.c:3920<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 percpu_down_read_preempt_disable include/li=
-nux/percpu-rwsem.h:36<br>
-&gt; [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 percpu_down_read include/linux/percpu-rwsem=
-.h:59 [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __sb_start_write+0x1e9/0x300 fs/super.c:138=
-5<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 file_start_write include/linux/fs.h:2718 [i=
-nline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 vfs_fallocate+0x5be/0x8d0 fs/open.c:318<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 ashmem_shrink_scan+0x1f1/0x560 drivers/stag=
-ing/android/ashmem.c:447<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 ashmem_ioctl+0x3bf/0x13a0 drivers/staging/a=
-ndroid/ashmem.c:789<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 vfs_ioctl fs/ioctl.c:46 [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 file_ioctl fs/ioctl.c:500 [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684<br=
->
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __do_sys_ioctl fs/ioctl.c:708 [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __se_sys_ioctl fs/ioctl.c:706 [inline]<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706<br=
->
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 do_syscall_64+0x1b1/0x800 arch/x86/entry/co=
-mmon.c:287<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 entry_SYSCALL_64_after_hwframe+0x49/0xbe<br=
->
-&gt; <br>
-&gt; other info that might help us debug this:<br>
-&gt; <br>
-&gt; Chain exists of:<br>
-&gt;=C2=A0 =C2=A0sb_writers#6 --&gt; &amp;mm-&gt;mmap_sem --&gt; ashmem_mut=
-ex<br>
-&gt; <br>
-&gt;=C2=A0 Possible unsafe locking scenario:<br>
-&gt; <br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 CPU0=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 CPU1<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 ----=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ----<br>
-&gt;=C2=A0 =C2=A0lock(ashmem_mutex);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 lock(&amp;mm-&gt;mmap_sem);<br>
-&gt;=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 lock(ashmem_mutex);<br>
-&gt;=C2=A0 =C2=A0lock(sb_writers#6);<br>
-&gt; <br>
-&gt;=C2=A0 *** DEADLOCK ***<br>
-&gt; <br>
-&gt; 1 lock held by syz-executor715/4492:<br>
-&gt;=C2=A0 #0:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(ptrval) (ashmem_mutex){+.+=
-.}, at:<br>
-&gt; ashmem_shrink_scan+0xac/0x560 drivers/staging/android/ashmem.c:440<br>
-&gt; <br>
-&gt; stack backtrace:<br>
-&gt; CPU: 1 PID: 4492 Comm: syz-executor715 Not tainted 4.17.0-rc2+ #23<br>
-&gt; Hardware name: Google Google Compute Engine/Google Compute Engine, BIO=
-S<br>
-&gt; Google 01/01/2011<br>
-&gt; Call Trace:<br>
-&gt;=C2=A0 __dump_stack lib/dump_stack.c:77 [inline]<br>
-&gt;=C2=A0 dump_stack+0x1b9/0x294 lib/dump_stack.c:113<br>
-&gt;=C2=A0 print_circular_bug.isra.36.cold.54+0x1bd/0x27d<br>
-&gt; kernel/locking/lockdep.c:1223<br>
-&gt;=C2=A0 check_prev_add kernel/locking/lockdep.c:1863 [inline]<br>
-&gt;=C2=A0 check_prevs_add kernel/locking/lockdep.c:1976 [inline]<br>
-&gt;=C2=A0 validate_chain kernel/locking/lockdep.c:2417 [inline]<br>
-&gt;=C2=A0 __lock_acquire+0x343e/0x5140 kernel/locking/lockdep.c:3431<br>
-&gt;=C2=A0 lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920<br>
-&gt;=C2=A0 percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36=
- [inline]<br>
-&gt;=C2=A0 percpu_down_read include/linux/percpu-rwsem.h:59 [inline]<br>
-&gt;=C2=A0 __sb_start_write+0x1e9/0x300 fs/super.c:1385<br>
-&gt;=C2=A0 file_start_write include/linux/fs.h:2718 [inline]<br>
-&gt;=C2=A0 vfs_fallocate+0x5be/0x8d0 fs/open.c:318<br>
-&gt;=C2=A0 ashmem_shrink_scan+0x1f1/0x560 drivers/staging/android/ashmem.c:=
-447<br>
-&gt;=C2=A0 ashmem_ioctl+0x3bf/0x13a0 drivers/staging/android/ashmem.c:789<b=
-r>
-&gt;=C2=A0 vfs_ioctl fs/ioctl.c:46 [inline]<br>
-&gt;=C2=A0 file_ioctl fs/ioctl.c:500 [inline]<br>
-&gt;=C2=A0 do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684<br>
-&gt;=C2=A0 ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701<br>
-&gt;=C2=A0 __do_sys_ioctl fs/ioctl.c:708 [inline]<br>
-&gt;=C2=A0 __se_sys_ioctl fs/ioctl.c:706 [inline]<br>
-&gt;=C2=A0 __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706<br>
-&gt;=C2=A0 do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287<br>
-&gt;=C2=A0 entry_SYSCALL_64_after_hwframe+0x49/0xbe<br>
-&gt; RIP: 0033:0x440179<br>
-&gt; RSP: 002b:00007ffc165d4a28 EFLAGS: 00000217 ORIG_RAX: 0000000000000010=
-<br>
-&gt; RAX: ffffffffffffffda RBX: 6873612f7665642f RCX: 0000000000440179<br>
-&gt; RDX: 0000000000000000 RSI: 000000000000770a RDI: 0000000000000004<br>
-&gt; RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000<br>
-&gt; R10: 0000000000000004 R11: 0000000000000217 R12: 00000000004016a0<br>
-&gt; R13: 0000000000401730 R14: 0000000000000000 R15: 0000000000000000<br>
-&gt; random: crng init done<br>
-&gt; <br>
-&gt; <br>
-&gt; ---<br>
-&gt; This bug is generated by a dumb bot. It may contain errors.<br>
-&gt; See <a href=3D"https://goo.gl/tpsmEJ" rel=3D"noreferrer" target=3D"_bl=
-ank">https://goo.gl/tpsmEJ</a> for details.<br>
-&gt; Direct all questions to <a href=3D"mailto:syzkaller@googlegroups.com" =
-target=3D"_blank">syzkaller@googlegroups.com</a>.<br>
-&gt; <br>
-&gt; syzbot will keep track of this bug report.<br>
-&gt; If you forgot to add the Reported-by tag, once the fix for this bug is=
-<br>
-&gt; merged<br>
-&gt; into any tree, please reply to this email with:<br>
-&gt; #syz fix: exact-commit-title<br>
-&gt; If you want to test a patch for this bug, please reply with:<br>
-&gt; #syz test: git://repo/address.git branch<br>
-&gt; and provide the patch inline or as an attachment.<br>
-&gt; To mark this as a duplicate of another syzbot report, please reply wit=
-h:<br>
-&gt; #syz dup: exact-subject-of-another-report<br>
-&gt; If it&#39;s a one-off invalid bug report, please reply with:<br>
-&gt; #syz invalid<br>
-&gt; Note: if the crash happens again, it will cause creation of a new bug<=
-br>
-&gt; report.<br>
-&gt; Note: all commands must start from beginning of the line in the email =
-body.<br>
-<br>
-Looks like yet another locking bug in ashmem.=C2=A0 ashmem_mutex normally r=
-anks below<br>
-mmap_sem, but ashmem_shrink_scan() inverts that order, via the<br>
-file_start_write() in vfs_fallocate().<br>
-<br>
-- Eric<br>
-</blockquote></div>
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/handle
+> +Date:		Apr, 2015
+> +KernelVersion:	v4.2
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) The address (given by the _ADR object) of the device on
+> its
+> +		parent bus of the NVDIMM device containing the NVDIMM region.
+> +
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/device
+> +Date:		Apr, 2015
+> +KernelVersion:	v4.1
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) Device id for the NVDIMM, assigned by the module vendor.
 
---000000000000fc84f1056bc8ca6d--
+Since "device" is confusing (a problem with the ACPI field name), this shou=
+ld=20
+state that it is the "Identifier for the NVDIMM", i.e., the module itself,
+not some device on the module.
+
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/rev_id
+> +Date:		Jun, 2015
+> +KernelVersion:	v4.2
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) Revision of the NVDIMM, assigned by the module vendor.
+> +
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/phys_id
+> +Date:		Apr, 2015
+> +KernelVersion:	v4.2
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) Handle (i.e., instance number) for the SMBIOS (system
+> +		management BIOS) Memory Device structure describing the NVDIMM
+> +		containing the NVDIMM region.
+
+Perhaps mention "dmidecode" as a tool to see the SMBIOS structures?
+
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/flags
+> +Date:		Jun, 2015
+> +KernelVersion:	v4.2
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) The flags in the NFIT memory device sub-structure
+> indicate
+> +		the state of the data on the nvdimm relative to its energy
+> +		source or last "flush to persistence".
+
+Capitalize nvdimm.
+
+The bits in this field are more varied than that description, though,
+and you can't predict what future standards will toss into this field.
+A more generic description might be better.
+
+> +
+> +		The attribute is a translation of the 'NVDIMM State Flags'
+> field
+> +		in section 5.2.25.3 'NVDIMM Region Mapping' Structure of the
+> +		ACPI specification 6.2.
+> +
+> +		The health states are "save_fail", "restore_fail", "flush_fail",
+> +		"not_armed", "smart_event", "map_fail" and "smart_notify".
+> +
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/format
+> +What:		/sys/bus/nd/devices/nmemX/nfit/format1
+> +What:		/sys/bus/nd/devices/nmemX/nfit/formats
+> +Date:		Apr, 2016
+> +KernelVersion:	v4.7
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) The interface codes indicate support for persistent
+> memory
+> +		mapped directly into system physical address space and / or a
+> +		block aperture access mechanism to the NVDIMM media.
+> +		The 'formats' attribute displays the number of supported
+> +		interfaces.
+> +
+> +		This layout is compatible with existing libndctl binaries that
+> +		only expect one code per-dimm as they will ignore
+> +		nmemX/nfit/formats and nmemX/nfit/formatN.
+> +
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/vendor
+> +Date:		Apr, 2016
+> +KernelVersion:	v4.7
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) Vendor id of the NVDIMM.
+
+Clarify that this is a JEDEC manufacturer ID code from JEP106, not an ident=
+ifier
+assigned by the PCI SIG, IEEE, or other organization.
+
+Clarify that it uses the two-byte format defined in JESD21C Page 4.1.2 (the=
+ SPD
+standard), and that it includes the parity bit.
+
+Suggestion:
+"Identifier indicating the vendor of the NVDIMM. This is a JEDEC manufactur=
+er
+ID code assigned in JEP106 and expressed in the two-byte format defined in
+JESD21C for Serial Presence Data (SPD)."
+
+
+> +
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/dsm_mask
+> +Date:		May, 2016
+> +KernelVersion:	v4.7
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) The bitmask indicates the supported device specific
+> control
+> +		functions relative to the NVDIMM command family supported by
+> the
+> +		device
+
+What is the endianness of this bitmask?
+
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/family
+> +Date:		Apr, 2016
+> +KernelVersion:	v4.7
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) Displays the NVDIMM family command sets. Values
+> +		0, 1, 2 and 3 correspond to NVDIMM_FAMILY_INTEL,
+> +		NVDIMM_FAMILY_HPE1, NVDIMM_FAMILY_HPE2 and NVDIMM_FAMILY_MSFT
+> +		respectively.
+> +
+> +		See the specifications for these command families here:
+> +		http://pmem.io/documents/NVDIMM_DSM_Interface-V1.6.pdf
+> +		https://github.com/HewlettPackard/hpe-
+> nvm/blob/master/Documentation/
+> +		https://msdn.microsoft.com/library/windows/hardware/mt604741"
+> +
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/id
+> +Date:		Apr, 2016
+> +KernelVersion:	v4.7
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) ACPI specification 6.2 section 5.2.25.9, defines an
+> +		identifier for an NVDIMM, which refelects the id attribute.
+
+reflects is spelled wrong.
+
+As time goes by, it might be hard to find a specific old revision of
+the specification, and the section numbers will probably have changed.
+Refer to the section name ("NVDIMM Representation Format") and provide
+other clues.
+
+Suggestion:
+
+An identifier for the NVDIMM using the NVDIMM Representation Format
+specified by ACPI.
+
+If the manufacturing location and manufacturing date fields are valid,
+this includes the contents of SPD bytes 320 to 328:
+      printf format: %02x%02x-%02x-%02x%02x-%02x%02x%02x%02x
+	contents:
+		JEDEC manufacturer ID byte 0 (including the parity bit)
+		JEDEC manufacturer ID byte 1
+		manufacturing location
+		manufacturing date byte 0: year=20
+		manufacturing date byte 1: week
+		serial number byte 0
+		serial number byte 1
+		serial number byte 2
+		serial number byte 3
+
+If the manufacturing location and manufacturing date fields are not valid,
+those are omitted:
+      printf format: %02x%02x-%02x%02x%02x%02x
+	contents:
+		JEDEC manufacturer ID byte 0 (including the parity bit)
+		JEDEC manufacturer ID byte 1
+		serial number byte 0
+		serial number byte 1
+		serial number byte 2
+		serial number byte 3
+
+
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/subsystem_vendor
+> +Date:		Apr, 2016
+> +KernelVersion:	v4.7
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) Sub-system vendor id of the NVDIMM non-volatile memory
+> +		subsystem controller.
+
+Use
+"Vendor of the NVDIMM non-volatile memory subsystem controller. This is a
+JEDEC manufacturer ID code assigned in JEP106 and expressed in the two-byte
+format defined in JESD21C for Serial Presence Data (SPD)."
+
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/subsystem_rev_id
+> +Date:		Apr, 2016
+> +KernelVersion:	v4.7
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) Sub-system revision id of the NVDIMM non-volatile memory
+> subsystem
+> +		controller, assigned by the non-volatile memory subsystem
+> +		controller vendor.
+
+Use
+"Revision of the NVDIMM non-volatile memory subsystem controller, ...".
+
+> +
+> +What:		/sys/bus/nd/devices/nmemX/nfit/subsystem_device
+> +Date:		Apr, 2016
+> +KernelVersion:	v4.7
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) Sub-system device id for the NVDIMM non-volatile memory
+> +		subsystem controller, assigned by the non-volatile memory
+> +		subsystem controller vendor.
+
+Use
+"Identifier for the NVDIMM non-volatile memory subsystem controller, ...".
+
+The "device" and "subsystem" terms can cause confusion because they are
+backwards from PCI:
+    NVDIMM: the module contains the subsystem
+    PCI card: the subsystem contains the device
+
+ACPI uses "Device ID" for a module ID, adding to the confusion.
+
+The best we can do is to overlook the poorly chosen field names and
+ensure the definitions of their content is clear.
+
+
+> +
+> +What:		/sys/bus/nd/devices/ndbusX/nfit/revision
+> +Date:		Jun, 2015
+> +KernelVersion:	v4.2
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) ACPI NFIT table revision number.
+> +
+> +
+> +What:		/sys/bus/nd/devices/ndbusX/nfit/scrub
+> +Date:		Sep, 2016
+> +KernelVersion:	v4.9
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RW) This shows the number of full Address Range Scrubs (ARS)
+> +		that have been completed since driver load time. Userspace can
+> +		wait on this using select/poll etc. A '+' at the end indicates
+> +		an ARS is in progress
+> +
+> +		Writing a value of 1 triggers an ARS scan.
+> +
+> +
+> +What:		/sys/bus/nd/devices/ndbusX/nfit/hw_error_scrub
+> +Date:		Sep, 2016
+> +KernelVersion:	v4.9
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RW) Provides a way to toggle the behavior between just adding
+> +		the address (cache line) where the MCE happened to the poison
+> +		list and doing a full scrub. The former (selective insertion
+> of
+> +		the address) is done unconditionally.
+> +
+> +		This attribute can have the following values written to it:
+> +
+> +		'0': Switch to the default mode where an exception will only
+> +		insert the address of the memory error into the poison and
+> +		badblocks lists.
+> +		'1': Enable a full scrub to happen if an exception for a
+> memory
+> +		error is received.
+> +
+> +
+> +What:		/sys/bus/nd/devices/ndbusX/nfit/dsm_mask
+> +Date:		Jun, 2017
+> +KernelVersion:	v4.13
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) The bitmask indicates the supported bus specific control
+> +		functions. See the section named 'NVDIMM Root Device _DSMs' in
+> +		the ACPI specification.
+
+What is the endianness of this bitmask?
+
+> +
+> +What:		/sys/bus/nd/devices/regionX/nfit/range_index
+> +Date:		Jun, 2015
+> +KernelVersion:	v4.2
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) A unique number provided by the BIOS to identify an
+> address
+> +		range. Used by NVDIMM Region Mapping Structure to uniquely
+> refer
+> +		to this structure. Value of 0 is reserved and not used as an
+> +		index.
+> +
+> +
+> +What:		/sys/bus/nd/devices/regionX/nfit/ecc_unit_size
+> +Date:		Aug, 2017
+> +KernelVersion:	v4.14
+> +Contact:	linux-nvdimm@lists.01.org
+> +Description:
+> +		(RO) Size of a write request to a DIMM that will not incur a
+> +		read-modify-write cycle at the memory controller.
+> +
+> +		When the nfit driver initializes it runs an ARS (Address Range
+> +		Scrub) operation across every pmem range. Part of that process
+> +		involves determining the ARS capabilities of a given address
+> +		range. One of the capabilities that is reported is the 'Clear
+> +		Uncorrectable Error Range Length Unit Size' (see: ACPI 6.2
+> +		section 9.20.7.4 Function Index 1 - Query ARS Capabilities).
+> +		This property indicates the boundary at which the NVDIMM may
+> +		need to perform read-modify-write cycles to maintain ECC
+> (Error
+> +		Correcting Code) blocks.
+> --
+> 2.16.2
+>=20
+> _______________________________________________
+> Linux-nvdimm mailing list
+> Linux-nvdimm@lists.01.org
+> https://lists.01.org/mailman/listinfo/linux-nvdimm
