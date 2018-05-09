@@ -1,154 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756088AbeEIGpZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 02:45:25 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:42183 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753339AbeEIGpY (ORCPT
+        id S1756211AbeEIGqW (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 02:46:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45982 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755360AbeEIGqQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 02:45:24 -0400
-X-Original-SENDERIP: 156.147.1.127
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-From: Byungchul Park <byungchul.park@lge.com>
-To: peterz@infradead.org, mingo@kernel.org, rostedt@goodmis.org
-Cc: tglx@linutronix.de, raistlin@linux.it, linux-kernel@vger.kernel.org,
-        juri.lelli@gmail.com, bristot@redhat.com, kernel-team@lge.com
-Subject: [RESEND PATCH v11 1/2] sched/deadline: Add support for SD_PREFER_SIBLING on find_later_rq()
-Date: Wed,  9 May 2018 15:44:22 +0900
-Message-Id: <1525848263-10958-2-git-send-email-byungchul.park@lge.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525848263-10958-1-git-send-email-byungchul.park@lge.com>
-References: <1525848263-10958-1-git-send-email-byungchul.park@lge.com>
+        Wed, 9 May 2018 02:46:16 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Wed, 09 May 2018 07:46:14 +0100
+From: okaya@codeaurora.org
+To: Rajat Jain <rajatja@google.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Keith Busch <keith.busch@intel.com>, Vidya Sagar <vidyas@nvidia.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Frederick Lawler <fred@fredlawl.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mayurkumar.patel@intel.com,
+        rajatxjain@gmail.com
+Subject: Re: [PATCH] pci/aspm: Remove CONFIG_PCIEASPM_DEBUG
+In-Reply-To: <20180508230148.121852-1-rajatja@google.com>
+References: <20180508230148.121852-1-rajatja@google.com>
+Message-ID: <7cdf5fb27cc7650523892389db76e12d@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It would be better to try to check other siblings first if
-SD_PREFER_SIBLING is flaged when pushing tasks - migration.
+On 2018-05-09 00:01, Rajat Jain wrote:
+> Currently, the linux kernel disables ASPM when a device is
+> removed from the kernel. But it is not enabled again when
+> a new device is added on that slot even if it was originally
+> enabled (by the BIOS) when the system booted up (assuming
+> POLICY_DEFAULT).
+> 
+> This was earlier discussed here:
+> https://www.spinics.net/lists/linux-pci/msg60212.html
+> 
+> And some suggestions from Bjorn here:
+> https://www.spinics.net/lists/linux-pci/msg60541.html
+> 
+> This patch picks up one of the suggestion, to remove the
+> CONFIG_PCIEASPM_DEBUG and thus make the code always
+> avilable. This provides control to userspace to control
+> ASPM on a per slot / device basis using sysfs interface.
+> 
+> Signed-off-by: Rajat Jain <rajatja@google.com>
 
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
-Acked-by: Juri Lelli <juri.lelli@arm.com>
----
- kernel/sched/deadline.c | 82 ++++++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 75 insertions(+), 7 deletions(-)
+Reviewed-by: Sinan Kaya <okaya@codeaurora.org>
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 0223694..d619c07 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1319,12 +1319,35 @@ static struct task_struct *pick_earliest_pushable_dl_task(struct rq *rq, int cpu
- 
- static DEFINE_PER_CPU(cpumask_var_t, local_cpu_mask_dl);
- 
-+/*
-+ * Find the first cpu in: mask & sd & ~prefer
-+ */
-+static int find_cpu(const struct cpumask *mask,
-+		    const struct sched_domain *sd,
-+		    const struct sched_domain *prefer)
-+{
-+	const struct cpumask *sds = sched_domain_span(sd);
-+	const struct cpumask *ps  = prefer ? sched_domain_span(prefer) : NULL;
-+	int cpu;
-+
-+	for_each_cpu(cpu, mask) {
-+		if (!cpumask_test_cpu(cpu, sds))
-+			continue;
-+		if (ps && cpumask_test_cpu(cpu, ps))
-+			continue;
-+		break;
-+	}
-+
-+	return cpu;
-+}
-+
- static int find_later_rq(struct task_struct *task)
- {
--	struct sched_domain *sd;
-+	struct sched_domain *sd, *prefer = NULL;
- 	struct cpumask *later_mask = this_cpu_cpumask_var_ptr(local_cpu_mask_dl);
- 	int this_cpu = smp_processor_id();
- 	int cpu = task_cpu(task);
-+	int fallback_cpu = -1;
- 
- 	/* Make sure the mask is initialized first */
- 	if (unlikely(!later_mask))
-@@ -1376,15 +1399,37 @@ static int find_later_rq(struct task_struct *task)
- 				return this_cpu;
- 			}
- 
--			best_cpu = cpumask_first_and(later_mask,
--							sched_domain_span(sd));
- 			/*
--			 * Last chance: if a cpu being in both later_mask
--			 * and current sd span is valid, that becomes our
--			 * choice. Of course, the latest possible cpu is
--			 * already under consideration through later_mask.
-+			 * If a cpu exists that is in the later_mask and
-+			 * the current sd span, but not in the prefer sd
-+			 * span, then that becomes our choice.
-+			 *
-+			 * Of course, the latest possible cpu is already
-+			 * under consideration through later_mask.
- 			 */
-+			best_cpu = find_cpu(later_mask, sd, prefer);
-+
- 			if (best_cpu < nr_cpu_ids) {
-+				/*
-+				 * If current domain is SD_PREFER_SIBLING
-+				 * flaged, we have to try to check other
-+				 * siblings first.
-+				 */
-+				if (sd->flags & SD_PREFER_SIBLING) {
-+					prefer = sd;
-+
-+					/*
-+					 * fallback_cpu should be one
-+					 * in the closest domain among
-+					 * SD_PREFER_SIBLING domains,
-+					 * in case that more than one
-+					 * SD_PREFER_SIBLING domains
-+					 * exist in the hierachy.
-+					 */
-+					if (fallback_cpu == -1)
-+						fallback_cpu = best_cpu;
-+					continue;
-+				}
- 				rcu_read_unlock();
- 				return best_cpu;
- 			}
-@@ -1393,6 +1438,29 @@ static int find_later_rq(struct task_struct *task)
- 	rcu_read_unlock();
- 
- 	/*
-+	 * If fallback_cpu is valid, all our guesses failed *except* for
-+	 * SD_PREFER_SIBLING domain. Now, we can return the fallback cpu.
-+	 *
-+	 * XXX: Consider the following example, 4 cores SMT2 system:
-+	 *
-+	 *    LLC [0       -        7]
-+	 *    SMT [0 1][2 3][4 5][6 7]
-+	 *         o x  o x  x x  x x
-+	 *
-+	 *    where 'o': occupied and 'x': empty.
-+	 *
-+	 * A wakeup on cpu0 will exclude cpu1 and choose cpu3, since
-+	 * cpu1 is in a SD_PREFER_SIBLING sd and cpu3 is not. However,
-+	 * in this case, cpu4 would have been a better choice, since
-+	 * cpu3 is a (SMT) thread of an already loaded core.
-+	 *
-+	 * Doing it 'right' is difficult and expensive. The current
-+	 * solution is an acceptable approximation.
-+	 */
-+	if (fallback_cpu != -1)
-+		return fallback_cpu;
-+
-+	/*
- 	 * At this point, all our guesses failed, we just return
- 	 * 'something', and let the caller sort the things out.
- 	 */
--- 
-1.9.1
+
+> ---
+>  drivers/pci/pci.h        | 5 -----
+>  drivers/pci/pcie/Kconfig | 8 --------
+>  drivers/pci/pcie/aspm.c  | 2 --
+>  3 files changed, 15 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 023f7cf25bff..383d92a6b0fb 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -365,13 +365,8 @@ static inline void
+> pcie_aspm_pm_state_change(struct pci_dev *pdev) { }
+>  static inline void pcie_aspm_powersave_config_link(struct pci_dev 
+> *pdev) { }
+>  #endif
+> 
+> -#ifdef CONFIG_PCIEASPM_DEBUG
+>  void pcie_aspm_create_sysfs_dev_files(struct pci_dev *pdev);
+>  void pcie_aspm_remove_sysfs_dev_files(struct pci_dev *pdev);
+> -#else
+> -static inline void pcie_aspm_create_sysfs_dev_files(struct pci_dev 
+> *pdev) { }
+> -static inline void pcie_aspm_remove_sysfs_dev_files(struct pci_dev 
+> *pdev) { }
+> -#endif
+> 
+>  #ifdef CONFIG_PCIE_PTM
+>  void pci_ptm_init(struct pci_dev *dev);
+> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
+> index b12e28b3d8f9..089b9f559d88 100644
+> --- a/drivers/pci/pcie/Kconfig
+> +++ b/drivers/pci/pcie/Kconfig
+> @@ -46,14 +46,6 @@ config PCIEASPM
+> 
+>  	  When in doubt, say Y.
+> 
+> -config PCIEASPM_DEBUG
+> -	bool "Debug PCI Express ASPM"
+> -	depends on PCIEASPM
+> -	default n
+> -	help
+> -	  This enables PCI Express ASPM debug support. It will add per-device
+> -	  interface to control ASPM.
+> -
+>  choice
+>  	prompt "Default ASPM policy"
+>  	default PCIEASPM_DEFAULT
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index c687c817b47d..8ffc13d42baa 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -1161,7 +1161,6 @@ static int pcie_aspm_get_policy(char *buffer,
+> const struct kernel_param *kp)
+>  module_param_call(policy, pcie_aspm_set_policy, pcie_aspm_get_policy,
+>  	NULL, 0644);
+> 
+> -#ifdef CONFIG_PCIEASPM_DEBUG
+>  static ssize_t link_state_show(struct device *dev,
+>  		struct device_attribute *attr,
+>  		char *buf)
+> @@ -1264,7 +1263,6 @@ void pcie_aspm_remove_sysfs_dev_files(struct
+> pci_dev *pdev)
+>  		sysfs_remove_file_from_group(&pdev->dev.kobj,
+>  			&dev_attr_clk_ctl.attr, power_group);
+>  }
+> -#endif
+> 
+>  static int __init pcie_aspm_disable(char *str)
+>  {
