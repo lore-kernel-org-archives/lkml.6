@@ -1,48 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933316AbeEIAO2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 20:14:28 -0400
-Received: from anholt.net ([50.246.234.109]:53694 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933175AbeEIAO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 20:14:27 -0400
-From: Eric Anholt <eric@anholt.net>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: [PATCH] drm: Fix render node numbering regression from control node removal.
-Date: Tue,  8 May 2018 17:14:25 -0700
-Message-Id: <20180509001425.12574-1-eric@anholt.net>
-X-Mailer: git-send-email 2.17.0
+        id S933346AbeEIAOm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 20:14:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52498 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933175AbeEIAOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 20:14:40 -0400
+Date: Tue, 8 May 2018 19:14:32 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Torsten Duwe <duwe@lst.de>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Jiri Kosina <jkosina@suse.cz>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Nicholas Piggin <npiggin@gmail.com>, live-patching@vger.kernel.org
+Subject: Re: [PATCH v3] ppc64le livepatch: implement reliable stacktrace for
+ newer consistency models
+Message-ID: <20180509001432.5nd55ictwf5yi7sm@treble>
+References: <20180305164928.GA17953@lst.de>
+ <20180308162616.yhbymodggnfzpskx@treble>
+ <20180309174718.2700b29e@blackhole.lan>
+ <20180312153536.7avozx64ku4lvd3e@treble>
+ <20180504123834.GA16581@lst.de>
+ <20180507154208.jo4s43olrf5a3hw4@treble>
+ <20180508103832.085378b9@blackhole.lan>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180508103832.085378b9@blackhole.lan>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drm_minor_alloc() does multiplication on this enum, so the removal
-ended up moving render nodes down from 128 base to 64.  This caused
-Mesa's surfaceless backend to be unable to open the render nodes,
-since it was still looking up at 128.
+On Tue, May 08, 2018 at 10:38:32AM +0200, Torsten Duwe wrote:
+> On Mon, 7 May 2018 10:42:08 -0500
+> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> 
+> > The subject doesn't actively describe what the patch does, maybe
+> > change it to something like:
+> > 
+> >   powerpc: Add support for HAVE_RELIABLE_STACKTRACE
+> > 
+> > or maybe
+> > 
+> >   powerpc: Add support for livepatch consistency model
+> 
+> Maybe $SUBJECT? You're absolutely right, the old subject was just a
+> leftover of my original attempt to just set the flag, before Miroslav
+> corrected me. I just kept on copying it without a second thought. Thanks
+> for noting.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Fixes: 0d49f303e8a7 ("drm: remove all control node code")
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Sean Paul <seanpaul@chromium.org>
----
- include/drm/drm_file.h | 1 +
- 1 file changed, 1 insertion(+)
+Generally we refer to it as "the consistency model".  So I would
+propose a minor edit:
 
-diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
-index 99ab50cbab00..69b0a8b57502 100644
---- a/include/drm/drm_file.h
-+++ b/include/drm/drm_file.h
-@@ -49,6 +49,7 @@ struct device;
- 
- enum drm_minor_type {
- 	DRM_MINOR_PRIMARY,
-+	DRM_MINOR_CONTROL,
- 	DRM_MINOR_RENDER,
- };
- 
+  ppc64le/livepatch: Implement reliable stack tracing for the consistency model
+
+> > Otherwise it looks great to me.
+> > 
+> > Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> > 
+> Thanks.
+> 
+> 	Torsten
+> 
+
 -- 
-2.17.0
+Josh
