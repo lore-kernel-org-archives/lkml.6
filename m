@@ -1,68 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935374AbeEISPU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 14:15:20 -0400
-Received: from mail.efficios.com ([167.114.142.138]:40272 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755415AbeEISPT (ORCPT
+        id S935486AbeEISRC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 14:17:02 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:44481 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933577AbeEISRA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 14:15:19 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com AFE221B74F8
-Date: Wed, 9 May 2018 14:15:18 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: lttng-dev <lttng-dev@lists.lttng.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <1944310744.230.1525889718516.JavaMail.zimbra@efficios.com>
-Subject: [RELEASE] LTTng-modules 2.9.9 (Linux kernel tracer)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2026 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_2031)
-Thread-Index: QeelOCWtiXmBN00fPNQ2+pvgv3anZQ==
-Thread-Topic: LTTng-modules 2.9.9 (Linux kernel tracer)
+        Wed, 9 May 2018 14:17:00 -0400
+X-Google-Smtp-Source: AB8JxZpWjZaNXG3vwmh45Nhw6/OLbKK1SeWzUJWZSQuz9uY2oD/w2nEJuVGw7VPsxjkC7vfOoTCRoQ==
+From: Oleg Keri <ezhi99@gmail.com>
+Cc: Oleg Keri <ezhi99@gmail.com>, Ike Panhc <ike.pan@canonical.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: ideapad-laptop: Add fn-lock setting Some of latest Lenovo ideapad laptops do not have UEFI/BIOS setting for switching fn-lock mode. This commit adds related acpi calls to ideapad platfrom driver. However setting is available via sysfs.
+Date: Wed,  9 May 2018 21:16:50 +0300
+Message-Id: <20180509181650.13687-1-ezhi99@gmail.com>
+X-Mailer: git-send-email 2.17.0
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a bugfix update of the stable-2.9 series of the LTTng modules
-project. It updates support to kernel 4.17-rc4 as well.
+Signed-off-by: Oleg Keri <ezhi99@gmail.com>
+---
+ drivers/platform/x86/ideapad-laptop.c | 52 +++++++++++++++++++++++++--
+ 1 file changed, 49 insertions(+), 3 deletions(-)
 
-Thanks,
-
-Mathieu
-
-Project website: http://lttng.org
-Documentation: http://lttng.org/docs
-Download link: http://lttng.org/download
-
-Changelog:
-
-2018-05-09 (Lost Sock Memorial Day) LTTng modules 2.9.9
-        * Fix: update RCU instrumentation for 4.17
-        * Fix: sunrpc instrumentation for 4.17
-        * Fix: use struct reclaim_stat in mm_vmscan_lru_shrink_inactive for 4.17
-        * Fix: Add gfp_flags arg to mm_vmscan_kswapd_wake for 4.17
-        * Update: kvm instrumentation for ubuntu 4.13.0-38
-        * Fix: update kvm instrumentation for Ubuntu 3.13.0-144
-        * Fix: btrfs instrumentation namespacing
-        * Cleanup: comment about CONFIG_HOTPLUG_CPU ifdef
-        * Fix: do not use CONFIG_HOTPLUG_CPU for the new hotplug API
-        * Fix: update kvm instrumentation for 4.1.50+
-        * Use the memory pool instead of kmalloc
-        * Create a memory pool for temporary tracepoint probes storage
-        * Fix: use proper pid_ns in the process statedump
-        * Fix: add variable quoting to shell scripts
-        * Update: kvm instrumentation for fedora 4.14.13-300
-        * Fix: Add Fedora version macros
-        * Fix: update btrfs instrumentation for SuSE 4.4.114-92
-        * Fix: update block instrumentation for SuSE 4.4.114-92
-        * Fix: update rcu instrumentation for v4.16
-        * Fix: update vmscan instrumentation for v4.16
-        * Fix: update timer instrumentation on 4.16 and 4.14-rt
-        * Update kvm instrumentation for debian kernel 4.14.0-3
-
+diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+index 535199c9..2f4991fb 100644
+--- a/drivers/platform/x86/ideapad-laptop.c
++++ b/drivers/platform/x86/ideapad-laptop.c
+@@ -43,6 +43,7 @@
+ #define IDEAPAD_RFKILL_DEV_NUM	(3)
+ 
+ #define BM_CONSERVATION_BIT (5)
++#define HA_FNLOCK_BIT       (10)
+ 
+ #define CFG_BT_BIT	(16)
+ #define CFG_3G_BIT	(17)
+@@ -59,6 +60,8 @@ static const char *const ideapad_wmi_fnesc_events[] = {
+ enum {
+ 	BMCMD_CONSERVATION_ON = 3,
+ 	BMCMD_CONSERVATION_OFF = 5,
++	HACMD_FNLOCK_ON = 0xe,
++	HACMD_FNLOCK_OFF = 0xf,
+ };
+ 
+ enum {
+@@ -139,11 +142,11 @@ static int method_gbmd(acpi_handle handle, unsigned long *ret)
+ 	return result;
+ }
+ 
+-static int method_sbmc(acpi_handle handle, int cmd)
++static int method_int1(acpi_handle handle, char *method, int cmd)
+ {
+ 	acpi_status status;
+ 
+-	status = acpi_execute_simple_method(handle, "SBMC", cmd);
++	status = acpi_execute_simple_method(handle, method, cmd);
+ 	return ACPI_FAILURE(status) ? -1 : 0;
+ }
+ 
+@@ -487,7 +490,7 @@ static ssize_t conservation_mode_store(struct device *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = method_sbmc(priv->adev->handle, state ?
++	ret = method_int1(priv->adev->handle, "SBMC", state ?
+ 					      BMCMD_CONSERVATION_ON :
+ 					      BMCMD_CONSERVATION_OFF);
+ 	if (ret < 0)
+@@ -497,11 +500,51 @@ static ssize_t conservation_mode_store(struct device *dev,
+ 
+ static DEVICE_ATTR_RW(conservation_mode);
+ 
++static ssize_t fn_lock_show(struct device *dev,
++			    struct device_attribute *attr,
++			    char *buf)
++{
++	struct ideapad_private *priv = dev_get_drvdata(dev);
++	unsigned long result;
++	int hals;
++	int fail = read_method_int(priv->adev->handle, "HALS", &hals);
++
++	if (fail)
++		return sprintf(buf, "-1\n");
++
++	result = hals;
++	return sprintf(buf, "%u\n", test_bit(HA_FNLOCK_BIT, &result));
++}
++
++static ssize_t fn_lock_store(struct device *dev,
++			     struct device_attribute *attr,
++			     const char *buf, size_t count)
++{
++	struct ideapad_private *priv = dev_get_drvdata(dev);
++	bool state;
++	int ret;
++
++	ret = kstrtobool(buf, &state);
++	if (ret)
++		return ret;
++
++	ret = method_int1(priv->adev->handle, "SALS", state ?
++			  HACMD_FNLOCK_ON :
++			  HACMD_FNLOCK_OFF);
++	if (ret < 0)
++		return -EIO;
++	return count;
++}
++
++static DEVICE_ATTR_RW(fn_lock);
++
++
+ static struct attribute *ideapad_attributes[] = {
+ 	&dev_attr_camera_power.attr,
+ 	&dev_attr_fan_mode.attr,
+ 	&dev_attr_touchpad.attr,
+ 	&dev_attr_conservation_mode.attr,
++	&dev_attr_fn_lock.attr,
+ 	NULL
+ };
+ 
+@@ -522,6 +565,9 @@ static umode_t ideapad_is_visible(struct kobject *kobj,
+ 	} else if (attr == &dev_attr_conservation_mode.attr) {
+ 		supported = acpi_has_method(priv->adev->handle, "GBMD") &&
+ 			    acpi_has_method(priv->adev->handle, "SBMC");
++	} else if (attr == &dev_attr_fn_lock.attr) {
++		supported = acpi_has_method(priv->adev->handle, "HALS") &&
++			acpi_has_method(priv->adev->handle, "SALS");
+ 	} else
+ 		supported = true;
+ 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+2.17.0
