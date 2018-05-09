@@ -1,197 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934195AbeEIIvZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:51:25 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:43199 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934168AbeEIIvS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:51:18 -0400
-X-Google-Smtp-Source: AB8JxZqy2rV/wKeK0PcyguRl0DHvyW9PMFt4bHvqYBGQljKMNgOsXkqgoNRq7+q9fOaEF5alrA9aUA==
-Date: Wed, 9 May 2018 01:51:16 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [RFC PATCH] sched/cpufreq/schedutil: handling urgent frequency
- requests
-Message-ID: <20180509085116.GC76874@joelaf.mtv.corp.google.com>
-References: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
- <20180508065435.bcht6dyb3rpp6gk5@vireshk-i7>
- <20180509045425.GA158882@joelaf.mtv.corp.google.com>
- <20180509064530.GA1681@localhost.localdomain>
- <20180509080644.GA76874@joelaf.mtv.corp.google.com>
- <CAJZ5v0iFZ5+6BQCism-o8bnOxD8KveueJ5CT58F9uH_7_pYOXQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0iFZ5+6BQCism-o8bnOxD8KveueJ5CT58F9uH_7_pYOXQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S934168AbeEIIxc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:53:32 -0400
+Received: from mga03.intel.com ([134.134.136.65]:31335 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934077AbeEIIx1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 04:53:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
+   d="scan'208";a="227055140"
+From: Aaron Lu <aaron.lu@intel.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Huang Ying <ying.huang@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kemi Wang <kemi.wang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Tariq Toukan <tariqt@mellanox.com>
+Subject: [RFC v3 PATCH 0/5] Eliminate zone->lock contention for will-it-scale/page_fault1 and parallel free
+Date: Wed,  9 May 2018 16:54:45 +0800
+Message-Id: <20180509085450.3524-1-aaron.lu@intel.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 10:30:37AM +0200, Rafael J. Wysocki wrote:
-> On Wed, May 9, 2018 at 10:06 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> > On Wed, May 09, 2018 at 08:45:30AM +0200, Juri Lelli wrote:
-> >> On 08/05/18 21:54, Joel Fernandes wrote:
-> >>
-> >> [...]
-> >>
-> >> > Just for discussion sake, is there any need for work_in_progress? If we can
-> >> > queue multiple work say kthread_queue_work can handle it, then just queuing
-> >> > works whenever they are available should be Ok and the kthread loop can
-> >> > handle them. __cpufreq_driver_target is also protected by the work lock if
-> >> > there is any concern that can have races... only thing is rate-limiting of
-> >> > the requests, but we are doing a rate limiting, just not for the "DL
-> >> > increased utilization" type requests (which I don't think we are doing at the
-> >> > moment for urgent DL requests anyway).
-> >> >
-> >> > Following is an untested diff to show the idea. What do you think?
-> >> >
-> >> > thanks,
-> >> >
-> >> > - Joel
-> >> >
-> >> > ----8<---
-> >> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> >> > index d2c6083304b4..862634ff4bf3 100644
-> >> > --- a/kernel/sched/cpufreq_schedutil.c
-> >> > +++ b/kernel/sched/cpufreq_schedutil.c
-> >> > @@ -38,7 +38,6 @@ struct sugov_policy {
-> >> >     struct                  mutex work_lock;
-> >> >     struct                  kthread_worker worker;
-> >> >     struct task_struct      *thread;
-> >> > -   bool                    work_in_progress;
-> >> >
-> >> >     bool                    need_freq_update;
-> >> >  };
-> >> > @@ -92,16 +91,8 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
-> >> >         !cpufreq_can_do_remote_dvfs(sg_policy->policy))
-> >> >             return false;
-> >> >
-> >> > -   if (sg_policy->work_in_progress)
-> >> > -           return false;
-> >> > -
-> >> >     if (unlikely(sg_policy->need_freq_update)) {
-> >> >             sg_policy->need_freq_update = false;
-> >> > -           /*
-> >> > -            * This happens when limits change, so forget the previous
-> >> > -            * next_freq value and force an update.
-> >> > -            */
-> >> > -           sg_policy->next_freq = UINT_MAX;
-> >> >             return true;
-> >> >     }
-> >> >
-> >> > @@ -129,7 +120,6 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
-> >> >             policy->cur = next_freq;
-> >> >             trace_cpu_frequency(next_freq, smp_processor_id());
-> >> >     } else {
-> >> > -           sg_policy->work_in_progress = true;
-> >> >             irq_work_queue(&sg_policy->irq_work);
-> >>
-> >> Isn't this potentially introducing unneeded irq pressure (and doing the
-> >> whole wakeup the kthread thing), while the already active kthread could
-> >> simply handle multiple back-to-back requests before going to sleep?
-> >
-> > How about this? Will use the latest request, and also doesn't do unnecessary
-> > irq_work_queue:
-> >
-> > (untested)
-> > -----8<--------
-> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > index d2c6083304b4..6a3e42b01f52 100644
-> > --- a/kernel/sched/cpufreq_schedutil.c
-> > +++ b/kernel/sched/cpufreq_schedutil.c
-> > @@ -38,7 +38,7 @@ struct sugov_policy {
-> >         struct                  mutex work_lock;
-> >         struct                  kthread_worker worker;
-> >         struct task_struct      *thread;
-> > -       bool                    work_in_progress;
-> > +       bool                    work_in_progress; /* Has kthread been kicked */
-> >
-> >         bool                    need_freq_update;
-> >  };
-> > @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
-> >             !cpufreq_can_do_remote_dvfs(sg_policy->policy))
-> >                 return false;
-> >
-> > -       if (sg_policy->work_in_progress)
-> > -               return false;
-> > -
-> 
-> Why this change?
-> 
-> Doing the below is rather pointless if work_in_progress is set, isn't it?
+This series is meant to improve zone->lock scalability for order 0 pages.
+With will-it-scale/page_fault1 workload, on a 2 sockets Intel Skylake
+server with 112 CPUs, CPU spend 80% of its time spinning on zone->lock.
+Perf profile shows the most time consuming part under zone->lock is the
+cache miss on "struct page", so here I'm trying to avoid those cache
+misses.
 
-The issue being discussed is that if a work was already in progress, then new
-frequency updates will be dropped. So say even if DL increased in
-utilization, nothing will happen because if work_in_progress = true and
-need_freq_update = true, we would skip an update.  In this diff, I am
-allowing the frequency request to be possible while work_in_progress is true.
-In the end the latest update will be picked.
+v3:
 
-> 
-> You'll drop the results of it on the floor going forward anyway then AFAICS.
+v2 has been sent out for more than a month and I was suggested to do a
+resent. While doing it, I suppose I should rebase it to a newer kernel.
+So...
 
-Why? If sg_policy->need_freq_update = true, sugov_should_update_freq() will
-return true.
+- Rebase to v4.17-rc4;
+- Remove useless "mt" param in add_to_buddy_common() as pointed out
+  by Vlastimil Babka;
+- Patch 4/5: optimiza cluster operation on free path for all possible
+  migrate types; Previous version only considered MOVABLE pages;
+- Patch 5/5 is newly added to only disable cluster alloc and no merge
+  when compaction is in progress. Previouslly we will disable cluster
+  alloc and no merge as long as there is compaction failures in the
+  zone.
 
-thanks,
+A branch is maintained here in case someone wants to give it a try:
+https://github.com/aaronlu/linux zone_lock_rfc_v3
 
-- Joel
+v2:
 
+Patch 1/4 adds some wrapper functions for page to be added/removed
+into/from buddy and doesn't have functionality changes.
 
-> 
-> >         if (unlikely(sg_policy->need_freq_update)) {
-> >                 sg_policy->need_freq_update = false;
-> >                 /*
-> > @@ -129,8 +126,11 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
-> >                 policy->cur = next_freq;
-> >                 trace_cpu_frequency(next_freq, smp_processor_id());
-> >         } else {
-> > -               sg_policy->work_in_progress = true;
-> > -               irq_work_queue(&sg_policy->irq_work);
-> > +               /* work_in_progress helps us not queue unnecessarily */
-> > +               if (!sg_policy->work_in_progress) {
-> > +                       sg_policy->work_in_progress = true;
-> > +                       irq_work_queue(&sg_policy->irq_work);
-> > +               }
-> >         }
-> >  }
-> >
-> > @@ -381,13 +381,23 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
-> >  static void sugov_work(struct kthread_work *work)
-> >  {
-> >         struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
-> > +       unsigned int freq;
-> > +
-> > +       /*
-> > +        * Hold sg_policy->update_lock just enough to handle the case where:
-> > +        * if sg_policy->next_freq is updated before work_in_progress is set to
-> > +        * false, we may miss queueing the new update request since
-> > +        * work_in_progress would appear to be true.
-> > +        */
-> > +       raw_spin_lock(&sg_policy->update_lock);
-> > +       freq = sg_policy->next_freq;
-> > +       sg_policy->work_in_progress = false;
-> > +       raw_spin_unlock(&sg_policy->update_lock);
-> >
-> >         mutex_lock(&sg_policy->work_lock);
-> > -       __cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
-> > +       __cpufreq_driver_target(sg_policy->policy, freq,
-> >                                 CPUFREQ_RELATION_L);
-> >         mutex_unlock(&sg_policy->work_lock);
-> > -
-> > -       sg_policy->work_in_progress = false;
-> >  }
-> >
-> >  static void sugov_irq_work(struct irq_work *irq_work)
+Patch 2/4 skip doing merge for order 0 pages to avoid cache misses on
+buddy's "struct page". On a 2 sockets Intel Skylake, this has very good
+effect on free path for will-it-scale/page_fault1 full load in that it
+reduced zone->lock contention on free path from 35% to 1.1%. Also, it
+shows good result on parallel free(*) workload by reducing zone->lock
+contention from 90% to almost zero(lru lock increased from almost 0 to
+90% though).
+
+Patch 3/4 deals with allocation path zone->lock contention by not
+touching pages on free_list one by one inside zone->lock. Together with
+patch 2/4, zone->lock contention is entirely eliminated for
+will-it-scale/page_fault1 full load, though this patch adds some
+overhead to manage cluster on free path and it has some bad effects on
+parallel free workload in that it increased zone->lock contention from
+almost 0 to 25%.
+
+Patch 4/4 is an optimization in free path due to cluster operation. It
+decreased the number of times add_to_cluster() has to be called and
+restored performance for parallel free workload by reducing zone->lock's
+contention to almost 0% again.
+
+The good thing about this patchset is, it eliminated zone->lock
+contention for will-it-scale/page_fault1 and parallel free on big
+servers(contention shifted to lru_lock). The bad things are:
+ - it added some overhead in compaction path where it will do merging
+   for those merge-skipped order 0 pages;
+ - it is unfriendly to high order page allocation since we do not do
+   merging for order 0 pages now.
+
+To see how much effect it has on compaction, mmtests/stress-highalloc is
+used on a Desktop machine with 8 CPUs and 4G memory.
+(mmtests/stress-highalloc: make N copies of kernel tree and start
+building them to consume almost all memory with reclaimable file page
+cache. These file page cache will not be returned to buddy so effectively
+makes it a worst case for high order page workload. Then after 5 minutes,
+start allocating X order-9 pages to see how well compaction works).
+
+With a delay of 100ms between allocations:
+kernel   success_rate  average_time_of_alloc_one_hugepage
+base           58%       3.95927e+06 ns
+patch2/4       58%       5.45935e+06 ns
+patch4/4       57%       6.59174e+06 ns
+
+With a delay of 1ms between allocations:
+kernel   success_rate  average_time_of_alloc_one_hugepage
+base           53%       3.17362e+06 ns
+patch2/4       44%       2.31637e+06 ns
+patch4/4       59%       2.73029e+06 ns
+
+If we compare patch4/4's result with base, it performed OK I think.
+This is probably due to compaction is a heavy job so the added overhead
+doesn't affect much.
+
+To see how much effect it has on workload that uses hugepage, I did the
+following test on a 2 sockets Intel Skylake with 112 CPUs/64G memory:
+1 Break all high order pages by starting a program that consumes almost
+  all memory with anonymous pages and then exit. This is used to create
+  an extreme bad case for this patchset compared to vanilla that always
+  does merging;
+2 Start 56 processes of will-it-scale/page_fault1 that use hugepages
+  through calling madvise(MADV_HUGEPAGE). To make things worse for this
+  patchset, start another 56 processes of will-it-scale/page_fault1 that
+  uses order 0 pages to continually cause trouble for the 56 THP users.
+  Let them run for 5 minutes.
+
+Score result(higher is better):
+
+kernel      order0           THP
+base        1522246        10540254
+patch2/4    5266247 +246%   3309816 -69%
+patch4/4    2234073 +47%    9610295 -8.8%
+
+TBH, I'm not sure if the way I tried above is good enough to expose the
+problem of this patchset. So if you have any thoughts on this patchset,
+please feel free to let me know, thanks.
+
+(*) Parallel free is a workload that I used to see how well parallel
+freeing a large VMA can be. I tested this on a 4 sockets Intel Skylake
+machine with 768G memory. The test program starts by doing a 512G anon
+memory allocation with mmap() and then exit to see how fast it can exit.
+The parallel is implemented inside kernel and has been posted before:
+http://lkml.kernel.org/r/1489568404-7817-1-git-send-email-aaron.lu@intel.com
+
+A branch is maintained here in case someone wants to give it a try:
+https://github.com/aaronlu/linux zone_lock_rfc_v2
+
+v1 is here:
+https://lkml.kernel.org/r/20180205053013.GB16980@intel.com
+
+Aaron Lu (5):
+  mm/page_alloc: use helper functions to add/remove a page to/from buddy
+  mm/__free_one_page: skip merge for order-0 page unless compaction
+    failed
+  mm/rmqueue_bulk: alloc without touching individual page structure
+  mm/free_pcppages_bulk: reduce overhead of cluster operation on free
+    path
+  mm/can_skip_merge(): make it more aggressive to attempt cluster
+    alloc/free
+
+ include/linux/mm_types.h |   3 +
+ include/linux/mmzone.h   |  35 ++++
+ mm/compaction.c          |  17 +-
+ mm/internal.h            |  57 ++++++
+ mm/page_alloc.c          | 496 ++++++++++++++++++++++++++++++++++++++++++-----
+ 5 files changed, 557 insertions(+), 51 deletions(-)
+
+-- 
+2.14.3
