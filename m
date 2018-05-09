@@ -1,77 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934840AbeEIMyS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:54:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43114 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934328AbeEIMyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:54:16 -0400
-Message-ID: <1525870455.11756.367.camel@redhat.com>
-Subject: Re: [PATCH] IB: remove redundant INFINIBAND kconfig dependencies
-From: Doug Ledford <dledford@redhat.com>
-To: Greg Thelen <gthelen@google.com>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 09 May 2018 08:54:15 -0400
-In-Reply-To: <20180504032919.90515-1-gthelen@google.com>
-References: <20180504032919.90515-1-gthelen@google.com>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-OUWj7AIC2e6lj2ww1Maq"
-Mime-Version: 1.0
+        id S934851AbeEIMz3 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:55:29 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:32955 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934328AbeEIMz2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 08:55:28 -0400
+Subject: Re: Regression caused by commit 882164a4a928
+To: Larry Finger <Larry.Finger@lwfinger.net>,
+        =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+CC: Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
+From: Matt Redfearn <matt.redfearn@mips.com>
+Message-ID: <372d149c-c34c-56a0-4e1a-5ab2c1e16e73@mips.com>
+Date: Wed, 9 May 2018 13:55:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [192.168.155.41]
+X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
+ mipsdag02.mipstec.com (10.20.40.47)
+X-BESS-ID: 1525870519-382908-25996-421923-1
+X-BESS-VER: 2018.5-r1804261738
+X-BESS-Apparent-Source-IP: 12.201.5.32
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192847
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Larry
 
---=-OUWj7AIC2e6lj2ww1Maq
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 07/05/18 16:44, Larry Finger wrote:
+> Matt,
+> 
+> Although commit 882164a4a928 ("ssb: Prevent build of PCI host features 
+> in module") appeared to be harmless, it leads to complete failure of 
+> drivers b43. and b43legacy, and likely affects b44 as well. The problem 
+> is that CONFIG_SSB_PCIHOST is undefined, which prevents the compilation 
+> of the code that controls the PCI cores of the device. See 
+> https://bugzilla.redhat.com/show_bug.cgi?id=1572349 for details.
 
-On Thu, 2018-05-03 at 20:29 -0700, Greg Thelen wrote:
-> INFINIBAND_ADDR_TRANS depends on INFINIBAND.  So there's no need for
-> options which depend INFINIBAND_ADDR_TRANS to also depend on INFINIBAND.
-> Remove the unnecessary INFINIBAND depends.
->=20
-> Signed-off-by: Greg Thelen <gthelen@google.com>
-> ---
->  drivers/infiniband/ulp/srpt/Kconfig | 2 +-
->  drivers/nvme/host/Kconfig           | 2 +-
->  drivers/nvme/target/Kconfig         | 2 +-
->  drivers/staging/lustre/lnet/Kconfig | 2 +-
->  fs/cifs/Kconfig                     | 2 +-
->  net/9p/Kconfig                      | 2 +-
->  net/rds/Kconfig                     | 2 +-
->  net/sunrpc/Kconfig                  | 2 +-
->  8 files changed, 8 insertions(+), 8 deletions(-)
+Sorry for the breakage :-/
 
-Thanks.  Since the original changes you submitted went through -rc, I'm
-sending this cleanup there too.
+> 
+> As the underlying errors ("pcibios_enable_device" undefined, and 
+> "register_pci_controller" undefined) do not appear on the architectures 
+> that I have tested (x86_64, x86, and ppc), I suspect something in the 
+> arch-specific code for your setup (MIPS?). As I have no idea on how to 
+> fix that problem, would the following patch work for you?
+> 
+> diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
+> index 9371651d8017..3743533c8057 100644
+> --- a/drivers/ssb/Kconfig
+> +++ b/drivers/ssb/Kconfig
+> @@ -117,7 +117,7 @@ config SSB_SERIAL
+> 
+>   config SSB_DRIVER_PCICORE_POSSIBLE
+>          bool
+> -       depends on SSB_PCIHOST && SSB = y
+> +       depends on SSB_PCIHOST && (SSB = y || !MIPS)
+>          default y
+> 
+>   config SSB_DRIVER_PCICORE
 
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-OUWj7AIC2e6lj2ww1Maq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+I believe that the problem stems from these drivers being used for some 
+wireless AP functionality built into some MIPS based SoCs. The Kconfig 
+rules sort out building this additional functionality when configured 
+for MIPS (in a round about sort of way), but it allowed it even when SSB 
+is a module, leading to build failures. My patch was intended to prevent 
+that.
 
------BEGIN PGP SIGNATURE-----
+There was a similar issue in the same Kconfig file, introduced by 
+c5611df96804 and fixed by a9e6d44ddecc. It was fixed the same way as you 
+suggest. I've tested the above patch and it does work for MIPS 
+(preventing the PCICORE being built into the module).
 
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlry73cACgkQuCajMw5X
-L90ifQ//WKtQIynf4c/6oOocd/TgRfyfPCFoH7DkhpOJySq2lCam0WQLv39NhlN8
-XPrCCluiKI5zfNQRcmEpUjVA6CGlaqxZGmYXmdrwPjGYVwKXtx4o9Kk5rMpSrtpz
-6/Ox3N9nPv1SZItRPayQvZ63orVAGgKQfTnXsmV9O2cGks2V3PVGf1mLlCESH+r9
-qkw4bwJvT46hx0Uuqzss2+wLrJmOqpTEG4fenFws78OAvHZ4C9B43Jh9nQFRJpP0
-aMf5V+SCzL/doK+4ccPHs1KeyqFeYkv8qhdZvw8FgTrk3VYf9TZEwOeEc6iaimUI
-3R/sXI8LD3Pj33Z6Fq6UPofwPtPUR95TzgRrnIIduH3DSdr1KK20Of4afvAViAi6
-hqwNEmTRtQ1DdnUjhVRJQivWH+x4TaIPeHwbkfJs6yIwptqF6aOAgiFjsoaIggRQ
-WIyzGhLsGMHbvFu1/srzUDoVkkYyV6Uh17kuav0MffwPrrWXpMxK0ceYoS20VUBt
-9Eu3YSVkPKMTn2OYtbtUmlBURjRXrc7y8m8ePGIYJGags0It4i30BEjvge7v7sDR
-J7aG5iAJbqF9BKB/RdzzX5X8Q+yHNNvArt4+GklcZ3uR3f1ZYCfJ1wpGQymn/kGZ
-TyO0/sMxqVIkBOuSdubyibb4C687CQKiDV05uaEiN/UALltkMTg=
-=UJaf
------END PGP SIGNATURE-----
+Tested-by: Matt Redfearn <matt.redfearn@mips.com>
 
---=-OUWj7AIC2e6lj2ww1Maq--
+Thanks & sorry again for the breakage,
+Matt
+
+
+
+> 
+> Thanks,
+> 
+> Larry
