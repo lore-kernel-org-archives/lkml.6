@@ -1,62 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935226AbeEIOpX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 10:45:23 -0400
-Received: from ms.lwn.net ([45.79.88.28]:42080 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934770AbeEIOpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 10:45:22 -0400
-Date: Wed, 9 May 2018 08:45:18 -0600
-From: Jonathan Corbet <corbet@lwn.net>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH 13/18] wait: wait.h: Get rid of a kernel-doc/Sphinx
- warnings
-Message-ID: <20180509084518.247650e2@lwn.net>
-In-Reply-To: <20180509084120.GF12217@hirez.programming.kicks-ass.net>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-        <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
-        <20180509084120.GF12217@hirez.programming.kicks-ass.net>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S935117AbeEIOtA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 10:49:00 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37025 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751000AbeEIOs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 10:48:59 -0400
+Subject: Re: [PATCH v2 0/3] HISI LPC ACPI UART support
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        <xuwei5@huawei.com>
+References: <1525775252-239214-1-git-send-email-john.garry@huawei.com>
+ <1f8dd53826554a113b03b7c0fb2d131bb315eefd.camel@linux.intel.com>
+CC: <mika.westerberg@linux.intel.com>, <lee.jones@linaro.org>,
+        <rjw@rjwysocki.net>, <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
+        <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
+        <z.liuxinliang@hisilicon.com>, <linuxarm@huawei.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <bffb33bd-525f-ae78-b8c0-844a83184f99@huawei.com>
+Date: Wed, 9 May 2018 15:48:35 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1f8dd53826554a113b03b7c0fb2d131bb315eefd.camel@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 May 2018 10:41:20 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On 08/05/2018 12:17, Andy Shevchenko wrote:
+> On Tue, 2018-05-08 at 18:27 +0800, John Garry wrote:
+>> This patchset adds ACPI FW support for the UART on
+>> the LPC bus on the Huawei D03 development board.
+>>
+>> It also drops MFD API usage. It's not right to use MFD
+>> APIs outside drivers/mfd. As the alternate solution, we
+>> use platform device APIs directly.
+>>
+>> The UART is 8250-compatible, and has the following
+>> profile:
+>> - IO space iotype
+>> - no interrupt, so polling mode required
+>> - 16550 type
+>>
+>> Currently no platform driver exists for the UART. Indeed,
+>> for PNP-compatible devices - like this UART - it would be
+>> better to create a PNP device so that we may use the
+>> existing PNP driver. Thus, we should use the 8250 PNP
+>> driver.
+>>
+>> However this host driver does not support PNP devices.
+>> An RFC was sent for PNP support in [1]. However it was
+>> deemed impractical to follow this path.
+>>
+>> So to provide this UART support we use the 8250 generic
+>> isa driver. For this, we need to set the UART platform
+>> device name to match the 8250 isa driver. This means
+>> passing the 8250 serial config in the child pdev platform
+>> data.
+>>
+>> 1. https://lkml.org/lkml/2018/4/20/278
+>>
+>
+> I'm fine with this least invasive approach. It seems it has minimum
+> duplication of code, which is anyway unavoidable when we are speaking of
+> instantiating platform devices.
+>
+> FWIW,
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> > This is easily done by using "::" instead of just ":".  
-> 
-> And I'll voice my objection once again. This makes a regular comment
-> worse. This rst stuff is utter shit for making normal text files less
-> readable in your favourite text editor.
-> 
-> If this gets merged, I'll simply remove that spurious ':' the next time
-> I'm near that comment.
+Thanks Andy!
 
-Seriously, Peter?
+Hi xuwei,
 
-It's a simple colon.  It goes along with the /** marker for kerneldoc
-comments and the @ markers found within them, both of which you seem to
-have found a way to live with.
+Unless there are any more comments, can you please pick up this series 
+(with Andy's review tags) for merging through the arm soc tree?
 
-The RST work was discussed for a year before we even started.  It has
-brought in the efforts of a large number of developers, all of whom see
-the value in actually caring about our documentation and making it
-accessible to a much larger group of readers.  And it has all happened
-while preserving the primacy of the plain-text documentation.
+All the best,
+John
 
-You're not the only consumer of the docs.  You may not appreciate the
-improvements that have come, but others certainly do.  I do hope that you
-can find it in youself to avoid vandalizing things for everybody else ...?
-
-Thanks,
-
-jon
+>
+>> Differences:
+>> v1 -> v2:
+>> - drop MFD API usage and use platform device APIs
+>>   directly for ACPI support
+>>
+>> RFC -> v1:
+>> - drop PNP support
+>> - use static MFD cells
+>> - add 8250 setup
+>>
+>> John Garry (3):
+>>   HISI LPC: Stop using MFD APIs
+>>   HISI LPC: Re-Add ACPI child enumeration support
+>>   HISI LPC: Add ACPI UART support
+>>
+>>  drivers/bus/Kconfig    |   1 -
+>>  drivers/bus/hisi_lpc.c | 159 ++++++++++++++++++++++++++++++--------
+>> -----------
+>>  2 files changed, 97 insertions(+), 63 deletions(-)
+>>
+>
