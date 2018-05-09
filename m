@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964885AbeEIPMS (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:12:18 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47084 "EHLO huawei.com"
+        id S964909AbeEIPMp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:12:45 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47137 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964834AbeEIPMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:12:13 -0400
+        id S964843AbeEIPMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 11:12:16 -0400
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, Xiaofei Tan <tanxiaofei@huawei.com>,
+        <linux-kernel@vger.kernel.org>, Xiang Chen <chenxiang66@hisilicon.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 6/6] scsi: hisi_sas: add check of device in hisi_sas_task_exec()
-Date: Wed, 9 May 2018 23:10:50 +0800
-Message-ID: <1525878650-213087-7-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 1/6] scsi: hisi_sas: relocate smp sg map
+Date: Wed, 9 May 2018 23:10:45 +0800
+Message-ID: <1525878650-213087-2-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1525878650-213087-1-git-send-email-john.garry@huawei.com>
 References: <1525878650-213087-1-git-send-email-john.garry@huawei.com>
@@ -25,91 +25,308 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaofei Tan <tanxiaofei@huawei.com>
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-Currently we don't check that device is not gone before
-dereferencing it's elements in the function
-hisi_sas_task_exec() (specifically, the DQ pointer).
+Currently we use DQ lock to protect delivery of DQ
+entry one by one.
 
-This patch fixes this issue by filling in the DQ
-pointer in hisi_sas_task_prep(), after we check
-that the device pointer is still safe to
-reference.
+To optimise to allow more than one slot to be built
+for a single DQ in parallel, we need to remove the DQ
+lock when preparing slots, prior to delivery.
 
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
+To achieve this, we rearrange the slot build order to
+ensure that once we allocate a slot for a task, we do
+cannot fail to deliver the task.
+
+In this patch, we rearrange the slot building for SMP
+tasks to ensure that sg mapping part (which can fail)
+happens before we allocate the slot in the DQ.
+
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 56 ++++++++++++++++++++++++++--------
+ drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 33 ++------------------
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 35 ++-------------------
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 33 ++------------------
+ 4 files changed, 51 insertions(+), 106 deletions(-)
 
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index a451625..39f694e 100644
+index ff5b8d7..0ce7c71 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -310,12 +310,13 @@ static void hisi_sas_slot_abort(struct work_struct *work)
- 		task->task_done(task);
- }
- 
--static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq *dq,
-+static int hisi_sas_task_prep(struct sas_task *task,
-+			      struct hisi_sas_dq **dq_pointer,
- 			      int is_tmf, struct hisi_sas_tmf_task *tmf,
- 			      int *pass)
- {
--	struct hisi_hba *hisi_hba = dq->hisi_hba;
- 	struct domain_device *device = task->dev;
-+	struct hisi_hba *hisi_hba = dev_to_hisi_hba(device);
- 	struct hisi_sas_device *sas_dev = device->lldd_dev;
- 	struct hisi_sas_port *port;
- 	struct hisi_sas_slot *slot;
-@@ -323,8 +324,9 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq *dq,
+@@ -319,7 +319,8 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
+ 	struct hisi_sas_cmd_hdr	*cmd_hdr_base;
  	struct asd_sas_port *sas_port = device->port;
  	struct device *dev = hisi_hba->dev;
- 	int dlvry_queue_slot, dlvry_queue, rc, slot_idx;
--	int  n_elem = 0, n_elem_req = 0, n_elem_resp = 0;
-+	int n_elem = 0, n_elem_req = 0, n_elem_resp = 0;
- 	unsigned long flags, flags_dq;
-+	struct hisi_sas_dq *dq;
- 	int wr_q_index;
+-	int dlvry_queue_slot, dlvry_queue, n_elem = 0, rc, slot_idx;
++	int dlvry_queue_slot, dlvry_queue, rc, slot_idx;
++	int  n_elem = 0, n_elem_req = 0, n_elem_resp = 0;
+ 	unsigned long flags;
  
  	if (!sas_port) {
-@@ -352,6 +354,8 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq *dq,
- 		return -ECOMM;
+@@ -358,6 +359,8 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
  	}
  
-+	*dq_pointer = dq = sas_dev->dq;
+ 	if (!sas_protocol_ata(task->task_proto)) {
++		unsigned int req_len, resp_len;
 +
- 	port = to_hisi_sas_port(sas_port);
- 	if (port && !port->port_attached) {
- 		dev_info(dev, "task prep: %s port%d not attach device\n",
-@@ -520,22 +524,21 @@ static int hisi_sas_task_exec(struct sas_task *task, gfp_t gfp_flags,
- 	unsigned long flags;
- 	struct hisi_hba *hisi_hba = dev_to_hisi_hba(task->dev);
- 	struct device *dev = hisi_hba->dev;
--	struct domain_device *device = task->dev;
--	struct hisi_sas_device *sas_dev = device->lldd_dev;
--	struct hisi_sas_dq *dq = sas_dev->dq;
-+	struct hisi_sas_dq *dq = NULL;
+ 		if (task->num_scatter) {
+ 			n_elem = dma_map_sg(dev, task->scatter,
+ 					    task->num_scatter, task->data_dir);
+@@ -365,6 +368,29 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
+ 				rc = -ENOMEM;
+ 				goto prep_out;
+ 			}
++		} else if (task->task_proto & SAS_PROTOCOL_SMP) {
++			n_elem_req = dma_map_sg(dev, &task->smp_task.smp_req,
++						1, DMA_TO_DEVICE);
++			if (!n_elem_req) {
++				rc = -ENOMEM;
++				goto prep_out;
++			}
++			req_len = sg_dma_len(&task->smp_task.smp_req);
++			if (req_len & 0x3) {
++				rc = -EINVAL;
++				goto err_out_dma_unmap;
++			}
++			n_elem_resp = dma_map_sg(dev, &task->smp_task.smp_resp,
++						 1, DMA_FROM_DEVICE);
++			if (!n_elem_req) {
++				rc = -ENOMEM;
++				goto err_out_dma_unmap;
++			}
++			resp_len = sg_dma_len(&task->smp_task.smp_resp);
++			if (resp_len & 0x3) {
++				rc = -EINVAL;
++				goto err_out_dma_unmap;
++			}
+ 		}
+ 	} else
+ 		n_elem = task->num_scatter;
+@@ -375,11 +401,9 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
+ 						    device);
+ 	else
+ 		rc = hisi_sas_slot_index_alloc(hisi_hba, &slot_idx);
+-	if (rc) {
+-		spin_unlock_irqrestore(&hisi_hba->lock, flags);
+-		goto err_out;
+-	}
+ 	spin_unlock_irqrestore(&hisi_hba->lock, flags);
++	if (rc)
++		goto err_out_dma_unmap;
  
- 	if (unlikely(test_bit(HISI_SAS_REJECT_CMD_BIT, &hisi_hba->flags)))
- 		return -EINVAL;
- 
- 	/* protect task_prep and start_delivery sequence */
--	rc = hisi_sas_task_prep(task, dq, is_tmf, tmf, &pass);
-+	rc = hisi_sas_task_prep(task, &dq, is_tmf, tmf, &pass);
+ 	rc = hisi_hba->hw->get_free_slot(hisi_hba, dq);
  	if (rc)
- 		dev_err(dev, "task exec: failed[%d]!\n", rc);
- 
--	spin_lock_irqsave(&dq->lock, flags);
--	if (likely(pass))
-+	if (likely(pass)) {
-+		spin_lock_irqsave(&dq->lock, flags);
- 		hisi_hba->hw->start_delivery(dq);
--	spin_unlock_irqrestore(&dq->lock, flags);
-+		spin_unlock_irqrestore(&dq->lock, flags);
+@@ -458,14 +482,22 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
+ 	spin_lock_irqsave(&hisi_hba->lock, flags);
+ 	hisi_sas_slot_index_free(hisi_hba, slot_idx);
+ 	spin_unlock_irqrestore(&hisi_hba->lock, flags);
+-err_out:
+-	dev_err(dev, "task prep: failed[%d]!\n", rc);
+-	if (!sas_protocol_ata(task->task_proto))
+-		if (n_elem)
+-			dma_unmap_sg(dev, task->scatter,
+-				     task->num_scatter,
+-				     task->data_dir);
++err_out_dma_unmap:
++	if (!sas_protocol_ata(task->task_proto)) {
++		if (task->num_scatter) {
++			dma_unmap_sg(dev, task->scatter, task->num_scatter,
++			     task->data_dir);
++		} else if (task->task_proto & SAS_PROTOCOL_SMP) {
++			if (n_elem_req)
++				dma_unmap_sg(dev, &task->smp_task.smp_req,
++					     1, DMA_TO_DEVICE);
++			if (n_elem_resp)
++				dma_unmap_sg(dev, &task->smp_task.smp_resp,
++					     1, DMA_FROM_DEVICE);
++		}
 +	}
- 
+ prep_out:
++	dev_err(dev, "task prep: failed[%d]!\n", rc);
  	return rc;
  }
+ 
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+index 84a0ccc..3769d70 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+@@ -974,38 +974,17 @@ static int prep_smp_v1_hw(struct hisi_hba *hisi_hba,
+ 	struct sas_task *task = slot->task;
+ 	struct hisi_sas_cmd_hdr *hdr = slot->cmd_hdr;
+ 	struct domain_device *device = task->dev;
+-	struct device *dev = hisi_hba->dev;
+ 	struct hisi_sas_port *port = slot->port;
+-	struct scatterlist *sg_req, *sg_resp;
++	struct scatterlist *sg_req;
+ 	struct hisi_sas_device *sas_dev = device->lldd_dev;
+ 	dma_addr_t req_dma_addr;
+-	unsigned int req_len, resp_len;
+-	int elem, rc;
++	unsigned int req_len;
+ 
+-	/*
+-	* DMA-map SMP request, response buffers
+-	*/
+ 	/* req */
+ 	sg_req = &task->smp_task.smp_req;
+-	elem = dma_map_sg(dev, sg_req, 1, DMA_TO_DEVICE);
+-	if (!elem)
+-		return -ENOMEM;
+ 	req_len = sg_dma_len(sg_req);
+ 	req_dma_addr = sg_dma_address(sg_req);
+ 
+-	/* resp */
+-	sg_resp = &task->smp_task.smp_resp;
+-	elem = dma_map_sg(dev, sg_resp, 1, DMA_FROM_DEVICE);
+-	if (!elem) {
+-		rc = -ENOMEM;
+-		goto err_out_req;
+-	}
+-	resp_len = sg_dma_len(sg_resp);
+-	if ((req_len & 0x3) || (resp_len & 0x3)) {
+-		rc = -EINVAL;
+-		goto err_out_resp;
+-	}
+-
+ 	/* create header */
+ 	/* dw0 */
+ 	hdr->dw0 = cpu_to_le32((port->id << CMD_HDR_PORT_OFF) |
+@@ -1027,14 +1006,6 @@ static int prep_smp_v1_hw(struct hisi_hba *hisi_hba,
+ 	hdr->sts_buffer_addr = cpu_to_le64(hisi_sas_status_buf_addr_dma(slot));
+ 
+ 	return 0;
+-
+-err_out_resp:
+-	dma_unmap_sg(dev, &slot->task->smp_task.smp_resp, 1,
+-		     DMA_FROM_DEVICE);
+-err_out_req:
+-	dma_unmap_sg(dev, &slot->task->smp_task.smp_req, 1,
+-		     DMA_TO_DEVICE);
+-	return rc;
+ }
+ 
+ static int prep_ssp_v1_hw(struct hisi_hba *hisi_hba,
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+index 9e68731..ac0a0b2 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+@@ -1721,37 +1721,16 @@ static int prep_smp_v2_hw(struct hisi_hba *hisi_hba,
+ 	struct sas_task *task = slot->task;
+ 	struct hisi_sas_cmd_hdr *hdr = slot->cmd_hdr;
+ 	struct domain_device *device = task->dev;
+-	struct device *dev = hisi_hba->dev;
+ 	struct hisi_sas_port *port = slot->port;
+-	struct scatterlist *sg_req, *sg_resp;
++	struct scatterlist *sg_req;
+ 	struct hisi_sas_device *sas_dev = device->lldd_dev;
+ 	dma_addr_t req_dma_addr;
+-	unsigned int req_len, resp_len;
+-	int elem, rc;
++	unsigned int req_len;
+ 
+-	/*
+-	* DMA-map SMP request, response buffers
+-	*/
+ 	/* req */
+ 	sg_req = &task->smp_task.smp_req;
+-	elem = dma_map_sg(dev, sg_req, 1, DMA_TO_DEVICE);
+-	if (!elem)
+-		return -ENOMEM;
+-	req_len = sg_dma_len(sg_req);
+ 	req_dma_addr = sg_dma_address(sg_req);
+-
+-	/* resp */
+-	sg_resp = &task->smp_task.smp_resp;
+-	elem = dma_map_sg(dev, sg_resp, 1, DMA_FROM_DEVICE);
+-	if (!elem) {
+-		rc = -ENOMEM;
+-		goto err_out_req;
+-	}
+-	resp_len = sg_dma_len(sg_resp);
+-	if ((req_len & 0x3) || (resp_len & 0x3)) {
+-		rc = -EINVAL;
+-		goto err_out_resp;
+-	}
++	req_len = sg_dma_len(&task->smp_task.smp_req);
+ 
+ 	/* create header */
+ 	/* dw0 */
+@@ -1775,14 +1754,6 @@ static int prep_smp_v2_hw(struct hisi_hba *hisi_hba,
+ 	hdr->sts_buffer_addr = cpu_to_le64(hisi_sas_status_buf_addr_dma(slot));
+ 
+ 	return 0;
+-
+-err_out_resp:
+-	dma_unmap_sg(dev, &slot->task->smp_task.smp_resp, 1,
+-		     DMA_FROM_DEVICE);
+-err_out_req:
+-	dma_unmap_sg(dev, &slot->task->smp_task.smp_req, 1,
+-		     DMA_TO_DEVICE);
+-	return rc;
+ }
+ 
+ static int prep_ssp_v2_hw(struct hisi_hba *hisi_hba,
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index 492c3be..cea5354 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -986,38 +986,17 @@ static int prep_smp_v3_hw(struct hisi_hba *hisi_hba,
+ 	struct sas_task *task = slot->task;
+ 	struct hisi_sas_cmd_hdr *hdr = slot->cmd_hdr;
+ 	struct domain_device *device = task->dev;
+-	struct device *dev = hisi_hba->dev;
+ 	struct hisi_sas_port *port = slot->port;
+-	struct scatterlist *sg_req, *sg_resp;
++	struct scatterlist *sg_req;
+ 	struct hisi_sas_device *sas_dev = device->lldd_dev;
+ 	dma_addr_t req_dma_addr;
+-	unsigned int req_len, resp_len;
+-	int elem, rc;
++	unsigned int req_len;
+ 
+-	/*
+-	 * DMA-map SMP request, response buffers
+-	 */
+ 	/* req */
+ 	sg_req = &task->smp_task.smp_req;
+-	elem = dma_map_sg(dev, sg_req, 1, DMA_TO_DEVICE);
+-	if (!elem)
+-		return -ENOMEM;
+ 	req_len = sg_dma_len(sg_req);
+ 	req_dma_addr = sg_dma_address(sg_req);
+ 
+-	/* resp */
+-	sg_resp = &task->smp_task.smp_resp;
+-	elem = dma_map_sg(dev, sg_resp, 1, DMA_FROM_DEVICE);
+-	if (!elem) {
+-		rc = -ENOMEM;
+-		goto err_out_req;
+-	}
+-	resp_len = sg_dma_len(sg_resp);
+-	if ((req_len & 0x3) || (resp_len & 0x3)) {
+-		rc = -EINVAL;
+-		goto err_out_resp;
+-	}
+-
+ 	/* create header */
+ 	/* dw0 */
+ 	hdr->dw0 = cpu_to_le32((port->id << CMD_HDR_PORT_OFF) |
+@@ -1040,14 +1019,6 @@ static int prep_smp_v3_hw(struct hisi_hba *hisi_hba,
+ 	hdr->sts_buffer_addr = cpu_to_le64(hisi_sas_status_buf_addr_dma(slot));
+ 
+ 	return 0;
+-
+-err_out_resp:
+-	dma_unmap_sg(dev, &slot->task->smp_task.smp_resp, 1,
+-		     DMA_FROM_DEVICE);
+-err_out_req:
+-	dma_unmap_sg(dev, &slot->task->smp_task.smp_req, 1,
+-		     DMA_TO_DEVICE);
+-	return rc;
+ }
+ 
+ static int prep_ata_v3_hw(struct hisi_hba *hisi_hba,
 -- 
 1.9.1
