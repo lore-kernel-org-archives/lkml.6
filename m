@@ -1,29 +1,29 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2499662-1525566649-2-13019706616969811400
+X-Cyrus-Session-Id: sloti22d1t05-83959-1525854238-2-6782756740081792037
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: 
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525566649; b=PV37+FwbkgvpxFJy4Xo2kE/05kwAIzr5UJfH9XoZT/v5ZlJ3WF
-    1tUToxkSkgyw8Z/PJRdxwAja3a+Dz1E6vR3yxAXWmrEWsLuETo2Ohlgtjsbe4/w0
-    84gzfGMNm5BjbBWgl0EC/1jYEZrwFF5zREwNW5ck7dfhX5I/Xf7H/6w7S6kNEp8/
-    5FIM2TIuS42YwsUzRNcH6LOwIwQpBrV4ziu4U5B8r7Fl25tGuZhoSI/o7xWsoK9v
-    pDjd2f93vIRZ72UGRFDBgWYA5vVpi9lNIKWS1c1R6rVUGQjxsjWwF23hYinUVTn2
-    5xfjkChjw0try9Og/eJKDlJFR6u4Nrkv4I3Q==
+    1525854238; b=Jp55idctdbsP1iUPRKyjEK4XGSkmY0JZPLjpBsAZ5jHOJPTSO4
+    1VHYg5Kgr0Ncr9BaYX3NCYATfxUAv8WWXByksBBdAKQNw+LKaOwSKwCEuxRc2LuQ
+    0FwcPwzrdfJdQ/Ih7H+JleuPbpwFwtMjU4ayM5mfjNSE76Ol9niPHI2StZpuuDq8
+    8Xx7a2oxebL6ZzojGjrPalII/DLOvWmXD7xcYrWQvrdMJxBKTa4YikSjAfAEdLHx
+    aaVVdtShUSodWnSf3XMa3CmmsjC5MW3KQCrcMKNIvWhXLo/M+g4hIxWib608TzEW
+    1Ziv49OUbosuS3O3jFbHdxgAMfdGVmI+WGWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525566649; bh=
-    SjDclrEDL9Iu04gmCE30jeY1Qbt9fTR2CstvGaBHBnA=; b=YRqkYXlAjKBmwxeF
-    KoNV9gs6p6M1xjL8dhgsDHUml0tm6/5HEkdGBhNC58zkgtzkx/KcCrouP/ju3HjO
-    waTOKD2SzFeX9W+D/GZO9mgiNgiQCsYTOjgqz2a3VLqoj+cIjOjY3arLAnmLp32C
-    CpSC7HGUgP/WfAH+GYJ9jP2nq4bqs7aO5lwRGSW6HgkpPlFQQlrcEF3cNVnLpHV2
-    S/F7v0Hg4OuQPH+ih5wRgt6UFXsBjWDYHOowB1Dzvm2FXNQSU6Q44jxYY4aYNf8C
-    h9fldkQ//x5S8Q1oM0Cx4qhiGWUxbN2joNKkhBtESQv9Dp7VCnTY5rk4yA3H1Waa
-    +3Y1Vg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1525854238; bh=xW+NAp5MnUZbUwwcCKDINsqGctEuBs
+    VVt5dyj/9uIWc=; b=enmxc3LmW5LOFSjaEOW9wtUwbEhlGvoYIgYb3uOR+IK2rN
+    H2jyGtdB3HUzsOvE9aRlijTBMjJzYyEOyK+VHsQ2cDoIidIbcsFHoi1AgmADCQGq
+    zJqidwI5qKlqixXhJbqIzhA04aKt78bTt+NTaLZW1EJTWIFprr8Sch9qF7wFn/RS
+    b4i/ItduCjLaowoZfpcCWQ0h/CoI27r3kulEVT/RIvdzemw3FDXCJp4w1bw43a2Y
+    dN/TCKN4XXYHMSdKmomngZ+P8OxdFYdFsTBzgaxuasQpmUeG5AapUn+ZwFdSDCJE
+    MrwWszZfw+gddaqC55l1qm04OyWAzjFsy1ku12cw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -35,8 +35,8 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
@@ -49,115 +49,70 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJEqN++QagpXxFEq7vc4DG6AJVI+FI5jwkmiuXTF+yGn+ioM44nyVGuLiwdjbOK5M51iwg8YC4ZkWtdU9W7G/Ec4Q+CCFUwBdYv/yzPb6i6SRXqwkSUh
-    5FxtgLWDItZmAnwu2GxycwytsRVvArb6hc784K+k5Rn7UHB7u60n8TGsLM9VHvUz5oieLFQA7DvA4qPevyHOjS9tFpLck7/0bz0mpYNHE3MJy8uYroSwcFGK
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
-    a=OvG5uloFpF5yMZtpmc0A:9
+X-CM-Envelope: MS4wfNMxUuI92xq+4betDHSvGqE4xKXdk58eHVp8cNYrbKI7XzPBE6GYyPEWiU5/psxvPd3rUqIcbFEhj25l5Ai9Q1kJ+R0EvI6fOqR8WeoXty90fE9l1F8P
+    LO7mMY3e2hKBm5D5y9tjBBbWrrvUl+8NaebyJVuUmS/SyWfylT2uYk9VWansC4Aedl/9SMrR3TE88b4vDPqaxk3T8XOGPh5c7P5qzqIycU2r5+Jdr7ZR75Ak
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=QyXUC8HyAAAA:8 a=92GmJv159eMOvW9L4CAA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751775AbeEFAap (ORCPT <rfc822;linux@kroah.com>);
-        Sat, 5 May 2018 20:30:45 -0400
-Received: from mga02.intel.com ([134.134.136.20]:58221 "EHLO mga02.intel.com"
+        id S934005AbeEIIX4 (ORCPT <rfc822;linux@kroah.com>);
+        Wed, 9 May 2018 04:23:56 -0400
+Received: from mga14.intel.com ([192.55.52.115]:18617 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751952AbeEFAan (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Sat, 5 May 2018 20:30:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S933811AbeEIIXy (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Wed, 9 May 2018 04:23:54 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,367,1520924400";
-   d="scan'208";a="226149324"
-From: changbin.du@intel.com
-To: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org
-Cc: rostedt@goodmis.org, rdunlap@infradead.org, x86@kernel.org,
-        lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, Changbin Du <changbin.du@intel.com>
-Subject: [PATCH v3 2/5] regulator: add dummy function of_find_regulator_by_node
-Date: Sun,  6 May 2018 08:20:13 +0800
-Message-Id: <1525566016-30172-3-git-send-email-changbin.du@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525566016-30172-1-git-send-email-changbin.du@intel.com>
+X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
+   d="scan'208";a="44418951"
+Date: Wed, 9 May 2018 16:13:42 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: changbin.du@intel.com, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
+        akpm@linux-foundation.org, rostedt@goodmis.org,
+        rdunlap@infradead.org, x86@kernel.org, lgirdwood@gmail.com,
+        arnd@arndb.de, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] regulator: add dummy function
+ of_find_regulator_by_node
+Message-ID: <20180509081341.ahx7xuqs366gmqaf@intel.com>
 References: <1525566016-30172-1-git-send-email-changbin.du@intel.com>
+ <1525566016-30172-3-git-send-email-changbin.du@intel.com>
+ <20180509082114.GQ13402@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509082114.GQ13402@sirena.org.uk>
+User-Agent: NeoMutt/20180323-6-5ca392
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Changbin Du <changbin.du@intel.com>
+On Wed, May 09, 2018 at 05:21:14PM +0900, Mark Brown wrote:
+> On Sun, May 06, 2018 at 08:20:13AM +0800, changbin.du@intel.com wrote:
+> > From: Changbin Du <changbin.du@intel.com>
+> > 
+> > If device tree is not enabled, of_find_regulator_by_node() should have
+> > a dummy function since the function call is still there.
+> 
+> Please do not submit new versions of already applied patches, please
+> submit incremental updates to the existing code.  Modifying existing
+> commits creates problems for other users building on top of those
+> commits so it's best practice to only change pubished git commits if
+> absolutely essential.
 
-If device tree is not enabled, of_find_regulator_by_node() should have
-a dummy function since the function call is still there.
+Hmm, I saw your merging notification too late. Let me refresh the series. Sorry
+for confusing.
 
-This is to fix build error after CONFIG_NO_AUTO_INLINE is introduced.
-If this option is enabled, GCC will not auto-inline functions that are
-not explicitly marked as inline.
-
-In this case (no CONFIG_OF), the copmiler will report error in function
-regulator_dev_lookup().
-
-W/O NO_AUTO_INLINE, function of_get_regulator() is auto-inlined and then
-the call to of_find_regulator_by_node() is optimized out since
-of_get_regulator() always return NULL.
-
-W/ NO_AUTO_INLINE, the return value of of_get_regulator() is a variable
-so the call to of_find_regulator_by_node() cannot be optimized out. So
-we need a stub of_find_regulator_by_node().
-
-static struct regulator_dev *regulator_dev_lookup(struct device *dev,
-						  const char *supply)
-{
-	struct regulator_dev *r = NULL;
-	struct device_node *node;
-	struct regulator_map *map;
-	const char *devname = NULL;
-
-	regulator_supply_alias(&dev, &supply);
-
-	/* first do a dt based lookup */
-	if (dev && dev->of_node) {
-		node = of_get_regulator(dev, supply);
-		if (node) {
-			r = of_find_regulator_by_node(node);
-			if (r)
-				return r;
-	...
-
-Signed-off-by: Changbin Du <changbin.du@intel.com>
----
- drivers/regulator/internal.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/regulator/internal.h b/drivers/regulator/internal.h
-index abfd56e..24fde1e 100644
---- a/drivers/regulator/internal.h
-+++ b/drivers/regulator/internal.h
-@@ -56,14 +56,19 @@ static inline struct regulator_dev *dev_to_rdev(struct device *dev)
- 	return container_of(dev, struct regulator_dev, dev);
- }
- 
--struct regulator_dev *of_find_regulator_by_node(struct device_node *np);
--
- #ifdef CONFIG_OF
-+struct regulator_dev *of_find_regulator_by_node(struct device_node *np);
- struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
- 			         const struct regulator_desc *desc,
- 				 struct regulator_config *config,
- 				 struct device_node **node);
- #else
-+static inline struct regulator_dev *
-+of_find_regulator_by_node(struct device_node *np)
-+{
-+	return NULL;
-+}
-+
- static inline struct regulator_init_data *
- regulator_of_get_init_data(struct device *dev,
- 			   const struct regulator_desc *desc,
 -- 
-2.7.4
+Thanks,
+Changbin Du
