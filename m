@@ -1,132 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934139AbeEIKTr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 06:19:47 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:42415 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932215AbeEIKTo (ORCPT
+        id S934226AbeEIKVT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 06:21:19 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38552 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933819AbeEIKVR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 06:19:44 -0400
-X-Google-Smtp-Source: AB8JxZr96ycDk4lquzFtzrO+XEc/FMGVvf81Lyeijyy7uCARxHQw7Se6iZHLuzn6KdVp9aRangf3lg==
-Date: Wed, 9 May 2018 11:49:36 +0200
-From: Anders Roxell <anders.roxell@linaro.org>
-To: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: mqueue: delete RUN_TESTS and EMIT_TESTS
- overrides
-Message-ID: <20180509094936.GD10043@localhost.localdomain>
-References: <20180502211848.22404-1-shuah@kernel.org>
- <20180502211848.22404-5-shuah@kernel.org>
+        Wed, 9 May 2018 06:21:17 -0400
+Date: Wed, 9 May 2018 12:21:00 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
+        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+Subject: Re: [PATCH 6/7] psi: pressure stall information for CPU, memory, and
+ IO
+Message-ID: <20180509102100.GN12217@hirez.programming.kicks-ass.net>
+References: <20180507210135.1823-1-hannes@cmpxchg.org>
+ <20180507210135.1823-7-hannes@cmpxchg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180502211848.22404-5-shuah@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180507210135.1823-7-hannes@cmpxchg.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-02 15:18, Shuah Khan (Samsung OSG) wrote:
-> Delete RUN_TESTS and EMIT_TESTS overrides and use common defines in lib.mk.
-> The overrides are in place to call mq_open_tests with queue name argument.
-> The change to delete overrides is coupled with a change to mq_open_tests
-> to use default queue name when it is called without one.
-> 
-> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-
-Reviewed-by: Anders Roxell <anders.roxell@linaro.org>
-
-> ---
->  tools/testing/selftests/mqueue/Makefile        | 12 +----------
->  tools/testing/selftests/mqueue/mq_open_tests.c | 29 +++++++++++++-------------
->  2 files changed, 16 insertions(+), 25 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/mqueue/Makefile b/tools/testing/selftests/mqueue/Makefile
-> index 743d3f9e5918..8a58055fc1f5 100644
-> --- a/tools/testing/selftests/mqueue/Makefile
-> +++ b/tools/testing/selftests/mqueue/Makefile
-> @@ -1,17 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  CFLAGS += -O2
->  LDLIBS = -lrt -lpthread -lpopt
+On Mon, May 07, 2018 at 05:01:34PM -0400, Johannes Weiner wrote:
+> +/**
+> + * psi_memstall_enter - mark the beginning of a memory stall section
+> + * @flags: flags to handle nested sections
+> + *
+> + * Marks the calling task as being stalled due to a lack of memory,
+> + * such as waiting for a refault or performing reclaim.
+> + */
+> +void psi_memstall_enter(unsigned long *flags)
+> +{
+> +	struct rq_flags rf;
+> +	struct rq *rq;
 > +
->  TEST_GEN_PROGS := mq_open_tests mq_perf_tests
->  
->  include ../lib.mk
-> -
-> -override define RUN_TESTS
-> -	@$(OUTPUT)/mq_open_tests /test1 || echo "selftests: mq_open_tests [FAIL]"
-> -	@$(OUTPUT)/mq_perf_tests || echo "selftests: mq_perf_tests [FAIL]"
-> -endef
-> -
-> -override define EMIT_TESTS
-> -	echo "./mq_open_tests /test1 || echo \"selftests: mq_open_tests [FAIL]\""
-> -	echo "./mq_perf_tests || echo \"selftests: mq_perf_tests [FAIL]\""
-> -endef
-> -
-> diff --git a/tools/testing/selftests/mqueue/mq_open_tests.c b/tools/testing/selftests/mqueue/mq_open_tests.c
-> index e0a74bd207a5..677140aa25fd 100644
-> --- a/tools/testing/selftests/mqueue/mq_open_tests.c
-> +++ b/tools/testing/selftests/mqueue/mq_open_tests.c
-> @@ -53,6 +53,7 @@ int saved_def_msgs, saved_def_msgsize, saved_max_msgs, saved_max_msgsize;
->  int cur_def_msgs, cur_def_msgsize, cur_max_msgs, cur_max_msgsize;
->  FILE *def_msgs, *def_msgsize, *max_msgs, *max_msgsize;
->  char *queue_path;
-> +char *default_queue_path = "/test1";
->  mqd_t queue = -1;
->  
->  static inline void __set(FILE *stream, int value, char *err_msg);
-> @@ -238,27 +239,27 @@ int main(int argc, char *argv[])
->  	struct mq_attr attr, result;
->  
->  	if (argc != 2) {
-> -		fprintf(stderr, "Must pass a valid queue name\n\n");
-> -		fprintf(stderr, usage, argv[0]);
-> -		exit(1);
-> -	}
-> +		printf("Using Default queue path - %s\n", default_queue_path);
-> +		queue_path = default_queue_path;
-> +	} else {
->  
->  	/*
->  	 * Although we can create a msg queue with a non-absolute path name,
->  	 * unlink will fail.  So, if the name doesn't start with a /, add one
->  	 * when we save it.
->  	 */
-> -	if (*argv[1] == '/')
-> -		queue_path = strdup(argv[1]);
-> -	else {
-> -		queue_path = malloc(strlen(argv[1]) + 2);
-> -		if (!queue_path) {
-> -			perror("malloc()");
-> -			exit(1);
-> +		if (*argv[1] == '/')
-> +			queue_path = strdup(argv[1]);
-> +		else {
-> +			queue_path = malloc(strlen(argv[1]) + 2);
-> +			if (!queue_path) {
-> +				perror("malloc()");
-> +				exit(1);
-> +			}
-> +			queue_path[0] = '/';
-> +			queue_path[1] = 0;
-> +			strcat(queue_path, argv[1]);
->  		}
-> -		queue_path[0] = '/';
-> -		queue_path[1] = 0;
-> -		strcat(queue_path, argv[1]);
->  	}
->  
->  	if (getuid() != 0) {
-> -- 
-> 2.14.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kselftest" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +	*flags = current->flags & PF_MEMSTALL;
+> +	if (*flags)
+> +		return;
+> +	/*
+> +	 * PF_MEMSTALL setting & accounting needs to be atomic wrt
+> +	 * changes to the task's scheduling state, otherwise we can
+> +	 * race with CPU migration.
+> +	 */
+> +	local_irq_disable();
+> +	rq = this_rq();
+> +	raw_spin_lock(&rq->lock);
+> +	rq_pin_lock(rq, &rf);
 
--- 
-Anders Roxell
-anders.roxell@linaro.org
-M: +46 709 71 42 85 | IRC: roxell
+Given that churn in sched.h, you seen rq_lock() and friends.
+
+Either write this like:
+
+	local_irq_disable();
+	rq = this_rq();
+	rq_lock(rq, &rf);
+
+Or instroduce "rq = this_rq_lock_irq()", which we could also use in
+do_sched_yield().
+
+> +	update_rq_clock(rq);
+> +
+> +	current->flags |= PF_MEMSTALL;
+> +	psi_task_change(current, rq_clock(rq), 0, TSK_MEMSTALL);
+> +
+> +	rq_unpin_lock(rq, &rf);
+> +	raw_spin_unlock(&rq->lock);
+> +	local_irq_enable();
+
+That's called rq_unlock_irq().
+
+> +}
+> +
+> +/**
+> + * psi_memstall_leave - mark the end of an memory stall section
+> + * @flags: flags to handle nested memdelay sections
+> + *
+> + * Marks the calling task as no longer stalled due to lack of memory.
+> + */
+> +void psi_memstall_leave(unsigned long *flags)
+> +{
+> +	struct rq_flags rf;
+> +	struct rq *rq;
+> +
+> +	if (*flags)
+> +		return;
+> +	/*
+> +	 * PF_MEMSTALL clearing & accounting needs to be atomic wrt
+> +	 * changes to the task's scheduling state, otherwise we could
+> +	 * race with CPU migration.
+> +	 */
+> +	local_irq_disable();
+> +	rq = this_rq();
+> +	raw_spin_lock(&rq->lock);
+> +	rq_pin_lock(rq, &rf);
+> +
+> +	update_rq_clock(rq);
+> +
+> +	current->flags &= ~PF_MEMSTALL;
+> +	psi_task_change(current, rq_clock(rq), TSK_MEMSTALL, 0);
+> +
+> +	rq_unpin_lock(rq, &rf);
+> +	raw_spin_unlock(&rq->lock);
+> +	local_irq_enable();
+> +}
+
+Idem.
