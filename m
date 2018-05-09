@@ -1,142 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933658AbeEIEWk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 00:22:40 -0400
-Received: from mail1.bemta8.messagelabs.com ([216.82.243.201]:47097 "EHLO
-        mail1.bemta8.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751217AbeEIEWi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 00:22:38 -0400
-X-Brightmail-Tracker: H4sIAAAAAAAAA1VTb0wbZRz2vf9buO0oMH5rBtO6zIzIPzXx+KD
-  i/LDLwpLF+KkS9crOa2Nbaq/MGsUwkYjQVjaXbutqthiM8m9NCk5WcTho0G6LBDbNIiiyYWYb
-  KBugTHHoHVem3oc3z+/3PO/ze9437zG4IUgbGcnrkdxO0W6iNhJyYerh4tbXFsxl8e5SPhzpp
-  viPzlv5Y4dGab4ruo+/EgtT/E/df5N84+EJmu//+DzGTwUq+abhcwR/8p00yc9NHlPRoQDiV+
-  6EqcpNwvDsPC6c6+nEhN5Pi4TowhFa+Ob4CiG0nlwlhNu//EAIkb7vCOHy6Tgt9F56Q/jszye
-  FpuU8YTFauJ81kzanpdb7EmmNhlYIV3CrN3bhbawBzUIL2sgYuJsIQuM+TC/iCP7ypymtIDgf
-  DkvhPlpn/BgMJO9kZJMIBgc/UWUbGIrbBYnZ73GNyOX8CH691k5oBc75SVge68U0VQ4nQ9Oly
-  7SGczkrxO42Ejp+BE6NvIdrmOB2QCo9oWKGYblqSPffr09rwOBMOLmm38A9Dd9e+31tMuIKIH
-  h9as0f5/Lhw2CI1DBwHLQPjOI6zoPkjdVMfzu83+UndFwA46dakTYAuDYSfMk2TCfK4euOQVw
-  nDlPQstpC6MVZBAO+mxnbIrg6nKC0qIh7FtJ9L+jtVyDxRZhclzTHQxnTQuj0T2d8OnCYS9yi
-  dWIbJI9/TrWh0tB/ThFSbXH1XiOxTPsBONo6TWuY5bIhcWKGOI2ITvSQIrkPSu7iR0ssbpts9
-  ThEm724vIwvcUiKIsqSXbQoJTW1jihS3+V96tePBld3D6GtDGbKY6tu3TYbNllqD7xuFRXri+
-  46u6QMoW0MYwK27OCC2ZDtlmTJ+7LNrj7udRqYLFMuW6CoNKu4RIdik3XqIqpguvuO+HBm5Ep
-  QXWe01UA4a52SMZ+lND9O22Ctc96zW/9dxlGBMYdFakBDlktyO2ye//MplM8gUw47oLlk2Zye
-  e1NTaiBMDZT987wWyCP+SxkbUNf2nsndi17zV8byxNTjS00Ve1yRzTUe+/TOV5+r3lLV/O5Tr
-  i/bq0d31kfKekoDNyZkLKfmwI+NZP3d5cVKeVfvXrIza8uZJUus45m6rusnPhidK94/s+ePi7
-  /tmxl74s3HzPEH6+VAqvHs/POOirG9zYuBuc1Vrh0jF4aE4beO2qirJkKxiuVFuFsR/wEYNBI
-  uKQQAAA==
-X-Env-Sender: yehs1@lenovo.com
-X-Msg-Ref: server-9.tower-218.messagelabs.com!1525839745!22878983!1
-X-Originating-IP: [103.30.234.44]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-From: Huaisheng HS1 Ye <yehs1@lenovo.com>
-To: Randy Dunlap <rdunlap@infradead.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-CC: "mhocko@suse.com" <mhocko@suse.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
-        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "penguin-kernel@I-love.SAKURA.ne.jp"
-        <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
-        "Ocean HY1 He" <hehy1@lenovo.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
-Subject: RE: [External] [RFC PATCH v1 3/6] mm, zone_type: create ZONE_NVM and
- fill into GFP_ZONE_TABLE
-Thread-Topic: [External] [RFC PATCH v1 3/6] mm, zone_type: create ZONE_NVM and
- fill into GFP_ZONE_TABLE
-Thread-Index: AQHT5oc89K0fVKx8vE2XYGyeMTEHcaQmvz4w
-Date: Wed, 9 May 2018 04:22:10 +0000
-Message-ID: <HK2PR03MB16847B78265A033C7310DDCB92990@HK2PR03MB1684.apcprd03.prod.outlook.com>
-References: <1525746628-114136-1-git-send-email-yehs1@lenovo.com>
- <1525746628-114136-4-git-send-email-yehs1@lenovo.com>
- <HK2PR03MB1684653383FFEDAE9B41A548929A0@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <ce3a6f37-3b13-0c35-6895-35156c7a290c@infradead.org>
-In-Reply-To: <ce3a6f37-3b13-0c35-6895-35156c7a290c@infradead.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [57.197.58.2]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK2PR03MB1458;7:leQFuFiLPJTuS239mvheao23ex2/WuLr3E5QqFZ0ySWHjkyyxyEdwYpnzwXAVVd0ngJYQnMOTmGsEGBhIohGFXRHPBANaUfKU73U5aoP+M9oVUqF9xVhtM8RaJsGTT67XfPMSezBQojChmOSTbOZY4f7r7m4LQ6np8VHzSGHF+S/U6RUvxD+qryXjJ4Yps28zsHnO3P0dXLr9j6vynIS3BUcdD5qj5x418EnmW/1M2OQlci6huf7u8vd6r4J89/R;20:8TxJey9gP3Fs47ghvr2VruXuV5V5CV/oarH5CGfIjos3sC5/d3VPRvoSJFzh03S5vJ9vQ5zY6FapTPHxZvFOgepqN3m2AT0Ia3riUsLfBezCqBvOJZThxIjjP/qvFqay9mQWRj4IERiWPanynFByNBJ0MZN2Ctefz6aznBzs8uCzY6T4XQ4YRmDUuGfjLTUCSZZqzjanLWxYGMgaTfhcUcIirZaFwSzVZ5/ooKlRRzTvMkma+hZLWbiEHvXkXl4tL7zVKGMhiGYUZEPzKmI0PPdKjFHJMdtJj5DgZKITYtwMQPBWyEFQxb5TvFZCUJopQ78havYTCHiFWHG25bt1iw==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(366004)(346002)(396003)(376002)(39850400004)(39380400002)(189003)(199004)(81166006)(8936002)(5250100002)(446003)(3280700002)(105586002)(25786009)(81156014)(93886005)(8676002)(3660700001)(106356001)(11346002)(486006)(2906002)(110136005)(7736002)(478600001)(316002)(2501003)(6436002)(54906003)(97736004)(6506007)(53546011)(186003)(6246003)(2201001)(26005)(68736007)(9686003)(53936002)(229853002)(76176011)(14454004)(305945005)(4326008)(33656002)(476003)(99286004)(2900100001)(66066001)(3846002)(74316002)(7696005)(102836004)(7416002)(86362001)(55016002)(5660300001)(6116002)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2PR03MB1458;H:HK2PR03MB1684.apcprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HK2PR03MB1458;
-x-ms-traffictypediagnostic: HK2PR03MB1458:
-x-microsoft-antispam-prvs: <HK2PR03MB14583F377E7B41DC0B288C6492990@HK2PR03MB1458.apcprd03.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:HK2PR03MB1458;BCL:0;PCL:0;RULEID:;SRVR:HK2PR03MB1458;
-x-forefront-prvs: 0667289FF8
-x-microsoft-antispam-message-info: Ek1cqmM4nAtAXhgaLrzI8wxy0j/5bKWYwX3JSw2o1fBV0m1UTUg0yc2LWSmfiAS/DyEXDDK7BQ8N6bs/9dNnw5WVYgfwnw1cxUnuI6HJ3/SYPEA1jHIL7pPKDQyetL3LocY1Ww7VYOCN4VB6cBgaspR7P5aUZBWuXGcabNCNr35vj2pkVaE3yRRHG4lC8diQ
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1753014AbeEIE3r (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 00:29:47 -0400
+Received: from mail-bl2nam02on0087.outbound.protection.outlook.com ([104.47.38.87]:55520
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751000AbeEIE3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 00:29:45 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Akshu.Agrawal@amd.com;
+From: Akshu Agrawal <akshu.agrawal@amd.com>
+Cc: djkurtz@chromium.org, akshu.agrawal@amd.com, Alexander.Deucher@amd.com,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        alsa-devel@alsa-project.org (moderated list:SOUND - SOC LAYER / DYNAMIC
+        AUDIO POWER MANAGEM...),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ASoC: AMD: Change codec to channel link as per hardware redesign
+Date: Wed,  9 May 2018 12:26:26 +0800
+Message-Id: <1525840011-14077-1-git-send-email-akshu.agrawal@amd.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: e8306869-04b7-4983-157b-08d5b5646f58
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8306869-04b7-4983-157b-08d5b5646f58
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2018 04:22:10.9992
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5c7d0b28-bdf8-410c-aa93-4df372b16203
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR03MB1458
+Content-Type: text/plain
+X-Originating-IP: [202.56.249.162]
+X-ClientProxiedBy: MA1PR01CA0090.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00::30)
+ To DM5PR12MB2357.namprd12.prod.outlook.com (2603:10b6:4:b4::10)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB2357;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2357;3:YgGEXua9Yi0KfI2m8OnYDwSrpodL0PAT8PoWPf8VKOrOIPwIprpaln9doPAa/XIbHBisVHWWFWEDVS3NDdOHEzRoNuqRN0fyUvw/leDjYIBW7m0P0zikVGDGrJlwpzl6Wr0legwQ5J7HhwMXVQSUpojn/wtEZbvZJ9MAgYMk9J2yoGG/R9z5o4dzjy5XQfjcfk6mJg8axBl59mzaFFF+eMw6NtW/hCZjmXKVht14rM8wCLa3OTw7MkfIYEet2/DT;25:aTrUK6AX+hsx/GOmYNXELMfMTCPoQkHkwEqF+NcfK8qjkVQKLA6QSIWdrOBr16MApT7gQ0gfYVJ5BgIl64nxztUkUWbDMnkIY3YYlRZMFLVRhQDpbEN0oTjNWc9qsRby7GQ58ZTKQICHfGD9rfN4F+KC81yhnbk2oqbgON2aG/2NS/tGDZ169AfnyXvUgTK7JspVIC9guXFPC0TI3o5aP8ji8obeTAcKmQ1JtJvpVgYngAMxbaUVekBi8Vt0grJsh7E8Pr3UGb4XfuU13nfJnXwlCFGwxnBG0Cjqphxtlno9N62ao4io4iK411N71eASrE18f9rhsOUaXA0/hTif7Q==;31:ggqlWP8vPsXDjI7fJH2KxCsOGMsI4unxC57PbE3p9Nx7i0y9JiGCDFvDxTOpCqvRBa3+OG/T5eSMwt8z1KbJ3g2cXT7UVJow5ji8afSKfu9Nzjp6cQZkAPd4Mzbo2xCEsqVStfRwoMmjOwIRUZrviPCQ+20QpcNuh1qc1hT9PlLBieqL7PszJ3QpWqv90buAZzzgmYBpEEQgnuMHDom0TkchZsc9IqLGpItQN+qBxU8=
+X-MS-TrafficTypeDiagnostic: DM5PR12MB2357:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2357;20:GVrPBGlQDIO4mlnMMbl+V8n3IR+45ahYDnR6PoNbk8plPg/y+jcE+7JtG7I7XL27hZJt4yKi8mG8uJZg8IETpbJKmCMehkdqoBdXPZES0g+vorQByIG5dSCNqH721jBXpHaqBhcqKZRa98Zyf36Al2TM9LxGTHkIhjCUqx3bi3Ecea4vDJbXdc2/DIvERlZyWTFcdTGoKAJTFu1ovtD4sHwPrGzA39AU5dWsXPd3MLz4cNbnR8RcX3R+Yrb+pIiOv6croCvxEgm/jui66c/OM+Z1ZuKCUSkwYzf1PVz0AiZ5Jb1d6S4XK5wnT7pWSqmuFVa4+lbPVeeFCSmQe3r3z88C5OFkGRItmsIl7cdg2VDQtZHq6RIbUjWfz4NM/l2hF6Pzc3dOPhg/M3uCSrVPE0hduO1KDp+1bciWRYJbPbVbUG8twsmXfbqNRvzst4q45rKQvRXSjKjBAZDsqGHz9jmnu3XwKg8OZ2Sk7nuOUihuB5c/RmX4wjauI6or5l8K;4:bVafUkrSSM+gHAl+K4i7aDoFn3WZzouW2Nc3U4vHZ5pOl9FenlcDNyaR13gcDDVDZOpsbaOJjkNR8aDmWL8Og11Nr00RqvOCv6BiOqd8HOCJk9gEWVQnSe/h+ESzMPK5JXpE+ZNVIOvKdY3bHGvxlz0l5JaEpJdDrwsCIK4R+wwdIPXv6NVnxHidnsdh9RxIuNe0JdOiB2320h/P8hLyXmQUUqBVl9WACXnp2J/f5lU4CF5FzRMti0kIAHyN1bQELMgxkKNfRSnko8GgZVDappN8JIq3i2c5NogI1SdC8E60dIeiRqsHq5aPlzJJRjnV
+X-Microsoft-Antispam-PRVS: <DM5PR12MB23578FBF7D6246AA36E88EA5F8990@DM5PR12MB2357.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR12MB2357;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB2357;
+X-Forefront-PRVS: 0667289FF8
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39850400004)(366004)(376002)(396003)(39380400002)(346002)(199004)(189003)(106356001)(186003)(51416003)(97736004)(26005)(16526019)(68736007)(53416004)(47776003)(44832011)(66066001)(2616005)(6306002)(956004)(7696005)(476003)(5660300001)(36756003)(16586007)(105586002)(386003)(52116002)(316002)(54906003)(86362001)(1671002)(4326008)(6116002)(1857600001)(72206003)(109986005)(3846002)(486006)(53936002)(2906002)(8936002)(966005)(6486002)(39060400002)(6666003)(305945005)(50466002)(7736002)(81156014)(25786009)(50226002)(48376002)(478600001)(81166006)(8676002)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2357;H:akshu-HP-EliteBook-745-G2.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR12MB2357;23:e209hZUuBrkUHEQfO7FIg3kyWbP7qNveeGfmPkP16?=
+ =?us-ascii?Q?2J38BpydeSFlOH68YZCpd9nd5GuG0Q7pWMAR0d6pNe4MaE42oNjMH51dY370?=
+ =?us-ascii?Q?4iegnXl823gh0kJOYj+wSe6pl5Asl4cl0GusTx3N31y0KHdLNdlPOTLmn1N4?=
+ =?us-ascii?Q?9IA7QSRr1jm4yNuBDBLL9KaIQt7GshGaXWcxP0yMqXq8pcAlWUWuDOusal6K?=
+ =?us-ascii?Q?y62hr0lK5i8QIHX7HSZT8Ek02eQVv43ACNMow3mwmP9wNcUoGya3Mj6R4Lk3?=
+ =?us-ascii?Q?5mF8A5nL+QGSwZuPlT/gm8a3yxuDeHNQrHlXWexm0IeoX9m7mIE6qpqblohr?=
+ =?us-ascii?Q?bvmKCHFgNl5+Qs0Y2heSKGtpSk640mph4JguBxqCNWC7BABVFownzXC0dAWA?=
+ =?us-ascii?Q?wIOkKNcryXc7ApjDUT96Dc+fKjMRQLhXrKO7G3MPF037oQ1aGv9nY3FfVMGR?=
+ =?us-ascii?Q?tH73q+rSKpkCoTPDpiqPdVDCXrERoqO+VCzNfWE+PDyvrgHg2z3otGkRPUdF?=
+ =?us-ascii?Q?Yk4xWPWTuBW9Z5GZTpF/joC0qHAzVG36WqaXKsV3wtv9SavC7soVqEthTZYW?=
+ =?us-ascii?Q?ndQM/xUeUcwNM1JOaIfa2IM3Lngivu62rBkyierFvAR3Dpf8SKkFEgL+oyTt?=
+ =?us-ascii?Q?BuWGBAj7C+ZU8sySmloOirGvGdJyhNW79p+V5dyaTJndq4qsC9LGx/Y3q49H?=
+ =?us-ascii?Q?rq0/zKApfXNwdtMJEx+xguZlRCYYDG1A/Yp+RR7N2+xEmdGuaJox8KC2t7lA?=
+ =?us-ascii?Q?bA8FX58jsuuKzYyFQ5MzhAUJ9j2PVZge+docyu6qt3KgZAvpC1AOh3YK66RY?=
+ =?us-ascii?Q?26cDkxn5vT+Evdvtt7h3cPD4jUu1qH0Lt6tMlHf0T64e2s8mBcUSc7AZLYGr?=
+ =?us-ascii?Q?Er/FhwATAoV8CkYjzg4Q8BeIc/nOu2JssEsSDQEmVXaNs0zGyW2bKe0DwAn1?=
+ =?us-ascii?Q?aNdWWQR3gBIql8NzYGoJvoW0MlD6d1+PWoK7k0/c2swfS/oxWYmtZ6cs4Wrt?=
+ =?us-ascii?Q?5JUUS5uim1ySLUw2xQfns9Wn34VLpZ7r6lqzM347A1Wwh6rjlqXC82fcJRGN?=
+ =?us-ascii?Q?RTmSttBDwZeRtpCLSbQG5WE3okir3T3ROp0DFCk5Fng2VoiP43OWuD8lcj7L?=
+ =?us-ascii?Q?+xCk5SPy56CpLVuU09PD9F4YXENbmx6SOsBfcUIL8Q0QxEZgzH8iA5x3oI1Y?=
+ =?us-ascii?Q?kViQSDqTQQ8i55P5KjI0wcYh5aUatOxBzkivEjT4OKtnUJhJ8vcGjN/6AlKs?=
+ =?us-ascii?Q?p7AjE/mGRy2JX7k9jzA2XLKnfQ6Cmso2alrqWkI+8WxYClNeCLzwgnMFRD7R?=
+ =?us-ascii?Q?9JvsAUDaxHDJyOnlTvHWls=3D?=
+X-Microsoft-Antispam-Message-Info: Pqf+5qN2rlyCjF6oy7+AKnlXEO8L4gQGcmhzv993PshI5ZWQeoybg0xJeFsg5gSArzoYokXwWtkqnPXsxrICvvHO39znpdQJwyobkLgN/9MgOTnZbJjwJzUs+PTCc4WNEtMZiRV/7MS+Dmxn8Pnfr1zwarBfKAh3KKjVJGFJGs7DnGREKRbqrxJ3Blfc2NVb
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2357;6:An/QK4/ZFHyOm/fhrZVIYdyKMGeDOI5zdhvFy3n6zlgJyqFlldkQBOxx7mIPImTlcHRWXEqMb1MOZcFhBMRXuATv+upVYU4ngVyW5ghI52hM1GohD43AzP+p9MUiJOX0Gk8HgBSncf24s9D5Rhk9YymPzPHP5yu4LpGeCw4FjjTrIwp/tYQSYTAIKcP66JWzhrhJp4E6xU8ER9fNlxHMWlN0LZ1S6mWfMXW9iflSUbpWoYsj4ODkTLsD7Y7XlXMmJzGC5O++ghQydY7qQXGNz7UyhFOySiX0e1CEnCa97BcR787fvUvofjpSGken0v8pzKObPdG0Few1SCJ5q0GhxkK/EKYj7/Kt7dncRhWo0GuMWu2VkLiPn/bonq4c9jSkryzNaSvhzKP19J6tRHReu6p0zObWV19LXtPte7capHjVq3S9nhzSNZ+EP9L37TxwlGElwqxbEXJjIphcA56W+g==;5:wMJ+9lZwH/bAF7bibl/MhZ9J5vX6LhLwsUXblESAt38uzrFGkEFrjKa7RW5dJ0TmBGGpYIUo+FlMhypaIbsVOEx+yp02ltl7dzQYcTFlygMvDab57zoCJU/bP7XL9I0n125HM8YddxX49dJ/BRnGHka7IXfwhEJu59gJC2QPHDk=;24:DdeVsTUSudlzA9mZVtxuvwjVYok3uRi5meDEZHuofDK/dOxsdUgL+tJ7KbReSXgd45XfL6/H3tfkyUyIqzLTc2adQittX867g7A5DgHGQWk=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2357;7:wujRTSulDZZeaCzzRn9fjAc97G8oJllfKCbcTqn31PNoMZiZHpyUQANugkRJevK76wZ79+tPVPvXPbAcMq6+dn6AIseNtQcQD1KUEmK8HW8vXbMFSh2G8R/rxBdYkyx/PqTe7Q6vxK6/7L+tir9dyV9jcBrOVPD8IQPBh9fluUWTGX489GeSxoBNAlNnqpx/5H99uB7np0fxxKsBcZn3BouQbMwvNRgst3Ls5bspg2sNM3BUuQ9ZkZF+I1uQrPSt;20:fTIOSaFfFL1QyzBYkCX7I5TwMwALlQhXYwINQfPHWoiv83kUmNhcGOdOSjhO2rXlIzK+fCEEWlRNYO9MAwUB5V+VrIQEAvSulkzWfWRin3gyO0oLw1NR/cgq9m5tC5vfFPXaJ7HiCyx7F7nwuRb8SM8GPRea80fsgrd2B6aYSgqSsQ62HD9oWpSFuZZdEGrOrsvevOh8FeBO6unmsDDn51t8M1Y+zOf5oHlPkbDFEcR4f+v9TvJam7x5XpccgM+g
+X-MS-Office365-Filtering-Correlation-Id: ce682a0c-5ab8-420d-8c7c-08d5b5657c77
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2018 04:29:39.2892 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ce682a0c-5ab8-420d-8c7c-08d5b5657c77
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2357
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w494Mk4S006793
 
+This is a correction to match acutal hardware configuration.
+The hardware configuration looks like:
+I2S_BT -> SPK(Max) + DMIC(Adau)
+I2S_SP -> DA7219 Headset
 
-> On 05/07/2018 07:33 PM, Huaisheng HS1 Ye wrote:
-> > diff --git a/mm/Kconfig b/mm/Kconfig
-> > index c782e8f..5fe1f63 100644
-> > --- a/mm/Kconfig
-> > +++ b/mm/Kconfig
-> > @@ -687,6 +687,22 @@ config ZONE_DEVICE
-> >
-> > +config ZONE_NVM
-> > +	bool "Manage NVDIMM (pmem) by memory management (EXPERIMENTAL)"
-> > +	depends on NUMA && X86_64
-> 
-> Hi,
-> I'm curious why this depends on NUMA. Couldn't it be useful in non-NUMA
-> (i.e., UMA) configs?
-> 
-I wrote these patches with two sockets testing platform, and there are two DDRs and two NVDIMMs have been installed to it.
-So, for every socket it has one DDR and one NVDIMM with it. Here is memory region from memblock, you can get its distribution.
+No actual products have been shipped with previous configuration.
 
- 435 [    0.000000] Zone ranges:
- 436 [    0.000000]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
- 437 [    0.000000]   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
- 438 [    0.000000]   Normal   [mem 0x0000000100000000-0x00000046bfffffff]
- 439 [    0.000000]   NVM      [mem 0x0000000440000000-0x00000046bfffffff]
- 440 [    0.000000]   Device   empty
- 441 [    0.000000] Movable zone start for each node
- 442 [    0.000000] Early memory node ranges
- 443 [    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009ffff]
- 444 [    0.000000]   node   0: [mem 0x0000000000100000-0x00000000a69c2fff]
- 445 [    0.000000]   node   0: [mem 0x00000000a7654000-0x00000000a85eefff]
- 446 [    0.000000]   node   0: [mem 0x00000000ab399000-0x00000000af3f6fff]
- 447 [    0.000000]   node   0: [mem 0x00000000af429000-0x00000000af7fffff]
- 448 [    0.000000]   node   0: [mem 0x0000000100000000-0x000000043fffffff]	Normal 0
- 449 [    0.000000]   node   0: [mem 0x0000000440000000-0x000000237fffffff]	NVDIMM 0
- 450 [    0.000000]   node   1: [mem 0x0000002380000000-0x000000277fffffff]	Normal 1
- 451 [    0.000000]   node   1: [mem 0x0000002780000000-0x00000046bfffffff]	NVDIMM 1
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+---
+This patch is dependent on [V4,10/10] ASoC: amd: dma driver changes for bt i2s instance
+https://patchwork.kernel.org/patch/10385381/
 
-If we disable NUMA, there is a result as Normal an NVDIMM zones will be overlapping with each other.
-Current mm treats all memory regions equally, it divides zones just by size, like 16M for DMA, 4G for DMA32, and others above for Normal.
-The spanned range of all zones couldn't be overlapped.
+ sound/soc/amd/acp-da7219-max98357a.c | 27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
 
-If we enable NUMA, for every socket its DDR and NVDIMM are separated, you can find that NVDIMM region always behind Normal zone.
-
-Sincerely,
-Huaisheng Ye 
+diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
+index ccddc66..566bd26 100644
+--- a/sound/soc/amd/acp-da7219-max98357a.c
++++ b/sound/soc/amd/acp-da7219-max98357a.c
+@@ -148,7 +148,7 @@ static int cz_da7219_startup(struct snd_pcm_substream *substream)
+ 	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
+ 				   &constraints_rates);
+ 
+-	machine->i2s_instance = I2S_BT_INSTANCE;
++	machine->i2s_instance = I2S_SP_INSTANCE;
+ 	return da7219_clk_enable(substream);
+ }
+ 
+@@ -163,7 +163,7 @@ static int cz_max_startup(struct snd_pcm_substream *substream)
+ 	struct snd_soc_card *card = rtd->card;
+ 	struct acp_platform_info *machine = snd_soc_card_get_drvdata(card);
+ 
+-	machine->i2s_instance = I2S_SP_INSTANCE;
++	machine->i2s_instance = I2S_BT_INSTANCE;
+ 	return da7219_clk_enable(substream);
+ }
+ 
+@@ -178,7 +178,7 @@ static int cz_dmic_startup(struct snd_pcm_substream *substream)
+ 	struct snd_soc_card *card = rtd->card;
+ 	struct acp_platform_info *machine = snd_soc_card_get_drvdata(card);
+ 
+-	machine->i2s_instance = I2S_SP_INSTANCE;
++	machine->i2s_instance = I2S_BT_INSTANCE;
+ 	return da7219_clk_enable(substream);
+ }
+ 
+@@ -204,16 +204,27 @@ static void cz_dmic_shutdown(struct snd_pcm_substream *substream)
+ 
+ static struct snd_soc_dai_link cz_dai_7219_98357[] = {
+ 	{
+-		.name = "amd-da7219-play-cap",
+-		.stream_name = "Playback and Capture",
++		.name = "amd-da7219-play",
++		.stream_name = "Playback",
+ 		.platform_name = "acp_audio_dma.0.auto",
+-		.cpu_dai_name = "designware-i2s.3.auto",
++		.cpu_dai_name = "designware-i2s.1.auto",
+ 		.codec_dai_name = "da7219-hifi",
+ 		.codec_name = "i2c-DLGS7219:00",
+ 		.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF
+ 				| SND_SOC_DAIFMT_CBM_CFM,
+ 		.init = cz_da7219_init,
+ 		.dpcm_playback = 1,
++		.ops = &cz_da7219_cap_ops,
++	},
++	{
++		.name = "amd-da7219-cap",
++		.stream_name = "Capture",
++		.platform_name = "acp_audio_dma.0.auto",
++		.cpu_dai_name = "designware-i2s.2.auto",
++		.codec_dai_name = "da7219-hifi",
++		.codec_name = "i2c-DLGS7219:00",
++		.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF
++				| SND_SOC_DAIFMT_CBM_CFM,
+ 		.dpcm_capture = 1,
+ 		.ops = &cz_da7219_cap_ops,
+ 	},
+@@ -221,7 +232,7 @@ static void cz_dmic_shutdown(struct snd_pcm_substream *substream)
+ 		.name = "amd-max98357-play",
+ 		.stream_name = "HiFi Playback",
+ 		.platform_name = "acp_audio_dma.0.auto",
+-		.cpu_dai_name = "designware-i2s.1.auto",
++		.cpu_dai_name = "designware-i2s.3.auto",
+ 		.codec_dai_name = "HiFi",
+ 		.codec_name = "MX98357A:00",
+ 		.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF
+@@ -233,7 +244,7 @@ static void cz_dmic_shutdown(struct snd_pcm_substream *substream)
+ 		.name = "dmic",
+ 		.stream_name = "DMIC Capture",
+ 		.platform_name = "acp_audio_dma.0.auto",
+-		.cpu_dai_name = "designware-i2s.2.auto",
++		.cpu_dai_name = "designware-i2s.3.auto",
+ 		.codec_dai_name = "adau7002-hifi",
+ 		.codec_name = "ADAU7002:00",
+ 		.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF
+-- 
+1.9.1
