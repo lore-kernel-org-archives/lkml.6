@@ -1,81 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935204AbeEIOot (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 10:44:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42500 "EHLO mx1.redhat.com"
+        id S935226AbeEIOpX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 10:45:23 -0400
+Received: from ms.lwn.net ([45.79.88.28]:42080 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934770AbeEIOor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 10:44:47 -0400
-Date: Wed, 9 May 2018 08:44:45 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: "Stephen  Bates" <sbates@raithlin.com>
-Cc: Don Dutile <ddutile@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        =?UTF-8?B?SsOpcsO0?= =?UTF-8?B?bWU=?= Glisse
-        <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all
- devices behind switches
-Message-ID: <20180509084445.626d2732@w520.home>
-In-Reply-To: <B5BFCF39-6BB4-4E45-B805-C8FCC8B79EF3@raithlin.com>
-References: <20180423233046.21476-1-logang@deltatee.com>
-        <20180423233046.21476-5-logang@deltatee.com>
-        <CAPcyv4g+5N_n03J-VhmJfrr60Sqk95ZapLKBkwSsGvV4nQ+ZRw@mail.gmail.com>
-        <64C231F5-DE36-415F-B308-3A423B0BBACB@raithlin.com>
-        <15433946-f7f5-f610-4e80-380fb59920e5@redhat.com>
-        <3C9FB262-A93C-4C8F-B1E0-85C6D6F78BC2@raithlin.com>
-        <c5f30ced-7bbf-9420-db1a-72519fc78b3a@redhat.com>
-        <20180508180157.7c7b393f@w520.home>
-        <B5BFCF39-6BB4-4E45-B805-C8FCC8B79EF3@raithlin.com>
+        id S934770AbeEIOpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 10:45:22 -0400
+Date: Wed, 9 May 2018 08:45:18 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH 13/18] wait: wait.h: Get rid of a kernel-doc/Sphinx
+ warnings
+Message-ID: <20180509084518.247650e2@lwn.net>
+In-Reply-To: <20180509084120.GF12217@hirez.programming.kicks-ass.net>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+        <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
+        <20180509084120.GF12217@hirez.programming.kicks-ass.net>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 May 2018 12:35:56 +0000
-"Stephen  Bates" <sbates@raithlin.com> wrote:
+On Wed, 9 May 2018 10:41:20 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-> Hi Alex and Don
+> > This is easily done by using "::" instead of just ":".  
 > 
-> >    Correct, the VM has no concept of the host's IOMMU groups, only
-> > the hypervisor knows about the groups,   
+> And I'll voice my objection once again. This makes a regular comment
+> worse. This rst stuff is utter shit for making normal text files less
+> readable in your favourite text editor.
 > 
-> But as I understand it these groups are usually passed through to VMs
-> on a pre-group basis by the hypervisor? So IOMMU group 1 might be
-> passed to VM A and IOMMU group 2 passed to VM B. So I agree the VM is
-> not aware of IOMMU groupings but it is impacted by them in the sense
-> that if the groupings change the PCI topology presented to the VM
-> needs to change too.
+> If this gets merged, I'll simply remove that spurious ':' the next time
+> I'm near that comment.
 
-Hypervisors don't currently expose any topology based on the grouping,
-the only case where such a concept even makes sense is when a vIOMMU is
-present as devices within the same group cannot have separate address
-spaces.  Our options for exposing such information is also limited, our
-only real option would seem to be placing devices within the same group
-together on a conventional PCI bus to denote the address space
-granularity.  Currently we strongly recommend singleton groups for this
-case and leave any additional configuration constraints to the admin.
+Seriously, Peter?
 
-The case you note of a group passed to VM A and another passed to VM B
-is exactly an example of why any sort of dynamic routing change needs to
-have the groups fully released, such as via hot-unplug.  For instance,
-a routing change at a shared node above groups 1 & 2 could result in
-the merging of these groups and there is absolutely no way to handle
-that with portions of the group being owned by two separate VMs after
-the merge.  Thanks,
+It's a simple colon.  It goes along with the /** marker for kerneldoc
+comments and the @ markers found within them, both of which you seem to
+have found a way to live with.
 
-Alex
+The RST work was discussed for a year before we even started.  It has
+brought in the efforts of a large number of developers, all of whom see
+the value in actually caring about our documentation and making it
+accessible to a much larger group of readers.  And it has all happened
+while preserving the primacy of the plain-text documentation.
+
+You're not the only consumer of the docs.  You may not appreciate the
+improvements that have come, but others certainly do.  I do hope that you
+can find it in youself to avoid vandalizing things for everybody else ...?
+
+Thanks,
+
+jon
