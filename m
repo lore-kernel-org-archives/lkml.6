@@ -1,78 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755629AbeEIFGE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 01:06:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52348 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753150AbeEIFGD (ORCPT
+        id S1755983AbeEIFGc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 01:06:32 -0400
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:35524 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753226AbeEIFGa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 01:06:03 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 09 May 2018 10:36:01 +0530
-From: kgunda@codeaurora.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH V1 4/5] backlight: qcom-wled: Add support for OVP
- interrupt handling
-In-Reply-To: <20180508171936.GK2259@tuxbook-pro>
-References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
- <1525341432-15818-5-git-send-email-kgunda@codeaurora.org>
- <20180507172152.GD2259@tuxbook-pro>
- <3736480b2712e2dd401fed0a635a25d7@codeaurora.org>
- <20180508171936.GK2259@tuxbook-pro>
-Message-ID: <9757b8fbcdd55cb72a42451270b3cb33@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+        Wed, 9 May 2018 01:06:30 -0400
+X-Google-Smtp-Source: AB8JxZraxATAE35ofiKjyFOFBDrG5cuEJXQ0/X9e/w1dgg3QyWH+hfnukVCUYTHGztt3UsGtvAP0IQ==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: bug in tag handling in blk-mq?
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <1525839089.15732.1.camel@gmx.de>
+Date: Wed, 9 May 2018 07:06:31 +0200
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        linux-block <linux-block@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>
+Message-Id: <511C7624-6089-44E2-840A-E2657141AD88@linaro.org>
+References: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
+ <7760d23b-7a4c-a645-1c7a-da7569bb44dc@kernel.dk>
+ <84145CD7-B917-4B32-8A5C-310C1910DB71@linaro.org>
+ <1525755090.24338.1.camel@gmx.de> <1525768632.5208.4.camel@gmx.de>
+ <ffd0c030-43f8-0dbe-42b3-03bb9c410bea@kernel.dk>
+ <1525797766.5204.2.camel@gmx.de>
+ <3692ce7d-a767-72e6-65ae-6178b6c2e7d8@kernel.dk>
+ <f04636df-3f97-6c16-f37b-d407e062b9e5@kernel.dk>
+ <57952405-bdeb-f4e4-1aef-a7c0a8a68674@kernel.dk>
+ <1525839089.15732.1.camel@gmx.de>
+To: Mike Galbraith <efault@gmx.de>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4956Yhe010343
 
-On 2018-05-08 22:49, Bjorn Andersson wrote:
-> On Tue 08 May 05:26 PDT 2018, kgunda@codeaurora.org wrote:
+
+
+> Il giorno 09 mag 2018, alle ore 06:11, Mike Galbraith <efault@gmx.de> ha scritto:
 > 
->> On 2018-05-07 22:51, Bjorn Andersson wrote:
->> > On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
-> [..]
->> > > @@ -220,7 +255,12 @@ static int wled_module_enable(struct wled
->> > > *wled, int val)
->> > >  				WLED3_CTRL_REG_MOD_EN,
->> > >  				WLED3_CTRL_REG_MOD_EN_MASK,
->> > >  				WLED3_CTRL_REG_MOD_EN_MASK);
->> > > -	return rc;
->> > > +	if (rc < 0)
->> > > +		return rc;
->> > > +
->> > > +	schedule_delayed_work(&wled->ovp_work, WLED_SOFT_START_DLY_US);
->> >
->> > Do you really want to delay the work on disable?
->> >
->> > Wouldn't it be better to use a delay worker for the enablement and in
->> > the disable case you cancel the work and just disable_irq() directly
->> > here.
->> >
->> Sure. Will do it in the next series.
->> > But more importantly, if this is only related to auto detection, do you
->> > really want to enable/disable the ovp_irq after you have detected the
->> > string configuration?
->> >
->> Ok. This is used for the genuine OVP detection and for the auto 
->> detection as
->> well.
+> On Tue, 2018-05-08 at 19:09 -0600, Jens Axboe wrote:
+>> 
+>> Alright, I managed to reproduce it. What I think is happening is that
+>> BFQ is limiting the inflight case to something less than the wake
+>> batch for sbitmap, which can lead to stalls. I don't have time to test
+>> this tonight, but perhaps you can give it a go when you are back at it.
+>> If not, I'll try tomorrow morning.
+>> 
+>> If this is the issue, I can turn it into a real patch. This is just to
+>> confirm that the issue goes away with the below.
 > 
-> What is the expected outcome of detecting an OVP condition, outside 
-> auto
-> detection?
+> Confirmed.  Impressive high speed bug stomping.
 > 
-Ok... Out side auto detection, it is used for information purpose. I 
-think it is
-okay to ignore enable/disable the ovp_irq after auto detection is done.
-> Regards,
-> Bjorn
+
+Great! It's a real relief that this ghost is gone.
+
+Thank you both,
+Paolo
+
+>> diff --git a/lib/sbitmap.c b/lib/sbitmap.c
+>> index e6a9c06ec70c..94ced15b6428 100644
+>> --- a/lib/sbitmap.c
+>> +++ b/lib/sbitmap.c
+>> @@ -272,6 +272,7 @@ EXPORT_SYMBOL_GPL(sbitmap_bitmap_show);
+>> 
+>> static unsigned int sbq_calc_wake_batch(unsigned int depth)
+>> {
+>> +#if 0
+>> 	unsigned int wake_batch;
+>> 
+>> 	/*
+>> @@ -284,6 +285,9 @@ static unsigned int sbq_calc_wake_batch(unsigned int depth)
+>> 		wake_batch = max(1U, depth / SBQ_WAIT_QUEUES);
+>> 
+>> 	return wake_batch;
+>> +#else
+>> +	return 1;
+>> +#endif
+>> }
+>> 
+>> int sbitmap_queue_init_node(struct sbitmap_queue *sbq, unsigned int depth,
+>> 
