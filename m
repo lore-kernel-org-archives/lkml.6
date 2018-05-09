@@ -1,35 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933816AbeEIHoR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 03:44:17 -0400
-Received: from s3.sipsolutions.net ([144.76.63.242]:39968 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933383AbeEIHoQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 03:44:16 -0400
-Message-ID: <1525851852.6910.1.camel@sipsolutions.net>
-Subject: Re: linux-next: build warning after merge of the mac80211-next tree
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Toke =?ISO-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>
-Date: Wed, 09 May 2018 09:44:12 +0200
-In-Reply-To: <20180509145624.643d2e56@canb.auug.org.au>
-References: <20180509145624.643d2e56@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S933830AbeEIHpM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 03:45:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57673 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933818AbeEIHpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 03:45:10 -0400
+Date: Wed, 9 May 2018 09:45:08 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: memcontrol: drain stocks on resize limit
+Message-ID: <20180509074508.GC32366@dhcp22.suse.cz>
+References: <20180504205548.110696-1-shakeelb@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180504205548.110696-1-shakeelb@google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Stephen,
+On Fri 04-05-18 13:55:48, Shakeel Butt wrote:
+> Resizing the memcg limit for cgroup-v2 drains the stocks before
+> triggering the memcg reclaim. Do the same for cgroup-v1 to make the
+> behavior consistent.
+> 
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
 
-The 0-day bot also gave me this heads-up, there are a few more places
-like it too. I'd asked Toke to fix the ones in the stack, but we both
-missed the ones in the drivers. I'll get a fix in for that one way or
-the other.
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-johannes
+> ---
+>  mm/memcontrol.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 25b148c2d222..e2d33a37f971 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2463,6 +2463,7 @@ static int mem_cgroup_resize_max(struct mem_cgroup *memcg,
+>  				 unsigned long max, bool memsw)
+>  {
+>  	bool enlarge = false;
+> +	bool drained = false;
+>  	int ret;
+>  	bool limits_invariant;
+>  	struct page_counter *counter = memsw ? &memcg->memsw : &memcg->memory;
+> @@ -2493,6 +2494,12 @@ static int mem_cgroup_resize_max(struct mem_cgroup *memcg,
+>  		if (!ret)
+>  			break;
+>  
+> +		if (!drained) {
+> +			drain_all_stock(memcg);
+> +			drained = true;
+> +			continue;
+> +		}
+> +
+>  		if (!try_to_free_mem_cgroup_pages(memcg, 1,
+>  					GFP_KERNEL, !memsw)) {
+>  			ret = -EBUSY;
+> -- 
+> 2.17.0.441.gb46fe60e1d-goog
+
+-- 
+Michal Hocko
+SUSE Labs
