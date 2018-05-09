@@ -1,55 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965016AbeEIPTl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:19:41 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:34483 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935065AbeEIPSn (ORCPT
+        id S935408AbeEIPUf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:20:35 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:56646 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935065AbeEIPUd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:18:43 -0400
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH 2/2] ARM: dts: stm32: update rtc st,syscfg property on stm32f746
-Date: Wed, 9 May 2018 17:18:14 +0200
-Message-ID: <1525879094-19562-3-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525879094-19562-1-git-send-email-amelie.delaunay@st.com>
-References: <1525879094-19562-1-git-send-email-amelie.delaunay@st.com>
+        Wed, 9 May 2018 11:20:33 -0400
+Date: Wed, 9 May 2018 17:20:26 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH 13/18] wait: wait.h: Get rid of a kernel-doc/Sphinx
+ warnings
+Message-ID: <20180509152026.GA12198@hirez.programming.kicks-ass.net>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+ <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
+ <20180509084120.GF12217@hirez.programming.kicks-ass.net>
+ <20180509084518.247650e2@lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-09_06:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509084518.247650e2@lwn.net>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To fit with latest rtc driver updates, rtc st,syscfg property must contain
-the control register offset of pwrcfg and the mask corresponding to the
-DBP (Disable Backup Protection) bit.
+On Wed, May 09, 2018 at 08:45:18AM -0600, Jonathan Corbet wrote:
+> On Wed, 9 May 2018 10:41:20 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > > This is easily done by using "::" instead of just ":".  
+> > 
+> > And I'll voice my objection once again. This makes a regular comment
+> > worse. This rst stuff is utter shit for making normal text files less
+> > readable in your favourite text editor.
+> > 
+> > If this gets merged, I'll simply remove that spurious ':' the next time
+> > I'm near that comment.
+> 
+> Seriously, Peter?
 
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
----
- arch/arm/boot/dts/stm32f746.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yep... it makes for pointlessly ugly text. And seeing that the only way
+to write code is using text editors, the text editor is the primary
+interface to our code.
 
-diff --git a/arch/arm/boot/dts/stm32f746.dtsi b/arch/arm/boot/dts/stm32f746.dtsi
-index 1479e3e..f48d06a 100644
---- a/arch/arm/boot/dts/stm32f746.dtsi
-+++ b/arch/arm/boot/dts/stm32f746.dtsi
-@@ -297,7 +297,7 @@
- 			interrupt-parent = <&exti>;
- 			interrupts = <17 1>;
- 			interrupt-names = "alarm";
--			st,syscfg = <&pwrcfg>;
-+			st,syscfg = <&pwrcfg 0x00 0x100>;
- 			status = "disabled";
- 		};
- 
--- 
-2.7.4
+The whole rst wankery is detrimental to that interface in order to
+pander to something else.. I don't see the value. I've objected before,
+and I suppose I'll object again.
+
+> It's a simple colon.  It goes along with the /** marker for kerneldoc
+> comments and the @ markers found within them, both of which you seem to
+> have found a way to live with.
+
+Barely, and personally I tend to not bother with kerneldoc much. Most of
+the comments I write lack the extra *, and I note that the other fix to
+this problem it to drop that spurious * here as well.
+
+The @arg thing is okay, it clearly distinguishes arguments/variable
+names from regular text. But "::" is the C++ class member syntax, not
+the start of an English enumeration or the like.
+
+> The RST work was discussed for a year before we even started.  It has
+> brought in the efforts of a large number of developers, all of whom see
+> the value in actually caring about our documentation and making it
+> accessible to a much larger group of readers.  And it has all happened
+> while preserving the primacy of the plain-text documentation.
+
+Clearly I don't agree. It reads like crap. I suspect many of the other
+options, which I suppose there were, were even worse. Doesn't mean rst
+is any good.
+
+> You're not the only consumer of the docs.  You may not appreciate the
+> improvements that have come, but others certainly do.  I do hope that you
+> can find it in youself to avoid vandalizing things for everybody else ...?
+
+Why should I care for people not using text editors to write code?
