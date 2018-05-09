@@ -1,88 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935510AbeEIRBA convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:01:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49783 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934820AbeEIRA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 13:00:58 -0400
-Date: Wed, 9 May 2018 19:00:55 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: i801: mark PM functions as __maybe_unused
-Message-ID: <20180509190055.61ad929b@endymion>
-In-Reply-To: <20180508073852.16840-1-anders.roxell@linaro.org>
-References: <20180508073852.16840-1-anders.roxell@linaro.org>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S965630AbeEIRBp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:01:45 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:37683 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934820AbeEIRBn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 13:01:43 -0400
+X-Google-Smtp-Source: AB8JxZrcKKGEDYQsTF4T9QHTdV0iBrRo6+9jf5XnWTYl6MKkfmcYhLaKGs3YxEW/W81cc7qQL+6vd9FnAolpZPXdrfc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <4baffc55-510e-96d3-3487-5ea09f993a0c@redhat.com>
+References: <20180509004229.36341-1-keescook@chromium.org> <4baffc55-510e-96d3-3487-5ea09f993a0c@redhat.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Wed, 9 May 2018 10:01:41 -0700
+X-Google-Sender-Auth: eHxeIp7CI8-ltxdgKBOlK_0xX4s
+Message-ID: <CAGXu5jKXq7--CYgp8Q+k00RjjGJY+o71RMr51NPuWS1eM0KX1w@mail.gmail.com>
+Subject: Re: [RFC][PATCH 00/13] Provide saturating helpers for allocation
+To: Laura Abbott <labbott@redhat.com>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anders,
+On Wed, May 9, 2018 at 9:08 AM, Laura Abbott <labbott@redhat.com> wrote:
+> On 05/08/2018 05:42 PM, Kees Cook wrote:
+>>
+>> This is a stab at providing three new helpers for allocation size
+>> calculation:
+>>
+>> struct_size(), array_size(), and array3_size().
+>>
+>> These are implemented on top of Rasmus's overflow checking functions,
+>> and the last 8 patches are all treewide conversions of open-coded
+>> multiplications into the various combinations of the helper functions.
+>>
+>> -Kees
+>>
+>>
+> Obvious question (that might indicate this deserves documentation?)
+>
+> What's the difference between
+>
+> kmalloc_array(cnt, sizeof(struct blah), GFP_KERNEL);
+>
+> and
+>
+> kmalloc(array_size(cnt, struct blah), GFP_KERNEL);
+>
+>
+> and when would you use one over the other?
 
-On Tue,  8 May 2018 09:38:52 +0200, Anders Roxell wrote:
-> With CONFIG_PM, we get a harmless build warning:
-> drivers/i2c/busses/i2c-i801.c:1723:12: warning: ‘i801_resume’ defined but not used [-Wunused-function]
->  static int i801_resume(struct device *dev)
->             ^~~~~~~~~~~
-> drivers/i2c/busses/i2c-i801.c:1714:12: warning: ‘i801_suspend’ defined but not used [-Wunused-function]
->  static int i801_suspend(struct device *dev)
->             ^~~~~~~~~~~~
+If I'm understanding the intentions here, the next set of treewide
+changes would be to remove *calloc() and *_array() in favor of using
+the array_size() helper. (i.e. reducing proliferation of allocator
+helpers in favor of using the *_size() helpers.
 
-I have CONFIG_PM=y and I don't get this warning, even with W=1. Which
-gcc version are you using, which exact kernel version are you building,
-and what is the value of all the CONFIG_PM_* options?
+There are, however, some cases that don't map well to
+{struct,array,array3}_size(), specifically cases of additions in
+finding a count. For example, stuff like:
 
-> This marks the affected functions as __maybe_unused.
+kmalloc(sizeof(header) + sizeof(trailing_array) * (count + SOMETHING), gfp...)
 
-I'm not a big fan of __maybe_unused, at least not in this specific
-situation. We should be able to know exactly when these functions are
-needed, and only include them when this is the case. Building unused
-code just to discard it later (hopefully?) is a waste of CPU time.
+This gets currently mapped to:
 
-> 
-> Fixes: a9c8088c7988 ("i2c: i801: Don't restore config registers on runtime PM")
+kmalloc(struct_size(header, trailing_array, (count + SOMETHING), gfp...)
 
-If SIMPLE_DEV_PM_OPS causes it but UNIVERSAL_DEV_PM_OPS did not, I
-suppose that what matters is CONFIG_PM_SLEEP.
+But we run the risk in some cases of having even the addition
+overflow. I think we need to have a "saturating add" too. Something
+like:
 
-So maybe we can just replace "#ifdef CONFIG_PM" with "ifdef
-CONFIG_PM_SLEEP" in the code below?
+kmalloc(struct_size(header, trailing_array, sat_add(count, SOMETHING), gfp...)
 
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  drivers/i2c/busses/i2c-i801.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
-> index ed07f9002710..ff18c6ed2bec 100644
-> --- a/drivers/i2c/busses/i2c-i801.c
-> +++ b/drivers/i2c/busses/i2c-i801.c
-> @@ -1711,7 +1711,7 @@ static void i801_shutdown(struct pci_dev *dev)
->  }
->  
->  #ifdef CONFIG_PM
-> -static int i801_suspend(struct device *dev)
-> +static int __maybe_unused i801_suspend(struct device *dev)
->  {
->  	struct pci_dev *pci_dev = to_pci_dev(dev);
->  	struct i801_priv *priv = pci_get_drvdata(pci_dev);
-> @@ -1720,7 +1720,7 @@ static int i801_suspend(struct device *dev)
->  	return 0;
->  }
->  
-> -static int i801_resume(struct device *dev)
-> +static int __maybe_unused i801_resume(struct device *dev)
->  {
->  	struct pci_dev *pci_dev = to_pci_dev(dev);
->  	struct i801_priv *priv = pci_get_drvdata(pci_dev);
+It's a bit ugly, but it would cover nearly all the remaining cases...
 
+-Kees
 
 -- 
-Jean Delvare
-SUSE L3 Support
+Kees Cook
+Pixel Security
