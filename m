@@ -1,84 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965866AbeEIRWw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:22:52 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:34633 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935153AbeEIRWu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 13:22:50 -0400
-X-Google-Smtp-Source: AB8JxZpTLWDEv0ZAq5tFXx/C0PJllP8vScrOFdMEE+cDliYIvLKhWsNKbrXPY9qqK49881uq5XpYQg==
-Reply-To: minyard@acm.org
-Subject: Re: [PATCH 0/6] treewide: Add and use dev_fmt similar to pr_fmt
-To: Joe Perches <joe@perches.com>,
-        openipmi-developer@lists.sourceforge.net, linux-rdma@vger.kernel.org
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <cover.1525878372.git.joe@perches.com>
- <4a397208-bd6c-a6c3-c161-4de8579ca17e@gmail.com>
- <ee5a0e0065047cd4d1da340f6ee924f3a31b0fac.camel@perches.com>
-From: Corey Minyard <minyard@acm.org>
-Message-ID: <b6809bcb-f86a-df50-5a79-ad0b86d12f05@acm.org>
-Date: Wed, 9 May 2018 12:22:46 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S965770AbeEIR0l (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:26:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57614 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935202AbeEIR0i (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 13:26:38 -0400
+Date: Wed, 9 May 2018 14:24:29 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jin Yao <yao.jin@linux.intel.com>
+Cc: jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH] perf annotate: Display multiple events for --stdio
+Message-ID: <20180509172429.GL13491@kernel.org>
+References: <1525881435-4092-1-git-send-email-yao.jin@linux.intel.com>
+ <20180509164251.GH13491@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ee5a0e0065047cd4d1da340f6ee924f3a31b0fac.camel@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509164251.GH13491@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/09/2018 12:04 PM, Joe Perches wrote:
-> On Wed, 2018-05-09 at 11:47 -0500, Corey Minyard wrote:
->> On 05/09/2018 10:15 AM, Joe Perches wrote:
->>> The pr_fmt mechanism exists for pr_<level> logging message prefixing,
->>> but no similar capability exists for dev_<level> message prefixing.
->>>
->>> Many uses of dev_<level> have an embedded prefix for logging output.
->>>
->>> So add a similar dev_fmt macro that can automatically prefix the
->>> dev_<level> logging output.
->>>
->>> Rename the existing dev_<level> functions to _dev_<level> and add new
->>> macros that call _dev_<level> with the desired prefix if defined.
->>>
->>> The new default #define for dev_fmt is blank.
->>>
->>> Convert ipmi and infiniband to use this mechanism.
->> The IPMI changes look good to me.
-> Oh good.
->
->> There are some conflicts with a patch I have pulling out the proc
->> interface that is destined for 3.18.
-> I'm sure you mean 4.18.
+Em Wed, May 09, 2018 at 01:42:51PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Wed, May 09, 2018 at 11:57:15PM +0800, Jin Yao escreveu:
+> > When we perform following command lines:
+> > 
+> > perf record -e "{cycles,branches}" ./div
+> > perf annotate main --stdio
+> > 
+> > Only shows one event "cycles" and the displaying format is not correct.
+> > 
+> >  Percent         |      Source code & Disassembly of div for cycles (44550 samples)
+> > -----------------------------------------------------------------------------------
+> 
+> Please indent command output (two spaces before all lines) to avoid
+> scripts breaking due to mistaking lines starting with --- as the end of
+> the patch.
+> 
+> Applying.
 
-Oops, yes :).  I was just looking at a 3.x kernel and it stuck in my brain.
+Also you forgot to add this:
 
->> I can take the IPMI changes into my tree, if you want.
-> These patches are not at all urgent and were done
-> on top of next-20180509.
->
-> As there are dependencies between the patch that
-> introduces dev_fmt and the reset of the patches,
-> I think it makes sense to take these as a single
-> patchset rather than take parts into various trees.
+Cc: Jiri Olsa <jolsa@kernel.org>
+Fixes: f681d593d1ce ("perf annotate: Remove disasm__calc_percent() from disasm_line__print()")
 
-The dependency isn't hard, the changes work without dev_fmt,
-it just won't print the prefix.  But I'm fine with you keeping
-them.
+Which I've just added, to help with stable@ processing.
 
->
-> Respinning the IPMI patches is trivial and can be
-> done whenever appropriate.
->
-> When do you expect your IPMI patches to hit -next?
->
-I went ahead and pulled it in now, it's been tested well enough
-in my tree.
-
-For patches 3, 4, and 5:
-
-Acked-by: Corey Minyard <cminyard@mvista.com>
+- Arnaldo
