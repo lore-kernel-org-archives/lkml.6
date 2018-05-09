@@ -1,53 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964832AbeEIPLZ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:11:25 -0400
-Received: from mail.ispras.ru ([83.149.199.45]:35766 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935065AbeEIPLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:11:24 -0400
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
-To: Joachim Eastwood <manabian@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Richard Weinberger <richard@nod.at>,
-        linux-arm-kernel@lists.infradead.org, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org,
-        Julia Lawall <julia.lawall@lip6.fr>, sil2review@lists.osadl.org
-Subject: [PATCH v3] mtd: nxp-spifi: release flash_np in nxp_spifi_probe()
-Date: Wed,  9 May 2018 18:11:20 +0300
-Message-Id: <1525878680-22005-1-git-send-email-khoroshilov@ispras.ru>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <20180509170310.65d19c49@bbrezillon>
+        id S964872AbeEIPMQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:12:16 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47091 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964821AbeEIPMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 11:12:13 -0400
+From: John Garry <john.garry@huawei.com>
+To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, Xiang Chen <chenxiang66@hisilicon.com>,
+        "John Garry" <john.garry@huawei.com>
+Subject: [PATCH 3/6] scsi: hisi_sas: allocate slot buffer earlier
+Date: Wed, 9 May 2018 23:10:47 +0800
+Message-ID: <1525878650-213087-4-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1525878650-213087-1-git-send-email-john.garry@huawei.com>
+References: <1525878650-213087-1-git-send-email-john.garry@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-nxp_spifi_probe() increments refcnt of SPI flash device node by
-of_get_next_available_child() and leaves it undecremented on both
-successful and error paths.
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Currently we allocate the slot's memory buffer
+after allocating the DQ slot.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+To aid DQ lockout reduction, and allow slots to be
+built in parallel, move this step (which can fail)
+prior to allocating the slot.
+
+Also a stray spin_unlock_irqrestore() is removed
+from internal task exec function.
+
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
 ---
-v3: Move of_node_put() before return value check as Boris Brezillon suggested.
+ drivers/scsi/hisi_sas/hisi_sas_main.c | 55 ++++++++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 24 deletions(-)
 
- drivers/mtd/spi-nor/nxp-spifi.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mtd/spi-nor/nxp-spifi.c b/drivers/mtd/spi-nor/nxp-spifi.c
-index 15374216d4d9..0c9094ec5966 100644
---- a/drivers/mtd/spi-nor/nxp-spifi.c
-+++ b/drivers/mtd/spi-nor/nxp-spifi.c
-@@ -436,6 +436,7 @@ static int nxp_spifi_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index 2772e920..58cbe1f 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -412,14 +412,22 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
+ 	if (rc)
+ 		goto err_out_dma_unmap;
  
- 	ret = nxp_spifi_setup_flash(spifi, flash_np);
-+	of_node_put(flash_np);
- 	if (ret) {
- 		dev_err(&pdev->dev, "unable to setup flash chip\n");
- 		goto dis_clks;
++	slot = &hisi_hba->slot_info[slot_idx];
++	memset(slot, 0, sizeof(struct hisi_sas_slot));
++
++	slot->buf = dma_pool_alloc(hisi_hba->buffer_pool,
++				   GFP_ATOMIC, &slot->buf_dma);
++	if (!slot->buf) {
++		rc = -ENOMEM;
++		goto err_out_tag;
++	}
++
+ 	rc = hisi_hba->hw->get_free_slot(hisi_hba, dq);
+ 	if (rc)
+-		goto err_out_tag;
++		goto err_out_buf;
+ 
+ 	dlvry_queue = dq->id;
+ 	dlvry_queue_slot = dq->wr_point;
+-	slot = &hisi_hba->slot_info[slot_idx];
+-	memset(slot, 0, sizeof(struct hisi_sas_slot));
+ 
+ 	slot->idx = slot_idx;
+ 	slot->n_elem = n_elem;
+@@ -434,12 +442,6 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
+ 	task->lldd_task = slot;
+ 	INIT_WORK(&slot->abort_slot, hisi_sas_slot_abort);
+ 
+-	slot->buf = dma_pool_alloc(hisi_hba->buffer_pool,
+-				   GFP_ATOMIC, &slot->buf_dma);
+-	if (!slot->buf) {
+-		rc = -ENOMEM;
+-		goto err_out_slot_buf;
+-	}
+ 	memset(slot->cmd_hdr, 0, sizeof(struct hisi_sas_cmd_hdr));
+ 	memset(hisi_sas_cmd_hdr_addr_mem(slot), 0, HISI_SAS_COMMAND_TABLE_SZ);
+ 	memset(hisi_sas_status_buf_addr_mem(slot), 0, HISI_SAS_STATUS_BUF_SZ);
+@@ -474,8 +476,9 @@ static int hisi_sas_task_prep(struct sas_task *task, struct hisi_sas_dq
+ 
+ 	return 0;
+ 
+-err_out_slot_buf:
+-	/* Nothing to be done */
++err_out_buf:
++	dma_pool_free(hisi_hba->buffer_pool, slot->buf,
++		      slot->buf_dma);
+ err_out_tag:
+ 	spin_lock_irqsave(&hisi_hba->lock, flags);
+ 	hisi_sas_slot_index_free(hisi_hba, slot_idx);
+@@ -1519,17 +1522,26 @@ static int hisi_sas_query_task(struct sas_task *task)
+ 	}
+ 	spin_unlock_irqrestore(&hisi_hba->lock, flags);
+ 
++	slot = &hisi_hba->slot_info[slot_idx];
++	memset(slot, 0, sizeof(struct hisi_sas_slot));
++
++	slot->buf = dma_pool_alloc(hisi_hba->buffer_pool,
++			GFP_ATOMIC, &slot->buf_dma);
++	if (!slot->buf) {
++		rc = -ENOMEM;
++		goto err_out_tag;
++	}
+ 	spin_lock_irqsave(&dq->lock, flags_dq);
+ 	rc = hisi_hba->hw->get_free_slot(hisi_hba, dq);
+-	if (rc)
+-		goto err_out_tag;
++	if (rc) {
++		rc = -ENOMEM;
++		spin_unlock_irqrestore(&dq->lock, flags_dq);
++		goto err_out_buf;
++	}
+ 
+ 	dlvry_queue = dq->id;
+ 	dlvry_queue_slot = dq->wr_point;
+ 
+-	slot = &hisi_hba->slot_info[slot_idx];
+-	memset(slot, 0, sizeof(struct hisi_sas_slot));
+-
+ 	slot->idx = slot_idx;
+ 	slot->n_elem = n_elem;
+ 	slot->dlvry_queue = dlvry_queue;
+@@ -1541,13 +1553,6 @@ static int hisi_sas_query_task(struct sas_task *task)
+ 	slot->is_internal = true;
+ 	task->lldd_task = slot;
+ 
+-	slot->buf = dma_pool_alloc(hisi_hba->buffer_pool,
+-			GFP_ATOMIC, &slot->buf_dma);
+-	if (!slot->buf) {
+-		rc = -ENOMEM;
+-		goto err_out_tag;
+-	}
+-
+ 	memset(slot->cmd_hdr, 0, sizeof(struct hisi_sas_cmd_hdr));
+ 	memset(hisi_sas_cmd_hdr_addr_mem(slot), 0, HISI_SAS_COMMAND_TABLE_SZ);
+ 	memset(hisi_sas_status_buf_addr_mem(slot), 0, HISI_SAS_STATUS_BUF_SZ);
+@@ -1570,11 +1575,13 @@ static int hisi_sas_query_task(struct sas_task *task)
+ 
+ 	return 0;
+ 
++err_out_buf:
++	dma_pool_free(hisi_hba->buffer_pool, slot->buf,
++		      slot->buf_dma);
+ err_out_tag:
+ 	spin_lock_irqsave(&hisi_hba->lock, flags);
+ 	hisi_sas_slot_index_free(hisi_hba, slot_idx);
+ 	spin_unlock_irqrestore(&hisi_hba->lock, flags);
+-	spin_unlock_irqrestore(&dq->lock, flags_dq);
+ err_out:
+ 	dev_err(dev, "internal abort task prep: failed[%d]!\n", rc);
+ 
 -- 
-2.7.4
+1.9.1
