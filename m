@@ -1,50 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934418AbeEIJsp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:48:45 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52472 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934366AbeEIJsk (ORCPT
+        id S934363AbeEIJsj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:48:39 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42978 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933715AbeEIJsh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:48:40 -0400
-From: Colin King <colin.king@canonical.com>
-To: Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>, Latchesar Ionkov <lucho@ionkov.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net/9p: fix spelling mistake: "suspsend" -> "suspend"
-Date: Wed,  9 May 2018 10:48:33 +0100
-Message-Id: <20180509094833.15871-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Wed, 9 May 2018 05:48:37 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, John Hsu <KCHSU0@nuvoton.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: nau8824: fix spelling mistake: "semaphone" -> "semaphore"" to the asoc tree
+In-Reply-To: <20180508224155.26486-1-colin.king@canonical.com>
+Message-Id: <20180509094740.74B1044007A@finisterre.ee.mobilebroadband>
+Date: Wed,  9 May 2018 10:47:40 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+The patch
 
-Trivial fix to spelling mistake in dev_warn message text
+   ASoC: nau8824: fix spelling mistake: "semaphone" -> "semaphore"
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 2ce7eb258999e5c510a1f828123e61df2ece2dd7 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Tue, 8 May 2018 23:41:55 +0100
+Subject: [PATCH] ASoC: nau8824: fix spelling mistake: "semaphone" ->
+ "semaphore"
+
+Trivial fix to spelling mistake in dev_warn messages
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- net/9p/trans_xen.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/nau8824.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/9p/trans_xen.c b/net/9p/trans_xen.c
-index 086a4abdfa7c..0f19960390a6 100644
---- a/net/9p/trans_xen.c
-+++ b/net/9p/trans_xen.c
-@@ -485,7 +485,7 @@ static int xen_9pfs_front_probe(struct xenbus_device *dev,
+diff --git a/sound/soc/codecs/nau8824.c b/sound/soc/codecs/nau8824.c
+index 76502c090654..6bd14453f06e 100644
+--- a/sound/soc/codecs/nau8824.c
++++ b/sound/soc/codecs/nau8824.c
+@@ -205,11 +205,11 @@ static int nau8824_sema_acquire(struct nau8824 *nau8824, long timeout)
+ 	if (timeout) {
+ 		ret = down_timeout(&nau8824->jd_sem, timeout);
+ 		if (ret < 0)
+-			dev_warn(nau8824->dev, "Acquire semaphone timeout\n");
++			dev_warn(nau8824->dev, "Acquire semaphore timeout\n");
+ 	} else {
+ 		ret = down_interruptible(&nau8824->jd_sem);
+ 		if (ret < 0)
+-			dev_warn(nau8824->dev, "Acquire semaphone fail\n");
++			dev_warn(nau8824->dev, "Acquire semaphore fail\n");
+ 	}
  
- static int xen_9pfs_front_resume(struct xenbus_device *dev)
- {
--	dev_warn(&dev->dev, "suspsend/resume unsupported\n");
-+	dev_warn(&dev->dev, "suspend/resume unsupported\n");
- 	return 0;
- }
- 
+ 	return ret;
 -- 
 2.17.0
