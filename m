@@ -1,103 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934851AbeEIMz3 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:55:29 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:32955 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934328AbeEIMz2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:55:28 -0400
-Subject: Re: Regression caused by commit 882164a4a928
-To: Larry Finger <Larry.Finger@lwfinger.net>,
-        =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-CC: Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
-From: Matt Redfearn <matt.redfearn@mips.com>
-Message-ID: <372d149c-c34c-56a0-4e1a-5ab2c1e16e73@mips.com>
-Date: Wed, 9 May 2018 13:55:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S934864AbeEIM4O (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:56:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56245 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934328AbeEIM4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 08:56:12 -0400
+Date: Wed, 9 May 2018 14:56:11 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Ganapatrao Kulkarni <gklkml16@gmail.com>
+Cc: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Tony Luck <tony.luck@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, tiantao6@huawei.com,
+        LKML <linux-kernel@vger.kernel.org>, linux-acpi@vger.kernel.org
+Subject: Re: fd3e45436660 ("ACPI / NUMA: ia64: Parse all entries of SRAT
+ memory affinity table")
+Message-ID: <20180509125611.GT32366@dhcp22.suse.cz>
+References: <20180411104832.GF23400@dhcp22.suse.cz>
+ <20180509122454.GR32366@dhcp22.suse.cz>
+ <CAKTKpr5uPuZUHBnQtDwpGA_d=WTx_5O2SF_+WStO6OMVNe77QQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [192.168.155.41]
-X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
- mipsdag02.mipstec.com (10.20.40.47)
-X-BESS-ID: 1525870519-382908-25996-421923-1
-X-BESS-VER: 2018.5-r1804261738
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192847
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKTKpr5uPuZUHBnQtDwpGA_d=WTx_5O2SF_+WStO6OMVNe77QQ@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Larry
-
-On 07/05/18 16:44, Larry Finger wrote:
-> Matt,
+On Wed 09-05-18 18:07:16, Ganapatrao Kulkarni wrote:
+> Hi Michal
 > 
-> Although commit 882164a4a928 ("ssb: Prevent build of PCI host features 
-> in module") appeared to be harmless, it leads to complete failure of 
-> drivers b43. and b43legacy, and likely affects b44 as well. The problem 
-> is that CONFIG_SSB_PCIHOST is undefined, which prevents the compilation 
-> of the code that controls the PCI cores of the device. See 
-> https://bugzilla.redhat.com/show_bug.cgi?id=1572349 for details.
-
-Sorry for the breakage :-/
-
 > 
-> As the underlying errors ("pcibios_enable_device" undefined, and 
-> "register_pci_controller" undefined) do not appear on the architectures 
-> that I have tested (x86_64, x86, and ppc), I suspect something in the 
-> arch-specific code for your setup (MIPS?). As I have no idea on how to 
-> fix that problem, would the following patch work for you?
+> On Wed, May 9, 2018 at 5:54 PM, Michal Hocko <mhocko@kernel.org> wrote:
+> > On Wed 11-04-18 12:48:32, Michal Hocko wrote:
+> >> Hi,
+> >> my attention was brought to the %subj commit and either I am missing
+> >> something or the patch is quite dubious. What is it actually trying to
+> >> fix? If a BIOS/FW provides more memblocks than the limit then we would
+> >> get misleading numa topology (numactl -H output) but is the situation
+> >> much better with it applied? Numa init code will refuse to init more
+> >> memblocks than the limit and falls back to dummy_numa_init (AFAICS)
+> >> which will break the topology again and numactl -H will have a
+> >> misleading output anyway.
 > 
-> diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
-> index 9371651d8017..3743533c8057 100644
-> --- a/drivers/ssb/Kconfig
-> +++ b/drivers/ssb/Kconfig
-> @@ -117,7 +117,7 @@ config SSB_SERIAL
-> 
->   config SSB_DRIVER_PCICORE_POSSIBLE
->          bool
-> -       depends on SSB_PCIHOST && SSB = y
-> +       depends on SSB_PCIHOST && (SSB = y || !MIPS)
->          default y
-> 
->   config SSB_DRIVER_PCICORE
+> IIRC, the MEMBLOCK beyond max limit getting dropped from visible
+> memory(partial drop from a node).
+> this patch removed any upper limit on memblocks and allowed to parse
+> all entries of SRAT.
 
-I believe that the problem stems from these drivers being used for some 
-wireless AP functionality built into some MIPS based SoCs. The Kconfig 
-rules sort out building this additional functionality when configured 
-for MIPS (in a round about sort of way), but it allowed it even when SSB 
-is a module, leading to build failures. My patch was intended to prevent 
-that.
+Yeah I've understood that much. My question is, however, why do we care
+about parsing the NUMA topology when we fallback into a single NUMA node
+anyway? Or do I misunderstand the code? I do not have any platform with
+that many memblocks.
 
-There was a similar issue in the same Kconfig file, introduced by 
-c5611df96804 and fixed by a9e6d44ddecc. It was fixed the same way as you 
-suggest. I've tested the above patch and it does work for MIPS 
-(preventing the PCICORE being built into the module).
-
-Tested-by: Matt Redfearn <matt.redfearn@mips.com>
-
-Thanks & sorry again for the breakage,
-Matt
-
-
-
-> 
-> Thanks,
-> 
-> Larry
+-- 
+Michal Hocko
+SUSE Labs
