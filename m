@@ -1,68 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934437AbeEIImb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:42:31 -0400
-Received: from outbound-smtp27.blacknight.com ([81.17.249.195]:38122 "EHLO
-        outbound-smtp27.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934264AbeEIIlv (ORCPT
+        id S934343AbeEIIm3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:42:29 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:44588 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934371AbeEIIlv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 9 May 2018 04:41:51 -0400
-Date: Wed, 9 May 2018 09:41:48 +0100
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: torvalds@linux-foundation.org, tglx@linutronix.de, mingo@kernel.org,
-        hpa@zytor.com, efault@gmx.de, linux-kernel@vger.kernel.org,
-        matt@codeblueprint.co.uk, peterz@infradead.org, ggherdovich@suse.cz,
-        linux-tip-commits@vger.kernel.org, mpe@ellerman.id.au
-Subject: Re: [tip:sched/core] sched/numa: Delay retrying placement for
- automatic NUMA balance after wake_affine()
-Message-ID: <20180509084148.qzpsetz74pkg7g33@techsingularity.net>
-References: <20180213133730.24064-7-mgorman@techsingularity.net>
- <tip-7347fc87dfe6b7315e74310ee1243dc222c68086@git.kernel.org>
- <20180507110607.GA3828@linux.vnet.ibm.com>
+X-Google-Smtp-Source: AB8JxZo937nZPLwwhG5JbgSjPw8R9RwbPgA2wJPIlaMPfNnKF5/Rgt7mB2sKzUbgiIponmHhTnPDaA==
+Date: Wed, 9 May 2018 10:41:47 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [RFC PATCH] sched/cpufreq/schedutil: handling urgent frequency
+ requests
+Message-ID: <20180509084147.GC1681@localhost.localdomain>
+References: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
+ <20180508065435.bcht6dyb3rpp6gk5@vireshk-i7>
+ <20180509045425.GA158882@joelaf.mtv.corp.google.com>
+ <20180509064530.GA1681@localhost.localdomain>
+ <20180509065449.c5zotxqmuyatjgfd@vireshk-i7>
+ <20180509070113.GB52784@joelaf.mtv.corp.google.com>
+ <CAJZ5v0hNgvd=0dKstXRsbHhtrc6m+ugS5kjPOq2B8k55ioX0MA@mail.gmail.com>
+ <20180509082350.GB1681@localhost.localdomain>
+ <CAJZ5v0hkeCOybZo4LPpwiE0PG8msCWQkgiHJbpi-6zJHtOQbfg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180507110607.GA3828@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <CAJZ5v0hkeCOybZo4LPpwiE0PG8msCWQkgiHJbpi-6zJHtOQbfg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 04:06:07AM -0700, Srikar Dronamraju wrote:
-> > @@ -1876,7 +1877,18 @@ static void numa_migrate_preferred(struct task_struct *p)
+On 09/05/18 10:25, Rafael J. Wysocki wrote:
+> On Wed, May 9, 2018 at 10:23 AM, Juri Lelli <juri.lelli@redhat.com> wrote:
+> > On 09/05/18 10:05, Rafael J. Wysocki wrote:
+> >> On Wed, May 9, 2018 at 9:01 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> >> > On Wed, May 09, 2018 at 12:24:49PM +0530, Viresh Kumar wrote:
+> >> >> On 09-05-18, 08:45, Juri Lelli wrote:
+> >> >> > On 08/05/18 21:54, Joel Fernandes wrote:
+> >> >> > Isn't this potentially introducing unneeded irq pressure (and doing the
+> >> >> > whole wakeup the kthread thing), while the already active kthread could
+> >> >> > simply handle multiple back-to-back requests before going to sleep?
+> >> >>
+> >> >> And then we may need more instances of the work item and need to store
+> >> >> a different value of next_freq with each work item, as we can't use
+> >> >> the common one anymore as there would be races around accessing it ?
+> >> >
+> >> > Exactly. I think it also doesn't make sense to over write an already
+> >> > committed request either so better to store them separate (?). After the
+> >> > "commit", that previous request is done..
+> >>
+> >> Why is it?
+> >>
+> >> In the non-fast-switch case the "commit" only means queuing up an
+> >> irq_work.  Which BTW is one of the reasons for having work_in_progress
+> >> even if your kthread can handle multiple work items in one go.
+> >>
+> >> You may try to clear work_in_progress in sugov_irq_work() instead of
+> >> in sugov_work(), though.
+> >>
+> >> BTW, I'm not sure if the comment in sugov_irq_work() still applies.  Juri?
 > >
-> >  	/* Periodically retry migrating the task to the preferred node */
-> >  	interval = min(interval, msecs_to_jiffies(p->numa_scan_period) / 16);
-> > -	p->numa_migrate_retry = jiffies + interval;
-> > +	numa_migrate_retry = jiffies + interval;
-> > +
-> > +	/*
-> > +	 * Check that the new retry threshold is after the current one. If
-> > +	 * the retry is in the future, it implies that wake_affine has
-> > +	 * temporarily asked NUMA balancing to backoff from placement.
-> > +	 */
-> > +	if (numa_migrate_retry > p->numa_migrate_retry)
-> > +		return;
+> > It doesn't anymore. sugov kthreads are now being "ignored". Should have
+> > remove it with the DL set of changes, sorry about that.
 > 
-> The above check looks wrong. This check will most likely to be true,
-> numa_migrate_preferred() itself is called either when jiffies >
-> p->numa_migrate_retry or if the task's numa_preferred_nid has changed.
-> 
+> No worries, you can still do that. ;-)
 
-Sorry for the delay getting back -- viral infections combined with a public
-day off is slowing me.
-
-You're right, without affine wakeups with a wakeup-intensive workload
-the path may never be hit and with the current code, it effectively acts
-as a broken throttling mechanism. However, I've confirmed that "fixing"
-it has mixed results with many regressions on x86 for both 2 and 4 socket
-boxes. I need time to think about it and see if this can be fixed without
-introducing another regression. I'll also check if a plain revert is the
-way to go for a short-term fix and then revisit it.
-
-Thanks Srikar.
-
--- 
-Mel Gorman
-SUSE Labs
+Indeed! Done. :)
