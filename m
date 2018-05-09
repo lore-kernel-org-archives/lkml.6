@@ -1,93 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934902AbeEIMJp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:09:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40888 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934641AbeEIMJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:09:41 -0400
-Date: Wed, 9 May 2018 08:09:17 -0400
-From: Richard Guy Briggs <rgb@redhat.com>
-To: "Tobin C. Harding" <tobin@apporbit.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>,
-        Paul Moore <paul@paul-moore.com>, Steve Grubb <sgrubb@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH ghak81 RFC V1 4/5] audit: use inline function to set
- audit context
-Message-ID: <20180509120917.xz3ggtloq523wqzh@madcap2.tricolour.ca>
-References: <cover.1525466167.git.rgb@redhat.com>
- <2f0566af8ccafdaf400a3d002cb4aef9b80e44cf.1525466167.git.rgb@redhat.com>
- <20180509020700.GE7517@eros>
+        id S934937AbeEIMKt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:10:49 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47302 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932318AbeEIMKr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 08:10:47 -0400
+Date: Wed, 9 May 2018 09:10:34 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH 16/18] mtd: rawnand.h: use nested union kernel-doc
+ markups
+Message-ID: <20180509091034.58dadd12@vento.lan>
+In-Reply-To: <20180507083232.5a084ba7@vento.lan>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+        <39d8d4f0e0ff5a06be0303f7f4f2eac5fb45b9ca.1525684985.git.mchehab+samsung@kernel.org>
+        <20180507114650.171edcc2@bbrezillon>
+        <20180507083232.5a084ba7@vento.lan>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509020700.GE7517@eros>
-User-Agent: NeoMutt/20171027
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-09 12:07, Tobin C. Harding wrote:
-> On Fri, May 04, 2018 at 04:54:37PM -0400, Richard Guy Briggs wrote:
-> > Recognizing that the audit context is an internal audit value, use an
-> > access function to set the audit context pointer for the task
-> > rather than reaching directly into the task struct to set it.
-> > 
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  include/linux/audit.h | 8 ++++++++
-> >  kernel/auditsc.c      | 6 +++---
-> >  kernel/fork.c         | 2 +-
-> >  3 files changed, 12 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > index 93e4c61..dba0d45 100644
-> > --- a/include/linux/audit.h
-> > +++ b/include/linux/audit.h
-> > @@ -235,6 +235,10 @@ extern void __audit_inode_child(struct inode *parent,
-> >  extern void __audit_seccomp(unsigned long syscall, long signr, int code);
-> >  extern void __audit_ptrace(struct task_struct *t);
-> >  
-> > +static inline void audit_set_context(struct task_struct *task, struct audit_context *ctx)
-> > +{
-> > +	task->audit_context = ctx;
-> > +}
-> >  static inline struct audit_context *audit_context(struct task_struct *task)
-> >  {
-> >  	return task->audit_context;
-> > @@ -472,6 +476,10 @@ static inline bool audit_dummy_context(void)
-> >  {
-> >  	return true;
-> >  }
-> > +static inline void audit_set_context(struct task_struct *task, struct audit_context *ctx)
-> > +{
-> > +	task->audit_context = ctx;
-> > +}
+Hi Boris,
+
+Em Mon, 7 May 2018 08:32:32 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> escreveu:
+
+> Hi Boris,
 > 
-> If audit_context is an internal audit value why do we set it when
-> CONFIG_AUDITSYSCALL is not set?
+> Em Mon, 7 May 2018 11:46:50 +0200
+> Boris Brezillon <boris.brezillon@bootlin.com> escreveu:
 
-Agreed, that is unnecessary, but harmless since it won't be called, or
-will be called with a value of NULL.  That has been fixed in my dynamic
-allocation patchset since not even the audit_task_info struct is
-available to assign the value.  It is now an empty function like the
-rest.
+> > Is there a simple
+> > way we can get rid of the warning we have when not describing timings
+> > but all of its fields?  
+> 
+> There's no direct way. It won't be hard to add a way to do it,
+> like applying the enclosed patch with ends by declaring timings as:
+> 
+> 	* @timings:	 -- undescribed --
+> 
+> IMHO, this is uglier.
 
-> Tobin.
+Didn't hear from you. What do you prefer for me to do with regards to
+this patch? 
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Thanks,
+Mauro
