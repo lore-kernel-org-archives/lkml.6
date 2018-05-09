@@ -1,213 +1,437 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756469AbeEIOID (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 10:08:03 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:33907 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756338AbeEIOIB (ORCPT
+        id S1756550AbeEIOJP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 10:09:15 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:62044 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756465AbeEIOJO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 10:08:01 -0400
-X-Google-Smtp-Source: AB8JxZqh+ap+4nIdKAhNcNXNEGpCG8E8mIrhGFu1lzeKUxChV29IhOSEQT3iB2FscUimepFHJh5EYw==
-From: Nick Simonov <nicksimonovv@gmail.com>
-To: dmitry.torokhov@gmail.com
-Cc: rydberg@bitmath.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nick Simonov <nicksimonovv@gmail.com>
-Subject: [PATCH] input: fix coding style issues in input.c
-Date: Wed,  9 May 2018 17:07:14 +0300
-Message-Id: <1525874834-20432-1-git-send-email-nicksimonovv@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 9 May 2018 10:09:14 -0400
+From: Dan Murphy <dmurphy@ti.com>
+To: <andrew@lunn.ch>, <f.fainelli@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v2] net: phy: DP83TC811: Introduce support for the DP83TC811 phy
+Date: Wed, 9 May 2018 09:09:02 -0500
+Message-ID: <20180509140902.16636-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.12.2
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a patch to the input.c file that fixes
-up warning found by checkpatch.pl tool
+Add support for the DP83811 phy.
 
-Signed-off-by: Nick Simonov <nicksimonovv@gmail.com>
+The DP83811 supports both rgmii and sgmii interfaces.
+There are 2 part numbers for this the DP83TC811R does not
+reliably support the SGMII interface but the DP83TC811S will.
+
+There is not a way to differentiate these parts from the
+hardware or register set.  So this is controlled via the DT
+to indicate which phy mode is required.  Or the part can be
+strapped to a certain interface.
+
+Data sheet can be found here:
+http://www.ti.com/product/DP83TC811S-Q1/description
+http://www.ti.com/product/DP83TC811R-Q1/description
+
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
 ---
- drivers/input/input.c | 52 ++++++++++++++++++++++++++++++++-------------------
- 1 file changed, 33 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 9785546..e18fdae 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * The input core
-  *
-@@ -252,7 +253,8 @@ static int input_handle_abs_event(struct input_dev *dev,
- 	}
+v2 - Remove extra config_init in reset, update config_init call back function
+fix a checkpatch alignment issue, add SGMII check in autoneg api - https://patchwork.kernel.org/patch/10389323/
+
+ drivers/net/phy/Kconfig     |   5 +
+ drivers/net/phy/Makefile    |   1 +
+ drivers/net/phy/dp83tc811.c | 350 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 356 insertions(+)
+ create mode 100644 drivers/net/phy/dp83tc811.c
+
+diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
+index bdfbabb86ee0..810140a9e114 100644
+--- a/drivers/net/phy/Kconfig
++++ b/drivers/net/phy/Kconfig
+@@ -285,6 +285,11 @@ config DP83822_PHY
+ 	---help---
+ 	  Supports the DP83822 PHY.
  
- 	/* Flush pending "slot" event */
--	if (is_mt_event && mt && mt->slot != input_abs_get_val(dev, ABS_MT_SLOT)) {
-+	if (is_mt_event && mt && mt->slot !=
-+		input_abs_get_val(dev, ABS_MT_SLOT)) {
- 		input_abs_set_val(dev, ABS_MT_SLOT, mt->slot);
- 		return INPUT_PASS_TO_HANDLERS | INPUT_SLOT;
- 	}
-@@ -969,7 +971,8 @@ bool input_match_device_id(const struct input_dev *dev,
- }
- EXPORT_SYMBOL(input_match_device_id);
- 
--static const struct input_device_id *input_match_device(struct input_handler *handler,
-+static
-+const struct input_device_id *input_match_device(struct input_handler *handler,
- 							struct input_dev *dev)
- {
- 	const struct input_device_id *id;
-@@ -984,7 +987,8 @@ static const struct input_device_id *input_match_device(struct input_handler *ha
- 	return NULL;
- }
- 
--static int input_attach_handler(struct input_dev *dev, struct input_handler *handler)
-+static
-+int input_attach_handler(struct input_dev *dev, struct input_handler *handler)
- {
- 	const struct input_device_id *id;
- 	int error;
-@@ -1010,6 +1014,7 @@ static int input_bits_to_string(char *buf, int buf_size,
- 
- 	if (in_compat_syscall()) {
- 		u32 dword = bits >> 32;
++config DP83TC811_PHY
++	tristate "Texas Instruments DP83TC822 PHY"
++	---help---
++	  Supports the DP83TC822 PHY.
 +
- 		if (dword || !skip_empty)
- 			len += snprintf(buf, buf_size, "%x ", dword);
- 
-@@ -1132,7 +1137,10 @@ static int input_devices_seq_show(struct seq_file *seq, void *v)
- 	struct input_handle *handle;
- 
- 	seq_printf(seq, "I: Bus=%04x Vendor=%04x Product=%04x Version=%04x\n",
--		   dev->id.bustype, dev->id.vendor, dev->id.product, dev->id.version);
-+		   dev->id.bustype,
-+		   dev->id.vendor,
-+		   dev->id.product,
-+		   dev->id.version);
- 
- 	seq_printf(seq, "N: Name=\"%s\"\n", dev->name ? dev->name : "");
- 	seq_printf(seq, "P: Phys=%s\n", dev->phys ? dev->phys : "");
-@@ -1221,9 +1229,10 @@ static void *input_handlers_seq_next(struct seq_file *seq, void *v, loff_t *pos)
- 
- static int input_handlers_seq_show(struct seq_file *seq, void *v)
- {
--	struct input_handler *handler = container_of(v, struct input_handler, node);
-+	struct input_handler *handler;
- 	union input_seq_state *state = (union input_seq_state *)&seq->private;
- 
-+	handler = container_of(v, struct input_handler, node);
- 	seq_printf(seq, "N: Number=%u Name=%s", state->pos, handler->name);
- 	if (handler->filter)
- 		seq_puts(seq, " (filter)");
-@@ -1302,7 +1311,7 @@ static ssize_t input_dev_show_##name(struct device *dev,		\
- 	return scnprintf(buf, PAGE_SIZE, "%s\n",			\
- 			 input_dev->name ? input_dev->name : "");	\
- }									\
--static DEVICE_ATTR(name, S_IRUGO, input_dev_show_##name, NULL)
-+static DEVICE_ATTR(name, 0444, input_dev_show_##name, NULL)
- 
- INPUT_DEV_STRING_ATTR_SHOW(name);
- INPUT_DEV_STRING_ATTR_SHOW(phys);
-@@ -1317,7 +1326,8 @@ static int input_print_modalias_bits(char *buf, int size,
- 	len += snprintf(buf, max(size, 0), "%c", name);
- 	for (i = min_bit; i < max_bit; i++)
- 		if (bm[BIT_WORD(i)] & BIT_MASK(i))
--			len += snprintf(buf + len, max(size - len, 0), "%X,", i);
-+			len += snprintf(buf + len, max(size - len, 0),
-+							"%X,", i);
- 	return len;
- }
- 
-@@ -1327,9 +1337,9 @@ static int input_print_modalias(char *buf, int size, struct input_dev *id,
- 	int len;
- 
- 	len = snprintf(buf, max(size, 0),
--		       "input:b%04Xv%04Xp%04Xe%04X-",
--		       id->id.bustype, id->id.vendor,
--		       id->id.product, id->id.version);
-+				"input:b%04Xv%04Xp%04Xe%04X-",
-+				id->id.bustype, id->id.vendor,
-+				id->id.product, id->id.version);
- 
- 	len += input_print_modalias_bits(buf + len, size - len,
- 				'e', id->evbit, 0, EV_MAX);
-@@ -1367,7 +1377,7 @@ static ssize_t input_dev_show_modalias(struct device *dev,
- 
- 	return min_t(int, len, PAGE_SIZE);
- }
--static DEVICE_ATTR(modalias, S_IRUGO, input_dev_show_modalias, NULL);
-+static DEVICE_ATTR(modalias, 0444, input_dev_show_modalias, NULL);
- 
- static int input_print_bitmap(char *buf, int buf_size, unsigned long *bitmap,
- 			      int max, int add_cr);
-@@ -1381,7 +1391,7 @@ static ssize_t input_dev_show_properties(struct device *dev,
- 				     INPUT_PROP_MAX, true);
- 	return min_t(int, len, PAGE_SIZE);
- }
--static DEVICE_ATTR(properties, S_IRUGO, input_dev_show_properties, NULL);
-+static DEVICE_ATTR(properties, 0444, input_dev_show_properties, NULL);
- 
- static struct attribute *input_dev_attrs[] = {
- 	&dev_attr_name.attr,
-@@ -1404,7 +1414,7 @@ static ssize_t input_dev_show_id_##name(struct device *dev,		\
- 	struct input_dev *input_dev = to_input_dev(dev);		\
- 	return scnprintf(buf, PAGE_SIZE, "%04x\n", input_dev->id.name);	\
- }									\
--static DEVICE_ATTR(name, S_IRUGO, input_dev_show_id_##name, NULL)
-+static DEVICE_ATTR(name, 0444, input_dev_show_id_##name, NULL)
- 
- INPUT_DEV_ID_ATTR(bustype);
- INPUT_DEV_ID_ATTR(vendor);
-@@ -1437,7 +1447,8 @@ static int input_print_bitmap(char *buf, int buf_size, unsigned long *bitmap,
- 		if (len) {
- 			skip_empty = false;
- 			if (i > 0)
--				len += snprintf(buf + len, max(buf_size - len, 0), " ");
-+				len += snprintf(buf + len,
-+						max(buf_size - len, 0), " ");
- 		}
- 	}
- 
-@@ -1464,7 +1475,7 @@ static ssize_t input_dev_show_cap_##bm(struct device *dev,		\
- 				     true);				\
- 	return min_t(int, len, PAGE_SIZE);				\
- }									\
--static DEVICE_ATTR(bm, S_IRUGO, input_dev_show_cap_##bm, NULL)
-+static DEVICE_ATTR(bm, 0444, input_dev_show_cap_##bm, NULL)
- 
- INPUT_DEV_CAP_ATTR(EV, ev);
- INPUT_DEV_CAP_ATTR(KEY, key);
-@@ -1519,7 +1530,9 @@ static void input_dev_release(struct device *device)
-  * device bitfields.
-  */
- static int input_add_uevent_bm_var(struct kobj_uevent_env *env,
--				   const char *name, unsigned long *bitmap, int max)
-+				   const char *name,
-+				   unsigned long *bitmap,
-+				   int max)
- {
- 	int len;
- 
-@@ -1899,7 +1912,8 @@ EXPORT_SYMBOL(input_free_device);
-  * In addition to setting up corresponding bit in appropriate capability
-  * bitmap the function also adjusts dev->evbit.
-  */
--void input_set_capability(struct input_dev *dev, unsigned int type, unsigned int code)
-+void input_set_capability(struct input_dev *dev,
-+					 unsigned int type, unsigned int code)
- {
- 	switch (type) {
- 	case EV_KEY:
-@@ -1943,8 +1957,8 @@ void input_set_capability(struct input_dev *dev, unsigned int type, unsigned int
- 		break;
- 
- 	default:
--		pr_err("input_set_capability: unknown type %u (code %u)\n",
--		       type, code);
-+		pr_err("%s: unknown type %u (code %u)\n",
-+			   __func__, type, code);
- 		dump_stack();
- 		return;
- 	}
+ config DP83848_PHY
+ 	tristate "Texas Instruments DP83848 PHY"
+ 	---help---
+diff --git a/drivers/net/phy/Makefile b/drivers/net/phy/Makefile
+index 01acbcb2c798..00445b61a9a8 100644
+--- a/drivers/net/phy/Makefile
++++ b/drivers/net/phy/Makefile
+@@ -57,6 +57,7 @@ obj-$(CONFIG_CORTINA_PHY)	+= cortina.o
+ obj-$(CONFIG_DAVICOM_PHY)	+= davicom.o
+ obj-$(CONFIG_DP83640_PHY)	+= dp83640.o
+ obj-$(CONFIG_DP83822_PHY)	+= dp83822.o
++obj-$(CONFIG_DP83TC811_PHY)	+= dp83tc811.o
+ obj-$(CONFIG_DP83848_PHY)	+= dp83848.o
+ obj-$(CONFIG_DP83867_PHY)	+= dp83867.o
+ obj-$(CONFIG_FIXED_PHY)		+= fixed_phy.o
+diff --git a/drivers/net/phy/dp83tc811.c b/drivers/net/phy/dp83tc811.c
+new file mode 100644
+index 000000000000..10c20426bcfa
+--- /dev/null
++++ b/drivers/net/phy/dp83tc811.c
+@@ -0,0 +1,350 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for the Texas Instruments DP83TC811 PHY
++ *
++ * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
++ *
++ */
++
++#include <linux/ethtool.h>
++#include <linux/etherdevice.h>
++#include <linux/kernel.h>
++#include <linux/mii.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/phy.h>
++#include <linux/netdevice.h>
++
++#define DP83TC811_PHY_ID	0x2000a253
++#define DP83811_DEVADDR		0x1f
++
++#define MII_DP83811_SGMII_CTRL	0x09
++#define MII_DP83811_INT_STAT1	0x12
++#define MII_DP83811_INT_STAT2	0x13
++#define MII_DP83811_RESET_CTRL	0x1f
++
++#define DP83811_HW_RESET	BIT(15)
++#define DP83811_SW_RESET	BIT(14)
++
++/* INT_STAT1 bits */
++#define DP83811_RX_ERR_HF_INT_EN	BIT(0)
++#define DP83811_MS_TRAINING_INT_EN	BIT(1)
++#define DP83811_ANEG_COMPLETE_INT_EN	BIT(2)
++#define DP83811_ESD_EVENT_INT_EN	BIT(3)
++#define DP83811_WOL_INT_EN		BIT(4)
++#define DP83811_LINK_STAT_INT_EN	BIT(5)
++#define DP83811_ENERGY_DET_INT_EN	BIT(6)
++#define DP83811_LINK_QUAL_INT_EN	BIT(7)
++
++/* INT_STAT2 bits */
++#define DP83811_JABBER_DET_INT_EN	BIT(0)
++#define DP83811_POLARITY_INT_EN		BIT(1)
++#define DP83811_SLEEP_MODE_INT_EN	BIT(2)
++#define DP83811_OVERTEMP_INT_EN		BIT(3)
++#define DP83811_OVERVOLTAGE_INT_EN	BIT(6)
++#define DP83811_UNDERVOLTAGE_INT_EN	BIT(7)
++
++#define MII_DP83811_RXSOP1	0x04a5
++#define MII_DP83811_RXSOP2	0x04a6
++#define MII_DP83811_RXSOP3	0x04a7
++
++/* WoL Registers */
++#define MII_DP83811_WOL_CFG	0x04a0
++#define MII_DP83811_WOL_STAT	0x04a1
++#define MII_DP83811_WOL_DA1	0x04a2
++#define MII_DP83811_WOL_DA2	0x04a3
++#define MII_DP83811_WOL_DA3	0x04a4
++
++/* WoL bits */
++#define DP83811_WOL_MAGIC_EN	BIT(0)
++#define DP83811_WOL_SECURE_ON	BIT(5)
++#define DP83811_WOL_EN		BIT(7)
++#define DP83811_WOL_INDICATION_SEL BIT(8)
++#define DP83811_WOL_CLR_INDICATION BIT(11)
++
++/* SGMII CTRL bits */
++#define DP83811_TDR_AUTO		BIT(8)
++#define DP83811_SGMII_EN		BIT(12)
++#define DP83811_SGMII_AUTO_NEG_EN	BIT(13)
++#define DP83811_SGMII_TX_ERR_DIS	BIT(14)
++#define DP83811_SGMII_SOFT_RESET	BIT(15)
++
++static int dp83811_ack_interrupt(struct phy_device *phydev)
++{
++	int err;
++
++	err = phy_read(phydev, MII_DP83811_INT_STAT1);
++	if (err < 0)
++		return err;
++
++	err = phy_read(phydev, MII_DP83811_INT_STAT2);
++	if (err < 0)
++		return err;
++
++	return 0;
++}
++
++static int dp83811_set_wol(struct phy_device *phydev,
++			   struct ethtool_wolinfo *wol)
++{
++	struct net_device *ndev = phydev->attached_dev;
++	u16 value;
++	const u8 *mac;
++
++	if (wol->wolopts & (WAKE_MAGIC | WAKE_MAGICSECURE)) {
++		mac = (const u8 *)ndev->dev_addr;
++
++		if (!is_valid_ether_addr(mac))
++			return -EINVAL;
++
++		/* MAC addresses start with byte 5, but stored in mac[0].
++		 * 811 PHYs store bytes 4|5, 2|3, 0|1
++		 */
++		phy_write_mmd(phydev, DP83811_DEVADDR, MII_DP83811_WOL_DA1,
++			      (mac[1] << 8) | mac[0]);
++		phy_write_mmd(phydev, DP83811_DEVADDR, MII_DP83811_WOL_DA2,
++			      (mac[3] << 8) | mac[2]);
++		phy_write_mmd(phydev, DP83811_DEVADDR, MII_DP83811_WOL_DA3,
++			      (mac[5] << 8) | mac[4]);
++
++		value = phy_read_mmd(phydev, DP83811_DEVADDR,
++				     MII_DP83811_WOL_CFG);
++		if (wol->wolopts & WAKE_MAGIC)
++			value |= DP83811_WOL_MAGIC_EN;
++		else
++			value &= ~DP83811_WOL_MAGIC_EN;
++
++		if (wol->wolopts & WAKE_MAGICSECURE) {
++			phy_write_mmd(phydev, DP83811_DEVADDR,
++				      MII_DP83811_RXSOP1,
++				      (wol->sopass[1] << 8) | wol->sopass[0]);
++			phy_write_mmd(phydev, DP83811_DEVADDR,
++				      MII_DP83811_RXSOP2,
++				      (wol->sopass[3] << 8) | wol->sopass[2]);
++			phy_write_mmd(phydev, DP83811_DEVADDR,
++				      MII_DP83811_RXSOP3,
++				      (wol->sopass[5] << 8) | wol->sopass[4]);
++			value |= DP83811_WOL_SECURE_ON;
++		} else {
++			value &= ~DP83811_WOL_SECURE_ON;
++		}
++
++		value |= (DP83811_WOL_EN | DP83811_WOL_INDICATION_SEL |
++			  DP83811_WOL_CLR_INDICATION);
++		phy_write_mmd(phydev, DP83811_DEVADDR, MII_DP83811_WOL_CFG,
++			      value);
++	} else {
++		value = phy_read_mmd(phydev, DP83811_DEVADDR,
++				     MII_DP83811_WOL_CFG);
++		value &= ~DP83811_WOL_EN;
++		phy_write_mmd(phydev, DP83811_DEVADDR, MII_DP83811_WOL_CFG,
++			      value);
++	}
++
++	return 0;
++}
++
++static void dp83811_get_wol(struct phy_device *phydev,
++			    struct ethtool_wolinfo *wol)
++{
++	int value;
++	u16 sopass_val;
++
++	wol->supported = (WAKE_MAGIC | WAKE_MAGICSECURE);
++	wol->wolopts = 0;
++
++	value = phy_read_mmd(phydev, DP83811_DEVADDR, MII_DP83811_WOL_CFG);
++
++	if (value & DP83811_WOL_MAGIC_EN)
++		wol->wolopts |= WAKE_MAGIC;
++
++	if (value & DP83811_WOL_SECURE_ON) {
++		sopass_val = phy_read_mmd(phydev, DP83811_DEVADDR,
++					  MII_DP83811_RXSOP1);
++		wol->sopass[0] = (sopass_val & 0xff);
++		wol->sopass[1] = (sopass_val >> 8);
++
++		sopass_val = phy_read_mmd(phydev, DP83811_DEVADDR,
++					  MII_DP83811_RXSOP2);
++		wol->sopass[2] = (sopass_val & 0xff);
++		wol->sopass[3] = (sopass_val >> 8);
++
++		sopass_val = phy_read_mmd(phydev, DP83811_DEVADDR,
++					  MII_DP83811_RXSOP3);
++		wol->sopass[4] = (sopass_val & 0xff);
++		wol->sopass[5] = (sopass_val >> 8);
++
++		wol->wolopts |= WAKE_MAGICSECURE;
++	}
++
++	/* WoL is not enabled so set wolopts to 0 */
++	if (!(value & DP83811_WOL_EN))
++		wol->wolopts = 0;
++}
++
++static int dp83811_config_intr(struct phy_device *phydev)
++{
++	int misr_status;
++	int err;
++
++	if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
++		misr_status = phy_read(phydev, MII_DP83811_INT_STAT1);
++		if (misr_status < 0)
++			return misr_status;
++
++		misr_status |= (DP83811_RX_ERR_HF_INT_EN |
++				DP83811_MS_TRAINING_INT_EN |
++				DP83811_ANEG_COMPLETE_INT_EN |
++				DP83811_ESD_EVENT_INT_EN |
++				DP83811_WOL_INT_EN |
++				DP83811_LINK_STAT_INT_EN |
++				DP83811_ENERGY_DET_INT_EN |
++				DP83811_LINK_QUAL_INT_EN);
++
++		err = phy_write(phydev, MII_DP83811_INT_STAT1, misr_status);
++		if (err < 0)
++			return err;
++
++		misr_status = phy_read(phydev, MII_DP83811_INT_STAT2);
++		if (misr_status < 0)
++			return misr_status;
++
++		misr_status |= (DP83811_JABBER_DET_INT_EN |
++				DP83811_POLARITY_INT_EN |
++				DP83811_SLEEP_MODE_INT_EN |
++				DP83811_OVERTEMP_INT_EN |
++				DP83811_OVERVOLTAGE_INT_EN |
++				DP83811_UNDERVOLTAGE_INT_EN);
++
++		err = phy_write(phydev, MII_DP83811_INT_STAT2, misr_status);
++
++	} else {
++		err = phy_write(phydev, MII_DP83811_INT_STAT1, 0);
++		if (err < 0)
++			return err;
++
++		err = phy_write(phydev, MII_DP83811_INT_STAT1, 0);
++	}
++
++	return err;
++}
++
++static int dp83811_config_aneg(struct phy_device *phydev)
++{
++	int err;
++	int value;
++
++	if (phydev->interface == PHY_INTERFACE_MODE_SGMII) {
++		value = phy_read(phydev, MII_DP83811_SGMII_CTRL);
++		if (phydev->autoneg == AUTONEG_ENABLE) {
++			err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
++					(DP83811_SGMII_AUTO_NEG_EN | value));
++			if (err < 0)
++				return err;
++		} else {
++			err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
++					(~DP83811_SGMII_AUTO_NEG_EN & value));
++			if (err < 0)
++				return err;
++		}
++	}
++
++	return genphy_config_aneg(phydev);
++}
++
++static int dp83811_config_init(struct phy_device *phydev)
++{
++	int err;
++	int value;
++
++	err = genphy_config_init(phydev);
++	if (err < 0)
++		return err;
++
++	if (phydev->interface == PHY_INTERFACE_MODE_SGMII) {
++		value = phy_read(phydev, MII_DP83811_SGMII_CTRL);
++		if (!(value & DP83811_SGMII_EN)) {
++			err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
++					(DP83811_SGMII_EN | value));
++			if (err < 0)
++				return err;
++		} else {
++			err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
++					(~DP83811_SGMII_EN & value));
++			if (err < 0)
++				return err;
++		}
++	}
++
++	value = DP83811_WOL_MAGIC_EN | DP83811_WOL_SECURE_ON | DP83811_WOL_EN;
++
++	return phy_write_mmd(phydev, DP83811_DEVADDR, MII_DP83811_WOL_CFG,
++	      value);
++}
++
++static int dp83811_phy_reset(struct phy_device *phydev)
++{
++	int err;
++
++	err = phy_write(phydev, MII_DP83811_RESET_CTRL, DP83811_HW_RESET);
++	if (err < 0)
++		return err;
++
++	return 0;
++}
++
++static int dp83811_suspend(struct phy_device *phydev)
++{
++	int value;
++
++	value = phy_read_mmd(phydev, DP83811_DEVADDR, MII_DP83811_WOL_CFG);
++
++	if (!(value & DP83811_WOL_EN))
++		genphy_suspend(phydev);
++
++	return 0;
++}
++
++static int dp83811_resume(struct phy_device *phydev)
++{
++	int value;
++
++	genphy_resume(phydev);
++
++	value = phy_read_mmd(phydev, DP83811_DEVADDR, MII_DP83811_WOL_CFG);
++
++	phy_write_mmd(phydev, DP83811_DEVADDR, MII_DP83811_WOL_CFG, value |
++		      DP83811_WOL_CLR_INDICATION);
++
++	return 0;
++}
++
++static struct phy_driver dp83811_driver[] = {
++	{
++		.phy_id = DP83TC811_PHY_ID,
++		.phy_id_mask = 0xfffffff0,
++		.name = "TI DP83TC811",
++		.features = PHY_BASIC_FEATURES,
++		.flags = PHY_HAS_INTERRUPT,
++		.config_init = dp83811_config_init,
++		.config_aneg = dp83811_config_aneg,
++		.soft_reset = dp83811_phy_reset,
++		.get_wol = dp83811_get_wol,
++		.set_wol = dp83811_set_wol,
++		.ack_interrupt = dp83811_ack_interrupt,
++		.config_intr = dp83811_config_intr,
++		.suspend = dp83811_suspend,
++		.resume = dp83811_resume,
++	 },
++};
++module_phy_driver(dp83811_driver);
++
++static struct mdio_device_id __maybe_unused dp83811_tbl[] = {
++	{ DP83TC811_PHY_ID, 0xfffffff0 },
++	{ },
++};
++MODULE_DEVICE_TABLE(mdio, dp83811_tbl);
++
++MODULE_DESCRIPTION("Texas Instruments DP83TC811 PHY driver");
++MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com");
++MODULE_LICENSE("GPL");
 -- 
-2.7.4
+2.17.0.582.gccdcbd54c
