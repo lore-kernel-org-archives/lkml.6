@@ -1,291 +1,299 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964929AbeEIPSX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:18:23 -0400
-Received: from mail-io0-f170.google.com ([209.85.223.170]:43159 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935390AbeEIPSU (ORCPT
+        id S965057AbeEIPSd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:18:33 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:58413 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935065AbeEIPS3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:18:20 -0400
-X-Google-Smtp-Source: AB8JxZqhC6umOq5FRmYXU0NBQHur3MTppAC9ztbPgbHhYoZGh4QBnbz4YAg8Gho2NpDd8B7mfrFQ/A==
-Subject: Re: bug in tag handling in blk-mq?
-To: Mike Galbraith <efault@gmx.de>,
-        Paolo Valente <paolo.valente@linaro.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-        linux-block <linux-block@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>
-References: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
- <7760d23b-7a4c-a645-1c7a-da7569bb44dc@kernel.dk>
- <84145CD7-B917-4B32-8A5C-310C1910DB71@linaro.org>
- <1525755090.24338.1.camel@gmx.de> <1525768632.5208.4.camel@gmx.de>
- <ffd0c030-43f8-0dbe-42b3-03bb9c410bea@kernel.dk>
- <1525797766.5204.2.camel@gmx.de>
- <3692ce7d-a767-72e6-65ae-6178b6c2e7d8@kernel.dk>
- <f04636df-3f97-6c16-f37b-d407e062b9e5@kernel.dk>
- <57952405-bdeb-f4e4-1aef-a7c0a8a68674@kernel.dk>
- <1525839089.15732.1.camel@gmx.de>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <ce5ee556-9552-6ffd-7578-7b3b983c07bf@kernel.dk>
-Date: Wed, 9 May 2018 09:18:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 9 May 2018 11:18:29 -0400
+Subject: Re: [REVIEW][PATCH 08/22] signal/mips: Use force_sig_fault where
+ appropriate
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+        <linux-arch@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, <linux-mips@linux-mips.org>
+References: <87604mhrnb.fsf@xmission.com>
+ <20180420143811.9994-8-ebiederm@xmission.com>
+From: Matt Redfearn <matt.redfearn@mips.com>
+Message-ID: <e0a5bde2-7817-3e05-1c8d-c8fa8f6aa5f2@mips.com>
+Date: Wed, 9 May 2018 16:14:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1525839089.15732.1.camel@gmx.de>
-Content-Type: text/plain; charset=iso-8859-15
+In-Reply-To: <20180420143811.9994-8-ebiederm@xmission.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.155.41]
+X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
+ mipsdag02.mipstec.com (10.20.40.47)
+X-BESS-ID: 1525878856-321459-31539-56416-1
+X-BESS-VER: 2018.5-r1804261738
+X-BESS-Apparent-Source-IP: 12.201.5.32
+X-BESS-Outbound-Spam-Score: 1.25
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192849
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.74 FRT_LEVITRA            BODY: ReplaceTags: Levitra
+        0.50 BSF_RULE7568M          META: Custom Rule 7568M
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=1.25 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=FRT_LEVITRA, BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/8/18 10:11 PM, Mike Galbraith wrote:
-> On Tue, 2018-05-08 at 19:09 -0600, Jens Axboe wrote:
->>
->> Alright, I managed to reproduce it. What I think is happening is that
->> BFQ is limiting the inflight case to something less than the wake
->> batch for sbitmap, which can lead to stalls. I don't have time to test
->> this tonight, but perhaps you can give it a go when you are back at it.
->> If not, I'll try tomorrow morning.
->>
->> If this is the issue, I can turn it into a real patch. This is just to
->> confirm that the issue goes away with the below.
+Hi Eric,
+
+On 20/04/18 15:37, Eric W. Biederman wrote:
+> Filling in struct siginfo before calling force_sig_info a tedious and
+> error prone process, where once in a great while the wrong fields
+> are filled out, and siginfo has been inconsistently cleared.
 > 
-> Confirmed.  Impressive high speed bug stomping.
+> Simplify this process by using the helper force_sig_fault.  Which
+> takes as a parameters all of the information it needs, ensures
+> all of the fiddly bits of filling in struct siginfo are done properly
+> and then calls force_sig_info.
+> 
+> In short about a 5 line reduction in code for every time force_sig_info
+> is called, which makes the calling function clearer.
+> 
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: James Hogan <jhogan@kernel.org>
+> Cc: linux-mips@linux-mips.org
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>   arch/mips/kernel/traps.c | 65 ++++++++++++++----------------------------------
+>   arch/mips/mm/fault.c     | 19 ++++----------
+>   2 files changed, 23 insertions(+), 61 deletions(-)
+> 
+> diff --git a/arch/mips/kernel/traps.c b/arch/mips/kernel/traps.c
+> index 967e9e4e795e..66ec4b0b484d 100644
+> --- a/arch/mips/kernel/traps.c
+> +++ b/arch/mips/kernel/traps.c
+> @@ -699,17 +699,11 @@ static int simulate_sync(struct pt_regs *regs, unsigned int opcode)
+>   asmlinkage void do_ov(struct pt_regs *regs)
+>   {
+>   	enum ctx_state prev_state;
+> -	siginfo_t info;
+> -
+> -	clear_siginfo(&info);
+> -	info.si_signo = SIGFPE;
+> -	info.si_code = FPE_INTOVF;
+> -	info.si_addr = (void __user *)regs->cp0_epc;
+>   
+>   	prev_state = exception_enter();
+>   	die_if_kernel("Integer overflow", regs);
+>   
+> -	force_sig_info(SIGFPE, &info, current);
+> +	force_sig_fault(SIGFPE, FPE_INTOVF, (void __user *)regs->cp0_epc, current);
+>   	exception_exit(prev_state);
+>   }
+>   
+> @@ -722,32 +716,27 @@ asmlinkage void do_ov(struct pt_regs *regs)
+>   void force_fcr31_sig(unsigned long fcr31, void __user *fault_addr,
+>   		     struct task_struct *tsk)
+>   {
+> -	struct siginfo si;
+> -
+> -	clear_siginfo(&si);
+> -	si.si_addr = fault_addr;
+> -	si.si_signo = SIGFPE;
+> +	int si_code;
 
-Well, that's good news. Can I get you to try this patch? Needs to be
-split, but it'll be good to know if this fixes it too (since it's an
-ACTUAL attempt at a fix, not just a masking).
+This is giving build errors in Linux next 
+(https://storage.kernelci.org/next/master/next-20180509/mips/defconfig+kselftest/build.log)
+
+si_code would have ended up as 0 before from the clear_siginfo(), but 
+perhaps
+
+int si_code = FPE_FLTUNK;
+
+Would make a more sensible default?
+
+Thanks,
+Matt
 
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index ebc264c87a09..b0dbfd297d20 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -533,19 +533,20 @@ static void bfq_update_depths(struct bfq_data *bfqd, struct sbitmap_queue *bt)
-  * Limit depths of async I/O and sync writes so as to counter both
-  * problems.
-  */
--static void bfq_limit_depth(unsigned int op, struct blk_mq_alloc_data *data)
-+static int bfq_limit_depth(unsigned int op, struct blk_mq_alloc_data *data)
- {
- 	struct blk_mq_tags *tags = blk_mq_tags_from_data(data);
- 	struct bfq_data *bfqd = data->q->elevator->elevator_data;
- 	struct sbitmap_queue *bt;
-+	int old_depth;
- 
- 	if (op_is_sync(op) && !op_is_write(op))
--		return;
-+		return 0;
- 
- 	if (data->flags & BLK_MQ_REQ_RESERVED) {
- 		if (unlikely(!tags->nr_reserved_tags)) {
- 			WARN_ON_ONCE(1);
--			return;
-+			return 0;
- 		}
- 		bt = &tags->breserved_tags;
- 	} else
-@@ -554,12 +555,18 @@ static void bfq_limit_depth(unsigned int op, struct blk_mq_alloc_data *data)
- 	if (unlikely(bfqd->sb_shift != bt->sb.shift))
- 		bfq_update_depths(bfqd, bt);
- 
-+	old_depth = data->shallow_depth;
- 	data->shallow_depth =
- 		bfqd->word_depths[!!bfqd->wr_busy_queues][op_is_sync(op)];
- 
- 	bfq_log(bfqd, "[%s] wr_busy %d sync %d depth %u",
- 			__func__, bfqd->wr_busy_queues, op_is_sync(op),
- 			data->shallow_depth);
-+
-+	if (old_depth != data->shallow_depth)
-+		return data->shallow_depth;
-+
-+	return 0;
- }
- 
- static struct bfq_queue *
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index 25c14c58385c..0c53a254671f 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -16,6 +16,32 @@
- #include "blk-mq-tag.h"
- #include "blk-wbt.h"
- 
-+void blk_mq_sched_limit_depth(struct elevator_queue *e,
-+			      struct blk_mq_alloc_data *data, unsigned int op)
-+{
-+	struct blk_mq_tags *tags = blk_mq_tags_from_data(data);
-+	struct sbitmap_queue *bt;
-+	int ret;
-+
-+	/*
-+	 * Flush requests are special and go directly to the
-+	 * dispatch list.
-+	 */
-+	if (op_is_flush(op) || !e->type->ops.mq.limit_depth)
-+		return;
-+
-+	ret = e->type->ops.mq.limit_depth(op, data);
-+	if (!ret)
-+		return;
-+
-+	if (data->flags & BLK_MQ_REQ_RESERVED)
-+		bt = &tags->breserved_tags;
-+	else
-+		bt = &tags->bitmap_tags;
-+
-+	sbitmap_queue_shallow_depth(bt, ret);
-+}
-+
- void blk_mq_sched_free_hctx_data(struct request_queue *q,
- 				 void (*exit)(struct blk_mq_hw_ctx *))
- {
-diff --git a/block/blk-mq-sched.h b/block/blk-mq-sched.h
-index 1e9c9018ace1..6abebc1b9ae0 100644
---- a/block/blk-mq-sched.h
-+++ b/block/blk-mq-sched.h
-@@ -5,6 +5,9 @@
- #include "blk-mq.h"
- #include "blk-mq-tag.h"
- 
-+void blk_mq_sched_limit_depth(struct elevator_queue *e,
-+			      struct blk_mq_alloc_data *data, unsigned int op);
-+
- void blk_mq_sched_free_hctx_data(struct request_queue *q,
- 				 void (*exit)(struct blk_mq_hw_ctx *));
- 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 4e9d83594cca..1bb7aa40c192 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -357,13 +357,7 @@ static struct request *blk_mq_get_request(struct request_queue *q,
- 
- 	if (e) {
- 		data->flags |= BLK_MQ_REQ_INTERNAL;
--
--		/*
--		 * Flush requests are special and go directly to the
--		 * dispatch list.
--		 */
--		if (!op_is_flush(op) && e->type->ops.mq.limit_depth)
--			e->type->ops.mq.limit_depth(op, data);
-+		blk_mq_sched_limit_depth(e, data, op);
- 	}
- 
- 	tag = blk_mq_get_tag(data);
-diff --git a/block/kyber-iosched.c b/block/kyber-iosched.c
-index 564967fafe5f..d2622386c115 100644
---- a/block/kyber-iosched.c
-+++ b/block/kyber-iosched.c
-@@ -433,17 +433,23 @@ static void rq_clear_domain_token(struct kyber_queue_data *kqd,
- 	}
- }
- 
--static void kyber_limit_depth(unsigned int op, struct blk_mq_alloc_data *data)
-+static int kyber_limit_depth(unsigned int op, struct blk_mq_alloc_data *data)
- {
-+	struct kyber_queue_data *kqd = data->q->elevator->elevator_data;
-+
-+	if (op_is_sync(op))
-+		return 0;
-+
- 	/*
- 	 * We use the scheduler tags as per-hardware queue queueing tokens.
- 	 * Async requests can be limited at this stage.
- 	 */
--	if (!op_is_sync(op)) {
--		struct kyber_queue_data *kqd = data->q->elevator->elevator_data;
--
-+	if (data->shallow_depth != kqd->async_depth) {
- 		data->shallow_depth = kqd->async_depth;
-+		return data->shallow_depth;
- 	}
-+
-+	return 0;
- }
- 
- static void kyber_prepare_request(struct request *rq, struct bio *bio)
-diff --git a/include/linux/elevator.h b/include/linux/elevator.h
-index 6d9e230dffd2..b2712f4ca9f1 100644
---- a/include/linux/elevator.h
-+++ b/include/linux/elevator.h
-@@ -105,7 +105,7 @@ struct elevator_mq_ops {
- 	int (*request_merge)(struct request_queue *q, struct request **, struct bio *);
- 	void (*request_merged)(struct request_queue *, struct request *, enum elv_merge);
- 	void (*requests_merged)(struct request_queue *, struct request *, struct request *);
--	void (*limit_depth)(unsigned int, struct blk_mq_alloc_data *);
-+	int (*limit_depth)(unsigned int, struct blk_mq_alloc_data *);
- 	void (*prepare_request)(struct request *, struct bio *bio);
- 	void (*finish_request)(struct request *);
- 	void (*insert_requests)(struct blk_mq_hw_ctx *, struct list_head *, bool);
-diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
-index 841585f6e5f2..99059789f45f 100644
---- a/include/linux/sbitmap.h
-+++ b/include/linux/sbitmap.h
-@@ -164,6 +164,17 @@ static inline void sbitmap_free(struct sbitmap *sb)
- void sbitmap_resize(struct sbitmap *sb, unsigned int depth);
- 
- /**
-+ * sbitmap_queue_shallow_depth() - Inform sbitmap about shallow depth changes
-+ * @sbq: Bitmap queue in question
-+ * @depth: Shallow depth limit
-+ *
-+ * Due to how sbitmap does batched wakes, if a user of sbitmap updates the
-+ * shallow depth, then we might need to update our batched wake counts.
-+ *
-+ */
-+void sbitmap_queue_shallow_depth(struct sbitmap_queue *sbq, unsigned int depth);
-+
-+/**
-  * sbitmap_get() - Try to allocate a free bit from a &struct sbitmap.
-  * @sb: Bitmap to allocate from.
-  * @alloc_hint: Hint for where to start searching for a free bit.
-diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-index e6a9c06ec70c..563ae9d75fb8 100644
---- a/lib/sbitmap.c
-+++ b/lib/sbitmap.c
-@@ -327,7 +327,8 @@ int sbitmap_queue_init_node(struct sbitmap_queue *sbq, unsigned int depth,
- }
- EXPORT_SYMBOL_GPL(sbitmap_queue_init_node);
- 
--void sbitmap_queue_resize(struct sbitmap_queue *sbq, unsigned int depth)
-+static void sbitmap_queue_update_batch_wake(struct sbitmap_queue *sbq,
-+					    unsigned int depth)
- {
- 	unsigned int wake_batch = sbq_calc_wake_batch(depth);
- 	int i;
-@@ -342,6 +343,11 @@ void sbitmap_queue_resize(struct sbitmap_queue *sbq, unsigned int depth)
- 		for (i = 0; i < SBQ_WAIT_QUEUES; i++)
- 			atomic_set(&sbq->ws[i].wait_cnt, 1);
- 	}
-+}
-+
-+void sbitmap_queue_resize(struct sbitmap_queue *sbq, unsigned int depth)
-+{
-+	sbitmap_queue_update_batch_wake(sbq, depth);
- 	sbitmap_resize(&sbq->sb, depth);
- }
- EXPORT_SYMBOL_GPL(sbitmap_queue_resize);
-@@ -403,6 +409,15 @@ int __sbitmap_queue_get_shallow(struct sbitmap_queue *sbq,
- }
- EXPORT_SYMBOL_GPL(__sbitmap_queue_get_shallow);
- 
-+/*
-+ * User has limited the shallow depth to 'depth', update batch wake counts
-+ */
-+void sbitmap_queue_shallow_depth(struct sbitmap_queue *sbq, unsigned int depth)
-+{
-+	sbitmap_queue_update_batch_wake(sbq, depth);
-+}
-+EXPORT_SYMBOL_GPL(sbitmap_queue_shallow_depth);
-+
- static struct sbq_wait_state *sbq_wake_ptr(struct sbitmap_queue *sbq)
- {
- 	int i, wake_index;
-
--- 
-Jens Axboe
+>   
+>   	if (fcr31 & FPU_CSR_INV_X)
+> -		si.si_code = FPE_FLTINV;
+> +		si_code = FPE_FLTINV;
+>   	else if (fcr31 & FPU_CSR_DIV_X)
+> -		si.si_code = FPE_FLTDIV;
+> +		si_code = FPE_FLTDIV;
+>   	else if (fcr31 & FPU_CSR_OVF_X)
+> -		si.si_code = FPE_FLTOVF;
+> +		si_code = FPE_FLTOVF;
+>   	else if (fcr31 & FPU_CSR_UDF_X)
+> -		si.si_code = FPE_FLTUND;
+> +		si_code = FPE_FLTUND;
+>   	else if (fcr31 & FPU_CSR_INE_X)
+> -		si.si_code = FPE_FLTRES;
+> +		si_code = FPE_FLTRES;
+>   
+> -	force_sig_info(SIGFPE, &si, tsk);
+> +	force_sig_fault(SIGFPE, si_code, fault_addr, tsk);
+>   }
+>   
+>   int process_fpemu_return(int sig, void __user *fault_addr, unsigned long fcr31)
+>   {
+> -	struct siginfo si;
+> +	int si_code;
+>   	struct vm_area_struct *vma;
+>   
+> -	clear_siginfo(&si);
+>   	switch (sig) {
+>   	case 0:
+>   		return 0;
+> @@ -757,23 +746,18 @@ int process_fpemu_return(int sig, void __user *fault_addr, unsigned long fcr31)
+>   		return 1;
+>   
+>   	case SIGBUS:
+> -		si.si_addr = fault_addr;
+> -		si.si_signo = sig;
+> -		si.si_code = BUS_ADRERR;
+> -		force_sig_info(sig, &si, current);
+> +		force_sig_fault(SIGBUS, BUS_ADRERR, fault_addr, current);
+>   		return 1;
+>   
+>   	case SIGSEGV:
+> -		si.si_addr = fault_addr;
+> -		si.si_signo = sig;
+>   		down_read(&current->mm->mmap_sem);
+>   		vma = find_vma(current->mm, (unsigned long)fault_addr);
+>   		if (vma && (vma->vm_start <= (unsigned long)fault_addr))
+> -			si.si_code = SEGV_ACCERR;
+> +			si_code = SEGV_ACCERR;
+>   		else
+> -			si.si_code = SEGV_MAPERR;
+> +			si_code = SEGV_MAPERR;
+>   		up_read(&current->mm->mmap_sem);
+> -		force_sig_info(sig, &si, current);
+> +		force_sig_fault(SIGSEGV, si_code, fault_addr, current);
+>   		return 1;
+>   
+>   	default:
+> @@ -896,10 +880,8 @@ asmlinkage void do_fpe(struct pt_regs *regs, unsigned long fcr31)
+>   void do_trap_or_bp(struct pt_regs *regs, unsigned int code, int si_code,
+>   	const char *str)
+>   {
+> -	siginfo_t info;
+>   	char b[40];
+>   
+> -	clear_siginfo(&info);
+>   #ifdef CONFIG_KGDB_LOW_LEVEL_TRAP
+>   	if (kgdb_ll_trap(DIE_TRAP, str, regs, code, current->thread.trap_nr,
+>   			 SIGTRAP) == NOTIFY_STOP)
+> @@ -921,13 +903,9 @@ void do_trap_or_bp(struct pt_regs *regs, unsigned int code, int si_code,
+>   	case BRK_DIVZERO:
+>   		scnprintf(b, sizeof(b), "%s instruction in kernel code", str);
+>   		die_if_kernel(b, regs);
+> -		if (code == BRK_DIVZERO)
+> -			info.si_code = FPE_INTDIV;
+> -		else
+> -			info.si_code = FPE_INTOVF;
+> -		info.si_signo = SIGFPE;
+> -		info.si_addr = (void __user *) regs->cp0_epc;
+> -		force_sig_info(SIGFPE, &info, current);
+> +		force_sig_fault(SIGFPE,
+> +				code == BRK_DIVZERO ? FPE_INTDIV : FPE_INTOVF,
+> +				(void __user *) regs->cp0_epc, current);
+>   		break;
+>   	case BRK_BUG:
+>   		die_if_kernel("Kernel bug detected", regs);
+> @@ -952,9 +930,7 @@ void do_trap_or_bp(struct pt_regs *regs, unsigned int code, int si_code,
+>   		scnprintf(b, sizeof(b), "%s instruction in kernel code", str);
+>   		die_if_kernel(b, regs);
+>   		if (si_code) {
+> -			info.si_signo = SIGTRAP;
+> -			info.si_code = si_code;
+> -			force_sig_info(SIGTRAP, &info, current);
+> +			force_sig_fault(SIGTRAP, si_code, NULL,	current);
+>   		} else {
+>   			force_sig(SIGTRAP, current);
+>   		}
+> @@ -1506,13 +1482,8 @@ asmlinkage void do_mdmx(struct pt_regs *regs)
+>    */
+>   asmlinkage void do_watch(struct pt_regs *regs)
+>   {
+> -	siginfo_t info;
+>   	enum ctx_state prev_state;
+>   
+> -	clear_siginfo(&info);
+> -	info.si_signo = SIGTRAP;
+> -	info.si_code = TRAP_HWBKPT;
+> -
+>   	prev_state = exception_enter();
+>   	/*
+>   	 * Clear WP (bit 22) bit of cause register so we don't loop
+> @@ -1528,7 +1499,7 @@ asmlinkage void do_watch(struct pt_regs *regs)
+>   	if (test_tsk_thread_flag(current, TIF_LOAD_WATCH)) {
+>   		mips_read_watch_registers();
+>   		local_irq_enable();
+> -		force_sig_info(SIGTRAP, &info, current);
+> +		force_sig_fault(SIGTRAP, TRAP_HWBKPT, NULL, current);
+>   	} else {
+>   		mips_clear_watch_registers();
+>   		local_irq_enable();
+> diff --git a/arch/mips/mm/fault.c b/arch/mips/mm/fault.c
+> index 75392becd933..5f71f2b903b7 100644
+> --- a/arch/mips/mm/fault.c
+> +++ b/arch/mips/mm/fault.c
+> @@ -42,7 +42,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
+>   	struct task_struct *tsk = current;
+>   	struct mm_struct *mm = tsk->mm;
+>   	const int field = sizeof(unsigned long) * 2;
+> -	siginfo_t info;
+> +	int si_code;
+>   	int fault;
+>   	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+>   
+> @@ -63,8 +63,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
+>   		return;
+>   #endif
+>   
+> -	clear_siginfo(&info);
+> -	info.si_code = SEGV_MAPERR;
+> +	si_code = SEGV_MAPERR;
+>   
+>   	/*
+>   	 * We fault-in kernel-space virtual memory on-demand. The
+> @@ -113,7 +112,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
+>    * we can handle it..
+>    */
+>   good_area:
+> -	info.si_code = SEGV_ACCERR;
+> +	si_code = SEGV_ACCERR;
+>   
+>   	if (write) {
+>   		if (!(vma->vm_flags & VM_WRITE))
+> @@ -224,11 +223,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
+>   			pr_cont("\n");
+>   		}
+>   		current->thread.trap_nr = (regs->cp0_cause >> 2) & 0x1f;
+> -		info.si_signo = SIGSEGV;
+> -		info.si_errno = 0;
+> -		/* info.si_code has been set above */
+> -		info.si_addr = (void __user *) address;
+> -		force_sig_info(SIGSEGV, &info, tsk);
+> +		force_sig_fault(SIGSEGV, si_code, (void __user *)address, tsk);
+>   		return;
+>   	}
+>   
+> @@ -284,11 +279,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
+>   #endif
+>   	current->thread.trap_nr = (regs->cp0_cause >> 2) & 0x1f;
+>   	tsk->thread.cp0_badvaddr = address;
+> -	info.si_signo = SIGBUS;
+> -	info.si_errno = 0;
+> -	info.si_code = BUS_ADRERR;
+> -	info.si_addr = (void __user *) address;
+> -	force_sig_info(SIGBUS, &info, tsk);
+> +	force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)address, tsk);
+>   
+>   	return;
+>   #ifndef CONFIG_64BIT
+> 
