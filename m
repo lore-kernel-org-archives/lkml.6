@@ -1,97 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753156AbeEIETM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 00:19:12 -0400
-Received: from ozlabs.org ([203.11.71.1]:54287 "EHLO ozlabs.org"
+        id S933558AbeEIEV6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 00:21:58 -0400
+Received: from ozlabs.org ([203.11.71.1]:46985 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751015AbeEIETK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 00:19:10 -0400
+        id S1751000AbeEIEV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 00:21:56 -0400
 Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 9 May 2018 14:19:07 +1000
+Date: Wed, 9 May 2018 14:21:54 +1000
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20180509141908.7b07df43@canb.auug.org.au>
+To: Networking <netdev@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        David Miller <davem@davemloft.net>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the s390
+ tree
+Message-ID: <20180509142154.73ff5772@canb.auug.org.au>
+In-Reply-To: <20180508102638.1e19b7f2@canb.auug.org.au>
+References: <20180508102638.1e19b7f2@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mGMZxklIsX=1ObZ3DWZTI/p"; protocol="application/pgp-signature"
+ boundary="Sig_/ZEI8h3kHyu3upTWz_00lbu/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/mGMZxklIsX=1ObZ3DWZTI/p
+--Sig_/ZEI8h3kHyu3upTWz_00lbu/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+On Tue, 8 May 2018 10:26:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the bpf-next tree got a conflict in:
+>=20
+>   arch/s390/net/bpf_jit.S
+>=20
+> between commit:
+>=20
+>   de5cb6eb514e ("s390: use expoline thunks in the BPF JIT")
+>=20
+> from the s390 tree and commit:
+>=20
+>   e1cf4befa297 ("bpf, s390x: remove ld_abs/ld_ind")
+>=20
+> from the bpf-next tree.
+>=20
+> I fixed it up (I just removed the file as the latter does) and can
+> carry the fix as necessary. This is now fixed as far as linux-next is
+> concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 
-  tools/testing/selftests/net/Makefile
-
-between commit:
-
-  1751eb42ddb5 ("selftests: net: use TEST_PROGS_EXTENDED")
-
-from the net tree and commits:
-
-  a7b15ab887e5 ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/=
-net")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+This is now a conflict between the net-next and s390 trees.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc tools/testing/selftests/net/Makefile
-index 3ff81a478dbe,73af45773938..000000000000
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@@ -5,10 -5,13 +5,13 @@@ CFLAGS =3D  -Wall -Wl,--no-as-needed -O2=20
-  CFLAGS +=3D -I../../../../usr/include/
- =20
-  TEST_PROGS :=3D run_netsocktests run_afpackettests test_bpf.sh netdevice.=
-sh rtnetlink.sh
-- TEST_PROGS +=3D fib_tests.sh fib-onlink-tests.sh pmtu.sh
-+ TEST_PROGS +=3D fib_tests.sh fib-onlink-tests.sh in_netns.sh pmtu.sh udpg=
-so.sh
-+ TEST_PROGS +=3D udpgso_bench.sh
- -TEST_GEN_PROGS_EXTENDED :=3D in_netns.sh
- +TEST_PROGS_EXTENDED :=3D in_netns.sh
-  TEST_GEN_FILES =3D  socket
-  TEST_GEN_FILES +=3D psock_fanout psock_tpacket msg_zerocopy
-+ TEST_GEN_FILES +=3D tcp_mmap tcp_inq
-+ TEST_GEN_FILES +=3D udpgso udpgso_bench_tx udpgso_bench_rx
-  TEST_GEN_PROGS =3D reuseport_bpf reuseport_bpf_cpu reuseport_bpf_numa
-  TEST_GEN_PROGS +=3D reuseport_dualstack reuseaddr_conflict
- =20
-
---Sig_/mGMZxklIsX=1ObZ3DWZTI/p
+--Sig_/ZEI8h3kHyu3upTWz_00lbu/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrydrwACgkQAVBC80lX
-0GzplQf/XpNaBqBALzYNKnKA+i1UxBSAiscCNJ+hY9nGaFLvRTpjYi+P3I1UvsnA
-1ROJMKv+FAQljIkhijWvd2jojrfjfqp6R9l0qNmbnNhLqMwG0AZv4Qbqe0LyqadJ
-OKMALH0wxE49nEgnwArrJPAEN810ZgkZ4q0V99z52LFrQm2BMkG/vsJM8aOANF8D
-lzhCUSXw56IRM19K+Rv95DwXn8LO/aw/u1KF5jnkzpyOoFUgquWe4PHPmclQyS4h
-pp7DWRQ3QILGxWDMxvvbwYDr7DMhEI0HyufX4aAAlQbIh98/TqxI/gVIvnywDWIh
-hAbp7mgBYNMLTK2gF3VBXJqaew2Jaw==
-=Yu5M
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlryd2IACgkQAVBC80lX
+0GxO0Af/WFqKfLIxODePDRc7kJDTY44CC0jXkQCc5YiGInrk9zBSBMGrhLZUpSv9
+Vfgt+EA/r98zfpCDFwg+PJ7q6WIzRK6CnP1p8O+twQjXI+CQlJFr+4s/hAJ7KfYQ
+/RQauRNEJge4hfxqk8JEUjeO+yY9LNUzzHf4Pb9TJN7jt/kImBRHFPpZ+RU6uQf8
+jeNk/1UtGujazY9Ys0K4ZWwbbET5cKBuMQcWJMWeyC6hT3u68JhM9b+EK0upv9A3
+66OT0AwBkNqI2PWi2paA2hyxyPjljhZFIPiiW5ceMXx4m1Dg6AYFbWyHEZVgakY1
+zhLJHZW5e1dgdcer733VqMS6ukJxfw==
+=ZCsq
 -----END PGP SIGNATURE-----
 
---Sig_/mGMZxklIsX=1ObZ3DWZTI/p--
+--Sig_/ZEI8h3kHyu3upTWz_00lbu/--
