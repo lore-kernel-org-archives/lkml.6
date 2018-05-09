@@ -1,63 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965584AbeEIQkW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:40:22 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35437 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934647AbeEIQkV (ORCPT
+        id S965606AbeEIQkc (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:40:32 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60458 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965410AbeEIQk3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:40:21 -0400
-X-Google-Smtp-Source: AB8JxZrGKe2nu+uzWDZRx2Fv4jacu41a/nbhT7k67oWapSgl7G2WBb4kLTR33/DkqUmcD8RWDpO6Uw==
-Date: Wed, 9 May 2018 19:40:17 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        mhocko@suse.com
-Subject: Re: [PATCH] elf: don't hash userspace addresses
-Message-ID: <20180509164017.GB16034@avx2>
-References: <20180504212308.GA7564@avx2>
- <201805050931.FEG18215.tFJOFLHOFVSOQM@I-love.SAKURA.ne.jp>
- <20180505123201.GA10847@avx2>
- <201805052219.AGC56242.LFVFQHOOOJFSMt@I-love.SAKURA.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <201805052219.AGC56242.LFVFQHOOOJFSMt@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 9 May 2018 12:40:29 -0400
+From: Rohit Jain <rohit.k.jain@oracle.com>
+To: matt@codeblueprint.co.uk, peterz@infradead.org
+Cc: mingo@kernel.org, dhaval.giani@oracle.com, subhra.mazumdar@oracle.com,
+        steven.sistare@oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] sched: Distinguish between idle_cpu calls based on desired effect
+Date: Wed,  9 May 2018 09:39:48 -0700
+Message-Id: <1525883988-10356-1-git-send-email-rohit.k.jain@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805090156
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 05, 2018 at 10:19:43PM +0900, Tetsuo Handa wrote:
-> Alexey Dobriyan wrote:
-> > On Sat, May 05, 2018 at 09:31:50AM +0900, Tetsuo Handa wrote:
-> > > Alexey Dobriyan wrote:
-> > > > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > > > ---
-> > > > 
-> > > >  fs/binfmt_elf.c |    4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > 
-> > > > --- a/fs/binfmt_elf.c
-> > > > +++ b/fs/binfmt_elf.c
-> > > > @@ -379,8 +379,8 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
-> > > >  
-> > > >  	if ((type & MAP_FIXED_NOREPLACE) &&
-> > > >  	    PTR_ERR((void *)map_addr) == -EEXIST)
-> > > > -		pr_info("%d (%s): Uhuuh, elf segment at %px requested but the memory is mapped already\n",
-> > > > -			task_pid_nr(current), current->comm, (void *)addr);
-> > > > +		pr_info("%d (%s): Uhuuh, elf segment at %lx requested but the memory is mapped already\n",
-> > > > +			task_pid_nr(current), current->comm, addr);
-> > > 
-> > > "%px" does not hash. For what reason you replace %px with %lx ?
-> > 
-> > Duh. There is no reason to use non-standard %px.
-> > 
-> 
-> See the comment for pointer() function in lib/vsprintf.c .
-> In Linux kernel world, various extension for %p is supported.
+In commit 247f2f6f3c70 ("sched/core: Don't schedule threads on pre-empted
+vCPUs") we distinguish between idle_cpu when the vcpu is not running for
+scheduling threads. However, idle_cpu function is used at other places for
+actually checking whether the state of the CPU is idle or not. Hence
+splitting the use of that function based on the desired return value.
 
-%p has this funny property: scanf(printf("%p", ptr)) does not equal %p
-because small pointer will become (null) or (errptr) or whatever is
-decided in recent vsnprintf thread, therefore the less %p is used
-the better.
+Changelog:
+v1->v2:
+* Changed the comment to say available_idle_cpu
+
+Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
+---
+ include/linux/sched.h |  1 +
+ kernel/sched/core.c   | 14 ++++++++++++++
+ kernel/sched/fair.c   | 20 ++++++++++----------
+ 3 files changed, 25 insertions(+), 10 deletions(-)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index c241370..959a858 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1504,6 +1504,7 @@ static inline int task_nice(const struct task_struct *p)
+ extern int can_nice(const struct task_struct *p, const int nice);
+ extern int task_curr(const struct task_struct *p);
+ extern int idle_cpu(int cpu);
++extern int available_idle_cpu(int cpu);
+ extern int sched_setscheduler(struct task_struct *, int, const struct sched_param *);
+ extern int sched_setscheduler_nocheck(struct task_struct *, int, const struct sched_param *);
+ extern int sched_setattr(struct task_struct *, const struct sched_attr *);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 4e0ebae..4064187 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4029,6 +4029,20 @@ int idle_cpu(int cpu)
+ 		return 0;
+ #endif
+ 
++	return 1;
++}
++
++/**
++ * available_idle_cpu - is a given CPU idle for enqueuing work.
++ * @cpu: the processor in question.
++ *
++ * Return: 1 if the CPU is currently idle. 0 otherwise.
++ */
++int available_idle_cpu(int cpu)
++{
++	if (!idle_cpu(cpu))
++		return 0;
++
+ 	if (vcpu_is_preempted(cpu))
+ 		return 0;
+ 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 1f6a23a..a0b0da4 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5870,8 +5870,8 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
+ 	 * a cpufreq perspective, it's better to have higher utilisation
+ 	 * on one CPU.
+ 	 */
+-	if (idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
+-		return idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
++	if (available_idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
++		return available_idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
+ 
+ 	if (sync && cpu_rq(this_cpu)->nr_running == 1)
+ 		return this_cpu;
+@@ -6157,7 +6157,7 @@ find_idlest_group_cpu(struct sched_group *group, struct task_struct *p, int this
+ 
+ 	/* Traverse only the allowed CPUs */
+ 	for_each_cpu_and(i, sched_group_span(group), &p->cpus_allowed) {
+-		if (idle_cpu(i)) {
++		if (available_idle_cpu(i)) {
+ 			struct rq *rq = cpu_rq(i);
+ 			struct cpuidle_state *idle = idle_get_state(rq);
+ 			if (idle && idle->exit_latency < min_exit_latency) {
+@@ -6286,7 +6286,7 @@ void __update_idle_core(struct rq *rq)
+ 		if (cpu == core)
+ 			continue;
+ 
+-		if (!idle_cpu(cpu))
++		if (!available_idle_cpu(cpu))
+ 			goto unlock;
+ 	}
+ 
+@@ -6318,7 +6318,7 @@ static int select_idle_core(struct task_struct *p, struct sched_domain *sd, int
+ 
+ 		for_each_cpu(cpu, cpu_smt_mask(core)) {
+ 			cpumask_clear_cpu(cpu, cpus);
+-			if (!idle_cpu(cpu))
++			if (!available_idle_cpu(cpu))
+ 				idle = false;
+ 		}
+ 
+@@ -6347,7 +6347,7 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
+ 	for_each_cpu(cpu, cpu_smt_mask(target)) {
+ 		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
+ 			continue;
+-		if (idle_cpu(cpu))
++		if (available_idle_cpu(cpu))
+ 			return cpu;
+ 	}
+ 
+@@ -6410,7 +6410,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+ 			return -1;
+ 		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
+ 			continue;
+-		if (idle_cpu(cpu))
++		if (available_idle_cpu(cpu))
+ 			break;
+ 	}
+ 
+@@ -6430,13 +6430,13 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ 	struct sched_domain *sd;
+ 	int i, recent_used_cpu;
+ 
+-	if (idle_cpu(target))
++	if (available_idle_cpu(target))
+ 		return target;
+ 
+ 	/*
+ 	 * If the previous CPU is cache affine and idle, don't be stupid:
+ 	 */
+-	if (prev != target && cpus_share_cache(prev, target) && idle_cpu(prev))
++	if (prev != target && cpus_share_cache(prev, target) && available_idle_cpu(prev))
+ 		return prev;
+ 
+ 	/* Check a recently used CPU as a potential idle candidate: */
+@@ -6444,7 +6444,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ 	if (recent_used_cpu != prev &&
+ 	    recent_used_cpu != target &&
+ 	    cpus_share_cache(recent_used_cpu, target) &&
+-	    idle_cpu(recent_used_cpu) &&
++	    available_idle_cpu(recent_used_cpu) &&
+ 	    cpumask_test_cpu(p->recent_used_cpu, &p->cpus_allowed)) {
+ 		/*
+ 		 * Replace recent_used_cpu with prev as it is a potential
+-- 
+2.7.4
