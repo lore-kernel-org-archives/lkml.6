@@ -1,177 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965331AbeEIP6U (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:58:20 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:40158 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965055AbeEIP6S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:58:18 -0400
-X-Google-Smtp-Source: AB8JxZrW8l81kGDJuzAmgNPZ3OLgkQXYz9O2aFS9UeciXQ6Tk3Yy/9xEZKIxCDn/FODNA0ILZgZqT6PckGnXCRB5SXo=
+        id S965348AbeEIP6w (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:58:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55590 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965055AbeEIP6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 11:58:50 -0400
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+To: Stephen Bates <sbates@raithlin.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+References: <20180423233046.21476-1-logang@deltatee.com>
+ <20180423233046.21476-5-logang@deltatee.com>
+ <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
+ <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
+ <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
+ <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
+ <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
+ <20180508133407.57a46902@w520.home>
+ <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
+ <20180508141331.7cd737cb@w520.home>
+ <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
+ <20180508144341.0441b676@w520.home>
+ <a524127a-3557-3dff-971c-dfe94ba5a01c@deltatee.com>
+ <20180508152631.50fd583c@w520.home>
+ <354F7407-0DC7-470C-B9AA-74FDF9C46B08@raithlin.com>
+ <20180508160336.0935ddde@w520.home>
+ <11819753-af26-4632-8580-d4a47127a3b2@redhat.com>
+ <C6D0BD3A-FA82-425A-899C-C2DBDCBC7EEC@raithlin.com>
+From: Don Dutile <ddutile@redhat.com>
+Message-ID: <09b4088a-838a-48f5-4395-f261de483dbf@redhat.com>
+Date: Wed, 9 May 2018 11:58:46 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com> <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
-In-Reply-To: <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
-From: Daniel Kurtz <djkurtz@chromium.org>
-Date: Wed, 09 May 2018 15:58:06 +0000
-Message-ID: <CAGS+omCB=b-PDos0uWY6k1nWpMkjSQ3TpSMAe8WSdrXByAG2Uw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
-To: Akshu Agrawal <akshu.agrawal@amd.com>
-Cc: Alexander.Deucher@amd.com, Mike Turquette <mturquette@baylibre.com>,
-        sboyd@kernel.org, christian.koenig@amd.com,
-        Dave Airlie <airlied@redhat.com>, Shaoyun.Liu@amd.com,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <C6D0BD3A-FA82-425A-899C-C2DBDCBC7EEC@raithlin.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 4:01 AM Akshu Agrawal <akshu.agrawal@amd.com> wrote:
-
-> Stoney SoC provides oscout clock. This clock can support 25Mhz and
-> 48Mhz of frequency.
-> The clock is available for general system use.
-
-> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
-
-Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-
-
-> ---
-> v2: config change, added SPDX tag and used clk_hw_register_.
-> v3: Fix kbuild warning for checking of NULL pointer
-> v4: unregister clk_hw in driver remove, add .suppress_bind_attrs
-> v5: Fix license, used static array
->   drivers/clk/x86/Makefile             |  3 +-
->   drivers/clk/x86/clk-st.c             | 77
-++++++++++++++++++++++++++++++++++++
->   include/linux/platform_data/clk-st.h | 17 ++++++++
->   3 files changed, 96 insertions(+), 1 deletion(-)
->   create mode 100644 drivers/clk/x86/clk-st.c
->   create mode 100644 include/linux/platform_data/clk-st.h
-
-> diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
-> index 1367afb..00303bc 100644
-> --- a/drivers/clk/x86/Makefile
-> +++ b/drivers/clk/x86/Makefile
-> @@ -1,3 +1,4 @@
-> +obj-$(CONFIG_PMC_ATOM)         += clk-pmc-atom.o
-> +obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)  += clk-st.o
->   clk-x86-lpss-objs              := clk-lpt.o
->   obj-$(CONFIG_X86_INTEL_LPSS)   += clk-x86-lpss.o
-> -obj-$(CONFIG_PMC_ATOM)         += clk-pmc-atom.o
-> diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
-> new file mode 100644
-> index 0000000..fb62f39
-> --- /dev/null
-> +++ b/drivers/clk/x86/clk-st.c
-> @@ -0,0 +1,77 @@
-> +// SPDX-License-Identifier: MIT
-> +/*
-> + * clock framework for AMD Stoney based clocks
-> + *
-> + * Copyright 2018 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_data/clk-st.h>
-> +#include <linux/platform_device.h>
-> +
-> +/* Clock Driving Strength 2 register */
-> +#define CLKDRVSTR2     0x28
-> +/* Clock Control 1 register */
-> +#define MISCCLKCNTL1   0x40
-> +/* Auxiliary clock1 enable bit */
-> +#define OSCCLKENB      2
-> +/* 25Mhz auxiliary output clock freq bit */
-> +#define OSCOUT1CLK25MHZ        16
-> +
-> +#define ST_CLK_48M     0
-> +#define ST_CLK_25M     1
-> +#define ST_CLK_MUX     2
-> +#define ST_CLK_GATE    3
-> +#define ST_MAX_CLKS    4
-> +
-> +static const char * const clk_oscout1_parents[] = { "clk48MHz",
-"clk25MHz" };
-> +static struct clk_hw *hws[ST_MAX_CLKS];
-> +
-> +static int st_clk_probe(struct platform_device *pdev)
-> +{
-> +       struct st_clk_data *st_data;
-> +
-> +       st_data = dev_get_platdata(&pdev->dev);
-> +       if (!st_data || !st_data->base)
-> +               return -EINVAL;
-> +
-> +       hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz",
-NULL, 0,
-> +                                                    48000000);
-> +       hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz",
-NULL, 0,
-> +                                                    25000000);
-> +
-> +       hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
-> +               clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
-> +               0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0,
-NULL);
-> +
-> +       clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
-> +
-> +       hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1",
-"oscout1_mux",
-> +               0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
-> +               CLK_GATE_SET_TO_DISABLE, NULL);
-> +
-> +       clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
-> +
-> +       return 0;
-> +}
-> +
-> +static int st_clk_remove(struct platform_device *pdev)
-> +{
-> +       int i;
-> +
-> +       for (i = 0; i < ST_MAX_CLKS; i++)
-> +               clk_hw_unregister(hws[i]);
-> +       return 0;
-> +}
-> +
-> +static struct platform_driver st_clk_driver = {
-> +       .driver = {
-> +               .name = "clk-st",
-> +               .suppress_bind_attrs = true,
-> +       },
-> +       .probe = st_clk_probe,
-> +       .remove = st_clk_remove,
-> +};
-> +builtin_platform_driver(st_clk_driver);
-> diff --git a/include/linux/platform_data/clk-st.h
-b/include/linux/platform_data/clk-st.h
-> new file mode 100644
-> index 0000000..7cdb6a4
-> --- /dev/null
-> +++ b/include/linux/platform_data/clk-st.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: MIT */
-> +/*
-> + * clock framework for AMD Stoney based clock
-> + *
-> + * Copyright 2018 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#ifndef __CLK_ST_H
-> +#define __CLK_ST_H
-> +
-> +#include <linux/compiler.h>
-> +
-> +struct st_clk_data {
-> +       void __iomem *base;
-> +};
-> +
-> +#endif /* __CLK_ST_H */
-> --
-> 1.9.1
+On 05/09/2018 08:44 AM, Stephen  Bates wrote:
+> Hi Don
+> 
+>>     RDMA VFs lend themselves to NVMEoF w/device-assignment.... need a way to
+>>     put NVME 'resources' into an assignable/manageable object for 'IOMMU-grouping',
+>>     which is really a 'DMA security domain' and less an 'IOMMU grouping domain'.
+>      
+> Ha, I like your term "DMA Security Domain" which sounds about right for what we are discussing with p2pdma and ACS disablement ;-). The problem is that ACS is, in some ways, too big of hammer for what we want here in the sense that it is either on or off for the bridge or MF EP we enable/disable it for. ACS can't filter the TLPs by address or ID though PCI-SIG are having some discussions on extending ACS. That's a long term solution and won't be applicable to us for some time.
+> 
+> NVMe SSDs that support SR-IOV are coming to market but we can't assume all NVMe SSDs with support SR-IOV. That will probably be a pretty high end-feature...
+> 
+> Stephen
+>      
+>      
+> 
+Sure, we could provide unsecure enablement for development and kick-the-tires deployment ..
+device-assignment started that way (no ACS, no intr-remapping, etc.), but for secure setups,
+VF's for both p2p EPs is the best security model.
+So, we should have a design goal for the secure configuration.
+workarounds/unsecure modes to deal with near-term what-we-have-to-work-with can be employed, but they shoudn't be
+the only/defacto/final-solution.
