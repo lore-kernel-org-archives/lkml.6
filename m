@@ -1,187 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933667AbeEICri (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 22:47:38 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34833 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933337AbeEICrg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 22:47:36 -0400
-X-Google-Smtp-Source: AB8JxZopb1x6Q7eaztSH9UTzWft0uw9npwIRid2Vym8aqA85oVUgbeC//cfYC9z9qkYQ2eRjQcrm/Q==
-Date: Tue, 8 May 2018 19:49:30 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
+        id S933682AbeEICs6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 22:48:58 -0400
+Received: from sandeen.net ([63.231.237.45]:44440 "EHLO sandeen.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932579AbeEICs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 22:48:56 -0400
+Subject: Re: WARNING: bad unlock balance in xfs_iunlock
 To: Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot <syzbot+40396d275b34b0dd5dad@syzkaller.appspotmail.com>,
-        David Miller <davem@davemloft.net>,
-        Cong Wang <xiyou.wangcong@gmail.com>, Tom Herbert <tom@quantonium.net>,
-        Eric Dumazet <edumazet@google.com>, Eric Biggers <ebiggers@google.com>,
-        netdev <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in work_is_static_object
-Message-ID: <20180509024930.GB711@sol.localdomain>
-References: <001a1144d6e8ef29870562424c44@google.com>
- <CACT4Y+bwGfUgdJzsgCYd+yqcv8BQ242+3pRNNY_R3SVKGV+24Q@mail.gmail.com>
- <CACT4Y+b2SHbAixYaGN-Q3zTBDskafTR6aXSMu=qXtEb4iwco+A@mail.gmail.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        syzkaller <syzkaller@googlegroups.com>
+References: <f403043cbe8414177d0568e81405@google.com>
+ <20180403043854.GL1150@dastard>
+ <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
+ <20180405213844.GE23861@dastard> <20180406161053.GF7500@magnolia>
+ <CACT4Y+aaEOffkFA-B-hMzwzSiQwVpkPrc2udC087a55OTnkS4g@mail.gmail.com>
+ <95c1400b-94f2-1af4-2d5d-c61c274c28ff@sandeen.net>
+ <CACT4Y+aiwgRg5pk+N7bq9HYpgumTFyqG6-y3EZ8pWkq9-uB1aA@mail.gmail.com>
+ <9f8d657c-7f42-7bd9-4477-6c3addf16dee@sandeen.net>
+ <CACT4Y+bUx4jw83Ux7w9URL9bCy1ERLaVGTTwvA9Fe_UtLFeqCw@mail.gmail.com>
+ <d7c8e0eb-61ed-1aad-6faa-82a0ef8c25b8@sandeen.net>
+ <CACT4Y+YNRt5YSrOYKKFUP25jodpK0xeZhysSGoz2UaiGs_Gx=A@mail.gmail.com>
+From: Eric Sandeen <sandeen@sandeen.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
+ 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 pA==
+Message-ID: <9adacfed-0de6-cb94-bf14-3e639678a02a@sandeen.net>
+Date: Tue, 8 May 2018 21:48:54 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+b2SHbAixYaGN-Q3zTBDskafTR6aXSMu=qXtEb4iwco+A@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CACT4Y+YNRt5YSrOYKKFUP25jodpK0xeZhysSGoz2UaiGs_Gx=A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 08, 2018 at 12:58:11PM +0100, 'Dmitry Vyukov' via syzkaller-bugs wrote:
-> On Mon, Jan 8, 2018 at 12:55 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> > On Mon, Jan 8, 2018 at 12:43 PM, syzbot
-> > <syzbot+40396d275b34b0dd5dad@syzkaller.appspotmail.com> wrote:
-> >> Hello,
-> >>
-> >> syzkaller hit the following crash on
-> >> f66faae2f80a45feafc04ce63ef744ac4b6e8c05
-> >> git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git/master
-> >> compiler: gcc (GCC) 7.1.1 20170620
-> >> .config is attached
-> >> Raw console output is attached.
-> >> Unfortunately, I don't have any reproducer for this bug yet.
-> >>
-> >>
-> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> >> Reported-by: syzbot+40396d275b34b0dd5dad@syzkaller.appspotmail.com
-> >> It will help syzbot understand when the bug is fixed. See footer for
-> >> details.
-> >> If you forward the report, please keep this part and the footer.
-> >
-> >
-> > This looks like an issue in kcm sockets, so +kcm maintainers.
-> 
-> FTR, guilty file extraction was fixed to ignore kernel/workqueue.c:
-> https://github.com/google/syzkaller/commit/1014e5506e35965f3bad13fabb08666134d0b273
-> Presumably for bugs in workqueue usually the caller is guilty.
-> 
-> 
-> >> device ip6_vti0 entered promiscuous mode
-> >> ==================================================================
-> >> BUG: KASAN: use-after-free in constant_test_bit
-> >> arch/x86/include/asm/bitops.h:325 [inline]
-> >> BUG: KASAN: use-after-free in work_is_static_object+0x39/0x40
-> >> kernel/workqueue.c:443
-> >> Read of size 8 at addr ffff8801beca5788 by task syz-executor2/12922
-> >>
-> >> CPU: 0 PID: 12922 Comm: syz-executor2 Not tainted 4.15.0-rc5+ #178
-> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> >> Google 01/01/2011
-> >> Call Trace:
-> >>  __dump_stack lib/dump_stack.c:17 [inline]
-> >>  dump_stack+0x194/0x257 lib/dump_stack.c:53
-> >>  print_address_description+0x73/0x250 mm/kasan/report.c:252
-> >>  kasan_report_error mm/kasan/report.c:351 [inline]
-> >>  kasan_report+0x25b/0x340 mm/kasan/report.c:409
-> >>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:430
-> >>  constant_test_bit arch/x86/include/asm/bitops.h:325 [inline]
-> >>  work_is_static_object+0x39/0x40 kernel/workqueue.c:443
-> >>  debug_object_activate+0x36f/0x730 lib/debugobjects.c:470
-> >>  debug_work_activate kernel/workqueue.c:492 [inline]
-> >>  __queue_work+0x163/0x1230 kernel/workqueue.c:1381
-> >>  queue_work_on+0x16a/0x1c0 kernel/workqueue.c:1487
-> >>  queue_work include/linux/workqueue.h:488 [inline]
-> >>  strp_check_rcv+0x25/0x30 net/strparser/strparser.c:552
-> >>  kcm_attach net/kcm/kcmsock.c:1439 [inline]
-> >>  kcm_attach_ioctl net/kcm/kcmsock.c:1460 [inline]
-> >>  kcm_ioctl+0x82f/0x1690 net/kcm/kcmsock.c:1665
-> >>  sock_do_ioctl+0x65/0xb0 net/socket.c:956
-> >>  sock_ioctl+0x2c2/0x440 net/socket.c:1053
-> >>  vfs_ioctl fs/ioctl.c:46 [inline]
-> >>  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
-> >>  SYSC_ioctl fs/ioctl.c:701 [inline]
-> >>  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-> >>  entry_SYSCALL_64_fastpath+0x23/0x9a
-> >> RIP: 0033:0x452ac9
-> >> RSP: 002b:00007f1bbd860c58 EFLAGS: 00000212 ORIG_RAX: 0000000000000010
-> >> RAX: ffffffffffffffda RBX: 000000000071bea0 RCX: 0000000000452ac9
-> >> RDX: 0000000020954ff8 RSI: 00000000000089e0 RDI: 0000000000000017
-> >> RBP: 000000000000057b R08: 0000000000000000 R09: 0000000000000000
-> >> R10: 0000000000000000 R11: 0000000000000212 R12: 00000000006f6428
-> >> R13: 00000000ffffffff R14: 00007f1bbd8616d4 R15: 0000000000000000
-> >>
-> >> Allocated by task 12922:
-> >>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-> >>  set_track mm/kasan/kasan.c:459 [inline]
-> >>  kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
-> >>  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:489
-> >>  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3544
-> >>  kmem_cache_zalloc include/linux/slab.h:678 [inline]
-> >>  kcm_attach net/kcm/kcmsock.c:1394 [inline]
-> >>  kcm_attach_ioctl net/kcm/kcmsock.c:1460 [inline]
-> >>  kcm_ioctl+0x2d2/0x1690 net/kcm/kcmsock.c:1665
-> >>  sock_do_ioctl+0x65/0xb0 net/socket.c:956
-> >>  sock_ioctl+0x2c2/0x440 net/socket.c:1053
-> >>  vfs_ioctl fs/ioctl.c:46 [inline]
-> >>  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
-> >>  SYSC_ioctl fs/ioctl.c:701 [inline]
-> >>  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-> >>  entry_SYSCALL_64_fastpath+0x23/0x9a
-> >>
-> >> Freed by task 12929:
-> >>  save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-> >>  set_track mm/kasan/kasan.c:459 [inline]
-> >>  kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
-> >>  __cache_free mm/slab.c:3488 [inline]
-> >>  kmem_cache_free+0x83/0x2a0 mm/slab.c:3746
-> >>  kcm_unattach+0xe53/0x1510 net/kcm/kcmsock.c:1563
-> >>  kcm_unattach_ioctl net/kcm/kcmsock.c:1608 [inline]
-> >>  kcm_ioctl+0xe54/0x1690 net/kcm/kcmsock.c:1675
-> >>  sock_do_ioctl+0x65/0xb0 net/socket.c:956
-> >>  sock_ioctl+0x2c2/0x440 net/socket.c:1053
-> >>  vfs_ioctl fs/ioctl.c:46 [inline]
-> >>  do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
-> >>  SYSC_ioctl fs/ioctl.c:701 [inline]
-> >>  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-> >>  entry_SYSCALL_64_fastpath+0x23/0x9a
-> >>
-> >> The buggy address belongs to the object at ffff8801beca56c0
-> >>  which belongs to the cache kcm_psock_cache of size 544
-> >> The buggy address is located 200 bytes inside of
-> >>  544-byte region [ffff8801beca56c0, ffff8801beca58e0)
-> >> The buggy address belongs to the page:
-> >> page:000000005180a80a count:1 mapcount:0 mapping:0000000058aa9a5c index:0x0
-> >> compound_mapcount: 0
-> >> flags: 0x2fffc0000008100(slab|head)
-> >> raw: 02fffc0000008100 ffff8801beca40c0 0000000000000000 000000010000000b
-> >> raw: ffff8801d31e8a48 ffff8801d31e8a48 ffff8801d3f6a380 0000000000000000
-> >> page dumped because: kasan: bad access detected
-> >>
-> >> Memory state around the buggy address:
-> >>  ffff8801beca5680: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-> >>  ffff8801beca5700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >>>
-> >>> ffff8801beca5780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >>
-> >>                       ^
-> >>  ffff8801beca5800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >>  ffff8801beca5880: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> >> ==================================================================
-> >>
-> >>
-> >> ---
-> >> This bug is generated by a dumb bot. It may contain errors.
-> >> See https://goo.gl/tpsmEJ for details.
-> >> Direct all questions to syzkaller@googlegroups.com.
-> >>
-> >> syzbot will keep track of this bug report.
-> >> If you forgot to add the Reported-by tag, once the fix for this bug is
-> >> merged
-> >> into any tree, please reply to this email with:
-> >> #syz fix: exact-commit-title
 
-This only happened 3 times, with no reproducer, and last occurred 105 days ago
-(Jan 23, on commit 2310035fa03f6).  It looks *very* similar to
-"KASAN: use-after-free Read in get_work_pool"
-(https://syzkaller.appspot.com/bug?extid=ea75c0ffcd353d32515f064aaebefc5279e6161e)
-which was fixed by commit 2cc683e88c0c99
-("kcm: lock lower socket in kcm_attach"),
-so I'll make an educated guess and say this one was fixed by that too...
 
-#syz fix: kcm: lock lower socket in kcm_attach
+On 5/8/18 2:52 AM, Dmitry Vyukov wrote:
+>> Or put another way, how did you arrive at the fs image values in the reproducer,
+>> i.e.:
+> Currently they are completely random, nobody taught syzkaller about AGFs, etc.
 
-- Eric
+So you just combine a few megabytes of purely random bits out of thin air until
+you get something that approximates an xfs filesystem?  Google must have more
+computing power than I was aware of.
+
+-Eric
+
+>> oid loop()
+>> {
+>>   memcpy((void*)0x20000000, "xfs", 4);
+>>   memcpy((void*)0x20000100, "./file0", 8);
+>>   *(uint64_t*)0x20000200 = 0x20010000;
+>>   memcpy((void*)0x20010000,
+>>          "\x58\x46\x53\x42\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00"
+>>          "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x9f\x98"
+>>          "\x99\xff\xcb\xa1\x4e\xe6\xad\x52\x08\x20\x67\x09\xed\x75\x00\x00\x00"
+>>          "\x00\x00\x00\x00\x04\x00\x00\x00\x00\x00\x00\x35\xe0\x00\x00\x00\x00"
+>>          "\x00\x00\x35\xe1\x00\x00\x00\x00\x00\x00\x35\xe2\x00\x00\x00\x01\x00"
+>>          "\x00\x10\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x03\x55\xb4\xa4"
+>>          "\x02\x00\x01\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+>>          "\x00\x0c\x09\x08\x04\x0c\x00\x00\x19\x00\x00\x00\x00\x00\x00\x00\x40"
+>>          "\x00\x00\x00\x00\x00\x00\x00\x3d\x00\x00\x00\x00\x00\x00\x0c\xa3\x00"
+>>          "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+>>          "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00"
+>>          "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x02\x02",
+>>          204);
+>>
+>> ...
+>>
+>> The in-memory xfs filesystem it constructs is damaged, is that an intentional
+>> part of the fuzzing during the test?
+> Yes, invalid inputs is part of testing.
