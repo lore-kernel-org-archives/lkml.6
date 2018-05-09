@@ -1,58 +1,89 @@
-Date: Tue, 8 May 2018 07:58:06 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: damian <damian.tometzki@icloud.com>, peterz@infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Kernel build with gcc 8 a lot of warnings
-Message-ID: <20180508055806.GA14989@kroah.com>
-References: <20180505192112.GA18728@zrhn9910b>
- <20180507045453.leou4zypnlcck4vr@treble>
- <20180508055126.GA18724@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180508055126.GA18724@kroah.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Return-Path: <ahiliation@yahoo.co.in>
+X-Google-Smtp-Source: AB8JxZrVdjgw3tvqA1VAVseze/LTRa7D6kQBP9NdSsQYLVWO30v1LFJ1q42R61mQv/xJgp7SDO5d
+ARC-Seal: i=1; a=rsa-sha256; t=1525887573; cv=none;
+        d=google.com; s=arc-20160816;
+        b=BOsGGwXmtG+Lo9MwF48ljmlaw92WutD7JuTSOmyOuWfvd218Nx5UPYEWp7Ps04FK68
+         KmUxH7btbDgHAOvjscwZw4zoStTlz9nFFl4fHbEocgfm+sH089S5NDmIg6sCJLFy7FL4
+         pg9DdAp+2qk6kjUu3Hdk7CVBCWGDNkXa5FKqepnlpeQqB3VnO8bqDY8TJ1/y6fKU0jgE
+         lu5Gao8SqFelz3TSes1FaJmggcGjsGWn87us+/ZLDK6aD6sDlfrcWGB6Rbk7hRxHtwNH
+         z1ndlTK/bTUSUkx+Ep83myauu0GZPaOQWReB4rOdVllm6kY2p/dG4gECF63ZUvHJ2nPC
+         2u5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=bZg/5MOTDXagudm5/+mvDnjQxBN5kF221BkU6UFHmJg=;
+        b=itvvdxhv7UbXn21xd7NHKSVQhdM5pVLGftvvMFFfmGOvOCrWZxnIVftU2YBTFAZ+sq
+         RsB1ZpjIxGwFxrvAVS5yNbbVzT0bkjJDyiIvANb7KJ/uKiFhl9FwDHEH5lXQmzydPWCj
+         /ZjLHRZF8wXUhpFeesTCXBbPCFeS7Cu1OnJenIQuu09RvnZpMKIQ+oQmHQCkJCNcj9hq
+         czvCU9QQNe9CM7y12Mqg49K/XQkRxXoOqtySRjzCCeWH9n5Fc6ckHDt/i5AeTVAq+Wgh
+         oH1YbAn4utgq6ksu5QyF3VIEbxlr8PfhpwM9iL5Wn/ASbwHhmNTLJNw3LuwNuUVu5Fwt
+         Nv1g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@yahoo.co.in header.s=s2048 header.b=LOk1dd3z;
+       spf=pass (google.com: domain of ahiliation@yahoo.co.in designates 106.10.242.40 as permitted sender) smtp.mailfrom=ahiliation@yahoo.co.in;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=yahoo.co.in
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@yahoo.co.in header.s=s2048 header.b=LOk1dd3z;
+       spf=pass (google.com: domain of ahiliation@yahoo.co.in designates 106.10.242.40 as permitted sender) smtp.mailfrom=ahiliation@yahoo.co.in;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=yahoo.co.in
+X-YMail-OSG: fZezlwYVM1nDXe1pn6a98D_wNV6f7mISLOSeK6wTnQGqq4DS6zDw7IhE1gRFk9T
+ ik6I1gqk2Jk_nKGTZrz_Bhs_oJRvFzTB1STfm3_gDyCvmb4tud18z8iPm8HIdrr_rXUFtRZcadSs
+ mwPaSWgovQHi4sRVrkXb8Nyl2kfiqqeZnWTUqNklcVVUHvjzjT0kKVuVVV8ENZLoFnbN_kPw_GNY
+ oBJXRhfhyX5lfKy6qFIFk3YacGH_2o6orq2GUxgAoZqXeE0Uz5opWTsWzFC5bYlxkkrtTNG8oKf9
+ sMsxQKFZt0hduhGbrn6UbBf0AifpDOQ7l7cZcuIBPAeED8S33UgIRjaZcXbxI5W.Dp..GP9YC7f_
+ eXDRa34uapJBVZqnLwUHz54sg.OjJCrHA2OPywgoJ_Mk8MDiWt9wAQ71hUN4bRmXeCbfNfusqtSv
+ Gi94MVg8.nL3E3es4BbkxUNaM777srqfdxx9VXafaAiUb11ERwid1hl4gjH19sHjcJxtwlMLSeML
+ HAhpPE.bjg0HeNMdsZmRgm2PoUSahNmD1_lJPS_fp_6jiqcfsyi5BD_2r7VRfeaqpduCZ8KgVDmh
+ 4vRi2TjyFUsKLJ_U2kbryGw9CfM62PfqK17oy6FP0FJsSrH2_Z8Qwj_CBsldQ7mluCMGN.fjxO4x
+ JHjZ3W6MFSmK0y4iIcX2RiOo5I_4VUQK4
+From: Jeffrin Jose T <ahiliation@yahoo.co.in>
+To: shuah@kernel.org,
+	kstewart@linuxfoundation.org,
+	daniel.diaz@linaro.org,
+	pombredanne@nexb.com,
+	gregkh@linuxfoundation.org,
+	thomas@m3y3r.de
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeffrin Jose T <ahiliation@yahoo.co.in>,
+	Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+Subject: [PATCH] selftests: intel_pstate: Fix a condition which does not notify user that root permission is useful
+Date: Wed,  9 May 2018 23:08:19 +0530
+Message-Id: <20180509173819.8017-1-ahiliation@yahoo.co.in>
+X-Mailer: git-send-email 2.17.0
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600009088111663295?=
+X-GMAIL-MSGID: =?utf-8?q?1600009088111663295?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 08, 2018 at 07:51:26AM +0200, Greg KH wrote:
-> On Sun, May 06, 2018 at 11:54:53PM -0500, Josh Poimboeuf wrote:
-> > On Sat, May 05, 2018 at 09:21:12PM +0200, damian wrote:
-> > > Helllo together,
-> > > 
-> > > Hello everybody,
-> > > 
-> > > is something special to note when kernel build with gcc 8? I receive various warnings from the objtool:
-> > > With GCC 7 works all fine.
-> > > 
-> > > kernel/cgroup/cgroup.o: warning: objtool: parse_cgroup_root_flags()+0x40: sibling call from callable instruction with modified stack frame
-> > > kernel/cgroup/cgroup.o: warning: objtool: cgroup_addrm_files()+0x2a3: sibling call from callable instruction with modified stack frame
-> > > kernel/cgroup/cgroup.o: warning: objtool: cgroup_apply_control_enable()+0x20b: sibling call from callable instruction with modified stack frame
-> > > kernel/cgroup/cgroup.o: warning: objtool: rebind_subsystems()+0x296: sibling call from callable instruction with modified stack frame
-> > > kernel/cgroup/cgroup.o: warning: objtool: cgroup_sk_alloc_disable()+0x10: sibling call from callable instruction with modified stack frame
-> > > kernel/cgroup/cgroup.o: warning: objtool: parse_cgroup_root_flags.cold.45()+0xa: call without frame pointer save/setup
-> > > kernel/cgroup/cgroup.o: warning: objtool: cgroup_addrm_files.cold.46()+0x17: call without frame pointer save/setup
-> > > kernel/cgroup/cgroup.o: warning: objtool: cgroup_apply_control_enable.cold.47()+0x24: call without frame pointer save/setup
-> > > kernel/cgroup/cgroup.o: warning: objtool: rebind_subsystems.cold.48()+0x10: call without frame pointer save/setup
-> > > kernel/cgroup/cgroup.o: warning: objtool: cgroup_sk_alloc_disable.cold.49()+0x7: call without frame pointer save/setup
-> > >   CC      kernel/cgroup/stat.o
-> > >   CC [M]  arch/x86/kvm/../../../virt/kvm/kvm_main.o
-> > > arch/x86/kernel/acpi/boot.o: warning: objtool: acpi_register_lapic()+0x10: sibling call from callable instruction with modified stack frame
-> > > arch/x86/kernel/acpi/boot.o: warning: objtool: acpi_map_cpu()+0x2c: sibling call from callable instruction with modified stack frame
-> > > arch/x86/kernel/acpi/boot.o: warning: objtool: acpi_register_lapic.cold.6()+0x7: call without frame pointer save/setup
-> > > arch/x86/kernel/acpi/boot.o: warning: objtool: acpi_map_cpu.cold.7()+0x7: call without frame pointer save/setup
-> > 
-> > Thanks, this is a known issue with GCC 8 that I haven't gotten a chance
-> > to fix yet.  They're related to the fact that GCC 8 is splitting out
-> > 'unlikely' code into 'cold' subfunctions in .text.unlikely.
-> > 
-> > I've got some old patches that fix it.  Now that GCC 8 is out, I'll need
-> > get the patches dusted off and cleaned up for merging.
-> 
-> Any pointers to these patches?  Archi linux just changed their default
-> compiler to gcc 8 and now I'm seeing this in my local builds :(
+aperf program uses /dev/cpu which is normally a root only
+access area. so in that case to successfully run thet test,
+root permissions are required.This patch is in the file run.sh.
 
-s/Archi/Arch/
+Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+---
+ tools/testing/selftests/intel_pstate/run.sh | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-ugh, time for more coffee...
+diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
+index 23a2e4e9880e..05d35392dcfd 100755
+--- a/tools/testing/selftests/intel_pstate/run.sh
++++ b/tools/testing/selftests/intel_pstate/run.sh
+@@ -31,6 +31,14 @@
+ 
+ EVALUATE_ONLY=0
+ 
++uid=$(id -u)
++if [ $uid -ne 0 ]; then
++    echo     "-----------------------"
++    echo $msg please run this as root >&2
++    echo     "-----------------------"
++    exit 0
++fi
++
+ if ! uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ | grep -q x86; then
+ 	echo "$0 # Skipped: Test can only run on x86 architectures."
+ 	exit 0
+-- 
+2.17.0
