@@ -1,54 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965513AbeEIQeO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:34:14 -0400
-Received: from outbound-smtp02.blacknight.com ([81.17.249.8]:40197 "EHLO
-        outbound-smtp02.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935232AbeEIQeM (ORCPT
+        id S935482AbeEIQeN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:34:13 -0400
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:53971 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933573AbeEIQeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:34:12 -0400
-Date: Wed, 9 May 2018 17:34:10 +0100
-From: Mel Gorman <mgorman@techsingularity.net>
-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc: torvalds@linux-foundation.org, tglx@linutronix.de, mingo@kernel.org,
-        hpa@zytor.com, efault@gmx.de, linux-kernel@vger.kernel.org,
-        matt@codeblueprint.co.uk, peterz@infradead.org, ggherdovich@suse.cz,
-        linux-tip-commits@vger.kernel.org, mpe@ellerman.id.au
-Subject: Re: [tip:sched/core] sched/numa: Delay retrying placement for
- automatic NUMA balance after wake_affine()
-Message-ID: <20180509163410.trju4eyrtslb3sk5@techsingularity.net>
-References: <20180213133730.24064-7-mgorman@techsingularity.net>
- <tip-7347fc87dfe6b7315e74310ee1243dc222c68086@git.kernel.org>
- <20180507110607.GA3828@linux.vnet.ibm.com>
- <20180509084148.qzpsetz74pkg7g33@techsingularity.net>
- <20180509105814.GA41120@linux.vnet.ibm.com>
+        Wed, 9 May 2018 12:34:11 -0400
+X-Google-Smtp-Source: AB8JxZpLFUd0JatgFnw0PqbgsEwLKOPmzk0fOSD4uYFeKG2w/MbZ3cngJHpENzUXTepw2FvEDpMxvw==
+Date: Wed, 9 May 2018 19:34:07 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] proc: test /proc/*/fd a bit (+ PF_KTHREAD is ABI!)
+Message-ID: <20180509163407.GA16034@avx2>
+References: <20180505000414.GA15090@avx2>
+ <20180508153920.9e74e1ab86a8b10e8ddf09a0@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180509105814.GA41120@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180508153920.9e74e1ab86a8b10e8ddf09a0@linux-foundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 03:58:14AM -0700, Srikar Dronamraju wrote:
-> In the other scenario, where wake_affine set p->numa_migrate_preferred to a
-> bigger value, the task calls numa_migrate_preferred(),
-> numa_migrate_preferred  could be before p->numa_migrate_preferred. In
-> such a case, we should have stopped the task from migration.
-> However we overwrite p->numa_migrate_preferred and do the
-> task_numa_migrate(). Somehow this doesn't seem to achieve what the
-> commit intended.
+On Tue, May 08, 2018 at 03:39:20PM -0700, Andrew Morton wrote:
+> On Sat, 5 May 2018 03:04:14 +0300 Alexey Dobriyan <adobriyan@gmail.com> wrote:
+
+> > This field is struct task_struct::flags in decimal!
+> > Check is done by testing PF_KTHREAD flags like we do in kernel.
+> > 
+> > 	PF_KTREAD value is a part of userspace ABI !!!
 > 
-> Or did I misunderstand?
-> 
+> erk.  Well if there's a need the we could export and support some
+> stable interface.  I wonder how ps determines this.
 
-Nope, the logic is broken. While it can be "fixed", the end result adds
-complexity for very little gain. I believe the right path for the moment
-is a revert and retry at a future date.
+Turned out ps (from procps-ng) reads /proc/*/cmdline and if read()
+returns 0 prints [] brackets. This is unreliable as
 
-Thanks.
+	execve("", NULL, NULL);
 
--- 
-Mel Gorman
-SUSE Labs
+exists and processes can empty their argv/envp area.
+
+It can do sorting based on "flags" field, so we hopefully can just mask
+most of the bits.
+
+At least it deals with ->comm containing ')' right.
