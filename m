@@ -1,179 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934040AbeEIJbI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:31:08 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:45048 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933869AbeEIJau (ORCPT
+        id S934021AbeEIJcK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:32:10 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43364 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933783AbeEIJcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:30:50 -0400
-From: =?UTF-8?q?H=C3=A5kon=20Bugge?= <Haakon.Bugge@oracle.com>
-To: Doug Ledford <dledford@redhat.com>, Don Hiatt <don.hiatt@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
-Subject: [PATCH IB/core 2/2] IB/cm: Send authentic pkey in REQ msg and check eligibility of the pkeys
-Date: Wed,  9 May 2018 11:30:20 +0200
-Message-Id: <20180509093020.24503-3-Haakon.Bugge@oracle.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180509093020.24503-1-Haakon.Bugge@oracle.com>
-References: <20180509093020.24503-1-Haakon.Bugge@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805090090
+        Wed, 9 May 2018 05:32:08 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        alsa-devel@alsa-project.org, Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: uniphier: evea: use DAPM to change source of line-in" to the asoc tree
+In-Reply-To: <20180508084509.21616-1-suzuki.katsuhiro@socionext.com>
+Message-Id: <20180509093158.8D18044007A@finisterre.ee.mobilebroadband>
+Date: Wed,  9 May 2018 10:31:58 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no point in using RDMA CM to establish a connection between
-two QPs that cannot possible communicate. Particularly, if both the
-active and passive side use limited pkeys, they are not able to
-communicate.
+The patch
 
-In order to detect this situation, the authentic pkey is used in the
-CM REQ message. The authentic pkey is the one that the HCA inserts
-into the BTH in the IB packets.
+   ASoC: uniphier: evea: use DAPM to change source of line-in
 
-When the passive side receives the REQ, commit ("ib_core: A full pkey
-is required to match a limited one") ensures that
-ib_find_matched_cached_pkey() fails unless at least one of the pkeys
-compared has the full-member bit.
+has been applied to the asoc tree at
 
-In the limited-to-limited case, this will prohibit the connection to
-be formed, and thus, Pkey Violation Traps will not be sent to the SM.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From e5ba319882d78030b054dee4eeaf758340b2756f Mon Sep 17 00:00:00 2001
+From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Date: Tue, 8 May 2018 17:45:09 +0900
+Subject: [PATCH] ASoC: uniphier: evea: use DAPM to change source of line-in
+
+This patch replaces mixer switch to DAPM one for changing audio source
+of line-in.
+
+Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/infiniband/core/cm.c | 39 ++++++++++++++++++++++++++++++++-------
- include/rdma/ib_cm.h         |  4 +++-
- 2 files changed, 35 insertions(+), 8 deletions(-)
+ sound/soc/uniphier/evea.c | 55 +++++++++++++++++++++++----------------
+ 1 file changed, 33 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/infiniband/core/cm.c b/drivers/infiniband/core/cm.c
-index a92e1a5c202b..52ed51d5bd2a 100644
---- a/drivers/infiniband/core/cm.c
-+++ b/drivers/infiniband/core/cm.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2004 Topspin Corporation.  All rights reserved.
-  * Copyright (c) 2004, 2005 Voltaire Corporation.  All rights reserved.
-  * Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
-+ * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
-  *
-  * This software is available to you under a choice of one of two
-  * licenses.  You may choose to be licensed under the terms of the GNU
-@@ -91,6 +92,7 @@ static const char * const ibcm_rej_reason_strs[] = {
- 	[IB_CM_REJ_INVALID_CLASS_VERSION]	= "invalid class version",
- 	[IB_CM_REJ_INVALID_FLOW_LABEL]		= "invalid flow label",
- 	[IB_CM_REJ_INVALID_ALT_FLOW_LABEL]	= "invalid alt flow label",
-+	[IB_CM_REJ_INVALID_PKEY]		= "invalid PKey",
+diff --git a/sound/soc/uniphier/evea.c b/sound/soc/uniphier/evea.c
+index 73fd6730095c..f9c10165fbc1 100644
+--- a/sound/soc/uniphier/evea.c
++++ b/sound/soc/uniphier/evea.c
+@@ -54,8 +54,21 @@ struct evea_priv {
+ 	int switch_hp;
  };
  
- const char *__attribute_const__ ibcm_reject_msg(int reason)
-@@ -518,8 +520,8 @@ static int cm_init_av_by_path(struct sa_path_rec *path, struct cm_av *av,
- 		return -EINVAL;
- 	cm_dev = port->cm_dev;
- 
--	ret = ib_find_cached_pkey(cm_dev->ib_device, port->port_num,
--				  be16_to_cpu(path->pkey), &av->pkey_index);
-+	ret = ib_find_matched_cached_pkey(cm_dev->ib_device, port->port_num,
-+					  be16_to_cpu(path->pkey), &av->pkey_index);
- 	if (ret)
- 		return ret;
- 
-@@ -1241,7 +1243,7 @@ static void cm_format_req(struct cm_req_msg *req_msg,
- 	cm_req_set_starting_psn(req_msg, cpu_to_be32(param->starting_psn));
- 	cm_req_set_local_resp_timeout(req_msg,
- 				      param->local_cm_response_timeout);
--	req_msg->pkey = param->primary_path->pkey;
-+	req_msg->pkey = cpu_to_be16(cm_id_priv->pkey);
- 	cm_req_set_path_mtu(req_msg, param->primary_path->mtu);
- 	cm_req_set_max_cm_retries(req_msg, param->max_cm_retries);
- 
-@@ -1396,7 +1398,23 @@ int ib_send_cm_req(struct ib_cm_id *cm_id,
- 	cm_id_priv->responder_resources = param->responder_resources;
- 	cm_id_priv->retry_count = param->retry_count;
- 	cm_id_priv->path_mtu = param->primary_path->mtu;
--	cm_id_priv->pkey = param->primary_path->pkey;
++static const char * const linsw1_sel1_text[] = {
++	"LIN1", "LIN2", "LIN3"
++};
 +
-+	/*
-+	 * We want to send the pkey used in the BTH in packets
-+	 * sent. This, in order for the passive side to determine if
-+	 * communication is permitted by the respective pkeys.
-+	 *
-+	 * The pkey in the paths are derived from the MGID, which has
-+	 * the full membership bit set. Hence, we retrieve the pkey by
-+	 * using the address vector's pkey_index.
-+	 */
-+	ret = ib_get_cached_pkey(cm_id_priv->id.device,
-+				 cm_id_priv->av.port->port_num,
-+				 cm_id_priv->av.pkey_index,
-+				 &cm_id_priv->pkey);
-+	if (ret)
-+		goto error1;
++static SOC_ENUM_SINGLE_DECL(linsw1_sel1_enum,
++	ALINSW1, ALINSW1_SEL1_SHIFT,
++	linsw1_sel1_text);
 +
- 	cm_id_priv->qp_type = param->qp_type;
- 
- 	ret = cm_alloc_msg(cm_id_priv, &cm_id_priv->msg);
-@@ -1956,16 +1974,19 @@ static int cm_req_handler(struct cm_work *work)
- 				 cm_id_priv);
- 	if (ret) {
- 		int err;
-+		int rej_reason = (ret == -ENOENT ?
-+				  IB_CM_REJ_INVALID_PKEY :
-+				  IB_CM_REJ_INVALID_GID);
- 
- 		err = ib_get_cached_gid(work->port->cm_dev->ib_device,
- 					work->port->port_num, 0,
- 					&work->path[0].sgid,
- 					NULL);
- 		if (err)
--			ib_send_cm_rej(cm_id, IB_CM_REJ_INVALID_GID,
-+			ib_send_cm_rej(cm_id, rej_reason,
- 				       NULL, 0, NULL, 0);
- 		else
--			ib_send_cm_rej(cm_id, IB_CM_REJ_INVALID_GID,
-+			ib_send_cm_rej(cm_id, rej_reason,
- 				       &work->path[0].sgid,
- 				       sizeof(work->path[0].sgid),
- 				       NULL, 0);
-@@ -1975,7 +1996,11 @@ static int cm_req_handler(struct cm_work *work)
- 		ret = cm_init_av_by_path(&work->path[1], &cm_id_priv->alt_av,
- 					 cm_id_priv);
- 		if (ret) {
--			ib_send_cm_rej(cm_id, IB_CM_REJ_INVALID_ALT_GID,
-+			int rej_reason = (ret == -ENOENT ?
-+					  IB_CM_REJ_INVALID_PKEY :
-+					  IB_CM_REJ_INVALID_ALT_GID);
++static const struct snd_kcontrol_new linesw1_mux[] = {
++	SOC_DAPM_ENUM("Line In 1 Source", linsw1_sel1_enum),
++};
 +
-+			ib_send_cm_rej(cm_id, rej_reason,
- 				       &work->path[0].sgid,
- 				       sizeof(work->path[0].sgid), NULL, 0);
- 			goto rejected;
-diff --git a/include/rdma/ib_cm.h b/include/rdma/ib_cm.h
-index 7979cb04f529..56b62303946a 100644
---- a/include/rdma/ib_cm.h
-+++ b/include/rdma/ib_cm.h
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2004 Topspin Corporation.  All rights reserved.
-  * Copyright (c) 2004 Voltaire Corporation.  All rights reserved.
-  * Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
-+ * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
-  *
-  * This software is available to you under a choice of one of two
-  * licenses.  You may choose to be licensed under the terms of the GNU
-@@ -183,7 +184,8 @@ enum ib_cm_rej_reason {
- 	IB_CM_REJ_DUPLICATE_LOCAL_COMM_ID	= 30,
- 	IB_CM_REJ_INVALID_CLASS_VERSION		= 31,
- 	IB_CM_REJ_INVALID_FLOW_LABEL		= 32,
--	IB_CM_REJ_INVALID_ALT_FLOW_LABEL	= 33
-+	IB_CM_REJ_INVALID_ALT_FLOW_LABEL	= 33,
-+	IB_CM_REJ_INVALID_PKEY			= 34,
+ static const struct snd_soc_dapm_widget evea_widgets[] = {
+-	SND_SOC_DAPM_ADC("ADC", "Capture", SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_ADC("ADC", NULL, SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_MUX("Line In 1 Mux", SND_SOC_NOPM, 0, 0, linesw1_mux),
+ 	SND_SOC_DAPM_INPUT("LIN1_LP"),
+ 	SND_SOC_DAPM_INPUT("LIN1_RP"),
+ 	SND_SOC_DAPM_INPUT("LIN2_LP"),
+@@ -63,7 +76,9 @@ static const struct snd_soc_dapm_widget evea_widgets[] = {
+ 	SND_SOC_DAPM_INPUT("LIN3_LP"),
+ 	SND_SOC_DAPM_INPUT("LIN3_RP"),
+ 
+-	SND_SOC_DAPM_DAC("DAC", "Playback", SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_DAC("DAC HP", NULL, SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_DAC("DAC LO1", NULL, SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_DAC("DAC LO2", NULL, SND_SOC_NOPM, 0, 0),
+ 	SND_SOC_DAPM_OUTPUT("HP1_L"),
+ 	SND_SOC_DAPM_OUTPUT("HP1_R"),
+ 	SND_SOC_DAPM_OUTPUT("LO2_L"),
+@@ -71,17 +86,22 @@ static const struct snd_soc_dapm_widget evea_widgets[] = {
  };
  
- struct ib_cm_rej_event_param {
+ static const struct snd_soc_dapm_route evea_routes[] = {
+-	{ "ADC", NULL, "LIN1_LP" },
+-	{ "ADC", NULL, "LIN1_RP" },
+-	{ "ADC", NULL, "LIN2_LP" },
+-	{ "ADC", NULL, "LIN2_RP" },
+-	{ "ADC", NULL, "LIN3_LP" },
+-	{ "ADC", NULL, "LIN3_RP" },
+-
+-	{ "HP1_L", NULL, "DAC" },
+-	{ "HP1_R", NULL, "DAC" },
+-	{ "LO2_L", NULL, "DAC" },
+-	{ "LO2_R", NULL, "DAC" },
++	{ "Line In 1", NULL, "ADC" },
++	{ "ADC", NULL, "Line In 1 Mux" },
++	{ "Line In 1 Mux", "LIN1", "LIN1_LP" },
++	{ "Line In 1 Mux", "LIN1", "LIN1_RP" },
++	{ "Line In 1 Mux", "LIN2", "LIN2_LP" },
++	{ "Line In 1 Mux", "LIN2", "LIN2_RP" },
++	{ "Line In 1 Mux", "LIN3", "LIN3_LP" },
++	{ "Line In 1 Mux", "LIN3", "LIN3_RP" },
++
++	{ "DAC HP", NULL, "Headphone 1" },
++	{ "DAC LO1", NULL, "Line Out 1" },
++	{ "DAC LO2", NULL, "Line Out 2" },
++	{ "HP1_L", NULL, "DAC HP" },
++	{ "HP1_R", NULL, "DAC HP" },
++	{ "LO2_L", NULL, "DAC LO2" },
++	{ "LO2_R", NULL, "DAC LO2" },
+ };
+ 
+ static void evea_set_power_state_on(struct evea_priv *evea)
+@@ -280,16 +300,7 @@ static int evea_set_switch_hp(struct snd_kcontrol *kcontrol,
+ 	return evea_update_switch_hp(evea);
+ }
+ 
+-static const char * const linsw1_sel1_text[] = {
+-	"LIN1", "LIN2", "LIN3"
+-};
+-
+-static SOC_ENUM_SINGLE_DECL(linsw1_sel1_enum,
+-	ALINSW1, ALINSW1_SEL1_SHIFT,
+-	linsw1_sel1_text);
+-
+ static const struct snd_kcontrol_new evea_controls[] = {
+-	SOC_ENUM("Line Capture Source", linsw1_sel1_enum),
+ 	SOC_SINGLE_BOOL_EXT("Line Capture Switch", 0,
+ 			    evea_get_switch_lin, evea_set_switch_lin),
+ 	SOC_SINGLE_BOOL_EXT("Line Playback Switch", 0,
 -- 
-2.13.6
+2.17.0
