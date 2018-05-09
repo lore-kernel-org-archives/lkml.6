@@ -1,150 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965641AbeEIVr2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 17:47:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51674 "EHLO mail.kernel.org"
+        id S965758AbeEIVwY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 17:52:24 -0400
+Received: from foss.arm.com ([217.140.101.70]:50184 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965206AbeEIVr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 17:47:27 -0400
-Date: Wed, 9 May 2018 14:47:26 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@sstabellini-ThinkPad-X260
-To: Roger Pau Monne <roger.pau@citrix.com>
-cc: linux-kernel@vger.kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 3/3] xen: share start flags between PV and PVH
-In-Reply-To: <20180509102129.14832-4-roger.pau@citrix.com>
-Message-ID: <alpine.DEB.2.10.1805091447150.9199@sstabellini-ThinkPad-X260>
-References: <20180509102129.14832-1-roger.pau@citrix.com> <20180509102129.14832-4-roger.pau@citrix.com>
-User-Agent: Alpine 2.10 (DEB 1266 2009-07-14)
+        id S965697AbeEIVwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 17:52:22 -0400
+Subject: Re: [PATCH v2 2/6] arm64: alternative: Apply alternatives early in
+ boot process
+To: Julien Thierry <julien.thierry@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: mark.rutland@arm.com, marc.zyngier@arm.com, james.morse@arm.com,
+        daniel.thompson@linaro.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <1516190084-18978-1-git-send-email-julien.thierry@arm.com>
+ <1516190084-18978-3-git-send-email-julien.thierry@arm.com>
+ <c935a9e6-94a0-03cb-eb64-7e2eef8f8d86@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <7a3afa42-821a-3d4a-3af8-00ba18653a4a@arm.com>
+Date: Wed, 9 May 2018 22:52:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="8323329-1392289433-1525902447=:9199"
+In-Reply-To: <c935a9e6-94a0-03cb-eb64-7e2eef8f8d86@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323329-1392289433-1525902447=:9199
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-On Wed, 9 May 2018, Roger Pau Monne wrote:
-> Use a global variable to store the start flags for both PV and PVH.
-> This allows the xen_initial_domain macro to work properly on PVH.
+On 05/04/2018 11:06 AM, Julien Thierry wrote:
+> Hi,
 > 
-> Note that ARM is also switched to use the new variable.
+> In order to prepare the v3 of this patchset, I'd like people's opinion 
+> on what this patch does. More below.
 > 
-> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Signed-off-by: Roger Pau Monné <roger.pau@citrix.com>
-> ---
-> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-> Cc: Juergen Gross <jgross@suse.com>
-> Cc: Stefano Stabellini <sstabellini@kernel.org>
-> Cc: xen-devel@lists.xenproject.org
-> ---
-> Changes since v1:
->  - Switch ARM to also use the new xen_start_flags.
+> On 17/01/18 11:54, Julien Thierry wrote:
+>> From: Daniel Thompson <daniel.thompson@linaro.org>
+>>
+>> Currently alternatives are applied very late in the boot process (and
+>> a long time after we enable scheduling). Some alternative sequences,
+>> such as those that alter the way CPU context is stored, must be applied
+>> much earlier in the boot sequence.
 
-The ARM side looks good
-
-
-> ---
->  arch/arm/xen/enlighten.c     | 7 ++++---
->  arch/x86/xen/enlighten.c     | 7 +++++++
->  arch/x86/xen/enlighten_pv.c  | 1 +
->  arch/x86/xen/enlighten_pvh.c | 1 +
->  include/xen/xen.h            | 4 +++-
->  5 files changed, 16 insertions(+), 4 deletions(-)
+>> +/*
+>> + * early-apply features are detected using only the boot CPU and 
+>> checked on
+>> + * secondary CPUs startup, even then,
+>> + * These early-apply features should only include features where we must
+>> + * patch the kernel very early in the boot process.
+>> + *
+>> + * Note that the cpufeature logic *must* be made aware of early-apply
+>> + * features to ensure they are reported as enabled without waiting
+>> + * for other CPUs to boot.
+>> + */
+>> +#define EARLY_APPLY_FEATURE_MASK BIT(ARM64_HAS_SYSREG_GIC_CPUIF)
+>> +
 > 
-> diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
-> index ba7f4c8f5c3e..a99d5edf7bdf 100644
-> --- a/arch/arm/xen/enlighten.c
-> +++ b/arch/arm/xen/enlighten.c
-> @@ -59,6 +59,9 @@ struct xen_memory_region xen_extra_mem[XEN_EXTRA_MEM_MAX_REGIONS] __initdata;
->  
->  static __read_mostly unsigned int xen_events_irq;
->  
-> +uint32_t xen_start_flags;
-> +EXPORT_SYMBOL(xen_start_flags);
-> +
->  int xen_remap_domain_gfn_array(struct vm_area_struct *vma,
->  			       unsigned long addr,
->  			       xen_pfn_t *gfn, int nr,
-> @@ -282,9 +285,7 @@ void __init xen_early_init(void)
->  	xen_setup_features();
->  
->  	if (xen_feature(XENFEAT_dom0))
-> -		xen_start_info->flags |= SIF_INITDOMAIN|SIF_PRIVILEGED;
-> -	else
-> -		xen_start_info->flags &= ~(SIF_INITDOMAIN|SIF_PRIVILEGED);
-> +		xen_start_flags |= SIF_INITDOMAIN|SIF_PRIVILEGED;
->  
->  	if (!console_set_on_cmdline && !xen_initial_domain())
->  		add_preferred_console("hvc", 0, NULL);
-> diff --git a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
-> index c9081c6671f0..3b5318505c69 100644
-> --- a/arch/x86/xen/enlighten.c
-> +++ b/arch/x86/xen/enlighten.c
-> @@ -64,6 +64,13 @@ struct shared_info xen_dummy_shared_info;
->  __read_mostly int xen_have_vector_callback;
->  EXPORT_SYMBOL_GPL(xen_have_vector_callback);
->  
-> +/*
-> + * NB: needs to live in .data because it's used by xen_prepare_pvh which runs
-> + * before clearing the bss.
-> + */
-> +uint32_t xen_start_flags __attribute__((section(".data"))) = 0;
-> +EXPORT_SYMBOL(xen_start_flags);
-> +
->  /*
->   * Point at some empty memory to start with. We map the real shared_info
->   * page as soon as fixmap is up and running.
-> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-> index c36d23aa6c35..04a6914b8b85 100644
-> --- a/arch/x86/xen/enlighten_pv.c
-> +++ b/arch/x86/xen/enlighten_pv.c
-> @@ -1227,6 +1227,7 @@ asmlinkage __visible void __init xen_start_kernel(void)
->  		return;
->  
->  	xen_domain_type = XEN_PV_DOMAIN;
-> +	xen_start_flags = xen_start_info->flags;
->  
->  	xen_setup_features();
->  
-> diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
-> index e039d1809809..2653eb9b5dd8 100644
-> --- a/arch/x86/xen/enlighten_pvh.c
-> +++ b/arch/x86/xen/enlighten_pvh.c
-> @@ -98,6 +98,7 @@ void __init xen_prepare_pvh(void)
->  	}
->  
->  	xen_pvh = 1;
-> +	xen_start_flags = pvh_start_info.flags;
->  
->  	wrmsr_safe(MSR_MTRRdefType, 0x800 | MTRR_TYPE_WRBACK, 0);
->  
-> diff --git a/include/xen/xen.h b/include/xen/xen.h
-> index 9d4340c907d1..15fa01c50a53 100644
-> --- a/include/xen/xen.h
-> +++ b/include/xen/xen.h
-> @@ -29,8 +29,10 @@ extern bool xen_pvh;
->  #include <xen/interface/xen.h>
->  #include <asm/xen/hypervisor.h>
->  
-> +extern uint32_t xen_start_flags;
-> +
->  #define xen_initial_domain()	(xen_domain() && \
-> -				 xen_start_info && xen_start_info->flags & SIF_INITDOMAIN)
-> +				 (xen_start_flags & SIF_INITDOMAIN))
->  #else  /* !CONFIG_XEN_DOM0 */
->  #define xen_initial_domain()	(0)
->  #endif	/* CONFIG_XEN_DOM0 */
-> -- 
-> 2.17.0
+> Following the change in the cpufeature infrastructure, 
+> ARM64_HAS_SYSREG_GIC_CPUIF will have the scope 
+> ARM64_CPUCAP_SCOPE_BOOT_CPU in order to be checked early in the boot 
+> process.
+
+Thats correct.
+
 > 
---8323329-1392289433-1525902447=:9199--
+> Now, regarding the early application of alternative, I am wondering 
+> whether we can apply all the alternatives associated with SCOPE_BOOT 
+> features that *do not* have a cpu_enable callback.
+> 
+
+I don't understand why would you skip the ones that have a "cpu_enable" 
+callback. Could you explain this a bit ? Ideally you should be able to
+apply the alternatives for features with the SCOPE_BOOT, provided the
+cpu_enable() callback is written properly.
+
+
+> Otherwise we can keep the macro to list individually each feature that 
+> is patchable at boot time as the current patch does (or put this info in 
+> a flag within the arm64_cpu_capabilities structure)
+
+You may be able to build up the mask of *available* capabilities with 
+SCOPE_BOOT at boot time by playing some trick in the 
+setup_boot_cpu_capabilities(), rather than embedding it in the 
+capabilities (and then parsing the entire table(s)) or manually keeping
+track of the capabilities by having a separate mask.
+
+Suzuki
+
+> 
+> Any thoughts or preferences on this?
+> 
+> Thanks,
+> 
+>>   #define __ALT_PTR(a,f)        ((void *)&(a)->f + (a)->f)
+>>   #define ALT_ORIG_PTR(a)        __ALT_PTR(a, orig_offset)
+>>   #define ALT_REPL_PTR(a)        __ALT_PTR(a, alt_offset)
+>> @@ -105,7 +117,8 @@ static u32 get_alt_insn(struct alt_instr *alt, 
+>> __le32 *insnptr, __le32 *altinsnp
+>>       return insn;
+>>   }
+>>
+>> -static void __apply_alternatives(void *alt_region, bool 
+>> use_linear_alias)
+>> +static void __apply_alternatives(void *alt_region,  bool 
+>> use_linear_alias,
+>> +                 unsigned long feature_mask)
+>>   {
+>>       struct alt_instr *alt;
+>>       struct alt_region *region = alt_region;
+>> @@ -115,6 +128,9 @@ static void __apply_alternatives(void *alt_region, 
+>> bool use_linear_alias)
+>>           u32 insn;
+>>           int i, nr_inst;
+>>
+>> +        if ((BIT(alt->cpufeature) & feature_mask) == 0)
+>> +            continue;
+>> +
+>>           if (!cpus_have_cap(alt->cpufeature))
+>>               continue;
+>>
+>> @@ -138,6 +154,21 @@ static void __apply_alternatives(void 
+>> *alt_region, bool use_linear_alias)
+>>   }
+>>
+>>   /*
+>> + * This is called very early in the boot process (directly after we run
+>> + * a feature detect on the boot CPU). No need to worry about other CPUs
+>> + * here.
+>> + */
+>> +void apply_alternatives_early(void)
+>> +{
+>> +    struct alt_region region = {
+>> +        .begin    = (struct alt_instr *)__alt_instructions,
+>> +        .end    = (struct alt_instr *)__alt_instructions_end,
+>> +    };
+>> +
+>> +    __apply_alternatives(&region, true, EARLY_APPLY_FEATURE_MASK);
+>> +}
+>> +
+>> +/*
+>>    * We might be patching the stop_machine state machine, so implement a
+>>    * really simple polling protocol here.
+>>    */
+>> @@ -156,7 +187,9 @@ static int __apply_alternatives_multi_stop(void 
+>> *unused)
+>>           isb();
+>>       } else {
+>>           BUG_ON(patched);
+>> -        __apply_alternatives(&region, true);
+>> +
+>> +        __apply_alternatives(&region, true, ~EARLY_APPLY_FEATURE_MASK);
+>> +
+>>           /* Barriers provided by the cache flushing */
+>>           WRITE_ONCE(patched, 1);
+>>       }
+>> @@ -177,5 +210,5 @@ void apply_alternatives(void *start, size_t length)
+>>           .end    = start + length,
+>>       };
+>>
+>> -    __apply_alternatives(&region, false);
+>> +    __apply_alternatives(&region, false, -1);
+>>   }
+>> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+>> index 551eb07..37361b5 100644
+>> --- a/arch/arm64/kernel/smp.c
+>> +++ b/arch/arm64/kernel/smp.c
+>> @@ -453,6 +453,12 @@ void __init smp_prepare_boot_cpu(void)
+>>        * cpuinfo_store_boot_cpu() above.
+>>        */
+>>       update_cpu_errata_workarounds();
+>> +    /*
+>> +     * We now know enough about the boot CPU to apply the
+>> +     * alternatives that cannot wait until interrupt handling
+>> +     * and/or scheduling is enabled.
+>> +     */
+>> +    apply_alternatives_early();
+>>   }
+>>
+>>   static u64 __init of_get_cpu_mpidr(struct device_node *dn)
+>> -- 
+>> 1.9.1
+>>
+> 
