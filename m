@@ -1,98 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752679AbeEIEMw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 00:12:52 -0400
-Received: from ozlabs.org ([203.11.71.1]:55089 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751207AbeEIEMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 00:12:50 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 9 May 2018 14:12:47 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Boris Pismenny <borisp@mellanox.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20180509141247.455427de@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3V_aOjATl7XD_M8hTO3yGI6"; protocol="application/pgp-signature"
+        id S1751619AbeEIEPp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 00:15:45 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:55863 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750784AbeEIEPn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 00:15:43 -0400
+X-Google-Smtp-Source: AB8JxZrOfq8BxSSCSJ4zCT0Nnvc+T1nRvSbcPABnO/LmDvR9TtvQBab8K6tTOlT4a1CpoEpF/lyYRQ==
+From: Leo Yan <leo.yan@linaro.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        coresight@lists.linaro.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v2 1/2] perf cs-etm: Support unknown_thread in cs_etm_auxtrace
+Date: Wed,  9 May 2018 12:15:11 +0800
+Message-Id: <1525839312-20544-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/3V_aOjATl7XD_M8hTO3yGI6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+CoreSight doesn't allocate thread structure for unknown_thread in etm
+auxtrace, so unknown_thread is NULL pointer.  If the perf data doesn't
+contain valid tid and then cs_etm__mem_access() uses unknown_thread
+instead as thread handler, this results in segmentation fault when
+thread__find_addr_map() accesses thread handler.
 
-Hi all,
+This commit creates new thread data which is used by unknown_thread, so
+CoreSight tracing can roll back to use unknown_thread if perf data
+doesn't include valid thread info.  This commit also releases thread
+data for initialization failure case and for normal auxtrace free flow.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ tools/perf/util/cs-etm.c | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
-  net/tls/tls_main.c
-
-between commit:
-
-  98f0a39529e5 ("tls: fix use after free in tls_sk_proto_close")
-
-from the net tree and commit:
-
-  f66de3ee2c16 ("net/tls: Split conf to rx + tx")
-
-from the net-next tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/tls/tls_main.c
-index 20cd93be6236,4b57ddd72f34..000000000000
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@@ -254,8 -252,12 +254,9 @@@ static void tls_sk_proto_close(struct s
-  	lock_sock(sk);
-  	sk_proto_close =3D ctx->sk_proto_close;
- =20
-- 	if (ctx->conf =3D=3D TLS_BASE || ctx->conf =3D=3D TLS_HW_RECORD) {
- -	if (ctx->tx_conf =3D=3D TLS_HW_RECORD && ctx->rx_conf =3D=3D TLS_HW_RECO=
-RD)
- -		goto skip_tx_cleanup;
- -
- -	if (ctx->tx_conf =3D=3D TLS_BASE && ctx->rx_conf =3D=3D TLS_BASE) {
- -		kfree(ctx);
- -		ctx =3D NULL;
-++	if ((ctx->tx_conf =3D=3D TLS_BASE && ctx->rx_conf =3D=3D TLS_BASE) ||
-++	    (ctx->tx_conf =3D=3D TLS_HW_RECORD && ctx->rx_conf =3D=3D TLS_HW_REC=
-ORD)) {
- +		free_ctx =3D true;
-  		goto skip_tx_cleanup;
-  	}
- =20
-
---Sig_/3V_aOjATl7XD_M8hTO3yGI6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrydT8ACgkQAVBC80lX
-0GxRewf/WxbRG9dTk487Io4Tu6m4KnRXGy+bapkJk+5cNyXE/PjnYoyHE9WxbbY5
-KUK4bZh5VXvrw9A4dZYTApHCFMsFRqAOeW3IEmWHqH3KFkiaSmvEp+wvopTesttF
-Lpausf14KFKgDHftZH/zp5d2AI77tt32HOTSo8kwyM3+EGqWKhFbl4xBCXOqLytL
-Wl6C+yRgkiEidsihHMO4Z275mfNtaZqju+NGfuuoPCR7ijaHvkMwUWE6BvEBnTJz
-r9ctc5CzRzj0p4VXYU4bDFgTo2Y27Wp6RT+rPWwdNGaePICqnJ+ppnx1NC6iJzIl
-46lQUgqQnn8Fe/AYhJma+Xm97GjWiw==
-=IbfP
------END PGP SIGNATURE-----
-
---Sig_/3V_aOjATl7XD_M8hTO3yGI6--
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 6533b1a..69f21de 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -239,6 +239,7 @@ static void cs_etm__free(struct perf_session *session)
+ 	for (i = 0; i < aux->num_cpu; i++)
+ 		zfree(&aux->metadata[i]);
+ 
++	thread__zput(aux->unknown_thread);
+ 	zfree(&aux->metadata);
+ 	zfree(&aux);
+ }
+@@ -1355,6 +1356,23 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 	etm->auxtrace.free = cs_etm__free;
+ 	session->auxtrace = &etm->auxtrace;
+ 
++	etm->unknown_thread = thread__new(999999999, 999999999);
++	if (!etm->unknown_thread)
++		goto err_free_queues;
++
++	/*
++	 * Initialize list node so that at thread__zput() we can avoid
++	 * segmentation fault at list_del_init().
++	 */
++	INIT_LIST_HEAD(&etm->unknown_thread->node);
++
++	err = thread__set_comm(etm->unknown_thread, "unknown", 0);
++	if (err)
++		goto err_delete_thread;
++
++	if (thread__init_map_groups(etm->unknown_thread, etm->machine))
++		goto err_delete_thread;
++
+ 	if (dump_trace) {
+ 		cs_etm__print_auxtrace_info(auxtrace_info->priv, num_cpu);
+ 		return 0;
+@@ -1369,16 +1387,18 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 
+ 	err = cs_etm__synth_events(etm, session);
+ 	if (err)
+-		goto err_free_queues;
++		goto err_delete_thread;
+ 
+ 	err = auxtrace_queues__process_index(&etm->queues, session);
+ 	if (err)
+-		goto err_free_queues;
++		goto err_delete_thread;
+ 
+ 	etm->data_queued = etm->queues.populated;
+ 
+ 	return 0;
+ 
++err_delete_thread:
++	thread__zput(etm->unknown_thread);
+ err_free_queues:
+ 	auxtrace_queues__free(&etm->queues);
+ 	session->auxtrace = NULL;
+-- 
+2.7.4
