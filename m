@@ -1,114 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935522AbeEIRQd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:16:33 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:45478 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935505AbeEIRQ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 13:16:26 -0400
-X-Google-Smtp-Source: AB8JxZqeTYoGtnII+qD4sBQSuCy48JIzCbe/nl3zs7dp4EiLteAIqY6bjb+HnmjDS+dEDwXGKY8NlL6SPs0zJnm9Vic=
-MIME-Version: 1.0
-In-Reply-To: <20180509114328.9887-1-mpe@ellerman.id.au>
-References: <20180509114328.9887-1-mpe@ellerman.id.au>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 9 May 2018 10:16:24 -0700
-X-Google-Sender-Auth: yjyPubY8TcrQ-EfAnx89lN2Vfg8
-Message-ID: <CAGXu5jJSDFid-w3kdhCYH_9d_n1AOnJkDaFg70OaWvjpsJ2sgQ@mail.gmail.com>
-Subject: Re: [PATCH] lib/test_bitmap.c: Fix bitmap optimisation tests to
- report errors correctly
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Yury Norov <ynorov@caviumnetworks.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S965819AbeEIRSq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:18:46 -0400
+Received: from mga11.intel.com ([192.55.52.93]:22733 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965240AbeEIRSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 13:18:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,382,1520924400";
+   d="scan'208";a="53786702"
+Subject: [PATCH 01/13] x86/pkeys/selftests: Give better unexpected fault error messages
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        linuxram@us.ibm.com, tglx@linutronix.de, dave.hansen@intel.com,
+        mpe@ellerman.id.au, mingo@kernel.org, akpm@linux-foundation.org,
+        shuah@kernel.org
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Wed, 09 May 2018 10:13:38 -0700
+References: <20180509171336.76636D88@viggo.jf.intel.com>
+In-Reply-To: <20180509171336.76636D88@viggo.jf.intel.com>
+Message-Id: <20180509171338.55D13B64@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 4:43 AM, Michael Ellerman <mpe@ellerman.id.au> wrote:
-> From: Matthew Wilcox <mawilcox@microsoft.com>
->
-> I had neglected to increment the error counter when the tests failed,
-> which made the tests noisy when they fail, but not actually return an
-> error code.
->
-> Reported-by: Michael Ellerman <mpe@ellerman.id.au>
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> Fixes: 3cc78125a081 ("lib/test_bitmap.c: add optimisation tests")
-> Cc: stable@vger.kernel.org # v4.13+
-> Tested-by: Michael Ellerman <mpe@ellerman.id.au>
 
-FWIW:
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+do_not_expect_pk_fault() is a helper that we call when we do not expect
+a PK fault to have occurred.  But, it is a function, which means that
+it obscures the line numbers from pkey_assert().  It also gives no
+details.
 
--Kees
+Replace it with an implementation that gives nice line numbers and
+also lets callers pass in a more descriptive message about what
+happened that caused the unexpected fault.
 
-> ---
->  lib/test_bitmap.c | 21 +++++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
->
-> We noticed this a while back but the patch got lost.
->
-> Andrew are you happy to take it?
->
-> cheers
->
->
-> diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
-> index de16f7869fb1..6cd7d0740005 100644
-> --- a/lib/test_bitmap.c
-> +++ b/lib/test_bitmap.c
-> @@ -331,23 +331,32 @@ static void noinline __init test_mem_optimisations(void)
->         unsigned int start, nbits;
->
->         for (start = 0; start < 1024; start += 8) {
-> -               memset(bmap1, 0x5a, sizeof(bmap1));
-> -               memset(bmap2, 0x5a, sizeof(bmap2));
->                 for (nbits = 0; nbits < 1024 - start; nbits += 8) {
-> +                       memset(bmap1, 0x5a, sizeof(bmap1));
-> +                       memset(bmap2, 0x5a, sizeof(bmap2));
-> +
->                         bitmap_set(bmap1, start, nbits);
->                         __bitmap_set(bmap2, start, nbits);
-> -                       if (!bitmap_equal(bmap1, bmap2, 1024))
-> +                       if (!bitmap_equal(bmap1, bmap2, 1024)) {
->                                 printk("set not equal %d %d\n", start, nbits);
-> -                       if (!__bitmap_equal(bmap1, bmap2, 1024))
-> +                               failed_tests++;
-> +                       }
-> +                       if (!__bitmap_equal(bmap1, bmap2, 1024)) {
->                                 printk("set not __equal %d %d\n", start, nbits);
-> +                               failed_tests++;
-> +                       }
->
->                         bitmap_clear(bmap1, start, nbits);
->                         __bitmap_clear(bmap2, start, nbits);
-> -                       if (!bitmap_equal(bmap1, bmap2, 1024))
-> +                       if (!bitmap_equal(bmap1, bmap2, 1024)) {
->                                 printk("clear not equal %d %d\n", start, nbits);
-> -                       if (!__bitmap_equal(bmap1, bmap2, 1024))
-> +                               failed_tests++;
-> +                       }
-> +                       if (!__bitmap_equal(bmap1, bmap2, 1024)) {
->                                 printk("clear not __equal %d %d\n", start,
->                                                                         nbits);
-> +                               failed_tests++;
-> +                       }
->                 }
->         }
->  }
-> --
-> 2.14.1
->
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Shuah Khan <shuah@kernel.org>
+---
 
+ b/tools/testing/selftests/x86/protection_keys.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-
--- 
-Kees Cook
-Pixel Security
+diff -puN tools/testing/selftests/x86/protection_keys.c~pkeys-selftests-give-better-pkey-fault-errors tools/testing/selftests/x86/protection_keys.c
+--- a/tools/testing/selftests/x86/protection_keys.c~pkeys-selftests-give-better-pkey-fault-errors	2018-05-09 09:20:18.202698408 -0700
++++ b/tools/testing/selftests/x86/protection_keys.c	2018-05-09 09:20:18.205698408 -0700
+@@ -939,10 +939,11 @@ void expected_pk_fault(int pkey)
+ 	last_si_pkey = -1;
+ }
+ 
+-void do_not_expect_pk_fault(void)
+-{
+-	pkey_assert(last_pkru_faults == pkru_faults);
+-}
++#define do_not_expect_pk_fault(msg)	do {			\
++	if (last_pkru_faults != pkru_faults)			\
++		dprintf0("unexpected PK fault: %s\n", msg);	\
++	pkey_assert(last_pkru_faults == pkru_faults);		\
++} while (0)
+ 
+ int test_fds[10] = { -1 };
+ int nr_test_fds;
+@@ -1228,7 +1229,7 @@ void test_ptrace_of_child(int *ptr, u16
+ 	pkey_assert(ret != -1);
+ 	/* Now access from the current task, and expect NO exception: */
+ 	peek_result = read_ptr(plain_ptr);
+-	do_not_expect_pk_fault();
++	do_not_expect_pk_fault("read plain pointer after ptrace");
+ 
+ 	ret = ptrace(PTRACE_DETACH, child_pid, ignored, 0);
+ 	pkey_assert(ret != -1);
+@@ -1272,7 +1273,7 @@ void test_executing_on_unreadable_memory
+ 	 */
+ 	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
+ 	lots_o_noops_around_write(&scratch);
+-	do_not_expect_pk_fault();
++	do_not_expect_pk_fault("executing on PROT_EXEC memory");
+ 	ptr_contents = read_ptr(p1);
+ 	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
+ 	expected_pk_fault(pkey);
+_
