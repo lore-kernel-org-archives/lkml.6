@@ -1,183 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965164AbeEITLr (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 15:11:47 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57214 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965026AbeEITLq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 15:11:46 -0400
-Message-ID: <3999c0a655cf75ed59c4c7cff6c4a45f85ca02cb.camel@collabora.com>
-Subject: Re: [PATCH v9 10/15] vb2: add explicit fence user API
-From: Ezequiel Garcia <ezequiel@collabora.com>
-To: Brian Starkey <brian.starkey@arm.com>
-Cc: linux-media@vger.kernel.org, kernel@collabora.com,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-Date: Wed, 09 May 2018 16:10:22 -0300
-In-Reply-To: <20180509163300.GA23664@e107564-lin.cambridge.arm.com>
-References: <20180504200612.8763-1-ezequiel@collabora.com>
-         <20180504200612.8763-11-ezequiel@collabora.com>
-         <20180509103353.GA39838@e107564-lin.cambridge.arm.com>
-         <e52f72ea1fdf491dd10a9a40bbced6d3bad66f7b.camel@collabora.com>
-         <20180509163300.GA23664@e107564-lin.cambridge.arm.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S965196AbeEITOq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 15:14:46 -0400
+Received: from mga12.intel.com ([192.55.52.136]:5145 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965013AbeEITOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 15:14:44 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,382,1520924400";
+   d="scan'208";a="227159469"
+Date: Thu, 10 May 2018 03:13:42 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: kbuild-all@01.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, afd@ti.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v3 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+Message-ID: <201805100310.5poORgcq%fengguang.wu@intel.com>
+References: <20180509115727.12070-2-dmurphy@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509115727.12070-2-dmurphy@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-09 at 17:33 +0100, Brian Starkey wrote:
-> On Wed, May 09, 2018 at 12:52:26PM -0300, Ezequiel Garcia wrote:
-> > On Wed, 2018-05-09 at 11:33 +0100, Brian Starkey wrote:
-> > > Hi Ezequiel,
-> > > 
-> > > On Fri, May 04, 2018 at 05:06:07PM -0300, Ezequiel Garcia wrote:
-> > > > From: Gustavo Padovan <gustavo.padovan@collabora.com>
-> > > > 
-> > > > Turn the reserved2 field into fence_fd that we will use to send
-> > > > an in-fence to the kernel or return an out-fence from the kernel to
-> > > > userspace.
-> > > > 
-> > > > Two new flags were added, V4L2_BUF_FLAG_IN_FENCE, that should be used
-> > > > when sending an in-fence to the kernel to be waited on, and
-> > > > V4L2_BUF_FLAG_OUT_FENCE, to ask the kernel to give back an out-fence.
-> > > > 
-> > > > v7: minor fixes on the Documentation (Hans Verkuil)
-> > > > 
-> > > > v6: big improvement on doc (Hans Verkuil)
-> > > > 
-> > > > v5: - keep using reserved2 field for cpia2
-> > > >    - set fence_fd to 0 for now, for compat with userspace(Mauro)
-> > > > 
-> > > > v4: make it a union with reserved2 and fence_fd (Hans Verkuil)
-> > > > 
-> > > > v3: make the out_fence refer to the current buffer (Hans Verkuil)
-> > > > 
-> > > > v2: add documentation
-> > > > 
-> > > > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-> > > > ---
-> > > > Documentation/media/uapi/v4l/buffer.rst         | 45 +++++++++++++++++++++++--
-> > > > drivers/media/common/videobuf2/videobuf2-v4l2.c |  2 +-
-> > > > drivers/media/v4l2-core/v4l2-compat-ioctl32.c   |  4 +--
-> > > > include/uapi/linux/videodev2.h                  |  8 ++++-
-> > > > 4 files changed, 52 insertions(+), 7 deletions(-)
-> > > > 
-> > > > diff --git a/Documentation/media/uapi/v4l/buffer.rst b/Documentation/media/uapi/v4l/buffer.rst
-> > > > index e2c85ddc990b..be9719cf5745 100644
-> > > > --- a/Documentation/media/uapi/v4l/buffer.rst
-> > > > +++ b/Documentation/media/uapi/v4l/buffer.rst
-> > > > @@ -301,10 +301,22 @@ struct v4l2_buffer
-> > > > 	elements in the ``planes`` array. The driver will fill in the
-> > > > 	actual number of valid elements in that array.
-> > > >     * - __u32
-> > > > -      - ``reserved2``
-> > > > +      - ``fence_fd``
-> > > >       -
-> > > > -      - A place holder for future extensions. Drivers and applications
-> > > > -	must set this to 0.
-> > > > +      - Used to communicate a fence file descriptors from userspace to kernel
-> > > > +	and vice-versa. On :ref:`VIDIOC_QBUF <VIDIOC_QBUF>` when sending
-> > > > +	an in-fence for V4L2 to wait on, the ``V4L2_BUF_FLAG_IN_FENCE`` flag must
-> > > > +	be used and this field set to the fence file descriptor of the in-fence.
-> > > > +	If the in-fence is not valid ` VIDIOC_QBUF`` returns an error.
-> > > > +
-> > > > +        To get an out-fence back from V4L2 the ``V4L2_BUF_FLAG_OUT_FENCE``
-> > > > +	must be set, the kernel will return the out-fence file descriptor in
-> > > > +	this field. If it fails to create the out-fence ``VIDIOC_QBUF` returns
-> > > > +        an error.
-> > > > +
-> > > > +	For all other ioctls V4L2 sets this field to -1 if
-> > > > +	``V4L2_BUF_FLAG_IN_FENCE`` and/or ``V4L2_BUF_FLAG_OUT_FENCE`` are set,
-> > > > +	otherwise this field is set to 0 for backward compatibility.
-> > > >     * - __u32
-> > > >       - ``reserved``
-> > > >       -
-> > > > @@ -648,6 +660,33 @@ Buffer Flags
-> > > >       - Start Of Exposure. The buffer timestamp has been taken when the
-> > > > 	exposure of the frame has begun. This is only valid for the
-> > > > 	``V4L2_BUF_TYPE_VIDEO_CAPTURE`` buffer type.
-> > > > +    * .. _`V4L2-BUF-FLAG-IN-FENCE`:
-> > > > +
-> > > > +      - ``V4L2_BUF_FLAG_IN_FENCE``
-> > > > +      - 0x00200000
-> > > > +      - Ask V4L2 to wait on the fence passed in the ``fence_fd`` field. The
-> > > > +	buffer won't be queued to the driver until the fence signals. The order
-> > > > +	in which buffers are queued is guaranteed to be preserved, so any
-> > > > +	buffers queued after this buffer will also be blocked until this fence
-> > > > +	signals. This flag must be set before calling ``VIDIOC_QBUF``. For
-> > > > +	other ioctls the driver just reports the value of the flag.
-> > > > +
-> > > > +        If the fence signals the flag is cleared and not reported anymore.
-> > > > +	If the fence is not valid ``VIDIOC_QBUF`` returns an error.
-> > > > +
-> > > > +
-> > > > +    * .. _`V4L2-BUF-FLAG-OUT-FENCE`:
-> > > > +
-> > > > +      - ``V4L2_BUF_FLAG_OUT_FENCE``
-> > > > +      - 0x00400000
-> > > > +      - Request for a fence to be attached to the buffer. The driver will fill
-> > > > +	in the out-fence fd in the ``fence_fd`` field when :ref:`VIDIOC_QBUF
-> > > > +	<VIDIOC_QBUF>` returns. This flag must be set before calling
-> > > > +	``VIDIOC_QBUF``. For other ioctls the driver just reports the value of
-> > > > +	the flag.
-> > > > +
-> > > > +        If the creation of the out-fence fails ``VIDIOC_QBUF`` returns an
-> > > > +	error.
-> > > > 
-> > > 
-> > > I commented similarly on some of the old patch-sets, and it's a minor
-> > > thing, but I still think the ordering of this series is off. It's
-> > > strange/wrong to me document all this behaviour, and expose the flags
-> > > to userspace, when the functionality isn't implemented yet.
-> > > 
-> > > If I apply this patch to the kernel, then the kernel doesn't do what
-> > > the (newly added) kernel-doc says it will.
-> > > 
-> > 
-> > This has never been a problem, and it has always been the canonical
-> > way of doing things.
-> > 
-> > First the required macros, stubs, documentation and interfaces are added,
-> > and then they are implemented.
-> 
-> If you say so, I don't know what sets the standard but that seems
-> kinda backwards.
-> 
-> I'd expect the "flick the switch, expose to userspace" to always be
-> the last thing, but I'm happy to be shown examples to the contrary.
-> 
-> > 
-> > I see no reason to go berserk here, unless you see an actual problem?
-> > Or something actually broken?
-> > 
-> 
-> The only "broken" thing, is as I said - I can apply this patch to a
-> kernel (any kernel, because there's no dependencies in the code), and
-> it won't do what the kernel-doc says it will.
-> 
+Hi Dan,
 
-I don't think we've ever honored that, but I can be wrong too.
+Thank you for the patch! Perhaps something to improve:
 
-> Maybe I'm crazy, but shouldn't comments at least be correct at the
-> point where they are added, even if they become incorrect later
-> through neglect?
-> 
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on v4.17-rc4 next-20180509]
+[cannot apply to j.anaszewski-leds/for-next]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-This is the best example I can give, a similar policy in the
-devicetree bindings [1]:
+url:    https://github.com/0day-ci/linux/commits/Dan-Murphy/dt-bindings-lm3601x-Introduce-the-lm3601x-driver/20180509-232022
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
 
-""
-  3) The Documentation/ portion of the patch should come in the series before
-     the code implementing the binding.
-""
 
-[1]  Documentation/devicetree/bindings/submitting-patches.txt
+coccinelle warnings: (new ones prefixed by >>)
+
+>> drivers/leds/leds-lm3601x.c:241:35-36: WARNING: Use ARRAY_SIZE
+
+vim +241 drivers/leds/leds-lm3601x.c
+
+   224	
+   225	static int lm3601x_strobe_set(struct led_classdev_flash *fled_cdev,
+   226					bool state)
+   227	{
+   228		struct lm3601x_led *led = fled_cdev_to_led(fled_cdev);
+   229		int ret;
+   230		int current_timeout;
+   231		int reg_count;
+   232		int i;
+   233		int timeout_reg_val = 0;
+   234	
+   235		mutex_lock(&led->lock);
+   236	
+   237		ret = regmap_read(led->regmap, LM3601X_CFG_REG, &current_timeout);
+   238		if (ret < 0)
+   239			goto out;
+   240	
+ > 241		reg_count = sizeof(strobe_timeouts) / sizeof(strobe_timeouts[0]);
+   242		for (i = 0; i < reg_count; i++) {
+   243			if (led->strobe_timeout > strobe_timeouts[i].timeout)
+   244				continue;
+   245	
+   246			if (led->strobe_timeout <= strobe_timeouts[i].timeout) {
+   247				timeout_reg_val = (strobe_timeouts[i].reg_val << 1);
+   248				break;
+   249			}
+   250	
+   251			ret = -EINVAL;
+   252			goto out;
+   253		}
+   254	
+   255		if (led->strobe_timeout != current_timeout)
+   256			ret = regmap_update_bits(led->regmap, LM3601X_CFG_REG,
+   257						0x1e, timeout_reg_val);
+   258	
+   259		if (state)
+   260			ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+   261						LM3601X_MODE_STROBE,
+   262						LM3601X_MODE_STROBE);
+   263		else
+   264			ret = regmap_update_bits(led->regmap, LM3601X_ENABLE_REG,
+   265						LM3601X_MODE_STROBE, LED_OFF);
+   266	
+   267		ret = lm3601x_read_faults(led);
+   268	out:
+   269		mutex_unlock(&led->lock);
+   270		return ret;
+   271	}
+   272	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
