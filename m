@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933528AbeEIBe0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 21:34:26 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:41122 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933134AbeEIBeW (ORCPT
+        id S933582AbeEIBed (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 21:34:33 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:34763 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933532AbeEIBe1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 21:34:22 -0400
-X-Google-Smtp-Source: AB8JxZpzcrx3S8i3m6gJ1lG7zVGBhhvIC2fXt0gO+0yTa3yIzlym7R5O2a+QYl3CG6VZt+i7VQjucQ==
+        Tue, 8 May 2018 21:34:27 -0400
+X-Google-Smtp-Source: AB8JxZpjM6DG4JsDlui+eG+1+PEtsOKMzu5N3LrNc43l4QYW8T2J5SVI0VQ13Kakk9I/Ow0yKJllaA==
 From: Kent Overstreet <kent.overstreet@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
         Ingo Molnar <mingo@kernel.org>
 Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 04/10] block: Use bioset_init() for fs_bio_set
-Date: Tue,  8 May 2018 21:33:52 -0400
-Message-Id: <20180509013358.16399-5-kent.overstreet@gmail.com>
+Subject: [PATCH 07/10] block: Add missing flush_dcache_page() call
+Date: Tue,  8 May 2018 21:33:55 -0400
+Message-Id: <20180509013358.16399-8-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180509013358.16399-1-kent.overstreet@gmail.com>
 References: <20180509013358.16399-1-kent.overstreet@gmail.com>
@@ -23,86 +23,26 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Minor optimization - remove a pointer indirection when using fs_bio_set.
+Since a bio can point to userspace pages (e.g. direct IO), this is
+generally necessary.
 
 Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
 ---
- block/bio.c                         | 7 +++----
- block/blk-core.c                    | 2 +-
- drivers/target/target_core_iblock.c | 2 +-
- include/linux/bio.h                 | 4 ++--
- 4 files changed, 7 insertions(+), 8 deletions(-)
+ block/bio.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/block/bio.c b/block/bio.c
-index 980befd919..b7cdad6fc4 100644
+index c58544d4bc..ce8e259f9a 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -53,7 +53,7 @@ static struct biovec_slab bvec_slabs[BVEC_POOL_NR] __read_mostly = {
-  * fs_bio_set is the bio_set containing bio and iovec memory pools used by
-  * IO code that does not need private memory pools.
-  */
--struct bio_set *fs_bio_set;
-+struct bio_set fs_bio_set;
- EXPORT_SYMBOL(fs_bio_set);
+@@ -994,6 +994,8 @@ void bio_copy_data_iter(struct bio *dst, struct bvec_iter *dst_iter,
+ 		kunmap_atomic(dst_p);
+ 		kunmap_atomic(src_p);
  
- /*
-@@ -2055,11 +2055,10 @@ static int __init init_bio(void)
- 	bio_integrity_init();
- 	biovec_init_slabs();
- 
--	fs_bio_set = bioset_create(BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
--	if (!fs_bio_set)
-+	if (bioset_init(&fs_bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS))
- 		panic("bio: can't allocate bios\n");
- 
--	if (bioset_integrity_create(fs_bio_set, BIO_POOL_SIZE))
-+	if (bioset_integrity_create(&fs_bio_set, BIO_POOL_SIZE))
- 		panic("bio: can't create integrity pool\n");
- 
- 	return 0;
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 6d82c4f7fa..66f24798ef 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -3409,7 +3409,7 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
- 	struct bio *bio, *bio_src;
- 
- 	if (!bs)
--		bs = fs_bio_set;
-+		bs = &fs_bio_set;
- 
- 	__rq_for_each_bio(bio_src, rq_src) {
- 		bio = bio_clone_fast(bio_src, gfp_mask, bs);
-diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
-index 07c814c426..c969c01c7c 100644
---- a/drivers/target/target_core_iblock.c
-+++ b/drivers/target/target_core_iblock.c
-@@ -164,7 +164,7 @@ static int iblock_configure_device(struct se_device *dev)
- 				goto out_blkdev_put;
- 			}
- 			pr_debug("IBLOCK setup BIP bs->bio_integrity_pool: %p\n",
--				 bs->bio_integrity_pool);
-+				 &bs->bio_integrity_pool);
- 		}
- 		dev->dev_attrib.hw_pi_prot_type = dev->dev_attrib.pi_prot_type;
++		flush_dcache_page(dst_bv.bv_page);
++
+ 		bio_advance_iter(src, src_iter, bytes);
+ 		bio_advance_iter(dst, dst_iter, bytes);
  	}
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index fa3cf94a50..91b02520e2 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -423,11 +423,11 @@ extern void __bio_clone_fast(struct bio *, struct bio *);
- extern struct bio *bio_clone_fast(struct bio *, gfp_t, struct bio_set *);
- extern struct bio *bio_clone_bioset(struct bio *, gfp_t, struct bio_set *bs);
- 
--extern struct bio_set *fs_bio_set;
-+extern struct bio_set fs_bio_set;
- 
- static inline struct bio *bio_alloc(gfp_t gfp_mask, unsigned int nr_iovecs)
- {
--	return bio_alloc_bioset(gfp_mask, nr_iovecs, fs_bio_set);
-+	return bio_alloc_bioset(gfp_mask, nr_iovecs, &fs_bio_set);
- }
- 
- static inline struct bio *bio_kmalloc(gfp_t gfp_mask, unsigned int nr_iovecs)
 -- 
 2.17.0
