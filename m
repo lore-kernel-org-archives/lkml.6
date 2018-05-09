@@ -1,82 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935479AbeEIRf2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:35:28 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38701 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935374AbeEIRfZ (ORCPT
+        id S935354AbeEIRhC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:37:02 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51722 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934953AbeEIRhA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 13:35:25 -0400
-X-Google-Smtp-Source: AB8JxZo/wUl698xl/s54MDHmqXh/NVTJAa36FT2qoLOjlYXjUZOjb0Xoa+fFBagzD1yR87M8F7xj6Q==
-Date: Wed, 9 May 2018 19:35:17 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laurent Dufour <ldufour@linux.vnet.ibm.com>, mingo@kernel.org
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- jc_docs tree
-Message-ID: <20180509173517.GA17579@andrea>
-References: <20180509202508.15c3435a@canb.auug.org.au>
- <20180509132824.GA14503@andrea>
- <20180509085920.5fbb32f5@lwn.net>
- <20180509165249.GA16976@andrea>
- <20180509111136.127756a8@lwn.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509111136.127756a8@lwn.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 9 May 2018 13:37:00 -0400
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Cornelia Huck <cohuck@redhat.com>,
+        "Dong Jia Shi" <bjsdjshi@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>
+Subject: [PATCH 1/1] s390: vfio-ccw: push down unsupported IDA check
+Date: Wed,  9 May 2018 19:36:47 +0200
+X-Mailer: git-send-email 2.16.3
+X-TM-AS-GCONF: 00
+x-cbid: 18050917-0040-0000-0000-00000457D1BC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050917-0041-0000-0000-000020FBDEDB
+Message-Id: <20180509173647.61367-1-pasic@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805090165
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 11:11:36AM -0600, Jonathan Corbet wrote:
-> On Wed, 9 May 2018 18:53:28 +0200
-> Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
-> 
-> > > Now that I look a little closer, I think the real issue is that the
-> > > "features" documentation assumes that there's a Kconfig option for each,
-> > > but there isn't in this case.  The lack of a Kconfig option does not,
-> > > this time around, imply that the feature has gone away.
-> > > 
-> > > I think that I should probably revert this patch in the short term.
-> > > Longer-term, it would be good to have an alternative syntax for "variable
-> > > set in the arch headers" to describe situations like this.  
-> > 
-> > Both matters were discussed during v1:
-> > 
-> >   http://lkml.kernel.org/r/1522774551-9503-1-git-send-email-andrea.parri@amarulasolutions.com
-> > 
-> > ... (and the glory details are documented in features-refresh.sh ;-) ).
-> 
-> So I'll admit to being confused, since I don't see discussion of the
-> actual topic at hand.
+There is at least one relevant control program (CP) that don't set the
+IDA flags in the ORB as we would like them, but never uses any IDA. So
+instead of saying -EOPNOTSUPP when observing an ORB such that a channel
+program specified by it could be a not supported one, let us say
+-EOPNOTSUPP only if the channel program is a not supported one.
 
-A couple of clicks on "next in thread"  :-)
+Of course, the real solution would be doing proper translation for all
+IDA. This is possible, but given the current code not straight forward.
 
-  https://marc.info/?l=linux-kernel&m=152284705204400&w=2
-  https://marc.info/?l=linux-kernel&m=152294150600751&w=2
+Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+Tested-by: Jason J. Herne <jjherne@linux.ibm.com>
+---
 
+QEMU counterpart comming soon.
+---
+ drivers/s390/cio/vfio_ccw_cp.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-> 
-> > As I suggested above, simply reverting this patch will leave this file,
-> > (and only this file!) out-of-date (and won't resolve the conflict with
-> > Laurent's patch ...).
-> 
-> Reverting this patch retains the updates from earlier in the series, and
-> does indeed make the conflict go away, so I'm still confused.  What am I
-> missing?
-
-The updates from earlier added "TODO" rows for nds32 and riscv, but missed
-the "TODO -> ok" update for riscv.
-
-  Andrea
-
-
-> 
-> Thanks,
-> 
-> jon
+diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
+index 2c7550797ec2..adfff492dc83 100644
+--- a/drivers/s390/cio/vfio_ccw_cp.c
++++ b/drivers/s390/cio/vfio_ccw_cp.c
+@@ -365,6 +365,9 @@ static void cp_unpin_free(struct channel_program *cp)
+  * This is the chain length not considering any TICs.
+  * You need to do a new round for each TIC target.
+  *
++ * The program is also validated for absence of not yet supported
++ * indirect data addressing scenarios.
++ *
+  * Returns: the length of the ccw chain or -errno.
+  */
+ static int ccwchain_calc_length(u64 iova, struct channel_program *cp)
+@@ -391,6 +394,14 @@ static int ccwchain_calc_length(u64 iova, struct channel_program *cp)
+ 	do {
+ 		cnt++;
+ 
++		/*
++		 * 2k byte block IDAWs (fmt1 or fmt2) are not yet supported.
++		 * There are however CPs that don't use IDA at all, and can
++		 * benefit from not failing until failure is eminent.
++		 */
++		if ((!cp->orb.cmd.c64 || cp->orb.cmd.i2k) && ccw_is_idal(ccw))
++			return -EOPNOTSUPP;
++
+ 		if ((!ccw_is_chain(ccw)) && (!ccw_is_tic(ccw)))
+ 			break;
+ 
+@@ -656,10 +667,8 @@ int cp_init(struct channel_program *cp, struct device *mdev, union orb *orb)
+ 	/*
+ 	 * XXX:
+ 	 * Only support prefetch enable mode now.
+-	 * Only support 64bit addressing idal.
+-	 * Only support 4k IDAW.
+ 	 */
+-	if (!orb->cmd.pfch || !orb->cmd.c64 || orb->cmd.i2k)
++	if (!orb->cmd.pfch)
+ 		return -EOPNOTSUPP;
+ 
+ 	INIT_LIST_HEAD(&cp->ccwchain_list);
+@@ -688,6 +697,10 @@ int cp_init(struct channel_program *cp, struct device *mdev, union orb *orb)
+ 	ret = ccwchain_loop_tic(chain, cp);
+ 	if (ret)
+ 		cp_unpin_free(cp);
++	/* It is safe to force: if not set but idals used
++	 * ccwchain_calc_length returns an error.
++	 */
++	cp->orb.cmd.c64 = 1;
+ 
+ 	return ret;
+ }
+-- 
+2.16.3
