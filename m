@@ -1,86 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934099AbeEIJmI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:42:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:41074 "EHLO foss.arm.com"
+        id S934142AbeEIJmy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:42:54 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51483 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933685AbeEIJmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:42:06 -0400
-Date: Wed, 9 May 2018 10:41:55 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, aryabinin@virtuozzo.com,
-        dvyukov@google.com, mingo@redhat.com, peterz@infradead.org
-Subject: Re: [PATCH 2/3] kcov: prefault the kcov_area
-Message-ID: <20180509094145.4yxx6dkcgu5w7zaz@lakrids.cambridge.arm.com>
-References: <20180504135535.53744-1-mark.rutland@arm.com>
- <20180504135535.53744-3-mark.rutland@arm.com>
- <20180508155158.7e6a789d950bcaf957c8c3bf@linux-foundation.org>
+        id S1753339AbeEIJmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 05:42:52 -0400
+Date: Wed, 9 May 2018 11:42:50 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Joachim Eastwood <manabian@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        ldv-project@linuxtesting.org, sil2review@lists.osadl.org,
+        Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
+        Julia Lawall <julia.lawall@lip6.fr>, linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] mtd: nxp-spifi: decrement flash_np refcnt on error
+ paths
+Message-ID: <20180509114250.120eb299@bbrezillon>
+In-Reply-To: <1525812456-25877-1-git-send-email-khoroshilov@ispras.ru>
+References: <1525812456-25877-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180508155158.7e6a789d950bcaf957c8c3bf@linux-foundation.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 03:51:58PM -0700, Andrew Morton wrote:
-> On Fri,  4 May 2018 14:55:34 +0100 Mark Rutland <mark.rutland@arm.com> wrote:
+On Tue,  8 May 2018 23:47:36 +0300
+Alexey Khoroshilov <khoroshilov@ispras.ru> wrote:
+
+> nxp_spifi_probe() increments refcnt of SPI flash device node by
+> of_get_next_available_child() and then it passes the node
+> to mtd device in nxp_spifi_setup_flash().
+> But if a failure happens before mtd_device_register() succeed,
+> the refcnt is left undecremented.
+
+Why not doing that in the error path of the probe function? Also, you
+probably want to call of_node_put() in the ->remove() function.
+
 > 
-> > On many architectures the vmalloc area is lazily faulted in upon first
-> > access. This is problematic for KCOV, as __sanitizer_cov_trace_pc
-> > accesses the (vmalloc'd) kcov_area, and fault handling code may be
-> > instrumented. If an access to kcov_area faults, this will result in
-> > mutual recursion through the fault handling code and
-> > __sanitizer_cov_trace_pc(), eventually leading to stack corruption
-> > and/or overflow.
-> > 
-> > We can avoid this by faulting in the kcov_area before
-> > __sanitizer_cov_trace_pc() is permitted to access it. Once it has been
-> > faulted in, it will remain present in the process page tables, and will
-> > not fault again.
-> > 
-> > ...
-> >
-> > --- a/kernel/kcov.c
-> > +++ b/kernel/kcov.c
-> > @@ -324,6 +324,17 @@ static int kcov_close(struct inode *inode, struct file *filep)
-> >  	return 0;
-> >  }
-> >  
-> > +static void kcov_fault_in_area(struct kcov *kcov)
+> Found by Linux Driver Verification project (linuxtesting.org).
 > 
-> It would be nice to have a comment here explaining why the function
-> exists.
+> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> ---
+>  drivers/mtd/spi-nor/nxp-spifi.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
 > 
-> umm, this?
-> 
-> --- a/kernel/kcov.c~kcov-prefault-the-kcov_area-fix-fix
-> +++ a/kernel/kcov.c
-> @@ -324,6 +324,10 @@ static int kcov_close(struct inode *inod
+> diff --git a/drivers/mtd/spi-nor/nxp-spifi.c b/drivers/mtd/spi-nor/nxp-spifi.c
+> index 15374216d4d9..8919e31f2ab8 100644
+> --- a/drivers/mtd/spi-nor/nxp-spifi.c
+> +++ b/drivers/mtd/spi-nor/nxp-spifi.c
+> @@ -294,7 +294,8 @@ static int nxp_spifi_setup_flash(struct nxp_spifi *spifi,
+>  			break;
+>  		default:
+>  			dev_err(spifi->dev, "unsupported rx-bus-width\n");
+> -			return -EINVAL;
+> +			ret = -EINVAL;
+> +			goto err_node_put;
+>  		}
+>  	}
+>  
+> @@ -328,7 +329,8 @@ static int nxp_spifi_setup_flash(struct nxp_spifi *spifi,
+>  		break;
+>  	default:
+>  		dev_err(spifi->dev, "only mode 0 and 3 supported\n");
+> -		return -EINVAL;
+> +		ret = -EINVAL;
+> +		goto err_node_put;
+>  	}
+>  
+>  	writel(ctrl, spifi->io_base + SPIFI_CTRL);
+> @@ -356,22 +358,26 @@ static int nxp_spifi_setup_flash(struct nxp_spifi *spifi,
+>  	ret = spi_nor_scan(&spifi->nor, NULL, &hwcaps);
+>  	if (ret) {
+>  		dev_err(spifi->dev, "device scan failed\n");
+> -		return ret;
+> +		goto err_node_put;
+>  	}
+>  
+>  	ret = nxp_spifi_setup_memory_cmd(spifi);
+>  	if (ret) {
+>  		dev_err(spifi->dev, "memory command setup failed\n");
+> -		return ret;
+> +		goto err_node_put;
+>  	}
+>  
+>  	ret = mtd_device_register(&spifi->nor.mtd, NULL, 0);
+>  	if (ret) {
+>  		dev_err(spifi->dev, "mtd device parse failed\n");
+> -		return ret;
+> +		goto err_node_put;
+>  	}
+>  
 >  	return 0;
+> +
+> +err_node_put:
+> +	of_node_put(np);
+> +	return ret;
 >  }
 >  
-> +/*
-> + * fault in a lazily-faulted vmalloc area, to avoid recursion issues if the
-> + * vmalloc fault handler itself is instrumented.
-> + */
-
-Sounds good to me. Perhaps we want a little more detail, e.g.
-
-/*
- * Fault in a lazily-faulted vmalloc area before it can be used by
- * __santizer_cov_trace_pc(), to avoid recursion issues if any code on
- * the vmalloc fault handling path is instrumented.
- */
-
->  static void kcov_fault_in_area(struct kcov *kcov)
-
-I also think it might make sense to rename this to kcov_prefault_area(),
-so that this doesn't sound like a fault handler, but that's not a big
-deal.
-
-Thanks for handling this!
-
-Mark.
+>  static int nxp_spifi_probe(struct platform_device *pdev)
