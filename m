@@ -1,48 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934527AbeEIKZ7 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 06:25:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52444 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933715AbeEIKZ5 (ORCPT
+        id S934536AbeEIK1D (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 06:27:03 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51942 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933715AbeEIK1B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 06:25:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E894960F8F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Wed, 9 May 2018 06:27:01 -0400
+Date: Wed, 9 May 2018 12:26:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
+        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+Subject: Re: [PATCH 6/7] psi: pressure stall information for CPU, memory, and
+ IO
+Message-ID: <20180509102646.GO12217@hirez.programming.kicks-ass.net>
+References: <20180507210135.1823-1-hannes@cmpxchg.org>
+ <20180507210135.1823-7-hannes@cmpxchg.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: mwifiex: delete unneeded include
-From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1525593233-10968-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1525593233-10968-1-git-send-email-Julia.Lawall@lip6.fr>
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Amitkumar Karwar <amitkarwar@gmail.com>,
-        kernel-janitors@vger.kernel.org,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Ganapathi Bhat <gbhat@marvell.com>, Xinming Hu <huxm@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180509102556.9EB8260F92@smtp.codeaurora.org>
-Date: Wed,  9 May 2018 10:25:56 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507210135.1823-7-hannes@cmpxchg.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+On Mon, May 07, 2018 at 05:01:34PM -0400, Johannes Weiner wrote:
+> +static void psi_clock(struct work_struct *work)
+> +{
 
-> Nothing that is defined in 11ac.h is referenced in cmdevt.c.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> +	dwork = to_delayed_work(work);
+> +	group = container_of(dwork, struct psi_group, clock_work);
+> +
 
-Patch applied to wireless-drivers-next.git, thanks.
+> +
+> +	/* Keep the clock ticking only when there is action */
+> +	if (nonidle_total)
+> +		schedule_delayed_work(dwork, MY_LOAD_FREQ);
+> +}
 
-4793e5a954fa mwifiex: delete unneeded include
+Note that this doesn't generate a stable frequency for the callback.
+The (nondeterministic) time spend doing the actual work is added to each
+period, this gives an unconditional downward bias to the frequency, but
+also makes it very unstable.
 
--- 
-https://patchwork.kernel.org/patch/10382667/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+You want explicit management of timer->expires, and add MY_LOAD_FREQ
+(which is a misnomer) to it and not reset it based on jiffies.
