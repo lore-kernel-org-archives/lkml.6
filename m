@@ -1,97 +1,146 @@
-Return-Path: <mathieu.poirier@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526396865; cv=none;
+Return-Path: <robin.murphy@arm.com>
+X-Google-Smtp-Source: AB8JxZr1q10Nk6w7F2tOslFqMXkuu+dOJoW/2vtI9fscZmAQWbLoavzngSjjte+RFOtDxENEzeWx
+ARC-Seal: i=1; a=rsa-sha256; t=1525873118; cv=none;
         d=google.com; s=arc-20160816;
-        b=IM1yfBA6uW2Lq3uUFU8GFhfYBr4h3BFQnoRN6ABwWWMvdLLRQHgt5U/xYhYxAFJoE4
-         D1Lig2bbVeTtIg4XQz7d/vQCzddeAMf0OzQML7iG64M2qHIP3mWiFn0Im2yBr5bYzmdK
-         WFx6pKUzbjgmJD4n5rW4d5XPWRgzE61OIOrDf9fp2pYEig+5hssv7Zej75osHLLqfkzx
-         EQoC+Iac9wRDBylirhPhsFMD4a13pT6GgoLSlh1w8V8ZjfplxiiqYunkTL62IpjsJvty
-         /s+aEf1L5+9Gg+q7Zsmyhfx8T4had2LNQNmwjMQGJyRQZ6fwIUzoaDISmJleqsdn/13m
-         g3Pg==
+        b=mYWnJ9EiJ7HqSxoYNKLyTcVgaFR7SUy5HNxiQUTqAX+dJKWd0cJVRowb2cOpdD0/iJ
+         8yDQ6HPwft5LzMqWVORdUkOwMsS8VFXLvddLPvQ1LCSgPKxWmvnUl1GZaCiIefijNZNU
+         1xSI250fcQmIUHx7oVDcQs1NvDJS0vGjNbI49wYtLkArcM2L9iLll3q16ecGMyUFA1Op
+         Wq6mH/9wM+UXtxPdWbEQwY9KH/OsSoxOcbnozDFLZ5BtW4KoOhm2xYvn8f7ROJ1CqCSl
+         cHOaDhzWnZDpMt/CWZBFZj5Ehq3c+0LsK4GXx0642QnBpBt9RBLrmeTDLcgVOcT3Q62s
+         r1Kg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=/WdWXXJLMrHFDkAngs1gFC0+V4h4yh7FK4seVUzRYjM=;
-        b=XwIfc1/C5E9dUXyiXd3Zr62CFRJCweLQxQkCm4UQVjo/EHUZzCcElQoDE7FhoIUYAE
-         Tv+m0IR6fEjJm6Ld2YOzjvD2zwFS9yRIoEJqtf6f9O1421k05PnG7ICnWWpiKk/Bd95h
-         TE4FVZHz+POI5u9HLj3b2QyPECeZXoxiY8O4YdXo2VeqqjwJpFKbOJsnWbnLpkGdJPot
-         +p/0hTe+shbS3V607/SKJsaDw+ID3dWXbaAZwYSJQi0VEBRg8anJIRS5MK6w53f4aSLy
-         Xml8sKgPI9oBPtBCfzlec/Y+ZRFqX34sbHlW7AO4aL0n/8Yb8Bh30BVIPlbiRCJ0nccP
-         Mn8g==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=1dO1kdegDw18hFeKTjoo1tGuZ/RIZW9QFqKQfZ2w1V0=;
+        b=WC7d9Mork350CRPcdj/9jyzHmb78fRlDPQSY4nXDzHhaMkcD/QHj0AVeRZehi2HRM2
+         v7aBE1rwH5tMhs7XXokgZ2E20MlVLp6mnWz8zclzFaMfbOxzBXyXE2cUcLKn+S2ZQHm9
+         +I359YcyxNQ2lEvPDRTcauIqIqJYF0OlU0AK6P4GKuMy7OeryJaFry9pxe1B+pNLgxVJ
+         2nItqz8YhdnVUtZLKL3UT9pw8W7zaaoB0Z3KnyKilBH0y/d+jEpxhU8QZ1dTPC1m2lgF
+         MmvrmI4qA5xL52YU/ptDgFaZ9+v0zsFwa5anrF/95G6zp0bWsPajq/8htBk/mkTn5CBE
+         6dmw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=LW4dQglF;
-       spf=pass (google.com: domain of mathieu.poirier@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=mathieu.poirier@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of robin.murphy@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=robin.murphy@arm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=LW4dQglF;
-       spf=pass (google.com: domain of mathieu.poirier@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=mathieu.poirier@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZp1fdFOh/AfDDg4gtqM2/D3p/A0S9W45XKLU5bl3H+XrDJNIjam37I2SrA+3rKhffI7wnHLsFLoSG/eFESgmrc=
-MIME-Version: 1.0
-In-Reply-To: <20180515093718.19ca71295fc36fe65c5df021@arm.com>
-References: <20180508140628.f30774c70c4c481bff3f8000@arm.com>
- <CAPDyKFqagt5zhz-8hLSXOqofv-nBqg4i-EVjA=UV3Jfi4zktKg@mail.gmail.com>
- <20180515081519.22751a39c49e63224da3acac@arm.com> <20180515134831.GG16141@n2100.armlinux.org.uk>
- <20180515093718.19ca71295fc36fe65c5df021@arm.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Tue, 15 May 2018 09:07:44 -0600
-Message-ID: <CANLsYkyND-hspG3zH5LwwcWTbb_s7WqcRFAAy1mNOhwQ3RNW9Q@mail.gmail.com>
+       spf=pass (google.com: domain of robin.murphy@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=robin.murphy@arm.com
 Subject: Re: [PATCH 1/4] amba: Export amba_bustype
-To: Kim Phillips <kim.phillips@arm.com>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
-	David Howells <dhowells@redhat.com>, Eric Auger <eric.auger@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Gargi Sharma <gs051095@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Kirill Tkhai <ktkhai@virtuozzo.com>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>, Oleg Nesterov <oleg@redhat.com>,
-	Pavel Tatashin <pasha.tatashin@oracle.com>, Rik van Riel <riel@redhat.com>,
-	Robin Murphy <robin.murphy@arm.com>, Thierry Reding <treding@nvidia.com>, Todd Kjos <tkjos@google.com>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Kim Phillips <kim.phillips@arm.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Howells <dhowells@redhat.com>, Eric Auger <eric.auger@redhat.com>,
+ Eric Biederman <ebiederm@xmission.com>, Gargi Sharma <gs051095@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Kirill Tkhai
+ <ktkhai@virtuozzo.com>, Mike Rapoport <rppt@linux.vnet.ibm.com>,
+ Oleg Nesterov <oleg@redhat.com>, Pavel Tatashin <pasha.tatashin@oracle.com>,
+ Rik van Riel <riel@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ Thierry Reding <treding@nvidia.com>, Todd Kjos <tkjos@google.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180508140628.f30774c70c4c481bff3f8000@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <8c2648ec-1379-fb2a-35d2-b3fa8fc9f063@arm.com>
+Date: Wed, 9 May 2018 14:38:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180508140628.f30774c70c4c481bff3f8000@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599923962072715113?=
-X-GMAIL-MSGID: =?utf-8?q?1600543119182719848?=
+X-GMAIL-MSGID: =?utf-8?q?1599993930310399767?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 15 May 2018 at 08:37, Kim Phillips <kim.phillips@arm.com> wrote:
-> On Tue, 15 May 2018 14:48:31 +0100
-> Russell King - ARM Linux <linux@armlinux.org.uk> wrote:
->
->> On Tue, May 15, 2018 at 08:15:19AM -0500, Kim Phillips wrote:
->> > On Tue, 15 May 2018 08:59:02 +0200
->> > Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> >
->> > > On 8 May 2018 at 21:06, Kim Phillips <kim.phillips@arm.com> wrote:
->> > > > This patch is provided in the context of allowing the Coresight driver
->> > > > subsystem to be loaded as modules.  Coresight uses amba_bus in its call
->> > > > to bus_find_device() in of_coresight_get_endpoint_device() when
->> > > > searching for a configurable endpoint device.  This patch allows
->> > > > Coresight to reference amba_bustype when built as a module.
->> > >
->> > > Sounds like you are fixing a bug, don't your want this to go for
->> > > stable and then also add a fixes tag?
->> >
->> > How do you consider this a bug fix?  What commit would the fixes tag
->> > reference?  The introduction of the amba bus?  Not only aren't busses
->> > required to export their bus_type, but that commit predates git.
->>
->> I do not consider it a bug fix (see my reply to Ulf) and I certainly
->
-> I agree this isn't a bug fix.
->
->> The only problem which we're aware of is with Coresight, and only then
->> when your patches to allow Coresight to be modular are merged.  That's
->
-> Just to clarify: the Coresight modularization patch depends on this
-> patch, so this patch is to be merged first.
+Hi Kim,
 
-I think the whole feature should be merge at the same time and (with
-Russell's ACK) probably easier through my tree.
+On 08/05/18 20:06, Kim Phillips wrote:
+> This patch is provided in the context of allowing the Coresight driver
+> subsystem to be loaded as modules.  Coresight uses amba_bus in its call
+> to bus_find_device() in of_coresight_get_endpoint_device() when
+> searching for a configurable endpoint device.  This patch allows
+> Coresight to reference amba_bustype when built as a module.
+> 
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Alex Williamson <alex.williamson@redhat.com>
+> Cc: Eric Auger <eric.auger@redhat.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Thierry Reding <treding@nvidia.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
+> ---
+> There was a prior patch submitted by Alex W. here:
+> 
+> https://lkml.org/lkml/2017/6/19/811
+> 
+> But I can't tell its fate - presume simply delayed?
+> 
+> Coresight uses amba_bus in its call to bus_find_device() here:
+> 
+> https://lxr.missinglinkelectronics.com/linux/drivers/hwtracing/coresight/of_coresight.c#L51
+> 
+> Grepping for bus_type and EXPORT shows other busses exporting their
+> type, so I don't think this is the wrong approach.  If, OTOH, Coresight
+> needs to do something differently, please comment.
 
->
-> Cheers,
->
-> Kim
+Exposing raw bus_types is pretty ugly, but it is indeed the status quo, 
+so this probably is the reasonable thing to do. I suppose an amba_bus 
+equivalent of of_find_device_by_node() could be implemented, but for 
+only a single potential user that doesn't seem particularly worthwhile, 
+since unless some massive shake-up of how buses work comes along the 
+bus_type will inevitably end up being exported for other reasons anyway. 
+So, in the context of this series;
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
+However, as a wild idea for sidestepping the issue completely (or at 
+least keeping it within the CoreSight framework), at first glance it 
+appears something like the below might be feasible, although I may well 
+be missing some obvious reason why not.
+
+Thanks,
+Robin.
+
+----->8-----
+diff --git a/drivers/hwtracing/coresight/of_coresight.c 
+b/drivers/hwtracing/coresight/of_coresight.c
+index 7c375443ede6..2c3fdc9b63e6 100644
+--- a/drivers/hwtracing/coresight/of_coresight.c
++++ b/drivers/hwtracing/coresight/of_coresight.c
+@@ -27,28 +27,13 @@
+
+  static int of_dev_node_match(struct device *dev, void *data)
+  {
+-	return dev->of_node == data;
++	return dev->parent->of_node == data;
+  }
+
+  static struct device *
+  of_coresight_get_endpoint_device(struct device_node *endpoint)
+  {
+-	struct device *dev = NULL;
+-
+-	/*
+-	 * If we have a non-configurable replicator, it will be found on the
+-	 * platform bus.
+-	 */
+-	dev = bus_find_device(&platform_bus_type, NULL,
+-			      endpoint, of_dev_node_match);
+-	if (dev)
+-		return dev;
+-
+-	/*
+-	 * We have a configurable component - circle through the AMBA bus
+-	 * looking for the device that matches the endpoint node.
+-	 */
+-	return bus_find_device(&amba_bustype, NULL,
++	return bus_find_device(&coresight_bustype, NULL,
+  			       endpoint, of_dev_node_match);
+  }
