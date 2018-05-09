@@ -1,100 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933658AbeEICkR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 22:40:17 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:45985 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933457AbeEICkP (ORCPT
+        id S933677AbeEICkZ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 22:40:25 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:41313 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933457AbeEICkW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 22:40:15 -0400
-X-Google-Smtp-Source: AB8JxZrrjUQphNJdfNfq8rmEldsE4gZ+42IroVXoC9Yj4LcqvO4zrG8Yq+fiI/AQXIo6uHvH4CXMt6DpWTSfNX8grRY=
+        Tue, 8 May 2018 22:40:22 -0400
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: neidhard.kim@lge.com
+X-Original-SENDERIP: 10.178.37.74
+X-Original-MAILFROM: neidhard.kim@lge.com
+Subject: Re: [PATCH v3] watchdog: sp805: add restart handler
+To: Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Chanho Min <chanho.min@lge.com>
+References: <cf2f151a-06d7-368e-7ae5-68e992dfc3ea@roeck-us.net>
+ <1525413903-7066-1-git-send-email-neidhard.kim@lge.com>
+ <1b084bff-84fd-18fa-7bee-dd00e33405a2@roeck-us.net>
+From: Jongsung Kim <neidhard.kim@lge.com>
+Message-ID: <6d09e8c6-d6b9-d0ea-2496-1b1cd1487808@lge.com>
+Date: Wed, 9 May 2018 11:40:19 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAFv23QmkLiuFA6C4YFsO3hoTEE--2bT4H2uxaMqoY30G4_QJGw@mail.gmail.com>
-References: <1523273714-17264-1-git-send-email-acelan.kao@canonical.com>
- <1523273714-17264-2-git-send-email-acelan.kao@canonical.com>
- <20180409123910.GB31060@lunn.ch> <20180409.105039.310935818370762783.davem@davemloft.net>
- <CAFv23Q=QYastpgLxHiwr_PSdoeWfEjiNp6x2F9kM5EYhRee2hA@mail.gmail.com> <CAFv23QmkLiuFA6C4YFsO3hoTEE--2bT4H2uxaMqoY30G4_QJGw@mail.gmail.com>
-From: AceLan Kao <acelan.kao@canonical.com>
-Date: Wed, 9 May 2018 10:40:13 +0800
-Message-ID: <CAFv23Qn1-5nHcFsk3egcL+OpKtujv4rkyXxa-Qht4eV4z6cbCA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] alx: add disable_wol paramenter
-To: David Miller <davem@davemloft.net>
-Cc: Andrew Lunn <andrew@lunn.ch>, James Cliburn <jcliburn@gmail.com>,
-        Chris Snook <chris.snook@gmail.com>, rakesh@tuxera.com,
-        netdev@vger.kernel.org,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Emily Chien <emily.chien@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1b084bff-84fd-18fa-7bee-dd00e33405a2@roeck-us.net>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-I didn't get any response around one month.
-I'm still here hoping you can consider accepting the WoL patch.
-
-Without that patch, people have no chance to bump into the issue and
-have no chance to fix it.
-Moreover, it leads to the dkms package be spreaded around, and it'll
-become a more annoying issue when UEFI secure boot is enabled[1].
-Please re-consider it to enable WoL again and set it to disable by default,
-so that we/user have a chance to examine the feature and have a chance
-to find out a read fix for it.
-Thanks.
-
-1. https://bugzilla.kernel.org/show_bug.cgi?id=61651
-
-Best regards,
-AceLan Kao.
-
-2018-04-24 11:45 GMT+08:00 AceLan Kao <acelan.kao@canonical.com>:
-> Hi,
->
-> May I know the final decision of this patch?
-> Thanks.
->
-> Best regards,
-> AceLan Kao.
->
-> 2018-04-10 10:40 GMT+08:00 AceLan Kao <acelan.kao@canonical.com>:
->> The problem is I don't have a machine with that wakeup issue, and I
->> need WoL feature.
->> Instead of spreading "alx with WoL" dkms package everywhere, I would
->> like to see it's supported in the driver and is disabled by default.
+On 05/04/2018 10:11 PM, Guenter Roeck wrote:
+> On 05/03/2018 11:05 PM, Jongsung Kim wrote:
+>> Add restart handler for SP805 watchdog so that the driver can be
+>> used to reboot the system.
 >>
->> Moreover, the wakeup issue may come from old Atheros chips, or result
->> from buggy BIOS.
->> With the WoL has been removed from the driver, no one will report
->> issue about that, and we don't have any chance to find a fix for it.
+>> Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
+>> Cc: Guenter Roeck <linux@roeck-us.net>
+>
+> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+>
+>> ---
+>
+> For future patches: change log goes here, please.
+>
+> Thanks,
+> Guenter
+
+Thank you for your review and kind comments.
+JS
+
+>
+>>   drivers/watchdog/sp805_wdt.c | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
 >>
->> Adding this feature back is not covering a paper on the issue, it
->> makes people have a chance to examine this feature.
+>> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+>> index 03805bc..9849db0 100644
+>> --- a/drivers/watchdog/sp805_wdt.c
+>> +++ b/drivers/watchdog/sp805_wdt.c
+>> @@ -121,6 +121,18 @@ static unsigned int wdt_timeleft(struct watchdog_device *wdd)
+>>       return div_u64(load, rate);
+>>   }
+>>   +static int
+>> +wdt_restart(struct watchdog_device *wdd, unsigned long mode, void *cmd)
+>> +{
+>> +    struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>> +
+>> +    writel_relaxed(0, wdt->base + WDTCONTROL);
+>> +    writel_relaxed(0, wdt->base + WDTLOAD);
+>> +    writel_relaxed(INT_ENABLE | RESET_ENABLE, wdt->base + WDTCONTROL);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>>   static int wdt_config(struct watchdog_device *wdd, bool ping)
+>>   {
+>>       struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>> @@ -197,6 +209,7 @@ static const struct watchdog_ops wdt_ops = {
+>>       .ping        = wdt_ping,
+>>       .set_timeout    = wdt_setload,
+>>       .get_timeleft    = wdt_timeleft,
+>> +    .restart    = wdt_restart,
+>>   };
+>>     static int
+>> @@ -230,6 +243,7 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
+>>       spin_lock_init(&wdt->lock);
+>>       watchdog_set_nowayout(&wdt->wdd, nowayout);
+>>       watchdog_set_drvdata(&wdt->wdd, wdt);
+>> +    watchdog_set_restart_priority(&wdt->wdd, 128);
+>>       wdt_setload(&wdt->wdd, DEFAULT_TIMEOUT);
+>>         ret = watchdog_register_device(&wdt->wdd);
 >>
->> 2018-04-09 22:50 GMT+08:00 David Miller <davem@davemloft.net>:
->>> From: Andrew Lunn <andrew@lunn.ch>
->>> Date: Mon, 9 Apr 2018 14:39:10 +0200
->>>
->>>> On Mon, Apr 09, 2018 at 07:35:14PM +0800, AceLan Kao wrote:
->>>>> The WoL feature was reported broken and will lead to
->>>>> the system resume immediately after suspending.
->>>>> This symptom is not happening on every system, so adding
->>>>> disable_wol option and disable WoL by default to prevent the issue from
->>>>> happening again.
->>>>
->>>>>  const char alx_drv_name[] = "alx";
->>>>>
->>>>> +/* disable WoL by default */
->>>>> +bool disable_wol = 1;
->>>>> +module_param(disable_wol, bool, 0);
->>>>> +MODULE_PARM_DESC(disable_wol, "Disable Wake on Lan feature");
->>>>> +
->>>>
->>>> Hi AceLan
->>>>
->>>> This seems like you are papering over the cracks. And module
->>>> parameters are not liked.
->>>>
->>>> Please try to find the real problem.
->>>
->>> Agreed.
+>
+>
