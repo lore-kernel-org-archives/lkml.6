@@ -1,147 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934895AbeEIOTl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 10:19:41 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59714 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932701AbeEIOTk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 10:19:40 -0400
-Date: Wed, 9 May 2018 16:19:28 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Jane Wan <Jane.Wan@nokia.com>
-Cc: miquel.raynal@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, richard@nod.at, marek.vasut@gmail.com,
-        yamada.masahiro@socionext.com, prabhakar.kushwaha@nxp.com,
-        shawnguo@kernel.org, jagdish.gediya@nxp.com,
-        shreeya.patel23498@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, ties.bos@nokia.com
-Subject: Re: [PATCH v4 2/2] mtd: rawnand: use bit-wise majority to recover
- the contents of ONFI parameter
-Message-ID: <20180509161928.149a42a7@bbrezillon>
-In-Reply-To: <1525814394-30067-2-git-send-email-Jane.Wan@nokia.com>
-References: <1525814394-30067-1-git-send-email-Jane.Wan@nokia.com>
-        <1525814394-30067-2-git-send-email-Jane.Wan@nokia.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S934983AbeEIOVf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 10:21:35 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:48108 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932701AbeEIOVe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 10:21:34 -0400
+Date: Wed, 9 May 2018 10:21:18 -0400
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Yisheng Xie <xieyisheng1@huawei.com>, mingo@kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] swiotlb: Update the comment of swiotlb
+Message-ID: <20180509142118.GA27814@char.us.oracle.com>
+References: <1525691185-55657-1-git-send-email-xieyisheng1@huawei.com>
+ <20180509073838.GA20874@lst.de>
+ <b6246d95-7d9c-2904-6298-9c5ca3506a5f@huawei.com>
+ <20180509113957.GA25787@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509113957.GA25787@lst.de>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=794
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805090136
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  8 May 2018 14:19:54 -0700
-Jane Wan <Jane.Wan@nokia.com> wrote:
-
-> Per ONFI specification (Rev. 4.0), if all parameter pages have invalid
-> CRC values, the bit-wise majority may be used to recover the contents of
-> the parameter pages from the parameter page copies present.
+On Wed, May 09, 2018 at 01:39:57PM +0200, Christoph Hellwig wrote:
+> On Wed, May 09, 2018 at 05:08:30PM +0800, Yisheng Xie wrote:
+> > Hi Christoph,
+> > 
+> > On 2018/5/9 15:38, Christoph Hellwig wrote:
+> > > Thanks,
+> > > 
+> > > applied to the dma-mapping tree.
+> > 
+> > Thanks
+> > 
+> > BTW, should lib/swiotlb.c also add to DMA MAPPING HELPERS, or
+> > add yourself as a maintainer of SWIOTLB SUBSYSTEM ? It will make
+> > get_maintainer.pl get you :)
 > 
-> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
-> ---
->  drivers/mtd/nand/raw/nand_base.c |   49 ++++++++++++++++++++++++++++++++++----
->  1 file changed, 44 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index 72f3a89..dfc341c 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -5086,6 +5086,38 @@ static int nand_flash_detect_ext_param_page(struct nand_chip *chip,
->  	return ret;
->  }
->  
-> +#define GET_BIT(bit, val)   (((val) >> (bit)) & 0x01)
-> +
-> +/*
-> + * Recover NAND parameter page with bit-wise majority
-> + */
-> +static int onfi_recover_param(struct nand_onfi_params *p, int pages)
+> Konrad is the maintainer, but due to me touching the file a lot
+> lately I keep merging the patches for now.  But anything non-trivial
+> absolutely requires an Ack from Konrad.
 
-I had something more generic in mind:
+<nods>
 
-static void nand_bit_wise_majority(const void **srcbufs,
-				   void *dstbuf,
-				   unsigned int nbufs,
-				   unsigned int bufsize)
-{
-	...
-}
-
-And then you do the crc check in nand_flash_detect_onfi().
-
-The reason I'm asking that is because I'm almost sure we'll re-use this
-functions for extended param pages, and also for vendor specific data
-(we already have a byte-wise majority check in the hynix driver, so I
-wouldn't be surprised if other vendors decided to use a bit-wise
-approach for some of their OTP area).
-
-> +{
-> +	int i, j, k;
-> +	u8 v, m;
-> +	u8 *buf;
-> +
-> +	buf = (u8 *)p;
-> +	for (i = 0; i < sizeof(*p); i++) {
-> +		v = 0;
-> +		for (j = 0; j < 8; j++) {
-> +			m = 0;
-> +			for (k = 0; k < pages; k++)
-> +				m += GET_BIT(j, buf[k*sizeof(*p) + i]);
-> +			if (m > pages/2)
-> +				v |= BIT(j);
-> +		}
-> +		((u8 *)p)[i] = v;
-> +	}
-> +
-> +	if (onfi_crc16(ONFI_CRC_BASE, (u8 *)p, 254) ==
-> +			le16_to_cpu(p->crc)) {
-> +		return 1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * Check if the NAND chip is ONFI compliant, returns 1 if it is, 0 otherwise.
->   */
-> @@ -5102,7 +5134,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  		return 0;
->  
->  	/* ONFI chip: allocate a buffer to hold its parameter page */
-> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
-> +	p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
->  	if (!p)
->  		return -ENOMEM;
->  
-> @@ -5113,21 +5145,28 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  	}
->  
->  	for (i = 0; i < 3; i++) {
-> -		ret = nand_read_data_op(chip, p, sizeof(*p), true);
-> +		ret = nand_read_data_op(chip, &p[i], sizeof(*p), true);
->  		if (ret) {
->  			ret = 0;
->  			goto free_onfi_param_page;
->  		}
->  
-> -		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) ==
-> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)&p[i], 254) ==
->  				le16_to_cpu(p->crc)) {
-> +			if (i)
-> +				memcpy(p, &p[i], sizeof(*p));
->  			break;
->  		}
->  	}
->  
->  	if (i == 3) {
-> -		pr_err("Could not find valid ONFI parameter page; aborting\n");
-> -		goto free_onfi_param_page;
-> +		pr_err("Could not find valid ONFI parameter page\n");
-> +		pr_info("Recover ONFI params with bit-wise majority\n");
-> +		ret = onfi_recover_param(p, 3);
-> +		if (ret == 0) {
-> +			pr_err("ONFI parameter recovery failed, aborting\n");
-> +			goto free_onfi_param_page;
-> +		}
->  	}
->  
->  	/* Check version */
+Thank you for pulling this in your tree.
