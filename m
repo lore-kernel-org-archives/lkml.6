@@ -1,98 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965600AbeEIQxD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:53:03 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.150.224]:47400 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934971AbeEIQxB (ORCPT
+        id S965646AbeEIQxh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:53:37 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44898 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965630AbeEIQxf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:53:01 -0400
-Date: Wed, 9 May 2018 09:33:11 -0700
-From: Paul Burton <paul.burton@mips.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin King <colin.king@canonical.com>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-mips@linux-mips.org>,
-        <linux-clk@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: boston: fix memory leak of 'onecell' on error
- return paths
-Message-ID: <20180509163311.alvyibwwuwkumyxf@pburton-laptop>
-References: <20180509134031.11611-1-colin.king@canonical.com>
- <20180509140135.4dndt3baomtxups5@mwanda>
+        Wed, 9 May 2018 12:53:35 -0400
+X-Google-Smtp-Source: AB8JxZo23nCQcFb+dWp9sfVkvp95IpmfA2b/wc2spR7uz7sL24eeav38m9CF3/BiU0S19cTlofzR3g==
+Date: Wed, 9 May 2018 18:53:28 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laurent Dufour <ldufour@linux.vnet.ibm.com>, mingo@kernel.org
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ jc_docs tree
+Message-ID: <20180509165249.GA16976@andrea>
+References: <20180509202508.15c3435a@canb.auug.org.au>
+ <20180509132824.GA14503@andrea>
+ <20180509085920.5fbb32f5@lwn.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180509140135.4dndt3baomtxups5@mwanda>
-User-Agent: NeoMutt/20180323
-X-BESS-ID: 1525884637-853316-27024-312772-1
-X-BESS-VER: 2018.5-r1804261738
-X-BESS-Apparent-Source-IP: 12.201.5.31
-X-BESS-Outbound-Spam-Score: 0.50
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192850
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.50 BSF_RULE7568M          META: Custom Rule 7568M
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+In-Reply-To: <20180509085920.5fbb32f5@lwn.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Colin & Dan,
-
-On Wed, May 09, 2018 at 05:01:35PM +0300, Dan Carpenter wrote:
-> On Wed, May 09, 2018 at 02:40:31PM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
+On Wed, May 09, 2018 at 08:59:20AM -0600, Jonathan Corbet wrote:
+> On Wed, 9 May 2018 15:28:24 +0200
+> Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
+> 
+> > > BTW, it would be nice if the the question "Why was this file removed?" was
+> > > answered by that jc_docs commit message ...  I actually wonder if this
+> > > file needs to return (I have no way of knowing).  
 > > 
-> > There are several error return paths that don't free up onecell
-> > and hence we have some memory leaks. Add an error exit path that
-> > kfree's onecell to fix the leaks.
+> > My bad; thanks for pointing this out.
 > > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/clk/imgtec/clk-boston.c | 15 +++++++++++----
-> >  1 file changed, 11 insertions(+), 4 deletions(-)
+> > Mmh... "why" would have been something like "the feature has no Kconfig". ;-)
 > > 
-> > diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
-> > index 15af423cc0c9..d6bc468ff551 100644
-> > --- a/drivers/clk/imgtec/clk-boston.c
-> > +++ b/drivers/clk/imgtec/clk-boston.c
-> > @@ -73,27 +73,34 @@ static void __init clk_boston_setup(struct device_node *np)
-> >  	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
-> >  	if (IS_ERR(hw)) {
-> >  		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
-> > -		return;
-> > +		goto error;
+> > I defer to your (community) decision regarding "if this file needs to return"
+> > (Cc-ing Ingo, who created the file and also suggested its removal); I remain
+> > available for preparing the patch to restore (and refresh) this file, should
+> > you agree with this approach.
 > 
-> I hate vague label names like "error" and "out"...
+> So I'll confess that I balked on the lack of a changelog, but then decided
+> to proceed with the patch (and the other removal as well) due to the lack
+> of the Kconfig option.
 > 
-> There are a bunch of other resources that we should free if we decide
-> it's worth freeing things.
-
-Agreed - for example unregistering the clocks that we'd be discarding
-references to by freeing onecell.
-
-> Can this even boot without the clk?
-
-Nope. If this clock setup fails then whether you free this memory or not
-you're going to be unable to do anything useful with it.
-
-I imagine this patch is the result of some static analysis rather than a
-problem being observed at runtime?
-
-Thanks,
-    Paul
-
-> When
-> the label names says what is freed, then you mentally only have to keep
-> track of the most recently allocated resource.  So if
+> Now that I look a little closer, I think the real issue is that the
+> "features" documentation assumes that there's a Kconfig option for each,
+> but there isn't in this case.  The lack of a Kconfig option does not,
+> this time around, imply that the feature has gone away.
 > 
-> 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+> I think that I should probably revert this patch in the short term.
+> Longer-term, it would be good to have an alternative syntax for "variable
+> set in the arch headers" to describe situations like this.
+
+Both matters were discussed during v1:
+
+  http://lkml.kernel.org/r/1522774551-9503-1-git-send-email-andrea.parri@amarulasolutions.com
+
+... (and the glory details are documented in features-refresh.sh ;-) ).
+
+As I suggested above, simply reverting this patch will leave this file,
+(and only this file!) out-of-date (and won't resolve the conflict with
+Laurent's patch ...).
+
+  Andrea
+
+
 > 
-> succeeds then the next goto is going to "goto free_clk_input;".
+> Make sense?
 > 
-> regards,
-> dan carpenter
+> Thanks,
+> 
+> jon
