@@ -1,67 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934077AbeEIIVw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:21:52 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37878 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933805AbeEIIVs (ORCPT
+        id S934031AbeEIIXE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:23:04 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:41429 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933805AbeEIIXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:21:48 -0400
-Date: Wed, 9 May 2018 17:21:14 +0900
-From: Mark Brown <broonie@kernel.org>
-To: changbin.du@intel.com
-Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
-        rostedt@goodmis.org, rdunlap@infradead.org, x86@kernel.org,
-        lgirdwood@gmail.com, arnd@arndb.de, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] regulator: add dummy function
- of_find_regulator_by_node
-Message-ID: <20180509082114.GQ13402@sirena.org.uk>
-References: <1525566016-30172-1-git-send-email-changbin.du@intel.com>
- <1525566016-30172-3-git-send-email-changbin.du@intel.com>
+        Wed, 9 May 2018 04:23:01 -0400
+X-Google-Smtp-Source: AB8JxZpBVIOihzweUKG48KDGbvYpgHkYNtbw1Ey55XNbkpRRwSsONHIpelkK8nbNPHwv535e9putfQ==
+Date: Wed, 9 May 2018 01:22:59 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [RFC PATCH] sched/cpufreq/schedutil: handling urgent frequency
+ requests
+Message-ID: <20180509082259.GB76874@joelaf.mtv.corp.google.com>
+References: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
+ <20180508065435.bcht6dyb3rpp6gk5@vireshk-i7>
+ <20180509045425.GA158882@joelaf.mtv.corp.google.com>
+ <20180509064530.GA1681@localhost.localdomain>
+ <20180509065449.c5zotxqmuyatjgfd@vireshk-i7>
+ <20180509070113.GB52784@joelaf.mtv.corp.google.com>
+ <CAJZ5v0hNgvd=0dKstXRsbHhtrc6m+ugS5kjPOq2B8k55ioX0MA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="EkxpYdHiqGHPYbUt"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1525566016-30172-3-git-send-email-changbin.du@intel.com>
-X-Cookie: Advancement in position.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAJZ5v0hNgvd=0dKstXRsbHhtrc6m+ugS5kjPOq2B8k55ioX0MA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 09, 2018 at 10:05:09AM +0200, Rafael J. Wysocki wrote:
+> On Wed, May 9, 2018 at 9:01 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> > On Wed, May 09, 2018 at 12:24:49PM +0530, Viresh Kumar wrote:
+> >> On 09-05-18, 08:45, Juri Lelli wrote:
+> >> > On 08/05/18 21:54, Joel Fernandes wrote:
+> >> > Isn't this potentially introducing unneeded irq pressure (and doing the
+> >> > whole wakeup the kthread thing), while the already active kthread could
+> >> > simply handle multiple back-to-back requests before going to sleep?
+> >>
+> >> And then we may need more instances of the work item and need to store
+> >> a different value of next_freq with each work item, as we can't use
+> >> the common one anymore as there would be races around accessing it ?
+> >
+> > Exactly. I think it also doesn't make sense to over write an already
+> > committed request either so better to store them separate (?). After the
+> > "commit", that previous request is done..
+> 
+> Why is it?
+> 
+> In the non-fast-switch case the "commit" only means queuing up an
+> irq_work.  Which BTW is one of the reasons for having work_in_progress
+> even if your kthread can handle multiple work items in one go.
 
---EkxpYdHiqGHPYbUt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok I agree. I just thought there was something funky with the meaning of
+commit from a cpufreq perspective.
 
-On Sun, May 06, 2018 at 08:20:13AM +0800, changbin.du@intel.com wrote:
-> From: Changbin Du <changbin.du@intel.com>
->=20
-> If device tree is not enabled, of_find_regulator_by_node() should have
-> a dummy function since the function call is still there.
+In the last diff I just sent out, I actually keep work_in_progress and
+consider its meaning to be what you're saying (has the kthread been kicked)
+and lets such "overwriting" of the next frequency to be made possible. Also
+with that we would be servicing just the latest request even if there were
+multiple ones made.
 
-Please do not submit new versions of already applied patches, please
-submit incremental updates to the existing code.  Modifying existing
-commits creates problems for other users building on top of those
-commits so it's best practice to only change pubished git commits if
-absolutely essential.
+thanks,
 
---EkxpYdHiqGHPYbUt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlryr3kACgkQJNaLcl1U
-h9Cf1Qf/VZXV2l+LOlO9wC/dYLfOubi56ydHPoYZE4BS7u5oWeD5QkXCJHO2HBYd
-hdPcuUgmVFyhllxpd6b44kSgYP70DoyxZ0ijsXZ4bEgg76pGKz9Fl8vhJ2EGmoeW
-3LCZ6ESiYwFPoDs3dtIpiOpzVxghMHSqUvQeFEwzLvP08r5fzTmDTUUhXUrY/9f+
-5bG/l+YkEXqo05FKp85vs+EA4ck1GPqZWT+eNQUHqNuARGUNvvG1OHQIYk9BewC0
-vXPe8+U98hjHjRpQWWIZJr0rrh17am9+y4H+HHxjUHlh/KxVjeDuz2g6w6k3Chrw
-r0j4nYeUdcc/WoCxu+jv5Jerhn2TBQ==
-=MKwt
------END PGP SIGNATURE-----
-
---EkxpYdHiqGHPYbUt--
+- Joel
