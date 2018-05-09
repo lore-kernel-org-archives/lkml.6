@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934310AbeEIIxj (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:53:39 -0400
-Received: from mga03.intel.com ([134.134.136.65]:31336 "EHLO mga03.intel.com"
+        id S934362AbeEIIxv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:53:51 -0400
+Received: from mga03.intel.com ([134.134.136.65]:31335 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934079AbeEIIx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:53:29 -0400
+        id S934141AbeEIIxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 04:53:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
-   d="scan'208";a="227055148"
+   d="scan'208";a="227055183"
 From: Aaron Lu <aaron.lu@intel.com>
 To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -23,9 +23,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
         Daniel Jordan <daniel.m.jordan@oracle.com>,
         Tariq Toukan <tariqt@mellanox.com>
-Subject: [RFC v3 PATCH 1/5] mm/page_alloc: use helper functions to add/remove a page to/from buddy
-Date: Wed,  9 May 2018 16:54:46 +0800
-Message-Id: <20180509085450.3524-2-aaron.lu@intel.com>
+Subject: [RFC v3 PATCH 5/5] mm/can_skip_merge(): make it more aggressive to attempt cluster alloc/free
+Date: Wed,  9 May 2018 16:54:50 +0800
+Message-Id: <20180509085450.3524-6-aaron.lu@intel.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180509085450.3524-1-aaron.lu@intel.com>
 References: <20180509085450.3524-1-aaron.lu@intel.com>
@@ -33,152 +33,33 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are multiple places that add/remove a page into/from buddy,
-introduce helper functions for them.
+After system runs a long time, it's easy for a zone to have no
+suitable high order page available and that will stop cluster alloc
+and free in current implementation due to compact_considered > 0.
 
-This also makes it easier to add code when a page is added/removed
-to/from buddy.
+To make it favour order0 alloc/free, relax the condition to only
+disallow cluster alloc/free when problem would occur, e.g. when
+compaction is in progress.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Aaron Lu <aaron.lu@intel.com>
 ---
- mm/page_alloc.c | 65 ++++++++++++++++++++++++++++++++++-----------------------
- 1 file changed, 39 insertions(+), 26 deletions(-)
+ mm/internal.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 905db9d7962f..a92afa362e1f 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -697,12 +697,41 @@ static inline void set_page_order(struct page *page, unsigned int order)
- 	__SetPageBuddy(page);
- }
- 
-+static inline void add_to_buddy_common(struct page *page, struct zone *zone,
-+					unsigned int order)
-+{
-+	set_page_order(page, order);
-+	zone->free_area[order].nr_free++;
-+}
-+
-+static inline void add_to_buddy_head(struct page *page, struct zone *zone,
-+					unsigned int order, int mt)
-+{
-+	add_to_buddy_common(page, zone, order);
-+	list_add(&page->lru, &zone->free_area[order].free_list[mt]);
-+}
-+
-+static inline void add_to_buddy_tail(struct page *page, struct zone *zone,
-+					unsigned int order, int mt)
-+{
-+	add_to_buddy_common(page, zone, order);
-+	list_add_tail(&page->lru, &zone->free_area[order].free_list[mt]);
-+}
-+
- static inline void rmv_page_order(struct page *page)
+diff --git a/mm/internal.h b/mm/internal.h
+index e3f209f8fb39..521aa4d8f3c1 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -552,10 +552,6 @@ void try_to_merge_page(struct page *page);
+ #ifdef CONFIG_COMPACTION
+ static inline bool can_skip_merge(struct zone *zone, int order)
  {
- 	__ClearPageBuddy(page);
- 	set_page_private(page, 0);
- }
- 
-+static inline void remove_from_buddy(struct page *page, struct zone *zone,
-+					unsigned int order)
-+{
-+	list_del(&page->lru);
-+	zone->free_area[order].nr_free--;
-+	rmv_page_order(page);
-+}
-+
- /*
-  * This function checks whether a page is free && is the buddy
-  * we can do coalesce a page and its buddy if
-@@ -806,13 +835,10 @@ static inline void __free_one_page(struct page *page,
- 		 * Our buddy is free or it is CONFIG_DEBUG_PAGEALLOC guard page,
- 		 * merge with it and move up one order.
- 		 */
--		if (page_is_guard(buddy)) {
-+		if (page_is_guard(buddy))
- 			clear_page_guard(zone, buddy, order, migratetype);
--		} else {
--			list_del(&buddy->lru);
--			zone->free_area[order].nr_free--;
--			rmv_page_order(buddy);
--		}
-+		else
-+			remove_from_buddy(buddy, zone, order);
- 		combined_pfn = buddy_pfn & pfn;
- 		page = page + (combined_pfn - pfn);
- 		pfn = combined_pfn;
-@@ -844,8 +870,6 @@ static inline void __free_one_page(struct page *page,
- 	}
- 
- done_merging:
--	set_page_order(page, order);
+-	/* Compaction has failed in this zone, we shouldn't skip merging */
+-	if (zone->compact_considered)
+-		return false;
 -
- 	/*
- 	 * If this is not the largest possible page, check if the buddy
- 	 * of the next-highest order is free. If it is, it's possible
-@@ -862,15 +886,12 @@ static inline void __free_one_page(struct page *page,
- 		higher_buddy = higher_page + (buddy_pfn - combined_pfn);
- 		if (pfn_valid_within(buddy_pfn) &&
- 		    page_is_buddy(higher_page, higher_buddy, order + 1)) {
--			list_add_tail(&page->lru,
--				&zone->free_area[order].free_list[migratetype]);
--			goto out;
-+			add_to_buddy_tail(page, zone, order, migratetype);
-+			return;
- 		}
- 	}
- 
--	list_add(&page->lru, &zone->free_area[order].free_list[migratetype]);
--out:
--	zone->free_area[order].nr_free++;
-+	add_to_buddy_head(page, zone, order, migratetype);
- }
- 
- /*
-@@ -1830,9 +1851,7 @@ static inline void expand(struct zone *zone, struct page *page,
- 		if (set_page_guard(zone, &page[size], high, migratetype))
- 			continue;
- 
--		list_add(&page[size].lru, &area->free_list[migratetype]);
--		area->nr_free++;
--		set_page_order(&page[size], high);
-+		add_to_buddy_head(&page[size], zone, high, migratetype);
- 	}
- }
- 
-@@ -1976,9 +1995,7 @@ struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
- 							struct page, lru);
- 		if (!page)
- 			continue;
--		list_del(&page->lru);
--		rmv_page_order(page);
--		area->nr_free--;
-+		remove_from_buddy(page, zone, current_order);
- 		expand(zone, page, order, current_order, area, migratetype);
- 		set_pcppage_migratetype(page, migratetype);
- 		return page;
-@@ -2896,9 +2913,7 @@ int __isolate_free_page(struct page *page, unsigned int order)
- 	}
- 
- 	/* Remove page from free list */
--	list_del(&page->lru);
--	zone->free_area[order].nr_free--;
--	rmv_page_order(page);
-+	remove_from_buddy(page, zone, order);
- 
- 	/*
- 	 * Set the pageblock if the isolated page is at least half of a
-@@ -8032,9 +8047,7 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 		pr_info("remove from free list %lx %d %lx\n",
- 			pfn, 1 << order, end_pfn);
- #endif
--		list_del(&page->lru);
--		rmv_page_order(page);
--		zone->free_area[order].nr_free--;
-+		remove_from_buddy(page, zone, order);
- 		for (i = 0; i < (1 << order); i++)
- 			SetPageReserved((page+i));
- 		pfn += (1 << order);
+ 	/* Only consider no_merge for order 0 pages */
+ 	if (order)
+ 		return false;
 -- 
 2.14.3
