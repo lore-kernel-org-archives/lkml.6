@@ -1,79 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935141AbeEIN2p (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 09:28:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41076 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935166AbeEIN2d (ORCPT
+        id S934820AbeEINag (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 09:30:36 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53440 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934698AbeEINaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 09:28:33 -0400
-Date: Wed, 9 May 2018 10:28:26 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 16/18] mtd: rawnand.h: use nested union kernel-doc
- markups
-Message-ID: <20180509102826.26d38719@vento.lan>
-In-Reply-To: <20180509142221.0fef7d1f@bbrezillon>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-        <39d8d4f0e0ff5a06be0303f7f4f2eac5fb45b9ca.1525684985.git.mchehab+samsung@kernel.org>
-        <20180507114650.171edcc2@bbrezillon>
-        <20180507083232.5a084ba7@vento.lan>
-        <20180509091034.58dadd12@vento.lan>
-        <20180509142221.0fef7d1f@bbrezillon>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Wed, 9 May 2018 09:30:35 -0400
+X-Google-Smtp-Source: AB8JxZpK1H66UcOhpyOZNlzWPL5G3hJ9RWbGeC3t1ENpE0R0xbtXHIciObOIqFanSKnTj8y2wXPUAQ==
+Date: Wed, 9 May 2018 15:30:28 +0200
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ jc_docs tree
+Message-ID: <20180509133027.GA14867@andrea>
+References: <20180509202508.15c3435a@canb.auug.org.au>
+ <20180509132824.GA14503@andrea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509132824.GA14503@andrea>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 9 May 2018 14:22:21 +0200
-Boris Brezillon <boris.brezillon@bootlin.com> escreveu:
+Really Cc-ing Ingo:
 
-> On Wed, 9 May 2018 09:10:34 -0300
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-> 
-> > Hi Boris,
+On Wed, May 09, 2018 at 03:28:24PM +0200, Andrea Parri wrote:
+> On Wed, May 09, 2018 at 08:25:26PM +1000, Stephen Rothwell wrote:
+> > Hi all,
 > > 
-> > Em Mon, 7 May 2018 08:32:32 -0300
-> > Mauro Carvalho Chehab <mchehab+samsung@kernel.org> escreveu:
-> >   
-> > > Hi Boris,
-> > > 
-> > > Em Mon, 7 May 2018 11:46:50 +0200
-> > > Boris Brezillon <boris.brezillon@bootlin.com> escreveu:    
-> >   
-> > > > Is there a simple
-> > > > way we can get rid of the warning we have when not describing timings
-> > > > but all of its fields?      
-> > > 
-> > > There's no direct way. It won't be hard to add a way to do it,
-> > > like applying the enclosed patch with ends by declaring timings as:
-> > > 
-> > > 	* @timings:	 -- undescribed --
-> > > 
-> > > IMHO, this is uglier.    
+> > Today's linux-next merge of the akpm-current tree got a conflict in:
 > > 
-> > Didn't hear from you.  
+> >   Documentation/features/vm/pte_special/arch-support.txt
+> > 
+> > between commit:
+> > 
+> >   2bef69a385b4 ("Documentation/features/vm: Remove arch support status file for 'pte_special'")
+> > 
+> > from the jc_docs tree and commit:
+> > 
+> >   1099dc900e93 ("mm: introduce ARCH_HAS_PTE_SPECIAL")
+> > 
+> > from the akpm-current tree.
+> > 
+> > I fixed it up (the former removed the file, so I did that) and can
+> > carry the fix as necessary. This is now fixed as far as linux-next is
+> > concerned, but any non trivial conflicts should be mentioned to your
+> > upstream maintainer when your tree is submitted for merging.  You may
+> > also want to consider cooperating with the maintainer of the conflicting
+> > tree to minimise any particularly complex conflicts.
+> > 
+> > BTW, it would be nice if the the question "Why was this file removed?" was
+> > answered by that jc_docs commit message ...  I actually wonder if this
+> > file needs to return (I have no way of knowing).
 > 
-> I replied just a few minutes ago ;).
-
-OK!
-
-> > What do you prefer for me to do with regards to
-> > this patch?   
+> My bad; thanks for pointing this out.
 > 
-> Will queue the initial patch to nand/next (I can also queue it to the
-> fixes branch if you prefer).
-
-No need. it can follow the usual workflow.
-
-Thanks,
-Mauro
+> Mmh... "why" would have been something like "the feature has no Kconfig". ;-)
+> 
+> I defer to your (community) decision regarding "if this file needs to return"
+> (Cc-ing Ingo, who created the file and also suggested its removal); I remain
+> available for preparing the patch to restore (and refresh) this file, should
+> you agree with this approach.
+> 
+>   Andrea
+> 
+> 
+> > 
+> > -- 
+> > Cheers,
+> > Stephen Rothwell
+> 
+> 
