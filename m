@@ -1,88 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965594AbeEIQrU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:47:20 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:37643 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935478AbeEIQrT (ORCPT
+        id S965600AbeEIQxD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:53:03 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.150.224]:47400 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934971AbeEIQxB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:47:19 -0400
-X-Google-Smtp-Source: AB8JxZrDTiGf5AWKzm3ofz+AJGQkK2uoojjspL/Nx0etcPhArq8Sfj9lLDJMzAomT7oyQPX0/SQE8Q==
-Reply-To: minyard@acm.org
-Subject: Re: [PATCH 0/6] treewide: Add and use dev_fmt similar to pr_fmt
-To: Joe Perches <joe@perches.com>,
-        openipmi-developer@lists.sourceforge.net, linux-rdma@vger.kernel.org
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1525878372.git.joe@perches.com>
-From: Corey Minyard <tcminyard@gmail.com>
-Message-ID: <4a397208-bd6c-a6c3-c161-4de8579ca17e@gmail.com>
-Date: Wed, 9 May 2018 11:47:15 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 9 May 2018 12:53:01 -0400
+Date: Wed, 9 May 2018 09:33:11 -0700
+From: Paul Burton <paul.burton@mips.com>
+To: Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin King <colin.king@canonical.com>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-mips@linux-mips.org>,
+        <linux-clk@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: boston: fix memory leak of 'onecell' on error
+ return paths
+Message-ID: <20180509163311.alvyibwwuwkumyxf@pburton-laptop>
+References: <20180509134031.11611-1-colin.king@canonical.com>
+ <20180509140135.4dndt3baomtxups5@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <cover.1525878372.git.joe@perches.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180509140135.4dndt3baomtxups5@mwanda>
+User-Agent: NeoMutt/20180323
+X-BESS-ID: 1525884637-853316-27024-312772-1
+X-BESS-VER: 2018.5-r1804261738
+X-BESS-Apparent-Source-IP: 12.201.5.31
+X-BESS-Outbound-Spam-Score: 0.50
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192850
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.50 BSF_RULE7568M          META: Custom Rule 7568M
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
+X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/09/2018 10:15 AM, Joe Perches wrote:
-> The pr_fmt mechanism exists for pr_<level> logging message prefixing,
-> but no similar capability exists for dev_<level> message prefixing.
->
-> Many uses of dev_<level> have an embedded prefix for logging output.
->
-> So add a similar dev_fmt macro that can automatically prefix the
-> dev_<level> logging output.
->
-> Rename the existing dev_<level> functions to _dev_<level> and add new
-> macros that call _dev_<level> with the desired prefix if defined.
->
-> The new default #define for dev_fmt is blank.
->
-> Convert ipmi and infiniband to use this mechanism.
+Hi Colin & Dan,
 
-The IPMI changes look good to me.
+On Wed, May 09, 2018 at 05:01:35PM +0300, Dan Carpenter wrote:
+> On Wed, May 09, 2018 at 02:40:31PM +0100, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > There are several error return paths that don't free up onecell
+> > and hence we have some memory leaks. Add an error exit path that
+> > kfree's onecell to fix the leaks.
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/clk/imgtec/clk-boston.c | 15 +++++++++++----
+> >  1 file changed, 11 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+> > index 15af423cc0c9..d6bc468ff551 100644
+> > --- a/drivers/clk/imgtec/clk-boston.c
+> > +++ b/drivers/clk/imgtec/clk-boston.c
+> > @@ -73,27 +73,34 @@ static void __init clk_boston_setup(struct device_node *np)
+> >  	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+> >  	if (IS_ERR(hw)) {
+> >  		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
+> > -		return;
+> > +		goto error;
+> 
+> I hate vague label names like "error" and "out"...
+> 
+> There are a bunch of other resources that we should free if we decide
+> it's worth freeing things.
 
-There are some conflicts with a patch I have pulling out the proc 
-interface that is
-destined for 3.18.  I can take the IPMI changes into my tree, if you want.
+Agreed - for example unregistering the clocks that we'd be discarding
+references to by freeing onecell.
+
+> Can this even boot without the clk?
+
+Nope. If this clock setup fails then whether you free this memory or not
+you're going to be unable to do anything useful with it.
+
+I imagine this patch is the result of some static analysis rather than a
+problem being observed at runtime?
 
 Thanks,
+    Paul
 
--corey
-
-> Miscellanea:
->
-> o x86/early-quirks uses an internal macro for #define dev_err which conflicts
->   with the existing dev_err macro, so rename it.
->
-> Joe Perches (6):
->    x86/early-quirks: Rename duplicate define of dev_err
->    device: Add #define dev_fmt similar to #define pr_fmt
->    ipmi: msghandler: Add and use pr_fmt and dev_fmt, remove PFX
->    ipmi: Use more common logging styles
->    ipmi: Convert printk(KERN_<level> to pr_<level>(
->    infiniband: qplib_fp: Use dev_fmt
->
->   arch/x86/kernel/early-quirks.c           |   8 +-
->   drivers/base/core.c                      |  12 +--
->   drivers/char/ipmi/ipmi_bt_sm.c           |  64 ++++++++--------
->   drivers/char/ipmi/ipmi_devintf.c         |  11 ++-
->   drivers/char/ipmi/ipmi_kcs_sm.c          |   4 +-
->   drivers/char/ipmi/ipmi_msghandler.c      |  53 +++++++------
->   drivers/char/ipmi/ipmi_poweroff.c        |  67 ++++++++---------
->   drivers/char/ipmi/ipmi_si_hardcode.c     |   9 ++-
->   drivers/char/ipmi/ipmi_si_hotmod.c       |  17 +++--
->   drivers/char/ipmi/ipmi_si_intf.c         |  22 +++---
->   drivers/char/ipmi/ipmi_si_pci.c          |  12 +--
->   drivers/char/ipmi/ipmi_si_platform.c     |  20 ++---
->   drivers/char/ipmi/ipmi_smic_sm.c         |  26 +++----
->   drivers/char/ipmi/ipmi_ssif.c            |  73 +++++++++---------
->   drivers/char/ipmi/ipmi_watchdog.c        |  52 +++++++------
->   drivers/infiniband/hw/bnxt_re/qplib_fp.c | 125 ++++++++++++++-----------------
->   include/linux/device.h                   | 103 ++++++++++++++-----------
->   17 files changed, 330 insertions(+), 348 deletions(-)
->
+> When
+> the label names says what is freed, then you mentally only have to keep
+> track of the most recently allocated resource.  So if
+> 
+> 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+> 
+> succeeds then the next goto is going to "goto free_clk_input;".
+> 
+> regards,
+> dan carpenter
