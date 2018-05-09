@@ -1,72 +1,254 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965848AbeEIRFA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:05:00 -0400
-Received: from smtprelay0104.hostedemail.com ([216.40.44.104]:57794 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965677AbeEIREy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 13:04:54 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:541:599:960:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2689:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3871:3872:3873:3874:4250:4321:5007:7903:8660:10004:10400:10848:11232:11658:11914:12296:12555:12663:12740:12760:12895:12986:13069:13095:13148:13161:13229:13230:13311:13357:13439:14096:14097:14659:14721:21080:21433:21451:21627:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:23,LUA_SUMMARY:none
-X-HE-Tag: knee66_479c34012034b
-X-Filterd-Recvd-Size: 2293
-Message-ID: <ee5a0e0065047cd4d1da340f6ee924f3a31b0fac.camel@perches.com>
-Subject: Re: [PATCH 0/6] treewide: Add and use dev_fmt similar to pr_fmt
-From: Joe Perches <joe@perches.com>
-To: minyard@acm.org, openipmi-developer@lists.sourceforge.net,
-        linux-rdma@vger.kernel.org
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 09 May 2018 10:04:50 -0700
-In-Reply-To: <4a397208-bd6c-a6c3-c161-4de8579ca17e@gmail.com>
-References: <cover.1525878372.git.joe@perches.com>
-         <4a397208-bd6c-a6c3-c161-4de8579ca17e@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S965799AbeEIRHb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:07:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54740 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935495AbeEIRH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 13:07:29 -0400
+Date: Wed, 9 May 2018 14:07:17 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH RFC 07/19] perf tools: Workaround missing maps for x86_64
+ KPTI entry trampolines
+Message-ID: <20180509170717.GI13491@kernel.org>
+References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
+ <1525866228-30321-8-git-send-email-adrian.hunter@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525866228-30321-8-git-send-email-adrian.hunter@intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-09 at 11:47 -0500, Corey Minyard wrote:
-> On 05/09/2018 10:15 AM, Joe Perches wrote:
-> > The pr_fmt mechanism exists for pr_<level> logging message prefixing,
-> > but no similar capability exists for dev_<level> message prefixing.
-> > 
-> > Many uses of dev_<level> have an embedded prefix for logging output.
-> > 
-> > So add a similar dev_fmt macro that can automatically prefix the
-> > dev_<level> logging output.
-> > 
-> > Rename the existing dev_<level> functions to _dev_<level> and add new
-> > macros that call _dev_<level> with the desired prefix if defined.
-> > 
-> > The new default #define for dev_fmt is blank.
-> > 
-> > Convert ipmi and infiniband to use this mechanism.
+Em Wed, May 09, 2018 at 02:43:36PM +0300, Adrian Hunter escreveu:
+> On x86_64 the KPTI entry trampolines are not in the kernel map created by
+> perf tools. That results in the addresses having no symbols and prevents
+> annotation. It also causes Intel PT to have decoding errors at the
+> trampoline addresses. Workaround that by creating maps for the trampolines.
+> At present the kernel does not export information revealing where the
+> trampolines are. Until that happens, the addresses are hardcoded.
 > 
-> The IPMI changes look good to me.
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> ---
+>  tools/perf/util/machine.c | 104 ++++++++++++++++++++++++++++++++++++++++++++++
+>  tools/perf/util/machine.h |   3 ++
+>  tools/perf/util/symbol.c  |  12 +++---
+>  3 files changed, 114 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> index 22047ff3cf2a..1bf15aa0b099 100644
+> --- a/tools/perf/util/machine.c
+> +++ b/tools/perf/util/machine.c
+> @@ -851,6 +851,110 @@ static int machine__get_running_kernel_start(struct machine *machine,
+>  	return 0;
+>  }
+>  
+> +struct special_kernal_map {
 
-Oh good.
+s/kernal/kernel/
 
-> There are some conflicts with a patch I have pulling out the proc 
-> interface that is destined for 3.18.
+And "special"?
 
-I'm sure you mean 4.18.
+> +	u64 start;
+> +	u64 end;
+> +	u64 pgoff;
+> +};
+> +
+> +static int machine__create_special_kernel_map(struct machine *machine,
+> +					      struct dso *kernel,
+> +					      struct special_kernal_map *sm)
+> +{
+> +	struct kmap *kmap;
+> +	struct map *map;
+> +
+> +	map = map__new2(sm->start, kernel);
+> +	if (!map)
+> +		return -1;
+> +
+> +	map->end   = sm->end;
+> +	map->pgoff = sm->pgoff;
+> +
+> +	kmap = map__kmap(map);
+> +
+> +	kmap->kmaps = &machine->kmaps;
+> +
+> +	map_groups__insert(&machine->kmaps, map);
+> +
+> +	pr_debug2("Added special kernel map %" PRIx64 "-%" PRIx64 "\n",
+> +		  map->start, map->end);
+> +
+> +	map__put(map);
+> +
+> +	return 0;
+> +}
+> +
+> +static u64 find_entry_trampoline(struct dso *dso)
+> +{
+> +	struct {
+> +		const char *name;
+> +		u64 addr;
+> +	} syms[] = {
+> +		/* Duplicates are removed so lookup all aliases */
+> +		{"_entry_trampoline", 0},
+> +		{"__entry_trampoline_start", 0},
+> +		{"entry_SYSCALL_64_trampoline", 0},
 
-> I can take the IPMI changes into my tree, if you want.
+We've been using named initializers consistently, so please change this
+to:
 
-These patches are not at all urgent and were done
-on top of next-20180509.
+	struct {
+		const char *name;
+		u64	   addr;
+	} syms[] = {
+		{ .name = "_entry_trampoline", },
+		{ .name = "__entry_trampoline_start", },
+		{ .name = "entry_SYSCALL_64_trampoline", },
+	},
 
-As there are dependencies between the patch that
-introduces dev_fmt and the reset of the patches,
-I think it makes sense to take these as a single
-patchset rather than take parts into various trees.
+Also why do you have to lookup to all of them to them use just the first
+found? I.e. you say they are aliases, why not return the first symbol
+found, i.e. the above would be reduced to:
 
-Respinning the IPMI patches is trivial and can be
-done whenever appropriate.
+	const char *syms[] = {
+		"_entry_trampoline",
+		"__entry_trampoline_start",
+		"entry_SYSCALL_64_trampoline",
+	},
 
-When do you expect your IPMI patches to hit -next?
+And then:
+
+	struct symbol *sym = dso__first_symbol(dso);
+	unsigned int i;
+
+	for (; sym; sym = dso__next_symbol(sym)) {
+		if (sym->binding != STB_GLOBAL)
+			continue;
+		for (i = 0; i < ARRAY_SIZE(syms); i++) {
+			if (!strcmp(sym->name, syms[i].name))
+				return sym->start;
+		}
+	}
+
+	return 0;
+
+> +	};
+> +	struct symbol *sym = dso__first_symbol(dso);
+> +	unsigned int i;
+> +
+> +	for (; sym; sym = dso__next_symbol(sym)) {
+> +		if (sym->binding != STB_GLOBAL)
+> +			continue;
+> +		for (i = 0; i < ARRAY_SIZE(syms); i++) {
+> +			if (!strcmp(sym->name, syms[i].name))
+> +				syms[i].addr = sym->start;
+> +		}
+> +	}
+> +
+> +	for (i = 0; i < ARRAY_SIZE(syms); i++) {
+> +		if (syms[i].addr)
+> +			return syms[i].addr;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * These values can be used for kernels that do not have symbols for the entry
+> + * trampolines in kallsyms.
+> + */
+> +#define X86_64_CPU_ENTRY_AREA_PER_CPU	0xfffffe0000000000ULL
+> +#define X86_64_CPU_ENTRY_AREA_SIZE	0x2c000
+> +#define X86_64_ENTRY_TRAMPOLINE		0x6000
+> +
+> +/* Map x86_64 KPTI entry trampolines */
+> +int machine__map_x86_64_entry_trampolines(struct machine *machine,
+> +					  struct dso *kernel)
+> +{
+> +	u64 pgoff = find_entry_trampoline(kernel);
+> +	int nr_cpus_avail = 0, cpu;
+> +
+> +	if (!pgoff)
+> +		return 0;
+> +
+> +	if (machine->env)
+> +		nr_cpus_avail = machine->env->nr_cpus_avail;
+> +
+> +	/* Add a 1 page map for each CPU's entry trampoline */
+> +	for (cpu = 0; cpu < nr_cpus_avail; cpu++) {
+> +		u64 va = X86_64_CPU_ENTRY_AREA_PER_CPU +
+> +			 cpu * X86_64_CPU_ENTRY_AREA_SIZE +
+> +			 X86_64_ENTRY_TRAMPOLINE;
+> +		struct special_kernal_map sm = {
+> +			.start = va,
+> +			.end   = va + page_size,
+> +			.pgoff = pgoff,
+> +		};
+> +
+> +		if (machine__create_special_kernel_map(machine, kernel, &sm) < 0)
+> +			return -1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int
+>  __machine__create_kernel_maps(struct machine *machine, struct dso *kernel)
+>  {
+> diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+> index b31d33b5aa2a..6e1c63d3a625 100644
+> --- a/tools/perf/util/machine.h
+> +++ b/tools/perf/util/machine.h
+> @@ -267,4 +267,7 @@ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
+>   */
+>  char *machine__resolve_kernel_addr(void *vmachine, unsigned long long *addrp, char **modp);
+>  
+> +int machine__map_x86_64_entry_trampolines(struct machine *machine,
+> +					  struct dso *kernel);
+> +
+>  #endif /* __PERF_MACHINE_H */
+> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+> index 4a39f4d0a174..c3a1a89a61cb 100644
+> --- a/tools/perf/util/symbol.c
+> +++ b/tools/perf/util/symbol.c
+> @@ -1490,20 +1490,22 @@ int dso__load(struct dso *dso, struct map *map)
+>  		goto out;
+>  	}
+>  
+> +	if (map->groups && map->groups->machine)
+> +		machine = map->groups->machine;
+> +	else
+> +		machine = NULL;
+> +
+>  	if (dso->kernel) {
+>  		if (dso->kernel == DSO_TYPE_KERNEL)
+>  			ret = dso__load_kernel_sym(dso, map);
+>  		else if (dso->kernel == DSO_TYPE_GUEST_KERNEL)
+>  			ret = dso__load_guest_kernel_sym(dso, map);
+>  
+> +		if (machine && machine__is(machine, "x86_64"))
+> +			machine__map_x86_64_entry_trampolines(machine, dso);
+>  		goto out;
+>  	}
+>  
+> -	if (map->groups && map->groups->machine)
+> -		machine = map->groups->machine;
+> -	else
+> -		machine = NULL;
+> -
+>  	dso->adjust_symbols = 0;
+>  
+>  	if (perfmap) {
+> -- 
+> 1.9.1
