@@ -1,60 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934383AbeEILnq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 07:43:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:33259 "EHLO ozlabs.org"
+        id S934449AbeEILoS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 07:44:18 -0400
+Received: from ozlabs.org ([203.11.71.1]:38407 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933832AbeEILnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 07:43:45 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 9 May 2018 21:43:41 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: linux-next: Signed-off-by missing for commits in the thermal tree
-Message-ID: <20180509214341.1d490677@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6y1WxWGFFE1sCTC830RL8g6"; protocol="application/pgp-signature"
+        id S934185AbeEILoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 07:44:17 -0400
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, mawilcox@microsoft.com,
+        ynorov@caviumnetworks.com, andriy.shevchenko@linux.intel.com,
+        geert@linux-m68k.org, keescook@chromium.org,
+        torvalds@linux-foundation.org
+Subject: [PATCH] lib/test_bitmap.c: Fix bitmap optimisation tests to report errors correctly
+Date: Wed,  9 May 2018 21:43:28 +1000
+Message-Id: <20180509114328.9887-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/6y1WxWGFFE1sCTC830RL8g6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Matthew Wilcox <mawilcox@microsoft.com>
 
-Hi Zhang,
+I had neglected to increment the error counter when the tests failed,
+which made the tests noisy when they fail, but not actually return an
+error code.
 
-Commits
+Reported-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Fixes: 3cc78125a081 ("lib/test_bitmap.c: add optimisation tests")
+Cc: stable@vger.kernel.org # v4.13+
+Tested-by: Michael Ellerman <mpe@ellerman.id.au>
+---
+ lib/test_bitmap.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-  a2ace598c00a ("thermal: exynos: Reading temperature makes sense only when=
- TMU is turned on")
-  f9cd6a904e6e ("thermal: exynos: Propagate error value from tmu_read()")
+We noticed this a while back but the patch got lost.
 
-are missing a Signed-off-by from their committer.
+Andrew are you happy to take it?
 
---=20
-Cheers,
-Stephen Rothwell
+cheers
 
---Sig_/6y1WxWGFFE1sCTC830RL8g6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlry3u0ACgkQAVBC80lX
-0GxERwf/WvjO5TL1qR9yVxGf+BMoIVbhaA7qwslel1k94mN7QNERgt1OIF1NSZkl
-TtyoNnNP1TSt4ZW+HBDDsCJoewTuKjX0BbIhpdkBo4GSZG9HAH3wgfux8v9VDR1j
-M+2qQsk5H9CaLnFY1uzpMFz24foS7FxdGIhzlBDLJbzLgz5r1JefhoQfeE1GPM3c
-jztwfaCqUsjgysq1nEwivp/nuW7j5lBJl9vBxPJ0WYbW/etXty1RAsdddrt7QITW
-lSwmMcEIdyLeHmdrJNc367Ub0ipT2nGWsEEPdNcEcmS4gRKKpWK7hxS78MJ//jfY
-o5/s7z+q+wbjQAR7ZELD0xP1aCwfrg==
-=qOM9
------END PGP SIGNATURE-----
-
---Sig_/6y1WxWGFFE1sCTC830RL8g6--
+diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
+index de16f7869fb1..6cd7d0740005 100644
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -331,23 +331,32 @@ static void noinline __init test_mem_optimisations(void)
+ 	unsigned int start, nbits;
+ 
+ 	for (start = 0; start < 1024; start += 8) {
+-		memset(bmap1, 0x5a, sizeof(bmap1));
+-		memset(bmap2, 0x5a, sizeof(bmap2));
+ 		for (nbits = 0; nbits < 1024 - start; nbits += 8) {
++			memset(bmap1, 0x5a, sizeof(bmap1));
++			memset(bmap2, 0x5a, sizeof(bmap2));
++
+ 			bitmap_set(bmap1, start, nbits);
+ 			__bitmap_set(bmap2, start, nbits);
+-			if (!bitmap_equal(bmap1, bmap2, 1024))
++			if (!bitmap_equal(bmap1, bmap2, 1024)) {
+ 				printk("set not equal %d %d\n", start, nbits);
+-			if (!__bitmap_equal(bmap1, bmap2, 1024))
++				failed_tests++;
++			}
++			if (!__bitmap_equal(bmap1, bmap2, 1024)) {
+ 				printk("set not __equal %d %d\n", start, nbits);
++				failed_tests++;
++			}
+ 
+ 			bitmap_clear(bmap1, start, nbits);
+ 			__bitmap_clear(bmap2, start, nbits);
+-			if (!bitmap_equal(bmap1, bmap2, 1024))
++			if (!bitmap_equal(bmap1, bmap2, 1024)) {
+ 				printk("clear not equal %d %d\n", start, nbits);
+-			if (!__bitmap_equal(bmap1, bmap2, 1024))
++				failed_tests++;
++			}
++			if (!__bitmap_equal(bmap1, bmap2, 1024)) {
+ 				printk("clear not __equal %d %d\n", start,
+ 									nbits);
++				failed_tests++;
++			}
+ 		}
+ 	}
+ }
+-- 
+2.14.1
