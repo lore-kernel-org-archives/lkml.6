@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934565AbeEILpK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 07:45:10 -0400
+        id S934589AbeEILpQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 07:45:16 -0400
 Received: from mga14.intel.com ([192.55.52.115]:26332 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934502AbeEILpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 07:45:04 -0400
+        id S934376AbeEILpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 07:45:12 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
-   d="scan'208";a="54445831"
+   d="scan'208";a="54445866"
 From: Adrian Hunter <adrian.hunter@intel.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -21,9 +21,9 @@ Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH RFC 01/19] kallsyms: Simplify update_iter_mod()
-Date: Wed,  9 May 2018 14:43:30 +0300
-Message-Id: <1525866228-30321-2-git-send-email-adrian.hunter@intel.com>
+Subject: [PATCH RFC 03/19] x86: Add entry trampolines to kcore
+Date: Wed,  9 May 2018 14:43:32 +0300
+Message-Id: <1525866228-30321-4-git-send-email-adrian.hunter@intel.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
 References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
@@ -32,46 +32,42 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simplify logic in update_iter_mod().
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 ---
- kernel/kallsyms.c | 20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
+ arch/x86/mm/cpu_entry_area.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
-index a23e21ada81b..eda4b0222dab 100644
---- a/kernel/kallsyms.c
-+++ b/kernel/kallsyms.c
-@@ -510,23 +510,15 @@ static int update_iter_mod(struct kallsym_iter *iter, loff_t pos)
- {
- 	iter->pos = pos;
+diff --git a/arch/x86/mm/cpu_entry_area.c b/arch/x86/mm/cpu_entry_area.c
+index d1da5cf4b2de..fb1fbc8538fa 100644
+--- a/arch/x86/mm/cpu_entry_area.c
++++ b/arch/x86/mm/cpu_entry_area.c
+@@ -3,6 +3,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/percpu.h>
+ #include <linux/kallsyms.h>
++#include <linux/kcore.h>
  
--	if (iter->pos_ftrace_mod_end > 0 &&
--	    iter->pos_ftrace_mod_end < iter->pos)
--		return get_ksymbol_bpf(iter);
--
--	if (iter->pos_mod_end > 0 &&
--	    iter->pos_mod_end < iter->pos) {
--		if (!get_ksymbol_ftrace_mod(iter))
--			return get_ksymbol_bpf(iter);
-+	if ((!iter->pos_mod_end || iter->pos_mod_end > pos) &&
-+	    get_ksymbol_mod(iter))
- 		return 1;
--	}
+ #include <asm/cpu_entry_area.h>
+ #include <asm/pgtable.h>
+@@ -14,6 +15,7 @@
+ #ifdef CONFIG_X86_64
+ static DEFINE_PER_CPU_PAGE_ALIGNED(char, exception_stacks
+ 	[(N_EXCEPTION_STACKS - 1) * EXCEPTION_STKSZ + DEBUG_STKSZ]);
++static DEFINE_PER_CPU(struct kcore_list, kcore_entry_trampoline);
+ #endif
  
--	if (!get_ksymbol_mod(iter)) {
--		if (!get_ksymbol_ftrace_mod(iter))
--			return get_ksymbol_bpf(iter);
--	}
-+	if ((!iter->pos_ftrace_mod_end || iter->pos_ftrace_mod_end > pos) &&
-+	    get_ksymbol_ftrace_mod(iter))
-+		return 1;
+ struct cpu_entry_area *get_cpu_entry_area(int cpu)
+@@ -147,6 +149,9 @@ static void __init setup_cpu_entry_area(int cpu)
  
--	return 1;
-+	return get_ksymbol_bpf(iter);
+ 	cea_set_pte(&get_cpu_entry_area(cpu)->entry_trampoline,
+ 		     __pa_symbol(_entry_trampoline), PAGE_KERNEL_RX);
++	kclist_add(&per_cpu(kcore_entry_trampoline, cpu),
++		   &get_cpu_entry_area(cpu)->entry_trampoline, PAGE_SIZE,
++		   KCORE_TEXT);
+ #endif
+ 	percpu_setup_debug_store(cpu);
  }
- 
- /* Returns false if pos at or past end of file. */
 -- 
 1.9.1
