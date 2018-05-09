@@ -1,76 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934775AbeEIMw3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 08:52:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40008 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934328AbeEIMw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 08:52:28 -0400
-Date: Wed, 9 May 2018 08:52:24 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: changbin.du@intel.com
-Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
-        rdunlap@infradead.org, x86@kernel.org, lgirdwood@gmail.com,
-        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] asm-generic: fix build error in fix_to_virt with
- CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
-Message-ID: <20180509085224.34116e36@gandalf.local.home>
-In-Reply-To: <1525855396-7908-5-git-send-email-changbin.du@intel.com>
-References: <1525855396-7908-1-git-send-email-changbin.du@intel.com>
-        <1525855396-7908-5-git-send-email-changbin.du@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S934840AbeEIMyS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 08:54:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43114 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934328AbeEIMyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 08:54:16 -0400
+Message-ID: <1525870455.11756.367.camel@redhat.com>
+Subject: Re: [PATCH] IB: remove redundant INFINIBAND kconfig dependencies
+From: Doug Ledford <dledford@redhat.com>
+To: Greg Thelen <gthelen@google.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 09 May 2018 08:54:15 -0400
+In-Reply-To: <20180504032919.90515-1-gthelen@google.com>
+References: <20180504032919.90515-1-gthelen@google.com>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-OUWj7AIC2e6lj2ww1Maq"
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  9 May 2018 16:43:16 +0800
-changbin.du@intel.com wrote:
 
-> From: Changbin Du <changbin.du@intel.com>
-> 
-> With '-Og' optimization level, GCC would not optimize a count for a loop
-> as a constant value. But BUILD_BUG_ON() only accept compile-time constant
-> values. Let's use __fix_to_virt() to avoid the error.
-> 
-> arch/arm/mm/mmu.o: In function `fix_to_virt':
-> /home/changbin/work/linux/./include/asm-generic/fixmap.h:31: undefined reference to `__compiletime_assert_31'
-> Makefile:1051: recipe for target 'vmlinux' failed
-> make: *** [vmlinux] Error 1
+--=-OUWj7AIC2e6lj2ww1Maq
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Perhaps we should put this patch ahead of patch 3. Why allow it to
-break?
-
-Anyway, besides that, I think the series looks good.
-
-For the series: Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-
-> 
-> Signed-off-by: Changbin Du <changbin.du@intel.com>
-> 
+On Thu, 2018-05-03 at 20:29 -0700, Greg Thelen wrote:
+> INFINIBAND_ADDR_TRANS depends on INFINIBAND.  So there's no need for
+> options which depend INFINIBAND_ADDR_TRANS to also depend on INFINIBAND.
+> Remove the unnecessary INFINIBAND depends.
+>=20
+> Signed-off-by: Greg Thelen <gthelen@google.com>
 > ---
-> v2: use __fix_to_virt() to fix the issue.
-> ---
->  arch/arm/mm/mmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-> index e46a6a4..c08d74e 100644
-> --- a/arch/arm/mm/mmu.c
-> +++ b/arch/arm/mm/mmu.c
-> @@ -1599,7 +1599,7 @@ static void __init early_fixmap_shutdown(void)
->  		pte_t *pte;
->  		struct map_desc map;
->  
-> -		map.virtual = fix_to_virt(i);
-> +		map.virtual = __fix_to_virt(i);
->  		pte = pte_offset_early_fixmap(pmd_off_k(map.virtual), map.virtual);
->  
->  		/* Only i/o device mappings are supported ATM */
+>  drivers/infiniband/ulp/srpt/Kconfig | 2 +-
+>  drivers/nvme/host/Kconfig           | 2 +-
+>  drivers/nvme/target/Kconfig         | 2 +-
+>  drivers/staging/lustre/lnet/Kconfig | 2 +-
+>  fs/cifs/Kconfig                     | 2 +-
+>  net/9p/Kconfig                      | 2 +-
+>  net/rds/Kconfig                     | 2 +-
+>  net/sunrpc/Kconfig                  | 2 +-
+>  8 files changed, 8 insertions(+), 8 deletions(-)
+
+Thanks.  Since the original changes you submitted went through -rc, I'm
+sending this cleanup there too.
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+--=-OUWj7AIC2e6lj2ww1Maq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlry73cACgkQuCajMw5X
+L90ifQ//WKtQIynf4c/6oOocd/TgRfyfPCFoH7DkhpOJySq2lCam0WQLv39NhlN8
+XPrCCluiKI5zfNQRcmEpUjVA6CGlaqxZGmYXmdrwPjGYVwKXtx4o9Kk5rMpSrtpz
+6/Ox3N9nPv1SZItRPayQvZ63orVAGgKQfTnXsmV9O2cGks2V3PVGf1mLlCESH+r9
+qkw4bwJvT46hx0Uuqzss2+wLrJmOqpTEG4fenFws78OAvHZ4C9B43Jh9nQFRJpP0
+aMf5V+SCzL/doK+4ccPHs1KeyqFeYkv8qhdZvw8FgTrk3VYf9TZEwOeEc6iaimUI
+3R/sXI8LD3Pj33Z6Fq6UPofwPtPUR95TzgRrnIIduH3DSdr1KK20Of4afvAViAi6
+hqwNEmTRtQ1DdnUjhVRJQivWH+x4TaIPeHwbkfJs6yIwptqF6aOAgiFjsoaIggRQ
+WIyzGhLsGMHbvFu1/srzUDoVkkYyV6Uh17kuav0MffwPrrWXpMxK0ceYoS20VUBt
+9Eu3YSVkPKMTn2OYtbtUmlBURjRXrc7y8m8ePGIYJGags0It4i30BEjvge7v7sDR
+J7aG5iAJbqF9BKB/RdzzX5X8Q+yHNNvArt4+GklcZ3uR3f1ZYCfJ1wpGQymn/kGZ
+TyO0/sMxqVIkBOuSdubyibb4C687CQKiDV05uaEiN/UALltkMTg=
+=UJaf
+-----END PGP SIGNATURE-----
+
+--=-OUWj7AIC2e6lj2ww1Maq--
