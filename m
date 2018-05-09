@@ -1,132 +1,177 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965288AbeEIP4n (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:56:43 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34931 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964984AbeEIP4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:56:41 -0400
-Date: Wed, 9 May 2018 17:56:28 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, Richard Weinberger <richard@nod.at>,
-        linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-mtd@lists.infradead.org,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH 16/18] mtd: rawnand.h: use nested union kernel-doc
- markups
-Message-ID: <20180509175628.204fdb71@bbrezillon>
-In-Reply-To: <39d8d4f0e0ff5a06be0303f7f4f2eac5fb45b9ca.1525684985.git.mchehab+samsung@kernel.org>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-        <39d8d4f0e0ff5a06be0303f7f4f2eac5fb45b9ca.1525684985.git.mchehab+samsung@kernel.org>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S965331AbeEIP6U (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:58:20 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:40158 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965055AbeEIP6S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 11:58:18 -0400
+X-Google-Smtp-Source: AB8JxZrW8l81kGDJuzAmgNPZ3OLgkQXYz9O2aFS9UeciXQ6Tk3Yy/9xEZKIxCDn/FODNA0ILZgZqT6PckGnXCRB5SXo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1525859941-23654-1-git-send-email-akshu.agrawal@amd.com> <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
+In-Reply-To: <1525859941-23654-2-git-send-email-akshu.agrawal@amd.com>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Date: Wed, 09 May 2018 15:58:06 +0000
+Message-ID: <CAGS+omCB=b-PDos0uWY6k1nWpMkjSQ3TpSMAe8WSdrXByAG2Uw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] clk: x86: Add ST oscout platform clock
+To: Akshu Agrawal <akshu.agrawal@amd.com>
+Cc: Alexander.Deucher@amd.com, Mike Turquette <mturquette@baylibre.com>,
+        sboyd@kernel.org, christian.koenig@amd.com,
+        Dave Airlie <airlied@redhat.com>, Shaoyun.Liu@amd.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  7 May 2018 06:35:52 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+On Wed, May 9, 2018 at 4:01 AM Akshu Agrawal <akshu.agrawal@amd.com> wrote:
 
-> Gets rid of those warnings and better document the parameters.
-> 
->   ./include/linux/mtd/rawnand.h:752: warning: Function parameter or member 'timings.sdr' not described in 'nand_data_interface'
->   ./include/linux/mtd/rawnand.h:817: warning: Function parameter or member 'buf' not described in 'nand_op_data_instr'
->   ./include/linux/mtd/rawnand.h:817: warning: Function parameter or member 'buf.in' not described in 'nand_op_data_instr'
->   ./include/linux/mtd/rawnand.h:817: warning: Function parameter or member 'buf.out' not described in 'nand_op_data_instr'
->   ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx' not described in 'nand_op_instr'
->   ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.cmd' not described in 'nand_op_instr'
->   ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.addr' not described in 'nand_op_instr'
->   ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.data' not described in 'nand_op_instr'
->   ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.waitrdy' not described in 'nand_op_instr'
->   ./include/linux/mtd/rawnand.h:1010: warning: Function parameter or member 'ctx' not described in 'nand_op_parser_pattern_elem'
->   ./include/linux/mtd/rawnand.h:1010: warning: Function parameter or member 'ctx.addr' not described in 'nand_op_parser_pattern_elem'
->   ./include/linux/mtd/rawnand.h:1010: warning: Function parameter or member 'ctx.data' not described in 'nand_op_parser_pattern_elem'
->   ./include/linux/mtd/rawnand.h:1313: warning: Function parameter or member 'manufacturer.desc' not described in 'nand_chip'
->   ./include/linux/mtd/rawnand.h:1313: warning: Function parameter or member 'manufacturer.priv' not described in 'nand_chip'
-> 
->   ./include/linux/mtd/rawnand.h:848: WARNING: Unexpected indentation.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> Stoney SoC provides oscout clock. This clock can support 25Mhz and
+> 48Mhz of frequency.
+> The clock is available for general system use.
 
-Applied.
+> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
 
-Thanks,
+Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
 
-Boris
 
 > ---
->  include/linux/mtd/rawnand.h | 26 ++++++++++++++++++--------
->  1 file changed, 18 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> index 5dad59b31244..b986f94906df 100644
-> --- a/include/linux/mtd/rawnand.h
-> +++ b/include/linux/mtd/rawnand.h
-> @@ -740,8 +740,9 @@ enum nand_data_interface_type {
->  
->  /**
->   * struct nand_data_interface - NAND interface timing
-> - * @type:	type of the timing
-> - * @timings:	The timing, type according to @type
-> + * @type:	 type of the timing
-> + * @timings:	 The timing, type according to @type
-> + * @timings.sdr: Use it when @type is %NAND_SDR_IFACE.
->   */
->  struct nand_data_interface {
->  	enum nand_data_interface_type type;
-> @@ -798,8 +799,9 @@ struct nand_op_addr_instr {
->  /**
->   * struct nand_op_data_instr - Definition of a data instruction
->   * @len: number of data bytes to move
-> - * @in: buffer to fill when reading from the NAND chip
-> - * @out: buffer to read from when writing to the NAND chip
-> + * @buf: buffer to fill
-> + * @buf.in: buffer to fill when reading from the NAND chip
-> + * @buf.out: buffer to read from when writing to the NAND chip
->   * @force_8bit: force 8-bit access
->   *
->   * Please note that "in" and "out" are inverted from the ONFI specification
-> @@ -842,9 +844,13 @@ enum nand_op_instr_type {
->  /**
->   * struct nand_op_instr - Instruction object
->   * @type: the instruction type
-> - * @cmd/@addr/@data/@waitrdy: extra data associated to the instruction.
-> - *                            You'll have to use the appropriate element
-> - *                            depending on @type
-> + * @ctx:  extra data associated to the instruction. You'll have to use the
-> + *        appropriate element depending on @type
-> + * @ctx.cmd: use it if @type is %NAND_OP_CMD_INSTR
-> + * @ctx.addr: use it if @type is %NAND_OP_ADDR_INSTR
-> + * @ctx.data: use it if @type is %NAND_OP_DATA_IN_INSTR
-> + *	      or %NAND_OP_DATA_OUT_INSTR
-> + * @ctx.waitrdy: use it if @type is %NAND_OP_WAITRDY_INSTR
->   * @delay_ns: delay the controller should apply after the instruction has been
->   *	      issued on the bus. Most modern controllers have internal timings
->   *	      control logic, and in this case, the controller driver can ignore
-> @@ -997,7 +1003,9 @@ struct nand_op_parser_data_constraints {
->   * struct nand_op_parser_pattern_elem - One element of a pattern
->   * @type: the instructuction type
->   * @optional: whether this element of the pattern is optional or mandatory
-> - * @addr/@data: address or data constraint (number of cycles or data length)
-> + * @ctx: address or data constraint
-> + * @ctx.addr: address constraint (number of cycles)
-> + * @ctx.data: data constraint (data length)
->   */
->  struct nand_op_parser_pattern_elem {
->  	enum nand_op_instr_type type;
-> @@ -1224,6 +1232,8 @@ int nand_op_parser_exec_op(struct nand_chip *chip,
->   *			devices.
->   * @priv:		[OPTIONAL] pointer to private chip data
->   * @manufacturer:	[INTERN] Contains manufacturer information
-> + * @manufacturer.desc:	[INTERN] Contains manufacturer's description
-> + * @manufacturer.priv:	[INTERN] Contains manufacturer private information
->   */
->  
->  struct nand_chip {
+> v2: config change, added SPDX tag and used clk_hw_register_.
+> v3: Fix kbuild warning for checking of NULL pointer
+> v4: unregister clk_hw in driver remove, add .suppress_bind_attrs
+> v5: Fix license, used static array
+>   drivers/clk/x86/Makefile             |  3 +-
+>   drivers/clk/x86/clk-st.c             | 77
+++++++++++++++++++++++++++++++++++++
+>   include/linux/platform_data/clk-st.h | 17 ++++++++
+>   3 files changed, 96 insertions(+), 1 deletion(-)
+>   create mode 100644 drivers/clk/x86/clk-st.c
+>   create mode 100644 include/linux/platform_data/clk-st.h
+
+> diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
+> index 1367afb..00303bc 100644
+> --- a/drivers/clk/x86/Makefile
+> +++ b/drivers/clk/x86/Makefile
+> @@ -1,3 +1,4 @@
+> +obj-$(CONFIG_PMC_ATOM)         += clk-pmc-atom.o
+> +obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)  += clk-st.o
+>   clk-x86-lpss-objs              := clk-lpt.o
+>   obj-$(CONFIG_X86_INTEL_LPSS)   += clk-x86-lpss.o
+> -obj-$(CONFIG_PMC_ATOM)         += clk-pmc-atom.o
+> diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
+> new file mode 100644
+> index 0000000..fb62f39
+> --- /dev/null
+> +++ b/drivers/clk/x86/clk-st.c
+> @@ -0,0 +1,77 @@
+> +// SPDX-License-Identifier: MIT
+> +/*
+> + * clock framework for AMD Stoney based clocks
+> + *
+> + * Copyright 2018 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/platform_data/clk-st.h>
+> +#include <linux/platform_device.h>
+> +
+> +/* Clock Driving Strength 2 register */
+> +#define CLKDRVSTR2     0x28
+> +/* Clock Control 1 register */
+> +#define MISCCLKCNTL1   0x40
+> +/* Auxiliary clock1 enable bit */
+> +#define OSCCLKENB      2
+> +/* 25Mhz auxiliary output clock freq bit */
+> +#define OSCOUT1CLK25MHZ        16
+> +
+> +#define ST_CLK_48M     0
+> +#define ST_CLK_25M     1
+> +#define ST_CLK_MUX     2
+> +#define ST_CLK_GATE    3
+> +#define ST_MAX_CLKS    4
+> +
+> +static const char * const clk_oscout1_parents[] = { "clk48MHz",
+"clk25MHz" };
+> +static struct clk_hw *hws[ST_MAX_CLKS];
+> +
+> +static int st_clk_probe(struct platform_device *pdev)
+> +{
+> +       struct st_clk_data *st_data;
+> +
+> +       st_data = dev_get_platdata(&pdev->dev);
+> +       if (!st_data || !st_data->base)
+> +               return -EINVAL;
+> +
+> +       hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz",
+NULL, 0,
+> +                                                    48000000);
+> +       hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz",
+NULL, 0,
+> +                                                    25000000);
+> +
+> +       hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
+> +               clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
+> +               0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0,
+NULL);
+> +
+> +       clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
+> +
+> +       hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1",
+"oscout1_mux",
+> +               0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
+> +               CLK_GATE_SET_TO_DISABLE, NULL);
+> +
+> +       clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
+> +
+> +       return 0;
+> +}
+> +
+> +static int st_clk_remove(struct platform_device *pdev)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < ST_MAX_CLKS; i++)
+> +               clk_hw_unregister(hws[i]);
+> +       return 0;
+> +}
+> +
+> +static struct platform_driver st_clk_driver = {
+> +       .driver = {
+> +               .name = "clk-st",
+> +               .suppress_bind_attrs = true,
+> +       },
+> +       .probe = st_clk_probe,
+> +       .remove = st_clk_remove,
+> +};
+> +builtin_platform_driver(st_clk_driver);
+> diff --git a/include/linux/platform_data/clk-st.h
+b/include/linux/platform_data/clk-st.h
+> new file mode 100644
+> index 0000000..7cdb6a4
+> --- /dev/null
+> +++ b/include/linux/platform_data/clk-st.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: MIT */
+> +/*
+> + * clock framework for AMD Stoney based clock
+> + *
+> + * Copyright 2018 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#ifndef __CLK_ST_H
+> +#define __CLK_ST_H
+> +
+> +#include <linux/compiler.h>
+> +
+> +struct st_clk_data {
+> +       void __iomem *base;
+> +};
+> +
+> +#endif /* __CLK_ST_H */
+> --
+> 1.9.1
