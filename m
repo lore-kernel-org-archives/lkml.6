@@ -1,78 +1,79 @@
-Return-Path: <dvyukov@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526282920; cv=none;
+Return-Path: <akpm@linux-foundation.org>
+X-Google-Smtp-Source: AB8JxZquhWduC0cXxgDP+d/aZ0AagIXTqF5Z3otumH4yyx/24+zugjy+qrsNytBVa7xOWSrnzj2N
+ARC-Seal: i=1; a=rsa-sha256; t=1525908029; cv=none;
         d=google.com; s=arc-20160816;
-        b=FJTMEtpEcg7PDuamcU+BFYj9tG8Zec/4/Yoqkn+NT+KSLKNESpvFk3NbQqF0rKy7fR
-         FXDCoIesopiEvRqbFSnPSh8WduLaNCIh3SNnvzyZYtiR7RjtzzQwOpz09fz+98CnDM9o
-         x8jMG9l4SgWyqGAdMLXQun4zJd883V7vZySiDiHKqQuNeI6tEMUJwFuno63HdUpFIlXk
-         oW/R7YIszS0gtRQcjAEqufnsmpsJjOhenoVPZmIRw7nuMpgjxCDtFPmrcaMBD+rGaY4i
-         0mgJCVnHVF+g3JIgz0QVIMc967cCX9b1F/gXcJo4bYJs7jIro2d5lz+8ax5ggaqxO2mz
-         bJhA==
+        b=JTHLNfyGxm3oeUkpFHTc/qIm/8/oES2MA6T2N8qRBs4DuXVjKA1eYMBb4TcuryKqb8
+         M5YkA0qNWpzqix9zN/9Jz+ck0DRhR5zM4ZGt3sRa907SInXTpcmDSnNhzYFbE6t5SOV8
+         xDSa7Tl94wxKABHMGP8M+bkbsfcq5a1nLx86MqiPCA0pET5p9v5FXkwGJExOBpn1s9wP
+         hLPERXj9Y2gF8TTlt1ILaBUXe6ApR3kqdghDtXqnvpWZaJ4MCvUE4Y9ZuUbECfaVMES1
+         Ky71teKg4iVzegE21Quz0BoM4BTm18b7RPtE5Dt+zt2XfLJzBUFUCTu5oW93TMwj90pj
+         3tXQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=S0jw+DYfPIbmJJ4dZdi45krwiy1aqz177paBqUVYDH4=;
-        b=c21JgIcdmWMGqd612OOTU9SgXdM+GDEWDfdhZV++G/nI+pCGaVpt2lZKNHSFkAUoKc
-         VXifs0qi8My8/B/ANhP22Fr20N2qRGQaWNzRWAM7zH2kg5yeaOwFAICoxSCbAVqhK+n2
-         GXTYFcuzQznZXCZ66f28uIijic1wPxmucE/Ig+gC183MeV95gxxONuHkVbSJFZaJdCbp
-         UrnmLiLTIPmkr0/kawIZXYcT+sdgE2CfrATPh7vxZbjQc72sxiClLgVRhpBGwAcZkmNV
-         r5y1bJV2jmrPVWCoBds6G4VWy1tTLdj3yxXfgvecvKrGjpG4fAQrDuAYWkTlkqQtWynJ
-         w4sg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=T4wF8U34VkSeGfIoWrZ5D0JWOFBxC1tPRtvHQFSlCaw=;
+        b=dI8qWceY3KrYca+mySgqc6W9tmQBhVWVoljD6Rv1SvV+oZXJoQ0W6jy7qQhywNsFgf
+         xyzdN+EszcYCu3eIT1jbcOhmXEuGxkBMJTnd5+M+gTS40DQgNP6Epf/T8ktiIgCp3lj1
+         JRCVtWxTKjmRKFJpej0W7fBsCrZUZcvl1H6y9pULy+MZLxYO+Vk7mvAjZMjL2ikxhskU
+         BIhBLOyUovMao6KEQ2CAXgaXcQHXsvBJ1etO9Y5RLr4IyMwwJe6hplXwppDQ6ms0mqyC
+         NfnC4f9MDeWrMwvDpVvlN3YTS9Is6ifpIZHDrIBTRHLC6TmBWM5E1jAXPkyEhxK3gqNa
+         4w9w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=SzdRbMlP;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       spf=softfail (google.com: domain of transitioning akpm@linux-foundation.org does not designate 104.133.9.71 as permitted sender) smtp.mailfrom=akpm@linux-foundation.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=SzdRbMlP;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AB8JxZo5HTv8DK4w27lI+32V34vwWlraYN63WWiU/ulPf/AU3uEH1I7PO5/ad40Auf+CnmwX1o2jGmJa0BEI6lTzvE4=
-MIME-Version: 1.0
-In-Reply-To: <CA+55aFx5_qcUHBQ50RfOnH+pS=jqA_Wg2YYCcm=fTXRFJjs3rg@mail.gmail.com>
+       spf=softfail (google.com: domain of transitioning akpm@linux-foundation.org does not designate 104.133.9.71 as permitted sender) smtp.mailfrom=akpm@linux-foundation.org
+Date: Wed, 9 May 2018 16:20:27 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Dexuan Cui <decui@microsoft.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rakib Mullick <rakib.mullick@gmail.com>, "'linux-kernel@vger.kernel.org'"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: for_each_cpu()  is buggy for UP kernel?
+Message-Id: <20180509162027.95ffa21312f7363d13d5ea1e@linux-foundation.org>
+In-Reply-To: <KL1P15301MB000678289FE55BA365B3279ABF990@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
 References: <KL1P15301MB000678289FE55BA365B3279ABF990@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
- <CA+55aFx5_qcUHBQ50RfOnH+pS=jqA_Wg2YYCcm=fTXRFJjs3rg@mail.gmail.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 14 May 2018 09:28:19 +0200
-Message-ID: <CACT4Y+aUV5XoynuhCnNTUNveQQGBhD8iHeYSMXbp7U6SVBAckw@mail.gmail.com>
-Subject: Re: for_each_cpu() is buggy for UP kernel?
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dexuan Cui <decui@microsoft.com>, Ingo Molnar <mingo@kernel.org>,
-	Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rakib Mullick <rakib.mullick@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kostya Serebryany <kcc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599966610262155638?=
-X-GMAIL-MSGID: =?utf-8?q?1600423640208046050?=
+X-GMAIL-MSGID: =?utf-8?q?1600030537829045120?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, May 13, 2018 at 8:21 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Tue, May 8, 2018 at 11:24 PM Dexuan Cui <decui@microsoft.com> wrote:
->
->> Should we fix the for_each_cpu() in include/linux/cpumask.h for UP?
->
-> As Thomas points out, this has come up before.
->
-> One of the issues is historical - we tried very hard to make the SMP code
-> not cause code generation problems for UP, and part of that was just that
-> all these loops were literally designed to entirely go away under UP. It
-> still *looks* syntactically like a loop, but an optimizing compiler will
-> see that there's nothing there, and "for_each_cpu(...) x" essentially just
-> turns into "x" on UP.  An empty mask simply generally doesn't make sense,
-> since opn UP you also don't have any masking of CPU ops, so the mask is
-> ignored, and that helps the code generation immensely.
->
-> If you have to load and test the mask, you immediately lose out badly in
-> code generation.
->
-> So honestly, I'd really prefer to keep our current behavior. Perhaps with a
-> debug option that actually tests (on SMP - because that's what every
-> developer is actually _using_ these days) that the mask isn't empty. But
-> I'm not sure that would find this case, since presumably on SMP it might
-> never be empty.
+On Wed, 9 May 2018 06:24:16 +0000 Dexuan Cui <decui@microsoft.com> wrote:
 
-This looks like the problem automated testing traditionally and
-effectively solves. If UP is an important config, there must be
-automated pre/post commit checks for this.
+> In include/linux/cpumask.h, for_each_cpu is defined like this for UP kernel (CONFIG_NR_CPUS=1):
+> 
+> #define for_each_cpu(cpu, mask)                 \
+>         for ((cpu) = 0; (cpu) < 1; (cpu)++, (void)mask)
+> 
+> Here 'mask' is ignored, but what if 'mask' contains 0 CPU? -- in this case, the for loop should not
+> run at all, but with the current code, we run the loop once with cpu==0.
+> 
+> I think I'm seeing a bug in my UP kernel that is caused by the buggy for_each_cpu():
+> 
+> in kernel/time/tick-broadcast.c: tick_handle_oneshot_broadcast(), tick_broadcast_oneshot_mask
+> contains 0 CPU, but due to the buggy for_each_cpu(), the variable 'next_event' is changed from
+> its default value KTIME_MAX to "next_event = td->evtdev->next_event"; as a result,
+> tick_handle_oneshot_broadcast () -> tick_broadcast_set_event() -> clockevents_program_event()
+> -> pit_next_event() is programming the PIT timer by accident, causing an interrupt storm of PIT
+> interrupts in some way: I'm seeing that the kernel is receiving ~8000 PIT interrupts per second for
+> 1~5 minutes when the UP kernel boots, and it looks the kernel hangs, but in 1~5 minutes, finally
+> somehow the kernel can recover and boot up fine. But, occasionally, the kernel just hangs there
+> forever, receiving ~8000 PIT timers per second. 
+> 
+> With the below change in kernel/time/tick-broadcast.c, the interrupt storm will go away:
+> 
+> +#undef for_each_cpu
+> +#define for_each_cpu(cpu, mask)                        \
+> +       for ((cpu) = 0; (((cpu) < 1) && ((mask)[0].bits[0] & 1)); (cpu)++, (void)mask)
+> 
+> Should we fix the for_each_cpu() in include/linux/cpumask.h for UP?
+
+I think so, yes.  That might reveal new peculiarities, but such is life.
+
+I guess we should use bitmap_empty() rather than open-coding it.
