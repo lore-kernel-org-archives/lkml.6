@@ -1,212 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933762AbeEIGlK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 02:41:10 -0400
-Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:1373 "EHLO
-        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933733AbeEIGlI (ORCPT
+        id S1755770AbeEIGnM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 02:43:12 -0400
+Received: from regular1.263xmail.com ([211.150.99.137]:56793 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751321AbeEIGnK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 02:41:08 -0400
-Date: Wed, 9 May 2018 16:41:03 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Jeff Mahoney <jeffm@suse.com>
-Cc: Mark Fasheh <mfasheh@suse.de>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [RFC][PATCH 0/76] vfs: 'views' for filesystems with more than
- one root
-Message-ID: <20180509064103.GP10363@dastard>
-References: <20180508180436.716-1-mfasheh@suse.de>
- <20180508233840.GM10363@dastard>
- <e6698201-a4a6-2146-d4c9-9e26c18ad828@suse.com>
+        Wed, 9 May 2018 02:43:10 -0400
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+X-IP-DOMAINF: 1
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: dianders@chromium.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <4b4898535c909a6839f3e8707e269212>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Message-ID: <5AF29818.2010705@rock-chips.com>
+Date: Wed, 09 May 2018 14:41:28 +0800
+From: JeffyChen <jeffy.chen@rock-chips.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6698201-a4a6-2146-d4c9-9e26c18ad828@suse.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+To: Doug Anderson <dianders@chromium.org>
+CC: Brian Norris <briannorris@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RESEND PATCH] pinctrl: rockchip: Disable interrupt when changing
+ it's capability
+References: <20180503065553.7762-1-jeffy.chen@rock-chips.com> <20180507221511.GA6448@rodete-desktop-imager.corp.google.com> <5AF0FF18.1050905@rock-chips.com> <20180508015623.GA61455@rodete-desktop-imager.corp.google.com> <CAD=FV=W_v+aoNT09k-2exVABTFzOp0heY-XWcLi95uPisZhiGQ@mail.gmail.com> <5AF25B2E.8080901@rock-chips.com> <CAD=FV=WZ+2MNbe341M7OQD11+RxaJuzdM6zMnXYB4dka74K1hQ@mail.gmail.com>
+In-Reply-To: <CAD=FV=WZ+2MNbe341M7OQD11+RxaJuzdM6zMnXYB4dka74K1hQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 10:06:44PM -0400, Jeff Mahoney wrote:
-> On 5/8/18 7:38 PM, Dave Chinner wrote:
-> > On Tue, May 08, 2018 at 11:03:20AM -0700, Mark Fasheh wrote:
-> >> Hi,
-> >>
-> >> The VFS's super_block covers a variety of filesystem functionality. In
-> >> particular we have a single structure representing both I/O and
-> >> namespace domains.
-> >>
-> >> There are requirements to de-couple this functionality. For example,
-> >> filesystems with more than one root (such as btrfs subvolumes) can
-> >> have multiple inode namespaces. This starts to confuse userspace when
-> >> it notices multiple inodes with the same inode/device tuple on a
-> >> filesystem.
-> > 
-> > Devil's Advocate - I'm not looking at the code, I'm commenting on
-> > architectural issues I see here.
-> > 
-> > The XFS subvolume work I've been doing explicitly uses a superblock
-> > per subvolume. That's because subvolumes are designed to be
-> > completely independent of the backing storage - they know nothing
-> > about the underlying storage except to share a BDI for writeback
-> > purposes and write to whatever block device the remapping layer
-> > gives them at IO time.  Hence XFS subvolumes have (at this point)
-> > their own unique s_dev, on-disk format configuration, journal, space
-> > accounting, etc. i.e. They are fully independent filesystems in
-> > their own right, and as such we do not have multiple inode
-> > namespaces per superblock.
-> 
-> That's a fundamental difference between how your XFS subvolumes work and
-> how btrfs subvolumes do.
+Hi Doug,
 
-Yup, you've just proved my point: this is not a "subvolume problem";
-but rather a "multiple namespace per root" problem.
+Thanks for your reply :)
 
-> There is no independence among btrfs
-> subvolumes.  When a snapshot is created, it has a few new blocks but
-> otherwise shares the metadata of the source subvolume.  The metadata
-> trees are shared across all of the subvolumes and there are several
-> internal trees used to manage all of it.
+On 05/09/2018 01:18 PM, Doug Anderson wrote:
+>> >
+>> >
+>> >right, so we now have 2 cases: rockchip_irq_demux/ rockchip_irq_set_type
+>> >
+>> >if i'm right about the spurious irq(only happen when set rising for a high
+>> >gpio, or set falling for a low gpio), then:
+>> >
+>> >1/ rockchip_irq_demux
+>> >it's important to not losing irqs in this case, maybe we can
+>> >
+>> >a) ack irq
+>> >b) update polarity for edge both irq
+>> >
+>> >we don't need to disable irq in b), since we would not hit the spurious irq
+>> >cases here(always check gpio level to toggle it)
+> Unless you have some sort of proof that rockchip_irq_demux(), I would
+> take it as an example of something that works.  I remember stress
+> testing the heck out of it.  Do you have some evidence that it's not
+> working?  I think Brian was simply speculating that there might be a
+> race here, but I don't think anyone has shown it have they?  Looking
+> back at my notes, the thing I really made sure to stress was that we
+> never got into a situation where we were losing an edge (AKA we were
+> never configured to look for a falling edge when the line was already
+> low).  I'm not sure I confirmed that we never got an extra interrupt.
+>
+> I'm at home right now and I can't add prints and poke at things, but
+> as I understand it for edge interrupts the usual flow to make sure
+> interrupts aren't ever lost is:
+>
+> 1. See that the interrupt went off
+> 2. Ack it (clear it)
+> 3. Call the interrupt handler
+>
+> ...presumably in this case rockchip_irq_demux() is called after step
+> #2 (but I don't know if it's called before or after step #3).  If the
+> line is toggling like crazy while the 3 steps are going on, it's OK if
+> the interrupt handler is called more than once.  In general this could
+> be considered expected.  That's why you Ack before handling--any extra
+> edges that come in any time after the interrupt handler starts (even
+> after the very first instruction) need to cause the interrupt handler
+> to get called again.
+>
+> This is different than Brian's understanding since he seemed to think
+> the Ack was happening later.  If you're in front of something where
+> you can add printouts, maybe you can tell us.  I tried to look through
+> the code and it was too twisted for me to be sure.
 
-I don't need btrfs 101 stuff explained to me. :/
+i think the current edge both irq flow for rk3399 would be:
+gic_handle_irq //irq-gic-v3.c
+   handle_domain_irq
+     rockchip_irq_demux //pinctrl-rockchip.c
+       toggle polarity
+       generic_handle_irq
+         handle_edge_irq //kernel/irq
+           irq_ack
+           handle_irq_event
+             action->handler
 
-> a single transaction engine.  There are housekeeping and maintenance
-> tasks that operate across the entire file system internally.  I
-> understand that there are several problems you need to solve at the VFS
-> layer to get your version of subvolumes up and running, but trying to
-> shoehorn one into the other is bound to fail.
+so i think the race might actually exist (maybe we can add some delay 
+after toggle polarity to confirm)
 
-Actually, the VFS has provided everything I need for XFS subvolumes
-so far without requiring any sort of modifications. That's the
-perspective I'm approaching this from - if the VFS can do what we
-need for XFS subvolumes, as well as overlay (which are effectively
-VFS-based COW subvolumes), then lets see if we can make that work
-for btrfs too.
 
-> > So this doesn't sound like a "subvolume problem" - it's a "how do we
-> > sanely support multiple independent namespaces per superblock"
-> > problem. AFAICT, this same problem exists with bind mounts and mount
-> > namespaces - they are effectively multiple roots on a single
-> > superblock, but it's done at the vfsmount level and so the
-> > superblock knows nothing about them.
-> 
-> In this case, you're talking about the user-visible file system
-> hierarchy namespace that has no bearing on the underlying file system
-> outside of per-mount flags.
+BTW, checking other drivers, there're quite a few using this kind of 
+toggle edge for edge both, and they go different ways:
 
-Except that it tracks and provides infrastructure that allows user
-visible  "multiple namespace per root" constructs. Subvolumes - as a
-user visible namespace construct - are little different to bind
-mounts in behaviour and functionality. 
+1/ toggle it in ack():
+mediatek/pinctrl-mtk-common.c
+gpio-ingenic.c
+gpio-ep93xx.c
 
-How the underlying filesystem implements subvolumes is really up to
-the filesystem, but we should be trying to implement a clean model
-for "multiple namespaces on a single root" at the VFS so we have
-consistent behaviour across all filesystems that implement similar
-functionality.
+2/ toggle it before handle_irq:
+pinctrl-rockchip.c
+pinctrl-armada-37xx.c
+gpio-ath79.c
+gpio-mxs.c
+gpio-omap.c
+gpio-mvebu.c
 
-FWIW, bind mounts and overlay also have similar inode number
-namespace problems to what Mark describes for btrfs subvolumes.
-e.g. overlay recently introduce the "xino" mount option to separate
-the user presented inode number namespace for overlay inode from the
-underlying parent filesystem inodes. How is that different to btrfs
-subvolumes needing to present different inode number namespaces from
-the underlying parent?
+3/ toggle it after handle_irq:
+gpio-dwapb.c
+gpio-pmic-eic-sprd.c
 
-This sort of "namespace shifting" is needed for several different
-pieces of information the kernel reports to userspace. The VFS
-replacement for shiftfs is an example of this. So is inode number
-remapping. I'm sure there's more.
 
-My point is that if we are talking about infrastructure to remap
-what userspace sees from different mountpoint views into a
-filesystem, then it should be done above the filesystem layers in
-the VFS so all filesystems behave the same way. And in this case,
-the vfsmount maps exactly to the "fs_view" that Mark has proposed we
-add to the superblock.....
+would it make sense to support this kind of emulate edge both irq in 
+some core codes?
 
-> It makes sense for that to be above the
-> superblock because the file system doesn't care about them.  We're
-> interested in the inode namespace, which for every other file system can
-> be described using an inode and a superblock pair, but btrfs has another
-> layer in the middle: inode -> btrfs_root -> superblock. 
+>
+>
+>> >2/ rockchip_irq_set_type
+>> >it's important to not having spurious irqs
+>> >
+>> >so we can disable irq during changing polarity only in these case:
+>> >((rising && gpio is heigh) || (falling && gpio is low))
+>> >
+>> >i'm still confirming the spurious irq with IC guys.
+> Hmmm, thinking about all this more, I'm curious how callers expect
+> this to work.  Certainly things are undefined if you have the
+> following situation:
+>
+> Start: rising edge trigger, line is actually high
+> Request: change to falling edge trigger
+> Line falls during the request
+>
+> In that case it's OK to throw the interrupt away because it can be
+> argued that the line could have fallen before the request actually
+> took place.  ...but it seems like there could be situations where the
+> user wouldn't expect interrupts to be thrown away by a call to
+> irq_set_type().  In other words:
+>
+> Start: rising edge trigger, line is actually high
+> Request: change to falling edge trigger
+> Line falls, rises, and falls during the request
+>
+> ...in that case you'd expect that some sort of interrupt would have
+> gone off and not be thrown away.  No matter what instant in time the
+> request actually took place it should have caught an edge, right?
+>
+>
+> Said another way: As a client of irq_set_type() I'd expect it to not
+> throw away interrupts, but I'd expect that the change in type would be
+> atomic.  That is: if the interrupt came in before the type change in
+> type applied then it should trigger with the old rules.  If the
+> interrupt came in after the type change then it should trigger with
+> the new rules.
+>
+>
+> I would be tempted to confirm your testing and just clear the spurious
+> interrupts that you're aware of.  AKA: if there's no interrupt pending
+> and you change the type to "IRQ_TYPE_EDGE_RISING" or
+> "IRQ_TYPE_EDGE_FALLING" then you should clear the interrupt.  It's
+> still racy, but I guess it's the best you can do unless IC guys come
+> up with something better.
+>
 
-Which seems to me to be irrelevant if there's a vfsmount per
-subvolume that can hold per-subvolume information.
-
-> > So this kinda feel like there's still a impedence mismatch between
-> > btrfs subvolumes being mounted as subtrees on the underlying root
-> > vfsmount rather than being created as truly independent vfs
-> > namespaces that share a superblock. To put that as a question: why
-> > aren't btrfs subvolumes vfsmounts in their own right, and the unique
-> > information subvolume information get stored in (or obtained from)
-> > the vfsmount?
-> 
-> Those are two separate problems.   Using a vfsmount to export the
-> btrfs_root is on my roadmap.  I have a WIP patch set that automounts the
-> subvolumes when stepping into a new one, but it's to fix a longstanding
-> UX wart.
-
-IMO that's more than a UX wart - th elack of vfsmounts for internal
-subvolume mount point traversals could be considered the root cause
-of the issues we are discussing here. Extending the mounted
-namespace should trigger vfs mounts, not be hidden deep inside the
-filesystem. Hence I'd suggest this needs changing before anything
-else....
-
-> >> During the discussion, one question did come up - why can't
-> >> filesystems like Btrfs use a superblock per subvolume? There's a
-> >> couple of problems with that:
-> >>
-> >> - It's common for a single Btrfs filesystem to have thousands of
-> >>   subvolumes. So keeping a superblock for each subvol in memory would
-> >>   get prohibively expensive - imagine having 8000 copies of struct
-> >>   super_block for a file system just because we wanted some separation
-> >>   of say, s_dev.
-> > 
-> > That's no different to using individual overlay mounts for the
-> > thousands of containers that are on the system. This doesn't seem to
-> > be a major problem...
-> 
-> Overlay mounts are indepedent of one another and don't need coordination
-> among them.  The memory usage is relatively unimportant.  The important
-> part is having a bunch of superblocks that all correspond to the same
-> resources and coordinating them at the VFS level.  Your assumptions
-> below follow how your XFS subvolumes work, where there's a clear
-> hierarchy between the subvolumes and the master filesystem with a
-> mapping layer between them.  Btrfs subvolumes have no such hierarchy.
-> Everything is shared. 
-
-Yup, that's the impedence mismatch between the VFS infrastructure
-and btrfs that I was talking about. What I'm trying to communicate
-is that I think the proposal is attacking the impedence mismatch
-from the wrong direction.
-
-i.e. The proposal is to modify btrfs code to propagate stuff that
-btrfs needs to know to deal with it's internal "everything is
-shared" problems up into the VFS where it's probably not useful to
-anything other than btrfs. We already have the necessary construct
-in the VFS - I think we should be trying to use the information held
-by the generic VFS infrastructure to solve the solve the specific
-btrfs issue at hand....
-
-> So while we could use a writeback hierarchy to
-> merge all of the inode lists before doing writeback on the 'master'
-> superblock, we'd gain nothing by it.  Handling anything involving
-> s_umount with a superblock per subvolume would be a nightmare.
-> Ultimately, it would be a ton of effort that amounts to working around
-> the VFS instead of with it.
-
-I'm not suggesting that btrfs needs to use a superblock per
-subvolume. Please don't confuse my statements along the lines of
-"this doesn't seem to be a problem for others" with "you must change
-btrfs to do this". I'm just saying that the problems arising from
-using a superblock per subvolume are not as dire as is being
-implied.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+hmmm, right, clear the spurious irq seems to be a better way, will try 
+to do it in the next version.
+>
+>
+> Anyway, it's past my bedtime.  Hopefully some of the above made sense.
+> I'm sure you'll tell me if it didn't or if I said something
+> stupid/wrong.:-P
+>
+> -Doug
+>
+>
+>
