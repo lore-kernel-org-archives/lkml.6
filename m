@@ -1,259 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756102AbeEIFRf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 01:17:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33048 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752802AbeEIFRd (ORCPT
+        id S1756120AbeEIFSX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 01:18:23 -0400
+Received: from mail-vk0-f44.google.com ([209.85.213.44]:37315 "EHLO
+        mail-vk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752931AbeEIFSV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 01:17:33 -0400
+        Wed, 9 May 2018 01:18:21 -0400
+X-Google-Smtp-Source: AB8JxZph9t9BBLNcWprZBp50hJpRwGvITKa6GUAn9OKXdRvKiQWejjPtUf7g3XHzcxDCTYbbkiJD8puaVfBkyrlJMNU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 09 May 2018 10:47:31 +0530
-From: kgunda@codeaurora.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH V2 4/5] backlight: qcom-wled: Add support for OVP
- interrupt handling
-In-Reply-To: <20180508103944.qib7ax3sgzhzacmb@holly.lan>
-References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
- <1525342352-25072-5-git-send-email-kgunda@codeaurora.org>
- <20180508103944.qib7ax3sgzhzacmb@holly.lan>
-Message-ID: <db3411e9fea2deda73ed1bb829349eef@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <5AF25B2E.8080901@rock-chips.com>
+References: <20180503065553.7762-1-jeffy.chen@rock-chips.com>
+ <20180507221511.GA6448@rodete-desktop-imager.corp.google.com>
+ <5AF0FF18.1050905@rock-chips.com> <20180508015623.GA61455@rodete-desktop-imager.corp.google.com>
+ <CAD=FV=W_v+aoNT09k-2exVABTFzOp0heY-XWcLi95uPisZhiGQ@mail.gmail.com> <5AF25B2E.8080901@rock-chips.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 8 May 2018 22:18:18 -0700
+X-Google-Sender-Auth: rmNS31WeKWbvKc7fbvP9geqd86k
+Message-ID: <CAD=FV=WZ+2MNbe341M7OQD11+RxaJuzdM6zMnXYB4dka74K1hQ@mail.gmail.com>
+Subject: Re: [RESEND PATCH] pinctrl: rockchip: Disable interrupt when changing
+ it's capability
+To: JeffyChen <jeffy.chen@rock-chips.com>
+Cc: Brian Norris <briannorris@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-08 16:09, Daniel Thompson wrote:
-> On Thu, May 03, 2018 at 03:42:31PM +0530, Kiran Gunda wrote:
->> WLED peripheral has over voltage protection(OVP) circuitry and the OVP
->> fault is notified through an interrupt. Though this fault condition 
->> rising
->> is due to an incorrect hardware configuration is mitigated in the 
->> hardware,
->> it still needs to be detected and handled. Add support for it.
-> 
-> Why detect and handle it? The interrupt handler doesn't appear to do
-> anything other than clear the interrupt... and it appears that the
-> interrupt can be masked.
-> 
-> 
-Planing to squash this patch with the auto-string-detection patch in the 
-next series,
-where the OVP is used for the right string detection.
->> When WLED module is enabled, keep OVP fault interrupt disabled for 10 
->> ms to
->> account for soft start delay.
->> 
->> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
->> ---
->>  drivers/video/backlight/qcom-wled.c | 118 
->> +++++++++++++++++++++++++++++++++++-
->>  1 file changed, 116 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/video/backlight/qcom-wled.c 
->> b/drivers/video/backlight/qcom-wled.c
->> index 2cfba77..80ae084 100644
->> --- a/drivers/video/backlight/qcom-wled.c
->> +++ b/drivers/video/backlight/qcom-wled.c
->> @@ -23,14 +23,20 @@
->> 
->>  /* From DT binding */
->>  #define WLED_DEFAULT_BRIGHTNESS				2048
->> -
->> +#define WLED_SOFT_START_DLY_US				10000
->>  #define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
->> 
->>  /* WLED3 Control registers */
->>  #define WLED3_CTRL_REG_FAULT_STATUS			0x08
->> +#define  WLED3_CTRL_REG_ILIM_FAULT_BIT			BIT(0)
->> +#define  WLED3_CTRL_REG_OVP_FAULT_BIT			BIT(1)
->> +#define  WLED4_CTRL_REG_SC_FAULT_BIT			BIT(2)
->> +
->> +#define WLED3_CTRL_REG_INT_RT_STS			0x10
->> 
->>  #define WLED3_CTRL_REG_MOD_EN				0x46
->>  #define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
->> +#define  WLED3_CTRL_REG_MOD_EN_BIT			BIT(7)
->> 
->>  #define WLED3_CTRL_REG_FREQ				0x4c
->>  #define  WLED3_CTRL_REG_FREQ_MASK			GENMASK(3, 0)
->> @@ -161,9 +167,12 @@ struct wled {
->>  	u32 short_count;
->>  	const int *version;
->>  	int short_irq;
->> +	int ovp_irq;
->>  	bool force_mod_disable;
->> +	bool ovp_irq_disabled;
->> 
->>  	struct wled_config cfg;
->> +	struct delayed_work ovp_work;
->>  	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
->>  	int (*wled_sync_toggle)(struct wled *wled);
->>  };
->> @@ -209,6 +218,32 @@ static int wled4_set_brightness(struct wled 
->> *wled, u16 brightness)
->>  	return 0;
->>  }
->> 
->> +static void wled_ovp_work(struct work_struct *work)
->> +{
->> +	u32 val;
->> +	int rc;
->> +
->> +	struct wled *wled = container_of(work,
->> +					 struct wled, ovp_work.work);
->> +
->> +	rc = regmap_read(wled->regmap, wled->ctrl_addr + 
->> WLED3_CTRL_REG_MOD_EN,
->> +			 &val);
->> +	if (rc < 0)
->> +		return;
->> +
->> +	if (val & WLED3_CTRL_REG_MOD_EN_BIT) {
->> +		if (wled->ovp_irq > 0 && wled->ovp_irq_disabled) {
->> +			enable_irq(wled->ovp_irq);
->> +			wled->ovp_irq_disabled = false;
->> +		}
->> +	} else {
->> +		if (wled->ovp_irq > 0 && !wled->ovp_irq_disabled) {
->> +			disable_irq(wled->ovp_irq);
->> +			wled->ovp_irq_disabled = true;
->> +		}
->> +	}
->> +}
->> +
->>  static int wled_module_enable(struct wled *wled, int val)
->>  {
->>  	int rc;
->> @@ -220,7 +255,12 @@ static int wled_module_enable(struct wled *wled, 
->> int val)
->>  				WLED3_CTRL_REG_MOD_EN,
->>  				WLED3_CTRL_REG_MOD_EN_MASK,
->>  				WLED3_CTRL_REG_MOD_EN_MASK);
->> -	return rc;
->> +	if (rc < 0)
->> +		return rc;
->> +
->> +	schedule_delayed_work(&wled->ovp_work, WLED_SOFT_START_DLY_US);
->> +
->> +	return 0;
->>  }
->> 
->>  static int wled3_sync_toggle(struct wled *wled)
->> @@ -346,6 +386,36 @@ static irqreturn_t wled_short_irq_handler(int 
->> irq, void *_wled)
->>  	return IRQ_HANDLED;
->>  }
->> 
->> +static irqreturn_t wled_ovp_irq_handler(int irq, void *_wled)
->> +{
->> +	struct wled *wled = _wled;
->> +	int rc;
->> +	u32 int_sts, fault_sts;
->> +
->> +	rc = regmap_read(wled->regmap,
->> +			 wled->ctrl_addr + WLED3_CTRL_REG_INT_RT_STS, &int_sts);
->> +	if (rc < 0) {
->> +		dev_err(wled->dev, "Error in reading WLED3_INT_RT_STS rc=%d\n",
->> +			rc);
->> +		return IRQ_HANDLED;
->> +	}
->> +
->> +	rc = regmap_read(wled->regmap, wled->ctrl_addr +
->> +			 WLED3_CTRL_REG_FAULT_STATUS, &fault_sts);
->> +	if (rc < 0) {
->> +		dev_err(wled->dev, "Error in reading WLED_FAULT_STATUS rc=%d\n",
->> +			rc);
->> +		return IRQ_HANDLED;
->> +	}
->> +
->> +	if (fault_sts &
->> +		(WLED3_CTRL_REG_OVP_FAULT_BIT | WLED3_CTRL_REG_ILIM_FAULT_BIT))
->> +		dev_dbg(wled->dev, "WLED OVP fault detected, int_sts=%x fault_sts= 
->> %x\n",
->> +			int_sts, fault_sts);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->>  static int wled3_setup(struct wled *wled)
->>  {
->>  	u16 addr;
->> @@ -821,6 +891,44 @@ static int wled_configure_short_irq(struct wled 
->> *wled,
->>  	return rc;
->>  }
->> 
->> +static int wled_configure_ovp_irq(struct wled *wled,
->> +				  struct platform_device *pdev)
->> +{
->> +	int rc = 0;
->> +	u32 val;
->> +
->> +	if (*wled->version == WLED_PM8941)
->> +		return 0;
->> +
->> +	wled->ovp_irq = platform_get_irq_byname(pdev, "ovp");
->> +	if (wled->ovp_irq < 0) {
->> +		dev_dbg(&pdev->dev, "ovp irq is not used\n");
->> +		return 0;
->> +	}
->> +
->> +	rc = devm_request_threaded_irq(wled->dev, wled->ovp_irq, NULL,
->> +				       wled_ovp_irq_handler, IRQF_ONESHOT,
->> +				       "wled_ovp_irq", wled);
->> +	if (rc < 0) {
->> +		dev_err(wled->dev, "Unable to request ovp_irq (err:%d)\n",
->> +			rc);
->> +		return 0;
->> +	}
->> +
->> +	rc = regmap_read(wled->regmap, wled->ctrl_addr +
->> +			 WLED3_CTRL_REG_MOD_EN, &val);
->> +	if (rc < 0)
->> +		return rc;
->> +
->> +	/* Keep OVP irq disabled until module is enabled */
->> +	if (!rc && !(val & WLED3_CTRL_REG_MOD_EN_MASK)) {
->> +		disable_irq(wled->ovp_irq);
->> +		wled->ovp_irq_disabled = true;
->> +	}
->> +
->> +	return rc;
->> +}
->> +
->>  static const struct backlight_ops wled_ops = {
->>  	.update_status = wled_update_status,
->>  };
->> @@ -874,10 +982,16 @@ static int wled_probe(struct platform_device 
->> *pdev)
->>  		}
->>  	}
->> 
->> +	INIT_DELAYED_WORK(&wled->ovp_work, wled_ovp_work);
->> +
->>  	rc = wled_configure_short_irq(wled, pdev);
->>  	if (rc < 0)
->>  		return rc;
->> 
->> +	rc = wled_configure_ovp_irq(wled, pdev);
->> +	if (rc < 0)
->> +		return rc;
->> +
->>  	val = WLED_DEFAULT_BRIGHTNESS;
->>  	of_property_read_u32(pdev->dev.of_node, "default-brightness", &val);
->> 
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
->> Forum,
->>  a Linux Foundation Collaborative Project
->> 
+Hi,
+
+On Tue, May 8, 2018 at 7:21 PM, JeffyChen <jeffy.chen@rock-chips.com> wrote:
+> Hi Doug,
+>
+> On 05/09/2018 03:46 AM, Doug Anderson wrote:
+>>
+>> One note is that in the case Brian points at (where we need to
+>> simulate EDGE_BOTH by swapping edges) we purposely ignored the TRM and
+>> we needed to do that to avoid losing interrupts.  For details, see
+>> commit 53b1bfc76df2 ("pinctrl: rockchip: Avoid losing interrupts when
+>> supporting both edges").  We did this because:
+>>
+>> 1. We believed that the IP block in Rockchip SoCs has nearly the same
+>> logic as "gpio-dwapb.c" and that's what "gpio-dwapb.c" did.
+>>
+>
+> hmm, but i saw the gpio-dwapb.c actually toggle trigger after handle irq,
+> which might avoid the race Brian mentioned:
+> +               generic_handle_irq(gpio_irq);
+> +               irq_status &= ~BIT(hwirq);
+> +
+> +               if ((irq_get_trigger_type(gpio_irq) & IRQ_TYPE_SENSE_MASK)
+> +                       == IRQ_TYPE_EDGE_BOTH)
+> +                       dwapb_toggle_trigger(gpio, hwirq);
+
+The code you point at in dwapb_toggle_trigger() specifically is an
+example of toggling the polarity _without_ disabling the interrupt in
+between.  We took this as "working" code and as proof that it was OK
+to change polarity without disabling the interrupt in-between.
+
+
+> and i also saw ./qcom/pinctrl-msm.c do the
+> toggle(msm_gpio_update_dual_edge_pos) at the end of msm_gpio_irq_set_type
+> and msm_gpio_irq_ack, that seems can avoid the polarity races too.
+>
+>> 2. We were actually losing real interrupts and this was the only way
+>> we could figure out how to fix it.
+>>
+>> When I tested that back in the day I was fairly convinced that we
+>> weren't losing any interrupts in the EDGE_BOTH case after my fix, but
+>> I certainly could have messed up.
+>>
+>>
+>> For the EDGE_BOTH case it was important not to lose an interrupt
+>> because, as you guys are talking about, we could end up configured the
+>> wrong way.  I think in your case where you're just picking one
+>> polarity losing an interrupt shouldn't matter since it's undefined
+>> exactly if an edge happens while you're in the middle of executing
+>> rockchip_irq_set_type().  Is that right?
+>
+>
+> right, so we now have 2 cases: rockchip_irq_demux/ rockchip_irq_set_type
+>
+> if i'm right about the spurious irq(only happen when set rising for a high
+> gpio, or set falling for a low gpio), then:
+>
+> 1/ rockchip_irq_demux
+> it's important to not losing irqs in this case, maybe we can
+>
+> a) ack irq
+> b) update polarity for edge both irq
+>
+> we don't need to disable irq in b), since we would not hit the spurious irq
+> cases here(always check gpio level to toggle it)
+
+Unless you have some sort of proof that rockchip_irq_demux(), I would
+take it as an example of something that works.  I remember stress
+testing the heck out of it.  Do you have some evidence that it's not
+working?  I think Brian was simply speculating that there might be a
+race here, but I don't think anyone has shown it have they?  Looking
+back at my notes, the thing I really made sure to stress was that we
+never got into a situation where we were losing an edge (AKA we were
+never configured to look for a falling edge when the line was already
+low).  I'm not sure I confirmed that we never got an extra interrupt.
+
+I'm at home right now and I can't add prints and poke at things, but
+as I understand it for edge interrupts the usual flow to make sure
+interrupts aren't ever lost is:
+
+1. See that the interrupt went off
+2. Ack it (clear it)
+3. Call the interrupt handler
+
+...presumably in this case rockchip_irq_demux() is called after step
+#2 (but I don't know if it's called before or after step #3).  If the
+line is toggling like crazy while the 3 steps are going on, it's OK if
+the interrupt handler is called more than once.  In general this could
+be considered expected.  That's why you Ack before handling--any extra
+edges that come in any time after the interrupt handler starts (even
+after the very first instruction) need to cause the interrupt handler
+to get called again.
+
+This is different than Brian's understanding since he seemed to think
+the Ack was happening later.  If you're in front of something where
+you can add printouts, maybe you can tell us.  I tried to look through
+the code and it was too twisted for me to be sure.
+
+
+> 2/ rockchip_irq_set_type
+> it's important to not having spurious irqs
+>
+> so we can disable irq during changing polarity only in these case:
+> ((rising && gpio is heigh) || (falling && gpio is low))
+>
+> i'm still confirming the spurious irq with IC guys.
+
+Hmmm, thinking about all this more, I'm curious how callers expect
+this to work.  Certainly things are undefined if you have the
+following situation:
+
+Start: rising edge trigger, line is actually high
+Request: change to falling edge trigger
+Line falls during the request
+
+In that case it's OK to throw the interrupt away because it can be
+argued that the line could have fallen before the request actually
+took place.  ...but it seems like there could be situations where the
+user wouldn't expect interrupts to be thrown away by a call to
+irq_set_type().  In other words:
+
+Start: rising edge trigger, line is actually high
+Request: change to falling edge trigger
+Line falls, rises, and falls during the request
+
+...in that case you'd expect that some sort of interrupt would have
+gone off and not be thrown away.  No matter what instant in time the
+request actually took place it should have caught an edge, right?
+
+
+Said another way: As a client of irq_set_type() I'd expect it to not
+throw away interrupts, but I'd expect that the change in type would be
+atomic.  That is: if the interrupt came in before the type change in
+type applied then it should trigger with the old rules.  If the
+interrupt came in after the type change then it should trigger with
+the new rules.
+
+
+I would be tempted to confirm your testing and just clear the spurious
+interrupts that you're aware of.  AKA: if there's no interrupt pending
+and you change the type to "IRQ_TYPE_EDGE_RISING" or
+"IRQ_TYPE_EDGE_FALLING" then you should clear the interrupt.  It's
+still racy, but I guess it's the best you can do unless IC guys come
+up with something better.
+
+
+
+Anyway, it's past my bedtime.  Hopefully some of the above made sense.
+I'm sure you'll tell me if it didn't or if I said something
+stupid/wrong.  :-P
+
+-Doug
