@@ -1,110 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934570AbeEIKei (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 06:34:38 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:46521 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933864AbeEIKeg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 06:34:36 -0400
-X-Google-Smtp-Source: AB8JxZqHgC444c7fmUsMqlaL3tVRZKHwVv37YAaZlDcdKYCQZE/AzRbBIHFV77OZer5vqAkkIF3FmQ==
-Date: Wed, 9 May 2018 03:34:34 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [RFC PATCH] sched/cpufreq/schedutil: handling urgent frequency
- requests
-Message-ID: <20180509103434.GF76874@joelaf.mtv.corp.google.com>
-References: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
- <20180508065435.bcht6dyb3rpp6gk5@vireshk-i7>
- <20180509045425.GA158882@joelaf.mtv.corp.google.com>
- <20180509064530.GA1681@localhost.localdomain>
- <20180509080644.GA76874@joelaf.mtv.corp.google.com>
- <CAJZ5v0iFZ5+6BQCism-o8bnOxD8KveueJ5CT58F9uH_7_pYOXQ@mail.gmail.com>
- <20180509084001.bghnwpv3a3xnuxce@vireshk-i7>
- <20180509090259.GD76874@joelaf.mtv.corp.google.com>
- <20180509092823.sfph4gomnblb7jgr@vireshk-i7>
+        id S934589AbeEIKfL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 06:35:11 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41938 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933864AbeEIKfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 06:35:09 -0400
+Date: Wed, 9 May 2018 11:35:05 +0100
+From: Brian Starkey <brian.starkey@arm.com>
+To: Gustavo Padovan <gustavo.padovan@collabora.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>, linux-media@vger.kernel.org,
+        kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 11/15] vb2: add in-fence support to QBUF
+Message-ID: <20180509103504.GB39838@e107564-lin.cambridge.arm.com>
+References: <20180504200612.8763-1-ezequiel@collabora.com>
+ <20180504200612.8763-12-ezequiel@collabora.com>
+ <5fd5d7a9-5b74-fe2a-6148-59b90cabb9e8@xs4all.nl>
+ <1525821486.1445.17.camel@collabora.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180509092823.sfph4gomnblb7jgr@vireshk-i7>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1525821486.1445.17.camel@collabora.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 02:58:23PM +0530, Viresh Kumar wrote:
-> On 09-05-18, 02:02, Joel Fernandes wrote:
-> > On Wed, May 09, 2018 at 02:10:01PM +0530, Viresh Kumar wrote:
-> > > Right, none of the above changes are required now.
-> > 
-> > I didn't follow what you mean the changes are not required? I was developing
-> > against Linus mainline. Also I replied to Rafael's comment in the other
-> > thread.
-> 
-> At least for the shared policy case the entire sequence of
-> sugov_should_update_freq() followed by sugov_update_commit() is
-> executed from within spinlock protected region and you are using the
-> same lock below. And so either the above two routines or the kthread
-> routine below will execute at a given point of time.
-> 
-> So in case kthread has started doing the update and acquired the lock,
-> the util update handler will wait until the time work_in_progress is
-> set to false, that's not a problem we are trying to solve here.
-> 
-> And if kthread hasn't acquired the lock yet and util handler has
-> started executing sugov_should_update_freq() ....
-> 
-> And ^^^ this is where I understood that your earlier change is
-> actually required, so that we accumulate the latest updated next_freq
-> value.
-> 
-> And with all that we wouldn't require a while loop in the kthread
-> code.
+Hi,
 
-Oh yeah, totally. So I think we are on the same page now about that.
+On Tue, May 08, 2018 at 08:18:06PM -0300, Gustavo Padovan wrote:
+>
+>Hi Hans,
+>
+>On Mon, 2018-05-07 at 14:07 +0200, Hans Verkuil wrote:
+>> On 04/05/18 22:06, Ezequiel Garcia wrote:
+>> > From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-> > > > > @@ -381,13 +381,23 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
-> > > > >  static void sugov_work(struct kthread_work *work)
-> > > > >  {
-> > > > >         struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
-> > > > > +       unsigned int freq;
-> > > > > +
-> > > > > +       /*
-> > > > > +        * Hold sg_policy->update_lock just enough to handle the case where:
-> > > > > +        * if sg_policy->next_freq is updated before work_in_progress is set to
-> > > > > +        * false, we may miss queueing the new update request since
-> > > > > +        * work_in_progress would appear to be true.
-> > > > > +        */
-> > > > > +       raw_spin_lock(&sg_policy->update_lock);
-> > > > > +       freq = sg_policy->next_freq;
-> > > > > +       sg_policy->work_in_progress = false;
-> > > > > +       raw_spin_unlock(&sg_policy->update_lock);
-> > > 
-> > > One problem we still have is that sg_policy->update_lock is only used
-> > > in the shared policy case and not in the single CPU per policy case,
-> > > so the race isn't solved there yet.
-> > 
-> > True.. I can make the single CPU case acquire the update_lock very briefly
-> > around sugov_update_commit call in sugov_update_single.
-> 
-> Rafael was very clear from the beginning that he wouldn't allow a spin
-> lock in the un-shared policy case :)
+[snip]
 
-That's fair. Probably we can just not do this trickery at all for the single
-case for now, incase work_in_progress is set. That way we still get the
-benefit for the shared case, and the single case isn't changed from what it is
-today.
+>> > diff --git a/include/media/videobuf2-core.h
+>> > b/include/media/videobuf2-core.h
+>> > index 364e4cb41b10..28ce8f66882e 100644
+>> > --- a/include/media/videobuf2-core.h
+>> > +++ b/include/media/videobuf2-core.h
+>> > @@ -17,6 +17,7 @@
+>> >  #include <linux/poll.h>
+>> >  #include <linux/dma-buf.h>
+>> >  #include <linux/bitops.h>
+>> > +#include <linux/dma-fence.h>
+>> >
+>> >  #define VB2_MAX_FRAME	(32)
+>> >  #define VB2_MAX_PLANES	(8)
+>> > @@ -255,12 +256,21 @@ struct vb2_buffer {
+>> >  	 * done_entry:		entry on the list that
+>> > stores all buffers ready
+>> >  	 *			to be dequeued to userspace
+>> >  	 * vb2_plane:		per-plane information; do not
+>> > change
+>> > +	 * in_fence:		fence received from vb2 client
+>> > to wait on before
+>> > +	 *			using the buffer (queueing to
+>> > the driver)
+>> > +	 * fence_cb:		fence callback information
+>> > +	 * fence_cb_lock:	protect callback signal/remove
+>> >  	 */
+>> >  	enum vb2_buffer_state	state;
+>> >
+>> >  	struct vb2_plane	planes[VB2_MAX_PLANES];
+>> >  	struct list_head	queued_entry;
+>> >  	struct list_head	done_entry;
+>> > +
+>> > +	struct dma_fence	*in_fence;
+>> > +	struct dma_fence_cb	fence_cb;
+>> > +	spinlock_t              fence_cb_lock;
+>> > +
+>>
+>> So for the _MPLANE formats this is one fence for all planes. Which
+>> makes sense, but how
+>> does drm handle that? Also one fence for all planes?
+>
+>Yes, this is one fence for all planes.
+>
+>The DRM concept for planes is a totally different concept and is
+>basically a representation of an user definable square on the screen,
+>and to that plane there in one framebuffer attached - display hw has no
+>such a multiplanar for the same image AFAICT. So you probably need some
+>blit to convert the v4l2 multiplanar to a DRM framebuffer.
+>
 
-thanks,
+Lots of display hardware can do multi-planar formats, and there's
+space in struct drm_framebuffer for up to 4 buffer handles (e.g. 3
+handles are passed for Luma, Cr, and Cb when the framebuffer format is
+DRM_FORMAT_YUV420) - like V4L2 MPLANE.
 
-- Joel
+The V4L2 code here matches with the DRM "explicit sync"
+(IN_FENCE_FD/OUT_FENCE_PTR) stuff, which is probably what we want.
+The main difference is that in DRM, explicit fences aren't associated
+with framebuffers, they're associated with the things using the
+framebuffers - but practically it doesn't make a difference.
+
+There can be per-buffer "implicit sync" via dma-buf reservation
+objects, but I don't think this series should attempt to deal with
+that.
+
+Cheers,
+-Brian
+
+>>
+>> I think there should be a comment about this somewhere.
+>
+>Yes, we've been over this exact discussion a few times :)
+>Having entirely different things with the same name is quite confusing.
+>
+>Regards,
+>
+>Gustavo
+>
+>-- 
+>Gustavo Padovan
+>Principal Software Engineer
+>Collabora Ltd.
