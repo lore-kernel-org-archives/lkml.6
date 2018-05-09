@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965713AbeEIRCM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 13:02:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56676 "EHLO
+        id S965731AbeEIRCQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 13:02:16 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56928 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965686AbeEIRCI (ORCPT
+        with ESMTP id S965686AbeEIRCM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 13:02:08 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C502E606AC
+        Wed, 9 May 2018 13:02:12 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A667860C67
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From: Lina Iyer <ilina@codeaurora.org>
@@ -16,10 +16,10 @@ To: andy.gross@linaro.org, david.brown@linaro.org,
 Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
         dianders@chromium.org, mka@chromium.org, rplsssn@codeaurora.org,
-        Lina Iyer <ilina@codeaurora.org>, devicetree@vger.kernel.org
-Subject: [PATCH v8 02/10] dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
-Date: Wed,  9 May 2018 11:01:51 -0600
-Message-Id: <20180509170159.29682-3-ilina@codeaurora.org>
+        Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v8 05/10] drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
+Date: Wed,  9 May 2018 11:01:54 -0600
+Message-Id: <20180509170159.29682-6-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180509170159.29682-1-ilina@codeaurora.org>
 References: <20180509170159.29682-1-ilina@codeaurora.org>
@@ -27,187 +27,219 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device binding documentation for Qualcomm Technology Inc's RPMH RSC
-driver. The driver is used for communicating resource state requests for
-shared resources.
+Sleep and wake requests are sent when the application processor
+subsystem of the SoC is entering deep sleep states like in suspend.
+These requests help lower the system power requirements when the
+resources are not in use.
 
-Cc: devicetree@vger.kernel.org
+Sleep and wake requests are written to the TCS slots but are not
+triggered at the time of writing. The TCS are triggered by the firmware
+after the last of the CPUs has executed its WFI. Since these requests
+may come in different batches of requests, it is the job of this
+controller driver to find and arrange the requests into the available
+TCSes.
+
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
+
 ---
 Changes in v8:
-	- Describe IRQ for all DRVs
+	- Bounds check in find_match()
 
 Changes in v7:
-	- Fix example
-
-Changes in v6:
-	- Address comments from Stephen Boyd
-
-Changes in v3:
-	- Move to soc/qcom
-	- Amend text per Stephen's suggestions
-
-Changes in v2:
-	- Amend text to describe the registers in reg property
-	- Add reg-names for the registers
-	- Update examples to use GIC_SPI in interrupts instead of 0
-	- Rephrase incorrect description
-
-Changes in v3:
-	- Fix unwanted capitalization
-	- Remove clients from the examples, this doc does not describe
-	  them
-	- Rephrase introductory paragraph
-	- Remove hardware specifics from DT bindings
+	- Bug fix in find_match()
 ---
- .../devicetree/bindings/soc/qcom/rpmh-rsc.txt | 137 ++++++++++++++++++
- 1 file changed, 137 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+ drivers/soc/qcom/rpmh-internal.h |   8 ++
+ drivers/soc/qcom/rpmh-rsc.c      | 122 +++++++++++++++++++++++++++++++
+ 2 files changed, 130 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
-new file mode 100644
-index 000000000000..e15c100f5c92
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
-@@ -0,0 +1,137 @@
-+RPMH RSC:
-+------------
+diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+index d9a21726e568..6e19fe458c31 100644
+--- a/drivers/soc/qcom/rpmh-internal.h
++++ b/drivers/soc/qcom/rpmh-internal.h
+@@ -14,6 +14,7 @@
+ #define MAX_CMDS_PER_TCS		16
+ #define MAX_TCS_PER_TYPE		3
+ #define MAX_TCS_NR			(MAX_TCS_PER_TYPE * TCS_TYPE_NR)
++#define MAX_TCS_SLOTS			(MAX_CMDS_PER_TCS * MAX_TCS_PER_TYPE)
+ #define RPMH_MAX_CTRLR			2
+ 
+ struct rsc_drv;
+@@ -30,6 +31,8 @@ struct rsc_drv;
+  * @ncpt:      number of commands in each TCS
+  * @lock:      lock for synchronizing this TCS writes
+  * @req:       requests that are sent from the TCS
++ * @cmd_cache: flattened cache of cmds in sleep/wake TCS
++ * @slots:     indicates which of @cmd_addr are occupied
+  */
+ struct tcs_group {
+ 	struct rsc_drv *drv;
+@@ -40,6 +43,8 @@ struct tcs_group {
+ 	int ncpt;
+ 	spinlock_t lock;
+ 	const struct tcs_request *req[MAX_TCS_PER_TYPE];
++	u32 *cmd_cache;
++	DECLARE_BITMAP(slots, MAX_TCS_SLOTS);
+ };
+ 
+ /**
+@@ -69,6 +74,9 @@ struct rsc_drv {
+ extern struct list_head rsc_drv_list;
+ 
+ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
++int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv,
++			     const struct tcs_request *msg);
++int rpmh_rsc_invalidate(struct rsc_drv *drv);
+ 
+ void rpmh_tx_done(const struct tcs_request *msg, int r);
+ 
+diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+index c0edf3850147..b5894b001ae1 100644
+--- a/drivers/soc/qcom/rpmh-rsc.c
++++ b/drivers/soc/qcom/rpmh-rsc.c
+@@ -113,6 +113,12 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+ 	case RPMH_ACTIVE_ONLY_STATE:
+ 		type = ACTIVE_TCS;
+ 		break;
++	case RPMH_WAKE_ONLY_STATE:
++		type = WAKE_TCS;
++		break;
++	case RPMH_SLEEP_STATE:
++		type = SLEEP_TCS;
++		break;
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+ 	}
+@@ -353,6 +359,109 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
+ }
+ EXPORT_SYMBOL(rpmh_rsc_send_data);
+ 
++static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
++		      int len)
++{
++	int i, j;
 +
-+Resource Power Manager Hardened (RPMH) is the mechanism for communicating with
-+the hardened resource accelerators on Qualcomm SoCs. Requests to the resources
-+can be written to the Trigger Command Set (TCS)  registers and using a (addr,
-+val) pair and triggered. Messages in the TCS are then sent in sequence over an
-+internal bus.
++	/* Check for already cached commands */
++	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
++		if (tcs->cmd_cache[i] != cmd[0].addr)
++			continue;
++		if (i + len >= MAX_TCS_SLOTS)
++			goto seq_err;
++		for (j = 0; j < len; j++) {
++			if (tcs->cmd_cache[i + j] != cmd[j].addr)
++				goto seq_err;
++		}
++		return i;
++	}
 +
-+The hardware block (Direct Resource Voter or DRV) is a part of the h/w entity
-+(Resource State Coordinator a.k.a RSC) that can handle multiple sleep and
-+active/wake resource requests. Multiple such DRVs can exist in a SoC and can
-+be written to from Linux. The structure of each DRV follows the same template
-+with a few variations that are captured by the properties here.
++	return -ENODATA;
 +
-+A TCS may be triggered from Linux or triggered by the F/W after all the CPUs
-+have powered off to facilitate idle power saving. TCS could be classified as -
++seq_err:
++	WARN(1, "Message does not match previous sequence.\n");
++	return -EINVAL;
++}
 +
-+	SLEEP   /* Triggered by F/W */
-+	WAKE    /* Triggered by F/W */
-+	ACTIVE  /* Triggered by Linux */
-+	CONTROL /* Triggered by F/W */
++static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
++		      int *tcs_id, int *cmd_id)
++{
++	int slot, offset;
++	int i = 0;
 +
-+The order in which they are described in the DT, should match the hardware
-+configuration.
++	/* Find if we already have the msg in our TCS */
++	slot = find_match(tcs, msg->cmds, msg->num_cmds);
++	if (slot >= 0)
++		goto copy_data;
 +
-+Requests can be made for the state of a resource, when the subsystem is active
-+or idle. When all subsystems like Modem, GPU, CPU are idle, the resource state
-+will be an aggregate of the sleep votes from each of those subsystems. Clients
-+may request a sleep value for their shared resources in addition to the active
-+mode requests.
++	/* Do over, until we can fit the full payload in a TCS */
++	do {
++		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
++						  i, msg->num_cmds, 0);
++		if (slot == MAX_TCS_SLOTS)
++			return -ENOMEM;
++		i += tcs->ncpt;
++	} while (slot + msg->num_cmds - 1 >= i);
 +
-+Properties:
++copy_data:
++	bitmap_set(tcs->slots, slot, msg->num_cmds);
++	/* Copy the addresses of the resources over to the slots */
++	for (i = 0; i < msg->num_cmds; i++)
++		tcs->cmd_cache[slot + i] = msg->cmds[i].addr;
 +
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Should be "qcom,rpmh-rsc".
++	offset = slot / tcs->ncpt;
++	*tcs_id = offset + tcs->offset;
++	*cmd_id = slot % tcs->ncpt;
 +
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: The first register specifies the base address of the
-+		    DRV(s). The number of DRVs in the dependent on the RSC.
-+	            The tcs-offset specifies the start address of the
-+	            TCS in the DRVs.
++	return 0;
++}
 +
-+- reg-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Maps the register specified in the reg property. Must be
-+	            "drv-0", "drv-1", "drv-2" etc and "tcs-offset". The
++static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
++{
++	struct tcs_group *tcs;
++	int tcs_id = 0, cmd_id = 0;
++	unsigned long flags;
++	int ret;
 +
-+- interrupts:
-+	Usage: required
-+	Value type: <prop-encoded-interrupt>
-+	Definition: The interrupt that trips when a message complete/response
-+	           is received for this DRV from the accelerators.
++	tcs = get_tcs_for_msg(drv, msg);
++	if (IS_ERR(tcs))
++		return PTR_ERR(tcs);
 +
-+- qcom,drv-id:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: The id of the DRV in the RSC block that will be used by
-+		    this controller.
++	spin_lock_irqsave(&tcs->lock, flags);
++	/* find the m-th TCS and the n-th position in the TCS to write to */
++	ret = find_slots(tcs, msg, &tcs_id, &cmd_id);
++	if (!ret)
++		__tcs_buffer_write(drv, tcs_id, cmd_id, msg);
++	spin_unlock_irqrestore(&tcs->lock, flags);
 +
-+- qcom,tcs-config:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: The tuple defining the configuration of TCS.
-+	            Must have 2 cells which describe each TCS type.
-+	            <type number_of_tcs>.
-+	            The order of the TCS must match the hardware
-+	            configuration.
-+	- Cell #1 (TCS Type): TCS types to be specified -
-+	            SLEEP_TCS
-+	            WAKE_TCS
-+	            ACTIVE_TCS
-+	            CONTROL_TCS
-+	- Cell #2 (Number of TCS): <u32>
++	return ret;
++}
 +
-+- label:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: Name for the RSC. The name would be used in trace logs.
++/**
++ * rpmh_rsc_write_ctrl_data: Write request to the controller
++ *
++ * @drv: the controller
++ * @msg: the data to be written to the controller
++ *
++ * There is no response returned for writing the request to the controller.
++ */
++int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv, const struct tcs_request *msg)
++{
++	if (!msg || !msg->cmds || !msg->num_cmds ||
++	    msg->num_cmds > MAX_RPMH_PAYLOAD) {
++		pr_err("Payload error\n");
++		return -EINVAL;
++	}
 +
-+Drivers that want to use the RSC to communicate with RPMH must specify their
-+bindings as child nodes of the RSC controllers they wish to communicate with.
++	/* Data sent to this API will not be sent immediately */
++	if (msg->state == RPMH_ACTIVE_ONLY_STATE)
++		return -EINVAL;
 +
-+Example 1:
++	return tcs_ctrl_write(drv, msg);
++}
++EXPORT_SYMBOL(rpmh_rsc_write_ctrl_data);
 +
-+For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
-+register offsets for DRV2 start at 0D00, the register calculations are like
-+this -
-+DRV0: 0x179C0000
-+DRV2: 0x179C0000 + 0x10000 = 0x179D0000
-+DRV2: 0x179C0000 + 0x10000 * 2 = 0x179E0000
-+TCS-OFFSET: 0xD00
+ static int rpmh_probe_tcs_config(struct platform_device *pdev,
+ 				 struct rsc_drv *drv)
+ {
+@@ -428,6 +537,19 @@ static int rpmh_probe_tcs_config(struct platform_device *pdev,
+ 		tcs->mask = ((1 << tcs->num_tcs) - 1) << st;
+ 		tcs->offset = st;
+ 		st += tcs->num_tcs;
 +
-+	apps_rsc: rsc@179c0000 {
-+		label = "apps_rsc";
-+		compatible = "qcom,rpmh-rsc";
-+		reg = <0x179c0000 0x10000>,
-+		      <0x179d0000 0x10000>,
-+		      <0x179e0000 0x10000>;
-+		reg-names = "drv-0", "drv-1", "drv-2";
-+		interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+		qcom,tcs-offset = <0xd00>;
-+		qcom,drv-id = <2>;
-+		qcom,tcs-config = <SLEEP_TCS   3>,
-+				  <WAKE_TCS    3>,
-+				  <ACTIVE_TCS  2>,
-+				  <CONTROL_TCS 1>;
-+	};
++		/*
++		 * Allocate memory to cache sleep and wake requests to
++		 * avoid reading TCS register memory.
++		 */
++		if (tcs->type == ACTIVE_TCS)
++			continue;
 +
-+Example 2:
-+
-+For a TCS whose RSC base address is 0xAF20000 and is at DRV id of 0, the
-+register offsets for DRV0 start at 01C00, the register calculations are like
-+this -
-+DRV0: 0xAF20000
-+TCS-OFFSET: 0x1C00
-+
-+	disp_rsc: rsc@af20000 {
-+		label = "disp_rsc";
-+		compatible = "qcom,rpmh-rsc";
-+		reg = <0xaf20000 0x10000>;
-+		reg-names = "drv-0";
-+		interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
-+		qcom,tcs-offset = <0x1c00>;
-+		qcom,drv-id = <0>;
-+		qcom,tcs-config = <SLEEP_TCS   1>,
-+				  <WAKE_TCS    1>,
-+				  <ACTIVE_TCS  0>,
-+				  <CONTROL_TCS 0>;
-+	};
++		tcs->cmd_cache = devm_kcalloc(&pdev->dev,
++					      tcs->num_tcs * ncpt, sizeof(u32),
++					      GFP_KERNEL);
++		if (!tcs->cmd_cache)
++			return -ENOMEM;
+ 	}
+ 
+ 	drv->num_tcs = st;
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
