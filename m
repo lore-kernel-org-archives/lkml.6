@@ -1,41 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933722AbeEIGeY (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 02:34:24 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:40235 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752931AbeEIGeX (ORCPT
+        id S933745AbeEIGgT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 02:36:19 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:52708 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933438AbeEIGgS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 02:34:23 -0400
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.222.33
-X-Original-MAILFROM: byungchul.park@lge.com
-Date: Wed, 9 May 2018 15:33:22 +0900
-From: Byungchul Park <byungchul.park@lge.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, rostedt@goodmis.org, tglx@linutronix.de,
-        raistlin@linux.it, linux-kernel@vger.kernel.org, juri.lelli@gmail.com,
-        bristot@redhat.com, kernel-team@lge.com
-Subject: Re: [RESEND PATCH v3 1/2] sched/deadline: Add cpudl_maximum_dl() for
- clean-up
-Message-ID: <20180509063322.GA29160@X58A-UD3R>
-References: <1515392081-32320-1-git-send-email-byungchul.park@lge.com>
- <20180111090716.GV6176@hirez.programming.kicks-ass.net>
+        Wed, 9 May 2018 02:36:18 -0400
+From: Richard Weinberger <richard@nod.at>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Jeff Dike <jdike@addtoit.com>, Nicholas Piggin <npiggin@gmail.com>,
+        uml-devel <user-mode-linux-devel@lists.sourceforge.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [UML] Question about arch/x86/um/vdso/vdso-syms.lds
+Date: Wed, 09 May 2018 08:36:09 +0200
+Message-ID: <1621114.mSmC2JOP5I@blindfold>
+In-Reply-To: <CAK7LNAQREY=32tX7m8dbJ6a_AhXLF_y-n5VLFBBcvXWaRvTmHg@mail.gmail.com>
+References: <CAK7LNAQREY=32tX7m8dbJ6a_AhXLF_y-n5VLFBBcvXWaRvTmHg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180111090716.GV6176@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 11, 2018 at 10:07:16AM +0100, Peter Zijlstra wrote:
-> 
-> 
-> Sorry for the huge delay on this, but I'll have to postpone further.
-> Still busy with meltdown/spectre stuff.
+Masahiro,
 
-Please consider this. Even though it's not a big bug, anyway leading
-mis-behavior in certain situaions.
+Am Mittwoch, 9. Mai 2018, 05:36:18 CEST schrieb Masahiro Yamada:
+> Hi Richard,
+> 
+> 
+> Please let me ask a question about vdso-syms.lds
+> under arch/x86/um/vdso/.
+> 
+> This file exists since:
+> 
+> commit f1c2bb8b9964ed31de988910f8b1cfb586d30091
+> Author: Richard Weinberger <richard@nod.at>
+> Date:   Mon Jul 25 17:12:54 2011 -0700
+> 
+>     um: implement a x86_64 vDSO
+> 
+> 
+> So, I think you are the right person
+> to reach out to.
+> 
+> 
+> Originally, vdso-syms.lds was linked to vmlinux,
+> but it is not since:
+> 
+> commit 827880ec260ba048f95fe646b96a205c394fa0f0
+> Author: Nicholas Piggin <npiggin@gmail.com>
+> Date:   Fri Jun 9 15:24:16 2017 +1000
+> 
+>     x86/um: thin archives build fix
+> 
+> 
+> 
+> Something may be missing from my thought,
+> but I wonder what vdso-syms.lds is used for.
+
+Hmm, I think we can kill it. In 2011 I used the x86 vdso
+code as "template" this is how the file made it into UML.
+AFAICT it was forgotten after all the vdso related refactoring
+in um and x86.
+
+Thanks,
+//richard
