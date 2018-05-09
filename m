@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933667AbeEIBgK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 21:36:10 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:43342 "EHLO
+        id S933672AbeEIBga (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 21:36:30 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:39185 "EHLO
         mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933499AbeEIBeY (ORCPT
+        with ESMTP id S933461AbeEIBeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 21:34:24 -0400
-X-Google-Smtp-Source: AB8JxZquqr++iaZIWhO7LHBSiCznrXhJ60cLvcHEFeLWbBsj479hh2IR80c6Qh5qINYOgFmopCgxlg==
+        Tue, 8 May 2018 21:34:20 -0400
+X-Google-Smtp-Source: AB8JxZr+dYlvkGFoVTT2KQhBLEyS8svDCwG8Dfj2Ol6yJDmJVaK9JVWTIdJa9sG6HLNbA59ktbE6vg==
 From: Kent Overstreet <kent.overstreet@gmail.com>
 To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
         Ingo Molnar <mingo@kernel.org>
 Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 05/10] block: Add bio_copy_data_iter(), zero_fill_bio_iter()
-Date: Tue,  8 May 2018 21:33:53 -0400
-Message-Id: <20180509013358.16399-6-kent.overstreet@gmail.com>
+Subject: [PATCH 03/10] block: Add bioset_init()/bioset_exit()
+Date: Tue,  8 May 2018 21:33:51 -0400
+Message-Id: <20180509013358.16399-4-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180509013358.16399-1-kent.overstreet@gmail.com>
 References: <20180509013358.16399-1-kent.overstreet@gmail.com>
@@ -23,142 +23,163 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add versions that take bvec_iter args instead of using bio->bi_iter - to
-be used by bcachefs.
+Similarly to mempool_init()/mempool_exit(), take a pointer indirection
+out of allocation/freeing by allowing biosets to be embedded in other
+structs.
 
 Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
 ---
- block/bio.c         | 44 ++++++++++++++++++++++++--------------------
- include/linux/bio.h | 18 +++++++++++++++---
- 2 files changed, 39 insertions(+), 23 deletions(-)
+ block/bio.c         | 93 +++++++++++++++++++++++++++++++--------------
+ include/linux/bio.h |  2 +
+ 2 files changed, 67 insertions(+), 28 deletions(-)
 
 diff --git a/block/bio.c b/block/bio.c
-index b7cdad6fc4..d7bd765e9e 100644
+index 360e9bcea5..980befd919 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -530,20 +530,20 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
+@@ -1856,21 +1856,83 @@ int biovec_init_pool(mempool_t *pool, int pool_entries)
+ 	return mempool_init_slab_pool(pool, pool_entries, bp->slab);
  }
- EXPORT_SYMBOL(bio_alloc_bioset);
  
--void zero_fill_bio(struct bio *bio)
-+void zero_fill_bio_iter(struct bio *bio, struct bvec_iter start)
- {
- 	unsigned long flags;
- 	struct bio_vec bv;
- 	struct bvec_iter iter;
- 
--	bio_for_each_segment(bv, bio, iter) {
-+	__bio_for_each_segment(bv, bio, iter, start) {
- 		char *data = bvec_kmap_irq(&bv, &flags);
- 		memset(data, 0, bv.bv_len);
- 		flush_dcache_page(bv.bv_page);
- 		bvec_kunmap_irq(data, &flags);
- 	}
- }
--EXPORT_SYMBOL(zero_fill_bio);
-+EXPORT_SYMBOL(zero_fill_bio_iter);
- 
- /**
-  * bio_put - release a reference to a bio
-@@ -971,28 +971,13 @@ void bio_advance(struct bio *bio, unsigned bytes)
- }
- EXPORT_SYMBOL(bio_advance);
- 
--/**
-- * bio_copy_data - copy contents of data buffers from one chain of bios to
-- * another
-- * @src: source bio list
-- * @dst: destination bio list
-- *
-- * If @src and @dst are single bios, bi_next must be NULL - otherwise, treats
-- * @src and @dst as linked lists of bios.
-- *
-- * Stops when it reaches the end of either @src or @dst - that is, copies
-- * min(src->bi_size, dst->bi_size) bytes (or the equivalent for lists of bios).
-- */
--void bio_copy_data(struct bio *dst, struct bio *src)
-+void bio_copy_data_iter(struct bio *dst, struct bvec_iter dst_iter,
-+			struct bio *src, struct bvec_iter src_iter)
- {
--	struct bvec_iter src_iter, dst_iter;
- 	struct bio_vec src_bv, dst_bv;
- 	void *src_p, *dst_p;
- 	unsigned bytes;
- 
--	src_iter = src->bi_iter;
--	dst_iter = dst->bi_iter;
--
- 	while (1) {
- 		if (!src_iter.bi_size) {
- 			src = src->bi_next;
-@@ -1029,6 +1014,25 @@ void bio_copy_data(struct bio *dst, struct bio *src)
- 		bio_advance_iter(dst, &dst_iter, bytes);
- 	}
- }
-+EXPORT_SYMBOL(bio_copy_data_iter);
-+
-+/**
-+ * bio_copy_data - copy contents of data buffers from one chain of bios to
-+ * another
-+ * @src: source bio list
-+ * @dst: destination bio list
+-void bioset_free(struct bio_set *bs)
++/*
++ * bioset_exit - exit a bioset initialized with bioset_init()
 + *
-+ * If @src and @dst are single bios, bi_next must be NULL - otherwise, treats
-+ * @src and @dst as linked lists of bios.
-+ *
-+ * Stops when it reaches the end of either @src or @dst - that is, copies
-+ * min(src->bi_size, dst->bi_size) bytes (or the equivalent for lists of bios).
++ * May be called on a zeroed but uninitialized bioset (i.e. allocated with
++ * kzalloc()).
 + */
-+void bio_copy_data(struct bio *dst, struct bio *src)
-+{
-+	bio_copy_data_iter(dst, dst->bi_iter,
-+			   src, src->bi_iter);
-+}
- EXPORT_SYMBOL(bio_copy_data);
++void bioset_exit(struct bio_set *bs)
+ {
+ 	if (bs->rescue_workqueue)
+ 		destroy_workqueue(bs->rescue_workqueue);
++	bs->rescue_workqueue = NULL;
  
- struct bio_map_data {
+ 	mempool_exit(&bs->bio_pool);
+ 	mempool_exit(&bs->bvec_pool);
+ 
+ 	bioset_integrity_free(bs);
+-	bio_put_slab(bs);
++	if (bs->bio_slab)
++		bio_put_slab(bs);
++	bs->bio_slab = NULL;
++}
++EXPORT_SYMBOL(bioset_exit);
+ 
++void bioset_free(struct bio_set *bs)
++{
++	bioset_exit(bs);
+ 	kfree(bs);
+ }
+ EXPORT_SYMBOL(bioset_free);
+ 
++/**
++ * bioset_init - Initialize a bio_set
++ * @pool_size:	Number of bio and bio_vecs to cache in the mempool
++ * @front_pad:	Number of bytes to allocate in front of the returned bio
++ * @flags:	Flags to modify behavior, currently %BIOSET_NEED_BVECS
++ *              and %BIOSET_NEED_RESCUER
++ *
++ * Similar to bioset_create(), but initializes a passed-in bioset instead of
++ * separately allocating it.
++ */
++int bioset_init(struct bio_set *bs,
++		unsigned int pool_size,
++		unsigned int front_pad,
++		int flags)
++{
++	unsigned int back_pad = BIO_INLINE_VECS * sizeof(struct bio_vec);
++
++	bs->front_pad = front_pad;
++
++	spin_lock_init(&bs->rescue_lock);
++	bio_list_init(&bs->rescue_list);
++	INIT_WORK(&bs->rescue_work, bio_alloc_rescue);
++
++	bs->bio_slab = bio_find_or_create_slab(front_pad + back_pad);
++	if (!bs->bio_slab)
++		return -ENOMEM;
++
++	if (mempool_init_slab_pool(&bs->bio_pool, pool_size, bs->bio_slab))
++		goto bad;
++
++	if ((flags & BIOSET_NEED_BVECS) &&
++	    biovec_init_pool(&bs->bvec_pool, pool_size))
++		goto bad;
++
++	if (!(flags & BIOSET_NEED_RESCUER))
++		return 0;
++
++	bs->rescue_workqueue = alloc_workqueue("bioset", WQ_MEM_RECLAIM, 0);
++	if (!bs->rescue_workqueue)
++		goto bad;
++
++	return 0;
++bad:
++	bioset_exit(bs);
++	return -ENOMEM;
++}
++EXPORT_SYMBOL(bioset_init);
++
+ /**
+  * bioset_create  - Create a bio_set
+  * @pool_size:	Number of bio and bio_vecs to cache in the mempool
+@@ -1895,43 +1957,18 @@ struct bio_set *bioset_create(unsigned int pool_size,
+ 			      unsigned int front_pad,
+ 			      int flags)
+ {
+-	unsigned int back_pad = BIO_INLINE_VECS * sizeof(struct bio_vec);
+ 	struct bio_set *bs;
+ 
+ 	bs = kzalloc(sizeof(*bs), GFP_KERNEL);
+ 	if (!bs)
+ 		return NULL;
+ 
+-	bs->front_pad = front_pad;
+-
+-	spin_lock_init(&bs->rescue_lock);
+-	bio_list_init(&bs->rescue_list);
+-	INIT_WORK(&bs->rescue_work, bio_alloc_rescue);
+-
+-	bs->bio_slab = bio_find_or_create_slab(front_pad + back_pad);
+-	if (!bs->bio_slab) {
++	if (bioset_init(bs, pool_size, front_pad, flags)) {
+ 		kfree(bs);
+ 		return NULL;
+ 	}
+ 
+-	if (mempool_init_slab_pool(&bs->bio_pool, pool_size, bs->bio_slab))
+-		goto bad;
+-
+-	if ((flags & BIOSET_NEED_BVECS) &&
+-	    biovec_init_pool(&bs->bvec_pool, pool_size))
+-		goto bad;
+-
+-	if (!(flags & BIOSET_NEED_RESCUER))
+-		return bs;
+-
+-	bs->rescue_workqueue = alloc_workqueue("bioset", WQ_MEM_RECLAIM, 0);
+-	if (!bs->rescue_workqueue)
+-		goto bad;
+-
+ 	return bs;
+-bad:
+-	bioset_free(bs);
+-	return NULL;
+ }
+ EXPORT_SYMBOL(bioset_create);
+ 
 diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 91b02520e2..5a6ee955a8 100644
+index 720f7261d0..fa3cf94a50 100644
 --- a/include/linux/bio.h
 +++ b/include/linux/bio.h
-@@ -67,8 +67,12 @@
- 
- #define bio_multiple_segments(bio)				\
- 	((bio)->bi_iter.bi_size != bio_iovec(bio).bv_len)
--#define bio_sectors(bio)	((bio)->bi_iter.bi_size >> 9)
--#define bio_end_sector(bio)	((bio)->bi_iter.bi_sector + bio_sectors((bio)))
-+
-+#define bvec_iter_sectors(iter)	((iter).bi_size >> 9)
-+#define bvec_iter_end_sector(iter) ((iter).bi_sector + bvec_iter_sectors((iter)))
-+
-+#define bio_sectors(bio)	bvec_iter_sectors((bio)->bi_iter)
-+#define bio_end_sector(bio)	bvec_iter_end_sector((bio)->bi_iter)
- 
- /*
-  * Return the data direction, READ or WRITE.
-@@ -501,6 +505,8 @@ static inline void bio_flush_dcache_pages(struct bio *bi)
+@@ -406,6 +406,8 @@ static inline struct bio *bio_next_split(struct bio *bio, int sectors,
+ 	return bio_split(bio, sectors, gfp, bs);
  }
- #endif
  
-+extern void bio_copy_data_iter(struct bio *dst, struct bvec_iter dst_iter,
-+			       struct bio *src, struct bvec_iter src_iter);
- extern void bio_copy_data(struct bio *dst, struct bio *src);
- extern void bio_free_pages(struct bio *bio);
- 
-@@ -509,7 +515,13 @@ extern struct bio *bio_copy_user_iov(struct request_queue *,
- 				     struct iov_iter *,
- 				     gfp_t);
- extern int bio_uncopy_user(struct bio *);
--void zero_fill_bio(struct bio *bio);
-+void zero_fill_bio_iter(struct bio *bio, struct bvec_iter iter);
-+
-+static inline void zero_fill_bio(struct bio *bio)
-+{
-+	zero_fill_bio_iter(bio, bio->bi_iter);
-+}
-+
- extern struct bio_vec *bvec_alloc(gfp_t, int, unsigned long *, mempool_t *);
- extern void bvec_free(mempool_t *, struct bio_vec *, unsigned int);
- extern unsigned int bvec_nr_vecs(unsigned short idx);
++extern int bioset_init(struct bio_set *, unsigned int, unsigned int, int flags);
++extern void bioset_exit(struct bio_set *);
+ extern struct bio_set *bioset_create(unsigned int, unsigned int, int flags);
+ enum {
+ 	BIOSET_NEED_BVECS = BIT(0),
 -- 
 2.17.0
