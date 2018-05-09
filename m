@@ -1,97 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965503AbeEIQai (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:30:38 -0400
-Received: from mail-eopbgr670139.outbound.protection.outlook.com ([40.107.67.139]:60364
-        "EHLO CAN01-TO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934914AbeEIQaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:30:35 -0400
-From: "Stephen  Bates" <sbates@raithlin.com>
-To: Jerome Glisse <jglisse@redhat.com>
-CC: =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
-        "Logan Gunthorpe" <logang@deltatee.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "Christoph Hellwig" <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-Thread-Topic: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-Thread-Index: AQHT21soiBVnp6SJuEuLCiH6kBzTLKQk+zIAgACHcYCAAJmxAIAABkiAgAAoBgCAAAW2gIAAA0YAgAAHvYCAAAGOgIAACKoAgACuAYCAAGxLgP//vUwAgABrwID//6HiAA==
-Date: Wed, 9 May 2018 16:30:32 +0000
-Message-ID: <366A8132-B88A-40F7-BDE3-DA542E45FC0C@raithlin.com>
-References: <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
- <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
- <20180508133407.57a46902@w520.home>
- <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
- <20180508141331.7cd737cb@w520.home>
- <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
- <20180508205005.GC15608@redhat.com>
- <7FFB9603-DF9F-4441-82E9-46037CB6C0DE@raithlin.com>
- <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
- <1775CC56-4651-422F-953A-18E024D3717C@raithlin.com>
- <20180509160722.GB4140@redhat.com>
-In-Reply-To: <20180509160722.GB4140@redhat.com>
-Accept-Language: en-CA, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.d.0.180505
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=sbates@raithlin.com;
-x-originating-ip: [70.65.250.31]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;YTOPR0101MB1177;7:eZA0lNJN+UqPq1LfAkfG8H+6TaiGdIKfw3qMvpiD4Uk9fqa6CI0F2zuLjOc+PdVxY9tnphT3FXK8bgd/w3XOruZFDAgzfdL0/PFJ3E5XDA0AvpwyCZIufm5Ewz0NRsL/CzN8UlcDtLReFqREwF861mOdTlM6wl6uEaXIcuJdRZXQQ3QMG+m8Qh4SJa7kkwczHighM1LHjahmonYPJb4z+RlS8NCEv4AnqhrjInHDD9egGpNNUkJeKBM+LdCO9lt4
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(5600026)(2017052603328)(7153060)(7193020);SRVR:YTOPR0101MB1177;
-x-ms-traffictypediagnostic: YTOPR0101MB1177:
-x-microsoft-antispam-prvs: <YTOPR0101MB117710289137767285DF696CAA990@YTOPR0101MB1177.CANPRD01.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(17755550239193);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(2016111802025)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(6043046)(201708071742011);SRVR:YTOPR0101MB1177;BCL:0;PCL:0;RULEID:;SRVR:YTOPR0101MB1177;
-x-forefront-prvs: 0667289FF8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(396003)(346002)(39380400002)(39830400003)(189003)(199004)(66066001)(58126008)(76176011)(99286004)(2900100001)(2906002)(14454004)(2616005)(476003)(316002)(6916009)(26005)(3280700002)(102836004)(186003)(446003)(6486002)(11346002)(97736004)(6246003)(3846002)(6506007)(6116002)(106356001)(105586002)(93886005)(8666007)(5660300001)(8676002)(486006)(81156014)(8936002)(81166006)(229853002)(53936002)(36756003)(6436002)(86362001)(6512007)(478600001)(25786009)(82746002)(54906003)(68736007)(3660700001)(305945005)(4326008)(83716003)(7736002)(5250100002)(33656002)(7416002);DIR:OUT;SFP:1102;SCL:1;SRVR:YTOPR0101MB1177;H:YTOPR0101MB2043.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: kzK4g5t+YlZzuwrKxLQ4+Qkw24OuDMhrsfGCymjwHGTsO9I6iLFdamn4IaV/u5xB8XXqO6BdIfY7nZFHGtoO/jo7n8dOoKYvXuc6WFJaj0+tag+PMgbYeRsQP4Jzep8n/v2DVEpuUS3apO9dRmA1hbuzg5OnZd58V/ykG3UiC34h7Yo6K3oJ+dYk4+qAFJi2
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <38BD6DAD15D12C479FC425A716586BE9@CANPRD01.PROD.OUTLOOK.COM>
+        id S965534AbeEIQbT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:31:19 -0400
+Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:46182 "EHLO
+        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934914AbeEIQbS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 12:31:18 -0400
+Date: Wed, 9 May 2018 17:31:15 +0100
+From: Mel Gorman <mgorman@techsingularity.net>
+To: mingo@kernel.org, peterz@infradead.org
+Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        torvalds@linux-foundation.org, tglx@linutronix.de, hpa@zytor.com,
+        efault@gmx.de, linux-kernel@vger.kernel.org, matt@codeblueprint.co.uk,
+        ggherdovich@suse.cz, mpe@ellerman.id.au
+Subject: [PATCH] Revert "sched/numa: Delay retrying placement for automatic
+ NUMA balance after wake_affine()"
+Message-ID: <20180509163115.6fnnyeg4vdm2ct4v@techsingularity.net>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: d2911c50-e081-44ad-3d03-08d5b5ca2fa2
-X-OriginatorOrg: raithlin.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2911c50-e081-44ad-3d03-08d5b5ca2fa2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2018 16:30:32.9351
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTOPR0101MB1177
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w49GUg64019936
 
-Hi Jerome
+This reverts commit 7347fc87dfe6b7315e74310ee1243dc222c68086.
 
-> Now inside that page table you can point GPU virtual address
-> to use GPU memory or use system memory. Those system memory entry can
-> also be mark as ATS against a given PASID.
-    
-Thanks. This all makes sense. 
+Srikar Dronamra pointed out that while the commit in question did show
+a performance improvement on ppc64, it did so at the cost of disabling
+active CPU migration by automatic NUMA balancing which was not the intent.
+The issue was that a serious flaw in the logic failed to ever active balance
+if SD_WAKE_AFFINE was disabled on scheduler domains. Even when it's enabled,
+the logic is still bizarre and against the original intent.
 
-But do you have examples of this in a kernel driver (if so can you point me too it) or is this all done via user-space? Based on my grepping of the kernel code I see zero EP drivers using in-kernel ATS functionality right now...
+Investigation showed that fixing the patch in either the way he suggested,
+using the correct comparison for jiffies values or introducing a new
+numa_migrate_deferred variable in task_struct all perform similarly to a
+revert with a mix of gains and losses depending on the workload, machine
+and socket count.
 
-Stephen
-    
+The original intent of the commit was to handle a problem whereby
+wake_affine, idle balancing and automatic NUMA balancing disagree on the
+appropriate placement for a task. This was particularly true for cases where
+a single task was a massive waker of tasks but where wake_wide logic did
+not apply.  This was particularly noticeable when a futex (a barrier) woke
+all worker threads and tried pulling the wakees to the waker nodes. In that
+specific case, it could be handled by tuning MPI or openMP appropriately,
+but the behavior is not illogical and was worth attempting to fix. However,
+the approach was wrong. Given that we're at rc4 and a fix is not obvious,
+it's better to play safe, revert this commit and retry later.
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ kernel/sched/fair.c | 57 +----------------------------------------------------
+ 1 file changed, 1 insertion(+), 56 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 54dc31e7ab9b..f43627c6bb3d 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1854,7 +1854,6 @@ static int task_numa_migrate(struct task_struct *p)
+ static void numa_migrate_preferred(struct task_struct *p)
+ {
+ 	unsigned long interval = HZ;
+-	unsigned long numa_migrate_retry;
+ 
+ 	/* This task has no NUMA fault statistics yet */
+ 	if (unlikely(p->numa_preferred_nid == -1 || !p->numa_faults))
+@@ -1862,18 +1861,7 @@ static void numa_migrate_preferred(struct task_struct *p)
+ 
+ 	/* Periodically retry migrating the task to the preferred node */
+ 	interval = min(interval, msecs_to_jiffies(p->numa_scan_period) / 16);
+-	numa_migrate_retry = jiffies + interval;
+-
+-	/*
+-	 * Check that the new retry threshold is after the current one. If
+-	 * the retry is in the future, it implies that wake_affine has
+-	 * temporarily asked NUMA balancing to backoff from placement.
+-	 */
+-	if (numa_migrate_retry > p->numa_migrate_retry)
+-		return;
+-
+-	/* Safe to try placing the task on the preferred node */
+-	p->numa_migrate_retry = numa_migrate_retry;
++	p->numa_migrate_retry = jiffies + interval;
+ 
+ 	/* Success if task is already running on preferred CPU */
+ 	if (task_node(p) == p->numa_preferred_nid)
+@@ -5922,48 +5910,6 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
+ 	return this_eff_load < prev_eff_load ? this_cpu : nr_cpumask_bits;
+ }
+ 
+-#ifdef CONFIG_NUMA_BALANCING
+-static void
+-update_wa_numa_placement(struct task_struct *p, int prev_cpu, int target)
+-{
+-	unsigned long interval;
+-
+-	if (!static_branch_likely(&sched_numa_balancing))
+-		return;
+-
+-	/* If balancing has no preference then continue gathering data */
+-	if (p->numa_preferred_nid == -1)
+-		return;
+-
+-	/*
+-	 * If the wakeup is not affecting locality then it is neutral from
+-	 * the perspective of NUMA balacing so continue gathering data.
+-	 */
+-	if (cpu_to_node(prev_cpu) == cpu_to_node(target))
+-		return;
+-
+-	/*
+-	 * Temporarily prevent NUMA balancing trying to place waker/wakee after
+-	 * wakee has been moved by wake_affine. This will potentially allow
+-	 * related tasks to converge and update their data placement. The
+-	 * 4 * numa_scan_period is to allow the two-pass filter to migrate
+-	 * hot data to the wakers node.
+-	 */
+-	interval = max(sysctl_numa_balancing_scan_delay,
+-			 p->numa_scan_period << 2);
+-	p->numa_migrate_retry = jiffies + msecs_to_jiffies(interval);
+-
+-	interval = max(sysctl_numa_balancing_scan_delay,
+-			 current->numa_scan_period << 2);
+-	current->numa_migrate_retry = jiffies + msecs_to_jiffies(interval);
+-}
+-#else
+-static void
+-update_wa_numa_placement(struct task_struct *p, int prev_cpu, int target)
+-{
+-}
+-#endif
+-
+ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
+ 		       int this_cpu, int prev_cpu, int sync)
+ {
+@@ -5979,7 +5925,6 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
+ 	if (target == nr_cpumask_bits)
+ 		return prev_cpu;
+ 
+-	update_wa_numa_placement(p, prev_cpu, target);
+ 	schedstat_inc(sd->ttwu_move_affine);
+ 	schedstat_inc(p->se.statistics.nr_wakeups_affine);
+ 	return target;
