@@ -1,84 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933339AbeEIAuQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 20:50:16 -0400
-Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:14769 "EHLO
-        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932475AbeEIAuO (ORCPT
+        id S933297AbeEIA4w (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 20:56:52 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39880 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932934AbeEIA4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 20:50:14 -0400
-Date: Wed, 9 May 2018 10:50:11 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: WARNING: bad unlock balance in xfs_iunlock
-Message-ID: <20180509005011.GP23861@dastard>
-References: <f403043cbe8414177d0568e81405@google.com>
- <20180403043854.GL1150@dastard>
- <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
- <CACT4Y+aQZ8KbU1C-sJ2PUKn_788SEKQpYGjoLaRDJrP9vXjs-A@mail.gmail.com>
- <20180501225159.GY23861@dastard>
- <CACT4Y+YZYHG=MyujDdTLxO=cn7Yz34vv6WKVjWr3Jvo1YTk0HA@mail.gmail.com>
+        Tue, 8 May 2018 20:56:50 -0400
+X-Google-Smtp-Source: AB8JxZrKm7K5ZHOFxiDSu/GdLTZTaR92vdQyDGY746MAteRixLZ4l6qg/6ELQjysJ/ttpWWPHpMaZA==
+Date: Wed, 9 May 2018 08:56:41 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, coresight@lists.linaro.org
+Subject: Re: [PATCH 1/2] perf cs-etm: Support unknown_thread in
+ cs_etm_auxtrace
+Message-ID: <20180509005640.GB23540@leoy-ThinkPad-X240s>
+References: <1525360703-26159-1-git-send-email-leo.yan@linaro.org>
+ <CANLsYky4QatoCv_4k1r8eb4Rjugx9g2YZLG1dtHKJy9AsHtCSg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+YZYHG=MyujDdTLxO=cn7Yz34vv6WKVjWr3Jvo1YTk0HA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CANLsYky4QatoCv_4k1r8eb4Rjugx9g2YZLG1dtHKJy9AsHtCSg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 09:56:01AM +0200, Dmitry Vyukov wrote:
-> On Wed, May 2, 2018 at 12:51 AM, Dave Chinner <david@fromorbit.com> wrote:
-> >> >>> Hello,
-> >> >>>
-> >> >>> syzbot hit the following crash on upstream commit
-> >> >>> 86bbbebac1933e6e95e8234c4f7d220c5ddd38bc (Mon Apr 2 18:47:07 2018 +0000)
-> >> >>> Merge branch 'ras-core-for-linus' of
-> >> >>> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> >> >>> syzbot dashboard link:
-> >> >>> https://syzkaller.appspot.com/bug?extid=84a67953651a971809ba
-> >> >>>
-> >> >>> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5719304272084992
-> >> >>> syzkaller reproducer:
-> >> >>> https://syzkaller.appspot.com/x/repro.syz?id=5767783983874048
-> >> >>
-> >> >> What a mess. A hand built, hopelessly broken filesystem image made
-> >> >> up of hex dumps, written into a mmap()d region of memory, then
-> >> >> copied into a tmpfs file and mounted with the loop device.
-> >> >>
-> >> >> Engineers that can debug broken filesystems don't grow on trees.  If
-> >> >> we are to have any hope of understanding what the hell this test is
-> >> >> doing, the bot needs to supply us with a copy of the built
-> >> >> filesystem image the test uses. We need to be able to point forensic
-> >> >> tools at the image to decode all the structures into human readable
-> >> >> format - if we are forced to do that by hand or jump through hoops
-> >> >> to create our own filesystem image than I'm certainly not going to
-> >> >> waste time looking at these reports...
-> >> >
-> >> > Hi Dave,
-> >> >
-> >> > Here is the image:
-> >> > https://drive.google.com/file/d/1jzhGGe5SBJcqfsjxCLHoh4Kazke1oTfC/view
-> >>
-> >> Have anybody looked at the bug and the image yet?
+On Tue, May 08, 2018 at 11:01:30AM -0600, Mathieu Poirier wrote:
+> On 3 May 2018 at 09:18, Leo Yan <leo.yan@linaro.org> wrote:
+> > CoreSight doesn't allocate thread structure for unknown_thread in etm
+> > auxtrace, so unknown_thread is NULL pointer.  If the perf data doesn't
+> > contain valid tid and then cs_etm__mem_access() uses unknown_thread
+> > instead as thread handler, this results in segmentation fault when
+> > thread__find_addr_map() accesses thread handler.
 > >
-> > Yes, I did that a couple of weeks ago. Couldn't reproduce on a TOT
-> > kernel here.
+> > This commit creates new thread data which is used by unknown_thread, so
+> > CoreSight tracing can roll back to use unknown_thread if perf data
+> > doesn't include valid thread info.  This commit also releases thread
+> > data for initialization failure case and for normal auxtrace free flow.
+> >
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > ---
+> >  tools/perf/util/cs-etm.c | 25 +++++++++++++++++++++++--
+> >  1 file changed, 23 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> > index 6533b1a..417302c 100644
+> > --- a/tools/perf/util/cs-etm.c
+> > +++ b/tools/perf/util/cs-etm.c
+> > @@ -239,6 +239,7 @@ static void cs_etm__free(struct perf_session *session)
+> >         for (i = 0; i < aux->num_cpu; i++)
+> >                 zfree(&aux->metadata[i]);
+> >
+> > +       thread__zput(aux->unknown_thread);
+> >         zfree(&aux->metadata);
+> >         zfree(&aux);
+> >  }
+> > @@ -266,6 +267,7 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u64 address,
+> >         if (!thread) {
+> >                 if (cpumode != PERF_RECORD_MISC_KERNEL)
+> >                         return -EINVAL;
+> > +
 > 
-> Do you think it is fixed now? What fixed it? The bug was there.
+> Extra line, please remove.
+> 
+> With this change:
+> 
+> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-We merge fixes for fuzzing issues all the time. IIRC a big batch of
-them from the xfstests fuzzing infrastructure went into 4.17-rc1.
+Thanks for reviewing, Mathieu.  Will spin new patches and send out.
 
-If you want a commit, then do a bisect....
+[...]
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Leo Yan
