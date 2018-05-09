@@ -1,88 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933639AbeEICfa (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 22:35:30 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:35989 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932526AbeEICf1 (ORCPT
+        id S933643AbeEICgu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 22:36:50 -0400
+Received: from exmail.andestech.com ([59.124.169.137]:29487 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932115AbeEICgt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 22:35:27 -0400
-X-Google-Smtp-Source: AB8JxZpDI1PUPZDwjj4dkB4tLjYLPecdcMlhmHwRR+yiHXoRCR4jJsqdaQFcFCZVe7os64Z5wTi3Lg==
-Date: Tue, 8 May 2018 19:37:21 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: WARNING: bad unlock balance in xfs_iunlock
-Message-ID: <20180509023721.GA711@sol.localdomain>
-References: <f403043cbe8414177d0568e81405@google.com>
- <20180403043854.GL1150@dastard>
- <CACT4Y+ZadV0xTqhiGTAHmadAnYaSfPKhUy_TFXMza2o_n8+o9w@mail.gmail.com>
- <CACT4Y+aQZ8KbU1C-sJ2PUKn_788SEKQpYGjoLaRDJrP9vXjs-A@mail.gmail.com>
- <20180501225159.GY23861@dastard>
- <CACT4Y+YZYHG=MyujDdTLxO=cn7Yz34vv6WKVjWr3Jvo1YTk0HA@mail.gmail.com>
- <20180509005011.GP23861@dastard>
+        Tue, 8 May 2018 22:36:49 -0400
+Date: Wed, 9 May 2018 10:36:05 +0800
+From: Alan Kao <alankao@andestech.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+CC: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        Greentime Hu <greentime@andestech.com>, Zong Li <zong@andestech.com>
+Subject: Re: [PATCH] riscv/ftrace: Fix the problem modules cannot find _mcount
+Message-ID: <20180509023605.GB7303@andestech.com>
+References: <1525749717-384-1-git-send-email-alankao@andestech.com>
+ <20180508091142.12b5231a@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180509005011.GP23861@dastard>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180508091142.12b5231a@gandalf.local.home>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.0.1.85]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com w492S5kQ096948
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 10:50:11AM +1000, Dave Chinner wrote:
-> On Tue, May 08, 2018 at 09:56:01AM +0200, Dmitry Vyukov wrote:
-> > On Wed, May 2, 2018 at 12:51 AM, Dave Chinner <david@fromorbit.com> wrote:
-> > >> >>> Hello,
-> > >> >>>
-> > >> >>> syzbot hit the following crash on upstream commit
-> > >> >>> 86bbbebac1933e6e95e8234c4f7d220c5ddd38bc (Mon Apr 2 18:47:07 2018 +0000)
-> > >> >>> Merge branch 'ras-core-for-linus' of
-> > >> >>> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> > >> >>> syzbot dashboard link:
-> > >> >>> https://syzkaller.appspot.com/bug?extid=84a67953651a971809ba
-> > >> >>>
-> > >> >>> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5719304272084992
-> > >> >>> syzkaller reproducer:
-> > >> >>> https://syzkaller.appspot.com/x/repro.syz?id=5767783983874048
-> > >> >>
-> > >> >> What a mess. A hand built, hopelessly broken filesystem image made
-> > >> >> up of hex dumps, written into a mmap()d region of memory, then
-> > >> >> copied into a tmpfs file and mounted with the loop device.
-> > >> >>
-> > >> >> Engineers that can debug broken filesystems don't grow on trees.  If
-> > >> >> we are to have any hope of understanding what the hell this test is
-> > >> >> doing, the bot needs to supply us with a copy of the built
-> > >> >> filesystem image the test uses. We need to be able to point forensic
-> > >> >> tools at the image to decode all the structures into human readable
-> > >> >> format - if we are forced to do that by hand or jump through hoops
-> > >> >> to create our own filesystem image than I'm certainly not going to
-> > >> >> waste time looking at these reports...
-> > >> >
-> > >> > Hi Dave,
-> > >> >
-> > >> > Here is the image:
-> > >> > https://drive.google.com/file/d/1jzhGGe5SBJcqfsjxCLHoh4Kazke1oTfC/view
-> > >>
-> > >> Have anybody looked at the bug and the image yet?
-> > >
-> > > Yes, I did that a couple of weeks ago. Couldn't reproduce on a TOT
-> > > kernel here.
+On Tue, May 08, 2018 at 09:11:42AM -0400, Steven Rostedt wrote:
+> On Tue, 8 May 2018 11:21:57 +0800
+> Alan Kao <alankao@andestech.com> wrote:
+> 
+> > Enabling ftrace and module support at the same time fails the kernel
+> > build process, because modules cannot find the _mcount symbol.  This
+> > patch fixes this issue.
+> 
+> I think you have a much bigger issue.
+>
+
+Yes, we do, but not this one.  Let me state more detail later.
+ 
 > > 
-> > Do you think it is fixed now? What fixed it? The bug was there.
+> > Signed-off-by: Alan Kao <alankao@andestech.com>
+> > Cc: Greentime Hu <greentime@andestech.com>
+> > Cc: Zong Li <zong@andestech.com>
+> > ---
+> >  arch/riscv/kernel/mcount.S | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/riscv/kernel/mcount.S b/arch/riscv/kernel/mcount.S
+> > index ce9bdc57a2a1..5721624886a1 100644
+> > --- a/arch/riscv/kernel/mcount.S
+> > +++ b/arch/riscv/kernel/mcount.S
+> > @@ -126,5 +126,5 @@ do_trace:
+> >  	RESTORE_ABI_STATE
+> >  	ret
+> >  ENDPROC(_mcount)
+> > -EXPORT_SYMBOL(_mcount)
+> >  #endif
+> > +EXPORT_SYMBOL(_mcount)
 > 
-> We merge fixes for fuzzing issues all the time. IIRC a big batch of
-> them from the xfstests fuzzing infrastructure went into 4.17-rc1.
+> How does this work? How do you export _mcount if _mcount isn't even
+> defined?
+
+_mcount is defined.
+
+This EXPORT_SYMBOL and the _mcount body was inside a
+"#ifndef CONFIG_DYNAMIC_FTRACE" section, so if the config has dynamic ftrace
+disabled, _mcount is visible.
+
+For the dynamic ftrace case, there is a code snippet in this file:
+
+> ENTRY(ftrace_stub)
+> #ifdef CONFIG_DYNAMIC_FTRACE         
+>       .global _mcount
+>       .set    _mcount, ftrace_stub
+> #endif
+>        ret 
+> ENDPROC(ftrace_stub)
+
+so the _mcount symbol is visible in the kernel, but not for modules.
+As a result, a module build always fails, because _mcount is neither exported,
+nor aliased to a defined symbol.
+
+That's the simple purpose of this patch:  we just want to eliminate the errors
+during the kernel build process.
+
 > 
-> If you want a commit, then do a bisect....
-> 
+> -- Steve
 
-The fix was commit 8241f7f983b9728:
+Talking about some bigger issues here, there will be twofold.
 
-#syz fix: xfs: don't iunlock the quota ip when quota block
+1. This patch lacks call-site collecting mechanism.
 
-- Eric
+This feature requires a pattern check in recordmcount.pl.  With this,
+section __mcount_loc is properly constructed, and the call-sites will be
+registered during the loading stage.
+
+However, the loading will then fail at the first try of make_nop, due to
+the instruction check.  This is thus the second issue.
+
+
+2. The instruction check for kernel texts is not applicable to module texts.
+
+The check expects a call instruction to _mcount, but here it is a call to
+the .plt section of the module.  After referencing the implementation of arm64,
+I think it would need much more work to have make_nop's and make_call's behavior
+right.
+
+
+Quick summary: This patch ensures that a kernel build will not fail because of
+the _mcount-missing problem.  But ftrace cannot trace loading modules for now
+due to the stated reasons.
+
+Thanks,
+Alan Kao
