@@ -1,89 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934857AbeEILrT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 07:47:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48887 "EHLO mx2.suse.de"
+        id S934742AbeEILpt (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 07:45:49 -0400
+Received: from mga14.intel.com ([192.55.52.115]:26332 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934758AbeEILrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 07:47:16 -0400
-Date: Wed, 9 May 2018 13:47:12 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Huaisheng HS1 Ye <yehs1@lenovo.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
-        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "penguin-kernel@I-love.SAKURA.ne.jp"
-        <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
-        Ocean HY1 He <hehy1@lenovo.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
-Subject: Re: [External] [RFC PATCH v1 3/6] mm, zone_type: create ZONE_NVM and
- fill into GFP_ZONE_TABLE
-Message-ID: <20180509114712.GP32366@dhcp22.suse.cz>
-References: <1525746628-114136-1-git-send-email-yehs1@lenovo.com>
- <1525746628-114136-4-git-send-email-yehs1@lenovo.com>
- <HK2PR03MB1684653383FFEDAE9B41A548929A0@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <ce3a6f37-3b13-0c35-6895-35156c7a290c@infradead.org>
- <HK2PR03MB16847B78265A033C7310DDCB92990@HK2PR03MB1684.apcprd03.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <HK2PR03MB16847B78265A033C7310DDCB92990@HK2PR03MB1684.apcprd03.prod.outlook.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S934376AbeEILpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 07:45:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,381,1520924400";
+   d="scan'208";a="54445963"
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: [PATCH RFC 11/19] perf tools: Synthesize and process mmap events for x86_64 KPTI entry trampolines
+Date: Wed,  9 May 2018 14:43:40 +0300
+Message-Id: <1525866228-30321-12-git-send-email-adrian.hunter@intel.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
+References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 09-05-18 04:22:10, Huaisheng HS1 Ye wrote:
-> 
-> > On 05/07/2018 07:33 PM, Huaisheng HS1 Ye wrote:
-> > > diff --git a/mm/Kconfig b/mm/Kconfig
-> > > index c782e8f..5fe1f63 100644
-> > > --- a/mm/Kconfig
-> > > +++ b/mm/Kconfig
-> > > @@ -687,6 +687,22 @@ config ZONE_DEVICE
-> > >
-> > > +config ZONE_NVM
-> > > +	bool "Manage NVDIMM (pmem) by memory management (EXPERIMENTAL)"
-> > > +	depends on NUMA && X86_64
-> > 
-> > Hi,
-> > I'm curious why this depends on NUMA. Couldn't it be useful in non-NUMA
-> > (i.e., UMA) configs?
-> > 
-> I wrote these patches with two sockets testing platform, and there are two DDRs and two NVDIMMs have been installed to it.
-> So, for every socket it has one DDR and one NVDIMM with it. Here is memory region from memblock, you can get its distribution.
-> 
->  435 [    0.000000] Zone ranges:
->  436 [    0.000000]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
->  437 [    0.000000]   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
->  438 [    0.000000]   Normal   [mem 0x0000000100000000-0x00000046bfffffff]
->  439 [    0.000000]   NVM      [mem 0x0000000440000000-0x00000046bfffffff]
->  440 [    0.000000]   Device   empty
->  441 [    0.000000] Movable zone start for each node
->  442 [    0.000000] Early memory node ranges
->  443 [    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009ffff]
->  444 [    0.000000]   node   0: [mem 0x0000000000100000-0x00000000a69c2fff]
->  445 [    0.000000]   node   0: [mem 0x00000000a7654000-0x00000000a85eefff]
->  446 [    0.000000]   node   0: [mem 0x00000000ab399000-0x00000000af3f6fff]
->  447 [    0.000000]   node   0: [mem 0x00000000af429000-0x00000000af7fffff]
->  448 [    0.000000]   node   0: [mem 0x0000000100000000-0x000000043fffffff]	Normal 0
->  449 [    0.000000]   node   0: [mem 0x0000000440000000-0x000000237fffffff]	NVDIMM 0
->  450 [    0.000000]   node   1: [mem 0x0000002380000000-0x000000277fffffff]	Normal 1
->  451 [    0.000000]   node   1: [mem 0x0000002780000000-0x00000046bfffffff]	NVDIMM 1
-> 
-> If we disable NUMA, there is a result as Normal an NVDIMM zones will be overlapping with each other.
-> Current mm treats all memory regions equally, it divides zones just by size, like 16M for DMA, 4G for DMA32, and others above for Normal.
-> The spanned range of all zones couldn't be overlapped.
+Like the kernel text, the location of x86_64 KPTI entry trampolines must be
+recorded in the perf.data file. Like the kernel, synthesize a mmap event
+for that, and add processing for it.
 
-No, this is not correct. Zones can overlap.
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+---
+ tools/perf/util/event.c   | 90 +++++++++++++++++++++++++++++++++++++++++++++--
+ tools/perf/util/machine.c | 28 +++++++++++++++
+ 2 files changed, 115 insertions(+), 3 deletions(-)
+
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index aafa9878465f..d810ff8488b1 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -888,9 +888,80 @@ int kallsyms__get_function_start(const char *kallsyms_filename,
+ 	return 0;
+ }
+ 
+-int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
+-				       perf_event__handler_t process,
+-				       struct machine *machine)
++#if defined(__x86_64__)
++
++static int perf_event__synthesize_special_kmaps(struct perf_tool *tool,
++						perf_event__handler_t process,
++						struct machine *machine)
++{
++	int rc = 0;
++	struct map *pos;
++	struct map_groups *kmaps = &machine->kmaps;
++	struct maps *maps = &kmaps->maps;
++	union perf_event *event = zalloc(sizeof(event->mmap) +
++					 machine->id_hdr_size);
++
++	if (!event) {
++		pr_debug("Not enough memory synthesizing mmap event "
++			 "for special kernel maps\n");
++		return -1;
++	}
++
++	for (pos = maps__first(maps); pos; pos = map__next(pos)) {
++		struct kmap *kmap;
++		size_t size;
++
++		if (!__map__is_special_kernel_map(pos))
++			continue;
++
++		kmap = map__kmap(pos);
++
++		size = sizeof(event->mmap) - sizeof(event->mmap.filename) +
++		       PERF_ALIGN(strlen(kmap->name) + 1, sizeof(u64)) +
++		       machine->id_hdr_size;
++
++		memset(event, 0, size);
++
++		event->mmap.header.type = PERF_RECORD_MMAP;
++
++		/*
++		 * kernel uses 0 for user space maps, see kernel/perf_event.c
++		 * __perf_event_mmap
++		 */
++		if (machine__is_host(machine))
++			event->header.misc = PERF_RECORD_MISC_KERNEL;
++		else
++			event->header.misc = PERF_RECORD_MISC_GUEST_KERNEL;
++
++		event->mmap.header.size = size;
++
++		event->mmap.start = pos->start;
++		event->mmap.len   = pos->end - pos->start;
++		event->mmap.pgoff = pos->pgoff;
++		event->mmap.pid   = machine->pid;
++
++		strlcpy(event->mmap.filename, kmap->name, PATH_MAX);
++
++		if (perf_tool__process_synth_event(tool, event, machine,
++						   process) != 0) {
++			rc = -1;
++			break;
++		}
++	}
++
++	free(event);
++	return rc;
++}
++
++#else
++
++#define perf_event__synthesize_special_kmaps(t, p, m) 0
++
++#endif
++
++static int __perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
++						perf_event__handler_t process,
++						struct machine *machine)
+ {
+ 	size_t size;
+ 	struct map *map = machine__kernel_map(machine);
+@@ -943,6 +1014,19 @@ int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
+ 	return err;
+ }
+ 
++int perf_event__synthesize_kernel_mmap(struct perf_tool *tool,
++				       perf_event__handler_t process,
++				       struct machine *machine)
++{
++	int err;
++
++	err = __perf_event__synthesize_kernel_mmap(tool, process, machine);
++	if (err < 0)
++		return err;
++
++	return perf_event__synthesize_special_kmaps(tool, process, machine);
++}
++
+ int perf_event__synthesize_thread_map2(struct perf_tool *tool,
+ 				      struct thread_map *threads,
+ 				      perf_event__handler_t process,
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index aa6bb493fcfa..aa938f92d6d1 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1493,6 +1493,32 @@ static bool machine__uses_kcore(struct machine *machine)
+ 	return false;
+ }
+ 
++static bool perf_event__is_special_kernel_mmap(struct machine *machine,
++					       union perf_event *event)
++{
++	return machine__is(machine, "x86_64") &&
++	       is_entry_trampoline(event->mmap.filename);
++}
++
++static int machine__process_special_kernel_map(struct machine *machine,
++					       union perf_event *event)
++{
++	struct map *kernel_map = machine__kernel_map(machine);
++	struct dso *kernel = kernel_map ? kernel_map->dso : NULL;
++	struct special_kernal_map sm = {
++		.start = event->mmap.start,
++		.end   = event->mmap.start + event->mmap.len,
++		.pgoff = event->mmap.pgoff,
++	};
++
++	if (kernel == NULL)
++		return -1;
++
++	strlcpy(sm.name, event->mmap.filename, KMAP_NAME_LEN);
++
++	return machine__create_special_kernel_map(machine, kernel, &sm);
++}
++
+ static int machine__process_kernel_mmap_event(struct machine *machine,
+ 					      union perf_event *event)
+ {
+@@ -1596,6 +1622,8 @@ static int machine__process_kernel_mmap_event(struct machine *machine,
+ 			 */
+ 			dso__load(kernel, machine__kernel_map(machine));
+ 		}
++	} else if (perf_event__is_special_kernel_mmap(machine, event)) {
++		return machine__process_special_kernel_map(machine, event);
+ 	}
+ 	return 0;
+ out_problem:
 -- 
-Michal Hocko
-SUSE Labs
+1.9.1
