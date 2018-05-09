@@ -1,51 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933983AbeEIIRv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:17:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41120 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753176AbeEIIRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:17:48 -0400
-From: Mohammed Gamal <mgamal@redhat.com>
-To: netdev@vger.kernel.org, sthemmin@microsoft.com
-Cc: kys@microsoft.com, haiyangz@microsoft.com,
-        devel@linuxdriverproject.org, vkuznets@redhat.com,
-        linux-kernel@vger.kernel.org, Mohammed Gamal <mgamal@redhat.com>
-Subject: [PATCH v2] hv_netvsc: Fix net device attach on older Windows hosts
-Date: Wed,  9 May 2018 10:17:34 +0200
-Message-Id: <1525853854-8277-1-git-send-email-mgamal@redhat.com>
+        id S933994AbeEIISM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:18:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60591 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755614AbeEIISJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 04:18:09 -0400
+Date: Wed, 9 May 2018 10:18:07 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Shakeel Butt <shakeelb@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Junaid Shahid <junaids@google.com>, Junaid Shahid <juanids@google.com>
+Subject: Re: [PATCH] mm: memcontrol: drain memcg stock on force_empty
+Message-ID: <20180509081807.GG32366@dhcp22.suse.cz>
+References: <20180507201651.165879-1-shakeelb@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507201651.165879-1-shakeelb@google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On older windows hosts the net_device instance is returned to
-the caller of rndis_filter_device_add() without having the presence
-bit set first. This would cause any subsequent calls to network device
-operations (e.g. MTU change, channel change) to fail after the device
-is detached once, returning -ENODEV.
+On Mon 07-05-18 13:16:51, Shakeel Butt wrote:
+> From: Junaid Shahid <junaids@google.com>
+> 
+> The per-cpu memcg stock can retain a charge of upto 32 pages. On a
+> machine with large number of cpus, this can amount to a decent amount
+> of memory. Additionally force_empty interface might be triggering
+> unneeded memcg reclaims.
+> 
+> Signed-off-by: Junaid Shahid <juanids@google.com>
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
 
-Instead of returning the device instabce, we take the exit path where
-we call netif_device_attach()
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-Fixes: 7b2ee50c0cd5 ("hv_netvsc: common detach logic")
+> ---
+>  mm/memcontrol.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index e2d33a37f971..2c3c69524b49 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2841,6 +2841,9 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
+>  
+>  	/* we call try-to-free pages for make this cgroup empty */
+>  	lru_add_drain_all();
+> +
+> +	drain_all_stock(memcg);
+> +
+>  	/* try to free all pages in this cgroup */
+>  	while (nr_retries && page_counter_read(&memcg->memory)) {
+>  		int progress;
+> -- 
+> 2.17.0.441.gb46fe60e1d-goog
 
-Signed-off-by: Mohammed Gamal <mgamal@redhat.com>
----
- drivers/net/hyperv/rndis_filter.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/hyperv/rndis_filter.c b/drivers/net/hyperv/rndis_filter.c
-index 6b127be..e7ca5b5 100644
---- a/drivers/net/hyperv/rndis_filter.c
-+++ b/drivers/net/hyperv/rndis_filter.c
-@@ -1288,7 +1288,7 @@ struct netvsc_device *rndis_filter_device_add(struct hv_device *dev,
- 		   rndis_device->link_state ? "down" : "up");
- 
- 	if (net_device->nvsp_version < NVSP_PROTOCOL_VERSION_5)
--		return net_device;
-+		goto out;
- 
- 	rndis_filter_query_link_speed(rndis_device, net_device);
- 
 -- 
-1.8.3.1
+Michal Hocko
+SUSE Labs
