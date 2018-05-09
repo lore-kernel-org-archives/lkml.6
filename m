@@ -1,79 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756020AbeEIGE4 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 02:04:56 -0400
-Received: from ozlabs.org ([203.11.71.1]:39025 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753147AbeEIGEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 02:04:54 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 9 May 2018 16:04:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Rob Herring <robherring2@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>, linux-kbuild@vger.kernel.org
-Subject: linux-next: build warning after merge of the devicetree tree
-Message-ID: <20180509160449.68b865a2@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IL3STJjhnP56oio3HG38gOG"; protocol="application/pgp-signature"
+        id S1756064AbeEIGMg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 02:12:36 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:36767 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753147AbeEIGMe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 02:12:34 -0400
+X-Google-Smtp-Source: AB8JxZqzWoz95NYkL9AD1luFdabee8qD0SipCTTsVxjYocMNZrZ5j3CRE21kbt1QBkfwswgQnwtvHw==
+From: Jongseok Kim <ks77sj@gmail.com>
+To: Vitaly Wool <vitalywool@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Jongseok Kim <ks77sj@gmail.com>
+Subject: Re: [PATCH v2] z3fold: fix reclaim lock-ups
+Date: Wed,  9 May 2018 15:11:59 +0900
+Message-Id: <1525846319-6179-1-git-send-email-ks77sj@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <CAMJBoFNdk3fRMmcBe46TFgk9=Q1T6eJEubZ86oASicLvEzj3ng@mail.gmail.com>
+References: <CAMJBoFNdk3fRMmcBe46TFgk9=Q1T6eJEubZ86oASicLvEzj3ng@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/IL3STJjhnP56oio3HG38gOG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+> Hi Jongseok,
 
-Hi Rob,
+> I don't see how that is relevant, we don't use zhdr variable if the page is
+headless anyway.
 
-After merging the devicetree tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+> Thanks, that is indeed a valid fix, but given the operation of eviction in
+> zswap case, I'd prefer to release the page here and not in _free().
+> Basically we should bail very early from z3fold_free() if the page is
+> headless and UNDER_RECLAIM and keep the code intact in
+> z3fold_reclaim_page().
 
-drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb: Warning (graph_endpoin=
-t): /fragment@1/__overlay__/port@3/endpoint: graph connection to node '/fra=
-gment@0/__overlay__/lvds@feb90000/ports/port@0/endpoint' is not bidirection=
-al
-drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb: Warning (graph_endpoin=
-t): /fragment@1/__overlay__/port@1/endpoint: graph connection to node '/fra=
-gment@0/__overlay__/lvds@feb90000/ports/port@0/endpoint' is not bidirection=
-al
-drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb: Warning (graph_endpoin=
-t): /fragment@1/__overlay__/port@2/endpoint: graph connection to node '/fra=
-gment@0/__overlay__/lvds@feb94000/ports/port@0/endpoint' is not bidirection=
-al
+> ~Vitaly
 
-and over 2000 more :-(
+Hi, Vitaly. Thanks for your reply.
+Then I think the below code is your preferred code.
 
-Presumably introduced by commit
+And explaining about zhdr, this code don't mean that zhdr pointer is 
+used as z3fold_header. Because it's headless like you said. 
+Even though it is headless, however, 'zhdr', the pointer of z3fold_header,
+is still used in _alloc and encode_handle as an address of a headless page.
 
-  0698fc8b542f ("scripts/dtc: Update to upstream version v1.4.6-21-g84e414b=
-0b5bc")
+So in pervious code, if eviction fails (it's not headless) and the selected page
+in the next try loop is headless, then 'zhdr' will remain the value of the
+previously failed page, which will cause a not headless page to be encoded
+to headless. This is why a page that is not headless is encoded as HEADLESS 
+in _map, which causes 'z3fold: unknown buddy id 0' warning.
 
-but not suppressed by commit
+And I have a one question. In z3fold_reclaim_page, is it because of 
+performance that you added non-headless pages only to lru list
+except buddy list?
 
-  b63caea4b5b5 ("kbuild: disable new dtc graph and unit-address warnings")
+~Jongseok
 
---=20
-Cheers,
-Stephen Rothwell
+---
+ mm/z3fold.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---Sig_/IL3STJjhnP56oio3HG38gOG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlryj4EACgkQAVBC80lX
-0GyrFgf+J8ahqnp2Qy+xapk3K59kiIjZZn/KuDeSFU1x3Ael0CaBCbjYajMXn2uz
-J7LdRmbpOFfS8oF7LhWyUeOBDL3enDw6NtGw9OWlML8j0z2zzAhIAzntjinKP7e5
-aooI/yYAfh4W3ONPUHXPxBSobOA0U9WxCVWouilnxWHd5CL2asn0F9YMVWiFuKN0
-PFi0JrwQgET/ErQrCESZWKabxTvdofLtInZN79tpQXzlaHefXebsS1B2nnQ7zbkw
-N3AuDP3WJNMF++jePraBKAYZuH00M00yk6secT6NHzUZ3nOxeHpAhbZfbaBwVaxr
-XgMsm1qQkinD0A6y++0QZQYUnl1SUQ==
-=OITf
------END PGP SIGNATURE-----
-
---Sig_/IL3STJjhnP56oio3HG38gOG--
+diff --git a/mm/z3fold.c b/mm/z3fold.c
+index d5b3f49..5f659ab 100644
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -746,6 +746,9 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
+ 	}
+ 
+ 	if (bud == HEADLESS) {
++		if (test_bit(UNDER_RECLAIM, &page->private))
++			return;
++
+ 		spin_lock(&pool->lock);
+ 		list_del(&page->lru);
+ 		spin_unlock(&pool->lock);
+@@ -836,11 +839,11 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+ 		}
+ 		list_for_each_prev(pos, &pool->lru) {
+ 			page = list_entry(pos, struct page, lru);
++			zhdr = page_address(page);
+ 			if (test_bit(PAGE_HEADLESS, &page->private))
+ 				/* candidate found */
+ 				break;
+ 
+-			zhdr = page_address(page);
+ 			if (!z3fold_page_trylock(zhdr))
+ 				continue; /* can't evict at this point */
+ 			kref_get(&zhdr->refcount);
+@@ -898,6 +901,7 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+ 		if (test_bit(PAGE_HEADLESS, &page->private)) {
+ 			if (ret == 0) {
+ 				free_z3fold_page(page);
++				atomic64_dec(&pool->pages_nr);
+ 				return 0;
+ 			}
+ 			spin_lock(&pool->lock);
+-- 
+2.7.4
