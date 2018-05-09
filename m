@@ -1,119 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965161AbeEIPvz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 11:51:55 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:40351 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935402AbeEIPvy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 11:51:54 -0400
-X-Google-Smtp-Source: AB8JxZo1Zss5V6X/LtKxPEyGsd+XuWv6WTqYSLb8sqe1yM+m++8DYXLCOAoRhm1D3GlX0pTpx/9oQw==
-Date: Wed, 9 May 2018 09:51:50 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Leo Yan <leo.yan@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        coresight@lists.linaro.org
-Subject: Re: [PATCH v2 1/2] perf cs-etm: Support unknown_thread in
- cs_etm_auxtrace
-Message-ID: <20180509155150.GC25559@xps15>
-References: <1525839312-20544-1-git-send-email-leo.yan@linaro.org>
+        id S965232AbeEIPwI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 11:52:08 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52014 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964984AbeEIPwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 11:52:06 -0400
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+To: Alex Williamson <alex.williamson@redhat.com>,
+        Stephen Bates <sbates@raithlin.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180423233046.21476-1-logang@deltatee.com>
+ <20180423233046.21476-5-logang@deltatee.com>
+ <CAPcyv4g+5N_n03J-VhmJfrr60Sqk95ZapLKBkwSsGvV4nQ+ZRw@mail.gmail.com>
+ <64C231F5-DE36-415F-B308-3A423B0BBACB@raithlin.com>
+ <15433946-f7f5-f610-4e80-380fb59920e5@redhat.com>
+ <3C9FB262-A93C-4C8F-B1E0-85C6D6F78BC2@raithlin.com>
+ <c5f30ced-7bbf-9420-db1a-72519fc78b3a@redhat.com>
+ <20180508180157.7c7b393f@w520.home>
+ <B5BFCF39-6BB4-4E45-B805-C8FCC8B79EF3@raithlin.com>
+ <20180509084445.626d2732@w520.home>
+From: Don Dutile <ddutile@redhat.com>
+Message-ID: <1c5b4a06-25bc-457a-8569-a5ae5eaa6e00@redhat.com>
+Date: Wed, 9 May 2018 11:52:04 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525839312-20544-1-git-send-email-leo.yan@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180509084445.626d2732@w520.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 12:15:11PM +0800, Leo Yan wrote:
-> CoreSight doesn't allocate thread structure for unknown_thread in etm
-> auxtrace, so unknown_thread is NULL pointer.  If the perf data doesn't
-> contain valid tid and then cs_etm__mem_access() uses unknown_thread
-> instead as thread handler, this results in segmentation fault when
-> thread__find_addr_map() accesses thread handler.
+On 05/09/2018 10:44 AM, Alex Williamson wrote:
+> On Wed, 9 May 2018 12:35:56 +0000
+> "Stephen  Bates" <sbates@raithlin.com> wrote:
 > 
-> This commit creates new thread data which is used by unknown_thread, so
-> CoreSight tracing can roll back to use unknown_thread if perf data
-> doesn't include valid thread info.  This commit also releases thread
-> data for initialization failure case and for normal auxtrace free flow.
-
-Hi Leo,
-
-Arnaldo maintains the perf tools and he receives dozens of patches every day.
-If his name is not the first one to appear on the "To:" list, it is unlikely
-that his email filters will catch your patches.
-
-Mathieu
-
+>> Hi Alex and Don
+>>
+>>>     Correct, the VM has no concept of the host's IOMMU groups, only
+>>> the hypervisor knows about the groups,
+>>
+>> But as I understand it these groups are usually passed through to VMs
+>> on a pre-group basis by the hypervisor? So IOMMU group 1 might be
+>> passed to VM A and IOMMU group 2 passed to VM B. So I agree the VM is
+>> not aware of IOMMU groupings but it is impacted by them in the sense
+>> that if the groupings change the PCI topology presented to the VM
+>> needs to change too.
 > 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->  tools/perf/util/cs-etm.c | 24 ++++++++++++++++++++++--
->  1 file changed, 22 insertions(+), 2 deletions(-)
+> Hypervisors don't currently expose any topology based on the grouping,
+> the only case where such a concept even makes sense is when a vIOMMU is
+> present as devices within the same group cannot have separate address
+> spaces.  Our options for exposing such information is also limited, our
+> only real option would seem to be placing devices within the same group
+> together on a conventional PCI bus to denote the address space
+> granularity.  Currently we strongly recommend singleton groups for this
+> case and leave any additional configuration constraints to the admin.
 > 
-> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> index 6533b1a..69f21de 100644
-> --- a/tools/perf/util/cs-etm.c
-> +++ b/tools/perf/util/cs-etm.c
-> @@ -239,6 +239,7 @@ static void cs_etm__free(struct perf_session *session)
->  	for (i = 0; i < aux->num_cpu; i++)
->  		zfree(&aux->metadata[i]);
->  
-> +	thread__zput(aux->unknown_thread);
->  	zfree(&aux->metadata);
->  	zfree(&aux);
->  }
-> @@ -1355,6 +1356,23 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
->  	etm->auxtrace.free = cs_etm__free;
->  	session->auxtrace = &etm->auxtrace;
->  
-> +	etm->unknown_thread = thread__new(999999999, 999999999);
-> +	if (!etm->unknown_thread)
-> +		goto err_free_queues;
-> +
-> +	/*
-> +	 * Initialize list node so that at thread__zput() we can avoid
-> +	 * segmentation fault at list_del_init().
-> +	 */
-> +	INIT_LIST_HEAD(&etm->unknown_thread->node);
-> +
-> +	err = thread__set_comm(etm->unknown_thread, "unknown", 0);
-> +	if (err)
-> +		goto err_delete_thread;
-> +
-> +	if (thread__init_map_groups(etm->unknown_thread, etm->machine))
-> +		goto err_delete_thread;
-> +
->  	if (dump_trace) {
->  		cs_etm__print_auxtrace_info(auxtrace_info->priv, num_cpu);
->  		return 0;
-> @@ -1369,16 +1387,18 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
->  
->  	err = cs_etm__synth_events(etm, session);
->  	if (err)
-> -		goto err_free_queues;
-> +		goto err_delete_thread;
->  
->  	err = auxtrace_queues__process_index(&etm->queues, session);
->  	if (err)
-> -		goto err_free_queues;
-> +		goto err_delete_thread;
->  
->  	etm->data_queued = etm->queues.populated;
->  
->  	return 0;
->  
-> +err_delete_thread:
-> +	thread__zput(etm->unknown_thread);
->  err_free_queues:
->  	auxtrace_queues__free(&etm->queues);
->  	session->auxtrace = NULL;
-> -- 
-> 2.7.4
+> The case you note of a group passed to VM A and another passed to VM B
+> is exactly an example of why any sort of dynamic routing change needs to
+> have the groups fully released, such as via hot-unplug.  For instance,
+> a routing change at a shared node above groups 1 & 2 could result in
+> the merging of these groups and there is absolutely no way to handle
+> that with portions of the group being owned by two separate VMs after
+> the merge.  Thanks,
 > 
+> Alex
+> 
+The above is why I stated the host/HV has to do p2p setup *before* device-assignment
+is done.
+Now, that could be done at boot time (with a mod.conf-like config in host/HV, before VM startup)
+as well.
+Dynamically, if such a feature is needed, requires a hot-unplug/plug cycling as Alex states.
