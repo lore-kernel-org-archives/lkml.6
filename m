@@ -1,87 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934561AbeEIJCa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 05:02:30 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:37792 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934007AbeEIJC1 (ORCPT
+        id S934586AbeEIJDE (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 05:03:04 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:40046 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934569AbeEIJDB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 05:02:27 -0400
-Date: Wed, 9 May 2018 10:02:13 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 2/6] ARM: imx6: register pm_power_off handler if
- "fsl,pmic-stby-poweroff" is set
-Message-ID: <20180509090213.GQ16141@n2100.armlinux.org.uk>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180305102524.5905-3-o.rempel@pengutronix.de>
- <20180508124033.GL16141@n2100.armlinux.org.uk>
- <20180509050628.csbusplowpvmmiwa@pengutronix.de>
+        Wed, 9 May 2018 05:03:01 -0400
+X-Google-Smtp-Source: AB8JxZpY77scpRJ1zLh9GE7owvHNuVMlGe/2sLFfgrlYj+qNgUFrzNo+waC8Le3RBZe0lPDf2wcqzg==
+Date: Wed, 9 May 2018 02:02:59 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [RFC PATCH] sched/cpufreq/schedutil: handling urgent frequency
+ requests
+Message-ID: <20180509090259.GD76874@joelaf.mtv.corp.google.com>
+References: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
+ <20180508065435.bcht6dyb3rpp6gk5@vireshk-i7>
+ <20180509045425.GA158882@joelaf.mtv.corp.google.com>
+ <20180509064530.GA1681@localhost.localdomain>
+ <20180509080644.GA76874@joelaf.mtv.corp.google.com>
+ <CAJZ5v0iFZ5+6BQCism-o8bnOxD8KveueJ5CT58F9uH_7_pYOXQ@mail.gmail.com>
+ <20180509084001.bghnwpv3a3xnuxce@vireshk-i7>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180509050628.csbusplowpvmmiwa@pengutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180509084001.bghnwpv3a3xnuxce@vireshk-i7>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 07:06:28AM +0200, Oleksij Rempel wrote:
-> On Tue, May 08, 2018 at 01:40:33PM +0100, Russell King - ARM Linux wrote:
-> > On Mon, Mar 05, 2018 at 11:25:19AM +0100, Oleksij Rempel wrote:
-> > > One of the Freescale recommended sequences for power off with external
-> > > PMIC is the following:
-> > > ...
-> > > 3.  SoC is programming PMIC for power off when standby is asserted.
-> > > 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
-> > > 
-> > > See:
-> > > http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
-> > > page 5083
-> > > 
-> > > This patch implements step 4. of this sequence.
-> > > 
-> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > > ---
-> > >  arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
-> > >  1 file changed, 25 insertions(+)
-> > > 
-> > > diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-> > > index ecdf071653d4..24689260a2a5 100644
-> > > --- a/arch/arm/mach-imx/pm-imx6.c
-> > > +++ b/arch/arm/mach-imx/pm-imx6.c
-> > > @@ -604,6 +604,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
-> > >  				   IMX6Q_GPR1_GINT);
-> > >  }
-> > >  
-> > > +static void imx6_pm_stby_poweroff(void)
-> > > +{
-> > > +	imx6_set_lpm(STOP_POWER_OFF);
-> > > +	cpu_suspend(0, imx6q_suspend_finish);
-> > 
-> > Do you actually need to save the processor state etc here - the request
-> > is after all to power down the system and not to suspend.  Would calling
-> > imx6q_suspend_finish() directly work (and hence simplify the code) ?
+On Wed, May 09, 2018 at 02:10:01PM +0530, Viresh Kumar wrote:
+> On 09-05-18, 10:30, Rafael J. Wysocki wrote:
+> > On Wed, May 9, 2018 at 10:06 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> > > How about this? Will use the latest request, and also doesn't do unnecessary
+> > > irq_work_queue:
 > 
-> yes you right. This will work as well.
-> I'll send changed version after Rafaels feedback for kernel/reboot.c
-> part.
-> Russell, can I expect your Signed-off-by for changed patch?
+> I almost wrote the same stuff before I went for lunch :)
 
-No, please read Documentation/process/submitting-patches.rst section 12.
-s-o-b does not apply in this case.
+Oh :)
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+> > > (untested)
+> > > -----8<--------
+> > > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> > > index d2c6083304b4..6a3e42b01f52 100644
+> > > --- a/kernel/sched/cpufreq_schedutil.c
+> > > +++ b/kernel/sched/cpufreq_schedutil.c
+> > > @@ -38,7 +38,7 @@ struct sugov_policy {
+> > >         struct                  mutex work_lock;
+> > >         struct                  kthread_worker worker;
+> > >         struct task_struct      *thread;
+> > > -       bool                    work_in_progress;
+> > > +       bool                    work_in_progress; /* Has kthread been kicked */
+> > >
+> > >         bool                    need_freq_update;
+> > >  };
+> > > @@ -92,9 +92,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+> > >             !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+> > >                 return false;
+> > >
+> > > -       if (sg_policy->work_in_progress)
+> > > -               return false;
+> > > -
+> > 
+> > Why this change?
+> > 
+> > Doing the below is rather pointless if work_in_progress is set, isn't it?
+> > 
+> > You'll drop the results of it on the floor going forward anyway then AFAICS.
+> > 
+> > >         if (unlikely(sg_policy->need_freq_update)) {
+> > >                 sg_policy->need_freq_update = false;
+> > >                 /*
+> > > @@ -129,8 +126,11 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
+> > >                 policy->cur = next_freq;
+> > >                 trace_cpu_frequency(next_freq, smp_processor_id());
+> > >         } else {
+> > > -               sg_policy->work_in_progress = true;
+> > > -               irq_work_queue(&sg_policy->irq_work);
+> > > +               /* work_in_progress helps us not queue unnecessarily */
+> > > +               if (!sg_policy->work_in_progress) {
+> > > +                       sg_policy->work_in_progress = true;
+> > > +                       irq_work_queue(&sg_policy->irq_work);
+> > > +               }
+> > >         }
+> > >  }
+> 
+> Right, none of the above changes are required now.
+
+I didn't follow what you mean the changes are not required? I was developing
+against Linus mainline. Also I replied to Rafael's comment in the other
+thread.
+
+> 
+> > > @@ -381,13 +381,23 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
+> > >  static void sugov_work(struct kthread_work *work)
+> > >  {
+> > >         struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
+> > > +       unsigned int freq;
+> > > +
+> > > +       /*
+> > > +        * Hold sg_policy->update_lock just enough to handle the case where:
+> > > +        * if sg_policy->next_freq is updated before work_in_progress is set to
+> > > +        * false, we may miss queueing the new update request since
+> > > +        * work_in_progress would appear to be true.
+> > > +        */
+> > > +       raw_spin_lock(&sg_policy->update_lock);
+> > > +       freq = sg_policy->next_freq;
+> > > +       sg_policy->work_in_progress = false;
+> > > +       raw_spin_unlock(&sg_policy->update_lock);
+> 
+> One problem we still have is that sg_policy->update_lock is only used
+> in the shared policy case and not in the single CPU per policy case,
+> so the race isn't solved there yet.
+
+True.. I can make the single CPU case acquire the update_lock very briefly
+around sugov_update_commit call in sugov_update_single.
+
+Also I think the lock acquiral from sugov_work running in the kthread context should be a raw_spin_lock_irqsave..
+
+thanks,
+
+- Joel
