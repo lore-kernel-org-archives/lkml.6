@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965530AbeEIQ0M (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 12:26:12 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:42712 "EHLO huawei.com"
+        id S965570AbeEIQ0W (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 12:26:22 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:42813 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965513AbeEIQ0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 12:26:10 -0400
+        id S965513AbeEIQ0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 12:26:17 -0400
 From: Salil Mehta <salil.mehta@huawei.com>
 To: <davem@davemloft.net>
 CC: <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>
-Subject: [PATCH net-next 0/4] Misc bug fixes for HNS3 Ethernet Driver
-Date: Wed, 9 May 2018 17:24:37 +0100
-Message-ID: <20180509162441.18068-1-salil.mehta@huawei.com>
+        <linuxarm@huawei.com>, Yunsheng Lin <linyunsheng@huawei.com>
+Subject: [PATCH net-next 3/4] net: hns3: fix for cleaning ring problem
+Date: Wed, 9 May 2018 17:24:40 +0100
+Message-ID: <20180509162441.18068-4-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20180509162441.18068-1-salil.mehta@huawei.com>
+References: <20180509162441.18068-1-salil.mehta@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.202.227.234]
@@ -24,20 +26,80 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes to some of the bugs found during system test, internal review
-and clean-up
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-Yunsheng Lin (4):
-  net: hns3: Fix for setting mac address when resetting
-  net: hns3: remove add/del_tunnel_udp in hns3_enet module
-  net: hns3: fix for cleaning ring problem
-  net: hns3: refactor the loopback related function
+The head or tail in hardware is not longer valid when resetting,
+current hns3_clear_all_ring use them to clean the ring, which
+will cause problem during resetting.
 
- drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   7 --
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    | 131 ++++++---------------
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  21 ++--
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |  68 +++++------
- 4 files changed, 76 insertions(+), 151 deletions(-)
+This patch fixes it by using next_to_use and next_to_clean in
+the ring struct.
 
+Fixes: 76ad4f0ee747 ("net: hns3: Add support of HNS3 Ethernet Driver for hip08 SoC")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 34 ++++++++++++++++++++++---
+ 1 file changed, 30 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index bd8e14b..4031174 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -3203,9 +3203,35 @@ static void hns3_recover_hw_addr(struct net_device *ndev)
+ 		hns3_nic_mc_sync(ndev, ha->addr);
+ }
+ 
+-static void hns3_drop_skb_data(struct hns3_enet_ring *ring, struct sk_buff *skb)
++static void hns3_clear_tx_ring(struct hns3_enet_ring *ring)
+ {
+-	dev_kfree_skb_any(skb);
++	if (!HNAE3_IS_TX_RING(ring))
++		return;
++
++	while (ring->next_to_clean != ring->next_to_use) {
++		hns3_free_buffer_detach(ring, ring->next_to_clean);
++		ring_ptr_move_fw(ring, next_to_clean);
++	}
++}
++
++static void hns3_clear_rx_ring(struct hns3_enet_ring *ring)
++{
++	if (HNAE3_IS_TX_RING(ring))
++		return;
++
++	while (ring->next_to_use != ring->next_to_clean) {
++		/* When a buffer is not reused, it's memory has been
++		 * freed in hns3_handle_rx_bd or will be freed by
++		 * stack, so only need to unmap the buffer here.
++		 */
++		if (!ring->desc_cb[ring->next_to_use].reuse_flag) {
++			hns3_unmap_buffer(ring,
++					  &ring->desc_cb[ring->next_to_use]);
++			ring->desc_cb[ring->next_to_use].dma = 0;
++		}
++
++		ring_ptr_move_fw(ring, next_to_use);
++	}
+ }
+ 
+ static void hns3_clear_all_ring(struct hnae3_handle *h)
+@@ -3219,13 +3245,13 @@ static void hns3_clear_all_ring(struct hnae3_handle *h)
+ 		struct hns3_enet_ring *ring;
+ 
+ 		ring = priv->ring_data[i].ring;
+-		hns3_clean_tx_ring(ring, ring->desc_num);
++		hns3_clear_tx_ring(ring);
+ 		dev_queue = netdev_get_tx_queue(ndev,
+ 						priv->ring_data[i].queue_index);
+ 		netdev_tx_reset_queue(dev_queue);
+ 
+ 		ring = priv->ring_data[i + h->kinfo.num_tqps].ring;
+-		hns3_clean_rx_ring(ring, ring->desc_num, hns3_drop_skb_data);
++		hns3_clear_rx_ring(ring);
+ 	}
+ }
+ 
 -- 
 2.7.4
