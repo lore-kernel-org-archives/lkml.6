@@ -1,112 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934983AbeEINma (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 09:42:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33119 "EHLO mx2.suse.de"
+        id S935024AbeEINnV (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 09:43:21 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:53361 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934110AbeEINm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 09:42:28 -0400
-Date: Wed, 9 May 2018 15:42:22 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: vmalloc with GFP_NOFS
-Message-ID: <20180509134222.GU32366@dhcp22.suse.cz>
-References: <20180424162712.GL17484@dhcp22.suse.cz>
- <20180424183536.GF30619@thunk.org>
- <20180424192542.GS17484@dhcp22.suse.cz>
+        id S934724AbeEINnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 09:43:18 -0400
+Date: Wed, 9 May 2018 15:43:15 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: f.fainelli@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phy: DP83TC811: Introduce support for the DP83TC811
+ phy
+Message-ID: <20180509134315.GE14276@lunn.ch>
+References: <20180509120559.12725-1-dmurphy@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180424192542.GS17484@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180509120559.12725-1-dmurphy@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24-04-18 13:25:42, Michal Hocko wrote:
-[...]
-> > As a suggestion, could you take
-> > documentation about how to convert to the memalloc_nofs_{save,restore}
-> > scope api (which I think you've written about e-mails at length
-> > before), and put that into a file in Documentation/core-api?
-> 
-> I can.
+> +static int dp83811_config_aneg(struct phy_device *phydev)
+> +{
+> +	int err;
+> +	int value;
+> +
+> +	value = phy_read(phydev, MII_DP83811_SGMII_CTRL);
+> +	if (phydev->autoneg == AUTONEG_ENABLE) {
+> +		err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
+> +				(DP83811_SGMII_AUTO_NEG_EN | value));
+> +		if (err < 0)
+> +			return err;
+> +	} else {
+> +		err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
+> +				(~DP83811_SGMII_AUTO_NEG_EN & value));
+> +		if (err < 0)
+> +			return err;
+> +	}
+> +
 
-Does something like the below sound reasonable/helpful?
----
-=================================
-GFP masks used from FS/IO context
-=================================
+Hi Dan
 
-:Date: Mapy, 2018
-:Author: Michal Hocko <mhocko@kernel.org>
+You say SGMII is unreliable on one of these devices. Should you check
+phydev->interface before enabling SGMII autoneg?
 
-Introduction
-============
+> +	return genphy_config_aneg(phydev);
+> +}
+> +
+> +static int dp83811_config_init(struct phy_device *phydev)
+> +{
+> +	int err;
+> +	int value;
+> +
+> +	err = genphy_config_init(phydev);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	if (phydev->interface == PHY_INTERFACE_MODE_SGMII) {
+> +		value = phy_read(phydev, MII_DP83811_SGMII_CTRL);
+> +		if (!(value & DP83811_SGMII_EN)) {
+> +			err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
+> +					(DP83811_SGMII_EN | value));
+> +			if (err < 0)
+> +				return err;
+> +		} else {
+> +			err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
+> +				(~DP83811_SGMII_EN & value));
+> +			if (err < 0)
+> +				return err;
+> +		}
 
-FS resp. IO submitting code paths have to be careful when allocating
-memory to prevent from potential recursion deadlocks caused by direct
-memory reclaim calling back into the FS/IO path and block on already
-held resources (e.g. locks). Traditional way to avoid this problem
-is to clear __GFP_FS resp. __GFP_IO (note the later implies clearing
-the first as well) in the gfp mask when calling an allocator. GFP_NOFS
-resp. GFP_NOIO can be used as shortcut.
+This looks to be a duplicate of dp83811_config_aneg()?
 
-This has been the traditional way to avoid deadlocks since ages. It
-turned out though that above approach has led to abuses when the restricted
-gfp mask is used "just in case" without a deeper consideration which leads
-to problems because an excessive use of GFP_NOFS/GFP_NOIO can lead to
-memory over-reclaim or other memory reclaim issues.
+> +	}
+> +
+> +	value = DP83811_WOL_MAGIC_EN | DP83811_WOL_SECURE_ON | DP83811_WOL_EN;
+> +
+> +	return phy_write_mmd(phydev, DP83811_DEVADDR, MII_DP83811_WOL_CFG,
+> +	      value);
+> +}
+> +
+> +static int dp83811_phy_reset(struct phy_device *phydev)
+> +{
+> +	int err;
+> +
+> +	err = phy_write(phydev, MII_DP83811_RESET_CTRL, DP83811_HW_RESET);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	dp83811_config_init(phydev);
 
-New API
-=======
+I don't think you need to initialize it here. phylib should call that
+soon after the reset.
 
-Since 4.12 we do have a generic scope API for both NOFS and NOIO context
-``memalloc_nofs_save``, ``memalloc_nofs_restore`` resp. ``memalloc_noio_save``,
-``memalloc_noio_restore`` which allow to mark a scope to be a critical
-section from the memory reclaim recursion into FS/IO POV. Any allocation
-from that scope will inherently drop __GFP_FS resp. __GFP_IO from the given
-mask so no memory allocation can recurse back in the FS/IO.
+> +
+> +	return 0;
+> +}
+> +
 
-FS/IO code then simply calls the appropriate save function right at
-the layer where a lock taken from the reclaim context (e.g. shrinker)
-is taken and the corresponding restore function when the lock is
-released. All that ideally along with an explanation what is the reclaim
-context for easier maintenance.
+> +static struct phy_driver dp83811_driver[] = {
+> +	{
+> +		.phy_id = DP83TC811_PHY_ID,
+> +		.phy_id_mask = 0xfffffff0,
+> +		.name = "TI DP83TC811",
+> +		.features = PHY_BASIC_FEATURES,
+> +		.flags = PHY_HAS_INTERRUPT,
+> +		.config_init = genphy_config_init,
 
-What about __vmalloc(GFP_NOFS)
-==============================
+????
 
-vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
-GFP_KERNEL allocations deep inside the allocator which are quit non-trivial
-to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
-almost always a bug. The good news is that the NOFS/NOIO semantic can be
-achieved by the scope api.
-
-In the ideal world, upper layers should already mark dangerous contexts
-and so no special care is required and vmalloc should be called without
-any problems. Sometimes if the context is not really clear or there are
-layering violations then the recommended way around that is to wrap ``vmalloc``
-by the scope API with a comment explaining the problem.
--- 
-Michal Hocko
-SUSE Labs
+	Andrew
