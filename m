@@ -1,82 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934349AbeEILhI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 07:37:08 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:48692 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933832AbeEILhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 07:37:07 -0400
-Subject: Re: [PATCH] selftests: memory-hotplug: delete RUN_TESTS and
- EMIT_TESTS overrides
-To: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
-        <po-hsu.lin@canonical.com>
-References: <20180502211848.22404-1-shuah@kernel.org>
- <20180502211848.22404-3-shuah@kernel.org>
-CC: <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: lei yang <lei.yang@windriver.com>
-Message-ID: <71d76124-fbe8-c475-3bb9-bec645db02a0@windriver.com>
-Date: Wed, 9 May 2018 19:39:47 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        id S934336AbeEILjC (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 07:39:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36720 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933832AbeEILi7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 07:38:59 -0400
+Date: Wed, 9 May 2018 13:38:49 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
+        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+Subject: Re: [PATCH 6/7] psi: pressure stall information for CPU, memory, and
+ IO
+Message-ID: <20180509113849.GJ12235@hirez.programming.kicks-ass.net>
+References: <20180507210135.1823-1-hannes@cmpxchg.org>
+ <20180507210135.1823-7-hannes@cmpxchg.org>
+ <20180509104618.GP12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20180502211848.22404-3-shuah@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [128.224.162.194]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509104618.GP12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 09, 2018 at 12:46:18PM +0200, Peter Zijlstra wrote:
+> On Mon, May 07, 2018 at 05:01:34PM -0400, Johannes Weiner wrote:
+> 
+> > @@ -2038,6 +2038,7 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+> >  	cpu = select_task_rq(p, p->wake_cpu, SD_BALANCE_WAKE, wake_flags);
+> >  	if (task_cpu(p) != cpu) {
+> >  		wake_flags |= WF_MIGRATED;
+> > +		psi_ttwu_dequeue(p);
+> >  		set_task_cpu(p, cpu);
+> >  	}
+> >  
+> 
+> > +static inline void psi_ttwu_dequeue(struct task_struct *p)
+> > +{
+> > +	/*
+> > +	 * Is the task being migrated during a wakeup? Make sure to
+> > +	 * deregister its sleep-persistent psi states from the old
+> > +	 * queue, and let psi_enqueue() know it has to requeue.
+> > +	 */
+> > +	if (unlikely(p->in_iowait || (p->flags & PF_MEMSTALL))) {
+> > +		struct rq_flags rf;
+> > +		struct rq *rq;
+> > +		int clear = 0;
+> > +
+> > +		if (p->in_iowait)
+> > +			clear |= TSK_IOWAIT;
+> > +		if (p->flags & PF_MEMSTALL)
+> > +			clear |= TSK_MEMSTALL;
+> > +
+> > +		rq = __task_rq_lock(p, &rf);
+> > +		update_rq_clock(rq);
+> > +		psi_task_change(p, rq_clock(rq), clear, 0);
+> > +		p->sched_psi_wake_requeue = 1;
+> > +		__task_rq_unlock(rq, &rf);
+> > +	}
+> > +}
+> 
+> Yeah, no... not happening.
+> 
+> We spend a lot of time to never touch the old rq->lock on wakeups. Mason
+> was the one pushing for that, so he should very well know this.
+> 
+> The one cross-cpu atomic (iowait) is already a problem (the whole iowait
+> accounting being useless makes it even worse), adding significant remote
+> prodding is just really bad.
 
-On 2018年05月03日 05:18, Shuah Khan (Samsung OSG) wrote:
-> Delete RUN_TESTS and EMIT_TESTS overrides and use common defines in
-> lib.mk. Common defines work after making the change the test to run
-> with ratio=2 as the default mode to be able to invoke the test without
-> the "-r 2" argument from the common RUN_TESTS and EMIT_TESTS.
->
-> The run_full_tests target now calls the test with "-r 10".
->
-> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Also, since all you need is the global number, I don't think you
+actually need any of this. See what we do for nr_uninterruptible.
 
-Reviewed-by: Lei.Yang@windriver.com
-
-Lei
-
-
-
-> ---
->   tools/testing/selftests/memory-hotplug/Makefile           | 5 +----
->   tools/testing/selftests/memory-hotplug/mem-on-off-test.sh | 3 ++-
->   2 files changed, 3 insertions(+), 5 deletions(-)
->
-> diff --git a/tools/testing/selftests/memory-hotplug/Makefile b/tools/testing/selftests/memory-hotplug/Makefile
-> index 686da510f989..e0a625e34f40 100644
-> --- a/tools/testing/selftests/memory-hotplug/Makefile
-> +++ b/tools/testing/selftests/memory-hotplug/Makefile
-> @@ -4,11 +4,8 @@ all:
->   include ../lib.mk
->   
->   TEST_PROGS := mem-on-off-test.sh
-> -override RUN_TESTS := @./mem-on-off-test.sh -r 2 && echo "selftests: memory-hotplug [PASS]" || echo "selftests: memory-hotplug [FAIL]"
-> -
-> -override EMIT_TESTS := echo "$(subst @,,$(RUN_TESTS))"
->   
->   run_full_test:
-> -	@/bin/bash ./mem-on-off-test.sh && echo "memory-hotplug selftests: [PASS]" || echo "memory-hotplug selftests: [FAIL]"
-> +	@/bin/bash ./mem-on-off-test.sh -r 10 && echo "memory-hotplug selftests: [PASS]" || echo "memory-hotplug selftests: [FAIL]"
->   
->   clean:
-> diff --git a/tools/testing/selftests/memory-hotplug/mem-on-off-test.sh b/tools/testing/selftests/memory-hotplug/mem-on-off-test.sh
-> index ae2c790d0880..ff4991704d07 100755
-> --- a/tools/testing/selftests/memory-hotplug/mem-on-off-test.sh
-> +++ b/tools/testing/selftests/memory-hotplug/mem-on-off-test.sh
-> @@ -133,7 +133,8 @@ offline_memory_expect_fail()
->   
->   error=-12
->   priority=0
-> -ratio=10
-> +# Run with default of ratio=2 for Kselftest run
-> +ratio=2
->   retval=0
->   
->   while getopts e:hp:r: opt; do
+In general I think you want to (re)read loadavg.c some more, and maybe
+reuse a bit more of that.
