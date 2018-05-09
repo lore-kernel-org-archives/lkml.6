@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933417AbeEIArI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 20:47:08 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42190 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933134AbeEIAmp (ORCPT
+        id S933312AbeEIAmm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 20:42:42 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:36434 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932475AbeEIAml (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 20:42:45 -0400
-X-Google-Smtp-Source: AB8JxZoCGNoAm3MjQMCf7bkdg8CG2jZziC0BxdS1BbDCtlXHrA+HFi52gwv8E2P1aDc0chEnTVlbPg==
+        Tue, 8 May 2018 20:42:41 -0400
+X-Google-Smtp-Source: AB8JxZq+1cd9h2Iu2geiWXeoy6buXWBqLBJHuUM3jeMZVeE06fXlIoZK+VxlIFki6YyUOW8Al4n8Ig==
 From: Kees Cook <keescook@chromium.org>
 To: Matthew Wilcox <mawilcox@microsoft.com>
 Cc: Kees Cook <keescook@chromium.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         kernel-hardening@lists.openwall.com
-Subject: [PATCH 07/13] treewide: Use struct_size() for vmalloc()-family
-Date: Tue,  8 May 2018 17:42:23 -0700
-Message-Id: <20180509004229.36341-8-keescook@chromium.org>
+Subject: [PATCH 04/13] mm: Use array_size() helpers for kmalloc()
+Date: Tue,  8 May 2018 17:42:20 -0700
+Message-Id: <20180509004229.36341-5-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180509004229.36341-1-keescook@chromium.org>
 References: <20180509004229.36341-1-keescook@chromium.org>
@@ -24,56 +24,98 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This only finds one hit in the entire tree, but here's the Coccinelle:
-
-// Directly refer to structure's field
-@@
-identifier alloc =~ "vmalloc|vzalloc";
-identifier VAR, ELEMENT;
-expression COUNT;
-@@
-
-- alloc(sizeof(*VAR) + COUNT * sizeof(*VAR->ELEMENT))
-+ alloc(struct_size(VAR, ELEMENT, COUNT))
-
-// mr = kzalloc(sizeof(*mr) + m * sizeof(mr->map[0]), GFP_KERNEL);
-@@
-identifier alloc =~ "vmalloc|vzalloc";
-identifier VAR, ELEMENT;
-expression COUNT;
-@@
-
-- alloc(sizeof(*VAR) + COUNT * sizeof(VAR->ELEMENT[0]))
-+ alloc(struct_size(VAR, ELEMENT, COUNT))
-
-// Same pattern, but can't trivially locate the trailing element name,
-// or variable name.
-@@
-identifier alloc =~ "vmalloc|vzalloc";
-expression SOMETHING, COUNT, ELEMENT;
-@@
-
-- alloc(sizeof(SOMETHING) + COUNT * sizeof(ELEMENT))
-+ alloc(CHECKME_struct_size(&SOMETHING, ELEMENT, COUNT))
+Instead of open-coded multiplication, use the new array_size() helper
+to detect overflow in kmalloc()-family functions.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/gpu/drm/nouveau/nvkm/core/ramht.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ include/linux/slab.h | 31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/core/ramht.c b/drivers/gpu/drm/nouveau/nvkm/core/ramht.c
-index ccba4ae73cc5..8162e3d2359c 100644
---- a/drivers/gpu/drm/nouveau/nvkm/core/ramht.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/core/ramht.c
-@@ -144,8 +144,7 @@ nvkm_ramht_new(struct nvkm_device *device, u32 size, u32 align,
- 	struct nvkm_ramht *ramht;
- 	int ret, i;
+diff --git a/include/linux/slab.h b/include/linux/slab.h
+index 81ebd71f8c03..d03e0726e136 100644
+--- a/include/linux/slab.h
++++ b/include/linux/slab.h
+@@ -13,6 +13,7 @@
+ #define	_LINUX_SLAB_H
  
--	if (!(ramht = *pramht = vzalloc(sizeof(*ramht) +
--					(size >> 3) * sizeof(*ramht->data))))
-+	if (!(ramht = *pramht = vzalloc(struct_size(ramht, data, (size >> 3)))))
- 		return -ENOMEM;
+ #include <linux/gfp.h>
++#include <linux/overflow.h>
+ #include <linux/types.h>
+ #include <linux/workqueue.h>
  
- 	ramht->device = device;
+@@ -499,6 +500,8 @@ static __always_inline void *kmalloc_large(size_t size, gfp_t flags)
+  */
+ static __always_inline void *kmalloc(size_t size, gfp_t flags)
+ {
++	if (size == SIZE_MAX)
++		return NULL;
+ 	if (__builtin_constant_p(size)) {
+ 		if (size > KMALLOC_MAX_CACHE_SIZE)
+ 			return kmalloc_large(size, flags);
+@@ -539,6 +542,8 @@ static __always_inline unsigned int kmalloc_size(unsigned int n)
+ 
+ static __always_inline void *kmalloc_node(size_t size, gfp_t flags, int node)
+ {
++	if (size == SIZE_MAX)
++		return NULL;
+ #ifndef CONFIG_SLOB
+ 	if (__builtin_constant_p(size) &&
+ 		size <= KMALLOC_MAX_CACHE_SIZE && !(flags & GFP_DMA)) {
+@@ -624,11 +629,13 @@ int memcg_update_all_caches(int num_memcgs);
+  */
+ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
+ {
+-	if (size != 0 && n > SIZE_MAX / size)
++	size_t bytes = array_size(n, size);
++
++	if (bytes == SIZE_MAX)
+ 		return NULL;
+ 	if (__builtin_constant_p(n) && __builtin_constant_p(size))
+-		return kmalloc(n * size, flags);
+-	return __kmalloc(n * size, flags);
++		return kmalloc(bytes, flags);
++	return __kmalloc(bytes, flags);
+ }
+ 
+ /**
+@@ -639,7 +646,9 @@ static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
+  */
+ static inline void *kcalloc(size_t n, size_t size, gfp_t flags)
+ {
+-	return kmalloc_array(n, size, flags | __GFP_ZERO);
++	size_t bytes = array_size(n, size);
++
++	return kmalloc(bytes, flags | __GFP_ZERO);
+ }
+ 
+ /*
+@@ -657,16 +666,22 @@ extern void *__kmalloc_track_caller(size_t, gfp_t, unsigned long);
+ static inline void *kmalloc_array_node(size_t n, size_t size, gfp_t flags,
+ 				       int node)
+ {
+-	if (size != 0 && n > SIZE_MAX / size)
++	size_t bytes = array_size(n, size);
++
++	if (bytes == SIZE_MAX)
+ 		return NULL;
+ 	if (__builtin_constant_p(n) && __builtin_constant_p(size))
+-		return kmalloc_node(n * size, flags, node);
+-	return __kmalloc_node(n * size, flags, node);
++		return kmalloc_node(bytes, flags, node);
++	return __kmalloc_node(bytes, flags, node);
+ }
+ 
+ static inline void *kcalloc_node(size_t n, size_t size, gfp_t flags, int node)
+ {
+-	return kmalloc_array_node(n, size, flags | __GFP_ZERO, node);
++	size_t bytes = array_size(n, size);
++
++	if (bytes == SIZE_MAX)
++		return NULL;
++	return kmalloc_node(bytes, flags | __GFP_ZERO, node);
+ }
+ 
+ 
 -- 
 2.17.0
