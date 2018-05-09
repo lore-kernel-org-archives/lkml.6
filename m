@@ -1,72 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934117AbeEIIZX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 04:25:23 -0400
-Received: from mail-ot0-f169.google.com ([74.125.82.169]:44740 "EHLO
-        mail-ot0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933828AbeEIIZU (ORCPT
+        id S934027AbeEII0Y (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 04:26:24 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:39107 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933749AbeEII0W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 04:25:20 -0400
-X-Google-Smtp-Source: AB8JxZqXQcqY98r9GcaON+DPd+D+LnV71leQKSM36aBdAqDWBihPPdU/ZIDez7ctevD1CnROl5NgeLQhby7/pcYIv44=
+        Wed, 9 May 2018 04:26:22 -0400
+X-IronPort-AV: E=Sophos;i="5.49,381,1520895600";
+   d="scan'208";a="326248523"
+Date: Wed, 9 May 2018 10:26:19 +0200 (CEST)
+From: Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To: Dan Murphy <dmurphy@ti.com>
+cc: robh+dt@kernel.org, mark.rutland@arm.com, jacek.anaszewski@gmail.com,
+        pavel@ucw.cz, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, kbuild-all@01.org
+Subject: [PATCH] leds: lm3601x: fix semicolon.cocci warnings
+Message-ID: <alpine.DEB.2.20.1805091023520.3379@hadrien>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <20180509082350.GB1681@localhost.localdomain>
-References: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
- <20180508065435.bcht6dyb3rpp6gk5@vireshk-i7> <20180509045425.GA158882@joelaf.mtv.corp.google.com>
- <20180509064530.GA1681@localhost.localdomain> <20180509065449.c5zotxqmuyatjgfd@vireshk-i7>
- <20180509070113.GB52784@joelaf.mtv.corp.google.com> <CAJZ5v0hNgvd=0dKstXRsbHhtrc6m+ugS5kjPOq2B8k55ioX0MA@mail.gmail.com>
- <20180509082350.GB1681@localhost.localdomain>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 9 May 2018 10:25:19 +0200
-X-Google-Sender-Auth: V_M-M2wU6cnn7boljd2qydW8_n8
-Message-ID: <CAJZ5v0hkeCOybZo4LPpwiE0PG8msCWQkgiHJbpi-6zJHtOQbfg@mail.gmail.com>
-Subject: Re: [RFC PATCH] sched/cpufreq/schedutil: handling urgent frequency requests
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 10:23 AM, Juri Lelli <juri.lelli@redhat.com> wrote:
-> On 09/05/18 10:05, Rafael J. Wysocki wrote:
->> On Wed, May 9, 2018 at 9:01 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
->> > On Wed, May 09, 2018 at 12:24:49PM +0530, Viresh Kumar wrote:
->> >> On 09-05-18, 08:45, Juri Lelli wrote:
->> >> > On 08/05/18 21:54, Joel Fernandes wrote:
->> >> > Isn't this potentially introducing unneeded irq pressure (and doing the
->> >> > whole wakeup the kthread thing), while the already active kthread could
->> >> > simply handle multiple back-to-back requests before going to sleep?
->> >>
->> >> And then we may need more instances of the work item and need to store
->> >> a different value of next_freq with each work item, as we can't use
->> >> the common one anymore as there would be races around accessing it ?
->> >
->> > Exactly. I think it also doesn't make sense to over write an already
->> > committed request either so better to store them separate (?). After the
->> > "commit", that previous request is done..
->>
->> Why is it?
->>
->> In the non-fast-switch case the "commit" only means queuing up an
->> irq_work.  Which BTW is one of the reasons for having work_in_progress
->> even if your kthread can handle multiple work items in one go.
->>
->> You may try to clear work_in_progress in sugov_irq_work() instead of
->> in sugov_work(), though.
->>
->> BTW, I'm not sure if the comment in sugov_irq_work() still applies.  Juri?
->
-> It doesn't anymore. sugov kthreads are now being "ignored". Should have
-> remove it with the DL set of changes, sorry about that.
+From: Fengguang Wu <fengguang.wu@intel.com>
 
-No worries, you can still do that. ;-)
+ Remove unneeded semicolon.
+
+Generated by: scripts/coccinelle/misc/semicolon.cocci
+
+Fixes: b550389fcb74 ("leds: lm3601x: Introduce the lm3601x LED driver")
+CC: Dan Murphy <dmurphy@ti.com>
+Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+---
+
+url:
+https://github.com/0day-ci/linux/commits/Dan-Murphy/dt-bindings-lm3601x-Introduce-the-lm3601x-driver/20180509-033939
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
+for-next
+:::::: branch date: 5 hours ago
+:::::: commit date: 5 hours ago
+
+I also received the following comment, but no other details.  It would be
+good to check what is going on on the mentioned lines.
+
+>> drivers/leds/leds-lm3601x.c:315:2-8: preceding lock on line 311
+
+ leds-lm3601x.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/leds/leds-lm3601x.c
++++ b/drivers/leds/leds-lm3601x.c
+@@ -234,7 +234,7 @@ static int lm3601x_strobe_set(struct led
+
+ 		ret = -EINVAL;
+ 		goto out;
+-	};
++	}
+
+ 	if (led->strobe_timeout != current_timeout)
+ 		ret = regmap_update_bits(led->regmap, LM3601X_CFG_REG,
