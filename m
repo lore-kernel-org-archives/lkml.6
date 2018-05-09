@@ -1,86 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935173AbeEIOkX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 10:40:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39996 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933988AbeEIOkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 10:40:21 -0400
-Date: Wed, 9 May 2018 16:40:16 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk, mingo@kernel.org,
-        paulmck@linux.vnet.ibm.com, keescook@chromium.org, riel@redhat.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
-        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Balbir Singh <balbir@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH] memcg: Replace mm->owner with mm->memcg
-Message-ID: <20180509144016.GA25742@redhat.com>
-References: <20180503133338.GA23401@redhat.com>
- <87y3h0x0qg.fsf@xmission.com>
- <20180504142056.GA26151@redhat.com>
- <87r2mrh4is.fsf@xmission.com>
- <20180504145435.GA26573@redhat.com>
- <87y3gzfmjt.fsf@xmission.com>
- <20180504162209.GB26573@redhat.com>
- <871serfk77.fsf@xmission.com>
- <20180507143358.GA3071@redhat.com>
- <87vabyvnw0.fsf@xmission.com>
+        id S935184AbeEIOkh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 10:40:37 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56060 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933988AbeEIOkg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 10:40:36 -0400
+Date: Wed, 9 May 2018 16:40:32 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Nick Dyer <nick@shmanahar.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ezequiel Garcia <ezequiel@collabora.com>, kernel@collabora.com
+Subject: Re: [PATCHv2] Input: atmel_mxt_ts - fix reset-gpio for level based
+ irqs
+Message-ID: <20180509144032.kirx5rz4cbz6cl4l@earth.universe>
+References: <20180420172408.26164-1-sebastian.reichel@collabora.co.uk>
+ <20180423115844.26281-1-sebastian.reichel@collabora.co.uk>
+ <20180509142545.GC25131@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dxewti5y2ddcf3wa"
 Content-Disposition: inline
-In-Reply-To: <87vabyvnw0.fsf@xmission.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180509142545.GC25131@amd>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/07, Eric W. Biederman wrote:
->
-> Oleg Nesterov <oleg@redhat.com> writes:
->
-> > before your patch get_mem_cgroup_from_mm() looks at mm->owner == current
-> > (in this case) and mem_cgroup_from_task() should return the correct memcg
-> > even if execing task migrates after bprm_mm_init(). At least in the common
-> > case when the old mm is not shared.
-> >
-> > After your patch the memory allocations in copy_strings() won't be accounted
-> > correctly, bprm->mm->memcg is wrong if this task migrates. And iiuc your recent
-> > "[PATCH 2/2] memcg: Close the race between migration and installing bprm->mm as mm"
-> > doesn't fix the problem.
-> >
-> > No?
->
-> The patch does solve the issue.  There should be nothing a userspace
-> process can observe that should tell it where in the middle of exec
-> such a migration happend so placing the migration at what from the
-> kernel's perspective might be technically later should not be a problem.
->
-> If it is a problem the issue is that there is a way to observe the
-> difference.
 
-So. The task migrates from some MEMCG right after bprm_mm_init().
+--dxewti5y2ddcf3wa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-copy_strings() triggers OOM in MEMCG. This is quite possible, it can use a lot
-of memory and that is why we have acct_arg_size() to make these allocations
-visible to oom killer.
+Hi,
 
-task_in_mem_cgroup(MEMCG) returns false and oom killer has to kill another
-innocent process in MEMCG.
+On Wed, May 09, 2018 at 04:25:45PM +0200, Pavel Machek wrote:
+> On Mon 2018-04-23 13:58:44, Sebastian Reichel wrote:
+> > The current reset-gpio support triggers an interrupt storm on platforms
+> > using the maxtouch with level based interrupt. The Motorola Droid 4,
+> > which I used for some of the tests is not affected, since it uses a edge
+> > based interrupt.
+> >=20
+> > This change avoids the interrupt storm by enabling the device while its
+> > interrupt is disabled. Afterwards we wait 100ms. This is important for
+> > two reasons: The device is unresponsive for some time (~22ms for
+> > mxt224E) and the CHG (interrupt) line is not working properly for 100ms.
+> > We don't need to wait for any following interrupts, since the following
+> > mxt_initialize() checks for bootloader mode anyways.
+> >=20
+> > This fixes a boot issue on GE PPD (watchdog kills device due to
+> > interrupt storm) and does not cause regression on Motorola Droid 4.
+>=20
+> Out of curiosity, what is "GE PPD"?
 
-Does this look like a way to observe the difference?
+PPD is a product from GE Healthcare to monitor vital biometric signals:
 
-> > Perhaps we can change get_mem_cgroup_from_mm() to use
-> > mem_cgroup_from_css(current, memory_cgrp_id) if mm->memcg == NULL?
->
-> Please God no.  Having any unnecessary special case is just going to
-> confuse people and cause bugs.
+arch/arm/boot/dts/imx53-ppd.dts
 
-To me the unnecessary special case is the new_mm->memcg which is used for
-accounting but doesn't follow migration till exec_mmap(). But I won't argue.
+> > Fixes: f657b00df22e ("Input: atmel_mxt_ts - add support for reset line")
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+>=20
+> Reviewed-by: Pavel Machek <pavel@ucw.cz>
 
-Oleg.
+Thanks,
+
+-- Sebastian
+
+--dxewti5y2ddcf3wa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrzCF0ACgkQ2O7X88g7
++ppdYA//SiNyLginSyY1gtjGqHxRFljwB59QXKJXel4+Dni4CIRQj6zSQAn3DV3i
+raDjqkDJ0hmrmlhofgwMIG07MGDFasHDpsfoc9Be9mLMgpFn7LZhZ7ePfu7Gu6A/
+P+O2yOprL8v3j1fM0t/0AIUtZRXo/nu1CCmb21Kj+Nic0fbKc2HPJs8troI9GaBY
+OQhuSv5oFAiadlAA3Yt9owPyhJTPSZybShhqFiZeqcF86o+bCtwPLx0OcBoF71iR
+VT6ttCZogn+GLr2DarnsYZxBC1Qv0PWEK9noDfo8eQZGxcvv/V6CYIDXkmHzlipu
+jTdYRNt0LTWfotlnv02NnCM4yU0k9Dm7fCASgPfDG9dZNX0IAAv0rmDK8fRkfYth
+tqSvBjOWlwtRtudCVFt1FZrIXbK25els/nZdlWIHnxmIFbsjgCZbvkMhJBIXRn3A
+ItIgft2jysHZt1LhRsrPrtondF//v2sdcLgCTmUAn2EbwLkGJKbhDiTQMCLSpbn/
+ns5pasYDlVKuSf9JlBZ9kLfnOJBilsGTHc2ADQR8AnulkcIx+ql/UYf2BFJ2lItY
+/iH66gVJqZE0VRyw1TM/ErX0MhxTZwF97jX5Dqy/mcaQp7rZDJuELYTH5ao31AkF
+qi0uQKsgZd7gGCWvXhQj+3P7D0jvTbmEJnf679TxDRX3ZrBYX/8=
+=ZL8Z
+-----END PGP SIGNATURE-----
+
+--dxewti5y2ddcf3wa--
