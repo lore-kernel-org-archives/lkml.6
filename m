@@ -1,248 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933470AbeEIBeU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 21:34:20 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39177 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933384AbeEIBeR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 21:34:17 -0400
-X-Google-Smtp-Source: AB8JxZqxwOfBPbgc/Xd1VBkVo72H35ZEwJTEQUI1/fPTSd8YWm+1/uxvAkGA/vavIT582wu32kKM2A==
-From: Kent Overstreet <kent.overstreet@gmail.com>
-To: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, Jens Axboe <axboe@kernel.dk>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH 01/10] mempool: Add mempool_init()/mempool_exit()
-Date: Tue,  8 May 2018 21:33:49 -0400
-Message-Id: <20180509013358.16399-2-kent.overstreet@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180509013358.16399-1-kent.overstreet@gmail.com>
-References: <20180509013358.16399-1-kent.overstreet@gmail.com>
+        id S933502AbeEIBlO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 21:41:14 -0400
+Received: from ozlabs.org ([203.11.71.1]:56071 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933305AbeEIBlN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 21:41:13 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Josh Poimboeuf <jpoimboe@redhat.com>, Torsten Duwe <duwe@lst.de>
+Cc: Jiri Kosina <jkosina@suse.cz>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v3] ppc64le livepatch: implement reliable stacktrace for newer consistency models
+In-Reply-To: <20180509001432.5nd55ictwf5yi7sm@treble>
+References: <20180305164928.GA17953@lst.de> <20180308162616.yhbymodggnfzpskx@treble> <20180309174718.2700b29e@blackhole.lan> <20180312153536.7avozx64ku4lvd3e@treble> <20180504123834.GA16581@lst.de> <20180507154208.jo4s43olrf5a3hw4@treble> <20180508103832.085378b9@blackhole.lan> <20180509001432.5nd55ictwf5yi7sm@treble>
+Date: Wed, 09 May 2018 11:41:09 +1000
+Message-ID: <87sh71zjuy.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allows mempools to be embedded in other structs, getting rid of a
-pointer indirection from allocation fastpaths.
+Josh Poimboeuf <jpoimboe@redhat.com> writes:
 
-mempool_exit() is safe to call on an uninitialized but zeroed mempool.
+> On Tue, May 08, 2018 at 10:38:32AM +0200, Torsten Duwe wrote:
+>> On Mon, 7 May 2018 10:42:08 -0500
+>> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>> 
+>> > The subject doesn't actively describe what the patch does, maybe
+>> > change it to something like:
+>> > 
+>> >   powerpc: Add support for HAVE_RELIABLE_STACKTRACE
+>> > 
+>> > or maybe
+>> > 
+>> >   powerpc: Add support for livepatch consistency model
+>> 
+>> Maybe $SUBJECT? You're absolutely right, the old subject was just a
+>> leftover of my original attempt to just set the flag, before Miroslav
+>> corrected me. I just kept on copying it without a second thought. Thanks
+>> for noting.
+>
+> Generally we refer to it as "the consistency model".  So I would
+> propose a minor edit:
+>
+>   ppc64le/livepatch: Implement reliable stack tracing for the consistency model
 
-Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
----
- include/linux/mempool.h |  34 +++++++++++++
- mm/mempool.c            | 108 ++++++++++++++++++++++++++++++----------
- 2 files changed, 115 insertions(+), 27 deletions(-)
+We use "powerpc" as the prefix.
 
-diff --git a/include/linux/mempool.h b/include/linux/mempool.h
-index b51f5c430c..0c964ac107 100644
---- a/include/linux/mempool.h
-+++ b/include/linux/mempool.h
-@@ -25,6 +25,18 @@ typedef struct mempool_s {
- 	wait_queue_head_t wait;
- } mempool_t;
- 
-+static inline bool mempool_initialized(mempool_t *pool)
-+{
-+	return pool->elements != NULL;
-+}
-+
-+void mempool_exit(mempool_t *pool);
-+int mempool_init_node(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
-+		      mempool_free_t *free_fn, void *pool_data,
-+		      gfp_t gfp_mask, int node_id);
-+int mempool_init(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
-+		 mempool_free_t *free_fn, void *pool_data);
-+
- extern mempool_t *mempool_create(int min_nr, mempool_alloc_t *alloc_fn,
- 			mempool_free_t *free_fn, void *pool_data);
- extern mempool_t *mempool_create_node(int min_nr, mempool_alloc_t *alloc_fn,
-@@ -43,6 +55,14 @@ extern void mempool_free(void *element, mempool_t *pool);
-  */
- void *mempool_alloc_slab(gfp_t gfp_mask, void *pool_data);
- void mempool_free_slab(void *element, void *pool_data);
-+
-+static inline int
-+mempool_init_slab_pool(mempool_t *pool, int min_nr, struct kmem_cache *kc)
-+{
-+	return mempool_init(pool, min_nr, mempool_alloc_slab,
-+			    mempool_free_slab, (void *) kc);
-+}
-+
- static inline mempool_t *
- mempool_create_slab_pool(int min_nr, struct kmem_cache *kc)
- {
-@@ -56,6 +76,13 @@ mempool_create_slab_pool(int min_nr, struct kmem_cache *kc)
-  */
- void *mempool_kmalloc(gfp_t gfp_mask, void *pool_data);
- void mempool_kfree(void *element, void *pool_data);
-+
-+static inline int mempool_init_kmalloc_pool(mempool_t *pool, int min_nr, size_t size)
-+{
-+	return mempool_init(pool, min_nr, mempool_kmalloc,
-+			    mempool_kfree, (void *) size);
-+}
-+
- static inline mempool_t *mempool_create_kmalloc_pool(int min_nr, size_t size)
- {
- 	return mempool_create(min_nr, mempool_kmalloc, mempool_kfree,
-@@ -68,6 +95,13 @@ static inline mempool_t *mempool_create_kmalloc_pool(int min_nr, size_t size)
-  */
- void *mempool_alloc_pages(gfp_t gfp_mask, void *pool_data);
- void mempool_free_pages(void *element, void *pool_data);
-+
-+static inline int mempool_init_page_pool(mempool_t *pool, int min_nr, int order)
-+{
-+	return mempool_init(pool, min_nr, mempool_alloc_pages,
-+			    mempool_free_pages, (void *)(long)order);
-+}
-+
- static inline mempool_t *mempool_create_page_pool(int min_nr, int order)
- {
- 	return mempool_create(min_nr, mempool_alloc_pages, mempool_free_pages,
-diff --git a/mm/mempool.c b/mm/mempool.c
-index 5c9dce3471..df90ace400 100644
---- a/mm/mempool.c
-+++ b/mm/mempool.c
-@@ -137,6 +137,28 @@ static void *remove_element(mempool_t *pool, gfp_t flags)
- 	return element;
- }
- 
-+/**
-+ * mempool_destroy - exit a mempool initialized with mempool_init()
-+ * @pool:      pointer to the memory pool which was initialized with
-+ *             mempool_init().
-+ *
-+ * Free all reserved elements in @pool and @pool itself.  This function
-+ * only sleeps if the free_fn() function sleeps.
-+ *
-+ * May be called on a zeroed but uninitialized mempool (i.e. allocated with
-+ * kzalloc()).
-+ */
-+void mempool_exit(mempool_t *pool)
-+{
-+	while (pool->curr_nr) {
-+		void *element = remove_element(pool, GFP_KERNEL);
-+		pool->free(element, pool->pool_data);
-+	}
-+	kfree(pool->elements);
-+	pool->elements = NULL;
-+}
-+EXPORT_SYMBOL(mempool_exit);
-+
- /**
-  * mempool_destroy - deallocate a memory pool
-  * @pool:      pointer to the memory pool which was allocated via
-@@ -150,15 +172,65 @@ void mempool_destroy(mempool_t *pool)
- 	if (unlikely(!pool))
- 		return;
- 
--	while (pool->curr_nr) {
--		void *element = remove_element(pool, GFP_KERNEL);
--		pool->free(element, pool->pool_data);
--	}
--	kfree(pool->elements);
-+	mempool_exit(pool);
- 	kfree(pool);
- }
- EXPORT_SYMBOL(mempool_destroy);
- 
-+int mempool_init_node(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
-+		      mempool_free_t *free_fn, void *pool_data,
-+		      gfp_t gfp_mask, int node_id)
-+{
-+	spin_lock_init(&pool->lock);
-+	pool->min_nr	= min_nr;
-+	pool->pool_data = pool_data;
-+	pool->alloc	= alloc_fn;
-+	pool->free	= free_fn;
-+	init_waitqueue_head(&pool->wait);
-+
-+	pool->elements = kmalloc_array_node(min_nr, sizeof(void *),
-+					    gfp_mask, node_id);
-+	if (!pool->elements)
-+		return -ENOMEM;
-+
-+	/*
-+	 * First pre-allocate the guaranteed number of buffers.
-+	 */
-+	while (pool->curr_nr < pool->min_nr) {
-+		void *element;
-+
-+		element = pool->alloc(gfp_mask, pool->pool_data);
-+		if (unlikely(!element)) {
-+			mempool_exit(pool);
-+			return -ENOMEM;
-+		}
-+		add_element(pool, element);
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(mempool_init_node);
-+
-+/**
-+ * mempool_init - initialize a memory pool
-+ * @min_nr:    the minimum number of elements guaranteed to be
-+ *             allocated for this pool.
-+ * @alloc_fn:  user-defined element-allocation function.
-+ * @free_fn:   user-defined element-freeing function.
-+ * @pool_data: optional private data available to the user-defined functions.
-+ *
-+ * Like mempool_create(), but initializes the pool in (i.e. embedded in another
-+ * structure).
-+ */
-+int mempool_init(mempool_t *pool, int min_nr, mempool_alloc_t *alloc_fn,
-+		 mempool_free_t *free_fn, void *pool_data)
-+{
-+	return mempool_init_node(pool, min_nr, alloc_fn, free_fn,
-+				 pool_data, GFP_KERNEL, NUMA_NO_NODE);
-+
-+}
-+EXPORT_SYMBOL(mempool_init);
-+
- /**
-  * mempool_create - create a memory pool
-  * @min_nr:    the minimum number of elements guaranteed to be
-@@ -186,35 +258,17 @@ mempool_t *mempool_create_node(int min_nr, mempool_alloc_t *alloc_fn,
- 			       gfp_t gfp_mask, int node_id)
- {
- 	mempool_t *pool;
-+
- 	pool = kzalloc_node(sizeof(*pool), gfp_mask, node_id);
- 	if (!pool)
- 		return NULL;
--	pool->elements = kmalloc_array_node(min_nr, sizeof(void *),
--				      gfp_mask, node_id);
--	if (!pool->elements) {
-+
-+	if (mempool_init_node(pool, min_nr, alloc_fn, free_fn, pool_data,
-+			      gfp_mask, node_id)) {
- 		kfree(pool);
- 		return NULL;
- 	}
--	spin_lock_init(&pool->lock);
--	pool->min_nr = min_nr;
--	pool->pool_data = pool_data;
--	init_waitqueue_head(&pool->wait);
--	pool->alloc = alloc_fn;
--	pool->free = free_fn;
- 
--	/*
--	 * First pre-allocate the guaranteed number of buffers.
--	 */
--	while (pool->curr_nr < pool->min_nr) {
--		void *element;
--
--		element = pool->alloc(gfp_mask, pool->pool_data);
--		if (unlikely(!element)) {
--			mempool_destroy(pool);
--			return NULL;
--		}
--		add_element(pool, element);
--	}
- 	return pool;
- }
- EXPORT_SYMBOL(mempool_create_node);
--- 
-2.17.0
+So I've used:
+
+  powerpc/livepatch: Implement reliable stack tracing for the consistency model
+
+
+cheers
