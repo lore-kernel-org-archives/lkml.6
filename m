@@ -1,80 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965245AbeEIVAO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 17:00:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38339 "EHLO mx2.suse.de"
+        id S965428AbeEIVEx (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 17:04:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38649 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964903AbeEIVAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 17:00:13 -0400
-Date: Wed, 9 May 2018 23:00:09 +0200
+        id S965147AbeEIVEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 17:04:51 -0400
+Date: Wed, 9 May 2018 23:04:47 +0200
 From: Michal Hocko <mhocko@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kbuild test robot <lkp@intel.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, kbuild-all@01.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, peterz@infradead.org,
-        oleg@redhat.com, viro@zeniv.linux.org.uk, mingo@kernel.org,
-        paulmck@linux.vnet.ibm.com, keescook@chromium.org, riel@redhat.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
-        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Balbir Singh <balbir@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH] memcg: Replace mm->owner with mm->memcg
-Message-ID: <20180509210009.GW32366@dhcp22.suse.cz>
-References: <87lgd1zww0.fsf_-_@xmission.com>
- <201805052304.9QOZSH4V%fengguang.wu@intel.com>
- <20180507161801.2641b71f63158839b9c528f3@linux-foundation.org>
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: vmalloc with GFP_NOFS
+Message-ID: <20180509210447.GX32366@dhcp22.suse.cz>
+References: <20180424162712.GL17484@dhcp22.suse.cz>
+ <20180424183536.GF30619@thunk.org>
+ <20180424192542.GS17484@dhcp22.suse.cz>
+ <20180509134222.GU32366@dhcp22.suse.cz>
+ <20180509151351.GA4111@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180507161801.2641b71f63158839b9c528f3@linux-foundation.org>
+In-Reply-To: <20180509151351.GA4111@magnolia>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 07-05-18 16:18:01, Andrew Morton wrote:
-> On Sun, 6 May 2018 00:54:48 +0800 kbuild test robot <lkp@intel.com> wrote:
+On Wed 09-05-18 08:13:51, Darrick J. Wong wrote:
+> On Wed, May 09, 2018 at 03:42:22PM +0200, Michal Hocko wrote:
+> > On Tue 24-04-18 13:25:42, Michal Hocko wrote:
+> > [...]
+> > > > As a suggestion, could you take
+> > > > documentation about how to convert to the memalloc_nofs_{save,restore}
+> > > > scope api (which I think you've written about e-mails at length
+> > > > before), and put that into a file in Documentation/core-api?
+> > > 
+> > > I can.
+> > 
+> > Does something like the below sound reasonable/helpful?
+> > ---
+> > =================================
+> > GFP masks used from FS/IO context
+> > =================================
+> > 
+> > :Date: Mapy, 2018
+> > :Author: Michal Hocko <mhocko@kernel.org>
+> > 
+> > Introduction
+> > ============
+> > 
+> > FS resp. IO submitting code paths have to be careful when allocating
 > 
-> > Hi Eric,
-> > 
-> > Thank you for the patch! Yet something to improve:
-> > 
-> > [auto build test ERROR on linus/master]
-> > [also build test ERROR on v4.17-rc3]
-> > [cannot apply to next-20180504]
-> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> > 
-> > url:    https://github.com/0day-ci/linux/commits/Eric-W-Biederman/memcg-Replace-mm-owner-with-mm-memcg/20180503-120054
-> > config: xtensa-nommu_kc705_defconfig (attached as .config)
-> > compiler: xtensa-de212-elf-gcc (crosstool-NG crosstool-ng-1.23.0-307-g452ee331) 7.3.0
-> > reproduce:
-> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> >         chmod +x ~/bin/make.cross
-> >         # save the attached .config to linux build tree
-> >         make.cross ARCH=xtensa 
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> >    kernel/fork.o: In function `sighand_ctor':
-> > >> fork.c:(.text+0x3b0): undefined reference to `mm_update_memcg'
-> >    kernel/fork.o: In function `mmdrop_async':
-> >    fork.c:(.text+0x43a): undefined reference to `mm_update_memcg'
-> >    kernel/fork.o: In function `set_task_stack_end_magic':
-> >    fork.c:(.text+0x752): undefined reference to `mm_update_memcg'
+> Not sure what 'FS resp. IO' means here -- 'FS and IO' ?
 > 
-> Due to the combination of CONFIG_MMU=n and CONFIG_MEMCG=y. 
-> mm/memcontrol.c's mm_update_memcg() depends upon CONFIG_MMU=y.
+> (Or is this one of those things where this looks like plain English text
+> but in reality it's some sort of markup that I'm not so familiar with?)
 > 
-> Is this a valid conbination?  Do we actually support (and test!) memcg
-> on nommu systems?
+> Confused because I've seen 'resp.' used as shorthand for
+> 'responsible'...
 
-Well, I was arguing we should mark it BROKEN quite some time ago but
-Johannes and you IIRC objected that we shouldn't do that as long as
-nobody complains it doesn't work. To be completely honest I am skeptical
-anybody uses memcg on nommu, but I might be easily wrong here. I didn't
-care enough to pursue back then...
+Well, I've tried to cover both. Filesystem and IO code paths which
+allocate while in sensitive context. IO submission is kinda clear but I
+am not sure what a general term for filsystem code paths would be. I
+would be greatful for any hints here.
+
+> 
+> > memory to prevent from potential recursion deadlocks caused by direct
+> > memory reclaim calling back into the FS/IO path and block on already
+> > held resources (e.g. locks). Traditional way to avoid this problem
+> 
+> 'The traditional way to avoid this deadlock problem...'
+
+Done
+
+> > is to clear __GFP_FS resp. __GFP_IO (note the later implies clearing
+> > the first as well) in the gfp mask when calling an allocator. GFP_NOFS
+> > resp. GFP_NOIO can be used as shortcut.
+> > 
+> > This has been the traditional way to avoid deadlocks since ages. It
+> 
+> I think this sentence is a little redundant with the previous sentence,
+> you could chop it out and join this paragraph to the one before it.
+
+OK
+
+> 
+> > turned out though that above approach has led to abuses when the restricted
+> > gfp mask is used "just in case" without a deeper consideration which leads
+> > to problems because an excessive use of GFP_NOFS/GFP_NOIO can lead to
+> > memory over-reclaim or other memory reclaim issues.
+> > 
+> > New API
+> > =======
+> > 
+> > Since 4.12 we do have a generic scope API for both NOFS and NOIO context
+> > ``memalloc_nofs_save``, ``memalloc_nofs_restore`` resp. ``memalloc_noio_save``,
+> > ``memalloc_noio_restore`` which allow to mark a scope to be a critical
+> > section from the memory reclaim recursion into FS/IO POV. Any allocation
+> > from that scope will inherently drop __GFP_FS resp. __GFP_IO from the given
+> > mask so no memory allocation can recurse back in the FS/IO.
+> > 
+> > FS/IO code then simply calls the appropriate save function right at
+> > the layer where a lock taken from the reclaim context (e.g. shrinker)
+> > is taken and the corresponding restore function when the lock is
+> > released. All that ideally along with an explanation what is the reclaim
+> > context for easier maintenance.
+> > 
+> > What about __vmalloc(GFP_NOFS)
+> > ==============================
+> > 
+> > vmalloc doesn't support GFP_NOFS semantic because there are hardcoded
+> > GFP_KERNEL allocations deep inside the allocator which are quit non-trivial
+> 
+> ...which are quite non-trivial...
+
+fixed
+
+> > to fix up. That means that calling ``vmalloc`` with GFP_NOFS/GFP_NOIO is
+> > almost always a bug. The good news is that the NOFS/NOIO semantic can be
+> > achieved by the scope api.
+> > 
+> > In the ideal world, upper layers should already mark dangerous contexts
+> > and so no special care is required and vmalloc should be called without
+> > any problems. Sometimes if the context is not really clear or there are
+> > layering violations then the recommended way around that is to wrap ``vmalloc``
+> > by the scope API with a comment explaining the problem.
+> 
+> Otherwise looks ok to me based on my understanding of how all this is
+> supposed to work...
+> 
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+Thanks for your review!
 
 -- 
 Michal Hocko
