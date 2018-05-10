@@ -1,169 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934637AbeEJJmr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 05:42:47 -0400
-Received: from mga12.intel.com ([192.55.52.136]:26898 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934363AbeEJJmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 05:42:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,384,1520924400";
-   d="scan'208";a="40131990"
-Subject: Re: [PATCH v2]: perf/x86: store user space frame-pointer value on a
- sample
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
-References: <31205dc8-b756-e12b-0249-2ed06c2db9c9@linux.intel.com>
- <20180509145436.GV12217@hirez.programming.kicks-ass.net>
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
-Message-ID: <3ecedd91-1c01-6fc5-4648-89eaf5ff0930@linux.intel.com>
-Date: Thu, 10 May 2018 12:42:38 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S1757055AbeEJJt3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 05:49:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34744 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1756697AbeEJJt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 05:49:27 -0400
+Subject: Re: [RFC v3 3/5] virtio_ring: add packed ring support
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com
+References: <20180425051550.24342-1-tiwei.bie@intel.com>
+ <20180425051550.24342-4-tiwei.bie@intel.com>
+ <927f4478-5a81-31d4-ac69-f9ec26248591@redhat.com>
+ <5885acac-e9e3-3abf-b6a2-7347f4d55be2@redhat.com>
+ <20180510085601.6mpxf3yvwxnqnk5q@debian>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <2fc35cd5-9dbd-7743-497f-b6637d92f528@redhat.com>
+Date: Thu, 10 May 2018 17:49:20 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180509145436.GV12217@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180510085601.6mpxf3yvwxnqnk5q@debian>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 09.05.2018 17:54, Peter Zijlstra wrote:
-> On Tue, May 08, 2018 at 06:21:36PM +0300, Alexey Budankov wrote:
+
+On 2018年05月10日 16:56, Tiwei Bie wrote:
+> On Thu, May 10, 2018 at 03:34:50PM +0800, Jason Wang wrote:
+>> On 2018年05月10日 15:32, Jason Wang wrote:
+>>> On 2018年04月25日 13:15, Tiwei Bie wrote:
+>>>> +    /* We're using some buffers from the free list. */
+>>>> +    vq->vq.num_free -= descs_used;
+>>>> +
+>>>> +    /* Update free pointer */
+>>>> +    if (indirect) {
+>>>> +        n = head + 1;
+>>>> +        if (n >= vq->vring_packed.num) {
+>>>> +            n = 0;
+>>>> +            vq->wrap_counter ^= 1;
+>>>> +        }
+>>>> +        vq->next_avail_idx = n;
+>>>> +    } else
+>>>> +        vq->next_avail_idx = i;
+>>> During testing zerocopy (out of order completion), I found driver may
+>>> submit two identical buffer id to vhost. So the above code may not work
+>>> well.
+>>>
+>>> Consider the case that driver adds 3 buffer and virtqueue size is 8.
+>>>
+>>> a) id = 0,count = 2,next_avail = 2
+>>>
+>>> b) id = 2,count = 4,next_avail = 2
+>> next_avail should be 6 here.
 >>
->> Store user space frame-pointer value (BP register) into Perf trace 
->> on a sample for a process so the value becomes available when 
->> unwinding call stacks for functions gaining event samples.
+>>> c) id = 4,count = 2,next_avail = 0
+>>>
+>> id should be 6 here.
 >>
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> ---
->>  arch/x86/kernel/perf_regs.c | 8 +++++++-
->>  1 file changed, 7 insertions(+), 1 deletion(-)
+>> Thanks
 >>
->> diff --git a/arch/x86/kernel/perf_regs.c b/arch/x86/kernel/perf_regs.c
->> index e47b2dbbdef3..8d68658eff7f 100644
->> --- a/arch/x86/kernel/perf_regs.c
->> +++ b/arch/x86/kernel/perf_regs.c
->> @@ -156,7 +156,13 @@ void perf_get_regs_user(struct perf_regs *regs_user,
-> 
-> 
->>  	 * Most system calls don't save these registers, don't report them.
-> 
-> ^^^ that worries me and is the reason for the '-1's below. However I
-> think with all the PTI rework this might no longer be true.
+>>> if packet b is done before packet a, driver may think buffer id 0 is
+>>> available and try to use it if even if the real buffer 0 was not done.
+>>>
+>>> Thanks
+> Nice catch! Thanks a lot!
+> I'll implement an ID allocator.
+>
+> Best regards,
+> Tiwei Bie
 
-Well ok, at the moment I don't see the rationale behind exposure the other 
-registers so they still may be reported as -1.
+Sounds good.
 
-However BP may contain valid frame address not only on syscalls but also 
-for samples landing into user space. 
+Another similar issue is detac_buf_packed(). It did:
 
-> 
-> The Changelog needs to state that user_regs->bp is in fact valid and
+         for (j = 0; j < vq->desc_state[head].num; j++) {
+                 desc = &vq->vring_packed.desc[i];
+                 vring_unmap_one_packed(vq, desc);
+                 i++;
+                 if (i >= vq->vring_packed.num)
+                         i = 0;
+         }
 
-That actually was tested on binaries compiled without and with BP exposed 
-and in the latter case proved the value of that change.
+This probably won't work for out of order too and according to the spec:
 
-Test executable for the example below was compiled with frame pointer 
-support enabled:
+"""
+Driver needs to keep track of the size of the list corresponding to each
+buffer ID, to be able to skip to where the next used descriptor is 
+written by the device.
+"""
 
-g++ -o futex-fp -fpermissive --no-omit-frame-pointer futex.c
+Looks like we should not depend on the descriptor ring.
 
-and profiled using:
-
-tools/perf/perf record --user-regs=IP,SP,BP \
-	-g --call-graph=dwarf,1024 -e cycles -- ./futex-fp
-
-Output of
-
-tools/perf/perf report -i perf.data --stdio 
-
-demonstrates the effect of the patch change so before saving BP 
-value on a sample we have several frames missing above main 
-function frame:
-
-# Samples: 138K of event 'cpu-cycles'
-# Event count (approx.): 92713835335
-#
-# Children      Self  Command   Shared Object     Symbol                                        
-# ........  ........  ........  ................  ..........................
-#
-    96.15%     0.72%  futex-fp  futex-fp          [.] main
-            |          
-            |--95.43%--main
-            |          |          
-            |          |--71.56%--syscall
-            |          |          |          
-            |          |          |--57.28%--entry_SYSCALL_64_after_hwframe
-            |          |          |          |          
-            |          |          |           --56.95%--do_syscall_64
-            |          |          |                     |          
-            |          |          |                      --55.77%--sys_futex
-
-and after saving BP value on a sample we have expected 
-
-	_start
-	__libc_start_main 
-
-frames unwound:
-
-# Samples: 128K of event 'cpu-cycles'
-# Event count (approx.): 85349981034
-#
-# Children      Self  Command   Shared Object     Symbol                                        
-# ........  ........  ........  ................  ..................
-#
-    95.83%     0.00%  futex-fp  futex-fp          [.] _start
-            |
-==>         ---_start
-==>            __libc_start_main
-               main
-               |          
-               |--71.28%--syscall
-               |          |          
-               |          |--55.67%--entry_SYSCALL_64
-               |          |          |          
-               |          |           --55.40%--do_syscall_64
-               |          |                     |          
-               |          |                      --54.21%--sys_futex
-
-
-> ideally point to the commits that makes it so. Also this patch should
-> update that comment.
-
-Accepted.
-
-> 
-> Cc Andy who keeps better track of all that than me.
-
-Yes, any comments and feedback would be very welcome.
-
-Thanks,
-Alexey
-
-> 
->>  	 */
->>  	regs_user_copy->bx = -1;
->> -	regs_user_copy->bp = -1;
->> +	/*
->> +	 * Store user space frame-pointer value on sample
->> +	 * to facilitate stack unwinding for cases when
->> +	 * user space executable code has such support
->> +	 * enabled at compile time;
->> +	 */
->> +	regs_user_copy->bp = user_regs->bp;
->>  	regs_user_copy->r12 = -1;
->>  	regs_user_copy->r13 = -1;
->>  	regs_user_copy->r14 = -1;
-> 
+Thanks
