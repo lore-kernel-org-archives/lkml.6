@@ -1,148 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756677AbeEJGc4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 02:32:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43493 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750854AbeEJGcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 02:32:53 -0400
-Subject: Re: [PATCH REPOST] Revert mm/vmstat.c: fix vmstat_update() preemption
- BUG
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
-        "Steven J . Hill" <steven.hill@cavium.com>,
-        Tejun Heo <htejun@gmail.com>, Christoph Lameter <cl@linux.com>
-References: <20180504104451.20278-1-bigeasy@linutronix.de>
- <513014a0-a149-5141-a5a0-9b0a4ce9a8d8@suse.cz>
- <20180508160257.6e19707ccf1dabe5ec9e8847@linux-foundation.org>
- <20180509223539.43aznhri72ephluc@linutronix.de>
-From: Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- A3XDrKOXTZil3g8D
-Message-ID: <524ecef9-e513-fec4-1178-ac1a87452e57@suse.cz>
-Date: Thu, 10 May 2018 08:32:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1756692AbeEJGjd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 02:39:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46736 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751313AbeEJGjc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 02:39:32 -0400
+Date: Thu, 10 May 2018 14:39:25 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: ying.huang@intel.com, hpa@zytor.com, mingo@elte.hu,
+        syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, akpm@linux-foundation.org,
+        dyoung@redhat.com, mingo@redhat.com, prudo@linux.vnet.ibm.com,
+        takahiro.akashi@linaro.org, tglx@linutronix.de,
+        thomas.lendacky@amd.com, x86@kernel.org
+Subject: Re: [PATCH v3] x86/kexec: avoid double free_page() upon
+ do_kexec_load() failure.
+Message-ID: <20180510063925.GL30581@MiWiFi-R3L-srv>
+References: <0000000000005dbad8056b20cabc@google.com>
+ <cb42fdcd-7d00-373b-094f-4188956afc1d@I-love.SAKURA.ne.jp>
+ <20180503232922.GE30581@MiWiFi-R3L-srv>
+ <201805082026.CAD35992.LFMQtSVFFOOJOH@I-love.SAKURA.ne.jp>
+ <201805091942.DGG12448.tMFVFSJFQOOLHO@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <20180509223539.43aznhri72ephluc@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201805091942.DGG12448.tMFVFSJFQOOLHO@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/10/2018 12:35 AM, Sebastian Andrzej Siewior wrote:
-> On 2018-05-08 16:02:57 [-0700], Andrew Morton wrote:
->> On Mon, 7 May 2018 09:31:05 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->>> In any case I agree that the revert should be done immediately even
->>> before fixing the underlying bug. The preempt_disable/enable doesn't
->>> prevent the bug, it only prevents the debugging code from actually
->>> reporting it! Note that it's debugging code (CONFIG_DEBUG_PREEMPT) that
->>> production kernels most likely don't have enabled, so we are not even
->>> helping them not crash (while allowing possible data corruption).
->>
->> Grumble.
->>
->> I don't see much benefit in emitting warnings into end-users' logs for
->> bugs which we already know about.
+On 05/09/18 at 07:42pm, Tetsuo Handa wrote:
+> >From ff82bedd3e12f0d3353282054ae48c3bd8c72012 Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Wed, 9 May 2018 12:12:39 +0900
+> Subject: [PATCH v3] x86/kexec: avoid double free_page() upon do_kexec_load() failure.
 > 
-> not end-users (not to mention that neither Debian Stretch nor F28 has
-> preemption enabled in their kernels). And if so, they may provide
-> additional information for someone to fix the bug in the end. I wasn't
+> syzbot is reporting crashes after memory allocation failure inside
+> do_kexec_load() [1]. This is because free_transition_pgtable() is called
+> by both init_transition_pgtable() and machine_kexec_cleanup() when memory
+> allocation failed inside init_transition_pgtable().
+> 
+> Regarding 32bit code, machine_kexec_free_page_tables() is called by both
+> machine_kexec_alloc_page_tables() and machine_kexec_cleanup() when memory
+> allocation failed inside machine_kexec_alloc_page_tables().
+> 
+> Fix this by leaving the error handling to machine_kexec_cleanup()
+> (and optionally setting NULL after free_page()).
+> 
+> [1] https://syzkaller.appspot.com/bug?id=91e52396168cf2bdd572fe1e1bc0bc645c1c6b40
+> 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Reported-by: syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>
+> Fixes: f5deb79679af6eb4 ("x86: kexec: Use one page table in x86_64 machine_kexec")
+> Fixes: 92be3d6bdf2cb349 ("kexec/i386: allocate page table pages dynamically")
+> Cc: Huang Ying <ying.huang@intel.com>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: Ingo Molnar <mingo@elte.hu>
+> ---
+>  arch/x86/kernel/machine_kexec_32.c | 6 +++++-
+>  arch/x86/kernel/machine_kexec_64.c | 5 ++++-
+>  2 files changed, 9 insertions(+), 2 deletions(-)
 
-Even if end-users have enabled preemption, they likely won't have
-enabled CONFIG_DEBUG_PREEMPT anyway.
+Looks good to me, thx!
 
-> able to reproduce the bug but I don't have access to anything MIPSish
-> where I can boot my own kernels. At least two people were looking at the
-> code after I posted the revert and nobody spotted the bug.
-> 
->> The only thing this buys us is that people will hassle us if we forget
->> to fix the bug, and how pathetic is that?  I mean, we may as well put
->>
->> 	printk("don't forget to fix the vmstat_update() bug!\n");
-> 
-> No that is different. That would be seen by everyone. The bug was only
-> reported by Steven J. Hill which did not respond since. This message
-> would also imply that we know how to fix the bug but didn't do it yet
-> which is not the case. We seen that something was wrong but have no idea
-> *how* it got there.
-> 
-> The preempt_disable() was added by the end of v4.16. The
-> smp_processor_id() in vmstat_update() was added in commit 7cc36bbddde5
-> ("vmstat: on-demand vmstat workers V8") which was in v3.18-rc1. The
-> hotplug rework took place in v4.10-rc1. And it took (counting from the
-> hotplug rework) 6 kernel releases for someone to trigger that warning
-> _if_ this was related to the hotplug rework.
-> 
-> What we have *now* is way worse: We have a possible bug that triggered
-> the warning. As we see in report the code in question was _already_
-> invoked on the wrong CPU. The preempt_disable() just silences the
-> warning, hiding the real issue so nobody will do a thing about it since
-> it will be never reported again (in a kernel with preemption and debug
-> enabled).
+Acked-by: Baoquan He <bhe@redhat.com>
 
-Fully agree with everything you said!
+Thanks
+Baoquan
 
-We could extend the warning to e.g. print affinity mask of the thread,
-and e.g. state of cpus that are subject to ongoing hotplug/hotremove.
-But maybe it's not so useful in general, as the common case is likely
-indeed a missing preempt_disable, and this is an exception? In any case,
-I would hope that Steven applies some patch locally and we get more
-details about what's going on at that MIPS machine.
+> 
+> diff --git a/arch/x86/kernel/machine_kexec_32.c b/arch/x86/kernel/machine_kexec_32.c
+> index 60cdec6..d1ab07e 100644
+> --- a/arch/x86/kernel/machine_kexec_32.c
+> +++ b/arch/x86/kernel/machine_kexec_32.c
+> @@ -57,12 +57,17 @@ static void load_segments(void)
+>  static void machine_kexec_free_page_tables(struct kimage *image)
+>  {
+>  	free_page((unsigned long)image->arch.pgd);
+> +	image->arch.pgd = NULL;
+>  #ifdef CONFIG_X86_PAE
+>  	free_page((unsigned long)image->arch.pmd0);
+> +	image->arch.pmd0 = NULL;
+>  	free_page((unsigned long)image->arch.pmd1);
+> +	image->arch.pmd1 = NULL;
+>  #endif
+>  	free_page((unsigned long)image->arch.pte0);
+> +	image->arch.pte0 = NULL;
+>  	free_page((unsigned long)image->arch.pte1);
+> +	image->arch.pte1 = NULL;
+>  }
+>  
+>  static int machine_kexec_alloc_page_tables(struct kimage *image)
+> @@ -79,7 +84,6 @@ static int machine_kexec_alloc_page_tables(struct kimage *image)
+>  	    !image->arch.pmd0 || !image->arch.pmd1 ||
+>  #endif
+>  	    !image->arch.pte0 || !image->arch.pte1) {
+> -		machine_kexec_free_page_tables(image);
+>  		return -ENOMEM;
+>  	}
+>  	return 0;
+> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> index a5e55d8..6010449 100644
+> --- a/arch/x86/kernel/machine_kexec_64.c
+> +++ b/arch/x86/kernel/machine_kexec_64.c
+> @@ -39,9 +39,13 @@
+>  static void free_transition_pgtable(struct kimage *image)
+>  {
+>  	free_page((unsigned long)image->arch.p4d);
+> +	image->arch.p4d = NULL;
+>  	free_page((unsigned long)image->arch.pud);
+> +	image->arch.pud = NULL;
+>  	free_page((unsigned long)image->arch.pmd);
+> +	image->arch.pmd = NULL;
+>  	free_page((unsigned long)image->arch.pte);
+> +	image->arch.pte = NULL;
+>  }
+>  
+>  static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
+> @@ -91,7 +95,6 @@ static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
+>  	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, PAGE_KERNEL_EXEC_NOENC));
+>  	return 0;
+>  err:
+> -	free_transition_pgtable(image);
+>  	return result;
+>  }
+>  
+> -- 
+> 1.8.3.1
