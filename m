@@ -1,80 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966157AbeEJPGL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 11:06:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50466 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965537AbeEJPGH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 11:06:07 -0400
-X-Google-Smtp-Source: AB8JxZokcOFD4mCjGq/lkxbdJ+WmhNqpk3TF7hegsaS/bl45hby1xClqC5zalzCRE9o9Axj1VU20Tg==
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH] media: uvcvideo: Support realtek's UVC 1.5 device
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
-Date: Thu, 10 May 2018 23:05:54 +0800
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <C4B48A97-2942-4E37-A65C-DD0570FAA52C@canonical.com>
-References: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
-To: ming_qian@realsil.com.cn
-X-Mailer: Apple Mail (2.3445.6.18)
+        id S966176AbeEJPGS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 11:06:18 -0400
+Received: from foss.arm.com ([217.140.101.70]:57338 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965537AbeEJPGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 11:06:13 -0400
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: [PATCH 2/3] sched/fair: util_est: update before schedutil
+Date: Thu, 10 May 2018 16:05:52 +0100
+Message-Id: <20180510150553.28122-3-patrick.bellasi@arm.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180510150553.28122-1-patrick.bellasi@arm.com>
+References: <20180510150553.28122-1-patrick.bellasi@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 10:13, ming_qian@realsil.com.cn wrote:
+When a task is enqueue the estimated utilization of a CPU is updated
+to better support the selection of the required frequency.
+However, schedutil is (implicitly) updated by update_load_avg() which
+always happens before util_est_{en,de}queue(), thus potentially
+introducing a latency between estimated utilization updates and
+frequency selections.
 
-> From: ming_qian <ming_qian@realsil.com.cn>
->
-> The length of UVC 1.5 video control is 48, and it id 34 for UVC 1.1.
-> Change it to 48 for UVC 1.5 device,
-> and the UVC 1.5 device can be recognized.
->
-> More changes to the driver are needed for full UVC 1.5 compatibility.
-> However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have
-> been reported to work well.
+Let's update util_est at the beginning of enqueue_task_fair(),
+which will ensure that all schedutil updates will see the most
+updated estimated utilization value for a CPU.
 
-I think this should also Cc: stable.
+Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+---
+ kernel/sched/fair.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-
->
-> Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
-> ---
->  drivers/media/usb/uvc/uvc_video.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/media/usb/uvc/uvc_video.c  
-> b/drivers/media/usb/uvc/uvc_video.c
-> index aa0082f..32dfb32 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -171,6 +171,8 @@ static int uvc_get_video_ctrl(struct uvc_streaming  
-> *stream,
->  	int ret;
->
->  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
-> +	if (stream->dev->uvc_version >= 0x0150)
-> +		size = 48;
->  	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
->  			query == UVC_GET_DEF)
->  		return -EIO;
-> @@ -259,6 +261,8 @@ static int uvc_set_video_ctrl(struct uvc_streaming  
-> *stream,
->  	int ret;
->
->  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
-> +	if (stream->dev->uvc_version >= 0x0150)
-> +		size = 48;
->  	data = kzalloc(size, GFP_KERNEL);
->  	if (data == NULL)
->  		return -ENOMEM;
-> -- 
-> 2.7.4
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 1f6a23a5b451..01dfc47541e6 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5356,6 +5356,9 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	struct cfs_rq *cfs_rq;
+ 	struct sched_entity *se = &p->se;
+ 
++	/* Estimated utilization must be updated before schedutil */
++	util_est_enqueue(&rq->cfs, p);
++
+ 	/*
+ 	 * If in_iowait is set, the code below may not trigger any cpufreq
+ 	 * utilization updates, so do it here explicitly with the IOWAIT flag
+@@ -5397,7 +5400,6 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	if (!se)
+ 		add_nr_running(rq, 1);
+ 
+-	util_est_enqueue(&rq->cfs, p);
+ 	hrtick_update(rq);
+ }
+ 
+-- 
+2.15.1
