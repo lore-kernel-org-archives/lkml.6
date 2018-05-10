@@ -1,58 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752333AbeEJVRP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 17:17:15 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:37286 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752078AbeEJVRN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 17:17:13 -0400
-Date: Thu, 10 May 2018 16:16:31 -0500
-From: Julia Cartwright <julia@ni.com>
-To: <linux-kernel@vger.kernel.org>, <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Alex Shi <alex.shi@linaro.org>
-Subject: [ANNOUNCE] 4.9.98-rt76
-Message-ID: <20180510211631.GA1063@jcartwri.amer.corp.natinst.com>
+        id S1752528AbeEJVRg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 17:17:36 -0400
+Received: from ozlabs.org ([203.11.71.1]:53355 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752412AbeEJVRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 17:17:35 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 11 May 2018 07:17:16 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hangbin Liu <liuhangbin@gmail.com>
+Subject: linux-next: Signed-off-by missing for commit in the net tree
+Message-ID: <20180511071716.038a9095@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-10_06:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/XTrBRb.gUvpaOdyj_1G8dYp"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello RT Folks!
+--Sig_/XTrBRb.gUvpaOdyj_1G8dYp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm pleased to announce the 4.9.98-rt76 stable release.
+Hi all,
 
-This release is just an update to the new stable 4.9.98 version
-and no RT specific changes have been made.
+Commit
 
-Expect a 4.9.98-rt77-rc1 with backports from rt-devel soon.
+  0e8411e426e2 ("ipv4: reset fnhe_mtu_locked after cache route flushed")
 
-You can get this release via the git tree at:
+is missing a Signed-off-by from its author.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+--=20
+Cheers,
+Stephen Rothwell
 
-  branch: v4.9-rt
-  Head SHA1: bc64e52891b8b9e56b19cbb800a1b8c415df13e8
+--Sig_/XTrBRb.gUvpaOdyj_1G8dYp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Or to build 4.9.98-rt76 directly, the following patches should be applied:
+-----BEGIN PGP SIGNATURE-----
 
-  http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.9.tar.xz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr0ttwACgkQAVBC80lX
+0GxpFwf/RnGxZS4x+O/f1PVDtXeueAtMOWuiOW0z2oLkB2bMchUBAdJAFAJ/TdRO
+AkXbxDyZ5aFsULDUU8SLlWG9C2MPjSJm5ADwx2s5dIzNjThW1eAG9/jJoXcrz6uc
+WGHrNDhi+TVgjxKpWMqwsJvgPN1Nau+hiClT+SCroMDipyuv8aPjZMK28UeTGtsU
+o9uG7ilcEJKn5OOSaN/NKhtCCRmjo2fvwvpROqTNjVLFkclNrQx1SbQ+WD7HjRgg
+QoaHiL399TZxAlZ4orJWFXsW0E8cADedeJ6Wpe8GB6nlc5k45/mqEwsOlJW8/ORj
+rQTQe3R1LeE2cGTqiBXw5Fb/W8qAbw==
+=af6P
+-----END PGP SIGNATURE-----
 
-  http://www.kernel.org/pub/linux/kernel/v4.x/patch-4.9.98.xz
-
-  http://www.kernel.org/pub/linux/kernel/projects/rt/4.9/patch-4.9.98-rt76.patch.xz
-
-Enjoy!
-    Julia
+--Sig_/XTrBRb.gUvpaOdyj_1G8dYp--
