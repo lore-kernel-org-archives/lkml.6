@@ -1,48 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757335AbeEJSRK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 14:17:10 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:37862 "EHLO mail.skyhub.de"
+        id S1757415AbeEJSTG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 14:19:06 -0400
+Received: from imap.thunk.org ([74.207.234.97]:59842 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756741AbeEJSRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 14:17:09 -0400
-Date: Thu, 10 May 2018 20:16:44 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Yonghong Song <yhs@fb.com>,
-        mingo@kernel.org, torvalds@linux-foundation.org, ast@fb.com,
-        daniel@iogearbox.net, linux-kernel@vger.kernel.org, x86@kernel.org,
-        netdev@vger.kernel.org, kernel-team@fb.com,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH bpf v3] x86/cpufeature: bpf hack for clang not supporting
- asm goto
-Message-ID: <20180510181644.GE15757@pd.tnic>
-References: <20180504033119.2130788-1-yhs@fb.com>
- <20180510100634.GZ12217@hirez.programming.kicks-ass.net>
- <20180510155240.5s2fpgm2fwal3jlj@ast-mbp.dhcp.thefacebook.com>
- <20180510162028.GB16130@pd.tnic>
- <20180510175833.nujqinu26mydeape@ast-mbp.dhcp.thefacebook.com>
+        id S1756741AbeEJSTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 14:19:05 -0400
+Date: Thu, 10 May 2018 14:19:01 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Dmitry Safonov <dima@arista.com>
+Cc: linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 1/2] random: Omit double-printing ratelimit messages
+Message-ID: <20180510181901.GG8335@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        0x7f454c46@gmail.com, Arnd Bergmann <arnd@arndb.de>
+References: <20180510125211.12583-1-dima@arista.com>
+ <20180510125211.12583-2-dima@arista.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180510175833.nujqinu26mydeape@ast-mbp.dhcp.thefacebook.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180510125211.12583-2-dima@arista.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 10:58:35AM -0700, Alexei Starovoitov wrote:
-> libbcc is a library. It's not only used by bcc scripts, but by production
-> services that compile bpf programs with clang.
+On Thu, May 10, 2018 at 01:52:10PM +0100, Dmitry Safonov wrote:
+> Currently "suppressed" messages will be printed once in a second for
+> unseeded/urandom warnings, but there is already custom message which
+> says how many warnings are missing. So, let's skip suppressed messages
+> until crng_init == 2.
 
-Let me get this straight: libbcc fails to compile because it
-includes (through some long include chain) the kernel header
-arch/x86/include/asm/cpufeature.h.
+I'm not sure what you are trying to fix?  The whole point of the
+ratelimit system is to nly allow no more than <burst> packages in a
+particular time interval.  Once that time interval has expired,
+messages allowed again until they exceed the burst limit.  So printing
+messages once a second is, in fact, working as intended.
 
-Is that it?
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+	      	       	      	    	    - Ted
