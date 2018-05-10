@@ -1,57 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752127AbeEJTkq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 15:40:46 -0400
-Received: from imap.thunk.org ([74.207.234.97]:33170 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752013AbeEJTkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 15:40:45 -0400
-Date: Thu, 10 May 2018 15:40:41 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Dmitry Safonov <dima@arista.com>
-Cc: linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/2] random: Omit double-printing ratelimit messages
-Message-ID: <20180510194041.GH8335@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
-        0x7f454c46@gmail.com, Arnd Bergmann <arnd@arndb.de>
-References: <20180510125211.12583-1-dima@arista.com>
- <20180510125211.12583-2-dima@arista.com>
- <20180510181901.GG8335@thunk.org>
- <1525977460.28243.2.camel@arista.com>
+        id S1752157AbeEJTlB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 15:41:01 -0400
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:35677 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752013AbeEJTk7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 15:40:59 -0400
+X-Google-Smtp-Source: AB8JxZrDahIUe9q4WxPcLq2A+uxxxpRyYB42pRzAeA/VAXSWoAp7hoxNTWciLxLu7H4MnameGpnJog==
+Date: Thu, 10 May 2018 12:35:01 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Joe Perches <joe@perches.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/18] ptp: Remove pr_fmt duplicate logging prefixes
+Message-ID: <20180510193500.rfnjgjffiksnceen@localhost>
+References: <cover.1525964381.git.joe@perches.com>
+ <5b315a623c63fd82df0540e27a130aaabd8c3b49.1525964385.git.joe@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1525977460.28243.2.camel@arista.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <5b315a623c63fd82df0540e27a130aaabd8c3b49.1525964385.git.joe@perches.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 07:37:40PM +0100, Dmitry Safonov wrote:
+On Thu, May 10, 2018 at 08:45:35AM -0700, Joe Perches wrote:
+> Converting pr_fmt from a simple define to use KBUILD_MODNAME added
+> some duplicate logging prefixes to existing uses.
 > 
-> Ok, then what's the purpose of those messages?
-> :        pr_notice("random: %d get_random_xx warning(s) missed "
-> :                  "due to ratelimiting\n",
-> :                  unseeded_warning.missed);
-> :        pr_notice("random: %d urandom warning(s) missed "
-> :                  "due to ratelimiting\n",
-> :                  urandom_warning.missed);
+> Remove them.
 > 
-> I thought you want to print the summary after initializing random,
-> not once per second?
+> Signed-off-by: Joe Perches <joe@perches.com>
 
-Yes, and that's what is happening today.  The "output lines suppressed
-due to ratelimiting" message is only printed out by printk_ratelimit()
-function, which we are *not* using.
-
-So I'm not sure what you are unhappy about?  What are you trying to fix?
-
->From my testing, it is *NOT* double-printing ratelimit messages today.
-Are you seeing something that I am not?
-
-       	   	     	     	     	     	  - Ted
+Acked-by: Richard Cochran <richardcochran@gmail.com>
