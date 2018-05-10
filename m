@@ -1,75 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751373AbeEJW3d (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 18:29:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750710AbeEJW3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 18:29:31 -0400
-Date: Thu, 10 May 2018 17:29:29 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Ariel Elior <ariel.elior@cavium.com>
-Cc: linux-pci@vger.kernel.org, everest-linux-l2@cavium.com,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tal Gilboa <talgi@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Jakub Kicinski <kubakici@wp.pl>
-Subject: Re: [PATCH v6 0/5] PCI: Improve PCIe link status reporting
-Message-ID: <20180510222928.GC190385@bhelgaas-glaptop.roam.corp.google.com>
-References: <152537719056.62474.2571390812509425478.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        id S1751579AbeEJW3i (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 18:29:38 -0400
+Received: from www62.your-server.de ([213.133.104.62]:50827 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750710AbeEJW3e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 18:29:34 -0400
+Subject: Re: [PATCH] bpf, doc: clarification for the meaning of 'id'
+To: Wang YanQing <udknight@gmail.com>, ast@kernel.org, corbet@lwn.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20180510030921.GA25941@udknight>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <c92bea6f-b182-1fcd-8c6d-5d5dc34567c4@iogearbox.net>
+Date: Fri, 11 May 2018 00:29:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152537719056.62474.2571390812509425478.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180510030921.GA25941@udknight>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 03:00:07PM -0500, Bjorn Helgaas wrote:
-> This is based on Tal's recent work to unify the approach for reporting PCIe
-> link speed/width and whether the device is being limited by a slower
-> upstream link.
+On 05/10/2018 05:09 AM, Wang YanQing wrote:
+> For me, as a reader whose mother language isn't English, the
+> old words bring a little difficulty to catch the meaning, this
+> patch rewords the subsection in a more clarificatory way.
 > 
-> The new pcie_print_link_status() interface appeared in v4.17-rc1; see
-> 9e506a7b5147 ("PCI: Add pcie_print_link_status() to log link speed and
-> whether it's limited").
+> This patch also add blank lines as separator at two places
+> to improve readability.
 > 
-> That's a good way to replace use of pcie_get_minimum_link(), which gives
-> misleading results when a path contains both a fast, narrow link and a
-> slow, wide link: it reports the equivalent of a slow, narrow link.
-> 
-> This series removes the remaining uses of pcie_get_minimum_link() and then
-> removes the interface itself.  I'd like to merge them all through the PCI
-> tree to make the removal easy.
-> 
-> This does change the dmesg reporting of link speeds, and in the ixgbe case,
-> it changes the reporting from KERN_WARN level to KERN_INFO.  If that's an
-> issue, let's talk about it.  I'm hoping the reduce code size, improved
-> functionality, and consistency across drivers is enough to make this
-> worthwhile.
-> 
-> ---
-> 
-> Bjorn Helgaas (5):
->       bnx2x: Report PCIe link properties with pcie_print_link_status()
->       bnxt_en: Report PCIe link properties with pcie_print_link_status()
->       cxgb4: Report PCIe link properties with pcie_print_link_status()
->       ixgbe: Report PCIe link properties with pcie_print_link_status()
->       PCI: Remove unused pcie_get_minimum_link()
+> Signed-off-by: Wang YanQing <udknight@gmail.com>
 
-Jeff has acked the ixgbe patch.
-
-Any comments on the bnx2x, bnxt_en, or cxgb4 patches?
-
->  drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c |   23 ++-----
->  drivers/net/ethernet/broadcom/bnxt/bnxt.c        |   19 ------
->  drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  |   75 ----------------------
->  drivers/net/ethernet/intel/ixgbe/ixgbe_main.c    |   47 --------------
->  drivers/pci/pci.c                                |   43 -------------
->  include/linux/pci.h                              |    2 -
->  6 files changed, 9 insertions(+), 200 deletions(-)
+Applied to bpf-next, thanks Wang!
