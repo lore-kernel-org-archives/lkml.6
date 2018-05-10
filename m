@@ -1,5 +1,5 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2676370-1525981367-2-9273455147994918489
+X-Cyrus-Session-Id: sloti22d1t05-2676370-1525981360-2-5356683446280891540
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525981366; b=hvOAhko1v/fDe1vbZpf93nXKbg9noQXrp+gPzthZRr7mmNeZ0o
-    el0aZ69hk6aKrrXV3RYddRJ6d9/MNCqDLbCA4uxTE9lh/l7aIZW46jTyr0IpTRNv
-    LAWs7uh4a0UzWLhWT+wtxn2l4BjZTngumV4QGOoizK9oZNyZLSz35uXHxVH6mSR4
-    Zm1q6RRnvZ1edeGvYzegagB1RuoJTbWjdh+9TBCA9bZud/gBQvo4xM9fcnOQ56qt
-    3Djx0lXHTEP7kp+JZnX9ffEgJFejkE9vayCT78FNcMGnSuC9Ulk2aPkh9rwFx1cb
-    ELgjlifYId0PcPTpZhjICvXa9LGe0kNMKqbg==
+    1525981360; b=mG3ll9xIFKNVaNej5AEQWm2KdjIp/vY+6g6ja1uV2rdjp81qPn
+    t+WCPqi6Q3eH6uve2BQTqyS4JKj7KilIJR7/PXQbzek2i9L9W9/N64UkxzRmP6/W
+    hLQR5xLOLqkvNwEBDpG8vWWCs0rvhXY7fPs4+kFa3AN0Dgf5Fo2Sj1GQtifhxeK/
+    39aTgIkn+0VGThI/4XQItuPhG/oAm4azitePLdlvpL3pkh/jmbTqU3Gc+PNuPtgP
+    79zP0BVzb/6OEb1qVAMZVRBSFzAiFBmNe+Vf4RvyH43bIfugQ73up74wAoScB4dO
+    omssrP1HNO28I+Th8uyNzP5bSMX4/tM9iIQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525981366; bh=qao+s
-    Iz0TBIBsBhLSHUh/UC9oQtAYyFNTfQTqUOPawA=; b=ZugCEewxo2uKTQihZDDNY
-    tLDJlN91w4goZSkz94RpEdusq1gNakUO10r7yo6+Lx7aosw5BFIXj1p9/3CqfMMF
-    Qvmea4ND7KLBnRTM2eT571TGntNnw6k0G6N3FIjfJ6y/YtsRUkZcKwdJKDKlDObx
-    xi4lUwtXCDGAscTLZLcot3U0gOQqT8y86id1yapaF4ecNS7LhB4S/k4tdMnqWWJv
-    tGn4H83iPr3sXT62wv5mOLs++2oJxHk3F8QOQ8nYTxTIjod8cUwB4ngUfVJlc8zh
-    tTX1FPTa1G7MYkPYh183saKq8KSzjiKayyH2gNm6Nk06Dr5DVwJw603Euhzi1EAq
+    :content-transfer-encoding:sender; s=fm2; t=1525981360; bh=5Ddrm
+    5VotVJbNfls92xhMv2pHnRHHopPs2JPaCBBeLU=; b=mAxIcmAHkzzdIIWyLguSg
+    xac7SBBCLWgTDw83uNWjH6b6shYHO7AEwJC6it3XiMKZpLReZwUm5zauPFyFeGJt
+    ezjTO3hq4wU+/VixJ65pU5TY1sXTsMJ+RCdjqDbCnXQQbDX9FEYpoyN1J6wkM10l
+    Cyr4QbTSp8bISvQ0klVhItyxepxSEfe/OrKrlbmizJD2OHj5dZWvsgoMCLnvmlyi
+    hLfzI9v24HmtXxeKa/WzwWay9o8r8b2Zg/u179hyhqIcwnMhKG7LQbeoMhHDTut3
+    Qu50yPj/53ufw8eMTXcmwZRLZP4DOJOd8NxtLRBfwrDDOBmlSh/lMtZg1fs0eJk4
     g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=anholt.net;
     iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
@@ -46,7 +46,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=anholt.net;
@@ -63,14 +63,13 @@ Authentication-Results: mx5.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJRGhxY6PqHN3bI6wQ35dED6JJEpdmpjyfHriechol7reRS18Q9+X7JQaOnQAWKkhrn89OLdLlW15y4FZ3VER2fTL+O9YkTq2QEmbTwRw0LX1EpmD0he
-    Yv6lgeNyMqVg5HKrKUGHk+VsVjnY45V5yhmFm0Vvzn4FS6Fe9cjljFCs6NkSOBB9qlvkL6dFY4W1E7DGT+nCSzHHwchUAa3GZEp9iCwAQIe0q+FSYwGlI3pU
-    EqzVI/HYy+QBl070+NCMVw==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+X-CM-Envelope: MS4wfD8nFffPJ2ls6grunGU5eyQdMkIPCkzOdrE0tv2KFWJkH6JiDgp7+7hZXh5+9heO3oRjIk8Y6aJqYKK4bsBvI8BgUjprMDYfwWnL8X8xdZjHaNQ2D+M9
+    hsCOBawRho1uQU7G/JWbZuRhX0lhqD1uA+oKFgnGfTKtnYM/5qHWuQhMCUVyje13QF286/KKSTTHS5hH9kAJNmXfNw50bV0m4RKO5zHmp4NgZwA230YHOfxO
+    ctn/YFFdG6GCTvQzfSvnow==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
     a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=WFZIRff2AAAA:8 a=-VAfIpHNAAAA:8
-    a=DDOyTI_5AAAA:8 a=wBpaVf9PQ3uuvB7-36QA:9 a=kUQxAbrDQ1du1lFW:21
-    a=RlQX-ZrPfKMgNLcZ:21 a=CjuIK1q_8ugA:10 a=srlwD-8ojaedGGhPAyx8:22
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=-VAfIpHNAAAA:8 a=DDOyTI_5AAAA:8
+    a=R_BO-4Znza9F-IM12VYA:9 a=CjuIK1q_8ugA:10 a=srlwD-8ojaedGGhPAyx8:22
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -80,10 +79,10 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
  linux-rpi-kernel@lists.infradead.org,
  Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH 05/15] staging: bcm2835-camera: Remove bulk_mutex as it is not
- required
-Date: Thu, 10 May 2018 12:42:09 -0700
-Message-Id: <20180510194220.30675-6-eric@anholt.net>
+Subject: [PATCH 01/15] staging/vc04_services: Register a platform device for
+ the camera driver.
+Date: Thu, 10 May 2018 12:42:05 -0700
+Message-Id: <20180510194220.30675-2-eric@anholt.net>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180510194220.30675-1-eric@anholt.net>
 References: <20180510194220.30675-1-eric@anholt.net>
@@ -108,155 +107,47 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dave Stevenson <dave.stevenson@raspberrypi.org>
+We had the camera driver set up in a module_init function, but that
+meant that the camera driver would fail to load if it was initialized
+before VCHI.  By attaching to this platform_device, it can get a
+defined load order.
 
-There is no requirement to serialise bulk transfers as that is all
-done in VCHI, and if a second MMAL_MSG_TYPE_BUFFER_TO_HOST happened
-before the VCHI_CALLBACK_BULK_RECEIVED, then the service_callback
-thread is deadlocked.
-
-Remove the bulk_mutex so that multiple receives can be scheduled at a
-time.
-
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
 Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- .../vc04_services/bcm2835-camera/mmal-vchiq.c | 48 +------------------
- 1 file changed, 1 insertion(+), 47 deletions(-)
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c   | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-index 037c68b83df9..d6950226551f 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-@@ -162,9 +162,6 @@ struct vchiq_mmal_instance {
- 	/* ensure serialised access to service */
- 	struct mutex vchiq_mutex;
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 3cd6177a7373..aaa264f3b598 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -168,6 +168,7 @@ static VCHIQ_STATE_T g_state;
+ static struct class  *vchiq_class;
+ static struct device *vchiq_dev;
+ static DEFINE_SPINLOCK(msg_queue_spinlock);
++static struct platform_device *bcm2835_camera;
  
--	/* ensure serialised access to bulk operations */
--	struct mutex bulk_mutex;
--
- 	/* vmalloc page to receive scratch bulk xfers into */
- 	void *bulk_scratch;
+ static const char *const ioctl_names[] = {
+ 	"CONNECT",
+@@ -3638,6 +3639,10 @@ static int vchiq_probe(struct platform_device *pdev)
+ 		VCHIQ_VERSION, VCHIQ_VERSION_MIN,
+ 		MAJOR(vchiq_devid), MINOR(vchiq_devid));
  
-@@ -332,13 +329,6 @@ static int bulk_receive(struct vchiq_mmal_instance *instance,
- 	unsigned long flags = 0;
- 	int ret;
++	bcm2835_camera = platform_device_register_data(&pdev->dev,
++						       "bcm2835-camera", -1,
++						       NULL, 0);
++
+ 	return 0;
  
--	/* bulk mutex stops other bulk operations while we have a
--	 * receive in progress - released in callback
--	 */
--	ret = mutex_lock_interruptible(&instance->bulk_mutex);
--	if (ret != 0)
--		return ret;
--
- 	rd_len = msg->u.buffer_from_host.buffer_header.length;
+ failed_debugfs_init:
+@@ -3655,6 +3660,7 @@ static int vchiq_probe(struct platform_device *pdev)
  
- 	/* take buffer from queue */
-@@ -357,8 +347,6 @@ static int bulk_receive(struct vchiq_mmal_instance *instance,
- 		 * waiting bulk receive?
- 		 */
- 
--		mutex_unlock(&instance->bulk_mutex);
--
- 		return -EINVAL;
- 	}
- 
-@@ -399,11 +387,6 @@ static int bulk_receive(struct vchiq_mmal_instance *instance,
- 
- 	vchi_service_release(instance->handle);
- 
--	if (ret != 0) {
--		/* callback will not be clearing the mutex */
--		mutex_unlock(&instance->bulk_mutex);
--	}
--
- 	return ret;
- }
- 
-@@ -413,13 +396,6 @@ static int dummy_bulk_receive(struct vchiq_mmal_instance *instance,
+ static int vchiq_remove(struct platform_device *pdev)
  {
- 	int ret;
- 
--	/* bulk mutex stops other bulk operations while we have a
--	 * receive in progress - released in callback
--	 */
--	ret = mutex_lock_interruptible(&instance->bulk_mutex);
--	if (ret != 0)
--		return ret;
--
- 	/* zero length indicates this was a dummy transfer */
- 	msg_context->u.bulk.buffer_used = 0;
- 
-@@ -435,11 +411,6 @@ static int dummy_bulk_receive(struct vchiq_mmal_instance *instance,
- 
- 	vchi_service_release(instance->handle);
- 
--	if (ret != 0) {
--		/* callback will not be clearing the mutex */
--		mutex_unlock(&instance->bulk_mutex);
--	}
--
- 	return ret;
- }
- 
-@@ -494,18 +465,11 @@ buffer_from_host(struct vchiq_mmal_instance *instance,
- 
- 	pr_debug("instance:%p buffer:%p\n", instance->handle, buf);
- 
--	/* bulk mutex stops other bulk operations while we
--	 * have a receive in progress
--	 */
--	if (mutex_lock_interruptible(&instance->bulk_mutex))
--		return -EINTR;
--
- 	/* get context */
- 	if (!buf->msg_context) {
- 		pr_err("%s: msg_context not allocated, buf %p\n", __func__,
- 		       buf);
--		ret = -EINVAL;
--		goto unlock;
-+		return -EINVAL;
- 	}
- 	msg_context = buf->msg_context;
- 
-@@ -559,9 +523,6 @@ buffer_from_host(struct vchiq_mmal_instance *instance,
- 
- 	vchi_service_release(instance->handle);
- 
--unlock:
--	mutex_unlock(&instance->bulk_mutex);
--
- 	return ret;
- }
- 
-@@ -685,9 +646,6 @@ static void buffer_to_host_cb(struct vchiq_mmal_instance *instance,
- static void bulk_receive_cb(struct vchiq_mmal_instance *instance,
- 			    struct mmal_msg_context *msg_context)
- {
--	/* bulk receive operation complete */
--	mutex_unlock(&msg_context->u.bulk.instance->bulk_mutex);
--
- 	/* replace the buffer header */
- 	port_buffer_from_host(msg_context->u.bulk.instance,
- 			      msg_context->u.bulk.port);
-@@ -703,9 +661,6 @@ static void bulk_abort_cb(struct vchiq_mmal_instance *instance,
- {
- 	pr_err("%s: bulk ABORTED msg_context:%p\n", __func__, msg_context);
- 
--	/* bulk receive operation complete */
--	mutex_unlock(&msg_context->u.bulk.instance->bulk_mutex);
--
- 	/* replace the buffer header */
- 	port_buffer_from_host(msg_context->u.bulk.instance,
- 			      msg_context->u.bulk.port);
-@@ -2042,7 +1997,6 @@ int vchiq_mmal_init(struct vchiq_mmal_instance **out_instance)
- 		return -ENOMEM;
- 
- 	mutex_init(&instance->vchiq_mutex);
--	mutex_init(&instance->bulk_mutex);
- 
- 	instance->bulk_scratch = vmalloc(PAGE_SIZE);
- 
++	platform_device_unregister(bcm2835_camera);
+ 	vchiq_debugfs_deinit();
+ 	device_destroy(vchiq_class, vchiq_devid);
+ 	class_destroy(vchiq_class);
 -- 
 2.17.0
 
