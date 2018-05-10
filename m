@@ -1,95 +1,157 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935605AbeEJAMG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 20:12:06 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:46483 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933493AbeEJAMF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 20:12:05 -0400
-X-Google-Smtp-Source: AB8JxZoGjLR8rYd7O+kkLhLcZZWI9Xg1D7x/tASU/dKvCuAnFUZV1sSY043ZCVEcRXSmdzGDx5YE2A==
-Date: Wed, 9 May 2018 17:12:02 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com,
-        benjamin.gaignard@linaro.org
-Subject: Re: [PATCH v3 04/13] remoteproc: add name in rproc_mem_entry struct
-Message-ID: <20180510001202.GC29093@builder>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
- <1519921440-21356-5-git-send-email-loic.pallardy@st.com>
+        id S935582AbeEJARP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 20:17:15 -0400
+Received: from ozlabs.org ([203.11.71.1]:44055 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933499AbeEJARN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 20:17:13 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 10 May 2018 10:17:03 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: linux-next: manual merge of the powerpc tree with the powerpc-fixes
+ tree
+Message-ID: <20180510101703.57ffb774@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519921440-21356-5-git-send-email-loic.pallardy@st.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/P+vlI.MpA0A+.dhb42QwUz5"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 01 Mar 08:23 PST 2018, Loic Pallardy wrote:
+--Sig_/P+vlI.MpA0A+.dhb42QwUz5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Add name field in struct rproc_mem_entry.
-> This new field will be used to match memory area
-> requested in resource table with pre-registered carveout.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+Hi all,
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Today's linux-next merge of the powerpc tree got a conflict in:
 
-Regards,
-Bjorn
+  arch/powerpc/include/asm/ftrace.h
 
-> ---
->  drivers/remoteproc/remoteproc_core.c    | 1 +
->  drivers/remoteproc/remoteproc_debugfs.c | 1 +
->  include/linux/remoteproc.h              | 2 ++
->  3 files changed, 4 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 5f11536..f73a0cf 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -749,6 +749,7 @@ static int rproc_handle_carveout(struct rproc *rproc,
->  	carveout->dma = dma;
->  	carveout->da = rsc->da;
->  	carveout->release = rproc_release_carveout;
-> +	strlcpy(carveout->name, rsc->name, sizeof(carveout->name));
->  
->  	list_add_tail(&carveout->node, &rproc->carveouts);
->  
-> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> index a204883..fc0e570 100644
-> --- a/drivers/remoteproc/remoteproc_debugfs.c
-> +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> @@ -260,6 +260,7 @@ static int rproc_carveouts_show(struct seq_file *seq, void *p)
->  
->  	list_for_each_entry(carveout, &rproc->carveouts, node) {
->  		seq_puts(seq, "Carveout memory entry:\n");
-> +		seq_printf(seq, "\tName: %s\n", carveout->name);
->  		seq_printf(seq, "\tVirtual address: %p\n", carveout->va);
->  		seq_printf(seq, "\tDMA address: %pad\n", &carveout->dma);
->  		seq_printf(seq, "\tDevice address: 0x%x\n", carveout->da);
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index dedc138..2202c08 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -315,6 +315,7 @@ struct fw_rsc_vdev {
->   * @da: device address
->   * @release: release associated memory
->   * @priv: associated data
-> + * @name: associated memory region name (optional)
->   * @node: list node
->   */
->  struct rproc_mem_entry {
-> @@ -323,6 +324,7 @@ struct rproc_mem_entry {
->  	int len;
->  	u32 da;
->  	void *priv;
-> +	char name[32];
->  	struct list_head node;
->  	int (*release)(struct rproc *rproc, struct rproc_mem_entry *mem);
->  };
-> -- 
-> 1.9.1
-> 
+between commit:
+
+  edf6a2dfe388 ("powerpc/trace/syscalls: Update syscall name matching logic=
+ to account for ppc_ prefix")
+
+from the powerpc-fixes tree and commit:
+
+  c3e59d778403 ("powerpc64/ftrace: Rearrange #ifdef sections in ftrace.h")
+
+from the powerpc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+Michael, I think the version in your merge branch is not quite right ...
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/powerpc/include/asm/ftrace.h
+index b2dabd06659d,fc3a2203c566..000000000000
+--- a/arch/powerpc/include/asm/ftrace.h
++++ b/arch/powerpc/include/asm/ftrace.h
+@@@ -66,35 -62,39 +62,54 @@@ struct dyn_arch_ftrace=20
+  #ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+  #define ARCH_SUPPORTS_FTRACE_OPS 1
+  #endif
+- #endif
++ #endif /* CONFIG_FUNCTION_TRACER */
+ =20
+- #if defined(CONFIG_FTRACE_SYSCALLS) && !defined(__ASSEMBLY__)
++ #ifndef __ASSEMBLY__
+ -#if defined(CONFIG_FTRACE_SYSCALLS) && defined(PPC64_ELF_ABI_v1)
+++#if defined(CONFIG_FTRACE_SYSCALLS)
+ +/*
+ + * Some syscall entry functions on powerpc start with "ppc_" (fork and cl=
+one,
+ + * for instance) or ppc32_/ppc64_. We should also match the sys_ variant =
+with
+ + * those.
+ + */
+  #define ARCH_HAS_SYSCALL_MATCH_SYM_NAME
+ +#ifdef PPC64_ELF_ABI_v1
+  static inline bool arch_syscall_match_sym_name(const char *sym, const cha=
+r *name)
+  {
+ -	/*
+ -	 * Compare the symbol name with the system call name. Skip the .sys or .=
+SyS
+ -	 * prefix from the symbol name and the sys prefix from the system call n=
+ame and
+ -	 * just match the rest. This is only needed on ppc64 since symbol names =
+on
+ -	 * 32bit do not start with a period so the generic function will work.
+ -	 */
+ -	return !strcmp(sym + 4, name + 3);
+ +	/* We need to skip past the initial dot, and the __se_sys alias */
+ +	return !strcmp(sym + 1, name) ||
+ +		(!strncmp(sym, ".__se_sys", 9) && !strcmp(sym + 6, name)) ||
+ +		(!strncmp(sym, ".ppc_", 5) && !strcmp(sym + 5, name + 4)) ||
+ +		(!strncmp(sym, ".ppc32_", 7) && !strcmp(sym + 7, name + 4)) ||
+ +		(!strncmp(sym, ".ppc64_", 7) && !strcmp(sym + 7, name + 4));
+  }
+ -#endif /* CONFIG_FTRACE_SYSCALLS && PPC64_ELF_ABI_v1 */
+ +#else
+ +static inline bool arch_syscall_match_sym_name(const char *sym, const cha=
+r *name)
+ +{
+ +	return !strcmp(sym, name) ||
+ +		(!strncmp(sym, "__se_sys", 8) && !strcmp(sym + 5, name)) ||
+ +		(!strncmp(sym, "ppc_", 4) && !strcmp(sym + 4, name + 4)) ||
+ +		(!strncmp(sym, "ppc32_", 6) && !strcmp(sym + 6, name + 4)) ||
+ +		(!strncmp(sym, "ppc64_", 6) && !strcmp(sym + 6, name + 4));
+ +}
+- #endif
+- #endif /* CONFIG_FTRACE_SYSCALLS && !__ASSEMBLY__ */
+++#endif /* PPC64_ELF_ABI_v1 */
+++#endif /* CONFIG_FTRACE_SYSCALLS */
++=20
++ #ifdef CONFIG_PPC64
++ #include <asm/paca.h>
++=20
++ static inline void this_cpu_disable_ftrace(void)
++ {
++ 	get_paca()->ftrace_enabled =3D 0;
++ }
++=20
++ static inline void this_cpu_enable_ftrace(void)
++ {
++ 	get_paca()->ftrace_enabled =3D 1;
++ }
++ #else /* CONFIG_PPC64 */
++ static inline void this_cpu_disable_ftrace(void) { }
++ static inline void this_cpu_enable_ftrace(void) { }
++ #endif /* CONFIG_PPC64 */
++ #endif /* !__ASSEMBLY__ */
+ =20
+  #endif /* _ASM_POWERPC_FTRACE */
+
+--Sig_/P+vlI.MpA0A+.dhb42QwUz5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrzj38ACgkQAVBC80lX
+0GxK/gf+LcQqTZpLp+78Kev/k7kNL5Fsk+clmLo0tLX+jorszBo+IGLtXmz8ravq
+D0Dvv5oEwVe2RHAvEtJs446JMUG7CBsPhKdhHhvEnmkCndS5jxICcmbx+Uv7qfFw
+29PGLV5Wen+xC9gKyFoCZeOKiKlEGGip5TM6IS1C3MX2HLjJNsQkeA6V46Z60vpD
+N4ujC7kfYI+SYQJXjyDFUMrI3YiVfuyHc0hBaYQefKa0tUEwT2Qnz7Y25dnMUgVc
+y8Q82aJQk9Si6SOZ6vPnpCyClduHUGqppSO281+7mEL3Xkyv0OH/L2nY+MHei499
+1fthgKtZMTvrQL/myrTAILE7KFfCWA==
+=9WNU
+-----END PGP SIGNATURE-----
+
+--Sig_/P+vlI.MpA0A+.dhb42QwUz5--
