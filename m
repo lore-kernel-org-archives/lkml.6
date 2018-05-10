@@ -1,70 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752048AbeEJTuN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 15:50:13 -0400
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:54866 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750762AbeEJTuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 15:50:12 -0400
-X-Google-Smtp-Source: AB8JxZp9MtsGFtnmAgT2uvh0vD6m+Teak4zURmiXOEwasf1AIBHvbJCbEpv/VwjjQCMB/EX/i9mhnA==
-Message-ID: <1525981807.28243.9.camel@arista.com>
-Subject: Re: [PATCH 1/2] random: Omit double-printing ratelimit messages
-From: Dmitry Safonov <dima@arista.com>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc: linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
-        Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 10 May 2018 20:50:07 +0100
-In-Reply-To: <20180510194041.GH8335@thunk.org>
-References: <20180510125211.12583-1-dima@arista.com>
-         <20180510125211.12583-2-dima@arista.com> <20180510181901.GG8335@thunk.org>
-         <1525977460.28243.2.camel@arista.com> <20180510194041.GH8335@thunk.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1752039AbeEJUCZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 16:02:25 -0400
+Received: from ms.lwn.net ([45.79.88.28]:59038 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750876AbeEJUCX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 16:02:23 -0400
+Date: Thu, 10 May 2018 14:02:19 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Tejun Heo <tj@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH v2 02/11] docs: admin-guide: add cgroup-v2 documentation
+Message-ID: <20180510140219.52faea50@lwn.net>
+In-Reply-To: <20180510184018.GS2368884@devbig577.frc2.facebook.com>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+        <1a62d2ec4d1eef268dd2256a1e2673df994bee5e.1525870886.git.mchehab+samsung@kernel.org>
+        <20180510184018.GS2368884@devbig577.frc2.facebook.com>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-10 at 15:40 -0400, Theodore Y. Ts'o wrote:
-> On Thu, May 10, 2018 at 07:37:40PM +0100, Dmitry Safonov wrote:
+On Thu, 10 May 2018 11:40:18 -0700
+Tejun Heo <tj@kernel.org> wrote:
+
+> On Wed, May 09, 2018 at 10:18:45AM -0300, Mauro Carvalho Chehab wrote:
+> > The cgroup-v2.txt is already in ReST format. So, move it to the
+> > admin-guide, where it belongs.
 > > 
-> > Ok, then what's the purpose of those messages?
-> > :        pr_notice("random: %d get_random_xx warning(s) missed "
-> > :                  "due to ratelimiting\n",
-> > :                  unseeded_warning.missed);
-> > :        pr_notice("random: %d urandom warning(s) missed "
-> > :                  "due to ratelimiting\n",
-> > :                  urandom_warning.missed);
-> > 
-> > I thought you want to print the summary after initializing random,
-> > not once per second?
+> > Cc: Tejun Heo <tj@kernel.org>
+> > Cc: Li Zefan <lizefan@huawei.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
 > 
-> Yes, and that's what is happening today.  The "output lines
-> suppressed
-> due to ratelimiting" message is only printed out by
-> printk_ratelimit()
-> function, which we are *not* using.
+> Acked-by: Tejun Heo <tj@kernel.org>
 
-random uses __ratelimit() which calls ___ratelimit() with a function
-name. Depending on !RATELIMIT_MSG_ON_RELEASE it prints how many
-messages were suppressed every ratelimit interval (1 second for random)
-and flushes ratelimit_state::missed:
+Applied to the docs tree, thanks.
 
-:if (time_is_before_jiffies(rs->begin + rs->interval)) {
-:    if (rs->missed) {
-:        if (!(rs->flags & RATELIMIT_MSG_ON_RELEASE)) {
-:            printk_deferred(KERN_WARNING
-:                            "%s: %d callbacks suppressed\n",
-:                            func, rs->missed);
-:            rs->missed = 0;
-:        }
-:    }
-:    rs->begin   = jiffies;
-:    rs->printed = 0;
-:}
-
--- 
-Thanks,
-             Dmitry
+jon
