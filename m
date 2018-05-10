@@ -1,69 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757259AbeEJNVU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 09:21:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59082 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756948AbeEJNVT (ORCPT
+        id S1757389AbeEJN1G (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 09:27:06 -0400
+Received: from mail-pf0-f172.google.com ([209.85.192.172]:38770 "EHLO
+        mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756998AbeEJN1F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 09:21:19 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 044DE60767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-From: Sahitya Tummala <stummala@codeaurora.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org,
-        Sahitya Tummala <stummala@codeaurora.org>
-Subject: [PATCH] f2fs: Fix deadlock in shutdown ioctl
-Date: Thu, 10 May 2018 18:50:44 +0530
-Message-Id: <1525958444-5579-1-git-send-email-stummala@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 10 May 2018 09:27:05 -0400
+X-Google-Smtp-Source: AB8JxZregMX/oynpZKjstgKQJ74WpZNJEL6QGpfk4wk1G4ZUAQ7WOLPQ1vTezT9T/NX9+ihkFsXgAA==
+Subject: Re: [PATCH net-next v2] tcp: Add mark for TIMEWAIT sockets
+To: Jon Maxwell <jmaxwell37@gmail.com>, davem@davemloft.net
+Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmaxwell@redhat.com
+References: <20180510065351.22535-1-jmaxwell37@gmail.com>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <9889abda-a022-44ae-30b6-ce2484c3bd90@gmail.com>
+Date: Thu, 10 May 2018 06:27:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180510065351.22535-1-jmaxwell37@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-f2fs_ioc_shutdown() ioctl gets stuck in the below path
-when going down with full sync (F2FS_GOING_DOWN_FULLSYNC)
-option.
 
-__switch_to+0x90/0xc4
-percpu_down_write+0x8c/0xc0
-freeze_super+0xec/0x1e4
-freeze_bdev+0xc4/0xcc
-f2fs_ioctl+0xc0c/0x1ce0
-f2fs_compat_ioctl+0x98/0x1f0
 
-Fix this by not holding write access during this ioctl.
+On 05/09/2018 11:53 PM, Jon Maxwell wrote:
+> This version has some suggestions by Eric Dumazet:
+> 
+> - Use a local variable for the mark in IPv6 instead of ctl_sk to avoid SMP 
+> races. 
+> - Use the more elegant "IP4_REPLY_MARK(net, skb->mark) ?: sk->sk_mark"
+> statement. 
+> - Factorize code as sk_fullsock() check is not necessary.
+> 
+> Aidan McGurn from Openwave Mobility systems reported the following bug:
+> 
+> "Marked routing is broken on customer deployment. Its effects are large 
+> increase in Uplink retransmissions caused by the client never receiving 
+> the final ACK to their FINACK - this ACK misses the mark and routes out 
+> of the incorrect route."
+> 
+> Currently marks are added to sk_buffs for replies when the "fwmark_reflect" 
+> sysctl is enabled. But not for TW sockets that had sk->sk_mark set via 
+> setsockopt(SO_MARK..).  
+> 
+> Fix this in IPv4/v6 by adding tw->tw_mark for TIME_WAIT sockets. Copy the the 
+> original sk->sk_mark in __inet_twsk_hashdance() to the new tw->tw_mark location. 
+> Then progate this so that the skb gets sent with the correct mark. Do the same 
+> for resets. Give the "fwmark_reflect" sysctl precedence over sk->sk_mark so that
+> netfilter rules are still honored.
+> 
+> Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
----
- fs/f2fs/file.c | 5 -----
- 1 file changed, 5 deletions(-)
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index b926df7..2c2e61b 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1835,10 +1835,6 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- 	if (get_user(in, (__u32 __user *)arg))
- 		return -EFAULT;
- 
--	ret = mnt_want_write_file(filp);
--	if (ret)
--		return ret;
--
- 	switch (in) {
- 	case F2FS_GOING_DOWN_FULLSYNC:
- 		sb = freeze_bdev(sb->s_bdev);
-@@ -1878,7 +1874,6 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
- 
- 	f2fs_update_time(sbi, REQ_TIME);
- out:
--	mnt_drop_write_file(filp);
- 	return ret;
- }
- 
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+Thanks Jon.
