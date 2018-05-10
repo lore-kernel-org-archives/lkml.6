@@ -1,371 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756975AbeEJJLU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 05:11:20 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:35431 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756699AbeEJJLQ (ORCPT
+        id S1756842AbeEJJQl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 05:16:41 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59256 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751313AbeEJJQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 05:11:16 -0400
-Subject: Re: [PATCH V3] ARM: dts: da850-evm: use phandles to extend nodes
-To: Adam Ford <aford173@gmail.com>, <adam.ford@logicpd.com>
-CC: Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180507123721.9264-1-aford173@gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <ae8292b2-b167-7a96-70be-1cfea6059874@ti.com>
-Date: Thu, 10 May 2018 14:40:46 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180507123721.9264-1-aford173@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 10 May 2018 05:16:38 -0400
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH IB/core 2/2] IB/cm: Send authentic pkey in REQ msg and
+ check eligibility of the pkeys
+From: =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>
+In-Reply-To: <ab1f16cd-aa60-0c43-841c-aed301fd2a7e@dev.mellanox.co.il>
+Date: Thu, 10 May 2018 11:16:08 +0200
+Cc: Doug Ledford <dledford@redhat.com>, Don Hiatt <don.hiatt@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Message-Id: <F9802EE9-4420-44EE-93DC-27CC799B427E@oracle.com>
+References: <20180509093020.24503-1-Haakon.Bugge@oracle.com>
+ <20180509093020.24503-3-Haakon.Bugge@oracle.com>
+ <ab1f16cd-aa60-0c43-841c-aed301fd2a7e@dev.mellanox.co.il>
+To: Hal Rosenstock <hal@dev.mellanox.co.il>
+X-Mailer: Apple Mail (2.3445.6.18)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8888 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=15 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805100091
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4A9Gm3l017303
 
-On Monday 07 May 2018 06:07 PM, Adam Ford wrote:
-> Many node labels in the device tree (like serial0, serial1, etc) are being
-> redefined, so let's modernize the device tree by using phandles to
-> extend the existing nodes.  This helps reduce the whitespace.
+
+
+> On 9 May 2018, at 13:28, Hal Rosenstock <hal@dev.mellanox.co.il> wrote:
 > 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+> On 5/9/2018 5:30 AM, Håkon Bugge wrote:
+>> There is no point in using RDMA CM to establish a connection between
+>> two QPs that cannot possible communicate. Particularly, if both the
+>> active and passive side use limited pkeys, they are not able to
+>> communicate.
+>> 
+>> In order to detect this situation, the authentic pkey is used in the
+>> CM REQ message. The authentic pkey is the one that the HCA inserts
+>> into the BTH in the IB packets.
+>> 
+>> When the passive side receives the REQ, commit ("ib_core: A full pkey
+>> is required to match a limited one") ensures that
+>> ib_find_matched_cached_pkey() fails unless at least one of the pkeys
+>> compared has the full-member bit.
+>> 
+>> In the limited-to-limited case, this will prohibit the connection to
+>> be formed, and thus, Pkey Violation Traps will not be sent to the SM.
+>> 
+>> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+>> ---
+>> drivers/infiniband/core/cm.c | 39 ++++++++++++++++++++++++++++++++-------
+>> include/rdma/ib_cm.h         |  4 +++-
+>> 2 files changed, 35 insertions(+), 8 deletions(-)
+>> 
+>> diff --git a/drivers/infiniband/core/cm.c b/drivers/infiniband/core/cm.c
+>> index a92e1a5c202b..52ed51d5bd2a 100644
+>> --- a/drivers/infiniband/core/cm.c
+>> +++ b/drivers/infiniband/core/cm.c
+>> @@ -3,6 +3,7 @@
+>>  * Copyright (c) 2004 Topspin Corporation.  All rights reserved.
+>>  * Copyright (c) 2004, 2005 Voltaire Corporation.  All rights reserved.
+>>  * Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
+>> + * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+>>  *
+>>  * This software is available to you under a choice of one of two
+>>  * licenses.  You may choose to be licensed under the terms of the GNU
+>> @@ -91,6 +92,7 @@ static const char * const ibcm_rej_reason_strs[] = {
+>> 	[IB_CM_REJ_INVALID_CLASS_VERSION]	= "invalid class version",
+>> 	[IB_CM_REJ_INVALID_FLOW_LABEL]		= "invalid flow label",
+>> 	[IB_CM_REJ_INVALID_ALT_FLOW_LABEL]	= "invalid alt flow label",
+>> +	[IB_CM_REJ_INVALID_PKEY]		= "invalid PKey",
+> 
+> If this patch goes ahead, IBA spec for CM should be updated to include this.
 
-I applied this without the pmic changes. I am not convinced about those. 
-The tps node is already being referred to as phandle. I am not sure 
-referring to each individual regulator using phandle is needed. Other 
-files like am335x-evm.dts don't do it as well.
+Sure, I see:
 
-Another thing is whether we really need the tp6507x.dtsi file. It does 
-not seem to contain much and also da850-evm.dts is the only file 
-including it. So it seems pretty pointless to me.
+ 33 Invalid Alternate Flow Label
 
-Here is what I committed.
+as the latest in the spec.
 
-Thanks,
-Sekhar
+> 
+>> };
+>> 
+>> const char *__attribute_const__ ibcm_reject_msg(int reason)
+>> @@ -518,8 +520,8 @@ static int cm_init_av_by_path(struct sa_path_rec *path, struct cm_av *av,
+>> 		return -EINVAL;
+>> 	cm_dev = port->cm_dev;
+>> 
+>> -	ret = ib_find_cached_pkey(cm_dev->ib_device, port->port_num,
+>> -				  be16_to_cpu(path->pkey), &av->pkey_index);
+>> +	ret = ib_find_matched_cached_pkey(cm_dev->ib_device, port->port_num,
+>> +					  be16_to_cpu(path->pkey), &av->pkey_index);
+>> 	if (ret)
+>> 		return ret;
+>> 
+>> @@ -1241,7 +1243,7 @@ static void cm_format_req(struct cm_req_msg *req_msg,
+>> 	cm_req_set_starting_psn(req_msg, cpu_to_be32(param->starting_psn));
+>> 	cm_req_set_local_resp_timeout(req_msg,
+>> 				      param->local_cm_response_timeout);
+>> -	req_msg->pkey = param->primary_path->pkey;
+>> +	req_msg->pkey = cpu_to_be16(cm_id_priv->pkey);
+>> 	cm_req_set_path_mtu(req_msg, param->primary_path->mtu);
+>> 	cm_req_set_max_cm_retries(req_msg, param->max_cm_retries);
+>> 
+>> @@ -1396,7 +1398,23 @@ int ib_send_cm_req(struct ib_cm_id *cm_id,
+>> 	cm_id_priv->responder_resources = param->responder_resources;
+>> 	cm_id_priv->retry_count = param->retry_count;
+>> 	cm_id_priv->path_mtu = param->primary_path->mtu;
+>> -	cm_id_priv->pkey = param->primary_path->pkey;
+>> +
+>> +	/*
+>> +	 * We want to send the pkey used in the BTH in packets
+>> +	 * sent. This, in order for the passive side to determine if
+>> +	 * communication is permitted by the respective pkeys.
+>> +	 *
+>> +	 * The pkey in the paths are derived from the MGID, which has
+>> +	 * the full membership bit set. Hence, we retrieve the pkey by
+>> +	 * using the address vector's pkey_index.
+> 
+> The paths usually come from the SM and I don't expect SM to provide path
+> between ports of only limited members of partition.
 
----8<---
-commit ae62a32d6019a8225e2c32e631b8b0d039151131 (refs/heads/v4.18/dt)
-Author:     Adam Ford <aford173@gmail.com>
-AuthorDate: Mon May 7 07:37:21 2018 -0500
-Commit:     Sekhar Nori <nsekhar@ti.com>
-CommitDate: Thu May 10 14:01:15 2018 +0530
+In my case, it does. 
 
-    ARM: dts: da850-evm: use phandles to extend nodes
-    
-    Many node labels in the device tree (like serial0, serial1, etc) are being
-    redefined, so let's modernize the device tree by using phandles to
-    extend the existing nodes.  This helps reduce the whitespace.
-    
-    Signed-off-by: Adam Ford <aford173@gmail.com>
-    [nsekhar@ti.com: drop tps6507x related changes]
-    Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+> Default ACM provider
+> forms path from multicast group parameters including pkey. Is that the
+> scenario of concern ?
 
-diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
-index 339cae353302..9389f95f4094 100644
---- a/arch/arm/boot/dts/da850-evm.dts
-+++ b/arch/arm/boot/dts/da850-evm.dts
-@@ -27,143 +27,6 @@
- 		spi0 = &spi1;
- 	};
- 
--	soc@1c00000 {
--		pmx_core: pinmux@14120 {
--			status = "okay";
--
--			mcasp0_pins: pinmux_mcasp0_pins {
--				pinctrl-single,bits = <
--					/*
--					 * AHCLKX, ACLKX, AFSX, AHCLKR, ACLKR,
--					 * AFSR, AMUTE
--					 */
--					0x00 0x11111111 0xffffffff
--					/* AXR11, AXR12 */
--					0x04 0x00011000 0x000ff000
--				>;
--			};
--			nand_pins: nand_pins {
--				pinctrl-single,bits = <
--					/* EMA_WAIT[0], EMA_OE, EMA_WE, EMA_CS[4], EMA_CS[3] */
--					0x1c 0x10110110  0xf0ff0ff0
--					/*
--					 * EMA_D[0], EMA_D[1], EMA_D[2],
--					 * EMA_D[3], EMA_D[4], EMA_D[5],
--					 * EMA_D[6], EMA_D[7]
--					 */
--					0x24 0x11111111  0xffffffff
--					/* EMA_A[1], EMA_A[2] */
--					0x30 0x01100000  0x0ff00000
--				>;
--			};
--		};
--		serial0: serial@42000 {
--			status = "okay";
--		};
--		serial1: serial@10c000 {
--			status = "okay";
--		};
--		serial2: serial@10d000 {
--			status = "okay";
--		};
--		rtc0: rtc@23000 {
--			status = "okay";
--		};
--		i2c0: i2c@22000 {
--			status = "okay";
--			clock-frequency = <100000>;
--			pinctrl-names = "default";
--			pinctrl-0 = <&i2c0_pins>;
--
--			tps: tps@48 {
--				reg = <0x48>;
--			};
--			tlv320aic3106: tlv320aic3106@18 {
--				#sound-dai-cells = <0>;
--				compatible = "ti,tlv320aic3106";
--				reg = <0x18>;
--				status = "okay";
--
--				/* Regulators */
--				IOVDD-supply = <&vdcdc2_reg>;
--				/* Derived from VBAT: Baseboard 3.3V / 1.8V */
--				AVDD-supply = <&vbat>;
--				DRVDD-supply = <&vbat>;
--				DVDD-supply = <&vbat>;
--			};
--			tca6416: gpio@20 {
--				compatible = "ti,tca6416";
--				reg = <0x20>;
--				gpio-controller;
--				#gpio-cells = <2>;
--			};
--		};
--		wdt: wdt@21000 {
--			status = "okay";
--		};
--		mmc0: mmc@40000 {
--			max-frequency = <50000000>;
--			bus-width = <4>;
--			status = "okay";
--			pinctrl-names = "default";
--			pinctrl-0 = <&mmc0_pins>;
--		};
--		spi1: spi@30e000 {
--			status = "okay";
--			pinctrl-names = "default";
--			pinctrl-0 = <&spi1_pins &spi1_cs0_pin>;
--			flash: m25p80@0 {
--				#address-cells = <1>;
--				#size-cells = <1>;
--				compatible = "m25p64";
--				spi-max-frequency = <30000000>;
--				m25p,fast-read;
--				reg = <0>;
--				partition@0 {
--					label = "U-Boot-SPL";
--					reg = <0x00000000 0x00010000>;
--					read-only;
--				};
--				partition@1 {
--					label = "U-Boot";
--					reg = <0x00010000 0x00080000>;
--					read-only;
--				};
--				partition@2 {
--					label = "U-Boot-Env";
--					reg = <0x00090000 0x00010000>;
--					read-only;
--				};
--				partition@3 {
--					label = "Kernel";
--					reg = <0x000a0000 0x00280000>;
--				};
--				partition@4 {
--					label = "Filesystem";
--					reg = <0x00320000 0x00400000>;
--				};
--				partition@5 {
--					label = "MAC-Address";
--					reg = <0x007f0000 0x00010000>;
--					read-only;
--				};
--			};
--		};
--		mdio: mdio@224000 {
--			status = "okay";
--			pinctrl-names = "default";
--			pinctrl-0 = <&mdio_pins>;
--			bus_freq = <2200000>;
--		};
--		eth0: ethernet@220000 {
--			status = "okay";
--			pinctrl-names = "default";
--			pinctrl-0 = <&mii_pins>;
--		};
--		gpio: gpio@226000 {
--			status = "okay";
--		};
--	};
- 	vbat: fixedregulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vbat";
-@@ -200,6 +63,153 @@
- 	};
- };
- 
-+&pmx_core {
-+	status = "okay";
-+
-+	mcasp0_pins: pinmux_mcasp0_pins {
-+		pinctrl-single,bits = <
-+			/*
-+			 * AHCLKX, ACLKX, AFSX, AHCLKR, ACLKR,
-+			 * AFSR, AMUTE
-+			 */
-+			0x00 0x11111111 0xffffffff
-+			/* AXR11, AXR12 */
-+			0x04 0x00011000 0x000ff000
-+		>;
-+	};
-+	nand_pins: nand_pins {
-+		pinctrl-single,bits = <
-+			/* EMA_WAIT[0], EMA_OE, EMA_WE, EMA_CS[4], EMA_CS[3] */
-+			0x1c 0x10110110  0xf0ff0ff0
-+			/*
-+			 * EMA_D[0], EMA_D[1], EMA_D[2],
-+			 * EMA_D[3], EMA_D[4], EMA_D[5],
-+			 * EMA_D[6], EMA_D[7]
-+			 */
-+			0x24 0x11111111  0xffffffff
-+			/* EMA_A[1], EMA_A[2] */
-+			0x30 0x01100000  0x0ff00000
-+		>;
-+	};
-+};
-+
-+&serial0 {
-+	status = "okay";
-+};
-+
-+&serial1 {
-+	status = "okay";
-+};
-+
-+&serial2 {
-+	status = "okay";
-+};
-+
-+&rtc0 {
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_pins>;
-+
-+	tps: tps@48 {
-+		reg = <0x48>;
-+	};
-+	tlv320aic3106: tlv320aic3106@18 {
-+		#sound-dai-cells = <0>;
-+		compatible = "ti,tlv320aic3106";
-+		reg = <0x18>;
-+		status = "okay";
-+
-+		/* Regulators */
-+		IOVDD-supply = <&vdcdc2_reg>;
-+		/* Derived from VBAT: Baseboard 3.3V / 1.8V */
-+		AVDD-supply = <&vbat>;
-+		DRVDD-supply = <&vbat>;
-+		DVDD-supply = <&vbat>;
-+	};
-+	tca6416: gpio@20 {
-+		compatible = "ti,tca6416";
-+		reg = <0x20>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+};
-+
-+&wdt {
-+	status = "okay";
-+};
-+
-+&mmc0 {
-+	max-frequency = <50000000>;
-+	bus-width = <4>;
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins>;
-+};
-+
-+&spi1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi1_pins &spi1_cs0_pin>;
-+	flash: m25p80@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "m25p64";
-+		spi-max-frequency = <30000000>;
-+		m25p,fast-read;
-+		reg = <0>;
-+		partition@0 {
-+			label = "U-Boot-SPL";
-+			reg = <0x00000000 0x00010000>;
-+			read-only;
-+		};
-+		partition@1 {
-+			label = "U-Boot";
-+			reg = <0x00010000 0x00080000>;
-+			read-only;
-+		};
-+		partition@2 {
-+			label = "U-Boot-Env";
-+			reg = <0x00090000 0x00010000>;
-+			read-only;
-+		};
-+		partition@3 {
-+			label = "Kernel";
-+			reg = <0x000a0000 0x00280000>;
-+		};
-+		partition@4 {
-+			label = "Filesystem";
-+			reg = <0x00320000 0x00400000>;
-+		};
-+		partition@5 {
-+			label = "MAC-Address";
-+			reg = <0x007f0000 0x00010000>;
-+			read-only;
-+		};
-+	};
-+};
-+
-+&mdio {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mdio_pins>;
-+	bus_freq = <2200000>;
-+};
-+
-+&eth0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mii_pins>;
-+};
-+
-+&gpio {
-+	status = "okay";
-+};
-+
- /include/ "tps6507x.dtsi"
- 
- &tps {
+Also RDMA CM does that. Do an ibdump of a CM REQ message sent from a limited port, and you will see the PKey is the full member in the CM REQ msg.
+
+> If so, I still don't fully understand the scenario
+> because limited members are not supposed to be part of a multicast
+> group. There was some work started to extend this for client/server
+> model but it was never completed. However, there may be hole(s) in
+> various components of implementation which open(s) this door.
+
+I view OpenSM not returning a valid path between two limited members an orthogonal issue, as OpenSM is another component.
+
+I think the CM REQ message should contain the correct PKey (fixed by this patch series).
+
+And in the event the passive side being a limited member and receives a CM REQ with a limited PKey, that connection should not be formed (fixed by this patch series).
+
+Read me correct, I am also in favour of fixing the OpenSM to not return a valid (but useless) path record in this case.
+
+
+Thxs, Håkon
+
+
+> 
+> -- Hal
+> 
+>> +	 */
+>> +	ret = ib_get_cached_pkey(cm_id_priv->id.device,
+>> +				 cm_id_priv->av.port->port_num,
+>> +				 cm_id_priv->av.pkey_index,
+>> +				 &cm_id_priv->pkey);
+>> +	if (ret)
+>> +		goto error1;
+>> +
+>> 	cm_id_priv->qp_type = param->qp_type;
+>> 
+>> 	ret = cm_alloc_msg(cm_id_priv, &cm_id_priv->msg);
+>> @@ -1956,16 +1974,19 @@ static int cm_req_handler(struct cm_work *work)
+>> 				 cm_id_priv);
+>> 	if (ret) {
+>> 		int err;
+>> +		int rej_reason = (ret == -ENOENT ?
+>> +				  IB_CM_REJ_INVALID_PKEY :
+>> +				  IB_CM_REJ_INVALID_GID);
+>> 
+>> 		err = ib_get_cached_gid(work->port->cm_dev->ib_device,
+>> 					work->port->port_num, 0,
+>> 					&work->path[0].sgid,
+>> 					NULL);
+>> 		if (err)
+>> -			ib_send_cm_rej(cm_id, IB_CM_REJ_INVALID_GID,
+>> +			ib_send_cm_rej(cm_id, rej_reason,
+>> 				       NULL, 0, NULL, 0);
+>> 		else
+>> -			ib_send_cm_rej(cm_id, IB_CM_REJ_INVALID_GID,
+>> +			ib_send_cm_rej(cm_id, rej_reason,
+>> 				       &work->path[0].sgid,
+>> 				       sizeof(work->path[0].sgid),
+>> 				       NULL, 0);
+>> @@ -1975,7 +1996,11 @@ static int cm_req_handler(struct cm_work *work)
+>> 		ret = cm_init_av_by_path(&work->path[1], &cm_id_priv->alt_av,
+>> 					 cm_id_priv);
+>> 		if (ret) {
+>> -			ib_send_cm_rej(cm_id, IB_CM_REJ_INVALID_ALT_GID,
+>> +			int rej_reason = (ret == -ENOENT ?
+>> +					  IB_CM_REJ_INVALID_PKEY :
+>> +					  IB_CM_REJ_INVALID_ALT_GID);
+>> +
+>> +			ib_send_cm_rej(cm_id, rej_reason,
+>> 				       &work->path[0].sgid,
+>> 				       sizeof(work->path[0].sgid), NULL, 0);
+>> 			goto rejected;
+>> diff --git a/include/rdma/ib_cm.h b/include/rdma/ib_cm.h
+>> index 7979cb04f529..56b62303946a 100644
+>> --- a/include/rdma/ib_cm.h
+>> +++ b/include/rdma/ib_cm.h
+>> @@ -3,6 +3,7 @@
+>>  * Copyright (c) 2004 Topspin Corporation.  All rights reserved.
+>>  * Copyright (c) 2004 Voltaire Corporation.  All rights reserved.
+>>  * Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
+>> + * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
+>>  *
+>>  * This software is available to you under a choice of one of two
+>>  * licenses.  You may choose to be licensed under the terms of the GNU
+>> @@ -183,7 +184,8 @@ enum ib_cm_rej_reason {
+>> 	IB_CM_REJ_DUPLICATE_LOCAL_COMM_ID	= 30,
+>> 	IB_CM_REJ_INVALID_CLASS_VERSION		= 31,
+>> 	IB_CM_REJ_INVALID_FLOW_LABEL		= 32,
+>> -	IB_CM_REJ_INVALID_ALT_FLOW_LABEL	= 33
+>> +	IB_CM_REJ_INVALID_ALT_FLOW_LABEL	= 33,
+>> +	IB_CM_REJ_INVALID_PKEY			= 34,
+>> };
+>> 
+>> struct ib_cm_rej_event_param {
+>> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
