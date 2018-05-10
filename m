@@ -1,70 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752618AbeEJVxb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 17:53:31 -0400
-Received: from server1.vittgam.net ([213.239.197.142]:62235 "EHLO
-        mail.vittgam.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752382AbeEJVxa (ORCPT
+        id S1752672AbeEJVyC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 17:54:02 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:37856 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752412AbeEJVyA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 17:53:30 -0400
-X-DKIM: OpenDKIM Filter v2.4.2 mail.vittgam.net w4ALrNxj152699
-X-VittGamMilter-Outgoing-SubjectPrefix: [linux-kernel]
-X-VittGamMilter-Outgoing-OriginalSubject: [PATCH] platform/chrome: cros_ec_lpc: Add support for newer Google devices using custom coreboot firmware or stock SeaBIOS.
-Date: Thu, 10 May 2018 23:53:23 +0200
-Message-Id: <201805102153.w4ALrNxj152699@mail.vittgam.net>
-From: "Vittorio Gambaletta (VittGam)" <linuxbugs@vittgam.net>
-To: <linux-kernel@vger.kernel.org>, <bleung@chromium.org>,
-        <bleung@google.com>, <olof@lixom.net>
-Cc: "Salvatore Bellizzi" <lkml@seppia.net>, <groeck@chromium.org>,
-        <groeck@google.com>, <dmitry.torokhov@gmail.com>
-Subject: [PATCH] platform/chrome: cros_ec_lpc: Add support for newer Google devices using custom coreboot firmware or stock SeaBIOS.
+        Thu, 10 May 2018 17:54:00 -0400
+Date: Thu, 10 May 2018 17:53:58 -0400 (EDT)
+Message-Id: <20180510.175358.1296757435086922873.davem@davemloft.net>
+To: colin.king@canonical.com
+Cc: igor.russkikh@aquantia.com, pavel.belous@aquantia.com,
+        weiyongjun1@huawei.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] net: aquantia: fix unsigned numvecs comparison
+ with less than zero
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180510125201.19707-1-colin.king@canonical.com>
+References: <20180510125201.19707-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Custom coreboot firmware does not contain "Google_*" as BIOS
-version string; also, booting through stock SeaBIOS will present
-an empty BIOS version string to Linux. So the generic match at
-the top would not work.
+From: Colin King <colin.king@canonical.com>
+Date: Thu, 10 May 2018 13:52:01 +0100
 
-A previous patch added the "GOOGLE" match for DMI system vendor,
-but newer machines such as Skylake-based Caroline use "Google"
-instead.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The comparison of numvecs < 0 is always false because numvecs is a u32
+> and hence the error return from a failed call to pci_alloc_irq_vectores
+> is never detected.  Fix this by using the signed int ret to handle the
+> error return and assign numvecs to err.
+> 
+> Detected by CoverityScan, CID#1468650 ("Unsigned compared against 0")
+> 
+> Fixes: a09bd81b5413 ("net: aquantia: Limit number of vectors to actually allocated irqs")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Also amend the previous comment adding a note that this is needed
-for stock SeaBIOS too.
-
-Signed-off-by: Vittorio Gambaletta <linuxbugs@vittgam.net>
-Signed-off-by: Salvatore Bellizzi <lkml@seppia.net>
-
----
-
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -347,7 +347,8 @@
- 	},
- 	{
- 		/*
--		 * If the box is running custom coreboot firmware then the
-+		 * If the box is running custom coreboot firmware,
-+		 * or is booting Linux through stock SeaBIOS, then the
- 		 * DMI BIOS version string will not be matched by "Google_",
- 		 * but the system vendor string will still be matched by
- 		 * "GOOGLE".
-@@ -358,6 +359,16 @@
- 		},
- 	},
- 	{
-+		/*
-+		 * Newer machines use "Google" instead of "GOOGLE" as
-+		 * DMI system vendor string.
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
-+			DMI_MATCH(DMI_SYS_VENDOR, "Google"),
-+		},
-+	},
-+	{
- 		/* x86-link, the Chromebook Pixel. */
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+This doesn't apply to net-next.
