@@ -1,236 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756842AbeEJJQl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 05:16:41 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:59256 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751313AbeEJJQi (ORCPT
+        id S1756949AbeEJJRb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 05:17:31 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:54552 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756820AbeEJJRY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 05:16:38 -0400
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH IB/core 2/2] IB/cm: Send authentic pkey in REQ msg and
- check eligibility of the pkeys
-From: =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>
-In-Reply-To: <ab1f16cd-aa60-0c43-841c-aed301fd2a7e@dev.mellanox.co.il>
-Date: Thu, 10 May 2018 11:16:08 +0200
-Cc: Doug Ledford <dledford@redhat.com>, Don Hiatt <don.hiatt@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Message-Id: <F9802EE9-4420-44EE-93DC-27CC799B427E@oracle.com>
-References: <20180509093020.24503-1-Haakon.Bugge@oracle.com>
- <20180509093020.24503-3-Haakon.Bugge@oracle.com>
- <ab1f16cd-aa60-0c43-841c-aed301fd2a7e@dev.mellanox.co.il>
-To: Hal Rosenstock <hal@dev.mellanox.co.il>
-X-Mailer: Apple Mail (2.3445.6.18)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8888 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=15 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805100091
+        Thu, 10 May 2018 05:17:24 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w4A9HHi6004984
+X-Nifty-SrcIP: [209.85.213.46]
+X-Google-Smtp-Source: AB8JxZragqN12G7S2JVYLa1JC1Y5aRFQiGh2IarJP0VXIdFUxDigADJlWq1tVFbQoY/SwQrg+BdlHnRq8lReDbre2gQ=
+MIME-Version: 1.0
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 10 May 2018 18:16:36 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATZgJ4MxOFLUCNARWv3Zz=gpL-jGReDnBnArquiaXRWoQ@mail.gmail.com>
+Message-ID: <CAK7LNATZgJ4MxOFLUCNARWv3Zz=gpL-jGReDnBnArquiaXRWoQ@mail.gmail.com>
+Subject: [reset-control] How to initialize hardware state with the shared
+ reset line?
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        DTML <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4A9Gm3l017303
+
+Hi.
+
+
+The previous thread was:
+"usb: dwc3: support clocks and resets for DWC3 core"
+https://patchwork.kernel.org/patch/10349623/
+
+
+I changed the subject because
+I think this is rather reset-control topic than USB.
+
+
+I am searching for a good way to initialize hardware devices
+in the following situation:
+
+ - two or more hardware devices share the same reset line
+
+ - those devices are not reset before booting the kernel
+   (i.e. flip flops in RTL are random state at driver probe)
+
+ - the hardware IP is used by various SoCs,
+   and this issue only appears only on some.
 
 
 
-> On 9 May 2018, at 13:28, Hal Rosenstock <hal@dev.mellanox.co.il> wrote:
-> 
-> On 5/9/2018 5:30 AM, Håkon Bugge wrote:
->> There is no point in using RDMA CM to establish a connection between
->> two QPs that cannot possible communicate. Particularly, if both the
->> active and passive side use limited pkeys, they are not able to
->> communicate.
->> 
->> In order to detect this situation, the authentic pkey is used in the
->> CM REQ message. The authentic pkey is the one that the HCA inserts
->> into the BTH in the IB packets.
->> 
->> When the passive side receives the REQ, commit ("ib_core: A full pkey
->> is required to match a limited one") ensures that
->> ib_find_matched_cached_pkey() fails unless at least one of the pkeys
->> compared has the full-member bit.
->> 
->> In the limited-to-limited case, this will prohibit the connection to
->> be formed, and thus, Pkey Violation Traps will not be sent to the SM.
->> 
->> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
->> ---
->> drivers/infiniband/core/cm.c | 39 ++++++++++++++++++++++++++++++++-------
->> include/rdma/ib_cm.h         |  4 +++-
->> 2 files changed, 35 insertions(+), 8 deletions(-)
->> 
->> diff --git a/drivers/infiniband/core/cm.c b/drivers/infiniband/core/cm.c
->> index a92e1a5c202b..52ed51d5bd2a 100644
->> --- a/drivers/infiniband/core/cm.c
->> +++ b/drivers/infiniband/core/cm.c
->> @@ -3,6 +3,7 @@
->>  * Copyright (c) 2004 Topspin Corporation.  All rights reserved.
->>  * Copyright (c) 2004, 2005 Voltaire Corporation.  All rights reserved.
->>  * Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
->> + * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
->>  *
->>  * This software is available to you under a choice of one of two
->>  * licenses.  You may choose to be licensed under the terms of the GNU
->> @@ -91,6 +92,7 @@ static const char * const ibcm_rej_reason_strs[] = {
->> 	[IB_CM_REJ_INVALID_CLASS_VERSION]	= "invalid class version",
->> 	[IB_CM_REJ_INVALID_FLOW_LABEL]		= "invalid flow label",
->> 	[IB_CM_REJ_INVALID_ALT_FLOW_LABEL]	= "invalid alt flow label",
->> +	[IB_CM_REJ_INVALID_PKEY]		= "invalid PKey",
-> 
-> If this patch goes ahead, IBA spec for CM should be updated to include this.
-
-Sure, I see:
-
- 33 Invalid Alternate Flow Label
-
-as the latest in the spec.
-
-> 
->> };
->> 
->> const char *__attribute_const__ ibcm_reject_msg(int reason)
->> @@ -518,8 +520,8 @@ static int cm_init_av_by_path(struct sa_path_rec *path, struct cm_av *av,
->> 		return -EINVAL;
->> 	cm_dev = port->cm_dev;
->> 
->> -	ret = ib_find_cached_pkey(cm_dev->ib_device, port->port_num,
->> -				  be16_to_cpu(path->pkey), &av->pkey_index);
->> +	ret = ib_find_matched_cached_pkey(cm_dev->ib_device, port->port_num,
->> +					  be16_to_cpu(path->pkey), &av->pkey_index);
->> 	if (ret)
->> 		return ret;
->> 
->> @@ -1241,7 +1243,7 @@ static void cm_format_req(struct cm_req_msg *req_msg,
->> 	cm_req_set_starting_psn(req_msg, cpu_to_be32(param->starting_psn));
->> 	cm_req_set_local_resp_timeout(req_msg,
->> 				      param->local_cm_response_timeout);
->> -	req_msg->pkey = param->primary_path->pkey;
->> +	req_msg->pkey = cpu_to_be16(cm_id_priv->pkey);
->> 	cm_req_set_path_mtu(req_msg, param->primary_path->mtu);
->> 	cm_req_set_max_cm_retries(req_msg, param->max_cm_retries);
->> 
->> @@ -1396,7 +1398,23 @@ int ib_send_cm_req(struct ib_cm_id *cm_id,
->> 	cm_id_priv->responder_resources = param->responder_resources;
->> 	cm_id_priv->retry_count = param->retry_count;
->> 	cm_id_priv->path_mtu = param->primary_path->mtu;
->> -	cm_id_priv->pkey = param->primary_path->pkey;
->> +
->> +	/*
->> +	 * We want to send the pkey used in the BTH in packets
->> +	 * sent. This, in order for the passive side to determine if
->> +	 * communication is permitted by the respective pkeys.
->> +	 *
->> +	 * The pkey in the paths are derived from the MGID, which has
->> +	 * the full membership bit set. Hence, we retrieve the pkey by
->> +	 * using the address vector's pkey_index.
-> 
-> The paths usually come from the SM and I don't expect SM to provide path
-> between ports of only limited members of partition.
-
-In my case, it does. 
-
-> Default ACM provider
-> forms path from multicast group parameters including pkey. Is that the
-> scenario of concern ?
-
-Also RDMA CM does that. Do an ibdump of a CM REQ message sent from a limited port, and you will see the PKey is the full member in the CM REQ msg.
-
-> If so, I still don't fully understand the scenario
-> because limited members are not supposed to be part of a multicast
-> group. There was some work started to extend this for client/server
-> model but it was never completed. However, there may be hole(s) in
-> various components of implementation which open(s) this door.
-
-I view OpenSM not returning a valid path between two limited members an orthogonal issue, as OpenSM is another component.
-
-I think the CM REQ message should contain the correct PKey (fixed by this patch series).
-
-And in the event the passive side being a limited member and receives a CM REQ with a limited PKey, that connection should not be formed (fixed by this patch series).
-
-Read me correct, I am also in favour of fixing the OpenSM to not return a valid (but useless) path record in this case.
+Specifically, the DWC3 USB IP case is in my mind,
+but this should apply to any hardware in general.
 
 
-Thxs, Håkon
 
 
-> 
-> -- Hal
-> 
->> +	 */
->> +	ret = ib_get_cached_pkey(cm_id_priv->id.device,
->> +				 cm_id_priv->av.port->port_num,
->> +				 cm_id_priv->av.pkey_index,
->> +				 &cm_id_priv->pkey);
->> +	if (ret)
->> +		goto error1;
->> +
->> 	cm_id_priv->qp_type = param->qp_type;
->> 
->> 	ret = cm_alloc_msg(cm_id_priv, &cm_id_priv->msg);
->> @@ -1956,16 +1974,19 @@ static int cm_req_handler(struct cm_work *work)
->> 				 cm_id_priv);
->> 	if (ret) {
->> 		int err;
->> +		int rej_reason = (ret == -ENOENT ?
->> +				  IB_CM_REJ_INVALID_PKEY :
->> +				  IB_CM_REJ_INVALID_GID);
->> 
->> 		err = ib_get_cached_gid(work->port->cm_dev->ib_device,
->> 					work->port->port_num, 0,
->> 					&work->path[0].sgid,
->> 					NULL);
->> 		if (err)
->> -			ib_send_cm_rej(cm_id, IB_CM_REJ_INVALID_GID,
->> +			ib_send_cm_rej(cm_id, rej_reason,
->> 				       NULL, 0, NULL, 0);
->> 		else
->> -			ib_send_cm_rej(cm_id, IB_CM_REJ_INVALID_GID,
->> +			ib_send_cm_rej(cm_id, rej_reason,
->> 				       &work->path[0].sgid,
->> 				       sizeof(work->path[0].sgid),
->> 				       NULL, 0);
->> @@ -1975,7 +1996,11 @@ static int cm_req_handler(struct cm_work *work)
->> 		ret = cm_init_av_by_path(&work->path[1], &cm_id_priv->alt_av,
->> 					 cm_id_priv);
->> 		if (ret) {
->> -			ib_send_cm_rej(cm_id, IB_CM_REJ_INVALID_ALT_GID,
->> +			int rej_reason = (ret == -ENOENT ?
->> +					  IB_CM_REJ_INVALID_PKEY :
->> +					  IB_CM_REJ_INVALID_ALT_GID);
->> +
->> +			ib_send_cm_rej(cm_id, rej_reason,
->> 				       &work->path[0].sgid,
->> 				       sizeof(work->path[0].sgid), NULL, 0);
->> 			goto rejected;
->> diff --git a/include/rdma/ib_cm.h b/include/rdma/ib_cm.h
->> index 7979cb04f529..56b62303946a 100644
->> --- a/include/rdma/ib_cm.h
->> +++ b/include/rdma/ib_cm.h
->> @@ -3,6 +3,7 @@
->>  * Copyright (c) 2004 Topspin Corporation.  All rights reserved.
->>  * Copyright (c) 2004 Voltaire Corporation.  All rights reserved.
->>  * Copyright (c) 2005 Sun Microsystems, Inc. All rights reserved.
->> + * Copyright (c) 2018 Oracle and/or its affiliates. All rights reserved.
->>  *
->>  * This software is available to you under a choice of one of two
->>  * licenses.  You may choose to be licensed under the terms of the GNU
->> @@ -183,7 +184,8 @@ enum ib_cm_rej_reason {
->> 	IB_CM_REJ_DUPLICATE_LOCAL_COMM_ID	= 30,
->> 	IB_CM_REJ_INVALID_CLASS_VERSION		= 31,
->> 	IB_CM_REJ_INVALID_FLOW_LABEL		= 32,
->> -	IB_CM_REJ_INVALID_ALT_FLOW_LABEL	= 33
->> +	IB_CM_REJ_INVALID_ALT_FLOW_LABEL	= 33,
->> +	IB_CM_REJ_INVALID_PKEY			= 34,
->> };
->> 
->> struct ib_cm_rej_event_param {
->> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Issue in detail
+---------------
+
+The DWC3 USB IP is very popular and used by various SoCs
+as you see in drivers/usb/dwc3/.
+
+SoCs are using the same RTL as provided by Synopsys.
+(SoC vendors could tweak the RTL if they like,
+but it would rarely happen because it would just be troublesome)
+
+So, let's assume we use the same IP with the same RTL version.
+It is *compatible* in terms of device tree.
+In this case, we should avoid differentiating the driver code per-SoC.
+
+In fact, we ended up with
+commit ff0a632 ("usb: dwc3: of-simple: add support for shared and
+pulsed reset lines")
+commit e8284db ("usb: dwc3: of-simple: add support for the Amlogic
+Meson GXL and AXG SoCs")
+
+
+This means, the difference that comes from the reset _provider_
+must be implemented in the reset _consumer_.
+This is unfortunate.
+
+So, I wonder if we can support it in sub-system level somehow
+instead of messing up the reset consumer driver.
+
+ - The reset topology is SoC-dependent.
+   A reset line is dedicated for single hardware for some SoCs,
+   and shared by multiple hardware for others.
+
+ - The reset policy (pulse reset, level reset, or both of them)
+   are SoC-dependent (reset controller dependent).
+
+
+
+RTL generally contains state machines.
+The initial state of flip flops are undefined on power-on
+hence the initial state of state machines are also undefined.
+
+So, digital circuits needs explicit reset in general.
+
+In some cases, the reset is performed before booting the kernel.
+
+ - power-on reset
+   (FFs are put into defined state on power-on automatically)
+
+ - a reset controller assert reset lines by default
+   (FFs are fixed to defined state.  If a reset consumer
+   driver deasserts the reset line, HW starts from the define state)
+
+ - Firmware may reset the hardware before booting the kernel
+
+
+If nothing above is done, and the reset line is shared by multiple devices,
+we do not have a good way to put the hardware into the sane state.
+
+
+Reset consumers choose the required reset type:
+
+- Shared reset:
+    reset_control_assert / reset_control_deassert work like
+clock_disable / clock_enable.
+    The consumer must be tolerant to the situation where the HW may
+not reset-asserted.
+
+- Exclusive reset:
+    It is guaranteed reset_control_assert() really asserts the reset line,
+    but only one reset consumer grabs the reset line at the same time.
+
+
+As above, the state machines in digital circuits must start from a
+defined state.
+So, we want exclusive reset to reset the FFs.
+However, this is too much requirement
+since it is a reset line is often shared.
+
+
+How to save such an Amlogic case?
+
+
+Hogging solve the problem?
+--------------------------
+
+
+I was thinking of a solution.
+
+I may be missing something, but
+one solution might be reset hogging on the
+reset provider side.  This allows us to describe
+the initial state of reset lines in the reset controller.
+
+The idea for "reset-hog" is similar to:
+ - "gpio-hog" defined in
+   Documentation/devicetree/bindings/gpio/gpio.txt
+ - "assigned-clocks" defined in
+   Documetation/devicetree/bindings/clock/clock-bindings.txt
+
+
+
+For example,
+
+   reset-controller {
+            ....
+
+            line_a {
+                  reset-hog;
+                  resets = <1>;
+                  reset-assert;
+            };
+   }
+
+
+When the reset controller is registered,
+the reset ID '1' is asserted.
+
+
+So, all reset consumers that share the reset line '1'
+will start from the asserted state
+(i.e. defined state machine state).
+
+
+>From the discussion with Martin Blumenstingl
+(https://lkml.org/lkml/2018/4/28/115),
+the problem for Amlogic is that
+the reset line is "de-asserted" by default.
+If so, the 'reset-hog' would fix the problem,
+and DWC3 driver would be able to use
+shared, level reset, I think.
+
+
+I think something may be missing from my mind,
+but I hope this will prompt the discussion,
+and we will find a better idea.
+
+Thanks.
+
+-- 
+Best Regards
+Masahiro Yamada
