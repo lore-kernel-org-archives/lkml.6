@@ -1,25 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966525AbeEJPs5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 11:48:57 -0400
-Received: from smtprelay0088.hostedemail.com ([216.40.44.88]:48982 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S966186AbeEJPq0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S966445AbeEJPq0 (ORCPT <rfc822;w@1wt.eu>);
         Thu, 10 May 2018 11:46:26 -0400
+Received: from smtprelay0031.hostedemail.com ([216.40.44.31]:57096 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S966087AbeEJPqR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 11:46:17 -0400
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:800:960:968:973:979:988:989:1260:1345:1359:1437:1534:1543:1711:1730:1747:1777:1792:2393:2559:2562:2734:2890:3138:3139:3140:3141:3142:3354:3855:3866:3867:3871:4042:4250:4321:4383:4419:4605:5007:6117:6119:6261:7903:10004:10848:11026:11473:11658:11914:12043:12048:12296:12438:12555:12679:12895:12986:13972:14093:14180:14181:14394:14721:21060:21080:21433:21450:21451:21611:21627:30001:30029:30054,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: snow87_1ac3b99d23622
-X-Filterd-Recvd-Size: 4834
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:2:41:69:355:379:541:800:960:968:973:988:989:1260:1345:1359:1437:1535:1730:1747:1777:1792:2198:2199:2393:2553:2559:2562:2895:3138:3139:3140:3141:3142:3355:3865:3866:3867:3868:3870:4052:4120:4250:4321:4419:4605:5007:6117:6119:6261:7903:7904:8603:9040:10004:10848:11026:11473:11657:11658:11914:12043:12296:12438:12555:12679:12683:12895:12986:14110:14394:21080:21324:21433:21451:21627:21740:30003:30051:30054:30070:30090,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:22,LUA_SUMMARY:none
+X-HE-Tag: place35_199113fab0c07
+X-Filterd-Recvd-Size: 9758
 From: Joe Perches <joe@perches.com>
-To: Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Theodore Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/18] random: Remove pr_fmt duplicate logging prefixes
-Date: Thu, 10 May 2018 08:45:34 -0700
-Message-Id: <25a039fce9e2f58d05f976ea32b7415085d35b57.1525964385.git.joe@perches.com>
+To: linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org
+Subject: [PATCH 04/18] x86: Remove pr_fmt duplicate logging prefixes
+Date: Thu, 10 May 2018 08:45:30 -0700
+Message-Id: <e7b709a2b040af7faa81b0aa2c3a125aed628a82.1525964383.git.joe@perches.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <cover.1525964381.git.joe@perches.com>
 References: <cover.1525964381.git.joe@perches.com>
@@ -27,118 +25,243 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Converting pr_fmt from a simple define to use KBUILD_MODNAME added
-some duplicate logging prefixes to existing uses.
+Converting pr_fmt from a default simple #define to use KBUILD_MODNAME
+added some duplicate prefixes.
 
-Remove them.
+Remove the duplicate prefixes.
 
 Signed-off-by: Joe Perches <joe@perches.com>
 ---
- drivers/char/hw_random/via-rng.c | 10 +++++-----
- drivers/char/random.c            | 16 +++++++---------
- 2 files changed, 12 insertions(+), 14 deletions(-)
+ arch/x86/events/amd/ibs.c |  2 +-
+ arch/x86/kernel/e820.c    | 32 +++++++++++++++++---------------
+ arch/x86/kernel/hpet.c    |  5 ++---
+ arch/x86/kernel/uprobes.c |  4 ++--
+ arch/x86/mm/numa.c        | 22 +++++++++++-----------
+ 5 files changed, 33 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/char/hw_random/via-rng.c b/drivers/char/hw_random/via-rng.c
-index ffe9b0c6c647..b9367e055468 100644
---- a/drivers/char/hw_random/via-rng.c
-+++ b/drivers/char/hw_random/via-rng.c
-@@ -24,6 +24,8 @@
-  * warranty of any kind, whether express or implied.
-  */
- 
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
- #include <crypto/padlock.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
-@@ -137,8 +139,7 @@ static int via_rng_init(struct hwrng *rng)
- 	 * register */
- 	if (((c->x86 == 6) && (c->x86_model >= 0x0f))  || (c->x86 > 6)){
- 		if (!boot_cpu_has(X86_FEATURE_XSTORE_EN)) {
--			pr_err(PFX "can't enable hardware RNG "
--				"if XSTORE is not enabled\n");
-+			pr_err("can't enable hardware RNG if XSTORE is not enabled\n");
- 			return -ENODEV;
- 		}
- 		return 0;
-@@ -176,7 +177,7 @@ static int via_rng_init(struct hwrng *rng)
- 	   unneeded */
- 	rdmsr(MSR_VIA_RNG, lo, hi);
- 	if ((lo & VIA_RNG_ENABLE) == 0) {
--		pr_err(PFX "cannot enable VIA C3 RNG, aborting\n");
-+		pr_err("cannot enable VIA C3 RNG, aborting\n");
- 		return -ENODEV;
- 	}
- 
-@@ -202,8 +203,7 @@ static int __init mod_init(void)
- 	pr_info("VIA RNG detected\n");
- 	err = hwrng_register(&via_rng);
- 	if (err) {
--		pr_err(PFX "RNG registering failed (%d)\n",
--		       err);
-+		pr_err("RNG registering failed (%d)\n", err);
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index 786fd875de92..4b98101209a1 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -889,7 +889,7 @@ static void force_ibs_eilvt_setup(void)
+ 	if (!ibs_eilvt_valid())
  		goto out;
- 	}
+ 
+-	pr_info("IBS: LVT offset %d assigned\n", offset);
++	pr_info("LVT offset %d assigned\n", offset);
+ 
+ 	return;
  out:
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index cd888d4ee605..d1e35cfcce8e 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -693,7 +693,7 @@ static void credit_entropy_bits(struct entropy_store *r, int nbits)
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 6a2cb1442e05..d1f25c831447 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -155,7 +155,8 @@ static void __init __e820__range_add(struct e820_table *table, u64 start, u64 si
+ 	int x = table->nr_entries;
+ 
+ 	if (x >= ARRAY_SIZE(table->entries)) {
+-		pr_err("e820: too many entries; ignoring [mem %#010llx-%#010llx]\n", start, start + size - 1);
++		pr_err("too many entries; ignoring [mem %#010llx-%#010llx]\n",
++		       start, start + size - 1);
+ 		return;
  	}
  
- 	if (unlikely(entropy_count < 0)) {
--		pr_warn("random: negative entropy/overflow: pool %s count %d\n",
-+		pr_warn("negative entropy/overflow: pool %s count %d\n",
- 			r->name, entropy_count);
- 		WARN_ON(1);
- 		entropy_count = 0;
-@@ -857,7 +857,7 @@ static int crng_fast_load(const char *cp, size_t len)
- 		invalidate_batched_entropy();
- 		crng_init = 1;
- 		wake_up_interruptible(&crng_init_wait);
--		pr_notice("random: fast init done\n");
-+		pr_notice("fast init done\n");
- 	}
- 	return 1;
+@@ -190,9 +191,10 @@ void __init e820__print_table(char *who)
+ 	int i;
+ 
+ 	for (i = 0; i < e820_table->nr_entries; i++) {
+-		pr_info("%s: [mem %#018Lx-%#018Lx] ", who,
+-		       e820_table->entries[i].addr,
+-		       e820_table->entries[i].addr + e820_table->entries[i].size - 1);
++		pr_info("%s: [mem %#018Lx-%#018Lx] ",
++			who,
++			e820_table->entries[i].addr,
++			e820_table->entries[i].addr + e820_table->entries[i].size - 1);
+ 
+ 		e820_print_type(e820_table->entries[i].type);
+ 		pr_cont("\n");
+@@ -574,7 +576,7 @@ void __init e820__update_table_print(void)
+ 	if (e820__update_table(e820_table))
+ 		return;
+ 
+-	pr_info("e820: modified physical RAM map:\n");
++	pr_info("modified physical RAM map:\n");
+ 	e820__print_table("modified");
  }
-@@ -942,16 +942,14 @@ static void crng_reseed(struct crng_state *crng, struct entropy_store *r)
- 		crng_init = 2;
- 		process_random_ready_list();
- 		wake_up_interruptible(&crng_init_wait);
--		pr_notice("random: crng init done\n");
-+		pr_notice("crng init done\n");
- 		if (unseeded_warning.missed) {
--			pr_notice("random: %d get_random_xx warning(s) missed "
--				  "due to ratelimiting\n",
-+			pr_notice("%d get_random_xx warning(s) missed due to ratelimiting\n",
- 				  unseeded_warning.missed);
- 			unseeded_warning.missed = 0;
- 		}
- 		if (urandom_warning.missed) {
--			pr_notice("random: %d urandom warning(s) missed "
--				  "due to ratelimiting\n",
-+			pr_notice("%d urandom warning(s) missed due to ratelimiting\n",
- 				  urandom_warning.missed);
- 			urandom_warning.missed = 0;
- 		}
-@@ -1380,7 +1378,7 @@ static size_t account(struct entropy_store *r, size_t nbytes, int min,
- 		ibytes = 0;
  
- 	if (unlikely(entropy_count < 0)) {
--		pr_warn("random: negative entropy count: pool %s count %d\n",
-+		pr_warn("negative entropy count: pool %s count %d\n",
- 			r->name, entropy_count);
- 		WARN_ON(1);
- 		entropy_count = 0;
-@@ -1596,7 +1594,7 @@ static void _warn_unseeded_randomness(const char *func_name, void *caller,
- 	print_once = true;
+@@ -636,9 +638,8 @@ __init void e820__setup_pci_gap(void)
+ 	if (!found) {
+ #ifdef CONFIG_X86_64
+ 		gapstart = (max_pfn << PAGE_SHIFT) + 1024*1024;
+-		pr_err(
+-			"e820: Cannot find an available gap in the 32-bit address range\n"
+-			"e820: PCI devices with unassigned 32-bit BARs may not work!\n");
++		pr_err("Cannot find an available gap in the 32-bit address range\n");
++		pr_err("PCI devices with unassigned 32-bit BARs may not work!\n");
+ #else
+ 		gapstart = 0x10000000;
  #endif
- 	if (__ratelimit(&unseeded_warning))
--		pr_notice("random: %s called from %pS with crng_init=%d\n",
-+		pr_notice("%s called from %pS with crng_init=%d\n",
- 			  func_name, caller, crng_init);
+@@ -649,7 +650,8 @@ __init void e820__setup_pci_gap(void)
+ 	 */
+ 	pci_mem_start = gapstart;
+ 
+-	pr_info("e820: [mem %#010lx-%#010lx] available for PCI devices\n", gapstart, gapstart + gapsize - 1);
++	pr_info("[mem %#010lx-%#010lx] available for PCI devices\n",
++		gapstart, gapstart + gapsize - 1);
  }
  
+ /*
+@@ -711,7 +713,7 @@ void __init e820__memory_setup_extended(u64 phys_addr, u32 data_len)
+ 	memcpy(e820_table_firmware, e820_table, sizeof(*e820_table_firmware));
+ 
+ 	early_memunmap(sdata, data_len);
+-	pr_info("e820: extended physical RAM map:\n");
++	pr_info("extended physical RAM map:\n");
+ 	e820__print_table("extended");
+ }
+ 
+@@ -780,7 +782,7 @@ u64 __init e820__memblock_alloc_reserved(u64 size, u64 align)
+ 	addr = __memblock_alloc_base(size, align, MEMBLOCK_ALLOC_ACCESSIBLE);
+ 	if (addr) {
+ 		e820__range_update_kexec(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
+-		pr_info("e820: update e820_table_kexec for e820__memblock_alloc_reserved()\n");
++		pr_info("update e820_table_kexec for e820__memblock_alloc_reserved()\n");
+ 		e820__update_table_kexec();
+ 	}
+ 
+@@ -830,8 +832,8 @@ static unsigned long __init e820_end_pfn(unsigned long limit_pfn, enum e820_type
+ 	if (last_pfn > max_arch_pfn)
+ 		last_pfn = max_arch_pfn;
+ 
+-	pr_info("e820: last_pfn = %#lx max_arch_pfn = %#lx\n",
+-			 last_pfn, max_arch_pfn);
++	pr_info("last_pfn = %#lx max_arch_pfn = %#lx\n",
++		last_pfn, max_arch_pfn);
+ 	return last_pfn;
+ }
+ 
+@@ -1005,7 +1007,7 @@ void __init e820__finish_early_params(void)
+ 		if (e820__update_table(e820_table) < 0)
+ 			early_panic("Invalid user supplied memory map");
+ 
+-		pr_info("e820: user-defined physical RAM map:\n");
++		pr_info("user-defined physical RAM map:\n");
+ 		e820__print_table("user");
+ 	}
+ }
+@@ -1238,7 +1240,7 @@ void __init e820__memory_setup(void)
+ 	memcpy(e820_table_kexec, e820_table, sizeof(*e820_table_kexec));
+ 	memcpy(e820_table_firmware, e820_table, sizeof(*e820_table_firmware));
+ 
+-	pr_info("e820: BIOS-provided physical RAM map:\n");
++	pr_info("BIOS-provided physical RAM map:\n");
+ 	e820__print_table(who);
+ }
+ 
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index 8ce4212e2b8d..b6be34ee88e9 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -975,8 +975,7 @@ int __init hpet_enable(void)
+ 	cfg &= ~(HPET_CFG_ENABLE | HPET_CFG_LEGACY);
+ 	hpet_writel(cfg, HPET_CFG);
+ 	if (cfg)
+-		pr_warn("HPET: Unrecognized bits %#x set in global cfg\n",
+-			cfg);
++		pr_warn("Unrecognized bits %#x set in global cfg\n", cfg);
+ 
+ 	for (i = 0; i <= last; ++i) {
+ 		cfg = hpet_readl(HPET_Tn_CFG(i));
+@@ -988,7 +987,7 @@ int __init hpet_enable(void)
+ 			 | HPET_TN_64BIT_CAP | HPET_TN_32BIT | HPET_TN_ROUTE
+ 			 | HPET_TN_FSB | HPET_TN_FSB_CAP);
+ 		if (cfg)
+-			pr_warn("HPET: Unrecognized bits %#x set in cfg#%u\n",
++			pr_warn("Unrecognized bits %#x set in cfg#%u\n",
+ 				cfg, i);
+ 	}
+ 	hpet_print_config();
+diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+index 85c7ef23d99f..d1c468741915 100644
+--- a/arch/x86/kernel/uprobes.c
++++ b/arch/x86/kernel/uprobes.c
+@@ -1079,8 +1079,8 @@ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr, struct pt_regs
+ 		return orig_ret_vaddr;
+ 
+ 	if (nleft != rasize) {
+-		pr_err("uprobe: return address clobbered: pid=%d, %%sp=%#lx, "
+-			"%%ip=%#lx\n", current->pid, regs->sp, regs->ip);
++		pr_err("return address clobbered: pid=%d, %%sp=%#lx, %%ip=%#lx\n",
++		       current->pid, regs->sp, regs->ip);
+ 
+ 		force_sig_info(SIGSEGV, SEND_SIG_FORCED, current);
+ 	}
+diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+index 25504d5aa816..fa150855647c 100644
+--- a/arch/x86/mm/numa.c
++++ b/arch/x86/mm/numa.c
+@@ -136,13 +136,13 @@ static int __init numa_add_memblk_to(int nid, u64 start, u64 end,
+ 
+ 	/* whine about and ignore invalid blks */
+ 	if (start > end || nid < 0 || nid >= MAX_NUMNODES) {
+-		pr_warning("NUMA: Warning: invalid memblk node %d [mem %#010Lx-%#010Lx]\n",
+-			   nid, start, end - 1);
++		pr_warn("Warning: invalid memblk node %d [mem %#010Lx-%#010Lx]\n",
++			nid, start, end - 1);
+ 		return 0;
+ 	}
+ 
+ 	if (mi->nr_blks >= NR_NODE_MEMBLKS) {
+-		pr_err("NUMA: too many memblk ranges\n");
++		pr_err("too many memblk ranges\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -267,14 +267,14 @@ int __init numa_cleanup_meminfo(struct numa_meminfo *mi)
+ 			 */
+ 			if (bi->end > bj->start && bi->start < bj->end) {
+ 				if (bi->nid != bj->nid) {
+-					pr_err("NUMA: node %d [mem %#010Lx-%#010Lx] overlaps with node %d [mem %#010Lx-%#010Lx]\n",
++					pr_err("node %d [mem %#010Lx-%#010Lx] overlaps with node %d [mem %#010Lx-%#010Lx]\n",
+ 					       bi->nid, bi->start, bi->end - 1,
+ 					       bj->nid, bj->start, bj->end - 1);
+ 					return -EINVAL;
+ 				}
+-				pr_warning("NUMA: Warning: node %d [mem %#010Lx-%#010Lx] overlaps with itself [mem %#010Lx-%#010Lx]\n",
+-					   bi->nid, bi->start, bi->end - 1,
+-					   bj->start, bj->end - 1);
++				pr_warn("Warning: node %d [mem %#010Lx-%#010Lx] overlaps with itself [mem %#010Lx-%#010Lx]\n",
++					bi->nid, bi->start, bi->end - 1,
++					bj->start, bj->end - 1);
+ 			}
+ 
+ 			/*
+@@ -364,7 +364,7 @@ static int __init numa_alloc_distance(void)
+ 	phys = memblock_find_in_range(0, PFN_PHYS(max_pfn_mapped),
+ 				      size, PAGE_SIZE);
+ 	if (!phys) {
+-		pr_warning("NUMA: Warning: can't allocate distance table!\n");
++		pr_warn("Warning: can't allocate distance table!\n");
+ 		/* don't retry until explicitly reset */
+ 		numa_distance = (void *)1LU;
+ 		return -ENOMEM;
+@@ -410,14 +410,14 @@ void __init numa_set_distance(int from, int to, int distance)
+ 
+ 	if (from >= numa_distance_cnt || to >= numa_distance_cnt ||
+ 			from < 0 || to < 0) {
+-		pr_warn_once("NUMA: Warning: node ids are out of bound, from=%d to=%d distance=%d\n",
+-			    from, to, distance);
++		pr_warn_once("Warning: node ids are out of bound, from=%d to=%d distance=%d\n",
++			     from, to, distance);
+ 		return;
+ 	}
+ 
+ 	if ((u8)distance != distance ||
+ 	    (from == to && distance != LOCAL_DISTANCE)) {
+-		pr_warn_once("NUMA: Warning: invalid distance parameter, from=%d to=%d distance=%d\n",
++		pr_warn_once("Warning: invalid distance parameter, from=%d to=%d distance=%d\n",
+ 			     from, to, distance);
+ 		return;
+ 	}
 -- 
 2.15.0
