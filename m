@@ -1,79 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935532AbeEJNaH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 09:30:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45083 "EHLO mx2.suse.de"
+        id S964894AbeEJNaT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 09:30:19 -0400
+Received: from ms.lwn.net ([45.79.88.28]:56974 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935285AbeEJNaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 09:30:05 -0400
-Date: Thu, 10 May 2018 15:30:03 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Roman Gushchin <guro@fb.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v3 1/2] mm: introduce memory.min
-Message-ID: <20180510133003.GH5325@dhcp22.suse.cz>
-References: <20180503114358.7952-1-guro@fb.com>
+        id S934693AbeEJNaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 09:30:18 -0400
+Date: Thu, 10 May 2018 07:30:12 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 13/18] wait: wait.h: Get rid of a kernel-doc/Sphinx
+ warnings
+Message-ID: <20180510073012.5902088e@lwn.net>
+In-Reply-To: <20180510063805.1859b1aa@vento.lan>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+        <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
+        <20180510083838.GA21846@infradead.org>
+        <20180510063805.1859b1aa@vento.lan>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180503114358.7952-1-guro@fb.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 03-05-18 12:43:57, Roman Gushchin wrote:
-> Memory controller implements the memory.low best-effort memory
-> protection mechanism, which works perfectly in many cases and
-> allows protecting working sets of important workloads from
-> sudden reclaim.
-> 
-> But its semantics has a significant limitation: it works
-> only as long as there is a supply of reclaimable memory.
-> This makes it pretty useless against any sort of slow memory
-> leaks or memory usage increases. This is especially true
-> for swapless systems. If swap is enabled, memory soft protection
-> effectively postpones problems, allowing a leaking application
-> to fill all swap area, which makes no sense.
-> The only effective way to guarantee the memory protection
-> in this case is to invoke the OOM killer.
-> 
-> It's possible to handle this case in userspace by reacting
-> on MEMCG_LOW events; but there is still a place for a fail-safe
-> in-kernel mechanism to provide stronger guarantees.
-> 
-> This patch introduces the memory.min interface for cgroup v2
-> memory controller. It works very similarly to memory.low
-> (sharing the same hierarchical behavior), except that it's
-> not disabled if there is no more reclaimable memory in the system.
+On Thu, 10 May 2018 06:38:05 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-Originally I was pushing for the hard guarantee before we landed with
-the best effort one. The assumption back then was that properly
-configured systems shouldn't see problems IIRC.
+> (Peter said):
+> > Independent of any philosophical discussion not allowing a setence to
+> > end with a single ':' is completely idiotic.  Please fix the tooling
+> > instead to allow it, as it is very important for being able to just
+> > write understandable comments.  
 
-It is not entirely clear to me what is the role of the low limit wrt.
-leaking application from the above description TBH. I presume you have a
-process without any low&hard limit which leaks and basically breaks the
-low limit expectation because of the lack of reclaimable memory and our
-memcg_low_reclaim fallback.
+FWIW, there's no problem with a sentence ending with a single colon.
+It's only an issue if you want to flag a special interpretation for the
+text that follows that sentence.  Just to be precise.
 
-If that is the case then the hard limit should indeed protect the
-respective memcg from reclaim. But what is the actuall guarantee?
-We can reclaim that memory by the OOM killer, because there is no
-protection from killing a memcg under the min limit. So what is the
-actual semantic?
+> Patches are welcome, although I don't see any easy way to solve it.
 
-Also how is an admin supposed to configure those limits? low limit
-doesn't reall protect in some cases so why should it be used at all?
-I see how min matches max and low matches high, so there is a nice
-symmetry but aren't we adding additional complexity to the API?
-Isn't the real problem that the other guy (leaking application) doesn't
-have any cap?
+I could envision some sort of heuristic that would recognize an indented
+block containing code.  Probably we could go simpler and force the
+"literal block" treatment for any indented block that lacks explicit
+enumeration markers.  So:
 
-Please note I haven't looked at the implementation yet but I would like
-to make sure I understand the whole concept first.
--- 
-Michal Hocko
-SUSE Labs
+	this->would_be("a literal block");
+
+but:
+
+  - This would not be
+
+Such a thing would likely be a bit fragile (people feel, rightly, that
+they can put anything into normal text) but it might just work well
+enough.  For best results, it should probably be done as part of Sphinx
+itself, rather than yet another ugly hack in the kerneldoc script.
+
+This particular problem may be solvable, and I'll look into it, but not
+right away.  The offline world is being rather insistently obnoxious
+these days...
+
+jon
