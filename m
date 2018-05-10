@@ -1,78 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934641AbeEJHe6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 03:34:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42168 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933589AbeEJHe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 03:34:57 -0400
-Subject: Re: [RFC v3 3/5] virtio_ring: add packed ring support
-From: Jason Wang <jasowang@redhat.com>
-To: Tiwei Bie <tiwei.bie@intel.com>, mst@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc: wexu@redhat.com
-References: <20180425051550.24342-1-tiwei.bie@intel.com>
- <20180425051550.24342-4-tiwei.bie@intel.com>
- <927f4478-5a81-31d4-ac69-f9ec26248591@redhat.com>
-Message-ID: <5885acac-e9e3-3abf-b6a2-7347f4d55be2@redhat.com>
-Date: Thu, 10 May 2018 15:34:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1756734AbeEJH5J (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 03:57:09 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:53432 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753944AbeEJH5I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 03:57:08 -0400
+Date: Thu, 10 May 2018 08:56:57 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Wang YanQing <udknight@gmail.com>
+Cc: illusionist.neo@gmail.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, daniel@iogearbox.net, ast@fb.com
+Subject: Re: [PATCH] bpf, arm32: Correct check_imm24
+Message-ID: <20180510075656.GS16141@n2100.armlinux.org.uk>
+References: <20180510032013.GB26016@udknight>
 MIME-Version: 1.0
-In-Reply-To: <927f4478-5a81-31d4-ac69-f9ec26248591@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510032013.GB26016@udknight>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 10, 2018 at 11:20:13AM +0800, Wang YanQing wrote:
+> imm24 is signed, so the right range is:
+> [-(2<<(24 - 1)), (2<<(24 - 1)) - 1]
 
+2 << (24 - 1) is the same as 1 << 24.
 
-On 2018年05月10日 15:32, Jason Wang wrote:
->
->
-> On 2018年04月25日 13:15, Tiwei Bie wrote:
->> +    /* We're using some buffers from the free list. */
->> +    vq->vq.num_free -= descs_used;
->> +
->> +    /* Update free pointer */
->> +    if (indirect) {
->> +        n = head + 1;
->> +        if (n >= vq->vring_packed.num) {
->> +            n = 0;
->> +            vq->wrap_counter ^= 1;
->> +        }
->> +        vq->next_avail_idx = n;
->> +    } else
->> +        vq->next_avail_idx = i;
->
-> During testing zerocopy (out of order completion), I found driver may 
-> submit two identical buffer id to vhost. So the above code may not 
-> work well.
->
-> Consider the case that driver adds 3 buffer and virtqueue size is 8.
->
-> a) id = 0,count = 2,next_avail = 2
->
-> b) id = 2,count = 4,next_avail = 2
+> -#define check_imm(bits, imm) do {				\
+> -	if ((((imm) > 0) && ((imm) >> (bits))) ||		\
+> -	    (((imm) < 0) && (~(imm) >> (bits)))) {		\
+> -		pr_info("[%2d] imm=%d(0x%x) out of range\n",	\
+> -			i, imm, imm);				\
+> +#define check_imm_range(min, max, imm) do {			\
+> +	if (imm < min || imm > max) {				\
+> +		pr_info("[%2d] imm=%d is out of range\n",	\
+> +			i, imm);				\
+>  		return -EINVAL;					\
+>  	}							\
+>  } while (0)
+> -#define check_imm24(imm) check_imm(24, imm)
+> +#define check_imm24(imm) check_imm_range(-16777216, 16777215, imm)
 
-next_avail should be 6 here.
+How is this any different?
 
->
-> c) id = 4,count = 2,next_avail = 0
->
+If imm is 16777216, then "imm > max" in your version is true.
+In the original version, "imm > 0" is true, so we then test for
+"16777216 >> 24" being non-zero.  That's also true, so the test
+condition fires.
 
-id should be 6 here.
+If imm is 16777215, then "imm > max" is false in your version.
+In the original version, the conditions also evaluate to false.
 
-Thanks
+For the -16777217 case, "imm < min" in your version is true.
+In the original version, "imm < 0" is true, so we then test for
+"~(-16777217) >> 24" being non-zero.  This is the same as
+"16777216 >> 24" being non-zero, which is true so the condition
+fires.
 
-> if packet b is done before packet a, driver may think buffer id 0 is 
-> available and try to use it if even if the real buffer 0 was not done.
->
-> Thanks
-> _______________________________________________
-> Virtualization mailing list
-> Virtualization@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/virtualization
+With -16777216, the same thing happens, both end up evaluating
+to false.
+
+So, the two cases end up producing identical results, and there
+is no actual effect from this change.
+
+However, your commit message is correct - there is a bug here.
+That's obvious when you mask the "imm" value with 0x00ffffff,
+and realise that an imm value of -16777216 ends up having the
+same value in the instruction as an imm value of 0.  So, the
+range of "imm" is _half_ that.
+
+ #define check_imm(bits, imm) do {				\
+-	if ((((imm) > 0) && ((imm) >> (bits))) ||		\
+-	    (((imm) < 0) && (~(imm) >> (bits)))) {		\
++	if ((((imm) > 0) && ((imm) >> (bits - 1))) ||		\
++	    (((imm) < 0) && (~(imm) >> (bits - 1)))) {		\
+ 		pr_info("[%2d] imm=%d(0x%x) out of range\n",	\
+ 			i, imm, imm);				\
+
+would fix it.  Alternatively:
+
+ #define check_imm(bits, imm) do {				\
+-	if ((((imm) > 0) && ((imm) >> (bits))) ||		\
+-	    (((imm) < 0) && (~(imm) >> (bits)))) {		\
++	if ((imm) >= (1 << ((bits) - 1)) ||			\
++	    (imm) < -(1 << ((bits) - 1))) {			\
+ 		pr_info("[%2d] imm=%d(0x%x) out of range\n",	\
+ 			i, imm, imm);				\
+
+would also fix it.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
