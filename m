@@ -1,87 +1,90 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2336747-1525967109-2-16912644561988595948
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2396152-1525968606-2-10929059990514250612
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525967107; b=gK4pugQbctDloia3a+D6KZ8K/jk+0ggw++E7sXX84BIjsW9coG
-    ysEdlqsghg5AUVPoAvVv/OmDazmL5ty0pYOV+7RLdJ3wOkZU2r8twHqbKdEMNXcc
-    8UHPrllHal2QQvmH5MAcAzgABux8VWrRgQ/naNfxTkMbUfBTqbv2btXr8qFsdhH3
-    otTaawNUlnD7dUE5W5qHzQKIGsTzM3zfwqwmAItDoZ0YTlA0RCNzGR4cq6NK2Qwc
-    cosj43q1KiRVM5CNb5kBwPtHIsNk5vf7aQm1LoECCCOUit0gjaNispX4vp0f+p6P
-    eQkoQQwHq9SUxzr1B05l7Ej1AGrOMF8yFNaQ==
+    1525968606; b=du5d+HWa5NHQiUFlX7HoYnK0BjGiKUdfXrDN1jMkuds8jpM2n6
+    FrEyYH62WLjdlRtR2Eu/3Ky+qUQzyHhlRIf3X+CNQHqaD/rVKhFXJxkGHRhxy7yH
+    5js7pC74f0rMuyUp5vgQicqNfEGVGzVCtXXCs1S5TtVOhXunDzZcgjrFkDtv/wAL
+    Uao56+zAsWtnQQODsGQraJqkIOSrer9Marpb34NAY1KnaVWbXA2R7z0ql7E1dmfy
+    F8QmxgwifjB5UjB66+ZTUpWn+e+6Uw5e8fS/piLOR5wIlcCW2gIcjUWPPJu1YKPB
+    0V+j1Zf98ymLn2rr9QmhXPbISm1YqTXv15Vg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525967107; bh=
-    ER3fq7Od7IPFzNnA64C+Dy9Vg0Up0DLw6hmRkQUx1fk=; b=WWVYnZFRCgAc/1D4
-    1oIJ9Wq0mBE8/lgJi6HsA12n3TsEdcLadNi0OjCp2jPI7sfr5DjosCCrapWdb4/V
-    z0NwPvP0MGe2ZrnIwXFOrDQptNh1Jn7kXy+FBkm/bgzD9kiT8YF+nGJ5GNJ6fRyZ
-    Zo130cAAhybFdMvl1MikSBBPeCQ02kHEuuY0tyv/TI+JubY+xYMNqF2fBIZcx4tZ
-    Ns2zEI+86/ajVVQ2SwAoou871aF0fwRJukpwfMeB5pHLE1J80c7mt/lU9dB5b/IP
-    s46J4l/6+Om3xISrP4qKmzhuD/u9H34+6Hf2BEqCV7nKo6Szw+4206Iv/TQiNv73
-    pik1LA==
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525968606;
+    bh=KmrmLwPthbGK8ixkwKeQLRBdJm4cALpVPC23k8xI12Q=; b=NgFnbtG8lnxZ
+    hlNn89nvwKHDyzowR5YvqcCIsf3YwRsfGLNr+rzUMaPy6IotqStX2qJ+NcL03DiJ
+    VZ2p9IrAATppmVsmrDUik0KC33u8qyszWGbnhgVbAiL4lnzU9GIUs7fOTaGtxlIX
+    EzhXymKm9bGW7pB5PJcREoP0AZa+bBNPwoAH65R1B0R2R/DRENCbeeemXR2azQbX
+    4+Vm8S4KNydqp5awYaUlduo2b54SUSBqUDDjBp/5IpUKWfSxyS5snwhjPp8WUr5b
+    M0/1sFJNGpz50NfZznRxw3gNVCfzDH9hcxNN4ZuRetBGc68hpNkjrn6jAuSJ5Gam
+    5KK2p/hHdQ==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=mellanox.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=infradead.org header.i=@infradead.org header.b=2Oh+25di
+    x-bits=2048 x-keytype=rsa x-algorithm=sha256
+    x-selector=merlin.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=mellanox.com header.result=pass
+    header.domain=infradead.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=mellanox.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=infradead.org header.i=@infradead.org header.b=2Oh+25di
+      x-bits=2048 x-keytype=rsa x-algorithm=sha256
+      x-selector=merlin.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=mellanox.com header.result=pass
+      header.domain=infradead.org header.result=pass
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJCytwWCUOcpySHPe0wBGMAb9oksC7OZPf39JPLcnOya19whJc2UdJtoQfLyKwSE2Z/CLRsRWb3k49yRT9056l5HlH47/jWrmIDC4NpiVBrWjp/7uqSG
-    yLjUYzRUgjokoUpXQL1YDKkAlogNqnPo5//tx5W/ZjDTUpthxWM1CFGX79eUXalwT+qU9gdet+OPLIIm+HrHCh06a/3OnAoeEXRNTNmW+WaA6D6SV7GYlD6o
+X-CM-Envelope: MS4wfLh0br7RhAvm03brjSkLqVLldEj1glbovKoj2kZCGqmnhWYExi4h1ECnlLUt+25+Ckx4aI05iJDqB1MGE+Hz93CjTDmomaNbdH/wsL3GYMYfSx6X0liG
+    Rh1MgMZuN93Pd4yBTpbI8N6h6a26skPAHWbZFqrgkUnv125RtCqS7mXgV2Koqp5kYON6dRS6fDjQ76u0h02Oj6k2hiwfvnoFUjhXmPlwqveR1XX/QHsaMBLo
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=CbDCq_QkAAAA:8
-    a=x3zYZSmJAAAA:8 a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8 a=WZNk9TXeAAAA:8
-    a=QyXUC8HyAAAA:8 a=etiEgX_XAAAA:8 a=IpJZQVW2AAAA:8 a=zeAeT-1tAAAA:8
-    a=VwQbUJbxAAAA:8 a=55SOjLTVc6x0XFyqSLkA:9 a=KQ-zbi7TU1qiw2r0:21
-    a=r_IaqqfOgRJdJ0l0:21 a=x8gzFH9gYPwA:10 a=1qrBK16LubpBFNPVNq2M:22
-    a=Mf0WTvVWf0_hbcvFJlB_:22 a=Yupwre4RP9_Eg_Bd0iYG:22 a=fEBet_Na2BBLfjun4ltz:22
-    a=MLbIUA-Bjd6y1alW9qBG:22 a=IawgGOuG5U0WyFbmm1f5:22 a=q4mi67SYSo5Z2N87e4-W:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=tMepLWK3MrXP0o1EOUEA:9 a=ISNlsAnQh35qn1Ay:21
+    a=A4EsQ4VPg5xe9TC1:21 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966380AbeEJPpF (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 10 May 2018 11:45:05 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35673 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S966327AbeEJPob (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 10 May 2018 11:44:31 -0400
-From: Oleksandr Shamray <oleksandrs@mellanox.com>
-To: gregkh@linuxfoundation.org, arnd@arndb.de
+        id S965266AbeEJQKC (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 10 May 2018 12:10:02 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45236 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965030AbeEJQKB (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Thu, 10 May 2018 12:10:01 -0400
+Subject: Re: [patch v19 1/4] drivers: jtag: Add JTAG core driver
+To: Oleksandr Shamray <oleksandrs@mellanox.com>,
+        gregkh@linuxfoundation.org, arnd@arndb.de
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, openbmc@lists.ozlabs.org,
         joel@jms.id.au, jiri@resnulli.us, tklauser@distanz.ch,
@@ -89,717 +92,92 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         system-sw-low-level@mellanox.com, robh+dt@kernel.org,
         openocd-devel-owner@lists.sourceforge.net,
         linux-api@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
-        Oleksandr Shamray <oleksandrs@mellanox.com>,
         Jiri Pirko <jiri@mellanox.com>
-Subject: [patch v19 1/4] drivers: jtag: Add JTAG core driver
-Date: Thu, 10 May 2018 18:44:21 +0300
-Message-Id: <1525967064-10760-2-git-send-email-oleksandrs@mellanox.com>
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1525967064-10760-1-git-send-email-oleksandrs@mellanox.com>
 References: <1525967064-10760-1-git-send-email-oleksandrs@mellanox.com>
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+ <1525967064-10760-2-git-send-email-oleksandrs@mellanox.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a6ff3a11-3fe5-311e-3097-d6477ed86015@infradead.org>
+Date: Thu, 10 May 2018 09:09:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <1525967064-10760-2-git-send-email-oleksandrs@mellanox.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Initial patch for JTAG driver
-JTAG class driver provide infrastructure to support hardware/software
-JTAG platform drivers. It provide user layer API interface for flashing
-and debugging external devices which equipped with JTAG interface
-using standard transactions.
+On 05/10/2018 08:44 AM, Oleksandr Shamray wrote:
+> Initial patch for JTAG driver
+> JTAG class driver provide infrastructure to support hardware/software
+> JTAG platform drivers. It provide user layer API interface for flashing
+> and debugging external devices which equipped with JTAG interface
+> using standard transactions.
 
-Driver exposes set of IOCTL to user space for:
-- XFER:
-- SIR (Scan Instruction Register, IEEE 1149.1 Data Register scan);
-- SDR (Scan Data Register, IEEE 1149.1 Instruction Register scan);
-- RUNTEST (Forces the IEEE 1149.1 bus to a run state for a specified
-  number of clocks).
-- SIOCFREQ/GIOCFREQ for setting and reading JTAG frequency.
+> ---
+>  Documentation/ioctl/ioctl-number.txt |    2 +
+>  MAINTAINERS                          |   10 ++
+>  drivers/Kconfig                      |    2 +
+>  drivers/Makefile                     |    1 +
+>  drivers/jtag/Kconfig                 |   16 ++
+>  drivers/jtag/Makefile                |    1 +
+>  drivers/jtag/jtag.c                  |  273 ++++++++++++++++++++++++++++++++++
+>  include/linux/jtag.h                 |   41 +++++
+>  include/uapi/linux/jtag.h            |  105 +++++++++++++
+>  9 files changed, 451 insertions(+), 0 deletions(-)
+>  create mode 100644 drivers/jtag/Kconfig
+>  create mode 100644 drivers/jtag/Makefile
+>  create mode 100644 drivers/jtag/jtag.c
+>  create mode 100644 include/linux/jtag.h
+>  create mode 100644 include/uapi/linux/jtag.h
+> 
+> diff --git a/drivers/jtag/Kconfig b/drivers/jtag/Kconfig
+> new file mode 100644
+> index 0000000..5e2c75b
+> --- /dev/null
+> +++ b/drivers/jtag/Kconfig
+> @@ -0,0 +1,16 @@
+> +menuconfig JTAG
+> +	tristate "JTAG support"
+> +	help
+> +	  This provides basic core functionality support for jtag class devices
 
-Driver core provides set of internal APIs for allocation and
-registration:
-- jtag_register;
-- jtag_unregister;
-- jtag_alloc;
-- jtag_free;
+	                                                     JTAG class devices.
 
-Platform driver on registration with jtag-core creates the next
-entry in dev folder:
-/dev/jtagX
+> +	  Hardware equipped with JTAG microcontroller which can be built
 
-Signed-off-by: Oleksandr Shamray <oleksandrs@mellanox.com>
-Signed-off-by: Jiri Pirko <jiri@mellanox.com>
-Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
----
-v18->v19
-Comments pointed by Julia Cartwright <juliac@eso.teric.us>
-- Fix memory leak on jtag_alloc exit
+I'm having problems understanding the line above + first 1/2 of the line below.
+Maybe something like:
 
-v17->v18
-Comments pointed by Julia Cartwright <juliac@eso.teric.us>
-- Change to return -EOPNOTSUPP in case of error in JTAG_GIOCFREQ
-- Add ops callbacks check to jtag_alloc
-- Add err check for copy_to_user
-- Move the kfree() above the if (err) in JTAG_IOCXFER
-- remove unnecessary check for error after put_user
-- add padding to struct jtag_xfer
+	  Hardware that is equipped with a JTAG microcontroller can be
+	  supported by using this driver's interfaces.
 
-v16->v17
-Comments pointed by Julia Cartwright <juliac@eso.teric.us>
-- Fix memory allocation on jtag alloc
-- Move out unnecessary form lock on jtag open
-- Rework jtag register behavior
+> +	  on top of this drivers. Driver exposes the set of IOCTL to the
 
-v15->v16
-Commen ts pointed by Florian Fainelli <f.fainelli@gmail.com>
-- move check jtag->ops->* in ioctl before get_user()
-- change error type -EINVAL --> -EBUSY on open already opened jtag
-- remove unnecessary ARCH_DMA_MINALIGN flag from kzalloc
-- remove define ARCH_DMA_MINALIGN
+	                          This driver exposes a set of IOCTLs to
 
-v14->v15
-v13->v14
-Comments pointed by Philippe Ombredanne <pombredanne@nexb.com>
-- Change style of head block comment from /**/ to //
+> +	  user space for:
 
-v12->v13
-Comments pointed by Philippe Ombredanne <pombredanne@nexb.com>
-- Change jtag.c licence type to
-  SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
-  and reorder line with license in description
-v11->v12
-Comments pointed by Greg KH <gregkh@linuxfoundation.org>
-- Change jtag.h licence type to
-  SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
-  and reorder line with license in description
+> +	  SIR (Scan Instruction Register, IEEE 1149.1 Data Register scan);
 
-Chip Bilbrey <chip@bilbrey.org>
-- Remove Apeed reference from uapi jtag.h header
-- Remove access mode from xfer and idle transactions
-- Add new ioctl JTAG_SIOCMODE for set hw mode
-- Add only one open per JTAG port blocking with mutex blocking
+	                                              ^^^^? Instruction?
 
-v10->v11
-Notifications from kbuild test robot <lkp@intel.com>
-- include types.h headeri to jtag.h
-- fix incompatible type of xfer callback
-- remove rdundant class defination
-- Fix return order in case of xfer error
+> +	  SDR (Scan Data Register, IEEE 1149.1 Instruction Register scan);
 
-V9->v10
-Comments pointed by Greg KH <gregkh@linuxfoundation.org>
-- remove unnecessary alignment for pirv data
-- move jtag_copy_to_user and jtag_copy_from_user code just to ioctl
-- move int jtag_run_test_idle_op and jtag_xfer_op code
-  just to ioctl
-- change return error codes to more applicable
-- add missing error checks
-- fix error check order in ioctl
-- remove unnecessary blank lines
-- add param validation to ioctl
-- remove compat_ioctl
-- remove only one open per JTAG port blocking.
-  User will care about this.
-- Fix idr memory leak on jtag_exit
-- change cdev device type to misc
+	                                       ^^^^^^^^^^^? Data?
 
-V8->v9
-Comments pointed by Arnd Bergmann <arnd@arndb.de>
-- use get_user() instead of __get_user().
-- change jtag->open type from int to atomic_t
-- remove spinlock on jtg_open
-- remove mutex on jtag_register
-- add unregister_chrdev_region on jtag_init err
-- add unregister_chrdev_region on jtag_exit
-- remove unnecessary pointer casts
-- add *data parameter to xfer function prototype
+> +	  RUNTEST (Forces IEEE 1149.1 bus to a run state for specified
+> +	  number of clocks).
+> +
+> +	  If you want this support, you should say Y here.
+> +
+> +	  To compile this driver as a module, choose M here: the module will
+> +	  be called jtag.
 
-v7->v8
-Comments pointed by Moritz Fischer <moritz.fischer@ettus.com>
-- Fix misspelling s/friver/driver
 
-v6->v7
-Notifications from kbuild test robot <lkp@intel.com>
-- Remove include asm/types.h from jtag.h
-- Add include <linux/types.h> to jtag.c
-
-v5->v6
-v4->v5
-
-v3->v4
-Comments pointed by Arnd Bergmann <arnd@arndb.de>
-- change transaction pointer tdio type  to __u64
-- change internal status type from enum to __u32
-- reorder jtag_xfer members to avoid the implied padding
-- add __packed attribute to jtag_xfer and jtag_run_test_idle
-
-v2->v3
-Notifications from kbuild test robot <lkp@intel.com>
-- Change include path to <linux/types.h> in jtag.h
-
-v1->v2
-Comments pointed by Greg KH <gregkh@linuxfoundation.org>
-- Change license type from GPLv2/BSD to GPLv2
-- Change type of variables which crossed user/kernel to __type
-- Remove "default n" from Kconfig
-
-Comments pointed by Andrew Lunn <andrew@lunn.ch>
-- Change list_add_tail in jtag_unregister to list_del
-
-Comments pointed by Neil Armstrong <narmstrong@baylibre.com>
-- Add SPDX-License-Identifier instead of license text
-
-Comments pointed by Arnd Bergmann <arnd@arndb.de>
-- Change __copy_to_user to memdup_user
-- Change __put_user to put_user
-- Change type of variables to __type for compatible 32 and 64-bit systems
-- Add check for maximum xfer data size
-- Change lookup data mechanism to get jtag data from inode
-- Add .compat_ioctl to file ops
-- Add mem alignment for jtag priv data
-
-Comments pointed by Tobias Klauser <tklauser@distanz.ch>
-- Change function names to avoid match with variable types
-- Fix description for jtag_ru_test_idle in uapi jtag.h
-- Fix misprints IDEL/IDLE, trough/through
----
- Documentation/ioctl/ioctl-number.txt |    2 +
- MAINTAINERS                          |   10 ++
- drivers/Kconfig                      |    2 +
- drivers/Makefile                     |    1 +
- drivers/jtag/Kconfig                 |   16 ++
- drivers/jtag/Makefile                |    1 +
- drivers/jtag/jtag.c                  |  273 ++++++++++++++++++++++++++++++++++
- include/linux/jtag.h                 |   41 +++++
- include/uapi/linux/jtag.h            |  105 +++++++++++++
- 9 files changed, 451 insertions(+), 0 deletions(-)
- create mode 100644 drivers/jtag/Kconfig
- create mode 100644 drivers/jtag/Makefile
- create mode 100644 drivers/jtag/jtag.c
- create mode 100644 include/linux/jtag.h
- create mode 100644 include/uapi/linux/jtag.h
-
-diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
-index 7f7413e..c5548b5 100644
---- a/Documentation/ioctl/ioctl-number.txt
-+++ b/Documentation/ioctl/ioctl-number.txt
-@@ -318,6 +318,8 @@ Code  Seq#(hex)	Include File		Comments
- 0xB0	all	RATIO devices		in development:
- 					<mailto:vgo@ratio.de>
- 0xB1	00-1F	PPPoX			<mailto:mostrows@styx.uwaterloo.ca>
-+0xB2	00-0f	linux/jtag.h		JTAG driver
-+					<mailto:oleksandrs@mellanox.com>
- 0xB3	00	linux/mmc/ioctl.h
- 0xB4	00-0F	linux/gpio.h		<mailto:linux-gpio@vger.kernel.org>
- 0xB5	00-0F	uapi/linux/rpmsg.h	<mailto:linux-remoteproc@vger.kernel.org>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 79bb02f..2fd22d6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7610,6 +7610,16 @@ L:	linux-serial@vger.kernel.org
- S:	Maintained
- F:	drivers/tty/serial/jsm/
- 
-+JTAG SUBSYSTEM
-+M:	Oleksandr Shamray <oleksandrs@mellanox.com>
-+M:	Vadim Pasternak <vadimp@mellanox.com>
-+S:	Maintained
-+F:	include/linux/jtag.h
-+F:	include/uapi/linux/jtag.h
-+F:	drivers/jtag/
-+F:	Documentation/devicetree/bindings/jtag/
-+F:	Documentation/ABI/testing/jtag-cdev
-+
- K10TEMP HARDWARE MONITORING DRIVER
- M:	Clemens Ladisch <clemens@ladisch.de>
- L:	linux-hwmon@vger.kernel.org
-diff --git a/drivers/Kconfig b/drivers/Kconfig
-index 95b9ccc..bb71e48 100644
---- a/drivers/Kconfig
-+++ b/drivers/Kconfig
-@@ -217,4 +217,6 @@ source "drivers/siox/Kconfig"
- 
- source "drivers/slimbus/Kconfig"
- 
-+source "drivers/jtag/Kconfig"
-+
- endmenu
-diff --git a/drivers/Makefile b/drivers/Makefile
-index 24cd470..c92636b 100644
---- a/drivers/Makefile
-+++ b/drivers/Makefile
-@@ -185,3 +185,4 @@ obj-$(CONFIG_TEE)		+= tee/
- obj-$(CONFIG_MULTIPLEXER)	+= mux/
- obj-$(CONFIG_UNISYS_VISORBUS)	+= visorbus/
- obj-$(CONFIG_SIOX)		+= siox/
-+obj-$(CONFIG_JTAG)		+= jtag/
-diff --git a/drivers/jtag/Kconfig b/drivers/jtag/Kconfig
-new file mode 100644
-index 0000000..5e2c75b
---- /dev/null
-+++ b/drivers/jtag/Kconfig
-@@ -0,0 +1,16 @@
-+menuconfig JTAG
-+	tristate "JTAG support"
-+	help
-+	  This provides basic core functionality support for jtag class devices
-+	  Hardware equipped with JTAG microcontroller which can be built
-+	  on top of this drivers. Driver exposes the set of IOCTL to the
-+	  user space for:
-+	  SIR (Scan Instruction Register, IEEE 1149.1 Data Register scan);
-+	  SDR (Scan Data Register, IEEE 1149.1 Instruction Register scan);
-+	  RUNTEST (Forces IEEE 1149.1 bus to a run state for specified
-+	  number of clocks).
-+
-+	  If you want this support, you should say Y here.
-+
-+	  To compile this driver as a module, choose M here: the module will
-+	  be called jtag.
-diff --git a/drivers/jtag/Makefile b/drivers/jtag/Makefile
-new file mode 100644
-index 0000000..af37493
---- /dev/null
-+++ b/drivers/jtag/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_JTAG)		+= jtag.o
-diff --git a/drivers/jtag/jtag.c b/drivers/jtag/jtag.c
-new file mode 100644
-index 0000000..7f8dca7
---- /dev/null
-+++ b/drivers/jtag/jtag.c
-@@ -0,0 +1,273 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+// drivers/jtag/jtag.c
-+//
-+// Copyright (c) 2018 Mellanox Technologies. All rights reserved.
-+// Copyright (c) 2018 Oleksandr Shamray <oleksandrs@mellanox.com>
-+
-+#include <linux/cdev.h>
-+#include <linux/device.h>
-+#include <linux/jtag.h>
-+#include <linux/kernel.h>
-+#include <linux/list.h>
-+#include <linux/miscdevice.h>
-+#include <linux/module.h>
-+#include <linux/rtnetlink.h>
-+#include <linux/spinlock.h>
-+#include <linux/types.h>
-+#include <uapi/linux/jtag.h>
-+
-+#define JTAG_NAME	"jtag0"
-+#define MAX_JTAG_NAME_LEN (sizeof("jtag") + 5)
-+
-+struct jtag {
-+	struct miscdevice miscdev;
-+	struct device *dev;
-+	const struct jtag_ops *ops;
-+	int id;
-+	bool opened;
-+	struct mutex open_lock;
-+	unsigned long priv[0];
-+};
-+
-+static DEFINE_IDA(jtag_ida);
-+
-+void *jtag_priv(struct jtag *jtag)
-+{
-+	return jtag->priv;
-+}
-+EXPORT_SYMBOL_GPL(jtag_priv);
-+
-+static long jtag_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+{
-+	struct jtag *jtag = file->private_data;
-+	struct jtag_run_test_idle idle;
-+	struct jtag_xfer xfer;
-+	u8 *xfer_data;
-+	u32 data_size;
-+	u32 value;
-+	int err;
-+
-+	if (!arg)
-+		return -EINVAL;
-+
-+	switch (cmd) {
-+	case JTAG_GIOCFREQ:
-+		if (!jtag->ops->freq_get)
-+			return -EOPNOTSUPP;
-+
-+		err = jtag->ops->freq_get(jtag, &value);
-+		if (err)
-+			break;
-+
-+		if (put_user(value, (__u32 *)arg))
-+			err = -EFAULT;
-+		break;
-+
-+	case JTAG_SIOCFREQ:
-+		if (!jtag->ops->freq_set)
-+			return -EOPNOTSUPP;
-+
-+		if (get_user(value, (__u32 *)arg))
-+			return -EFAULT;
-+		if (value == 0)
-+			return -EINVAL;
-+
-+		err = jtag->ops->freq_set(jtag, value);
-+		break;
-+
-+	case JTAG_IOCRUNTEST:
-+		if (copy_from_user(&idle, (void *)arg,
-+				   sizeof(struct jtag_run_test_idle)))
-+			return -EFAULT;
-+
-+		if (idle.endstate > JTAG_STATE_PAUSEDR)
-+			return -EINVAL;
-+
-+		err = jtag->ops->idle(jtag, &idle);
-+		break;
-+
-+	case JTAG_IOCXFER:
-+		if (copy_from_user(&xfer, (void *)arg,
-+				   sizeof(struct jtag_xfer)))
-+			return -EFAULT;
-+
-+		if (xfer.length >= JTAG_MAX_XFER_DATA_LEN)
-+			return -EINVAL;
-+
-+		if (xfer.type > JTAG_SDR_XFER)
-+			return -EINVAL;
-+
-+		if (xfer.direction > JTAG_WRITE_XFER)
-+			return -EINVAL;
-+
-+		if (xfer.endstate > JTAG_STATE_PAUSEDR)
-+			return -EINVAL;
-+
-+		data_size = DIV_ROUND_UP(xfer.length, BITS_PER_BYTE);
-+		xfer_data = memdup_user(u64_to_user_ptr(xfer.tdio), data_size);
-+
-+		if (IS_ERR(xfer_data))
-+			return -EFAULT;
-+
-+		err = jtag->ops->xfer(jtag, &xfer, xfer_data);
-+		if (err) {
-+			kfree(xfer_data);
-+			return -EFAULT;
-+		}
-+
-+		err = copy_to_user(u64_to_user_ptr(xfer.tdio),
-+				   (void *)(xfer_data), data_size);
-+		kfree(xfer_data);
-+		if (err)
-+			return -EFAULT;
-+
-+		if (copy_to_user((void *)arg, &xfer, sizeof(struct jtag_xfer)))
-+			return -EFAULT;
-+		break;
-+
-+	case JTAG_GIOCSTATUS:
-+		err = jtag->ops->status_get(jtag, &value);
-+		if (err)
-+			break;
-+
-+		err = put_user(value, (__u32 *)arg);
-+		break;
-+	case JTAG_SIOCMODE:
-+		if (get_user(value, (__u32 *)arg))
-+			return -EFAULT;
-+		if (value == 0)
-+			return -EINVAL;
-+
-+		err = jtag->ops->mode_set(jtag, value);
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+	return err;
-+}
-+
-+static int jtag_open(struct inode *inode, struct file *file)
-+{
-+	struct jtag *jtag = container_of(file->private_data, struct jtag,
-+					 miscdev);
-+
-+	if (mutex_lock_interruptible(&jtag->open_lock))
-+		return -ERESTARTSYS;
-+
-+	if (jtag->opened) {
-+		mutex_unlock(&jtag->open_lock);
-+		return -EBUSY;
-+	}
-+	jtag->opened = true;
-+	mutex_unlock(&jtag->open_lock);
-+
-+	nonseekable_open(inode, file);
-+	file->private_data = jtag;
-+	return 0;
-+}
-+
-+static int jtag_release(struct inode *inode, struct file *file)
-+{
-+	struct jtag *jtag = file->private_data;
-+
-+	mutex_lock(&jtag->open_lock);
-+	jtag->opened = false;
-+	mutex_unlock(&jtag->open_lock);
-+	return 0;
-+}
-+
-+static const struct file_operations jtag_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= jtag_open,
-+	.release	= jtag_release,
-+	.llseek		= noop_llseek,
-+	.unlocked_ioctl = jtag_ioctl,
-+};
-+
-+struct jtag *jtag_alloc(size_t priv_size, const struct jtag_ops *ops)
-+{
-+	struct jtag *jtag;
-+
-+	if (!ops)
-+		return NULL;
-+
-+	if (!ops->idle || !ops->mode_set || !ops->status_get || !ops->xfer)
-+		return NULL;
-+
-+	jtag = kzalloc(sizeof(*jtag) + priv_size, GFP_KERNEL);
-+	if (!jtag)
-+		return NULL;
-+
-+	jtag->ops = ops;
-+	return jtag;
-+}
-+EXPORT_SYMBOL_GPL(jtag_alloc);
-+
-+void jtag_free(struct jtag *jtag)
-+{
-+	kfree(jtag);
-+}
-+EXPORT_SYMBOL_GPL(jtag_free);
-+
-+int jtag_register(struct jtag *jtag)
-+{
-+	char *name;
-+	int err;
-+	int id;
-+
-+	id = ida_simple_get(&jtag_ida, 0, 0, GFP_KERNEL);
-+	if (id < 0)
-+		return id;
-+
-+	jtag->id = id;
-+	jtag->opened = false;
-+
-+	name = kzalloc(MAX_JTAG_NAME_LEN, GFP_KERNEL);
-+	if (!name) {
-+		err = -ENOMEM;
-+		goto err_jtag_alloc;
-+	}
-+
-+	err = snprintf(name, MAX_JTAG_NAME_LEN, "jtag%d", id);
-+	if (err < 0)
-+		goto err_jtag_name;
-+
-+	mutex_init(&jtag->open_lock);
-+	jtag->miscdev.fops =  &jtag_fops;
-+	jtag->miscdev.minor = MISC_DYNAMIC_MINOR;
-+	jtag->miscdev.name = name;
-+
-+	err = misc_register(&jtag->miscdev);
-+	if (err) {
-+		dev_err(jtag->dev, "Unable to register device\n");
-+		goto err_jtag_name;
-+	}
-+	return 0;
-+
-+err_jtag_name:
-+	kfree(name);
-+err_jtag_alloc:
-+	ida_simple_remove(&jtag_ida, id);
-+	return err;
-+}
-+EXPORT_SYMBOL_GPL(jtag_register);
-+
-+void jtag_unregister(struct jtag *jtag)
-+{
-+	misc_deregister(&jtag->miscdev);
-+	kfree(jtag->miscdev.name);
-+	ida_simple_remove(&jtag_ida, jtag->id);
-+}
-+EXPORT_SYMBOL_GPL(jtag_unregister);
-+
-+static void __exit jtag_exit(void)
-+{
-+	ida_destroy(&jtag_ida);
-+}
-+
-+module_exit(jtag_exit);
-+
-+MODULE_AUTHOR("Oleksandr Shamray <oleksandrs@mellanox.com>");
-+MODULE_DESCRIPTION("Generic jtag support");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/jtag.h b/include/linux/jtag.h
-new file mode 100644
-index 0000000..80a887f
---- /dev/null
-+++ b/include/linux/jtag.h
-@@ -0,0 +1,41 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// include/linux/jtag.h - JTAG class driver
-+//
-+// Copyright (c) 2018 Mellanox Technologies. All rights reserved.
-+// Copyright (c) 2018 Oleksandr Shamray <oleksandrs@mellanox.com>
-+
-+#ifndef __JTAG_H
-+#define __JTAG_H
-+
-+#include <uapi/linux/jtag.h>
-+
-+#define jtag_u64_to_ptr(arg) ((void *)(uintptr_t)arg)
-+
-+#define JTAG_MAX_XFER_DATA_LEN 65535
-+
-+struct jtag;
-+/**
-+ * struct jtag_ops - callbacks for jtag control functions:
-+ *
-+ * @freq_get: get frequency function. Filled by device driver
-+ * @freq_set: set frequency function. Filled by device driver
-+ * @status_get: set status function. Filled by device driver
-+ * @idle: set JTAG to idle state function. Filled by device driver
-+ * @xfer: send JTAG xfer function. Filled by device driver
-+ */
-+struct jtag_ops {
-+	int (*freq_get)(struct jtag *jtag, u32 *freq);
-+	int (*freq_set)(struct jtag *jtag, u32 freq);
-+	int (*status_get)(struct jtag *jtag, u32 *state);
-+	int (*idle)(struct jtag *jtag, struct jtag_run_test_idle *idle);
-+	int (*xfer)(struct jtag *jtag, struct jtag_xfer *xfer, u8 *xfer_data);
-+	int (*mode_set)(struct jtag *jtag, u32 mode_mask);
-+};
-+
-+void *jtag_priv(struct jtag *jtag);
-+int jtag_register(struct jtag *jtag);
-+void jtag_unregister(struct jtag *jtag);
-+struct jtag *jtag_alloc(size_t priv_size, const struct jtag_ops *ops);
-+void jtag_free(struct jtag *jtag);
-+
-+#endif /* __JTAG_H */
-diff --git a/include/uapi/linux/jtag.h b/include/uapi/linux/jtag.h
-new file mode 100644
-index 0000000..ecd02a0
---- /dev/null
-+++ b/include/uapi/linux/jtag.h
-@@ -0,0 +1,105 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// include/uapi/linux/jtag.h - JTAG class driver uapi
-+//
-+// Copyright (c) 2018 Mellanox Technologies. All rights reserved.
-+// Copyright (c) 2018 Oleksandr Shamray <oleksandrs@mellanox.com>
-+
-+#ifndef __UAPI_LINUX_JTAG_H
-+#define __UAPI_LINUX_JTAG_H
-+
-+#include <linux/types.h>
-+/*
-+ * JTAG_XFER_HW_MODE: JTAG hardware mode. Used to set HW drived or bitbang
-+ * mode. This is bitmask param of ioctl JTAG_SIOCMODE command
-+ */
-+#define  JTAG_XFER_HW_MODE 1
-+
-+/**
-+ * enum jtag_endstate:
-+ *
-+ * @JTAG_STATE_IDLE: JTAG state machine IDLE state
-+ * @JTAG_STATE_PAUSEIR: JTAG state machine PAUSE_IR state
-+ * @JTAG_STATE_PAUSEDR: JTAG state machine PAUSE_DR state
-+ */
-+enum jtag_endstate {
-+	JTAG_STATE_IDLE,
-+	JTAG_STATE_PAUSEIR,
-+	JTAG_STATE_PAUSEDR,
-+};
-+
-+/**
-+ * enum jtag_xfer_type:
-+ *
-+ * @JTAG_SIR_XFER: SIR transfer
-+ * @JTAG_SDR_XFER: SDR transfer
-+ */
-+enum jtag_xfer_type {
-+	JTAG_SIR_XFER,
-+	JTAG_SDR_XFER,
-+};
-+
-+/**
-+ * enum jtag_xfer_direction:
-+ *
-+ * @JTAG_READ_XFER: read transfer
-+ * @JTAG_WRITE_XFER: write transfer
-+ */
-+enum jtag_xfer_direction {
-+	JTAG_READ_XFER,
-+	JTAG_WRITE_XFER,
-+};
-+
-+/**
-+ * struct jtag_run_test_idle - forces JTAG state machine to
-+ * RUN_TEST/IDLE state
-+ *
-+ * @reset: 0 - run IDLE/PAUSE from current state
-+ *         1 - go through TEST_LOGIC/RESET state before  IDLE/PAUSE
-+ * @end: completion flag
-+ * @tck: clock counter
-+ *
-+ * Structure represents interface to JTAG device for jtag idle
-+ * execution.
-+ */
-+struct jtag_run_test_idle {
-+	__u8	reset;
-+	__u8	endstate;
-+	__u8	tck;
-+};
-+
-+/**
-+ * struct jtag_xfer - jtag xfer:
-+ *
-+ * @type: transfer type
-+ * @direction: xfer direction
-+ * @length: xfer bits len
-+ * @tdio : xfer data array
-+ * @endir: xfer end state
-+ *
-+ * Structure represents interface to JTAG device for jtag sdr xfer
-+ * execution.
-+ */
-+struct jtag_xfer {
-+	__u8	type;
-+	__u8	direction;
-+	__u8	endstate;
-+	__u8	padding;
-+	__u32	length;
-+	__u64	tdio;
-+};
-+
-+/* ioctl interface */
-+#define __JTAG_IOCTL_MAGIC	0xb2
-+
-+#define JTAG_IOCRUNTEST	_IOW(__JTAG_IOCTL_MAGIC, 0,\
-+			     struct jtag_run_test_idle)
-+#define JTAG_SIOCFREQ	_IOW(__JTAG_IOCTL_MAGIC, 1, unsigned int)
-+#define JTAG_GIOCFREQ	_IOR(__JTAG_IOCTL_MAGIC, 2, unsigned int)
-+#define JTAG_IOCXFER	_IOWR(__JTAG_IOCTL_MAGIC, 3, struct jtag_xfer)
-+#define JTAG_GIOCSTATUS _IOWR(__JTAG_IOCTL_MAGIC, 4, enum jtag_endstate)
-+#define JTAG_SIOCMODE	_IOW(__JTAG_IOCTL_MAGIC, 5, unsigned int)
-+
-+#define JTAG_FIRST_MINOR 0
-+#define JTAG_MAX_DEVICES 32
-+
-+#endif /* __UAPI_LINUX_JTAG_H */
 -- 
-1.7.1
-
+~Randy
