@@ -1,87 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757083AbeEJKsT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 06:48:19 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35093 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756729AbeEJKsR (ORCPT
+        id S934581AbeEJKtH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 06:49:07 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:29303 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756988AbeEJKtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 06:48:17 -0400
-X-Google-Smtp-Source: AB8JxZqTxuadgURI+gvkUREDekh/BAd9U4+w/DhZsNGcJ2RlEBjLp7spGT+i6nFRMUvY9av3XwGdwvJpLZD/OmhnbJk=
+        Thu, 10 May 2018 06:49:05 -0400
+X-IronPort-AV: E=Sophos;i="5.49,385,1520924400";
+   d="scan'208";a="11917215"
+From: Eugen Hristev <eugen.hristev@microchip.com>
+To: <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
+        <alexandre.belloni@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
+        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
+CC: Eugen Hristev <eugen.hristev@microchip.com>
+Subject: [PATCH v5 1/9] MAINTAINERS: add generic resistive touchscreen adc
+Date: Thu, 10 May 2018 13:45:06 +0300
+Message-ID: <1525949114-29263-2-git-send-email-eugen.hristev@microchip.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525949114-29263-1-git-send-email-eugen.hristev@microchip.com>
+References: <1525949114-29263-1-git-send-email-eugen.hristev@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <CACna6rxb9KSQfGwi__xxSMACAxh-bOV9SR1NsnUVe8ASdA0Liw@mail.gmail.com>
-References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net> <CACna6rxb9KSQfGwi__xxSMACAxh-bOV9SR1NsnUVe8ASdA0Liw@mail.gmail.com>
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 10 May 2018 12:48:15 +0200
-Message-ID: <CACna6ry4AYpwOguzDoP4XsonF4_eWW2PpxonwbuAXMVw3wrQ+g@mail.gmail.com>
-Subject: Re: Regression caused by commit 882164a4a928
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Matt Redfearn <matt.redfearn@mips.com>,
-        =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4AAmQRw024514
 
-On 10 May 2018 at 12:41, Rafał Miłecki <zajec5@gmail.com> wrote:
-> On 7 May 2018 at 17:44, Larry Finger <Larry.Finger@lwfinger.net> wrote:
->> Although commit 882164a4a928 ("ssb: Prevent build of PCI host features in
->> module") appeared to be harmless, it leads to complete failure of drivers
->> b43. and b43legacy, and likely affects b44 as well. The problem is that
->> CONFIG_SSB_PCIHOST is undefined, which prevents the compilation of the code
->> that controls the PCI cores of the device. See
->> https://bugzilla.redhat.com/show_bug.cgi?id=1572349 for details.
->>
->> As the underlying errors ("pcibios_enable_device" undefined, and
->> "register_pci_controller" undefined) do not appear on the architectures that
->> I have tested (x86_64, x86, and ppc), I suspect something in the
->> arch-specific code for your setup (MIPS?). As I have no idea on how to fix
->> that problem, would the following patch work for you?
->>
->> diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
->> index 9371651d8017..3743533c8057 100644
->> --- a/drivers/ssb/Kconfig
->> +++ b/drivers/ssb/Kconfig
->> @@ -117,7 +117,7 @@ config SSB_SERIAL
->>
->>  config SSB_DRIVER_PCICORE_POSSIBLE
->>         bool
->> -       depends on SSB_PCIHOST && SSB = y
->> +       depends on SSB_PCIHOST && (SSB = y || !MIPS)
->>         default y
->>
->>  config SSB_DRIVER_PCICORE
->
-> I strongly suggest we take a step back, slow down a bit and look at
-> the original problem.
->
-> In driver_pcicore.c there is MIPS specific code. It's protected using
-> #ifdef CONFIG_SSB_PCICORE_HOSTMODE
-> (...)
-> #endif
->
-> If anyone has ever seen
-> ERROR: "pcibios_enable_device" [drivers/ssb/ssb.ko] undefined!
-> ERROR: "register_pci_controller" [drivers/ssb/ssb.ko] undefined!
-> make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
-> it means he managed to get CONFIG_SSB_PCICORE_HOSTMODE set on non-MIPS system.
->
-> We should rather answer how did that happen and fix it.
->
-> SSB_PCICORE_HOSTMODE depends on SSB_DRIVER_MIPS
-> SSB_DRIVER_MIPS depends on MIPS
->
-> How is that possible to set SSB_PCICORE_HOSTMODE with non-MIPS config?
-> Is there some mistake in Kconfig I can't see?
+Add MAINTAINERS entry for generic resistive touchscreen adc
 
-I think SSB = y should be added as dependency for
-SSB_PCICORE_HOSTMODE. See also commit 79ca239a68f8f ("bcma: Prevent
-build of PCI host features in module").
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+---
+Changes in v3:
+ - Changed source file name
 
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3bdc260..ce9720f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5943,6 +5943,12 @@ F:	drivers/base/power/domain*.c
+ F:	include/linux/pm_domain.h
+ F:	Documentation/devicetree/bindings/power/power_domain.txt
+ 
++GENERIC RESISTIVE TOUCHSCREEN ADC DRIVER
++M:	Eugen Hristev <eugen.hristev@microchip.com>
++L:	linux-input@vger.kernel.org
++S:	Maintained
++F:	drivers/input/touchscreen/resistive-adc-touch.c
++
+ GENERIC UIO DRIVER FOR PCI DEVICES
+ M:	"Michael S. Tsirkin" <mst@redhat.com>
+ L:	kvm@vger.kernel.org
 -- 
-Rafał
+2.7.4
