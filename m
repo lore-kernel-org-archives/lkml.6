@@ -1,82 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751048AbeEJWsr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 18:48:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55356 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750710AbeEJWsq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 18:48:46 -0400
-Date: Thu, 10 May 2018 15:48:44 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        linux-nvdimm@lists.01.org
-Subject: Re: [PATCH 0/5] fix radix tree multi-order iteration race
-Message-Id: <20180510154844.dc4e4c7471a885b73ed50576@linux-foundation.org>
-In-Reply-To: <20180508174424.GA12638@linux.intel.com>
-References: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
-        <20180508174424.GA12638@linux.intel.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1750879AbeEJWvf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 18:51:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55136 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750711AbeEJWve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 18:51:34 -0400
+Date: Thu, 10 May 2018 17:51:32 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v2 00/10] PCI: leak fixes, removable generic PCI host,
+ assorted stuff
+Message-ID: <20180510225132.GD190385@bhelgaas-glaptop.roam.corp.google.com>
+References: <cover.1525067324.git.jan.kiszka@siemens.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 8 May 2018 11:44:24 -0600 Ross Zwisler <ross.zwisler@linux.intel.com> wrote:
-
-> On Thu, May 03, 2018 at 01:24:25PM -0600, Ross Zwisler wrote:
-> > The following series gets the radix tree test suite compiling again in
-> > the current linux/master, adds a unit test which exposes a race in the
-> > radix tree multi-order iteration code, and then fixes that race.
-> > 
-> > This race was initially hit on a v4.15 based kernel and results in a GP
-> > fault.  I've described the race in detail in patches 4 and 5.
-> > 
-> > The fix is simple and necessary, and I think it should be merged for
-> > v4.17.
-> > 
-> > This tree has gotten positive build confirmation from the 0-day bot,
-> > passes the updated radix tree test suite, xfstests, and the original
-> > test that was hitting the race with the v4.15 based kernel.
-> > 
-> > Ross Zwisler (5):
-> >   radix tree test suite: fix mapshift build target
-> >   radix tree test suite: fix compilation issue
-> >   radix tree test suite: add item_delete_rcu()
-> >   radix tree test suite: multi-order iteration race
-> >   radix tree: fix multi-order iteration race
-> > 
-> >  lib/radix-tree.c                      |  6 ++--
-> >  tools/include/linux/spinlock.h        |  3 +-
-> >  tools/testing/radix-tree/Makefile     |  6 ++--
-> >  tools/testing/radix-tree/multiorder.c | 63 +++++++++++++++++++++++++++++++++++
-> >  tools/testing/radix-tree/test.c       | 19 +++++++++++
-> >  tools/testing/radix-tree/test.h       |  3 ++
-> >  6 files changed, 91 insertions(+), 9 deletions(-)
-> > 
-> > -- 
-> > 2.14.3
-> > 
+On Mon, Apr 30, 2018 at 07:48:34AM +0200, Jan Kiszka wrote:
+> Changes in v2:
+>  - patch 1: commit message reworking as suggested by Lorenzo
+>  - patch 3-6: split-up as suggested by Bjorn
+>  - patch 8: new
+>  - patch 10: select PCI_DOMAINS from PCI_HOST_GENERIC, rather than
+>    allowing manual choice, as suggested by Lorenzo
 > 
-> Ping on this series.  Does anyone have any feedback?  Matthew?
+> This primarily enables to unbind the generic PCI host controller without
+> leaving lots of memory leaks behind. A previous proposal patch 5 was
+> rejected because of those issues [1].
 > 
-> I'd really like to get it into v4.17.
+> The fixes have been validated in the Jailhouse setup, where we add and
+> remove a virtual PCI host controller on hypervisor activation/
+> deactivation, with the help of kmemleak.
 > 
-> We can take it through the libnvdimm tree, if that's easiest.
+> Besides that, there is tiny PCI API cleanup at the beginning and
+> support for manually enabled PCI domains at the end that enables the
+> Jailhouse scenario.
+> 
+> Jan
+> 
+> [1] http://lkml.iu.edu/hypermail/linux/kernel/1606.3/00072.html
+> 
+> 
+> CC: Jingoo Han <jingoohan1@gmail.com>
+> CC: Joao Pinto <Joao.Pinto@synopsys.com>
+> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> CC: Will Deacon <will.deacon@arm.com>
+> 
+> Jan Kiszka (10):
+>   PCI: Make pci_get_new_domain_nr() static
+>   PCI: Fix memory leak of devm_pci_alloc_host_bridge()
+>   PCI: Factor out __of_pci_get_host_bridge_resources()
+>   PCI: Add dev parameter to __of_pci_get_host_bridge_resources()
+>   PCI: Replace pr_*() with dev_*() in
+>     __of_pci_get_host_bridge_resources()
+>   PCI: Introduce devm_of_pci_get_host_bridge_resources()
+>   PCI: Convert of_pci_get_host_bridge_resources() users to devm variant
+>   PCI: Deprecate of_pci_get_host_bridge_resources()
+>   PCI: Add support for unbinding the generic PCI host controller
+>   PCI: Enable PCI_DOMAINS along with generic PCI host controller
 
-There's a copy in Dan's linux-next tree which is missing
+Applied to pci/resource for v4.18, thanks!
 
-- The Link: tag
-- The Fixes: tag
-- The Reported-by
-- Jan's reviewed-by
-- the cc:stable tag
+I added the reviewed-by tags from Vladimir (thank you!) and replaced the
+"Deprecate" patch by the v3 "Remove" patch.
 
-so I think I'll just ignore all that and send this series off to Linus next
-week.
+>  drivers/pci/dwc/pcie-designware-host.c |   2 +-
+>  drivers/pci/host/Kconfig               |   1 +
+>  drivers/pci/host/pci-aardvark.c        |   5 +-
+>  drivers/pci/host/pci-ftpci100.c        |   4 +-
+>  drivers/pci/host/pci-host-common.c     |  13 ++++
+>  drivers/pci/host/pci-host-generic.c    |   1 +
+>  drivers/pci/host/pci-v3-semi.c         |   3 +-
+>  drivers/pci/host/pci-versatile.c       |   3 +-
+>  drivers/pci/host/pci-xgene.c           |   3 +-
+>  drivers/pci/host/pcie-altera.c         |   5 +-
+>  drivers/pci/host/pcie-iproc-platform.c |   4 +-
+>  drivers/pci/host/pcie-rcar.c           |   5 +-
+>  drivers/pci/host/pcie-rockchip.c       |   4 +-
+>  drivers/pci/host/pcie-xilinx-nwl.c     |   4 +-
+>  drivers/pci/host/pcie-xilinx.c         |   4 +-
+>  drivers/pci/of.c                       | 105 +++++++++++++++++++++------------
+>  drivers/pci/pci.c                      |   6 +-
+>  drivers/pci/probe.c                    |   4 +-
+>  include/linux/of_pci.h                 |  42 ++++++++++++-
+>  include/linux/pci-ecam.h               |   1 +
+>  include/linux/pci.h                    |   3 -
+>  21 files changed, 149 insertions(+), 73 deletions(-)
+> 
+> -- 
+> 2.13.6
+> 
