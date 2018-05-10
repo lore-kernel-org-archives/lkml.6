@@ -1,119 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934747AbeEJLJz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 07:09:55 -0400
-Received: from bues.ch ([80.190.117.144]:55234 "EHLO bues.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756679AbeEJLJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 07:09:54 -0400
-Date: Thu, 10 May 2018 13:09:12 +0200
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Matt Redfearn <matt.redfearn@mips.com>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJl?= =?UTF-8?B?Y2tp?= <zajec5@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Subject: Re: Regression caused by commit 882164a4a928
-Message-ID: <20180510130912.72738106@wiggum>
-In-Reply-To: <af1f604a-21e0-e7ff-f526-9d2aec184389@mips.com>
-References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
-        <372d149c-c34c-56a0-4e1a-5ab2c1e16e73@mips.com>
-        <20180509182756.6f36cc05@wiggum>
-        <af1f604a-21e0-e7ff-f526-9d2aec184389@mips.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S935087AbeEJLKY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 07:10:24 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57665 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934783AbeEJLKS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 07:10:18 -0400
+Date: Thu, 10 May 2018 13:10:16 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Kiran Gunda <kgunda@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V1 1/5] qcom: wled: Rename pm8941-wled.c to qcom-wled.c
+Message-ID: <20180510111015.GB6977@amd>
+References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
+ <1525341432-15818-2-git-send-email-kgunda@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/87YtzGCidlbcr1x5uZFlufW"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
+Content-Disposition: inline
+In-Reply-To: <1525341432-15818-2-git-send-email-kgunda@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/87YtzGCidlbcr1x5uZFlufW
-Content-Type: text/plain; charset=US-ASCII
+
+--ftEhullJWpWg/VHq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 10 May 2018 11:24:12 +0100
-Matt Redfearn <matt.redfearn@mips.com> wrote:
+On Thu 2018-05-03 15:27:08, Kiran Gunda wrote:
+> pm8941-wled.c driver is supporting the WLED peripheral
+> on pm8941. Rename it to qcom-wled.c so that it can support
+> WLED on multiple PMICs.
+>=20
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
 
-> > Could you please try this?
-> >=20
-> > config SSB_DRIVER_PCICORE_POSSIBLE
-> > 	depends on SSB_PCIHOST
-> >=20
-> > config SSB_PCICORE_HOSTMODE
-> > 	depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS && (SSB =3D y) && PCI=
-_DRIVERS_LEGACY
-> >=20
-> >=20
-> > The affected API pcibios_enable_device() and register_pci_controller()
-> > is only used in HOSTMODE. So I think it makes sense to make HOSTMODE
-> > depend on SSB=3Dy and PCI_DRIVERS_LEGACY.
-> >=20
-> > PCICore itself does not use the API, if hostmode is disabled.
-> >  =20
->=20
-> Sure - I've tested the patch:
->=20
-> --- a/drivers/ssb/Kconfig
-> +++ b/drivers/ssb/Kconfig
-> @@ -117,7 +117,7 @@ config SSB_SERIAL
->=20
->   config SSB_DRIVER_PCICORE_POSSIBLE
->          bool
-> -       depends on SSB_PCIHOST && SSB =3D y
-> +       depends on SSB_PCIHOST
->          default y
->=20
->   config SSB_DRIVER_PCICORE
-> @@ -131,7 +131,7 @@ config SSB_DRIVER_PCICORE
->=20
->   config SSB_PCICORE_HOSTMODE
->          bool "Hostmode support for SSB PCI core"
-> -       depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS
-> +       depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS && (SSB =3D y) &=
-&=20
-> PCI_DRIVERS_LEGACY
->          help
->            PCIcore hostmode operation (external PCI bus).
->=20
->=20
-> And this seems to work for MIPS, we don't get the build error from=20
-> building the SSB module under nec_markeins allmodconfig, and=20
-> SSB_PCICORE_HOSTMODE=3Dy for bcm47xx allmodconfig, which selects SSB=3Dy.
->=20
-> So this looks like a good fix for MIPS, at least.
->=20
-> Tested-by: Matt Redfearn <matt.redfearn@mips.com>
-
-
-Thanks.
-Could you please submit it?
-You can add my Acked-by.
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
 --=20
-Michael
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
---Sig_/87YtzGCidlbcr1x5uZFlufW
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--ftEhullJWpWg/VHq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlr0KFgACgkQ9TK+HZCN
-iw5y9A/7BABuNQ+CSpVQqNzuzLUqhvdOpfkSad3mH2cmbEWwNPgeZB8GIQJUUR3l
-PRbZMQJhGg0nBwJJLsrP/qXXCoX50y/XLhrrJLCPIt7KCPCKbjnR5M2Zgw0aRrTm
-imoKQVf3ZDjvc/32NJ0yantApp6L9yEzICCAhGPN76g1V9jNM5I7u7Pw/dHG6w0E
-nZB2EBlrSQZiYgIrK9OwebF2qfIj5J+sJQg32EJoDVjr+PB/TC3t96+REGX4+Bty
-/FhVN9a6HNFN0Yld4Fv0LJtyynyMkKmkl+Es040R8GuS0d3weVtD0lIUYJIHhbkG
-ww5N00DeiK6e5hL+j1hQclNgkYSBChDkFtUQNxaOXjBSzDP8QdI4qO9BlnWHF8ez
-VXrR1I2pX5n4s2+iwaidGHA+VNaKzuxF27jQKQLjzL4BpUdfhbUx5Rue4/InGUzw
-8nJCkK8NXt/1yEGZK1XXhU/w80B5ncqZjRd9dtdVaeukGpvBPOdaYqgqHlPfEC7n
-Ljsgg7W5EO2RqSd4pjwERkHnoaF3J70qtPF/AcQEmXxo8EflMEoAMoJSgoFxeFy5
-R5S6Ydp/jbR731GwfXHEimSnQmTKQuX7hrWTMGzGWj37mPQLUUbmtScu4bh9oBnW
-tYxlKQQoUjXmBNqNdHJ2HeV+1Vo3PUmnBo8lKxa9R6d7zjr0hRo=
-=Nsfv
+iEYEARECAAYFAlr0KJcACgkQMOfwapXb+vIBCACfdU/BG35pa+jbxl1zQluwZJYV
+gl0AnA5DIMfp+UoE3Dv076pGtMJ/sJIv
+=LDbK
 -----END PGP SIGNATURE-----
 
---Sig_/87YtzGCidlbcr1x5uZFlufW--
+--ftEhullJWpWg/VHq--
