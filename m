@@ -1,120 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756995AbeEJJ3P (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 05:29:15 -0400
-Received: from regular1.263xmail.com ([211.150.99.133]:37225 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756726AbeEJJ3L (ORCPT
+        id S1756961AbeEJJgv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 05:36:51 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:42238 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756665AbeEJJgt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 05:29:11 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-IP-DOMAINF: 1
-X-RL-SENDER: djw@t-chip.com.cn
-X-FST-TO: linux-rockchip@lists.infradead.org
-X-SENDER-IP: 59.33.101.82
-X-LOGIN-NAME: djw@t-chip.com.cn
-X-UNIQUE-TAG: <8a08539e6a62418933a2e5eb9abc0dfa>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 7
-From: djw@t-chip.com.cn
-To: linux-rockchip@lists.infradead.org
-Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>,
-        Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
-        David Wu <david.wu@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
-        William Wu <william.wu@rock-chips.com>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Joseph Chen <chenjh@rock-chips.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Rocky Hao <rocky.hao@rock-chips.com>
-Subject: [PATCH v1 5/5] arm64: dts: rockchip: Add sdmmc UHS support for roc-rk3328-cc
-Date: Thu, 10 May 2018 17:28:41 +0800
-Message-Id: <1525944521-17114-1-git-send-email-djw@t-chip.com.cn>
+        Thu, 10 May 2018 05:36:49 -0400
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2] nvme-rdma: stop queue first before free it in config admin queue
+Date: Thu, 10 May 2018 17:37:05 +0800
+Message-Id: <1525945025-1638-1-git-send-email-jianchao.w.wang@oracle.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525943800-14095-1-git-send-email-djw@t-chip.com.cn>
-References: <1525943800-14095-1-git-send-email-djw@t-chip.com.cn>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8888 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805100094
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Levin Du <djw@t-chip.com.cn>
+When any of cases after nvme_rdma_start_queue in
+nvme_rdma_configure_admin_queue fails, the ctrl->queues[0] will be
+freed but the NVME_RDMA_Q_LIVE is still set. If nvme_rdma_stop_queue
+is invoked, we will incur use-after-free which will cause memory
+corruption.
+BUG: KASAN: use-after-free in rdma_disconnect+0x1f/0xe0 [rdma_cm]
+Read of size 8 at addr ffff8801dc3969c0 by task kworker/u16:3/9304
 
-In roc-rk3328-cc board, the signal voltage of sdmmc is supplied by
-the vcc_sdio regulator, which is a mux between 1.8V and 3.3V,
-controlled by a special output only gpio pin labeled
-"gpiomut_pmuio_iout", corresponding bit 1 of the syscon GRF_SOC_CON10.
+CPU: 3 PID: 9304 Comm: kworker/u16:3 Kdump: loaded Tainted: G        W         4.17.0-rc3+ #20
+Workqueue: nvme-delete-wq nvme_delete_ctrl_work
+Call Trace:
+ dump_stack+0x91/0xeb
+ print_address_description+0x6b/0x290
+ kasan_report+0x261/0x360
+ rdma_disconnect+0x1f/0xe0 [rdma_cm]
+ nvme_rdma_stop_queue+0x25/0x40 [nvme_rdma]
+ nvme_rdma_shutdown_ctrl+0xf3/0x150 [nvme_rdma]
+ nvme_delete_ctrl_work+0x98/0xe0
+ process_one_work+0x3ca/0xaa0
+ worker_thread+0x4e2/0x6c0
+ kthread+0x18d/0x1e0
+ ret_from_fork+0x24/0x30
 
-This special pin can now be reference as <&gpio_syscon10 1>, thanks
-to the gpio-syscon driver, which makes writing regulator-gpio possible.
+To fix it, call nvme_rdma_stop_queue for all the failed cases after
+nvme_rdma_start_queue.
 
-If the signal voltage changes, the io domain needs to change
-correspondingly.
-
-To use this feature, the following options are required in kernel config:
- - CONFIG_GPIO_SYSCON=y
- - CONFIG_POWER_AVS=y
- - CONFIG_ROCKCHIP_IODOMAIN=y
-
-Signed-off-by: Levin Du <djw@t-chip.com.cn>
-
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
+ drivers/nvme/host/rdma.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Changes in v1:
-- Split into small patches
-- Sort dts properties in sdmmc node
-
- arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts b/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-index b983abd..3f33e42 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-@@ -41,6 +41,19 @@
- 		vin-supply = <&vcc_io>;
- 	};
+diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
+index a0ead1d..966e0dd 100644
+--- a/drivers/nvme/host/rdma.c
++++ b/drivers/nvme/host/rdma.c
+@@ -777,7 +777,7 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
+ 	if (error) {
+ 		dev_err(ctrl->ctrl.device,
+ 			"prop_get NVME_REG_CAP failed\n");
+-		goto out_cleanup_queue;
++		goto out_stop_queue;
+ 	}
  
-+	vcc_sdio: sdmmcio-regulator {
-+		compatible = "regulator-gpio";
-+		gpios = <&gpio_syscon10 1 GPIO_ACTIVE_HIGH>;
-+		states = <1800000 0x1
-+			  3300000 0x0>;
-+		regulator-name = "vcc_sdio";
-+		regulator-type = "voltage";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		vin-supply = <&vcc_sys>;
-+	};
-+
- 	vcc_host1_5v: vcc_otg_5v: vcc-host1-5v-regulator {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
-@@ -213,7 +226,7 @@
+ 	ctrl->ctrl.sqsize =
+@@ -785,23 +785,25 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
  
- 	vccio1-supply = <&vcc_io>;
- 	vccio2-supply = <&vcc18_emmc>;
--	vccio3-supply = <&vcc_io>;
-+	vccio3-supply = <&vcc_sdio>;
- 	vccio4-supply = <&vcc_18>;
- 	vccio5-supply = <&vcc_io>;
- 	vccio6-supply = <&vcc_io>;
-@@ -242,7 +255,12 @@
- 	max-frequency = <150000000>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdmmc0_clk &sdmmc0_cmd &sdmmc0_dectn &sdmmc0_bus4>;
-+	sd-uhs-sdr12;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	vmmc-supply = <&vcc_sd>;
-+	vqmmc-supply = <&vcc_sdio>;
- 	status = "okay";
- };
+ 	error = nvme_enable_ctrl(&ctrl->ctrl, ctrl->ctrl.cap);
+ 	if (error)
+-		goto out_cleanup_queue;
++		goto out_stop_queue;
  
+ 	ctrl->ctrl.max_hw_sectors =
+ 		(ctrl->max_fr_pages - 1) << (ilog2(SZ_4K) - 9);
+ 
+ 	error = nvme_init_identify(&ctrl->ctrl);
+ 	if (error)
+-		goto out_cleanup_queue;
++		goto out_stop_queue;
+ 
+ 	error = nvme_rdma_alloc_qe(ctrl->queues[0].device->dev,
+ 			&ctrl->async_event_sqe, sizeof(struct nvme_command),
+ 			DMA_TO_DEVICE);
+ 	if (error)
+-		goto out_cleanup_queue;
++		goto out_stop_queue;
+ 
+ 	return 0;
+ 
++out_stop_queue:
++	nvme_rdma_stop_queue(&ctrl->queues[0]);
+ out_cleanup_queue:
+ 	if (new)
+ 		blk_cleanup_queue(ctrl->ctrl.admin_q);
 -- 
 2.7.4
