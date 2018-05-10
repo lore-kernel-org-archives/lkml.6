@@ -1,38 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965997AbeEJO0H (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 10:26:07 -0400
-Received: from pindarots.xs4all.nl ([82.161.210.87]:42014 "EHLO
-        pindarots.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965708AbeEJO0E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 10:26:04 -0400
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Udo van den Heuvel <udovdh@xs4all.nl>
-Subject: 4.16.8 do_IRQ: 1.37 No irq handler for vector
-Organization: hierzo
-Message-ID: <7aaa7bf4-461f-1882-3762-b06b95aca0d5@xs4all.nl>
-Date: Thu, 10 May 2018 16:26:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        id S965950AbeEJO15 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 10:27:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34990 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935632AbeEJO14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 10:27:56 -0400
+Date: Thu, 10 May 2018 09:27:54 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: perf: fuzzer causes stack going in wrong direction warnings
+Message-ID: <20180510142754.6av5on7mapnpwbzt@treble>
+References: <20180501135850.enx4waqd5d7yowlj@treble>
+ <alpine.DEB.2.21.1805011557240.19937@macbook-air>
+ <20180501220458.p3rgwzh3jcqt4jmm@treble>
+ <20180502205009.codkvscnh4j4hm6b@treble>
+ <alpine.DEB.2.21.1805041033230.6376@macbook-air>
+ <20180504162557.iodmglq3duomz6c2@treble>
+ <alpine.DEB.2.21.1805051134230.11518@macbook-air>
+ <20180505182912.llj7jb3v7yd43t5h@treble>
+ <20180506234935.yq6zxjetlpldpzz7@treble>
+ <20180510134841.GE12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20180510134841.GE12217@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, May 10, 2018 at 03:48:41PM +0200, Peter Zijlstra wrote:
+> On Sun, May 06, 2018 at 06:49:35PM -0500, Josh Poimboeuf wrote:
+> 
+> > Deja vu.  Most of these are related to perf PEBS, similar to the
+> > following issue:
+> > 
+> >   b8000586c90b ("perf/x86/intel: Cure bogus unwind from PEBS entries")
+> > 
+> > This is basically the ORC version of that.  setup_pebs_sample_data() is
+> > assembling a franken-pt_regs which ORC isn't happy about.  RIP is
+> > inconsistent with some of the other registers (like RSP and RBP).
+> > 
+> > Peter, any ideas?
+> 
+> Urgh..
+> 
+> Something like so perhaps? It's a bit of a hack, but I couldn't quickly
+> think of something nicer.
 
-My Asrock QC5000M-ITX/PH baord booted into 4.16.8 recently and after a
-while we noticed messages like:
+Thanks, seems like this would work.  I'll give it some testing.
 
-May 10 16:00:04 v kernel: do_IRQ: 1.37 No irq handler for vector
-May 10 16:00:04 v kernel: do_IRQ: 1.37 No irq handler for vector
-
-
-How can we fix this these? (previous kernel did not produce these)
-
-Kind regards,
-Udo
+-- 
+Josh
