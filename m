@@ -1,64 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966172AbeEJSUB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 14:20:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40807 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757182AbeEJSUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 14:20:00 -0400
-Subject: Re: [PATCH -next 0/2] ipc/shm: shmat() fixes around nil-page
-To: Davidlohr Bueso <dave@stgolabs.net>, akpm@linux-foundation.org,
-        aarcange@redhat.com
-Cc: joe.lawrence@redhat.com, gareth.evans@contextis.co.uk,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, stable@kernel.org,
-        ltp@lists.linux.it
-References: <20180503203243.15045-1-dave@stgolabs.net>
-From: Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <8addf0c1-26cd-add9-fb9c-292cc3567014@suse.cz>
-Date: Thu, 10 May 2018 20:17:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1757414AbeEJSZP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 14:25:15 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44849 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757247AbeEJSZN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 14:25:13 -0400
+X-Google-Smtp-Source: AB8JxZpGI7132HnH9tWiEkGxT0f45R0tzBDhIE3tB/hiTs59AKMOHODc472JF9oy8Z2lf0kqxZ9rFw==
+Date: Thu, 10 May 2018 23:57:19 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: paulus@ozlabs.org, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        willy@infradead.org
+Cc: kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] powerpc: kvm: Change return type to vm_fault_t
+Message-ID: <20180510182719.GA22217@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <20180503203243.15045-1-dave@stgolabs.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/03/2018 10:32 PM, Davidlohr Bueso wrote:
-> Hi,
-> 
-> These patches fix two issues reported[1] a while back by Joe and Andrea
-> around how shmat(2) behaves with nil-page.
-> 
-> The first reverts a commit that it was incorrectly thought that mapping
-> nil-page (address=0) was a no no with MAP_FIXED. This is not the case,
-> with the exception of SHM_REMAP; which is address in the second patch.
+Use new return type vm_fault_t for fault handler
+in struct vm_operations_struct. For now, this is
+just documenting that the function returns a 
+VM_FAULT value rather than an errno.  Once all
+instances are converted, vm_fault_t will become
+a distinct type.
 
-Can you add appropriate Fixes: tags if possible? I guess patch 1 is
-clear, dunno about patch 2...
+commit 1c8f422059ae ("mm: change return type to
+vm_fault_t")
 
-> I chose two patches because it is easier to backport and it explicitly
-> reverts bogus behaviour. Both patches ought to be in -stable and ltp
-> testcases need updated (the added testcase around the cve can be modified
-> to just test for SHM_RND|SHM_REMAP).
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+v2: Updated the change log
 
-CC'd ltp so they know :)
+ arch/powerpc/kvm/book3s_64_vio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Vlastimil
+diff --git a/arch/powerpc/kvm/book3s_64_vio.c b/arch/powerpc/kvm/book3s_64_vio.c
+index 4dffa61..346ac0d 100644
+--- a/arch/powerpc/kvm/book3s_64_vio.c
++++ b/arch/powerpc/kvm/book3s_64_vio.c
+@@ -237,7 +237,7 @@ static void release_spapr_tce_table(struct rcu_head *head)
+ 	kfree(stt);
+ }
 
-> 
-> [1] lkml.kernel.org/r/20180430172152.nfa564pvgpk3ut7p@linux-n805
-> 
-> Thanks! 
-> 
-> Davidlohr Bueso (2):
->   Revert "ipc/shm: Fix shmat mmap nil-page protection"
->   ipc/shm: fix shmat() nil address after round-down when remapping
-> 
->  ipc/shm.c | 19 +++++++++++--------
->  1 file changed, 11 insertions(+), 8 deletions(-)
-> 
+-static int kvm_spapr_tce_fault(struct vm_fault *vmf)
++static vm_fault_t kvm_spapr_tce_fault(struct vm_fault *vmf)
+ {
+ 	struct kvmppc_spapr_tce_table *stt = vmf->vma->vm_file->private_data;
+ 	struct page *page;
+--
+1.9.1
