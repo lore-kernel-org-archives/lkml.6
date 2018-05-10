@@ -1,69 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966529AbeEJQKN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 12:10:13 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45536 "EHLO
+        id S966556AbeEJQK3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 12:10:29 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:45762 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964877AbeEJQKL (ORCPT
+        with ESMTP id S964877AbeEJQK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 12:10:11 -0400
-Date: Thu, 10 May 2018 09:09:58 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Mathieu Malaterre <malat@debian.org>
-Cc: tytso@mit.edu, Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: make =?utf-8?Q?function_?=
- =?utf-8?B?4oCYZXh0NF9nZXRmc21hcF9maW5kX2ZpeGVkX21ldGFkYXRh4oCZ?= static
-Message-ID: <20180510160958.GB4111@magnolia>
-References: <20180505200452.18962-1-malat@debian.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180505200452.18962-1-malat@debian.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 10 May 2018 12:10:27 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: linux-next: build warning after merge of the nfsd tree
+From: Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <20180510152410.GB29678@fieldses.org>
+Date: Thu, 10 May 2018 12:10:18 -0400
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-Id: <401FFD11-BAF8-4C2E-8596-0BA734C8EDD5@oracle.com>
+References: <20180510104213.31c41377@canb.auug.org.au>
+ <4A03C3E8-6DBA-4FDA-A5C3-46D9E678FC02@oracle.com>
+ <20180510152410.GB29678@fieldses.org>
+To: Bruce Fields <bfields@fieldses.org>
+X-Mailer: Apple Mail (2.3445.6.18)
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8888 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1711220000 definitions=main-1805100152
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4AGAWs4012043
 
-On Sat, May 05, 2018 at 10:04:52PM +0200, Mathieu Malaterre wrote:
-> Since function ‘ext4_getfsmap_find_fixed_metadata’ can be made static,
-> make it so. Remove the following gcc warning (W=1):
+
+
+> On May 10, 2018, at 11:24 AM, Bruce Fields <bfields@fieldses.org> wrote:
 > 
->   fs/ext4/fsmap.c:405:5: warning: no previous prototype for ‘ext4_getfsmap_find_fixed_metadata’ [-Wmissing-prototypes]
+> On Thu, May 10, 2018 at 10:21:05AM -0400, Chuck Lever wrote:
+>> 
+>> 
+>>> On May 9, 2018, at 8:42 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>> 
+>>> Hi all,
+>>> 
+>>> After merging the nfsd tree, today's linux-next build (powerpc
+>>> ppc64_defconfig) produced this warning:
+>>> 
+>>> net/sunrpc/xprtrdma/svc_rdma_transport.c: In function 'rdma_listen_handler':
+>>> net/sunrpc/xprtrdma/svc_rdma_transport.c:299:23: warning: unused variable 'rdma' [-Wunused-variable]
+>>> struct svcxprt_rdma *rdma = cma_id->context;
+>>>                      ^~~~
+>> 
+>> Needs to be wrapped with "#if IS_ENABLED(CONFIG_SUNRPC_DEBUG)"
+>> Would you like me to send a patch?
 > 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> Any objection to saving the #if and just going back to writing out
+> cma_id->context there?
 
-Sorry about being late to the party,
+LGTM
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+That's not really very useful information anyway, but I decided
+to leave this stuff mostly as-is for now. I plan to do something
+to fix races between disconnect and device removal at some point.
 
---D
 
-> ---
->  fs/ext4/fsmap.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> I've done that in my tree.
 > 
-> diff --git a/fs/ext4/fsmap.c b/fs/ext4/fsmap.c
-> index e871c4bf18e9..4b99e2db95b8 100644
-> --- a/fs/ext4/fsmap.c
-> +++ b/fs/ext4/fsmap.c
-> @@ -402,8 +402,8 @@ static void ext4_getfsmap_free_fixed_metadata(struct list_head *meta_list)
->  }
->  
->  /* Find all the fixed metadata in the filesystem. */
-> -int ext4_getfsmap_find_fixed_metadata(struct super_block *sb,
-> -				      struct list_head *meta_list)
-> +static int ext4_getfsmap_find_fixed_metadata(struct super_block *sb,
-> +					     struct list_head *meta_list)
->  {
->  	struct ext4_group_desc *gdp;
->  	ext4_group_t agno;
-> -- 
-> 2.11.0
+> --b.
 > 
+> diff --git a/net/sunrpc/xprtrdma/svc_rdma_transport.c b/net/sunrpc/xprtrdma/svc_rdma_transport.c
+> index ca9001d73456..05edb18f8ca3 100644
+> --- a/net/sunrpc/xprtrdma/svc_rdma_transport.c
+> +++ b/net/sunrpc/xprtrdma/svc_rdma_transport.c
+> @@ -544,7 +544,6 @@ static int rdma_listen_handler(struct rdma_cm_id *cma_id,
+> 			       struct rdma_cm_event *event)
+> {
+> 	struct sockaddr *sap = (struct sockaddr *)&cma_id->route.addr.src_addr;
+> -	struct svcxprt_rdma *rdma = cma_id->context;
+> 	int ret = 0;
+> 
+> 	trace_svcrdma_cm_event(event, sap);
+> @@ -552,7 +551,7 @@ static int rdma_listen_handler(struct rdma_cm_id *cma_id,
+> 	switch (event->event) {
+> 	case RDMA_CM_EVENT_CONNECT_REQUEST:
+> 		dprintk("svcrdma: Connect request on cma_id=%p, xprt = %p, "
+> -			"event = %s (%d)\n", cma_id, rdma,
+> +			"event = %s (%d)\n", cma_id, cma_id->context,
+> 			rdma_event_msg(event->event), event->event);
+> 		handle_connect_req(cma_id, &event->param.conn);
+> 		break;
+
+--
+Chuck Lever
