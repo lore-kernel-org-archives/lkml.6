@@ -1,101 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966065AbeEJBKo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 21:10:44 -0400
-Received: from mail-oi0-f42.google.com ([209.85.218.42]:43467 "EHLO
-        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965688AbeEJBKm (ORCPT
+        id S966074AbeEJBLj (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 21:11:39 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:39389 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S965830AbeEJBLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 21:10:42 -0400
-X-Google-Smtp-Source: AB8JxZoHUJpuQGw9VSxtm139QIt87CArdT8pbHTSLDj/8UkSAWoxcEMxEbnNw9y2mYm9EOGrtSmUwjbC49RNjAqEXGY=
+        Wed, 9 May 2018 21:11:38 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="39750699"
+Subject: Re: [PATCH v2] perf test shell: Add -D to check dynamic symbols for
+ ubuntu/debian
+To: Kim Phillips <kim.phillips@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <acme@kernel.org>,
+        <peterz@infradead.org>, <mingo@redhat.com>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <philip.li@intel.com>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <1525851929-20233-1-git-send-email-lizhijian@cn.fujitsu.com>
+ <20180509164108.3fd8f5c71c2fa11d0c474067@arm.com>
+From: Li Zhijian <lizhijian@cn.fujitsu.com>
+Organization: fnst-ulinux
+Message-ID: <81202e37-a9c2-1385-a32d-0f78d233e22a@cn.fujitsu.com>
+Date: Thu, 10 May 2018 09:11:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180509153428.1440-1-lukma@denx.de>
-References: <20180509153428.1440-1-lukma@denx.de>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 9 May 2018 22:10:41 -0300
-Message-ID: <CAOMZO5AexXNEGVoXa9K_GAm+aFLNRQOXOhF_SdKAjV1qmuD2nA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: DTS: imx53: Add support for imx53 HSC/DDC boards
- from K+P
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180509164108.3fd8f5c71c2fa11d0c474067@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.167.226.45]
+X-yoursite-MailScanner-ID: 64F324B34D43.AC14F
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: lizhijian@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukasz,
+The input file is from
+lizhijian@haswell-OptiPlex-9020:~/lkp/linux/tools/perf/tests/shell$ grep libc= -A1  record+probe_libc_inet_pton.sh
+libc=$(grep -w libc /proc/self/maps | head -1 | sed -r 's/.*[[:space:]](\/.*)/\1/g')
+nm -gD $libc 2>/dev/null | fgrep -q inet_pton || exit 254
 
-On Wed, May 9, 2018 at 12:34 PM, Lukasz Majewski <lukma@denx.de> wrote:
+It mostly points to a striped libc.so(the runtime library)
+lizhijian@haswell-OptiPlex-9020:~/lkp/linux/tools/perf/tests/shell$ grep -w libc /proc/self/maps | head -1 | sed -r 's/.*[[:space:]](\/.*)/\1/g'
+/lib/x86_64-linux-gnu/libc-2.23.so
 
-> +&iomuxc {
-> +       imx53-kp-ddc {
+Although we can get the expected symbol from the debug library, it still doesn't work for this case.
 
-No need for keeping this imx53-kp-ddc.
+Thanks
+Zhijian
 
-> diff --git a/arch/arm/boot/dts/imx53-kp-hsc.dts b/arch/arm/boot/dts/imx53-kp-hsc.dts
-> new file mode 100644
-> index 000000000000..fff358395c9d
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx53-kp-hsc.dts
-> @@ -0,0 +1,53 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright 2018
-> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-> + */
-> +
-> +/dts-v1/;
-> +#include "imx53-kp.dtsi"
-> +
-> +/ {
-> +       model = "K+P imx53 HSC";
-> +       compatible = "kiebackpeter,imx53-hsc", "fsl,imx53";
-> +
 
-No need for this blank line.
-
-> +};
-> +
-> +&fec {
-> +       status = "okay";
-
-We usually put the status in the last line.
-
-> +       gpio_buttons {
-> +               compatible = "gpio-keys";
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&pinctrl_gpiobuttons>;
-> +
-> +               button@1 {
-
-You pass @1 without a reg property. This triggers a warning when
-building with W=1.
-
-You could remove the @1.
-
-Please make sure this patch does not introduce any W=1 dtc warning.
-
-> +&iomuxc {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_kp_common>;
-> +
-> +       imx53-kp-common {
-
-No need for this  imx53-kp-common
-
-> +&uart4 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_uart4>;
-> +
-
-No need for this blank line.
+On 05/10/2018 05:41 AM, Kim Phillips wrote:
+> On Wed, 9 May 2018 15:45:29 +0800
+> Li Zhijian <lizhijian@cn.fujitsu.com> wrote:
+>
+>> On Ubuntu and Debian, we can't find any symbol including "inet_pton" from 'nm -g'
+>> root@vm-lkp-nex04-8G-5 ~# nm -g /lib/x86_64-linux-gnu/libc-2.25.so | grep inet_pton
+>> nm: /lib/x86_64-linux-gnu/libc-2.25.so: no symbols
+>>
+>> it looks libc.so has different symbol compositions at different distros
+> I'm wondering if that is because libc6-dbg isn't installed?:
+>
+> ubuntu$ nm -g /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.26.so | grep inet_pton
+> 0000000000136340 W inet_pton
+> 0000000000136010 T __inet_pton_length
+>
+> Kim
+>
+>
+> .
+>
