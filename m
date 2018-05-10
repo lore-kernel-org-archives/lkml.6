@@ -1,100 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757055AbeEJJt3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 05:49:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34744 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756697AbeEJJt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 05:49:27 -0400
-Subject: Re: [RFC v3 3/5] virtio_ring: add packed ring support
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com
-References: <20180425051550.24342-1-tiwei.bie@intel.com>
- <20180425051550.24342-4-tiwei.bie@intel.com>
- <927f4478-5a81-31d4-ac69-f9ec26248591@redhat.com>
- <5885acac-e9e3-3abf-b6a2-7347f4d55be2@redhat.com>
- <20180510085601.6mpxf3yvwxnqnk5q@debian>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <2fc35cd5-9dbd-7743-497f-b6637d92f528@redhat.com>
-Date: Thu, 10 May 2018 17:49:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1757066AbeEJJwT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 05:52:19 -0400
+Received: from mail-pg0-f53.google.com ([74.125.83.53]:41724 "EHLO
+        mail-pg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756756AbeEJJwP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 05:52:15 -0400
+X-Google-Smtp-Source: AB8JxZo1nkKICtTtlqzyCOV9GxLR8Mr0UXxLe3g6knpATZNeQ+gIosV/WO0L34e0yC/qJL0XqZ63ZPOdCzfsMVmi+L0=
 MIME-Version: 1.0
-In-Reply-To: <20180510085601.6mpxf3yvwxnqnk5q@debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <CADvbK_d9Z3OsHnLc2mg-3e=0t6sVFnEVXoDah3nWJrFSyaq+5w@mail.gmail.com>
+References: <001a114372a6074e6505642b7f72@google.com> <CADvbK_d9Z3OsHnLc2mg-3e=0t6sVFnEVXoDah3nWJrFSyaq+5w@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 10 May 2018 11:51:53 +0200
+Message-ID: <CACT4Y+bJf_MNz9PfrAQOCvf5KtTCP9zGHx_wEpcfDkTPVhm1UA@mail.gmail.com>
+Subject: Re: kernel BUG at net/core/skbuff.c:LINE! (3)
+To: Xin Long <lucien.xin@gmail.com>, William Tu <u9012063@gmail.com>,
+        mvohra@vmware.com
+Cc: syzbot <syzbot+b2bf2652983d23734c5c@syzkaller.appspotmail.com>,
+        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vlad Yasevich <vyasevich@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018年05月10日 16:56, Tiwei Bie wrote:
-> On Thu, May 10, 2018 at 03:34:50PM +0800, Jason Wang wrote:
->> On 2018年05月10日 15:32, Jason Wang wrote:
->>> On 2018年04月25日 13:15, Tiwei Bie wrote:
->>>> +    /* We're using some buffers from the free list. */
->>>> +    vq->vq.num_free -= descs_used;
->>>> +
->>>> +    /* Update free pointer */
->>>> +    if (indirect) {
->>>> +        n = head + 1;
->>>> +        if (n >= vq->vring_packed.num) {
->>>> +            n = 0;
->>>> +            vq->wrap_counter ^= 1;
->>>> +        }
->>>> +        vq->next_avail_idx = n;
->>>> +    } else
->>>> +        vq->next_avail_idx = i;
->>> During testing zerocopy (out of order completion), I found driver may
->>> submit two identical buffer id to vhost. So the above code may not work
->>> well.
->>>
->>> Consider the case that driver adds 3 buffer and virtqueue size is 8.
->>>
->>> a) id = 0,count = 2,next_avail = 2
->>>
->>> b) id = 2,count = 4,next_avail = 2
->> next_avail should be 6 here.
+On Sat, Feb 10, 2018 at 12:17 PM, Xin Long <lucien.xin@gmail.com> wrote:
+> On Fri, Feb 2, 2018 at 3:21 AM, syzbot
+> <syzbot+b2bf2652983d23734c5c@syzkaller.appspotmail.com> wrote:
+>> Hello,
 >>
->>> c) id = 4,count = 2,next_avail = 0
->>>
->> id should be 6 here.
+>> syzbot hit the following crash on net-next commit
+>> b2fe5fa68642860e7de76167c3111623aa0d5de1 (Wed Jan 31 22:31:10 2018 +0000)
+>> Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
 >>
->> Thanks
+>> Unfortunately, I don't have any reproducer for this crash yet.
+>> Raw console output is attached.
+>> compiler: gcc (GCC) 7.1.1 20170620
+>> .config is attached.
 >>
->>> if packet b is done before packet a, driver may think buffer id 0 is
->>> available and try to use it if even if the real buffer 0 was not done.
->>>
->>> Thanks
-> Nice catch! Thanks a lot!
-> I'll implement an ID allocator.
->
-> Best regards,
-> Tiwei Bie
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+b2bf2652983d23734c5c@syzkaller.appspotmail.com
+>> It will help syzbot understand when the bug is fixed. See footer for
+>> details.
+>> If you forward the report, please keep this part and the footer.
+>>
+>> skbuff: skb_over_panic: text:000000004b89f3be len:66136 put:66124
+>> head:00000000f255561a data:00000000ccb55e52 tail:0x10310 end:0x6c0
+>> dev:<NULL>
+> From the raw log, it should be a data chunk.
+> But I couldn't see how len:66136 happened?
+> considering that frag_point is always smaller than SCTP_MAX_CHUNK_LEN.
 
-Sounds good.
+William, Meenakshi,
 
-Another similar issue is detac_buf_packed(). It did:
+This crash was bisected to:
 
-         for (j = 0; j < vq->desc_state[head].num; j++) {
-                 desc = &vq->vring_packed.desc[i];
-                 vring_unmap_one_packed(vq, desc);
-                 i++;
-                 if (i >= vq->vring_packed.num)
-                         i = 0;
-         }
+commit 84e54fe0a5eaed696dee4019c396f8396f5a908b
+Author: William Tu <u9012063@gmail.com>
+Date:   Tue Aug 22 09:40:28 2017 -0700
 
-This probably won't work for out of order too and according to the spec:
+    gre: introduce native tunnel support for ERSPAN
 
-"""
-Driver needs to keep track of the size of the list corresponding to each
-buffer ID, to be able to skip to where the next used descriptor is 
-written by the device.
-"""
+bisection log:
+https://gist.githubusercontent.com/dvyukov/a9661d43b2b519b91540f7466dbc32c1/raw/8df343224177933c8c398be126bb82be99aa0b4b/gistfile1.txt
 
-Looks like we should not depend on the descriptor ring.
 
-Thanks
+
+
+>> ------------[ cut here ]------------
+>> kernel BUG at net/core/skbuff.c:104!
+>> invalid opcode: 0000 [#1] SMP KASAN
+>> Dumping ftrace buffer:
+>>    (ftrace buffer empty)
+>> Modules linked in:
+>> CPU: 1 PID: 19738 Comm: syz-executor3 Not tainted 4.15.0+ #219
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> RIP: 0010:skb_panic+0x162/0x1f0 net/core/skbuff.c:100
+>> RSP: 0018:ffff8801c1a6e4e8 EFLAGS: 00010286
+>> RAX: 000000000000008f RBX: ffff8801d0090000 RCX: 0000000000000000
+>> RDX: 000000000000008f RSI: ffffc90003d53000 RDI: ffffed003834dc91
+>> RBP: ffff8801c1a6e550 R08: 1ffff1003834dc1f R09: 0000000000000000
+>> R10: 0000000000000004 R11: 0000000000000000 R12: ffffffff863fe4e0
+>> R13: ffffffff85276640 R14: 000000000001024c R15: ffffffff863fdd20
+>> FS:  00007f69cd01b700(0000) GS:ffff8801db500000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000000000718008 CR3: 00000001c71c7006 CR4: 00000000001606e0
+>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>> Call Trace:
+>>  skb_over_panic net/core/skbuff.c:109 [inline]
+>>  skb_put+0x18d/0x1d0 net/core/skbuff.c:1695
+>>  skb_put_data include/linux/skbuff.h:2049 [inline]
+>>  sctp_packet_pack net/sctp/output.c:473 [inline]
+>>  sctp_packet_transmit+0x1180/0x3750 net/sctp/output.c:606
+>>  sctp_outq_flush+0x121b/0x4060 net/sctp/outqueue.c:1197
+>>  sctp_outq_uncork+0x5a/0x70 net/sctp/outqueue.c:776
+>>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1807 [inline]
+>>  sctp_side_effects net/sctp/sm_sideeffect.c:1210 [inline]
+>>  sctp_do_sm+0x4e0/0x6ed0 net/sctp/sm_sideeffect.c:1181
+>>  sctp_primitive_SEND+0xa0/0xd0 net/sctp/primitive.c:178
+>>  sctp_sendmsg+0x1894/0x35e0 net/sctp/socket.c:2029
+>>  inet_sendmsg+0x11f/0x5e0 net/ipv4/af_inet.c:764
+>>  sock_sendmsg_nosec net/socket.c:630 [inline]
+>>  sock_sendmsg+0xca/0x110 net/socket.c:640
+>>  sock_write_iter+0x31a/0x5d0 net/socket.c:909
+>>  call_write_iter include/linux/fs.h:1781 [inline]
+>>  do_iter_readv_writev+0x55c/0x830 fs/read_write.c:653
+>>  do_iter_write+0x154/0x540 fs/read_write.c:932
+>>  vfs_writev+0x18a/0x340 fs/read_write.c:977
+>>  do_writev+0xfc/0x2a0 fs/read_write.c:1012
+>>  SYSC_writev fs/read_write.c:1085 [inline]
+>>  SyS_writev+0x27/0x30 fs/read_write.c:1082
+>>  entry_SYSCALL_64_fastpath+0x29/0xa0
+>> RIP: 0033:0x453299
+>> RSP: 002b:00007f69cd01ac58 EFLAGS: 00000212 ORIG_RAX: 0000000000000014
+>> RAX: ffffffffffffffda RBX: 000000000071bea0 RCX: 0000000000453299
+>> RDX: 0000000000000001 RSI: 0000000020f7ffe0 RDI: 0000000000000013
+>> RBP: 00000000000005c5 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000212 R12: 00000000006f7b18
+>> R13: 00000000ffffffff R14: 00007f69cd01b6d4 R15: 0000000000000000
+>> Code: 04 01 84 c0 74 04 3c 03 7e 23 8b 8b 80 00 00 00 41 57 48 c7 c7 60 dd
+>> 3f 86 52 56 4c 89 ea 41 50 4c 89 e6 45 89 f0 e8 c6 d7 25 fd <0f> 0b 4c 89 4d
+>> b8 4c 89 45 c0 48 89 75 c8 48 89 55 d0 e8 47 53
+>> RIP: skb_panic+0x162/0x1f0 net/core/skbuff.c:100 RSP: ffff8801c1a6e4e8
+>> ---[ end trace c7cd29819a9b12ab ]---
+>>
+>>
+>> ---
+>> This bug is generated by a dumb bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for details.
+>> Direct all questions to syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this bug report.
+>> If you forgot to add the Reported-by tag, once the fix for this bug is
+>> merged
+>> into any tree, please reply to this email with:
+>> #syz fix: exact-commit-title
+>> To mark this as a duplicate of another syzbot report, please reply with:
+>> #syz dup: exact-subject-of-another-report
+>> If it's a one-off invalid bug report, please reply with:
+>> #syz invalid
+>> Note: if the crash happens again, it will cause creation of a new bug
+>> report.
+>> Note: all commands must start from beginning of the line in the email body.
