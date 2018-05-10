@@ -1,64 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966063AbeEJApG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 20:45:06 -0400
-Received: from ozlabs.org ([203.11.71.1]:54193 "EHLO ozlabs.org"
+        id S965977AbeEJAtb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 20:49:31 -0400
+Received: from mga04.intel.com ([192.55.52.120]:1849 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964863AbeEJApF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 20:45:05 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the powerpc tree with the powerpc-fixes tree
-In-Reply-To: <20180510101703.57ffb774@canb.auug.org.au>
-References: <20180510101703.57ffb774@canb.auug.org.au>
-Date: Thu, 10 May 2018 10:45:02 +1000
-Message-ID: <87d0y4z6cx.fsf@concordia.ellerman.id.au>
+        id S964863AbeEJAta (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 20:49:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,383,1520924400";
+   d="scan'208";a="44657324"
+Subject: Re: [PATCH] perf annotate: Display multiple events for --stdio
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+References: <1525881435-4092-1-git-send-email-yao.jin@linux.intel.com>
+ <20180509164251.GH13491@kernel.org> <20180509172429.GL13491@kernel.org>
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <7f78244e-2945-d526-5db0-776fc1f562ce@linux.intel.com>
+Date: Thu, 10 May 2018 08:49:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180509172429.GL13491@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-> Hi all,
->
-> Today's linux-next merge of the powerpc tree got a conflict in:
->
->   arch/powerpc/include/asm/ftrace.h
->
-> between commit:
->
->   edf6a2dfe388 ("powerpc/trace/syscalls: Update syscall name matching logic to account for ppc_ prefix")
->
-> from the powerpc-fixes tree and commit:
->
->   c3e59d778403 ("powerpc64/ftrace: Rearrange #ifdef sections in ftrace.h")
->
-> from the powerpc tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> Michael, I think the version in your merge branch is not quite right ...
 
-Yep.
+On 5/10/2018 1:24 AM, Arnaldo Carvalho de Melo wrote:
+> Em Wed, May 09, 2018 at 01:42:51PM -0300, Arnaldo Carvalho de Melo escreveu:
+>> Em Wed, May 09, 2018 at 11:57:15PM +0800, Jin Yao escreveu:
+>>> When we perform following command lines:
+>>>
+>>> perf record -e "{cycles,branches}" ./div
+>>> perf annotate main --stdio
+>>>
+>>> Only shows one event "cycles" and the displaying format is not correct.
+>>>
+>>>   Percent         |      Source code & Disassembly of div for cycles (44550 samples)
+>>> -----------------------------------------------------------------------------------
+>>
+>> Please indent command output (two spaces before all lines) to avoid
+>> scripts breaking due to mistaking lines starting with --- as the end of
+>> the patch.
+>>
+>> Applying.
+> 
+> Also you forgot to add this:
+> 
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Fixes: f681d593d1ce ("perf annotate: Remove disasm__calc_percent() from disasm_line__print()")
+> 
+> Which I've just added, to help with stable@ processing.
+> 
+> - Arnaldo
+> 
 
-Don't do merges after midnight kids.
+Actually I notice this issue during fixing another issue. :)
 
-I've pushed a fixed version, which I think matches yours.
+Another issue is, without using group, the multiple events can't be 
+supported well in perf annotate.
 
-I'll resolve it in my next when I merge my fixes & next later in the
-cycle.
+perf record -e cycles,branches ./div
+perf annotate main --stdio
 
-cheers
+It should show both cycles and branches on the left side but actually it 
+only show cycles.
+
+I will post patches for fixing this (working on the patch now).
+
+Thanks
+Jin Yao
