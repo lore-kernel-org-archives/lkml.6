@@ -1,111 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752212AbeEJU1E (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 16:27:04 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:33901 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751438AbeEJU1C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 16:27:02 -0400
-X-Google-Smtp-Source: AB8JxZo09nqmGZj2cY05Su7UIT+F0+n+6xiRg0jRTqWqCqxSwO5yniJ6xdeKH9LaHmergi95dd+gMOyrxffAcqXhcd4=
-MIME-Version: 1.0
-In-Reply-To: <alpine.LNX.2.21.1805091805130.72@nippy.intranet>
-References: <S1751632AbeECEYA/20180503042400Z+254@vger.kernel.org>
- <CAMuHMdUAxmVZLekekvVrnMbbL18oyY86sF9QX087idSqcKMiPQ@mail.gmail.com>
- <alpine.LNX.2.21.1805031801310.8@nippy.intranet> <CAMuHMdU1XBqt7hwEW6JTas64ZNGCGCMr5HMZwuLo0O-ZBCOWyA@mail.gmail.com>
- <alpine.LNX.2.21.1805091805130.72@nippy.intranet>
-From: Michael Schmitz <schmitzmic@gmail.com>
-Date: Fri, 11 May 2018 08:27:01 +1200
-Message-ID: <CAOmrzkKNPemq5RySvza+Y8_jgwg2fkUZodR794cgOxpQpfh+SA@mail.gmail.com>
-Subject: Re: [PATCH net] macmace: Set platform device coherent_dma_mask
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752226AbeEJUdh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 16:33:37 -0400
+Received: from mga03.intel.com ([134.134.136.65]:31799 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751881AbeEJUdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 16:33:35 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,386,1520924400";
+   d="asc'?scan'208";a="198366247"
+Message-ID: <ea4c716024a30ed834b1121adb8c2cb1deff2c97.camel@intel.com>
+Subject: Re: [PATCH v6 5/5] PCI: Remove unused pcie_get_minimum_link()
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Reply-To: jeffrey.t.kirsher@intel.com
+To: Bjorn Helgaas <helgaas@kernel.org>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ariel Elior <ariel.elior@cavium.com>
+Cc: linux-pci@vger.kernel.org, everest-linux-l2@cavium.com,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tal Gilboa <talgi@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Jakub Kicinski <kubakici@wp.pl>
+Date: Thu, 10 May 2018 13:34:47 -0700
+In-Reply-To: <20180510163357.GB190385@bhelgaas-glaptop.roam.corp.google.com>
+References: <152537719056.62474.2571390812509425478.stgit@bhelgaas-glaptop.roam.corp.google.com>
+         <152537764322.62474.552711932384023140.stgit@bhelgaas-glaptop.roam.corp.google.com>
+         <20180510163357.GB190385@bhelgaas-glaptop.roam.corp.google.com>
+Organization: Intel
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-ezjtuMDbw9aM3nX0qUyk"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
 
-On Thu, May 10, 2018 at 1:25 PM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> On Thu, 3 May 2018, Geert Uytterhoeven wrote:
->
->>
->> Perhaps you can add a new helper
->> (platform_device_register_simple_dma()?) that takes the DMA mask, too?
-[...]
-> To actually hoist the dma mask setup out of existing platform drivers
-> would have implications for every device that matches with those drivers.
->
-> That's a bit risky since I can't test those devices -- that's assuming I
-> could identify them all; sometimes platform device matching is not well
-> defined at build time (see loongson_sysconf.ecname).
->
-> So far, it looks like macmace and macsonic would be the only callers of
-> this new API call.
->
-> What's worse, if you do pass a dma_mask in struct platform_device_info,
-> you end up with this problem in platform_device_register_full():
->
->         if (pdevinfo->dma_mask) {
->                 /*
->                  * This memory isn't freed when the device is put,
->                  * I don't have a nice idea for that though.  Conceptually
->                  * dma_mask in struct device should not be a pointer.
->                  * See http://thread.gmane.org/gmane.linux.kernel.pci/9081
->                  */
->                 pdev->dev.dma_mask =
->                         kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
+--=-ezjtuMDbw9aM3nX0qUyk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Maybe platform_device_register_full() should rather check whether
-dev.coherent_dma_mask is set, and make dev.dma_mask point to that?
-This is how we solved the warning issue for the Zorro bus devices...
-(8614f1b58bd0e920a5859464a500b93152c5f8b1)
+On Thu, 2018-05-10 at 11:33 -0500, Bjorn Helgaas wrote:
+> On Thu, May 03, 2018 at 03:00:43PM -0500, Bjorn Helgaas wrote:
+> > From: Bjorn Helgaas <bhelgaas@google.com>
+> >=20
+> > In some cases pcie_get_minimum_link() returned misleading
+> > information
+> > because it found the slowest link and the narrowest link without
+> > considering the total bandwidth of the link.
+> >=20
+> > For example, consider a path with these two links:
+> >=20
+> >    - 16.0 GT/s  x1 link  (16.0 * 10^9 * 128 / 130) *  1 / 8 =3D 1969
+> > MB/s
+> >    -  2.5 GT/s x16 link  ( 2.5 * 10^9 *   8 /  10) * 16 / 8 =3D 4000
+> > MB/s
+> >=20
+> > The available bandwidth of the path is limited by the 16 GT/s link
+> > to about
+> > 1969 MB/s, but pcie_get_minimum_link() returned 2.5 GT/s x1, which
+> > corresponds to only 250 MB/s.
+> >=20
+> > Callers should use pcie_print_link_status() instead, or
+> > pcie_bandwidth_available() if they need more detailed information.
+> >=20
+> > Remove pcie_get_minimum_link() since there are no callers left.
+> >=20
+> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+>=20
+> Hi Jeff,
+>=20
+> I got your note that you applied this to dev-queue.  I assume that
+> means you also applied the preceding patches that removed all the
+> users.  I got a note about ixgbe, but not the others, so I'm just
+> double-checking.
 
-Not sure what the ramifications of that change would be in the general
-case (i.e. platforms where coherent and non-coherent DMA operations
-must use different masks). I'd hope all those platforms explicitly set
-up their DMA masks anyway.
+I did initially apply it, but realized that I would have to apply the
+earlier patches as well, which did not pertain to the Intel wired LAN
+drivers.  So I have removed this patch from queue and will only be
+testing the ixgbe patch of the series, which Andrew has already tested
+and responded to.
+--=-ezjtuMDbw9aM3nX0qUyk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Your other comment regarding the default used by dma_get_mask() is spot on.
+-----BEGIN PGP SIGNATURE-----
 
-> Most of the platform drivers that call dma_coerce_mask_and_coherent() are
-> using pdev->of_match_table, not platform_device_register_simple(). Many of
-> them have a comment like this:
->
->         /*
->          * Right now device-tree probed devices don't get dma_mask set.
->          * Since shared usb code relies on it, set it here for now.
->          * Once we have dma capability bindings this can go away.
->          */
->
->> With people setting the mask to kill the WARNING splat, this may become
->> more common.
->
-> Since the commit which introduced the WARNING, only commits f61e64310b75
-> ("m68k: set dma and coherent masks for platform FEC ethernets") and
-> 7bcfab202ca7 ("powerpc/macio: set a proper dma_coherent_mask") seem to be
-> aimed at squelching that WARNING.
->
-> (Am I missing any others?)
+iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlr0rOcACgkQ5W/vlVpL
+7c42xBAAlFSF0qz3Go3dVfEzbDD1YlmobU8AzSTOONIuP3aFmggcNMR0pX+uoHLb
+QdqhMeh6/I3wUUpMX+eV0wF39hj6WOMAHOJiORU8SLa0SFRGiLzXnzKHprdIDTiJ
+isdNzJ/EkrogVu5QsuOMYA5O3bCc37SfwSSoaTJJU4w7MS1UvUjfwT2ZWT1bqxoI
+cM1UKUF+FKVv6QvgUf1JuLqpFtauyfJTy8/EnqPMPtkodxrp8F7dpui+NXt1gUM1
+WbwW25ZqRcCsvMEFAC7Jf0YrRgnkkn/KUrNqBzL3LdgEbmeVcdWnrVqWHXlUplYJ
+Qt/x5NQ1E0uh4B5A3CeUVuuUHaZI3MPK1/MffHR1ja4NyI19o2KEAGPgmrajOEcK
+TFrKFyYCZOHO9flhVOUzbA6vReaz5ELELNwlNiS//4Qazp/YI/2u03a8LHQuSal/
+2aUkA+qYfTNzTvkupp52kCnStE1qB2mwu/10cxUAg2tqtq9ZiOoNbjs/JuQw6NWJ
+QP8waunF2r7r9+5fn1+X3tpDzoL65uZXwLQP92pEX9xlVYQcOIx9wf9ZCF/zHAGo
+VtUbNCtGwJnp1EypI9/PiGmFKHwnsOjhqAg2+yAJxuKlIeDtnVZRE9c/OXR++6aI
+1ROAd/ODYha5ssWy+0hygaaZNrEPaF7G/k5ARPne4Yzo5c2geiQ=
+=9ryB
+-----END PGP SIGNATURE-----
 
-Zorro devices :-) Which begs the question: why can' you set up all
-Nubus bus devices' DMA masks in nubus_device_register(), or
-nubus_add_board()?
-
-> So far, this is not looking like a common problem, and I'm having trouble
-> finding some way to improve on my original patches.
-
-Putting this in the core platform device code might have too many
-unintended side effects. Platform specific bus drivers or device
-drivers might be a safer place to put this. Makes it harder for
-Christoph to find all instances of such workarounds though.
-
-Cheers,
-
-  Michael
+--=-ezjtuMDbw9aM3nX0qUyk--
