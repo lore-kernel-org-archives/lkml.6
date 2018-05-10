@@ -1,119 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752349AbeEJUwJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 16:52:09 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54010 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751924AbeEJUwH (ORCPT
+        id S1752384AbeEJU5v (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 16:57:51 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:46320 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752102AbeEJU5t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 16:52:07 -0400
-X-Google-Smtp-Source: AB8JxZp/RHsKs3QlKzcl460ffNCTg9xF4LjVHYouMk8V+0IWYMId5OVpXaxKVpa6q56it97ZeULGoA==
-Subject: Re: [PATCH v5 1/2] dt: bindings: lm3601x: Introduce the lm3601x
- driver
-To: Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, mark.rutland@arm.com,
-        pavel@ucw.cz, afd@ti.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <20180510174717.26540-1-dmurphy@ti.com>
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <868fe3bf-b12d-581b-18f9-1eac734e6239@gmail.com>
-Date: Thu, 10 May 2018 22:50:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 10 May 2018 16:57:49 -0400
+X-Google-Smtp-Source: AB8JxZpLcQOFqaKfTayytKC+ZmwhFEuhDXB4Uchv5h+y7zyUnYvczc0XSS05GB4QUmDARBCZbhuAotlyVP6+6AaDguo=
 MIME-Version: 1.0
-In-Reply-To: <20180510174717.26540-1-dmurphy@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180505075854.192237-1-ksspiers@google.com>
+References: <20180505075854.192237-1-ksspiers@google.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 10 May 2018 13:57:47 -0700
+X-Google-Sender-Auth: cxTS1uwstWVtnzM8kNyLNZQ9hdA
+Message-ID: <CAGXu5jKgiJfZTTs0RM9yaXSBMVq1Nsby4L8fwjOZ7yM3kik7Nw@mail.gmail.com>
+Subject: Re: [PATCH v2] async_pq: Remove VLA usage
+To: Kyle Spiers <ksspiers@google.com>,
+        Dan Williams <dan.j.williams@intel.com>, vinod.koul@intel.com,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>, ray.jui@broadcom.com,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/10/2018 07:47 PM, Dan Murphy wrote:
-> Introduce the device tree bindings for the lm3601x
-> family of LED torch, flash and IR drivers.
-> 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+On Sat, May 5, 2018 at 12:58 AM, Kyle Spiers <ksspiers@google.com> wrote:
+> In the quest to remove VLAs from the kernel[1], this moves the
+> allocation of coefs and blocks from the stack to being kmalloc()ed.
+>
+> [1] https://lkml.org/lkml/2018/3/7/621
+>
+> Signed-off-by: Kyle Spiers <ksspiers@google.com>
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+Is this something that should go via Vinod, Dan, or direct through
+Herbert's crypto tree?
+
+Thanks!
+
+-Kees
+
 > ---
-> 
-> v5 - No changes - https://patchwork.kernel.org/patch/10391743/
-> 
-> v4 - Added " " around "=", changed strobe to flash on label, removed "support and
-> register" comment and change ir lable to ir:torch - See v2 patchworks for comments
-> v3 - Removed wildcard compatible - https://patchwork.kernel.org/patch/10386241/
-> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
-> 
->   .../devicetree/bindings/leds/leds-lm3601x.txt | 50 +++++++++++++++++++
->   1 file changed, 50 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-> new file mode 100644
-> index 000000000000..697e5e3a1d4c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-> @@ -0,0 +1,50 @@
-> +* Texas Instruments - lm3601x Single-LED Flash Driver
+> Forgot to add slab.h
+> ---
+>  crypto/async_tx/async_pq.c  | 18 ++++++++++++++----
+>  crypto/async_tx/raid6test.c |  9 ++++++++-
+>  2 files changed, 22 insertions(+), 5 deletions(-)
+>
+> diff --git a/crypto/async_tx/async_pq.c b/crypto/async_tx/async_pq.c
+> index 56bd612927ab..af1912313a23 100644
+> --- a/crypto/async_tx/async_pq.c
+> +++ b/crypto/async_tx/async_pq.c
+> @@ -194,9 +194,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+>             (src_cnt <= dma_maxpq(device, 0) ||
+>              dma_maxpq(device, DMA_PREP_CONTINUE) > 0) &&
+>             is_dma_pq_aligned(device, offset, 0, len)) {
+> -               struct dma_async_tx_descriptor *tx;
+> +               struct dma_async_tx_descriptor *tx = NULL;
+>                 enum dma_ctrl_flags dma_flags = 0;
+> -               unsigned char coefs[src_cnt];
+> +               unsigned char *coefs;
+>                 int i, j;
+>
+>                 /* run the p+q asynchronously */
+> @@ -207,6 +207,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+>                  * sources and update the coefficients accordingly
+>                  */
+>                 unmap->len = len;
+> +               coefs = kmalloc_array(src_cnt, sizeof(*coefs), GFP_KERNEL);
+> +               if (!coefs)
+> +                       goto out;
+>                 for (i = 0, j = 0; i < src_cnt; i++) {
+>                         if (blocks[i] == NULL)
+>                                 continue;
+> @@ -240,7 +243,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+>                 }
+>
+>                 tx = do_async_gen_syndrome(chan, coefs, j, unmap, dma_flags, submit);
+> +out:
+>                 dmaengine_unmap_put(unmap);
+> +               kfree(coefs);
+>                 return tx;
+>         }
+>
+> @@ -298,8 +303,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
+>  {
+>         struct dma_chan *chan = pq_val_chan(submit, blocks, disks, len);
+>         struct dma_device *device = chan ? chan->device : NULL;
+> -       struct dma_async_tx_descriptor *tx;
+> -       unsigned char coefs[disks-2];
+> +       struct dma_async_tx_descriptor *tx = NULL;
+> +       unsigned char *coefs = NULL;
+>         enum dma_ctrl_flags dma_flags = submit->cb_fn ? DMA_PREP_INTERRUPT : 0;
+>         struct dmaengine_unmap_data *unmap = NULL;
+>
+> @@ -318,6 +323,9 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
+>                          __func__, disks, len);
+>
+>                 unmap->len = len;
+> +               coefs = kmalloc_array(disks - 2, sizeof(*coefs), GFP_KERNEL);
+> +               if (!coefs)
+> +                       goto out;
+>                 for (i = 0; i < disks-2; i++)
+>                         if (likely(blocks[i])) {
+>                                 unmap->addr[j] = dma_map_page(dev, blocks[i],
+> @@ -423,6 +431,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
+>                 async_tx_sync_epilog(submit);
+>                 tx = NULL;
+>         }
+> +out:
+> +       kfree(coefs);
+>         dmaengine_unmap_put(unmap);
+>
+>         return tx;
+> diff --git a/crypto/async_tx/raid6test.c b/crypto/async_tx/raid6test.c
+> index dad95f45b88f..4237a5ae8f42 100644
+> --- a/crypto/async_tx/raid6test.c
+> +++ b/crypto/async_tx/raid6test.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/random.h>
+>  #include <linux/module.h>
+> +#include <linux/slab.h>
+>
+>  #undef pr
+>  #define pr(fmt, args...) pr_info("raid6test: " fmt, ##args)
+> @@ -81,11 +82,16 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
+>                         init_async_submit(&submit, 0, NULL, NULL, NULL, addr_conv);
+>                         tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
+>                 } else {
+> -                       struct page *blocks[disks];
+> +                       struct page **blocks;
+>                         struct page *dest;
+>                         int count = 0;
+>                         int i;
+>
+> +                       blocks = kmalloc_array(disks, sizeof(*blocks),
+> +                                                       GFP_KERNEL);
+> +                       if (!blocks)
+> +                               return;
 > +
-> +The LM3601X are ultra-small LED flash drivers that
-> +provide a high level of adjustability.
-> +
-> +Required properties:
-> +	- compatible : Can be one of the following
-> +		"ti,lm36010"
-> +		"ti,lm36011"
-> +	- reg : I2C slave address
-> +	- #address-cells : 1
-> +	- #size-cells : 0
-> +
-> +Required child properties:
-> +	- reg : 0 - Indicates a torch interface
-> +		1 - Indicates a flash interface
-> +		2 - Indicates an infrared interface
+>                         /* data+Q failure.  Reconstruct data from P,
+>                          * then rebuild syndrome
+>                          */
+> @@ -101,6 +107,7 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
+>
+>                         init_async_submit(&submit, 0, tx, NULL, NULL, addr_conv);
+>                         tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
+> +                       kfree(blocks);
+>                 }
+>         } else {
+>                 if (failb == disks-2) {
+> --
+> 2.17.0.441.gb46fe60e1d-goog
+>
 
-You need here also:
 
-- flash-max-microamp : see Documentation/devicetree/bindin
-/leds/common.txt
-- flash-max-timeout-us : see 
-Documentation/devicetree/bindings/leds/common.txt
-
-
-> +
-> +Optional child properties:
-> +	- label : see Documentation/devicetree/bindings/leds/common.txt
-> +
-> +Example:
-> +led-controller@64 {
-> +	compatible = "ti,lm36010";
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	reg = <0x64>;
-> +
-> +	led@0 {
-> +		reg = <0>;
-> +		label = "white:torch";
-> +		led-max-microamp = <10000>;
-> +	};
-> +
-> +	led@1 {
-> +		reg = <1>;
-> +		label = "white:flash";
-> +		flash-max-microamp = <10000>;
-> +		flash-max-timeout-us = <800>;
-> +	};
-> +
-> +	led@2 {
-> +		reg = <2>;
-> +		label = "ir:torch";
-> +	};
-> +}
-> +
-> +For more product information please see the links below:
-> +http://www.ti.com/product/LM36010
-> +http://www.ti.com/product/LM36011
-> 
 
 -- 
-Best regards,
-Jacek Anaszewski
+Kees Cook
+Pixel Security
