@@ -1,46 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966578AbeEJQ6w (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 12:58:52 -0400
-Received: from mga07.intel.com ([134.134.136.100]:6338 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966305AbeEJQ6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 12:58:51 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,386,1520924400";
-   d="scan'208";a="44880216"
-Date: Thu, 10 May 2018 11:00:39 -0600
-From: Keith Busch <keith.busch@intel.com>
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: linux-nvme@lists.infradead.org, alex_gagniuc@dellteam.com,
-        Austin.Bolen@dell.com, Shyam.Iyer@dell.com, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvme-pci: Avoid use of goto in nvme_reset_work()
-Message-ID: <20180510170038.GA4556@localhost.localdomain>
-References: <20180510164645.19559-1-mr.nuke.me@gmail.com>
+        id S966643AbeEJQ7E (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 12:59:04 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52788 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966305AbeEJQ7C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 12:59:02 -0400
+From: Colin King <colin.king@canonical.com>
+To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        linux-mips@linux-mips.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] MIPS: VPE: fix spelling mistake: "uneeded" -> "unneeded"
+Date: Thu, 10 May 2018 17:59:00 +0100
+Message-Id: <20180510165900.13733-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180510164645.19559-1-mr.nuke.me@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 11:46:33AM -0500, Alexandru Gagniuc wrote:
-> This patch started as a challenge from Keith relating to code
-> structuring with goto vs return. I think the final result improves
-> readability on two counts:
-> First, it clarifies the separation between work struct and nvme_dev.
-> Second, it makes it clearer what error is being passed on:
-> 'return -ENODEV' vs 'goto out', where 'result' happens to be -ENODEV
-> 
-> CC: Keith Busch <keith.busch@intel.com>
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Ah, that's just wrapping a function that has a single out. The challenge
-is to find a better mechanism than 'goto' to unwind a failure that has
-multiple outs, like nvme_probe().
+Trivial fix to spelling mistake in pr_warn message text
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ arch/mips/kernel/vpe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/mips/kernel/vpe.c b/arch/mips/kernel/vpe.c
+index 544ea21bfef9..0bef238d2c0c 100644
+--- a/arch/mips/kernel/vpe.c
++++ b/arch/mips/kernel/vpe.c
+@@ -872,7 +872,7 @@ static ssize_t vpe_write(struct file *file, const char __user *buffer,
+ 		return -ENODEV;
+ 
+ 	if ((count + v->len) > v->plen) {
+-		pr_warn("VPE loader: elf size too big. Perhaps strip uneeded symbols\n");
++		pr_warn("VPE loader: elf size too big. Perhaps strip unneeded symbols\n");
+ 		return -ENOMEM;
+ 	}
+ 
+-- 
+2.17.0
