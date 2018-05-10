@@ -1,96 +1,54 @@
-Return-Path: <j.neuschaefer@gmx.net>
-X-Google-Smtp-Source: AB8JxZp/mZNfx28AlW4ibNmCHAELWytAKNjqbOrIWzFuzo3rCZwnAZ33SV/0eXqk5/iqEsu2wrpx
-ARC-Seal: i=1; a=rsa-sha256; t=1525702860; cv=none;
+Return-Path: <michael@ozlabs.org>
+X-Google-Smtp-Source: AB8JxZpvWKOErdq0EJDBX3QcMuC72tit4ar9OSR9sziibnD8dhZbMcMlS0pYper+aRX3t06sw0V5
+ARC-Seal: i=1; a=rsa-sha256; t=1525961207; cv=none;
         d=google.com; s=arc-20160816;
-        b=v8QD/8TWDLZ8wgNESHDhYQY6p/zQ2jE6UXedYHhGsR87eiPuBjgoO8xw/UPFuGUwO7
-         e14bwD+knG+OigwNaSoc7v4t5eipqpwRWwe57U08abYtFTVf3/FYJA8K3my8YysIiw87
-         3B+CiPwZLrqO5g61TmW0GwCwyZLUZdSIfQIjjbAtMn0dkwo595IS8EDj6eGT9oGKhAdq
-         ZaZbxFeC0bPIzl6PnLCe6YgluFcq4SZAEigzF+k746qbJvLmDD5h2xTBNyRgYMrTEhZF
-         9jGbdEYGGDAoK2/v1vhAECnpD3xclp3A43e/Xg6rLdTl+eby+CdUUKTZC1/87oJN8Ica
-         K/xA==
+        b=J2J3U6zwpz6Vh6xdRBlunHXPwQsyBJD5J5tcKYnOIC4/0aDRTHYoySHEzDvyEHZT5+
+         6l97Ye44hcf+LH3li0XUgbeuc3dspMbMTvG98BSYGIoxwmeXiFB+q4UkHAeoniE7mXe4
+         Nh1zSuBCI+t+0GOLyNmJAWGSvJ2Snj5Ejc08g5R94fM//QFhbbWdt40Eovq99X7Px8Qp
+         PnKN1C8iJSxzJcSCfuR8D0wp9KwWje5qKTH3D7L/75004xnr+8tMJLK772Tjbdk4VP+9
+         9jpnqL3azCKsdiA1KEL7MMJOzBhNbrZfrErmfLJoSH+dKtkig/DmxKiru1iPJC83wRwx
+         Ut5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=m9/yX/A6QzwgktVbA0N0ZE9LfIS+31NtcC3Bb3+QjaA=;
-        b=ejanBsD4TkWw7WUp/GSX0dwBK6HA6RS+GKPjVKzksWt+CCQqvsTyicysB7Zw9YXgs4
-         31o7CUNDOvW6ZOl+JadzFr5QQ3WjS6wRos6CSY0ZqnW4jVjnIpl/30GkjJBlT9BgQ0G3
-         dY7YjS7jRixZvWieet5+4YC+86VwOGIKSdx43lAxZoBrCzTdOtRsAZdiL0W9qFaIkSpl
-         40He6bhDBFsywRq4smQYLEo7zOnZ+NZq00Tv/cZnVIjYXygxC7/eC7JR8ma7z2ebhQw5
-         0p0InGAApwZ9N4WZCsM8pXmvN376yr1xJMq6HBL6IZariDqYodBlZUjuil7GeGgCFH+7
-         2o1A==
+        h=date:message-id:subject:cc:from:to:in-reply-to
+         :arc-authentication-results;
+        bh=ydpRhX5/7VC5Dt+HskEylf8EsEDtwhteFExRt9lv6vQ=;
+        b=kL6ghlV+UyA9wJt+v9aLb813LqAR6LZfIv2RXMdNw0RsgOHzBdjAJHy4TQWGSfNxQy
+         M7fvxzT+wjOiYefcflVuxEG0HJOS/TEF0JbLw1BNlWOIO0bzLWZ4IqhQR1mLdwOvd+uh
+         eA0F1lQmlV+SLhO8QrJKAcAfsA7fLpTaSYFhgJhbjDj/i39XUiZrL5CvTA7ff6u3z3KK
+         YuWRYfgmDxg/LQqMPbG41Mtjl573Zlf/qD2wgXe9n3Emrkh/WZ39f9HcdX5a04v6upMR
+         96v6Eyse0p5/DAvNRqVxNbJBoIEDbcbDmRPLTMrWyJYGEgULBfE4CUO98umTeH9ickUY
+         SM6w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.17.21 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
+       spf=pass (google.com: domain of michael@ozlabs.org designates 203.11.71.1 as permitted sender) smtp.mailfrom=michael@ozlabs.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.17.21 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
-From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Joel Stanley <joel@jms.id.au>,
-	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Paul Mackerras <paulus@samba.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Benjamin Gilbert <benjamin.gilbert@coreos.com>,
-	"Robin H. Johnson" <robbat2@gentoo.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/4] powerpc: wii_defconfig: Disable Ethernet driver support code
-Date: Mon,  7 May 2018 16:20:16 +0200
-Message-Id: <20180507142019.32669-2-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180507142019.32669-1-j.neuschaefer@gmx.net>
-References: <20180507142019.32669-1-j.neuschaefer@gmx.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:hoqHEiE9z55io5mWgVsRbIeENhVm1Lnyg4GyY/xbaPBrWGk9VUb
- uI989b/m4GUvkt2qLPp8ZeDhV4sLkhtkZAQKhW/vC/ZzzulcGdAXChW0r2b13+HKYi0qwR8
- 2NXgeQUo+obiGHowwTYZvnnN84Vd38CRdEdsj/ZBKC4Ch3jBymF6w/u65+q+cbLDADgei0u
- uu3JJrtLd4qoaAuySTHmQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:HNOAEqv+6oA=:R1LPhBfnY89sTDYJWatTdl
- IT/yG+wXL61YVEjIaplazL4E1jZf3Vus84XMKgxyhq6PayYzJRKu+KgCqsJX1Du6G6/XxfKRv
- U1yPA3K/ZhD6ePNLjgoeZidbdioZRcGN4sVN/gnBCBr4OxHFm+C8WAF0LGRnpmz/lbm0c2VhZ
- JtPWB8q9ztR2luA7dZCkrrgvaSS5FTsWwtJWTLQQdxAMOOAiAryeoRGigH9WEe0foJ8M7jH4v
- 9v6r2UtQ3I5b5jM28rLkJIqNF83Ock+mw7UqRCTSpSe9T9+BBAuyKBUg+yml7mbli6JlpSwLa
- nvEqxpc3etS7hfMkQF3NV/5AuLCFVT3ItOSMQxNmB0Ixt03a9NXmDa8I9zR3KnYNyREYh9S5H
- KKN6vihotvbNT+AGERDFMBFSHCriC4EzByouoHv9M9YkcanGdU1L5kt27pu67sc24g/1FyERu
- hFqUzms0yXJuUiz7BI2rNajaaEaxIItf19aUF7Hg2RU/AVNxhTnXWK8f5c42WFLGaG7Joe35p
- Lm4S9Jc82S13Jq6x45ycl6bfa6oODCHfe0mY/kbgSgWa5NB3S3CizHFHeCeAiqewTU5SEZYgc
- jFhIj61IZ+S4m8yG0cYERjAApBiGeyWj8NEgV5o6C16cnjwSzp4K/+WGYHmvgugCYvgxF8WpL
- YJLkI17lYUkFxTEnukx74PlCgzjcpsrFYBVQ/7X8cM27pIoXpNbyDMMQWRmBgUxQ244++U4fd
- SIfyIHljrxJBm9SywyU9kHDqATZO2pCMUWyyiRKvT8dm3254EKG6gtH/GdnFEfezYRJVQKn9V
- +B8Ksn/
+       spf=pass (google.com: domain of michael@ozlabs.org designates 203.11.71.1 as permitted sender) smtp.mailfrom=michael@ozlabs.org
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: a84813f5bf2948c2a2947b0d68456204128ae28a
+In-Reply-To: <20180507142019.32669-2-j.neuschaefer@gmx.net>
+To: =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, linuxppc-dev@lists.ozlabs.org
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Gilbert <benjamin.gilbert@coreos.com>, =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, "Robin H. Johnson" <robbat2@gentoo.org>, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Joel Stanley <joel@jms.id.au>
+Subject: Re: [v2, 1/4] powerpc: wii_defconfig: Disable Ethernet driver support code
+Message-Id: <40hZll2TTNz9s1p@ozlabs.org>
+Date: Fri, 11 May 2018 00:06:42 +1000 (AEST)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599815401906137196?=
-X-GMAIL-MSGID: =?utf-8?q?1599815401906137196?=
+X-GMAIL-MSGID: =?utf-8?q?1600086298748619545?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The Wii doesn't have built-in Ethernet and USB Ethernet adapters are in
-a different menu. Disable CONFIG_ETHERNET to save some space in support
-code for Ethernet drivers.
+On Mon, 2018-05-07 at 14:20:16 UTC, =?utf-8?q?Jonathan_Neusch=C3=A4fer?= wrote:
+> The Wii doesn't have built-in Ethernet and USB Ethernet adapters are in
+> a different menu. Disable CONFIG_ETHERNET to save some space in support
+> code for Ethernet drivers.
+> 
+> Note that this patch doesn't disable any Ethernet drivers, because they
+> are not enabled by default.
+> 
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 
-Note that this patch doesn't disable any Ethernet drivers, because they
-are not enabled by default.
+Series applied to powerpc next, thanks.
 
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
----
-v2:
-- Drop the bloat-o-meter output from the commit message
----
- arch/powerpc/configs/wii_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+https://git.kernel.org/powerpc/c/a84813f5bf2948c2a2947b0d684562
 
-diff --git a/arch/powerpc/configs/wii_defconfig b/arch/powerpc/configs/wii_defconfig
-index 0b0f78823a1b..3167b9d7f3e5 100644
---- a/arch/powerpc/configs/wii_defconfig
-+++ b/arch/powerpc/configs/wii_defconfig
-@@ -49,6 +49,7 @@ CONFIG_BLK_DEV_RAM_COUNT=2
- CONFIG_SCSI=y
- CONFIG_BLK_DEV_SD=y
- CONFIG_NETDEVICES=y
-+# CONFIG_ETHERNET is not set
- CONFIG_B43=y
- CONFIG_B43_SDIO=y
- # CONFIG_B43_PHY_LP is not set
--- 
-2.17.0
+cheers
