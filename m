@@ -1,98 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756847AbeEJIoW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 04:44:22 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:60752 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756379AbeEJIoR (ORCPT
+        id S1756935AbeEJIw0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 04:52:26 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:46249 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756379AbeEJIwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 04:44:17 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180510084414euoutp02cef2cc9c3591a69a139cc89e782abc1a~tPAg7Y6Vx1966019660euoutp02Z
-X-AuditID: cbfec7f2-5ffe19c000011644-0f-5af4065cca86
-Subject: Re: [PATCH 2/2] i2c: exynos5: remove pointless initializers
-To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-From: Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <b69f6656-3831-86ea-5f13-fc805d86b288@samsung.com>
-Date: Thu, 10 May 2018 10:44:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.7.0
+        Thu, 10 May 2018 04:52:23 -0400
+X-Google-Smtp-Source: AB8JxZrjFIFBFu3XqHExhZOvPQWoIbqjdmD4psagnbeTiBtH9FZ6/sRqqlZitcfr9ReWkX0dZmlXKg==
+Date: Thu, 10 May 2018 16:48:31 +0800
+From: Wang YanQing <udknight@gmail.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: illusionist.neo@gmail.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, daniel@iogearbox.net, ast@fb.com
+Subject: Re: [PATCH] bpf, arm32: Correct check_imm24
+Message-ID: <20180510084831.GA31194@udknight>
+Mail-Followup-To: Wang YanQing <udknight@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        illusionist.neo@gmail.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, daniel@iogearbox.net,
+        ast@fb.com
+References: <20180510032013.GB26016@udknight>
+ <20180510075656.GS16141@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20180509194532.28929-2-peda@axentia.se>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRjl3b27uxtOrvNjLypJi+gD0oSKS5mJCO1X5L8Yad3ypqZutjlT
-        o5RBuYma2Ww2NbPUdEXW/BYdNstpNWdmkpH5Q+1DmUib6BC1bVfJf+c8zznveQ68OCIws4Px
-        VGkWLZdS6SKMh3YMumyHzmNOyeG2Li5ZotKxyLszCwhps73ikMaZCTapXncC8nNPNUZW2kws
-        ss9cC8jmIT1C9v1wgBie+EF/FUdsNGgw8aPheHFrfb54SLeCioffz6Jih3HXWY6EF5VEp6dm
-        0/KI6Iu8lOEBA5p5j5PzouQpVgCm2EWAi0PiCHz5ZhQUAR4uIJoA1Nd1shniBNAwN4cyxAGg
-        bXWRtW2xFpduqZ65Vf3NGEPsAJaZnqMelT8RBzUVP72OAOIUrJj4w/KIEKKXBVvuD3rTMeIA
-        XG+dxDyYT0TDt6ZijgejxF7Y9L0K8eBA4hxU/XJxGI0fHH446w3gEkfhwuSG14sQYbDTXo0w
-        WAi/zdZ6wyAxxoGTJf1uM+4mcbC3nmYq+MN5SxuHwaFws7t2q9oNOPlbhTJeNYDTa4UYszgB
-        Byyf2J53EPfRLT0RzPgkNHavIMzzvvCr3Y85wReWd+i2xnyoviNg1LvhtLUdYbAQNowuY2Vg
-        j35HMf2OMvodZfT/cx8D1ACEtFKRkUwrIqX09XAFlaFQSpPDL8syjMD9sz5sWP52geWxS2ZA
-        4EDkw6/kOSQCNpWtyM0wA4gjogD+6oh7xE+icvNoueyCXJlOK8wgBEdFQn7i/lsSAZFMZdFp
-        NJ1Jy7e3LJwbXADS9rW9y4y6apUNdWmzVKVaiVPSYA3k1mhaY1IHziyV5y+hU6wrQQuuPLUr
-        qLxHcvy0zhRJa2qwupGE2PY84bWwbFmHQHt7MadwdS3no0/j6wJDiFJ2M+nYl8a0RH9TKKVN
-        GKeCkufji2LlEumTdUvf5vhoVCnfMtdqNSjtIlSRQkUeROQK6h82tByAVQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xe7qRbF+iDFackbXobZrOZNH/+DWz
-        xfnzG9gtNj2+xmrR8fcLo8XlXXPYLGac38dksffQfEaLlSdmMVvsvfeZ0YHLY9qB2ewem1Z1
-        snnMOxnosXlJvceJ6d9ZPE6eesLi8XmTXAB7lJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYml
-        nqGxeayVkamSvp1NSmpOZllqkb5dgl7GycOrWAomsles6V3M1sB4l7WLkZNDQsBE4mxPH5DN
-        xSEksJRRYvHSVewQCXGJ3fPfMkPYwhJ/rnWxQRS9ZpQ4c2UbE0hCWMBFonPqMzBbRMBeYuq1
-        l0wgRcwC+5gkljfMYYbo2MwosfP9GkaQKjYBTYm/m2+ygdi8AnYSR/b1gK1jEVCVWHFnNtg6
-        UYEIiXvnP0HVCEqcnPmEBcTmFDCVeH3zH1icWUBd4s+8S8wQtrzE9rdzoGxxiVtP5jNNYBSa
-        haR9FpKWWUhaZiFpWcDIsopRJLW0ODc9t9hQrzgxt7g0L10vOT93EyMwTrcd+7l5B+OljcGH
-        GAU4GJV4eGdwfY4SYk0sK67MPcQowcGsJML74xxQiDclsbIqtSg/vqg0J7X4EKMp0HMTmaVE
-        k/OBKSSvJN7Q1NDcwtLQ3Njc2MxCSZz3vEFllJBAemJJanZqakFqEUwfEwenVANjlM+6l+Vm
-        fEm3jE2Nq9479zIwha2a3F6pVa7+41H5pAyLRwfllx/pP3vebP3X9hsJkk/6lUuaJKwmmpxS
-        N+E9tXua7dObDAZlX/MmTL+V4faBMT/8SPqsj/3CZpPEnE+f1Snx+Dt1xY33N70/2n7tXpK7
-        gWdBsjX7bf4qK9bTQRnrp4hENF1XYinOSDTUYi4qTgQAn6vqfOkCAAA=
-X-CMS-MailID: 20180510084410eucas1p16d234eaa2ae5822029754b9529ea01ab
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180510084410eucas1p16d234eaa2ae5822029754b9529ea01ab
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180509194552epcas3p4777026e41c7b34663eb11345e4f3d82d
-X-RootMTR: 20180509194552epcas3p4777026e41c7b34663eb11345e4f3d82d
-References: <20180509194532.28929-1-peda@axentia.se>
-        <CGME20180509194552epcas3p4777026e41c7b34663eb11345e4f3d82d@epcas3p4.samsung.com>
-        <20180509194532.28929-2-peda@axentia.se>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510075656.GS16141@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.7.1 (2016-10-04)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.05.2018 21:45, Peter Rosin wrote:
-> The variables are always assigned before use anyway.
->
-> Signed-off-by: Peter Rosin <peda@axentia.se>
-> ---
->  drivers/i2c/busses/i2c-exynos5.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-> index a2cbc779c33a..185fba37e830 100644
-> --- a/drivers/i2c/busses/i2c-exynos5.c
-> +++ b/drivers/i2c/busses/i2c-exynos5.c
-> @@ -707,7 +707,7 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
->  			struct i2c_msg *msgs, int num)
->  {
->  	struct exynos5_i2c *i2c = adap->algo_data;
-> -	int i = 0, ret = 0, stop = 0;
-> +	int i, ret, stop;
+On Thu, May 10, 2018 at 08:56:57AM +0100, Russell King - ARM Linux wrote:
+> On Thu, May 10, 2018 at 11:20:13AM +0800, Wang YanQing wrote:
+> > imm24 is signed, so the right range is:
+> > [-(2<<(24 - 1)), (2<<(24 - 1)) - 1]
+> 
+> 2 << (24 - 1) is the same as 1 << 24.
+> 
+> > -#define check_imm(bits, imm) do {				\
+> > -	if ((((imm) > 0) && ((imm) >> (bits))) ||		\
+> > -	    (((imm) < 0) && (~(imm) >> (bits)))) {		\
+> > -		pr_info("[%2d] imm=%d(0x%x) out of range\n",	\
+> > -			i, imm, imm);				\
+> > +#define check_imm_range(min, max, imm) do {			\
+> > +	if (imm < min || imm > max) {				\
+> > +		pr_info("[%2d] imm=%d is out of range\n",	\
+> > +			i, imm);				\
+> >  		return -EINVAL;					\
+> >  	}							\
+> >  } while (0)
+> > -#define check_imm24(imm) check_imm(24, imm)
+> > +#define check_imm24(imm) check_imm_range(-16777216, 16777215, imm)
+> 
+> How is this any different?
+> 
+> If imm is 16777216, then "imm > max" in your version is true.
+> In the original version, "imm > 0" is true, so we then test for
+> "16777216 >> 24" being non-zero.  That's also true, so the test
+> condition fires.
+> 
+> If imm is 16777215, then "imm > max" is false in your version.
+> In the original version, the conditions also evaluate to false.
+> 
+> For the -16777217 case, "imm < min" in your version is true.
+> In the original version, "imm < 0" is true, so we then test for
+> "~(-16777217) >> 24" being non-zero.  This is the same as
+> "16777216 >> 24" being non-zero, which is true so the condition
+> fires.
+> 
+> With -16777216, the same thing happens, both end up evaluating
+> to false.
+> 
+> So, the two cases end up producing identical results, and there
+> is no actual effect from this change.
+> 
+> However, your commit message is correct - there is a bug here.
+> That's obvious when you mask the "imm" value with 0x00ffffff,
+> and realise that an imm value of -16777216 ends up having the
+> same value in the instruction as an imm value of 0.  So, the
+> range of "imm" is _half_ that.
+> 
+>  #define check_imm(bits, imm) do {				\
+> -	if ((((imm) > 0) && ((imm) >> (bits))) ||		\
+> -	    (((imm) < 0) && (~(imm) >> (bits)))) {		\
+> +	if ((((imm) > 0) && ((imm) >> (bits - 1))) ||		\
+> +	    (((imm) < 0) && (~(imm) >> (bits - 1)))) {		\
+>  		pr_info("[%2d] imm=%d(0x%x) out of range\n",	\
+>  			i, imm, imm);				\
+> 
+> would fix it.  Alternatively:
+> 
+>  #define check_imm(bits, imm) do {				\
+> -	if ((((imm) > 0) && ((imm) >> (bits))) ||		\
+> -	    (((imm) < 0) && (~(imm) >> (bits)))) {		\
+> +	if ((imm) >= (1 << ((bits) - 1)) ||			\
+> +	    (imm) < -(1 << ((bits) - 1))) {			\
+>  		pr_info("[%2d] imm=%d(0x%x) out of range\n",	\
+>  			i, imm, imm);				\
+> 
+> would also fix it.
 
-I hope gcc is smart enough to not complain in case of ret.
-I think you can merge both patches into one.
+Hi!
 
-Regards
-Andrzej
+Sorry for confusion, I make a mistake here, the real fix I want to
+submit is [8388607, -8388608], this range has the same effect as your
+suggestion.
 
->  
->  	if (i2c->suspended) {
->  		dev_err(i2c->dev, "HS-I2C is not initialized.\n");
+Will you fix it? or I resend another version?
+
+Thanks.
