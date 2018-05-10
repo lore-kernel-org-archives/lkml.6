@@ -1,110 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751634AbeEJXc0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 19:32:26 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:55778 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750710AbeEJXcY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 19:32:24 -0400
-From: Qing Huang <qing.huang@oracle.com>
-To: tariqt@mellanox.com, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Qing Huang <qing.huang@oracle.com>
-Subject: [PATCH] mlx4_core: allocate 4KB ICM chunks
-Date: Thu, 10 May 2018 16:31:43 -0700
-Message-Id: <20180510233143.7236-1-qing.huang@oracle.com>
-X-Mailer: git-send-email 2.9.3
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8889 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=765
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805100216
+        id S1751907AbeEJXcv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 19:32:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55962 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751695AbeEJXct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 19:32:49 -0400
+Date: Thu, 10 May 2018 23:32:47 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, ast@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: Re: [PATCH] coredump: rename umh_pipe_setup() to
+ coredump_pipe_setup()
+Message-ID: <20180510233247.GG27853@wotan.suse.de>
+References: <20180507233002.5571-1-mcgrof@kernel.org>
+ <20180510231907.xbok4h6rjopwdq6e@ast-mbp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510231907.xbok4h6rjopwdq6e@ast-mbp>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a system is under memory presure (high usage with fragments),
-the original 256KB ICM chunk allocations will likely trigger kernel
-memory management to enter slow path doing memory compact/migration
-ops in order to complete high order memory allocations.
+On Thu, May 10, 2018 at 04:19:09PM -0700, Alexei Starovoitov wrote:
+> On Mon, May 07, 2018 at 04:30:02PM -0700, Luis R. Rodriguez wrote:
+> > This makes it clearer this code is part of the coredump code, and
+> > is not an exported generic helper from kernel/umh.c.
+> > 
+> > Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+> > ---
+> >  fs/coredump.c | 9 +++++----
+> >  1 file changed, 5 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/fs/coredump.c b/fs/coredump.c
+> > index 1e2c87acac9b..566504781683 100644
+> > --- a/fs/coredump.c
+> > +++ b/fs/coredump.c
+> > @@ -508,7 +508,7 @@ static void wait_for_dump_helpers(struct file *file)
+> >  }
+> >  
+> >  /*
+> > - * umh_pipe_setup
+> > + * coredump_pipe_setup
+> >   * helper function to customize the process used
+> >   * to collect the core in userspace.  Specifically
+> >   * it sets up a pipe and installs it as fd 0 (stdin)
+> > @@ -518,7 +518,7 @@ static void wait_for_dump_helpers(struct file *file)
+> >   * is a special value that we use to trap recursive
+> >   * core dumps
+> >   */
+> > -static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
+> > +static int coredump_pipe_setup(struct subprocess_info *info, struct cred *new)
+> 
+> I think this renaming makes sense.
+> How do we want to proceed?
+> I can take it as part of my series and get the whole thing through net-next
+> or folks want to apply this separately?
 
-When that happens, user processes calling uverb APIs may get stuck
-for more than 120s easily even though there are a lot of free pages
-in smaller chunks available in the system.
+I think net-next makes sense if Al Viro is OK with that. This way it could go
+in regardless of the state of your series, but it also lines up with your work.
 
-Syslog:
-...
-Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
-oracle_205573_e:205573 blocked for more than 120 seconds.
-...
-
-With 4KB ICM chunk size, the above issue is fixed.
-
-However in order to support 4KB ICM chunk size, we need to fix another
-issue in large size kcalloc allocations.
-
-E.g.
-Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
-size, each ICM chunk can only hold 512 mtt entries (8 bytes for each mtt
-entry). So we need a 16MB allocation for a table->icm pointer array to
-hold 2M pointers which can easily cause kcalloc to fail.
-
-The solution is to use vzalloc to replace kcalloc. There is no need
-for contiguous memory pages for a driver meta data structure (no need
-of DMA ops).
-
-Signed-off-by: Qing Huang <qing.huang@oracle.com>
-Acked-by: Daniel Jurgens <danielj@mellanox.com>
----
- drivers/net/ethernet/mellanox/mlx4/icm.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c b/drivers/net/ethernet/mellanox/mlx4/icm.c
-index a822f7a..2b17a4b 100644
---- a/drivers/net/ethernet/mellanox/mlx4/icm.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
-@@ -43,12 +43,12 @@
- #include "fw.h"
- 
- /*
-- * We allocate in as big chunks as we can, up to a maximum of 256 KB
-- * per chunk.
-+ * We allocate in 4KB page size chunks to avoid high order memory
-+ * allocations in fragmented/high usage memory situation.
-  */
- enum {
--	MLX4_ICM_ALLOC_SIZE	= 1 << 18,
--	MLX4_TABLE_CHUNK_SIZE	= 1 << 18
-+	MLX4_ICM_ALLOC_SIZE	= 1 << 12,
-+	MLX4_TABLE_CHUNK_SIZE	= 1 << 12
- };
- 
- static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct mlx4_icm_chunk *chunk)
-@@ -400,7 +400,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
- 	obj_per_chunk = MLX4_TABLE_CHUNK_SIZE / obj_size;
- 	num_icm = (nobj + obj_per_chunk - 1) / obj_per_chunk;
- 
--	table->icm      = kcalloc(num_icm, sizeof(*table->icm), GFP_KERNEL);
-+	table->icm      = vzalloc(num_icm * sizeof(*table->icm));
- 	if (!table->icm)
- 		return -ENOMEM;
- 	table->virt     = virt;
-@@ -446,7 +446,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
- 			mlx4_free_icm(dev, table->icm[i], use_coherent);
- 		}
- 
--	kfree(table->icm);
-+	vfree(table->icm);
- 
- 	return -ENOMEM;
- }
-@@ -462,5 +462,5 @@ void mlx4_cleanup_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table)
- 			mlx4_free_icm(dev, table->icm[i], table->coherent);
- 		}
- 
--	kfree(table->icm);
-+	vfree(table->icm);
- }
--- 
-2.9.3
+  Luis
