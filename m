@@ -1,80 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935448AbeEJL0W (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 07:26:22 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:55757 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935393AbeEJL0S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 07:26:18 -0400
-X-ME-Helo: ubuntu-CJ.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 10 May 2018 13:26:17 +0200
-X-ME-IP: 86.244.116.1
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: jiri@mellanox.com, idosch@mellanox.com, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] mlxsw: core: Fix an error handling path in 'mlxsw_core_bus_device_register()'
-Date: Thu, 10 May 2018 13:26:16 +0200
-Message-Id: <20180510112616.20508-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.17.0
+        id S935484AbeEJL0l (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 07:26:41 -0400
+Received: from bues.ch ([80.190.117.144]:55328 "EHLO bues.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935115AbeEJL0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 07:26:40 -0400
+Date: Thu, 10 May 2018 13:26:12 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>,
+        Larry Finger <larry.finger@lwfinger.net>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        Hauke Mehrtens <hauke@hauke-m.de>, LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+Subject: Re: [PATCH 4.17 2/2] ssb: make SSB_PCICORE_HOSTMODE depend on SSB =
+ y
+Message-ID: <20180510132612.25c8c20e@wiggum>
+In-Reply-To: <CACna6ryWUCnrw9w4yhfiNXFHy1hFjVV-BqH07i7DQqxq8FtjMw@mail.gmail.com>
+References: <20180510111401.1161-1-zajec5@gmail.com>
+ <20180510111401.1161-2-zajec5@gmail.com>
+ <20180510131725.111079af@wiggum>
+ <CACna6ryWUCnrw9w4yhfiNXFHy1hFjVV-BqH07i7DQqxq8FtjMw@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/PyILieRqIXwLZLz+e2YE=TJ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Resources are not freed in the reverse order of the allocation.
-Labels are also mixed-up.
+--Sig_/PyILieRqIXwLZLz+e2YE=TJ
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Fix it and reorder code and labels in the error handling path of
-'mlxsw_core_bus_device_register()'
+On Thu, 10 May 2018 13:20:01 +0200
+Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com> wrote:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Please review carefully. This patch is proposed because it triggers one of
-my coccinelle scripts. I'm not 100% sure if correct.
+> On 10 May 2018 at 13:17, Michael B=C3=BCsch <m@bues.ch> wrote:
+> > On Thu, 10 May 2018 13:14:01 +0200
+> > Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com> wrote:
+> > =20
+> >> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+> >>
+> >> SSB_PCICORE_HOSTMODE protects MIPS specific code that calls not export=
+ed
+> >> symbols pcibios_enable_device and register_pci_controller. This code is
+> >> supposed to be compiled only with ssb builtin.
+> >>
+> >> This fixes:
+> >> ERROR: "pcibios_enable_device" [drivers/ssb/ssb.ko] undefined!
+> >> ERROR: "register_pci_controller" [drivers/ssb/ssb.ko] undefined!
+> >> make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
+> >>
+> >> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+> >> ---
+> >>  drivers/ssb/Kconfig | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
+> >> index b3f5cae98ea6..c574dd210500 100644
+> >> --- a/drivers/ssb/Kconfig
+> >> +++ b/drivers/ssb/Kconfig
+> >> @@ -131,7 +131,7 @@ config SSB_DRIVER_PCICORE
+> >>
+> >>  config SSB_PCICORE_HOSTMODE
+> >>       bool "Hostmode support for SSB PCI core"
+> >> -     depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS
+> >> +     depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS && SSB =3D y
+> >>       help
+> >>         PCIcore hostmode operation (external PCI bus).
+> >> =20
+> >
+> >
+> > I think we also need to depend on PCI_DRIVERS_LEGACY.
+> > See the other patch that floats around. =20
+>=20
+> I believe it's already handled by SSB_PCIHOST_POSSIBLE's dependency on
+> PCI_DRIVERS_LEGACY.
 
-The script tries to spot wrongly ordered error handling path. It is:
-@@
-identifier l1, l2;
-@@
 
-   if (...) {
-      ...
-*     goto l1;
-   }
-   ...
-   if (...) {
-      ...
-*     goto l2;
-   }
-   ...
-*l1:
-   ...
-*l2:
-   ...
----
- drivers/net/ethernet/mellanox/mlxsw/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+That dependency seems to be wrong there.
+Was it added among some other "let's just unbreak some random
+build" change as well?
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/core.c b/drivers/net/ethernet/mellanox/mlxsw/core.c
-index 93ea56620a24..e13ac3b8dff7 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/core.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
-@@ -1100,11 +1100,11 @@ int mlxsw_core_bus_device_register(const struct mlxsw_bus_info *mlxsw_bus_info,
- err_alloc_lag_mapping:
- 	mlxsw_ports_fini(mlxsw_core);
- err_ports_init:
--	mlxsw_bus->fini(bus_priv);
--err_bus_init:
- 	if (!reload)
- 		devlink_resources_unregister(devlink, NULL);
- err_register_resources:
-+	mlxsw_bus->fini(bus_priv);
-+err_bus_init:
- 	if (!reload)
- 		devlink_free(devlink);
- err_devlink_alloc:
--- 
-2.17.0
+SSB_PCIHOST enables support for SSB on top of PCI. (Which is 99% of it
+uses). I don't see how this uses the legacy API.
+
+SSB_PCICORE_HOSTMODE enables PCI on top of SSB. Which is a MIPS corner
+case. This uses the legacy MIPS API to register a PCI bus.
+
+--=20
+Michael
+
+--Sig_/PyILieRqIXwLZLz+e2YE=TJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlr0LFQACgkQ9TK+HZCN
+iw4fBxAA4MbuyoXLlqcFbKPsL+DurCb+P7y3aGUoeQL5ZqtYmX38xRXV3jPaPYBG
+4olkODEzw3IP3KweXuBzP6Vc1EtfdAqV42hjJyp5EyEHbabCAA6EjqvAg0O/UuVi
+aA/PHZ4cX/Kr8us/9ctrZOhvb1qXaLwybNWViBoarQTnsS9x2mwVHdIEeXpjLBVB
+v6MKyqIX3OiFCHj0lmoiGM5zMCI+A1u769oFr4htVUywxCdKvfaiYc2o5ug9+rjw
+eoLMAdG+ZJTU3GUYVmt9/Dr9eReXASwWz0nd7K3ztV6xMKJFqxoeVtUkQwRnKxAJ
+HuGqcJRYYG4+V58owBEgaufNU1MJVXo88zoVlQ4/CPxkkKDyW4WiyRGmw0Zf6Z9G
+M6p2jyO4uKxV3w2uQLQHgzMnLFGsCVW7rvcVYK1xv2mO2bKEwGi/oCIhmOM3058L
+Esvv9NuueKyM0ddPGD7YXgCfwOdOg5PkGnWsh/WnurOgxzIolhLFEnILDa8iia2Y
+Mmrd+Wnaxdw+prakwITuGgymSaCxnQcCd0h8OdqgZZqDUqyvlBqTGOyECgT8CUhX
+mM/QNyYNJHiaQ3gEpcfw7G7LEinjqZkCFkIoPC+hhgr5pmFekHpR+nq3Q13DCGWc
+eyooKarmcJn7bbgSBYeuzbdmV/KhEW0AKzigCIRjlVkcUqwhE0o=
+=d7ZQ
+-----END PGP SIGNATURE-----
+
+--Sig_/PyILieRqIXwLZLz+e2YE=TJ--
