@@ -1,107 +1,312 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752192AbeEJUOa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 16:14:30 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:56744 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbeEJUO2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 16:14:28 -0400
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-To: shuah@kernel.org, akpm@linux-foundation.org, mike.kravetz@oracle.com
-Cc: marcandre.lureau@redhat.com, sj38.park@gmail.com,
-        anders.roxell@linaro.org, lizhijian@cn.fujitsu.com,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests: memfd: split regular and hugetlbfs tests
-Date: Thu, 10 May 2018 14:13:54 -0600
-Message-Id: <20180510201354.23930-1-shuah@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        id S1752176AbeEJUPr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 16:15:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38156 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751012AbeEJUPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 16:15:46 -0400
+Date: Thu, 10 May 2018 17:15:42 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Hunter, Adrian" <adrian.hunter@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH RFC 07/19] perf tools: Workaround missing maps for x86_64
+ KPTI entry trampolines
+Message-ID: <20180510201542.GD4311@kernel.org>
+References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
+ <1525866228-30321-8-git-send-email-adrian.hunter@intel.com>
+ <20180509170717.GI13491@kernel.org>
+ <363DA0ED52042842948283D2FC38E4649C13DE9E@IRSMSX106.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <363DA0ED52042842948283D2FC38E4649C13DE9E@IRSMSX106.ger.corp.intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split normal memfd and hugetlbfs tests to improve the test reporting.
-Remove run_fuse_test.sh and memfd_test from run_tests.sh and add them
-to the Makefile.
+Em Thu, May 10, 2018 at 07:08:37PM +0000, Hunter, Adrian escreveu:
+> > -----Original Message-----
+> > From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
+> > Sent: Wednesday, May 9, 2018 8:07 PM
+> > To: Hunter, Adrian <adrian.hunter@intel.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>; Ingo Molnar
+> > <mingo@redhat.com>; Peter Zijlstra <peterz@infradead.org>; Andy
+> > Lutomirski <luto@kernel.org>; H. Peter Anvin <hpa@zytor.com>; Andi Kleen
+> > <ak@linux.intel.com>; Alexander Shishkin
+> > <alexander.shishkin@linux.intel.com>; Dave Hansen
+> > <dave.hansen@linux.intel.com>; Joerg Roedel <joro@8bytes.org>; Jiri Olsa
+> > <jolsa@redhat.com>; linux-kernel@vger.kernel.org; x86@kernel.org
+> > Subject: Re: [PATCH RFC 07/19] perf tools: Workaround missing maps for
+> > x86_64 KPTI entry trampolines
+> > 
+> > Em Wed, May 09, 2018 at 02:43:36PM +0300, Adrian Hunter escreveu:
+> > > On x86_64 the KPTI entry trampolines are not in the kernel map created
+> > > by perf tools. That results in the addresses having no symbols and
+> > > prevents annotation. It also causes Intel PT to have decoding errors
+> > > at the trampoline addresses. Workaround that by creating maps for the
+> > trampolines.
+> > > At present the kernel does not export information revealing where the
+> > > trampolines are. Until that happens, the addresses are hardcoded.
+> > >
+> > > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> > > ---
+> > >  tools/perf/util/machine.c | 104
+> > ++++++++++++++++++++++++++++++++++++++++++++++
+> > >  tools/perf/util/machine.h |   3 ++
+> > >  tools/perf/util/symbol.c  |  12 +++---
+> > >  3 files changed, 114 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> > > index 22047ff3cf2a..1bf15aa0b099 100644
+> > > --- a/tools/perf/util/machine.c
+> > > +++ b/tools/perf/util/machine.c
+> > > @@ -851,6 +851,110 @@ static int
+> > machine__get_running_kernel_start(struct machine *machine,
+> > >  	return 0;
+> > >  }
+> > >
+> > > +struct special_kernal_map {
+> > 
+> > s/kernal/kernel/
+> > 
+> > And "special"?
+> 
+> I have added comment:
+> 
+> /* Kernel-space maps that are not the main kernel map nor a module map */
 
-Add memfd_test to TEST_GEN_PROGS to be run separately.
-Rename run_tests.sh to run_hugetlbfs_test.sh
-Add run_fuse_test.sh and run_hugetlbfs_test.sh to TEST_PROGS
+Perhaps:
 
-The report for non-root run wth this change is:
+  /* Kernel-space maps for symbols that are outside the main kernel map and module maps */
 
-TAP version 13
-selftests: memfd: memfd_test
-========================================
-memfd: CREATE
-memfd: BASIC
-memfd: SEAL-WRITE
-memfd: SEAL-SHRINK
-memfd: SEAL-GROW
-memfd: SEAL-RESIZE
-memfd: SHARE-DUP
-memfd: SHARE-MMAP
-memfd: SHARE-OPEN
-memfd: SHARE-FORK
-memfd: SHARE-DUP (shared file-table)
-memfd: SHARE-MMAP (shared file-table)
-memfd: SHARE-OPEN (shared file-table)
-memfd: SHARE-FORK (shared file-table)
-memfd: DONE
-ok 1..1 selftests: memfd: memfd_test [PASS]
-selftests: memfd: run_fuse_test.sh
-========================================
-opening: ./mnt/memfd
-fuse: DONE
-ok 1..2 selftests: memfd: run_fuse_test.sh [PASS]
-selftests: memfd: run_hugetlbfs_test.sh
-========================================
-Please run memfd with hugetlbfs test as root
-not ok 1..3 selftests: memfd: run_hugetlbfs_test.sh [SKIP]
+  struct extra_kernel_map;
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
----
- tools/testing/selftests/memfd/Makefile                              | 6 +++---
- .../testing/selftests/memfd/{run_tests.sh => run_hugetlbfs_test.sh} | 6 ------
- 2 files changed, 3 insertions(+), 9 deletions(-)
- rename tools/testing/selftests/memfd/{run_tests.sh => run_hugetlbfs_test.sh} (95%)
+What do you think?
 
-diff --git a/tools/testing/selftests/memfd/Makefile b/tools/testing/selftests/memfd/Makefile
-index 0862e6f47a38..53a848109f7b 100644
---- a/tools/testing/selftests/memfd/Makefile
-+++ b/tools/testing/selftests/memfd/Makefile
-@@ -4,9 +4,9 @@ CFLAGS += -I../../../../include/uapi/
- CFLAGS += -I../../../../include/
- CFLAGS += -I../../../../usr/include/
+> And fixed kernal, and changed machine__is()
+
+Thanks
  
--TEST_PROGS := run_tests.sh
--TEST_FILES := run_fuse_test.sh
--TEST_GEN_FILES := memfd_test fuse_mnt fuse_test
-+TEST_GEN_PROGS := memfd_test
-+TEST_PROGS := run_fuse_test.sh run_hugetlbfs_test.sh
-+TEST_GEN_FILES := fuse_mnt fuse_test
+> Revised patch set is here:
+> 
+> 	http://git.infradead.org/users/ahunter/linux-perf.git/shortlog/refs/heads/perf-tools-kpti
+> 
+> which is the perf-tools-kpti branch of:
+> 
+> 	git://git.infradead.org/users/ahunter/linux-perf.git
+> 
+> Let me know if you want me to post the workaround patches separately,
+> otherwise I will wait a bit before sending the patches again.
+
+I'll see if I went thru all of the patches already...
+
+- Arnaldo
  
- fuse_mnt.o: CFLAGS += $(shell pkg-config fuse --cflags)
- 
-diff --git a/tools/testing/selftests/memfd/run_tests.sh b/tools/testing/selftests/memfd/run_hugetlbfs_test.sh
-similarity index 95%
-rename from tools/testing/selftests/memfd/run_tests.sh
-rename to tools/testing/selftests/memfd/run_hugetlbfs_test.sh
-index 2013f195e623..fb633eeb0290 100755
---- a/tools/testing/selftests/memfd/run_tests.sh
-+++ b/tools/testing/selftests/memfd/run_hugetlbfs_test.sh
-@@ -4,12 +4,6 @@
- # Kselftest framework requirement - SKIP code is 4.
- ksft_skip=4
- 
--#
--# Normal tests requiring no special resources
--#
--./run_fuse_test.sh
--./memfd_test
--
- #
- # To test memfd_create with hugetlbfs, there needs to be hpages_test
- # huge pages free.  Attempt to allocate enough pages to test.
--- 
-2.14.1
+> > 
+> > > +	u64 start;
+> > > +	u64 end;
+> > > +	u64 pgoff;
+> > > +};
+> > > +
+> > > +static int machine__create_special_kernel_map(struct machine
+> > *machine,
+> > > +					      struct dso *kernel,
+> > > +					      struct special_kernal_map *sm) {
+> > > +	struct kmap *kmap;
+> > > +	struct map *map;
+> > > +
+> > > +	map = map__new2(sm->start, kernel);
+> > > +	if (!map)
+> > > +		return -1;
+> > > +
+> > > +	map->end   = sm->end;
+> > > +	map->pgoff = sm->pgoff;
+> > > +
+> > > +	kmap = map__kmap(map);
+> > > +
+> > > +	kmap->kmaps = &machine->kmaps;
+> > > +
+> > > +	map_groups__insert(&machine->kmaps, map);
+> > > +
+> > > +	pr_debug2("Added special kernel map %" PRIx64 "-%" PRIx64 "\n",
+> > > +		  map->start, map->end);
+> > > +
+> > > +	map__put(map);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static u64 find_entry_trampoline(struct dso *dso) {
+> > > +	struct {
+> > > +		const char *name;
+> > > +		u64 addr;
+> > > +	} syms[] = {
+> > > +		/* Duplicates are removed so lookup all aliases */
+> > > +		{"_entry_trampoline", 0},
+> > > +		{"__entry_trampoline_start", 0},
+> > > +		{"entry_SYSCALL_64_trampoline", 0},
+> > 
+> > We've been using named initializers consistently, so please change this
+> > to:
+> > 
+> > 	struct {
+> > 		const char *name;
+> > 		u64	   addr;
+> > 	} syms[] = {
+> > 		{ .name = "_entry_trampoline", },
+> > 		{ .name = "__entry_trampoline_start", },
+> > 		{ .name = "entry_SYSCALL_64_trampoline", },
+> > 	},
+> > 
+> > Also why do you have to lookup to all of them to them use just the first
+> > found? I.e. you say they are aliases, why not return the first symbol found,
+> > i.e. the above would be reduced to:
+> > 
+> > 	const char *syms[] = {
+> > 		"_entry_trampoline",
+> > 		"__entry_trampoline_start",
+> > 		"entry_SYSCALL_64_trampoline",
+> > 	},
+> > 
+> > And then:
+> > 
+> > 	struct symbol *sym = dso__first_symbol(dso);
+> > 	unsigned int i;
+> > 
+> > 	for (; sym; sym = dso__next_symbol(sym)) {
+> > 		if (sym->binding != STB_GLOBAL)
+> > 			continue;
+> > 		for (i = 0; i < ARRAY_SIZE(syms); i++) {
+> > 			if (!strcmp(sym->name, syms[i].name))
+> > 				return sym->start;
+> > 		}
+> > 	}
+> > 
+> > 	return 0;
+> > 
+> > > +	};
+> > > +	struct symbol *sym = dso__first_symbol(dso);
+> > > +	unsigned int i;
+> > > +
+> > > +	for (; sym; sym = dso__next_symbol(sym)) {
+> > > +		if (sym->binding != STB_GLOBAL)
+> > > +			continue;
+> > > +		for (i = 0; i < ARRAY_SIZE(syms); i++) {
+> > > +			if (!strcmp(sym->name, syms[i].name))
+> > > +				syms[i].addr = sym->start;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	for (i = 0; i < ARRAY_SIZE(syms); i++) {
+> > > +		if (syms[i].addr)
+> > > +			return syms[i].addr;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +/*
+> > > + * These values can be used for kernels that do not have symbols for
+> > > +the entry
+> > > + * trampolines in kallsyms.
+> > > + */
+> > > +#define X86_64_CPU_ENTRY_AREA_PER_CPU
+> > 	0xfffffe0000000000ULL
+> > > +#define X86_64_CPU_ENTRY_AREA_SIZE	0x2c000
+> > > +#define X86_64_ENTRY_TRAMPOLINE		0x6000
+> > > +
+> > > +/* Map x86_64 KPTI entry trampolines */ int
+> > > +machine__map_x86_64_entry_trampolines(struct machine *machine,
+> > > +					  struct dso *kernel)
+> > > +{
+> > > +	u64 pgoff = find_entry_trampoline(kernel);
+> > > +	int nr_cpus_avail = 0, cpu;
+> > > +
+> > > +	if (!pgoff)
+> > > +		return 0;
+> > > +
+> > > +	if (machine->env)
+> > > +		nr_cpus_avail = machine->env->nr_cpus_avail;
+> > > +
+> > > +	/* Add a 1 page map for each CPU's entry trampoline */
+> > > +	for (cpu = 0; cpu < nr_cpus_avail; cpu++) {
+> > > +		u64 va = X86_64_CPU_ENTRY_AREA_PER_CPU +
+> > > +			 cpu * X86_64_CPU_ENTRY_AREA_SIZE +
+> > > +			 X86_64_ENTRY_TRAMPOLINE;
+> > > +		struct special_kernal_map sm = {
+> > > +			.start = va,
+> > > +			.end   = va + page_size,
+> > > +			.pgoff = pgoff,
+> > > +		};
+> > > +
+> > > +		if (machine__create_special_kernel_map(machine, kernel,
+> > &sm) < 0)
+> > > +			return -1;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  static int
+> > >  __machine__create_kernel_maps(struct machine *machine, struct dso
+> > > *kernel)  { diff --git a/tools/perf/util/machine.h
+> > > b/tools/perf/util/machine.h index b31d33b5aa2a..6e1c63d3a625 100644
+> > > --- a/tools/perf/util/machine.h
+> > > +++ b/tools/perf/util/machine.h
+> > > @@ -267,4 +267,7 @@ int machine__set_current_tid(struct machine
+> > *machine, int cpu, pid_t pid,
+> > >   */
+> > >  char *machine__resolve_kernel_addr(void *vmachine, unsigned long long
+> > > *addrp, char **modp);
+> > >
+> > > +int machine__map_x86_64_entry_trampolines(struct machine *machine,
+> > > +					  struct dso *kernel);
+> > > +
+> > >  #endif /* __PERF_MACHINE_H */
+> > > diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c index
+> > > 4a39f4d0a174..c3a1a89a61cb 100644
+> > > --- a/tools/perf/util/symbol.c
+> > > +++ b/tools/perf/util/symbol.c
+> > > @@ -1490,20 +1490,22 @@ int dso__load(struct dso *dso, struct map
+> > *map)
+> > >  		goto out;
+> > >  	}
+> > >
+> > > +	if (map->groups && map->groups->machine)
+> > > +		machine = map->groups->machine;
+> > > +	else
+> > > +		machine = NULL;
+> > > +
+> > >  	if (dso->kernel) {
+> > >  		if (dso->kernel == DSO_TYPE_KERNEL)
+> > >  			ret = dso__load_kernel_sym(dso, map);
+> > >  		else if (dso->kernel == DSO_TYPE_GUEST_KERNEL)
+> > >  			ret = dso__load_guest_kernel_sym(dso, map);
+> > >
+> > > +		if (machine && machine__is(machine, "x86_64"))
+> > > +
+> > 	machine__map_x86_64_entry_trampolines(machine, dso);
+> > >  		goto out;
+> > >  	}
+> > >
+> > > -	if (map->groups && map->groups->machine)
+> > > -		machine = map->groups->machine;
+> > > -	else
+> > > -		machine = NULL;
+> > > -
+> > >  	dso->adjust_symbols = 0;
+> > >
+> > >  	if (perfmap) {
+> > > --
+> > > 1.9.1
