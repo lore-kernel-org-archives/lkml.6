@@ -1,77 +1,134 @@
-Return-Path: <lurodriguez@suse.de>
-X-Google-Smtp-Source: AB8JxZpEqxN6K598aUtbOatjuiy0K448kG2aUBe7DgLSV8Htvg1IOUJk5SRq2+wbqyuH8R0RkxC9
-ARC-Seal: i=1; a=rsa-sha256; t=1525972475; cv=none;
+Return-Path: <mcgrof@kernel.org>
+X-Google-Smtp-Source: AB8JxZp48UndNz88A8B6xFBKFeIkuNkAT67M/LhZ6qP4mdtrFvnlxP9yfOWSk/OPfRQhC03pQH0h
+ARC-Seal: i=1; a=rsa-sha256; t=1525916690; cv=none;
         d=google.com; s=arc-20160816;
-        b=EAcgY1tUe+aVGZijm9qJQf4PqLRRenKFcGaONKaqZH2luvjWbtKXx1ULHRQW1pqcqS
-         pQMl3H15NyFWPThxFP5Z0ZaiVigl/snO2F1xwKbQfhdkgH+Fhot+ohkNw2mo/P0JH2Qp
-         aCQwAJg5jPE9oswqfZgCNXFCc2P6sznkq1wDlpAVBW16yWjT4Q6DlBpeVCfFPHdc1k2m
-         D62JtnJVB1Jlh+2OPgWMGNuKAJj5AxcYE1oVHuB31nQiscYBCEftRmVpvNppmJB+A24Z
-         OYwcY5trmoKFPuN14v6GrlWPAIzEvzM8dCON1MgeGNxC281HylUt0boAtar38TWQ17K7
-         73Jw==
+        b=yLVqnWlNmPO3SAsspZQ4rIusgu4/6YL1Xn+7yV5f0JnXiXUUUyYCeO6JzADK7BiOcd
+         5xVpgNJzlPTba61Lk15aKZaevTsdFov89l3vyPlFZAc3SCv9iDyRzI67GpevNnvcJtLP
+         EYmkATc7u5buNCek57YsgCaJZmndZzkvlvY1KZ5QhKqfCRvfHDGlH/Gw1ksqAuNcayyC
+         1n93kN27EpOKaiIE5S3OVTAlzGGC9WVM8B4/zBh8vXRg+wcqE86ebXdudj2aCQLw2li1
+         792bY+uJRQ0lzGVrQYO4wxL0D6jww5NQj1u7A7pyDvJ/jJ/S3ouWSC+snPxnE8GXjVRd
+         NuMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=6Xcj5W8RKh+lV/F5zwnITUDFNL1EyYbc0yz54yqwA14=;
-        b=uMuDRewPA66ZjBMNiWRZk8iBEpg+l71XVAOWVx9P35NLMMEKZzy/1Py2TeuULnN0p8
-         qhaYfQJWHFmvxVX3Nt+rdx5YTgKIV34yBHUweiKVn7az7/Z/6kUgy4okHI1V9u0Ampll
-         PWb37e0uevh0xOddPum0/7ivrfEyNV5ekWYh1MmsixCjkPqrQ0BS4BYF3Hl/hd88ToSj
-         3tGAgz52ct3LwlEKnLuu74+4n40AqVtaW+0WxqmW353yaFdeJx/ZCbdatbNLXdiahf3b
-         /n5oOk3NC/9kV8LiwlU8I0LgcI4C6G64CCi5XJxDkF0+3jNNnjeBlxXy4TgAw4Ia22aH
-         RdEw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=1K+9TNjwLVRAkCgZ5vXSneAJWIs9CpFSOGSiRhWSunw=;
+        b=SBG3KUu2KVEoinGAOApv0jaGwd8aG3YfDkMH8DIIt6jIjvNfKyMwAoaPyu0wFg65KS
+         yfBW8/nbX1a9VG8TNRp6y2PkW5tZD3FHmIvF/uEXlNaIQagdGMG0OroflNzvvn+roDiZ
+         9f9D6Q5SKxSsvcka3Qvj5wIThtCmUss0km/3OszCjOSNQsHDSLe5sKdriFHvUf1ODHns
+         TiHfa57UGnNaOW48PQN+6uVrtKgAZbcYKVdOZkQnaVP+RaeCN/wU+aTM1dtAVGxpDOKd
+         9zNdlylPYyAMGYxr/T2BOJ3YDI6HtzGV65cmmE53CoovHiNQ3M6JwmS8da1bp1w6qXm/
+         CK5w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       dkim=pass header.i=@kernel.org header.s=default header.b=b5llzdOD;
+       spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Date: Thu, 10 May 2018 17:14:32 +0000
+       dkim=pass header.i=@kernel.org header.s=default header.b=b5llzdOD;
+       spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Arnd Bergmann <arnd@arndb.de>, Greg KH <gregkh@linuxfoundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-m68k <linux-m68k@lists.linux-m68k.org>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	Linux MM <linux-mm@kvack.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] mm: provide a fallback for PAGE_KERNEL_EXEC for
- architectures
-Message-ID: <20180510171432.GC27853@wotan.suse.de>
+To: arnd@arndb.de
+Cc: gregkh@linuxfoundation.org,
+	willy@infradead.org,
+	geert@linux-m68k.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH v2 1/2] mm: provide a fallback for PAGE_KERNEL_RO for architectures
+Date: Wed,  9 May 2018 18:44:46 -0700
+Message-Id: <20180510014447.15989-2-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180510014447.15989-1-mcgrof@kernel.org>
 References: <20180510014447.15989-1-mcgrof@kernel.org>
- <20180510014447.15989-3-mcgrof@kernel.org>
- <CAMuHMdUJTKqqWzFi594_y_F1HdONr3+FOSTzg-n0ogoroFUqpA@mail.gmail.com>
- <20180510153355.GB27853@wotan.suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180510153355.GB27853@wotan.suse.de>
-User-Agent: Mutt/1.6.0 (2016-04-01)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600039619823069048?=
-X-GMAIL-MSGID: =?utf-8?q?1600098114277905192?=
+X-GMAIL-THRID: =?utf-8?q?1598946836077947117?=
+X-GMAIL-MSGID: =?utf-8?q?1600039619497041853?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 10, 2018 at 03:33:55PM +0000, Luis R. Rodriguez wrote:
-> On Thu, May 10, 2018 at 09:45:56AM +0200, Geert Uytterhoeven wrote:
-> > Hi Luis,
-> > 
-> > On Thu, May 10, 2018 at 3:44 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> > > Some architectures just don't have PAGE_KERNEL_EXEC. The mm/nommu.c
-> > > and mm/vmalloc.c code have been using PAGE_KERNEL as a fallback for years.
-> > > Move this fallback to asm-generic.
-> > >
-> > > Architectures which do not define PAGE_KERNEL_EXEC yet:
-> > >
-> > >   o alpha
-> > >   o mips
-> > >   o openrisc
-> > >   o sparc64
-> > 
-> > The above list seems to be far from complete?
-> 
-> I'll look again. If you know of others lemme know.
+Some architectures do not define certain PAGE_KERNEL_* flags, this is
+either because:
 
-You know, better just ignore documenting these. I'll respin without that.
+a) The way to implement some these flags is *not yet ported*, or
+b) The architecture *has no way* to describe them
 
-  Luis
+Over time we have accumulated a few PAGE_KERNEL_* fallback work arounds for
+architectures in the kernel which do not define them using *relatively safe*
+equivalents. Move these scattered fallback hacks into asm-generic and
+document which architectures needs further evaluation for which
+PAGE_KERNEL_* flag.
+
+We start off with PAGE_KERNEL_RO using PAGE_KERNEL as a fallback. This
+has been in place on the firmware loader for years. Move the fallback
+into the respective asm-generic header.
+
+Architectures which don't define this yet:
+
+  o alpha
+  o ia64
+  o m68k
+  o mips
+  o sparc64
+  o sparc
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+---
+ drivers/base/firmware_loader/fallback.c |  5 -----
+ include/asm-generic/pgtable.h           | 24 ++++++++++++++++++++++++
+ 2 files changed, 24 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+index 358354148dec..36f016b753e0 100644
+--- a/drivers/base/firmware_loader/fallback.c
++++ b/drivers/base/firmware_loader/fallback.c
+@@ -219,11 +219,6 @@ static ssize_t firmware_loading_show(struct device *dev,
+ 	return sprintf(buf, "%d\n", loading);
+ }
+ 
+-/* Some architectures don't have PAGE_KERNEL_RO */
+-#ifndef PAGE_KERNEL_RO
+-#define PAGE_KERNEL_RO PAGE_KERNEL
+-#endif
+-
+ /* one pages buffer should be mapped/unmapped only once */
+ static int map_fw_priv_pages(struct fw_priv *fw_priv)
+ {
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index f59639afaa39..890fc54f4713 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -1083,6 +1083,30 @@ int phys_mem_access_prot_allowed(struct file *file, unsigned long pfn,
+ static inline void init_espfix_bsp(void) { }
+ #endif
+ 
++/*
++ * Architecture PAGE_KERNEL_* fallbacks
++ *
++ * Some architectures don't define certain PAGE_KERNEL_* flags. This is either
++ * because they really don't support them, or the port needs to be updated to
++ * reflect the required functionality. Below are a set of relatively safe
++ * fallbacks, as best effort, which we can count on in lieu of the architectures
++ * not defining them on their own yet.
++ */
++
++/*
++ * Current architectures known to not define PAGE_KERNEL_RO:
++ *
++ *  o alpha
++ *  o ia64
++ *  o m68k
++ *  o mips
++ *  o sparc64
++ *  o sparc
++ */
++#ifndef PAGE_KERNEL_RO
++# define PAGE_KERNEL_RO PAGE_KERNEL
++#endif
++
+ #endif /* !__ASSEMBLY__ */
+ 
+ #ifndef io_remap_pfn_range
+-- 
+2.17.0
