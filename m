@@ -1,53 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965905AbeEJOWH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 10:22:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45140 "EHLO mail.kernel.org"
+        id S965931AbeEJOWw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 10:22:52 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:50242 "EHLO gum.cmpxchg.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965379AbeEJOWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 10:22:06 -0400
-Date: Thu, 10 May 2018 10:22:03 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Fengguang Wu <fengguang.wu@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: printk feature for syzbot?
-Message-ID: <20180510102203.520e303d@gandalf.local.home>
-In-Reply-To: <20180510121122.GA29136@jagdpanzerIV>
-References: <201804232233.CIC65675.OJSOMFQOFFHVtL@I-love.SAKURA.ne.jp>
-        <CACT4Y+boyw_Qy=y-iTnsKZrtTgF0Hk3nHN_xtqUdX4etgiYDQw@mail.gmail.com>
-        <20180424013336.GA1376@jagdpanzerIV>
-        <20180426100603.czif6sat75fjsazp@pathway.suse.cz>
-        <20180510042206.GA3426@jagdpanzerIV>
-        <20180510113058.q6d7apmih5sdmlba@pathway.suse.cz>
-        <20180510121122.GA29136@jagdpanzerIV>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S965078AbeEJOWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 10:22:51 -0400
+Date: Thu, 10 May 2018 10:24:42 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
+        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+Subject: Re: [PATCH 6/7] psi: pressure stall information for CPU, memory, and
+ IO
+Message-ID: <20180510142442.GG19348@cmpxchg.org>
+References: <20180507210135.1823-1-hannes@cmpxchg.org>
+ <20180507210135.1823-7-hannes@cmpxchg.org>
+ <20180509102100.GN12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180509102100.GN12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 May 2018 21:11:22 +0900
-Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
-
-> > The patchset was rejected by Linus because it would broke some
-> > userspace tool, e.g. systemd, that depend on the format and semantic
-> > provided by /dev/kmsg[2].  
+On Wed, May 09, 2018 at 12:21:00PM +0200, Peter Zijlstra wrote:
+> On Mon, May 07, 2018 at 05:01:34PM -0400, Johannes Weiner wrote:
+> > +	local_irq_disable();
+> > +	rq = this_rq();
+> > +	raw_spin_lock(&rq->lock);
+> > +	rq_pin_lock(rq, &rf);
 > 
-> Right, but I think I was talking about this email
->  https://lkml.kernel.org/r/20171123124648.s4oigunxjfzvhtqh@pathway.suse.cz
+> Given that churn in sched.h, you seen rq_lock() and friends.
 > 
-> But yeah, it's not really related to the extension of struct printk_log,
-> so I think we should be fine.
+> Either write this like:
+> 
+> 	local_irq_disable();
+> 	rq = this_rq();
+> 	rq_lock(rq, &rf);
+> 
+> Or instroduce "rq = this_rq_lock_irq()", which we could also use in
+> do_sched_yield().
 
-Note, crash is "special". It depends on internals of the kernel to keep
-working as its purpose is to debug kernel crashes. I'm constantly
-breaking it with ftrace. Which reminds me, I need to see if it works
-with the latest kernel, and send patches if it isn't.
+Sounds good, I'll add that.
 
--- Steve
+> > +	update_rq_clock(rq);
+> > +
+> > +	current->flags |= PF_MEMSTALL;
+> > +	psi_task_change(current, rq_clock(rq), 0, TSK_MEMSTALL);
+> > +
+> > +	rq_unpin_lock(rq, &rf);
+> > +	raw_spin_unlock(&rq->lock);
+> > +	local_irq_enable();
+> 
+> That's called rq_unlock_irq().
+
+I'll use that. This code was first written against a kernel that
+didn't have 8a8c69c32778 ("sched/core: Add rq->lock wrappers.") yet ;)
