@@ -1,141 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965991AbeEJO7x (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 10:59:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59992 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965215AbeEJO7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 10:59:51 -0400
-Date: Thu, 10 May 2018 10:59:46 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: Stephen Bates <sbates@raithlin.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-Message-ID: <20180510145946.GB3652@redhat.com>
-References: <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
- <20180508205005.GC15608@redhat.com>
- <7FFB9603-DF9F-4441-82E9-46037CB6C0DE@raithlin.com>
- <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
- <1775CC56-4651-422F-953A-18E024D3717C@raithlin.com>
- <20180509160722.GB4140@redhat.com>
- <366A8132-B88A-40F7-BDE3-DA542E45FC0C@raithlin.com>
- <20180509174952.GC4140@redhat.com>
- <405531AE-8315-4A4F-9B0C-8DBE49BFCAB4@raithlin.com>
- <73b6a454-bf84-1640-0b5e-137d03c0ad8c@amd.com>
+        id S966071AbeEJPCp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 11:02:45 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:34491 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965404AbeEJPCo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 11:02:44 -0400
+X-Google-Smtp-Source: AB8JxZqhTRp+XqRcM7nzmQoeTpQ7LiNpjGZrqAh83www385IFjw5/8H3idF6mIzmHTk+YaJZpxSgkA==
+Date: Thu, 10 May 2018 20:34:48 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: linux@armlinux.org.uk, airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org
+Subject: [PATCH v2] gpu: drm: armada: Adding new typedef vm_fault_t
+Message-ID: <20180510150448.GA26306@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <73b6a454-bf84-1640-0b5e-137d03c0ad8c@amd.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 04:29:44PM +0200, Christian König wrote:
-> Am 10.05.2018 um 16:20 schrieb Stephen Bates:
-> > Hi Jerome
-> > 
-> > > As it is tie to PASID this is done using IOMMU so looks for caller
-> > > of amd_iommu_bind_pasid() or intel_svm_bind_mm() in GPU the existing
-> > >   user is the AMD GPU driver see:
-> > Ah thanks. This cleared things up for me. A quick search shows there are still no users of intel_svm_bind_mm() but I see the AMD version used in that GPU driver.
-> 
-> Just FYI: There is also another effort ongoing to give both the AMD, Intel
-> as well as ARM IOMMUs a common interface so that drivers can use whatever
-> the platform offers fro SVM support.
-> 
-> > One thing I could not grok from the code how the GPU driver indicates which DMA events require ATS translations and which do not. I am assuming the driver implements someway of indicating that and its not just a global ON or OFF for all DMAs? The reason I ask is that I looking at if NVMe was to support ATS what would need to be added in the NVMe spec above and beyond what we have in PCI ATS to support efficient use of ATS (for example would we need a flag in the submission queue entries to indicate a particular IO's SGL/PRP should undergo ATS).
-> 
-> Oh, well that is complicated at best.
-> 
-> On very old hardware it wasn't a window, but instead you had to use special
-> commands in your shader which indicated that you want to use an ATS
-> transaction instead of a normal PCIe transaction for your read/write/atomic.
-> 
-> As Jerome explained on most hardware we have a window inside the internal
-> GPU address space which when accessed issues a ATS transaction with a
-> configurable PASID.
-> 
-> But on very newer hardware that window became a bit in the GPUVM page
-> tables, so in theory we now can control it on a 4K granularity basis for the
-> internal 48bit GPU address space.
-> 
+Use new return type vm_fault_t for fault handler in
+struct vm_operations_struct. For now, this is just
+documenting that the function returns a VM_FAULT
+value rather than an errno. Once all instances are
+converted, vm_fault_t will become a distinct type.
 
-To complete this a 50 lines primer on GPU:
+commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 
-GPUVA - GPU virtual address
-GPUPA - GPU physical address
+Previously vm_insert_pfn() returns err which driver
+mapped into VM_FAULT_* type. The new function
+vmf_insert_pfn() will replace this inefficiency by
+returning VM_FAULT_* type.
 
-GPU run programs very much like CPU program expect a program will have
-many thousands of threads running concurrently. There is a hierarchy of
-groups for a given program ie threads are grouped together, the lowest
-hierarchy level have a group size in <= 64 threads on most GPUs.
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+v2: Updated the change log
 
-Those programs (call shader for graphic program think OpenGL, Vulkan
-or compute for GPGPU think OpenCL CUDA) are submited by the userspace
-against a given address space. In the "old" days (couple years back
-when dinausor were still roaming the earth) this address space was
-specific to the GPU and each user space program could create multiple
-GPU address space. All the memory operation done by the program was
-against this address space. Hence all PCIE transactions are spawn from
-a program + address space.
+ drivers/gpu/drm/armada/armada_gem.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-GPU use page table + window aperture (the window aperture is going away
-so you can focus on page table). To translate GPU virtual address into
-a physical address. The physical address can point to GPU local memory
-or to system memory or to another PCIE device memory (ie some PCIE BAR).
+diff --git a/drivers/gpu/drm/armada/armada_gem.c b/drivers/gpu/drm/armada/armada_gem.c
+index a97f509..81a55b7 100644
+--- a/drivers/gpu/drm/armada/armada_gem.c
++++ b/drivers/gpu/drm/armada/armada_gem.c
+@@ -13,25 +13,14 @@
+ #include <drm/armada_drm.h>
+ #include "armada_ioctlP.h"
 
-So all PCIE transaction are spawn through this process of GPUVA to GPUPA
-then GPUPA is handled by the GPU mmu unit that either spawn a PCIE
-transaction for non local GPUPA or access local memory otherwise.
+-static int armada_gem_vm_fault(struct vm_fault *vmf)
++static vm_fault_t armada_gem_vm_fault(struct vm_fault *vmf)
+ {
+ 	struct drm_gem_object *gobj = vmf->vma->vm_private_data;
+ 	struct armada_gem_object *obj = drm_to_armada_gem(gobj);
+ 	unsigned long pfn = obj->phys_addr >> PAGE_SHIFT;
+-	int ret;
 
+ 	pfn += (vmf->address - vmf->vma->vm_start) >> PAGE_SHIFT;
+-	ret = vm_insert_pfn(vmf->vma, vmf->address, pfn);
+-
+-	switch (ret) {
+-	case 0:
+-	case -EBUSY:
+-		return VM_FAULT_NOPAGE;
+-	case -ENOMEM:
+-		return VM_FAULT_OOM;
+-	default:
+-		return VM_FAULT_SIGBUS;
+-	}
++	return vmf_insert_pfn(vmf->vma, vmf->address, pfn);
+ }
 
-So per say the kernel driver does not configure which transaction is
-using ATS or peer to peer. Userspace program create a GPU virtual address
-space and bind object into it. This object can be system memory or some
-other PCIE device memory in which case we would to do a peer to peer.
-
-
-So you won't find any logic in the kernel. What you find is creating
-virtual address space and binding object.
-
-
-Above i talk about the old days, nowadays we want the GPU virtual address
-space to be exactly the same as the CPU virtual address space as the
-process which initiate the GPU program is using. This is where we use the
-PASID and ATS. So here userspace create a special "GPU context" that says
-that the GPU virtual address space will be the same as the program that
-create the GPU context. A process ID is then allocated and the mm_struct
-is bind to this process ID in the IOMMU driver. Then all program executed
-on the GPU use the process ID to identify the address space against which
-they are running.
-
-
-All of the above i did not talk about DMA engine which are on the "side"
-of the GPU to copy memory around. GPU have multiple DMA engines with
-different capabilities, some of those DMA engine use the same GPU address
-space as describe above, other use directly GPUPA.
-
-
-Hopes this helps understanding the big picture. I over simplify thing and
-devils is in the details.
-
-Cheers,
-Jérôme
+ const struct vm_operations_struct armada_gem_vm_ops = {
+--
+1.9.1
