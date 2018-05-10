@@ -1,64 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751969AbeEJTFw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 15:05:52 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:34342 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751457AbeEJTFu (ORCPT
+        id S1752036AbeEJTHE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 15:07:04 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:17517 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751207AbeEJTHD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 15:05:50 -0400
-X-Google-Smtp-Source: AB8JxZoHlFObDR3hNu5Ncftdib+z1A2jKK9HGToMJoKReq8o0UP8LjVrP/FPkt6ueN0JmB1j6AxmK69n5lLrfi8RjCk=
+        Thu, 10 May 2018 15:07:03 -0400
+Subject: Re: [PATCH v5 1/2] dt: bindings: lm3601x: Introduce the lm3601x
+ driver
+To: Pavel Machek <pavel@ucw.cz>
+CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <jacek.anaszewski@gmail.com>, <afd@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>
+References: <20180510174717.26540-1-dmurphy@ti.com>
+ <20180510185401.GB12846@amd>
+From: Dan Murphy <dmurphy@ti.com>
+Message-ID: <80e7346f-e8cd-79d2-6d4e-d638c2be01eb@ti.com>
+Date: Thu, 10 May 2018 14:06:48 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <28df5659605d7b2ace94deca3b831b462183303f.1525964381.git.joe@perches.com>
-References: <cover.1525964381.git.joe@perches.com> <28df5659605d7b2ace94deca3b831b462183303f.1525964381.git.joe@perches.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 10 May 2018 12:05:48 -0700
-X-Google-Sender-Auth: JTsnxZ0dTtt1Y38eAMoe5qHfkrA
-Message-ID: <CAGXu5jLk9N9w=CPzw-Gvr3tOOLS8RjwTs-YX=rmbvfQz7EA4dg@mail.gmail.com>
-Subject: Re: [PATCH 01/18] kernel: Use pr_fmt
-To: Joe Perches <joe@perches.com>
-Cc: Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>, Jessica Yu <jeyu@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>, Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Audit <linux-audit@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180510185401.GB12846@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 8:45 AM, Joe Perches <joe@perches.com> wrote:
-> Sometime in the future, it would be useful to convert pr_fmt from a
-> default simple define to use a default prefix with KBUILD_MODNAME.
->
-> There are files in kernel/ that use pr_<level>, some with an embedded
-> prefix, that also do not have a specific pr_fmt define.
->
-> Add pr_fmt for those files.
->
-> There are some differences in output as some messages are now prefixed
-> with their KBUILD_MODNAME.
->
-> Miscellanea:
->
-> o Align multiline statements to open parenthesis
-> o Wrap and realign arguments to 80 columns where sensible
-> o Coalesce formats
->
-> Signed-off-by: Joe Perches <joe@perches.com>
+Pavel
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+On 05/10/2018 01:54 PM, Pavel Machek wrote:
+> Hi!
+> 
+>> Introduce the device tree bindings for the lm3601x
+>> family of LED torch, flash and IR drivers.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> 
+> Better, thanks.
+>> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+>> @@ -0,0 +1,50 @@
+>> +* Texas Instruments - lm3601x Single-LED Flash Driver
+> 
+> Ok, so is it single-LED driver, or can it driver ir & white LEDs at
+> the same time?
 
--Kees
+It is a single LED driver.  It can drive a Torch white LED or IR LED indefinitely or if the driver
+is programmed to strobe mode the driver will drive the configured LED for the flash timeout specified.
+
+Basically a flash and a flash light. IR or White LED.
+
+
+> 
+>> +Example:
+>> +led-controller@64 {
+>> +	compatible = "ti,lm36010";
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	reg = <0x64>;
+>> +
+>> +	led@0 {
+>> +		reg = <0>;
+>> +		label = "white:torch";
+>> +		led-max-microamp = <10000>;
+>> +	};
+>> +
+>> +	led@1 {
+>> +		reg = <1>;
+>> +		label = "white:flash";
+>> +		flash-max-microamp = <10000>;
+>> +		flash-max-timeout-us = <800>;
+>> +	};
+> 
+> Is this realistic config? I'd expect flash to use more power than
+> torch, and would expect longer timeout than 0.8msec.
+
+Timeout in the spreadsheet is ms I will update this example and code
+Current in the spreadsheet is mA I will update this example and code
+
+> 
+> Also.. if this is physically one white LED, it should not be
+> spread over reg = <0> and reg = <1>...
+
+If the torch LED and strobe LED are the same LED how do I expose them both to the user.
+It is up to consumer to configure the required interfaces they want to expose to the filesystem.
+
+Maybe they don't want the strobe feature and just want LED on/off and switch between IR and White.
+
+The IR is driven via a different output pin.
+
+Dan
+
+> 
+> Best regards,
+> 									Pavel
+> 
+
 
 -- 
-Kees Cook
-Pixel Security
+------------------
+Dan Murphy
