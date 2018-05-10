@@ -1,51 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965704AbeEJO7E (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 10:59:04 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50328 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965326AbeEJO7D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 10:59:03 -0400
-From: Colin King <colin.king@canonical.com>
-To: Jun Nie <jun.nie@linaro.org>, Baoyou Xie <baoyou.xie@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-arm-kernel@lists.infradead.org,
-        alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: zx-i2s: fix spelling mistake: "timeing" -> "timing"
-Date: Thu, 10 May 2018 15:58:38 +0100
-Message-Id: <20180510145838.3907-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S965991AbeEJO7x (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 10:59:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59992 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965215AbeEJO7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 10:59:51 -0400
+Date: Thu, 10 May 2018 10:59:46 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Stephen Bates <sbates@raithlin.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+Message-ID: <20180510145946.GB3652@redhat.com>
+References: <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
+ <20180508205005.GC15608@redhat.com>
+ <7FFB9603-DF9F-4441-82E9-46037CB6C0DE@raithlin.com>
+ <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
+ <1775CC56-4651-422F-953A-18E024D3717C@raithlin.com>
+ <20180509160722.GB4140@redhat.com>
+ <366A8132-B88A-40F7-BDE3-DA542E45FC0C@raithlin.com>
+ <20180509174952.GC4140@redhat.com>
+ <405531AE-8315-4A4F-9B0C-8DBE49BFCAB4@raithlin.com>
+ <73b6a454-bf84-1640-0b5e-137d03c0ad8c@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <73b6a454-bf84-1640-0b5e-137d03c0ad8c@amd.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, May 10, 2018 at 04:29:44PM +0200, Christian König wrote:
+> Am 10.05.2018 um 16:20 schrieb Stephen Bates:
+> > Hi Jerome
+> > 
+> > > As it is tie to PASID this is done using IOMMU so looks for caller
+> > > of amd_iommu_bind_pasid() or intel_svm_bind_mm() in GPU the existing
+> > >   user is the AMD GPU driver see:
+> > Ah thanks. This cleared things up for me. A quick search shows there are still no users of intel_svm_bind_mm() but I see the AMD version used in that GPU driver.
+> 
+> Just FYI: There is also another effort ongoing to give both the AMD, Intel
+> as well as ARM IOMMUs a common interface so that drivers can use whatever
+> the platform offers fro SVM support.
+> 
+> > One thing I could not grok from the code how the GPU driver indicates which DMA events require ATS translations and which do not. I am assuming the driver implements someway of indicating that and its not just a global ON or OFF for all DMAs? The reason I ask is that I looking at if NVMe was to support ATS what would need to be added in the NVMe spec above and beyond what we have in PCI ATS to support efficient use of ATS (for example would we need a flag in the submission queue entries to indicate a particular IO's SGL/PRP should undergo ATS).
+> 
+> Oh, well that is complicated at best.
+> 
+> On very old hardware it wasn't a window, but instead you had to use special
+> commands in your shader which indicated that you want to use an ATS
+> transaction instead of a normal PCIe transaction for your read/write/atomic.
+> 
+> As Jerome explained on most hardware we have a window inside the internal
+> GPU address space which when accessed issues a ATS transaction with a
+> configurable PASID.
+> 
+> But on very newer hardware that window became a bit in the GPUVM page
+> tables, so in theory we now can control it on a 4K granularity basis for the
+> internal 48bit GPU address space.
+> 
 
-Trivial fix to spelling mistake in dev_err message text
+To complete this a 50 lines primer on GPU:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/zte/zx-i2s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+GPUVA - GPU virtual address
+GPUPA - GPU physical address
 
-diff --git a/sound/soc/zte/zx-i2s.c b/sound/soc/zte/zx-i2s.c
-index 9a0565937d1f..b6b056c607fa 100644
---- a/sound/soc/zte/zx-i2s.c
-+++ b/sound/soc/zte/zx-i2s.c
-@@ -197,7 +197,7 @@ static int zx_i2s_set_fmt(struct snd_soc_dai *cpu_dai, unsigned int fmt)
- 		val |= (ZX_I2S_TIMING_I2S | ZX_I2S_TIMING_LSB_JUSTIF);
- 		break;
- 	default:
--		dev_err(cpu_dai->dev, "Unknown i2s timeing\n");
-+		dev_err(cpu_dai->dev, "Unknown i2s timing\n");
- 		return -EINVAL;
- 	}
- 
--- 
-2.17.0
+GPU run programs very much like CPU program expect a program will have
+many thousands of threads running concurrently. There is a hierarchy of
+groups for a given program ie threads are grouped together, the lowest
+hierarchy level have a group size in <= 64 threads on most GPUs.
+
+Those programs (call shader for graphic program think OpenGL, Vulkan
+or compute for GPGPU think OpenCL CUDA) are submited by the userspace
+against a given address space. In the "old" days (couple years back
+when dinausor were still roaming the earth) this address space was
+specific to the GPU and each user space program could create multiple
+GPU address space. All the memory operation done by the program was
+against this address space. Hence all PCIE transactions are spawn from
+a program + address space.
+
+GPU use page table + window aperture (the window aperture is going away
+so you can focus on page table). To translate GPU virtual address into
+a physical address. The physical address can point to GPU local memory
+or to system memory or to another PCIE device memory (ie some PCIE BAR).
+
+So all PCIE transaction are spawn through this process of GPUVA to GPUPA
+then GPUPA is handled by the GPU mmu unit that either spawn a PCIE
+transaction for non local GPUPA or access local memory otherwise.
+
+
+So per say the kernel driver does not configure which transaction is
+using ATS or peer to peer. Userspace program create a GPU virtual address
+space and bind object into it. This object can be system memory or some
+other PCIE device memory in which case we would to do a peer to peer.
+
+
+So you won't find any logic in the kernel. What you find is creating
+virtual address space and binding object.
+
+
+Above i talk about the old days, nowadays we want the GPU virtual address
+space to be exactly the same as the CPU virtual address space as the
+process which initiate the GPU program is using. This is where we use the
+PASID and ATS. So here userspace create a special "GPU context" that says
+that the GPU virtual address space will be the same as the program that
+create the GPU context. A process ID is then allocated and the mm_struct
+is bind to this process ID in the IOMMU driver. Then all program executed
+on the GPU use the process ID to identify the address space against which
+they are running.
+
+
+All of the above i did not talk about DMA engine which are on the "side"
+of the GPU to copy memory around. GPU have multiple DMA engines with
+different capabilities, some of those DMA engine use the same GPU address
+space as describe above, other use directly GPUPA.
+
+
+Hopes this helps understanding the big picture. I over simplify thing and
+devils is in the details.
+
+Cheers,
+Jérôme
