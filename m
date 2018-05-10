@@ -1,38 +1,38 @@
 Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2554686-1525773964-2-12379272222456056510
+X-Cyrus-Session-Id: sloti22d1t05-2030069-1525951280-2-4145226216969378083
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, T_TVD_MIME_EPI 0.01, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='cz',
   MailFrom='org'
-X-Spam-charsets: from='UTF-8', plain='UTF-8'
+X-Spam-charsets: to='iso-8859-1', plain='us-ascii'
+X-Attached: signature.asc
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525773963; b=C/Z/0gnE2z3OxGil1Vh+pKPIEGDNdFLrnZ32AadjmLmOUShQHg
-    2AMjHcVofiK4r2wgygUvZEd99b1+xAG6X8VXASV+LuhWqauPRRDwV6jbl/jn43mY
-    YE0QD2Cao44g1i3k/o3SKrgOP2X1Q2ClwR1lpPjvjFgI1a1cq3wzKuMAqZVcXpun
-    N0DUkKCbZ4w8fMiFftJ5bzlVqOm0wzRf37sBCzIrtZUH7qIF+qglpfhTb0BCtqUx
-    6zA6gz2g8osdQ0FkjXF28RsVKFqlfNJrSJtN9duQxcuDjFYHw2BaPrKGFJ1LpRD7
-    gJ40EZQwTFiKWKo4EMJaJR/DVfLpw3zzc3pw==
+    1525951280; b=V79mJ5FWx+8zbsFK/NQbppSJqh3lsERfI6JkZ6+d0jiabGpAXX
+    V6tIWZ5EOp2w0VcPDAt1nkZzbMaawcL0AFf1Zq9/NPXyNUNAeNZ4Cv5MkJuE2p7H
+    iETHdl1I+grBRj35ND4qI/qsbMTRSmJH6kqvAEgiPDUiTYrNknA2/o6TBOqfxTzR
+    Wgm2h1vNLWOcm+ffOgc7lEOABv5U0oeeEYE/InzFp0GQC1cznyYn6vZ6daCoHrxb
+    EwVfIIVaBYyj8Lju5u7w5ht31g/GSWSyQ4wmNWkhIlIVhdNaZHEj2CtYEv8JA1rM
+    Jq5qf2AVMDVt7i8z83rGa3elSUOHMGK0xxgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1525773963;
-    bh=ntlyQ1srHKUoR+p07ywtPVhYc3zB6Ldv2t9XiuAiR3I=; b=WmaSmtxiXx8K
-    bRV2xWOIrJfOZwhHpNhYfN3Jr+na56RlLabqbcN7vCjlEN+cdbbR2efZ2Mh6xzNJ
-    ZrHPcM/lE9ca9vHWTk7ExvtvI7LR0lGl+s6zxTXtp2M3jEx76c914llo3ytRo/pX
-    5q0KQELYVybjGhmAOpLV6xnnHIle14iqLN2a6+mRKMunOF6O/lbbk4mK9apNQ3of
-    kfsSXc9g4e64Q1CzqSLP7WCZMWuQQqeVygd5ZrLd7/GOgfbOTe6ZdoGGM98SR8+e
-    xbx67KPxpQVm4JgcVPStHxSuA8Rwb82Jzr4rRRJRIhMNO9TJXAfcsIUK2jWox9mt
-    cNciX/Eh4g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1525951280; bh=N/pymTm4QE/HR7reM72N5dE0pvFDFH
+    9y9ME07shiXDU=; b=EiR4RqS5C6GeqLdY75iXW0YZk0poNtz63Yi/1jfv8ObHkk
+    O/tmt+ttxsv4sPnH79LREK/8FO2jsJWKvmv9VEsxTw10aFIRi6/LTweD9L0x3hx5
+    vxfvMZVhsrboUePtmEEeMck6xn4rPvi5wBFDCG04qP/4BM2bRZ7qAsjeSuFvcVEr
+    9xyD2yJ3VFwtpMW+lASCBrN9kdq1vAdEZ3VY+ayVcLduJbXaTk5Hfk/RkXJDIbyL
+    4FCwlW/fm1p6SesLtbhA86uqZBECE+Jij3bXVRFTbcvRwiOA4852McL39x/ObksY
+    8e/ATZvSW8shDaFbi9V0zOqmyhyQk4SSoJf8EVKQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=pengutronix.de;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -41,13 +41,12 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=pengutronix.de header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+    header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-51 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=pengutronix.de;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -56,280 +55,123 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=pengutronix.de header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-51 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIYf4cD3gY2Cy+FuYDciHXjbp7tGJ7MD7T1YrIQo/k9n5DRtQsRYfPhM7tcpVqhYm7ZGvb/Cd8Le/3lg9gk80tuR2hPD3YId0HC2GFSG2F4KXDzaGLry
-    hBKE3MBWwhg7D8NC4KN+z/b71yV9NA1wqICNGsOltvbwzm0szvV5RE2wGNOZHkweOQxKWw2K0ynKFoNlh5xEhmn4F7lJC3mPGdkoBHsskVKpnleA5GGVaLqs
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
-    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=V8_BtoOIRrhnP8fO0FUA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfEe3xx5xfZhDZkTZRJiWM2Pg9KZr/9OfYfMJzxv2j9hJtuUopFbb1mppeQElCFqNAXQsah5g4oYq5xGS58izkicVtnNfy2bEqGfa71g6WxH67BxI8yJg
+    17YkDX+jUM6myLiGqOzyPlGlv94V23ieTmOKck61FmhPk0m+k1JTzOvsvF7DqlLvs2LXqMPQIqkZ/UwrKef0R82AMcD8dyrVmaZCGSzNK1ioHr6KVuazT9R7
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=M8rcC2nyAAAA:8
+    a=RXnXJx7MAAAA:8 a=-xF5dSSdrjwzh1U1ka0A:9 a=e1THz3Rk8z4FPtRH:21
+    a=9MXj8BRjqOOqMjAq:21 a=CjuIK1q_8ugA:10 a=0dxXHNIcbWwA:10 a=gA6IeH5FQcgA:10
+    a=NWVoK91CQyQA:10 a=EZ09DwmfpVQ15xUTO9gA:9 a=ONNS8QRKHyMA:10 a=VwQbUJbxAAAA:8
+    a=_3iAN5dmJPxjh_Nw_akA:9 a=x8gzFH9gYPwA:10 a=K9tzwgKBnWaK51F8Cre1:22
+    a=U_UV0sFCMgXoaKVbI-EZ:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932275AbeEHKGA (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 8 May 2018 06:06:00 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54651 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754925AbeEHKFz (ORCPT
+        id S935318AbeEJLVF (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 10 May 2018 07:21:05 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57975 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934002AbeEJLVE (ORCPT
         <rfc822;linux-serial@vger.kernel.org>);
-        Tue, 8 May 2018 06:05:55 -0400
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+        Thu, 10 May 2018 07:21:04 -0400
+Date: Thu, 10 May 2018 13:21:01 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
         <u.kleine-koenig@pengutronix.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc: linux-serial@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-leds@vger.kernel.org,
         linux-can@vger.kernel.org, kernel@pengutronix.de,
         One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 1/3] leds: triggers: provide led_trigger_register_format()
-Date: Tue,  8 May 2018 12:05:41 +0200
-Message-Id: <20180508100543.12559-2-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180508100543.12559-1-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v3 1/3] leds: triggers: provide
+ led_trigger_register_format()
+Message-ID: <20180510112101.GD6977@amd>
 References: <20180508100543.12559-1-u.kleine-koenig@pengutronix.de>
+ <20180508100543.12559-2-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-serial@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="3Pql8miugIZX0722"
+Content-Disposition: inline
+In-Reply-To: <20180508100543.12559-2-u.kleine-koenig@pengutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-serial-owner@vger.kernel.org
 X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This allows one to simplify drivers that provide a trigger with a
-non-constant name (e.g. one trigger per device with the trigger name
-depending on the device's name).
 
-Internally the memory the name member of struct led_trigger points to
-now always allocated dynamically instead of just taken from the caller.
+--3Pql8miugIZX0722
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The function led_trigger_rename_static() must be changed accordingly and
-was renamed to led_trigger_rename() for consistency, with the only user
-adapted.
+Hi!
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/leds/led-triggers.c | 84 +++++++++++++++++++++++++++----------
- drivers/net/can/led.c       |  6 +--
- include/linux/leds.h        | 30 +++++++------
- 3 files changed, 81 insertions(+), 39 deletions(-)
+> This allows one to simplify drivers that provide a trigger with a
+> non-constant name (e.g. one trigger per device with the trigger name
+> depending on the device's name).
+>=20
+> Internally the memory the name member of struct led_trigger points to
+> now always allocated dynamically instead of just taken from the caller.
+>=20
+> The function led_trigger_rename_static() must be changed accordingly and
+> was renamed to led_trigger_rename() for consistency, with the only user
+> adapted.
 
-diff --git a/drivers/leds/led-triggers.c b/drivers/leds/led-triggers.c
-index 431123b048a2..5d8bb504b07b 100644
---- a/drivers/leds/led-triggers.c
-+++ b/drivers/leds/led-triggers.c
-@@ -175,18 +175,34 @@ void led_trigger_set_default(struct led_classdev *led_cdev)
- }
- EXPORT_SYMBOL_GPL(led_trigger_set_default);
- 
--void led_trigger_rename_static(const char *name, struct led_trigger *trig)
-+int led_trigger_rename(struct led_trigger *trig, const char *fmt, ...)
- {
--	/* new name must be on a temporary string to prevent races */
--	BUG_ON(name == trig->name);
-+	const char *prevname;
-+	const char *newname;
-+	va_list args;
-+
-+	if (!trig)
-+		return 0;
-+
-+	va_start(args, fmt);
-+	newname = kvasprintf_const(GFP_KERNEL, fmt, args);
-+	va_end(args);
-+
-+	if (!newname) {
-+		pr_err("Failed to allocate new name for trigger %s\n", trig->name);
-+		return -ENOMEM;
-+	}
- 
- 	down_write(&triggers_list_lock);
--	/* this assumes that trig->name was originaly allocated to
--	 * non constant storage */
--	strcpy((char *)trig->name, name);
-+	prevname = trig->name;
-+	trig->name = newname;
- 	up_write(&triggers_list_lock);
-+
-+	kfree_const(prevname);
-+
-+	return 0;
- }
--EXPORT_SYMBOL_GPL(led_trigger_rename_static);
-+EXPORT_SYMBOL_GPL(led_trigger_rename);
- 
- /* LED Trigger Interface */
- 
-@@ -333,34 +349,56 @@ void led_trigger_blink_oneshot(struct led_trigger *trig,
- }
- EXPORT_SYMBOL_GPL(led_trigger_blink_oneshot);
- 
--void led_trigger_register_simple(const char *name, struct led_trigger **tp)
-+int led_trigger_register_format(struct led_trigger **tp, const char *fmt, ...)
- {
-+	va_list args;
- 	struct led_trigger *trig;
--	int err;
-+	int err = -ENOMEM;
-+	const char *name;
-+
-+	va_start(args, fmt);
-+	name = kvasprintf_const(GFP_KERNEL, fmt, args);
-+	va_end(args);
- 
- 	trig = kzalloc(sizeof(struct led_trigger), GFP_KERNEL);
- 
--	if (trig) {
--		trig->name = name;
--		err = led_trigger_register(trig);
--		if (err < 0) {
--			kfree(trig);
--			trig = NULL;
--			pr_warn("LED trigger %s failed to register (%d)\n",
--				name, err);
--		}
--	} else {
--		pr_warn("LED trigger %s failed to register (no memory)\n",
--			name);
--	}
-+	if (!name || !trig)
-+		goto err;
-+
-+	trig->name = name;
-+
-+	err = led_trigger_register(trig);
-+	if (err < 0)
-+		goto err;
-+
- 	*tp = trig;
-+
-+	return 0;
-+
-+err:
-+	kfree(trig);
-+	kfree_const(name);
-+
-+	*tp = NULL;
-+
-+	return err;
-+}
-+EXPORT_SYMBOL_GPL(led_trigger_register_format);
-+
-+void led_trigger_register_simple(const char *name, struct led_trigger **tp)
-+{
-+	int ret = led_trigger_register_format(tp, "%s", name);
-+	if (ret < 0)
-+		pr_warn("LED trigger %s failed to register (%d)\n", name, ret);
- }
- EXPORT_SYMBOL_GPL(led_trigger_register_simple);
- 
- void led_trigger_unregister_simple(struct led_trigger *trig)
- {
--	if (trig)
-+	if (trig) {
- 		led_trigger_unregister(trig);
-+		kfree_const(trig->name);
-+	}
- 	kfree(trig);
- }
- EXPORT_SYMBOL_GPL(led_trigger_unregister_simple);
-diff --git a/drivers/net/can/led.c b/drivers/net/can/led.c
-index c1b667675fa1..2d7d1b0d20f9 100644
---- a/drivers/net/can/led.c
-+++ b/drivers/net/can/led.c
-@@ -115,13 +115,13 @@ static int can_led_notifier(struct notifier_block *nb, unsigned long msg,
- 
- 	if (msg == NETDEV_CHANGENAME) {
- 		snprintf(name, sizeof(name), "%s-tx", netdev->name);
--		led_trigger_rename_static(name, priv->tx_led_trig);
-+		led_trigger_rename(priv->tx_led_trig, name);
- 
- 		snprintf(name, sizeof(name), "%s-rx", netdev->name);
--		led_trigger_rename_static(name, priv->rx_led_trig);
-+		led_trigger_rename(priv->rx_led_trig, name);
- 
- 		snprintf(name, sizeof(name), "%s-rxtx", netdev->name);
--		led_trigger_rename_static(name, priv->rxtx_led_trig);
-+		led_trigger_rename(priv->rxtx_led_trig, name);
- 	}
- 
- 	return NOTIFY_DONE;
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index b7e82550e655..e706c28bb35b 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -275,6 +275,8 @@ extern void led_trigger_unregister(struct led_trigger *trigger);
- extern int devm_led_trigger_register(struct device *dev,
- 				     struct led_trigger *trigger);
- 
-+extern int led_trigger_register_format(struct led_trigger **trigger,
-+				       const char *fmt, ...);
- extern void led_trigger_register_simple(const char *name,
- 				struct led_trigger **trigger);
- extern void led_trigger_unregister_simple(struct led_trigger *trigger);
-@@ -298,28 +300,25 @@ static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
- }
- 
- /**
-- * led_trigger_rename_static - rename a trigger
-- * @name: the new trigger name
-+ * led_trigger_rename - rename a trigger
-  * @trig: the LED trigger to rename
-+ * @fmt: format string for new name
-  *
-- * Change a LED trigger name by copying the string passed in
-- * name into current trigger name, which MUST be large
-- * enough for the new string.
-- *
-- * Note that name must NOT point to the same string used
-- * during LED registration, as that could lead to races.
-- *
-- * This is meant to be used on triggers with statically
-- * allocated name.
-+ * rebaptize the given trigger.
-  */
--extern void led_trigger_rename_static(const char *name,
--				      struct led_trigger *trig);
-+extern int led_trigger_rename(struct led_trigger *trig, const char *fmt, ...);
- 
- #else
- 
- /* Trigger has no members */
- struct led_trigger {};
- 
-+static inline int led_trigger_register_format(struct led_trigger **trigger,
-+					      const char *fmt, ...)
-+{
-+	return 0;
-+}
-+
- /* Trigger inline empty functions */
- static inline void led_trigger_register_simple(const char *name,
- 					struct led_trigger **trigger) {}
-@@ -342,6 +341,11 @@ static inline void *led_get_trigger_data(struct led_classdev *led_cdev)
- 	return NULL;
- }
- 
-+static inline int led_trigger_rename(struct led_trigger *trig, const char *fmt, ...)
-+{
-+	return 0;
-+}
-+
- #endif /* CONFIG_LEDS_TRIGGERS */
- 
- /* Trigger specific functions */
--- 
-2.17.0
+Well, I'm not sure if we want to have _that_ many trigger. Trigger
+interface is going to become.. "interesting".
 
+We have 4K limit on total number of triggers. We use rather strange
+interface to select trigger.
+
+> @@ -115,13 +115,13 @@ static int can_led_notifier(struct notifier_block *=
+nb, unsigned long msg,
+> =20
+>  	if (msg =3D=3D NETDEV_CHANGENAME) {
+>  		snprintf(name, sizeof(name), "%s-tx", netdev->name);
+> -		led_trigger_rename_static(name, priv->tx_led_trig);
+> +		led_trigger_rename(priv->tx_led_trig, name);
+> =20
+>  		snprintf(name, sizeof(name), "%s-rx", netdev->name);
+> -		led_trigger_rename_static(name, priv->rx_led_trig);
+> +		led_trigger_rename(priv->rx_led_trig, name);
+> =20
+>  		snprintf(name, sizeof(name), "%s-rxtx", netdev->name);
+> -		led_trigger_rename_static(name, priv->rxtx_led_trig);
+> +		led_trigger_rename(priv->rxtx_led_trig, name);
+>  	}
+> =20
+
+I know this is not your fault, but if you have a space or "[]" in
+netdev names, confusing things will happen.
+
+I believe we should have triggers "net-rx, net-tx" and it should have
+parameter "which device it acts on".=20
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--3Pql8miugIZX0722
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlr0Kx0ACgkQMOfwapXb+vLW1QCgnozST91ktpRM+xqluM5IlXl3
+vRIAoJ2T07nh8amp5NEYb4mjacqZSeYx
+=mG9E
+-----END PGP SIGNATURE-----
+
+--3Pql8miugIZX0722--
