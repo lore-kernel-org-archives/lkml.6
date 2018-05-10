@@ -1,63 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966640AbeEJQsh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 12:48:37 -0400
-Received: from muru.com ([72.249.23.125]:41596 "EHLO muru.com"
+        id S966404AbeEJQvK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 12:51:10 -0400
+Received: from ms.lwn.net ([45.79.88.28]:58112 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966345AbeEJQsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 12:48:35 -0400
-Date: Thu, 10 May 2018 09:48:31 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 1/2] serdev: add controller runtime PM support
-Message-ID: <20180510164831.GH98604@atomide.com>
-References: <20180509094419.13470-1-johan@kernel.org>
+        id S965017AbeEJQvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 12:51:08 -0400
+Date: Thu, 10 May 2018 10:51:05 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH 1/2] scripts/kernel-doc: Auto-detect common
+ code-blocks
+Message-ID: <20180510105105.5cb0d54f@lwn.net>
+In-Reply-To: <20180510163456.GC30442@bombadil.infradead.org>
+References: <2ac6e3da22119f714406925139e40f4d835d11a4.1525962971.git.mchehab+samsung@kernel.org>
+        <20180510163456.GC30442@bombadil.infradead.org>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509094419.13470-1-johan@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Johan Hovold <johan@kernel.org> [180509 09:46]:
-> Add support for controller runtime power management to serdev core. This
-> is needed to allow slave drivers to manage the runtime PM state of the
-> underlying serial controller when its driver, in turn, implements more
-> aggressive runtime power management (e.g. using autosuspend).
-> 
-> For some applications, for example, where loss off initial data after a
-> remote-wakeup event is acceptable or where rx is not used at all,
-> aggressive serial controller runtime PM may be used without further
-> involvement of the slave driver. But when this is not the case, the
-> slave driver must be able to indicate when incoming data is expected in
-> order to avoid data loss.
-> 
-> To facilitate the common case, where the serial controller power state
-> is active whenever the port is open (which is the case with just about
-> every serial driver), and where data loss is not acceptable and cannot
-> even be prevented by explicit controller runtime power management, an
-> RPM reference is taken in serdev open and put again at close. This
-> reference can later be balanced by any serdev driver which wants and/or
-> can handle aggressive controller runtime PM.
-> 
-> Note that the .ignore_children flag is set for the serdev controller to
-> allow the underlying hardware to idle when no I/O is expected, regardless
-> of the slave device RPM state.
+On Thu, 10 May 2018 09:34:56 -0700
+Matthew Wilcox <willy@infradead.org> wrote:
 
-If this solution works for GPS then this should also work for modems
-that might produce data. And as long as the serdev consumer driver
-can wake up the UART with pm_runtime_get(&serdev->ctrl->dev) then
-the out of band GPIO wake interrupts will work to. And for TX,
-the serdev consumer driver can toggle the wake GPIO, and then call
-pm_runtime_get(&serdev->ctrl->dev). So yeah, looks nice to me:
+> I think this is a bit fragile.  Why not just search for ':\n'?  Is
+> there ever a case where we want to write:
+> 
+> /**
+>  * foo is a bar:
+>  * wibble
+>  */
+> and have wibble not be a code-block?
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+Yeah, we might want to write something like:
+
+ - Leading off a bulleted list
+
+ 1) or a numbered list
+
+for example.  That's why I was thinking of looking for explicit markers
+for such lists.
+
+It'll take some playing around with to have a hope of getting right,
+methinks.
+
+jon
