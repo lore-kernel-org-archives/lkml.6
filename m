@@ -1,66 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752134AbeEJUWk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 16:22:40 -0400
-Received: from ms.lwn.net ([45.79.88.28]:59174 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751438AbeEJUWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 16:22:38 -0400
-Date: Thu, 10 May 2018 14:22:35 -0600
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/11] Fix some doc build warnings/errors and broken
- links
-Message-ID: <20180510142235.221da447@lwn.net>
-In-Reply-To: <cover.1525870886.git.mchehab+samsung@kernel.org>
-References: <cover.1525870886.git.mchehab+samsung@kernel.org>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1752145AbeEJUYt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 16:24:49 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35286 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751438AbeEJUYr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 16:24:47 -0400
+Date: Thu, 10 May 2018 13:24:36 -0700
+From: Ram Pai <linuxram@us.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: mingo@redhat.com, linuxppc-dev@ozlabs.org, linux-mm@kvack.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org, dave.hansen@intel.com
+Subject: Re: [PATCH 9/8] powerpc/pkeys: Drop private VM_PKEY definitions
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <20180508145948.9492-9-mpe@ellerman.id.au>
+ <20180510135422.6585-1-mpe@ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180510135422.6585-1-mpe@ellerman.id.au>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18051020-0040-0000-0000-0000043852CF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051020-0041-0000-0000-0000263C98A5
+Message-Id: <20180510202435.GB6257@ram.oc3035372033.ibm.com>
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-10_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805100188
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  9 May 2018 10:18:43 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-> Patches 1 to 5 on this series contain the patches that weren't yet
-> applied from the past patch series and touch only at Documentation.
-> There are two changes there:
->   patch 2: fixed the description and added a c/c to cgroup maintainers;
->   patch 4: rewritten according with Louis request, droping several hunks.
+Agree. Was going to send that the moment the other patches
+landed upstream. Glad I dont have to do it :-)
 
-Of these, I've applied 2, 4, and 6.  The networking and crypto folks like
-to apply their own documentation fixes; I assume they'll pick these up.
+Reviewed-by: Ram Pai <linuxram@us.ibm.com>
 
-> Patch 6 rewrites scripts/documentation-file-ref-check on Perl,
-> adding an auto-fix feature.
 
-Applied this one.
 
-> Patches 7 and 8 fix things that would cause troubles for the
-> automatic autocorrection tool.
+On Thu, May 10, 2018 at 11:54:22PM +1000, Michael Ellerman wrote:
+> Now that we've updated the generic headers to support 5 PKEY bits for
+> powerpc we don't need our own #defines in arch code.
+> 
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> ---
+>  arch/powerpc/include/asm/pkeys.h | 15 ---------------
+>  1 file changed, 15 deletions(-)
+> 
+> One additional patch to finish cleaning things up.
+> 
+> I've added this to my branch.
+> 
+> cheers
+> 
+> diff --git a/arch/powerpc/include/asm/pkeys.h b/arch/powerpc/include/asm/pkeys.h
+> index 18ef59a9886d..5ba80cffb505 100644
+> --- a/arch/powerpc/include/asm/pkeys.h
+> +++ b/arch/powerpc/include/asm/pkeys.h
+> @@ -15,21 +15,6 @@ DECLARE_STATIC_KEY_TRUE(pkey_disabled);
+>  extern int pkeys_total; /* total pkeys as per device tree */
+>  extern u32 initial_allocation_mask; /* bits set for reserved keys */
+> 
+> -/*
+> - * Define these here temporarily so we're not dependent on patching linux/mm.h.
+> - * Once it's updated we can drop these.
+> - */
+> -#ifndef VM_PKEY_BIT0
+> -# define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
+> -# define VM_PKEY_BIT0	VM_HIGH_ARCH_0
+> -# define VM_PKEY_BIT1	VM_HIGH_ARCH_1
+> -# define VM_PKEY_BIT2	VM_HIGH_ARCH_2
+> -# define VM_PKEY_BIT3	VM_HIGH_ARCH_3
+> -# define VM_PKEY_BIT4	VM_HIGH_ARCH_4
+> -#elif !defined(VM_PKEY_BIT4)
+> -# define VM_PKEY_BIT4	VM_HIGH_ARCH_4
+> -#endif
+> -
+>  #define ARCH_VM_PKEY_FLAGS (VM_PKEY_BIT0 | VM_PKEY_BIT1 | VM_PKEY_BIT2 | \
+>  			    VM_PKEY_BIT3 | VM_PKEY_BIT4)
+> 
+> -- 
+> 2.14.1
 
-#7 is applied.  #8 doesn't apply, though; I'm not sure which tree you made
-it against?  In any case, I've stopped here for now.
-
-> Patch 9 touches a lot of random places (including MAINTAINERS)
-> that contain broken links and can be auto-fixed. It could be
-> broken into one patch per touched file, but I think that is
-> overkill. 
-
-Let's keep this one (and the ones that follow) aside.  I'm happy to apply
-them, but I think they are best applied as an end-of-merge-window thing.  I
-envision lots of conflicts, and I already have a pile of those to explain
-to Linus this time around.
-
-Sound good?
-
-Thanks,
-
-jon
+-- 
+Ram Pai
