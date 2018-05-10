@@ -1,29 +1,29 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AB8JxZon0MogxqYzAsURm93v/1+ICxNXRc25mZD/ERfcmS0D7td01wEcHYfeRDTCe/qRg6D9m8Bm
-ARC-Seal: i=1; a=rsa-sha256; t=1525982949; cv=none;
+X-Google-Smtp-Source: AB8JxZrGn4LSfqtloVdreaFBJ2Af8bXVjQ+r9hYMb6VeCSnFwtzvU/3DTItZETZfJjrTFM818Jec
+ARC-Seal: i=1; a=rsa-sha256; t=1525982947; cv=none;
         d=google.com; s=arc-20160816;
-        b=QnCHB8pRp/f6TTHi2dNihEn+tH015D8fkgqDh68ZBQv7WI39K82BeRQe+Rq7TDwx+e
-         WOpOtKZTbKwF1Hvwd5Dbbwkv7J/b77/lnpbE7C87IAkcoZfoUNqLYFeMpCf4dSyT4d2d
-         PnqWMaIkjKV3xK2lzC/eTihMSL2Y+Kdek5eoHKb8Fe0H9PKhIxADYiLmYM+lt2DI1A8b
-         +oMCp285KNohkIFIZfIBIwe3H4CZeh9HrvSpWcJgHszkDU+nHe1d4SWo5CruooI9nhtA
-         5eMKDbUsl5wPi2+9XIiDLfoZXKg9nJMUtVJikBC9SxSONXn2wcWw2glX/+wA8lQ2Ze0Z
-         wggg==
+        b=JVa29BqGkKONSREB3MnKUWxn1K+R4UFxLIggEJM/Zy6EqHGlZ11k9H68uTG/YIYcsR
+         3Z1dTWEji3QyCreehTQK6LS1BnrZstUz0/wTc295gNWHHSyOgA6z3zNmdAGmlTfV+P9b
+         8i1uwb7zQIKlRsJ8gtU4dyFft8JsJhYmnviKSp1vwdsVgWLdTc4z7cwXMdrc4xt4Nvfv
+         MzNoj6D08DiYFS1i9h5mDVVmI3FUsIIHzL3CzJmF2OyUTLSYIwzSiRUcgTmikjANzLNQ
+         fWYy+Z6YDPjS5Z9BPboZpuQ7ZRixdYDO7kgBlfZQzFaXbG3dI5htI8d/XoiBQtWZ2AKV
+         352w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=kp5YwzrxErjiNrZ4uqsiVN47Rxb+BufMHyIiyxMpDDE=;
-        b=hOVQ6wkdnabbBP2Z83HFz4DAEXEY8T3mXd/PX7qcts3cEgatvwn+MpKqkFP5L48edg
-         BZ/vzm/MVBTEYRhmPxUyfLlehgxOxZAkMtR2khGIcsI5V156qXDeEduaugjkKHZmNQEK
-         Yr7hibJZb9wXwlPXe1kf8HOCvg+9qbxN/nc5bv2icWRBSFYx4qCBs5YmW1rVIMtz94zn
-         JoQTUoOKPz0ELI/Gc53NLkRPP3ZzX0qCbmxYDcYKGHFdw4zlI/V3t+NJZtqT8c9gvTHf
-         5fWtyA/65pshpXGE8o5g76M78w4JgZhjxNPV7f5o+U0mE1Tzmz1n7c2djZ6jhJY6xkGq
-         f2lw==
+        bh=zDhSCdHedqiu0sqGEWX8RLoRihFG2iUDO7cLbPQY95o=;
+        b=u4s3Gqi2gHRTz6usKtSfaHhYPAyC2U3zaUy/gqDNuGxKZOh0Qg8KCwntTU1K+d+LhH
+         a1EzIGb+m7mw7C5g7GMXL+EqXBKG8WWzryiKLB19mMdfJYTAPKx+4/XTg7KCqDRIxRnF
+         y0DSNgsnqfA+01GmRYiz+rL1tcFkcL/EEVyr/j23EwJ1sgTehZI5D1LBcV2VGWyHkc8h
+         eo1ZsOvLuHC9GHALXLY8T2YCIsE79MglYYxBwFJGurtQxPwZ4ntdJ0elwTebwNNPHqAx
+         oATgRN6W5bmvkWAeNFkQLcbQIZUo4pYKkskbxlFp/PA3Z7ECwKP1ufZe46Kb7Kz1+gqQ
+         FjwA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=h+XWqnE5;
+       dkim=pass header.i=@kernel.org header.s=default header.b=c8M1fTqW;
        spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=h+XWqnE5;
+       dkim=pass header.i=@kernel.org header.s=default header.b=c8M1fTqW;
        spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -68,43 +68,125 @@ Cc: akpm@linux-foundation.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-wireless@vger.kernel.org,
 	"Luis R . Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v7 10/14] ath10k: use firmware_request_nowarn() to load firmware
-Date: Thu, 10 May 2018 13:08:46 -0700
-Message-Id: <20180510200850.5958-11-mcgrof@kernel.org>
+Subject: [PATCH v7 09/14] firmware: add firmware_request_nowarn() - load firmware without warnings
+Date: Thu, 10 May 2018 13:08:45 -0700
+Message-Id: <20180510200850.5958-10-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180510200850.5958-1-mcgrof@kernel.org>
 References: <20180510200850.5958-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600109096794438529?=
-X-GMAIL-MSGID: =?utf-8?q?1600109096794438529?=
+X-GMAIL-THRID: =?utf-8?q?1600109095843037662?=
+X-GMAIL-MSGID: =?utf-8?q?1600109095843037662?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andres Rodriguez <andresx7@gmail.com>
 
-This reduces the unnecessary spew when trying to load optional firmware:
-"Direct firmware load for ... failed with error -2"
+Currently the firmware loader only exposes one silent path for querying
+optional firmware, and that is firmware_request_direct(). This function
+also disables the sysfs fallback mechanism, which might not always be the
+desired behaviour [0].
+
+This patch introduces a variations of request_firmware() that enable the
+caller to disable the undesired warning messages but enables the sysfs
+fallback mechanism. This is equivalent to adding FW_OPT_NO_WARN to the
+old behaviour.
+
+[0]: https://git.kernel.org/linus/c0cc00f250e1
 
 Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-Acked-by: Kalle Valo <kvalo@codeaurora.org>
+Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
+[mcgrof: used the old API calls as the full rename is not done yet, and
+ add the caller for when FW_LOADER is disabled, enhance documentation ]
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../driver-api/firmware/request_firmware.rst  |  5 ++++
+ drivers/base/firmware_loader/main.c           | 27 +++++++++++++++++++
+ include/linux/firmware.h                      | 10 +++++++
+ 3 files changed, 42 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
-index 4cf54a7ef09a..ad4f6e3c0737 100644
---- a/drivers/net/wireless/ath/ath10k/core.c
-+++ b/drivers/net/wireless/ath/ath10k/core.c
-@@ -694,7 +694,7 @@ static const struct firmware *ath10k_fetch_fw_file(struct ath10k *ar,
- 		dir = ".";
+diff --git a/Documentation/driver-api/firmware/request_firmware.rst b/Documentation/driver-api/firmware/request_firmware.rst
+index d5ec95a7195b..f62bdcbfed5b 100644
+--- a/Documentation/driver-api/firmware/request_firmware.rst
++++ b/Documentation/driver-api/firmware/request_firmware.rst
+@@ -20,6 +20,11 @@ request_firmware
+ .. kernel-doc:: drivers/base/firmware_loader/main.c
+    :functions: request_firmware
  
- 	snprintf(filename, sizeof(filename), "%s/%s", dir, file);
--	ret = request_firmware(&fw, filename, ar->dev);
-+	ret = firmware_request_nowarn(&fw, filename, ar->dev);
- 	ath10k_dbg(ar, ATH10K_DBG_BOOT, "boot fw request '%s': %d\n",
- 		   filename, ret);
++firmware_request_nowarn
++-----------------------
++.. kernel-doc:: drivers/base/firmware_loader/main.c
++   :functions: firmware_request_nowarn
++
+ request_firmware_direct
+ -----------------------
+ .. kernel-doc:: drivers/base/firmware_loader/main.c
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index abdc4e4d55f1..0943e7065e0e 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -631,6 +631,33 @@ request_firmware(const struct firmware **firmware_p, const char *name,
+ }
+ EXPORT_SYMBOL(request_firmware);
  
++/**
++ * firmware_request_nowarn() - request for an optional fw module
++ * @firmware: pointer to firmware image
++ * @name: name of firmware file
++ * @device: device for which firmware is being loaded
++ *
++ * This function is similar in behaviour to request_firmware(), except
++ * it doesn't produce warning messages when the file is not found.
++ * The sysfs fallback mechanism is enabled if direct filesystem lookup fails,
++ * however, however failures to find the firmware file with it are still
++ * suppressed. It is therefore up to the driver to check for the return value
++ * of this call and to decide when to inform the users of errors.
++ **/
++int firmware_request_nowarn(const struct firmware **firmware, const char *name,
++			    struct device *device)
++{
++	int ret;
++
++	/* Need to pin this module until return */
++	__module_get(THIS_MODULE);
++	ret = _request_firmware(firmware, name, device, NULL, 0,
++				FW_OPT_UEVENT | FW_OPT_NO_WARN);
++	module_put(THIS_MODULE);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(firmware_request_nowarn);
++
+ /**
+  * request_firmware_direct() - load firmware directly without usermode helper
+  * @firmware_p: pointer to firmware image
+diff --git a/include/linux/firmware.h b/include/linux/firmware.h
+index 41050417cafb..2dd566c91d44 100644
+--- a/include/linux/firmware.h
++++ b/include/linux/firmware.h
+@@ -42,6 +42,8 @@ struct builtin_fw {
+ #if defined(CONFIG_FW_LOADER) || (defined(CONFIG_FW_LOADER_MODULE) && defined(MODULE))
+ int request_firmware(const struct firmware **fw, const char *name,
+ 		     struct device *device);
++int firmware_request_nowarn(const struct firmware **fw, const char *name,
++			    struct device *device);
+ int request_firmware_nowait(
+ 	struct module *module, bool uevent,
+ 	const char *name, struct device *device, gfp_t gfp, void *context,
+@@ -59,6 +61,14 @@ static inline int request_firmware(const struct firmware **fw,
+ {
+ 	return -EINVAL;
+ }
++
++static inline int firmware_request_nowarn(const struct firmware **fw,
++					  const char *name,
++					  struct device *device)
++{
++	return -EINVAL;
++}
++
+ static inline int request_firmware_nowait(
+ 	struct module *module, bool uevent,
+ 	const char *name, struct device *device, gfp_t gfp, void *context,
 -- 
 2.17.0
