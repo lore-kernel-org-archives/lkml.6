@@ -1,92 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756394AbeEJBZw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 21:25:52 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:58154 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756003AbeEJBZv (ORCPT
+        id S1756455AbeEJB0h (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 21:26:37 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:41456 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756088AbeEJB0f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 21:25:51 -0400
-Date: Thu, 10 May 2018 11:25:35 +1000 (AEST)
-From: Finn Thain <fthain@telegraphics.com.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: "David S. Miller" <davem@davemloft.net>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH net] macmace: Set platform device coherent_dma_mask
-In-Reply-To: <CAMuHMdU1XBqt7hwEW6JTas64ZNGCGCMr5HMZwuLo0O-ZBCOWyA@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1805091805130.72@nippy.intranet>
-References: <S1751632AbeECEYA/20180503042400Z+254@vger.kernel.org> <CAMuHMdUAxmVZLekekvVrnMbbL18oyY86sF9QX087idSqcKMiPQ@mail.gmail.com> <alpine.LNX.2.21.1805031801310.8@nippy.intranet> <CAMuHMdU1XBqt7hwEW6JTas64ZNGCGCMr5HMZwuLo0O-ZBCOWyA@mail.gmail.com>
+        Wed, 9 May 2018 21:26:35 -0400
+X-Google-Smtp-Source: AB8JxZrC64iQaMg4VNL9Cak5XaRtIH9B5JaCbyCTaF7vBIPDYtCLBtfItxK95I5SdDygBPU6iKkm3g==
+Subject: Re: [PATCH v2] mm/ksm: ignore STABLE_FLAG of rmap_item->address in
+ rmap_walk_ksm
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrea Arcangeli <aarcange@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com,
+        Hugh Dickins <hughd@google.com>
+References: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
+ <1525403506-6750-1-git-send-email-hejianet@gmail.com>
+ <20180509163101.02f23de1842a822c61fc68ff@linux-foundation.org>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <80070c0b-aecf-0dcf-2b36-fa6110ed8ad5@gmail.com>
+Date: Thu, 10 May 2018 09:26:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180509163101.02f23de1842a822c61fc68ff@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 3 May 2018, Geert Uytterhoeven wrote:
+Hi Andrew
 
-> 
-> Perhaps you can add a new helper 
-> (platform_device_register_simple_dma()?) that takes the DMA mask, too?
 
-Would there be enough potential callers in future to justify that API?
-It seems that there haven't been many in the past. I found four users of 
-platform_device_register_simple() which might benefit. Mostly these call 
-dma_set_coherent_mask() in the platform driver probe routine.
+On 5/10/2018 7:31 AM, Andrew Morton Wrote:
+> On Fri,  4 May 2018 11:11:46 +0800 Jia He <hejianet@gmail.com> wrote:
+>
+>> In our armv8a server(QDF2400), I noticed lots of WARN_ON caused by PAGE_SIZE
+>> unaligned for rmap_item->address under memory pressure tests(start 20 guests
+>> and run memhog in the host).
+>>
+>> ...
+>>
+>> In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
+>> then the start and end in handle_hva_to_gpa might not be PAGE_SIZE aligned.
+>> Thus it will cause exceptions in handle_hva_to_gpa on arm64.
+>>
+>> This patch fixes it by ignoring(not removing) the low bits of address when
+>> doing rmap_walk_ksm.
+>>
+>> Signed-off-by: jia.he@hxt-semitech.com
+> I assumed you wanted this patch to be committed as
+> From:jia.he@hxt-semitech.com rather than From:hejianet@gmail.com, so I
+> made that change.  Please let me know if this was inappropriate.
+Thanks, because there is still some issues in our company's mail server.
+I have to use my gmail mailbox.
+>
+> You can do this yourself by adding an explicit From: line to the very
+> start of the patch's email text.
+>
+> Also, a storm of WARN_ONs is pretty poor behaviour.  Is that the only
+> misbehaviour which this bug causes?  Do you think the fix should be
+> backported into earlier kernels?
+IMO, it should be backported to stable tree, seems that I missed CC to stable 
+tree ;-)
+the stom of WARN_ONs is very easy for me to reproduce.
+More than that, I watched a panic (not reproducible) as follows:
+[35380.805825] page:ffff7fe003742d80 count:-4871 mapcount:-2126053375 
+mapping:          (null) index:0x0
+[35380.815024] flags: 0x1fffc00000000000()
+[35380.818845] raw: 1fffc00000000000 0000000000000000 0000000000000000 
+ffffecf981470000
+[35380.826569] raw: dead000000000100 dead000000000200 ffff8017c001c000 
+0000000000000000
+[35380.834294] page dumped because: nonzero _refcount
+[35380.839069] Modules linked in: vhost_net vhost tap ebtable_filter ebtables 
+ip6table_filter ip6_tables iptable_filter fcoe libfcoe libfc 8021q garp mrp stp 
+llc scsi_transport_fc openvswitch nf_conntrack_ipv6 nf_nat_ipv6 
+nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_defrag_ipv6 nf_nat nf_conntrack 
+vfat fat rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi scsi_transport_iscsi 
+ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm ib_ucm 
+ib_uverbs ib_umad rdma_cm ib_cm iw_cm mlx5_ib ib_core crc32_ce ipmi_ssif tpm_tis 
+tpm_tis_core sg nfsd auth_rpcgss nfs_acl lockd grace sunrpc dm_multipath 
+ip_tables xfs libcrc32c mlx5_core mlxfw devlink ahci_platform libahci_platform 
+libahci qcom_emac sdhci_acpi sdhci hdma mmc_core hdma_mgmt i2c_qup dm_mirror 
+dm_region_hash dm_log dm_mod
+[35380.908341] CPU: 29 PID: 18323 Comm: qemu-kvm Tainted: G W       
+4.14.15-5.hxt.aarch64 #1
+[35380.917107] Hardware name: <snip for confidential issues>
+[35380.930909] Call trace:
+[35380.933345] [<ffff000008088f00>] dump_backtrace+0x0/0x22c
+[35380.938723] [<ffff000008089150>] show_stack+0x24/0x2c
+[35380.943759] [<ffff00000893c078>] dump_stack+0x8c/0xb0
+[35380.948794] [<ffff00000820ab50>] bad_page+0xf4/0x154
+[35380.953740] [<ffff000008211ce8>] free_pages_check_bad+0x90/0x9c
+[35380.959642] [<ffff00000820c430>] free_pcppages_bulk+0x464/0x518
+[35380.965545] [<ffff00000820db98>] free_hot_cold_page+0x22c/0x300
+[35380.971448] [<ffff0000082176fc>] __put_page+0x54/0x60
+[35380.976484] [<ffff0000080b1164>] unmap_stage2_range+0x170/0x2b4
+[35380.982385] [<ffff0000080b12d8>] kvm_unmap_hva_handler+0x30/0x40
+[35380.988375] [<ffff0000080b0104>] handle_hva_to_gpa+0xb0/0xec
+[35380.994016] [<ffff0000080b2644>] kvm_unmap_hva_range+0x5c/0xd0
+[35380.999833] [<ffff0000080a8054>] 
+kvm_mmu_notifier_invalidate_range_start+0x60/0xb0
+[35381.007387] [<ffff000008271f44>] __mmu_notifier_invalidate_range_start+0x64/0x8c
+[35381.014765] [<ffff0000082547c8>] try_to_unmap_one+0x78c/0x7a4
+[35381.020493] [<ffff000008276d04>] rmap_walk_ksm+0x124/0x1a0
+[35381.025961] [<ffff0000082551b4>] rmap_walk+0x94/0x98
+[35381.030909] [<ffff0000082555e4>] try_to_unmap+0x100/0x124
+[35381.036293] [<ffff00000828243c>] unmap_and_move+0x480/0x6fc
+[35381.041847] [<ffff000008282b6c>] migrate_pages+0x10c/0x288
+[35381.047318] [<ffff00000823c164>] compact_zone+0x238/0x954
+[35381.052697] [<ffff00000823c944>] compact_zone_order+0xc4/0xe8
+[35381.058427] [<ffff00000823d25c>] try_to_compact_pages+0x160/0x294
+[35381.064503] [<ffff00000820f074>] __alloc_pages_direct_compact+0x68/0x194
+[35381.071187] [<ffff000008210138>] __alloc_pages_nodemask+0xc20/0xf7c
+[35381.077437] [<ffff0000082709e4>] alloc_pages_vma+0x1a4/0x1c0
+[35381.083080] [<ffff000008285b68>] do_huge_pmd_anonymous_page+0x128/0x324
+[35381.089677] [<ffff000008248a24>] __handle_mm_fault+0x71c/0x7e8
+[35381.095492] [<ffff000008248be8>] handle_mm_fault+0xf8/0x194
+[35381.101049] [<ffff000008240dcc>] __get_user_pages+0x124/0x34c
+[35381.106777] [<ffff000008241870>] populate_vma_page_range+0x90/0x9c
+[35381.112941] [<ffff000008241940>] __mm_populate+0xc4/0x15c
+[35381.118322] [<ffff00000824b294>] SyS_mlockall+0x100/0x164
+[35381.123705] Exception stack(0xffff800dce5f3ec0 to 0xffff800dce5f4000)
+[35381.130128] 3ec0: 0000000000000003 d6e6024cc9b87e00 0000aaaabe94f000 
+0000000000000000
+[35381.137940] 3ee0: 0000000000000002 0000000000000000 0000000000000000 
+0000aaaacf6fc3c0
+[35381.145753] 3f00: 00000000000000e6 0000aaaacf6fc490 0000ffffeeeab0f0 
+d6e6024cc9b87e00
+[35381.153565] 3f20: 0000000000000000 0000aaaabe81b3c0 0000000000000020 
+00009e53eff806b5
+[35381.161379] 3f40: 0000aaaabe94de48 0000ffffa7c269b0 0000000000000011 
+0000ffffeeeabf68
+[35381.169190] 3f60: 0000aaaaceacfe60 0000aaaabe94f000 0000aaaabe9ba358 
+0000aaaabe7ffb80
+[35381.177003] 3f80: 0000aaaabe9ba000 0000aaaabe959f64 0000000000000000 
+0000aaaabe94f000
+[35381.184815] 3fa0: 0000000000000000 0000ffffeeeabdb0 0000aaaabe5f3bf8 
+0000ffffeeeabdb0
+[35381.192628] 3fc0: 0000ffffa7c269b8 0000000060000000 0000000000000003 
+00000000000000e6
+[35381.200440] 3fe0: 0000000000000000 0000000000000000 0000000000000000 
+0000000000000000
+[35381.208254] [<ffff00000808339c>] __sys_trace_return+0x0/0x4
+[35381.213809] Disabling lock debugging due to kernel taint
 
-drivers/gpu/drm/etnaviv/etnaviv_drv.c
-drivers/gpu/drm/exynos/exynos_drm_drv.c
-drivers/gpu/drm/omapdrm/omap_drv.c
-drivers/parport/parport_pc.c
-
-(Am I missing any others?)
-
-To actually hoist the dma mask setup out of existing platform drivers 
-would have implications for every device that matches with those drivers. 
-
-That's a bit risky since I can't test those devices -- that's assuming I 
-could identify them all; sometimes platform device matching is not well 
-defined at build time (see loongson_sysconf.ecname).
-
-So far, it looks like macmace and macsonic would be the only callers of 
-this new API call.
-
-What's worse, if you do pass a dma_mask in struct platform_device_info, 
-you end up with this problem in platform_device_register_full():
-
-        if (pdevinfo->dma_mask) {
-                /*
-                 * This memory isn't freed when the device is put,
-                 * I don't have a nice idea for that though.  Conceptually
-                 * dma_mask in struct device should not be a pointer.
-                 * See http://thread.gmane.org/gmane.linux.kernel.pci/9081
-                 */
-                pdev->dev.dma_mask =
-                        kmalloc(sizeof(*pdev->dev.dma_mask), GFP_KERNEL);
-
-Most of the platform drivers that call dma_coerce_mask_and_coherent() are 
-using pdev->of_match_table, not platform_device_register_simple(). Many of 
-them have a comment like this:
-
-        /*
-         * Right now device-tree probed devices don't get dma_mask set.
-         * Since shared usb code relies on it, set it here for now.
-         * Once we have dma capability bindings this can go away.
-         */
-
-> With people setting the mask to kill the WARNING splat, this may become 
-> more common.
-
-Since the commit which introduced the WARNING, only commits f61e64310b75 
-("m68k: set dma and coherent masks for platform FEC ethernets") and 
-7bcfab202ca7 ("powerpc/macio: set a proper dma_coherent_mask") seem to be 
-aimed at squelching that WARNING.
-
-(Am I missing any others?)
-
-So far, this is not looking like a common problem, and I'm having trouble 
-finding some way to improve on my original patches.
+I ever injected a fault on purpose in kvm_unmap_hva_range by set 
+size=size-0x200, the call trace is similar
+as above. Thus, I thought the panic is similarly caused by the root cause of WARN_ON
 
 -- 
+Cheers,
+Jia
