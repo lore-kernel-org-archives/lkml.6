@@ -1,78 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966180AbeEJPTu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 11:19:50 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:20924 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964827AbeEJPTs (ORCPT
+        id S966175AbeEJPVn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 11:21:43 -0400
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:37522 "EHLO
+        mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964827AbeEJPVm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 11:19:48 -0400
-Subject: Re: [PATCH V3] ARM: dts: da850-evm: use phandles to extend nodes
-To: Adam Ford <aford173@gmail.com>
-CC: Adam Ford <adam.ford@logicpd.com>, Kevin Hilman <khilman@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180507123721.9264-1-aford173@gmail.com>
- <ae8292b2-b167-7a96-70be-1cfea6059874@ti.com>
- <CAHCN7xKXJnh5MSudY3FU_9Xw98PwDi3yaWTUdfjFDaE24NBrzw@mail.gmail.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <7692ca00-3c9d-6e3e-12b6-f65d82f6fa95@ti.com>
-Date: Thu, 10 May 2018 20:49:17 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 10 May 2018 11:21:42 -0400
+X-Google-Smtp-Source: AB8JxZoQXj70By09vHtRGJb/wld794a5AhGIdkJRyuYOGKJ1BvOz73eWnGxuZPrxZ/qxLvhTkEZWeKZ10tV7L37WOds=
 MIME-Version: 1.0
-In-Reply-To: <CAHCN7xKXJnh5MSudY3FU_9Xw98PwDi3yaWTUdfjFDaE24NBrzw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180424123513.53opt3ufe47i5db7@sirius.home.kraxel.org>
+References: <20180417133844.GA30256@jordon-HP-15-Notebook-PC>
+ <20180423104924.ozalv7x5ppjifnxc@sirius.home.kraxel.org> <20180424121151.GX31310@phenom.ffwll.local>
+ <20180424123513.53opt3ufe47i5db7@sirius.home.kraxel.org>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Thu, 10 May 2018 20:51:39 +0530
+Message-ID: <CAFqt6zYwCgzBkbeRFgOHGRaYT5EqaAybXQ5_E73cBLEc7Hzv8A@mail.gmail.com>
+Subject: Re: [PATCH] gpu: drm: qxl: Adding new typedef vm_fault_t
+To: Gerd Hoffmann <kraxel@redhat.com>
+Cc: airlied@linux.ie, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        virtualization@lists.linux-foundation.org,
+        dri-devel@lists.freedesktop.org, airlied@redhat.com,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Sean Paul <seanpaul@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 10 May 2018 08:38 PM, Adam Ford wrote:
-> On Thu, May 10, 2018 at 4:10 AM, Sekhar Nori <nsekhar@ti.com> wrote:
->> On Monday 07 May 2018 06:07 PM, Adam Ford wrote:
->>> Many node labels in the device tree (like serial0, serial1, etc) are being
->>> redefined, so let's modernize the device tree by using phandles to
->>> extend the existing nodes.  This helps reduce the whitespace.
->>>
->>> Signed-off-by: Adam Ford <aford173@gmail.com>
+Hi Gerd /Daniel,
+
+On Tue, Apr 24, 2018 at 6:05 PM, Gerd Hoffmann <kraxel@redhat.com> wrote:
+> On Tue, Apr 24, 2018 at 02:11:51PM +0200, Daniel Vetter wrote:
+>> On Mon, Apr 23, 2018 at 12:49:24PM +0200, Gerd Hoffmann wrote:
+>> > On Tue, Apr 17, 2018 at 07:08:44PM +0530, Souptick Joarder wrote:
+>> > > Use new return type vm_fault_t for fault handler. For
+>> > > now, this is just documenting that the function returns
+>> > > a VM_FAULT value rather than an errno. Once all instances
+>> > > are converted, vm_fault_t will become a distinct type.
+>> > >
+>> > > Reference id -> 1c8f422059ae ("mm: change return type to
+>> > > vm_fault_t")
+>> >
+>> > Hmm, that commit isn't yet in drm-misc-next.
+>> > Will drm-misc-next merge with 4.17-rcX soon?
 >>
->> I applied this without the pmic changes. I am not convinced about those.
->> The tps node is already being referred to as phandle. I am not sure
->> referring to each individual regulator using phandle is needed. Other
->> files like am335x-evm.dts don't do it as well.
-> 
-> I tested the regulator values and names after booting to see if the
-> names and values matched the expected values. They did, so I am
-> fairly confident it would have worked.
+>> For backmerge requests you need to cc/ping the drm-misc maintainers.
+>> Adding them. I think the hold-up also was that Dave was on vacations
+>> still.
+>
+> Ah, ok.
+>
+> So my expectation that a backmerge happens anyway after -rc1/2 is in
+> line with reality, it is just to be delayed this time.  I'll stay
+> tuned ;)
 
-Not doubting that. But I am not sure if thats the "norm". Do you see any
-other device-tree file doing this?
-
-> 
->>
->> Another thing is whether we really need the tp6507x.dtsi file. It does
->> not seem to contain much and also da850-evm.dts is the only file
->> including it. So it seems pretty pointless to me.
-> 
-> Do you want me to do a patch that removes the  tp6507x.dtsi file and
-> just sets up the
-> PMIC from scratch within the da850-evm file?
-
-I am fine with the plan, but not something urgent, IMO.
-
-> 
->>
->> Here is what I committed.
-> 
-> Thank you.  I think looks cleaner this way, and more consistent with
-> many of the other platforms and boards.
-
-Yes.
-
-Thanks,
-Sekhar
+Is this patch already merged in drm-misc-next tree ?
