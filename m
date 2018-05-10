@@ -1,23 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756958AbeEJIPP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 04:15:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51761 "EHLO mx2.suse.de"
+        id S1756941AbeEJIPO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 04:15:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51881 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756769AbeEJIGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 04:06:52 -0400
+        id S1756726AbeEJIHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 04:07:01 -0400
 From: Jiri Slaby <jslaby@suse.cz>
 To: mingo@redhat.com
 Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.cz>, Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, linux-crypto@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: [PATCH -resend 08/27] x86: assembly, annotate aliases
-Date: Thu, 10 May 2018 10:06:25 +0200
-Message-Id: <20180510080644.19752-9-jslaby@suse.cz>
+        Jiri Slaby <jslaby@suse.cz>, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH -resend 10/27] x86: head, annotate data appropriatelly
+Date: Thu, 10 May 2018 10:06:27 +0200
+Message-Id: <20180510080644.19752-11-jslaby@suse.cz>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180510080644.19752-1-jslaby@suse.cz>
 References: <20180510080644.19752-1-jslaby@suse.cz>
@@ -25,141 +21,301 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-_key_expansion_128 is an alias to _key_expansion_256a, __memcpy to
-memcpy, xen_syscall32_target to xen_sysenter_target, and so on. Annotate
-them all using the new SYM_FUNC_START_ALIAS, SYM_FUNC_START_LOCAL_ALIAS,
-and SYM_FUNC_END_ALIAS. This will make the tools generating the
-debuginfo happy.
+Use the new SYM_DATA, SYM_DATA_START, and SYM_DATA_END in both 32 and 64
+bit heads.  In the 64-bit version, define also
+SYM_DATA_START_PAGE_ALIGNED locally using the new SYM_START. It is used
+in the code instead of NEXT_PAGE() which was defined in this file and
+has been using the obsolete macro GLOBAL().
+
+Now, the data in the 64-bit object file look sane:
+Value   Size Type    Bind   Vis      Ndx Name
+  0000  4096 OBJECT  GLOBAL DEFAULT   15 init_level4_pgt
+  1000  4096 OBJECT  GLOBAL DEFAULT   15 level3_kernel_pgt
+  2000  2048 OBJECT  GLOBAL DEFAULT   15 level2_kernel_pgt
+  3000  4096 OBJECT  GLOBAL DEFAULT   15 level2_fixmap_pgt
+  4000  4096 OBJECT  GLOBAL DEFAULT   15 level1_fixmap_pgt
+  5000     2 OBJECT  GLOBAL DEFAULT   15 early_gdt_descr
+  5002     8 OBJECT  LOCAL  DEFAULT   15 early_gdt_descr_base
+  500a     8 OBJECT  GLOBAL DEFAULT   15 phys_base
+  0000     8 OBJECT  GLOBAL DEFAULT   17 initial_code
+  0008     8 OBJECT  GLOBAL DEFAULT   17 initial_gs
+  0010     8 OBJECT  GLOBAL DEFAULT   17 initial_stack
+  0000     4 OBJECT  GLOBAL DEFAULT   19 early_recursion_flag
+  1000  4096 OBJECT  GLOBAL DEFAULT   19 early_level4_pgt
+  2000 0x40000 OBJECT  GLOBAL DEFAULT   19 early_dynamic_pgts
+  0000  4096 OBJECT  GLOBAL DEFAULT   22 empty_zero_page
+
+All have correct size and type.
+
+Note, that we can now see that it might be worth pushing
+early_recursion_flag after early_dynamic_pgts -- we are wasting almost
+4K of .init.data.
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: <x86@kernel.org>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Reviewed-by: Juergen Gross <jgross@suse.com> [xen parts]
-Cc: <linux-crypto@vger.kernel.org>
-Cc: <xen-devel@lists.xenproject.org>
+Cc: x86@kernel.org
 ---
- arch/x86/crypto/aesni-intel_asm.S | 5 ++---
- arch/x86/lib/memcpy_64.S          | 4 ++--
- arch/x86/lib/memmove_64.S         | 4 ++--
- arch/x86/lib/memset_64.S          | 4 ++--
- arch/x86/xen/xen-asm_64.S         | 4 ++--
- 5 files changed, 10 insertions(+), 11 deletions(-)
+ arch/x86/kernel/head_32.S | 29 ++++++++++--------
+ arch/x86/kernel/head_64.S | 78 +++++++++++++++++++++++++----------------------
+ 2 files changed, 58 insertions(+), 49 deletions(-)
 
-diff --git a/arch/x86/crypto/aesni-intel_asm.S b/arch/x86/crypto/aesni-intel_asm.S
-index b482ac1a1fb3..c85ecb163c78 100644
---- a/arch/x86/crypto/aesni-intel_asm.S
-+++ b/arch/x86/crypto/aesni-intel_asm.S
-@@ -1761,8 +1761,7 @@ ENDPROC(aesni_gcm_finalize)
+diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
+index 727632a20110..1a6a6b4e4b4c 100644
+--- a/arch/x86/kernel/head_32.S
++++ b/arch/x86/kernel/head_32.S
+@@ -502,8 +502,7 @@ ENDPROC(early_ignore_irq)
+ 
+ __INITDATA
+ 	.align 4
+-GLOBAL(early_recursion_flag)
+-	.long 0
++SYM_DATA(early_recursion_flag, .long 0)
+ 
+ __REFDATA
+ 	.align 4
+@@ -541,7 +540,7 @@ EXPORT_SYMBOL(empty_zero_page)
+ __PAGE_ALIGNED_DATA
+ 	/* Page-aligned for the benefit of paravirt? */
+ 	.align PAGE_SIZE
+-ENTRY(initial_page_table)
++SYM_DATA_START(initial_page_table)
+ 	.long	pa(initial_pg_pmd+PGD_IDENT_ATTR),0	/* low identity map */
+ # if KPMDS == 3
+ 	.long	pa(initial_pg_pmd+PGD_IDENT_ATTR),0
+@@ -559,17 +558,18 @@ ENTRY(initial_page_table)
+ #  error "Kernel PMDs should be 1, 2 or 3"
+ # endif
+ 	.align PAGE_SIZE		/* needs to be page-sized too */
++SYM_DATA_END(initial_page_table)
  #endif
  
+ .data
+ .balign 4
+-ENTRY(initial_stack)
+-	/*
+-	 * The SIZEOF_PTREGS gap is a convention which helps the in-kernel
+-	 * unwinder reliably detect the end of the stack.
+-	 */
+-	.long init_thread_union + THREAD_SIZE - SIZEOF_PTREGS - \
+-	      TOP_OF_KERNEL_STACK_PADDING;
++/*
++ * The SIZEOF_PTREGS gap is a convention which helps the in-kernel unwinder
++ * reliably detect the end of the stack.
++ */
++SYM_DATA(initial_stack,
++		.long init_thread_union + THREAD_SIZE -
++		SIZEOF_PTREGS - TOP_OF_KERNEL_STACK_PADDING)
  
--.align 4
--_key_expansion_128:
-+SYM_FUNC_START_LOCAL_ALIAS(_key_expansion_128)
- SYM_FUNC_START_LOCAL(_key_expansion_256a)
- 	pshufd $0b11111111, %xmm1, %xmm1
- 	shufps $0b00010000, %xmm0, %xmm4
-@@ -1773,8 +1772,8 @@ SYM_FUNC_START_LOCAL(_key_expansion_256a)
- 	movaps %xmm0, (TKEYP)
- 	add $0x10, TKEYP
- 	ret
--ENDPROC(_key_expansion_128)
- SYM_FUNC_END(_key_expansion_256a)
-+SYM_FUNC_END_ALIAS(_key_expansion_128)
+ __INITRODATA
+ int_msg:
+@@ -590,22 +590,25 @@ int_msg:
+ 	ALIGN
+ # early boot GDT descriptor (must use 1:1 address mapping)
+ 	.word 0				# 32 bit align gdt_desc.address
+-boot_gdt_descr:
++SYM_DATA_START(boot_gdt_descr)
+ 	.word __BOOT_DS+7
+ 	.long boot_gdt - __PAGE_OFFSET
++SYM_DATA_END(boot_gdt_descr)
  
- SYM_FUNC_START_LOCAL(_key_expansion_192a)
- 	pshufd $0b01010101, %xmm1, %xmm1
-diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
-index 9a53a06e5a3e..4911b1c61aa8 100644
---- a/arch/x86/lib/memcpy_64.S
-+++ b/arch/x86/lib/memcpy_64.S
-@@ -26,7 +26,7 @@
-  * Output:
-  * rax original destination
+ # boot GDT descriptor (later on used by CPU#0):
+ 	.word 0				# 32 bit align gdt_desc.address
+-ENTRY(early_gdt_descr)
++SYM_DATA_START(early_gdt_descr)
+ 	.word GDT_ENTRIES*8-1
+ 	.long gdt_page			/* Overwritten for secondary CPUs */
++SYM_DATA_END(early_gdt_descr)
+ 
+ /*
+  * The boot_gdt must mirror the equivalent in setup.S and is
+  * used only for booting.
   */
--ENTRY(__memcpy)
-+SYM_FUNC_START_ALIAS(__memcpy)
- ENTRY(memcpy)
- 	ALTERNATIVE_2 "jmp memcpy_orig", "", X86_FEATURE_REP_GOOD, \
- 		      "jmp memcpy_erms", X86_FEATURE_ERMS
-@@ -40,7 +40,7 @@ ENTRY(memcpy)
- 	rep movsb
- 	ret
- ENDPROC(memcpy)
--ENDPROC(__memcpy)
-+SYM_FUNC_END_ALIAS(__memcpy)
- EXPORT_SYMBOL(memcpy)
- EXPORT_SYMBOL(__memcpy)
+ 	.align L1_CACHE_BYTES
+-ENTRY(boot_gdt)
++SYM_DATA_START(boot_gdt)
+ 	.fill GDT_ENTRY_BOOT_CS,8,0
+ 	.quad 0x00cf9a000000ffff	/* kernel 4GB code at 0x00000000 */
+ 	.quad 0x00cf92000000ffff	/* kernel 4GB data at 0x00000000 */
++SYM_DATA_END(boot_gdt)
+diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+index d3a0f5b1f1b6..80b620c824eb 100644
+--- a/arch/x86/kernel/head_64.S
++++ b/arch/x86/kernel/head_64.S
+@@ -261,16 +261,14 @@ ENDPROC(start_cpu0)
+ 	/* Both SMP bootup and ACPI suspend change these variables */
+ 	__REFDATA
+ 	.balign	8
+-	GLOBAL(initial_code)
+-	.quad	x86_64_start_kernel
+-	GLOBAL(initial_gs)
+-	.quad	INIT_PER_CPU_VAR(irq_stack_union)
+-	GLOBAL(initial_stack)
+-	/*
+-	 * The SIZEOF_PTREGS gap is a convention which helps the in-kernel
+-	 * unwinder reliably detect the end of the stack.
+-	 */
+-	.quad  init_thread_union + THREAD_SIZE - SIZEOF_PTREGS
++SYM_DATA(initial_code,	.quad x86_64_start_kernel)
++SYM_DATA(initial_gs,	.quad INIT_PER_CPU_VAR(irq_stack_union))
++/*
++ * The SIZEOF_PTREGS gap is a convention which helps the in-kernel unwinder
++ * reliably detect the end of the stack.
++ */
++SYM_DATA(initial_stack,
++		.quad init_thread_union + THREAD_SIZE - SIZEOF_PTREGS)
+ 	__FINITDATA
  
-diff --git a/arch/x86/lib/memmove_64.S b/arch/x86/lib/memmove_64.S
-index bbec69d8223b..50c1648311b3 100644
---- a/arch/x86/lib/memmove_64.S
-+++ b/arch/x86/lib/memmove_64.S
-@@ -26,7 +26,7 @@
+ 	__INIT
+@@ -339,12 +337,10 @@ SYM_CODE_END(early_idt_handler_common)
+ 	__INITDATA
+ 
+ 	.balign 4
+-GLOBAL(early_recursion_flag)
+-	.long 0
++SYM_DATA(early_recursion_flag, .long 0)
+ 
+-#define NEXT_PAGE(name) \
+-	.balign	PAGE_SIZE; \
+-GLOBAL(name)
++#define SYM_DATA_START_PAGE_ALIGNED(name)			\
++	SYM_START(name, SYM_L_GLOBAL, .balign PAGE_SIZE)
+ 
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+ /*
+@@ -359,11 +355,11 @@ GLOBAL(name)
   */
- .weak memmove
+ #define PTI_USER_PGD_FILL	512
+ /* This ensures they are 8k-aligned: */
+-#define NEXT_PGD_PAGE(name) \
+-	.balign 2 * PAGE_SIZE; \
+-GLOBAL(name)
++#define SYM_DATA_START_KAISER_ALIGNED(name) \
++	SYM_START(name, SYM_L_GLOBAL, .balign 2 * PAGE_SIZE)
+ #else
+-#define NEXT_PGD_PAGE(name) NEXT_PAGE(name)
++#define SYM_DATA_START_KAISER_ALIGNED(name) \
++	SYM_DATA_START_PAGE_ALIGNED(name)
+ #define PTI_USER_PGD_FILL	0
+ #endif
  
--ENTRY(memmove)
-+SYM_FUNC_START_ALIAS(memmove)
- ENTRY(__memmove)
+@@ -376,17 +372,19 @@ GLOBAL(name)
+ 	.endr
  
- 	/* Handle more 32 bytes in loop */
-@@ -208,6 +208,6 @@ ENTRY(__memmove)
- 13:
- 	retq
- ENDPROC(__memmove)
--ENDPROC(memmove)
-+SYM_FUNC_END_ALIAS(memmove)
- EXPORT_SYMBOL(__memmove)
- EXPORT_SYMBOL(memmove)
-diff --git a/arch/x86/lib/memset_64.S b/arch/x86/lib/memset_64.S
-index 9bc861c71e75..927ac44d34aa 100644
---- a/arch/x86/lib/memset_64.S
-+++ b/arch/x86/lib/memset_64.S
-@@ -19,7 +19,7 @@
-  *
-  * rax   original destination
-  */
--ENTRY(memset)
-+SYM_FUNC_START_ALIAS(memset)
- ENTRY(__memset)
+ 	__INITDATA
+-NEXT_PGD_PAGE(early_top_pgt)
++SYM_DATA_START_KAISER_ALIGNED(early_top_pgt)
+ 	.fill	512,8,0
+ 	.fill	PTI_USER_PGD_FILL,8,0
++SYM_DATA_END(early_top_pgt)
+ 
+-NEXT_PAGE(early_dynamic_pgts)
++SYM_DATA_START_PAGE_ALIGNED(early_dynamic_pgts)
+ 	.fill	512*EARLY_DYNAMIC_PAGE_TABLES,8,0
++SYM_DATA_END(early_dynamic_pgts)
+ 
+ 	.data
+ 
+ #if defined(CONFIG_XEN_PV) || defined(CONFIG_XEN_PVH)
+-NEXT_PGD_PAGE(init_top_pgt)
++SYM_DATA_START_KAISER_ALIGNED(init_top_pgt)
+ 	.quad   level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
+ 	.org    init_top_pgt + L4_PAGE_OFFSET*8, 0
+ 	.quad   level3_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
+@@ -394,11 +392,13 @@ NEXT_PGD_PAGE(init_top_pgt)
+ 	/* (2^48-(2*1024*1024*1024))/(2^39) = 511 */
+ 	.quad   level3_kernel_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+ 	.fill	PTI_USER_PGD_FILL,8,0
++SYM_DATA_END(init_top_pgt)
+ 
+-NEXT_PAGE(level3_ident_pgt)
++SYM_DATA_START_PAGE_ALIGNED(level3_ident_pgt)
+ 	.quad	level2_ident_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
+ 	.fill	511, 8, 0
+-NEXT_PAGE(level2_ident_pgt)
++SYM_DATA_END(level3_ident_pgt)
++SYM_DATA_START_PAGE_ALIGNED(level2_ident_pgt)
  	/*
- 	 * Some CPUs support enhanced REP MOVSB/STOSB feature. It is recommended
-@@ -43,8 +43,8 @@ ENTRY(__memset)
- 	rep stosb
- 	movq %r9,%rax
- 	ret
--ENDPROC(memset)
- ENDPROC(__memset)
-+SYM_FUNC_END_ALIAS(memset)
- EXPORT_SYMBOL(memset)
- EXPORT_SYMBOL(__memset)
+ 	 * Since I easily can, map the first 1G.
+ 	 * Don't set NX because code runs from these pages.
+@@ -408,25 +408,29 @@ NEXT_PAGE(level2_ident_pgt)
+ 	 * the CPU should ignore the bit.
+ 	 */
+ 	PMDS(0, __PAGE_KERNEL_IDENT_LARGE_EXEC, PTRS_PER_PMD)
++SYM_DATA_END(level2_ident_pgt)
+ #else
+-NEXT_PGD_PAGE(init_top_pgt)
++SYM_DATA_START_KAISER_ALIGNED(init_top_pgt)
+ 	.fill	512,8,0
+ 	.fill	PTI_USER_PGD_FILL,8,0
++SYM_DATA_END(init_top_pgt)
+ #endif
  
-diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
-index 417b339e5c8e..e8f6f482bb20 100644
---- a/arch/x86/xen/xen-asm_64.S
-+++ b/arch/x86/xen/xen-asm_64.S
-@@ -164,13 +164,13 @@ ENDPROC(xen_sysenter_target)
+ #ifdef CONFIG_X86_5LEVEL
+-NEXT_PAGE(level4_kernel_pgt)
++SYM_DATA_START_PAGE_ALIGNED(level4_kernel_pgt)
+ 	.fill	511,8,0
+ 	.quad	level3_kernel_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
++SYM_DATA_END(level4_kernel_pgt)
+ #endif
  
- #else /* !CONFIG_IA32_EMULATION */
+-NEXT_PAGE(level3_kernel_pgt)
++SYM_DATA_START_PAGE_ALIGNED(level3_kernel_pgt)
+ 	.fill	L3_START_KERNEL,8,0
+ 	/* (2^48-(2*1024*1024*1024)-((2^39)*511))/(2^30) = 510 */
+ 	.quad	level2_kernel_pgt - __START_KERNEL_map + _KERNPG_TABLE_NOENC
+ 	.quad	level2_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
++SYM_DATA_END(level3_kernel_pgt)
  
--ENTRY(xen_syscall32_target)
-+SYM_FUNC_START_ALIAS(xen_syscall32_target)
- ENTRY(xen_sysenter_target)
- 	lea 16(%rsp), %rsp	/* strip %rcx, %r11 */
- 	mov $-ENOSYS, %rax
- 	pushq $0
- 	jmp hypercall_iret
--ENDPROC(xen_syscall32_target)
- ENDPROC(xen_sysenter_target)
-+SYM_FUNC_END_ALIAS(xen_syscall32_target)
+-NEXT_PAGE(level2_kernel_pgt)
++SYM_DATA_START_PAGE_ALIGNED(level2_kernel_pgt)
+ 	/*
+ 	 * 512 MB kernel mapping. We spend a full page on this pagetable
+ 	 * anyway.
+@@ -443,25 +447,26 @@ NEXT_PAGE(level2_kernel_pgt)
+ 	 */
+ 	PMDS(0, __PAGE_KERNEL_LARGE_EXEC,
+ 		KERNEL_IMAGE_SIZE/PMD_SIZE)
++SYM_DATA_END(level2_kernel_pgt)
  
- #endif	/* CONFIG_IA32_EMULATION */
+-NEXT_PAGE(level2_fixmap_pgt)
++SYM_DATA_START_PAGE_ALIGNED(level2_fixmap_pgt)
+ 	.fill	506,8,0
+ 	.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
+ 	/* 8MB reserved for vsyscalls + a 2MB hole = 4 + 1 entries */
+ 	.fill	5,8,0
++SYM_DATA_END(level2_fixmap_pgt)
+ 
+-NEXT_PAGE(level1_fixmap_pgt)
++SYM_DATA_START_PAGE_ALIGNED(level1_fixmap_pgt)
+ 	.fill	512,8,0
++SYM_DATA_END(level1_fixmap_pgt)
+ 
+ #undef PMDS
+ 
+ 	.data
+ 	.align 16
+-	.globl early_gdt_descr
+-early_gdt_descr:
+-	.word	GDT_ENTRIES*8-1
+-early_gdt_descr_base:
+-	.quad	INIT_PER_CPU_VAR(gdt_page)
++
++SYM_DATA(early_gdt_descr,		.word GDT_ENTRIES*8-1)
++SYM_DATA_LOCAL(early_gdt_descr_base,	.quad INIT_PER_CPU_VAR(gdt_page))
+ 
+ /* This must match the first entry in level2_kernel_pgt */
+ SYM_DATA(phys_base, .quad 0x0000000000000000)
+@@ -470,7 +475,8 @@ EXPORT_SYMBOL(phys_base)
+ #include "../../x86/xen/xen-head.S"
+ 
+ 	__PAGE_ALIGNED_BSS
+-NEXT_PAGE(empty_zero_page)
++SYM_DATA_START_PAGE_ALIGNED(empty_zero_page)
+ 	.skip PAGE_SIZE
++SYM_DATA_END(empty_zero_page)
+ EXPORT_SYMBOL(empty_zero_page)
+ 
 -- 
 2.16.3
