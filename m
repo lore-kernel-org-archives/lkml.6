@@ -1,43 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757403AbeEJN1X (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 09:27:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44892 "EHLO mx2.suse.de"
+        id S935532AbeEJNaH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 09:30:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45083 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756998AbeEJN1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 09:27:22 -0400
-Date: Thu, 10 May 2018 15:27:19 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: i801: mark PM functions as __maybe_unused
-Message-ID: <20180510152719.6e37b10e@endymion>
-In-Reply-To: <20180509190055.61ad929b@endymion>
-References: <20180508073852.16840-1-anders.roxell@linaro.org>
-        <20180509190055.61ad929b@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S935285AbeEJNaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 09:30:05 -0400
+Date: Thu, 10 May 2018 15:30:03 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Roman Gushchin <guro@fb.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v3 1/2] mm: introduce memory.min
+Message-ID: <20180510133003.GH5325@dhcp22.suse.cz>
+References: <20180503114358.7952-1-guro@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180503114358.7952-1-guro@fb.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 May 2018 19:00:55 +0200, Jean Delvare wrote:
-> If SIMPLE_DEV_PM_OPS causes it but UNIVERSAL_DEV_PM_OPS did not, I
-> suppose that what matters is CONFIG_PM_SLEEP.
+On Thu 03-05-18 12:43:57, Roman Gushchin wrote:
+> Memory controller implements the memory.low best-effort memory
+> protection mechanism, which works perfectly in many cases and
+> allows protecting working sets of important workloads from
+> sudden reclaim.
 > 
-> So maybe we can just replace "#ifdef CONFIG_PM" with "ifdef
-> CONFIG_PM_SLEEP" in the code below?
+> But its semantics has a significant limitation: it works
+> only as long as there is a supply of reclaimable memory.
+> This makes it pretty useless against any sort of slow memory
+> leaks or memory usage increases. This is especially true
+> for swapless systems. If swap is enabled, memory soft protection
+> effectively postpones problems, allowing a leaking application
+> to fill all swap area, which makes no sense.
+> The only effective way to guarantee the memory protection
+> in this case is to invoke the OOM killer.
+> 
+> It's possible to handle this case in userspace by reacting
+> on MEMCG_LOW events; but there is still a place for a fail-safe
+> in-kernel mechanism to provide stronger guarantees.
+> 
+> This patch introduces the memory.min interface for cgroup v2
+> memory controller. It works very similarly to memory.low
+> (sharing the same hierarchical behavior), except that it's
+> not disabled if there is no more reclaimable memory in the system.
 
-It seems that drivers i2c-brcmstb, i2c-mpc, i2c-ocores, i2c-pnx,
-i2c-puv3, i2c-st, i2c-stu300 and i2c-mux-pca954x are doing exactly that
-already, so that must be a valid way to solve the problem.
+Originally I was pushing for the hard guarantee before we landed with
+the best effort one. The assumption back then was that properly
+configured systems shouldn't see problems IIRC.
 
-Will you send a new patch?
+It is not entirely clear to me what is the role of the low limit wrt.
+leaking application from the above description TBH. I presume you have a
+process without any low&hard limit which leaks and basically breaks the
+low limit expectation because of the lack of reclaimable memory and our
+memcg_low_reclaim fallback.
 
-Thanks,
+If that is the case then the hard limit should indeed protect the
+respective memcg from reclaim. But what is the actuall guarantee?
+We can reclaim that memory by the OOM killer, because there is no
+protection from killing a memcg under the min limit. So what is the
+actual semantic?
+
+Also how is an admin supposed to configure those limits? low limit
+doesn't reall protect in some cases so why should it be used at all?
+I see how min matches max and low matches high, so there is a nice
+symmetry but aren't we adding additional complexity to the API?
+Isn't the real problem that the other guy (leaking application) doesn't
+have any cap?
+
+Please note I haven't looked at the implementation yet but I would like
+to make sure I understand the whole concept first.
 -- 
-Jean Delvare
-SUSE L3 Support
+Michal Hocko
+SUSE Labs
