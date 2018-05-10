@@ -1,55 +1,124 @@
-Date: Mon, 14 May 2018 16:23:56 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: arnd@arndb.de, willy@infradead.org, geert@linux-m68k.org,
-	linux-m68k@lists.linux-m68k.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] mm: PAGE_KERNEL_* fallbacks
-Message-ID: <20180514142356.GA25793@kroah.com>
+Return-Path: <mcgrof@kernel.org>
+X-Google-Smtp-Source: AB8JxZqYGb7V1qHJSwUL5HOpJVGplSbTgf75YllmtE35Fa7M9iPu/ez/TWwNolvpQydMTQPqurIB
+ARC-Seal: i=1; a=rsa-sha256; t=1525916690; cv=none;
+        d=google.com; s=arc-20160816;
+        b=0Sm4W18aVMxnDY7CIwBmIBpru4pE1L4fCBt6amSm9D7xSecSVKYMt+1AWeBmPrUdLr
+         MnvtKVsBI99oA75cX/q6pnHLIFuPkgBXPlBvlF3vYSyS2ntEWqRTTnmFGFWmVVBa3XMp
+         Vu3CkHDzKqaIe1Np6TfBdZHc8FrG7KRcWBXzKIM9+tVz5J2OmDQcyriS9VMI4IGspv+O
+         mYXvfM3XRJQH0kiy7gkZ1KQ2Ej+T7odjLVxm2OS2qZjcA1Avo5hiZfsc7Su6vBzDTPXi
+         nwsvW54+6XHwAr/WPMN/244//Is4U+JCYoMbABuKv618/cu4mWxrauI/+Cy5CSK/TXLR
+         EaOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=uZ3mtURJToymJdzqmknRW4VLNJ6gXdyk5Tf2p2rYSzw=;
+        b=09R6Eibt1uDhVQ2y95ZXxl/EBuInLh59Trs613rTXXxMZ+aN46qqypIq4NoQ9b8RlH
+         narGhsPLi7vadC2ILuHLG7nKGlfAJ+TCpIcTo3F3ReieJlrXWYcO49f6zeoM8JRs1N6z
+         QL+kbT6FJGjlpv29FN/HgHJLRkfhiADPDtLusNThC410CLWgqagRjAOLEv412vy6Efv3
+         Bh8BbJlck4RSKlHWIFSB/tn8X+3nF2qc3Rgm/8R3KBCgb89QTVANahF1J1lRi+/wpDnz
+         Br/CigVcEva+zOvRa8Ml1csx/BwM0hQ7FXE7pUA0ZMl2yKhj9Ygc9bP8kOgv4jkHRcdB
+         A9PA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=YAr0XswI;
+       spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=YAr0XswI;
+       spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: arnd@arndb.de
+Cc: gregkh@linuxfoundation.org,
+	willy@infradead.org,
+	geert@linux-m68k.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH v2 2/2] mm: provide a fallback for PAGE_KERNEL_EXEC for architectures
+Date: Wed,  9 May 2018 18:44:47 -0700
+Message-Id: <20180510014447.15989-3-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180510014447.15989-1-mcgrof@kernel.org>
 References: <20180510014447.15989-1-mcgrof@kernel.org>
- <20180510060733.GA23098@kroah.com>
- <20180510171520.GD27853@wotan.suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180510171520.GD27853@wotan.suse.de>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600039619823069048?=
+X-GMAIL-MSGID: =?utf-8?q?1600039619823069048?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 10, 2018 at 05:15:20PM +0000, Luis R. Rodriguez wrote:
-> On Thu, May 10, 2018 at 08:07:33AM +0200, Greg KH wrote:
-> > On Wed, May 09, 2018 at 06:44:45PM -0700, Luis R. Rodriguez wrote:
-> > > While dusting out the firmware loader closet I spotted a PAGE_KERNEL_*
-> > > fallback hack. This hurts my eyes, and it should also be blinding
-> > > others. Turns out we have other PAGE_KERNEL_* fallback hacks in
-> > > other places.
-> > > 
-> > > This moves them to asm-generic, and keeps track of architectures which
-> > > need some love or review. At least 0-day was happy with the changes.
-> > > 
-> > > Matthew Wilcox did put together a PAGE_KERNEL_RO patch for ia64, that
-> > > needs review and testing, and if it goes well it should be merged.
-> > > 
-> > > Luis R. Rodriguez (2):
-> > >   mm: provide a fallback for PAGE_KERNEL_RO for architectures
-> > >   mm: provide a fallback for PAGE_KERNEL_EXEC for architectures
-> > > 
-> > >  drivers/base/firmware_loader/fallback.c |  5 ----
-> > >  include/asm-generic/pgtable.h           | 36 +++++++++++++++++++++++++
-> > >  mm/nommu.c                              |  4 ---
-> > >  mm/vmalloc.c                            |  4 ---
-> > >  4 files changed, 36 insertions(+), 13 deletions(-)
-> > 
-> > No list of changes that happened from v1?  :(
-> 
-> Didn't know you'd want it for such simple patch set, but I'll provide one for v3 and
-> also list the changes in v2.
+Some architectures just don't have PAGE_KERNEL_EXEC. The mm/nommu.c
+and mm/vmalloc.c code have been using PAGE_KERNEL as a fallback for years.
+Move this fallback to asm-generic.
 
-Nothing is "trivial" really, and given the huge rate of patch
-submissions, how is anyone supposed to remember what you did in the last
-one?
+Architectures which do not define PAGE_KERNEL_EXEC yet:
 
-thanks,
+  o alpha
+  o mips
+  o openrisc
+  o sparc64
 
-greg k-h
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+---
+ include/asm-generic/pgtable.h | 12 ++++++++++++
+ mm/nommu.c                    |  4 ----
+ mm/vmalloc.c                  |  4 ----
+ 3 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 890fc54f4713..39e9bd66c786 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -1107,6 +1107,18 @@ static inline void init_espfix_bsp(void) { }
+ # define PAGE_KERNEL_RO PAGE_KERNEL
+ #endif
+ 
++/*
++ * Current architectures known to not define PAGE_KERNEL_EXEC:
++ *
++ *  o alpha
++ *  o mips
++ *  o openrisc
++ *  o sparc64
++ */
++#ifndef PAGE_KERNEL_EXEC
++# define PAGE_KERNEL_EXEC PAGE_KERNEL
++#endif
++
+ #endif /* !__ASSEMBLY__ */
+ 
+ #ifndef io_remap_pfn_range
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 13723736d38f..08ad4dcd281d 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -364,10 +364,6 @@ void *vzalloc_node(unsigned long size, int node)
+ }
+ EXPORT_SYMBOL(vzalloc_node);
+ 
+-#ifndef PAGE_KERNEL_EXEC
+-# define PAGE_KERNEL_EXEC PAGE_KERNEL
+-#endif
+-
+ /**
+  *	vmalloc_exec  -  allocate virtually contiguous, executable memory
+  *	@size:		allocation size
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index ebff729cc956..89543d13e32a 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1920,10 +1920,6 @@ void *vzalloc_node(unsigned long size, int node)
+ }
+ EXPORT_SYMBOL(vzalloc_node);
+ 
+-#ifndef PAGE_KERNEL_EXEC
+-# define PAGE_KERNEL_EXEC PAGE_KERNEL
+-#endif
+-
+ /**
+  *	vmalloc_exec  -  allocate virtually contiguous, executable memory
+  *	@size:		allocation size
+-- 
+2.17.0
