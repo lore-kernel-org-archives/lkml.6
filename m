@@ -1,96 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752031AbeEJThs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 15:37:48 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:39099 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751892AbeEJThp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 15:37:45 -0400
-Date: Thu, 10 May 2018 20:37:37 +0100
-From: Justin Skists <justin.skists@juzza.co.uk>
-To: linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation/process/posting: wrap text at 80 cols
-Message-ID: <20180510193737.GA19307@tanglefoot>
+        id S1752086AbeEJTkW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 15:40:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43142 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750762AbeEJTkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 15:40:21 -0400
+Date: Thu, 10 May 2018 21:40:17 +0200
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm@vger.kernel.org, x86@kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] KVM: x86: hyperv: simplistic
+ HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE} implementation
+Message-ID: <20180510194016.GB3885@flask>
+References: <20180416110806.4896-1-vkuznets@redhat.com>
+ <20180416110806.4896-5-vkuznets@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Provags-ID: V03:K1:3FvRLdcNpXSWH9UZVNdWIpV1RDNDcuJSgj7hz2DzSyeeStX+IMj
- xfdXljZ4Rt57xkjapHghhZIgO0Vff4u+kRkxKKPPyCJrJbKia47SyxiQsef7qZ99azKzoMf
- fDlMzWBjRuyOaUGHfbuEalK24ydBBLu5stx7BxaiSftsC3tshOWDyBI3Hkwsras6/njquaN
- w9htQJf0aEuPoYa/MWXuQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:3XTvyzeKjxA=:xS5P+m2AWiwkbF80wEzoK4
- 7Fe/TpYc4Lhbglt2vvpFcviBHCAXD4FeVz+2Tb89bdfwzDmKeg3GXR2xJCArvtoXZLdWskPgY
- JgvfiSxEEug5Mqlh/aAc8Q63T9LOaUNZPzx0KYrtlfXNcx/z+fQRgWYgvvQo3YIk93fxL1G29
- JTx7mpSfsihjXA87f5kp224mfk5wLkZx14xU/qIvmchtjUha5+FTIomNHwxBgAKF67w8ff0WY
- yZ72gZqfIk5EV0Hhy8Y2ddc3ONqYFZp3FT3MANYSmhbggm7PWW9NRWZ3Imn8Q3YOIuxE0dmM9
- NNc7/REvui1m20Y/8FOalMjhSa7ezB56DCOqgvIy26FbLvAsFrraaRA+vFijUNXkzLkXGH14t
- xKvI5RmAv1otXtYv+myxOr9dDh5E3ShmPdJS9i6u2VZNF84vAHDjuqhXEvIM0vOSeXH6Q6GvR
- KV8O1/teZOVO7K0SVzT37paOu5sNEN2Sqp53p2kbt9uC51NDXJ9foo/d/HIhATZrT4OFOOPiG
- cTa4Ath0K5Mx86CupZHg/8pHNYiLvAVm1rb431Wp8DhdbvE9Q4uzdT/xqKMXzWX1KhVy4roLv
- fHNqb/+jZBgqKMp30ukkfLjIRxI1/yzVhB+VJu+Z8+S1E2MowwH9dpEgKq3KuukkquiFF6v+6
- 4lOlRUR/hF0LrxjtJojFRNfGRhsAqs7Tb9xi3B9t2GCsG4fEBxi9gan40LHjZzJ0M1K8=
+In-Reply-To: <20180416110806.4896-5-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Trivial patch to adjust the text formatting to wrap at 80 columns. No
-actual content has changed.
+2018-04-16 13:08+0200, Vitaly Kuznetsov:
+> Implement HvFlushVirtualAddress{List,Space} hypercalls in a simplistic way:
+> do full TLB flush with KVM_REQ_TLB_FLUSH and kick vCPUs which are currently
+> IN_GUEST_MODE.
+> 
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+> @@ -1242,6 +1242,65 @@ int kvm_hv_get_msr_common(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
+>  		return kvm_hv_get_msr(vcpu, msr, pdata);
+>  }
+>  
+> +static void ack_flush(void *_completed)
+> +{
+> +}
+> +
+> +static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
+> +			    u16 rep_cnt)
+> +{
+> +	struct kvm *kvm = current_vcpu->kvm;
+> +	struct kvm_vcpu_hv *hv_current = &current_vcpu->arch.hyperv;
+> +	struct hv_tlb_flush flush;
+> +	struct kvm_vcpu *vcpu;
+> +	int i, cpu, me;
+> +
+> +	if (unlikely(kvm_read_guest(kvm, ingpa, &flush, sizeof(flush))))
+> +		return HV_STATUS_INVALID_HYPERCALL_INPUT;
+> +
+> +	trace_kvm_hv_flush_tlb(flush.processor_mask, flush.address_space,
+> +			       flush.flags);
+> +
+> +	cpumask_clear(&hv_current->tlb_lush);
+> +
+> +	me = get_cpu();
+> +
+> +	kvm_for_each_vcpu(i, vcpu, kvm) {
+> +		struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
+> +
+> +		if (!(flush.flags & HV_FLUSH_ALL_PROCESSORS) &&
 
-Signed-off-by: Justin Skists <justin.skists@juzza.co.uk>
----
- Documentation/process/5.Posting.rst | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Please add a check to prevent undefined behavior in C:
 
-diff --git a/Documentation/process/5.Posting.rst b/Documentation/process/5.Posting.rst
-index c209d70da66f..c418c5d6cae4 100644
---- a/Documentation/process/5.Posting.rst
-+++ b/Documentation/process/5.Posting.rst
-@@ -10,8 +10,8 @@ of conventions and procedures which are used in the posting of patches;
- following them will make life much easier for everybody involved.  This
- document will attempt to cover these expectations in reasonable detail;
- more information can also be found in the files process/submitting-patches.rst,
--process/submitting-drivers.rst, and process/submit-checklist.rst in the kernel documentation
--directory.
-+process/submitting-drivers.rst, and process/submit-checklist.rst in the kernel
-+documentation directory.
- 
- 
- When to post
-@@ -198,8 +198,8 @@ pass it to diff with the "-X" option.
- 
- The tags mentioned above are used to describe how various developers have
- been associated with the development of this patch.  They are described in
--detail in the process/submitting-patches.rst document; what follows here is a brief
--summary.  Each of these lines has the format:
-+detail in the process/submitting-patches.rst document; what follows here is a
-+brief summary.  Each of these lines has the format:
- 
- ::
- 
-@@ -210,8 +210,8 @@ The tags in common use are:
-  - Signed-off-by: this is a developer's certification that he or she has
-    the right to submit the patch for inclusion into the kernel.  It is an
-    agreement to the Developer's Certificate of Origin, the full text of
--   which can be found in Documentation/process/submitting-patches.rst.  Code without a
--   proper signoff cannot be merged into the mainline.
-+   which can be found in Documentation/process/submitting-patches.rst.  Code
-+   without a proper signoff cannot be merged into the mainline.
- 
-  - Co-developed-by: states that the patch was also created by another developer
-    along with the original author.  This is useful at times when multiple
-@@ -226,8 +226,8 @@ The tags in common use are:
-    it to work.
- 
-  - Reviewed-by: the named developer has reviewed the patch for correctness;
--   see the reviewer's statement in Documentation/process/submitting-patches.rst for more
--   detail.
-+   see the reviewer's statement in Documentation/process/submitting-patches.rst
-+   for more detail.
- 
-  - Reported-by: names a user who reported a problem which is fixed by this
-    patch; this tag is used to give credit to the (often underappreciated)
--- 
-2.17.0
+                    (hv->vp_index >= 64 ||
+
+> +		    !(flush.processor_mask & BIT_ULL(hv->vp_index)))
+> +			continue;
+
+It would also fail in the wild as shl only considers the bottom 5 bits.
+
+> +		/*
+> +		 * vcpu->arch.cr3 may not be up-to-date for running vCPUs so we
+> +		 * can't analyze it here, flush TLB regardless of the specified
+> +		 * address space.
+> +		 */
+> +		kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
+> +
+> +		/*
+> +		 * It is possible that vCPU will migrate and we will kick wrong
+> +		 * CPU but vCPU's TLB will anyway be flushed upon migration as
+> +		 * we already made KVM_REQ_TLB_FLUSH request.
+> +		 */
+> +		cpu = vcpu->cpu;
+> +		if (cpu != -1 && cpu != me && cpu_online(cpu) &&
+> +		    kvm_arch_vcpu_should_kick(vcpu))
+> +			cpumask_set_cpu(cpu, &hv_current->tlb_lush);
+> +	}
+> +
+> +	if (!cpumask_empty(&hv_current->tlb_lush))
+> +		smp_call_function_many(&hv_current->tlb_lush, ack_flush,
+> +				       NULL, true);
+
+Hm, quite a lot of code duplication with EX hypercall and also
+kvm_make_all_cpus_request ... I'm thinking about making something like
+
+  kvm_make_some_cpus_request(struct kvm *kvm, unsigned int req,
+                             bool (*predicate)(struct kvm_vcpu *vcpu))
+
+or to implement a vp_index -> vcpu mapping and using
+
+  kvm_vcpu_request_mask(struct kvm *kvm, unsigned int req, long *vcpu_bitmap)
+
+The latter would probably simplify logic of the EX hypercall.
+
+What do you think?
