@@ -1,82 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757044AbeEJKl2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 06:41:28 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35991 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756705AbeEJKl0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 06:41:26 -0400
-X-Google-Smtp-Source: AB8JxZrx1A1Tf7KDrigcd0Rz/c1r7cGILxAySmP1zbyBnnZVVOKX4spoFEYlGLu2ZrCIK2EXxag7s4tzXQ21YQXS0f8=
+        id S1757099AbeEJKlk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 06:41:40 -0400
+Received: from sauhun.de ([88.99.104.3]:45266 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757045AbeEJKlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 06:41:37 -0400
+Date: Thu, 10 May 2018 12:41:35 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: trivial@kernel.org, linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] dt-bindings: i2c: fix typo 'can by' to 'can be'
+Message-ID: <20180510104135.cj6em2n34lwwzgm2@ninjato>
+References: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
+ <20180506112404.24872-2-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-In-Reply-To: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
-References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 10 May 2018 12:41:24 +0200
-Message-ID: <CACna6rxb9KSQfGwi__xxSMACAxh-bOV9SR1NsnUVe8ASdA0Liw@mail.gmail.com>
-Subject: Re: Regression caused by commit 882164a4a928
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Matt Redfearn <matt.redfearn@mips.com>,
-        =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yvjvf7crypp62h6k"
+Content-Disposition: inline
+In-Reply-To: <20180506112404.24872-2-wsa+renesas@sang-engineering.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4AAfYY8021117
 
-On 7 May 2018 at 17:44, Larry Finger <Larry.Finger@lwfinger.net> wrote:
-> Although commit 882164a4a928 ("ssb: Prevent build of PCI host features in
-> module") appeared to be harmless, it leads to complete failure of drivers
-> b43. and b43legacy, and likely affects b44 as well. The problem is that
-> CONFIG_SSB_PCIHOST is undefined, which prevents the compilation of the code
-> that controls the PCI cores of the device. See
-> https://bugzilla.redhat.com/show_bug.cgi?id=1572349 for details.
->
-> As the underlying errors ("pcibios_enable_device" undefined, and
-> "register_pci_controller" undefined) do not appear on the architectures that
-> I have tested (x86_64, x86, and ppc), I suspect something in the
-> arch-specific code for your setup (MIPS?). As I have no idea on how to fix
-> that problem, would the following patch work for you?
->
-> diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
-> index 9371651d8017..3743533c8057 100644
-> --- a/drivers/ssb/Kconfig
-> +++ b/drivers/ssb/Kconfig
-> @@ -117,7 +117,7 @@ config SSB_SERIAL
->
->  config SSB_DRIVER_PCICORE_POSSIBLE
->         bool
-> -       depends on SSB_PCIHOST && SSB = y
-> +       depends on SSB_PCIHOST && (SSB = y || !MIPS)
->         default y
->
->  config SSB_DRIVER_PCICORE
 
-I strongly suggest we take a step back, slow down a bit and look at
-the original problem.
+--yvjvf7crypp62h6k
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In driver_pcicore.c there is MIPS specific code. It's protected using
-#ifdef CONFIG_SSB_PCICORE_HOSTMODE
-(...)
-#endif
+On Sun, May 06, 2018 at 01:23:45PM +0200, Wolfram Sang wrote:
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-If anyone has ever seen
-ERROR: "pcibios_enable_device" [drivers/ssb/ssb.ko] undefined!
-ERROR: "register_pci_controller" [drivers/ssb/ssb.ko] undefined!
-make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
-it means he managed to get CONFIG_SSB_PCICORE_HOSTMODE set on non-MIPS system.
+Applied to for-next, thanks!
 
-We should rather answer how did that happen and fix it.
 
-SSB_PCICORE_HOSTMODE depends on SSB_DRIVER_MIPS
-SSB_DRIVER_MIPS depends on MIPS
+--yvjvf7crypp62h6k
+Content-Type: application/pgp-signature; name="signature.asc"
 
-How is that possible to set SSB_PCICORE_HOSTMODE with non-MIPS config?
-Is there some mistake in Kconfig I can't see?
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Rafał
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlr0Id8ACgkQFA3kzBSg
+KbaSnw/7BOVHCjcSyFnEXN+NkI/Rh0b8yN6wIAYW+UDfu2C5cAFXI2zf5GVDxoP5
+0gBDZHKtKpFfY03e0UpgWigRbjRaRzQtdRHKysIxhv8xSEx/en02fPI59PeBT1bA
+L/6P3QrYK+08rVzzhyV705JgPdAJO+xHW5qarAIvFC+KIcRQPjAI7mIno5sbGEy0
+tpJnV8p1tk9ZHqLkfDeJ/NvLzNmgmHQTQHbdIHkMmaVZe+xVlOSHUp7czMubLxL7
+5jHBcMuIhMSspuFes/YoF8+vDus95ncakH+QCk/4btEuxjVRR6ZYUaRqPUW9YeRf
+ori8DVE80woRu18tknw1BxslYdDLdVm61H6EZE5JIeF7NoEzfLwjSDA+mkRyBsZr
+oRycOFPotjwdv5BipTmgWxR5Xipsvr3LOjZlAGmU4EnkdDGSMw3f8Kx5UPa9rD/m
+bistd8ZZorM0krjjF4H9Fdg4XjPHjaPZsnNrMrBPM+CYefeAL4lutJIX2s1tywrj
+Os89345lp8eDTO/rjJ7F9/eZRmdHt83tVxo8Xn4MM5S6eLXrBlqu98UgImJqXvQR
+Vaad84ki+WfQdaUa4bvAlqGjqVDNhu9/9pMKIaGqq0VWyp1EdodccyU9SSe9GAo7
+DevXIJsxhG9qxSXbvuRjkEwa1ZauSJVcfgcGirFsaU4xGKiqH+A=
+=oVlN
+-----END PGP SIGNATURE-----
+
+--yvjvf7crypp62h6k--
