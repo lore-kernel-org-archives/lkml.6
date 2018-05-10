@@ -1,132 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752241AbeEJUgC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 16:36:02 -0400
-Received: from mga18.intel.com ([134.134.136.126]:39400 "EHLO mga18.intel.com"
+        id S1752370AbeEJUoX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 16:44:23 -0400
+Received: from mga12.intel.com ([192.55.52.136]:59217 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752054AbeEJUgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 16:36:00 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1751963AbeEJUoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 16:44:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,386,1520924400";
-   d="asc'?scan'208";a="38377717"
-Message-ID: <182a863cd7502dd9d872beb5265487a4ce39453d.camel@intel.com>
-Subject: Re: [PATCH v6 4/5] ixgbe: Report PCIe link properties with
- pcie_print_link_status()
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Reply-To: jeffrey.t.kirsher@intel.com
-To: Bjorn Helgaas <helgaas@kernel.org>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Ariel Elior <ariel.elior@cavium.com>
-Cc: linux-pci@vger.kernel.org, everest-linux-l2@cavium.com,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tal Gilboa <talgi@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Jakub Kicinski <kubakici@wp.pl>
-Date: Thu, 10 May 2018 13:37:17 -0700
-In-Reply-To: <152537763602.62474.15659483976051204438.stgit@bhelgaas-glaptop.roam.corp.google.com>
-References: <152537719056.62474.2571390812509425478.stgit@bhelgaas-glaptop.roam.corp.google.com>
-         <152537763602.62474.15659483976051204438.stgit@bhelgaas-glaptop.roam.corp.google.com>
-Organization: Intel
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-pn319CNs1sSWaLiR7sVo"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
+   d="scan'208";a="40007063"
+From: thor.thayer@linux.intel.com
+To: dinguyen@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: catalin.marinas@arm.com, will.deacon@arm.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Thor Thayer <thor.thayer@linux.intel.com>
+Subject: [PATCH] arm64: dts: stratix10: Add QSPI support for Stratix10
+Date: Thu, 10 May 2018 15:46:44 -0500
+Message-Id: <1525985204-11525-1-git-send-email-thor.thayer@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
---=-pn319CNs1sSWaLiR7sVo
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Add qspi_clock
+   The qspi_clk frequency is updated by U-Boot before starting Linux.
+Add QSPI interface node.
+Add QSPI flash memory child node.
+   Setup the QSPI memory in 2 partitions.
 
-On Thu, 2018-05-03 at 15:00 -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
->=20
-> Previously the driver used pcie_get_minimum_link() to warn when the
-> NIC
-> is in a slot that can't supply as much bandwidth as the NIC could
-> use.
->=20
-> pcie_get_minimum_link() can be misleading because it finds the
-> slowest link
-> and the narrowest link (which may be different links) without
-> considering
-> the total bandwidth of each link.  For a path with a 16 GT/s x1 link
-> and a
-> 2.5 GT/s x16 link, it returns 2.5 GT/s x1, which corresponds to 250
-> MB/s of
-> bandwidth, not the true available bandwidth of about 1969 MB/s for a
-> 16 GT/s x1 link.
->=20
-> Use pcie_print_link_status() to report PCIe link speed and possible
-> limitations instead of implementing this in the driver itself.  This
-> finds
-> the slowest link in the path to the device by computing the total
-> bandwidth
-> of each link and compares that with the capabilities of the device.
->=20
-> The dmesg change is:
->=20
->   - PCI Express bandwidth of %dGT/s available
->   - (Speed:%s, Width: x%d, Encoding Loss:%s)
->   + %u.%03u Gb/s available PCIe bandwidth (%s x%d link)
->=20
-> or, if the device is capable of better performance than is available
-> in the
-> current slot:
->=20
->   - This is not sufficient for optimal performance of this card.
->   - For optimal performance, at least %dGT/s of bandwidth is
-> required.
->   - A slot with more lanes and/or higher speed is suggested.
->   + %u.%03u Gb/s available PCIe bandwidth, limited by %s x%d link at
-> %s (capable of %u.%03u Gb/s with %s x%d link)
->=20
-> Note that the driver previously used dev_warn() to suggest using a
-> different slot, but pcie_print_link_status() uses dev_info() because
-> if the
-> platform has no faster slot available, the user can't do anything
-> about the
-> warning and may not want to be bothered with it.
->=20
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+---
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  | 22 +++++++++++++++
+ .../boot/dts/altera/socfpga_stratix10_socdk.dts    | 31 ++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
 
-Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-
-Since this is apart of a series, I am not planning to pick this up and
-push to David Miller in my ixgbe updates.  This should remain in the
-series so David can pick up the entire series at once.
-
-> ---
->  drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |   47 +------------
-> ------------
->  1 file changed, 1 insertion(+), 46 deletions(-)
-
---=-pn319CNs1sSWaLiR7sVo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlr0rX0ACgkQ5W/vlVpL
-7c4B1g/9GFdyqM9Jr9tJUa4p9tx12FENwn4QFgkxMsgrgVxSMajW6xErR7SeNDB9
-wjYkJa8buc6P2LQSk9Ix8xfI2ZJKU2yyrr3TqEjq0klrU80kWBhht2iwvWd/4Kvw
-pcWUA4T2v2e5GpiH0SxBZMrrqHFZxt5RCc3Z/N5VViD/IvsYUcEoibA+pvdAe8QB
-TTAKjA83oDUrpPuir9aPgHHoLc80taD2bIrD37yjtS9he5C4KZ/Pt7zIpHiRWbLO
-HnPaiYG/TPYoOB1Zmr0EWvte0SMEzYYmTefmv/3snYEztN4ZQcxcOxH9iHsfQ6Be
-EDkk2mwbNfZE/COuHAFIXF/TXi0zSsQ4O5D5Xyjh0zsimTs9n773gVHoZNaRwi71
-Ev/5lY0vEQ3Z0opqE5ODpcOscDK/+AxnKVnUtwNN+WF7TYz6GG6T82xH6+KaZN8T
-1cXpNbIi0gtuh/Ub6UQtSFArgvxc5TrNjpcYLhlUmogz/m0QOXy+WL+Xbz+XhWxd
-fcQs+aonGvYjt7HhU4vwgZWMFkE7l1VcTUWEo4YcFY+1bv6s1DDoBLGEm5IUd4Pi
-To2kYpILUoPBMsWS2z4GjjPmsuB18PH4g+i68DM7+3/koIwGss4OgO5D7uTaq59M
-v8Uq2PTUobhnxQcecUjaUaTgpqKvNBfOmaITdWoHU54wJTMfRU0=
-=Z8SL
------END PGP SIGNATURE-----
-
---=-pn319CNs1sSWaLiR7sVo--
+diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+index e6b059378dc0..ed47dfce3ba6 100644
+--- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
++++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
+@@ -119,6 +119,12 @@
+ 				#clock-cells = <0>;
+ 				compatible = "fixed-clock";
+ 			};
++
++			qspi_clk: qspi_clk {
++				#clock-cells = <0>;
++				compatible = "fixed-clock";
++				clock-frequency = <200000000>;
++			};
+ 		};
+ 
+ 		gmac0: ethernet@ff800000 {
+@@ -466,5 +472,21 @@
+ 				interrupts = <16 4>, <48 4>;
+ 			};
+ 		};
++
++		qspi: spi@ff8d2000 {
++			compatible = "cdns,qspi-nor";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0xff8d2000 0x100>,
++			      <0xff900000 0x100000>;
++			interrupts = <0 3 4>;
++			cdns,fifo-depth = <128>;
++			cdns,fifo-width = <4>;
++			cdns,trigger-address = <0x00000000>;
++			clocks = <&qspi_clk>;
++			bus-num = <1>;
++
++			status = "disabled";
++		};
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+index f9b1ef12db48..60251462067a 100644
+--- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
++++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
+@@ -147,3 +147,34 @@
+ 		reg = <0x68>;
+ 	};
+ };
++
++&qspi {
++	flash0: n25q00@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "n25q00aa";
++		reg = <0>;
++		spi-max-frequency = <50000000>;
++
++		m25p,fast-read;
++		cdns,page-size = <256>;
++		cdns,block-size = <16>;
++		cdns,read-delay = <1>;
++		cdns,tshsl-ns = <50>;
++		cdns,tsd2d-ns = <50>;
++		cdns,tchsh-ns = <4>;
++		cdns,tslch-ns = <4>;
++
++		partition@qspi-boot {
++			label = "Boot and fpga data";
++			/* 64MB for boot and FPGA data */
++			reg = <0x0 0x4000000>;
++		};
++
++		partition@qspi-rootfs {
++			label = "Root Filesystem - JFFS2";
++			/* 64MB for Linux jffs2 */
++			reg = <0x4000000 0x4000000>;
++		};
++	};
++};
+-- 
+2.7.4
