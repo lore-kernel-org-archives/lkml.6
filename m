@@ -1,110 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933743AbeEJGFc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 02:05:32 -0400
-Received: from mga18.intel.com ([134.134.136.126]:10754 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750746AbeEJGFa (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 02:05:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,384,1520924400";
-   d="scan'208";a="53061509"
-From: Jin Yao <yao.jin@linux.intel.com>
-To: acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com
-Cc: Linux-kernel@vger.kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com, Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH] perf annotate: Support multiple events without group
-Date: Thu, 10 May 2018 21:59:22 +0800
-Message-Id: <1525960762-19520-1-git-send-email-yao.jin@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1756634AbeEJGP0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 02:15:26 -0400
+Received: from mail-wr0-f176.google.com ([209.85.128.176]:37744 "EHLO
+        mail-wr0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751313AbeEJGPZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 02:15:25 -0400
+X-Google-Smtp-Source: AB8JxZq0RvR5LSGvS+Kh2VtElxAgSXSW/wUZDaF/GZXeo4NvkbvqT0uvruB8e+/qN/Ii8mDrZeqdP7iUp1OGkbL2s5I=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <eece810c-b3c8-4307-c03a-1cfdaa7109de@gmail.com>
+References: <20180510052111.17886-1-jmaxwell37@gmail.com> <eece810c-b3c8-4307-c03a-1cfdaa7109de@gmail.com>
+From: Jonathan Maxwell <jmaxwell37@gmail.com>
+Date: Thu, 10 May 2018 16:14:43 +1000
+Message-ID: <CAGHK07CckLqZBKBD-gpu6x1fLDtZ_ea3D+-pQJc-hQUM0DRgJA@mail.gmail.com>
+Subject: Re: [PATCH net-next v1] tcp: Add mark for TIMEWAIT sockets
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: David Miller <davem@davemloft.net>, kuznet <kuznet@ms2.inr.ac.ru>,
+        yoshfuji <yoshfuji@linux-ipv6.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jon Maxwell <jmaxwell@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-See example,
+On Thu, May 10, 2018 at 3:45 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+>
+> On 05/09/2018 10:21 PM, Jon Maxwell wrote:
+>
+> ...
+>
+>>       if (th->rst)
+>> @@ -723,11 +724,17 @@ static void tcp_v4_send_reset(const struct sock *sk, struct sk_buff *skb)
+>>       arg.tos = ip_hdr(skb)->tos;
+>>       arg.uid = sock_net_uid(net, sk && sk_fullsock(sk) ? sk : NULL);
+>>       local_bh_disable();
+>> -     ip_send_unicast_reply(*this_cpu_ptr(net->ipv4.tcp_sk),
+>> +     ctl_sk = *this_cpu_ptr(net->ipv4.tcp_sk);
+>> +     if (sk && sk->sk_state == TCP_TIME_WAIT)
+>> +             ctl_sk->sk_mark = inet_twsk(sk)->tw_mark;
+>> +     else if (sk && sk_fullsock(sk))
+>
+> I do not believe we could have a non fullsock here ?
+>
 
-perf record -e cycles,branches ./div
-perf annotate main --stdio or
-perf annotate main --stdio2 or
-perf annotate main
+Okay thanks I'll make these changes to v2.
 
-The "perf annotate" should show both cycles and branches on the
-left side, but actually it only shows one event cycles.
-
-It works with events group like:
-perf record -e "{cycles,branches}" ./div
-
-It should work too even without group.
-
-This patch uses 'symbol_conf.nr_events > 1' to check if it's the
-multiple events case.
-
-With this patch,
-
-perf record -e cycles,branches ./div
-perf annotate main --stdio2
-
-  ......
-                           for (i = 0; i < 2000000000; i++) {
-                                   flag = compute_flag();
-  4.85   5.83  38:   xor    %eax,%eax
-  0.01   0.01      → callq  compute_flag
-
-                                   count++;
-  4.44   2.27        mov    count,%edx
-  0.00   0.00        add    $0x1,%edx
-  ......
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
----
- tools/perf/util/annotate.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 5d74a30..ca8d4b1 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1054,6 +1054,8 @@ annotation_line__new(struct annotate_args *args, size_t privsize)
- 
- 	if (perf_evsel__is_group_event(evsel))
- 		nr = evsel->nr_members;
-+	else if (symbol_conf.nr_events > nr)
-+		nr = symbol_conf.nr_events;
- 
- 	size += sizeof(al->samples[0]) * nr;
- 
-@@ -1326,6 +1328,8 @@ annotation_line__print(struct annotation_line *al, struct symbol *sym, u64 start
- 
- 		if (perf_evsel__is_group_event(evsel))
- 			width *= evsel->nr_members;
-+		else if (symbol_conf.nr_events > 1)
-+			width *= symbol_conf.nr_events;
- 
- 		if (!*al->line)
- 			printf(" %*s:\n", width, " ");
-@@ -1967,6 +1971,8 @@ int symbol__annotate_printf(struct symbol *sym, struct map *map,
- 
- 	if (perf_evsel__is_group_event(evsel))
- 		width *= evsel->nr_members;
-+	else if (symbol_conf.nr_events > 1)
-+		width *= symbol_conf.nr_events;
- 
- 	graph_dotted_len = printf(" %-*.*s|	Source code & Disassembly of %s for %s (%" PRIu64 " samples)\n",
- 				  width, width, symbol_conf.show_total_period ? "Period" :
-@@ -2578,6 +2584,8 @@ int symbol__annotate2(struct symbol *sym, struct map *map, struct perf_evsel *ev
- 
- 	if (perf_evsel__is_group_event(evsel))
- 		nr_pcnt = evsel->nr_members;
-+	else if (symbol_conf.nr_events > nr_pcnt)
-+		nr_pcnt = symbol_conf.nr_events;
- 
- 	err = symbol__annotate(sym, map, evsel, 0, parch);
- 	if (err)
--- 
-2.7.4
+> A request socket (SYN_RECV state) at this point is not expected.
+>
+>
+> So you can factorize :
+>
+> if (sk)
+>         ctl_sk->sk_mark = (sk->sk_state == TCP_TIME_WAIT) ?
+>                           inet_twsk(sk)->tw_mark : sk->sk_mark;
+>
+> (same remark for IPv6)
+>
+>
+>> +             ctl_sk->sk_mark = sk->sk_mark;
+>> +     ip_send_unicast_reply(ctl_sk,
+>>                             skb, &TCP_SKB_CB(skb)->header.h4.opt,
+>>                             ip_hdr(skb)->saddr, ip_hdr(skb)->daddr,
+>>                             &arg, arg.iov[0].iov_len);
+>
+>
