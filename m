@@ -1,103 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966864AbeEJSKQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 14:10:16 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:45030 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966722AbeEJSKO (ORCPT
+        id S1757253AbeEJSNr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 14:13:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40055 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756741AbeEJSNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 14:10:14 -0400
-X-Google-Smtp-Source: AB8JxZqkxAg2I9vn07X0qFyJeE+O4uvRqy4lhYiW9hqY3GZYMqGe8AtcR2lq/VH8jBEuCfCeDxAt7w==
-Date: Thu, 10 May 2018 20:10:09 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        KarimAllah Ahmed <karahmed@amazon.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Wang Nan <wangnan0@huawei.com>, William Cohen <wcohen@redhat.com>,
-        Yisheng Xie <xieyisheng1@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [GIT PULL 0/6] perf/urgent fixes
-Message-ID: <20180510181009.fayjnnt5swpb75ym@gmail.com>
-References: <20180507201333.26990-1-acme@kernel.org>
+        Thu, 10 May 2018 14:13:46 -0400
+Date: Thu, 10 May 2018 11:13:00 -0700
+From: tip-bot for Yisheng Xie <tipbot@zytor.com>
+Message-ID: <tip-2abb80dad3afa9170ae19ca03bb7b4cd1ec06d62@git.kernel.org>
+Cc: mingo@kernel.org, xieyisheng1@huawei.com, acme@redhat.com,
+        peterz@infradead.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com, tglx@linutronix.de
+Reply-To: acme@redhat.com, peterz@infradead.org, xieyisheng1@huawei.com,
+        mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com, jolsa@redhat.com,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <1524644707-11030-1-git-send-email-xieyisheng1@huawei.com>
+References: <1524644707-11030-1-git-send-email-xieyisheng1@huawei.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf bench numa: Fix typo in options
+Git-Commit-ID: 2abb80dad3afa9170ae19ca03bb7b4cd1ec06d62
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180507201333.26990-1-acme@kernel.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  2abb80dad3afa9170ae19ca03bb7b4cd1ec06d62
+Gitweb:     https://git.kernel.org/tip/2abb80dad3afa9170ae19ca03bb7b4cd1ec06d62
+Author:     Yisheng Xie <xieyisheng1@huawei.com>
+AuthorDate: Wed, 25 Apr 2018 16:25:07 +0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 7 May 2018 12:17:56 -0300
 
-* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+perf bench numa: Fix typo in options
 
-> Hi Ingo,
-> 
-> 	Please consider pulling,
-> 
-> - Arnaldo
-> 
-> Test results at the end of this message, as usual.
-> 
-> The following changes since commit 1504269814263c9676b4605a6a91e14dc6ceac21:
-> 
->   Merge tag 'linux-kselftest-4.17-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest (2018-05-03 19:26:51 -1000)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git perf-urgent-for-mingo-4.17-20180507
-> 
-> for you to fetch changes up to 4a35a9027f64d588d2fd9436dda4126e8d5647d7:
-> 
->   Revert "perf pmu: Fix pmu events parsing rule" (2018-05-07 16:28:10 -0300)
-> 
-> ----------------------------------------------------------------
-> perf/urgent fixes:
-> 
-> . Revert "perf pmu: Fix pmu events parsing rule", as it broke Intel PT
->   event description parsing (Arnaldo Carvalho de Melo)
-> 
-> . Sync x86's cpufeatures.h and kvm UAPI headers with the kernel sources,
->   suppressing the ABI drift warnings (Arnaldo Carvalho de Melo)
-> 
-> - Remove duplicated entry for westmereep-dp in Intel's mapfile.csv (William Cohen)
-> 
-> - Fix typo in 'perf bench numa' options description (Yisheng Xie)
-> 
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> ----------------------------------------------------------------
-> Arnaldo Carvalho de Melo (4):
->       tools headers: Sync x86 cpufeatures.h with the kernel sources
->       tools headers kvm: Sync uapi/linux/kvm.h with the kernel sources
->       tools headers kvm: Sync ARM UAPI headers with the kernel sources
->       Revert "perf pmu: Fix pmu events parsing rule"
-> 
-> William Cohen (1):
->       perf vendor events intel: Remove duplicated entry for westmereep-dp in mapfile.csv
-> 
-> Yisheng Xie (1):
->       perf bench numa: Fix typo in options
-> 
->  tools/arch/arm/include/uapi/asm/kvm.h      | 6 ++++++
->  tools/arch/arm64/include/uapi/asm/kvm.h    | 6 ++++++
->  tools/arch/x86/include/asm/cpufeatures.h   | 1 +
->  tools/include/uapi/linux/kvm.h             | 7 +++++++
->  tools/perf/bench/numa.c                    | 2 +-
->  tools/perf/pmu-events/arch/x86/mapfile.csv | 1 -
->  tools/perf/util/parse-events.y             | 8 ++++----
->  7 files changed, 25 insertions(+), 6 deletions(-)
+'R' means access the data via reads instead of writes, fix this typo.
 
-Pulled, thanks a lot Arnaldo!
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1524644707-11030-1-git-send-email-xieyisheng1@huawei.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/bench/numa.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	Ingo
+diff --git a/tools/perf/bench/numa.c b/tools/perf/bench/numa.c
+index 944070e98a2c..63eb49082774 100644
+--- a/tools/perf/bench/numa.c
++++ b/tools/perf/bench/numa.c
+@@ -175,7 +175,7 @@ static const struct option options[] = {
+ 	OPT_UINTEGER('s', "nr_secs"	, &p0.nr_secs,		"max number of seconds to run (default: 5 secs)"),
+ 	OPT_UINTEGER('u', "usleep"	, &p0.sleep_usecs,	"usecs to sleep per loop iteration"),
+ 
+-	OPT_BOOLEAN('R', "data_reads"	, &p0.data_reads,	"access the data via writes (can be mixed with -W)"),
++	OPT_BOOLEAN('R', "data_reads"	, &p0.data_reads,	"access the data via reads (can be mixed with -W)"),
+ 	OPT_BOOLEAN('W', "data_writes"	, &p0.data_writes,	"access the data via writes (can be mixed with -R)"),
+ 	OPT_BOOLEAN('B', "data_backwards", &p0.data_backwards,	"access the data backwards as well"),
+ 	OPT_BOOLEAN('Z', "data_zero_memset", &p0.data_zero_memset,"access the data via glibc bzero only"),
