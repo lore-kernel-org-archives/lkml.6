@@ -1,129 +1,510 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752395AbeEJTnP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 15:43:15 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33759 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752370AbeEJTnL (ORCPT
+        id S1752522AbeEJTqK (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 15:46:10 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:51354 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750876AbeEJTqF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 15:43:11 -0400
-X-Google-Smtp-Source: AB8JxZrOuik2w0oBzN+jKtgbr2K0MqYIhTsMKYYfx1mH7SFKBkFnGVA7KABlTBgORibqwVqLiQt1cA==
-Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
- controller driver
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Baolin Wang <baolin.wang@linaro.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, xiaotong.lu@spreadtrum.com, broonie@kernel.org,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
- <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
- <20180509142539.GB25131@amd> <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
- <20180510113749.GG6977@amd>
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <6289571e-7224-ca5e-1acf-5b099be57302@gmail.com>
-Date: Thu, 10 May 2018 21:41:50 +0200
+        Thu, 10 May 2018 15:46:05 -0400
+Subject: Re: [PATCH v2] selftests/cgroup: memory controller self-tests
+To: Roman Gushchin <guro@fb.com>, Tejun Heo <tj@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, kernel-team@fb.com,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>
+References: <20180510163701.28936-1-guro@fb.com>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <a9adb726-9ba4-b29d-cae1-55bd832fe51d@kernel.org>
+Date: Thu, 10 May 2018 13:45:49 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180510113749.GG6977@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <20180510163701.28936-1-guro@fb.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
-
-On 05/10/2018 01:37 PM, Pavel Machek wrote:
-> Hi!
+On 05/10/2018 10:37 AM, Roman Gushchin wrote:
+> Cgroups are used for controlling the physical resource distribution
+> (memory, CPU, io, etc) and often are used as basic building blocks
+> for large distributed computing systems. Even small differences
+> in the actual behavior may lead to significant incidents.
 > 
->>>> This patch adds Spreadtrum SC27xx PMIC series breathing light controller
->>>> driver, which can support 3 LEDs. Each LED can work at normal PWM mode
->>>> and breathing mode.
->>>>
->>>> diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
->>>> new file mode 100644
->>>> index 0000000..22166fb
->>>> --- /dev/null
->>>> +++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
->>>> @@ -0,0 +1,19 @@
->>>> +What:		/sys/class/leds/<led>/rise_time
->>>> +What:		/sys/class/leds/<led>/high_time
->>>> +What:		/sys/class/leds/<led>/fall_time
->>>> +What:		/sys/class/leds/<led>/low_time
->>>> +Date:		May 2018
->>>> +KernelVersion:	4.18
->>>> +Contact:	Xiaotong Lu <xiaotong.lu@spreadtrum.com>
->>>> +Description:
->>>> +		Set the pattern generator rise, high, fall and low
->>>> +		times (0..63). It's unit is 0.125s, it should be > 0.
->>>> +
->>>> +		1 - 125 ms
->>>> +		2 - 250 ms
->>>> +		3 - 375 ms
->>>> +		...
->>>> +		...
->>>> +		...
->>>> +		62 - 7.75 s
->>>> +		63 - 7.875 s
->>>
->>> How does this interact with triggers? With manually setting
->>> brightness? Are the pattern generators independend for the LEDs?
->>>
->>> Can you generate white breathing pattern? If so, how?
->>>
->>> How do you select between normal and breathing modes?
->>>
->>> I'd specify times in miliseconds or something, this is way too
->>> hardware specific.
->>
->> Agreed.
->>
->>> Now... functionality like this is common between many LED
->>> controllers. N900 could do this kind of "breathing", too, and it also
->>> supports other patterns.
->>>
->>> I believe we need interface common between different LED controllers.
->>>
->>> And I guess it would be easiest if you dropped this part from initial
->>> merge.
->>
->> I disagree here. We already had the same discussion at the occasion
->> of the patch [0] and it turned out to be a dead-end [1]. Now we have
->> neither the driver nor the generic pattern interface.
->>
->> We also already have some older LED class drivers that implement custom
->> pattern interfaces (e.g. drivers/leds/leds-lm3533.c) and the same
->> approach can be applied in this case.
+> The codebase is under the active development, which will unlikely
+> stop at any time soon. Also it's scattered over different
+> kernel subsystems, which makes regressions more probable.
 > 
-> Please don't. It was mistake to implement custom pattern interfaces
-> back then, it is still mistake now.
-
-It turned out to be really hard to cover all known pattern generator
-implementations with generic interface. Sure, it would be nice to have
-one, but the whole discussion around [0] only unveiled the diversity of
-parameters to cover. And still new devices appear on the market.
-
-We would have to propose a set of pattern schemes and allow to
-add new ones to it.
-
-> If we really need solution now, I'd recommend "pattern" file with
+> Given that, the lack of any tests is crying.
 > 
-> "<delta time> <brightness> <delta time> <brightness>".
+> This patch implements some basic tests for the memory controller,
+> as well as a minimal required framework.
+> It doesn't pretend for a very good coverage, but pretends
+> to be a starting point.
 > 
-> In this specific case, hardware only supports patterns in this format:
+> Hopefully, any following significant changes will
+> include corresponding tests.
 > 
-> low_time 0 rise_time 255 high_time 255 fall_time 0
+> Tests for CPU and io controllers, as well as cgroup core
+> are next in the todo list.
 > 
-> so driver would simply -EINVAL on anything else.
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Cc: kernel-team@fb.com
+> Cc: linux-kselftest@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  tools/testing/selftests/Makefile                 |   1 +
+>  tools/testing/selftests/cgroup/Makefile          |  10 +
+>  tools/testing/selftests/cgroup/cgroup_util.c     | 317 ++++++++++
+>  tools/testing/selftests/cgroup/cgroup_util.h     |  40 ++
+>  tools/testing/selftests/cgroup/test_memcontrol.c | 741 +++++++++++++++++++++++
+>  5 files changed, 1109 insertions(+)
+>  create mode 100644 tools/testing/selftests/cgroup/Makefile
+>  create mode 100644 tools/testing/selftests/cgroup/cgroup_util.c
+>  create mode 100644 tools/testing/selftests/cgroup/cgroup_util.h
+>  create mode 100644 tools/testing/selftests/cgroup/test_memcontrol.c
+> 
+> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+> index 32aafa92074c..24d0331d6c11 100644
+> --- a/tools/testing/selftests/Makefile
+> +++ b/tools/testing/selftests/Makefile
+> @@ -3,6 +3,7 @@ TARGETS = android
+>  TARGETS += bpf
+>  TARGETS += breakpoints
+>  TARGETS += capabilities
+> +TARGETS += cgroup
+>  TARGETS += cpufreq
+>  TARGETS += cpu-hotplug
+>  TARGETS += efivarfs
+> diff --git a/tools/testing/selftests/cgroup/Makefile b/tools/testing/selftests/cgroup/Makefile
+> new file mode 100644
+> index 000000000000..f7a31392eb2f
+> --- /dev/null
+> +++ b/tools/testing/selftests/cgroup/Makefile
+> @@ -0,0 +1,10 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +CFLAGS += -Wall
+> +
+> +all:
+> +
+> +TEST_GEN_PROGS = test_memcontrol
+> +
+> +include ../lib.mk
+> +
+> +$(OUTPUT)/test_memcontrol: cgroup_util.c
+> diff --git a/tools/testing/selftests/cgroup/cgroup_util.c b/tools/testing/selftests/cgroup/cgroup_util.c
+> new file mode 100644
+> index 000000000000..a938b6c8b55a
+> --- /dev/null
+> +++ b/tools/testing/selftests/cgroup/cgroup_util.c
+> @@ -0,0 +1,317 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#define _GNU_SOURCE
+> +
+> +#include <errno.h>
+> +#include <fcntl.h>
+> +#include <linux/limits.h>
+> +#include <signal.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <sys/stat.h>
+> +#include <sys/types.h>
+> +#include <sys/wait.h>
+> +#include <unistd.h>
+> +
+> +#include "cgroup_util.h"
+> +
+> +static ssize_t read_text(const char *path, char *buf, size_t max_len)
+> +{
+> +	ssize_t len;
+> +	int fd;
+> +
+> +	fd = open(path, O_RDONLY);
+> +	if (fd < 0)
+> +		return fd;
+> +
+> +	len = read(fd, buf, max_len - 1);
+> +	if (len < 0)
+> +		goto out;
+> +
+> +	buf[len] = 0;
+> +out:
+> +	close(fd);
+> +	return len;
+> +}
+> +
+> +static ssize_t write_text(const char *path, char *buf, size_t len)
+> +{
+> +	int fd;
+> +
+> +	fd = open(path, O_WRONLY | O_APPEND);
+> +	if (fd < 0)
+> +		return fd;
+> +
+> +	len = write(fd, buf, len);
+> +	if (len < 0) {
+> +		close(fd);
+> +		return len;
+> +	}
+> +
+> +	close(fd);
+> +
+> +	return len;
+> +}
+> +
+> +char *cg_name(const char *root, const char *name)
+> +{
+> +	size_t len = strlen(root) + strlen(name) + 2;
+> +	char *ret = malloc(len);
+> +
+> +	if (name)
+> +		snprintf(ret, len, "%s/%s", root, name);
+> +
+> +	return ret;
+> +}
+> +
+> +char *cg_name_indexed(const char *root, const char *name, int index)
+> +{
+> +	size_t len = strlen(root) + strlen(name) + 10;
+> +	char *ret = malloc(len);
+> +
+> +	if (name)
+> +		snprintf(ret, len, "%s/%s_%d", root, name, index);
+> +
+> +	return ret;
+> +}
+> +
+> +int cg_read(const char *cgroup, const char *control, char *buf, size_t len)
+> +{
+> +	char path[PATH_MAX];
+> +
+> +	snprintf(path, sizeof(path), "%s/%s", cgroup, control);
+> +
+> +	if (read_text(path, buf, len) >= 0)
+> +		return 0;
+> +
+> +	return -1;
+> +}
+> +
+> +int cg_read_strcmp(const char *cgroup, const char *control,
+> +		   const char *expected)
+> +{
+> +	size_t size = strlen(expected) + 1;
+> +	char *buf;
+> +
+> +	buf = malloc(size);
+> +	if (!buf)
+> +		return -1;
+> +
+> +	if (cg_read(cgroup, control, buf, size))
+> +		return -1;
+> +
+> +	return strcmp(expected, buf);
+> +}
+> +
+> +int cg_read_strstr(const char *cgroup, const char *control, const char *needle)
+> +{
+> +	char buf[PAGE_SIZE];
+> +
+> +	if (cg_read(cgroup, control, buf, sizeof(buf)))
+> +		return -1;
+> +
+> +	return strstr(buf, needle) ? 0 : -1;
+> +}
+> +
+> +long cg_read_long(const char *cgroup, const char *control)
+> +{
+> +	char buf[128];
+> +
+> +	if (cg_read(cgroup, control, buf, sizeof(buf)))
+> +		return -1;
+> +
+> +	return atol(buf);
+> +}
+> +
+> +long cg_read_key_long(const char *cgroup, const char *control, const char *key)
+> +{
+> +	char buf[PAGE_SIZE];
+> +	char *ptr;
+> +
+> +	if (cg_read(cgroup, control, buf, sizeof(buf)))
+> +		return -1;
+> +
+> +	ptr = strstr(buf, key);
+> +	if (!ptr)
+> +		return -1;
+> +
+> +	return atol(ptr + strlen(key));
+> +}
+> +
+> +int cg_write(const char *cgroup, const char *control, char *buf)
+> +{
+> +	char path[PATH_MAX];
+> +	size_t len = strlen(buf);
+> +
+> +	snprintf(path, sizeof(path), "%s/%s", cgroup, control);
+> +
+> +	if (write_text(path, buf, len) == len)
+> +		return 0;
+> +
+> +	return -1;
+> +}
+> +
+> +int cg_find_unified_root(char *root, size_t len)
+> +{
+> +	char buf[10 * PAGE_SIZE];
+> +	char *fs, *mount, *type;
+> +	const char delim[] = "\n\t ";
+> +
+> +	if (read_text("/proc/self/mounts", buf, sizeof(buf)) <= 0)
+> +		return -1;
+> +
+> +	/*
+> +	 * Example:
+> +	 * cgroup /sys/fs/cgroup cgroup2 rw,seclabel,noexec,relatime 0 0
+> +	 */
+> +	for (fs = strtok(buf, delim); fs; fs = strtok(NULL, delim)) {
+> +		mount = strtok(NULL, delim);
+> +		type = strtok(NULL, delim);
+> +		strtok(NULL, delim);
+> +		strtok(NULL, delim);
+> +		strtok(NULL, delim);
+> +
+> +		if (strcmp(fs, "cgroup") == 0 &&
+> +		    strcmp(type, "cgroup2") == 0) {
+> +			strncpy(root, mount, len);
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	return -1;
+> +}
+> +
+> +int cg_create(const char *cgroup)
+> +{
+> +	return mkdir(cgroup, 0644);
+> +}
+> +
+> +static int cg_killall(const char *cgroup)
+> +{
+> +	char buf[PAGE_SIZE];
+> +	char *ptr = buf;
+> +
+> +	if (cg_read(cgroup, "cgroup.procs", buf, sizeof(buf)))
+> +		return -1;
+> +
+> +	while (ptr < buf + sizeof(buf)) {
+> +		int pid = strtol(ptr, &ptr, 10);
+> +
+> +		if (pid == 0)
+> +			break;
+> +		if (*ptr)
+> +			ptr++;
+> +		else
+> +			break;
+> +		if (kill(pid, SIGKILL))
+> +			return -1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int cg_destroy(const char *cgroup)
+> +{
+> +	int ret;
+> +
+> +retry:
+> +	ret = rmdir(cgroup);
+> +	if (ret && errno == EBUSY) {
+> +		ret = cg_killall(cgroup);
+> +		if (ret)
+> +			return ret;
+> +		usleep(100);
+> +		goto retry;
+> +	}
+> +
+> +	if (ret && errno == ENOENT)
+> +		ret = 0;
+> +
+> +	return ret;
+> +}
+> +
+> +int cg_run(const char *cgroup,
+> +	   int (*fn)(const char *cgroup, void *arg),
+> +	   void *arg)
+> +{
+> +	int pid, retcode;
+> +
+> +	pid = fork();
+> +	if (pid < 0) {
+> +		return pid;
+> +	} else if (pid == 0) {
+> +		char buf[64];
+> +
+> +		snprintf(buf, sizeof(buf), "%d", getpid());
+> +		if (cg_write(cgroup, "cgroup.procs", buf))
+> +			exit(EXIT_FAILURE);
+> +		exit(fn(cgroup, arg));
+> +	} else {
+> +		waitpid(pid, &retcode, 0);
+> +		if (WIFEXITED(retcode))
+> +			return WEXITSTATUS(retcode);
+> +		else
+> +			return -1;
+> +	}
+> +}
+> +
+> +int cg_run_nowait(const char *cgroup,
+> +		  int (*fn)(const char *cgroup, void *arg),
+> +		  void *arg)
+> +{
+> +	int pid;
+> +
+> +	pid = fork();
+> +	if (pid == 0) {
+> +		char buf[64];
+> +
+> +		snprintf(buf, sizeof(buf), "%d", getpid());
+> +		if (cg_write(cgroup, "cgroup.procs", buf))
+> +			exit(EXIT_FAILURE);
+> +		exit(fn(cgroup, arg));
+> +	}
+> +
+> +	return pid;
+> +}
+> +
+> +int get_temp_fd(void)
+> +{
+> +	return open(".", O_TMPFILE | O_RDWR | O_EXCL);
+> +}
+> +
+> +int alloc_pagecache(int fd, size_t size)
+> +{
+> +	char buf[PAGE_SIZE];
+> +	struct stat st;
+> +	int i;
+> +
+> +	if (fstat(fd, &st))
+> +		goto cleanup;
+> +
+> +	size += st.st_size;
+> +
+> +	if (ftruncate(fd, size))
+> +		goto cleanup;
+> +
+> +	for (i = 0; i < size; i += sizeof(buf))
+> +		read(fd, buf, sizeof(buf));
+> +
+> +	return 0;
+> +
+> +cleanup:
+> +	return -1;
+> +}
+> +
+> +int alloc_anon(const char *cgroup, void *arg)
+> +{
+> +	size_t size = (unsigned long)arg;
+> +	char *buf, *ptr;
+> +
+> +	buf = malloc(size);
+> +	for (ptr = buf; ptr < buf + size; ptr += PAGE_SIZE)
+> +		*ptr = 0;
+> +
+> +	free(buf);
+> +	return 0;
+> +}
+> diff --git a/tools/testing/selftests/cgroup/cgroup_util.h b/tools/testing/selftests/cgroup/cgroup_util.h
+> new file mode 100644
+> index 000000000000..000de075d3d8
+> --- /dev/null
+> +++ b/tools/testing/selftests/cgroup/cgroup_util.h
+> @@ -0,0 +1,40 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#include <stdlib.h>
+> +
+> +#define PAGE_SIZE 4096
+> +
+> +#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+> +
+> +#define MB(x) (x << 20)
+> +
+> +/*
+> + * Checks if two given values differ by less than err% of their sum.
+> + */
+> +static inline int values_close(long a, long b, int err)
+> +{
+> +	return abs(a - b) <= (a + b) / 100 * err;
+> +}
+> +
+> +extern int cg_find_unified_root(char *root, size_t len);
+> +extern char *cg_name(const char *root, const char *name);
+> +extern char *cg_name_indexed(const char *root, const char *name, int index);
+> +extern int cg_create(const char *cgroup);
+> +extern int cg_destroy(const char *cgroup);
+> +extern int cg_read(const char *cgroup, const char *control,
+> +		   char *buf, size_t len);
+> +extern int cg_read_strcmp(const char *cgroup, const char *control,
+> +			  const char *expected);
+> +extern int cg_read_strstr(const char *cgroup, const char *control,
+> +			  const char *needle);
+> +extern long cg_read_long(const char *cgroup, const char *control);
+> +long cg_read_key_long(const char *cgroup, const char *control, const char *key);
+> +extern int cg_write(const char *cgroup, const char *control, char *buf);
+> +extern int cg_run(const char *cgroup,
+> +		  int (*fn)(const char *cgroup, void *arg),
+> +		  void *arg);
+> +extern int cg_run_nowait(const char *cgroup,
+> +			 int (*fn)(const char *cgroup, void *arg),
+> +			 void *arg);
+> +extern int get_temp_fd(void);
+> +extern int alloc_pagecache(int fd, size_t size);
+> +extern int alloc_anon(const char *cgroup, void *arg);
+> diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
+> new file mode 100644
+> index 000000000000..b6bbc4c1adc3
+> --- /dev/null
+> +++ b/tools/testing/selftests/cgroup/test_memcontrol.c
+> @@ -0,0 +1,741 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#define _GNU_SOURCE
+> +
+> +#include <linux/limits.h>
+> +#include <fcntl.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <sys/stat.h>
+> +#include <sys/types.h>
+> +#include <unistd.h>
+> +
+> +#include "../kselftest.h"
+> +#include "cgroup_util.h"
+> +
+> +/*
+> + * Can't use KSFT_ values,
+> + * because there is no difference between SKIP and PASS values.
+> + */
+> +enum test_result {
+> +	TEST_SKIP,
+> +	TEST_FAIL,
+> +	TEST_PASS,
+> +};
+> +
 
-I'm fine with the pattern file, but the pattern format would have
-to be defined in the per-driver ABI documentation. It wouldn't much
-differ from the custom pattern approach though, unless I'm missing some
-gain of having pattern setting in a uniformly named single sysfs file
-(with semantics differing from driver to driver).
+Please check linux-kselftest next - You will see thet SKIP handling
+patches in there.
 
--- 
-Best regards,
-Jacek Anaszewski
+Please clean this up before they get into 4.18-rc1
+
+thanks,
+-- Shuah
