@@ -1,110 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966410AbeEJQdF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 12:33:05 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:47958 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965017AbeEJQdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 12:33:02 -0400
-To: Stephen Bates <sbates@raithlin.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Jerome Glisse <jglisse@redhat.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-References: <20180423233046.21476-5-logang@deltatee.com>
- <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
- <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
- <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
- <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
- <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
- <20180508133407.57a46902@w520.home>
- <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
- <20180508141331.7cd737cb@w520.home>
- <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
- <20180508205005.GC15608@redhat.com>
- <7FFB9603-DF9F-4441-82E9-46037CB6C0DE@raithlin.com>
- <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
- <4e0d0b96-ab02-2662-adf3-fa956efd294c@deltatee.com>
- <2fc61d29-9eb4-d168-a3e5-955c36e5d821@amd.com>
- <94C8FE12-7FC3-48BD-9DCA-E6A427E71810@raithlin.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <f0101988-cf82-7ffb-2aca-d3b8d2f4b504@deltatee.com>
-Date: Thu, 10 May 2018 10:32:22 -0600
+        id S966452AbeEJQdt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 12:33:49 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45690 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965017AbeEJQdr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 12:33:47 -0400
+Subject: Re: [RFC PATCH 2/2] wait: add a keyword to indicate a diagram code
+ block on a kernel-doc
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <2ac6e3da22119f714406925139e40f4d835d11a4.1525962971.git.mchehab+samsung@kernel.org>
+ <dfe40a6f75e9bd445ea36218dbcf367090b2367b.1525962971.git.mchehab+samsung@kernel.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <f0c8a649-5304-b9e9-975e-e80fa3a4c44e@infradead.org>
+Date: Thu, 10 May 2018 09:33:41 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <94C8FE12-7FC3-48BD-9DCA-E6A427E71810@raithlin.com>
+In-Reply-To: <dfe40a6f75e9bd445ea36218dbcf367090b2367b.1525962971.git.mchehab+samsung@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: benh@kernel.crashing.org, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org, alex.williamson@redhat.com, jglisse@redhat.com, christian.koenig@amd.com, sbates@raithlin.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 05/10/2018 07:38 AM, Mauro Carvalho Chehab wrote:
+> When handling code-blocks, usual parsing should be disabled.
+> Indicate it by using the keyword disagram.
 
+                                   diagram.
 
-On 10/05/18 08:16 AM, Stephen  Bates wrote:
-> Hi Christian
+Please add such keyword(s) to one of Documentation/doc-guide/{kernel-doc,sphinx}.rst.
+
 > 
->> Why would a switch not identify that as a peer address? We use the PASID 
->>    together with ATS to identify the address space which a transaction 
->>    should use.
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  include/linux/wait.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I think you are conflating two types of TLPs here. If the device supports ATS then it will issue a TR TLP to obtain a translated address from the IOMMU. This TR TLP will be addressed to the RP and so regardless of ACS it is going up to the Root Port. When it gets the response it gets the physical address and can use that with the TA bit set for the p2pdma. In the case of ATS support we also have more control over ACS as we can disable it just for TA addresses (as per 7.7.7.7.2 of the spec).
-
-Yes. Remember if we are using the IOMMU the EP is being programmed
-(regardless of whether it's a DMA engine, NTB window or GPUVA) with an
-IOVA address which is separate from the device's PCI bus address. Any
-packet addressed to an IOVA address is going to go back to the root
-complex no matter what the ACS bits say. Only once ATS translates the
-addres back into the PCI bus address will the EP send packets to the
-peer and the switch will attempt to root them to the peer and only then
-do the ACS bits apply. And the direct translated ACS bit allows packets
-that have purportedly been translated through.
-
->  >   If I'm not completely mistaken when you disable ACS it is perfectly 
->  >   possible that a bridge identifies a transaction as belonging to a peer 
->  >   address, which isn't what we want here.
->    
-> You are right here and I think this illustrates a problem for using the IOMMU at all when P2PDMA devices do not support ATS. Let me explain:
+> diff --git a/include/linux/wait.h b/include/linux/wait.h
+> index d9f131ecf708..653814475ee9 100644
+> --- a/include/linux/wait.h
+> +++ b/include/linux/wait.h
+> @@ -101,7 +101,7 @@ init_waitqueue_func_entry(struct wait_queue_entry *wq_entry, wait_queue_func_t f
+>   * lead to sporadic and non-obvious failure.
+>   *
+>   * Use either while holding wait_queue_head::lock or when used for wakeups
+> - * with an extra smp_mb() like:
+> + * with an extra smp_mb() as shown in this diagram:
+>   *
+>   *      CPU0 - waker                    CPU1 - waiter
+>   *
 > 
-> If we want to do a P2PDMA and the DMA device does not support ATS then I think we have to disable the IOMMU (something Mike suggested earlier). The reason is that since ATS is not an option the EP must initiate the DMA using the addresses passed down to it. If the IOMMU is on then this is an IOVA that could (with some non-zero probability) point to an IO Memory address in the same PCI domain. So if we disable ACS we are in trouble as we might MemWr to the wrong place but if we enable ACS we lose much of the benefit of P2PDMA. Disabling the IOMMU removes the IOVA risk and ironically also resolves the IOMMU grouping issues.
-> So I think if we want to support performant P2PDMA for devices that don't have ATS (and no NVMe SSDs today support ATS) then we have to disable the IOMMU. I know this is problematic for AMDs use case so perhaps we also need to consider a mode for P2PDMA for devices that DO support ATS where we can enable the IOMMU (but in this case EPs without ATS cannot participate as P2PDMA DMA iniators).
-> 
-> Make sense?
 
-Not to me. In the p2pdma code we specifically program DMA engines with
-the PCI bus address. So regardless of whether we are using the IOMMU or
-not, the packets will be forwarded directly to the peer. If the ACS
-Redir bits are on they will be forced back to the RC by the switch and
-the transaction will fail. If we clear the ACS bits, the TLPs will go
-where we want and everything will work (but we lose the isolation of ACS).
 
-For EPs that support ATS, we should (but don't necessarily have to)
-program them with the IOVA address so they can go through the
-translation process which will allow P2P without disabling the ACS Redir
-bits -- provided the ACS direct translation bit is set. (And btw, if it
-is, then we lose the benefit of ACS protecting against malicious EPs).
-But, per above, the ATS transaction should involve only the IOVA address
-so the ACS bits not being set should not break ATS.
-
-Logan
+-- 
+~Randy
