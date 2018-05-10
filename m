@@ -1,109 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935411AbeEJKtl convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 06:49:41 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:36720 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935346AbeEJKti (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 06:49:38 -0400
-Subject: Re: Regression caused by commit 882164a4a928
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-CC: =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
- <CACna6rxb9KSQfGwi__xxSMACAxh-bOV9SR1NsnUVe8ASdA0Liw@mail.gmail.com>
-From: Matt Redfearn <matt.redfearn@mips.com>
-Message-ID: <6e64abf4-a8c1-21db-e740-79f031b4560e@mips.com>
-Date: Thu, 10 May 2018 11:49:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S935455AbeEJKuN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 06:50:13 -0400
+Received: from mga14.intel.com ([192.55.52.115]:17303 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935027AbeEJKuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 06:50:11 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,385,1520924400";
+   d="scan'208";a="53120099"
+Date: Thu, 10 May 2018 18:50:42 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com
+Subject: Re: [RFC v3 3/5] virtio_ring: add packed ring support
+Message-ID: <20180510105042.4pexugiizpqccn77@debian>
+References: <20180425051550.24342-1-tiwei.bie@intel.com>
+ <20180425051550.24342-4-tiwei.bie@intel.com>
+ <927f4478-5a81-31d4-ac69-f9ec26248591@redhat.com>
+ <5885acac-e9e3-3abf-b6a2-7347f4d55be2@redhat.com>
+ <20180510085601.6mpxf3yvwxnqnk5q@debian>
+ <2fc35cd5-9dbd-7743-497f-b6637d92f528@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CACna6rxb9KSQfGwi__xxSMACAxh-bOV9SR1NsnUVe8ASdA0Liw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [192.168.155.41]
-X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
- mipsdag02.mipstec.com (10.20.40.47)
-X-BESS-ID: 1525949368-321457-18461-48659-1
-X-BESS-VER: 2018.5-r1804261738
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192872
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2fc35cd5-9dbd-7743-497f-b6637d92f528@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafał,
+On Thu, May 10, 2018 at 05:49:20PM +0800, Jason Wang wrote:
+> On 2018年05月10日 16:56, Tiwei Bie wrote:
+> > On Thu, May 10, 2018 at 03:34:50PM +0800, Jason Wang wrote:
+> > > On 2018年05月10日 15:32, Jason Wang wrote:
+> > > > On 2018年04月25日 13:15, Tiwei Bie wrote:
+> > > > > +    /* We're using some buffers from the free list. */
+> > > > > +    vq->vq.num_free -= descs_used;
+> > > > > +
+> > > > > +    /* Update free pointer */
+> > > > > +    if (indirect) {
+> > > > > +        n = head + 1;
+> > > > > +        if (n >= vq->vring_packed.num) {
+> > > > > +            n = 0;
+> > > > > +            vq->wrap_counter ^= 1;
+> > > > > +        }
+> > > > > +        vq->next_avail_idx = n;
+> > > > > +    } else
+> > > > > +        vq->next_avail_idx = i;
+> > > > During testing zerocopy (out of order completion), I found driver may
+> > > > submit two identical buffer id to vhost. So the above code may not work
+> > > > well.
+> > > > 
+> > > > Consider the case that driver adds 3 buffer and virtqueue size is 8.
+> > > > 
+> > > > a) id = 0,count = 2,next_avail = 2
+> > > > 
+> > > > b) id = 2,count = 4,next_avail = 2
+> > > next_avail should be 6 here.
+> > > 
+> > > > c) id = 4,count = 2,next_avail = 0
+> > > > 
+> > > id should be 6 here.
+> > > 
+> > > Thanks
+> > > 
+> > > > if packet b is done before packet a, driver may think buffer id 0 is
+> > > > available and try to use it if even if the real buffer 0 was not done.
+> > > > 
+> > > > Thanks
+> > Nice catch! Thanks a lot!
+> > I'll implement an ID allocator.
+> > 
+> > Best regards,
+> > Tiwei Bie
+> 
+> Sounds good.
+> 
+> Another similar issue is detac_buf_packed(). It did:
+> 
+>         for (j = 0; j < vq->desc_state[head].num; j++) {
+>                 desc = &vq->vring_packed.desc[i];
+>                 vring_unmap_one_packed(vq, desc);
+>                 i++;
+>                 if (i >= vq->vring_packed.num)
+>                         i = 0;
+>         }
+> 
+> This probably won't work for out of order too and according to the spec:
+> 
+> """
+> Driver needs to keep track of the size of the list corresponding to each
+> buffer ID, to be able to skip to where the next used descriptor is written
+> by the device.
+> """
+> 
+> Looks like we should not depend on the descriptor ring.
 
-On 10/05/18 11:41, Rafał Miłecki wrote:
-> On 7 May 2018 at 17:44, Larry Finger <Larry.Finger@lwfinger.net> wrote:
->> Although commit 882164a4a928 ("ssb: Prevent build of PCI host features in
->> module") appeared to be harmless, it leads to complete failure of drivers
->> b43. and b43legacy, and likely affects b44 as well. The problem is that
->> CONFIG_SSB_PCIHOST is undefined, which prevents the compilation of the code
->> that controls the PCI cores of the device. See
->> https://bugzilla.redhat.com/show_bug.cgi?id=1572349 for details.
->>
->> As the underlying errors ("pcibios_enable_device" undefined, and
->> "register_pci_controller" undefined) do not appear on the architectures that
->> I have tested (x86_64, x86, and ppc), I suspect something in the
->> arch-specific code for your setup (MIPS?). As I have no idea on how to fix
->> that problem, would the following patch work for you?
->>
->> diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
->> index 9371651d8017..3743533c8057 100644
->> --- a/drivers/ssb/Kconfig
->> +++ b/drivers/ssb/Kconfig
->> @@ -117,7 +117,7 @@ config SSB_SERIAL
->>
->>   config SSB_DRIVER_PCICORE_POSSIBLE
->>          bool
->> -       depends on SSB_PCIHOST && SSB = y
->> +       depends on SSB_PCIHOST && (SSB = y || !MIPS)
->>          default y
->>
->>   config SSB_DRIVER_PCICORE
-> 
-> I strongly suggest we take a step back, slow down a bit and look at
-> the original problem.
-> 
-> In driver_pcicore.c there is MIPS specific code. It's protected using
-> #ifdef CONFIG_SSB_PCICORE_HOSTMODE
-> (...)
-> #endif
-> 
-> If anyone has ever seen
-> ERROR: "pcibios_enable_device" [drivers/ssb/ssb.ko] undefined!
-> ERROR: "register_pci_controller" [drivers/ssb/ssb.ko] undefined!
-> make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
-> it means he managed to get CONFIG_SSB_PCICORE_HOSTMODE set on non-MIPS system.
+Yeah, the previous ID allocation is too simple.. 
+Let me fix it in the next version.
 
-I saw this on a MIPS system (to my knowledge, this does not happen on 
-other arches due to the Kconfig rules you describe), which is what my 
-original patch was attempting to fix, but appears to have caused 
-problems on other arches.
-
-Thanks,
-Matt
-
+Thanks!
 
 > 
-> We should rather answer how did that happen and fix it.
-> 
-> SSB_PCICORE_HOSTMODE depends on SSB_DRIVER_MIPS
-> SSB_DRIVER_MIPS depends on MIPS
-> 
-> How is that possible to set SSB_PCICORE_HOSTMODE with non-MIPS config?
-> Is there some mistake in Kconfig I can't see?
-> 
+> Thanks
