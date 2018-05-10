@@ -1,67 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966407AbeEJQa6 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 12:30:58 -0400
-Received: from mout.gmx.net ([212.227.15.19]:57029 "EHLO mout.gmx.net"
+        id S966410AbeEJQdF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 12:33:05 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:47958 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965017AbeEJQa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 12:30:57 -0400
-Message-ID: <1525969846.5308.2.camel@gmx.de>
-Subject: Re: [Nouveau] kernel spew from nouveau/ swiotlb
-From: Mike Galbraith <efault@gmx.de>
-To: Jerome Glisse <jglisse@redhat.com>
-Cc: nouveau <nouveau@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>
-Date: Thu, 10 May 2018 18:30:46 +0200
-In-Reply-To: <1525966280.5207.1.camel@gmx.de>
-References: <1525943427.8013.11.camel@gmx.de>
-         <474293973.18773550.1525962696189.JavaMail.zimbra@redhat.com>
-         <1525966280.5207.1.camel@gmx.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:YIvWi7ZBayUCt/HkWjZAqbqyDPmYoUBz0ErKIH9/Wdkn72Us4bk
- suSU+Tcm3jlQS6JiSNeN8moh2CWUb6IY/2s30AHz89B/J0Zhe1yN0Noz1IZi6OHa4sVWbs3
- ks1DgHzElYbyswjEbMu9Lf/JwqM7o1YeTTGRECDP9WyImDFiiKrELgNYRta+jsLvSTOr6qa
- Vt36lDS/N9yxtye28dKVA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:OAhuVl9AwaU=:LaB1oJHA3bbAYNfDem0Ww0
- dIpD6IbZAE059qZxyfzRyXKQhwa3YUPEu+DQLRnvMTyjs3XJTjSxNZcIMrzTeb/nDgRNnXbPi
- OSk5X7YCbdp2yvn/JMABrE48HNslV/QtmKU8+Sc0iHUvHCLVWOLXz6wSDSl03F6xEZNqNcy2S
- qeseCoXB1Qhng3GGay2AlE/HY0BJ3jf4Mme/l1uRUj/qoh5zaIZCo7iV7oYcyNbbnojC7Her3
- vWa8FyY3C4B0a4FUtck9TuCm8E28FVwdWqotghNUILG3urag41GLBWMQ0bhaz6OoT6REnX+bv
- cAMU8/pLgPIUB5ztbHwhMeNTJwj/t1YonEIIniI4gVBah0/V049F6OoYMLCJJqYs2dqgtz66f
- pzuVPGxz4zVONq3gPyBlBSgHe3rPTSTqikqkpjl2XkGJgJ2XoTd++JP/Ai0yoZsDZjEXMQ/LS
- qQ1Zqv6hC6BzI/wY8pvJLsVFojBOklkUq1Yb6ct3C/8OimgGI/W6mumgL4oCbgpPGV1nnE8XX
- JHx3lnu9D6K5i7eZBdWo3kFkklrdEbGk6Dqsuk7c6KtDWRXlfKPWkPrY1bFVMMU13SHvv8Srz
- 7Iy6obVNa11QS281BM8MPftVlqTfvcDcGWbhccUPzrQ035kK4R341+VhcX4sKFRCvoINNECRP
- bMIJwW6WTRHPH6cnNbE3ThInQbci2/g/WW5kqjNlcOtx9zZZjZKJBQ91m/NA14+mEkv/qIy9P
- f7PjaaODFxz3X7xK4iad4jpDdNwa/V0F85v6uE4eV/WzoSKOfPgDdoM9FfdzcdEC4i0zM8NHt
- sq0otWB
+        id S965017AbeEJQdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 12:33:02 -0400
+To: Stephen Bates <sbates@raithlin.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Jerome Glisse <jglisse@redhat.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+References: <20180423233046.21476-5-logang@deltatee.com>
+ <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
+ <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
+ <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
+ <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
+ <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
+ <20180508133407.57a46902@w520.home>
+ <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
+ <20180508141331.7cd737cb@w520.home>
+ <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
+ <20180508205005.GC15608@redhat.com>
+ <7FFB9603-DF9F-4441-82E9-46037CB6C0DE@raithlin.com>
+ <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
+ <4e0d0b96-ab02-2662-adf3-fa956efd294c@deltatee.com>
+ <2fc61d29-9eb4-d168-a3e5-955c36e5d821@amd.com>
+ <94C8FE12-7FC3-48BD-9DCA-E6A427E71810@raithlin.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <f0101988-cf82-7ffb-2aca-d3b8d2f4b504@deltatee.com>
+Date: Thu, 10 May 2018 10:32:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <94C8FE12-7FC3-48BD-9DCA-E6A427E71810@raithlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: benh@kernel.crashing.org, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org, alex.williamson@redhat.com, jglisse@redhat.com, christian.koenig@amd.com, sbates@raithlin.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-10 at 17:31 +0200, Mike Galbraith wrote:
-> On Thu, 2018-05-10 at 10:31 -0400, Jerome Glisse wrote:
-> > 
-> > Could you bisect ? I would love to point finger upstream to the DMA
-> > folk who made changes to that API without testing with GPU.
+
+
+On 10/05/18 08:16 AM, Stephen  Bates wrote:
+> Hi Christian
 > 
-> Rummaging a bit, it might be...
+>> Why would a switch not identify that as a peer address? We use the PASID 
+>>    together with ATS to identify the address space which a transaction 
+>>    should use.
 > 
+> I think you are conflating two types of TLPs here. If the device supports ATS then it will issue a TR TLP to obtain a translated address from the IOMMU. This TR TLP will be addressed to the RP and so regardless of ACS it is going up to the Root Port. When it gets the response it gets the physical address and can use that with the TA bit set for the p2pdma. In the case of ATS support we also have more control over ACS as we can disable it just for TA addresses (as per 7.7.7.7.2 of the spec).
 
-(unsend, whack duplicate line, munge, send;)
+Yes. Remember if we are using the IOMMU the EP is being programmed
+(regardless of whether it's a DMA engine, NTB window or GPUVA) with an
+IOVA address which is separate from the device's PCI bus address. Any
+packet addressed to an IOVA address is going to go back to the root
+complex no matter what the ACS bits say. Only once ATS translates the
+addres back into the PCI bus address will the EP send packets to the
+peer and the switch will attempt to root them to the peer and only then
+do the ACS bits apply. And the direct translated ACS bit allows packets
+that have purportedly been translated through.
 
-> nouveau_bo_new()
-> ...
-> ttm_dma_pool_alloc_new_pages()
->   dma_alloc_attrs()
->     ops->alloc() == x86_swiotlb_alloc_coherent()
->     x86_swiotlb_alloc_coherent() flags |= __GFP_NOWARN;
->       swiotlb_alloc_coherent(..flags)
->         swiotlb_alloc_coherent(..flags) attrs = (flags & __GFP_NOWARN) ? DMA_ATTR_NO_WARN : 0;
->           swiotlb_alloc_buffer(..attrs)
-*              swiotlb_tbl_map_single(..0) passed 0 vs attrs, gripeage follows
+>  >   If I'm not completely mistaken when you disable ACS it is perfectly 
+>  >   possible that a bridge identifies a transaction as belonging to a peer 
+>  >   address, which isn't what we want here.
+>    
+> You are right here and I think this illustrates a problem for using the IOMMU at all when P2PDMA devices do not support ATS. Let me explain:
+> 
+> If we want to do a P2PDMA and the DMA device does not support ATS then I think we have to disable the IOMMU (something Mike suggested earlier). The reason is that since ATS is not an option the EP must initiate the DMA using the addresses passed down to it. If the IOMMU is on then this is an IOVA that could (with some non-zero probability) point to an IO Memory address in the same PCI domain. So if we disable ACS we are in trouble as we might MemWr to the wrong place but if we enable ACS we lose much of the benefit of P2PDMA. Disabling the IOMMU removes the IOVA risk and ironically also resolves the IOMMU grouping issues.
+> So I think if we want to support performant P2PDMA for devices that don't have ATS (and no NVMe SSDs today support ATS) then we have to disable the IOMMU. I know this is problematic for AMDs use case so perhaps we also need to consider a mode for P2PDMA for devices that DO support ATS where we can enable the IOMMU (but in this case EPs without ATS cannot participate as P2PDMA DMA iniators).
+> 
+> Make sense?
 
-Or something like that.
+Not to me. In the p2pdma code we specifically program DMA engines with
+the PCI bus address. So regardless of whether we are using the IOMMU or
+not, the packets will be forwarded directly to the peer. If the ACS
+Redir bits are on they will be forced back to the RC by the switch and
+the transaction will fail. If we clear the ACS bits, the TLPs will go
+where we want and everything will work (but we lose the isolation of ACS).
+
+For EPs that support ATS, we should (but don't necessarily have to)
+program them with the IOVA address so they can go through the
+translation process which will allow P2P without disabling the ACS Redir
+bits -- provided the ACS direct translation bit is set. (And btw, if it
+is, then we lose the benefit of ACS protecting against malicious EPs).
+But, per above, the ATS transaction should involve only the IOVA address
+so the ACS bits not being set should not break ATS.
+
+Logan
