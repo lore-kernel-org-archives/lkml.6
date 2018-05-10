@@ -1,121 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933911AbeEJDJi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 23:09:38 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:59323 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756584AbeEJDJe (ORCPT
+        id S1756585AbeEJDMg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 23:12:36 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:42507 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756394AbeEJDMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 23:09:34 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk, mingo@kernel.org,
-        paulmck@linux.vnet.ibm.com, keescook@chromium.org, riel@redhat.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
-        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Balbir Singh <balbir@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
-References: <20180503133338.GA23401@redhat.com> <87y3h0x0qg.fsf@xmission.com>
-        <20180504142056.GA26151@redhat.com> <87r2mrh4is.fsf@xmission.com>
-        <20180504145435.GA26573@redhat.com> <87y3gzfmjt.fsf@xmission.com>
-        <20180504162209.GB26573@redhat.com> <871serfk77.fsf@xmission.com>
-        <20180507143358.GA3071@redhat.com> <87vabyvnw0.fsf@xmission.com>
-        <20180509144016.GA25742@redhat.com>
-Date: Wed, 09 May 2018 22:09:25 -0500
-In-Reply-To: <20180509144016.GA25742@redhat.com> (Oleg Nesterov's message of
-        "Wed, 9 May 2018 16:40:16 +0200")
-Message-ID: <87vabwp5p6.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Wed, 9 May 2018 23:12:34 -0400
+X-Google-Smtp-Source: AB8JxZqP4vtBvRCUE3Y5JApgcVcTnyXt4nd25cP8oi+WMPfaG3rLhnQ3WZp1jAw/l7hri75M2fs4dRn50yX8rzADtn0=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fGbxT-0007JS-0y;;;mid=<87vabwp5p6.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.90.247.198;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/9y98JOJXTymzqFuqsmdGX3vLJuwRupnM=
-X-SA-Exim-Connect-IP: 97.90.247.198
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Oleg Nesterov <oleg@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1275 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 2.8 (0.2%), b_tie_ro: 1.87 (0.1%), parse: 0.86 (0.1%),
-        extract_message_metadata: 3.3 (0.3%), get_uri_detail_list: 1.59 (0.1%),
-        tests_pri_-1000: 4.2 (0.3%), tests_pri_-950: 1.24 (0.1%), tests_pri_-900:
-        1.04 (0.1%), tests_pri_-400: 27 (2.1%), check_bayes: 25 (2.0%), b_tokenize: 8
-        (0.6%), b_tok_get_all: 7 (0.6%), b_comp_prob: 2.3 (0.2%), b_tok_touch_all:
-        4.5 (0.4%), b_finish: 1.99 (0.2%), tests_pri_0: 1222 (95.8%),
-        check_dkim_signature: 0.55 (0.0%), check_dkim_adsp: 2.9 (0.2%),
-        tests_pri_500: 4.9 (0.4%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] memcg: Replace mm->owner with mm->memcg
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <20180509142539.GB25131@amd>
+References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
+ <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
+ <20180509142539.GB25131@amd>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Thu, 10 May 2018 11:12:32 +0800
+Message-ID: <CAMz4kuLYP1aHTAsgN0rkqV8Zj12V4-d1pECTn8x537a9fLRndw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
+ controller driver
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        xiaotong.lu@spreadtrum.com, Mark Brown <broonie@kernel.org>,
+        linux-leds@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oleg Nesterov <oleg@redhat.com> writes:
+Hi Pavel,
 
-> On 05/07, Eric W. Biederman wrote:
+On 9 May 2018 at 22:25, Pavel Machek <pavel@ucw.cz> wrote:
+> On Tue 2018-05-08 13:39:45, Baolin Wang wrote:
+>> From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 >>
->> Oleg Nesterov <oleg@redhat.com> writes:
+>> This patch adds Spreadtrum SC27xx PMIC series breathing light controller
+>> driver, which can support 3 LEDs. Each LED can work at normal PWM mode
+>> and breathing mode.
 >>
->> > before your patch get_mem_cgroup_from_mm() looks at mm->owner == current
->> > (in this case) and mem_cgroup_from_task() should return the correct memcg
->> > even if execing task migrates after bprm_mm_init(). At least in the common
->> > case when the old mm is not shared.
->> >
->> > After your patch the memory allocations in copy_strings() won't be accounted
->> > correctly, bprm->mm->memcg is wrong if this task migrates. And iiuc your recent
->> > "[PATCH 2/2] memcg: Close the race between migration and installing bprm->mm as mm"
->> > doesn't fix the problem.
->> >
->> > No?
->>
->> The patch does solve the issue.  There should be nothing a userspace
->> process can observe that should tell it where in the middle of exec
->> such a migration happend so placing the migration at what from the
->> kernel's perspective might be technically later should not be a problem.
->>
->> If it is a problem the issue is that there is a way to observe the
->> difference.
+>> diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> new file mode 100644
+>> index 0000000..22166fb
+>> --- /dev/null
+>> +++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+>> @@ -0,0 +1,19 @@
+>> +What:                /sys/class/leds/<led>/rise_time
+>> +What:                /sys/class/leds/<led>/high_time
+>> +What:                /sys/class/leds/<led>/fall_time
+>> +What:                /sys/class/leds/<led>/low_time
+>> +Date:                May 2018
+>> +KernelVersion:       4.18
+>> +Contact:     Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+>> +Description:
+>> +             Set the pattern generator rise, high, fall and low
+>> +             times (0..63). It's unit is 0.125s, it should be > 0.
+>> +
+>> +             1 - 125 ms
+>> +             2 - 250 ms
+>> +             3 - 375 ms
+>> +             ...
+>> +             ...
+>> +             ...
+>> +             62 - 7.75 s
+>> +             63 - 7.875 s
 >
-> So. The task migrates from some MEMCG right after bprm_mm_init().
+> How does this interact with triggers? With manually setting
+> brightness? Are the pattern generators independend for the LEDs?
+
+With depending on what mode user selected. If user set the
+raise/high/fall/low time values, that means the LED will work at
+breathing mode, and we set brightness to turn on/off the breathing
+mode LED.
+
+Yes, they are independent for each LED.
+
 >
-> copy_strings() triggers OOM in MEMCG. This is quite possible, it can use a lot
-> of memory and that is why we have acct_arg_size() to make these allocations
-> visible to oom killer.
+> Can you generate white breathing pattern? If so, how?
+
+Yes, firstly we should set the raise/high/fall/low time values for red
+LED, blue LED and green LED (each LED time values are same), then set
+one brightness value to turn on the red LED, blue LED and green LED.
+
 >
-> task_in_mem_cgroup(MEMCG) returns false and oom killer has to kill another
-> innocent process in MEMCG.
+> How do you select between normal and breathing modes?
+
+As I explained, when user set the raise/high/fall/low time values,
+that means user selects the breathing mode of the LED. Otherwise the
+LED works at normal mode.
+
 >
-> Does this look like a way to observe the difference?
+> I'd specify times in miliseconds or something, this is way too
+> hardware specific.
 
-Sort of.
+But our hardware specification defines magic numbers, not times values
+in milliseconds. So I think we should follow our specification's
+definition, and user should also follow the same rules.
 
-I don't know how the memcg gets away without migrating charges
-when it migrates a process.  With charges not being migrated
-I don't think this is observable.
-
-That does look like a real issue however.
-
->> > Perhaps we can change get_mem_cgroup_from_mm() to use
->> > mem_cgroup_from_css(current, memory_cgrp_id) if mm->memcg == NULL?
->>
->> Please God no.  Having any unnecessary special case is just going to
->> confuse people and cause bugs.
 >
-> To me the unnecessary special case is the new_mm->memcg which is used for
-> accounting but doesn't follow migration till exec_mmap(). But I won't
-> argue.
+> Now... functionality like this is common between many LED
+> controllers. N900 could do this kind of "breathing", too, and it also
+> supports other patterns.
+>
+> I believe we need interface common between different LED controllers.
+>
+> And I guess it would be easiest if you dropped this part from initial
+> merge.
+>
+> Thanks and best regards,
+>
+>                                                                 Pavel
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
 
-Eric
+
+
+-- 
+Baolin.wang
+Best Regards
