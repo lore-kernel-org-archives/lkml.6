@@ -1,135 +1,215 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757109AbeEJLhx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 07:37:53 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58447 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756824AbeEJLhv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 07:37:51 -0400
-Date: Thu, 10 May 2018 13:37:49 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc: Baolin Wang <baolin.wang@linaro.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, xiaotong.lu@spreadtrum.com, broonie@kernel.org,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
- controller driver
-Message-ID: <20180510113749.GG6977@amd>
-References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
- <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
- <20180509142539.GB25131@amd>
- <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
+        id S935029AbeEJLkn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 07:40:43 -0400
+Received: from mga07.intel.com ([134.134.136.100]:56707 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756891AbeEJLkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 07:40:41 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,385,1520924400";
+   d="scan'208";a="39878832"
+Date: Thu, 10 May 2018 19:40:09 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Amelie Delaunay <amelie.delaunay@st.com>
+Cc: kbuild-all@01.org, Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Amelie Delaunay <amelie.delaunay@st.com>
+Subject: Re: [PATCH v2 3/3] rtc: stm32: add stm32mp1 rtc support
+Message-ID: <201805101823.CrM3ZuJP%fengguang.wu@intel.com>
+References: <1525880770-22263-4-git-send-email-amelie.delaunay@st.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="p7qwJlK53pWzbayA"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
+In-Reply-To: <1525880770-22263-4-git-send-email-amelie.delaunay@st.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Amelie,
 
---p7qwJlK53pWzbayA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the patch! Perhaps something to improve:
 
-Hi!
+[auto build test WARNING on abelloni/rtc-next]
+[also build test WARNING on next-20180510]
+[cannot apply to v4.17-rc4]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-> >>This patch adds Spreadtrum SC27xx PMIC series breathing light controller
-> >>driver, which can support 3 LEDs. Each LED can work at normal PWM mode
-> >>and breathing mode.
-> >>
-> >>diff --git a/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx b/=
-Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-> >>new file mode 100644
-> >>index 0000000..22166fb
-> >>--- /dev/null
-> >>+++ b/Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
-> >>@@ -0,0 +1,19 @@
-> >>+What:		/sys/class/leds/<led>/rise_time
-> >>+What:		/sys/class/leds/<led>/high_time
-> >>+What:		/sys/class/leds/<led>/fall_time
-> >>+What:		/sys/class/leds/<led>/low_time
-> >>+Date:		May 2018
-> >>+KernelVersion:	4.18
-> >>+Contact:	Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-> >>+Description:
-> >>+		Set the pattern generator rise, high, fall and low
-> >>+		times (0..63). It's unit is 0.125s, it should be > 0.
-> >>+
-> >>+		1 - 125 ms
-> >>+		2 - 250 ms
-> >>+		3 - 375 ms
-> >>+		...
-> >>+		...
-> >>+		...
-> >>+		62 - 7.75 s
-> >>+		63 - 7.875 s
-> >
-> >How does this interact with triggers? With manually setting
-> >brightness? Are the pattern generators independend for the LEDs?
-> >
-> >Can you generate white breathing pattern? If so, how?
-> >
-> >How do you select between normal and breathing modes?
-> >
-> >I'd specify times in miliseconds or something, this is way too
-> >hardware specific.
->=20
-> Agreed.
->=20
-> >Now... functionality like this is common between many LED
-> >controllers. N900 could do this kind of "breathing", too, and it also
-> >supports other patterns.
-> >
-> >I believe we need interface common between different LED controllers.
-> >
-> >And I guess it would be easiest if you dropped this part from initial
-> >merge.
->=20
-> I disagree here. We already had the same discussion at the occasion
-> of the patch [0] and it turned out to be a dead-end [1]. Now we have
-> neither the driver nor the generic pattern interface.
->=20
-> We also already have some older LED class drivers that implement custom
-> pattern interfaces (e.g. drivers/leds/leds-lm3533.c) and the same
-> approach can be applied in this case.
+url:    https://github.com/0day-ci/linux/commits/Amelie-Delaunay/Introduce-STM32MP1-RTC/20180510-054013
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
 
-Please don't. It was mistake to implement custom pattern interfaces
-back then, it is still mistake now.
-=20
-If we really need solution now, I'd recommend "pattern" file with
+smatch warnings:
+drivers/rtc/rtc-stm32.c:827 stm32_rtc_probe() warn: always true condition '(regs.verr != ~0) => (0-u16max != (-1))'
 
-"<delta time> <brightness> <delta time> <brightness>".
+vim +827 drivers/rtc/rtc-stm32.c
 
-In this specific case, hardware only supports patterns in this format:
+   694	
+   695	static int stm32_rtc_probe(struct platform_device *pdev)
+   696	{
+   697		struct stm32_rtc *rtc;
+   698		struct stm32_rtc_registers regs;
+   699		struct resource *res;
+   700		int ret;
+   701	
+   702		rtc = devm_kzalloc(&pdev->dev, sizeof(*rtc), GFP_KERNEL);
+   703		if (!rtc)
+   704			return -ENOMEM;
+   705	
+   706		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+   707		rtc->base = devm_ioremap_resource(&pdev->dev, res);
+   708		if (IS_ERR(rtc->base))
+   709			return PTR_ERR(rtc->base);
+   710	
+   711		rtc->data = (struct stm32_rtc_data *)
+   712			    of_device_get_match_data(&pdev->dev);
+   713		regs = rtc->data->regs;
+   714	
+   715		if (rtc->data->need_dbp) {
+   716			rtc->dbp = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
+   717								   "st,syscfg");
+   718			if (IS_ERR(rtc->dbp)) {
+   719				dev_err(&pdev->dev, "no st,syscfg\n");
+   720				return PTR_ERR(rtc->dbp);
+   721			}
+   722	
+   723			ret = of_property_read_u32_index(pdev->dev.of_node, "st,syscfg",
+   724							 1, &rtc->dbp_reg);
+   725			if (ret) {
+   726				dev_err(&pdev->dev, "can't read DBP register offset\n");
+   727				return ret;
+   728			}
+   729	
+   730			ret = of_property_read_u32_index(pdev->dev.of_node, "st,syscfg",
+   731							 2, &rtc->dbp_mask);
+   732			if (ret) {
+   733				dev_err(&pdev->dev, "can't read DBP register mask\n");
+   734				return ret;
+   735			}
+   736		}
+   737	
+   738		if (!rtc->data->has_pclk) {
+   739			rtc->pclk = NULL;
+   740			rtc->rtc_ck = devm_clk_get(&pdev->dev, NULL);
+   741		} else {
+   742			rtc->pclk = devm_clk_get(&pdev->dev, "pclk");
+   743			if (IS_ERR(rtc->pclk)) {
+   744				dev_err(&pdev->dev, "no pclk clock");
+   745				return PTR_ERR(rtc->pclk);
+   746			}
+   747			rtc->rtc_ck = devm_clk_get(&pdev->dev, "rtc_ck");
+   748		}
+   749		if (IS_ERR(rtc->rtc_ck)) {
+   750			dev_err(&pdev->dev, "no rtc_ck clock");
+   751			return PTR_ERR(rtc->rtc_ck);
+   752		}
+   753	
+   754		if (rtc->data->has_pclk) {
+   755			ret = clk_prepare_enable(rtc->pclk);
+   756			if (ret)
+   757				return ret;
+   758		}
+   759	
+   760		ret = clk_prepare_enable(rtc->rtc_ck);
+   761		if (ret)
+   762			goto err;
+   763	
+   764		if (rtc->data->need_dbp)
+   765			regmap_update_bits(rtc->dbp, rtc->dbp_reg,
+   766					   rtc->dbp_mask, rtc->dbp_mask);
+   767	
+   768		/*
+   769		 * After a system reset, RTC_ISR.INITS flag can be read to check if
+   770		 * the calendar has been initialized or not. INITS flag is reset by a
+   771		 * power-on reset (no vbat, no power-supply). It is not reset if
+   772		 * rtc_ck parent clock has changed (so RTC prescalers need to be
+   773		 * changed). That's why we cannot rely on this flag to know if RTC
+   774		 * init has to be done.
+   775		 */
+   776		ret = stm32_rtc_init(pdev, rtc);
+   777		if (ret)
+   778			goto err;
+   779	
+   780		rtc->irq_alarm = platform_get_irq(pdev, 0);
+   781		if (rtc->irq_alarm <= 0) {
+   782			dev_err(&pdev->dev, "no alarm irq\n");
+   783			ret = rtc->irq_alarm;
+   784			goto err;
+   785		}
+   786	
+   787		ret = device_init_wakeup(&pdev->dev, true);
+   788		if (rtc->data->has_wakeirq) {
+   789			rtc->wakeirq_alarm = platform_get_irq(pdev, 1);
+   790			if (rtc->wakeirq_alarm <= 0)
+   791				ret = rtc->wakeirq_alarm;
+   792			else
+   793				ret = dev_pm_set_dedicated_wake_irq(&pdev->dev,
+   794								    rtc->wakeirq_alarm);
+   795		}
+   796		if (ret)
+   797			dev_warn(&pdev->dev, "alarm can't wake up the system: %d", ret);
+   798	
+   799		platform_set_drvdata(pdev, rtc);
+   800	
+   801		rtc->rtc_dev = devm_rtc_device_register(&pdev->dev, pdev->name,
+   802							&stm32_rtc_ops, THIS_MODULE);
+   803		if (IS_ERR(rtc->rtc_dev)) {
+   804			ret = PTR_ERR(rtc->rtc_dev);
+   805			dev_err(&pdev->dev, "rtc device registration failed, err=%d\n",
+   806				ret);
+   807			goto err;
+   808		}
+   809	
+   810		/* Handle RTC alarm interrupts */
+   811		ret = devm_request_threaded_irq(&pdev->dev, rtc->irq_alarm, NULL,
+   812						stm32_rtc_alarm_irq, IRQF_ONESHOT,
+   813						pdev->name, rtc);
+   814		if (ret) {
+   815			dev_err(&pdev->dev, "IRQ%d (alarm interrupt) already claimed\n",
+   816				rtc->irq_alarm);
+   817			goto err;
+   818		}
+   819	
+   820		/*
+   821		 * If INITS flag is reset (calendar year field set to 0x00), calendar
+   822		 * must be initialized
+   823		 */
+   824		if (!(readl_relaxed(rtc->base + regs.isr) & STM32_RTC_ISR_INITS))
+   825			dev_warn(&pdev->dev, "Date/Time must be initialized\n");
+   826	
+ > 827		if (regs.verr != UNDEF_REG) {
+   828			u32 ver = readl_relaxed(rtc->base + regs.verr);
+   829	
+   830			dev_info(&pdev->dev, "registered rev:%d.%d\n",
+   831				 (ver >> STM32_RTC_VERR_MAJREV_SHIFT) & 0xF,
+   832				 (ver >> STM32_RTC_VERR_MINREV_SHIFT) & 0xF);
+   833		}
+   834	
+   835		return 0;
+   836	err:
+   837		if (rtc->data->has_pclk)
+   838			clk_disable_unprepare(rtc->pclk);
+   839		clk_disable_unprepare(rtc->rtc_ck);
+   840	
+   841		if (rtc->data->need_dbp)
+   842			regmap_update_bits(rtc->dbp, rtc->dbp_reg, rtc->dbp_mask, 0);
+   843	
+   844		dev_pm_clear_wake_irq(&pdev->dev);
+   845		device_init_wakeup(&pdev->dev, false);
+   846	
+   847		return ret;
+   848	}
+   849	
 
-low_time 0 rise_time 255 high_time 255 fall_time 0
-
-so driver would simply -EINVAL on anything else.
-
-Best regards,
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---p7qwJlK53pWzbayA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlr0Lw0ACgkQMOfwapXb+vIRVACgwnjEX9KbjsguxrZHENVrg85k
-DzEAoLHGFNDSqR/bS/Z/JhEioFUQBHOn
-=v++i
------END PGP SIGNATURE-----
-
---p7qwJlK53pWzbayA--
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
