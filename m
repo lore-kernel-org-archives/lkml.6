@@ -1,177 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752723AbeEJV7w (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 17:59:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51100 "EHLO mail.bootlin.com"
+        id S1752738AbeEJV77 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 17:59:59 -0400
+Received: from mout.gmx.net ([212.227.15.18]:45089 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752698AbeEJV7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 17:59:48 -0400
-Date: Thu, 10 May 2018 23:59:46 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: a.zummo@towertech.it, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] rtc: ds1307: add offset sysfs for mt41txx chips.
-Message-ID: <20180510215946.GS10960@piout.net>
-References: <20180509193355.49466-1-giulio.benetti@micronovasrl.com>
- <20180509193355.49466-3-giulio.benetti@micronovasrl.com>
+        id S1752698AbeEJV7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 17:59:54 -0400
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mathieu Malaterre <malat@debian.org>,
+        =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+Subject: [PATCH 2/2] powerpc: hlwd-pic: Prevent interrupts from being handled by Starlet
+Date: Thu, 10 May 2018 23:59:19 +0200
+Message-Id: <20180510215919.27808-3-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180510215919.27808-1-j.neuschaefer@gmx.net>
+References: <20180510215919.27808-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509193355.49466-3-giulio.benetti@micronovasrl.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:1QIMz60H6Rk4js3dUDr52t5ndFzeeog7sTfiei+EQb0IyomljYO
+ CplNJQFtdEW7AF432PGndTeRtioYmIw+9Z8meaF0Y6B56w+fOLey3nxfSfHLd4g47Fee9GD
+ 0pcCKeqmVymKQHd+PqhkbHuG9FsaFZGyL+mffdwmj33PK3YPf8AifWPABWKru87jOMNGKvI
+ +H1hjmkpGqKM50Ai4B2Qw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:6P2l+/0PbSU=:+kWDgM1GaUr09an/dIT63c
+ 6cmX9zz0r80ptUvYpfb6UPq8m2iXybuhTsm3VXqlFU4rAfoVVgLI10JkXvCRDdWDVM/l+O4QE
+ i/NKJyTZ7DOFbhK53rJoyMnipz/PmNZP4QQl0RWEieK3apHhDJXTOEWt62SswaYA7yKIWgAHk
+ WjL1kq4qd628dkTkew92CiXTSxp23XVz2chLWieBASUU/h50HIn8yquMKyla09R7S8p5Cfees
+ XO7cbWFJNHsI+yWkARopqd7UG7LsBpyACB9P/h6UnH/8CpZyK2J5tQVM2AjFcUHBytmGvt/aO
+ BiNxkrhiIR5rOL0rfZXbmkQxPNf+Bjeo4WX0xKBC4QsFH9jyziDGIz7zDhkfadQcG4DSCdh72
+ XRyHq8LxPGaNHnnru5B9izzYBU5wV10m2ZNanez1+04BeeD5dn9yatQTpPIXzX3c/+lEMoJwm
+ TsnOdNAvyzCCBm9ICRt7BWUSQMb29MEWp1F+6gPEBB8ecv7LTXt5jxRJKO8duJ4kyweFIpaOF
+ U96l+dBoK8wdYD9NvRcLH9JhDplZl0ufIg7tE1tWcL/9D9vgrrfjn7HXcp5NISQPDsy7tWTNI
+ fZzT4ShXfl6KFzC/IMZoMyWJl1j6nSLFg7R8I5uHUwyKMoEMZVTj7t33R95USVmSya3lXb7Dc
+ sbWL7o3wYstF67G9UocJ8t9XN0xMNW+/XgLpfeecoLa5Mw4MSir2Ig+cEyKqwzKJMcK0p00tw
+ L6FzD2m4H3zCdhuwdAK3lpLsHTQTnEYISamSKb5hBZdqLYwtFzXSSktUV1G1s4lyiKoU1PcP0
+ LOTn0aq
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/05/2018 21:33:54+0200, Giulio Benetti wrote:
-> m41txx chips can hold a calibration value to get correct clock bias.
-> If positive offset is passed, it means adding 512 cycles(@32.768Hz)
-> every tick(1s).
-> If negative offset is passed, it means subtracting 256 cycles(@32.768Hz)
-> every tick(1s).
-> 
-> Add offset handling (ranging between (-31) and 31) via sysfs.
-> 
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
-> ---
->  drivers/rtc/rtc-ds1307.c | 70 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-> index 0ab0c166da83..33895668b363 100644
-> --- a/drivers/rtc/rtc-ds1307.c
-> +++ b/drivers/rtc/rtc-ds1307.c
-> @@ -114,6 +114,16 @@ enum ds_type {
->  #	define RX8025_BIT_VDET		0x40
->  #	define RX8025_BIT_XST		0x20
->  
-> +#define M41TXX_REG_CONTROL	0x07
-> +#	define M41TXX_BIT_OUT		0x80
-> +#	define M41TXX_BIT_FT		0x40
-> +#	define M41TXX_BIT_CALIB_SIGN	0x20
-> +#	define M41TXX_M_CALIBRATION	0x1f
-> +
-> +/* Min and max values supported with 'offset' interface by M41TXX */
-> +#define M41TXX_MIN_OFFSET	(-31)
-> +#define M41TXX_MAX_OFFSET	(31)
-> +
->  struct ds1307 {
->  	enum ds_type		type;
->  	unsigned long		flags;
-> @@ -146,6 +156,9 @@ struct chip_desc {
->  
->  static int ds1307_get_time(struct device *dev, struct rtc_time *t);
->  static int ds1307_set_time(struct device *dev, struct rtc_time *t);
-> +static int ds1337_read_alarm(struct device *dev, struct rtc_wkalrm *t);
-> +static int ds1337_set_alarm(struct device *dev, struct rtc_wkalrm *t);
-> +static int ds1307_alarm_irq_enable(struct device *dev, unsigned int enabled);
->  static u8 do_trickle_setup_ds1339(struct ds1307 *, u32 ohms, bool diode);
->  static irqreturn_t rx8130_irq(int irq, void *dev_id);
->  static int rx8130_read_alarm(struct device *dev, struct rtc_wkalrm *t);
-> @@ -155,6 +168,8 @@ static irqreturn_t mcp794xx_irq(int irq, void *dev_id);
->  static int mcp794xx_read_alarm(struct device *dev, struct rtc_wkalrm *t);
->  static int mcp794xx_set_alarm(struct device *dev, struct rtc_wkalrm *t);
->  static int mcp794xx_alarm_irq_enable(struct device *dev, unsigned int enabled);
-> +static int m41txx_rtc_read_offset(struct device *dev, long *offset);
-> +static int m41txx_rtc_set_offset(struct device *dev, long offset);
->  
->  static const struct rtc_class_ops rx8130_rtc_ops = {
->  	.read_time      = ds1307_get_time,
-> @@ -172,6 +187,16 @@ static const struct rtc_class_ops mcp794xx_rtc_ops = {
->  	.alarm_irq_enable = mcp794xx_alarm_irq_enable,
->  };
->  
-> +static const struct rtc_class_ops m41txx_rtc_ops = {
-> +	.read_time      = ds1307_get_time,
-> +	.set_time       = ds1307_set_time,
-> +	.read_alarm	= ds1337_read_alarm,
-> +	.set_alarm	= ds1337_set_alarm,
-> +	.alarm_irq_enable = ds1307_alarm_irq_enable,
-> +	.read_offset	= m41txx_rtc_read_offset,
-> +	.set_offset	= m41txx_rtc_set_offset,
-> +};
-> +
->  static const struct chip_desc chips[last_ds_type] = {
->  	[ds_1307] = {
->  		.nvram_offset	= 8,
-> @@ -227,10 +252,17 @@ static const struct chip_desc chips[last_ds_type] = {
->  		.irq_handler = rx8130_irq,
->  		.rtc_ops = &rx8130_rtc_ops,
->  	},
-> +	[m41t0] = {
-> +		.rtc_ops	= &m41txx_rtc_ops,
-> +	},
-> +	[m41t00] = {
-> +		.rtc_ops	= &m41txx_rtc_ops,
-> +	},
->  	[m41t11] = {
->  		/* this is battery backed SRAM */
->  		.nvram_offset	= 8,
->  		.nvram_size	= 56,
-> +		.rtc_ops	= &m41txx_rtc_ops,
->  	},
->  	[mcp794xx] = {
->  		.alarm		= 1,
-> @@ -972,6 +1004,44 @@ static int mcp794xx_alarm_irq_enable(struct device *dev, unsigned int enabled)
->  				  enabled ? MCP794XX_BIT_ALM0_EN : 0);
->  }
->  
-> +static int m41txx_rtc_read_offset(struct device *dev, long *offset)
-> +{
-> +	struct ds1307 *ds1307 = dev_get_drvdata(dev);
-> +	unsigned int ctrl_reg;
-> +	u8 val;
-> +
-> +	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
-> +
-> +	val = ctrl_reg & M41TXX_M_CALIBRATION;
-> +
-> +	/* check if positive */
-> +	if (ctrl_reg & M41TXX_BIT_CALIB_SIGN)
-> +		*offset = val;
-> +	else
-> +		*offset = -val;
-> +
+The interrupt controller inside the Wii's Hollywood chip is connected to
+two masters, the "Broadway" PowerPC and the "Starlet" ARM926, each with
+their own interrupt status and mask registers.
 
-This is definitively not right, you have to convert to/from ppb when
-reading/setting the offset. The datasheet gives you the correct steps in
-ppm.
+When booting the Wii with mini[1], interrupts from the SD card
+controller (IRQ 7) are handled by the ARM, because mini provides SD
+access over IPC. Linux however can't currently use or disable this IPC
+service, so both sides try to handle IRQ 7 without coordination.
 
-> +	return 0;
-> +}
-> +
-> +static int m41txx_rtc_set_offset(struct device *dev, long offset)
-> +{
-> +	struct ds1307 *ds1307 = dev_get_drvdata(dev);
-> +	unsigned int ctrl_reg;
-> +
-> +	if ((offset < M41TXX_MIN_OFFSET) || (offset > M41TXX_MAX_OFFSET))
-> +		return -ERANGE;
-> +
-> +	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
-> +
-> +	ctrl_reg &= ~M41TXX_M_CALIBRATION;
-> +	ctrl_reg |= abs(offset) & M41TXX_M_CALIBRATION;
-> +
-> +	if (offset >= 0)
-> +		ctrl_reg |= M41TXX_BIT_CALIB_SIGN;
-> +
-> +	return regmap_write(ds1307->regmap, M41TXX_REG_CONTROL,	ctrl_reg);
+Let's instead make sure that all interrupts that are unmasked on the PPC
+side are masked on the ARM side; this will also make sure that Linux can
+properly talk to the SD card controller (and potentially other devices).
 
-Please use regmap_update_bits
+If access to a device through IPC is desired in the future, interrupts
+from that device should not be handled by Linux directly.
 
-> +}
-> +
->  /*----------------------------------------------------------------------*/
->  
->  static int ds1307_nvram_read(void *priv, unsigned int offset, void *val,
-> -- 
-> 2.17.0
-> 
+[1]: https://github.com/lewurm/mini
 
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+---
+ arch/powerpc/platforms/embedded6xx/hlwd-pic.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/powerpc/platforms/embedded6xx/hlwd-pic.c b/arch/powerpc/platforms/embedded6xx/hlwd-pic.c
+index e3e3af73e9d8..8112b39879d6 100644
+--- a/arch/powerpc/platforms/embedded6xx/hlwd-pic.c
++++ b/arch/powerpc/platforms/embedded6xx/hlwd-pic.c
+@@ -35,6 +35,8 @@
+  */
+ #define HW_BROADWAY_ICR		0x00
+ #define HW_BROADWAY_IMR		0x04
++#define HW_STARLET_ICR		0x08
++#define HW_STARLET_IMR		0x0c
+ 
+ 
+ /*
+@@ -74,6 +76,9 @@ static void hlwd_pic_unmask(struct irq_data *d)
+ 	void __iomem *io_base = irq_data_get_irq_chip_data(d);
+ 
+ 	setbits32(io_base + HW_BROADWAY_IMR, 1 << irq);
++
++	/* Make sure the ARM (aka. Starlet) doesn't handle this interrupt. */
++	clrbits32(io_base + HW_STARLET_IMR, 1 << irq);
+ }
+ 
+ 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.0
