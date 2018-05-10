@@ -1,73 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756323AbeEJB2N (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 21:28:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42802 "EHLO mail.kernel.org"
+        id S1756349AbeEJBif (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 21:38:35 -0400
+Received: from ozlabs.org ([203.11.71.1]:52047 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753270AbeEJB2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 21:28:12 -0400
-Date: Thu, 10 May 2018 10:28:08 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: acme@kernel.org, jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf buildid-cache: Warn --purge-all failures
-Message-Id: <20180510102808.5fcc479ccda0dd0eb08b7383@kernel.org>
-In-Reply-To: <20180509145205.3241-1-ravi.bangoria@linux.ibm.com>
-References: <20180509145205.3241-1-ravi.bangoria@linux.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1755415AbeEJBid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 21:38:33 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Thu, 10 May 2018 11:38:29 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jonathan Corbet <corbet@lwn.net>, Christoph Hellwig <hch@lst.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: linux-next: manual merge of the jc_docs tree with the dma-mapping
+ tree
+Message-ID: <20180510113829.513b3db9@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/gir9HIap0zOjnlhomcPczrz"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  9 May 2018 20:22:05 +0530
-Ravi Bangoria <ravi.bangoria@linux.ibm.com> wrote:
+--Sig_/gir9HIap0zOjnlhomcPczrz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Warn perf buildid-cache --purge-all failures in non verbose mode.
-> Ex,
-> 
->   $ sudo chown root:root /home/ravi/.debug -R
->   $ ./perf buildid-cache -P
->     Error: Permission denied.
-> 
-> Suggested-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-> ---
->  tools/perf/builtin-buildid-cache.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
-> index 7a7403913b57..ef6b3cc8d57d 100644
-> --- a/tools/perf/builtin-buildid-cache.c
-> +++ b/tools/perf/builtin-buildid-cache.c
-> @@ -488,8 +488,12 @@ int cmd_buildid_cache(int argc, const char **argv)
->  		}
->  	}
->  
-> -	if (purge_all)
-> -		ret = build_id_cache__purge_all();
-> +	if (purge_all) {
-> +		if (build_id_cache__purge_all()) {
-> +			pr_warning("Error: %s.\n",
-> +				str_error_r(errno, sbuf, sizeof(sbuf)));
+Hi Jonathan,
 
-I would like to see "Couldn't remove some caches: error reason..."
-as same as other error messages.
+Today's linux-next merge of the jc_docs tree got a conflict in:
 
-Thank you,
+  Documentation/features/io/dma-api-debug/arch-support.txt
 
-> +		}
-> +	}
->  
->  	if (missing_filename)
->  		ret = build_id_cache__fprintf_missing(session, stdout);
-> -- 
-> 2.14.3
-> 
+between commit:
 
+  6e88628d03dd ("dma-debug: remove CONFIG_HAVE_DMA_API_DEBUG")
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+from the dma-mapping tree and commit:
+
+  7156fc292850 ("Documentation/features: Refresh the arch support status fi=
+les in place")
+
+from the jc_docs tree.
+
+I fixed it up (I just remobved the file like the former commit did) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gir9HIap0zOjnlhomcPczrz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrzopUACgkQAVBC80lX
+0GwvDAf/T6gbsaJeu9y8m42wPF3AJD2D7lr1MjWq9O8r1eQgunUCpVRQKiZakOyp
+WPHH1zc4Xuy7F0wkUcb20bsqSgzpdMnw6gF1syBgXJpZSa28d0e4h0oAfoGeBdTE
+YN0dWEJ0pKTWtrw5Lu39pXgnLmWm50BB/LaOxiAdwY6jBCrzpvcEQOTSGmr35DWo
+8bnalSDolQIgM9xd0zNTtcCFgq4P9FZ/YiuIsUJu8fzMT+BsDAAQ/+JG8nPy+QrR
+v+548ZS5W5yQP/GR4/0QKnDAvhLQKT0ysPPf5u5AJeE0gO9ZkECteOp10b3wlDGi
+0ysmHM831SCm5SK6Ef4BxxCLfziKcQ==
+=Kbq2
+-----END PGP SIGNATURE-----
+
+--Sig_/gir9HIap0zOjnlhomcPczrz--
