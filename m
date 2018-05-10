@@ -1,148 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757391AbeEJNsr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 09:48:47 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39226 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757097AbeEJNsq (ORCPT
+        id S1757411AbeEJNsy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 09:48:54 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37775 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757097AbeEJNst (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 09:48:46 -0400
-Date: Thu, 10 May 2018 15:48:41 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: perf: fuzzer causes stack going in wrong direction warnings
-Message-ID: <20180510134841.GE12217@hirez.programming.kicks-ass.net>
-References: <alpine.DEB.2.21.1805010925140.19413@macbook-air>
- <20180501135850.enx4waqd5d7yowlj@treble>
- <alpine.DEB.2.21.1805011557240.19937@macbook-air>
- <20180501220458.p3rgwzh3jcqt4jmm@treble>
- <20180502205009.codkvscnh4j4hm6b@treble>
- <alpine.DEB.2.21.1805041033230.6376@macbook-air>
- <20180504162557.iodmglq3duomz6c2@treble>
- <alpine.DEB.2.21.1805051134230.11518@macbook-air>
- <20180505182912.llj7jb3v7yd43t5h@treble>
- <20180506234935.yq6zxjetlpldpzz7@treble>
+        Thu, 10 May 2018 09:48:49 -0400
+X-Google-Smtp-Source: AB8JxZpydcjvWYcHDl/hjNiiFIiBn3uJMTRiDSIuqGNQFvO6WOxtOlKrRHLQ9wYaayB/ifEDrOXmNgMlmjMbdVbyhtM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180506234935.yq6zxjetlpldpzz7@treble>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180425045922.GA21590@jordon-HP-15-Notebook-PC>
+References: <20180425045922.GA21590@jordon-HP-15-Notebook-PC>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Thu, 10 May 2018 19:18:46 +0530
+Message-ID: <CAFqt6zZeQLMkdha4DD2uMp=LOX879BrR6pf4_fwXzc3nr=G-Rw@mail.gmail.com>
+Subject: Re: [PATCH v2] gpu: drm: udl: Adding new typedef vm_fault_t
+To: airlied@redhat.com,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        =?UTF-8?Q?Cihangir_Akt=C3=BCrk?= <cakturk@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Michal Hocko <mhocko@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 06, 2018 at 06:49:35PM -0500, Josh Poimboeuf wrote:
+On Wed, Apr 25, 2018 at 10:29 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> Use new return type vm_fault_t for fault and huge_fault
+> handler. For now, this is just documenting that the
+> function returns a VM_FAULT value rather than an errno.
+> Once all instances are converted, vm_fault_t will become
+> a distinct type.
+>
+> Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>
+> Previously vm_insert_page() returns err which driver
+> mapped into VM_FAULT_* type. The new function vmf_
+> insert_page() will replace this inefficiency by
+> returning VM_FAULT_* type.
+>
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+> ---
+> v2: Updated the change log
+>
+>  drivers/gpu/drm/udl/udl_drv.h |  3 ++-
+>  drivers/gpu/drm/udl/udl_gem.c | 15 ++-------------
+>  2 files changed, 4 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/udl/udl_drv.h b/drivers/gpu/drm/udl/udl_drv.h
+> index 2a75ab8..11151c4 100644
+> --- a/drivers/gpu/drm/udl/udl_drv.h
+> +++ b/drivers/gpu/drm/udl/udl_drv.h
+> @@ -16,6 +16,7 @@
+>
+>  #include <linux/usb.h>
+>  #include <drm/drm_gem.h>
+> +#include <linux/mm_types.h>
+>
+>  #define DRIVER_NAME            "udl"
+>  #define DRIVER_DESC            "DisplayLink"
+> @@ -134,7 +135,7 @@ struct drm_gem_object *udl_gem_prime_import(struct drm_device *dev,
+>  int udl_gem_vmap(struct udl_gem_object *obj);
+>  void udl_gem_vunmap(struct udl_gem_object *obj);
+>  int udl_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+> -int udl_gem_fault(struct vm_fault *vmf);
+> +vm_fault_t udl_gem_fault(struct vm_fault *vmf);
+>
+>  int udl_handle_damage(struct udl_framebuffer *fb, int x, int y,
+>                       int width, int height);
+> diff --git a/drivers/gpu/drm/udl/udl_gem.c b/drivers/gpu/drm/udl/udl_gem.c
+> index dee6bd9..cf5fe35 100644
+> --- a/drivers/gpu/drm/udl/udl_gem.c
+> +++ b/drivers/gpu/drm/udl/udl_gem.c
+> @@ -100,13 +100,12 @@ int udl_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+>         return ret;
+>  }
+>
+> -int udl_gem_fault(struct vm_fault *vmf)
+> +vm_fault_t udl_gem_fault(struct vm_fault *vmf)
+>  {
+>         struct vm_area_struct *vma = vmf->vma;
+>         struct udl_gem_object *obj = to_udl_bo(vma->vm_private_data);
+>         struct page *page;
+>         unsigned int page_offset;
+> -       int ret = 0;
+>
+>         page_offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
+>
+> @@ -114,17 +113,7 @@ int udl_gem_fault(struct vm_fault *vmf)
+>                 return VM_FAULT_SIGBUS;
+>
+>         page = obj->pages[page_offset];
+> -       ret = vm_insert_page(vma, vmf->address, page);
+> -       switch (ret) {
+> -       case -EAGAIN:
+> -       case 0:
+> -       case -ERESTARTSYS:
+> -               return VM_FAULT_NOPAGE;
+> -       case -ENOMEM:
+> -               return VM_FAULT_OOM;
+> -       default:
+> -               return VM_FAULT_SIGBUS;
+> -       }
+> +       return vmf_insert_page(vma, vmf->address, page);
+>  }
+>
+>  int udl_gem_get_pages(struct udl_gem_object *obj)
+> --
+> 1.9.1
+>
 
-> Deja vu.  Most of these are related to perf PEBS, similar to the
-> following issue:
-> 
->   b8000586c90b ("perf/x86/intel: Cure bogus unwind from PEBS entries")
-> 
-> This is basically the ORC version of that.  setup_pebs_sample_data() is
-> assembling a franken-pt_regs which ORC isn't happy about.  RIP is
-> inconsistent with some of the other registers (like RSP and RBP).
-> 
-> Peter, any ideas?
-
-Urgh..
-
-Something like so perhaps? It's a bit of a hack, but I couldn't quickly
-think of something nicer.
-
-
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 707b2a96e516..86f0c15dcc2d 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2997,6 +2997,9 @@ static int intel_pmu_hw_config(struct perf_event *event)
- 		}
- 		if (x86_pmu.pebs_aliases)
- 			x86_pmu.pebs_aliases(event);
-+
-+		if (event->attr.sample_type & PERF_SAMPLE_CALLCHAIN)
-+			event->attr.sample_type |= __PERF_SAMPLE_CALLCHAIN_EARLY;
- 	}
- 
- 	if (needs_branch_stack(event)) {
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 8a10a045b57b..2115ac8336b4 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1183,17 +1183,21 @@ static void setup_pebs_sample_data(struct perf_event *event,
- 		data->data_src.val = val;
- 	}
- 
-+	/*
-+	 * We must however always use iregs for the unwinder to stay sane; the
-+	 * record BP,SP,IP can point into thin air when the record is from a
-+	 * previous PMI context or an (I)RET happend between the record and
-+	 * PMI.
-+	 */
-+	if (sample_type & PERF_SAMPLE_CALLCHAIN)
-+		data->callchain = perf_callchain(event, iregs);
-+
- 	/*
- 	 * We use the interrupt regs as a base because the PEBS record does not
- 	 * contain a full regs set, specifically it seems to lack segment
- 	 * descriptors, which get used by things like user_mode().
- 	 *
- 	 * In the simple case fix up only the IP for PERF_SAMPLE_IP.
--	 *
--	 * We must however always use BP,SP from iregs for the unwinder to stay
--	 * sane; the record BP,SP can point into thin air when the record is
--	 * from a previous PMI context or an (I)RET happend between the record
--	 * and PMI.
- 	 */
- 	*regs = *iregs;
- 
-@@ -1212,15 +1216,8 @@ static void setup_pebs_sample_data(struct perf_event *event,
- 		regs->si = pebs->si;
- 		regs->di = pebs->di;
- 
--		/*
--		 * Per the above; only set BP,SP if we don't need callchains.
--		 *
--		 * XXX: does this make sense?
--		 */
--		if (!(sample_type & PERF_SAMPLE_CALLCHAIN)) {
--			regs->bp = pebs->bp;
--			regs->sp = pebs->sp;
--		}
-+		regs->bp = pebs->bp;
-+		regs->sp = pebs->sp;
- 
- #ifndef CONFIG_X86_32
- 		regs->r8 = pebs->r8;
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index b8e288a1f740..55b93cd0d48a 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -143,6 +143,8 @@ enum perf_event_sample_format {
- 	PERF_SAMPLE_PHYS_ADDR			= 1U << 19,
- 
- 	PERF_SAMPLE_MAX = 1U << 20,		/* non-ABI */
-+
-+	__PERF_SAMPLE_CALLCHAIN_EARLY		= 1UL << 63,
- };
- 
- /*
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 67612ce359ad..27c9e0f99f30 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6380,7 +6380,9 @@ void perf_prepare_sample(struct perf_event_header *header,
- 	if (sample_type & PERF_SAMPLE_CALLCHAIN) {
- 		int size = 1;
- 
--		data->callchain = perf_callchain(event, regs);
-+		if (!(sample_type & __PERF_SAMPLE_CALLCHAIN_EARLY))
-+			data->callchain = perf_callchain(event, regs);
-+
- 		size += data->callchain->nr;
- 
- 		header->size += size * sizeof(u64);
+Any comment on this patch ?
