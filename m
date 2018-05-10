@@ -1,153 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935130AbeEJKYg convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 06:24:36 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.210]:50321 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934760AbeEJKYb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 06:24:31 -0400
-Subject: Re: Regression caused by commit 882164a4a928
-To: =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>
-CC: Larry Finger <Larry.Finger@lwfinger.net>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
- <372d149c-c34c-56a0-4e1a-5ab2c1e16e73@mips.com>
- <20180509182756.6f36cc05@wiggum>
-From: Matt Redfearn <matt.redfearn@mips.com>
-Message-ID: <af1f604a-21e0-e7ff-f526-9d2aec184389@mips.com>
-Date: Thu, 10 May 2018 11:24:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20180509182756.6f36cc05@wiggum>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+        id S934993AbeEJK23 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 06:28:29 -0400
+Received: from mout.gmx.net ([212.227.17.20]:43563 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756686AbeEJK21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 06:28:27 -0400
+Message-ID: <1525948096.29445.4.camel@gmx.de>
+Subject: Re: kernel spew from nouveau/ swiotlb
+From: Mike Galbraith <efault@gmx.de>
+To: nouveau <nouveau@lists.freedesktop.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Roger He <Hongbo.He@amd.com>
+Date: Thu, 10 May 2018 12:28:16 +0200
+In-Reply-To: <1525943427.8013.11.camel@gmx.de>
+References: <1525943427.8013.11.camel@gmx.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [192.168.155.41]
-X-ClientProxiedBy: mipsdag02.mipstec.com (10.20.40.47) To
- mipsdag02.mipstec.com (10.20.40.47)
-X-BESS-ID: 1525947862-531716-13881-555844-1
-X-BESS-VER: 2018.5-r1804261738
-X-BESS-Apparent-Source-IP: 12.201.5.32
-X-BESS-Outbound-Spam-Score: 0.00
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.192871
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound
-X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
-X-BESS-BRTS-Status: 1
+X-Provags-ID: V03:K1:HmOHihd2tWH7fzhZErR5kHWaRaZFykvIz9GKVU8PIRT66+wtzEz
+ 0H+7jP+8ik7T06ILKq9gjryLDETJ8wUT0kG88pZOX0xmXCOmhtyAOAIFSRHiP6KfNF7mvAs
+ KxEWAGM/u/X+8nbZX3G2oojVgJbrVJs17YMKvY/7a2mxK48aF6sTeuKYnK3LXsgGyGDn/m6
+ tHtzehdFQhiySIRdXIBRA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:CZfBLTFEMxQ=:gqB+cdeGIHQdtElwI4mEQz
+ 92cL3Icd1sAYrnScOP4FRQTevYTMjqJDSWHdqufuPXkSeky32Gnsvysk/JsYAoyYQazFeMizV
+ zXSfYonvV9SwnLebGW+xk1shT2NS7a7pSSosuHDfxMsRRDMphQy0Ssa+4+L3J37uBacDQXyIC
+ dFlV0gqCIyOOPCI2iWhn/9cLX8PqGGjwoae3IvWdPA1VaclhtEGpVLYmvzSMZINz+ogvebopy
+ OHNBnP6u7cDx1r1sq+em1SnAVVK1qqc8vh2tfNOGmrn1JKaE6m2I3b/uJgVdORbJeCFc2wYO3
+ fVQKQ+ZdRUJ1KZp4QtBaNZ6mVLbIHfKXWcxOh9xgVdGlFdtAn53JNhDTOZY32TRQoNxvOAShm
+ 8FAUWwIx6pV/y3xznMu+CYFX+cNEMVFmFXpuKnT6Or094pBKUP/nQMG92D2U559JLroXbWyL9
+ CwF+oBBQWB9QWQ6Nn8Dxao0TqX3hbN1OOGlHDFcKTCDpoYQj3QbIduW2MLierUKiEjx4rqnZK
+ 0gQ0Ox7KDv/X/CAz+4fT33vNhvLq7TkxbFyrJMSn+f/4NJiU4Gje8OfKw/W2QhUNkCmneoqhL
+ r6+MvrMk3W1MVGROL/X6WIKeuVLU6wszSDR9zBgsap9PGklLI/PW3doHQxMNVGsaX/xMO9G1x
+ FnQl/R8LWWOR+pc+nzUvbrMckxr9YFQue5I7YE4XKCgvx3J49dFNvWNa6KESIrLg4+G3Ig9GN
+ rmh6TccJVuYi8+9ZHm03CHoaZpU53Zis3XUXwMH0lvJQb2WjHzYwpc1ouhiNJaPaLTjeYNbaU
+ USgDu9c
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
-
-On 09/05/18 17:27, Michael BÃ¼sch wrote:
-> On Wed, 9 May 2018 13:55:43 +0100
-> Matt Redfearn <matt.redfearn@mips.com> wrote:
+On Thu, 2018-05-10 at 11:10 +0200, Mike Galbraith wrote:
+> Greetings,
 > 
->> Hi Larry
->>
->> On 07/05/18 16:44, Larry Finger wrote:
->>> Matt,
->>>
->>> Although commit 882164a4a928 ("ssb: Prevent build of PCI host features
->>> in module") appeared to be harmless, it leads to complete failure of
->>> drivers b43. and b43legacy, and likely affects b44 as well. The problem
->>> is that CONFIG_SSB_PCIHOST is undefined, which prevents the compilation
->>> of the code that controls the PCI cores of the device. See
->>> https://bugzilla.redhat.com/show_bug.cgi?id=1572349 for details.
->>
->> Sorry for the breakage :-/
->>
->>>
->>> As the underlying errors ("pcibios_enable_device" undefined, and
->>> "register_pci_controller" undefined) do not appear on the architectures
->>> that I have tested (x86_64, x86, and ppc), I suspect something in the
->>> arch-specific code for your setup (MIPS?). As I have no idea on how to
->>> fix that problem, would the following patch work for you?
->>>
->>> diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
->>> index 9371651d8017..3743533c8057 100644
->>> --- a/drivers/ssb/Kconfig
->>> +++ b/drivers/ssb/Kconfig
->>> @@ -117,7 +117,7 @@ config SSB_SERIAL
->>>
->>>   Â config SSB_DRIVER_PCICORE_POSSIBLE
->>>   Â Â Â Â Â Â Â  bool
->>> -Â Â Â Â Â Â  depends on SSB_PCIHOST && SSB = y
->>> +Â Â Â Â Â Â  depends on SSB_PCIHOST && (SSB = y || !MIPS)
->>>   Â Â Â Â Â Â Â  default y
->>>
->>>   Â config SSB_DRIVER_PCICORE
->>
->> I believe that the problem stems from these drivers being used for some
->> wireless AP functionality built into some MIPS based SoCs. The Kconfig
->> rules sort out building this additional functionality when configured
->> for MIPS (in a round about sort of way), but it allowed it even when SSB
->> is a module, leading to build failures. My patch was intended to prevent
->> that.
->>
->> There was a similar issue in the same Kconfig file, introduced by
->> c5611df96804 and fixed by a9e6d44ddecc. It was fixed the same way as you
->> suggest. I've tested the above patch and it does work for MIPS
->> (preventing the PCICORE being built into the module).
->>
->> Tested-by: Matt Redfearn <matt.redfearn@mips.com>
+> When box is earning its keep, nouveau/swiotlb grumble.. a LOT.  The
+> below is from master.today.
 > 
+> [12594.640959] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
+> [12594.693000] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
+> [12594.713787] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
+> [12594.743413] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
+> [12594.796740] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
+> [12607.000774] swiotlb_tbl_map_single: 54 callbacks suppressed
+> [12607.000776] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
+> [12607.347941] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
+> [12608.677038] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
+> homer:/novell/ssh # dmesg|grep 'swiotlb buffer is full'|wc -l
+> 2052
+> homer:/novell/ssh # dmesg|grep 'callbacks suppressed'|wc -l
+> 171
 > 
-> Could you please try this?
+> lib/swiotlb.c:
+>  573 not_found:
+>  574         spin_unlock_irqrestore(&io_tlb_lock, flags);
+>  575         if (!(attrs & DMA_ATTR_NO_WARN) && printk_ratelimit())
+>  576                 dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes)\n", size);
 > 
-> config SSB_DRIVER_PCICORE_POSSIBLE
-> 	depends on SSB_PCIHOST
-> 
-> config SSB_PCICORE_HOSTMODE
-> 	depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS && (SSB = y) && PCI_DRIVERS_LEGACY
-> 
-> 
-> The affected API pcibios_enable_device() and register_pci_controller()
-> is only used in HOSTMODE. So I think it makes sense to make HOSTMODE
-> depend on SSB=y and PCI_DRIVERS_LEGACY.
-> 
-> PCICore itself does not use the API, if hostmode is disabled.
-> 
+> Does nouveau perhaps want one of those DMA_ATTR_NO_WARN thingies?
 
-Sure - I've tested the patch:
+Or should ttm perhaps always use the one on hand?  (seems to work)
 
---- a/drivers/ssb/Kconfig
-+++ b/drivers/ssb/Kconfig
-@@ -117,7 +117,7 @@ config SSB_SERIAL
+---
+ drivers/gpu/drm/ttm/ttm_page_alloc_dma.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  config SSB_DRIVER_PCICORE_POSSIBLE
-         bool
--       depends on SSB_PCIHOST && SSB = y
-+       depends on SSB_PCIHOST
-         default y
-
-  config SSB_DRIVER_PCICORE
-@@ -131,7 +131,7 @@ config SSB_DRIVER_PCICORE
-
-  config SSB_PCICORE_HOSTMODE
-         bool "Hostmode support for SSB PCI core"
--       depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS
-+       depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS && (SSB = y) && 
-PCI_DRIVERS_LEGACY
-         help
-           PCIcore hostmode operation (external PCI bus).
-
-
-And this seems to work for MIPS, we don't get the build error from 
-building the SSB module under nec_markeins allmodconfig, and 
-SSB_PCICORE_HOSTMODE=y for bcm47xx allmodconfig, which selects SSB=y.
-
-So this looks like a good fix for MIPS, at least.
-
-Tested-by: Matt Redfearn <matt.redfearn@mips.com>
-
-Thanks,
-Matt
+--- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
++++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+@@ -342,7 +342,7 @@ static struct dma_page *__ttm_dma_alloc_
+ 	if (!d_page)
+ 		return NULL;
+ 
+-	if (pool->type & IS_HUGE)
++	if (1 || pool->type & IS_HUGE)
+ 		attrs = DMA_ATTR_NO_WARN;
+ 
+ 	vaddr = dma_alloc_attrs(pool->dev, pool->size, &d_page->dma,
