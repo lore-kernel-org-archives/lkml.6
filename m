@@ -1,65 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757080AbeEJKjL (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 06:39:11 -0400
-Received: from mga12.intel.com ([192.55.52.136]:28913 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756780AbeEJKjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 06:39:10 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,385,1520924400";
-   d="scan'208";a="227341512"
-Date: Thu, 10 May 2018 18:39:41 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Stefan Hajnoczi <stefanha@redhat.com>
-Cc: mst@redhat.com, jasowang@redhat.com, pbonzini@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
-        dan.daly@intel.com, cunming.liang@intel.com, zhihong.wang@intel.com
-Subject: Re: [PATCH v1] virtio: support VIRTIO_F_IO_BARRIER
-Message-ID: <20180510103941.znxka65iluybktuq@debian>
-References: <20180504045915.17693-1-tiwei.bie@intel.com>
- <20180510095317.GO1296@stefanha-x1.localdomain>
+        id S1757044AbeEJKl2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 06:41:28 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35991 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756705AbeEJKl0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 06:41:26 -0400
+X-Google-Smtp-Source: AB8JxZrx1A1Tf7KDrigcd0Rz/c1r7cGILxAySmP1zbyBnnZVVOKX4spoFEYlGLu2ZrCIK2EXxag7s4tzXQ21YQXS0f8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180510095317.GO1296@stefanha-x1.localdomain>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
+References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Date: Thu, 10 May 2018 12:41:24 +0200
+Message-ID: <CACna6rxb9KSQfGwi__xxSMACAxh-bOV9SR1NsnUVe8ASdA0Liw@mail.gmail.com>
+Subject: Re: Regression caused by commit 882164a4a928
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Matt Redfearn <matt.redfearn@mips.com>,
+        =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4AAfYY8021117
 
-On Thu, May 10, 2018 at 10:53:17AM +0100, Stefan Hajnoczi wrote:
-> On Fri, May 04, 2018 at 12:59:15PM +0800, Tiwei Bie wrote:
-> > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> > index 308e2096291f..9fb519a9df28 100644
-> > --- a/include/uapi/linux/virtio_config.h
-> > +++ b/include/uapi/linux/virtio_config.h
-> > @@ -49,7 +49,7 @@
-> >   * transport being used (eg. virtio_ring), the rest are per-device feature
-> >   * bits. */
-> >  #define VIRTIO_TRANSPORT_F_START	28
-> > -#define VIRTIO_TRANSPORT_F_END		34
-> > +#define VIRTIO_TRANSPORT_F_END		37
-> 
-> Have you updated "2.2 Feature Bits" in the VIRTIO spec?
-> 
-> In 1.0 it says:
-> 
->  24 to 32
->     Feature bits reserved for extensions to the queue and feature negotiation mechanisms
-> 
-> This information is out-of-date.
-> 
+On 7 May 2018 at 17:44, Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> Although commit 882164a4a928 ("ssb: Prevent build of PCI host features in
+> module") appeared to be harmless, it leads to complete failure of drivers
+> b43. and b43legacy, and likely affects b44 as well. The problem is that
+> CONFIG_SSB_PCIHOST is undefined, which prevents the compilation of the code
+> that controls the PCI cores of the device. See
+> https://bugzilla.redhat.com/show_bug.cgi?id=1572349 for details.
+>
+> As the underlying errors ("pcibios_enable_device" undefined, and
+> "register_pci_controller" undefined) do not appear on the architectures that
+> I have tested (x86_64, x86, and ppc), I suspect something in the
+> arch-specific code for your setup (MIPS?). As I have no idea on how to fix
+> that problem, would the following patch work for you?
+>
+> diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
+> index 9371651d8017..3743533c8057 100644
+> --- a/drivers/ssb/Kconfig
+> +++ b/drivers/ssb/Kconfig
+> @@ -117,7 +117,7 @@ config SSB_SERIAL
+>
+>  config SSB_DRIVER_PCICORE_POSSIBLE
+>         bool
+> -       depends on SSB_PCIHOST && SSB = y
+> +       depends on SSB_PCIHOST && (SSB = y || !MIPS)
+>         default y
+>
+>  config SSB_DRIVER_PCICORE
 
-No. In the latest spec draft, it's 24 to 33. And it
-becomes out-of-date since VIRTIO_F_RING_PACKED(34)
-and VIRTIO_F_IN_ORDER(35) were introduced. Do you
-want me to update it in the IO_BARRIER patch or do
-you want me to update it in a new patch?
+I strongly suggest we take a step back, slow down a bit and look at
+the original problem.
 
-Best regards,
-Tiwei Bie
+In driver_pcicore.c there is MIPS specific code. It's protected using
+#ifdef CONFIG_SSB_PCICORE_HOSTMODE
+(...)
+#endif
+
+If anyone has ever seen
+ERROR: "pcibios_enable_device" [drivers/ssb/ssb.ko] undefined!
+ERROR: "register_pci_controller" [drivers/ssb/ssb.ko] undefined!
+make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
+it means he managed to get CONFIG_SSB_PCICORE_HOSTMODE set on non-MIPS system.
+
+We should rather answer how did that happen and fix it.
+
+SSB_PCICORE_HOSTMODE depends on SSB_DRIVER_MIPS
+SSB_DRIVER_MIPS depends on MIPS
+
+How is that possible to set SSB_PCICORE_HOSTMODE with non-MIPS config?
+Is there some mistake in Kconfig I can't see?
+
+-- 
+Rafał
