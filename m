@@ -1,68 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935087AbeEJLKY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 07:10:24 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57665 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934783AbeEJLKS (ORCPT
+        id S935122AbeEJLQA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 07:16:00 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36729 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934880AbeEJLP6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 07:10:18 -0400
-Date: Thu, 10 May 2018 13:10:16 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Kiran Gunda <kgunda@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V1 1/5] qcom: wled: Rename pm8941-wled.c to qcom-wled.c
-Message-ID: <20180510111015.GB6977@amd>
-References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
- <1525341432-15818-2-git-send-email-kgunda@codeaurora.org>
+        Thu, 10 May 2018 07:15:58 -0400
+X-Google-Smtp-Source: AB8JxZrG+rkWPJZp8ToOZjAozkuo2J7HNq2Lq0o9O7nOwAVgIod18pcP3ygOKhr8zRuAuAoZihM2KQ==
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To: Kalle Valo <kvalo@codeaurora.org>,
+        =?UTF-8?q?Michael=20B=C3=BCsch?= <m@bues.ch>,
+        Larry Finger <larry.finger@lwfinger.net>,
+        Matt Redfearn <matt.redfearn@mips.com>
+Cc: linux-wireless@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
+Subject: [PATCH 4.17 1/2] Revert "ssb: Prevent build of PCI host features in module"
+Date: Thu, 10 May 2018 13:14:00 +0200
+Message-Id: <20180510111401.1161-1-zajec5@gmail.com>
+X-Mailer: git-send-email 2.13.6
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
-Content-Disposition: inline
-In-Reply-To: <1525341432-15818-2-git-send-email-kgunda@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Rafał Miłecki <rafal@milecki.pl>
 
---ftEhullJWpWg/VHq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This reverts commit 882164a4a928bcaa53280940436ca476e6b1db8e.
 
-On Thu 2018-05-03 15:27:08, Kiran Gunda wrote:
-> pm8941-wled.c driver is supporting the WLED peripheral
-> on pm8941. Rename it to qcom-wled.c so that it can support
-> WLED on multiple PMICs.
->=20
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+Above commit added "SSB = y" dependency to the wrong symbol
+SSB_DRIVER_PCICORE_POSSIBLE and prevented SSB_DRIVER_PCICORE from being
+selected when needed. PCI core driver for core running in clienthost
+mode is important for bus initialization. It's perfectly valid scenario
+to have ssb built as module and use it with buses on PCI cards.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+This fixes regression that affected all *module* users with PCI cards.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1572349
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+---
+ drivers/ssb/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---ftEhullJWpWg/VHq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlr0KJcACgkQMOfwapXb+vIBCACfdU/BG35pa+jbxl1zQluwZJYV
-gl0AnA5DIMfp+UoE3Dv076pGtMJ/sJIv
-=LDbK
------END PGP SIGNATURE-----
-
---ftEhullJWpWg/VHq--
+diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
+index 9371651d8017..b3f5cae98ea6 100644
+--- a/drivers/ssb/Kconfig
++++ b/drivers/ssb/Kconfig
+@@ -117,7 +117,7 @@ config SSB_SERIAL
+ 
+ config SSB_DRIVER_PCICORE_POSSIBLE
+ 	bool
+-	depends on SSB_PCIHOST && SSB = y
++	depends on SSB_PCIHOST
+ 	default y
+ 
+ config SSB_DRIVER_PCICORE
+-- 
+2.13.6
