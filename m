@@ -1,120 +1,148 @@
-Return-Path: <tipbot@zytor.com>
-X-Google-Smtp-Source: AB8JxZotlC2dueJ8EzWp7jlt+cuRhcWKK4Cu3+F+6I2NAdfTGeyvTylmr1gIjEwhQxGEr6FMBuCY
-ARC-Seal: i=1; a=rsa-sha256; t=1526301493; cv=none;
-        d=google.com; s=arc-20160816;
-        b=i1YVhz8v5lfUo59uDdJ6R6Wo/ZCNoHW7xoZlRnHNUM5qydCVwGelWLlpGDFEg8U/QU
-         pu4u60sgI/aSd6imyoMqyiqucNHz10Cp3Uf2x/JmfX/4B9uO3PtB3QaRBVfEG0LlIcSL
-         J6q+XCu2tpNS3gg4aiFG5UbK7VRU5kV8Vp1t/qkVMQjx4xAFn7g2iEFaeCNaas7LFTKv
-         DpH6/K+MeSH5i9TA85bq9UzkSahILJqGAQ3Ki20VK0SYi2XE8Oh0qZOedH0fJJ9fW+E1
-         kS0roQbC5l8RxdIjAou2h+pYxiEk3Do1rC9NGQC8SYhGzt/eBZiQNAtGIr4d5lp4ESk6
-         2d4w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=precedence:content-disposition:content-transfer-encoding
-         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
-         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
-         :arc-authentication-results;
-        bh=/Dxxdhyh5hZ9ZHPU8ohj28MKqGk4tfjSkJ9szsLHDTY=;
-        b=VuULTzaBgEXic+fzcTZbtj6LpfDgRjjrRtHTkDNX8lsH/10nm9DvJId5HTMkY48heX
-         frTrQpCi3KSCNAqJWyoU7mvtXleQp8ovgilFinOI6/nIxwJ+Yewj3IdqaUo1KmwhFhLL
-         3oP9LLumvoDqJtgdLPj614KT/rfXSS8B5MBcgqPQBAt4JHfnKvLORmQ2ol2zzM87ZiAm
-         S1viwPwKu98Fo/IIgPdvRrnV584jAbR3wWICb7VjpLngTyel/FhzGhkJZqBRjT7aYlrg
-         BpmUKIMgDJyzFIbK1xk1wyFVEzXc/0Klvi3BmKRuQbinm7msZzJe9NlZelpSrk7Mquc0
-         mEvw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
-Date: Mon, 14 May 2018 05:37:19 -0700
-Sender: tip tree robot <tipbot@zytor.com>
-From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
-Message-ID: <tip-0afd0d9e0e7879d666c1df2fa1bea4d8716909fe@git.kernel.org>
-Cc: tglx@linutronix.de, torvalds@linux-foundation.org, mingo@kernel.org,
-        rdunlap@infradead.org, hpa@zytor.com, damian.tometzki@icloud.com,
-        David.Laight@ACULAB.COM, arnd@arndb.de, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, jpoimboe@redhat.com,
-        gregkh@linuxfoundation.org
-Reply-To: rdunlap@infradead.org, tglx@linutronix.de, mingo@kernel.org,
-        torvalds@linux-foundation.org, damian.tometzki@icloud.com,
-        David.Laight@ACULAB.COM, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        arnd@arndb.de, peterz@infradead.org, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com
-In-Reply-To: <7cc156408c5781a1f62085d352ced1fe39fe2f91.1525923412.git.jpoimboe@redhat.com>
-References: <7cc156408c5781a1f62085d352ced1fe39fe2f91.1525923412.git.jpoimboe@redhat.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:core/urgent] objtool: Fix "noreturn" detection for recursive
- sibling calls
-Git-Commit-ID: 0afd0d9e0e7879d666c1df2fa1bea4d8716909fe
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2910789-1525994003-2-1591500491143840302
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525994002; b=EMQMGqLUn8bh2QGOOwb/edJV1+HosHgY3P458VWxZaWQZqYhvR
+    Hoc0VMhwTIIcaPWQOzEp2c3Fdb5Lvs5aiUSJBeN+SibkpSneCxFjUxXsikI76qrj
+    qLPIDtlMUrm6MAAV9F0IA+CKirVpudI0AB+jIrKidIOUWG1mh+ExcIkZ7a/nf7D+
+    pmaFbmKflKGvBnnNOGcw77lLyDF1XwQ4Rp/JRGN+yBYdaVK4dz+N10exNxoXvEq6
+    1VV0ekDytLRDM2uBw5LD6wemfrynOkvIyw9wHlOmD+7vUFJgrcPn6ypFNQD3eYT/
+    TLGMcnL6scT0a0WzIzL5ftkx/m7HMYXXNwVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1525994002; bh=tTKIu
+    RL7/JAmV/VGLPVJFda6t1lrwl1dDiIwbgRD/8U=; b=h7jurm6qfOucGHivTcyvM
+    IWTrcBcP8otnuhnpmEV3epz40khZ68I8cRR2VJHAh+9mEO/1WsM4sILsTkWvrGL5
+    8JLEfEiXuR5f3JIpmTWZunSpyurVQ2UzsN9ncZTGg/5Dv6jL8W2fYMZrh8n5wc+Q
+    k49VS4jmUk37JnDGH0yHz9a9eddDQGrxdEqrvs7b8R1gaYv4dMv8a2hkf0zaTmKz
+    dN0GhzUpmhCFVanHg3M2pS6E7M4aREPXp4J7uRTXoum2B3A65qmOseQxFrWLfVD9
+    AITd8GrTpM97RwtTywixvfSpybHxA0YlUC4+PI/XyS0yxM6g1woggQET0TGjG+hj
+    g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=gmail.com header.i=@gmail.com header.b=Nga1iJCy x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+    smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=fmh72O/F;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+    smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
+    header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=gmail.com header.i=@gmail.com header.b=Nga1iJCy x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+      smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=fmh72O/F;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+      smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
+      header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfCLb05LjIICPxitHoyckHo1Vqpu/+Xd58LxCauvN8vcXjrYYcYiVyJ2jjD3vOFaC90U9Eqcx0zkZbNx9pscltXFWJ2OyNWGDeFXt2MF5nk2jhHJhXHbY
+    r85d3K2GVn1/i5LgC54MDOEJIYW+6uNuJd263w1G/SdT8TtYBL4s2/nzAPZe5zB9NTQi6P78EacFZOMU9AKdencqfHGOq3T0LQ1VGszytuB2xQBPYWbzWo7T
+    y8Q0xm6RLOsyIvu2F6DDfA==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=l9Rml2zWq8kA:10 a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=FbYjHrOm20jgJ3eHRMkA:9 a=CjuIK1q_8ugA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AB8JxZofQ5ZFI9aZckM8rw0j+GvotonHuiPbt78VOyyoKwgpcYTzNT8cCkwueORZx49i11+KiX6SzQ==
+From: Stefan Schake <stschake@gmail.com>
+To: eric@anholt.net, stefan.wahren@i2se.com, gregkh@linuxfoundation.org,
+ linux-rpi-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+ linux-kernel@vger.kernel.org, dave.stevenson@raspberrypi.org
+Subject: [PATCH] staging: bcm2835-camera: Add TODO for removing overlay support
+Date: Fri, 11 May 2018 01:12:44 +0200
+Message-Id: <1525993965-4317-1-git-send-email-stschake@gmail.com>
+X-Mailer: git-send-email 2.7.4
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Stefan Schake <stschake@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600046845024948230?=
-X-GMAIL-MSGID: =?utf-8?q?1600443115547442431?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Commit-ID:  0afd0d9e0e7879d666c1df2fa1bea4d8716909fe
-Gitweb:     https://git.kernel.org/tip/0afd0d9e0e7879d666c1df2fa1bea4d8716909fe
-Author:     Josh Poimboeuf <jpoimboe@redhat.com>
-AuthorDate: Wed, 9 May 2018 22:39:14 -0500
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 14 May 2018 10:20:53 +0200
+The overlay code is non-functional since it relies on firmware control
+of the HVS.
 
-objtool: Fix "noreturn" detection for recursive sibling calls
-
-Objtool has some crude logic for detecting static "noreturn" functions
-(aka "dead ends").  This is necessary for being able to correctly follow
-GCC code flow when such functions are called.
-
-It's remotely possible for two functions to call each other via sibling
-calls.  If they don't have RET instructions, objtool's noreturn
-detection logic goes into a recursive loop:
-
-  drivers/char/ipmi/ipmi_ssif.o: warning: objtool: return_hosed_msg()+0x0: infinite recursion (objtool bug!)
-  drivers/char/ipmi/ipmi_ssif.o: warning: objtool: deliver_recv_msg()+0x0: infinite recursion (objtool bug!)
-
-Instead of reporting an error in this case, consider the functions to be
-non-dead-ends.
-
-Reported-and-tested-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: damian <damian.tometzki@icloud.com>
-Link: http://lkml.kernel.org/r/7cc156408c5781a1f62085d352ced1fe39fe2f91.1525923412.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Stefan Schake <stschake@gmail.com>
 ---
- tools/objtool/check.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Dave, does this match your understanding?
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 5409f6f6c48d..264522d4e4af 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -190,9 +190,13 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
- 					continue;
+ drivers/staging/vc04_services/bcm2835-camera/TODO | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/staging/vc04_services/bcm2835-camera/TODO b/drivers/staging/vc04_services/bcm2835-camera/TODO
+index 0ab9e88..770fea6 100644
+--- a/drivers/staging/vc04_services/bcm2835-camera/TODO
++++ b/drivers/staging/vc04_services/bcm2835-camera/TODO
+@@ -32,3 +32,11 @@ We should have VCHI create a platform device once it's initialized,
+ and have this driver bind to it, so that we automatically load the
+ v4l2 module after VCHI loads.
  
- 				if (recursion == 5) {
--					WARN_FUNC("infinite recursion (objtool bug!)",
--						  dest->sec, dest->offset);
--					return -1;
-+					/*
-+					 * Infinite recursion: two functions
-+					 * have sibling calls to each other.
-+					 * This is a very rare case.  It means
-+					 * they aren't dead ends.
-+					 */
-+					return 0;
- 				}
- 
- 				return __dead_end_function(file, dest_func,
++5) Remove overlay support.
++
++We advertise support for a V4L2 overlay implemented through the
++ril.video_render component. This component is non-functional with an
++upstream kernel since the VC4 DRM driver controls the HVS, not the
++firmware. Once we have dma-buf support, the same functionality with
++improved control can be achieved through the DRM interface. We should
++therefore remove all V4L2 overlay functionality from the driver.
+-- 
+2.7.4
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
