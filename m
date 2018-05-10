@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752005AbeEJSsk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 14:48:40 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:56608 "EHLO
+        id S1752060AbeEJSte (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 14:49:34 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:55952 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750972AbeEJSsh (ORCPT
+        with ESMTP id S1750881AbeEJSs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 14:48:37 -0400
+        Thu, 10 May 2018 14:48:27 -0400
 From: Paul Cercueil <paul@crapouillou.net>
 To: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -15,68 +15,57 @@ Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
         Mathieu Malaterre <malat@debian.org>, linux-watchdog@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mips@linux-mips.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v3 6/8] MIPS: jz4780: dts: Fix watchdog node
-Date: Thu, 10 May 2018 20:47:49 +0200
-Message-Id: <20180510184751.13416-6-paul@crapouillou.net>
+Subject: [PATCH v3 4/8] watchdog: JZ4740: Drop module remove function
+Date: Thu, 10 May 2018 20:47:47 +0200
+Message-Id: <20180510184751.13416-4-paul@crapouillou.net>
 In-Reply-To: <20180510184751.13416-1-paul@crapouillou.net>
 References: <20180510184751.13416-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- The previous node requested a memory area of 0x100 bytes, while the
-  driver only manipulates four registers present in the first 0x10 bytes.
+When the watchdog was configured for nowayout, and after the
+userspace watchdog daemon closed the dev node without sending the
+magic character, unloading this module stopped the watchdog
+hardware, which was clearly a problem.
 
-- The driver requests for the "rtc" clock, but the previous node did not
-  provide any.
+Besides, unloading the module is not possible when the userspace
+watchdog daemon is running, so it's safe to assume that we don't
+need to stop the watchdog hardware in the jz4740_wdt_remove()
+function.
+
+For this reason, the jz4740_wdt_remove() function can then be
+dropped alltogether.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Mathieu Malaterre <malat@debian.org>
-Acked-by: James Hogan <jhogan@kernel.org>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 ---
- Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt | 7 ++++++-
- arch/mips/boot/dts/ingenic/jz4780.dtsi                            | 5 ++++-
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ drivers/watchdog/jz4740_wdt.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
- v2: No change
- v3: Also fix documentation
+ v2: New patch in this series
+ v3: No change
 
-diff --git a/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt b/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
-index cb44918f01a8..ce1cb72d5345 100644
---- a/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
-@@ -3,10 +3,15 @@ Ingenic Watchdog Timer (WDT) Controller for JZ4740 & JZ4780
- Required properties:
- compatible: "ingenic,jz4740-watchdog" or "ingenic,jz4780-watchdog"
- reg: Register address and length for watchdog registers
-+clocks: phandle to the RTC clock
-+clock-names: should be "rtc"
+diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
+index b8b015a7d045..ec4d99a830ba 100644
+--- a/drivers/watchdog/jz4740_wdt.c
++++ b/drivers/watchdog/jz4740_wdt.c
+@@ -206,16 +206,8 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
+ 	return 0;
+ }
  
- Example:
- 
- watchdog: jz4740-watchdog@10002000 {
- 	compatible = "ingenic,jz4740-watchdog";
--	reg = <0x10002000 0x100>;
-+	reg = <0x10002000 0x10>;
-+
-+	clocks = <&cgu JZ4740_CLK_RTC>;
-+	clock-names = "rtc";
- };
-diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-index 9b5794667aee..a52f59bf58c7 100644
---- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-@@ -221,7 +221,10 @@
- 
- 	watchdog: watchdog@10002000 {
- 		compatible = "ingenic,jz4780-watchdog";
--		reg = <0x10002000 0x100>;
-+		reg = <0x10002000 0x10>;
-+
-+		clocks = <&cgu JZ4780_CLK_RTCLK>;
-+		clock-names = "rtc";
- 	};
- 
- 	nemc: nemc@13410000 {
+-static int jz4740_wdt_remove(struct platform_device *pdev)
+-{
+-	struct jz4740_wdt_drvdata *drvdata = platform_get_drvdata(pdev);
+-
+-	return jz4740_wdt_stop(&drvdata->wdt);
+-}
+-
+ static struct platform_driver jz4740_wdt_driver = {
+ 	.probe = jz4740_wdt_probe,
+-	.remove = jz4740_wdt_remove,
+ 	.driver = {
+ 		.name = "jz4740-wdt",
+ 		.of_match_table = of_match_ptr(jz4740_wdt_of_matches),
 -- 
 2.11.0
