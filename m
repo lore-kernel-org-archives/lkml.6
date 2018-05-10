@@ -1,93 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756708AbeEJGkD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 02:40:03 -0400
-Received: from ozlabs.org ([203.11.71.1]:38229 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751313AbeEJGkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 02:40:02 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Thu, 10 May 2018 16:39:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Subject: linux-next: manual merge of the akpm-current tree with the
- dma-mapping tree
-Message-ID: <20180510163959.12a429dc@canb.auug.org.au>
+        id S1756703AbeEJGpx (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 02:45:53 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:22757 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753497AbeEJGpv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 02:45:51 -0400
+X-UUID: 3d9d347426f341eeb08de49e37d37b2b-20180510
+Message-ID: <1525934741.18877.38.camel@mtkswgap22>
+Subject: Re: [PATCH v1 6/7] Bluetooth: hci_mediatek: Add protocol support
+ for MediaTek serial devices
+From: Sean Wang <sean.wang@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        BlueZ development <linux-bluetooth@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Thu, 10 May 2018 14:45:41 +0800
+In-Reply-To: <6033F916-F103-4F07-9912-695B5B49F30F@holtmann.org>
+References: <cover.1522736996.git.sean.wang@mediatek.com>
+         <f0e0a0b7f1dc3845dc6eafb4ccd60284d1675f8d.1522736996.git.sean.wang@mediatek.com>
+         <A7391E5D-2945-415B-8AB1-8DFBF2E65878@holtmann.org>
+         <1525762084.14468.20.camel@mtkswgap22>
+         <D474053D-6910-4B04-8B98-59B96FEB86BC@holtmann.org>
+         <1525767775.18877.22.camel@mtkswgap22>
+         <6033F916-F103-4F07-9912-695B5B49F30F@holtmann.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1Jin8twgnfHwaqIHEKRrC6M"; protocol="application/pgp-signature"
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/1Jin8twgnfHwaqIHEKRrC6M
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2018-05-08 at 13:18 +0200, Marcel Holtmann wrote:
+> Hi Sean,
+> 
+> >>>>> +
 
-Hi Andrew,
+[ ... ]
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+> > 
+> > I'm happy to do with btmon. just the environment with buildroot the BT
+> > running on seems there's a missing support for btmon. I can start to use
+> > btmon once I change the environment to Debian.
+> > 
+> >> So all the MTK vendor commands respond with a vendor event? Or are there some that do the standard command status/complete handling?
+> >> 
+> > 
+> > yes, mtk controller after mt7622 (included), its MTK vendors command
+> > (opcode 0xfc6f) always respond with a vendor event id 0xe4. And they
+> > don't do any standard status/complete handling.
 
-  arch/sh/Kconfig
 
-between commits:
+> then we need to figure out where the __hci_cmd_sync_ev causes a problem. Since normally that should just work for you.
+> 
 
-  86596f0a2833 ("scatterlist: move the NEED_SG_DMA_LENGTH config symbol to =
-lib/Kconfig")
-  f616ab59c294 ("dma-mapping: move the NEED_DMA_MAP_STATE config symbol to =
-lib/Kconfig")
+Okay. I will look into more about the issue after I finished the v2
+based on btuart driver. By the way, I've ported the btmon to my board,
+these vendor commands/events reported via btmon looks like below shown
+up
 
-from the dma-mapping tree and commit:
+> HCI Event: Unknown (0xe4) plen 5
+ [hci0] 11.213593
+        02 01 01 00 00                                   .....
 
-  1099dc900e93 ("mm: introduce ARCH_HAS_PTE_SPECIAL")
+> HCI Event: Unknown (0xe4) plen 5
+ [hci0] 11.214272
+        02 01 01 00 00                                   .....
 
-from the akpm-current tree.
+< HCI Command: Vendor (0x3f|0x006f) plen 5
+ [hci0] 11.214318
+        01 07 01 00 04                                   .....
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+> HCI Event: Unknown (0xe4) plen 5
+ [hci0] 11.214438
+        02 07 01 00 00                                   .....
 
---=20
-Cheers,
-Stephen Rothwell
+< HCI Command: Vendor (0x3f|0x006f) plen 6
+ [hci0] 13.229379
+        01 06 02 00 00 01                                ......
 
-diff --cc arch/sh/Kconfig
-index 7d521926041e,a6c75b6806d2..000000000000
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@@ -49,9 -50,7 +49,10 @@@ config SUPER
-  	select HAVE_ARCH_AUDITSYSCALL
-  	select HAVE_FUTEX_CMPXCHG if FUTEX
-  	select HAVE_NMI
- +	select NEED_DMA_MAP_STATE
- +	select NEED_SG_DMA_LENGTH
-+ 	select ARCH_HAS_PTE_SPECIAL
- +
-  	help
-  	  The SuperH is a RISC processor targeted for use in embedded systems
-  	  and consumer electronics; it was also used in the Sega Dreamcast
+> HCI Event: Unknown (0xe4) plen 5
+ [hci0] 13.307729
+        02 06 01 00 00                                   .....
 
---Sig_/1Jin8twgnfHwaqIHEKRrC6M
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+> > BTW, mtk controller before mt7622, such as mt7623, its MTK vendor
+> > command always go with completely specific format, not with hci format.
+> 
+> What does that mean? Do you have an example?
+> 
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrz6T8ACgkQAVBC80lX
-0GwVCgf9HY93mmmNLPvvTXaFFal/TO394arvB+V7ex2jVFVTKWiyjY9Ft3ObM74r
-Scw9B5aG1ed9c3Onf+KR64SXurqea8/STLAxzJ6ooWOt6abJQWSNqmetnKz95/AF
-vVQD7eRLpHyfSWa9wX9ssZ7sTHC+hwfxCWZnN57Nz8A18f0lUfl2TtstLa1Q8TEr
-BBckSg6UryezeRL5TYyDK4tEzmn1qbc42JBAbNFfqXS3FUyXzBPTu8PNrM3V+SKx
-/ADNkA11G94P4u2dDgy+QMyPVFPmacDTun6sgmkfqNTg+pyxf7UMTOTuhXL1FsPz
-EPsVEY5EM0O2XRZG77o8hQuu5LQD9g==
-=ZocQ
------END PGP SIGNATURE-----
+what I meant is that these vendor commands and events applied on old
+SoCs prior to MT7622 always use completely proprietary format rather
+than any BT packet to setup the BT controller.
 
---Sig_/1Jin8twgnfHwaqIHEKRrC6M--
+for example:
+- vendor command 
+01 06 02 00 00 01 
+
+- vendor event
+02 06 01 00 00
+
+> Regards
+> 
+> Marcel
+> 
