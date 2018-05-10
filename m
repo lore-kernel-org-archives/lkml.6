@@ -1,62 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751375AbeEJXTP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 19:19:15 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:42172 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750830AbeEJXTM (ORCPT
+        id S1751847AbeEJXTj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 19:19:39 -0400
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:33120 "EHLO
+        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751478AbeEJXTf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 19:19:12 -0400
-X-Google-Smtp-Source: AB8JxZrn+LoHoUBpaJpy20WSOEYJv8GSCEy/I67amOGCf945uU6YAikPAMHHBUdjheJyZnjYmAzPTQ==
-Date: Thu, 10 May 2018 16:19:09 -0700
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: viro@zeniv.linux.org.uk, ast@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] coredump: rename umh_pipe_setup() to
- coredump_pipe_setup()
-Message-ID: <20180510231907.xbok4h6rjopwdq6e@ast-mbp>
-References: <20180507233002.5571-1-mcgrof@kernel.org>
+        Thu, 10 May 2018 19:19:35 -0400
+X-Google-Smtp-Source: AB8JxZqooa2b9KnuqUNdsx1gPhVBl+XIDQedf5qQ1XzGRf8DVneTNYud9qaLY2I2L1ZpOy26DNXWu+57VCqdcJFWO8A=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180507233002.5571-1-mcgrof@kernel.org>
-User-Agent: NeoMutt/20180223
+In-Reply-To: <20180510161242.0f9f97686a9c0a47f07eef4e@linux-foundation.org>
+References: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
+ <20180508174424.GA12638@linux.intel.com> <20180510154844.dc4e4c7471a885b73ed50576@linux-foundation.org>
+ <CAPcyv4hy40dRr81aO7mr5LhC4L=es6NXE_kDCO2+USGXovGDiQ@mail.gmail.com> <20180510161242.0f9f97686a9c0a47f07eef4e@linux-foundation.org>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Thu, 10 May 2018 16:19:34 -0700
+Message-ID: <CAPcyv4jpxLarYA3UmWdCu54MR-eYZJO9j22h7_VR27Bkaejkdw@mail.gmail.com>
+Subject: Re: [PATCH 0/5] fix radix tree multi-order iteration race
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@lst.de>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 04:30:02PM -0700, Luis R. Rodriguez wrote:
-> This makes it clearer this code is part of the coredump code, and
-> is not an exported generic helper from kernel/umh.c.
-> 
-> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-> ---
->  fs/coredump.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index 1e2c87acac9b..566504781683 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -508,7 +508,7 @@ static void wait_for_dump_helpers(struct file *file)
->  }
->  
->  /*
-> - * umh_pipe_setup
-> + * coredump_pipe_setup
->   * helper function to customize the process used
->   * to collect the core in userspace.  Specifically
->   * it sets up a pipe and installs it as fd 0 (stdin)
-> @@ -518,7 +518,7 @@ static void wait_for_dump_helpers(struct file *file)
->   * is a special value that we use to trap recursive
->   * core dumps
->   */
-> -static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
-> +static int coredump_pipe_setup(struct subprocess_info *info, struct cred *new)
+On Thu, May 10, 2018 at 4:12 PM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Thu, 10 May 2018 15:54:53 -0700 Dan Williams <dan.j.williams@intel.com> wrote:
+>
+>> > - The Fixes: tag
+>> > - The Reported-by
+>>
+>> Those were there.
+>>
+>> > - Jan's reviewed-by
+>>
+>> Right, Jan's came after I pushed it for -next soaking, but I updated it.
+>>
+>> > - the cc:stable tag
+>>
+>> That was there too, not sure where you were looking.
+>
+> git show 4272afac65e0debacae7eb6af4591e31ba89dcad
 
-I think this renaming makes sense.
-How do we want to proceed?
-I can take it as part of my series and get the whole thing through net-next
-or folks want to apply this separately?
+That was the unit test suite patch, see the following actual fix:
+
+7fa96cd88dbc: before Jan's reviewed-by
+
+ce376ed6b706: after
