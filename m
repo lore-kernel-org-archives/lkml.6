@@ -1,117 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752086AbeEJTkW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 15:40:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43142 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750762AbeEJTkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 15:40:21 -0400
-Date: Thu, 10 May 2018 21:40:17 +0200
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, x86@kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/6] KVM: x86: hyperv: simplistic
- HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE} implementation
-Message-ID: <20180510194016.GB3885@flask>
-References: <20180416110806.4896-1-vkuznets@redhat.com>
- <20180416110806.4896-5-vkuznets@redhat.com>
+        id S1752127AbeEJTkq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 15:40:46 -0400
+Received: from imap.thunk.org ([74.207.234.97]:33170 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752013AbeEJTkp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 15:40:45 -0400
+Date: Thu, 10 May 2018 15:40:41 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Dmitry Safonov <dima@arista.com>
+Cc: linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 1/2] random: Omit double-printing ratelimit messages
+Message-ID: <20180510194041.GH8335@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        0x7f454c46@gmail.com, Arnd Bergmann <arnd@arndb.de>
+References: <20180510125211.12583-1-dima@arista.com>
+ <20180510125211.12583-2-dima@arista.com>
+ <20180510181901.GG8335@thunk.org>
+ <1525977460.28243.2.camel@arista.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180416110806.4896-5-vkuznets@redhat.com>
+In-Reply-To: <1525977460.28243.2.camel@arista.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-04-16 13:08+0200, Vitaly Kuznetsov:
-> Implement HvFlushVirtualAddress{List,Space} hypercalls in a simplistic way:
-> do full TLB flush with KVM_REQ_TLB_FLUSH and kick vCPUs which are currently
-> IN_GUEST_MODE.
+On Thu, May 10, 2018 at 07:37:40PM +0100, Dmitry Safonov wrote:
 > 
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
-> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-> @@ -1242,6 +1242,65 @@ int kvm_hv_get_msr_common(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata)
->  		return kvm_hv_get_msr(vcpu, msr, pdata);
->  }
->  
-> +static void ack_flush(void *_completed)
-> +{
-> +}
-> +
-> +static u64 kvm_hv_flush_tlb(struct kvm_vcpu *current_vcpu, u64 ingpa,
-> +			    u16 rep_cnt)
-> +{
-> +	struct kvm *kvm = current_vcpu->kvm;
-> +	struct kvm_vcpu_hv *hv_current = &current_vcpu->arch.hyperv;
-> +	struct hv_tlb_flush flush;
-> +	struct kvm_vcpu *vcpu;
-> +	int i, cpu, me;
-> +
-> +	if (unlikely(kvm_read_guest(kvm, ingpa, &flush, sizeof(flush))))
-> +		return HV_STATUS_INVALID_HYPERCALL_INPUT;
-> +
-> +	trace_kvm_hv_flush_tlb(flush.processor_mask, flush.address_space,
-> +			       flush.flags);
-> +
-> +	cpumask_clear(&hv_current->tlb_lush);
-> +
-> +	me = get_cpu();
-> +
-> +	kvm_for_each_vcpu(i, vcpu, kvm) {
-> +		struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
-> +
-> +		if (!(flush.flags & HV_FLUSH_ALL_PROCESSORS) &&
+> Ok, then what's the purpose of those messages?
+> :        pr_notice("random: %d get_random_xx warning(s) missed "
+> :                  "due to ratelimiting\n",
+> :                  unseeded_warning.missed);
+> :        pr_notice("random: %d urandom warning(s) missed "
+> :                  "due to ratelimiting\n",
+> :                  urandom_warning.missed);
+> 
+> I thought you want to print the summary after initializing random,
+> not once per second?
 
-Please add a check to prevent undefined behavior in C:
+Yes, and that's what is happening today.  The "output lines suppressed
+due to ratelimiting" message is only printed out by printk_ratelimit()
+function, which we are *not* using.
 
-                    (hv->vp_index >= 64 ||
+So I'm not sure what you are unhappy about?  What are you trying to fix?
 
-> +		    !(flush.processor_mask & BIT_ULL(hv->vp_index)))
-> +			continue;
+>From my testing, it is *NOT* double-printing ratelimit messages today.
+Are you seeing something that I am not?
 
-It would also fail in the wild as shl only considers the bottom 5 bits.
-
-> +		/*
-> +		 * vcpu->arch.cr3 may not be up-to-date for running vCPUs so we
-> +		 * can't analyze it here, flush TLB regardless of the specified
-> +		 * address space.
-> +		 */
-> +		kvm_make_request(KVM_REQ_TLB_FLUSH, vcpu);
-> +
-> +		/*
-> +		 * It is possible that vCPU will migrate and we will kick wrong
-> +		 * CPU but vCPU's TLB will anyway be flushed upon migration as
-> +		 * we already made KVM_REQ_TLB_FLUSH request.
-> +		 */
-> +		cpu = vcpu->cpu;
-> +		if (cpu != -1 && cpu != me && cpu_online(cpu) &&
-> +		    kvm_arch_vcpu_should_kick(vcpu))
-> +			cpumask_set_cpu(cpu, &hv_current->tlb_lush);
-> +	}
-> +
-> +	if (!cpumask_empty(&hv_current->tlb_lush))
-> +		smp_call_function_many(&hv_current->tlb_lush, ack_flush,
-> +				       NULL, true);
-
-Hm, quite a lot of code duplication with EX hypercall and also
-kvm_make_all_cpus_request ... I'm thinking about making something like
-
-  kvm_make_some_cpus_request(struct kvm *kvm, unsigned int req,
-                             bool (*predicate)(struct kvm_vcpu *vcpu))
-
-or to implement a vp_index -> vcpu mapping and using
-
-  kvm_vcpu_request_mask(struct kvm *kvm, unsigned int req, long *vcpu_bitmap)
-
-The latter would probably simplify logic of the EX hypercall.
-
-What do you think?
+       	   	     	     	     	     	  - Ted
