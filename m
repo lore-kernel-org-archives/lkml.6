@@ -1,259 +1,286 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756882AbeEJIJv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 04:09:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51903 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756802AbeEJIHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 04:07:08 -0400
-From: Jiri Slaby <jslaby@suse.cz>
-To: mingo@redhat.com
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: [PATCH -resend 21/27] x86_64: assembly, add ENDs to some functions and relabel with SYM_CODE_*
-Date: Thu, 10 May 2018 10:06:38 +0200
-Message-Id: <20180510080644.19752-22-jslaby@suse.cz>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180510080644.19752-1-jslaby@suse.cz>
-References: <20180510080644.19752-1-jslaby@suse.cz>
+        id S1756893AbeEJIKT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 04:10:19 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:54315 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756671AbeEJIJu (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:8:1>);
+        Thu, 10 May 2018 04:09:50 -0400
+Message-Id: <5AF3F989020000F90001A482@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Thu, 10 May 2018 01:49:29 -0600
+From: "Gang He" <ghe@suse.com>
+To: <jlbec@evilplan.org>, <jiangqi903@gmail.com>, <piaojun@huawei.com>,
+        "ge changwei" <gechangwei@live.cn>, "Lei Chen" <lchen@suse.com>,
+        <mfasheh@versity.com>
+Cc: <ocfs2-devel@oss.oracle.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [Ocfs2-devel] [PATCH] ocfs2: ocfs2_inode_lock_tracker does
+ not distinguish lock level
+References: <20180510053230.17217-1-lchen@suse.com>
+In-Reply-To: <20180510053230.17217-1-lchen@suse.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All these are functions which are invoked from elsewhere, but they are
-not typical C functions. So we annotate them (as global) using the new
-SYM_CODE_START. All these were not balanced with any END, so mark their
-ends by SYM_CODE_END, appropriatelly.
+Hello Joseph, Changwei and Jun/Alex,
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com> [xen bits]
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: xen-devel@lists.xenproject.org
+Please help to take a look at this patch, 
+since the previous patch really has vulnerability in logic, although our test cases did not hit it.
+
+Thanks
+Gang
+ 
+
+
+>>> Larry Chen <lchen@suse.com> 2018/5/10 13:32 >>>
+ocfs2_inode_lock_tracker as a variant of ocfs2_inode_lock,
+is used to prevent deadlock due to recursive lock acquisition.
+
+But this function does not distinguish
+whether the requested level is EX or PR.
+
+If a RP lock has been attained, this function
+will immediately return success afterwards even
+an EX lock is requested.
+
+But actually the return value does not mean that
+the process got a EX lock, because ocfs2_inode_lock
+has not been called.
+
+When taking lock levels into account, we face some different situations.
+1. no lock is held
+   In this case, just lock the inode and return 0
+
+2. We are holding a lock
+   For this situation, things diverges into several cases
+
+   wanted     holding	     what to do
+   ex		ex	    see 2.1 below
+   ex		pr	    see 2.2 below
+   pr		ex	    see 2.1 below
+   pr		pr	    see 2.1 below
+
+   2.1 lock level that is been held is compatible
+   with the wanted level, so no lock action will be tacken.
+
+   2.2 Otherwise, an upgrade is needed, but it is forbidden.
+
+Reason why upgrade within a process is forbidden is that
+lock upgrade may cause dead lock. The following illustrate
+how it happens.
+
+        process 1                             process 2
+ocfs2_inode_lock_tracker(ex=0)
+                               <======   ocfs2_inode_lock_tracker(ex=1)
+
+ocfs2_inode_lock_tracker(ex=1)
+
+Signed-off-by: Larry Chen <lchen@suse.com>
+Reviewed-by: Gang He <ghe@suse.com>
 ---
- arch/x86/boot/compressed/head_64.S   |  6 ++++--
- arch/x86/platform/olpc/xo1-wakeup.S  |  3 ++-
- arch/x86/power/hibernate_asm_64.S    |  6 ++++--
- arch/x86/realmode/rm/reboot.S        |  3 ++-
- arch/x86/realmode/rm/trampoline_64.S | 10 +++++++---
- arch/x86/realmode/rm/wakeup_asm.S    |  3 ++-
- arch/x86/xen/xen-asm_64.S            |  6 ++++--
- 7 files changed, 25 insertions(+), 12 deletions(-)
+ fs/ocfs2/dlmglue.c | 119 +++++++++++++++++++++++++++++++++++++++--------------
+ fs/ocfs2/dlmglue.h |   1 +
+ 2 files changed, 90 insertions(+), 30 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index a1a92f6fc8e4..d056c789f90d 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -250,7 +250,7 @@ ENDPROC(efi32_stub_entry)
+diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+index 97a972efab83..68728de12864 100644
+--- a/fs/ocfs2/dlmglue.c
++++ b/fs/ocfs2/dlmglue.c
+@@ -788,35 +788,34 @@ static inline void ocfs2_add_holder(struct ocfs2_lock_res *lockres,
+ 	spin_unlock(&lockres->l_lock);
+ }
  
- 	.code64
- 	.org 0x200
--ENTRY(startup_64)
-+SYM_CODE_START(startup_64)
- 	/*
- 	 * 64bit entry is 0x200 and it is ABI so immutable!
- 	 * We come here either from startup_32 or directly from a
-@@ -400,6 +400,7 @@ trampoline_return:
-  */
- 	leaq	relocated(%rbx), %rax
- 	jmp	*%rax
-+SYM_CODE_END(startup_64)
+-static inline void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
+-				       struct ocfs2_lock_holder *oh)
+-{
+-	spin_lock(&lockres->l_lock);
+-	list_del(&oh->oh_list);
+-	spin_unlock(&lockres->l_lock);
+-
+-	put_pid(oh->oh_owner_pid);
+-}
+-
+-static inline int ocfs2_is_locked_by_me(struct ocfs2_lock_res *lockres)
++static struct ocfs2_lock_holder *
++ocfs2_pid_holder(struct ocfs2_lock_res *lockres,
++		struct pid *pid)
+ {
+ 	struct ocfs2_lock_holder *oh;
+-	struct pid *pid;
  
- #ifdef CONFIG_EFI_STUB
+-	/* look in the list of holders for one with the current task as owner */
+ 	spin_lock(&lockres->l_lock);
+-	pid = task_pid(current);
+ 	list_for_each_entry(oh, &lockres->l_holders, oh_list) {
+ 		if (oh->oh_owner_pid == pid) {
+ 			spin_unlock(&lockres->l_lock);
+-			return 1;
++			return oh;
+ 		}
+ 	}
+ 	spin_unlock(&lockres->l_lock);
++	return NULL;
++}
  
-@@ -521,7 +522,7 @@ SYM_FUNC_END(relocated)
-  * ECX contains the base address of the trampoline memory.
-  * Non zero RDX on return means we need to enable 5-level paging.
-  */
--ENTRY(trampoline_32bit_src)
-+SYM_CODE_START(trampoline_32bit_src)
- 	/* Set up data and stack segments */
- 	movl	$__KERNEL_DS, %eax
- 	movl	%eax, %ds
-@@ -574,6 +575,7 @@ ENTRY(trampoline_32bit_src)
- 	movl	%eax, %cr0
- 
- 	lret
-+SYM_CODE_END(trampoline_32bit_src)
- 
- 	.code64
- SYM_FUNC_START_LOCAL_NOALIGN(paging_enabled)
-diff --git a/arch/x86/platform/olpc/xo1-wakeup.S b/arch/x86/platform/olpc/xo1-wakeup.S
-index 5fee3a2c2fd4..75f4faff8468 100644
---- a/arch/x86/platform/olpc/xo1-wakeup.S
-+++ b/arch/x86/platform/olpc/xo1-wakeup.S
-@@ -90,7 +90,7 @@ restore_registers:
- 
- 	ret
- 
--ENTRY(do_olpc_suspend_lowlevel)
-+SYM_CODE_START(do_olpc_suspend_lowlevel)
- 	call	save_processor_state
- 	call	save_registers
- 
-@@ -110,6 +110,7 @@ ret_point:
- 	call	restore_registers
- 	call	restore_processor_state
- 	ret
-+SYM_CODE_END(do_olpc_suspend_lowlevel)
- 
- .data
- saved_gdt:             .long   0,0
-diff --git a/arch/x86/power/hibernate_asm_64.S b/arch/x86/power/hibernate_asm_64.S
-index ce8da3a0412c..44755a847856 100644
---- a/arch/x86/power/hibernate_asm_64.S
-+++ b/arch/x86/power/hibernate_asm_64.S
-@@ -53,7 +53,7 @@ ENTRY(swsusp_arch_suspend)
- 	ret
- ENDPROC(swsusp_arch_suspend)
- 
--ENTRY(restore_image)
-+SYM_CODE_START(restore_image)
- 	/* prepare to jump to the image kernel */
- 	movq	restore_jump_address(%rip), %r8
- 	movq	restore_cr3(%rip), %r9
-@@ -68,9 +68,10 @@ ENTRY(restore_image)
- 	/* jump to relocated restore code */
- 	movq	relocated_restore_code(%rip), %rcx
- 	jmpq	*%rcx
-+SYM_CODE_END(restore_image)
- 
- 	/* code below has been relocated to a safe page */
--ENTRY(core_restore_code)
-+SYM_CODE_START(core_restore_code)
- 	/* switch to temporary page tables */
- 	movq	%rax, %cr3
- 	/* flush TLB */
-@@ -98,6 +99,7 @@ ENTRY(core_restore_code)
- .Ldone:
- 	/* jump to the restore_registers address from the image header */
- 	jmpq	*%r8
-+SYM_CODE_END(core_restore_code)
- 
- 	 /* code below belongs to the image kernel */
- 	.align PAGE_SIZE
-diff --git a/arch/x86/realmode/rm/reboot.S b/arch/x86/realmode/rm/reboot.S
-index 6e38c13c1873..7db1459d363f 100644
---- a/arch/x86/realmode/rm/reboot.S
-+++ b/arch/x86/realmode/rm/reboot.S
-@@ -19,7 +19,7 @@
-  */
- 	.section ".text32", "ax"
- 	.code32
--ENTRY(machine_real_restart_asm)
-+SYM_CODE_START(machine_real_restart_asm)
- 
- #ifdef CONFIG_X86_64
- 	/* Switch to trampoline GDT as it is guaranteed < 4 GiB */
-@@ -63,6 +63,7 @@ SYM_CODE_INNER_LABEL(machine_real_restart_paging_off, SYM_L_GLOBAL)
- 	movl	%ecx, %gs
- 	movl	%ecx, %ss
- 	ljmpw	$8, $1f
-+SYM_CODE_END(machine_real_restart_asm)
- 
- /*
-  * This is 16-bit protected mode code to disable paging and the cache,
-diff --git a/arch/x86/realmode/rm/trampoline_64.S b/arch/x86/realmode/rm/trampoline_64.S
-index 9e5f9ade43c8..408f81710ccd 100644
---- a/arch/x86/realmode/rm/trampoline_64.S
-+++ b/arch/x86/realmode/rm/trampoline_64.S
-@@ -38,7 +38,7 @@
- 	.code16
- 
- 	.balign	PAGE_SIZE
--ENTRY(trampoline_start)
-+SYM_CODE_START(trampoline_start)
- 	cli			# We should be safe anyway
- 	wbinvd
- 
-@@ -81,12 +81,14 @@ ENTRY(trampoline_start)
- no_longmode:
- 	hlt
- 	jmp no_longmode
-+SYM_CODE_END(trampoline_start)
+-	return 0;
++static inline void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
++				       struct ocfs2_lock_holder *oh)
++{
++	spin_lock(&lockres->l_lock);
++	list_del(&oh->oh_list);
++	spin_unlock(&lockres->l_lock);
 +
- #include "../kernel/verify_cpu.S"
++	put_pid(oh->oh_owner_pid);
+ }
  
- 	.section ".text32","ax"
- 	.code32
- 	.balign 4
--ENTRY(startup_32)
-+SYM_CODE_START(startup_32)
- 	movl	%edx, %ss
- 	addl	$pa_real_mode_base, %esp
- 	movl	%edx, %ds
-@@ -140,13 +142,15 @@ ENTRY(startup_32)
- 	 * the new gdt/idt that has __KERNEL_CS with CS.L = 1.
- 	 */
- 	ljmpl	$__KERNEL_CS, $pa_startup_64
-+SYM_CODE_END(startup_32)
- 
- 	.section ".text64","ax"
- 	.code64
- 	.balign 4
--ENTRY(startup_64)
-+SYM_CODE_START(startup_64)
- 	# Now jump into the kernel using virtual addresses
- 	jmpq	*tr_start(%rip)
-+SYM_CODE_END(startup_64)
- 
- 	.section ".rodata","a"
- 	# Duplicate the global descriptor table
-diff --git a/arch/x86/realmode/rm/wakeup_asm.S b/arch/x86/realmode/rm/wakeup_asm.S
-index 0af6b30d3c68..7079913adbd2 100644
---- a/arch/x86/realmode/rm/wakeup_asm.S
-+++ b/arch/x86/realmode/rm/wakeup_asm.S
-@@ -37,7 +37,7 @@ SYM_DATA_END(wakeup_header)
- 	.code16
- 
- 	.balign	16
--ENTRY(wakeup_start)
-+SYM_CODE_START(wakeup_start)
- 	cli
- 	cld
- 
-@@ -135,6 +135,7 @@ ENTRY(wakeup_start)
- #else
- 	jmp	trampoline_start
- #endif
-+SYM_CODE_END(wakeup_start)
- 
- bogus_real_magic:
- 1:
-diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
-index e8f6f482bb20..a69a171f7cea 100644
---- a/arch/x86/xen/xen-asm_64.S
-+++ b/arch/x86/xen/xen-asm_64.S
-@@ -84,11 +84,12 @@ hypercall_iret = hypercall_page + __HYPERVISOR_iret * 32
-  *	r11		}<-- pushed by hypercall page
-  * rsp->rax		}
++
+ static inline void ocfs2_inc_holders(struct ocfs2_lock_res *lockres,
+ 				     int level)
+ {
+@@ -2610,34 +2609,93 @@ void ocfs2_inode_unlock(struct inode *inode,
+  *
+  * return < 0 on error, return == 0 if there's no lock holder on the stack
+  * before this call, return == 1 if this call would be a recursive locking.
++ * return == -1 if this lock attempt will cause an upgrade which is forbidden.
++ *
++ * When taking lock levels into account,we face some different situations.
++ *
++ * 1. no lock is held
++ *    In this case, just lock the inode as requested and return 0
++ *
++ * 2. We are holding a lock
++ *    For this situation, things diverges into several cases
++ *
++ *    wanted     holding	     what to do
++ *    ex		ex	    see 2.1 below
++ *    ex		pr	    see 2.2 below
++ *    pr		ex	    see 2.1 below
++ *    pr		pr	    see 2.1 below
++ *
++ *    2.1 lock level that is been held is compatible
++ *    with the wanted level, so no lock action will be tacken.
++ *
++ *    2.2 Otherwise, an upgrade is needed, but it is forbidden.
++ *
++ * Reason why upgrade within a process is forbidden is that
++ * lock upgrade may cause dead lock. The following illustrates
++ * how it happens.
++ *
++ *         thread on node1                             thread on node2
++ * ocfs2_inode_lock_tracker(ex=0)
++ *
++ *                                <======   ocfs2_inode_lock_tracker(ex=1)
++ *
++ * ocfs2_inode_lock_tracker(ex=1)
   */
--ENTRY(xen_iret)
-+SYM_CODE_START(xen_iret)
- 	pushq $0
- 	jmp hypercall_iret
-+SYM_CODE_END(xen_iret)
+ int ocfs2_inode_lock_tracker(struct inode *inode,
+ 			     struct buffer_head **ret_bh,
+ 			     int ex,
+ 			     struct ocfs2_lock_holder *oh)
+ {
+-	int status;
+-	int arg_flags = 0, has_locked;
++	int status = 0;
+ 	struct ocfs2_lock_res *lockres;
++	struct ocfs2_lock_holder *tmp_oh;
++	struct pid *pid = task_pid(current);
++
  
--ENTRY(xen_sysret64)
-+SYM_CODE_START(xen_sysret64)
- 	/*
- 	 * We're already on the usermode stack at this point, but
- 	 * still with the kernel gs, so we can easily switch back
-@@ -104,6 +105,7 @@ ENTRY(xen_sysret64)
+ 	lockres = &OCFS2_I(inode)->ip_inode_lockres;
+-	has_locked = ocfs2_is_locked_by_me(lockres);
+-	/* Just get buffer head if the cluster lock has been taken */
+-	if (has_locked)
+-		arg_flags = OCFS2_META_LOCK_GETBH;
++	tmp_oh = ocfs2_pid_holder(lockres, pid);
  
- 	pushq $VGCF_in_syscall
- 	jmp hypercall_iret
-+SYM_CODE_END(xen_sysret64)
+-	if (likely(!has_locked || ret_bh)) {
+-		status = ocfs2_inode_lock_full(inode, ret_bh, ex, arg_flags);
++	if (!tmp_oh) {
++		/*
++		 * This corresponds to the case 1.
++		 * We haven't got any lock before.
++		 */
++		status = ocfs2_inode_lock_full(inode, ret_bh, ex, 0);
+ 		if (status < 0) {
+ 			if (status != -ENOENT)
+ 				mlog_errno(status);
+ 			return status;
+ 		}
+-	}
+-	if (!has_locked)
++
++		oh->oh_ex = ex;
+ 		ocfs2_add_holder(lockres, oh);
++		return 0;
++	}
  
- /*
-  * Xen handles syscall callbacks much like ordinary exceptions, which
+-	return has_locked;
++	if (unlikely(ex && !tmp_oh->oh_ex)) {
++		/*
++		 * case 2.2 upgrade may cause dead lock, forbid it.
++		 */
++		mlog(ML_ERROR, "Recursive locking is not permitted to "
++		     "upgrade to EX level from PR level.\n");
++		dump_stack();
++		return -EINVAL;
++	}
++
++	/*
++	 *  case 2.1 OCFS2_META_LOCK_GETBH flag make ocfs2_inode_lock_full.
++	 *  ignore the lock level and just update it.
++	 */
++	if (ret_bh) {
++		status = ocfs2_inode_lock_full(inode, ret_bh, ex,
++					       OCFS2_META_LOCK_GETBH);
++		if (status < 0) {
++			if (status != -ENOENT)
++				mlog_errno(status);
++			return status;
++		}
++	}
++	return tmp_oh ? 1 : 0;
+ }
+ 
+ void ocfs2_inode_unlock_tracker(struct inode *inode,
+@@ -2649,12 +2707,13 @@ void ocfs2_inode_unlock_tracker(struct inode *inode,
+ 
+ 	lockres = &OCFS2_I(inode)->ip_inode_lockres;
+ 	/* had_lock means that the currect process already takes the cluster
+-	 * lock previously. If had_lock is 1, we have nothing to do here, and
+-	 * it will get unlocked where we got the lock.
++	 * lock previously.
++	 * If had_lock is 1, we have nothing to do here.
++	 * If had_lock is 0, we will release the lock.
+ 	 */
+ 	if (!had_lock) {
++		ocfs2_inode_unlock(inode, oh->oh_ex);
+ 		ocfs2_remove_holder(lockres, oh);
+-		ocfs2_inode_unlock(inode, ex);
+ 	}
+ }
+ 
+diff --git a/fs/ocfs2/dlmglue.h b/fs/ocfs2/dlmglue.h
+index 256e0a9067b8..4ec1c828f6e0 100644
+--- a/fs/ocfs2/dlmglue.h
++++ b/fs/ocfs2/dlmglue.h
+@@ -96,6 +96,7 @@ struct ocfs2_trim_fs_info {
+ struct ocfs2_lock_holder {
+ 	struct list_head oh_list;
+ 	struct pid *oh_owner_pid;
++	int oh_ex;
+ };
+ 
+ /* ocfs2_inode_lock_full() 'arg_flags' flags */
 -- 
-2.16.3
+2.13.6
+
+
+_______________________________________________
+Ocfs2-devel mailing list
+Ocfs2-devel@oss.oracle.com 
+https://oss.oracle.com/mailman/listinfo/ocfs2-devel 
