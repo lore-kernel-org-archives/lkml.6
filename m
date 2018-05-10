@@ -1,77 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757049AbeEJJiN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 05:38:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59570 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756726AbeEJJiL (ORCPT
+        id S1757040AbeEJJlu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 05:41:50 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45376 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756726AbeEJJlt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 05:38:11 -0400
-Date: Thu, 10 May 2018 06:38:05 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 13/18] wait: wait.h: Get rid of a kernel-doc/Sphinx
- warnings
-Message-ID: <20180510063805.1859b1aa@vento.lan>
-In-Reply-To: <20180510083838.GA21846@infradead.org>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-        <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
-        <20180510083838.GA21846@infradead.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 10 May 2018 05:41:49 -0400
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
+To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2] nvme-rdma: fix double free in nvme_rdma_free_queue
+Date: Thu, 10 May 2018 17:42:08 +0800
+Message-Id: <1525945328-1908-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8888 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805100095
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 10 May 2018 01:38:38 -0700
-Christoph Hellwig <hch@infradead.org> escreveu:
+BUG: KASAN: double-free or invalid-free in nvme_rdma_free_queue+0xf6/0x110 [nvme_rdma]
+Workqueue: nvme-reset-wq nvme_rdma_reset_ctrl_work [nvme_rdma]
+Call Trace:
+ dump_stack+0x91/0xeb
+ print_address_description+0x6b/0x290
+ kasan_report_invalid_free+0x55/0x80
+ __kasan_slab_free+0x176/0x190
+ kfree+0xeb/0x310
+ nvme_rdma_free_queue+0xf6/0x110 [nvme_rdma]
+ nvme_rdma_configure_admin_queue+0x1a3/0x4d0 [nvme_rdma]
+ nvme_rdma_reset_ctrl_work+0x4e/0xd0 [nvme_rdma]
+ process_one_work+0x3ca/0xaa0
+ worker_thread+0x4e2/0x6c0
+ kthread+0x18d/0x1e0
+ ret_from_fork+0x24/0x30
 
-> >   * Use either while holding wait_queue_head::lock or when used for wakeups
-> > - * with an extra smp_mb() like:
-> > + * with an extra smp_mb() like::  
-> 
-> Independent of any philosophical discussion not allowing a setence to
-> end with a single ':' is completely idiotic.  Please fix the tooling
-> instead to allow it, as it is very important for being able to just
-> write understandable comments.
+The double free is on ctrl->async_event_sqe.
+If any case fails before ctrl->async_event_sqe is allocated in
+nvme_rdma_configure_admin_queue, nvme_rdma_free_queue will be
+invoked. However, at the moment, the ctrl->async_event_sqe has
+not been allocated because it has been freed in
+nvme_rdma_reset_ctrl_work
+  -> nvme_rdma_shutdown_ctrl
+    ->nvme_rdma_destroy_admin_queue
+      -> nvme_rdma_free_queue
 
-Patches are welcome, although I don't see any easy way to solve it.
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
 
-In English, the common case is that a line with ends with a colon is
-followed by a list. E. g.
+V2:
+handle it in nvme_rdma_free_queue and add some comment to explain it.
 
-	foo:
-	  - bar1;
-	  - bar2.
+ drivers/nvme/host/rdma.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-However, in this specific case, it is followed by an ascii artwork. 
-The double colon is a notation that tells Sphinx to not parse the
-lines at the next block, placing the contents of it inside a literal
-block. It is used also when the next lines contain a code example,
-in order to avoid parsing things like @, () and * inside the code 
-block.
-
-The kernel-doc tool might eventually have some parsing logic that
-would replace something to a '::' before sending it to Sphinx.
-It could, for example, have a "hint" regex that would expect a
-certain sequence of characters to be at the last line, like:
-
-	s/ascii\s+artwork.*:/ascii artwork.*::/
-or
-	s/code\s+block.*:/code block.*::/
-
-Then, change the kernel-doc comment to use it, like:
-
- * with an extra smp_mb() like shown at the following ascii artwork:
-
-but IMHO, this is a lot worse than "::": it would be more intrusive
-and more error-prune.
-
-Thanks,
-Mauro
+diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
+index 966e0dd..fa5cf87 100644
+--- a/drivers/nvme/host/rdma.c
++++ b/drivers/nvme/host/rdma.c
+@@ -561,9 +561,18 @@ static void nvme_rdma_free_queue(struct nvme_rdma_queue *queue)
+ 		return;
+ 
+ 	if (nvme_rdma_queue_idx(queue) == 0) {
+-		nvme_rdma_free_qe(queue->device->dev,
+-			&queue->ctrl->async_event_sqe,
+-			sizeof(struct nvme_command), DMA_TO_DEVICE);
++		/*
++		 * async_event_sqe is not allocated in nvme_rdma_alloc_queue.
++		 * so there are cases where NVME_RDMA_Q_ALLOCATED is set, but
++		 * async_event_sqe is not allocated. To avoid double free, set
++		 * async_event_sqe.data to NULL to indicate it has been freed.
++		 */
++		if (queue->ctrl->async_event_sqe.data) {
++			nvme_rdma_free_qe(queue->device->dev,
++				&queue->ctrl->async_event_sqe,
++				sizeof(struct nvme_command), DMA_TO_DEVICE);
++			queue->ctrl->async_event_sqe.data = NULL;
++		}
+ 	}
+ 
+ 	nvme_rdma_destroy_queue_ib(queue);
+-- 
+2.7.4
