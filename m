@@ -1,76 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966343AbeEJPh6 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 11:37:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39854 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966093AbeEJPh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 11:37:56 -0400
-Date: Fri, 11 May 2018 00:37:52 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: acme@kernel.org, jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf buildid-cache: Warn --purge-all failures
-Message-Id: <20180511003752.7790aac3b7967f454fdd0c7f@kernel.org>
-In-Reply-To: <20180510043651.12189-1-ravi.bangoria@linux.ibm.com>
-References: <20180510102808.5fcc479ccda0dd0eb08b7383@kernel.org>
-        <20180510043651.12189-1-ravi.bangoria@linux.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S966352AbeEJPiU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 11:38:20 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40729 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966209AbeEJPiS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 11:38:18 -0400
+X-Google-Smtp-Source: AB8JxZpqRgJQVde0j9z42a/6W+CTaq5AX7mc/J+yacvK9m5RuFFSdTPo1EkEne0MKe5hHQPY59ZZnw==
+Subject: Re: media: uvcvideo: Support realtek's UVC 1.5 device
+To: ming_qian@realsil.com.cn,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <b2f5c769-be06-0334-9ef8-328973a10a30@redhat.com>
+Date: Thu, 10 May 2018 17:38:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 May 2018 10:06:51 +0530
-Ravi Bangoria <ravi.bangoria@linux.ibm.com> wrote:
+Hi,
 
-> Warn perf buildid-cache --purge-all failures in non verbose mode.
-> Ex,
+On 09-05-18 04:13, ming_qian@realsil.com.cn wrote:
+> From: ming_qian <ming_qian@realsil.com.cn>
 > 
->   $ sudo chown root:root /home/ravi/.debug -R
->   $ sudo chmod 700 /home/ravi/.debug/ -R
->   $ ./perf buildid-cache -P
->     Couldn't remove some caches. Error: Permission denied.
+> The length of UVC 1.5 video control is 48, and it id 34 for UVC 1.1.
+> Change it to 48 for UVC 1.5 device,
+> and the UVC 1.5 device can be recognized.
 > 
-> Suggested-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> More changes to the driver are needed for full UVC 1.5 compatibility.
+> However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have
+> been reported to work well.
+> 
+> Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
+> Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-This looks good to me.
+Looks good to me:
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-Thanks!
+Regards,
+
+Hans
+
+
 
 > ---
->  tools/perf/builtin-buildid-cache.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+>   drivers/media/usb/uvc/uvc_video.c | 4 ++++
+>   1 file changed, 4 insertions(+)
 > 
-> diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
-> index 7a7403913b57..ef6b3cc8d57d 100644
-> --- a/tools/perf/builtin-buildid-cache.c
-> +++ b/tools/perf/builtin-buildid-cache.c
-> @@ -488,8 +488,12 @@ int cmd_buildid_cache(int argc, const char **argv)
->  		}
->  	}
->  
-> -	if (purge_all)
-> -		ret = build_id_cache__purge_all();
-> +	if (purge_all) {
-> +		if (build_id_cache__purge_all()) {
-> +			pr_warning("Couldn't remove some caches. Error: %s.\n",
-> +				str_error_r(errno, sbuf, sizeof(sbuf)));
-> +		}
-> +	}
->  
->  	if (missing_filename)
->  		ret = build_id_cache__fprintf_missing(session, stdout);
-> -- 
-> 2.14.3
+> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> index aa0082f..32dfb32 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -171,6 +171,8 @@ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
+>   	int ret;
+>   
+>   	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+> +	if (stream->dev->uvc_version >= 0x0150)
+> +		size = 48;
+>   	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
+>   			query == UVC_GET_DEF)
+>   		return -EIO;
+> @@ -259,6 +261,8 @@ static int uvc_set_video_ctrl(struct uvc_streaming *stream,
+>   	int ret;
+>   
+>   	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+> +	if (stream->dev->uvc_version >= 0x0150)
+> +		size = 48;
+>   	data = kzalloc(size, GFP_KERNEL);
+>   	if (data == NULL)
+>   		return -ENOMEM;
 > 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
