@@ -1,66 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965221AbeEJNot (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 09:44:49 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:50108 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935499AbeEJNop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 09:44:45 -0400
-Date: Thu, 10 May 2018 09:46:36 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
-        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
-        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
-        Daniel Walker <danielwa@cisco.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
-Subject: Re: [PATCH 5/7] sched: loadavg: make calc_load_n() public
-Message-ID: <20180510134636.GB19348@cmpxchg.org>
-References: <20180507210135.1823-1-hannes@cmpxchg.org>
- <20180507210135.1823-6-hannes@cmpxchg.org>
- <20180509094906.GI12217@hirez.programming.kicks-ass.net>
+        id S1757227AbeEJNra (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 09:47:30 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:37662 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756948AbeEJNr2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 09:47:28 -0400
+Subject: Re: [PATCH V3 1/1] PCI/AER: add pcie TLP header information in the
+ tracepoint
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, rostedt@goodmis.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mr.nuke.me@gmail.com
+References: <1525820696-31967-1-git-send-email-thomas.tai@oracle.com>
+ <1525820696-31967-2-git-send-email-thomas.tai@oracle.com>
+ <20180510133739.GI173327@bhelgaas-glaptop.roam.corp.google.com>
+From: Thomas Tai <thomas.tai@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <d20f3744-807f-9079-f3a9-28c33772eb13@oracle.com>
+Date: Thu, 10 May 2018 09:47:18 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509094906.GI12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180510133739.GI173327@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8888 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805100133
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 11:49:06AM +0200, Peter Zijlstra wrote:
-> On Mon, May 07, 2018 at 05:01:33PM -0400, Johannes Weiner wrote:
-> > +static inline unsigned long
-> > +fixed_power_int(unsigned long x, unsigned int frac_bits, unsigned int n)
-> > +{
-> > +	unsigned long result = 1UL << frac_bits;
-> > +
-> > +	if (n) {
-> > +		for (;;) {
-> > +			if (n & 1) {
-> > +				result *= x;
-> > +				result += 1UL << (frac_bits - 1);
-> > +				result >>= frac_bits;
-> > +			}
-> > +			n >>= 1;
-> > +			if (!n)
-> > +				break;
-> > +			x *= x;
-> > +			x += 1UL << (frac_bits - 1);
-> > +			x >>= frac_bits;
-> > +		}
-> > +	}
-> > +
-> > +	return result;
-> > +}
-> 
-> No real objection; but that does look a wee bit fat for an inline I
-> suppose.
 
-Fair enough, I'll put these back where I found them and make
-calc_load_n() extern instead.
+
+On 2018-05-10 09:37 AM, Bjorn Helgaas wrote:
+> On Tue, May 08, 2018 at 07:04:56PM -0400, Thomas Tai wrote:
+>> When a PCIe AER occurs, the TLP header information is
+>> printed in the kernel message but it is missing from
+>> the tracepoint. A userspace program can use this information
+>> in the tracepoint to better analyze problems.
+>>
+>> To enable the tracepoint:
+>> echo 1 > /sys/kernel/debug/tracing/events/ras/aer_event/enable
+>>
+>> Example tracepoint output:
+>> cat /sys/kernel/debug/tracing/trace
+>> aer_event: 0000:01:00.0
+>> PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
+>> TLP Header={0x0,0x1,0x2,0x3}
+>>
+>> Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
+> 
+> Applied with Steven's reviewed-by to pci/aer for v4.18, thanks!
+
+Thank you Bjorn.
+
+-Thomas
+
+> 
+>> ---
+>>   drivers/pci/pcie/aer/aerdrv_errprint.c |  4 ++--
+>>   include/ras/ras_event.h                | 22 ++++++++++++++++++----
+>>   2 files changed, 20 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
+>> index cfc89dd..fd49a8d 100644
+>> --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
+>> +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+>> @@ -189,7 +189,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+>>   		pci_err(dev, "  Error of this Agent(%04x) is reported first\n", id);
+>>   
+>>   	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
+>> -			info->severity);
+>> +			info->severity, info->tlp_header_valid, &info->tlp);
+>>   }
+>>   
+>>   void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
+>> @@ -249,6 +249,6 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
+>>   		__print_tlp_header(dev, &aer->header_log);
+>>   
+>>   	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
+>> -			aer_severity);
+>> +			aer_severity, tlp_header_valid, &aer->header_log);
+>>   }
+>>   #endif
+>> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+>> index 9c68986..a079463 100644
+>> --- a/include/ras/ras_event.h
+>> +++ b/include/ras/ras_event.h
+>> @@ -298,30 +298,44 @@
+>>   TRACE_EVENT(aer_event,
+>>   	TP_PROTO(const char *dev_name,
+>>   		 const u32 status,
+>> -		 const u8 severity),
+>> +		 const u8 severity,
+>> +		 const u8 tlp_header_valid,
+>> +		 struct aer_header_log_regs *tlp),
+>>   
+>> -	TP_ARGS(dev_name, status, severity),
+>> +	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
+>>   
+>>   	TP_STRUCT__entry(
+>>   		__string(	dev_name,	dev_name	)
+>>   		__field(	u32,		status		)
+>>   		__field(	u8,		severity	)
+>> +		__field(	u8, 		tlp_header_valid)
+>> +		__array(	u32, 		tlp_header, 4	)
+>>   	),
+>>   
+>>   	TP_fast_assign(
+>>   		__assign_str(dev_name, dev_name);
+>>   		__entry->status		= status;
+>>   		__entry->severity	= severity;
+>> +		__entry->tlp_header_valid = tlp_header_valid;
+>> +		if (tlp_header_valid) {
+>> +			__entry->tlp_header[0] = tlp->dw0;
+>> +			__entry->tlp_header[1] = tlp->dw1;
+>> +			__entry->tlp_header[2] = tlp->dw2;
+>> +			__entry->tlp_header[3] = tlp->dw3;
+>> +		}
+>>   	),
+>>   
+>> -	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
+>> +	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
+>>   		__get_str(dev_name),
+>>   		__entry->severity == AER_CORRECTABLE ? "Corrected" :
+>>   			__entry->severity == AER_FATAL ?
+>>   			"Fatal" : "Uncorrected, non-fatal",
+>>   		__entry->severity == AER_CORRECTABLE ?
+>>   		__print_flags(__entry->status, "|", aer_correctable_errors) :
+>> -		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
+>> +		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
+>> +		__entry->tlp_header_valid ?
+>> +			__print_array(__entry->tlp_header, 4, 4) :
+>> +			"Not available")
+>>   );
+>>   
+>>   /*
+>> -- 
+>> 1.8.3.1
+>>
