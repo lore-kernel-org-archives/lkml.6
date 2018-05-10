@@ -1,118 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935484AbeEJL0l (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 07:26:41 -0400
-Received: from bues.ch ([80.190.117.144]:55328 "EHLO bues.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935115AbeEJL0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 07:26:40 -0400
-Date: Thu, 10 May 2018 13:26:12 +0200
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>,
-        Larry Finger <larry.finger@lwfinger.net>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        Hauke Mehrtens <hauke@hauke-m.de>, LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-Subject: Re: [PATCH 4.17 2/2] ssb: make SSB_PCICORE_HOSTMODE depend on SSB =
- y
-Message-ID: <20180510132612.25c8c20e@wiggum>
-In-Reply-To: <CACna6ryWUCnrw9w4yhfiNXFHy1hFjVV-BqH07i7DQqxq8FtjMw@mail.gmail.com>
-References: <20180510111401.1161-1-zajec5@gmail.com>
- <20180510111401.1161-2-zajec5@gmail.com>
- <20180510131725.111079af@wiggum>
- <CACna6ryWUCnrw9w4yhfiNXFHy1hFjVV-BqH07i7DQqxq8FtjMw@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S935364AbeEJL2L (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 07:28:11 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58172 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934609AbeEJL2J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 07:28:09 -0400
+Date: Thu, 10 May 2018 13:28:07 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Dan Murphy <dmurphy@ti.com>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, jacek.anaszewski@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt: bindings: lm3601x: Introduce the lm3601x
+ driver
+Message-ID: <20180510112807.GF6977@amd>
+References: <20180508141704.24271-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/PyILieRqIXwLZLz+e2YE=TJ"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="pyE8wggRBhVBcj8z"
+Content-Disposition: inline
+In-Reply-To: <20180508141704.24271-1-dmurphy@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/PyILieRqIXwLZLz+e2YE=TJ
-Content-Type: text/plain; charset=UTF-8
+
+--pyE8wggRBhVBcj8z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 10 May 2018 13:20:01 +0200
-Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com> wrote:
-
-> On 10 May 2018 at 13:17, Michael B=C3=BCsch <m@bues.ch> wrote:
-> > On Thu, 10 May 2018 13:14:01 +0200
-> > Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com> wrote:
-> > =20
-> >> From: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
-> >>
-> >> SSB_PCICORE_HOSTMODE protects MIPS specific code that calls not export=
-ed
-> >> symbols pcibios_enable_device and register_pci_controller. This code is
-> >> supposed to be compiled only with ssb builtin.
-> >>
-> >> This fixes:
-> >> ERROR: "pcibios_enable_device" [drivers/ssb/ssb.ko] undefined!
-> >> ERROR: "register_pci_controller" [drivers/ssb/ssb.ko] undefined!
-> >> make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
-> >>
-> >> Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
-> >> ---
-> >>  drivers/ssb/Kconfig | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
-> >> index b3f5cae98ea6..c574dd210500 100644
-> >> --- a/drivers/ssb/Kconfig
-> >> +++ b/drivers/ssb/Kconfig
-> >> @@ -131,7 +131,7 @@ config SSB_DRIVER_PCICORE
-> >>
-> >>  config SSB_PCICORE_HOSTMODE
-> >>       bool "Hostmode support for SSB PCI core"
-> >> -     depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS
-> >> +     depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS && SSB =3D y
-> >>       help
-> >>         PCIcore hostmode operation (external PCI bus).
-> >> =20
-> >
-> >
-> > I think we also need to depend on PCI_DRIVERS_LEGACY.
-> > See the other patch that floats around. =20
+On Tue 2018-05-08 09:17:03, Dan Murphy wrote:
+> Introduce the device tree bindings for the lm3601x
+> family of LED torch, flash and IR drivers.
 >=20
-> I believe it's already handled by SSB_PCIHOST_POSSIBLE's dependency on
-> PCI_DRIVERS_LEGACY.
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
+>=20
+> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
+>=20
+>  .../devicetree/bindings/leds/leds-lm3601x.txt | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.t=
+xt
+>=20
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Do=
+cumentation/devicetree/bindings/leds/leds-lm3601x.txt
+> new file mode 100644
+> index 000000000000..38cdabf6ca7e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+> @@ -0,0 +1,51 @@
+> +* Texas Instruments - lm3601x Single-LED Flash Driver
+> +
+> +The LM3601X are ultra-small LED flash drivers that
+> +provides a high level of adjustability.
 
+"provide".
 
-That dependency seems to be wrong there.
-Was it added among some other "let's just unbreak some random
-build" change as well?
+> +Required properties:
+> +	- compatible : Can be one of the following
+> +		"ti,lm3601x"
+> +		"ti,lm36010"
+> +		"ti,lm36011"
+> +	- reg : I2C slave address
+> +	- #address-cells : 1
+> +	- #size-cells : 0
+> +
+> +Required child properties:
+> +	- reg : 0 - Indicates to support and register a torch interface
+> +		1 - Indicates to support and register a strobe interface
+> +		2 - Indicates to support and register an ir interface
 
-SSB_PCIHOST enables support for SSB on top of PCI. (Which is 99% of it
-uses). I don't see how this uses the legacy API.
+I'd delete "to support and register" -- we are describing hardware here.
 
-SSB_PCICORE_HOSTMODE enables PCI on top of SSB. Which is a MIPS corner
-case. This uses the legacy MIPS API to register a PCI bus.
+> +Optional child properties:
+> +	- label : see Documentation/devicetree/bindings/leds/common.txt
+> +
+> +Example:
+> +led-controller@64 {
+> +	compatible =3D "ti,lm3601x";
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <0>;
+> +	reg =3D <0x64>;
+> +
+> +	led@0 {
+> +		reg =3D <0>;
+> +		label =3D "white:torch";
+> +		led-max-microamp=3D<10000>;
+> +	};
+> +
+> +	led@1 {
+> +		reg =3D <1>;
+> +		label =3D "white:strobe";
+> +		flash-max-microamp=3D<10000>;
+> +		flash-max-timeout-us=3D<800>;
+> +	};
+> +
+> +	led@2 {
+> +		reg =3D <2>;
+> +		label =3D "invisible:ir";
+> +	};
+> +}
 
+Title says this is single-LED driver chip, but it controls three chips
+in this example?
+
+I'd put " " around "=3D" for consistency.
+
+We use "flash" elsewhere, I'd replace "strobe" with that. Userspace
+would like consistency, too.
+
+What is the IR led good for? Taking videos in the dark?
+
+I guess for consistency, it is "ir:torch" :-).
+
+									Pavel
 --=20
-Michael
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
---Sig_/PyILieRqIXwLZLz+e2YE=TJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--pyE8wggRBhVBcj8z
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlr0LFQACgkQ9TK+HZCN
-iw4fBxAA4MbuyoXLlqcFbKPsL+DurCb+P7y3aGUoeQL5ZqtYmX38xRXV3jPaPYBG
-4olkODEzw3IP3KweXuBzP6Vc1EtfdAqV42hjJyp5EyEHbabCAA6EjqvAg0O/UuVi
-aA/PHZ4cX/Kr8us/9ctrZOhvb1qXaLwybNWViBoarQTnsS9x2mwVHdIEeXpjLBVB
-v6MKyqIX3OiFCHj0lmoiGM5zMCI+A1u769oFr4htVUywxCdKvfaiYc2o5ug9+rjw
-eoLMAdG+ZJTU3GUYVmt9/Dr9eReXASwWz0nd7K3ztV6xMKJFqxoeVtUkQwRnKxAJ
-HuGqcJRYYG4+V58owBEgaufNU1MJVXo88zoVlQ4/CPxkkKDyW4WiyRGmw0Zf6Z9G
-M6p2jyO4uKxV3w2uQLQHgzMnLFGsCVW7rvcVYK1xv2mO2bKEwGi/oCIhmOM3058L
-Esvv9NuueKyM0ddPGD7YXgCfwOdOg5PkGnWsh/WnurOgxzIolhLFEnILDa8iia2Y
-Mmrd+Wnaxdw+prakwITuGgymSaCxnQcCd0h8OdqgZZqDUqyvlBqTGOyECgT8CUhX
-mM/QNyYNJHiaQ3gEpcfw7G7LEinjqZkCFkIoPC+hhgr5pmFekHpR+nq3Q13DCGWc
-eyooKarmcJn7bbgSBYeuzbdmV/KhEW0AKzigCIRjlVkcUqwhE0o=
-=d7ZQ
+iEYEARECAAYFAlr0LMcACgkQMOfwapXb+vI1igCfR3PBrzknyo2zuV5qghdEPA9j
+bZUAoIDk6ULSlOTimfVCCCsVoA+hZga/
+=kSWL
 -----END PGP SIGNATURE-----
 
---Sig_/PyILieRqIXwLZLz+e2YE=TJ--
+--pyE8wggRBhVBcj8z--
