@@ -1,61 +1,63 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2676370-1525981359-5-10845807907697739314
+X-Cyrus-Session-Id: sloti22d1t05-2676370-1525981359-2-6481674442562510622
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='net', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525981358; b=emEaNkMyeVDBPBFLkDRhtmqivI53HChrxwo6rQu1dwdGorhAMY
-    PM4Li5uEwIGfmeokoU6M+oUNqCpyJHSlCWyrDFmqGIWDwva5Tu+2NStrWY7PPY4c
-    XP8b+x57yzFLCkzY+Kw8vmPGuRQHRHXohp+ZR5tKJfMAythcEY0q3/fQTt3REUYP
-    A0Xf7kVYzLUF7DfnfLmFBTsQcbY3stifu73ZS/aMGD/3rTNb3jgwaHJPb8/sFNJl
-    DvuvrU0G7I6oFpjSgIsM4YCDZgf2/Nhe2LR/A7rEgv7i+9w/B/T41YxcLnA6jCOm
-    a/8sH92Dr6Lj4elknLsxUKrgbxj7Q1Vja8WA==
+    1525981357; b=bj+NwfAjIFn7sQcNssg6wboViuLYRusgs6/aypMKF+2Kq/h3IH
+    H5ySnREJ3/5oIzqHyxL6HehOsLBb4TcRNx/jHsFq/uXW0Q7rzi2+n0EwAAX/Fpb9
+    96h/k2UvirVPYRipvcfL5PqelnVGSL5bBlc6OxvhRNImDgKwcM5Os0mBeMltt62n
+    aVtmio14Z5JIiOPSgOLeUh2UcU2pqRR3lwxcnAVHSyPdCpOj0VEndD6eBOo85YtP
+    M6wfYJhfAm01Dh2wbW78tTMaocWnH9Pf9Nxt428Q5B9ZD/0EqUUCJuayYEv2jmNC
+    UCWvaCjY5wgTWCylaMsTbMtnX4Bq5aJWmqzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525981358; bh=8VzRg
-    wR2dwSNCTRU3jdk0jUacc6V/1PmmQuLRzCfbBw=; b=IjIsALXdwRieRqnB1wNcl
-    1XgxJ08cebZdUc9MhhdXJsb1wGYW2iPsVnaGjiaJcWkqFV9BapESjPA1VM6WjIGL
-    714DumikblV+qm9dLEKuXdeaDPScEw79epMr73Y25nHupOt2UtyUg4GrQa/+jpmy
-    ieCE7IvFBK5683kCiBajRO2tDZ79U5mri0/lhvTflp52H0a0vslalLdrjCEoEhuM
-    +aCxJC/zUUUAyiO7qfw4mL7iqeQmXVR1qIkcGipP2A93Eedtlekmz9QMwAFiC2De
-    QujTTOh7aF8hVZnG1/P4iem3EwXdHeC5yndyRw+tueTelUBuGXgaWll2WXCNEcje
+    :content-transfer-encoding:sender; s=fm2; t=1525981357; bh=QpXcz
+    7olYWtQPCHIwTQGhmtFU7S9Q42PS6WMkIuiO1E=; b=JR/DKm4YJ6H8/KGL6PEFb
+    8sMZ4JNdyr4KYhniJN3eQZ7IG0hPNx8W+nQQP6OEyyBG6juS2hq1ILoywh2h94Rb
+    VbCc7Gnr9o4C2dXx+SUgxCvV7cxpthIIKrZprd5BeZMymIbNqGGlQHzy32pc8W37
+    yL51poNK2At/BFVFopqI5TEepU/SmrneZmkBCdSHMaaQYpaQls9cc8ugJDCnBuGg
+    juATIlKY3eP0EGSZVhpVrO2Pkl7rGvkgGP3SSG5K18mBrnruPUKTzB4P7dTWkdX7
+    XgmZgsizXF/HgiV00+ca4jh4rAPikt71KRRd0n4+79Cd5ucky95rjR3ewlwMx6qn
     A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=anholt.net;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=fraxinus.osuosl.org;
+    smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
+    x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=anholt.net header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=anholt.net;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=fraxinus.osuosl.org;
+      smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
+      x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=anholt.net header.result=pass
       header_is_org_domain=yes;
@@ -63,13 +65,13 @@ Authentication-Results: mx5.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGIDtnguoVqEmZ/27lQThGZwKuSWIKrXUIhaRpRN0tMCJBtX0eYEG8ztCbh3O5m3vWFvdJTifVVgIP0vrG6/6721rQJkJ6XWj4SmzUurcTSwUMXI94Oh
-    kME22hX/hrsAilvIj52APyjDoFyfSJHY6LywpFnmS0+mLv2fXWvoxfOoGSpHww0XX5qqhhA7fEhWkn1c/yQMLcyuYJnMOYtu9hZINFekXm4/gNSf2C9z5MXu
-    3vQQHHcaA1PyzGWNXlAZFg==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=NEAV23lmAAAA:8 a=WFZIRff2AAAA:8
-    a=-VAfIpHNAAAA:8 a=DDOyTI_5AAAA:8 a=U7VM7ceA6Wpb5NxDmfUA:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfDLh3CEhWV7YlgZCOxlIreRHshKdhqQetwTPJ97LPHsfYHi2RH9XV9G3G+miTd/6YqCWkCEiWvrrnlnGGunNRl+bLKaYvgYPY0G7RI9BRC9JVkPI2Cs5
+    PnJ0YARqeg+3be/a6edAo87e+wWZHgINw1ky3NSm3dpmmpfhuHyZbfB+XrmV4mdPXNd/ZbbZ5qNEozv3txCT4Bvm7hYzIsoWG+UN6HZOKp/zUozeMULFVcPg
+    eN5HOZ6UGb20Lnz5YMTc2Q==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=WFZIRff2AAAA:8 a=-VAfIpHNAAAA:8
+    a=DDOyTI_5AAAA:8 a=cPnG7trEE0XDhgrGWNYA:9 a=CjuIK1q_8ugA:10
     a=srlwD-8ojaedGGhPAyx8:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -79,10 +81,10 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
  linux-rpi-kernel@lists.infradead.org,
  Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH 03/15] staging: bcm2835-camera: Skip ISP pass to eliminate
- padding.
-Date: Thu, 10 May 2018 12:42:07 -0700
-Message-Id: <20180510194220.30675-4-eric@anholt.net>
+Subject: [PATCH 04/15] staging: bcm2835-camera: Allocate context once per
+ buffer
+Date: Thu, 10 May 2018 12:42:08 -0700
+Message-Id: <20180510194220.30675-5-eric@anholt.net>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180510194220.30675-1-eric@anholt.net>
 References: <20180510194220.30675-1-eric@anholt.net>
@@ -97,7 +99,6 @@ List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: Eric Anholt <eric@anholt.net>,
- Dave Stevenson <6by9@users.noreply.github.com>,
  Dave Stevenson <dave.stevenson@raspberrypi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -108,234 +109,199 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dave Stevenson <6by9@users.noreply.github.com>
+From: Dave Stevenson <dave.stevenson@raspberrypi.org>
 
-Interleaved RGB and single plane YUV formats can be delivered by the
-GPU without the secondary step of removing padding, as the
-bytesperline field can be set appropriately.
+The struct mmal_msg_context was being allocated for every message
+being sent to the VPU, and freed when it came back.  Whilst that is
+required behaviour for some messages (mainly the synchronous ones), it
+is wasteful for the video buffers that make up the majority of the
+traffic.
 
-Planar YUV needs the GPU to still remove padding, as there is no way
-to report that there is padding between the planes (ie on the height).
-The multi-planar formats are NOT applicable, as there is no easy way
-to make them contiguous in memory (ie one large allocation that gets
-broken up). The whole task is passed across to videobuf2 which has no
-notion of that requirement.
+Add to the buffer_init/cleanup hooks that it allocates/frees the
+msg_context required.
 
-v2: Changes by anholt from the downstream driver: Flag two more planar
-    formats as needing padding removal, and remove broken userspace
-    workaround.
+v2: changes by anholt from the downstream tree: clean up indentation,
+    pass an error value through, forward-declare the struct so we have
+    less void *
 
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
 Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- .../bcm2835-camera/bcm2835-camera.c           | 44 ++++++++++++++-----
- .../bcm2835-camera/mmal-common.h              |  3 ++
- 2 files changed, 35 insertions(+), 12 deletions(-)
+ .../bcm2835-camera/bcm2835-camera.c           | 30 +++++++++++++--
+ .../bcm2835-camera/mmal-common.h              |  4 ++
+ .../vc04_services/bcm2835-camera/mmal-vchiq.c | 38 ++++++++++++++-----
+ .../vc04_services/bcm2835-camera/mmal-vchiq.h |  3 ++
+ 4 files changed, 62 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-index aac876c35dea..7b32c3a93873 100644
+index 7b32c3a93873..dc1c2775bc0b 100644
 --- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
 +++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-@@ -86,6 +86,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 12,
- 	 .mmal_component = MMAL_COMPONENT_CAMERA,
- 	 .ybbp = 1,
-+	 .remove_padding = 1,
- 	 },
- 	{
- 	 .name = "4:2:2, packed, YUYV",
-@@ -95,6 +96,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 16,
- 	 .mmal_component = MMAL_COMPONENT_CAMERA,
- 	 .ybbp = 2,
-+	 .remove_padding = 0,
- 	 },
- 	{
- 	 .name = "RGB24 (LE)",
-@@ -104,6 +106,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 24,
- 	 .mmal_component = MMAL_COMPONENT_CAMERA,
- 	 .ybbp = 3,
-+	 .remove_padding = 0,
- 	 },
- 	{
- 	 .name = "JPEG",
-@@ -113,6 +116,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 8,
- 	 .mmal_component = MMAL_COMPONENT_IMAGE_ENCODE,
- 	 .ybbp = 0,
-+	 .remove_padding = 0,
- 	 },
- 	{
- 	 .name = "H264",
-@@ -122,6 +126,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 8,
- 	 .mmal_component = MMAL_COMPONENT_VIDEO_ENCODE,
- 	 .ybbp = 0,
-+	 .remove_padding = 0,
- 	 },
- 	{
- 	 .name = "MJPEG",
-@@ -131,6 +136,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 8,
- 	 .mmal_component = MMAL_COMPONENT_VIDEO_ENCODE,
- 	 .ybbp = 0,
-+	 .remove_padding = 0,
- 	 },
- 	{
- 	 .name = "4:2:2, packed, YVYU",
-@@ -140,6 +146,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 16,
- 	 .mmal_component = MMAL_COMPONENT_CAMERA,
- 	 .ybbp = 2,
-+	 .remove_padding = 0,
- 	 },
- 	{
- 	 .name = "4:2:2, packed, VYUY",
-@@ -149,6 +156,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 16,
- 	 .mmal_component = MMAL_COMPONENT_CAMERA,
- 	 .ybbp = 2,
-+	 .remove_padding = 0,
- 	 },
- 	{
- 	 .name = "4:2:2, packed, UYVY",
-@@ -158,6 +166,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 16,
- 	 .mmal_component = MMAL_COMPONENT_CAMERA,
- 	 .ybbp = 2,
-+	 .remove_padding = 0,
- 	 },
- 	{
- 	 .name = "4:2:0, planar, NV12",
-@@ -167,6 +176,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 12,
- 	 .mmal_component = MMAL_COMPONENT_CAMERA,
- 	 .ybbp = 1,
-+	 .remove_padding = 1,
- 	 },
- 	{
- 	 .name = "RGB24 (BE)",
-@@ -176,6 +186,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 24,
- 	 .mmal_component = MMAL_COMPONENT_CAMERA,
- 	 .ybbp = 3,
-+	 .remove_padding = 0,
- 	 },
- 	{
- 	 .name = "4:2:0, planar, YVU",
-@@ -185,6 +196,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 12,
- 	 .mmal_component = MMAL_COMPONENT_CAMERA,
- 	 .ybbp = 1,
-+	 .remove_padding = 1,
- 	 },
- 	{
- 	 .name = "4:2:0, planar, NV21",
-@@ -194,6 +206,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 12,
- 	 .mmal_component = MMAL_COMPONENT_CAMERA,
- 	 .ybbp = 1,
-+	 .remove_padding = 1,
- 	 },
- 	{
- 	 .name = "RGB32 (BE)",
-@@ -203,6 +216,7 @@ static struct mmal_fmt formats[] = {
- 	 .depth = 32,
- 	 .mmal_component = MMAL_COMPONENT_CAMERA,
- 	 .ybbp = 4,
-+	 .remove_padding = 0,
- 	 },
- };
+@@ -278,6 +278,20 @@ static int queue_setup(struct vb2_queue *vq,
+ 	return 0;
+ }
  
-@@ -929,9 +943,19 @@ static int vidioc_try_fmt_vid_cap(struct file *file, void *priv,
- 			      &f->fmt.pix.height, MIN_HEIGHT, dev->max_height,
- 			      1, 0);
- 	f->fmt.pix.bytesperline = f->fmt.pix.width * mfmt->ybbp;
-+	if (!mfmt->remove_padding) {
-+		int align_mask = ((32 * mfmt->depth) >> 3) - 1;
-+		/* GPU isn't removing padding, so stride is aligned to 32 */
-+		f->fmt.pix.bytesperline =
-+			(f->fmt.pix.bytesperline + align_mask) & ~align_mask;
-+		v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev,
-+			 "Not removing padding, so bytes/line = %d, "
-+			 "(align_mask %d)\n",
-+			 f->fmt.pix.bytesperline, align_mask);
-+	}
- 
- 	/* Image buffer has to be padded to allow for alignment, even though
--	 * we then remove that padding before delivering the buffer.
-+	 * we sometimes then remove that padding before delivering the buffer.
- 	 */
- 	f->fmt.pix.sizeimage = ((f->fmt.pix.height + 15) & ~15) *
- 			(((f->fmt.pix.width + 31) & ~31) * mfmt->depth) >> 3;
-@@ -964,6 +988,7 @@ static int mmal_setup_components(struct bm2835_mmal_dev *dev,
- 	struct vchiq_mmal_port *port = NULL, *camera_port = NULL;
- 	struct vchiq_mmal_component *encode_component = NULL;
- 	struct mmal_fmt *mfmt = get_format(f);
-+	u32 remove_padding;
- 
- 	BUG_ON(!mfmt);
- 
-@@ -1032,6 +1057,12 @@ static int mmal_setup_components(struct bm2835_mmal_dev *dev,
- 			camera_port->format.encoding = MMAL_ENCODING_RGB24;
- 	}
- 
-+	remove_padding = mfmt->remove_padding;
-+	vchiq_mmal_port_parameter_set(dev->instance,
-+				      camera_port,
-+				      MMAL_PARAMETER_NO_IMAGE_PADDING,
-+				      &remove_padding, sizeof(remove_padding));
++static int buffer_init(struct vb2_buffer *vb)
++{
++	struct bm2835_mmal_dev *dev = vb2_get_drv_priv(vb->vb2_queue);
++	struct vb2_v4l2_buffer *vb2 = to_vb2_v4l2_buffer(vb);
++	struct mmal_buffer *buf = container_of(vb2, struct mmal_buffer, vb);
 +
- 	camera_port->format.encoding_variant = 0;
- 	camera_port->es.video.width = f->fmt.pix.width;
- 	camera_port->es.video.height = f->fmt.pix.height;
-@@ -1509,7 +1540,6 @@ static int __init mmal_init(struct bm2835_mmal_dev *dev)
++	v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev, "%s: dev:%p, vb %p\n",
++		 __func__, dev, vb);
++	buf->buffer = vb2_plane_vaddr(&buf->vb.vb2_buf, 0);
++	buf->buffer_size = vb2_plane_size(&buf->vb.vb2_buf, 0);
++
++	return mmal_vchi_buffer_init(dev->instance, buf);
++}
++
+ static int buffer_prepare(struct vb2_buffer *vb)
  {
- 	int ret;
- 	struct mmal_es_format_local *format;
--	u32 bool_true = 1;
- 	u32 supported_encodings[MAX_SUPPORTED_ENCODINGS];
- 	int param_size;
- 	struct vchiq_mmal_component  *camera;
-@@ -1593,11 +1623,6 @@ static int __init mmal_init(struct bm2835_mmal_dev *dev)
- 	format->es->video.frame_rate.num = 0; /* Rely on fps_range */
- 	format->es->video.frame_rate.den = 1;
+ 	struct bm2835_mmal_dev *dev = vb2_get_drv_priv(vb->vb2_queue);
+@@ -300,6 +314,17 @@ static int buffer_prepare(struct vb2_buffer *vb)
+ 	return 0;
+ }
  
--	vchiq_mmal_port_parameter_set(dev->instance,
--				      &camera->output[MMAL_CAMERA_PORT_VIDEO],
--				      MMAL_PARAMETER_NO_IMAGE_PADDING,
--				      &bool_true, sizeof(bool_true));
++static void buffer_cleanup(struct vb2_buffer *vb)
++{
++	struct bm2835_mmal_dev *dev = vb2_get_drv_priv(vb->vb2_queue);
++	struct vb2_v4l2_buffer *vb2 = to_vb2_v4l2_buffer(vb);
++	struct mmal_buffer *buf = container_of(vb2, struct mmal_buffer, vb);
++
++	v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev, "%s: dev:%p, vb %p\n",
++		 __func__, dev, vb);
++	mmal_vchi_buffer_cleanup(buf);
++}
++
+ static inline bool is_capturing(struct bm2835_mmal_dev *dev)
+ {
+ 	return dev->capture.camera_port ==
+@@ -467,9 +492,6 @@ static void buffer_queue(struct vb2_buffer *vb)
+ 	v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev,
+ 		 "%s: dev:%p buf:%p\n", __func__, dev, buf);
+ 
+-	buf->buffer = vb2_plane_vaddr(&buf->vb.vb2_buf, 0);
+-	buf->buffer_size = vb2_plane_size(&buf->vb.vb2_buf, 0);
 -
- 	format = &camera->output[MMAL_CAMERA_PORT_CAPTURE].format;
+ 	ret = vchiq_mmal_submit_buffer(dev->instance, dev->capture.port, buf);
+ 	if (ret < 0)
+ 		v4l2_err(&dev->v4l2_dev, "%s: error submitting buffer\n",
+@@ -632,7 +654,9 @@ static void bm2835_mmal_unlock(struct vb2_queue *vq)
  
- 	format->encoding = MMAL_ENCODING_OPAQUE;
-@@ -1619,11 +1644,6 @@ static int __init mmal_init(struct bm2835_mmal_dev *dev)
- 	dev->capture.enc_profile = V4L2_MPEG_VIDEO_H264_PROFILE_HIGH;
- 	dev->capture.enc_level = V4L2_MPEG_VIDEO_H264_LEVEL_4_0;
- 
--	vchiq_mmal_port_parameter_set(dev->instance,
--				      &camera->output[MMAL_CAMERA_PORT_CAPTURE],
--				      MMAL_PARAMETER_NO_IMAGE_PADDING,
--				      &bool_true, sizeof(bool_true));
--
- 	/* get the preview component ready */
- 	ret = vchiq_mmal_component_init(
- 			dev->instance, "ril.video_render",
+ static const struct vb2_ops bm2835_mmal_video_qops = {
+ 	.queue_setup = queue_setup,
++	.buf_init = buffer_init,
+ 	.buf_prepare = buffer_prepare,
++	.buf_cleanup = buffer_cleanup,
+ 	.buf_queue = buffer_queue,
+ 	.start_streaming = start_streaming,
+ 	.stop_streaming = stop_streaming,
 diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-common.h b/drivers/staging/vc04_services/bcm2835-camera/mmal-common.h
-index 800e4e7e5f96..e68ca1bf7222 100644
+index e68ca1bf7222..fe079d054174 100644
 --- a/drivers/staging/vc04_services/bcm2835-camera/mmal-common.h
 +++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-common.h
-@@ -28,6 +28,9 @@ struct mmal_fmt {
- 	int   depth;
- 	u32   mmal_component;  /* MMAL component index to be used to encode */
- 	u32   ybbp;            /* depth of first Y plane for planar formats */
-+	bool  remove_padding;  /* Does the GPU have to remove padding,
-+				* or can we do hide padding via bytesperline.
-+				*/
+@@ -19,6 +19,8 @@
+ /** Special value signalling that time is not known */
+ #define MMAL_TIME_UNKNOWN (1LL<<63)
+ 
++struct mmal_msg_context;
++
+ /* mapping between v4l and mmal video modes */
+ struct mmal_fmt {
+ 	char  *name;
+@@ -43,6 +45,8 @@ struct mmal_buffer {
+ 
+ 	void *buffer; /* buffer pointer */
+ 	unsigned long buffer_size; /* size of allocated buffer */
++
++	struct mmal_msg_context *msg_context;
  };
  
- /* buffer for one video frame */
+ /* */
+diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
+index a91ef6ea29ce..037c68b83df9 100644
+--- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
++++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
+@@ -321,8 +321,6 @@ static void buffer_work_cb(struct work_struct *work)
+ 					    msg_context->u.bulk.dts,
+ 					    msg_context->u.bulk.pts);
+ 
+-	/* release message context */
+-	release_msg_context(msg_context);
+ }
+ 
+ /* enqueue a bulk receive for a given message context */
+@@ -503,11 +501,13 @@ buffer_from_host(struct vchiq_mmal_instance *instance,
+ 		return -EINTR;
+ 
+ 	/* get context */
+-	msg_context = get_msg_context(instance);
+-	if (IS_ERR(msg_context)) {
+-		ret = PTR_ERR(msg_context);
++	if (!buf->msg_context) {
++		pr_err("%s: msg_context not allocated, buf %p\n", __func__,
++		       buf);
++		ret = -EINVAL;
+ 		goto unlock;
+ 	}
++	msg_context = buf->msg_context;
+ 
+ 	/* store bulk message context for when data arrives */
+ 	msg_context->u.bulk.instance = instance;
+@@ -557,11 +557,6 @@ buffer_from_host(struct vchiq_mmal_instance *instance,
+ 					sizeof(struct mmal_msg_header) +
+ 					sizeof(m.u.buffer_from_host));
+ 
+-	if (ret != 0) {
+-		release_msg_context(msg_context);
+-		/* todo: is this correct error value? */
+-	}
+-
+ 	vchi_service_release(instance->handle);
+ 
+ unlock:
+@@ -1775,6 +1770,29 @@ int vchiq_mmal_submit_buffer(struct vchiq_mmal_instance *instance,
+ 	return 0;
+ }
+ 
++int mmal_vchi_buffer_init(struct vchiq_mmal_instance *instance,
++			  struct mmal_buffer *buf)
++{
++	struct mmal_msg_context *msg_context = get_msg_context(instance);
++
++	if (IS_ERR(msg_context))
++		return (PTR_ERR(msg_context));
++
++	buf->msg_context = msg_context;
++	return 0;
++}
++
++int mmal_vchi_buffer_cleanup(struct mmal_buffer *buf)
++{
++	struct mmal_msg_context *msg_context = buf->msg_context;
++
++	if (msg_context)
++		release_msg_context(msg_context);
++	buf->msg_context = NULL;
++
++	return 0;
++}
++
+ /* Initialise a mmal component and its ports
+  *
+  */
+diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.h b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.h
+index b1f22b6dca10..dadf47fe1bdc 100644
+--- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.h
++++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.h
+@@ -168,4 +168,7 @@ int vchiq_mmal_submit_buffer(struct vchiq_mmal_instance *instance,
+ 			     struct vchiq_mmal_port *port,
+ 			     struct mmal_buffer *buf);
+ 
++int mmal_vchi_buffer_init(struct vchiq_mmal_instance *instance,
++			  struct mmal_buffer *buf);
++int mmal_vchi_buffer_cleanup(struct mmal_buffer *buf);
+ #endif /* MMAL_VCHIQ_H */
 -- 
 2.17.0
 
