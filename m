@@ -1,43 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751147AbeEJWbM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 18:31:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43422 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750711AbeEJWbL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 18:31:11 -0400
-Date: Thu, 10 May 2018 15:31:09 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Chengguang Xu <cgxu519@gmx.com>
-Cc: ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net,
-        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [V9fs-developer][PATCH v3 1/2] net/9p: detecting invalid
- options as much as possible
-Message-Id: <20180510153109.ca9ac1c8d2308c37952a42c7@linux-foundation.org>
-In-Reply-To: <1525340676-34072-1-git-send-email-cgxu519@gmx.com>
-References: <1525340676-34072-1-git-send-email-cgxu519@gmx.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1750972AbeEJWgX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 18:36:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750711AbeEJWgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 18:36:21 -0400
+Date: Thu, 10 May 2018 17:36:19 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Fengguang Wu <fengguang.wu@intel.com>
+Cc: linux-kernel@vger.kernel.org, LKP <lkp@01.org>
+Subject: cross-compiling a 64-bit kernel on a 32-bit host
+Message-ID: <20180510223619.jwdlle42brksfp4v@treble>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  3 May 2018 17:44:35 +0800 Chengguang Xu <cgxu519@gmx.com> wrote:
+Hi Fengguang,
 
-> Currently when detecting invalid options in option parsing,
-> some options(e.g. msize) just set errno and allow to continuously
-> validate other options so that it can detect invalid options
-> as much as possible and give proper error messages together.
-> 
-> This patch applies same rule to option 'trans' and 'version'
-> when detecting -EINVAL.
+I occasionally get compilation bug reports from people who are
+cross-compiling an x86-64 kernel target on an x86-32 host.
 
-Looks OK.
+Any chance the 0-day build bot could test that configuration?  I think
+just building a defconfig would be sufficient.  It would help sort out
+issues in objtool and other host-built scripts.
 
-It does mean that if two or more options cause errors, we will now
-return the error code arising from the final error rather than from the
-first error (or from some mish-mash mixture of both, as the present
-code does).  But I don't think this matters.
+-- 
+Josh
