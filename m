@@ -1,61 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751941AbeEJXQz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 19:16:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50340 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750758AbeEJXQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 19:16:52 -0400
-Date: Thu, 10 May 2018 18:16:49 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: perf: fuzzer causes stack going in wrong direction warnings
-Message-ID: <20180510231649.a5p3cv3g653jai6a@treble>
-References: <20180501135850.enx4waqd5d7yowlj@treble>
- <alpine.DEB.2.21.1805011557240.19937@macbook-air>
- <20180501220458.p3rgwzh3jcqt4jmm@treble>
- <20180502205009.codkvscnh4j4hm6b@treble>
- <alpine.DEB.2.21.1805041033230.6376@macbook-air>
- <20180504162557.iodmglq3duomz6c2@treble>
- <alpine.DEB.2.21.1805051134230.11518@macbook-air>
- <20180505182912.llj7jb3v7yd43t5h@treble>
- <20180506234935.yq6zxjetlpldpzz7@treble>
- <20180510134841.GE12217@hirez.programming.kicks-ass.net>
+        id S1751375AbeEJXTP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 19:19:15 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:42172 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750830AbeEJXTM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 19:19:12 -0400
+X-Google-Smtp-Source: AB8JxZrn+LoHoUBpaJpy20WSOEYJv8GSCEy/I67amOGCf945uU6YAikPAMHHBUdjheJyZnjYmAzPTQ==
+Date: Thu, 10 May 2018 16:19:09 -0700
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: viro@zeniv.linux.org.uk, ast@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH] coredump: rename umh_pipe_setup() to
+ coredump_pipe_setup()
+Message-ID: <20180510231907.xbok4h6rjopwdq6e@ast-mbp>
+References: <20180507233002.5571-1-mcgrof@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180510134841.GE12217@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180507233002.5571-1-mcgrof@kernel.org>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 03:48:41PM +0200, Peter Zijlstra wrote:
-> On Sun, May 06, 2018 at 06:49:35PM -0500, Josh Poimboeuf wrote:
+On Mon, May 07, 2018 at 04:30:02PM -0700, Luis R. Rodriguez wrote:
+> This makes it clearer this code is part of the coredump code, and
+> is not an exported generic helper from kernel/umh.c.
 > 
-> > Deja vu.  Most of these are related to perf PEBS, similar to the
-> > following issue:
-> > 
-> >   b8000586c90b ("perf/x86/intel: Cure bogus unwind from PEBS entries")
-> > 
-> > This is basically the ORC version of that.  setup_pebs_sample_data() is
-> > assembling a franken-pt_regs which ORC isn't happy about.  RIP is
-> > inconsistent with some of the other registers (like RSP and RBP).
-> > 
-> > Peter, any ideas?
+> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+> ---
+>  fs/coredump.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> Urgh..
-> 
-> Something like so perhaps? It's a bit of a hack, but I couldn't quickly
-> think of something nicer.
+> diff --git a/fs/coredump.c b/fs/coredump.c
+> index 1e2c87acac9b..566504781683 100644
+> --- a/fs/coredump.c
+> +++ b/fs/coredump.c
+> @@ -508,7 +508,7 @@ static void wait_for_dump_helpers(struct file *file)
+>  }
+>  
+>  /*
+> - * umh_pipe_setup
+> + * coredump_pipe_setup
+>   * helper function to customize the process used
+>   * to collect the core in userspace.  Specifically
+>   * it sets up a pipe and installs it as fd 0 (stdin)
+> @@ -518,7 +518,7 @@ static void wait_for_dump_helpers(struct file *file)
+>   * is a special value that we use to trap recursive
+>   * core dumps
+>   */
+> -static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
+> +static int coredump_pipe_setup(struct subprocess_info *info, struct cred *new)
 
-I had to convert perf_callchain() to a global function to get it to
-compile, but it does seem to fix the issue.
-
--- 
-Josh
+I think this renaming makes sense.
+How do we want to proceed?
+I can take it as part of my series and get the whole thing through net-next
+or folks want to apply this separately?
