@@ -1,140 +1,199 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3496624-1527666909-2-9304602453209508876
+X-Cyrus-Session-Id: sloti22d1t05-1338303-1525919970-2-14893757653601841511
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: 
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1527666909; b=a3hoIpw5We6mIXtGRswyL5oAZECJfDgJoqVSt6LmKj2IcsQLrV
-    /Qd5WtwR2IFKM6ReMW0hb1s5/vlTHYvRo+1yPOKifENwVU/Fu4JtBxatAFVwAd9J
-    3R7lkbIqKLSFqPJr+X7Ij2Rmvve1MUC6d1tCmJVKOhag3r7O7tXFgHXambJL5tF9
-    W9LQWM9KAYQhC7TN8sMmHZabqSIGbwdODF7EhJd4sJs23hY2ncXIxHQyQsz+6D98
-    aNp7JyTe3zvu91QUjV1tNh8HjDviZAtzjEz+ZuY/hkCSkriI4Y4UYwD9krmCgnEQ
-    MBkw2BbJ6rYpoXeji0RbvAAqGvMrF+oF6ZQw==
+    1525919969; b=QY9H3jpaY65Ep7ATnCd12Rn2Rj89k16Zo3JRlT5D/VWM6Qt9Ji
+    +lWhroJpFuXarf8Rd6OcAaK84ROeuA9CEv83VKJh4VDMOk/e7l2N42LFyG4AdHVU
+    1DprFEq4gQ5Gu6jUXGRaAgwTl8W7DvkkG6pQLDEXinMjZh9TEVXziTx8T9C3wXWG
+    hKPfkfW1vrWptobOOHHnAN+gnFNz1c90zk//12gN8ddEUVa8iiYafcZi47L2PBrx
+    K0plnghuqOYqzxSG0cQyhdrHgEC13ldI0zEYpCsm3x4O6oC7aML2MWSKlNzf87PN
+    +gRt6knzTGNO2KkpmechD0BxjzX0A0uYSqMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1527666909;
-    bh=c9Sj2oOGr2bPbdmLuWkTkq+D6KOaNRZOk8mTb4aKkAs=; b=VARiDHb8MCAE
-    1VegP4uw0l48cH6eeR18hhofBWrLbDbn02+wXBiQMhLtPIausMLR1pKDx9jx+reY
-    Jbdo9mBodXDJcua4Wj2fDcF8sybEkffXAk2QQaz9XxWS/etaBSuRyPuZwYyUC2A2
-    4/yDNdTqkkvm0tiGIouCWvkSc680m7g+OsF3JzAhCt1u5rkjQf5zzkTrxajHzXhH
-    VI69GSMYAXUeoHp3hUD3MNn7YocG/RvK/vgoYcimj7LVXQ6RL0g31ncuA7VMX9cX
-    BGIz6HD3cI9c6Et7SUKGtoloOjD2XUfXed6PKwv8WfTSSeX1jNIuy6HYUzSr++aa
-    Tghoum6yfA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256)
-    header.d=cogentembedded-com.20150623.gappssmtp.com
-    header.i=@cogentembedded-com.20150623.gappssmtp.com header.b=ADmk56Xx
-    header.a=rsa-sha256 header.s=20150623 x-bits=2048;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=cogentembedded.com;
+    messagingengine.com; h=from:to:cc:references:date:in-reply-to
+    :message-id:mime-version:content-type:subject:sender:list-id; s=
+    fm2; t=1525919969; bh=uAwtBlRBCQUWOiZH2NyquHWwHPrVvrl8FFVk4cNTPe
+    g=; b=k97d/1FMZkzYZF/bHQpF7wPdIdCWEsfsQnke6OB3IHALeHg89ikrdYy+pH
+    SyIbBjbWHlTQVVmsSZJM4DCj9nZepgAyoxoTKygErHDMpZlGpYGaCkpW02NxwKL3
+    h1cqBHloWJFWxPtglEDHA8t5ESWhtVLtDihdwq7cbZV0eEPXYTk7XgsgvgQi0oLw
+    zUUmc+VhxCYMDW86rwQ+SaJhyv/DBvXHEaD9bR7oucyPDhOA4XmeLdFtS2KpgtKK
+    PFhjqESQTa5PHPY7cy7mHPEDuGivpNjgyqkTz8MGxXr8cA82N9MU5VFIHk8+aPLC
+    LPekVtK2z8ZVY7yQ068D1yyOmytA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xmission.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=BcFNU54m;
-    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=cogentembedded.com header.result=pass
+    header.domain=xmission.com header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256)
-      header.d=cogentembedded-com.20150623.gappssmtp.com
-      header.i=@cogentembedded-com.20150623.gappssmtp.com header.b=ADmk56Xx
-      header.a=rsa-sha256 header.s=20150623 x-bits=2048;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=cogentembedded.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xmission.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=BcFNU54m;
-    x-ptr=pass smtp.helo=vger.kernel.org policy.ptr=vger.kernel.org;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=cogentembedded.com header.result=pass
+      header.domain=xmission.com header.result=pass
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBis2S2ITSs+MDhoiTq1yfLnnrC1j1xC81U6PkPEnkugdJrkY2L+xN9T7r01g0ihp33RUHz1IbPrQrBKv95E4vNSVasvp31CvZIk7IGzLbLZ/aEfbttV
-    UAIzlpkJHHv9DXXnt9mzW0gJxzaSgLPPOkCicadk2hejgu6ojl6HTrq6PreLzhQ/UbW2I4pUaPx//aZ1B8cZCFmNm5GSQBLxU1QVPiZ5EKC0sRo3gU1+Xb1n
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=tBb2bbeoAAAA:8 a=PtDNVHqPAAAA:8 a=_BGUAAqz3DGLcvd3qjYA:9 a=QEXdDO2ut3YA:10
-    a=Oj-tNtZlA1e06AYgeCfH:22 a=BpimnaHY1jUKGyF_4-AF:22
+X-CM-Envelope: MS4wfGtkf6O/RxZhJ64DCfDnz4dDUQ9MMHxb9rmttk7dkjyXwGQjMl3rhQYW7GQZ1GylLOD9GHmHcYNudLbduwX5eGPCC4BmLNA1fu955cIy3YjydV+Y7+2w
+    t2Jox0PsEuIsA9SNXqEuPIO3xdxhzh2LetqaiyYFNVoVLpY4ARsgfIeyCcmqjlzBSY/ilaYLSTT0BmE0z/W15rpbQGWl6nNQmZ0pbxOEgXexZZN/X2527o0m
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=gPJu0pBYAAAA:8
+    a=WPyIoOwQAAAA:8 a=VwQbUJbxAAAA:8 a=PtDNVHqPAAAA:8 a=U0zfkUukAAAA:8
+    a=tKuSCHl2DgjvuoJ0MYwA:9 a=AlIIF0cMT2hfDT4axODj:22 a=S-HzPIwwDS8t1QcwSuWs:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=BpimnaHY1jUKGyF_4-AF:22 a=rXRU1dkEVDZ1dOovDhQH:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935389AbeE3HzF (ORCPT <rfc822;linux@kroah.com>);
-        Wed, 30 May 2018 03:55:05 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:42026 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935776AbeE3HzE (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Wed, 30 May 2018 03:55:04 -0400
-X-Google-Smtp-Source: ADUXVKL2XCVtbHAfeJVPQ3IWbjTPj2PLHPB104aoScOAa5dWEFvH+clZaZJAK+vcdibMZNLI7Ygmag==
-Subject: Re: [PATCH] signal/sh: Stop gcc warning about an impossible case in
- do_divide_error
-To: "Eric W. Biederman" <ebiederm@xmission.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Rich Felker <dalias@libc.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Linux-sh list <linux-sh@vger.kernel.org>
+        id S1756259AbeEJCj2 (ORCPT <rfc822;linux@kroah.com>);
+        Wed, 9 May 2018 22:39:28 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:48601 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756209AbeEJCj1 (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Wed, 9 May 2018 22:39:27 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Matt Redfearn <matt.redfearn@mips.com>
+Cc: <linux-arch@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, <linux-mips@linux-mips.org>
 References: <87604mhrnb.fsf@xmission.com>
- <20180420143811.9994-16-ebiederm@xmission.com>
- <20180420145514.GP3094@brightrain.aerifal.cx>
- <CAMuHMdXxL+k_SitLXV1LJDHJmCY1HiUnZSk7MM64rcgs75nLiw@mail.gmail.com>
- <87h8mqo6at.fsf_-_@xmission.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <8a890c7c-771a-2f10-6dc1-145a9f75e48a@cogentembedded.com>
-Date: Wed, 30 May 2018 10:54:57 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        <20180420143811.9994-8-ebiederm@xmission.com>
+        <e0a5bde2-7817-3e05-1c8d-c8fa8f6aa5f2@mips.com>
+Date: Wed, 09 May 2018 21:39:20 -0500
+In-Reply-To: <e0a5bde2-7817-3e05-1c8d-c8fa8f6aa5f2@mips.com> (Matt Redfearn's
+        message of "Wed, 9 May 2018 16:14:40 +0100")
+Message-ID: <8736z0s087.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <87h8mqo6at.fsf_-_@xmission.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1fGbUK-0005rd-J9;;;mid=<8736z0s087.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.90.247.198;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18+pLRg9iIEb56W85HioAhQbXeZXb7Drr8=
+X-SA-Exim-Connect-IP: 97.90.247.198
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;Matt Redfearn <matt.redfearn@mips.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1253 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 3.1 (0.2%), b_tie_ro: 2.1 (0.2%), parse: 1.03 (0.1%),
+        extract_message_metadata: 20 (1.6%), get_uri_detail_list: 2.8 (0.2%),
+        tests_pri_-1000: 8 (0.7%), tests_pri_-950: 1.15 (0.1%), tests_pri_-900: 0.97
+        (0.1%), tests_pri_-400: 22 (1.8%), check_bayes: 22 (1.7%), b_tokenize: 7
+        (0.6%), b_tok_get_all: 7 (0.6%), b_comp_prob: 2.0 (0.2%), b_tok_touch_all:
+        2.9 (0.2%), b_finish: 0.59 (0.0%), tests_pri_0: 1187 (94.8%),
+        check_dkim_signature: 0.49 (0.0%), check_dkim_adsp: 2.6 (0.2%),
+        tests_pri_500: 6 (0.5%), poll_dns_idle: 0.58 (0.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [REVIEW][PATCH 08/22] signal/mips: Use force_sig_fault where appropriate
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello!
+Matt Redfearn <matt.redfearn@mips.com> writes:
 
-On 5/29/2018 6:00 PM, Eric W. Biederman wrote:
+> Hi Eric,
+>
+> On 20/04/18 15:37, Eric W. Biederman wrote:
+>> Filling in struct siginfo before calling force_sig_info a tedious and
+>> error prone process, where once in a great while the wrong fields
+>> are filled out, and siginfo has been inconsistently cleared.
+>>
+>> Simplify this process by using the helper force_sig_fault.  Which
+>> takes as a parameters all of the information it needs, ensures
+>> all of the fiddly bits of filling in struct siginfo are done properly
+>> and then calls force_sig_info.
+>>
+>> In short about a 5 line reduction in code for every time force_sig_info
+>> is called, which makes the calling function clearer.
+>>
+>> Cc: Ralf Baechle <ralf@linux-mips.org>
+>> Cc: James Hogan <jhogan@kernel.org>
+>> Cc: linux-mips@linux-mips.org
+>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>> ---
+>>   arch/mips/kernel/traps.c | 65 ++++++++++++++----------------------------------
+>>   arch/mips/mm/fault.c     | 19 ++++----------
+>>   2 files changed, 23 insertions(+), 61 deletions(-)
+>>
+>> diff --git a/arch/mips/kernel/traps.c b/arch/mips/kernel/traps.c
+>> index 967e9e4e795e..66ec4b0b484d 100644
+>> --- a/arch/mips/kernel/traps.c
+>> +++ b/arch/mips/kernel/traps.c
+>> @@ -699,17 +699,11 @@ static int simulate_sync(struct pt_regs *regs, unsigned int opcode)
+>>   asmlinkage void do_ov(struct pt_regs *regs)
+>>   {
+>>   	enum ctx_state prev_state;
+>> -	siginfo_t info;
+>> -
+>> -	clear_siginfo(&info);
+>> -	info.si_signo = SIGFPE;
+>> -	info.si_code = FPE_INTOVF;
+>> -	info.si_addr = (void __user *)regs->cp0_epc;
+>>     	prev_state = exception_enter();
+>>   	die_if_kernel("Integer overflow", regs);
+>>   -	force_sig_info(SIGFPE, &info, current);
+>> +	force_sig_fault(SIGFPE, FPE_INTOVF, (void __user *)regs->cp0_epc, current);
+>>   	exception_exit(prev_state);
+>>   }
+>>   @@ -722,32 +716,27 @@ asmlinkage void do_ov(struct pt_regs *regs)
+>>   void force_fcr31_sig(unsigned long fcr31, void __user *fault_addr,
+>>   		     struct task_struct *tsk)
+>>   {
+>> -	struct siginfo si;
+>> -
+>> -	clear_siginfo(&si);
+>> -	si.si_addr = fault_addr;
+>> -	si.si_signo = SIGFPE;
+>> +	int si_code;
+>
+> This is giving build errors in Linux next
+> (https://storage.kernelci.org/next/master/next-20180509/mips/defconfig+kselftest/build.log)
+>
+> si_code would have ended up as 0 before from the clear_siginfo(), but perhaps
 
-> Geert Uytterhoeven <geert@linux-m68k.org> reported:
->>    HOSTLD  scripts/mod/modpost
->>    CC      arch/sh/kernel/traps_32.o
->> arch/sh/kernel/traps_32.c: In function 'do_divide_error':
->> arch/sh/kernel/traps_32.c:606:17: error: 'code' may be used uninitialized in this function [-Werror=uninitialized]
->> cc1: all warnings being treated as errors
-> 
-> It is clear from inspection that do_divide_error is only called with
-> TRAP_DIVZERO_ERROR or TRAP_DIVOVF_ERROR, as that is the way
-> set_exception_table_vec is called.  So let gcc know the other cases
-> should not be considered by returning in all other cases.
-> 
-> This removes the warning and let's the code continue to build.
+And si_code 0 is not a valid si_code to use with a floating point
+siginfo layout.
 
-    Lets. :-)
+> int si_code = FPE_FLTUNK;
+>
+> Would make a more sensible default?
 
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Fixes: c65626c0cd4d ("signal/sh: Use force_sig_fault where appropriate")
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-[...]
+FPE_FLTUNK would make a more sensible default.
 
-MBR, Sergei
+I seem to remember someone telling me that case can never happen in
+practice so I have simply not worried about it.  Perhaps I am
+misremembering this.
+
+Eric
