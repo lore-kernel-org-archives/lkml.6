@@ -1,177 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757260AbeEJMDS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 08:03:18 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40496 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1757243AbeEJMDN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 08:03:13 -0400
-Date: Thu, 10 May 2018 14:03:11 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Jane Wan <Jane.Wan@nokia.com>
-Cc: miquel.raynal@bootlin.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, richard@nod.at, marek.vasut@gmail.com,
-        yamada.masahiro@socionext.com, prabhakar.kushwaha@nxp.com,
-        shawnguo@kernel.org, jagdish.gediya@nxp.com,
-        shreeya.patel23498@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, ties.bos@nokia.com
-Subject: Re: [PATCH v5 2/2] mtd: rawnand: use bit-wise majority to recover
- the contents of ONFI parameter
-Message-ID: <20180510140311.02805561@bbrezillon>
-In-Reply-To: <1525920400-11392-1-git-send-email-Jane.Wan@nokia.com>
-References: <1525920400-11392-1-git-send-email-Jane.Wan@nokia.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1757280AbeEJMEP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 08:04:15 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:57572 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757264AbeEJMEN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 08:04:13 -0400
+Subject: Re: [PATCH v2 1/2] dt: bindings: lm3601x: Introduce the lm3601x
+ driver
+To: Pavel Machek <pavel@ucw.cz>
+CC: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <jacek.anaszewski@gmail.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
+References: <20180508141704.24271-1-dmurphy@ti.com>
+ <20180510112807.GF6977@amd>
+From: Dan Murphy <dmurphy@ti.com>
+Message-ID: <1c4dc2a1-2d3e-d282-7d94-8301d0e9dd83@ti.com>
+Date: Thu, 10 May 2018 07:04:00 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180510112807.GF6977@amd>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jane,
+Pavel
 
-Subject prefix should be "[PATCH v5] ...", the 2/2 is no longer valid
-since you only have one patch here.
+Thanks for the review
 
-On Wed,  9 May 2018 19:46:40 -0700
-Jane Wan <Jane.Wan@nokia.com> wrote:
-
-> Per ONFI specification (Rev. 4.0), if all parameter pages have invalid
-> CRC values, the bit-wise majority may be used to recover the contents of
-> the parameter pages from the parameter page copies present.
+On 05/10/2018 06:28 AM, Pavel Machek wrote:
+> On Tue 2018-05-08 09:17:03, Dan Murphy wrote:
+>> Introduce the device tree bindings for the lm3601x
+>> family of LED torch, flash and IR drivers.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>
+>> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
+>>
+>>  .../devicetree/bindings/leds/leds-lm3601x.txt | 51 +++++++++++++++++++
+>>  1 file changed, 51 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+>> new file mode 100644
+>> index 000000000000..38cdabf6ca7e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+>> @@ -0,0 +1,51 @@
+>> +* Texas Instruments - lm3601x Single-LED Flash Driver
+>> +
+>> +The LM3601X are ultra-small LED flash drivers that
+>> +provides a high level of adjustability.
 > 
-> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
-> ---
+> "provide".
 
-There should be a changelog here describing what has changed in each
-version of the patch.
+Data sheet says provides.
 
->  drivers/mtd/nand/raw/nand_base.c |   46 +++++++++++++++++++++++++++++++++-----
->  1 file changed, 41 insertions(+), 5 deletions(-)
+It reads fine either way but I will change it.
+
 > 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index 72f3a89..a7c2507 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -5086,6 +5086,34 @@ static int nand_flash_detect_ext_param_page(struct nand_chip *chip,
->  	return ret;
->  }
->  
-> +#define GET_BIT(bit, val)   (((val) >> (bit)) & 0x01)
+>> +Required properties:
+>> +	- compatible : Can be one of the following
+>> +		"ti,lm3601x"
+>> +		"ti,lm36010"
+>> +		"ti,lm36011"
+>> +	- reg : I2C slave address
+>> +	- #address-cells : 1
+>> +	- #size-cells : 0
+>> +
+>> +Required child properties:
+>> +	- reg : 0 - Indicates to support and register a torch interface
+>> +		1 - Indicates to support and register a strobe interface
+>> +		2 - Indicates to support and register an ir interface
+> 
+> I'd delete "to support and register" -- we are describing hardware here.
 
-Not sure we need that macro, see below.
+OK
 
-> +
-> +/*
-> + * Recover data with bit-wise majority
-> + */
-> +static void nand_bit_wise_majority(const void **srcbufs,
-> +				   void *dstbuf,
-> +				   unsigned int nbufs,
-> +				   unsigned int bufsize)
+> 
+>> +Optional child properties:
+>> +	- label : see Documentation/devicetree/bindings/leds/common.txt
+>> +
+>> +Example:
+>> +led-controller@64 {
+>> +	compatible = "ti,lm3601x";
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	reg = <0x64>;
+>> +
+>> +	led@0 {
+>> +		reg = <0>;
+>> +		label = "white:torch";
+>> +		led-max-microamp=<10000>;
+>> +	};
+>> +
+>> +	led@1 {
+>> +		reg = <1>;
+>> +		label = "white:strobe";
+>> +		flash-max-microamp=<10000>;
+>> +		flash-max-timeout-us=<800>;
+>> +	};
+>> +
+>> +	led@2 {
+>> +		reg = <2>;
+>> +		label = "invisible:ir";
+>> +	};
+>> +}
+> 
+> Title says this is single-LED driver chip, but it controls three chips
+> in this example?
 
-I'd prefer to have nbufs just after srcbufs and named nsrcbufs:
+3 chips?  It technically controls 3 LED methods and only 2 LEDs.  The torch can be used as the strobe
+and the IR is controlled independently.
 
-static void nand_bit_wise_majority(const void **srcbufs,
-				   unsigned int nsrcbufs,
-				   void *dstbuf,
-				   unsigned int bufsize)
+> 
+> I'd put " " around "=" for consistency.
 
-> +{
-> +	int i, j, k;
-> +	u8 v, m;
-> +	u8 *p;
-> +
-> +	p = *(u8 **)srcbufs;
+OK
 
-Nope, I'd like to support the cases where srcbufs are not contiguous,
-so that does not work.
+> 
+> We use "flash" elsewhere, I'd replace "strobe" with that. Userspace
+> would like consistency, too.
 
-> +	for (i = 0; i < bufsize; i++) {
-> +		v = 0;
+Labels are meant to be examples only not absolutes.  I will change it to say flash
+but the label can be anything the customer wants it to be.
 
-You can declare the v variable here, since its scope is limited to the
-for loop. BTW, v, m, can't we pick better names? I guess v is for val,
-but I'm not even sure what m stands for.
+> 
+> What is the IR led good for? Taking videos in the dark?
 
-> +		for (j = 0; j < 8; j++) {
-> +			m = 0;
-> +			for (k = 0; k < nbufs; k++)
-> +				m += GET_BIT(j, p[k*bufsize + i]);
+Yes.  That is one application.
+And hunting ghosts ;)
 
-			for (k = 0; k < nbufs; k++) {
-				const u8 *srcbuf = srcbufs[j];
+> 
+> I guess for consistency, it is "ir:torch" :-).
 
-				if (srcbuf[i] & BIT(k))
-					m++;
-			}
+OK
 
-> +			if (m > nbufs/2)
+> 
+> 									Pavel
+> 
 
-Space between operands and operators please
 
-			if (m > nbufs / 2)
-
-> +				v |= BIT(j);
-> +		}
-> +		((u8 *)dstbuf)[i] = v;
-> +	}
-> +}
-> +
->  /*
->   * Check if the NAND chip is ONFI compliant, returns 1 if it is, 0 otherwise.
->   */
-> @@ -5102,7 +5130,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  		return 0;
->  
->  	/* ONFI chip: allocate a buffer to hold its parameter page */
-> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
-> +	p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
->  	if (!p)
->  		return -ENOMEM;
->  
-> @@ -5113,21 +5141,29 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
->  	}
->  
->  	for (i = 0; i < 3; i++) {
-> -		ret = nand_read_data_op(chip, p, sizeof(*p), true);
-> +		ret = nand_read_data_op(chip, &p[i], sizeof(*p), true);
->  		if (ret) {
->  			ret = 0;
->  			goto free_onfi_param_page;
->  		}
->  
-> -		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) ==
-> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)&p[i], 254) ==
->  				le16_to_cpu(p->crc)) {
-> +			if (i)
-> +				memcpy(p, &p[i], sizeof(*p));
->  			break;
->  		}
->  	}
->  
->  	if (i == 3) {
-
-		const void *srcbufs[3] = {p, p + 1, p + 2};
-
-> -		pr_err("Could not find valid ONFI parameter page; aborting\n");
-> -		goto free_onfi_param_page;
-> +		pr_err("Could not find valid ONFI parameter page\n");
-> +		pr_info("Recover ONFI params with bit-wise majority\n");
-> +		nand_bit_wise_majority((const void **)&p, p, 3, sizeof(*p));
-
-		nand_bit_wise_majority(srcbufs, ARRAY_SIZE(srcbufs), p,
-				       sizeof(*p))
-
-> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)p, 254) !=
-> +				le16_to_cpu(p->crc)) {
-> +			pr_err("ONFI parameter recovery failed, aborting\n");
-> +			goto free_onfi_param_page;
-> +		}
->  	}
->  
->  	/* Check version */
-
-Thanks,
-
-Boris
+-- 
+------------------
+Dan Murphy
