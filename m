@@ -1,82 +1,133 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756730AbeEJHSd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 03:18:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48484 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753979AbeEJHSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 03:18:31 -0400
-Date: Thu, 10 May 2018 09:18:25 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mikulas Patocka <mpatocka@redhat.com>, linux-mtd@lists.infradead.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: vmalloc with GFP_NOFS
-Message-ID: <20180510071825.GC32366@dhcp22.suse.cz>
-References: <20180424162712.GL17484@dhcp22.suse.cz>
- <20180424183536.GF30619@thunk.org>
- <20180424192542.GS17484@dhcp22.suse.cz>
- <20180509134222.GU32366@dhcp22.suse.cz>
- <20180509151351.GA4111@magnolia>
- <20180509210447.GX32366@dhcp22.suse.cz>
- <20180509220231.GD25312@magnolia>
- <20180510055825.GB32366@dhcp22.suse.cz>
+        id S934302AbeEJHVg (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 03:21:36 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:41529 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933887AbeEJHVf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 03:21:35 -0400
+X-Google-Smtp-Source: AB8JxZomG2NaP1a6c1JB9HKEDrA3E1Wq6jO6/F3bl7bQgWcjlH2in5Ga18HPYJ+fhLHqS+l6Ljp6YA==
+Date: Thu, 10 May 2018 00:21:33 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel.opensrc@gmail.com, torvalds@linux-foundation.org,
+        npiggin@gmail.com
+Subject: Re: [tip/core/rcu, 05/21] rcu: Make rcu_gp_cleanup() more accurately
+ predict need for new GP
+Message-ID: <20180510072133.GA122810@joelaf.mtv.corp.google.com>
+References: <1524452624-27589-5-git-send-email-paulmck@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180510055825.GB32366@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1524452624-27589-5-git-send-email-paulmck@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 10-05-18 07:58:25, Michal Hocko wrote:
-> On Wed 09-05-18 15:02:31, Darrick J. Wong wrote:
-> > On Wed, May 09, 2018 at 11:04:47PM +0200, Michal Hocko wrote:
-> > > On Wed 09-05-18 08:13:51, Darrick J. Wong wrote:
-> [...]
-> > > > > FS resp. IO submitting code paths have to be careful when allocating
-> > > > 
-> > > > Not sure what 'FS resp. IO' means here -- 'FS and IO' ?
-> > > > 
-> > > > (Or is this one of those things where this looks like plain English text
-> > > > but in reality it's some sort of markup that I'm not so familiar with?)
-> > > > 
-> > > > Confused because I've seen 'resp.' used as shorthand for
-> > > > 'responsible'...
-> > > 
-> > > Well, I've tried to cover both. Filesystem and IO code paths which
-> > > allocate while in sensitive context. IO submission is kinda clear but I
-> > > am not sure what a general term for filsystem code paths would be. I
-> > > would be greatful for any hints here.
-> > 
-> > "Code paths in the filesystem and IO stacks must be careful when
-> > allocating memory to prevent recursion deadlocks caused by direct memory
-> > reclaim calling back into the FS or IO paths and blocking on already
-> > held resources (e.g. locks)." ?
-> 
-> Great, thanks!
+Hi Paul,
 
-I dared to extend the last part to "(e.g. locks - most commonly those
-used for the transaction context)"
--- 
-Michal Hocko
-SUSE Labs
+On Sun, Apr 22, 2018 at 08:03:28PM -0700, Paul E. McKenney wrote:
+> Currently, rcu_gp_cleanup() scans the rcu_node tree in order to reset
+> state to reflect the end of the grace period.  It also checks to see
+> whether a new grace period is needed, but in a number of cases, rather
+> than directly cause the new grace period to be immediately started, it
+> instead leaves the grace-period-needed state where various fail-safes
+> can find it.  This works fine, but results in higher contention on the
+> root rcu_node structure's ->lock, which is undesirable, and contention
+> on that lock has recently become noticeable.
+> 
+> This commit therefore makes rcu_gp_cleanup() immediately start a new
+> grace period if there is any need for one.
+> 
+> It is quite possible that it will later be necessary to throttle the
+> grace-period rate, but that can be dealt with when and if.
+> 
+> Reported-by: Nicholas Piggin <npiggin@gmail.com>
+> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> ---
+>  kernel/rcu/tree.c        | 16 ++++++++++------
+>  kernel/rcu/tree.h        |  1 -
+>  kernel/rcu/tree_plugin.h | 17 -----------------
+>  3 files changed, 10 insertions(+), 24 deletions(-)
+> 
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 497f139056c7..afc5e32f0da4 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -1763,14 +1763,14 @@ rcu_start_future_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+>   * Clean up any old requests for the just-ended grace period.  Also return
+>   * whether any additional grace periods have been requested.
+>   */
+> -static int rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
+> +static bool rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
+>  {
+>  	int c = rnp->completed;
+> -	int needmore;
+> +	bool needmore;
+>  	struct rcu_data *rdp = this_cpu_ptr(rsp->rda);
+>  
+>  	need_future_gp_element(rnp, c) = 0;
+> -	needmore = need_future_gp_element(rnp, c + 1);
+> +	needmore = need_any_future_gp(rnp);
+>  	trace_rcu_future_gp(rnp, rdp, c,
+>  			    needmore ? TPS("CleanupMore") : TPS("Cleanup"));
+>  	return needmore;
+> @@ -2113,7 +2113,6 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
+>  {
+>  	unsigned long gp_duration;
+>  	bool needgp = false;
+> -	int nocb = 0;
+>  	struct rcu_data *rdp;
+>  	struct rcu_node *rnp = rcu_get_root(rsp);
+>  	struct swait_queue_head *sq;
+> @@ -2152,7 +2151,7 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
+>  		if (rnp == rdp->mynode)
+>  			needgp = __note_gp_changes(rsp, rnp, rdp) || needgp;
+>  		/* smp_mb() provided by prior unlock-lock pair. */
+> -		nocb += rcu_future_gp_cleanup(rsp, rnp);
+> +		needgp = rcu_future_gp_cleanup(rsp, rnp) || needgp;
+>  		sq = rcu_nocb_gp_get(rnp);
+>  		raw_spin_unlock_irq_rcu_node(rnp);
+>  		rcu_nocb_gp_cleanup(sq);
+> @@ -2162,13 +2161,18 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
+>  	}
+>  	rnp = rcu_get_root(rsp);
+>  	raw_spin_lock_irq_rcu_node(rnp); /* Order GP before ->completed update. */
+> -	rcu_nocb_gp_set(rnp, nocb);
+>  
+>  	/* Declare grace period done. */
+>  	WRITE_ONCE(rsp->completed, rsp->gpnum);
+>  	trace_rcu_grace_period(rsp->name, rsp->completed, TPS("end"));
+>  	rsp->gp_state = RCU_GP_IDLE;
+> +	/* Check for GP requests since above loop. */
+>  	rdp = this_cpu_ptr(rsp->rda);
+> +	if (need_any_future_gp(rnp)) {
+> +		trace_rcu_future_gp(rnp, rdp, rsp->completed - 1,
+> +				    TPS("CleanupMore"));
+> +		needgp = true;
+
+Patch makes sense to me.
+
+I didn't get the "rsp->completed - 1" bit in the call to trace_rcu_future_gp.
+The grace period that just completed is in rsp->completed. The future one
+should be completed + 1. What is meaning of the third argument 'c' to the
+trace event?
+
+Also in rcu_future_gp_cleanup, we call:
+	trace_rcu_future_gp(rnp, rdp, c,
+			    needmore ? TPS("CleanupMore") : TPS("Cleanup"));
+For this case, in the final trace event record, rnp->completed and c will be
+the same, since c is set to rnp->completed before calling
+trace_rcu_future_gp. I was thinking they should be different, do you expect
+them to be the same?
+
+thanks!
+
+- Joel
