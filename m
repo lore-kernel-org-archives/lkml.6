@@ -1,126 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752279AbeEJUT1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 16:19:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39462 "EHLO mail.kernel.org"
+        id S1752134AbeEJUWk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 16:22:40 -0400
+Received: from ms.lwn.net ([45.79.88.28]:59174 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752008AbeEJUTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 16:19:25 -0400
-Date: Thu, 10 May 2018 17:19:22 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: "Hunter, Adrian" <adrian.hunter@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH RFC 07/19] perf tools: Workaround missing maps for x86_64
- KPTI entry trampolines
-Message-ID: <20180510201922.GE4311@kernel.org>
-References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
- <1525866228-30321-8-git-send-email-adrian.hunter@intel.com>
- <20180509170717.GI13491@kernel.org>
- <363DA0ED52042842948283D2FC38E4649C13DE9E@IRSMSX106.ger.corp.intel.com>
- <20180510201542.GD4311@kernel.org>
+        id S1751438AbeEJUWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 16:22:38 -0400
+Date: Thu, 10 May 2018 14:22:35 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/11] Fix some doc build warnings/errors and broken
+ links
+Message-ID: <20180510142235.221da447@lwn.net>
+In-Reply-To: <cover.1525870886.git.mchehab+samsung@kernel.org>
+References: <cover.1525870886.git.mchehab+samsung@kernel.org>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180510201542.GD4311@kernel.org>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, May 10, 2018 at 05:15:42PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Thu, May 10, 2018 at 07:08:37PM +0000, Hunter, Adrian escreveu:
-> > > -----Original Message-----
-> > > From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
-> > > Sent: Wednesday, May 9, 2018 8:07 PM
-> > > To: Hunter, Adrian <adrian.hunter@intel.com>
-> > > Cc: Thomas Gleixner <tglx@linutronix.de>; Ingo Molnar
-> > > <mingo@redhat.com>; Peter Zijlstra <peterz@infradead.org>; Andy
-> > > Lutomirski <luto@kernel.org>; H. Peter Anvin <hpa@zytor.com>; Andi Kleen
-> > > <ak@linux.intel.com>; Alexander Shishkin
-> > > <alexander.shishkin@linux.intel.com>; Dave Hansen
-> > > <dave.hansen@linux.intel.com>; Joerg Roedel <joro@8bytes.org>; Jiri Olsa
-> > > <jolsa@redhat.com>; linux-kernel@vger.kernel.org; x86@kernel.org
-> > > Subject: Re: [PATCH RFC 07/19] perf tools: Workaround missing maps for
-> > > x86_64 KPTI entry trampolines
-> > > 
-> > > Em Wed, May 09, 2018 at 02:43:36PM +0300, Adrian Hunter escreveu:
-> > > > On x86_64 the KPTI entry trampolines are not in the kernel map created
-> > > > by perf tools. That results in the addresses having no symbols and
-> > > > prevents annotation. It also causes Intel PT to have decoding errors
-> > > > at the trampoline addresses. Workaround that by creating maps for the
-> > > trampolines.
-> > > > At present the kernel does not export information revealing where the
-> > > > trampolines are. Until that happens, the addresses are hardcoded.
-> > > >
-> > > > Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> > > > ---
-> > > >  tools/perf/util/machine.c | 104
-> > > ++++++++++++++++++++++++++++++++++++++++++++++
-> > > >  tools/perf/util/machine.h |   3 ++
-> > > >  tools/perf/util/symbol.c  |  12 +++---
-> > > >  3 files changed, 114 insertions(+), 5 deletions(-)
-> > > >
-> > > > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> > > > index 22047ff3cf2a..1bf15aa0b099 100644
-> > > > --- a/tools/perf/util/machine.c
-> > > > +++ b/tools/perf/util/machine.c
-> > > > @@ -851,6 +851,110 @@ static int
-> > > machine__get_running_kernel_start(struct machine *machine,
-> > > >  	return 0;
-> > > >  }
-> > > >
-> > > > +struct special_kernal_map {
-> > > 
-> > > s/kernal/kernel/
-> > > 
-> > > And "special"?
-> > 
-> > I have added comment:
-> > 
-> > /* Kernel-space maps that are not the main kernel map nor a module map */
-> 
-> Perhaps:
-> 
->   /* Kernel-space maps for symbols that are outside the main kernel map and module maps */
-> 
->   struct extra_kernel_map;
-> 
-> What do you think?
-> 
-> > And fixed kernal, and changed machine__is()
-> 
-> Thanks
->  
-> > Revised patch set is here:
-> > 
-> > 	http://git.infradead.org/users/ahunter/linux-perf.git/shortlog/refs/heads/perf-tools-kpti
-> > 
-> > which is the perf-tools-kpti branch of:
-> > 
-> > 	git://git.infradead.org/users/ahunter/linux-perf.git
-> > 
-> > Let me know if you want me to post the workaround patches separately,
-> > otherwise I will wait a bit before sending the patches again.
-> 
-> I'll see if I went thru all of the patches already...
+On Wed,  9 May 2018 10:18:43 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-So I looked at the patches posted and one comment is about the terse
-commit logs for some of the kcore_copy patches, for instance:
+> Patches 1 to 5 on this series contain the patches that weren't yet
+> applied from the past patch series and touch only at Documentation.
+> There are two changes there:
+>   patch 2: fixed the description and added a c/c to cgroup maintainers;
+>   patch 4: rewritten according with Louis request, droping several hunks.
 
---------------------
- In preparation to add more program headers, get rid of kernel_map and
-modules_map.
---------------------
+Of these, I've applied 2, 4, and 6.  The networking and crypto folks like
+to apply their own documentation fixes; I assume they'll pick these up.
 
-Can't this be made a bit more verbose? Lemme re-read the patch...
+> Patch 6 rewrites scripts/documentation-file-ref-check on Perl,
+> adding an auto-fix feature.
 
-- Arnaldo
+Applied this one.
+
+> Patches 7 and 8 fix things that would cause troubles for the
+> automatic autocorrection tool.
+
+#7 is applied.  #8 doesn't apply, though; I'm not sure which tree you made
+it against?  In any case, I've stopped here for now.
+
+> Patch 9 touches a lot of random places (including MAINTAINERS)
+> that contain broken links and can be auto-fixed. It could be
+> broken into one patch per touched file, but I think that is
+> overkill. 
+
+Let's keep this one (and the ones that follow) aside.  I'm happy to apply
+them, but I think they are best applied as an end-of-merge-window thing.  I
+envision lots of conflicts, and I already have a pile of those to explain
+to Linus this time around.
+
+Sound good?
+
+Thanks,
+
+jon
