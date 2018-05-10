@@ -1,187 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752681AbeEJVqx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 17:46:53 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50932 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752568AbeEJVqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 17:46:51 -0400
-Date: Thu, 10 May 2018 23:46:49 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: a.zummo@towertech.it, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] rtc: ds1307: add freq_test sysfs attribute to
- check tick on m41txx
-Message-ID: <20180510214649.GR10960@piout.net>
-References: <20180509193355.49466-1-giulio.benetti@micronovasrl.com>
- <20180509193355.49466-4-giulio.benetti@micronovasrl.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509193355.49466-4-giulio.benetti@micronovasrl.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1752648AbeEJVrt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 17:47:49 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:37774 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752298AbeEJVrs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 17:47:48 -0400
+Date: Thu, 10 May 2018 17:47:46 -0400 (EDT)
+Message-Id: <20180510.174746.56190527987284941.davem@davemloft.net>
+To: christophe.jaillet@wanadoo.fr
+Cc: tariqt@mellanox.com, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] net/mlx4_en: Fix an error handling path in
+ 'mlx4_en_init_netdev()'
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180510070604.19635-1-christophe.jaillet@wanadoo.fr>
+References: <20180510070604.19635-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/05/2018 21:33:55+0200, Giulio Benetti wrote:
-> On m41txx you can enable open-drain OUT pin to check if offset is ok.
-> Enabling OUT pin with freq_test attribute, OUT pin will tick 512 times
-> faster than 1s tick base.
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 10 May 2018 09:06:04 +0200
+
+> If an error occurs, 'mlx4_en_destroy_netdev()' is called.
+> It then calls 'mlx4_en_free_resources()' which does the needed resources
+> cleanup.
 > 
-> Enable or Disable FT bit on CONTROL register if freq_test is 1 or 0.
+> So, doing some explicit kfree in the error handling path would lead to
+> some double kfree.
 > 
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
-> ---
-> V2 => V3: export freq_test on sysfs only if supported(m41txx series)
+> Simplify code to avoid such a case.
 > 
->  drivers/rtc/rtc-ds1307.c | 107 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 107 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-> index 33895668b363..79206bf21018 100644
-> --- a/drivers/rtc/rtc-ds1307.c
-> +++ b/drivers/rtc/rtc-ds1307.c
-> @@ -1042,6 +1042,109 @@ static int m41txx_rtc_set_offset(struct device *dev, long offset)
->  	return regmap_write(ds1307->regmap, M41TXX_REG_CONTROL,	ctrl_reg);
->  }
->  
-> +static ssize_t freq_test_store(struct device *dev,
-> +			       struct device_attribute *attr,
-> +			       const char *buf, size_t count)
-> +{
-> +	struct ds1307 *ds1307 = dev_get_drvdata(dev);
-> +	unsigned long freq_test = 0;
-> +	unsigned int ctrl_reg;
-> +	int retval;
-> +
-> +	retval = kstrtoul(buf, 10, &freq_test);
-> +	if ((retval < 0) || (retval > 1)) {
-> +		dev_err(dev, "Failed to store RTC Frequency Test attribute\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
-> +
-> +	if (freq_test)
-> +		ctrl_reg |= M41TXX_BIT_FT;
-> +	else
-> +		ctrl_reg &= ~M41TXX_BIT_FT;
-> +
-> +	retval = regmap_write(ds1307->regmap, M41TXX_REG_CONTROL, ctrl_reg);
-> +
+> Fixes: 67f8b1dcb9ee ("net/mlx4_en: Refactor the XDP forwarding rings scheme")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Pleas use regmap_update_bits
-
-> +	return retval ? retval : count;
-> +}
-> +
-> +static ssize_t freq_test_show(struct device *dev,
-> +				    struct device_attribute *attr, char *buf)
-> +{
-> +	struct ds1307 *ds1307 = dev_get_drvdata(dev);
-> +	int freq_test = 0;
-> +	unsigned int ctrl_reg;
-> +
-> +	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
-> +
-> +	if (ctrl_reg & M41TXX_BIT_FT)
-> +		freq_test = true;
-> +	else
-> +		freq_test = false;
-> +
-> +	if ((freq_test < 0) || (freq_test > 1)) {
-
-This will never happen
-
-> +		dev_err(dev, "Failed to read RTC Frequency Test\n");
-> +		sprintf(buf, "0\n");
-> +		return freq_test;
-> +	}
-> +
-> +	return sprintf(buf, "%d\n", freq_test);
-> +}
-> +
-> +static DEVICE_ATTR_RW(freq_test);
-
-I'd prefer the file to be named frequency_test_enable
-
-> +
-> +static struct attribute *rtc_freq_test_attrs[] = {
-> +	&dev_attr_freq_test.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group rtc_freq_test_attr_group = {
-> +	.attrs		= rtc_freq_test_attrs,
-> +};
-> +
-> +static void rtc_calib_remove_sysfs_group(void *_dev)
-> +{
-> +	struct device *dev = _dev;
-> +
-> +	sysfs_remove_group(&dev->kobj, &rtc_freq_test_attr_group);
-> +}
-> +
-> +static int ds1307_add_frequency_test(struct ds1307 *ds1307)
-> +{
-> +	int err = 0;
-> +
-> +	switch (ds1307->type) {
-> +	case m41t0:
-> +	case m41t00:
-> +	case m41t11:
-> +		/* Export sysfs entries */
-> +		err = sysfs_create_group(&(ds1307->dev)->kobj,
-> +					 &rtc_freq_test_attr_group);
-> +		if (err) {
-> +			dev_err(ds1307->dev,
-> +				"Failed to create sysfs group: %d\n",
-> +				err);
-> +			return err;
-> +		}
-> +
-> +		err = devm_add_action_or_reset(ds1307->dev,
-> +					       rtc_calib_remove_sysfs_group,
-> +					       ds1307->dev);
-> +		if (err) {
-> +			dev_err(ds1307->dev,
-> +				"Failed to add sysfs cleanup action: %d\n",
-> +				err);
-
-You need to sysfs_remove_group here
-
-> +			return err;
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return err;
-> +}
-> +
->  /*----------------------------------------------------------------------*/
->  
->  static int ds1307_nvram_read(void *priv, unsigned int offset, void *val,
-> @@ -1783,6 +1886,10 @@ static int ds1307_probe(struct i2c_client *client,
->  	if (err)
->  		return err;
->  
-> +	err = ds1307_add_frequency_test(ds1307);
-> +	if (err)
-> +		return err;
-> +
->  	if (chip->nvram_size) {
->  		struct nvmem_config nvmem_cfg = {
->  			.name = "ds1307_nvram",
-> -- 
-> 2.17.0
-> 
-
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Applied and queued up for -stable, thanks.
