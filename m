@@ -1,77 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966448AbeEJQHN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 12:07:13 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:38804 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965049AbeEJQHL (ORCPT
+        id S966529AbeEJQKN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 12:10:13 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:45536 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964877AbeEJQKL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 12:07:11 -0400
-X-Google-Smtp-Source: AB8JxZqCl0bJRBt5eBAy1pY9K+nW82RWz/tmIpYzyt03Hvm1Bj4MG5Vxu8eRBQA8ozPlrj84b8kpTQ==
-Subject: Re: [PATCH 4.17 2/2] ssb: make SSB_PCICORE_HOSTMODE depend on SSB = y
-To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>,
-        Matt Redfearn <matt.redfearn@mips.com>
-Cc: linux-wireless@vger.kernel.org, Hauke Mehrtens <hauke@hauke-m.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-References: <20180510111401.1161-1-zajec5@gmail.com>
- <20180510111401.1161-2-zajec5@gmail.com>
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <ff18cb0a-e878-dff4-777b-134f0f3fe2e5@lwfinger.net>
-Date: Thu, 10 May 2018 11:07:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 10 May 2018 12:10:11 -0400
+Date: Thu, 10 May 2018 09:09:58 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: tytso@mit.edu, Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4: make =?utf-8?Q?function_?=
+ =?utf-8?B?4oCYZXh0NF9nZXRmc21hcF9maW5kX2ZpeGVkX21ldGFkYXRh4oCZ?= static
+Message-ID: <20180510160958.GB4111@magnolia>
+References: <20180505200452.18962-1-malat@debian.org>
 MIME-Version: 1.0
-In-Reply-To: <20180510111401.1161-2-zajec5@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180505200452.18962-1-malat@debian.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8888 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805100152
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/10/2018 06:14 AM, Rafał Miłecki wrote:
-> From: Rafał Miłecki <rafal@milecki.pl>
+On Sat, May 05, 2018 at 10:04:52PM +0200, Mathieu Malaterre wrote:
+> Since function ‘ext4_getfsmap_find_fixed_metadata’ can be made static,
+> make it so. Remove the following gcc warning (W=1):
 > 
-> SSB_PCICORE_HOSTMODE protects MIPS specific code that calls not exported
-> symbols pcibios_enable_device and register_pci_controller. This code is
-> supposed to be compiled only with ssb builtin.
+>   fs/ext4/fsmap.c:405:5: warning: no previous prototype for ‘ext4_getfsmap_find_fixed_metadata’ [-Wmissing-prototypes]
 > 
-> This fixes:
-> ERROR: "pcibios_enable_device" [drivers/ssb/ssb.ko] undefined!
-> ERROR: "register_pci_controller" [drivers/ssb/ssb.ko] undefined!
-> make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
-> 
-> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 
-This patch needs a "Reported-by: Matt Redfearn <matt.redfearn@mips.com>".
+Sorry about being late to the party,
 
-Applying both patches leads to a correct configuration for PCI. I cannot test on 
-my present hardware, but the patches seem to be correct.
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-Reviewed-by: Larry Finger <Larry.Finger@lwfinger.net>
-
-@Kalle: Please drop my patch from yesterday. This solution is much better.
-
-Larry
+--D
 
 > ---
->   drivers/ssb/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/ext4/fsmap.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
-> index b3f5cae98ea6..c574dd210500 100644
-> --- a/drivers/ssb/Kconfig
-> +++ b/drivers/ssb/Kconfig
-> @@ -131,7 +131,7 @@ config SSB_DRIVER_PCICORE
->   
->   config SSB_PCICORE_HOSTMODE
->   	bool "Hostmode support for SSB PCI core"
-> -	depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS
-> +	depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS && SSB = y
->   	help
->   	  PCIcore hostmode operation (external PCI bus).
->   
+> diff --git a/fs/ext4/fsmap.c b/fs/ext4/fsmap.c
+> index e871c4bf18e9..4b99e2db95b8 100644
+> --- a/fs/ext4/fsmap.c
+> +++ b/fs/ext4/fsmap.c
+> @@ -402,8 +402,8 @@ static void ext4_getfsmap_free_fixed_metadata(struct list_head *meta_list)
+>  }
+>  
+>  /* Find all the fixed metadata in the filesystem. */
+> -int ext4_getfsmap_find_fixed_metadata(struct super_block *sb,
+> -				      struct list_head *meta_list)
+> +static int ext4_getfsmap_find_fixed_metadata(struct super_block *sb,
+> +					     struct list_head *meta_list)
+>  {
+>  	struct ext4_group_desc *gdp;
+>  	ext4_group_t agno;
+> -- 
+> 2.11.0
 > 
