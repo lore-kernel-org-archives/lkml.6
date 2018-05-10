@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1816600-1525939995-2-5244871689111648528
+X-Cyrus-Session-Id: sloti22d1t05-1831883-1525939994-2-3437402326329826433
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: 
@@ -7,23 +7,23 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525939995; b=JBLoDtKsXbPIIgSn8PiwhZDVyixx8ZAqENmA2vlNBxg1wLd1Eq
-    x6c0OSgmQxR+JHHCPKPY6oXDVaXkJNWPtvK+vPqc28ULR24eBCTvcafGtRU4OBtL
-    JlqdSdPDlm7vV1DOM9yvsmWlxHgB0gzileBPsGbBz38v7SRYs12IkkSDrzKWVfWb
-    8plnNmh8fNome+Tq/QBE4pvC5rHcdBfHN4Hnfb6q6sqcusSXCUNRmdWGKeYd4zu5
-    e01srE/E6FwZbuupc0wUmSMaoyoLvEbpul7vdLFU4x3Fqd8hAg7biZ1QMI28+zL9
-    y08AsGGiY8X1yW3v8zgOhA4tpmBl0eCthuqA==
+    1525939994; b=lD6zHFHyd9Jtce3Pz4RKmw2hq5seBwcfnsWBTRGAJ5bhWVumuc
+    WF6O+ESSxZ1HQ5OC0zN7YcrEMjH10tm3ic8gD5Yjwx7HaZpOWhMkWis3ALZSP1Pk
+    go6zGor9FmPQK1GZ/WbHW1wS6smStHJIUw3eVm4LzVvSFvyWTGvHHLFVh5ENvJQJ
+    uqX/2cX9P3HFPQkFOOXuuxlWbnxswHA1VxhcjSDEtVt5YKV63CgPlfRAV0WkV8lS
+    DbaHCzc3ZwUv/nrWusp2pNS9Toy1A2MTkiN1L39bpt9XWhFL/UZACf9HSwephvUo
+    iWlh/Aks11317M+PFJ6lGEc7x7kCA5/M17FQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525939995; bh=
-    i5F4/swcoIth4L/6WUqXN53eMNbh8ym9CXj5IKdH61Q=; b=Xf8X1WtFurTwcqKG
-    xBJag471JjLhFA2JPL9YToR2bCn08VeMZkBYrFEfb90DEDeTeAtCaidNXibHOuZh
-    rIr4UWnleEpIrnGglGfHkfW0mkrrN6w1WptW+6lBeFEyGmMHL5LouyU5/M7d4Nbb
-    SsBhAtzcHrDxlXMNtaDIYsb5RfjleqGDYLXfo2wEFmQ5ohL1DTBW/a5or0z/99r/
-    fBb1X82y5PtuuOIfjKrQgtkwkDELvVdtZ4YtRCzBT+A9NxWp/SllquQjSTgMCHm3
-    rM+HwS+n99m++5o6wnc+oExHDL0wrSOP+cn9jZknVLrl2Yr6MTzhqj9EZt2/VS89
-    CGYCxg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525939994; bh=
+    o3cZYwSN5NN9v60iK9Cu1pm5i/E8ML252gqRgbHQP/E=; b=cTbtXW7QHLUsqf3d
+    h8lLuU4XDC+a9xkozX58GO8rynw5DVhTmSnteB5mp57By4XfpFCmbz9YZivsIHF7
+    TDHEwy9FVW8M8gu8m30YtUssbsabKG7PWLORftNDm+tceWGJCngBChQiVY91r4QS
+    7D3Eb9qxAfZyKu8sjDhujbBA3NMEPAFYe7u30uLmuXnbYZSJ5mJNB7ZQB/hQ+j/w
+    yHKHM5KrfpI4cWcG1/Qm0mbueV9nW3RNd4RkG/xXsiuD28mMykXufqbyvHrlHsDL
+    qJI77pIsuQdjDd7lEAq7K0jTk6oOkCxP27DHnUZ+r6RyDJzSYEx2Nb6B+55m6JRf
+    hz1+9w==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -36,7 +36,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=suse.cz header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
@@ -51,29 +51,30 @@ Authentication-Results: mx3.messagingengine.com;
       header.domain=suse.cz header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNObFSpv0UGLqssxGzFOScbCU8FOzOQqcBrwpZ88MxSDMd2jRuw6dEbSoWYKsERdT3fq4Op0fVED0+yBXAnBaN79wed7SUoUyWmjOtd5RMBLIpR5gbQ+
-    ISRlQl8u3q+QYH+39s3bptkx5FRZiL4asbyMaO/eRf261178RzV5eb5Z7DuSJhTYQ+5fRHsj/jdze1DXGDyKQR57YoUVBOlhFsDept+PMl8SiR2l+QZaRGwH
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=oGMlB6cnAAAA:8
-    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=6kfwl7NHpHrI6RXzbgYA:9
+X-CM-Envelope: MS4wfGN8zlqE2omZYnKlo0hYFuzWMlxDNbhsL4/Xzq5vQbsIBE1auMTflRxjSezKabWo40oYxoW5yCCCW8D9bM8Uv7WBVbOiRYkKewLvZlfBiJxWf7hBvu0v
+    4kPa7YkLaYm0tJl4i+AAGJ1lHiYDHIAEBtG0AGdkiRdTPsHXBCjY76Y7F1y37PdpJvUzOMFwM7z1YR2wP1iuqf4eHBV0dAlbhLTB/VY7nl+LsPaaJsns3IpJ
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
+    a=oGMlB6cnAAAA:8 a=VwQbUJbxAAAA:8 a=7S8H7V3pDoY91oZkGvcA:9
     a=NdAtdrkLVvyUPsUoGJp4:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934891AbeEJINL (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 10 May 2018 04:13:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51891 "EHLO mx2.suse.de"
+        id S934174AbeEJINK (ORCPT <rfc822;linux@kroah.com>);
+        Thu, 10 May 2018 04:13:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51893 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756773AbeEJIHC (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Thu, 10 May 2018 04:07:02 -0400
+        id S1756776AbeEJIHD (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Thu, 10 May 2018 04:07:03 -0400
 From: Jiri Slaby <jslaby@suse.cz>
 To: mingo@redhat.com
 Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.cz>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Subject: [PATCH -resend 11/27] x86: boot, annotate data appropriatelly
-Date: Thu, 10 May 2018 10:06:28 +0200
-Message-Id: <20180510080644.19752-12-jslaby@suse.cz>
+        Jiri Slaby <jslaby@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH -resend 14/27] x86: purgatory, start using annotations
+Date: Thu, 10 May 2018 10:06:31 +0200
+Message-Id: <20180510080644.19752-15-jslaby@suse.cz>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180510080644.19752-1-jslaby@suse.cz>
 References: <20180510080644.19752-1-jslaby@suse.cz>
@@ -83,164 +84,153 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use the new SYM_DATA, SYM_DATA_START, and SYM_DATA_END* macros for data.
-
-Now, the data in the object file look sane:
-Value   Size Type    Bind   Vis      Ndx Name
-  0000    10 OBJECT  GLOBAL DEFAULT    3 efi32_boot_gdt
-  000a    10 OBJECT  LOCAL  DEFAULT    3 save_gdt
-  0014     8 OBJECT  LOCAL  DEFAULT    3 func_rt_ptr
-  001c    48 OBJECT  GLOBAL DEFAULT    3 efi_gdt64
-  004c     0 OBJECT  LOCAL  DEFAULT    3 efi_gdt64_end
-
-  0000    48 OBJECT  LOCAL  DEFAULT    3 gdt
-  0030     0 OBJECT  LOCAL  DEFAULT    3 gdt_end
-  0030     8 OBJECT  LOCAL  DEFAULT    3 efi_config
-  0038    49 OBJECT  GLOBAL DEFAULT    3 efi32_config
-  0069    49 OBJECT  GLOBAL DEFAULT    3 efi64_config
-
-All have correct size and type now.
+purgatory used no annotations. So include linux/linkage.h and annotate
+everything:
+* code by SYM_CODE_*
+* data by SYM_DATA_*
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: x86@kernel.org
 ---
- arch/x86/boot/compressed/efi_thunk_64.S | 21 ++++++++++++---------
- arch/x86/boot/compressed/head_64.S      | 29 ++++++++++++++---------------
- arch/x86/boot/compressed/mem_encrypt.S  |  6 ++----
- 3 files changed, 28 insertions(+), 28 deletions(-)
+ arch/x86/purgatory/entry64.S      | 21 ++++++++++++---------
+ arch/x86/purgatory/setup-x86_64.S | 14 ++++++++------
+ arch/x86/purgatory/stack.S        |  7 ++++---
+ 3 files changed, 24 insertions(+), 18 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/efi_thunk_64.S b/arch/x86/boot/compressed/efi_thunk_64.S
-index bff9ab7c6317..d66000d23921 100644
---- a/arch/x86/boot/compressed/efi_thunk_64.S
-+++ b/arch/x86/boot/compressed/efi_thunk_64.S
-@@ -176,16 +176,19 @@ ENDPROC(efi_enter32)
+diff --git a/arch/x86/purgatory/entry64.S b/arch/x86/purgatory/entry64.S
+index d1a4291d3568..c51e3c999e38 100644
+--- a/arch/x86/purgatory/entry64.S
++++ b/arch/x86/purgatory/entry64.S
+@@ -10,13 +10,13 @@
+  * Version 2.  See the file COPYING for more details.
+  */
  
- 	.data
- 	.balign	8
--	.global	efi32_boot_gdt
--efi32_boot_gdt:	.word	0
--		.quad	0
-+SYM_DATA_START(efi32_boot_gdt)
-+	.word	0
-+	.quad	0
-+SYM_DATA_END(efi32_boot_gdt)
++#include <linux/linkage.h>
 +
-+SYM_DATA_START_LOCAL(save_gdt)
-+	.word	0
-+	.quad	0
-+SYM_DATA_END(save_gdt)
+ 	.text
+ 	.balign 16
+ 	.code64
+-	.globl entry64, entry64_regs
+-
  
--save_gdt:	.word	0
--		.quad	0
--func_rt_ptr:	.quad	0
-+SYM_DATA_LOCAL(func_rt_ptr, .quad 0)
+-entry64:
++SYM_CODE_START(entry64)
+ 	/* Setup a gdt that should be preserved */
+ 	lgdt gdt(%rip)
  
--	.global efi_gdt64
--efi_gdt64:
-+SYM_DATA_START(efi_gdt64)
- 	.word	efi_gdt64_end - efi_gdt64
- 	.long	0			/* Filled out by user */
- 	.word	0
-@@ -194,4 +197,4 @@ efi_gdt64:
- 	.quad	0x00cf92000000ffff	/* __KERNEL_DS */
- 	.quad	0x0080890000000000	/* TS descriptor */
- 	.quad   0x0000000000000000	/* TS continued */
--efi_gdt64_end:
-+SYM_DATA_END_LABEL(efi_gdt64, SYM_L_LOCAL, efi_gdt64_end)
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index 614dc4868915..a1a92f6fc8e4 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -599,12 +599,13 @@ SYM_FUNC_END(no_longmode)
- #include "../../kernel/verify_cpu.S"
+@@ -56,10 +56,11 @@ new_cs_exit:
  
- 	.data
--gdt64:
-+SYM_DATA_START_LOCAL(gdt64)
- 	.word	gdt_end - gdt
- 	.long	0
- 	.word	0
- 	.quad   0
+ 	/* Jump to the new code... */
+ 	jmpq	*rip(%rip)
++SYM_CODE_END(entry64)
+ 
+ 	.section ".rodata"
+ 	.balign 4
+-entry64_regs:
++SYM_DATA_START(entry64_regs)
+ rax:	.quad 0x0
+ rcx:	.quad 0x0
+ rdx:	.quad 0x0
+@@ -77,12 +78,12 @@ r13:	.quad 0x0
+ r14:	.quad 0x0
+ r15:	.quad 0x0
+ rip:	.quad 0x0
+-	.size entry64_regs, . - entry64_regs
++SYM_DATA_END(entry64_regs)
+ 
+ 	/* GDT */
+ 	.section ".rodata"
+ 	.balign 16
 -gdt:
-+SYM_DATA_END(gdt64)
 +SYM_DATA_START_LOCAL(gdt)
- 	.word	gdt_end - gdt
- 	.long	gdt
- 	.word	0
-@@ -613,25 +614,24 @@ gdt:
- 	.quad	0x00cf92000000ffff	/* __KERNEL_DS */
- 	.quad	0x0080890000000000	/* TS descriptor */
- 	.quad   0x0000000000000000	/* TS continued */
+ 	/* 0x00 unusable segment
+ 	 * 0x08 unused
+ 	 * so use them as gdt ptr
+@@ -96,6 +97,8 @@ gdt:
+ 
+ 	/* 0x18 4GB flat data segment */
+ 	.word 0xFFFF, 0x0000, 0x9200, 0x00CF
+-gdt_end:
+-stack:	.quad   0, 0
+-stack_init:
++SYM_DATA_END_LABEL(gdt, SYM_L_LOCAL, gdt_end)
++
++SYM_DATA_START_LOCAL(stack)
++	.quad   0, 0
++SYM_DATA_END_LABEL(stack, SYM_L_LOCAL, stack_init)
+diff --git a/arch/x86/purgatory/setup-x86_64.S b/arch/x86/purgatory/setup-x86_64.S
+index dfae9b9e60b5..f0de104d3f3a 100644
+--- a/arch/x86/purgatory/setup-x86_64.S
++++ b/arch/x86/purgatory/setup-x86_64.S
+@@ -9,14 +9,14 @@
+  * This source code is licensed under the GNU General Public License,
+  * Version 2.  See the file COPYING for more details.
+  */
++#include <linux/linkage.h>
+ #include <asm/purgatory.h>
+ 
+ 	.text
+-	.globl purgatory_start
+ 	.balign 16
+-purgatory_start:
+ 	.code64
+ 
++SYM_CODE_START(purgatory_start)
+ 	/* Load a gdt so I know what the segment registers are */
+ 	lgdt	gdt(%rip)
+ 
+@@ -34,10 +34,12 @@ purgatory_start:
+ 	/* Call the C code */
+ 	call purgatory
+ 	jmp	entry64
++SYM_CODE_END(purgatory_start)
+ 
+ 	.section ".rodata"
+ 	.balign 16
+-gdt:	/* 0x00 unusable segment
++SYM_DATA_START_LOCAL(gdt)
++	/* 0x00 unusable segment
+ 	 * 0x08 unused
+ 	 * so use them as the gdt ptr
+ 	 */
+@@ -50,10 +52,10 @@ gdt:	/* 0x00 unusable segment
+ 
+ 	/* 0x18 4GB flat data segment */
+ 	.word	0xFFFF, 0x0000, 0x9200, 0x00CF
 -gdt_end:
 +SYM_DATA_END_LABEL(gdt, SYM_L_LOCAL, gdt_end)
  
- #ifdef CONFIG_EFI_STUB
--efi_config:
--	.quad	0
-+SYM_DATA_LOCAL(efi_config, .quad 0)
- 
- #ifdef CONFIG_EFI_MIXED
--	.global efi32_config
--efi32_config:
-+SYM_DATA_START(efi32_config)
- 	.fill	5,8,0
- 	.quad	efi64_thunk
- 	.byte	0
-+SYM_DATA_END(efi32_config)
- #endif
- 
--	.global efi64_config
--efi64_config:
-+SYM_DATA_START(efi64_config)
- 	.fill	5,8,0
- 	.quad	efi_call
- 	.byte	1
-+SYM_DATA_END(efi64_config)
- #endif /* CONFIG_EFI_STUB */
- 
- /*
-@@ -639,16 +639,15 @@ efi64_config:
-  */
  	.bss
- 	.balign 4
--boot_heap:
--	.fill BOOT_HEAP_SIZE, 1, 0
--boot_stack:
-+SYM_DATA_LOCAL(boot_heap,	.fill BOOT_HEAP_SIZE, 1, 0)
-+
-+SYM_DATA_START_LOCAL(boot_stack)
- 	.fill BOOT_STACK_SIZE, 1, 0
--boot_stack_end:
-+SYM_DATA_END_LABEL(boot_stack, SYM_L_LOCAL, boot_stack_end)
- 
- /*
-  * Space for page tables (not in .bss so not zeroed)
-  */
- 	.section ".pgtable","a",@nobits
  	.balign 4096
--pgtable:
--	.fill BOOT_PGT_SIZE, 1, 0
-+SYM_DATA_LOCAL(pgtable,		.fill BOOT_PGT_SIZE, 1, 0)
-diff --git a/arch/x86/boot/compressed/mem_encrypt.S b/arch/x86/boot/compressed/mem_encrypt.S
-index eaa843a52907..fabed28d2edd 100644
---- a/arch/x86/boot/compressed/mem_encrypt.S
-+++ b/arch/x86/boot/compressed/mem_encrypt.S
-@@ -113,11 +113,9 @@ ENTRY(set_sev_encryption_mask)
- ENDPROC(set_sev_encryption_mask)
+-lstack:
++SYM_DATA_START_LOCAL(lstack)
+ 	.skip 4096
+-lstack_end:
++SYM_DATA_END_LABEL(lstack, SYM_L_LOCAL, lstack_end)
+diff --git a/arch/x86/purgatory/stack.S b/arch/x86/purgatory/stack.S
+index 50a4147f91fb..987e6510a960 100644
+--- a/arch/x86/purgatory/stack.S
++++ b/arch/x86/purgatory/stack.S
+@@ -7,13 +7,14 @@
+  * Version 2.  See the file COPYING for more details.
+  */
  
++#include <linux/linkage.h>
++
+ 	/* A stack for the loaded kernel.
+ 	 * Separate and in the data section so it can be prepopulated.
+ 	 */
  	.data
--enc_bit:
--	.int	0xffffffff
-+SYM_DATA_LOCAL(enc_bit, .int 0xffffffff)
+ 	.balign 4096
+-	.globl stack, stack_end
  
- #ifdef CONFIG_AMD_MEM_ENCRYPT
- 	.balign	8
--GLOBAL(sme_me_mask)
--	.quad	0
-+SYM_DATA(sme_me_mask, .quad 0)
- #endif
+-stack:
++SYM_DATA_START(stack)
+ 	.skip 4096
+-stack_end:
++SYM_DATA_END_LABEL(stack, SYM_L_GLOBAL, stack_end)
 -- 
 2.16.3
