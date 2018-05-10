@@ -1,61 +1,61 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2676370-1525981374-2-15540686899286289467
+X-Cyrus-Session-Id: sloti22d1t05-2679656-1525981374-2-11037354551682877151
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES roen,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='net', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525981374; b=BfFkjQbZe6h7uFvsojdSnT+BZA8tSk6Y4masn4q0CnGMUu2vAM
-    qpLniToBoqzOy7HOE+IHojbypuotzvNmsPGiJk4I/Ckr4GQBMotLcOGBsI1f9V75
-    Ij9IYVnRVSYLcRE9g5bIBqYhb8NXn4Tfnt6XTWb00QnYnv2F23GhTMlAE8N+zquJ
-    ll7G/U+UdmdpUi9ZadERfevVC1F5vd9zJMT4z7qE87Po76K1yWTrBTbypmB1Nz19
-    05J5jpgnVf1aROc+Y1969DcbKVwE0cM6oGcHJ9a9mpIaEPOjb/L01LxBMukmUDMA
-    2j8Z39gyKU2yl3gJNWwwnjNE8nh3sPGPkWMQ==
+    1525981373; b=Jw+OM0giHGNJbuB+OzlLIZOnlPaqLAqpWOrCwlNvpkci6Gkfcm
+    KitaRqN5+h4Gdj1czOblWnJGO6Zz4qC79igond45uiIlYa3Uu716TVFiL9ZQZWN+
+    ahwjaHgiCOHieA4qjTbHe7Ax4YxlYDkSPPSZ1PuAN9t++FF3/ktBH1r1WK2c7vJD
+    GpnN8pCEHiZufDnzJCZNzaZV83bQjiJVY+OP6V+RVWKYq25aLP9OSEUHdfEETriF
+    mMKMCi7eBfqUmBeuV/b1b3cRn1bmTOqeJOr1eKCrNLpd5Cw39pu9O1t6eNGex9QQ
+    LpgwG8eOf8AigsUQGydOLUDyxFK43U8yOb3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525981374; bh=bBS+j
-    I0MjHX2n9Wak5uyNxqlgO7PAQGQ93t+sqk+42U=; b=eTeXUlJr/8xuuivVqNZZG
-    3pShAu4hQPxcWa+KOu37bxLYdg34nd96k+nir/oZJu5Nq4vWxeCrOZx4pQvA43rm
-    AGlqVoR6vMfvfOcVGgni9DBG0wtsp/njG7H3KbnZOoAGaEMs+tTEy08hOatT8Ztf
-    ws81InvkNbcY0LO6CT9LYDxAF7z4eIeRFY9zb+gp4gysjKEdLSSMyCzNbYhR54fu
-    CmoSXwZ9QvkjZlSX/aB6Wh5vG0PVN6HZUbEWdnVgqENJ1XZqE03u2UjcvM2OuOnF
-    lDb4AESugeirlJdzuDYJ5lc1vWh64NLcdyNJQar1MdK/Oi4aAH/HJTyz9/4r5pwA
-    g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1525981373; bh=lfCkp
+    QWjBG9tWpvU6tiXsLIQmpmxZCX1/1LnkLdNLRM=; b=fOeiR/N4bTByzqRQetjkp
+    XN/lOmLY1GaCeatwNLaqO9xa52myukOdH8i+ZdO30KZ7zRAyNV6dfKJ1bPkyYPNU
+    rRmg6f8cKKi1UKx1jwIpsVbYDRSB+6zNi8PZFVo2BTOJwe/iZjgJrZBM9klEyecg
+    DzoV99WpsupOkVOUk4qvkEsHNYwJCa/Yk49ZGe7C0BT2FhioteMAVn/ObBkWQ4Se
+    NWOHfbIy0c7me3iZ//f5hWGp0Nqj99ZeZdKMNiJU6sp6iXdy3Ss1Wj9JCM+TBRsc
+    7cWMJGr/quWOuFCJcc5sQTLcP3s2i+D211di9cQAGJHxgc4L+3JTaOFfZtUVPnRB
+    w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=anholt.net;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=fraxinus.osuosl.org;
+    smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=anholt.net header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=anholt.net;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=fraxinus.osuosl.org;
+      smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=anholt.net header.result=pass
       header_is_org_domain=yes;
@@ -63,14 +63,13 @@ Authentication-Results: mx6.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIG0WkvzOLkThDZe4ZwYWNyv18iseXtGW5lKu2UHo9vxSXfeLxg3krI12IsqSyWWKSdMDxo4iMGuvArCBymfuAa+0l5lUbYesOEcFSlvxNob52t2Qknu
-    d1GeFNwCVueaNuyi2pLAdEhZlhY2kwyM5JUdftmoQAVeJFe4qbVwE+Tcc31Hsd+5U35HpuS+/WFWjmfmw8REtJGfXFeCHM6pEZHmaS+rM9PT19kMOyZMDqvc
-    2RJNLOjIW/ON6BSuTARJqQ==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=WFZIRff2AAAA:8 a=-VAfIpHNAAAA:8
-    a=DDOyTI_5AAAA:8 a=ahRXuR5nUfPsMiTnCiMA:9 a=zIA4z0u7Ssv4q3y8:21
-    a=zBof9SqIcVGBi4ow:21 a=CjuIK1q_8ugA:10 a=srlwD-8ojaedGGhPAyx8:22
+X-CM-Envelope: MS4wfJaRukvGkQj8fP3APOWKLUV9trY7FRLS/MtnkTT0sLZ2dM9nF62W7svSSLdBJLOuSYIL2efCm8M820nL1FD8JVAK/9inNR33d2/jZ1yy42O9MZj/H1Zu
+    Omji3ygzSJZy6tducbIedCJPK5qBu1YMX24elkjyho3KEsVymCWN9ACsdCEZ0tU47ltV0kqdNl2GpdSgdvzxUEmCY1j3ra2/J7nWTHlcG4+NV0ChMshOJCbq
+    lFc/CIeNcVnj1qPMyU/nqQ==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=-VAfIpHNAAAA:8 a=DDOyTI_5AAAA:8
+    a=xzDHn56aIbsgqSmip3gA:9 a=CjuIK1q_8ugA:10 a=srlwD-8ojaedGGhPAyx8:22
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -80,10 +79,10 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
  linux-rpi-kernel@lists.infradead.org,
  Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH 06/15] staging: bcm2835-camera: Match MMAL buffer count to
- V4L2.
-Date: Thu, 10 May 2018 12:42:10 -0700
-Message-Id: <20180510194220.30675-7-eric@anholt.net>
+Subject: [PATCH 15/15] staging: bcm2835: Fix mmal_port_parameter_get()
+ signed/unsigned warnings.
+Date: Thu, 10 May 2018 12:42:20 -0700
+Message-Id: <20180510194220.30675-17-eric@anholt.net>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180510194220.30675-1-eric@anholt.net>
 References: <20180510194220.30675-1-eric@anholt.net>
@@ -108,120 +107,44 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dave Stevenson <dave.stevenson@raspberrypi.org>
+The arg is a u32 *, so switch over to that in our declarations.
 
-For historical reasons, the number of buffers passed to the VPU over
-MMAL did not match that passed from V4L2.  That is a silly situation
-as the driver has to duplicate serialisation and other functions that
-have already been implemented in V4L2/videobuf2.
-
-As we had more V4L2 buffers than MMAL ones, the MMAL buffer headers
-were returned to the VPU immediately on being filled, which is now
-invalid.
-
-Match the number of buffers notified in queue_setup with that used in
-MMAL.  Return buffers only when we get them from V4L2.
-
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
 Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- .../bcm2835-camera/bcm2835-camera.c           |  6 ++++--
- .../vc04_services/bcm2835-camera/mmal-vchiq.c | 21 +------------------
- .../vc04_services/bcm2835-camera/mmal-vchiq.h |  4 ----
- 3 files changed, 5 insertions(+), 26 deletions(-)
+ .../staging/vc04_services/bcm2835-camera/bcm2835-camera.c   | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-index dc1c2775bc0b..8553b677eb08 100644
+index 879c0b0ed958..53f33fb3998b 100644
 --- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
 +++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-@@ -260,8 +260,10 @@ static int queue_setup(struct vb2_queue *vq,
- 		return -EINVAL;
- 	}
- 
--	if (*nbuffers < (dev->capture.port->current_buffer.num + 2))
--		*nbuffers = (dev->capture.port->current_buffer.num + 2);
-+	if (*nbuffers < dev->capture.port->minimum_buffer.num)
-+		*nbuffers = dev->capture.port->minimum_buffer.num;
-+
-+	dev->capture.port->current_buffer.num = *nbuffers;
- 
- 	*nplanes = 1;
- 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-index d6950226551f..0f1961aeb223 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-@@ -545,7 +545,6 @@ static int port_buffer_from_host(struct vchiq_mmal_instance *instance,
- 	/* peek buffer from queue */
- 	spin_lock_irqsave(&port->slock, flags);
- 	if (list_empty(&port->buffers)) {
--		port->buffer_underflow++;
- 		spin_unlock_irqrestore(&port->slock, flags);
- 		return -ENOSPC;
- 	}
-@@ -636,9 +635,6 @@ static void buffer_to_host_cb(struct vchiq_mmal_instance *instance,
- 		    msg->u.buffer_from_host.payload_in_message;
- 	}
- 
--	/* replace the buffer header */
--	port_buffer_from_host(instance, msg_context->u.bulk.port);
--
- 	/* schedule the port callback */
- 	schedule_work(&msg_context->u.bulk.work);
- }
-@@ -646,10 +642,6 @@ static void buffer_to_host_cb(struct vchiq_mmal_instance *instance,
- static void bulk_receive_cb(struct vchiq_mmal_instance *instance,
- 			    struct mmal_msg_context *msg_context)
+@@ -492,7 +492,7 @@ static int start_streaming(struct vb2_queue *vq, unsigned int count)
  {
--	/* replace the buffer header */
--	port_buffer_from_host(msg_context->u.bulk.instance,
--			      msg_context->u.bulk.port);
--
- 	msg_context->u.bulk.status = 0;
+ 	struct bm2835_mmal_dev *dev = vb2_get_drv_priv(vq);
+ 	int ret;
+-	int parameter_size;
++	u32 parameter_size;
  
- 	/* schedule the port callback */
-@@ -661,10 +653,6 @@ static void bulk_abort_cb(struct vchiq_mmal_instance *instance,
- {
- 	pr_err("%s: bulk ABORTED msg_context:%p\n", __func__, msg_context);
+ 	v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev, "%s: dev:%p\n",
+ 		 __func__, dev);
+@@ -1489,7 +1489,7 @@ static int get_num_cameras(struct vchiq_mmal_instance *instance,
+ 	int ret;
+ 	struct vchiq_mmal_component  *cam_info_component;
+ 	struct mmal_parameter_camera_info_t cam_info = {0};
+-	int param_size = sizeof(cam_info);
++	u32 param_size = sizeof(cam_info);
+ 	int i;
  
--	/* replace the buffer header */
--	port_buffer_from_host(msg_context->u.bulk.instance,
--			      msg_context->u.bulk.port);
--
- 	msg_context->u.bulk.status = -EINTR;
+ 	/* create a camera_info component */
+@@ -1553,7 +1553,7 @@ static int __init mmal_init(struct bm2835_mmal_dev *dev)
+ 	int ret;
+ 	struct mmal_es_format_local *format;
+ 	u32 supported_encodings[MAX_SUPPORTED_ENCODINGS];
+-	int param_size;
++	u32 param_size;
+ 	struct vchiq_mmal_component  *camera;
  
- 	schedule_work(&msg_context->u.bulk.work);
-@@ -1713,14 +1701,7 @@ int vchiq_mmal_submit_buffer(struct vchiq_mmal_instance *instance,
- 	list_add_tail(&buffer->list, &port->buffers);
- 	spin_unlock_irqrestore(&port->slock, flags);
- 
--	/* the port previously underflowed because it was missing a
--	 * mmal_buffer which has just been added, submit that buffer
--	 * to the mmal service.
--	 */
--	if (port->buffer_underflow) {
--		port_buffer_from_host(instance, port);
--		port->buffer_underflow--;
--	}
-+	port_buffer_from_host(instance, port);
- 
- 	return 0;
- }
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.h b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.h
-index dadf47fe1bdc..0ab9f660b822 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.h
-+++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.h
-@@ -79,10 +79,6 @@ struct vchiq_mmal_port {
- 	struct list_head buffers;
- 	/* lock to serialise adding and removing buffers from list */
- 	spinlock_t slock;
--	/* count of how many buffer header refils have failed because
--	 * there was no buffer to satisfy them
--	 */
--	int buffer_underflow;
- 	/* callback on buffer completion */
- 	vchiq_mmal_buffer_cb buffer_cb;
- 	/* callback context */
+ 	ret = vchiq_mmal_init(&dev->instance);
 -- 
 2.17.0
 
