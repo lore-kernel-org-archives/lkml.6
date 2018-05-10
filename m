@@ -1,63 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757354AbeEJMtT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 08:49:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53954 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1757217AbeEJMtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 08:49:18 -0400
-Date: Thu, 10 May 2018 07:49:16 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Jiri Slaby <jslaby@suse.cz>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org
-Subject: Re: [PATCH 1/2] x86/stacktrace: do not fail when regs on stack for
- ORC
-Message-ID: <20180510124916.ckgjtgmmcy33ahtd@treble>
-References: <20171130080325.24785-1-jslaby@suse.cz>
- <20171130195710.cu2lsa47kwnow2hi@treble>
- <73526a6b-5083-78f1-8f76-d5f3ac52f958@suse.cz>
- <20171218033749.ihpwkjh7qfnilj4s@treble>
- <20171220174544.g34v2lkjrz2r6kh7@treble>
- <bf832ed0-47f4-2e8c-f320-1f54bce76e5c@suse.cz>
- <20180416221653.bf3or5yarlame3co@treble>
- <20180419134222.truupyqhwcpnhuis@treble>
- <a27a7de0-cc28-cfc8-7d0b-7d284f5d5788@suse.cz>
+        id S935471AbeEJMux (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 08:50:53 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55496 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757217AbeEJMuw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 08:50:52 -0400
+Subject: Re: [PATCH v1 3/5] arm64: dts: rockchip: Add gpio-syscon10 to rk3328
+To: djw@t-chip.com.cn, linux-rockchip@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
+        Sugar Zhang <sugar.zhang@rock-chips.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        David Wu <david.wu@rock-chips.com>,
+        William Wu <william.wu@rock-chips.com>,
+        Rocky Hao <rocky.hao@rock-chips.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <1525943800-14095-1-git-send-email-djw@t-chip.com.cn>
+ <1525943800-14095-4-git-send-email-djw@t-chip.com.cn>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <76f2bbde-e158-a186-f136-9fb610a810c5@arm.com>
+Date: Thu, 10 May 2018 13:50:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a27a7de0-cc28-cfc8-7d0b-7d284f5d5788@suse.cz>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <1525943800-14095-4-git-send-email-djw@t-chip.com.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 02:33:03PM +0200, Jiri Slaby wrote:
-> On 04/19/2018, 03:42 PM, Josh Poimboeuf wrote:
-> > On Mon, Apr 16, 2018 at 05:16:53PM -0500, Josh Poimboeuf wrote:
-> >> On Wed, Dec 20, 2017 at 08:07:17PM +0100, Jiri Slaby wrote:
-> >>> On 12/20/2017, 06:45 PM, Josh Poimboeuf wrote:
-> >>>> It might not be until 2018 though.  But in the meantime you can go ahead
-> >>>> and update your patches accordingly and then we can combine them for
-> >>>> testing next year.
-> >>>
-> >>> I already did ;). So when you have that ready, I will send it on top
-> >>> right after.
-> >>
-> >> Sorry for the delay...  Here's a (lightly tested) patch.  Can you test
-> >> it with the latest version of your patches?
-> > 
-> > This one actually compiles:
-> > 
-> > From: Josh Poimboeuf <jpoimboe@redhat.com>
-> > Subject: [PATCH] x86/unwind/orc: Detect the end of the stack
+On 10/05/18 10:16, djw@t-chip.com.cn wrote:
+> From: Levin Du <djw@t-chip.com.cn>
 > 
-> With this patch applied, livepatching never completes. Kthreads are in
-> the unpatched state forever. I have no details yet.
+> Adding a new gpio controller named "gpio-syscon10" to rk3328, providing
+> access to the pins defined in the syscon GRF_SOC_CON10.
 
-Hm, I thought I had tested that, but now I'm not sure.  Let me try it
-again.
+This is the GPIO_MUTE pin, right? The public TRM is rather vague, but 
+cross-referencing against the datasheet and schematics implies that it's 
+the "gpiomut_*" part of the GRF bit names which is most significant.
 
--- 
-Josh
+It might be worth using a more descriptive name here, since "syscon10" 
+is pretty much meaningless at the board level.
+
+Robin.
+
+> Boards using these special pins to control regulators or LEDs, can now
+> utilize existing drivers like gpio-regulator and leds-gpio.
+> 
+> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+> 
+> ---
+> 
+> Changes in v1:
+> - Split from V0 and add to rk3328.dtsi for general use.
+> 
+>   arch/arm64/boot/dts/rockchip/rk3328.dtsi | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+> index b8e9da1..73a822d 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+> @@ -309,6 +309,12 @@
+>   			mode-loader = <BOOT_BL_DOWNLOAD>;
+>   		};
+>   
+> +		gpio_syscon10: gpio-syscon10 {
+> +			compatible = "rockchip,gpio-syscon";
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			gpio,syscon-dev = <0 0x0428 0>;
+> +		};
+>   	};
+>   
+>   	uart0: serial@ff110000 {
+> 
