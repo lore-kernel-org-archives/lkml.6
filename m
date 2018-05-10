@@ -1,29 +1,29 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AB8JxZqfFNMBqqNtKtdxdZooUVbyUjrWJi9L/drf6rHhoJa0tzPgN5ixwn0QfhxKh8Zwv/Zn+K9B
+X-Google-Smtp-Source: AB8JxZp3i7Jg7OZs/v0obPx4rtypiZ06YKxBQVybx5N6T3nnyePki2p4/zcF899DFMfK3UCpnHO4
 ARC-Seal: i=1; a=rsa-sha256; t=1525982953; cv=none;
         d=google.com; s=arc-20160816;
-        b=wFECCM1cDPANwQCGUTpSZ2CuDZsdn3lnfhfmxfT22ByUGKJL0HPMr8yUsns23dOn51
-         AXlY6FuDO5kEag0FzNsxL1G4K421qduIe8roMOjI7yOCV2uCTb8D0s3C0TeaBDLI3h+f
-         cXS/UwaqEz3H7nnI49YmluXHwghXKbZSak8+Ey+1LUOAoBBrWFeqvtQ41cAiSe5ek/Pz
-         fsoQzvEnRrbxxZ+xJlQ7OaWf+qPBZ7HyxLlSsBQmpo6xIrN3RSPtYPS9D4Nx2puxba10
-         DMBd9PHlxrmtUV1rVUUFqTupBOxN/ahWX2mjFBag4+2g3X4U9wL98Wyc4Lj95j6D0tpl
-         P5cA==
+        b=HWuo9QTQDiR1uitVLrutJughxzarGwRdDX5J/5zrIiALMW4tMZwgwqZWc4rjwB/puR
+         u1CLEOn8uVD67OwlspKTZ0HE+1Zy0qZmTLKJqcumr3etKV9X/iAyHyhq1nxzma73xO9j
+         LzaQQtTrsLI5TFKk6rJ0YpZ2QWvfwrIp2Eub5J+a7VqbJE3HmU7qmR+eSLCHnDiFltPO
+         CymeSQlTeKhUNsNESS4yyUSpx3vIkNBtwxIa26RN8WDwBeyqM1YuNWrwxAzd2PEE+oUT
+         d6y9U9yaVvqzH+JIVj4vmgUbmfxxMy4Yy90Yo4lP20od2MIi9r9RXG9yDrw/ufKkhPDP
+         PBIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=HUYssJpWJpxyMUFDzxc8btvA3tGjnLJ4MdBswden4YE=;
-        b=Z9J89M1/FI63mGbZ+uBGvioDcvGNhaegZh/apBPOzs1P0dHTElwy+1KsYdCjOx01Ah
-         T4k4UmSCqCZjBlaLdpT0OUU6UiKmpx/SCAa7ar7lSxBQIpqyhJw7ssn1IyKSF0R2mGgV
-         bFALlVQ7vc1l9h6cZ/IHWWkdntMIlngdeCJxFs7XrvNZTebsIRIFybaBzYIXRa4/M36F
-         55barpc1zjPR0EBKXzfEiHf+wcU5d1M3cTJMiWlhIjCF7Ybb1Ci3ehT1mzAzrXNFw///
-         tm+yyqqWU7a/KPxTOPrmZ1nOMS8UZlviuc3X+QQ+q/M1H5kisFE9VY8XKjWKLPgXKEMa
-         hikg==
+        bh=RHlzmKAJdsM8McFzm03lD/uXlX/LK45CsUVcrk7a45I=;
+        b=yorBvCAxsqNLqZB394/hrwB8056ubUAsJoTaOHUZbzXt8qqUhR6r4WZIG6asms8RnJ
+         PX5DrD/FKtQGKBAp4PxMC9REpbPzOmF3XkFmBUnNDAusXWPGj8XwI6EwecaZhp+62lim
+         N+xWAYxWq/dSHnbh8P9Knii6uj63TWj3UXeay+0C5kxG+EJpW7j/KF8pQ5ev4LgTljZh
+         EmgmcPzRsifll7cL9qU61FNcxFKFtycbmxxe4TB2wWoxDyE9RpkKL9pfUjZ6KQol7i0z
+         zDLGWbbDZOyv3VsCDWa5T73hRUh8qg1mmqpXCBzQ5c/BfYqGKadMsfo1fCVexLZ/sddZ
+         Bz9Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=HidKEe+n;
+       dkim=pass header.i=@kernel.org header.s=default header.b=pWcDl+Jf;
        spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=HidKEe+n;
+       dkim=pass header.i=@kernel.org header.s=default header.b=pWcDl+Jf;
        spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -68,64 +68,42 @@ Cc: akpm@linux-foundation.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-wireless@vger.kernel.org,
 	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v7 12/14] Documentation: fix few typos and clarifications for the firmware loader
-Date: Thu, 10 May 2018 13:08:48 -0700
-Message-Id: <20180510200850.5958-13-mcgrof@kernel.org>
+Subject: [PATCH v7 13/14] Documentation: remove stale firmware API reference
+Date: Thu, 10 May 2018 13:08:49 -0700
+Message-Id: <20180510200850.5958-14-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180510200850.5958-1-mcgrof@kernel.org>
 References: <20180510200850.5958-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600109099932794138?=
-X-GMAIL-MSGID: =?utf-8?q?1600109099932794138?=
+X-GMAIL-THRID: =?utf-8?q?1600109101901764611?=
+X-GMAIL-MSGID: =?utf-8?q?1600109101901764611?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fix a few typos, and clarify a few sentences.
+It refers to a pending patch, but this was merged eons ago.
 
+Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Reviewed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- Documentation/driver-api/firmware/fallback-mechanisms.rst | 5 +++--
- Documentation/driver-api/firmware/firmware_cache.rst      | 4 ++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ Documentation/dell_rbu.txt | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/Documentation/driver-api/firmware/fallback-mechanisms.rst b/Documentation/driver-api/firmware/fallback-mechanisms.rst
-index f353783ae0be..a39323ef7d29 100644
---- a/Documentation/driver-api/firmware/fallback-mechanisms.rst
-+++ b/Documentation/driver-api/firmware/fallback-mechanisms.rst
-@@ -83,7 +83,7 @@ and a file upload firmware into:
-   * /sys/$DEVPATH/data
+diff --git a/Documentation/dell_rbu.txt b/Documentation/dell_rbu.txt
+index 0fdb6aa2704c..5d1ce7bcd04d 100644
+--- a/Documentation/dell_rbu.txt
++++ b/Documentation/dell_rbu.txt
+@@ -121,10 +121,7 @@ read back the image downloaded.
  
- To upload firmware you will echo 1 onto the loading file to indicate
--you are loading firmware. You then cat the firmware into the data file,
-+you are loading firmware. You then write the firmware into the data file,
- and you notify the kernel the firmware is ready by echo'ing 0 onto
- the loading file.
+ .. note::
  
-@@ -136,7 +136,8 @@ by kobject uevents. This is specially exacerbated due to the fact that most
- distributions today disable CONFIG_FW_LOADER_USER_HELPER_FALLBACK.
- 
- Refer to do_firmware_uevent() for details of the kobject event variables
--setup. Variables passwdd with a kobject add event:
-+setup. The variables currently passed to userspace with a "kobject add"
-+event are:
- 
- * FIRMWARE=firmware name
- * TIMEOUT=timeout value
-diff --git a/Documentation/driver-api/firmware/firmware_cache.rst b/Documentation/driver-api/firmware/firmware_cache.rst
-index 2210e5bfb332..c2e69d9c6bf1 100644
---- a/Documentation/driver-api/firmware/firmware_cache.rst
-+++ b/Documentation/driver-api/firmware/firmware_cache.rst
-@@ -29,8 +29,8 @@ Some implementation details about the firmware cache setup:
- * If an asynchronous call is used the firmware cache is only set up for a
-   device if if the second argument (uevent) to request_firmware_nowait() is
-   true. When uevent is true it requests that a kobject uevent be sent to
--  userspace for the firmware request. For details refer to the Fackback
--  mechanism documented below.
-+  userspace for the firmware request through the sysfs fallback mechanism
-+  if the firmware file is not found.
- 
- * If the firmware cache is determined to be needed as per the above two
-   criteria the firmware cache is setup by adding a devres entry for the
+-   This driver requires a patch for firmware_class.c which has the modified
+-   request_firmware_nowait function.
+-
+-   Also after updating the BIOS image a user mode application needs to execute
++   After updating the BIOS image a user mode application needs to execute
+    code which sends the BIOS update request to the BIOS. So on the next reboot
+    the BIOS knows about the new image downloaded and it updates itself.
+    Also don't unload the rbu driver if the image has to be updated.
 -- 
 2.17.0
