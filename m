@@ -1,113 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965093AbeEJNEV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 09:04:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56768 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965021AbeEJNET (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 09:04:19 -0400
-Date: Thu, 10 May 2018 10:04:13 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH 13/18] wait: wait.h: Get rid of a kernel-doc/Sphinx
- warnings
-Message-ID: <20180510100413.754d1399@vento.lan>
-In-Reply-To: <20180510122036.GD12217@hirez.programming.kicks-ass.net>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-        <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
-        <20180510083838.GA21846@infradead.org>
-        <20180510063805.1859b1aa@vento.lan>
-        <20180510122036.GD12217@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1757119AbeEJNGr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 09:06:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55676 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756808AbeEJNGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 09:06:46 -0400
+From: Mark Rutland <mark.rutland@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH] perf/ring_buffer: ensure atomicity and order of updates
+Date: Thu, 10 May 2018 14:06:32 +0100
+Message-Id: <20180510130632.34497-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 10 May 2018 14:20:36 +0200
-Peter Zijlstra <peterz@infradead.org> escreveu:
+Userspace can read/write the user page at any point in time, and in
+perf_output_put_handle() we're very careful to use memory barriers to
+ensure ordering between updates to data and the user page.
 
-> On Thu, May 10, 2018 at 06:38:05AM -0300, Mauro Carvalho Chehab wrote:
-> > Em Thu, 10 May 2018 01:38:38 -0700
-> > Christoph Hellwig <hch@infradead.org> escreveu:
-> >   
-> > > >   * Use either while holding wait_queue_head::lock or when used for wakeups
-> > > > - * with an extra smp_mb() like:
-> > > > + * with an extra smp_mb() like::    
-> > > 
-> > > Independent of any philosophical discussion not allowing a setence to
-> > > end with a single ':' is completely idiotic.  Please fix the tooling
-> > > instead to allow it, as it is very important for being able to just
-> > > write understandable comments.  
-> 
-> That is exactly my point; the whole rst stuff detracts from normal text.
-> It makes both reading and writing harder than it needs to be.
-> 
-> > Patches are welcome, although I don't see any easy way to solve it.
-> > 
-> > In English, the common case is that a line with ends with a colon is
-> > followed by a list. E. g.  
-> 
-> (google) Dictionary says:
-> 
-> "a punctuation mark (:) used to precede a list of items, a quotation, or
-> an expansion or explanation."
-> 
-> An enumeration (list) is just one of many possible uses of the colon.
+We don't use barriers when updating aux_head, where similar ordering
+constraints apply. This could result in userspace seeing stale data, or
+data being overwritten while userspace was still consuming it.
 
-True, but the point is that whatever tool is used, it should be able
-to uniquely unambiguously identify what it follows.
+Further, we update data_head and aux_head with plain assignments, which
+the compiler can tear, potentially resulting in userspace seeing
+erroneous values.
 
-For example, it if is a list of items, it should keep parsing the
-semantics markups inside it e. g. marking %FOO as a constant,
-and bar() as a function, etc, following kernel-doc syntax. 
+We can solve both of these problems by using smp_store_release to update
+data_head and aux_head, so let's do so.
 
-But, if it is a quote, a code example or an ascii artwork, it
-should disable all such parsers, enclosing the result into a
-literal block.
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ kernel/events/ring_buffer.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-> > However, in this specific case, it is followed by an ascii artwork. 
-> > The double colon is a notation that tells Sphinx to not parse the
-> > lines at the next block, placing the contents of it inside a literal
-> > block. It is used also when the next lines contain a code example,
-> > in order to avoid parsing things like @, () and * inside the code 
-> > block.
-> > 
-> > The kernel-doc tool might eventually have some parsing logic that
-> > would replace something to a '::' before sending it to Sphinx.  
-> 
-> I think typically there will be an 'empty' line between the colon ending
-> and the 'example/explanation'. This seems true for a number of comments
-> I found in drm using the '::' nonsense.
-
-Unfortunately, that's not true treewide. The presense/absense of a
-blank line after a line ending with a colon doesn't indicate if the contents
-below should be handled as a literal block or not[1].
-
-[1] you can verify some use cases with:
-	$ git grep -A2 "\*.*\s.*:$" -- $(git grep kernel-doc:: Documentation/|cut -d : -f 4-)
-
-> Simple regexes don't do multi-line patterns, but maybe the kerneldoc
-> thing can parse it differently.
-
-kernel-doc is a regex-based parser (and not an AI engine). It will do only
-what it is programmed for, based on a clear regex-based semantics.
-
-Independently on how easy/hard it would be to use a multi-line pattern
-for this, what it is required is a clear non-hint based pattern that
-will provide a match for a part of the tag that should be escaped
-from normal parsing rules. The m/::$/ is a clear rule.
-
-Do you have a proposal for some other rule? If so, I can see how
-feasible is to add it there.
-
-Thanks,
-Mauro
+diff --git a/kernel/events/ring_buffer.c b/kernel/events/ring_buffer.c
+index 6c6b3c48db71..839b207e4c77 100644
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -63,10 +63,10 @@ static void perf_output_put_handle(struct perf_output_handle *handle)
+ 	 *   kernel				user
+ 	 *
+ 	 *   if (LOAD ->data_tail) {		LOAD ->data_head
+-	 *			(A)		smp_rmb()	(C)
++	 *				(A) 	smp_rmb()	(C)
+ 	 *	STORE $data			LOAD $data
+-	 *	smp_wmb()	(B)		smp_mb()	(D)
+-	 *	STORE ->data_head		STORE ->data_tail
++	 *					smp_mb()	(D)
++	 *	RELEASE ->data_head	(B)	STORE ->data_tail
+ 	 *   }
+ 	 *
+ 	 * Where A pairs with D, and B pairs with C.
+@@ -83,8 +83,7 @@ static void perf_output_put_handle(struct perf_output_handle *handle)
+ 	 *
+ 	 * See perf_output_begin().
+ 	 */
+-	smp_wmb(); /* B, matches C */
+-	rb->user_page->data_head = head;
++	smp_store_release(&rb->user_page->data_head, head); /* B, matches C */
+ 
+ 	/*
+ 	 * Now check if we missed an update -- rely on previous implied
+@@ -464,7 +463,7 @@ void perf_aux_output_end(struct perf_output_handle *handle, unsigned long size)
+ 		                     handle->aux_flags);
+ 	}
+ 
+-	rb->user_page->aux_head = rb->aux_head;
++	smp_store_release(&rb->user_page->aux_head, rb->aux_head);
+ 	if (rb_need_aux_wakeup(rb))
+ 		wakeup = true;
+ 
+@@ -496,7 +495,7 @@ int perf_aux_output_skip(struct perf_output_handle *handle, unsigned long size)
+ 
+ 	rb->aux_head += size;
+ 
+-	rb->user_page->aux_head = rb->aux_head;
++	smp_store_release(&rb->user_page->aux_head, rb->aux_head);
+ 	if (rb_need_aux_wakeup(rb)) {
+ 		perf_output_wakeup(handle);
+ 		handle->wakeup = rb->aux_wakeup + rb->aux_watermark;
+-- 
+2.11.0
