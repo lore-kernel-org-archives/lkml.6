@@ -1,60 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966226AbeEJPOS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 11:14:18 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35228 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966110AbeEJPOP (ORCPT
+        id S966061AbeEJPPT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 11:15:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42248 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964827AbeEJPPR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 11:14:15 -0400
-X-Google-Smtp-Source: AB8JxZquDzRmYECVF7kWjS1FWCanlaLdPFp8MZiV+ptBv3S1UcS7VCIfJC2DBPXvA4hjxA4ABMqu28HPMdQWqoS5IA8=
+        Thu, 10 May 2018 11:15:17 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04176601EA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Thu, 10 May 2018 09:15:15 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Matthias Kaehlcke <mka@chromium.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org, rplsssn@codeaurora.org
+Subject: Re: [PATCH v8 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
+ requests to TCS
+Message-ID: <20180510151515.GH4698@codeaurora.org>
+References: <20180509170159.29682-1-ilina@codeaurora.org>
+ <20180509170159.29682-6-ilina@codeaurora.org>
+ <20180509232503.GJ19594@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180419155606.45a85009.cohuck@redhat.com>
-References: <20180418191958.GA25806@jordon-HP-15-Notebook-PC> <20180419155606.45a85009.cohuck@redhat.com>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Thu, 10 May 2018 20:44:12 +0530
-Message-ID: <CAFqt6zYUpKOibZn-e42LnzkXc6a4bu35PZcOAsDwDZV5RzaUXg@mail.gmail.com>
-Subject: Re: [PATCH] kvm: Change return type to vm_fault_t
-To: Cornelia Huck <cohuck@redhat.com>
-Cc: jhogan@kernel.org, ralf@linux-mips.org, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, borntraeger@de.ibm.com,
-        frankja@linux.vnet.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
-        pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        christoffer.dall@linaro.org, marc.zyngier@arm.com,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180509232503.GJ19594@google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 19, 2018 at 7:26 PM, Cornelia Huck <cohuck@redhat.com> wrote:
-> On Thu, 19 Apr 2018 00:49:58 +0530
-> Souptick Joarder <jrdr.linux@gmail.com> wrote:
+On Wed, May 09 2018 at 17:25 -0600, Matthias Kaehlcke wrote:
+>Hi Lina,
 >
->> Use new return type vm_fault_t for fault handler. For
->> now, this is just documenting that the function returns
->> a VM_FAULT value rather than an errno. Once all instances
->> are converted, vm_fault_t will become a distinct type.
+>On Wed, May 09, 2018 at 11:01:54AM -0600, Lina Iyer wrote:
+>> Sleep and wake requests are sent when the application processor
+>> subsystem of the SoC is entering deep sleep states like in suspend.
+>> These requests help lower the system power requirements when the
+>> resources are not in use.
 >>
->> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>> Sleep and wake requests are written to the TCS slots but are not
+>> triggered at the time of writing. The TCS are triggered by the firmware
+>> after the last of the CPUs has executed its WFI. Since these requests
+>> may come in different batches of requests, it is the job of this
+>> controller driver to find and arrange the requests into the available
+>> TCSes.
 >>
->> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> Reviewed-by: Evan Green <evgreen@chromium.org>
+>>
 >> ---
->>  arch/mips/kvm/mips.c       | 2 +-
->>  arch/powerpc/kvm/powerpc.c | 2 +-
->>  arch/s390/kvm/kvm-s390.c   | 2 +-
->>  arch/x86/kvm/x86.c         | 2 +-
->>  include/linux/kvm_host.h   | 2 +-
->>  virt/kvm/arm/arm.c         | 2 +-
->>  virt/kvm/kvm_main.c        | 2 +-
->>  7 files changed, 7 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+>> index c0edf3850147..b5894b001ae1 100644
+>> --- a/drivers/soc/qcom/rpmh-rsc.c
+>> +++ b/drivers/soc/qcom/rpmh-rsc.c
+>>
+>> <snip>
+>>
+>> +static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
+>> +		      int len)
+>> +{
+>> +	int i, j;
+>> +
+>> +	/* Check for already cached commands */
+>> +	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
+>> +		if (tcs->cmd_cache[i] != cmd[0].addr)
+>> +			continue;
+>> +		if (i + len >= MAX_TCS_SLOTS)
+>> +			goto seq_err;
 >
-> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+>The command cache can have less than MAX_TCS_SLOTS slot:
+>
 
-If no further comment, We would like to get this
-patch in queue for 4.18.
+That's true. I forgot that I had optimized the cache slots. Thanks for
+pointing out.
+
+>static int rpmh_probe_tcs_config(struct platform_device *pdev,
+>				 struct rsc_drv *drv)
+>{
+>	...
+>	tcs->cmd_cache = devm_kcalloc(&pdev->dev,
+>				      tcs->num_tcs * ncpt, sizeof(u32),
+>				      GFP_KERNEL);
+>	...
+>}
+>
+>So the condition needs to be:
+>
+>if (i + len >= tcs->num_tcs * tcs->ncpt)
+>
+>> +static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
+>> +		      int *tcs_id, int *cmd_id)
+>> +{
+>> +	int slot, offset;
+>> +	int i = 0;
+>> +
+>> +	/* Find if we already have the msg in our TCS */
+>> +	slot = find_match(tcs, msg->cmds, msg->num_cmds);
+>> +	if (slot >= 0)
+>> +		goto copy_data;
+>> +
+>> +	/* Do over, until we can fit the full payload in a TCS */
+>> +	do {
+>> +		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
+>> +						  i, msg->num_cmds, 0);
+>> +		if (slot == MAX_TCS_SLOTS)
+>> +			return -ENOMEM;
+>
+>Like above, use 'tcs->num_tcs * tcs->ncpt' as maximum instead of
+>MAX_TCS_SLOTS.
+>
+>> +static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
+>> +{
+>> +	struct tcs_group *tcs;
+>> +	int tcs_id = 0, cmd_id = 0;
+>> +	unsigned long flags;
+>> +	int ret;
+>> +
+>> +	tcs = get_tcs_for_msg(drv, msg);
+>> +	if (IS_ERR(tcs))
+>> +		return PTR_ERR(tcs);
+>> +
+>> +	spin_lock_irqsave(&tcs->lock, flags);
+>> +	/* find the m-th TCS and the n-th position in the TCS to write to */
+>
+>The comment still refers to the old names 'm' and 'n'.
+>
+Really? :)
+Will fix.
+
+Thanks for your review,
+Lina
