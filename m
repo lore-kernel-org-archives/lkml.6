@@ -1,112 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966197AbeEJPRT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 11:17:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43194 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964827AbeEJPRR (ORCPT
+        id S966180AbeEJPTu (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 11:19:50 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:20924 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964827AbeEJPTs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 11:17:17 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 779AB6019F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Thu, 10 May 2018 09:17:14 -0600
-From: Lina Iyer <ilina@codeaurora.org>
-To: Matthias Kaehlcke <mka@chromium.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, rplsssn@codeaurora.org
-Subject: Re: [PATCH v8 09/10] drivers: qcom: rpmh: add support for batch RPMH
- request
-Message-ID: <20180510151714.GI4698@codeaurora.org>
-References: <20180509170159.29682-1-ilina@codeaurora.org>
- <20180509170159.29682-10-ilina@codeaurora.org>
- <20180509220304.GI19594@google.com>
+        Thu, 10 May 2018 11:19:48 -0400
+Subject: Re: [PATCH V3] ARM: dts: da850-evm: use phandles to extend nodes
+To: Adam Ford <aford173@gmail.com>
+CC: Adam Ford <adam.ford@logicpd.com>, Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180507123721.9264-1-aford173@gmail.com>
+ <ae8292b2-b167-7a96-70be-1cfea6059874@ti.com>
+ <CAHCN7xKXJnh5MSudY3FU_9Xw98PwDi3yaWTUdfjFDaE24NBrzw@mail.gmail.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <7692ca00-3c9d-6e3e-12b6-f65d82f6fa95@ti.com>
+Date: Thu, 10 May 2018 20:49:17 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180509220304.GI19594@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAHCN7xKXJnh5MSudY3FU_9Xw98PwDi3yaWTUdfjFDaE24NBrzw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09 2018 at 16:03 -0600, Matthias Kaehlcke wrote:
->On Wed, May 09, 2018 at 11:01:58AM -0600, Lina Iyer wrote:
->> Platform drivers need make a lot of resource state requests at the same
->> time, say, at the start or end of an usecase. It can be quite
->> inefficient to send each request separately. Instead they can give the
->> RPMH library a batch of requests to be sent and wait on the whole
->> transaction to be complete.
+On Thursday 10 May 2018 08:38 PM, Adam Ford wrote:
+> On Thu, May 10, 2018 at 4:10 AM, Sekhar Nori <nsekhar@ti.com> wrote:
+>> On Monday 07 May 2018 06:07 PM, Adam Ford wrote:
+>>> Many node labels in the device tree (like serial0, serial1, etc) are being
+>>> redefined, so let's modernize the device tree by using phandles to
+>>> extend the existing nodes.  This helps reduce the whitespace.
+>>>
+>>> Signed-off-by: Adam Ford <aford173@gmail.com>
 >>
->> rpmh_write_batch() is a blocking call that can be used to send multiple
->> RPMH command sets. Each RPMH command set is set asynchronously and the
->> API blocks until all the command sets are complete and receive their
->> tx_done callbacks.
->>
->> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->> ---
->>
->> Changes in v7:
->> 	- Check for loop out of bounds
->>
->> Changes in v6:
->> 	- replace rpmh_client with device *
->> Changes in v4:
->> 	- reorganize rpmh_write_batch()
->> 	- introduce wait_count here, instead of patch#4
->> ---
->>  drivers/soc/qcom/rpmh.c | 154 +++++++++++++++++++++++++++++++++++++++-
->>  include/soc/qcom/rpmh.h |   8 +++
->>  2 files changed, 160 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
->> index 1bb62876795c..a0e277b4b846 100644
->> --- a/drivers/soc/qcom/rpmh.c
->> +++ b/drivers/soc/qcom/rpmh.c
->>
->> ...
->>
->> +static int flush_batch(struct rpmh_ctrlr *ctrlr)
->> +{
->> +	const struct rpmh_request *rpm_msg;
->> +	unsigned long flags;
->> +	int ret = 0;
->> +	int i;
->> +
->> +	/* Send Sleep/Wake requests to the controller, expect no response */
->> +	spin_lock_irqsave(&ctrlr->lock, flags);
->> +	for (i = 0; ctrlr->batch_cache[i]; i++) {
->
->I missed this earlier: the loop goes beyond ctrlr->batch_cache when
->the batch cache is full.
->
->> +		rpm_msg = ctrlr->batch_cache[i];
->> +		ret = rpmh_rsc_write_ctrl_data(ctrlr->drv, &rpm_msg->msg);
->> +		if (ret)
->> +			break;
->> +	}
->> +	spin_unlock_irqrestore(&ctrlr->lock, flags);
->> +
->> +	return ret;
->> +}
->> +
->> +static void invalidate_batch(struct rpmh_ctrlr *ctrlr)
->> +{
->> +	unsigned long flags;
->> +	int index = 0;
->> +
->> +	spin_lock_irqsave(&ctrlr->lock, flags);
->> +	while (ctrlr->batch_cache[index]) {
->
->This still goes beyond ctrlr->batch_cache when the batch cache is
->full.
-I will check through the code for all out-of-bounds. Seems like I have
-not worried about it too much. Well the space here assigned is beyond
-what we see on a production device. Neverthless, it needs to be checked.
+>> I applied this without the pmic changes. I am not convinced about those.
+>> The tps node is already being referred to as phandle. I am not sure
+>> referring to each individual regulator using phandle is needed. Other
+>> files like am335x-evm.dts don't do it as well.
+> 
+> I tested the regulator values and names after booting to see if the
+> names and values matched the expected values. They did, so I am
+> fairly confident it would have worked.
 
-Thanks for your review Matthias.
+Not doubting that. But I am not sure if thats the "norm". Do you see any
+other device-tree file doing this?
 
--- Lina
+> 
+>>
+>> Another thing is whether we really need the tp6507x.dtsi file. It does
+>> not seem to contain much and also da850-evm.dts is the only file
+>> including it. So it seems pretty pointless to me.
+> 
+> Do you want me to do a patch that removes the  tp6507x.dtsi file and
+> just sets up the
+> PMIC from scratch within the da850-evm file?
+
+I am fine with the plan, but not something urgent, IMO.
+
+> 
+>>
+>> Here is what I committed.
+> 
+> Thank you.  I think looks cleaner this way, and more consistent with
+> many of the other platforms and boards.
+
+Yes.
+
+Thanks,
+Sekhar
