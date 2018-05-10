@@ -1,94 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757359AbeEJM14 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 08:27:56 -0400
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:44549 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757277AbeEJM1y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 08:27:54 -0400
-X-Google-Smtp-Source: AB8JxZpF+e5vipVYztzZPN4boDUd1MLkLO3G49sV5FOkM9+gQwNdzHaVHsAPdXIaF8wiRZ1vGai0ow==
-Subject: Re: [PATCH/RFC] mtd: spi-nor: honour max_message_size for spi-nor
- writes.
-To: NeilBrown <neil@brown.name>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <87efj1kw9u.fsf@notabene.neil.brown.name>
- <20180509160240.23ef11f2@bbrezillon>
- <87vabwa2gm.fsf@notabene.neil.brown.name>
- <cb612906-3d52-66cd-fbbc-7872bd2d9a92@gmail.com>
- <87mux7afkv.fsf@notabene.neil.brown.name>
-From: Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <1bb32a4e-55cf-f5f2-60f5-2213f31d54ac@gmail.com>
-Date: Thu, 10 May 2018 14:27:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1757321AbeEJMan (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 08:30:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40680 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756741AbeEJMam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 08:30:42 -0400
+Date: Thu, 10 May 2018 14:30:39 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, linux-mm@kvack.org, mgorman@techsingularity.net,
+        mingo@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        fengguang.wu@intel.com, dennisszhou@gmail.com
+Subject: Re: [PATCH v2] mm: allow deferred page init for vmemmap only
+Message-ID: <20180510123039.GF5325@dhcp22.suse.cz>
+References: <20180510115356.31164-1-pasha.tatashin@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <87mux7afkv.fsf@notabene.neil.brown.name>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510115356.31164-1-pasha.tatashin@oracle.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/10/2018 01:57 PM, NeilBrown wrote:
-> On Thu, May 10 2018, Marek Vasut wrote:
+On Thu 10-05-18 07:53:56, Pavel Tatashin wrote:
+[...]
+> Here is a sample path, where translation is required, that occurs before
+> mm_init():
 > 
->> On 05/10/2018 12:28 AM, NeilBrown wrote:
->>> On Wed, May 09 2018, Boris Brezillon wrote:
->>>
->>>> On Fri, 27 Apr 2018 16:18:05 +1000
->>>> NeilBrown <neil@brown.name> wrote:
->>>>
->>>>> Hi,
->>>>>  I've labeled this an RFC because I'm really not sure about removing the
->>>>>  error path from spi_nor_write() -- maybe that really matters.  But on
->>>>>  my hardware, performing multiple small spi writes to the flash seems
->>>>>  to work.
->>>>>
->>>>>  The spi driver is drivers/staging/mt7621-spi.  Possibly this needs to
->>>>>  use DMA instead of a FIFO (assuming the hardware can) - or maybe
->>>>>  drivers/spi/spi-mt65xx.c can be made to work on this hardware, though
->>>>>  that is for an ARM SOC and mt7621 is a MIPS SOC.
->>>>>
->>>>>  I note that openwrt has similar patches:
->>>>>   target/linux/generic/pending-4.14/450-mtd-spi-nor-allow-NOR-driver-to-write-fewer-bytes-th.patch
->>>>>
->>>>>  They also change the spi driver to do a short write, rather
->>>>>  than change m25p80 to request a short write.
->>>>>
->>>>>  Is there something horribly wrong with this?
->>>>
->>>> Marek, any opinion on this patch?
->>>>
->>>
->>> Hi,
->>>  thanks for following up.
->>>  I have since found that I don't need this patch, though maybe others
->>>  still do(??).
->>>  My hardware can only send 36 bytes and receive 32 in a single
->>>  transaction.  However I can run a sequence of transactions
->>>  to process a whole message no matter how large that message is.  As
->>>  long as I keep chip-select asserted, all the slave device sees is that
->>>  the clock period isn't quite constant, and the slave shouldn't care
->>>  much about that.
->>>  When reading from flash, I found that handling large messages with
->>>  multiple hardware transactions was 50% faster than breaking the
->>>  read down into lots of 32 byte messages.
->>>
->>>  So, I won't object if this patch is forgotten.  Thanks for
->>>  your time anyway.
->>
->> Nice, which hardware is that ?
-> 
-> Mediatek MT7621 SOC (particularly in the gnubee.org NAS platform).
+> start_kernel()
+>  trap_init()
+>   setup_cpu_entry_areas()
+>    setup_cpu_entry_area(cpu)
+>     get_cpu_gdt_paddr(cpu)
+>      per_cpu_ptr_to_phys(addr)
+>       pcpu_addr_to_page(addr)
+>        virt_to_page(addr)
+>         pfn_to_page(__pa(addr) >> PAGE_SHIFT)
 
-On nice, a mips, good to see someone still cares about mips :)
+Thanks that helped me to see the problem. On the other hand isn't this a
+bit of an overkill? AFAICS this affects only NEED_PER_CPU_KM which is !SMP
+and DEFERRED_STRUCT_PAGE_INIT makes only very limited sense on UP,
+right?
 
+Or do we have more such places?
 -- 
-Best regards,
-Marek Vasut
+Michal Hocko
+SUSE Labs
