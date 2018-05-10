@@ -1,97 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756453AbeEJBzz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 21:55:55 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:38890 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756336AbeEJBzx (ORCPT
+        id S933443AbeEJCFy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 22:05:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40886 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1756088AbeEJCFq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 21:55:53 -0400
-X-Google-Smtp-Source: AB8JxZrvDPtNZTtCj24YNVIhnV9PgWC/pdIA+D0eUbNZoH6teyv3T1/iO6MYDsICNkZ8x5RfDPQpBrbLw7y6wSr9moA=
+        Wed, 9 May 2018 22:05:46 -0400
+Date: Wed, 9 May 2018 19:04:51 -0700
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To: Mel Gorman <mgorman@techsingularity.net>
+Cc: mingo@kernel.org, peterz@infradead.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de, hpa@zytor.com, efault@gmx.de,
+        linux-kernel@vger.kernel.org, matt@codeblueprint.co.uk,
+        ggherdovich@suse.cz, mpe@ellerman.id.au
+Subject: Re: [PATCH] Revert "sched/numa: Delay retrying placement for
+ automatic NUMA balance after wake_affine()"
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20180509163115.6fnnyeg4vdm2ct4v@techsingularity.net>
 MIME-Version: 1.0
-In-Reply-To: <20180509142526.GA25131@amd>
-References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
- <20180509142526.GA25131@amd>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Thu, 10 May 2018 09:55:52 +0800
-Message-ID: <CAMz4kuLar4jxPkX2GZi4UD_VgacXcmy+VJPWGyc7UrrLX_JW2Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: leds: Add SC27xx breathing light
- controller documentation
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        xiaotong.lu@spreadtrum.com, Mark Brown <broonie@kernel.org>,
-        linux-leds@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20180509163115.6fnnyeg4vdm2ct4v@techsingularity.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18051002-0044-0000-0000-00000550FA4F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051002-0045-0000-0000-00002892448D
+Message-Id: <20180510020451.GB41120@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-09_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805100017
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
+* Mel Gorman <mgorman@techsingularity.net> [2018-05-09 17:31:15]:
 
-On 9 May 2018 at 22:25, Pavel Machek <pavel@ucw.cz> wrote:
-> Hi!
->
->> This patch adds the binding documentation for Spreadtrum SC27xx series
->> breathing light controller, which supports 3 outputs: red LED, green
->> LED and blue LED.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->> Changes since v1:
->>  - Change the compatible string to be one explicit SoC name.
->>  - Change the child node name.
->>  - Change to be upper case for the first character.
->> ---
->>  .../devicetree/bindings/leds/leds-sc27xx-bltc.txt  |   41 ++++++++++++++++++++
->>  1 file changed, 41 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
->> new file mode 100644
->> index 0000000..b3de7fc
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
->> @@ -0,0 +1,41 @@
->> +LEDs connected to Spreadtrum SC27XX PMIC breathing light controller
->> +
->> +The SC27xx breathing light controller supports to 3 outputs:
->> +red LED, green LED and blue LED. Each LED can work at normal
->> +PWM mode or breath light mode.
->
->> +Required properties:
->> +- compatible: Should be "sprd,sc2731-bltc".
->
-> If this is for 2731, I'd say so in the title and the filename...?
+> This reverts commit 7347fc87dfe6b7315e74310ee1243dc222c68086.
+> 
+> Srikar Dronamra pointed out that while the commit in question did show
+> a performance improvement on ppc64, it did so at the cost of disabling
+> active CPU migration by automatic NUMA balancing which was not the intent.
+> The issue was that a serious flaw in the logic failed to ever active balance
+> if SD_WAKE_AFFINE was disabled on scheduler domains. Even when it's enabled,
+> the logic is still bizarre and against the original intent.
+> 
+> Investigation showed that fixing the patch in either the way he suggested,
+> using the correct comparison for jiffies values or introducing a new
+> numa_migrate_deferred variable in task_struct all perform similarly to a
+> revert with a mix of gains and losses depending on the workload, machine
+> and socket count.
+> 
+> The original intent of the commit was to handle a problem whereby
+> wake_affine, idle balancing and automatic NUMA balancing disagree on the
+> appropriate placement for a task. This was particularly true for cases where
+> a single task was a massive waker of tasks but where wake_wide logic did
+> not apply.  This was particularly noticeable when a futex (a barrier) woke
+> all worker threads and tried pulling the wakees to the waker nodes. In that
+> specific case, it could be handled by tuning MPI or openMP appropriately,
+> but the behavior is not illogical and was worth attempting to fix. However,
+> the approach was wrong. Given that we're at rc4 and a fix is not obvious,
+> it's better to play safe, revert this commit and retry later.
+> 
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 
-I agree with Jacek's comments. We will add other PMICs belonging to
-sc27xx series in future.
 
->
->> +- #address-cells: Must be 1.
->> +- #size-cells: Must be 0.
->> +- reg: Specify controller address.
->
-> the controller...
-
-Will fix.
-
->
->> +Required child properties:
->> +- reg: Number of LED line (could be from 0 to 2).
->
-> Uff. "Port this LED is connected to"?
-
-Will fix.
-
->
-> With that fixed...
->
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-
-Thanks for your comments.
-
--- 
-Baolin.wang
-Best Regards
+Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
