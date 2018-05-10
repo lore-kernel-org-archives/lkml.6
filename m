@@ -1,128 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964984AbeEJNDr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 09:03:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41626 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934380AbeEJNDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 09:03:45 -0400
-Date: Thu, 10 May 2018 08:03:43 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Joseph Salisbury <joseph.salisbury@canonical.com>, bhelgaas@google.com,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        1745646@bugs.launchpad.net,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH] PCI / PM: Check device_may_wakeup() in pci_enable_wake()
-Message-ID: <20180510130343.GA173327@bhelgaas-glaptop.roam.corp.google.com>
-References: <56a8953c-d833-837c-57d5-fe758d4db02a@canonical.com>
- <1823373.ea0yBGqyI6@aspire.rjw.lan>
+        id S965093AbeEJNEV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 09:04:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56768 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965021AbeEJNET (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 09:04:19 -0400
+Date: Thu, 10 May 2018 10:04:13 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH 13/18] wait: wait.h: Get rid of a kernel-doc/Sphinx
+ warnings
+Message-ID: <20180510100413.754d1399@vento.lan>
+In-Reply-To: <20180510122036.GD12217@hirez.programming.kicks-ass.net>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+        <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
+        <20180510083838.GA21846@infradead.org>
+        <20180510063805.1859b1aa@vento.lan>
+        <20180510122036.GD12217@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1823373.ea0yBGqyI6@aspire.rjw.lan>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 12:18:32AM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Commit 0847684cfc5f0 (PCI / PM: Simplify device wakeup settings code)
-> went too far and dropped the device_may_wakeup() check from
-> pci_enable_wake() which causes wakeup to be enabled during system
-> suspend, hibernation or shutdown for some PCI devices that are not
-> allowed by user space to wake up the system from sleep (or power off).
-> 
-> As a result of this excessive power is drawn by some of the affected
-> systems while in sleep states or off.
-> 
-> Restore the device_may_wakeup() check in pci_enable_wake(), but make
-> sure that the PCI bus type's runtime suspend callback will not call
-> device_may_wakeup() which is about system wakeup from sleep and not
-> about device wakeup from runtime suspend.
-> 
-> Fixes: 0847684cfc5f0 (PCI / PM: Simplify device wakeup settings code)
-> Reported-by: Joseph Salisbury <joseph.salisbury@canonical.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Em Thu, 10 May 2018 14:20:36 +0200
+Peter Zijlstra <peterz@infradead.org> escreveu:
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
-0847684cfc5f0 appeared in v4.13, which raises the question of whether
-this problem is important enough for a stable backport.  Up to you :)
-
-> ---
->  drivers/pci/pci.c |   29 +++++++++++++++++++++++------
->  1 file changed, 23 insertions(+), 6 deletions(-)
+> On Thu, May 10, 2018 at 06:38:05AM -0300, Mauro Carvalho Chehab wrote:
+> > Em Thu, 10 May 2018 01:38:38 -0700
+> > Christoph Hellwig <hch@infradead.org> escreveu:
+> >   
+> > > >   * Use either while holding wait_queue_head::lock or when used for wakeups
+> > > > - * with an extra smp_mb() like:
+> > > > + * with an extra smp_mb() like::    
+> > > 
+> > > Independent of any philosophical discussion not allowing a setence to
+> > > end with a single ':' is completely idiotic.  Please fix the tooling
+> > > instead to allow it, as it is very important for being able to just
+> > > write understandable comments.  
 > 
-> Index: linux-pm/drivers/pci/pci.c
-> ===================================================================
-> --- linux-pm.orig/drivers/pci/pci.c
-> +++ linux-pm/drivers/pci/pci.c
-> @@ -1910,7 +1910,7 @@ void pci_pme_active(struct pci_dev *dev,
->  EXPORT_SYMBOL(pci_pme_active);
->  
->  /**
-> - * pci_enable_wake - enable PCI device as wakeup event source
-> + * __pci_enable_wake - enable PCI device as wakeup event source
->   * @dev: PCI device affected
->   * @state: PCI state from which device will issue wakeup events
->   * @enable: True to enable event generation; false to disable
-> @@ -1928,7 +1928,7 @@ EXPORT_SYMBOL(pci_pme_active);
->   * Error code depending on the platform is returned if both the platform and
->   * the native mechanism fail to enable the generation of wake-up events
->   */
-> -int pci_enable_wake(struct pci_dev *dev, pci_power_t state, bool enable)
-> +static int __pci_enable_wake(struct pci_dev *dev, pci_power_t state, bool enable)
->  {
->  	int ret = 0;
->  
-> @@ -1969,6 +1969,23 @@ int pci_enable_wake(struct pci_dev *dev,
->  
->  	return ret;
->  }
-> +
-> +/**
-> + * pci_enable_wake - change wakeup settings for a PCI device
-> + * @pci_dev: Target device
-> + * @state: PCI state from which device will issue wakeup events
-> + * @enable: Whether or not to enable event generation
-> + *
-> + * If @enable is set, check device_may_wakeup() for the device before calling
-> + * __pci_enable_wake() for it.
-> + */
-> +int pci_enable_wake(struct pci_dev *pci_dev, pci_power_t state, bool enable)
-> +{
-> +	if (enable && !device_may_wakeup(&pci_dev->dev))
-> +		return -EINVAL;
-> +
-> +	return __pci_enable_wake(pci_dev, state, enable);
-> +}
->  EXPORT_SYMBOL(pci_enable_wake);
->  
->  /**
-> @@ -1981,9 +1998,9 @@ EXPORT_SYMBOL(pci_enable_wake);
->   * should not be called twice in a row to enable wake-up due to PCI PM vs ACPI
->   * ordering constraints.
->   *
-> - * This function only returns error code if the device is not capable of
-> - * generating PME# from both D3_hot and D3_cold, and the platform is unable to
-> - * enable wake-up power for it.
-> + * This function only returns error code if the device is not allowed to wake
-> + * up the system from sleep or it is not capable of generating PME# from both
-> + * D3_hot and D3_cold and the platform is unable to enable wake-up power for it.
->   */
->  int pci_wake_from_d3(struct pci_dev *dev, bool enable)
->  {
-> @@ -2114,7 +2131,7 @@ int pci_finish_runtime_suspend(struct pc
->  
->  	dev->runtime_d3cold = target_state == PCI_D3cold;
->  
-> -	pci_enable_wake(dev, target_state, pci_dev_run_wake(dev));
-> +	__pci_enable_wake(dev, target_state, pci_dev_run_wake(dev));
->  
->  	error = pci_set_power_state(dev, target_state);
->  
+> That is exactly my point; the whole rst stuff detracts from normal text.
+> It makes both reading and writing harder than it needs to be.
 > 
+> > Patches are welcome, although I don't see any easy way to solve it.
+> > 
+> > In English, the common case is that a line with ends with a colon is
+> > followed by a list. E. g.  
+> 
+> (google) Dictionary says:
+> 
+> "a punctuation mark (:) used to precede a list of items, a quotation, or
+> an expansion or explanation."
+> 
+> An enumeration (list) is just one of many possible uses of the colon.
+
+True, but the point is that whatever tool is used, it should be able
+to uniquely unambiguously identify what it follows.
+
+For example, it if is a list of items, it should keep parsing the
+semantics markups inside it e. g. marking %FOO as a constant,
+and bar() as a function, etc, following kernel-doc syntax. 
+
+But, if it is a quote, a code example or an ascii artwork, it
+should disable all such parsers, enclosing the result into a
+literal block.
+
+> > However, in this specific case, it is followed by an ascii artwork. 
+> > The double colon is a notation that tells Sphinx to not parse the
+> > lines at the next block, placing the contents of it inside a literal
+> > block. It is used also when the next lines contain a code example,
+> > in order to avoid parsing things like @, () and * inside the code 
+> > block.
+> > 
+> > The kernel-doc tool might eventually have some parsing logic that
+> > would replace something to a '::' before sending it to Sphinx.  
+> 
+> I think typically there will be an 'empty' line between the colon ending
+> and the 'example/explanation'. This seems true for a number of comments
+> I found in drm using the '::' nonsense.
+
+Unfortunately, that's not true treewide. The presense/absense of a
+blank line after a line ending with a colon doesn't indicate if the contents
+below should be handled as a literal block or not[1].
+
+[1] you can verify some use cases with:
+	$ git grep -A2 "\*.*\s.*:$" -- $(git grep kernel-doc:: Documentation/|cut -d : -f 4-)
+
+> Simple regexes don't do multi-line patterns, but maybe the kerneldoc
+> thing can parse it differently.
+
+kernel-doc is a regex-based parser (and not an AI engine). It will do only
+what it is programmed for, based on a clear regex-based semantics.
+
+Independently on how easy/hard it would be to use a multi-line pattern
+for this, what it is required is a clear non-hint based pattern that
+will provide a match for a part of the tag that should be escaped
+from normal parsing rules. The m/::$/ is a clear rule.
+
+Do you have a proposal for some other rule? If so, I can see how
+feasible is to add it there.
+
+Thanks,
+Mauro
