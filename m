@@ -1,19 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756972AbeEJIPR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 04:15:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51760 "EHLO mx2.suse.de"
+        id S1756958AbeEJIPP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 04:15:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51761 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756771AbeEJIGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1756769AbeEJIGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 10 May 2018 04:06:52 -0400
 From: Jiri Slaby <jslaby@suse.cz>
 To: mingo@redhat.com
 Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.cz>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
-Subject: [PATCH -resend 07/27] x86: boot, annotate local functions
-Date: Thu, 10 May 2018 10:06:24 +0200
-Message-Id: <20180510080644.19752-8-jslaby@suse.cz>
+        Jiri Slaby <jslaby@suse.cz>, Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-crypto@vger.kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: [PATCH -resend 08/27] x86: assembly, annotate aliases
+Date: Thu, 10 May 2018 10:06:25 +0200
+Message-Id: <20180510080644.19752-9-jslaby@suse.cz>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180510080644.19752-1-jslaby@suse.cz>
 References: <20180510080644.19752-1-jslaby@suse.cz>
@@ -21,87 +25,141 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-relocated, paging_enabled, and no_longmode are self-standing local
-functions, annotate them as such. paging_enabled is annotated as
-NOALIGN, since the trampoline code has to be compact.
+_key_expansion_128 is an alias to _key_expansion_256a, __memcpy to
+memcpy, xen_syscall32_target to xen_sysenter_target, and so on. Annotate
+them all using the new SYM_FUNC_START_ALIAS, SYM_FUNC_START_LOCAL_ALIAS,
+and SYM_FUNC_END_ALIAS. This will make the tools generating the
+debuginfo happy.
 
 Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
-Cc: x86@kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: <x86@kernel.org>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Reviewed-by: Juergen Gross <jgross@suse.com> [xen parts]
+Cc: <linux-crypto@vger.kernel.org>
+Cc: <xen-devel@lists.xenproject.org>
 ---
- arch/x86/boot/compressed/head_32.S | 3 ++-
- arch/x86/boot/compressed/head_64.S | 9 ++++++---
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ arch/x86/crypto/aesni-intel_asm.S | 5 ++---
+ arch/x86/lib/memcpy_64.S          | 4 ++--
+ arch/x86/lib/memmove_64.S         | 4 ++--
+ arch/x86/lib/memset_64.S          | 4 ++--
+ arch/x86/xen/xen-asm_64.S         | 4 ++--
+ 5 files changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/head_32.S b/arch/x86/boot/compressed/head_32.S
-index 37380c0d5999..7e8ab0bb6968 100644
---- a/arch/x86/boot/compressed/head_32.S
-+++ b/arch/x86/boot/compressed/head_32.S
-@@ -209,7 +209,7 @@ ENDPROC(efi32_stub_entry)
+diff --git a/arch/x86/crypto/aesni-intel_asm.S b/arch/x86/crypto/aesni-intel_asm.S
+index b482ac1a1fb3..c85ecb163c78 100644
+--- a/arch/x86/crypto/aesni-intel_asm.S
++++ b/arch/x86/crypto/aesni-intel_asm.S
+@@ -1761,8 +1761,7 @@ ENDPROC(aesni_gcm_finalize)
  #endif
  
- 	.text
--relocated:
-+SYM_FUNC_START_LOCAL(relocated)
  
- /*
-  * Clear BSS (stack is currently empty)
-@@ -260,6 +260,7 @@ relocated:
+-.align 4
+-_key_expansion_128:
++SYM_FUNC_START_LOCAL_ALIAS(_key_expansion_128)
+ SYM_FUNC_START_LOCAL(_key_expansion_256a)
+ 	pshufd $0b11111111, %xmm1, %xmm1
+ 	shufps $0b00010000, %xmm0, %xmm4
+@@ -1773,8 +1772,8 @@ SYM_FUNC_START_LOCAL(_key_expansion_256a)
+ 	movaps %xmm0, (TKEYP)
+ 	add $0x10, TKEYP
+ 	ret
+-ENDPROC(_key_expansion_128)
+ SYM_FUNC_END(_key_expansion_256a)
++SYM_FUNC_END_ALIAS(_key_expansion_128)
+ 
+ SYM_FUNC_START_LOCAL(_key_expansion_192a)
+ 	pshufd $0b01010101, %xmm1, %xmm1
+diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
+index 9a53a06e5a3e..4911b1c61aa8 100644
+--- a/arch/x86/lib/memcpy_64.S
++++ b/arch/x86/lib/memcpy_64.S
+@@ -26,7 +26,7 @@
+  * Output:
+  * rax original destination
   */
- 	xorl	%ebx, %ebx
- 	jmp	*%eax
-+SYM_FUNC_END(relocated)
+-ENTRY(__memcpy)
++SYM_FUNC_START_ALIAS(__memcpy)
+ ENTRY(memcpy)
+ 	ALTERNATIVE_2 "jmp memcpy_orig", "", X86_FEATURE_REP_GOOD, \
+ 		      "jmp memcpy_erms", X86_FEATURE_ERMS
+@@ -40,7 +40,7 @@ ENTRY(memcpy)
+ 	rep movsb
+ 	ret
+ ENDPROC(memcpy)
+-ENDPROC(__memcpy)
++SYM_FUNC_END_ALIAS(__memcpy)
+ EXPORT_SYMBOL(memcpy)
+ EXPORT_SYMBOL(__memcpy)
  
- #ifdef CONFIG_EFI_STUB
- 	.data
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index fca012baba19..614dc4868915 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -469,7 +469,7 @@ ENDPROC(efi64_stub_entry)
- #endif
- 
- 	.text
--relocated:
-+SYM_FUNC_START_LOCAL(relocated)
- 
- /*
-  * Clear BSS (stack is currently empty)
-@@ -511,6 +511,7 @@ relocated:
-  * Jump to the decompressed kernel.
+diff --git a/arch/x86/lib/memmove_64.S b/arch/x86/lib/memmove_64.S
+index bbec69d8223b..50c1648311b3 100644
+--- a/arch/x86/lib/memmove_64.S
++++ b/arch/x86/lib/memmove_64.S
+@@ -26,7 +26,7 @@
   */
- 	jmp	*%rax
-+SYM_FUNC_END(relocated)
+ .weak memmove
  
- 	.code32
- /*
-@@ -575,9 +576,10 @@ ENTRY(trampoline_32bit_src)
- 	lret
+-ENTRY(memmove)
++SYM_FUNC_START_ALIAS(memmove)
+ ENTRY(__memmove)
  
- 	.code64
--paging_enabled:
-+SYM_FUNC_START_LOCAL_NOALIGN(paging_enabled)
- 	/* Return from the trampoline */
- 	jmp	*%rdi
-+SYM_FUNC_END(paging_enabled)
- 
+ 	/* Handle more 32 bytes in loop */
+@@ -208,6 +208,6 @@ ENTRY(__memmove)
+ 13:
+ 	retq
+ ENDPROC(__memmove)
+-ENDPROC(memmove)
++SYM_FUNC_END_ALIAS(memmove)
+ EXPORT_SYMBOL(__memmove)
+ EXPORT_SYMBOL(memmove)
+diff --git a/arch/x86/lib/memset_64.S b/arch/x86/lib/memset_64.S
+index 9bc861c71e75..927ac44d34aa 100644
+--- a/arch/x86/lib/memset_64.S
++++ b/arch/x86/lib/memset_64.S
+@@ -19,7 +19,7 @@
+  *
+  * rax   original destination
+  */
+-ENTRY(memset)
++SYM_FUNC_START_ALIAS(memset)
+ ENTRY(__memset)
  	/*
-          * The trampoline code has a size limit.
-@@ -587,11 +589,12 @@ paging_enabled:
- 	.org	trampoline_32bit_src + TRAMPOLINE_32BIT_CODE_SIZE
+ 	 * Some CPUs support enhanced REP MOVSB/STOSB feature. It is recommended
+@@ -43,8 +43,8 @@ ENTRY(__memset)
+ 	rep stosb
+ 	movq %r9,%rax
+ 	ret
+-ENDPROC(memset)
+ ENDPROC(__memset)
++SYM_FUNC_END_ALIAS(memset)
+ EXPORT_SYMBOL(memset)
+ EXPORT_SYMBOL(__memset)
  
- 	.code32
--no_longmode:
-+SYM_FUNC_START_LOCAL(no_longmode)
- 	/* This isn't an x86-64 CPU, so hang intentionally, we cannot continue */
- 1:
- 	hlt
- 	jmp     1b
-+SYM_FUNC_END(no_longmode)
+diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
+index 417b339e5c8e..e8f6f482bb20 100644
+--- a/arch/x86/xen/xen-asm_64.S
++++ b/arch/x86/xen/xen-asm_64.S
+@@ -164,13 +164,13 @@ ENDPROC(xen_sysenter_target)
  
- #include "../../kernel/verify_cpu.S"
+ #else /* !CONFIG_IA32_EMULATION */
  
+-ENTRY(xen_syscall32_target)
++SYM_FUNC_START_ALIAS(xen_syscall32_target)
+ ENTRY(xen_sysenter_target)
+ 	lea 16(%rsp), %rsp	/* strip %rcx, %r11 */
+ 	mov $-ENOSYS, %rax
+ 	pushq $0
+ 	jmp hypercall_iret
+-ENDPROC(xen_syscall32_target)
+ ENDPROC(xen_sysenter_target)
++SYM_FUNC_END_ALIAS(xen_syscall32_target)
+ 
+ #endif	/* CONFIG_IA32_EMULATION */
 -- 
 2.16.3
