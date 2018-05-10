@@ -1,121 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934923AbeEJIge (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 04:36:34 -0400
-Received: from lgeamrelo12.lge.com ([156.147.23.52]:41801 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934366AbeEJIgc (ORCPT
+        id S934966AbeEJIhN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 04:37:13 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58752 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934266AbeEJIhJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 04:36:32 -0400
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: hoeun.ryu@lge.com.com
-X-Original-SENDERIP: 10.177.226.38
-X-Original-MAILFROM: hoeun.ryu@lge.com.com
-From: Hoeun Ryu <hoeun.ryu@lge.com.com>
-To: Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>
-Cc: Hoeun Ryu <hoeun.ryu@lge.com>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] armpmu: broadcast overflow irq on multi-core system having one muxed SPI for PMU.
-Date: Thu, 10 May 2018 17:36:17 +0900
-Message-Id: <1525941385-12766-1-git-send-email-hoeun.ryu@lge.com.com>
-X-Mailer: git-send-email 2.1.4
+        Thu, 10 May 2018 04:37:09 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180510083707euoutp02f34aa82414fce2bdfbb584dbb43c617f~tO6TRZGOy1597915979euoutp02Y
+X-AuditID: cbfec7f5-f95739c0000028a9-df-5af404b04e0b
+Subject: Re: [PATCH 1/2] i2c: exynos5: remove some dead code
+To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <b3915e40-895f-2a72-27a2-dcffe504456d@samsung.com>
+Date: Thu, 10 May 2018 10:36:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180509194532.28929-1-peda@axentia.se>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTcRjG+++cbWejyXFavqgkTaIbaZbCAW99KFoQoaIQY5anPKjk1HbU
+        ssLmKp2r0AovzUoRwxRJm07UnJiFlyJvgTdEKZXM0g85yWu1s5Pkt4fn+b3v/33gT2Byq9Cd
+        SEhKZbRJdKJCJMUbO1d6D9XhNtXhKhtB3dcXCai8qe8Y1ddXJ6bMU0NCyrBhQ9Snliciqriv
+        TUBZO0oRVdVtwijrxCI6JlUWtpeIlebqXJHyWU+4sr7iprK76Beu7Hk/jSsXzbvCxCppUCyT
+        mJDOaH1DYqTxd4YzUwolVysqw3UoT2xEEgJIf8jqXkZGJCXk5AsERcUNiAvkpA1BaU4MHywi
+        mFmdQZsT9QXDYh6qRNDU6cdD8wjeDbc5IBcyCHIfFDggVzIUCoa+CTgII1sFUPuoU8gFInI/
+        bNSPijgtI0NgzfjFPkwQOLkHmsc0nL2DPAv6rytiHnGGnsfTOKclZADoLesOjZFecMtSgvHa
+        DcamSx1vATkohknrioDbCeRx6Nd58wVcYK6r4V99T/jTzPGcvg6js3qcnzUgmFzLEfFBILzt
+        GhByezD7zbUtvrwdDAN3u0X8eicYmXfmT3CCh41FGG/LwJAt5+ndMPnRgvHaDZ73L4nykbdp
+        SzHTljKmLWVM/98tQ3g1cmPSWE0cwx5NYq74sLSGTUuK87mYrDEj+6f68LtrqQm1rV/oQCSB
+        FNtlxdJFlVxIp7MZmg4EBKZwlS332i1ZLJ1xjdEmn9emJTJsB/IgcIWb7Ny+TJWcjKNTmUsM
+        k8JoN1MBIXHXISfPEnWpLe6Etib5ZbbsDHU6YDxq+ZQhEpf7O02n3MiCaHW5IgyhHwc9imMW
+        VGWrZnY8wmvZKKneu0SFzpjXXAd/zlpara8/j8vdR8olO4NMkXMT+UeeRi9E+BQMBi6l6mt0
+        r9QDlsv+7SfvpeoSbucE0+XqzOGGqG1qOuiNAmfjab8DmJal/wL0SDa1UAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsVy+t/xe7prWb5EGUxeZGDR2zSdyaL/8Wtm
+        i/PnN7BbbHp8jdWi4+8XRovLu+awWcw4v4/JYu+h+YwWK0/MYrbYe+8zowOXx7QDs9k9Nq3q
+        ZPOYdzLQY/OSeo8T07+zeJw89YTF4/MmuQD2KD2bovzSklSFjPziElulaEMLIz1DSws9IxNL
+        PUNj81grI1MlfTublNSczLLUIn27BL2M1ut1BdM4K5YsD2xg7GfvYuTkkBAwkdg89TqYLSSw
+        lFFi4aR6iLi4xO75b5khbGGJP9e62LoYuYBqXjNKtPxYywqSEBawkeicOBWsWUTAXmLqtZdM
+        IEXMAvuYJJY3zGGGmNrBKHHsSTaIzSagKfF38002EJtXwE7id9cjxi5GDg4WAVWJnbdyQcKi
+        AhES985/gioRlDg58wkLiM0pYCrRtPUPmM0soC7xZ94lZghbXqJ562woW1zi1pP5TBMYhWYh
+        aZ+FpGUWkpZZSFoWMLKsYhRJLS3OTc8tNtQrTswtLs1L10vOz93ECIzObcd+bt7BeGlj8CFG
+        AQ5GJR7eGVyfo4RYE8uKK3MPMUpwMCuJ8P44BxTiTUmsrEotyo8vKs1JLT7EaAr020RmKdHk
+        fGDiyCuJNzQ1NLewNDQ3Njc2s1AS5z1vUBklJJCeWJKanZpakFoE08fEwSnVwDjhodLjfCWe
+        nR4+0ySvx565bNLl4SAk9PbnSr8bFkGTbt5uCppzn1vwknXD/ef595Yn2oe4Ciz8OvPcAQf3
+        Ey/Ob496eZKvzLnR9+2kK2sZrGe6pa3Yftj4ydm4FOW0Q9dl9e1zD3g1ypTOUja3KGkKb06e
+        WFHx57tWqVDQ28q4VcdTIxh6PyqxFGckGmoxFxUnAgAsysyi5AIAAA==
+X-CMS-MailID: 20180510083702eucas1p2c6a0c9b25b46ef2c579450759ff2a896
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180510083702eucas1p2c6a0c9b25b46ef2c579450759ff2a896
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180509194548epcas2p25579e969e21707afe2435b1f568ff005
+X-RootMTR: 20180509194548epcas2p25579e969e21707afe2435b1f568ff005
+References: <CGME20180509194548epcas2p25579e969e21707afe2435b1f568ff005@epcas2p2.samsung.com>
+        <20180509194532.28929-1-peda@axentia.se>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hoeun Ryu <hoeun.ryu@lge.com>
+On 09.05.2018 21:45, Peter Rosin wrote:
+> The else branch cannot be taken as i will always equal num.
+> Get rid of the whole construct.
+>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  drivers/i2c/busses/i2c-exynos5.c | 12 +-----------
+>  1 file changed, 1 insertion(+), 11 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+> index 12ec8484e653..a2cbc779c33a 100644
+> --- a/drivers/i2c/busses/i2c-exynos5.c
+> +++ b/drivers/i2c/busses/i2c-exynos5.c
+> @@ -727,17 +727,7 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
+>  			goto out;
+>  	}
+>  
+> -	if (i == num) {
+> -		ret = num;
+> -	} else {
+> -		/* Only one message, cannot access the device */
+> -		if (i == 1)
+> -			ret = -EREMOTEIO;
+> -		else
+> -			ret = i;
+> -
+> -		dev_warn(i2c->dev, "xfer message failed\n");
+> -	}
+> +	ret = num;
+>  
+>   out:
+>  	clk_disable(i2c->clk);
 
- On some SoCs like i.MX6DL/QL have only one muxed SPI for multi-core system.
-On the systems, a CPU can be interrupted by overflow irq but it is possible that
-the overflow actually occurs on another CPU.
- This patch broadcasts the irq using smp_call_function() so that other CPUs can
-check and handle their overflows by themselves when a overflow doesn't actually
-occur on the interrupted CPU.
+You can go further and remove "out:" label, use break instead, and at
+the end use "return (i == num) ? num : ret;" or sth similar.
 
- Local irq is enabled and preemption is disabled temporarily to call
-smp_call_function_many() in armpmu_dispatch_irq() as the smp_call_function_many()
-doesn't allow to be called with irq-disabled.
+With this change you can add:
 
- The callback for smp_call_function_many() is __armpmu_handle_irq() and the
-function calls armpmu->handle_irq() with an invalid irq_num because
-smp_call_func_t has only one parameter and armpmu pointer is handed over by the
-pointer. It can be a problem if irq_num parameter is used by handlers but no
-handler uses the irq parameter for now. We could have another approach removing
-irq_num argument itself in handle_irq() function.
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-Signed-off-by: Hoeun Ryu <hoeun.ryu@lge.com>
----
- drivers/perf/arm_pmu.c | 51 +++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 48 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-index 1a0d340..3d65e44 100644
---- a/drivers/perf/arm_pmu.c
-+++ b/drivers/perf/arm_pmu.c
-@@ -322,6 +322,29 @@ validate_group(struct perf_event *event)
- 	return 0;
- }
- 
-+static void __armpmu_handle_irq(void *dev)
-+{
-+	struct arm_pmu *armpmu;
-+	u64 start_clock, finish_clock;
-+	irqreturn_t ret;
-+
-+	armpmu = *(void **)dev;
-+	start_clock = sched_clock();
-+	/*
-+	 * irq_num should not be used by the handler, we don't have irq_num for
-+	 * the first place. There is no handler using the irq_num argument for now.
-+	 * smp_call_func_t has one function argument and irq number cannot be handed
-+	 * over to this callback because we need dev pointer here.
-+	 * If you need valid irq_num, you need to declare a wrapper struct having
-+	 * irq_num and dev pointer.
-+	 */
-+	ret = armpmu->handle_irq(-1, armpmu);
-+	if (ret == IRQ_HANDLED) {
-+		finish_clock = sched_clock();
-+		perf_sample_event_took(finish_clock - start_clock);
-+	}
-+}
-+
- static irqreturn_t armpmu_dispatch_irq(int irq, void *dev)
- {
- 	struct arm_pmu *armpmu;
-@@ -340,9 +363,31 @@ static irqreturn_t armpmu_dispatch_irq(int irq, void *dev)
- 
- 	start_clock = sched_clock();
- 	ret = armpmu->handle_irq(irq, armpmu);
--	finish_clock = sched_clock();
--
--	perf_sample_event_took(finish_clock - start_clock);
-+	/*
-+	 * The handler just returns with IRQ_NONE when it checks the overflow
-+	 * and the overflow doesn't occur on the CPU.
-+	 *
-+	 * Some SoCs like i.MX6 have one muxed SPI on multi-core system.
-+	 * On the systems , the irq should be broadcasted to other CPUs so that the
-+	 * CPUs can check their own PMU overflow.
-+	 */
-+	if (ret == IRQ_HANDLED) {
-+		finish_clock = sched_clock();
-+		perf_sample_event_took(finish_clock - start_clock);
-+	} else if (ret == IRQ_NONE) {
-+		struct cpumask mask;
-+
-+		cpumask_copy(&mask, cpu_online_mask);
-+		cpumask_clear_cpu(raw_smp_processor_id(), &mask);
-+		if (!cpumask_empty(&mask)) {
-+			/* smp_call_function cannot be called with irq disabled */
-+			local_irq_enable();
-+			preempt_disable();
-+			smp_call_function_many(&mask, __armpmu_handle_irq, dev, 0);
-+			preempt_enable();
-+			local_irq_disable();
-+		}
-+	}
- 	return ret;
- }
- 
--- 
-2.1.4
+ --
+Regards
+Andrzej
