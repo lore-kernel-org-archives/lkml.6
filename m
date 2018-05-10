@@ -1,286 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756893AbeEJIKT convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 04:10:19 -0400
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:54315 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756671AbeEJIJu (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:8:1>);
-        Thu, 10 May 2018 04:09:50 -0400
-Message-Id: <5AF3F989020000F90001A482@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date: Thu, 10 May 2018 01:49:29 -0600
-From: "Gang He" <ghe@suse.com>
-To: <jlbec@evilplan.org>, <jiangqi903@gmail.com>, <piaojun@huawei.com>,
-        "ge changwei" <gechangwei@live.cn>, "Lei Chen" <lchen@suse.com>,
-        <mfasheh@versity.com>
-Cc: <ocfs2-devel@oss.oracle.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [Ocfs2-devel] [PATCH] ocfs2: ocfs2_inode_lock_tracker does
- not distinguish lock level
-References: <20180510053230.17217-1-lchen@suse.com>
-In-Reply-To: <20180510053230.17217-1-lchen@suse.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
+        id S1756904AbeEJIKm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 04:10:42 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34738 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756671AbeEJIKe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 04:10:34 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180510081032euoutp010f223cf76be87c090b8b114e64234bcd~tOjFbA6o21361113611euoutp01L
+X-AuditID: cbfec7f4-6f9ff700000043e4-29-5af3fe76269d
+Subject: Re: [PATCH v2 26/26] drm/bridge: establish a link between the
+ bridge supplier and consumer
+To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Peter Senna Tschudin <peter.senna@collabora.com>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <a723ad4a-8caa-4ff5-d39d-52db98a56d7b@samsung.com>
+Date: Thu, 10 May 2018 10:10:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180504135212.26977-27-peda@axentia.se>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxjGd+53O9pdqrPvdMu2IpuaiXOfJ2xDYxZz/9G5zCwLS5yd3hQn
+        oOkVnCybrJBZKCgfjkHB+TEmpnGBoBQpA1nNWlssXcdAcSsQ6QKVMZkVAxnCWm7N+O93nud9
+        z/O+J4cjNWPMcm5P9gHRmK3P1DFKyu6a6VmbOxdJf7F0MhWX9ngIbDJP0Njk9DL4y3Y7i+ft
+        5ST+beoOg+tGfQi3DTui2q1xGp+o+BxXDJVR2FJkpvHYYIDCx0bGSez3N7HYZ/qLxUXl9Sxu
+        HumncfllH4t7HXUM7i0IINwS/pvAd4fnSVzt7yTw6X9aKHzepcbdZxtJbCp8GQcHr1K4w3kS
+        4duhKRqPnp4mcbApGl9dGWbwtb4uamOSUNVVywq1+QFK6D1aSggPRq9TwqVgPRI67p+iBEvE
+        SQpt1mC0xFxDC822Ikb4o/9HRmi9P0wL33reFYYsbkK4UH9YKPRcprZBuvLN3WLmnlzRuC5t
+        pzKj8HqA3n9H++l8d3I+mtYUIwUH/Ctw90Y1W4yUnIY/h+BMwQ+EfLiH4OhPnXEngmDyZxv5
+        sOX4RBspGw0Ixi198aoJBKb8i6gYcdwSXoRzfetjDUv5DfB1f3jhWpL/TgmuIyE2ZjD8anhw
+        YYCJsYpPg1Zn80ICxSeDrTO0oD/OfwCm0RlWrkkET02IirGCfw1KXGEUY5J/GgpaakmZtXAz
+        dHIhDPhWBczafaw89tsw2d5IyLwEbrsvxvUnobuyhJL5MxgYM1FysxnB0L9HGNl4A664A3Rs
+        MzI6daNjXQyBfwsayz+RUQ03JhLlEdRQYf+GlGUVmL+KP/WzMORrib+hFr7/ZYopQ0nWRYtZ
+        Fy1jXbSM9f/YU4iyIa2YI2UZROmlbPFgiqTPknKyDSm79mU1o+j/755z37uEHLMfOxHPIV2C
+        ajIhkq6h9bnSoSwnAo7ULVVN90Ql1W79oTzRuO8jY06mKDnRCo7SaVU7Vn2RruEN+gPiXlHc
+        LxofugSnWJ6Pnhj0jlQZepd5nl9VdyUxwWtcuWmn4VVH9eHf01J93oMZT7mPbc7r/HDNloyS
+        FcvsCqIpL/lXa42ro3ImuHmvRs16r26YrUla/cjWgrxxv+Ud9Rb/nymRru03Bx+7dv59267w
+        e1Zp/pbwjLRxLhWXNVQ9+kJO0lnzjk3Ptb2+tqG9smNAR0kZ+vVrSKOk/w/671ft+wMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTZxjH855bW0LNsaC8QRNNjTEusdIi9KlRxCWa88EPEj+4oJs2eAI4
+        eklPS4ThBGRbC4KAumlxVhM0BrfAyh0VmzrBithUFIKxQIAMK+MieEGDsNK6hG+//J//733y
+        Jo+YlM3TseJMvZk36bVZciaC6lro9G+xLMymxk2+VUPpEw8BhdYJGgrdjxgouN0kgsWmChKe
+        vZti4PJYN4LWobZgNjxOw++VJ6FysJyCEpuVhlcDPgrOjoyT4PXWiaC78F8R2CqqReAc6aWh
+        4l63CHraLjPQc9qHoDEwScDM0CIJF73tBFx700jBHx0roOtGLQmFRfHgH3hIwV23A8Hr0Xc0
+        jF2bI8FfF1x/8VyAgcfPXVTyBu5XV5WIq8r3UVxPWSnBfR7ro7gWfzXi7r6/SnEls26Sa7X7
+        gxXrJZpz1tgY7mXvHYZrfj9Ec1c8KdxgSSfB1Vef4oo896j9OFWxw2SwmPn1GQbBvFN+SAkq
+        hVIDCtU2jUIZr/52uypBvjVpxzE+KzObN21NOqrIKOrz0capmBOLXRvz0ZysGEnEmN2Gz0+0
+        ksUoQixjryPs/ORA4UEMvu2YIMMched7i5lwaRxhR8GL0CCK5XHH7F8hIZrdhS/0BoglJtlb
+        EbjhlS4sNCDc56pllgYMuxl/ru8PsZRNws1uZ+ghit2Ia9pHQ/kq9hs84J350lmJPZdGqSWW
+        sIn4TEcAhRdswvNXnpJhXodPN1Z94Rj8YtRBlCOZfZluX6bYlyn2ZcpVRNWgaN4i6NJ1gkoh
+        aHWCRZ+uSDPonCh4eU0dHxtaUPHkATdixUgeKZ2OnE2V0dpsIUfnRlhMyqOlc0+CkfSYNieX
+        NxmOmCxZvOBGCcHPVZCxq9IMwTvWm48oE5Rq0CjV8er4RJDHSL1xOakyNl1r5r/neSNv+t8j
+        xJLYfLTlt9enppo+qpk02Z6WO8Y1T639H4x7iaM/N45Ye/LeZK/dl+GZcQx6r2+WHH8wfPgX
+        qr8+97Hm5k9k59fwp2/KNVxWdvAfyWqbd3fpIWMOm5ebtV7zd+IFW7lGdT7ZNfyDvu1TVHpd
+        863WwZRpcZxIUVK7q/J+QPdj4ndzKEW/do+cEjK0yq9Ik6D9D4pCfg6PAwAA
+X-CMS-MailID: 20180510081030eucas1p1e34df6d19674dded20ff11d48ff19368
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180510081030eucas1p1e34df6d19674dded20ff11d48ff19368
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180504135432epcas3p368bb7541ca52bc8bc301dec794851214
+X-RootMTR: 20180504135432epcas3p368bb7541ca52bc8bc301dec794851214
+References: <20180504135212.26977-1-peda@axentia.se>
+        <CGME20180504135432epcas3p368bb7541ca52bc8bc301dec794851214@epcas3p3.samsung.com>
+        <20180504135212.26977-27-peda@axentia.se>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Joseph, Changwei and Jun/Alex,
+On 04.05.2018 15:52, Peter Rosin wrote:
+> If the bridge supplier is unbound, this will bring the bridge consumer
+> down along with the bridge. Thus, there will no longer linger any
+> dangling pointers from the bridge consumer (the drm_device) to some
+> non-existent bridge supplier.
+>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  drivers/gpu/drm/drm_bridge.c | 18 ++++++++++++++++++
+>  include/drm/drm_bridge.h     |  2 ++
+>  2 files changed, 20 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> index 78d186b6831b..0259f0a3ff27 100644
+> --- a/drivers/gpu/drm/drm_bridge.c
+> +++ b/drivers/gpu/drm/drm_bridge.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/mutex.h>
+>  
+>  #include <drm/drm_bridge.h>
+> +#include <drm/drm_device.h>
+>  #include <drm/drm_encoder.h>
+>  
+>  #include "drm_crtc_internal.h"
+> @@ -127,12 +128,25 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+>  	if (bridge->dev)
+>  		return -EBUSY;
+>  
+> +	if (encoder->dev->dev != bridge->odev) {
 
-Please help to take a look at this patch, 
-since the previous patch really has vulnerability in logic, although our test cases did not hit it.
+I wonder why device_link_add does not handle this case (self dependency)
+silently as noop, as it seems to be a correct behavior.
 
-Thanks
-Gang
- 
+> +		bridge->link = device_link_add(encoder->dev->dev,
+> +					       bridge->odev, 0);
+> +		if (!bridge->link) {
+> +			dev_err(bridge->odev, "failed to link bridge to %s\n",
+> +				dev_name(encoder->dev->dev));
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+>  	bridge->dev = encoder->dev;
+>  	bridge->encoder = encoder;
+>  
+>  	if (bridge->funcs->attach) {
+>  		ret = bridge->funcs->attach(bridge);
+>  		if (ret < 0) {
+> +			if (bridge->link)
+> +				device_link_del(bridge->link);
+> +			bridge->link = NULL;
+>  			bridge->dev = NULL;
+>  			bridge->encoder = NULL;
+>  			return ret;
+> @@ -159,6 +173,10 @@ void drm_bridge_detach(struct drm_bridge *bridge)
+>  	if (bridge->funcs->detach)
+>  		bridge->funcs->detach(bridge);
+>  
+> +	if (bridge->link)
+> +		device_link_del(bridge->link);
+> +	bridge->link = NULL;
+> +
+>  	bridge->dev = NULL;
+>  }
+>  
+> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+> index b656e505d11e..804189c63a4c 100644
+> --- a/include/drm/drm_bridge.h
+> +++ b/include/drm/drm_bridge.h
+> @@ -261,6 +261,7 @@ struct drm_bridge_timings {
+>   * @list: to keep track of all added bridges
+>   * @timings: the timing specification for the bridge, if any (may
+>   * be NULL)
+> + * @link: drm consumer <-> bridge supplier
 
+Nitpick: "<->" suggests symmetry, maybe "device link from drm consumer
+to the bridge" would be better.
 
->>> Larry Chen <lchen@suse.com> 2018/5/10 13:32 >>>
-ocfs2_inode_lock_tracker as a variant of ocfs2_inode_lock,
-is used to prevent deadlock due to recursive lock acquisition.
+Anyway:
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-But this function does not distinguish
-whether the requested level is EX or PR.
+ --
+Regards
+Andrzej
 
-If a RP lock has been attained, this function
-will immediately return success afterwards even
-an EX lock is requested.
-
-But actually the return value does not mean that
-the process got a EX lock, because ocfs2_inode_lock
-has not been called.
-
-When taking lock levels into account, we face some different situations.
-1. no lock is held
-   In this case, just lock the inode and return 0
-
-2. We are holding a lock
-   For this situation, things diverges into several cases
-
-   wanted     holding	     what to do
-   ex		ex	    see 2.1 below
-   ex		pr	    see 2.2 below
-   pr		ex	    see 2.1 below
-   pr		pr	    see 2.1 below
-
-   2.1 lock level that is been held is compatible
-   with the wanted level, so no lock action will be tacken.
-
-   2.2 Otherwise, an upgrade is needed, but it is forbidden.
-
-Reason why upgrade within a process is forbidden is that
-lock upgrade may cause dead lock. The following illustrate
-how it happens.
-
-        process 1                             process 2
-ocfs2_inode_lock_tracker(ex=0)
-                               <======   ocfs2_inode_lock_tracker(ex=1)
-
-ocfs2_inode_lock_tracker(ex=1)
-
-Signed-off-by: Larry Chen <lchen@suse.com>
-Reviewed-by: Gang He <ghe@suse.com>
----
- fs/ocfs2/dlmglue.c | 119 +++++++++++++++++++++++++++++++++++++++--------------
- fs/ocfs2/dlmglue.h |   1 +
- 2 files changed, 90 insertions(+), 30 deletions(-)
-
-diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
-index 97a972efab83..68728de12864 100644
---- a/fs/ocfs2/dlmglue.c
-+++ b/fs/ocfs2/dlmglue.c
-@@ -788,35 +788,34 @@ static inline void ocfs2_add_holder(struct ocfs2_lock_res *lockres,
- 	spin_unlock(&lockres->l_lock);
- }
- 
--static inline void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
--				       struct ocfs2_lock_holder *oh)
--{
--	spin_lock(&lockres->l_lock);
--	list_del(&oh->oh_list);
--	spin_unlock(&lockres->l_lock);
--
--	put_pid(oh->oh_owner_pid);
--}
--
--static inline int ocfs2_is_locked_by_me(struct ocfs2_lock_res *lockres)
-+static struct ocfs2_lock_holder *
-+ocfs2_pid_holder(struct ocfs2_lock_res *lockres,
-+		struct pid *pid)
- {
- 	struct ocfs2_lock_holder *oh;
--	struct pid *pid;
- 
--	/* look in the list of holders for one with the current task as owner */
- 	spin_lock(&lockres->l_lock);
--	pid = task_pid(current);
- 	list_for_each_entry(oh, &lockres->l_holders, oh_list) {
- 		if (oh->oh_owner_pid == pid) {
- 			spin_unlock(&lockres->l_lock);
--			return 1;
-+			return oh;
- 		}
- 	}
- 	spin_unlock(&lockres->l_lock);
-+	return NULL;
-+}
- 
--	return 0;
-+static inline void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
-+				       struct ocfs2_lock_holder *oh)
-+{
-+	spin_lock(&lockres->l_lock);
-+	list_del(&oh->oh_list);
-+	spin_unlock(&lockres->l_lock);
-+
-+	put_pid(oh->oh_owner_pid);
- }
- 
-+
- static inline void ocfs2_inc_holders(struct ocfs2_lock_res *lockres,
- 				     int level)
- {
-@@ -2610,34 +2609,93 @@ void ocfs2_inode_unlock(struct inode *inode,
-  *
-  * return < 0 on error, return == 0 if there's no lock holder on the stack
-  * before this call, return == 1 if this call would be a recursive locking.
-+ * return == -1 if this lock attempt will cause an upgrade which is forbidden.
-+ *
-+ * When taking lock levels into account,we face some different situations.
-+ *
-+ * 1. no lock is held
-+ *    In this case, just lock the inode as requested and return 0
-+ *
-+ * 2. We are holding a lock
-+ *    For this situation, things diverges into several cases
-+ *
-+ *    wanted     holding	     what to do
-+ *    ex		ex	    see 2.1 below
-+ *    ex		pr	    see 2.2 below
-+ *    pr		ex	    see 2.1 below
-+ *    pr		pr	    see 2.1 below
-+ *
-+ *    2.1 lock level that is been held is compatible
-+ *    with the wanted level, so no lock action will be tacken.
-+ *
-+ *    2.2 Otherwise, an upgrade is needed, but it is forbidden.
-+ *
-+ * Reason why upgrade within a process is forbidden is that
-+ * lock upgrade may cause dead lock. The following illustrates
-+ * how it happens.
-+ *
-+ *         thread on node1                             thread on node2
-+ * ocfs2_inode_lock_tracker(ex=0)
-+ *
-+ *                                <======   ocfs2_inode_lock_tracker(ex=1)
-+ *
-+ * ocfs2_inode_lock_tracker(ex=1)
-  */
- int ocfs2_inode_lock_tracker(struct inode *inode,
- 			     struct buffer_head **ret_bh,
- 			     int ex,
- 			     struct ocfs2_lock_holder *oh)
- {
--	int status;
--	int arg_flags = 0, has_locked;
-+	int status = 0;
- 	struct ocfs2_lock_res *lockres;
-+	struct ocfs2_lock_holder *tmp_oh;
-+	struct pid *pid = task_pid(current);
-+
- 
- 	lockres = &OCFS2_I(inode)->ip_inode_lockres;
--	has_locked = ocfs2_is_locked_by_me(lockres);
--	/* Just get buffer head if the cluster lock has been taken */
--	if (has_locked)
--		arg_flags = OCFS2_META_LOCK_GETBH;
-+	tmp_oh = ocfs2_pid_holder(lockres, pid);
- 
--	if (likely(!has_locked || ret_bh)) {
--		status = ocfs2_inode_lock_full(inode, ret_bh, ex, arg_flags);
-+	if (!tmp_oh) {
-+		/*
-+		 * This corresponds to the case 1.
-+		 * We haven't got any lock before.
-+		 */
-+		status = ocfs2_inode_lock_full(inode, ret_bh, ex, 0);
- 		if (status < 0) {
- 			if (status != -ENOENT)
- 				mlog_errno(status);
- 			return status;
- 		}
--	}
--	if (!has_locked)
-+
-+		oh->oh_ex = ex;
- 		ocfs2_add_holder(lockres, oh);
-+		return 0;
-+	}
- 
--	return has_locked;
-+	if (unlikely(ex && !tmp_oh->oh_ex)) {
-+		/*
-+		 * case 2.2 upgrade may cause dead lock, forbid it.
-+		 */
-+		mlog(ML_ERROR, "Recursive locking is not permitted to "
-+		     "upgrade to EX level from PR level.\n");
-+		dump_stack();
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 *  case 2.1 OCFS2_META_LOCK_GETBH flag make ocfs2_inode_lock_full.
-+	 *  ignore the lock level and just update it.
-+	 */
-+	if (ret_bh) {
-+		status = ocfs2_inode_lock_full(inode, ret_bh, ex,
-+					       OCFS2_META_LOCK_GETBH);
-+		if (status < 0) {
-+			if (status != -ENOENT)
-+				mlog_errno(status);
-+			return status;
-+		}
-+	}
-+	return tmp_oh ? 1 : 0;
- }
- 
- void ocfs2_inode_unlock_tracker(struct inode *inode,
-@@ -2649,12 +2707,13 @@ void ocfs2_inode_unlock_tracker(struct inode *inode,
- 
- 	lockres = &OCFS2_I(inode)->ip_inode_lockres;
- 	/* had_lock means that the currect process already takes the cluster
--	 * lock previously. If had_lock is 1, we have nothing to do here, and
--	 * it will get unlocked where we got the lock.
-+	 * lock previously.
-+	 * If had_lock is 1, we have nothing to do here.
-+	 * If had_lock is 0, we will release the lock.
- 	 */
- 	if (!had_lock) {
-+		ocfs2_inode_unlock(inode, oh->oh_ex);
- 		ocfs2_remove_holder(lockres, oh);
--		ocfs2_inode_unlock(inode, ex);
- 	}
- }
- 
-diff --git a/fs/ocfs2/dlmglue.h b/fs/ocfs2/dlmglue.h
-index 256e0a9067b8..4ec1c828f6e0 100644
---- a/fs/ocfs2/dlmglue.h
-+++ b/fs/ocfs2/dlmglue.h
-@@ -96,6 +96,7 @@ struct ocfs2_trim_fs_info {
- struct ocfs2_lock_holder {
- 	struct list_head oh_list;
- 	struct pid *oh_owner_pid;
-+	int oh_ex;
- };
- 
- /* ocfs2_inode_lock_full() 'arg_flags' flags */
--- 
-2.13.6
-
-
-_______________________________________________
-Ocfs2-devel mailing list
-Ocfs2-devel@oss.oracle.com 
-https://oss.oracle.com/mailman/listinfo/ocfs2-devel 
+>   * @funcs: control functions
+>   * @driver_private: pointer to the bridge driver's internal context
+>   */
+> @@ -271,6 +272,7 @@ struct drm_bridge {
+>  	struct drm_bridge *next;
+>  	struct list_head list;
+>  	const struct drm_bridge_timings *timings;
+> +	struct device_link *link;
+>  
+>  	const struct drm_bridge_funcs *funcs;
+>  	void *driver_private;
