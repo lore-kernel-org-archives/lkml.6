@@ -1,68 +1,72 @@
-Return-Path: <colin.king@canonical.com>
-X-Google-Smtp-Source: AB8JxZrMBBUuJz9EV+nFYa0iEkHNTFBB1wBN24wRhD+h+7RDociZ6l54DGvn+nReJqz1MksBQU9c
-ARC-Seal: i=1; a=rsa-sha256; t=1525964862; cv=none;
+Return-Path: <jrdr.linux@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525962018; cv=none;
         d=google.com; s=arc-20160816;
-        b=uliAnP1wym8CvIb0cgGmwe3ZTjku+9UXnfxQG+XOjFdVocPRMt7ddwjBxc+KCq5cyF
-         NWMc2sE1jncLkg/NlZR2Xlvkm1UluixwWv/8mOVpuki5D//YCWYeb/Fy0isO8pYWCTjB
-         n+bMjD+ohljJKXlBkREgzi6sXjxwL4CHxzWbDNxAGfUM/NDKlzQ9agqIU1l5agE8xoUS
-         eTumKELq/z9AzcoguHFBA/HSBwZORSUlTi1vtLAd5WuF1EF4dJg62ZwJAEcEVPVXbJ+K
-         4bZSufPAimrDb/vNfUVQE1MQJc4kKIc3OWXsn8HcNsNyfTCEj0Vni5BUnSyShU5EURr4
-         k63Q==
+        b=jYh8/DfM9qYKcmU3VfwIbCpl0SyMb1eZcFnqhO8mSfrknP6bp6ocl/LFNkKXeG6jCG
+         ktRSdZXQTEgPDbjgnYl1kEs5Xgm1DCvoroa+XlSOOoGFvUfPkK/IHNEvn4Q6oU5SPBqD
+         8kCpwwLcRDIPU2LnfK7hmwKBA2VRpfJLbjoCJFCO1uTv3Nhe0rVmUKBsbL1vMn1xFhro
+         4JpMFrCUzmdIO2uACPKIo5JZdS7+j9UgcmQnALZSwMPcrlXKi7X/L5wpe5T+RkPbmz9V
+         sJIfQOQG3stdg6rx2xKZR7p6C71S9plG1kXZh5eHKXjsgcEBpSvjz8CMDbVuHhy0v1KE
+         J7bQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:arc-authentication-results;
-        bh=Q2WTcq255rC4Zw+uKe00TZwP9EaNbYHYKuyChhKNWJg=;
-        b=W7TE43glV8ffRklj2pWxYThI+SHULYgpC4QJMZsm9FsJoYUPc4r40Kff0QeiNKXEOe
-         mAm0e+vYm0InPwcfQtiuehflY37W0SIlTNmeDeFr+rNDUwJ1IHGwewrXvatsdqrMhcnK
-         sKYsaL50QIJPwRrAKYl59dt9krHapwixkXQniHn5TWZdbUtxjJBOzquhPpovlNFlQVg9
-         vK05cmNfguu4HqDUTcDUfxjfZPoDFwpzSN3nP2K9JPuxy62sus3p/Zfz4wqkdV7bQSfm
-         LL6BEKs09LHT1VZNwVjdbmobyPkMAn58xH9hSrG+O6/U4/QcfbPNy6aB1pEwur6G8B/1
-         3sVw==
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:dkim-signature:arc-authentication-results;
+        bh=fL5wirfNI/ypXNWdMdwRYhJlc2EGVz1q2EQvKiAO0Hk=;
+        b=M02Ciib0GtDNc5RKt9Bbfrnu7fvQ0ZxSimpF+s9B5liCR8bTxNC1wd7/rWHDfKgqGS
+         SSh7nmCkZJPcTaxJRBBj94+tsfuXI1LXbQbkEVJq90ewuX8JVVYBiAadhHn8xYppb5RM
+         vFNSOSdRaoVzSotSNUixiLO8qtf1w5s3j6wvlObkVz2b3pO7NKhUG7b1ZgvWQknDWC0M
+         2x2zARWhQSJwNCYlti4xqwsLCtr22VnTyAiBA+4ylezrFbvFySkS7qiyzWEWA0sXs8XM
+         h4pju4fpUderiAeZf0hinWU2HJVjrGYNwAJbv7fO6jU7rak5xikPDswzftMuD6M3oY41
+         HkKw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=J2lMXZTz;
+       spf=pass (google.com: domain of jrdr.linux@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jrdr.linux@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of colin.king@canonical.com designates 91.189.89.112 as permitted sender) smtp.mailfrom=colin.king@canonical.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=canonical.com
-From: Colin King <colin.king@canonical.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devel@driverdev.osuosl.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtlwifi: fix spelling mistake: "traking" -> "tracking"
-Date: Thu, 10 May 2018 16:07:41 +0100
-Message-Id: <20180510150741.20677-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=J2lMXZTz;
+       spf=pass (google.com: domain of jrdr.linux@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jrdr.linux@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZp4/PKrhrFDGAMzvcyocBTrW9MV+Hh366JQxv43Xc7Xu1nMpj27q/1sIIhA2hrXYL037WF6gg==
+Date: Thu, 10 May 2018 19:52:23 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: airlied@linux.ie, arnd@arndb.de, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: [PATCH] char: agp: Change return type to vm_fault_t
+Message-ID: <20180510142223.GA25519@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600090131983688658?=
-X-GMAIL-MSGID: =?utf-8?q?1600090131983688658?=
+X-GMAIL-THRID: =?utf-8?q?1600087149819739591?=
+X-GMAIL-MSGID: =?utf-8?q?1600087149819739591?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+Use new return type vm_fault_t for fault handler. For now,
+this is just documenting that the function returns a
+VM_FAULT value rather than an errno. Once all instances are
+converted, vm_fault_t will become a distinct type.
 
-Trivial fix to spelling mistake in ODM_RT_TRACE message text
+commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
 ---
- drivers/staging/rtlwifi/phydm/phydm_rainfo.c | 2 +-
+ drivers/char/agp/alpha-agp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtlwifi/phydm/phydm_rainfo.c b/drivers/staging/rtlwifi/phydm/phydm_rainfo.c
-index 8d0802669928..a89bc59cf63b 100644
---- a/drivers/staging/rtlwifi/phydm/phydm_rainfo.c
-+++ b/drivers/staging/rtlwifi/phydm/phydm_rainfo.c
-@@ -985,7 +985,7 @@ static void phydm_ra_common_info_update(void *dm_void)
- 		}
- 		ODM_RT_TRACE(
- 			dm, ODM_COMP_RATE_ADAPTIVE,
--			"MACID[%d], Highest Tx order Update for power traking: %d\n",
-+			"MACID[%d], Highest Tx order Update for power tracking: %d\n",
- 			(ra_tab->highest_client_tx_rate_order),
- 			(ra_tab->highest_client_tx_order));
- 	}
+diff --git a/drivers/char/agp/alpha-agp.c b/drivers/char/agp/alpha-agp.c
+index 53fe633..c9bf2c2 100644
+--- a/drivers/char/agp/alpha-agp.c
++++ b/drivers/char/agp/alpha-agp.c
+@@ -11,7 +11,7 @@
+ 
+ #include "agp.h"
+ 
+-static int alpha_core_agp_vm_fault(struct vm_fault *vmf)
++static vm_fault_t alpha_core_agp_vm_fault(struct vm_fault *vmf)
+ {
+ 	alpha_agp_info *agp = agp_bridge->dev_private_data;
+ 	dma_addr_t dma_addr;
 -- 
-2.17.0
+1.9.1
