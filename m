@@ -1,128 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965153AbeEJNhn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 09:37:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935499AbeEJNhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 09:37:41 -0400
-Date: Thu, 10 May 2018 08:37:39 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Thomas Tai <thomas.tai@oracle.com>
-Cc: bhelgaas@google.com, rostedt@goodmis.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mr.nuke.me@gmail.com
-Subject: Re: [PATCH V3 1/1] PCI/AER: add pcie TLP header information in the
- tracepoint
-Message-ID: <20180510133739.GI173327@bhelgaas-glaptop.roam.corp.google.com>
-References: <1525820696-31967-1-git-send-email-thomas.tai@oracle.com>
- <1525820696-31967-2-git-send-email-thomas.tai@oracle.com>
+        id S935644AbeEJNiW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 09:38:22 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:36314 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935499AbeEJNiU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 09:38:20 -0400
+Date: Thu, 10 May 2018 16:38:08 +0300
+From: Yuval Shaia <yuval.shaia@oracle.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: davem@davemloft.net, tariqt@mellanox.com, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] net/mlx4_en: Fix an error handling path in
+ 'mlx4_en_init_netdev()'
+Message-ID: <20180510133808.GA10943@lap1>
+References: <20180510070226.19575-1-christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1525820696-31967-2-git-send-email-thomas.tai@oracle.com>
+In-Reply-To: <20180510070226.19575-1-christophe.jaillet@wanadoo.fr>
 User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8888 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=9 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=993
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805100132
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 07:04:56PM -0400, Thomas Tai wrote:
-> When a PCIe AER occurs, the TLP header information is
-> printed in the kernel message but it is missing from
-> the tracepoint. A userspace program can use this information
-> in the tracepoint to better analyze problems.
+On Thu, May 10, 2018 at 09:02:26AM +0200, Christophe JAILLET wrote:
+> If an error occurs, 'mlx4_en_destroy_netdev()' is called.
+> It then calls 'mlx4_en_free_resources()' which does the needed resources
+> cleanup.
 > 
-> To enable the tracepoint:
-> echo 1 > /sys/kernel/debug/tracing/events/ras/aer_event/enable
-> 
-> Example tracepoint output:
-> cat /sys/kernel/debug/tracing/trace
-> aer_event: 0000:01:00.0
-> PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
-> TLP Header={0x0,0x1,0x2,0x3}
-> 
-> Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
+> So, doing some explicit kfree in the error handling path would lead to
+> some double kfree.
 
-Applied with Steven's reviewed-by to pci/aer for v4.18, thanks!
+Patch make sense but what's bothering me is that mlx4_en_free_resources
+loops on the entire array, assuming !priv->tx_ring[t] means entry is
+allocated but the existing code does not assume that, see [1]. So i looked
+to see where tx_ring array is zeroed and didn't find it.
 
+Am i missing something here.
+
+> 
+> Simplify code to avoid such a case.
+> 
+> Fixes: 67f8b1dcb9ee ("net/mlx4_en: Refactor the XDP forwarding rings scheme")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/pci/pcie/aer/aerdrv_errprint.c |  4 ++--
->  include/ras/ras_event.h                | 22 ++++++++++++++++++----
->  2 files changed, 20 insertions(+), 6 deletions(-)
+>  drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
 > 
-> diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
-> index cfc89dd..fd49a8d 100644
-> --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
-> +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
-> @@ -189,7 +189,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->  		pci_err(dev, "  Error of this Agent(%04x) is reported first\n", id);
+> diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+> index e0adac4a9a19..9670b33fc9b1 100644
+> --- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+> +++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+> @@ -3324,12 +3324,11 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
+>  					   MAX_TX_RINGS, GFP_KERNEL);
+>  		if (!priv->tx_ring[t]) {
+>  			err = -ENOMEM;
+> -			goto err_free_tx;
+> +			goto out;
+>  		}
+>  		priv->tx_cq[t] = kzalloc(sizeof(struct mlx4_en_cq *) *
+>  					 MAX_TX_RINGS, GFP_KERNEL);
+>  		if (!priv->tx_cq[t]) {
+> -			kfree(priv->tx_ring[t]);
+>  			err = -ENOMEM;
+>  			goto out;
+>  		}
+> @@ -3582,11 +3581,6 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
 >  
->  	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
-> -			info->severity);
-> +			info->severity, info->tlp_header_valid, &info->tlp);
->  }
+>  	return 0;
 >  
->  void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
-> @@ -249,6 +249,6 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
->  		__print_tlp_header(dev, &aer->header_log);
->  
->  	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
-> -			aer_severity);
-> +			aer_severity, tlp_header_valid, &aer->header_log);
->  }
->  #endif
-> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-> index 9c68986..a079463 100644
-> --- a/include/ras/ras_event.h
-> +++ b/include/ras/ras_event.h
-> @@ -298,30 +298,44 @@
->  TRACE_EVENT(aer_event,
->  	TP_PROTO(const char *dev_name,
->  		 const u32 status,
-> -		 const u8 severity),
-> +		 const u8 severity,
-> +		 const u8 tlp_header_valid,
-> +		 struct aer_header_log_regs *tlp),
->  
-> -	TP_ARGS(dev_name, status, severity),
-> +	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
->  
->  	TP_STRUCT__entry(
->  		__string(	dev_name,	dev_name	)
->  		__field(	u32,		status		)
->  		__field(	u8,		severity	)
-> +		__field(	u8, 		tlp_header_valid)
-> +		__array(	u32, 		tlp_header, 4	)
->  	),
->  
->  	TP_fast_assign(
->  		__assign_str(dev_name, dev_name);
->  		__entry->status		= status;
->  		__entry->severity	= severity;
-> +		__entry->tlp_header_valid = tlp_header_valid;
-> +		if (tlp_header_valid) {
-> +			__entry->tlp_header[0] = tlp->dw0;
-> +			__entry->tlp_header[1] = tlp->dw1;
-> +			__entry->tlp_header[2] = tlp->dw2;
-> +			__entry->tlp_header[3] = tlp->dw3;
-> +		}
->  	),
->  
-> -	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
-> +	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
->  		__get_str(dev_name),
->  		__entry->severity == AER_CORRECTABLE ? "Corrected" :
->  			__entry->severity == AER_FATAL ?
->  			"Fatal" : "Uncorrected, non-fatal",
->  		__entry->severity == AER_CORRECTABLE ?
->  		__print_flags(__entry->status, "|", aer_correctable_errors) :
-> -		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
-> +		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
-> +		__entry->tlp_header_valid ?
-> +			__print_array(__entry->tlp_header, 4, 4) :
-> +			"Not available")
->  );
->  
->  /*
+> -err_free_tx:
+> -	while (t--) {
+
+[1]
+
+> -		kfree(priv->tx_ring[t]);
+> -		kfree(priv->tx_cq[t]);
+> -	}
+>  out:
+>  	mlx4_en_destroy_netdev(dev);
+>  	return err;
 > -- 
-> 1.8.3.1
+> 2.17.0
 > 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
