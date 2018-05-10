@@ -1,75 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935281AbeEJLUF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 07:20:05 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36199 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934002AbeEJLUD (ORCPT
+        id S935448AbeEJL0W (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 07:26:22 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:55757 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935393AbeEJL0S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 07:20:03 -0400
-X-Google-Smtp-Source: AB8JxZp60B4/63UgfN4yZxItuEMtnbbbL67VRJwX7bSUHSbt8eFJpgd83b99FLiB/3l1Cr5N+yVRNR0bR2khqHcVxcY=
-MIME-Version: 1.0
-In-Reply-To: <20180510131725.111079af@wiggum>
-References: <20180510111401.1161-1-zajec5@gmail.com> <20180510111401.1161-2-zajec5@gmail.com>
- <20180510131725.111079af@wiggum>
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date: Thu, 10 May 2018 13:20:01 +0200
-Message-ID: <CACna6ryWUCnrw9w4yhfiNXFHy1hFjVV-BqH07i7DQqxq8FtjMw@mail.gmail.com>
-Subject: Re: [PATCH 4.17 2/2] ssb: make SSB_PCICORE_HOSTMODE depend on SSB = y
-To: =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
-Cc: Kalle Valo <kvalo@codeaurora.org>,
-        Larry Finger <larry.finger@lwfinger.net>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        Hauke Mehrtens <hauke@hauke-m.de>, LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 10 May 2018 07:26:18 -0400
+X-ME-Helo: ubuntu-CJ.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 10 May 2018 13:26:17 +0200
+X-ME-IP: 86.244.116.1
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: jiri@mellanox.com, idosch@mellanox.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] mlxsw: core: Fix an error handling path in 'mlxsw_core_bus_device_register()'
+Date: Thu, 10 May 2018 13:26:16 +0200
+Message-Id: <20180510112616.20508-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4ABKBK3024722
 
-On 10 May 2018 at 13:17, Michael Büsch <m@bues.ch> wrote:
-> On Thu, 10 May 2018 13:14:01 +0200
-> Rafał Miłecki <zajec5@gmail.com> wrote:
->
->> From: Rafał Miłecki <rafal@milecki.pl>
->>
->> SSB_PCICORE_HOSTMODE protects MIPS specific code that calls not exported
->> symbols pcibios_enable_device and register_pci_controller. This code is
->> supposed to be compiled only with ssb builtin.
->>
->> This fixes:
->> ERROR: "pcibios_enable_device" [drivers/ssb/ssb.ko] undefined!
->> ERROR: "register_pci_controller" [drivers/ssb/ssb.ko] undefined!
->> make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
->>
->> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
->> ---
->>  drivers/ssb/Kconfig | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
->> index b3f5cae98ea6..c574dd210500 100644
->> --- a/drivers/ssb/Kconfig
->> +++ b/drivers/ssb/Kconfig
->> @@ -131,7 +131,7 @@ config SSB_DRIVER_PCICORE
->>
->>  config SSB_PCICORE_HOSTMODE
->>       bool "Hostmode support for SSB PCI core"
->> -     depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS
->> +     depends on SSB_DRIVER_PCICORE && SSB_DRIVER_MIPS && SSB = y
->>       help
->>         PCIcore hostmode operation (external PCI bus).
->>
->
->
-> I think we also need to depend on PCI_DRIVERS_LEGACY.
-> See the other patch that floats around.
+Resources are not freed in the reverse order of the allocation.
+Labels are also mixed-up.
 
-I believe it's already handled by SSB_PCIHOST_POSSIBLE's dependency on
-PCI_DRIVERS_LEGACY.
+Fix it and reorder code and labels in the error handling path of
+'mlxsw_core_bus_device_register()'
 
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Please review carefully. This patch is proposed because it triggers one of
+my coccinelle scripts. I'm not 100% sure if correct.
+
+The script tries to spot wrongly ordered error handling path. It is:
+@@
+identifier l1, l2;
+@@
+
+   if (...) {
+      ...
+*     goto l1;
+   }
+   ...
+   if (...) {
+      ...
+*     goto l2;
+   }
+   ...
+*l1:
+   ...
+*l2:
+   ...
+---
+ drivers/net/ethernet/mellanox/mlxsw/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/core.c b/drivers/net/ethernet/mellanox/mlxsw/core.c
+index 93ea56620a24..e13ac3b8dff7 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/core.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/core.c
+@@ -1100,11 +1100,11 @@ int mlxsw_core_bus_device_register(const struct mlxsw_bus_info *mlxsw_bus_info,
+ err_alloc_lag_mapping:
+ 	mlxsw_ports_fini(mlxsw_core);
+ err_ports_init:
+-	mlxsw_bus->fini(bus_priv);
+-err_bus_init:
+ 	if (!reload)
+ 		devlink_resources_unregister(devlink, NULL);
+ err_register_resources:
++	mlxsw_bus->fini(bus_priv);
++err_bus_init:
+ 	if (!reload)
+ 		devlink_free(devlink);
+ err_devlink_alloc:
 -- 
-Rafał
+2.17.0
