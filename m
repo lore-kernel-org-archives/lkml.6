@@ -1,29 +1,29 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AB8JxZpubEzUfCdZUnb+xUhRfjLSdHNWey+XcAl3nbZu2Ge9jnYgBWzVDbT4N38fKD7/wkrROAgy
-ARC-Seal: i=1; a=rsa-sha256; t=1525982941; cv=none;
+X-Google-Smtp-Source: AB8JxZqWUR/lrvDzQuqkOX1abZdUDhxx8+CZ13OOvlneL8c60FZhwGDj77vD/umkGNYHGYJjqDTF
+ARC-Seal: i=1; a=rsa-sha256; t=1525982940; cv=none;
         d=google.com; s=arc-20160816;
-        b=Tc3cnPlvOgthPgrphTGjI3+e/Fj6WPXpDnMS0rdq1diXrfH4J+GS6MqkHgpHTJSwfe
-         zBimckqoARz2bEXGuSWAOHY5W5RPx+ru7CEMypPzmobW12yeLxYE4OT0KOVfS71w79Sa
-         as5BLPOva5BGm9Gidb8yBXpnA1HDT+Oac/QJWXCuG9mwzopdhtiocjTEjHVIAxpoaiMw
-         eZSR2UVwIf7GMXToD6FFvWzd8SXs5T/tXqLKbd0akX3v9x+cptOIjA2i4xn/701IzwMq
-         qbP+h5M8YYeP9upBtvOFoaYR9ea5u8pzhyVaW7QmIdHwbUBjivw1wh0jU0rNc/vbP0XM
-         9JXQ==
+        b=Q/EH7OhxsRClIgQD2mNttNmIvn4WQ+Pem/G4NgA69iVqVX+R9BNwztL4Yqvn4WarrC
+         ZFLN4o1MfS/WbEPk4NW7Bp5zLI0qbTXnvfRbUouZY3Odli+zHO59S1gp7+L6834l6/W1
+         /yraXwuL5D6PuugviIn+WUCyoXDbUcdlRA0cEY30pWnegde4WF5bfdi3BikWo46YRwTm
+         NG0mfx3uaN+hKA84OdRef3smKqlS3ahGnhHn20UCZ1147VNvLfUkO55A/hG8YP1RfU3L
+         e9xeRcP41XDanilxS6Cdk99iaI+080X0fyX5eCM5kgLDrNLYA37SR0vj6lNhnzXuDAV3
+         JxrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=GMtYn4dHWeMjH0nZMXZo/eYPNY2atAyUcnAmwHlE46s=;
-        b=hjWHg5ty0479xtJqGZxg1S94ZRQ6T3AiyekZiO822+PVHmJCKFOxvQXAzRvqIfMg+1
-         /R9xSiLjX5j6CwbiHY2H+Mu2w+zd0XgAt9vdiPOJRNjlqEgH7SASYfEmqF8ryS9mJS3k
-         5uKcts6sJiR1REx2lIe7ip+Aj4MBf2CsNETAG4ZEe+z3KxsPukmxIAwLZkOx6fIpN8Rt
-         HWcI8Dt7MzkBGnFFv5IyLbuYcvf3bBbESxuNMzrTBv4mH6MdWbB6JUC/yRvhx2xQYpOf
-         +/H+X5+DCI/pE5lzTDyic5LfzT3OPOcG69SLG2jT9UWszV+fc8LYLNlCZKuSbom7BqLn
-         kGOw==
+        bh=kCNo/ZLjAnK3VkdZf5rqX7ZN5Tnmwb9VZC4IVBhswWc=;
+        b=FGyyJXDVlDtLJ1L/XC58z7jD/Ca34dA6SmI6PcUmDijRedRgGVdrVcUguVPONLhcAD
+         JkStsMdO7gOdArQefic1J1YdWC2Ptjj5aNEwbzlC5ZJATXquHv7F0+ykMFK6eqw89pFz
+         19jjKo8fN0If22dqduSq7belNjRbs1DMrA+UHCifqe9ymVmbDX4N1sFvYKBqSGiYUx7/
+         MxamhCduyMYJt40nEtjxVRaRL+HA0PdCafVP46KwFMMJj3eiI4ZVTRt162YTN6EzmfID
+         0mQMau/01uXpoTKoA8uJDHswY65cCdo53riqYDsXSryaF0kmSBBddXHaIYtbumgFdRo3
+         cDug==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Q+lcr1YQ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=m84HTz8Z;
        spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Q+lcr1YQ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=m84HTz8Z;
        spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -68,247 +68,57 @@ Cc: akpm@linux-foundation.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-wireless@vger.kernel.org,
 	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v7 05/14] firmware_loader: enhance Kconfig documentation over FW_LOADER
-Date: Thu, 10 May 2018 13:08:41 -0700
-Message-Id: <20180510200850.5958-6-mcgrof@kernel.org>
+Subject: [PATCH v7 04/14] firmware_loader: document firmware_sysfs_fallback()
+Date: Thu, 10 May 2018 13:08:40 -0700
+Message-Id: <20180510200850.5958-5-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180510200850.5958-1-mcgrof@kernel.org>
 References: <20180510200850.5958-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600109089559087476?=
-X-GMAIL-MSGID: =?utf-8?q?1600109089559087476?=
+X-GMAIL-THRID: =?utf-8?q?1600109087744907232?=
+X-GMAIL-MSGID: =?utf-8?q?1600109087744907232?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-If you try to read FW_LOADER today it speaks of old riddles and
-unless you have been following development closely you will lose
-track of what is what. Even the documentation for PREVENT_FIRMWARE_BUILD
-is a bit fuzzy and how it fits into this big picture.
-
-Give the FW_LOADER kconfig documentation some love with more up to
-date developments and recommendations. While at it, wrap the FW_LOADER
-code into its own menu to compartmentalize and make it clearer which
-components really are part of the FW_LOADER. This should also make
-it easier to later move these kconfig entries into the firmware_loader/
-directory later.
-
-This also now recommends using firmwared [0] for folks left needing a
-uevent handler in userspace for the sysfs firmware fallback mechanis
-given udev's uevent firmware mechanism was ripped out a while ago.
-
-[0] https://github.com/teg/firmwared
+This also sets the expecations for future fallback interfaces, even
+if they are not exported.
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- drivers/base/Kconfig | 165 ++++++++++++++++++++++++++++++++++---------
- 1 file changed, 131 insertions(+), 34 deletions(-)
+ drivers/base/firmware_loader/fallback.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-index 29b0eb452b3a..db2bbe483927 100644
---- a/drivers/base/Kconfig
-+++ b/drivers/base/Kconfig
-@@ -70,39 +70,64 @@ config STANDALONE
- 	  If unsure, say Y.
+diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+index 3db9e0f225ac..9169e7b9800c 100644
+--- a/drivers/base/firmware_loader/fallback.c
++++ b/drivers/base/firmware_loader/fallback.c
+@@ -662,6 +662,26 @@ static bool fw_run_sysfs_fallback(enum fw_opt opt_flags)
+ 	return fw_force_sysfs_fallback(opt_flags);
+ }
  
- config PREVENT_FIRMWARE_BUILD
--	bool "Prevent firmware from being built"
-+	bool "Disable drivers features which enable custom firmware building"
- 	default y
- 	help
--	  Say yes to avoid building firmware. Firmware is usually shipped
--	  with the driver and only when updating the firmware should a
--	  rebuild be made.
--	  If unsure, say Y here.
-+	  Say yes to disable driver features which enable building a custom
-+	  driver firmware at kernel build time. These drivers do not use the
-+	  kernel firmware API to load firmware (CONFIG_FW_LOADER), instead they
-+	  use their own custom loading mechanism. The required firmware is
-+	  usually shipped with the driver, building the driver firmware
-+	  should only be needed if you have an updated firmware source.
-+
-+	  Firmware should not be being built as part of kernel, these days
-+	  you should always prevent this and say Y here. There are only two
-+	  old drivers which enable building of its firmware at kernel build
-+	  time:
-+
-+	    o CONFIG_WANXL through CONFIG_WANXL_BUILD_FIRMWARE
-+	    o CONFIG_SCSI_AIC79XX through CONFIG_AIC79XX_BUILD_FIRMWARE
-+
-+menu "Firmware loader"
- 
- config FW_LOADER
--	tristate "Userspace firmware loading support" if EXPERT
-+	tristate "Firmware loading facility" if EXPERT
- 	default y
- 	---help---
--	  This option is provided for the case where none of the in-tree modules
--	  require userspace firmware loading support, but a module built
--	  out-of-tree does.
-+	  This enables the firmware loading facility in the kernel. The kernel
-+	  will first look for built-in firmware, if it has any. Next, it will
-+	  look for the requested firmware in a series of filesystem paths:
-+
-+		o firmware_class path module parameter or kernel boot param
-+		o /lib/firmware/updates/UTS_RELEASE
-+		o /lib/firmware/updates
-+		o /lib/firmware/UTS_RELEASE
-+		o /lib/firmware
-+
-+	  Enabling this feature only increases your kernel image by about
-+	  828 bytes, enable this option unless you are certain you don't
-+	  need firmware.
-+
-+	  You typically want this built-in (=y) but you can also enable this
-+	  as a module, in which case the firmware_class module will be built.
-+	  You also want to be sure to enable this built-in if you are going to
-+	  enable built-in firmware (CONFIG_EXTRA_FIRMWARE).
-+
-+if FW_LOADER
- 
- config EXTRA_FIRMWARE
--	string "External firmware blobs to build into the kernel binary"
--	depends on FW_LOADER
-+	string "Build named firmware blobs into the kernel binary"
- 	help
--	  Various drivers in the kernel source tree may require firmware,
--	  which is generally available in your distribution's linux-firmware
--	  package.
-+	  Device drivers which require firmware can typically deal with
-+	  having the kernel load firmware from the various supported
-+	  /lib/firmware/ paths. This option enables you to build into the
-+	  kernel firmware files. Built-in firmware searches are preceded
-+	  over firmware lookups using your filesystem over the supported
-+	  /lib/firmware paths documented on CONFIG_FW_LOADER.
- 
--	  The linux-firmware package should install firmware into
--	  /lib/firmware/ on your system, so they can be loaded by userspace
--	  helpers on request.
--
--	  This option allows firmware to be built into the kernel for the case
--	  where the user either cannot or doesn't want to provide it from
--	  userspace at runtime (for example, when the firmware in question is
--	  required for accessing the boot device, and the user doesn't want to
--	  use an initrd).
-+	  This may be useful for testing or if the firmware is required early on
-+	  in boot and cannot rely on the firmware being placed in an initrd or
-+	  initramfs.
- 
- 	  This option is a string and takes the (space-separated) names of the
- 	  firmware files -- the same names that appear in MODULE_FIRMWARE()
-@@ -113,7 +138,7 @@ config EXTRA_FIRMWARE
- 	  For example, you might set CONFIG_EXTRA_FIRMWARE="usb8388.bin", copy
- 	  the usb8388.bin file into /lib/firmware, and build the kernel. Then
- 	  any request_firmware("usb8388.bin") will be satisfied internally
--	  without needing to call out to userspace.
-+	  inside the kernel without ever looking at your filesystem at runtime.
- 
- 	  WARNING: If you include additional firmware files into your binary
- 	  kernel image that are not available under the terms of the GPL,
-@@ -130,22 +155,94 @@ config EXTRA_FIRMWARE_DIR
- 	  looks for the firmware files listed in the EXTRA_FIRMWARE option.
- 
- config FW_LOADER_USER_HELPER
--	bool
-+	bool "Enable the firmware sysfs fallback mechanism"
-+	help
-+	  This option enables a sysfs loading facility to enable firmware
-+	  loading to the kernel through userspace as a fallback mechanism
-+	  if and only if the kernel's direct filesystem lookup for the
-+	  firmware failed using the different /lib/firmware/ paths, or the
-+	  path specified in the firmware_class path module parameter, or the
-+	  firmware_class path kernel boot parameter if the firmware_class is
-+	  built-in. For details on how to work with the sysfs fallback mechanism
-+	  refer to Documentation/driver-api/firmware/fallback-mechanisms.rst.
-+
-+	  The direct filesystem lookup for firmware is always used first now.
-+
-+	  If the kernel's direct filesystem lookup for firmware fails to find
-+	  the requested firmware a sysfs fallback loading facility is made
-+	  available and userspace is informed about this through uevents.
-+	  The uevent can be suppressed if the driver explicitly requested it,
-+	  this is known as the driver using the custom fallback mechanism.
-+	  If the custom fallback mechanism is used userspace must always
-+	  acknowledge failure to find firmware as the timeout for the fallback
-+	  mechanism is disabled, and failed requests will linger forever.
-+
-+	  This used to be the default firmware loading facility, and udev used
-+	  to listen for uvents to load firmware for the kernel. The firmware
-+	  loading facility functionality in udev has been removed, as such it
-+	  can no longer be relied upon as a fallback mechanism. Linux no longer
-+	  relies on or uses a fallback mechanism in userspace. If you need to
-+	  rely on one refer to the permissively licensed firmwared:
-+
-+	  https://github.com/teg/firmwared
-+
-+	  Since this was the default firmware loading facility at one point,
-+	  old userspace may exist which relies upon it, and as such this
-+	  mechanism can never be removed from the kernel.
-+
-+	  You should only enable this functionality if you are certain you
-+	  require a fallback mechanism and have a userspace mechanism ready to
-+	  load firmware in case it is not found. One main reason for this may
-+	  be if you have drivers which require firmware built-in and for
-+	  whatever reason cannot place the required firmware in initramfs.
-+	  Another reason kernels may have this feature enabled is to support a
-+	  driver which explicitly relies on this fallback mechanism. Only two
-+	  drivers need this today:
-+
-+	    o CONFIG_LEDS_LP55XX_COMMON
-+	    o CONFIG_DELL_RBU
-+
-+	  Outside of supporting the above drivers, another reason for needing
-+	  this may be that your firmware resides outside of the paths the kernel
-+	  looks for and cannot possibly be specified using the firmware_class
-+	  path module parameter or kernel firmware_class path boot parameter
-+	  if firmware_class is built-in.
-+
-+	  A modern use case may be to temporarily mount a custom partition
-+	  during provisioning which is only accessible to userspace, and then
-+	  to use it to look for and fetch the required firmware. Such type of
-+	  driver functionality may not even ever be desirable upstream by
-+	  vendors, and as such is only required to be supported as an interface
-+	  for provisioning. Since udev's firmware loading facility has been
-+	  removed you can use firmwared or a fork of it to customize how you
-+	  want to load firmware based on uevents issued.
-+
-+	  Enabling this option will increase your kernel image size by about
-+	  13436 bytes.
-+
-+	  If you are unsure about this, say N here, unless you are Linux
-+	  distribution and need to support the above two drivers, or you are
-+	  certain you need to support some really custom firmware loading
-+	  facility in userspace.
- 
- config FW_LOADER_USER_HELPER_FALLBACK
--	bool "Fallback user-helper invocation for firmware loading"
--	depends on FW_LOADER
--	select FW_LOADER_USER_HELPER
-+	bool "Force the firmware sysfs fallback mechanism when possible"
-+	depends on FW_LOADER_USER_HELPER
- 	help
--	  This option enables / disables the invocation of user-helper
--	  (e.g. udev) for loading firmware files as a fallback after the
--	  direct file loading in kernel fails.  The user-mode helper is
--	  no longer required unless you have a special firmware file that
--	  resides in a non-standard path. Moreover, the udev support has
--	  been deprecated upstream.
-+	  Enabling this option forces a sysfs userspace fallback mechanism
-+	  to be used for all firmware requests which explicitly do not disable a
-+	  a fallback mechanism. Firmware calls which do prohibit a fallback
-+	  mechanism is request_firmware_direct(). This option is kept for
-+          backward compatibility purposes given this precise mechanism can also
-+	  be enabled by setting the proc sysctl value to true:
-+
-+	       /proc/sys/kernel/firmware_config/force_sysfs_fallback
- 
- 	  If you are unsure about this, say N here.
- 
-+endif # FW_LOADER
-+endmenu
-+
- config WANT_DEV_COREDUMP
- 	bool
- 	help
++/**
++ * firmware_fallback_sysfs() - use the fallback mechanism to find firmware
++ * @fw: pointer to firmware image
++ * @name: name of firmware file to look for
++ * @device: device for which firmware is being loaded
++ * @opt_flags: options to control firmware loading behaviour
++ * @ret: return value from direct lookup which triggered the fallback mechanism
++ *
++ * This function is called if direct lookup for the firmware failed, it enables
++ * a fallback mechanism through userspace by exposing a sysfs loading
++ * interface. Userspace is in charge of loading the firmware through the syfs
++ * loading interface. This syfs fallback mechanism may be disabled completely
++ * on a system by setting the proc sysctl value ignore_sysfs_fallback to true.
++ * If this false we check if the internal API caller set the @FW_OPT_NOFALLBACK
++ * flag, if so it would also disable the fallback mechanism. A system may want
++ * to enfoce the sysfs fallback mechanism at all times, it can do this by
++ * setting ignore_sysfs_fallback to false and force_sysfs_fallback to true.
++ * Enabling force_sysfs_fallback is functionally equivalent to build a kernel
++ * with CONFIG_FW_LOADER_USER_HELPER_FALLBACK.
++ **/
+ int firmware_fallback_sysfs(struct firmware *fw, const char *name,
+ 			    struct device *device,
+ 			    enum fw_opt opt_flags,
 -- 
 2.17.0
