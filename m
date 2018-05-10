@@ -1,67 +1,371 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756830AbeEJJKl convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 05:10:41 -0400
-Received: from mout.gmx.net ([212.227.15.19]:57123 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756699AbeEJJKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 05:10:38 -0400
-Message-ID: <1525943427.8013.11.camel@gmx.de>
-Subject: kernel spew from nouveau/ swiotlb
-From: Mike Galbraith <efault@gmx.de>
-To: nouveau <nouveau@lists.freedesktop.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>
-Date: Thu, 10 May 2018 11:10:27 +0200
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:208AdHrDNLAgdTF44umy1+aD6CoSizYPzq+N8NgCA3YCr8wM0cb
- VzR8F9hEIU2R2bu7ikEk8i67Gjm5W74F6xTk79ZdeJ5uCr1lQlxFOqnbNxjCZnyTOAbmMYm
- 1YjhEDboKGiKcHqnM+6k1l7RWVaKyU4TngcizRRq7wJzKZTEfZuBf4DBnY0sT1BGCPygGVN
- AEw8eX2/YGI3zTYtJIQjA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:uztD/ORKjS4=:/qg0Z22yZAV4ooP8TNfbYt
- OQKudLgpVFnJSIBDNMxLpYtcNbOFc3DrJffmB1swqp4Qka20NSXjv8SE09Dc2327CITIm14HG
- f9ANeiVYJPL71+znVby0X5HsiB5GB1HVhB5zogiU5TDWQEJg2jYg7SErMuyGrmr59WYw1pt2w
- zkAO3oVGwhD3KTzoCsTIhz14/Q13YwIyP2DqVnTBRw+Jg7mTCXcvJT4+br5HtcozCXeYuN3cn
- sCdVD98rnquzoKQJYhd54ZfUjELx6rQGR2mZOO44Y0e5VpErZ7EXMBGBDoII2eIi7r4v4eV9j
- 0YOOJN3slyK3MUnbRwN0596Wy4lhGX3ReqrcjziROnCDxJIftxjfJkoah0ciCFeBZqac0DdyL
- QEeEagdnzjyEDbpP8FrQZuaPQiiWzmEdw6uXYdC1QnjApouGZZCFwK+OQQBfcHAVUdCnf6LE6
- gtU/dk8J7guX8sQwn9+JkvpW/H6V3EZDyFSiWaPDlsNB2nyJ3faj8r/9vH8YtO2KiU2/UkJK6
- LGI7QOHelJtVTRY4sUi1+G1dg3iJPiPpDVbgd9lSPyZh3j6tZtInPHJtfKMxNUY6UHj125WFV
- w7pll2AVbp0Fg/QHvNMgGPD67xujHVsIeot09EmB6NuHO2Bn/iLRinctJlOWZf+TNlxwKfPtm
- pNNuhzz0fbQ5ITicIG4EP9Sg0ZvpVaie5CD1HgOe4lZaj7BqU6ig7gl/XvaKLibBt5+wJpGBw
- gQ+zyoSWC3i6P4s1UYUKZcap6pwG9ie+XlWPkO3ff8m0Z2sdRi7lhWsRjD3JCGQo/LFpVF/68
- dCmTovC
+        id S1756975AbeEJJLU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 05:11:20 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:35431 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756699AbeEJJLQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 05:11:16 -0400
+Subject: Re: [PATCH V3] ARM: dts: da850-evm: use phandles to extend nodes
+To: Adam Ford <aford173@gmail.com>, <adam.ford@logicpd.com>
+CC: Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180507123721.9264-1-aford173@gmail.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <ae8292b2-b167-7a96-70be-1cfea6059874@ti.com>
+Date: Thu, 10 May 2018 14:40:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180507123721.9264-1-aford173@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greetings,
+On Monday 07 May 2018 06:07 PM, Adam Ford wrote:
+> Many node labels in the device tree (like serial0, serial1, etc) are being
+> redefined, so let's modernize the device tree by using phandles to
+> extend the existing nodes.  This helps reduce the whitespace.
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-When box is earning its keep, nouveau/swiotlb grumble.. a LOT.  The
-below is from master.today.
+I applied this without the pmic changes. I am not convinced about those. 
+The tps node is already being referred to as phandle. I am not sure 
+referring to each individual regulator using phandle is needed. Other 
+files like am335x-evm.dts don't do it as well.
 
-[12594.640959] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-[12594.693000] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-[12594.713787] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-[12594.743413] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-[12594.796740] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-[12607.000774] swiotlb_tbl_map_single: 54 callbacks suppressed
-[12607.000776] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-[12607.347941] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-[12608.677038] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-homer:/novell/ssh # dmesg|grep 'swiotlb buffer is full'|wc -l
-2052
-homer:/novell/ssh # dmesg|grep 'callbacks suppressed'|wc -l
-171
+Another thing is whether we really need the tp6507x.dtsi file. It does 
+not seem to contain much and also da850-evm.dts is the only file 
+including it. So it seems pretty pointless to me.
 
-lib/swiotlb.c:
- 573 not_found:
- 574         spin_unlock_irqrestore(&io_tlb_lock, flags);
- 575         if (!(attrs & DMA_ATTR_NO_WARN) && printk_ratelimit())
- 576                 dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes)\n", size);
+Here is what I committed.
 
-Does nouveau perhaps want one of those DMA_ATTR_NO_WARN thingies?
+Thanks,
+Sekhar
 
-	-Mike
+---8<---
+commit ae62a32d6019a8225e2c32e631b8b0d039151131 (refs/heads/v4.18/dt)
+Author:     Adam Ford <aford173@gmail.com>
+AuthorDate: Mon May 7 07:37:21 2018 -0500
+Commit:     Sekhar Nori <nsekhar@ti.com>
+CommitDate: Thu May 10 14:01:15 2018 +0530
+
+    ARM: dts: da850-evm: use phandles to extend nodes
+    
+    Many node labels in the device tree (like serial0, serial1, etc) are being
+    redefined, so let's modernize the device tree by using phandles to
+    extend the existing nodes.  This helps reduce the whitespace.
+    
+    Signed-off-by: Adam Ford <aford173@gmail.com>
+    [nsekhar@ti.com: drop tps6507x related changes]
+    Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+
+diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
+index 339cae353302..9389f95f4094 100644
+--- a/arch/arm/boot/dts/da850-evm.dts
++++ b/arch/arm/boot/dts/da850-evm.dts
+@@ -27,143 +27,6 @@
+ 		spi0 = &spi1;
+ 	};
+ 
+-	soc@1c00000 {
+-		pmx_core: pinmux@14120 {
+-			status = "okay";
+-
+-			mcasp0_pins: pinmux_mcasp0_pins {
+-				pinctrl-single,bits = <
+-					/*
+-					 * AHCLKX, ACLKX, AFSX, AHCLKR, ACLKR,
+-					 * AFSR, AMUTE
+-					 */
+-					0x00 0x11111111 0xffffffff
+-					/* AXR11, AXR12 */
+-					0x04 0x00011000 0x000ff000
+-				>;
+-			};
+-			nand_pins: nand_pins {
+-				pinctrl-single,bits = <
+-					/* EMA_WAIT[0], EMA_OE, EMA_WE, EMA_CS[4], EMA_CS[3] */
+-					0x1c 0x10110110  0xf0ff0ff0
+-					/*
+-					 * EMA_D[0], EMA_D[1], EMA_D[2],
+-					 * EMA_D[3], EMA_D[4], EMA_D[5],
+-					 * EMA_D[6], EMA_D[7]
+-					 */
+-					0x24 0x11111111  0xffffffff
+-					/* EMA_A[1], EMA_A[2] */
+-					0x30 0x01100000  0x0ff00000
+-				>;
+-			};
+-		};
+-		serial0: serial@42000 {
+-			status = "okay";
+-		};
+-		serial1: serial@10c000 {
+-			status = "okay";
+-		};
+-		serial2: serial@10d000 {
+-			status = "okay";
+-		};
+-		rtc0: rtc@23000 {
+-			status = "okay";
+-		};
+-		i2c0: i2c@22000 {
+-			status = "okay";
+-			clock-frequency = <100000>;
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&i2c0_pins>;
+-
+-			tps: tps@48 {
+-				reg = <0x48>;
+-			};
+-			tlv320aic3106: tlv320aic3106@18 {
+-				#sound-dai-cells = <0>;
+-				compatible = "ti,tlv320aic3106";
+-				reg = <0x18>;
+-				status = "okay";
+-
+-				/* Regulators */
+-				IOVDD-supply = <&vdcdc2_reg>;
+-				/* Derived from VBAT: Baseboard 3.3V / 1.8V */
+-				AVDD-supply = <&vbat>;
+-				DRVDD-supply = <&vbat>;
+-				DVDD-supply = <&vbat>;
+-			};
+-			tca6416: gpio@20 {
+-				compatible = "ti,tca6416";
+-				reg = <0x20>;
+-				gpio-controller;
+-				#gpio-cells = <2>;
+-			};
+-		};
+-		wdt: wdt@21000 {
+-			status = "okay";
+-		};
+-		mmc0: mmc@40000 {
+-			max-frequency = <50000000>;
+-			bus-width = <4>;
+-			status = "okay";
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&mmc0_pins>;
+-		};
+-		spi1: spi@30e000 {
+-			status = "okay";
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&spi1_pins &spi1_cs0_pin>;
+-			flash: m25p80@0 {
+-				#address-cells = <1>;
+-				#size-cells = <1>;
+-				compatible = "m25p64";
+-				spi-max-frequency = <30000000>;
+-				m25p,fast-read;
+-				reg = <0>;
+-				partition@0 {
+-					label = "U-Boot-SPL";
+-					reg = <0x00000000 0x00010000>;
+-					read-only;
+-				};
+-				partition@1 {
+-					label = "U-Boot";
+-					reg = <0x00010000 0x00080000>;
+-					read-only;
+-				};
+-				partition@2 {
+-					label = "U-Boot-Env";
+-					reg = <0x00090000 0x00010000>;
+-					read-only;
+-				};
+-				partition@3 {
+-					label = "Kernel";
+-					reg = <0x000a0000 0x00280000>;
+-				};
+-				partition@4 {
+-					label = "Filesystem";
+-					reg = <0x00320000 0x00400000>;
+-				};
+-				partition@5 {
+-					label = "MAC-Address";
+-					reg = <0x007f0000 0x00010000>;
+-					read-only;
+-				};
+-			};
+-		};
+-		mdio: mdio@224000 {
+-			status = "okay";
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&mdio_pins>;
+-			bus_freq = <2200000>;
+-		};
+-		eth0: ethernet@220000 {
+-			status = "okay";
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&mii_pins>;
+-		};
+-		gpio: gpio@226000 {
+-			status = "okay";
+-		};
+-	};
+ 	vbat: fixedregulator0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vbat";
+@@ -200,6 +63,153 @@
+ 	};
+ };
+ 
++&pmx_core {
++	status = "okay";
++
++	mcasp0_pins: pinmux_mcasp0_pins {
++		pinctrl-single,bits = <
++			/*
++			 * AHCLKX, ACLKX, AFSX, AHCLKR, ACLKR,
++			 * AFSR, AMUTE
++			 */
++			0x00 0x11111111 0xffffffff
++			/* AXR11, AXR12 */
++			0x04 0x00011000 0x000ff000
++		>;
++	};
++	nand_pins: nand_pins {
++		pinctrl-single,bits = <
++			/* EMA_WAIT[0], EMA_OE, EMA_WE, EMA_CS[4], EMA_CS[3] */
++			0x1c 0x10110110  0xf0ff0ff0
++			/*
++			 * EMA_D[0], EMA_D[1], EMA_D[2],
++			 * EMA_D[3], EMA_D[4], EMA_D[5],
++			 * EMA_D[6], EMA_D[7]
++			 */
++			0x24 0x11111111  0xffffffff
++			/* EMA_A[1], EMA_A[2] */
++			0x30 0x01100000  0x0ff00000
++		>;
++	};
++};
++
++&serial0 {
++	status = "okay";
++};
++
++&serial1 {
++	status = "okay";
++};
++
++&serial2 {
++	status = "okay";
++};
++
++&rtc0 {
++	status = "okay";
++};
++
++&i2c0 {
++	status = "okay";
++	clock-frequency = <100000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c0_pins>;
++
++	tps: tps@48 {
++		reg = <0x48>;
++	};
++	tlv320aic3106: tlv320aic3106@18 {
++		#sound-dai-cells = <0>;
++		compatible = "ti,tlv320aic3106";
++		reg = <0x18>;
++		status = "okay";
++
++		/* Regulators */
++		IOVDD-supply = <&vdcdc2_reg>;
++		/* Derived from VBAT: Baseboard 3.3V / 1.8V */
++		AVDD-supply = <&vbat>;
++		DRVDD-supply = <&vbat>;
++		DVDD-supply = <&vbat>;
++	};
++	tca6416: gpio@20 {
++		compatible = "ti,tca6416";
++		reg = <0x20>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++};
++
++&wdt {
++	status = "okay";
++};
++
++&mmc0 {
++	max-frequency = <50000000>;
++	bus-width = <4>;
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc0_pins>;
++};
++
++&spi1 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&spi1_pins &spi1_cs0_pin>;
++	flash: m25p80@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "m25p64";
++		spi-max-frequency = <30000000>;
++		m25p,fast-read;
++		reg = <0>;
++		partition@0 {
++			label = "U-Boot-SPL";
++			reg = <0x00000000 0x00010000>;
++			read-only;
++		};
++		partition@1 {
++			label = "U-Boot";
++			reg = <0x00010000 0x00080000>;
++			read-only;
++		};
++		partition@2 {
++			label = "U-Boot-Env";
++			reg = <0x00090000 0x00010000>;
++			read-only;
++		};
++		partition@3 {
++			label = "Kernel";
++			reg = <0x000a0000 0x00280000>;
++		};
++		partition@4 {
++			label = "Filesystem";
++			reg = <0x00320000 0x00400000>;
++		};
++		partition@5 {
++			label = "MAC-Address";
++			reg = <0x007f0000 0x00010000>;
++			read-only;
++		};
++	};
++};
++
++&mdio {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&mdio_pins>;
++	bus_freq = <2200000>;
++};
++
++&eth0 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&mii_pins>;
++};
++
++&gpio {
++	status = "okay";
++};
++
+ /include/ "tps6507x.dtsi"
+ 
+ &tps {
