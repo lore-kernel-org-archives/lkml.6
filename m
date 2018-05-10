@@ -1,100 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756961AbeEJJgv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 05:36:51 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42238 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756665AbeEJJgt (ORCPT
+        id S1757049AbeEJJiN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 05:38:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59570 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756726AbeEJJiL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 05:36:49 -0400
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2] nvme-rdma: stop queue first before free it in config admin queue
-Date: Thu, 10 May 2018 17:37:05 +0800
-Message-Id: <1525945025-1638-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8888 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805100094
+        Thu, 10 May 2018 05:38:11 -0400
+Date: Thu, 10 May 2018 06:38:05 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 13/18] wait: wait.h: Get rid of a kernel-doc/Sphinx
+ warnings
+Message-ID: <20180510063805.1859b1aa@vento.lan>
+In-Reply-To: <20180510083838.GA21846@infradead.org>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+        <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
+        <20180510083838.GA21846@infradead.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When any of cases after nvme_rdma_start_queue in
-nvme_rdma_configure_admin_queue fails, the ctrl->queues[0] will be
-freed but the NVME_RDMA_Q_LIVE is still set. If nvme_rdma_stop_queue
-is invoked, we will incur use-after-free which will cause memory
-corruption.
-BUG: KASAN: use-after-free in rdma_disconnect+0x1f/0xe0 [rdma_cm]
-Read of size 8 at addr ffff8801dc3969c0 by task kworker/u16:3/9304
+Em Thu, 10 May 2018 01:38:38 -0700
+Christoph Hellwig <hch@infradead.org> escreveu:
 
-CPU: 3 PID: 9304 Comm: kworker/u16:3 Kdump: loaded Tainted: G        W         4.17.0-rc3+ #20
-Workqueue: nvme-delete-wq nvme_delete_ctrl_work
-Call Trace:
- dump_stack+0x91/0xeb
- print_address_description+0x6b/0x290
- kasan_report+0x261/0x360
- rdma_disconnect+0x1f/0xe0 [rdma_cm]
- nvme_rdma_stop_queue+0x25/0x40 [nvme_rdma]
- nvme_rdma_shutdown_ctrl+0xf3/0x150 [nvme_rdma]
- nvme_delete_ctrl_work+0x98/0xe0
- process_one_work+0x3ca/0xaa0
- worker_thread+0x4e2/0x6c0
- kthread+0x18d/0x1e0
- ret_from_fork+0x24/0x30
+> >   * Use either while holding wait_queue_head::lock or when used for wakeups
+> > - * with an extra smp_mb() like:
+> > + * with an extra smp_mb() like::  
+> 
+> Independent of any philosophical discussion not allowing a setence to
+> end with a single ':' is completely idiotic.  Please fix the tooling
+> instead to allow it, as it is very important for being able to just
+> write understandable comments.
 
-To fix it, call nvme_rdma_stop_queue for all the failed cases after
-nvme_rdma_start_queue.
+Patches are welcome, although I don't see any easy way to solve it.
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- drivers/nvme/host/rdma.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+In English, the common case is that a line with ends with a colon is
+followed by a list. E. g.
 
-diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
-index a0ead1d..966e0dd 100644
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -777,7 +777,7 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
- 	if (error) {
- 		dev_err(ctrl->ctrl.device,
- 			"prop_get NVME_REG_CAP failed\n");
--		goto out_cleanup_queue;
-+		goto out_stop_queue;
- 	}
- 
- 	ctrl->ctrl.sqsize =
-@@ -785,23 +785,25 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
- 
- 	error = nvme_enable_ctrl(&ctrl->ctrl, ctrl->ctrl.cap);
- 	if (error)
--		goto out_cleanup_queue;
-+		goto out_stop_queue;
- 
- 	ctrl->ctrl.max_hw_sectors =
- 		(ctrl->max_fr_pages - 1) << (ilog2(SZ_4K) - 9);
- 
- 	error = nvme_init_identify(&ctrl->ctrl);
- 	if (error)
--		goto out_cleanup_queue;
-+		goto out_stop_queue;
- 
- 	error = nvme_rdma_alloc_qe(ctrl->queues[0].device->dev,
- 			&ctrl->async_event_sqe, sizeof(struct nvme_command),
- 			DMA_TO_DEVICE);
- 	if (error)
--		goto out_cleanup_queue;
-+		goto out_stop_queue;
- 
- 	return 0;
- 
-+out_stop_queue:
-+	nvme_rdma_stop_queue(&ctrl->queues[0]);
- out_cleanup_queue:
- 	if (new)
- 		blk_cleanup_queue(ctrl->ctrl.admin_q);
--- 
-2.7.4
+	foo:
+	  - bar1;
+	  - bar2.
+
+However, in this specific case, it is followed by an ascii artwork. 
+The double colon is a notation that tells Sphinx to not parse the
+lines at the next block, placing the contents of it inside a literal
+block. It is used also when the next lines contain a code example,
+in order to avoid parsing things like @, () and * inside the code 
+block.
+
+The kernel-doc tool might eventually have some parsing logic that
+would replace something to a '::' before sending it to Sphinx.
+It could, for example, have a "hint" regex that would expect a
+certain sequence of characters to be at the last line, like:
+
+	s/ascii\s+artwork.*:/ascii artwork.*::/
+or
+	s/code\s+block.*:/code block.*::/
+
+Then, change the kernel-doc comment to use it, like:
+
+ * with an extra smp_mb() like shown at the following ascii artwork:
+
+but IMHO, this is a lot worse than "::": it would be more intrusive
+and more error-prune.
+
+Thanks,
+Mauro
