@@ -1,101 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965739AbeEJAS3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 20:18:29 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37601 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933499AbeEJAS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 20:18:28 -0400
-Subject: [PATCH v3] ftrace: nuke clear_ftrace_function
-To: Steven Rostedt <rostedt@goodmis.org>
-References: <1525858436-10900-1-git-send-email-xieyisheng1@huawei.com>
- <20180509085643.4001dc9c@gandalf.local.home>
-CC: <mingo@redhat.com>, <linux-kernel@vger.kernel.org>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <f65a966e-5602-b9da-59c1-36e50e06f76a@huawei.com>
-Date: Thu, 10 May 2018 08:17:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
+        id S935625AbeEJATI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 20:19:08 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41048 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934234AbeEJATG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 20:19:06 -0400
+X-Google-Smtp-Source: AB8JxZqDn8x0tdJnUcJ6YSJUWG1TY1K7Sy4D2TV0P+UQ6F8h0gC6AkDjpeQFkxr/ej/HBmFRlkhldQ==
+Date: Wed, 9 May 2018 17:19:03 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Loic Pallardy <loic.pallardy@st.com>
+Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com,
+        benjamin.gaignard@linaro.org
+Subject: Re: [PATCH v3 07/13] remoteproc: introduce
+ rproc_find_carveout_by_name function
+Message-ID: <20180510001903.GD29093@builder>
+References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
+ <1519921440-21356-8-git-send-email-loic.pallardy@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20180509085643.4001dc9c@gandalf.local.home>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1519921440-21356-8-git-send-email-loic.pallardy@st.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clear_ftrace_function is not used outside of ftrace.c and is not help to
-use a function, so nuke it per Steve's suggestion.
+On Thu 01 Mar 08:23 PST 2018, Loic Pallardy wrote:
 
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
----
-v3:
- - remove clear_ftrace_function() but make comment in line. - per Steve
+> This patch provides a new function to find a carveout according
+> to a name.
+> If match found, this function returns a pointer on the corresponding
+> carveout (rproc_mem_entry structure).
+> 
+> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 43 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 91aa22b..7a500cb 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -216,6 +216,49 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>  }
+>  EXPORT_SYMBOL(rproc_da_to_va);
+>  
+> +/**
+> + * rproc_find_carveout_by_name() - lookup the carveout region by a name
+> + * @rproc: handle of a remote processor
+> + * @name,..: carveout name to find (standard printf format)
+> + *
+> + * Platform driver has the capability to register some pre-allacoted carveout
+> + * (physically contiguous memory regions) before rproc firmware loading and
+> + * associated resource table analysis. These regions may be dedicated memory
+> + * regions internal to the coprocessor or specified DDR region with specific
+> + * attributes
+> + *
+> + * This function is a helper function with which we can go over the
+> + * allocated carveouts and return associated region characteristics like
+> + * coprocessor address, length or processor virtual address.
+> + *
+> + * The function returns a valid pointer on carveout entry on success
+> + * or NULL on failure.
 
-v2:
- - nuke clear_ftrace_function instead of use it - per Steve
+The kerneldoc format for describing the return value is
 
-v1:
- - https://lkml.org/lkml/2018/1/29/944
+ * Return: description
 
- include/linux/ftrace.h |  2 --
- kernel/trace/ftrace.c  | 14 ++------------
- 2 files changed, 2 insertions(+), 14 deletions(-)
+> + */
+> +struct rproc_mem_entry *
+> +rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...)
+> +{
+> +	va_list args;
+> +	char _name[32];
+> +	struct rproc_mem_entry *carveout, *mem = NULL;
+> +
+> +	va_start(args, name);
+> +	snprintf(_name, sizeof(_name), name, args);
+> +	va_end(args);
+> +
+> +	if (!name)
+> +		return NULL;
 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 9c3c9a3..15518b5 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -223,7 +223,6 @@ enum ftrace_tracing_type_t {
-  */
- int register_ftrace_function(struct ftrace_ops *ops);
- int unregister_ftrace_function(struct ftrace_ops *ops);
--void clear_ftrace_function(void);
+If you would like for it to actually be valid to pass NULL for name,
+then I think you should move this check to the top of the function.
 
- extern void ftrace_stub(unsigned long a0, unsigned long a1,
- 			struct ftrace_ops *op, struct pt_regs *regs);
-@@ -239,7 +238,6 @@ static inline int ftrace_nr_registered_ops(void)
- {
- 	return 0;
- }
--static inline void clear_ftrace_function(void) { }
- static inline void ftrace_kill(void) { }
- static inline void ftrace_free_init_mem(void) { }
- static inline void ftrace_free_mem(struct module *mod, void *start, void *end) { }
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 8d83bcf..46e40a4 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -192,17 +192,6 @@ static void ftrace_pid_func(unsigned long ip, unsigned long parent_ip,
- 	op->saved_func(ip, parent_ip, op, regs);
- }
+But I suspect that you're looking for (name[0] == '\0'), to check if we
+where passed an empty string, e.g. from a resource table without
+resource names.
 
--/**
-- * clear_ftrace_function - reset the ftrace function
-- *
-- * This NULLs the ftrace function and in essence stops
-- * tracing.  There may be lag
-- */
--void clear_ftrace_function(void)
--{
--	ftrace_trace_function = ftrace_stub;
--}
--
- static void ftrace_sync(struct work_struct *work)
- {
- 	/*
-@@ -6689,7 +6678,8 @@ void ftrace_kill(void)
- {
- 	ftrace_disabled = 1;
- 	ftrace_enabled = 0;
--	clear_ftrace_function();
-+	/* This will stop tracing, but there may be a lag */
-+	ftrace_trace_function = ftrace_stub;
- }
+> +
+> +	list_for_each_entry(carveout, &rproc->carveouts, node) {
+> +		/* Compare carveout and requested names */
+> +		if (!strcmp(carveout->name, name)) {
+> +			mem = carveout;
+> +			break;
 
- /**
--- 
-1.7.12.4
+Just return carveout when you find it.
+
+> +		}
+> +	}
+> +
+> +	return mem;
+> +}
+> +
+
+Regards,
+Bjorn
