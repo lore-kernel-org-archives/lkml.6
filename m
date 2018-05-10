@@ -1,121 +1,69 @@
-Return-Path: <j.neuschaefer@gmx.net>
-X-Google-Smtp-Source: AB8JxZpqYKUqB5LGe56GQpl96tMSxHO3yONk4hVhJ4pyOMNl1VG0Y+eZxkDetoBuFK2fllRYGxHE
-ARC-Seal: i=1; a=rsa-sha256; t=1525702869; cv=none;
+Return-Path: <phil.edworthy@renesas.com>
+X-Google-Smtp-Source: AB8JxZq5kPMfwKMtSeeqtONvWi9uzBtw4DC/2zd11+KibkhzefoGocteulTD77j6TO8Ld7U9+/Ud
+ARC-Seal: i=1; a=rsa-sha256; t=1525957755; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ge7DDwILUfaPC63YgB78xGbrpx7KMML9GuRxmrsO0+tVtxlrFWLWKV/j5BAGJ/SPNA
-         ItsUnONT+tS3YiB8rcM0Mj/yW8gPCupI9Zw/nr34BBJ7gepneQiL+YJaxrn1D26wGhGa
-         nkrZ2fHo51ytlJAzVlZQ2ugnxweQjotYvnIZXKOW8UwTvESp+YrVCm94J4N4k3ehrEVm
-         XMtWBt2EjoOfsh5lHcXNi4z162fvqbPLQPdOdW3N8rT/QRl7+ptf1RJnzBIPe5p8GOqa
-         s5af4wKciSIH/QWWCT7lSIDfIx6wUKPxwIKsD91DNlHgfGvVPsBW76nEqnh/9A8OfF/A
-         0UdA==
+        b=EsAEw1lBWPKCUNHkcUgaQrQjUGZRW/mzfg2U/UpN6L20Q0ezX+YXzpYBqVmxtXwD0Y
+         fGKh+7qFuliDUtDnKToiF5FEFl0ZVs9fAwPo+c6wv56JYIN5TN66yJdQpqY+rvPNGePm
+         pG8UELks6qomvTs74ZVrYoam4PNzv/IyYOPIOmAfcw4wzUz78QkXUeEDyY+POrjaqErf
+         fw9x5VfYX8FzQGNTyx7kNuYE21++cggHL7+/TMSvgCO8w6F+aoa+EnfTiGKUj31gdfxV
+         PN75nO4ktXObpvkNkzYUCr1XR/AaWJ4yKJYzN9pGQi/Q3CrN+zlq2JPgtUAgboIvJubY
+         1rxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=Jd5FF0YdCktfW2u8TJdnI7y1iSCMm0lys0eMgu1cIbg=;
-        b=bKms1/EYK+aaAw8AnMVcr+TpZkoz/OgAC6NFmeRCcHfigEtyc0PB/2TlHgJuaih346
-         55wjiIFtNVQKk9uuhITFW629FFMeuhfnKvGZG3ksvQ34oP9eLhl9SjjucAm7vW6XlJJE
-         wHiE2hvd1B0EsJAsT0I0Jxgoh8/Gr5rlqmRZGHD7Ft/F84I/BB20Z6brMOoLOBwmbLQT
-         vWMuUz5CPeDZkVCuK0KmZ2KUrVreJYsMB6BHUgUDakrYkBEK6N3xIasi8sCwToOaL6ZG
-         YgkJN/G2TWAjza4OA24OlblQqwzH32rvsxidPSOQ9///I8aU2bSn6ut1Dj4+nxs+r1ZZ
-         1c+w==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=e/vAj+55ojTz5F35GxGVTxQnJCbaR+X+hdhffEPnlDA=;
+        b=w5pnikqkYFX2diJQL+iuQqO6XQyMLdcOeiasVLgQqEkvPZ8wyrDmY3VDmDdbEN1cl9
+         aIz1YuP3bsNdBvEgjn4oUj8i+zr2dMkboskZI6oKbaClKvXe6U1aGSNj1BLXo68azyg2
+         D50N8r4m/Pq9Mhend7MnjzEaaZX0oD/en4J82MeatDwGTJ9hNzSrBK1U3XWhKa2d37rX
+         2BUkziurS7r8BpI+ZIDPyCZDLvR0d0xfg+kPh4KiTFuAVDQLgEVKlHbx/wqCSf8v5bSc
+         ifNfpuZjCQ8aiDPQsfeBsFaV9QGbspiCLZ8guvYuH+nHIeH7gKECSh0IxB1bDtS5/795
+         s1zQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.15.15 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
+       spf=pass (google.com: domain of phil.edworthy@renesas.com designates 210.160.252.173 as permitted sender) smtp.mailfrom=phil.edworthy@renesas.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.15.15 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
-From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Joel Stanley <joel@jms.id.au>,
-	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Paul Mackerras <paulus@samba.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Robin H. Johnson" <robbat2@gentoo.org>,
-	Benjamin Gilbert <benjamin.gilbert@coreos.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+       spf=pass (google.com: domain of phil.edworthy@renesas.com designates 210.160.252.173 as permitted sender) smtp.mailfrom=phil.edworthy@renesas.com
+X-IronPort-AV: E=Sophos;i="5.49,385,1520866800";
+   d="scan'208";a="279162566"
+From: Phil Edworthy <phil.edworthy@renesas.com>
+To: Felipe Balbi <balbi@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michal Nazarewicz <mina86@mina86.com>,
+	Michel Pollet <michel.pollet@bp.renesas.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] powerpc: wii_defconfig: Enable GPIO-related options
-Date: Mon,  7 May 2018 16:20:17 +0200
-Message-Id: <20180507142019.32669-3-j.neuschaefer@gmx.net>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180507142019.32669-1-j.neuschaefer@gmx.net>
-References: <20180507142019.32669-1-j.neuschaefer@gmx.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:+Bfb15xBEyTweXudWqGbXUPT3ZLoGf3FBzCFnM2W8o3rgwladhn
- VMH2cE2KX4o3Fq25oBAtya48E9efppc2327Hf4arSKu869+J96umHi7jT1sRbO+XrfB6v1N
- F4/zP+fKcGE06vewrjoFeJZKOA1FjpO/TkU9ywRY4rEb/6CSfrLqo3QKrZHzcrA0ac8AHC0
- JWTbo6ywDt/eBSkmJOQRA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:BQdhDDD7gHg=:SwdLW4Xa8PFJvXsSiXc2EH
- AOJGvEtn7dsTMro7aXtQ1HKMZIZTV+4dM24neHk2SNYFpq/fHPyXnPsRny1nAQSHNLa9hHrX4
- B9Oq9zYrjXxCdQedVEc/7oOq3FfD2UJxPbvZ1p1MDThxpCQZ5/t+KNzIZTrHkdrPREejiGSpw
- X8GXFcC0WXQIXWn1eUCog/ld8KWiSi4C5XDMHO/hxQXFSXXRUjVceu67HRHmQFf6R6JUqa8av
- WEm6XCZB48hFm6k2sJDvwNcyvd1PRF6UKKe62yKhNu0HSfgjikFTjXXeJFdkpmGtr8ld9b2wL
- MviU2kv4cn7QfqKLVOiev5JZJ3ZyrM3XkWuyoYT8DIwVsOS9v6cp7K430mE9fpYn42t54fA2F
- qf2JsxTy5w7AldaCg5ZVqDUJKWIgBsXndlh5M+4gqLCvHzYpp26+KEL047BK+O4s/5PIS593x
- 53oT8XDKvhL12yHdVuXKXDTIf+YxTOjCYE/3P9R5Fsf3PoxyvB9IynLA+ttuDozEdKWskqqZy
- TmFtjCcJKhNNCKjY1FtiA8VMgtfHiaIU4LTVpQ9BPQI3PQDqhnfCzLAv2XYNzY1QVJEeAc7wk
- JEoOG0QJeYxqiPXbfzmXroT++OI5lc2LHflAGAGrR0gb061ONjREkHvXloJGyfyPgk2WNTq1U
- n2wKZlOM9CB00K7BtTaK8vE7JGii/L4jXQeVAoXVRE5xprgSYeYx3ouxLZ9p8G1eAPKGvD8LC
- INyZUU7LQ2hScN8IE3D8DqubnzgA9ri99FiemTaK1mk2g+haPAvdls+BqiKusUOaYlIYGQpHf
- yEDP+Zb
+Subject: [PATCH] USB: rndis: Fix for handling garbled messages
+Date: Thu, 10 May 2018 14:09:09 +0100
+Message-Id: <1525957749-5391-1-git-send-email-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599179228553644681?=
-X-GMAIL-MSGID: =?utf-8?q?1599815412528365758?=
+X-GMAIL-THRID: =?utf-8?q?1600082679809865193?=
+X-GMAIL-MSGID: =?utf-8?q?1600082679809865193?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Now that there's a GPIO driver for the Wii, let's enable the following
-drivers:
+From: Michel Pollet <michel.pollet@bp.renesas.com>
 
-- the GPIO driver itself
-- gpio-keys
-- gpio-poweroff
-- gpio-leds and a few LED triggers
+A message can be forged to crash the stack; here we make sure we don't
+completely break the system if this occurs
 
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
 ---
-v2:
-- Set CONFIG_NEW_LEDS=y and CONFIG_LEDS_TRIGGERS=y, without which some
-  of the other options can't be set.
----
- arch/powerpc/configs/wii_defconfig | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/usb/gadget/function/rndis.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/powerpc/configs/wii_defconfig b/arch/powerpc/configs/wii_defconfig
-index 3167b9d7f3e5..c5933a38e5ad 100644
---- a/arch/powerpc/configs/wii_defconfig
-+++ b/arch/powerpc/configs/wii_defconfig
-@@ -58,6 +58,7 @@ CONFIG_INPUT_FF_MEMLESS=m
- CONFIG_INPUT_JOYDEV=y
- CONFIG_INPUT_EVDEV=y
- # CONFIG_KEYBOARD_ATKBD is not set
-+CONFIG_KEYBOARD_GPIO=y
- # CONFIG_MOUSE_PS2 is not set
- CONFIG_INPUT_JOYSTICK=y
- CONFIG_INPUT_MISC=y
-@@ -72,6 +73,9 @@ CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_GPIO=y
- CONFIG_GPIOLIB=y
- CONFIG_GPIO_SYSFS=y
-+CONFIG_GPIO_HLWD=y
-+CONFIG_POWER_RESET=y
-+CONFIG_POWER_RESET_GPIO=y
- # CONFIG_HWMON is not set
- CONFIG_SSB_DEBUG=y
- CONFIG_FB=y
-@@ -89,6 +93,12 @@ CONFIG_HID_APPLE=m
- CONFIG_HID_WACOM=m
- CONFIG_MMC=y
- CONFIG_MMC_SDHCI=y
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_GPIO=y
-+CONFIG_LEDS_TRIGGERS=y
-+CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-+CONFIG_LEDS_TRIGGER_PANIC=y
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_GENERIC=y
- CONFIG_EXT2_FS=y
+diff --git a/drivers/usb/gadget/function/rndis.c b/drivers/usb/gadget/function/rndis.c
+index 51dd3e9..04c142c 100644
+--- a/drivers/usb/gadget/function/rndis.c
++++ b/drivers/usb/gadget/function/rndis.c
+@@ -851,6 +851,9 @@ int rndis_msg_parser(struct rndis_params *params, u8 *buf)
+ 		 */
+ 		pr_warn("%s: unknown RNDIS message 0x%08X len %d\n",
+ 			__func__, MsgType, MsgLength);
++		/* Garbled message can be huge, so limit what we display */
++		if (MsgLength > 16)
++			MsgLength = 16;
+ 		print_hex_dump_bytes(__func__, DUMP_PREFIX_OFFSET,
+ 				     buf, MsgLength);
+ 		break;
 -- 
-2.17.0
+2.7.4
