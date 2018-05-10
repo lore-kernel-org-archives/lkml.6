@@ -1,175 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756717AbeEJGy1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 02:54:27 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41599 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753693AbeEJGy0 (ORCPT
+        id S1756746AbeEJHAj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 03:00:39 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57819 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756305AbeEJHAe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 02:54:26 -0400
-X-Google-Smtp-Source: AB8JxZrk2Uj2NBXrXz8TMG8iYn3HpkDbjlpbaqZt0A7pVzYtqOfYGbdSWHvM7dFgHsqBWlvHey9voQ==
-From: Jon Maxwell <jmaxwell37@gmail.com>
-To: davem@davemloft.net
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmaxwell@redhat.com
-Subject: [PATCH net-next v2] tcp: Add mark for TIMEWAIT sockets
-Date: Thu, 10 May 2018 16:53:51 +1000
-Message-Id: <20180510065351.22535-1-jmaxwell37@gmail.com>
-X-Mailer: git-send-email 2.13.6
+        Thu, 10 May 2018 03:00:34 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180510070031euoutp02e9179ad91a2f7df124318863e5350744~tNl8nghES0134801348euoutp02z
+X-AuditID: cbfec7f4-6f9ff700000043e4-18-5af3ee0e1fae
+Subject: Re: [PATCH v2 01/26] drm/bridge: allow optionally specifying an
+ owner .odev device
+To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Cc: Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Peter Senna Tschudin <peter.senna@collabora.com>,
+        Martin Donnelly <martin.donnelly@ge.com>,
+        Martyn Welch <martyn.welch@collabora.co.uk>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <603ed606-022b-6520-149d-3b333123cfcf@samsung.com>
+Date: Thu, 10 May 2018 09:00:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <5abcab35-8a78-a02a-9f22-321da55d9858@axentia.se>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0xTZxjO13OlseRQMbyyJboaI1syUTDLlyBoMo1HfxiJfwgRXJ0n4IRq
+        esTN24atkQJBAbMiLVCMdVPmBkGo0oGQ6uiqQEEGXqFHZSkX8bKK4rxgy8HIv+d93ud9n/f5
+        8rGEepiOZnfo9gh6nTZLQytJR/sr75fhjwOpy+73RuKiLo8CG0zjFDa4rtH48J8OBk85Sgj8
+        z8QTGlf4OxFukpxB7sEYhStLD+FSXzGJC/NNFB4e7CHx8YdjBPZ66xjcaXjE4PwSO4PrH/ZT
+        uKS1k8G9zgoa9xp7EG4ceazA/0lTBD7pvazAp541kvh8ezi+/kstgQ1H4vHA4N8kbnHZEB4d
+        mqCw/9QkgQfqgvYnT4zQuKOvjVy9iDe3WRnemttD8r3HihT8W/9Nkr80YEd8y4tqki8MuAi+
+        yTIQlJjKKb6+Jp/m7/U30/zFFxLFV3mSeV+hW8FfsP/EH/G0kpsgVblyu5C1Y6+gj036Rpl5
+        9488tNu34AePtZrJRd75BSiMBW4FVNT8ThUgJavmziIod3Yp5OI5AulWBS0XAQS+e2biw4jD
+        aZpR/YqgvXaUkItxBIY3V8gCxLJzuTTI9W4NDURyq+Dn/pHpAYI7rYT2vCEm1KC5z+Hthdt0
+        CKu4JLAbbVQIk9xiqJROT2vmcSlg8L9iZE0EeMqHpveHBfWDJ5JDNMEtAGOjlZBxFNwZsk17
+        AdcaBl5bg0K+eg34zEdn8FwYdTcwMv4UpppsM/wBuD1sIOVhUzDy6zxabiTAFXcPFTImgkfX
+        OmNDELhEqLqpkmE43BqPkE8Ih1JHGSHTKjAdVcs7PgNfZ+PME0bBme4JuhgtsszKZZkVxjIr
+        jOWjbTUia1CUkCNmZwhinE74fqmozRZzdBlLv92VXY+C///6O/fzS8j5ZpsLcSzSzFE9nRNI
+        VVPaveK+bBcCltBEqia7gpRqu3bffkG/a6s+J0sQXegTltREqdJjfkxVcxnaPcJOQdgt6D90
+        FWxYdC6KuLw8IV1clvydvW7TEmNMsXlhaUfixt+UW64+KtOu7nbmvRw5fi6+7SXz7E5sWlLg
+        QVK37qLUHJ1Ct+xsqC38euHmxTHuCf9aKdFati3F33fwatw5Y1pCZXrJk8HRjrH4xKLJFZv/
+        eioVnz1vbjbE/Xtj3Zq+zK/+b1HN2yBNjq+vMmpIMVO7/AtCL2rfA/faBcb7AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTZxiH951bD83qjhXCJ0twdll0S6gcLvKyKeqIyUlcCGiWIBtIoydA
+        pNT0FASTRQYmFAgqOBYoIpBVExhB5VIFpphqYIVBuUzESy8qCSBDp6TMJag7UJfw3y/v73m+
+        N1/ysqR6mQ5hs3JMojFHl61hlNTQ2wF3mOr5Ykq42bceKkYcBBSZF2gosg8y8GOvTQHvbJUk
+        /Ol7wcD5mWEE3d4eefZknob6qh+gynOWgvJSMw2z7jEKzjydJ8HpvKKA4aK/FFBaaVVA+9NJ
+        Gir7hhUw0XOegYniMQRdc88JeOV9R0KN8yYBTS+7KGjtXwdDly6TUHQqElzu3ym4YW9A8Gza
+        R8NM02sSXFfk9TXn5hj44+4tavenws+36hRCXeEYJUycriCENzP3KOG6y4qEG0uNlFC+aCeF
+        botLRsy1tNDeUsoIjyZ/Y4RrS15auOBIEjzlA4TQYT0pnHL0UYk4RbvDaMg1iZ9kGiTTTs13
+        PERo+VjQRkTFavnImNQvI6I12+J2HBGzs/JE47a4dG3mw7YSdMyzKd9R16goRM6NZSiAxVwU
+        tvWYiTKkZNXcRYQd9dWEvwjGvQ0LpD9vwMuTZYwfmke4tfsnZqXYwKXia80t1EoO5Hbh6sm5
+        VZnkflXizlm9Xxgl8NBilWKlYLjP8ZuO+6uyiovD1uIGeiVT3Ge43vvLKhPEJWO389V7Zj12
+        1E7LC1g2QObd55L872/ByxfGSX/ehIu76t7nYPxguoE4i9SWNbZljWJZo1jWKI2IakGBYq6k
+        z9BLvFbS6aXcnAztYYO+HcmXZ+v/t+M6Gr96wI44Fmk+VNUoF1PUtC5PKtDbEWZJTaDq9Yg8
+        Uh3RFZwQjYZDxtxsUbKjaPlvlWRI0GGDfMc5pkN8NB8DsXxMZEzkdtAEq5zhBSlqLkNnEo+K
+        4jHR+L9HsAEhheijQcKz8I1rdFc/t33vlPlFetgHjP5x6NTtKOXu253MbMHA6b6bzbFJd8oS
+        dtpoXzN1p+Ir6/3a+KUEPZXH+L4NDYsv8diyOj1t/3xcUSIkHHiYNq3ac3L/1EvvifT4dYat
+        QaFvk7+ubkvjNyv/1o0fj0pM7SPLvz94tDY//9E+9V4NJWXq+C9Io6T7D0yOoj2PAwAA
+X-CMS-MailID: 20180510070029eucas1p15acf23b29afdd21901104a85789227d5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180510070029eucas1p15acf23b29afdd21901104a85789227d5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180504135245epcas4p1d0463b6b3c73d1dd2550c6ed5a4e3986
+X-RootMTR: 20180504135245epcas4p1d0463b6b3c73d1dd2550c6ed5a4e3986
+References: <20180504135212.26977-1-peda@axentia.se>
+        <CGME20180504135245epcas4p1d0463b6b3c73d1dd2550c6ed5a4e3986@epcas4p1.samsung.com>
+        <20180504135212.26977-2-peda@axentia.se>
+        <4e92fdea-0609-0fff-0e3f-d9f78f596eb7@samsung.com>
+        <4be4448e-763c-4832-f194-6b79afe87d08@axentia.se>
+        <5abcab35-8a78-a02a-9f22-321da55d9858@axentia.se>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This version has some suggestions by Eric Dumazet:
+On 10.05.2018 00:21, Peter Rosin wrote:
+> On 2018-05-09 17:53, Peter Rosin wrote:
+>> On 2018-05-09 17:08, Andrzej Hajda wrote:
+>>> On 04.05.2018 15:51, Peter Rosin wrote:
+>>>> Bridge drivers can now (temporarily, in a transition phase) select if
+>>>> they want to provide a full owner device or keep just providing an
+>>>> of_node.
+>>>>
+>>>> By providing a full owner device, the bridge drivers no longer need
+>>>> to provide an of_node since that node is available via the owner
+>>>> device.
+>>>>
+>>>> When all bridge drivers provide an owner device, that will become
+>>>> mandatory and the .of_node member will be removed.
+>>>>
+>>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+>>>> ---
+>>>>  drivers/gpu/drm/drm_bridge.c             | 3 ++-
+>>>>  drivers/gpu/drm/rockchip/rockchip_lvds.c | 4 +++-
+>>> What is the reason to put rockchip here? Shouldn't be in separate patch?
+>> Because the rockchip driver peeks into the bridge struct and all the
+>> changes in this patch relate to making the new .odev member optional in
+>> the transition phase, when the bridge can have either a new-style odev
+>> or an old style of_node.
+>>
+>> I guess this rockchip change could be patch 2, but it has to come first
+>> after this patch and it makes no sense on its own. Hence, one patch.
+>>
+>> This rockchip_lvds interaction is also present in patch 24/26
+>> drm/bridge: remove the .of_node member
+>>
+>> I can split them if you want, but I personally don't see the point.
+> I had a second look, and maybe the series should start with a patch like
+> this instead, so that the rockchip_lvds.c hunks can be removed from
+> patch 1/26 and 24/26. That would perhaps be slightly cleaner?
+>
+> On the other hand, it's orthogonal and this series can be left as is
+> (with the benefit of me not having to do another iteration and you all
+> not having another bunch of messages to sift through). The below
+> patch could easily be (adjusted and) applied later instead. Or not,
+> since the right fix is to do this with the newfangled static image
+> format mechanism from Jacopo Mondi, and it might be easier to just do
+> it right.
+>
+> State your preference.
 
-- Use a local variable for the mark in IPv6 instead of ctl_sk to avoid SMP 
-races. 
-- Use the more elegant "IP4_REPLY_MARK(net, skb->mark) ?: sk->sk_mark"
-statement. 
-- Factorize code as sk_fullsock() check is not necessary.
+For me the current version is OK, it maybe lacks explanation why do you
+need to touch rockchip, from my PoV it did not seem so obvious.
+Somebody should fix rockchip to use Jacopo's approach instead of
+violating abstractions, but this is another story.
 
-Aidan McGurn from Openwave Mobility systems reported the following bug:
+With or without added missing explanation:
 
-"Marked routing is broken on customer deployment. Its effects are large 
-increase in Uplink retransmissions caused by the client never receiving 
-the final ACK to their FINACK - this ACK misses the mark and routes out 
-of the incorrect route."
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-Currently marks are added to sk_buffs for replies when the "fwmark_reflect" 
-sysctl is enabled. But not for TW sockets that had sk->sk_mark set via 
-setsockopt(SO_MARK..).  
+ --
+Regards
+Andrzej
 
-Fix this in IPv4/v6 by adding tw->tw_mark for TIME_WAIT sockets. Copy the the 
-original sk->sk_mark in __inet_twsk_hashdance() to the new tw->tw_mark location. 
-Then progate this so that the skb gets sent with the correct mark. Do the same 
-for resets. Give the "fwmark_reflect" sysctl precedence over sk->sk_mark so that
-netfilter rules are still honored.
 
-Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
----
- include/net/inet_timewait_sock.h |  1 +
- net/ipv4/ip_output.c             |  2 +-
- net/ipv4/tcp_ipv4.c              | 16 ++++++++++++++--
- net/ipv4/tcp_minisocks.c         |  1 +
- net/ipv6/tcp_ipv6.c              |  6 +++++-
- 5 files changed, 22 insertions(+), 4 deletions(-)
-
-diff --git a/include/net/inet_timewait_sock.h b/include/net/inet_timewait_sock.h
-index c7be1ca8e562..659d8ed5a3bc 100644
---- a/include/net/inet_timewait_sock.h
-+++ b/include/net/inet_timewait_sock.h
-@@ -62,6 +62,7 @@ struct inet_timewait_sock {
- #define tw_dr			__tw_common.skc_tw_dr
- 
- 	int			tw_timeout;
-+	__u32			tw_mark;
- 	volatile unsigned char	tw_substate;
- 	unsigned char		tw_rcv_wscale;
- 
-diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
-index 95adb171f852..b5e21eb198d8 100644
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@ -1561,7 +1561,7 @@ void ip_send_unicast_reply(struct sock *sk, struct sk_buff *skb,
- 		oif = skb->skb_iif;
- 
- 	flowi4_init_output(&fl4, oif,
--			   IP4_REPLY_MARK(net, skb->mark),
-+			   IP4_REPLY_MARK(net, skb->mark) ?: sk->sk_mark,
- 			   RT_TOS(arg->tos),
- 			   RT_SCOPE_UNIVERSE, ip_hdr(skb)->protocol,
- 			   ip_reply_arg_flowi_flags(arg),
-diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-index f70586b50838..caf23de88f8a 100644
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -621,6 +621,7 @@ static void tcp_v4_send_reset(const struct sock *sk, struct sk_buff *skb)
- 	struct sock *sk1 = NULL;
- #endif
- 	struct net *net;
-+	struct sock *ctl_sk;
- 
- 	/* Never send a reset in response to a reset. */
- 	if (th->rst)
-@@ -723,11 +724,16 @@ static void tcp_v4_send_reset(const struct sock *sk, struct sk_buff *skb)
- 	arg.tos = ip_hdr(skb)->tos;
- 	arg.uid = sock_net_uid(net, sk && sk_fullsock(sk) ? sk : NULL);
- 	local_bh_disable();
--	ip_send_unicast_reply(*this_cpu_ptr(net->ipv4.tcp_sk),
-+	ctl_sk = *this_cpu_ptr(net->ipv4.tcp_sk);
-+	if (sk)
-+		ctl_sk->sk_mark = (sk->sk_state == TCP_TIME_WAIT) ?
-+				   inet_twsk(sk)->tw_mark : sk->sk_mark;
-+	ip_send_unicast_reply(ctl_sk,
- 			      skb, &TCP_SKB_CB(skb)->header.h4.opt,
- 			      ip_hdr(skb)->saddr, ip_hdr(skb)->daddr,
- 			      &arg, arg.iov[0].iov_len);
- 
-+	ctl_sk->sk_mark = 0;
- 	__TCP_INC_STATS(net, TCP_MIB_OUTSEGS);
- 	__TCP_INC_STATS(net, TCP_MIB_OUTRSTS);
- 	local_bh_enable();
-@@ -759,6 +765,7 @@ static void tcp_v4_send_ack(const struct sock *sk,
- 	} rep;
- 	struct net *net = sock_net(sk);
- 	struct ip_reply_arg arg;
-+	struct sock *ctl_sk;
- 
- 	memset(&rep.th, 0, sizeof(struct tcphdr));
- 	memset(&arg, 0, sizeof(arg));
-@@ -809,11 +816,16 @@ static void tcp_v4_send_ack(const struct sock *sk,
- 	arg.tos = tos;
- 	arg.uid = sock_net_uid(net, sk_fullsock(sk) ? sk : NULL);
- 	local_bh_disable();
--	ip_send_unicast_reply(*this_cpu_ptr(net->ipv4.tcp_sk),
-+	ctl_sk = *this_cpu_ptr(net->ipv4.tcp_sk);
-+	if (sk)
-+		ctl_sk->sk_mark = (sk->sk_state == TCP_TIME_WAIT) ?
-+				   inet_twsk(sk)->tw_mark : sk->sk_mark;
-+	ip_send_unicast_reply(ctl_sk,
- 			      skb, &TCP_SKB_CB(skb)->header.h4.opt,
- 			      ip_hdr(skb)->saddr, ip_hdr(skb)->daddr,
- 			      &arg, arg.iov[0].iov_len);
- 
-+	ctl_sk->sk_mark = 0;
- 	__TCP_INC_STATS(net, TCP_MIB_OUTSEGS);
- 	local_bh_enable();
- }
-diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
-index 57b5468b5139..f867658b4b30 100644
---- a/net/ipv4/tcp_minisocks.c
-+++ b/net/ipv4/tcp_minisocks.c
-@@ -263,6 +263,7 @@ void tcp_time_wait(struct sock *sk, int state, int timeo)
- 		struct inet_sock *inet = inet_sk(sk);
- 
- 		tw->tw_transparent	= inet->transparent;
-+		tw->tw_mark		= sk->sk_mark;
- 		tw->tw_rcv_wscale	= tp->rx_opt.rcv_wscale;
- 		tcptw->tw_rcv_nxt	= tp->rcv_nxt;
- 		tcptw->tw_snd_nxt	= tp->snd_nxt;
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 6d664d83cd16..7d47c2b550a9 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -803,6 +803,7 @@ static void tcp_v6_send_response(const struct sock *sk, struct sk_buff *skb, u32
- 	unsigned int tot_len = sizeof(struct tcphdr);
- 	struct dst_entry *dst;
- 	__be32 *topt;
-+	__u32 mark = 0;
- 
- 	if (tsecr)
- 		tot_len += TCPOLEN_TSTAMP_ALIGNED;
-@@ -871,7 +872,10 @@ static void tcp_v6_send_response(const struct sock *sk, struct sk_buff *skb, u32
- 		fl6.flowi6_oif = oif;
- 	}
- 
--	fl6.flowi6_mark = IP6_REPLY_MARK(net, skb->mark);
-+	if (sk)
-+		mark = (sk->sk_state == TCP_TIME_WAIT) ?
-+			inet_twsk(sk)->tw_mark : sk->sk_mark;
-+	fl6.flowi6_mark = IP6_REPLY_MARK(net, skb->mark) ?: mark;
- 	fl6.fl6_dport = t1->dest;
- 	fl6.fl6_sport = t1->source;
- 	fl6.flowi6_uid = sock_net_uid(net, sk && sk_fullsock(sk) ? sk : NULL);
--- 
-2.13.6
+>
+> Cheers,
+> Peter
+>
+> >From dee27b36a36acd271459d1489336b56132097425 Mon Sep 17 00:00:00 2001
+> From: Peter Rosin <peda@axentia.se>
+> Date: Wed, 9 May 2018 23:58:24 +0200
+> Subject: [PATCH] drm/rockchip: lvds: do not dig into the DT of remote bridges
+>
+> The driver is trying to find the needed "data-mapping" for
+> interacting with the following bridge in the graphics chain.
+> But, doing so is bad since it is done w/o regard of the
+> compatible of the remote bridge, so the value of "data-mapping"
+> might not mean what this driver assumes. It is also pointless
+> since no bridge has any documented "data-mapping" DT property
+> and no dts file show any undocumented use.
+>
+> Just remove the inappropriate code.
+>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  drivers/gpu/drm/rockchip/rockchip_lvds.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> index 4bd94b167d2c..fa3f4bf9712f 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+> @@ -377,8 +377,6 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
+>  	}
+>  	if (lvds->panel)
+>  		remote = lvds->panel->dev->of_node;
+> -	else
+> -		remote = lvds->bridge->of_node;
+>  	if (of_property_read_string(dev->of_node, "rockchip,output", &name))
+>  		/* default set it as output rgb */
+>  		lvds->output = DISPLAY_OUTPUT_RGB;
