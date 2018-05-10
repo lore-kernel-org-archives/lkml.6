@@ -1,157 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965174AbeEJNjs (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 09:39:48 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:50082 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935499AbeEJNjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 09:39:46 -0400
-Date: Thu, 10 May 2018 09:41:32 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
-        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
-        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
-        Daniel Walker <danielwa@cisco.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
-Subject: Re: [PATCH 6/7] psi: pressure stall information for CPU, memory, and
- IO
-Message-ID: <20180510134132.GA19348@cmpxchg.org>
-References: <20180507210135.1823-1-hannes@cmpxchg.org>
- <20180507210135.1823-7-hannes@cmpxchg.org>
- <20180509104618.GP12217@hirez.programming.kicks-ass.net>
- <20180509113849.GJ12235@hirez.programming.kicks-ass.net>
+        id S965218AbeEJNkA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 09:40:00 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:43520 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964920AbeEJNj7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 09:39:59 -0400
+X-Google-Smtp-Source: AB8JxZqqoz5SIPO5IgsbFaF9KM+P5ovQ7oRSAsqsoRnrnrxjZqluMeAx6CxJyPWsZs1az4PjP2fxYg==
+Date: Thu, 10 May 2018 19:12:04 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: daniel.vetter@intel.com, gustavo@padovan.org, seanpaul@chromium.org,
+        airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org
+Subject: [PATCH] gpu: drm: drm_vm: Adding new typedef vm_fault_t
+Message-ID: <20180510134203.GA25166@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180509113849.GJ12235@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 01:38:49PM +0200, Peter Zijlstra wrote:
-> On Wed, May 09, 2018 at 12:46:18PM +0200, Peter Zijlstra wrote:
-> > On Mon, May 07, 2018 at 05:01:34PM -0400, Johannes Weiner wrote:
-> > 
-> > > @@ -2038,6 +2038,7 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
-> > >  	cpu = select_task_rq(p, p->wake_cpu, SD_BALANCE_WAKE, wake_flags);
-> > >  	if (task_cpu(p) != cpu) {
-> > >  		wake_flags |= WF_MIGRATED;
-> > > +		psi_ttwu_dequeue(p);
-> > >  		set_task_cpu(p, cpu);
-> > >  	}
-> > >  
-> > 
-> > > +static inline void psi_ttwu_dequeue(struct task_struct *p)
-> > > +{
-> > > +	/*
-> > > +	 * Is the task being migrated during a wakeup? Make sure to
-> > > +	 * deregister its sleep-persistent psi states from the old
-> > > +	 * queue, and let psi_enqueue() know it has to requeue.
-> > > +	 */
-> > > +	if (unlikely(p->in_iowait || (p->flags & PF_MEMSTALL))) {
-> > > +		struct rq_flags rf;
-> > > +		struct rq *rq;
-> > > +		int clear = 0;
-> > > +
-> > > +		if (p->in_iowait)
-> > > +			clear |= TSK_IOWAIT;
-> > > +		if (p->flags & PF_MEMSTALL)
-> > > +			clear |= TSK_MEMSTALL;
-> > > +
-> > > +		rq = __task_rq_lock(p, &rf);
-> > > +		update_rq_clock(rq);
-> > > +		psi_task_change(p, rq_clock(rq), clear, 0);
-> > > +		p->sched_psi_wake_requeue = 1;
-> > > +		__task_rq_unlock(rq, &rf);
-> > > +	}
-> > > +}
-> > 
-> > Yeah, no... not happening.
-> > 
-> > We spend a lot of time to never touch the old rq->lock on wakeups. Mason
-> > was the one pushing for that, so he should very well know this.
-> > 
-> > The one cross-cpu atomic (iowait) is already a problem (the whole iowait
-> > accounting being useless makes it even worse), adding significant remote
-> > prodding is just really bad.
-> 
-> Also, since all you need is the global number, I don't think you
-> actually need any of this. See what we do for nr_uninterruptible.
-> 
-> In general I think you want to (re)read loadavg.c some more, and maybe
-> reuse a bit more of that.
+Use new return type vm_fault_t for fault handler. For
+now, this is just documenting that the function returns
+a VM_FAULT value rather than an errno. Once all instances
+are converted, vm_fault_t will become a distinct type.
 
-So there is a reason I'm tracking productivity states per-cpu and not
-globally. Consider the following example periods on two CPUs:
+commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 
-    CPU 0
-Task 1: | EXECUTING  | memstalled |
-Task 2: | runqueued  | EXECUTING  |
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+ drivers/gpu/drm/drm_vm.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-    CPU 1
-Task 3: | memstalled | EXECUTING  |
-
-If we tracked only the global number of stalled tasks, similarly to
-nr_uninterruptible, the number would be elevated throughout the whole
-sampling period, giving a pressure value of 100% for "some stalled".
-And, since there is always something executing, a "full stall" of 0%.
-
-Now consider what happens when the Task 3 sequence is the other way
-around:
-
-    CPU 0
-Task 1: | EXECUTING  | memstalled |
-Task 2: | runqueued  | EXECUTING  |
-
-    CPU 1
-Task 3: | EXECUTING  | memstalled |
-
-Here the number of stalled tasks is elevated only during half of the
-sampling period, this time giving a pressure reading of 50% for "some"
-(and again 0% for "full").
-
-That's a different measurement, but in terms of workload progress, the
-sequences are functionally equivalent. In both scenarios the same
-amount of productive CPU cycles is spent advancing tasks 1, 2 and 3,
-and the same amount of potentially productive CPU time is lost due to
-the contention of memory. We really ought to read the same pressure.
-
-So what I'm doing is calculating the productivity loss on each CPU in
-a sampling period as if they were independent time slices. It doesn't
-matter how you slice and dice the sequences within each one - if used
-CPU time and lost CPU time have the same proportion, we have the same
-pressure.
-
-In both scenarios above, this method will give a pressure reading of
-some=50% and full=25% of "normalized walltime", which is the time loss
-the work would experience on a single CPU executing it serially.
-
-To illustrate:
-
-    CPU X
-        1            2            3            4
-Task 1: | EXECUTING  | memstalled | sleeping   | sleeping   |
-Task 2: | runqueued  | EXECUTING  | sleeping   | sleeping   |
-Task 3: | sleeping   | sleeping   | EXECUTING  | memstalled |
-
-You can clearly see the 50% of walltime in which *somebody* isn't
-advancing (2 and 4), and the 25% of walltime in which *no* tasks are
-(3). Same amount of work, same memory stalls, same pressure numbers.
-
-Globalized state tracking would produce those numbers on the single
-CPU (obviously), but once concurrency gets into the mix, it's
-questionable what its results mean. It certainly isn't able to
-reliably detect equivalent slowdowns of individual tasks ("some" is
-all over the place), and in this example wasn't able to capture the
-impact of contention on overall work completion ("full" is 0%).
-
-* CPU 0: some = 50%, full =  0%
-  CPU 1: some = 50%, full = 50%
-    avg: some = 50%, full = 25%
+diff --git a/drivers/gpu/drm/drm_vm.c b/drivers/gpu/drm/drm_vm.c
+index 2660543..c330104 100644
+--- a/drivers/gpu/drm/drm_vm.c
++++ b/drivers/gpu/drm/drm_vm.c
+@@ -100,7 +100,7 @@ static pgprot_t drm_dma_prot(uint32_t map_type, struct vm_area_struct *vma)
+  * map, get the page, increment the use count and return it.
+  */
+ #if IS_ENABLED(CONFIG_AGP)
+-static int drm_vm_fault(struct vm_fault *vmf)
++static vm_fault_t drm_vm_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct drm_file *priv = vma->vm_file->private_data;
+@@ -173,7 +173,7 @@ static int drm_vm_fault(struct vm_fault *vmf)
+ 	return VM_FAULT_SIGBUS;	/* Disallow mremap */
+ }
+ #else
+-static int drm_vm_fault(struct vm_fault *vmf)
++static vm_fault_t drm_vm_fault(struct vm_fault *vmf)
+ {
+ 	return VM_FAULT_SIGBUS;
+ }
+@@ -189,7 +189,7 @@ static int drm_vm_fault(struct vm_fault *vmf)
+  * Get the mapping, find the real physical page to map, get the page, and
+  * return it.
+  */
+-static int drm_vm_shm_fault(struct vm_fault *vmf)
++static vm_fault_t drm_vm_shm_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct drm_local_map *map = vma->vm_private_data;
+@@ -291,7 +291,7 @@ static void drm_vm_shm_close(struct vm_area_struct *vma)
+  *
+  * Determine the page number from the page offset and get it from drm_device_dma::pagelist.
+  */
+-static int drm_vm_dma_fault(struct vm_fault *vmf)
++static vm_fault_t drm_vm_dma_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct drm_file *priv = vma->vm_file->private_data;
+@@ -326,7 +326,7 @@ static int drm_vm_dma_fault(struct vm_fault *vmf)
+  *
+  * Determine the map offset from the page offset and get it from drm_sg_mem::pagelist.
+  */
+-static int drm_vm_sg_fault(struct vm_fault *vmf)
++static vm_fault_t drm_vm_sg_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct drm_local_map *map = vma->vm_private_data;
+--
+1.9.1
