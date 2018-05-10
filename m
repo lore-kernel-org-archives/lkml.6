@@ -1,65 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966255AbeEJPbb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 11:31:31 -0400
-Received: from mout.gmx.net ([212.227.17.20]:60725 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965949AbeEJPba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 11:31:30 -0400
-Message-ID: <1525966280.5207.1.camel@gmx.de>
-Subject: Re: [Nouveau] kernel spew from nouveau/ swiotlb
-From: Mike Galbraith <efault@gmx.de>
-To: Jerome Glisse <jglisse@redhat.com>
-Cc: nouveau <nouveau@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>
-Date: Thu, 10 May 2018 17:31:20 +0200
-In-Reply-To: <474293973.18773550.1525962696189.JavaMail.zimbra@redhat.com>
-References: <1525943427.8013.11.camel@gmx.de>
-         <474293973.18773550.1525962696189.JavaMail.zimbra@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
+        id S966260AbeEJPd2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 11:33:28 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:39034 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964827AbeEJPd0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 11:33:26 -0400
+Subject: Re: [PATCH] selftests: ftrace: Fixes for the testing script
+ ftracetest
+To: Jeffrin Jose T <ahiliation@yahoo.co.in>, rostedt@goodmis.org,
+        mingo@redhat.com
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrin Jose T <jeffrin@rajagiritech.edu.in>,
+        Shuah Khan <shuah@kernel.org>
+References: <20180510152108.19750-1-ahiliation@yahoo.co.in>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <4f351384-0308-c273-9df7-c1ad3bc500c4@kernel.org>
+Date: Thu, 10 May 2018 09:33:15 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180510152108.19750-1-ahiliation@yahoo.co.in>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:C+Ij9P9MY4CL5UtO2rhBkWI9ofSiW+3dWeKDnCLJFb8kjwuzNp2
- GTHoAZnpHW4ViTgZv5rt9CVu8+7rDPz43QacoDOu8wZ1RWhrRTVXeEsvn8q9nKjkRWfAt51
- 1kOJDNDv1DREY+F82eYw3mrAEFZArv06sqMO+RhNlDVS9UzEqe8H8iE2T5m4DNzRK6kweoC
- WK13ifQ3YfZwKhJMpxBSA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:uktDvysgenY=:21gnMcQfnGlevP+7RAhBFF
- Y06mWnOfAL5tW1JuaNXxduakeXhq9KpFE2bwp0+VODENxZJIV2jOxXf09b7W+Fnl8VN6VV50N
- aPjjvofVkVLBp86VZYfO+oijaqA9O6EAZEY69hSsjxnAbrFqs9jQivoPCkbKXG81JHEaQl0G4
- 6HPtf1N4OZKqYEe1kZ6u3UduWHyiAknVHBIOgR7MEhCuP15Cd4Gy1hieWalr5dbZ3nz7k2ESB
- h6IK9vXMB8QoRTzvyazV3/TM3W7CpV1v1ObUu94LETnMOqlApLSJZNVv9lvxfiW5FCmxXiVKG
- jbltMcQn0b50eQfCanBdYP+SfEVoNe9Jut/qiCPgzWT3KRYel8tS/WdzBw8FvBYjgwbFT/CVR
- IzdHzmJG9zGaG/7YMdHNM9zbF+5Q9RAjaVG5Ylju+ZTM/S4Q8kEgZ2a1+FwKSw6lQURWG0Sqb
- bsYbnaupnWdd8nvcMGjWNOm7Gf8Nb0KHqH2JvoeNdqDJZq3FtJTepHh99o4LfB4N6ocVGHSls
- bzmwANl2LUwmrVpIe2zgjq5+QnjnvoUsUQj6FMAAE/HdraybW9A7GFUXZepsC1gtlqpJg2hCG
- GoSZ/WbP7bO6k93SquEdqp9O6MtV/uGWrqj4J53MqtMYZVea69g7ooscL4F1KZdh1S7I/QEEL
- /ZVJHrlfRVdJd4z6divLgK9LdNtaAvotGpDY3kRWbfxIIayVgu8seV6QTW1DWg9t2IbpL3DNf
- QugpXIhiDgFvyVuQdzZw8+CB8RIJLAk58Tuk8LUMJmPE8Sw9KSJSwjvOVJwq6SsamLXHK6zIc
- nVuAsra
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-10 at 10:31 -0400, Jerome Glisse wrote:
+On 05/10/2018 09:21 AM, Jeffrin Jose T wrote:
+> modified notification of permission requirement to run test
+> to make it unified with standards
 > 
-> Could you bisect ? I would love to point finger upstream to the DMA
-> folk who made changes to that API without testing with GPU.
+> Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+> ---
+>  tools/testing/selftests/ftrace/ftracetest | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+> index f9a9d424c980..0cc967344c07 100755
+> --- a/tools/testing/selftests/ftrace/ftracetest
+> +++ b/tools/testing/selftests/ftrace/ftracetest
+> @@ -1,4 +1,4 @@
+> -#!/bin/sh
+> +#!/bin/bash
+>  
+>  # ftracetest - Ftrace test shell scripts
+>  #
+> @@ -29,8 +29,11 @@ errexit() { # message
+>  }
+>  
+>  # Ensuring user privilege
+> -if [ `id -u` -ne 0 ]; then
+> -  errexit "this must be run by root user"
+> +msg="skip all tests:"
+> +
+> +if [ $UID != 0 ]; then
+> +    echo $msg please run this as root >&2
+> +    exit $ksft_skip
+>  fi
+>  
+>  # Utilities
+> 
 
-Rummaging a bit, it might be...
+Hi Jeffrin,
 
-nouveau_bo_new()
-...
-ttm_dma_pool_alloc_new_pages()
-  dma_alloc_attrs()
-    ops->alloc() == x86_swiotlb_alloc_coherent()
-    x86_swiotlb_alloc_coherent() flags |= __GFP_NOWARN;
-      swiotlb_alloc_coherent(..flags)
-        swiotlb_alloc_coherent(..flags) attrs = (flags & __GFP_NOWARN) ? DMA_ATTR_NO_WARN : 0;
-          swiotlb_alloc_buffer(..attr)
-            swiotlb_alloc_buffer(..0)  <== hm, pass zero instead of attr?
-              swiotlb_tbl_map_single() gripeage
+I already have a patch out for this. Please make sure you aren't doing
+duplicate work.
 
-...that?
-
-	-Mike
+thanks,
+-- Shuah
