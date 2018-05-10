@@ -1,90 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966584AbeEJQPK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 12:15:10 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55902 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966443AbeEJQPG (ORCPT
+        id S966597AbeEJQPc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 12:15:32 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45292 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964881AbeEJQPa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 12:15:06 -0400
-X-Google-Smtp-Source: AB8JxZqMc7428hyj8SYmtzIdZPUR9k+lP2OYlJHyEbw9zG6g8rfc76bItipCUrW3iA2sNJbMka39uI7PZATkwKLMwR0=
+        Thu, 10 May 2018 12:15:30 -0400
+Date: Thu, 10 May 2018 18:15:15 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH 3/3] sched/fair: schedutil: explicit update only when
+ required
+Message-ID: <20180510161515.GH12217@hirez.programming.kicks-ass.net>
+References: <20180510150553.28122-1-patrick.bellasi@arm.com>
+ <20180510150553.28122-4-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <1523975611-15978-7-git-send-email-ldufour@linux.vnet.ibm.com>
-References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com> <1523975611-15978-7-git-send-email-ldufour@linux.vnet.ibm.com>
-From: vinayak menon <vinayakm.list@gmail.com>
-Date: Thu, 10 May 2018 21:45:05 +0530
-Message-ID: <CAOaiJ-n6P-hjBEkiR4+MyFYunocPgzAYkG1wALDcmi7ROe4-ag@mail.gmail.com>
-Subject: Re: [PATCH v10 06/25] mm: make pte_unmap_same compatible with SPF
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, kirill@shutemov.name,
-        ak@linux.intel.com, dave@stgolabs.net, jack@suse.cz,
-        Matthew Wilcox <willy@infradead.org>, benh@kernel.crashing.org,
-        mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org, Vinayak Menon <vinmenon@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510150553.28122-4-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 8:03 PM, Laurent Dufour
-<ldufour@linux.vnet.ibm.com> wrote:
-> pte_unmap_same() is making the assumption that the page table are still
-> around because the mmap_sem is held.
-> This is no more the case when running a speculative page fault and
-> additional check must be made to ensure that the final page table are still
-> there.
->
-> This is now done by calling pte_spinlock() to check for the VMA's
-> consistency while locking for the page tables.
->
-> This is requiring passing a vm_fault structure to pte_unmap_same() which is
-> containing all the needed parameters.
->
-> As pte_spinlock() may fail in the case of a speculative page fault, if the
-> VMA has been touched in our back, pte_unmap_same() should now return 3
-> cases :
->         1. pte are the same (0)
->         2. pte are different (VM_FAULT_PTNOTSAME)
->         3. a VMA's changes has been detected (VM_FAULT_RETRY)
->
-> The case 2 is handled by the introduction of a new VM_FAULT flag named
-> VM_FAULT_PTNOTSAME which is then trapped in cow_user_page().
-> If VM_FAULT_RETRY is returned, it is passed up to the callers to retry the
-> page fault while holding the mmap_sem.
->
-> Acked-by: David Rientjes <rientjes@google.com>
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> ---
->  include/linux/mm.h |  1 +
->  mm/memory.c        | 39 ++++++++++++++++++++++++++++-----------
->  2 files changed, 29 insertions(+), 11 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 4d1aff80669c..714da99d77a3 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1208,6 +1208,7 @@ static inline void clear_page_pfmemalloc(struct page *page)
->  #define VM_FAULT_NEEDDSYNC  0x2000     /* ->fault did not modify page tables
->                                          * and needs fsync() to complete (for
->                                          * synchronous page faults in DAX) */
-> +#define VM_FAULT_PTNOTSAME 0x4000      /* Page table entries have changed */
+On Thu, May 10, 2018 at 04:05:53PM +0100, Patrick Bellasi wrote:
+> All the above considered, let's make schedutil updates more explicit in
+> fair.c by removing the cfs_rq_util_change() wrapper function in favour
+> of the existing cpufreq_update_util() public API.
+> This can be done by calling cpufreq_update_util() explicitly in the few
+> call sites where it really makes sense and when all the (potentially)
+> required cfs_rq's information have been updated.
 
+Aside from having to redraw my ever stale diagrams _again_ I don't think
+I object too much here. As you write tracking the exact point where we
+did do the update was fairly tedious.
 
-This has to be added to VM_FAULT_RESULT_TRACE ?
+> @@ -5397,9 +5366,27 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>  		update_cfs_group(se);
+>  	}
+>  
+> +	/* The task is visible from the root cfs_rq */
+> +	if (!se) {
+> +		unsigned int flags = 0;
+
+That one shadows the @flags argument. Some checker is bound to complain
+about it.
+
+> +
+>  		add_nr_running(rq, 1);
+>  
+> +		if (p->in_iowait)
+> +			flags |= SCHED_CPUFREQ_IOWAIT;
+> +
+> +		/*
+> +		 * !last_update_time means we've passed through
+> +		 * migrate_task_rq_fair() indicating we migrated.
+> +		 *
+> +		 * IOW we're enqueueing a task on a new CPU.
+> +		 */
+> +		if (!p->se.avg.last_update_time)
+> +			flags |= SCHED_CPUFREQ_MIGRATION;
+> +
+> +		cpufreq_update_util(rq, flags);
+> +	}
+> +
+>  	hrtick_update(rq);
+>  }
