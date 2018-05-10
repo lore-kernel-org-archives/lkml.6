@@ -1,48 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757251AbeEJMI0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 08:08:26 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41984 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757158AbeEJMIY (ORCPT
+        id S1757254AbeEJML3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 08:11:29 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:37229 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757212AbeEJML2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 08:08:24 -0400
-X-Google-Smtp-Source: AB8JxZpegVrFurC8bD6BL92neKMt0TY2Ya48KrnhkpZt57aLXhNoLCKaaIIj9MbT4Sjo5Px5SR3y5g==
-Date: Thu, 10 May 2018 17:38:20 +0530
-From: Vinod Koul <vinod.koul@linaro.org>
-To: Amit Kucheria <amit.kucheria@verdurent.com>
-Cc: srinivas.kandagatla@linaro.org, Andy Gross <andy.gross@linaro.org>,
-        linux-arm-msm@vger.kernel.org, David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-soc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        lakml <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] arm64: msm8916: fix gic_irq_domain_translate warnings
-Message-ID: <20180510120820.GA18812@vkoul-mobl.Dlink>
-References: <20180418163415.21646-1-srinivas.kandagatla@linaro.org>
- <CAHLCerOZ3_A7PvD6i53WXLJXVPmUWcNakvA2gcwFYMT9f1iR0A@mail.gmail.com>
+        Thu, 10 May 2018 08:11:28 -0400
+X-Google-Smtp-Source: AB8JxZpM3dFOlvgBYbDnlDJBxawzOWu+92NduEGRGyuahEudbAmWURj0go9gk3HSe5Z32O4D8vojhA==
+Date: Thu, 10 May 2018 21:11:22 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Fengguang Wu <fengguang.wu@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: printk feature for syzbot?
+Message-ID: <20180510121122.GA29136@jagdpanzerIV>
+References: <201804232233.CIC65675.OJSOMFQOFFHVtL@I-love.SAKURA.ne.jp>
+ <CACT4Y+boyw_Qy=y-iTnsKZrtTgF0Hk3nHN_xtqUdX4etgiYDQw@mail.gmail.com>
+ <20180424013336.GA1376@jagdpanzerIV>
+ <20180426100603.czif6sat75fjsazp@pathway.suse.cz>
+ <20180510042206.GA3426@jagdpanzerIV>
+ <20180510113058.q6d7apmih5sdmlba@pathway.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHLCerOZ3_A7PvD6i53WXLJXVPmUWcNakvA2gcwFYMT9f1iR0A@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180510113058.q6d7apmih5sdmlba@pathway.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10-05-18, 12:03, Amit Kucheria wrote:
-> On Wed, Apr 18, 2018 at 7:34 PM,  <srinivas.kandagatla@linaro.org> wrote:
-> > From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> >
-> > Remove the usage of IRQ_TYPE_NONE to fix loud warnings from
-> > patch (83a86fbb5b56b "irqchip/gic: Loudly complain about
-> > the use of IRQ_TYPE_NONE").
-> >
-> > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On (05/10/18 13:30), Petr Mladek wrote:
+[..]
+> I guess that you are talking about the patchset adding possibility
+> to use different time-stamps[1]. It changed the semantic of the
+> timestamp. All the tools needed an update to show the timestamp
+> correctly.
 > 
-> Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+> The patchset was rejected by Linus because it would broke some
+> userspace tool, e.g. systemd, that depend on the format and semantic
+> provided by /dev/kmsg[2].
 
-Tested-by: Vinod Koul <vkoul@kernel.org>
+Right, but I think I was talking about this email
+ https://lkml.kernel.org/r/20171123124648.s4oigunxjfzvhtqh@pathway.suse.cz
 
--- 
-~Vinod
+But yeah, it's not really related to the extension of struct printk_log,
+so I think we should be fine.
+
+> By other words, we must not change /dev/kmsg format. But it should
+> be acceptable to change/extend the internal format and eventually
+> extend the format used on consoles.
+
+Sure.
+
+> Anyway, we need to be careful and test makedumpfile and crash tools
+> and eventually provide patches for them.
+
+Agreed. I'd prefer it to be hidden somewhere under kernel hacking config,
+so only syzkaller folks would enable it. I think Steven also mentioned
+a config option.
+
+> Reference:
+> [0] https://lkml.kernel.org/r/20160419085613.GJ6862@pathway.suse.cz
+> [1] https://lkml.kernel.org/r/CA+55aFzLH9crdMtUFkD-PtNGuxu_fsG5GH2ACni69ug9iM=09g@mail.gmail.com
+
+Thanks.
+
+	-ss
