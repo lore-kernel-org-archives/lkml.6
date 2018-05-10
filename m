@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751920AbeEJWpr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 18:45:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49352 "EHLO mx1.redhat.com"
+        id S1751978AbeEJWpy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 18:45:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52950 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751649AbeEJWpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 18:45:43 -0400
+        id S1751649AbeEJWpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 18:45:49 -0400
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net 4/5] rxrpc: Add a tracepoint to log ICMP/ICMP6 and error
- messages
+Subject: [PATCH net 5/5] rxrpc: Trace UDP transmission failure
 From: David Howells <dhowells@redhat.com>
 To: netdev@vger.kernel.org
 Cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Date: Thu, 10 May 2018 23:45:41 +0100
-Message-ID: <152599234168.26376.17970759155830952951.stgit@warthog.procyon.org.uk>
+Date: Thu, 10 May 2018 23:45:47 +0100
+Message-ID: <152599234790.26376.4005965432336029696.stgit@warthog.procyon.org.uk>
 In-Reply-To: <152599231687.26376.15020977491573449830.stgit@warthog.procyon.org.uk>
 References: <152599231687.26376.15020977491573449830.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -28,194 +27,255 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a tracepoint to log received ICMP/ICMP6 events and other error
-messages.
+Add a tracepoint to log transmission failure from the UDP transport socket
+being used by AF_RXRPC.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- include/trace/events/rxrpc.h |   30 +++++++++++++++++++++++++++
- net/rxrpc/peer_event.c       |   46 +++++++++++++++++++++---------------------
- 2 files changed, 53 insertions(+), 23 deletions(-)
+ include/trace/events/rxrpc.h |   55 ++++++++++++++++++++++++++++++++++++++++++
+ net/rxrpc/conn_event.c       |   11 ++++++--
+ net/rxrpc/local_event.c      |    3 ++
+ net/rxrpc/output.c           |   23 ++++++++++++++++--
+ net/rxrpc/rxkad.c            |    6 +++--
+ 5 files changed, 90 insertions(+), 8 deletions(-)
 
 diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index 9e96c2fe2793..497d0b67f421 100644
+index 497d0b67f421..077e664ac9a2 100644
 --- a/include/trace/events/rxrpc.h
 +++ b/include/trace/events/rxrpc.h
-@@ -15,6 +15,7 @@
- #define _TRACE_RXRPC_H
+@@ -211,6 +211,20 @@ enum rxrpc_congest_change {
+ 	rxrpc_cong_saw_nack,
+ };
  
- #include <linux/tracepoint.h>
-+#include <linux/errqueue.h>
++enum rxrpc_tx_fail_trace {
++	rxrpc_tx_fail_call_abort,
++	rxrpc_tx_fail_call_ack,
++	rxrpc_tx_fail_call_data_frag,
++	rxrpc_tx_fail_call_data_nofrag,
++	rxrpc_tx_fail_call_final_resend,
++	rxrpc_tx_fail_conn_abort,
++	rxrpc_tx_fail_conn_challenge,
++	rxrpc_tx_fail_conn_response,
++	rxrpc_tx_fail_reject,
++	rxrpc_tx_fail_version_keepalive,
++	rxrpc_tx_fail_version_reply,
++};
++
+ #endif /* end __RXRPC_DECLARE_TRACE_ENUMS_ONCE_ONLY */
  
  /*
-  * Define enums for tracing information.
-@@ -1374,6 +1375,35 @@ TRACE_EVENT(rxrpc_resend,
- 		      __entry->anno)
+@@ -438,6 +452,19 @@ enum rxrpc_congest_change {
+ 	EM(RXRPC_CALL_LOCAL_ERROR,		"LocalError") \
+ 	E_(RXRPC_CALL_NETWORK_ERROR,		"NetError")
+ 
++#define rxrpc_tx_fail_traces \
++	EM(rxrpc_tx_fail_call_abort,		"CallAbort") \
++	EM(rxrpc_tx_fail_call_ack,		"CallAck") \
++	EM(rxrpc_tx_fail_call_data_frag,	"CallDataFrag") \
++	EM(rxrpc_tx_fail_call_data_nofrag,	"CallDataNofrag") \
++	EM(rxrpc_tx_fail_call_final_resend,	"CallFinalResend") \
++	EM(rxrpc_tx_fail_conn_abort,		"ConnAbort") \
++	EM(rxrpc_tx_fail_conn_challenge,	"ConnChall") \
++	EM(rxrpc_tx_fail_conn_response,		"ConnResp") \
++	EM(rxrpc_tx_fail_reject,		"Reject") \
++	EM(rxrpc_tx_fail_version_keepalive,	"VerKeepalive") \
++	E_(rxrpc_tx_fail_version_reply,		"VerReply")
++
+ /*
+  * Export enum symbols via userspace.
+  */
+@@ -461,6 +488,7 @@ rxrpc_propose_ack_traces;
+ rxrpc_propose_ack_outcomes;
+ rxrpc_congest_modes;
+ rxrpc_congest_changes;
++rxrpc_tx_fail_traces;
+ 
+ /*
+  * Now redefine the EM() and E_() macros to map the enums to the strings that
+@@ -1404,6 +1432,33 @@ TRACE_EVENT(rxrpc_rx_icmp,
+ 		      &__entry->srx.transport)
  	    );
  
-+TRACE_EVENT(rxrpc_rx_icmp,
-+	    TP_PROTO(struct rxrpc_peer *peer, struct sock_extended_err *ee,
-+		     struct sockaddr_rxrpc *srx),
++TRACE_EVENT(rxrpc_tx_fail,
++	    TP_PROTO(unsigned int debug_id, rxrpc_serial_t serial, int ret,
++		     enum rxrpc_tx_fail_trace what),
 +
-+	    TP_ARGS(peer, ee, srx),
++	    TP_ARGS(debug_id, serial, ret, what),
 +
 +	    TP_STRUCT__entry(
-+		    __field(unsigned int,			peer	)
-+		    __field_struct(struct sock_extended_err,	ee	)
-+		    __field_struct(struct sockaddr_rxrpc,	srx	)
++		    __field(unsigned int,		debug_id	)
++		    __field(rxrpc_serial_t,		serial		)
++		    __field(int,			ret		)
++		    __field(enum rxrpc_tx_fail_trace,   what		)
 +			     ),
 +
 +	    TP_fast_assign(
-+		    __entry->peer = peer->debug_id;
-+		    memcpy(&__entry->ee, ee, sizeof(__entry->ee));
-+		    memcpy(&__entry->srx, srx, sizeof(__entry->srx));
++		    __entry->debug_id = debug_id;
++		    __entry->serial = serial;
++		    __entry->ret = ret;
++		    __entry->what = what;
 +			   ),
 +
-+	    TP_printk("P=%08x o=%u t=%u c=%u i=%u d=%u e=%d %pISp",
-+		      __entry->peer,
-+		      __entry->ee.ee_origin,
-+		      __entry->ee.ee_type,
-+		      __entry->ee.ee_code,
-+		      __entry->ee.ee_info,
-+		      __entry->ee.ee_data,
-+		      __entry->ee.ee_errno,
-+		      &__entry->srx.transport)
++	    TP_printk("c=%08x r=%x ret=%d %s",
++		      __entry->debug_id,
++		      __entry->serial,
++		      __entry->ret,
++		      __print_symbolic(__entry->what, rxrpc_tx_fail_traces))
 +	    );
 +
  #endif /* _TRACE_RXRPC_H */
  
  /* This part must be outside protection */
-diff --git a/net/rxrpc/peer_event.c b/net/rxrpc/peer_event.c
-index 78c2f95d1f22..0ed8b651cec2 100644
---- a/net/rxrpc/peer_event.c
-+++ b/net/rxrpc/peer_event.c
-@@ -28,39 +28,39 @@ static void rxrpc_store_error(struct rxrpc_peer *, struct sock_exterr_skb *);
-  * Find the peer associated with an ICMP packet.
-  */
- static struct rxrpc_peer *rxrpc_lookup_peer_icmp_rcu(struct rxrpc_local *local,
--						     const struct sk_buff *skb)
-+						     const struct sk_buff *skb,
-+						     struct sockaddr_rxrpc *srx)
- {
- 	struct sock_exterr_skb *serr = SKB_EXT_ERR(skb);
--	struct sockaddr_rxrpc srx;
+diff --git a/net/rxrpc/conn_event.c b/net/rxrpc/conn_event.c
+index c717152070df..1350f1be8037 100644
+--- a/net/rxrpc/conn_event.c
++++ b/net/rxrpc/conn_event.c
+@@ -40,7 +40,7 @@ static void rxrpc_conn_retransmit_call(struct rxrpc_connection *conn,
+ 	} __attribute__((packed)) pkt;
+ 	struct rxrpc_ackinfo ack_info;
+ 	size_t len;
+-	int ioc;
++	int ret, ioc;
+ 	u32 serial, mtu, call_id, padding;
  
- 	_enter("");
- 
--	memset(&srx, 0, sizeof(srx));
--	srx.transport_type = local->srx.transport_type;
--	srx.transport_len = local->srx.transport_len;
--	srx.transport.family = local->srx.transport.family;
-+	memset(srx, 0, sizeof(*srx));
-+	srx->transport_type = local->srx.transport_type;
-+	srx->transport_len = local->srx.transport_len;
-+	srx->transport.family = local->srx.transport.family;
- 
- 	/* Can we see an ICMP4 packet on an ICMP6 listening socket?  and vice
- 	 * versa?
- 	 */
--	switch (srx.transport.family) {
-+	switch (srx->transport.family) {
- 	case AF_INET:
--		srx.transport.sin.sin_port = serr->port;
-+		srx->transport.sin.sin_port = serr->port;
- 		switch (serr->ee.ee_origin) {
- 		case SO_EE_ORIGIN_ICMP:
- 			_net("Rx ICMP");
--			memcpy(&srx.transport.sin.sin_addr,
-+			memcpy(&srx->transport.sin.sin_addr,
- 			       skb_network_header(skb) + serr->addr_offset,
- 			       sizeof(struct in_addr));
- 			break;
- 		case SO_EE_ORIGIN_ICMP6:
- 			_net("Rx ICMP6 on v4 sock");
--			memcpy(&srx.transport.sin.sin_addr,
-+			memcpy(&srx->transport.sin.sin_addr,
- 			       skb_network_header(skb) + serr->addr_offset + 12,
- 			       sizeof(struct in_addr));
- 			break;
- 		default:
--			memcpy(&srx.transport.sin.sin_addr, &ip_hdr(skb)->saddr,
-+			memcpy(&srx->transport.sin.sin_addr, &ip_hdr(skb)->saddr,
- 			       sizeof(struct in_addr));
- 			break;
- 		}
-@@ -68,25 +68,25 @@ static struct rxrpc_peer *rxrpc_lookup_peer_icmp_rcu(struct rxrpc_local *local,
- 
- #ifdef CONFIG_AF_RXRPC_IPV6
- 	case AF_INET6:
--		srx.transport.sin6.sin6_port = serr->port;
-+		srx->transport.sin6.sin6_port = serr->port;
- 		switch (serr->ee.ee_origin) {
- 		case SO_EE_ORIGIN_ICMP6:
- 			_net("Rx ICMP6");
--			memcpy(&srx.transport.sin6.sin6_addr,
-+			memcpy(&srx->transport.sin6.sin6_addr,
- 			       skb_network_header(skb) + serr->addr_offset,
- 			       sizeof(struct in6_addr));
- 			break;
- 		case SO_EE_ORIGIN_ICMP:
- 			_net("Rx ICMP on v6 sock");
--			srx.transport.sin6.sin6_addr.s6_addr32[0] = 0;
--			srx.transport.sin6.sin6_addr.s6_addr32[1] = 0;
--			srx.transport.sin6.sin6_addr.s6_addr32[2] = htonl(0xffff);
--			memcpy(srx.transport.sin6.sin6_addr.s6_addr + 12,
-+			srx->transport.sin6.sin6_addr.s6_addr32[0] = 0;
-+			srx->transport.sin6.sin6_addr.s6_addr32[1] = 0;
-+			srx->transport.sin6.sin6_addr.s6_addr32[2] = htonl(0xffff);
-+			memcpy(srx->transport.sin6.sin6_addr.s6_addr + 12,
- 			       skb_network_header(skb) + serr->addr_offset,
- 			       sizeof(struct in_addr));
- 			break;
- 		default:
--			memcpy(&srx.transport.sin6.sin6_addr,
-+			memcpy(&srx->transport.sin6.sin6_addr,
- 			       &ipv6_hdr(skb)->saddr,
- 			       sizeof(struct in6_addr));
- 			break;
-@@ -98,7 +98,7 @@ static struct rxrpc_peer *rxrpc_lookup_peer_icmp_rcu(struct rxrpc_local *local,
- 		BUG();
+ 	_enter("%d", conn->debug_id);
+@@ -135,10 +135,13 @@ static void rxrpc_conn_retransmit_call(struct rxrpc_connection *conn,
+ 		break;
  	}
  
--	return rxrpc_lookup_peer_rcu(local, &srx);
-+	return rxrpc_lookup_peer_rcu(local, srx);
+-	kernel_sendmsg(conn->params.local->socket, &msg, iov, ioc, len);
++	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, ioc, len);
+ 	conn->params.peer->last_tx_at = ktime_get_real();
++	if (ret < 0)
++		trace_rxrpc_tx_fail(conn->debug_id, serial, ret,
++				    rxrpc_tx_fail_call_final_resend);
++
+ 	_leave("");
+-	return;
  }
  
  /*
-@@ -146,6 +146,7 @@ static void rxrpc_adjust_mtu(struct rxrpc_peer *peer, struct sock_exterr_skb *se
- void rxrpc_error_report(struct sock *sk)
- {
- 	struct sock_exterr_skb *serr;
-+	struct sockaddr_rxrpc srx;
- 	struct rxrpc_local *local = sk->sk_user_data;
- 	struct rxrpc_peer *peer;
- 	struct sk_buff *skb;
-@@ -166,7 +167,7 @@ void rxrpc_error_report(struct sock *sk)
- 	}
+@@ -236,6 +239,8 @@ static int rxrpc_abort_connection(struct rxrpc_connection *conn,
  
- 	rcu_read_lock();
--	peer = rxrpc_lookup_peer_icmp_rcu(local, skb);
-+	peer = rxrpc_lookup_peer_icmp_rcu(local, skb, &srx);
- 	if (peer && !rxrpc_get_peer_maybe(peer))
- 		peer = NULL;
- 	if (!peer) {
-@@ -176,6 +177,8 @@ void rxrpc_error_report(struct sock *sk)
- 		return;
+ 	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, 2, len);
+ 	if (ret < 0) {
++		trace_rxrpc_tx_fail(conn->debug_id, serial, ret,
++				    rxrpc_tx_fail_conn_abort);
+ 		_debug("sendmsg failed: %d", ret);
+ 		return -EAGAIN;
  	}
+diff --git a/net/rxrpc/local_event.c b/net/rxrpc/local_event.c
+index 93b5d910b4a1..8325f1b86840 100644
+--- a/net/rxrpc/local_event.c
++++ b/net/rxrpc/local_event.c
+@@ -71,7 +71,8 @@ static void rxrpc_send_version_request(struct rxrpc_local *local,
  
-+	trace_rxrpc_rx_icmp(peer, &serr->ee, &srx);
+ 	ret = kernel_sendmsg(local->socket, &msg, iov, 2, len);
+ 	if (ret < 0)
+-		_debug("sendmsg failed: %d", ret);
++		trace_rxrpc_tx_fail(local->debug_id, 0, ret,
++				    rxrpc_tx_fail_version_reply);
+ 
+ 	_leave("");
+ }
+diff --git a/net/rxrpc/output.c b/net/rxrpc/output.c
+index 6b9d27f0d7ec..f03de1c59ba3 100644
+--- a/net/rxrpc/output.c
++++ b/net/rxrpc/output.c
+@@ -210,6 +210,9 @@ int rxrpc_send_ack_packet(struct rxrpc_call *call, bool ping,
+ 	if (ping)
+ 		call->ping_time = now;
+ 	conn->params.peer->last_tx_at = ktime_get_real();
++	if (ret < 0)
++		trace_rxrpc_tx_fail(call->debug_id, serial, ret,
++				    rxrpc_tx_fail_call_ack);
+ 
+ 	if (call->state < RXRPC_CALL_COMPLETE) {
+ 		if (ret < 0) {
+@@ -294,6 +297,10 @@ int rxrpc_send_abort_packet(struct rxrpc_call *call)
+ 	ret = kernel_sendmsg(conn->params.local->socket,
+ 			     &msg, iov, 1, sizeof(pkt));
+ 	conn->params.peer->last_tx_at = ktime_get_real();
++	if (ret < 0)
++		trace_rxrpc_tx_fail(call->debug_id, serial, ret,
++				    rxrpc_tx_fail_call_abort);
 +
- 	if ((serr->ee.ee_origin == SO_EE_ORIGIN_ICMP &&
- 	     serr->ee.ee_type == ICMP_DEST_UNREACH &&
- 	     serr->ee.ee_code == ICMP_FRAG_NEEDED)) {
-@@ -209,9 +212,6 @@ static void rxrpc_store_error(struct rxrpc_peer *peer,
  
- 	ee = &serr->ee;
+ 	rxrpc_put_connection(conn);
+ 	return ret;
+@@ -387,6 +394,9 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
+ 	conn->params.peer->last_tx_at = ktime_get_real();
  
--	_net("Rx Error o=%d t=%d c=%d e=%d",
--	     ee->ee_origin, ee->ee_type, ee->ee_code, ee->ee_errno);
--
- 	err = ee->ee_errno;
+ 	up_read(&conn->params.local->defrag_sem);
++	if (ret < 0)
++		trace_rxrpc_tx_fail(call->debug_id, serial, ret,
++				    rxrpc_tx_fail_call_data_nofrag);
+ 	if (ret == -EMSGSIZE)
+ 		goto send_fragmentable;
  
- 	switch (ee->ee_origin) {
+@@ -476,6 +486,10 @@ int rxrpc_send_data_packet(struct rxrpc_call *call, struct sk_buff *skb,
+ #endif
+ 	}
+ 
++	if (ret < 0)
++		trace_rxrpc_tx_fail(call->debug_id, serial, ret,
++				    rxrpc_tx_fail_call_data_frag);
++
+ 	up_write(&conn->params.local->defrag_sem);
+ 	goto done;
+ }
+@@ -493,6 +507,7 @@ void rxrpc_reject_packets(struct rxrpc_local *local)
+ 	struct kvec iov[2];
+ 	size_t size;
+ 	__be32 code;
++	int ret;
+ 
+ 	_enter("%d", local->debug_id);
+ 
+@@ -527,7 +542,10 @@ void rxrpc_reject_packets(struct rxrpc_local *local)
+ 			whdr.flags	^= RXRPC_CLIENT_INITIATED;
+ 			whdr.flags	&= RXRPC_CLIENT_INITIATED;
+ 
+-			kernel_sendmsg(local->socket, &msg, iov, 2, size);
++			ret = kernel_sendmsg(local->socket, &msg, iov, 2, size);
++			if (ret < 0)
++				trace_rxrpc_tx_fail(local->debug_id, 0, ret,
++						    rxrpc_tx_fail_reject);
+ 		}
+ 
+ 		rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
+@@ -578,7 +596,8 @@ void rxrpc_send_keepalive(struct rxrpc_peer *peer)
+ 
+ 	ret = kernel_sendmsg(peer->local->socket, &msg, iov, 2, len);
+ 	if (ret < 0)
+-		_debug("sendmsg failed: %d", ret);
++		trace_rxrpc_tx_fail(peer->debug_id, 0, ret,
++				    rxrpc_tx_fail_version_keepalive);
+ 
+ 	peer->last_tx_at = ktime_get_real();
+ 	_leave("");
+diff --git a/net/rxrpc/rxkad.c b/net/rxrpc/rxkad.c
+index 588fea0dd362..6c0ae27fff84 100644
+--- a/net/rxrpc/rxkad.c
++++ b/net/rxrpc/rxkad.c
+@@ -664,7 +664,8 @@ static int rxkad_issue_challenge(struct rxrpc_connection *conn)
+ 
+ 	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, 2, len);
+ 	if (ret < 0) {
+-		_debug("sendmsg failed: %d", ret);
++		trace_rxrpc_tx_fail(conn->debug_id, serial, ret,
++				    rxrpc_tx_fail_conn_challenge);
+ 		return -EAGAIN;
+ 	}
+ 
+@@ -719,7 +720,8 @@ static int rxkad_send_response(struct rxrpc_connection *conn,
+ 
+ 	ret = kernel_sendmsg(conn->params.local->socket, &msg, iov, 3, len);
+ 	if (ret < 0) {
+-		_debug("sendmsg failed: %d", ret);
++		trace_rxrpc_tx_fail(conn->debug_id, serial, ret,
++				    rxrpc_tx_fail_conn_response);
+ 		return -EAGAIN;
+ 	}
+ 
