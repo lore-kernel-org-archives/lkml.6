@@ -1,169 +1,124 @@
-Return-Path: <mhocko@kernel.org>
-X-Google-Smtp-Source: AB8JxZoTnjRvpKX+RBmwjJxTpVKvnskgPEwHh3SVvY2wqim64fzJohGOGwmxWrpdF0PiN8cLnx9M
-ARC-Seal: i=1; a=rsa-sha256; t=1525941370; cv=none;
-        d=google.com; s=arc-20160816;
-        b=PZgDrCPz+haAAHhx/YQ+qytL22dtHFp7vBXIX+TU5LF2RDRhSoXVqbYi3zB+YUkOt1
-         AfjoDX6F+/UT7wgXCC8VP9Q6JDfFgwJ4dRcJQ8dONYAajMLcnmTMEkBn6V1Y9IyF7RHt
-         wnWm91P4m9DKh4irVlWOxivciNn/f4LUYofzupeBoSA//P2VH6JfzTMUPTtRYF7Ln3JY
-         ALtp52JcVMqvzLBJ5mrtBLnGYcJoz4wYvlS7NnW18rUvOAhM81akOrfRYxanS7NHTwbD
-         prQbsBm8v0ALeqbV56m42nR5ayys2A8YsyzbmIAegIjm6ruyNKm6oGoFdBv9jf8IaAaw
-         WigQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:message-id:subject:cc
-         :to:from:date:arc-authentication-results;
-        bh=Lej+TvnSHElBpYUkYnZNoKj5ZYb4Qj8g+MpvvG/qLB4=;
-        b=iZ6/wam9jRtemgUQLSWyWEA1ZhUIZRYA5WmVYB0r29mR2DR5w/ZA+pcbli8AJxDJ0b
-         +VyUr8SvZvymnJfZlD8YY6EkYxsGPU3m4noWjmr0JxDCfJxBQjVNRAg8kvBEw5P6OQrN
-         hS4zLQb0qf6XgqBcAAC4vI2GNgfBQDyZ/DKvy1oL8OPuYsBHxA8Rbj3XMgM5JVAIbn48
-         9vFo9Gz1I9SxOq2GO+lZ1hxEAwB4Ppi7MdNkN0zm18FwmfbwnXplnfes8Ah6nvuOI9cU
-         CMm/d8F2Xtnh62XfMCwv21sF1goC76gn3igwPYgn4Oe+LSSWfojBMIbNKL34sGMBmKnC
-         ptwg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning mhocko@kernel.org does not designate 195.135.220.15 as permitted sender) smtp.mailfrom=mhocko@kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning mhocko@kernel.org does not designate 195.135.220.15 as permitted sender) smtp.mailfrom=mhocko@kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Date: Thu, 10 May 2018 10:36:04 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Pavel Tatashin <pasha.tatashin@oracle.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Reza Arbab <arbab@linux.vnet.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm: move =?utf-8?Q?function?=
- =?utf-8?B?IOKAmGlzX3BhZ2VibG9ja19yZW1vdmFibGVfbm9sb2Nr?= =?utf-8?B?4oCZ?= to
- mm/memory_hotplug.c
-Message-ID: <20180510083604.GI32366@dhcp22.suse.cz>
-References: <20180505201107.21070-1-malat@debian.org>
- <20180509190001.24789-1-malat@debian.org>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1521860-1525931354-2-9283420661751027882
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525931353; b=VRqwtvDaZAyDpHVkGx0/LICmmqPa3376qSaGStv6cjvNR/5GMR
+    deU46S6kKkEt5qQHpjpdFkE1ZmQkIDA1+LOS1fN1V1BTSXzWHlYnycBXF9XGUNPK
+    HsStw20yKkOMatluroPwlFcMGfG3WynELwtvbKsAB0GTgOwvSgx+AIT/Yqx8zYyI
+    Lit4HTygbY17V2+EFChHEmhMCKm1aNBP+Q885hko7FVr6jlDASwVr0mTT5hA4H8k
+    bZSsFdr4OeKR2sZIlHOhuXPH+dvnLq6eKlAnqY1icgUSmBK6AuZ7TAJ2dLc/cHeS
+    qDGJsB/2g799H8aZ8H+ZjaOLvvxyy5Ub+vwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1525931353;
+    bh=IkcNOoNnDohw33axN+w9eB4aP3Qsk2NY/v9edIP3XKQ=; b=HQD8CIpky//C
+    TrqALorYB6BwVL73hdmJxCDafwtJF52fp/bKGupuBAO8qEnYvMKI1eatEYKQ/LC/
+    JlgtgLiu/W3aNN+Mei2UGklzLWNwoqkt69uCQt5BWUoioxbDWOK9sWzXS/M1zoaq
+    psNaZHoF+AdODoRm1uMkQLDIiwdqFmqW0vmDQC0B4cuN2XCpPUhWMmKeMScFkzOq
+    kwKoaVQ8wAusGSey1FCm5TcLqxvrgMV3JH/3hc3K6bYi0ERKAyhhQI+SJfGqmJtn
+    FWErQLOeswHutArrZs9wOPYJlTdCRzMaUMfrlSoeMbkeJRn9o2B/I3dx9TngKLEV
+    wnsBnfP3uw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=mediatek.com header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=mediatek.com header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfOpWi+xNbXxTRfQ855R9s7qoRMekpMZVT+fSMAYVmgvc1sTRVl6oF4WVCSfRR5FYBC6mte0qf7cGPc85Z0LAmUQDfRl59jXflkFzuZcEmlmEyw3yyfM8
+    TbzZchctRNdeY1a4y0xJTQ6v6ATJGZ8uXLRMv2kN3bT1BuoLDmjn4mkicByW/2Vitxhet4ovEHcpfG1UUroLCt9hDBtuZdu/w6BiH4eMRsrjFGWi9B7fSJ3u
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=mpaa-ttXAAAA:8
+    a=VwQbUJbxAAAA:8 a=Ij6qccZBKdxcU9xWfWgA:9 a=x8gzFH9gYPwA:10
+    a=6heAxKwa5pAsJatQ0mat:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1756444AbeEJFrX (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 10 May 2018 01:47:23 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:43407 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753633AbeEJFrX (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Thu, 10 May 2018 01:47:23 -0400
+X-UUID: f8e5ca9d4cdc4e3a89cd9232a9b43039-20180510
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: [PATCH v2 1/7] usb: mtu3: avoid TX data length truncated in SS/SSP mode
+Date: Thu, 10 May 2018 13:47:06 +0800
+Message-ID: <6b82c11302a81368bd6936424d081ede3340b431.1525930818.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180509190001.24789-1-malat@debian.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain
+X-MTK: N
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600014160898520786?=
-X-GMAIL-MSGID: =?utf-8?q?1600065498073197084?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed 09-05-18 20:59:57, Mathieu Malaterre wrote:
-> Function ‘is_pageblock_removable_nolock’ is not used outside of
-> mm/memory_hotplug.c. Move it next to unique caller:
-> ‘is_mem_section_removable’ and make it static.
-> Remove prototype in <linux/memory_hotplug.h>. Silence gcc warning (W=1):
-> 
->   mm/page_alloc.c:7704:6: warning: no previous prototype for ‘is_pageblock_removable_nolock’ [-Wmissing-prototypes]
-> 
-> Suggested-by: Michal Hocko <mhocko@kernel.org>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+The variable of 'count' is declared as u8, this will cause an issue
+due to value truncated when works in SS or SSP mode and data length
+is greater than 255, so change it as u32.
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+ drivers/usb/mtu3/mtu3_gadget_ep0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-> ---
-> v2: this function can be made static, make it so
-> 
->  include/linux/memory_hotplug.h |  1 -
->  mm/memory_hotplug.c            | 23 +++++++++++++++++++++++
->  mm/page_alloc.c                | 23 -----------------------
->  3 files changed, 23 insertions(+), 24 deletions(-)
-> 
-> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-> index e0e49b5b1ee1..9566d551a41b 100644
-> --- a/include/linux/memory_hotplug.h
-> +++ b/include/linux/memory_hotplug.h
-> @@ -107,7 +107,6 @@ static inline bool movable_node_is_enabled(void)
->  }
->  
->  #ifdef CONFIG_MEMORY_HOTREMOVE
-> -extern bool is_pageblock_removable_nolock(struct page *page);
->  extern int arch_remove_memory(u64 start, u64 size,
->  		struct vmem_altmap *altmap);
->  extern int __remove_pages(struct zone *zone, unsigned long start_pfn,
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index f74826cdceea..9342e120518a 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1237,6 +1237,29 @@ static struct page *next_active_pageblock(struct page *page)
->  	return page + pageblock_nr_pages;
->  }
->  
-> +static bool is_pageblock_removable_nolock(struct page *page)
-> +{
-> +	struct zone *zone;
-> +	unsigned long pfn;
-> +
-> +	/*
-> +	 * We have to be careful here because we are iterating over memory
-> +	 * sections which are not zone aware so we might end up outside of
-> +	 * the zone but still within the section.
-> +	 * We have to take care about the node as well. If the node is offline
-> +	 * its NODE_DATA will be NULL - see page_zone.
-> +	 */
-> +	if (!node_online(page_to_nid(page)))
-> +		return false;
-> +
-> +	zone = page_zone(page);
-> +	pfn = page_to_pfn(page);
-> +	if (!zone_spans_pfn(zone, pfn))
-> +		return false;
-> +
-> +	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE, true);
-> +}
-> +
->  /* Checks if this range of memory is likely to be hot-removable. */
->  bool is_mem_section_removable(unsigned long start_pfn, unsigned long nr_pages)
->  {
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 905db9d7962f..52731601ca5a 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -7701,29 +7701,6 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
->  	return false;
->  }
->  
-> -bool is_pageblock_removable_nolock(struct page *page)
-> -{
-> -	struct zone *zone;
-> -	unsigned long pfn;
-> -
-> -	/*
-> -	 * We have to be careful here because we are iterating over memory
-> -	 * sections which are not zone aware so we might end up outside of
-> -	 * the zone but still within the section.
-> -	 * We have to take care about the node as well. If the node is offline
-> -	 * its NODE_DATA will be NULL - see page_zone.
-> -	 */
-> -	if (!node_online(page_to_nid(page)))
-> -		return false;
-> -
-> -	zone = page_zone(page);
-> -	pfn = page_to_pfn(page);
-> -	if (!zone_spans_pfn(zone, pfn))
-> -		return false;
-> -
-> -	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE, true);
-> -}
-> -
->  #if (defined(CONFIG_MEMORY_ISOLATION) && defined(CONFIG_COMPACTION)) || defined(CONFIG_CMA)
->  
->  static unsigned long pfn_max_align_down(unsigned long pfn)
-> -- 
-> 2.11.0
-> 
-
+diff --git a/drivers/usb/mtu3/mtu3_gadget_ep0.c b/drivers/usb/mtu3/mtu3_gadget_ep0.c
+index ebdcf7a..d67b540 100644
+--- a/drivers/usb/mtu3/mtu3_gadget_ep0.c
++++ b/drivers/usb/mtu3/mtu3_gadget_ep0.c
+@@ -546,7 +546,7 @@ static void ep0_tx_state(struct mtu3 *mtu)
+ 	struct usb_request *req;
+ 	u32 csr;
+ 	u8 *src;
+-	u8 count;
++	u32 count;
+ 	u32 maxp;
+ 
+ 	dev_dbg(mtu->dev, "%s\n", __func__);
 -- 
-Michal Hocko
-SUSE Labs
+1.9.1
+
