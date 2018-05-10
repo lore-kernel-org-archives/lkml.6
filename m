@@ -1,109 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966145AbeEJOsB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 10:48:01 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:50268 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966102AbeEJOr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 10:47:56 -0400
-Date: Thu, 10 May 2018 10:49:43 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
-        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
-        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
-        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
-        Daniel Walker <danielwa@cisco.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
-Subject: Re: [PATCH 7/7] psi: cgroup support
-Message-ID: <20180510144943.GH19348@cmpxchg.org>
-References: <20180507210135.1823-1-hannes@cmpxchg.org>
- <20180507210135.1823-8-hannes@cmpxchg.org>
- <20180509110736.GR12217@hirez.programming.kicks-ass.net>
+        id S965342AbeEJOtl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 10:49:41 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:40972 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934430AbeEJOtj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 10:49:39 -0400
+X-Google-Smtp-Source: AB8JxZoOJCPtl0ymubiVpfRsIb0uJmH3KRJ2iSCVXmetlV61sGhaQE9qo6cgjMWPoUDYvoca8v6C2wCjKqxzG8nZ26E=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509110736.GR12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180510130343.GA173327@bhelgaas-glaptop.roam.corp.google.com>
+References: <56a8953c-d833-837c-57d5-fe758d4db02a@canonical.com>
+ <1823373.ea0yBGqyI6@aspire.rjw.lan> <20180510130343.GA173327@bhelgaas-glaptop.roam.corp.google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 10 May 2018 16:49:38 +0200
+X-Google-Sender-Auth: ifhRPB24uxi4-WQ4HfFhql8JA74
+Message-ID: <CAJZ5v0hdkyQnpRseSYi2gJWrFPu+svUA64sZvmV0dg2g=KOuiw@mail.gmail.com>
+Subject: Re: [PATCH] PCI / PM: Check device_may_wakeup() in pci_enable_wake()
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Joseph Salisbury <joseph.salisbury@canonical.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        1745646@bugs.launchpad.net,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 01:07:36PM +0200, Peter Zijlstra wrote:
-> On Mon, May 07, 2018 at 05:01:35PM -0400, Johannes Weiner wrote:
-> > --- a/kernel/sched/psi.c
-> > +++ b/kernel/sched/psi.c
-> > @@ -260,6 +260,18 @@ void psi_task_change(struct task_struct *task, u64 now, int clear, int set)
-> >  	task->psi_flags |= set;
-> >  
-> >  	psi_group_update(&psi_system, cpu, now, clear, set);
-> > +
-> > +#ifdef CONFIG_CGROUPS
-> > +       cgroup = task->cgroups->dfl_cgrp;
-> > +       while (cgroup && (parent = cgroup_parent(cgroup))) {
-> > +               struct psi_group *group;
-> > +
-> > +               group = cgroup_psi(cgroup);
-> > +               psi_group_update(group, cpu, now, clear, set);
-> > +
-> > +               cgroup = parent;
-> > +       }
-> > +#endif
-> >  }
-> 
-> TJ fixed needing that for stats at some point, why can't you do the
-> same?
+On Thu, May 10, 2018 at 3:03 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> On Wed, May 09, 2018 at 12:18:32AM +0200, Rafael J. Wysocki wrote:
+>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>
+>> Commit 0847684cfc5f0 (PCI / PM: Simplify device wakeup settings code)
+>> went too far and dropped the device_may_wakeup() check from
+>> pci_enable_wake() which causes wakeup to be enabled during system
+>> suspend, hibernation or shutdown for some PCI devices that are not
+>> allowed by user space to wake up the system from sleep (or power off).
+>>
+>> As a result of this excessive power is drawn by some of the affected
+>> systems while in sleep states or off.
+>>
+>> Restore the device_may_wakeup() check in pci_enable_wake(), but make
+>> sure that the PCI bus type's runtime suspend callback will not call
+>> device_may_wakeup() which is about system wakeup from sleep and not
+>> about device wakeup from runtime suspend.
+>>
+>> Fixes: 0847684cfc5f0 (PCI / PM: Simplify device wakeup settings code)
+>> Reported-by: Joseph Salisbury <joseph.salisbury@canonical.com>
+>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+>
+> 0847684cfc5f0 appeared in v4.13, which raises the question of whether
+> this problem is important enough for a stable backport.  Up to you :)
 
-The stats deltas are all additive, so it's okay to delay flushing them
-up the tree right before somebody is trying to look at them.
-
-With this, though, we are tracking time of an aggregate state composed
-of child tasks, and that state might not be identical for you and all
-your ancestor, so everytime a task state changes we have to evaluate
-and start/stop clocks on every level, because we cannot derive our
-state from the state history of our child groups.
-
-For example, say you have the following tree:
-
-              root
-             /
-            A
-          /   \
-         A1   A2
-  running=1   running=1
-
-I.e. There is a a running task in A1 and one in A2.
-
-root, A, A1, and A2 are all PSI_NONE as nothing is stalled.
-
-Now the task in A2 enters a memstall.
-
-              root
-             /
-            A
-          /   \
-         A1   A2
-  running=1   memstall=1
-
->From the perspective of A2, the group is now fully blocked and starts
-recording time in PSI_FULL.
-
->From the perspective of A, it has a working group below it and a
-stalled one, which would make it PSI_SOME, so it starts recording time
-in PSI_SOME.
-
-The root/sytem level likewise has to start the timer on PSI_SOME.
-
-Now the task in A1 enters a memstall, and we have to propagate the
-PSI_FULL state up A1 -> A -> root.
-
-I'm not quite sure how we could make this lazy. Say we hadn't
-propagated the state from A1 and A2 right away, and somebody is asking
-about the averages for A. We could tell that A1 and A2 had been in
-PSI_FULL recently, but we wouldn't know exactly if them being in these
-states fully overlapped (all PSI_FULL), overlapped partially (some
-PSI_FULL and some PSI_SOME), or didn't overlap at all (PSI_SOME).
+Yes, it is IMO, thank you!
