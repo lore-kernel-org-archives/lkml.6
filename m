@@ -1,95 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966114AbeEJOlo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 10:41:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37620 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965266AbeEJOll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 10:41:41 -0400
-Date: Thu, 10 May 2018 10:41:37 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Stephen Bates <sbates@raithlin.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-Message-ID: <20180510144137.GA3652@redhat.com>
-References: <20180508133407.57a46902@w520.home>
- <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
- <20180508141331.7cd737cb@w520.home>
- <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
- <20180508205005.GC15608@redhat.com>
- <7FFB9603-DF9F-4441-82E9-46037CB6C0DE@raithlin.com>
- <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
- <4e0d0b96-ab02-2662-adf3-fa956efd294c@deltatee.com>
- <2fc61d29-9eb4-d168-a3e5-955c36e5d821@amd.com>
- <94C8FE12-7FC3-48BD-9DCA-E6A427E71810@raithlin.com>
+        id S966145AbeEJOsB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 10:48:01 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:50268 "EHLO gum.cmpxchg.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966102AbeEJOr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 10:47:56 -0400
+Date: Thu, 10 May 2018 10:49:43 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
+        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+Subject: Re: [PATCH 7/7] psi: cgroup support
+Message-ID: <20180510144943.GH19348@cmpxchg.org>
+References: <20180507210135.1823-1-hannes@cmpxchg.org>
+ <20180507210135.1823-8-hannes@cmpxchg.org>
+ <20180509110736.GR12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <94C8FE12-7FC3-48BD-9DCA-E6A427E71810@raithlin.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180509110736.GR12217@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 02:16:25PM +0000, Stephen  Bates wrote:
-> Hi Christian
+On Wed, May 09, 2018 at 01:07:36PM +0200, Peter Zijlstra wrote:
+> On Mon, May 07, 2018 at 05:01:35PM -0400, Johannes Weiner wrote:
+> > --- a/kernel/sched/psi.c
+> > +++ b/kernel/sched/psi.c
+> > @@ -260,6 +260,18 @@ void psi_task_change(struct task_struct *task, u64 now, int clear, int set)
+> >  	task->psi_flags |= set;
+> >  
+> >  	psi_group_update(&psi_system, cpu, now, clear, set);
+> > +
+> > +#ifdef CONFIG_CGROUPS
+> > +       cgroup = task->cgroups->dfl_cgrp;
+> > +       while (cgroup && (parent = cgroup_parent(cgroup))) {
+> > +               struct psi_group *group;
+> > +
+> > +               group = cgroup_psi(cgroup);
+> > +               psi_group_update(group, cpu, now, clear, set);
+> > +
+> > +               cgroup = parent;
+> > +       }
+> > +#endif
+> >  }
 > 
-> > Why would a switch not identify that as a peer address? We use the PASID 
-> >    together with ATS to identify the address space which a transaction 
-> >    should use.
-> 
-> I think you are conflating two types of TLPs here. If the device supports ATS then it will issue a TR TLP to obtain a translated address from the IOMMU. This TR TLP will be addressed to the RP and so regardless of ACS it is going up to the Root Port. When it gets the response it gets the physical address and can use that with the TA bit set for the p2pdma. In the case of ATS support we also have more control over ACS as we can disable it just for TA addresses (as per 7.7.7.7.2 of the spec).
->     
->  >   If I'm not completely mistaken when you disable ACS it is perfectly 
->  >   possible that a bridge identifies a transaction as belonging to a peer 
->  >   address, which isn't what we want here.
->    
-> You are right here and I think this illustrates a problem for using the IOMMU at all when P2PDMA devices do not support ATS. Let me explain:
-> 
-> If we want to do a P2PDMA and the DMA device does not support ATS then I think we have to disable the IOMMU (something Mike suggested earlier). The reason is that since ATS is not an option the EP must initiate the DMA using the addresses passed down to it. If the IOMMU is on then this is an IOVA that could (with some non-zero probability) point to an IO Memory address in the same PCI domain. So if we disable ACS we are in trouble as we might MemWr to the wrong place but if we enable ACS we lose much of the benefit of P2PDMA. Disabling the IOMMU removes the IOVA risk and ironically also resolves the IOMMU grouping issues.
-> 
-> So I think if we want to support performant P2PDMA for devices that don't have ATS (and no NVMe SSDs today support ATS) then we have to disable the IOMMU. I know this is problematic for AMDs use case so perhaps we also need to consider a mode for P2PDMA for devices that DO support ATS where we can enable the IOMMU (but in this case EPs without ATS cannot participate as P2PDMA DMA iniators).
-> 
-> Make sense?
-> 
+> TJ fixed needing that for stats at some point, why can't you do the
+> same?
 
-Note on GPU we do would not rely on ATS for peer to peer. Some part
-of the GPU (DMA engines) do not necessarily support ATS. Yet those
-are the part likely to be use in peer to peer.
+The stats deltas are all additive, so it's okay to delay flushing them
+up the tree right before somebody is trying to look at them.
 
-However here this is a distinction in objective that i believe is lost.
-We (ake GPU people aka the good guys ;)) do no want to do peer to peer
-for performance reasons ie we do not care having our transaction going
-to the root complex and back down the destination. At least in use case
-i am working on this is fine.
+With this, though, we are tracking time of an aggregate state composed
+of child tasks, and that state might not be identical for you and all
+your ancestor, so everytime a task state changes we have to evaluate
+and start/stop clocks on every level, because we cannot derive our
+state from the state history of our child groups.
 
-Reasons is that GPU are giving up on PCIe (see all specialize link like
-NVlink that are popping up in GPU space). So for fast GPU inter-connect
-we have this new links. Yet for legacy and inter-operability we would
-like to do peer to peer with other devices like RDMA ... going through
-the root complex would be fine from performance point of view. Worst
-case is that it is slower than existing design where system memory is
-use as bounce buffer.
+For example, say you have the following tree:
 
-Also the IOMMU isolation do matter a lot to us. Think someone using this
-peer to peer to gain control of a server in the cloud.
+              root
+             /
+            A
+          /   \
+         A1   A2
+  running=1   running=1
 
-Cheers,
-Jérôme
+I.e. There is a a running task in A1 and one in A2.
+
+root, A, A1, and A2 are all PSI_NONE as nothing is stalled.
+
+Now the task in A2 enters a memstall.
+
+              root
+             /
+            A
+          /   \
+         A1   A2
+  running=1   memstall=1
+
+>From the perspective of A2, the group is now fully blocked and starts
+recording time in PSI_FULL.
+
+>From the perspective of A, it has a working group below it and a
+stalled one, which would make it PSI_SOME, so it starts recording time
+in PSI_SOME.
+
+The root/sytem level likewise has to start the timer on PSI_SOME.
+
+Now the task in A1 enters a memstall, and we have to propagate the
+PSI_FULL state up A1 -> A -> root.
+
+I'm not quite sure how we could make this lazy. Say we hadn't
+propagated the state from A1 and A2 right away, and somebody is asking
+about the averages for A. We could tell that A1 and A2 had been in
+PSI_FULL recently, but we wouldn't know exactly if them being in these
+states fully overlapped (all PSI_FULL), overlapped partially (some
+PSI_FULL and some PSI_SOME), or didn't overlap at all (PSI_SOME).
