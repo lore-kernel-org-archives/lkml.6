@@ -1,81 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934971AbeEJJ6b (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 05:58:31 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52648 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934430AbeEJJ6a (ORCPT
+        id S934803AbeEJKGw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 06:06:52 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:41308 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753944AbeEJKGu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 05:58:30 -0400
-X-Google-Smtp-Source: AB8JxZrghiMVeIihxknk2kRnB24ClPbnfpkBnr+DfGVYhttTJF8DQNrEitU5THvXydjniB1+VZMbMg==
-Subject: Re: [PATCH v2] nvmem: properly handle returned value nvmem_reg_read
-To: Mathieu Malaterre <malat@debian.org>
-Cc: linux-kernel@vger.kernel.org
-References: <20180505202450.26630-1-malat@debian.org>
- <20180509185724.24079-1-malat@debian.org>
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <2cb62de4-f8be-e3cf-f415-54de60bb669e@linaro.org>
-Date: Thu, 10 May 2018 10:58:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Thu, 10 May 2018 06:06:50 -0400
+Date: Thu, 10 May 2018 12:06:34 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Yonghong Song <yhs@fb.com>
+Cc: mingo@kernel.org, torvalds@linux-foundation.org, ast@fb.com,
+        daniel@iogearbox.net, linux-kernel@vger.kernel.org, x86@kernel.org,
+        netdev@vger.kernel.org, kernel-team@fb.com,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH bpf v3] x86/cpufeature: bpf hack for clang not supporting
+ asm goto
+Message-ID: <20180510100634.GZ12217@hirez.programming.kicks-ass.net>
+References: <20180504033119.2130788-1-yhs@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <20180509185724.24079-1-malat@debian.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180504033119.2130788-1-yhs@fb.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 03, 2018 at 08:31:19PM -0700, Yonghong Song wrote:
 
+> This approach is preferred since the already deployed bcc scripts, or
+> any other bpf applicaitons utilizing LLVM JIT compilation functionality,
+> will continue work with the new kernel without re-compilation and
+> re-deployment.
 
-On 09/05/18 19:57, Mathieu Malaterre wrote:
-> Function nvmem_reg_read can return a non zero value indicating an error.
-> This returned value must be read and error propagated to
-> nvmem_cell_prepare_write_buffer. Silence the following gcc warning (W=1):
-> 
->    drivers/nvmem/core.c:1093:9: warning: variable ‘rc’ set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
-> v2: prefer ERR_PTR(-EINVAL) over a simple return NULL
-> 
->   drivers/nvmem/core.c | 7 +++++++
->   1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> index b05aa8e81303..f7b6c85cf393 100644
-> --- a/drivers/nvmem/core.c
-> +++ b/drivers/nvmem/core.c
-> @@ -1107,6 +1107,8 @@ static void *nvmem_cell_prepare_write_buffer(struct nvmem_cell *cell,
->   
->   		/* setup the first byte with lsb bits from nvmem */
->   		rc = nvmem_reg_read(nvmem, cell->offset, &v, 1);
-> +		if (rc)
-> +			goto err;
->   		*b++ |= GENMASK(bit_offset - 1, 0) & v;
->   
->   		/* setup rest of the byte if any */
-> @@ -1125,11 +1127,16 @@ static void *nvmem_cell_prepare_write_buffer(struct nvmem_cell *cell,
->   		/* setup the last byte with msb bits from nvmem */
->   		rc = nvmem_reg_read(nvmem,
->   				    cell->offset + cell->bytes - 1, &v, 1);
-> +		if (rc)
-> +			goto err;
->   		*p |= GENMASK(7, (nbits + bit_offset) % BITS_PER_BYTE) & v;
->   
->   	}
->   
->   	return buf;
-> +err:
-> +	kfree(buf);
-> +	return ERR_PTR(-EINVAL);
-You should return ERR_PTR(rc) not EINVAL here.
-errors should always propagate to caller!
+So I really hate this and would much rather see the BPF build
+environment changed. It not consistenyly having __BPF__ defined really
+smells like a bug on your end.
 
-thanks,
-srini
->   }
->   
->   /**
+Sometimes you just need to update tools... Is it really too hard to do
+-D__BPF__ in the bpf build process that we need to mollest the kernel
+for it?
+
+> Note that this is a hack in the kernel to workaround bpf compilation issue.
+> The hack will be removed once clang starts to support asm goto.
+
+Note that that ^^ already mandates people re-deploy their bpf tools, so
+why is llvm supporting asm-goto a better point to re-deploy than fixing
+a consistent __BPF__ define for the bpf build environment?
+
+> diff --git a/Makefile b/Makefile
+> index 83b6c54..cfd8759 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -504,6 +504,7 @@ export RETPOLINE_CFLAGS
+>  ifeq ($(call shell-cached,$(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
+>    CC_HAVE_ASM_GOTO := 1
+>    KBUILD_CFLAGS += -DCC_HAVE_ASM_GOTO
+> +  KBUILD_CFLAGS += -D__NO_CLANG_BPF_HACK
+>    KBUILD_AFLAGS += -DCC_HAVE_ASM_GOTO
+>  endif
+
+I really think this is the wrong thing to do; but if the x86 maintainers
+are willing to take this, I'll grudingly shut up.
+
+Ingo, Thomas?
+
+> diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+> index b27da96..42edd5d 100644
+> --- a/arch/x86/include/asm/cpufeature.h
+> +++ b/arch/x86/include/asm/cpufeature.h
+> @@ -140,6 +140,8 @@ extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
+>  
+>  #define setup_force_cpu_bug(bit) setup_force_cpu_cap(bit)
+>  
+> +/* this macro is a temporary hack for bpf until clang gains asm-goto support */
+> +#ifdef __NO_CLANG_BPF_HACK
+>  /*
+>   * Static testing of CPU features.  Used the same as boot_cpu_has().
+>   * These will statically patch the target code for additional
+> @@ -195,6 +197,9 @@ static __always_inline __pure bool _static_cpu_has(u16 bit)
+>  		boot_cpu_has(bit) :				\
+>  		_static_cpu_has(bit)				\
+>  )
+> +#else
+> +#define static_cpu_has(bit)		boot_cpu_has(bit)
+> +#endif
+>  
+>  #define cpu_has_bug(c, bit)		cpu_has(c, (bit))
+>  #define set_cpu_bug(c, bit)		set_cpu_cap(c, (bit))
+> -- 
+> 2.9.5
 > 
