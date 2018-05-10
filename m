@@ -1,75 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966594AbeEJQnK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 12:43:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36782 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966402AbeEJQnJ (ORCPT
+        id S966555AbeEJQrF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 12:47:05 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:40057 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966305AbeEJQrE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 12:43:09 -0400
-Date: Thu, 10 May 2018 13:42:58 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Christoph Hellwig <hch@infradead.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 13/18] wait: wait.h: Get rid of a kernel-doc/Sphinx
- warnings
-Message-ID: <20180510134249.64445281@vento.lan>
-In-Reply-To: <20180510093846.184f6de0@lwn.net>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-        <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
-        <20180510083838.GA21846@infradead.org>
-        <20180510063805.1859b1aa@vento.lan>
-        <20180510073012.5902088e@lwn.net>
-        <20180510112113.4db65764@vento.lan>
-        <20180510093846.184f6de0@lwn.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 10 May 2018 12:47:04 -0400
+X-Google-Smtp-Source: AB8JxZr7GiNZYOnA0IlDtjJVIqJk2oBw1dk9zr/JAhZZYfvI6/DbqZ/3M+DjHj1kSw0Zv46sSMnfCA==
+From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To: linux-nvme@lists.infradead.org
+Cc: alex_gagniuc@dellteam.com, Austin.Bolen@dell.com, Shyam.Iyer@dell.com,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] nvme-pci: Avoid use of goto in nvme_reset_work()
+Date: Thu, 10 May 2018 11:46:33 -0500
+Message-Id: <20180510164645.19559-1-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, 10 May 2018 09:38:46 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+This patch started as a challenge from Keith relating to code
+structuring with goto vs return. I think the final result improves
+readability on two counts:
+First, it clarifies the separation between work struct and nvme_dev.
+Second, it makes it clearer what error is being passed on:
+'return -ENODEV' vs 'goto out', where 'result' happens to be -ENODEV
 
-> On Thu, 10 May 2018 11:21:13 -0300
-> Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-> 
-> > The problem with a hint-based mechanism is that it will generate
-> > false hints. If added, we may end by needing to add extra tags to
-> > disable the hints mechanism where it gets wrong, or to periodically
-> > do code changes at kernel-doc comments in order to make the hints
-> > logic happy.
-> > 
-> > So, IMO, we should provide non-hints based mechanism, like forcing the
-> > string that prepends the colon to have a keyword that will make it to
-> > parse the block as literal, where expressions like:
-> > 
-> > 	See the code-block foo:
-> > 	See the following code example:
-> > 	See the following flow diagram:
-> > 	See the following artwork:
-> > 
-> > Is the best alternative to avoid "::", as on the enclosed patch.  
-> 
-> But this, too, is a hint-based mechanism.  Thanks for the patches, I'll
-> keep them around, but I would like an opportunity to try to do better
-> before applying them.  I fear that using magic words in this way will
-> lead to a constant stream of surprises, and I'd like to avoid that if
-> possible...
+CC: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+---
+ drivers/nvme/host/pci.c | 42 ++++++++++++++++++++++++------------------
+ 1 file changed, 24 insertions(+), 18 deletions(-)
 
-Yes, it is still hint-based. A careful selection of the "magic spell
-words/phrases" would minimize the risks of false positives, but it
-could still lead into some unwanted surprises.
-
-IMO, "::" (or some other character combination that is not used
-elsewhere) is still the safest option.
-
-
-Thanks,
-Mauro
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index fbc71fac6f1e..bac7d30a10a7 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2286,16 +2286,14 @@ static void nvme_remove_dead_ctrl(struct nvme_dev *dev, int status)
+ 		nvme_put_ctrl(&dev->ctrl);
+ }
+ 
+-static void nvme_reset_work(struct work_struct *work)
++static int do_nvme_reset_work(struct nvme_dev *dev)
+ {
+-	struct nvme_dev *dev =
+-		container_of(work, struct nvme_dev, ctrl.reset_work);
+ 	bool was_suspend = !!(dev->ctrl.ctrl_config & NVME_CC_SHN_NORMAL);
+ 	int result = -ENODEV;
+ 	enum nvme_ctrl_state new_state = NVME_CTRL_LIVE;
+ 
+ 	if (WARN_ON(dev->ctrl.state != NVME_CTRL_RESETTING))
+-		goto out;
++		return -ENODEV;
+ 
+ 	/*
+ 	 * If we're called to reset a live controller first shut it down before
+@@ -2310,30 +2308,30 @@ static void nvme_reset_work(struct work_struct *work)
+ 	 */
+ 	if (!nvme_change_ctrl_state(&dev->ctrl, NVME_CTRL_CONNECTING)) {
+ 		dev_warn(dev->ctrl.device,
+-			"failed to mark controller CONNECTING\n");
+-		goto out;
++			 "failed to mark controller CONNECTING\n");
++		return -ENODEV;
+ 	}
+ 
+ 	result = nvme_pci_enable(dev);
+ 	if (result)
+-		goto out;
++		return result;
+ 
+ 	result = nvme_pci_configure_admin_queue(dev);
+ 	if (result)
+-		goto out;
++		return result;
+ 
+ 	result = nvme_alloc_admin_tags(dev);
+ 	if (result)
+-		goto out;
++		return result;
+ 
+ 	result = nvme_init_identify(&dev->ctrl);
+ 	if (result)
+-		goto out;
++		return result;
+ 
+ 	if (dev->ctrl.oacs & NVME_CTRL_OACS_SEC_SUPP) {
+ 		if (!dev->ctrl.opal_dev)
+ 			dev->ctrl.opal_dev =
+-				init_opal_dev(&dev->ctrl, &nvme_sec_submit);
++			init_opal_dev(&dev->ctrl, &nvme_sec_submit);
+ 		else if (was_suspend)
+ 			opal_unlock_from_suspend(dev->ctrl.opal_dev);
+ 	} else {
+@@ -2351,12 +2349,12 @@ static void nvme_reset_work(struct work_struct *work)
+ 	if (dev->ctrl.hmpre) {
+ 		result = nvme_setup_host_mem(dev);
+ 		if (result < 0)
+-			goto out;
++			return result;
+ 	}
+ 
+ 	result = nvme_setup_io_queues(dev);
+ 	if (result)
+-		goto out;
++		return result;
+ 
+ 	/*
+ 	 * Keep the controller around but remove all namespaces if we don't have
+@@ -2382,15 +2380,23 @@ static void nvme_reset_work(struct work_struct *work)
+ 	 */
+ 	if (!nvme_change_ctrl_state(&dev->ctrl, new_state)) {
+ 		dev_warn(dev->ctrl.device,
+-			"failed to mark controller state %d\n", new_state);
+-		goto out;
++			 "failed to mark controller state %d\n", new_state);
++		return 0;
+ 	}
+ 
+ 	nvme_start_ctrl(&dev->ctrl);
+-	return;
++	return 0;
++
++}
++static void nvme_reset_work(struct work_struct *work)
++{
++	struct nvme_dev *dev =
++		container_of(work, struct nvme_dev, ctrl.reset_work);
++	int result;
+ 
+- out:
+-	nvme_remove_dead_ctrl(dev, result);
++	result = do_nvme_reset_work(dev);
++	if (result < 0)
++		nvme_remove_dead_ctrl(dev, result);
+ }
+ 
+ static void nvme_remove_dead_ctrl_work(struct work_struct *work)
+-- 
+2.14.3
