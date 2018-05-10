@@ -1,52 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966280AbeEJPe3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 11:34:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41674 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966093AbeEJPe1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 11:34:27 -0400
-Date: Thu, 10 May 2018 17:34:20 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
-Subject: Re: [PATCH 2/3] sched/fair: util_est: update before schedutil
-Message-ID: <20180510153420.GG12217@hirez.programming.kicks-ass.net>
-References: <20180510150553.28122-1-patrick.bellasi@arm.com>
- <20180510150553.28122-3-patrick.bellasi@arm.com>
+        id S966283AbeEJPgY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 11:36:24 -0400
+Received: from mga12.intel.com ([192.55.52.136]:41879 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966093AbeEJPgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 11:36:23 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,385,1520924400";
+   d="scan'208";a="227408200"
+Date: Thu, 10 May 2018 23:36:54 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: mst@redhat.com, jasowang@redhat.com, pbonzini@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, virtio-dev@lists.oasis-open.org,
+        dan.daly@intel.com, cunming.liang@intel.com, zhihong.wang@intel.com
+Subject: Re: [virtio-dev] Re: [PATCH v1] virtio: support VIRTIO_F_IO_BARRIER
+Message-ID: <20180510153654.ysy6kehqhbqljgiy@debian>
+References: <20180504045915.17693-1-tiwei.bie@intel.com>
+ <20180510095317.GO1296@stefanha-x1.localdomain>
+ <20180510103941.znxka65iluybktuq@debian>
+ <20180510150258.GB9308@stefanha-x1.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180510150553.28122-3-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180510150258.GB9308@stefanha-x1.localdomain>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 04:05:52PM +0100, Patrick Bellasi wrote:
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 1f6a23a5b451..01dfc47541e6 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5356,6 +5356,9 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
->  	struct cfs_rq *cfs_rq;
->  	struct sched_entity *se = &p->se;
->  
-> +	/* Estimated utilization must be updated before schedutil */
-> +	util_est_enqueue(&rq->cfs, p);
+On Thu, May 10, 2018 at 04:02:58PM +0100, Stefan Hajnoczi wrote:
+> On Thu, May 10, 2018 at 06:39:41PM +0800, Tiwei Bie wrote:
+> > On Thu, May 10, 2018 at 10:53:17AM +0100, Stefan Hajnoczi wrote:
+> > > On Fri, May 04, 2018 at 12:59:15PM +0800, Tiwei Bie wrote:
+> > > > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+> > > > index 308e2096291f..9fb519a9df28 100644
+> > > > --- a/include/uapi/linux/virtio_config.h
+> > > > +++ b/include/uapi/linux/virtio_config.h
+> > > > @@ -49,7 +49,7 @@
+> > > >   * transport being used (eg. virtio_ring), the rest are per-device feature
+> > > >   * bits. */
+> > > >  #define VIRTIO_TRANSPORT_F_START	28
+> > > > -#define VIRTIO_TRANSPORT_F_END		34
+> > > > +#define VIRTIO_TRANSPORT_F_END		37
+> > > 
+> > > Have you updated "2.2 Feature Bits" in the VIRTIO spec?
+> > > 
+> > > In 1.0 it says:
+> > > 
+> > >  24 to 32
+> > >     Feature bits reserved for extensions to the queue and feature negotiation mechanisms
+> > > 
+> > > This information is out-of-date.
+> > > 
+> > 
+> > No. In the latest spec draft, it's 24 to 33. And it
+> > becomes out-of-date since VIRTIO_F_RING_PACKED(34)
+> > and VIRTIO_F_IN_ORDER(35) were introduced. Do you
+> > want me to update it in the IO_BARRIER patch or do
+> > you want me to update it in a new patch?
+> 
+> Please update it to 37 in the IO_BARRIER patch.
 
-Please clarify the comment with a reason; because I'm sure that the next
-time I see that comment, I'll go 'but why again!?'.
+Will do it! Thanks!
 
->  	/*
->  	 * If in_iowait is set, the code below may not trigger any cpufreq
->  	 * utilization updates, so do it here explicitly with the IOWAIT flag
+Best regards,
+Tiwei Bie
