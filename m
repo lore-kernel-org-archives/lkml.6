@@ -1,148 +1,96 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3752413-1526034050-2-8639480211324441680
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526034049; b=AUVHYdcC7X8DpARy4q1V4iKBmZITRn7LU95dZ9jfh6WyouGoUo
-    ObetZQpFY15ICdkdHwNzviAQvu772mH3wsYPcxKd+sBIgbrKnnaIb08wUS7czq5d
-    T5zab8b+9COOnj6q9TfA+5WUeM+bwlnYgnLTKK4f7pfTMzAexowEVjEUSJ6Mlt2M
-    E85EsemihmjQ7jPnUhDjIzrKsxuLrrRxUYtNSik4ySPX4zLdoIyRgiEn1saF9oqF
-    BhBhphlUPWhHFSVuuuGXBgE4k3nnXzBOFPnLomABJX5b/MpbQjSLXGrl873HlWQf
-    1Zsk0R1rU9utxJNIdqHMKzN+1sU+a5J+Skhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526034049; bh=
-    vyDO9fdneG6gGaIoDsHBXUbPPVwFpCal7G+F7u+s2Hc=; b=dfRIzZLi+eVGK+H8
-    Ponnt7LxZJuRF+JaJJ2ffFMAOhMaqLi0FpGZKMjci608brsiXNjPu6ZRdi7YzRLN
-    uEx52VpAATv5SxyM3N/PL8SXkIYKvG/RACfPjS2FDC+I5EiuMQgKREyL/tYS7Nv/
-    XdvSlrMJVkJqzvB+xgnKbtMHgXvc2/ghtCOPvKM6bfMXVvvHFQmHj8bvOtd1bAMg
-    zaaTN5/lbM18xgyYPa0nHdcF1UDyf2FJQCoSbA6OoEVT/GhV6zXPI6v+LZMjigYP
-    wcy9G97r/4LHPRApkQLabMGtOF4VFMcUYRQLcguKhQ1iQwUO7QdhgUW68lwjQV/Z
-    0xrZWg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=evQq2t43 x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=h1PURzpW;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=evQq2t43 x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=h1PURzpW;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDd2AgLpAq+lIafkQ4rv6GXpFGuC3NW0XewsBsuW4csfQYnBQVvGsMenbGEdvhvIe9lwhJr+8x0+UCBg6Bj7Yh1lfP2lSdEcek9nNRF4GT6OfljatjVj
-    x7Kra1ZmJjCit7BaX7cQgNK7ERpn9CCV3R5tV85ZGmg3oCWIgwITMGp0dWa15Na7zglZkXckGG8Kd2qJ5XWTYRMTuGnhB1RtJxPvSp77q4wpGdp7JEWQAZ9i
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=za2JL7ueGaoA:10
-    a=VUJBJC2UJ8kA:10 a=XYAwZIGsAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
-    a=iJV5URIOCaHoMKCIuLQA:9 a=x8gzFH9gYPwA:10 a=E8ToXWR_bxluHZ7gmE-Z:22
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752952AbeEKKUk (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 11 May 2018 06:20:40 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:45109 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752925AbeEKKUh (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Fri, 11 May 2018 06:20:37 -0400
-X-Google-Smtp-Source: AB8JxZptihyQt7/VQGQll3ItRviD+UQCk8eHCPQSWL/ANaI9EmiteGem/GpYFDUDaNgawOts1EbyMA==
-From: Romain Izard <romain.izard.pro@gmail.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-usb@vger.kernel.org,
-        Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v2 3/3] usb: gadget: udc: atmel: Fix indenting
-Date: Fri, 11 May 2018 12:19:56 +0200
-Message-Id: <20180511101956.11782-4-romain.izard.pro@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180511101956.11782-1-romain.izard.pro@gmail.com>
-References: <20180511101956.11782-1-romain.izard.pro@gmail.com>
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+Return-Path: <dougso@me.com>
+X-Google-Smtp-Source: AB8JxZox4WAdiwKQayvXxcToxk3gjihUgLRuReQbiIkWg7bTXMcC8RWk+cPX1r6Q5oiRdsVtM1QS
+ARC-Seal: i=1; a=rsa-sha256; t=1525975638; cv=none;
+        d=google.com; s=arc-20160816;
+        b=gDxuXD34VXlqgmCF0TTyb7uwZiRcIAAUM5ROe7fSP+qm7jAjEjJaKlGknsWms2EzZ3
+         O6fKp6vIyjEMRQtf40s/NyGgQ/h8vXKtnSEdLpEy3Qjzrk2svHtNldnr8wh353tgTKCW
+         vGUWy7YnbNl+3zjXZ4WD1Mabs4JhgZcdNLve24KL/n63T96xygtPgt5nRWZlWtbSmHIH
+         3zgzD65wh6ka7dc+jnQkWzME9P4Xrs00yv2dgnrZJBaUxTWrNY9F8HQFlknohc4w8DPf
+         GBQxAAHPwVjY46ASyH62kS+hXkiOTdG7XrwRn5uM5Jv1p5f7nLEeBseBKBJf5pgoopDw
+         9Haw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=A9s7VzC9lTDDiddYsa5pKhZCZ88tSKei62dibdnOSgI=;
+        b=Aymk+hvgf84t5ua+OI/KRv9TtmTT+SZqWsW+qMrehN/DFMVKS+wXMfwz2gcFYpLSj4
+         OM9+FShHJ2Pe8aR/DR8edb73b6dcyg3uKGQghJwlihVF7iVxxQ3yLiqc9omY1xAcJKCB
+         H8d0BH4K/Wj6EWx+2tuZhtsHaquXYGXNQD/vEcuXcipo18z4CSc4K0Qp3ZRmHtn3/nmD
+         mqwGpAC0VIkN5aNDti0VbxdEZbbnxFo7ho1ZfHTXqLOUaQNE8YJn4ATjc+mApUyfMTj5
+         Dk+oOeBIiGbbxqOHCUL5F3ByIjN62mbw9eyHHXZ5aV7Nofm+xLHlxORTa7CbvVFGLGSx
+         dlfg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@me.com header.s=04042017 header.b=UZCg5Ke2;
+       spf=pass (google.com: domain of dougso@me.com designates 17.172.80.96 as permitted sender) smtp.mailfrom=dougso@me.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=me.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@me.com header.s=04042017 header.b=UZCg5Ke2;
+       spf=pass (google.com: domain of dougso@me.com designates 17.172.80.96 as permitted sender) smtp.mailfrom=dougso@me.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=me.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,,
+ definitions=2018-05-10_06:,, signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
+ clxscore=1015 suspectscore=2 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1707230000 definitions=main-1805100169
+From: Doug Oucharek <dougso@me.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ devel@driverdev.osuosl.org, Oleg Drokin <oleg.drokin@intel.com>,
+ Andreas Dilger <andreas.dilger@intel.com>,
+ James Simmons <jsimmons@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>,
+ Doug Oucharek <dougso@me.com>
+Subject: [PATCH v2] staging: lustre: o2iblnd: Fix crash in
+ kiblnd_handle_early_rxs()
+Date: Thu, 10 May 2018 11:07:01 -0700
+Message-id: <1525975621-4978-1-git-send-email-dougso@me.com>
+X-Mailer: git-send-email 1.8.3.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600101431301672185?=
+X-GMAIL-MSGID: =?utf-8?q?1600101431301672185?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fix the fallout of the conversion to GPIO descriptors in 3df034081021.
+Under upstream staging commit 5a2ca43fa54f561c252c2, the list handling
+code in kiblnd_handle_early_rxs() got changed to list_for_each_safe().
+That protects against the current thread from deleting the current entry
+it is looking at. It does not protect against another thread from deleting
+the next item in the list (which the tmp variable points to). The way this
+routine holds then releases a lock opens the door to other threads doing
+just that.
 
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+This patch reverts this commit on this routine.
+
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-9886
+Fixes: 5a2ca43fa54f ("Staging: lustre: Iterate list using list_for_each_entry")
+Signed-off-by: Doug Oucharek <dougso@me.com>
 ---
- drivers/usb/gadget/udc/atmel_usba_udc.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+Change v2: Fixed list_entry parameter to be proper struct
+Change v1: Initial Patch
 
-diff --git a/drivers/usb/gadget/udc/atmel_usba_udc.c b/drivers/usb/gadget/udc/atmel_usba_udc.c
-index b9623e228609..2f586f2bda7e 100644
---- a/drivers/usb/gadget/udc/atmel_usba_udc.c
-+++ b/drivers/usb/gadget/udc/atmel_usba_udc.c
-@@ -2277,15 +2277,15 @@ static int usba_udc_probe(struct platform_device *pdev)
- 	if (udc->vbus_pin) {
- 		irq_set_status_flags(gpiod_to_irq(udc->vbus_pin), IRQ_NOAUTOEN);
- 		ret = devm_request_threaded_irq(&pdev->dev,
--					gpiod_to_irq(udc->vbus_pin), NULL,
--					usba_vbus_irq_thread, USBA_VBUS_IRQFLAGS,
--					"atmel_usba_udc", udc);
--			if (ret) {
--				udc->vbus_pin = NULL;
--				dev_warn(&udc->pdev->dev,
--					 "failed to request vbus irq; "
--					 "assuming always on\n");
--			}
-+				gpiod_to_irq(udc->vbus_pin), NULL,
-+				usba_vbus_irq_thread, USBA_VBUS_IRQFLAGS,
-+				"atmel_usba_udc", udc);
-+		if (ret) {
-+			udc->vbus_pin = NULL;
-+			dev_warn(&udc->pdev->dev,
-+				 "failed to request vbus irq; "
-+				 "assuming always on\n");
-+		}
- 	}
+ drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+index 32fa8ca..47eb8b4 100644
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+@@ -1965,13 +1965,14 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ {
+ 	unsigned long flags;
+ 	struct kib_rx *rx;
+-	struct kib_rx *tmp;
  
- 	ret = usb_add_gadget_udc(&pdev->dev, &udc->gadget);
+ 	LASSERT(!in_interrupt());
+ 	LASSERT(conn->ibc_state >= IBLND_CONN_ESTABLISHED);
+ 
+ 	write_lock_irqsave(&kiblnd_data.kib_global_lock, flags);
+-	list_for_each_entry_safe(rx, tmp, &conn->ibc_early_rxs, rx_list) {
++	while (!list_empty(&conn->ibc_early_rxs)) {
++		rx = list_entry(conn->ibc_early_rxs.next,
++				struct kib_rx, rx_list);
+ 		list_del(&rx->rx_list);
+ 		write_unlock_irqrestore(&kiblnd_data.kib_global_lock, flags);
+ 
 -- 
-2.14.1
-
+1.8.3.1
