@@ -1,121 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752370AbeEJUoX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 16:44:23 -0400
-Received: from mga12.intel.com ([192.55.52.136]:59217 "EHLO mga12.intel.com"
+        id S1752273AbeEJUrG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 16:47:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751963AbeEJUoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 16:44:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,386,1520924400";
-   d="scan'208";a="40007063"
-From: thor.thayer@linux.intel.com
-To: dinguyen@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: catalin.marinas@arm.com, will.deacon@arm.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCH] arm64: dts: stratix10: Add QSPI support for Stratix10
-Date: Thu, 10 May 2018 15:46:44 -0500
-Message-Id: <1525985204-11525-1-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1751878AbeEJUrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 16:47:04 -0400
+Date: Thu, 10 May 2018 17:47:00 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Hunter, Adrian" <adrian.hunter@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH RFC 07/19] perf tools: Workaround missing maps for x86_64
+ KPTI entry trampolines
+Message-ID: <20180510204700.GF4311@kernel.org>
+References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
+ <1525866228-30321-8-git-send-email-adrian.hunter@intel.com>
+ <20180509170717.GI13491@kernel.org>
+ <363DA0ED52042842948283D2FC38E4649C13DE9E@IRSMSX106.ger.corp.intel.com>
+ <20180510201542.GD4311@kernel.org>
+ <20180510201922.GE4311@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510201922.GE4311@kernel.org>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+Em Thu, May 10, 2018 at 05:19:22PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Thu, May 10, 2018 at 05:15:42PM -0300, Arnaldo Carvalho de Melo escreveu:
+> > Em Thu, May 10, 2018 at 07:08:37PM +0000, Hunter, Adrian escreveu:
+> > > Let me know if you want me to post the workaround patches separately,
+> > > otherwise I will wait a bit before sending the patches again.
 
-Add qspi_clock
-   The qspi_clk frequency is updated by U-Boot before starting Linux.
-Add QSPI interface node.
-Add QSPI flash memory child node.
-   Setup the QSPI memory in 2 partitions.
-
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  | 22 +++++++++++++++
- .../boot/dts/altera/socfpga_stratix10_socdk.dts    | 31 ++++++++++++++++++++++
- 2 files changed, 53 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index e6b059378dc0..ed47dfce3ba6 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -119,6 +119,12 @@
- 				#clock-cells = <0>;
- 				compatible = "fixed-clock";
- 			};
-+
-+			qspi_clk: qspi_clk {
-+				#clock-cells = <0>;
-+				compatible = "fixed-clock";
-+				clock-frequency = <200000000>;
-+			};
- 		};
+> > I'll see if I went thru all of the patches already...
  
- 		gmac0: ethernet@ff800000 {
-@@ -466,5 +472,21 @@
- 				interrupts = <16 4>, <48 4>;
- 			};
- 		};
-+
-+		qspi: spi@ff8d2000 {
-+			compatible = "cdns,qspi-nor";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0xff8d2000 0x100>,
-+			      <0xff900000 0x100000>;
-+			interrupts = <0 3 4>;
-+			cdns,fifo-depth = <128>;
-+			cdns,fifo-width = <4>;
-+			cdns,trigger-address = <0x00000000>;
-+			clocks = <&qspi_clk>;
-+			bus-num = <1>;
-+
-+			status = "disabled";
-+		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-index f9b1ef12db48..60251462067a 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-@@ -147,3 +147,34 @@
- 		reg = <0x68>;
- 	};
- };
-+
-+&qspi {
-+	flash0: n25q00@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "n25q00aa";
-+		reg = <0>;
-+		spi-max-frequency = <50000000>;
-+
-+		m25p,fast-read;
-+		cdns,page-size = <256>;
-+		cdns,block-size = <16>;
-+		cdns,read-delay = <1>;
-+		cdns,tshsl-ns = <50>;
-+		cdns,tsd2d-ns = <50>;
-+		cdns,tchsh-ns = <4>;
-+		cdns,tslch-ns = <4>;
-+
-+		partition@qspi-boot {
-+			label = "Boot and fpga data";
-+			/* 64MB for boot and FPGA data */
-+			reg = <0x0 0x4000000>;
-+		};
-+
-+		partition@qspi-rootfs {
-+			label = "Root Filesystem - JFFS2";
-+			/* 64MB for Linux jffs2 */
-+			reg = <0x4000000 0x4000000>;
-+		};
-+	};
-+};
--- 
-2.7.4
+> So I looked at the patches posted and one comment is about the terse
+> commit logs for some of the kcore_copy patches, for instance:
+ 
+> --------------------
+>  In preparation to add more program headers, get rid of kernel_map and
+> modules_map.
+> --------------------
+ 
+> Can't this be made a bit more verbose? Lemme re-read the patch...
+
+So you had just one pointers to the kernel map and a module_maps, and
+then this is replaced by kcore_copy__map() that instead of populating
+those fields that are being removed:
+
+-       struct phdr_data kernel_map;
+-       struct phdr_data modules_map;
+
+Will allocate and add "struct phdr_data" instances to the
+kcore_copy_info->phdrs list, so I propose, to follow convention used
+elsewhere in tools/perf/ that you rename kcore_copy__map() to
+
+  kcore_copy_info__addnew(kci, fields)
+
+I would do it as:
+
+struct phdr_data *phdr_data__new(fields)
+{
+	return  zalloc() + init fields;
+}
+
+struct phdr_data *kcore_copy_info__addnew(kci, fields)
+{
+	struct phdr_data *pd = phdr_data__new(fields);
+
+	if (pd)
+		list_add(&pd->list, &kci->phdrs)
+}
+
+Also please rename pd->list to pd->node, to clarify that it is a node in
+some list, not a list.
+
+The commit log list then could reflect that somehow, with something
+around:
+
+----------------------
+
+Move ->kernel_map and ->modules_map to newly allocated entries in the
+->phdrs list.
+
+----------------------
+
+wdyt?
+
+- Arnaldo
