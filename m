@@ -1,39 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756825AbeEJIim (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 04:38:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57250 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934089AbeEJIik (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 04:38:40 -0400
-Date: Thu, 10 May 2018 01:38:38 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 13/18] wait: wait.h: Get rid of a kernel-doc/Sphinx
- warnings
-Message-ID: <20180510083838.GA21846@infradead.org>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
- <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
+        id S1756769AbeEJIlY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 04:41:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54496 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756391AbeEJIlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 04:41:22 -0400
+Date: Thu, 10 May 2018 10:41:19 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Huaisheng Ye <yehs1@lenovo.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, willy@infradead.org,
+        vbabka@suse.cz, mgorman@techsingularity.net, pasha.tatashin@oracle.com,
+        alexander.levin@verizon.com, hannes@cmpxchg.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, colyli@suse.de, chengnt@lenovo.com,
+        hehy1@lenovo.com, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org
+Subject: Re: [RFC PATCH v1 0/6] use mm to manage NVDIMM (pmem) zone
+Message-ID: <20180510084119.GJ32366@dhcp22.suse.cz>
+References: <1525746628-114136-1-git-send-email-yehs1@lenovo.com>
+ <20180510075759.GF32366@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6b9b3184cbfabab1ad89c974ddf1c61631e8f1bf.1525684985.git.mchehab+samsung@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180510075759.GF32366@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->   * Use either while holding wait_queue_head::lock or when used for wakeups
-> - * with an extra smp_mb() like:
-> + * with an extra smp_mb() like::
+I have only now noticed that you have posted this few days ago
+http://lkml.kernel.org/r/1525704627-30114-1-git-send-email-yehs1@lenovo.com
+There were some good questions asked there and I have many that are
+common yet they are not covered in the cover letter. Please _always_
+make sure to answer review comments before reposting. Otherwise some
+important parts gets lost on the way.
 
-Independent of any philosophical discussion not allowing a setence to
-end with a single ':' is completely idiotic.  Please fix the tooling
-instead to allow it, as it is very important for being able to just
-write understandable comments.
+On Thu 10-05-18 09:57:59, Michal Hocko wrote:
+> On Tue 08-05-18 10:30:22, Huaisheng Ye wrote:
+> > Traditionally, NVDIMMs are treated by mm(memory management) subsystem as
+> > DEVICE zone, which is a virtual zone and both its start and end of pfn
+> > are equal to 0, mm wouldn’t manage NVDIMM directly as DRAM, kernel uses
+> > corresponding drivers, which locate at \drivers\nvdimm\ and
+> > \drivers\acpi\nfit and fs, to realize NVDIMM memory alloc and free with
+> > memory hot plug implementation.
+> > 
+> > With current kernel, many mm’s classical features like the buddy
+> > system, swap mechanism and page cache couldn’t be supported to NVDIMM.
+> > What we are doing is to expand kernel mm’s capacity to make it to handle
+> > NVDIMM like DRAM. Furthermore we make mm could treat DRAM and NVDIMM
+> > separately, that means mm can only put the critical pages to NVDIMM
+> > zone, here we created a new zone type as NVM zone.
+> 
+> How do you define critical pages? Who is allowed to allocate from them?
+> You do not seem to add _any_ user of GFP_NVM.
+> 
+> > That is to say for
+> > traditional(or normal) pages which would be stored at DRAM scope like
+> > Normal, DMA32 and DMA zones. But for the critical pages, which we hope
+> > them could be recovered from power fail or system crash, we make them
+> > to be persistent by storing them to NVM zone.
+> 
+> This brings more questions than it answers. First of all is this going
+> to be any guarantee? Let's say I want GFP_NVM, can I get memory from
+> other zones? In other words is such a request allowed to fallback to
+> succeed? Are we allowed to reclaim memory from the new zone? What should
+> happen on the OOM? How is the user expected to restore the previous
+> content after reboot/crash?
+> 
+> I am sorry if these questions are answered in the respective patches but
+> it would be great to have this in the cover letter to have a good
+> overview of the whole design. From my quick glance over patches my
+> previous concerns about an additional zone still hold, though.
+> -- 
+> Michal Hocko
+> SUSE Labs
+
+-- 
+Michal Hocko
+SUSE Labs
