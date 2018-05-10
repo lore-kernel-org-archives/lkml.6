@@ -1,69 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966079AbeEJObi convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 10:31:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41576 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965516AbeEJObg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 10:31:36 -0400
-Date: Thu, 10 May 2018 10:31:36 -0400 (EDT)
-From: Jerome Glisse <jglisse@redhat.com>
-To: Mike Galbraith <efault@gmx.de>
-Cc: nouveau <nouveau@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>
-Message-ID: <474293973.18773550.1525962696189.JavaMail.zimbra@redhat.com>
-In-Reply-To: <1525943427.8013.11.camel@gmx.de>
-References: <1525943427.8013.11.camel@gmx.de>
-Subject: Re: [Nouveau] kernel spew from nouveau/ swiotlb
+        id S966095AbeEJObt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 10:31:49 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:63012 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965266AbeEJObr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 10:31:47 -0400
+Subject: Re: [PATCH v4 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: Dan Murphy <dmurphy@ti.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>
+References: <20180510122718.8413-1-dmurphy@ti.com>
+ <20180510122718.8413-2-dmurphy@ti.com>
+ <87eaf628-3cf6-6855-5732-b0e5291f3b34@ti.com>
+ <08526618-7463-1e6e-a4ac-c4da4627c1b2@ti.com>
+From: "Andrew F. Davis" <afd@ti.com>
+Message-ID: <7832225b-115c-2316-025e-29929cd4f208@ti.com>
+Date: Thu, 10 May 2018 09:31:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.10.124.156, 10.4.195.27]
-Thread-Topic: kernel spew from nouveau/ swiotlb
-Thread-Index: 74MORyPBTRtlaOhpmhaDpIhmgrEWRQ==
+In-Reply-To: <08526618-7463-1e6e-a4ac-c4da4627c1b2@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Greetings,
+On 05/10/2018 09:04 AM, Dan Murphy wrote:
+
+>>> +static int lm3601x_remove(struct i2c_client *client)
+>>> +{
+>>> +	struct lm3601x_led *led = i2c_get_clientdata(client);
+>>> +
+>>> +	regmap_write(led->regmap, LM3601X_ENABLE_REG, 0);
+>>> +
+>>
+>>
+>> If probe doesn't enable this, remove shouldn't disable it. It can lead
+>> to odd cases if the driver is removed and added again.
 > 
-> When box is earning its keep, nouveau/swiotlb grumble.. a LOT.  The
-> below is from master.today.
-> 
-> [12594.640959] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152
-> bytes)
-> [12594.693000] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152
-> bytes)
-> [12594.713787] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152
-> bytes)
-> [12594.743413] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152
-> bytes)
-> [12594.796740] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152
-> bytes)
-> [12607.000774] swiotlb_tbl_map_single: 54 callbacks suppressed
-> [12607.000776] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152
-> bytes)
-> [12607.347941] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152
-> bytes)
-> [12608.677038] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152
-> bytes)
-> homer:/novell/ssh # dmesg|grep 'swiotlb buffer is full'|wc -l
-> 2052
-> homer:/novell/ssh # dmesg|grep 'callbacks suppressed'|wc -l
-> 171
-> 
-> lib/swiotlb.c:
->  573 not_found:
->  574         spin_unlock_irqrestore(&io_tlb_lock, flags);
->  575         if (!(attrs & DMA_ATTR_NO_WARN) && printk_ratelimit())
->  576                 dev_warn(hwdev, "swiotlb buffer is full (sz: %zd
->  bytes)\n", size);
-> 
-> Does nouveau perhaps want one of those DMA_ATTR_NO_WARN thingies?
+> I want to make sure the LED is off and in standby mode.  Maybe I will just set it to
+> the default value instead.
 > 
 
-Could you bisect ? I would love to point finger upstream to the DMA
-folk who made changes to that API without testing with GPU.
 
-Cheers,
-Jérôme
+Why? If you want to do this then implement PM controls and put it in
+standby mode there.
+
+
+>>
+>> Plus, removing the driver is not a command to disable the LED anyway.
+> 
+> True but you don't want to leave any LEDs in the on state without a driver to support it.
+> This could burn out the LED or the board if left on on max brightness
+> 
+
+
+I disagree, we should not try to decide what the user wants here. We
+should only do what we are instructed to do, which for remove() is to
+cleanup what probe has done so the driver can be removed w/o leaking
+memory or device state.
+
+
+> 
+> Dan
+> 
