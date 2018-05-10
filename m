@@ -1,137 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966061AbeEJPPT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 11:15:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42248 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964827AbeEJPPR (ORCPT
+        id S966106AbeEJPQf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 11:16:35 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:65054 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964827AbeEJPQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 11:15:17 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04176601EA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date: Thu, 10 May 2018 09:15:15 -0600
-From: Lina Iyer <ilina@codeaurora.org>
-To: Matthias Kaehlcke <mka@chromium.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, rplsssn@codeaurora.org
-Subject: Re: [PATCH v8 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
- requests to TCS
-Message-ID: <20180510151515.GH4698@codeaurora.org>
-References: <20180509170159.29682-1-ilina@codeaurora.org>
- <20180509170159.29682-6-ilina@codeaurora.org>
- <20180509232503.GJ19594@google.com>
+        Thu, 10 May 2018 11:16:33 -0400
+Subject: Re: [PATCH v4 2/2] leds: lm3601x: Introduce the lm3601x LED driver
+To: "Andrew F. Davis" <afd@ti.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>
+References: <20180510122718.8413-1-dmurphy@ti.com>
+ <20180510122718.8413-2-dmurphy@ti.com>
+ <87eaf628-3cf6-6855-5732-b0e5291f3b34@ti.com>
+ <08526618-7463-1e6e-a4ac-c4da4627c1b2@ti.com>
+ <7832225b-115c-2316-025e-29929cd4f208@ti.com>
+From: Dan Murphy <dmurphy@ti.com>
+Message-ID: <33622c0a-1e6d-f930-d4c8-a465541f56cc@ti.com>
+Date: Thu, 10 May 2018 10:16:19 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180509232503.GJ19594@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <7832225b-115c-2316-025e-29929cd4f208@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09 2018 at 17:25 -0600, Matthias Kaehlcke wrote:
->Hi Lina,
->
->On Wed, May 09, 2018 at 11:01:54AM -0600, Lina Iyer wrote:
->> Sleep and wake requests are sent when the application processor
->> subsystem of the SoC is entering deep sleep states like in suspend.
->> These requests help lower the system power requirements when the
->> resources are not in use.
+On 05/10/2018 09:31 AM, Andrew F. Davis wrote:
+> On 05/10/2018 09:04 AM, Dan Murphy wrote:
+> 
+>>>> +static int lm3601x_remove(struct i2c_client *client)
+>>>> +{
+>>>> +	struct lm3601x_led *led = i2c_get_clientdata(client);
+>>>> +
+>>>> +	regmap_write(led->regmap, LM3601X_ENABLE_REG, 0);
+>>>> +
+>>>
+>>>
+>>> If probe doesn't enable this, remove shouldn't disable it. It can lead
+>>> to odd cases if the driver is removed and added again.
 >>
->> Sleep and wake requests are written to the TCS slots but are not
->> triggered at the time of writing. The TCS are triggered by the firmware
->> after the last of the CPUs has executed its WFI. Since these requests
->> may come in different batches of requests, it is the job of this
->> controller driver to find and arrange the requests into the available
->> TCSes.
+>> I want to make sure the LED is off and in standby mode.  Maybe I will just set it to
+>> the default value instead.
 >>
->> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
->> Reviewed-by: Evan Green <evgreen@chromium.org>
->>
->> ---
->>
->> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
->> index c0edf3850147..b5894b001ae1 100644
->> --- a/drivers/soc/qcom/rpmh-rsc.c
->> +++ b/drivers/soc/qcom/rpmh-rsc.c
->>
->> <snip>
->>
->> +static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
->> +		      int len)
->> +{
->> +	int i, j;
->> +
->> +	/* Check for already cached commands */
->> +	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
->> +		if (tcs->cmd_cache[i] != cmd[0].addr)
->> +			continue;
->> +		if (i + len >= MAX_TCS_SLOTS)
->> +			goto seq_err;
->
->The command cache can have less than MAX_TCS_SLOTS slot:
->
+> 
+> 
+> Why? If you want to do this then implement PM controls and put it in
+> standby mode there.
+> 
+> 
 
-That's true. I forgot that I had optimized the cache slots. Thanks for
-pointing out.
+Implementing PM controls does not cause this line to be removed on a removal.
 
->static int rpmh_probe_tcs_config(struct platform_device *pdev,
->				 struct rsc_drv *drv)
->{
->	...
->	tcs->cmd_cache = devm_kcalloc(&pdev->dev,
->				      tcs->num_tcs * ncpt, sizeof(u32),
->				      GFP_KERNEL);
->	...
->}
->
->So the condition needs to be:
->
->if (i + len >= tcs->num_tcs * tcs->ncpt)
->
->> +static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
->> +		      int *tcs_id, int *cmd_id)
->> +{
->> +	int slot, offset;
->> +	int i = 0;
->> +
->> +	/* Find if we already have the msg in our TCS */
->> +	slot = find_match(tcs, msg->cmds, msg->num_cmds);
->> +	if (slot >= 0)
->> +		goto copy_data;
->> +
->> +	/* Do over, until we can fit the full payload in a TCS */
->> +	do {
->> +		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
->> +						  i, msg->num_cmds, 0);
->> +		if (slot == MAX_TCS_SLOTS)
->> +			return -ENOMEM;
->
->Like above, use 'tcs->num_tcs * tcs->ncpt' as maximum instead of
->MAX_TCS_SLOTS.
->
->> +static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
->> +{
->> +	struct tcs_group *tcs;
->> +	int tcs_id = 0, cmd_id = 0;
->> +	unsigned long flags;
->> +	int ret;
->> +
->> +	tcs = get_tcs_for_msg(drv, msg);
->> +	if (IS_ERR(tcs))
->> +		return PTR_ERR(tcs);
->> +
->> +	spin_lock_irqsave(&tcs->lock, flags);
->> +	/* find the m-th TCS and the n-th position in the TCS to write to */
->
->The comment still refers to the old names 'm' and 'n'.
->
-Really? :)
-Will fix.
+>>>
+>>> Plus, removing the driver is not a command to disable the LED anyway.
+>>
+>> True but you don't want to leave any LEDs in the on state without a driver to support it.
+>> This could burn out the LED or the board if left on on max brightness
+>>
+> 
+> 
+> I disagree, we should not try to decide what the user wants here. We
+> should only do what we are instructed to do, which for remove() is to
+> cleanup what probe has done so the driver can be removed w/o leaking
+> memory or device state.
 
-Thanks for your review,
-Lina
+So your OK with a causing a burn out of the device or LED or draining the battery because the driver was
+unloaded and there is not way to turn it off besides hard power cycling the device.  Because even a reboot
+of the device will still leave the LED on throughout the boot until the driver is reloaded.
+
+I will let the maintainer weigh in on this issue.
+
+> 
+> 
+>>
+>> Dan
+>>
+
+
+-- 
+------------------
+Dan Murphy
