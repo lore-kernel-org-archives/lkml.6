@@ -1,119 +1,85 @@
-Return-Path: <poza@qualcomm.com>
-X-Google-Smtp-Source: AB8JxZrSXG7vynKyEMTi6/fV+lTg7qIYcouNIOMFFJElKVyNTkfuKePy4yEcIudqkVLbRZ0f7w3j
-ARC-Seal: i=1; a=rsa-sha256; t=1525323847; cv=none;
+Return-Path: <helgaas@kernel.org>
+X-Google-Smtp-Source: AB8JxZqFF7wjcJl/jj07wODDOGD8h2cGr3tdFdM+FiODkqZHecMHhl9905YKoRCOQ/BaUgafsHDO
+ARC-Seal: i=1; a=rsa-sha256; t=1525959066; cv=none;
         d=google.com; s=arc-20160816;
-        b=LYA5Vz6tzys8/uLyjzKqT+t2kB2Bl92wjJ3qCpGA0ObveCG6anux3KwvrYuLTyXuRe
-         4yp/uqyxwjt0nu3ubZREelapf4KWV/hf+kMnIGZtHHBIQh3f9X/7DiNIUKtpByK64XM8
-         K+k+7Ivzy0n4eo9SiQdRIL7e+mYBvhHxdMfrxmfYOIeVVP3h5Lb+EwkSHbPzHN5fAL/f
-         F7psxGZZCVJsOtdUoPaEIF99Fd5C3gCcrpQjFKs9KBAv2dG1VRThBUpF7EtrhyQhBRw/
-         1SKGh3l3Sa9znCntNJDigGNuRpQne/pIJJSTqT+T5fKKLluHhhUz8wUf8onKj8oPhA6Q
-         gquA==
+        b=uGKsJpUmhnL+aG8a6t9bkQfWZB4xiPrFW6kAsx9EYJKT17JnzPz4L4RvLSB/hegsYm
+         R0sBU9ihPtrERSJWp5IOMqTJh8xai46o0qJCldaxuVL5kWe6kKLrQi7pcgml6lQg43FT
+         YvDtkdLT7e4A205SUn1nSSaPgusfzy/rQZrJd3tsp0OO5mYLk6LDDiE9KlSlzQQG/UwX
+         rT9KC0Biqp8FB+NMxehwo3EDT/pfP4/aYUkQfQ1yqWWGUBCs8IHRJGkWeq8qqCSMxaE/
+         C7iwzZxlL1BTaTLoGx+OB+UTKQI4wqJWGp4F0V02b2mJ2XxTTsPHO4+xxtSY345ppEM1
+         Mtog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=jVnavRtPW7QLrHDqBj1mvSLisgWy38a8+qEoZq4aJMc=;
-        b=c1t+T3TDGh7NiNLdLsK0INH3Ti8IFi3U4syieJIaMlpoui8H91mg2xmHeS2fEp/vd7
-         jN8WWf+9kzVdXq8lY2pV7oPXkJFh3pU7KVqizm+iob4Jsr6SeqtdMuxGKpyFZ1vUBQ9i
-         yRL4iwPnxh0QCz479zoZ9flHBxylTP0X2hTvhMJCV6khrU86dNEd7KYnktEQUpezKWX4
-         Cq1oly0VPZ5YkYimpaSfgutPMi3V53d+ZHOrQbXUOM85Fl9HyjDcEqjIyzC4N4DNwu29
-         dYrbo7RAHgO8QcwWC1J5I5nCngjrB9QXjtcx76eoePbLh71ZvdZjE9of/hosV5JABId2
-         k6OA==
+        bh=c2ALu7GyMXr87aSf0E+ZjW/XxvJicXkYo724PPYuLBw=;
+        b=YKf17MapM1JAMs8xKm1yo4UGRFZ+RfdKGTfhBe7dsuxzgPwEo98V8QVfsY05/HjaRp
+         tIqdMcEWFjfTUaGbxvykoRnM6INDfx/fk3A6RK9P32i1k7pEsqoBP/nai3UP/7DqA+XY
+         dc2I7WUKZVB/eOCYbkIHhgY4GAMi3BC2265Zfvp9/OeJDb9qE3q7KW/cwbgxh/IF+dT4
+         /jXXm54k0iVOKoTQm9+KGfx0rSEoAUyh3Lurmi2Kkn3fWoUlktV/g8BY4bzLcSrY4rSX
+         bwgyls5j4xNXSV5+jRvcgPrQBFaBFFnwIubR6GT/CdUVuZKfcecvDgOh1Rx7I6SYg4iD
+         wIuA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 65.197.215.72 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+       dkim=pass header.i=@kernel.org header.s=default header.b=ontw3a+r;
+       spf=pass (google.com: domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 65.197.215.72 as permitted sender) smtp.mailfrom=poza@qualcomm.com
-X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="126361299"
-X-IronPort-AV: E=McAfee;i="5900,7806,8881"; a="182707667"
-From: Oza Pawandeep <poza@codeaurora.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
+       dkim=pass header.i=@kernel.org header.s=default header.b=ontw3a+r;
+       spf=pass (google.com: domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Date: Thu, 10 May 2018 08:31:04 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Oza Pawandeep <poza@codeaurora.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Dongdong Liu <liudongdong3@huawei.com>,
-	Keith Busch <keith.busch@intel.com>,
-	Wei Zhang <wzhang@fb.com>,
+	Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
 	Timur Tabi <timur@codeaurora.org>
-Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH v15 7/9] PCI/PORTDRV: Implement generic find device
-Date: Thu,  3 May 2018 01:03:56 -0400
-Message-Id: <1525323838-1735-8-git-send-email-poza@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525323838-1735-1-git-send-email-poza@codeaurora.org>
+Subject: Re: [PATCH v15 7/9] PCI/PORTDRV: Implement generic find device
+Message-ID: <20180510133104.GG173327@bhelgaas-glaptop.roam.corp.google.com>
 References: <1525323838-1735-1-git-send-email-poza@codeaurora.org>
+ <1525323838-1735-8-git-send-email-poza@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525323838-1735-8-git-send-email-poza@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599417978309229425?=
-X-GMAIL-MSGID: =?utf-8?q?1599417978309229425?=
+X-GMAIL-MSGID: =?utf-8?q?1600084054094086559?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch implements generic pcie_port_find_device() routine.
+On Thu, May 03, 2018 at 01:03:56AM -0400, Oza Pawandeep wrote:
+> This patch implements generic pcie_port_find_device() routine.
+> ...
 
-Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
-Reviewed-by: Keith Busch <keith.busch@intel.com>
+> + * pcie_port_find_device - find the struct device
+> + * @dev: PCI Express port the service devices associated with
+> + * @service: For the service to find
+> + *
+> + * Find PCI Express port service driver associated with given service
+> + */
+> +struct  device *pcie_port_find_device(struct pci_dev *dev,
 
-diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
-index ba6c963..896608a 100644
---- a/drivers/pci/pcie/portdrv.h
-+++ b/drivers/pci/pcie/portdrv.h
-@@ -114,4 +114,6 @@ static inline void pcie_pme_interrupt_enable(struct pci_dev *dev, bool en) {}
- 
- struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
- 							u32 service);
-+struct device *pcie_port_find_device(struct pci_dev *dev,
-+				     u32 service);
- #endif /* _PORTDRV_H_ */
-diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
-index d843055..c6147c4 100644
---- a/drivers/pci/pcie/portdrv_core.c
-+++ b/drivers/pci/pcie/portdrv_core.c
-@@ -20,6 +20,7 @@
- #include "portdrv.h"
- struct portdrv_service_data {
- 	struct pcie_port_service_driver *drv;
-+	struct device *dev;
- 	u32 service;
- };
- 
-@@ -415,6 +416,7 @@ static int find_service_iter(struct device *device, void *data)
- 		service_driver = to_service_driver(device->driver);
- 		if (service_driver->service == service) {
- 			pdrvs->drv = service_driver;
-+			pdrvs->dev = device;
- 			return 1;
- 		}
- 	}
-@@ -443,6 +445,27 @@ struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
- }
- 
- /**
-+ * pcie_port_find_device - find the struct device
-+ * @dev: PCI Express port the service devices associated with
-+ * @service: For the service to find
-+ *
-+ * Find PCI Express port service driver associated with given service
-+ */
-+struct  device *pcie_port_find_device(struct pci_dev *dev,
-+				      u32 service)
-+{
-+	struct device *device;
-+	struct portdrv_service_data pdrvs;
-+
-+	pdrvs.dev = NULL;
-+	pdrvs.service = service;
-+	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
-+
-+	device = pdrvs.dev;
-+	return device;
-+}
-+
-+/**
-  * pcie_port_device_remove - unregister PCI Express port service devices
-  * @dev: PCI Express port the service devices to unregister are associated with
-  *
--- 
-2.7.4
+s/struct  device/struct device/ (remove extra space)
+
+> +				      u32 service)
+> +{
+> +	struct device *device;
+> +	struct portdrv_service_data pdrvs;
+> +
+> +	pdrvs.dev = NULL;
+> +	pdrvs.service = service;
+> +	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
+> +
+> +	device = pdrvs.dev;
+> +	return device;
+> +}
+> +
+> +/**
