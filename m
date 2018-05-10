@@ -1,81 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756769AbeEJIlY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 04:41:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54496 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756391AbeEJIlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 04:41:22 -0400
-Date: Thu, 10 May 2018 10:41:19 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Huaisheng Ye <yehs1@lenovo.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, willy@infradead.org,
-        vbabka@suse.cz, mgorman@techsingularity.net, pasha.tatashin@oracle.com,
-        alexander.levin@verizon.com, hannes@cmpxchg.org,
-        penguin-kernel@I-love.SAKURA.ne.jp, colyli@suse.de, chengnt@lenovo.com,
-        hehy1@lenovo.com, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org
-Subject: Re: [RFC PATCH v1 0/6] use mm to manage NVDIMM (pmem) zone
-Message-ID: <20180510084119.GJ32366@dhcp22.suse.cz>
-References: <1525746628-114136-1-git-send-email-yehs1@lenovo.com>
- <20180510075759.GF32366@dhcp22.suse.cz>
+        id S1756847AbeEJIoW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 04:44:22 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:60752 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756379AbeEJIoR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 04:44:17 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180510084414euoutp02cef2cc9c3591a69a139cc89e782abc1a~tPAg7Y6Vx1966019660euoutp02Z
+X-AuditID: cbfec7f2-5ffe19c000011644-0f-5af4065cca86
+Subject: Re: [PATCH 2/2] i2c: exynos5: remove pointless initializers
+To: Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <b69f6656-3831-86ea-5f13-fc805d86b288@samsung.com>
+Date: Thu, 10 May 2018 10:44:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180510075759.GF32366@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180509194532.28929-2-peda@axentia.se>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRjl3b27uxtOrvNjLypJi+gD0oSKS5mJCO1X5L8Yad3ypqZutjlT
+        o5RBuYma2Ww2NbPUdEXW/BYdNstpNWdmkpH5Q+1DmUib6BC1bVfJf+c8zznveQ68OCIws4Px
+        VGkWLZdS6SKMh3YMumyHzmNOyeG2Li5ZotKxyLszCwhps73ikMaZCTapXncC8nNPNUZW2kws
+        ss9cC8jmIT1C9v1wgBie+EF/FUdsNGgw8aPheHFrfb54SLeCioffz6Jih3HXWY6EF5VEp6dm
+        0/KI6Iu8lOEBA5p5j5PzouQpVgCm2EWAi0PiCHz5ZhQUAR4uIJoA1Nd1shniBNAwN4cyxAGg
+        bXWRtW2xFpduqZ65Vf3NGEPsAJaZnqMelT8RBzUVP72OAOIUrJj4w/KIEKKXBVvuD3rTMeIA
+        XG+dxDyYT0TDt6ZijgejxF7Y9L0K8eBA4hxU/XJxGI0fHH446w3gEkfhwuSG14sQYbDTXo0w
+        WAi/zdZ6wyAxxoGTJf1uM+4mcbC3nmYq+MN5SxuHwaFws7t2q9oNOPlbhTJeNYDTa4UYszgB
+        Byyf2J53EPfRLT0RzPgkNHavIMzzvvCr3Y85wReWd+i2xnyoviNg1LvhtLUdYbAQNowuY2Vg
+        j35HMf2OMvodZfT/cx8D1ACEtFKRkUwrIqX09XAFlaFQSpPDL8syjMD9sz5sWP52geWxS2ZA
+        4EDkw6/kOSQCNpWtyM0wA4gjogD+6oh7xE+icvNoueyCXJlOK8wgBEdFQn7i/lsSAZFMZdFp
+        NJ1Jy7e3LJwbXADS9rW9y4y6apUNdWmzVKVaiVPSYA3k1mhaY1IHziyV5y+hU6wrQQuuPLUr
+        qLxHcvy0zhRJa2qwupGE2PY84bWwbFmHQHt7MadwdS3no0/j6wJDiFJ2M+nYl8a0RH9TKKVN
+        GKeCkufji2LlEumTdUvf5vhoVCnfMtdqNSjtIlSRQkUeROQK6h82tByAVQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xe7qRbF+iDFackbXobZrOZNH/+DWz
+        xfnzG9gtNj2+xmrR8fcLo8XlXXPYLGac38dksffQfEaLlSdmMVvsvfeZ0YHLY9qB2ewem1Z1
+        snnMOxnosXlJvceJ6d9ZPE6eesLi8XmTXAB7lJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYml
+        nqGxeayVkamSvp1NSmpOZllqkb5dgl7GycOrWAomsles6V3M1sB4l7WLkZNDQsBE4mxPH5DN
+        xSEksJRRYvHSVewQCXGJ3fPfMkPYwhJ/rnWxQRS9ZpQ4c2UbE0hCWMBFonPqMzBbRMBeYuq1
+        l0wgRcwC+5gkljfMYYbo2MwosfP9GkaQKjYBTYm/m2+ygdi8AnYSR/b1gK1jEVCVWHFnNtg6
+        UYEIiXvnP0HVCEqcnPmEBcTmFDCVeH3zH1icWUBd4s+8S8wQtrzE9rdzoGxxiVtP5jNNYBSa
+        haR9FpKWWUhaZiFpWcDIsopRJLW0ODc9t9hQrzgxt7g0L10vOT93EyMwTrcd+7l5B+OljcGH
+        GAU4GJV4eGdwfY4SYk0sK67MPcQowcGsJML74xxQiDclsbIqtSg/vqg0J7X4EKMp0HMTmaVE
+        k/OBKSSvJN7Q1NDcwtLQ3Njc2MxCSZz3vEFllJBAemJJanZqakFqEUwfEwenVANjlM+6l+Vm
+        fEm3jE2Nq9479zIwha2a3F6pVa7+41H5pAyLRwfllx/pP3vebP3X9hsJkk/6lUuaJKwmmpxS
+        N+E9tXua7dObDAZlX/MmTL+V4faBMT/8SPqsj/3CZpPEnE+f1Snx+Dt1xY33N70/2n7tXpK7
+        gWdBsjX7bf4qK9bTQRnrp4hENF1XYinOSDTUYi4qTgQAn6vqfOkCAAA=
+X-CMS-MailID: 20180510084410eucas1p16d234eaa2ae5822029754b9529ea01ab
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180510084410eucas1p16d234eaa2ae5822029754b9529ea01ab
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180509194552epcas3p4777026e41c7b34663eb11345e4f3d82d
+X-RootMTR: 20180509194552epcas3p4777026e41c7b34663eb11345e4f3d82d
+References: <20180509194532.28929-1-peda@axentia.se>
+        <CGME20180509194552epcas3p4777026e41c7b34663eb11345e4f3d82d@epcas3p4.samsung.com>
+        <20180509194532.28929-2-peda@axentia.se>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have only now noticed that you have posted this few days ago
-http://lkml.kernel.org/r/1525704627-30114-1-git-send-email-yehs1@lenovo.com
-There were some good questions asked there and I have many that are
-common yet they are not covered in the cover letter. Please _always_
-make sure to answer review comments before reposting. Otherwise some
-important parts gets lost on the way.
+On 09.05.2018 21:45, Peter Rosin wrote:
+> The variables are always assigned before use anyway.
+>
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  drivers/i2c/busses/i2c-exynos5.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+> index a2cbc779c33a..185fba37e830 100644
+> --- a/drivers/i2c/busses/i2c-exynos5.c
+> +++ b/drivers/i2c/busses/i2c-exynos5.c
+> @@ -707,7 +707,7 @@ static int exynos5_i2c_xfer(struct i2c_adapter *adap,
+>  			struct i2c_msg *msgs, int num)
+>  {
+>  	struct exynos5_i2c *i2c = adap->algo_data;
+> -	int i = 0, ret = 0, stop = 0;
+> +	int i, ret, stop;
 
-On Thu 10-05-18 09:57:59, Michal Hocko wrote:
-> On Tue 08-05-18 10:30:22, Huaisheng Ye wrote:
-> > Traditionally, NVDIMMs are treated by mm(memory management) subsystem as
-> > DEVICE zone, which is a virtual zone and both its start and end of pfn
-> > are equal to 0, mm wouldn’t manage NVDIMM directly as DRAM, kernel uses
-> > corresponding drivers, which locate at \drivers\nvdimm\ and
-> > \drivers\acpi\nfit and fs, to realize NVDIMM memory alloc and free with
-> > memory hot plug implementation.
-> > 
-> > With current kernel, many mm’s classical features like the buddy
-> > system, swap mechanism and page cache couldn’t be supported to NVDIMM.
-> > What we are doing is to expand kernel mm’s capacity to make it to handle
-> > NVDIMM like DRAM. Furthermore we make mm could treat DRAM and NVDIMM
-> > separately, that means mm can only put the critical pages to NVDIMM
-> > zone, here we created a new zone type as NVM zone.
-> 
-> How do you define critical pages? Who is allowed to allocate from them?
-> You do not seem to add _any_ user of GFP_NVM.
-> 
-> > That is to say for
-> > traditional(or normal) pages which would be stored at DRAM scope like
-> > Normal, DMA32 and DMA zones. But for the critical pages, which we hope
-> > them could be recovered from power fail or system crash, we make them
-> > to be persistent by storing them to NVM zone.
-> 
-> This brings more questions than it answers. First of all is this going
-> to be any guarantee? Let's say I want GFP_NVM, can I get memory from
-> other zones? In other words is such a request allowed to fallback to
-> succeed? Are we allowed to reclaim memory from the new zone? What should
-> happen on the OOM? How is the user expected to restore the previous
-> content after reboot/crash?
-> 
-> I am sorry if these questions are answered in the respective patches but
-> it would be great to have this in the cover letter to have a good
-> overview of the whole design. From my quick glance over patches my
-> previous concerns about an additional zone still hold, though.
-> -- 
-> Michal Hocko
-> SUSE Labs
+I hope gcc is smart enough to not complain in case of ret.
+I think you can merge both patches into one.
 
--- 
-Michal Hocko
-SUSE Labs
+Regards
+Andrzej
+
+>  
+>  	if (i2c->suspended) {
+>  		dev_err(i2c->dev, "HS-I2C is not initialized.\n");
