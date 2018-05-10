@@ -1,177 +1,261 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756636AbeEJFWB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 01:22:01 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:46112 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756569AbeEJFV5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 01:21:57 -0400
-X-Google-Smtp-Source: AB8JxZo/neMUXJlUbnnBuj3170dn6AzvD9iJPvd3E9jw+erCGsZkR+B62pzcHZcznLYwmBca8o8+eg==
-From: Jon Maxwell <jmaxwell37@gmail.com>
-To: davem@davemloft.net
-Cc: kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmaxwell@redhat.com
-Subject: [PATCH net-next v1] tcp: Add mark for TIMEWAIT sockets
-Date: Thu, 10 May 2018 15:21:11 +1000
-Message-Id: <20180510052111.17886-1-jmaxwell37@gmail.com>
+        id S1756614AbeEJFcz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 01:32:55 -0400
+Received: from prv3-mh.provo.novell.com ([137.65.250.26]:50242 "EHLO
+        prv3-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756391AbeEJFcy (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Thu, 10 May 2018 01:32:54 -0400
+From: Larry Chen <lchen@suse.com>
+To: mfasheh@versity.com, jlbec@evilplan.org
+Cc: linux-kernel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        akpm@linux-foundation.org
+Subject: [PATCH] ocfs2: ocfs2_inode_lock_tracker does not distinguish lock level
+Date: Thu, 10 May 2018 13:32:30 +0800
+Message-Id: <20180510053230.17217-1-lchen@suse.com>
 X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This version has some suggestions by Eric Dumazet:
+ocfs2_inode_lock_tracker as a variant of ocfs2_inode_lock,
+is used to prevent deadlock due to recursive lock acquisition.
 
-- Use a local variable for the mark in IPv6 instead of ctl_sk to avoid SMP 
-races. 
-- Use the more elegant "IP4_REPLY_MARK(net, skb->mark) ?: sk->sk_mark"
-statement. 
+But this function does not distinguish
+whether the requested level is EX or PR.
 
-Aidan McGurn from Openwave Mobility systems reported the following bug:
+If a RP lock has been attained, this function
+will immediately return success afterwards even
+an EX lock is requested.
 
-"Marked routing is broken on customer deployment. Its effects are large 
-increase in Uplink retransmissions caused by the client never receiving 
-the final ACK to their FINACK - this ACK misses the mark and routes out 
-of the incorrect route."
+But actually the return value does not mean that
+the process got a EX lock, because ocfs2_inode_lock
+has not been called.
 
-Currently marks are added to sk_buffs for replies when the "fwmark_reflect" 
-sysctl is enabled. But not for TW sockets that had sk->sk_mark set via 
-setsockopt(SO_MARK..).  
+When taking lock levels into account, we face some different situations.
+1. no lock is held
+   In this case, just lock the inode and return 0
 
-Fix this in IPv4/v6 by adding tw->tw_mark for TIME_WAIT sockets. Copy the the 
-original sk->sk_mark in __inet_twsk_hashdance() to the new tw->tw_mark location. 
-Then progate this so that the skb gets sent with the correct mark. Do the same 
-for resets. Give the "fwmark_reflect" sysctl precedence over sk->sk_mark so that
-netfilter rules are still honored.
+2. We are holding a lock
+   For this situation, things diverges into several cases
 
-Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
+   wanted     holding	     what to do
+   ex		ex	    see 2.1 below
+   ex		pr	    see 2.2 below
+   pr		ex	    see 2.1 below
+   pr		pr	    see 2.1 below
+
+   2.1 lock level that is been held is compatible
+   with the wanted level, so no lock action will be tacken.
+
+   2.2 Otherwise, an upgrade is needed, but it is forbidden.
+
+Reason why upgrade within a process is forbidden is that
+lock upgrade may cause dead lock. The following illustrate
+how it happens.
+
+        process 1                             process 2
+ocfs2_inode_lock_tracker(ex=0)
+                               <======   ocfs2_inode_lock_tracker(ex=1)
+
+ocfs2_inode_lock_tracker(ex=1)
+
+Signed-off-by: Larry Chen <lchen@suse.com>
+Reviewed-by: Gang He <ghe@suse.com>
 ---
- include/net/inet_timewait_sock.h |  1 +
- net/ipv4/ip_output.c             |  2 +-
- net/ipv4/tcp_ipv4.c              | 18 ++++++++++++++++--
- net/ipv4/tcp_minisocks.c         |  1 +
- net/ipv6/tcp_ipv6.c              |  7 ++++++-
- 5 files changed, 25 insertions(+), 4 deletions(-)
+ fs/ocfs2/dlmglue.c | 119 +++++++++++++++++++++++++++++++++++++++--------------
+ fs/ocfs2/dlmglue.h |   1 +
+ 2 files changed, 90 insertions(+), 30 deletions(-)
 
-diff --git a/include/net/inet_timewait_sock.h b/include/net/inet_timewait_sock.h
-index c7be1ca8e562..659d8ed5a3bc 100644
---- a/include/net/inet_timewait_sock.h
-+++ b/include/net/inet_timewait_sock.h
-@@ -62,6 +62,7 @@ struct inet_timewait_sock {
- #define tw_dr			__tw_common.skc_tw_dr
- 
- 	int			tw_timeout;
-+	__u32			tw_mark;
- 	volatile unsigned char	tw_substate;
- 	unsigned char		tw_rcv_wscale;
- 
-diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
-index 95adb171f852..b5e21eb198d8 100644
---- a/net/ipv4/ip_output.c
-+++ b/net/ipv4/ip_output.c
-@@ -1561,7 +1561,7 @@ void ip_send_unicast_reply(struct sock *sk, struct sk_buff *skb,
- 		oif = skb->skb_iif;
- 
- 	flowi4_init_output(&fl4, oif,
--			   IP4_REPLY_MARK(net, skb->mark),
-+			   IP4_REPLY_MARK(net, skb->mark) ?: sk->sk_mark,
- 			   RT_TOS(arg->tos),
- 			   RT_SCOPE_UNIVERSE, ip_hdr(skb)->protocol,
- 			   ip_reply_arg_flowi_flags(arg),
-diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-index f70586b50838..fbee36579c83 100644
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -621,6 +621,7 @@ static void tcp_v4_send_reset(const struct sock *sk, struct sk_buff *skb)
- 	struct sock *sk1 = NULL;
- #endif
- 	struct net *net;
-+	struct sock *ctl_sk;
- 
- 	/* Never send a reset in response to a reset. */
- 	if (th->rst)
-@@ -723,11 +724,17 @@ static void tcp_v4_send_reset(const struct sock *sk, struct sk_buff *skb)
- 	arg.tos = ip_hdr(skb)->tos;
- 	arg.uid = sock_net_uid(net, sk && sk_fullsock(sk) ? sk : NULL);
- 	local_bh_disable();
--	ip_send_unicast_reply(*this_cpu_ptr(net->ipv4.tcp_sk),
-+	ctl_sk = *this_cpu_ptr(net->ipv4.tcp_sk);
-+	if (sk && sk->sk_state == TCP_TIME_WAIT)
-+		ctl_sk->sk_mark = inet_twsk(sk)->tw_mark;
-+	else if (sk && sk_fullsock(sk))
-+		ctl_sk->sk_mark = sk->sk_mark;
-+	ip_send_unicast_reply(ctl_sk,
- 			      skb, &TCP_SKB_CB(skb)->header.h4.opt,
- 			      ip_hdr(skb)->saddr, ip_hdr(skb)->daddr,
- 			      &arg, arg.iov[0].iov_len);
- 
-+	ctl_sk->sk_mark = 0;
- 	__TCP_INC_STATS(net, TCP_MIB_OUTSEGS);
- 	__TCP_INC_STATS(net, TCP_MIB_OUTRSTS);
- 	local_bh_enable();
-@@ -759,6 +766,7 @@ static void tcp_v4_send_ack(const struct sock *sk,
- 	} rep;
- 	struct net *net = sock_net(sk);
- 	struct ip_reply_arg arg;
-+	struct sock *ctl_sk;
- 
- 	memset(&rep.th, 0, sizeof(struct tcphdr));
- 	memset(&arg, 0, sizeof(arg));
-@@ -809,11 +817,17 @@ static void tcp_v4_send_ack(const struct sock *sk,
- 	arg.tos = tos;
- 	arg.uid = sock_net_uid(net, sk_fullsock(sk) ? sk : NULL);
- 	local_bh_disable();
--	ip_send_unicast_reply(*this_cpu_ptr(net->ipv4.tcp_sk),
-+	ctl_sk = *this_cpu_ptr(net->ipv4.tcp_sk);
-+	if (sk && sk->sk_state == TCP_TIME_WAIT)
-+		ctl_sk->sk_mark = inet_twsk(sk)->tw_mark;
-+	else if (sk && sk_fullsock(sk))
-+		ctl_sk->sk_mark = sk->sk_mark;
-+	ip_send_unicast_reply(ctl_sk,
- 			      skb, &TCP_SKB_CB(skb)->header.h4.opt,
- 			      ip_hdr(skb)->saddr, ip_hdr(skb)->daddr,
- 			      &arg, arg.iov[0].iov_len);
- 
-+	ctl_sk->sk_mark = 0;
- 	__TCP_INC_STATS(net, TCP_MIB_OUTSEGS);
- 	local_bh_enable();
+diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+index 97a972efab83..68728de12864 100644
+--- a/fs/ocfs2/dlmglue.c
++++ b/fs/ocfs2/dlmglue.c
+@@ -788,35 +788,34 @@ static inline void ocfs2_add_holder(struct ocfs2_lock_res *lockres,
+ 	spin_unlock(&lockres->l_lock);
  }
-diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
-index 57b5468b5139..f867658b4b30 100644
---- a/net/ipv4/tcp_minisocks.c
-+++ b/net/ipv4/tcp_minisocks.c
-@@ -263,6 +263,7 @@ void tcp_time_wait(struct sock *sk, int state, int timeo)
- 		struct inet_sock *inet = inet_sk(sk);
  
- 		tw->tw_transparent	= inet->transparent;
-+		tw->tw_mark		= sk->sk_mark;
- 		tw->tw_rcv_wscale	= tp->rx_opt.rcv_wscale;
- 		tcptw->tw_rcv_nxt	= tp->rcv_nxt;
- 		tcptw->tw_snd_nxt	= tp->snd_nxt;
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 6d664d83cd16..9b1ecdc1722e 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -803,6 +803,7 @@ static void tcp_v6_send_response(const struct sock *sk, struct sk_buff *skb, u32
- 	unsigned int tot_len = sizeof(struct tcphdr);
- 	struct dst_entry *dst;
- 	__be32 *topt;
-+	__u32 mark = 0;
+-static inline void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
+-				       struct ocfs2_lock_holder *oh)
+-{
+-	spin_lock(&lockres->l_lock);
+-	list_del(&oh->oh_list);
+-	spin_unlock(&lockres->l_lock);
+-
+-	put_pid(oh->oh_owner_pid);
+-}
+-
+-static inline int ocfs2_is_locked_by_me(struct ocfs2_lock_res *lockres)
++static struct ocfs2_lock_holder *
++ocfs2_pid_holder(struct ocfs2_lock_res *lockres,
++		struct pid *pid)
+ {
+ 	struct ocfs2_lock_holder *oh;
+-	struct pid *pid;
  
- 	if (tsecr)
- 		tot_len += TCPOLEN_TSTAMP_ALIGNED;
-@@ -871,7 +872,11 @@ static void tcp_v6_send_response(const struct sock *sk, struct sk_buff *skb, u32
- 		fl6.flowi6_oif = oif;
+-	/* look in the list of holders for one with the current task as owner */
+ 	spin_lock(&lockres->l_lock);
+-	pid = task_pid(current);
+ 	list_for_each_entry(oh, &lockres->l_holders, oh_list) {
+ 		if (oh->oh_owner_pid == pid) {
+ 			spin_unlock(&lockres->l_lock);
+-			return 1;
++			return oh;
+ 		}
  	}
+ 	spin_unlock(&lockres->l_lock);
++	return NULL;
++}
  
--	fl6.flowi6_mark = IP6_REPLY_MARK(net, skb->mark);
-+	if (sk && sk->sk_state == TCP_TIME_WAIT)
-+		mark = inet_twsk(sk)->tw_mark;
-+	else if (sk && sk_fullsock(sk))
-+		mark = sk->sk_mark;
-+	fl6.flowi6_mark = IP6_REPLY_MARK(net, skb->mark) ?: mark;
- 	fl6.fl6_dport = t1->dest;
- 	fl6.fl6_sport = t1->source;
- 	fl6.flowi6_uid = sock_net_uid(net, sk && sk_fullsock(sk) ? sk : NULL);
+-	return 0;
++static inline void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
++				       struct ocfs2_lock_holder *oh)
++{
++	spin_lock(&lockres->l_lock);
++	list_del(&oh->oh_list);
++	spin_unlock(&lockres->l_lock);
++
++	put_pid(oh->oh_owner_pid);
+ }
+ 
++
+ static inline void ocfs2_inc_holders(struct ocfs2_lock_res *lockres,
+ 				     int level)
+ {
+@@ -2610,34 +2609,93 @@ void ocfs2_inode_unlock(struct inode *inode,
+  *
+  * return < 0 on error, return == 0 if there's no lock holder on the stack
+  * before this call, return == 1 if this call would be a recursive locking.
++ * return == -1 if this lock attempt will cause an upgrade which is forbidden.
++ *
++ * When taking lock levels into account,we face some different situations.
++ *
++ * 1. no lock is held
++ *    In this case, just lock the inode as requested and return 0
++ *
++ * 2. We are holding a lock
++ *    For this situation, things diverges into several cases
++ *
++ *    wanted     holding	     what to do
++ *    ex		ex	    see 2.1 below
++ *    ex		pr	    see 2.2 below
++ *    pr		ex	    see 2.1 below
++ *    pr		pr	    see 2.1 below
++ *
++ *    2.1 lock level that is been held is compatible
++ *    with the wanted level, so no lock action will be tacken.
++ *
++ *    2.2 Otherwise, an upgrade is needed, but it is forbidden.
++ *
++ * Reason why upgrade within a process is forbidden is that
++ * lock upgrade may cause dead lock. The following illustrates
++ * how it happens.
++ *
++ *         thread on node1                             thread on node2
++ * ocfs2_inode_lock_tracker(ex=0)
++ *
++ *                                <======   ocfs2_inode_lock_tracker(ex=1)
++ *
++ * ocfs2_inode_lock_tracker(ex=1)
+  */
+ int ocfs2_inode_lock_tracker(struct inode *inode,
+ 			     struct buffer_head **ret_bh,
+ 			     int ex,
+ 			     struct ocfs2_lock_holder *oh)
+ {
+-	int status;
+-	int arg_flags = 0, has_locked;
++	int status = 0;
+ 	struct ocfs2_lock_res *lockres;
++	struct ocfs2_lock_holder *tmp_oh;
++	struct pid *pid = task_pid(current);
++
+ 
+ 	lockres = &OCFS2_I(inode)->ip_inode_lockres;
+-	has_locked = ocfs2_is_locked_by_me(lockres);
+-	/* Just get buffer head if the cluster lock has been taken */
+-	if (has_locked)
+-		arg_flags = OCFS2_META_LOCK_GETBH;
++	tmp_oh = ocfs2_pid_holder(lockres, pid);
+ 
+-	if (likely(!has_locked || ret_bh)) {
+-		status = ocfs2_inode_lock_full(inode, ret_bh, ex, arg_flags);
++	if (!tmp_oh) {
++		/*
++		 * This corresponds to the case 1.
++		 * We haven't got any lock before.
++		 */
++		status = ocfs2_inode_lock_full(inode, ret_bh, ex, 0);
+ 		if (status < 0) {
+ 			if (status != -ENOENT)
+ 				mlog_errno(status);
+ 			return status;
+ 		}
+-	}
+-	if (!has_locked)
++
++		oh->oh_ex = ex;
+ 		ocfs2_add_holder(lockres, oh);
++		return 0;
++	}
+ 
+-	return has_locked;
++	if (unlikely(ex && !tmp_oh->oh_ex)) {
++		/*
++		 * case 2.2 upgrade may cause dead lock, forbid it.
++		 */
++		mlog(ML_ERROR, "Recursive locking is not permitted to "
++		     "upgrade to EX level from PR level.\n");
++		dump_stack();
++		return -EINVAL;
++	}
++
++	/*
++	 *  case 2.1 OCFS2_META_LOCK_GETBH flag make ocfs2_inode_lock_full.
++	 *  ignore the lock level and just update it.
++	 */
++	if (ret_bh) {
++		status = ocfs2_inode_lock_full(inode, ret_bh, ex,
++					       OCFS2_META_LOCK_GETBH);
++		if (status < 0) {
++			if (status != -ENOENT)
++				mlog_errno(status);
++			return status;
++		}
++	}
++	return tmp_oh ? 1 : 0;
+ }
+ 
+ void ocfs2_inode_unlock_tracker(struct inode *inode,
+@@ -2649,12 +2707,13 @@ void ocfs2_inode_unlock_tracker(struct inode *inode,
+ 
+ 	lockres = &OCFS2_I(inode)->ip_inode_lockres;
+ 	/* had_lock means that the currect process already takes the cluster
+-	 * lock previously. If had_lock is 1, we have nothing to do here, and
+-	 * it will get unlocked where we got the lock.
++	 * lock previously.
++	 * If had_lock is 1, we have nothing to do here.
++	 * If had_lock is 0, we will release the lock.
+ 	 */
+ 	if (!had_lock) {
++		ocfs2_inode_unlock(inode, oh->oh_ex);
+ 		ocfs2_remove_holder(lockres, oh);
+-		ocfs2_inode_unlock(inode, ex);
+ 	}
+ }
+ 
+diff --git a/fs/ocfs2/dlmglue.h b/fs/ocfs2/dlmglue.h
+index 256e0a9067b8..4ec1c828f6e0 100644
+--- a/fs/ocfs2/dlmglue.h
++++ b/fs/ocfs2/dlmglue.h
+@@ -96,6 +96,7 @@ struct ocfs2_trim_fs_info {
+ struct ocfs2_lock_holder {
+ 	struct list_head oh_list;
+ 	struct pid *oh_owner_pid;
++	int oh_ex;
+ };
+ 
+ /* ocfs2_inode_lock_full() 'arg_flags' flags */
 -- 
 2.13.6
