@@ -1,171 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966637AbeEJRWo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 13:22:44 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:43156 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966425AbeEJRWm (ORCPT
+        id S966712AbeEJR03 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 13:26:29 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:42246 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966632AbeEJR00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 13:22:42 -0400
-X-Google-Smtp-Source: AB8JxZpoLBlA/CtqoIbsZNjFfQIohlTS5DUst4xxcFPUs4m0+J9eYzJ49aR8kcXQXwvviUglZFkjhA==
-Date: Thu, 10 May 2018 10:22:40 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
-        dipankar@in.ibm.com, akpm@linux-foundation.org,
-        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
-        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel.opensrc@gmail.com, torvalds@linux-foundation.org,
-        npiggin@gmail.com
-Subject: Re: [tip/core/rcu, 05/21] rcu: Make rcu_gp_cleanup() more accurately
- predict need for new GP
-Message-ID: <20180510172240.GA228531@joelaf.mtv.corp.google.com>
-References: <1524452624-27589-5-git-send-email-paulmck@linux.vnet.ibm.com>
- <20180510072133.GA122810@joelaf.mtv.corp.google.com>
- <20180510131546.GN26088@linux.vnet.ibm.com>
+        Thu, 10 May 2018 13:26:26 -0400
+Subject: Re: [PATCH 1/2] selftests/filesystems: devpts_pts included wrong
+ header
+From: Shuah Khan <shuah@kernel.org>
+To: Christian Brauner <christian.brauner@canonical.com>,
+        Anders Roxell <anders.roxell@linaro.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <20180418075256.300-1-anders.roxell@linaro.org>
+ <CAPP7u0XLS7sFM2cSY9ypziW3S1T8oouku=8u=9VLCO1qxuOOrQ@mail.gmail.com>
+ <0631ea78-dc18-639c-8658-cdb810c6b4f3@kernel.org>
+Message-ID: <e9fd19e2-1e0f-0437-df1f-f7de8c7c64e9@kernel.org>
+Date: Thu, 10 May 2018 11:26:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180510131546.GN26088@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <0631ea78-dc18-639c-8658-cdb810c6b4f3@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 06:15:46AM -0700, Paul E. McKenney wrote:
-> On Thu, May 10, 2018 at 12:21:33AM -0700, Joel Fernandes wrote:
-> > Hi Paul,
-> > 
-> > On Sun, Apr 22, 2018 at 08:03:28PM -0700, Paul E. McKenney wrote:
-> > > Currently, rcu_gp_cleanup() scans the rcu_node tree in order to reset
-> > > state to reflect the end of the grace period.  It also checks to see
-> > > whether a new grace period is needed, but in a number of cases, rather
-> > > than directly cause the new grace period to be immediately started, it
-> > > instead leaves the grace-period-needed state where various fail-safes
-> > > can find it.  This works fine, but results in higher contention on the
-> > > root rcu_node structure's ->lock, which is undesirable, and contention
-> > > on that lock has recently become noticeable.
-> > > 
-> > > This commit therefore makes rcu_gp_cleanup() immediately start a new
-> > > grace period if there is any need for one.
-> > > 
-> > > It is quite possible that it will later be necessary to throttle the
-> > > grace-period rate, but that can be dealt with when and if.
-> > > 
-> > > Reported-by: Nicholas Piggin <npiggin@gmail.com>
-> > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > > ---
-> > >  kernel/rcu/tree.c        | 16 ++++++++++------
-> > >  kernel/rcu/tree.h        |  1 -
-> > >  kernel/rcu/tree_plugin.h | 17 -----------------
-> > >  3 files changed, 10 insertions(+), 24 deletions(-)
-> > > 
-> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > > index 497f139056c7..afc5e32f0da4 100644
-> > > --- a/kernel/rcu/tree.c
-> > > +++ b/kernel/rcu/tree.c
-> > > @@ -1763,14 +1763,14 @@ rcu_start_future_gp(struct rcu_node *rnp, struct rcu_data *rdp,
-> > >   * Clean up any old requests for the just-ended grace period.  Also return
-> > >   * whether any additional grace periods have been requested.
-> > >   */
-> > > -static int rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
-> > > +static bool rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
-> > >  {
-> > >  	int c = rnp->completed;
-> > > -	int needmore;
-> > > +	bool needmore;
-> > >  	struct rcu_data *rdp = this_cpu_ptr(rsp->rda);
-> > >  
-> > >  	need_future_gp_element(rnp, c) = 0;
-> > > -	needmore = need_future_gp_element(rnp, c + 1);
-> > > +	needmore = need_any_future_gp(rnp);
-> > >  	trace_rcu_future_gp(rnp, rdp, c,
-> > >  			    needmore ? TPS("CleanupMore") : TPS("Cleanup"));
-> > >  	return needmore;
-> > > @@ -2113,7 +2113,6 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
-> > >  {
-> > >  	unsigned long gp_duration;
-> > >  	bool needgp = false;
-> > > -	int nocb = 0;
-> > >  	struct rcu_data *rdp;
-> > >  	struct rcu_node *rnp = rcu_get_root(rsp);
-> > >  	struct swait_queue_head *sq;
-> > > @@ -2152,7 +2151,7 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
-> > >  		if (rnp == rdp->mynode)
-> > >  			needgp = __note_gp_changes(rsp, rnp, rdp) || needgp;
-> > >  		/* smp_mb() provided by prior unlock-lock pair. */
-> > > -		nocb += rcu_future_gp_cleanup(rsp, rnp);
-> > > +		needgp = rcu_future_gp_cleanup(rsp, rnp) || needgp;
-> > >  		sq = rcu_nocb_gp_get(rnp);
-> > >  		raw_spin_unlock_irq_rcu_node(rnp);
-> > >  		rcu_nocb_gp_cleanup(sq);
-> > > @@ -2162,13 +2161,18 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
-> > >  	}
-> > >  	rnp = rcu_get_root(rsp);
-> > >  	raw_spin_lock_irq_rcu_node(rnp); /* Order GP before ->completed update. */
-> > > -	rcu_nocb_gp_set(rnp, nocb);
-> > >  
-> > >  	/* Declare grace period done. */
-> > >  	WRITE_ONCE(rsp->completed, rsp->gpnum);
-> > >  	trace_rcu_grace_period(rsp->name, rsp->completed, TPS("end"));
-> > >  	rsp->gp_state = RCU_GP_IDLE;
-> > > +	/* Check for GP requests since above loop. */
-> > >  	rdp = this_cpu_ptr(rsp->rda);
-> > > +	if (need_any_future_gp(rnp)) {
-> > > +		trace_rcu_future_gp(rnp, rdp, rsp->completed - 1,
-> > > +				    TPS("CleanupMore"));
-> > > +		needgp = true;
-> > 
-> > Patch makes sense to me.
-> > 
-> > I didn't get the "rsp->completed - 1" bit in the call to trace_rcu_future_gp.
-> > The grace period that just completed is in rsp->completed. The future one
-> > should be completed + 1. What is meaning of the third argument 'c' to the
-> > trace event?
+On 05/04/2018 01:42 PM, Shuah Khan wrote:
+> On 05/02/2018 08:05 AM, Christian Brauner wrote:
+>> On Wed, Apr 18, 2018 at 09:52:55AM +0200, Anders Roxell wrote:
+>>> We were picking up the wrong header should use asm/ioctls.h form the kernel
+>>> and not the header from the system (sys/ioctl.h). In the current code we
+>>> added the correct include and we added the kernel headers path to the CFLAGS.
+>>>
+>>> Fixes: ce290a19609d ("selftests: add devpts selftests")
+>>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+>>> ---
+>>
+>> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+>>
+>> Patch looks good to me.
+>>
+>> I'm going to look into the ioctl() error.
+>>
+>> Thanks!
+>> Christian
+>>
+>>>
+>>> Hi,
+>>>
+>>> I've been running devpts_pts on a mainline kernel (4.16+git0+60cc43fc88) and
+>>
+>>
+>>
+>>> the verify_invalid_ptmx_bind_mount() test failes with this failure:
+>>>
+>>> root@intel-core2-32:~# ./devpts_pts
+>>> Failed to perform TIOCGPTPEER ioctl
+>>>
+>>> However, I'm still confused why I'm not able to get the test to pass.  Strace
+>>> showes that -ENOENT return in the TIOCGPTPEER implementation in the
+>>> kernel. I think the -ENOENT gets returned from this path
+>>> devpts_mntget()->devpts_ptmx_path->path_pts().
+>>>
+>>> See the strace issue below:
+>>> root@intel-core2-32:~# strace ./devpts_pts
+>>> execve("./devpts_pts", ["./devpts_pts"], [/* 17 vars */]) = 0
+>>> brk(NULL)                               = 0x5634e0092000
+>>> mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f459d338000
+>>> access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+>>> open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+>>> fstat(3, {st_mode=S_IFREG|0644, st_size=16726, ...}) = 0
+>>> mmap(NULL, 16726, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f459d333000
+>>> close(3)                                = 0
+>>> open("/lib/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+>>> read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\260\3\2\0\0\0\0\0"..., 832) = 832
+>>> fstat(3, {st_mode=S_IFREG|0755, st_size=1681056, ...}) = 0
+>>> mmap(NULL, 3787168, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f459cd7b000
+>>> mprotect(0x7f459cf0f000, 2093056, PROT_NONE) = 0
+>>> mmap(0x7f459d10e000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x193000) = 0x7f459d10e000
+>>> mmap(0x7f459d114000, 14752, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f459d114000
+>>> close(3)                                = 0
+>>> mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f459d331000
+>>> arch_prctl(ARCH_SET_FS, 0x7f459d331700) = 0
+>>> mprotect(0x7f459d10e000, 16384, PROT_READ) = 0
+>>> mprotect(0x5634debe3000, 4096, PROT_READ) = 0
+>>> mprotect(0x7f459d33a000, 4096, PROT_READ) = 0
+>>> munmap(0x7f459d333000, 16726)           = 0
+>>> ioctl(0, TCGETS, {B38400 opost isig icanon echo ...}) = 0
+>>> unshare(CLONE_NEWNS)                    = 0
+>>> mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL) = 0
+>>> mount("/dev/pts/ptmx", "/dev/ptmx", NULL, MS_BIND, NULL) = 0
+>>> open("/dev/ptmx", O_RDWR|O_NOCTTY|O_CLOEXEC) = 3
+>>> ioctl(3, TIOCSPTLCK, [0])               = 0
+>>> ioctl(3, _IOC(0, 0x54, 0x41, 0x00), 0x80102) = 4
+>>> clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f459d3319d0) = 4377
+>>> wait4(4377, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 4377
+>>> --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=4377, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+>>> close(3)                                = 0
+>>> close(4)                                = 0
+>>> getpid()                                = 4376
+>>> open("/tmp/devpts_ptmx_Z6aEvy", O_RDWR|O_CREAT|O_EXCL, 0600) = 3
+>>> mount("/dev/pts/ptmx", "/tmp/devpts_ptmx_Z6aEvy", NULL, MS_BIND, NULL) = 0
+>>> close(3)                                = 0
+>>> open("/tmp/devpts_ptmx_Z6aEvy", O_RDWR|O_NOCTTY|O_CLOEXEC) = 3
+>>> ioctl(3, TIOCSPTLCK, [0])               = 0
+>>> ioctl(3, _IOC(0, 0x54, 0x41, 0x00), 0x80102) = -1 ENOENT (No such file or directory)
+>>> write(2, "Failed to perform TIOCGPTPEER io"..., 36Failed to perform TIOCGPTPEER ioctl
+>>> ) = 36
+>>> close(3)                                = 0
+>>> umount2("/dev/pts", 0)                  = 0
+>>> umount2("/dev/ptmx", 0)                 = 0
+>>> mkdir("/tmp/devpts_fs_w22bR6", 0700)    = 0
+>>> mount("devpts", "/tmp/devpts_fs_w22bR6", "devpts", MS_NOSUID|MS_NOEXEC, "newinstance,ptmxmode=0666,mode=0"...) = 0
+>>> open("/tmp/devpts_fs_w22bR6/ptmx", O_RDWR|O_NOCTTY|O_CLOEXEC) = 3
+>>> ioctl(3, TIOCSPTLCK, [0])               = 0
+>>> ioctl(3, _IOC(0, 0x54, 0x41, 0x00), 0x80102) = 4
+>>> clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f459d3319d0) = 4378
+>>> wait4(4378, [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0, NULL) = 4378
+>>> --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=4378, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+>>> close(3)                                = 0
+>>> close(4)                                = 0
+>>> unlink("/tmp/devpts_fs_w22bR6")         = -1 EISDIR (Is a directory)
+>>> exit_group(0)                           = ?
+>>> +++ exited with 0 +++
+>>> root@intel-core2-32:~#
+>>>
+>>>  tools/testing/selftests/filesystems/Makefile     | 1 +
+>>>  tools/testing/selftests/filesystems/devpts_pts.c | 2 +-
+>>>  2 files changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/tools/testing/selftests/filesystems/Makefile b/tools/testing/selftests/filesystems/Makefile
+>>> index 4e6d09fb166f..427a401aae5c 100644
+>>> --- a/tools/testing/selftests/filesystems/Makefile
+>>> +++ b/tools/testing/selftests/filesystems/Makefile
+>>> @@ -1,5 +1,6 @@
+>>>  # SPDX-License-Identifier: GPL-2.0
+>>>  TEST_PROGS := dnotify_test devpts_pts
+>>> +CFLAGS += -I../../../../usr/include/
+>>>  all: $(TEST_PROGS)
+>>>
+>>>  include ../lib.mk
+>>> diff --git a/tools/testing/selftests/filesystems/devpts_pts.c b/tools/testing/selftests/filesystems/devpts_pts.c
+>>> index b9055e974289..79420b9d00c7 100644
+>>> --- a/tools/testing/selftests/filesystems/devpts_pts.c
+>>> +++ b/tools/testing/selftests/filesystems/devpts_pts.c
+>>> @@ -8,7 +8,7 @@
+>>>  #include <stdlib.h>
+>>>  #include <string.h>
+>>>  #include <unistd.h>
+>>> -#include <sys/ioctl.h>
+>>> +#include <asm/ioctls.h>
+>>>  #include <sys/mount.h>
+>>>  #include <sys/wait.h>
+>>>
+>>> --
+>>> 2.11.0
+>>>
+>>
 > 
-> The thought was that the grace period must have been requested while
-> rsp->completed was one less than it is now.
+> Thanks. I will queue this up for 4.18-rc1
 > 
-> In the current code, it uses rnp->gp_seq_needed, which is instead the grace
-> period that is being requested.
-
-Oh ok, IIUC from the code, the 'c' parameter passed to trace_rcu_future_gp is
-the grace-period number in the future. Perhaps we should clarify this in the
-include/trace/events/rcu.h code what this parameter means. Probably
-'future_gp' or something like that.
-
-> > Also in rcu_future_gp_cleanup, we call:
-> > 	trace_rcu_future_gp(rnp, rdp, c,
-> > 			    needmore ? TPS("CleanupMore") : TPS("Cleanup"));
-> > For this case, in the final trace event record, rnp->completed and c will be
-> > the same, since c is set to rnp->completed before calling
-> > trace_rcu_future_gp. I was thinking they should be different, do you expect
-> > them to be the same?
+> -- Shuah
 > 
-> Hmmm...  That does look a bit inconsistent.  And it currently uses
-> rnp->gp_seq instead of rnp->gp_seq_needed despite having the same
-> "CleanupMore" name.
 
-Yes I was thinking in rcu_future_gp_cleanup, the call to trace_rcu_future_gp
-should be trace_rcu_future_gp(rnp, rdp, c + 1, needmore...);
+Applied to linux-kselftest next for 4.18-rc1.
 
-This is because in rcu_future_gp_cleanup, c is set to rnp->completed. Just
-before this point rnp->completed was set to rsp->gpnum, which marks the end of
-the GP for the node. The next gp would be c + 1 right?
-
-> Looks like a review of the calls to trace_rcu_this_gp() is in order.
-
-Yes, I'll do some tracing and see if something else doesn't make sense to me
-and let you know.
-
-> Or did you have suggestions for name/gp assocations for this trace
-> message type?
-
-I think the name for this one is fine but also that "CleanupMore" sounds like
-more clean up is needed. It could be improved to "CleanupNeedgp" or
-"CleanupAndStart" or something like that.
-
-thanks!
-
-- Joel
+thanks,
+-- Shuah
