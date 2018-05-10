@@ -1,112 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935625AbeEJATI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 9 May 2018 20:19:08 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:41048 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934234AbeEJATG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 May 2018 20:19:06 -0400
-X-Google-Smtp-Source: AB8JxZqDn8x0tdJnUcJ6YSJUWG1TY1K7Sy4D2TV0P+UQ6F8h0gC6AkDjpeQFkxr/ej/HBmFRlkhldQ==
-Date: Wed, 9 May 2018 17:19:03 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Loic Pallardy <loic.pallardy@st.com>
-Cc: ohad@wizery.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, arnaud.pouliquen@st.com,
-        benjamin.gaignard@linaro.org
-Subject: Re: [PATCH v3 07/13] remoteproc: introduce
- rproc_find_carveout_by_name function
-Message-ID: <20180510001903.GD29093@builder>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
- <1519921440-21356-8-git-send-email-loic.pallardy@st.com>
+        id S935617AbeEJA33 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 9 May 2018 20:29:29 -0400
+Received: from mga07.intel.com ([134.134.136.100]:48417 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934395AbeEJA32 (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 9 May 2018 20:29:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,383,1520924400";
+   d="scan'208";a="44653575"
+Subject: Re: [PATCH] perf annotate: Display multiple events for --stdio
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+References: <1525881435-4092-1-git-send-email-yao.jin@linux.intel.com>
+ <20180509164251.GH13491@kernel.org>
+From: "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <1cda43c7-535b-9cae-bf62-b521c951b8c4@linux.intel.com>
+Date: Thu, 10 May 2018 08:29:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1519921440-21356-8-git-send-email-loic.pallardy@st.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180509164251.GH13491@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 01 Mar 08:23 PST 2018, Loic Pallardy wrote:
 
-> This patch provides a new function to find a carveout according
-> to a name.
-> If match found, this function returns a pointer on the corresponding
-> carveout (rproc_mem_entry structure).
+
+On 5/10/2018 12:42 AM, Arnaldo Carvalho de Melo wrote:
+> Em Wed, May 09, 2018 at 11:57:15PM +0800, Jin Yao escreveu:
+>> When we perform following command lines:
+>>
+>> perf record -e "{cycles,branches}" ./div
+>> perf annotate main --stdio
+>>
+>> Only shows one event "cycles" and the displaying format is not correct.
+>>
+>>   Percent         |      Source code & Disassembly of div for cycles (44550 samples)
+>> -----------------------------------------------------------------------------------
 > 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 43 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
+> Please indent command output (two spaces before all lines) to avoid
+> scripts breaking due to mistaking lines starting with --- as the end of
+> the patch.
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 91aa22b..7a500cb 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -216,6 +216,49 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, int len)
->  }
->  EXPORT_SYMBOL(rproc_da_to_va);
->  
-> +/**
-> + * rproc_find_carveout_by_name() - lookup the carveout region by a name
-> + * @rproc: handle of a remote processor
-> + * @name,..: carveout name to find (standard printf format)
-> + *
-> + * Platform driver has the capability to register some pre-allacoted carveout
-> + * (physically contiguous memory regions) before rproc firmware loading and
-> + * associated resource table analysis. These regions may be dedicated memory
-> + * regions internal to the coprocessor or specified DDR region with specific
-> + * attributes
-> + *
-> + * This function is a helper function with which we can go over the
-> + * allocated carveouts and return associated region characteristics like
-> + * coprocessor address, length or processor virtual address.
-> + *
-> + * The function returns a valid pointer on carveout entry on success
-> + * or NULL on failure.
+> Applying.
+> 
+> - Arnaldo
+> 
 
-The kerneldoc format for describing the return value is
+Breaking the scripts? Oh, very sorry about that, I will be careful next 
+time.
 
- * Return: description
+Thanks
+Jin Yao
 
-> + */
-> +struct rproc_mem_entry *
-> +rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...)
-> +{
-> +	va_list args;
-> +	char _name[32];
-> +	struct rproc_mem_entry *carveout, *mem = NULL;
-> +
-> +	va_start(args, name);
-> +	snprintf(_name, sizeof(_name), name, args);
-> +	va_end(args);
-> +
-> +	if (!name)
-> +		return NULL;
-
-If you would like for it to actually be valid to pass NULL for name,
-then I think you should move this check to the top of the function.
-
-But I suspect that you're looking for (name[0] == '\0'), to check if we
-where passed an empty string, e.g. from a resource table without
-resource names.
-
-> +
-> +	list_for_each_entry(carveout, &rproc->carveouts, node) {
-> +		/* Compare carveout and requested names */
-> +		if (!strcmp(carveout->name, name)) {
-> +			mem = carveout;
-> +			break;
-
-Just return carveout when you find it.
-
-> +		}
-> +	}
-> +
-> +	return mem;
-> +}
-> +
-
-Regards,
-Bjorn
+>>                   :
+>>                   :
+>>                   :
+>>                   :            Disassembly of section .text:
+>>                   :
+>>                   :            00000000004004b0 <main>:
+>>                   :            main():
+>>                   :
+>>                   :                    return i;
+>>                   :            }
+>>                   :
+>>                   :            int main(void)
+>>                   :            {
+>>      0.00 :   4004b0:       push   %rbx
+>>                   :                    int i;
+>>                   :                    int flag;
+>>                   :                    volatile double x = 1212121212, y = 121212;
+>>                   :
+>>                   :                    s_randseed = time(0);
+>>      0.00 :   4004b1:       xor    %edi,%edi
+>>                   :                    srand(s_randseed);
+>>      0.00 :   4004b3:       mov    $0x77359400,%ebx
+>>                   :
+>>                   :                    return i;
+>>                   :            }
+>>                   :
+>>
+>> The issue is the value of nr_percent is hardcoded to 1.
+>> This patch fixes it.
+>>
+>> With this patch, the output is:
+>>
+>>   Percent         |      Source code & Disassembly of div for cycles (44550 samples)
+>> -----------------------------------------------------------------------------------
+>>                   :
+>>                   :
+>>                   :
+>>                   :            Disassembly of section .text:
+>>                   :
+>>                   :            00000000004004b0 <main>:
+>>                   :            main():
+>>                   :
+>>                   :                    return i;
+>>                   :            }
+>>                   :
+>>                   :            int main(void)
+>>                   :            {
+>>      0.00    0.00 :   4004b0:       push   %rbx
+>>                   :                    int i;
+>>                   :                    int flag;
+>>                   :                    volatile double x = 1212121212, y = 121212;
+>>                   :
+>>                   :                    s_randseed = time(0);
+>>      0.00    0.00 :   4004b1:       xor    %edi,%edi
+>>                   :                    srand(s_randseed);
+>>      0.00    0.00 :   4004b3:       mov    $0x77359400,%ebx
+>>                   :
+>>                   :                    return i;
+>>                   :            }
+>>
+>> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+>> ---
+>>   tools/perf/util/annotate.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+>> index 536ee14..5d74a30 100644
+>> --- a/tools/perf/util/annotate.c
+>> +++ b/tools/perf/util/annotate.c
+>> @@ -1263,6 +1263,9 @@ annotation_line__print(struct annotation_line *al, struct symbol *sym, u64 start
+>>   				max_percent = sample->percent;
+>>   		}
+>>   
+>> +		if (al->samples_nr > nr_percent)
+>> +			nr_percent = al->samples_nr;
+>> +
+>>   		if (max_percent < min_pcnt)
+>>   			return -1;
+>>   
+>> -- 
+>> 2.7.4
