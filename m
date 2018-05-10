@@ -1,45 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966557AbeEJPuW (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 11:50:22 -0400
-Received: from imap.thunk.org ([74.207.234.97]:56538 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966203AbeEJPuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 11:50:20 -0400
-Date: Thu, 10 May 2018 11:50:16 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: make =?utf-8?Q?function_?=
- =?utf-8?B?4oCYZXh0NF9nZXRmc21hcF9maW5kX2ZpeGVkX21ldGFkYXRh4oCZ?= static
-Message-ID: <20180510155016.GC8335@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Mathieu Malaterre <malat@debian.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180505200452.18962-1-malat@debian.org>
+        id S966384AbeEJPws (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 11:52:48 -0400
+Received: from mail-pg0-f41.google.com ([74.125.83.41]:36854 "EHLO
+        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965033AbeEJPwq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 11:52:46 -0400
+X-Google-Smtp-Source: AB8JxZpba8svyDcEkdmDctzI++wm2Ec00BskghkdIAQZMo9kcZlHjM1wztA4ybifx7l89UJ2l5R09A==
+Date: Thu, 10 May 2018 08:52:42 -0700
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Yonghong Song <yhs@fb.com>, mingo@kernel.org,
+        torvalds@linux-foundation.org, ast@fb.com, daniel@iogearbox.net,
+        linux-kernel@vger.kernel.org, x86@kernel.org, netdev@vger.kernel.org,
+        kernel-team@fb.com, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH bpf v3] x86/cpufeature: bpf hack for clang not supporting
+ asm goto
+Message-ID: <20180510155240.5s2fpgm2fwal3jlj@ast-mbp.dhcp.thefacebook.com>
+References: <20180504033119.2130788-1-yhs@fb.com>
+ <20180510100634.GZ12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180505200452.18962-1-malat@debian.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20180510100634.GZ12217@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 05, 2018 at 10:04:52PM +0200, Mathieu Malaterre wrote:
-> Since function ‘ext4_getfsmap_find_fixed_metadata’ can be made static,
-> make it so. Remove the following gcc warning (W=1):
+On Thu, May 10, 2018 at 12:06:34PM +0200, Peter Zijlstra wrote:
+> On Thu, May 03, 2018 at 08:31:19PM -0700, Yonghong Song wrote:
 > 
->   fs/ext4/fsmap.c:405:5: warning: no previous prototype for ‘ext4_getfsmap_find_fixed_metadata’ [-Wmissing-prototypes]
+> > This approach is preferred since the already deployed bcc scripts, or
+> > any other bpf applicaitons utilizing LLVM JIT compilation functionality,
+> > will continue work with the new kernel without re-compilation and
+> > re-deployment.
 > 
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> So I really hate this and would much rather see the BPF build
+> environment changed. It not consistenyly having __BPF__ defined really
+> smells like a bug on your end.
+> 
+> Sometimes you just need to update tools... Is it really too hard to do
+> -D__BPF__ in the bpf build process that we need to mollest the kernel
+> for it?
+> 
+> > Note that this is a hack in the kernel to workaround bpf compilation issue.
+> > The hack will be removed once clang starts to support asm goto.
+> 
+> Note that that ^^ already mandates people re-deploy their bpf tools, so
+> why is llvm supporting asm-goto a better point to re-deploy than fixing
+> a consistent __BPF__ define for the bpf build environment?
 
-Applied, thanks.
+This thread has been going for over a month now. Looks like we're starting
+to go in circles and what we discussed earlier got lost. To recap:
 
-						- Ted
+- this is NOT a bpf issue. libbcc is the first user that got broken
+  by commit d0266046ad54 ("x86: Remove FAST_FEATURE_TESTS")
+
+- all other libraries and tools (like fuzzers, static code analyzers, etc)
+  that are using clang front-end to process kernel headers are broken too
+
+That makes me wonder what happened with "we do not break user space" rule?
+
+I think the safest course of action would be to partially revert the
+offending commit d0266046ad54 which we proposed first.
+Since you were concerned that this is somehow will disincentivize clang
+folks to add asm-goto support, we agreed to add this __NO_CLANG_BPF_HACK
+macro to un-break libbcc at least, so that existing libbcc installations
+will continue to work when people upgrade kernels.
+
+The __BPF__ macro is automatically defined by clang when '-target bpf' is used.
+This is NOT the case here. libbcc has to use native target when
+processing kernel headers.
+
+It happens from time to time that one or the other libbcc script gets
+broken by new kernel because kprobe symbol that the script is using
+got changed in the recent kernel. That's ok and we deal with this situation
+all the time. What's different this time that ALL bcc scripts are broken
+because of this commit and we cannot workaround in user space.
