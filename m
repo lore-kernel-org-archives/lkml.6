@@ -1,248 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756611AbeEJFJR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 01:09:17 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33597 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756545AbeEJFJB (ORCPT
+        id S1756522AbeEJFOt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 01:14:49 -0400
+Received: from mail-pf0-f175.google.com ([209.85.192.175]:43332 "EHLO
+        mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755004AbeEJFOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 01:09:01 -0400
-X-Google-Smtp-Source: AB8JxZq1VhzLoYzsNqw6gHpYqDDal39rj9UEyU1BBMf71WDhaHDglhrt3pOCBYdXNi6CPP3FylSj3A==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: dmitry.torokhov@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        orsonzhai@gmail.com, zhang.lyra@gmail.com
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, baolin.wang@linaro.org,
-        xiaotong.lu@spreadtrum.com
-Subject: [PATCH v4 2/2] input: misc: Add Spreadtrum vibrator driver
-Date: Thu, 10 May 2018 13:08:34 +0800
-Message-Id: <68ed1ed8c7c2759f47341dc3f4f6c18acad9cb90.1525928437.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <44b17778d8f0bf897a316a39516ba2cafecf43c9.1525928437.git.baolin.wang@linaro.org>
-References: <44b17778d8f0bf897a316a39516ba2cafecf43c9.1525928437.git.baolin.wang@linaro.org>
-In-Reply-To: <44b17778d8f0bf897a316a39516ba2cafecf43c9.1525928437.git.baolin.wang@linaro.org>
-References: <44b17778d8f0bf897a316a39516ba2cafecf43c9.1525928437.git.baolin.wang@linaro.org>
+        Thu, 10 May 2018 01:14:47 -0400
+X-Google-Smtp-Source: AB8JxZpXbjxfMAnImIYZzF6tBO1EyQp9N3rxbDoSHJeogc6dzW0Cr/ffYqDOi/FQxC0GYGeOLuAIYZoOlHz8sGMie34=
+MIME-Version: 1.0
+In-Reply-To: <0000000000003723710569916833@google.com>
+References: <0000000000003723710569916833@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 10 May 2018 07:14:26 +0200
+Message-ID: <CACT4Y+Yz-zRdEKTJeSdK5QTqPtgsSqwoJ4WU8bcX+8RwXUAiSA@mail.gmail.com>
+Subject: Re: KASAN: slab-out-of-bounds Write in process_preds
+To: syzbot <syzbot+5702a7e6d4a13b3accd5@syzkaller.appspotmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+On Wed, Apr 11, 2018 at 2:02 PM, syzbot
+<syzbot+5702a7e6d4a13b3accd5@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot hit the following crash on upstream commit
+> b284d4d5a6785f8cd07eda2646a95782373cd01e (Tue Apr 10 19:25:30 2018 +0000)
+> Merge tag 'ceph-for-4.17-rc1' of git://github.com/ceph/ceph-client
+> syzbot dashboard link:
+> https://syzkaller.appspot.com/bug?extid=5702a7e6d4a13b3accd5
+>
+> So far this crash happened 4 times on upstream.
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=6364313065357312
+> syzkaller reproducer:
+> https://syzkaller.appspot.com/x/repro.syz?id=4775648954417152
+> Raw console output:
+> https://syzkaller.appspot.com/x/log.txt?id=6353070183153664
+> Kernel config:
+> https://syzkaller.appspot.com/x/.config?id=-1223000601505858474
+> compiler: gcc (GCC) 8.0.1 20180301 (experimental)
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+5702a7e6d4a13b3accd5@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
 
-This patch adds the Spreadtrum vibrator driver, which embedded in the
-Spreadtrum SC27xx series PMICs.
 
-Signed-off-by: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes since v3:
- - No updates.
+This was bisected to:
 
-Changes since v2:
- - Fix the condition when disabling the vibrator.
- - Change of_property_read_u32() to device_property_read_u32().
- - Correct the device parent relationship.
- - Call sc27xx_vibra_hw_init() before calling input_register_device().
- - Remove platform_set_drvdata().
+commit 80765597bc587feae8dbc8ce97a0f32e12a6e625
+Author: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Date:   Fri Mar 9 13:19:28 2018 -0500
 
-Changes since v1:
- - Remove input_ff_destroy() and input_unregister_device()
----
- drivers/input/misc/Kconfig        |   10 +++
- drivers/input/misc/Makefile       |    1 +
- drivers/input/misc/sc27xx-vibra.c |  154 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 165 insertions(+)
- create mode 100644 drivers/input/misc/sc27xx-vibra.c
+    tracing: Rewrite filter logic to be simpler and faster
 
-diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-index 572b15f..c761c0c 100644
---- a/drivers/input/misc/Kconfig
-+++ b/drivers/input/misc/Kconfig
-@@ -841,4 +841,14 @@ config INPUT_RAVE_SP_PWRBUTTON
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called rave-sp-pwrbutton.
- 
-+config INPUT_SC27XX_VIBRA
-+	tristate "Spreadtrum sc27xx vibrator support"
-+	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-+	select INPUT_FF_MEMLESS
-+	help
-+	  This option enables support for Spreadtrum sc27xx vibrator driver.
-+
-+	  To compile this driver as a module, choose M here. The module will
-+	  be called sc27xx_vibra.
-+
- endif
-diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-index 72cde28..9d0f9d1 100644
---- a/drivers/input/misc/Makefile
-+++ b/drivers/input/misc/Makefile
-@@ -66,6 +66,7 @@ obj-$(CONFIG_INPUT_RETU_PWRBUTTON)	+= retu-pwrbutton.o
- obj-$(CONFIG_INPUT_AXP20X_PEK)		+= axp20x-pek.o
- obj-$(CONFIG_INPUT_GPIO_ROTARY_ENCODER)	+= rotary_encoder.o
- obj-$(CONFIG_INPUT_RK805_PWRKEY)	+= rk805-pwrkey.o
-+obj-$(CONFIG_INPUT_SC27XX_VIBRA)	+= sc27xx-vibra.o
- obj-$(CONFIG_INPUT_SGI_BTNS)		+= sgi_btns.o
- obj-$(CONFIG_INPUT_SIRFSOC_ONKEY)	+= sirfsoc-onkey.o
- obj-$(CONFIG_INPUT_SOC_BUTTON_ARRAY)	+= soc_button_array.o
-diff --git a/drivers/input/misc/sc27xx-vibra.c b/drivers/input/misc/sc27xx-vibra.c
-new file mode 100644
-index 0000000..295251a
---- /dev/null
-+++ b/drivers/input/misc/sc27xx-vibra.c
-@@ -0,0 +1,154 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Spreadtrum Communications Inc.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/input.h>
-+#include <linux/workqueue.h>
-+
-+#define CUR_DRV_CAL_SEL		GENMASK(13, 12)
-+#define SLP_LDOVIBR_PD_EN	BIT(9)
-+#define LDO_VIBR_PD		BIT(8)
-+
-+struct vibra_info {
-+	struct input_dev	*input_dev;
-+	struct work_struct	play_work;
-+	struct regmap		*regmap;
-+	u32			base;
-+	u32			strength;
-+	bool			enabled;
-+};
-+
-+static void sc27xx_vibra_set(struct vibra_info *info, bool on)
-+{
-+	if (on) {
-+		regmap_update_bits(info->regmap, info->base, LDO_VIBR_PD, 0);
-+		regmap_update_bits(info->regmap, info->base,
-+				   SLP_LDOVIBR_PD_EN, 0);
-+		info->enabled = true;
-+	} else {
-+		regmap_update_bits(info->regmap, info->base, LDO_VIBR_PD,
-+				   LDO_VIBR_PD);
-+		regmap_update_bits(info->regmap, info->base,
-+				   SLP_LDOVIBR_PD_EN, SLP_LDOVIBR_PD_EN);
-+		info->enabled = false;
-+	}
-+}
-+
-+static int sc27xx_vibra_hw_init(struct vibra_info *info)
-+{
-+	return regmap_update_bits(info->regmap, info->base, CUR_DRV_CAL_SEL, 0);
-+}
-+
-+static void sc27xx_vibra_play_work(struct work_struct *work)
-+{
-+	struct vibra_info *info = container_of(work, struct vibra_info,
-+					       play_work);
-+
-+	if (info->strength && !info->enabled)
-+		sc27xx_vibra_set(info, true);
-+	else if (info->strength == 0 && info->enabled)
-+		sc27xx_vibra_set(info, false);
-+}
-+
-+static int sc27xx_vibra_play(struct input_dev *input, void *data,
-+			     struct ff_effect *effect)
-+{
-+	struct vibra_info *info = input_get_drvdata(input);
-+
-+	info->strength = effect->u.rumble.weak_magnitude;
-+	schedule_work(&info->play_work);
-+
-+	return 0;
-+}
-+
-+static void sc27xx_vibra_close(struct input_dev *input)
-+{
-+	struct vibra_info *info = input_get_drvdata(input);
-+
-+	cancel_work_sync(&info->play_work);
-+	if (info->enabled)
-+		sc27xx_vibra_set(info, false);
-+}
-+
-+static int sc27xx_vibra_probe(struct platform_device *pdev)
-+{
-+	struct vibra_info *info;
-+	int error;
-+
-+	info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	info->regmap = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!info->regmap) {
-+		dev_err(&pdev->dev, "failed to get vibrator regmap.\n");
-+		return -ENODEV;
-+	}
-+
-+	error = device_property_read_u32(&pdev->dev, "reg", &info->base);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to get vibrator base address.\n");
-+		return error;
-+	}
-+
-+	info->input_dev = devm_input_allocate_device(&pdev->dev);
-+	if (!info->input_dev) {
-+		dev_err(&pdev->dev, "failed to allocate input device.\n");
-+		return -ENOMEM;
-+	}
-+
-+	info->input_dev->name = "sc27xx:vibrator";
-+	info->input_dev->id.version = 0;
-+	info->input_dev->close = sc27xx_vibra_close;
-+
-+	input_set_drvdata(info->input_dev, info);
-+	input_set_capability(info->input_dev, EV_FF, FF_RUMBLE);
-+	INIT_WORK(&info->play_work, sc27xx_vibra_play_work);
-+	info->enabled = false;
-+
-+	error = sc27xx_vibra_hw_init(info);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to initialize the vibrator.\n");
-+		return error;
-+	}
-+
-+	error = input_ff_create_memless(info->input_dev, NULL,
-+					sc27xx_vibra_play);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to register vibrator to FF.\n");
-+		return error;
-+	}
-+
-+	error = input_register_device(info->input_dev);
-+	if (error) {
-+		dev_err(&pdev->dev, "failed to register input device.\n");
-+		return error;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id sc27xx_vibra_of_match[] = {
-+	{ .compatible = "sprd,sc2731-vibrator", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, sc27xx_vibra_of_match);
-+
-+static struct platform_driver sc27xx_vibra_driver = {
-+	.driver = {
-+		.name = "sc27xx-vibrator",
-+		.of_match_table = sc27xx_vibra_of_match,
-+	},
-+	.probe = sc27xx_vibra_probe,
-+};
-+
-+module_platform_driver(sc27xx_vibra_driver);
-+
-+MODULE_DESCRIPTION("Spreadtrum SC27xx Vibrator Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Xiaotong Lu <xiaotong.lu@spreadtrum.com>");
--- 
-1.7.9.5
+
+
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in predicate_parse
+> kernel/trace/trace_events_filter.c:557 [inline]
+> BUG: KASAN: slab-out-of-bounds in process_preds+0x1958/0x19b0
+> kernel/trace/trace_events_filter.c:1505
+> Write of size 4 at addr ffff8801ceecdef0 by task syzkaller992239/4513
+>
+> CPU: 0 PID: 4513 Comm: syzkaller992239 Not tainted 4.16.0+ #17
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.7+0xac/0x2f5 mm/kasan/report.c:412
+>  __asan_report_store4_noabort+0x17/0x20 mm/kasan/report.c:437
+>  predicate_parse kernel/trace/trace_events_filter.c:557 [inline]
+>  process_preds+0x1958/0x19b0 kernel/trace/trace_events_filter.c:1505
+>  create_filter+0x1a8/0x370 kernel/trace/trace_events_filter.c:1714
+>  ftrace_profile_set_filter+0x109/0x2b0
+> kernel/trace/trace_events_filter.c:2042
+>  perf_event_set_filter+0x248/0x1230 kernel/events/core.c:9064
+>  _perf_ioctl+0x84c/0x1650 kernel/events/core.c:5056
+>  perf_ioctl+0x59/0x80 kernel/events/core.c:5107
+>  vfs_ioctl fs/ioctl.c:46 [inline]
+>  file_ioctl fs/ioctl.c:500 [inline]
+>  do_vfs_ioctl+0x1cf/0x1650 fs/ioctl.c:684
+>  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+>  SYSC_ioctl fs/ioctl.c:708 [inline]
+>  SyS_ioctl+0x24/0x30 fs/ioctl.c:706
+>  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> RIP: 0033:0x43fdb9
+> RSP: 002b:00007ffc7afb3e88 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fdb9
+> RDX: 0000000020000040 RSI: 0000000040082406 RDI: 0000000000000003
+> RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+> R10: 0000000000000000 R11: 0000000000000213 R12: 00000000004016e0
+> R13: 0000000000401770 R14: 0000000000000000 R15: 0000000000000000
+>
+> Allocated by task 1:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+>  kmem_cache_alloc_trace+0x152/0x780 mm/slab.c:3620
+>  kmalloc include/linux/slab.h:512 [inline]
+>  call_modprobe kernel/kmod.c:80 [inline]
+>  __request_module+0x386/0xcdd kernel/kmod.c:171
+>  adfdrv_init+0x1b/0x5f drivers/crypto/qat/qat_dh895xcc/adf_drv.c:315
+>  do_one_initcall+0x127/0x913 init/main.c:880
+>  do_initcall_level init/main.c:948 [inline]
+>  do_initcalls init/main.c:956 [inline]
+>  do_basic_setup init/main.c:974 [inline]
+>  kernel_init_freeable+0x49b/0x58e init/main.c:1124
+>  kernel_init+0x11/0x1b3 init/main.c:1050
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
+>
+> Freed by task 1:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+>  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+>  __cache_free mm/slab.c:3498 [inline]
+>  kfree+0xd9/0x260 mm/slab.c:3813
+>  free_modprobe_argv+0x74/0xa0 kernel/kmod.c:67
+>  call_usermodehelper_freeinfo kernel/umh.c:42 [inline]
+>  call_usermodehelper_exec+0x274/0x4f0 kernel/umh.c:458
+>  call_modprobe kernel/kmod.c:99 [inline]
+>  __request_module+0x4ba/0xcdd kernel/kmod.c:171
+>  adfdrv_init+0x1b/0x5f drivers/crypto/qat/qat_dh895xcc/adf_drv.c:315
+>  do_one_initcall+0x127/0x913 init/main.c:880
+>  do_initcall_level init/main.c:948 [inline]
+>  do_initcalls init/main.c:956 [inline]
+>  do_basic_setup init/main.c:974 [inline]
+>  kernel_init_freeable+0x49b/0x58e init/main.c:1124
+>  kernel_init+0x11/0x1b3 init/main.c:1050
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
+>
+> The buggy address belongs to the object at ffff8801ceecde80
+>  which belongs to the cache kmalloc-64 of size 64
+> The buggy address is located 48 bytes to the right of
+>  64-byte region [ffff8801ceecde80, ffff8801ceecdec0)
+> The buggy address belongs to the page:
+> page:ffffea00073bb340 count:1 mapcount:0 mapping:ffff8801ceecd000 index:0x0
+> flags: 0x2fffc0000000100(slab)
+> raw: 02fffc0000000100 ffff8801ceecd000 0000000000000000 0000000100000020
+> raw: ffffea0007392ba0 ffffea0007509220 ffff8801dac00340 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>  ffff8801ceecdd80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>  ffff8801ceecde00: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+>>
+>> ffff8801ceecde80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>
+>                                                              ^
+>  ffff8801ceecdf00: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
+>  ffff8801ceecdf80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+> ==================================================================
+>
+>
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/0000000000003723710569916833%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
