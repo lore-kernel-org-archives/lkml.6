@@ -1,79 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757014AbeEJLbC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 07:31:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37257 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756832AbeEJLbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 07:31:01 -0400
-Date: Thu, 10 May 2018 13:30:58 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Fengguang Wu <fengguang.wu@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: printk feature for syzbot?
-Message-ID: <20180510113058.q6d7apmih5sdmlba@pathway.suse.cz>
-References: <201804232233.CIC65675.OJSOMFQOFFHVtL@I-love.SAKURA.ne.jp>
- <CACT4Y+boyw_Qy=y-iTnsKZrtTgF0Hk3nHN_xtqUdX4etgiYDQw@mail.gmail.com>
- <20180424013336.GA1376@jagdpanzerIV>
- <20180426100603.czif6sat75fjsazp@pathway.suse.cz>
- <20180510042206.GA3426@jagdpanzerIV>
+        id S1757076AbeEJLdw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 07:33:52 -0400
+Received: from mail-wr0-f175.google.com ([209.85.128.175]:39250 "EHLO
+        mail-wr0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756891AbeEJLdv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 07:33:51 -0400
+X-Google-Smtp-Source: AB8JxZrwB6WCUdvB37S41Mcj5xNdgy9VLDFghOr+5KyMYFQy3FL1Cb82kvrWk2w8NYRbxigyUpPozA==
+Subject: Re: support for non-uniform SPI NOR flash memories
+To: Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Cyrille Pitchen <cyrille.pitchen@microchip.com>, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
+        richard@nod.at
+Cc: linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+References: <5bc6ab91-9ae3-28b1-2110-452f58fee8c7@microchip.com>
+ <e9218dcf-dce6-a009-70ec-33d0cac5bc4d@gmail.com>
+ <b7cbad40-8340-0a8f-e539-932b777757d8@microchip.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <825117a7-0412-0558-f7e0-37e026b45db2@gmail.com>
+Date: Thu, 10 May 2018 12:19:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180510042206.GA3426@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <b7cbad40-8340-0a8f-e539-932b777757d8@microchip.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-05-10 13:22:06, Sergey Senozhatsky wrote:
-> On (04/26/18 12:06), Petr Mladek wrote:
-> > 
-> > > Petr, Steven, Fengguang, what do you think? Do you have any objections?
-> > > Ideas?
-> > 
-> > I wonder if we could create some mechanism that would help to extend
-> > struct printk_log easier in the future.
+On 05/09/2018 06:40 PM, Tudor Ambarus wrote:
 > 
-> Hm, interesting idea.
+> On 05/07/2018 08:14 PM, Marek Vasut wrote:
+>> But indeed there are -- to my knowledge -- no flashes with interleaved
+>> erase blocks. And yes, there could be improvement in erasing exactly the
+>> required chunk of flash with a fitting opcode:)
 > 
-> > I know only about crash tool implementation. It uses information provided
-> > by log_buf_vmcoreinfo_setup(). The size of the structure is already
-> > public. Therefore crash should be able to find all existing information
-> > even if we increase the size of the structure.
-> > 
-> > log_buf_vmcoreinfo_setup() even allows to inform about newly added
-> > structure items. We could probably extend it to inform also about
-> > the offset of the new optional elements.
+> Thanks Marek.
 > 
-> I vaguely remember that the last time Thomas Gleixner modified
-> printk_log you managed to find a case that broke crash tool.
-> ... Or may be I'm mistaken.
+> Other improvement would be to minimize the amount of erase() calls by
+> using the best sequence of erase type commands depending on alignment.
+> But this will increase the number of queries.
+> 
+> I've read again the Sector Map section of the JEDECB standard and it
+> looks like "overlaid" regions are possible. Here's an example that I
+> found there:
+> 
+> Bottom: 8x 4KB sectors at bottom (only 4KB erase supported),
+>         1x overlaid 64KB sector at bottom (only 64KB erase supported),
+>         511 uniform 64KB sectors (only 64KB erase supported)
+> 
+> That's interesting, when one wants to erase the overlaid 64KB sector, I
+> guess that the 8x 4KB sectors will be erased too.
 
-I guess that you are talking about the patchset adding possibility
-to use different time-stamps[1]. It changed the semantic of the
-timestamp. All the tools needed an update to show the timestamp
-correctly.
+Ah yes, some old flashes had these few 64 kiB erase blocks at the
+beginning/end, which could either be erased as one 64 kiB block or as
+smaller 8k/4k blocks .
 
-The patchset was rejected by Linus because it would broke some
-userspace tool, e.g. systemd, that depend on the format and semantic
-provided by /dev/kmsg[2].
+> I'm still studying this, I'll try to come with a proposal in the next
+> few days.
 
-By other words, we must not change /dev/kmsg format. But it should
-be acceptable to change/extend the internal format and eventually
-extend the format used on consoles.
+Cool!
 
-Anyway, we need to be careful and test makedumpfile and crash tools
-and eventually provide patches for them.
-
-Reference:
-[0] https://lkml.kernel.org/r/20160419085613.GJ6862@pathway.suse.cz
-[1] https://lkml.kernel.org/r/CA+55aFzLH9crdMtUFkD-PtNGuxu_fsG5GH2ACni69ug9iM=09g@mail.gmail.com
-
-Best Regards,
-Petr
+-- 
+Best regards,
+Marek Vasut
