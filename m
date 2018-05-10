@@ -1,18 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752226AbeEJUdh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 16:33:37 -0400
-Received: from mga03.intel.com ([134.134.136.65]:31799 "EHLO mga03.intel.com"
+        id S1752241AbeEJUgC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 16:36:02 -0400
+Received: from mga18.intel.com ([134.134.136.126]:39400 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751881AbeEJUdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 16:33:35 -0400
+        id S1752054AbeEJUgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 16:36:00 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,386,1520924400";
-   d="asc'?scan'208";a="198366247"
-Message-ID: <ea4c716024a30ed834b1121adb8c2cb1deff2c97.camel@intel.com>
-Subject: Re: [PATCH v6 5/5] PCI: Remove unused pcie_get_minimum_link()
+   d="asc'?scan'208";a="38377717"
+Message-ID: <182a863cd7502dd9d872beb5265487a4ce39453d.camel@intel.com>
+Subject: Re: [PATCH v6 4/5] ixgbe: Report PCIe link properties with
+ pcie_print_link_status()
 From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Reply-To: jeffrey.t.kirsher@intel.com
 To: Bjorn Helgaas <helgaas@kernel.org>,
@@ -25,14 +26,13 @@ Cc: linux-pci@vger.kernel.org, everest-linux-l2@cavium.com,
         Tariq Toukan <tariqt@mellanox.com>,
         Jacob Keller <jacob.e.keller@intel.com>,
         Jakub Kicinski <kubakici@wp.pl>
-Date: Thu, 10 May 2018 13:34:47 -0700
-In-Reply-To: <20180510163357.GB190385@bhelgaas-glaptop.roam.corp.google.com>
+Date: Thu, 10 May 2018 13:37:17 -0700
+In-Reply-To: <152537763602.62474.15659483976051204438.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <152537719056.62474.2571390812509425478.stgit@bhelgaas-glaptop.roam.corp.google.com>
-         <152537764322.62474.552711932384023140.stgit@bhelgaas-glaptop.roam.corp.google.com>
-         <20180510163357.GB190385@bhelgaas-glaptop.roam.corp.google.com>
+         <152537763602.62474.15659483976051204438.stgit@bhelgaas-glaptop.roam.corp.google.com>
 Organization: Intel
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-ezjtuMDbw9aM3nX0qUyk"
+        protocol="application/pgp-signature"; boundary="=-pn319CNs1sSWaLiR7sVo"
 X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
 Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
@@ -40,70 +40,93 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-ezjtuMDbw9aM3nX0qUyk
+--=-pn319CNs1sSWaLiR7sVo
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2018-05-10 at 11:33 -0500, Bjorn Helgaas wrote:
-> On Thu, May 03, 2018 at 03:00:43PM -0500, Bjorn Helgaas wrote:
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> >=20
-> > In some cases pcie_get_minimum_link() returned misleading
-> > information
-> > because it found the slowest link and the narrowest link without
-> > considering the total bandwidth of the link.
-> >=20
-> > For example, consider a path with these two links:
-> >=20
-> >    - 16.0 GT/s  x1 link  (16.0 * 10^9 * 128 / 130) *  1 / 8 =3D 1969
-> > MB/s
-> >    -  2.5 GT/s x16 link  ( 2.5 * 10^9 *   8 /  10) * 16 / 8 =3D 4000
-> > MB/s
-> >=20
-> > The available bandwidth of the path is limited by the 16 GT/s link
-> > to about
-> > 1969 MB/s, but pcie_get_minimum_link() returned 2.5 GT/s x1, which
-> > corresponds to only 250 MB/s.
-> >=20
-> > Callers should use pcie_print_link_status() instead, or
-> > pcie_bandwidth_available() if they need more detailed information.
-> >=20
-> > Remove pcie_get_minimum_link() since there are no callers left.
-> >=20
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+On Thu, 2018-05-03 at 15:00 -0500, Bjorn Helgaas wrote:
+> From: Bjorn Helgaas <bhelgaas@google.com>
 >=20
-> Hi Jeff,
+> Previously the driver used pcie_get_minimum_link() to warn when the
+> NIC
+> is in a slot that can't supply as much bandwidth as the NIC could
+> use.
 >=20
-> I got your note that you applied this to dev-queue.  I assume that
-> means you also applied the preceding patches that removed all the
-> users.  I got a note about ixgbe, but not the others, so I'm just
-> double-checking.
+> pcie_get_minimum_link() can be misleading because it finds the
+> slowest link
+> and the narrowest link (which may be different links) without
+> considering
+> the total bandwidth of each link.  For a path with a 16 GT/s x1 link
+> and a
+> 2.5 GT/s x16 link, it returns 2.5 GT/s x1, which corresponds to 250
+> MB/s of
+> bandwidth, not the true available bandwidth of about 1969 MB/s for a
+> 16 GT/s x1 link.
+>=20
+> Use pcie_print_link_status() to report PCIe link speed and possible
+> limitations instead of implementing this in the driver itself.  This
+> finds
+> the slowest link in the path to the device by computing the total
+> bandwidth
+> of each link and compares that with the capabilities of the device.
+>=20
+> The dmesg change is:
+>=20
+>   - PCI Express bandwidth of %dGT/s available
+>   - (Speed:%s, Width: x%d, Encoding Loss:%s)
+>   + %u.%03u Gb/s available PCIe bandwidth (%s x%d link)
+>=20
+> or, if the device is capable of better performance than is available
+> in the
+> current slot:
+>=20
+>   - This is not sufficient for optimal performance of this card.
+>   - For optimal performance, at least %dGT/s of bandwidth is
+> required.
+>   - A slot with more lanes and/or higher speed is suggested.
+>   + %u.%03u Gb/s available PCIe bandwidth, limited by %s x%d link at
+> %s (capable of %u.%03u Gb/s with %s x%d link)
+>=20
+> Note that the driver previously used dev_warn() to suggest using a
+> different slot, but pcie_print_link_status() uses dev_info() because
+> if the
+> platform has no faster slot available, the user can't do anything
+> about the
+> warning and may not want to be bothered with it.
+>=20
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-I did initially apply it, but realized that I would have to apply the
-earlier patches as well, which did not pertain to the Intel wired LAN
-drivers.  So I have removed this patch from queue and will only be
-testing the ixgbe patch of the series, which Andrew has already tested
-and responded to.
---=-ezjtuMDbw9aM3nX0qUyk
+Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+
+Since this is apart of a series, I am not planning to pick this up and
+push to David Miller in my ixgbe updates.  This should remain in the
+series so David can pick up the entire series at once.
+
+> ---
+>  drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |   47 +------------
+> ------------
+>  1 file changed, 1 insertion(+), 46 deletions(-)
+
+--=-pn319CNs1sSWaLiR7sVo
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlr0rOcACgkQ5W/vlVpL
-7c42xBAAlFSF0qz3Go3dVfEzbDD1YlmobU8AzSTOONIuP3aFmggcNMR0pX+uoHLb
-QdqhMeh6/I3wUUpMX+eV0wF39hj6WOMAHOJiORU8SLa0SFRGiLzXnzKHprdIDTiJ
-isdNzJ/EkrogVu5QsuOMYA5O3bCc37SfwSSoaTJJU4w7MS1UvUjfwT2ZWT1bqxoI
-cM1UKUF+FKVv6QvgUf1JuLqpFtauyfJTy8/EnqPMPtkodxrp8F7dpui+NXt1gUM1
-WbwW25ZqRcCsvMEFAC7Jf0YrRgnkkn/KUrNqBzL3LdgEbmeVcdWnrVqWHXlUplYJ
-Qt/x5NQ1E0uh4B5A3CeUVuuUHaZI3MPK1/MffHR1ja4NyI19o2KEAGPgmrajOEcK
-TFrKFyYCZOHO9flhVOUzbA6vReaz5ELELNwlNiS//4Qazp/YI/2u03a8LHQuSal/
-2aUkA+qYfTNzTvkupp52kCnStE1qB2mwu/10cxUAg2tqtq9ZiOoNbjs/JuQw6NWJ
-QP8waunF2r7r9+5fn1+X3tpDzoL65uZXwLQP92pEX9xlVYQcOIx9wf9ZCF/zHAGo
-VtUbNCtGwJnp1EypI9/PiGmFKHwnsOjhqAg2+yAJxuKlIeDtnVZRE9c/OXR++6aI
-1ROAd/ODYha5ssWy+0hygaaZNrEPaF7G/k5ARPne4Yzo5c2geiQ=
-=9ryB
+iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlr0rX0ACgkQ5W/vlVpL
+7c4B1g/9GFdyqM9Jr9tJUa4p9tx12FENwn4QFgkxMsgrgVxSMajW6xErR7SeNDB9
+wjYkJa8buc6P2LQSk9Ix8xfI2ZJKU2yyrr3TqEjq0klrU80kWBhht2iwvWd/4Kvw
+pcWUA4T2v2e5GpiH0SxBZMrrqHFZxt5RCc3Z/N5VViD/IvsYUcEoibA+pvdAe8QB
+TTAKjA83oDUrpPuir9aPgHHoLc80taD2bIrD37yjtS9he5C4KZ/Pt7zIpHiRWbLO
+HnPaiYG/TPYoOB1Zmr0EWvte0SMEzYYmTefmv/3snYEztN4ZQcxcOxH9iHsfQ6Be
+EDkk2mwbNfZE/COuHAFIXF/TXi0zSsQ4O5D5Xyjh0zsimTs9n773gVHoZNaRwi71
+Ev/5lY0vEQ3Z0opqE5ODpcOscDK/+AxnKVnUtwNN+WF7TYz6GG6T82xH6+KaZN8T
+1cXpNbIi0gtuh/Ub6UQtSFArgvxc5TrNjpcYLhlUmogz/m0QOXy+WL+Xbz+XhWxd
+fcQs+aonGvYjt7HhU4vwgZWMFkE7l1VcTUWEo4YcFY+1bv6s1DDoBLGEm5IUd4Pi
+To2kYpILUoPBMsWS2z4GjjPmsuB18PH4g+i68DM7+3/koIwGss4OgO5D7uTaq59M
+v8Uq2PTUobhnxQcecUjaUaTgpqKvNBfOmaITdWoHU54wJTMfRU0=
+=Z8SL
 -----END PGP SIGNATURE-----
 
---=-ezjtuMDbw9aM3nX0qUyk--
+--=-pn319CNs1sSWaLiR7sVo--
