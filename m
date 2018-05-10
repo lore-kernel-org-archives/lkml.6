@@ -1,156 +1,114 @@
-Return-Path: <broonie@sirena.org.uk>
-X-Google-Smtp-Source: AB8JxZqtblBx/SN99pB3rx6n9UH3Z1kYBQjPd1wvmDPDA06n2oCJHD95XQk4A+0Dh7JnFXwFaPYy
-ARC-Seal: i=1; a=rsa-sha256; t=1526008580; cv=none;
-        d=google.com; s=arc-20160816;
-        b=zKuQjhg1O+pnlAriPPWauhWqvJ+ieV+7bIL+TaF9Ki2cdu0b5+AL156zps5Vhsac0f
-         CtHgNSRPFRmLv8O6MgAvzT+6+BgfbiyMsgZrfEhSdPN/d/ONdQekowh3Ya2cldVUFdEF
-         T0jAyz1cw3ES2OVzrYqMNpKwjPl1zJDbx/tfraOBi9s7/sJJU/FUUwzdmyqxcmKWnH3u
-         73CqCLyRdhvT3jKT5yy/eebnStqqz3VieaO/YxIvIedkLHX57L1mBDzKcvliPJr3k7Em
-         xHSGtcSCFlwNHPmhjmvION59z6e+hHp8H/uO6+O5K6GDEkLI/hoBTtsHKINhtDYyRiNT
-         D5Zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=OdDzdcyWbZed9DlKy/A9KgzlUdiSVRWBen0YWI6kUVI=;
-        b=PmpFdoCbEKV9iTpxtI5sGNPMNQflEnr6QL0rH/nqaEQdFOd5+8wfIbIXJAwxl0iVaD
-         2z6QFC6GkVoJg0EFuaRwRXGwCzepjV7XuTde+1+nfmGpKoTJieNy1E2HbtiC9SBCc/Xn
-         pIaGrqdqsIBirBJzLPd21NMGwN2lB3W33RbMlckItsWJRgsD2JmzPqxqrknbnlfzK2AC
-         phvb9cdvbbSb45H+1/Uhm2A/VW385GKAWxt+excGtCZ7v9oq8B6LQ15UxobNsdT5l8XU
-         3TMWQzuQzv0Cgd6rimnkW3F20dT7qcpe7YGqFS4bcgRhCoulN1GLFzj1iosFIvwPvDCl
-         zlTw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=kaxaWclI;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=kaxaWclI;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Mark Brown <broonie@kernel.org>, andy.gross@linaro.org, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, robh+dt@kernel.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, tiwai@suse.com, lgirdwood@gmail.com, david.brown@linaro.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: dt-bindings: Add q6asm dt bindings" to the asoc tree
-In-Reply-To: <20180426094606.4775-7-srinivas.kandagatla@linaro.org>
-Message-Id: <20180511031602.30B7C44007A@finisterre.ee.mobilebroadband>
-Date: Fri, 11 May 2018 04:16:02 +0100 (BST)
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2746254-1525985296-2-4735621819825795332
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525985295; b=V/J9z1GRitSBcS6TKcy6MiGiHyoCTML7OAbhKzaBJx9ZSh4aHv
+    7GUfFXptTIMiEznIgiBxcRpM7J9Ljvu5dgCtlGiq9RdQmhbjMap6Zbvm3Yir5r55
+    c6hMCPH40D2E/CO6FjR3w359ntYxdtD7gnwl8d8l/zZ+laXQIeRToBniBiKz/E7y
+    DEldwucXgU00acsCbIRneC1Oa+67s4pmDJYXiGITRx7yctoXK2M8MnKBDdyiXcEA
+    fFEgcFEGk3XUBJzyRjO+qlrCh0zCa3WUB1MZKNHuhdUt3OfFzg26xDy6QTmd/DBW
+    aqsOLUoMlvLfCcsnQlEpGkIgST0g4+4Ezn5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1525985295; bh=7b0Th38pdpmyKfwIY50ZV4OVzt4X/9
+    OKYQMH7aXfFjU=; b=c3Ux8HeHDL+Pvz0hNjGaTw4sIgPxI/+SIVphQLKixu7DFq
+    ecSqq4T+ncJYxXSuBGNVxVS18HmnkuIz0Y6r6kXCMmMLOkiYwCY+gj8jOLavqzBV
+    M1GEjM4titMwUgdJLFg/nXKj2fSfxz6O2VzQqW0U9Qm2qPVC2TMRHwNXTLbcJnwS
+    h+hJ2TscBWcOwux+nGQn54cu2RsZxPv2a8ej7lZNfMb8aDI8IJ0Z1szXqE/MvrJ2
+    cDy0nh/sa+bNe9copsU60Pl9YMbRV2YbUe3ItrH6+2RIFcdW+jZk/tBHCrHY5zvv
+    KsqPCHPVL3wiLHSlA5BW4/eaCqXDcLHW3+q8BO9g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=zeniv.linux.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=zeniv.linux.org.uk header.mx.error=NOERROR
+    header.result=warn header_org.domain=linux.org.uk
+    header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=zeniv.linux.org.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=zeniv.linux.org.uk header.mx.error=NOERROR
+      header.result=warn header_org.domain=linux.org.uk
+      header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfIodicg+NiH066npPIJdE26kfy8NA/Trx6iksZ0Ynw2mGUnGm4BN3sAOLEEa8Aw6UNgmOjMxC+7c36jbzDjmqbnFzsUg47d7Fi4pFKopcoDo495+cE0t
+    Mz6spYphFxLxLl5beSqiI/IzSZPZLgUFy83qG3n9S0D6aRWDkVSYzr0+CLCUNyng8Qr7GEKoElkzrSasnNhMlh+3ykhdzZtfx8uN3WuS4A7hRI6yByj+wUA5
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=Gy2oqKvDCts8vtp6em4A:9 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752235AbeEJUsO (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 10 May 2018 16:48:14 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:56996 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752188AbeEJUsN (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 10 May 2018 16:48:13 -0400
+Date: Thu, 10 May 2018 21:48:07 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        sandeen@sandeen.net, darrick.wong@oracle.com, dhowells@redhat.com,
+        tytso@mit.edu, fliu@suse.com, jack@suse.cz, jeffm@suse.com,
+        nborisov@suse.com, jake.norris@suse.com, mtk.manpages@gmail.com,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] vfs: skip extra attributes check on removal for symlinks
+Message-ID: <20180510204807.GV30522@ZenIV.linux.org.uk>
+References: <20180426234639.12480-1-mcgrof@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180426234639.12480-1-mcgrof@kernel.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600135972764991305?=
-X-GMAIL-MSGID: =?utf-8?q?1600135972764991305?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The patch
+On Thu, Apr 26, 2018 at 04:46:39PM -0700, Luis R. Rodriguez wrote:
 
-   ASoC: qdsp6: dt-bindings: Add q6asm dt bindings
+> Since we cannot set these attributes we should special-case the
+> immutable/append on delete for symlinks, this would be consistent with
+> what we *do* allow on Linux for all filesystems.
 
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 0e17e9820319c012c80ebba0a6df07d6a3a03ab3 Mon Sep 17 00:00:00 2001
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Wed, 9 May 2018 13:56:17 +0100
-Subject: [PATCH] ASoC: qdsp6: dt-bindings: Add q6asm dt bindings
-
-This patch add DT bindings for ASM (Audio Stream Manager) DSP module.
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- .../devicetree/bindings/sound/qcom,q6asm.txt  | 33 +++++++++++++++++++
- include/dt-bindings/sound/qcom,q6asm.h        | 22 +++++++++++++
- 2 files changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6asm.txt
- create mode 100644 include/dt-bindings/sound/qcom,q6asm.h
-
-diff --git a/Documentation/devicetree/bindings/sound/qcom,q6asm.txt b/Documentation/devicetree/bindings/sound/qcom,q6asm.txt
-new file mode 100644
-index 000000000000..2178eb91146f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qcom,q6asm.txt
-@@ -0,0 +1,33 @@
-+Qualcomm Audio Stream Manager (Q6ASM) binding
-+
-+Q6ASM is one of the APR audio service on Q6DSP.
-+Please refer to qcom,apr.txt for details of the common apr service bindings
-+used by the apr service device.
-+
-+- but must contain the following property:
-+
-+- compatible:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "qcom,q6asm-v<MAJOR-NUMBER>.<MINOR-NUMBER>".
-+		    Or "qcom,q6asm" where the version number can be queried
-+		    from DSP.
-+		    example "qcom,q6asm-v2.0"
-+
-+= ASM DAIs (Digial Audio Interface)
-+"dais" subnode of the ASM node represents dai specific configuration
-+
-+- #sound-dai-cells
-+	Usage: required
-+	Value type: <u32>
-+	Definition: Must be 1
-+
-+= EXAMPLE
-+
-+q6asm@7 {
-+	compatible = "qcom,q6asm";
-+	reg = <APR_SVC_ASM>;
-+	q6asmdai: dais {
-+		#sound-dai-cells = <1>;
-+	};
-+};
-diff --git a/include/dt-bindings/sound/qcom,q6asm.h b/include/dt-bindings/sound/qcom,q6asm.h
-new file mode 100644
-index 000000000000..1eb77d87c2e8
---- /dev/null
-+++ b/include/dt-bindings/sound/qcom,q6asm.h
-@@ -0,0 +1,22 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __DT_BINDINGS_Q6_ASM_H__
-+#define __DT_BINDINGS_Q6_ASM_H__
-+
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA1	0
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA2	1
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA3	2
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA4	3
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA5	4
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA6	5
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA7	6
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA8	7
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA9	8
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA10	9
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA11	10
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA12	11
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA13	12
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA14	13
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA15	14
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA16	15
-+
-+#endif /* __DT_BINDINGS_Q6_ASM_H__ */
--- 
-2.17.0
+Er...  So why not simply sanity-check it in places that set it on
+inodes?  If anything, I would suggest
+	* converting all places that set those in ->i_flags to
+inode_set_flags()
+	* making inode_set_flags() check and return an error on
+that...
