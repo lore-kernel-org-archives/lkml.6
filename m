@@ -1,27 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966370AbeEJSP1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 14:15:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:40751 "EHLO
+        id S966623AbeEJSQF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 14:16:05 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37169 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966012AbeEJSPZ (ORCPT
+        with ESMTP id S966012AbeEJSQD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 14:15:25 -0400
-Date: Thu, 10 May 2018 11:15:08 -0700
+        Thu, 10 May 2018 14:16:03 -0400
+Date: Thu, 10 May 2018 11:15:40 -0700
 From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-7u37pv09xtvet1ll27840w73@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, namhyung@kernel.org, mingo@kernel.org,
-        hpa@zytor.com, tglx@linutronix.de, wangnan0@huawei.com,
-        marc.zyngier@arm.com, jolsa@kernel.org, adrian.hunter@intel.com,
-        acme@redhat.com, dsahern@gmail.com
-Reply-To: adrian.hunter@intel.com, dsahern@gmail.com, acme@redhat.com,
-        wangnan0@huawei.com, marc.zyngier@arm.com, jolsa@kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <tip-ye1o2mji7x68xotiot1tn1gp@git.kernel.org>
+Cc: ak@linux.intel.com, wangnan0@huawei.com, jolsa@kernel.org,
+        adrian.hunter@intel.com, mingo@kernel.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, hpa@zytor.com,
+        alexander.shishkin@linux.intel.com, dsahern@gmail.com,
+        namhyung@kernel.org, acme@redhat.com, kan.liang@linux.intel.com
+Reply-To: jolsa@kernel.org, wangnan0@huawei.com, ak@linux.intel.com,
+        adrian.hunter@intel.com, mingo@kernel.org, tglx@linutronix.de,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        alexander.shishkin@linux.intel.com, dsahern@gmail.com, hpa@zytor.com,
+        acme@redhat.com, kan.liang@linux.intel.com, namhyung@kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools headers kvm: Sync ARM UAPI headers with the
- kernel sources
-Git-Commit-ID: 5981ec36688c49b7262f399c1a10edecc6e55ed2
+Subject: [tip:perf/urgent] Revert "perf pmu: Fix pmu events parsing rule"
+Git-Commit-ID: 4a35a9027f64d588d2fd9436dda4126e8d5647d7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,66 +35,74 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5981ec36688c49b7262f399c1a10edecc6e55ed2
-Gitweb:     https://git.kernel.org/tip/5981ec36688c49b7262f399c1a10edecc6e55ed2
+Commit-ID:  4a35a9027f64d588d2fd9436dda4126e8d5647d7
+Gitweb:     https://git.kernel.org/tip/4a35a9027f64d588d2fd9436dda4126e8d5647d7
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 7 May 2018 13:23:19 -0300
+AuthorDate: Mon, 7 May 2018 15:27:01 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 7 May 2018 15:23:46 -0300
+CommitDate: Mon, 7 May 2018 16:28:10 -0300
 
-tools headers kvm: Sync ARM UAPI headers with the kernel sources
+Revert "perf pmu: Fix pmu events parsing rule"
 
-To sync with the changes made in 85bd0ba1ff98 ("arm/arm64: KVM: Add PSCI
-version selection API"), that do not cause any changes in the tools,
-just to silence the build warning:
+As reported by Adrian Hunter, this breaks intel_pt event parsing:
 
-  Warning: Kernel ABI header at 'tools/arch/arm/include/uapi/asm/kvm.h' differs from latest version at 'arch/arm/include/uapi/asm/kvm.h'
-  Warning: Kernel ABI header at 'tools/arch/arm64/include/uapi/asm/kvm.h' differs from latest version at 'arch/arm64/include/uapi/asm/kvm.h'
+  # perf record -e intel_pt//u uname
+  event syntax error: 'intel_pt//u'
+                               \___ parser error
+  Run 'perf list' for a list of valid events
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
+   Usage: perf record [<options>] [<command>]
+      or: perf record [<options>] -- <command> [<options>]
+
+      -e, --event <event>   event selector. use 'perf list' to list available events
+  #
+
+This reverts commit 9a4a931ce847f4aaa12edf11b2e050e18bf45910.
+
+Reported-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-7u37pv09xtvet1ll27840w73@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-ye1o2mji7x68xotiot1tn1gp@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/arch/arm/include/uapi/asm/kvm.h   | 6 ++++++
- tools/arch/arm64/include/uapi/asm/kvm.h | 6 ++++++
- 2 files changed, 12 insertions(+)
+ tools/perf/util/parse-events.y | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/arch/arm/include/uapi/asm/kvm.h b/tools/arch/arm/include/uapi/asm/kvm.h
-index 2ba95d6fe852..caae4843cb70 100644
---- a/tools/arch/arm/include/uapi/asm/kvm.h
-+++ b/tools/arch/arm/include/uapi/asm/kvm.h
-@@ -195,6 +195,12 @@ struct kvm_arch_memory_slot {
- #define KVM_REG_ARM_VFP_FPINST		0x1009
- #define KVM_REG_ARM_VFP_FPINST2		0x100A
+diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+index d14464c42714..7afeb80cc39e 100644
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -224,15 +224,15 @@ event_def: event_pmu |
+ 	   event_bpf_file
  
-+/* KVM-as-firmware specific pseudo-registers */
-+#define KVM_REG_ARM_FW			(0x0014 << KVM_REG_ARM_COPROC_SHIFT)
-+#define KVM_REG_ARM_FW_REG(r)		(KVM_REG_ARM | KVM_REG_SIZE_U64 | \
-+					 KVM_REG_ARM_FW | ((r) & 0xffff))
-+#define KVM_REG_ARM_PSCI_VERSION	KVM_REG_ARM_FW_REG(0)
-+
- /* Device Control API: ARM VGIC */
- #define KVM_DEV_ARM_VGIC_GRP_ADDR	0
- #define KVM_DEV_ARM_VGIC_GRP_DIST_REGS	1
-diff --git a/tools/arch/arm64/include/uapi/asm/kvm.h b/tools/arch/arm64/include/uapi/asm/kvm.h
-index 9abbf3044654..04b3256f8e6d 100644
---- a/tools/arch/arm64/include/uapi/asm/kvm.h
-+++ b/tools/arch/arm64/include/uapi/asm/kvm.h
-@@ -206,6 +206,12 @@ struct kvm_arch_memory_slot {
- #define KVM_REG_ARM_TIMER_CNT		ARM64_SYS_REG(3, 3, 14, 3, 2)
- #define KVM_REG_ARM_TIMER_CVAL		ARM64_SYS_REG(3, 3, 14, 0, 2)
+ event_pmu:
+-PE_NAME '/' event_config '/'
++PE_NAME opt_event_config
+ {
+ 	struct list_head *list, *orig_terms, *terms;
  
-+/* KVM-as-firmware specific pseudo-registers */
-+#define KVM_REG_ARM_FW			(0x0014 << KVM_REG_ARM_COPROC_SHIFT)
-+#define KVM_REG_ARM_FW_REG(r)		(KVM_REG_ARM64 | KVM_REG_SIZE_U64 | \
-+					 KVM_REG_ARM_FW | ((r) & 0xffff))
-+#define KVM_REG_ARM_PSCI_VERSION	KVM_REG_ARM_FW_REG(0)
-+
- /* Device Control API: ARM VGIC */
- #define KVM_DEV_ARM_VGIC_GRP_ADDR	0
- #define KVM_DEV_ARM_VGIC_GRP_DIST_REGS	1
+-	if (parse_events_copy_term_list($3, &orig_terms))
++	if (parse_events_copy_term_list($2, &orig_terms))
+ 		YYABORT;
+ 
+ 	ALLOC_LIST(list);
+-	if (parse_events_add_pmu(_parse_state, list, $1, $3, false)) {
++	if (parse_events_add_pmu(_parse_state, list, $1, $2, false)) {
+ 		struct perf_pmu *pmu = NULL;
+ 		int ok = 0;
+ 		char *pattern;
+@@ -262,7 +262,7 @@ PE_NAME '/' event_config '/'
+ 		if (!ok)
+ 			YYABORT;
+ 	}
+-	parse_events_terms__delete($3);
++	parse_events_terms__delete($2);
+ 	parse_events_terms__delete(orig_terms);
+ 	$$ = list;
+ }
