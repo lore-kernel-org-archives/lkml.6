@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3189354-1526008748-2-16485261371071159935
+X-Cyrus-Session-Id: sloti22d1t05-2746254-1525986015-2-12343957880920076759
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='us-ascii'
@@ -8,22 +8,22 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526008748; b=Tp4OXc1tYtebmuxv2Wb8axHEuXCktYpmvv5XRMKzvIAN7tnpSw
-    sYtKFE++GF/iBNhnfWoU39EPK2IaP2CBWEkj5xZflSXGshZuCyPIcf3y953/DMbw
-    rq/HUMQ2xHKXf0X0d+z5WtKKKZZ5SGTgq2jHLLjahrsF00FLY1T3vMMQoh0B51Xp
-    Pi7dJFJumncrUKckfjX1ntkIk9GYeOHylQIJF7k3cklZHq1r8Cy/8gqGKPxiF67z
-    6nkSJvrHUgqPeItD9vlOJRi5Qr0K+QBbfqownHYgrq+PhG9Zvt+4UTbEL+Psaqaw
-    ECFRg+KNoMc3/PO4M28JZU0Q3agVDWZcq/Gw==
+    1525986015; b=POgjPs3mbBbQhtEgIFsrUWO/h4IRESVdOL99nWGK/IlPrC583C
+    VntRPtnjYQsl97Dx64kPnoL5mGaCK2Gh94cU8fiuVNWFc5KctpHePtx3nrhyE8p+
+    HsI7ev2cgP6NGrFzI/3Rv4tN+NnVKJwydA5IXEl/WjQLtr74wN55midqr7cXarp+
+    GD1gLi1t8XqtYAZAMabNDgRY2P4sE4qBF+A1KpIWt1PEYxPBhH2n2DU7lbvQsKWU
+    jLOYGpjpTxSCdQF/jhwEFC/8zV1HHQZlD422DHzPOaRlLm4zojfLR//6cEaFzMpU
+    S2Tr73gQtsesUrs8QVriLz+xpg8Hf/vfpUdg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526008748; bh=Cr5/ibxP6dk9AA5XvxPJZWHsz/i7yL
-    1xV8aOoGOKTa4=; b=mMsNhVTcAxNfg0v+0C9GFSkC3ZitMjtotoh3JjhoQC2ErF
-    I/MFWx2Mc/m371W9ZupbZDAHl/nP8wp7nmWGnSpO2tOTv0HDK7ZRvfG0HYXG1ev+
-    /TEXQMko4Ie5XvKbouUCypmLpGoWGVFVNvEjQv6nBQhF7ILdEzWWjw5OIzbSAkx/
-    D7v7fFhohG16vJU8pXuyl25KxDfBVeBDkhPfTQ/LXZwILYuLQJp0Xj1n2PmyEWWD
-    f4iLtZ4vy0cbYzhBmP4YczI28ZpLFAm6PY8NIYktzct9v50ZtDU38WQARy0xRD+8
-    Ctg7eN81C7uEkBlyyr0FhXblGnmlAHP2iT4rX4JA==
+    :list-id; s=fm2; t=1525986015; bh=l7GACWQRGGQ7GjDsmGFZzJcZ3cd9tF
+    5+Mqaw4x7HoQI=; b=Xb9YDhLTRLg3Idgi737RlkXR6N0iY2hj4VbocGbVl3NOfI
+    /xPCLo+VoxrGr4p69YsiZJlaW0uOehpFMYkoznQIQmlaLzOggT/gQIP9+ugN9kSk
+    p1BhdZ1w8aDozIFpXdT1ZfRsQs3Qq6tKfNueZEXkRHNPVxWCdezgW/W9sniX2D0c
+    YXPWdVBPijV7Yuj5XToTss1Cdo/pCmtiwjccqb+3vs4RsBYzgUI9sZWnIWXbWwAM
+    CJGdDeNn5aJgqLW1GL2DZwGWmE4mxQ6f13h9OkpP73F4SRD9MDAWBGXtGVcRv2Nc
+    fNr0ZCZrGHG4kkGQgT7Kyd2V4AHhEbOEMi1av+nQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
@@ -52,29 +52,28 @@ Authentication-Results: mx4.messagingengine.com;
       header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPxeopiiHgxwGrMMW158vJUe1q2rICuA0VwQ4qfvl1/b5FY5vfN9A6c3oMi2ai8g9+5taT3QKLE3EnyL07JkN3cyqUr8MemWg1Cj/8yd1GTvZTJRhZ8w
-    BtmziPbb3aAb+cEULaGQ45tHlchLvwB3p5QGDe2AyJh4iz73nPCtIMY4NHYdJNTya1GfSMEF+PtYKOdAGUurX0R2wpKv6iB8PgIYxCjtCPQQyU2NcNedd2GP
+X-CM-Envelope: MS4wfLe+vrPQzdvAUQVr9Z9FGusenFlz1+AwM8gtw//OL8GbnLJtA8SnLJe36WFE7Zu15x9n7gVOQM6hXoxRE6Xscpi9pUWMsmc1mhXPM0pZh/3IwEv7HI2s
+    lULts2uMI3ZYVv1wkYhnDaZIyTZ66VVBplYTks/nZTFhjKNYtwX3cfGuR530o9XfOH0O9wACoX6OI7aRREy9BhOv4Ey3YVHp9l4br0qB+06U9IwVOD7KxFwW
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=NEAV23lmAAAA:8
-    a=mDV3o1hIAAAA:8 a=VnNF1IyMAAAA:8 a=i3X5FwGiAAAA:8 a=BxbVYVQHuwBNYEwyMGEA:9
+    a=mDV3o1hIAAAA:8 a=meVymXHHAAAA:8 a=i3X5FwGiAAAA:8 a=sn6BUSaPpWSHMX88B8wA:9
     a=CjuIK1q_8ugA:10 a=Ady7SOFvOD8UXnpTnOMA:9 a=49ladYHvHUoA:10
-    a=_FVE-zBwftR9WsbkzFJk:22 a=mmqRlSCDY2ywfjPLJ4af:22
+    a=_FVE-zBwftR9WsbkzFJk:22 a=2JgSa4NbpEOStq-L5dxp:22 a=mmqRlSCDY2ywfjPLJ4af:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752242AbeEKDTF (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 10 May 2018 23:19:05 -0400
-Received: from mga11.intel.com ([192.55.52.93]:25242 "EHLO mga11.intel.com"
+        id S1752512AbeEJVAN (ORCPT <rfc822;linux@kroah.com>);
+        Thu, 10 May 2018 17:00:13 -0400
+Received: from mga18.intel.com ([134.134.136.126]:40566 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752238AbeEKDTE (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Thu, 10 May 2018 23:19:04 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1752457AbeEJVAM (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Thu, 10 May 2018 17:00:12 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,387,1520924400";
-   d="gz'50?scan'50,208,50";a="227612515"
-Date: Fri, 11 May 2018 11:18:04 +0800
+X-IronPort-AV: E=Sophos;i="5.49,386,1520924400";
+   d="gz'50?scan'50,208,50";a="54880891"
+Date: Fri, 11 May 2018 04:59:18 +0800
 From: kbuild test robot <lkp@intel.com>
 To: changbin.du@intel.com
 Cc: kbuild-all@01.org, yamada.masahiro@socionext.com,
@@ -86,10 +85,10 @@ Cc: kbuild-all@01.org, yamada.masahiro@socionext.com,
         Changbin Du <changbin.du@intel.com>
 Subject: Re: [PATCH v4 3/4] kernel hacking: new config
  CC_OPTIMIZE_FOR_DEBUGGING to apply GCC -Og optimization
-Message-ID: <201805111151.dA3OXxaF%fengguang.wu@intel.com>
+Message-ID: <201805110234.FUlJejFr%fengguang.wu@intel.com>
 References: <1525855396-7908-4-git-send-email-changbin.du@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="sm4nu43k4a2Rpi4c"
+Content-Type: multipart/mixed; boundary="FL5UXtIhxfXey3p5"
 Content-Disposition: inline
 In-Reply-To: <1525855396-7908-4-git-send-email-changbin.du@intel.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
@@ -103,7 +102,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
---sm4nu43k4a2Rpi4c
+--FL5UXtIhxfXey3p5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
@@ -127,102 +126,176 @@ http://gcc.gnu.org/wiki/Better_Uninitialized_Warnings
 
 All warnings (new ones prefixed by >>):
 
-   lib/test_firmware.c: In function 'trigger_batched_requests_async_store':
->> lib/test_firmware.c:779:31: warning: 'rc' may be used uninitialized in this function [-Wmaybe-uninitialized]
-      test_fw_config->test_result = rc;
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
---
-   kernel/futex.c: In function 'futex_atomic_op_inuser':
->> kernel/futex.c:1604:17: warning: 'oldval' may be used uninitialized in this function [-Wmaybe-uninitialized]
-      return oldval > cmparg;
-             ~~~~~~~^~~~~~~~
---
-   kernel/kexec_file.c: In function 'kexec_apply_relocations':
->> kernel/kexec_file.c:896:6: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-      if (ret)
+   drivers//net/wireless/zydas/zd1201.c: In function 'zd1201_get_freq':
+>> drivers//net/wireless/zydas/zd1201.c:939:10: warning: 'channel' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     freq->m = channel;
+     ~~~~~~~~^~~~~~~~~
+   drivers//net/wireless/zydas/zd1201.c: In function 'zd1201_get_mode':
+>> drivers//net/wireless/zydas/zd1201.c:1016:2: warning: 'porttype' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     switch(porttype) {
+     ^~~~~~
+   drivers//net/wireless/zydas/zd1201.c: In function 'zd1201_get_rate':
+>> drivers//net/wireless/zydas/zd1201.c:1282:2: warning: 'rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     switch(rate) {
+     ^~~~~~
+   drivers//net/wireless/zydas/zd1201.c: In function 'zd1201_get_rts':
+>> drivers//net/wireless/zydas/zd1201.c:1334:13: warning: 'rtst' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     rts->value = rtst;
+     ~~~~~~~~~~~^~~~~~
+   drivers//net/wireless/zydas/zd1201.c: In function 'zd1201_get_frag':
+>> drivers//net/wireless/zydas/zd1201.c:1372:14: warning: 'fragt' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     frag->value = fragt;
+     ~~~~~~~~~~~~^~~~~~~
+   drivers//net/wireless/zydas/zd1201.c: In function 'zd1201_set_power':
+>> drivers//net/wireless/zydas/zd1201.c:1503:28: warning: 'duration' may be used uninitialized in this function [-Wmaybe-uninitialized]
+       level = vwrq->value * 4 / duration;
+               ~~~~~~~~~~~~~~~~^~~~~~~~~~
+   drivers//net/wireless/zydas/zd1201.c: In function 'zd1201_get_power':
+   drivers//net/wireless/zydas/zd1201.c:1542:27: warning: 'duration' may be used uninitialized in this function [-Wmaybe-uninitialized]
+       vwrq->value = duration * level / 4;
+                     ~~~~~~~~~^~~~~~~
+>> drivers//net/wireless/zydas/zd1201.c:1547:15: warning: 'level' may be used uninitialized in this function [-Wmaybe-uninitialized]
+      if (enabled && level)
+          ~~~~~~~~^~~~~~~~
+>> drivers//net/wireless/zydas/zd1201.c:1547:6: warning: 'enabled' may be used uninitialized in this function [-Wmaybe-uninitialized]
+      if (enabled && level)
          ^
+   drivers//net/wireless/zydas/zd1201.c: In function 'zd1201_get_hostauth':
+>> drivers//net/wireless/zydas/zd1201.c:1631:13: warning: 'hostauth' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     rrq->value = hostauth;
+     ~~~~~~~~~~~^~~~~~~~~~
+   drivers//net/wireless/zydas/zd1201.c: In function 'zd1201_get_maxassoc':
+>> drivers//net/wireless/zydas/zd1201.c:1681:13: warning: 'maxassoc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     rrq->value = maxassoc;
+     ~~~~~~~~~~~^~~~~~~~~~
 --
-   mm/swap_state.c: In function '__add_to_swap_cache':
->> mm/swap_state.c:156:9: warning: 'error' may be used uninitialized in this function [-Wmaybe-uninitialized]
-     return error;
-            ^~~~~
+   drivers/rtc/rtc-da9052.c: In function 'da9052_read_alarm':
+>> drivers/rtc/rtc-da9052.c:25:3: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+      dev_err(rtc->da9052->dev, "%s: " fmt, __func__, ##__VA_ARGS__)
+      ^~~~~~~
+   In file included from drivers/rtc/rtc-da9052.c:21:0:
+   include/linux/mfd/da9052/da9052.h:157:6: note: 'ret' was declared here
+     int ret;
+         ^~~
+>> drivers/rtc/rtc-da9052.c:25:3: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+      dev_err(rtc->da9052->dev, "%s: " fmt, __func__, ##__VA_ARGS__)
+      ^~~~~~~
+   In file included from drivers/rtc/rtc-da9052.c:21:0:
+   include/linux/mfd/da9052/da9052.h:157:6: note: 'ret' was declared here
+     int ret;
+         ^~~
+   drivers/rtc/rtc-da9052.c: In function 'da9052_rtc_read_time':
+>> drivers/rtc/rtc-da9052.c:25:3: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+      dev_err(rtc->da9052->dev, "%s: " fmt, __func__, ##__VA_ARGS__)
+      ^~~~~~~
+   In file included from drivers/rtc/rtc-da9052.c:21:0:
+   include/linux/mfd/da9052/da9052.h:157:6: note: 'ret' was declared here
+     int ret;
+         ^~~
+>> drivers/rtc/rtc-da9052.c:25:3: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+      dev_err(rtc->da9052->dev, "%s: " fmt, __func__, ##__VA_ARGS__)
+      ^~~~~~~
+   In file included from drivers/rtc/rtc-da9052.c:21:0:
+   include/linux/mfd/da9052/da9052.h:157:6: note: 'ret' was declared here
+     int ret;
+         ^~~
 --
-   mm/swapfile.c: In function 'setup_swap_map_and_extents':
->> mm/swapfile.c:3061:10: warning: 'nr_extents' may be used uninitialized in this function [-Wmaybe-uninitialized]
-      return nr_extents;
-             ^~~~~~~~~~
+   net/bluetooth/mgmt.c: In function 'read_local_oob_ext_data_complete':
+>> net/bluetooth/mgmt.c:5669:27: warning: 'r256' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     u8 *h192, *r192, *h256, *r256;
+                              ^~~~
 --
-   mm/ksm.c: In function 'stable_node_dup':
->> mm/ksm.c:1365:15: warning: 'found_rmap_hlist_len' may be used uninitialized in this function [-Wmaybe-uninitialized]
-       if (!found ||
-           ~~~~~~~^~
-           dup->rmap_hlist_len > found_rmap_hlist_len) {
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers//net/wireless/zydas/zd1211rw/zd_usb.c:28:0:
+   drivers//net/wireless/zydas/zd1211rw/zd_usb.c: In function 'eject_installer':
+>> include/linux/usb.h:1922:23: warning: 'bulk_out_ep' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     ((PIPE_BULK << 30) | __create_pipe(dev, endpoint))
+                          ^~~~~~~~~~~~~
+   drivers//net/wireless/zydas/zd1211rw/zd_usb.c:1278:5: note: 'bulk_out_ep' was declared here
+     u8 bulk_out_ep;
+        ^~~~~~~~~~~
 --
-   mm/huge_memory.c: In function 'do_huge_pmd_wp_page':
->> mm/huge_memory.c:1318:15: warning: 'huge_gfp' may be used uninitialized in this function [-Wmaybe-uninitialized]
-     if (unlikely(mem_cgroup_try_charge(new_page, vma->vm_mm,
-                  ^~~~~~~~~~~~~~~~~~~~~
+   drivers/slimbus/messaging.c: In function 'slim_do_transfer':
+>> drivers/slimbus/messaging.c:126:4: warning: 'tid' may be used uninitialized in this function [-Wmaybe-uninitialized]
+       idr_remove(&ctrl->tid_idr, tid);
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 --
-   fs/splice.c: In function 'iter_file_splice_write':
->> fs/splice.c:694:10: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-     ssize_t ret;
-             ^~~
+   drivers//staging/comedi/drivers/serial2002.c: In function 'serial2002_setup_subdevs':
+>> drivers//staging/comedi/drivers/serial2002.c:497:7: warning: 'cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+      if (serial2002_setup_subdevice(s, cfg, range, mapping, kind))
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 --
-   In file included from include/asm-generic/bug.h:5:0,
-                    from arch/x86/include/asm/bug.h:83,
-                    from include/linux/bug.h:5,
-                    from include/linux/mmdebug.h:5,
-                    from include/linux/gfp.h:5,
-                    from include/linux/slab.h:15,
-                    from ipc/sem.c:73:
-   ipc/sem.c: In function 'find_alloc_undo':
->> include/linux/compiler.h:215:31: warning: 'ulp' may be used uninitialized in this function [-Wmaybe-uninitialized]
-     case 8: *(volatile __u64 *)p = *(__u64 *)res; break;
-             ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
-   ipc/sem.c:1843:24: note: 'ulp' was declared here
-     struct sem_undo_list *ulp;
-                           ^~~
+   In file included from drivers/net/wireless/zydas/zd1211rw/zd_usb.c:28:0:
+   drivers/net/wireless/zydas/zd1211rw/zd_usb.c: In function 'eject_installer':
+>> include/linux/usb.h:1922:23: warning: 'bulk_out_ep' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     ((PIPE_BULK << 30) | __create_pipe(dev, endpoint))
+                          ^~~~~~~~~~~~~
+   drivers/net/wireless/zydas/zd1211rw/zd_usb.c:1278:5: note: 'bulk_out_ep' was declared here
+     u8 bulk_out_ep;
+        ^~~~~~~~~~~
 --
-   block/blk-merge.c: In function '__blk_recalc_rq_segments':
->> block/blk-merge.c:284:21: warning: 'bbio' may be used uninitialized in this function [-Wmaybe-uninitialized]
-     if (seg_size > bbio->bi_seg_back_size)
-                    ~~~~^~~~~~~~~~~~~~~~~~
+   drivers//regulator/max8925-regulator.c: In function 'max8925_regulator_probe':
+>> drivers//regulator/max8925-regulator.c:315:3: warning: 'ri' may be used uninitialized in this function [-Wmaybe-uninitialized]
+      dev_err(&pdev->dev, "failed to register regulator %s\n",
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ri->desc.name);
+        ~~~~~~~~~~~~~~
+--
+   drivers//bcma/sprom.c: In function 'bcma_sprom_get':
+>> drivers//bcma/sprom.c:642:3: warning: 'sprom' may be used uninitialized in this function [-Wmaybe-uninitialized]
+      kfree(sprom);
+      ^~~~~~~~~~~~
+--
+   drivers//block/rbd.c: In function 'rbd_v2_snap_id_by_name':
+>> drivers//block/rbd.c:4797:25: warning: 'snap_id' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     return found ? snap_id : CEPH_NOSNAP;
+                             
+   drivers//block/rbd.c: In function 'rbd_dev_image_id':
+>> drivers//block/rbd.c:5349:27: warning: 'image_id' may be used uninitialized in this function [-Wmaybe-uninitialized]
+      rbd_dev->spec->image_id = image_id;
+      ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+--
+   drivers//firmware/qemu_fw_cfg.c: In function 'fw_cfg_build_symlink':
+>> drivers//firmware/qemu_fw_cfg.c:557:9: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     return ret;
+            ^~~
+..
 
-vim +/ulp +215 include/linux/compiler.h
+vim +/seq +33 include/linux/compiler.h
 
-230fa253 Christian Borntraeger 2014-11-25  208  
-43239cbe Christian Borntraeger 2015-01-13  209  static __always_inline void __write_once_size(volatile void *p, void *res, int size)
-230fa253 Christian Borntraeger 2014-11-25  210  {
-230fa253 Christian Borntraeger 2014-11-25  211  	switch (size) {
-230fa253 Christian Borntraeger 2014-11-25  212  	case 1: *(volatile __u8 *)p = *(__u8 *)res; break;
-230fa253 Christian Borntraeger 2014-11-25  213  	case 2: *(volatile __u16 *)p = *(__u16 *)res; break;
-230fa253 Christian Borntraeger 2014-11-25  214  	case 4: *(volatile __u32 *)p = *(__u32 *)res; break;
-230fa253 Christian Borntraeger 2014-11-25 @215  	case 8: *(volatile __u64 *)p = *(__u64 *)res; break;
-230fa253 Christian Borntraeger 2014-11-25  216  	default:
-230fa253 Christian Borntraeger 2014-11-25  217  		barrier();
-230fa253 Christian Borntraeger 2014-11-25  218  		__builtin_memcpy((void *)p, (const void *)res, size);
-230fa253 Christian Borntraeger 2014-11-25  219  		barrier();
-230fa253 Christian Borntraeger 2014-11-25  220  	}
-230fa253 Christian Borntraeger 2014-11-25  221  }
-230fa253 Christian Borntraeger 2014-11-25  222  
+1f0d69a9 Steven Rostedt          2008-11-12  22  
+d45ae1f7 Steven Rostedt (VMware  2017-01-17  23) #define __branch_check__(x, expect, is_constant) ({			\
+1f0d69a9 Steven Rostedt          2008-11-12  24  			int ______r;					\
+134e6a03 Steven Rostedt (VMware  2017-01-19  25) 			static struct ftrace_likely_data		\
+1f0d69a9 Steven Rostedt          2008-11-12  26  				__attribute__((__aligned__(4)))		\
+45b79749 Steven Rostedt          2008-11-21  27  				__attribute__((section("_ftrace_annotated_branch"))) \
+1f0d69a9 Steven Rostedt          2008-11-12  28  				______f = {				\
+134e6a03 Steven Rostedt (VMware  2017-01-19  29) 				.data.func = __func__,			\
+134e6a03 Steven Rostedt (VMware  2017-01-19  30) 				.data.file = __FILE__,			\
+134e6a03 Steven Rostedt (VMware  2017-01-19  31) 				.data.line = __LINE__,			\
+1f0d69a9 Steven Rostedt          2008-11-12  32  			};						\
+d45ae1f7 Steven Rostedt (VMware  2017-01-17 @33) 			______r = __builtin_expect(!!(x), expect);	\
+d45ae1f7 Steven Rostedt (VMware  2017-01-17  34) 			ftrace_likely_update(&______f, ______r,		\
+d45ae1f7 Steven Rostedt (VMware  2017-01-17  35) 					     expect, is_constant);	\
+1f0d69a9 Steven Rostedt          2008-11-12  36  			______r;					\
+1f0d69a9 Steven Rostedt          2008-11-12  37  		})
+1f0d69a9 Steven Rostedt          2008-11-12  38  
 
-:::::: The code at line 215 was first introduced by commit
-:::::: 230fa253df6352af12ad0a16128760b5cb3f92df kernel: Provide READ_ONCE and ASSIGN_ONCE
+:::::: The code at line 33 was first introduced by commit
+:::::: d45ae1f7041ac52ade6c5ec76d96bbed765d67aa tracing: Process constants for (un)likely() profiler
 
-:::::: TO: Christian Borntraeger <borntraeger@de.ibm.com>
-:::::: CC: Christian Borntraeger <borntraeger@de.ibm.com>
+:::::: TO: Steven Rostedt (VMware) <rostedt@goodmis.org>
+:::::: CC: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
 ---
 0-DAY kernel test infrastructure                Open Source Technology Center
 https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
---sm4nu43k4a2Rpi4c
+--FL5UXtIhxfXey3p5
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICHb99FoAAy5jb25maWcAlDxdc+M2ku/5FarJy+5DEtvj9eXqyg8QCUqISIIDkJLlF5Zj
+H4sICNR+9FoAAy5jb25maWcAlDxdc+M2ku/5FarJy+5DEtvj9eXqyg8QCUqISIIDkJLlF5Zj
 azKueOxZW94k//66G/wAwKYuN1XJDNGNBgj0dzf1/XffL8T78eXr3fHx/u7p6a/Fb4fnw+vd
 8fCw+Pz4dPifRaoXpa4XMlX1j4CcPz6///nTnz9ftVeXi8sfz//rx7MfXu8vF5vD6/PhaZG8
 PH9+/O0dCDy+PH/3/XeJLjO1Atylqq//6h9vaHrwPD6o0tamSWqlyzaViU6lGYG6qaumbjNt
@@ -889,4 +962,4 @@ WdKGYqn2Dk1SSyaFH/Qqy1wS2us2K3ba/4M4QaMymxOIDnhzASyR7veVcLz+KCyLHdVKg/Bu
 4aMv6Ix0rv0wZFpjVTwz9Q6HTNgJRGcUhiAbnVuQxQ1Dx9wZ6QbfGxNyqctk29j1+x42kxOP
 Nej/AYEH8Bu8JwIA
 
---sm4nu43k4a2Rpi4c--
+--FL5UXtIhxfXey3p5--
