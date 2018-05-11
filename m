@@ -1,66 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752453AbeEKEDU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 00:03:20 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:40579 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752373AbeEKEDT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 00:03:19 -0400
-X-Google-Smtp-Source: AB8JxZoCIfXjhKp7RaaNOoRorUbU9t3Qng5gSqzda9DZZxPmOiKArSBdx5qfjj10VthhwaJdsqrebAkSAbICBJOqBf4=
+        id S1752540AbeEKEEd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 00:04:33 -0400
+Received: from mga07.intel.com ([134.134.136.100]:26957 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751000AbeEKEEc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 00:04:32 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,387,1520924400";
+   d="scan'208";a="53349107"
+Date: Thu, 10 May 2018 22:04:30 -0600
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        linux-nvdimm@lists.01.org
+Subject: Re: [PATCH 0/5] fix radix tree multi-order iteration race
+Message-ID: <20180511040430.GA32655@linux.intel.com>
+References: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
+ <20180508174424.GA12638@linux.intel.com>
+ <20180510154844.dc4e4c7471a885b73ed50576@linux-foundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20180404143239.GA18238@arm.com>
-References: <20180404143239.GA18238@arm.com>
-From: Yang Li <pku.leo@gmail.com>
-Date: Thu, 10 May 2018 23:03:18 -0500
-Message-ID: <CADRPPNQhoXSGr4hpHaomcyamW51wT_F4fRTqZi4qtAD-jBHjxA@mail.gmail.com>
-Subject: Re: [GIT PULL] arm64: updates for 4.17
-To: Will Deacon <will.deacon@arm.com>
-Cc: torvalds@linux-foundation.org, lkml <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>, lorenzo.pieralisi@arm.com,
-        ebiederm@xmission.com, Marc Zyngier <marc.zyngier@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510154844.dc4e4c7471a885b73ed50576@linux-foundation.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 4, 2018 at 9:32 AM, Will Deacon <will.deacon@arm.com> wrote:
-> Hi Linus,
->
-> Please pull these arm64 updates for 4.17. Note that I've pulled in a
-> stable branch from Eric Biederman here to fulfil some siginfo dependencies,
-> so the diffstat strays slightly out of arm64 due to his changes.
-{snip}
->
-> Catalin Marinas (1):
->       arm64: Revert L1_CACHE_SHIFT back to 6 (64-byte cache line size)
->
+On Thu, May 10, 2018 at 03:48:44PM -0700, Andrew Morton wrote:
+> so I think I'll just ignore all that and send this series off to Linus next
+> week.
 
-{snip}
-
->
-> Will Deacon (20):
->       arm64: signal: Make force_signal_inject more robust
->       arm64: signal: Force SIGKILL for unknown signals in force_signal_inject
->       arm64: Introduce arm64_force_sig_info and hook up in arm64_notify_die
->       arm64: signal: Don't print anything directly in force_signal_inject
->       arm64: Pass user fault info to arm64_notify_die instead of printing it
->       arm64: mm: Rework unhandled user pagefaults to call arm64_force_sig_info
->       arm64: signal: Call arm64_notify_segfault when failing to deliver signal
->       arm64: Move show_unhandled_signals_ratelimited into traps.c
->       arm64: Use arm64_force_sig_info instead of force_sig_info
->       arm64: lse: Pass -fomit-frame-pointer to out-of-line ll/sc atomics
->       arm64: kaslr: Set TCR_EL1.NFD1 when CONFIG_RANDOMIZE_BASE=y
->       Merge tag 'acpi/iort-for-v4.17' of git://git.kernel.org/.../lpieralisi/linux into aarch64/for-next/core
->       Merge branch 'siginfo-next' of git://git.kernel.org/.../ebiederm/user-namespace into aarch64/for-next/core
->       arm64: cpufeature: Avoid warnings due to unused symbols
->       Revert "arm64: Revert L1_CACHE_SHIFT back to 6 (64-byte cache line size)"
-
-Hi Will,
-
-I'm wondering if we are changing the L1_CACHE_SHIFT to 6 in 4.17?
-This is causing big performance differences for us now.
-
-Regards,
-Leo
+Great.  Thank you, Andrew.
