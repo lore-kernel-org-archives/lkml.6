@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753386AbeEKPFP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 11:05:15 -0400
-Received: from foss.arm.com ([217.140.101.70]:43110 "EHLO foss.arm.com"
+        id S1753166AbeEKPGD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 11:06:03 -0400
+Received: from foss.arm.com ([217.140.101.70]:43198 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753145AbeEKPFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 11:05:13 -0400
+        id S1753421AbeEKPF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 11:05:59 -0400
 From: Dave Martin <Dave.Martin@arm.com>
 To: linux-kernel@vger.kernel.org
 Cc: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
@@ -16,70 +16,117 @@ Cc: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
         Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
         linux-arch@vger.kernel.org
-Subject: [PATCH REPOST 0/5] Simplify setting thread flags to a particular value
-Date: Fri, 11 May 2018 16:04:59 +0100
-Message-Id: <1526051104-15995-1-git-send-email-Dave.Martin@arm.com>
+Subject: [PATCH REPOST 3/5] MIPS: Use update{,_tsk}_thread_flag()
+Date: Fri, 11 May 2018 16:05:02 +0100
+Message-Id: <1526051104-15995-4-git-send-email-Dave.Martin@arm.com>
 X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1526051104-15995-1-git-send-email-Dave.Martin@arm.com>
+References: <1526051104-15995-1-git-send-email-Dave.Martin@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a number of bits of code sprinkled around the kernel to
-set a thread flag if a certain condition is true, and clear it
-otherwise.
+This patch uses the new update_thread_flag() helpers to simplify a
+couple of if () set; else clear; constructs.
 
-This series ports relevant bits of code to use the new
-update_thread_flag() helpers implemented in [2].
+No functional change.
 
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+---
+ arch/mips/kernel/elf.c     | 10 ++--------
+ arch/mips/kernel/process.c | 15 ++++++---------
+ arch/mips/kernel/ptrace.c  |  5 +----
+ arch/mips/kernel/syscall.c | 10 ++--------
+ 4 files changed, 11 insertions(+), 29 deletions(-)
 
-Note: This is a repost of a previous RFC [1].  Part of patch 1, and
-all of patch 4 of that series have been split out and reviewed
-separately ([2], [3] respectively).  I currently expect them to merge
-via Marc's KVM tree.
-
-The remainder of the patches from [1] are reposted here.
-
-Patch 1 ports some core code that to use the update_thread_flag()
-helpers.
-
-The remaining patches port relevant bits of arch code.
-
-Build-tested on the affected architectures; some context switch stress
-testing done on arm64, which exercises a few call sites for the new
-helpers.
-
-Comments welcome.
-
-Cheers
----Dave
-
-
-[1] [RFC PATCH 0/6] Simplify setting thread flags to a particular value
-https://lkml.org/lkml/2018/4/19/225
-
-[2] [PATCH v7 01/16] thread_info: Add update_thread_flag() helpers
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/576596.html
-
-[3] [PATCH v7 02/16] arm64: Use update{,_tsk}_thread_flag()
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/576597.html
-
-Dave Martin (5):
-  thread_info: Port core code to use update_thread_flag() helpers
-  ARM: Use update_thread_flag()
-  MIPS: Use update{,_tsk}_thread_flag()
-  powerpc: Use update_thread_flag()
-  sparc: Use update_thread_flag()
-
- arch/arm/kernel/elf.c           |  9 +++------
- arch/mips/kernel/elf.c          | 10 ++--------
- arch/mips/kernel/process.c      | 15 ++++++---------
- arch/mips/kernel/ptrace.c       |  5 +----
- arch/mips/kernel/syscall.c      | 10 ++--------
- arch/powerpc/include/asm/elf.h  | 10 ++--------
- arch/sparc/include/asm/elf_64.h |  5 +----
- include/trace/syscall.h         |  6 ++----
- kernel/ptrace.c                 | 13 +++++--------
- 9 files changed, 24 insertions(+), 59 deletions(-)
-
+diff --git a/arch/mips/kernel/elf.c b/arch/mips/kernel/elf.c
+index 731325a..2351509 100644
+--- a/arch/mips/kernel/elf.c
++++ b/arch/mips/kernel/elf.c
+@@ -267,14 +267,8 @@ int arch_check_elf(void *_ehdr, bool has_interpreter, void *_interp_ehdr,
+ 
+ static inline void set_thread_fp_mode(int hybrid, int regs32)
+ {
+-	if (hybrid)
+-		set_thread_flag(TIF_HYBRID_FPREGS);
+-	else
+-		clear_thread_flag(TIF_HYBRID_FPREGS);
+-	if (regs32)
+-		set_thread_flag(TIF_32BIT_FPREGS);
+-	else
+-		clear_thread_flag(TIF_32BIT_FPREGS);
++	update_thread_flag(TIF_HYBRID_FPREGS, hybrid);
++	update_thread_flag(TIF_32BIT_FPREGS, regs32);
+ }
+ 
+ void mips_set_personality_fp(struct arch_elf_state *state)
+diff --git a/arch/mips/kernel/process.c b/arch/mips/kernel/process.c
+index b9e9bf6..4bdecb6 100644
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -763,18 +763,15 @@ int mips_set_process_fp_mode(struct task_struct *task, unsigned int value)
+ 	 */
+ 	for_each_thread(task, t) {
+ 		/* Update desired FP register width */
+-		if (value & PR_FP_MODE_FR) {
+-			clear_tsk_thread_flag(t, TIF_32BIT_FPREGS);
+-		} else {
+-			set_tsk_thread_flag(t, TIF_32BIT_FPREGS);
++		update_tsk_thread_flag(t, TIF_32BIT_REGS,
++				       !(value & PR_FP_MODE_FR));
++
++		if (!(value & PR_FP_MODE_FR))
+ 			clear_tsk_thread_flag(t, TIF_MSA_CTX_LIVE);
+-		}
+ 
+ 		/* Update desired FP single layout */
+-		if (value & PR_FP_MODE_FRE)
+-			set_tsk_thread_flag(t, TIF_HYBRID_FPREGS);
+-		else
+-			clear_tsk_thread_flag(t, TIF_HYBRID_FPREGS);
++		update_tsk_thread_flag(t, TIF_HYBRID_FPREGS,
++				       value & PR_FP_MODE_FRE);
+ 	}
+ 
+ 	/* Allow threads to use FP again */
+diff --git a/arch/mips/kernel/ptrace.c b/arch/mips/kernel/ptrace.c
+index 0b23b1a..b218812 100644
+--- a/arch/mips/kernel/ptrace.c
++++ b/arch/mips/kernel/ptrace.c
+@@ -279,10 +279,7 @@ int ptrace_set_watch_regs(struct task_struct *child,
+ 		child->thread.watch.mips3264.watchhi[i] = ht[i];
+ 	}
+ 
+-	if (watch_active)
+-		set_tsk_thread_flag(child, TIF_LOAD_WATCH);
+-	else
+-		clear_tsk_thread_flag(child, TIF_LOAD_WATCH);
++	update_tsk_thread_flag(child, TIF_LOAD_WATCH, watch_active);
+ 
+ 	return 0;
+ }
+diff --git a/arch/mips/kernel/syscall.c b/arch/mips/kernel/syscall.c
+index 69c17b5..e9fa130 100644
+--- a/arch/mips/kernel/syscall.c
++++ b/arch/mips/kernel/syscall.c
+@@ -209,14 +209,8 @@ SYSCALL_DEFINE3(sysmips, long, cmd, long, arg1, long, arg2)
+ 		if (arg1 & ~3)
+ 			return -EINVAL;
+ 
+-		if (arg1 & 1)
+-			set_thread_flag(TIF_FIXADE);
+-		else
+-			clear_thread_flag(TIF_FIXADE);
+-		if (arg1 & 2)
+-			set_thread_flag(TIF_LOGADE);
+-		else
+-			clear_thread_flag(TIF_LOGADE);
++		update_thread_flag(TIF_FIXADE, arg1 & 1);
++		update_thread_flag(TIF_LOGADE, arg1 & 2);
+ 
+ 		return 0;
+ 
 -- 
 2.1.4
