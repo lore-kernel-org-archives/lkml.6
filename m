@@ -1,29 +1,30 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-488117-1525682298-2-5739311599928978331
+X-Cyrus-Session-Id: sloti22d1t05-174305-1526064875-5-4268850204019590418
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: 
+X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525682298; b=Q1bZrIL/ZOffVAQnyAH9s9GXiDlAXZloRlQNa4W4Jo2yYUC4p8
-    h+AJtBq3JSLXbJrVdkcgCbbuaVJIIOadt16nRRwS4TVY6WIggcdQ/BMcjQXbyUIi
-    uYhco0/PVzw6QDslBzR5Ks9BH0BxXkpPAkznD2NM0szNilj/rJlZQUzL7ysLHu4l
-    /QOQwFNEtCos17KcONQBarbow/3FgfIjLuv9CAjVWvTEh1A6gSSqOP2EpnqZSdRP
-    wD9MkKtZtfN8tWX4IDEQFm0Pb7R9dtQew/KnD+R3ElPl9f2R7CBYwc5WKGandWrN
-    oy5dyZdtEOKL8zGt9dnuBXkteVcP0tGuQ16w==
+    1526064875; b=fvd6NCB+VbYFP3Y5WQ1e2rfnptCfiYGadjvUUewi1TpRDvRtU3
+    sdZDTg//YWcEq6sGIDAoCFxXE5cEUwjiMZg6YhpubXqixX2iH1zKEuSecoEeQn1I
+    qrdWGWLYvjZZjj3bSOMoFGVDKsYQy/0zJz9BthjWPtL7XaPdHjxpSmhU7k8azJw3
+    FcjHYnh+Z9DqNAxbFzgwW+n+Fg7C6dT0qCy6t89iCWlIdw+VVCMMwrAHRKBLmHpA
+    wZD/SHve8+x117uE8iNnx5krhgvuzJSKADInvXBmQ2ioWd25YccK83QZnzRnZ6qn
+    Rksm/Cow42r5mC6B73in/J/MuBZVTfkr707Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1525682298; bh=SxyZrACj+hd8TV1c8TxSAfuenu9KOm
-    9wmUI0QczyAao=; b=V3rGNhChDnNIQVV2FPxU3MzP0WxMZofVlzGKk+uC4I/Jz0
-    OrogSfIW9K0+ANiIb+12nxSh58cMadnQd4rLisuUrv0G0FTrSb6yHNlbdM+wamDi
-    0CH8fOSZJ8YA9fTZbOgXRCS0iI/l0TaR/EKDupFmDBFgXT0V2jPG2uVRWONbT6a0
-    sKB4UrVhCed/sjrbd8/jypucvKVaNtJjh0pXDs5AkxY8dVwy13WY2s6JD0m7WDD+
-    YsIuQ3bGpNOB7HQQj/teIKd+mHalJrmcRmVsqnM6+SGpnpVG+BIG6dqDFprN3ulC
-    u5ryIaTRjDw036XezV8CzkpgqFDNYlajhDEvL1GA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1526064875; bh=2efnxt77BmhcJMGHU4y13/Y2Dhbk0B
+    lhqJ72134UbSM=; b=USz9rQdoHxaKH+1NzfkgCKOPZsoecv+DLlsyrIOAvE85j+
+    NQ2aOpi4M2GYVFvtMSurKxr2+KWXYcR88wHJeXGP54mXOXPEBW9hkfqtk7zQT0o6
+    dUUPgHejrdCN1+SToRaJdkwAwjtKlVAIEvxl5CO7uFGcdgtomk6b7d/4SwP/aH7E
+    8wz2aMeJE82zK/vvNQepvhuUCuK7lunesOXT92oC8YYhGpfv/At87qG4B5xm7VG9
+    j2RphlJWH42oZkODz6oEQMF8R+2ATi8du5LZ17V/NALxdZ5HctZ7pz2S4J9X/0VM
+    nlJa6fpCvXINvyz+Vpvk6QxE5lQBY9Ud9dgfYcRA==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -31,14 +32,12 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=fNrWE/2/;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -47,164 +46,156 @@ Authentication-Results: mx5.messagingengine.com;
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=fNrWE/2/;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJ8fxlGxA+iTKOJBjETuiLjTjoKVzo6raTx3XLyXsIzHXyPc3evnXU4qCy66OIYqYLmw+YHtVOqMZKD1KCv89pU9Ks3IplpSKDIukUUEGXcQgytD7G+Y
-    +PqjvhppIf8xN24tldnrA7cHtz2TlBTGEzpH7F9x0qERvrvsN5yUFSm9RhfZxMr7+DNfjAmJAlswIvIbdIPsATrEM8jSc4AcZYsKF3jN6TxBwGyQ8gR1ehmm
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=cD0sha9eELB2ZReeA2UA:9 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfJPs+ZwtcmwahAM7DqSO0uj+dimDJJIvl/yDxqeohRbn9TU7jcngdtMr4GdRWhQZgwrqvVpqyiM7VF9HOnJXZJmT4X6ry0O7W/Dyyej0rBikHWRwIROW
+    1EKLeFJgpLdR6GIhup3o57ZPaPuEM37ttayU2seihuaDRB4kGfwJSS9zA/VILBbEOPIyzXXJXXfCI5bblrHSzJn6Ur4+zfV52u0t2N8Lg8w97PHf756wLqU5
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=9c5tj4TsTwd62wWh5a0A:9 a=CjuIK1q_8ugA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752028AbeEGIiP (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 7 May 2018 04:38:15 -0400
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:39334 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751940AbeEGIiN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 May 2018 04:38:13 -0400
-X-Google-Smtp-Source: AB8JxZrskdRwSkKWpw25I5+b0xf6DuOtiVPTRWQ4HAH45qIDA65NVBX2RNUHKCMvbZM954RW4KJqaA==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH v2 00/35] overlayfs: stack file operations
-Date: Mon,  7 May 2018 10:37:32 +0200
-Message-Id: <20180507083807.28792-1-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
+        id S1751449AbeEKSyd (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 11 May 2018 14:54:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40632 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751400AbeEKSyc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 May 2018 14:54:32 -0400
+Date: Fri, 11 May 2018 14:54:30 -0400
+From: Vivek Goyal <vgoyal@redhat.com>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-security-module@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        Paul Moore <pmoore@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: [PATCH v2 22/35] vfs: don't open real
+Message-ID: <20180511185430.GE6044@redhat.com>
+References: <20180507083807.28792-1-mszeredi@redhat.com>
+ <20180507083807.28792-23-mszeredi@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507083807.28792-23-mszeredi@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-[Al, can you please review the vfs affecting patches? ]
+On Mon, May 07, 2018 at 10:37:54AM +0200, Miklos Szeredi wrote:
+> Let overlayfs do its thing when opening a file.
+> 
+> This enables stacking and fixes the corner case when a file is opened for
+> read, modified through a writable open, and data is read from the read-only
+> file.  After this patch the read-only open will not return stale data even
+> in this case.
 
-Up till now overlayfs didn't stack regular file operations.  Instead, when
-a file was opened on an overlay, the file from one of the underlying layers
-would be opened and any file operations performed would directly go to the
-underlying file on a real filesystem.
+[CC Dan, Steven, Paul, linux-security-module list]
 
-This works well mostly, but various hacks were added to the VFS to work
-around issues with this:
+Hi Miklos,
 
- - d_path() and friends
- - relatime handling
- - file locking
- - fsnotify
- - writecount handling
+I was running selinux-testsuite and one of the tests seems to fail. I
+think this is side effect of installing overlay inode in file->f_inode
+instead of real underlying inode.
 
-There are also issues that are unresolved before this patchset:
+Following test is failing.
 
- - ioctl's that need write access but can be performed on a O_RDONLY fd
- - ro/rw inconsistency: file on lower layer opened for read-only will
-   return stale data on read after copy-up and modification
- - ro/rw inconsistency for mmap: file on lower layer mapped shared will
-   contain stale data after copy-up and modification
+sub test_90_1 {
+    print "Attempting to enter domain with bad entrypoint, should fail.\n";
+    $result = system(
+"runcon -t test_overlay_client_t -l s0:c10,c20 $basedir/container1/merged/badentrypoint >/dev/null 2>&1"
+    );
+    ok($result);
+    return;
+}
 
-This patch series reverts the VFS hacks (with the exception of d_path) and
-fixes the unresoved issues.  We need to keep d_path related hacks, because
-memory maps are still not stacked, yet d_path() should keep working on
-vma->vm_file->f_path.
+Basically, this test has an executable named "badentrypoint" with selinux
+label "unconfined_u:object_r:test_overlay_files_ro_t:s0". And we mount
+overlay with context=unconfined_u:object_r:test_overlay_files_rwx_t:s0:c10,c20
 
-No regressions were observed after running various test suites (xfstests,
-ltp, unionmount-testsuite, pjd-fstest).
+So effectively overlay inode of "badentrypoint" now gets the label
+specified by "context=".
 
-Performance impact of stacking was found to be minimal.  Memory use for
-open overlay files increases by about 256bytes or 12% of total (files +
-pinned dentries + pinned inodes).
+I think intent of test is that this file's real label is "...ro_t". That
+means this file is not supposed to be executed and any attempt to execute
+it should be denied.
 
-Git tree is here:
+Currently test works and execution fails with following avc.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git overlayfs-rorw
+AVC avc:  denied  { entrypoint } for  pid=1425 comm="runcon" path="/root/git/selinux-testsuite/tests/overlay/container1/merged/badentrypoint" dev="dm-0" ino=34515261 scontext=unconfined_u:unconfined_r:test_overlay_client_t:s0:c10,c20 tcontext=unconfined_u:object_r:test_overlay_files_ro_t:s0 tclass=file permissive=0
 
-Thanks,
-Miklos
+But with new patches, this test starts passing. 
 
-Changes from v1:
+I think currently selinux_bprm_set_creds() returns error. It does
+checks on inode returned by file_inode() and as of now that inode is
+real inode and that inode has real lable of "...ro_t" and permission
+to execute that file is denied.
 
- - split out dedupe API cleanup
- - update documentation and comments
- - clean up directory modification helpers inside overlayfs
- - make functions static
- - added compat ioctl
- - check for upper files in dedupe
- - bring back d_real_inode() as a new user just cropped up in 4.17
+But after the patches file_inode() returns overlay inode. Which has
+the label specified by context= mount option "...rwx_t". And that
+label allows executing file, so file execution is not blocked by
+selinux.
 
----
-Miklos Szeredi (35):
-  vfs: add path_open()
-  vfs: optionally don't account file in nr_files
-  vfs: add f_op->pre_mmap()
-  vfs: export vfs_ioctl() to modules
-  vfs: export vfs_dedupe_file_range_one() to modules
-  ovl: copy up times
-  ovl: copy up inode flags
-  Revert "Revert "ovl: get_write_access() in truncate""
-  ovl: copy up file size as well
-  ovl: deal with overlay files in ovl_d_real()
-  ovl: stack file ops
-  ovl: add helper to return real file
-  ovl: add ovl_read_iter()
-  ovl: add ovl_write_iter()
-  ovl: add ovl_fsync()
-  ovl: add ovl_mmap()
-  ovl: add ovl_fallocate()
-  ovl: add lsattr/chattr support
-  ovl: add ovl_fiemap()
-  ovl: add O_DIRECT support
-  ovl: add reflink/copyfile/dedup support
-  vfs: don't open real
-  ovl: copy-up on MAP_SHARED
-  vfs: simplify dentry_open()
-  Revert "ovl: fix may_write_real() for overlayfs directories"
-  Revert "ovl: don't allow writing ioctl on lower layer"
-  vfs: fix freeze protection in mnt_want_write_file() for overlayfs
-  Revert "ovl: fix relatime for directories"
-  Revert "vfs: update ovl inode before relatime check"
-  Revert "vfs: add flags to d_real()"
-  Revert "vfs: do get_write_access() on upper layer of overlayfs"
-  Partially revert "locks: fix file locking on overlayfs"
-  Revert "fsnotify: support overlayfs"
-  vfs: remove open_flags from d_real()
-  ovl: fix documentation of non-standard behavior
+I feel that even now code is working accidently. Ideally our theme was
+that task's credential as checked against overlay inode and mounter's
+creds are checked against underlying inode to determine if certain
+permission is allowed. So ideally mounter should not have been allwed
+to execute a file of type "...ro_t". But we don't have that workflow
+and VFS calls into selinux and selinux checks the underlying file's
+label against task.
 
- Documentation/filesystems/Locking       |   4 +-
- Documentation/filesystems/overlayfs.txt |  60 ++--
- Documentation/filesystems/vfs.txt       |  19 +-
- fs/file_table.c                         |  13 +-
- fs/inode.c                              |  46 +--
- fs/internal.h                           |  17 +-
- fs/ioctl.c                              |   1 +
- fs/locks.c                              |  20 +-
- fs/namei.c                              |   2 +-
- fs/namespace.c                          |  69 +----
- fs/open.c                               |  74 ++---
- fs/overlayfs/Kconfig                    |  21 ++
- fs/overlayfs/Makefile                   |   4 +-
- fs/overlayfs/dir.c                      |  33 ++-
- fs/overlayfs/file.c                     | 506 ++++++++++++++++++++++++++++++++
- fs/overlayfs/inode.c                    |  63 +++-
- fs/overlayfs/overlayfs.h                |  21 +-
- fs/overlayfs/ovl_entry.h                |   1 +
- fs/overlayfs/super.c                    |  65 ++--
- fs/overlayfs/util.c                     |  11 +-
- fs/read_write.c                         |   6 +-
- fs/xattr.c                              |   9 +-
- include/linux/dcache.h                  |  15 +-
- include/linux/fs.h                      |  28 +-
- include/linux/fsnotify.h                |  14 +-
- include/uapi/linux/fs.h                 |   1 -
- mm/util.c                               |   5 +
- 27 files changed, 824 insertions(+), 304 deletions(-)
- create mode 100644 fs/overlayfs/file.c
+It worked so far but the moment we install overlay inode in file, selinux
+checks it against overlay inode label and allows permission to execute and
+mounter is never checked against real inode.
 
--- 
-2.14.3
+I am not sure what's the right solution. So far selinux is not aware of
+two levels of checks and if two levels of checks are to be performed, it
+somehow needs to be enforced by overlay and call same hook on two levels.
+
+Thought of atleast starting a conversation on this.
+
+Thanks
+Vivek
+
+
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/open.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index 6e52fd6fea7c..244cd2ecfefd 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -897,13 +897,8 @@ EXPORT_SYMBOL(file_path);
+>  int vfs_open(const struct path *path, struct file *file,
+>  	     const struct cred *cred)
+>  {
+> -	struct dentry *dentry = d_real(path->dentry, NULL, file->f_flags, 0);
+> -
+> -	if (IS_ERR(dentry))
+> -		return PTR_ERR(dentry);
+> -
+>  	file->f_path = *path;
+> -	return do_dentry_open(file, d_backing_inode(dentry), NULL, cred);
+> +	return do_dentry_open(file, d_backing_inode(path->dentry), NULL, cred);
+>  }
+>  
+>  /**
+> -- 
+> 2.14.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
