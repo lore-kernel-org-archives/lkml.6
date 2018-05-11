@@ -1,72 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753268AbeEKOwy (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 10:52:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50924 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752981AbeEKOwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 10:52:53 -0400
-Date: Fri, 11 May 2018 15:52:47 +0100
-From: James Hogan <jhogan@kernel.org>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Mathieu Malaterre <malat@debian.org>, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-Subject: Re: [PATCH v3 5/8] MIPS: jz4740: dts: Add bindings for the
- jz4740-wdt driver
-Message-ID: <20180511145246.GA12956@jamesdev>
-References: <20180510184751.13416-1-paul@crapouillou.net>
- <20180510184751.13416-5-paul@crapouillou.net>
+        id S1753311AbeEKOzp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 10:55:45 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:57596 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753143AbeEKOzo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 10:55:44 -0400
+Subject: Re: [PATCH v2] selftests/cgroup: memory controller self-tests
+To: Tejun Heo <tj@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, kernel-team@fb.com,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>
+References: <20180510163701.28936-1-guro@fb.com>
+ <20180510183224.GP2368884@devbig577.frc2.facebook.com>
+ <a652ce44-07f9-d229-70d4-4376bfbafa40@kernel.org>
+ <20180511143228.GU2368884@devbig577.frc2.facebook.com>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <ae4dc3f9-baa6-b492-7c43-0359734440b3@kernel.org>
+Date: Fri, 11 May 2018 08:55:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
-Content-Disposition: inline
-In-Reply-To: <20180510184751.13416-5-paul@crapouillou.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180511143228.GU2368884@devbig577.frc2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 05/11/2018 08:32 AM, Tejun Heo wrote:
+> Hello, Shuah.
+> 
+> On Thu, May 10, 2018 at 01:29:07PM -0600, Shuah Khan wrote:
+>> Don't pull them yet. If Roman can redo the patches on linux-kselftest next,
+>> he can pick up the SKIP changes.
+> 
+> So, what we can do is either fix that up during / after the merge
+> window or creating a separate branch which pulls from both cgroup and
+> kselftest.  Please let me know which way you wanna go and if the
+> latter which branch I should pull (it gotta be a stable branch).
+> 
+> Thanks.
+> 
 
---EeQfGwPcQSOJBaQU
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+I think we don't need to create a special branch and all. The following
+should work:
 
-On Thu, May 10, 2018 at 08:47:48PM +0200, Paul Cercueil wrote:
-> Also remove the watchdog platform_device from platform.c, since it
-> wasn't used anywhere anyway.
+linux-next already has the skip work. What we can do is:
 
-Nit: it'd be slightly nicer IMO if the patch body was a superset of the
-subject line. It's fine to repeat what the subject says since thats
-meant to summarise the body.
+Do the cleanup and test it against linux-next. In linux-next SKIP isn't PASS. If test is
+compiled on linux-next, you will see that SKIP is SKIP. If it is compiled on the mainline,
+it will be reported PASS, which will be a temporary state.
 
-> -struct platform_device jz4740_wdt_device = {
+cgroup test will end up in linux-next anyway with crgoups tree before the merge window.
+We can verify it then and make sure it is working correctly.
 
-There's an extern in arch/mips/include/asm/mach-jz4740/platform.h that
-should perhaps be removed also?
+So I would recommend a version 3 that includes the cleanup to get rid if the TEST_* local
+defines.
 
-Otherwise
-Acked-by: James Hogan <jhogan@kernel.org>
-
-I'm happy to apply for 4.18 with that change if you want it to go
-through the MIPS tree.
-
-Cheers
-James
-
---EeQfGwPcQSOJBaQU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWvWuPQAKCRA1zuSGKxAj
-8mlfAQCJf5mvfQD9ow7oPKhrS7ZEEtsAokvWC1M/Z2F3mCx3bgD9HQQl05Fya66i
-Dpd1TlEADWA+H91gd5uKii85SdfeNwo=
-=IGgX
------END PGP SIGNATURE-----
-
---EeQfGwPcQSOJBaQU--
+thanks,
+-- Shuah
