@@ -1,80 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752045AbeEKCkX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 22:40:23 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:40373 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751258AbeEKCkW (ORCPT
+        id S1751954AbeEKClv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 22:41:51 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:45358 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750722AbeEKClt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 22:40:22 -0400
-X-Google-Smtp-Source: AB8JxZoie4kOQL7q/cufl5iY9CRMcK4cFEJOTQgM6X5WcP45qxFHMtVvNxrWDdv+N5rBltnSbF0bLZWDb8x6dV5pgcw=
+        Thu, 10 May 2018 22:41:49 -0400
+X-Google-Smtp-Source: AB8JxZpNxBBoPXcgUxVlyzAgsawcNb87GONyv/lOaMFUrE7OKQ3O4aMN2xN+UTY14HdFVZz6b3smrw==
+Date: Fri, 11 May 2018 11:41:44 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Joe Perches <joe@perches.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/18] printk: Convert pr_fmt from blank define to
+ KBUILD_MODNAME
+Message-ID: <20180511024144.GA416@jagdpanzerIV>
+References: <20180511022314.GA491@jagdpanzerIV>
+ <5b898d97466c512049493c26d5fd4bf8123ed7c7.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <CAEbi=3d11ZcxgyoL-ZEruUzj0odDZ2GZXALNTtC7p55nfkkObA@mail.gmail.com>
-References: <4ccb747b-fb3b-18c8-8737-2cc02d7b1c34@roeck-us.net>
- <CAEbi=3cr5i3HKLKOacFih9pz00c7UBKrd=o4ER8HAUT1j_oqGg@mail.gmail.com>
- <CAK8P3a2cogDMEdvhNt8CsJwaONWOgBR7zR3sABun4u8pAgTtqQ@mail.gmail.com> <CAEbi=3d11ZcxgyoL-ZEruUzj0odDZ2GZXALNTtC7p55nfkkObA@mail.gmail.com>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 10 May 2018 22:40:20 -0400
-X-Google-Sender-Auth: ehmc4KFkWr6y0-iDusB_nsIiWhs
-Message-ID: <CAK8P3a1xDCS1X-4UETB5WW5txD38hrRUGKAfqU=SUy93o3DH5g@mail.gmail.com>
-Subject: Re: nds32 build failures
-To: Greentime Hu <green.hu@gmail.com>
-Cc: Guenter Roeck <private@roeck-us.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Vincent Chen <vincentc@andestech.com>,
-        Greentime Hu <greentime@andestech.com>, kito.cheng@gmail.com,
-        wuiw@andestech.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b898d97466c512049493c26d5fd4bf8123ed7c7.camel@perches.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 3:19 AM, Greentime Hu <green.hu@gmail.com> wrote:
-> 2018-04-17 20:47 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
->> On Mon, Apr 16, 2018 at 11:06 AM, Greentime Hu <green.hu@gmail.com> wrote:
->>> 2018-04-16 11:58 GMT+08:00 Guenter Roeck <private@roeck-us.net>:
->>>
->>> This built failure is because the toolchain version you used is not
->>> supported the latest intrinsic function/macro.
->>> We are sending the latest patchset now and we expect the whole new
->>> features will be supported in gcc8.0.0 and binutil2.31+.
->>>
->>> If you'd like to get these new features of toolchain, you may use the
->>> github version.
->>> This is the built-script repo. https://github.com/andestech/build_script.git
->>
->> I've taken the gcc-6.3 sources from there, and updated them to gcc-6.4.0
->> in order to build a nds32le-linux toolchain based on the same version as
->> the other ones.
->>
->> Unfortunately neither the usual binutils-2.29.1 nor your binutils worked
->> for me, but I eventually managed to get a build using the binutils-2.30
->> release.
->>
->> With this, I could build a mainline kernel with a couple of warnings,
->> but an 'allmodconfig' build still failed.
->>
->> Guenter, can you try my binary from
->> www.kernel.org/pub/tools/crosstool/files/bin/x86_64/6.4.0/x86_64-gcc-6.4.0-nolibc-nds32le-linux.tar.xz
->> ?
->>
->> If that works for you, I'll update the front-page and remove the nds32-elf
->> toolchains.
->>
->> Greentime, do you have a patch set for gcc-7.3 as well, or are 6.3 and 8.0 the
->> only working compilers for nds32le-linux?
->>
->
-> Hi, all:
->
-> I just discuss with our toolchain colleagues. We have only gcc6.3 and
-> gcc8.0 for nds32le-linux.
-> I have the ld segmentation fault issue too when building kernel with
-> 'allmodconfig'. We are dealing with it.
+On (05/10/18 19:33), Joe Perches wrote:
+> > 
+> > [   28.420519] generic: RSP: 0018:ffffa01dc062bda8 EFLAGS: 00010282
+> > [   28.420522] generic: RAX: ffffffff8317612f RBX: ffffffffffffffea RCX: ffffa01dc062bdc8
+> > [   28.420523] generic: RDX: 000055a6a3f03110 RSI: 0000000000000001 RDI: ffffffff83e31540
+> > [   28.420525] generic: RBP: 0000000000000001 R08: ffffa01dc062bec0 R09: 0000000000000004
+> > [   28.420526] generic: R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000001
+> > [   28.420528] generic: R13: ffffffff83e31540 R14: ffffa01dc062bec0 R15: 0000000000000002
+> > [   28.420547] generic: ? rcu_read_lock_sched_held+0x5d/0x63
+> > [   28.420549] generic: ? rcu_sync_lockdep_assert+0x2e/0x54
+> > [   28.420551] generic: ? __sb_start_write+0xeb/0x1a3
+> > 
+> > Correct?
+> 
+> No, that stack dump comes from arch/x86/kernel/dumpstack.c
+> and that uses printk(KERN_DEFAULT ... and generic printk(
+> which is not prefixed at all.
 
-I've tried building the mainline gcc-8.1 sources for nds32le-linux and
-still got a failure with those (building gcc), building a nds32le-elf gcc-8.1.0
-worked fine, but that fails to build the vdso (no support for -fPIC), so
-it's again unusable for building kernels. Any other ideas?
+That's platform specific. Right? Most of platforms [probably most of them]
+use plain printk("... %pS"). But some use pr_emerg("[<%p>] %s%pS\n") or
+pr_info("PC: [<%08lx>] %pS\n"), and so on.
 
-          Arnd
+In case of x86, I think we will have some changes as well. Looking
+at generic __warn(): pr_warn("WARNING: CPU: %d PID: %d at %s:%d %pS\n")
+and pr_warn("WARNING: CPU: %d PID: %d at %pS\n") and probably some
+others will change now:
+
+Instead of
+
+[    0.000000] ------------[ cut here ]------------
+[    0.000000] WARNING: CPU: 0 PID: 0 at blah-blah-blah
+
+we will have
+[    0.000000] panic: ------------[ cut here ]------------
+[    0.000000] panic: WARNING: CPU: 0 PID: 0 at blah-blah-blah
+
+	-ss
