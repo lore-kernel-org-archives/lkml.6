@@ -1,244 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753321AbeEKPC3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 11:02:29 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:53940 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752997AbeEKPC2 (ORCPT
+        id S1753366AbeEKPEn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 11:04:43 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:36754 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753120AbeEKPEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 11:02:28 -0400
-Date: Fri, 11 May 2018 11:02:24 -0400
-From: Rich Felker <dalias@libc.org>
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Subject: Re: [PATCH] sh: switch to NO_BOOTMEM
-Message-ID: <20180511150224.GR1392@brightrain.aerifal.cx>
-References: <20180511134559.13464-1-robh@kernel.org>
+        Fri, 11 May 2018 11:04:41 -0400
+X-Auth-Info: q3Y0UD1V/kx1WOeKeTQhRbxmcf5RkEMoFtiLz56OyCM=
+Date: Fri, 11 May 2018 17:04:07 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Rob Herring <robh@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] display: panel: Add KOE tx14d24vm1bpa display support
+ (320x240)
+Message-ID: <20180511170407.6c1c6f97@jawa>
+In-Reply-To: <CAL_JsqLHwOv5+yoJ8S+74TmA2nUxzohhAkksZtrBCK7CAnp46A@mail.gmail.com>
+References: <20180412143715.6828-1-lukma@denx.de>
+        <20180416192442.qnb53b6u3bsfet6y@rob-hp-laptop>
+        <20180504122842.33643142@jawa>
+        <CAL_JsqLHwOv5+yoJ8S+74TmA2nUxzohhAkksZtrBCK7CAnp46A@mail.gmail.com>
+Organization: denx.de
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180511134559.13464-1-robh@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xU.VF1Ch=hs4zt3QjPG/F=e"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 08:45:59AM -0500, Rob Herring wrote:
-> Commit 0fa1c579349f ("of/fdt: use memblock_virt_alloc for early alloc")
-> inadvertently switched the DT unflattening allocations from memblock to
-> bootmem which doesn't work because the unflattening happens before
-> bootmem is initialized. Swapping the order of bootmem init and
-> unflattening could also fix this, but removing bootmem is desired. So
-> enable NO_BOOTMEM on SH like other architectures have done.
-> 
-> Fixes: 0fa1c579349f ("of/fdt: use memblock_virt_alloc for early alloc")
-> Reported-by: Rich Felker <dalias@libc.org>
-> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> This is compile tested only, but similar to microblaze and h8300 
-> conversions. The additional complexity for SH is NUMA support (which to 
-> me looks like an abuse of NUMA support to map a small amount of 
-> on-chip? RAM to NUMA nodes). 
+--Sig_/xU.VF1Ch=hs4zt3QjPG/F=e
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks! I was just reading the corresponding microblaze commit, and
-think this approach makes sense. I'll test it now with both DT and
-non-DT sh systems and let you know if it works. If it's good would you
-like me to send it upstream via arch/sh? I already have 2
-regression-fix patches to submit in a pull request asap.
+Hi Rob, Thierry
 
-Rich
+> On Fri, May 4, 2018 at 5:28 AM, Lukasz Majewski <lukma@denx.de> wrote:
+> > Hi Rob,
+> > =20
+> >> On Thu, Apr 12, 2018 at 04:37:15PM +0200, Lukasz Majewski wrote: =20
+> >> > This commit adds support for KOE's 5.7" display.
+> >> >
+> >> > Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> >> > ---
+> >> >  .../bindings/display/panel/koe,tx14d24vm1bpa.txt   | 42
+> >> > ++++++++++++++++++++++
+> >> > drivers/gpu/drm/panel/panel-simple.c               | 26
+> >> > ++++++++++++++ 2 files changed, 68 insertions(+) create mode
+> >> > 100644
+> >> > Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.tx=
+t =20
+> >>
+> >> Reviewed-by: Rob Herring <robh@kernel.org>
+> >> =20
+> >
+> > Gentle ping on this - as I don't know if this patch been applied. =20
+>=20
+> This should go thru DRM tree via Thierry.
+
+Would it be possible to pull this patch along with:
+[PATCH v3] display: panel: Add AUO g070vvn01 display support (800x480)
+
+To your -next tree (as we are now with -rc4) ?
+
+>=20
+> Rob
 
 
->  arch/sh/Kconfig        |  1 +
->  arch/sh/kernel/setup.c |  1 -
->  arch/sh/mm/init.c      | 68 ++++--------------------------------------
->  arch/sh/mm/numa.c      | 19 ------------
->  4 files changed, 7 insertions(+), 82 deletions(-)
-> 
-> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-> index 97fe29316476..1851eaeee131 100644
-> --- a/arch/sh/Kconfig
-> +++ b/arch/sh/Kconfig
-> @@ -9,6 +9,7 @@ config SUPERH
->  	select HAVE_IDE if HAS_IOPORT_MAP
->  	select HAVE_MEMBLOCK
->  	select HAVE_MEMBLOCK_NODE_MAP
-> +	select NO_BOOTMEM
->  	select ARCH_DISCARD_MEMBLOCK
->  	select HAVE_OPROFILE
->  	select HAVE_GENERIC_DMA_COHERENT
-> diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
-> index d34e998b809f..c286cf5da6e7 100644
-> --- a/arch/sh/kernel/setup.c
-> +++ b/arch/sh/kernel/setup.c
-> @@ -11,7 +11,6 @@
->  #include <linux/ioport.h>
->  #include <linux/init.h>
->  #include <linux/initrd.h>
-> -#include <linux/bootmem.h>
->  #include <linux/console.h>
->  #include <linux/root_dev.h>
->  #include <linux/utsname.h>
-> diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
-> index ce0bbaa7e404..4034035fbede 100644
-> --- a/arch/sh/mm/init.c
-> +++ b/arch/sh/mm/init.c
-> @@ -211,59 +211,15 @@ void __init allocate_pgdat(unsigned int nid)
->  
->  	NODE_DATA(nid) = __va(phys);
->  	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
-> -
-> -	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
->  #endif
->  
->  	NODE_DATA(nid)->node_start_pfn = start_pfn;
->  	NODE_DATA(nid)->node_spanned_pages = end_pfn - start_pfn;
->  }
->  
-> -static void __init bootmem_init_one_node(unsigned int nid)
-> -{
-> -	unsigned long total_pages, paddr;
-> -	unsigned long end_pfn;
-> -	struct pglist_data *p;
-> -
-> -	p = NODE_DATA(nid);
-> -
-> -	/* Nothing to do.. */
-> -	if (!p->node_spanned_pages)
-> -		return;
-> -
-> -	end_pfn = pgdat_end_pfn(p);
-> -
-> -	total_pages = bootmem_bootmap_pages(p->node_spanned_pages);
-> -
-> -	paddr = memblock_alloc(total_pages << PAGE_SHIFT, PAGE_SIZE);
-> -	if (!paddr)
-> -		panic("Can't allocate bootmap for nid[%d]\n", nid);
-> -
-> -	init_bootmem_node(p, paddr >> PAGE_SHIFT, p->node_start_pfn, end_pfn);
-> -
-> -	free_bootmem_with_active_regions(nid, end_pfn);
-> -
-> -	/*
-> -	 * XXX Handle initial reservations for the system memory node
-> -	 * only for the moment, we'll refactor this later for handling
-> -	 * reservations in other nodes.
-> -	 */
-> -	if (nid == 0) {
-> -		struct memblock_region *reg;
-> -
-> -		/* Reserve the sections we're already using. */
-> -		for_each_memblock(reserved, reg) {
-> -			reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
-> -		}
-> -	}
-> -
-> -	sparse_memory_present_with_active_regions(nid);
-> -}
-> -
->  static void __init do_init_bootmem(void)
->  {
->  	struct memblock_region *reg;
-> -	int i;
->  
->  	/* Add active regions with valid PFNs. */
->  	for_each_memblock(memory, reg) {
-> @@ -279,9 +235,12 @@ static void __init do_init_bootmem(void)
->  
->  	plat_mem_setup();
->  
-> -	for_each_online_node(i)
-> -		bootmem_init_one_node(i);
-> +	for_each_memblock(memory, reg) {
-> +		int nid = memblock_get_region_node(reg);
->  
-> +		memory_present(nid, memblock_region_memory_base_pfn(reg),
-> +			memblock_region_memory_end_pfn(reg));
-> +	}
->  	sparse_init();
->  }
->  
-> @@ -322,7 +281,6 @@ void __init paging_init(void)
->  {
->  	unsigned long max_zone_pfns[MAX_NR_ZONES];
->  	unsigned long vaddr, end;
-> -	int nid;
->  
->  	sh_mv.mv_mem_init();
->  
-> @@ -377,21 +335,7 @@ void __init paging_init(void)
->  	kmap_coherent_init();
->  
->  	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
-> -
-> -	for_each_online_node(nid) {
-> -		pg_data_t *pgdat = NODE_DATA(nid);
-> -		unsigned long low, start_pfn;
-> -
-> -		start_pfn = pgdat->bdata->node_min_pfn;
-> -		low = pgdat->bdata->node_low_pfn;
-> -
-> -		if (max_zone_pfns[ZONE_NORMAL] < low)
-> -			max_zone_pfns[ZONE_NORMAL] = low;
-> -
-> -		printk("Node %u: start_pfn = 0x%lx, low = 0x%lx\n",
-> -		       nid, start_pfn, low);
-> -	}
-> -
-> +	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
->  	free_area_init_nodes(max_zone_pfns);
->  }
->  
-> diff --git a/arch/sh/mm/numa.c b/arch/sh/mm/numa.c
-> index 05713d190247..830e8b3684e4 100644
-> --- a/arch/sh/mm/numa.c
-> +++ b/arch/sh/mm/numa.c
-> @@ -8,7 +8,6 @@
->   * for more details.
->   */
->  #include <linux/module.h>
-> -#include <linux/bootmem.h>
->  #include <linux/memblock.h>
->  #include <linux/mm.h>
->  #include <linux/numa.h>
-> @@ -26,9 +25,7 @@ EXPORT_SYMBOL_GPL(node_data);
->   */
->  void __init setup_bootmem_node(int nid, unsigned long start, unsigned long end)
->  {
-> -	unsigned long bootmap_pages;
->  	unsigned long start_pfn, end_pfn;
-> -	unsigned long bootmem_paddr;
->  
->  	/* Don't allow bogus node assignment */
->  	BUG_ON(nid >= MAX_NUMNODES || nid <= 0);
-> @@ -48,25 +45,9 @@ void __init setup_bootmem_node(int nid, unsigned long start, unsigned long end)
->  					     SMP_CACHE_BYTES, end));
->  	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
->  
-> -	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
->  	NODE_DATA(nid)->node_start_pfn = start_pfn;
->  	NODE_DATA(nid)->node_spanned_pages = end_pfn - start_pfn;
->  
-> -	/* Node-local bootmap */
-> -	bootmap_pages = bootmem_bootmap_pages(end_pfn - start_pfn);
-> -	bootmem_paddr = memblock_alloc_base(bootmap_pages << PAGE_SHIFT,
-> -				       PAGE_SIZE, end);
-> -	init_bootmem_node(NODE_DATA(nid), bootmem_paddr >> PAGE_SHIFT,
-> -			  start_pfn, end_pfn);
-> -
-> -	free_bootmem_with_active_regions(nid, end_pfn);
-> -
-> -	/* Reserve the pgdat and bootmap space with the bootmem allocator */
-> -	reserve_bootmem_node(NODE_DATA(nid), start_pfn << PAGE_SHIFT,
-> -			     sizeof(struct pglist_data), BOOTMEM_DEFAULT);
-> -	reserve_bootmem_node(NODE_DATA(nid), bootmem_paddr,
-> -			     bootmap_pages << PAGE_SHIFT, BOOTMEM_DEFAULT);
-> -
->  	/* It's up */
->  	node_set_online(nid);
->  
-> -- 
-> 2.17.0
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+
+--Sig_/xU.VF1Ch=hs4zt3QjPG/F=e
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlr1sOcACgkQAR8vZIA0
+zr195AgA5G6IoQZcFMD90RBg78llcnE9ygCo0yXiRhvqr5p5DJKjIH8IFNgg+mAx
+5WJhLcVCQmXl+oe0jMfmKj4TOqx2KOsrkrj9Nq1hAXg0tX2GaluJ38VGlFGmjYzF
+V6m0nMwbnvzuiqq0g8Dchmt1THkGoW6jH97ld/P3yefh0jh0MkpKHPmYf4hU9LJm
+YnGnydpGgRpZ6OAEdJbpBVclpv8EBTcc5HaUEeeXq3xO5Bd/4FqhMjv6Iu1oujV4
+Xu56C2TCTgplVsAh6q6S7dVnvd0JS6DjnnTRR5DwaqNE/rI5kbc2IBdyqWDTYB49
+WWrnmD0iPCflJZS9dC9mRx2SsFU3fw==
+=r/LW
+-----END PGP SIGNATURE-----
+
+--Sig_/xU.VF1Ch=hs4zt3QjPG/F=e--
