@@ -1,48 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752142AbeEKCZD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 22:25:03 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:41719 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751764AbeEKCZB (ORCPT
+        id S1752158AbeEKC2C (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 22:28:02 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:32845 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752040AbeEKC2B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 22:25:01 -0400
-X-Google-Smtp-Source: AB8JxZr0HGApQNbMZMzpIILUYitpS/qBdFPPaJ1He81mXOyiPZKwf82KbjT+e90pwyess9jF8vKMVw==
-Date: Fri, 11 May 2018 11:24:57 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Joe Perches <joe@perches.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/18] printk: Convert pr_fmt from blank define to
- KBUILD_MODNAME
-Message-ID: <20180511022457.GB491@jagdpanzerIV>
-References: <cover.1525964381.git.joe@perches.com>
- <deb55d864f0bf266e019a74456612db36f8921a9.1525964383.git.joe@perches.com>
- <20180511015140.GB895@jagdpanzerIV>
- <18d24efb4d5dafae2360cb2103b366098311998a.camel@perches.com>
+        Thu, 10 May 2018 22:28:01 -0400
+X-ME-Sender: <xms:sP_0WiCm3zs2EFz6Sx9YubqjSpzKz8U91aq8kt1Ty0_cPU-9zx6MsQ>
+From: Samuel Holland <samuel@sholland.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH 0/2] Allwinner A64 timer workaround
+Date: Thu, 10 May 2018 21:27:49 -0500
+Message-Id: <20180511022751.9096-1-samuel@sholland.org>
+X-Mailer: git-send-email 2.16.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <18d24efb4d5dafae2360cb2103b366098311998a.camel@perches.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (05/10/18 18:57), Joe Perches wrote:
-> 
-> What about them?
-> 
-> All those defines above are non-generic as they are
-> specified to start with "OF: " and then some optional
-> extra bit.
-> 
-> Why should these defines be updated or modified?
+Hello,
 
-Nevermind, my bad. I, for some reason, assumed that you were going
-to drop all of those pr_fmt, but you obviously was speaking only
-about those that have "KBUILD_MODNAME".
+Several people (including me) have experienced extremely large system
+clock jumps on their A64-based devices, apparently due to the
+architectural timer going backward, which is interpreted by Linux as
+the timer wrapping around after 2^56 cycles.
 
-	-ss
+Investigation led to discovery of some obvious problems with this SoC's
+architectural timer, and this patch series introduces what I believe is
+the simplest workaround. More details are in the commit message for
+patch 1. Patch 2 simply enables the workaround in the device tree.
+
+Thanks,
+Samuel
+
+Samuel Holland (2):
+  arm64: arch_timer: Workaround for Allwinner A64 timer instability
+  arm64: dts: allwinner: a64: Enable A64 timer workaround
+
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  1 +
+ drivers/clocksource/Kconfig                   | 11 ++++++++
+ drivers/clocksource/arm_arch_timer.c          | 39 +++++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+)
+
+--
+2.16.1
