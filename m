@@ -1,335 +1,157 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-30389-1526056527-2-9344136033338785755
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4175019-1526053211-2-4764684692416449826
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='US-ASCII'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526056526; b=BjZiHRwWEDK0+suq/GyuRRfV0I2F5ROhU2OpT0ffdYPgIJRXDj
-    hz5ESdBNsHuvjXKX/OwHV42H+J8urZuIuzBUzbSU6f6sntBSFx6/B1j2zQAMALBq
-    JqCzf7EnVSZQshmpbz3JXBb55MherUWV+xDymi0v5Kla4C0B06CKqTNBGjjcIlT9
-    w/mNJblh6QOWWU54fnZQjPZRCnP9D/rSE3Vy2T0iw5WGujKpCJRni4BeTyRMofqP
-    Ap50ksqnJrdGoLRk1zkbvGZ0wmt8M2Dn0jOexSLNPISTSTteyFmfx2/XTDd0V1z7
-    8BlA1FGpziH4hJmMZASvThRAbR/hmJAUmM+w==
+    1526053210; b=HQ5YQNkiHp5nun7qhVq2t/dMA1KJKiNhbwE/jUHyI1/CdbpMMe
+    TfgCX5I4TwcIGrtbNqznbBmwe5qZTWFQldAP/mz1rPk5rdm3lNyY/aEWHte1JAWi
+    +nHQS0rCVe2ZLmyxK7aM+0yM2AsAMvUai7J3Whh0atV7xBYpyKxf0XLK8MN9DFZ0
+    nixhOTKU0apWeCftc++hGRXq7aobJLx2vYgb6c/VrQOHTDTscfOb9SYx0sDGsZC1
+    s9ipS9UgII0XQgV+kTW+J0nA+ADIUPvhHTBUJtQWCFo0F1sUi5AVoPI/OxdZzWeD
+    0w/Z4POHtBsSvhDCHfG64iE//in+Tbw6m/8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526056526; bh=uRk1p
-    yEM1owk6Bbzd3xV8F3gtaOcfMeKRYEm7wnZtoA=; b=ELdVAUQsUKEgtffCY5W0c
-    g/mSSJxLbbKuU73rDaqzdVuBYNBKZbD4wItwqaX5xR0fASo9VpWP+UKSsZAFjmAN
-    JU+AKxT3Znnnmj2MSgNedZYi1Qq+zOiVpteSvMFR3HlJdcwfhOnHNSze6LlOhg8s
-    prYjgggCdJzl+cxvc1b5rIUjh/tMxWpS33JB+ruEy9rjwy9KA4zor2Mn5HJhiRRm
-    omd6/gOAyRRcllbsN4z8kk/OIdiL6/+OnJul8ngiGcEU8guqAKQkIaBQj7PaNWke
-    l75CqoSSEcMZ6AKm6zr+BIRDFILGUhNJZ2CTQK1UOoCR+iqna0YoMFKbWMd/i/JF
-    g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1526053210; bh=h0NuoORhQ4iw1OKDb+Uji+4Njt54T3
+    fzovJ5WmxmcI8=; b=NwJ9ANCOTNqUd90fOeAxyINqkwDGxy6s2JsIWGpUFs9rRq
+    4v6cepzEpUoxp+DScFWoBTjefhAquqBjnBBwdw74tTKMiCBOjZTz7ZQaQG9CmHip
+    qWhBFgZC69ybicpTCM/+/UK/acdexW/l2FYW18bPMCqkKNXF7P74A/hrBXO+WNQI
+    bkvNuDJ5hCn0r06dGJR+iDFunoSKIomsFtz3J+tfE1Odl/hMQ15AZELKX5NWoYyS
+    TIde+ZuiVTkwhaROBeCnriZdmLENZiedm5OTFP2fzzJ4NnwF4oUWeSg1cJ3xklxl
+    pXyhBBwzoaVk6PQTENSDmTB2YMich98jcieIOsng==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=anholt.net;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=fraxinus.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=anholt.net header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=anholt.net;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=fraxinus.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=anholt.net header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDFBcEYJZAA6fyJuePDQWM2U5OujEIO/GUI4zpTqpkKvN9gBDYbvhuITSLOqd9kr2MKxN4o78IPXZ3XQmdm0XOqFCgoJ9wVrw5GfMMNNt2PBE4jS9Lil
-    vrx4EvkHok3K6w4SIjap4wAeEQT40mTdGXJyJGtDbgQMY5IxZDk71KGzLeSixvey5++h935Ls+ecmc6XGMXatj218x2gUL8rTXkiR4pK1uf/V+1BrVfaWL1W
-    DTuG9ldDWiJEenirjqsm9w==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=-VAfIpHNAAAA:8 a=DDOyTI_5AAAA:8
-    a=kZUX5tHZYDj883ZmAdEA:9 a=CjuIK1q_8ugA:10 a=srlwD-8ojaedGGhPAyx8:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfM0AHUv+rLI06PiX1ctwWXmufNS8PKK/EygHHxbR1q6q5KKnKfuNA88Hix+21vUT2hfmfwjAylvqTyUC52t1URz9qA5oI4Y+CbMlb7p4A7hIuAePYBZD
+    HQ4tpI7TNeNzjpFL8h0F83mnfWiszF86t1wqGmkMNH9PVaoPxIGpjB3MTb43ZweXFCaCE/LJZCqOUXHixruArQYsXUFzB8FXdgYQI8fdB+2et1lcniWoULTs
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=meVymXHHAAAA:8 a=Z3TViDYMNVcoLodJPusA:9
+    a=xwFVHlgjZqdO3xLz:21 a=I0xmZmH6WzsuNfxn:21 a=CjuIK1q_8ugA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=2JgSa4NbpEOStq-L5dxp:22
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Eric Anholt <eric@anholt.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org,
- Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH v2] staging: bcm2835-camera: Replace open-coded idr with a
- struct idr.
-Date: Fri, 11 May 2018 09:35:15 -0700
-Message-Id: <20180511163515.29836-1-eric@anholt.net>
-X-Mailer: git-send-email 2.17.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Eric Anholt <eric@anholt.net>
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751564AbeEKPkA (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 11 May 2018 11:40:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57842 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750950AbeEKPj5 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 11 May 2018 11:39:57 -0400
+Date: Fri, 11 May 2018 11:39:55 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org
+Subject: [GIT PULL] tracing: Fix regex_match_front() to not over compare the
+ test string
+Message-ID: <20180511113955.2a789dee@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We just need some integer handles that can map back to our message
-struct when we're handling a reply, which struct idr is perfect for.
 
-v2: Fix error check to look at the right variable.
+Linus,
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- .../vc04_services/bcm2835-camera/mmal-vchiq.c | 135 ++++--------------
- 1 file changed, 31 insertions(+), 104 deletions(-)
+Working on some new updates to trace filtering, I noticed that the
+regex_match_front() test was updated to be limited to the size
+of the pattern instead of the full test string. But as the test string
+is not guaranteed to be nul terminated, it still needs to consider
+the size of the test string.
 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-index 3a3b843fc122..f5b5ead6347c 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-@@ -21,7 +21,6 @@
- #include <linux/slab.h>
- #include <linux/completion.h>
- #include <linux/vmalloc.h>
--#include <linux/btree.h>
- #include <asm/cacheflush.h>
- #include <media/videobuf2-vmalloc.h>
+
+Please pull the latest trace-v4.17-rc4 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+trace-v4.17-rc4
+
+Tag SHA1: cb82e07247fa5f1a91940a2928fb260256727a14
+Head SHA1: dc432c3d7f9bceb3de6f5b44fb9c657c9810ed6d
+
+
+Steven Rostedt (VMware) (1):
+      tracing: Fix regex_match_front() to not over compare the test string
+
+----
+ kernel/trace/trace_events_filter.c | 3 +++
+ 1 file changed, 3 insertions(+)
+---------------------------
+commit dc432c3d7f9bceb3de6f5b44fb9c657c9810ed6d
+Author: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Date:   Wed May 9 11:59:32 2018 -0400
+
+    tracing: Fix regex_match_front() to not over compare the test string
+    
+    The regex match function regex_match_front() in the tracing filter logic,
+    was fixed to test just the pattern length from testing the entire test
+    string. That is, it went from strncmp(str, r->pattern, len) to
+    strcmp(str, r->pattern, r->len).
+    
+    The issue is that str is not guaranteed to be nul terminated, and if r->len
+    is greater than the length of str, it can access more memory than is
+    allocated.
+    
+    The solution is to add a simple test if (len < r->len) return 0.
+    
+    Cc: stable@vger.kernel.org
+    Fixes: 285caad415f45 ("tracing/filters: Fix MATCH_FRONT_ONLY filter matching")
+    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
+index 1f951b3df60c..7d306b74230f 100644
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -762,6 +762,9 @@ static int regex_match_full(char *str, struct regex *r, int len)
  
-@@ -111,7 +110,11 @@ struct vchiq_mmal_instance;
- /* normal message context */
- struct mmal_msg_context {
- 	struct vchiq_mmal_instance *instance;
--	u32 handle;
-+
-+	/* Index in the context_map idr so that we can find the
-+	 * mmal_msg_context again when servicing the VCHI reply.
-+	 */
-+	int handle;
- 
- 	union {
- 		struct {
-@@ -149,13 +152,6 @@ struct mmal_msg_context {
- 
- };
- 
--struct vchiq_mmal_context_map {
--	/* ensure serialized access to the btree(contention should be low) */
--	struct mutex lock;
--	struct btree_head32 btree_head;
--	u32 last_handle;
--};
--
- struct vchiq_mmal_instance {
- 	VCHI_SERVICE_HANDLE_T handle;
- 
-@@ -165,92 +161,19 @@ struct vchiq_mmal_instance {
- 	/* vmalloc page to receive scratch bulk xfers into */
- 	void *bulk_scratch;
- 
--	/* mapping table between context handles and mmal_msg_contexts */
--	struct vchiq_mmal_context_map context_map;
-+	struct idr context_map;
-+	spinlock_t context_map_lock;
- 
- 	/* component to use next */
- 	int component_idx;
- 	struct vchiq_mmal_component component[VCHIQ_MMAL_MAX_COMPONENTS];
- };
- 
--static int __must_check
--mmal_context_map_init(struct vchiq_mmal_context_map *context_map)
--{
--	mutex_init(&context_map->lock);
--	context_map->last_handle = 0;
--	return btree_init32(&context_map->btree_head);
--}
--
--static void mmal_context_map_destroy(struct vchiq_mmal_context_map *context_map)
--{
--	mutex_lock(&context_map->lock);
--	btree_destroy32(&context_map->btree_head);
--	mutex_unlock(&context_map->lock);
--}
--
--static u32
--mmal_context_map_create_handle(struct vchiq_mmal_context_map *context_map,
--			       struct mmal_msg_context *msg_context,
--			       gfp_t gfp)
--{
--	u32 handle;
--
--	mutex_lock(&context_map->lock);
--
--	while (1) {
--		/* just use a simple count for handles, but do not use 0 */
--		context_map->last_handle++;
--		if (!context_map->last_handle)
--			context_map->last_handle++;
--
--		handle = context_map->last_handle;
--
--		/* check if the handle is already in use */
--		if (!btree_lookup32(&context_map->btree_head, handle))
--			break;
--	}
--
--	if (btree_insert32(&context_map->btree_head, handle,
--			   msg_context, gfp)) {
--		/* probably out of memory */
--		mutex_unlock(&context_map->lock);
--		return 0;
--	}
--
--	mutex_unlock(&context_map->lock);
--	return handle;
--}
--
--static struct mmal_msg_context *
--mmal_context_map_lookup_handle(struct vchiq_mmal_context_map *context_map,
--			       u32 handle)
--{
--	struct mmal_msg_context *msg_context;
--
--	if (!handle)
--		return NULL;
--
--	mutex_lock(&context_map->lock);
--
--	msg_context = btree_lookup32(&context_map->btree_head, handle);
--
--	mutex_unlock(&context_map->lock);
--	return msg_context;
--}
--
--static void
--mmal_context_map_destroy_handle(struct vchiq_mmal_context_map *context_map,
--				u32 handle)
--{
--	mutex_lock(&context_map->lock);
--	btree_remove32(&context_map->btree_head, handle);
--	mutex_unlock(&context_map->lock);
--}
--
- static struct mmal_msg_context *
- get_msg_context(struct vchiq_mmal_instance *instance)
+ static int regex_match_front(char *str, struct regex *r, int len)
  {
- 	struct mmal_msg_context *msg_context;
-+	int handle;
- 
- 	/* todo: should this be allocated from a pool to avoid kzalloc */
- 	msg_context = kzalloc(sizeof(*msg_context), GFP_KERNEL);
-@@ -258,32 +181,40 @@ get_msg_context(struct vchiq_mmal_instance *instance)
- 	if (!msg_context)
- 		return ERR_PTR(-ENOMEM);
- 
--	msg_context->instance = instance;
--	msg_context->handle =
--		mmal_context_map_create_handle(&instance->context_map,
--					       msg_context,
--					       GFP_KERNEL);
-+	/* Create an ID that will be passed along with our message so
-+	 * that when we service the VCHI reply, we can look up what
-+	 * message is being replied to.
-+	 */
-+	spin_lock(&instance->context_map_lock);
-+	handle = idr_alloc(&instance->context_map, msg_context,
-+			   0, 0, GFP_KERNEL);
-+	spin_unlock(&instance->context_map_lock);
- 
--	if (!msg_context->handle) {
-+	if (handle < 0) {
- 		kfree(msg_context);
--		return ERR_PTR(-ENOMEM);
-+		return ERR_PTR(handle);
- 	}
- 
-+	msg_context->instance = instance;
-+	msg_context->handle = handle;
++	if (len < r->len)
++		return 0;
 +
- 	return msg_context;
- }
- 
- static struct mmal_msg_context *
--lookup_msg_context(struct vchiq_mmal_instance *instance, u32 handle)
-+lookup_msg_context(struct vchiq_mmal_instance *instance, int handle)
- {
--	return mmal_context_map_lookup_handle(&instance->context_map,
--		handle);
-+	return idr_find(&instance->context_map, handle);
- }
- 
- static void
- release_msg_context(struct mmal_msg_context *msg_context)
- {
--	mmal_context_map_destroy_handle(&msg_context->instance->context_map,
--					msg_context->handle);
-+	struct vchiq_mmal_instance *instance = msg_context->instance;
-+
-+	spin_lock(&instance->context_map_lock);
-+	idr_remove(&instance->context_map, msg_context->handle);
-+	spin_unlock(&instance->context_map_lock);
- 	kfree(msg_context);
- }
- 
-@@ -1860,7 +1791,7 @@ int vchiq_mmal_finalise(struct vchiq_mmal_instance *instance)
- 
- 	vfree(instance->bulk_scratch);
- 
--	mmal_context_map_destroy(&instance->context_map);
-+	idr_destroy(&instance->context_map);
- 
- 	kfree(instance);
- 
-@@ -1922,12 +1853,8 @@ int vchiq_mmal_init(struct vchiq_mmal_instance **out_instance)
- 
- 	instance->bulk_scratch = vmalloc(PAGE_SIZE);
- 
--	status = mmal_context_map_init(&instance->context_map);
--	if (status) {
--		pr_err("Failed to init context map (status=%d)\n", status);
--		kfree(instance);
--		return status;
--	}
-+	spin_lock_init(&instance->context_map_lock);
-+	idr_init_base(&instance->context_map, 1);
- 
- 	params.callback_param = instance;
- 
--- 
-2.17.0
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+ 	if (strncmp(str, r->pattern, r->len) == 0)
+ 		return 1;
+ 	return 0;
