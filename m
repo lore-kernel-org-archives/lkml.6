@@ -1,72 +1,257 @@
-Return-Path: <robherring2@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525178690; cv=none;
+Return-Path: <gladkov.alexey@gmail.com>
+X-Google-Smtp-Source: AB8JxZroRTm/SKyTmSIa/7f6+NLfiJ0EFDtNr0JB04UK3oK13dn2uFgh89c2WD0kOiRtd6JP2eym
+ARC-Seal: i=1; a=rsa-sha256; t=1526032025; cv=none;
         d=google.com; s=arc-20160816;
-        b=kCmNK9fzeyr03BPWusQrlKILinp+vM6bFXnI3zuF1XxIb/aa2JApbbhtu5uEk05uAY
-         dMm5JxF+vDOkSejR00PEJmx9i59uFujx2d87MecX9avw6bsLKoAXl76vSnieITMffO9j
-         wIUlv/79M2ryJDLVL8J+gu6CMUWv2kjVZfc+BbCuc/EnfIiXFVDHkTfuupTPjMxFx4j3
-         MKcA43btLf91mQ3oQGQpdjjeAmLQA4SZFQ4DYBZrekj5NP26dppEM4V6/r6Q18urW2iR
-         xFENvxcKUbklWjTZWXrHchxor+DXkGVW7m8fnYvU4dywylxnMnbudIgKhtMvknijWUx9
-         KOmg==
+        b=EtoYDIpZl3GrNgwn3A5MpgDaJCFVl5D6XN2s2pkVPI07LdnO4WUB92IQDp3aZNe6Za
+         QwTSS47sizT0jcAtkW11zsQCT/vtegiOgWN2wWHOzJ/vSTJGxC5oOmDx7RP8qJXnKlZC
+         2sQNbaZBltoolHJ4xAdHrul2hJkuzVdMkNf6T8xdgOtlENrwxv8uYwoUrh/SiDoInMct
+         44UgUi9kzSmEVTevUxEUDG8WBm6222j/8LW+lpdIFi/Kxkf5x+JlWBxeKi0FOfIUTkbi
+         S4SODrU8tp1uKUS13D6MllfRIiyOy0rKb3Sxie9jnGgaL5K6mb1i4nVd9LXR9JvFJ1Xl
+         j3nw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=Mg9pXpRfe7QOIUaNE9N3gbVsM/B7PUUvavjJSedK5Ew=;
-        b=YTchJ3boB79HyeCwNm3EoSgPo7uZ1nwy2Wo4E0m40eIcqDQHnTd8vVCLqo8iUqKnj4
-         T+j+csnr9oApMI4AdUPsUeuw621wo+P/t8DLJKrRfQNyoMNx1PaI8RkzuRHbbVerNxFx
-         hbsGay+Hm5t5DdzFW9vMUdeOr9lggKi+KA6CaUIoDvqaiNyCu9MVjldwmCWVtEHF6y0c
-         gEn/jMtMLIS8gmSVBvuxZ1aZ/jv68j8hbGwMn4Lz8x/RcMYdHgmH5y85fB8q0cfY6tA4
-         r8FmLKGQvSOLd9AaPGUQHlYF5goshP4gohuPVGCanVFTkgjrgaHpJdQmtb0a4VRQvZAb
-         HjPQ==
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=4f3Jrz/ReXuaHzkzI7z/xTqvSE1pqx0+zJGftj1i2IY=;
+        b=p+ioeXLdzl4+a/FKmLZk4QKCHBP6VZv2vDcGdQIiHiRrOtbhkQf91OvjPXGhrSEksO
+         6GaNhqyxzCRU36o7jKZNWKQuJ7t1lpVpLtHvYSaJ3EqYVknsINBqWhBP7BA1yP441jPR
+         JFV9cemivk76MAKYwp0V0WG+7Xeaxw8H8kVQd0yMHz/FrYJMSLGlT7fhPX/Xs4/m7EtY
+         2X8kRb54UbCxZQmrke7lw8RH2f9l/ujr+8PYzURgvzmkJ6ysucII+QVSp5IXc4rAx/e+
+         laclYXZyVh709o8P1oeRjRcljhsJ19n98JWIVhZqFt4GPZTYLc5CcEL4mBf/iw8lxKI3
+         /fCA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
+       spf=softfail (google.com: domain of transitioning gladkov.alexey@gmail.com does not designate 5.9.28.80 as permitted sender) smtp.mailfrom=gladkov.alexey@gmail.com;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of robherring2@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=robherring2@gmail.com
-X-Google-Smtp-Source: AB8JxZo+ZL2Ys4M0mZqFDuGcys2HAe806Zb92Q5S1pgSH2wOofQ7u9HrlyNolm/SZqVRUr4hV9NvsA==
-Date: Tue, 1 May 2018 07:44:49 -0500
-From: Rob Herring <robh@kernel.org>
-To: Nipun Gupta <nipun.gupta@nxp.com>
-Cc: robin.murphy@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-	catalin.marinas@arm.com, gregkh@linuxfoundation.org, hch@lst.de,
-	joro@8bytes.org, m.szyprowski@samsung.com, shawnguo@kernel.org,
-	frowand.list@gmail.com, bhelgaas@google.com,
-	iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-	bharat.bhushan@nxp.com, stuyoder@gmail.com, laurentiu.tudor@nxp.com,
-	leoyang.li@nxp.com
-Subject: Re: [PATCH v4 2/6] iommu: of: make of_pci_map_rid() available for
- other devices too
-Message-ID: <20180501124449.GA3009@rob-hp-laptop>
-References: <1524824826-29473-1-git-send-email-nipun.gupta@nxp.com>
- <1525069641-8523-1-git-send-email-nipun.gupta@nxp.com>
- <1525069641-8523-3-git-send-email-nipun.gupta@nxp.com>
+       spf=softfail (google.com: domain of transitioning gladkov.alexey@gmail.com does not designate 5.9.28.80 as permitted sender) smtp.mailfrom=gladkov.alexey@gmail.com;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Date: Fri, 11 May 2018 11:37:07 +0200
+From: Alexey Gladkov <gladkov.alexey@gmail.com>
+To: Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Akinobu Mita <akinobu.mita@gmail.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Jeff Layton <jlayton@poochiereds.net>,
+	Ingo Molnar <mingo@kernel.org>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	aniel Micay <danielmicay@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, bfields@fieldses.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>, solar@openwall.com,
+	"Dmitry V. Levin" <ldv@altlinux.org>,
+	Djalal Harouni <tixxdz@gmail.com>
+Subject: [PATCH v5 7/7] proc: add option to mount only a pids subset
+Message-ID: <20180511093707.GA1403@comp-core-i7-2640m-0182e6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1525069641-8523-3-git-send-email-nipun.gupta@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598894771028861343?=
-X-GMAIL-MSGID: =?utf-8?q?1599265771026404569?=
+X-GMAIL-THRID: =?utf-8?q?1600160557264356413?=
+X-GMAIL-MSGID: =?utf-8?q?1600160557264356413?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 30, 2018 at 11:57:17AM +0530, Nipun Gupta wrote:
-> iommu-map property is also used by devices with fsl-mc. This
-> patch moves the of_pci_map_rid to generic location, so that it
-> can be used by other busses too.
-> 
-> 'of_pci_map_rid' is renamed here to 'of_map_rid' and there is no
-> functional change done in the API.
-> 
-> Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
-> ---
->  drivers/iommu/of_iommu.c |   5 +--
->  drivers/of/base.c        | 102 +++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/of/irq.c         |   5 +--
->  drivers/pci/of.c         | 101 ----------------------------------------------
->  include/linux/of.h       |  11 +++++
->  include/linux/of_pci.h   |  10 -----
->  6 files changed, 117 insertions(+), 117 deletions(-)
+This allows to hide all files and directories in the procfs that are not
+related to tasks.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+---
+ fs/proc/generic.c       | 20 ++++++++++++++++++++
+ fs/proc/inode.c         |  7 +++++++
+ fs/proc/root.c          | 12 ++++++++++--
+ include/linux/proc_fs.h | 21 +++++++++++++++++++++
+ 4 files changed, 58 insertions(+), 2 deletions(-)
+
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index 2078e70..af1295c 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -266,6 +266,11 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
+ struct dentry *proc_lookup(struct inode *dir, struct dentry *dentry,
+ 		unsigned int flags)
+ {
++	struct proc_fs_info *fs_info = proc_sb(dir->i_sb);
++
++	if (proc_fs_pidonly(fs_info))
++		return ERR_PTR(-ENOENT);
++
+ 	return proc_lookup_de(dir, dentry, PDE(dir));
+ }
+ 
+@@ -322,10 +327,24 @@ int proc_readdir_de(struct file *file, struct dir_context *ctx,
+ int proc_readdir(struct file *file, struct dir_context *ctx)
+ {
+ 	struct inode *inode = file_inode(file);
++	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
++
++	if (proc_fs_pidonly(fs_info))
++		return 1;
+ 
+ 	return proc_readdir_de(file, ctx, PDE(inode));
+ }
+ 
++static int proc_dir_open(struct inode *inode, struct file *file)
++{
++	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
++
++	if (proc_fs_pidonly(fs_info))
++		return -ENOENT;
++
++	return 0;
++}
++
+ /*
+  * These are the generic /proc directory operations. They
+  * use the in-memory "struct proc_dir_entry" tree to parse
+@@ -335,6 +354,7 @@ static const struct file_operations proc_dir_operations = {
+ 	.llseek			= generic_file_llseek,
+ 	.read			= generic_read_dir,
+ 	.iterate_shared		= proc_readdir,
++	.open			= proc_dir_open,
+ };
+ 
+ /*
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index 5e62598..9b7d9cb 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -125,6 +125,9 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+ 	if (limit_pids > PROC_LIMIT_PIDS_OFF)
+ 		seq_printf(seq, ",limit_pids=%u", limit_pids);
+ 
++	if (proc_fs_pidonly(fs_info))
++		seq_printf(seq, ",pidonly");
++
+ 	return 0;
+ }
+ 
+@@ -338,12 +341,16 @@ proc_reg_get_unmapped_area(struct file *file, unsigned long orig_addr,
+ 
+ static int proc_reg_open(struct inode *inode, struct file *file)
+ {
++	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
+ 	struct proc_dir_entry *pde = PDE(inode);
+ 	int rv = 0;
+ 	int (*open)(struct inode *, struct file *);
+ 	int (*release)(struct inode *, struct file *);
+ 	struct pde_opener *pdeo;
+ 
++	if (proc_fs_pidonly(fs_info))
++		return -ENOENT;
++
+ 	/*
+ 	 * Ensure that
+ 	 * 1) PDE's ->release hook will be called no matter what
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index c72d22c..daa318e 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -28,17 +28,18 @@
+ #include "internal.h"
+ 
+ enum {
+-	Opt_gid, Opt_hidepid, Opt_limit_pids, Opt_err,
++	Opt_gid, Opt_hidepid, Opt_limit_pids, Opt_pidonly, Opt_err,
+ };
+ 
+ static const match_table_t tokens = {
+ 	{Opt_hidepid, "hidepid=%u"},
+ 	{Opt_gid, "gid=%u"},
+ 	{Opt_limit_pids, "limit_pids=%u"},
++	{Opt_pidonly, "pidonly"},
+ 	{Opt_err, NULL},
+ };
+ 
+-/* We only parse 'limit_pids' option here */
++/* We only parse 'limit_pids' and 'pidonly' option here */
+ int proc_parse_early_options(char *options, struct proc_fs_info *fs_info)
+ {
+ 	char *p, *opts, *orig;
+@@ -74,6 +75,11 @@ int proc_parse_early_options(char *options, struct proc_fs_info *fs_info)
+ 			proc_fs_set_newinstance(fs_info, true);
+ 			pr_info("proc: mounting a new procfs instance ");
+ 			break;
++		case Opt_pidonly:
++			proc_fs_set_pidonly(fs_info, PROC_PIDONLY_ON);
++			proc_fs_set_newinstance(fs_info, true);
++			pr_info("proc: mounting a new procfs instance ");
++			break;
+ 		case Opt_gid:
+ 		case Opt_hidepid:
+ 			break;
+@@ -126,6 +132,7 @@ int proc_parse_options(char *options, struct proc_fs_info *fs_info)
+ 			}
+ 			proc_fs_set_hide_pid(fs_info, option);
+ 			break;
++		case Opt_pidonly:
+ 		case Opt_limit_pids:
+ 			break;
+ 		default:
+@@ -198,6 +205,7 @@ static struct dentry *proc_mount(struct file_system_type *fs_type,
+ 	/* Set it as early as possible */
+ 	proc_fs_set_newinstance(fs_info, false);
+ 	proc_fs_set_limit_pids(fs_info, PROC_LIMIT_PIDS_OFF);
++	proc_fs_set_pidonly(fs_info, PROC_PIDONLY_OFF);
+ 
+ 	if (flags & SB_KERNMOUNT) {
+ 		ns = data;
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index 70e8b10..77137c1 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -18,6 +18,11 @@ enum { /* definitions for proc mount option limit_pids */
+ 	PROC_LIMIT_PIDS_PTRACE	= 1,	/* Limit pids to only ptracable pids */
+ };
+ 
++enum {
++	PROC_PIDONLY_OFF = 0,
++	PROC_PIDONLY_ON = 1,
++};
++
+ struct proc_fs_info {
+ 	struct super_block *sb;
+ 	struct pid_namespace *pid_ns;
+@@ -26,6 +31,7 @@ struct proc_fs_info {
+ 	struct dentry *proc_thread_self; /* For /proc/thread-self/ */
+ 	bool newinstance; /* Private flag for new separated instances */
+ 	int limit_pids:1;
++	int pidonly:1;
+ };
+ 
+ #ifdef CONFIG_PROC_FS
+@@ -60,6 +66,16 @@ static inline int proc_fs_set_limit_pids(struct proc_fs_info *fs_info, int value
+ 	return 0;
+ }
+ 
++static inline int proc_fs_set_pidonly(struct proc_fs_info *fs_info, int value)
++{
++	if (value != PROC_PIDONLY_ON && value != PROC_PIDONLY_OFF)
++		return -EINVAL;
++
++	fs_info->pidonly = value;
++
++	return 0;
++}
++
+ static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
+ {
+ 	return fs_info->pid_ns->hide_pid;
+@@ -80,6 +96,11 @@ static inline int proc_fs_limit_pids(struct proc_fs_info *fs_info)
+ 	return fs_info->limit_pids;
+ }
+ 
++static inline int proc_fs_pidonly(struct proc_fs_info *fs_info)
++{
++	return fs_info->pidonly;
++}
++
+ extern void proc_root_init(void);
+ extern void proc_flush_task(struct task_struct *);
+ 
+-- 
+2.10.5
