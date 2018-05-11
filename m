@@ -1,69 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752656AbeEKMIx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 08:08:53 -0400
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:46985 "EHLO
-        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750726AbeEKMIv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 08:08:51 -0400
-X-Google-Smtp-Source: AB8JxZq8hXvL9azaelH6EiOknm126eXPDQVQt0EvHQ89etkawlDruD7YC5HgnSlHDYuDWRWnTDzQBg==
-Subject: Re: [PATCH V2 1/2] Revert "ssb: Prevent build of PCI host features in
- module"
-To: Kalle Valo <kvalo@codeaurora.org>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        Hauke Mehrtens <hauke@hauke-m.de>, LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-References: <20180511091715.1989-1-zajec5@gmail.com>
- <CACna6ry-91oR1u697NRymLsN28fnnHDp9OQrdiVwA7A3KTV1fg@mail.gmail.com>
- <87bmdmcxf6.fsf@codeaurora.org>
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <727571cb-5d1f-2d99-b050-979edd02106f@lwfinger.net>
-Date: Fri, 11 May 2018 07:08:48 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <87bmdmcxf6.fsf@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1752990AbeEKMJK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 08:09:10 -0400
+Received: from mga17.intel.com ([192.55.52.151]:44522 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751000AbeEKMJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 08:09:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,388,1520924400";
+   d="scan'208";a="227662793"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH 1/2] x86/boot/compressed/64: Fix trampoline page table address calculation
+Date: Fri, 11 May 2018 15:08:58 +0300
+Message-Id: <20180511120859.26375-2-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180511120859.26375-1-kirill.shutemov@linux.intel.com>
+References: <20180511120859.26375-1-kirill.shutemov@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2018 05:13 AM, Kalle Valo wrote:
-> Rafał Miłecki <zajec5@gmail.com> writes:
-> 
->> On 11 May 2018 at 11:17, Rafał Miłecki <zajec5@gmail.com> wrote:
->>> From: Rafał Miłecki <rafal@milecki.pl>
->>>
->>> This reverts commit 882164a4a928bcaa53280940436ca476e6b1db8e.
->>>
->>> Above commit added "SSB = y" dependency to the wrong symbol
->>> SSB_DRIVER_PCICORE_POSSIBLE and prevented SSB_DRIVER_PCICORE from being
->>> selected when needed. PCI core driver for core running in clienthost
->>> mode is important for bus initialization. It's perfectly valid scenario
->>> to have ssb built as module and use it with buses on PCI cards.
->>>
->>> This fixes regression that affected all *module* users with PCI cards.
->>>
->>> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1572349
->>> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
->>
->> As these patches fix regression/build error, I believe both should get
->> into 4.17.
-> 
-> How much confidence do we have that we don't need to end up reverting
-> patch 2 as well? I rather be pushing patch 2 to 4.18 so that there's
-> more time for testing and waiting for feedback.
+Hugh noticied that I calculate address of trampoline page table wrong in
+cleanup_trampoline(). TRAMPOLINE_32BIT_PGTABLE_OFFSET has to be divided
+by sizeof(unsigned long) since trampoline_32bit is unsigned long
+pointer.
 
-Although I do not have the hardware to test the builds, I worked closely with 
-the OP in the bug at b.r.c noted above. From that effort, it became clear what 
-configuration variables were missing to cause the x86 failures. Patch 2 
-satisfies the requirement, and prevents the build problems found by the MIPS 
-users. Both patches are needed in 4.17.
+TRAMPOLINE_32BIT_PGTABLE_OFFSET is zero so the bug doesn't have a
+visible effect.
 
-Larry
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Reported-by: Hugh Dickins <hughd@google.com>
+Fixes: e9d0e6330eb8 ("x86/boot/compressed/64: Prepare new top-level page table for trampoline")
+---
+ arch/x86/boot/compressed/pgtable_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index a362fa0b849c..23707e1da1ff 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -130,7 +130,7 @@ void cleanup_trampoline(void *pgtable)
+ {
+ 	void *trampoline_pgtable;
+ 
+-	trampoline_pgtable = trampoline_32bit + TRAMPOLINE_32BIT_PGTABLE_OFFSET;
++	trampoline_pgtable = trampoline_32bit + TRAMPOLINE_32BIT_PGTABLE_OFFSET / sizeof(unsigned long);
+ 
+ 	/*
+ 	 * Move the top level page table out of trampoline memory,
+-- 
+2.17.0
