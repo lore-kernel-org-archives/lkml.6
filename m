@@ -1,31 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752814AbeEKKNl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 06:13:41 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37618 "EHLO
+        id S1752781AbeEKKSg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 06:18:36 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39468 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752639AbeEKKNj (ORCPT
+        with ESMTP id S1750852AbeEKKSf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 06:13:39 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6DB6860290
+        Fri, 11 May 2018 06:18:35 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1C3B560290
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
 From: Kalle Valo <kvalo@codeaurora.org>
-To: =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc: Michael =?utf-8?Q?B=C3=BCsch?= <m@bues.ch>,
-        Larry Finger <larry.finger@lwfinger.net>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+To: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>,
+        Michael =?utf-8?Q?B=C3=BCsch?= <m@bues.ch>,
+        Matt Redfearn <matt.redfearn@mips.com>, linux-wireless@vger.kernel.org,
         Hauke Mehrtens <hauke@hauke-m.de>, LKML <linux-kernel@vger.kernel.org>,
-        =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
-Subject: Re: [PATCH V2 1/2] Revert "ssb: Prevent build of PCI host features in module"
-References: <20180511091715.1989-1-zajec5@gmail.com>
-        <CACna6ry-91oR1u697NRymLsN28fnnHDp9OQrdiVwA7A3KTV1fg@mail.gmail.com>
-Date: Fri, 11 May 2018 13:13:33 +0300
-In-Reply-To: <CACna6ry-91oR1u697NRymLsN28fnnHDp9OQrdiVwA7A3KTV1fg@mail.gmail.com>
-        (=?utf-8?Q?=22Rafa=C5=82_Mi=C5=82ecki=22's?= message of "Fri, 11 May 2018
- 11:21:11 +0200")
-Message-ID: <87bmdmcxf6.fsf@codeaurora.org>
+        =?utf-8?Q?Rafa?= =?utf-8?Q?=C5=82_Mi=C5=82ecki?=
+        <rafal@milecki.pl>
+Subject: Re: [PATCH 4.17 2/2] ssb: make SSB_PCICORE_HOSTMODE depend on SSB = y
+References: <20180510111401.1161-1-zajec5@gmail.com>
+        <20180510111401.1161-2-zajec5@gmail.com>
+        <ff18cb0a-e878-dff4-777b-134f0f3fe2e5@lwfinger.net>
+Date: Fri, 11 May 2018 13:18:30 +0300
+In-Reply-To: <ff18cb0a-e878-dff4-777b-134f0f3fe2e5@lwfinger.net> (Larry
+        Finger's message of "Thu, 10 May 2018 11:07:09 -0500")
+Message-ID: <8736yycx6x.fsf@codeaurora.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -33,32 +33,35 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4BADkVS002145
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4BAIiOK002165
 
-Rafał Miłecki <zajec5@gmail.com> writes:
+Larry Finger <Larry.Finger@lwfinger.net> writes:
 
-> On 11 May 2018 at 11:17, Rafał Miłecki <zajec5@gmail.com> wrote:
+> On 05/10/2018 06:14 AM, Rafał Miłecki wrote:
 >> From: Rafał Miłecki <rafal@milecki.pl>
 >>
->> This reverts commit 882164a4a928bcaa53280940436ca476e6b1db8e.
+>> SSB_PCICORE_HOSTMODE protects MIPS specific code that calls not exported
+>> symbols pcibios_enable_device and register_pci_controller. This code is
+>> supposed to be compiled only with ssb builtin.
 >>
->> Above commit added "SSB = y" dependency to the wrong symbol
->> SSB_DRIVER_PCICORE_POSSIBLE and prevented SSB_DRIVER_PCICORE from being
->> selected when needed. PCI core driver for core running in clienthost
->> mode is important for bus initialization. It's perfectly valid scenario
->> to have ssb built as module and use it with buses on PCI cards.
+>> This fixes:
+>> ERROR: "pcibios_enable_device" [drivers/ssb/ssb.ko] undefined!
+>> ERROR: "register_pci_controller" [drivers/ssb/ssb.ko] undefined!
+>> make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
 >>
->> This fixes regression that affected all *module* users with PCI cards.
->>
->> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1572349
 >> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
 >
-> As these patches fix regression/build error, I believe both should get
-> into 4.17.
+> This patch needs a "Reported-by: Matt Redfearn <matt.redfearn@mips.com>".
+>
+> Applying both patches leads to a correct configuration for PCI. I
+> cannot test on my present hardware, but the patches seem to be
+> correct.
+>
+> Reviewed-by: Larry Finger <Larry.Finger@lwfinger.net>
+>
+> @Kalle: Please drop my patch from yesterday. This solution is much better.
 
-How much confidence do we have that we don't need to end up reverting
-patch 2 as well? I rather be pushing patch 2 to 4.18 so that there's
-more time for testing and waiting for feedback.
+Dropped, thanks for letting me know.
 
 -- 
 Kalle Valo
