@@ -1,59 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751989AbeEKBxl (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 21:53:41 -0400
-Received: from mga12.intel.com ([192.55.52.136]:56260 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750722AbeEKBxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 21:53:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,387,1520924400";
-   d="scan'208";a="198432196"
-Message-ID: <1526003610.19343.1.camel@intel.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the thermal
- tree
-From: Zhang Rui <rui.zhang@intel.com>
-To: Eduardo Valentin <edubezval@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Fri, 11 May 2018 09:53:30 +0800
-In-Reply-To: <20180510021011.GA3765@localhost.localdomain>
-References: <20180509214341.1d490677@canb.auug.org.au>
-         <20180510021011.GA3765@localhost.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1752047AbeEKByy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 21:54:54 -0400
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:40283 "EHLO
+        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750798AbeEKByx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 21:54:53 -0400
+X-Google-Smtp-Source: AB8JxZqIqK3V/kqaPL8aD4UYGuYbIjXgK5RdOt5TF9By5Z6NH4zkJ4ZXc/Ki3ivh4FryeUfrDFkTSg==
+Date: Fri, 11 May 2018 10:54:48 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Joe Perches <joe@perches.com>
+Cc: Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/18] printk: Remove pr_fmt duplicate logging prefixes
+Message-ID: <20180511015448.GC895@jagdpanzerIV>
+References: <cover.1525964381.git.joe@perches.com>
+ <fdcd68ac1b1c8d5e51fa04e65862c838767c04c3.1525964385.git.joe@perches.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fdcd68ac1b1c8d5e51fa04e65862c838767c04c3.1525964385.git.joe@perches.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 三, 2018-05-09 at 19:10 -0700, Eduardo Valentin wrote:
-> Hey Rui,
+On (05/10/18 08:45), Joe Perches wrote:
+> Converting pr_fmt from a simple define to use KBUILD_MODNAME added
+> some duplicate logging prefixes to existing uses.
 > 
-> On Wed, May 09, 2018 at 09:43:41PM +1000, Stephen Rothwell wrote:
-> > 
-> > Hi Zhang,
-> > 
-> > Commits
-> > 
-> >   a2ace598c00a ("thermal: exynos: Reading temperature makes sense
-> > only when TMU is turned on")
-> >   f9cd6a904e6e ("thermal: exynos: Propagate error value from
-> > tmu_read()")
-> > 
-> > are missing a Signed-off-by from their committer.
-> Did you cherry-pick them instead of merging? If cherry-picking you
-> have
-> to add your Signed-off-by..
+> Remove them.
 > 
-I merged them, and then did a rebase to drop some of the patch, hmmm,
-could that be the problem?
-Anyway, I will re-merge your tree and push them out sometime tomorrow.
+> Signed-off-by: Joe Perches <joe@perches.com>
 
-thanks,
-rui
+Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+
+	-ss
