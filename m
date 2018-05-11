@@ -1,147 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751366AbeEKPOb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 11:14:31 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:40263 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750722AbeEKPO2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 11:14:28 -0400
-Subject: Re: I2C PM overhaul needed? (Re: [PATCH 1/2] i2c: sprd: Prevent i2c
- accesses after suspend is called)
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Baolin Wang <baolin.wang@linaro.org>, Mark Brown <broonie@kernel.org>,
-        <linux-i2c@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <99031524fa147e72451d26f54b24f36093c0d3fa.1523255712.git.baolin.wang@linaro.org>
- <20180427121417.auv4ppryegkprv32@ninjato>
- <CAMz4kuK3fyBhdrUcLvY0s0N-0yY9_0MrAAi9cWdX1ZfdNW+R0w@mail.gmail.com>
- <20180502052336.i5f4yv2ho3za7qa7@tetsubishi>
- <CAMz4kuJAzr-ybCCmjx_Tcdw6qNYN0wLGQgWsb1H0WEkR4ZpyYg@mail.gmail.com>
- <3485f73f-e356-6db0-89fc-d51bf8bdab71@ti.com>
- <20180504122447.u3xgrkperxz5dpcz@ninjato>
- <bef80500-4727-d324-f0c8-4fc6016f43ed@ti.com>
- <20180508163221.2slrtg3cidvpj7g2@ninjato>
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <ee6cb844-733b-dc5f-4ba1-65b692e75946@ti.com>
-Date: Fri, 11 May 2018 10:14:23 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180508163221.2slrtg3cidvpj7g2@ninjato>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
+        id S1751375AbeEKPPr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 11:15:47 -0400
+Received: from mout.gmx.net ([212.227.17.22]:58753 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750746AbeEKPPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 11:15:46 -0400
+Message-ID: <1526051730.23162.3.camel@gmx.de>
+Subject: [patch] swiotlb: fix ignored DMA_ATTR_NO_WARN request
+From: Mike Galbraith <efault@gmx.de>
+To: nouveau <nouveau@lists.freedesktop.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Roger He <Hongbo.He@amd.com>, Christoph Hellwig <hch@lst.de>
+Date: Fri, 11 May 2018 17:15:30 +0200
+In-Reply-To: <1526022830.6288.3.camel@gmx.de>
+References: <1525943427.8013.11.camel@gmx.de>
+         <1525948096.29445.4.camel@gmx.de> <1526022830.6288.3.camel@gmx.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Provags-ID: V03:K1:8GHCwJNqycaaCt2knY+4eAUmZJhraSn4K2b7nrAmrlUs3izOR99
+ OUXMzT6F9ayhVWWJHUT3dV0Ixl7AIN+6/nfUU7HNSY1VI3ljGVJTOEeiA5Z3MlobvaJSIOx
+ AqsD8TE4yTnAdgZ2P7vksXJIUuviv6hWNcjdiyUHiEr3dFj99SkyqtuYZZEHyTN4EhyFXrW
+ AKahxqpF5y4TBxkC1YpeA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:WtwOm/OLYyM=:4xQ+TF2MO98w3lkJ3P/G9q
+ L1XCVEbYOBUPkaVHjU4gov7DYvyMrc5frSPc58L/d32linO6V4tbmHJnukfxjdhCXQA4GHZ1T
+ MGD5VYqb8MyTeYekj64GdwqLq39Nn5kdZPpvv0370jIND2eZDHw2SfEQyxKrEi5uAzeWHirfu
+ egaloTwIBhfAUr3oflcerLzoYGDiH54RzJhnBlDyr02zmJOfFAm9CD1TJgdZG9hz/YgTyC8Fp
+ xpW2Mptq0jNjxBzv4RS0FCa725RRctElQoS6ZHYyrGDFDzNq2O5DLQ8aAfeOI+lBZXE+jfRL6
+ 25gKIV4Y31NfySLvAUoRAk7566GKzxr/gDTUCcTW3Kgt53M7gc/1eEai0O82PKaq7duhLxwGC
+ QMfRFTX3dH81dzAsZIow9xpJat0S+lviuXWZaApaiTYEnLIcCXvttiokSltBfcKGFjDd4Ar3I
+ +Y4csKbH3ImqomW96r8XdgGr7eGtcI2mgGnc20xGvuj3mUunFq/FHj+0PTb/H7QWcIK461J+u
+ HfdM1tP5u1BMXtgMk28VRjQfV6GYTwDgA55j5f4UUeG5vi64sDHYHzTYIFD/7+pQAhL1Znqx5
+ oNBFF10vxSW09r34+Lv+cAx0Y4nuZ/4Z1lgMv118Q3X8chIJJWtUqSkev2z5eW6qReY8Y2F02
+ x5ahay+Lllo2ffegdWQ30wge5gjQ1lLuarIn/RUnCu64aPbztTNIDnUtj+bT7t/ZD5pc6YG9n
+ Vwk9jDHcDIxolUhd4TfJyvT2kRO9Zb63UjKWLTGBzLuUYQWIIufeYTrYFDVK6hyY217Eadmyv
+ Dq/0MX+
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+In the trace below, swiotlb_alloc() is called with __GFP_NOWARN, it ors
+attrs with DMA_ATTR_NO_WARN and passes it to swiotlb_alloc_buffer(),
+which does NOT pass it on to swiotlb_tbl_map_single(), leading to an
+ever repeating warning that the caller of swiotlb_alloc() explicitly
+asked to be squelched.  Pass the caller's request for silence onward.
 
-On 05/08/2018 11:32 AM, Wolfram Sang wrote:
-> Grygorii,
-> 
-> thanks a lot for your input. Much appreciated!
-> 
->> That would be great, but note:
->> 1) only i2c_transfer() operations are locked, so if driver is doing
->> i2c_transfer(1)
->> i2c_transfer(2) <- suspend in the middle
->> <- suspend in between
->> i2c_transfer(3)
->> It will not help.
-> 
-> Will it not improve the situation by ensuring that at least the transfer
-> with its (potenitally) multiple messages got completed? That we are at
-> least in a bus-free state (assuming single-master here) before
-> suspending?
-> 
->> Everything depends on timings :( - in my practice 10000 suspend iteration tests
->> where required to run many times to catch 3 buggy I2C client drivers.
-> 
-> Matches my experiences that creating a reliable test case for that is
-> not that easy as I thought. Or I am missing something obvious.
-> 
->> 2) It's normal to abort suspend if system is busy, so if I2C core will be able
->> to catch active I2C operation - it should abort, but again I do not see how it
->>   can be detected 100% with current I2C core design or without reworking huge number of drivers.
-> 
-> I agree. After second thought, waiting for i2c_transfer to finish maybe
-> won't be enough, I am afraid. We don't know if STOP has been put on the
-> wires yet. My best bet now is that we implement such a
-> 'is-transfer-ongoing'-check in the suspend function of the master
-> driver? That check should be optional, but recommended.
-> 
->> 3) So, only one thing I2C core potentially can do - catch invalid access and
->> report it. "wait for transfer to finish" wouldn't work as for me.
-> 
-> And we do this in suspend_noirq function of the i2c core.
-> 
->>> I at least know of some Renesas boards which needed the I2C connected
->>> PMIC to do a system reset (not sure about suspend, need to recheck
->>> that). That still today causes problems because interrupts are disabled
->>> then.
->>
->> this was triggered few times already (sry, don't have links), as of now,
->>   and as I know, the only ways to W/A this is:
->> - to create barametal platform driver (some time in ASM)
->> - or delegate final suspend operation to another system controller (co-processor),
->>    as example TI am335x SoCs,
->> - or implement I2C driver in hw - TI AVS/SmartReflex.
-> 
-> Yes. Please note that this is only needed for reset, not suspend. So, it
-> is a bit easier. Still, it might make more sense to use a platform based
-> solution. I'll think about that.
-> 
->> Sry, but 99% percent of I2C client drivers *should not* access I2C bus after
->> .suspend_noirq() stage it's BUG-BUG!! Any W/A will just hide real problems.
-> 
-> I do believe you, still is there documentation about such things? I like
-> to understand more but didn't dig up something up to now. E.g. I grepped
-> for "noirq" in Documentation/power.
-> 
->> "master_xfer_irqless" might be a not bad idea, but, in my opinion, it
->> should be used explicitly by platform code only, and each usage should
->> be proved to exist.
-> 
-> Yes, we can think about it once it is really needed.
-> 
->> Some additional info:
-> 
-> Thanks a lot for that!
-> 
->> I'm attaching some very old patch (don't ask me why it was not sent :()
->> I did for Android system - which likes suspend very much. Some
->> part of below diff are obsolete now (like omap_i2c_suspend()),
->> but .noirq() callback are still valid and can show over all idea.
->> Really helped to catch min 3 buggy client drivers with timers, delayed
->> or periodic works.
-> 
-> Ok, so what do you think about my plan to:
-> 
-> 1) encourage drivers to check if there is still an ongoing transfer in
-> their .suspend function (or the core can do that, too, if we agree that
-> checking for a taken adapter lock is sufficient)
-> 
-> -> to ensure transfers don't get interrupted in the middle
+ Xorg-3170  [006] ....   963.866098: swiotlb_alloc+0x1d/0x1a0: gfp & __GFP_NOWARN
+ Xorg-3170  [006] ....   963.866101: <stack trace>
+ => ttm_dma_populate+0x250/0x310 [ttm]
+ => ttm_tt_populate+0x28/0x70 [ttm]
+ => ttm_tt_bind+0x26/0x60 [ttm]
+ => ttm_bo_handle_move_mem+0x51a/0x580 [ttm]
+ => ttm_bo_validate+0xfa/0x110 [ttm]
+ => ttm_bo_init_reserved+0x296/0x450 [ttm]
+ => ttm_bo_init+0x73/0xd0 [ttm]
+ => nouveau_bo_new+0x3eb/0x5c0 [nouveau]
+ => nouveau_gem_new+0x66/0x110 [nouveau]
+ => nouveau_gem_ioctl_new+0x48/0xc0 [nouveau]
+ => drm_ioctl_kernel+0x66/0xb0 [drm]
+ => drm_ioctl+0x28d/0x340 [drm]
+ => nouveau_drm_ioctl+0x50/0xb0 [nouveau]
+ => do_vfs_ioctl+0x92/0x5e0
+ => ksys_ioctl+0x3a/0x70
+ => __x64_sys_ioctl+0x16/0x20
+ => do_syscall_64+0x5b/0x180
+ => entry_SYSCALL_64_after_hwframe+0x44/0xa9
+ Xorg-3170  [006] ....   963.866917: swiotlb_tbl_map_single+0x29b/0x2d0: swiotlb buffer is full (sz: 2097152 bytes)
 
-It probably should be part of .suspend_noirq() also.
+Signed-off-by: Mike Galbraith <efault@gmx.de>
+---
+ lib/swiotlb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> 2) use a .suspend_noirq callback in i2c_bus_type.pm to reject and WARN
-> about transfers still going on in that phase
-> 
-> -> this ensures that buggy drivers are caught
-> 
-> 3) write some documentation about our findings / assumptions /
-> recommendations to a file in Documentation/i2c/
-> 
-> -> this ensures we won't forget why we did things like they are ;)
-> 
-> ?
-
-Sry, for delayed reply. It sounds good.
-
--- 
-regards,
--grygorii
+--- a/lib/swiotlb.c
++++ b/lib/swiotlb.c
+@@ -714,7 +714,7 @@ swiotlb_alloc_buffer(struct device *dev,
+ 
+ 	phys_addr = swiotlb_tbl_map_single(dev,
+ 			__phys_to_dma(dev, io_tlb_start),
+-			0, size, DMA_FROM_DEVICE, 0);
++			0, size, DMA_FROM_DEVICE, attrs);
+ 	if (phys_addr == SWIOTLB_MAP_ERROR)
+ 		goto out_warn;
+ 
