@@ -1,49 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753367AbeEKLRE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 07:17:04 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:50516 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752747AbeEKLRC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 07:17:02 -0400
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <nm@ti.com>, <t-kristo@ti.com>
-CC: <ssantosh@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <lokeshvutla@ti.com>
-Subject: [PATCH] firmware: ti_sci: Correct the timeout type in ti_sci_do_xfer()
-Date: Fri, 11 May 2018 14:17:26 +0300
-Message-ID: <20180511111726.27350-1-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.17.0
+        id S1753405AbeEKLRJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 07:17:09 -0400
+Received: from mga05.intel.com ([192.55.52.43]:31424 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752747AbeEKLRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 07:17:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,388,1520924400";
+   d="scan'208";a="57786138"
+Subject: Re: [PATCH RFC 07/19] perf tools: Workaround missing maps for x86_64
+ KPTI entry trampolines
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
+ <1525866228-30321-8-git-send-email-adrian.hunter@intel.com>
+ <20180509170717.GI13491@kernel.org>
+ <363DA0ED52042842948283D2FC38E4649C13DE9E@IRSMSX106.ger.corp.intel.com>
+ <20180510201542.GD4311@kernel.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <b34d2556-10d1-4de9-caa6-700dd850d8e5@intel.com>
+Date: Fri, 11 May 2018 14:15:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180510201542.GD4311@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It should be 'unsigned long', not int.
+On 10/05/18 23:15, Arnaldo Carvalho de Melo wrote:
+> Em Thu, May 10, 2018 at 07:08:37PM +0000, Hunter, Adrian escreveu:
+>>> -----Original Message-----
+>>> From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
+>>> Sent: Wednesday, May 9, 2018 8:07 PM
+>>> To: Hunter, Adrian <adrian.hunter@intel.com>
+>>> Cc: Thomas Gleixner <tglx@linutronix.de>; Ingo Molnar
+>>> <mingo@redhat.com>; Peter Zijlstra <peterz@infradead.org>; Andy
+>>> Lutomirski <luto@kernel.org>; H. Peter Anvin <hpa@zytor.com>; Andi Kleen
+>>> <ak@linux.intel.com>; Alexander Shishkin
+>>> <alexander.shishkin@linux.intel.com>; Dave Hansen
+>>> <dave.hansen@linux.intel.com>; Joerg Roedel <joro@8bytes.org>; Jiri Olsa
+>>> <jolsa@redhat.com>; linux-kernel@vger.kernel.org; x86@kernel.org
+>>> Subject: Re: [PATCH RFC 07/19] perf tools: Workaround missing maps for
+>>> x86_64 KPTI entry trampolines
+>>>
+>>> Em Wed, May 09, 2018 at 02:43:36PM +0300, Adrian Hunter escreveu:
+>>>> On x86_64 the KPTI entry trampolines are not in the kernel map created
+>>>> by perf tools. That results in the addresses having no symbols and
+>>>> prevents annotation. It also causes Intel PT to have decoding errors
+>>>> at the trampoline addresses. Workaround that by creating maps for the
+>>> trampolines.
+>>>> At present the kernel does not export information revealing where the
+>>>> trampolines are. Until that happens, the addresses are hardcoded.
+>>>>
+>>>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+>>>> ---
+>>>>  tools/perf/util/machine.c | 104
+>>> ++++++++++++++++++++++++++++++++++++++++++++++
+>>>>  tools/perf/util/machine.h |   3 ++
+>>>>  tools/perf/util/symbol.c  |  12 +++---
+>>>>  3 files changed, 114 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+>>>> index 22047ff3cf2a..1bf15aa0b099 100644
+>>>> --- a/tools/perf/util/machine.c
+>>>> +++ b/tools/perf/util/machine.c
+>>>> @@ -851,6 +851,110 @@ static int
+>>> machine__get_running_kernel_start(struct machine *machine,
+>>>>  	return 0;
+>>>>  }
+>>>>
+>>>> +struct special_kernal_map {
+>>>
+>>> s/kernal/kernel/
+>>>
+>>> And "special"?
+>>
+>> I have added comment:
+>>
+>> /* Kernel-space maps that are not the main kernel map nor a module map */
+> 
+> Perhaps:
+> 
+>   /* Kernel-space maps for symbols that are outside the main kernel map and module maps */
+> 
+>   struct extra_kernel_map;
+> 
+> What do you think?
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/firmware/ti_sci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-index b74a533ef35b..398a6db4da88 100644
---- a/drivers/firmware/ti_sci.c
-+++ b/drivers/firmware/ti_sci.c
-@@ -419,7 +419,7 @@ static inline int ti_sci_do_xfer(struct ti_sci_info *info,
- 				 struct ti_sci_xfer *xfer)
- {
- 	int ret;
--	int timeout;
-+	unsigned long timeout;
- 	struct device *dev = info->dev;
- 
- 	ret = mbox_send_message(info->chan_tx, &xfer->tx_message);
--- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+I have done the re-naming and comment change and pushed the changes to the
+same branch.
