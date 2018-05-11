@@ -1,36 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752025AbeEKCs5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 22:48:57 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:36194 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750751AbeEKCs4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 22:48:56 -0400
-Date: Fri, 11 May 2018 03:48:51 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, ast@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: Re: [PATCH] coredump: rename umh_pipe_setup() to
- coredump_pipe_setup()
-Message-ID: <20180511024851.GB30522@ZenIV.linux.org.uk>
-References: <20180507233002.5571-1-mcgrof@kernel.org>
- <20180510231907.xbok4h6rjopwdq6e@ast-mbp>
- <20180510233247.GG27853@wotan.suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180510233247.GG27853@wotan.suse.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        id S1752121AbeEKCtf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 22:49:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58994 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752033AbeEKCtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 22:49:33 -0400
+From: Jason Wang <jasowang@redhat.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: xiyou.wangcong@gmail.com, eric.dumazet@gmail.com, mst@redhat.com,
+        Jason Wang <jasowang@redhat.com>
+Subject: [PATCH net V2] tun: fix use after free for ptr_ring
+Date: Fri, 11 May 2018 10:49:25 +0800
+Message-Id: <1526006965-9124-1-git-send-email-jasowang@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 11:32:47PM +0000, Luis R. Rodriguez wrote:
+We used to initialize ptr_ring during TUNSETIFF, this is because its
+size depends on the tx_queue_len of netdevice. And we try to clean it
+up when socket were detached from netdevice. A race were spotted when
+trying to do uninit during a read which will lead a use after free for
+pointer ring. Solving this by always initialize a zero size ptr_ring
+in open() and do resizing during TUNSETIFF, and then we can safely do
+cleanup during close(). With this, there's no need for the workaround
+that was introduced by commit 4df0bfc79904 ("tun: fix a memory leak
+for tfile->tx_array").
 
-> I think net-next makes sense if Al Viro is OK with that. This way it could go
-> in regardless of the state of your series, but it also lines up with your work.
+Reported-by: syzbot+e8b902c3c3fadf0a9dba@syzkaller.appspotmail.com
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Fixes: 1576d9860599 ("tun: switch to use skb array for tx")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+Changes from v1:
+- free ptr_ring during close()
+- use tun_ptr_free() during resie for safety
+---
+ drivers/net/tun.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-Fine by me...
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index ef33950..9fbbb32 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -681,15 +681,6 @@ static void tun_queue_purge(struct tun_file *tfile)
+ 	skb_queue_purge(&tfile->sk.sk_error_queue);
+ }
+ 
+-static void tun_cleanup_tx_ring(struct tun_file *tfile)
+-{
+-	if (tfile->tx_ring.queue) {
+-		ptr_ring_cleanup(&tfile->tx_ring, tun_ptr_free);
+-		xdp_rxq_info_unreg(&tfile->xdp_rxq);
+-		memset(&tfile->tx_ring, 0, sizeof(tfile->tx_ring));
+-	}
+-}
+-
+ static void __tun_detach(struct tun_file *tfile, bool clean)
+ {
+ 	struct tun_file *ntfile;
+@@ -736,7 +727,8 @@ static void __tun_detach(struct tun_file *tfile, bool clean)
+ 			    tun->dev->reg_state == NETREG_REGISTERED)
+ 				unregister_netdevice(tun->dev);
+ 		}
+-		tun_cleanup_tx_ring(tfile);
++		if (tun)
++			xdp_rxq_info_unreg(&tfile->xdp_rxq);
+ 		sock_put(&tfile->sk);
+ 	}
+ }
+@@ -783,14 +775,14 @@ static void tun_detach_all(struct net_device *dev)
+ 		tun_napi_del(tun, tfile);
+ 		/* Drop read queue */
+ 		tun_queue_purge(tfile);
++		xdp_rxq_info_unreg(&tfile->xdp_rxq);
+ 		sock_put(&tfile->sk);
+-		tun_cleanup_tx_ring(tfile);
+ 	}
+ 	list_for_each_entry_safe(tfile, tmp, &tun->disabled, next) {
+ 		tun_enable_queue(tfile);
+ 		tun_queue_purge(tfile);
++		xdp_rxq_info_unreg(&tfile->xdp_rxq);
+ 		sock_put(&tfile->sk);
+-		tun_cleanup_tx_ring(tfile);
+ 	}
+ 	BUG_ON(tun->numdisabled != 0);
+ 
+@@ -834,7 +826,8 @@ static int tun_attach(struct tun_struct *tun, struct file *file,
+ 	}
+ 
+ 	if (!tfile->detached &&
+-	    ptr_ring_init(&tfile->tx_ring, dev->tx_queue_len, GFP_KERNEL)) {
++	    ptr_ring_resize(&tfile->tx_ring, dev->tx_queue_len,
++			    GFP_KERNEL, tun_ptr_free)) {
+ 		err = -ENOMEM;
+ 		goto out;
+ 	}
+@@ -3219,6 +3212,11 @@ static int tun_chr_open(struct inode *inode, struct file * file)
+ 					    &tun_proto, 0);
+ 	if (!tfile)
+ 		return -ENOMEM;
++	if (ptr_ring_init(&tfile->tx_ring, 0, GFP_KERNEL)) {
++		sk_free(&tfile->sk);
++		return -ENOMEM;
++	}
++
+ 	RCU_INIT_POINTER(tfile->tun, NULL);
+ 	tfile->flags = 0;
+ 	tfile->ifindex = 0;
+@@ -3239,8 +3237,6 @@ static int tun_chr_open(struct inode *inode, struct file * file)
+ 
+ 	sock_set_flag(&tfile->sk, SOCK_ZEROCOPY);
+ 
+-	memset(&tfile->tx_ring, 0, sizeof(tfile->tx_ring));
+-
+ 	return 0;
+ }
+ 
+@@ -3249,6 +3245,7 @@ static int tun_chr_close(struct inode *inode, struct file *file)
+ 	struct tun_file *tfile = file->private_data;
+ 
+ 	tun_detach(tfile, true);
++	ptr_ring_cleanup(&tfile->tx_ring, tun_ptr_free);
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
