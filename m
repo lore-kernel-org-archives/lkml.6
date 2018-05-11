@@ -1,49 +1,37 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753097AbeEKN23 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 09:28:29 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40674 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750777AbeEKN22 (ORCPT
+        id S1753065AbeEKNfU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 09:35:20 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:40845 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752873AbeEKNfS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 09:28:28 -0400
-From: Colin King <colin.king@canonical.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: hisilicon: fix spelling mistake: "uknown" -> "unknown"
-Date: Fri, 11 May 2018 14:28:18 +0100
-Message-Id: <20180511132818.16728-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 11 May 2018 09:35:18 -0400
+Date: Fri, 11 May 2018 15:35:14 +0200
+From: Simon Horman <horms@verge.net.au>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        geert@glider.be, magnus.damm@gmail.com, robh+dt@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: media: rcar-vin: Add R8A77995 support
+Message-ID: <20180511133513.25dldevvnlnxl7y6@verge.net.au>
+References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526032802-14376-2-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526032802-14376-2-git-send-email-jacopo+renesas@jmondi.org>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, May 11, 2018 at 12:00:00PM +0200, Jacopo Mondi wrote:
+> Add compatible string for R-Car D3 R8A7795 to list of SoCs supported by
+> rcar-vin driver.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Trivial fix to spelling mistake in dev_err message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/hisilicon/hi6210-i2s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/hisilicon/hi6210-i2s.c b/sound/soc/hisilicon/hi6210-i2s.c
-index 07a57209e055..53344a3b7a60 100644
---- a/sound/soc/hisilicon/hi6210-i2s.c
-+++ b/sound/soc/hisilicon/hi6210-i2s.c
-@@ -498,7 +498,7 @@ static int hi6210_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
- 			hi6210_i2s_txctrl(cpu_dai, 0);
- 		break;
- 	default:
--		dev_err(cpu_dai->dev, "uknown cmd\n");
-+		dev_err(cpu_dai->dev, "unknown cmd\n");
- 		return -EINVAL;
- 	}
- 	return 0;
--- 
-2.17.0
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
