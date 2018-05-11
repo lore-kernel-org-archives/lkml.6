@@ -1,157 +1,125 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526036970; cv=none;
+Return-Path: <fbarrat@linux.ibm.com>
+X-Google-Smtp-Source: AB8JxZqPl0tANJzDI6LNkbZj3v6v9HqCvJAJBjcQpzA9F/Y7XxFz3YrB+avztcmwoOxgABurLPGd
+ARC-Seal: i=1; a=rsa-sha256; t=1526034276; cv=none;
         d=google.com; s=arc-20160816;
-        b=uF7oyOxZLp8ofG1UUv/+tAcSS5zRdEQ23HhCDRr3hfwbNlAQXQW4/Fy4rvijiemLG5
-         0OhFACTZnIviHg515HSlNgdsWwWgq8NgOe7SNrRWgL7S6iCs+aKX9u78xiQrcWzWuq08
-         XO/j/+DA556UEz7V0GpSMVpqWnSHlhdbQJGZAAFAXbvU2UkcbBxOdvz9MrC/aqbPNxxT
-         6AI+QyV5sAni5yUGqTsRwa+GAnLWT9dYI2QWXlpCIdjqc1ZPDGcaTqzDdeM8692kOcNl
-         dZyUjBac46nEm2EjbsVMMISe4W77AEpX/rp+42qg5bRRT8emM0jCAM2KQBEvMLCNlZUa
-         LjAQ==
+        b=QltYhhc/LNfhzG3cOxgT7KyT1/omSUzStvBvhLp/TI58068yNzNlMVjpQ8qa6CnAF2
+         pCQc4SI7cM/+H8yLcIwz7aLJ85KlpsG3VA7mnVV9EBD1KV9E8BCw5JNLfCtBQGnJ1Aiu
+         3HhNkmDiTDijH+8pVBIG7y+pFxPyfVa7WjAK5BPu7Mep1no1XnxaNZTeC4pYJOmWCO/5
+         6JblpAnZtlW6SsAmIfj/g5m+au4XTPKNdHISZ3kFIbGdhwDPblU0WsFN3GoxrIy8K5uj
+         GjIXRXVsjKzGGott9A6po//tY/s6q2eWFUr8wDtik+3zP8vqpBPiam22vljSzvRrfJpQ
+         uuTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=SzJUKBPNwe/3NehlMvPVKfMBKPVrmxN/Paoe95Wq8jY=;
-        b=jeBdHnaM0m4Gm+Sv8vcyQg6bOUlPJe7v3wP2hILCurVt+Dk21ImYBnB8N7NJtirC/I
-         twJVCBBsh3udm9ujfjDcAfYEHmLdSjfeEiJQuG7nQbBUew+Uyi/StvlFRUOTPlXsGdRW
-         UWKcKi0oy4TwBrZ93PajiL7J1a1EYMUIRlBZxSVDGB+iNuDOSLuc5IHaWyYTAzSdngVM
-         8OUibpn8g/E2UnqmKc+tX2QCC2IXux/GYVAvkH/GCDOhzW4ZjSe+nLnyDaWvIaAFR9FE
-         HLSItLN8k9sMrLB2TGTAyySUz/8LVAYVRO6aGE1mBs/nynG2t3+yk4uaWY8/v/iqjy6p
-         4qmg==
+        h=message-id:content-transfer-encoding:content-language:in-reply-to
+         :mime-version:user-agent:date:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=fwtCl12raWMZHM5sKKAQGoPc8y3RGBv+kZLiCAEgj2g=;
+        b=gZIxiDVNq+xWJrv/8LAm43sgOQxOrqCPpKfj7NVRWUBGT53Rf41SPwDDo3ho+0S1EH
+         h3LuJn0OYMvc3BcRrZNXnLmPLMaXeJeLHFvOEIkyH6Tw+Tv2VanmJkrf29nZUpJcD1y5
+         /dFNCrx2VFOZoqgTwOJpY+t5DhW4NNdq3vBcp0M550eBRDqORe1JIMhIzKiCRZBgtfIV
+         BVlEwivUFfT/o8BxxURciRm6KxTLrv0me6CMIwqVMlK/68U5rgeFwfhiIEJqhZ0EPso5
+         M0NeZgQoKE6mwPO55BVQODZlWSAnWCrvOSubcZfwOHiOlnnFNz6NM7D49BJgomGWaCv4
+         UWLA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=KrXt64vA;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of fbarrat@linux.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=fbarrat@linux.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=KrXt64vA;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZqVINMK7bPnqzaii2xuhw5qOkNFaAHP8lk2EoK9I7u7e+8ZZn1erNLJLHQ87dQ9sBL4qopn6A==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	srinivas.kandagatla@linaro.org,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH 1/8] drivers: nvmem: Export nvmem_add_cells()
-Date: Fri, 11 May 2018 12:06:56 +0100
-Message-Id: <20180511110703.4924-2-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
-References: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
+       spf=pass (google.com: domain of fbarrat@linux.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=fbarrat@linux.ibm.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+Subject: Re: [PATCH] misc: cxl: Change return type to vm_fault_t
+To: Souptick Joarder <jrdr.linux@gmail.com>, fbarrat@linux.vnet.ibm.com,
+        andrew.donnellan@au1.ibm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org
+References: <20180417145354.GA31451@jordon-HP-15-Notebook-PC>
+From: Frederic Barrat <fbarrat@linux.ibm.com>
+Date: Fri, 11 May 2018 12:24:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180417145354.GA31451@jordon-HP-15-Notebook-PC>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18051110-0040-0000-0000-0000043888AC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051110-0041-0000-0000-0000263CD12B
+Message-Id: <efed6e3d-b40b-9a96-4e7a-f5409c03c54f@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805110100
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600165742365001027?=
-X-GMAIL-MSGID: =?utf-8?q?1600165742365001027?=
+X-GMAIL-THRID: =?utf-8?q?1598005414798688515?=
+X-GMAIL-MSGID: =?utf-8?q?1600162917846102148?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Andrew Lunn <andrew@lunn.ch>
 
-Not all platforms use device tree. It is useful to be able to add
-cells to a NVMEM device from code. Export nvmem_add_cells() so making
-this possible.
 
-This required changing the parameters a bit, so that just the cells
-and the number of cells are passed, not the whole nvmem config
-structure.
+Le 17/04/2018 à 16:53, Souptick Joarder a écrit :
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
+> 
+> Reference id -> 1c8f422059ae ("mm: change return type to
+> vm_fault_t")
+> 
+> previously cxl_mmap_fault returns VM_FAULT_NOPAGE as
+> default value irrespective of vm_insert_pfn() return
+> value. This bug is fixed with new vmf_insert_pfn()
+> which will return VM_FAULT_ type based on err.
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> ---
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/nvmem/core.c           | 24 +++++++++++++++++-------
- include/linux/nvmem-provider.h | 11 +++++++++++
- 2 files changed, 28 insertions(+), 7 deletions(-)
+It looks ok, and it passed some basic testing.
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index b05aa8e81303..b1c95ef78544 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -353,18 +353,27 @@ static int nvmem_cell_info_to_nvmem_cell(struct nvmem_device *nvmem,
- 	return 0;
- }
- 
--static int nvmem_add_cells(struct nvmem_device *nvmem,
--			   const struct nvmem_config *cfg)
-+/**
-+ * nvmem_add_cells() - Add cell information to an nvmem device
-+ *
-+ * @nvmem: nvmem device to add cells to.
-+ * @info: nvmem cell info to add to the device
-+ * @ncells: number of cells in info
-+ *
-+ * Return: 0 or negative error code on failure.
-+ */
-+int nvmem_add_cells(struct nvmem_device *nvmem,
-+		    const struct nvmem_cell_info *info,
-+		    int ncells)
- {
- 	struct nvmem_cell **cells;
--	const struct nvmem_cell_info *info = cfg->cells;
- 	int i, rval;
- 
--	cells = kcalloc(cfg->ncells, sizeof(*cells), GFP_KERNEL);
-+	cells = kcalloc(ncells, sizeof(*cells), GFP_KERNEL);
- 	if (!cells)
- 		return -ENOMEM;
- 
--	for (i = 0; i < cfg->ncells; i++) {
-+	for (i = 0; i < ncells; i++) {
- 		cells[i] = kzalloc(sizeof(**cells), GFP_KERNEL);
- 		if (!cells[i]) {
- 			rval = -ENOMEM;
-@@ -380,7 +389,7 @@ static int nvmem_add_cells(struct nvmem_device *nvmem,
- 		nvmem_cell_add(cells[i]);
- 	}
- 
--	nvmem->ncells = cfg->ncells;
-+	nvmem->ncells = ncells;
- 	/* remove tmp array */
- 	kfree(cells);
- 
-@@ -393,6 +402,7 @@ static int nvmem_add_cells(struct nvmem_device *nvmem,
- 
- 	return rval;
- }
-+EXPORT_SYMBOL_GPL(nvmem_add_cells);
- 
- /*
-  * nvmem_setup_compat() - Create an additional binary entry in
-@@ -509,7 +519,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	}
- 
- 	if (config->cells)
--		nvmem_add_cells(nvmem, config);
-+		nvmem_add_cells(nvmem, config->cells, config->ncells);
- 
- 	return nvmem;
- 
-diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
-index f89598bc4e1c..24def6ad09bb 100644
---- a/include/linux/nvmem-provider.h
-+++ b/include/linux/nvmem-provider.h
-@@ -77,6 +77,9 @@ struct nvmem_device *devm_nvmem_register(struct device *dev,
- 
- int devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem);
- 
-+int nvmem_add_cells(struct nvmem_device *nvmem,
-+		    const struct nvmem_cell_info *info,
-+		    int ncells);
- #else
- 
- static inline struct nvmem_device *nvmem_register(const struct nvmem_config *c)
-@@ -99,6 +102,14 @@ static inline int
- devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem)
- {
- 	return nvmem_unregister(nvmem);
-+
-+}
-+
-+static inline int nvmem_add_cells(struct nvmem_device *nvmem,
-+				  const struct nvmem_cell_info *info,
-+				  int ncells)
-+{
-+	return -ENOSYS;
- }
- 
- #endif /* CONFIG_NVMEM */
--- 
-2.16.2
+Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+
+   Fred
+
+
+>   drivers/misc/cxl/context.c | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/misc/cxl/context.c b/drivers/misc/cxl/context.c
+> index 7ff315a..c6ec872 100644
+> --- a/drivers/misc/cxl/context.c
+> +++ b/drivers/misc/cxl/context.c
+> @@ -128,11 +128,12 @@ void cxl_context_set_mapping(struct cxl_context *ctx,
+>   	mutex_unlock(&ctx->mapping_lock);
+>   }
+> 
+> -static int cxl_mmap_fault(struct vm_fault *vmf)
+> +static vm_fault_t cxl_mmap_fault(struct vm_fault *vmf)
+>   {
+>   	struct vm_area_struct *vma = vmf->vma;
+>   	struct cxl_context *ctx = vma->vm_file->private_data;
+>   	u64 area, offset;
+> +	vm_fault_t ret;
+> 
+>   	offset = vmf->pgoff << PAGE_SHIFT;
+> 
+> @@ -169,11 +170,11 @@ static int cxl_mmap_fault(struct vm_fault *vmf)
+>   		return VM_FAULT_SIGBUS;
+>   	}
+> 
+> -	vm_insert_pfn(vma, vmf->address, (area + offset) >> PAGE_SHIFT);
+> +	ret = vmf_insert_pfn(vma, vmf->address, (area + offset) >> PAGE_SHIFT);
+> 
+>   	mutex_unlock(&ctx->status_mutex);
+> 
+> -	return VM_FAULT_NOPAGE;
+> +	return ret;
+>   }
+> 
+>   static const struct vm_operations_struct cxl_mmap_vmops = {
+> --
+> 1.9.1
+> 
