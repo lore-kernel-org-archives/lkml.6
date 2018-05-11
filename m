@@ -1,286 +1,240 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751790AbeEKSeT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 14:34:19 -0400
-Received: from mail-ve1eur01on0103.outbound.protection.outlook.com ([104.47.1.103]:21318
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750980AbeEKSeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 14:34:16 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=avagin@virtuozzo.com;
-Date: Fri, 11 May 2018 11:33:59 -0700
-From: Andrei Vagin <avagin@virtuozzo.com>
-To: syzbot <syzbot+c1872be62e587eae9669@syzkaller.appspotmail.com>
-Cc: avagin@openvz.org, davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: possible deadlock in sk_diag_fill
-Message-ID: <20180511183358.GA1492@outlook.office365.com>
-References: <000000000000169606056b793179@google.com>
+        id S1751878AbeEKSlu (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 14:41:50 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:39210 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750980AbeEKSlr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 14:41:47 -0400
+X-Google-Smtp-Source: AB8JxZpNd+lZR/hPL80UHrrfdMpln59Exu7qreevOOdv76ye/LY/D5WHuxbB9RGySudsxv0EugtQhg==
+Date: Fri, 11 May 2018 15:41:41 -0300
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+fc78715ba3b3257caf6a@syzkaller.appspotmail.com>,
+        Vladislav Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>, linux-sctp@vger.kernel.org,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        David Miller <davem@davemloft.net>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: INFO: rcu detected stall in kfree_skbmem
+Message-ID: <20180511184141.GW5105@localhost.localdomain>
+References: <000000000000a9b0e3056b14bfb2@google.com>
+ <CACT4Y+Z_+=VLbELVW69B7WEVqvri1xBMM5RMnMQynec_XgaE=w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000169606056b793179@google.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
-X-Originating-IP: [4.16.175.162]
-X-ClientProxiedBy: MWHPR03CA0049.namprd03.prod.outlook.com
- (2603:10b6:301:3b::38) To DB7PR08MB3257.eurprd08.prod.outlook.com
- (2603:10a6:5:1f::19)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB7PR08MB3257;
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3257;3:kxjvHHz0Y/EarQ7ioQGhbMyXN4OzVTZv7WPMYVe7CgCMAP+LLXARUdzL+1cR6wrOAaBMnGQF7trMtGAvi5ioYVc8N5SqhKvxSnEkyE22yDcX/wbU6fsqQ0pyZ++HY7fPpfciK9hpdzdd4xVg6lZ6CmYZQ6utDlO0XjxuTssrXRlHJn/FjU1ZB4A095JcEAbBVc0hIaW7YfuI2IMYCk3x/9lkDFx831AuRvjGFe9Oay6R0cPXRQxWidlm2TJj6RMR;25:w+vhQLHup/9eGNit6N8oMHf+/3N1CkcqEwOXAJTuodqxXb2fOhpcSbAS9Sq+Q2Yq60JAnNEEDEEdt+WjqeTL/8b6bkkWQCiLnKFLUD8SK5DxZEXwj9pqCDM+H1aKzNRdUpe1I+X84Oyg1hUYRQRq9gXnX1UQdgJH3GGlUi2ydWdVRF00jwFDywJbWGCHJrxvvNlF++n4I/BRZ0j/4hef5HE2nSv1eB69Uiw8b+MZHOc1h95KP3oCPsorD4elRfvAR1YSYkeuf+QGwm0jDLynwhNDocMfkq2ymX21HZmw1c8gV1FAx5xuWHYgRcUe9wB0qg+OukpNrSN99up+yMQXVQ==;31:ulM5om/pEgpZzN/JChYU6Po2ngO86EEeGTl44sAkK22/9ZEcB7Ujz40qMmLm/TGMUCrXbVmRsN0QL555DmRNcBZm0U+9JG5txDQn+4uM5XroSIFqOPHM37SBjmvfL9H6lyz6StxMYgQOFDK0Xdi/7GwzOX4UmU0yOFcb4j4gXW43JeGUugoxNIiiwZm9+pBwrpKTsqH0WIu9u91B1Wpwl7+wTIAPFn3kCQRIuRTxi6Q=
-X-MS-TrafficTypeDiagnostic: DB7PR08MB3257:
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3257;20:X8KQ6MR8yQ088B7WOD39cLusYw3LRr1ZRTkSeeZcLseYbz/BbIRkEvsUpDlQXyBVAlp4S9qph5Fjtz09v2GzutjDaXTE2l+xQHOh54muEH3p8NdZKPGAfWy6U5m5M8/8k/YZyVFjHMxj0hIyVLV8pCrbgkXThjC3R6cOsBrq4f42CqwHNh6UNtdpTjAPAiNtplBPXORhlmRiH5ybrO1spelw0f8kg8HjKUnFee6snBFmeTsAS6iyFA03Z6p+v5piIleqd8qQXMNQGW1xcOg61rBgwbunAaXx2hi70MN1l472ToQOGEnZvdY+4wK33KcJBMFfcA0NYz2JAxtOf+C2GQH6+lR0o1EN9wofre2lWsIRBGIlREdmGp1y1Y6EzFs7Lh2cVY8qRRxjlIcuXTxCGjRYjecNJIuwZxJvBhqcjFaM+H8eZX9MWvQu0bH9eNc69vyc1sTj+QeE43uJRtcdQVflimfX6aQ8TFqHdjf7Om6WIY7Il4jcP4dVTCYQhmSR;4:6A4+p1OXHn/KC0EHe3R2uYYvFO7bXlPiCwTAu0AzYKFlRnmfNOHnf/DfwOuRtwGrxZQln0exNp9+FpPQ3KH8qIqsyhVje3LCtY4UmnFlDZHSqfIRD0i456X5C0FTe6p5kUlafnYLKM6N6cNfWNQTqAng6YQdXjPOULggqLhdAQT3CQFFlElGXPBcRW4jI4kbMlZZK209LtMYPPG/9HZ86BbWTPSW2JF4hlzkNUvcLfccjyJQF9MRbPMjexxWJ/LL2IG3d5SD7fMh9TBP4a/H6uxY/auMoe++9+vG3/ZaWikiRXEWV1sS/aDwWqBlZj6i
-X-Microsoft-Antispam-PRVS: <DB7PR08MB32576A67AA3DF63CB190C9DACF9F0@DB7PR08MB3257.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(148501403981450);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(10201501046)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DB7PR08MB3257;BCL:0;PCL:0;RULEID:;SRVR:DB7PR08MB3257;
-X-Forefront-PRVS: 06691A4183
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39850400004)(39380400002)(376002)(346002)(366004)(396003)(189003)(199004)(97736004)(1076002)(4326008)(53936002)(9686003)(6246003)(33656002)(68736007)(37156001)(55016002)(6306002)(23686003)(305945005)(47776003)(3846002)(6116002)(66066001)(7736002)(50466002)(81166006)(8676002)(81156014)(69596002)(8936002)(2906002)(6666003)(966005)(478600001)(58126008)(7696005)(52116002)(229853002)(106356001)(105586002)(25786009)(11346002)(446003)(86362001)(956004)(476003)(76176011)(59450400001)(26005)(386003)(316002)(11609785009)(16586007)(16526019)(5660300001)(6506007)(186003)(486006)(53416004)(18370500001)(99710200001);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR08MB3257;H:outlook.office365.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?koi8-r?Q?1;DB7PR08MB3257;23:IIeh+35K87twGAl+/zhblA4RCjtvzFqkh4uGcDiHC1e?=
- =?koi8-r?Q?fzooy4uiTEPsGGrLZSMJIFJ7ZHXGDpaTX4uhK4610RchZj5Uu8MUw7OwJlX5or?=
- =?koi8-r?Q?angMZT0BqPKiG2Z4MNnjyCCHdCrrzABK8bnbaMsZS3WPJfBLxw4bNMgbG2tqPa?=
- =?koi8-r?Q?jh6F1vYlCvB6hrIHltMnxv26/6M2HnmmfVb4+nC5Zu/WR4O2DztSM9ueqJ7SmP?=
- =?koi8-r?Q?I9Td8wgJyGyh+ImxDlkkOjOrf92xz1svQcZZWiC4AQSk4gFGJGgeWJRNBzES6M?=
- =?koi8-r?Q?EJEAV4m6vLMBiCeKCVlhhoVROwjzXbJSg/WGKBlYXs6D7jl8b32Iuh3PctYnXw?=
- =?koi8-r?Q?XXz+maUQpEfLTBhqVoh0BEEg+b+sepR4gT45rnedsmpAmtDM1XQIejfkFzSUj9?=
- =?koi8-r?Q?+vHWGhhsbocwF6v7wv63OFSQhbTES4+pjTfN/fS+Z2RahLoT7AXCObPxepm0C5?=
- =?koi8-r?Q?Kh36idfUZcXM0S3hPmTf1BidlH/NV1ffDvJed4jivC2nLM7J9tFpa4+KH7uwUD?=
- =?koi8-r?Q?j2WY8btzXGaPY7sSkoGEQWhlvJwoo8KA6uDw+bMhpZs6BnF0joZr1N/Ry3Vci8?=
- =?koi8-r?Q?5PhxekEbhTNAg3VFwEzc+8XvVh795qSw5a8LgtgVPtsk3o97ejUV0yhzFiw9VD?=
- =?koi8-r?Q?Kgzr7c8JklEpxJrg616QsDqh/jjVP39+oWeXmSWDueWjXtxaWvvlLw5KeESOQL?=
- =?koi8-r?Q?MJK18EBkOXYdGqFafzTfrLD5m3zhRArG+qD97yYmhEKuPiFlhyoPEFpNUXfAmk?=
- =?koi8-r?Q?AVOO8ygxyvk5641iwIpqauTN3IEsdEXKSWmpP8/Yzmje9KU7xp5SWTdq8NX70u?=
- =?koi8-r?Q?gQuNsLzHFJ8tuDlPjNndM4MjW7oTsL9zaVPes+vpvarp0hDQpDhi0AieNLL8fZ?=
- =?koi8-r?Q?TFUMQVNTKyMI+2Pm6KDhiCDlYnfHD/66wHvSiXj+nvP0vZTp8yz0qH6cm77bmd?=
- =?koi8-r?Q?E5QyH8uBI6HkF90qJZQsKEMLHYN5BXb1f539XwZ6ZvIj7s5mHWhwgssxDC3kNq?=
- =?koi8-r?Q?UeHonvW7D7rBQzy3v2nPG7Nq8GcApaKAb3PZEpp/9BgkXJSY0urE72VLrClzbi?=
- =?koi8-r?Q?gwlPFA3iM/rrCyiLYiNtuTIycY4WqHIY89z/iWdMpeK1CKBwgYmaEloBOeLCzu?=
- =?koi8-r?Q?syAZY9MWeiCw6gFQ6BJXCRt+bPzngaPfzVdpcSho55KyMziGpgAqLATWVjmsXc?=
- =?koi8-r?Q?DVbyG45V6M7B7QGvsOq2Kt8I2tXEEg0ELUhuqre0l9hY10n3J4NGZI0jkrRp3p?=
- =?koi8-r?Q?XqYldc3BnABDVWERZSHmKHeuoA9Y1gmuA9C6byycBWWO1aZsrCNPCUuZoTEt8d?=
- =?koi8-r?Q?HdTgfmRw2Y+02cfcQa49EjDrBInEGKSznTSU5v+C4ss5uq0dXKZu52X6lcet4k?=
- =?koi8-r?Q?eaI9eP0regYEwz4fVIPfHig=3D=3D?=
-X-Microsoft-Antispam-Message-Info: Nye2dNrdfyuxXy3vK0sGb2nKYoGTsf8zZgsDJvpBlc5dyW3l0GRi/O3p0V11aZ0uO7w6ylK/7S98lsFVBkLpTSVamd2aZ8Gc87wkxYY6D2McA0McKAkJ55Za3mlyfauYjgxPpn80f8ligsYZrHKodjLptr3GxPDEMWde4lTPt9/GU3szh743RAsearUXKVaS
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3257;6:9Q4Oz9qUw+IFPru134naiP0No3Kh6FgPifsSxOEjIC1M3LO+KKxllCewjZ+y7vqp3a1KXTpUne2zZ5WIgwU8AtYYX/acBOauZqQepZzY8jS9RFQ9I/SFCZE2HwL9nA+xuVT18gqkXTevMHUV5WoL00mORx53y8TLClbHoCiwbciGYcEaWfx8Ulhl6er1w0yoHxQ6HaPR900VtRFruQQBcWDMzfMmImTyR8z89V4gRZ+DQai8tckgN8SgLbWlWMe4Ei3TP8iGt/6smlwgaUuX69AJ9CjTvxAv4a5wtMdPvRx2u5Xv2lFM/+RtSPrdaMwZsTm+PcxU0cJhvUH/Ssn6l59bZcqUHuyV4/O429SSANRwFCnIAUEiFXu1ZJFO4Eo2PGTEyYS712QGG7Gr6cD9kwz0wdMn+wr2R6w5p62ZvcAbOMteXuYIOVf8+pL1HmEtq200JFJ2zFQv9jPAzpePHw==;5:SJUVYNyMklHMm9cgIxY2P01YZWXxZ4Q6A9v8XYKsrYTQxiNQoH/cPw+5gB8CkNOLe367UBkE317iynpVjudzVtDFDbAIV/D2p4pPiGf5ue5s5V0DNSfrSKLNq76iVySDX5noK/ji6B2B1XXyNJRx7Ypw86rwsiSpYQXV0a2zbM4=;24:C552/HzG+gsKMDVmuzIh5WbGhNt2IMkGVdQT3YQPEZaSHfw47Gc62+WOhd94S5rOXTGHiS6iObLAqpt0fgaezcBliypF2//quhRpWXQnVkc=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3257;7:RivlQDtvzYvYAsQgsPrXYLVCpjkIny3zRNbKGvYICSWFtL1QmzLPIvXTjsy/P/gwZAXANWuVM5fmJ37iwwuW1p7Plt6mtF2DEKNPRNLabIUK7gripFNUFLuagrnK/BbAQ2AdT0mOQaWvCp6CWD/quSafmwvHxxV1nwTJVQE9RGfDcyjwDj84tIqPcBYXC0AyahNBOlMvVdVGPpXdmRywshsmIOGoCQvHgLciRxzbwE7FwOoJyRyqyDdoOXbyTLwp;20:foUn+zcC1rpnb9VVZIR3anibe3L6eRHe/E0MB0KP6G1C+NX4MJesv5mPg/cmT84IA2/s7xcLrqIswoXuS1pMyKwMB3flz3CjJYGUsB2cx678qb19bJWw1q4hTf8fvSMS9TCCJaKEoiwkcqW2YfuQB+eHJNuwIp+MDfkejrit2xU=
-X-MS-Office365-Filtering-Correlation-Id: f54ee994-3346-47bf-506b-08d5b76dcb51
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2018 18:34:12.1027 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f54ee994-3346-47bf-506b-08d5b76dcb51
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3257
+In-Reply-To: <CACT4Y+Z_+=VLbELVW69B7WEVqvri1xBMM5RMnMQynec_XgaE=w@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 05, 2018 at 10:59:02AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    c1c07416cdd4 Merge tag 'kbuild-fixes-v4.17' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=12164c97800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5a1dc06635c10d27
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c1872be62e587eae9669
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> userspace arch: i386
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+c1872be62e587eae9669@syzkaller.appspotmail.com
-> 
-> 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 4.17.0-rc3+ #59 Not tainted
-> ------------------------------------------------------
-> syz-executor1/25282 is trying to acquire lock:
-> 000000004fddf743 (&(&u->lock)->rlock/1){+.+.}, at: sk_diag_dump_icons
-> net/unix/diag.c:82 [inline]
-> 000000004fddf743 (&(&u->lock)->rlock/1){+.+.}, at:
-> sk_diag_fill.isra.5+0xa43/0x10d0 net/unix/diag.c:144
-> 
-> but task is already holding lock:
-> 00000000b6895645 (rlock-AF_UNIX){+.+.}, at: spin_lock
-> include/linux/spinlock.h:310 [inline]
-> 00000000b6895645 (rlock-AF_UNIX){+.+.}, at: sk_diag_dump_icons
-> net/unix/diag.c:64 [inline]
-> 00000000b6895645 (rlock-AF_UNIX){+.+.}, at: sk_diag_fill.isra.5+0x94e/0x10d0
-> net/unix/diag.c:144
-> 
-> which lock already depends on the new lock.
+On Fri, May 11, 2018 at 12:00:38PM +0200, Dmitry Vyukov wrote:
+> On Mon, Apr 30, 2018 at 8:09 PM, syzbot
+> <syzbot+fc78715ba3b3257caf6a@syzkaller.appspotmail.com> wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    5d1365940a68 Merge
+> > git://git.kernel.org/pub/scm/linux/kerne...
+> > git tree:       net-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?id=5667997129637888
+> > kernel config:
+> > https://syzkaller.appspot.com/x/.config?id=-5947642240294114534
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=fc78715ba3b3257caf6a
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> >
+> > Unfortunately, I don't have any reproducer for this crash yet.
+>
+> This looks sctp-related, +sctp maintainers.
+>
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+fc78715ba3b3257caf6a@syzkaller.appspotmail.com
+> >
+> > INFO: rcu_sched self-detected stall on CPU
+> >         1-...!: (1 GPs behind) idle=a3e/1/4611686018427387908
+> > softirq=71980/71983 fqs=33
+> >          (t=125000 jiffies g=39438 c=39437 q=958)
+> > rcu_sched kthread starved for 124829 jiffies! g39438 c39437 f0x0
+> > RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=0
+> > RCU grace-period kthread stack dump:
+> > rcu_sched       R  running task    23768     9      2 0x80000000
+> > Call Trace:
+> >  context_switch kernel/sched/core.c:2848 [inline]
+> >  __schedule+0x801/0x1e30 kernel/sched/core.c:3490
+> >  schedule+0xef/0x430 kernel/sched/core.c:3549
+> >  schedule_timeout+0x138/0x240 kernel/time/timer.c:1801
+> >  rcu_gp_kthread+0x6b5/0x1940 kernel/rcu/tree.c:2231
+> >  kthread+0x345/0x410 kernel/kthread.c:238
+> >  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
+> > NMI backtrace for cpu 1
+> > CPU: 1 PID: 20560 Comm: syz-executor4 Not tainted 4.16.0+ #1
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >  <IRQ>
+> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+> >  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+> >  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+> >  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+> >  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
+> >  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
+> >  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
+> >  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
+> >  __rcu_pending kernel/rcu/tree.c:3356 [inline]
+> >  rcu_pending kernel/rcu/tree.c:3401 [inline]
+> >  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
+> >  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+> >  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:173
+> >  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1283
+> >  __run_hrtimer kernel/time/hrtimer.c:1386 [inline]
+> >  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1448
+> >  hrtimer_interrupt+0x286/0x650 kernel/time/hrtimer.c:1506
+> >  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+> >  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
+> >  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:862
+> > RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783
+> > [inline]
+> > RIP: 0010:kmem_cache_free+0xb3/0x2d0 mm/slab.c:3757
+> > RSP: 0018:ffff8801db105228 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+> > RAX: 0000000000000007 RBX: ffff8800b055c940 RCX: 1ffff1003b2345a5
+> > RDX: 0000000000000000 RSI: ffff8801d91a2d80 RDI: 0000000000000282
+> > RBP: ffff8801db105248 R08: ffff8801d91a2cb8 R09: 0000000000000002
+> > R10: ffff8801d91a2480 R11: 0000000000000000 R12: ffff8801d9848e40
+> > R13: 0000000000000282 R14: ffffffff85b7f27c R15: 0000000000000000
+> >  kfree_skbmem+0x13c/0x210 net/core/skbuff.c:582
+> >  __kfree_skb net/core/skbuff.c:642 [inline]
+> >  kfree_skb+0x19d/0x560 net/core/skbuff.c:659
+> >  enqueue_to_backlog+0x2fc/0xc90 net/core/dev.c:3968
+> >  netif_rx_internal+0x14d/0xae0 net/core/dev.c:4181
+> >  netif_rx+0xba/0x400 net/core/dev.c:4206
+> >  loopback_xmit+0x283/0x741 drivers/net/loopback.c:91
+> >  __netdev_start_xmit include/linux/netdevice.h:4087 [inline]
+> >  netdev_start_xmit include/linux/netdevice.h:4096 [inline]
+> >  xmit_one net/core/dev.c:3053 [inline]
+> >  dev_hard_start_xmit+0x264/0xc10 net/core/dev.c:3069
+> >  __dev_queue_xmit+0x2724/0x34c0 net/core/dev.c:3584
+> >  dev_queue_xmit+0x17/0x20 net/core/dev.c:3617
+> >  neigh_hh_output include/net/neighbour.h:472 [inline]
+> >  neigh_output include/net/neighbour.h:480 [inline]
+> >  ip6_finish_output2+0x134e/0x2810 net/ipv6/ip6_output.c:120
+> >  ip6_finish_output+0x5fe/0xbc0 net/ipv6/ip6_output.c:154
+> >  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
+> >  ip6_output+0x227/0x9b0 net/ipv6/ip6_output.c:171
+> >  dst_output include/net/dst.h:444 [inline]
+> >  NF_HOOK include/linux/netfilter.h:288 [inline]
+> >  ip6_xmit+0xf51/0x23f0 net/ipv6/ip6_output.c:277
 
-In the code, we have a comment which explains why it is safe to take this lock
+sctp_v6_xmit calls ip6_xmit with rcu_read_lock() as it has to pass
+np->opt to ip6_xmit. Sounds like this packet then went through a long
+journey and hit the bell.
 
-/*
- * The state lock is outer for the same sk's
- * queue lock. With the other's queue locked it's
- * OK to lock the state.
- */
-unix_state_lock_nested(req);
+But calling ip6_xmit with rcu_read_lock is expected. tcp stack also
+does it.
+Thus I think this is more of an issue with IPv6 stack. If a host has
+an extensive ip6tables ruleset, it probably generates this more
+easily.
 
-It is a question how to explain this to lockdep.
+> >  sctp_v6_xmit+0x4a5/0x6b0 net/sctp/ipv6.c:225
+> >  sctp_packet_transmit+0x26f6/0x3ba0 net/sctp/output.c:650
+> >  sctp_outq_flush+0x1373/0x4370 net/sctp/outqueue.c:1197
+> >  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
+> >  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
+> >  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+> >  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
+> >  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
+> >  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
+> >  expire_timers kernel/time/timer.c:1363 [inline]
 
-> 
-> 
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #1 (rlock-AF_UNIX){+.+.}:
->        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
->        skb_queue_tail+0x26/0x150 net/core/skbuff.c:2900
->        unix_dgram_sendmsg+0xf77/0x1730 net/unix/af_unix.c:1797
->        sock_sendmsg_nosec net/socket.c:629 [inline]
->        sock_sendmsg+0xd5/0x120 net/socket.c:639
->        ___sys_sendmsg+0x525/0x940 net/socket.c:2117
->        __sys_sendmmsg+0x3bb/0x6f0 net/socket.c:2205
->        __compat_sys_sendmmsg net/compat.c:770 [inline]
->        __do_compat_sys_sendmmsg net/compat.c:777 [inline]
->        __se_compat_sys_sendmmsg net/compat.c:774 [inline]
->        __ia32_compat_sys_sendmmsg+0x9f/0x100 net/compat.c:774
->        do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
->        do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
->        entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-> 
-> -> #0 (&(&u->lock)->rlock/1){+.+.}:
->        lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
->        _raw_spin_lock_nested+0x28/0x40 kernel/locking/spinlock.c:354
->        sk_diag_dump_icons net/unix/diag.c:82 [inline]
->        sk_diag_fill.isra.5+0xa43/0x10d0 net/unix/diag.c:144
->        sk_diag_dump net/unix/diag.c:178 [inline]
->        unix_diag_dump+0x35f/0x550 net/unix/diag.c:206
->        netlink_dump+0x507/0xd20 net/netlink/af_netlink.c:2226
->        __netlink_dump_start+0x51a/0x780 net/netlink/af_netlink.c:2323
->        netlink_dump_start include/linux/netlink.h:214 [inline]
->        unix_diag_handler_dump+0x3f4/0x7b0 net/unix/diag.c:307
->        __sock_diag_cmd net/core/sock_diag.c:230 [inline]
->        sock_diag_rcv_msg+0x2e0/0x3d0 net/core/sock_diag.c:261
->        netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2448
->        sock_diag_rcv+0x2a/0x40 net/core/sock_diag.c:272
->        netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
->        netlink_unicast+0x58b/0x740 net/netlink/af_netlink.c:1336
->        netlink_sendmsg+0x9f0/0xfa0 net/netlink/af_netlink.c:1901
->        sock_sendmsg_nosec net/socket.c:629 [inline]
->        sock_sendmsg+0xd5/0x120 net/socket.c:639
->        sock_write_iter+0x35a/0x5a0 net/socket.c:908
->        call_write_iter include/linux/fs.h:1784 [inline]
->        new_sync_write fs/read_write.c:474 [inline]
->        __vfs_write+0x64d/0x960 fs/read_write.c:487
->        vfs_write+0x1f8/0x560 fs/read_write.c:549
->        ksys_write+0xf9/0x250 fs/read_write.c:598
->        __do_sys_write fs/read_write.c:610 [inline]
->        __se_sys_write fs/read_write.c:607 [inline]
->        __ia32_sys_write+0x71/0xb0 fs/read_write.c:607
->        do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
->        do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
->        entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-> 
-> other info that might help us debug this:
-> 
->  Possible unsafe locking scenario:
-> 
->        CPU0                    CPU1
->        ----                    ----
->   lock(rlock-AF_UNIX);
->                                lock(&(&u->lock)->rlock/1);
->                                lock(rlock-AF_UNIX);
->   lock(&(&u->lock)->rlock/1);
-> 
->  *** DEADLOCK ***
-> 
-> 5 locks held by syz-executor1/25282:
->  #0: 000000003919e1bd (sock_diag_mutex){+.+.}, at: sock_diag_rcv+0x1b/0x40
-> net/core/sock_diag.c:271
->  #1: 000000004f328d3e (sock_diag_table_mutex){+.+.}, at: __sock_diag_cmd
-> net/core/sock_diag.c:225 [inline]
->  #1: 000000004f328d3e (sock_diag_table_mutex){+.+.}, at:
-> sock_diag_rcv_msg+0x169/0x3d0 net/core/sock_diag.c:261
->  #2: 000000004cc04dbb (nlk_cb_mutex-SOCK_DIAG){+.+.}, at:
-> netlink_dump+0x98/0xd20 net/netlink/af_netlink.c:2182
->  #3: 00000000accdef41 (unix_table_lock){+.+.}, at: spin_lock
-> include/linux/spinlock.h:310 [inline]
->  #3: 00000000accdef41 (unix_table_lock){+.+.}, at:
-> unix_diag_dump+0x10a/0x550 net/unix/diag.c:192
->  #4: 00000000b6895645 (rlock-AF_UNIX){+.+.}, at: spin_lock
-> include/linux/spinlock.h:310 [inline]
->  #4: 00000000b6895645 (rlock-AF_UNIX){+.+.}, at: sk_diag_dump_icons
-> net/unix/diag.c:64 [inline]
->  #4: 00000000b6895645 (rlock-AF_UNIX){+.+.}, at:
-> sk_diag_fill.isra.5+0x94e/0x10d0 net/unix/diag.c:144
-> 
-> stack backtrace:
-> CPU: 1 PID: 25282 Comm: syz-executor1 Not tainted 4.17.0-rc3+ #59
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  print_circular_bug.isra.36.cold.54+0x1bd/0x27d
-> kernel/locking/lockdep.c:1223
->  check_prev_add kernel/locking/lockdep.c:1863 [inline]
->  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
->  validate_chain kernel/locking/lockdep.c:2417 [inline]
->  __lock_acquire+0x343e/0x5140 kernel/locking/lockdep.c:3431
->  lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
->  _raw_spin_lock_nested+0x28/0x40 kernel/locking/spinlock.c:354
->  sk_diag_dump_icons net/unix/diag.c:82 [inline]
->  sk_diag_fill.isra.5+0xa43/0x10d0 net/unix/diag.c:144
->  sk_diag_dump net/unix/diag.c:178 [inline]
->  unix_diag_dump+0x35f/0x550 net/unix/diag.c:206
->  netlink_dump+0x507/0xd20 net/netlink/af_netlink.c:2226
->  __netlink_dump_start+0x51a/0x780 net/netlink/af_netlink.c:2323
->  netlink_dump_start include/linux/netlink.h:214 [inline]
->  unix_diag_handler_dump+0x3f4/0x7b0 net/unix/diag.c:307
->  __sock_diag_cmd net/core/sock_diag.c:230 [inline]
->  sock_diag_rcv_msg+0x2e0/0x3d0 net/core/sock_diag.c:261
->  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2448
->  sock_diag_rcv+0x2a/0x40 net/core/sock_diag.c:272
->  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
->  netlink_unicast+0x58b/0x740 net/netlink/af_netlink.c:1336
->  netlink_sendmsg+0x9f0/0xfa0 net/netlink/af_netlink.c:1901
->  sock_sendmsg_nosec net/socket.c:629 [inline]
->  sock_sendmsg+0xd5/0x120 net/socket.c:639
->  sock_write_iter+0x35a/0x5a0 net/socket.c:908
->  call_write_iter include/linux/fs.h:1784 [inline]
->  new_sync_write fs/read_write.c:474 [inline]
->  __vfs_write+0x64d/0x960 fs/read_write.c:487
->  vfs_write+0x1f8/0x560 fs/read_write.c:549
->  ksys_write+0xf9/0x250 fs/read_write.c:598
->  __do_sys_write fs/read_write.c:610 [inline]
->  __se_sys_write fs/read_write.c:607 [inline]
->  __ia32_sys_write+0x71/0xb0 fs/read_write.c:607
->  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
->  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
->  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-> RIP: 0023:0xf7f8ccb9
-> RSP: 002b:00000000f5f880ac EFLAGS: 00000282 ORIG_RAX: 0000000000000004
-> RAX: ffffffffffffffda RBX: 0000000000000017 RCX: 000000002058bfe4
-> RDX: 0000000000000029 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
+Having this call from a timer means it wasn't processing sctp stack
+for too long.
+
+> >  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
+> >  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+> >  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+> >  invoke_softirq kernel/softirq.c:365 [inline]
+> >  irq_exit+0x1d1/0x200 kernel/softirq.c:405
+> >  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
+> >  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
+> >  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:862
+> >  </IRQ>
+> > RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783
+> > [inline]
+> > RIP: 0010:lock_release+0x4d4/0xa10 kernel/locking/lockdep.c:3942
+> > RSP: 0018:ffff8801971ce7b0 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+> > RAX: dffffc0000000000 RBX: 1ffff10032e39cfb RCX: 1ffff1003b234595
+> > RDX: 1ffffffff11630ed RSI: 0000000000000002 RDI: 0000000000000282
+> > RBP: ffff8801971ce8e0 R08: 1ffff10032e39cff R09: ffffed003b6246c2
+> > R10: 0000000000000003 R11: 0000000000000001 R12: ffff8801d91a2480
+> > R13: ffffffff88b8df60 R14: ffff8801d91a2480 R15: ffff8801971ce7f8
+> >  rcu_lock_release include/linux/rcupdate.h:251 [inline]
+> >  rcu_read_unlock include/linux/rcupdate.h:688 [inline]
+> >  __unlock_page_memcg+0x72/0x100 mm/memcontrol.c:1654
+> >  unlock_page_memcg+0x2c/0x40 mm/memcontrol.c:1663
+> >  page_remove_file_rmap mm/rmap.c:1248 [inline]
+> >  page_remove_rmap+0x6f2/0x1250 mm/rmap.c:1299
+> >  zap_pte_range mm/memory.c:1337 [inline]
+> >  zap_pmd_range mm/memory.c:1441 [inline]
+> >  zap_pud_range mm/memory.c:1470 [inline]
+> >  zap_p4d_range mm/memory.c:1491 [inline]
+> >  unmap_page_range+0xeb4/0x2200 mm/memory.c:1512
+> >  unmap_single_vma+0x1a0/0x310 mm/memory.c:1557
+> >  unmap_vmas+0x120/0x1f0 mm/memory.c:1587
+> >  exit_mmap+0x265/0x570 mm/mmap.c:3038
+> >  __mmput kernel/fork.c:962 [inline]
+> >  mmput+0x251/0x610 kernel/fork.c:983
+> >  exit_mm kernel/exit.c:544 [inline]
+> >  do_exit+0xe98/0x2730 kernel/exit.c:852
+> >  do_group_exit+0x16f/0x430 kernel/exit.c:968
+> >  get_signal+0x886/0x1960 kernel/signal.c:2469
+> >  do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
+> >  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
+> >  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+> >  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
+> >  do_syscall_64+0x792/0x9d0 arch/x86/entry/common.c:292
+> >  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+> > RIP: 0033:0x455319
+> > RSP: 002b:00007fa346e81ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+> > RAX: fffffffffffffe00 RBX: 000000000072bf80 RCX: 0000000000455319
+> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000072bf80
+> > RBP: 000000000072bf80 R08: 0000000000000000 R09: 000000000072bf58
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> > R13: 0000000000a3e81f R14: 00007fa346e829c0 R15: 0000000000000001
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report.
+> > If you forgot to add the Reported-by tag, once the fix for this bug is
+> > merged
+> > into any tree, please reply to this email with:
+> > #syz fix: exact-commit-title
+> > To mark this as a duplicate of another syzbot report, please reply with:
+> > #syz dup: exact-subject-of-another-report
+> > If it's a one-off invalid bug report, please reply with:
+> > #syz invalid
+> > Note: if the crash happens again, it will cause creation of a new bug
+> > report.
+> > Note: all commands must start from beginning of the line in the email body.
+> >
+> > --
+> > You received this message because you are subscribed to the Google Groups
+> > "syzkaller-bugs" group.
+> > To unsubscribe from this group and stop receiving emails from it, send an
+> > email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> > To view this discussion on the web visit
+> > https://groups.google.com/d/msgid/syzkaller-bugs/000000000000a9b0e3056b14bfb2%40google.com.
+> > For more options, visit https://groups.google.com/d/optout.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-sctp" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
