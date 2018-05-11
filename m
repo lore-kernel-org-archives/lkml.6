@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753161AbeEKO32 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 10:29:28 -0400
-Received: from foss.arm.com ([217.140.101.70]:42402 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753115AbeEKO3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 10:29:24 -0400
+        id S1753212AbeEKO3s (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 10:29:48 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42396 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753050AbeEKO3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 10:29:23 -0400
 From: Robin Murphy <robin.murphy@arm.com>
 To: will.deacon@arm.com, mark.rutland@arm.com
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         pawel.moll@arm.com, suzuki.poulose@arm.com
-Subject: [PATCH 3/3] perf/arm-cci: Allow building as a module
-Date: Fri, 11 May 2018 15:29:14 +0100
-Message-Id: <d4597983118d832fc958c1d4707672a4b250a405.1526048005.git.robin.murphy@arm.com>
+Subject: [PATCH 2/3] perf/arm-cci: Remove pointless PMU disabling
+Date: Fri, 11 May 2018 15:29:13 +0100
+Message-Id: <0278134025d69817f28ee50a704fb63715a397d8.1526048005.git.robin.murphy@arm.com>
 X-Mailer: git-send-email 2.17.0.dirty
 In-Reply-To: <cover.1526048005.git.robin.murphy@arm.com>
 References: <cover.1526048005.git.robin.murphy@arm.com>
@@ -20,122 +20,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fill in the few extra bits and annotations needed to make the driver
-work properly as a module, and jiggle the Kconfig to expose the
-driver-level ARM_CCI_PMU option.
+The CCI PMU driver bears some legacy remnants of the arm_pmu framework
+from when it was split in c6f85cb4305b ("bus: cci: move away from
+arm_pmu framework"). In particular this perf_pmu_{dis,en}able() dance
+around pmu->add which was fixed for arm_pmu in a9e469d1c89b
+("drivers/perf: arm_pmu: remove pointless PMU disabling").
+
+For the exact same reasons (i.e. perf core already does this around the
+call anyway), give cci_pmu_add() the exact same change, which also
+prevents having to export those core functions to build it as a module.
 
 Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 ---
+ drivers/perf/arm-cci.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-Preserving the current level of configurability does end up allowing a
-rather pointless module configuration which supports no hardware variants,
-but I couldn't find a way to enforce "at least one sub-option selected"
-logic without Kbuild claiming a recursive dependency.
-
- drivers/perf/Kconfig   | 31 +++++++++++++++++--------------
- drivers/perf/arm-cci.c | 17 ++++++++++++++++-
- 2 files changed, 33 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-index 28bb5a029558..269331bfb746 100644
---- a/drivers/perf/Kconfig
-+++ b/drivers/perf/Kconfig
-@@ -6,30 +6,33 @@ menu "Performance monitor support"
- 	depends on PERF_EVENTS
- 
- config ARM_CCI_PMU
--	bool
-+	tristate "ARM CCI PMU driver"
- 	select ARM_CCI
-+	help
-+	  Support for PMU events monitoring on the ARM CCI (Cache Coherent
-+	  Interconnect) family of products.
-+
-+	  If compiled as a module, it will be called arm-cci.
- 
- config ARM_CCI400_PMU
--	bool "ARM CCI400 PMU support"
-+	bool "support CCI-400"
-+	default y
- 	depends on (ARM && CPU_V7) || ARM64
-+	depends on ARM_CCI_PMU
- 	select ARM_CCI400_COMMON
--	select ARM_CCI_PMU
- 	help
--	  Support for PMU events monitoring on the ARM CCI-400 (cache coherent
--	  interconnect). CCI-400 supports counting events related to the
--	  connected slave/master interfaces.
-+	  CCI-400 provides 4 independent event counters counting events related
-+	  to the connected slave/master interfaces, plus a cycle counter.
- 
- config ARM_CCI5xx_PMU
--	bool "ARM CCI-500/CCI-550 PMU support"
-+	bool "support CCI-500/CCI-550"
-+	default y
- 	depends on (ARM && CPU_V7) || ARM64
--	select ARM_CCI_PMU
-+	depends on ARM_CCI_PMU
- 	help
--	  Support for PMU events monitoring on the ARM CCI-500/CCI-550 cache
--	  coherent interconnects. Both of them provide 8 independent event counters,
--	  which can count events pertaining to the slave/master interfaces as well
--	  as the internal events to the CCI.
--
--	  If unsure, say Y
-+	  CCI-500/CCI-550 both provide 8 independent event counters, which can
-+	  count events pertaining to the slave/master interfaces as well as the
-+	  internal events to the CCI.
- 
- config ARM_CCN
- 	tristate "ARM CCN driver support"
 diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
-index 7029d8fe8f44..09938dd8eb6f 100644
+index 53c774b20563..7029d8fe8f44 100644
 --- a/drivers/perf/arm-cci.c
 +++ b/drivers/perf/arm-cci.c
-@@ -1416,6 +1416,7 @@ static int cci_pmu_init(struct cci_pmu *cci_pmu, struct platform_device *pdev)
- 	pmu_format_attr_group.attrs = model->format_attrs;
+@@ -1184,16 +1184,11 @@ static int cci_pmu_add(struct perf_event *event, int flags)
+ 	struct cci_pmu_hw_events *hw_events = &cci_pmu->hw_events;
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	int idx;
+-	int err = 0;
+-
+-	perf_pmu_disable(event->pmu);
  
- 	cci_pmu->pmu = (struct pmu) {
-+		.module		= THIS_MODULE,
- 		.name		= cci_pmu->model->name,
- 		.task_ctx_nr	= perf_invalid_context,
- 		.pmu_enable	= cci_pmu_enable,
-@@ -1581,6 +1582,7 @@ static const struct of_device_id arm_cci_pmu_matches[] = {
- #endif
- 	{},
- };
-+MODULE_DEVICE_TABLE(of, arm_cci_pmu_matches);
+ 	/* If we don't have a space for the counter then finish early. */
+ 	idx = pmu_get_event_idx(hw_events, event);
+-	if (idx < 0) {
+-		err = idx;
+-		goto out;
+-	}
++	if (idx < 0)
++		return idx;
  
- static bool is_duplicate_irq(int irq, int *irqs, int nr_irqs)
- {
-@@ -1702,14 +1704,27 @@ static int cci_pmu_probe(struct platform_device *pdev)
- 	return 0;
+ 	event->hw.idx = idx;
+ 	hw_events->events[idx] = event;
+@@ -1205,9 +1200,7 @@ static int cci_pmu_add(struct perf_event *event, int flags)
+ 	/* Propagate our changes to the userspace mapping. */
+ 	perf_event_update_userpage(event);
+ 
+-out:
+-	perf_pmu_enable(event->pmu);
+-	return err;
++	return 0;
  }
  
-+static int cci_pmu_remove(struct platform_device *pdev)
-+{
-+	if (!g_cci_pmu)
-+		return 0;
-+
-+	cpuhp_remove_state(CPUHP_AP_PERF_ARM_CCI_ONLINE);
-+	perf_pmu_unregister(&g_cci_pmu->pmu);
-+	g_cci_pmu = NULL;
-+
-+	return 0;
-+}
-+
- static struct platform_driver cci_pmu_driver = {
- 	.driver = {
- 		   .name = DRIVER_NAME,
- 		   .of_match_table = arm_cci_pmu_matches,
- 		  },
- 	.probe = cci_pmu_probe,
-+	.remove = cci_pmu_remove,
- };
- 
--builtin_platform_driver(cci_pmu_driver);
-+module_platform_driver(cci_pmu_driver);
- MODULE_LICENSE("GPL v2");
- MODULE_DESCRIPTION("ARM CCI PMU support");
+ static void cci_pmu_del(struct perf_event *event, int flags)
 -- 
 2.17.0.dirty
