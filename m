@@ -1,188 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752836AbeEKJyC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 05:54:02 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35426 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752729AbeEKJyA (ORCPT
+        id S1752767AbeEKKAY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 06:00:24 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:60941 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752232AbeEKKAX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 05:54:00 -0400
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH RFC 1/2] vfio-ccw: forward halt/clear to device if
- supported
-To: Cornelia Huck <cohuck@redhat.com>,
-        Dong Jia Shi <bjsdjshi@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, qemu-s390x@nongnu.org,
-        qemu-devel@nongnu.org
-References: <20180509154910.23578-1-cohuck@redhat.com>
- <20180509154910.23578-2-cohuck@redhat.com>
-From: Pierre Morel <pmorel@linux.ibm.com>
-Date: Fri, 11 May 2018 11:53:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180509154910.23578-2-cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18051109-0012-0000-0000-000005D5981D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051109-0013-0000-0000-000019529FA8
-Message-Id: <d2030a0c-6ab6-a470-f7d7-0926a7ff2b28@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805110095
+        Fri, 11 May 2018 06:00:23 -0400
+X-Originating-IP: 2.224.242.101
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
+        horms@verge.net.au, geert@glider.be, magnus.damm@gmail.com,
+        robh+dt@kernel.org
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] arm64: dts: Draak: Enable HDMI input and VIN4
+Date: Fri, 11 May 2018 11:59:59 +0200
+Message-Id: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/05/2018 17:49, Cornelia Huck wrote:
-> The initial version of vfio-ccw did not support forwarding of the
-> halt or clear functions to the device, and we had to emulate them
-> instead.
->
-> For versions of the vfio-ccw kernel implementation that indeed do
-> support halt/clear (by indicating them in the fctl of the scsw in
-> the io_region), we can simply start making use of it. If the kernel
-> does not support handling halt/clear, fall back to emulation.
->
-> Signed-off-by: Cornelia Huck <cohuck@redhat.com>
-> ---
->   hw/s390x/css.c         | 32 ++++++++++++++++++++++++++++----
->   hw/vfio/ccw.c          | 11 +++++++++--
->   include/hw/s390x/css.h | 10 +++++++---
->   3 files changed, 44 insertions(+), 9 deletions(-)
->
-> diff --git a/hw/s390x/css.c b/hw/s390x/css.c
-> index 301bf1772f..b6727d0607 100644
-> --- a/hw/s390x/css.c
-> +++ b/hw/s390x/css.c
-> @@ -1180,6 +1180,16 @@ static void sch_handle_start_func_virtual(SubchDev *sch)
->   
->   }
->   
-> +static IOInstEnding sch_handle_clear_func_passthrough(SubchDev *sch)
-> +{
-> +    return s390_ccw_cmd_request(sch);
-> +}
-> +
-> +static IOInstEnding sch_handle_halt_func_passthrough(SubchDev *sch)
-> +{
-> +    return s390_ccw_cmd_request(sch);
-> +}
-> +
->   static IOInstEnding sch_handle_start_func_passthrough(SubchDev *sch)
->   {
->   
-> @@ -1233,13 +1243,27 @@ IOInstEnding do_subchannel_work_virtual(SubchDev *sch)
->   IOInstEnding do_subchannel_work_passthrough(SubchDev *sch)
->   {
->       SCSW *s = &sch->curr_status.scsw;
-> +    static bool no_halt_clear;
->   
-> +    /* if the kernel does not support halt/clear, fall back to emulation */
->       if (s->ctrl & SCSW_FCTL_CLEAR_FUNC) {
-> -        /* TODO: Clear handling */
-> -        sch_handle_clear_func(sch);
-> +        if (no_halt_clear) {
-> +            sch_handle_clear_func(sch);
-> +        } else {
-> +            if (sch_handle_clear_func_passthrough(sch) == IOINST_OPNOTSUPP) {
-> +                no_halt_clear = true;
-> +                sch_handle_halt_func(sch);
-> +            }
-> +        }
->       } else if (s->ctrl & SCSW_FCTL_HALT_FUNC) {
-> -        /* TODO: Halt handling */
-> -        sch_handle_halt_func(sch);
-> +        if (no_halt_clear) {
-> +            sch_handle_halt_func(sch);
-> +        } else {
-> +            if (sch_handle_halt_func_passthrough(sch) == IOINST_OPNOTSUPP) {
-> +                no_halt_clear = true;
-> +                sch_handle_halt_func(sch);
-> +            }
-> +        }
->       } else if (s->ctrl & SCSW_FCTL_START_FUNC) {
->           return sch_handle_start_func_passthrough(sch);
->       }
-> diff --git a/hw/vfio/ccw.c b/hw/vfio/ccw.c
-> index e67392c5f9..247901ae41 100644
-> --- a/hw/vfio/ccw.c
-> +++ b/hw/vfio/ccw.c
-> @@ -60,6 +60,7 @@ static IOInstEnding vfio_ccw_handle_request(SubchDev *sch)
->   
->       memset(region, 0, sizeof(*region));
->   
-> +    /* orb is only valid for ssch, but does not hurt for other functions */
->       memcpy(region->orb_area, &sch->orb, sizeof(ORB));
->       memcpy(region->scsw_area, &sch->curr_status.scsw, sizeof(SCSW));
->   
-> @@ -70,8 +71,12 @@ again:
->           if (errno == EAGAIN) {
->               goto again;
->           }
-> -        error_report("vfio-ccw: wirte I/O region failed with errno=%d", errno);
-> -        ret = -errno;
-> +        /* handle not supported operations like halt/clear on older kernels */
-> +        if (ret != -EOPNOTSUPP) {
-> +            error_report("vfio-ccw: write I/O region failed with errno=%d",
-> +                         errno);
-> +            ret = -errno;
-> +        }
->       } else {
->           ret = region->ret_code;
->       }
-> @@ -83,6 +88,8 @@ again:
->       case -ENODEV:
->       case -EACCES:
->           return IOINST_CC_NOT_OPERATIONAL;
-> +    case -EOPNOTSUPP:
-> +        return IOINST_OPNOTSUPP;
->       case -EFAULT:
->       default:
->           sch_gen_unit_exception(sch);
-> diff --git a/include/hw/s390x/css.h b/include/hw/s390x/css.h
-> index 35facb47d2..e33f26882b 100644
-> --- a/include/hw/s390x/css.h
-> +++ b/include/hw/s390x/css.h
-> @@ -100,9 +100,11 @@ typedef struct CcwDataStream {
->   } CcwDataStream;
->   
->   /*
-> - * IO instructions conclude according to this. Currently we have only
-> - * cc codes. Valid values are 0, 1, 2, 3 and the generic semantic for
-> + * IO instructions conclude according to this. One class of values are
-> + * cc codes: Valid values are 0, 1, 2, 3 and the generic semantic for
->    * IO instructions is described briefly. For more details consult the PoP.
-> + * Additionally, other endings may occur due to internal processing errors
-> + * like lack of support for an operation.
->    */
->   typedef enum IOInstEnding {
->       /* produced expected result */
-> @@ -112,7 +114,9 @@ typedef enum IOInstEnding {
->       /* inst. ineffective because busy with previously initiated function */
->       IOINST_CC_BUSY = 2,
->       /* inst. ineffective because not operational */
-> -    IOINST_CC_NOT_OPERATIONAL = 3
-> +    IOINST_CC_NOT_OPERATIONAL = 3,
-> +    /* internal: operation not supported */
-> +    IOINST_OPNOTSUPP = 4
->   } IOInstEnding;
->   
->   typedef struct SubchDev SubchDev;
+Hello,
+   this series enables HDMI input and VIN4 on R-Car D3 Draak board.
 
+The Draak board has an HDMI input connected to an HDMI decoder that feeds
+the VIN capture interface through its parallel video interface.
 
-Couldn't we introduce ABI versioning ?
+The series requires the just sent:
+[PATCH 0/5] rcar-vin: Add support for digital input on Gen3
 
+and enables image capture operations on D3 Draak board.
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+The series has been developed on top of media-master tree but applies cleanly
+on top of latest renesas-driver.
+
+Geert: would you like a topic branch for this series to be included in
+renesas-drivers?
+
+Patches for testing are available at:
+git://jmondi.org/linux d3/media-master/driver
+git://jmondi.org/linux d3/media-master/dts
+git://jmondi.org/linux d3/media-master/test
+git://jmondi.org/vin-tests d3
+
+Thanks
+    j
+
+Jacopo Mondi (3):
+  dt-bindings: media: rcar-vin: Add R8A77995 support
+  arm64: dts: renesas: r8a77995: Add VIN4
+  arm64: dts: renesas: draak: Describe HDMI input
+
+ .../devicetree/bindings/media/rcar_vin.txt         |  1 +
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 68 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi          | 11 ++++
+ 3 files changed, 80 insertions(+)
+
+--
+2.7.4
