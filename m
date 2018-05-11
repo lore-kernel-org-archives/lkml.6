@@ -1,30 +1,30 @@
 Return-Path: <gladkov.alexey@gmail.com>
-X-Google-Smtp-Source: AB8JxZoKSsqskNilJd5A90LeU2NdtwQIKW/ed6o0hk99AzHhI1MBlO/T4ieF1UI7frmnaxlOJlKJ
-ARC-Seal: i=1; a=rsa-sha256; t=1526032003; cv=none;
+X-Google-Smtp-Source: AB8JxZrRvxoyYOQBJbG5Ibslu1KZx7Zpxt71dTWOIfILyVPkEH1xJI94itk88vvx68r1HWimsleb
+ARC-Seal: i=1; a=rsa-sha256; t=1526031950; cv=none;
         d=google.com; s=arc-20160816;
-        b=aliwndKJA61Lg0NxVDnMeMh0gFLvW4PNzcZAd7PrmWDN3mCnBmAkSg5S7dGT8aGBIU
-         KdN3uW+A4/OdRxIG5SlBCELSne20RSKyWNQ0xS+TTiuJrltX3ajXWPY5Y1bRxkNol95A
-         SHnKaOyTk5QTfY8m9XFk2xe/SG2z4Ny1ux95k918qFiaF6eVksPKuY7ZWWIeSGzUvNPi
-         bll/bK0JvPw5P2UiCr9k90RQLO+HdlODI+2YfJrw99OHdmSwm353kBeezHpbScBSkfYl
-         hDx8dHFC6/Tp/38ASFZ2iGupeggP6XS4i9JH0arHos3ZEwWKN1cg0OIy8Tuzou3vvpb3
-         9vVg==
+        b=Za770o0AuOQ1ljle/puoJMtgYhpmkDzZBB6j3GcmlWtMmXuCjnNSxNeJrGWWV4odSC
+         teY+6FMVLv+PE5PXx2bjU697y4J5Ny48UvKqhuTdcb5YqfTNj/sBco3+lCxgbudgM2n1
+         vODwp94Egvm/3VXIJt7cE4GXwIjjRVJAQkfmcLlg6NwsOoGEPXJpl3AbVN3+On4W0M1n
+         gfuk0ayo2J15pHIVuqOefYVmCGctkLG9UE6uPS+6wzy7H6mYH6dTduf4ZawgNZyuG4h0
+         yU1UXDpbxFSe0+WLuP44XN9zWcGNpqCNbEqg+AJ1irihu6Rsq5ChTq9jx5ZG88T3xhV/
+         Iz0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :arc-authentication-results;
-        bh=uDFBzXNfutadFONYghTX3AG4c3h6HKmgtG+K5QFwAEA=;
-        b=ZRQgnDaMsjyjJ1V9d7RA1tYAb8AFK6BVs1iEmedx4Z1p1aVFYR09oPq8aCOEuKz08d
-         nGqoF19Vk+FEJeSOO9wBg6erBl/PR3/XtkY6SL2MATJxiASihfWnJdoHTqTguzKZxD7a
-         OFREWl5WuIsBSQIpD3J2Y+W2AWdMND4yIyJjrI6FD9m8x34IV1X2wlixgRh5KFHtX6v2
-         zOgY8S68i7DQ+8wOgeawAkLWMkGVPJ7aNxSH5Cy7aiuPslGTfiiTF/2tPpntu58zRAuH
-         Mwc9SbY9MTzhAhVfjJY+WkgSF86jvX6BAYM59qy+VSsPDbJn1/deWi2zfV9AgmaR9Paj
-         CPFw==
+        bh=W03d8SQs2EhzUfra+3WeCjgJyPFeWP9AvWonklM/ib0=;
+        b=riqMg25Ga/lroZJ/p95CofEhZH9hsPi9HS/eUk29dZnm47t29IzBBqiM6tWxSpNmlq
+         xciya0BRCxYJ3CecXIOc0Oa37TIoZn+Yt4ljaqoLBWs9wsgOpV+OAKeViF5uTg0jufH1
+         89fh6nnqCgTCzi742pLgXxsaqRtvJjVomW8QIaJN2uH6jDnV1WIdX0hOX56Sj8OSwKaM
+         0oOoFrJcfTT8ws8YbtNtaAPlStfbc79DTjTrYNc+GF5KmSRRg3NXTf2BpnPQKPUgw+/c
+         ucnpTZkqw8JMQIQw7rNEOuD0LAWaVkLqbUaiJzB1YJ7URDVZRYZFKKqdBNbCIimXgs1e
+         YRjg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=softfail (google.com: domain of transitioning gladkov.alexey@gmail.com does not designate 5.9.28.80 as permitted sender) smtp.mailfrom=gladkov.alexey@gmail.com;
        dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
        spf=softfail (google.com: domain of transitioning gladkov.alexey@gmail.com does not designate 5.9.28.80 as permitted sender) smtp.mailfrom=gladkov.alexey@gmail.com;
        dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Date: Fri, 11 May 2018 11:36:45 +0200
+Date: Fri, 11 May 2018 11:35:51 +0200
 From: Alexey Gladkov <gladkov.alexey@gmail.com>
 To: Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -45,221 +45,414 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Stephen Rothwell <sfr@canb.auug.org.au>, solar@openwall.com,
 	"Dmitry V. Levin" <ldv@altlinux.org>,
 	Djalal Harouni <tixxdz@gmail.com>
-Subject: [PATCH v5 6/7] proc: flush task dcache entries from all procfs
- instances
-Message-ID: <20180511093645.GA1365@comp-core-i7-2640m-0182e6>
+Subject: [PATCH v5 4/7] proc: support mounting private procfs instances
+ inside same pid namespace
+Message-ID: <20180511093551.GA1299@comp-core-i7-2640m-0182e6>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600160534143415772?=
-X-GMAIL-MSGID: =?utf-8?q?1600160534143415772?=
+X-GMAIL-THRID: =?utf-8?q?1600160477951003433?=
+X-GMAIL-MSGID: =?utf-8?q?1600160477951003433?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Djalal Harouni <tixxdz@gmail.com>
 
-This allows to flush dcache entries of a task on multiple procfs mounts
-per pid namespace.
+This patch allows to have multiple private procfs instances inside the
+same pid namespace. Lot of other areas in the kernel and filesystems
+have been updated to be able to support private instances, devpts is one
+major example. The aim here is lightweight sandboxes, and to allow that we
+have to modernize procfs internals.
+
+1) The main aim of this work is to have on embedded systems one
+supervisor for apps. Right now we have some lightweight sandbox support,
+however if we create pid namespacess we have to manages all the
+processes inside too, where our goal is to be able to run a bunch of
+apps each one inside its own mount namespace without being able to
+notice each other. We only want to use mount namespaces, and we want
+procfs to behave more like a real mount point.
+
+2) Linux Security Modules have multiple ptrace paths inside some
+subsystems, however inside procfs, the implementation does not guarantee
+that the ptrace() check which triggers the security_ptrace_check() hook
+will always run. We have the 'hidepid' mount option that can be used to
+force the ptrace_may_access() check inside has_pid_permissions() to run.
+The problem is that 'hidepid' is per pid namespace and not attached to
+the mount point, any remount or modification of 'hidepid' will propagate
+to all other procfs mounts.
+
+This also does not allow to support Yama LSM easily in desktop and user
+sessions. Yama ptrace scope which restricts ptrace and some other
+syscalls to be allowed only on inferiors, can be updated to have a
+per-task context, where the context will be inherited during fork(),
+clone() and preserved across execve(). If we support multiple private
+procfs instances, then we may force the ptrace_may_access() on
+/proc/<pids>/ to always run inside that new procfs instances. This will
+allow to specifiy on user sessions if we should populate procfs with
+pids that the user can ptrace or not.
+
+By using Yama ptrace scope, some restricted users will only be able to see
+inferiors inside /proc, they won't even be able to see their other
+processes. Some software like Chromium, Firefox's crash handler, Wine
+and others are already using Yama to restrict which processes can be
+ptracable. With this change this will give the possibility to restrict
+/proc/<pids>/ but more importantly this will give desktop users a
+generic and usuable way to specifiy which users should see all processes
+and which users can not.
+
+Side notes:
+* This covers the lack of seccomp where it is not able to parse
+arguments, it is easy to install a seccomp filter on direct syscalls
+that operate on pids, however /proc/<pid>/ is a Linux ABI using
+filesystem syscalls. With this change LSMs should be able to analyze
+open/read/write/close...
+
+3) This will modernize procfs and align it with all other filesystems
+and subsystems that have been updated recently to be able to work in a
+flexible way. This is the same as devpts where each mount now is a distinct
+filesystem such that ptys and their indicies allocated in one mount are
+independent from ptys and their indicies in all other mounts.
+
+We have to align procfs and modernize it to have a per mount context
+where at least the mount option do not propagate to all other mounts,
+then maybe we can continue to implement new features. One example is to
+require CAP_SYS_ADMIN in the init user namespace on some /proc/* which are
+not pids and which are are not virtualized by design, or CAP_NET_ADMIN
+inside userns on the net bits that are virtualized, etc.
+These mount options won't propagate to previous mounts, and the system
+will continue to be usable.
+
+Ths patch introduces the new 'limit_pids' mount option as it was also
+suggesed by Andy Lutomirski [1]. When this option is passed we
+automatically create a private procfs instance. This is not the default
+behaviour since we do not want to break userspace and we do not want to
+provide different devices IDs by default, please see [1] for why.
+
+* If 'limit_pids=0' this will create a private procfs instance without
+  any restrictions.
+
+* If 'limit_pids=1' this will create a private procfs instance where
+processes will only be able to see pids that they can ptrace inside
+/proc/
+
+This allows to have a stable LSM path later inside has_pid_permissions()
+to make sure that processes are not using filesystem syscall on
+/proc/pid to inspect or write to pid where other mechanisms are supposed
+to prevent this. This allows to align filesystem syscalls that go
+through procfs on pids with the other syscalls that can be blocked by
+seccomp filters.
+
+Later Yama LSM can be updated to check that processes are able only
+able to see their children inside /proc/.
+
+[1] https://lkml.org/lkml/2017/3/31/324
 
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Andy Lutomirski <luto@kernel.org>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
 ---
- fs/proc/base.c                | 27 ++++++++++++++++++++++-----
- fs/proc/inode.c               |  9 ++++++++-
- fs/proc/root.c                | 10 ++++++++++
- include/linux/pid_namespace.h | 42 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/proc_fs.h       |  2 ++
- 5 files changed, 84 insertions(+), 6 deletions(-)
+ fs/proc/base.c          | 21 ++++++++----
+ fs/proc/inode.c         |  4 +++
+ fs/proc/root.c          | 88 ++++++++++++++++++++++++++++++++++++++++++++++---
+ include/linux/proc_fs.h | 51 ++++++++++++++++++++++++++++
+ 4 files changed, 153 insertions(+), 11 deletions(-)
 
 diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 31baeef..987d702 100644
+index 57fc895..6f084344 100644
 --- a/fs/proc/base.c
 +++ b/fs/proc/base.c
-@@ -3068,7 +3068,8 @@ static const struct inode_operations proc_tgid_base_inode_operations = {
- 	.permission	= proc_pid_permission,
- };
- 
--static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
-+static void proc_flush_task_mnt_root(struct dentry *mnt_root,
-+				     pid_t pid, pid_t tgid)
+@@ -688,13 +688,22 @@ static bool has_pid_permissions(struct proc_fs_info *fs_info,
+ 				 struct task_struct *task,
+ 				 int hide_pid_min)
  {
- 	struct dentry *dentry, *leader, *dir;
- 	char buf[10 + 1];
-@@ -3077,7 +3078,7 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
- 	name.name = buf;
- 	name.len = snprintf(buf, sizeof(buf), "%u", pid);
- 	/* no ->d_hash() rejects on procfs */
--	dentry = d_hash_and_lookup(mnt->mnt_root, &name);
-+	dentry = d_hash_and_lookup(mnt_root, &name);
- 	if (dentry) {
- 		d_invalidate(dentry);
- 		dput(dentry);
-@@ -3088,7 +3089,7 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
+-	int hide_pid = proc_fs_hide_pid(fs_info);
+-	kgid_t gid = proc_fs_pid_gid(fs_info);
++	int limit_pids = proc_fs_limit_pids(fs_info);
  
- 	name.name = buf;
- 	name.len = snprintf(buf, sizeof(buf), "%u", tgid);
--	leader = d_hash_and_lookup(mnt->mnt_root, &name);
-+	leader = d_hash_and_lookup(mnt_root, &name);
- 	if (!leader)
- 		goto out;
- 
-@@ -3143,14 +3144,30 @@ void proc_flush_task(struct task_struct *task)
- 	int i;
- 	struct pid *pid, *tgid;
- 	struct upid *upid;
-+	struct proc_fs_info *fs_info_entry;
-+	struct pid_namespace *pid_ns;
-+	struct dentry *mnt_root;
- 
- 	pid = task_pid(task);
- 	tgid = task_tgid(task);
- 
- 	for (i = 0; i <= pid->level; i++) {
- 		upid = &pid->numbers[i];
--		proc_flush_task_mnt(upid->ns->proc_mnt, upid->nr,
--					tgid->numbers[i].nr);
-+		pid_ns = upid->ns;
+-	if (hide_pid < hide_pid_min)
+-		return true;
+-	if (in_group_p(gid))
+-		return true;
++	/*
++	 * If 'limit_pids' mount is set force a ptrace check,
++	 * we indicate that we are using a filesystem syscall
++	 * by passing PTRACE_MODE_READ_FSCREDS
++	 */
++	if (limit_pids == PROC_LIMIT_PIDS_OFF) {
++		int hide_pid = proc_fs_hide_pid(fs_info);
++		kgid_t gid = proc_fs_pid_gid(fs_info);
 +
-+		pidns_proc_lock_shared(pid_ns);
-+		list_for_each_entry(fs_info_entry, &pid_ns->procfs_mounts,
-+				    pidns_entry) {
-+			if (proc_fs_newinstance(fs_info_entry)) {
-+				mnt_root = fs_info_entry->sb->s_root;
-+				proc_flush_task_mnt_root(mnt_root, upid->nr,
-+							 tgid->numbers[i].nr);
-+			}
-+		}
-+		pidns_proc_unlock_shared(pid_ns);
-+
-+		mnt_root = pid_ns->proc_mnt->mnt_root;
-+		proc_flush_task_mnt_root(mnt_root, upid->nr, tgid->numbers[i].nr);
- 	}
++		if (hide_pid < hide_pid_min)
++			return true;
++		if (in_group_p(gid))
++			return true;
++	}
+ 	return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
  }
  
 diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 985df4b..5e62598 100644
+index 9585727..985df4b 100644
 --- a/fs/proc/inode.c
 +++ b/fs/proc/inode.c
-@@ -498,10 +498,17 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
- int proc_fill_super(struct super_block *s, void *data, int silent)
- {
- 	struct proc_fs_info *fs_info = proc_sb(s);
-+	struct pid_namespace *ns = get_pid_ns(fs_info->pid_ns);
- 	struct inode *root_inode;
- 	int ret;
+@@ -115,12 +115,16 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+ 	struct super_block *sb = root->d_sb;
+ 	struct proc_fs_info *fs_info = proc_sb(sb);
+ 	struct pid_namespace *pid = fs_info->pid_ns;
++	int limit_pids = proc_fs_limit_pids(fs_info);
  
--	get_pid_ns(fs_info->pid_ns);
-+	fs_info->sb = s;
-+
-+	if (proc_fs_newinstance(fs_info)) {
-+		pidns_proc_lock(ns);
-+		list_add_tail(&fs_info->pidns_entry, &ns->procfs_mounts);
-+		pidns_proc_unlock(ns);
-+	}
+ 	if (!gid_eq(pid->pid_gid, GLOBAL_ROOT_GID))
+ 		seq_printf(seq, ",gid=%u", from_kgid_munged(&init_user_ns, pid->pid_gid));
+ 	if (pid->hide_pid != HIDEPID_OFF)
+ 		seq_printf(seq, ",hidepid=%u", pid->hide_pid);
  
- 	if (!proc_parse_options(data, fs_info))
- 		return -EINVAL;
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index c5ce241..c72d22c 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -249,6 +249,13 @@ static void proc_kill_sb(struct super_block *sb)
- 		dput(fs_info->proc_self);
- 	if (fs_info->proc_thread_self)
- 		dput(fs_info->proc_thread_self);
-+
-+	if (proc_fs_newinstance(fs_info)) {
-+		pidns_proc_lock(ns);
-+		list_del(&fs_info->pidns_entry);
-+		pidns_proc_unlock(ns);
-+	}
-+
- 	kill_anon_super(sb);
- 	put_pid_ns(ns);
- 	kfree(fs_info);
-@@ -357,6 +364,9 @@ int pid_ns_prepare_proc(struct pid_namespace *ns)
- 		return PTR_ERR(mnt);
- 
- 	ns->proc_mnt = mnt;
-+	init_rwsem(&ns->rw_procfs_mnts);
-+	INIT_LIST_HEAD(&ns->procfs_mounts);
++	if (limit_pids > PROC_LIMIT_PIDS_OFF)
++		seq_printf(seq, ",limit_pids=%u", limit_pids);
 +
  	return 0;
  }
  
-diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
-index f91a8bf..767fc96 100644
---- a/include/linux/pid_namespace.h
-+++ b/include/linux/pid_namespace.h
-@@ -32,6 +32,8 @@ struct pid_namespace {
- 	struct pid_namespace *parent;
- #ifdef CONFIG_PROC_FS
- 	struct vfsmount *proc_mnt; /* Internal proc mounted during each new pidns */
-+	struct rw_semaphore rw_procfs_mnts;
-+	struct list_head procfs_mounts; /* list of separated procfs mounts */
- #endif
- #ifdef CONFIG_BSD_PROCESS_ACCT
- 	struct fs_pin *bacct;
-@@ -98,4 +100,44 @@ extern struct pid_namespace *task_active_pid_ns(struct task_struct *tsk);
- void pidhash_init(void);
- void pid_idr_init(void);
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index bdea220..c5ce241 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -28,15 +28,66 @@
+ #include "internal.h"
  
-+#ifdef CONFIG_PROC_FS
-+static inline void pidns_proc_lock(struct pid_namespace *pid_ns)
-+{
-+	down_write(&pid_ns->rw_procfs_mnts);
-+}
-+
-+static inline void pidns_proc_unlock(struct pid_namespace *pid_ns)
-+{
-+	up_write(&pid_ns->rw_procfs_mnts);
-+}
-+
-+static inline void pidns_proc_lock_shared(struct pid_namespace *pid_ns)
-+{
-+	down_read(&pid_ns->rw_procfs_mnts);
-+}
-+
-+static inline void pidns_proc_unlock_shared(struct pid_namespace *pid_ns)
-+{
-+	up_read(&pid_ns->rw_procfs_mnts);
-+}
-+#else /* !CONFIG_PROC_FS */
-+
-+static inline void pidns_proc_lock(struct pid_namespace *pid_ns)
-+{
-+}
-+
-+static inline void pidns_proc_unlock(struct pid_namespace *pid_ns)
-+{
-+}
-+
-+static inline void pidns_proc_lock_shared(struct pid_namespace *pid_ns)
-+{
-+}
-+
-+static inline void pidns_proc_unlock_shared(struct pid_namespace *pid_ns)
-+{
-+}
-+
-+#endif /* CONFIG_PROC_FS */
-+
- #endif /* _LINUX_PID_NS_H */
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 2d16d0e..70e8b10 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -19,7 +19,9 @@ enum { /* definitions for proc mount option limit_pids */
+ enum {
+-	Opt_gid, Opt_hidepid, Opt_err,
++	Opt_gid, Opt_hidepid, Opt_limit_pids, Opt_err,
  };
  
+ static const match_table_t tokens = {
+ 	{Opt_hidepid, "hidepid=%u"},
+ 	{Opt_gid, "gid=%u"},
++	{Opt_limit_pids, "limit_pids=%u"},
+ 	{Opt_err, NULL},
+ };
+ 
++/* We only parse 'limit_pids' option here */
++int proc_parse_early_options(char *options, struct proc_fs_info *fs_info)
++{
++	char *p, *opts, *orig;
++	substring_t args[MAX_OPT_ARGS];
++	int option, ret;
++
++	if (!options)
++		return 0;
++
++	opts = kstrdup(options, GFP_KERNEL);
++	if (!opts)
++		return -ENOMEM;
++
++	orig = opts;
++
++	while ((p = strsep(&opts, ",")) != NULL) {
++		int token;
++
++		if (!*p)
++			continue;
++
++		token = match_token(p, tokens, args);
++		switch (token) {
++		case Opt_limit_pids:
++			if (match_int(&args[0], &option))
++				return -EINVAL;
++			ret = proc_fs_set_limit_pids(fs_info, option);
++			if (ret < 0) {
++				pr_err("proc: faild to parse mount option "
++				       "\"%s\" \n", p);
++				return ret;
++			}
++			proc_fs_set_newinstance(fs_info, true);
++			pr_info("proc: mounting a new procfs instance ");
++			break;
++		case Opt_gid:
++		case Opt_hidepid:
++			break;
++		default:
++			pr_err("proc: unrecognized mount option \"%s\" "
++			       "or missing value\n", p);
++			return -EINVAL;
++		}
++	}
++
++	kfree(orig);
++	return 0;
++}
++
+ int proc_parse_options(char *options, struct proc_fs_info *fs_info)
+ {
+ 	char *p;
+@@ -75,6 +126,8 @@ int proc_parse_options(char *options, struct proc_fs_info *fs_info)
+ 			}
+ 			proc_fs_set_hide_pid(fs_info, option);
+ 			break;
++		case Opt_limit_pids:
++			break;
+ 		default:
+ 			pr_err("proc: unrecognized mount option \"%s\" "
+ 			       "or missing value\n", p);
+@@ -87,18 +140,34 @@ int proc_parse_options(char *options, struct proc_fs_info *fs_info)
+ 
+ int proc_remount(struct super_block *sb, int *flags, char *data)
+ {
++	int error;
+ 	struct proc_fs_info *fs_info = proc_sb(sb);
+ 
+ 	sync_filesystem(sb);
++
++	/*
++	 * If this is a new instance, then parse again the proc mount
++	 * options.
++	 */
++	if (proc_fs_newinstance(fs_info)) {
++		error = proc_parse_early_options(data, fs_info);
++		if (error < 0)
++			return error;
++	}
++
+ 	return !proc_parse_options(data, fs_info);
+ }
+ 
+-static int proc_test_super(struct super_block *s, void *data)
++static int proc_test_super(struct super_block *sb, void *data)
+ {
+ 	struct proc_fs_info *p = data;
+-	struct proc_fs_info *fs_info = proc_sb(s);
++	struct proc_fs_info *fs_info = proc_sb(sb);
+ 
+-	return p->pid_ns == fs_info->pid_ns;
++	if (!proc_fs_newinstance(p) && !proc_fs_newinstance(fs_info) &&
++	    p->pid_ns == fs_info->pid_ns)
++		return 1;
++
++	return 0;
+ }
+ 
+ static int proc_set_super(struct super_block *sb, void *data)
+@@ -110,7 +179,7 @@ static int proc_set_super(struct super_block *sb, void *data)
+ static struct dentry *proc_mount(struct file_system_type *fs_type,
+ 	int flags, const char *dev_name, void *data)
+ {
+-	int error;
++	int error = 0;
+ 	struct super_block *sb;
+ 	struct pid_namespace *ns;
+ 	struct proc_fs_info *fs_info;
+@@ -126,10 +195,19 @@ static struct dentry *proc_mount(struct file_system_type *fs_type,
+ 	if (!fs_info)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	/* Set it as early as possible */
++	proc_fs_set_newinstance(fs_info, false);
++	proc_fs_set_limit_pids(fs_info, PROC_LIMIT_PIDS_OFF);
++
+ 	if (flags & SB_KERNMOUNT) {
+ 		ns = data;
+ 		data = NULL;
+ 	} else {
++		/* Parse early mount options if not a MS_KERNMOUNT */
++		error = proc_parse_early_options(data, fs_info);
++		if (error < 0)
++			goto error_fs_info;
++
+ 		ns = task_active_pid_ns(current);
+ 	}
+ 
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index a7fc6a1..2d16d0e 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -13,10 +13,17 @@
+ struct proc_dir_entry;
+ struct pid_namespace;
+ 
++enum { /* definitions for proc mount option limit_pids */
++	PROC_LIMIT_PIDS_OFF	= 0,	/* Limit pids is off */
++	PROC_LIMIT_PIDS_PTRACE	= 1,	/* Limit pids to only ptracable pids */
++};
++
  struct proc_fs_info {
-+	struct super_block *sb;
  	struct pid_namespace *pid_ns;
-+	struct list_head pidns_entry; /* Node in procfs_mounts of a pidns */
  	struct dentry *proc_self; /* For /proc/self */
  	struct dentry *proc_thread_self; /* For /proc/thread-self/ */
- 	bool newinstance; /* Private flag for new separated instances */
++	bool newinstance; /* Private flag for new separated instances */
++	int limit_pids:1;
+ };
+ 
+ #ifdef CONFIG_PROC_FS
+@@ -36,6 +43,21 @@ static inline void proc_fs_set_pid_gid(struct proc_fs_info *fs_info, kgid_t gid)
+ 	fs_info->pid_ns->pid_gid = gid;
+ }
+ 
++static inline void proc_fs_set_newinstance(struct proc_fs_info *fs_info, bool value)
++{
++	fs_info->newinstance = value;
++}
++
++static inline int proc_fs_set_limit_pids(struct proc_fs_info *fs_info, int value)
++{
++	if (value < PROC_LIMIT_PIDS_OFF || value > PROC_LIMIT_PIDS_PTRACE)
++		return -EINVAL;
++
++	fs_info->limit_pids = value;
++
++	return 0;
++}
++
+ static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
+ {
+ 	return fs_info->pid_ns->hide_pid;
+@@ -46,6 +68,16 @@ static inline kgid_t proc_fs_pid_gid(struct proc_fs_info *fs_info)
+ 	return fs_info->pid_ns->pid_gid;
+ }
+ 
++static inline bool proc_fs_newinstance(struct proc_fs_info *fs_info)
++{
++	return fs_info->newinstance;
++}
++
++static inline int proc_fs_limit_pids(struct proc_fs_info *fs_info)
++{
++	return fs_info->limit_pids;
++}
++
+ extern void proc_root_init(void);
+ extern void proc_flush_task(struct task_struct *);
+ 
+@@ -90,6 +122,15 @@ static inline void proc_fs_set_pid_gid(struct proc_info_fs *fs_info, kgid_t gid)
+ {
+ }
+ 
++static inline void proc_fs_set_newinstance(struct proc_fs_info *fs_info, bool value)
++{
++}
++
++static inline int proc_fs_set_limit_pids(struct proc_fs_info *fs_info, int value)
++{
++	return 0;
++}
++
+ static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
+ {
+ 	return 0;
+@@ -100,6 +141,16 @@ extern kgid_t proc_fs_pid_gid(struct proc_fs_info *fs_info)
+ 	return GLOBAL_ROOT_GID;
+ }
+ 
++static inline bool proc_fs_newinstance(struct proc_fs_info *fs_info)
++{
++	return false;
++}
++
++static inline int proc_fs_limit_pids(struct proc_fs_info *fs_info)
++{
++	return 0;
++}
++
+ extern inline struct proc_fs_info *proc_sb(struct super_block *sb) { return NULL;}
+ static inline struct proc_dir_entry *proc_symlink(const char *name,
+ 		struct proc_dir_entry *parent,const char *dest) { return NULL;}
 -- 
 2.10.5
