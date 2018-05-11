@@ -1,103 +1,84 @@
-Return-Path: <ruslan.bilovol@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526290575; cv=none;
+Return-Path: <jorge.sanjuan@codethink.co.uk>
+X-Google-Smtp-Source: AB8JxZq9XDZ6YL6jDAHGUTv/L9uvNDULHRgxENpaaE7n4XgJdGuAPVGiLl2TePI5/TGhgXU31QgL
+ARC-Seal: i=1; a=rsa-sha256; t=1526052347; cv=none;
         d=google.com; s=arc-20160816;
-        b=gm1xU4mpAJtADh7zIN6wYM9z0bGDBchYfJ7fCCmzOGEQBwCU/ODFYqPKmGfvTtgX3R
-         RCvKD3GwQYDrRk5UTF5ZsUGvx0oxVjtD8mEAw1zn2dp/CKriorCLE/2fDCqULPiOBBa3
-         JHoUQ4SoWTZQPiNAhHlFkReItwWinDXLaHB3/12SUxdjlrDOU8rBTVMhlfGPOHPwqJTu
-         GnAkXcD/+ucLzYOatcJlhZyADeHT7bOWjG0uOQgEnMfQJvQvPw/kWkVHZ+mRncdSdK3o
-         Hg/asw4Vg5xLt8mPR3wUPrSWD2kUWln4D8XExjfbeyD9hDkaRz2YRlobpgp+Fvc8gVZN
-         9E1g==
+        b=hTbKeyyXp5ocVKM/hf6AovXW7yCfMng6flW1fJkwZ5JDVAFwwouH1Fn+2pHWzCfaXh
+         QOIiWgaJh4R/TXwT9qHOfxTRhOCYt/B4m1xdhwFwJNkJGxyPCG8yHBVfFtXTu6upwwIE
+         NzHZqWip/GIQG8/VM2AiCzYIkWopM1B+etm8NGAPOQNPR84zEq77DR8K+esvXQhEGU0x
+         BxoQ5mIX2BziWqJjz02egngSYuVq54WUM32lmSc0kBBfgQh+ttaKx6aRaCbhCGtciV4S
+         DaPD0OSBEoN1/xsBvFQf4fHURfpSzq+HOWMSUz59Xoyu55Xs0JsjHalzdg/aN7x4+18c
+         mMjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=gvldIfEnic4F9aNRZBHS6OnUZLVvxTOgidLWde0Yot4=;
-        b=p11UPFozZB+0IuQaJfP/7/02EY1plpwB0y+burN9oy/V3YgrJWo6UmkBJITuE2EC0k
-         tIE20z1Pxkldg55g623E0RARbbQuHsBFBpgP5VLgLIAqEdvElktQ+Hkny3zki29/nlXY
-         UIIfRq+OSZDAzBdxxxN4uBARKCIo0iopR65kEJFO+LZ45OKi5AkVCNpWkImiwCiyhf4F
-         3/7WzgYEr3giHBQq2yLKa3/e+WcITTxcgOB8uamhFEiV/K2kd73Ek4I4mFDEVgnnO8c1
-         0wiIyJRYRasOuX8hSqYt+oSVMXWpJFEE7bOCHGglQFydSHrjmwNBESfAZ5I7nbN/8o/5
-         gkPw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=UV09o4I1Pfl2MPUzeWYmlKy0qqTQq1s7b2GMoxWINrs=;
+        b=sgHBzMAQq7DbNnFA4J8RNrCf/HaOi1N+cazncpQwKvDI1r7yC9HTOdpnhr+cKrsDaS
+         HxJl9ClWUrYq9Ti8OaQjR7yvJHseFjkwiZU9GWER8O3qEhuKXzu1bCpB56yeKQdnvqlW
+         o5mhhvLl6DUeKZt/CoO8mbsWGu2L8uO1il0Am5Bu/1vXdroyBhCAUfz5SY5hmM+pGtPe
+         4Sa79srFNhdHw1ybGEesJV4Px9sqMs5F1rXjf1wOZ0sLSe/2Gm53giCyEPoXt2BlOPx+
+         9ciLwhm+CY5TjR37VSh0im9ft+ulg8IPESNWS7SGjH9MYWhRZznMtQRK+/OO9S6Xgzlo
+         oQdw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uXkzU1HM;
-       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of jorge.sanjuan@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=jorge.sanjuan@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=uXkzU1HM;
-       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZoqI4sCdXqioLeLXzQxpoXISLF7liHzRHf0Bjv7tq/6DohZesy+NlcMtTh1M1DFcDofZV0Lb04LKmlZRnkMQv4=
-MIME-Version: 1.0
-In-Reply-To: <e2088eb5-381f-3ad4-8e59-381a729346d0@codethink.co.uk>
+       spf=pass (google.com: domain of jorge.sanjuan@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=jorge.sanjuan@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
+From: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+To: tiwai@suse.com
+Cc: alsa-devel@alsa-project.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	ruslan.bilovol@gmail.com,
+	Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Subject: [PATCH v4 2/4] ALSA: usb-audio: Use Class Specific EP for UAC3 devices.
+Date: Fri, 11 May 2018 16:25:35 +0100
+Message-Id: <20180511152537.32267-3-jorge.sanjuan@codethink.co.uk>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180511152537.32267-1-jorge.sanjuan@codethink.co.uk>
 References: <20180420170327.31569-1-jorge.sanjuan@codethink.co.uk>
- <20180511152537.32267-1-jorge.sanjuan@codethink.co.uk> <20180511152537.32267-5-jorge.sanjuan@codethink.co.uk>
- <e2088eb5-381f-3ad4-8e59-381a729346d0@codethink.co.uk>
-From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
-Date: Mon, 14 May 2018 12:36:14 +0300
-Message-ID: <CAB=otbRx01uackLJtaOKCzT9tc5V9Nc62tV42Pie3rTd-exrKQ@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] ALSA: usb-audio: UAC3: Parse Input Terminal number
- of channels.
-To: Jorge <jorge.sanjuan@codethink.co.uk>
-Cc: Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ <20180511152537.32267-1-jorge.sanjuan@codethink.co.uk>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600181868703215105?=
-X-GMAIL-MSGID: =?utf-8?q?1600431665926846157?=
+X-GMAIL-THRID: =?utf-8?q?1598285489825871167?=
+X-GMAIL-MSGID: =?utf-8?q?1600181867182043786?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 14, 2018 at 11:54 AM, Jorge <jorge.sanjuan@codethink.co.uk> wrote:
->
->
-> On 11/05/18 16:25, Jorge Sanjuan wrote:
->>
->> Obtain the number of channels for the Input Terminal from the
->> Logical Cluster Descriptor. This achieves a useful minimal parsing
->> of this unit so it can be used in other units in the topology.
->>
->> Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
->> ---
->>   sound/usb/mixer.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
->> index 431f3c319839..19b25fbc7437 100644
->> --- a/sound/usb/mixer.c
->> +++ b/sound/usb/mixer.c
->> @@ -903,9 +903,9 @@ static int check_input_term(struct mixer_build *state,
->> int id,
->>                                  * recursion calls */
->>                                 term->id = id;
->>                                 term->type =
->> le16_to_cpu(d->wTerminalType);
->> +                               term->channels =
->> get_cluster_channels_v3(state, d->wClusterDescrID);
->
->
->
-> Sorry about this. I just spotted that I should have used the helper function
-> I added to access d->wClusterDescrID `uac3_mixer_unit_wClusterDescrID`.
->
-> I got the sparse warning for the endianess and realized that. I'll resend
-> this one patch.
+bmAtributes offset doesn't exist in the UAC3 CS_EP descriptor.
+Hence, checking for pitch control as if it was UAC2 doesn't make
+any sense. Use the defined UAC3 offsets instead.
 
-While here, please add checking output of get_cluster_channels_v3() as
-it can return negative errno.
+Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+---
+ sound/usb/stream.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-BTW, I've just tested your Mixer patches and this is the only comment I have
-so far.
-
-Thanks,
-Ruslan
-
->
->>   -                             /* REVISIT: UAC3 IT doesn't have
->> channels/cfg */
->> -                               term->channels = 0;
->> +                               /* REVISIT: UAC3 IT doesn't have channels
->> cfg */
->>                                 term->chconfig = 0;
->>                                 term->name =
->> le16_to_cpu(d->wTerminalDescrStr);
->>
->
+diff --git a/sound/usb/stream.c b/sound/usb/stream.c
+index 764be07474a8..6b2924533d8d 100644
+--- a/sound/usb/stream.c
++++ b/sound/usb/stream.c
+@@ -576,7 +576,7 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
+ 
+ 	if (protocol == UAC_VERSION_1) {
+ 		attributes = csep->bmAttributes;
+-	} else {
++	} else if (protocol == UAC_VERSION_2) {
+ 		struct uac2_iso_endpoint_descriptor *csep2 =
+ 			(struct uac2_iso_endpoint_descriptor *) csep;
+ 
+@@ -585,6 +585,13 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
+ 		/* emulate the endpoint attributes of a v1 device */
+ 		if (csep2->bmControls & UAC2_CONTROL_PITCH)
+ 			attributes |= UAC_EP_CS_ATTR_PITCH_CONTROL;
++	} else { /* UAC_VERSION_3 */
++		struct uac3_iso_endpoint_descriptor *csep3 =
++			(struct uac3_iso_endpoint_descriptor *) csep;
++
++		/* emulate the endpoint attributes of a v1 device */
++		if (le32_to_cpu(csep3->bmControls) & UAC2_CONTROL_PITCH)
++			attributes |= UAC_EP_CS_ATTR_PITCH_CONTROL;
+ 	}
+ 
+ 	return attributes;
+-- 
+2.11.0
