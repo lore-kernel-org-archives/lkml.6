@@ -1,217 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752962AbeEKKBE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 06:01:04 -0400
-Received: from mail-pl0-f43.google.com ([209.85.160.43]:42607 "EHLO
-        mail-pl0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752941AbeEKKBA (ORCPT
+        id S1752644AbeEKKGR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 06:06:17 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:45816 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751406AbeEKKGP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 06:01:00 -0400
-X-Google-Smtp-Source: AB8JxZp4WcsFKjfBaWYekoZIJHY3dkcEmsK1EXoA4nDs6/K2KzayMFYmG6ZKm30qND/ydDX3VvyHCAbSi/MvcO2DLdg=
+        Fri, 11 May 2018 06:06:15 -0400
+Date: Fri, 11 May 2018 20:06:06 +1000 (AEST)
+From: Finn Thain <fthain@telegraphics.com.au>
+To: Michael Schmitz <schmitzmic@gmail.com>
+cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH net] macmace: Set platform device coherent_dma_mask
+In-Reply-To: <8c2c3ad5-eeb5-cf61-b9fb-c6096619e310@gmail.com>
+Message-ID: <alpine.LNX.2.21.1805112003250.8@nippy.intranet>
+References: <S1751632AbeECEYA/20180503042400Z+254@vger.kernel.org> <CAMuHMdUAxmVZLekekvVrnMbbL18oyY86sF9QX087idSqcKMiPQ@mail.gmail.com> <alpine.LNX.2.21.1805031801310.8@nippy.intranet> <CAMuHMdU1XBqt7hwEW6JTas64ZNGCGCMr5HMZwuLo0O-ZBCOWyA@mail.gmail.com>
+ <alpine.LNX.2.21.1805091805130.72@nippy.intranet> <CAOmrzkKNPemq5RySvza+Y8_jgwg2fkUZodR794cgOxpQpfh+SA@mail.gmail.com> <alpine.LNX.2.21.1805110921020.8@nippy.intranet> <CAOmrzkLL0ZNzAh7rwiDy=BkNqqXgbqfv3vkN6K8CTF8VGbT8zA@mail.gmail.com>
+ <alpine.LNX.2.21.1805111221180.8@nippy.intranet> <0b13a08d-ba2d-b9dc-4fd9-1f6bad5cd1ee@gmail.com> <alpine.LNX.2.21.1805111451220.8@nippy.intranet> <8c2c3ad5-eeb5-cf61-b9fb-c6096619e310@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <000000000000a9b0e3056b14bfb2@google.com>
-References: <000000000000a9b0e3056b14bfb2@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 11 May 2018 12:00:38 +0200
-Message-ID: <CACT4Y+Z_+=VLbELVW69B7WEVqvri1xBMM5RMnMQynec_XgaE=w@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in kfree_skbmem
-To: syzbot <syzbot+fc78715ba3b3257caf6a@syzkaller.appspotmail.com>,
-        Vladislav Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        linux-sctp@vger.kernel.org
-Cc: Andrei Vagin <avagin@virtuozzo.com>,
-        David Miller <davem@davemloft.net>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 8:09 PM, syzbot
-<syzbot+fc78715ba3b3257caf6a@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    5d1365940a68 Merge
-> git://git.kernel.org/pub/scm/linux/kerne...
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?id=5667997129637888
-> kernel config:
-> https://syzkaller.appspot.com/x/.config?id=-5947642240294114534
-> dashboard link: https://syzkaller.appspot.com/bug?extid=fc78715ba3b3257caf6a
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
+On Fri, 11 May 2018, Michael Schmitz wrote:
 
-This looks sctp-related, +sctp maintainers.
+> 
+> I wasn't proposing to follow platform_device_register() with the mask 
+> assignment,
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+fc78715ba3b3257caf6a@syzkaller.appspotmail.com
->
-> INFO: rcu_sched self-detected stall on CPU
->         1-...!: (1 GPs behind) idle=a3e/1/4611686018427387908
-> softirq=71980/71983 fqs=33
->          (t=125000 jiffies g=39438 c=39437 q=958)
-> rcu_sched kthread starved for 124829 jiffies! g39438 c39437 f0x0
-> RCU_GP_WAIT_FQS(3) ->state=0x0 ->cpu=0
-> RCU grace-period kthread stack dump:
-> rcu_sched       R  running task    23768     9      2 0x80000000
-> Call Trace:
->  context_switch kernel/sched/core.c:2848 [inline]
->  __schedule+0x801/0x1e30 kernel/sched/core.c:3490
->  schedule+0xef/0x430 kernel/sched/core.c:3549
->  schedule_timeout+0x138/0x240 kernel/time/timer.c:1801
->  rcu_gp_kthread+0x6b5/0x1940 kernel/rcu/tree.c:2231
->  kthread+0x345/0x410 kernel/kthread.c:238
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
-> NMI backtrace for cpu 1
-> CPU: 1 PID: 20560 Comm: syz-executor4 Not tainted 4.16.0+ #1
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
->  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
->  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
->  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
->  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
->  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
->  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
->  __rcu_pending kernel/rcu/tree.c:3356 [inline]
->  rcu_pending kernel/rcu/tree.c:3401 [inline]
->  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
->  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
->  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:173
->  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1283
->  __run_hrtimer kernel/time/hrtimer.c:1386 [inline]
->  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1448
->  hrtimer_interrupt+0x286/0x650 kernel/time/hrtimer.c:1506
->  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
->  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:862
-> RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783
-> [inline]
-> RIP: 0010:kmem_cache_free+0xb3/0x2d0 mm/slab.c:3757
-> RSP: 0018:ffff8801db105228 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-> RAX: 0000000000000007 RBX: ffff8800b055c940 RCX: 1ffff1003b2345a5
-> RDX: 0000000000000000 RSI: ffff8801d91a2d80 RDI: 0000000000000282
-> RBP: ffff8801db105248 R08: ffff8801d91a2cb8 R09: 0000000000000002
-> R10: ffff8801d91a2480 R11: 0000000000000000 R12: ffff8801d9848e40
-> R13: 0000000000000282 R14: ffffffff85b7f27c R15: 0000000000000000
->  kfree_skbmem+0x13c/0x210 net/core/skbuff.c:582
->  __kfree_skb net/core/skbuff.c:642 [inline]
->  kfree_skb+0x19d/0x560 net/core/skbuff.c:659
->  enqueue_to_backlog+0x2fc/0xc90 net/core/dev.c:3968
->  netif_rx_internal+0x14d/0xae0 net/core/dev.c:4181
->  netif_rx+0xba/0x400 net/core/dev.c:4206
->  loopback_xmit+0x283/0x741 drivers/net/loopback.c:91
->  __netdev_start_xmit include/linux/netdevice.h:4087 [inline]
->  netdev_start_xmit include/linux/netdevice.h:4096 [inline]
->  xmit_one net/core/dev.c:3053 [inline]
->  dev_hard_start_xmit+0x264/0xc10 net/core/dev.c:3069
->  __dev_queue_xmit+0x2724/0x34c0 net/core/dev.c:3584
->  dev_queue_xmit+0x17/0x20 net/core/dev.c:3617
->  neigh_hh_output include/net/neighbour.h:472 [inline]
->  neigh_output include/net/neighbour.h:480 [inline]
->  ip6_finish_output2+0x134e/0x2810 net/ipv6/ip6_output.c:120
->  ip6_finish_output+0x5fe/0xbc0 net/ipv6/ip6_output.c:154
->  NF_HOOK_COND include/linux/netfilter.h:277 [inline]
->  ip6_output+0x227/0x9b0 net/ipv6/ip6_output.c:171
->  dst_output include/net/dst.h:444 [inline]
->  NF_HOOK include/linux/netfilter.h:288 [inline]
->  ip6_xmit+0xf51/0x23f0 net/ipv6/ip6_output.c:277
->  sctp_v6_xmit+0x4a5/0x6b0 net/sctp/ipv6.c:225
->  sctp_packet_transmit+0x26f6/0x3ba0 net/sctp/output.c:650
->  sctp_outq_flush+0x1373/0x4370 net/sctp/outqueue.c:1197
->  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
->  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
->  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
->  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
->  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
->  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
->  expire_timers kernel/time/timer.c:1363 [inline]
->  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
->  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
->  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
->  invoke_softirq kernel/softirq.c:365 [inline]
->  irq_exit+0x1d1/0x200 kernel/softirq.c:405
->  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
->  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:862
->  </IRQ>
-> RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783
-> [inline]
-> RIP: 0010:lock_release+0x4d4/0xa10 kernel/locking/lockdep.c:3942
-> RSP: 0018:ffff8801971ce7b0 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-> RAX: dffffc0000000000 RBX: 1ffff10032e39cfb RCX: 1ffff1003b234595
-> RDX: 1ffffffff11630ed RSI: 0000000000000002 RDI: 0000000000000282
-> RBP: ffff8801971ce8e0 R08: 1ffff10032e39cff R09: ffffed003b6246c2
-> R10: 0000000000000003 R11: 0000000000000001 R12: ffff8801d91a2480
-> R13: ffffffff88b8df60 R14: ffff8801d91a2480 R15: ffff8801971ce7f8
->  rcu_lock_release include/linux/rcupdate.h:251 [inline]
->  rcu_read_unlock include/linux/rcupdate.h:688 [inline]
->  __unlock_page_memcg+0x72/0x100 mm/memcontrol.c:1654
->  unlock_page_memcg+0x2c/0x40 mm/memcontrol.c:1663
->  page_remove_file_rmap mm/rmap.c:1248 [inline]
->  page_remove_rmap+0x6f2/0x1250 mm/rmap.c:1299
->  zap_pte_range mm/memory.c:1337 [inline]
->  zap_pmd_range mm/memory.c:1441 [inline]
->  zap_pud_range mm/memory.c:1470 [inline]
->  zap_p4d_range mm/memory.c:1491 [inline]
->  unmap_page_range+0xeb4/0x2200 mm/memory.c:1512
->  unmap_single_vma+0x1a0/0x310 mm/memory.c:1557
->  unmap_vmas+0x120/0x1f0 mm/memory.c:1587
->  exit_mmap+0x265/0x570 mm/mmap.c:3038
->  __mmput kernel/fork.c:962 [inline]
->  mmput+0x251/0x610 kernel/fork.c:983
->  exit_mm kernel/exit.c:544 [inline]
->  do_exit+0xe98/0x2730 kernel/exit.c:852
->  do_group_exit+0x16f/0x430 kernel/exit.c:968
->  get_signal+0x886/0x1960 kernel/signal.c:2469
->  do_signal+0x98/0x2040 arch/x86/kernel/signal.c:810
->  exit_to_usermode_loop+0x28a/0x310 arch/x86/entry/common.c:162
->  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
->  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
->  do_syscall_64+0x792/0x9d0 arch/x86/entry/common.c:292
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x455319
-> RSP: 002b:00007fa346e81ce8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-> RAX: fffffffffffffe00 RBX: 000000000072bf80 RCX: 0000000000455319
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000072bf80
-> RBP: 000000000072bf80 R08: 0000000000000000 R09: 000000000072bf58
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000a3e81f R14: 00007fa346e829c0 R15: 0000000000000001
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000a9b0e3056b14bfb2%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+I see.
+
+> but rather to use the same strategy from the Coldfire FEC patch 
+> (f61e64310b75): set pdev.dev.coherent_dma_mask and pdev.dev.dma_mask 
+> _before_ calling platform_device_register().
+> 
+
+That patch is attempting to solve the same problem using a different 
+approach, but I'd prefer to keep using platform_device_register_simple().
+
+> 
+> If you want to avoid the overhead of defining the macmace platform 
+> device and using platform_device_register() ... seeing as you would not 
+> be defining just the DMA mask and nothing else, that's probably the 
+> least effort for the MACE and SONIC drivers.
+> 
+
+I don't mind the effort. I want to avoid all the boilerplate.
+
+> 
+> You would have to be careful not to overwrite a pdev->dev.dma_mask and 
+> pdev->dev.dma_coherent_mask that might have been set in a platform 
+> device passed via platform_device_register here. Coldfire is the only 
+> m68k platform currently using that, but there might be others in future.
+> 
+
+That Coldfire patch could be reverted if this is a better solution.
+
+> ... But I don't think there are smaller DMA masks used by m68k drivers 
+> that use the platform device mechanism at present. I've only looked at 
+> arch/m68k though.
+
+So we're back at the same problem that Geert's suggestion also raised: how 
+to identify potentially affected platform devices and drivers?
+
+Maybe we can take a leaf out of Christoph's book, and leave a noisy 
+WARNING splat in the log.
+
+void arch_setup_pdev_archdata(struct platform_device *pdev)
+{
+        WARN_ON_ONCE(pdev->dev.coherent_dma_mask != DMA_MASK_NONE ||
+                     pdev->dev.dma_mask != NULL);
+        pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+        pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
+}
+
+-- 
