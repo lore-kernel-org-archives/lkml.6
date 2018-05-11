@@ -1,126 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751357AbeEKTAQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 15:00:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59566 "EHLO mail.kernel.org"
+        id S1751617AbeEKTCo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 15:02:44 -0400
+Received: from anor.bigon.be ([91.121.173.99]:46651 "EHLO anor.bigon.be"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750937AbeEKTAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 15:00:15 -0400
-Date: Fri, 11 May 2018 14:00:13 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pci/aer: Get rid of aer_recover_work_func() forward
- declaration
-Message-ID: <20180511190013.GI190385@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180511163923.22116-1-bp@alien8.de>
+        id S1750937AbeEKTCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 15:02:42 -0400
+Subject: Re: [PATCH] tpm_tis: verify locality released before returning from
+ release_locality
+To: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
+References: <20180505195453.10431-1-jsnitsel@redhat.com>
+ <20180505200315.x7jt33j7psizmfyi@cantor>
+From: Laurent Bigonville <bigon@debian.org>
+Message-ID: <bcac4481-108a-4598-6524-041879be7c06@debian.org>
+Date: Fri, 11 May 2018 21:02:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180511163923.22116-1-bp@alien8.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180505200315.x7jt33j7psizmfyi@cantor>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: fr-BE
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 06:39:23PM +0200, Borislav Petkov wrote:
-> From: Borislav Petkov <bp@suse.de>
-> 
-> Just move the actual function up so that it is visible to its user
-> aer_recover_queue().
-
-Good idea.
-
-Not *directly* related, but I'm really tired of the clutter of all these
-separate files, and I'm thinking of squashing
-
-  drivers/pci/pcie/aer/*       => drivers/pci/pcie/aer.c
-  drivers/pci/pcie/portdrv*    => drivers/pci/pcie/portdrv.c
-  drivers/pci/hotplug/pciehp*  => drivers/pci/hotplug/pciehp.c
-  drivers/pci/hotplug/shpchp*  => drivers/pci/hotplug/shpchp.c
-  etc.
-
-That would let us make many more things static and (more importantly,
-IMO), make it easier to browse the code.
-
-> No functional changes.
-> 
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> ---
->  drivers/pci/pcie/aer/aerdrv_core.c | 45 +++++++++++++++---------------
->  1 file changed, 22 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
-> index 0ea5acc40323..a9e575189571 100644
-> --- a/drivers/pci/pcie/aer/aerdrv_core.c
-> +++ b/drivers/pci/pcie/aer/aerdrv_core.c
-> @@ -567,8 +567,6 @@ static void handle_error_source(struct pcie_device *aerdev,
->  }
->  
->  #ifdef CONFIG_ACPI_APEI_PCIEAER
-> -static void aer_recover_work_func(struct work_struct *work);
-> -
->  #define AER_RECOVER_RING_ORDER		4
->  #define AER_RECOVER_RING_SIZE		(1 << AER_RECOVER_RING_ORDER)
->  
-> @@ -582,6 +580,28 @@ struct aer_recover_entry {
->  
->  static DEFINE_KFIFO(aer_recover_ring, struct aer_recover_entry,
->  		    AER_RECOVER_RING_SIZE);
-> +
-> +static void aer_recover_work_func(struct work_struct *work)
-> +{
-> +	struct aer_recover_entry entry;
-> +	struct pci_dev *pdev;
-> +
-> +	while (kfifo_get(&aer_recover_ring, &entry)) {
-> +		pdev = pci_get_domain_bus_and_slot(entry.domain, entry.bus,
-> +						   entry.devfn);
-> +		if (!pdev) {
-> +			pr_err("AER recover: Can not find pci_dev for %04x:%02x:%02x:%x\n",
-> +			       entry.domain, entry.bus,
-> +			       PCI_SLOT(entry.devfn), PCI_FUNC(entry.devfn));
-> +			continue;
-> +		}
-> +		cper_print_aer(pdev, entry.severity, entry.regs);
-> +		if (entry.severity != AER_CORRECTABLE)
-> +			do_recovery(pdev, entry.severity);
-> +		pci_dev_put(pdev);
-> +	}
-> +}
-> +
->  /*
->   * Mutual exclusion for writers of aer_recover_ring, reader side don't
->   * need lock, because there is only one reader and lock is not needed
-> @@ -611,27 +631,6 @@ void aer_recover_queue(int domain, unsigned int bus, unsigned int devfn,
->  	spin_unlock_irqrestore(&aer_recover_ring_lock, flags);
->  }
->  EXPORT_SYMBOL_GPL(aer_recover_queue);
-> -
-> -static void aer_recover_work_func(struct work_struct *work)
-> -{
-> -	struct aer_recover_entry entry;
-> -	struct pci_dev *pdev;
-> -
-> -	while (kfifo_get(&aer_recover_ring, &entry)) {
-> -		pdev = pci_get_domain_bus_and_slot(entry.domain, entry.bus,
-> -						   entry.devfn);
-> -		if (!pdev) {
-> -			pr_err("AER recover: Can not find pci_dev for %04x:%02x:%02x:%x\n",
-> -			       entry.domain, entry.bus,
-> -			       PCI_SLOT(entry.devfn), PCI_FUNC(entry.devfn));
-> -			continue;
-> -		}
-> -		cper_print_aer(pdev, entry.severity, entry.regs);
-> -		if (entry.severity != AER_CORRECTABLE)
-> -			do_recovery(pdev, entry.severity);
-> -		pci_dev_put(pdev);
-> -	}
-> -}
->  #endif
->  
->  /**
-> -- 
-> 2.17.0.391.g1f1cddd558b5
-> 
+Le 05/05/18 à 22:03, Jerry Snitselaar a écrit :
+> On Sat May 05 18, Jerry Snitselaar wrote:
+>> For certain tpm chips releasing locality can take long enough that a
+>> subsequent call to request_locality will see the locality as being
+>> active when the access register is read in check_locality. So check
+>> that the locality has been released before returning from
+>> release_locality.
+>>
+>> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>> Cc: Peter Huewe <peterhuewe@gmx.de>
+>> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+>> Reported-by: Laurent Bigonville <bigon@debian.org>
+>> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Tested-by: Laurent Bigonville <bigon@debian.org>
+>> ---
+>> drivers/char/tpm/tpm_tis_core.c | 47 
+>> ++++++++++++++++++++++++++++++++++++++++-
+>> 1 file changed, 46 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/char/tpm/tpm_tis_core.c 
+>> b/drivers/char/tpm/tpm_tis_core.c
+>> index 5a1f47b43947..d547cd309dbd 100644
+>> --- a/drivers/char/tpm/tpm_tis_core.c
+>> +++ b/drivers/char/tpm/tpm_tis_core.c
+>> @@ -143,13 +143,58 @@ static bool check_locality(struct tpm_chip 
+>> *chip, int l)
+>>     return false;
+>> }
+>>
+>> +static bool locality_inactive(struct tpm_chip *chip, int l)
+>> +{
+>> +    struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>> +    int rc;
+>> +    u8 access;
+>> +
+>> +    rc = tpm_tis_read8(priv, TPM_ACCESS(l), &access);
+>> +    if (rc < 0)
+>> +        return false;
+>> +
+>> +    if ((access & (TPM_ACCESS_VALID | TPM_ACCESS_ACTIVE_LOCALITY))
+>> +        == TPM_ACCESS_VALID)
+>> +        return true;
+>> +
+>> +    return false;
+>> +}
+>> +
+>> static int release_locality(struct tpm_chip *chip, int l)
+>> {
+>>     struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+>> +    unsigned long stop, timeout;
+>> +    long rc;
+>>
+>>     tpm_tis_write8(priv, TPM_ACCESS(l), TPM_ACCESS_ACTIVE_LOCALITY);
+>>
+>> -    return 0;
+>> +    stop = jiffies + chip->timeout_a;
+>> +
+>> +    if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+>> +again:
+>> +        timeout = stop - jiffies;
+>> +        if ((long)timeout <= 0)
+>> +            return -1;
+>> +
+>> +        rc = wait_event_interruptible_timeout(priv->int_queue,
+>> +                              (locality_inactive(chip, l)),
+>> +                              timeout);
+>> +
+>> +        if (rc > 0)
+>> +            return 0;
+>> +
+>> +        if (rc == -ERESTARTSYS && freezing(current)) {
+>> +            clear_thread_flag(TIF_SIGPENDING);
+>> +            goto again;
+>> +        }
+>> +    } else {
+>> +        do {
+>> +            if (locality_inactive(chip, l))
+>> +                return 0;
+>> +            tpm_msleep(TPM_TIMEOUT);
+>> +        } while (time_before(jiffies, stop));
+>> +    }
+>> +    return -1;
+>> }
+>>
+>> static int request_locality(struct tpm_chip *chip, int l)
+>> -- 
+>> 2.15.0
+>>
+>
+> Laurent,
+>
+> Can you try this patch with your system since it is the one
+> that has exhibited the problem so far. I've tested on a
+> tpm2.0 and tpm1.2 system here.
+>
+> Regards,
+> Jerry
