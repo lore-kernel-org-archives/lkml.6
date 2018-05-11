@@ -1,100 +1,159 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752023AbeEKQMb (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:12:31 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:35635 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751228AbeEKQM1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:12:27 -0400
-X-Google-Smtp-Source: AB8JxZq2M7nmRs2SRTck0xGHQzpYCF/OVgO6GqrcyYz6vLURK0Cci3AcSDkka6k0eEUAL9epj2WdhQ==
-Subject: Re: [RFC PATCH v4 2/3] acpi: apei: Rename ghes_severity() to
- ghes_cper_severity()
-To: Borislav Petkov <bp@alien8.de>
-Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        devel@acpica.org
-References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-2-mr.nuke.me@gmail.com> <20180511153947.GC12705@pd.tnic>
- <56d445b2-ace3-6ee2-9699-f2a684518de9@gmail.com>
- <20180511155833.GE12705@pd.tnic>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <f70e209d-00ec-1969-16de-09d6142668da@gmail.com>
-Date: Fri, 11 May 2018 11:12:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751881AbeEKQN1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:13:27 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44040 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751096AbeEKQN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 12:13:26 -0400
+Date: Fri, 11 May 2018 17:13:18 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Alexander Popov <alex.popov@linux.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: Clear the stack
+Message-ID: <20180511161317.57k6prl54xjmsit3@lakrids.cambridge.arm.com>
+References: <20180502203326.9491-1-labbott@redhat.com>
+ <20180502203326.9491-3-labbott@redhat.com>
+ <20180503071917.xm2xvgagvzkworay@salmiak>
+ <dd6ad26c-1d2c-88f3-8f01-e68d2b31d6ea@linux.com>
+ <20180504110907.c2dw33kjmyybso6t@lakrids.cambridge.arm.com>
+ <4badae50-be9b-2c6d-854b-57ab48664800@linux.com>
+ <71199506-b46b-5f91-e489-e6450b6d1067@linux.com>
 MIME-Version: 1.0
-In-Reply-To: <20180511155833.GE12705@pd.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <71199506-b46b-5f91-e489-e6450b6d1067@linux.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2018 10:58 AM, Borislav Petkov wrote:
-> On Fri, May 11, 2018 at 10:45:49AM -0500, Alex G. wrote:
->>
->>
->> On 05/11/2018 10:39 AM, Borislav Petkov wrote:
->>> On Mon, Apr 30, 2018 at 04:33:51PM -0500, Alexandru Gagniuc wrote:
->>>> ghes_severity() is a misnomer in this case, as it implies the severity
->>>> of the entire GHES structure. Instead, it maps one CPER value to a
->>>> monotonically increasing number.
->>>
->>> ... as opposed to CPER severity which is something else or what is this
->>> formulation trying to express?
->>>
->>
->> CPER madness goes like this:
+On Fri, May 11, 2018 at 06:50:09PM +0300, Alexander Popov wrote:
+> Hello everyone,
 > 
-> Let's slow down first. Why is it a "CPER madness"? Maybe this is clear
-> in your head but I'm not in it.
-> 
->> 	0 - Recoverable
->> 	1 - Fatal
->> 	2 - Corrected
->> 	3 - None
-> 
-> If you're quoting this:
+> On 06.05.2018 11:22, Alexander Popov wrote:
+> > On 04.05.2018 14:09, Mark Rutland wrote:
+> >>>>> +	stack_left = sp & (THREAD_SIZE - 1);
+> >>>>> +	BUG_ON(stack_left < 256 || size >= stack_left - 256);
+> >>>>
+> >>>> Is this arbitrary, or is there something special about 256?
+> >>>>
+> >>>> Even if this is arbitrary, can we give it some mnemonic?
+> >>>
+> >>> It's just a reasonable number. We can introduce a macro for it.
+> >>
+> >> I'm just not sure I see the point in the offset, given things like
+> >> VMAP_STACK exist. BUG_ON() handling will likely require *more* than 256
+> >> bytes of stack, so it seems superfluous, as we'd be relying on stack
+> >> overflow detection at that point.
+> >>
+> >> I can see that we should take the CONFIG_SCHED_STACK_END_CHECK offset
+> >> into account, though.
+> > 
+> > Mark, thank you for such an important remark!
+> > 
+> > In Kconfig STACKLEAK implies but doesn't depend on VMAP_STACK. In fact x86_32
+> > doesn't have VMAP_STACK at all but can have STACKLEAK.
+> > 
+> > [Adding Andy Lutomirski]
+> > 
+> > I've made some additional experiments: I exhaust the thread stack to have only
+> > (MIN_STACK_LEFT - 1) bytes left and then force alloca. If VMAP_STACK is
+> > disabled, BUG_ON() handling causes stack depth overflow, which is detected by
+> > SCHED_STACK_END_CHECK. If VMAP_STACK is enabled, the kernel hangs on BUG_ON()
+> > handling! Enabling CONFIG_PROVE_LOCKING gives the needed report from VMAP_STACK:
 
-I'm quoting ACPI 6.2, Table 18-381 Generic Error Data Entry, though I'm
-certain they got that from the efi spec.
+I can't see why CONFIG_VMAP_STACK would only work in conjunction with
+CONFIG_PROVE_LOCKING.
 
-> enum {
->         CPER_SEV_RECOVERABLE,
->         CPER_SEV_FATAL,
->         CPER_SEV_CORRECTED,
->         CPER_SEV_INFORMATIONAL,
-> };
-> 
-> that last 3 is informational.
-> 
->> As you can see, the numbering was created by crackmonkeys. GHES_* is an
->> internal enum that goes up in order of severity, as you'd expect.
-> 
-> So what are you trying to tell me - that those CPER numbers are not
-> increasing?!
-> 
-> Why does that even matter?
+On arm64 at least, if we overflow the stack while handling a BUG(), we
+*should* trigger the overflow handler as usual, and that should work,
+unless I'm missing something.
 
-Because the GHES structure uses CPER values, but all the code is written
-to use GHES_SEV_ values. GHES_SEV_ is a made up enum, specifically for
-linux.
+Maybe it gets part-way into panic(), sets up some state,
+stack-overflows, and we get wedged because we're already in a panic?
+Perhaps CONFIG_PROVE_LOCKING causes more stack to be used, so it dies a
+little earlier in panic(), before setting up some state that causes
+wedging.
 
-Sure, the return in ghes_sec_pcie_severity() should say
-GHES_SEV_RECOVERABLE, but that is a Freudian slip rather than
-intentional typing. Thank you for catching that :)
+... which sounds like something best fixed in those code paths, and not
+here.
 
-Alex
+> [...]
+> 
+> > I can't say why VMAP_STACK report hangs during BUG_ON() handling on defconfig.
+> > Andy, can you give a clue?
+> > 
+> > I see that MIN_STACK_LEFT = 2048 is enough for BUG_ON() handling on both x86_64
+> > and x86_32. So I'm going to:
+> >  - set MIN_STACK_LEFT to 2048;
+> >  - improve the lkdtm test to cover this case.
+> > 
+> > Mark, Kees, Laura, does it sound good?
+> 
+> 
+> Could you have a look at the following changes in check_alloca() before I send
+> the next version?
+> 
+> If VMAP_STACK is enabled and alloca causes stack depth overflow, I write to
+> guard page below the thread stack to cause double fault and VMAP_STACK report.
+
+On arm64 at least, writing to the guard page will not itself trigger a
+stack overflow, but will trigger a data abort. I suspect similar is true
+on x86, if the stack pointer is sufficiently far above the guard page.
+
+> If VMAP_STACK is disabled, I use MIN_STACK_LEFT = 2048, which seems to be enough
+> for BUG_ON() handling both on x86_32 and x86_64. Unfortunately, I can't
+> guarantee that it is always enough.
+
+I don't think that we can choose something that's guaranteed to be
+sufficient for BUG() handling and also not wasting a tonne of space
+under normal operation.
+
+Let's figure out what's going wrong on x86 in the case that you mention,
+and try to solve that.
+
+Here I don't think we should reserve space at all -- it's completely
+arbitrary, and as above we can't guarantee that it's sufficient anyway.
+
+>  #ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+> -#define MIN_STACK_LEFT 256
+> +#define MIN_STACK_LEFT 2048
+> 
+>  void __used check_alloca(unsigned long size)
+>  {
+>         unsigned long sp = (unsigned long)&sp;
+>         struct stack_info stack_info = {0};
+>         unsigned long visit_mask = 0;
+>         unsigned long stack_left;
+> 
+>         BUG_ON(get_stack_info(&sp, current, &stack_info, &visit_mask));
+> 
+>         stack_left = sp - (unsigned long)stack_info.begin;
+> +
+> +#ifdef CONFIG_VMAP_STACK
+> +       /*
+> +        * If alloca oversteps the thread stack boundary, we touch the guard
+> +        * page provided by VMAP_STACK to trigger handle_stack_overflow().
+> +        */
+> +       if (size >= stack_left)
+> +               *(stack_info.begin - 1) = 42;
+> +#else
+
+On arm64, this won't trigger our stack overflow handler, unless the SP
+is already very close to the boundary.
+
+Please just use BUG(). If there is an issue on x86, it would be good to
+solve that in the x86 code.
+
+>         BUG_ON(stack_left < MIN_STACK_LEFT ||
+>                                 size >= stack_left - MIN_STACK_LEFT);
+
+I really don't think we should bother with this arbitrary offset at all.
+
+Thanks,
+Mark.
