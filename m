@@ -1,110 +1,121 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526036973; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1526036971; cv=none;
         d=google.com; s=arc-20160816;
-        b=cwq98zoN307oHZsGucl0anX0wyYbe0STEoVWlxeng7FK/CFNZUhrKbDT3yHna7+40f
-         LWF21LYMwqEUweUhEzlo+J+Zx2QOwjPt1LlFsbIzZDuA15Z5cyzXbnp2tkDNZgln81xe
-         xnBCtMbBsnIZLtpUd0xpVtZJ9qzI6uNUWXkWJz5kzCe/5sGU8u1baLF5JYpekul+zyl7
-         lBa/TAKqjjEvAxmZebLLD6v6eftl8CtzNgbo/xvNy5I5h/IoeO9lPAEBpDE4RkxuY40B
-         GkhweEDntjuAYD2dPHNAfsnDwt7i9h4noU6RBI4PSZbqdWrLTvPSC0smxFhwNG59YI3b
-         G8tg==
+        b=ebzPgfxO84aeeHkCqrztqjoC0nOU4xTpQVVsBa8fJIAWjpYYMjomeQaRbUI4LJAmWX
+         nPRUK29RLAMBcrXADOkeyEr6EQ1eVz6Y+iie+jj/fWi0e55ilEUqxU3GUQzaNgJkrNYh
+         mriITiJj0rpx7kBmqFd9H1ZgxwUdF+uR90dfVdj/8LXX4J6aWcyn7vpYhsyuurRNaLW5
+         NW72PyDDHzKU+CP6IvEIxVwBJc9aruNSWUT0rgvjIqJIROg+cvDy6RP8iAuoy6nXq/GT
+         k8FyvYLQv+sn3n32DyDIeX1ph1mdGSxq//0SCE0us3X59B3J94ttGrX3ic6PvJz/Vi5d
+         XDFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=H0qz3G2Yf+qnI2Pb4BPJFyzQj57UjzkRbyWc8uQk8Mg=;
-        b=zcwrfPqamoLVWI71Y+UMlPXI59GSv6jsAkv+7+tiC/OD0wjfkeFOt7fqsu0AKfXWWH
-         EficsNJVsbVFESa1hTt4C0k6FH+uyzLXBomuqDCEl2VxicUpjXLPfTYMbAm4Te5idtpj
-         o4rlv8S8rL/AHrKXnRNVX8ggA69gNa7oeaqtB/0+Qj6Yd7KnPY7a9xLA5k6YvNq6Te/H
-         XIVG2/5r9eLSwQSk0104PdqNtwEQdz8sGrsrcg0JqDMnqK4xbHN1DOIQ51mXPQT4f0id
-         KFDnkH1QhVCQ5JkeKnrfL7az5WUC4enblDUl5lwVbGSXtKZ7QtLbDVzaHhVjXEXVcVja
-         OHjw==
+        bh=e5VkeKyjspWx0gNrw1JAcgyTe6NRKcWiRvuIotTcpwU=;
+        b=yO5S5xFr1Yx8fkOQx9fCN9yEvHIaN4Fjo0riE7tMHJDnk6ZyehwzwXnrvBTmsFfxOS
+         bQhaeKj48oqXTbplmPSVrgaYcP6nQfNogNhT/cDeaZFBeYw3U+3Iuww/Pi/myyQq+Aaa
+         jDNf2mmMW5oV1nNa44dtRLVNHeP8BhIRSCuWL3HsJuJWPfb7vG339Y/I6NblEd4ygK3u
+         wxRNeiOl7eMqIaJ6F4DZwnjN2osFx8DDTlE5sb6FielDrjoQLPP8uCnrT1ZwcqYG6wPu
+         p+fdNZ0A0te+IZBS+EFYl7FaRp8I1AkF8DxxN3BWL4dK5RUn+HinHVF4MDgxQ+NVjz6O
+         8MmQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=jaBGao1Q;
+       dkim=pass header.i=@linaro.org header.s=google header.b=YBPWXBdd;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=jaBGao1Q;
+       dkim=pass header.i=@linaro.org header.s=google header.b=YBPWXBdd;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZruCo6faolWDJ4g2fWw6UkbFGGJXLUrxSEG1vLHXTXn8R8DitaMCGuEjqoFjDbs8VcqU6MKZQ==
+X-Google-Smtp-Source: AB8JxZopum+6EOSsnQbD5qbgpI1tjeYLHLk5SIOEntk4xcG13pR5no01aTR7zoOKrCATtX4FOMsN/g==
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	srinivas.kandagatla@linaro.org,
-	Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH 4/8] nvmem: meson-efuse: remove econfig global
-Date: Fri, 11 May 2018 12:06:59 +0100
-Message-Id: <20180511110703.4924-5-srinivas.kandagatla@linaro.org>
+	Andrey Smirnov <andrew.smirnov@gmail.com>,
+	Chris Healy <cphealy@gmail.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Aleksander Morgado <aleksander@aleksander.es>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	devicetree@vger.kernel.org
+Subject: [PATCH 2/8] dt-bindings: nvmem: Add binding for RAVE SP EEPROM driver
+Date: Fri, 11 May 2018 12:06:57 +0100
+Message-Id: <20180511110703.4924-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
 References: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600165745808248271?=
-X-GMAIL-MSGID: =?utf-8?q?1600165745808248271?=
+X-GMAIL-THRID: =?utf-8?q?1600165743775017377?=
+X-GMAIL-MSGID: =?utf-8?q?1600165743775017377?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Having a global structure holding a reference to the device
-structure is not very nice. Allocate the econfig instead and fill
-the nvmem information as before
+Add Device Tree bindings for RAVE SP EEPROM driver - an MFD cell of
+parent RAVE SP driver (documented in
+Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Aleksander Morgado <aleksander@aleksander.es>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/meson-efuse.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+ .../bindings/nvmem/zii,rave-sp-eeprom.txt          | 40 ++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
 
-diff --git a/drivers/nvmem/meson-efuse.c b/drivers/nvmem/meson-efuse.c
-index 71823d1403c5..2df9b0094f45 100644
---- a/drivers/nvmem/meson-efuse.c
-+++ b/drivers/nvmem/meson-efuse.c
-@@ -35,13 +35,6 @@ static int meson_efuse_read(void *context, unsigned int offset,
- 	return 0;
- }
- 
--static struct nvmem_config econfig = {
--	.name = "meson-efuse",
--	.stride = 1,
--	.word_size = 1,
--	.read_only = true,
--};
--
- static const struct of_device_id meson_efuse_match[] = {
- 	{ .compatible = "amlogic,meson-gxbb-efuse", },
- 	{ /* sentinel */ },
-@@ -50,17 +43,27 @@ MODULE_DEVICE_TABLE(of, meson_efuse_match);
- 
- static int meson_efuse_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	struct nvmem_device *nvmem;
-+	struct nvmem_config *econfig;
- 	unsigned int size;
- 
- 	if (meson_sm_call(SM_EFUSE_USER_MAX, &size, 0, 0, 0, 0, 0) < 0)
- 		return -EINVAL;
- 
--	econfig.dev = &pdev->dev;
--	econfig.reg_read = meson_efuse_read;
--	econfig.size = size;
-+	econfig = devm_kzalloc(dev, sizeof(*econfig), GFP_KERNEL);
-+	if (!econfig)
-+		return -ENOMEM;
+diff --git a/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+new file mode 100644
+index 000000000000..d5e22fc67d66
+--- /dev/null
++++ b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+@@ -0,0 +1,40 @@
++Zodiac Inflight Innovations RAVE EEPROM Bindings
 +
-+	econfig->dev = dev;
-+	econfig->name = dev_name(dev);
-+	econfig->stride = 1;
-+	econfig->word_size = 1;
-+	econfig->read_only = true;
-+	econfig->reg_read = meson_efuse_read;
-+	econfig->size = size;
- 
--	nvmem = devm_nvmem_register(&pdev->dev, &econfig);
-+	nvmem = devm_nvmem_register(&pdev->dev, econfig);
- 
- 	return PTR_ERR_OR_ZERO(nvmem);
- }
++RAVE SP EEPROM device is a "MFD cell" device exposing physical EEPROM
++attached to RAVE Supervisory Processor. It is expected that its Device
++Tree node is specified as a child of the node corresponding to the
++parent RAVE SP device (as documented in
++Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
++
++Required properties:
++
++- compatible: Should be "zii,rave-sp-eeprom"
++
++Optional properties:
++
++- zii,eeprom-name: Unique EEPROM identifier describing its function in the
++  system. Will be used as created NVMEM deivce's name.
++
++Data cells:
++
++Data cells are child nodes of eerpom node, bindings for which are
++documented in Documentation/bindings/nvmem/nvmem.txt
++
++Example:
++
++	rave-sp {
++		compatible = "zii,rave-sp-rdu1";
++		current-speed = <38400>;
++
++		eeprom@a4 {
++			compatible = "zii,rave-sp-eeprom";
++			reg = <0xa4 0x4000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			zii,eeprom-name = "main-eeprom";
++
++			wdt_timeout: wdt-timeout@81 {
++				reg = <0x81 2>;
++			};
++		};
++	}
 -- 
 2.16.2
