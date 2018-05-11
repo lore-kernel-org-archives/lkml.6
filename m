@@ -1,159 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeEKQN1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:13:27 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44040 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751096AbeEKQN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:13:26 -0400
-Date: Fri, 11 May 2018 17:13:18 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Alexander Popov <alex.popov@linux.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: Clear the stack
-Message-ID: <20180511161317.57k6prl54xjmsit3@lakrids.cambridge.arm.com>
-References: <20180502203326.9491-1-labbott@redhat.com>
- <20180502203326.9491-3-labbott@redhat.com>
- <20180503071917.xm2xvgagvzkworay@salmiak>
- <dd6ad26c-1d2c-88f3-8f01-e68d2b31d6ea@linux.com>
- <20180504110907.c2dw33kjmyybso6t@lakrids.cambridge.arm.com>
- <4badae50-be9b-2c6d-854b-57ab48664800@linux.com>
- <71199506-b46b-5f91-e489-e6450b6d1067@linux.com>
+        id S1751926AbeEKQQY (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:16:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33114 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750950AbeEKQQX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 12:16:23 -0400
+Date: Fri, 11 May 2018 09:17:46 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+        kernel-team@lge.com, peterz@infradead.org
+Subject: Re: [PATCH] rcu: Report a quiescent state when it's exactly in the
+ state
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1526027434-21237-1-git-send-email-byungchul.park@lge.com>
+ <3af4cec0-4019-e3ac-77f9-8631252fb6da@lge.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <71199506-b46b-5f91-e489-e6450b6d1067@linux.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3af4cec0-4019-e3ac-77f9-8631252fb6da@lge.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18051116-0052-0000-0000-000002ED23D3
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009006; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01030798; UDB=6.00526834; IPR=6.00809929;
+ MB=3.00021049; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-11 16:16:20
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051116-0053-0000-0000-00005CA5D713
+Message-Id: <20180511161746.GX26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805110153
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 06:50:09PM +0300, Alexander Popov wrote:
-> Hello everyone,
+On Fri, May 11, 2018 at 09:57:54PM +0900, Byungchul Park wrote:
+> Hello folks,
 > 
-> On 06.05.2018 11:22, Alexander Popov wrote:
-> > On 04.05.2018 14:09, Mark Rutland wrote:
-> >>>>> +	stack_left = sp & (THREAD_SIZE - 1);
-> >>>>> +	BUG_ON(stack_left < 256 || size >= stack_left - 256);
-> >>>>
-> >>>> Is this arbitrary, or is there something special about 256?
-> >>>>
-> >>>> Even if this is arbitrary, can we give it some mnemonic?
-> >>>
-> >>> It's just a reasonable number. We can introduce a macro for it.
-> >>
-> >> I'm just not sure I see the point in the offset, given things like
-> >> VMAP_STACK exist. BUG_ON() handling will likely require *more* than 256
-> >> bytes of stack, so it seems superfluous, as we'd be relying on stack
-> >> overflow detection at that point.
-> >>
-> >> I can see that we should take the CONFIG_SCHED_STACK_END_CHECK offset
-> >> into account, though.
-> > 
-> > Mark, thank you for such an important remark!
-> > 
-> > In Kconfig STACKLEAK implies but doesn't depend on VMAP_STACK. In fact x86_32
-> > doesn't have VMAP_STACK at all but can have STACKLEAK.
-> > 
-> > [Adding Andy Lutomirski]
-> > 
-> > I've made some additional experiments: I exhaust the thread stack to have only
-> > (MIN_STACK_LEFT - 1) bytes left and then force alloca. If VMAP_STACK is
-> > disabled, BUG_ON() handling causes stack depth overflow, which is detected by
-> > SCHED_STACK_END_CHECK. If VMAP_STACK is enabled, the kernel hangs on BUG_ON()
-> > handling! Enabling CONFIG_PROVE_LOCKING gives the needed report from VMAP_STACK:
-
-I can't see why CONFIG_VMAP_STACK would only work in conjunction with
-CONFIG_PROVE_LOCKING.
-
-On arm64 at least, if we overflow the stack while handling a BUG(), we
-*should* trigger the overflow handler as usual, and that should work,
-unless I'm missing something.
-
-Maybe it gets part-way into panic(), sets up some state,
-stack-overflows, and we get wedged because we're already in a panic?
-Perhaps CONFIG_PROVE_LOCKING causes more stack to be used, so it dies a
-little earlier in panic(), before setting up some state that causes
-wedging.
-
-... which sounds like something best fixed in those code paths, and not
-here.
-
-> [...]
+> I think I wrote the title in a misleading way.
 > 
-> > I can't say why VMAP_STACK report hangs during BUG_ON() handling on defconfig.
-> > Andy, can you give a clue?
-> > 
-> > I see that MIN_STACK_LEFT = 2048 is enough for BUG_ON() handling on both x86_64
-> > and x86_32. So I'm going to:
-> >  - set MIN_STACK_LEFT to 2048;
-> >  - improve the lkdtm test to cover this case.
-> > 
-> > Mark, Kees, Laura, does it sound good?
+> Please change the title to something else such as,
+> "rcu: Report a quiescent state when it's in the state" or,
+> "rcu: Add points reporting quiescent states where proper" or so on.
 > 
+> On 2018-05-11 오후 5:30, Byungchul Park wrote:
+> >We expect a quiescent state of TASKS_RCU when cond_resched_tasks_rcu_qs()
+> >is called, no matter whether it actually be scheduled or not. However,
+> >it currently doesn't report the quiescent state when the task enters
+> >into __schedule() as it's called with preempt = true. So make it report
+> >the quiescent state unconditionally when cond_resched_tasks_rcu_qs() is
+> >called.
+> >
+> >And in TINY_RCU, even though the quiescent state of rcu_bh also should
+> >be reported when the tick interrupt comes from user, it doesn't. So make
+> >it reported.
+> >
+> >Lastly in TREE_RCU, rcu_note_voluntary_context_switch() should be
+> >reported when the tick interrupt comes from not only user but also idle,
+> >as an extended quiescent state.
+> >
+> >Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+> >---
+> >  include/linux/rcupdate.h | 4 ++--
+> >  kernel/rcu/tiny.c        | 6 +++---
+> >  kernel/rcu/tree.c        | 4 ++--
+> >  3 files changed, 7 insertions(+), 7 deletions(-)
+> >
+> >diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> >index ee8cf5fc..7432261 100644
+> >--- a/include/linux/rcupdate.h
+> >+++ b/include/linux/rcupdate.h
+> >@@ -195,8 +195,8 @@ static inline void exit_tasks_rcu_finish(void) { }
+> >   */
+> >  #define cond_resched_tasks_rcu_qs() \
+> >  do { \
+> >-	if (!cond_resched()) \
+> >-		rcu_note_voluntary_context_switch_lite(current); \
+> >+	rcu_note_voluntary_context_switch_lite(current); \
+> >+	cond_resched(); \
+
+Ah, good point.
+
+Peter, I have to ask...  Why is "cond_resched()" considered a preemption
+while "schedule()" is not?
+
+> >  } while (0)
+> >  /*
+> >diff --git a/kernel/rcu/tiny.c b/kernel/rcu/tiny.c
+> >index a64eee0..68d2332 100644
+> >--- a/kernel/rcu/tiny.c
+> >+++ b/kernel/rcu/tiny.c
+> >@@ -120,12 +120,12 @@ void rcu_bh_qs(void)
+> >   */
+> >  void rcu_check_callbacks(int user)
+> >  {
+> >-	if (user)
+> >+	if (user) {
+> >  		rcu_sched_qs();
+> >-	else if (!in_softirq())
+> >  		rcu_bh_qs();
+> >-	if (user)
+> >  		rcu_note_voluntary_context_switch(current);
+> >+	} else if (!in_softirq())
+> >+		rcu_bh_qs();
+> >  }
+> >  /*
+> >diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> >index 36075dd..1abe29a 100644
+> >--- a/kernel/rcu/tree.c
+> >+++ b/kernel/rcu/tree.c
+> >@@ -2595,6 +2595,7 @@ void rcu_check_callbacks(int user)
+> >  		rcu_sched_qs();
+> >  		rcu_bh_qs();
+> >+		rcu_note_voluntary_context_switch(current);
+> >  	} else if (!in_softirq()) {
+> >@@ -2610,8 +2611,7 @@ void rcu_check_callbacks(int user)
+> >  	rcu_preempt_check_callbacks();
+> >  	if (rcu_pending())
+> >  		invoke_rcu_core();
+> >-	if (user)
+> >-		rcu_note_voluntary_context_switch(current);
+> >+
+
+I recall that I had some reason for wanting this down here, but
+do not recall the reason itself.  I will try testing this patch
+to see if rcutorture reminds me.
+
+							Thanx, Paul
+
+> >  	trace_rcu_utilization(TPS("End scheduler-tick"));
+> >  }
+> >
 > 
-> Could you have a look at the following changes in check_alloca() before I send
-> the next version?
+> -- 
+> Thanks,
+> Byungchul
 > 
-> If VMAP_STACK is enabled and alloca causes stack depth overflow, I write to
-> guard page below the thread stack to cause double fault and VMAP_STACK report.
-
-On arm64 at least, writing to the guard page will not itself trigger a
-stack overflow, but will trigger a data abort. I suspect similar is true
-on x86, if the stack pointer is sufficiently far above the guard page.
-
-> If VMAP_STACK is disabled, I use MIN_STACK_LEFT = 2048, which seems to be enough
-> for BUG_ON() handling both on x86_32 and x86_64. Unfortunately, I can't
-> guarantee that it is always enough.
-
-I don't think that we can choose something that's guaranteed to be
-sufficient for BUG() handling and also not wasting a tonne of space
-under normal operation.
-
-Let's figure out what's going wrong on x86 in the case that you mention,
-and try to solve that.
-
-Here I don't think we should reserve space at all -- it's completely
-arbitrary, and as above we can't guarantee that it's sufficient anyway.
-
->  #ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> -#define MIN_STACK_LEFT 256
-> +#define MIN_STACK_LEFT 2048
-> 
->  void __used check_alloca(unsigned long size)
->  {
->         unsigned long sp = (unsigned long)&sp;
->         struct stack_info stack_info = {0};
->         unsigned long visit_mask = 0;
->         unsigned long stack_left;
-> 
->         BUG_ON(get_stack_info(&sp, current, &stack_info, &visit_mask));
-> 
->         stack_left = sp - (unsigned long)stack_info.begin;
-> +
-> +#ifdef CONFIG_VMAP_STACK
-> +       /*
-> +        * If alloca oversteps the thread stack boundary, we touch the guard
-> +        * page provided by VMAP_STACK to trigger handle_stack_overflow().
-> +        */
-> +       if (size >= stack_left)
-> +               *(stack_info.begin - 1) = 42;
-> +#else
-
-On arm64, this won't trigger our stack overflow handler, unless the SP
-is already very close to the boundary.
-
-Please just use BUG(). If there is an issue on x86, it would be good to
-solve that in the x86 code.
-
->         BUG_ON(stack_left < MIN_STACK_LEFT ||
->                                 size >= stack_left - MIN_STACK_LEFT);
-
-I really don't think we should bother with this arbitrary offset at all.
-
-Thanks,
-Mark.
