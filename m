@@ -1,295 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752717AbeEKJZg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 05:25:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58030 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752615AbeEKJZd (ORCPT
+        id S1752611AbeEKJ1H (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 05:27:07 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:33147 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbeEKJ1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 05:25:33 -0400
-Subject: Re: [PATCH v5 5/7] ocxl: Expose the thread_id needed for wait on
- POWER9
-To: "Alastair D'Silva" <alastair@au1.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        mikey@neuling.org, vaibhav@linux.vnet.ibm.com,
-        aneesh.kumar@linux.vnet.ibm.com, malat@debian.org,
-        felix@linux.vnet.ibm.com, pombredanne@nexb.com,
-        sukadev@linux.vnet.ibm.com, npiggin@gmail.com,
-        gregkh@linuxfoundation.org, arnd@arndb.de,
-        andrew.donnellan@au1.ibm.com, fbarrat@linux.vnet.ibm.com,
-        corbet@lwn.net, "Alastair D'Silva" <alastair@d-silva.org>
-References: <20180511061303.10728-1-alastair@au1.ibm.com>
- <20180511061303.10728-6-alastair@au1.ibm.com>
-From: Frederic Barrat <fbarrat@linux.ibm.com>
-Date: Fri, 11 May 2018 11:25:23 +0200
+        Fri, 11 May 2018 05:27:04 -0400
+X-Google-Smtp-Source: AB8JxZryFWV0i6oTs/vcXrR0F2Xu0TyUr4gcO1UrBmiCMKVujtywXELc25HfTG7JVRHrmMnSxCseuQ==
+Subject: Re: [PATCH V5 2/4] soc: mediatek: pwrap: fix cipher init setting
+ error
+To: argus.lin@mediatek.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Chenglin Xu <chenglin.xu@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>, wsd_upstream@mediatek.com,
+        henryc.chen@mediatek.com, flora.fu@mediatek.com,
+        Chen Zhong <chen.zhong@mediatek.com>,
+        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <1525957319-20557-1-git-send-email-argus.lin@mediatek.com>
+ <1525957319-20557-3-git-send-email-argus.lin@mediatek.com>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <318abd43-a2ac-121c-8c18-dd32248a4676@gmail.com>
+Date: Fri, 11 May 2018 11:26:58 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180511061303.10728-6-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1525957319-20557-3-git-send-email-argus.lin@mediatek.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18051109-0008-0000-0000-000004F57B6F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051109-0009-0000-0000-00001E89CC71
-Message-Id: <9656b063-eafd-a882-c678-a1c4d504cd54@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805110091
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-Le 11/05/2018 à 08:13, Alastair D'Silva a écrit :
-> From: Alastair D'Silva <alastair@d-silva.org>
+On 05/10/2018 03:01 PM, argus.lin@mediatek.com wrote:
+> From: Argus Lin <argus.lin@mediatek.com>
 > 
-> In order to successfully issue as_notify, an AFU needs to know the TID
-> to notify, which in turn means that this information should be
-> available in userspace so it can be communicated to the AFU.
+> PWRAP_DEW_CIPHER_LOAD and PWRAP_DEW_CIPHER_START only exist at
+> PMIC_mt6397 datasheet. We fix it before merge PMIC_mt6351 driver.
+
+Please don't put info like "We fix it before merge PMIC_mt6351 driver." in the
+commit message. You can see this from the git log later and it does not add any
+value.
+
+Regards,
+Matthias
+
 > 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> Fixes: 5ae48040aa47 ("soc: mediatek: PMIC wrap: add mt6323 slave support")
 > ---
-
-Ok, so we keep the limitation of having only one thread per context able 
-to call 'wait', even though we don't have to worry about depleting the 
-pool of TIDs any more. I think that's acceptable, though we don't really 
-have a reason to justify it any more. Any reason you want to keep it 
-that way?
-
-   Fred
-
-
->   drivers/misc/ocxl/context.c       |  5 ++-
->   drivers/misc/ocxl/file.c          | 53 +++++++++++++++++++++++++++++++
->   drivers/misc/ocxl/link.c          | 36 +++++++++++++++++++++
->   drivers/misc/ocxl/ocxl_internal.h |  1 +
->   include/misc/ocxl.h               |  9 ++++++
->   include/uapi/misc/ocxl.h          |  8 +++++
->   6 files changed, 111 insertions(+), 1 deletion(-)
+>  drivers/soc/mediatek/mtk-pmic-wrap.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> diff --git a/drivers/misc/ocxl/context.c b/drivers/misc/ocxl/context.c
-> index 909e8807824a..95f74623113e 100644
-> --- a/drivers/misc/ocxl/context.c
-> +++ b/drivers/misc/ocxl/context.c
-> @@ -34,6 +34,8 @@ int ocxl_context_init(struct ocxl_context *ctx, struct ocxl_afu *afu,
->   	mutex_init(&ctx->xsl_error_lock);
->   	mutex_init(&ctx->irq_lock);
->   	idr_init(&ctx->irq_idr);
-> +	ctx->tidr = 0;
-> +
->   	/*
->   	 * Keep a reference on the AFU to make sure it's valid for the
->   	 * duration of the life of the context
-> @@ -65,6 +67,7 @@ int ocxl_context_attach(struct ocxl_context *ctx, u64 amr)
->   {
->   	int rc;
+> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
+> index e9e054a..9a01e30 100644
+> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
+> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
+> @@ -1080,8 +1080,6 @@ static int pwrap_init_cipher(struct pmic_wrapper *wrp)
+>  	pwrap_write(wrp, wrp->slave->dew_regs[PWRAP_DEW_CIPHER_SWRST], 0x0);
+>  	pwrap_write(wrp, wrp->slave->dew_regs[PWRAP_DEW_CIPHER_KEY_SEL], 0x1);
+>  	pwrap_write(wrp, wrp->slave->dew_regs[PWRAP_DEW_CIPHER_IV_SEL], 0x2);
+> -	pwrap_write(wrp, wrp->slave->dew_regs[PWRAP_DEW_CIPHER_LOAD], 0x1);
+> -	pwrap_write(wrp, wrp->slave->dew_regs[PWRAP_DEW_CIPHER_START], 0x1);
+>  
+>  	switch (wrp->slave->type) {
+>  	case PMIC_MT6397:
+> -- 
+> 1.8.1.1.dirty
 > 
-> +	// Locks both status & tidr
->   	mutex_lock(&ctx->status_mutex);
->   	if (ctx->status != OPENED) {
->   		rc = -EIO;
-> @@ -72,7 +75,7 @@ int ocxl_context_attach(struct ocxl_context *ctx, u64 amr)
->   	}
-> 
->   	rc = ocxl_link_add_pe(ctx->afu->fn->link, ctx->pasid,
-> -			current->mm->context.id, 0, amr, current->mm,
-> +			current->mm->context.id, ctx->tidr, amr, current->mm,
->   			xsl_fault_error, ctx);
->   	if (rc)
->   		goto out;
-> diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
-> index 038509e5d031..eb409a469f21 100644
-> --- a/drivers/misc/ocxl/file.c
-> +++ b/drivers/misc/ocxl/file.c
-> @@ -5,6 +5,8 @@
->   #include <linux/sched/signal.h>
->   #include <linux/uaccess.h>
->   #include <uapi/misc/ocxl.h>
-> +#include <asm/reg.h>
-> +#include <asm/switch_to.h>
->   #include "ocxl_internal.h"
-> 
-> 
-> @@ -123,11 +125,55 @@ static long afu_ioctl_get_metadata(struct ocxl_context *ctx,
->   	return 0;
->   }
-> 
-> +#ifdef CONFIG_PPC64
-> +static long afu_ioctl_enable_p9_wait(struct ocxl_context *ctx,
-> +		struct ocxl_ioctl_p9_wait __user *uarg)
-> +{
-> +	struct ocxl_ioctl_p9_wait arg;
-> +
-> +	memset(&arg, 0, sizeof(arg));
-> +
-> +	if (cpu_has_feature(CPU_FTR_P9_TIDR)) {
-> +		enum ocxl_context_status status;
-> +
-> +		// Locks both status & tidr
-> +		mutex_lock(&ctx->status_mutex);
-> +		if (!ctx->tidr) {
-> +			if (set_thread_tidr(current))
-> +				return -ENOENT;
-> +
-> +			ctx->tidr = current->thread.tidr;
-> +		}
-> +
-> +		status = ctx->status;
-> +		mutex_unlock(&ctx->status_mutex);
-> +
-> +		if (status == ATTACHED) {
-> +			int rc;
-> +			struct link *link = ctx->afu->fn->link;
-> +
-> +			rc = ocxl_link_update_pe(link, ctx->pasid, ctx->tidr);
-> +			if (rc)
-> +				return rc;
-> +		}
-> +
-> +		arg.thread_id = ctx->tidr;
-> +	} else
-> +		return -ENOENT;
-> +
-> +	if (copy_to_user(uarg, &arg, sizeof(arg)))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
->   #define CMD_STR(x) (x == OCXL_IOCTL_ATTACH ? "ATTACH" :			\
->   			x == OCXL_IOCTL_IRQ_ALLOC ? "IRQ_ALLOC" :	\
->   			x == OCXL_IOCTL_IRQ_FREE ? "IRQ_FREE" :		\
->   			x == OCXL_IOCTL_IRQ_SET_FD ? "IRQ_SET_FD" :	\
->   			x == OCXL_IOCTL_GET_METADATA ? "GET_METADATA" :	\
-> +			x == OCXL_IOCTL_ENABLE_P9_WAIT ? "ENABLE_P9_WAIT" :	\
->   			"UNKNOWN")
-> 
->   static long afu_ioctl(struct file *file, unsigned int cmd,
-> @@ -186,6 +232,13 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
->   				(struct ocxl_ioctl_metadata __user *) args);
->   		break;
-> 
-> +#ifdef CONFIG_PPC64
-> +	case OCXL_IOCTL_ENABLE_P9_WAIT:
-> +		rc = afu_ioctl_enable_p9_wait(ctx,
-> +				(struct ocxl_ioctl_p9_wait __user *) args);
-> +		break;
-> +#endif
-> +
->   	default:
->   		rc = -EINVAL;
->   	}
-> diff --git a/drivers/misc/ocxl/link.c b/drivers/misc/ocxl/link.c
-> index 656e8610eec2..88876ae8f330 100644
-> --- a/drivers/misc/ocxl/link.c
-> +++ b/drivers/misc/ocxl/link.c
-> @@ -544,6 +544,42 @@ int ocxl_link_add_pe(void *link_handle, int pasid, u32 pidr, u32 tidr,
->   }
->   EXPORT_SYMBOL_GPL(ocxl_link_add_pe);
-> 
-> +int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid)
-> +{
-> +	struct link *link = (struct link *) link_handle;
-> +	struct spa *spa = link->spa;
-> +	struct ocxl_process_element *pe;
-> +	int pe_handle, rc;
-> +
-> +	if (pasid > SPA_PASID_MAX)
-> +		return -EINVAL;
-> +
-> +	pe_handle = pasid & SPA_PE_MASK;
-> +	pe = spa->spa_mem + pe_handle;
-> +
-> +	mutex_lock(&spa->spa_lock);
-> +
-> +	pe->tid = tid;
-> +
-> +	/*
-> +	 * The barrier makes sure the PE is updated
-> +	 * before we clear the NPU context cache below, so that the
-> +	 * old PE cannot be reloaded erroneously.
-> +	 */
-> +	mb();
-> +
-> +	/*
-> +	 * hook to platform code
-> +	 * On powerpc, the entry needs to be cleared from the context
-> +	 * cache of the NPU.
-> +	 */
-> +	rc = pnv_ocxl_spa_remove_pe_from_cache(link->platform_data, pe_handle);
-> +	WARN_ON(rc);
-> +
-> +	mutex_unlock(&spa->spa_lock);
-> +	return rc;
-> +}
-> +
->   int ocxl_link_remove_pe(void *link_handle, int pasid)
->   {
->   	struct link *link = (struct link *) link_handle;
-> diff --git a/drivers/misc/ocxl/ocxl_internal.h b/drivers/misc/ocxl/ocxl_internal.h
-> index 5d421824afd9..a32f2151029f 100644
-> --- a/drivers/misc/ocxl/ocxl_internal.h
-> +++ b/drivers/misc/ocxl/ocxl_internal.h
-> @@ -77,6 +77,7 @@ struct ocxl_context {
->   	struct ocxl_xsl_error xsl_error;
->   	struct mutex irq_lock;
->   	struct idr irq_idr;
-> +	u16 tidr; // Thread ID used for P9 wait implementation
->   };
-> 
->   struct ocxl_process_element {
-> diff --git a/include/misc/ocxl.h b/include/misc/ocxl.h
-> index 51ccf76db293..9ff6ddc28e22 100644
-> --- a/include/misc/ocxl.h
-> +++ b/include/misc/ocxl.h
-> @@ -188,6 +188,15 @@ extern int ocxl_link_add_pe(void *link_handle, int pasid, u32 pidr, u32 tidr,
->   		void (*xsl_err_cb)(void *data, u64 addr, u64 dsisr),
->   		void *xsl_err_data);
-> 
-> +/**
-> + * Update values within a Process Element
-> + *
-> + * link_handle: the link handle associated with the process element
-> + * pasid: the PASID for the AFU context
-> + * tid: the new thread id for the process element
-> + */
-> +extern int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid);
-> +
->   /*
->    * Remove a Process Element from the Shared Process Area for a link
->    */
-> diff --git a/include/uapi/misc/ocxl.h b/include/uapi/misc/ocxl.h
-> index 0af83d80fb3e..561e6f0dfcb7 100644
-> --- a/include/uapi/misc/ocxl.h
-> +++ b/include/uapi/misc/ocxl.h
-> @@ -48,6 +48,13 @@ struct ocxl_ioctl_metadata {
->   	__u64 reserved[13]; // Total of 16*u64
->   };
-> 
-> +struct ocxl_ioctl_p9_wait {
-> +	__u16 thread_id; // The thread ID required to wake this thread
-> +	__u16 reserved1;
-> +	__u32 reserved2;
-> +	__u64 reserved3[3];
-> +};
-> +
->   struct ocxl_ioctl_irq_fd {
->   	__u64 irq_offset;
->   	__s32 eventfd;
-> @@ -62,5 +69,6 @@ struct ocxl_ioctl_irq_fd {
->   #define OCXL_IOCTL_IRQ_FREE	_IOW(OCXL_MAGIC, 0x12, __u64)
->   #define OCXL_IOCTL_IRQ_SET_FD	_IOW(OCXL_MAGIC, 0x13, struct ocxl_ioctl_irq_fd)
->   #define OCXL_IOCTL_GET_METADATA _IOR(OCXL_MAGIC, 0x14, struct ocxl_ioctl_metadata)
-> +#define OCXL_IOCTL_ENABLE_P9_WAIT	_IOR(OCXL_MAGIC, 0x15, struct ocxl_ioctl_p9_wait)
-> 
->   #endif /* _UAPI_MISC_OCXL_H */
+> ************* Email Confidentiality Notice ********************
+> The information contained in this e-mail message (including any 
+> attachments) may be confidential, proprietary, privileged, or otherwise
+> exempt from disclosure under applicable laws. It is intended to be 
+> conveyed only to the designated recipient(s). Any use, dissemination, 
+> distribution, printing, retaining or copying of this e-mail (including its 
+> attachments) by unintended recipient(s) is strictly prohibited and may 
+> be unlawful. If you are not an intended recipient of this e-mail, or believe 
+> that you have received this e-mail in error, please notify the sender 
+> immediately (by replying to this e-mail), delete any and all copies of 
+> this e-mail (including any attachments) from your system, and do not
+> disclose the content of this e-mail to any other person. Thank you!
 > 
