@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751885AbeEKTCw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 15:02:52 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:54030 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751698AbeEKTCu (ORCPT
+        id S1751928AbeEKTDj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 15:03:39 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:45569 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751012AbeEKTDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 15:02:50 -0400
-Date: Fri, 11 May 2018 15:02:47 -0400
-From: Rich Felker <dalias@libc.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux-sh list <linux-sh@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rob Herring <robh@kernel.org>
-Subject: [GIT PULL] arch/sh regression fixes for 4.17
-Message-ID: <20180511190247.GA18860@brightrain.aerifal.cx>
+        Fri, 11 May 2018 15:03:37 -0400
+X-Google-Smtp-Source: AB8JxZqYjL+lCxgKRahUVwYZxVtMokImrBwdVFN6ZX4rIFk24cD/1kW0fFY1iV/wzfhsRjZPQQ6osA==
+Date: Sat, 12 May 2018 00:35:42 +0530
+From: Souptick Joarder <jrdr.linux@gmail.com>
+To: akpm@linux-foundation.org, dan.j.williams@intel.com, jack@suse.cz,
+        ross.zwisler@linux.intel.com, riel@redhat.com, willy@infradead.org,
+        hughd@google.com, pasha.tatashin@oracle.com, mhocko@suse.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mm: Adding new return type vm_fault_t
+Message-ID: <20180511190542.GA2412@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -23,44 +24,91 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Use new return type vm_fault_t for fault handler
+in struct vm_operations_struct. For now, this is
+just documenting that the function returns a 
+VM_FAULT value rather than an errno.  Once all
+instances are converted, vm_fault_t will become
+a distinct type.
 
-Please pull these changes for arch/sh. They fix regressions introduced
-in 4.15 and 4.17-rc1 that prevent booting on affected systems.
+commit 1c8f422059ae ("mm: change return type to
+vm_fault_t")
 
-Rich
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+v2: updated the change log
 
+ include/linux/mm.h | 4 ++--
+ mm/filemap.c       | 8 ++++----
+ mm/nommu.c         | 2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ad06d42..7fc4baf 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2281,10 +2281,10 @@ extern void truncate_inode_pages_range(struct address_space *,
+ extern void truncate_inode_pages_final(struct address_space *);
 
-The following changes since commit 6da6c0db5316275015e8cc2959f12a17584aeb64:
+ /* generic vm_area_ops exported for stackable file systems */
+-extern int filemap_fault(struct vm_fault *vmf);
++extern vm_fault_t filemap_fault(struct vm_fault *vmf);
+ extern void filemap_map_pages(struct vm_fault *vmf,
+ 		pgoff_t start_pgoff, pgoff_t end_pgoff);
+-extern int filemap_page_mkwrite(struct vm_fault *vmf);
++extern vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf);
 
-  Linux v4.17-rc3 (2018-04-29 14:17:42 -0700)
+ /* mm/page-writeback.c */
+ int __must_check write_one_page(struct page *page);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 693f622..cae7e4f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2491,7 +2491,7 @@ static void do_async_mmap_readahead(struct vm_area_struct *vma,
+  *
+  * We never return with VM_FAULT_RETRY and a bit from VM_FAULT_ERROR set.
+  */
+-int filemap_fault(struct vm_fault *vmf)
++vm_fault_t filemap_fault(struct vm_fault *vmf)
+ {
+ 	int error;
+ 	struct file *file = vmf->vma->vm_file;
+@@ -2501,7 +2501,7 @@ int filemap_fault(struct vm_fault *vmf)
+ 	pgoff_t offset = vmf->pgoff;
+ 	pgoff_t max_off;
+ 	struct page *page;
+-	int ret = 0;
++	vm_fault_t ret = 0;
 
-are available in the git repository at:
+ 	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+ 	if (unlikely(offset >= max_off))
+@@ -2696,11 +2696,11 @@ void filemap_map_pages(struct vm_fault *vmf,
+ }
+ EXPORT_SYMBOL(filemap_map_pages);
 
-  git://git.libc.org/linux-sh tags/sh-for-4.17-fixes
+-int filemap_page_mkwrite(struct vm_fault *vmf)
++vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf)
+ {
+ 	struct page *page = vmf->page;
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+-	int ret = VM_FAULT_LOCKED;
++	vm_fault_t ret = VM_FAULT_LOCKED;
 
-for you to fetch changes up to ac21fc2dcb405cf250ad3f1228f64f64930d9211:
+ 	sb_start_pagefault(inode->i_sb);
+ 	file_update_time(vmf->vma->vm_file);
+diff --git a/mm/nommu.c b/mm/nommu.c
+index ebb6e61..90456a6 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -1788,7 +1788,7 @@ unsigned long arch_get_unmapped_area(struct file *file, unsigned long addr,
+ 	return -ENOMEM;
+ }
 
-  sh: switch to NO_BOOTMEM (2018-05-11 13:35:46 -0400)
-
-----------------------------------------------------------------
-Fixes for critical regressions and a build failure.
-
-----------------------------------------------------------------
-Jacopo Mondi (1):
-      sh: mm: Fix unprotected access to struct device
-
-Rich Felker (1):
-      sh: fix build failure for J2 cpu with SMP disabled
-
-Rob Herring (1):
-      sh: switch to NO_BOOTMEM
-
- arch/sh/Kconfig                |  1 +
- arch/sh/kernel/cpu/sh2/probe.c |  4 +++
- arch/sh/kernel/setup.c         |  1 -
- arch/sh/mm/consistent.c        | 11 +++++--
- arch/sh/mm/init.c              | 68 ++++--------------------------------------
- arch/sh/mm/numa.c              | 19 ------------
- 6 files changed, 19 insertions(+), 85 deletions(-)
+-int filemap_fault(struct vm_fault *vmf)
++vm_fault_t filemap_fault(struct vm_fault *vmf)
+ {
+ 	BUG();
+ 	return 0;
+--
+1.9.1
