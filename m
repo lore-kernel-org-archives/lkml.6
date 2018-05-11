@@ -1,133 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753180AbeEKNfk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 09:35:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36288 "EHLO mail.kernel.org"
+        id S1753037AbeEKNhU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 09:37:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752983AbeEKNfh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 09:35:37 -0400
-X-Google-Smtp-Source: AB8JxZqy11yIKJB7R7uc2+NGUO1MrpyMiDl9Pk5oIzbg9kK7LnSSLWJrHAjCmQ/XO+c9M+5Fst1mYkRpGvMnBsp4aLM=
+        id S1750758AbeEKNhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 09:37:18 -0400
+Date: Fri, 11 May 2018 09:37:16 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: printk feature for syzbot?
+Message-ID: <20180511093716.18329322@gandalf.local.home>
+In-Reply-To: <20180511095004.GA6575@jagdpanzerIV>
+References: <201805102350.JJH73950.tVJHQLFSOMOOFF@I-love.SAKURA.ne.jp>
+        <20180511014515.GA895@jagdpanzerIV>
+        <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
+        <20180511062151.GA18160@jagdpanzerIV>
+        <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
+        <20180511095004.GA6575@jagdpanzerIV>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAPoXtQK2s-G3sPHOQQcEQe+O9LGBWBv3Jrsy_NTVNo_nAtd1bg@mail.gmail.com>
-References: <20180505213448.8180-1-andrea.greco.gapmilano@gmail.com>
- <20180508161636.GA23960@rob-hp-laptop> <CAPoXtQK2s-G3sPHOQQcEQe+O9LGBWBv3Jrsy_NTVNo_nAtd1bg@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 11 May 2018 08:35:15 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLU9EMKWTgLSuW-xekEmfOXfpAYtLpxXXp25AidSg7ejA@mail.gmail.com>
-Message-ID: <CAL_JsqLU9EMKWTgLSuW-xekEmfOXfpAYtLpxXXp25AidSg7ejA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/3] arcnet: com20020: Add memory map of com20020
-To: Andrea Greco <andrea.greco.gapmilano@gmail.com>
-Cc: Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        Andrea Greco <a.greco@4sigma.it>, Mark Rutland <mark.rutland@arm.com>,
-        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 5:50 AM, Andrea Greco
-<andrea.greco.gapmilano@gmail.com> wrote:
-> On 05/08/2018 06:16 PM, Rob Herring wrote:
->> On Sat, May 05, 2018 at 11:34:45PM +0200, Andrea Greco wrote:
->>> From: Andrea Greco <a.greco@4sigma.it>
->>>
->>> Add support for com20022I/com20020, memory mapped chip version.
->>> Support bus: Intel 80xx and Motorola 68xx.
->>> Bus size: Only 8 bit bus size is supported.
->>> Added related device tree bindings
->>>
->>> Signed-off-by: Andrea Greco <a.greco@4sigma.it>
->>> ---
->>>   .../devicetree/bindings/net/smsc-com20020.txt      |  23 +++
->>
->> Please split bindings to separate patch.
->
-> Ok
->>
->>>   drivers/net/arcnet/Kconfig                         |  12 +-
->>>   drivers/net/arcnet/Makefile                        |   1 +
->>>   drivers/net/arcnet/arcdevice.h                     |  27 ++-
->>>   drivers/net/arcnet/com20020-membus.c               | 191 +++++++++++++++++++++
->>>   drivers/net/arcnet/com20020.c                      |   9 +-
->>>   6 files changed, 253 insertions(+), 10 deletions(-)
->>>   create mode 100644 Documentation/devicetree/bindings/net/smsc-com20020.txt
->>>   create mode 100644 drivers/net/arcnet/com20020-membus.c
->>>
->>> diff --git a/Documentation/devicetree/bindings/net/smsc-com20020.txt b/Documentation/devicetree/bindings/net/smsc-com20020.txt
->>> new file mode 100644
->>> index 000000000000..39c5b19c55af
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/net/smsc-com20020.txt
->>> @@ -0,0 +1,23 @@
->>> +SMSC com20020, com20022I
->>
->> What does this device do?
->>
->
-> Changed in:
-> SMSC com20020 Arcnet network controller
->
->>> +
->>> +timeout: Arcnet timeout, checkout datashet
->>> +clockp: Clock Prescaler, checkout datashet
->>
->> s/datashet/datasheet/
->>
->>> +clockm: Clock multiplier, checkout datasheet
->>
->> Would these 3 properties be common for arcnet devices? If not, then they
->> should have a vendor prefix.
->>
->
-> Timeout is arcnet propelty:
-> Other is smsc params, then become:
-> - timeout: Arcnet timeout
+On Fri, 11 May 2018 18:50:04 +0900
+Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
 
-Needs unit suffix as defined in property-units.txt.
+> On (05/11/18 11:17), Dmitry Vyukov wrote:
+> > 
+> > From what I see, it seems that interrupts can be nested:  
+> 
+> Hm, I thought that in general IRQ handlers run with local IRQs
+> disabled on CPU. So, generally, IRQs don't nest. Was I wrong?
+> NMIs can nest, that's true; but I thought that at least IRQs
+> don't.
 
-> - smsc-clockp: Clock Prescaler
-> - smsc-clockm: Clock multiplier
-> - smsc-backplane: Controller use backplane mode inside of transceiver
+We normally don't run nested interrupts, although as the comment in
+preempt.h says:
 
-Vendor properties are <vendor>,<prop-name>.
+ * The hardirq count could in theory be the same as the number of
+ * interrupts in the system, but we run all interrupt handlers with
+ * interrupts disabled, so we cannot have nesting interrupts. Though
+ * there are a few palaeontologic drivers which reenable interrupts in
+ * the handler, so we need more than one bit here.
 
->
-> I forget backplane propelty, but is required
->
->>> +
->>> +phy-reset-gpios: Chip reset ppin
->>
->> Use 'reset-gpios' as that is standard.
->>
->>> +phy-irq-gpios: Chip irq pin
->>
->> Use 'interrupts'. Interrupt capable gpio controllers are also interrupt
->> controllers.
->>
->
-> Ok, change to standard
->
->>> +
->>> +com20020_A@0 {
->>
->> Node names should be generic based on the class of device. I don't think
->> we have one defined, but how about 'arcnet'.
->>
->> Unit addresses must have a corresponding reg property. How is this
->> device accessed?
->>
->
-> Then: arcnet@28000000
->
->>> +    compatible = "smsc,com20020";
->>
->> Not documented.
->>
-> I miss something? Where add this doc?
-> Is not this file?
+And no, NMI handlers do not nest. Yes, we deal with nested NMIs, but in
+those cases, we just set a bit as a latch, and return, and when the
+first NMI is complete, it checks that bit and if it is set, it executes
+another NMI handler.
 
-Yes, this file up above with all the other properties. The example is
-just an example, not a binding definition.
+> 
+> > https://syzkaller.appspot.com/bug?id=72eddef9cedcf81486adb9dd3e789f0d77505ba5
+> > https://syzkaller.appspot.com/bug?id=66fcf61c65f8aa50bbb862eb2fde27c08909a4ff
+> > 
+> > Will this in_nmi()/in_irq()/in_serving_softirq()/else be enough to
+> > untangle output printed by such nested interrupts?  
+> 
+> Well, hm. __irq_enter() does preempt_count_add(HARDIRQ_OFFSET) and
+> __irq_exit() does preempt_count_sub(HARDIRQ_OFFSET). So, technically,
+> you can store
+> 
+> 	preempt_count() & HARDIRQ_MASK
+> 	preempt_count() & SOFTIRQ_MASK
+> 	preempt_count() & NMI_MASK
+> 
+> in that extended context tracking. The numbers will not tell you
+> the IRQ line number, for instance, but at least you'll be able to
+> distinguish different hard/soft IRQs, NMIs. Just an idea, I didn't
+> check it, may be it won't work at all.
+> 
+> Ideally, the serial log should be like this
+> 
+> 	i:1 ... foo()
+> 	i:1 ... bar()
+> 	i:2 ... foo()  // __irq_enter()
+> 	i:2 ... bar()
+> 	i:2 ... buz()  // __irq_exit()
+> 	i:1 ... buz()
+> 
+> but I may be completely wrong.
+> 
+> Petr and Steven probably will have better ideas.
 
-Rob
+I handle nesting of different contexts in the ftrace ring buffer using
+the preempt count. See trace_recursive_lock/unlock() in
+kernel/trace/ring_buffer.c.
+
+-- Steve
