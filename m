@@ -1,126 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752196AbeEKANw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 20:13:52 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45268 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751962AbeEKANu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 20:13:50 -0400
-Subject: Re: [PATCH] mlx4_core: allocate 4KB ICM chunks
-To: Qing Huang <qing.huang@oracle.com>, tariqt@mellanox.com,
-        davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180510233143.7236-1-qing.huang@oracle.com>
-From: Yanjun Zhu <yanjun.zhu@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <6454d5eb-2700-4fe2-fd91-d366112c4674@oracle.com>
-Date: Fri, 11 May 2018 08:13:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751228AbeEKAki (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 20:40:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37335 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750751AbeEKAkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 20:40:37 -0400
+From: NeilBrown <neilb@suse.com>
+To: Oleg Drokin <oleg.drokin@intel.com>,
+        Andreas Dilger <andreas.dilger@intel.com>,
+        James Simmons <jsimmons@infradead.org>
+Date: Fri, 11 May 2018 10:37:14 +1000
+Subject: RFC: [PATCH 0/6] lustre: Improve locking in lu_object.s
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>
+Message-ID: <152599874625.19824.11344372150811845854.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180510233143.7236-1-qing.huang@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8889 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805110000
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is a followup to the patches that James recently posted
+which addressed some locking issues in lu_object.c.
+I said at the time that I thought the locking could be
+improved further.  Here is the result of that thought.
+
+The lu_keys_guard lock is now gone, replaced by a spin lock, an rwsem,
+and some lockless code.
+The lu_context_exit() function, which appears to have been a
+performance problem at one point, is now completely lockless.
+
+This is an RFC at this stage: I haven't included Greg on the email and
+don't expect this to go upstream without some review - and maybe even
+some testing.
+
+Thanks,
+NeilBrown
 
 
-On 2018/5/11 7:31, Qing Huang wrote:
-> When a system is under memory presure (high usage with fragments),
-> the original 256KB ICM chunk allocations will likely trigger kernel
-> memory management to enter slow path doing memory compact/migration
-> ops in order to complete high order memory allocations.
->
-> When that happens, user processes calling uverb APIs may get stuck
-> for more than 120s easily even though there are a lot of free pages
-> in smaller chunks available in the system.
->
-> Syslog:
-> ...
-> Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
-> oracle_205573_e:205573 blocked for more than 120 seconds.
-> ...
->
-> With 4KB ICM chunk size, the above issue is fixed.
->
-> However in order to support 4KB ICM chunk size, we need to fix another
-> issue in large size kcalloc allocations.
->
-> E.g.
-> Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
-> size, each ICM chunk can only hold 512 mtt entries (8 bytes for each mtt
-> entry). So we need a 16MB allocation for a table->icm pointer array to
-> hold 2M pointers which can easily cause kcalloc to fail.
->
-> The solution is to use vzalloc to replace kcalloc. There is no need
-> for contiguous memory pages for a driver meta data structure (no need
-Hi,
+---
 
-Replace continuous memory pages with virtual memory, is there any 
-performance loss?
+NeilBrown (6):
+      staging: lustre: make key_set_version an atomic_t
+      staging: lustre: use an rwsem instead of lu_key_initing_cnt.
+      staging: lustre: remove locking from lu_context_exit()
+      staging: lustre: use wait_event_var() in lu_context_key_degister()
+      staging: lustre: remove lock from key register/degister
+      staging: lustre: rename lu_keys_guard to lu_context_remembered_guard
 
-Zhu Yanjun
-> of DMA ops).
->
-> Signed-off-by: Qing Huang <qing.huang@oracle.com>
-> Acked-by: Daniel Jurgens <danielj@mellanox.com>
-> ---
->   drivers/net/ethernet/mellanox/mlx4/icm.c | 14 +++++++-------
->   1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c b/drivers/net/ethernet/mellanox/mlx4/icm.c
-> index a822f7a..2b17a4b 100644
-> --- a/drivers/net/ethernet/mellanox/mlx4/icm.c
-> +++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
-> @@ -43,12 +43,12 @@
->   #include "fw.h"
->   
->   /*
-> - * We allocate in as big chunks as we can, up to a maximum of 256 KB
-> - * per chunk.
-> + * We allocate in 4KB page size chunks to avoid high order memory
-> + * allocations in fragmented/high usage memory situation.
->    */
->   enum {
-> -	MLX4_ICM_ALLOC_SIZE	= 1 << 18,
-> -	MLX4_TABLE_CHUNK_SIZE	= 1 << 18
-> +	MLX4_ICM_ALLOC_SIZE	= 1 << 12,
-> +	MLX4_TABLE_CHUNK_SIZE	= 1 << 12
->   };
->   
->   static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct mlx4_icm_chunk *chunk)
-> @@ -400,7 +400,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
->   	obj_per_chunk = MLX4_TABLE_CHUNK_SIZE / obj_size;
->   	num_icm = (nobj + obj_per_chunk - 1) / obj_per_chunk;
->   
-> -	table->icm      = kcalloc(num_icm, sizeof(*table->icm), GFP_KERNEL);
-> +	table->icm      = vzalloc(num_icm * sizeof(*table->icm));
->   	if (!table->icm)
->   		return -ENOMEM;
->   	table->virt     = virt;
-> @@ -446,7 +446,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
->   			mlx4_free_icm(dev, table->icm[i], use_coherent);
->   		}
->   
-> -	kfree(table->icm);
-> +	vfree(table->icm);
->   
->   	return -ENOMEM;
->   }
-> @@ -462,5 +462,5 @@ void mlx4_cleanup_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table)
->   			mlx4_free_icm(dev, table->icm[i], table->coherent);
->   		}
->   
-> -	kfree(table->icm);
-> +	vfree(table->icm);
->   }
+
+ drivers/staging/lustre/lustre/include/lu_object.h  |    1 
+ drivers/staging/lustre/lustre/obdclass/lu_object.c |  187 ++++++++------------
+ 2 files changed, 78 insertions(+), 110 deletions(-)
+
+--
+Signature
