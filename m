@@ -1,86 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752006AbeEKX33 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 19:29:29 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38649 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751217AbeEKX31 (ORCPT
+        id S1752050AbeEKXaI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 19:30:08 -0400
+Received: from mail-pl0-f49.google.com ([209.85.160.49]:34930 "EHLO
+        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752017AbeEKXaA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 19:29:27 -0400
-X-Google-Smtp-Source: AB8JxZpmiT1q9ypFyiSs4RtCl5cRRDnlbAcg63O7kf/KXiyxQSQJBEA+Bf2wAWic6Ap9cH9YaDGRYg==
-From: Florian Fainelli <f.fainelli@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] net: dsa: bcm_sf2: Fix RX_CLS_LOC_ANY overwrite for last rule
-Date: Fri, 11 May 2018 16:24:58 -0700
-Message-Id: <20180511232459.15980-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        Fri, 11 May 2018 19:30:00 -0400
+X-Google-Smtp-Source: AB8JxZrS5iCadfQfLcDoMCEQz77auP/YXPGV2Z4hFmE6nC9EyU93yKhZOr5O4rnS58DntsusMsnWFQ==
+Date: Sat, 12 May 2018 07:29:53 +0800
+From: Leo Yan <leo.yan@linaro.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v2 1/2] perf cs-etm: Support unknown_thread in
+ cs_etm_auxtrace
+Message-ID: <20180511232953.GA28378@leoy-ThinkPad-X240s>
+References: <1525924920-4381-1-git-send-email-leo.yan@linaro.org>
+ <20180511134800.GO13491@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180511134800.GO13491@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we let the kernel pick up a rule location with RX_CLS_LOC_ANY, we
-would be able to overwrite the last rules because of a number of issues:
+On Fri, May 11, 2018 at 10:48:00AM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Thu, May 10, 2018 at 12:01:59PM +0800, Leo Yan escreveu:
+> > CoreSight doesn't allocate thread structure for unknown_thread in etm
+> > auxtrace, so unknown_thread is NULL pointer.  If the perf data doesn't
+> > contain valid tid and then cs_etm__mem_access() uses unknown_thread
+> > instead as thread handler, this results in segmentation fault when
+> > thread__find_addr_map() accesses thread handler.
+> > 
+> > This commit creates new thread data which is used by unknown_thread, so
+> > CoreSight tracing can roll back to use unknown_thread if perf data
+> > doesn't include valid thread info.  This commit also releases thread
+> > data for initialization failure case and for normal auxtrace free flow.
+> > 
+> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> > Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+> Thanks, applied to perf/urgent.
+> 
+> And please use a more descriptive, eye catching summary, something like:
+> 
+>   perf cs-etm: Fix segfault when accessing NULL unknown_thread variable
+> 
+> :-)
 
-- the IPv4 code path would not be checking that rule_index is within
-  bounds, the IPv6 code path would only be checking the second index and
-  not the first one
+Thanks for suggestion.  Indeed, this patch is a fix rather than
+a new feature, subject should reflect it.
 
-- find_first_zero_bit() needs to operate on the full bitmap size
-  (priv->num_cfp_rules) otherwise it would be off by one in the results
-  it returns and the checks against bcm_sf2_cfp_rule_size() would be non
-  functioning
-
-Fixes: 3306145866b6 ("net: dsa: bcm_sf2: Move IPv4 CFP processing to specific functions")
-Fixes: ba0696c22e7c ("net: dsa: bcm_sf2: Add support for IPv6 CFP rules")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/dsa/bcm_sf2_cfp.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/dsa/bcm_sf2_cfp.c b/drivers/net/dsa/bcm_sf2_cfp.c
-index 23b45da784cb..ade5fa3d747d 100644
---- a/drivers/net/dsa/bcm_sf2_cfp.c
-+++ b/drivers/net/dsa/bcm_sf2_cfp.c
-@@ -354,10 +354,13 @@ static int bcm_sf2_cfp_ipv4_rule_set(struct bcm_sf2_priv *priv, int port,
- 	/* Locate the first rule available */
- 	if (fs->location == RX_CLS_LOC_ANY)
- 		rule_index = find_first_zero_bit(priv->cfp.used,
--						 bcm_sf2_cfp_rule_size(priv));
-+						 priv->num_cfp_rules);
- 	else
- 		rule_index = fs->location;
- 
-+	if (rule_index > bcm_sf2_cfp_rule_size(priv))
-+		return -ENOSPC;
-+
- 	layout = &udf_tcpip4_layout;
- 	/* We only use one UDF slice for now */
- 	slice_num = bcm_sf2_get_slice_number(layout, 0);
-@@ -563,9 +566,11 @@ static int bcm_sf2_cfp_ipv6_rule_set(struct bcm_sf2_priv *priv, int port,
- 	 */
- 	if (fs->location == RX_CLS_LOC_ANY)
- 		rule_index[0] = find_first_zero_bit(priv->cfp.used,
--						    bcm_sf2_cfp_rule_size(priv));
-+						    priv->num_cfp_rules);
- 	else
- 		rule_index[0] = fs->location;
-+	if (rule_index[0] > bcm_sf2_cfp_rule_size(priv))
-+		return -ENOSPC;
- 
- 	/* Flag it as used (cleared on error path) such that we can immediately
- 	 * obtain a second one to chain from.
-@@ -573,7 +578,7 @@ static int bcm_sf2_cfp_ipv6_rule_set(struct bcm_sf2_priv *priv, int port,
- 	set_bit(rule_index[0], priv->cfp.used);
- 
- 	rule_index[1] = find_first_zero_bit(priv->cfp.used,
--					    bcm_sf2_cfp_rule_size(priv));
-+					    priv->num_cfp_rules);
- 	if (rule_index[1] > bcm_sf2_cfp_rule_size(priv)) {
- 		ret = -ENOSPC;
- 		goto out_err;
--- 
-2.14.1
+Thanks,
+Leo Yan
