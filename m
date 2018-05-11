@@ -1,252 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752274AbeEKFnU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 01:43:20 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33032 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750927AbeEKFnS (ORCPT
+        id S1752445AbeEKFoN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 01:44:13 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:43911 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752007AbeEKFoL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 01:43:18 -0400
-X-Google-Smtp-Source: AB8JxZqW8jQI4h2WuEfv2E0Iz3dgD0mXZQQ/NigcQl2qOm62kKwCVkRtsDdt4cyh1Y2NEBE1+rqFDQ==
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: Icenowy Zheng <icenowy@aosc.io>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2] arm64: allwinner: a64: Add Amarula A64 Relic initial support
-Date: Fri, 11 May 2018 11:13:07 +0530
-Message-Id: <20180511054307.3410-1-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.14.3
+        Fri, 11 May 2018 01:44:11 -0400
+X-Google-Smtp-Source: AB8JxZre9rkA9TWuhAWJRq7PGSGkTvTq3JCbbJyf6MVdhsxzH1eP9wA0k5GoYOL7fI7FV6nkTd4LOA==
+Date: Fri, 11 May 2018 11:14:07 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH 1/3] sched/cpufreq: always consider blocked FAIR
+ utilization
+Message-ID: <20180511054407.qxwyyqsgyzqsf6e4@vireshk-i7>
+References: <20180510150553.28122-1-patrick.bellasi@arm.com>
+ <20180510150553.28122-2-patrick.bellasi@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510150553.28122-2-patrick.bellasi@arm.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Amarula A64 Relic is Allwinner A64 based IoT device, which support
-- Allwinner A64 Cortex-A53
-- Mali-400MP2 GPU
-- AXP803 PMIC
-- 1GB DDR3 RAM
-- 8GB eMMC
-- AP6330 Wifi/BLE
-- MIPI-DSI
-- CSI: OV5640 sensor
-- USB OTG
-- 12V DC power supply
+On 10-05-18, 16:05, Patrick Bellasi wrote:
+> Since the refactoring introduced by:
+> 
+>    commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
+> 
+> we aggregate FAIR utilization only if this class has runnable tasks.
+> This was mainly due to avoid the risk to stay on an high frequency just
+> because of the blocked utilization of a CPU not being properly decayed
+> while the CPU was idle.
+> 
+> However, since:
+> 
+>    commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
+> 
+> the FAIR blocked utilization is properly decayed also for IDLE CPUs.
+> 
+> This allows us to use the FAIR blocked utilization as a safe mechanism
+> to gracefully reduce the frequency only if no FAIR tasks show up on a
+> CPU for a reasonable period of time.
+> 
+> Moreover, we also reduce the frequency drops of CPUs running periodic
+> tasks which, depending on the task periodicity and the time required
+> for a frequency switch, was increasing the chances to introduce some
+> undesirable performance variations.
+> 
+> Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
+> Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Joel Fernandes <joelaf@google.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> ---
+>  kernel/sched/cpufreq_schedutil.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v2:
-- Rename dts name to sun50i-a64-relic.dts which is simple to use
-- Update dldo4 min voltage as 1.8
-- Use licence year as 2018
+Do we need a Fixes tag and Cc stable ?
 
- arch/arm64/boot/dts/allwinner/Makefile             |   1 +
- arch/arm64/boot/dts/allwinner/sun50i-a64-relic.dts | 182 +++++++++++++++++++++
- 2 files changed, 183 insertions(+)
- create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-relic.dts
+> 
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index d2c6083304b4..a74d05160e66 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -183,22 +183,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
+>  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>  {
+>  	struct rq *rq = cpu_rq(sg_cpu->cpu);
+> -	unsigned long util;
+>  
+> -	if (rq->rt.rt_nr_running) {
+> -		util = sg_cpu->max;
+> -	} else {
+> -		util = sg_cpu->util_dl;
+> -		if (rq->cfs.h_nr_running)
+> -			util += sg_cpu->util_cfs;
+> -	}
+> +	if (rq->rt.rt_nr_running)
+> +		return sg_cpu->max;
+>  
+>  	/*
+> +	 * Utilization required by DEADLINE must always be granted while, for
+> +	 * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
+> +	 * gracefully reduce the frequency when no tasks show up for longer
+> +	 * periods of time.
+> +	 *
+>  	 * Ideally we would like to set util_dl as min/guaranteed freq and
+>  	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
+>  	 * ready for such an interface. So, we only do the latter for now.
+>  	 */
+> -	return min(util, sg_cpu->max);
+> +	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
+>  }
+>  
+>  static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
 
-diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-index c31f90a49481..9b4417f00b68 100644
---- a/arch/arm64/boot/dts/allwinner/Makefile
-+++ b/arch/arm64/boot/dts/allwinner/Makefile
-@@ -6,6 +6,7 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-orangepi-win.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-pine64-plus.dtb sun50i-a64-pine64.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-sopine-baseboard.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-teres-i.dtb
-+dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-relic.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-libretech-all-h3-cc.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo2.dtb
- dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo-plus2.dtb
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-relic.dts
-new file mode 100644
-index 000000000000..7dd6f8b03503
---- /dev/null
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-relic.dts
-@@ -0,0 +1,182 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2018 Amarula Solutions B.V.
-+ * Author: Jagan Teki <jagan@amarulasolutions.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include "sun50i-a64.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "Amarula A64 Relic";
-+	compatible = "amarula,a64-relic", "allwinner,sun50i-a64";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&ehci0 {
-+	status = "okay";
-+};
-+
-+&mmc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc2_pins>;
-+	vmmc-supply = <&reg_dcdc1>;
-+	bus-width = <8>;
-+	non-removable;
-+	cap-mmc-hw-reset;
-+	status = "okay";
-+};
-+
-+&ohci0 {
-+	status = "okay";
-+};
-+
-+&r_rsb {
-+	status = "okay";
-+
-+	axp803: pmic@3a3 {
-+		compatible = "x-powers,axp803";
-+		reg = <0x3a3>;
-+		interrupt-parent = <&r_intc>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+		x-powers,drive-vbus-en; /* set N_VBUSEN as output pin */
-+	};
-+};
-+
-+#include "axp803.dtsi"
-+
-+&reg_aldo1 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "avdd-csi";
-+};
-+
-+&reg_aldo2 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "vcc-pl";
-+};
-+
-+&reg_aldo3 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <3000000>;
-+	regulator-max-microvolt = <3000000>;
-+	regulator-name = "vcc-pll-avcc";
-+};
-+
-+&reg_dcdc1 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-3v3";
-+};
-+
-+&reg_dcdc2 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1040000>;
-+	regulator-max-microvolt = <1300000>;
-+	regulator-name = "vdd-cpux";
-+};
-+
-+/* DCDC3 is polyphased with DCDC2 */
-+
-+&reg_dcdc5 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1500000>;
-+	regulator-max-microvolt = <1500000>;
-+	regulator-name = "vcc-dram";
-+};
-+
-+&reg_dcdc6 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1100000>;
-+	regulator-max-microvolt = <1100000>;
-+	regulator-name = "vdd-sys";
-+};
-+
-+&reg_dldo1 {
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-hdmi-dsi-sensor";
-+};
-+
-+&reg_dldo2 {
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-mipi";
-+};
-+
-+&reg_dldo3 {
-+	regulator-min-microvolt = <2800000>;
-+	regulator-max-microvolt = <2800000>;
-+	regulator-name = "vcc-gen";
-+};
-+
-+&reg_dldo4 {
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-wifi-io";
-+};
-+
-+&reg_drivevbus {
-+	regulator-name = "usb0-vbus";
-+	status = "okay";
-+};
-+
-+&reg_eldo1 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1800000>;
-+	regulator-max-microvolt = <1800000>;
-+	regulator-name = "cpvdd";
-+};
-+
-+&reg_fldo1 {
-+	regulator-min-microvolt = <1200000>;
-+	regulator-max-microvolt = <1200000>;
-+	regulator-name = "vcc-1v2-hsic";
-+};
-+
-+/*
-+ * The A64 chip cannot work without this regulator off, although
-+ * it seems to be only driving the AR100 core.
-+ * Maybe we don't still know well about CPUs domain.
-+ */
-+&reg_fldo2 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1100000>;
-+	regulator-max-microvolt = <1100000>;
-+	regulator-name = "vdd-cpus";
-+};
-+
-+&reg_rtc_ldo {
-+	regulator-name = "vcc-rtc";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins_a>;
-+	status = "okay";
-+};
-+
-+&usb_otg {
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	usb0_id_det-gpios = <&pio 7 9 GPIO_ACTIVE_HIGH>; /* PH9 */
-+	usb0_vbus-supply = <&reg_drivevbus>;
-+	status = "okay";
-+};
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
 -- 
-2.14.3
+viresh
