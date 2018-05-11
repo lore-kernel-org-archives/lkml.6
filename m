@@ -1,50 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753169AbeEKOSj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 10:18:39 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:43312 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752983AbeEKOSi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 10:18:38 -0400
-X-Google-Smtp-Source: AB8JxZrEC883GglclCPhhLzMPyRDpJJ3MMvu70SZcRSfg4X40cenfbcoozgNSJkq66AvAjxIIYNa2rd/vCZsr9IPRWI=
+        id S1753015AbeEKOSq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 10:18:46 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42160 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753137AbeEKOSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 10:18:43 -0400
+Date: Fri, 11 May 2018 15:18:36 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: kishon@ti.com, bhelgaas@google.com, nsekhar@ti.com, john@metanate.com,
+        shawn.lin@rock-chips.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pci: endpoint: Replace mdelay with usleep_range in
+ pci_epf_test_write
+Message-ID: <20180511141836.GA29104@e107981-ln.cambridge.arm.com>
+References: <1523365446-31563-1-git-send-email-baijiaju1990@gmail.com>
 MIME-Version: 1.0
-References: <20180510115356.31164-1-pasha.tatashin@oracle.com> <20180510123039.GF5325@dhcp22.suse.cz>
-In-Reply-To: <20180510123039.GF5325@dhcp22.suse.cz>
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Fri, 11 May 2018 10:17:55 -0400
-X-Gmail-Original-Message-ID: <CAGM2reZbYR96_uv-SB=5eL6tt0OSq9yXhtA-B2TGHbRQtfGU6g@mail.gmail.com>
-Message-ID: <CAGM2reZbYR96_uv-SB=5eL6tt0OSq9yXhtA-B2TGHbRQtfGU6g@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: allow deferred page init for vmemmap only
-To: mhocko@kernel.org
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        mgorman@techsingularity.net, mingo@kernel.org, peterz@infradead.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Dennis Zhou <dennisszhou@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8889 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=964
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805110135
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1523365446-31563-1-git-send-email-baijiaju1990@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Thanks that helped me to see the problem. On the other hand isn't this a
-> bit of an overkill? AFAICS this affects only NEED_PER_CPU_KM which is !SMP
-> and DEFERRED_STRUCT_PAGE_INIT makes only very limited sense on UP,
-> right?
+On Tue, Apr 10, 2018 at 09:04:06PM +0800, Jia-Ju Bai wrote:
+> pci_epf_test_write() is never called in atomic context.
+> 
+> The call chain ending up at pci_epf_test_write() is:
+> [1] pci_epf_test_write() <- pci_epf_test_cmd_handler()
+> 
+> pci_epf_test_cmd_handler() is set as a parameter of INIT_DELAYED_WORK() 
+> in pci_epf_test_probe().
+> This function is not called in atomic context.
+> 
+> Despite never getting called from atomic context, pci_epf_test_write()
+> calls mdelay() to busily wait.
+> This is not necessary and can be replaced with usleep_range() to
+> avoid busy waiting.
+> 
+> This is found by a static analysis tool named DCNS written by myself.
+> And I also manually check it.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Or do we have more such places?
+Applied to pci/endpoint for v4.18, thanks.
 
-I do not know other places, but my worry is that trap_init() is arch
-specific and we cannot guarantee that arches won't do virt to phys in
-trap_init() in other places. Therefore, I think a proper fix is simply
-allow DEFERRED_STRUCT_PAGE_INIT when it is safe to do virt to phys without
-accessing struct pages, which is with SPARSEMEM_VMEMMAP.
+Lorenzo
+
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index f9308c2..2f0642e 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -237,7 +237,7 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
+>  	 * wait 1ms inorder for the write to complete. Without this delay L3
+>  	 * error in observed in the host system.
+>  	 */
+> -	mdelay(1);
+> +	usleep_range(1000, 2000);
+>  
+>  	kfree(buf);
+>  
+> -- 
+> 1.9.1
+> 
