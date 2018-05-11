@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752446AbeEKDhJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 23:37:09 -0400
-Received: from mail-cys01nam02on0091.outbound.protection.outlook.com ([104.47.37.91]:20140
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S1752559AbeEKDhV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 23:37:21 -0400
+Received: from mail-sn1nam01on0108.outbound.protection.outlook.com ([104.47.32.108]:58784
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752357AbeEKDhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 23:37:03 -0400
+        id S1750937AbeEKDhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 23:37:16 -0400
 Authentication-Results: spf=fail (sender IP is 64.157.242.222)
  smtp.mailfrom=nxp.com; nxp.com; dkim=none (message not signed)
  header.d=none;nxp.com; dmarc=fail action=none header.from=nxp.com;
@@ -38,237 +38,117 @@ CC: <xiaobo.xie@nxp.com>, <ran.wang_1@nxp.com>,
         <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         "open list:FREESCALE SOC DRIVERS" <linuxppc-dev@lists.ozlabs.org>,
-        Tang Yuantian <Yuantian.Tang@nxp.com>, <ying.zhang22455@nxp.com>
-Subject: [PATCH 3/9] soc: fsl: set rcpm bit for FTM
-Date: Fri, 11 May 2018 11:35:24 +0800
-Message-ID: <20180511033530.7931-3-yinbo.zhu@nxp.com>
+        Tang Yuantian <Yuantian.Tang@nxp.com>, <ying.zhang22455@nxp.com>,
+        Yuantian Tang <andy.tang@nxp.com>
+Subject: [PATCH 5/9] drivers: firmware: psci: use psci v0.2 to implement sleep
+Date: Fri, 11 May 2018 11:35:26 +0800
+Message-ID: <20180511033530.7931-5-yinbo.zhu@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180511033530.7931-1-yinbo.zhu@nxp.com>
 References: <20180511033530.7931-1-yinbo.zhu@nxp.com>
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:64.157.242.222;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(1496009)(39380400002)(39860400002)(376002)(346002)(396003)(2980300002)(1110001)(1109001)(339900001)(199004)(189003)(76176011)(4326008)(44832011)(106466001)(105606002)(336012)(51416003)(110136005)(54906003)(36756003)(8656006)(1076002)(7416002)(47776003)(5660300001)(97736004)(26005)(53936002)(486006)(126002)(2616005)(7406005)(11346002)(305945005)(81156014)(446003)(498600001)(50466002)(8936002)(356003)(85426001)(86362001)(81166006)(8676002)(6636002)(6666003)(50226002)(48376002)(2906002)(16586007)(77096007)(476003)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:BN3PR03MB2180;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;LANG:en;PTR:ErrorRetry;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BN1BFFO11FD011;1:t9XU8zNtrgr00ZH8ZHeqLc5gaC1aQofrimA9GC1JgEf6dPZhQIAmn6Ea67KchSjqPkI4hdqZy62nO9CQ8UgOM88/p0Ni9+cPXEAfV9PipbY4euNafbADXrIPRiBzHKIR
+X-Forefront-Antispam-Report: CIP:64.157.242.222;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(1496009)(39860400002)(39380400002)(396003)(376002)(346002)(2980300002)(1109001)(1110001)(339900001)(189003)(199004)(50466002)(316002)(26005)(7406005)(7416002)(106466001)(16586007)(2906002)(4326008)(81156014)(498600001)(5660300001)(8676002)(8656006)(50226002)(48376002)(81166006)(77096007)(105606002)(1076002)(97736004)(86362001)(356003)(8936002)(36756003)(51416003)(476003)(2616005)(446003)(110136005)(126002)(336012)(76176011)(54906003)(486006)(47776003)(11346002)(6666003)(6636002)(53936002)(44832011)(305945005)(59450400001)(85426001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN2PR03MB2189;H:tx30smr01.am.freescale.net;FPR:;SPF:Fail;LANG:en;PTR:ErrorRetry;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD025;1:dJ0W2YSSexHVe55OWniMIkncX/cnBEqHGhEiJux60nV91K8j//64PQYJ3mBcTmlSbxc0zjH6IKnUG7de2zeUMUSO9QsAAX2xhuW6EbZEQ4vHKVAwCW2mq3l+K0n/OcXU
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(5600026)(2017052603328);SRVR:BN3PR03MB2180;
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2180;3:Y6E4VJ0rRhPHN3IrIlGHJXp3CMfObWWv/BCxbBXeBDTQi7KO243PTuV0OghJmV+fccELw+lWt/w9ZiG5/do2hO/s6h7kuJCbX13ERtCSJAhoxBkMe5x+4t1zxcvpyKzKqt5UG0i9w0+5j3D5Wc5/kIlp+y/e7E7ukq+ys/Nw1UuGmMzKYFX7TfDXiArMEUefov54wlxlQkKEtV8LWyahTS1qqrcEvOO/1aMh1OgsMwzCpi/nVzTCNtTtLe707mdoxltRznrMuaa+fAxgokiSR0T1PA1WoZ79rcrFZa+sxBzVXJB1jC1BCMCMr1K41ZWJQjPMJOWecsGHaQKGNf9hTCNQkuHz9xs37YNjnNs6mLA=;25:l5ve9yKhGPJjIq3WGljkVKevlDPnJOCVIRkMPJYOGn9aNEh3G0Jr7I7Av0OGGHZxWScUOw3wfJcFM08U+joKpb6PWqZ1vQf8UDGP2gV0gWTlQh64P9yHuOYAfgkNjjO0Q/aoV7DqyV+dXa4zhVDpGW9XE78SHMfE/Sr8u3St05S/zalxb7AEoiDwiGrSR/R1cBoLM0RchCZY3JL29V7zzItIm56IDuaBV3ASLZsMgmnREHfW49g25vetbfIkm82wdnkigwb1SMHPoXqIrWukLFgB1DRb/qAMP9/xx7i8LB6OLdBvPdzBlPDsqB68640R3U0gAZ/A4KTuEhHN2VKkoQ==
-X-MS-TrafficTypeDiagnostic: BN3PR03MB2180:
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(5600026)(2017052603328);SRVR:SN2PR03MB2189;
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;3:9zICG90Yy251lb2yLUm6iXOQDXWAPY3NnUfsuymdDTsZvp/5vN+L5AVOHH4xQGGWWSlHXJxcRF75oe7lLO/6VOqHez8Q87ndE6ldheNwFc7VT5r1S1yQVqX2otyjzOVMfp77h/zoG3OZ0PSJdelaBV1VDVmUAFBHG6LGG65QvKC32+9wVfCNlVoZUWRbG5s4M/WhLfcLQKbPVdennppjyOHDj/wGCgiiHe4dBTuZfplorwpGZgy+9vHcmrHl3e3y3wP+fA5Gntu0P9svDrA9eW8oJd3eLi+6WHMAkK2GDu+t/Rkm3cuhsz0s4uVndpJJLzgacjQ0PpOn1UmBwWdXyRbiQsLejt+ZxNqngRFRS74=;25:md3esU82diB0TCh2dwZx8Xb5an75/4PcsoBStJycTEpvWdbTGn750n/57Qk0ay7AeHv2tVPBT1TlKPlgSQr5dWzM9cxTJhjILnhRGgx705LiO4V2VxKbfihevBknBYZ9N+H08+/EjUlQYuu3+mlhumKSaEhgBnG6cXQ7+wpNjR22cxW4FANI2WzvHFgHtXyC10n2L/ZFym8thI9Y4dj+3I3XlIYzQbJSVRbSPbJpEq/3oSXdM0yYL1sy6RoF7365+UvGG6W1YphH2177fB3tFRw0sATUbh1/ntYxrXw1TUDyvzkuo3rlAOclDDg7g8DQDbqTHbfiPMxntnKK82JTCQ==
+X-MS-TrafficTypeDiagnostic: SN2PR03MB2189:
 X-LD-Processed: 710a03f5-10f6-4d38-9ff4-a80b81da590d,ExtAddr
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2180;31:GuUSEJ4e7YDjIv/WdECr8/IVqzbVNDnTWQb82g5e9++0VE8i7xHrw75PWpos1hbmVTiI2JG/CR+81moge+ceTwAWgwfjHwaIntWLCGcjOtXFSWoqtE6DasLw7JJpWDJQycE/3sGR/ihqCq/aIoYOIgeYudOuyPuut+2dOUQZ3Lkn/nM8NuxqoKBZnNwXsfiy6Buh1EWrGGLb2nViyFGhjuNi1T+Qmq6hGBzJ4xf2cRE=;20:Qo+KVIrQBPaSbmPf5wzEJhywgaH0xsYP4kZGYFYEU8U2eeoNxnpsin82M97TyAc+8vMMxXLpQzKm/GU3mzuAA559qL9BnPNACBA6wnLZP8GL/LgiGMOoSiYlieL03hAIWv+Dj4J6SE+M9cgz+k7KO+LSWOmmoveou+JGxpMQlMy443+XkQxSRMCfGWAr+EK9LxjTpxF2jrSg3Nwa/sskREXZYXh7MPPZu9aWhwSdMn6en72/eXMcSQv3fL414d+RRSg70eCdA7Ray6hhw4AFTyK8fBT/FRtHr1jevX07VIOAvpN0YvJBsoyOTwLfhy+75MKHIGJl5J8r21bS3HCLA2OJ/PK0pmzQyMNdlZ7M3hXIyy0IpmY66UycVknYgKmSeQFVOyUR7YGRRxPkdEeIC+BQdkBYvxpjnih5bgNB2SXIl5OxR1U3zUzRastlHf1MiU1aaWboxmDhritXv93wVDiTk1BuEGgk8AZOxBhP4H9bziUyWe7kP0J1dCij+ZQpoOWbKATLMWl6ALjnpBVdAnhdb5gAPwuycJIUv3eOc4PnCM1mL8JWU+b6x6TZZBsuZNWigilRzGOEZIR2WxYF+a1BF1afxJ6H7I7TCb8WDZo=
-X-Microsoft-Antispam-PRVS: <BN3PR03MB2180AC18066C8B0C316B51B5E99F0@BN3PR03MB2180.namprd03.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;31:YfC24O4TivbRZzqs3O+C9Yb+QlNDp6YQi7O20fPy4ID7d4b2oeFudsr+zvtPgUST4CckZjiiIt1X+siAZuMHl77vlJMDZsrcgEqlUlLvYZTJ1cvgW+lTjZ48bLj+1Beh5aEkhrnSQtDFBFUEfW+/hUKhemwouyyGQuSaUnjqIU/pzRMP0jepzqS1JnDmmJuG7H2UtFeQXnUQ7zFlaAkqoPJ88N7j92D5MgxNtR+iaKs=;20:e9Gh5KSUhDReZDPPDVy8l+WsT9CgEqIOMpTwgPnQCSyy5xL3h/tfs+V6u8VdNPPoutuM/2bYH/L4DkDi3pdCsuhNWHaEOBxQr49Z4ac3ATRz0djW8qtmAtt9e3CFxj6BtUrk4bUM5OAkF8Vcm7bWj4sg1Hp7icSLgP7mwHw0drTMlIX9PLgXtotuIE98cmWSfIpyJf9N2Ek33955gwuc1WzK0OnoZeIoFOeRBCkM6fbnp5LB8v69M9MVM1jkm9e6Kin5rIgVvkyON69xSuZOIu7d1NymbnJpj84iJOrsuWeZvBZnnsXNvEa7wfxaidl5gH/862iL/uj1eVRYCiC6JJxjDhB0ohRWcymtk2eg9CNTLcY/OdEUMuO7B1BZZh2RkQXw8Fh+LFAeDK1UbdMyz9+P+na1H2XBeA0mBM1zZxDxtU5jCod/ucYhMTctBNivi36Hlue+/yDaHS4LGvn9nTqXDlybfD2wDMcATdz3i4p+7n0y3cGvXV1pNTz54BO314tBm6E0Fp9nuvxcajwBmjgqejx4ou190YWaJabkhlRUbmVezjsz9wmRUxtCzEzMHXGWc3ZCjfKWGgUN8I+/x4ekVlLuLREH3Xuh1tJqyLk=
+X-Microsoft-Antispam-PRVS: <SN2PR03MB218942B6B3DFD3C8A2BBD188E99F0@SN2PR03MB2189.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 0
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93003095)(3002001)(10201501046)(3231254)(944501410)(52105095)(20161123222025)(6055026)(149027)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061750153)(6072148)(201708071742011);SRVR:BN3PR03MB2180;BCL:0;PCL:0;RULEID:;SRVR:BN3PR03MB2180;
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2180;4:bOukIAiDeXsV+5gNTL0zfl9Bn70AJszyxBHZl3tHqhGx+yXo08p3RXjF5HqSA18GTaOngkaR3l/UhKp0Go0PtmrcCkQxZMV2GqZEb6CHTbHsTe99/YuIwmvoztST8ktLp1skyF4GxtGkQeSe7f2kkpL8gyQtKNyg0EoKg0ua6d0kutfFlzTt2gwmTR6YrTspdVYeKuyBd2BSNKkstRuHUTlU9KY32w9D7+DhA8UTmYg55bRKECezlCi8uAaQBwTQ7mQtmFLyvB4dbSp0aZ0jFjVJpY4bYMz5sg9AZxKOAxSo1OAksVPN+7mXv2VGVLqL
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93003095)(3231254)(944501410)(52105095)(10201501046)(3002001)(6055026)(149027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061750153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:SN2PR03MB2189;BCL:0;PCL:0;RULEID:;SRVR:SN2PR03MB2189;
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;4:SY2r+fCAsRbuDQ6tDK24/0RqpI20jEiHLGGdrt/1w1zcDP1MhXyoPOnMtYETcd/ueDoiH8OIh1qyw6MgLjk1BQE1JtFP2g6GymJxkkdEuzRFydunILgxGKzrIs6K8a9M4e0BHMM9PegYnhELLGHUVVa5yCNVpUxl6Q6wYKR2AUtZ6viZWNtWNf/vDFMnq8fIWHDGsIfLkbTZQAu+qDZE28/LhJ8JMhYVOIlj2HSx5u8VNP95mjoZL7pSwGSxHXv33dbxAxu1OyPrjYxWyKbyGazwWQLI1DUNn+Pe207T+yo9EcRlYHRPg3VwP86K8+um
 X-Forefront-PRVS: 06691A4183
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN3PR03MB2180;23:ry4GsuALEWTjtSivreFggGky1xCVydulKwuTAXvs0?=
- =?us-ascii?Q?Hv+nQcjARwWJMOQF0J1uGdcD+k/eEeY2ZTyBBHuiWU9ZfXKN+B8D2O72M5JN?=
- =?us-ascii?Q?waAXAyvF736qAzkQLjGjfj/qVh939RimM1TV2f0yEdwF+3trb4BVPaqdYg2T?=
- =?us-ascii?Q?RwmPmja5JMEVLmoc8AsEBFDgeK0jl5b8l2KdF9PJEsFmF1TcIi/mkEUZAAgc?=
- =?us-ascii?Q?UH4mDJ4MQmok8PzTjBMYu7cYMV9d12YBBud/yOZpuB7mOWxgjYisP5y4s05z?=
- =?us-ascii?Q?SJqZwVXvoPZGA6lTQ2xdfGY951BpxBHwQ7b8fmmgc0Ab0dQgJppShXYF+5eG?=
- =?us-ascii?Q?Noe8HCFUrCj1ddLn4yYW1Fc4ULh9ztg2XYVkddwp2ofYxEzll7QwtvJOG9R7?=
- =?us-ascii?Q?PHsbJ1CIsn8W98Qt4foGSyId+Jm718YJlJZgv6q9wkUsH/ZwCkfiYu2SbYR3?=
- =?us-ascii?Q?0Ffvdpw1Q5C8U046YYAdrE6lcTgVsok8SL1vXEm1a78mYsEDlS3Ew0OK5nrX?=
- =?us-ascii?Q?OvvoyS3Xb8MMv79j3N1GNMSHJNCj7N7Iv/+bZUG3hjtBSrUkUE20JeYIDECK?=
- =?us-ascii?Q?Tpo23HMx4WFBN06agDOM4Ln8zmnPv6Z7q0Ro2JQebfEOcYKjJEkPBjPBDZeO?=
- =?us-ascii?Q?dGmKVF2hecWygPVWs2ScdO4+BY+YJw87vgS+mMuFttaVVzaC0mlItMOc0hb9?=
- =?us-ascii?Q?q9B307OlXjgvpp8o5yBTljCtb01y4QJ6IKlBZJOU3XGIL4hUodLOm/66vKdc?=
- =?us-ascii?Q?yGOkzMCtwHdBBefzWmdz3UaLpTsXySfSuhZv8vm9j7lMSDv6HlzHKCAY/kfa?=
- =?us-ascii?Q?I5X9fOoYj0NMwMUg7Qiir+BceZQtZUJtjKKRPd2mX84rKOHO5wsrZvQ6sShA?=
- =?us-ascii?Q?gVW0jpBZM8ETzEeMV0DRI3e/TCRcnINKX4otHDD/ybP0GHNTUEfFhF28Kef2?=
- =?us-ascii?Q?e8WNIJYz2dtFAgTinW1qfmHwoLmu8nZGqHBgS9rRY3cuU/UlMv+oo3FWg7eu?=
- =?us-ascii?Q?4S8TJwd4ybYCl0P4hmE5gEDQul0osJv7UhUdkeqvX3zJCyGiRNSy/MAEZL/+?=
- =?us-ascii?Q?P/jBmORywnAijmuUCLd02u0O1IIDITJ80xv/lyMkqjwdJI2tBME/SanVWqba?=
- =?us-ascii?Q?2EXQ0uHThqp0Zxsvg5ddDpFH0uVASiP6n0hPrrBgGhTe1wSM1nSpYUeY17qH?=
- =?us-ascii?Q?AWv8+QM8No5OB9WCCIg8sVtQVO31apyBEq4eElyT1D4pRyMt38C+dAJKQ=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: 4mEPtZXYENWJMC6h7Squw4M4tspkEjZQMTP2ONupfT1virXAXEChOHKArqyrFh5+A/sxzwhh/AxAVyLm5sHlNZzRLqoZzgqKCTx4J2XGLb1jKSfHukuA/GEXqSuEl6kKYJhaCb6Zyf4F1ujlGuiMW/1wvgRUxvVtuWdmebl9x1vyB0HKWLEqd1xBKLL2ttNK
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2180;6:ro8lKnqTzRJjorZLNmTGzKjw+7AcM+v96t0vwoZ8u5KgpeT5YVajlRZFVBzSxQ0e2Synsi1yMy6Ioq7A2nWsbyYuYUJ1uzdl5h9kdNovNW1H+IzNZ2XdiMh+upKTeG+OvtJdY3LTl2zhaQMEnnSBj6+2lFvdYjkmXoKkUwiog6gz3oHoXxu2+b1XXvcFEyLRW0IodQmXK3BaEjVP05JNzDTzDNEQzyt7d0OBcSNoniiEfy4O/moo2O2euCxzCt/M3ss5tIbG+f479IBx1WHSvli2FyjE7aYJwt6eCwxzDrUiyPYK4a3YG+HmXfrDMI6mqsWUsvoMJQWkg9LwTnR1MDPecWUMtyk7m5TT2LRWxQW1eiDCJzuUuzsTBtDOqvBOlOu8uukaSKvOG+iqosRFf5PKdvCB7SL8yt9suQD/esOKER0PQA9MShaqdRgseFDxySAQP4yN/1xVC/lGotRYPg==;5:SCgktQUJq8iHzTQ6rpVWlgw0hWU8+k354C0MYzPH9YNIbW38tOTdYvvTFI0EPmdyVPg5UtHD4KAlzh0ZQgXuOHNVMqTTCQPmazD8RW+a2sX42ea08LKzRfo2L5z2HooIVEF2cGTSiBfo3lFMnxu2IxaGVzRRXKISookyFSHbs98=;24:YBHtQdkfo7xo2A4cA978wUHcJX+Hc8uURLNZAc4bjPJD1JRQEn3eUMXwD50v2T63mhbCLmyifre1dXrr1lsv/6VD/wsLn0w0bnO7/6V3VJ0=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN2PR03MB2189;23:hiudYMEVLDzKKIfj0m+KyOtOBl7zk24l1NtJwqmwW?=
+ =?us-ascii?Q?Fs7jtneVN8QucydP1ducjeM/m43hPZOTs2Rshwhl+l9fFf9hMf5K46tkWMrU?=
+ =?us-ascii?Q?0J0AXO83C8hFiCqYZeXZNIz2wGci8C14BoGh/wZkf+1E4JGgJqtgHAnYlBmV?=
+ =?us-ascii?Q?h+ATDsLHdSZ4Rg0YvS1u2KuoyK2VSU83SUCuwAbxXB3LpLPyjfUIMznSc+ux?=
+ =?us-ascii?Q?9CxffaY1NGGWlJoPSrAOSkIh98p5hs1ixQbMQYRIFzD1UKeud9rgQZi93RoV?=
+ =?us-ascii?Q?GfcwhbQl8XzxyzZ2hcHPYk2uxYxSI9Ss0oqOiRKxnRqQwQobVAl3eaILV0Jz?=
+ =?us-ascii?Q?3yrsZ7+bmOeYeRP4Kiqh6jjbsqpZ921bd6egoMxRrl90PrGofqvO2cucTcD5?=
+ =?us-ascii?Q?L8SVFxtQnxakGFhoV3N7XSdeXUoGxCYVJiq+ZFI+YRMDo9RpWlZxC/UUjmKJ?=
+ =?us-ascii?Q?VIN3GzF7gwJFv4w0jgcPou1cTjjyCfVApeUa9kvh5Ip0EMXzUmWqZ0KVZyCj?=
+ =?us-ascii?Q?fbIsLH2yPFZHBbidUznO/T5S9+BLIY55z4Bpx2yL1SqEmQuWACiPgFNlVFOG?=
+ =?us-ascii?Q?/yb1YHj7/yPOxtK9bmpscV2rxGI2GdNBBngvkSOZF2YFtjOvxJ3o4tPdzWOw?=
+ =?us-ascii?Q?zLd4kn6hjxZPRyH4Hg62m3E2FVSQBwRSxbgqyVWTPCC81qoQqrkEGgbqw0uj?=
+ =?us-ascii?Q?/hOPzvRdOBqgCtrCyUHKa23FWUAcuG8tyHev/c+1PDegto6yMq1stlcwh+Xf?=
+ =?us-ascii?Q?7IIsNoPQz9suQsnNa3JCCe/EyrYA/RMmvD3XLEc1CjjhUkdYayT8UtHEA8ev?=
+ =?us-ascii?Q?seE0h8jv39gYJylzjTKZriROuOalfikFyReYW197gRh+uoQgs9QisIG2jrs6?=
+ =?us-ascii?Q?hGrBQ/aIbLvoNqyaf2Z9VsoTLxp/Xipj0iOOy93QVtJ52KUlTdNew3VgpByb?=
+ =?us-ascii?Q?Uatr9kD5i+HfjdLOqNAmGESPH5M1F5gQgM5Evcy/qC3F/8AkbRCljda172ox?=
+ =?us-ascii?Q?lkBVo9scX7bZoYDEenNbfRTx31/0kpo+LiwgmGvGzjRl/AfSQDm/FOaIYOEd?=
+ =?us-ascii?Q?X89LmzjQ+kNBZxPKOzkV1mqSX4ww+w5Gab3eh5V2zkXDpU6S3I3UK7qmBdpu?=
+ =?us-ascii?Q?wLiBJ9n66a0sY8o1yV8HzpnnO9pl10ahekiIK6YBgIi9BqiMOhQ+xu+96H/2?=
+ =?us-ascii?Q?9esy1Q4bmKTumZc276I1T2fO9f8h/roepHfpyqA9EKoe8+hfJ6m4yXzHOZiG?=
+ =?us-ascii?Q?HnYAyVW0r4SOizDC6E=3D?=
+X-Microsoft-Antispam-Message-Info: ftIWnXruMTQZp0cJftYhlpDOX2XpmMd0BXdlzFTSNjS4qura0vQl7UqaQv0RX/W/CYYwjHs+686J1qc2X7qa3cDwSDaxw4fjpFVZoHp6aULjGM3DVlEEf7RdfE0t+cgvLiTA9qA+vDSZ95/XBt2B4DwK1238AgNSNdQiPVFR5yQ80ehfS16eU3GFuHiE6iO4
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;6:7bcLUf5q2hWj6EHAV07O8HmIt/h21IDs4tXDdlGxl5GzNoyF1KumRw4lAK6qPGv3qh9a0PP9s6Do0JSBj4zhjaL4os2KTN0mLF9eEZI0d88w/G1icL1FtMdf54F5sruvbSkj6srCYSv/ZFgDPx0m1qzrMKem58ZU4Ik3f6GHEXGkLgft30f9bo0LT8ZkJiZZ9xBhd3M5s9Entvl3xgO5x0nZ9xyVGgYYKuVIhCaM+4SajwiyFUxlirCNuUPbYslg+2nMqere95UI6goEVfXnawDfA54RpFnr+nzWppbllqdLBqc33SQNs85t0WdAVsdgB6KeDK4Eycs3XBi5HaZlGxuQnOq85Z+hGbGqyfuZM+K242IYX45LqOIbaFlUuZiX44CofyKHxnbkeDVS0DSxST+laAo+jCa0k6y59PWSanCJ8NZU7HPcBXt/QoXHE0ydnZkIl7b1pXtpysiaNs7oZw==;5:vHlX7SxKRCI9yQei+Z5K0UfMVnbcty5829bk3cWaxR0ITeC/nm0zNc4fUiqXnZ/mOAQitvWDHjXT85fV/TL+6d4lAOMYAWaomWcbri+QqpbpVb7dT/qC3+wwVh9+ZQ1KaPaTRoMUYg2JuWFcm13QCBwbU6pqGlsnF1zPXj/8sc4=;24:Mc8cb0qbCL1u9A/ED3vRJk/Ci4i+XPdr0MSbrAho/2EwpPRVp1NhCYSWeUWvfrSEG+FcJpj4mYlum0BOEfpSNHI4lg4ov4YcG6wNVaBe7Bc=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR03MB2180;7:SgLDFtLmF0QjwXXXszrYJuVZQcYkOg3j/5pgK3IvDZoz3B4HnLnz+zPxXvMXjDBw0tG9vR5q9dbYURutzrDVYFuUDIjeEPxMd+Odb+x/Yy+rNH+aEtWyNW8jq+g5Y2/ahJc+H+nMxGKpxPrYdUkiIJIUyuirJpMUj+QiEXKOSBoRdvhgVoQ8AusP9+m6Aaogp5/exE6psEPLzvDzi5buYFpZfzT/0+MbYMLKhKUhozC2xZE6sWrfm2/WfCFO4Z9U
-X-MS-Office365-Filtering-Correlation-Id: 3bedce20-b2c7-49c3-70df-08d5b6f070ad
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2189;7:f3WobbwqBIJlu+2hjib5tuYlGt2gibVlbkqqdfl+YwRRFNdvFmBsvK8QWz7KzMBZhNUCUIwvQC3wRlipG5FtDG8tqaubIeOlqIZXgA7LbZiCXI/yymCAV1MtpwWSBISjCAOM14S9UiEz1feFMd+OGqmLIq6yn1HHPGPGSa2EQy7WDbYwervMda6Bekf8SVH7PQOjIGTSoKdBbiNZA4Xk6T20gmiVbtn22EOJPxnTK11XFJhRyQWURGJGdYZ0A0hw
+X-MS-Office365-Filtering-Correlation-Id: 412c5e39-aee1-438e-8682-08d5b6f07990
 X-OriginatorOrg: freescale.onmicrosoft.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2018 03:36:53.6934
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2018 03:37:08.7126
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3bedce20-b2c7-49c3-70df-08d5b6f070ad
+X-MS-Exchange-CrossTenant-Network-Message-Id: 412c5e39-aee1-438e-8682-08d5b6f07990
 X-MS-Exchange-CrossTenant-Id: 710a03f5-10f6-4d38-9ff4-a80b81da590d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=710a03f5-10f6-4d38-9ff4-a80b81da590d;Ip=[64.157.242.222];Helo=[tx30smr01.am.freescale.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR03MB2180
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN2PR03MB2189
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhang Ying-22455 <ying.zhang22455@nxp.com>
+From: Yuantian Tang <andy.tang@nxp.com>
 
-Set RCPM for FTM when using FTM as wakeup source. Because the RCPM
-module of each platform has different big-end and little-end mode,
-there need to set RCPM depending on the platform.
+Technically psci v0.2 can not support system sleep. Unfortunately
+our PPA only supports psci v0.2. So workaround this by changing
+psci v1.0 to v0.2 call to implement system sleep.
 
-Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
+Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
 Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
 ---
- .../devicetree/bindings/timer/fsl,ftm-timer.txt    |    7 ++
- drivers/soc/fsl/layerscape/ftm_alarm.c             |   92 ++++++++++++++++++-
- 2 files changed, 94 insertions(+), 5 deletions(-)
+ drivers/firmware/psci.c |   16 ++++++++++++++--
+ 1 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/timer/fsl,ftm-timer.txt b/Documentation/devicetree/bindings/timer/fsl,ftm-timer.txt
-index aa8c402..15ead58 100644
---- a/Documentation/devicetree/bindings/timer/fsl,ftm-timer.txt
-+++ b/Documentation/devicetree/bindings/timer/fsl,ftm-timer.txt
-@@ -3,6 +3,13 @@ Freescale FlexTimer Module (FTM) Timer
- Required properties:
+diff --git a/drivers/firmware/psci.c b/drivers/firmware/psci.c
+index c80ec1d..0bd795f 100644
+--- a/drivers/firmware/psci.c
++++ b/drivers/firmware/psci.c
+@@ -437,8 +437,18 @@ int psci_cpu_suspend_enter(unsigned long index)
  
- - compatible : should be "fsl,ftm-timer"
-+ Possible compatibles for ARM:
-+     "fsl,ls1012a-ftm"
-+     "fsl,ls1021a-ftm"
-+     "fsl,ls1043a-ftm"
-+     "fsl,ls1046a-ftm"
-+     "fsl,ls1088a-ftm"
-+     "fsl,ls208xa-ftm"
- - reg : Specifies base physical address and size of the register sets for the
-   clock event device and clock source device.
- - interrupts : Should be the clock event device interrupt.
-diff --git a/drivers/soc/fsl/layerscape/ftm_alarm.c b/drivers/soc/fsl/layerscape/ftm_alarm.c
-index 6f9882f..811dcfa 100644
---- a/drivers/soc/fsl/layerscape/ftm_alarm.c
-+++ b/drivers/soc/fsl/layerscape/ftm_alarm.c
-@@ -16,6 +16,9 @@
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
- #include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/libata.h>
- 
- #define FTM_SC			0x00
- #define FTM_SC_CLK_SHIFT	3
-@@ -40,6 +43,59 @@
- static u32 alarm_freq;
- static bool big_endian;
- 
-+enum pmu_endian_type {
-+	BIG_ENDIAN,
-+	LITTLE_ENDIAN,
-+};
-+
-+struct rcpm_cfg {
-+	enum pmu_endian_type big_endian; /* Big/Little endian of PMU module */
-+
-+	/* FlexTimer1 is not powerdown during device LPM20 */
-+	u32 flextimer_set_bit;
-+};
-+
-+static struct rcpm_cfg ls1012a_rcpm_cfg = {
-+	.big_endian = BIG_ENDIAN,
-+	.flextimer_set_bit = 0x20000,
-+};
-+
-+static struct rcpm_cfg ls1021a_rcpm_cfg = {
-+	.big_endian = BIG_ENDIAN,
-+	.flextimer_set_bit = 0x20000,
-+};
-+
-+static struct rcpm_cfg ls1043a_rcpm_cfg = {
-+	.big_endian = BIG_ENDIAN,
-+	.flextimer_set_bit = 0x20000,
-+};
-+
-+static struct rcpm_cfg ls1046a_rcpm_cfg = {
-+	.big_endian = BIG_ENDIAN,
-+	.flextimer_set_bit = 0x20000,
-+};
-+
-+static struct rcpm_cfg ls1088a_rcpm_cfg = {
-+	.big_endian = LITTLE_ENDIAN,
-+	.flextimer_set_bit = 0x4000,
-+};
-+
-+static struct rcpm_cfg ls208xa_rcpm_cfg = {
-+	.big_endian = LITTLE_ENDIAN,
-+	.flextimer_set_bit = 0x4000,
-+};
-+
-+static const struct of_device_id ippdexpcr_of_match[] = {
-+	{ .compatible = "fsl,ls1012a-ftm", .data = &ls1012a_rcpm_cfg},
-+	{ .compatible = "fsl,ls1021a-ftm", .data = &ls1021a_rcpm_cfg},
-+	{ .compatible = "fsl,ls1043a-ftm", .data = &ls1043a_rcpm_cfg},
-+	{ .compatible = "fsl,ls1046a-ftm", .data = &ls1046a_rcpm_cfg},
-+	{ .compatible = "fsl,ls1088a-ftm", .data = &ls1088a_rcpm_cfg},
-+	{ .compatible = "fsl,ls208xa-ftm", .data = &ls208xa_rcpm_cfg},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, ippdexpcr_of_match);
-+
- static inline u32 ftm_readl(void __iomem *addr)
+ static int psci_system_suspend(unsigned long unused)
  {
- 	if (big_endian)
-@@ -214,7 +270,10 @@ static int ftm_alarm_probe(struct platform_device *pdev)
- 	struct resource *r;
- 	int irq;
- 	int ret;
--	u32 ippdexpcr;
-+	struct rcpm_cfg *rcpm_cfg;
-+	u32 ippdexpcr, flextimer;
-+	const struct of_device_id *of_id;
-+	enum pmu_endian_type endian;
- 
- 	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!r)
-@@ -224,14 +283,32 @@ static int ftm_alarm_probe(struct platform_device *pdev)
- 	if (IS_ERR(ftm1_base))
- 		return PTR_ERR(ftm1_base);
- 
-+	of_id = of_match_node(ippdexpcr_of_match, np);
-+	if (!of_id)
-+		return -ENODEV;
+-	return invoke_psci_fn(PSCI_FN_NATIVE(1_0, SYSTEM_SUSPEND),
+-			      __pa_symbol(cpu_resume), 0, 0);
++	u32 state;
++	u32 ver = psci_get_version();
 +
-+	rcpm_cfg = devm_kzalloc(&pdev->dev, sizeof(*rcpm_cfg), GFP_KERNEL);
-+	if (!rcpm_cfg)
-+		return -ENOMEM;
++	if (PSCI_VERSION_MAJOR(ver) >= 1) {
++		return invoke_psci_fn(PSCI_FN_NATIVE(1_0, SYSTEM_SUSPEND),
++				virt_to_phys(cpu_resume), 0, 0);
++	} else {
++		state = (2 << PSCI_0_2_POWER_STATE_AFFL_SHIFT) |
++			(1 << PSCI_0_2_POWER_STATE_TYPE_SHIFT);
 +
-+	rcpm_cfg = (struct rcpm_cfg *)of_id->data;
-+	endian = rcpm_cfg->big_endian;
-+	flextimer = rcpm_cfg->flextimer_set_bit;
-+
- 	r = platform_get_resource_byname(pdev, IORESOURCE_MEM, "FlexTimer1");
- 	if (r) {
- 		rcpm_ftm_addr = devm_ioremap_resource(&pdev->dev, r);
- 		if (IS_ERR(rcpm_ftm_addr))
- 			return PTR_ERR(rcpm_ftm_addr);
--		ippdexpcr = ioread32be(rcpm_ftm_addr);
--		ippdexpcr |= 0x20000;
--		iowrite32be(ippdexpcr, rcpm_ftm_addr);
-+		if (endian == BIG_ENDIAN)
-+			ippdexpcr = ioread32be(rcpm_ftm_addr);
-+		else
-+			ippdexpcr = ioread32(rcpm_ftm_addr);
-+		ippdexpcr |= flextimer;
-+		if (endian == BIG_ENDIAN)
-+			iowrite32be(ippdexpcr, rcpm_ftm_addr);
-+		else
-+			iowrite32(ippdexpcr, rcpm_ftm_addr);
- 	}
- 
- 	irq = irq_of_parse_and_map(np, 0);
-@@ -265,7 +342,12 @@ static int ftm_alarm_probe(struct platform_device *pdev)
++		return psci_cpu_suspend(state, virt_to_phys(cpu_resume));
++	}
  }
  
- static const struct of_device_id ftm_alarm_match[] = {
--	{ .compatible = "fsl,ftm-alarm", },
-+	{ .compatible = "fsl,ls1012a-ftm", },
-+	{ .compatible = "fsl,ls1021a-ftm", },
-+	{ .compatible = "fsl,ls1043a-ftm", },
-+	{ .compatible = "fsl,ls1046a-ftm", },
-+	{ .compatible = "fsl,ls1088a-ftm", },
-+	{ .compatible = "fsl,ls208xa-ftm", },
- 	{ .compatible = "fsl,ftm-timer", },
- 	{ },
- };
+ static int psci_system_suspend_enter(suspend_state_t state)
+@@ -562,6 +572,8 @@ static void __init psci_0_2_set_functions(void)
+ 	arm_pm_restart = psci_sys_reset;
+ 
+ 	pm_power_off = psci_sys_poweroff;
++
++	suspend_set_ops(&psci_suspend_ops);
+ }
+ 
+ /*
 -- 
 1.7.1
