@@ -1,52 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751955AbeEKPkd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 11:40:33 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:56566 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751839AbeEKPkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 11:40:13 -0400
-Date: Fri, 11 May 2018 17:39:47 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        devel@acpica.org
-Subject: Re: [RFC PATCH v4 2/3] acpi: apei: Rename ghes_severity() to
- ghes_cper_severity()
-Message-ID: <20180511153947.GC12705@pd.tnic>
-References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-2-mr.nuke.me@gmail.com>
+        id S1752019AbeEKPkv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 11:40:51 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:54802 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751839AbeEKPkt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 11:40:49 -0400
+Date: Fri, 11 May 2018 11:40:19 -0400
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To: Wanpeng Li <kernellwp@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Tim Shearer <tshearer@advaoptical.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: Re: [PATCH 0/3] KVM: VMX: Allow to disable ioport intercept per-VM
+ by userspace
+Message-ID: <20180511154019.GG27459@char.us.oracle.com>
+References: <1523943962-25415-1-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180430213358.8319-2-mr.nuke.me@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1523943962-25415-1-git-send-email-wanpengli@tencent.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8890 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=793
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805110148
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 30, 2018 at 04:33:51PM -0500, Alexandru Gagniuc wrote:
-> ghes_severity() is a misnomer in this case, as it implies the severity
-> of the entire GHES structure. Instead, it maps one CPER value to a
-> monotonically increasing number.
+On Mon, Apr 16, 2018 at 10:45:59PM -0700, Wanpeng Li wrote:
+> Tim Shearer reported that "There is a guest which is running a packet
+> forwarding app based on the DPDK (dpdk.org). The packet receive routine
+> writes to 0xc070 using glibc's "outw_p" function which does an additional
+> write to I/O port 0x80. It does this write for every packet that's
+> received, causing a flood of KVM userspace context switches". He uses
+> mpstat to observe a CPU performing L2 packet forwarding on a pinned
+> guest vCPU, the guest time is 95 percent when allowing I/O port 0x80
+> bypass, however, it is 65.78 percent when I/O port 0x80 bypss is
+> disabled.
+> 
+> This patchset introduces per-VM I/O permission bitmaps, the userspace
+> can disable the ioport intercept when they are more concern the
+> performance than the security.
 
-... as opposed to CPER severity which is something else or what is this
-formulation trying to express?
+Could you kindly also add:
 
--- 
-Regards/Gruss,
-    Boris.
+Suggested-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Thank you.
