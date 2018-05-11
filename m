@@ -1,95 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751932AbeEKFR2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 01:17:28 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:40318 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750758AbeEKFR0 (ORCPT
+        id S1752214AbeEKFVI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 01:21:08 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:38560 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751352AbeEKFVG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 01:17:26 -0400
-X-Google-Smtp-Source: AB8JxZqpEJROcoF1ETohxKAEllX40d/Ai1qaaPBGYqvO++eL/MVK5w3VePUb13yO64jhwS8JK2NhzqT/qLNN9jM20f4=
+        Fri, 11 May 2018 01:21:06 -0400
+X-Google-Smtp-Source: AB8JxZrQ0vuafNI/Dek1DWzTy1yettiLV989+fwPuDfjX5iWY5rs1vD55D5QgWdzjIxlH/YZp00MSg==
+Date: Fri, 11 May 2018 14:20:59 +0900
+From: DaeRyong Jeong <threeearcat@gmail.com>
+To: santosh.shilimkar@oracle.com, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org,
+        byoungyoung@purdue.edu, kt0755@gmail.com
+Subject: KASAN: null-ptr-deref Read in rds_ib_get_mr
+Message-ID: <20180511052056.GA10547@dragonet.kaist.ac.kr>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1xDCS1X-4UETB5WW5txD38hrRUGKAfqU=SUy93o3DH5g@mail.gmail.com>
-References: <4ccb747b-fb3b-18c8-8737-2cc02d7b1c34@roeck-us.net>
- <CAEbi=3cr5i3HKLKOacFih9pz00c7UBKrd=o4ER8HAUT1j_oqGg@mail.gmail.com>
- <CAK8P3a2cogDMEdvhNt8CsJwaONWOgBR7zR3sABun4u8pAgTtqQ@mail.gmail.com>
- <CAEbi=3d11ZcxgyoL-ZEruUzj0odDZ2GZXALNTtC7p55nfkkObA@mail.gmail.com> <CAK8P3a1xDCS1X-4UETB5WW5txD38hrRUGKAfqU=SUy93o3DH5g@mail.gmail.com>
-From: Kito Cheng <kito.cheng@gmail.com>
-Date: Fri, 11 May 2018 13:17:05 +0800
-X-Google-Sender-Auth: P5a5bQBqRw8CdZScFkVnFNCnmU8
-Message-ID: <CA+yXCZBqrz5Ftmen8wH5uBWGAKQ0cxPiK_nqKS6meUxXCPQ3Og@mail.gmail.com>
-Subject: Re: nds32 build failures
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Greentime Hu <green.hu@gmail.com>,
-        Guenter Roeck <private@roeck-us.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Vincent Chen <vincentc@andestech.com>,
-        Greentime Hu <greentime@andestech.com>,
-        =?UTF-8?B?QWxlYyBJLVdlaSBXdSjlkLPlpZXnt68p?= <wuiw@andestech.com>,
-        Chung-Ju Wu <jasonwucj@gmail.com>, Kito Cheng <kito@andestech.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd:
+We report the crash: KASAN: null-ptr-deref Read in rds_ib_get_mr
 
-I am GCC guy from Andes, we've missed the release schedule for GCC 8,
-we didn't upstream the Linux support on time.
+Note that this bug is previously reported by syzkaller.
+https://syzkaller.appspot.com/bug?id=0bb56a5a48b000b52aa2b0d8dd20b1f545214d91
+Nonetheless, this bug has not fixed yet, and we hope that this report and our
+analysis, which gets help by the RaceFuzzer's feature, will helpful to fix the
+crash.
 
-Our plan is put our GCC 8 on github and continue commit rest patches
-to upstream.
-And we'll put our source on github after our internal testing done.
+This crash has been found in v4.17-rc1 using RaceFuzzer (a modified
+version of Syzkaller), which we describe more at the end of this
+report. Our analysis shows that the race occurs when invoking two
+syscalls concurrently, bind$rds and setsockopt$RDS_GET_MR.
 
-Thanks.
 
-On Fri, May 11, 2018 at 10:40 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wed, Apr 18, 2018 at 3:19 AM, Greentime Hu <green.hu@gmail.com> wrote:
->> 2018-04-17 20:47 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
->>> On Mon, Apr 16, 2018 at 11:06 AM, Greentime Hu <green.hu@gmail.com> wrote:
->>>> 2018-04-16 11:58 GMT+08:00 Guenter Roeck <private@roeck-us.net>:
->>>>
->>>> This built failure is because the toolchain version you used is not
->>>> supported the latest intrinsic function/macro.
->>>> We are sending the latest patchset now and we expect the whole new
->>>> features will be supported in gcc8.0.0 and binutil2.31+.
->>>>
->>>> If you'd like to get these new features of toolchain, you may use the
->>>> github version.
->>>> This is the built-script repo. https://github.com/andestech/build_script.git
->>>
->>> I've taken the gcc-6.3 sources from there, and updated them to gcc-6.4.0
->>> in order to build a nds32le-linux toolchain based on the same version as
->>> the other ones.
->>>
->>> Unfortunately neither the usual binutils-2.29.1 nor your binutils worked
->>> for me, but I eventually managed to get a build using the binutils-2.30
->>> release.
->>>
->>> With this, I could build a mainline kernel with a couple of warnings,
->>> but an 'allmodconfig' build still failed.
->>>
->>> Guenter, can you try my binary from
->>> www.kernel.org/pub/tools/crosstool/files/bin/x86_64/6.4.0/x86_64-gcc-6.4.0-nolibc-nds32le-linux.tar.xz
->>> ?
->>>
->>> If that works for you, I'll update the front-page and remove the nds32-elf
->>> toolchains.
->>>
->>> Greentime, do you have a patch set for gcc-7.3 as well, or are 6.3 and 8.0 the
->>> only working compilers for nds32le-linux?
->>>
->>
->> Hi, all:
->>
->> I just discuss with our toolchain colleagues. We have only gcc6.3 and
->> gcc8.0 for nds32le-linux.
->> I have the ld segmentation fault issue too when building kernel with
->> 'allmodconfig'. We are dealing with it.
->
-> I've tried building the mainline gcc-8.1 sources for nds32le-linux and
-> still got a failure with those (building gcc), building a nds32le-elf gcc-8.1.0
-> worked fine, but that fails to build the vdso (no support for -fPIC), so
-> it's again unusable for building kernels. Any other ideas?
->
->           Arnd
+Analysis:
+We think the concurrent execution of __rds_rdma_map() and rds_bind()
+causes the problem. __rds_rdma_map() checks whether rs->rs_bound_addr is 0
+or not. But the concurrent execution with rds_bind() can by-pass this
+check. Therefore, __rds_rdmap_map() calls rs->rs_transport->get_mr() and
+rds_ib_get_mr() causes the null deref at ib_rdma.c:544 in v4.17-rc1, when
+dereferencing rs_conn.
+
+
+Thread interleaving:
+CPU0 (__rds_rdma_map)					CPU1 (rds_bind)
+							// rds_add_bound() sets rs->bound_addr as none 0
+							ret = rds_add_bound(rs, sin->sin_addr.s_addr, &sin->sin_port);
+if (rs->rs_bound_addr == 0 || !rs->rs_transport) {
+	ret = -ENOTCONN; /* XXX not a great errno */
+	goto out;
+}
+							if (rs->rs_transport) { /* previously bound */
+								trans = rs->rs_transport;
+								if (trans->laddr_check(sock_net(sock->sk),
+										       sin->sin_addr.s_addr) != 0) {
+									ret = -ENOPROTOOPT;
+									// rds_remove_bound() sets rs->bound_addr as 0
+									rds_remove_bound(rs);
+...
+trans_private = rs->rs_transport->get_mr(sg, nents, rs,
+					 &mr->r_key);
+(in rds_ib_get_mr())
+struct rds_ib_connection *ic = rs->rs_conn->c_transport_data;
+
+
+Call sequence (v4.17-rc1):
+CPU0
+rds_setsockopt
+	rds_get_mr
+		__rds_rdma_map
+			rds_ib_get_mr
+
+
+CPU1
+rds_bind
+	rds_add_bound
+	...
+	rds_remove_bound
+
+
+Crash log:
+==================================================================
+BUG: KASAN: null-ptr-deref in rds_ib_get_mr+0x3a/0x150 net/rds/ib_rdma.c:544
+Read of size 8 at addr 0000000000000068 by task syz-executor0/32067
+
+CPU: 0 PID: 32067 Comm: syz-executor0 Not tainted 4.17.0-rc1 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.8.2-0-g33fbe13 by qemu-project.org 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x166/0x21c lib/dump_stack.c:113
+ kasan_report_error mm/kasan/report.c:352 [inline]
+ kasan_report+0x140/0x360 mm/kasan/report.c:412
+ check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+ __asan_load8+0x54/0x90 mm/kasan/kasan.c:699
+ rds_ib_get_mr+0x3a/0x150 net/rds/ib_rdma.c:544
+ __rds_rdma_map+0x521/0x9d0 net/rds/rdma.c:271
+ rds_get_mr+0xad/0xf0 net/rds/rdma.c:333
+ rds_setsockopt+0x57f/0x720 net/rds/af_rds.c:347
+ __sys_setsockopt+0x147/0x230 net/socket.c:1903
+ __do_sys_setsockopt net/socket.c:1914 [inline]
+ __se_sys_setsockopt net/socket.c:1911 [inline]
+ __x64_sys_setsockopt+0x67/0x80 net/socket.c:1911
+ do_syscall_64+0x15f/0x4a0 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4563f9
+RSP: 002b:00007f6a2b3c2b28 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 000000000072bee0 RCX: 00000000004563f9
+RDX: 0000000000000002 RSI: 0000000000000114 RDI: 0000000000000015
+RBP: 0000000000000575 R08: 0000000000000020 R09: 0000000000000000
+R10: 0000000020000140 R11: 0000000000000246 R12: 00007f6a2b3c36d4
+R13: 00000000ffffffff R14: 00000000006fd398 R15: 0000000000000000
+==================================================================
+
+
+= About RaceFuzzer
+
+RaceFuzzer is a customized version of Syzkaller, specifically tailored
+to find race condition bugs in the Linux kernel. While we leverage
+many different technique, the notable feature of RaceFuzzer is in
+leveraging a custom hypervisor (QEMU/KVM) to interleave the
+scheduling. In particular, we modified the hypervisor to intentionally
+stall a per-core execution, which is similar to supporting per-core
+breakpoint functionality. This allows RaceFuzzer to force the kernel
+to deterministically trigger racy condition (which may rarely happen
+in practice due to randomness in scheduling).
+
+RaceFuzzer's C repro always pinpoints two racy syscalls. Since C
+repro's scheduling synchronization should be performed at the user
+space, its reproducibility is limited (reproduction may take from 1
+second to 10 minutes (or even more), depending on a bug). This is
+because, while RaceFuzzer precisely interleaves the scheduling at the
+kernel's instruction level when finding this bug, C repro cannot fully
+utilize such a feature. Please disregard all code related to
+"should_hypercall" in the C repro, as this is only for our debugging
+purposes using our own hypervisor.
