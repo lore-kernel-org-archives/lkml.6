@@ -1,55 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752019AbeEKPkv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 11:40:51 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:54802 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751839AbeEKPkt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 11:40:49 -0400
-Date: Fri, 11 May 2018 11:40:19 -0400
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Tim Shearer <tshearer@advaoptical.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: Re: [PATCH 0/3] KVM: VMX: Allow to disable ioport intercept per-VM
- by userspace
-Message-ID: <20180511154019.GG27459@char.us.oracle.com>
-References: <1523943962-25415-1-git-send-email-wanpengli@tencent.com>
+        id S1752046AbeEKPlE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 11:41:04 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:56672 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752021AbeEKPlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 11:41:02 -0400
+Date: Fri, 11 May 2018 17:40:39 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Tyler Baicar <tbaicar@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        devel@acpica.org
+Subject: Re: [RFC PATCH v4 3/3] acpi: apei: Do not panic() on PCIe errors
+ reported through GHES
+Message-ID: <20180511154039.GD12705@pd.tnic>
+References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
+ <20180430213358.8319-1-mr.nuke.me@gmail.com>
+ <20180430213358.8319-3-mr.nuke.me@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1523943962-25415-1-git-send-email-wanpengli@tencent.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8890 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=793
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805110148
+In-Reply-To: <20180430213358.8319-3-mr.nuke.me@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 16, 2018 at 10:45:59PM -0700, Wanpeng Li wrote:
-> Tim Shearer reported that "There is a guest which is running a packet
-> forwarding app based on the DPDK (dpdk.org). The packet receive routine
-> writes to 0xc070 using glibc's "outw_p" function which does an additional
-> write to I/O port 0x80. It does this write for every packet that's
-> received, causing a flood of KVM userspace context switches". He uses
-> mpstat to observe a CPU performing L2 packet forwarding on a pinned
-> guest vCPU, the guest time is 95 percent when allowing I/O port 0x80
-> bypass, however, it is 65.78 percent when I/O port 0x80 bypss is
-> disabled.
+On Mon, Apr 30, 2018 at 04:33:52PM -0500, Alexandru Gagniuc wrote:
+> The policy was to panic() when GHES said that an error is "Fatal".
+> This logic is wrong for several reasons, as it doesn't take into
+> account what caused the error.
 > 
-> This patchset introduces per-VM I/O permission bitmaps, the userspace
-> can disable the ioport intercept when they are more concern the
-> performance than the security.
+> PCIe fatal errors indicate that the link to a device is either
+> unstable or unusable. They don't indicate that the machine is on fire,
+> and they are not severe enough that we need to panic(). Instead of
+> relying on crackmonkey firmware, evaluate the error severity based on
+	     ^^^^^^^^^^^^
 
-Could you kindly also add:
+Please keep the smartass formulations for the ML only and do not let
+them leak into commit messages.
 
-Suggested-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> ---
+>  drivers/acpi/apei/ghes.c | 45 ++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 42 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index c9f1971333c1..49318fba409c 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -425,8 +425,7 @@ static void ghes_handle_memory_failure(struct acpi_hest_generic_data *gdata, int
+>   * GHES_SEV_RECOVERABLE -> AER_NONFATAL
+>   * GHES_SEV_RECOVERABLE && CPER_SEC_RESET -> AER_FATAL
+>   *     These both need to be reported and recovered from by the AER driver.
+> - * GHES_SEV_PANIC does not make it to this handling since the kernel must
+> - *     panic.
+> + * GHES_SEV_PANIC -> AER_FATAL
+>   */
+>  static void ghes_handle_aer(struct acpi_hest_generic_data *gdata)
+>  {
+> @@ -459,6 +458,46 @@ static void ghes_handle_aer(struct acpi_hest_generic_data *gdata)
+>  #endif
+>  }
+>  
+> +/* PCIe errors should not cause a panic. */
+> +static int ghes_sec_pcie_severity(struct acpi_hest_generic_data *gdata)
+> +{
+> +	struct cper_sec_pcie *pcie_err = acpi_hest_get_payload(gdata);
+> +
+> +	if (pcie_err->validation_bits & CPER_PCIE_VALID_DEVICE_ID &&
+> +	    pcie_err->validation_bits & CPER_PCIE_VALID_AER_INFO &&
+> +	    IS_ENABLED(CONFIG_ACPI_APEI_PCIEAER))
 
-Thank you.
+How is PCIe error severity dependent on whether the AER error reporting
+driver is enabled (and possibly not even loaded) on the system?
+
+> +		return CPER_SEV_RECOVERABLE;
+> +
+> +	return ghes_cper_severity(gdata->error_severity);
+> +}
+> +/*
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
