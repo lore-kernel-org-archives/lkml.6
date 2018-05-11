@@ -1,44 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752859AbeEKK5E (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 06:57:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41085 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752666AbeEKK5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 06:57:03 -0400
-From: Juergen Gross <jgross@suse.com>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com
-Subject: [GIT PULL] xen: fix for 4.17-rc5
-Date: Fri, 11 May 2018 12:57:01 +0200
-Message-Id: <20180511105701.22827-1-jgross@suse.com>
-X-Mailer: git-send-email 2.13.6
+        id S1752854AbeEKK7g (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 06:59:36 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39822 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752362AbeEKK7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 06:59:35 -0400
+Date: Fri, 11 May 2018 11:59:32 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] perf/ring_buffer: ensure atomicity and order of updates
+Message-ID: <20180511105931.yyarmtz2gjkbuq2a@lakrids.cambridge.arm.com>
+References: <20180510130632.34497-1-mark.rutland@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510130632.34497-1-mark.rutland@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Thu, May 10, 2018 at 02:06:32PM +0100, Mark Rutland wrote:
+> -	smp_wmb(); /* B, matches C */
+> -	rb->user_page->data_head = head;
+> +	smp_store_release(&rb->user_page->data_head, head); /* B, matches C */
 
-Please git pull the following tag:
+> -	rb->user_page->aux_head = rb->aux_head;
+> +	smp_store_release(&rb->user_page->aux_head, rb->aux_head);
 
- git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-4.17-rc5-tag
-
-xen: fix for 4.17-rc5
-
-It contains one fix for the kernel running as a fully virtualized
-guest using PV drivers on old Xen hypervisor versions.
+> -	rb->user_page->aux_head = rb->aux_head;
+> +	smp_store_release(&rb->user_page->aux_head, rb->aux_head);
 
 
-Thanks.
+The kbuild test robot has helpfully discovered another latent bug here.
 
-Juergen
+We assume we can make single-copy-atomic accesses to
+{aux,data}_{head,tail}, but this isn't necessarily true on 32-bit
+architectures, and smp_store_release() rightly complains at build time.
 
- arch/x86/xen/enlighten_hvm.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+READ_ONCE() and WRITE_ONCE() "helpfully" make a silent fallback to a
+memcpy in this case, so we're broken today, regardless of this change.
 
-Juergen Gross (1):
-      Merge tag 'for-linus-4.17-rc5-tag' of gitolite.kernel.org:pub/scm/linux/kernel/git/xen/tip into __for-linus-4.17-rc5-tag
+I suspect that in practice we get single-copy-atomicity for the 32-bit
+halves, and sessions likely produce less than 4GiB of ringbuffer data,
+so failures would be rare.
 
-van der Linden, Frank (1):
-      x86/xen: Reset VCPU0 info pointer after shared_info remap
+I'm not sure how to fix the ABI here. The same issue applies on the
+userspace side, so whatever we do we need to fix both sides.
+
+Thanks,
+Mark.
