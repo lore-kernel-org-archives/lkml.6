@@ -1,97 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752141AbeEKC4U (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 22:56:20 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:46982 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752028AbeEKC4O (ORCPT
+        id S1752179AbeEKC5G (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 22:57:06 -0400
+Received: from smtprelay0210.hostedemail.com ([216.40.44.210]:51660 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751099AbeEKC5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 22:56:14 -0400
-X-Google-Smtp-Source: AB8JxZr38lDwqB3WX+Nimjbq98+hyujDW9LqL5AWNv2+5xGqXj6Aejhf8aOiwm0S9g4ElB/Xvk4JmA==
-Date: Fri, 11 May 2018 10:52:17 +0800
-From: Wang YanQing <udknight@gmail.com>
-To: linux@armlinux.org.uk
-Cc: daniel@iogearbox.net, ast@fb.com, illusionist.neo@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] bpf, arm32: Fix inconsistent naming about
- emit_a32_lsr_r64|emit_a32_lsr_i64
-Message-ID: <20180511025217.GA7621@udknight>
-Mail-Followup-To: Wang YanQing <udknight@gmail.com>, linux@armlinux.org.uk,
-        daniel@iogearbox.net, ast@fb.com, illusionist.neo@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.7.1 (2016-10-04)
+        Thu, 10 May 2018 22:57:05 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:69:355:379:541:599:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:1981:2194:2199:2393:2559:2562:2693:2828:2895:3138:3139:3140:3141:3142:3353:3622:3866:3867:3868:3870:3871:3872:3874:4321:5007:6119:6238:10004:10400:10848:11026:11232:11658:11914:12043:12438:12555:12740:12760:12895:12986:13439:13870:13904:14659:14721:21080:21324:21451:21611:21627:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:21,LUA_SUMMARY:none
+X-HE-Tag: fog70_3d9f24425992e
+X-Filterd-Recvd-Size: 2986
+Message-ID: <bd86d9c85d3d1ff4bb0bb6ca4d7e76d168362ab8.camel@perches.com>
+Subject: Re: [PATCH 03/18] printk: Convert pr_fmt from blank define to
+ KBUILD_MODNAME
+From: Joe Perches <joe@perches.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Date: Thu, 10 May 2018 19:57:01 -0700
+In-Reply-To: <20180511024144.GA416@jagdpanzerIV>
+References: <20180511022314.GA491@jagdpanzerIV>
+         <5b898d97466c512049493c26d5fd4bf8123ed7c7.camel@perches.com>
+         <20180511024144.GA416@jagdpanzerIV>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The names for BPF_ALU64 | BPF_ARSH are emit_a32_arsh_*,
-the names for BPF_ALU64 | BPF_LSH are emit_a32_lsh_*, but
-the names for BPF_ALU64 | BPF_RSH are emit_a32_lsr_*.
+On Fri, 2018-05-11 at 11:41 +0900, Sergey Senozhatsky wrote:
+> On (05/10/18 19:33), Joe Perches wrote:
+> > > 
+> > > [   28.420519] generic: RSP: 0018:ffffa01dc062bda8 EFLAGS: 00010282
+> > > [   28.420522] generic: RAX: ffffffff8317612f RBX: ffffffffffffffea RCX: ffffa01dc062bdc8
+> > > [   28.420523] generic: RDX: 000055a6a3f03110 RSI: 0000000000000001 RDI: ffffffff83e31540
+> > > [   28.420525] generic: RBP: 0000000000000001 R08: ffffa01dc062bec0 R09: 0000000000000004
+> > > [   28.420526] generic: R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000001
+> > > [   28.420528] generic: R13: ffffffff83e31540 R14: ffffa01dc062bec0 R15: 0000000000000002
+> > > [   28.420547] generic: ? rcu_read_lock_sched_held+0x5d/0x63
+> > > [   28.420549] generic: ? rcu_sync_lockdep_assert+0x2e/0x54
+> > > [   28.420551] generic: ? __sb_start_write+0xeb/0x1a3
+> > > 
+> > > Correct?
+> > 
+> > No, that stack dump comes from arch/x86/kernel/dumpstack.c
+> > and that uses printk(KERN_DEFAULT ... and generic printk(
+> > which is not prefixed at all.
+> 
+> That's platform specific. Right?
 
-For consistence reason, let's rename emit_a32_lsr_* to
-emit_a32_rsh_*.
+yes, it seems so.
 
-This patch also correct a wrong comment.
+> Most of platforms [probably most of them]
+> use plain printk("... %pS"). But some use pr_emerg("[<%p>] %s%pS\n") or
+> pr_info("PC: [<%08lx>] %pS\n"), and so on.
+> 
+> In case of x86, I think we will have some changes as well. Looking
+> at generic __warn(): pr_warn("WARNING: CPU: %d PID: %d at %s:%d %pS\n")
+> and pr_warn("WARNING: CPU: %d PID: %d at %pS\n") and probably some
+> others will change now:
+> 
+> Instead of
+> 
+> [    0.000000] ------------[ cut here ]------------
+> [    0.000000] WARNING: CPU: 0 PID: 0 at blah-blah-blah
+> 
+> we will have
+> [    0.000000] panic: ------------[ cut here ]------------
+> [    0.000000] panic: WARNING: CPU: 0 PID: 0 at blah-blah-blah
 
-Signed-off-by: Wang YanQing <udknight@gmail.com>
----
- Changes v1-v2:
- 1:Rewords the changelog.
+right.
 
- arch/arm/net/bpf_jit_32.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+So far, I've made no attempt to update arch/...
 
-diff --git a/arch/arm/net/bpf_jit_32.c b/arch/arm/net/bpf_jit_32.c
-index b5030e1..caccc78 100644
---- a/arch/arm/net/bpf_jit_32.c
-+++ b/arch/arm/net/bpf_jit_32.c
-@@ -708,7 +708,7 @@ static inline void emit_a32_arsh_r64(const u8 dst[], const u8 src[], bool dstk,
- }
- 
- /* dst = dst >> src */
--static inline void emit_a32_lsr_r64(const u8 dst[], const u8 src[], bool dstk,
-+static inline void emit_a32_rsh_r64(const u8 dst[], const u8 src[], bool dstk,
- 				     bool sstk, struct jit_ctx *ctx) {
- 	const u8 *tmp = bpf2a32[TMP_REG_1];
- 	const u8 *tmp2 = bpf2a32[TMP_REG_2];
-@@ -724,7 +724,7 @@ static inline void emit_a32_lsr_r64(const u8 dst[], const u8 src[], bool dstk,
- 		emit(ARM_LDR_I(rm, ARM_SP, STACK_VAR(dst_hi)), ctx);
- 	}
- 
--	/* Do LSH operation */
-+	/* Do RSH operation */
- 	emit(ARM_RSB_I(ARM_IP, rt, 32), ctx);
- 	emit(ARM_SUBS_I(tmp2[0], rt, 32), ctx);
- 	emit(ARM_MOV_SR(ARM_LR, rd, SRTYPE_LSR, rt), ctx);
-@@ -774,7 +774,7 @@ static inline void emit_a32_lsh_i64(const u8 dst[], bool dstk,
- }
- 
- /* dst = dst >> val */
--static inline void emit_a32_lsr_i64(const u8 dst[], bool dstk,
-+static inline void emit_a32_rsh_i64(const u8 dst[], bool dstk,
- 				    const u32 val, struct jit_ctx *ctx) {
- 	const u8 *tmp = bpf2a32[TMP_REG_1];
- 	const u8 *tmp2 = bpf2a32[TMP_REG_2];
-@@ -1330,7 +1330,7 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx)
- 	case BPF_ALU64 | BPF_RSH | BPF_K:
- 		if (unlikely(imm > 63))
- 			return -EINVAL;
--		emit_a32_lsr_i64(dst, dstk, imm, ctx);
-+		emit_a32_rsh_i64(dst, dstk, imm, ctx);
- 		break;
- 	/* dst = dst << src */
- 	case BPF_ALU64 | BPF_LSH | BPF_X:
-@@ -1338,7 +1338,7 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx)
- 		break;
- 	/* dst = dst >> src */
- 	case BPF_ALU64 | BPF_RSH | BPF_X:
--		emit_a32_lsr_r64(dst, src, dstk, sstk, ctx);
-+		emit_a32_rsh_r64(dst, src, dstk, sstk, ctx);
- 		break;
- 	/* dst = dst >> src (signed) */
- 	case BPF_ALU64 | BPF_ARSH | BPF_X:
--- 
-1.8.5.6.2.g3d8a54e.dirty
+It's almost certain that some additions of
+	#define pr_fmt(fmt) fmt
+will need to be made for some arch/... files.
