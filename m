@@ -1,79 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752616AbeEKJuL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 05:50:11 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:44092 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750806AbeEKJuK (ORCPT
+        id S1752836AbeEKJyC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 05:54:02 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35426 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752729AbeEKJyA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 05:50:10 -0400
-X-Google-Smtp-Source: AB8JxZoCEQbCGb88fFRN5G6O+1Kqemnh4JaMieeO7SS+ZIZoGiKb+IeWt3MegfARpk2hjfMCbHBmSw==
-Date: Fri, 11 May 2018 18:50:04 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: printk feature for syzbot?
-Message-ID: <20180511095004.GA6575@jagdpanzerIV>
-References: <201805102350.JJH73950.tVJHQLFSOMOOFF@I-love.SAKURA.ne.jp>
- <20180511014515.GA895@jagdpanzerIV>
- <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
- <20180511062151.GA18160@jagdpanzerIV>
- <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
+        Fri, 11 May 2018 05:54:00 -0400
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH RFC 1/2] vfio-ccw: forward halt/clear to device if
+ supported
+To: Cornelia Huck <cohuck@redhat.com>,
+        Dong Jia Shi <bjsdjshi@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qemu-s390x@nongnu.org,
+        qemu-devel@nongnu.org
+References: <20180509154910.23578-1-cohuck@redhat.com>
+ <20180509154910.23578-2-cohuck@redhat.com>
+From: Pierre Morel <pmorel@linux.ibm.com>
+Date: Fri, 11 May 2018 11:53:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180509154910.23578-2-cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18051109-0012-0000-0000-000005D5981D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051109-0013-0000-0000-000019529FA8
+Message-Id: <d2030a0c-6ab6-a470-f7d7-0926a7ff2b28@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805110095
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (05/11/18 11:17), Dmitry Vyukov wrote:
-> 
-> From what I see, it seems that interrupts can be nested:
+On 09/05/2018 17:49, Cornelia Huck wrote:
+> The initial version of vfio-ccw did not support forwarding of the
+> halt or clear functions to the device, and we had to emulate them
+> instead.
+>
+> For versions of the vfio-ccw kernel implementation that indeed do
+> support halt/clear (by indicating them in the fctl of the scsw in
+> the io_region), we can simply start making use of it. If the kernel
+> does not support handling halt/clear, fall back to emulation.
+>
+> Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+> ---
+>   hw/s390x/css.c         | 32 ++++++++++++++++++++++++++++----
+>   hw/vfio/ccw.c          | 11 +++++++++--
+>   include/hw/s390x/css.h | 10 +++++++---
+>   3 files changed, 44 insertions(+), 9 deletions(-)
+>
+> diff --git a/hw/s390x/css.c b/hw/s390x/css.c
+> index 301bf1772f..b6727d0607 100644
+> --- a/hw/s390x/css.c
+> +++ b/hw/s390x/css.c
+> @@ -1180,6 +1180,16 @@ static void sch_handle_start_func_virtual(SubchDev *sch)
+>   
+>   }
+>   
+> +static IOInstEnding sch_handle_clear_func_passthrough(SubchDev *sch)
+> +{
+> +    return s390_ccw_cmd_request(sch);
+> +}
+> +
+> +static IOInstEnding sch_handle_halt_func_passthrough(SubchDev *sch)
+> +{
+> +    return s390_ccw_cmd_request(sch);
+> +}
+> +
+>   static IOInstEnding sch_handle_start_func_passthrough(SubchDev *sch)
+>   {
+>   
+> @@ -1233,13 +1243,27 @@ IOInstEnding do_subchannel_work_virtual(SubchDev *sch)
+>   IOInstEnding do_subchannel_work_passthrough(SubchDev *sch)
+>   {
+>       SCSW *s = &sch->curr_status.scsw;
+> +    static bool no_halt_clear;
+>   
+> +    /* if the kernel does not support halt/clear, fall back to emulation */
+>       if (s->ctrl & SCSW_FCTL_CLEAR_FUNC) {
+> -        /* TODO: Clear handling */
+> -        sch_handle_clear_func(sch);
+> +        if (no_halt_clear) {
+> +            sch_handle_clear_func(sch);
+> +        } else {
+> +            if (sch_handle_clear_func_passthrough(sch) == IOINST_OPNOTSUPP) {
+> +                no_halt_clear = true;
+> +                sch_handle_halt_func(sch);
+> +            }
+> +        }
+>       } else if (s->ctrl & SCSW_FCTL_HALT_FUNC) {
+> -        /* TODO: Halt handling */
+> -        sch_handle_halt_func(sch);
+> +        if (no_halt_clear) {
+> +            sch_handle_halt_func(sch);
+> +        } else {
+> +            if (sch_handle_halt_func_passthrough(sch) == IOINST_OPNOTSUPP) {
+> +                no_halt_clear = true;
+> +                sch_handle_halt_func(sch);
+> +            }
+> +        }
+>       } else if (s->ctrl & SCSW_FCTL_START_FUNC) {
+>           return sch_handle_start_func_passthrough(sch);
+>       }
+> diff --git a/hw/vfio/ccw.c b/hw/vfio/ccw.c
+> index e67392c5f9..247901ae41 100644
+> --- a/hw/vfio/ccw.c
+> +++ b/hw/vfio/ccw.c
+> @@ -60,6 +60,7 @@ static IOInstEnding vfio_ccw_handle_request(SubchDev *sch)
+>   
+>       memset(region, 0, sizeof(*region));
+>   
+> +    /* orb is only valid for ssch, but does not hurt for other functions */
+>       memcpy(region->orb_area, &sch->orb, sizeof(ORB));
+>       memcpy(region->scsw_area, &sch->curr_status.scsw, sizeof(SCSW));
+>   
+> @@ -70,8 +71,12 @@ again:
+>           if (errno == EAGAIN) {
+>               goto again;
+>           }
+> -        error_report("vfio-ccw: wirte I/O region failed with errno=%d", errno);
+> -        ret = -errno;
+> +        /* handle not supported operations like halt/clear on older kernels */
+> +        if (ret != -EOPNOTSUPP) {
+> +            error_report("vfio-ccw: write I/O region failed with errno=%d",
+> +                         errno);
+> +            ret = -errno;
+> +        }
+>       } else {
+>           ret = region->ret_code;
+>       }
+> @@ -83,6 +88,8 @@ again:
+>       case -ENODEV:
+>       case -EACCES:
+>           return IOINST_CC_NOT_OPERATIONAL;
+> +    case -EOPNOTSUPP:
+> +        return IOINST_OPNOTSUPP;
+>       case -EFAULT:
+>       default:
+>           sch_gen_unit_exception(sch);
+> diff --git a/include/hw/s390x/css.h b/include/hw/s390x/css.h
+> index 35facb47d2..e33f26882b 100644
+> --- a/include/hw/s390x/css.h
+> +++ b/include/hw/s390x/css.h
+> @@ -100,9 +100,11 @@ typedef struct CcwDataStream {
+>   } CcwDataStream;
+>   
+>   /*
+> - * IO instructions conclude according to this. Currently we have only
+> - * cc codes. Valid values are 0, 1, 2, 3 and the generic semantic for
+> + * IO instructions conclude according to this. One class of values are
+> + * cc codes: Valid values are 0, 1, 2, 3 and the generic semantic for
+>    * IO instructions is described briefly. For more details consult the PoP.
+> + * Additionally, other endings may occur due to internal processing errors
+> + * like lack of support for an operation.
+>    */
+>   typedef enum IOInstEnding {
+>       /* produced expected result */
+> @@ -112,7 +114,9 @@ typedef enum IOInstEnding {
+>       /* inst. ineffective because busy with previously initiated function */
+>       IOINST_CC_BUSY = 2,
+>       /* inst. ineffective because not operational */
+> -    IOINST_CC_NOT_OPERATIONAL = 3
+> +    IOINST_CC_NOT_OPERATIONAL = 3,
+> +    /* internal: operation not supported */
+> +    IOINST_OPNOTSUPP = 4
+>   } IOInstEnding;
+>   
+>   typedef struct SubchDev SubchDev;
 
-Hm, I thought that in general IRQ handlers run with local IRQs
-disabled on CPU. So, generally, IRQs don't nest. Was I wrong?
-NMIs can nest, that's true; but I thought that at least IRQs
-don't.
 
-> https://syzkaller.appspot.com/bug?id=72eddef9cedcf81486adb9dd3e789f0d77505ba5
-> https://syzkaller.appspot.com/bug?id=66fcf61c65f8aa50bbb862eb2fde27c08909a4ff
-> 
-> Will this in_nmi()/in_irq()/in_serving_softirq()/else be enough to
-> untangle output printed by such nested interrupts?
+Couldn't we introduce ABI versioning ?
 
-Well, hm. __irq_enter() does preempt_count_add(HARDIRQ_OFFSET) and
-__irq_exit() does preempt_count_sub(HARDIRQ_OFFSET). So, technically,
-you can store
 
-	preempt_count() & HARDIRQ_MASK
-	preempt_count() & SOFTIRQ_MASK
-	preempt_count() & NMI_MASK
-
-in that extended context tracking. The numbers will not tell you
-the IRQ line number, for instance, but at least you'll be able to
-distinguish different hard/soft IRQs, NMIs. Just an idea, I didn't
-check it, may be it won't work at all.
-
-Ideally, the serial log should be like this
-
-	i:1 ... foo()
-	i:1 ... bar()
-	i:2 ... foo()  // __irq_enter()
-	i:2 ... bar()
-	i:2 ... buz()  // __irq_exit()
-	i:1 ... buz()
-
-but I may be completely wrong.
-
-Petr and Steven probably will have better ideas.
-
-	-ss
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
