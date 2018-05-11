@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753600AbeEKPHm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 11:07:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:43220 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753423AbeEKPGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 11:06:01 -0400
+        id S1753418AbeEKPF7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 11:05:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43172 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753145AbeEKPF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 11:05:57 -0400
 From: Dave Martin <Dave.Martin@arm.com>
 To: linux-kernel@vger.kernel.org
 Cc: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
@@ -15,10 +15,10 @@ Cc: Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
         Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
-        linux-arch@vger.kernel.org
-Subject: [PATCH REPOST 4/5] powerpc: Use update_thread_flag()
-Date: Fri, 11 May 2018 16:05:03 +0100
-Message-Id: <1526051104-15995-5-git-send-email-Dave.Martin@arm.com>
+        linux-arch@vger.kernel.org, Russell King <linux@armlinux.org.uk>
+Subject: [PATCH REPOST 2/5] ARM: Use update_thread_flag()
+Date: Fri, 11 May 2018 16:05:01 +0100
+Message-Id: <1526051104-15995-3-git-send-email-Dave.Martin@arm.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1526051104-15995-1-git-send-email-Dave.Martin@arm.com>
 References: <1526051104-15995-1-git-send-email-Dave.Martin@arm.com>
@@ -26,39 +26,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch uses the new update_thread_flag() helper to simplify a
-couple of if () set; else clear; constructs.
+This patch uses the new update_thread_flag() helper to simplify an
+if () set; else clear; construct.
 
 No functional change.
 
 Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Russell King <linux@armlinux.org.uk>
 ---
- arch/powerpc/include/asm/elf.h | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ arch/arm/kernel/elf.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/elf.h b/arch/powerpc/include/asm/elf.h
-index 548d9a4..136c9b1 100644
---- a/arch/powerpc/include/asm/elf.h
-+++ b/arch/powerpc/include/asm/elf.h
-@@ -88,14 +88,8 @@ typedef elf_vrregset_t elf_fpxregset_t;
- #ifdef __powerpc64__
- # define SET_PERSONALITY(ex)					\
- do {								\
--	if (((ex).e_flags & 0x3) == 2)				\
--		set_thread_flag(TIF_ELF2ABI);			\
--	else							\
--		clear_thread_flag(TIF_ELF2ABI);			\
--	if ((ex).e_ident[EI_CLASS] == ELFCLASS32)		\
--		set_thread_flag(TIF_32BIT);			\
--	else							\
--		clear_thread_flag(TIF_32BIT);			\
-+	update_thread_flag(TIF_ELF2ABI, ((ex).e_flags & 0x3) == 2);	\
-+	update_thread_flag(TIF_32BIT, (ex).e_ident[EI_CLASS] == ELFCLASS32); \
- 	if (personality(current->personality) != PER_LINUX32)	\
- 		set_personality(PER_LINUX |			\
- 			(current->personality & (~PER_MASK)));	\
+diff --git a/arch/arm/kernel/elf.c b/arch/arm/kernel/elf.c
+index 1824229..aade393 100644
+--- a/arch/arm/kernel/elf.c
++++ b/arch/arm/kernel/elf.c
+@@ -68,12 +68,9 @@ void elf_set_personality(const struct elf32_hdr *x)
+ 	 * binary is EABI or softfloat (and thus, guaranteed not to use
+ 	 * FPA instructions.)
+ 	 */
+-	if (elf_hwcap & HWCAP_IWMMXT &&
+-	    eflags & (EF_ARM_EABI_MASK | EF_ARM_SOFT_FLOAT)) {
+-		set_thread_flag(TIF_USING_IWMMXT);
+-	} else {
+-		clear_thread_flag(TIF_USING_IWMMXT);
+-	}
++	update_thread_flag(TIF_USING_IWMMXT,
++			   elf_hwcap & HWCAP_IWMMXT &&
++			   eflags & (EF_ARM_EABI_MASK | EF_ARM_SOFT_FLOAT));
+ }
+ EXPORT_SYMBOL(elf_set_personality);
+ 
 -- 
 2.1.4
