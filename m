@@ -1,86 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753316AbeEKOIB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 10:08:01 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52380 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753086AbeEKOH7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 10:07:59 -0400
-Subject: Re: [rds-devel] KASAN: null-ptr-deref Read in rds_ib_get_mr
-To: Sowmini Varadhan <sowmini.varadhan@oracle.com>
-Cc: DaeRyong Jeong <threeearcat@gmail.com>, santosh.shilimkar@oracle.com,
-        davem@davemloft.net, rds-devel@oss.oracle.com, kt0755@gmail.com,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, byoungyoung@purdue.edu
-References: <20180511052056.GA10547@dragonet.kaist.ac.kr>
- <fa3461d4-8872-48af-9b67-be0affd16bbd@oracle.com>
- <20180511104630.GD14952@oracle.com>
-From: Yanjun Zhu <yanjun.zhu@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <7ee8589c-97ab-6843-3095-f735040b6f13@oracle.com>
-Date: Fri, 11 May 2018 22:07:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753230AbeEKOJ6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 10:09:58 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7667 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752592AbeEKOJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 10:09:57 -0400
+Subject: Re: [PATCH v3 2/2] arm64: dts: hi3660: Add pcie msi interrupt
+ attribute
+To: Yao Chen <chenyao11@huawei.com>, <songxiaowei@hisilicon.com>,
+        <wangbinghui@hisilicon.com>, <lorenzo.pieralisi@arm.com>,
+        <bhelgaas@google.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+References: <1526030149-23985-1-git-send-email-chenyao11@huawei.com>
+ <1526030149-23985-3-git-send-email-chenyao11@huawei.com>
+CC: <dimitrysh@google.com>, <guodong.xu@linaro.org>,
+        <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
+        <xuwei5@hisilicon.com>
+From: Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5AF5A411.4010507@hisilicon.com>
+Date: Fri, 11 May 2018 15:09:21 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180511104630.GD14952@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1526030149-23985-3-git-send-email-chenyao11@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8889 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=853
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805110134
+X-Originating-IP: [10.202.226.45]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Yao,
 
+On 2018/5/11 10:15, Yao Chen wrote:
+> Add pcie msi interrupt attribute for hi3660 SOC.
+> 
+> Signed-off-by: Yao Chen <chenyao11@huawei.com>
 
-On 2018/5/11 18:46, Sowmini Varadhan wrote:
-> On (05/11/18 15:48), Yanjun Zhu wrote:
->> diff --git a/net/rds/ib_rdma.c b/net/rds/ib_rdma.c
->> index e678699..2228b50 100644
->> --- a/net/rds/ib_rdma.c
->> +++ b/net/rds/ib_rdma.c
->> @@ -539,11 +539,17 @@ void rds_ib_flush_mrs(void)
->>     void *rds_ib_get_mr(struct scatterlist *sg, unsigned long nents,
->>                                          struct rds_sock *rs, u32 *key_ret)
->>     {
->> -             struct rds_ib_device *rds_ibdev;
->> +             struct rds_ib_device *rds_ibdev = NULL;
->>                  struct rds_ib_mr *ibmr = NULL;
->> -             struct rds_ib_connection *ic = rs->rs_conn->c_transport_data;
->> +             struct rds_ib_connection *ic = NULL;
->>                  int ret;
->>
->> +             if (rs->rs_bound_addr == 0) {
->> +                             ret = -EPERM;
->> +                             goto out;
->> +             }
->> +
->> +             ic = rs->rs_conn->c_transport_data;
->>                  rds_ibdev = rds_ib_get_device(rs->rs_bound_addr);
->>                  if (!rds_ibdev) {
->>                                  ret = -ENODEV;
->>
->> I made this raw patch. If you can reproduce this bug, please make tests
->> with it.
-> I dont think this solves the problem, I think it
-> just changes the timing under which it can still happen.
->
-> what if the rds_remove_bound() in rds_bind() happens after the check
-> for if (rs->rs_bound_addr == 0) added above by the patch
->
-> I believe you need some type of synchronization (either
-> through mutex, or some atomic flag in the rs or similar) to make
-> sure rds_bind() and rds_ib_get_mr() are mutually exclusive.
-Sure. I agree with you. Maybe mutex is a good choice.
+Applied patch 2 into the hisilicon dt tree.
+Thanks!
 
-Zhu Yanjun
->
-> --Sowmini
->   
->
->
+BR,
+Wei
+
+> ---
+>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> index ec3eb8e..2cef8f4 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> @@ -872,6 +872,8 @@
+>  				  0x0 0x02000000>;
+>  			num-lanes = <1>;
+>  			#interrupt-cells = <1>;
+> +			interrupts = <0 283 4>;
+> +			interrupt-names = "msi";
+>  			interrupt-map-mask = <0xf800 0 0 7>;
+>  			interrupt-map = <0x0 0 0 1
+>  					 &gic GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
+> 
