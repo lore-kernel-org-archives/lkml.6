@@ -1,114 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751169AbeEKTXj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 15:23:39 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:60578 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750711AbeEKTXi (ORCPT
+        id S1751579AbeEKT0x (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 15:26:53 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:28297 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751169AbeEKT0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 15:23:38 -0400
-From: Qing Huang <qing.huang@oracle.com>
-To: tariqt@mellanox.com, davem@davemloft.net, haakon.bugge@oracle.com,
-        yanjun.zhu@oracle.com
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Qing Huang <qing.huang@oracle.com>
-Subject: [PATCH V2] mlx4_core: allocate ICM memory in page size chunks
-Date: Fri, 11 May 2018 12:23:18 -0700
-Message-Id: <20180511192318.22342-1-qing.huang@oracle.com>
-X-Mailer: git-send-email 2.9.3
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8890 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=787
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805110177
+        Fri, 11 May 2018 15:26:51 -0400
+From: Murali Karicheri <m-karicheri2@ti.com>
+To: <ssantosh@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux@armlinux.org.uk>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [linux-next PATCH 1/4] ARM: dts: k2g: add dt bindings to support network driver
+Date: Fri, 11 May 2018 15:29:09 -0400
+Message-ID: <1526066952-5230-2-git-send-email-m-karicheri2@ti.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526066952-5230-1-git-send-email-m-karicheri2@ti.com>
+References: <1526066952-5230-1-git-send-email-m-karicheri2@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a system is under memory presure (high usage with fragments),
-the original 256KB ICM chunk allocations will likely trigger kernel
-memory management to enter slow path doing memory compact/migration
-ops in order to complete high order memory allocations.
+This patch add dt bindings to support network driver based on
+Network Sub System (NSS) found on k2g SoC. This consists of
+bindings for netcp node, nss qmss , pktdma, cpsw 2u version
+of ethss and mdio.
 
-When that happens, user processes calling uverb APIs may get stuck
-for more than 120s easily even though there are a lot of free pages
-in smaller chunks available in the system.
+In order to support transitioning between non-promiscuous
+and promiscuous modes in K2G's ethernet switch, netcp ALE
+needs to be enabled. Therefore this patch enables K2G's
+netcp ALE for that purpose.
 
-Syslog:
-...
-Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
-oracle_205573_e:205573 blocked for more than 120 seconds.
-...
-
-With 4KB ICM chunk size on x86_64 arch, the above issue is fixed.
-
-However in order to support smaller ICM chunk size, we need to fix
-another issue in large size kcalloc allocations.
-
-E.g.
-Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
-size, each ICM chunk can only hold 512 mtt entries (8 bytes for each mtt
-entry). So we need a 16MB allocation for a table->icm pointer array to
-hold 2M pointers which can easily cause kcalloc to fail.
-
-The solution is to use vzalloc to replace kcalloc. There is no need
-for contiguous memory pages for a driver meta data structure (no need
-of DMA ops).
-
-Signed-off-by: Qing Huang <qing.huang@oracle.com>
-Acked-by: Daniel Jurgens <danielj@mellanox.com>
-Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
+Signed-off-by: WingMan Kwok <w-kwok2@ti.com>
+Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 ---
-v2 -> v1: adjusted chunk size to reflect different architectures.
+ arch/arm/boot/dts/keystone-k2g-netcp.dtsi | 147 ++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/keystone-k2g.dtsi       |  13 +++
+ 2 files changed, 160 insertions(+)
+ create mode 100644 arch/arm/boot/dts/keystone-k2g-netcp.dtsi
 
- drivers/net/ethernet/mellanox/mlx4/icm.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c b/drivers/net/ethernet/mellanox/mlx4/icm.c
-index a822f7a..ccb62b8 100644
---- a/drivers/net/ethernet/mellanox/mlx4/icm.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
-@@ -43,12 +43,12 @@
- #include "fw.h"
- 
- /*
-- * We allocate in as big chunks as we can, up to a maximum of 256 KB
-- * per chunk.
-+ * We allocate in page size (default 4KB on many archs) chunks to avoid high
-+ * order memory allocations in fragmented/high usage memory situation.
-  */
- enum {
--	MLX4_ICM_ALLOC_SIZE	= 1 << 18,
--	MLX4_TABLE_CHUNK_SIZE	= 1 << 18
-+	MLX4_ICM_ALLOC_SIZE	= 1 << PAGE_SHIFT,
-+	MLX4_TABLE_CHUNK_SIZE	= 1 << PAGE_SHIFT
+diff --git a/arch/arm/boot/dts/keystone-k2g-netcp.dtsi b/arch/arm/boot/dts/keystone-k2g-netcp.dtsi
+new file mode 100644
+index 0000000..d0e6a9a
+--- /dev/null
++++ b/arch/arm/boot/dts/keystone-k2g-netcp.dtsi
+@@ -0,0 +1,147 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for K2G Netcp driver
++ *
++ * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
++ */
++
++qmss: qmss@4020000 {
++	compatible = "ti,66ak2g-navss-qm";
++	dma-coherent;
++	#address-cells = <1>;
++	#size-cells = <1>;
++	power-domains = <&k2g_pds 0x0018>;
++	clocks = <&k2g_clks 0x0018 0>;
++	clock-names = "nss_vclk";
++	ranges;
++	queue-range = <0 0x80>;
++	linkram0 = <0x4020000 0x7ff>;
++	status = "disabled";
++
++	qmgrs {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++		qmgr0 {
++			managed-queues = <0 0x80>;
++			reg = <0x4100000 0x800>,
++			      <0x4040000 0x100>,
++			      <0x4080000 0x800>,
++			      <0x40c0000 0x800>;
++			reg-names = "peek", "config",
++				    "region", "push";
++		};
++
++	};
++	queue-pools {
++		qpend {
++			qpend-0 {
++				qrange = <77 8>;
++				interrupts =<0 308 0xf04 0 309 0xf04 0 310 0xf04
++					     0 311 0xf04 0 312 0xf04 0 313 0xf04
++					     0 314 0xf04 0 315 0xf04>;
++				qalloc-by-id;
++			};
++		};
++		general-purpose {
++			gp-0 {
++				qrange = <112 8>;
++			};
++			netcp-tx {
++				qrange = <5 8>;
++				qalloc-by-id;
++			};
++		};
++	};
++
++	descriptor-regions {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++		region-12 {
++			id = <12>;
++			region-spec = <1023 128>; /* num_desc desc_size */
++			link-index = <0x400>;
++		};
++	};
++}; /* qmss */
++
++knav_dmas: knav_dmas@0 {
++	compatible = "ti,keystone-navigator-dma";
++	#address-cells = <1>;
++	#size-cells = <1>;
++	status = "disabled";
++	power-domains = <&k2g_pds 0x0018>;
++	clocks = <&k2g_clks 0x0018 0>;
++	clock-names = "nss_vclk";
++	ranges;
++	ti,navigator-cloud-address = <0x40c0000 0x40c0000 0x40c0000 0x40c0000>;
++
++	dma_gbe: dma_gbe@0 {
++		reg = <0x4010000 0x100>,
++		      <0x4011000 0x2a0>, /* 21 Tx channels */
++		      <0x4012000 0x400>, /* 32 Rx channels */
++		      <0x4010100 0x80>,
++		      <0x4013000 0x400>; /* 32 Rx flows */
++		reg-names = "global", "txchan", "rxchan",
++			    "txsched", "rxflow";
++	};
++
++};
++
++netcp: netcp@4000000 {
++	reg = <0x2620110 0x8>;
++	reg-names = "efuse";
++	compatible = "ti,netcp-1.0";
++	#address-cells = <1>;
++	#size-cells = <1>;
++	status = "disabled";
++	power-domains = <&k2g_pds 0x0018>;
++	clocks = <&k2g_clks 0x0018 3>, <&k2g_clks 0x0018 8>;
++	clock-names = "ethss_clk", "cpts";
++
++	/* NetCP address range */
++	ranges = <0 0x4000000 0x1000000>;
++
++	dma-coherent;
++
++	ti,navigator-dmas = <&dma_gbe 0>, <&dma_gbe 5>;
++	ti,navigator-dma-names = "netrx0", "nettx";
++
++	netcp-devices {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++		gbe: gbe@200000 {
++			label = "netcp-gbe";
++			compatible = "ti,netcp-gbe-2";
++			reg = <0x200000 0x20>, <0x220000 0x20000>;
++			enable-ale;
++			tx-queue = <5>;
++			tx-channel = "nettx";
++			cpts-rftclk-sel = <0>;
++			cpts-ext-ts-inputs = <8>;
++
++			interfaces {
++				gbe0: interface-0 {
++					slave-port = <0>;
++					link-interface	= <5>;
++				};
++			};
++		};
++	};
++
++	netcp-interfaces {
++		interface-0 {
++			rx-channel = "netrx0";
++			rx-pool = <512 12>;
++			tx-pool = <511 12>;
++			rx-queue-depth = <128 128 0 0>;
++			rx-buffer-size = <1518 4096 0 0>;
++			rx-queue = <77>;
++			tx-completion-queue = <78>;
++			efuse-mac = <1>;
++			netcp-gbe = <&gbe0>;
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/keystone-k2g.dtsi b/arch/arm/boot/dts/keystone-k2g.dtsi
+index da78c00..a8324a7 100644
+--- a/arch/arm/boot/dts/keystone-k2g.dtsi
++++ b/arch/arm/boot/dts/keystone-k2g.dtsi
+@@ -609,5 +609,18 @@
+ 			reg = <0x21010000 0x200>;
+ 			interrupts = <GIC_SPI 123 IRQ_TYPE_EDGE_RISING>;
+ 		};
++
++		mdio: mdio@4200f00 {
++			compatible = "ti,keystone_mdio", "ti,davinci_mdio";
++			reg = <0x04200f00 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&k2g_clks 0x0018 3>;
++			clock-names = "fck";
++			power-domains = <&k2g_pds 0x0018>;
++			status = "disabled";
++			bus_freq = <2500000>;
++		};
++		#include "keystone-k2g-netcp.dtsi"
+ 	};
  };
- 
- static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct mlx4_icm_chunk *chunk)
-@@ -400,7 +400,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
- 	obj_per_chunk = MLX4_TABLE_CHUNK_SIZE / obj_size;
- 	num_icm = (nobj + obj_per_chunk - 1) / obj_per_chunk;
- 
--	table->icm      = kcalloc(num_icm, sizeof(*table->icm), GFP_KERNEL);
-+	table->icm      = vzalloc(num_icm * sizeof(*table->icm));
- 	if (!table->icm)
- 		return -ENOMEM;
- 	table->virt     = virt;
-@@ -446,7 +446,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table,
- 			mlx4_free_icm(dev, table->icm[i], use_coherent);
- 		}
- 
--	kfree(table->icm);
-+	vfree(table->icm);
- 
- 	return -ENOMEM;
- }
-@@ -462,5 +462,5 @@ void mlx4_cleanup_icm_table(struct mlx4_dev *dev, struct mlx4_icm_table *table)
- 			mlx4_free_icm(dev, table->icm[i], table->coherent);
- 		}
- 
--	kfree(table->icm);
-+	vfree(table->icm);
- }
 -- 
-2.9.3
+1.9.1
