@@ -1,92 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752987AbeEKKjM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 06:39:12 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39488 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752596AbeEKKjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 06:39:11 -0400
-Date: Fri, 11 May 2018 11:39:01 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: =?utf-8?B?77+977+9yKPvv73vv70=?= <hoeun.ryu@lge.com>
-Cc: "'Hoeun Ryu'" <hoeun.ryu@lge.com.com>,
-        "'Will Deacon'" <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] armpmu: broadcast overflow irq on multi-core system
- having one muxed SPI for PMU.
-Message-ID: <20180511103901.osi5lckq55jrms64@lakrids.cambridge.arm.com>
-References: <1525941385-12766-1-git-send-email-hoeun.ryu@lge.com.com>
- <20180510102114.obmctt3nn7xakggi@lakrids.cambridge.arm.com>
- <010c01d3e8b5$8839a480$98aced80$@lge.com>
+        id S1752986AbeEKKqp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 06:46:45 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:51210 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752386AbeEKKqn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 06:46:43 -0400
+Date: Fri, 11 May 2018 06:46:30 -0400
+From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+To: Yanjun Zhu <yanjun.zhu@oracle.com>
+Cc: DaeRyong Jeong <threeearcat@gmail.com>, santosh.shilimkar@oracle.com,
+        davem@davemloft.net, rds-devel@oss.oracle.com, kt0755@gmail.com,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, byoungyoung@purdue.edu
+Subject: Re: [rds-devel] KASAN: null-ptr-deref Read in rds_ib_get_mr
+Message-ID: <20180511104630.GD14952@oracle.com>
+References: <20180511052056.GA10547@dragonet.kaist.ac.kr>
+ <fa3461d4-8872-48af-9b67-be0affd16bbd@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <010c01d3e8b5$8839a480$98aced80$@lge.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <fa3461d4-8872-48af-9b67-be0affd16bbd@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8889 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=799
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805110103
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 08:20:49AM +0900, ��ȣ�� wrote:
-> Thank you for the reply.
+On (05/11/18 15:48), Yanjun Zhu wrote:
+> diff --git a/net/rds/ib_rdma.c b/net/rds/ib_rdma.c
+> index e678699..2228b50 100644
+> --- a/net/rds/ib_rdma.c
+> +++ b/net/rds/ib_rdma.c
+> @@ -539,11 +539,17 @@ void rds_ib_flush_mrs(void)
+>    void *rds_ib_get_mr(struct scatterlist *sg, unsigned long nents,
+>                                         struct rds_sock *rs, u32 *key_ret)
+>    {
+> -             struct rds_ib_device *rds_ibdev;
+> +             struct rds_ib_device *rds_ibdev = NULL;
+>                 struct rds_ib_mr *ibmr = NULL;
+> -             struct rds_ib_connection *ic = rs->rs_conn->c_transport_data;
+> +             struct rds_ib_connection *ic = NULL;
+>                 int ret;
 > 
-> > -----Original Message-----
-> > From: Mark Rutland [mailto:mark.rutland@arm.com]
-> > Sent: Thursday, May 10, 2018 7:21 PM
-> > To: Hoeun Ryu <hoeun.ryu@lge.com.com>
-> > Cc: Will Deacon <will.deacon@arm.com>; Hoeun Ryu <hoeun.ryu@lge.com>;
-> > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH] armpmu: broadcast overflow irq on multi-core system
-> > having one muxed SPI for PMU.
-
-> > Muxing the PMU IRQs is a really broken system design, and there's no good
-> > way of supporting it.
-
-> > What we should do for such systems is:
-> > 
-> > * Add a flag to the DT to describe that the IRQs are muxed, as this
-> >   cannot be probed.
-> > 
-> > * Add hrtimer code to periodically update the counters, to avoid
-> >   overflow (e.g. as we do in the l2x0 PMU).
-> > 
-> > * Reject sampling for such systems, as this cannot be done reliably or
-> >   efficiently.
-> > 
-> > NAK to broadcasting the IRQ -- there are a number of issues with the
-> > general approach.
+> +             if (rs->rs_bound_addr == 0) {
+> +                             ret = -EPERM;
+> +                             goto out;
+> +             }
+> +
+> +             ic = rs->rs_conn->c_transport_data;
+>                 rds_ibdev = rds_ib_get_device(rs->rs_bound_addr);
+>                 if (!rds_ibdev) {
+>                                 ret = -ENODEV;
 > 
-> The second solution would be good if sampling is necessary even like those
-> systems.
+> I made this raw patch. If you can reproduce this bug, please make tests 
+> with it.
 
-Please note that I mean *all* of the above. There would be no sampling
-on systems with muxed PMU IRQs, since there's no correlation between
-overflow events and the hrtimer interrupts -- the results of sampling
-would be misleading.
+I dont think this solves the problem, I think it
+just changes the timing under which it can still happen. 
 
-> Actually I'm working on FIQ available ARM32 system and trying to enable the
-> hard lockup detector by routing the PMU IRQ to FIQ.
-> Because of that, I really need the interrupt event if it is a muxed SPI,
-> beside I also need to make an dedicated IPI FIQ to broadcast the IRQ in
-> this approach.
-> What would you do if you were in the same situation ?
+what if the rds_remove_bound() in rds_bind() happens after the check
+for if (rs->rs_bound_addr == 0) added above by the patch 
 
-I don't think that this can work with a muxed IRQ, sorry.
+I believe you need some type of synchronization (either
+through mutex, or some atomic flag in the rs or similar) to make
+sure rds_bind() and rds_ib_get_mr() are mutually exclusive.
 
-It would be better to use some kind of timer.
-
-[...]
-
-> > Futher, If you ever encounter a case where you need to avoid preemption
-> > across enabling IRQs, preemption must be disabled *before* enabling IRQs.
-> 
-> Ah, OK.
-> Enabling IRQs can cause scheduling tasks in the end of exception or other
-> scheduling points, right ?
-
-Yes. If an IRQ was taken *between* enabling IRQs and disabling
-preemption, preemption may occur as part of the exception return.
-
-Thanks,
-Mark.
+--Sowmini
+ 
