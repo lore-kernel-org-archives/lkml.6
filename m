@@ -1,55 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751333AbeEKVW7 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 17:22:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48706 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750798AbeEKVW6 (ORCPT
+        id S1751787AbeEKV0N (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 17:26:13 -0400
+Received: from mail-it0-f43.google.com ([209.85.214.43]:56292 "EHLO
+        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750985AbeEKV0M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 17:22:58 -0400
-Date: Fri, 11 May 2018 14:22:56 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Larry Chen <lchen@suse.com>
-Cc: mfasheh@versity.com, jlbec@evilplan.org, linux-kernel@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com
-Subject: Re: [PATCH] ocfs2: ocfs2_inode_lock_tracker does not distinguish
- lock level
-Message-Id: <20180511142256.ecabae077ddd5fb18df29959@linux-foundation.org>
-In-Reply-To: <88053e38-350e-34a4-b3d8-431297dc1f90@suse.com>
-References: <20180510053230.17217-1-lchen@suse.com>
-        <20180510144944.d0842b82b99a471dbbc745ad@linux-foundation.org>
-        <88053e38-350e-34a4-b3d8-431297dc1f90@suse.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+        Fri, 11 May 2018 17:26:12 -0400
+X-Google-Smtp-Source: AB8JxZqK/5jjrOVpk84QJ0rVVcjZ6eHRF0+w+zv6BQQp42pjB4YJxL3hjooGkBCF6+vTVkjlao18E+VujJuhg74kQLk=
+MIME-Version: 1.0
+References: <20180511.170018.656888133931954275.davem@davemloft.net>
+In-Reply-To: <20180511.170018.656888133931954275.davem@davemloft.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 11 May 2018 14:25:59 -0700
+Message-ID: <CA+55aFyxKMxA2jLcZ3Z7hfqNZps6wXpfxEhkAcCmZ0OJdxGxgQ@mail.gmail.com>
+Subject: Re: [GIT] Networking
+To: David Miller <davem@davemloft.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 May 2018 12:16:51 +0800 Larry Chen <lchen@suse.com> wrote:
+David, is there something you want to tell us?
 
-> > Nice changelog, but it gives no information about the severity of the
-> > bug: how often does it hit and what is the end-user impact.
-> >
-> > This info is needed so that I and others can decide which kernel
-> > version(s) need the patch, so please always include it when fixing a
-> > bug, thanks.
-> 
-> Thanks for your review and feel sorry for not providing enough information.
-> 
-> For the status quo of ocfs2, without this patch, neither a bug nor end-user
-> impact will be caused because the wrong logic is avoided.
-> 
-> But I'm afraid this generic interface, may be called by other
-> developers in future and used in this situation.
-> 
->      a process
-> ocfs2_inode_lock_tracker(ex=0)
-> ocfs2_inode_lock_tracker(ex=1)
+Drugs are bad, m'kay..
 
-OK, thanks.
+               Linus
 
-> By the way, should I resend this patch with this info included?
+On Fri, May 11, 2018 at 2:00 PM David Miller <davem@davemloft.net> wrote:
 
-I pasted the above into my copy of the changelog so we're good.
+> "from Kevin Easton", "Thanks to Bhadram Varka", "courtesy of Gustavo A.
+> R.  Silva", "To Eric Dumazet we are most grateful for this fix", "This
+> fix from YU Bo, we do appreciate", "Once again we are blessed by the
+> honorable Eric Dumazet with this fix", "This fix is bestowed upon us by
+> Andrew Tomt", "another great gift from Eric Dumazet", "to Hangbin Liu we
+> give thanks for this", "Paolo Abeni, he gave us this", "thank you Moshe
+> Shemesh", "from our good brother David Howells", "Daniel Juergens,
+> you're the best!", "Debabrata Benerjee saved us!", "The ship is now
+> water tight, thanks to Andrey Ignatov", "from Colin Ian King, man we've
+> got holes everywhere!", "Jiri Pirko what would we do without you!
