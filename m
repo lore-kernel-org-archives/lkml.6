@@ -1,63 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752821AbeEKJQD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 05:16:03 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56421 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751406AbeEKJQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 05:16:01 -0400
-From: Yao Chen <chenyao11@huawei.com>
-To: <songxiaowei@hisilicon.com>, <wangbinghui@hisilicon.com>,
-        <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <xuwei5@hisilicon.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
-CC: <dimitrysh@google.com>, <guodong.xu@linaro.org>,
-        <chenyao11@huawei.com>, <suzhuangluan@hisilicon.com>,
-        <kongfei@hisilicon.com>
-Subject: [PATCH v3 0/2] Add MSI support
-Date: Fri, 11 May 2018 17:15:47 +0800
-Message-ID: <1526030149-23985-1-git-send-email-chenyao11@huawei.com>
-X-Mailer: git-send-email 1.9.1
+        id S1752880AbeEKJRn (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 05:17:43 -0400
+Received: from mail-pl0-f52.google.com ([209.85.160.52]:44719 "EHLO
+        mail-pl0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752264AbeEKJRl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 05:17:41 -0400
+X-Google-Smtp-Source: AB8JxZpZq3r7eDV16Cwc21j7r3nbhosP6wOrauQn5UCYzzoQun4CRawXDc+nQ+BMmlpUqailnZAqeSsFQm07FgAiZ1A=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.143.148.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180511062151.GA18160@jagdpanzerIV>
+References: <201805102350.JJH73950.tVJHQLFSOMOOFF@I-love.SAKURA.ne.jp>
+ <20180511014515.GA895@jagdpanzerIV> <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
+ <20180511062151.GA18160@jagdpanzerIV>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, 11 May 2018 11:17:20 +0200
+Message-ID: <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
+Subject: Re: printk feature for syzbot?
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Before Version Patches
-======================
-patch v2
-https://www.spinics.net/lists/kernel/msg2797610.html
+On Fri, May 11, 2018 at 8:21 AM, Sergey Senozhatsky
+<sergey.senozhatsky.work@gmail.com> wrote:
+> On (05/11/18 11:38), Tetsuo Handa wrote:
+>> >
+>> > So you basically want to have one more con_msg_format_flags? Do
+>> > you want to track a context which prints out a messages or the
+>> > context which "generated" the message? A CPU/task that stores
+>> > a logbuf entry - vprintk_emit() - is not always the same as the
+>> > CPU/task that prints it to consoles - console_unlock().
+>> >
+>>
+>> Well, below is the (partial) patch.
+>
+> Hi,
+>
+> Tetsuo, I will take a look a bit later, but at glance, there are several
+> ways to achieve what you are trying to do. The first one is the way you
+> did it - add additional buffer and make that context tracking info part of
+> the message body. Another one would be to extend struct printk_log and add
+> pid/cpu/flag there, which you then can convert into text in msg_print_text().
+> So far we talked about extending printk_log. Yet another one could be - add
+> vsprintf specifiers that would add pid/cpu/flag to the vsprintf-ed message.
+> You then can re-define pr_fmt, for instance, in the code you want to track
+> pr_fmt "%zZ" fmt, or somehow force printk to add that "%zZ" to every
+> message.
 
-patch v1
-https://www.spinics.net/lists/kernel/msg2796410.html
 
-Changes between V3 and V2
-=========================
-1. fix issues according to review comments
-   (1)from Bjorn Helgaas: Check for 'pci->pp.msi_irq < 0'.
-   (2)from Bjorn Helgaas: Update the message of 'msi irq' in dev_err().
+For syzbot perspective, yes, we can set any necessary additional
+configs, add cmdline arguments, etc.
 
-Changes between V2 and V1
-=========================
-1. seperate DT binding patch.
-2. fix issues according to review comments
-   (1)from Bjorn Helgaas: Update the style of subject and changelog.
-   (2)from Bjorn Helgaas: Add msi irq number in the message.
-   (3)from Bjorn Helgaas: Delete unnecessary code 'pci->pp.root_bus_nr = -1'.
-   (4)from Dmitry Shmidt: Fix typing error. Replace 'interrupts-names' of 'interrupt-names'.
+Manually changing format strings won't work -- bugs are all over the place.
 
-Yao Chen (2):
-  PCI: kirin: Add MSI support
-  arm64: dts: hi3660: Add pcie msi interrupt attribute
+>From what I see, it seems that interrupts can be nested:
 
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi |  2 ++
- drivers/pci/dwc/pcie-kirin.c              | 39 +++++++++++++++++++++++++++++++
- 2 files changed, 41 insertions(+)
+https://syzkaller.appspot.com/bug?id=72eddef9cedcf81486adb9dd3e789f0d77505ba5
+https://syzkaller.appspot.com/bug?id=66fcf61c65f8aa50bbb862eb2fde27c08909a4ff
 
--- 
-1.9.1
+Will this in_nmi()/in_irq()/in_serving_softirq()/else be enough to
+untangle output printed by such nested interrupts? For the first link
+it seems that they both are the same type of interrupt --
+apic_timer_interrupt.
