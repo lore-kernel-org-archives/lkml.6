@@ -1,62 +1,75 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525870841; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZqpHnlREFx9g7+GnbIu7dlC1CYUBTymEvePAUqCYTH7oei416O1bs/yuaU1ULmUmOq22AgL
+ARC-Seal: i=1; a=rsa-sha256; t=1526008724; cv=none;
         d=google.com; s=arc-20160816;
-        b=JG1GgVz7mUTgDO2Du2P7EiD4GDsilbIaXURkoh5JQE4quwJqeu1um6zVaf4x2U8n4W
-         sH+JLH5vBoHG7/Kjs/spkjgTl2g8TB8c0tX6JTjLXbazlVmUqFx/CenfxRTblpsOfRC7
-         H23+MVo7W/hWQCfFDyCd21lTT8LirJ9Z0wI+/rbUOHJNCVKSVpuExR8jeKt4OQ8YWsfO
-         69mDPyfuEMYANihaUL+8I1VVtgnFlakxvfjUy3SCa+zI0H5tkp3JI+di2B1dQ2/ntc/8
-         jWVUTc/NKYWFJIzWX0Itck9D0GSu84uuC0hjRt62fPW3mYhuQvOrf/Qr836HHIbcBTwH
-         rOjw==
+        b=qA5LEqM+O6oAMwAcITynQty8O84aR+aRa7sXrExE+nEXElaG7pC/xuejZuXANl+8B5
+         oP8sKGNYODgdITNd6AuMCiQhyU+wO6+V2JTPDyz5GxxKznOAR8vAzTKrjJInzAvBvtb9
+         jRjCaAt3vGAsQyEHW4bYHrFsBdDOekDu2p4LZB/0O5zOT+hVZrAPwr9ApxklhQO8SuYb
+         Ifx0NKeN5AamU/M32FTzGICN+SSt4Qfc2ysYowA3hw7VSIsN6QMROz/XSuEw4eHeoLVy
+         xqZR0txAYMd0ufaXJW3Au1t7JSknQM9iCobsngmGHex+rNDpzuUvrBIVXmXmXHGYB1FA
+         hwSQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=7QY0Jir7FHjo2znovGpIiqHvAm6kI7ZR8Aut4xTvvzU=;
-        b=mklt+VEJOFz9FcALRJSbB3kJeDTboVR7hHb5iGVOd6/w1SnvS/dGZA6rfuZ5zp003z
-         8GYgxWQBIW7S98wdFiZF56WQtf4qT64aBbLke5r4mQpbJnjEgWNbm8DksavOEnLJpMMl
-         7Bq7VHpiXGV8lkWhbB1wJzDDZq6MI1vTPwWU+4ECQCaiiEH3pRPdus5GUVzIEbstLQXD
-         YykXGUL0jYQxKp/Sb2lgOvY5h6/42VWC0c0KD3UbPhNwTtnHgdCEZrEKGsTFAwoNtVYP
-         TckSkh5H5us1zufAcCcAyKT+yAMvqctfHsIZJ4AwP+DZg5db1DybvJyAij7fhJ6G+o4C
-         p+rw==
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=syblOWVnHbUQ+YcRFyEZy5K4U46wGxM/knw4LMA9lU4=;
+        b=PqFjHhFAV57DGg88smDUiBNRLHp7kJQoBLl33C8s1XN+D0x2x+M3F3x0qHdo2AWB1D
+         ca2wqAHOXB+03C2GmdDwZvUkBHNZOPdcDCKttDqLywelc51ZMBvkolw3TGirpBtH+m9d
+         UedqVhFW/uNPOBVe/VCdVqTd1sRsC2YGmwXrNU/HyaiVhrLyu+VAA5rxlLbrmlJ7olzJ
+         Mya8NVXJ7b2jxQqYohJ5W8Wyf8WT6LJ38+QxiYbyF5ZDR9oBIZBST6Co8vfJ1NVWida3
+         4kMAvxxQgDKW7eUXgSeWBhUSvzNd32ZhPWKBcGkbEwdeBcwsZSaJW8C0k9w6kLLp/2QU
+         y6wA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=jqJgakEL;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=EvTvwbng;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=jqJgakEL;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZqy+RuNT8LNJbWfRLvabAeJxa+bVLQlmo83dRY5eoBYZTXv9KS4TnFrwiSz2E4b4DC0EYqO2Q==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: andy.gross@linaro.org,
-	broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	robh+dt@kernel.org,
-	bgoswami@codeaurora.org
-Cc: gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v8 03/24] ASoC: qdsp6: dt-bindings: Add q6core dt bindings
-Date: Wed,  9 May 2018 13:56:14 +0100
-Message-Id: <20180509125635.5653-4-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180509125635.5653-1-srinivas.kandagatla@linaro.org>
-References: <20180509125635.5653-1-srinivas.kandagatla@linaro.org>
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=EvTvwbng;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, andy.gross@linaro.org, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, robh+dt@kernel.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, tiwai@suse.com, lgirdwood@gmail.com, david.brown@linaro.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qdsp6: dt-bindings: Add q6core dt bindings" to the asoc tree
+In-Reply-To: <20180509125635.5653-4-srinivas.kandagatla@linaro.org>
+Message-Id: <20180511031834.6BFF644007A@finisterre.ee.mobilebroadband>
+Date: Fri, 11 May 2018 04:18:34 +0100 (BST)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599991543212419255?=
-X-GMAIL-MSGID: =?utf-8?q?1599991543212419255?=
+X-GMAIL-THRID: =?utf-8?q?1600136124522365616?=
+X-GMAIL-MSGID: =?utf-8?q?1600136124522365616?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+The patch
+
+   ASoC: qdsp6: dt-bindings: Add q6core dt bindings
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 8c943ef123669b0c4100d69039326696c1662d60 Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Wed, 9 May 2018 13:56:14 +0100
+Subject: [PATCH] ASoC: qdsp6: dt-bindings: Add q6core dt bindings
 
 This patch add DT bindings for Q6CORE DSP module.
 
@@ -64,8 +77,9 @@ Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../devicetree/bindings/sound/qcom,q6core.txt       | 21 +++++++++++++++++++++
+ .../devicetree/bindings/sound/qcom,q6core.txt | 21 +++++++++++++++++++
  1 file changed, 21 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6core.txt
 
@@ -97,4 +111,4 @@ index 000000000000..7f36ff8bec18
 +	reg = <APR_SVC_ADSP_CORE>;
 +};
 -- 
-2.16.2
+2.17.0
