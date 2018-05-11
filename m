@@ -1,9 +1,9 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1368942-1526329818-5-15394712517835721702
+X-Cyrus-Session-Id: sloti22d1t05-3970764-1526044377-2-4573859304143760806
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
@@ -13,24 +13,24 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526329818; b=WWYYZTUvjKH12K+yR7PWppUuZq2EIaG+iU51FJtTcsTZpzw3Tr
-    L4i+9cGhFguDceRGN80Ig/OSUeqJb82u10wRk626wAsxvGsxyn0kOrC6kTFAoM8V
-    X/ElfLNJwNVuc0ZJkScjcX5nGOhy36W9OXCpQfdLbMzUdT+RW0jkbnBUNfI5ri4B
-    LsxfbjHnybUQnOC+eVYzVhUgy13v0+5vB+RlsJSNpMhz6VR5jChQzLbih8WlRB7s
-    yP0poy4BHmoBYyqhx55dqQpUg79hDu9VUZNJLBja+5PmkfCyLXXPnvzPhgw4tMsr
-    0TjVKrqXl+Ngvrn4HU24dtRGo1xaBX2Z3POw==
+    1526044376; b=SEouJUUQ9Y1CLFwt88EEE8dREq8XhEBBGTcxQCzrtEpd3StBto
+    X7E47PZNskePsCluO0yzmLNgB5TTLgk45peZ7yMCnTELbq2lxLJVEj5AEO0jqMOk
+    sxYj4ZOYzjIdMMz1FojGc+JHuVm5WJNXnNxUmRReWxmoLNdDh2Ww1SNKV2moF6YW
+    Us0/xf31Dw9KknehZTgsUBuIUalokd9CvFxzfR+0TIE77rt1g1Uw0HTvX2RDMiOa
+    jxaOoq44RbvNwoY6arjX+J3CDWyXEcco28aMEmhqxOtNFBawTArthHje/RMBXCbc
+    7hYj6bt+gqEzYuT3ZoIAgA9NC60+bj+cWTRQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:cc:subject:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526329818;
-    bh=XlWtDI1AAsziUByW9XNMbqltEFpy5gLbUJ/+n4abFAc=; b=ncc9cM7CdvDE
-    UmkPc0Bl7UHGeFF0HF/TLTGkrOOAwgzZAwvxOmx8yjzb9m5JFp6NLL/jZqae49PF
-    H+rvTTb098hWUzs8d03XgpnVtU3UI71qtb2Yobh5Tz2t7CaJvaN+LInVaihwyMid
-    f1HOeReClU2DyBTfcY+vCCQ7SJU6R/zEK7/66BcUYaxuB/KbjVBpPwPRgnEv7UA5
-    ehZvU4ouGFivwTOPNrZheCi2GIAB0AVwGmisvw5J3QCpr0Rl/scT6szbIjcn78dO
-    3WK+Bxzgy7oeD/P+q4IZWrwHoLApEAlY1z8hgoW+pGGvs4JYHCV4L4yVgzYIHBmo
-    1ScmqWPn+w==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526044376;
+    bh=8JDlwNYWcPH8qeEVxvOWN/RKDhlMW/p8bYlYCXzQwss=; b=LY7cekJ026I/
+    J5aaczHK6TDtauIZryflgRQcDojRC+WFGFlh+J4Lx6kg/VHTRWhJhBLYovbPPXGv
+    8hN/Ncvg1e/IjtFIHMT9LFZCSXBBzhw0SunO9thX9A7CDVtBamdiHi0YVKzltgLt
+    asLlCy6tFqtYTWsiWTILqv363El5ldb4kwmkuQxUFY5QiMZVPfsZHNH3yKNYOZ4s
+    +jSnM8RCQ13UyHmYIn9x0Zz3Pd6MSWrheXXJC3bs7q3DBSlkkjYz4mVwMi7+aJLR
+    8oszCQQfgkaCLlFfmZ2T8HIXOs3zJUt9EmOQSAgFF9nSNaL9O0vTVnKO3jZC9HMl
+    +hTNCHraGQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -43,7 +43,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
@@ -58,23 +58,22 @@ Authentication-Results: mx4.messagingengine.com;
       header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMvX/e5XuC9FTT29nV2VxW+Z/GFIpibiLayjWJv8gXDaGZNO7WeI5bvYr865fIryxL89V/y3GhwmDcunIiXo6RIyvS7UZ6FG4OuFKZpEyuCdoZ6c2eDr
-    a6EVcykU8ATXH3eET5oK5PRAWnzaJ7uXNXaHTUUTQASoIYQSaBBe/EdNfXqLkCfGw0R0U3oz6BK5RgAfA51hl4MlgjRZwffMS6oSTpZtOyAXUsEoZpedShPd
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFR22Jafann5BF1/ZJFpAmocj8Uvi+ABgk9KF4Rofp2qE3oxOm4MyQ+ILOP9N1q+5YLm+eUaphAItaCgrriwuem3VJSF1AL5MnBv/oLhPnxNeIa0JVuI
+    BU0aOsoTIftzSQWmv7aC30am8Ct54KxHbR6abr0FHQPB0R6Iiqt10DND2YdVgMzNMa3Aj9lQniXNyvNkTbJWzT60GSPW/WkQDyDcDttW6WzYYxH6WrCSwxsv
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=iox4zFpeAAAA:8 a=VwQbUJbxAAAA:8 a=meVymXHHAAAA:8 a=Liw12kgf9JG06bkJUVMA:9
-    a=CjuIK1q_8ugA:10 a=WzC6qhA0u3u7Ye7llzcV:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=2JgSa4NbpEOStq-L5dxp:22
+    a=iox4zFpeAAAA:8 a=meVymXHHAAAA:8 a=yJb95oN3TFZ3iZilJaAA:9 a=CjuIK1q_8ugA:10
+    a=WzC6qhA0u3u7Ye7llzcV:22 a=2JgSa4NbpEOStq-L5dxp:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751962AbeENUaC (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 16:30:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43316 "EHLO mail.kernel.org"
+        id S1753081AbeEKNM2 convert rfc822-to-8bit (ORCPT
+        <rfc822;greg@kroah.com>); Fri, 11 May 2018 09:12:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752017AbeENU3s (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 16:29:48 -0400
-Date: Mon, 14 May 2018 16:29:44 -0400
+        id S1753030AbeEKNM1 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 11 May 2018 09:12:27 -0400
+Date: Fri, 11 May 2018 09:12:24 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: Juergen Gross <jgross@suse.com>
 Cc: LKML <linux-kernel@vger.kernel.org>,
@@ -89,14 +88,14 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         stable@vger.kernel.org
 Subject: Re: [PATCH] tracing/x86/xen: Remove zero data size trace events
  trace_xen_mmu_flush_tlb{_all}
-Message-ID: <20180514162944.35f5debf@gandalf.local.home>
+Message-ID: <20180511091224.51ee352f@gandalf.local.home>
 In-Reply-To: <54c0a807-87e3-866f-aaa8-de383d567d50@suse.com>
 References: <20180509144605.5a220327@gandalf.local.home>
         <54c0a807-87e3-866f-aaa8-de383d567d50@suse.com>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
@@ -106,21 +105,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 On Fri, 11 May 2018 06:14:07 +0200
 Juergen Gross <jgross@suse.com> wrote:
 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 95a7d76897c1e ("xen/mmu: Use Xen specific TLB flush instead of the generic one.")
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>  
-> 
 > Any reason not sending this patch to the Xen maintainers?
+
+Nope, I guess I should have run the patch through "get_maintainer.pl".
+
 > 
 > I can take it through the Xen tree. :-)
-> 
-> Reviewed-by: Juergen Gross <jgross@suse.com>
-
-Are you going to take it?
-
-Hmm, I guess I probably should as my patch depends on it. I'll add your
-reviewed-by tag and take it.
 
 Thanks!
 
+
+> 
+> Reviewed-by: Juergen Gross <jgross@suse.com>
+
+Note, I'm going to be adding the below patch for 4.18 (or 5.0) which
+will cause the build to break in case there's any more instances of
+this.
+
 -- Steve
+
+>From 8f8125877582345dd68f865f76442dda9204c0c1 Mon Sep 17 00:00:00 2001
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Date: Thu, 10 May 2018 12:40:21 -0400
+Subject: [PATCH] tracing: Prevent further users of zero size static arrays in
+ trace events
+
+A zero size static array has special meaning in the ftrace infrastructure.
+Trace events are for recording data in the trace buffers that is normally
+difficult to obtain via probes or function tracing. There is no reason for
+any trace event to declare a zero size static array.
+
+If one does, BUILD_BUG_ON() will trigger and prevent the kernel from
+compiling.
+
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ include/trace/trace_events.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
+index bfda803b0a09..4ecdfe2e3580 100644
+--- a/include/trace/trace_events.h
++++ b/include/trace/trace_events.h
+@@ -422,6 +422,7 @@ static struct trace_event_functions trace_event_type_funcs_##call = {	\
+ 	do {								\
+ 		char *type_str = #type"["__stringify(len)"]";		\
+ 		BUILD_BUG_ON(len > MAX_FILTER_STR_VAL);			\
++		BUILD_BUG_ON(len <= 0);					\
+ 		ret = trace_define_field(event_call, type_str, #item,	\
+ 				 offsetof(typeof(field), item),		\
+ 				 sizeof(field.item),			\
+-- 
+2.13.6
