@@ -1,314 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753270AbeEKOfW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 10:35:22 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:39864 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752394AbeEKOfU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 10:35:20 -0400
-X-Google-Smtp-Source: AB8JxZrLB+chOtN/AqVGE1ofPJzJMMvU8H1sjtWNblwK3pyLAAM0HKMGhwuWTyKC53MjAV9ffJBaBA==
-Date: Fri, 11 May 2018 10:35:18 -0400
-From: Sean Paul <seanpaul@chromium.org>
-To: Lin Huang <hl@rock-chips.com>
-Cc: seanpaul@chromium.org, airlied@linux.ie, zyw@rock-chips.com,
-        dianders@chromium.org, briannorris@chromium.org,
-        linux-rockchip@lists.infradead.org, heiko@sntech.de,
-        daniel.vetter@intel.com, jani.nikula@linux.intel.com,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, eballetbo@gmail.com
-Subject: Re: [PATCH v2 1/4] drm/rockchip: add transfer function for cdn-dp
-Message-ID: <20180511143518.GN33053@art_vandelay>
-References: <1525861364-26323-1-git-send-email-hl@rock-chips.com>
+        id S1753219AbeEKOhB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 10:37:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44467 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752948AbeEKOg7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 10:36:59 -0400
+Date: Fri, 11 May 2018 16:36:47 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Paul Kocialkowski <contact@paulk.fr>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>
+Subject: Re: [PATCH v4 3/3] ARM: dts: sun7i: Add support for the Ainol AW1
+ tablet
+Message-ID: <20180511143647.ici2bfoeeldto3ju@flea>
+References: <20180507220413.21990-1-contact@paulk.fr>
+ <20180507220413.21990-3-contact@paulk.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xxiga6mvouif32wv"
 Content-Disposition: inline
-In-Reply-To: <1525861364-26323-1-git-send-email-hl@rock-chips.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180507220413.21990-3-contact@paulk.fr>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 06:22:41PM +0800, Lin Huang wrote:
-> From: Chris Zhong <zyw@rock-chips.com>
-> 
-> We may support training outside firmware, so we need support
-> dpcd read/write to get the message or do some setting with
-> display.
-> 
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
 
-FTR, I've already done one pass at [1]. All of those nits look fixed, so 
+--xxiga6mvouif32wv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-
-[1]- https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/985572
-
-> ---
-> 
-> Changes in v2: 
-> - update patch following Enric suggest
-> 
->  drivers/gpu/drm/rockchip/cdn-dp-core.c | 55 ++++++++++++++++++++++++----
->  drivers/gpu/drm/rockchip/cdn-dp-core.h |  1 +
->  drivers/gpu/drm/rockchip/cdn-dp-reg.c  | 67 ++++++++++++++++++++++++++++++----
->  drivers/gpu/drm/rockchip/cdn-dp-reg.h  | 14 ++++++-
->  4 files changed, 120 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> index c6fbdcd..cce64c1 100644
-> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> @@ -176,8 +176,8 @@ static int cdn_dp_get_sink_count(struct cdn_dp_device *dp, u8 *sink_count)
->  	u8 value;
->  
->  	*sink_count = 0;
-> -	ret = cdn_dp_dpcd_read(dp, DP_SINK_COUNT, &value, 1);
-> -	if (ret)
-> +	ret = drm_dp_dpcd_read(&dp->aux, DP_SINK_COUNT, &value, 1);
-> +	if (ret < 0)
->  		return ret;
->  
->  	*sink_count = DP_GET_SINK_COUNT(value);
-> @@ -374,9 +374,9 @@ static int cdn_dp_get_sink_capability(struct cdn_dp_device *dp)
->  	if (!cdn_dp_check_sink_connection(dp))
->  		return -ENODEV;
->  
-> -	ret = cdn_dp_dpcd_read(dp, DP_DPCD_REV, dp->dpcd,
-> -			       DP_RECEIVER_CAP_SIZE);
-> -	if (ret) {
-> +	ret = drm_dp_dpcd_read(&dp->aux, DP_DPCD_REV, dp->dpcd,
-> +			       sizeof(dp->dpcd));
-> +	if (ret < 0) {
->  		DRM_DEV_ERROR(dp->dev, "Failed to get caps %d\n", ret);
->  		return ret;
->  	}
-> @@ -582,8 +582,8 @@ static bool cdn_dp_check_link_status(struct cdn_dp_device *dp)
->  	if (!port || !dp->link.rate || !dp->link.num_lanes)
->  		return false;
->  
-> -	if (cdn_dp_dpcd_read(dp, DP_LANE0_1_STATUS, link_status,
-> -			     DP_LINK_STATUS_SIZE)) {
-> +	if (drm_dp_dpcd_read_link_status(&dp->aux, link_status) !=
-> +	    DP_LINK_STATUS_SIZE) {
->  		DRM_ERROR("Failed to get link status\n");
->  		return false;
->  	}
-> @@ -1012,6 +1012,40 @@ static int cdn_dp_pd_event(struct notifier_block *nb,
->  	return NOTIFY_DONE;
->  }
->  
-> +static ssize_t cdn_dp_aux_transfer(struct drm_dp_aux *aux,
-> +				   struct drm_dp_aux_msg *msg)
-> +{
-> +	struct cdn_dp_device *dp = container_of(aux, struct cdn_dp_device, aux);
-> +	int ret;
-> +	u8 status;
-> +
-> +	switch (msg->request & ~DP_AUX_I2C_MOT) {
-> +	case DP_AUX_NATIVE_WRITE:
-> +	case DP_AUX_I2C_WRITE:
-> +	case DP_AUX_I2C_WRITE_STATUS_UPDATE:
-> +		ret = cdn_dp_dpcd_write(dp, msg->address, msg->buffer,
-> +					msg->size);
-> +		break;
-> +	case DP_AUX_NATIVE_READ:
-> +	case DP_AUX_I2C_READ:
-> +		ret = cdn_dp_dpcd_read(dp, msg->address, msg->buffer,
-> +				       msg->size);
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	status = cdn_dp_get_aux_status(dp);
-> +	if (status == AUX_STATUS_ACK)
-> +		msg->reply = DP_AUX_NATIVE_REPLY_ACK;
-> +	else if (status == AUX_STATUS_NACK)
-> +		msg->reply = DP_AUX_NATIVE_REPLY_NACK;
-> +	else if (status == AUX_STATUS_DEFER)
-> +		msg->reply = DP_AUX_NATIVE_REPLY_DEFER;
-> +
-> +	return ret;
-> +}
-> +
->  static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
->  {
->  	struct cdn_dp_device *dp = dev_get_drvdata(dev);
-> @@ -1030,6 +1064,13 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
->  	dp->active = false;
->  	dp->active_port = -1;
->  	dp->fw_loaded = false;
-> +	dp->aux.name = "DP-AUX";
-> +	dp->aux.transfer = cdn_dp_aux_transfer;
-> +	dp->aux.dev = dev;
-> +
-> +	ret = drm_dp_aux_register(&dp->aux);
-> +	if (ret)
-> +		return ret;
->  
->  	INIT_WORK(&dp->event_work, cdn_dp_pd_event_work);
->  
-> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.h b/drivers/gpu/drm/rockchip/cdn-dp-core.h
-> index f57e296..46159b2 100644
-> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.h
-> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.h
-> @@ -78,6 +78,7 @@ struct cdn_dp_device {
->  	struct platform_device *audio_pdev;
->  	struct work_struct event_work;
->  	struct edid *edid;
-> +	struct drm_dp_aux aux;
->  
->  	struct mutex lock;
->  	bool connected;
-> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-> index eb3042c..afdfda0 100644
-> --- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-> +++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-> @@ -221,7 +221,11 @@ static int cdn_dp_reg_write_bit(struct cdn_dp_device *dp, u16 addr,
->  				   sizeof(field), field);
->  }
->  
-> -int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
+On Tue, May 08, 2018 at 12:04:13AM +0200, Paul Kocialkowski wrote:
+> +++ b/arch/arm/boot/dts/sun7i-a20-ainol-aw1.dts
+> @@ -0,0 +1,297 @@
 > +/*
-> + * Returns the number of bytes transferred on success, or a negative error
-> + * code on failure. -ETIMEDOUT is returned if mailbox message not send success;
-> + */
-> +ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
->  {
->  	u8 msg[5], reg[5];
->  	int ret;
-> @@ -247,24 +251,40 @@ int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
->  		goto err_dpcd_read;
->  
->  	ret = cdn_dp_mailbox_read_receive(dp, data, len);
-> +	if (!ret)
-> +		return len;
->  
->  err_dpcd_read:
-> +	DRM_DEV_ERROR(dp->dev, "dpcd read failed: %d\n", ret);
->  	return ret;
->  }
->  
-> -int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
-> +#define CDN_AUX_HEADER_SIZE	5
-> +#define CDN_AUX_MSG_SIZE	20
-> +/*
-> + * Returns the number of bytes transferred on success, or a negative error
-> + * code on failure. -ETIMEDOUT is returned if mailbox message not send success;
-> + * -EINVAL is return if get the wrong data size after message send.
-> + */
-> +ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
->  {
-> -	u8 msg[6], reg[5];
-> +	u8 msg[CDN_AUX_MSG_SIZE + CDN_AUX_HEADER_SIZE];
-> +	u8 reg[CDN_AUX_HEADER_SIZE];
->  	int ret;
->  
-> -	msg[0] = 0;
-> -	msg[1] = 1;
-> +	if (WARN_ON(len > CDN_AUX_MSG_SIZE) || WARN_ON(len <= 0))
-> +		return -EINVAL;
-> +
-> +	msg[0] = (len >> 8) & 0xff;
-> +	msg[1] = len & 0xff;
->  	msg[2] = (addr >> 16) & 0xff;
->  	msg[3] = (addr >> 8) & 0xff;
->  	msg[4] = addr & 0xff;
-> -	msg[5] = value;
-> +
-> +	memcpy(msg + CDN_AUX_HEADER_SIZE, data, len);
-> +
->  	ret = cdn_dp_mailbox_send(dp, MB_MODULE_ID_DP_TX, DPTX_WRITE_DPCD,
-> -				  sizeof(msg), msg);
-> +				  CDN_AUX_HEADER_SIZE + len, msg);
->  	if (ret)
->  		goto err_dpcd_write;
->  
-> @@ -277,8 +297,12 @@ int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
->  	if (ret)
->  		goto err_dpcd_write;
->  
-> -	if (addr != (reg[2] << 16 | reg[3] << 8 | reg[4]))
-> +	if ((len != (reg[0] << 8 | reg[1])) ||
-> +	    (addr != (reg[2] << 16 | reg[3] << 8 | reg[4]))) {
->  		ret = -EINVAL;
-> +	} else {
-> +		return len;
-> +	}
->  
->  err_dpcd_write:
->  	if (ret)
-> @@ -286,6 +310,33 @@ int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
->  	return ret;
->  }
->  
-> +int cdn_dp_get_aux_status(struct cdn_dp_device *dp)
-> +{
-> +	u8 status;
-> +	int ret;
-> +
-> +	ret = cdn_dp_mailbox_send(dp, MB_MODULE_ID_DP_TX,
-> +				  DPTX_GET_LAST_AUX_STAUS, 0, NULL);
-> +	if (ret)
-> +		goto err_get_hpd;
-> +
-> +	ret = cdn_dp_mailbox_validate_receive(dp, MB_MODULE_ID_DP_TX,
-> +					      DPTX_GET_LAST_AUX_STAUS,
-> +					      sizeof(status));
-> +	if (ret)
-> +		goto err_get_hpd;
-> +
-> +	ret = cdn_dp_mailbox_read_receive(dp, &status, sizeof(status));
-> +	if (ret)
-> +		goto err_get_hpd;
-> +
-> +	return status;
-> +
-> +err_get_hpd:
-> +	DRM_DEV_ERROR(dp->dev, "get aux status failed: %d\n", ret);
-> +	return ret;
-> +}
-> +
->  int cdn_dp_load_firmware(struct cdn_dp_device *dp, const u32 *i_mem,
->  			 u32 i_size, const u32 *d_mem, u32 d_size)
->  {
-> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.h b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
-> index c4bbb4a83..6580b11 100644
-> --- a/drivers/gpu/drm/rockchip/cdn-dp-reg.h
-> +++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
-> @@ -328,6 +328,13 @@
->  #define GENERAL_BUS_SETTINGS            0x03
->  #define GENERAL_TEST_ACCESS             0x04
->  
-> +/* AUX status*/
-> +#define AUX_STATUS_ACK			0
-> +#define AUX_STATUS_NACK			1
-> +#define AUX_STATUS_DEFER			2
-> +#define AUX_STATUS_SINK_ERROR		3
-> +#define AUX_STATUS_BUS_ERROR		4
-> +
->  #define DPTX_SET_POWER_MNG			0x00
->  #define DPTX_SET_HOST_CAPABILITIES		0x01
->  #define DPTX_GET_EDID				0x02
-> @@ -469,8 +476,11 @@ int cdn_dp_set_host_cap(struct cdn_dp_device *dp, u8 lanes, bool flip);
->  int cdn_dp_event_config(struct cdn_dp_device *dp);
->  u32 cdn_dp_get_event(struct cdn_dp_device *dp);
->  int cdn_dp_get_hpd_status(struct cdn_dp_device *dp);
-> -int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value);
-> -int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len);
-> +ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr,
-> +			  u8 *data, u16 len);
-> +ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr,
-> +			 u8 *data, u16 len);
-> +int cdn_dp_get_aux_status(struct cdn_dp_device *dp);
->  int cdn_dp_get_edid_block(void *dp, u8 *edid,
->  			  unsigned int block, size_t length);
->  int cdn_dp_train_link(struct cdn_dp_device *dp);
-> -- 
-> 2.7.4
-> 
+> + * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+This really should be the first line, and with a C++ style comment, as
+in:
+
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (C) ...
+
+See Documentation/process/license-rules.rst
+
+> +	backlight: backlight {
+> +		compatible =3D "pwm-backlight";
+> +		pwms =3D <&pwm 0 50000 PWM_POLARITY_INVERTED>;
+> +		brightness-levels =3D <  0   1   1   1   1   2   2   2
+> +				       2   3   3   3   3   4   4   4
+> +				       5   5   5   6   6   6   7   7
+> +				       8   8   8   9   9   9  10  10
+> +				      10  11  11  12  12  12  13  13
+> +				      14  14  14  15  15  16  16  17
+> +				      17  17  18  18  19  19  20  20
+> +				      21  21  21  22  22  23  23  24
+> +				      24  25  25  26  26  27  27  28
+> +				      28  29  30  30  31  31  32  32
+> +				      33  33  34  35  35  36  36  37
+> +				      38  38  39  39  40  41  41  42
+> +				      43  43  44  44  45  46  47  47
+> +				      48  49  49  50  51  51  52  53
+> +				      54  54  55  56  57  57  58  59
+> +				      60  61  61  62  63  64  65  65
+> +				      66  67  68  69  70  71  71  72
+> +				      73  74  75  76  77  78  79  80
+> +				      81  82  83  84  85  86  87  88
+> +				      89  90  91  92  93  94  95  96
+> +				      97  98  99 101 102 103 104 105
+> +				     106 108 109 110 111 112 114 115
+> +				     116 117 119 120 121 123 124 125
+> +				     127 128 129 131 132 133 135 136
+> +				     138 139 141 142 144 145 147 148
+> +				     150 151 153 154 156 157 159 161
+> +				     162 164 166 167 169 171 173 174
+> +				     176 178 180 181 183 185 187 189
+> +				     191 192 194 196 198 200 202 204
+> +				     206 208 210 212 214 216 219 221
+> +				     223 225 227 229 232 234 236 238
+> +				     241 242 244 246 248 250 253 255>;
+
+You kind of overdid it here :)
+
+What I meant to say before was that if you have 10 elements (and you
+really should have something in that magnitude) each step should
+increase the perceived brightness by 10%.
+
+In this particular case, I really think having something close to <0 4
+8 16 32 64 128 255> would be enough.
+
+And in general, that kind of odd looking table without any more
+context is just screaming for a comment :)
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--xxiga6mvouif32wv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr1qn4ACgkQ0rTAlCFN
+r3T1fhAAg4IkyfpJOLPsTAh0O8cLo+82Lfa/YLz78L91phK/uCyVebNoQGvrJHHg
+M4wR4rjKqB5ehTCPer3F+BWYA/obvHZObmj6eHCy17poU+tJbsa3b7OgZCS9Bwe4
+bUbqYZveII1P2qUsOaOyWkka5UoJOZjxs0rBaShdGb1p//TibzXuCBZsH7z650TT
+ZF/7wdFLkPm67Vp8mbFWnITMqYOyjhN4uwhriqiuAaA7nDz5DqXaiGHTE5eP7Hoq
+Bpo6joFFwi82JzpXDSx5Ig4YJW2cMb6Idn9alqL553picznf04GZ0psPnuwC/0q5
+LXppCh8b7Dvnzv3upO0Jv6mTU8szqgOK5YqhWHTxLtLv4o0SHIS49VmsHBw9yfJd
+KqFlAUTNoBq83unXD7FqH6ONrn49Nj7RkB/rcecdEjtU3KdyFpy3WIa23BaSZAHx
+x68wnA56M+kQeXZGTzJdxlfnRZu21B99tXkGTsOXYIHpxzgnNFmQlnQxVXwQ/E/b
+xYrGfC8VO5BynKzX1VYIfQFkJ1xGsoMksQ7Htc7VkSx0BociG57iup++7xPC0oQM
+7fP6jPb+MqJre7Mxz47ikY0IpFhLuB5dW3YAeOYlYbofdv9adr/VUKYGPmjavnZ3
+ScfXnIWEQKlKYle/DjEfkqbscIVLoGzr3kliXk+nJfYgXQqtRnk=
+=RPPW
+-----END PGP SIGNATURE-----
+
+--xxiga6mvouif32wv--
