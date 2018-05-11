@@ -1,93 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752908AbeEKJWe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 05:22:34 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:42892 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752547AbeEKJWd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 05:22:33 -0400
-Date: Fri, 11 May 2018 10:22:06 +0100
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: Re: [PATCH v2] gpu: drm: armada: Adding new typedef vm_fault_t
-Message-ID: <20180511092205.GB16141@n2100.armlinux.org.uk>
-References: <20180510150448.GA26306@jordon-HP-15-Notebook-PC>
+        id S1752645AbeEKJZX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 05:25:23 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38586 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752272AbeEKJZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 05:25:22 -0400
+Subject: Re: [PATCH 0/2] Allwinner A64 timer workaround
+To: Samuel Holland <samuel@sholland.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20180511022751.9096-1-samuel@sholland.org>
+From: Andre Przywara <andre.przywara@arm.com>
+Message-ID: <9d12075e-745d-b7d7-9847-f1493fc8647e@arm.com>
+Date: Fri, 11 May 2018 10:24:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180510150448.GA26306@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180511022751.9096-1-samuel@sholland.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 08:34:48PM +0530, Souptick Joarder wrote:
-> Use new return type vm_fault_t for fault handler in
-> struct vm_operations_struct. For now, this is just
-> documenting that the function returns a VM_FAULT
-> value rather than an errno. Once all instances are
-> converted, vm_fault_t will become a distinct type.
-> 
-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
-> 
-> Previously vm_insert_pfn() returns err which driver
-> mapped into VM_FAULT_* type. The new function
-> vmf_insert_pfn() will replace this inefficiency by
-> returning VM_FAULT_* type.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+Hi,
 
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+On 11/05/18 03:27, Samuel Holland wrote:
+> Hello,
+> 
+> Several people (including me) have experienced extremely large system
+> clock jumps on their A64-based devices, apparently due to the
+> architectural timer going backward, which is interpreted by Linux as
+> the timer wrapping around after 2^56 cycles.
 
-Thanks.
+So I experienced this before, though I didn't see actual clock jumps,
+only that subsequent reads of CNTVCT_EL0, both directly via mrs and
+indirectly via CLOCK_MONOTONIC, from userland (triggered by a directed
+test) *sometimes* went backwards, with a number of '1's in the lower bits.
+But that didn't happen on every boot, and I was suspecting that some
+timer setup was missing on the hardware/firmware side. And later on I
+failed to reproduce it anymore.
+So do you see it on every boot, with recent U-Boot/ATF?
 
-> ---
-> v2: Updated the change log
+Cheers,
+Andre.
+
+> Investigation led to discovery of some obvious problems with this SoC's
+> architectural timer, and this patch series introduces what I believe is
+> the simplest workaround. More details are in the commit message for
+> patch 1. Patch 2 simply enables the workaround in the device tree.
 > 
->  drivers/gpu/drm/armada/armada_gem.c | 15 ++-------------
->  1 file changed, 2 insertions(+), 13 deletions(-)
+> Thanks,
+> Samuel
 > 
-> diff --git a/drivers/gpu/drm/armada/armada_gem.c b/drivers/gpu/drm/armada/armada_gem.c
-> index a97f509..81a55b7 100644
-> --- a/drivers/gpu/drm/armada/armada_gem.c
-> +++ b/drivers/gpu/drm/armada/armada_gem.c
-> @@ -13,25 +13,14 @@
->  #include <drm/armada_drm.h>
->  #include "armada_ioctlP.h"
+> Samuel Holland (2):
+>   arm64: arch_timer: Workaround for Allwinner A64 timer instability
+>   arm64: dts: allwinner: a64: Enable A64 timer workaround
 > 
-> -static int armada_gem_vm_fault(struct vm_fault *vmf)
-> +static vm_fault_t armada_gem_vm_fault(struct vm_fault *vmf)
->  {
->  	struct drm_gem_object *gobj = vmf->vma->vm_private_data;
->  	struct armada_gem_object *obj = drm_to_armada_gem(gobj);
->  	unsigned long pfn = obj->phys_addr >> PAGE_SHIFT;
-> -	int ret;
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  1 +
+>  drivers/clocksource/Kconfig                   | 11 ++++++++
+>  drivers/clocksource/arm_arch_timer.c          | 39 +++++++++++++++++++++++++++
+>  3 files changed, 51 insertions(+)
 > 
->  	pfn += (vmf->address - vmf->vma->vm_start) >> PAGE_SHIFT;
-> -	ret = vm_insert_pfn(vmf->vma, vmf->address, pfn);
-> -
-> -	switch (ret) {
-> -	case 0:
-> -	case -EBUSY:
-> -		return VM_FAULT_NOPAGE;
-> -	case -ENOMEM:
-> -		return VM_FAULT_OOM;
-> -	default:
-> -		return VM_FAULT_SIGBUS;
-> -	}
-> +	return vmf_insert_pfn(vmf->vma, vmf->address, pfn);
->  }
-> 
->  const struct vm_operations_struct armada_gem_vm_ops = {
 > --
-> 1.9.1
+> 2.16.1
 > 
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
-According to speedtest.net: 8.21Mbps down 510kbps up
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
