@@ -1,81 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753249AbeEKOFt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 10:05:49 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:59337 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752563AbeEKOFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 10:05:48 -0400
-Subject: Re: [PATCH 5/5] hisi: Consolidate the Kconfigs for the CLOCK_STUB and
- the MAILBOX
-To: Leo Yan <leo.yan@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>
-References: <1522811675-12741-1-git-send-email-leo.yan@linaro.org>
- <1522811675-12741-6-git-send-email-leo.yan@linaro.org>
- <CABb+yY2ke__W2ZW4c_Z9CejZzup52ykRDyNecTs0+nkvf5cbNA@mail.gmail.com>
- <20180509040255.GF23540@leoy-ThinkPad-X240s>
-CC: Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
-        "Kaihua Zhong" <zhongkaihua@huawei.com>,
-        Tao Wang <kevin.wangtao@hisilicon.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        <", linux-arm-kernel"@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Guodong Xu <guodong.xu@linaro.org>,
-        "Haojian Zhuang" <haojian.zhuang@linaro.org>, <xuwei5@hisilicon.com>
-From: Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5AF5A328.7080001@hisilicon.com>
-Date: Fri, 11 May 2018 15:05:28 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        id S1753316AbeEKOIB (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 10:08:01 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:52380 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753086AbeEKOH7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 10:07:59 -0400
+Subject: Re: [rds-devel] KASAN: null-ptr-deref Read in rds_ib_get_mr
+To: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc: DaeRyong Jeong <threeearcat@gmail.com>, santosh.shilimkar@oracle.com,
+        davem@davemloft.net, rds-devel@oss.oracle.com, kt0755@gmail.com,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, byoungyoung@purdue.edu
+References: <20180511052056.GA10547@dragonet.kaist.ac.kr>
+ <fa3461d4-8872-48af-9b67-be0affd16bbd@oracle.com>
+ <20180511104630.GD14952@oracle.com>
+From: Yanjun Zhu <yanjun.zhu@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <7ee8589c-97ab-6843-3095-f735040b6f13@oracle.com>
+Date: Fri, 11 May 2018 22:07:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180509040255.GF23540@leoy-ThinkPad-X240s>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20180511104630.GD14952@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.45]
-X-CFilter-Loop: Reflected
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8889 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=853
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805110134
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Leo,
 
-On 2018/5/9 5:02, Leo Yan wrote:
-> On Wed, May 09, 2018 at 09:19:13AM +0530, Jassi Brar wrote:
->> On Wed, Apr 4, 2018 at 8:44 AM, Leo Yan <leo.yan@linaro.org> wrote:
->>> From: Daniel Lezcano <daniel.lezcano@linaro.org>
->>>
->>> The current defconfig is inconsistent as it selects the mailbox and
->>> the clock for the hi6220 and the hi3660 without having their Kconfigs
->>> making sure the dependencies are correct. It ends up when selecting
->>> different versions for the kernel (for example when git bisecting)
->>> those options disappear and they don't get back, leading to unexpected
->>> behaviors. In our case, the cpufreq driver does no longer work because
->>> the clock fails to initialize due to the clock stub and the mailbox
->>> missing.
->>>
->>> In order to have the dependencies correctly set when defaulting, let's
->>> do the same as commit 3a49afb84ca074e ("clk: enable hi655x common clk
->>> automatically") where we select automatically the driver when the
->>> parent driver is selected. With sensible defaults in place, we can leave
->>> other choices for EXPERT.
->>>
->> Acked-by: Jassi Brar <jaswinder.singh@linaro.org>
-> 
-> Thanks Jassi & Stephen.
-> 
-> Wei, could you pick this patch?
 
-Thanks!
-Series applied into the hisilicon tree.
+On 2018/5/11 18:46, Sowmini Varadhan wrote:
+> On (05/11/18 15:48), Yanjun Zhu wrote:
+>> diff --git a/net/rds/ib_rdma.c b/net/rds/ib_rdma.c
+>> index e678699..2228b50 100644
+>> --- a/net/rds/ib_rdma.c
+>> +++ b/net/rds/ib_rdma.c
+>> @@ -539,11 +539,17 @@ void rds_ib_flush_mrs(void)
+>>     void *rds_ib_get_mr(struct scatterlist *sg, unsigned long nents,
+>>                                          struct rds_sock *rs, u32 *key_ret)
+>>     {
+>> -             struct rds_ib_device *rds_ibdev;
+>> +             struct rds_ib_device *rds_ibdev = NULL;
+>>                  struct rds_ib_mr *ibmr = NULL;
+>> -             struct rds_ib_connection *ic = rs->rs_conn->c_transport_data;
+>> +             struct rds_ib_connection *ic = NULL;
+>>                  int ret;
+>>
+>> +             if (rs->rs_bound_addr == 0) {
+>> +                             ret = -EPERM;
+>> +                             goto out;
+>> +             }
+>> +
+>> +             ic = rs->rs_conn->c_transport_data;
+>>                  rds_ibdev = rds_ib_get_device(rs->rs_bound_addr);
+>>                  if (!rds_ibdev) {
+>>                                  ret = -ENODEV;
+>>
+>> I made this raw patch. If you can reproduce this bug, please make tests
+>> with it.
+> I dont think this solves the problem, I think it
+> just changes the timing under which it can still happen.
+>
+> what if the rds_remove_bound() in rds_bind() happens after the check
+> for if (rs->rs_bound_addr == 0) added above by the patch
+>
+> I believe you need some type of synchronization (either
+> through mutex, or some atomic flag in the rs or similar) to make
+> sure rds_bind() and rds_ib_get_mr() are mutually exclusive.
+Sure. I agree with you. Maybe mutex is a good choice.
 
-BR,
-Wei
-
-> 
-> Thanks,
-> Leo Yan
-> 
-> .
-> 
+Zhu Yanjun
+>
+> --Sowmini
+>   
+>
+>
