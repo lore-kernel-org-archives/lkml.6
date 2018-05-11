@@ -1,141 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751564AbeEKWll (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 18:41:41 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38585 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750818AbeEKWlk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 18:41:40 -0400
-X-Google-Smtp-Source: AB8JxZqM4yeb7sGhTS+bv9bp0G6C+N62Bx8m9i/9B/FB79KZT4YoEpu46lFGlF8QjOeAOwdP4mjd4Q==
-Date: Fri, 11 May 2018 15:41:38 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Byungchul Park <byungchul.park@lge.com>, jiangshanlai@gmail.com,
-        josh@joshtriplett.org, rostedt@goodmis.org,
-        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-        kernel-team@lge.com, peterz@infradead.org
-Subject: Re: [PATCH] rcu: Report a quiescent state when it's exactly in the
- state
-Message-ID: <20180511224138.GA89902@joelaf.mtv.corp.google.com>
-References: <1526027434-21237-1-git-send-email-byungchul.park@lge.com>
- <3af4cec0-4019-e3ac-77f9-8631252fb6da@lge.com>
- <20180511161746.GX26088@linux.vnet.ibm.com>
+        id S1751764AbeEKWzg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 18:55:36 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:57334 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751217AbeEKWzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 18:55:33 -0400
+To: Stephen Bates <sbates@raithlin.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Jerome Glisse <jglisse@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Bjorn Helgaas <helgaas@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>
+References: <20180423233046.21476-5-logang@deltatee.com>
+ <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
+ <20180508133407.57a46902@w520.home>
+ <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
+ <20180508141331.7cd737cb@w520.home>
+ <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
+ <20180508205005.GC15608@redhat.com>
+ <7FFB9603-DF9F-4441-82E9-46037CB6C0DE@raithlin.com>
+ <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
+ <4e0d0b96-ab02-2662-adf3-fa956efd294c@deltatee.com>
+ <2fc61d29-9eb4-d168-a3e5-955c36e5d821@amd.com>
+ <94C8FE12-7FC3-48BD-9DCA-E6A427E71810@raithlin.com>
+ <f0101988-cf82-7ffb-2aca-d3b8d2f4b504@deltatee.com>
+ <868B49CE-4F0E-4A48-BE78-12149F85F1A4@raithlin.com>
+ <8113cba8-62b9-1801-7a77-f82be223b183@deltatee.com>
+ <cf2b92c9-7c5b-f19c-b5b1-2f2d435296d1@amd.com>
+ <53fa38ce-40dd-6bc1-9b83-c6ccf228b755@deltatee.com>
+ <A50EA568-81E7-4AD7-8C1B-1029FEA92F49@raithlin.com>
+ <YTXPR0101MB2045DC0248A9B125CA276969AA9F0@YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <fe1e1d66-9764-768a-a2da-73845d319b4e@deltatee.com>
+Date: Fri, 11 May 2018 16:55:11 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <YTXPR0101MB2045DC0248A9B125CA276969AA9F0@YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180511161746.GX26088@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: hch@lst.de, maxg@mellanox.com, bhelgaas@google.com, benh@kernel.crashing.org, helgaas@kernel.org, jgg@mellanox.com, alex.williamson@redhat.com, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org, keith.busch@intel.com, axboe@kernel.dk, jglisse@redhat.com, christian.koenig@amd.com, sbates@raithlin.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 09:17:46AM -0700, Paul E. McKenney wrote:
-> On Fri, May 11, 2018 at 09:57:54PM +0900, Byungchul Park wrote:
-> > Hello folks,
-> > 
-> > I think I wrote the title in a misleading way.
-> > 
-> > Please change the title to something else such as,
-> > "rcu: Report a quiescent state when it's in the state" or,
-> > "rcu: Add points reporting quiescent states where proper" or so on.
-> > 
-> > On 2018-05-11 오후 5:30, Byungchul Park wrote:
-> > >We expect a quiescent state of TASKS_RCU when cond_resched_tasks_rcu_qs()
-> > >is called, no matter whether it actually be scheduled or not. However,
-> > >it currently doesn't report the quiescent state when the task enters
-> > >into __schedule() as it's called with preempt = true. So make it report
-> > >the quiescent state unconditionally when cond_resched_tasks_rcu_qs() is
-> > >called.
-> > >
-> > >And in TINY_RCU, even though the quiescent state of rcu_bh also should
-> > >be reported when the tick interrupt comes from user, it doesn't. So make
-> > >it reported.
-> > >
-> > >Lastly in TREE_RCU, rcu_note_voluntary_context_switch() should be
-> > >reported when the tick interrupt comes from not only user but also idle,
-> > >as an extended quiescent state.
-> > >
-> > >Signed-off-by: Byungchul Park <byungchul.park@lge.com>
-> > >---
-> > >  include/linux/rcupdate.h | 4 ++--
-> > >  kernel/rcu/tiny.c        | 6 +++---
-> > >  kernel/rcu/tree.c        | 4 ++--
-> > >  3 files changed, 7 insertions(+), 7 deletions(-)
-> > >
-> > >diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-> > >index ee8cf5fc..7432261 100644
-> > >--- a/include/linux/rcupdate.h
-> > >+++ b/include/linux/rcupdate.h
-> > >@@ -195,8 +195,8 @@ static inline void exit_tasks_rcu_finish(void) { }
-> > >   */
-> > >  #define cond_resched_tasks_rcu_qs() \
-> > >  do { \
-> > >-	if (!cond_resched()) \
-> > >-		rcu_note_voluntary_context_switch_lite(current); \
-> > >+	rcu_note_voluntary_context_switch_lite(current); \
-> > >+	cond_resched(); \
+On 5/11/2018 4:24 PM, Stephen  Bates wrote:
+> All
 > 
-> Ah, good point.
+>>   Alex (or anyone else) can you point to where IOVA addresses are generated?
 > 
-> Peter, I have to ask...  Why is "cond_resched()" considered a preemption
-> while "schedule()" is not?
+> A case of RTFM perhaps (though a pointer to the code would still be appreciated).
+> 
+> https://www.kernel.org/doc/Documentation/Intel-IOMMU.txt
+> 
+> Some exceptions to IOVA
+> -----------------------
+> Interrupt ranges are not address translated, (0xfee00000 - 0xfeefffff).
+> The same is true for peer to peer transactions. Hence we reserve the
+> address from PCI MMIO ranges so they are not allocated for IOVA addresses.
 
-Infact something interesting I inferred from the __schedule loop related to
-your question:
+Hmm, except I'm not sure how to interpret that. It sounds like there 
+can't be an IOVA address that overlaps with the PCI MMIO range which is 
+good and what I'd expect.
 
-switch_count can either be set to prev->invcsw or prev->nvcsw. If we can
-assume that switch_count reflects whether the context switch is involuntary
-or voluntary,
-                      
-task-running-state	preempt		switch_count
-0 (running)		1		involuntary
-0			0		involuntary
-1			0		voluntary
-1			1		involuntary
+But for peer to peer they say they don't translate the address which 
+implies to me that the intention is for a peer to peer address to not be 
+mapped in the same way using the dma_map interface (of course though if 
+you were using ATS you'd want this for sure). Unless the existing 
+dma_map command's notice a PCI MMIO address and handle them differently, 
+but I don't see how.
 
-According to the above table, both the task's running state and the preempt
-parameter to __schedule should be used together to determine if the switch is
-a voluntary one or not.
-
-So this code in rcu_note_context_switch should really be:
-if (!preempt && !(current->state & TASK_RUNNING))
-	rcu_note_voluntary_context_switch_lite(current);
-
-According to the above table, cond_resched always classifies as an
-involuntary switch which makes sense to me. Even though cond_resched is
-explicitly called, its still sort of involuntary in the sense its not called
-into the scheduler for sleeping, but rather for seeing if something else can
-run instead (a preemption point). Infact none of the task deactivation in the
-__schedule loop will run if cond_resched is used.
-
-I agree that if schedule was called directly but with TASK_RUNNING=1, then
-that could probably be classified an involuntary switch too...
-
-Also since we're deciding to call rcu_note_voluntary_context_switch_lite
-unconditionally, then IMO this comment on that macro:
-
-/*
- * Note a voluntary context switch for RCU-tasks benefit.  This is a
- * macro rather than an inline function to avoid #include hell.
- */
- #ifdef CONFIG_TASKS_RCU
- #define rcu_note_voluntary_context_switch_lite(t)
-
-Should be changed to:
-
-/*
- * Note a attempt to perform a voluntary context switch for RCU-tasks
- * benefit.  This is called even in situations where a context switch
- * didn't really happen even though it was requested. This is a
- * macro rather than an inline function to avoid #include hell.
- */
- #ifdef CONFIG_TASKS_RCU
- #define rcu_note_voluntary_context_switch_lite(t)
-
-Right?
-
-Correct me if I'm wrong about anything, thanks,
-
-- Joel
+Logan
