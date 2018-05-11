@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752428AbeEKGPI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 02:15:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53162 "EHLO
+        id S1752393AbeEKGPF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 02:15:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53198 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752302AbeEKGPC (ORCPT
+        by vger.kernel.org with ESMTP id S1752306AbeEKGPD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 02:15:02 -0400
+        Fri, 11 May 2018 02:15:03 -0400
 From: "Alastair D'Silva" <alastair@au1.ibm.com>
 To: linuxppc-dev@lists.ozlabs.org
 Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
@@ -17,14 +17,16 @@ Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
         gregkh@linuxfoundation.org, arnd@arndb.de,
         andrew.donnellan@au1.ibm.com, fbarrat@linux.vnet.ibm.com,
         corbet@lwn.net, "Alastair D'Silva" <alastair@d-silva.org>
-Subject: [PATCH v5 0/7] ocxl: Implement Power9 as_notify/wait for OpenCAPI
-Date: Fri, 11 May 2018 16:12:56 +1000
+Subject: [PATCH v5 7/7] ocxl: Document new OCXL IOCTLs
+Date: Fri, 11 May 2018 16:13:03 +1000
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180511061303.10728-1-alastair@au1.ibm.com>
+References: <20180511061303.10728-1-alastair@au1.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18051106-0040-0000-0000-0000043872C3
+x-cbid: 18051106-0012-0000-0000-000005D58619
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051106-0041-0000-0000-0000263CB9C9
-Message-Id: <20180511061303.10728-1-alastair@au1.ibm.com>
+x-cbparentid: 18051106-0013-0000-0000-000019528C2C
+Message-Id: <20180511061303.10728-8-alastair@au1.ibm.com>
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 MIME-Version: 1.0
@@ -41,51 +43,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alastair D'Silva <alastair@d-silva.org>
 
-The Power 9 as_notify/wait feature provides a lower latency way to
-signal a thread that work is complete. This series enables the use of
-this feature from OpenCAPI adapters, as well as addressing a potential
-starvation issue when allocating thread IDs.
+Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+---
+ Documentation/accelerators/ocxl.rst | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Changelog:
-v5:
-  Remove stray brace
-  Fix bad rename of ocxl_ioctl_platform to ocxl_ioctl_features
-v4:
-  Remove the "unique" statement from the set_thread_tidr function and
-    move the text explaining why it is safe from the commit message
-    to the function description
-v3:
-  Fix references to POWER9
-  Remove stray whitespace edit from docs
-  Add more details to commit message for "use task_pid_nr()"
-  Retitle patch 6 to indicate OCXL rather than CPU features
-v2:
-  Rename get_platform IOCTL to get_features
-  Move stray edit from patch 1 to patch 3
-
-Alastair D'Silva (7):
-  powerpc: Add TIDR CPU feature for POWER9
-  powerpc: Use TIDR CPU feature to control TIDR allocation
-  powerpc: use task_pid_nr() for TID allocation
-  ocxl: Rename pnv_ocxl_spa_remove_pe to clarify it's action
-  ocxl: Expose the thread_id needed for wait on POWER9
-  ocxl: Add an IOCTL so userspace knows what OCXL features are available
-  ocxl: Document new OCXL IOCTLs
-
- Documentation/accelerators/ocxl.rst   |  11 ++++
- arch/powerpc/include/asm/cputable.h   |   3 +-
- arch/powerpc/include/asm/pnv-ocxl.h   |   2 +-
- arch/powerpc/include/asm/switch_to.h  |   1 -
- arch/powerpc/kernel/dt_cpu_ftrs.c     |   1 +
- arch/powerpc/kernel/process.c         | 101 +---------------------------------
- arch/powerpc/platforms/powernv/ocxl.c |   4 +-
- drivers/misc/ocxl/context.c           |   5 +-
- drivers/misc/ocxl/file.c              |  78 ++++++++++++++++++++++++++
- drivers/misc/ocxl/link.c              |  38 ++++++++++++-
- drivers/misc/ocxl/ocxl_internal.h     |   1 +
- include/misc/ocxl.h                   |   9 +++
- include/uapi/misc/ocxl.h              |  14 +++++
- 13 files changed, 163 insertions(+), 105 deletions(-)
-
+diff --git a/Documentation/accelerators/ocxl.rst b/Documentation/accelerators/ocxl.rst
+index ddcc58d01cfb..14cefc020e2d 100644
+--- a/Documentation/accelerators/ocxl.rst
++++ b/Documentation/accelerators/ocxl.rst
+@@ -157,6 +157,17 @@ OCXL_IOCTL_GET_METADATA:
+   Obtains configuration information from the card, such at the size of
+   MMIO areas, the AFU version, and the PASID for the current context.
+ 
++OCXL_IOCTL_ENABLE_P9_WAIT:
++
++  Allows the AFU to wake a userspace thread executing 'wait'. Returns
++  information to userspace to allow it to configure the AFU. Note that
++  this is only available on POWER9.
++
++OCXL_IOCTL_GET_FEATURES:
++
++  Reports on which CPU features that affect OpenCAPI are usable from
++  userspace.
++
+ 
+ mmap
+ ----
 -- 
-2.14.3
+2.17.0
