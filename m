@@ -1,161 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752647AbeEKJlR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 05:41:17 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:33106 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750852AbeEKJlP (ORCPT
+        id S1752616AbeEKJuL (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 05:50:11 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:44092 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750806AbeEKJuK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 05:41:15 -0400
-X-Google-Smtp-Source: AB8JxZpwKquXBHOQ4dnjecAiiF14d+0aClzYARZwlItvkhgSbpSC0Nx1xns0+zBMZTOelG0r3+ZE2snv6cZ2Xz0ZQp4=
+        Fri, 11 May 2018 05:50:10 -0400
+X-Google-Smtp-Source: AB8JxZoCEQbCGb88fFRN5G6O+1Kqemnh4JaMieeO7SS+ZIZoGiKb+IeWt3MegfARpk2hjfMCbHBmSw==
+Date: Fri, 11 May 2018 18:50:04 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: printk feature for syzbot?
+Message-ID: <20180511095004.GA6575@jagdpanzerIV>
+References: <201805102350.JJH73950.tVJHQLFSOMOOFF@I-love.SAKURA.ne.jp>
+ <20180511014515.GA895@jagdpanzerIV>
+ <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
+ <20180511062151.GA18160@jagdpanzerIV>
+ <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180509181650.13687-1-ezhi99@gmail.com>
-References: <20180509181650.13687-1-ezhi99@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 11 May 2018 12:41:14 +0300
-Message-ID: <CAHp75VdjYxp7QGYdtY3EXNrLZkgEUvQ8C5XssUeLh=0V6zT1jg@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: ideapad-laptop: Add fn-lock setting Some of
- latest Lenovo ideapad laptops do not have UEFI/BIOS setting for switching
- fn-lock mode. This commit adds related acpi calls to ideapad platfrom driver.
- However setting is available via sysfs.
-To: Oleg Keri <ezhi99@gmail.com>
-Cc: Ike Panhc <ike.pan@canonical.com>, Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 9, 2018 at 9:16 PM, Oleg Keri <ezhi99@gmail.com> wrote:
+On (05/11/18 11:17), Dmitry Vyukov wrote:
+> 
+> From what I see, it seems that interrupts can be nested:
 
-Oleg, thank you for the patch, thoiugh it contains two issues, i.e.
- - each new attribute in sysfs is ABI, *must* be documented; if there
-is no such file present at all, you may start a new one;
- - the commit message is formatted rather as in SVN style, in Git we
-have a separate line for subject followed by empty line that followed
-by body of commit message.
+Hm, I thought that in general IRQ handlers run with local IRQs
+disabled on CPU. So, generally, IRQs don't nest. Was I wrong?
+NMIs can nest, that's true; but I thought that at least IRQs
+don't.
 
-The code itself, assuming it's tested, looks good.
+> https://syzkaller.appspot.com/bug?id=72eddef9cedcf81486adb9dd3e789f0d77505ba5
+> https://syzkaller.appspot.com/bug?id=66fcf61c65f8aa50bbb862eb2fde27c08909a4ff
+> 
+> Will this in_nmi()/in_irq()/in_serving_softirq()/else be enough to
+> untangle output printed by such nested interrupts?
 
-> Signed-off-by: Oleg Keri <ezhi99@gmail.com>
-> ---
->  drivers/platform/x86/ideapad-laptop.c | 52 +++++++++++++++++++++++++--
->  1 file changed, 49 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-> index 535199c9..2f4991fb 100644
-> --- a/drivers/platform/x86/ideapad-laptop.c
-> +++ b/drivers/platform/x86/ideapad-laptop.c
-> @@ -43,6 +43,7 @@
->  #define IDEAPAD_RFKILL_DEV_NUM (3)
->
->  #define BM_CONSERVATION_BIT (5)
-> +#define HA_FNLOCK_BIT       (10)
->
->  #define CFG_BT_BIT     (16)
->  #define CFG_3G_BIT     (17)
-> @@ -59,6 +60,8 @@ static const char *const ideapad_wmi_fnesc_events[] = {
->  enum {
->         BMCMD_CONSERVATION_ON = 3,
->         BMCMD_CONSERVATION_OFF = 5,
-> +       HACMD_FNLOCK_ON = 0xe,
-> +       HACMD_FNLOCK_OFF = 0xf,
->  };
->
->  enum {
-> @@ -139,11 +142,11 @@ static int method_gbmd(acpi_handle handle, unsigned long *ret)
->         return result;
->  }
->
-> -static int method_sbmc(acpi_handle handle, int cmd)
-> +static int method_int1(acpi_handle handle, char *method, int cmd)
->  {
->         acpi_status status;
->
-> -       status = acpi_execute_simple_method(handle, "SBMC", cmd);
-> +       status = acpi_execute_simple_method(handle, method, cmd);
->         return ACPI_FAILURE(status) ? -1 : 0;
->  }
->
-> @@ -487,7 +490,7 @@ static ssize_t conservation_mode_store(struct device *dev,
->         if (ret)
->                 return ret;
->
-> -       ret = method_sbmc(priv->adev->handle, state ?
-> +       ret = method_int1(priv->adev->handle, "SBMC", state ?
->                                               BMCMD_CONSERVATION_ON :
->                                               BMCMD_CONSERVATION_OFF);
->         if (ret < 0)
-> @@ -497,11 +500,51 @@ static ssize_t conservation_mode_store(struct device *dev,
->
->  static DEVICE_ATTR_RW(conservation_mode);
->
-> +static ssize_t fn_lock_show(struct device *dev,
-> +                           struct device_attribute *attr,
-> +                           char *buf)
-> +{
-> +       struct ideapad_private *priv = dev_get_drvdata(dev);
-> +       unsigned long result;
-> +       int hals;
-> +       int fail = read_method_int(priv->adev->handle, "HALS", &hals);
-> +
-> +       if (fail)
-> +               return sprintf(buf, "-1\n");
-> +
-> +       result = hals;
-> +       return sprintf(buf, "%u\n", test_bit(HA_FNLOCK_BIT, &result));
-> +}
-> +
-> +static ssize_t fn_lock_store(struct device *dev,
-> +                            struct device_attribute *attr,
-> +                            const char *buf, size_t count)
-> +{
-> +       struct ideapad_private *priv = dev_get_drvdata(dev);
-> +       bool state;
-> +       int ret;
-> +
-> +       ret = kstrtobool(buf, &state);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = method_int1(priv->adev->handle, "SALS", state ?
-> +                         HACMD_FNLOCK_ON :
-> +                         HACMD_FNLOCK_OFF);
-> +       if (ret < 0)
-> +               return -EIO;
-> +       return count;
-> +}
-> +
-> +static DEVICE_ATTR_RW(fn_lock);
-> +
-> +
->  static struct attribute *ideapad_attributes[] = {
->         &dev_attr_camera_power.attr,
->         &dev_attr_fan_mode.attr,
->         &dev_attr_touchpad.attr,
->         &dev_attr_conservation_mode.attr,
-> +       &dev_attr_fn_lock.attr,
->         NULL
->  };
->
-> @@ -522,6 +565,9 @@ static umode_t ideapad_is_visible(struct kobject *kobj,
->         } else if (attr == &dev_attr_conservation_mode.attr) {
->                 supported = acpi_has_method(priv->adev->handle, "GBMD") &&
->                             acpi_has_method(priv->adev->handle, "SBMC");
-> +       } else if (attr == &dev_attr_fn_lock.attr) {
-> +               supported = acpi_has_method(priv->adev->handle, "HALS") &&
-> +                       acpi_has_method(priv->adev->handle, "SALS");
->         } else
->                 supported = true;
->
-> --
-> 2.17.0
->
+Well, hm. __irq_enter() does preempt_count_add(HARDIRQ_OFFSET) and
+__irq_exit() does preempt_count_sub(HARDIRQ_OFFSET). So, technically,
+you can store
 
+	preempt_count() & HARDIRQ_MASK
+	preempt_count() & SOFTIRQ_MASK
+	preempt_count() & NMI_MASK
 
+in that extended context tracking. The numbers will not tell you
+the IRQ line number, for instance, but at least you'll be able to
+distinguish different hard/soft IRQs, NMIs. Just an idea, I didn't
+check it, may be it won't work at all.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Ideally, the serial log should be like this
+
+	i:1 ... foo()
+	i:1 ... bar()
+	i:2 ... foo()  // __irq_enter()
+	i:2 ... bar()
+	i:2 ... buz()  // __irq_exit()
+	i:1 ... buz()
+
+but I may be completely wrong.
+
+Petr and Steven probably will have better ideas.
+
+	-ss
