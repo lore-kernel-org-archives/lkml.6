@@ -1,11 +1,10 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3842726-1526037665-2-11519038027753103948
+X-Cyrus-Session-Id: sloti22d1t05-3845081-1526037652-2-10347718639771251245
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
 X-Spam-charsets: 
@@ -13,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526037665; b=VC9SCXiAJq1ea4Y9JRe5x+8nBh6mYshvuivyql1VUagEa1N5IH
-    134BgJeDWtgF7byM0FQi5BC1yDQVjFxXHU4eKpn9hwFVKeW71GtP1cGXD1VwLig9
-    iPl4M7yEnkiinvMIYIY2tPrq8ggU7MAyhTtbF5DjRalmDXqeFLZLV2ymife99K+G
-    evlUu7gvTWIewPophrsvnUBSjegb4REcNQd4KY5ZCRw7e3hlBTUHYdor3g0mCeBE
-    6QQ/uemxm8nSx57S5KR5BIm6r9hQ4fT3HOEzCnMJeb72lrmeW8aeTrmYOS1Oo/c0
-    6rNU0pCdpymXCjN3zVzjxdwwrf0SbLlDd1XA==
+    1526037651; b=JitJikMgE8ee7B5F6LbQFkrfEpLv5FyP2Uqf10lCuoX171whpE
+    wOHebWwe10vxiDdSRapvtTowlAuLKyi8xurf1MGLB6E4VgNmeywOXBomcLrKME1J
+    cRhURoFtZ5GNp1hc/EVnsbeoQh7B8a6a9pu6RNWrZnHAFvNMrGkWZVAtyjSHBDcT
+    tVuL1YdobnB5henBpdUjWBuI9chi9qgiozRpF3TVSWkoDPNvejtubv6WhDoLkVNN
+    JR3B1AKiZzd0oH+11u0dd2Eb+jF6/0Hu5IsfK7UBfaoNlBpAqcQfcSdrU5rRlWS3
+    iwL7dbUN1EWL0g9iY+7E6q8lSeoWLo9QLyjQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526037665; bh=
-    Hqbs16KSEacUCu6pkD/3g3OC6ua0/pms/gKpLq7hhtQ=; b=IvyctCEHOiDNagUa
-    oUVM5wwgmzQlHjBa52CAjy24M1VPEKpz5E4IydiwJgC7Wp2OSsM3AMqMGTuEdTl4
-    wQ1xJdacSNtxkz/hRiRKGZ1RUWZNbA9EGXnujIb9Dltc6pFBskB52mr/c7IHCBRn
-    9jWHA+oi9M2qTjAYFxYChntWfZ3vonHyhzT4T5xPXH5Sc+zPJBDo5j201Xcrr8Ge
-    /rkK7kITT3q29h7qd+Ty4eV6Tx83ybc9ijwun2dSA15CJAWOMbUm2wNXjR7nSCJY
-    2pJaCAZdsFhl8MdFabQ21XVBr1NakMe5OA6cYOgnJ/z/wv8frbPONTHN/su4yfGi
-    yRKxfA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526037651; bh=
+    PJ7c0kODGJjajPJhm6lMy/GtBx11DZtVI7n7W2ont/Q=; b=bnWjlSRpS2mrZ8SZ
+    Mrr1KQ//sOcztVcpMYx4xUZK5Te028Z4elnVWZgZYL5NGWkO9NyEQ/U5+F24hrlN
+    S5NdO6ymmFgyb82zhb2NjOxdUKZu5bJoQ0FaHxBgk0k59IMOBFnzrQe816YKJnvC
+    1zeE3bTsS68lZHZNRKvwqJuC966LyEmCh/LhBreqcQaPG4uGNWnyB8An+PuiRT3G
+    n5sZbsjmI9rsCwHHRQRQT26u/7+A2nqfM0HrBQIEw9SaA7mokO+/AWVT4zPxPwhq
+    swq3YegO7TU0vLzKpSlhXaKrPwLDvHS3q1z/7L2i1SBb7cF14mScJEWQvSCWeMfw
+    qStXSA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=tTadJdVN
+    header.d=infradead.org header.i=@infradead.org header.b=EKVzVDpq
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -45,10 +44,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=tTadJdVN
+      header.d=infradead.org header.i=@infradead.org header.b=EKVzVDpq
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -63,28 +62,29 @@ Authentication-Results: mx3.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPsJEXW5T1wjPGbkdJTyOswDkPZpvRi4yrPsNdwrMMKMd7TUpNe9nW9w3AMye+DvIpk9dxhhYm+qNBPIGRohZhAqjaQGJLLkQ1kPkeV68aUd4b5kS5IQ
-    83kA+c5D5OwLFEFZsAQ33IAuXHs7sL3xIJolPh3LaMmROwvFDzOSZKBcf73HtysZsYjZ8VkFtVL70YGLxPOUgkyMZKXZfLgZ9tyXUpBw9RdOipm9eEel0voW
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=GZiGuu59xe6QNL0EksgA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfC7T/hvIbLKXb4URtBOZoK0V1MiJ7u8RXsixCDstuO9RWW2lPcxg5bSnZbPUO1qTgS4Fy8ZlSUUbC6iaDouXtC6dYzhYRlihgQYAQ66qS2EGp7zGtsBm
+    ho8s4pcgdrz1N3Jumueg7C9qUNvQxnTmp5RgOzu6h1vEfKl7q31wUD9erYm6pFh/i2UWCxB+yXr0zNLdrZxmWpN+Xc/3m1f+d8c+9d8bfN0gUMmkKFM2T9kS
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
+    a=ag1SF4gXAAAA:8 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=sBy_PAm624FdtEvdJhYA:9
+    a=x8gzFH9gYPwA:10 a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753110AbeEKLIk (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 11 May 2018 07:08:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47294 "EHLO
+        id S1753177AbeEKLUa (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 11 May 2018 07:20:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47306 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753059AbeEKLIh (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 11 May 2018 07:08:37 -0400
+        with ESMTP id S1753100AbeEKLIk (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Fri, 11 May 2018 07:08:40 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/32] aio: add delayed cancel support
-Date: Fri, 11 May 2018 13:07:40 +0200
-Message-Id: <20180511110803.10910-10-hch@lst.de>
+Subject: [PATCH 10/32] aio: implement IOCB_CMD_POLL
+Date: Fri, 11 May 2018 13:07:41 +0200
+Message-Id: <20180511110803.10910-11-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180511110803.10910-1-hch@lst.de>
 References: <20180511110803.10910-1-hch@lst.de>
@@ -95,219 +95,176 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The upcoming aio poll support would like to be able to complete the iocb
-inline from the cancellation context, but that would cause a double lock
-of ctx_lock as-is.  Add a new delayed_cancel_reqs list of iocbs that
-should be cancelled from outside the ctx_lock by calling the (re-)added
-ki_cancel callback.
+Simple one-shot poll through the io_submit() interface.  To poll for
+a file descriptor the application should submit an iocb of type
+IOCB_CMD_POLL.  It will poll the fd for the events specified in the
+the first 32 bits of the aio_buf field of the iocb.
 
-To make this safe aio_complete needs to check if this call should complete
-the iocb, and to make that safe without much reordering a struct file
-argument to put is padded to aio_complete.
+Unlike poll or epoll without EPOLLONESHOT this interface always works
+in one shot mode, that is once the iocb is completed, it will have to be
+resubmitted.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Jeff Moyer <jmoyer@redhat.com>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 ---
- fs/aio.c | 80 ++++++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 51 insertions(+), 29 deletions(-)
+ fs/aio.c                     | 92 +++++++++++++++++++++++++++++++++++-
+ include/uapi/linux/aio_abi.h |  6 +--
+ 2 files changed, 93 insertions(+), 5 deletions(-)
 
 diff --git a/fs/aio.c b/fs/aio.c
-index be10dde20c8e..3afca506c7f0 100644
+index 3afca506c7f0..f2c7674e2151 100644
 --- a/fs/aio.c
 +++ b/fs/aio.c
-@@ -138,7 +138,8 @@ struct kioctx {
+@@ -5,6 +5,7 @@
+  *	Implements an efficient asynchronous io interface.
+  *
+  *	Copyright 2000, 2001, 2002 Red Hat, Inc.  All Rights Reserved.
++ *	Copyright 2018 Christoph Hellwig.
+  *
+  *	See ../COPYING for licensing terms.
+  */
+@@ -165,10 +166,18 @@ struct fsync_iocb {
+ 	bool			datasync;
+ };
  
- 	struct {
- 		spinlock_t	ctx_lock;
--		struct list_head active_reqs;	/* used for cancellation */
-+		struct list_head cancel_reqs;
-+		struct list_head delayed_cancel_reqs;
- 	} ____cacheline_aligned_in_smp;
- 
- 	struct {
-@@ -171,6 +172,7 @@ struct aio_kiocb {
++struct poll_iocb {
++	struct file		*file;
++	__poll_t		events;
++	struct wait_queue_head	*head;
++	struct wait_queue_entry	wait;
++};
++
+ struct aio_kiocb {
+ 	union {
+ 		struct kiocb		rw;
+ 		struct fsync_iocb	fsync;
++		struct poll_iocb	poll;
  	};
  
  	struct kioctx		*ki_ctx;
-+	int			(*ki_cancel)(struct aio_kiocb *iocb);
+@@ -1569,7 +1578,6 @@ static int aio_fsync(struct fsync_iocb *req, struct iocb *iocb, bool datasync)
+ 	if (unlikely(iocb->aio_buf || iocb->aio_offset || iocb->aio_nbytes ||
+ 			iocb->aio_rw_flags))
+ 		return -EINVAL;
+-
+ 	req->file = fget(iocb->aio_fildes);
+ 	if (unlikely(!req->file))
+ 		return -EBADF;
+@@ -1584,6 +1592,86 @@ static int aio_fsync(struct fsync_iocb *req, struct iocb *iocb, bool datasync)
+ 	return -EIOCBQUEUED;
+ }
  
- 	struct iocb __user	*ki_user_iocb;	/* user's aiocb */
- 	__u64			ki_user_data;	/* user's data for completion */
-@@ -178,6 +180,9 @@ struct aio_kiocb {
- 	struct list_head	ki_list;	/* the aio core uses this
- 						 * for cancellation */
- 
-+	unsigned int		flags;		/* protected by ctx->ctx_lock */
-+#define AIO_IOCB_CANCELLED	(1 << 1)
++static int aio_poll_cancel(struct aio_kiocb *iocb)
++{
++	remove_wait_queue(iocb->poll.head, &iocb->poll.wait);
++	aio_complete(iocb, iocb->poll.file, 0, 0, AIO_COMPLETE_CANCEL);
++	return 0;
++}
 +
- 	/*
- 	 * If the aio_resfd field of the userspace iocb is not zero,
- 	 * this is the underlying eventfd context to deliver events to.
-@@ -584,18 +589,23 @@ static void free_ioctx_users(struct percpu_ref *ref)
- {
- 	struct kioctx *ctx = container_of(ref, struct kioctx, users);
- 	struct aio_kiocb *req;
-+	LIST_HEAD(list);
- 
- 	spin_lock_irq(&ctx->ctx_lock);
--
--	while (!list_empty(&ctx->active_reqs)) {
--		req = list_first_entry(&ctx->active_reqs,
-+	while (!list_empty(&ctx->cancel_reqs)) {
-+		req = list_first_entry(&ctx->cancel_reqs,
- 				       struct aio_kiocb, ki_list);
- 		list_del_init(&req->ki_list);
- 		req->rw.ki_filp->f_op->cancel_kiocb(&req->rw);
- 	}
--
-+	list_splice_init(&ctx->delayed_cancel_reqs, &list);
- 	spin_unlock_irq(&ctx->ctx_lock);
- 
-+	while (!list_empty(&list)) {
-+		req = list_first_entry(&list, struct aio_kiocb, ki_list);
-+		req->ki_cancel(req);
++static int aio_poll_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
++		void *key)
++{
++	struct poll_iocb *req = container_of(wait, struct poll_iocb, wait);
++	struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, poll);
++	struct file *file = req->file;
++	__poll_t mask = key_to_poll(key);
++
++	assert_spin_locked(&req->head->lock);
++
++	/* for instances that support it check for an event match first: */
++	if (mask && !(mask & req->events))
++		return 0;
++
++	mask = file->f_op->poll_mask(file, req->events);
++	if (!mask)
++		return 0;
++
++	__remove_wait_queue(req->head, &req->wait);
++	aio_complete(iocb, req->file, mangle_poll(mask), 0, 0);
++	return 1;
++}
++
++static ssize_t aio_poll(struct aio_kiocb *aiocb, struct iocb *iocb)
++{
++	struct kioctx *ctx = aiocb->ki_ctx;
++	struct poll_iocb *req = &aiocb->poll;
++	unsigned long flags;
++	__poll_t mask;
++
++	/* reject any unknown events outside the normal event mask. */
++	if ((u16)iocb->aio_buf != iocb->aio_buf)
++		return -EINVAL;
++	/* reject fields that are not defined for poll */
++	if (iocb->aio_offset || iocb->aio_nbytes || iocb->aio_rw_flags)
++		return -EINVAL;
++
++	req->events = demangle_poll(iocb->aio_buf) | POLLERR | POLLHUP;
++	req->file = fget(iocb->aio_fildes);
++	if (unlikely(!req->file))
++		return -EBADF;
++	if (!file_has_poll_mask(req->file))
++		goto out_fail;
++
++	req->head = req->file->f_op->get_poll_head(req->file, req->events);
++	if (!req->head)
++		goto out_fail;
++	if (IS_ERR(req->head)) {
++		mask = EPOLLERR;
++		goto done;
 +	}
 +
- 	percpu_ref_kill(&ctx->reqs);
- 	percpu_ref_put(&ctx->reqs);
- }
-@@ -715,7 +725,8 @@ static struct kioctx *ioctx_alloc(unsigned nr_events)
- 	mutex_lock(&ctx->ring_lock);
- 	init_waitqueue_head(&ctx->wait);
- 
--	INIT_LIST_HEAD(&ctx->active_reqs);
-+	INIT_LIST_HEAD(&ctx->cancel_reqs);
-+	INIT_LIST_HEAD(&ctx->delayed_cancel_reqs);
- 
- 	if (percpu_ref_init(&ctx->users, free_ioctx_users, 0, GFP_KERNEL))
- 		goto err;
-@@ -1032,25 +1043,34 @@ static struct kioctx *lookup_ioctx(unsigned long ctx_id)
- 	return ret;
- }
- 
-+#define AIO_COMPLETE_CANCEL	(1 << 0)
++	init_waitqueue_func_entry(&req->wait, aio_poll_wake);
++	aiocb->ki_cancel = aio_poll_cancel;
 +
- /* aio_complete
-  *	Called when the io request on the given iocb is complete.
-  */
--static void aio_complete(struct aio_kiocb *iocb, long res, long res2)
-+static void aio_complete(struct aio_kiocb *iocb, struct file *file, long res,
-+		long res2, unsigned complete_flags)
- {
- 	struct kioctx	*ctx = iocb->ki_ctx;
- 	struct aio_ring	*ring;
- 	struct io_event	*ev_page, *event;
- 	unsigned tail, pos, head;
--	unsigned long	flags;
-+	unsigned long flags;
- 
- 	if (!list_empty_careful(&iocb->ki_list)) {
--		unsigned long flags;
--
- 		spin_lock_irqsave(&ctx->ctx_lock, flags);
-+		if (!(complete_flags & AIO_COMPLETE_CANCEL) &&
-+		    (iocb->flags & AIO_IOCB_CANCELLED)) {
-+			spin_unlock_irqrestore(&ctx->ctx_lock, flags);
-+			return;
-+		}
++	spin_lock_irqsave(&ctx->ctx_lock, flags);
++	list_add_tail(&aiocb->ki_list, &ctx->delayed_cancel_reqs);
++	spin_unlock(&ctx->ctx_lock);
 +
- 		list_del(&iocb->ki_list);
- 		spin_unlock_irqrestore(&ctx->ctx_lock, flags);
- 	}
- 
-+	fput(file);
++	spin_lock(&req->head->lock);
++	mask = req->file->f_op->poll_mask(req->file, req->events);
++	if (!mask)
++		__add_wait_queue(req->head, &req->wait);
++	spin_unlock_irqrestore(&req->head->lock, flags);
++done:
++	if (mask)
++		aio_complete(aiocb, req->file, mangle_poll(mask), 0, 0);
++	return -EIOCBQUEUED;
++out_fail:
++	fput(req->file);
++	return -EINVAL; /* same as no support for IOCB_CMD_POLL */
++}
 +
- 	/*
- 	 * Add a completion event to the ring buffer. Must be done holding
- 	 * ctx->completion_lock to prevent other code from messing with the tail
-@@ -1384,8 +1404,7 @@ static void aio_complete_rw(struct kiocb *kiocb, long res, long res2)
- 		file_end_write(kiocb->ki_filp);
- 	}
- 
--	fput(kiocb->ki_filp);
--	aio_complete(iocb, res, res2);
-+	aio_complete(iocb, kiocb->ki_filp, res, res2, 0);
- }
- 
- static int aio_prep_rw(struct kiocb *req, struct iocb *iocb)
-@@ -1437,7 +1456,7 @@ static inline ssize_t aio_rw_ret(struct kiocb *req, ssize_t ret)
- 			unsigned long flags;
- 
- 			spin_lock_irqsave(&ctx->ctx_lock, flags);
--			list_add_tail(&iocb->ki_list, &ctx->active_reqs);
-+			list_add_tail(&iocb->ki_list, &ctx->cancel_reqs);
- 			spin_unlock_irqrestore(&ctx->ctx_lock, flags);
- 		}
- 		return ret;
-@@ -1539,11 +1558,10 @@ static ssize_t aio_write(struct kiocb *req, struct iocb *iocb, bool vectored,
- static void aio_fsync_work(struct work_struct *work)
+ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
+ 			 struct iocb *iocb, bool compat)
  {
- 	struct fsync_iocb *req = container_of(work, struct fsync_iocb, work);
--	int ret;
-+	struct aio_kiocb *iocb = container_of(req, struct aio_kiocb, fsync);
-+	struct file *file = req->file;
- 
--	ret = vfs_fsync(req->file, req->datasync);
--	fput(req->file);
--	aio_complete(container_of(req, struct aio_kiocb, fsync), ret, 0);
-+	aio_complete(iocb, file, vfs_fsync(file, req->datasync), 0, 0);
- }
- 
- static int aio_fsync(struct fsync_iocb *req, struct iocb *iocb, bool datasync)
-@@ -1768,18 +1786,12 @@ COMPAT_SYSCALL_DEFINE3(io_submit, compat_aio_context_t, ctx_id,
- }
- #endif
- 
--/* lookup_kiocb
-- *	Finds a given iocb for cancellation.
-- */
- static struct aio_kiocb *
--lookup_kiocb(struct kioctx *ctx, struct iocb __user *iocb)
-+lookup_kiocb(struct list_head *list, struct iocb __user *iocb)
- {
- 	struct aio_kiocb *kiocb;
- 
--	assert_spin_locked(&ctx->ctx_lock);
--
--	/* TODO: use a hash or array, this sucks. */
--	list_for_each_entry(kiocb, &ctx->active_reqs, ki_list) {
-+	list_for_each_entry(kiocb, list, ki_list) {
- 		if (kiocb->ki_user_iocb == iocb)
- 			return kiocb;
- 	}
-@@ -1801,6 +1813,7 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
- {
- 	struct kioctx *ctx;
- 	struct aio_kiocb *kiocb;
-+	LIST_HEAD(dummy);
- 	int ret = -EINVAL;
- 	u32 key;
- 
-@@ -1814,12 +1827,21 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
- 		return -EINVAL;
- 
- 	spin_lock_irq(&ctx->ctx_lock);
--	kiocb = lookup_kiocb(ctx, iocb);
-+	kiocb = lookup_kiocb(&ctx->delayed_cancel_reqs, iocb);
- 	if (kiocb) {
--		list_del_init(&kiocb->ki_list);
--		ret = kiocb->rw.ki_filp->f_op->cancel_kiocb(&kiocb->rw);
-+		kiocb->flags |= AIO_IOCB_CANCELLED;
-+		list_move_tail(&kiocb->ki_list, &dummy);
-+		spin_unlock_irq(&ctx->ctx_lock);
-+
-+		ret = kiocb->ki_cancel(kiocb);
-+	} else {
-+		kiocb = lookup_kiocb(&ctx->cancel_reqs, iocb);
-+		if (kiocb) {
-+			list_del_init(&kiocb->ki_list);
-+			ret = kiocb->rw.ki_filp->f_op->cancel_kiocb(&kiocb->rw);
-+		}
-+		spin_unlock_irq(&ctx->ctx_lock);
- 	}
--	spin_unlock_irq(&ctx->ctx_lock);
- 
- 	if (!ret) {
- 		/*
+@@ -1652,6 +1740,8 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
+ 		break;
+ 	case IOCB_CMD_FDSYNC:
+ 		ret = aio_fsync(&req->fsync, iocb, true);
++	case IOCB_CMD_POLL:
++		ret = aio_poll(req, iocb);
+ 		break;
+ 	default:
+ 		pr_debug("invalid aio operation %d\n", iocb->aio_lio_opcode);
+diff --git a/include/uapi/linux/aio_abi.h b/include/uapi/linux/aio_abi.h
+index 2c0a3415beee..ed0185945bb2 100644
+--- a/include/uapi/linux/aio_abi.h
++++ b/include/uapi/linux/aio_abi.h
+@@ -39,10 +39,8 @@ enum {
+ 	IOCB_CMD_PWRITE = 1,
+ 	IOCB_CMD_FSYNC = 2,
+ 	IOCB_CMD_FDSYNC = 3,
+-	/* These two are experimental.
+-	 * IOCB_CMD_PREADX = 4,
+-	 * IOCB_CMD_POLL = 5,
+-	 */
++	/* 4 was the experimental IOCB_CMD_PREADX */
++	IOCB_CMD_POLL = 5,
+ 	IOCB_CMD_NOOP = 6,
+ 	IOCB_CMD_PREADV = 7,
+ 	IOCB_CMD_PWRITEV = 8,
 -- 
 2.17.0
 
