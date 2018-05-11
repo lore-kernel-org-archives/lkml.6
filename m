@@ -1,279 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752906AbeEKMc6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 08:32:58 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40776 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750726AbeEKMc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 08:32:57 -0400
-Subject: Re: [PATCH v1 7/9] iommu/tegra: gart: Provide single domain and group
- for all devices
-To: Dmitry Osipenko <digetx@gmail.com>, Joerg Roedel <joro@8bytes.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-References: <20180508181700.5169-1-digetx@gmail.com>
- <20180508181700.5169-8-digetx@gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <dd440bff-5bbd-e0c6-5ebb-e36b9ab5e843@arm.com>
-Date: Fri, 11 May 2018 13:32:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752673AbeEKMgG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 08:36:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56612 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750726AbeEKMgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 08:36:04 -0400
+Date: Fri, 11 May 2018 14:35:53 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 1/2] serdev: add controller runtime PM support
+Message-ID: <20180511123553.gmtpc5gelps5j3vj@earth.universe>
+References: <20180509094419.13470-1-johan@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180508181700.5169-8-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rj6nkibnjsz4q422"
+Content-Disposition: inline
+In-Reply-To: <20180509094419.13470-1-johan@kernel.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/05/18 19:16, Dmitry Osipenko wrote:
-> GART aperture is shared by all devices, hence there is a single IOMMU
-> domain and group shared by these devices. Allocation of a group per
-> device only wastes resources and allowance of having more than one domain
-> is simply wrong because IOMMU mappings made by the users of "different"
-> domains will stomp on each other.
 
-Strictly, that reasoning is a bit backwards - allocating multiple groups 
-is the conceptually-wrong thing if the GART cannot differentiate between 
-different devices, whereas having multiple domains *exist* is no real 
-problem, it's merely that only one can be active at any point in time 
-(which will inherently become the case once all devices are grouped 
-together).
+--rj6nkibnjsz4q422
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Hi Johan,
+
+On Wed, May 09, 2018 at 11:44:18AM +0200, Johan Hovold wrote:
+> Add support for controller runtime power management to serdev core. This
+> is needed to allow slave drivers to manage the runtime PM state of the
+> underlying serial controller when its driver, in turn, implements more
+> aggressive runtime power management (e.g. using autosuspend).
+>=20
+> For some applications, for example, where loss off initial data after a
+> remote-wakeup event is acceptable or where rx is not used at all,
+> aggressive serial controller runtime PM may be used without further
+> involvement of the slave driver. But when this is not the case, the
+> slave driver must be able to indicate when incoming data is expected in
+> order to avoid data loss.
+>=20
+> To facilitate the common case, where the serial controller power state
+> is active whenever the port is open (which is the case with just about
+> every serial driver), and where data loss is not acceptable and cannot
+> even be prevented by explicit controller runtime power management, an
+> RPM reference is taken in serdev open and put again at close. This
+> reference can later be balanced by any serdev driver which wants and/or
+> can handle aggressive controller runtime PM.
+>=20
+> Note that the .ignore_children flag is set for the serdev controller to
+> allow the underlying hardware to idle when no I/O is expected, regardless
+> of the slave device RPM state.
+>=20
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 > ---
->   drivers/iommu/tegra-gart.c | 107 +++++++++----------------------------
->   1 file changed, 24 insertions(+), 83 deletions(-)
-> 
-> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-> index 5b2d27620350..ebc105c201bd 100644
-> --- a/drivers/iommu/tegra-gart.c
-> +++ b/drivers/iommu/tegra-gart.c
-> @@ -19,7 +19,6 @@
->   
->   #include <linux/io.h>
->   #include <linux/iommu.h>
-> -#include <linux/list.h>
->   #include <linux/module.h>
->   #include <linux/of_device.h>
->   #include <linux/slab.h>
-> @@ -44,22 +43,17 @@
->   #define GART_PAGE_MASK						\
->   	(~(GART_PAGE_SIZE - 1) & ~GART_ENTRY_PHYS_ADDR_VALID)
->   
-> -struct gart_client {
-> -	struct device		*dev;
-> -	struct list_head	list;
-> -};
-> -
->   struct gart_device {
->   	void __iomem		*regs;
->   	u32			*savedata;
->   	u32			page_count;	/* total remappable size */
->   	dma_addr_t		iovmm_base;	/* offset to vmm_area */
->   	spinlock_t		pte_lock;	/* for pagetable */
-> -	struct list_head	client;
-> -	spinlock_t		client_lock;	/* for client list */
->   	struct device		*dev;
->   
->   	struct iommu_device	iommu;		/* IOMMU Core handle */
-> +	struct iommu_group	*group;		/* Common IOMMU group */
-> +	struct gart_domain	*domain;	/* Unique IOMMU domain */
->   
->   	struct tegra_mc_gart_handle mc_gart_handle;
->   };
-> @@ -169,81 +163,31 @@ static inline bool gart_iova_range_valid(struct gart_device *gart,
->   static int gart_iommu_attach_dev(struct iommu_domain *domain,
->   				 struct device *dev)
->   {
-> -	struct gart_domain *gart_domain = to_gart_domain(domain);
-> -	struct gart_device *gart = gart_domain->gart;
-> -	struct gart_client *client, *c;
-> -	int err = 0;
-> -
-> -	client = devm_kzalloc(gart->dev, sizeof(*c), GFP_KERNEL);
-> -	if (!client)
-> -		return -ENOMEM;
-> -	client->dev = dev;
-> -
-> -	spin_lock(&gart->client_lock);
-> -	list_for_each_entry(c, &gart->client, list) {
-> -		if (c->dev == dev) {
-> -			dev_err(gart->dev,
-> -				"%s is already attached\n", dev_name(dev));
-> -			err = -EINVAL;
-> -			goto fail;
-> -		}
-> -	}
-> -	list_add(&client->list, &gart->client);
-> -	spin_unlock(&gart->client_lock);
-> -	dev_dbg(gart->dev, "Attached %s\n", dev_name(dev));
->   	return 0;
-> -
-> -fail:
-> -	devm_kfree(gart->dev, client);
-> -	spin_unlock(&gart->client_lock);
-> -	return err;
->   }
->   
->   static void gart_iommu_detach_dev(struct iommu_domain *domain,
->   				  struct device *dev)
->   {
-> -	struct gart_domain *gart_domain = to_gart_domain(domain);
-> -	struct gart_device *gart = gart_domain->gart;
-> -	struct gart_client *c;
-> -
-> -	spin_lock(&gart->client_lock);
-> -
-> -	list_for_each_entry(c, &gart->client, list) {
-> -		if (c->dev == dev) {
-> -			list_del(&c->list);
-> -			devm_kfree(gart->dev, c);
-> -			dev_dbg(gart->dev, "Detached %s\n", dev_name(dev));
-> -			goto out;
-> -		}
-> -	}
-> -	dev_err(gart->dev, "Couldn't find\n");
-> -out:
-> -	spin_unlock(&gart->client_lock);
->   }
 
-The .detach_dev callback is optional in the core API now, so you can 
-just remove the whole thing.
+Looks good to me.
 
->   static struct iommu_domain *gart_iommu_domain_alloc(unsigned type)
->   {
-> -	struct gart_domain *gart_domain;
-> -	struct gart_device *gart;
-> -
-> -	if (type != IOMMU_DOMAIN_UNMANAGED)
-> -		return NULL;
-> +	struct gart_device *gart = gart_handle;
->   
-> -	gart = gart_handle;
-> -	if (!gart)
-> +	if (type != IOMMU_DOMAIN_UNMANAGED || gart->domain)
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
-Singleton domains are a little unpleasant given the way the IOMMU API 
-expects things to work, but it looks fairly simple to avoid needing that 
-at all. AFAICS you could move gart->savedata to something like 
-gart_domain->ptes and keep it up-to-date in .map/.unmap, then in 
-.attach_dev you just need to do something like:
+-- Sebastian
 
-	if (gart_domain != gart->domain) {
-		do_gart_setup(gart, gart_domain->ptes);
-		gart->domain = gart_domain;
-	}
-
-to context-switch the hardware state when moving the group from one 
-domain to another (and as a bonus you would no longer need to do 
-anything for suspend, since resume can just look at the current domain 
-too). If in practice there's only ever one domain allocated anyway, then 
-there's no difference in memory overhead, but you still have the benefit 
-of the driver being more consistent with others and allowing that 
-flexibility if anyone ever did want to play with it.
-
->   		return NULL;
->   
-> -	gart_domain = kzalloc(sizeof(*gart_domain), GFP_KERNEL);
-> -	if (!gart_domain)
-> -		return NULL;
-> -
-> -	gart_domain->gart = gart;
-> -	gart_domain->domain.geometry.aperture_start = gart->iovmm_base;
-> -	gart_domain->domain.geometry.aperture_end = gart->iovmm_base +
-> +	gart->domain = kzalloc(sizeof(*gart->domain), GFP_KERNEL);
-> +	if (gart->domain) {
-> +		gart->domain->domain.geometry.aperture_start = gart->iovmm_base;
-> +		gart->domain->domain.geometry.aperture_end = gart->iovmm_base +
->   					gart->page_count * GART_PAGE_SIZE - 1;
-> -	gart_domain->domain.geometry.force_aperture = true;
-> +		gart->domain->domain.geometry.force_aperture = true;
-> +		gart->domain->gart = gart;
-> +	}
->   
-> -	return &gart_domain->domain;
-> +	return &gart->domain->domain;
->   }
->   
->   static void gart_iommu_domain_free(struct iommu_domain *domain)
-> @@ -251,18 +195,7 @@ static void gart_iommu_domain_free(struct iommu_domain *domain)
->   	struct gart_domain *gart_domain = to_gart_domain(domain);
->   	struct gart_device *gart = gart_domain->gart;
->   
-> -	if (gart) {
-> -		spin_lock(&gart->client_lock);
-> -		if (!list_empty(&gart->client)) {
-> -			struct gart_client *c;
-> -
-> -			list_for_each_entry(c, &gart->client, list)
-> -				gart_iommu_detach_dev(domain, c->dev);
-> -		}
-> -		spin_unlock(&gart->client_lock);
-> -	}
-> -
-> -	kfree(gart_domain);
-> +	kfree(gart->domain);
->   }
->   
->   static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
-> @@ -377,7 +310,7 @@ struct iommu_group *gart_iommu_device_group(struct device *dev)
->   	if (err)
->   		return ERR_PTR(err);
->   
-> -	return generic_device_group(dev);
-> +	return gart_handle->group;
-
-You should take a reference per device, i.e.:
-
-	return iommu_group_ref_get(gart_handle->group);
-
-otherwise removing devices could unbalance things and result in the 
-group getting freed prematurely.
-
->   }
->   
->   static int gart_iommu_of_xlate(struct device *dev,
-> @@ -502,8 +435,6 @@ static int tegra_gart_probe(struct platform_device *pdev)
->   
->   	gart->dev = &pdev->dev;
->   	spin_lock_init(&gart->pte_lock);
-> -	spin_lock_init(&gart->client_lock);
-> -	INIT_LIST_HEAD(&gart->client);
->   	gart->regs = gart_regs;
->   	gart->iovmm_base = (dma_addr_t)res_remap->start;
->   	gart->page_count = (resource_size(res_remap) >> GART_PAGE_SHIFT);
-> @@ -517,6 +448,14 @@ static int tegra_gart_probe(struct platform_device *pdev)
->   		goto iommu_unregister;
->   	}
->   
-> +	gart->group = iommu_group_alloc();
-> +	if (IS_ERR(gart->group)) {
-> +		ret = PTR_ERR(gart->group);
-> +		goto free_savedata;
+>  drivers/tty/serdev/core.c | 33 ++++++++++++++++++++++++++++++---
+>  1 file changed, 30 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+> index df93b727e984..e5e84303faca 100644
+> --- a/drivers/tty/serdev/core.c
+> +++ b/drivers/tty/serdev/core.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/serdev.h>
+>  #include <linux/slab.h>
+> =20
+> @@ -143,11 +144,28 @@ EXPORT_SYMBOL_GPL(serdev_device_remove);
+>  int serdev_device_open(struct serdev_device *serdev)
+>  {
+>  	struct serdev_controller *ctrl =3D serdev->ctrl;
+> +	int ret;
+> =20
+>  	if (!ctrl || !ctrl->ops->open)
+>  		return -EINVAL;
+> =20
+> -	return ctrl->ops->open(ctrl);
+> +	ret =3D ctrl->ops->open(ctrl);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D pm_runtime_get_sync(&ctrl->dev);
+> +	if (ret < 0) {
+> +		pm_runtime_put_noidle(&ctrl->dev);
+> +		goto err_close;
 > +	}
 > +
-> +	iommu_group_ref_get(gart->group);
-
-You already hold the initial reference from iommu_group_alloc(), so 
-there's no need to take a second one at this point.
-
-Robin.
-
+> +	return 0;
 > +
->   	platform_set_drvdata(pdev, gart);
->   	do_gart_setup(gart, NULL);
->   
-> @@ -525,6 +464,8 @@ static int tegra_gart_probe(struct platform_device *pdev)
->   
->   	return 0;
->   
-> +free_savedata:
-> +	vfree(gart->savedata);
->   iommu_unregister:
->   	iommu_device_unregister(&gart->iommu);
->   remove_sysfs:
-> 
+> +err_close:
+> +	if (ctrl->ops->close)
+> +		ctrl->ops->close(ctrl);
+> +
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(serdev_device_open);
+> =20
+> @@ -158,6 +176,8 @@ void serdev_device_close(struct serdev_device *serdev)
+>  	if (!ctrl || !ctrl->ops->close)
+>  		return;
+> =20
+> +	pm_runtime_put(&ctrl->dev);
+> +
+>  	ctrl->ops->close(ctrl);
+>  }
+>  EXPORT_SYMBOL_GPL(serdev_device_close);
+> @@ -416,6 +436,9 @@ struct serdev_controller *serdev_controller_alloc(str=
+uct device *parent,
+> =20
+>  	dev_set_name(&ctrl->dev, "serial%d", id);
+> =20
+> +	pm_runtime_no_callbacks(&ctrl->dev);
+> +	pm_suspend_ignore_children(&ctrl->dev, true);
+> +
+>  	dev_dbg(&ctrl->dev, "allocated controller 0x%p id %d\n", ctrl, id);
+>  	return ctrl;
+> =20
+> @@ -547,20 +570,23 @@ int serdev_controller_add(struct serdev_controller =
+*ctrl)
+>  	if (ret)
+>  		return ret;
+> =20
+> +	pm_runtime_enable(&ctrl->dev);
+> +
+>  	ret_of =3D of_serdev_register_devices(ctrl);
+>  	ret_acpi =3D acpi_serdev_register_devices(ctrl);
+>  	if (ret_of && ret_acpi) {
+>  		dev_dbg(&ctrl->dev, "no devices registered: of:%d acpi:%d\n",
+>  			ret_of, ret_acpi);
+>  		ret =3D -ENODEV;
+> -		goto out_dev_del;
+> +		goto err_rpm_disable;
+>  	}
+> =20
+>  	dev_dbg(&ctrl->dev, "serdev%d registered: dev:%p\n",
+>  		ctrl->nr, &ctrl->dev);
+>  	return 0;
+> =20
+> -out_dev_del:
+> +err_rpm_disable:
+> +	pm_runtime_disable(&ctrl->dev);
+>  	device_del(&ctrl->dev);
+>  	return ret;
+>  };
+> @@ -591,6 +617,7 @@ void serdev_controller_remove(struct serdev_controlle=
+r *ctrl)
+> =20
+>  	dummy =3D device_for_each_child(&ctrl->dev, NULL,
+>  				      serdev_remove_device);
+> +	pm_runtime_disable(&ctrl->dev);
+>  	device_del(&ctrl->dev);
+>  }
+>  EXPORT_SYMBOL_GPL(serdev_controller_remove);
+> --=20
+> 2.17.0
+>=20
+
+--rj6nkibnjsz4q422
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlr1jiYACgkQ2O7X88g7
++po57w/9Fr2uQ1qCrElanPCpNKB1uB0HjCkU+jDpMXzEpoX/TI+6L57SJbZ0qfzL
+vMKzMhpOVogiF2Kd8kVxz4ZliJFngCNDd7tPccH1AHdt4kr00VIC70UGBvG57GOt
+iQMF1Sd25x9sXv3t/qLNpOwqv3VcmFp8zm7ewp43XCHSOXhBgykcBCtldiSYw72b
+oA8DUfOTdzm1M7Rpiy1fo6/XUQX62Mexlj40cp6m2afnEKxJiBATpYG9ftK11kT2
+jsVq2GqYnp+M4BAgsS7+Ev269T+1q8YLkk+0evyKlAXThjZTArhfPxQENpIONN8R
+r51MIhzGZ45g2ghTnREybaf2jboDVP6v1dFLTtCVC2tOAnVNodX//c8L89IWENss
+Bpx+PNJIS4G58ZUPPNSjYq2wRVtS3BdRHVsbmYO42SEBFvklKwAMQ4AqUnOsAYec
+Dg8v/Sl7hfyS+jCrSUg8DA9CEeFY+6nwNwrmzdZT204VOP1MrGLMQQgMYK72FI84
+KytM0Etf9PhohYcXz9G4FWJ/QM5XA63AsW3msSk2OHqL3JcOUfqSyV4JIJWi8VwZ
+mQTm4KqvsPOrNDvmJh4XfM+AUWt/Xk9ZA43pBSXnF8Wo5/1BAJc3pBdNrykK3R/u
+UBN665HIWlch7dviHqwm2oGr8T08i1QKgitnKWVDx+BhootW548=
+=NEH3
+-----END PGP SIGNATURE-----
+
+--rj6nkibnjsz4q422--
