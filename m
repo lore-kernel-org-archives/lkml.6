@@ -1,96 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752295AbeEKDpu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 23:45:50 -0400
-Received: from regular1.263xmail.com ([211.150.99.137]:52170 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750751AbeEKDps (ORCPT
+        id S1752243AbeEKDtm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 23:49:42 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:38360 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751258AbeEKDtl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 23:45:48 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-IP-DOMAINF: 1
-X-RL-SENDER: djw@t-chip.com.cn
-X-FST-TO: linux-arm-kernel@lists.infradead.org
-X-SENDER-IP: 183.57.25.242
-X-LOGIN-NAME: djw@t-chip.com.cn
-X-UNIQUE-TAG: <14b209c465b9d4dad2f279c56d4daae4>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-Subject: Re: [PATCH v1 3/5] arm64: dts: rockchip: Add gpio-syscon10 to rk3328
-To: Robin Murphy <robin.murphy@arm.com>,
-        linux-rockchip@lists.infradead.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
-        Sugar Zhang <sugar.zhang@rock-chips.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        David Wu <david.wu@rock-chips.com>,
-        William Wu <william.wu@rock-chips.com>,
-        Rocky Hao <rocky.hao@rock-chips.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1525943800-14095-1-git-send-email-djw@t-chip.com.cn>
- <1525943800-14095-4-git-send-email-djw@t-chip.com.cn>
- <76f2bbde-e158-a186-f136-9fb610a810c5@arm.com>
-From: Levin Du <djw@t-chip.com.cn>
-Message-ID: <3fdfcc9b-90b5-191c-37e0-c99389a4e872@t-chip.com.cn>
-Date: Fri, 11 May 2018 11:45:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 10 May 2018 23:49:41 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w4B3nV16000910
+X-Nifty-SrcIP: [209.85.213.42]
+X-Google-Smtp-Source: AB8JxZoExBKaX0zWnii9g6XI8f577jc8sayKsbZVQ0g+eyCCuUNx4674qdPEtI4iLkhcQQ16cemvgf79Wd5r/Yfrf9g=
 MIME-Version: 1.0
-In-Reply-To: <76f2bbde-e158-a186-f136-9fb610a810c5@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <1621114.mSmC2JOP5I@blindfold>
+References: <CAK7LNAQREY=32tX7m8dbJ6a_AhXLF_y-n5VLFBBcvXWaRvTmHg@mail.gmail.com>
+ <1621114.mSmC2JOP5I@blindfold>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 11 May 2018 12:48:50 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQXwKKM9Czkz0CnGm-OFqsM1AB7Run3dT9CdCTkCz=eiA@mail.gmail.com>
+Message-ID: <CAK7LNAQXwKKM9Czkz0CnGm-OFqsM1AB7Run3dT9CdCTkCz=eiA@mail.gmail.com>
+Subject: Re: [UML] Question about arch/x86/um/vdso/vdso-syms.lds
+To: Richard Weinberger <richard@nod.at>
+Cc: Jeff Dike <jdike@addtoit.com>, Nicholas Piggin <npiggin@gmail.com>,
+        uml-devel <user-mode-linux-devel@lists.sourceforge.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-10 8:50 PM, Robin Murphy wrote:
-> On 10/05/18 10:16, djw@t-chip.com.cn wrote:
->> From: Levin Du <djw@t-chip.com.cn>
+Richard,
+
+
+2018-05-09 15:36 GMT+09:00 Richard Weinberger <richard@nod.at>:
+> Masahiro,
+>
+> Am Mittwoch, 9. Mai 2018, 05:36:18 CEST schrieb Masahiro Yamada:
+>> Hi Richard,
 >>
->> Adding a new gpio controller named "gpio-syscon10" to rk3328, providing
->> access to the pins defined in the syscon GRF_SOC_CON10.
+>>
+>> Please let me ask a question about vdso-syms.lds
+>> under arch/x86/um/vdso/.
+>>
+>> This file exists since:
+>>
+>> commit f1c2bb8b9964ed31de988910f8b1cfb586d30091
+>> Author: Richard Weinberger <richard@nod.at>
+>> Date:   Mon Jul 25 17:12:54 2011 -0700
+>>
+>>     um: implement a x86_64 vDSO
+>>
+>>
+>> So, I think you are the right person
+>> to reach out to.
+>>
+>>
+>> Originally, vdso-syms.lds was linked to vmlinux,
+>> but it is not since:
+>>
+>> commit 827880ec260ba048f95fe646b96a205c394fa0f0
+>> Author: Nicholas Piggin <npiggin@gmail.com>
+>> Date:   Fri Jun 9 15:24:16 2017 +1000
+>>
+>>     x86/um: thin archives build fix
+>>
+>>
+>>
+>> Something may be missing from my thought,
+>> but I wonder what vdso-syms.lds is used for.
 >
-> This is the GPIO_MUTE pin, right? The public TRM is rather vague, but 
-> cross-referencing against the datasheet and schematics implies that 
-> it's the "gpiomut_*" part of the GRF bit names which is most significant.
+> Hmm, I think we can kill it. In 2011 I used the x86 vdso
+> code as "template" this is how the file made it into UML.
+> AFAICT it was forgotten after all the vdso related refactoring
+> in um and x86.
 >
-> It might be worth using a more descriptive name here, since "syscon10" 
-> is pretty much meaningless at the board level.
->
-> Robin.
->
-Previously I though other bits might be able to reference from syscon10, 
-other than GPIO_MUTE alone.
-If it is renamed to gpio-mute, then the GPIO_MUTE pin is accessed as 
-`<&gpio-mute 1>`. Yet other
-bits in syscon10 can also be referenced, say, `<&gpio-mute 10>`, which 
-is not good.
+> Thanks,
+> //richard
 
-I'd like to add a `gpio,syscon-bit` property to gpio-syscon, which 
-overrides the properties
-of bit_count,  data_bit_offset and dir_bit_offset in the driver. For 
-example:
 
-                 gpio_mute: gpio-mute {
-                         compatible = "rockchip,gpio-syscon";
-                         gpio-controller;
-                         #gpio-cells = <2>;
-                         gpio,syscon-dev = <0 0x0428 0>;
-                         gpio,syscon-bit = <1 1 0>;
-                 };
+OK, I have sent a patch to the UML ML.
+Thanks.
 
-That way, the mute pin is strictly specified as <&gpio_mute 0>, and 
-<&gpio_mute 1> will be invalid.
-I think that is neat, and consistent with the gpio_mute name.
 
-Thanks
-Levin
+-- 
+Best Regards
+Masahiro Yamada
