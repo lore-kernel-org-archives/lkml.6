@@ -1,109 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753056AbeEKNCJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 09:02:09 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41034 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752394AbeEKNCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 09:02:07 -0400
-Subject: Re: [PATCH v1 8/9] iommu: Introduce iotlb_sync_map callback
-To: Dmitry Osipenko <digetx@gmail.com>, Joerg Roedel <joro@8bytes.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-References: <20180508181700.5169-1-digetx@gmail.com>
- <20180508181700.5169-9-digetx@gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <da823a61-5bda-042b-c61f-d0d98f9b6e6f@arm.com>
-Date: Fri, 11 May 2018 14:02:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180508181700.5169-9-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+        id S1753071AbeEKNEP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 09:04:15 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:38265 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752592AbeEKNEO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 09:04:14 -0400
+Message-ID: <f6f7b18644136323f4485d6123b330d0dde207a4.camel@pengutronix.de>
+Subject: Re: Delivery Status Notification (Failure)
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Pintu Kumar <pintu.ping@gmail.com>
+Cc: open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kernelnewbies@kernelnewbies.org
+Date: Fri, 11 May 2018 15:04:09 +0200
+In-Reply-To: <20180511123915.GC16141@n2100.armlinux.org.uk>
+References: <CAOuPNLjqJVsPOVPCnswtFyXudAJ88_F0QVUq-Z6qWE=UpH0mBA@mail.gmail.com>
+         <CAOuPNLjqJVsPOVPCnswtFyXudAJ88_F0QVUq-Z6qWE=UpH0mBA@mail.gmail.com>
+         <5af57fea.1c69fb81.885f0.2377.GMRIR@mx.google.com>
+         <CAOuPNLgbT59h=Jm5YiOCbrqFkDokJ8xutQ_OkpsFYzKazKhTHg@mail.gmail.com>
+         <20180511123915.GC16141@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/05/18 19:16, Dmitry Osipenko wrote:
-> Introduce iotlb_sync_map() callback that is invoked in the end of
-> iommu_map(). This new callback allows IOMMU drivers to avoid syncing
-> on mapping of each contiguous chunk and sync only when whole mapping
-> is completed, optimizing performance of the mapping operation.
-
-This looks like a reasonable compromise - for users of 
-IO_PGTABLE_QUIRK_TLBI_ON_MAP we can leave the implicit add_flush() in 
-place for each individual map call, but at least move the sync() out to 
-this callback, which should still be beneficial overall.
-
-Modulo one possible nit below,
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->   drivers/iommu/iommu.c | 8 ++++++--
->   include/linux/iommu.h | 1 +
->   2 files changed, 7 insertions(+), 2 deletions(-)
+Am Freitag, den 11.05.2018, 13:39 +0100 schrieb Russell King - ARM Linux:
+> On Fri, May 11, 2018 at 05:07:37PM +0530, Pintu Kumar wrote:
+> > Hi,
+> > 
+> > I need one help.
+> > I am using i.MX7 Sabre board with kernel version 4.1.15
+> > 
+> > Let's say I am interested in GPIO number: 21
+> > I wanted to set CPU affinity for particular GPIO->IRQ number, so I
+> > tried the below steps:
+> > root@10:~# echo 21 > /sys/class/gpio/export
+> > root@10:~# echo "rising" > /sys/class/gpio/gpio21/edge
+> > root@10:~# cat /proc/interrupts | grep 21
+> >   47: 0 0 gpio-mxc 21 Edge gpiolib
+> > root@10:~# cat /sys/class/gpio/gpio21/direction
+> > in
+> > root@10:~# cat /proc/irq/47/smp_affinity
+> > 3
+> > root@10:~# echo 2 > /proc/irq/47/smp_affinity
+> > -bash: echo: write error: Input/output error
+> > 
+> > But I get input/output error.
+> > When I debug further, found that irq_can_set_affinity is returning 0:
+> > [    0.000000] genirq: irq_can_set_affinity (0): balance: 1,
+> > irq_data.chip: a81b7e48, irq_set_affinity:   (null)
+> > [    0.000000] write_irq_affinity: FAIL
+> > 
+> > I also tried first setting /proc/irq/default_smp_affinity to 2 (from 3).
+> > This change is working, but the smp_affinity setting for the new IRQ
+> > is not working.
+> > 
+> > When I try to set smp_affinity for mmc0, then it works.
+> > # cat /proc/interrupts | grep mmc
+> > 295:         55          0     GPCV2  22 Edge      mmc0
+> > 296:          0          0     GPCV2  23 Edge      mmc1
+> > 297:         52          0     GPCV2  24 Edge      mmc2
+> > 
+> > root@10:~# echo 2 > /proc/irq/295/smp_affinity
+> > root@10:~#
+> > 
+> > 
+> > So, I wanted to know what are the conditions for which setting
+> > smp_affinity for an IRQ will work ?
+> > 
+> > Is there any way by which I can set CPU affinity to a GPIO -> IRQ ?
+> > Whether, irq_set_affinity_hint() will work in this case ?
 > 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index d2aa23202bb9..39b2ee66aa96 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -1508,13 +1508,14 @@ static size_t iommu_pgsize(struct iommu_domain *domain,
->   int iommu_map(struct iommu_domain *domain, unsigned long iova,
->   	      phys_addr_t paddr, size_t size, int prot)
->   {
-> +	const struct iommu_ops *ops = domain->ops;
->   	unsigned long orig_iova = iova;
->   	unsigned int min_pagesz;
->   	size_t orig_size = size;
->   	phys_addr_t orig_paddr = paddr;
->   	int ret = 0;
->   
-> -	if (unlikely(domain->ops->map == NULL ||
-> +	if (unlikely(ops->map == NULL ||
->   		     domain->pgsize_bitmap == 0UL))
->   		return -ENODEV;
->   
-> @@ -1543,7 +1544,7 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
->   		pr_debug("mapping: iova 0x%lx pa %pa pgsize 0x%zx\n",
->   			 iova, &paddr, pgsize);
->   
-> -		ret = domain->ops->map(domain, iova, paddr, pgsize, prot);
-> +		ret = ops->map(domain, iova, paddr, pgsize, prot);
->   		if (ret)
->   			break;
->   
-> @@ -1552,6 +1553,9 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
->   		size -= pgsize;
->   	}
->   
-> +	if (ops->iotlb_sync_map)
-> +		ops->iotlb_sync_map(domain);
-
-Is it worth trying to skip this in the error case when we're just going 
-to undo it immediately?
-
-Robin.
-
-> +
->   	/* unroll mapping in case something went wrong */
->   	if (ret)
->   		iommu_unmap(domain, orig_iova, orig_size - size);
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 19938ee6eb31..5224aa376377 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -206,6 +206,7 @@ struct iommu_ops {
->   	void (*flush_iotlb_all)(struct iommu_domain *domain);
->   	void (*iotlb_range_add)(struct iommu_domain *domain,
->   				unsigned long iova, size_t size);
-> +	void (*iotlb_sync_map)(struct iommu_domain *domain);
->   	void (*iotlb_sync)(struct iommu_domain *domain);
->   	phys_addr_t (*iova_to_phys)(struct iommu_domain *domain, dma_addr_t iova);
->   	int (*add_device)(struct device *dev);
+> IRQ affinity is only supported where interrupts are _directly_ wired to
+> the GIC.  It's the GIC which does the interrupt steering to the CPU
+> cores.
 > 
+> Interrupts on downstream interrupt controllers (such as GPCV2) have no
+> ability to be directed independently to other CPUs - the only possible
+> way to change the mapping is to move _all_ interrupts on that controller,
+> and any downstream chained interrupts at GIC level.
+> 
+> Hence why Interrupt 295 has no irq_set_affinity function: there is no way
+> for the interrupt controller itself to change the affinity of the input
+> interrupt.
+
+The GPCv2 though is a secondary IRQ controller which has a 1:1 mapping
+of its input IRQs to the upstream GIC IRQ lines. Affinity can thus be
+handled by forwarding the request to the GIC by
+irq_chip_set_affinity_parent().
+
+As this is handled correctly in the upstream kernel since the first
+commit introducing support for the GPCv2, it seems the issue is only
+present in some downstream kernel.
+
+Regards,
+Lucas
