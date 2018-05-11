@@ -1,83 +1,92 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526036969; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1526036977; cv=none;
         d=google.com; s=arc-20160816;
-        b=mcipsGpdrKEIM6GKJFrUr996aHNRyjQJvO/YqRQ/7iswxWLnQlkwgJG+Q03vfiwKml
-         JQN/juhURnbglTS2ZBZPaLXJd3T1T8EBFZ76/a+fDmu4YBQsOlEhLtf+y9Fl50vNkSfP
-         hpKAJEXXGpUIUer9PJPmHpsqBEEphqUtdyEswbGFU8VrNnrq9hN4NYNU5lkd5D/TnoF4
-         MLDkTX0JU30GvDqn7Uowp8Y6OeOJFMoAGAoo02gG4uCFWZAeNOeozGWAThUhG5j2uPBK
-         Nl1DMNYO0CRaB0IRQAbphmVK4mKVC5xPzy/RkQQwzuA2BRoJ4TM1zrTkzarw+tAYVftc
-         n15A==
+        b=V6MQhM7edxOdI0edNtj6QKcODCGQ8glI1xLAmtL69AufGr39nqZCC5SUgzW61lXfPi
+         ilVEQRmccAB/pYOiCmRXF3VYX15/R8dOb1Fl4BncbM5qeYiIcgYNzYGNjUS6avhHPoas
+         LyH+h0h3jisZO69Z5dg0K5FHy+BBjuAuvg07Q7Z4+Bf4d02RaHpVFzf3PP5MKutCX6F6
+         cR8M4cX/hfcy4QArqaFbFFVv70squIyW4ffqap9pcxcx3JDB8RA2rWt2X7VDhFM3GQxB
+         LyXmScuadLyGVSZTFIID47NO1Xz2wJvRxBvAQxFIA85Z/i9v9teFGKlh+OTQa2GAn7j9
+         HmtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=rZA7mpeWn81QZnJHiHVDFrsZQlN9TH0Lcl45w1EZ/Cs=;
-        b=p8dpiPpEHClNUHx/RxjlSvQz07xIeUFZJ/IQhXm9hqtqDptuzh1o4s743TUToLn19T
-         E91yjgwajG3njBix+0QJz06LDFF6bXjnrvsk/2UsNWhsSRVf6Ks1LvGztSLXCODRvxOy
-         GoIVCr3euJ5pJrZLybjELYhgOt9iYkH8jv2/NM1rUCIFLNXayC8cpVANsXW7dB+Z85ix
-         6/kQkxq4Wx6G/GYDokyddEAVjedmiLrY53Pg+mAmThD8W+69j0QoaEI8MsOV3jpqi0PP
-         UYR3+g48Glxzi7mNvdkvSn2Ghe6rTgtUTCYQZQK021/B3Y9r/E+F8olNaYPm3OPFlP3G
-         ITQg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=w5TjQwKiVwpDnrp/KCzD6gMlzqCUY8K4AVpRvmhKkF0=;
+        b=iwNEAWQllu1rzQAn9ZfHcY/V0eG7Mz2eINjAK9K+QVkEuQM0eRFONU3/y2jkT+UcPv
+         7ndWS8kesQKNkebbt58j57X6irZtG6n8MZp/OvokZ4oWnSOn+Ph28xqcniKYWwXHuPGB
+         JeqOVkn4EYdx6xluUXCDf5NxwEK5DJ3+9uTEjCSXgCI3LjEqBfa3fumDNyrhCUnKblvW
+         I5OnTRXTkB3HI86rwg0l40VH1lNqMDH3YMCNDnWUZvSUhLxecD4UkQGefFJWo2v3I/T4
+         0RaHm/H6d1q5RgBvrcoJw0OxdaTXw9tiloFDHiAXb/4IUtbXYKMQNbnzoMRPXY42aWxE
+         fqnQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=IeoCCWcF;
+       dkim=pass header.i=@linaro.org header.s=google header.b=iYYkLbiT;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=IeoCCWcF;
+       dkim=pass header.i=@linaro.org header.s=google header.b=iYYkLbiT;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZpUDSCphNH4aNuQWQpEu97LXmXj3JJ7hhCzBljfKMvi21f8pxqxWK0EpIBdSLOBac+Rcfc2Mg==
+X-Google-Smtp-Source: AB8JxZpRZYy4hj0IlraJQkPuOzTHQ/w2b4Mqq+LkiC2PeC6U5vsC+63hoFWJjb8TNPFMQSeCTbMVaA==
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
-	srinivas.kandagatla@linaro.org
-Subject: [PATCH 0/8] nvmem: patches for v4.18
-Date: Fri, 11 May 2018 12:06:55 +0100
-Message-Id: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
+	srinivas.kandagatla@linaro.org,
+	Mathieu Malaterre <malat@debian.org>
+Subject: [PATCH 8/8] nvmem: properly handle returned value nvmem_reg_read
+Date: Fri, 11 May 2018 12:07:03 +0100
+Message-Id: <20180511110703.4924-9-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
+In-Reply-To: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
+References: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600165740989682591?=
-X-GMAIL-MSGID: =?utf-8?q?1600165740989682591?=
+X-GMAIL-THRID: =?utf-8?q?1600165749609590574?=
+X-GMAIL-MSGID: =?utf-8?q?1600165749609590574?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Greg,
+From: Mathieu Malaterre <malat@debian.org>
 
-Here are some nvmem enhancements, fixes, write support to meson efuse
-and new RAVE SP eeprom driver.
+Function nvmem_reg_read can return a non zero value indicating an error.
+This returned value must be read and error propagated to
+nvmem_cell_prepare_write_buffer. Silence the following gcc warning (W=1):
 
-Can you queue them up for 4.18.
+drivers/nvmem/core.c:1093:9: warning: variable 'rc' set but
+ not used [-Wunused-but-set-variable]
 
-Thanks,
-Srini
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+ drivers/nvmem/core.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Andrew Lunn (1):
-  drivers: nvmem: Export nvmem_add_cells()
-
-Andrey Smirnov (2):
-  dt-bindings: nvmem: Add binding for RAVE SP EEPROM driver
-  nvmem: Add RAVE SP EEPROM driver
-
-Jerome Brunet (3):
-  nvmem: meson-efuse: remove econfig global
-  nvmem: meson-efuse: simplify read callback
-  nvmem: meson-efuse: add write support
-
-Mathieu Malaterre (1):
-  nvmem: properly handle returned value nvmem_reg_read
-
-Srinivas Kandagatla (1):
-  nvmem: core: describe add missing dev function parameter
-
- .../bindings/nvmem/zii,rave-sp-eeprom.txt          |  40 +++
- drivers/nvmem/Kconfig                              |   6 +
- drivers/nvmem/Makefile                             |   3 +
- drivers/nvmem/core.c                               |  33 +-
- drivers/nvmem/meson-efuse.c                        |  41 +--
- drivers/nvmem/rave-sp-eeprom.c                     | 357 +++++++++++++++++++++
- include/linux/nvmem-provider.h                     |  11 +
- 7 files changed, 465 insertions(+), 26 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
- create mode 100644 drivers/nvmem/rave-sp-eeprom.c
-
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 36361044ddbe..b5b0cdc21d01 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -1119,6 +1119,8 @@ static void *nvmem_cell_prepare_write_buffer(struct nvmem_cell *cell,
+ 
+ 		/* setup the first byte with lsb bits from nvmem */
+ 		rc = nvmem_reg_read(nvmem, cell->offset, &v, 1);
++		if (rc)
++			goto err;
+ 		*b++ |= GENMASK(bit_offset - 1, 0) & v;
+ 
+ 		/* setup rest of the byte if any */
+@@ -1137,11 +1139,16 @@ static void *nvmem_cell_prepare_write_buffer(struct nvmem_cell *cell,
+ 		/* setup the last byte with msb bits from nvmem */
+ 		rc = nvmem_reg_read(nvmem,
+ 				    cell->offset + cell->bytes - 1, &v, 1);
++		if (rc)
++			goto err;
+ 		*p |= GENMASK(7, (nbits + bit_offset) % BITS_PER_BYTE) & v;
+ 
+ 	}
+ 
+ 	return buf;
++err:
++	kfree(buf);
++	return ERR_PTR(rc);
+ }
+ 
+ /**
 -- 
 2.16.2
