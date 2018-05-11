@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752911AbeEKKAh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 06:00:37 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:56159 "EHLO
+        id S1752884AbeEKKAf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 06:00:35 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:51885 "EHLO
         relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752791AbeEKKAa (ORCPT
+        with ESMTP id S1752232AbeEKKAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 06:00:30 -0400
+        Fri, 11 May 2018 06:00:32 -0400
 X-Originating-IP: 2.224.242.101
 From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
@@ -15,9 +15,9 @@ To: niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com,
 Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] arm64: dts: renesas: r8a77995: Add VIN4
-Date: Fri, 11 May 2018 12:00:01 +0200
-Message-Id: <1526032802-14376-3-git-send-email-jacopo+renesas@jmondi.org>
+Subject: [PATCH 3/3] arm64: dts: renesas: draak: Describe HDMI input
+Date: Fri, 11 May 2018 12:00:02 +0200
+Message-Id: <1526032802-14376-4-git-send-email-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
 References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
@@ -25,34 +25,110 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Describe VIN4 interface for R-Car D3 R8A77995 SoC.
+Describe HDMI input connected to VIN4 interface for R-Car D3 Draak
+development board.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 68 ++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 82aed7e..bdf7017 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -783,6 +783,17 @@
- 				};
- 			};
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index d03f194..e0ce462 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -59,6 +59,17 @@
  		};
-+
-+		vin4: video@e6ef4000 {
-+			compatible = "renesas,vin-r8a77995";
-+			reg = <0 0xe6ef4000 0 0x1000>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 807>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			resets = <&cpg 807>;
-+			renesas,id = <4>;
-+			status = "disabled";
-+		};
  	};
  
- 	timer {
++	hdmi-in {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&adv7612_in>;
++			};
++		};
++	};
++
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* first 128MB is reserved for secure area. */
+@@ -142,6 +153,11 @@
+ 		groups = "usb0";
+ 		function = "usb0";
+ 	};
++
++	vin4_pins: vin4 {
++		groups = "vin4_data24", "vin4_sync", "vin4_clk", "vin4_clkenb";
++		function = "vin4";
++	};
+ };
+ 
+ &i2c0 {
+@@ -154,6 +170,35 @@
+ 		reg = <0x50>;
+ 		pagesize = <8>;
+ 	};
++
++	hdmi-decoder@4c {
++		compatible = "adi,adv7612";
++		reg = <0x4c>;
++		default-input = <0>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				adv7612_in: endpoint {
++					remote-endpoint = <&hdmi_con_in>;
++				};
++			};
++
++			port@2 {
++				reg = <2>;
++				adv7612_out: endpoint {
++					pclk-sample = <0>;
++					hsync-active = <0>;
++					vsync-active = <0>;
++
++					remote-endpoint = <&vin4_in>;
++				};
++			};
++		};
++	};
+ };
+ 
+ &i2c1 {
+@@ -246,3 +291,26 @@
+ 	timeout-sec = <60>;
+ 	status = "okay";
+ };
++
++&vin4 {
++	pinctrl-0 = <&vin4_pins>;
++	pinctrl-names = "default";
++
++	status = "okay";
++
++	ports {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		port@0 {
++			reg = <0>;
++
++			vin4_in: endpoint {
++				hsync-active = <0>;
++				vsync-active = <0>;
++
++				remote-endpoint = <&adv7612_out>;
++			};
++		};
++	};
++};
 -- 
 2.7.4
