@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3632397-1526025858-2-2430602421427225215
+X-Cyrus-Session-Id: sloti22d1t05-3632397-1526025774-2-3125351903377420517
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: 
@@ -7,25 +7,25 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526025857; b=RG9uTMuwRB1ULCnQGiewshuRCBxqXTFoeXXeOAPZiec8nBosuh
-    3ig4Z+tjZQqIzAiTknb3HVQM8Yi254yDaEkc0BBtnSa9AhK2iFcRnUoL/lo4PfbI
-    3t7E/1WATqGfN5Cd6dTTN5R2jX83h7p1++o75MIjn4PwYA37izp7xgXiMe2E6tT0
-    eMe1M89UWWtw2zwCSOTPrGscj+LkOE5N+EA70mLL13BXtq79lda/280u8iOrQDgQ
-    TIE41xWng4xcUmUDcXIDX4aumZgtSTy3t82Oi9a6C4yNlDPg5TtMycoqNyMJU2sV
-    Ca7//KuiZlzT9zoVG2jqrh3nVQj5pX2jZovw==
+    1526025774; b=AXc0/fuZT5czWaqo7uSpzLYNxFHCJhhrCgaguo3YVz4viWtMQZ
+    2ai2TGEaBSfWrBJts+FETnC4RmFzeLZH4hl2igcB8KsZwZWCSPNiwYgbznw1sYC/
+    ilc+wg64lDXz14wb3DH7kt48zqn9HMmZoVkniV8x2qrddgw3380S/a12RkMAT43g
+    qRQHYVOBbyTv7VcMQEwRljtNhmKWhasAyIbe6UKqYofsaWbGCYEDsJUPQSyPsLg9
+    6lwNs2OaRvUJyHgD08SjFHkC8JSDvigtm7tkAzYyYIhDBFqA3X1GT/ooDwSwbjxX
+    Wt4Jt2AqN4vs6l18k88vlABkc5HU4XqIuAGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526025857; bh=
-    E+ntzFfgx7YXA5epJcDsELMGSsFmVtfe/rYYmI+CxdA=; b=M3xwG/hw9AUepoQi
-    2kh2VecntjkqzjYAZT2VxnjgKYLtOoldANAhNfpcI5pOc0tjGbQOCv0lrnDAoI3a
-    y4d0z4ACB1oiRgPgFZOUG5N+uUtzz0/Z6Y4OfpevjZ5kAtQ6hSdK3Z+cWGc1DRqL
-    XoAgrRT7KN4FCzuAmBiiV1sO5sQ7H2m1XRb5ihAw+xPV3Bd6a060W3OL+T0Kq0WT
-    kLXT7+/rrMzTt56M9KjWEolT4hSQ3JTxQEFVxTUiahTWqn018Eht9U9H8ec2eFlM
-    T9UPlc/RwHGPx7j9Axbm22g0o9SBZ5q2higQIU1TrZToPXFS6medhd3Xs65lNJ9d
-    0YX5tA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526025774; bh=
+    mc+66cpLgGJrF8TqjhED7vezJOUwyDTPecUGyKpn7oE=; b=jkcxCDA9jqQM928R
+    AylIF3HoKgqclxU25K910I+oBrIPjy4rZmz7S5y4GYtJP4jhS5HT+LDep0+5/XRx
+    H/RY47JzJnw6iBKWr+H5kxgvRqhYXNKEo6sRSkA35JxsO6yjewdY7FbvkuhGk/yv
+    +9YJRRuyGiWRYyIzvqKWBiYqQVriOt77YlyyBeNsmWA1MzDbZ5NPzdUoyblhkemT
+    6IItXmr08E+J6qjOrAUy0ZwItrvROtknl9/+JX8iKoQeKFwhBUoDnsZwErDcO27S
+    Gx/SABnV9GcdKIwwgmjyyd9lWf3ya5/a6fbbzUYb96gxizgkBYbCB6eyVwTT+69O
+    KT/hGw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=JCSfas71
+    header.d=infradead.org header.i=@infradead.org header.b=XwfyEMdk
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -39,10 +39,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=JCSfas71
+      header.d=infradead.org header.i=@infradead.org header.b=XwfyEMdk
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -57,20 +57,20 @@ Authentication-Results: mx2.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGdjzbcB53txzbEGY6VOTBd4Lnp6l3zMULR4zxgYeuhHhcX7CkD3NFvQ+39sfFFLS6oyn9Ul6JnGAXy5CBLehsEYr/Rk7GdnFJxF8E+qFnx6chP6I1iJ
-    zlO6sKkK4WUOAdDG4wiUzy8zc2WS0JvhQJGTZF3R0abshtLXo5gKluXlWrxvv8by0zR02xIjoy/ALB6jn9RLDU1LiTOYxqBK5L7JgPGJhV6Jp9EIIqvw22NO
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=6llCMZQGAES-Mta6dj4A:9
-    a=DeZHcT2oNLa7kkqT:21 a=dUsOPc9ZFMnm9uUs:21
+X-CM-Envelope: MS4wfKv5PX8WWbtW7DKtUNXKq3xXwnTDpkJj0UuSNJFktyzIJJ5u6Us68bHDjVMmrjlFERRa1Cy6/OcvdACIdgGmz7w/QipN14Tu5i9jCu3hJ40nSk0LS3KO
+    aGOgaodK71PkdSzUQ8AXBaio6+Nnm+YBhHGUaZI7QoAYCKd4BfuIps9RwdJjGOwf+bnrbpbYnR5uoKSo8VGU9th9q5nurbWwF9z09uYYqIYvFUf7hpc2nFRP
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=4kK0doguKl6wwCPbyP0A:9
+    a=2fRGtxBThEPbubwI:21 a=2YxqEkJN9SrATvaK:21
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752916AbeEKIEP (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 11 May 2018 04:04:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39696 "EHLO
+        id S1753076AbeEKICs (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 11 May 2018 04:02:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37364 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752894AbeEKID3 (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Fri, 11 May 2018 04:03:29 -0400
+        with ESMTP id S1752666AbeEKICT (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Fri, 11 May 2018 04:02:19 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: iommu@lists.linux-foundation.org
 Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
@@ -83,9 +83,9 @@ Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
         linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
         sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 19/20] sparc: use generic dma_noncoherent_ops
-Date: Fri, 11 May 2018 09:59:44 +0200
-Message-Id: <20180511075945.16548-20-hch@lst.de>
+Subject: [PATCH 15/20] sh: use dma_direct_ops for the CONFIG_DMA_COHERENT case
+Date: Fri, 11 May 2018 09:59:40 +0200
+Message-Id: <20180511075945.16548-16-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180511075945.16548-1-hch@lst.de>
 References: <20180511075945.16548-1-hch@lst.de>
@@ -96,244 +96,96 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Switch to the generic noncoherent direct mapping implementation.
-
-This removes the previous sync_single_for_device implementation, which
-looks bogus given that no syncing is happening in the similar but more
-important map_single case.
+This is a slight change in behavior as we avoid the detour through the
+virtual mapping for the coherent allocator, but if this CPU really is
+coherent that should be the right thing to do.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/sparc/Kconfig                   |   2 +
- arch/sparc/include/asm/dma-mapping.h |   5 +-
- arch/sparc/kernel/ioport.c           | 151 ++-------------------------
- 3 files changed, 14 insertions(+), 144 deletions(-)
+ arch/sh/Kconfig                   | 1 +
+ arch/sh/include/asm/dma-mapping.h | 4 ++++
+ arch/sh/kernel/Makefile           | 4 ++--
+ arch/sh/kernel/dma-nommu.c        | 4 ----
+ 4 files changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index 435dbc033afe..0889b4eabf8b 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -48,6 +48,8 @@ config SPARC
+diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+index 7d521926041e..d0b095323d62 100644
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -157,6 +157,7 @@ config SWAP_IO_SPACE
+ 	bool
  
- config SPARC32
- 	def_bool !64BIT
-+	select ARCH_HAS_SYNC_DMA_FOR_CPU
-+	select DMA_NONCOHERENT_OPS
- 	select GENERIC_ATOMIC64
- 	select CLZ_TAB
- 	select HAVE_UID16
-diff --git a/arch/sparc/include/asm/dma-mapping.h b/arch/sparc/include/asm/dma-mapping.h
-index 12ae33daf52f..e17566376934 100644
---- a/arch/sparc/include/asm/dma-mapping.h
-+++ b/arch/sparc/include/asm/dma-mapping.h
-@@ -7,7 +7,6 @@
- #include <linux/dma-debug.h>
+ config DMA_COHERENT
++	select DMA_DIRECT_OPS
+ 	bool
  
- extern const struct dma_map_ops *dma_ops;
--extern const struct dma_map_ops pci32_dma_ops;
+ config DMA_NONCOHERENT
+diff --git a/arch/sh/include/asm/dma-mapping.h b/arch/sh/include/asm/dma-mapping.h
+index 149e71f95be7..1ebc6a4eb1c5 100644
+--- a/arch/sh/include/asm/dma-mapping.h
++++ b/arch/sh/include/asm/dma-mapping.h
+@@ -6,7 +6,11 @@ extern const struct dma_map_ops nommu_dma_ops;
  
- extern struct bus_type pci_bus_type;
- 
-@@ -15,11 +14,11 @@ static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+ static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
  {
- #ifdef CONFIG_SPARC_LEON
- 	if (sparc_cpu_model == sparc_leon)
--		return &pci32_dma_ops;
-+		return &dma_noncoherent_ops;
- #endif
- #if defined(CONFIG_SPARC32) && defined(CONFIG_PCI)
- 	if (bus == &pci_bus_type)
--		return &pci32_dma_ops;
-+		return &dma_noncoherent_ops;
- #endif
- 	return dma_ops;
- }
-diff --git a/arch/sparc/kernel/ioport.c b/arch/sparc/kernel/ioport.c
-index 3bcef9ce74df..7954512c42e7 100644
---- a/arch/sparc/kernel/ioport.c
-+++ b/arch/sparc/kernel/ioport.c
-@@ -38,6 +38,7 @@
- #include <linux/proc_fs.h>
- #include <linux/seq_file.h>
- #include <linux/scatterlist.h>
-+#include <linux/dma-noncoherent.h>
- #include <linux/of_device.h>
- 
- #include <asm/io.h>
-@@ -434,9 +435,8 @@ arch_initcall(sparc_register_ioport);
- /* Allocate and map kernel buffer using consistent mode DMA for a device.
-  * hwdev should be valid struct pci_dev pointer for PCI devices.
-  */
--static void *pci32_alloc_coherent(struct device *dev, size_t len,
--				  dma_addr_t *pba, gfp_t gfp,
--				  unsigned long attrs)
-+void *arch_dma_alloc(struct device *dev, size_t len, dma_addr_t *pba, gfp_t gfp,
-+		unsigned long attrs)
- {
- 	unsigned long len_total = PAGE_ALIGN(len);
- 	void *va;
-@@ -488,8 +488,8 @@ static void *pci32_alloc_coherent(struct device *dev, size_t len,
-  * References to the memory and mappings associated with cpu_addr/dma_addr
-  * past this call are illegal.
-  */
--static void pci32_free_coherent(struct device *dev, size_t n, void *p,
--				dma_addr_t ba, unsigned long attrs)
-+void arch_dma_free(struct device *dev, size_t n, void *p, dma_addr_t ba,
-+		unsigned long attrs)
- {
- 	struct resource *res;
- 
-@@ -519,146 +519,15 @@ static void pci32_free_coherent(struct device *dev, size_t n, void *p,
- 	free_pages((unsigned long)phys_to_virt(ba), get_order(n));
++#ifdef CONFIG_DMA_NONCOHERENT
+ 	return &nommu_dma_ops;
++#else
++	return &dma_direct_ops;
++#endif
  }
  
--/*
-- * Same as pci_map_single, but with pages.
-- */
--static dma_addr_t pci32_map_page(struct device *dev, struct page *page,
--				 unsigned long offset, size_t size,
--				 enum dma_data_direction dir,
--				 unsigned long attrs)
--{
--	/* IIep is write-through, not flushing. */
--	return page_to_phys(page) + offset;
--}
--
--static void pci32_unmap_page(struct device *dev, dma_addr_t ba, size_t size,
--			     enum dma_data_direction dir, unsigned long attrs)
--{
--	if (dir != PCI_DMA_TODEVICE && !(attrs & DMA_ATTR_SKIP_CPU_SYNC))
--		dma_make_coherent(ba, PAGE_ALIGN(size));
--}
--
--/* Map a set of buffers described by scatterlist in streaming
-- * mode for DMA.  This is the scatter-gather version of the
-- * above pci_map_single interface.  Here the scatter gather list
-- * elements are each tagged with the appropriate dma address
-- * and length.  They are obtained via sg_dma_{address,length}(SG).
-- *
-- * NOTE: An implementation may be able to use a smaller number of
-- *       DMA address/length pairs than there are SG table elements.
-- *       (for example via virtual mapping capabilities)
-- *       The routine returns the number of addr/length pairs actually
-- *       used, at most nents.
-- *
-- * Device ownership issues as mentioned above for pci_map_single are
-- * the same here.
-- */
--static int pci32_map_sg(struct device *device, struct scatterlist *sgl,
--			int nents, enum dma_data_direction dir,
--			unsigned long attrs)
--{
--	struct scatterlist *sg;
--	int n;
--
--	/* IIep is write-through, not flushing. */
--	for_each_sg(sgl, sg, nents, n) {
--		sg->dma_address = sg_phys(sg);
--		sg->dma_length = sg->length;
--	}
--	return nents;
--}
--
--/* Unmap a set of streaming mode DMA translations.
-- * Again, cpu read rules concerning calls here are the same as for
-- * pci_unmap_single() above.
-- */
--static void pci32_unmap_sg(struct device *dev, struct scatterlist *sgl,
--			   int nents, enum dma_data_direction dir,
--			   unsigned long attrs)
--{
--	struct scatterlist *sg;
--	int n;
--
--	if (dir != PCI_DMA_TODEVICE && !(attrs & DMA_ATTR_SKIP_CPU_SYNC)) {
--		for_each_sg(sgl, sg, nents, n) {
--			dma_make_coherent(sg_phys(sg), PAGE_ALIGN(sg->length));
--		}
--	}
--}
-+/* IIep is write-through, not flushing on cpu to device transfer. */
+ extern void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+diff --git a/arch/sh/kernel/Makefile b/arch/sh/kernel/Makefile
+index dc80041f7363..cb5f1bfb52de 100644
+--- a/arch/sh/kernel/Makefile
++++ b/arch/sh/kernel/Makefile
+@@ -12,7 +12,7 @@ endif
  
--/* Make physical memory consistent for a single
-- * streaming mode DMA translation before or after a transfer.
-- *
-- * If you perform a pci_map_single() but wish to interrogate the
-- * buffer using the cpu, yet do not wish to teardown the PCI dma
-- * mapping, you must call this function before doing so.  At the
-- * next point you give the PCI dma address back to the card, you
-- * must first perform a pci_dma_sync_for_device, and then the
-- * device again owns the buffer.
-- */
--static void pci32_sync_single_for_cpu(struct device *dev, dma_addr_t ba,
--				      size_t size, enum dma_data_direction dir)
-+void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
- {
--	if (dir != PCI_DMA_TODEVICE) {
--		dma_make_coherent(ba, PAGE_ALIGN(size));
--	}
--}
+ CFLAGS_REMOVE_return_address.o = -pg
+ 
+-obj-y	:= debugtraps.o dma-nommu.o dumpstack.o 		\
++obj-y	:= debugtraps.o dumpstack.o 		\
+ 	   idle.o io.o irq.o irq_$(BITS).o kdebugfs.o			\
+ 	   machvec.o nmi_debug.o process.o				\
+ 	   process_$(BITS).o ptrace.o ptrace_$(BITS).o			\
+@@ -45,7 +45,7 @@ obj-$(CONFIG_DUMP_CODE)		+= disassemble.o
+ obj-$(CONFIG_HIBERNATION)	+= swsusp.o
+ obj-$(CONFIG_DWARF_UNWINDER)	+= dwarf.o
+ obj-$(CONFIG_PERF_EVENTS)	+= perf_event.o perf_callchain.o
 -
--static void pci32_sync_single_for_device(struct device *dev, dma_addr_t ba,
--					 size_t size, enum dma_data_direction dir)
--{
--	if (dir != PCI_DMA_TODEVICE) {
--		dma_make_coherent(ba, PAGE_ALIGN(size));
--	}
-+	if (dir != PCI_DMA_TODEVICE)
-+		dma_make_coherent(paddr, PAGE_ALIGN(size));
++obj-$(CONFIG_DMA_NONCOHERENT)	+= dma-nommu.o
+ obj-$(CONFIG_HAVE_HW_BREAKPOINT)		+= hw_breakpoint.o
+ 
+ ccflags-y := -Werror
+diff --git a/arch/sh/kernel/dma-nommu.c b/arch/sh/kernel/dma-nommu.c
+index 79a9edafa5b0..d8689b1cb743 100644
+--- a/arch/sh/kernel/dma-nommu.c
++++ b/arch/sh/kernel/dma-nommu.c
+@@ -51,7 +51,6 @@ static int nommu_map_sg(struct device *dev, struct scatterlist *sg,
+ 	return nents;
  }
  
--/* Make physical memory consistent for a set of streaming
-- * mode DMA translations after a transfer.
-- *
-- * The same as pci_dma_sync_single_* but for a scatter-gather list,
-- * same rules and usage.
-- */
--static void pci32_sync_sg_for_cpu(struct device *dev, struct scatterlist *sgl,
--				  int nents, enum dma_data_direction dir)
--{
--	struct scatterlist *sg;
--	int n;
--
--	if (dir != PCI_DMA_TODEVICE) {
--		for_each_sg(sgl, sg, nents, n) {
--			dma_make_coherent(sg_phys(sg), PAGE_ALIGN(sg->length));
--		}
--	}
--}
--
--static void pci32_sync_sg_for_device(struct device *device, struct scatterlist *sgl,
--				     int nents, enum dma_data_direction dir)
--{
--	struct scatterlist *sg;
--	int n;
--
--	if (dir != PCI_DMA_TODEVICE) {
--		for_each_sg(sgl, sg, nents, n) {
--			dma_make_coherent(sg_phys(sg), PAGE_ALIGN(sg->length));
--		}
--	}
--}
--
--/* note: leon re-uses pci32_dma_ops */
--const struct dma_map_ops pci32_dma_ops = {
--	.alloc			= pci32_alloc_coherent,
--	.free			= pci32_free_coherent,
--	.map_page		= pci32_map_page,
--	.unmap_page		= pci32_unmap_page,
--	.map_sg			= pci32_map_sg,
--	.unmap_sg		= pci32_unmap_sg,
--	.sync_single_for_cpu	= pci32_sync_single_for_cpu,
--	.sync_single_for_device	= pci32_sync_single_for_device,
--	.sync_sg_for_cpu	= pci32_sync_sg_for_cpu,
--	.sync_sg_for_device	= pci32_sync_sg_for_device,
--};
--EXPORT_SYMBOL(pci32_dma_ops);
--
- const struct dma_map_ops *dma_ops = &sbus_dma_ops;
- EXPORT_SYMBOL(dma_ops);
+-#ifdef CONFIG_DMA_NONCOHERENT
+ static void nommu_sync_single_for_device(struct device *dev, dma_addr_t addr,
+ 			      size_t size, enum dma_data_direction dir)
+ {
+@@ -67,16 +66,13 @@ static void nommu_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+ 	for_each_sg(sg, s, nelems, i)
+ 		sh_sync_dma_for_device(sg_virt(s), s->length, dir);
+ }
+-#endif
  
+ const struct dma_map_ops nommu_dma_ops = {
+ 	.alloc			= dma_generic_alloc_coherent,
+ 	.free			= dma_generic_free_coherent,
+ 	.map_page		= nommu_map_page,
+ 	.map_sg			= nommu_map_sg,
+-#ifdef CONFIG_DMA_NONCOHERENT
+ 	.sync_single_for_device	= nommu_sync_single_for_device,
+ 	.sync_sg_for_device	= nommu_sync_sg_for_device,
+-#endif
+ };
+ EXPORT_SYMBOL(nommu_dma_ops);
 -- 
 2.17.0
