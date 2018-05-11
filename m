@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752288AbeEKD1U (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 23:27:20 -0400
-Received: from regular1.263xmail.com ([211.150.99.133]:36969 "EHLO
+        id S1752427AbeEKD1j (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 23:27:39 -0400
+Received: from regular1.263xmail.com ([211.150.99.134]:50276 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750758AbeEKD1T (ORCPT
+        with ESMTP id S1752347AbeEKD1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 23:27:19 -0400
+        Thu, 10 May 2018 23:27:37 -0400
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -17,7 +17,7 @@ X-RL-SENDER: zhangqing@rock-chips.com
 X-FST-TO: heiko@sntech.de
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: zhangqing@rock-chips.com
-X-UNIQUE-TAG: <5f510345ba743f48555e63ac552d6e09>
+X-UNIQUE-TAG: <e94080f050eaa235275bd2cee93faf6b>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: Elaine Zhang <zhangqing@rock-chips.com>
@@ -28,9 +28,9 @@ Cc: devicetree@vger.kernel.org, rjw@rjwysocki.net, khilman@kernel.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         wxt@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
         huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 05/13] dt-bindings: power: add RK3128 SoCs header for power-domain
-Date: Fri, 11 May 2018 11:32:39 +0800
-Message-Id: <1526009559-1807-1-git-send-email-zhangqing@rock-chips.com>
+Subject: [PATCH v1 06/13] dt-bindings: add binding for rk3128 power domains
+Date: Fri, 11 May 2018 11:32:58 +0800
+Message-Id: <1526009578-1853-1-git-send-email-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526009458-28579-1-git-send-email-zhangqing@rock-chips.com>
 References: <1526009458-28579-1-git-send-email-zhangqing@rock-chips.com>
@@ -38,47 +38,41 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to a description from TRM, add all the power domains.
+Add binding documentation for the power domains
+found on Rockchip RK3128 SoCs.
 
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- include/dt-bindings/power/rk3128-power.h | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 include/dt-bindings/power/rk3128-power.h
+ Documentation/devicetree/bindings/soc/rockchip/power_domain.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/dt-bindings/power/rk3128-power.h b/include/dt-bindings/power/rk3128-power.h
-new file mode 100644
-index 000000000000..26aef519cd94
---- /dev/null
-+++ b/include/dt-bindings/power/rk3128-power.h
-@@ -0,0 +1,28 @@
-+/*
-+ * Copyright (c) 2017 Rockchip Electronics Co. Ltd.
-+ * Author: Elaine Zhang <zhangqing@rock-chips.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+#ifndef __DT_BINDINGS_POWER_RK3128_POWER_H__
-+#define __DT_BINDINGS_POWER_RK3128_POWER_H__
-+
-+/* VD_CORE */
-+#define RK3128_PD_CORE		0
-+
-+/* VD_LOGIC */
-+#define RK3128_PD_VIO		1
-+#define RK3128_PD_VIDEO		2
-+#define RK3128_PD_GPU		3
-+#define RK3128_PD_MSCH		4
-+
-+#endif
+diff --git a/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt b/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt
+index 79924ee9ae86..9a3f5fd36a80 100644
+--- a/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt
++++ b/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt
+@@ -6,6 +6,7 @@ powered up/down by software based on different application scenes to save power.
+ Required properties for power domain controller:
+ - compatible: Should be one of the following.
+ 	"rockchip,rk3036-power-controller" - for RK3036 SoCs.
++	"rockchip,rk3128-power-controller" - for RK3128 SoCs.
+ 	"rockchip,rk3288-power-controller" - for RK3288 SoCs.
+ 	"rockchip,rk3328-power-controller" - for RK3328 SoCs.
+ 	"rockchip,rk3366-power-controller" - for RK3366 SoCs.
+@@ -19,6 +20,7 @@ Required properties for power domain controller:
+ Required properties for power domain sub nodes:
+ - reg: index of the power domain, should use macros in:
+ 	"include/dt-bindings/power/rk3036-power.h" - for RK3036 type power domain.
++	"include/dt-bindings/power/rk3128-power.h" - for RK3128 type power domain.
+ 	"include/dt-bindings/power/rk3288-power.h" - for RK3288 type power domain.
+ 	"include/dt-bindings/power/rk3328-power.h" - for RK3328 type power domain.
+ 	"include/dt-bindings/power/rk3366-power.h" - for RK3366 type power domain.
+@@ -96,6 +98,7 @@ containing a phandle to the power device node and an index specifying which
+ power domain to use.
+ The index should use macros in:
+ 	"include/dt-bindings/power/rk3036-power.h" - for rk3036 type power domain.
++	"include/dt-bindings/power/rk3128-power.h" - for rk3128 type power domain.
+ 	"include/dt-bindings/power/rk3288-power.h" - for rk3288 type power domain.
+ 	"include/dt-bindings/power/rk3328-power.h" - for rk3328 type power domain.
+ 	"include/dt-bindings/power/rk3366-power.h" - for rk3366 type power domain.
 -- 
 1.9.1
