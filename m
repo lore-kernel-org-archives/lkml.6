@@ -1,116 +1,215 @@
-Return-Path: <fbarrat@linux.ibm.com>
-X-Google-Smtp-Source: AB8JxZoqSPcIMyghan+Wm93eF94oCn21vrDbYv4YOC/2M5oE2uCRN97/RToN/xY4iY7d2JbAP4KD
-ARC-Seal: i=1; a=rsa-sha256; t=1525713604; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZoEYtlRuSTpmF7TQsr6va5IA9rHBMyYJCDjbA/ScP/CBa9YC4phBAG9JWJd5pG0e4ihz9dQ
+ARC-Seal: i=1; a=rsa-sha256; t=1526008779; cv=none;
         d=google.com; s=arc-20160816;
-        b=F5/ScflC58+nLE5yYzHZ6OOMwqYSr1MltA7XMgigR907+Q1WINolVMkFalQFzfhoOB
-         PJhK9M4Y78X86OgZWAV0vQrOFjnKyfL4fS990HgOcCRmm/CnFLCvl8kMn4y+uZ1yw7TG
-         ku9Nnma69EoF3Hk78LoF8kBEiZLg9dOIo7e+sX3Ykop2skb8L4nupfLR24Ji3azsz0xH
-         cGROgb9g02UBuRZjI6iST8Nlxt4uXxjcQq7xhnNChImMSNUwQd2gWalypbgpN1UXu2Ip
-         fHx4cszZKGwmNQULvhZ3TOhyIkeXIZ8vbR1qKmFWnRCETguPKN9Bv79NjUGe37ILR1J7
-         nJvA==
+        b=H0yPiZPGriCWLVkCOw6a/FWETsBkgtZFBNqUWTVMeb+uWO+KYHJwyt0azGbQmno20O
+         PwMlk5qtjSBBlm8TljNOgvO0/IPBPIw3fpQcRTFwGKBPPnLPMgcg7uTW+BxTi2jfVzIX
+         9SVHmFgD3kNtHk5DipEArvOBax+D3GxvKILwtFGE0ougTwL/WJ1xGHWX3UsJ4Ksm4UwU
+         4QZABo/S7GQr/aRvy/vxU3G+FU2RxN0dxfmbnVsRTV6dlTYmJKPREP0MLnx3ifkgvwdg
+         4gZSmXyYRwlPbUFfb+9eM6wdg0gWdsKHz3G2nfIgMNWTkmXWEXlqZd/HQg4tw3TaOZ4I
+         gicg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-transfer-encoding:content-language:in-reply-to
-         :mime-version:user-agent:date:from:references:cc:to:subject
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=c7D2eg2IGbfK8dR/9w5updnMQhkx5dpMxghed3+XGf8=;
-        b=NI+HtEswdUF8scGIMXuAI1JQzPynUObzns/oWfiz+PTlX/pix3uVHYUhwmBcHqh1he
-         wLwc98quvotzDc0hlxvD9TB4RMkmI0z86Ykt4hSoEyLEQjcYo+BqCPUb7pS2SqBxANJr
-         4gLLA7umff1xXQw35huHKPGeQ8Ps0VjGf/UfcLAZRHgvOJHd7G1LReEDRLyGBuVkkBPE
-         eEdVv8gw4Q0fjEVtEqmAV6ifIy16tePyphT4MeuzTXKEz/WCiH125VysnHKIS/tO+Nzh
-         fPjS4xf2jK2TfqdZZoUOfMELs5ZmBEh/cta26OsTENFmOqRVVoQH0lVV969yKLvGNdj7
-         jpUw==
+        bh=9nZGT0w9UYWOGtC/uP8/6qw12HaJtwpu2ymN6X9lkNo=;
+        b=V/hZIh8kMxe167piY1HeJou7IwH1VprmWWMhM3vGxYdCKflY3kUtdGt0a/8Q+nodfm
+         wP9ES2J8Lp75cukUQbTqF7/BcpmTU7Xr+TkAK5ShFIsAmtjrMAtqexKHXCfMB+l+pDq/
+         JxKnsRlz+OJLNDrrg3gvtAcDnB5NH2+hf7dn0ZR52qb+vEEPTtjLLJc+Kg7vikNkQexS
+         30KDVWOUyJD5juPFGeYSiod8gJG16HDF7ll+/yPen+/uKYEruZe0tgbbGyXFA7bEcTQp
+         LESYnGPBeZUtVohs+p/YVj6kBb/IOwRli80ygi5F/9zeCbMVUz3iqsLyR8IyT6c+RndC
+         60Ag==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of fbarrat@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=fbarrat@linux.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=iZxQDawg;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of fbarrat@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=fbarrat@linux.ibm.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH v2 2/7] powerpc: Use TIDR CPU feature to control TIDR
- allocation
-To: "Alastair D'Silva" <alastair@au1.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, mikey@neuling.org,
-        vaibhav@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
-        malat@debian.org, felix@linux.vnet.ibm.com, pombredanne@nexb.com,
-        sukadev@linux.vnet.ibm.com, npiggin@gmail.com,
-        gregkh@linuxfoundation.org, arnd@arndb.de,
-        andrew.donnellan@au1.ibm.com, fbarrat@linux.vnet.ibm.com,
-        corbet@lwn.net, "Alastair D'Silva" <alastair@d-silva.org>
-References: <20180417020950.21446-1-alastair@au1.ibm.com>
- <20180418010810.30937-1-alastair@au1.ibm.com>
- <20180418010810.30937-3-alastair@au1.ibm.com>
-From: Frederic Barrat <fbarrat@linux.ibm.com>
-Date: Mon, 7 May 2018 19:19:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180418010810.30937-3-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18050717-0020-0000-0000-0000041A0B20
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050717-0021-0000-0000-000042AF3FB8
-Message-Id: <772d6e5d-54c2-0512-b8e6-21d12d8c44cc@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805070174
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=iZxQDawg;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, andy.gross@linaro.org, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, robh+dt@kernel.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, tiwai@suse.com, lgirdwood@gmail.com, david.brown@linaro.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "soc: qcom dt-bindings: Add APR bus bindings" to the asoc tree
+In-Reply-To: <20180426094606.4775-2-srinivas.kandagatla@linaro.org>
+Message-Id: <20180511031930.419CC44007A@finisterre.ee.mobilebroadband>
+Date: Fri, 11 May 2018 04:19:30 +0100 (BST)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597957550458920157?=
-X-GMAIL-MSGID: =?utf-8?q?1599826668072549214?=
+X-GMAIL-THRID: =?utf-8?q?1600136182276150208?=
+X-GMAIL-MSGID: =?utf-8?q?1600136182276150208?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The patch
 
+   soc: qcom dt-bindings: Add APR bus bindings
 
-Le 18/04/2018 à 03:08, Alastair D'Silva a écrit :
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> Switch the use of TIDR on it's CPU feature, rather than assuming it
-> is available based on architecture.
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> ---
+has been applied to the asoc tree at
 
-Reviewed-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
->   arch/powerpc/kernel/process.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-> index 1237f13fed51..3b00da47699b 100644
-> --- a/arch/powerpc/kernel/process.c
-> +++ b/arch/powerpc/kernel/process.c
-> @@ -1154,7 +1154,7 @@ static inline void restore_sprs(struct thread_struct *old_thread,
->   			mtspr(SPRN_TAR, new_thread->tar);
->   	}
-> 
-> -	if (cpu_has_feature(CPU_FTR_ARCH_300) &&
-> +	if (cpu_has_feature(CPU_FTR_P9_TIDR) &&
->   	    old_thread->tidr != new_thread->tidr)
->   		mtspr(SPRN_TIDR, new_thread->tidr);
->   #endif
-> @@ -1570,7 +1570,7 @@ void clear_thread_tidr(struct task_struct *t)
->   	if (!t->thread.tidr)
->   		return;
-> 
-> -	if (!cpu_has_feature(CPU_FTR_ARCH_300)) {
-> +	if (!cpu_has_feature(CPU_FTR_P9_TIDR)) {
->   		WARN_ON_ONCE(1);
->   		return;
->   	}
-> @@ -1593,7 +1593,7 @@ int set_thread_tidr(struct task_struct *t)
->   {
->   	int rc;
-> 
-> -	if (!cpu_has_feature(CPU_FTR_ARCH_300))
-> +	if (!cpu_has_feature(CPU_FTR_P9_TIDR))
->   		return -EINVAL;
-> 
->   	if (t != current)
-> 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 8675e8d3d1b413dc0e6165d2ce09de4335f7f57a Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Wed, 9 May 2018 13:56:12 +0100
+Subject: [PATCH] soc: qcom dt-bindings: Add APR bus bindings
+
+This patch add dt bindings for Qualcomm APR (Asynchronous Packet Router)
+bus driver. This bus is used for communicating with DSP which provides
+audio and various other services to cpu.
+
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../devicetree/bindings/soc/qcom/qcom,apr.txt | 84 +++++++++++++++++++
+ include/dt-bindings/soc/qcom,apr.h            | 28 +++++++
+ 2 files changed, 112 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+ create mode 100644 include/dt-bindings/soc/qcom,apr.h
+
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+new file mode 100644
+index 000000000000..bcc612cc7423
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+@@ -0,0 +1,84 @@
++Qualcomm APR (Asynchronous Packet Router) binding
++
++This binding describes the Qualcomm APR. APR is a IPC protocol for
++communication between Application processor and QDSP. APR is mainly
++used for audio/voice services on the QDSP.
++
++- compatible:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "qcom,apr-v<VERSION-NUMBER>", example "qcom,apr-v2"
++
++- reg
++	Usage: required
++	Value type: <u32>
++	Definition: Destination processor ID.
++	Possible values are :
++			1 - APR simulator
++			2 - PC
++			3 - MODEM
++			4 - ADSP
++			5 - APPS
++			6 - MODEM2
++			7 - APPS2
++
++= APR SERVICES
++Each subnode of the APR node represents service tied to this apr. The name
++of the nodes are not important. The properties of these nodes are defined
++by the individual bindings for the specific service
++- All APR services MUST contain the following property:
++
++- reg
++	Usage: required
++	Value type: <u32>
++	Definition: APR Service ID
++	Possible values are :
++			3 - DSP Core Service
++			4 - Audio Front End Service.
++			5 - Voice Stream Manager Service.
++			6 - Voice processing manager.
++			7 - Audio Stream Manager Service.
++			8 - Audio Device Manager Service.
++			9 - Multimode voice manager.
++			10 - Core voice stream.
++			11 - Core voice processor.
++			12 - Ultrasound stream manager.
++			13 - Listen stream manager.
++
++= EXAMPLE
++The following example represents a QDSP based sound card on a MSM8996 device
++which uses apr as communication between Apps and QDSP.
++
++	apr@4 {
++		compatible = "qcom,apr-v2";
++		reg = <APR_DOMAIN_ADSP>;
++
++		q6core@3 {
++			compatible = "qcom,q6core";
++			reg = <APR_SVC_ADSP_CORE>;
++		};
++
++		q6afe@4 {
++			compatible = "qcom,q6afe";
++			reg = <APR_SVC_AFE>;
++
++			dais {
++				#sound-dai-cells = <1>;
++				hdmi@1 {
++					reg = <1>;
++				};
++			};
++		};
++
++		q6asm@7 {
++			compatible = "qcom,q6asm";
++			reg = <APR_SVC_ASM>;
++			...
++		};
++
++		q6adm@8 {
++			compatible = "qcom,q6adm";
++			reg = <APR_SVC_ADM>;
++			...
++		};
++	};
+diff --git a/include/dt-bindings/soc/qcom,apr.h b/include/dt-bindings/soc/qcom,apr.h
+new file mode 100644
+index 000000000000..006362400c0f
+--- /dev/null
++++ b/include/dt-bindings/soc/qcom,apr.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __DT_BINDINGS_QCOM_APR_H
++#define __DT_BINDINGS_QCOM_APR_H
++
++/* Domain IDs */
++#define APR_DOMAIN_SIM		0x1
++#define APR_DOMAIN_PC		0x2
++#define APR_DOMAIN_MODEM	0x3
++#define APR_DOMAIN_ADSP		0x4
++#define APR_DOMAIN_APPS		0x5
++#define APR_DOMAIN_MAX		0x6
++
++/* ADSP service IDs */
++#define APR_SVC_ADSP_CORE	0x3
++#define APR_SVC_AFE		0x4
++#define APR_SVC_VSM		0x5
++#define APR_SVC_VPM		0x6
++#define APR_SVC_ASM		0x7
++#define APR_SVC_ADM		0x8
++#define APR_SVC_ADSP_MVM	0x09
++#define APR_SVC_ADSP_CVS	0x0A
++#define APR_SVC_ADSP_CVP	0x0B
++#define APR_SVC_USM		0x0C
++#define APR_SVC_LSM		0x0D
++#define APR_SVC_VIDC		0x16
++#define APR_SVC_MAX		0x17
++
++#endif /* __DT_BINDINGS_QCOM_APR_H */
+-- 
+2.17.0
