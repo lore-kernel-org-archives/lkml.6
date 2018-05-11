@@ -1,77 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751717AbeEKUsN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 16:48:13 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:46287 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750980AbeEKUsM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 16:48:12 -0400
-X-Google-Smtp-Source: AB8JxZqK0prADzGlhqsslLVfVz8R/MXUJkXMEuRqSGEu1XYn3/BpxOwLgiQK0thsVaIKLcs7NTBQlQ==
-Date: Fri, 11 May 2018 17:42:28 -0300
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To: Eric Dumazet <eric.dumazet@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+fc78715ba3b3257caf6a@syzkaller.appspotmail.com>,
-        Vladislav Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>, linux-sctp@vger.kernel.org,
-        Andrei Vagin <avagin@virtuozzo.com>,
-        David Miller <davem@davemloft.net>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: INFO: rcu detected stall in kfree_skbmem
-Message-ID: <20180511204228.GO4977@localhost.localdomain>
-References: <000000000000a9b0e3056b14bfb2@google.com>
- <CACT4Y+Z_+=VLbELVW69B7WEVqvri1xBMM5RMnMQynec_XgaE=w@mail.gmail.com>
- <20180511184141.GW5105@localhost.localdomain>
- <683d1ead-d35b-27ee-0f0c-f7e815d989fc@gmail.com>
+        id S1752211AbeEKUyW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 16:54:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57472 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750876AbeEKUyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 16:54:20 -0400
+Date: Fri, 11 May 2018 21:54:14 +0100
+From: James Hogan <jhogan@kernel.org>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+Subject: Re: [PATCH v3 5/8] MIPS: jz4740: dts: Add bindings for the
+ jz4740-wdt driver
+Message-ID: <20180511205413.GA18694@jamesdev>
+References: <5af5c20f.1c69fb81.e968b.17c0SMTPIN_ADDED_MISSING@mx.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
 Content-Disposition: inline
-In-Reply-To: <683d1ead-d35b-27ee-0f0c-f7e815d989fc@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <5af5c20f.1c69fb81.e968b.17c0SMTPIN_ADDED_MISSING@mx.google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 12:08:33PM -0700, Eric Dumazet wrote:
->
->
-> On 05/11/2018 11:41 AM, Marcelo Ricardo Leitner wrote:
->
-> > But calling ip6_xmit with rcu_read_lock is expected. tcp stack also
-> > does it.
-> > Thus I think this is more of an issue with IPv6 stack. If a host has
-> > an extensive ip6tables ruleset, it probably generates this more
-> > easily.
+
+--UugvWAfsgieZRqgk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, May 11, 2018 at 01:17:04PM -0300, Paul Cercueil wrote:
+> Le 11 mai 2018 11:52, James Hogan <jhogan@kernel.org> a =C3=A9crit :
+> > Otherwise=20
+> > Acked-by: James Hogan <jhogan@kernel.org>=20
 > >
-> >>>  sctp_v6_xmit+0x4a5/0x6b0 net/sctp/ipv6.c:225
-> >>>  sctp_packet_transmit+0x26f6/0x3ba0 net/sctp/output.c:650
-> >>>  sctp_outq_flush+0x1373/0x4370 net/sctp/outqueue.c:1197
-> >>>  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
-> >>>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
-> >>>  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
-> >>>  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
-> >>>  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
-> >>>  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
-> >>>  expire_timers kernel/time/timer.c:1363 [inline]
-> >
-> > Having this call from a timer means it wasn't processing sctp stack
-> > for too long.
-> >
->
-> I feel the problem is that this part is looping, in some infinite loop.
->
-> I have seen this stack traces in other reports.
+> > I'm happy to apply for 4.18 with that change if you want it to go=20
+> > through the MIPS tree.=20
+>=20
+> Yes please!
 
-Checked mail history now, seems at least two other reports on RCU
-stalls had sctp_generate_heartbeat_event involved.
+Done
 
->
-> Maybe some kind of list corruption.
+Thanks
+James
 
-Could be.
-Do we know if it generated a flood of packets?
+--UugvWAfsgieZRqgk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  Marcelo
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWvYC9AAKCRA1zuSGKxAj
+8phyAQDZoZqOKloD7PM+wLPxstrAw1VWIjKL+v52Gvt1yS1XngD/TnyxIuRbRmnd
+htOP4kysT09dfNSDNBH3WOqrPo2xrAY=
+=3t2e
+-----END PGP SIGNATURE-----
+
+--UugvWAfsgieZRqgk--
