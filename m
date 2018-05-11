@@ -1,320 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752613AbeEKKND convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 06:13:03 -0400
-Received: from ushosting.nmnhosting.com ([167.160.173.127]:41660 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750806AbeEKKNC (ORCPT
+        id S1752814AbeEKKNl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 06:13:41 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37618 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752639AbeEKKNj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 06:13:02 -0400
-From: "Alastair D'Silva" <alastair@d-silva.org>
-To: "'Frederic Barrat'" <fbarrat@linux.ibm.com>,
-        "'Alastair D'Silva'" <alastair@au1.ibm.com>,
-        <linuxppc-dev@lists.ozlabs.org>
-Cc: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <mikey@neuling.org>, <vaibhav@linux.vnet.ibm.com>,
-        <aneesh.kumar@linux.vnet.ibm.com>, <malat@debian.org>,
-        <felix@linux.vnet.ibm.com>, <pombredanne@nexb.com>,
-        <sukadev@linux.vnet.ibm.com>, <npiggin@gmail.com>,
-        <gregkh@linuxfoundation.org>, <arnd@arndb.de>,
-        <andrew.donnellan@au1.ibm.com>, <fbarrat@linux.vnet.ibm.com>,
-        <corbet@lwn.net>
-References: <20180511061303.10728-1-alastair@au1.ibm.com> <20180511061303.10728-6-alastair@au1.ibm.com> <9656b063-eafd-a882-c678-a1c4d504cd54@linux.ibm.com>
-In-Reply-To: <9656b063-eafd-a882-c678-a1c4d504cd54@linux.ibm.com>
-Subject: RE: [PATCH v5 5/7] ocxl: Expose the thread_id needed for wait on POWER9
-Date: Fri, 11 May 2018 20:06:54 +1000
-Message-ID: <02a401d3e90f$cdb0be90$69123bb0$@d-silva.org>
+        Fri, 11 May 2018 06:13:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6DB6860290
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
+Cc: Michael =?utf-8?Q?B=C3=BCsch?= <m@bues.ch>,
+        Larry Finger <larry.finger@lwfinger.net>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        Hauke Mehrtens <hauke@hauke-m.de>, LKML <linux-kernel@vger.kernel.org>,
+        =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+Subject: Re: [PATCH V2 1/2] Revert "ssb: Prevent build of PCI host features in module"
+References: <20180511091715.1989-1-zajec5@gmail.com>
+        <CACna6ry-91oR1u697NRymLsN28fnnHDp9OQrdiVwA7A3KTV1fg@mail.gmail.com>
+Date: Fri, 11 May 2018 13:13:33 +0300
+In-Reply-To: <CACna6ry-91oR1u697NRymLsN28fnnHDp9OQrdiVwA7A3KTV1fg@mail.gmail.com>
+        (=?utf-8?Q?=22Rafa=C5=82_Mi=C5=82ecki=22's?= message of "Fri, 11 May 2018
+ 11:21:11 +0200")
+Message-ID: <87bmdmcxf6.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-au
-Thread-Index: AQEt5zmHT2O8EKH9DOs7VTNMP4ZkhQICfQ2uAiL96JWlVSTnUA==
+Content-Type: text/plain; charset=utf-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4BADkVS002145
 
+Rafał Miłecki <zajec5@gmail.com> writes:
 
-> -----Original Message-----
-> From: Frederic Barrat <fbarrat@linux.ibm.com>
-> Sent: Friday, 11 May 2018 7:25 PM
-> To: Alastair D'Silva <alastair@au1.ibm.com>; linuxppc-dev@lists.ozlabs.org
-> Cc: linux-kernel@vger.kernel.org; linux-doc@vger.kernel.org;
-> mikey@neuling.org; vaibhav@linux.vnet.ibm.com;
-> aneesh.kumar@linux.vnet.ibm.com; malat@debian.org;
-> felix@linux.vnet.ibm.com; pombredanne@nexb.com;
-> sukadev@linux.vnet.ibm.com; npiggin@gmail.com;
-> gregkh@linuxfoundation.org; arnd@arndb.de;
-> andrew.donnellan@au1.ibm.com; fbarrat@linux.vnet.ibm.com;
-> corbet@lwn.net; Alastair D'Silva <alastair@d-silva.org>
-> Subject: Re: [PATCH v5 5/7] ocxl: Expose the thread_id needed for wait on
-> POWER9
-> 
-> 
-> 
-> Le 11/05/2018 à 08:13, Alastair D'Silva a écrit :
-> > From: Alastair D'Silva <alastair@d-silva.org>
-> >
-> > In order to successfully issue as_notify, an AFU needs to know the TID
-> > to notify, which in turn means that this information should be
-> > available in userspace so it can be communicated to the AFU.
-> >
-> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> > ---
-> 
-> Ok, so we keep the limitation of having only one thread per context able to
-> call 'wait', even though we don't have to worry about depleting the pool of
-> TIDs any more. I think that's acceptable, though we don't really have a reason
-> to justify it any more. Any reason you want to keep it that way?
-> 
+> On 11 May 2018 at 11:17, Rafał Miłecki <zajec5@gmail.com> wrote:
+>> From: Rafał Miłecki <rafal@milecki.pl>
+>>
+>> This reverts commit 882164a4a928bcaa53280940436ca476e6b1db8e.
+>>
+>> Above commit added "SSB = y" dependency to the wrong symbol
+>> SSB_DRIVER_PCICORE_POSSIBLE and prevented SSB_DRIVER_PCICORE from being
+>> selected when needed. PCI core driver for core running in clienthost
+>> mode is important for bus initialization. It's perfectly valid scenario
+>> to have ssb built as module and use it with buses on PCI cards.
+>>
+>> This fixes regression that affected all *module* users with PCI cards.
+>>
+>> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1572349
+>> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+>
+> As these patches fix regression/build error, I believe both should get
+> into 4.17.
 
-No strong reason, just trying to minimise the amount of changes. We can always expand the scope later, if we have a use-case for it.
+How much confidence do we have that we don't need to end up reverting
+patch 2 as well? I rather be pushing patch 2 to 4.18 so that there's
+more time for testing and waiting for feedback.
 
->    Fred
-> 
-> 
-> >   drivers/misc/ocxl/context.c       |  5 ++-
-> >   drivers/misc/ocxl/file.c          | 53 +++++++++++++++++++++++++++++++
-> >   drivers/misc/ocxl/link.c          | 36 +++++++++++++++++++++
-> >   drivers/misc/ocxl/ocxl_internal.h |  1 +
-> >   include/misc/ocxl.h               |  9 ++++++
-> >   include/uapi/misc/ocxl.h          |  8 +++++
-> >   6 files changed, 111 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/misc/ocxl/context.c b/drivers/misc/ocxl/context.c
-> > index 909e8807824a..95f74623113e 100644
-> > --- a/drivers/misc/ocxl/context.c
-> > +++ b/drivers/misc/ocxl/context.c
-> > @@ -34,6 +34,8 @@ int ocxl_context_init(struct ocxl_context *ctx, struct
-> ocxl_afu *afu,
-> >   	mutex_init(&ctx->xsl_error_lock);
-> >   	mutex_init(&ctx->irq_lock);
-> >   	idr_init(&ctx->irq_idr);
-> > +	ctx->tidr = 0;
-> > +
-> >   	/*
-> >   	 * Keep a reference on the AFU to make sure it's valid for the
-> >   	 * duration of the life of the context @@ -65,6 +67,7 @@ int
-> > ocxl_context_attach(struct ocxl_context *ctx, u64 amr)
-> >   {
-> >   	int rc;
-> >
-> > +	// Locks both status & tidr
-> >   	mutex_lock(&ctx->status_mutex);
-> >   	if (ctx->status != OPENED) {
-> >   		rc = -EIO;
-> > @@ -72,7 +75,7 @@ int ocxl_context_attach(struct ocxl_context *ctx, u64
-> amr)
-> >   	}
-> >
-> >   	rc = ocxl_link_add_pe(ctx->afu->fn->link, ctx->pasid,
-> > -			current->mm->context.id, 0, amr, current->mm,
-> > +			current->mm->context.id, ctx->tidr, amr, current-
-> >mm,
-> >   			xsl_fault_error, ctx);
-> >   	if (rc)
-> >   		goto out;
-> > diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c index
-> > 038509e5d031..eb409a469f21 100644
-> > --- a/drivers/misc/ocxl/file.c
-> > +++ b/drivers/misc/ocxl/file.c
-> > @@ -5,6 +5,8 @@
-> >   #include <linux/sched/signal.h>
-> >   #include <linux/uaccess.h>
-> >   #include <uapi/misc/ocxl.h>
-> > +#include <asm/reg.h>
-> > +#include <asm/switch_to.h>
-> >   #include "ocxl_internal.h"
-> >
-> >
-> > @@ -123,11 +125,55 @@ static long afu_ioctl_get_metadata(struct
-> ocxl_context *ctx,
-> >   	return 0;
-> >   }
-> >
-> > +#ifdef CONFIG_PPC64
-> > +static long afu_ioctl_enable_p9_wait(struct ocxl_context *ctx,
-> > +		struct ocxl_ioctl_p9_wait __user *uarg) {
-> > +	struct ocxl_ioctl_p9_wait arg;
-> > +
-> > +	memset(&arg, 0, sizeof(arg));
-> > +
-> > +	if (cpu_has_feature(CPU_FTR_P9_TIDR)) {
-> > +		enum ocxl_context_status status;
-> > +
-> > +		// Locks both status & tidr
-> > +		mutex_lock(&ctx->status_mutex);
-> > +		if (!ctx->tidr) {
-> > +			if (set_thread_tidr(current))
-> > +				return -ENOENT;
-> > +
-> > +			ctx->tidr = current->thread.tidr;
-> > +		}
-> > +
-> > +		status = ctx->status;
-> > +		mutex_unlock(&ctx->status_mutex);
-> > +
-> > +		if (status == ATTACHED) {
-> > +			int rc;
-> > +			struct link *link = ctx->afu->fn->link;
-> > +
-> > +			rc = ocxl_link_update_pe(link, ctx->pasid, ctx->tidr);
-> > +			if (rc)
-> > +				return rc;
-> > +		}
-> > +
-> > +		arg.thread_id = ctx->tidr;
-> > +	} else
-> > +		return -ENOENT;
-> > +
-> > +	if (copy_to_user(uarg, &arg, sizeof(arg)))
-> > +		return -EFAULT;
-> > +
-> > +	return 0;
-> > +}
-> > +#endif
-> > +
-> >   #define CMD_STR(x) (x == OCXL_IOCTL_ATTACH ? "ATTACH" :
-> 		\
-> >   			x == OCXL_IOCTL_IRQ_ALLOC ? "IRQ_ALLOC" :	\
-> >   			x == OCXL_IOCTL_IRQ_FREE ? "IRQ_FREE" :
-> 	\
-> >   			x == OCXL_IOCTL_IRQ_SET_FD ? "IRQ_SET_FD" :
-> 	\
-> >   			x == OCXL_IOCTL_GET_METADATA ?
-> "GET_METADATA" :	\
-> > +			x == OCXL_IOCTL_ENABLE_P9_WAIT ?
-> "ENABLE_P9_WAIT" :	\
-> >   			"UNKNOWN")
-> >
-> >   static long afu_ioctl(struct file *file, unsigned int cmd, @@ -186,6
-> > +232,13 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
-> >   				(struct ocxl_ioctl_metadata __user *) args);
-> >   		break;
-> >
-> > +#ifdef CONFIG_PPC64
-> > +	case OCXL_IOCTL_ENABLE_P9_WAIT:
-> > +		rc = afu_ioctl_enable_p9_wait(ctx,
-> > +				(struct ocxl_ioctl_p9_wait __user *) args);
-> > +		break;
-> > +#endif
-> > +
-> >   	default:
-> >   		rc = -EINVAL;
-> >   	}
-> > diff --git a/drivers/misc/ocxl/link.c b/drivers/misc/ocxl/link.c index
-> > 656e8610eec2..88876ae8f330 100644
-> > --- a/drivers/misc/ocxl/link.c
-> > +++ b/drivers/misc/ocxl/link.c
-> > @@ -544,6 +544,42 @@ int ocxl_link_add_pe(void *link_handle, int pasid,
-> u32 pidr, u32 tidr,
-> >   }
-> >   EXPORT_SYMBOL_GPL(ocxl_link_add_pe);
-> >
-> > +int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid) {
-> > +	struct link *link = (struct link *) link_handle;
-> > +	struct spa *spa = link->spa;
-> > +	struct ocxl_process_element *pe;
-> > +	int pe_handle, rc;
-> > +
-> > +	if (pasid > SPA_PASID_MAX)
-> > +		return -EINVAL;
-> > +
-> > +	pe_handle = pasid & SPA_PE_MASK;
-> > +	pe = spa->spa_mem + pe_handle;
-> > +
-> > +	mutex_lock(&spa->spa_lock);
-> > +
-> > +	pe->tid = tid;
-> > +
-> > +	/*
-> > +	 * The barrier makes sure the PE is updated
-> > +	 * before we clear the NPU context cache below, so that the
-> > +	 * old PE cannot be reloaded erroneously.
-> > +	 */
-> > +	mb();
-> > +
-> > +	/*
-> > +	 * hook to platform code
-> > +	 * On powerpc, the entry needs to be cleared from the context
-> > +	 * cache of the NPU.
-> > +	 */
-> > +	rc = pnv_ocxl_spa_remove_pe_from_cache(link->platform_data,
-> pe_handle);
-> > +	WARN_ON(rc);
-> > +
-> > +	mutex_unlock(&spa->spa_lock);
-> > +	return rc;
-> > +}
-> > +
-> >   int ocxl_link_remove_pe(void *link_handle, int pasid)
-> >   {
-> >   	struct link *link = (struct link *) link_handle; diff --git
-> > a/drivers/misc/ocxl/ocxl_internal.h
-> > b/drivers/misc/ocxl/ocxl_internal.h
-> > index 5d421824afd9..a32f2151029f 100644
-> > --- a/drivers/misc/ocxl/ocxl_internal.h
-> > +++ b/drivers/misc/ocxl/ocxl_internal.h
-> > @@ -77,6 +77,7 @@ struct ocxl_context {
-> >   	struct ocxl_xsl_error xsl_error;
-> >   	struct mutex irq_lock;
-> >   	struct idr irq_idr;
-> > +	u16 tidr; // Thread ID used for P9 wait implementation
-> >   };
-> >
-> >   struct ocxl_process_element {
-> > diff --git a/include/misc/ocxl.h b/include/misc/ocxl.h index
-> > 51ccf76db293..9ff6ddc28e22 100644
-> > --- a/include/misc/ocxl.h
-> > +++ b/include/misc/ocxl.h
-> > @@ -188,6 +188,15 @@ extern int ocxl_link_add_pe(void *link_handle, int
-> pasid, u32 pidr, u32 tidr,
-> >   		void (*xsl_err_cb)(void *data, u64 addr, u64 dsisr),
-> >   		void *xsl_err_data);
-> >
-> > +/**
-> > + * Update values within a Process Element
-> > + *
-> > + * link_handle: the link handle associated with the process element
-> > + * pasid: the PASID for the AFU context
-> > + * tid: the new thread id for the process element  */ extern int
-> > +ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid);
-> > +
-> >   /*
-> >    * Remove a Process Element from the Shared Process Area for a link
-> >    */
-> > diff --git a/include/uapi/misc/ocxl.h b/include/uapi/misc/ocxl.h index
-> > 0af83d80fb3e..561e6f0dfcb7 100644
-> > --- a/include/uapi/misc/ocxl.h
-> > +++ b/include/uapi/misc/ocxl.h
-> > @@ -48,6 +48,13 @@ struct ocxl_ioctl_metadata {
-> >   	__u64 reserved[13]; // Total of 16*u64
-> >   };
-> >
-> > +struct ocxl_ioctl_p9_wait {
-> > +	__u16 thread_id; // The thread ID required to wake this thread
-> > +	__u16 reserved1;
-> > +	__u32 reserved2;
-> > +	__u64 reserved3[3];
-> > +};
-> > +
-> >   struct ocxl_ioctl_irq_fd {
-> >   	__u64 irq_offset;
-> >   	__s32 eventfd;
-> > @@ -62,5 +69,6 @@ struct ocxl_ioctl_irq_fd {
-> >   #define OCXL_IOCTL_IRQ_FREE	_IOW(OCXL_MAGIC, 0x12, __u64)
-> >   #define OCXL_IOCTL_IRQ_SET_FD	_IOW(OCXL_MAGIC, 0x13, struct
-> ocxl_ioctl_irq_fd)
-> >   #define OCXL_IOCTL_GET_METADATA _IOR(OCXL_MAGIC, 0x14, struct
-> > ocxl_ioctl_metadata)
-> > +#define OCXL_IOCTL_ENABLE_P9_WAIT	_IOR(OCXL_MAGIC, 0x15,
-> struct ocxl_ioctl_p9_wait)
-> >
-> >   #endif /* _UAPI_MISC_OCXL_H */
-> >
-> 
-> 
-> ---
-> This email has been checked for viruses by AVG.
-> http://www.avg.com
+-- 
+Kalle Valo
