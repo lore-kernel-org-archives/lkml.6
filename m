@@ -1,62 +1,75 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525176628; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZpAQ7cOWds9+hw2VnHr/B6BpUJ36PiSXwpGz67AOC8E1b9wlKnjWm76rZK1CtrwMqhS5B1V
+ARC-Seal: i=1; a=rsa-sha256; t=1526008736; cv=none;
         d=google.com; s=arc-20160816;
-        b=lOwuNfEs97LN15OF7rtLyXIXnJtKiJ/NWJDeSifYK8lziB5NsU4kWfw2OJF1kjzro0
-         GvwXCk2IFZKRkgURwflCAQZdt4ZMFV556y9GJ7MmYs/olmkrRe87N/NWkKneYqkw5jbY
-         IWSJR70zHlaDPR58FxGp1BmfD8YFI1zksVjBp+memWZNQj4Dsb9SEDhf7pjrGIrKelO2
-         +wzPR1Z1eONw1C+VOESUxG4w4J3H9IK02qcaYalihuuXCW8AgVb9bzZQjKMK0tcZ9G5u
-         rG5akcNmu/MFO2/i7ThTVEq4Y07qukL+2oqzShBs94nza70qcLRma2e8ofb6MiNkWt2M
-         4NdA==
+        b=k+agKDVsPLxyfbPexw14/pQyAO/OdSKqoCQPhsmTHq+8U6L0JihQdPw0B7FRolvgDV
+         1LmZnXDpGFgNDcR0FvFLMEXuUlxKE7K3nWb5h8e9wCyKDeUyOTjm/NhdlhazUDiWMewa
+         mCbsCZiv2jjJuSK/ceMJlcrY1QWZFFpYONVokgAS3O8a7upHNZz7n7v/5Izn0UXhfA5d
+         wY88J6j2vuLQRmenZpRo06FeVgOyAEPgpWypMyjori25a/FMBG+Qy0ZDhF9jptkLoNeJ
+         bog4Nxdqr5P5anUnYwdLwM1s1BAi05wdh7giVpF17rHsHk4LoRKpA5G0IiQp5yDcW4+M
+         PXAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=rK8dUYSTakDJDHy3Z7AAufu6STUee7TEHpgZCh5Ov/s=;
-        b=meuFxeeIkX3mg9Iul3lX/QuXp95B1ZtvTiF10a4saU2TGJk+40YZsBK5PW7LYzoT1I
-         JP69cmB+4sbyVUWkUNp47nTc4sHq72+hbOeXn7aiuk5IT8qxJVYNenTFAV7/k5pXqRMC
-         +JiAmT+GCVFkJPlGUEyJ9lLrl4Uy8OUiX/KsF9qt+PQgF0eWKVGhWe5INIETfBCEAYtn
-         i/phTiZTUQ4ujTBcevjoV9Md2UCWCTU8Q1KhhlET3V/nWKh+LsWIOfSQjoY2Ld3CFYBB
-         D8cMnUbWcSL0ZioliI3F61fS525ws2ct2Z62h7aYoRZ7Zsy+ZFSYWkSwA87+U+iGMyyW
-         yBBQ==
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=z2CZPZpC0arLwcoIb2zARyz8Oeik3Hrd7Kx/Q8pKecw=;
+        b=M8JynY24RnPE1Y8Pm+INTZ7uTZG79NkEJjSYQ5N8zLwAVJ86pdTBxxUt+jFIvqH2HG
+         abTmcwF/jgpBHbIfGe+zp23DerxQ4jIOpHP/1QqSbvYQcuY5D04uldKSVXXu22SR40gV
+         kdDqSZUSYxtem9elFtNpLy6SjfWBvjuimZA+n7w5P1XK3c6acXTCU4wOBeFSbSsyZ1RQ
+         ZDviildfzL3Mh1A2ul5ppZ32djMHzzDSsoIkiwlplnvButjIgHBm7UuEriiZdcmKlDsL
+         4lYyvfZtTyiyCKhkgkA3HszIx406Y2ZB3f/f9Ru+n3F0Zid65HsAZVi6lNwzkSo+1tPi
+         G2tw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=dbZaU0SO;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=qwGJAxbf;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=dbZaU0SO;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZoBN8uGrJW7WRM4O403u/YaZJzm8eKi1r3qkqVko+NJP7aYpjmP5nCKpdOeOgtlhff9Y6qOsA==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: andy.gross@linaro.org,
-	broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	robh+dt@kernel.org,
-	bgoswami@codeaurora.org
-Cc: gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v7 02/24] soc: qcom: Add APR bus driver
-Date: Tue,  1 May 2018 13:07:58 +0100
-Message-Id: <20180501120820.11016-3-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180501120820.11016-1-srinivas.kandagatla@linaro.org>
-References: <20180501120820.11016-1-srinivas.kandagatla@linaro.org>
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=qwGJAxbf;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>, Mark Brown <broonie@kernel.org>, andy.gross@linaro.org, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, robh+dt@kernel.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, tiwai@suse.com, lgirdwood@gmail.com, david.brown@linaro.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "soc: qcom: Add APR bus driver" to the asoc tree
+In-Reply-To: <20180501120820.11016-3-srinivas.kandagatla@linaro.org>
+Message-Id: <20180511031845.2194144007A@finisterre.ee.mobilebroadband>
+Date: Fri, 11 May 2018 04:18:45 +0100 (BST)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599263608472013493?=
-X-GMAIL-MSGID: =?utf-8?q?1599263608472013493?=
+X-GMAIL-THRID: =?utf-8?q?1600136136999277841?=
+X-GMAIL-MSGID: =?utf-8?q?1600136136999277841?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+The patch
+
+   soc: qcom: Add APR bus driver
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 6adba21eb434d8160da05507c564c2339f4afdda Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Wed, 9 May 2018 13:56:13 +0100
+Subject: [PATCH] soc: qcom: Add APR bus driver
 
 This patch adds support to APR bus (Asynchronous Packet Router) driver.
 APR driver is made as a bus driver so that the apr devices can added removed
@@ -67,12 +80,14 @@ use services on QDSP like Audio and others.
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
 Acked-by: Andy Gross <andy.gross@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
  drivers/soc/qcom/Kconfig        |   9 +
  drivers/soc/qcom/Makefile       |   1 +
- drivers/soc/qcom/apr.c          | 378 ++++++++++++++++++++++++++++++++++++++++
- include/linux/mod_devicetable.h |  11 ++
- include/linux/soc/qcom/apr.h    | 128 ++++++++++++++
+ drivers/soc/qcom/apr.c          | 378 ++++++++++++++++++++++++++++++++
+ include/linux/mod_devicetable.h |  11 +
+ include/linux/soc/qcom/apr.h    | 128 +++++++++++
  5 files changed, 527 insertions(+)
  create mode 100644 drivers/soc/qcom/apr.c
  create mode 100644 include/linux/soc/qcom/apr.h
@@ -645,4 +660,4 @@ index 000000000000..c5d52e2cb275
 +
 +#endif /* __QCOM_APR_H_ */
 -- 
-2.16.2
+2.17.0
