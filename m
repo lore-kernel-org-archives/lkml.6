@@ -1,155 +1,532 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-555205-1525880890-2-2872791536210624491
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525880889; b=Ma0SQL4YKh/IHyZ2hWemMRHl3N2NbZ2iTc/j4A8zyNzCC8+YXg
-    r+fjsOvGnidJNwBXvnUETzYDfndNBBRDwFB0/Sf/RBInusTyPNzg9TSeSH+SUA8k
-    aw13gquu1msNugmalk060nrHQQ2fPPau1Us+eSd9rauVLXi5WM54eJefAXsjwpKg
-    Ug3AALGFBb3JOvFF64lXlnQiAv/qJpLui/ebC92NwIPSMChki5uAyCDr84pKWv/h
-    YF80KhlhHuNWkfgPN/C5eWig9znY+keGTBOIoLIXkf4QCUWjWKRVTQVzrD9HTUT5
-    UcAn1kFi+LMAs3nJbFjynF77idLVXPeDSYwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
-    t=1525880889; bh=m9M6mYOl2bmdcPiXf0wxV7PoZMJ4oUn3OqENNrUaJQo=; b=
-    mJYxBqCxMU3xv1ie8btywdBmZ7ZfS/E02kd7jvmM5tjPRiyzCgklXc5rnLvcoEzu
-    /HpYoCm5uQiKgCGBR7dPT3z5K29V5pXPzp5Iz6IxbV6FKErOl+soi48nIDEib7Lh
-    DyJ/qPi/XpHtzG8pPM0rc2k+9sYPQBo2n+yfZxoaLvjVb4Cl112s3L01PtkTNZf5
-    e8zyQ4Oe8bEbx0LNk338eRL0SkKcni5LlmIStscGskEh+lyBz9NYkIsJm/k2E9U2
-    yHErojavqlHCGrOJUqtK/VpgqrWJtjdqqugsBiQ71yjkoMu2e26AaQmZz/ErrpyL
-    AYJWZG19XFEa04G1esrgUg==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=hpe.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=hpe.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=hpe.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJvKHqe7Uh0NnqSywqBoKbpT/tzSEbSIioShRXTnAKolU9RXid7ldOulRcooYLtkAW/1vz+MLNSOghFNrZLNs9uJPGrqO3VoBh9uxEEnKRLdwVH22yKQ
-    wDei27qsxHCHjE4rBmxrgOYE1yBMzVSpsv4DO33OTpimPwjxcRIWo7SgxalLUP6rEikD6XjhELmOiDW316zNIKRwAjnwdk7Sfp1ClRXrdHVup1ve7HVeVTTr
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=mGcY1-y8K0sA:10 a=JQGMX7YiA1EA:10
-    a=f42vwGsFWEMA:10 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
-    a=QDZ4HvhdkI4A:10 a=tA7aZXjiAAAA:8 a=VGcmLtMpudURNlr_U38A:9 a=QEXdDO2ut3YA:10
-    a=kIIFJ0VLUOy1gFZzwZHL:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935419AbeEIPrx (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 9 May 2018 11:47:53 -0400
-Received: from g2t2352.austin.hpe.com ([15.233.44.25]:31919 "EHLO
-        g2t2352.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935151AbeEIPrv (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 9 May 2018 11:47:51 -0400
-From: "Kani, Toshi" <toshi.kani@hpe.com>
-To: "tglx@linutronix.de" <tglx@linutronix.de>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "Hocko, Michal" <MHocko@suse.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mingo@redhat.com" <mingo@redhat.com>
-CC: "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "cpandya@codeaurora.org" <cpandya@codeaurora.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH 3/3] x86/mm: disable ioremap free page handling on x86-PAE
-Thread-Topic: [PATCH 3/3] x86/mm: disable ioremap free page handling on
- x86-PAE
-Thread-Index: AQHT4K02VIDvFUCTQE661P1+g/51n6QnmF+A
-Date: Wed, 9 May 2018 15:47:19 +0000
-Message-ID: <1525880775.2693.558.camel@hpe.com>
-References: <20180430175925.2657-1-toshi.kani@hpe.com>
-         <20180430175925.2657-4-toshi.kani@hpe.com>
-In-Reply-To: <20180430175925.2657-4-toshi.kani@hpe.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=toshi.kani@hpe.com;
-x-originating-ip: [15.219.163.8]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AT5PR8401MB0851;7:w+DQ3qHPGKf5Qkf/8Mnx3DVFw3X7YkLVP02WBGu5r+RrmOYvAJ80h8TG9Bb9SYEqtnieBTDq2mOdMtcf8AlGEJgNFT+ha2Kyk3f09YYU01SoRBq6uacLlpInTm+bdR3OD7VLez0z6Aqk5CCoTPZb4P1WJwI/VMS2xlLaBaZz6IzuJgJ/pZthPOVvaXvUOJos7wcsrXLlVw1XNAse2+I9AyddPaI1OsghV81svMV9BJPPJD0CK2hCyZt+iOmrQ2Px
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989080)(4534165)(4627221)(201703031133081)(201702281549075)(8990040)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB0851;
-x-ms-traffictypediagnostic: AT5PR8401MB0851:
-x-ld-processed: 105b2061-b669-4b31-92ac-24d304d195dc,ExtAddr
-x-microsoft-antispam-prvs: <AT5PR8401MB0851122D0C4BB1F6A145C18582990@AT5PR8401MB0851.NAMPRD84.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AT5PR8401MB0851;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB0851;
-x-forefront-prvs: 0667289FF8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39380400002)(39860400002)(376002)(346002)(396003)(189003)(199004)(377424004)(2501003)(102836004)(4326008)(53936002)(106356001)(305945005)(81156014)(103116003)(6486002)(8676002)(81166006)(105586002)(68736007)(5660300001)(54906003)(8936002)(5250100002)(7736002)(486006)(25786009)(6436002)(59450400001)(14454004)(476003)(446003)(6116002)(11346002)(6512007)(3846002)(229853002)(6506007)(2616005)(110136005)(478600001)(3280700002)(7416002)(36756003)(2906002)(99286004)(26005)(66066001)(2900100001)(316002)(2201001)(97736004)(186003)(76176011)(6246003)(86362001)(3660700001);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB0851;H:AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: lBOPhc2jYRW9Bj8KeBvzZB6tQrx/TsM+p9Vs4uXu91LMNuJG6ey77tFvWneoFWvlz+kncPH2kolFDsnIdNzWPllAsE9qZLJzEZY1cWy0MVqZNqdpqNlGb8qu8ZKJ/Z6SImnqD5VyWX990Qh6wsfyniIXcoP06LoHsEiV3lOkrLa1bu2ytce3jW3xKbPFxbKs
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C8A4E1ED8C323440AC59F286858F2AF9@NAMPRD84.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+Return-Path: <gladkov.alexey@gmail.com>
+X-Google-Smtp-Source: AB8JxZptPHsTL7eHO8jB3mM1wYNMuImQwOpmAYeh0uXKb15zrGy+3Y0iWjGpkstpTUK6zBDhetES
+ARC-Seal: i=1; a=rsa-sha256; t=1526031883; cv=none;
+        d=google.com; s=arc-20160816;
+        b=rcwA4JQFf1yq5WtQQ8p5wrJ2rf7MlSgG/h3JBF0qs06JC6fUcHG4Q23JQ6wJys3+MD
+         dh5RKLlhng2j0tYIjWP/bzPYGpKg4EES1U1/2bORN2nvNeez8U1nR1ihevWz9XOfLpB8
+         tJwQ8M2sGzVQ/WORduSBUgSrWi/g7zJsNparnCnP6cN1O5/lU3hElNCfZBdmmbqafV02
+         i8ODaDxd3hQe4WJC3YhRYPAfnZk+kf0Vmac/m+0EKyLIHfukkC1CPi87FJsHqgeYFD09
+         +a5GBifFlMi+O4E7OEh2bMAM6s3y4dDKKGlH7acVMMH7w3rEcZqoYbG8//6Y313A1kZt
+         5+NQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=xDFtipjjfEMTk/hvUWCgrCYpuuWzdRCA4gW6bD7S9HY=;
+        b=Kc7SRa0YFwOe05r/RX0MZ5uNJAXnRKD0i+przZOZT5pO69iiGUpD0G6oYf9X4hbwqz
+         nlz2DPKeeJFC9rMhIG3Z2fzyckK/MAQ48UivmKQ+gmeATI3woZB6IkuW5bU8fhnCjrLt
+         I3fsu67xop+iXpdjII6jiGzTnIpMexdTSPxGj4n+eIsC4cp3U1Mge2Hcqg+/FkmxIcX7
+         mAHM9kl3LVfhDD73wQeQcF+KJlbkaTiarkIR1KmbgjQLau6gAHrAU6wZT78UE08gAMv7
+         tFtF6+BE0mXmNqy4hk1dUiaLdIRBZiIPasAdSrNXhJqOyFp4+R2oIqTk/IEzA17SQs4C
+         /KLg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gladkov.alexey@gmail.com does not designate 5.9.28.80 as permitted sender) smtp.mailfrom=gladkov.alexey@gmail.com;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gladkov.alexey@gmail.com does not designate 5.9.28.80 as permitted sender) smtp.mailfrom=gladkov.alexey@gmail.com;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Date: Fri, 11 May 2018 11:34:45 +0200
+From: Alexey Gladkov <gladkov.alexey@gmail.com>
+To: Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Akinobu Mita <akinobu.mita@gmail.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Jeff Layton <jlayton@poochiereds.net>,
+	Ingo Molnar <mingo@kernel.org>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	aniel Micay <danielmicay@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, bfields@fieldses.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>, solar@openwall.com,
+	"Dmitry V. Levin" <ldv@altlinux.org>,
+	Djalal Harouni <tixxdz@gmail.com>
+Subject: [PATCH v5 1/7] proc: add proc_fs_info struct to store proc
+ information
+Message-ID: <20180511093445.GA1008@comp-core-i7-2640m-0182e6>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 3f3fedbc-2918-4e67-4629-08d5b5c425a8
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f3fedbc-2918-4e67-4629-08d5b5c425a8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2018 15:47:19.1354
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB0851
-X-OriginatorOrg: hpe.com
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600160408637786282?=
+X-GMAIL-MSGID: =?utf-8?q?1600160408637786282?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-T24gTW9uLCAyMDE4LTA0LTMwIGF0IDExOjU5IC0wNjAwLCBUb3NoaSBLYW5pIHdyb3RlOg0KPiBp
-b3JlbWFwKCkgc3VwcG9ydHMgcG1kIG1hcHBpbmdzIG9uIHg4Ni1QQUUuICBIb3dldmVyLCBrZXJu
-ZWwncyBwbWQNCj4gdGFibGVzIGFyZSBub3Qgc2hhcmVkIGFtb25nIHByb2Nlc3NlcyBvbiB4ODYt
-UEFFLiAgVGhlcmVmb3JlLCBhbnkNCj4gdXBkYXRlIHRvIHN5bmMnZCBwbWQgZW50cmllcyBuZWVk
-IHJlLXN5bmNpbmcuICBGcmVlaW5nIGEgcHRlIHBhZ2UNCj4gYWxzbyBsZWFkcyB0byBhIHZtYWxs
-b2MgZmF1bHQgYW5kIGhpdHMgdGhlIEJVR19PTiBpbiB2bWFsbG9jX3N5bmNfb25lKCkuDQo+IA0K
-PiBEaXNhYmxlIGZyZWUgcGFnZSBoYW5kbGluZyBvbiB4ODYtUEFFLiAgcHVkX2ZyZWVfcG1kX3Bh
-Z2UoKSBhbmQNCj4gcG1kX2ZyZWVfcHRlX3BhZ2UoKSBzaW1wbHkgcmV0dXJuIDAgaWYgYSBnaXZl
-biBwdWQvcG1kIGVudHJ5IGlzIHByZXNlbnQuDQo+IFRoaXMgYXNzdXJlcyB0aGF0IGlvcmVtYXAo
-KSBkb2VzIG5vdCB1cGRhdGUgc3luYydkIHBtZCBlbnRyaWVzIGF0IHRoZQ0KPiBjb3N0IG9mIGZh
-bGxpbmcgYmFjayB0byBwdGUgbWFwcGluZ3MuDQo+IA0KPiBGaXhlczogMjhlZTkwZmU2MDQ4ICgi
-eDg2L21tOiBpbXBsZW1lbnQgZnJlZSBwbWQvcHRlIHBhZ2UgaW50ZXJmYWNlcyIpDQo+IFJlcG9y
-dGVkLWJ5OiBKb2VyZyBSb2VkZWwgPGpvcm9AOGJ5dGVzLm9yZz4NCg0KSGkgSm9lcmcsDQoNCkRv
-ZXMgaXQgc29sdmUgeW91ciBwcm9ibGVtPyAgTGV0IG1lIGtub3cgaWYgeW91IGhhdmUgYW55IGlz
-c3VlIHdpdGggdGhlDQpzZXJpZXMuIA0KDQpUaGFua3MsDQotVG9zaGkNCg==
+From: Djalal Harouni <tixxdz@gmail.com>
+
+This is a preparation patch that adds proc_fs_info to be able to store
+different procfs options and informations. Right now some mount options
+are stored inside the pid namespace which makes it hard to change or
+modernize procfs without affecting pid namespaces. Plus we do want to
+treat proc as more of a real mount point and filesystem. procfs is part
+of Linux API where it offers some features using filesystem syscalls and
+in order to support some features where we are able to have multiple
+instances of procfs, each one with its mount options inside the same pid
+namespace, we have to separate these procfs instances.
+
+This is the same feature that was also added to other Linux interfaces
+like devpts in order to support containers, sandboxes, and to have
+multiple instances of devpts filesystem [1].
+
+[1] http://lxr.free-electrons.com/source/Documentation/filesystems/devpts.txt?v=3.14
+
+Cc: Kees Cook <keescook@chromium.org>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
+Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
+---
+ fs/locks.c              |  6 +++--
+ fs/proc/base.c          | 34 +++++++++++++++-----------
+ fs/proc/inode.c         |  8 +++---
+ fs/proc/root.c          | 65 ++++++++++++++++++++++++++++++++++++++++++++++---
+ fs/proc/self.c          |  8 +++---
+ fs/proc/thread_self.c   |  6 +++--
+ fs/proc_namespace.c     | 14 +++++------
+ include/linux/proc_fs.h | 11 +++++++++
+ 8 files changed, 117 insertions(+), 35 deletions(-)
+
+diff --git a/fs/locks.c b/fs/locks.c
+index 62bbe8b..6c73288 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -2622,7 +2622,8 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+ {
+ 	struct inode *inode = NULL;
+ 	unsigned int fl_pid;
+-	struct pid_namespace *proc_pidns = file_inode(f->file)->i_sb->s_fs_info;
++	struct proc_fs_info *fs_info = proc_sb(file_inode(f->file)->i_sb);
++	struct pid_namespace *proc_pidns = fs_info->pid_ns;
+ 
+ 	fl_pid = locks_translate_pid(fl, proc_pidns);
+ 	/*
+@@ -2702,7 +2703,8 @@ static int locks_show(struct seq_file *f, void *v)
+ {
+ 	struct locks_iterator *iter = f->private;
+ 	struct file_lock *fl, *bfl;
+-	struct pid_namespace *proc_pidns = file_inode(f->file)->i_sb->s_fs_info;
++	struct proc_fs_info *fs_info = proc_sb(file_inode(f->file)->i_sb);
++	struct pid_namespace *proc_pidns = fs_info->pid_ns;
+ 
+ 	fl = hlist_entry(v, struct file_lock, fl_link);
+ 
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 1b2ede6..99a0f24 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -698,7 +698,8 @@ static bool has_pid_permissions(struct pid_namespace *pid,
+ 
+ static int proc_pid_permission(struct inode *inode, int mask)
+ {
+-	struct pid_namespace *pid = inode->i_sb->s_fs_info;
++	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
++	struct pid_namespace *pid = fs_info->pid_ns;
+ 	struct task_struct *task;
+ 	bool has_perms;
+ 
+@@ -733,12 +734,12 @@ static const struct inode_operations proc_def_inode_operations = {
+ static int proc_single_show(struct seq_file *m, void *v)
+ {
+ 	struct inode *inode = m->private;
+-	struct pid_namespace *ns;
+ 	struct pid *pid;
+ 	struct task_struct *task;
+ 	int ret;
+ 
+-	ns = inode->i_sb->s_fs_info;
++	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
++	struct pid_namespace *ns = fs_info->pid_ns;
+ 	pid = proc_pid(inode);
+ 	task = get_pid_task(pid, PIDTYPE_PID);
+ 	if (!task)
+@@ -1410,7 +1411,8 @@ static const struct file_operations proc_fail_nth_operations = {
+ static int sched_show(struct seq_file *m, void *v)
+ {
+ 	struct inode *inode = m->private;
+-	struct pid_namespace *ns = inode->i_sb->s_fs_info;
++	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
++	struct pid_namespace *ns = fs_info->pid_ns;
+ 	struct task_struct *p;
+ 
+ 	p = get_proc_task(inode);
+@@ -1781,9 +1783,10 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
+ int pid_getattr(const struct path *path, struct kstat *stat,
+ 		u32 request_mask, unsigned int query_flags)
+ {
+-	struct inode *inode = d_inode(path->dentry);
+ 	struct task_struct *task;
+-	struct pid_namespace *pid = path->dentry->d_sb->s_fs_info;
++	struct inode *inode = d_inode(path->dentry);
++	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
++	struct pid_namespace *pid = fs_info->pid_ns;
+ 
+ 	generic_fillattr(inode, stat);
+ 
+@@ -2330,6 +2333,8 @@ static const struct seq_operations proc_timers_seq_ops = {
+ static int proc_timers_open(struct inode *inode, struct file *file)
+ {
+ 	struct timers_private *tp;
++	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
++	struct pid_namespace *ns = fs_info->pid_ns;
+ 
+ 	tp = __seq_open_private(file, &proc_timers_seq_ops,
+ 			sizeof(struct timers_private));
+@@ -2337,7 +2342,7 @@ static int proc_timers_open(struct inode *inode, struct file *file)
+ 		return -ENOMEM;
+ 
+ 	tp->pid = proc_pid(inode);
+-	tp->ns = inode->i_sb->s_fs_info;
++	tp->ns = ns;
+ 	return 0;
+ }
+ 
+@@ -3169,13 +3174,13 @@ struct dentry *proc_pid_lookup(struct inode *dir, struct dentry * dentry, unsign
+ 	int result = -ENOENT;
+ 	struct task_struct *task;
+ 	unsigned tgid;
+-	struct pid_namespace *ns;
++	struct proc_fs_info *fs_info = proc_sb(dir->i_sb);
++	struct pid_namespace *ns = fs_info->pid_ns;
+ 
+ 	tgid = name_to_int(&dentry->d_name);
+ 	if (tgid == ~0U)
+ 		goto out;
+ 
+-	ns = dentry->d_sb->s_fs_info;
+ 	rcu_read_lock();
+ 	task = find_task_by_pid_ns(tgid, ns);
+ 	if (task)
+@@ -3239,7 +3244,8 @@ static struct tgid_iter next_tgid(struct pid_namespace *ns, struct tgid_iter ite
+ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
+ {
+ 	struct tgid_iter iter;
+-	struct pid_namespace *ns = file_inode(file)->i_sb->s_fs_info;
++	struct proc_fs_info *fs_info = proc_sb(file_inode(file)->i_sb);
++	struct pid_namespace *ns = fs_info->pid_ns;
+ 	loff_t pos = ctx->pos;
+ 
+ 	if (pos >= PID_MAX_LIMIT + TGID_OFFSET)
+@@ -3465,7 +3471,8 @@ static struct dentry *proc_task_lookup(struct inode *dir, struct dentry * dentry
+ 	struct task_struct *task;
+ 	struct task_struct *leader = get_proc_task(dir);
+ 	unsigned tid;
+-	struct pid_namespace *ns;
++	struct proc_fs_info *fs_info = proc_sb(dentry->d_sb);
++	struct pid_namespace *ns = fs_info->pid_ns;
+ 
+ 	if (!leader)
+ 		goto out_no_task;
+@@ -3474,7 +3481,6 @@ static struct dentry *proc_task_lookup(struct inode *dir, struct dentry * dentry
+ 	if (tid == ~0U)
+ 		goto out;
+ 
+-	ns = dentry->d_sb->s_fs_info;
+ 	rcu_read_lock();
+ 	task = find_task_by_pid_ns(tid, ns);
+ 	if (task)
+@@ -3576,7 +3582,8 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
+ {
+ 	struct inode *inode = file_inode(file);
+ 	struct task_struct *task;
+-	struct pid_namespace *ns;
++	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
++	struct pid_namespace *ns = fs_info->pid_ns;
+ 	int tid;
+ 
+ 	if (proc_inode_is_dead(inode))
+@@ -3588,7 +3595,6 @@ static int proc_task_readdir(struct file *file, struct dir_context *ctx)
+ 	/* f_version caches the tgid value that the last readdir call couldn't
+ 	 * return. lseek aka telldir automagically resets f_version to 0.
+ 	 */
+-	ns = inode->i_sb->s_fs_info;
+ 	tid = (int)file->f_version;
+ 	file->f_version = 0;
+ 	for (task = first_tid(proc_pid(inode), tid, ctx->pos - 2, ns);
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index 2cf3b74..e34b89a 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -113,7 +113,8 @@ void __init proc_init_kmemcache(void)
+ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+ {
+ 	struct super_block *sb = root->d_sb;
+-	struct pid_namespace *pid = sb->s_fs_info;
++	struct proc_fs_info *fs_info = proc_sb(sb);
++	struct pid_namespace *pid = fs_info->pid_ns;
+ 
+ 	if (!gid_eq(pid->pid_gid, GLOBAL_ROOT_GID))
+ 		seq_printf(seq, ",gid=%u", from_kgid_munged(&init_user_ns, pid->pid_gid));
+@@ -492,7 +493,8 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
+ 
+ int proc_fill_super(struct super_block *s, void *data, int silent)
+ {
+-	struct pid_namespace *ns = get_pid_ns(s->s_fs_info);
++	struct proc_fs_info *fs_info = proc_sb(s);
++	struct pid_namespace *ns = get_pid_ns(fs_info->pid_ns);
+ 	struct inode *root_inode;
+ 	int ret;
+ 
+@@ -514,7 +516,7 @@ int proc_fill_super(struct super_block *s, void *data, int silent)
+ 	 * top of it
+ 	 */
+ 	s->s_stack_depth = FILESYSTEM_MAX_STACK_DEPTH;
+-	
++
+ 	pde_get(&proc_root);
+ 	root_inode = proc_get_inode(s, &proc_root);
+ 	if (!root_inode) {
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index 61b7340..5d4c454 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -16,6 +16,7 @@
+ #include <linux/init.h>
+ #include <linux/sched.h>
+ #include <linux/sched/stat.h>
++#include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/bitops.h>
+ #include <linux/user_namespace.h>
+@@ -80,16 +81,45 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
+ 
+ int proc_remount(struct super_block *sb, int *flags, char *data)
+ {
+-	struct pid_namespace *pid = sb->s_fs_info;
++	struct proc_fs_info *fs_info = proc_sb(sb);
++	struct pid_namespace *pid = fs_info->pid_ns;
+ 
+ 	sync_filesystem(sb);
+ 	return !proc_parse_options(data, pid);
+ }
+ 
++static int proc_test_super(struct super_block *s, void *data)
++{
++	struct proc_fs_info *p = data;
++	struct proc_fs_info *fs_info = proc_sb(s);
++
++	return p->pid_ns == fs_info->pid_ns;
++}
++
++static int proc_set_super(struct super_block *sb, void *data)
++{
++	sb->s_fs_info = data;
++	return set_anon_super(sb, NULL);
++}
++
+ static struct dentry *proc_mount(struct file_system_type *fs_type,
+ 	int flags, const char *dev_name, void *data)
+ {
++	int error;
++	struct super_block *sb;
+ 	struct pid_namespace *ns;
++	struct proc_fs_info *fs_info;
++
++	/*
++	 * Don't allow mounting unless the caller has CAP_SYS_ADMIN over
++	 * the namespace.
++	 */
++	if (!(flags & MS_KERNMOUNT) && !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
++		return ERR_PTR(-EPERM);
++
++	fs_info = kzalloc(sizeof(*fs_info), GFP_NOFS);
++	if (!fs_info)
++		return ERR_PTR(-ENOMEM);
+ 
+ 	if (flags & SB_KERNMOUNT) {
+ 		ns = data;
+@@ -98,20 +128,47 @@ static struct dentry *proc_mount(struct file_system_type *fs_type,
+ 		ns = task_active_pid_ns(current);
+ 	}
+ 
+-	return mount_ns(fs_type, flags, data, ns, ns->user_ns, proc_fill_super);
++	fs_info->pid_ns = ns;
++
++	sb = sget_userns(fs_type, proc_test_super, proc_set_super, flags,
++			 ns->user_ns, fs_info);
++	if (IS_ERR(sb)) {
++		error = PTR_ERR(sb);
++		goto error_fs_info;
++	}
++
++	if (sb->s_root) {
++		kfree(fs_info);
++	} else {
++		error = proc_fill_super(sb, data, flags & MS_SILENT ? 1 : 0);
++		if (error) {
++			deactivate_locked_super(sb);
++			goto error;
++		}
++
++		sb->s_flags |= MS_ACTIVE;
++	}
++
++	return dget(sb->s_root);
++
++error_fs_info:
++	kfree(fs_info);
++error:
++	return ERR_PTR(error);
+ }
+ 
+ static void proc_kill_sb(struct super_block *sb)
+ {
+-	struct pid_namespace *ns;
++	struct proc_fs_info *fs_info = proc_sb(sb);
++	struct pid_namespace *ns = (struct pid_namespace *)fs_info->pid_ns;
+ 
+-	ns = (struct pid_namespace *)sb->s_fs_info;
+ 	if (ns->proc_self)
+ 		dput(ns->proc_self);
+ 	if (ns->proc_thread_self)
+ 		dput(ns->proc_thread_self);
+ 	kill_anon_super(sb);
+ 	put_pid_ns(ns);
++	kfree(fs_info);
+ }
+ 
+ static struct file_system_type proc_fs_type = {
+diff --git a/fs/proc/self.c b/fs/proc/self.c
+index 4d7d061..3f2a88f 100644
+--- a/fs/proc/self.c
++++ b/fs/proc/self.c
+@@ -12,7 +12,8 @@ static const char *proc_self_get_link(struct dentry *dentry,
+ 				      struct inode *inode,
+ 				      struct delayed_call *done)
+ {
+-	struct pid_namespace *ns = inode->i_sb->s_fs_info;
++	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
++	struct pid_namespace *ns = fs_info->pid_ns;
+ 	pid_t tgid = task_tgid_nr_ns(current, ns);
+ 	char *name;
+ 
+@@ -36,9 +37,10 @@ static unsigned self_inum __ro_after_init;
+ int proc_setup_self(struct super_block *s)
+ {
+ 	struct inode *root_inode = d_inode(s->s_root);
+-	struct pid_namespace *ns = s->s_fs_info;
++	struct proc_fs_info *fs_info = proc_sb(s);
++	struct pid_namespace *ns = fs_info->pid_ns;
+ 	struct dentry *self;
+-	
++
+ 	inode_lock(root_inode);
+ 	self = d_alloc_name(s->s_root, "self");
+ 	if (self) {
+diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
+index 9d2efac..e80dd79 100644
+--- a/fs/proc/thread_self.c
++++ b/fs/proc/thread_self.c
+@@ -12,7 +12,8 @@ static const char *proc_thread_self_get_link(struct dentry *dentry,
+ 					     struct inode *inode,
+ 					     struct delayed_call *done)
+ {
+-	struct pid_namespace *ns = inode->i_sb->s_fs_info;
++	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
++	struct pid_namespace *ns = fs_info->pid_ns;
+ 	pid_t tgid = task_tgid_nr_ns(current, ns);
+ 	pid_t pid = task_pid_nr_ns(current, ns);
+ 	char *name;
+@@ -35,8 +36,9 @@ static unsigned thread_self_inum __ro_after_init;
+ 
+ int proc_setup_thread_self(struct super_block *s)
+ {
++	struct proc_fs_info *fs_info = proc_sb(s);
++	struct pid_namespace *ns = fs_info->pid_ns;
+ 	struct inode *root_inode = d_inode(s->s_root);
+-	struct pid_namespace *ns = s->s_fs_info;
+ 	struct dentry *thread_self;
+ 
+ 	inode_lock(root_inode);
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index e16fb8f..f500331 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -37,23 +37,23 @@ static __poll_t mounts_poll(struct file *file, poll_table *wait)
+ 	return res;
+ }
+ 
+-struct proc_fs_info {
++struct proc_fs_opts {
+ 	int flag;
+ 	const char *str;
+ };
+ 
+ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
+ {
+-	static const struct proc_fs_info fs_info[] = {
++	static const struct proc_fs_opts fs_opts[] = {
+ 		{ SB_SYNCHRONOUS, ",sync" },
+ 		{ SB_DIRSYNC, ",dirsync" },
+ 		{ SB_MANDLOCK, ",mand" },
+ 		{ SB_LAZYTIME, ",lazytime" },
+ 		{ 0, NULL }
+ 	};
+-	const struct proc_fs_info *fs_infop;
++	const struct proc_fs_opts *fs_infop;
+ 
+-	for (fs_infop = fs_info; fs_infop->flag; fs_infop++) {
++	for (fs_infop = fs_opts; fs_infop->flag; fs_infop++) {
+ 		if (sb->s_flags & fs_infop->flag)
+ 			seq_puts(m, fs_infop->str);
+ 	}
+@@ -63,7 +63,7 @@ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
+ 
+ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ {
+-	static const struct proc_fs_info mnt_info[] = {
++	static const struct proc_fs_opts mnt_opts[] = {
+ 		{ MNT_NOSUID, ",nosuid" },
+ 		{ MNT_NODEV, ",nodev" },
+ 		{ MNT_NOEXEC, ",noexec" },
+@@ -72,9 +72,9 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ 		{ MNT_RELATIME, ",relatime" },
+ 		{ 0, NULL }
+ 	};
+-	const struct proc_fs_info *fs_infop;
++	const struct proc_fs_opts *fs_infop;
+ 
+-	for (fs_infop = mnt_info; fs_infop->flag; fs_infop++) {
++	for (fs_infop = mnt_opts; fs_infop->flag; fs_infop++) {
+ 		if (mnt->mnt_flags & fs_infop->flag)
+ 			seq_puts(m, fs_infop->str);
+ 	}
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index 928ef9e..7c8cf3c 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -7,11 +7,21 @@
+ 
+ #include <linux/types.h>
+ #include <linux/fs.h>
++#include <linux/refcount.h>
++
++struct proc_fs_info {
++	struct pid_namespace *pid_ns;
++};
+ 
+ struct proc_dir_entry;
+ 
+ #ifdef CONFIG_PROC_FS
+ 
++static inline struct proc_fs_info *proc_sb(struct super_block *sb)
++{
++	return sb->s_fs_info;
++}
++
+ extern void proc_root_init(void);
+ extern void proc_flush_task(struct task_struct *);
+ 
+@@ -48,6 +58,7 @@ static inline void proc_flush_task(struct task_struct *task)
+ {
+ }
+ 
++extern inline struct proc_fs_info *proc_sb(struct super_block *sb) { return NULL;}
+ static inline struct proc_dir_entry *proc_symlink(const char *name,
+ 		struct proc_dir_entry *parent,const char *dest) { return NULL;}
+ static inline struct proc_dir_entry *proc_mkdir(const char *name,
+-- 
+2.10.5
