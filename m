@@ -1,62 +1,75 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525176634; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZpqCUPVCfPJoAQw5HBUmg8bei/rAefWnT+7EMleLPILKaop+0lSRmg23aNlRuvH5S0xT24W
+ARC-Seal: i=1; a=rsa-sha256; t=1526008545; cv=none;
         d=google.com; s=arc-20160816;
-        b=VENruht4P3/G8WcvzwD/GWzC/uFfNqjyYmfXoJ43l/qZoFSbwlEI+P/TaI6g6e7smY
-         eIy+GVh7iYzB9OrYEkeoRHfCbdMvoN76f7JllfUC6dZ8YUq9Mk019Rl2NZ0n7arRrK5Q
-         H5cUle4szNGh03YwlLIE3uz0LSZtBydroFHgBQuq9tk/P5zlIKtmGp0O/mz3OC6IDVKl
-         fDxM4jK6Oi4HqpPYEsn+l+UPI2aEKwXnwrQjieoQD3AYIllly047tTxdan9bPVFCnF6i
-         luX+m+fPwC+/0fwapFeKXFpbVw0GyVEm15Mgs0YFWvWQsikKekX6I5SWBqEasp6RKbcX
-         7qFQ==
+        b=mfSZfJEm4XKbEU9iaf3yc7sIUBha2ql5Sp+/jYvbH0LVRDShQ62+KGkt032TX5s2nX
+         Pq0nWNhOydJWCve1snBQc6hbAdEQMXqV+nO0Dxd63oRAGnW/rkBHIMzRcZ0aS7Ek+5BK
+         4NpYOyQ2sggpgbmIb69iQpFi2QoT7VCvhMTVNWDedayNnak2SvaoakBW6gsutOK6w1jf
+         XmUBb512SutAdsGJAKK3BhVhnUZDjJXaOGsnnPkyQersVireHgRkRu6zw5YG66TZIw77
+         Y1Mau1aKF3PNAAyMuJvWo7RchzO8Z0bJyNiJVwOOQNqlZxSG8Tg/yTQiZGJkSX4nhdDJ
+         fA+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=meiK4Hc1OUMDeW8ZgK4o9O4gIOMPFNmgFX/XAOLdp6U=;
-        b=B27v3Z+pHEca/cWbXNkvNDfWsxS09vwso15d43A0iW3cC9y6/VNOmzweK3ztoQIKyC
-         GqSneUsV+tqCI+nh9OmnPGJ6B/iN2sdV4qS0WWrEZ4UcWI2Hm0cAaYdsz/Y1dqXJ66qX
-         JXOVfBlpVdFPH7zYOMXIB+w63iv1XpF5o0WiParfkTcbZ2wKibPIig8V8ykLihzB53ql
-         GGpiAsXvOb8/0Vk5mw7wJaWjcl+YgXwPybmpVPTbLGufTwB+C8IPJ72tszqcmq5ecJxi
-         VPyXi4SvwlUzW3yKf8p5CkmsV9s3IHYua3NcifgArwgceo46rAIocBNmxxKw1jEtVaPp
-         vZcA==
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=S9g7tE+LCsil3ngjyLJAg5rpofNjwkRff/H8zE693Kg=;
+        b=jQUN3L81J365xybZR3pdyEUNu0KEH6NEohv64ITd4rrtivUwg2PLAMHWjZ/NWkIZee
+         2W8uuIw0j6j2IveIktxiOGPKKDIxvbSXQ7MLHDNdYr0cHRYo/rbnYQmukcNNaPjkknlJ
+         zNk5kUcT/iWqzqUV+tJZeXIsSe+C4il+n9PTpz9D/9LCRCdn+j/MNOqrujzMvkyTSusG
+         m+KYgQ1Cmfv2XJ/cHMejS956CYbaeVGMaugsBIxgptb2vrgFyXOClrY84iQEDFhqs4Qj
+         6tX9i+2fNHEeBE3xErIErZe8krRCQyXV9Bnph9xQ1w6QR3sleGdj6qczt91gU3gowS25
+         vmFA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=ecTJLpTS;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=BNjkjemx;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=ecTJLpTS;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZqmUzpEzGTXuuDkcUBjok3mHi+firlw9jZllC2NYix8apvObH15Sf2SOMeDqFn781qr4+968A==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: andy.gross@linaro.org,
-	broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	robh+dt@kernel.org,
-	bgoswami@codeaurora.org
-Cc: gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v7 07/24] ASoC: qdsp6: q6common: Add qdsp6 helper functions
-Date: Tue,  1 May 2018 13:08:03 +0100
-Message-Id: <20180501120820.11016-8-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180501120820.11016-1-srinivas.kandagatla@linaro.org>
-References: <20180501120820.11016-1-srinivas.kandagatla@linaro.org>
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=BNjkjemx;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, andy.gross@linaro.org, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, robh+dt@kernel.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, tiwai@suse.com, lgirdwood@gmail.com, david.brown@linaro.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qdsp6: q6common: Add qdsp6 helper functions" to the asoc tree
+In-Reply-To: <20180501120820.11016-8-srinivas.kandagatla@linaro.org>
+Message-Id: <20180511031526.825CE44007A@finisterre.ee.mobilebroadband>
+Date: Fri, 11 May 2018 04:15:26 +0100 (BST)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599263614938700775?=
-X-GMAIL-MSGID: =?utf-8?q?1599263614938700775?=
+X-GMAIL-THRID: =?utf-8?q?1600135936817301528?=
+X-GMAIL-MSGID: =?utf-8?q?1600135936817301528?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+The patch
+
+   ASoC: qdsp6: q6common: Add qdsp6 helper functions
+
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 4dddbddbce324dc027182ba33d6cbbaf797dfd9e Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Wed, 9 May 2018 13:56:18 +0100
+Subject: [PATCH] ASoC: qdsp6: q6common: Add qdsp6 helper functions
 
 This patch adds some common helper functions like translating dsp error
 to linux error codes and channel mappings etc.
@@ -65,13 +78,15 @@ These functions are used in all the following qdsp6 drivers.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
+Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/Kconfig              | 13 ++++++++
+ sound/soc/qcom/Kconfig              | 13 ++++++
  sound/soc/qcom/Makefile             |  3 ++
  sound/soc/qcom/qdsp6/Makefile       |  1 +
- sound/soc/qcom/qdsp6/q6dsp-common.c | 66 +++++++++++++++++++++++++++++++++++++
- sound/soc/qcom/qdsp6/q6dsp-common.h | 24 ++++++++++++++
- sound/soc/qcom/qdsp6/q6dsp-errno.h  | 51 ++++++++++++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6dsp-common.c | 66 +++++++++++++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6dsp-common.h | 24 +++++++++++
+ sound/soc/qcom/qdsp6/q6dsp-errno.h  | 51 ++++++++++++++++++++++
  6 files changed, 158 insertions(+)
  create mode 100644 sound/soc/qcom/qdsp6/Makefile
  create mode 100644 sound/soc/qcom/qdsp6/q6dsp-common.c
@@ -277,4 +292,4 @@ index 000000000000..1ec00ff8c1d2
 +
 +#endif /*__Q6DSP_ERR_NO_H__ */
 -- 
-2.16.2
+2.17.0
