@@ -1,90 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751764AbeEKWzg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 18:55:36 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:57334 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751217AbeEKWzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 18:55:33 -0400
-To: Stephen Bates <sbates@raithlin.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Jerome Glisse <jglisse@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Bjorn Helgaas <helgaas@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>
-References: <20180423233046.21476-5-logang@deltatee.com>
- <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
- <20180508133407.57a46902@w520.home>
- <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
- <20180508141331.7cd737cb@w520.home>
- <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
- <20180508205005.GC15608@redhat.com>
- <7FFB9603-DF9F-4441-82E9-46037CB6C0DE@raithlin.com>
- <a1a36f88-fbfb-b5ee-6dcb-5c5bb96132dd@amd.com>
- <4e0d0b96-ab02-2662-adf3-fa956efd294c@deltatee.com>
- <2fc61d29-9eb4-d168-a3e5-955c36e5d821@amd.com>
- <94C8FE12-7FC3-48BD-9DCA-E6A427E71810@raithlin.com>
- <f0101988-cf82-7ffb-2aca-d3b8d2f4b504@deltatee.com>
- <868B49CE-4F0E-4A48-BE78-12149F85F1A4@raithlin.com>
- <8113cba8-62b9-1801-7a77-f82be223b183@deltatee.com>
- <cf2b92c9-7c5b-f19c-b5b1-2f2d435296d1@amd.com>
- <53fa38ce-40dd-6bc1-9b83-c6ccf228b755@deltatee.com>
- <A50EA568-81E7-4AD7-8C1B-1029FEA92F49@raithlin.com>
- <YTXPR0101MB2045DC0248A9B125CA276969AA9F0@YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <fe1e1d66-9764-768a-a2da-73845d319b4e@deltatee.com>
-Date: Fri, 11 May 2018 16:55:11 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751596AbeEKXCp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 19:02:45 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43452 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750818AbeEKXCn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 19:02:43 -0400
+X-Google-Smtp-Source: AB8JxZrQ1d67g751GjHntGJPkM4Oqq4k1nlrCtyb3W4xbt07x0hVvxjUE1evQO8BFHVoEGOkMgc4qg==
+Date: Sat, 12 May 2018 02:01:20 +0300
+From: Nick Simonov <nicksimonovv@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: rydberg@bitmath.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] input: fix coding style issues in input.c
+Message-ID: <20180511230120.GA23354@gmail.com>
+References: <1525874834-20432-1-git-send-email-nicksimonovv@gmail.com>
+ <20180510003313.GD91762@dtor-ws>
 MIME-Version: 1.0
-In-Reply-To: <YTXPR0101MB2045DC0248A9B125CA276969AA9F0@YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: hch@lst.de, maxg@mellanox.com, bhelgaas@google.com, benh@kernel.crashing.org, helgaas@kernel.org, jgg@mellanox.com, alex.williamson@redhat.com, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org, keith.busch@intel.com, axboe@kernel.dk, jglisse@redhat.com, christian.koenig@amd.com, sbates@raithlin.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: multipart/mixed; boundary="vtzGhvizbBRQ85DL"
+Content-Disposition: inline
+In-Reply-To: <20180510003313.GD91762@dtor-ws>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/11/2018 4:24 PM, Stephen  Bates wrote:
-> All
-> 
->>   Alex (or anyone else) can you point to where IOVA addresses are generated?
-> 
-> A case of RTFM perhaps (though a pointer to the code would still be appreciated).
-> 
-> https://www.kernel.org/doc/Documentation/Intel-IOMMU.txt
-> 
-> Some exceptions to IOVA
-> -----------------------
-> Interrupt ranges are not address translated, (0xfee00000 - 0xfeefffff).
-> The same is true for peer to peer transactions. Hence we reserve the
-> address from PCI MMIO ranges so they are not allocated for IOVA addresses.
 
-Hmm, except I'm not sure how to interpret that. It sounds like there 
-can't be an IOVA address that overlaps with the PCI MMIO range which is 
-good and what I'd expect.
+--vtzGhvizbBRQ85DL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-But for peer to peer they say they don't translate the address which 
-implies to me that the intention is for a peer to peer address to not be 
-mapped in the same way using the dma_map interface (of course though if 
-you were using ATS you'd want this for sure). Unless the existing 
-dma_map command's notice a PCI MMIO address and handle them differently, 
-but I don't see how.
+ Wed, May 09, 2018 at 05:33:13PM -0700, Dmitry Torokhov wrote:
+> Hi NIck,
+> 
+> On Wed, May 09, 2018 at 05:07:14PM +0300, Nick Simonov wrote:
+> > This is a patch to the input.c file that fixes
+> > up warning found by checkpatch.pl tool
+> > 
+> > Signed-off-by: Nick Simonov <nicksimonovv@gmail.com>
+> > ---
+> >  drivers/input/input.c | 52 ++++++++++++++++++++++++++++++++-------------------
+> >  1 file changed, 33 insertions(+), 19 deletions(-)
+> > 
+> > diff --git a/drivers/input/input.c b/drivers/input/input.c
+> > index 9785546..e18fdae 100644
+> > --- a/drivers/input/input.c
+> > +++ b/drivers/input/input.c
+> > @@ -1,3 +1,4 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> >  /*
+> >   * The input core
+> >   *
+> > @@ -252,7 +253,8 @@ static int input_handle_abs_event(struct input_dev *dev,
+> >  	}
+> >  
+> >  	/* Flush pending "slot" event */
+> > -	if (is_mt_event && mt && mt->slot != input_abs_get_val(dev, ABS_MT_SLOT)) {
+> > +	if (is_mt_event && mt && mt->slot !=
+> > +		input_abs_get_val(dev, ABS_MT_SLOT)) {
+> >  		input_abs_set_val(dev, ABS_MT_SLOT, mt->slot);
+> 
+> So now it is not immediately clear what is part of condition and what is
+> part of body.
+> 
+> I am sorry to say, but with most of these changes the cure is worse than
+> the disease. If you were fixing the code and adjusted the affected lines
+> so they are under 80 columns limit that would be one thing, but just
+> reformatting for the sake of it is not really helpful.
+> 
+> Thanks.
+> 
+> -- 
+> Dmitry
 
-Logan
+Dmitry thanks for your comment. I deleted all my changes except one
+and prepare a new patch for it. 
+
+In function input_set_capability when it go through default statment 
+it is use hard coded function name "input_set_capability" in pr_err() call.
+I replace it using "%s" __func__ instead.
+
+--vtzGhvizbBRQ85DL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline; filename="0001-input-replace-hard-coded-string-with-__func__-in-pr_.patch"
+
+>From 2aef27ca4896b8d9e64fd1417965793acfba3653 Mon Sep 17 00:00:00 2001
+From: Nick Simonov <nicksimonovv@gmail.com>
+Date: Sat, 12 May 2018 01:24:47 +0300
+Subject: [PATCH] input: replace hard coded string with __func__ in pr_err()
+
+Change hardcoded string "input_set_capability"
+in pr_err() function call, replace it with
+"%s" __func__ instead.
+
+Signed-off-by: Nick Simonov <nicksimonovv@gmail.com>
+---
+ drivers/input/input.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/input/input.c b/drivers/input/input.c
+index 9785546..6365c19 100644
+--- a/drivers/input/input.c
++++ b/drivers/input/input.c
+@@ -1943,8 +1943,7 @@ void input_set_capability(struct input_dev *dev, unsigned int type, unsigned int
+ 		break;
+ 
+ 	default:
+-		pr_err("input_set_capability: unknown type %u (code %u)\n",
+-		       type, code);
++		pr_err("%s: unknown type %u (code %u)\n", __func__, type, code);
+ 		dump_stack();
+ 		return;
+ 	}
+-- 
+2.7.4
+
+
+--vtzGhvizbBRQ85DL--
