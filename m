@@ -1,210 +1,174 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2438926-1525348367-2-2605638209237930616
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-2975690-1525997564-2-13109447482792119827
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: from='iso-8859-1', plain='iso-8859-1'
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525348367; b=f4RvcsKait+tFCaDIjGLtTAwRhl/WT80RPsvR6Yc9wIhuYvV5g
-    cofl9gklmdy7PlA2EGnPu768k2DOSmbEugKLUYIlV1z1JH3ed7BAroE0ffeoT9s5
-    g3KjLar8OzLwPppMA8x+Z7ITqPXYn3SGtx6UQkz3Cy9KXpoGk9R3RB5uQqygKjI5
-    0/85fJyrSyUH/QE476fu6LZ/24TSYs0L/mwq63tAcrweIWoTvusT6zFVIAe/pePb
-    u9+r9nTdPcutTZesClcNmTloAhCj6qGWBtzRd1Ht8wTgOP5k3Loq1xjY3pgETZ0B
-    wHQFxqGEsAtzrUK86TA+6ATZsepPgNI90Wkw==
+    1525997563; b=UB2A0ihZ/64bR9+612/ueavqAMwgV7wCi1OThFGr15dFPkBEcp
+    2kZZZkGrgkvVdufdRtLLAVrfBJZ/s/ywN8N2PRI3kKiXSOKvE6OX8RpXHBNIRxa1
+    UgZY6z5eD8eAwGUYpHFpS0J8x7ww9uP0V092jV6UL/21idref8nM+L3NwGGrzjHQ
+    gCsQJV7nHNxshW5sPHHlZ24Y3DQ1Uql3O+CdPUczVQhDaF/LpqUexxSw8xXkF4aw
+    99uVDor4gWaEZVVm9BRPVYnf7PTbahunhTdPzcj0fdYQ4lmkBdGBvvHW3PgDk4BF
+    7TqJ1r77mAuU1f0wjPCaH8tanK+lYmG2cwGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1525348367; bh=DT29R5Jv7/c
-    tyZPAk+I71qKelbs9Sv+LU/V0Q4iOTuI=; b=B9pva2IvINLxrILKAZl/uzzMbOS
-    pufDm3CxdDm2PmKDMEXD3x1WGZfYpGXkur7dqltV7q1mgJw5ySl0Eiy7bzZCKc+C
-    DUyEkm2EJRDomMEy/WGaSMlRcqGQVd+peFjJ5vk0uSvd91tuLcwlgxzNdvHRny55
-    POcPffNF06l5szELts9vEzWv/TIYrHGsvR6SB8/tc2J7hgu+hpzsImdTHpL0cePS
-    bix9xgD3BdzeKzMK4IyfuA13LYm+cIDpWUeDeAahox3/u6QdpSH185tn9Uamt2Kk
-    RpYTaUN95obAY8tSYr3fwd64545GBvGXhgGLbUGP9ZgEMB+nsAu8xztjzTA==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=pengutronix.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1525997563; bh=GW/9h
+    cG08aYVgouGiCtpgk5Mfuy8iEXx4Ln23kA+q3I=; b=gG84lqSeqzd40lsgbMiMl
+    CUi1gMGQXy2VnYp8M+fil4yHxFCSk6X9nKV5ra9LAL7gZYS46hi3sbT4l7Yr/v0C
+    Bw/X61b+zjFbgmH3lHHP5hv35vGrdhtBk8FpQ659++F09mP1RIrcpnGEkxmYqaKh
+    7mXLcDwsXhGRfY+rUnUfr0xJ7CQFtCJvAyIhhDk3g3bdAjJ6mKq0eUstZWauyeut
+    a2y8Y9kvUoFR1QAhYAU5ahFChCSxCHXLH2/a7V8PDGPurBk7hYHDktM2+geNA5t0
+    diL/2As8U67etrZprChUAIGUgXkow/ndjtOhLeggC5UgXc4heCKn9GiM5PE51Cgp
+    A==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256)
+    header.d=onstation.org header.i=@onstation.org header.b=olECgyX4
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=onstation.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+    smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=pengutronix.de header.result=pass
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+    smtp_is_org_domain=yes header.domain=onstation.org
+    header.mx.error=NOERROR header.aaaa.error=NOERROR header.result=warn
     header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=pengutronix.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256)
+      header.d=onstation.org header.i=@onstation.org header.b=olECgyX4
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=onstation.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+      smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=pengutronix.de header.result=pass
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+      smtp_is_org_domain=yes header.domain=onstation.org
+      header.mx.error=NOERROR header.aaaa.error=NOERROR header.result=warn
       header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIlIUtabOlNkeDX/5eFpls+X1T1jDGDn5hEDAemiAw0X19U4oV6lE7/BSe9amG43wlzTTeeNkv+n2Qi+OpOoT2CT1s542xfCKHbIY0uzp++KzMeDt7Ae
-    yEIbJpldx2nCKcmVNPGEBlh+y5PMNoBwG5KZ0z4esAqfN1wC0S/ni6MBwmoGGPLdYoQpo1I9nNPFGmoRBZ1z3IEBvcCy9n73vl8t7IwnSgclpVbsakWZLO5Z
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=xqWC_Br6kY4A:10
-    a=VUJBJC2UJ8kA:10 a=bGNZPXyTAAAA:8 a=VwQbUJbxAAAA:8 a=kMeOZ7sdGS2vkW5sB7oA:9
-    a=HFkPjQK4fOao-DIG:21 a=D-qzHcMTX2D0UQ-i:21 a=wPNLvfGTeEIA:10
-    a=x8gzFH9gYPwA:10 a=yL4RfsBhuEsimFDS2qtJ:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfI8J0SRy4M5ycd894XJaGAKWLDpph3TDx5evYNVjTCTPI/HcITq3tg50Q9f9TZLDf71h+scGm0I79Yzm2TlybiQwpJmhsiULFFY051KhK/StD5KV/JVh
+    2JB761/InqBuy8AL295Ggtw5+nkRYL0h0AjK4rsrzVhDXZp4rr6nBF+loOfy02h7RfIaTnDnV1f4KGguTw5NqW1gJNgWe32yGoQib4Ay7l67aEEkLwlnoA9D
+    dDSWiSH70t+3lkTt8n+wiQ==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=GlixS5zuAAAA:8 a=DDOyTI_5AAAA:8
+    a=C0GCQNNq987cKD6j32UA:9 a=CjuIK1q_8ugA:10 a=adCy40026U1O_QNtz7Gb:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751004AbeECLwd (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 3 May 2018 07:52:33 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60271 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751121AbeECLwb (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Thu, 3 May 2018 07:52:31 -0400
-Date: Thu, 3 May 2018 13:52:27 +0200
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-serial@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] tty: implement a rx led trigger
-Message-ID: <20180503115227.gogvknx5sbuyrcey@pengutronix.de>
-References: <20180503100448.1350-1-u.kleine-koenig@pengutronix.de>
- <20180503101047.GF32180@amd>
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Brian Masney <masneyb@onstation.org>
+To: jic23@kernel.org,
+	linux-iio@vger.kernel.org
+Subject: [PATCH v3 0/9] staging: iio: tsl2x7x: move out of staging
+Date: Thu, 10 May 2018 20:12:14 -0400
+Message-Id: <20180511001223.12378-1-masneyb@onstation.org>
+X-Mailer: git-send-email 2.14.3
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, lars@metafoo.de, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, pmeerw@pmeerw.net, knaack.h@gmx.de,
+ drew.paterson@ams.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180503101047.GF32180@amd>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-serial@vger.kernel.org
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 03, 2018 at 12:10:47PM +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > The trigger fires when data is pushed to the ldisc. This is a bit later
-> > than the actual receiving of data but has the nice benefit that it
-> > doesn't need adaption for each driver and isn't in the hot path.
-> > 
-> > Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> 
-> Well, why not, but there certainly should be config option? Because I
-> really don't see many people wanting to use this trigger.
+Hopefully this is the last of the changes that are required for a
+staging graduation. Changes since v2:
 
-Yeah, can be done. I'll implement this for v2.
+- Correct values returned in in_intensity0_integration_time_available so
+  that it doesn't break expected ABI. The driver now uses the read_avail
+  for all three *_available sysfs attributes.
+- Remove unnecessary whitespace
+- Direct returns
+- Turn chip off if IIO registration fails
+- Add range checking to tsl2x7x_write_raw
 
-> > diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
-> > index c996b6859c5e..4d364b77b1a7 100644
-> > --- a/drivers/tty/tty_buffer.c
-> > +++ b/drivers/tty/tty_buffer.c
-> > @@ -17,6 +17,7 @@
-> >  #include <linux/delay.h>
-> >  #include <linux/module.h>
-> >  #include <linux/ratelimit.h>
-> > +#include <linux/leds.h>
-> >  
-> >  
-> >  #define MIN_TTYB_SIZE	256
-> > @@ -499,6 +500,7 @@ static void flush_to_ldisc(struct work_struct *work)
-> >  		struct tty_buffer *head = buf->head;
-> >  		struct tty_buffer *next;
-> >  		int count;
-> > +		unsigned long delay = 50 /* ms */;
-> >  
-> >  		/* Ldisc or user is trying to gain exclusive access */
-> >  		if (atomic_read(&buf->priority))
-> > @@ -521,6 +523,8 @@ static void flush_to_ldisc(struct work_struct *work)
-> >  			continue;
-> >  		}
-> >  
-> > +		led_trigger_blink_oneshot(port->led_trigger_rx, &delay, &delay, 0);
-> > +
-> >  		count = receive_buf(port, head, count);
-> >  		if (!count)
-> >  			break;
-> > diff --git a/drivers/tty/tty_port.c b/drivers/tty/tty_port.c
-> > index 25d736880013..51b78a585417 100644
-> > --- a/drivers/tty/tty_port.c
-> > +++ b/drivers/tty/tty_port.c
-> > @@ -16,6 +16,7 @@
-> >  #include <linux/wait.h>
-> >  #include <linux/bitops.h>
-> >  #include <linux/delay.h>
-> > +#include <linux/leds.h>
-> >  #include <linux/module.h>
-> >  #include <linux/serdev.h>
-> >  
-> > @@ -157,6 +158,18 @@ struct device *tty_port_register_device_attr_serdev(struct tty_port *port,
-> >  
-> >  	tty_port_link_device(port, driver, index);
-> >  
-> > +	port->led_trigger_rx_name = kasprintf(GFP_KERNEL, "%s%d-rx",
-> > +					      driver->name, index);
-> > +	if (!port->led_trigger_rx_name) {
-> > +		pr_err("Failed to allocate trigger name for %s%d\n",
-> > +		       driver->name, index);
-> > +		goto skip_trigger;
-> > +	}
-> > +
-> > +	led_trigger_register_simple(port->led_trigger_rx_name,
-> > +				    &port->led_trigger_rx);
-> > +
-> > +skip_trigger:
-> >  	dev = serdev_tty_port_register(port, device, driver, index);
-> >  	if (PTR_ERR(dev) != -ENODEV) {
-> >  		/* Skip creating cdev if we registered a serdev device */
-> > @@ -206,6 +219,9 @@ void tty_port_unregister_device(struct tty_port *port,
-> >  	if (ret == 0)
-> >  		return;
-> >  
-> > +	led_trigger_unregister_simple(port->led_trigger_rx);
-> 
-> Is it ok to unregister if it was not registered in the first place?
+Datasheet for TSL2772
+https://ams.com/eng/content/download/291503/1066377/file/TSL2772_DS000181_2-00.pdf
 
-led_trigger_unregister_simple() looks as follows:
+Other datasheets:
 
-	if (trig)
-		led_trigger_unregister(trig);
-	kfree(trig);
+ALS only
+- https://ams.com/eng/content/download/250043/975277/file/TSL2571_DS000114_2-00.pdf
+- https://ams.com/eng/content/download/291224/1065822/file/TSL2572_DS000178_2-00.pdf
 
-So yes, it does the right thing when it wasn't registered. Assuming it
-is NULL then, which doesn't seem to be guaranteed. Probably I'd need
+Proximity Only
+- https://ams.com/eng/content/download/250323/976177/file/TSL2671_DS000111_2-00.pdf
+- https://ams.com/eng/content/download/250304/976107/file/TMD2671_DS000176_2-00.pdf
+- https://ams.com/eng/content/download/291443/1066277/file/TSL2672_Datasheet_EN_v1.pdf
+- https://ams.com/eng/content/download/364923/1210537/file/TMD2672_Datasheet_EN_v1.pdf
 
-	port->led_trigger_rx = NULL
-	
-if kasprintf failed.
+ALS / Proximity
+- https://ams.com/eng/content/download/250264/976045/file/TSL2771_DS000105_3-00.pdf
+- https://ams.com/eng/content/download/250283/976077/file/TMD2771_DS000177_2-00.pdf
+- https://ams.com/eng/content/download/365023/1210677/file/TMD2772-E.pdf
 
-Best regards
-Uwe
+Brian Masney (9):
+  staging: iio: tsl2x7x: remove unnecessary whitespace
+  staging: iio: tsl2x7x: use direct returns
+  staging: iio: tsl2x7x: turn chip off if IIO device registration fails
+  staging: iio: tsl2x7x: use macro to populate tsl2X7X_device_info
+  staging: iio: tsl2x7x: convert to use read_avail
+  staging: iio: tsl2x7x: correct IIO_EV_INFO_PERIOD values
+  staging: iio: tsl2x7x: add range checking to tsl2x7x_write_raw
+  staging: iio: tsl2x7x: rename driver to tsl2772
+  staging: iio: tsl2x7x/tsl2772: move out of staging
+
+ drivers/iio/light/Kconfig                          |   8 +
+ drivers/iio/light/Makefile                         |   1 +
+ .../iio/light/tsl2x7x.c => iio/light/tsl2772.c}    | 886 +++++++++++----------
+ drivers/staging/iio/Kconfig                        |   1 -
+ drivers/staging/iio/Makefile                       |   1 -
+ drivers/staging/iio/light/Kconfig                  |  14 -
+ drivers/staging/iio/light/Makefile                 |   5 -
+ .../linux/platform_data/tsl2772.h                  |  51 +-
+ 8 files changed, 494 insertions(+), 473 deletions(-)
+ rename drivers/{staging/iio/light/tsl2x7x.c => iio/light/tsl2772.c} (59%)
+ delete mode 100644 drivers/staging/iio/light/Kconfig
+ delete mode 100644 drivers/staging/iio/light/Makefile
+ rename drivers/staging/iio/light/tsl2x7x.h => include/linux/platform_data/tsl2772.h (70%)
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.14.3
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
