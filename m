@@ -1,66 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752049AbeEKQjR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:39:17 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:38693 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750950AbeEKQjQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:39:16 -0400
-X-Google-Smtp-Source: AB8JxZowkIg2foAa+J3fT6yupdwPgqQPNTS1HcC5jgYgT7/TQgcTJfs1iHA8n0soEILi8Ylu7/PxDmbx1wbAB9qRjN8=
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4i1=q45aqSHXkWvQQgXBqkwuHR2ZxXWmpbeQxptXCcAFA@mail.gmail.com>
-References: <20180511163421.GA32728@jordon-HP-15-Notebook-PC> <CAPcyv4i1=q45aqSHXkWvQQgXBqkwuHR2ZxXWmpbeQxptXCcAFA@mail.gmail.com>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Fri, 11 May 2018 22:09:13 +0530
-Message-ID: <CAFqt6zZitXMDzX7gX2xvMO1AzW7_RikgZ0ssRucYn6OWb3ON_w@mail.gmail.com>
-Subject: Re: [PATCH v4] dax: Change return type to vm_fault_t
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        zi.yan@cs.rutgers.edu, Ross Zwisler <ross.zwisler@linux.intel.com>,
-        "Huang, Ying" <ying.huang@intel.com>, Michal Hocko <mhocko@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        David Rientjes <rientjes@google.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752142AbeEKQjt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:39:49 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:58960 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750950AbeEKQjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 12:39:47 -0400
+From: Borislav Petkov <bp@alien8.de>
+To: linux-pci@vger.kernel.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] pci/aer: Get rid of aer_recover_work_func() forward declaration
+Date: Fri, 11 May 2018 18:39:23 +0200
+Message-Id: <20180511163923.22116-1-bp@alien8.de>
+X-Mailer: git-send-email 2.17.0.391.g1f1cddd558b5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 10:04 PM, Dan Williams <dan.j.williams@intel.com> wrote:
-> On Fri, May 11, 2018 at 9:34 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
->> Use new return type vm_fault_t for fault handler. For
->> now, this is just documenting that the function returns
->> a VM_FAULT value rather than an errno. Once all instances
->> are converted, vm_fault_t will become a distinct type.
->>
->> Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
->>
->> Previously vm_insert_mixed() returns err which driver
->> mapped into VM_FAULT_* type. The new function
->> vmf_insert_mixed() will replace this inefficiency by
->> returning VM_FAULT_* type.
->>
->> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
->> Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
->> ---
->> v2: Modified the change log
->>
->> v3: Updated the change log and
->>     added Ross in review list
->>
->> v4: Addressed David's comment.
->>     Changes in huge_memory.c put
->>     together in a single patch that
->>     it is bisectable in furture
->
-> Thanks, I'll carry this in the nvdimm tree since it collides with some
-> work-in progress development.
+From: Borislav Petkov <bp@suse.de>
 
-Thanks Dan :)
+Just move the actual function up so that it is visible to its user
+aer_recover_queue().
+
+No functional changes.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ drivers/pci/pcie/aer/aerdrv_core.c | 45 +++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+index 0ea5acc40323..a9e575189571 100644
+--- a/drivers/pci/pcie/aer/aerdrv_core.c
++++ b/drivers/pci/pcie/aer/aerdrv_core.c
+@@ -567,8 +567,6 @@ static void handle_error_source(struct pcie_device *aerdev,
+ }
+ 
+ #ifdef CONFIG_ACPI_APEI_PCIEAER
+-static void aer_recover_work_func(struct work_struct *work);
+-
+ #define AER_RECOVER_RING_ORDER		4
+ #define AER_RECOVER_RING_SIZE		(1 << AER_RECOVER_RING_ORDER)
+ 
+@@ -582,6 +580,28 @@ struct aer_recover_entry {
+ 
+ static DEFINE_KFIFO(aer_recover_ring, struct aer_recover_entry,
+ 		    AER_RECOVER_RING_SIZE);
++
++static void aer_recover_work_func(struct work_struct *work)
++{
++	struct aer_recover_entry entry;
++	struct pci_dev *pdev;
++
++	while (kfifo_get(&aer_recover_ring, &entry)) {
++		pdev = pci_get_domain_bus_and_slot(entry.domain, entry.bus,
++						   entry.devfn);
++		if (!pdev) {
++			pr_err("AER recover: Can not find pci_dev for %04x:%02x:%02x:%x\n",
++			       entry.domain, entry.bus,
++			       PCI_SLOT(entry.devfn), PCI_FUNC(entry.devfn));
++			continue;
++		}
++		cper_print_aer(pdev, entry.severity, entry.regs);
++		if (entry.severity != AER_CORRECTABLE)
++			do_recovery(pdev, entry.severity);
++		pci_dev_put(pdev);
++	}
++}
++
+ /*
+  * Mutual exclusion for writers of aer_recover_ring, reader side don't
+  * need lock, because there is only one reader and lock is not needed
+@@ -611,27 +631,6 @@ void aer_recover_queue(int domain, unsigned int bus, unsigned int devfn,
+ 	spin_unlock_irqrestore(&aer_recover_ring_lock, flags);
+ }
+ EXPORT_SYMBOL_GPL(aer_recover_queue);
+-
+-static void aer_recover_work_func(struct work_struct *work)
+-{
+-	struct aer_recover_entry entry;
+-	struct pci_dev *pdev;
+-
+-	while (kfifo_get(&aer_recover_ring, &entry)) {
+-		pdev = pci_get_domain_bus_and_slot(entry.domain, entry.bus,
+-						   entry.devfn);
+-		if (!pdev) {
+-			pr_err("AER recover: Can not find pci_dev for %04x:%02x:%02x:%x\n",
+-			       entry.domain, entry.bus,
+-			       PCI_SLOT(entry.devfn), PCI_FUNC(entry.devfn));
+-			continue;
+-		}
+-		cper_print_aer(pdev, entry.severity, entry.regs);
+-		if (entry.severity != AER_CORRECTABLE)
+-			do_recovery(pdev, entry.severity);
+-		pci_dev_put(pdev);
+-	}
+-}
+ #endif
+ 
+ /**
+-- 
+2.17.0.391.g1f1cddd558b5
