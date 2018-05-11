@@ -1,34 +1,34 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3620115-1526025644-2-6982335397627702587
+X-Cyrus-Session-Id: sloti22d1t05-3923664-1526042675-2-15013951074952431015
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: 
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526025644; b=nzreRD6ymRe05Yfq9SPU5ZINOX4BMpTW5ZlzCY6b+RadgzepVU
-    DwNkZNM9KXtMW9QS3On9Kltep+nGdKgfl6AcjTmr03nRy16uwGy5EaWr45ZW80ke
-    mQ8/yWnDBH+Ah8uhGjlmOvX6t6JlntG3koth8V5n8B32ScXMOWAe1IGemI2obedH
-    9Sj/3bG3tkK1RTzw83KQ1C3lDxOLOEsxrwWIr1pIBxo/ULHxW99AOhWWEXVeJdFj
-    GYx3m/LRKK37Xtj+VLbS+lk81sAfFJ3Chy9IruaslEoxkwqBbrJWk8PSd86g4Ve3
-    Eq9ywB89zJLS8l2OBDd7bhdE4Z5QQVq9rmLg==
+    1526042675; b=l5DgRj0vOLjyJnBvfbM91Vfe3JquQOmiOYhOlSp7dGIkUw58a0
+    7qRN5CB8vTQkGlfs8oKv/mYD/frZRGV5yFE4HYdq1LJgpeA2ElOjCK8CfMiHLRfv
+    47j2pi9wdsqmlfKMdhYTHe8vekh/5+9YslFGS2GtR1JesphGHOkN9hPqMXswIYyX
+    KhduvnF4z1UURPWgp4TxS/FoW11fOOlIfbPupQhi4rjLQm2eXkXvpg104XTff0uR
+    vXksyAm45USRCgzdDGHTI9cM9QZPeH7YM1gwFC0uSfKpdoeUbr0HzTyu4ma2+71A
+    zjcKKnLRe8Rffi6Z/FtiCfUphRj4gwaLRD7A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526025644; bh=
-    tV/c5wFOEM7ru2yxD/dwmoaCNRBN8D6OW5eP2LXwUTo=; b=GzCR09y1skf/kqkn
-    AwtubR7uHAQGMh3aJuLQbHIFR/13mt7J59uuAkrty8krYLiRdnlVQlFkRfI//ZLe
-    gNWY/M0PvflZrfJBDmIGyzfLd6v6wqgkTwm63tST1/tnAFXVMX5KMmflyH9fpnEg
-    FMGO5rGAuvUr9DwbJguQVfmrROskAExig3wCPnX+Mo0iIaG7+aW9vM+FS6yPlqWr
-    Pik+tg4zudK0Mn6ShrqfffI1YkgRRktwck6MCjGtcYCBpgWAohSeKSFA0NPwuwBe
-    cyNH0SbUA48z65/OCQ/2Px+Ilr2pZSSi9o7S+gCCZxH9KOKD01TspnC3uORLWbEl
-    Q/FkTw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=BKG2Hxku
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256
-    x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    :references:in-reply-to:content-type:content-id
+    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
+    t=1526042675; bh=KyUXvawQz5uattqB6YgoFMntMTQN3H7XV8HDfljxL/c=; b=
+    H8bqoFRY2+86xwom+QmduY1ya6q41Qg8x/loyXiYwMKBN329exW8ckzsWw2LRDyS
+    ogoK4aqiSd6iB/63zMEsVxzpVyjEzqxDxBDS14F8rqyU3FJHjlyfPvihEMU9Lvop
+    W78K4q0fRxN+7bsfJ4JuvxBnCUuTk/v5WKujg7BDewKjQzwC3VadOhNfccVUbTKg
+    Hq9rQ6EvnQ7Aj1kPejPPDHXeiWoR0Kj2CJqlC8xzdVfsKsAk9HlRWFv1Sh/kD/nr
+    pIfLk0VogNobcHisHW7kDMo+qvXl6+H+s/8HneWi7iDmrZMRA79rVSMMfFksPZdk
+    m1Cf7wssQK7nKmD7rcgW1Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=synopsys.com
+    header.i=@synopsys.com header.b=AlU+700e x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=mail;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=synopsys.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -37,15 +37,15 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=lst.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+    header.domain=synopsys.com header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=BKG2Hxku
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256
-      x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    dkim=pass (2048-bit rsa key sha256) header.d=synopsys.com
+      header.i=@synopsys.com header.b=AlU+700e x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=mail;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=synopsys.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -54,303 +54,86 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=lst.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=synopsys.com header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBA6EQsusWteV6bBozM8tHsq8Prw6gJqVKrCgopBhrrKwVhI82TYXukU3j6JDBqZraZjFIu+b/shky3xxAEQpUXcDvGhzOXbYxZS4SZ0oNtgCtPZHwUF
-    U3Kp2M0nSKiiFzYMAgpRJ0HBVgiT3n1V6xo7SPYH4yU0goP8dafSok/XCpmJXrq0tT+HBKjW7aOxi5pBUi2jOPwm/pXoM8ksO8J967cLDkyJ1oxu++BYqt1P
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=jIQo8A4GAAAA:8
-    a=Zkdt6OuXDtlIVup5SysA:9 a=eCJWswlsqIGlfQnQ:21 a=LTjnTX8t3fd-Qqto:21
-    a=Lf5xNeLK5dgiOs8hzIjU:22
+X-CM-Envelope: MS4wfMR+NYvxB0FkIyjym6tRkBIeycXiRETI596rJs1SuLplJSHZrec4xDAXmXjE8Pgg+mKFdBj3MBB1nSyqwIfqwKxG4yolbB0ToLNvP0eBc/T7FGkW7laT
+    Xc2Jhe0TNWxPotZnBM/EPgOMpHzQNss0Ag0RkkgpSvjru/iWonoPFjoZnIIBoQZFYGdUhTs3fXB31R82TAhVWIOzhJV3AJSgit1T6W/1GN5UkxR1PkzwMlQW
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=qJjIXQE9WAAA:10 a=IkcTkHD0fZMA:10
+    a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10 a=gfPmG6xZwV3XGw6L0kcA:9 a=QEXdDO2ut3YA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752604AbeEKIAl (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 11 May 2018 04:00:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34296 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751406AbeEKIAi (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Fri, 11 May 2018 04:00:38 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: iommu@lists.linux-foundation.org
-Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
-        Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-hexagon@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 03/20] arc: use generic dma_noncoherent_ops
-Date: Fri, 11 May 2018 09:59:28 +0200
-Message-Id: <20180511075945.16548-4-hch@lst.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180511075945.16548-1-hch@lst.de>
+        id S1752604AbeEKMoc (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 11 May 2018 08:44:32 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:50454 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752272AbeEKMob (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Fri, 11 May 2018 08:44:31 -0400
+From: Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To: "hch@lst.de" <hch@lst.de>
+CC: "deanbo422@gmail.com" <deanbo422@gmail.com>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nios2-dev@lists.rocketboards.org" <nios2-dev@lists.rocketboards.org>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
+        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-hexagon@vger.kernel.org" <linux-hexagon@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org"
+        <linux-snps-arc@lists.infradead.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "green.hu@gmail.com" <green.hu@gmail.com>,
+        "openrisc@lists.librecores.org" <openrisc@lists.librecores.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "monstr@monstr.eu" <monstr@monstr.eu>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-c6x-dev@linux-c6x.org" <linux-c6x-dev@linux-c6x.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>
+Subject: Re: [PATCH 03/20] arc: use generic dma_noncoherent_ops
+Thread-Topic: [PATCH 03/20] arc: use generic dma_noncoherent_ops
+Thread-Index: AQHT6P6OnpXig9S2zE6C6YX6KW7bXqQqWA0A
+Date: Fri, 11 May 2018 12:44:23 +0000
+Message-ID: <1526042662.19036.31.camel@synopsys.com>
 References: <20180511075945.16548-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+         <20180511075945.16548-4-hch@lst.de>
+In-Reply-To: <20180511075945.16548-4-hch@lst.de>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.8.87]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <971F7A34D96DA94FBA9D4F8C88AF4970@internal.synopsys.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Switch to the generic noncoherent direct mapping implementation.
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/arc/Kconfig                   |   4 +
- arch/arc/include/asm/Kbuild        |   1 +
- arch/arc/include/asm/dma-mapping.h |  21 -----
- arch/arc/mm/dma.c                  | 141 +++--------------------------
- 4 files changed, 19 insertions(+), 148 deletions(-)
- delete mode 100644 arch/arc/include/asm/dma-mapping.h
-
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index 7498aca4b887..89d47eac18b2 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -9,11 +9,15 @@
- config ARC
- 	def_bool y
- 	select ARC_TIMERS
-+	select ARCH_HAS_SYNC_DMA_FOR_CPU
-+	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_HAS_SG_CHAIN
- 	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
- 	select BUILDTIME_EXTABLE_SORT
- 	select CLONE_BACKWARDS
- 	select COMMON_CLK
-+	select DMA_NONCOHERENT_OPS
-+	select DMA_NONCOHERENT_MMAP
- 	select GENERIC_ATOMIC64 if !ISA_ARCV2 || !(ARC_HAS_LL64 && ARC_HAS_LLSC)
- 	select GENERIC_CLOCKEVENTS
- 	select GENERIC_FIND_FIRST_BIT
-diff --git a/arch/arc/include/asm/Kbuild b/arch/arc/include/asm/Kbuild
-index 4bd5d4369e05..bbdcb955e18f 100644
---- a/arch/arc/include/asm/Kbuild
-+++ b/arch/arc/include/asm/Kbuild
-@@ -2,6 +2,7 @@
- generic-y += bugs.h
- generic-y += device.h
- generic-y += div64.h
-+generic-y += dma-mapping.h
- generic-y += emergency-restart.h
- generic-y += extable.h
- generic-y += fb.h
-diff --git a/arch/arc/include/asm/dma-mapping.h b/arch/arc/include/asm/dma-mapping.h
-deleted file mode 100644
-index 7a16824bfe98..000000000000
---- a/arch/arc/include/asm/dma-mapping.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--/*
-- * DMA Mapping glue for ARC
-- *
-- * Copyright (C) 2004, 2007-2010, 2011-2012 Synopsys, Inc. (www.synopsys.com)
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#ifndef ASM_ARC_DMA_MAPPING_H
--#define ASM_ARC_DMA_MAPPING_H
--
--extern const struct dma_map_ops arc_dma_ops;
--
--static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
--{
--	return &arc_dma_ops;
--}
--
--#endif
-diff --git a/arch/arc/mm/dma.c b/arch/arc/mm/dma.c
-index 1dcc404b5aec..e4cd485517b4 100644
---- a/arch/arc/mm/dma.c
-+++ b/arch/arc/mm/dma.c
-@@ -16,13 +16,12 @@
-  * The default DMA address == Phy address which is 0x8000_0000 based.
-  */
- 
--#include <linux/dma-mapping.h>
-+#include <linux/dma-noncoherent.h>
- #include <asm/cache.h>
- #include <asm/cacheflush.h>
- 
--
--static void *arc_dma_alloc(struct device *dev, size_t size,
--		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
-+void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
-+		gfp_t gfp, unsigned long attrs)
- {
- 	unsigned long order = get_order(size);
- 	struct page *page;
-@@ -89,7 +88,7 @@ static void *arc_dma_alloc(struct device *dev, size_t size,
- 	return kvaddr;
- }
- 
--static void arc_dma_free(struct device *dev, size_t size, void *vaddr,
-+void arch_dma_free(struct device *dev, size_t size, void *vaddr,
- 		dma_addr_t dma_handle, unsigned long attrs)
- {
- 	phys_addr_t paddr = dma_handle;
-@@ -105,9 +104,9 @@ static void arc_dma_free(struct device *dev, size_t size, void *vaddr,
- 	__free_pages(page, get_order(size));
- }
- 
--static int arc_dma_mmap(struct device *dev, struct vm_area_struct *vma,
--			void *cpu_addr, dma_addr_t dma_addr, size_t size,
--			unsigned long attrs)
-+int arch_dma_mmap(struct device *dev, struct vm_area_struct *vma,
-+		void *cpu_addr, dma_addr_t dma_addr, size_t size,
-+		unsigned long attrs)
- {
- 	unsigned long user_count = vma_pages(vma);
- 	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-@@ -135,7 +134,7 @@ static int arc_dma_mmap(struct device *dev, struct vm_area_struct *vma,
-  * CPU accesses page via normal paddr, thus needs to explicitly made
-  * consistent before each use
-  */
--static void _dma_cache_sync(phys_addr_t paddr, size_t size,
-+static void _dma_cache_sync(struct device *dev, phys_addr_t paddr, size_t size,
- 		enum dma_data_direction dir)
- {
- 	switch (dir) {
-@@ -153,126 +152,14 @@ static void _dma_cache_sync(phys_addr_t paddr, size_t size,
- 	}
- }
- 
--/*
-- * arc_dma_map_page - map a portion of a page for streaming DMA
-- *
-- * Ensure that any data held in the cache is appropriately discarded
-- * or written back.
-- *
-- * The device owns this memory once this call has completed.  The CPU
-- * can regain ownership by calling dma_unmap_page().
-- *
-- * Note: while it takes struct page as arg, caller can "abuse" it to pass
-- * a region larger than PAGE_SIZE, provided it is physically contiguous
-- * and this still works correctly
-- */
--static dma_addr_t arc_dma_map_page(struct device *dev, struct page *page,
--		unsigned long offset, size_t size, enum dma_data_direction dir,
--		unsigned long attrs)
--{
--	phys_addr_t paddr = page_to_phys(page) + offset;
--
--	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
--		_dma_cache_sync(paddr, size, dir);
--
--	return paddr;
--}
--
--/*
-- * arc_dma_unmap_page - unmap a buffer previously mapped through dma_map_page()
-- *
-- * After this call, reads by the CPU to the buffer are guaranteed to see
-- * whatever the device wrote there.
-- *
-- * Note: historically this routine was not implemented for ARC
-- */
--static void arc_dma_unmap_page(struct device *dev, dma_addr_t handle,
--			       size_t size, enum dma_data_direction dir,
--			       unsigned long attrs)
--{
--	phys_addr_t paddr = handle;
--
--	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
--		_dma_cache_sync(paddr, size, dir);
--}
--
--static int arc_dma_map_sg(struct device *dev, struct scatterlist *sg,
--	   int nents, enum dma_data_direction dir, unsigned long attrs)
--{
--	struct scatterlist *s;
--	int i;
--
--	for_each_sg(sg, s, nents, i)
--		s->dma_address = dma_map_page(dev, sg_page(s), s->offset,
--					       s->length, dir);
--
--	return nents;
--}
--
--static void arc_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
--			     int nents, enum dma_data_direction dir,
--			     unsigned long attrs)
--{
--	struct scatterlist *s;
--	int i;
--
--	for_each_sg(sg, s, nents, i)
--		arc_dma_unmap_page(dev, sg_dma_address(s), sg_dma_len(s), dir,
--				   attrs);
--}
--
--static void arc_dma_sync_single_for_cpu(struct device *dev,
--		dma_addr_t dma_handle, size_t size, enum dma_data_direction dir)
--{
--	_dma_cache_sync(dma_handle, size, DMA_FROM_DEVICE);
--}
--
--static void arc_dma_sync_single_for_device(struct device *dev,
--		dma_addr_t dma_handle, size_t size, enum dma_data_direction dir)
-+void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
- {
--	_dma_cache_sync(dma_handle, size, DMA_TO_DEVICE);
-+	return _dma_cache_sync(dev, paddr, size, dir);
- }
- 
--static void arc_dma_sync_sg_for_cpu(struct device *dev,
--		struct scatterlist *sglist, int nelems,
--		enum dma_data_direction dir)
-+void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
- {
--	int i;
--	struct scatterlist *sg;
--
--	for_each_sg(sglist, sg, nelems, i)
--		_dma_cache_sync(sg_phys(sg), sg->length, dir);
-+	return _dma_cache_sync(dev, paddr, size, dir);
- }
--
--static void arc_dma_sync_sg_for_device(struct device *dev,
--		struct scatterlist *sglist, int nelems,
--		enum dma_data_direction dir)
--{
--	int i;
--	struct scatterlist *sg;
--
--	for_each_sg(sglist, sg, nelems, i)
--		_dma_cache_sync(sg_phys(sg), sg->length, dir);
--}
--
--static int arc_dma_supported(struct device *dev, u64 dma_mask)
--{
--	/* Support 32 bit DMA mask exclusively */
--	return dma_mask == DMA_BIT_MASK(32);
--}
--
--const struct dma_map_ops arc_dma_ops = {
--	.alloc			= arc_dma_alloc,
--	.free			= arc_dma_free,
--	.mmap			= arc_dma_mmap,
--	.map_page		= arc_dma_map_page,
--	.unmap_page		= arc_dma_unmap_page,
--	.map_sg			= arc_dma_map_sg,
--	.unmap_sg		= arc_dma_unmap_sg,
--	.sync_single_for_device	= arc_dma_sync_single_for_device,
--	.sync_single_for_cpu	= arc_dma_sync_single_for_cpu,
--	.sync_sg_for_cpu	= arc_dma_sync_sg_for_cpu,
--	.sync_sg_for_device	= arc_dma_sync_sg_for_device,
--	.dma_supported		= arc_dma_supported,
--};
--EXPORT_SYMBOL(arc_dma_ops);
--- 
-2.17.0
+SGkgQ2hyaXN0b3BoLA0KDQpPbiBGcmksIDIwMTgtMDUtMTEgYXQgMDk6NTkgKzAyMDAsIENocmlz
+dG9waCBIZWxsd2lnIHdyb3RlOg0KPiBTd2l0Y2ggdG8gdGhlIGdlbmVyaWMgbm9uY29oZXJlbnQg
+ZGlyZWN0IG1hcHBpbmcgaW1wbGVtZW50YXRpb24uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBDaHJp
+c3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4NCj4gLS0tDQo+ICBhcmNoL2FyYy9LY29uZmlnICAg
+ICAgICAgICAgICAgICAgIHwgICA0ICsNCj4gIGFyY2gvYXJjL2luY2x1ZGUvYXNtL0tidWlsZCAg
+ICAgICAgfCAgIDEgKw0KPiAgYXJjaC9hcmMvaW5jbHVkZS9hc20vZG1hLW1hcHBpbmcuaCB8ICAy
+MSAtLS0tLQ0KPiAgYXJjaC9hcmMvbW0vZG1hLmMgICAgICAgICAgICAgICAgICB8IDE0MSArKyst
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAgNCBmaWxlcyBjaGFuZ2VkLCAxOSBpbnNlcnRp
+b25zKCspLCAxNDggZGVsZXRpb25zKC0pDQo+ICBkZWxldGUgbW9kZSAxMDA2NDQgYXJjaC9hcmMv
+aW5jbHVkZS9hc20vZG1hLW1hcHBpbmcuaA0KDQpTb3JyeSBJIGRpZG4ndCB0cnkgeW91ciBwcm9w
+b3NlZCBmaXggZWFybGllciAtIHdhcyBhd2F5IGZvciBhIGNvdXBsZSBvZiBkYXlzLg0KDQpCdXQg
+dGhhdCBuZXdlciB2ZXJzaW9uIHdpdGggZml4ZWQgbGliL2RtYS1ub25jb2hlcmVudC5jIHN0aWxs
+IGRvZXNuJ3Qgd29yayBvbiBBUkMuDQoNClVTQiBFQ0hJIGNvbnRyb2xsZXIgZmFpbHMgbGlrZSB0
+aGF0Og0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LQ0KdXNiIDEtMTogbmV3IGhpZ2gtc3BlZWQgVVNCIGRldmljZSBudW1iZXIgMiB1c2luZyBlaGNp
+LXBsYXRmb3JtDQp1c2IgMS0xOiBjYW4ndCBzZXQgY29uZmlnICMxLCBlcnJvciAtMzINCi0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KQWdhaW4g
+d2l0aCBlbnRpcmUgc2VyaWVzIHJldmVydGVkIFVTQiBzdGFydHMgdG8gd29yay4NCkxldCdzIHdh
+aXQgZm9yIG90aGVyIGFyY2hlcyBwcmV2aW91c2x5IGFmZmVjdGVkIHRvIHVwZGF0ZSBvbiB0aGVp
+ciBzdGF0dXMuDQoNCi1BbGV4ZXk=
