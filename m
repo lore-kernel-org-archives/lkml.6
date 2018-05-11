@@ -1,315 +1,432 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753517AbeEKPIr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 11:08:47 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:50823 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753120AbeEKPIp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 11:08:45 -0400
-X-ME-Sender: <xms:_LH1WqslAvTG36Uo6A8On5sMFLPHI2ucXWVhtDTssBRrptuPMNcbuA>
-From: Samuel Holland <samuel@sholland.org>
-Subject: Re: [PATCH 1/2] arm64: arch_timer: Workaround for Allwinner A64 timer
- instability
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Mark Rutland <Mark.Rutland@arm.com>
-References: <20180511022751.9096-1-samuel@sholland.org>
- <20180511022751.9096-2-samuel@sholland.org>
- <058bea48-a19b-d2c2-d5c4-8de7a424ef8a@arm.com>
-Message-ID: <e9b0d748-1c99-6eb0-2463-a6103b19e4aa@sholland.org>
-Date: Fri, 11 May 2018 10:08:42 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751159AbeEKPM5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 11:12:57 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51472 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750722AbeEKPMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 11:12:55 -0400
+Date: Fri, 11 May 2018 10:12:52 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Jiri Slaby <jslaby@suse.cz>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org
+Subject: Re: [PATCH 1/2] x86/stacktrace: do not fail when regs on stack for
+ ORC
+Message-ID: <20180511151252.sihxdvl4ip7hjjoc@treble>
+References: <20171130195710.cu2lsa47kwnow2hi@treble>
+ <73526a6b-5083-78f1-8f76-d5f3ac52f958@suse.cz>
+ <20171218033749.ihpwkjh7qfnilj4s@treble>
+ <20171220174544.g34v2lkjrz2r6kh7@treble>
+ <bf832ed0-47f4-2e8c-f320-1f54bce76e5c@suse.cz>
+ <20180416221653.bf3or5yarlame3co@treble>
+ <20180419134222.truupyqhwcpnhuis@treble>
+ <a27a7de0-cc28-cfc8-7d0b-7d284f5d5788@suse.cz>
+ <20180510124916.ckgjtgmmcy33ahtd@treble>
+ <16f714bb-1a32-9203-39d5-aab927fba6c9@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <058bea48-a19b-d2c2-d5c4-8de7a424ef8a@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <16f714bb-1a32-9203-39d5-aab927fba6c9@suse.cz>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/18 03:48, Marc Zyngier wrote:
-> [+Mark, who co-maintains the arch timer code with me]
+On Fri, May 11, 2018 at 09:01:30AM +0200, Jiri Slaby wrote:
+> On 05/10/2018, 02:49 PM, Josh Poimboeuf wrote:
+> > On Thu, May 10, 2018 at 02:33:03PM +0200, Jiri Slaby wrote:
+> >> On 04/19/2018, 03:42 PM, Josh Poimboeuf wrote:
+> >>> On Mon, Apr 16, 2018 at 05:16:53PM -0500, Josh Poimboeuf wrote:
+> >>>> On Wed, Dec 20, 2017 at 08:07:17PM +0100, Jiri Slaby wrote:
+> >>>>> On 12/20/2017, 06:45 PM, Josh Poimboeuf wrote:
+> >>>>>> It might not be until 2018 though.  But in the meantime you can go ahead
+> >>>>>> and update your patches accordingly and then we can combine them for
+> >>>>>> testing next year.
+> >>>>>
+> >>>>> I already did ;). So when you have that ready, I will send it on top
+> >>>>> right after.
+> >>>>
+> >>>> Sorry for the delay...  Here's a (lightly tested) patch.  Can you test
+> >>>> it with the latest version of your patches?
+> >>>
+> >>> This one actually compiles:
+> >>>
+> >>> From: Josh Poimboeuf <jpoimboe@redhat.com>
+> >>> Subject: [PATCH] x86/unwind/orc: Detect the end of the stack
+> >>
+> >> With this patch applied, livepatching never completes. Kthreads are in
+> >> the unpatched state forever. I have no details yet.
+> > 
+> > Hm, I thought I had tested that, but now I'm not sure.  Let me try it
+> > again.
 > 
-> Hi Samuel,
-> 
-> On 11/05/18 03:27, Samuel Holland wrote:
->> The Allwinner A64 SoC is known [1] to have an unstable architectural
->> timer, which manifests itself most obviously in the time jumping forward
->> a multiple of 95 years [2][3]. This coincides with 2^56 cycles at a
->> timer frequency of 24 MHz, implying that the time went slightly backward
->> (and this was interpreted by the kernel as it jumping forward and
->> wrapping around past the epoch).
->>
->> Further investigation revealed instability in the low bits of CNTVCT at
->> the point a high bit rolls over. This leads to power-of-two cycle
->> forward and backward jumps. (Testing shows that forward jumps are about
->> twice as likely as backward jumps.)
->>
->> Without trapping reads to CNTVCT, a userspace program is able to read it
->> in a loop faster than it changes. A test program running on all 4 CPU
->> cores that reported jumps larger than 100 ms was run for 13.6 hours and
->> reported the following:
->>
->>  Count | Event
->> -------+---------------------------
->>   9940 | jumped backward      699ms
->>    268 | jumped backward     1398ms
->>      1 | jumped backward     2097ms
->>  16020 | jumped forward       175ms
->>   6443 | jumped forward       699ms
->>   2976 | jumped forward      1398ms
->>      9 | jumped forward    356516ms
->>      9 | jumped forward    357215ms
->>      4 | jumped forward    714430ms
->>      1 | jumped forward   3578440ms
->>
->> This works out to a jump larger than 100 ms about every 5.5 seconds on
->> each CPU core.
->>
->> The largest jump (almost an hour!) was the following sequence of reads:
->>       0x0000007fffffffff → 0x00000093feffffff → 0x0000008000000000
->>
->> Note that the middle bits don't necessarily all read as all zeroes or
->> all ones during the anomalous behavior; however the low 11 bits checked
->> by the function in this patch have never been observed with any other
->> value.
->>
->> Also note that smaller jumps are much more common, with the smallest
->> backward jumps of 2048 cycles observed over 400 times per second on each
->> core. (Of course, this is partially due to lower bits rolling over more
->> frequently.) Any one of these could have caused the 95 year time skip.
->>
->> Similar anomalies were observed while reading CNTPCT (after patching the
->> kernel to allow reads from userspace). However, the jumps are much less
->> frequent, and only small jumps were observed. The same program as before
->> (except now reading CNTPCT) observed after 72 hours:
->>
->>  Count | Event
->> -------+---------------------------
->>     17 | jumped backward      699ms
->>     52 | jumped forward       175ms
->>   2831 | jumped forward       699ms
->>      5 | jumped forward      1398ms
->>
->> ========================================================================
->>
->> Because the CPU can read the CNTPCT/CNTVCT registers faster than they
->> change, performing two reads of the register and comparing the high bits
->> (like other workarounds) is not a workable solution. And because the
->> timer can jump both forward and backward, no pair of reads can
->> distinguish a good value from a bad one. The only way to guarantee a
->> good value from consecutive reads would be to read _three_ times, and
->> take the middle value iff the three values are 1) individually unique
->> and 2) increasing. This takes at minimum 3 cycles (125 ns), or more if
->> an anomaly is detected.
->>
->> However, since there is a distinct pattern to the bad values, we can
->> optimize the common case (2046/2048 of the time) to a single read by
->> simply ignoring values that match the pattern. This still takes no more
->> than 3 cycles in the worst case, and requires much less code.
-> 
-> Thanks for the thorough description of the problem. A couple of questions:
-> 
-> - Have the 000/7ff values of the bottom bits only been experimentally
-> found? Or do you have more concrete evidence of this is what happens in
-> the HW?
+> We need to propagate end from hints to orcs. This works for me™:
 
-Only experimentally found. Here's a sample of the larger jumps:
+Ah, right, I forgot to connect the dots.  Here's an updated patch with a
+few more tweaks.  Can you test?  I assume you're going to carry this as
+part of your patches to enable HAVE_RELIABLE_STACKTRACE?
 
-CPU 3: 0x000000a5ebffffff → 0x000000a5edffffff (retry = 0x000000a5ec000000)
-CPU 1: 0x000000a5ebffffff → 0x000000a5edffffff (retry = 0x000000a5ec000000)
-CPU 1: 0x000000a5ecffffff > 0x000000a5ec000000 (retry = 0x000000a5ed000000)
-CPU 0: 0x000000a5eeffffff > 0x000000a5ee000000 (retry = 0x000000a5ef000000)
-CPU 2: 0x000000a5f0bfffff → 0x000000a5f0ffffff (retry = 0x000000a5f0c00000)
-CPU 0: 0x000000a5f0ffffff > 0x000000a5f0000000 (retry = 0x000000a5f1000000)
-CPU 2: 0x000000a5f3ffffff > 0x000000a5f2000000 (retry = 0x000000a5f4000000)
-CPU 0: 0x000000a5f6ffffff > 0x000000a5f6000000 (retry = 0x000000a5f7000000)
-CPU 1: 0x000000a5fbbfffff → 0x000000a5fbffffff (retry = 0x000000a5fbc00000)
-CPU 0: 0x000000a5fdffffff → 0x000000a5feffffff (retry = 0x000000a5fe000000)
-CPU 2: 0x000000a5ffffffff → 0x000000a7fe000000 (retry = 0x000000a600000000)
-CPU 3: 0x000000a5ffffffff → 0x000000a7fe000000 (retry = 0x000000a600000000)
-CPU 1: 0x000000a603bfffff → 0x000000a603ffffff (retry = 0x000000a603c00000)
-CPU 1: 0x000000a607bfffff → 0x000000a607ffffff (retry = 0x000000a607c00000)
-CPU 3: 0x000000a60cbfffff → 0x000000a60cffffff (retry = 0x000000a60cc00000)
-CPU 2: 0x000000a60cbfffff → 0x000000a60cffffff (retry = 0x000000a60cc00000)
-CPU 2: 0x000000a60dffffff → 0x000000a60effffff (retry = 0x000000a60e000000)
-CPU 0: 0x000000a60e3fffff → 0x000000a60e7fffff (retry = 0x000000a60e400000)
-CPU 1: 0x000000a60effffff > 0x000000a60e000000 (retry = 0x000000a60f000000)
 
-(Note that for the large jump, 0x000000a5ffffffff → 0x000000a7fe000000, not
-all of the low bits are zeroes during the transition.)
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH] x86/unwind/orc: Detect the end of the stack
 
-And of the tiny jumps backward:
+The existing UNWIND_HINT_EMPTY annotations happen to be good indicators
+of where entry code calls into C code for the first time.  So also use
+them to mark the end of the stack for the ORC unwinder.
 
-CPU 3: 0x000000d2f010bfff > 0x000000d2f010b800 (retry = 0x000000d2f010b801)
-CPU 3: 0x000000d2f0110fff > 0x000000d2f0110800 (retry = 0x000000d2f0110801)
-CPU 3: 0x000000d2f0112fff > 0x000000d2f0112800 (retry = 0x000000d2f0112801)
-CPU 3: 0x000000d2f0119fff > 0x000000d2f0119800 (retry = 0x000000d2f0119801)
-CPU 3: 0x000000d2f011f7ff > 0x000000d2f011f000 (retry = 0x000000d2f011f800)
-CPU 3: 0x000000d2f01257ff > 0x000000d2f0125000 (retry = 0x000000d2f0125800)
-CPU 3: 0x000000d2f012b7ff > 0x000000d2f012b000 (retry = 0x000000d2f012b800)
-CPU 3: 0x000000d2f01317ff > 0x000000d2f0131000 (retry = 0x000000d2f0131800)
-CPU 2: 0x000000d2f00c17ff > 0x000000d2f00c1000 (retry = 0x000000d2f00c1800)
-CPU 2: 0x000000d2f0136fff > 0x000000d2f0136800 (retry = 0x000000d2f0136801)
-CPU 2: 0x000000d2f01377ff > 0x000000d2f0137000 (retry = 0x000000d2f0137800)
-CPU 2: 0x000000d2f013afff > 0x000000d2f013a800 (retry = 0x000000d2f013a801)
-CPU 2: 0x000000d2f01417ff > 0x000000d2f0141000 (retry = 0x000000d2f0141800)
-CPU 2: 0x000000d2f0142fff > 0x000000d2f0142800 (retry = 0x000000d2f0142801)
-CPU 2: 0x000000d2f01497ff > 0x000000d2f0149000 (retry = 0x000000d2f0149800)
-CPU 2: 0x000000d2f014b7ff > 0x000000d2f014b000 (retry = 0x000000d2f014b800)
-CPU 2: 0x000000d2f0150fff > 0x000000d2f0150800 (retry = 0x000000d2f0150801)
-CPU 2: 0x000000d2f01577ff > 0x000000d2f0157000 (retry = 0x000000d2f0157800)
-CPU 2: 0x000000d2f015d7ff > 0x000000d2f015d000 (retry = 0x000000d2f015d800)
-CPU 2: 0x000000d2f015f7ff > 0x000000d2f015f000 (retry = 0x000000d2f015f800)
-CPU 2: 0x000000d2f01617ff > 0x000000d2f0161000 (retry = 0x000000d2f0161800)
-CPU 2: 0x000000d2f0166fff > 0x000000d2f0166800 (retry = 0x000000d2f0166801)
-CPU 2: 0x000000d2f0168fff > 0x000000d2f0168800 (retry = 0x000000d2f0168801)
-CPU 2: 0x000000d2f016b7ff > 0x000000d2f016b000 (retry = 0x000000d2f016b800)
+Use that information to set unwind->error if the ORC unwinder doesn't
+unwind all the way to the end.  This will be needed for enabling
+HAVE_RELIABLE_STACKTRACE for the ORC unwinder so we can use it with the
+livepatch consistency model.
 
-I have close to 100 hours of data, and the "bottom 11 bits" value came from
-the observations that:
-1) Jumps by 2048 cycles were the smallest jumps seen
-2) Even when the anomalous values were not all ones/all zeroes, the bottom
-   11 bits _were_ all ones/all zeroes
+Thanks to Jiri Slaby for teaching the ORCs.
 
-I'd be happy to run more tests if there's something else you think I should
-look for.
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+ arch/x86/entry/entry_64.S                     |  1 +
+ arch/x86/include/asm/orc_types.h              |  2 +
+ arch/x86/include/asm/unwind_hints.h           | 16 +++---
+ arch/x86/kernel/unwind_orc.c                  | 52 +++++++++++--------
+ .../objtool/arch/x86/include/asm/orc_types.h  |  2 +
+ tools/objtool/check.c                         |  1 +
+ tools/objtool/check.h                         |  2 +-
+ tools/objtool/orc_dump.c                      |  3 +-
+ tools/objtool/orc_gen.c                       |  1 +
+ 9 files changed, 51 insertions(+), 29 deletions(-)
 
-> - Do you have an official erratum number from the silicon vendor, so
-> that Documentation/arm64/silicon-errata.txt can be kept up to date?
-
-No, unfortunately the only information we have from the vendor is in the
-form of BSP kernel code drops. There _is_ a workaround present in their
-official sources [1], but it looks to be for a different issue (one that I
-haven't experienced).
-
-[1]
-https://github.com/Allwinner-Homlet/H6-BSP4.9-linux/blob/e634a960316d/drivers/clocksource/arm_arch_timer.c#L272-L327
-
->>
->> [1]: https://github.com/armbian/build/commit/a08cd6fe7ae9
->> [2]: https://forum.armbian.com/topic/3458-a64-datetime-clock-issue/
->> [3]: https://irclog.whitequark.org/linux-sunxi/2018-01-26
->>
->> Signed-off-by: Samuel Holland <samuel@sholland.org>
->> ---
->>  drivers/clocksource/Kconfig          | 11 ++++++++++
->>  drivers/clocksource/arm_arch_timer.c | 39 ++++++++++++++++++++++++++++++++++++
->>  2 files changed, 50 insertions(+)
->>
->> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->> index 8e8a09755d10..7a5d434dd30b 100644
->> --- a/drivers/clocksource/Kconfig
->> +++ b/drivers/clocksource/Kconfig
->> @@ -364,6 +364,17 @@ config ARM64_ERRATUM_858921
->>  	  The workaround will be dynamically enabled when an affected
->>  	  core is detected.
->>  
->> +config SUN50I_A64_UNSTABLE_TIMER
->> +	bool "Workaround for Allwinner A64 timer instability"
->> +	default y
->> +	depends on ARM_ARCH_TIMER && ARM64 && ARCH_SUNXI
->> +	select ARM_ARCH_TIMER_OOL_WORKAROUND
->> +	help
->> +	  This option enables a workaround for instability in the timer on
->> +	  the Allwinner A64 SoC. The workaround will only be active if the
->> +	  allwinner,sun50i-a64-unstable-timer property is found in the
->> +	  timer node.
->> +
->>  config ARM_GLOBAL_TIMER
->>  	bool "Support for the ARM global timer" if COMPILE_TEST
->>  	select TIMER_OF if OF
->> diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
->> index 57cb2f00fc07..66ce13578c52 100644
->> --- a/drivers/clocksource/arm_arch_timer.c
->> +++ b/drivers/clocksource/arm_arch_timer.c
->> @@ -319,6 +319,36 @@ static u64 notrace arm64_858921_read_cntvct_el0(void)
->>  }
->>  #endif
->>  
->> +#ifdef CONFIG_SUN50I_A64_UNSTABLE_TIMER
->> +/*
->> + * The low bits of each register can transiently read as all ones or all zeroes
->> + * when bit 11 or greater rolls over. Since the value can jump both backward
->> + * (7ff -> 000 -> 800) and forward (7ff -> fff -> 800), it is simplest to just
->> + * ignore register values with all ones or zeros in the low bits.
->> + */
->> +static u64 notrace sun50i_a64_read_cntpct_el0(void)
->> +{
->> +	u64 val;
->> +
->> +	do {
->> +		val = read_sysreg(cntpct_el0);
->> +	} while (((val + 1) & GENMASK(10, 0)) <= 1);
-> 
-> Other workarounds of the same kind have a bounded loop. Have you done
-> any investigation on how many loops you need at most to sort the timer?
-> Depending on how many loops you need, it might be worth sticking a WFE
-> here to just wait for something to happen instead of busy looping.
-
-The worst case delay inside the loop is two timer cycles at 24 MHz (83.3 ns).
-So the number of iterations depends on the CPU speed. For example:
-
-0x???4ffe -> read once and return
-0x???4fff -> read and loop (((val + 1) & GENMASK(10, 0)) == 0)
-0x???5000 -> read and loop (((val + 1) & GENMASK(10, 0)) == 1)
-0x???5001 -> read once and return
-
-Now of course this function could be preempted, in which case it most likely
-does even fewer reads. (The probability of "read 0x???4fff", "preempt", "read
-0x???5fff" is pretty low.)
-
-I do not think it is possible to know if an 000/7ff value is valid without
-reading three unique values from the timer. So the latency entirely depends
-on the timer frequency, not the CPU speed.
-
->> +
->> +	return val;
->> +}
->> +
->> +static u64 notrace sun50i_a64_read_cntvct_el0(void)
->> +{
->> +	u64 val;
->> +
->> +	do {
->> +		val = read_sysreg(cntvct_el0);
->> +	} while (((val + 1) & GENMASK(10, 0)) <= 1);
->> +
->> +	return val;
->> +}
->> +#endif
->> +
->>  #ifdef CONFIG_ARM_ARCH_TIMER_OOL_WORKAROUND
->>  DEFINE_PER_CPU(const struct arch_timer_erratum_workaround *, timer_unstable_counter_workaround);
->>  EXPORT_SYMBOL_GPL(timer_unstable_counter_workaround);
->> @@ -408,6 +438,15 @@ static const struct arch_timer_erratum_workaround ool_workarounds[] = {
->>  		.read_cntvct_el0 = arm64_858921_read_cntvct_el0,
->>  	},
->>  #endif
->> +#ifdef CONFIG_SUN50I_A64_UNSTABLE_TIMER
->> +	{
->> +		.match_type = ate_match_dt,
->> +		.id = "allwinner,sun50i-a64-unstable-timer",
->> +		.desc = "Allwinner A64 timer instability",
->> +		.read_cntpct_el0 = sun50i_a64_read_cntpct_el0,
->> +		.read_cntvct_el0 = sun50i_a64_read_cntvct_el0,
->> +	},
->> +#endif
->>  };
->>  
->>  typedef bool (*ate_match_fn_t)(const struct arch_timer_erratum_workaround *,
->>
-> 
-> Thanks,
-> 
-> 	M.
-> 
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index ab4f451aeb97..e35dbc507425 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -408,6 +408,7 @@ ENTRY(ret_from_fork)
+ 
+ 1:
+ 	/* kernel thread */
++	UNWIND_HINT_EMPTY
+ 	movq	%r12, %rdi
+ 	CALL_NOSPEC %rbx
+ 	/*
+diff --git a/arch/x86/include/asm/orc_types.h b/arch/x86/include/asm/orc_types.h
+index 9c9dc579bd7d..46f516dd80ce 100644
+--- a/arch/x86/include/asm/orc_types.h
++++ b/arch/x86/include/asm/orc_types.h
+@@ -88,6 +88,7 @@ struct orc_entry {
+ 	unsigned	sp_reg:4;
+ 	unsigned	bp_reg:4;
+ 	unsigned	type:2;
++	unsigned	end:1;
+ } __packed;
+ 
+ /*
+@@ -101,6 +102,7 @@ struct unwind_hint {
+ 	s16		sp_offset;
+ 	u8		sp_reg;
+ 	u8		type;
++	u8		end;
+ };
+ #endif /* __ASSEMBLY__ */
+ 
+diff --git a/arch/x86/include/asm/unwind_hints.h b/arch/x86/include/asm/unwind_hints.h
+index bae46fc6b9de..0bcdb1279361 100644
+--- a/arch/x86/include/asm/unwind_hints.h
++++ b/arch/x86/include/asm/unwind_hints.h
+@@ -26,7 +26,7 @@
+  * the debuginfo as necessary.  It will also warn if it sees any
+  * inconsistencies.
+  */
+-.macro UNWIND_HINT sp_reg=ORC_REG_SP sp_offset=0 type=ORC_TYPE_CALL
++.macro UNWIND_HINT sp_reg=ORC_REG_SP sp_offset=0 type=ORC_TYPE_CALL end=0
+ #ifdef CONFIG_STACK_VALIDATION
+ .Lunwind_hint_ip_\@:
+ 	.pushsection .discard.unwind_hints
+@@ -35,12 +35,14 @@
+ 		.short \sp_offset
+ 		.byte \sp_reg
+ 		.byte \type
++		.byte \end
++		.balign 4
+ 	.popsection
+ #endif
+ .endm
+ 
+ .macro UNWIND_HINT_EMPTY
+-	UNWIND_HINT sp_reg=ORC_REG_UNDEFINED
++	UNWIND_HINT sp_reg=ORC_REG_UNDEFINED end=1
+ .endm
+ 
+ .macro UNWIND_HINT_REGS base=%rsp offset=0 indirect=0 extra=1 iret=0
+@@ -86,19 +88,21 @@
+ 
+ #else /* !__ASSEMBLY__ */
+ 
+-#define UNWIND_HINT(sp_reg, sp_offset, type)			\
++#define UNWIND_HINT(sp_reg, sp_offset, type, end)		\
+ 	"987: \n\t"						\
+ 	".pushsection .discard.unwind_hints\n\t"		\
+ 	/* struct unwind_hint */				\
+ 	".long 987b - .\n\t"					\
+-	".short " __stringify(sp_offset) "\n\t"		\
++	".short " __stringify(sp_offset) "\n\t"			\
+ 	".byte " __stringify(sp_reg) "\n\t"			\
+ 	".byte " __stringify(type) "\n\t"			\
++	".byte " __stringify(end) "\n\t"			\
++	".balign 4 \n\t"					\
+ 	".popsection\n\t"
+ 
+-#define UNWIND_HINT_SAVE UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_SAVE)
++#define UNWIND_HINT_SAVE UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_SAVE, 0)
+ 
+-#define UNWIND_HINT_RESTORE UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_RESTORE)
++#define UNWIND_HINT_RESTORE UNWIND_HINT(0, 0, UNWIND_HINT_TYPE_RESTORE, 0)
+ 
+ #endif /* __ASSEMBLY__ */
+ 
+diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
+index feb28fee6cea..26038eacf74a 100644
+--- a/arch/x86/kernel/unwind_orc.c
++++ b/arch/x86/kernel/unwind_orc.c
+@@ -198,7 +198,7 @@ static int orc_sort_cmp(const void *_a, const void *_b)
+ 	 * whitelisted .o files which didn't get objtool generation.
+ 	 */
+ 	orc_a = cur_orc_table + (a - cur_orc_ip_table);
+-	return orc_a->sp_reg == ORC_REG_UNDEFINED ? -1 : 1;
++	return orc_a->sp_reg == ORC_REG_UNDEFINED && !orc_a->end ? -1 : 1;
+ }
+ 
+ #ifdef CONFIG_MODULES
+@@ -352,7 +352,7 @@ static bool deref_stack_iret_regs(struct unwind_state *state, unsigned long addr
+ 
+ bool unwind_next_frame(struct unwind_state *state)
+ {
+-	unsigned long ip_p, sp, orig_ip, prev_sp = state->sp;
++	unsigned long ip_p, sp, orig_ip = state->ip, prev_sp = state->sp;
+ 	enum stack_type prev_type = state->stack_info.type;
+ 	struct orc_entry *orc;
+ 	bool indirect = false;
+@@ -363,9 +363,9 @@ bool unwind_next_frame(struct unwind_state *state)
+ 	/* Don't let modules unload while we're reading their ORC data. */
+ 	preempt_disable();
+ 
+-	/* Have we reached the end? */
++	/* End-of-stack check for user tasks: */
+ 	if (state->regs && user_mode(state->regs))
+-		goto done;
++		goto the_end;
+ 
+ 	/*
+ 	 * Find the orc_entry associated with the text address.
+@@ -374,9 +374,16 @@ bool unwind_next_frame(struct unwind_state *state)
+ 	 * calls and calls to noreturn functions.
+ 	 */
+ 	orc = orc_find(state->signal ? state->ip : state->ip - 1);
+-	if (!orc || orc->sp_reg == ORC_REG_UNDEFINED)
+-		goto done;
+-	orig_ip = state->ip;
++	if (!orc)
++		goto err;
++
++	/* End-of-stack check for kernel threads: */
++	if (orc->sp_reg == ORC_REG_UNDEFINED) {
++		if (!orc->end)
++			goto err;
++
++		goto the_end;
++	}
+ 
+ 	/* Find the previous frame's stack: */
+ 	switch (orc->sp_reg) {
+@@ -402,7 +409,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		if (!state->regs || !state->full_regs) {
+ 			orc_warn("missing regs for base reg R10 at ip %pB\n",
+ 				 (void *)state->ip);
+-			goto done;
++			goto err;
+ 		}
+ 		sp = state->regs->r10;
+ 		break;
+@@ -411,7 +418,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		if (!state->regs || !state->full_regs) {
+ 			orc_warn("missing regs for base reg R13 at ip %pB\n",
+ 				 (void *)state->ip);
+-			goto done;
++			goto err;
+ 		}
+ 		sp = state->regs->r13;
+ 		break;
+@@ -420,7 +427,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		if (!state->regs || !state->full_regs) {
+ 			orc_warn("missing regs for base reg DI at ip %pB\n",
+ 				 (void *)state->ip);
+-			goto done;
++			goto err;
+ 		}
+ 		sp = state->regs->di;
+ 		break;
+@@ -429,7 +436,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		if (!state->regs || !state->full_regs) {
+ 			orc_warn("missing regs for base reg DX at ip %pB\n",
+ 				 (void *)state->ip);
+-			goto done;
++			goto err;
+ 		}
+ 		sp = state->regs->dx;
+ 		break;
+@@ -437,12 +444,12 @@ bool unwind_next_frame(struct unwind_state *state)
+ 	default:
+ 		orc_warn("unknown SP base reg %d for ip %pB\n",
+ 			 orc->sp_reg, (void *)state->ip);
+-		goto done;
++		goto err;
+ 	}
+ 
+ 	if (indirect) {
+ 		if (!deref_stack_reg(state, sp, &sp))
+-			goto done;
++			goto err;
+ 	}
+ 
+ 	/* Find IP, SP and possibly regs: */
+@@ -451,7 +458,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		ip_p = sp - sizeof(long);
+ 
+ 		if (!deref_stack_reg(state, ip_p, &state->ip))
+-			goto done;
++			goto err;
+ 
+ 		state->ip = ftrace_graph_ret_addr(state->task, &state->graph_idx,
+ 						  state->ip, (void *)ip_p);
+@@ -465,7 +472,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		if (!deref_stack_regs(state, sp, &state->ip, &state->sp)) {
+ 			orc_warn("can't dereference registers at %p for ip %pB\n",
+ 				 (void *)sp, (void *)orig_ip);
+-			goto done;
++			goto err;
+ 		}
+ 
+ 		state->regs = (struct pt_regs *)sp;
+@@ -477,7 +484,7 @@ bool unwind_next_frame(struct unwind_state *state)
+ 		if (!deref_stack_iret_regs(state, sp, &state->ip, &state->sp)) {
+ 			orc_warn("can't dereference iret registers at %p for ip %pB\n",
+ 				 (void *)sp, (void *)orig_ip);
+-			goto done;
++			goto err;
+ 		}
+ 
+ 		state->regs = (void *)sp - IRET_FRAME_OFFSET;
+@@ -500,18 +507,18 @@ bool unwind_next_frame(struct unwind_state *state)
+ 
+ 	case ORC_REG_PREV_SP:
+ 		if (!deref_stack_reg(state, sp + orc->bp_offset, &state->bp))
+-			goto done;
++			goto err;
+ 		break;
+ 
+ 	case ORC_REG_BP:
+ 		if (!deref_stack_reg(state, state->bp + orc->bp_offset, &state->bp))
+-			goto done;
++			goto err;
+ 		break;
+ 
+ 	default:
+ 		orc_warn("unknown BP base reg %d for ip %pB\n",
+ 			 orc->bp_reg, (void *)orig_ip);
+-		goto done;
++		goto err;
+ 	}
+ 
+ 	/* Prevent a recursive loop due to bad ORC data: */
+@@ -520,13 +527,16 @@ bool unwind_next_frame(struct unwind_state *state)
+ 	    state->sp <= prev_sp) {
+ 		orc_warn("stack going in the wrong direction? ip=%pB\n",
+ 			 (void *)orig_ip);
+-		goto done;
++		goto err;
+ 	}
+ 
+ 	preempt_enable();
+ 	return true;
+ 
+-done:
++err:
++	state->error = true;
++
++the_end:
+ 	preempt_enable();
+ 	state->stack_info.type = STACK_TYPE_UNKNOWN;
+ 	return false;
+diff --git a/tools/objtool/arch/x86/include/asm/orc_types.h b/tools/objtool/arch/x86/include/asm/orc_types.h
+index 9c9dc579bd7d..46f516dd80ce 100644
+--- a/tools/objtool/arch/x86/include/asm/orc_types.h
++++ b/tools/objtool/arch/x86/include/asm/orc_types.h
+@@ -88,6 +88,7 @@ struct orc_entry {
+ 	unsigned	sp_reg:4;
+ 	unsigned	bp_reg:4;
+ 	unsigned	type:2;
++	unsigned	end:1;
+ } __packed;
+ 
+ /*
+@@ -101,6 +102,7 @@ struct unwind_hint {
+ 	s16		sp_offset;
+ 	u8		sp_reg;
+ 	u8		type;
++	u8		end;
+ };
+ #endif /* __ASSEMBLY__ */
+ 
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 5409f6f6c48d..fef15cea9f1e 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -1109,6 +1109,7 @@ static int read_unwind_hints(struct objtool_file *file)
+ 
+ 		cfa->offset = hint->sp_offset;
+ 		insn->state.type = hint->type;
++		insn->state.end = hint->end;
+ 	}
+ 
+ 	return 0;
+diff --git a/tools/objtool/check.h b/tools/objtool/check.h
+index c6b68fcb926f..95700a2bcb7c 100644
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -31,7 +31,7 @@ struct insn_state {
+ 	int stack_size;
+ 	unsigned char type;
+ 	bool bp_scratch;
+-	bool drap;
++	bool drap, end;
+ 	int drap_reg, drap_offset;
+ 	struct cfi_reg vals[CFI_NUM_REGS];
+ };
+diff --git a/tools/objtool/orc_dump.c b/tools/objtool/orc_dump.c
+index c3343820916a..faa444270ee3 100644
+--- a/tools/objtool/orc_dump.c
++++ b/tools/objtool/orc_dump.c
+@@ -203,7 +203,8 @@ int orc_dump(const char *_objname)
+ 
+ 		print_reg(orc[i].bp_reg, orc[i].bp_offset);
+ 
+-		printf(" type:%s\n", orc_type_name(orc[i].type));
++		printf(" type:%s end:%d\n",
++		       orc_type_name(orc[i].type), orc[i].end);
+ 	}
+ 
+ 	elf_end(elf);
+diff --git a/tools/objtool/orc_gen.c b/tools/objtool/orc_gen.c
+index 18384d9be4e1..229c12e3fcf6 100644
+--- a/tools/objtool/orc_gen.c
++++ b/tools/objtool/orc_gen.c
+@@ -86,6 +86,7 @@ int create_orc(struct objtool_file *file)
+ 		orc->sp_offset = cfa->offset;
+ 		orc->bp_offset = bp->offset;
+ 		orc->type = insn->state.type;
++		orc->end = insn->state.end;
+ 	}
+ 
+ 	return 0;
+-- 
+2.17.0
