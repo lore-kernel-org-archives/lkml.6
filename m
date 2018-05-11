@@ -1,83 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752669AbeEKIiL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 04:38:11 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34490 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752569AbeEKIiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 04:38:10 -0400
-Date: Fri, 11 May 2018 10:37:44 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Samuel Holland <samuel@sholland.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/2] arm64: dts: allwinner: a64: Update Orange Pi Win/Win
- Plus
-Message-ID: <20180511083744.jpzt7m3vbk5epqjj@flea>
-References: <20180511030124.9356-1-samuel@sholland.org>
+        id S1752721AbeEKIjP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 04:39:15 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45224 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752569AbeEKIjO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 04:39:14 -0400
+Subject: Re: [PATCH v5 1/7] powerpc: Add TIDR CPU feature for POWER9
+To: "Alastair D'Silva" <alastair@au1.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        mikey@neuling.org, vaibhav@linux.vnet.ibm.com,
+        aneesh.kumar@linux.vnet.ibm.com, malat@debian.org,
+        felix@linux.vnet.ibm.com, pombredanne@nexb.com,
+        sukadev@linux.vnet.ibm.com, npiggin@gmail.com,
+        gregkh@linuxfoundation.org, arnd@arndb.de,
+        andrew.donnellan@au1.ibm.com, fbarrat@linux.vnet.ibm.com,
+        corbet@lwn.net, "Alastair D'Silva" <alastair@d-silva.org>
+References: <20180511061303.10728-1-alastair@au1.ibm.com>
+ <20180511061303.10728-2-alastair@au1.ibm.com>
+From: Frederic Barrat <fbarrat@linux.ibm.com>
+Date: Fri, 11 May 2018 10:38:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rfiozkxyqo6fkz3s"
-Content-Disposition: inline
-In-Reply-To: <20180511030124.9356-1-samuel@sholland.org>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180511061303.10728-2-alastair@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18051108-0044-0000-0000-0000055176B1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051108-0045-0000-0000-00002892C65A
+Message-Id: <215f7aba-4e24-bc09-e164-1618693be072@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805110083
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---rfiozkxyqo6fkz3s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Le 11/05/2018 à 08:12, Alastair D'Silva a écrit :
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> This patch adds a CPU feature bit to show whether the CPU has
+> the TIDR register available, enabling as_notify/wait in userspace.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> ---
 
-On Thu, May 10, 2018 at 10:01:23PM -0500, Samuel Holland wrote:
-> Enable the following board hardware features:
-> - Gigabit Ethernet
-> - SDIO Wi-Fi on mmc1
-> - SPI flash on spi0
-> - Status LED
-> - Dual-role micro-USB connection
->=20
-> Also provide nodes for the UARTs exposed by the 40-pin GPIO header.
->=20
-> A couple of fixes were made:
-> - Updating a couple of regulators from the schematic
-> - Marking the CPU's power supply as such
+Reviewed-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
 
-All these changes look sane, but you should really split them into
-more patches to have one of these changes per patch. We really don't
-mind having more patches when it's justified, and this is definitely
-the case for both your patches.
 
-Thanks!
-Maxime
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---rfiozkxyqo6fkz3s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr1VlcACgkQ0rTAlCFN
-r3StVg/+MT+aKZpB2vOVBS4PjikMAQiimUG2RK8EvJH1yFM6Q1cQPEdQQ1plnxI/
-F+dqyAadZsC3lRL1/xV1xcCAxTwHRyyqCB7DsCkAnQGAco/8uO4Gs0UJhP8iVHHb
-+/poZ3tc9Y84uAVwnnz+yZW/Y5OfYsZRBG/ZuMIy9dcE4ED3rL8SOObMBDCPjooE
-sShrvTx5gpRsNtHuTq6/VeXWoMg1LYWkXltVveUNwvzNIwrmtEWbPu+1dKyO+4x1
-XSrPcRvDq8dWcm5oj/uDOzdDb3LSfW+OeXOSFurggHV8v92t5Ih1uMhNHsdaulcA
-UwrDi8z6Lk5rH4kwl8H5SF82NOKVC0bM4KU43OulaZgsCuni/vjzNzeepjOeIm3C
-1u40OKu5R/p68NNKJFCQsNMve7t7oqnBWfrLExCYdKxtmi+CobywXLs/bD7XvypC
-y0jGqduQA7Q+aEIBf/a/jEq8u3AMc252cNbK5ew+W3Ew5HbR119FYWjCXoYfNq7e
-VXz/6lO8S/SWP2SVBgfDhivuhIwoRNtDe6XMXPfzoP/VI2pa56bxxxRMTfxfFQrB
-D0Iujo11lmudVzwqi7j9JG0FNv9cjqEVZ1hlKolOazIQNJTDW9dzUVED/8kVwIF4
-EbY48bFiGBq4phkDpMxTQRxo0jwr+aig3fXOEM+/wUgQXxHa+p4=
-=wJBP
------END PGP SIGNATURE-----
-
---rfiozkxyqo6fkz3s--
+>   arch/powerpc/include/asm/cputable.h | 3 ++-
+>   arch/powerpc/kernel/dt_cpu_ftrs.c   | 1 +
+>   2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/include/asm/cputable.h b/arch/powerpc/include/asm/cputable.h
+> index 66fcab13c8b4..9c0a3083571b 100644
+> --- a/arch/powerpc/include/asm/cputable.h
+> +++ b/arch/powerpc/include/asm/cputable.h
+> @@ -215,6 +215,7 @@ static inline void cpu_feature_keys_init(void) { }
+>   #define CPU_FTR_P9_TM_HV_ASSIST		LONG_ASM_CONST(0x0000100000000000)
+>   #define CPU_FTR_P9_TM_XER_SO_BUG	LONG_ASM_CONST(0x0000200000000000)
+>   #define CPU_FTR_P9_TLBIE_BUG		LONG_ASM_CONST(0x0000400000000000)
+> +#define CPU_FTR_P9_TIDR			LONG_ASM_CONST(0x0000800000000000)
+> 
+>   #ifndef __ASSEMBLY__
+> 
+> @@ -462,7 +463,7 @@ static inline void cpu_feature_keys_init(void) { }
+>   	    CPU_FTR_CFAR | CPU_FTR_HVMODE | CPU_FTR_VMX_COPY | \
+>   	    CPU_FTR_DBELL | CPU_FTR_HAS_PPR | CPU_FTR_ARCH_207S | \
+>   	    CPU_FTR_TM_COMP | CPU_FTR_ARCH_300 | CPU_FTR_PKEY | \
+> -	    CPU_FTR_P9_TLBIE_BUG)
+> +	    CPU_FTR_P9_TLBIE_BUG | CPU_FTR_P9_TIDR)
+>   #define CPU_FTRS_POWER9_DD1 ((CPU_FTRS_POWER9 | CPU_FTR_POWER9_DD1) & \
+>   			     (~CPU_FTR_SAO))
+>   #define CPU_FTRS_POWER9_DD2_0 CPU_FTRS_POWER9
+> diff --git a/arch/powerpc/kernel/dt_cpu_ftrs.c b/arch/powerpc/kernel/dt_cpu_ftrs.c
+> index 8ab51f6ca03a..415555e5b69f 100644
+> --- a/arch/powerpc/kernel/dt_cpu_ftrs.c
+> +++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
+> @@ -716,6 +716,7 @@ static __init void cpufeatures_cpu_quirks(void)
+>   	if ((version & 0xffff0000) == 0x004e0000) {
+>   		cur_cpu_spec->cpu_features &= ~(CPU_FTR_DAWR);
+>   		cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
+> +		cur_cpu_spec->cpu_features |= CPU_FTR_P9_TIDR;
+>   	}
+> 
+>   	/*
+> 
