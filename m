@@ -1,98 +1,229 @@
-Return-Path: <ruslan.bilovol@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526331611; cv=none;
+Return-Path: <jorge.sanjuan@codethink.co.uk>
+X-Google-Smtp-Source: AB8JxZqcZVYfO7erVfdlgDYkp9Wak3ot0xnxl8Qmcha4DxfEZ7wzTtOOj7fLjybhD47Vby36b7yv
+ARC-Seal: i=1; a=rsa-sha256; t=1526052346; cv=none;
         d=google.com; s=arc-20160816;
-        b=S3Z3m9mdzm4Kwz0M5EXRRprjN2c3trGOj929HXXDgPcF03tqAefmODicn/cuR6WH9R
-         boSVZxkUgo28Lg3xvALRhbImWlK33gJgz5BTZ1spMTH/4AzROqCvUfe1TIAYHd+mZ2ex
-         udDIQaUjiIBGrRuPPG8yMFvDj91geXh26ztsjjc5ygbQQRNBEdu2acaXIOg7aLpRkw/3
-         NVYWzO6J6ntXs+8D7QS8P5xNFEm78Ko98kswHYqK0tTaRzXYaw/AAmQyKfe0EdFrXWGL
-         N9zueiYARV+bBzPYOoBY9cC7NvdPae06pdM6EzZ0c5WLeN5kfwkKyiTYj/EsrqX7zPa7
-         q7CA==
+        b=mZ6kYkHT4AhAJz8ZrHCF/yBu8JEjTcOF4mV7X/Au4p2YAhZ3qC2WKDoxgmF5eDLs8V
+         jM0EbFzMX7o2yj/Xe1ia+ZiomwVNdYg0uc3M/TuC0iGPP4U5JRVwVxhPSHAR0DCijBG7
+         5h3cM6kB/OpLLIgndorv0keiPA3g6Z60cf98ynj/s7qSRqJu/o9BgDiJLy2s8C2tGt/i
+         RsyiU73XkvmqV+loPl/ixCR6QYQsoQ1T0HcWbYLNWjVRBiA3IQN6SRnCl8H+P0798ziU
+         vXyhxH62FUo6EzIJFoJDgWPTqemnj814i3ddQOppuy056PSBkGa9aAtpZj5CSIQSWi6Z
+         N5mw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=A+3QvxIJc4nNoZszN9PxI/51yfbUuXRKpv4tO14Gh9g=;
-        b=GOzGal2Y/22CfSuwg7TFC4iMYJTH9SZ3/3GeIxEIaE8FBsojQ70wM3U1Sf97gFBKXM
-         7ZC5Rs30oBBrJL4QwK4Jlg923sCDRVf3tNlHcegwFgKw9S5WsXNQO1ukoltks7ZNh/Cg
-         mOvPCF3O2uOu3EOmLgxcV11iHcS+DGRJPFVmXUauY11WA5by4/6a9SehIOv5eZ5gRZ7E
-         t6lz7TVhR8CRixvzvaLcRHvwHIjP6Gu9MnZf40ECY3p2JQNGlbZhuXJ/IRCYKVJ8bMSA
-         Gol0Q3hglHtKUBpZq2VQnIRGgX/zufYfT1JIRskqohMJzPixdyPD/YQLvND4GMHzseax
-         Qq+w==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=yU07AYpA+QAbOwGBGwakg6hBehw6vASa42QVr0kHrig=;
+        b=y/m3ckzjbduUTYtVGhe0Ufi4mf87eaobHNdT/piQ5cB1iwq5HZqV1lRnPyWJt5+Cmy
+         uEFzlDHtpnmudNFtN+Qy6kUWwyjl0aq+mnDT6PZWtCkisJFFOpCpJluCKDDAvWafqhB0
+         GXvb3/O8o/fZAyr34DNmpSr5nDvxT1IMNbbW6+ozRWZOtUfEtbF4GU3lRCLxu2/yxbnk
+         tWDG9yblJfIzyiQv548L94hVrfY9fA2hVhXVbmmhn/58DCI7FN9rO5CT+yxRkXBKHE6N
+         vQto08z6hdoZwC275UHPrO1trvSwhgIcMz1G8I8KTO3HzYn7YZFR/WV9wAroJZqNftbL
+         KA0g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=gA7+3jjy;
-       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       spf=pass (google.com: domain of jorge.sanjuan@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=jorge.sanjuan@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=gA7+3jjy;
-       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZrNNZwBJDAPdRYXvMkSF3G0M3skemLDY1AVJMZzEgocsM42YFqmz+J6LzJzRbgeHevDm8m5mKe9PN7ZGwXZa9g=
-MIME-Version: 1.0
-In-Reply-To: <20180511152537.32267-3-jorge.sanjuan@codethink.co.uk>
+       spf=pass (google.com: domain of jorge.sanjuan@codethink.co.uk designates 176.9.8.82 as permitted sender) smtp.mailfrom=jorge.sanjuan@codethink.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=codethink.co.uk
+From: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+To: tiwai@suse.com
+Cc: alsa-devel@alsa-project.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	ruslan.bilovol@gmail.com,
+	Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Subject: [PATCH v4 1/4] ALSA: usb-audio: UAC3. Add support for mixer unit.
+Date: Fri, 11 May 2018 16:25:34 +0100
+Message-Id: <20180511152537.32267-2-jorge.sanjuan@codethink.co.uk>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180511152537.32267-1-jorge.sanjuan@codethink.co.uk>
 References: <20180420170327.31569-1-jorge.sanjuan@codethink.co.uk>
- <20180511152537.32267-1-jorge.sanjuan@codethink.co.uk> <20180511152537.32267-3-jorge.sanjuan@codethink.co.uk>
-From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
-Date: Tue, 15 May 2018 00:00:11 +0300
-Message-ID: <CAB=otbSF+Nqo2G-fTGTXX_cOtGmo8KrbSgcHim7EKxUZq4APzw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] ALSA: usb-audio: Use Class Specific EP for UAC3 devices.
-To: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-Cc: Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ <20180511152537.32267-1-jorge.sanjuan@codethink.co.uk>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598285489825871167?=
-X-GMAIL-MSGID: =?utf-8?q?1600474696179306965?=
+X-GMAIL-THRID: =?utf-8?q?1598285487518505397?=
+X-GMAIL-MSGID: =?utf-8?q?1600181865603276631?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, May 11, 2018 at 6:25 PM, Jorge Sanjuan
-<jorge.sanjuan@codethink.co.uk> wrote:
-> bmAtributes offset doesn't exist in the UAC3 CS_EP descriptor.
-> Hence, checking for pitch control as if it was UAC2 doesn't make
-> any sense. Use the defined UAC3 offsets instead.
+This adds support for the MIXER UNIT in UAC3. All the information
+is obtained from the (HIGH CAPABILITY) Cluster's header. We don't
+read the rest of the logical cluster to obtain the channel config
+as that wont make any difference in the current mixer behaviour.
 
-This one I already reviewed in v2 and there is no changes in v4,
-so still:
-Reviewed-by: Ruslan Bilovol <ruslan.bilovol@gmail.com>
+The name of the mixer unit is not yet requested as there is not
+support for the UAC3 Class Specific String requests.
 
-By the way, this patch is an independent change and can go
-into v4.17-rcXX, if it's not too late for it.
+Tested in an UAC3 device working as a HEADSET with a basic mixer
+unit (same as the one in the BADD spec) with no controls.
 
-Thanks,
-Ruslan
+Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+---
+ include/uapi/linux/usb/audio.h | 19 +++++++--
+ sound/usb/mixer.c              | 88 ++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 97 insertions(+), 10 deletions(-)
 
->
-> Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-> ---
->  sound/usb/stream.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/sound/usb/stream.c b/sound/usb/stream.c
-> index 764be07474a8..6b2924533d8d 100644
-> --- a/sound/usb/stream.c
-> +++ b/sound/usb/stream.c
-> @@ -576,7 +576,7 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
->
->         if (protocol == UAC_VERSION_1) {
->                 attributes = csep->bmAttributes;
-> -       } else {
-> +       } else if (protocol == UAC_VERSION_2) {
->                 struct uac2_iso_endpoint_descriptor *csep2 =
->                         (struct uac2_iso_endpoint_descriptor *) csep;
->
-> @@ -585,6 +585,13 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
->                 /* emulate the endpoint attributes of a v1 device */
->                 if (csep2->bmControls & UAC2_CONTROL_PITCH)
->                         attributes |= UAC_EP_CS_ATTR_PITCH_CONTROL;
-> +       } else { /* UAC_VERSION_3 */
-> +               struct uac3_iso_endpoint_descriptor *csep3 =
-> +                       (struct uac3_iso_endpoint_descriptor *) csep;
-> +
-> +               /* emulate the endpoint attributes of a v1 device */
-> +               if (le32_to_cpu(csep3->bmControls) & UAC2_CONTROL_PITCH)
-> +                       attributes |= UAC_EP_CS_ATTR_PITCH_CONTROL;
->         }
->
->         return attributes;
-> --
-> 2.11.0
->
+diff --git a/include/uapi/linux/usb/audio.h b/include/uapi/linux/usb/audio.h
+index 3a78e7145689..13d98e6e0db1 100644
+--- a/include/uapi/linux/usb/audio.h
++++ b/include/uapi/linux/usb/audio.h
+@@ -285,9 +285,22 @@ static inline __u8 uac_mixer_unit_iChannelNames(struct uac_mixer_unit_descriptor
+ static inline __u8 *uac_mixer_unit_bmControls(struct uac_mixer_unit_descriptor *desc,
+ 					      int protocol)
+ {
+-	return (protocol == UAC_VERSION_1) ?
+-		&desc->baSourceID[desc->bNrInPins + 4] :
+-		&desc->baSourceID[desc->bNrInPins + 6];
++	switch (protocol) {
++	case UAC_VERSION_1:
++		return &desc->baSourceID[desc->bNrInPins + 4];
++	case UAC_VERSION_2:
++		return &desc->baSourceID[desc->bNrInPins + 6];
++	case UAC_VERSION_3:
++		return &desc->baSourceID[desc->bNrInPins + 2];
++	default:
++		return NULL;
++	}
++}
++
++static inline __u16 uac3_mixer_unit_wClusterDescrID(struct uac_mixer_unit_descriptor *desc)
++{
++	return (desc->baSourceID[desc->bNrInPins + 1] << 8) |
++		desc->baSourceID[desc->bNrInPins];
+ }
+ 
+ static inline __u8 uac_mixer_unit_iMixer(struct uac_mixer_unit_descriptor *desc)
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index 76417943ff85..129c1397f0cb 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -719,6 +719,66 @@ static int get_term_name(struct snd_usb_audio *chip, struct usb_audio_term *iter
+ }
+ 
+ /*
++ * Get logical cluster information for UAC3 devices.
++ */
++static int get_cluster_channels_v3(struct mixer_build *state, unsigned int cluster_id)
++{
++	struct uac3_cluster_header_descriptor c_header;
++	int err;
++
++	err = snd_usb_ctl_msg(state->chip->dev,
++			usb_rcvctrlpipe(state->chip->dev, 0),
++			UAC3_CS_REQ_HIGH_CAPABILITY_DESCRIPTOR,
++			USB_RECIP_INTERFACE | USB_TYPE_CLASS | USB_DIR_IN,
++			cluster_id,
++			snd_usb_ctrl_intf(state->chip),
++			&c_header, sizeof(c_header));
++	if (err < 0)
++		goto error;
++	if (err != sizeof(c_header)) {
++		err = -EIO;
++		goto error;
++	}
++
++	return c_header.bNrChannels;
++
++error:
++	usb_audio_err(state->chip, "cannot request logical cluster ID: %d (err: %d)\n", cluster_id, err);
++	return err;
++}
++
++/*
++ * Get number of channels for a Mixer Unit.
++ */
++static int uac_mixer_unit_get_channels(struct mixer_build *state,
++				       struct uac_mixer_unit_descriptor *desc)
++{
++	int mu_channels;
++
++	if (desc->bLength < 11)
++		return -EINVAL;
++	if (!desc->bNrInPins)
++		return -EINVAL;
++
++	switch (state->mixer->protocol) {
++	case UAC_VERSION_1:
++	case UAC_VERSION_2:
++	default:
++		mu_channels = uac_mixer_unit_bNrChannels(desc);
++		break;
++	case UAC_VERSION_3:
++		mu_channels = get_cluster_channels_v3(state,
++				uac3_mixer_unit_wClusterDescrID(desc));
++		break;
++	}
++
++	if (!mu_channels)
++		return -EINVAL;
++
++	return mu_channels;
++}
++
++/*
+  * parse the source unit recursively until it reaches to a terminal
+  * or a branched unit.
+  */
+@@ -865,6 +925,18 @@ static int check_input_term(struct mixer_build *state, int id,
+ 				term->name = le16_to_cpu(d->wClockSourceStr);
+ 				return 0;
+ 			}
++			case UAC3_MIXER_UNIT: {
++				struct uac_mixer_unit_descriptor *d = p1;
++
++				err = uac_mixer_unit_get_channels(state, d);
++				if (err < 0)
++					return err;
++
++				term->channels = err;
++				term->type = d->bDescriptorSubtype << 16; /* virtual type */
++
++				return 0;
++			}
+ 			default:
+ 				return -ENODEV;
+ 			}
+@@ -1798,11 +1870,10 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid,
+  */
+ static void build_mixer_unit_ctl(struct mixer_build *state,
+ 				 struct uac_mixer_unit_descriptor *desc,
+-				 int in_pin, int in_ch, int unitid,
+-				 struct usb_audio_term *iterm)
++				 int in_pin, int in_ch, int num_outs,
++				 int unitid, struct usb_audio_term *iterm)
+ {
+ 	struct usb_mixer_elem_info *cval;
+-	unsigned int num_outs = uac_mixer_unit_bNrChannels(desc);
+ 	unsigned int i, len;
+ 	struct snd_kcontrol *kctl;
+ 	const struct usbmix_name_map *map;
+@@ -1879,14 +1950,17 @@ static int parse_audio_mixer_unit(struct mixer_build *state, int unitid,
+ 	int input_pins, num_ins, num_outs;
+ 	int pin, ich, err;
+ 
+-	if (desc->bLength < 11 || !(input_pins = desc->bNrInPins) ||
+-	    !(num_outs = uac_mixer_unit_bNrChannels(desc))) {
++	err = uac_mixer_unit_get_channels(state, desc);
++	if (err < 0) {
+ 		usb_audio_err(state->chip,
+ 			      "invalid MIXER UNIT descriptor %d\n",
+ 			      unitid);
+-		return -EINVAL;
++		return err;
+ 	}
+ 
++	num_outs = err;
++	input_pins = desc->bNrInPins;
++
+ 	num_ins = 0;
+ 	ich = 0;
+ 	for (pin = 0; pin < input_pins; pin++) {
+@@ -1913,7 +1987,7 @@ static int parse_audio_mixer_unit(struct mixer_build *state, int unitid,
+ 				}
+ 			}
+ 			if (ich_has_controls)
+-				build_mixer_unit_ctl(state, desc, pin, ich,
++				build_mixer_unit_ctl(state, desc, pin, ich, num_outs,
+ 						     unitid, &iterm);
+ 		}
+ 	}
+-- 
+2.11.0
