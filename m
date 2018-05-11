@@ -1,175 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752710AbeEKIKk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 04:10:40 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:50796 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752663AbeEKIKe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 04:10:34 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180511081032epoutp0130c34873df7e1aa56ec53782a6209ead~tiMYA2Q3y0922009220epoutp01F
-X-AuditID: b6c32a47-bdfff70000001011-7c-5af54ff8eec3
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-To: krzk@kernel.org
-Cc: robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: dts: exynos: Use dedicated DT bindings for Odroid
- X/X2, U3
-Date: Fri, 11 May 2018 10:09:47 +0200
-Message-id: <20180511080947.3057-1-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.14.2
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCmue4P/69RBucWiltsnLGe1WL+kXOs
-        FufPb2C32PT4GqvF5V1z2CxmnN/HZLH2yF12i9a9R9gtDr9pZ3Xg9Ni0qpPNY/OSeo++LasY
-        PT5vkgtgieKySUnNySxLLdK3S+DKOLMqsOCddMXt/jlMDYzd4l2MnBwSAiYSJzesZuli5OIQ
-        EtjBKHGw8SU7hPOdUeLztGtsMFW7Hp5khUjsZpQ49PoaVNUvRom5W14wgVSxCRhK9B7tYwSx
-        RQSEJe4tXQ5WxCzQwCTx78EusCJhgSCJ92fmgtksAqoSK95NYAGxeQWsJL5f2scEsU5e4v2C
-        +4wgzRICX1klrt1bAJVwkVjRP50VwhaWeHV8CzuELS3xbNVGRgi7WqKzrYsdormFUeLPtEtQ
-        T1hLHD5+EayZWYBPouPwX6AiDqA4r0RHmxBEiYfElJ1dUDMdJWZuvAC2V0ggVmLmy6tsExgl
-        FzAyrGIUSy0ozk1PLTYqMNYrTswtLs1L10vOz93ECI5DLfcdjNvO+RxiFOBgVOLhlYj5EiXE
-        mlhWXJl7iFGCg1lJhHffCqAQb0piZVVqUX58UWlOavEhRmkOFiVx3jVKX6OEBNITS1KzU1ML
-        UotgskwcnFINjDN3btPxXnKNo6Dq9mUr81nnnz96sWWDRNjKwiur5Xb/j/4b9kPQ1l9A3GW6
-        4Owbj7+JLeiRMExYHfjTZwb33nkTd8v9UeNQtzh0ZAnjC3d+y7Af7UHq2wQeGFRmGcr5x3eu
-        PL/z3uqa3eEFy5iuMm9YzjtrAs+vB02iMQ4TxdednPO9Joxr2VwlluKMREMt5qLiRADbKF4U
-        vwIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOJMWRmVeSWpSXmKPExsVy+t9jAd3v/l+jDOYsN7PYOGM9q8X8I+dY
-        Lc6f38BusenxNVaLy7vmsFnMOL+PyWLtkbvsFq17j7BbHH7TzurA6bFpVSebx+Yl9R59W1Yx
-        enzeJBfAEsVlk5Kak1mWWqRvl8CVcWZVYME76Yrb/XOYGhi7xbsYOTkkBEwkdj08yQpiCwns
-        ZJTobtftYuQCsn8xSly/t4EZJMEmYCjRe7SPEcQWERCWuLd0OTtIEbNAA5PE20Nf2UASwgIB
-        ErMO32MHsVkEVCVWvJvAAmLzClhJfL+0jwlim7zE+wX3GScwci1gZFjFKJlaUJybnltsVGCU
-        l1quV5yYW1yal66XnJ+7iREYHNsOa/XvYHy8JP4QowAHoxIPb0POlygh1sSy4srcQ4wSHMxK
-        Irz7VgCFeFMSK6tSi/Lji0pzUosPMUpzsCiJ8/LnH4sUEkhPLEnNTk0tSC2CyTJxcEo1MBoc
-        NixLmV3cOD/tGKtqeJBBgPuZaVOfLTAstXY5sF9foHGTQN0UL1cOgTVSAWr2j9/8aJKSlnBu
-        vqLfklf/Qbvh4eKFXywaJsgsiQn79r7TsvPXDKUtSWd3dB84zlIdzLv89utFrJIb3E+msVcd
-        d/+5eobPo1Uz5lX+Tm77eKiZSyO8523xTSWW4oxEQy3mouJEAL8eyWoKAgAA
-X-CMS-MailID: 20180511081032epcas2p30f381cf699cb7524d9a143390e9c74b5
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180511081032epcas2p30f381cf699cb7524d9a143390e9c74b5
-X-RootMTR: 20180511081032epcas2p30f381cf699cb7524d9a143390e9c74b5
-References: <CGME20180511081032epcas2p30f381cf699cb7524d9a143390e9c74b5@epcas2p3.samsung.com>
+        id S1752630AbeEKINF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 04:13:05 -0400
+Received: from foss.arm.com ([217.140.101.70]:37572 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752174AbeEKIND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 04:13:03 -0400
+From: Julien Thierry <julien.thierry@arm.com>
+Subject: Re: [PATCH v2 2/6] arm64: alternative: Apply alternatives early in
+ boot process
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: mark.rutland@arm.com, marc.zyngier@arm.com, james.morse@arm.com,
+        daniel.thompson@linaro.org, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <1516190084-18978-1-git-send-email-julien.thierry@arm.com>
+ <1516190084-18978-3-git-send-email-julien.thierry@arm.com>
+ <c935a9e6-94a0-03cb-eb64-7e2eef8f8d86@arm.com>
+ <7a3afa42-821a-3d4a-3af8-00ba18653a4a@arm.com>
+Message-ID: <d170336d-8af0-893a-acb2-51900c28ade5@arm.com>
+Date: Fri, 11 May 2018 09:12:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <7a3afa42-821a-3d4a-3af8-00ba18653a4a@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use dedicated Odroid audio subsystem DT bindings instead of the simple-card.
-This adds support for audio on the HDMI interface.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 33 ++++++++++++++-----------
- arch/arm/boot/dts/exynos4412-odroidu3.dts       |  7 +++---
- arch/arm/boot/dts/exynos4412-odroidx.dts        |  7 +++---
- 3 files changed, 27 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index d7ad07fd48f9..bad08e70358a 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -37,20 +37,12 @@
- 	};
- 
- 	sound: sound {
--		compatible = "simple-audio-card";
--
--		simple-audio-card,format = "i2s";
--		simple-audio-card,bitclock-master = <&link0_codec>;
--		simple-audio-card,frame-master = <&link0_codec>;
--
--		simple-audio-card,cpu {
-+		cpu {
- 			sound-dai = <&i2s0 0>;
--			system-clock-frequency = <19200000>;
- 		};
- 
--		link0_codec: simple-audio-card,codec {
--			sound-dai = <&max98090>;
--			clocks = <&i2s0 CLK_I2S_CDCLK>;
-+		codec {
-+			sound-dai = <&hdmi>, <&max98090>;
- 		};
- 	};
- 
-@@ -142,14 +134,25 @@
- 	pinctrl-0 = <>;
- };
- 
-+&clock {
-+	assigned-clocks = <&clock CLK_FOUT_EPLL>;
-+	assigned-clock-rates = <45158401>;
-+};
-+
- &clock_audss {
- 	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
- 			<&clock_audss EXYNOS_MOUT_I2S>,
- 			<&clock_audss EXYNOS_DOUT_SRP>,
--			<&clock_audss EXYNOS_DOUT_AUD_BUS>;
-+			<&clock_audss EXYNOS_DOUT_AUD_BUS>,
-+			<&clock_audss EXYNOS_DOUT_I2S>;
-+
- 	assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
--			<&clock_audss EXYNOS_MOUT_AUDSS>;
--	assigned-clock-rates = <0>, <0>, <192000000>, <19200000>;
-+			  <&clock_audss EXYNOS_MOUT_AUDSS>;
-+
-+	assigned-clock-rates = <0>, <0>,
-+			<196608001>,
-+			<(196608001 / 2)>,
-+			<(196608001 / 8)>;
- };
- 
- &cpu0 {
-@@ -498,6 +501,8 @@
- 	pinctrl-0 = <&i2s0_bus>;
- 	pinctrl-names = "default";
- 	status = "okay";
-+	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-+	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
- };
- 
- &mixer {
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index bdcd4523cc1c..7a94a423097d 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -113,11 +113,12 @@
- };
- 
- &sound {
--	simple-audio-card,name = "Odroid-U3";
--	simple-audio-card,widgets =
-+	compatible = "hardkernel,odroid-xu4-audio";
-+	model = "Odroid-U3";
-+	samsung,audio-widgets =
- 		"Headphone", "Headphone Jack",
- 		"Speakers", "Speakers";
--	simple-audio-card,routing =
-+	samsung,audio-routing =
- 		"Headphone Jack", "HPL",
- 		"Headphone Jack", "HPR",
- 		"Headphone Jack", "MICBIAS",
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-index 2dff129bc2ad..f0d5037f3a5d 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-@@ -97,12 +97,13 @@
- };
- 
- &sound {
--	simple-audio-card,name = "Odroid-X";
--	simple-audio-card,widgets =
-+	compatible = "hardkernel,odroid-xu4-audio";
-+	model = "Odroid-X";
-+	samsung,audio-widgets =
- 		"Headphone", "Headphone Jack",
- 		"Microphone", "Mic Jack",
- 		"Microphone", "DMIC";
--	simple-audio-card,routing =
-+	samsung,audio-routing =
- 		"Headphone Jack", "HPL",
- 		"Headphone Jack", "HPR",
- 		"IN1", "Mic Jack",
+On 09/05/18 22:52, Suzuki K Poulose wrote:
+> On 05/04/2018 11:06 AM, Julien Thierry wrote:
+>> Hi,
+>>
+>> In order to prepare the v3 of this patchset, I'd like people's opinion 
+>> on what this patch does. More below.
+>>
+>> On 17/01/18 11:54, Julien Thierry wrote:
+>>> From: Daniel Thompson <daniel.thompson@linaro.org>
+>>>
+>>> Currently alternatives are applied very late in the boot process (and
+>>> a long time after we enable scheduling). Some alternative sequences,
+>>> such as those that alter the way CPU context is stored, must be applied
+>>> much earlier in the boot sequence.
+> 
+>>> +/*
+>>> + * early-apply features are detected using only the boot CPU and 
+>>> checked on
+>>> + * secondary CPUs startup, even then,
+>>> + * These early-apply features should only include features where we 
+>>> must
+>>> + * patch the kernel very early in the boot process.
+>>> + *
+>>> + * Note that the cpufeature logic *must* be made aware of early-apply
+>>> + * features to ensure they are reported as enabled without waiting
+>>> + * for other CPUs to boot.
+>>> + */
+>>> +#define EARLY_APPLY_FEATURE_MASK BIT(ARM64_HAS_SYSREG_GIC_CPUIF)
+>>> +
+>>
+>> Following the change in the cpufeature infrastructure, 
+>> ARM64_HAS_SYSREG_GIC_CPUIF will have the scope 
+>> ARM64_CPUCAP_SCOPE_BOOT_CPU in order to be checked early in the boot 
+>> process.
+> 
+> Thats correct.
+> 
+>>
+>> Now, regarding the early application of alternative, I am wondering 
+>> whether we can apply all the alternatives associated with SCOPE_BOOT 
+>> features that *do not* have a cpu_enable callback.
+>>
+> 
+> I don't understand why would you skip the ones that have a "cpu_enable" 
+> callback. Could you explain this a bit ? Ideally you should be able to
+> apply the alternatives for features with the SCOPE_BOOT, provided the
+> cpu_enable() callback is written properly.
+> 
+
+In my mind the "cpu_enable" callback is the setup a cpu should perform 
+before using the feature (i.e. the code getting patched in by the 
+alternative). So I was worried about the code getting patched by the 
+boot cpu and then have the secondary cpus ending up executing patched 
+code before the cpu_enable for the corresponding feature gets called.
+Or is there a requirement for secondary cpu startup code to be free of 
+alternative code?
+
+> 
+>> Otherwise we can keep the macro to list individually each feature that 
+>> is patchable at boot time as the current patch does (or put this info 
+>> in a flag within the arm64_cpu_capabilities structure)
+> 
+> You may be able to build up the mask of *available* capabilities with 
+> SCOPE_BOOT at boot time by playing some trick in the 
+> setup_boot_cpu_capabilities(), rather than embedding it in the 
+> capabilities (and then parsing the entire table(s)) or manually keeping
+> track of the capabilities by having a separate mask.
+> 
+
+Yes, I like that idea.
+
+Thanks,
+
+> Suzuki
+> 
+>>
+>> Any thoughts or preferences on this?
+>>
+>> Thanks,
+>>
+>>>   #define __ALT_PTR(a,f)        ((void *)&(a)->f + (a)->f)
+>>>   #define ALT_ORIG_PTR(a)        __ALT_PTR(a, orig_offset)
+>>>   #define ALT_REPL_PTR(a)        __ALT_PTR(a, alt_offset)
+>>> @@ -105,7 +117,8 @@ static u32 get_alt_insn(struct alt_instr *alt, 
+>>> __le32 *insnptr, __le32 *altinsnp
+>>>       return insn;
+>>>   }
+>>>
+>>> -static void __apply_alternatives(void *alt_region, bool 
+>>> use_linear_alias)
+>>> +static void __apply_alternatives(void *alt_region,  bool 
+>>> use_linear_alias,
+>>> +                 unsigned long feature_mask)
+>>>   {
+>>>       struct alt_instr *alt;
+>>>       struct alt_region *region = alt_region;
+>>> @@ -115,6 +128,9 @@ static void __apply_alternatives(void 
+>>> *alt_region, bool use_linear_alias)
+>>>           u32 insn;
+>>>           int i, nr_inst;
+>>>
+>>> +        if ((BIT(alt->cpufeature) & feature_mask) == 0)
+>>> +            continue;
+>>> +
+>>>           if (!cpus_have_cap(alt->cpufeature))
+>>>               continue;
+>>>
+>>> @@ -138,6 +154,21 @@ static void __apply_alternatives(void 
+>>> *alt_region, bool use_linear_alias)
+>>>   }
+>>>
+>>>   /*
+>>> + * This is called very early in the boot process (directly after we run
+>>> + * a feature detect on the boot CPU). No need to worry about other CPUs
+>>> + * here.
+>>> + */
+>>> +void apply_alternatives_early(void)
+>>> +{
+>>> +    struct alt_region region = {
+>>> +        .begin    = (struct alt_instr *)__alt_instructions,
+>>> +        .end    = (struct alt_instr *)__alt_instructions_end,
+>>> +    };
+>>> +
+>>> +    __apply_alternatives(&region, true, EARLY_APPLY_FEATURE_MASK);
+>>> +}
+>>> +
+>>> +/*
+>>>    * We might be patching the stop_machine state machine, so implement a
+>>>    * really simple polling protocol here.
+>>>    */
+>>> @@ -156,7 +187,9 @@ static int __apply_alternatives_multi_stop(void 
+>>> *unused)
+>>>           isb();
+>>>       } else {
+>>>           BUG_ON(patched);
+>>> -        __apply_alternatives(&region, true);
+>>> +
+>>> +        __apply_alternatives(&region, true, ~EARLY_APPLY_FEATURE_MASK);
+>>> +
+>>>           /* Barriers provided by the cache flushing */
+>>>           WRITE_ONCE(patched, 1);
+>>>       }
+>>> @@ -177,5 +210,5 @@ void apply_alternatives(void *start, size_t length)
+>>>           .end    = start + length,
+>>>       };
+>>>
+>>> -    __apply_alternatives(&region, false);
+>>> +    __apply_alternatives(&region, false, -1);
+>>>   }
+>>> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+>>> index 551eb07..37361b5 100644
+>>> --- a/arch/arm64/kernel/smp.c
+>>> +++ b/arch/arm64/kernel/smp.c
+>>> @@ -453,6 +453,12 @@ void __init smp_prepare_boot_cpu(void)
+>>>        * cpuinfo_store_boot_cpu() above.
+>>>        */
+>>>       update_cpu_errata_workarounds();
+>>> +    /*
+>>> +     * We now know enough about the boot CPU to apply the
+>>> +     * alternatives that cannot wait until interrupt handling
+>>> +     * and/or scheduling is enabled.
+>>> +     */
+>>> +    apply_alternatives_early();
+>>>   }
+>>>
+>>>   static u64 __init of_get_cpu_mpidr(struct device_node *dn)
+>>> -- 
+>>> 1.9.1
+>>>
+>>
+> 
+
 -- 
-2.14.2
+Julien Thierry
