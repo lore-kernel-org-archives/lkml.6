@@ -1,99 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753037AbeEKNhU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 09:37:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36632 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750758AbeEKNhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 09:37:18 -0400
-Date: Fri, 11 May 2018 09:37:16 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: printk feature for syzbot?
-Message-ID: <20180511093716.18329322@gandalf.local.home>
-In-Reply-To: <20180511095004.GA6575@jagdpanzerIV>
-References: <201805102350.JJH73950.tVJHQLFSOMOOFF@I-love.SAKURA.ne.jp>
-        <20180511014515.GA895@jagdpanzerIV>
-        <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
-        <20180511062151.GA18160@jagdpanzerIV>
-        <CACT4Y+ahAHZa7WGW41rY5TtApU7F9x2jo=iPv8GvjaGZbzMOCQ@mail.gmail.com>
-        <20180511095004.GA6575@jagdpanzerIV>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753188AbeEKNh4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 09:37:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46134 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752977AbeEKNhz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 09:37:55 -0400
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>, Cathy Avery <cavery@redhat.com>,
+        linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>
+Subject: [PATCH RFC v2 0/5] KVM: nVMX: Enlightened VMCS for Hyper-V on KVM
+Date: Fri, 11 May 2018 15:37:46 +0200
+Message-Id: <20180511133751.13414-1-vkuznets@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 May 2018 18:50:04 +0900
-Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+It's been a while since RFCv1 (https://lwn.net/Articles/741846/). After the
+initial submission I decided to implement Enlightened VMCS for KVM on
+Hyper-V first and this is now fully merged. Time to resume this work.
 
-> On (05/11/18 11:17), Dmitry Vyukov wrote:
-> > 
-> > From what I see, it seems that interrupts can be nested:  
-> 
-> Hm, I thought that in general IRQ handlers run with local IRQs
-> disabled on CPU. So, generally, IRQs don't nest. Was I wrong?
-> NMIs can nest, that's true; but I thought that at least IRQs
-> don't.
+This is an initial implementation of Enlightened VMCS for nested Hyper-V on
+KVM. Using it helps to spare 1100 cpu cycles for nested vmexit (tight cpuid
+loop in WS2016 with Hyper-V role on KVM: 15200 cycles -> 14100 cycles).
 
-We normally don't run nested interrupts, although as the comment in
-preempt.h says:
+'RFC' mostly goes to the last patch in the series. Currently, we have
+prepare_vmcs02()/prepare_vmcs02_full() split which is only valid for Shadow
+VMCS. Enlightened VMCS has 'clean fields' idea and I'm having hard times
+incorporating it. The simplest way is implemented in the patch: we just
+wrap groups of vmwrites with 'if (!hv_evmcs||evmcs_needs_write(vmx, ...))'
+checks. This works and doesn't give much overhead for non-eVMCS case 
+(compared to e.g. wrapping each vmwrite with such check) but this is not
+flexible and ugly. In case we'll need to implement additional ideas later
+(eVMCSv2 when it comes, something similar for KVM-on-KVM,...) it will be
+really hard. So.. looking forward to your ideas!
 
- * The hardirq count could in theory be the same as the number of
- * interrupts in the system, but we run all interrupt handlers with
- * interrupts disabled, so we cannot have nesting interrupts. Though
- * there are a few palaeontologic drivers which reenable interrupts in
- * the handler, so we need more than one bit here.
+Ladi Prosek (1):
+  KVM: hyperv: define VP assist page helpers
 
-And no, NMI handlers do not nest. Yes, we deal with nested NMIs, but in
-those cases, we just set a bit as a latch, and return, and when the
-first NMI is complete, it checks that bit and if it is set, it executes
-another NMI handler.
+Vitaly Kuznetsov (4):
+  KVM: nVMX: add KVM_CAP_HYPERV_ENLIGHTENED_VMCS capability
+  KVM: nVMX: add enlightened VMCS state
+  KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR
+  KVM: nVMX: optimize prepare_vmcs02{,_full} for Enlightened VMCS case
 
-> 
-> > https://syzkaller.appspot.com/bug?id=72eddef9cedcf81486adb9dd3e789f0d77505ba5
-> > https://syzkaller.appspot.com/bug?id=66fcf61c65f8aa50bbb862eb2fde27c08909a4ff
-> > 
-> > Will this in_nmi()/in_irq()/in_serving_softirq()/else be enough to
-> > untangle output printed by such nested interrupts?  
-> 
-> Well, hm. __irq_enter() does preempt_count_add(HARDIRQ_OFFSET) and
-> __irq_exit() does preempt_count_sub(HARDIRQ_OFFSET). So, technically,
-> you can store
-> 
-> 	preempt_count() & HARDIRQ_MASK
-> 	preempt_count() & SOFTIRQ_MASK
-> 	preempt_count() & NMI_MASK
-> 
-> in that extended context tracking. The numbers will not tell you
-> the IRQ line number, for instance, but at least you'll be able to
-> distinguish different hard/soft IRQs, NMIs. Just an idea, I didn't
-> check it, may be it won't work at all.
-> 
-> Ideally, the serial log should be like this
-> 
-> 	i:1 ... foo()
-> 	i:1 ... bar()
-> 	i:2 ... foo()  // __irq_enter()
-> 	i:2 ... bar()
-> 	i:2 ... buz()  // __irq_exit()
-> 	i:1 ... buz()
-> 
-> but I may be completely wrong.
-> 
-> Petr and Steven probably will have better ideas.
+ arch/x86/include/asm/kvm_host.h |   3 +
+ arch/x86/kvm/hyperv.c           |  23 +-
+ arch/x86/kvm/hyperv.h           |   4 +
+ arch/x86/kvm/lapic.c            |   4 +-
+ arch/x86/kvm/lapic.h            |   2 +-
+ arch/x86/kvm/svm.c              |   9 +
+ arch/x86/kvm/vmx.c              | 807 +++++++++++++++++++++++++++++++++-------
+ arch/x86/kvm/x86.c              |  17 +-
+ include/uapi/linux/kvm.h        |   1 +
+ 9 files changed, 728 insertions(+), 142 deletions(-)
 
-I handle nesting of different contexts in the ftrace ring buffer using
-the preempt count. See trace_recursive_lock/unlock() in
-kernel/trace/ring_buffer.c.
-
--- Steve
+-- 
+2.14.3
