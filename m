@@ -1,99 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752437AbeEKHOG convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 03:14:06 -0400
-Received: from mout.gmx.net ([212.227.15.18]:41849 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750858AbeEKHOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 03:14:05 -0400
-Message-ID: <1526022830.6288.3.camel@gmx.de>
-Subject: Re: kernel spew from nouveau/ swiotlb
-From: Mike Galbraith <efault@gmx.de>
-To: nouveau <nouveau@lists.freedesktop.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Roger He <Hongbo.He@amd.com>, Christoph Hellwig <hch@lst.de>
-Date: Fri, 11 May 2018 09:13:50 +0200
-In-Reply-To: <1525948096.29445.4.camel@gmx.de>
-References: <1525943427.8013.11.camel@gmx.de>
-         <1525948096.29445.4.camel@gmx.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:TfLmtzf/9EXSGYv41bUv4Ek8hktFDG8uMQyCKDrNSyZ0sSpMYKH
- EwcB3JCUW/XDqyzsXgFxjvNF9F3GSiISX/LVBA0KjppeirzMa974PYu7LCgzcGLykL7cNXh
- qXm0XIquWRLhZsoc0lKB+/TOeYWpzR1xtpuHokYaa9Fj0KPIKwOMS7lA9WAXaCFGSrPaUwB
- Zfya1pnDSl0S+olC2DDig==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:bcFGEiCjmqM=:TDB2jK160VoRw7rIsTLYo2
- Zn5UduA7haiGji74NE7A3g5QojIQO4GbsGKOLhDew4J8gwXzJnXABM0ZI8KtmWO1eX2AGTp+n
- dsjcJX0f2Ev8PwKy3a3qsT5ZG8PbGnPuN4Vp76GZqSnTuv3Ig9qlKMLq2yjF5rl3daFTJqQeX
- HX5vtrT/R7JXW1Kovrty9KuNv9HNzVFGjk/BGNPtrI7bU3RJkttODVCZNwjHOgtKe8lLsN9vS
- WiWOoFxRXb3jHwc2LrAJV/XiCBTXkb9y7mlN9RUWJQMrpgKg/nwxhOB/ymzyMCkwG11z80vy/
- rCxy4S9jx2li81B7QRkXB3zBYaFZtR8nG76aKIejGN2nvjNQAaWuRm7+k/Voz0sg2Xkzod0ZL
- JyuJejCXB7gqJI4ax0Qbcxc1EDzkomu4ihxAJ8kHp3xLqDKofKXJIkkFwUIUzGJXaKEAp8fCa
- QDM2npryHRi1H/ZZE5fmsqf0dvHCZG4slh+GfQMkU0jEWiMVQJ0okLKvkYp0mzAv8zzhZtJR1
- xTOOBnoyNcBfcx/Z+UEwD8QbkX+QVjzQK1Y1IeQ95ihhCZ0sxKtxxTHQfu5tVoJlS8oGyZTOq
- aq63/f7TALioakOvOug6ug4KWQ9QcpcxZ7cTgOrypHdeIS/nHM2ljKYYbXYbDia/zD5Ws5mbQ
- KGt786Y9KDUccThNpyrnP5eK7LzXGynQ3jDDOTFue87tXbIysXZVsMtFpNS/OmrIHx4BAWblc
- oLGhcTrYENLFJDRPWt0QuAgWuLX0bEsmGstqqQzVy6fv1jWPUElrscHB9ljL43PvAHd+Ltj8n
- PP5Preu
+        id S1752565AbeEKHOt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 03:14:49 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:35524 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752514AbeEKHOr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 03:14:47 -0400
+X-Google-Smtp-Source: AB8JxZpKnNFusyIYmQJDQDpBDmiMcAF/keGYt8oFMnDXaDoXyfjoNlwt4pZ00tlIkawlGNnsB7zK+3DVKcqwVS+EoK0=
+MIME-Version: 1.0
+X-Originating-IP: [62.219.136.235]
+In-Reply-To: <1526021972.6192.7.camel@abdul>
+References: <1526021972.6192.7.camel@abdul>
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Date: Fri, 11 May 2018 10:14:45 +0300
+Message-ID: <CAOtvUMd4RGVmkahgFY0L0pWKautxs8qXZXkXx-tAtsNaSB0TPg@mail.gmail.com>
+Subject: Re: [next-20180509][bisected a794d8d] ppc boot warnings at crypto/testmgr.c:3720
+To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-next <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, mpe <mpe@ellerman.id>,
+        sachinp <sachinp@linux.vnet.ibm.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-10 at 12:28 +0200, Mike Galbraith wrote:
-> On Thu, 2018-05-10 at 11:10 +0200, Mike Galbraith wrote:
-> > Greetings,
-> > 
-> > When box is earning its keep, nouveau/swiotlb grumble.. a LOT.  The
-> > below is from master.today.
-> > 
-> > [12594.640959] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-> > [12594.693000] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-> > [12594.713787] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-> > [12594.743413] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-> > [12594.796740] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-> > [12607.000774] swiotlb_tbl_map_single: 54 callbacks suppressed
-> > [12607.000776] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-> > [12607.347941] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-> > [12608.677038] nouveau 0000:01:00.0: swiotlb buffer is full (sz: 2097152 bytes)
-> > homer:/novell/ssh # dmesg|grep 'swiotlb buffer is full'|wc -l
-> > 2052
-> > homer:/novell/ssh # dmesg|grep 'callbacks suppressed'|wc -l
-> > 171
-> > 
-> > lib/swiotlb.c:
-> >  573 not_found:
-> >  574         spin_unlock_irqrestore(&io_tlb_lock, flags);
-> >  575         if (!(attrs & DMA_ATTR_NO_WARN) && printk_ratelimit())
-> >  576                 dev_warn(hwdev, "swiotlb buffer is full (sz: %zd bytes)\n", size);
-> > 
-> > Does nouveau perhaps want one of those DMA_ATTR_NO_WARN thingies?
-> 
-> Or should ttm perhaps always use the one on hand?  (seems to work)
+On Fri, May 11, 2018 at 9:59 AM, Abdul Haleem
+<abdhalee@linux.vnet.ibm.com> wrote:
+> Greeting's
+>
+> Today's next kernel on powerpc machine has boot warnings with commit
+>
+> a794d8d : crypto: ccree - enable support for hardware keys
 
-No it didn't, I just didn't wait long enough for spew to start...
+Adding the crypto list and maintainer as it came in via the crypto tree.
 
-> ---
->  drivers/gpu/drm/ttm/ttm_page_alloc_dma.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-> +++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-> @@ -342,7 +342,7 @@ static struct dma_page *__ttm_dma_alloc_
->  	if (!d_page)
->  		return NULL;
->  
-> -	if (pool->type & IS_HUGE)
-> +	if (1 || pool->type & IS_HUGE)
->  		attrs = DMA_ATTR_NO_WARN;
->  
->  	vaddr = dma_alloc_attrs(pool->dev, pool->size, &d_page->dma,
+>
+> Warning disappears when above commit is reverted.
+>
+> Machine Type: Power8 PowerVM LPAR
+> kernel : 4.17.0-rc4-next-20180509
+> config: attached.
+> test: kexec boot
+>
+> trace logs:
+> -----------
+> Initialise system trusted keyrings
+> workingset: timestamp_bits=38 max_order=18 bucket_order=0
+> zbud: loaded
+> pstore: using deflate compression
+> WARNING: CPU: 6 PID: 109 at crypto/testmgr.c:3720 alg_test.part.6+0xd4/0x460
+> Modules linked in:
+> CPU: 6 PID: 109 Comm: cryptomgr_test Not tainted 4.17.0-rc4-next-20180509-autotest-00002-g0244ae7 #2
+> NIP:  c0000000004a60f4 LR: c0000000004a60e4 CTR: c0000000004a0200
+> REGS: c000000289acb9d0 TRAP: 0700   Not tainted  (4.17.0-rc4-next-20180509-autotest-00002-g0244ae7)
+> MSR:  8000000000029033 <SF,EE,ME,IR,DR,RI,LE>  CR: 24000484  XER: 20000000
+> CFAR: c0000000009b9110 SOFTE: 0
+> GPR00: c0000000004a0260 c000000289acbc50 c00000000115df00 0000000000000001
+> GPR04: c000000000c13e64 000000000000000d 0000000000000400 0000000000000000
+> GPR08: 0000000000000000 0000000000000001 000000000000006b 0000000000000000
+> GPR12: 0000000000000000 c00000000eca7800 c000000000128918 c0000002812a3600
+> GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> GPR20: 0000000000000000 c000000000c13560 c000000288c29880 0000000000000400
+> GPR24: c000000288c29800 000000000000000d c000000000c135a8 c000000000a1db38
+> GPR28: c000000000c13128 c000000000c13e60 c000000000a1c788 0000000000000001
+> NIP [c0000000004a60f4] alg_test.part.6+0xd4/0x460
+> LR [c0000000004a60e4] alg_test.part.6+0xc4/0x460
+> Call Trace:
+> [c000000289acbc50] [c000000289acbcc0] 0xc000000289acbcc0 (unreliable)
+> [c000000289acbd90] [c0000000004a0260] cryptomgr_test+0x60/0x80
+> [c000000289acbdc0] [c000000000128a68] kthread+0x158/0x1a0
+> [c000000289acbe30] [c00000000000b628] ret_from_kernel_thread+0x5c/0xb4
+> Instruction dump:
+> 3b5a56a8 48000024 60000000 eb9effc8 ebbe0000 7f83e378 7fa4eb78 48513001
+> 60000000 7c7f1b78 7d3f00d0 79290fe0 <0b090000> 2f9f0000 419d013c 7fe90034
+> ---[ end trace f8ddd7633e720997 ]---
+> testmgr: alg_test_descs entries in wrong order: 'ecb(paes)' before 'ecb(khazad)'
+>
 
-While IS_HUGE is indeed false on my box, it just doesn't matter,
-because when we get to either the old or the new alloc(), it calls
-swiotlb_alloc_buffer(), which drops attrs passed to it on the floor,
-making it unlikely that alloc() caller wishes are granted.
+Oouch! this is is my bad. I've changed the cipher name (from haes to
+paes) based on review feedback
+but forgot that the cipher test names are alphabetically ordered.
 
-	-Mike
+I wonder why I didn't see this myself as I'm 100% sure booted this fix
+on 2 different platforms.
+
+Maybe because Khazad was not enabled in my test setup and I guess
+there are no other cipher starting in I, L,M,N,O ?
+
+Fix coming up shortly. Sorry about this.
+
+Gilad
+
+
+
+-- 
+Gilad Ben-Yossef
+Chief Coffee Drinker
+
+"If you take a class in large-scale robotics, can you end up in a
+situation where the homework eats your dog?"
+ -- Jean-Baptiste Queru
