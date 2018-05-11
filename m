@@ -1,93 +1,92 @@
-Return-Path: <rjwysocki@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526459095; cv=none;
+Return-Path: <jeremy.linton@arm.com>
+X-Google-Smtp-Source: AB8JxZqySN4k4K2XrZQg/B4E5So59zYD9ACaDBlHbxs5IzCI+kpLMn/mrU5FzoRotDFBFl2IIUOQ
+ARC-Seal: i=1; a=rsa-sha256; t=1526083147; cv=none;
         d=google.com; s=arc-20160816;
-        b=GEIs4hf/mbg15rFTRGYnbOyqs6ybgM2gJFBtR4+NRyua1MtToDTDH1oqPMDTblV/8z
-         jwsKXe1EB3ZI60vkRVvg46Xd7JzfVm5ea5uZ4wZ27HUNFzq8jlm4Z1tBwdBu1+UzVyhG
-         djFGmlboyk81Ww4dW/8hdOcvMAJlK80H2sFs4GFEhYYDe8h5vOaE4U4f2oKxR/PBSEj6
-         I882bJ/iasqh+WA8y9O2s8hXhnd3Jl/1s8oKQRh8Ah+aVeQIIyPSuAIH5lYdDvWPewOG
-         Z/qzlOMmckEXkXnvokJuGf4+gPVSylS7rI2oopfSgIwv7a5FYcli4vcUEvAuZ4/oBEz1
-         BhfA==
+        b=rP88khO+F7eUyEQwdNKpz8Tf500VKBM2J1jxuuRzCdxlTvIwlqYj1z/eA5grBL+tPi
+         CcS11iSzJaIzRs+wyegaoRCmzaccYj+aDiKZ7PoOjaEwlB7eksuVAfiw0LzaS9iH4TN9
+         hFR7yYN3fBj0YUmlG2u/bC228oYbV5JcFaCjbG3fPTzW7OAzwL59dY1vBpTw6j+s0H4Y
+         bw56PqSuQOIXiaMskPbAiyJyV29p6nVb2P356T0lgluXRtlWaBdfMj/bagewMqeT37VM
+         uxeQhWgwC4JqYZOhuSDTMinG+Wf0nrDbkofT/jJ1hccIkknEsax/z6XFw05YKCeTNJqj
+         8D5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=5HTdC3vrAWvcW0B8TLcR5QNYLyYOGQIsMv1pVaegYTc=;
-        b=MDMJsfnxV/L6tDx1y4i4VLlIutxtWlmjjbltThiNr5Kqt7Bmh7B2meXVChWT1Jc8xB
-         883bZIIyZc/vfDa9N7+zb69Cbs2J0it+ImryRM4RpCP+yz9UqiE2I+qjXetXw0HS5NZZ
-         hohiy+mIuUCYtu7h6przO2rC01qPa/NftNWk7F1aX5cs+TJR2OaT5g8IbFrVm2LfEpNJ
-         0LeVySOTkWs9AZQcWQANzZpgoYpV0dbxIBSICU1/9qTF7XSypIPcgjdTFbpMo+VDQpCp
-         B+RVGgmMVPnsgnCdXZhD+1vlI4gZFuUPsa2RIQJwQsS7lWGaJNt7GBJv6QYlN42FrGBc
-         oGaQ==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=KI88hQ+QtJXnQyQQNDXeocUR3hLl7Wk3Kxs0n5iJEF4=;
+        b=1IcQxJYbtyqfKw//0OE9Sdcu65FPixzIA8DLtP8MMKQZNrcNw3BI8u4HPEWxITq0/c
+         jxjkWTXWsLqmvcfwX7A/uFIsGSE9970J8lfiPRqdBEKu0u3mZBWpL+8h//rEz8+xy5T2
+         di+iYcI/3a1JRmYw04CdDYYfFVJlRX03r7VIQfK/nYeDhq1KLm1yh3RF46m6ud/TCpDd
+         a46d32nFk8nknus27tkDh+O36f222BjBPwxXkC1Bxss3hJDL/sk6XrJnTiVmwSz9KeMI
+         z2qQ8q/oRPlvxyLqGyszrFXaQ1NaAD5n5cyw9w36Jo8S0Bk3cuK7k9Y7Sdh/IxBGI3z+
+         Ck8A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=trSuaeBe;
-       spf=pass (google.com: domain of rjwysocki@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rjwysocki@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=trSuaeBe;
-       spf=pass (google.com: domain of rjwysocki@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rjwysocki@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-X-Google-Smtp-Source: AB8JxZpZ0yBZJNE3hXftCNF9iFG0gNTGJ6aVQGL8CxQ0gXT5V2wjyOje82cy5BCuWKtasizxJCBFgojhR9QehrEaQ8o=
-MIME-Version: 1.0
-Sender: rjwysocki@gmail.com
-In-Reply-To: <7cefb087-f41a-0a73-ef77-b560d338be4b@arm.com>
-References: <20180511235807.30834-1-jeremy.linton@arm.com> <20180511235807.30834-6-jeremy.linton@arm.com>
- <CAJZ5v0h4OeTaG2h0Q1c8zX93tici_nfLftpEyKWSkXoztHuUDg@mail.gmail.com> <7cefb087-f41a-0a73-ef77-b560d338be4b@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 16 May 2018 10:24:54 +0200
-X-Google-Sender-Auth: _DaS3sCrvVFCrP0t70737kxvWqc
-Message-ID: <CAJZ5v0jE4JJbcK-BiFg_JVf00JZCvbMFRnrkTdJTOwz0vW_ZMg@mail.gmail.com>
-Subject: Re: [PATCH v9 05/12] ACPI/PPTT: Add Processor Properties Topology
- Table parsing
-To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-	Sudeep Holla <Sudeep.Holla@arm.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Hanjun Guo <hanjun.guo@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Will Deacon <Will.Deacon@arm.com>,
-	Catalin Marinas <Catalin.Marinas@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <Mark.Rutland@arm.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-riscv@lists.infradead.org,
-	wangxiongfeng2@huawei.com, vkilari@codeaurora.org, Al Stone <ahs3@redhat.com>,
-	Dietmar Eggemann <Dietmar.Eggemann@arm.com>, Morten Rasmussen <Morten.Rasmussen@arm.com>, palmer@sifive.com,
-	Len Brown <lenb@kernel.org>, John Garry <john.garry@huawei.com>, austinwc@codeaurora.org,
-	tnowicki@caviumnetworks.com, jhugo@codeaurora.org,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+       spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
+From: Jeremy Linton <jeremy.linton@arm.com>
+To: linux-acpi@vger.kernel.org
+Cc: Sudeep.Holla@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	Lorenzo.Pieralisi@arm.com,
+	hanjun.guo@linaro.org,
+	rjw@rjwysocki.net,
+	Will.Deacon@arm.com,
+	Catalin.Marinas@arm.com,
+	gregkh@linuxfoundation.org,
+	Mark.Rutland@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	wangxiongfeng2@huawei.com,
+	vkilari@codeaurora.org,
+	ahs3@redhat.com,
+	Dietmar.Eggemann@arm.com,
+	Morten.Rasmussen@arm.com,
+	palmer@sifive.com,
+	lenb@kernel.org,
+	john.garry@huawei.com,
+	austinwc@codeaurora.org,
+	tnowicki@caviumnetworks.com,
+	jhugo@codeaurora.org,
+	ard.biesheuvel@linaro.org,
+	Jeremy Linton <jeremy.linton@arm.com>
+Subject: [PATCH v9 04/12] arm64/acpi: Create arch specific cpu to acpi id helper
+Date: Fri, 11 May 2018 18:57:59 -0500
+Message-Id: <20180511235807.30834-5-jeremy.linton@arm.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180511235807.30834-1-jeremy.linton@arm.com>
+References: <20180511235807.30834-1-jeremy.linton@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600214162685472859?=
-X-GMAIL-MSGID: =?utf-8?q?1600608372519483261?=
+X-GMAIL-THRID: =?utf-8?q?1600214161845271552?=
+X-GMAIL-MSGID: =?utf-8?q?1600214161845271552?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 15, 2018 at 11:42 PM, Jeremy Linton <jeremy.linton@arm.com> wrote:
-> Hi,
->
->
-> On 05/12/2018 05:09 AM, Rafael J. Wysocki wrote:
->>
->> On Sat, May 12, 2018 at 1:58 AM, Jeremy Linton <jeremy.linton@arm.com>
->> wrote:
->>>
+Its helpful to be able to lookup the acpi_processor_id associated
+with a logical cpu. Provide an arm64 helper to do this.
 
-[cut]
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Tested-by: Vijaya Kumar K <vkilari@codeaurora.org>
+Tested-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Tested-by: Tomasz Nowicki <Tomasz.Nowicki@cavium.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ arch/arm64/include/asm/acpi.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
->>
->>
->> I don't think you really need the explicit type cast here and above,
->> but that's very minor.
->>
->>> +}
->>
->>
->> Please feel free to add
->>
->> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>
->> to the patch and route it through the arch tree as needed.
->
->
-> Thanks for looking at this (and the ack of course)!
->
-> As an FYI, the in my build without the type cast, the
-> -Werror=incompatible-pointer-types (sourced from the root Makefile) triggers
-> an error.
-
-Fair enough.
+diff --git a/arch/arm64/include/asm/acpi.h b/arch/arm64/include/asm/acpi.h
+index 32f465a80e4e..0db62a4cbce2 100644
+--- a/arch/arm64/include/asm/acpi.h
++++ b/arch/arm64/include/asm/acpi.h
+@@ -86,6 +86,10 @@ static inline bool acpi_has_cpu_in_madt(void)
+ }
+ 
+ struct acpi_madt_generic_interrupt *acpi_cpu_get_madt_gicc(int cpu);
++static inline u32 get_acpi_id_for_cpu(unsigned int cpu)
++{
++	return	acpi_cpu_get_madt_gicc(cpu)->uid;
++}
+ 
+ static inline void arch_fix_phys_package_id(int num, u32 slot) { }
+ void __init acpi_init_cpus(void);
+-- 
+2.13.6
