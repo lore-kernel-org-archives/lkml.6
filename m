@@ -1,89 +1,128 @@
-Return-Path: <bgoswami@codeaurora.org>
-X-Google-Smtp-Source: AB8JxZrgKeHR6U9sWCImLTucb1FLhkms1QyoDK+2NGAZChLERjXDS4mJYwA55Xednt/nMOOIzcYd
-ARC-Seal: i=1; a=rsa-sha256; t=1525391117; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZoOD0cxZibrcrwSOGX+K2eOJnA7wNvbkKZtc2wzMx7TIGscWTbUzB3wksDgu01pANdXk6ly
+ARC-Seal: i=1; a=rsa-sha256; t=1526008641; cv=none;
         d=google.com; s=arc-20160816;
-        b=Jh6nxs5zLWIiGRiQoObOD5wKW6/kiRvjio5jp3bOF7jgFajIW9n4TG7rNV4j5qsO9p
-         kAR7xSkJ68Pd9EkXWODWLtmwvwPPzqYZSaCQ+mAzLaEq5kBJ9bDIgVugmCP7NEzarBg3
-         9jaox6j+ok74Yl6rrl7682vpvC5uHG+HGVSK8XbIE69uW+NXCgfOviOqWRpbRiS+xynd
-         2N7/h32rYB3HJJfhL2IU80sahh3uR9H67eSy57oD7ApbYR9c0zhj4CR9L+ezLc1CiF69
-         OeIOu7J5SIGi09uVVKbgGr0t9X9UaaAgp9FrAe/k949A5CeaPB1agIYGt9L69kiychBS
-         secw==
+        b=uGrytcmtaPo38gECDv12kyGSMpZUDriMoaIdMTVjuUG2b9Q16hcwy/8xH45vPtjGHY
+         2QvIi/ScfSMDrNx7O2R0uS/5WoY6kgRo9FNwmzRsdeeaoz1z63E7Kxq6NJLfnDYDwEKR
+         XzLz6ibiap0SlHXZ2gO2AM6jI8VfUjfhBJgXUU8mnGXmd8WKlyyjWkiim8IrArU2rwBr
+         KjNJbrE0906jE9EP3wPFjCAeaKQDqvBUI+MLMyjJqlEX1Bsp+QDGsoKdV5+l8vZqfyaa
+         YuphY7z6fmMf9L0SZP6zP3lIVfm3hf7i79KNwth5HLHumwdhC02oieN2qPqZZDKLx8h5
+         7wwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dmarc-filter:dkim-signature:dkim-signature
+        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=P9NCS9/wni19xE7bQ5eJG1GQoPsOWkRyasS+YZg6NAo=;
-        b=uyAnrbosIflctcUWEMWvpSEE/r1GOnEVj0r8gbmvLWl0dVyn6LazzDcvYRNAk7zfF2
-         YO08uEaHeakfAUtpJ/Gi9fmaljOiS0koa9VFwdn7WsPaNtJBMv/G73f9nQtSTgvxDzy5
-         KXDPZfhxR805uFfqhT3exTkG6EfGnMITbwglOcOWk62O4TJtDHXj43plJ8XwzWRdqBOc
-         0of8o+dnp6Vp416uYc5jShrXpN/4EyIYjAqP2CXKtH6m/IncIEH7YdQBNtH0q0JJhRkx
-         ERsagRwbAJGDeSvCUyckqCzTggq5FUgBXCdih/OxzlFAfakmuDbnZh8AHZ2CggGuEppO
-         Dqgw==
+        bh=WGQ13cMLMO9YupYtNm2910y7/Ath/XXke1fr6g3OkQ0=;
+        b=zEZXNdIbgPiQOk7axUNxP301rxsRcfOKaIsbmhGTd9vq16c3ZR0pBlopDf1mqDrtNf
+         LPxaP+XpEUvNaEKiBQvhlNoYMe8fTFaMErU2JDKur6sj+sEkh27wIYBMY060AZqpQURt
+         u0CMMMQrAKe2glVmbvAJYogJDMLpxmqnaf5Sncz0Frc9fwqeZmlrwRZT0M561iMC193h
+         JF1RlEfKv4PakdbOLiLG753lK6DCLN/AnMP/WLVJ2r1U5UjW9qd3JzD/wQGbarfD2XyZ
+         HqfE0U11cMJLrGn37zBMz49rbYFmTKMqUViX7jV7qE0YFUwXb2HQc636BrT0MFVVPyI7
+         NQ4A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=GZwWXvB0;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=GZwWXvB0;
-       spf=pass (google.com: domain of bgoswami@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=bgoswami@codeaurora.org
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=RetknoEL;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=GZwWXvB0;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=GZwWXvB0;
-       spf=pass (google.com: domain of bgoswami@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=bgoswami@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5E9EF601A8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgoswami@codeaurora.org
-Subject: Re: [PATCH v7 03/24] ASoC: qdsp6: dt-bindings: Add q6core dt bindings
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- andy.gross@linaro.org, broonie@kernel.org, linux-arm-msm@vger.kernel.org,
- alsa-devel@alsa-project.org, robh+dt@kernel.org
-Cc: gregkh@linuxfoundation.org, david.brown@linaro.org, mark.rutland@arm.com,
- lgirdwood@gmail.com, plai@codeaurora.org, tiwai@suse.com, perex@perex.cz,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
- spatakok@qti.qualcomm.com
-References: <20180501120820.11016-1-srinivas.kandagatla@linaro.org>
- <20180501120820.11016-4-srinivas.kandagatla@linaro.org>
-From: Banajit Goswami <bgoswami@codeaurora.org>
-Message-ID: <88da0352-d5f9-8c02-9dbf-ec4667d66271@codeaurora.org>
-Date: Thu, 3 May 2018 16:45:14 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180501120820.11016-4-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=RetknoEL;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: Mark Brown <broonie@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>, andy.gross@linaro.org, broonie@kernel.org, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org, robh+dt@kernel.org, bgoswami@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, rohkumar@qti.qualcomm.com, gregkh@linuxfoundation.org, plai@codeaurora.org, tiwai@suse.com, lgirdwood@gmail.com, david.brown@linaro.org, linux-arm-kernel@lists.infradead.org, spatakok@qti.qualcomm.com, linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qdsp6: dt-bindings: Add q6adm dt bindings" to the asoc tree
+In-Reply-To: <20180426094606.4775-6-srinivas.kandagatla@linaro.org>
+Message-Id: <20180511031709.A3A1344007A@finisterre.ee.mobilebroadband>
+Date: Fri, 11 May 2018 04:17:09 +0100 (BST)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599263609248976088?=
-X-GMAIL-MSGID: =?utf-8?q?1599488516069543705?=
+X-GMAIL-THRID: =?utf-8?q?1600136037796609487?=
+X-GMAIL-MSGID: =?utf-8?q?1600136037796609487?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+The patch
 
+   ASoC: qdsp6: dt-bindings: Add q6adm dt bindings
 
-On 5/1/2018 5:07 AM, Srinivas Kandagatla wrote:
-> This patch add DT bindings for Q6CORE DSP module.
->
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->   .../devicetree/bindings/sound/qcom,q6core.txt       | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6core.txt
->
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,q6core.txt b/Documentation/devicetree/bindings/sound/qcom,q6core.txt
-> new file mode 100644
-> index 000000000000..bd14e9a93490
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/qcom,q6core.txt
-> @@ -0,0 +1,21 @@
-> +Qualcomm ADSP Core service binding
-> +
-> +Q6CORE is one of the APR audio service on Q6DSP.
-> +Please refer to qcom,apr.txt for details of the coommon apr service bindings
-Correct "coommon" to "common". Otherwise looks good.
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 364b8768182abc40603dca05cbe2bea0a0a851a0 Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Wed, 9 May 2018 13:56:16 +0100
+Subject: [PATCH] ASoC: qdsp6: dt-bindings: Add q6adm dt bindings
+
+This patch add DT bindings for ADM (Audio Device Manager) DSP module.
+This module implements mixer controls to setup the connections between
+AFE ports and ASM streams.
+
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../devicetree/bindings/sound/qcom,q6adm.txt  | 33 +++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6adm.txt
 
+diff --git a/Documentation/devicetree/bindings/sound/qcom,q6adm.txt b/Documentation/devicetree/bindings/sound/qcom,q6adm.txt
+new file mode 100644
+index 000000000000..cb709e5dbc44
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/qcom,q6adm.txt
+@@ -0,0 +1,33 @@
++Qualcomm Audio Device Manager (Q6ADM) binding
++
++Q6ADM is one of the APR audio service on Q6DSP.
++Please refer to qcom,apr.txt for details of the coommon apr service bindings
++used by the apr service device.
++
++- but must contain the following property:
++
++- compatible:
++	Usage: required
++	Value type: <stringlist>
++	Definition: must be "qcom,q6adm-v<MAJOR-NUMBER>.<MINOR-NUMBER>".
++		   Or "qcom,q6adm" where the version number can be queried
++		   from DSP.
++		   example "qcom,q6adm-v2.0"
++
++
++= ADM routing
++"routing" subnode of the ADM node represents adm routing specific configuration
++
++- #sound-dai-cells
++	Usage: required
++	Value type: <u32>
++	Definition: Must be 0
++
++= EXAMPLE
++q6adm@8 {
++	compatible = "qcom,q6adm";
++	reg = <APR_SVC_ADM>;
++	q6routing: routing {
++		#sound-dai-cells = <0>;
++	};
++};
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.17.0
