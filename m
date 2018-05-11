@@ -1,22 +1,23 @@
 Return-Path: <jeremy.linton@arm.com>
-X-Google-Smtp-Source: AB8JxZp9KJHzi9hFosaMg6XcBXVWJXj5EdcqPEEvXdwycjLWkjz6koYGjRK5FmYXKgMsEJDDXYxC
-ARC-Seal: i=1; a=rsa-sha256; t=1526083132; cv=none;
+X-Google-Smtp-Source: AB8JxZptPrZwPGy/gWyY7Vq6wmPrMnxD2x8Tvmp9AYWRgvrJ0v3u7UlZ2An0B/s5LgX+2LBBH7/4
+ARC-Seal: i=1; a=rsa-sha256; t=1526083143; cv=none;
         d=google.com; s=arc-20160816;
-        b=zwXvG8EEyOvPj7O3JAHQCmSQ00E3KazucpQNWn5WSUw+OBGu9HyGWYE/2+Sfq3fVEm
-         WXvhwMnxQxzcbmzY8SSHzq0WWw6CBWrWWoqua011g4C1msWOSYDmxhSq6K6brLsuKKFO
-         LkOu0mY3m7H89vd4sYTNqtW+8TLw7ekIpAnSr6YczXOlU9eJIGfoLxJpXI18y2Vx4HmL
-         jr0sQZEWQ44AB9ooEWWL3/MLNw5iZRy5OZyOfUFegnn8LNyofRbNmbGCigsi0vFBgWmG
-         1ZYF5VviFbDTaQgRyUQdnsvZY7702Mja7vaT3APcAXCJ/yvPYfeLBx5CqCbWNgs/kUxO
-         wNmg==
+        b=r1wRkkx0PKozNhniMqrAxZsyGu2NfUxC83KYj4g7hXkBNt3cJLRLFzSkMEdM3HmKPo
+         cizTaO4Lkkbp9F6a7dzBqnmoQMXmGDucSMSPmp+44MkCJ6IIDN7MpuSeWL3SFYpQDhuF
+         z4Ai+MXNMzX4g50PEWDu7RMHIeFuHV5UXjfloC5orA7ORa1VWq0Q5TVUPhpIFGhbwTHX
+         GeHACR0bHGWGkArN+hWhI5i9RswApHxsEF6TA66ENTo0WeSmqV2xbnZR9ELhpQL9Fa/h
+         eThZ9zYW9m4q8QohlyUZi6BbzIQePH2S5Xh23UzDcZe+fgWcup+VmEr84oUmVqxffNuz
+         qS6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=fL10GeYpzNDlH8MD1JvzN8eUClsNmjKm+4ey6E8aoCM=;
-        b=EFHazSNoCugrqFrveVF/ZZkwD/bYWjvTVArbFCNfUxsssZJw12rrLkHri+Jw0ebnNr
-         w58u4hhH2kNbOb1jW20xus5bibpkZz6w+/ns6lNaK6MVnA9HHWSLebNLmZdr8n1llmvr
-         N8UiZTLIC0MLfig9nZ98LNQ/fHb8vKKqpv/eEuHQspw+Ywo/SevUE+UdjoVeJGAy7Q9n
-         tPHgeNLkhouIi8fMEAqq1Dshsk3aTz6wZ4tHVbx8tH3g05b/PGI1uY2Olb0SeoB0pBtH
-         rW+DgFccpMKSf0ge/afw8SVgDn4CnzGJkMgsrpj4pR256mWlHh5ktqTFX8FLJTv+hlxC
-         yNmw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=lBjOA8OBvY9azKDxEg/k4XoX9hlgZPPdQWANBtB8xWs=;
+        b=kDImTroC/Ex/BIInEDIhog/VWlp8Ej+GCG9j9kIEItV5Y08z5uRpKbkJDFZiBS2WFa
+         fWtsKmQ3CODLAGRDL48Yb/sCGNhLRhxU8rCCUps6301og8mDPg0+/Lr3Lk7gcBmVRdC/
+         MJEwI8DcJV8eJvMs9Ak0OMvFN5iJFl5b4LeK+V28qjlf/Rch/8FNKhu/tshSErwNxeS8
+         jUqL6mLVqyYzbLy75wwTzuXKFlHxXWGtc4VEjTZzC6PXxFI2/NIgpjIzypg6uB4RGlaU
+         QZKqufjPb3ScQ7kfZ6cKs65bYQBIR+4iuIkpERGvEKhLUssCSqRwPptmdttGQm4ccFFh
+         T2jg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
 Authentication-Results: mx.google.com;
@@ -47,106 +48,215 @@ Cc: Sudeep.Holla@arm.com,
 	jhugo@codeaurora.org,
 	ard.biesheuvel@linaro.org,
 	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v9 00/12] Support PPTT for ARM64
-Date: Fri, 11 May 2018 18:57:55 -0500
-Message-Id: <20180511235807.30834-1-jeremy.linton@arm.com>
+Subject: [PATCH v9 02/12] drivers: base: cacheinfo: setup DT cache properties early
+Date: Fri, 11 May 2018 18:57:57 -0500
+Message-Id: <20180511235807.30834-3-jeremy.linton@arm.com>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180511235807.30834-1-jeremy.linton@arm.com>
+References: <20180511235807.30834-1-jeremy.linton@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600214146814792437?=
-X-GMAIL-MSGID: =?utf-8?q?1600214146814792437?=
+X-GMAIL-THRID: =?utf-8?q?1600214158032002659?=
+X-GMAIL-MSGID: =?utf-8?q?1600214158032002659?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-ACPI 6.2 adds the Processor Properties Topology Table (PPTT), which is
-used to describe the processor and cache topology. Ideally it is
-used to extend/override information provided by the hardware, but
-right now ARM64 is entirely dependent on firmware provided tables.
+The original intent in cacheinfo was that an architecture
+specific populate_cache_leaves() would probe the hardware
+and then cache_shared_cpu_map_setup() and
+cache_override_properties() would provide firmware help to
+extend/expand upon what was probed. Arm64 was really
+the only architecture that was working this way, and
+with the removal of most of the hardware probing logic it
+became clear that it was possible to simplify the logic a bit.
 
-This patch parses the table for the cache topology and CPU topology.
-When we enable ACPI/PPTT for arm64 we map the package_id to the
-PPTT node flagged as the physical package by the firmware.
-This results in topologies that match what the remainder of the
-system expects. Finally, we update the scheduler MC domain so that
-it generally reflects the LLC unless the LLC is too large for the
-NUMA domain (or package).
+This patch combines the walk of the DT nodes with the
+code updating the cache size/line_size and nr_sets.
+cache_override_properties() (which was DT specific) is
+then removed. The result is that cacheinfo.of_node is
+no longer used as a temporary place to hold DT references
+for future calls that update cache properties. That change
+helps to clarify its one remaining use (matching
+cacheinfo nodes that represent shared caches) which
+will be used by the ACPI/PPTT code in the following patches.
 
-For example on juno:
-[root@mammon-juno-rh topology]# lstopo-no-graphics
-  Package L#0
-    L2 L#0 (1024KB)
-      L1d L#0 (32KB) + L1i L#0 (32KB) + Core L#0 + PU L#0 (P#0)
-      L1d L#1 (32KB) + L1i L#1 (32KB) + Core L#1 + PU L#1 (P#1)
-      L1d L#2 (32KB) + L1i L#2 (32KB) + Core L#2 + PU L#2 (P#2)
-      L1d L#3 (32KB) + L1i L#3 (32KB) + Core L#3 + PU L#3 (P#3)
-    L2 L#1 (2048KB)
-      L1d L#4 (32KB) + L1i L#4 (48KB) + Core L#4 + PU L#4 (P#4)
-      L1d L#5 (32KB) + L1i L#5 (48KB) + Core L#5 + PU L#5 (P#5)
-  HostBridge L#0
-    PCIBridge
-      PCIBridge
-        PCIBridge
-          PCI 1095:3132
-            Block(Disk) L#0 "sda"
-        PCIBridge
-          PCI 1002:68f9
-            GPU L#1 "renderD128"
-            GPU L#2 "card0"
-            GPU L#3 "controlD64"
-        PCIBridge
-          PCI 11ab:4380
-            Net L#4 "enp8s0"
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Tested-by: Vijaya Kumar K <vkilari@codeaurora.org>
+Tested-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Tested-by: Tomasz Nowicki <Tomasz.Nowicki@cavium.com>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ arch/riscv/kernel/cacheinfo.c |  1 -
+ drivers/base/cacheinfo.c      | 65 +++++++++++++++++++------------------------
+ 2 files changed, 29 insertions(+), 37 deletions(-)
 
-Git tree at:
-http://linux-arm.org/git?p=linux-jlinton.git
-branch: pptt_v9
-
-v8->v9:
- Add further ack/tested by's (thanks everyone)
- kerneldoc, general comment and patch description tweaks.
- Squash the pptt.c module (#5 & #13) back together.
- remove a redundant () in an if, and rename a variable.
-
-v7->v8:
- Modify the logic used to select the MC domain (the change
-   shouldn't modify the sched domains on any existing machines
-   compared to v7, only how they are built)
- Reduce the severity of some parsing messages.
- Fix s390 link problem.
- Further checks to deal with broken PPTT tables.
- Various style tweaks, SPDX license addition, etc.
-
-(see previous cover letters for further changes)
-
-
-Jeremy Linton (12):
-  drivers: base: cacheinfo: move cache_setup_of_node()
-  drivers: base: cacheinfo: setup DT cache properties early
-  cacheinfo: rename of_node to fw_token
-  arm64/acpi: Create arch specific cpu to acpi id helper
-  ACPI/PPTT: Add Processor Properties Topology Table parsing
-  ACPI: Enable PPTT support on ARM64
-  drivers: base cacheinfo: Add support for ACPI based firmware tables
-  arm64: Add support for ACPI based firmware tables
-  arm64: topology: rename cluster_id
-  arm64: topology: enable ACPI/PPTT based CPU topology
-  ACPI: Add PPTT to injectable table list
-  arm64: topology: divorce MC scheduling domain from core_siblings
-
- arch/arm64/Kconfig                |   1 +
- arch/arm64/include/asm/acpi.h     |   4 +
- arch/arm64/include/asm/topology.h |   6 +-
- arch/arm64/kernel/cacheinfo.c     |  15 +-
- arch/arm64/kernel/topology.c      | 107 ++++++-
- arch/riscv/kernel/cacheinfo.c     |   1 -
- drivers/acpi/Kconfig              |   3 +
- drivers/acpi/Makefile             |   1 +
- drivers/acpi/pptt.c               | 655 ++++++++++++++++++++++++++++++++++++++
- drivers/acpi/tables.c             |   2 +-
- drivers/base/cacheinfo.c          | 157 ++++-----
- include/linux/acpi.h              |   4 +
- include/linux/cacheinfo.h         |  25 +-
- 13 files changed, 874 insertions(+), 107 deletions(-)
- create mode 100644 drivers/acpi/pptt.c
-
+diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
+index 10ed2749e246..0bc86e5f8f3f 100644
+--- a/arch/riscv/kernel/cacheinfo.c
++++ b/arch/riscv/kernel/cacheinfo.c
+@@ -20,7 +20,6 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
+ 			 struct device_node *node,
+ 			 enum cache_type type, unsigned int level)
+ {
+-	this_leaf->of_node = node;
+ 	this_leaf->level = level;
+ 	this_leaf->type = type;
+ 	/* not a sector cache */
+diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+index 09ccef7ddc99..a872523e8951 100644
+--- a/drivers/base/cacheinfo.c
++++ b/drivers/base/cacheinfo.c
+@@ -71,7 +71,7 @@ static inline int get_cacheinfo_idx(enum cache_type type)
+ 	return type;
+ }
+ 
+-static void cache_size(struct cacheinfo *this_leaf)
++static void cache_size(struct cacheinfo *this_leaf, struct device_node *np)
+ {
+ 	const char *propname;
+ 	const __be32 *cache_size;
+@@ -80,13 +80,14 @@ static void cache_size(struct cacheinfo *this_leaf)
+ 	ct_idx = get_cacheinfo_idx(this_leaf->type);
+ 	propname = cache_type_info[ct_idx].size_prop;
+ 
+-	cache_size = of_get_property(this_leaf->of_node, propname, NULL);
++	cache_size = of_get_property(np, propname, NULL);
+ 	if (cache_size)
+ 		this_leaf->size = of_read_number(cache_size, 1);
+ }
+ 
+ /* not cache_line_size() because that's a macro in include/linux/cache.h */
+-static void cache_get_line_size(struct cacheinfo *this_leaf)
++static void cache_get_line_size(struct cacheinfo *this_leaf,
++				struct device_node *np)
+ {
+ 	const __be32 *line_size;
+ 	int i, lim, ct_idx;
+@@ -98,7 +99,7 @@ static void cache_get_line_size(struct cacheinfo *this_leaf)
+ 		const char *propname;
+ 
+ 		propname = cache_type_info[ct_idx].line_size_props[i];
+-		line_size = of_get_property(this_leaf->of_node, propname, NULL);
++		line_size = of_get_property(np, propname, NULL);
+ 		if (line_size)
+ 			break;
+ 	}
+@@ -107,7 +108,7 @@ static void cache_get_line_size(struct cacheinfo *this_leaf)
+ 		this_leaf->coherency_line_size = of_read_number(line_size, 1);
+ }
+ 
+-static void cache_nr_sets(struct cacheinfo *this_leaf)
++static void cache_nr_sets(struct cacheinfo *this_leaf, struct device_node *np)
+ {
+ 	const char *propname;
+ 	const __be32 *nr_sets;
+@@ -116,7 +117,7 @@ static void cache_nr_sets(struct cacheinfo *this_leaf)
+ 	ct_idx = get_cacheinfo_idx(this_leaf->type);
+ 	propname = cache_type_info[ct_idx].nr_sets_prop;
+ 
+-	nr_sets = of_get_property(this_leaf->of_node, propname, NULL);
++	nr_sets = of_get_property(np, propname, NULL);
+ 	if (nr_sets)
+ 		this_leaf->number_of_sets = of_read_number(nr_sets, 1);
+ }
+@@ -135,32 +136,27 @@ static void cache_associativity(struct cacheinfo *this_leaf)
+ 		this_leaf->ways_of_associativity = (size / nr_sets) / line_size;
+ }
+ 
+-static bool cache_node_is_unified(struct cacheinfo *this_leaf)
++static bool cache_node_is_unified(struct cacheinfo *this_leaf,
++				  struct device_node *np)
+ {
+-	return of_property_read_bool(this_leaf->of_node, "cache-unified");
++	return of_property_read_bool(np, "cache-unified");
+ }
+ 
+-static void cache_of_override_properties(unsigned int cpu)
++static void cache_of_set_props(struct cacheinfo *this_leaf,
++			       struct device_node *np)
+ {
+-	int index;
+-	struct cacheinfo *this_leaf;
+-	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+-
+-	for (index = 0; index < cache_leaves(cpu); index++) {
+-		this_leaf = this_cpu_ci->info_list + index;
+-		/*
+-		 * init_cache_level must setup the cache level correctly
+-		 * overriding the architecturally specified levels, so
+-		 * if type is NONE at this stage, it should be unified
+-		 */
+-		if (this_leaf->type == CACHE_TYPE_NOCACHE &&
+-		    cache_node_is_unified(this_leaf))
+-			this_leaf->type = CACHE_TYPE_UNIFIED;
+-		cache_size(this_leaf);
+-		cache_get_line_size(this_leaf);
+-		cache_nr_sets(this_leaf);
+-		cache_associativity(this_leaf);
+-	}
++	/*
++	 * init_cache_level must setup the cache level correctly
++	 * overriding the architecturally specified levels, so
++	 * if type is NONE at this stage, it should be unified
++	 */
++	if (this_leaf->type == CACHE_TYPE_NOCACHE &&
++	    cache_node_is_unified(this_leaf, np))
++		this_leaf->type = CACHE_TYPE_UNIFIED;
++	cache_size(this_leaf, np);
++	cache_get_line_size(this_leaf, np);
++	cache_nr_sets(this_leaf, np);
++	cache_associativity(this_leaf);
+ }
+ 
+ static int cache_setup_of_node(unsigned int cpu)
+@@ -193,6 +189,7 @@ static int cache_setup_of_node(unsigned int cpu)
+ 			np = of_node_get(np);/* cpu node itself */
+ 		if (!np)
+ 			break;
++		cache_of_set_props(this_leaf, np);
+ 		this_leaf->of_node = np;
+ 		index++;
+ 	}
+@@ -203,7 +200,6 @@ static int cache_setup_of_node(unsigned int cpu)
+ 	return 0;
+ }
+ #else
+-static void cache_of_override_properties(unsigned int cpu) { }
+ static inline int cache_setup_of_node(unsigned int cpu) { return 0; }
+ static inline bool cache_leaves_are_shared(struct cacheinfo *this_leaf,
+ 					   struct cacheinfo *sib_leaf)
+@@ -286,12 +282,6 @@ static void cache_shared_cpu_map_remove(unsigned int cpu)
+ 	}
+ }
+ 
+-static void cache_override_properties(unsigned int cpu)
+-{
+-	if (of_have_populated_dt())
+-		return cache_of_override_properties(cpu);
+-}
+-
+ static void free_cache_attributes(unsigned int cpu)
+ {
+ 	if (!per_cpu_cacheinfo(cpu))
+@@ -325,6 +315,10 @@ static int detect_cache_attributes(unsigned int cpu)
+ 	if (per_cpu_cacheinfo(cpu) == NULL)
+ 		return -ENOMEM;
+ 
++	/*
++	 * populate_cache_leaves() may completely setup the cache leaves and
++	 * shared_cpu_map or it may leave it partially setup.
++	 */
+ 	ret = populate_cache_leaves(cpu);
+ 	if (ret)
+ 		goto free_ci;
+@@ -338,7 +332,6 @@ static int detect_cache_attributes(unsigned int cpu)
+ 		goto free_ci;
+ 	}
+ 
+-	cache_override_properties(cpu);
+ 	return 0;
+ 
+ free_ci:
 -- 
 2.13.6
