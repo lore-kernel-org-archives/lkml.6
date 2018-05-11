@@ -1,66 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752687AbeEKIQs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 04:16:48 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34057 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752476AbeEKIQq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 04:16:46 -0400
-X-Google-Smtp-Source: AB8JxZogDPMFAdi1Gz5tINUovtPH6Gbp9+JQt0r3QSvd3FjI7c1MBosWpcLIAJ/R7MqiVMZvwdP0nQ==
-Date: Fri, 11 May 2018 10:16:43 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@osg.samsung.com>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] net: Add new LoRaWAN subsystem
-Message-ID: <20180511081643.GA1869@nanopsycho>
-References: <CAC=mGzijVyqEG=DXH4v9WkD0kXR2WOJC4KBPzoT7g5wqVrPGXA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAC=mGzijVyqEG=DXH4v9WkD0kXR2WOJC4KBPzoT7g5wqVrPGXA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1752686AbeEKIUT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 04:20:19 -0400
+Received: from mga09.intel.com ([134.134.136.24]:8561 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750852AbeEKIUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 04:20:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,387,1520924400";
+   d="scan'208";a="55002595"
+From: changbin.du@intel.com
+To: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org
+Cc: rostedt@goodmis.org, rdunlap@infradead.org, x86@kernel.org,
+        lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, Changbin Du <changbin.du@intel.com>
+Subject: [PATCH v5 1/4] x86/mm: surround level4_kernel_pgt with #ifdef CONFIG_X86_5LEVEL...#endif
+Date: Fri, 11 May 2018 16:09:44 +0800
+Message-Id: <1526026187-11782-2-git-send-email-changbin.du@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526026187-11782-1-git-send-email-changbin.du@intel.com>
+References: <1526026187-11782-1-git-send-email-changbin.du@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tue, May 08, 2018 at 05:33:01PM CEST, starnight@g.ncu.edu.tw wrote:
->A Low-Power Wide-Area Network (LPWAN) is a type of wireless
->telecommunication wide area network designed to allow long range
->communications at a low bit rate among things (connected objects), such
->as sensors operated on a battery.  It can be used widely in IoT area.
->LoRaWAN, which is one kind of implementation of LPWAN, is a medium
->access control (MAC) layer protocol for managing communication between
->LPWAN gateways and end-node devices, maintained by the LoRa Alliance.
->LoRaWAN™ Specification could be downloaded at:
->https://lora-alliance.org/lorawan-for-developers
->
->However, LoRaWAN is not implemented in Linux kernel right now, so I am
->trying to develop it.  Here is my repository:
->https://github.com/starnight/LoRa/tree/lorawan-ndo/LoRaWAN
+From: Changbin Du <changbin.du@intel.com>
 
-Link to some out-of-tree module is not enough.
-If you want anyone to look at this and comment, you need to base your
-work on top of kernel git (net-next for example) and send a patch/patchset.
+The level4_kernel_pgt is only defined when X86_5LEVEL is enabled. So
+surround level4_kernel_pgt with #ifdef CONFIG_X86_5LEVEL...#endif to
+make code correct.
 
+Signed-off-by: Changbin Du <changbin.du@intel.com>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ arch/x86/include/asm/pgtable_64.h |  2 ++
+ arch/x86/kernel/head64.c          | 13 ++++++-------
+ 2 files changed, 8 insertions(+), 7 deletions(-)
 
->
->Because it is a kind of network, the ideal usage in an user space
->program should be like "socket(PF_LORAWAN, SOCK_DGRAM, 0)" and with
->other socket APIs.  Therefore, the definitions like AF_LORAWAN,
->PF_LORAWAN ..., must be listed in the header files of glibc.
->For the driver in kernel space, the definitions also must be listed in
->the corresponding Linux socket header files.
->Especially, both are for the testing programs.
->
->Back to the mentioned "LoRaWAN is not implemented in Linux kernel now".
->Could or should we add the definitions into corresponding kernel header
->files now, if LoRaWAN will be accepted as a subsystem in Linux?
->
->Thanks,
->Jian-Hong Pan
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 877bc27..9e7f667 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -15,7 +15,9 @@
+ #include <linux/bitops.h>
+ #include <linux/threads.h>
+ 
++#ifdef CONFIG_X86_5LEVEL
+ extern p4d_t level4_kernel_pgt[512];
++#endif
+ extern p4d_t level4_ident_pgt[512];
+ extern pud_t level3_kernel_pgt[512];
+ extern pud_t level3_ident_pgt[512];
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 0c408f8..775d7a6 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -143,16 +143,15 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 
+ 	pgd = fixup_pointer(&early_top_pgt, physaddr);
+ 	p = pgd + pgd_index(__START_KERNEL_map);
+-	if (la57)
+-		*p = (unsigned long)level4_kernel_pgt;
+-	else
+-		*p = (unsigned long)level3_kernel_pgt;
+-	*p += _PAGE_TABLE_NOENC - __START_KERNEL_map + load_delta;
+-
++#ifdef CONFIG_X86_5LEVEL
+ 	if (la57) {
++		*p = (unsigned long)level4_kernel_pgt;
+ 		p4d = fixup_pointer(&level4_kernel_pgt, physaddr);
+ 		p4d[511] += load_delta;
+-	}
++	} else
++#endif
++		*p = (unsigned long)level3_kernel_pgt;
++	*p += _PAGE_TABLE_NOENC - __START_KERNEL_map + load_delta;
+ 
+ 	pud = fixup_pointer(&level3_kernel_pgt, physaddr);
+ 	pud[510] += load_delta;
+-- 
+2.7.4
