@@ -1,113 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeEKBYp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 21:24:45 -0400
-Received: from mga18.intel.com ([134.134.136.126]:53085 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750798AbeEKBYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 21:24:43 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,387,1520924400";
-   d="scan'208";a="198427354"
-From: "Dey, Megha" <megha.dey@intel.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>
-Subject: RE: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
- support
-Thread-Topic: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
- support
-Thread-Index: AQHTiaT71VA7Q5Or9ESQdIw+yX/ir6N6FLYAgFlFdnuAMogJgIABiP2AgABwaXCAAKKQgIAI0PhwgAKZVoCACDnDsIAJDTaAgAVJM2A=
-Date: Fri, 11 May 2018 01:24:42 +0000
-Message-ID: <C440BA31B54DCD4AAC682D2365C8FEE738C60300@ORSMSX111.amr.corp.intel.com>
-References: <20180118113905.GA19904@gondor.apana.org.au>
- <1516322661.2526.3.camel@megha-Z97X-UD7-TH>
- <20180316145351.GA6231@gondor.apana.org.au>
- <C440BA31B54DCD4AAC682D2365C8FEE738C13267@ORSMSX111.amr.corp.intel.com>
- <20180418110115.v2w3o5yfv4u3gc4r@gondor.apana.org.au>
- <C440BA31B54DCD4AAC682D2365C8FEE738C13DDE@ORSMSX111.amr.corp.intel.com>
- <20180419032525.6csodbz6lrksyudd@gondor.apana.org.au>
- <C440BA31B54DCD4AAC682D2365C8FEE738C270FC@ORSMSX111.amr.corp.intel.com>
- <20180426094445.4jiwondmtbenepo2@gondor.apana.org.au>
- <C440BA31B54DCD4AAC682D2365C8FEE738C4291E@ORSMSX111.amr.corp.intel.com>
- <20180507093511.jscgnk436e3ba4un@gondor.apana.org.au>
-In-Reply-To: <20180507093511.jscgnk436e3ba4un@gondor.apana.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzE5NjA3NDMtNDdmZS00ODM5LWI0YjItNDMyN2I4MWRkMmZiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6Im5ocm9vTUU5cUxvTEs1T0t4WHZGdFVnVzAyNnVLMFN5MlNVZGRneStJUVk9In0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1751955AbeEKB2D (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 21:28:03 -0400
+Received: from smtp-proxy004.phy.lolipop.jp ([157.7.104.45]:35613 "EHLO
+        smtp-proxy004.phy.lolipop.jp" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750830AbeEKB2C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 21:28:02 -0400
+Subject: Re: [PATCH v5 00/13] ALSA: hda/ca0132: Patch Series for Recon3Di and
+ Sound Blaster Z Support
+To: Connor McAdams <conmanx360@gmail.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        =?UTF-8?Q?J=c3=a9r=c3=a9my_Lefaure?= <jeremy.lefaure@lse.epita.fr>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <1525800015-2920-1-git-send-email-conmanx360@gmail.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Message-ID: <95282579-08c1-bf71-e303-9fa8efb1873f@sakamocchi.jp>
+Date: Fri, 11 May 2018 10:27:59 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <1525800015-2920-1-git-send-email-conmanx360@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+On May 9 2018 02:20, Connor McAdams wrote:
+> This patchset adds support for the Sound Blaster Z and the Recon3Di.
+> 
+> In order to figure out how to get these cards to work, I made a program called
+> QemuHDADump[1], which uses the trace function of qemu to see interactions with
+> the memory mapped pci BAR space of the card being used in the virtual machine.
+> With this, I obtain the CORB buffer location to get the command verbs, and then
+> dump them each time the buffer rolls over. This program may be useful for fixing
+> other HDA related driver issues where there is no documentation for the device.
+> 
+> So far, I have been able to get all features supported on the Sound Blaster Z
+> and the Recon3Di. All output and input effects work, all inputs and outputs
+> work, and just about anything else I can think of. I have also added new
+> controls in order to select the new inputs and outputs, as well as controls to
+> change the effect levels and presets.
+> 
+> I have also added the ability to use firmware taken from the Windows drivers of
+> both the Sound Blaster Z and Recon3Di. I am trying to get into contact with
+> Creative to get permission to redistribute these along with the current
+> file included with the Chromebook, but they have not been very responsive.
+> Luckily, the cards work with the Chromebook firmware just fine, although I
+> believe there has to be a reason they have different firmware in Windows. I
+> will not link to the firmwares here, but if you look up my thread on Creative
+> Labs forums, you will find the link to download the firmwares there.
+> 
+> I am willing to help get the other non-working cards such as the ZxR and the
+> newer AE-5 working too, but I will need someone willing to run QemuHDADump in a
+> virtual machine in order to get the commands.
+> 
+> So, in summary:
+> -This patchset makes the cards work better than they did before (they really
+>   didn't work before)
+> 
+> -This patchset leaves the original chromebook related stuff alone.
+> 
+> Thanks.
+> 
+> [1] https://github.com/Conmanx360/QemuHDADump
+> 
+> Bugs:
+> -------------------------------------------------------------------------------
+> Recon3Di: (Reported by Mariusz Ceier)
+> *******************
+> -Occasionally switching between rear and front mic breaks the input until
+>   computer is shutdown or put to sleep.
+> 
+> -Surround Sound works, but is inconsistent. Sometimes, just updating the volume
+>   fixes it, and sometimes, it requires a restart.
+> 
+> Sound Blaster Z:
+> *******************
+> -none that I'm aware of.
+> 
+> 
+> Version changes:
+> -------------------------------------------------------------------------------
+> v1:
+> *******************
+> -Massive patch formatting failure, please ignore v1.
+> 
+> v2:
+> *******************
+> -Fixed patch formatting failure.
+> 
+> v3:
+> *******************
+> -Fixed mem_base unmap, instead of checking for QUIRK_SBZ on exit, have it check
+>   if the area is mapped, and if it is, unmap it. Also make it unmap after all
+>   other commands are finished.
+> 
+> -Change notification of failure to map mem_base from codec_dbg to codec_warn,
+>   and use codec_info to tell the user that their card might have been incorrectly
+>   identified as a Sound Blaster Z.
+> 
+> -Remove commented out commands in sbz_exit_chip function, only reintroduce them
+>   when their functions are defined.
+> 
+> v4:
+> *******************
+> -Split patch into smaller pieces.
+> 
+> -Added const to alt_out_presets array.
+> 
+> -Fixed command that was commented out and only put it in when
+>   it was actually used.
+> 
+> v5:
+> *******************
+> -Fixed issue identified by kbuild test robot, where patch 12 didn't compile
+>   individually.
+> 
+> Connor McAdams (13):
+>    ALSA: hda/ca0132: R3Di and SBZ quirk entires + alt firmware loading
+>    ALSA: hda/ca0132: Add pincfg for SBZ + R3Di, add fp hp auto-detect
+>    ALSA: hda/ca0132: Add PCI region2 iomap for SBZ
+>    ALSA: hda/ca0132: Add extra exit functions for R3Di and SBZ
+>    ALSA: hda/ca0132: add extra init functions for r3di + sbz
+>    ALSA: hda/ca0132: update core functions for sbz + r3di
+>    ALSA: hda/ca0132: add dsp setup related commands for the sbz
+>    ALSA: hda/ca0132: Add dsp setup + gpio functions for r3di
+>    ALSA: hda/ca0132: add the ability to set src_id on scp commands
+>    ALSA: hda/ca0132: add alt_select_in/out for R3Di + SBZ
+>    ALSA: hda/ca0132: Add DSP Volume set and New mixers for SBZ + R3Di
+>    ALSA: hda/ca0132: add ca0132_alt_set_vipsource
+>    ALSA: hda/ca0132: Add new control changes for SBZ + R3Di
+> 
+>   sound/pci/hda/patch_ca0132.c | 3057 ++++++++++++++++++++++++++++++++++++++++--
+>   1 file changed, 2941 insertions(+), 116 deletions(-)
+
+I reviewed the above patches.
+
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+
+There're some points to improve such like read-only memory objects, and 
+I'll post some patches for them after merging this patchset.
 
 
->-----Original Message-----
->From: Herbert Xu [mailto:herbert@gondor.apana.org.au]
->Sent: Monday, May 7, 2018 2:35 AM
->To: Dey, Megha <megha.dey@intel.com>
->Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org;
->davem@davemloft.net
->Subject: Re: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
->support
->
->On Tue, May 01, 2018 at 10:39:15PM +0000, Dey, Megha wrote:
->>
->> crypto/simd.c provides a simd_skcipher_create_compat. I have used the
->> same template to introduce simd_ahash_create_compat which would wrap
->around the inner hash algorithm.
->>
->> Hence we would still register 2 algs, outer and inner.
->
->Right.
->
->> Currently we have outer_alg -> mcryptd alg -> inner_alg
->>
->> Mcryptd is mainly providing the following:
->> 1. Ensuring the lanes(8 in case of AVX2) are full before dispatching to the
->lower inner algorithm. This is obviously why we would expect better
->performance for multi-buffer as opposed to the present single-buffer
->algorithms.
->> 2. If there no new incoming jobs, issue a flush.
->> 3. A glue layer which sends the correct pointers and completions.
->>
->> If we get rid of mcryptd, these functions needs to be done by someone. Since
->all multi-buffer algorithms would require this tasks, where do you suggest these
->helpers live, if not the current mcryptd.c?
->
->That's the issue.  I don't think mcryptd is doing any of these claimed functions
->except for hosting the flush helper which could really live anywhere.
->
->All these functions are actually being carried out in the inner algorithm already.
->
->> I am not sure if you are suggesting that we need to get rid of the mcryptd
->work queue itself. In that case, we would need to execute in the context of the
->job requesting the crypto transformation.
->
->Which is fine as long as you can disable the FPU.  If not the simd wrapper will
->defer the job to kthread context as required.
+Thanks
 
-Hi Herbert,
-
-Are you suggesting that the SIMD wrapper, will do what is currently being done by the ' mcryptd_queue_worker ' function (assuming FPU is not disabled) i.e dispatching the job to the inner algorithm?
-
-I have got rid of the mcryptd layer( have an inner layer, outer SIMD layer, handled the pointers and completions accordingly), but still facing some issues after removing the per cpu mcryptd_cpu_queue.
- 
->
->Cheers,
->--
->Email: Herbert Xu <herbert@gondor.apana.org.au> Home Page:
->http://gondor.apana.org.au/~herbert/
->PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Takashi Sakamoto
