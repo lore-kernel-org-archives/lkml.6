@@ -1,74 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751904AbeEKSvn (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 14:51:43 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:27106 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751705AbeEKSvm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 14:51:42 -0400
-Subject: Re: [PATCH v3] net: phy: DP83TC811: Introduce support for the
- DP83TC811 phy
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <f.fainelli@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20180511180819.5036-1-dmurphy@ti.com>
- <20180511183006.GB12738@lunn.ch>
-From: Dan Murphy <dmurphy@ti.com>
-Message-ID: <56ca63ce-d609-5bb7-f38c-17d875496bd5@ti.com>
-Date: Fri, 11 May 2018 13:51:28 -0500
+        id S1751847AbeEKSyT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 14:54:19 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43217 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751373AbeEKSyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 14:54:16 -0400
+Subject: Re: [PATCH] x86: pad assembly functions with INT3
+To: David Laight <David.Laight@ACULAB.COM>,
+        "'Alexey Dobriyan'" <adobriyan@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+References: <20180507213755.GA32406@avx2>
+ <20fb84fd5eef4c45b2d38d0290235d5d@AcuMS.aculab.com>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <5c6762fe-5cbe-42ed-ac4e-a7144b8ef7ad@zytor.com>
+Date: Fri, 11 May 2018 11:53:40 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180511183006.GB12738@lunn.ch>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20fb84fd5eef4c45b2d38d0290235d5d@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew
-
-On 05/11/2018 01:30 PM, Andrew Lunn wrote:
-> On Fri, May 11, 2018 at 01:08:19PM -0500, Dan Murphy wrote:
->> Add support for the DP83811 phy.
+On 05/10/18 09:39, David Laight wrote:
+> From: Alexey Dobriyan
+>> Sent: 07 May 2018 22:38
 >>
->> The DP83811 supports both rgmii and sgmii interfaces.
->> There are 2 part numbers for this the DP83TC811R does not
->> reliably support the SGMII interface but the DP83TC811S will.
+>> Use INT3 instead of NOP. All that padding between functions is
+>> an illegal area, no legitimate code should jump into it.
 >>
->> There is not a way to differentiate these parts from the
->> hardware or register set.  So this is controlled via the DT
->> to indicate which phy mode is required.  Or the part can be
->> strapped to a certain interface.
->>
->> Data sheet can be found here:
->> http://www.ti.com/product/DP83TC811S-Q1/description
->> http://www.ti.com/product/DP83TC811R-Q1/description
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> I've checked x86_64 allyesconfig disassembly, all changes looks sane:
+>> INT3 is only used after RET or unconditional JMP.
 > 
-> Hi Dan
+> I thought there was a performance penalty (on at least some cpu)
+> depending on the number of and the actual instructions used for padding.
 > 
-> It is normal to add any Reviewed-by, or Tested-by: tags you received,
-> so long as you don't make major changes.
+> I believe that is why gcc generates a small number of very long 'nop'
+> instructions when padding code.
 > 
 
-Thanks for the reminder.
+There is a performance penalty for using NOP instructions *in the
+fallthrough case.*  In the case where the padding is never supposed to
+be executed, which is what we're talking about here, it is irrelevant.
 
-I usually add them if I get them explicitly stated in the review.
+I thought I had filed a gcc enhancement request, but I can't find it
+now, so I just filed this:
 
-I have not seen any Reviewed-by or Tested-by tags in any of the replies for the
-patch.  But I may have missed it.
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85751
 
-Dan
-
->     Andrew
-> 
-
-
--- 
-------------------
-Dan Murphy
+	-hpa
