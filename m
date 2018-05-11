@@ -1,121 +1,157 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526036971; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1526036970; cv=none;
         d=google.com; s=arc-20160816;
-        b=ebzPgfxO84aeeHkCqrztqjoC0nOU4xTpQVVsBa8fJIAWjpYYMjomeQaRbUI4LJAmWX
-         nPRUK29RLAMBcrXADOkeyEr6EQ1eVz6Y+iie+jj/fWi0e55ilEUqxU3GUQzaNgJkrNYh
-         mriITiJj0rpx7kBmqFd9H1ZgxwUdF+uR90dfVdj/8LXX4J6aWcyn7vpYhsyuurRNaLW5
-         NW72PyDDHzKU+CP6IvEIxVwBJc9aruNSWUT0rgvjIqJIROg+cvDy6RP8iAuoy6nXq/GT
-         k8FyvYLQv+sn3n32DyDIeX1ph1mdGSxq//0SCE0us3X59B3J94ttGrX3ic6PvJz/Vi5d
-         XDFQ==
+        b=uF7oyOxZLp8ofG1UUv/+tAcSS5zRdEQ23HhCDRr3hfwbNlAQXQW4/Fy4rvijiemLG5
+         0OhFACTZnIviHg515HSlNgdsWwWgq8NgOe7SNrRWgL7S6iCs+aKX9u78xiQrcWzWuq08
+         XO/j/+DA556UEz7V0GpSMVpqWnSHlhdbQJGZAAFAXbvU2UkcbBxOdvz9MrC/aqbPNxxT
+         6AI+QyV5sAni5yUGqTsRwa+GAnLWT9dYI2QWXlpCIdjqc1ZPDGcaTqzDdeM8692kOcNl
+         dZyUjBac46nEm2EjbsVMMISe4W77AEpX/rp+42qg5bRRT8emM0jCAM2KQBEvMLCNlZUa
+         LjAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=e5VkeKyjspWx0gNrw1JAcgyTe6NRKcWiRvuIotTcpwU=;
-        b=yO5S5xFr1Yx8fkOQx9fCN9yEvHIaN4Fjo0riE7tMHJDnk6ZyehwzwXnrvBTmsFfxOS
-         bQhaeKj48oqXTbplmPSVrgaYcP6nQfNogNhT/cDeaZFBeYw3U+3Iuww/Pi/myyQq+Aaa
-         jDNf2mmMW5oV1nNa44dtRLVNHeP8BhIRSCuWL3HsJuJWPfb7vG339Y/I6NblEd4ygK3u
-         wxRNeiOl7eMqIaJ6F4DZwnjN2osFx8DDTlE5sb6FielDrjoQLPP8uCnrT1ZwcqYG6wPu
-         p+fdNZ0A0te+IZBS+EFYl7FaRp8I1AkF8DxxN3BWL4dK5RUn+HinHVF4MDgxQ+NVjz6O
-         8MmQ==
+        bh=SzJUKBPNwe/3NehlMvPVKfMBKPVrmxN/Paoe95Wq8jY=;
+        b=jeBdHnaM0m4Gm+Sv8vcyQg6bOUlPJe7v3wP2hILCurVt+Dk21ImYBnB8N7NJtirC/I
+         twJVCBBsh3udm9ujfjDcAfYEHmLdSjfeEiJQuG7nQbBUew+Uyi/StvlFRUOTPlXsGdRW
+         UWKcKi0oy4TwBrZ93PajiL7J1a1EYMUIRlBZxSVDGB+iNuDOSLuc5IHaWyYTAzSdngVM
+         8OUibpn8g/E2UnqmKc+tX2QCC2IXux/GYVAvkH/GCDOhzW4ZjSe+nLnyDaWvIaAFR9FE
+         HLSItLN8k9sMrLB2TGTAyySUz/8LVAYVRO6aGE1mBs/nynG2t3+yk4uaWY8/v/iqjy6p
+         4qmg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=YBPWXBdd;
+       dkim=pass header.i=@linaro.org header.s=google header.b=KrXt64vA;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=YBPWXBdd;
+       dkim=pass header.i=@linaro.org header.s=google header.b=KrXt64vA;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZopum+6EOSsnQbD5qbgpI1tjeYLHLk5SIOEntk4xcG13pR5no01aTR7zoOKrCATtX4FOMsN/g==
+X-Google-Smtp-Source: AB8JxZqVINMK7bPnqzaii2xuhw5qOkNFaAHP8lk2EoK9I7u7e+8ZZn1erNLJLHQ87dQ9sBL4qopn6A==
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	srinivas.kandagatla@linaro.org,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Chris Healy <cphealy@gmail.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Aleksander Morgado <aleksander@aleksander.es>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org
-Subject: [PATCH 2/8] dt-bindings: nvmem: Add binding for RAVE SP EEPROM driver
-Date: Fri, 11 May 2018 12:06:57 +0100
-Message-Id: <20180511110703.4924-3-srinivas.kandagatla@linaro.org>
+	Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH 1/8] drivers: nvmem: Export nvmem_add_cells()
+Date: Fri, 11 May 2018 12:06:56 +0100
+Message-Id: <20180511110703.4924-2-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
 References: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600165743775017377?=
-X-GMAIL-MSGID: =?utf-8?q?1600165743775017377?=
+X-GMAIL-THRID: =?utf-8?q?1600165742365001027?=
+X-GMAIL-MSGID: =?utf-8?q?1600165742365001027?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
-Add Device Tree bindings for RAVE SP EEPROM driver - an MFD cell of
-parent RAVE SP driver (documented in
-Documentation/devicetree/bindings/mfd/zii,rave-sp.txt).
+Not all platforms use device tree. It is useful to be able to add
+cells to a NVMEM device from code. Export nvmem_add_cells() so making
+this possible.
 
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Aleksander Morgado <aleksander@aleksander.es>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+This required changing the parameters a bit, so that just the cells
+and the number of cells are passed, not the whole nvmem config
+structure.
+
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- .../bindings/nvmem/zii,rave-sp-eeprom.txt          | 40 ++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
+ drivers/nvmem/core.c           | 24 +++++++++++++++++-------
+ include/linux/nvmem-provider.h | 11 +++++++++++
+ 2 files changed, 28 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
-new file mode 100644
-index 000000000000..d5e22fc67d66
---- /dev/null
-+++ b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
-@@ -0,0 +1,40 @@
-+Zodiac Inflight Innovations RAVE EEPROM Bindings
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index b05aa8e81303..b1c95ef78544 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -353,18 +353,27 @@ static int nvmem_cell_info_to_nvmem_cell(struct nvmem_device *nvmem,
+ 	return 0;
+ }
+ 
+-static int nvmem_add_cells(struct nvmem_device *nvmem,
+-			   const struct nvmem_config *cfg)
++/**
++ * nvmem_add_cells() - Add cell information to an nvmem device
++ *
++ * @nvmem: nvmem device to add cells to.
++ * @info: nvmem cell info to add to the device
++ * @ncells: number of cells in info
++ *
++ * Return: 0 or negative error code on failure.
++ */
++int nvmem_add_cells(struct nvmem_device *nvmem,
++		    const struct nvmem_cell_info *info,
++		    int ncells)
+ {
+ 	struct nvmem_cell **cells;
+-	const struct nvmem_cell_info *info = cfg->cells;
+ 	int i, rval;
+ 
+-	cells = kcalloc(cfg->ncells, sizeof(*cells), GFP_KERNEL);
++	cells = kcalloc(ncells, sizeof(*cells), GFP_KERNEL);
+ 	if (!cells)
+ 		return -ENOMEM;
+ 
+-	for (i = 0; i < cfg->ncells; i++) {
++	for (i = 0; i < ncells; i++) {
+ 		cells[i] = kzalloc(sizeof(**cells), GFP_KERNEL);
+ 		if (!cells[i]) {
+ 			rval = -ENOMEM;
+@@ -380,7 +389,7 @@ static int nvmem_add_cells(struct nvmem_device *nvmem,
+ 		nvmem_cell_add(cells[i]);
+ 	}
+ 
+-	nvmem->ncells = cfg->ncells;
++	nvmem->ncells = ncells;
+ 	/* remove tmp array */
+ 	kfree(cells);
+ 
+@@ -393,6 +402,7 @@ static int nvmem_add_cells(struct nvmem_device *nvmem,
+ 
+ 	return rval;
+ }
++EXPORT_SYMBOL_GPL(nvmem_add_cells);
+ 
+ /*
+  * nvmem_setup_compat() - Create an additional binary entry in
+@@ -509,7 +519,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ 	}
+ 
+ 	if (config->cells)
+-		nvmem_add_cells(nvmem, config);
++		nvmem_add_cells(nvmem, config->cells, config->ncells);
+ 
+ 	return nvmem;
+ 
+diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
+index f89598bc4e1c..24def6ad09bb 100644
+--- a/include/linux/nvmem-provider.h
++++ b/include/linux/nvmem-provider.h
+@@ -77,6 +77,9 @@ struct nvmem_device *devm_nvmem_register(struct device *dev,
+ 
+ int devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem);
+ 
++int nvmem_add_cells(struct nvmem_device *nvmem,
++		    const struct nvmem_cell_info *info,
++		    int ncells);
+ #else
+ 
+ static inline struct nvmem_device *nvmem_register(const struct nvmem_config *c)
+@@ -99,6 +102,14 @@ static inline int
+ devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem)
+ {
+ 	return nvmem_unregister(nvmem);
 +
-+RAVE SP EEPROM device is a "MFD cell" device exposing physical EEPROM
-+attached to RAVE Supervisory Processor. It is expected that its Device
-+Tree node is specified as a child of the node corresponding to the
-+parent RAVE SP device (as documented in
-+Documentation/devicetree/bindings/mfd/zii,rave-sp.txt)
++}
 +
-+Required properties:
-+
-+- compatible: Should be "zii,rave-sp-eeprom"
-+
-+Optional properties:
-+
-+- zii,eeprom-name: Unique EEPROM identifier describing its function in the
-+  system. Will be used as created NVMEM deivce's name.
-+
-+Data cells:
-+
-+Data cells are child nodes of eerpom node, bindings for which are
-+documented in Documentation/bindings/nvmem/nvmem.txt
-+
-+Example:
-+
-+	rave-sp {
-+		compatible = "zii,rave-sp-rdu1";
-+		current-speed = <38400>;
-+
-+		eeprom@a4 {
-+			compatible = "zii,rave-sp-eeprom";
-+			reg = <0xa4 0x4000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			zii,eeprom-name = "main-eeprom";
-+
-+			wdt_timeout: wdt-timeout@81 {
-+				reg = <0x81 2>;
-+			};
-+		};
-+	}
++static inline int nvmem_add_cells(struct nvmem_device *nvmem,
++				  const struct nvmem_cell_info *info,
++				  int ncells)
++{
++	return -ENOSYS;
+ }
+ 
+ #endif /* CONFIG_NVMEM */
 -- 
 2.16.2
