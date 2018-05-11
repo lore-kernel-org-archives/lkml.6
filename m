@@ -1,76 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752313AbeEKGYw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 02:24:52 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:40949 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750805AbeEKGYu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 02:24:50 -0400
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: hoeun.ryu@lge.com
-X-Original-SENDERIP: 10.159.138.109
-X-Original-MAILFROM: hoeun.ryu@lge.com
-From: "Hoeun Ryu" <hoeun.ryu@lge.com>
-To: "'Peter Zijlstra'" <peterz@infradead.org>,
-        "'Hoeun Ryu'" <hoeun.ryu@lge.com.com>
-Cc: <mingo@kernel.org>, <aaron.lu@intel.com>, <adobriyan@gmail.com>,
-        <frederic@kernel.org>, <ying.huang@intel.com>,
-        <linux-kernel@vger.kernel.org>
-References: <00fb01d3e81b$89b9c2d0$9d2d4870$@lge.com> <20180510101653.GB12217@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180510101653.GB12217@hirez.programming.kicks-ass.net>
-Subject: RE: smp_call_function() friends and irq/bottom_half context
-Date: Fri, 11 May 2018 15:24:46 +0900
-Message-ID: <013801d3e8f0$c1f21820$45d64860$@lge.com>
+        id S1752311AbeEKGdl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 02:33:41 -0400
+Received: from verein.lst.de ([213.95.11.211]:51287 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750852AbeEKGdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 02:33:40 -0400
+Date: Fri, 11 May 2018 08:37:24 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: linux-nvme@lists.infradead.org, alex_gagniuc@dellteam.com,
+        Austin.Bolen@dell.com, Shyam.Iyer@dell.com,
+        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme-pci: Avoid use of goto in nvme_reset_work()
+Message-ID: <20180511063724.GA8368@lst.de>
+References: <20180510164645.19559-1-mr.nuke.me@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQGgz48akdOms0mM0V3gM5Qi+2oKGwIuF5+hpH6/3tA=
-Content-Language: ko
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510164645.19559-1-mr.nuke.me@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, May 10, 2018 at 11:46:33AM -0500, Alexandru Gagniuc wrote:
+> This patch started as a challenge from Keith relating to code
+> structuring with goto vs return. I think the final result improves
+> readability on two counts:
+> First, it clarifies the separation between work struct and nvme_dev.
+> Second, it makes it clearer what error is being passed on:
+> 'return -ENODEV' vs 'goto out', where 'result' happens to be -ENODEV
 
-> -----Original Message-----
-> From: Peter Zijlstra [mailto:peterz@infradead.org]
-> Sent: Thursday, May 10, 2018 7:17 PM
-> To: ��ȣ�� <hoeun.ryu@lge.com>
-> Cc: mingo@kernel.org; aaron.lu@intel.com; adobriyan@gmail.com;
-> frederic@kernel.org; ying.huang@intel.com; linux-kernel@vger.kernel.org
-> Subject: Re: smp_call_function() friends and irq/bottom_half context
-> 
-> On Thu, May 10, 2018 at 01:58:29PM +0900, ��ȣ�� wrote:
-> > Hi, all.
-> >
-> > I'm reading kernel/smp.c code and I found comments on smp_call_function()
-> > and smp_call_function_[single/many]
-> > saying that these functions are cannot be called in interrupt disabled
-> > context or irq/bottom half handlers.
-> >
-> > I understand that there is a potential deadlock issue when caller CPU of
-> > the functions is waiting for the completion of the callback of other
-> CPUs.
-> > But I was wondering if this is the case even when the caller CPU doesn't
-> > wait for the completion (wait == 0).
-> 
-> IIRC yes, because csd_lock(). You can however use
-> smp_call_function_single_async() with your own csd. Be very careful
-> though, it is very easy to construct deadlocks.
-
-Thank you for the explanation and the suggestion.
-
-Would you please explain more on csd lock and irq disabled or irq/bh context ?
-How can deadlocks happen when calling smp_call_function(wait=0) with irq disabled ?
-How can deadlocks happen when calling smp_call_function(wait=0) from irq or bottom half context ?
-
-I think it as 2d array like call_single_data[caller cpu][target cpu].flags.
-csd_lock(csd[caller][target]) spins on the flag only when LOCKED is already set
-which means that the caller CPU already called smp_call_function(wait=0)
-and at the second calling of the function, the caller CPU spins on
-csd_lock(csd[caller][target]) but the target CPU is still processing its callback list
-(maybe processing other csd[other cpu][target]) and it does not yet process
-csd[caller][target]. But the callback list will be finally flushed and LOCKED flags
-is cleared of csd[caller][target] eventually ?
+I think this actually makes the code much less readable.  The only real
+improvement the code needs is to replace the "out" label name with
+something more descriptive like "remove_controller".
