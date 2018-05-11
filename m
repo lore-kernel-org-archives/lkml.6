@@ -1,92 +1,80 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526036977; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1526036976; cv=none;
         d=google.com; s=arc-20160816;
-        b=V6MQhM7edxOdI0edNtj6QKcODCGQ8glI1xLAmtL69AufGr39nqZCC5SUgzW61lXfPi
-         ilVEQRmccAB/pYOiCmRXF3VYX15/R8dOb1Fl4BncbM5qeYiIcgYNzYGNjUS6avhHPoas
-         LyH+h0h3jisZO69Z5dg0K5FHy+BBjuAuvg07Q7Z4+Bf4d02RaHpVFzf3PP5MKutCX6F6
-         cR8M4cX/hfcy4QArqaFbFFVv70squIyW4ffqap9pcxcx3JDB8RA2rWt2X7VDhFM3GQxB
-         LyXmScuadLyGVSZTFIID47NO1Xz2wJvRxBvAQxFIA85Z/i9v9teFGKlh+OTQa2GAn7j9
-         HmtA==
+        b=KWVm9+hjrQhxtmiM3w80Dxh+DBnKIAv7aytSvcsn2uwu6FbLourxHqUieVfkkkx4P7
+         mgJQ5d5jy2fSW9tckF88I0WTwRsya3e3wTL9xQjbCssnEy4y9sVomepL7/N0Wb90n8bl
+         kav5poyRhqRFZEW8hpRMTO6yyplpN7XU2K9HgIEZba3tzTi4uzicoYNT43w/fnDbLuMh
+         iYn7Feknz2c1GBhShX+zGoPHOm0xfopuuB87kXTkEeaSnGbWuEZnTySNVv7KlGGzOo+w
+         jSLFvjlgHBPqLQdzg49qnbIOnQ/pTnHc5CPBUFyxQa4B6V72kh8hO36litm8Qs/gU27g
+         G0Kw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=w5TjQwKiVwpDnrp/KCzD6gMlzqCUY8K4AVpRvmhKkF0=;
-        b=iwNEAWQllu1rzQAn9ZfHcY/V0eG7Mz2eINjAK9K+QVkEuQM0eRFONU3/y2jkT+UcPv
-         7ndWS8kesQKNkebbt58j57X6irZtG6n8MZp/OvokZ4oWnSOn+Ph28xqcniKYWwXHuPGB
-         JeqOVkn4EYdx6xluUXCDf5NxwEK5DJ3+9uTEjCSXgCI3LjEqBfa3fumDNyrhCUnKblvW
-         I5OnTRXTkB3HI86rwg0l40VH1lNqMDH3YMCNDnWUZvSUhLxecD4UkQGefFJWo2v3I/T4
-         0RaHm/H6d1q5RgBvrcoJw0OxdaTXw9tiloFDHiAXb/4IUtbXYKMQNbnzoMRPXY42aWxE
-         fqnQ==
+        bh=eDLacnyz2Sx4d3x3swArJATYhMnSB+WxXyrGozFdY0o=;
+        b=An2FkvoDmL1xXVlh+4fWPcAygzze0zGbShli4jLRDU4cTMHkDv7+LAmykUunLiaz47
+         I4i4zZqLw9LtWnukQ4I719Z5DCCwF35EoQzuQyqu8YSM3NTCH1jngGYtqdkTcp0skR5A
+         J2g17wuY2DgBfPGKjgg3uHEH6mwpB2Rbj6sOMLnToMMExaqTK35ex2vfJ/ikeGCN0bcd
+         Oqcd146hPRQMZRFQwLUuuQBpJw+i0PfCZxyhtuWveI3a6lEvRgpxSVa+dHm09MWMc1CX
+         FM+t0NYICsGmeWaw5cG3o8cIiEXw/Yrl2jXgZO68r+nGyVJHvDgD95nyu/wz1blrPXY0
+         QKMg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=iYYkLbiT;
+       dkim=pass header.i=@linaro.org header.s=google header.b=LM86dHfH;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=iYYkLbiT;
+       dkim=pass header.i=@linaro.org header.s=google header.b=LM86dHfH;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZpRZYy4hj0IlraJQkPuOzTHQ/w2b4Mqq+LkiC2PeC6U5vsC+63hoFWJjb8TNPFMQSeCTbMVaA==
+X-Google-Smtp-Source: AB8JxZpt623jSFn9DeA1jeCezeiO4EF9GXGLTEproplwtQPiKrVUypSGViB8LOWw1NDlgJp8B7qJng==
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
-	srinivas.kandagatla@linaro.org,
-	Mathieu Malaterre <malat@debian.org>
-Subject: [PATCH 8/8] nvmem: properly handle returned value nvmem_reg_read
-Date: Fri, 11 May 2018 12:07:03 +0100
-Message-Id: <20180511110703.4924-9-srinivas.kandagatla@linaro.org>
+	srinivas.kandagatla@linaro.org
+Subject: [PATCH 7/8] nvmem: core: describe add missing dev function parameter
+Date: Fri, 11 May 2018 12:07:02 +0100
+Message-Id: <20180511110703.4924-8-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
 References: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600165749609590574?=
-X-GMAIL-MSGID: =?utf-8?q?1600165749609590574?=
+X-GMAIL-THRID: =?utf-8?q?1600165748806704824?=
+X-GMAIL-MSGID: =?utf-8?q?1600165748806704824?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Mathieu Malaterre <malat@debian.org>
+Document dev parameter which not described in devm_nvmem_unregister
+and devm_nvmem_register functions.
 
-Function nvmem_reg_read can return a non zero value indicating an error.
-This returned value must be read and error propagated to
-nvmem_cell_prepare_write_buffer. Silence the following gcc warning (W=1):
+Fix below warnings when kernel is compiled with W=1
+drivers/nvmem/core.c:579: warning: Function parameter or member
+ 'dev' not described in 'devm_nvmem_register'
+nvmem/core.c:615: warning: Function parameter or member 'dev'
+ not described in 'devm_nvmem_unregister'
 
-drivers/nvmem/core.c:1093:9: warning: variable 'rc' set but
- not used [-Wunused-but-set-variable]
-
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/core.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/nvmem/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 36361044ddbe..b5b0cdc21d01 100644
+index b1c95ef78544..36361044ddbe 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -1119,6 +1119,8 @@ static void *nvmem_cell_prepare_write_buffer(struct nvmem_cell *cell,
- 
- 		/* setup the first byte with lsb bits from nvmem */
- 		rc = nvmem_reg_read(nvmem, cell->offset, &v, 1);
-+		if (rc)
-+			goto err;
- 		*b++ |= GENMASK(bit_offset - 1, 0) & v;
- 
- 		/* setup rest of the byte if any */
-@@ -1137,11 +1139,16 @@ static void *nvmem_cell_prepare_write_buffer(struct nvmem_cell *cell,
- 		/* setup the last byte with msb bits from nvmem */
- 		rc = nvmem_reg_read(nvmem,
- 				    cell->offset + cell->bytes - 1, &v, 1);
-+		if (rc)
-+			goto err;
- 		*p |= GENMASK(7, (nbits + bit_offset) % BITS_PER_BYTE) & v;
- 
- 	}
- 
- 	return buf;
-+err:
-+	kfree(buf);
-+	return ERR_PTR(rc);
- }
- 
- /**
+@@ -569,6 +569,7 @@ static void devm_nvmem_release(struct device *dev, void *res)
+  * nvmem_config.
+  * Also creates an binary entry in /sys/bus/nvmem/devices/dev-name/nvmem
+  *
++ * @dev: Device that uses the nvmem device.
+  * @config: nvmem device configuration with which nvmem device is created.
+  *
+  * Return: Will be an ERR_PTR() on error or a valid pointer to nvmem_device
+@@ -607,6 +608,7 @@ static int devm_nvmem_match(struct device *dev, void *res, void *data)
+  * devm_nvmem_unregister() - Unregister previously registered managed nvmem
+  * device.
+  *
++ * @dev: Device that uses the nvmem device.
+  * @nvmem: Pointer to previously registered nvmem device.
+  *
+  * Return: Will be an negative on error or a zero on success.
 -- 
 2.16.2
