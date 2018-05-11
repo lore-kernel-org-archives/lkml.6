@@ -1,134 +1,149 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-221214-1526066925-2-4448092711675111506
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526066925; b=bbSP/Fedsljo2+BROKmFvAxJQdGWgTjPxpHm97QId2pIo81rez
-    frtP39ubUJXQYhRflug/P2agS0BsfRR2z/bsarqW995lesMQtvCLXdd1Yx6es/5u
-    IpAWY1+Gh+6tvu7l7hpbpmZK+TJi33Zh9LbUFjVznONaExqq5wA4nErUtM7aNXL+
-    1g2kyZdAt2Ay8kar15vmyhHP2gDhrlb6WRWBFxwvZD6yVJMFEV/uAfpyI6PiL1D8
-    m+y44Z49JPs8FXdAYOC90UbIkyzsjYmfx4LT9M6a9EJETCCnm1XmLeIPVt+/8YjA
-    NMCRKVIsIvZK8lNscHtQ2xp+EnTEdS05chpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526066925; bh=dWvsZWk7SZX8f7bHHt22lau2jwHVN3
-    EB42QsNUFUZi0=; b=XjWpEGJHUYHydEnc2c0Af5IqEuRBWWzskfne7wGEescBTU
-    MDg4fc2mcLG7QxLfQtTO3ewyOsU5znSlCzcraqYP/+T0UN3RdP9SnwhAbyQHfxaC
-    jh4LnuKayA8NCHJw6yviPPtRZIGZINN2/XFVOmQnnOFwcVkp4uoBGPcEMR8OcUdw
-    SvUZtJbi5UQ4Ht2/+fFrL54Uxp/vzLS+8nCJG1ng82iDk09IB/+GO2c153hHUY+o
-    iv5niFsAby7bqCwSyA1zkDq1GJi7/4lPWPKd86Jzsq7hT6PbcE/BrPcxgpFddDxU
-    l0t1dEkYnTCn7N45+8mJsXLFGEyQRSKnnzXSpg+w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=zeniv.linux.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=zeniv.linux.org.uk header.mx.error=NOERROR
-    header.result=warn header_org.domain=linux.org.uk
-    header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=zeniv.linux.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=zeniv.linux.org.uk header.mx.error=NOERROR
-      header.result=warn header_org.domain=linux.org.uk
-      header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKQTEbpEh0bKOyibngUN6T8YoCJGMHwzV7JTi0ydZuFa/H3ntH1trhRe2xDH1RHI2BqUBU69W+pwRCH89YMOoMRZNZ5lUgLsyn3pC34wwMSOMIrSqG5o
-    7atrPTsSchSUWSJeXDWMLMFS24u2+iKSdAIVa1eINBz2uRtXogOSgGOdQWggDGoxilYezIFlsnoMT1zt2R3/YLN3knhWGDfwXXJEXinMfDYIJL8Krmp/kD3i
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=zJnW8gc2Vqe23zpo_3gA:9 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751012AbeEKT2m (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 11 May 2018 15:28:42 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:57390 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750937AbeEKT2l (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 11 May 2018 15:28:41 -0400
-Date: Fri, 11 May 2018 20:28:32 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: gladkov.alexey@gmail.com, Kees Cook <keescook@chromium.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Solar Designer <solar@openwall.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        Djalal Harouni <tixxdz@gmail.com>
-Subject: Re: [PATCH v5 0/7] proc: modernize proc to support multiple private
- instances
-Message-ID: <20180511192831.GC30522@ZenIV.linux.org.uk>
-References: <20180511093221.GA902@comp-core-i7-2640m-0182e6>
- <CA+55aFwZK+BMsm19sK-Wmfta6PcdvW6z-ghuKsb4PAwk19nRVg@mail.gmail.com>
+Return-Path: <dvyukov@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1526060389; cv=none;
+        d=google.com; s=arc-20160816;
+        b=oEc3ylm6V1uFNo6bw67qCG6Vm2LwFrKKrjsdG8E8fzAcEbfVywy82ZL5UaW5FJsCol
+         TTOiRNk0/LUxerK7MXrjaxtkwVVpF6FXx02jjdgN0OXpj6+VAdBExY/O53tDh/F+C+r9
+         kH4Dfg96oJF/KfM784ql+UreZVJfdLuh7t2U5hmt7p9PQNxpSw7O1IBtjEPZ6FbrjtvI
+         Vm7DyCoXWIhrl6ufoZqhJgKnQ8m6g8YXWQF2vm4arKExzjhAindptFBaz+UruW275ls+
+         ZH+Ir9FZ4/xUCRsI+iE6yZ9YuPXFjxrd7dUXDauPUWTiJTwaqYpfPViQ4huj7/VMh3UD
+         B2Rg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=OhNbNQBovzuK3h3F0ngijdzeGxZrV2ijAaokNdKb2aY=;
+        b=qIBr22TnWPnwIE3NDvgxJC6CIZt/1MCrBxLbbSGrvAW9TybWwz3i6XrLeo8WPsWfD4
+         eMkcSROoBzzwVdB8O1cau/1Hjt/AKJzfBWfMeHejuTFthOgVLG376OwB9zWhgCKaXDmw
+         OCdA1osyznujra5EXVuFiwxcFkkf9rv3rChnn2TuC6av1WphjumtU3RggfiMiLeCA5wG
+         lge4eSzv9EmphcvburLPujRYzZKvbBSiLg48vybVy1fRsQvom4z0zqS/BuSGivRx9lnu
+         5qgGQSs7YoUoPyCgcTLSshZYe0zN/3t+1kDKIBS51XivWgKD7m2c5Bgf2qMgwclJjpPH
+         yftA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=RT8n1bny;
+       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dvyukov@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=RT8n1bny;
+       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dvyukov@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AB8JxZrNBNbPFk2pz2czrqO+/6DZa5DsZB9WiUq+9C722yl+jsHMQFIz7YBUs6dUr7PN3xVxOlLHlzsQxz0+/TwI8j4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwZK+BMsm19sK-Wmfta6PcdvW6z-ghuKsb4PAwk19nRVg@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+In-Reply-To: <94eb2c05b4ba7e98d2055dc57696@google.com>
+References: <94eb2c05b4ba7e98d2055dc57696@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, 11 May 2018 19:39:27 +0200
+Message-ID: <CACT4Y+bs06eV-bG1hO7aMaM6CTVhXi+eLNurKfFoxV5ZxGumOg@mail.gmail.com>
+Subject: Re: general protection fault in usb_find_alt_setting
+To: syzbot <bot+c99ecc8a2c68eb7e06cf2f652e60d63d6fbe2f31@syzkaller.appspotmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Johan Hovold <johan@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	USB list <linux-usb@vger.kernel.org>, mathias.nyman@linux.intel.com,
+	peter.chen@nxp.com, sriram.dash@nxp.com,
+	syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1583850520264684740?=
+X-GMAIL-MSGID: =?utf-8?q?1600190298335609937?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, May 11, 2018 at 09:39:23AM -0700, Linus Torvalds wrote:
-> On Fri, May 11, 2018 at 2:42 AM Alexey Gladkov <gladkov.alexey@gmail.com>
-> wrote:
-> 
-> > This is RFC v5 to modernize procfs and make it able to support multiple
-> > private instances per the same pid namespace.
-> 
-> So I have no big objections, but I would *really* like this to go through
-> Al's vfs tree.
-> 
-> Al? Have you looked at this series?
+On Sun, Nov 12, 2017 at 10:06 AM, syzbot
+<bot+c99ecc8a2c68eb7e06cf2f652e60d63d6fbe2f31@syzkaller.appspotmail.com>
+wrote:
+> Hello,
+>
+> syzkaller hit the following crash on
+> d9e0e63d9a6f88440eb201e1491fcf730272c706
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
+> compiler: gcc (GCC) 7.1.1 20170620
+> .config is attached
+> Raw console output is attached.
+>
+> Unfortunately, I don't have any reproducer for this bug yet.
 
-Looking through it...
+
+This crash happened 779 times, but first 188d ago, and last 175d ago.
+Let's consider this fixed by something.
+
+#syz invalid
+
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] SMP KASAN
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in:
+> CPU: 3 PID: 23503 Comm: syz-executor5 Not tainted 4.14.0-rc8-next-20171110+
+> #12
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+> task: ffff88007c5e0580 task.stack: ffff88006c3b8000
+> RIP: 0010:usb_find_alt_setting+0x38/0x310 drivers/usb/core/usb.c:231
+> RSP: 0018:ffff88006c3bf610 EFLAGS: 00010247
+> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff83bf4473
+> RDX: 0000000000000000 RSI: ffffc90002773000 RDI: 0000000000000004
+> RBP: ffff88006c3bf650 R08: ffffed000d877ee2 R09: ffffed000d877ee2
+> R10: 0000000000000003 R11: ffffed000d877ee1 R12: ffff88007c668000
+> R13: 00000000000000fd R14: 00000000000007fd R15: 0000000000000000
+> FS:  00007f10e9fc8700(0000) GS:ffff88007fd00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020278000 CR3: 000000006e8fe000 CR4: 00000000000006e0
+> DR0: 0000000020000008 DR1: 0000000020000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+> Call Trace:
+>  check_ctrlrecip+0xf3/0x290 drivers/usb/core/devio.c:831
+>  proc_control+0x13f/0xe30 drivers/usb/core/devio.c:1078
+>  usbdev_do_ioctl+0x2097/0x3670 drivers/usb/core/devio.c:2396
+> SELinux: unrecognized netlink message: protocol=6 nlmsg_type=0
+> sclass=netlink_xfrm_socket pig=23496 comm=syz-executor0
+>  usbdev_ioctl+0x25/0x30 drivers/usb/core/devio.c:2553
+>  vfs_ioctl fs/ioctl.c:46 [inline]
+>  do_vfs_ioctl+0x1b1/0x1530 fs/ioctl.c:686
+>  SYSC_ioctl fs/ioctl.c:701 [inline]
+>  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
+>  entry_SYSCALL_64_fastpath+0x1f/0x96
+> RIP: 0033:0x447c99
+> RSP: 002b:00007f10e9fc7bd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007f10e9fc86cc RCX: 0000000000447c99
+> RDX: 000000002003dffa RSI: 00000000c0185500 RDI: 0000000000000014
+> RBP: 0000000000000086 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> R13: 00000000000048d8 R14: 00000000006e8978 R15: 00007f10e9fc8700
+> Code: 89 d5 53 48 89 fb 48 83 ec 18 48 89 7d c8 89 75 d0 e8 2d 3c b0 fd 48
+> 8d 7b 04 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48
+> 89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 a1 02 00
+> SELinux: unrecognized netlink message: protocol=0 nlmsg_type=0
+> sclass=netlink_route_socket pig=23514 comm=syz-executor7
+> RIP: usb_find_alt_setting+0x38/0x310 drivers/usb/core/usb.c:231 RSP:
+> ffff88006c3bf610
+> ---[ end trace 53f2c0803d4e1797 ]---
+> Kernel panic - not syncing: Fatal exception
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
+>
+> syzbot will keep track of this bug report.
+> Once a fix for this bug is committed, please reply to this email with:
+> #syz fix: exact-commit-title
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/94eb2c05b4ba7e98d2055dc57696%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
