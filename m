@@ -1,12 +1,12 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-4098225-1526051193-2-12597147625285608875
+X-Cyrus-Session-Id: sloti22d1t05-4103318-1526051209-2-6784065184977443528
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
   HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='fr', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
@@ -14,25 +14,26 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526051192; b=iEWFb0eP5ClzKM0EgdOE35d4VxLAjN8I1rvyVehyGwpvmAj3IP
-    9j0MDTL84i7IeonjF9zxJG0DWq4YaUSJWviAKOURwQsW45LLTrbjxZ1bsTae23aO
-    4cwqzFH6LTjVsD6YpvjqH1xErAzO5AGAX9vJT/dhbcST6811n75YGywJ4YW1YHBf
-    U3sA5qr5AFcjKxGVvXw4hnSzcI0bgp1usU18buxOn4wM+hf5Rm9bHBeBPk04j2MU
-    ucp4kzLg/iFjOi0nu7mB523rPSokvMivt2tll8PxljbYfc60/n09oCDJancWQRdQ
-    Q7Sw7f8spVz+tEw+xtLqeDA15NriBZk7nKQA==
+    1526051208; b=CNAqXgELPfzOzgs0Z9EGDyrzTcUQ2XrsId/F35x0v6yR5orpPJ
+    CS5M36IfBmGphH3gW9ho4C86QMwHopVrMPQEaxUXh1B3ToExnAx3sOWgjfOYBp0K
+    8A25KI63Cxbn3G4mRsOOE5sVMXq7+R+rw2Ghl3HHa4U63RTPRlv892SWNR8Dcqk4
+    ZxafrMYJsNqVAlXvDOBHEMsiLO8ide2YErtR2RaCFZvG1r9Ry8Hg7fBo31bJDBn6
+    cFTcBWaU4uVMcUtkeZ39e7vzmot/Y+kHawQECJWKDMB4dq74rhrNLMBr1LhNlLse
+    ClpdDxiNTfko/UlsklHGfSD17bmVebRXhWVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:in-reply-to:references:list-id
     :list-unsubscribe:list-archive:list-post:list-help
     :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526051192; bh=RZEXP
-    a/pQEnOK/XlA6ib94iBFg6opIUQ4wjMWw4xquo=; b=dG1vpwJtt9RxjNPoysxLN
-    ipl6zUqYRu/Of9hERallGDelIC1zxvEuu387xJwwt/+g5mMVIgNT3fTsYCWkaKCt
-    AxkFGJ+YOXQ8mlLXnG9yZYqMIHZo6N7Ob+JtIJbz89hQS3iOK50IPH3/9uvf9Rxg
-    pI8JKWuudyNa1fBMUxxXp0AFwsUKChdHRaWPz6z35lYNYUUAQwewF0oEnWpQWodu
-    /r15S1SgR/Ep9FjOOagWO2IJajVGkRvur/2FOpxu1sX8sQTvwpEsUX4vkLhoOEyN
-    ctlDIkmb58ak1z9VT6C4/3aSrNCxAm4rAaDlNkpfalL01Uf2y7E3bIX7rKkT3g7d
-    A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1526051208; bh=4xnYK
+    BlSnt71GdFsPzRNLpY/katYU1RMkXxw3uhz1ZU=; b=e/WCHb/ieh+W0orK2Apwu
+    d4SY8bhDfY4iZEqZGop/752rQHI/ttIqU92uhxRy3rupqyJWBfMY8HqGMqSa5OGR
+    YRw0Hh5o9IZ9KtfeUcwLnMbbLI3pOvMGIo9M8Hn4oRS44hv71JaK006jEae3QbpE
+    wInVyopdCJa8N8CBC/zN/VhoB/20luDMz4TqAgouNOp/ltO8E4VGz0/WJmBtIWo4
+    PIooh5MNxGDbEMVcP0Ub/GrNngWHuSRgOA79IvycBdGoWm0JGEevVgAM9eBbuGRm
+    lpvoS/IK7T8Gpx0Xp5wKohEnFBYrno90t7T9f1MLpZyvFv7LggtSQ/Zf7HU8jyY1
+    Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=wanadoo.fr;
     iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
@@ -46,8 +47,8 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+    x-vs=clean score=25 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=wanadoo.fr;
@@ -62,31 +63,38 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
       bits=128/128;
-    x-vs=clean score=0 state=0
+    x-vs=clean score=25 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFf4PItFNRTdtm/SzUadIHOlK3g2YonzUJkiBGRtSI8AgHlL89WmkIkxujfJxd8hOSDoM4RWz5sy7Hdvd5j8LqBrTbrqtRb5TpMFeA0kreXvtaD2gKHV
-    aF8QOR7RY5uuW8a1zM7ZrKPWkaFOh4CzH8Bh+I+Rz/lrzMfMu/Af0XwNJ37p+n0+qCNBQ1PwsSvN/a6hXMehnYvDChhuDs4Enh1+2NpXh23O7lw79SLCO7yT
-    ygu3q1Pw6SNY/SB76WaLjw==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+X-CM-Envelope: MS4wfGO6VsNrterLViQFMMBkG9geFt4dq1Ra+0Y02l+jILOrcGd+Wd8KsoNo9dss/CrSFhdvDdkYauim2bJizX1N61uvLtwOV5PUPBt9alyoxnpBU6wpndTd
+    2Z3LcjIVfcvfIY8cnqulMtT+52aRdEU8m2IEV09VaQkKTjxBCaiEejUuhZCxgaHTPRGStJjmS273bGtlK1+Z0xioSjUmGFY965oPZTvt9/noFGSNWO6jRbQ7
+    zu8JALZNFKmGlhHxWb6hlg==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
     a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
     a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8
-    a=chjP6sQugMFXrh-HTt0A:9 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+    a=jQZD9b6nzSCjgMAzE7sA:9 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 X-ME-Helo: ubuntu-CJ.home
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 11 May 2018 17:06:20 +0200
+X-ME-Date: Fri, 11 May 2018 17:06:37 +0200
 X-ME-IP: 86.244.116.1
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: alan@linux.intel.com, sakari.ailus@linux.intel.com, mchehab@kernel.org,
  gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
  chen.chenchacha@foxmail.com, keescook@chromium.org,
  arvind.yadav.cs@gmail.com
-Subject: [PATCH 0/3] media: staging: atomisp: 
-Date: Fri, 11 May 2018 17:06:15 +0200
-Message-Id: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 2/3] media: staging: atomisp: Fix an error handling path in
+ 'lm3554_probe()'
+Date: Fri, 11 May 2018 17:06:17 +0200
+Message-Id: <f762630a681c08d9903cf73243dd98416ae96a7c.1526048313.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -110,29 +118,44 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-These 3 patches fixes (at least I hope) some issues found in or around
-'lm3554_probe()'.
+The use of 'fail1' and 'fail2' is not correct. Reorder these calls to
+branch at the right place of the error handling path.
 
-Please review them carefully. I've only compile tested the changes and
-I propose them because they sound logical to me.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/staging/media/atomisp/i2c/atomisp-lm3554.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-The first one, return an error code instead of 0 if the call to an
-initialisation function fails.
-The 2nd one reorders own some label are reached in order to have a logical
-flow (first error goes to last label, last error goes to first label)
-The 3rd one fix the use 'media_entity_cleanup()'. If this one is correct,
-some other drivers will need to be fixed the same way.  
-
-Christophe JAILLET (3):
-  media: staging: atomisp: Return an error code in case
-    of error in 'lm3554_probe()'
-  media: staging: atomisp: Fix an error handling path in
-    'lm3554_probe()'
-  media: staging: atomisp: Fix usage of 'media_entity_cleanup()'
-
- .../media/atomisp/i2c/atomisp-lm3554.c        | 20 +++++++++----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/staging/media/atomisp/i2c/atomisp-lm3554.c b/drivers/staging/media/atomisp/i2c/atomisp-lm3554.c
+index 723fa74ff815..1e5f516f6e50 100644
+--- a/drivers/staging/media/atomisp/i2c/atomisp-lm3554.c
++++ b/drivers/staging/media/atomisp/i2c/atomisp-lm3554.c
+@@ -871,7 +871,7 @@ static int lm3554_probe(struct i2c_client *client)
+ 				     ARRAY_SIZE(lm3554_controls));
+ 	if (err) {
+ 		dev_err(&client->dev, "error initialize a ctrl_handler.\n");
+-		goto fail2;
++		goto fail1;
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(lm3554_controls); i++)
+@@ -879,7 +879,6 @@ static int lm3554_probe(struct i2c_client *client)
+ 				     NULL);
+ 
+ 	if (flash->ctrl_handler.error) {
+-
+ 		dev_err(&client->dev, "ctrl_handler error.\n");
+ 		goto fail2;
+ 	}
+@@ -888,7 +887,7 @@ static int lm3554_probe(struct i2c_client *client)
+ 	err = media_entity_pads_init(&flash->sd.entity, 0, NULL);
+ 	if (err) {
+ 		dev_err(&client->dev, "error initialize a media entity.\n");
+-		goto fail1;
++		goto fail2;
+ 	}
+ 
+ 	flash->sd.entity.function = MEDIA_ENT_F_FLASH;
 -- 
 2.17.0
 
