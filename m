@@ -1,63 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752442AbeEKGV6 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 02:21:58 -0400
-Received: from mail-pf0-f182.google.com ([209.85.192.182]:41304 "EHLO
-        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752383AbeEKGV4 (ORCPT
+        id S1752313AbeEKGYw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 02:24:52 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:40949 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750805AbeEKGYu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 02:21:56 -0400
-X-Google-Smtp-Source: AB8JxZrHt6EjUhrdKpb3QwnoODrg7gF+upqTlrW0x7ERg2auFdkHNI38XJjLr5i4AaPZVh93jrepdQ==
-Date: Fri, 11 May 2018 15:21:51 +0900
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        pmladek@suse.com, dvyukov@google.com, sergey.senozhatsky@gmail.com,
-        syzkaller@googlegroups.com, rostedt@goodmis.org,
-        fengguang.wu@intel.com, linux-kernel@vger.kernel.org
-Subject: Re: printk feature for syzbot?
-Message-ID: <20180511062151.GA18160@jagdpanzerIV>
-References: <201805102350.JJH73950.tVJHQLFSOMOOFF@I-love.SAKURA.ne.jp>
- <20180511014515.GA895@jagdpanzerIV>
- <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
+        Fri, 11 May 2018 02:24:50 -0400
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: hoeun.ryu@lge.com
+X-Original-SENDERIP: 10.159.138.109
+X-Original-MAILFROM: hoeun.ryu@lge.com
+From: "Hoeun Ryu" <hoeun.ryu@lge.com>
+To: "'Peter Zijlstra'" <peterz@infradead.org>,
+        "'Hoeun Ryu'" <hoeun.ryu@lge.com.com>
+Cc: <mingo@kernel.org>, <aaron.lu@intel.com>, <adobriyan@gmail.com>,
+        <frederic@kernel.org>, <ying.huang@intel.com>,
+        <linux-kernel@vger.kernel.org>
+References: <00fb01d3e81b$89b9c2d0$9d2d4870$@lge.com> <20180510101653.GB12217@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180510101653.GB12217@hirez.programming.kicks-ass.net>
+Subject: RE: smp_call_function() friends and irq/bottom_half context
+Date: Fri, 11 May 2018 15:24:46 +0900
+Message-ID: <013801d3e8f0$c1f21820$45d64860$@lge.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQGgz48akdOms0mM0V3gM5Qi+2oKGwIuF5+hpH6/3tA=
+Content-Language: ko
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (05/11/18 11:38), Tetsuo Handa wrote:
-> > 
-> > So you basically want to have one more con_msg_format_flags? Do
-> > you want to track a context which prints out a messages or the
-> > context which "generated" the message? A CPU/task that stores
-> > a logbuf entry - vprintk_emit() - is not always the same as the
-> > CPU/task that prints it to consoles - console_unlock().
-> > 
+
+> -----Original Message-----
+> From: Peter Zijlstra [mailto:peterz@infradead.org]
+> Sent: Thursday, May 10, 2018 7:17 PM
+> To: ��ȣ�� <hoeun.ryu@lge.com>
+> Cc: mingo@kernel.org; aaron.lu@intel.com; adobriyan@gmail.com;
+> frederic@kernel.org; ying.huang@intel.com; linux-kernel@vger.kernel.org
+> Subject: Re: smp_call_function() friends and irq/bottom_half context
 > 
-> Well, below is the (partial) patch.
+> On Thu, May 10, 2018 at 01:58:29PM +0900, ��ȣ�� wrote:
+> > Hi, all.
+> >
+> > I'm reading kernel/smp.c code and I found comments on smp_call_function()
+> > and smp_call_function_[single/many]
+> > saying that these functions are cannot be called in interrupt disabled
+> > context or irq/bottom half handlers.
+> >
+> > I understand that there is a potential deadlock issue when caller CPU of
+> > the functions is waiting for the completion of the callback of other
+> CPUs.
+> > But I was wondering if this is the case even when the caller CPU doesn't
+> > wait for the completion (wait == 0).
+> 
+> IIRC yes, because csd_lock(). You can however use
+> smp_call_function_single_async() with your own csd. Be very careful
+> though, it is very easy to construct deadlocks.
 
-Hi,
+Thank you for the explanation and the suggestion.
 
-Tetsuo, I will take a look a bit later, but at glance, there are several
-ways to achieve what you are trying to do. The first one is the way you
-did it - add additional buffer and make that context tracking info part of
-the message body. Another one would be to extend struct printk_log and add
-pid/cpu/flag there, which you then can convert into text in msg_print_text().
-So far we talked about extending printk_log. Yet another one could be - add
-vsprintf specifiers that would add pid/cpu/flag to the vsprintf-ed message.
-You then can re-define pr_fmt, for instance, in the code you want to track
-pr_fmt "%zZ" fmt, or somehow force printk to add that "%zZ" to every
-message.
+Would you please explain more on csd lock and irq disabled or irq/bh context ?
+How can deadlocks happen when calling smp_call_function(wait=0) with irq disabled ?
+How can deadlocks happen when calling smp_call_function(wait=0) from irq or bottom half context ?
 
-> By the way, when I tried to make similar change for printk_safe_log_store(),
-> I noticed that printk_safe_log_store() is not safe because it is reusing
-> the va_list variable after "goto again;". We need to use va_copy(), or
-> we will get crash like an example shown below.
-
-Oh, right. Can you send a patch?
-
-	-ss
+I think it as 2d array like call_single_data[caller cpu][target cpu].flags.
+csd_lock(csd[caller][target]) spins on the flag only when LOCKED is already set
+which means that the caller CPU already called smp_call_function(wait=0)
+and at the second calling of the function, the caller CPU spins on
+csd_lock(csd[caller][target]) but the target CPU is still processing its callback list
+(maybe processing other csd[other cpu][target]) and it does not yet process
+csd[caller][target]. But the callback list will be finally flushed and LOCKED flags
+is cleared of csd[caller][target] eventually ?
