@@ -1,179 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752317AbeEKQWW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:22:22 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:34485 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751881AbeEKQVt (ORCPT
+        id S1752356AbeEKQWi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:22:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60438 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752334AbeEKQWf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:21:49 -0400
-X-Google-Smtp-Source: AB8JxZracqxLhh5F9oN1ARZPa7MTqRLh4lGUnsAXYnLH9A5CpvPQgZ4gPKCS1K6HkmNFyAwnRSBEBQ==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>, Johan Hovold <johan@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 11/12] misc: implement a dummy early platform driver
-Date: Fri, 11 May 2018 18:20:27 +0200
-Message-Id: <20180511162028.20616-12-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180511162028.20616-1-brgl@bgdev.pl>
-References: <20180511162028.20616-1-brgl@bgdev.pl>
+        Fri, 11 May 2018 12:22:35 -0400
+Date: Fri, 11 May 2018 18:22:29 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] perf/ring_buffer: ensure atomicity and order of updates
+Message-ID: <20180511162229.GK12217@hirez.programming.kicks-ass.net>
+References: <20180510130632.34497-1-mark.rutland@arm.com>
+ <20180511105931.yyarmtz2gjkbuq2a@lakrids.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180511105931.yyarmtz2gjkbuq2a@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Fri, May 11, 2018 at 11:59:32AM +0100, Mark Rutland wrote:
+> READ_ONCE() and WRITE_ONCE() "helpfully" make a silent fallback to a
+> memcpy in this case, so we're broken today, regardless of this change.
+> 
+> I suspect that in practice we get single-copy-atomicity for the 32-bit
+> halves, and sessions likely produce less than 4GiB of ringbuffer data,
+> so failures would be rare.
 
-Implement a very simple early platform driver. Its purpose is to show
-how such drivers can be registered and to emit a message when probed.
+This should not be a problem because of the 32bit adress space limit,
+which would necessarily limit us to the low word.
 
-It can be then added to the device tree or machine code to verify that
-the early platform devices work as expected.
+Also note that in perf_output_put_handle(), where we write ->data_head,
+the store is from an 'unsigned long'. So on 32bit that will result in a
+zero high word. Similarly, in __perf_output_begin() we read ->data_tail
+into an unsigned long, which will discard the high word.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/misc/Kconfig       |  8 ++++
- drivers/misc/Makefile      |  1 +
- drivers/misc/dummy-early.c | 82 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 91 insertions(+)
- create mode 100644 drivers/misc/dummy-early.c
+So userspace should always read (head) a zero high word, irrespective of
+a split store (2x32bit), and the kernel will disregard the high word on
+reading (tail), irrespective of what userspace put there.
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 5d713008749b..60fef04eb236 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -91,6 +91,14 @@ config DUMMY_IRQ
- 	  The sole purpose of this module is to help with debugging of systems on
- 	  which spurious IRQs would happen on disabled IRQ vector.
- 
-+config DUMMY_EARLY
-+	bool "Dummy early platform driver"
-+	select EARLY_PLATFORM
-+	default n
-+	help
-+	  This module's only function is to register itself with the early
-+	  platform device framework and be probed early in the boot process.
-+
- config IBM_ASM
- 	tristate "Device driver for IBM RSA service processor"
- 	depends on X86 && PCI && INPUT
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index d0a8788d5151..6170855853a1 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -11,6 +11,7 @@ obj-$(CONFIG_INTEL_MID_PTI)	+= pti.o
- obj-$(CONFIG_ATMEL_SSC)		+= atmel-ssc.o
- obj-$(CONFIG_ATMEL_TCLIB)	+= atmel_tclib.o
- obj-$(CONFIG_DUMMY_IRQ)		+= dummy-irq.o
-+obj-$(CONFIG_DUMMY_EARLY)	+= dummy-early.o
- obj-$(CONFIG_ICS932S401)	+= ics932s401.o
- obj-$(CONFIG_LKDTM)		+= lkdtm/
- obj-$(CONFIG_TIFM_CORE)       	+= tifm_core.o
-diff --git a/drivers/misc/dummy-early.c b/drivers/misc/dummy-early.c
-new file mode 100644
-index 000000000000..eb8f826aea64
---- /dev/null
-+++ b/drivers/misc/dummy-early.c
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Texas Instruments
-+ *
-+ * Author:
-+ *   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+ *
-+ * Dummy testing driver whose only purpose is to be registered and probed
-+ * using the early platform device mechanism.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/early_platform.h>
-+
-+struct dummy_early_data {
-+	int a;
-+	int b;
-+};
-+
-+static int dummy_early_probe_early(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct dummy_early_data *data;
-+	struct resource *res;
-+
-+	dev_notice(dev, "dummy-early driver probed early!\n");
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->a = 123;
-+	data->b = 321;
-+
-+	dev_dbg(dev, "setting driver data early: a = %d, b = %d\n",
-+		data->a, data->b);
-+	dev_set_drvdata(dev, data);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (res)
-+		dev_dbg(dev, "got early resource: start = 0x%08x, end = 0x%08x\n",
-+			res->start, res->end);
-+
-+	return 0;
-+}
-+
-+static int dummy_early_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct dummy_early_data *data;
-+
-+	dev_notice(dev, "dummy-early driver probed late!\n");
-+	data = dev_get_drvdata(dev);
-+	dev_dbg(dev, "retrieving driver data late: a = %d, b = %d\n",
-+		data->a, data->b);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id dummy_early_of_match[] = {
-+	{ .compatible = "dummy-early", },
-+	{ },
-+};
-+
-+static struct early_platform_driver dummy_early_driver = {
-+	.early_probe = dummy_early_probe_early,
-+	.pdrv = {
-+		.probe = dummy_early_probe,
-+		.driver = {
-+			.name = "dummy-early",
-+			.of_match_table = dummy_early_of_match,
-+		},
-+	}
-+};
-+module_early_platform_driver(dummy_early_driver);
-+
-+MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
-+MODULE_DESCRIPTION("Dummy early platform device driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.0
+This is all a bit subtle, and could probably use a comment, but it ought
+to work..
