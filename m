@@ -1,140 +1,110 @@
-Return-Path: <fengguang.wu@intel.com>
-X-Google-Smtp-Source: AB8JxZrJTdThqBYue2lxY79BICaeH4es47RBd3EcCEI/3EiKAwfSSYLbNMHVnZ9Q1wXryS5ch2UA
-ARC-Seal: i=1; a=rsa-sha256; t=1526289952; cv=none;
+Return-Path: <broonie@sirena.org.uk>
+X-Google-Smtp-Source: AB8JxZon4JvYBq/NKkWn2DB8CRKJL2ejwcDlrRvHNeLV24O038I7Sj21sYpui4D5LygfRAjRrEX8
+ARC-Seal: i=1; a=rsa-sha256; t=1526004629; cv=none;
         d=google.com; s=arc-20160816;
-        b=T6IzuaByxZ9nDB2JW930bZKR8KC5D+c3b91N/VShjF3eh9F2jKpfDCuk2Ryl9Ek810
-         xXsXU3m3VSNta7xfuAWEluMVQ/7I6tr77lJNZm8q0J6RMwUc8TbuIEP2h+dV87A6+iJv
-         WTCjiyopwpDcCGHtxBlbiGz/46KODg+CPviXz0MihMJndXF/c7rBqJ+M65E/fJEiWASl
-         TCdyT9y1+szJDUrsRiLPCeZzQ/Q9URu6rfiL8U4J6AlxjbvkzjFv9n8MLQyK2wkIB34k
-         DrdqkkqpXWEkv6QcbDLAu9KqN6LkilIZO9zqnfZL4yyTw44CKo8XGUZzt991VdiZ+ZOG
-         +TPQ==
+        b=AX/S8lV4UxwTE9o54FGhLpV7Mg1ySRYCCm0YLcrx/UBwC0VCxwv7+yt/m5ckcO8S3F
+         kTTGiIhAFD7ryYTKD01kOPgGrL2sat0S03daq3uWJl7WVwigOwXrt5Us4w4H+qBJVBC2
+         q1sfYePi2EZIxH4ZUhz3O8DG0/wQu2MBdokmQyHwk5uLg3eHfTdnzjbFb+M+atpgxU1d
+         zufqx4YDThmtoy7KutxdWBkwPMQUS9CAtb3gVnLmpMdE3ycg5y9AWKfbMM3mNsBMWxkS
+         1pC3EV/wKHSmprzwMsx7b8WLGg4BDon+/0vGqO/5U3YjRDhlD4CjSmkf7c993ixigxS+
+         n4BQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=s/5H4oABHhLBpZ/YnXky5aFkK4pp0Hne7LQeOXA3Tyo=;
-        b=n11mRKtRPzPFeNidauZCQ5jZDl+NzN+cXq/k5KvosnE8sAZ8TcXjRbd/Vdn25xws0e
-         Gs641buKi4v41xNotM74ZMbzQcSJc53xecKVeQ7ePx2gnel+FBcuMwXPLoXuhqkUsCbD
-         92j+rwG0Tx8QGFkTrWVcGsNDepf9NATOk+roNN4fg86jxGe+Uu+tm+RPP2e5HxdXJ5nE
-         xFa6Sj7EsVkq1Hpgfb3GjfpQQAEJPHN2G+tf23Ta3X1p1z+s0C5NjCi1BNvh6Fh+AeNM
-         ijlocg2imeYg2hg14C/hyVO60e3Fmh5guotvjU/J1AQGDecOzGCCX529c5WZM4rWA+iT
-         r/2w==
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=j8YfIasyGJvvehmDEPqdbN+bez+gAVGRm6v/YPG/nOo=;
+        b=ntJx0hLqwQb9g+nX5Pb42Jz8iBPJhmr4OcF0LDHBw+Ox5M8+eXkl2rexsGFDHTWqjX
+         +Ma0pcJCE6rcotp5C/lo02OhyD3EkGQVW0l0oRncqtd19mS7ITL7zIO49jMhiHSs+zu+
+         JLRqKwYCb7GnZe/ouFJsGuB8dVMkc0pVPIJM4XEzyunAFswLoaOtY9o+pL1BT71y2ew5
+         ceNdr/v79rrQF3Dv9+zcScgPyyWBhL2fscCtPsxm4uKDs62P/cjq3S+3ukhIMPGyebZ/
+         Xis1ZBVqeDNZiJ4lpmJiUijeINMkK2n8yynU+vmB7V/QVu8P8xiuN4OZuLw32yyMVuWz
+         8qkA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of fengguang.wu@intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=fengguang.wu@intel.com
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=ioyZI7Mx;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of fengguang.wu@intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=fengguang.wu@intel.com
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,399,1520924400";
-   d="scan'208";a="49036350"
-Date: Mon, 14 May 2018 17:25:48 +0800
-From: Fengguang Wu <fengguang.wu@intel.com>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Sasha Levin <Alexander.Levin@microsoft.com>,
-	"ksummit-discuss@lists.linuxfoundation.org" <ksummit-discuss@lists.linuxfoundation.org>,
+       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=ioyZI7Mx;
+       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Date: Fri, 11 May 2018 11:10:18 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>,
 	Greg KH <gregkh@linuxfoundation.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"ksummit-discuss@lists.linuxfoundation.org" <ksummit-discuss@lists.linuxfoundation.org>,
 	"w@1wt.eu" <w@1wt.eu>
 Subject: Re: [Ksummit-discuss] bug-introducing patches
-Message-ID: <20180514092548.qwv4ycsixduqd6q3@wfg-t540p.sh.intel.com>
-References: <CAKMK7uEWYmhA3owSeYM9tNA0tpMm5=4Yqda2j=VfMWi7i8ya8w@mail.gmail.com>
+Message-ID: <20180511021018.GE949@sirena.org.uk>
+References: <20180502194632.GB18390@sasha-vm>
+ <20180503020550.GP2714@sirena.org.uk>
+ <20180503031000.GC29205@thunk.org>
+ <0276fcda-0385-8f22-dbdb-e063f7ed8bbe@roeck-us.net>
+ <20180503224217.GR2714@sirena.org.uk>
+ <20180503230905.GA98604@atomide.com>
+ <CAPDyKFrCKkRHwOh-7yfFbvMp+Ykhs7oXrDwhTShSPvUBvpn2ZQ@mail.gmail.com>
+ <20180509084440.GW13402@sirena.org.uk>
+ <CAKMK7uEWYmhA3owSeYM9tNA0tpMm5=4Yqda2j=VfMWi7i8ya8w@mail.gmail.com>
  <nycvar.YFH.7.76.1805101802150.27054@cbobk.fhfr.pm>
- <20180510164722.GH8514@sasha-vm>
- <CAMuHMdWDNjsba29id4Svjy_tauKivWDUixub3qf82Nx_6rYueA@mail.gmail.com>
- <CAMuHMdUHK=kmJB-=G-Y7YEneZityMzi5YZ3nJFD6uCs61bOaiQ@mail.gmail.com>
- <20180514101237.5df1e0d7@bbrezillon>
- <CAMuHMdWQTOioXPmWX+_jetECpp9=SCK_BfWq9kJ7xj3WTnB_ng@mail.gmail.com>
- <20180514103428.55285a70@bbrezillon>
- <CAMuHMdVwA6jK1fPu3Dzc4-+_kWv1yTNvOGJP811Fdyrrnbc18w@mail.gmail.com>
- <20180514104803.23d2a8a3@bbrezillon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="G6nVm6DDWH/FONJq"
 Content-Disposition: inline
-In-Reply-To: <20180514104803.23d2a8a3@bbrezillon>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <nycvar.YFH.7.76.1805101802150.27054@cbobk.fhfr.pm>
+X-Cookie: Falling rock.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
 X-GMAIL-THRID: =?utf-8?q?1600003109861123526?=
-X-GMAIL-MSGID: =?utf-8?q?1600431013090744628?=
+X-GMAIL-MSGID: =?utf-8?q?1600131830543867134?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 14, 2018 at 10:48:03AM +0200, Boris Brezillon wrote:
->+Fengguang
->
->On Mon, 14 May 2018 10:40:10 +0200
->Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
->> Hi Boris,
->>
->> On Mon, May 14, 2018 at 10:34 AM, Boris Brezillon
->> <boris.brezillon@bootlin.com> wrote:
->> > On Mon, 14 May 2018 10:29:04 +0200
->> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> >> On Mon, May 14, 2018 at 10:12 AM, Boris Brezillon
->> >> <boris.brezillon@bootlin.com> wrote:
->> >> > On Mon, 14 May 2018 10:00:30 +0200
->> >> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> >> >> On Tue, May 1, 2018 at 10:00 PM, Sasha Levin
->> >> >> <Alexander.Levin@microsoft.com> wrote:
->> >> >> > On Tue, May 01, 2018 at 03:44:50PM -0400, Theodore Y. Ts'o wrote:
->> >> >> >>On Tue, May 01, 2018 at 04:38:21PM +0000, Sasha Levin wrote:
->> >> >> > What's worse is that that commit is tagged for stable, which means
->> >> >> > that (given Greg's schedule) it may find it's way to -stable users
->> >> >> > even before some -next users/bots had a chance to test it out.
->> >> >>
->> >> >> I just noticed a case where a commit was picked up for stable, while a
->> >> >> bot had flagged it as a build regression 18 hours earlier (with a CC to
->> >> >> lkml).
->> >> >
->> >> > Also, this patch has been on a tree that I know is tested by Fengguang's
->> >> > robots for more than a week (and in linux-next for 2 days, which, I
->> >> > agree, is probably not enough), and still, I only received the bug
->> >> > report when the patch reached mainline. Are there tests that are only
->> >> > run on Linus' tree?
->> >>
->> >> Have your received a success report from Fengguang's bot, listing all
->> >> configs tested (the broken one should be included; it is included in the
->> >> configs tested on my branches)?
->> >
->> > Yes I did (see below).
->> >
->> > -->8--
->> > From: kbuild test robot <lkp@intel.com>
->> > To: Boris Brezillon <boris.brezillon@bootlin.com>
->> > Subject: [bbrezillon-0day:mtd/fixes] BUILD SUCCESS  fc3a9e15b492eef707afd56b7478001fdecfe53f
->> > Date: Mon, 07 May 2018 20:05:52 +0800
->> > User-Agent: Heirloom mailx 12.5 6/20/10
->> >
->> > tree/branch: https://github.com/bbrezillon/linux-0day  mtd/fixes
->> > branch HEAD: fc3a9e15b492eef707afd56b7478001fdecfe53f  mtd: rawnand: Make sure we wait tWB before polling the STATUS reg
->> >
->> > elapsed time: 49m
->> >
->> > configs tested: 142
->>
->> But the failed config (m68k/allmodconfig) is not listed?
->
->Yes, that's my point. It seems that some configs are only rarely
->(never?) tested on my linux-0day tree (probably because they take longer
->to build), and I should only take kbuild robot results as an indication
->not a guarantee.
 
-Yeah sorry, there is no 100% guarantee. There are 2 main aspects to
-this problem.
+--G6nVm6DDWH/FONJq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-- Response time vs coverage. Most build errors can be caught within 1
-  day. The build success notification email is typically sent within
-  half day (a reasonable feedback time). At this time, it can only be
-  a rough indication not a guarantee. After sending the 0day build
-  success notification, the build tests will actually continue for
-  about 1 week to increase test coverage. 
+On Thu, May 10, 2018 at 06:03:22PM +0200, Jiri Kosina wrote:
+> On Wed, 9 May 2018, Daniel Vetter wrote:
 
-- Merge-test-bisect based workflow. If one branch is hard to merge
-  with others, especially if it's based on old kernel, it'll receive
-  much less test coverage. Branches with known build/boot errors will
-  be excluded from further merges, too.
+> > Since Stephen merges all -fixes branches first, before merging all the
+> > -next branches, he already generates that as part of linux-next. All
+> > he'd need to do is push that intermediate state out to some
+> > linux-fixes branch for consumption by test bots.
 
-Thanks,
-Fengguang
+> What I do for my trees is that I actually merge the '-fixes' branch (that=
+=20
+> is scheduled to go to Linus in the 'current' cycle) into my for-next=20
+> branch as well.
+
+> This has the advantage of (a) getting all the coverage linux-next does (b=
+)=20
+> seeing any potential merge conflicts early
+
+> Is this not feasible for other trees?
+
+That's obviously best practice which I hope everyone who doesn't have a
+separate fix branch in -next is doing but it means that the fixes branch
+is not getting tested without the changes in your -next branch, and also
+reduces the coverage separate to other people's -next branches.  This
+means that there's room for implicit dependencies to slip through.
+
+--G6nVm6DDWH/FONJq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlr0+4oACgkQJNaLcl1U
+h9AgNgf/bAT4jhMrJUeKLkhow6ag+iOj8415TKB+/4p5WdMsxL3NTK1+I2+yyL6s
+FQ4pCIgT0MY29Gkxj778/kCcY1pZVsqp2RlGKELU9GTNY2FpblWnXoUoocibcbwO
+s/fQhbkpHpkz5vDTa86rHaD5KgtY5GhYh1SW0N5P6zxm2K0PtKcVW6Z+tJlx46mG
+XaRSJIKtzOQmKpXqWMP0cBGQlk7k7tQdH0Twxhj8IjVTvoBSbY0eo/z+S27j2TyS
+hWH/Y3FRGqOVcbvfFA2G0jPHBGRlsV9N0JESO8JU1baMMoExvwZobDHHg0Xq0KF+
+1VN+C1lVyWhFJrMPdpJL7A67nOnI3w==
+=4Usi
+-----END PGP SIGNATURE-----
+
+--G6nVm6DDWH/FONJq--
