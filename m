@@ -1,211 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752870AbeEKIBX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 04:01:23 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35520 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750852AbeEKIBS (ORCPT
+        id S1752824AbeEKIBO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 04:01:14 -0400
+Received: from www84.your-server.de ([213.133.104.84]:49589 "EHLO
+        www84.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752174AbeEKIBK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 04:01:18 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: iommu@lists.linux-foundation.org
-Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
-        Greentime Hu <green.hu@gmail.com>, Vincent Chen <deanbo422@gmail.com>,
-        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-hexagon@vger.kernel.org, linux-m68k@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 07/20] m68k: use generic dma_noncoherent_ops
-Date: Fri, 11 May 2018 09:59:32 +0200
-Message-Id: <20180511075945.16548-8-hch@lst.de>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180511075945.16548-1-hch@lst.de>
-References: <20180511075945.16548-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Fri, 11 May 2018 04:01:10 -0400
+Message-ID: <1526023986.28429.1.camel@seibold.net>
+Subject: Re: Is read barrier missed in kfifo?
+From: Stefani Seibold <stefani@seibold.net>
+To: Xiao Guangrong <guangrong.xiao@gmail.com>, paulmck@linux.vnet.ibm.com
+Cc: peterz@infradead.org, rostedt@goodmis.org,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date: Fri, 11 May 2018 09:33:06 +0200
+In-Reply-To: <5382d3a8-08e0-5429-0cd3-36f9c69197e1@gmail.com>
+References: <5382d3a8-08e0-5429-0cd3-36f9c69197e1@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.24.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: stefani@seibold.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to the generic noncoherent direct mapping implementation.
+My guts thinks you are right. Feel free to send a patch...
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/m68k/Kconfig                   |  2 +
- arch/m68k/include/asm/Kbuild        |  1 +
- arch/m68k/include/asm/dma-mapping.h | 12 -----
- arch/m68k/kernel/dma.c              | 68 ++++-------------------------
- 4 files changed, 11 insertions(+), 72 deletions(-)
- delete mode 100644 arch/m68k/include/asm/dma-mapping.h
-
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index 785612b576f7..3f61327da2d5 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -2,6 +2,7 @@
- config M68K
- 	bool
- 	default y
-+	select ARCH_HAS_SYNC_DMA_FOR_DEVICE if HAS_DMA
- 	select ARCH_MIGHT_HAVE_PC_PARPORT if ISA
- 	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
- 	select HAVE_IDE
-@@ -24,6 +25,7 @@ config M68K
- 	select MODULES_USE_ELF_RELA
- 	select OLD_SIGSUSPEND3
- 	select OLD_SIGACTION
-+	select DMA_NONCOHERENT_OPS if HAS_DMA
- 
- config CPU_BIG_ENDIAN
- 	def_bool y
-diff --git a/arch/m68k/include/asm/Kbuild b/arch/m68k/include/asm/Kbuild
-index 88a9d27df1ac..a853c00f1374 100644
---- a/arch/m68k/include/asm/Kbuild
-+++ b/arch/m68k/include/asm/Kbuild
-@@ -1,5 +1,6 @@
- generic-y += barrier.h
- generic-y += device.h
-+generic-y += dma-mapping.h
- generic-y += emergency-restart.h
- generic-y += exec.h
- generic-y += extable.h
-diff --git a/arch/m68k/include/asm/dma-mapping.h b/arch/m68k/include/asm/dma-mapping.h
-deleted file mode 100644
-index e3722ed04fbb..000000000000
---- a/arch/m68k/include/asm/dma-mapping.h
-+++ /dev/null
-@@ -1,12 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _M68K_DMA_MAPPING_H
--#define _M68K_DMA_MAPPING_H
--
--extern const struct dma_map_ops m68k_dma_ops;
--
--static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
--{
--        return &m68k_dma_ops;
--}
--
--#endif  /* _M68K_DMA_MAPPING_H */
-diff --git a/arch/m68k/kernel/dma.c b/arch/m68k/kernel/dma.c
-index c01b9b8f97bf..3d561c577d35 100644
---- a/arch/m68k/kernel/dma.c
-+++ b/arch/m68k/kernel/dma.c
-@@ -6,7 +6,7 @@
- 
- #undef DEBUG
- 
--#include <linux/dma-mapping.h>
-+#include <linux/dma-noncoherent.h>
- #include <linux/device.h>
- #include <linux/kernel.h>
- #include <linux/scatterlist.h>
-@@ -18,7 +18,7 @@
- 
- #if defined(CONFIG_MMU) && !defined(CONFIG_COLDFIRE)
- 
--static void *m68k_dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
-+void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
- 		gfp_t flag, unsigned long attrs)
- {
- 	struct page *page, **map;
-@@ -61,7 +61,7 @@ static void *m68k_dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
- 	return addr;
- }
- 
--static void m68k_dma_free(struct device *dev, size_t size, void *addr,
-+void arch_dma_free(struct device *dev, size_t size, void *addr,
- 		dma_addr_t handle, unsigned long attrs)
- {
- 	pr_debug("dma_free_coherent: %p, %x\n", addr, handle);
-@@ -72,8 +72,8 @@ static void m68k_dma_free(struct device *dev, size_t size, void *addr,
- 
- #include <asm/cacheflush.h>
- 
--static void *m68k_dma_alloc(struct device *dev, size_t size,
--		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
-+void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
-+		gfp_t gfp, unsigned long attrs)
- {
- 	void *ret;
- 
-@@ -88,7 +88,7 @@ static void *m68k_dma_alloc(struct device *dev, size_t size,
- 	return ret;
- }
- 
--static void m68k_dma_free(struct device *dev, size_t size, void *vaddr,
-+void arch_dma_free(struct device *dev, size_t size, void *vaddr,
- 		dma_addr_t dma_handle, unsigned long attrs)
- {
- 	free_pages((unsigned long)vaddr, get_order(size));
-@@ -96,8 +96,8 @@ static void m68k_dma_free(struct device *dev, size_t size, void *vaddr,
- 
- #endif /* CONFIG_MMU && !CONFIG_COLDFIRE */
- 
--static void m68k_dma_sync_single_for_device(struct device *dev,
--		dma_addr_t handle, size_t size, enum dma_data_direction dir)
-+void arch_sync_dma_for_device(struct device *dev, phys_addr_t handle,
-+		size_t size, enum dma_data_direction dir)
- {
- 	switch (dir) {
- 	case DMA_BIDIRECTIONAL:
-@@ -113,55 +113,3 @@ static void m68k_dma_sync_single_for_device(struct device *dev,
- 		break;
- 	}
- }
--
--static void m68k_dma_sync_sg_for_device(struct device *dev,
--		struct scatterlist *sglist, int nents, enum dma_data_direction dir)
--{
--	int i;
--	struct scatterlist *sg;
--
--	for_each_sg(sglist, sg, nents, i) {
--		dma_sync_single_for_device(dev, sg->dma_address, sg->length,
--					   dir);
--	}
--}
--
--static dma_addr_t m68k_dma_map_page(struct device *dev, struct page *page,
--		unsigned long offset, size_t size, enum dma_data_direction dir,
--		unsigned long attrs)
--{
--	dma_addr_t handle = page_to_phys(page) + offset;
--
--	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
--		dma_sync_single_for_device(dev, handle, size, dir);
--
--	return handle;
--}
--
--static int m68k_dma_map_sg(struct device *dev, struct scatterlist *sglist,
--		int nents, enum dma_data_direction dir, unsigned long attrs)
--{
--	int i;
--	struct scatterlist *sg;
--
--	for_each_sg(sglist, sg, nents, i) {
--		sg->dma_address = sg_phys(sg);
--
--		if (attrs & DMA_ATTR_SKIP_CPU_SYNC)
--			continue;
--
--		dma_sync_single_for_device(dev, sg->dma_address, sg->length,
--					   dir);
--	}
--	return nents;
--}
--
--const struct dma_map_ops m68k_dma_ops = {
--	.alloc			= m68k_dma_alloc,
--	.free			= m68k_dma_free,
--	.map_page		= m68k_dma_map_page,
--	.map_sg			= m68k_dma_map_sg,
--	.sync_single_for_device	= m68k_dma_sync_single_for_device,
--	.sync_sg_for_device	= m68k_dma_sync_sg_for_device,
--};
--EXPORT_SYMBOL(m68k_dma_ops);
--- 
-2.17.0
+Am Freitag, den 11.05.2018, 15:25 +0800 schrieb Xiao Guangrong:
+> Hi,
+> 
+> Currently, there is no read barrier between reading the index
+> (kfifo.in) and fetching the real data from the fifo.
+> 
+> I am afraid that will cause the vfifo is observed as not empty
+> however the data is not actually ready for read. Right?
+> 
+> Thanks!
