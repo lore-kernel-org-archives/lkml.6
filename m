@@ -1,312 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752155AbeEKQf0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:35:26 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44486 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750950AbeEKQfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:35:23 -0400
-Subject: Re: [PATCH v2 26/27] coresight: perf: Remove reset_buffer call back
- for sinks
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mike.leach@linaro.org, robert.walker@arm.com, mark.rutland@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com, sudeep.holla@arm.com,
-        frowand.list@gmail.com, robh@kernel.org, john.horley@arm.com
-References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
- <1525165857-11096-27-git-send-email-suzuki.poulose@arm.com>
- <20180508194241.GC3389@xps15>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <7478286d-cbbe-4bf2-4012-f4469133f4b2@arm.com>
-Date: Fri, 11 May 2018 17:35:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752049AbeEKQjR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:39:17 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:38693 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750950AbeEKQjQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 12:39:16 -0400
+X-Google-Smtp-Source: AB8JxZowkIg2foAa+J3fT6yupdwPgqQPNTS1HcC5jgYgT7/TQgcTJfs1iHA8n0soEILi8Ylu7/PxDmbx1wbAB9qRjN8=
 MIME-Version: 1.0
-In-Reply-To: <20180508194241.GC3389@xps15>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAPcyv4i1=q45aqSHXkWvQQgXBqkwuHR2ZxXWmpbeQxptXCcAFA@mail.gmail.com>
+References: <20180511163421.GA32728@jordon-HP-15-Notebook-PC> <CAPcyv4i1=q45aqSHXkWvQQgXBqkwuHR2ZxXWmpbeQxptXCcAFA@mail.gmail.com>
+From: Souptick Joarder <jrdr.linux@gmail.com>
+Date: Fri, 11 May 2018 22:09:13 +0530
+Message-ID: <CAFqt6zZitXMDzX7gX2xvMO1AzW7_RikgZ0ssRucYn6OWb3ON_w@mail.gmail.com>
+Subject: Re: [PATCH v4] dax: Change return type to vm_fault_t
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        zi.yan@cs.rutgers.edu, Ross Zwisler <ross.zwisler@linux.intel.com>,
+        "Huang, Ying" <ying.huang@intel.com>, Michal Hocko <mhocko@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/05/18 20:42, Mathieu Poirier wrote:
-> On Tue, May 01, 2018 at 10:10:56AM +0100, Suzuki K Poulose wrote:
->> Right now we issue an update_buffer() and reset_buffer() call backs
->> in succession when we stop tracing an event. The update_buffer is
->> supposed to check the status of the buffer and make sure the ring buffer
->> is updated with the trace data. And we store information about the
->> size of the data collected only to be consumed by the reset_buffer
->> callback which always follows the update_buffer. This was originally
->> designed for handling future IPs which could trigger a buffer overflow
->> interrupt. This patch gets rid of the reset_buffer callback altogether
->> and performs the actions in update_buffer, making it return the size
->> collected. We can always add the support for handling the overflow
->> interrupt case later.
+On Fri, May 11, 2018 at 10:04 PM, Dan Williams <dan.j.williams@intel.com> wrote:
+> On Fri, May 11, 2018 at 9:34 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> Use new return type vm_fault_t for fault handler. For
+>> now, this is just documenting that the function returns
+>> a VM_FAULT value rather than an errno. Once all instances
+>> are converted, vm_fault_t will become a distinct type.
 >>
->> This removes some not-so pretty hack (storing the new head in the
->> size field for snapshot mode) and cleans it up a little bit.
-> 
-> IPs with an overflow interrupts will be arriving shortly, so it is not like the
-> future is uncertain - they are coming.  Right now the logic is there - I don't
-> see a real need to consolidate things only to split it again in the near future.
-> 
-> I agree the part about overloading buf->data_size with the head of the ring
-> buffer when operating in snapshot mode isn't pretty (though well documented).
-> If anything that can be improve, i.e add a buf->head and things will be clear.
-> Once again this could be part of another patchset.
-> 
-
-Mathieu,
-
-I am not sure how was this supposed to be used in conjunction with the overflow
-handling. Please could you help me here ? I might be able to retain
-the callback and possibly improve it with the changes for etr_buf infrastructure.
-
-Cheers
-Suzuki
-
-
+>> Commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 >>
->> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Previously vm_insert_mixed() returns err which driver
+>> mapped into VM_FAULT_* type. The new function
+>> vmf_insert_mixed() will replace this inefficiency by
+>> returning VM_FAULT_* type.
+>>
+>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>> Reviewed-by: Ross Zwisler <ross.zwisler@linux.intel.com>
 >> ---
->>   drivers/hwtracing/coresight/coresight-etb10.c    | 56 +++++------------------
->>   drivers/hwtracing/coresight/coresight-etm-perf.c |  9 +---
->>   drivers/hwtracing/coresight/coresight-tmc-etf.c  | 58 +++++-------------------
->>   include/linux/coresight.h                        |  5 +-
->>   4 files changed, 26 insertions(+), 102 deletions(-)
+>> v2: Modified the change log
 >>
->> diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
->> index d9c2f87..b13712a 100644
->> --- a/drivers/hwtracing/coresight/coresight-etb10.c
->> +++ b/drivers/hwtracing/coresight/coresight-etb10.c
->> @@ -322,37 +322,7 @@ static int etb_set_buffer(struct coresight_device *csdev,
->>   	return ret;
->>   }
->>   
->> -static unsigned long etb_reset_buffer(struct coresight_device *csdev,
->> -				      struct perf_output_handle *handle,
->> -				      void *sink_config)
->> -{
->> -	unsigned long size = 0;
->> -	struct cs_buffers *buf = sink_config;
->> -
->> -	if (buf) {
->> -		/*
->> -		 * In snapshot mode ->data_size holds the new address of the
->> -		 * ring buffer's head.  The size itself is the whole address
->> -		 * range since we want the latest information.
->> -		 */
->> -		if (buf->snapshot)
->> -			handle->head = local_xchg(&buf->data_size,
->> -						  buf->nr_pages << PAGE_SHIFT);
->> -
->> -		/*
->> -		 * Tell the tracer PMU how much we got in this run and if
->> -		 * something went wrong along the way.  Nobody else can use
->> -		 * this cs_buffers instance until we are done.  As such
->> -		 * resetting parameters here and squaring off with the ring
->> -		 * buffer API in the tracer PMU is fine.
->> -		 */
->> -		size = local_xchg(&buf->data_size, 0);
->> -	}
->> -
->> -	return size;
->> -}
->> -
->> -static void etb_update_buffer(struct coresight_device *csdev,
->> +static unsigned long etb_update_buffer(struct coresight_device *csdev,
->>   			      struct perf_output_handle *handle,
->>   			      void *sink_config)
->>   {
->> @@ -361,13 +331,13 @@ static void etb_update_buffer(struct coresight_device *csdev,
->>   	u8 *buf_ptr;
->>   	const u32 *barrier;
->>   	u32 read_ptr, write_ptr, capacity;
->> -	u32 status, read_data, to_read;
->> -	unsigned long offset;
->> +	u32 status, read_data;
->> +	unsigned long offset, to_read;
->>   	struct cs_buffers *buf = sink_config;
->>   	struct etb_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
->>   
->>   	if (!buf)
->> -		return;
->> +		return 0;
->>   
->>   	capacity = drvdata->buffer_depth * ETB_FRAME_SIZE_WORDS;
->>   
->> @@ -472,18 +442,17 @@ static void etb_update_buffer(struct coresight_device *csdev,
->>   	writel_relaxed(0x0, drvdata->base + ETB_RAM_WRITE_POINTER);
->>   
->>   	/*
->> -	 * In snapshot mode all we have to do is communicate to
->> -	 * perf_aux_output_end() the address of the current head.  In full
->> -	 * trace mode the same function expects a size to move rb->aux_head
->> -	 * forward.
->> +	 * In snapshot mode we have to update the handle->head to point
->> +	 * to the new location.
->>   	 */
->> -	if (buf->snapshot)
->> -		local_set(&buf->data_size, (cur * PAGE_SIZE) + offset);
->> -	else
->> -		local_add(to_read, &buf->data_size);
->> -
->> +	if (buf->snapshot) {
->> +		handle->head = (cur * PAGE_SIZE) + offset;
->> +		to_read = buf->nr_pages << PAGE_SHIFT;
->> +	}
->>   	etb_enable_hw(drvdata);
->>   	CS_LOCK(drvdata->base);
->> +
->> +	return to_read;
->>   }
->>   
->>   static const struct coresight_ops_sink etb_sink_ops = {
->> @@ -492,7 +461,6 @@ static const struct coresight_ops_sink etb_sink_ops = {
->>   	.alloc_buffer	= etb_alloc_buffer,
->>   	.free_buffer	= etb_free_buffer,
->>   	.set_buffer	= etb_set_buffer,
->> -	.reset_buffer	= etb_reset_buffer,
->>   	.update_buffer	= etb_update_buffer,
->>   };
->>   
->> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
->> index 4e5ed65..5096def 100644
->> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
->> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
->> @@ -342,15 +342,8 @@ static void etm_event_stop(struct perf_event *event, int mode)
->>   		if (!sink_ops(sink)->update_buffer)
->>   			return;
->>   
->> -		sink_ops(sink)->update_buffer(sink, handle,
->> +		size = sink_ops(sink)->update_buffer(sink, handle,
->>   					      event_data->snk_config);
->> -
->> -		if (!sink_ops(sink)->reset_buffer)
->> -			return;
->> -
->> -		size = sink_ops(sink)->reset_buffer(sink, handle,
->> -						    event_data->snk_config);
->> -
->>   		perf_aux_output_end(handle, size);
->>   	}
->>   
->> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
->> index 0a32734..75ef5c4 100644
->> --- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
->> +++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
->> @@ -360,36 +360,7 @@ static int tmc_set_etf_buffer(struct coresight_device *csdev,
->>   	return ret;
->>   }
->>   
->> -static unsigned long tmc_reset_etf_buffer(struct coresight_device *csdev,
->> -					  struct perf_output_handle *handle,
->> -					  void *sink_config)
->> -{
->> -	long size = 0;
->> -	struct cs_buffers *buf = sink_config;
->> -
->> -	if (buf) {
->> -		/*
->> -		 * In snapshot mode ->data_size holds the new address of the
->> -		 * ring buffer's head.  The size itself is the whole address
->> -		 * range since we want the latest information.
->> -		 */
->> -		if (buf->snapshot)
->> -			handle->head = local_xchg(&buf->data_size,
->> -						  buf->nr_pages << PAGE_SHIFT);
->> -		/*
->> -		 * Tell the tracer PMU how much we got in this run and if
->> -		 * something went wrong along the way.  Nobody else can use
->> -		 * this cs_buffers instance until we are done.  As such
->> -		 * resetting parameters here and squaring off with the ring
->> -		 * buffer API in the tracer PMU is fine.
->> -		 */
->> -		size = local_xchg(&buf->data_size, 0);
->> -	}
->> -
->> -	return size;
->> -}
->> -
->> -static void tmc_update_etf_buffer(struct coresight_device *csdev,
->> +static unsigned long tmc_update_etf_buffer(struct coresight_device *csdev,
->>   				  struct perf_output_handle *handle,
->>   				  void *sink_config)
->>   {
->> @@ -398,17 +369,17 @@ static void tmc_update_etf_buffer(struct coresight_device *csdev,
->>   	const u32 *barrier;
->>   	u32 *buf_ptr;
->>   	u64 read_ptr, write_ptr;
->> -	u32 status, to_read;
->> -	unsigned long offset;
->> +	u32 status;
->> +	unsigned long offset, to_read;
->>   	struct cs_buffers *buf = sink_config;
->>   	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
->>   
->>   	if (!buf)
->> -		return;
->> +		return 0;
->>   
->>   	/* This shouldn't happen */
->>   	if (WARN_ON_ONCE(drvdata->mode != CS_MODE_PERF))
->> -		return;
->> +		return 0;
->>   
->>   	CS_UNLOCK(drvdata->base);
->>   
->> @@ -497,18 +468,14 @@ static void tmc_update_etf_buffer(struct coresight_device *csdev,
->>   		}
->>   	}
->>   
->> -	/*
->> -	 * In snapshot mode all we have to do is communicate to
->> -	 * perf_aux_output_end() the address of the current head.  In full
->> -	 * trace mode the same function expects a size to move rb->aux_head
->> -	 * forward.
->> -	 */
->> -	if (buf->snapshot)
->> -		local_set(&buf->data_size, (cur * PAGE_SIZE) + offset);
->> -	else
->> -		local_add(to_read, &buf->data_size);
->> -
->> +	/* In snapshot mode we have to update the head */
->> +	if (buf->snapshot) {
->> +		handle->head = (cur * PAGE_SIZE) + offset;
->> +		to_read = buf->nr_pages << PAGE_SHIFT;
->> +	}
->>   	CS_LOCK(drvdata->base);
->> +
->> +	return to_read;
->>   }
->>   
->>   static const struct coresight_ops_sink tmc_etf_sink_ops = {
->> @@ -517,7 +484,6 @@ static const struct coresight_ops_sink tmc_etf_sink_ops = {
->>   	.alloc_buffer	= tmc_alloc_etf_buffer,
->>   	.free_buffer	= tmc_free_etf_buffer,
->>   	.set_buffer	= tmc_set_etf_buffer,
->> -	.reset_buffer	= tmc_reset_etf_buffer,
->>   	.update_buffer	= tmc_update_etf_buffer,
->>   };
->>   
->> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
->> index c0e1568..41b3729 100644
->> --- a/include/linux/coresight.h
->> +++ b/include/linux/coresight.h
->> @@ -212,10 +212,7 @@ struct coresight_ops_sink {
->>   	int (*set_buffer)(struct coresight_device *csdev,
->>   			  struct perf_output_handle *handle,
->>   			  void *sink_config);
->> -	unsigned long (*reset_buffer)(struct coresight_device *csdev,
->> -				      struct perf_output_handle *handle,
->> -				      void *sink_config);
->> -	void (*update_buffer)(struct coresight_device *csdev,
->> +	unsigned long (*update_buffer)(struct coresight_device *csdev,
->>   			      struct perf_output_handle *handle,
->>   			      void *sink_config);
->>   };
->> -- 
->> 2.7.4
+>> v3: Updated the change log and
+>>     added Ross in review list
 >>
+>> v4: Addressed David's comment.
+>>     Changes in huge_memory.c put
+>>     together in a single patch that
+>>     it is bisectable in furture
+>
+> Thanks, I'll carry this in the nvdimm tree since it collides with some
+> work-in progress development.
+
+Thanks Dan :)
