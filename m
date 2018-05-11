@@ -1,80 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753323AbeEKLSP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 07:18:15 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54878 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1753242AbeEKLRo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 07:17:44 -0400
-From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Subject: [PATCH 2/2] powerpc: Enable ASYM_SMT on interleaved big-core systems
-Date: Fri, 11 May 2018 16:47:24 +0530
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1526037444-22876-1-git-send-email-ego@linux.vnet.ibm.com>
-References: <1526037444-22876-1-git-send-email-ego@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18051111-0052-0000-0000-000002ED0829
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009005; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000259; SDB=6.01030698; UDB=6.00526774; IPR=6.00809829;
- MB=3.00021044; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-11 11:17:43
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051111-0053-0000-0000-00005CA5389A
-Message-Id: <1526037444-22876-3-git-send-email-ego@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805110107
+        id S1753424AbeEKLTR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 07:19:17 -0400
+Received: from mga07.intel.com ([134.134.136.100]:9095 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753186AbeEKLTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 07:19:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,388,1520924400";
+   d="scan'208";a="57786594"
+Subject: Re: [PATCH RFC 07/19] perf tools: Workaround missing maps for x86_64
+ KPTI entry trampolines
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
+ <1525866228-30321-8-git-send-email-adrian.hunter@intel.com>
+ <20180509170717.GI13491@kernel.org>
+ <363DA0ED52042842948283D2FC38E4649C13DE9E@IRSMSX106.ger.corp.intel.com>
+ <20180510201542.GD4311@kernel.org> <20180510201922.GE4311@kernel.org>
+ <20180510204700.GF4311@kernel.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <291c0615-2b5c-0076-faeb-720df9ab5c84@intel.com>
+Date: Fri, 11 May 2018 14:18:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180510204700.GF4311@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+On 10/05/18 23:47, Arnaldo Carvalho de Melo wrote:
+> Em Thu, May 10, 2018 at 05:19:22PM -0300, Arnaldo Carvalho de Melo escreveu:
+>> Em Thu, May 10, 2018 at 05:15:42PM -0300, Arnaldo Carvalho de Melo escreveu:
+>>> Em Thu, May 10, 2018 at 07:08:37PM +0000, Hunter, Adrian escreveu:
+>>>> Let me know if you want me to post the workaround patches separately,
+>>>> otherwise I will wait a bit before sending the patches again.
+> 
+>>> I'll see if I went thru all of the patches already...
+>  
+>> So I looked at the patches posted and one comment is about the terse
+>> commit logs for some of the kcore_copy patches, for instance:
+>  
+>> --------------------
+>>  In preparation to add more program headers, get rid of kernel_map and
+>> modules_map.
+>> --------------------
+>  
+>> Can't this be made a bit more verbose? Lemme re-read the patch...
+> 
+> So you had just one pointers to the kernel map and a module_maps, and
+> then this is replaced by kcore_copy__map() that instead of populating
+> those fields that are being removed:
+> 
+> -       struct phdr_data kernel_map;
+> -       struct phdr_data modules_map;
+> 
+> Will allocate and add "struct phdr_data" instances to the
+> kcore_copy_info->phdrs list, so I propose, to follow convention used
+> elsewhere in tools/perf/ that you rename kcore_copy__map() to
+> 
+>   kcore_copy_info__addnew(kci, fields)
+> 
+> I would do it as:
+> 
+> struct phdr_data *phdr_data__new(fields)
+> {
+> 	return  zalloc() + init fields;
+> }
+> 
+> struct phdr_data *kcore_copy_info__addnew(kci, fields)
+> {
+> 	struct phdr_data *pd = phdr_data__new(fields);
+> 
+> 	if (pd)
+> 		list_add(&pd->list, &kci->phdrs)
+> }
+> 
+> Also please rename pd->list to pd->node, to clarify that it is a node in
+> some list, not a list.
+> 
+> The commit log list then could reflect that somehow, with something
+> around:
+> 
+> ----------------------
+> 
+> Move ->kernel_map and ->modules_map to newly allocated entries in the
+> ->phdrs list.
+> 
+> ----------------------
+> 
+> wdyt?
 
-Each of the SMT4 cores forming a fused-core are more or less
-independent units. Thus when multiple tasks are scheduled to run on
-the fused core, we get the best performance when the tasks are spread
-across the pair of SMT4 cores.
-
-Since the threads in the pair of SMT4 cores of an interleaved big-core
-are numbered {0,2,4,6} and {1,3,5,7} respectively, enable ASYM_SMT on
-such interleaved big-cores that will bias the load-balancing of tasks
-on smaller numbered threads, which will automatically result in
-spreading the tasks uniformly across the associated pair of SMT4
-cores.
-
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
----
- arch/powerpc/kernel/smp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-index 9ca7148..0153f01 100644
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -1082,7 +1082,7 @@ static int powerpc_smt_flags(void)
- {
- 	int flags = SD_SHARE_CPUCAPACITY | SD_SHARE_PKG_RESOURCES;
- 
--	if (cpu_has_feature(CPU_FTR_ASYM_SMT)) {
-+	if (cpu_has_feature(CPU_FTR_ASYM_SMT) || has_interleaved_big_core) {
- 		printk_once(KERN_INFO "Enabling Asymmetric SMT scheduling\n");
- 		flags |= SD_ASYM_PACKING;
- 	}
--- 
-1.9.4
+I have done the changes but still have kcore_copy__map() calling
+kcore_copy_info__addnew().  The changes have been pushed to the same branch.
