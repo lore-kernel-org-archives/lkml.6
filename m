@@ -1,39 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752311AbeEKGdl (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 02:33:41 -0400
-Received: from verein.lst.de ([213.95.11.211]:51287 "EHLO newverein.lst.de"
+        id S1752319AbeEKGpz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 02:45:55 -0400
+Received: from ozlabs.org ([203.11.71.1]:41979 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750852AbeEKGdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 02:33:40 -0400
-Date: Fri, 11 May 2018 08:37:24 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: linux-nvme@lists.infradead.org, alex_gagniuc@dellteam.com,
-        Austin.Bolen@dell.com, Shyam.Iyer@dell.com,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvme-pci: Avoid use of goto in nvme_reset_work()
-Message-ID: <20180511063724.GA8368@lst.de>
-References: <20180510164645.19559-1-mr.nuke.me@gmail.com>
+        id S1751352AbeEKGpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 02:45:54 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, aneesh.kumar@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH  11/17] powerpc/nohash32: set GUARDED attribute in the PMD directly
+In-Reply-To: <4e87c5bd5ffe886ca202a58e5c93358bd6a34dce.1525435203.git.christophe.leroy@c-s.fr>
+References: <cover.1525435203.git.christophe.leroy@c-s.fr> <4e87c5bd5ffe886ca202a58e5c93358bd6a34dce.1525435203.git.christophe.leroy@c-s.fr>
+Date: Fri, 11 May 2018 16:45:52 +1000
+Message-ID: <87vabur8pr.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180510164645.19559-1-mr.nuke.me@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 11:46:33AM -0500, Alexandru Gagniuc wrote:
-> This patch started as a challenge from Keith relating to code
-> structuring with goto vs return. I think the final result improves
-> readability on two counts:
-> First, it clarifies the separation between work struct and nvme_dev.
-> Second, it makes it clearer what error is being passed on:
-> 'return -ENODEV' vs 'goto out', where 'result' happens to be -ENODEV
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-I think this actually makes the code much less readable.  The only real
-improvement the code needs is to replace the "out" label name with
-something more descriptive like "remove_controller".
+> diff --git a/arch/powerpc/mm/ioremap.c b/arch/powerpc/mm/ioremap.c
+> index 59be5dfcb3e9..b8c347077e02 100644
+> --- a/arch/powerpc/mm/ioremap.c
+> +++ b/arch/powerpc/mm/ioremap.c
+> @@ -132,9 +132,14 @@ void __iomem * __ioremap_caller(phys_addr_t addr, unsigned long size,
+>  	if (slab_is_available()) {
+>  		struct vm_struct *area;
+>  
+> -		area = __get_vm_area_caller(size, VM_IOREMAP,
+> -					    ioremap_bot, IOREMAP_END,
+> -					    caller);
+> +		if (flags & _PAGE_GUARDED)
+
+On 64-bit configs:
+
+  arch/powerpc/mm/ioremap.c:135:15: error: '_PAGE_GUARDED' undeclared (first use in this function)
+
+cheers
