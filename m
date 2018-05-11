@@ -1,32 +1,34 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2990480-1526218020-2-11062424474648958016
+X-Cyrus-Session-Id: sloti22d1t05-3620115-1526025644-2-6982335397627702587
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: 
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526218019; b=AThQDKloh4eI+iMs9UDIOy/VKB/DWGCbIXmQ9lc3gPqFK//I0/
-    XOTkLD/1atn0ifuKU9YemUZuWcp5Uy/1az4CEoWjvLwpdhQN2P3fdDqGClrJynDB
-    FxJPYWXlS8tgWTduyuB3sH27AZVkOT7plJiwTJrx7PqAtmXXiPcvDypvKmq9i0t4
-    ZzLGee5ZSmqCdG8gFDUm64SUyu7pSAYWwSmg478/muVTh/D6rvebPAYBm3uea1Ud
-    DNTVRNvd0JOPwlSZ0qXOS6P6W9QKQ+LzWURYMDd5PLbYMUTtfpCnLaW1+TPF8EiV
-    17Nl2P3UViaP/okqcgU0kKulXKrhQenRbhDw==
+    1526025644; b=nzreRD6ymRe05Yfq9SPU5ZINOX4BMpTW5ZlzCY6b+RadgzepVU
+    DwNkZNM9KXtMW9QS3On9Kltep+nGdKgfl6AcjTmr03nRy16uwGy5EaWr45ZW80ke
+    mQ8/yWnDBH+Ah8uhGjlmOvX6t6JlntG3koth8V5n8B32ScXMOWAe1IGemI2obedH
+    9Sj/3bG3tkK1RTzw83KQ1C3lDxOLOEsxrwWIr1pIBxo/ULHxW99AOhWWEXVeJdFj
+    GYx3m/LRKK37Xtj+VLbS+lk81sAfFJ3Chy9IruaslEoxkwqBbrJWk8PSd86g4Ve3
+    Eq9ywB89zJLS8l2OBDd7bhdE4Z5QQVq9rmLg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526218019;
-    bh=IEp1gIFE8mkuXBS4U8mYCjuw6n5Tp3OdcxV51oNJH8g=; b=HMn9FFPsEl1N
-    4esCV7yC/CyLvlRjK179KyO2m0FJje2uvW1YF7Qrg+OcLezX9jiUQfwpVbFkOByG
-    /O820aogCzRnxzokfVGUmc2YtA533YLJtP9/1FaeEOtUDxNU/aMWLUAqB9U/1jnX
-    M5rvVHUJJdNCDuV1ZnaLQ60QQ4ObVQF1ci7WAz9iRs7Nd1p5mAxphYScGyVFozXz
-    O1UwswtV0B7zJ4GNMgXylrbOOoHYmHClu20IoJTlmfvGMStC1SDuUC1GVjmh9d10
-    j/W5Ib6r+8YOZPbNbtiSvNTDhe7H41D/2hcCH21yzdJ0tCmoaExgaDPRklNijHRZ
-    pW0GSJVIRA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gmx.de;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526025644; bh=
+    tV/c5wFOEM7ru2yxD/dwmoaCNRBN8D6OW5eP2LXwUTo=; b=GzCR09y1skf/kqkn
+    AwtubR7uHAQGMh3aJuLQbHIFR/13mt7J59uuAkrty8krYLiRdnlVQlFkRfI//ZLe
+    gNWY/M0PvflZrfJBDmIGyzfLd6v6wqgkTwm63tST1/tnAFXVMX5KMmflyH9fpnEg
+    FMGO5rGAuvUr9DwbJguQVfmrROskAExig3wCPnX+Mo0iIaG7+aW9vM+FS6yPlqWr
+    Pik+tg4zudK0Mn6ShrqfffI1YkgRRktwck6MCjGtcYCBpgWAohSeKSFA0NPwuwBe
+    cyNH0SbUA48z65/OCQ/2Px+Ilr2pZSSi9o7S+gCCZxH9KOKD01TspnC3uORLWbEl
+    Q/FkTw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=infradead.org header.i=@infradead.org header.b=BKG2Hxku
+    x-bits=2048 x-keytype=rsa x-algorithm=sha256
+    x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -35,12 +37,15 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmx.de header.result=pass header_is_org_domain=yes;
+    header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gmx.de;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=infradead.org header.i=@infradead.org header.b=BKG2Hxku
+      x-bits=2048 x-keytype=rsa x-algorithm=sha256
+      x-selector=bombadil.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -49,27 +54,26 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmx.de header.result=pass header_is_org_domain=yes;
+      header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKIFdfQnKXTwQMqt5BK1wbSmO17cS/5ALSAbrZDGlUlB14iJ0SfaS/ke/7aaBfQfrauZx8s5x2GZ6SxgG8URZNp9mLKyKz+4RlFtCrgU5iD+53SRT3qa
-    MiAXbbkqmRPGBvPj6zZzxG07mi6Gj3g9khsWDNsOpvpP43b2Ardtz67qTmu7CV6kZ1Rdeykro4+YQV7OSmfuz5r2Yv4madaaOP0FjJD2iQ3+jOpPlOaVDAmb
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=udSRKcfUiZYA:10
-    a=VUJBJC2UJ8kA:10 a=JfrnYn6hAAAA:8 a=preA1W1IIu_PAkDiUwoA:9
-    a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
+X-CM-Envelope: MS4wfBA6EQsusWteV6bBozM8tHsq8Prw6gJqVKrCgopBhrrKwVhI82TYXukU3j6JDBqZraZjFIu+b/shky3xxAEQpUXcDvGhzOXbYxZS4SZ0oNtgCtPZHwUF
+    U3Kp2M0nSKiiFzYMAgpRJ0HBVgiT3n1V6xo7SPYH4yU0goP8dafSok/XCpmJXrq0tT+HBKjW7aOxi5pBUi2jOPwm/pXoM8ksO8J967cLDkyJ1oxu++BYqt1P
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=jIQo8A4GAAAA:8
+    a=Zkdt6OuXDtlIVup5SysA:9 a=eCJWswlsqIGlfQnQ:21 a=LTjnTX8t3fd-Qqto:21
+    a=Lf5xNeLK5dgiOs8hzIjU:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751805AbeEMN04 (ORCPT <rfc822;linux@kroah.com>);
-        Sun, 13 May 2018 09:26:56 -0400
-Received: from mout.gmx.net ([212.227.17.22]:55933 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751345AbeEMN0y (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Sun, 13 May 2018 09:26:54 -0400
-Subject: Re: common non-cache coherent direct dma mapping ops
-To: Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
+        id S1752604AbeEKIAl (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 11 May 2018 04:00:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34296 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751406AbeEKIAi (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Fri, 11 May 2018 04:00:38 -0400
+From: Christoph Hellwig <hch@lst.de>
+To: iommu@lists.linux-foundation.org
 Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
         Greentime Hu <green.hu@gmail.com>,
         Vincent Chen <deanbo422@gmail.com>,
@@ -78,80 +82,275 @@ Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
         linux-hexagon@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
         linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180511075945.16548-1-hch@lst.de>
-From: Helge Deller <deller@gmx.de>
-Message-ID: <1834767f-0430-8f7f-61b1-560353cd6e5f@gmx.de>
-Date: Sun, 13 May 2018 15:26:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 03/20] arc: use generic dma_noncoherent_ops
+Date: Fri, 11 May 2018 09:59:28 +0200
+Message-Id: <20180511075945.16548-4-hch@lst.de>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180511075945.16548-1-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:20QWLIhFXyRzbujUp8MnwFYNwBnQjTSC3Od6k/1r6d54moMZEd+
- rq9NHZtRAHy7zFaLtMWjj+9dMaLAQh2wGIs9ROkUw1hV1CraD4thVXHYRBCM3fjX5glb4gm
- /PLoW5QkQxS1adc1l2gjiNj6qmSW0R0TqcAMAifI8YuWkWx9UvNiLOs+ZL4zT3pnio7NhFw
- AdJ/nh6pshCLan8Yw8hMA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:JFNPQCVINME=:Hwo7z3keqp6255cKnXUNz4
- whYHnbcUogtlkgbYHbUeuFSqYeUR1C9EL+zfMv3QM7C7t5XIDsdkdeknflP8K1nYxQm4C4V9w
- YRDT+pihsoF/5sQ8zgINAU+BKPl1EQDKl9JMWqFcVAuvPgnp01qz5lhhUJ2bXQcwt7MLFySd7
- n1dSpyoEZBjvHdbaojzh6GmK7SgrJqryciX4zwuJ5RHhFPZ/S1BpNxR13kXqyWiVIfVzoSnYd
- lzdT2RqLpP9UslQB2fw4gu9oVgektX5hWcwBzXCS7fnK0Z2TNYfHsZjKLzJZGShyJV012Qcjj
- 4/X7NSFwUvuJorWCvCmgiPpWY+Y+Zy4B6f9QTiBWs4weNs2u1O0qluVNGpPJbVBM+ErXI9GbO
- qslFE5SHDVpTHsEqJhs/QntNuiPyEKgJ+snzWSpmdiZs/aK6+Eib1YDjTZInzehH06Z9ONPNw
- xwq9/ErHw00O1opb+qNW8wFjfWKrUTNI3HZTPfTyYTyFyq19r+ljFM4qla1ID0TWpWDE/fPzx
- WtOUEpjjBHfx/UIMPB8C7XF23k7bEmNaVo2iw3oJsMXrTLnv9vQFm1P4Znbs4/WStbt/c7Qf2
- +gv/NvQEpr8H5woEdj3HcUT3fNpwJskDiIBbWMGwKhPmZ/p8b8A4HTRYEzKV/A3H0yVL+kTDx
- yO0Vf32fQgj7nhO58Z+rPnN8P3CtJe/U9casZMaFZmk7E1aMmGSQ/aX/FOOIho6FDBGF8X/td
- SmjDL18V8Xa19++vF18XoJgujWVo6bWRK0NKM8dgFEtROUl7FZP3EFuHLcI16Wi+3DOi4afCz
- ZKnoC/x
+References: <20180511075945.16548-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 11.05.2018 09:59, Christoph Hellwig wrote:
-> this series continues consolidating the dma-mapping code, with a focus
-> on architectures that do not (always) provide cache coherence for DMA.
-> Three architectures (arm, mips and powerpc) are still left to be
-> converted later due to complexity of their dma ops selection.
-> 
-> The dma-noncoherent ops calls the dma-direct ops for the actual
-> translation of streaming mappins and allow the architecture to provide
-> any cache flushing required for cpu to device and/or device to cpu
-> ownership transfers.  The dma coherent allocator is for now still left
-> entirely to architecture supplied implementations due the amount of
-> variations.  Hopefully we can do some consolidation for them later on
-> as well.
-> 
-> A lot of architectures are currently doing very questionable things
-> in their dma mapping routines, which are documented in the changelogs
-> for each patch.  Please review them very careful and correct me on
-> incorrect assumptions.
-> 
-> Because this series sits on top of two previously submitted series
-> a git tree might be useful to actually test it.  It is provided here:
-> 
->     git://git.infradead.org/users/hch/misc.git generic-dma-noncoherent
-> 
-> Gitweb:
-> 
->     http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/generic-dma-noncoherent
-> 
-> Changes since RFC:
->  - fix a typo accidentally disabling the device to cpu transfer sync
->  - fixed a few compile failures
+Switch to the generic noncoherent direct mapping implementation.
 
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/arc/Kconfig                   |   4 +
+ arch/arc/include/asm/Kbuild        |   1 +
+ arch/arc/include/asm/dma-mapping.h |  21 -----
+ arch/arc/mm/dma.c                  | 141 +++--------------------------
+ 4 files changed, 19 insertions(+), 148 deletions(-)
+ delete mode 100644 arch/arc/include/asm/dma-mapping.h
 
-I tested it again on parisc (this time again on top of git head) and it still breaks
-the same way as I reported in my mail on April 21st: the lasi82956 network driver works
-unreliable. NIC gets IP, but ping doesn't work.
-See drivers/net/ethernet/i825xx/lasi_82596.c, it uses dma*sync() functions.
-
-See comment in James mail from April 21st too:
--> you just made every 32 bit parisc system unnecessarily use non-coherent.
-
-Helge
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index 7498aca4b887..89d47eac18b2 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -9,11 +9,15 @@
+ config ARC
+ 	def_bool y
+ 	select ARC_TIMERS
++	select ARCH_HAS_SYNC_DMA_FOR_CPU
++	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+ 	select ARCH_HAS_SG_CHAIN
+ 	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
+ 	select BUILDTIME_EXTABLE_SORT
+ 	select CLONE_BACKWARDS
+ 	select COMMON_CLK
++	select DMA_NONCOHERENT_OPS
++	select DMA_NONCOHERENT_MMAP
+ 	select GENERIC_ATOMIC64 if !ISA_ARCV2 || !(ARC_HAS_LL64 && ARC_HAS_LLSC)
+ 	select GENERIC_CLOCKEVENTS
+ 	select GENERIC_FIND_FIRST_BIT
+diff --git a/arch/arc/include/asm/Kbuild b/arch/arc/include/asm/Kbuild
+index 4bd5d4369e05..bbdcb955e18f 100644
+--- a/arch/arc/include/asm/Kbuild
++++ b/arch/arc/include/asm/Kbuild
+@@ -2,6 +2,7 @@
+ generic-y += bugs.h
+ generic-y += device.h
+ generic-y += div64.h
++generic-y += dma-mapping.h
+ generic-y += emergency-restart.h
+ generic-y += extable.h
+ generic-y += fb.h
+diff --git a/arch/arc/include/asm/dma-mapping.h b/arch/arc/include/asm/dma-mapping.h
+deleted file mode 100644
+index 7a16824bfe98..000000000000
+--- a/arch/arc/include/asm/dma-mapping.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/*
+- * DMA Mapping glue for ARC
+- *
+- * Copyright (C) 2004, 2007-2010, 2011-2012 Synopsys, Inc. (www.synopsys.com)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#ifndef ASM_ARC_DMA_MAPPING_H
+-#define ASM_ARC_DMA_MAPPING_H
+-
+-extern const struct dma_map_ops arc_dma_ops;
+-
+-static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
+-{
+-	return &arc_dma_ops;
+-}
+-
+-#endif
+diff --git a/arch/arc/mm/dma.c b/arch/arc/mm/dma.c
+index 1dcc404b5aec..e4cd485517b4 100644
+--- a/arch/arc/mm/dma.c
++++ b/arch/arc/mm/dma.c
+@@ -16,13 +16,12 @@
+  * The default DMA address == Phy address which is 0x8000_0000 based.
+  */
+ 
+-#include <linux/dma-mapping.h>
++#include <linux/dma-noncoherent.h>
+ #include <asm/cache.h>
+ #include <asm/cacheflush.h>
+ 
+-
+-static void *arc_dma_alloc(struct device *dev, size_t size,
+-		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
++void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
++		gfp_t gfp, unsigned long attrs)
+ {
+ 	unsigned long order = get_order(size);
+ 	struct page *page;
+@@ -89,7 +88,7 @@ static void *arc_dma_alloc(struct device *dev, size_t size,
+ 	return kvaddr;
+ }
+ 
+-static void arc_dma_free(struct device *dev, size_t size, void *vaddr,
++void arch_dma_free(struct device *dev, size_t size, void *vaddr,
+ 		dma_addr_t dma_handle, unsigned long attrs)
+ {
+ 	phys_addr_t paddr = dma_handle;
+@@ -105,9 +104,9 @@ static void arc_dma_free(struct device *dev, size_t size, void *vaddr,
+ 	__free_pages(page, get_order(size));
+ }
+ 
+-static int arc_dma_mmap(struct device *dev, struct vm_area_struct *vma,
+-			void *cpu_addr, dma_addr_t dma_addr, size_t size,
+-			unsigned long attrs)
++int arch_dma_mmap(struct device *dev, struct vm_area_struct *vma,
++		void *cpu_addr, dma_addr_t dma_addr, size_t size,
++		unsigned long attrs)
+ {
+ 	unsigned long user_count = vma_pages(vma);
+ 	unsigned long count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+@@ -135,7 +134,7 @@ static int arc_dma_mmap(struct device *dev, struct vm_area_struct *vma,
+  * CPU accesses page via normal paddr, thus needs to explicitly made
+  * consistent before each use
+  */
+-static void _dma_cache_sync(phys_addr_t paddr, size_t size,
++static void _dma_cache_sync(struct device *dev, phys_addr_t paddr, size_t size,
+ 		enum dma_data_direction dir)
+ {
+ 	switch (dir) {
+@@ -153,126 +152,14 @@ static void _dma_cache_sync(phys_addr_t paddr, size_t size,
+ 	}
+ }
+ 
+-/*
+- * arc_dma_map_page - map a portion of a page for streaming DMA
+- *
+- * Ensure that any data held in the cache is appropriately discarded
+- * or written back.
+- *
+- * The device owns this memory once this call has completed.  The CPU
+- * can regain ownership by calling dma_unmap_page().
+- *
+- * Note: while it takes struct page as arg, caller can "abuse" it to pass
+- * a region larger than PAGE_SIZE, provided it is physically contiguous
+- * and this still works correctly
+- */
+-static dma_addr_t arc_dma_map_page(struct device *dev, struct page *page,
+-		unsigned long offset, size_t size, enum dma_data_direction dir,
+-		unsigned long attrs)
+-{
+-	phys_addr_t paddr = page_to_phys(page) + offset;
+-
+-	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+-		_dma_cache_sync(paddr, size, dir);
+-
+-	return paddr;
+-}
+-
+-/*
+- * arc_dma_unmap_page - unmap a buffer previously mapped through dma_map_page()
+- *
+- * After this call, reads by the CPU to the buffer are guaranteed to see
+- * whatever the device wrote there.
+- *
+- * Note: historically this routine was not implemented for ARC
+- */
+-static void arc_dma_unmap_page(struct device *dev, dma_addr_t handle,
+-			       size_t size, enum dma_data_direction dir,
+-			       unsigned long attrs)
+-{
+-	phys_addr_t paddr = handle;
+-
+-	if (!(attrs & DMA_ATTR_SKIP_CPU_SYNC))
+-		_dma_cache_sync(paddr, size, dir);
+-}
+-
+-static int arc_dma_map_sg(struct device *dev, struct scatterlist *sg,
+-	   int nents, enum dma_data_direction dir, unsigned long attrs)
+-{
+-	struct scatterlist *s;
+-	int i;
+-
+-	for_each_sg(sg, s, nents, i)
+-		s->dma_address = dma_map_page(dev, sg_page(s), s->offset,
+-					       s->length, dir);
+-
+-	return nents;
+-}
+-
+-static void arc_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
+-			     int nents, enum dma_data_direction dir,
+-			     unsigned long attrs)
+-{
+-	struct scatterlist *s;
+-	int i;
+-
+-	for_each_sg(sg, s, nents, i)
+-		arc_dma_unmap_page(dev, sg_dma_address(s), sg_dma_len(s), dir,
+-				   attrs);
+-}
+-
+-static void arc_dma_sync_single_for_cpu(struct device *dev,
+-		dma_addr_t dma_handle, size_t size, enum dma_data_direction dir)
+-{
+-	_dma_cache_sync(dma_handle, size, DMA_FROM_DEVICE);
+-}
+-
+-static void arc_dma_sync_single_for_device(struct device *dev,
+-		dma_addr_t dma_handle, size_t size, enum dma_data_direction dir)
++void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
+ {
+-	_dma_cache_sync(dma_handle, size, DMA_TO_DEVICE);
++	return _dma_cache_sync(dev, paddr, size, dir);
+ }
+ 
+-static void arc_dma_sync_sg_for_cpu(struct device *dev,
+-		struct scatterlist *sglist, int nelems,
+-		enum dma_data_direction dir)
++void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
+ {
+-	int i;
+-	struct scatterlist *sg;
+-
+-	for_each_sg(sglist, sg, nelems, i)
+-		_dma_cache_sync(sg_phys(sg), sg->length, dir);
++	return _dma_cache_sync(dev, paddr, size, dir);
+ }
+-
+-static void arc_dma_sync_sg_for_device(struct device *dev,
+-		struct scatterlist *sglist, int nelems,
+-		enum dma_data_direction dir)
+-{
+-	int i;
+-	struct scatterlist *sg;
+-
+-	for_each_sg(sglist, sg, nelems, i)
+-		_dma_cache_sync(sg_phys(sg), sg->length, dir);
+-}
+-
+-static int arc_dma_supported(struct device *dev, u64 dma_mask)
+-{
+-	/* Support 32 bit DMA mask exclusively */
+-	return dma_mask == DMA_BIT_MASK(32);
+-}
+-
+-const struct dma_map_ops arc_dma_ops = {
+-	.alloc			= arc_dma_alloc,
+-	.free			= arc_dma_free,
+-	.mmap			= arc_dma_mmap,
+-	.map_page		= arc_dma_map_page,
+-	.unmap_page		= arc_dma_unmap_page,
+-	.map_sg			= arc_dma_map_sg,
+-	.unmap_sg		= arc_dma_unmap_sg,
+-	.sync_single_for_device	= arc_dma_sync_single_for_device,
+-	.sync_single_for_cpu	= arc_dma_sync_single_for_cpu,
+-	.sync_sg_for_cpu	= arc_dma_sync_sg_for_cpu,
+-	.sync_sg_for_device	= arc_dma_sync_sg_for_device,
+-	.dma_supported		= arc_dma_supported,
+-};
+-EXPORT_SYMBOL(arc_dma_ops);
+-- 
+2.17.0
