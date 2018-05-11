@@ -1,115 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753224AbeEKOhf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 10:37:35 -0400
-Received: from mail-ua0-f172.google.com ([209.85.217.172]:37225 "EHLO
-        mail-ua0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752017AbeEKOhe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 10:37:34 -0400
-X-Google-Smtp-Source: AB8JxZqNasKRYmXXexTwzf8aMMI8SDaR8aGbWjYhlDVy/lQpTx6NLzGswOH4DCl07ab+xQEHHKuuUUU/L5dcPekEEXA=
+        id S1753244AbeEKOiT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 10:38:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42668 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752394AbeEKOiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 10:38:18 -0400
+Date: Fri, 11 May 2018 15:38:14 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: will.deacon@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, pawel.moll@arm.com,
+        suzuki.poulose@arm.com
+Subject: Re: [PATCH 2/3] perf/arm-cci: Remove pointless PMU disabling
+Message-ID: <20180511143814.i4iorhlhyxslgkzn@lakrids.cambridge.arm.com>
+References: <cover.1526048005.git.robin.murphy@arm.com>
+ <0278134025d69817f28ee50a704fb63715a397d8.1526048005.git.robin.murphy@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <f6f7b18644136323f4485d6123b330d0dde207a4.camel@pengutronix.de>
-References: <CAOuPNLjqJVsPOVPCnswtFyXudAJ88_F0QVUq-Z6qWE=UpH0mBA@mail.gmail.com>
- <5af57fea.1c69fb81.885f0.2377.GMRIR@mx.google.com> <CAOuPNLgbT59h=Jm5YiOCbrqFkDokJ8xutQ_OkpsFYzKazKhTHg@mail.gmail.com>
- <20180511123915.GC16141@n2100.armlinux.org.uk> <f6f7b18644136323f4485d6123b330d0dde207a4.camel@pengutronix.de>
-From: Pintu Kumar <pintu.ping@gmail.com>
-Date: Fri, 11 May 2018 20:07:33 +0530
-Message-ID: <CAOuPNLgRHCasmsXTVwcy5ohq8TYjbr4MThxm4Q-HFWihJ7ARww@mail.gmail.com>
-Subject: Re: Delivery Status Notification (Failure)
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kernelnewbies@kernelnewbies.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0278134025d69817f28ee50a704fb63715a397d8.1526048005.git.robin.murphy@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 6:34 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
-> Am Freitag, den 11.05.2018, 13:39 +0100 schrieb Russell King - ARM Linux:
->> On Fri, May 11, 2018 at 05:07:37PM +0530, Pintu Kumar wrote:
->> > Hi,
->> >
->> > I need one help.
->> > I am using i.MX7 Sabre board with kernel version 4.1.15
->> >
->> > Let's say I am interested in GPIO number: 21
->> > I wanted to set CPU affinity for particular GPIO->IRQ number, so I
->> > tried the below steps:
->> > root@10:~# echo 21 > /sys/class/gpio/export
->> > root@10:~# echo "rising" > /sys/class/gpio/gpio21/edge
->> > root@10:~# cat /proc/interrupts | grep 21
->> >   47: 0 0 gpio-mxc 21 Edge gpiolib
->> > root@10:~# cat /sys/class/gpio/gpio21/direction
->> > in
->> > root@10:~# cat /proc/irq/47/smp_affinity
->> > 3
->> > root@10:~# echo 2 > /proc/irq/47/smp_affinity
->> > -bash: echo: write error: Input/output error
->> >
->> > But I get input/output error.
->> > When I debug further, found that irq_can_set_affinity is returning 0:
->> > [    0.000000] genirq: irq_can_set_affinity (0): balance: 1,
->> > irq_data.chip: a81b7e48, irq_set_affinity:   (null)
->> > [    0.000000] write_irq_affinity: FAIL
->> >
->> > I also tried first setting /proc/irq/default_smp_affinity to 2 (from 3).
->> > This change is working, but the smp_affinity setting for the new IRQ
->> > is not working.
->> >
->> > When I try to set smp_affinity for mmc0, then it works.
->> > # cat /proc/interrupts | grep mmc
->> > 295:         55          0     GPCV2  22 Edge      mmc0
->> > 296:          0          0     GPCV2  23 Edge      mmc1
->> > 297:         52          0     GPCV2  24 Edge      mmc2
->> >
->> > root@10:~# echo 2 > /proc/irq/295/smp_affinity
->> > root@10:~#
->> >
->> >
->> > So, I wanted to know what are the conditions for which setting
->> > smp_affinity for an IRQ will work ?
->> >
->> > Is there any way by which I can set CPU affinity to a GPIO -> IRQ ?
->> > Whether, irq_set_affinity_hint() will work in this case ?
->>
->> IRQ affinity is only supported where interrupts are _directly_ wired to
->> the GIC.  It's the GIC which does the interrupt steering to the CPU
->> cores.
->>
->> Interrupts on downstream interrupt controllers (such as GPCV2) have no
->> ability to be directed independently to other CPUs - the only possible
->> way to change the mapping is to move _all_ interrupts on that controller,
->> and any downstream chained interrupts at GIC level.
->>
->> Hence why Interrupt 295 has no irq_set_affinity function: there is no way
->> for the interrupt controller itself to change the affinity of the input
->> interrupt.
->
-> The GPCv2 though is a secondary IRQ controller which has a 1:1 mapping
-> of its input IRQs to the upstream GIC IRQ lines. Affinity can thus be
-> handled by forwarding the request to the GIC by
-> irq_chip_set_affinity_parent().
->
-> As this is handled correctly in the upstream kernel since the first
-> commit introducing support for the GPCv2, it seems the issue is only
-> present in some downstream kernel.
->
+On Fri, May 11, 2018 at 03:29:13PM +0100, Robin Murphy wrote:
+> The CCI PMU driver bears some legacy remnants of the arm_pmu framework
+> from when it was split in c6f85cb4305b ("bus: cci: move away from
+> arm_pmu framework"). In particular this perf_pmu_{dis,en}able() dance
+> around pmu->add which was fixed for arm_pmu in a9e469d1c89b
+> ("drivers/perf: arm_pmu: remove pointless PMU disabling").
+> 
+> For the exact same reasons (i.e. perf core already does this around the
+> call anyway), give cci_pmu_add() the exact same change, which also
+> prevents having to export those core functions to build it as a module.
+> 
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 
-OK. Thanks so much for your reply.
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-I saw some of the drivers using irq_set_affinity_hint() to force the
-IRQ affinity to a particular CPU.
-This is the sample:
-{
-cpumask_clear(mask);
-cpumask_set_cpu(cpu, mask);
-irq_set_affinity_hint(irq, mask);
-}
+Mark.
 
-Whether this logic will work for a particular GPIO pin ?
-
-
-> Regards,
-> Lucas
+> ---
+>  drivers/perf/arm-cci.c | 13 +++----------
+>  1 file changed, 3 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
+> index 53c774b20563..7029d8fe8f44 100644
+> --- a/drivers/perf/arm-cci.c
+> +++ b/drivers/perf/arm-cci.c
+> @@ -1184,16 +1184,11 @@ static int cci_pmu_add(struct perf_event *event, int flags)
+>  	struct cci_pmu_hw_events *hw_events = &cci_pmu->hw_events;
+>  	struct hw_perf_event *hwc = &event->hw;
+>  	int idx;
+> -	int err = 0;
+> -
+> -	perf_pmu_disable(event->pmu);
+>  
+>  	/* If we don't have a space for the counter then finish early. */
+>  	idx = pmu_get_event_idx(hw_events, event);
+> -	if (idx < 0) {
+> -		err = idx;
+> -		goto out;
+> -	}
+> +	if (idx < 0)
+> +		return idx;
+>  
+>  	event->hw.idx = idx;
+>  	hw_events->events[idx] = event;
+> @@ -1205,9 +1200,7 @@ static int cci_pmu_add(struct perf_event *event, int flags)
+>  	/* Propagate our changes to the userspace mapping. */
+>  	perf_event_update_userpage(event);
+>  
+> -out:
+> -	perf_pmu_enable(event->pmu);
+> -	return err;
+> +	return 0;
+>  }
+>  
+>  static void cci_pmu_del(struct perf_event *event, int flags)
+> -- 
+> 2.17.0.dirty
+> 
