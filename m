@@ -1,165 +1,190 @@
-Return-Path: <rogerq@ti.com>
-X-Google-Smtp-Source: AB8JxZoO7g5DVYZgtJJofY0zfYKt43BTy7/xCoPf+k9Zw8Tg4gsWAqHD1drQUn2ZuQKn6h2jC02q
-ARC-Seal: i=1; a=rsa-sha256; t=1526630334; cv=none;
+Return-Path: <jacob.jun.pan@linux.intel.com>
+X-Google-Smtp-Source: AB8JxZqvo5rbDLjyVuTGwt6UyaQ6GicKevlq5VbFOFL0fzFJ+Da38ud+Quege+iXTivP67/QJe8o
+ARC-Seal: i=1; a=rsa-sha256; t=1526071892; cv=none;
         d=google.com; s=arc-20160816;
-        b=R5btNqlCdHp0v8TPTwgXFhMvVROFMgQO1oIhoGlVF7SUlHqzZom4qzb1kdl1OUXKi/
-         V+4QhfY++sBHlaUDbAhP41RalGLv7ooCrg9hRHEayTqxnG7vk8XCJPFFdjgM4WSA4MLv
-         vzwvkrUjT5edMITcrWZoBeOIhO/OmH2TV2DW867i7FPkOAz4O1CcYwgTTxQoJ0NV5eTO
-         YO/tWrKjTu6AWwlL1/5HhGboDJoS4DLH61bjXk180X9gzJrcGu6xBa9AaaWR5EIcQmml
-         VFu/Ui+n7+FZTlVHRUeMglzPS4w7o1m0yVakjnty5yZXUNTFL8SfjXJjJ1xUuNhjQ12t
-         C5PQ==
+        b=Mg6H+xaTgR7d2XNOzM6XHufp5LH3+cLgmYVbMJMmth1BE58R324acaDfqLrneHh4HJ
+         dcogFQVhLu0GYD6a0Qb9nyncYn3YD04E2NRzVvmLwMOu8uXACorKKZXuqBq2NEO8/gcS
+         K9IuXNattMTcB/fvWmEVGyENxO/VojZ23YAG5xQYWFXl4lfpMLmX1wgIULnQ3EvS6N9v
+         OeDstyEUkjg0MV3kmqjPnszdUSknNO1Jj7Eh1TykOzFicToHHC+dTa7lNcJze7scHZVb
+         QxF897vAb7EYzKF0J19jO+53gAErH8giFgplMPm3MKsYuhMuxyAiKAGbKtEIz1aAIk3w
+         XxnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:autocrypt:openpgp:from:references:cc:to
-         :subject:dkim-signature:arc-authentication-results;
-        bh=ChASFdWERHXZbvnk47CDqxczUFXf2WAi/WRS7LcAFPM=;
-        b=dJrKkCMZV4vKnxA0youaHHE31jA0M+4XNYJpUS/VbE8ROe1jfczB+dye8bFuqLM37n
-         MifJTe5dAcH18n6kiwjRT8WA9tXbTGiRbIeVjZl9UMpOfEQLWcBU2q5S4X2Bti5euEiq
-         2LEWEcxjmLwELbyzfVlPz+36/7z77+P9KQp8I5r0egTBLfw6ha780UuPpmfypQ97Dl/1
-         ntQvybONIjiRsXokxbGZk625KuUTrNzZNYrS3fLXrUJLh3F4mqPq2xoA8Z5I/BaIof1T
-         s/WAQMmtsrji3D6yCPNdpciAV0CwUZUalsTkIGavC67oeiXRwpl+LORbnLJyV+Jg+Qy5
-         b1ow==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=LS9kUFfKuJlnzy3HtnqogJqUloh/KpGmjfg8jtw0OEk=;
+        b=DGu1bPlysA0R5GKh8RtndKz9nUgQYTwKcs62R1s0yrD5M+iVWuCT7u1n3HzrvPTfaN
+         4+pOr8NkU+/TKAM2AZuGo7b0rymt5C1uaNF/tq+glot66GNBG4bHKvcjLidfGJPkPLhY
+         PA6nMugWb6fuYj5tFToTKlklqfsVJ74fRSAlQad27To+W/clBefxnkMI3CtISbxzzHd4
+         76YVyDSYkCVOFW1UnmDwvsgsRiRKVuKPl7b1M3uoOUmq61LJTPHa7Bg23dI0LHmhaoN6
+         cUph3drGUUGnnblo/k7LsjJLw92T8jE9aH5Wpsu0IPccAuDaEyP/th+9cj9/60y8BD90
+         tUlA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=XOOKxIba;
-       spf=pass (google.com: domain of rogerq@ti.com designates 198.47.27.77 as permitted sender) smtp.mailfrom=rogerq@ti.com;
-       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
+       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@ti.com header.s=ti-com-17Q1 header.b=XOOKxIba;
-       spf=pass (google.com: domain of rogerq@ti.com designates 198.47.27.77 as permitted sender) smtp.mailfrom=rogerq@ti.com;
-       dmarc=pass (p=QUARANTINE sp=NONE dis=NONE) header.from=ti.com
-Subject: Re: [RFC PATCH linux-next] USB: dwc3: dwc3_get_extcon() can be static
-To: Andrzej Hajda <a.hajda@samsung.com>,
-        kbuild test robot
-	<fengguang.wu@intel.com>
-CC: <kbuild-all@01.org>, Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <201805180059.3X1bJsDZ%fengguang.wu@intel.com>
- <CGME20180517160655epcas3p2b8e0c7aa08f2138882a84b5e2b7b291a@epcas3p2.samsung.com>
- <20180517160641.GA55289@lkp-ib03>
- <8b363802-50f5-1da0-0879-fe8d38231f5e@samsung.com>
- <50b8c19d-563d-660c-9cf1-134c64062ba8@ti.com>
- <8c0c7001-550f-7b4d-33fd-47b3812d5c14@samsung.com>
-From: Roger Quadros <rogerq@ti.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=rogerq@ti.com; prefer-encrypt=mutual; keydata=
- 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
- IwrfNkJOLj3CvocMIw==
-Message-ID: <f1e9d179-2e80-4492-93d0-4a4bffd5dd9b@ti.com>
-Date: Fri, 18 May 2018 10:58:41 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <8c0c7001-550f-7b4d-33fd-47b3812d5c14@samsung.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+       spf=pass (google.com: best guess record for domain of jacob.jun.pan@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=jacob.jun.pan@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,390,1520924400";
+   d="scan'208";a="41104725"
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: iommu@lists.linux-foundation.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Joerg Roedel <joro@8bytes.org>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc: Rafael Wysocki <rafael.j.wysocki@intel.com>,
+	"Liu, Yi L" <yi.l.liu@intel.com>,
+	"Tian, Kevin" <kevin.tian@intel.com>,
+	Raj Ashok <ashok.raj@intel.com>,
+	Jean Delvare <khali@linux-fr.org>,
+	"Christoph Hellwig" <hch@infradead.org>,
+	"Lu Baolu" <baolu.lu@linux.intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v5 00/23] IOMMU and VT-d driver support for Shared Virtual Address (SVA)
+Date: Fri, 11 May 2018 13:53:52 -0700
+Message-Id: <1526072055-86990-1-git-send-email-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600728031909224122?=
-X-GMAIL-MSGID: =?utf-8?q?1600787930027096472?=
+X-GMAIL-THRID: =?utf-8?q?1600202361036375004?=
+X-GMAIL-MSGID: =?utf-8?q?1600202361036375004?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 18/05/18 10:47, Andrzej Hajda wrote:
-> On 18.05.2018 09:38, Roger Quadros wrote:
->> On 18/05/18 08:39, Andrzej Hajda wrote:
->>> On 17.05.2018 18:06, kbuild test robot wrote:
->>>> Fixes: 5f0b74e54890 ("USB: dwc3: get extcon device by OF graph bindings")
->>>> Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
->>> It should be static of course, my bad.
->>>
->>> Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
->> I don't think we accept patches from robots, yet :)
-> 
-> What do you mean by 'we'? In case of whole kernel it is not true:
-> 
-> $ git log --author='kbuild test robot <fengguang.wu@intel.com>'
-> --oneline | wc -l
-> 183
+Shared virtual address (SVA), a.k.a, Shared virtual memory (SVM) on Intel
+platforms allow address space sharing between device DMA and applications.
+SVA can reduce programming complexity and enhance security. To enable SVA
+in the guest, i.e. shared guest application address space and physical
+device DMA address, IOMMU driver must provide some new functionalities.
 
-OK, then I'm wrong. Should have checked before commenting. Sorry about that.
+This patchset is a follow-up on the discussions held at LPC 2017
+VFIO/IOMMU/PCI track. Slides and notes can be found here:
+https://linuxplumbersconf.org/2017/ocw/events/LPC2017/tracks/636
 
-> 
-> Regards
-> Andrzej
-> 
->>
->>>  --
->>> Regards
->>> Andrzej
->>>
->>>> ---
->>>>  drd.c |    2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/usb/dwc3/drd.c b/drivers/usb/dwc3/drd.c
->>>> index 2706824..218371f 100644
->>>> --- a/drivers/usb/dwc3/drd.c
->>>> +++ b/drivers/usb/dwc3/drd.c
->>>> @@ -440,7 +440,7 @@ static int dwc3_drd_notifier(struct notifier_block *nb,
->>>>  	return NOTIFY_DONE;
->>>>  }
->>>>  
->>>> -struct extcon_dev *dwc3_get_extcon(struct dwc3 *dwc)
->>>> +static struct extcon_dev *dwc3_get_extcon(struct dwc3 *dwc)
->>>>  {
->>>>  	struct device *dev = dwc->dev;
->>>>  	struct device_node *np_phy, *np_conn;
->>>>
->>>>
->>>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
-> 
+The complete guest SVA support also involves changes in QEMU and VFIO,
+which has been posted earlier.
+https://www.spinics.net/lists/kvm/msg148798.html
+
+This is the IOMMU portion follow up of the more complete series of the
+kernel changes to support vSVA. Please refer to the link below for more
+details. https://www.spinics.net/lists/kvm/msg148819.html
+
+Generic APIs are introduced in addition to Intel VT-d specific changes,
+the goal is to have common interfaces across IOMMU and device types for
+both VFIO and other in-kernel users.
+
+At the top level, new IOMMU interfaces are introduced as follows:
+ - bind guest PASID table
+ - passdown invalidations of translation caches
+ - IOMMU device fault reporting including page request/response and
+   non-recoverable faults.
+
+For IOMMU detected device fault reporting, struct device is extended to
+provide callback and tracking at device level. The original proposal was
+discussed here "Error handling for I/O memory management units"
+(https://lwn.net/Articles/608914/). I have experimented two alternative
+solutions:
+1. use a shared group notifier, this does not scale well also causes unwanted
+notification traffic when group sibling device is reported with faults.
+2. place fault callback at device IOMMU arch data, e.g. device_domain_info
+in Intel/FSL IOMMU driver. This will cause code duplication, since per
+device fault reporting is generic.
+
+The additional patches are Intel VT-d specific, which either implements or
+replaces existing private interfaces with the generic ones.
+
+This patchset is based on the work and ideas from many people, especially:
+Ashok Raj <ashok.raj@intel.com>
+Liu, Yi L <yi.l.liu@linux.intel.com>
+Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+
+Thanks,
+
+Jacob
+
+V5
+	- Removed device context cache and non-pasid TLB invalidation type
+	- Simplified and sorted granularities for the remaining TLB
+	invalidation types, per discussion and review by Jean-Philippe Brucker.
+	- Added a setup parameter for page response timeout
+	- Added version and size checking in bind PASID and invalidation APIs
+	- Fixed locking and error handling in device fault reporting API based
+	  on Jean's review
+
+V4
+	- Futher integrate feedback for iommu_param and iommu_fault_param
+	  from Jean and others.
+	- Handle fault reporting error and race conditions. Keep tracking per
+	  device pending page requests such that page group response can be
+	  sanitized.
+	- Added a timer to handle irresponsive guest who does not send page
+	  response on time.
+	- Use a workqueue for VT-d non-recorverable IRQ fault handling.
+	- Added trace events for invalidation and fault reporting.
+V3
+	- Consolidated fault reporting data format based on discussions on v2,
+	  including input from ARM and AMD.
+	- Renamed invalidation APIs from svm to sva based on discussions on v2
+	- Use a parent pointer under struct device for all iommu per device data
+	- Simplified device fault callback, allow driver private data to be
+	  registered. This might make it easy to replace domain fault handler.
+V2
+	- Replaced hybrid interface data model (generic data + vendor specific
+	data) with all generic data. This will have the security benefit where
+	data passed from user space can be sanitized by all software layers if
+	needed.
+	- Addressed review comments from V1
+	- Use per device fault report data
+	- Support page request/response communications between host IOMMU and
+	guest or other in-kernel users.
+	- Added unrecoverable fault reporting to DMAR
+	- Use threaded IRQ function for DMAR fault interrupt and fault
+	  reporting
+
+Jacob Pan (22):
+  iommu: introduce bind_pasid_table API function
+  iommu/vt-d: move device_domain_info to header
+  iommu/vt-d: add a flag for pasid table bound status
+  iommu/vt-d: add bind_pasid_table function
+  iommu/vt-d: add definitions for PFSID
+  iommu/vt-d: fix dev iotlb pfsid use
+  iommu/vt-d: support flushing more translation cache types
+  iommu/vt-d: add svm/sva invalidate function
+  iommu: introduce device fault data
+  driver core: add per device iommu param
+  iommu: add a timeout parameter for prq response
+  iommu: introduce device fault report API
+  iommu: introduce page response function
+  iommu: handle page response timeout
+  iommu/config: add build dependency for dmar
+  iommu/vt-d: report non-recoverable faults to device
+  iommu/intel-svm: report device page request
+  iommu/intel-svm: replace dev ops with fault report API
+  iommu/intel-svm: do not flush iotlb for viommu
+  iommu/vt-d: add intel iommu page response function
+  trace/iommu: add sva trace events
+  iommu: use sva invalidate and device fault trace event
+
+Liu, Yi L (1):
+  iommu: introduce iommu invalidate API function
+
+ Documentation/admin-guide/kernel-parameters.txt |   8 +
+ drivers/iommu/Kconfig                           |   1 +
+ drivers/iommu/dmar.c                            | 209 ++++++++++++++-
+ drivers/iommu/intel-iommu.c                     | 338 ++++++++++++++++++++++--
+ drivers/iommu/intel-svm.c                       |  84 ++++--
+ drivers/iommu/iommu.c                           | 311 +++++++++++++++++++++-
+ include/linux/device.h                          |   3 +
+ include/linux/dma_remapping.h                   |   1 +
+ include/linux/dmar.h                            |   2 +-
+ include/linux/intel-iommu.h                     |  52 +++-
+ include/linux/intel-svm.h                       |  20 +-
+ include/linux/iommu.h                           | 216 ++++++++++++++-
+ include/trace/events/iommu.h                    | 112 ++++++++
+ include/uapi/linux/iommu.h                      | 124 +++++++++
+ 14 files changed, 1409 insertions(+), 72 deletions(-)
+ create mode 100644 include/uapi/linux/iommu.h
 
 -- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.7.4
