@@ -1,58 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeEKBWG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 21:22:06 -0400
-Received: from mail-oi0-f46.google.com ([209.85.218.46]:44030 "EHLO
-        mail-oi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750798AbeEKBWE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 21:22:04 -0400
-X-Google-Smtp-Source: AB8JxZo/I/xHt6GS3kT+rUSZz1P90zxJNfdWksxwBVxMQHldfvSw/b4yVrecwpgFafUPX2IRUr2CiA8wRy77ywq8x7Y=
+        id S1751901AbeEKBYp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 21:24:45 -0400
+Received: from mga18.intel.com ([134.134.136.126]:53085 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750798AbeEKBYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 21:24:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,387,1520924400";
+   d="scan'208";a="198427354"
+From: "Dey, Megha" <megha.dey@intel.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>
+Subject: RE: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+ support
+Thread-Topic: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+ support
+Thread-Index: AQHTiaT71VA7Q5Or9ESQdIw+yX/ir6N6FLYAgFlFdnuAMogJgIABiP2AgABwaXCAAKKQgIAI0PhwgAKZVoCACDnDsIAJDTaAgAVJM2A=
+Date: Fri, 11 May 2018 01:24:42 +0000
+Message-ID: <C440BA31B54DCD4AAC682D2365C8FEE738C60300@ORSMSX111.amr.corp.intel.com>
+References: <20180118113905.GA19904@gondor.apana.org.au>
+ <1516322661.2526.3.camel@megha-Z97X-UD7-TH>
+ <20180316145351.GA6231@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C13267@ORSMSX111.amr.corp.intel.com>
+ <20180418110115.v2w3o5yfv4u3gc4r@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C13DDE@ORSMSX111.amr.corp.intel.com>
+ <20180419032525.6csodbz6lrksyudd@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C270FC@ORSMSX111.amr.corp.intel.com>
+ <20180426094445.4jiwondmtbenepo2@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C4291E@ORSMSX111.amr.corp.intel.com>
+ <20180507093511.jscgnk436e3ba4un@gondor.apana.org.au>
+In-Reply-To: <20180507093511.jscgnk436e3ba4un@gondor.apana.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzE5NjA3NDMtNDdmZS00ODM5LWI0YjItNDMyN2I4MWRkMmZiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE2LjUuOS4zIiwiVHJ1c3RlZExhYmVsSGFzaCI6Im5ocm9vTUU5cUxvTEs1T0t4WHZGdFVnVzAyNnVLMFN5MlNVZGRneStJUVk9In0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <CAFkk2KRWon_S--dxYw82cDyGXKTFA6jxrrQwstzLvHPs=6-dqQ@mail.gmail.com>
-References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
- <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org> <CAFkk2KRozscmd4kQSJKwKmY3WpTody7S5XZZObf8SKLF62k6+w@mail.gmail.com>
- <CAFkk2KRkEt3+786QvyjzPPAm+3HDe2+ydzZJpshfdKyUDQVfuw@mail.gmail.com>
- <CAFkk2KRvSxu+x-nb045=3L63KEk5h9URr5QYLPoYp6rqqTR4qA@mail.gmail.com>
- <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org> <CAFkk2KRWon_S--dxYw82cDyGXKTFA6jxrrQwstzLvHPs=6-dqQ@mail.gmail.com>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Fri, 11 May 2018 03:22:03 +0200
-Message-ID: <CAFkk2KSxkg5j1GOw=z1DDz6mV1F-Ej4Yfwv+S9wMivz9VCi-6g@mail.gmail.com>
-Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 8, 2018 at 6:59 PM, Ulf Magnusson <ulfalizer@gmail.com> wrote:
-> Hello,
->
-> I've added incremental search for jumping directly to a symbol now.
-> Regular expressions are supported as well.
->
-> Some screenshots below:
->
-> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss10.png
-> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss11.png
-> https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss13.png
->
-> The last screenshot shows how things might look after you jump to a
-> symbol. The jumped-to symbol wasn't visible in this case, so show-all
-> mode was turned on automatically.
->
 
-Some new search-related features:
 
-  - The jump-to dialog now searches and lists prompt texts.
+>-----Original Message-----
+>From: Herbert Xu [mailto:herbert@gondor.apana.org.au]
+>Sent: Monday, May 7, 2018 2:35 AM
+>To: Dey, Megha <megha.dey@intel.com>
+>Cc: linux-kernel@vger.kernel.org; linux-crypto@vger.kernel.org;
+>davem@davemloft.net
+>Subject: Re: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+>support
+>
+>On Tue, May 01, 2018 at 10:39:15PM +0000, Dey, Megha wrote:
+>>
+>> crypto/simd.c provides a simd_skcipher_create_compat. I have used the
+>> same template to introduce simd_ahash_create_compat which would wrap
+>around the inner hash algorithm.
+>>
+>> Hence we would still register 2 algs, outer and inner.
+>
+>Right.
+>
+>> Currently we have outer_alg -> mcryptd alg -> inner_alg
+>>
+>> Mcryptd is mainly providing the following:
+>> 1. Ensuring the lanes(8 in case of AVX2) are full before dispatching to the
+>lower inner algorithm. This is obviously why we would expect better
+>performance for multi-buffer as opposed to the present single-buffer
+>algorithms.
+>> 2. If there no new incoming jobs, issue a flush.
+>> 3. A glue layer which sends the correct pointers and completions.
+>>
+>> If we get rid of mcryptd, these functions needs to be done by someone. Since
+>all multi-buffer algorithms would require this tasks, where do you suggest these
+>helpers live, if not the current mcryptd.c?
+>
+>That's the issue.  I don't think mcryptd is doing any of these claimed functions
+>except for hosting the flush helper which could really live anywhere.
+>
+>All these functions are actually being carried out in the inner algorithm already.
+>
+>> I am not sure if you are suggesting that we need to get rid of the mcryptd
+>work queue itself. In that case, we would need to execute in the context of the
+>job requesting the crypto transformation.
+>
+>Which is fine as long as you can disable the FPU.  If not the simd wrapper will
+>defer the job to kthread context as required.
 
-  - A kind of poor man's fuzzy search has been added. 'foo bar baz'
-    matches all entries that match all of 'foo', 'bar', and 'baz', as
-    regexes.
+Hi Herbert,
 
-Demo: https://asciinema.org/a/Q4UNFVPF5zd62KqjrG95mowkG
+Are you suggesting that the SIMD wrapper, will do what is currently being done by the ' mcryptd_queue_worker ' function (assuming FPU is not disabled) i.e dispatching the job to the inner algorithm?
 
-Cheers,
-Ulf
+I have got rid of the mcryptd layer( have an inner layer, outer SIMD layer, handled the pointers and completions accordingly), but still facing some issues after removing the per cpu mcryptd_cpu_queue.
+ 
+>
+>Cheers,
+>--
+>Email: Herbert Xu <herbert@gondor.apana.org.au> Home Page:
+>http://gondor.apana.org.au/~herbert/
+>PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
