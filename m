@@ -1,29 +1,28 @@
 Return-Path: <poza@qualcomm.com>
-X-Google-Smtp-Source: AB8JxZoAra6+3JjkysmHiZTPiOzhgBI2vXzgmOAtt/kU8ymcGbnTESP7b+FHbfBAB81Mko04GYGk
+X-Google-Smtp-Source: AB8JxZqqkZar3+j4VaDWhVAHsUaH4Rw3G12GnpxY0iy53lCkaCRoLC91qZFNq2rekIanZgZAXg71
 ARC-Seal: i=1; a=rsa-sha256; t=1526035413; cv=none;
         d=google.com; s=arc-20160816;
-        b=t4YhgUR9/k/uYMnLO988rZxCGF9eEiTcGyxwU1GcIfv2J0I+Q7RlUFcVl4oFjmLSJ3
-         oBIcXmILea/0oNR75Mo/naCukoLP4hbPiLJl7XU9MPA6Okki+yhJPPsd1W8Ojp7dYQhM
-         pH7H8EpKn7/NJDHoz5vkBKXzMF0ZMFRKzPkJF4qb2RPo3+2k53KXEm9EU5T9KuJJOZ+v
-         bn1SCcjgiAOuIMtkb5AnKHqjwQiv5CfukiGUjUFlRvrsYrxed+xCMHKMPD6C8JkZ1N8u
-         lQm+smvO6j/kdSBNebsjZxxbcCIld+t5AFDPvHqVTRS5ek6cEXMp9eC81iSCVldXLNT1
-         2crg==
+        b=WkZtHFYG9+SeuKHcgtpEzS/nYk4ZdbmBcOnvCj2i3zaTP5Ap293yJfdgY4eibU9xFl
+         +3UYZLJ062c/aU4niC3ehRqz6YCJ51Z3h85An0s8CLgaOLl87nPdjeK00DWC+mwOHN7o
+         kW0ZVDVMIZSeA1MOsFlQQrGN9s8FlHS2OEj5lwR0bB2u1Osra/KuifdQEg5TjKCvtPTM
+         aMXE3UKFhrFjt2ZGTfa9KtULmyMc2G+jc1m1Kpsh3duQ64F7S3G97woR+/SMaJnGHBtx
+         CHfxtII+HSLrUP869YEOw+dmedEbXAj6/BKh5xMh2oVuT2eRF8gQc/jHTenOs02oUWwv
+         tI1w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=9Ud8h/H89iHBmA3ArVkx6qabq85aQq3lEJ6z3kZb/c8=;
-        b=joqOaZy/9vfyEq1t+CsMHfuutlikM6xLZkXvea3I5t3saw9AzsIUQ28Nmqa54XeuXP
-         k+YbxOw1QJQNHEneY2CpCciNood6fmnIBQsNqaEb0mRri5xHWPx8oyGZ37dsdE5VHOA5
-         m0Kayq7K0yqQzbAu85KoHVKL9h0Nl3awTSqTY/SU1nphBXCexw4vxjse/zyAnnEwLPsT
-         m74LNjIFG1oZnA90swTZH0MRB7yiniWiJLW+4vfIjjTuC2RruyMRtybOpl2aznsmzWI+
-         Ldq/f1Q8wgw85oyiBs4ketxaHhNL4N62dLAo9WcmzVkWed3E9KQRguXnThgZxxVbaa4m
-         Hmzg==
+        bh=TiuAlLFcn85H1K/Qum+domAsG4GfMtJ972BYAOV4Luo=;
+        b=isLQXT/mACc9dAgxOBiE2EZSfuCVudLyC3smPEOToY4vU3o81ihtT8pizKym3KVi1I
+         fQmA5UGPvxGaH1KXcTyXdLtYHGQjW9OYV5sAfHCVkAqLj5AplbQHo4e1H07PrMnsmKDZ
+         yu2852dRrA/xFqOrAqk7YQ5oC3qCwcJLhwfLDZ2Xsrer9wjH+7OpGAAisMwHD0ON8qHN
+         67ajrHTl1Ig+DZoOXbeVYrFK9Su0ZczgSx2aJkzmQogahPVLfKeeDXW+zNanHOHJn+Ni
+         pwALqKkD/kkUwBtrltnsLbDASHTSjjVY/ONGhHYi5k4CiEAEM5kkfAWiUNtAPaJAbqOP
+         jfKA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.251 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+       spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.38 as permitted sender) smtp.mailfrom=poza@qualcomm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.251 as permitted sender) smtp.mailfrom=poza@qualcomm.com
-X-IronPort-AV: E=Sophos;i="5.49,388,1520924400";
-   d="scan'208";a="435728388"
+       spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.38 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+X-IronPort-AV: E=McAfee;i="5900,7806,8889"; a="82987115"
 From: Oza Pawandeep <poza@codeaurora.org>
 To: Bjorn Helgaas <bhelgaas@google.com>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
@@ -38,100 +37,135 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
 	Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH v16 4/9] PCI/AER: Rename error recovery to generic PCI naming
-Date: Fri, 11 May 2018 06:43:23 -0400
-Message-Id: <1526035408-31328-5-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v16 1/9] PCI: Unify wait for link active into generic PCI
+Date: Fri, 11 May 2018 06:43:20 -0400
+Message-Id: <1526035408-31328-2-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526035408-31328-1-git-send-email-poza@codeaurora.org>
 References: <1526035408-31328-1-git-send-email-poza@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600164110103973001?=
-X-GMAIL-MSGID: =?utf-8?q?1600164110103973001?=
+X-GMAIL-THRID: =?utf-8?q?1600164109933664581?=
+X-GMAIL-MSGID: =?utf-8?q?1600164109933664581?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch renames error recovery to generic name with pcie prefix
+Clients such as HP, DPC are using pcie_wait_link_active(), which waits
+till the link becomes active or inactive.
+
+Made generic function and moved it to drivers/pci/pci.c
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 Reviewed-by: Keith Busch <keith.busch@intel.com>
 
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index 18a42f8..e0c2b8e 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -231,25 +231,11 @@ bool pciehp_check_link_active(struct controller *ctrl)
+ 	return ret;
+ }
+ 
+-static void __pcie_wait_link_active(struct controller *ctrl, bool active)
+-{
+-	int timeout = 1000;
+-
+-	if (pciehp_check_link_active(ctrl) == active)
+-		return;
+-	while (timeout > 0) {
+-		msleep(10);
+-		timeout -= 10;
+-		if (pciehp_check_link_active(ctrl) == active)
+-			return;
+-	}
+-	ctrl_dbg(ctrl, "Data Link Layer Link Active not %s in 1000 msec\n",
+-			active ? "set" : "cleared");
+-}
+-
+ static void pcie_wait_link_active(struct controller *ctrl)
+ {
+-	__pcie_wait_link_active(ctrl, true);
++	struct pci_dev *pdev = ctrl_dev(ctrl);
++
++	pcie_wait_for_link(pdev, true);
+ }
+ 
+ static bool pci_bus_check_dev(struct pci_bus *bus, int devfn)
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index e597655..adfc553 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -4138,6 +4138,35 @@ static int pci_pm_reset(struct pci_dev *dev, int probe)
+ 
+ 	return pci_dev_wait(dev, "PM D3->D0", PCIE_RESET_READY_POLL_MS);
+ }
++/**
++ * pcie_wait_for_link - Wait for link till it's active?/inactive?
++ * @pdev: Bridge device
++ * @active: waiting for active or inactive ?
++ *
++ * Use this to wait till link becomes active or inactive.
++ */
++bool pcie_wait_for_link(struct pci_dev *pdev, bool active)
++{
++	int timeout = 1000;
++	bool ret;
++	u16 lnk_status;
++
++	for (;;) {
++		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
++		ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
++		if (ret == active)
++			return true;
++		if (timeout <= 0)
++			break;
++		msleep(10);
++		timeout -= 10;
++	}
++
++	pci_info(pdev, "Data Link Layer Link Active not %s in 1000 msec\n",
++		 active ? "set" : "cleared");
++
++	return false;
++}
+ 
+ void pci_reset_secondary_bus(struct pci_dev *dev)
+ {
 diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index cec9d8c..5e8857a 100644
+index 023f7cf..cec9d8c 100644
 --- a/drivers/pci/pci.h
 +++ b/drivers/pci/pci.h
-@@ -353,6 +353,10 @@ static inline resource_size_t pci_resource_alignment(struct pci_dev *dev,
+@@ -353,6 +353,7 @@ static inline resource_size_t pci_resource_alignment(struct pci_dev *dev,
  
  void pci_enable_acs(struct pci_dev *dev);
  
-+/* PCI error reporting and recovery */
-+void pcie_do_fatal_recovery(struct pci_dev *dev);
-+void pcie_do_nonfatal_recovery(struct pci_dev *dev);
-+
- bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
++bool pcie_wait_for_link(struct pci_dev *pdev, bool active);
  #ifdef CONFIG_PCIEASPM
  void pcie_aspm_init_link_state(struct pci_dev *pdev);
-diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
-index 649dd1f..4444aa4 100644
---- a/drivers/pci/pcie/aer/aerdrv_core.c
-+++ b/drivers/pci/pcie/aer/aerdrv_core.c
-@@ -476,7 +476,7 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
- }
+ void pcie_aspm_exit_link_state(struct pci_dev *pdev);
+diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+index 8c57d60..80ec384 100644
+--- a/drivers/pci/pcie/dpc.c
++++ b/drivers/pci/pcie/dpc.c
+@@ -68,19 +68,9 @@ static int dpc_wait_rp_inactive(struct dpc_dev *dpc)
  
- /**
-- * do_fatal_recovery - handle fatal error recovery process
-+ * pcie_do_fatal_recovery - handle fatal error recovery process
-  * @dev: pointer to a pci_dev data structure of agent detecting an error
-  *
-  * Invoked when an error is fatal. Once being invoked, removes the devices
-@@ -484,7 +484,7 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
-  * followed by re-enumeration of devices.
-  */
- 
--static void do_fatal_recovery(struct pci_dev *dev)
-+void pcie_do_fatal_recovery(struct pci_dev *dev)
+ static void dpc_wait_link_inactive(struct dpc_dev *dpc)
  {
- 	struct pci_dev *udev;
- 	struct pci_bus *parent;
-@@ -535,14 +535,14 @@ static void do_fatal_recovery(struct pci_dev *dev)
+-	unsigned long timeout = jiffies + HZ;
+ 	struct pci_dev *pdev = dpc->dev->port;
+-	struct device *dev = &dpc->dev->device;
+-	u16 lnk_status;
+ 
+-	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+-	while (lnk_status & PCI_EXP_LNKSTA_DLLLA &&
+-					!time_after(jiffies, timeout)) {
+-		msleep(10);
+-		pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
+-	}
+-	if (lnk_status & PCI_EXP_LNKSTA_DLLLA)
+-		dev_warn(dev, "Link state not disabled for DPC event\n");
++	pcie_wait_for_link(pdev, false);
  }
  
- /**
-- * do_nonfatal_recovery - handle nonfatal error recovery process
-+ * pcie_do_nonfatal_recovery - handle nonfatal error recovery process
-  * @dev: pointer to a pci_dev data structure of agent detecting an error
-  *
-  * Invoked when an error is nonfatal/fatal. Once being invoked, broadcast
-  * error detected message to all downstream drivers within a hierarchy in
-  * question and return the returned code.
-  */
--static void do_nonfatal_recovery(struct pci_dev *dev)
-+void pcie_do_nonfatal_recovery(struct pci_dev *dev)
- {
- 	pci_ers_result_t status;
- 	enum pci_channel_state state;
-@@ -613,9 +613,9 @@ static void handle_error_source(struct pcie_device *aerdev,
- 			pci_write_config_dword(dev, pos + PCI_ERR_COR_STATUS,
- 					info->status);
- 	} else if (info->severity == AER_NONFATAL)
--		do_nonfatal_recovery(dev);
-+		pcie_do_nonfatal_recovery(dev);
- 	else if (info->severity == AER_FATAL)
--		do_fatal_recovery(dev);
-+		pcie_do_fatal_recovery(dev);
- }
- 
- #ifdef CONFIG_ACPI_APEI_PCIEAER
-@@ -680,9 +680,9 @@ static void aer_recover_work_func(struct work_struct *work)
- 		}
- 		cper_print_aer(pdev, entry.severity, entry.regs);
- 		if (entry.severity == AER_NONFATAL)
--			do_nonfatal_recovery(pdev);
-+			pcie_do_nonfatal_recovery(pdev);
- 		else if (entry.severity == AER_FATAL)
--			do_fatal_recovery(pdev);
-+			pcie_do_fatal_recovery(pdev);
- 		pci_dev_put(pdev);
- 	}
- }
+ static void dpc_work(struct work_struct *work)
 -- 
 2.7.4
