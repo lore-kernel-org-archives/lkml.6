@@ -1,77 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752551AbeEKESL (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 00:18:11 -0400
-Received: from mail-pl0-f48.google.com ([209.85.160.48]:41049 "EHLO
-        mail-pl0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbeEKESJ (ORCPT
+        id S1752409AbeEKEbw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 00:31:52 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:51560 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751462AbeEKEbv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 00:18:09 -0400
-X-Google-Smtp-Source: AB8JxZrEm++PAN1DET1rVJ4mThCwU7EPY2Sxa41/GrKWSJXTTTrUfnKHtkUR3SsgOGmEDMsS5WMhoA==
-Subject: Re: [PATCH net] macmace: Set platform device coherent_dma_mask
-To: Finn Thain <fthain@telegraphics.com.au>
-References: <S1751632AbeECEYA/20180503042400Z+254@vger.kernel.org>
- <CAMuHMdUAxmVZLekekvVrnMbbL18oyY86sF9QX087idSqcKMiPQ@mail.gmail.com>
- <alpine.LNX.2.21.1805031801310.8@nippy.intranet>
- <CAMuHMdU1XBqt7hwEW6JTas64ZNGCGCMr5HMZwuLo0O-ZBCOWyA@mail.gmail.com>
- <alpine.LNX.2.21.1805091805130.72@nippy.intranet>
- <CAOmrzkKNPemq5RySvza+Y8_jgwg2fkUZodR794cgOxpQpfh+SA@mail.gmail.com>
- <alpine.LNX.2.21.1805110921020.8@nippy.intranet>
- <CAOmrzkLL0ZNzAh7rwiDy=BkNqqXgbqfv3vkN6K8CTF8VGbT8zA@mail.gmail.com>
- <alpine.LNX.2.21.1805111221180.8@nippy.intranet>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-From: Michael Schmitz <schmitzmic@gmail.com>
-X-Enigmail-Draft-Status: N1110
-Message-ID: <0b13a08d-ba2d-b9dc-4fd9-1f6bad5cd1ee@gmail.com>
-Date: Fri, 11 May 2018 16:18:01 +1200
-User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
- Icedove/45.4.0
+        Fri, 11 May 2018 00:31:51 -0400
+Subject: Re: nds32 build failures
+To: Arnd Bergmann <arnd@arndb.de>, Greentime Hu <green.hu@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vincent Chen <vincentc@andestech.com>,
+        Greentime Hu <greentime@andestech.com>, kito.cheng@gmail.com,
+        wuiw@andestech.com
+References: <4ccb747b-fb3b-18c8-8737-2cc02d7b1c34@roeck-us.net>
+ <CAEbi=3cr5i3HKLKOacFih9pz00c7UBKrd=o4ER8HAUT1j_oqGg@mail.gmail.com>
+ <CAK8P3a2cogDMEdvhNt8CsJwaONWOgBR7zR3sABun4u8pAgTtqQ@mail.gmail.com>
+ <CAEbi=3d11ZcxgyoL-ZEruUzj0odDZ2GZXALNTtC7p55nfkkObA@mail.gmail.com>
+ <CAK8P3a1xDCS1X-4UETB5WW5txD38hrRUGKAfqU=SUy93o3DH5g@mail.gmail.com>
+From: Guenter Roeck <private@roeck-us.net>
+Message-ID: <fe3e24c4-4be4-872f-0bd4-02596fbfe013@roeck-us.net>
+Date: Thu, 10 May 2018 21:31:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.LNX.2.21.1805111221180.8@nippy.intranet>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <CAK8P3a1xDCS1X-4UETB5WW5txD38hrRUGKAfqU=SUy93o3DH5g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Authenticated_sender: private@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: private@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: private@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
-
-Am 11.05.2018 um 15:28 schrieb Finn Thain:
-> On Fri, 11 May 2018, Michael Schmitz wrote:
-> 
->>>> Which begs the question: why can' you set up all Nubus bus devices' 
->>>> DMA masks in nubus_device_register(), or nubus_add_board()?
+On 05/10/2018 07:40 PM, Arnd Bergmann wrote:
+> On Wed, Apr 18, 2018 at 3:19 AM, Greentime Hu <green.hu@gmail.com> wrote:
+>> 2018-04-17 20:47 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
+>>> On Mon, Apr 16, 2018 at 11:06 AM, Greentime Hu <green.hu@gmail.com> wrote:
+>>>> 2018-04-16 11:58 GMT+08:00 Guenter Roeck <private@roeck-us.net>:
+>>>>
+>>>> This built failure is because the toolchain version you used is not
+>>>> supported the latest intrinsic function/macro.
+>>>> We are sending the latest patchset now and we expect the whole new
+>>>> features will be supported in gcc8.0.0 and binutil2.31+.
+>>>>
+>>>> If you'd like to get these new features of toolchain, you may use the
+>>>> github version.
+>>>> This is the built-script repo. https://github.com/andestech/build_script.git
+>>> I've taken the gcc-6.3 sources from there, and updated them to gcc-6.4.0
+>>> in order to build a nds32le-linux toolchain based on the same version as
+>>> the other ones.
 >>>
->>> I am expecting to see the same WARNING from the nubus sonic driver but 
->>> it hasn't happened yet, so I don't have a patch for it yet. In 
->>> anycase, the nubus fix would be a lot like the zorro bus fix, so I 
->>> don't see a problem.
+>>> Unfortunately neither the usual binutils-2.29.1 nor your binutils worked
+>>> for me, but I eventually managed to get a build using the binutils-2.30
+>>> release.
+>>>
+>>> With this, I could build a mainline kernel with a couple of warnings,
+>>> but an 'allmodconfig' build still failed.
+>>>
+>>> Guenter, can you try my binary from
+>>> www.kernel.org/pub/tools/crosstool/files/bin/x86_64/6.4.0/x86_64-gcc-6.4.0-nolibc-nds32le-linux.tar.xz
+>>> ?
+>>>
+>>> If that works for you, I'll update the front-page and remove the nds32-elf
+>>> toolchains.
+>>>
+>>> Greentime, do you have a patch set for gcc-7.3 as well, or are 6.3 and 8.0 the
+>>> only working compilers for nds32le-linux?
+>>>
+>> Hi, all:
 >>
->> That's odd. But what I meant to say is that by setting up 
->> dma_coherent_mask in nubus_add_board(), and pointing dma_mask to that, 
->> ypu won't need any patches to Nubus device drivers.
-> 
-> Right. I think I've already acknowledged that. But it's off-topic, because 
-> the patches under review are for platform drivers. Those patches fix an 
-> actual bug that I've observed. Whereas, the nubus driver dma mask issue 
-> that you raised is purely theoretical at this stage.
+>> I just discuss with our toolchain colleagues. We have only gcc6.3 and
+>> gcc8.0 for nds32le-linux.
+>> I have the ld segmentation fault issue too when building kernel with
+>> 'allmodconfig'. We are dealing with it.
+> I've tried building the mainline gcc-8.1 sources for nds32le-linux and
+> still got a failure with those (building gcc), building a nds32le-elf gcc-8.1.0
+> worked fine, but that fails to build the vdso (no support for -fPIC), so
+> it's again unusable for building kernels. Any other ideas?
+FWIW, nds32 in linux-next doesn't build for me at all, at least not with
+nds32le-linux-gcc (GCC) 6.4.0 from kernel.org. I have not tried any
+other versions.
 
-I had lost track of the fact that macsonic can be probed as either Nubus
-or platform device. Sorry for the noise.
-
-I'm afraid using platform_device_register() (which you already use for
-the SCC devices) is the only option handling this on a per-device basis
-without touching platform core code, while at the same time keeping the
-DMA mask setup out of device drivers (I can see Geert's point there -
-device driver code might be shared across implementations of the device
-on platforms with different DMA mask requirements,, something the driver
-can't be expected to know about).
-
-Cheers,
-
-	Michael
+Guenter
