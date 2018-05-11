@@ -1,238 +1,244 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753284AbeEKPBu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 11:01:50 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:45929 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752997AbeEKPBt (ORCPT
+        id S1753321AbeEKPC3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 11:02:29 -0400
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:53940 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752997AbeEKPC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 11:01:49 -0400
-X-Google-Smtp-Source: AB8JxZqDgJsUjKEcJLYlFEBMoSDMcgZcdI3Y+ZrTnIatAZiPnZxv/DNLIZYBdIa2DDAyH5Dc6En+9g==
-Date: Fri, 11 May 2018 11:01:47 -0400
-From: Sean Paul <seanpaul@chromium.org>
-To: Lin Huang <hl@rock-chips.com>
-Cc: seanpaul@chromium.org, airlied@linux.ie, zyw@rock-chips.com,
-        dianders@chromium.org, briannorris@chromium.org,
-        linux-rockchip@lists.infradead.org, heiko@sntech.de,
-        daniel.vetter@intel.com, jani.nikula@linux.intel.com,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, eballetbo@gmail.com
-Subject: Re: [PATCH v2 4/4] drm/rockchip: support dp training outside dp
- firmware
-Message-ID: <20180511150147.GQ33053@art_vandelay>
-References: <1525861364-26323-1-git-send-email-hl@rock-chips.com>
- <1525861364-26323-4-git-send-email-hl@rock-chips.com>
+        Fri, 11 May 2018 11:02:28 -0400
+Date: Fri, 11 May 2018 11:02:24 -0400
+From: Rich Felker <dalias@libc.org>
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>
+Subject: Re: [PATCH] sh: switch to NO_BOOTMEM
+Message-ID: <20180511150224.GR1392@brightrain.aerifal.cx>
+References: <20180511134559.13464-1-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1525861364-26323-4-git-send-email-hl@rock-chips.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180511134559.13464-1-robh@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 06:22:44PM +0800, Lin Huang wrote:
-> DP firmware uses fixed phy config values to do training, but some
-> boards need to adjust these values to fit for their unique hardware
-> design. So if the phy is using custom config values, do software
-> link training instead of relying on firmware, if software training
-> fail, keep firmware training as a fallback if sw training fails.
+On Fri, May 11, 2018 at 08:45:59AM -0500, Rob Herring wrote:
+> Commit 0fa1c579349f ("of/fdt: use memblock_virt_alloc for early alloc")
+> inadvertently switched the DT unflattening allocations from memblock to
+> bootmem which doesn't work because the unflattening happens before
+> bootmem is initialized. Swapping the order of bootmem init and
+> unflattening could also fix this, but removing bootmem is desired. So
+> enable NO_BOOTMEM on SH like other architectures have done.
 > 
-> Signed-off-by: Chris Zhong <zyw@rock-chips.com>
-> Signed-off-by: Lin Huang <hl@rock-chips.com>
-
-FTR, I've previously reviewed this patch at
-https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/985573
-
+> Fixes: 0fa1c579349f ("of/fdt: use memblock_virt_alloc for early alloc")
+> Reported-by: Rich Felker <dalias@libc.org>
+> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
-> Changes in v2:
-> - update patch following Enric suggest
+> This is compile tested only, but similar to microblaze and h8300 
+> conversions. The additional complexity for SH is NUMA support (which to 
+> me looks like an abuse of NUMA support to map a small amount of 
+> on-chip? RAM to NUMA nodes). 
+
+Thanks! I was just reading the corresponding microblaze commit, and
+think this approach makes sense. I'll test it now with both DT and
+non-DT sh systems and let you know if it works. If it's good would you
+like me to send it upstream via arch/sh? I already have 2
+regression-fix patches to submit in a pull request asap.
+
+Rich
+
+
+>  arch/sh/Kconfig        |  1 +
+>  arch/sh/kernel/setup.c |  1 -
+>  arch/sh/mm/init.c      | 68 ++++--------------------------------------
+>  arch/sh/mm/numa.c      | 19 ------------
+>  4 files changed, 7 insertions(+), 82 deletions(-)
 > 
->  drivers/gpu/drm/rockchip/Makefile               |   3 +-
->  drivers/gpu/drm/rockchip/cdn-dp-core.c          |  24 +-
->  drivers/gpu/drm/rockchip/cdn-dp-core.h          |   2 +
->  drivers/gpu/drm/rockchip/cdn-dp-link-training.c | 391 ++++++++++++++++++++++++
->  drivers/gpu/drm/rockchip/cdn-dp-reg.c           |  34 ++-
->  drivers/gpu/drm/rockchip/cdn-dp-reg.h           |  38 ++-
->  6 files changed, 479 insertions(+), 13 deletions(-)
->  create mode 100644 drivers/gpu/drm/rockchip/cdn-dp-link-training.c
-> 
-
-/snip
-
-> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.h b/drivers/gpu/drm/rockchip/cdn-dp-core.h
-> index 46159b2..c6050ab 100644
-> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.h
-> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.h
-> @@ -84,6 +84,7 @@ struct cdn_dp_device {
->  	bool connected;
->  	bool active;
->  	bool suspended;
-> +	bool sw_training_success;
-
-Can you change this to use_fw_training instead? So it will be false if sw
-training succeeds, and true if sw training fails and needs to fallback to fw.
-
+> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+> index 97fe29316476..1851eaeee131 100644
+> --- a/arch/sh/Kconfig
+> +++ b/arch/sh/Kconfig
+> @@ -9,6 +9,7 @@ config SUPERH
+>  	select HAVE_IDE if HAS_IOPORT_MAP
+>  	select HAVE_MEMBLOCK
+>  	select HAVE_MEMBLOCK_NODE_MAP
+> +	select NO_BOOTMEM
+>  	select ARCH_DISCARD_MEMBLOCK
+>  	select HAVE_OPROFILE
+>  	select HAVE_GENERIC_DMA_COHERENT
+> diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
+> index d34e998b809f..c286cf5da6e7 100644
+> --- a/arch/sh/kernel/setup.c
+> +++ b/arch/sh/kernel/setup.c
+> @@ -11,7 +11,6 @@
+>  #include <linux/ioport.h>
+>  #include <linux/init.h>
+>  #include <linux/initrd.h>
+> -#include <linux/bootmem.h>
+>  #include <linux/console.h>
+>  #include <linux/root_dev.h>
+>  #include <linux/utsname.h>
+> diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
+> index ce0bbaa7e404..4034035fbede 100644
+> --- a/arch/sh/mm/init.c
+> +++ b/arch/sh/mm/init.c
+> @@ -211,59 +211,15 @@ void __init allocate_pgdat(unsigned int nid)
 >  
->  	const struct firmware *fw;	/* cdn dp firmware */
->  	unsigned int fw_version;	/* cdn fw version */
-> @@ -106,6 +107,7 @@ struct cdn_dp_device {
->  	u8 ports;
->  	u8 lanes;
->  	int active_port;
-> +	u8 train_set[4];
+>  	NODE_DATA(nid) = __va(phys);
+>  	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
+> -
+> -	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
+>  #endif
 >  
->  	u8 dpcd[DP_RECEIVER_CAP_SIZE];
->  	bool sink_has_audio;
-
-/snip
-
-> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-> index afdfda0..bd0aed5 100644
-> --- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-> +++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-> @@ -17,7 +17,9 @@
->  #include <linux/delay.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
-> +#include <linux/phy/phy.h>
->  #include <linux/reset.h>
-> +#include <soc/rockchip/rockchip_phy_typec.h>
->  
->  #include "cdn-dp-core.h"
->  #include "cdn-dp-reg.h"
-> @@ -189,7 +191,7 @@ static int cdn_dp_mailbox_send(struct cdn_dp_device *dp, u8 module_id,
->  	return 0;
+>  	NODE_DATA(nid)->node_start_pfn = start_pfn;
+>  	NODE_DATA(nid)->node_spanned_pages = end_pfn - start_pfn;
 >  }
 >  
-> -static int cdn_dp_reg_write(struct cdn_dp_device *dp, u16 addr, u32 val)
-> +int cdn_dp_reg_write(struct cdn_dp_device *dp, u16 addr, u32 val)
+> -static void __init bootmem_init_one_node(unsigned int nid)
+> -{
+> -	unsigned long total_pages, paddr;
+> -	unsigned long end_pfn;
+> -	struct pglist_data *p;
+> -
+> -	p = NODE_DATA(nid);
+> -
+> -	/* Nothing to do.. */
+> -	if (!p->node_spanned_pages)
+> -		return;
+> -
+> -	end_pfn = pgdat_end_pfn(p);
+> -
+> -	total_pages = bootmem_bootmap_pages(p->node_spanned_pages);
+> -
+> -	paddr = memblock_alloc(total_pages << PAGE_SHIFT, PAGE_SIZE);
+> -	if (!paddr)
+> -		panic("Can't allocate bootmap for nid[%d]\n", nid);
+> -
+> -	init_bootmem_node(p, paddr >> PAGE_SHIFT, p->node_start_pfn, end_pfn);
+> -
+> -	free_bootmem_with_active_regions(nid, end_pfn);
+> -
+> -	/*
+> -	 * XXX Handle initial reservations for the system memory node
+> -	 * only for the moment, we'll refactor this later for handling
+> -	 * reservations in other nodes.
+> -	 */
+> -	if (nid == 0) {
+> -		struct memblock_region *reg;
+> -
+> -		/* Reserve the sections we're already using. */
+> -		for_each_memblock(reserved, reg) {
+> -			reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
+> -		}
+> -	}
+> -
+> -	sparse_memory_present_with_active_regions(nid);
+> -}
+> -
+>  static void __init do_init_bootmem(void)
 >  {
->  	u8 msg[6];
+>  	struct memblock_region *reg;
+> -	int i;
 >  
-> @@ -606,7 +608,35 @@ static int cdn_dp_get_training_status(struct cdn_dp_device *dp)
->  int cdn_dp_train_link(struct cdn_dp_device *dp)
->  {
->  	int ret;
-> +	struct cdn_dp_port *port = dp->port[dp->active_port];
-> +	struct rockchip_typec_phy *tcphy = phy_get_drvdata(port->phy);
+>  	/* Add active regions with valid PFNs. */
+>  	for_each_memblock(memory, reg) {
+> @@ -279,9 +235,12 @@ static void __init do_init_bootmem(void)
 >  
-> +	/*
-> +	 * DP firmware uses fixed phy config values to do training, but some
-> +	 * boards need to adjust these values to fit for their unique hardware
-> +	 * design. So if the phy is using custom config values, do software
-> +	 * link training instead of relying on firmware, if software training
-> +	 * fail, keep firmware training as a fallback if sw training fails.
-> +	 */
-> +	if (tcphy->need_software_training) {
-
-As discussed in the downstream review, I'd rather default to sw training and
-fallback to fw training if we must.
-
-> +		ret = cdn_dp_software_train_link(dp);
-> +		if (ret) {
-> +			DRM_DEV_ERROR(dp->dev,
-> +				"Failed to do software training %d\n", ret);
-> +			goto do_fw_training;
-> +		}
-> +		ret = cdn_dp_reg_write(dp, SOURCE_HDTX_CAR, 0xf);
-> +		if (ret) {
-> +			DRM_DEV_ERROR(dp->dev,
-> +			"Failed to write SOURCE_HDTX_CAR register %d\n", ret);
-> +			goto do_fw_training;
-> +		}
-> +		dp->sw_training_success = true;
-> +		return 0;
+>  	plat_mem_setup();
+>  
+> -	for_each_online_node(i)
+> -		bootmem_init_one_node(i);
+> +	for_each_memblock(memory, reg) {
+> +		int nid = memblock_get_region_node(reg);
+>  
+> +		memory_present(nid, memblock_region_memory_base_pfn(reg),
+> +			memblock_region_memory_end_pfn(reg));
 > +	}
-> +
-> +do_fw_training:
-> +	dp->sw_training_success = false;
-
-Can you please add a DRM_DEBUG_KMS log message here?
-
->  	ret = cdn_dp_training_start(dp);
->  	if (ret) {
->  		DRM_DEV_ERROR(dp->dev, "Failed to start training %d\n", ret);
-> @@ -621,7 +651,7 @@ int cdn_dp_train_link(struct cdn_dp_device *dp)
->  
->  	DRM_DEV_DEBUG_KMS(dp->dev, "rate:0x%x, lanes:%d\n", dp->link.rate,
->  			  dp->link.num_lanes);
-> -	return ret;
-> +	return 0;
+>  	sparse_init();
 >  }
 >  
->  int cdn_dp_set_video_status(struct cdn_dp_device *dp, int active)
-> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.h b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
-> index 6580b11..3420771 100644
-> --- a/drivers/gpu/drm/rockchip/cdn-dp-reg.h
-> +++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
-> @@ -137,7 +137,7 @@
->  #define HPD_EVENT_MASK			0x211c
->  #define HPD_EVENT_DET			0x2120
+> @@ -322,7 +281,6 @@ void __init paging_init(void)
+>  {
+>  	unsigned long max_zone_pfns[MAX_NR_ZONES];
+>  	unsigned long vaddr, end;
+> -	int nid;
 >  
-> -/* dpyx framer addr */
-> +/* dptx framer addr */
->  #define DP_FRAMER_GLOBAL_CONFIG		0x2200
->  #define DP_SW_RESET			0x2204
->  #define DP_FRAMER_TU			0x2208
-> @@ -431,6 +431,40 @@
->  /* Reference cycles when using lane clock as reference */
->  #define LANE_REF_CYC				0x8000
+>  	sh_mv.mv_mem_init();
 >  
-> +/* register CM_VID_CTRL */
-> +#define LANE_VID_REF_CYC(x)                    (((x) & (BIT(24) - 1)) << 0)
-> +#define NMVID_MEAS_TOLERANCE(x)                        (((x) & 0xf) << 24)
-> +
-> +/* register DP_TX_PHY_CONFIG_REG */
-> +#define DP_TX_PHY_TRAINING_ENABLE(x)           ((x) & 1)
-> +#define DP_TX_PHY_TRAINING_TYPE_PRBS7          (0 << 1)
-> +#define DP_TX_PHY_TRAINING_TYPE_TPS1           (1 << 1)
-> +#define DP_TX_PHY_TRAINING_TYPE_TPS2           (2 << 1)
-> +#define DP_TX_PHY_TRAINING_TYPE_TPS3           (3 << 1)
-> +#define DP_TX_PHY_TRAINING_TYPE_TPS4           (4 << 1)
-> +#define DP_TX_PHY_TRAINING_TYPE_PLTPAT         (5 << 1)
-> +#define DP_TX_PHY_TRAINING_TYPE_D10_2          (6 << 1)
-> +#define DP_TX_PHY_TRAINING_TYPE_HBR2CPAT       (8 << 1)
-> +#define DP_TX_PHY_TRAINING_PATTERN(x)          ((x) << 1)
-> +#define DP_TX_PHY_SCRAMBLER_BYPASS(x)          (((x) & 1) << 5)
-> +#define DP_TX_PHY_ENCODER_BYPASS(x)            (((x) & 1) << 6)
-> +#define DP_TX_PHY_SKEW_BYPASS(x)               (((x) & 1) << 7)
-> +#define DP_TX_PHY_DISPARITY_RST(x)             (((x) & 1) << 8)
-> +#define DP_TX_PHY_LANE0_SKEW(x)                (((x) & 7) << 9)
-> +#define DP_TX_PHY_LANE1_SKEW(x)                (((x) & 7) << 12)
-> +#define DP_TX_PHY_LANE2_SKEW(x)                (((x) & 7) << 15)
-> +#define DP_TX_PHY_LANE3_SKEW(x)                (((x) & 7) << 18)
-> +#define DP_TX_PHY_10BIT_ENABLE(x)              (((x) & 1) << 21)
-> +
-> +/* register DP_FRAMER_GLOBAL_CONFIG */
-> +#define NUM_LANES(x)           ((x) & 3)
-> +#define SST_MODE               (0 << 2)
-> +#define RG_EN                  (0 << 4)
-> +#define GLOBAL_EN              BIT(3)
-> +#define NO_VIDEO               BIT(5)
-> +#define ENC_RST_DIS            BIT(6)
-> +#define WR_VHSYNC_FALL         BIT(7)
-> +
->  enum voltage_swing_level {
->  	VOLTAGE_LEVEL_0,
->  	VOLTAGE_LEVEL_1,
-> @@ -476,6 +510,7 @@ int cdn_dp_set_host_cap(struct cdn_dp_device *dp, u8 lanes, bool flip);
->  int cdn_dp_event_config(struct cdn_dp_device *dp);
->  u32 cdn_dp_get_event(struct cdn_dp_device *dp);
->  int cdn_dp_get_hpd_status(struct cdn_dp_device *dp);
-> +int cdn_dp_reg_write(struct cdn_dp_device *dp, u16 addr, u32 val);
->  ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr,
->  			  u8 *data, u16 len);
->  ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr,
-> @@ -489,4 +524,5 @@ int cdn_dp_config_video(struct cdn_dp_device *dp);
->  int cdn_dp_audio_stop(struct cdn_dp_device *dp, struct audio_info *audio);
->  int cdn_dp_audio_mute(struct cdn_dp_device *dp, bool enable);
->  int cdn_dp_audio_config(struct cdn_dp_device *dp, struct audio_info *audio);
-> +int cdn_dp_software_train_link(struct cdn_dp_device *dp);
->  #endif /* _CDN_DP_REG_H */
+> @@ -377,21 +335,7 @@ void __init paging_init(void)
+>  	kmap_coherent_init();
+>  
+>  	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
+> -
+> -	for_each_online_node(nid) {
+> -		pg_data_t *pgdat = NODE_DATA(nid);
+> -		unsigned long low, start_pfn;
+> -
+> -		start_pfn = pgdat->bdata->node_min_pfn;
+> -		low = pgdat->bdata->node_low_pfn;
+> -
+> -		if (max_zone_pfns[ZONE_NORMAL] < low)
+> -			max_zone_pfns[ZONE_NORMAL] = low;
+> -
+> -		printk("Node %u: start_pfn = 0x%lx, low = 0x%lx\n",
+> -		       nid, start_pfn, low);
+> -	}
+> -
+> +	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+>  	free_area_init_nodes(max_zone_pfns);
+>  }
+>  
+> diff --git a/arch/sh/mm/numa.c b/arch/sh/mm/numa.c
+> index 05713d190247..830e8b3684e4 100644
+> --- a/arch/sh/mm/numa.c
+> +++ b/arch/sh/mm/numa.c
+> @@ -8,7 +8,6 @@
+>   * for more details.
+>   */
+>  #include <linux/module.h>
+> -#include <linux/bootmem.h>
+>  #include <linux/memblock.h>
+>  #include <linux/mm.h>
+>  #include <linux/numa.h>
+> @@ -26,9 +25,7 @@ EXPORT_SYMBOL_GPL(node_data);
+>   */
+>  void __init setup_bootmem_node(int nid, unsigned long start, unsigned long end)
+>  {
+> -	unsigned long bootmap_pages;
+>  	unsigned long start_pfn, end_pfn;
+> -	unsigned long bootmem_paddr;
+>  
+>  	/* Don't allow bogus node assignment */
+>  	BUG_ON(nid >= MAX_NUMNODES || nid <= 0);
+> @@ -48,25 +45,9 @@ void __init setup_bootmem_node(int nid, unsigned long start, unsigned long end)
+>  					     SMP_CACHE_BYTES, end));
+>  	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
+>  
+> -	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
+>  	NODE_DATA(nid)->node_start_pfn = start_pfn;
+>  	NODE_DATA(nid)->node_spanned_pages = end_pfn - start_pfn;
+>  
+> -	/* Node-local bootmap */
+> -	bootmap_pages = bootmem_bootmap_pages(end_pfn - start_pfn);
+> -	bootmem_paddr = memblock_alloc_base(bootmap_pages << PAGE_SHIFT,
+> -				       PAGE_SIZE, end);
+> -	init_bootmem_node(NODE_DATA(nid), bootmem_paddr >> PAGE_SHIFT,
+> -			  start_pfn, end_pfn);
+> -
+> -	free_bootmem_with_active_regions(nid, end_pfn);
+> -
+> -	/* Reserve the pgdat and bootmap space with the bootmem allocator */
+> -	reserve_bootmem_node(NODE_DATA(nid), start_pfn << PAGE_SHIFT,
+> -			     sizeof(struct pglist_data), BOOTMEM_DEFAULT);
+> -	reserve_bootmem_node(NODE_DATA(nid), bootmem_paddr,
+> -			     bootmap_pages << PAGE_SHIFT, BOOTMEM_DEFAULT);
+> -
+>  	/* It's up */
+>  	node_set_online(nid);
+>  
 > -- 
-> 2.7.4
-> 
-
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+> 2.17.0
