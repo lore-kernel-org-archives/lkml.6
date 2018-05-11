@@ -1,149 +1,247 @@
-Return-Path: <dvyukov@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526060389; cv=none;
-        d=google.com; s=arc-20160816;
-        b=oEc3ylm6V1uFNo6bw67qCG6Vm2LwFrKKrjsdG8E8fzAcEbfVywy82ZL5UaW5FJsCol
-         TTOiRNk0/LUxerK7MXrjaxtkwVVpF6FXx02jjdgN0OXpj6+VAdBExY/O53tDh/F+C+r9
-         kH4Dfg96oJF/KfM784ql+UreZVJfdLuh7t2U5hmt7p9PQNxpSw7O1IBtjEPZ6FbrjtvI
-         Vm7DyCoXWIhrl6ufoZqhJgKnQ8m6g8YXWQF2vm4arKExzjhAindptFBaz+UruW275ls+
-         ZH+Ir9FZ4/xUCRsI+iE6yZ9YuPXFjxrd7dUXDauPUWTiJTwaqYpfPViQ4huj7/VMh3UD
-         B2Rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=OhNbNQBovzuK3h3F0ngijdzeGxZrV2ijAaokNdKb2aY=;
-        b=qIBr22TnWPnwIE3NDvgxJC6CIZt/1MCrBxLbbSGrvAW9TybWwz3i6XrLeo8WPsWfD4
-         eMkcSROoBzzwVdB8O1cau/1Hjt/AKJzfBWfMeHejuTFthOgVLG376OwB9zWhgCKaXDmw
-         OCdA1osyznujra5EXVuFiwxcFkkf9rv3rChnn2TuC6av1WphjumtU3RggfiMiLeCA5wG
-         lge4eSzv9EmphcvburLPujRYzZKvbBSiLg48vybVy1fRsQvom4z0zqS/BuSGivRx9lnu
-         5qgGQSs7YoUoPyCgcTLSshZYe0zN/3t+1kDKIBS51XivWgKD7m2c5Bgf2qMgwclJjpPH
-         yftA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=RT8n1bny;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=RT8n1bny;
-       spf=pass (google.com: domain of dvyukov@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=dvyukov@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AB8JxZrNBNbPFk2pz2czrqO+/6DZa5DsZB9WiUq+9C722yl+jsHMQFIz7YBUs6dUr7PN3xVxOlLHlzsQxz0+/TwI8j4=
+Return-Path: <kernelnewbies-bounces@kernelnewbies.org>
+X-Cyrus-Session-Id: sloti22d1t05-3845081-1526038580-2-1249493511589567779
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, HTML_MESSAGE 0.001,
+  MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_NONE -0.0001, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='96.67.55.147', Host='shelob.surriel.com', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8', html='UTF-8', plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: kernelnewbies-bounces@kernelnewbies.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526038579; b=HZ5+qzesmJ787Pv2z1Ggmf75M81gXGyNifi3oGgYYNuuEtyMbr
+    kEgOqRSnLgNgHq1HYlWdhZkcHqabLE2/ZM4lI2YAwqtt1sHU+aUpytO75P0yF98s
+    C4VXWj2zdrzNMJGc9iujhGFpChUKAI4d6QgXJPvgtR8s+GK3AFB0ABLmHQcubflD
+    QJJHKS/1cCHY2QjBg3MKahgoP0Rhh+B95etTIVFV6NEjKTHkLaHEgFWKJQr4dFrN
+    DrTGt5RkOb60kOF7NuriwbRjmnZRZ8MJ+z+Mn1IHwZvtEcSo33uyf341qWX2cU6R
+    /+8d31F6UkPGNwarWbI8M/sHmhEGNl0SEirQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:from:date:message-id:subject
+    :to:list-id:list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:content-type; s=fm2; t=1526038579; bh=ssRTc+Kvuw
+    Ka/w5H6BB/xHCvBjIqP6jFCMi9dpVBgUo=; b=hyqenOliHwqKhM5QrJU9SWsClR
+    dy0RYiS24a3Lvq5Ylb+Vf6LmMuNB/vmqd9/kNed9VkYq3FRRSmmnmwLC+8cijYXa
+    qBjL2R47u6dYdG7HT6jXkpVYqZnYU3LA0scwThYKV6leOw4UAcZmvdCla03j/hTg
+    Lp7h1Npj7DXSatyblZi3tjEAjAmmyH9wz8bHJdG5t9j8u9vUj224IfWJyJRotcKK
+    4EbKpx2YwG067lTWuB9gdgOfiXgkHiVBXW4AgS1iYPPd5MBaTR4lGRknM9QgL8kV
+    adBIHqHpKLKhTMlaRrPw+C7+vPDfh60JNxl+aSaah4CuLkevIeZgAbEfDenQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=gmail.com header.i=@gmail.com header.b=dvk5Uyjt x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=96.67.55.147 (shelob.surriel.com);
+    spf=permerror smtp.mailfrom=kernelnewbies-bounces@kernelnewbies.org
+    smtp.helo=shelob.surriel.com;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=Dg6fnsUi;
+    x-ptr=pass x-ptr-helo=shelob.surriel.com
+    x-ptr-lookup=shelob.surriel.com;
+    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass
+    smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
+    header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=gmail.com header.i=@gmail.com header.b=dvk5Uyjt x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=96.67.55.147 (shelob.surriel.com);
+    spf=permerror smtp.mailfrom=kernelnewbies-bounces@kernelnewbies.org
+      smtp.helo=shelob.surriel.com;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=Dg6fnsUi;
+    x-ptr=pass x-ptr-helo=shelob.surriel.com
+      x-ptr-lookup=shelob.surriel.com;
+    x-return-mx=pass smtp.domain=kernelnewbies.org smtp.result=pass
+      smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
+      header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfPGRW68ekTkNK9KOGETUZa2zn8K8JHbEdav2eBBPUCYsv1sGmqubV3ALzcjB8OEbp3RiFHz+9LM88HLvT4Os/i3Npp0RDn1WlojcF0OeI2iflUiB3nFP
+    /YnwcAUH/jJr910uCmoa/ACjmljJEgOP11nB87AlodK7mqXbvrH752XqOAttEPDk2fLvaj4ZyGs4saAXZne4uby3Sg2BbHD7BEE=
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=rY4dWIxwDULXyY+dMrlW8Q==:117
+    a=rY4dWIxwDULXyY+dMrlW8Q==:17 a=x7bEGLp0ZPQA:10 a=czdFmxznmnoA:10
+    a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=GGdKqnK_KW9Sck3OX-AA:9 a=1K8ewAGmg4rX2cu2:21 a=atutN0o5x7TmsORt:21
+    a=QEXdDO2ut3YA:10 a=nbgc9u9JYlDev0Wnx_cA:9 a=-wVxLY0Yommcmw6X:21
+    a=SiqW3_QkAAAA:8 a=pA5yba_4-WtoxGtPXkoA:9 a=CjuIK1q_8ugA:10 a=Fe-e93FlemcA:10
+    a=0-oVHmElw7bdUHZZ8WX8:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Google-Smtp-Source: AB8JxZprtYyvXhiBH0Kq+JXgWCUHY59PWQ+w6rlgu34UVL9QtGSZLAgdDHAtoRAPej4EGNJvjDfehtlz5PdS9t65EXI=
 MIME-Version: 1.0
-In-Reply-To: <94eb2c05b4ba7e98d2055dc57696@google.com>
-References: <94eb2c05b4ba7e98d2055dc57696@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 11 May 2018 19:39:27 +0200
-Message-ID: <CACT4Y+bs06eV-bG1hO7aMaM6CTVhXi+eLNurKfFoxV5ZxGumOg@mail.gmail.com>
-Subject: Re: general protection fault in usb_find_alt_setting
-To: syzbot <bot+c99ecc8a2c68eb7e06cf2f652e60d63d6fbe2f31@syzkaller.appspotmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Johan Hovold <johan@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	USB list <linux-usb@vger.kernel.org>, mathias.nyman@linux.intel.com,
-	peter.chen@nxp.com, sriram.dash@nxp.com,
-	syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Pintu Kumar <pintu.ping@gmail.com>
+Date: Fri, 11 May 2018 17:04:50 +0530
+Message-ID: <CAOuPNLjqJVsPOVPCnswtFyXudAJ88_F0QVUq-Z6qWE=UpH0mBA@mail.gmail.com>
+Subject: Not able to set smp_affinity for an IRQ on i.MX7
+To: open list <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernelnewbies@kernelnewbies.org
+X-BeenThere: kernelnewbies@kernelnewbies.org
+X-Mailman-Version: 2.1.15
+List-Unsubscribe: <https://lists.kernelnewbies.org/mailman/options/kernelnewbies>,
+ <mailto:kernelnewbies-request@kernelnewbies.org?subject=unsubscribe>
+List-Archive: <http://lists.kernelnewbies.org/pipermail/kernelnewbies/>
+List-Post: <mailto:kernelnewbies@kernelnewbies.org>
+List-Help: <mailto:kernelnewbies-request@kernelnewbies.org?subject=help>
+List-Subscribe: <https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies>,
+ <mailto:kernelnewbies-request@kernelnewbies.org?subject=subscribe>
+Content-Type: multipart/mixed; boundary="===============2595804741952351622=="
+Errors-To: kernelnewbies-bounces@kernelnewbies.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1583850520264684740?=
-X-GMAIL-MSGID: =?utf-8?q?1600190298335609937?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, Nov 12, 2017 at 10:06 AM, syzbot
-<bot+c99ecc8a2c68eb7e06cf2f652e60d63d6fbe2f31@syzkaller.appspotmail.com>
-wrote:
-> Hello,
->
-> syzkaller hit the following crash on
-> d9e0e63d9a6f88440eb201e1491fcf730272c706
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
->
-> Unfortunately, I don't have any reproducer for this bug yet.
+--===============2595804741952351622==
+Content-Type: multipart/alternative; boundary="00000000000024d142056bec86f6"
+
+--00000000000024d142056bec86f6
+Content-Type: text/plain; charset="UTF-8"
+
+Hi,
+
+I need one help.
+I am using i.MX7 Sabre board with kernel version 4.1.15
+
+Let's say I am interested in GPIO number: 21
+I wanted to set CPU affinity for particular GPIO->IRQ number, so I tried
+the below steps:
+root@10:~# echo 21 > /sys/class/gpio/export
+root@10:~# echo "rising" > /sys/class/gpio/gpio21/edge
+root@10:~# cat /proc/interrupts | grep 21
+  47: 0 0 gpio-mxc 21 Edge gpiolib
+root@10:~# cat /sys/class/gpio/gpio21/direction
+in
+root@10:~# cat /proc/irq/47/smp_affinity
+3
+root@10:~# echo 2 > /proc/irq/47/smp_affinity
+-bash: echo: write error: Input/output error
+
+But I get input/output error.
+When I debug further, found that irq_can_set_affinity is returning 0:
+[    0.000000] genirq: irq_can_set_affinity (0): balance: 1, irq_data.chip:
+a81b7e48, irq_set_affinity:   (null)
+[    0.000000] write_irq_affinity: FAIL
+
+I also tried first setting /proc/irq/default_smp_affinity to 2 (from 3).
+This change is working, but the smp_affinity setting for the new IRQ is not
+working.
+
+When I try to set smp_affinity for mmc0, then it works.
+# cat /proc/interrupts | grep mmc
+295:         55          0     GPCV2  22 Edge      mmc0
+296:          0          0     GPCV2  23 Edge      mmc1
+297:         52          0     GPCV2  24 Edge      mmc2
+
+root@10:~# echo 2 > /proc/irq/295/smp_affinity
+root@10:~#
 
 
-This crash happened 779 times, but first 188d ago, and last 175d ago.
-Let's consider this fixed by something.
+So, I wanted to know what are the conditions for which setting smp_affinity
+for an IRQ will work ?
 
-#syz invalid
+Is there any way by which I can set CPU affinity to a GPIO -> IRQ ?
+Whether, irq_set_affinity_hint() will work in this case ?
 
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 3 PID: 23503 Comm: syz-executor5 Not tainted 4.14.0-rc8-next-20171110+
-> #12
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-> task: ffff88007c5e0580 task.stack: ffff88006c3b8000
-> RIP: 0010:usb_find_alt_setting+0x38/0x310 drivers/usb/core/usb.c:231
-> RSP: 0018:ffff88006c3bf610 EFLAGS: 00010247
-> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff83bf4473
-> RDX: 0000000000000000 RSI: ffffc90002773000 RDI: 0000000000000004
-> RBP: ffff88006c3bf650 R08: ffffed000d877ee2 R09: ffffed000d877ee2
-> R10: 0000000000000003 R11: ffffed000d877ee1 R12: ffff88007c668000
-> R13: 00000000000000fd R14: 00000000000007fd R15: 0000000000000000
-> FS:  00007f10e9fc8700(0000) GS:ffff88007fd00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020278000 CR3: 000000006e8fe000 CR4: 00000000000006e0
-> DR0: 0000000020000008 DR1: 0000000020000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-> Call Trace:
->  check_ctrlrecip+0xf3/0x290 drivers/usb/core/devio.c:831
->  proc_control+0x13f/0xe30 drivers/usb/core/devio.c:1078
->  usbdev_do_ioctl+0x2097/0x3670 drivers/usb/core/devio.c:2396
-> SELinux: unrecognized netlink message: protocol=6 nlmsg_type=0
-> sclass=netlink_xfrm_socket pig=23496 comm=syz-executor0
->  usbdev_ioctl+0x25/0x30 drivers/usb/core/devio.c:2553
->  vfs_ioctl fs/ioctl.c:46 [inline]
->  do_vfs_ioctl+0x1b1/0x1530 fs/ioctl.c:686
->  SYSC_ioctl fs/ioctl.c:701 [inline]
->  SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
->  entry_SYSCALL_64_fastpath+0x1f/0x96
-> RIP: 0033:0x447c99
-> RSP: 002b:00007f10e9fc7bd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 00007f10e9fc86cc RCX: 0000000000447c99
-> RDX: 000000002003dffa RSI: 00000000c0185500 RDI: 0000000000000014
-> RBP: 0000000000000086 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-> R13: 00000000000048d8 R14: 00000000006e8978 R15: 00007f10e9fc8700
-> Code: 89 d5 53 48 89 fb 48 83 ec 18 48 89 7d c8 89 75 d0 e8 2d 3c b0 fd 48
-> 8d 7b 04 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48
-> 89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 a1 02 00
-> SELinux: unrecognized netlink message: protocol=0 nlmsg_type=0
-> sclass=netlink_route_socket pig=23514 comm=syz-executor7
-> RIP: usb_find_alt_setting+0x38/0x310 drivers/usb/core/usb.c:231 RSP:
-> ffff88006c3bf610
-> ---[ end trace 53f2c0803d4e1797 ]---
-> Kernel panic - not syncing: Fatal exception
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
->
->
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> Please credit me with: Reported-by: syzbot <syzkaller@googlegroups.com>
->
-> syzbot will keep track of this bug report.
-> Once a fix for this bug is committed, please reply to this email with:
-> #syz fix: exact-commit-title
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/94eb2c05b4ba7e98d2055dc57696%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+
+Thanks,
+Pintu
+
+--00000000000024d142056bec86f6
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div class=3D"gmail_default" style=3D"font-family:verdana,=
+sans-serif">Hi,</div><div class=3D"gmail_default" style=3D"font-family:verd=
+ana,sans-serif"><br></div><div class=3D"gmail_default" style=3D"font-family=
+:verdana,sans-serif">I need one help.</div><div class=3D"gmail_default" sty=
+le=3D"font-family:verdana,sans-serif">I am using i.MX7 Sabre board with ker=
+nel version 4.1.15</div><div class=3D"gmail_default" style=3D"font-family:v=
+erdana,sans-serif"><br></div><div class=3D"gmail_default" style=3D"font-fam=
+ily:verdana,sans-serif">Let&#39;s say I am interested in GPIO number: 21</d=
+iv><div class=3D"gmail_default" style=3D"font-family:verdana,sans-serif">I =
+wanted to set CPU affinity for particular GPIO-&gt;IRQ number, so I tried t=
+he below steps:</div><div class=3D"gmail_default" style=3D"font-family:verd=
+ana,sans-serif"><span style=3D"font-family:arial,sans-serif">root@10:~# ech=
+o 21 &gt; /sys/class/gpio/export</span></div><div class=3D"gmail_default" s=
+tyle=3D"font-family:verdana,sans-serif"><span style=3D"font-family:arial,sa=
+ns-serif">root@10:~# echo &quot;rising&quot; &gt; /sys/class/gpio/gpio21/ed=
+ge</span></div><div class=3D"gmail_default" style=3D"font-family:verdana,sa=
+ns-serif"><span style=3D"font-family:arial,sans-serif">root@10:~# cat /proc=
+/interrupts | grep 21</span></div><div class=3D"gmail_default" style=3D"fon=
+t-family:verdana,sans-serif"><span style=3D"font-family:arial,sans-serif">=
+=C2=A0 47:          0          0  gpio-mxc  21 Edge      gpiolib</span></di=
+v><div class=3D"gmail_default" style=3D"font-family:verdana,sans-serif"><sp=
+an style=3D"font-family:arial,sans-serif">root@10:~# cat /sys/class/gpio/gp=
+io21/direction</span></div><div class=3D"gmail_default" style=3D"font-famil=
+y:verdana,sans-serif"><span style=3D"font-family:arial,sans-serif">in</span=
+></div><div class=3D"gmail_default"><span style=3D"font-family:verdana,sans=
+-serif">root@10:~# cat /proc/irq/47/smp_affinity</span></div><div class=3D"=
+gmail_default"><span style=3D"font-family:verdana,sans-serif">3</span></div=
+><div class=3D"gmail_default" style=3D"font-family:verdana,sans-serif">
+
+<div class=3D"gmail_default">root@10:~# echo 2 &gt; /proc/irq/47/smp_affini=
+ty</div><div class=3D"gmail_default">-bash: echo: write error: Input/output=
+ error</div><div class=3D"gmail_default"><br></div><div class=3D"gmail_defa=
+ult">But I get input/output error.</div><div class=3D"gmail_default">When I=
+ debug further, found that irq_can_set_affinity is returning 0:</div><div c=
+lass=3D"gmail_default"><div class=3D"gmail_default">[=C2=A0 =C2=A0 0.000000=
+] genirq: irq_can_set_affinity (0): balance: 1, irq_data.chip: a81b7e48, ir=
+q_set_affinity:=C2=A0 =C2=A0(null)</div><div class=3D"gmail_default">[=C2=
+=A0 =C2=A0 0.000000] write_irq_affinity: FAIL</div><div class=3D"gmail_defa=
+ult"><br></div><div class=3D"gmail_default">I also tried first setting=C2=
+=A0/proc/irq/default_smp_affinity to 2 (from 3).</div><div class=3D"gmail_d=
+efault">This change is working, but the smp_affinity setting for the new IR=
+Q is not working.</div><div class=3D"gmail_default"><br></div><div class=3D=
+"gmail_default">When I try to set smp_affinity for mmc0, then it works.</di=
+v><div class=3D"gmail_default"># cat /proc/interrupts | grep mmc</div><div =
+class=3D"gmail_default"><div class=3D"gmail_default">295:=C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A055=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 0=C2=A0 =C2=A0 =C2=A0=
+GPCV2=C2=A0 22 Edge=C2=A0 =C2=A0 =C2=A0 mmc0</div><div class=3D"gmail_defau=
+lt">296:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 0=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 0=C2=A0 =C2=A0 =C2=A0GPCV2=C2=A0 23 Edge=C2=A0 =C2=A0 =C2=A0 mmc1</div>=
+<div class=3D"gmail_default">297:=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A052=C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 0=C2=A0 =C2=A0 =C2=A0GPCV2=C2=A0 24 Edge=C2=A0=
+ =C2=A0 =C2=A0 mmc2</div><div class=3D"gmail_default"><br></div><div class=
+=3D"gmail_default"><div class=3D"gmail_default">root@10:~# echo 2 &gt; /pro=
+c/irq/295/smp_affinity</div><div class=3D"gmail_default">root@10:~#</div></=
+div></div><div class=3D"gmail_default"><br></div><div class=3D"gmail_defaul=
+t"><br></div><div class=3D"gmail_default">So, I wanted to know what are the=
+ conditions for which setting smp_affinity for an IRQ will work ?</div><div=
+ class=3D"gmail_default"><br></div><div class=3D"gmail_default">Is there an=
+y way by which I can set CPU affinity to a GPIO -&gt; IRQ ?</div><div class=
+=3D"gmail_default">Whether, irq_set_affinity_hint() will work in this case =
+?</div><div class=3D"gmail_default"><br></div><div class=3D"gmail_default">=
+<br></div><div class=3D"gmail_default">Thanks,</div><div class=3D"gmail_def=
+ault">Pintu</div><div class=3D"gmail_default"><br></div></div></div></div>
+
+--00000000000024d142056bec86f6--
+
+
+--===============2595804741952351622==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+Kernelnewbies mailing list
+Kernelnewbies@kernelnewbies.org
+https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies
+
+--===============2595804741952351622==--
