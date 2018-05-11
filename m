@@ -1,161 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752112AbeEKBhF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 21:37:05 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:44516 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751997AbeEKBhD (ORCPT
+        id S1751130AbeEKBpV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 21:45:21 -0400
+Received: from mail-pg0-f54.google.com ([74.125.83.54]:40323 "EHLO
+        mail-pg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750722AbeEKBpU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 21:37:03 -0400
-Subject: Re: [PATCH] mlx4_core: allocate 4KB ICM chunks
-To: Yanjun Zhu <yanjun.zhu@oracle.com>, tariqt@mellanox.com,
-        davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180510233143.7236-1-qing.huang@oracle.com>
- <6454d5eb-2700-4fe2-fd91-d366112c4674@oracle.com>
- <4a23dac7-fafe-3b1c-7284-75f3a38f420c@oracle.com>
- <6768e075-70f5-4de3-a98a-fdffa53e0a2f@oracle.com>
-From: Qing Huang <qing.huang@oracle.com>
-Message-ID: <a1ecd591-7462-d43d-cc4e-206b0321742f@oracle.com>
-Date: Thu, 10 May 2018 18:36:58 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 10 May 2018 21:45:20 -0400
+X-Google-Smtp-Source: AB8JxZo5hasCFCI9dxPMeBSu12eTsOBuv2iNqIgdESV2iRtrok3Bn3Jd/PRYGTMyL2at22CCj7mWrw==
+Date: Fri, 11 May 2018 10:45:15 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: sergey.senozhatsky.work@gmail.com, pmladek@suse.com,
+        dvyukov@google.com, sergey.senozhatsky@gmail.com,
+        syzkaller@googlegroups.com, rostedt@goodmis.org,
+        fengguang.wu@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: printk feature for syzbot?
+Message-ID: <20180511014515.GA895@jagdpanzerIV>
+References: <201804232233.CIC65675.OJSOMFQOFFHVtL@I-love.SAKURA.ne.jp>
+ <CACT4Y+boyw_Qy=y-iTnsKZrtTgF0Hk3nHN_xtqUdX4etgiYDQw@mail.gmail.com>
+ <20180424013336.GA1376@jagdpanzerIV>
+ <20180426100603.czif6sat75fjsazp@pathway.suse.cz>
+ <20180510042206.GA3426@jagdpanzerIV>
+ <201805102350.JJH73950.tVJHQLFSOMOOFF@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <6768e075-70f5-4de3-a98a-fdffa53e0a2f@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8889 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805110009
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201805102350.JJH73950.tVJHQLFSOMOOFF@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you for reviewing it!
+On (05/10/18 23:50), Tetsuo Handa wrote:
+> What I meant is nothing but something like below (i.e. inject context ID before
+> string to print)
+> 
+>   -sprintf(printk_buf + offset, "[ %s] %s", stamp, string_to_print);
+>   +cpu = smp_processor_id()
+>   +if (in_nmi())
+>   +  sprintf(printk_buf + offset, "[ %s](N%u) %s", stamp, cpu, string_to_print);
+>   +else if (in_irq())
+>   +  sprintf(printk_buf + offset, "[ %s](I%u) %s", stamp, cpu, string_to_print);
+>   +else if (in_serving_softirq())
+>   +  sprintf(printk_buf + offset, "[ %s](S%u) %s", stamp, cpu, string_to_print);
+>   +else
+>   +  sprintf(printk_buf + offset, "[ %s](%u) %s", stamp, current->pid, string_to_print);
+> 
+> without touching any struct.
 
+So you basically want to have one more con_msg_format_flags? Do
+you want to track a context which prints out a messages or the
+context which "generated" the message? A CPU/task that stores
+a logbuf entry - vprintk_emit() - is not always the same as the
+CPU/task that prints it to consoles - console_unlock().
 
-On 5/10/2018 6:23 PM, Yanjun Zhu wrote:
->
->
->
-> On 2018/5/11 9:15, Qing Huang wrote:
->>
->>
->>
->> On 5/10/2018 5:13 PM, Yanjun Zhu wrote:
->>>
->>>
->>> On 2018/5/11 7:31, Qing Huang wrote:
->>>> When a system is under memory presure (high usage with fragments),
->>>> the original 256KB ICM chunk allocations will likely trigger kernel
->>>> memory management to enter slow path doing memory compact/migration
->>>> ops in order to complete high order memory allocations.
->>>>
->>>> When that happens, user processes calling uverb APIs may get stuck
->>>> for more than 120s easily even though there are a lot of free pages
->>>> in smaller chunks available in the system.
->>>>
->>>> Syslog:
->>>> ...
->>>> Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
->>>> oracle_205573_e:205573 blocked for more than 120 seconds.
->>>> ...
->>>>
->>>> With 4KB ICM chunk size, the above issue is fixed.
->>>>
->>>> However in order to support 4KB ICM chunk size, we need to fix another
->>>> issue in large size kcalloc allocations.
->>>>
->>>> E.g.
->>>> Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
->>>> size, each ICM chunk can only hold 512 mtt entries (8 bytes for 
->>>> each mtt
->>>> entry). So we need a 16MB allocation for a table->icm pointer array to
->>>> hold 2M pointers which can easily cause kcalloc to fail.
->>>>
->>>> The solution is to use vzalloc to replace kcalloc. There is no need
->>>> for contiguous memory pages for a driver meta data structure (no need
->>> Hi,
->>>
->>> Replace continuous memory pages with virtual memory, is there any 
->>> performance loss?
->>
->> Not really. "table->icm" will be accessed as individual pointer 
->> variables randomly. Kcalloc
->
-> Sure. Thanks. If "table->icm" will be accessed as individual pointer 
-> variables randomly, the performance loss
-> caused by discontinuous memory will be very trivial.
->
-> Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
->
->> also returns a virtual address except its mapped pages are guaranteed 
->> to be contiguous
->> which will provide little advantage over vzalloc for individual 
->> pointer variable access.
->>
->> Qing
->>
->>>
->>> Zhu Yanjun
->>>> of DMA ops).
->>>>
->>>> Signed-off-by: Qing Huang <qing.huang@oracle.com>
->>>> Acked-by: Daniel Jurgens <danielj@mellanox.com>
->>>> ---
->>>>   drivers/net/ethernet/mellanox/mlx4/icm.c | 14 +++++++-------
->>>>   1 file changed, 7 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c 
->>>> b/drivers/net/ethernet/mellanox/mlx4/icm.c
->>>> index a822f7a..2b17a4b 100644
->>>> --- a/drivers/net/ethernet/mellanox/mlx4/icm.c
->>>> +++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
->>>> @@ -43,12 +43,12 @@
->>>>   #include "fw.h"
->>>>     /*
->>>> - * We allocate in as big chunks as we can, up to a maximum of 256 KB
->>>> - * per chunk.
->>>> + * We allocate in 4KB page size chunks to avoid high order memory
->>>> + * allocations in fragmented/high usage memory situation.
->>>>    */
->>>>   enum {
->>>> -    MLX4_ICM_ALLOC_SIZE    = 1 << 18,
->>>> -    MLX4_TABLE_CHUNK_SIZE    = 1 << 18
->>>> +    MLX4_ICM_ALLOC_SIZE    = 1 << 12,
->>>> +    MLX4_TABLE_CHUNK_SIZE    = 1 << 12
->>>>   };
->>>>     static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct 
->>>> mlx4_icm_chunk *chunk)
->>>> @@ -400,7 +400,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, 
->>>> struct mlx4_icm_table *table,
->>>>       obj_per_chunk = MLX4_TABLE_CHUNK_SIZE / obj_size;
->>>>       num_icm = (nobj + obj_per_chunk - 1) / obj_per_chunk;
->>>>   -    table->icm      = kcalloc(num_icm, sizeof(*table->icm), 
->>>> GFP_KERNEL);
->>>> +    table->icm      = vzalloc(num_icm * sizeof(*table->icm));
->>>>       if (!table->icm)
->>>>           return -ENOMEM;
->>>>       table->virt     = virt;
->>>> @@ -446,7 +446,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, 
->>>> struct mlx4_icm_table *table,
->>>>               mlx4_free_icm(dev, table->icm[i], use_coherent);
->>>>           }
->>>>   -    kfree(table->icm);
->>>> +    vfree(table->icm);
->>>>         return -ENOMEM;
->>>>   }
->>>> @@ -462,5 +462,5 @@ void mlx4_cleanup_icm_table(struct mlx4_dev 
->>>> *dev, struct mlx4_icm_table *table)
->>>>               mlx4_free_icm(dev, table->icm[i], table->coherent);
->>>>           }
->>>>   -    kfree(table->icm);
->>>> +    vfree(table->icm);
->>>>   }
->>>
->>
->
+	-ss
