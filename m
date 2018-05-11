@@ -1,114 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752837AbeEKJAS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 05:00:18 -0400
-Received: from mail-pl0-f53.google.com ([209.85.160.53]:36014 "EHLO
-        mail-pl0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752547AbeEKJAP (ORCPT
+        id S1752785AbeEKJLe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 05:11:34 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:42726 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752604AbeEKJLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 05:00:15 -0400
-X-Google-Smtp-Source: AB8JxZqMFE4q25D+uutQ/oHZEgWMS6phhP9zgRQ6/FHsmkQRiH6YFmQ1VFFCQZPoTQ7nOH065DjDcvmp3oR6zEQcJX0=
+        Fri, 11 May 2018 05:11:31 -0400
+Date: Fri, 11 May 2018 10:11:15 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Christoph Hellwig <hch@lst.de>
+Cc: iommu@lists.linux-foundation.org, linux-arch@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, Michal Simek <monstr@monstr.eu>,
+        Vincent Chen <deanbo422@gmail.com>, linux-c6x-dev@linux-c6x.org,
+        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-m68k@vger.kernel.org, openrisc@lists.librecores.org,
+        Greentime Hu <green.hu@gmail.com>, linux-alpha@vger.kernel.org,
+        sparclinux@vger.kernel.org, nios2-dev@lists.rocketboards.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 04/20] arm-nommu: use generic dma_noncoherent_ops
+Message-ID: <20180511091114.GA16141@n2100.armlinux.org.uk>
+References: <20180511075945.16548-1-hch@lst.de>
+ <20180511075945.16548-5-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20180509232254.GQ10363@dastard>
-References: <20180406161053.GF7500@magnolia> <CACT4Y+aaEOffkFA-B-hMzwzSiQwVpkPrc2udC087a55OTnkS4g@mail.gmail.com>
- <95c1400b-94f2-1af4-2d5d-c61c274c28ff@sandeen.net> <CACT4Y+aiwgRg5pk+N7bq9HYpgumTFyqG6-y3EZ8pWkq9-uB1aA@mail.gmail.com>
- <9f8d657c-7f42-7bd9-4477-6c3addf16dee@sandeen.net> <CACT4Y+bUx4jw83Ux7w9URL9bCy1ERLaVGTTwvA9Fe_UtLFeqCw@mail.gmail.com>
- <d7c8e0eb-61ed-1aad-6faa-82a0ef8c25b8@sandeen.net> <CACT4Y+YNRt5YSrOYKKFUP25jodpK0xeZhysSGoz2UaiGs_Gx=A@mail.gmail.com>
- <9adacfed-0de6-cb94-bf14-3e639678a02a@sandeen.net> <CACT4Y+Ya0cSP7eKjzcbfxQHYLJeR8Qnp_f4MwcM_QU91unnD5w@mail.gmail.com>
- <20180509232254.GQ10363@dastard>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Fri, 11 May 2018 10:59:53 +0200
-Message-ID: <CACT4Y+ZpyBVD3yhNxV-7fpKbCOm975kHDmxbHwpU6t13kK=FGw@mail.gmail.com>
-Subject: Re: WARNING: bad unlock balance in xfs_iunlock
-To: Dave Chinner <david@fromorbit.com>
-Cc: Eric Sandeen <sandeen@sandeen.net>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        syzbot <syzbot+84a67953651a971809ba@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-xfs@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180511075945.16548-5-hch@lst.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 1:22 AM, Dave Chinner <david@fromorbit.com> wrote:
-> On Wed, May 09, 2018 at 10:43:05AM +0200, Dmitry Vyukov wrote:
->> Does "xfstests fuzzing infrastructure" use coverage-guidance?
->
-> It's guided manually to fuzz a substantial proportion of the fields
-> in the on-disk format that are susceptible to fuzzing bqased
-> attacks. It's not complete coverage yet, but it's getting better and
-> better, and we're finding more problems from it that random bit
-> based fuzzing has ever uncovered.
->
-> Also, the xfstests fuzzing defeats the CRC protection now built into
-> the metadata, which means it can exercise all the new filesystem
-> features that random bit fuzzers cannot exercise. That's the problem
-> with fuzzers like syzbot - they can only usefully fuzz the legacy
-> filesystem format which doesn't have CRC validation, nor many of the
-> other protections that the current filesystem format has to detect
-> corruption. This will also allow us to test things like online
-> repair of fuzzed structures....
+On Fri, May 11, 2018 at 09:59:29AM +0200, Christoph Hellwig wrote:
+> Switch to the generic noncoherent direct mapping implementation for
+> the nommu dma map implementation.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/arc/Kconfig                |   1 +
+>  arch/arm/Kconfig                |   4 +
+>  arch/arm/mm/dma-mapping-nommu.c | 139 +++++---------------------------
+>  3 files changed, 23 insertions(+), 121 deletions(-)
+> 
+> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+> index 89d47eac18b2..3a492a9aeaad 100644
+> --- a/arch/arc/Kconfig
+> +++ b/arch/arc/Kconfig
+> @@ -9,6 +9,7 @@
+>  config ARC
+>  	def_bool y
+>  	select ARC_TIMERS
+> +	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+>  	select ARCH_HAS_SYNC_DMA_FOR_CPU
+>  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+>  	select ARCH_HAS_SG_CHAIN
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index c43f5bb55ac8..76ddd0064f87 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -12,6 +12,8 @@ config ARM
+>  	select ARCH_HAS_PHYS_TO_DMA
+>  	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
+>  	select ARCH_HAS_STRICT_MODULE_RWX if MMU
+> +	select ARCH_HAS_SYNC_DMA_FOR_CPU if !MMU
+> +	select ARCH_HAS_SYNC_DMA_FOR_DEVICE if !MMU
+>  	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+>  	select ARCH_HAVE_CUSTOM_GPIO_H
+>  	select ARCH_HAS_GCOV_PROFILE_ALL
+> @@ -27,6 +29,8 @@ config ARM
+>  	select CPU_PM if (SUSPEND || CPU_IDLE)
+>  	select DCACHE_WORD_ACCESS if HAVE_EFFICIENT_UNALIGNED_ACCESS
+>  	select DMA_DIRECT_OPS if !MMU
+> +	select DMA_NONCOHERENT_OPS if !MMU
+> +	select DMA_NONCOHERENT_MMAP if !MMU
+>  	select EDAC_SUPPORT
+>  	select EDAC_ATOMIC_SCRUB
+>  	select GENERIC_ALLOCATOR
+> diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
+> index f448a0663b10..a74ed6632982 100644
+> --- a/arch/arm/mm/dma-mapping-nommu.c
+> +++ b/arch/arm/mm/dma-mapping-nommu.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/export.h>
+>  #include <linux/mm.h>
+>  #include <linux/dma-direct.h>
+> +#include <linux/dma-noncoherent.h>
+>  #include <linux/scatterlist.h>
+>  
+>  #include <asm/cachetype.h>
+> @@ -26,18 +27,16 @@
+>   *   - MMU/MPU is off
+>   *   - cpu is v7m w/o cache support
+>   *   - device is coherent
+> - *  otherwise arm_nommu_dma_ops is used.
+> + *  otherwise dma_noncoherent_ops is used.
+>   *
+> - *  arm_nommu_dma_ops rely on consistent DMA memory (please, refer to
+> + *  dma_noncoherent_ops rely on consistent DMA memory (please, refer to
+>   *  [1] on how to declare such memory).
+>   *
+>   *  [1] Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+>   */
+>  
+> -static void *arm_nommu_dma_alloc(struct device *dev, size_t size,
+> -				 dma_addr_t *dma_handle, gfp_t gfp,
+> -				 unsigned long attrs)
+> -
+> +void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
+> +		gfp_t gfp, unsigned long attrs)
+>  {
+>  	void *ret;
+>  
+> @@ -65,9 +64,8 @@ static void *arm_nommu_dma_alloc(struct device *dev, size_t size,
+>  	return ret;
+>  }
+>  
+> -static void arm_nommu_dma_free(struct device *dev, size_t size,
+> -			       void *cpu_addr, dma_addr_t dma_addr,
+> -			       unsigned long attrs)
+> +void arch_dma_free(struct device *dev, size_t size, void *cpu_addr,
+> +		dma_addr_t dma_addr, unsigned long attrs)
+>  {
+>  	if (attrs & DMA_ATTR_NON_CONSISTENT) {
+>  		dma_direct_free(dev, size, cpu_addr, dma_addr, attrs);
+> @@ -81,9 +79,9 @@ static void arm_nommu_dma_free(struct device *dev, size_t size,
+>  	return;
+>  }
+>  
+> -static int arm_nommu_dma_mmap(struct device *dev, struct vm_area_struct *vma,
+> -			      void *cpu_addr, dma_addr_t dma_addr, size_t size,
+> -			      unsigned long attrs)
+> +int arch_dma_mmap(struct device *dev, struct vm_area_struct *vma,
+> +		void *cpu_addr, dma_addr_t dma_addr, size_t size,
+> +		unsigned long attrs)
+>  {
+>  	int ret;
+>  
+> @@ -93,9 +91,8 @@ static int arm_nommu_dma_mmap(struct device *dev, struct vm_area_struct *vma,
+>  	return dma_common_mmap(dev, vma, cpu_addr, dma_addr, size);
+>  }
+>  
+> -
+> -static void __dma_page_cpu_to_dev(phys_addr_t paddr, size_t size,
+> -				  enum dma_data_direction dir)
+> +void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
+> +		size_t size, enum dma_data_direction dir)
 
-syzkaller has 2 techniques to deal with checksums, if you are
-interested I can go into more detail.
+Please no.  There is a lot of history of these (__dma_page_cpu_to_dev etc)
+functions being abused by out of tree drivers, because they think they
+know better.  This is stopped by making them static and ensuring that
+drivers have no access to these functions.
 
-> Random bit perturbation filesystem image fuzzing was state of the
-> art ~10 years ago.  They were made redundant by filesystems like
-> XFS and ext4 adding metadata CRC checking ~5 years ago. The legacy
-> filesystem formats are essentially unfixable, and it's largely a
-> waste of time to be trying to make them robust against random bit
-> fuzzing because such random bit corruptions (like the syzbot images)
-> do not occur in the real world.
+Please do not re-expose these to the global kernel.
 
-Note there are also specifically crafted images that can be
-automounted whenever one plugs something into USB.
+While it may make things easier for a cross-architecture point of view,
+it makes it a lot easier for people to abuse these private APIs.
 
-> IOWs, we've had to advance the "state of the art" ourselves because
-> nobody else in the fuzzing world responded to the fact we've
-> essentially defeated random bit image fuzzing. Not only that, we
-> have our own infrastructure that produces repeatable, understandable
-> and debuggable failures, and this is something that many 3rd party
-> fuzzing efforts do not provide us with.
->
->> If not, it would be useful to add. Among some solutions there are
->> LibFuzzer (https://llvm.org/docs/LibFuzzer.html), AFL >
->> (http://lcamtuf.coredump.cx/afl/), kernel-fuzzing
->> (https://github.com/oracle/kernel-fuzzing).  I don't know how
->> xfstests fuzzing works, so I can't say what would be more suitable
->> there.
->
-> I think only AFL would be a usable infrastructure, but it would
-> require being taught about the ondisk format so it could perturb the
-> image in ways that are useful to modern filesystem formats. Lots(!)
-> of work, and it's not clear it would do any better than what we
-> already have.
->
-> Given the results we're getting from our own fuzzers, I don't see
-> much point in (XFS developers) investing huge amounts of effort to
-> make some other fuzzer equivalent to what we already have. If
-> someone else starts fuzzing the current format (v5) XFS filesystems
-> and finding problems we haven't, then I'm going to be interested in
-> their fuzzing tools.  But (guided) random bit perturbation fuzzing
-> of legacy filesystem formats is really not that useful or
-> interesting to us right now.
-
-Just asked.
-
-Note that coverage-guidance does not necessary mean bit flipping.
-syzkaller combines coverage-guidance with grammar-awareness and other
-smartness.
-
-Based on our experience with network testing, main advantage of
-syzkaller over just feeding blobs as network packets (even if these
-blobs are built in a very smart way) is the following. syzkaller can
-build complex interactions between syscalls, external inputs and
-blobs. For example, handling of external network packets depend on if
-there is an open socket on that port, what setsockopts were called, if
-there is a pending receive, what flags were passed to that receive,
-were some data sent the other way, etc. For filesystems that would be
-various filesystem syscalls executed against the mounted image,
-concurrent umount, rebind, switch to read-only mode, etc.
-But maybe xfstests do this too, I don't know. Do they?
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
