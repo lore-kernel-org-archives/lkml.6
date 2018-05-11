@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752178AbeEKQVm (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:21:42 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:42788 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752147AbeEKQVh (ORCPT
+        id S1752215AbeEKQVq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:21:46 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39195 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752090AbeEKQVm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:21:37 -0400
-X-Google-Smtp-Source: AB8JxZpRvn5r8Ql0ms9vDGBpVqiyG9YCbH+m9Qr0ZQvQPVoK0Nfi2Em1rvj5qJdsmFtKk618qIaxsg==
+        Fri, 11 May 2018 12:21:42 -0400
+X-Google-Smtp-Source: AB8JxZogYRLmsi7c3hnOMQiP7BUwaOCB9Q95nG0M3Vsq5gbovAB2xGzTsEi/O7sxOJ7vJ5Ut6awWMA==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         David Lechner <david@lechnology.com>,
@@ -30,9 +30,9 @@ To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 05/12] platform: export platform_device_release() locally
-Date: Fri, 11 May 2018 18:20:21 +0200
-Message-Id: <20180511162028.20616-6-brgl@bgdev.pl>
+Subject: [PATCH 08/12] of/platform: provide a separate routine for device initialization
+Date: Fri, 11 May 2018 18:20:24 +0200
+Message-Id: <20180511162028.20616-9-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180511162028.20616-1-brgl@bgdev.pl>
 References: <20180511162028.20616-1-brgl@bgdev.pl>
@@ -42,36 +42,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The early platform driver mechanism will use this function as the
-device release callback. Make it available in drivers/base.
+The early platform device framework will need to initialize the
+platform device objects without them being allocated in
+of_device_alloc(). Provide a routine that allows it.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/base/base.h     | 1 +
- drivers/base/platform.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/of/platform.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/base/base.h b/drivers/base/base.h
-index 7a72ae72a98e..514a6d198f14 100644
---- a/drivers/base/base.h
-+++ b/drivers/base/base.h
-@@ -164,3 +164,4 @@ extern void device_links_unbind_consumers(struct device *dev);
- 
- /* Platform device helpers. */
- extern int platform_match(struct device *dev, struct device_driver *drv);
-+extern void platform_device_release(struct device *dev);
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 0ba4effb9618..417ab6071350 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -239,7 +239,7 @@ void platform_device_put(struct platform_device *pdev)
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index 24791e558ec5..0e554fe1f325 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -132,6 +132,19 @@ int of_device_init_resources(struct platform_device *pdev,
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(platform_device_put);
  
--static void platform_device_release(struct device *dev)
-+void platform_device_release(struct device *dev)
- {
- 	struct platform_object *pa = container_of(dev, struct platform_object,
- 						  pdev.dev);
++static void of_device_init(struct platform_device *pdev, struct device_node *np,
++			   const char *bus_id, struct device *parent)
++{
++	pdev->dev.of_node = of_node_get(np);
++	pdev->dev.fwnode = &np->fwnode;
++	pdev->dev.parent = parent ? : &platform_bus;
++
++	if (bus_id)
++		dev_set_name(&pdev->dev, "%s", bus_id);
++	else
++		of_device_make_bus_id(&pdev->dev);
++}
++
+ /**
+  * of_device_alloc - Allocate and initialize an of_device
+  * @np: device node to assign to device
+@@ -155,14 +168,7 @@ struct platform_device *of_device_alloc(struct device_node *np,
+ 		return NULL;
+ 	}
+ 
+-	dev->dev.of_node = of_node_get(np);
+-	dev->dev.fwnode = &np->fwnode;
+-	dev->dev.parent = parent ? : &platform_bus;
+-
+-	if (bus_id)
+-		dev_set_name(&dev->dev, "%s", bus_id);
+-	else
+-		of_device_make_bus_id(&dev->dev);
++	of_device_init(dev, np, bus_id, parent);
+ 
+ 	return dev;
+ }
 -- 
 2.17.0
