@@ -1,79 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752238AbeEKGBj convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 02:01:39 -0400
-Received: from ozlabs.org ([203.11.71.1]:55103 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750927AbeEKGBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 02:01:38 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, aneesh.kumar@linux.vnet.ibm.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH  05/17] powerpc: move io mapping functions into ioremap.c
-In-Reply-To: <b6f1dc10a4e2be3674fb9999d5b176a5ce9787e6.1525435203.git.christophe.leroy@c-s.fr>
-References: <cover.1525435203.git.christophe.leroy@c-s.fr> <b6f1dc10a4e2be3674fb9999d5b176a5ce9787e6.1525435203.git.christophe.leroy@c-s.fr>
-Date: Fri, 11 May 2018 16:01:36 +1000
-Message-ID: <87y3gqrarj.fsf@concordia.ellerman.id.au>
+        id S1752146AbeEKGHH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 02:07:07 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36892 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750805AbeEKGHG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 02:07:06 -0400
+X-Google-Smtp-Source: AB8JxZoUTwpn6i7CigkeJu1PpXEYG6oqdzO+PSjqDg6RZ1zQ7UoldPinGSI+M5M2HMLDF32ZRP7gu/A3is3tAcKPfxM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAGb2v67ZDUqLGiWfocZXzGY54dYcSVUMC-xz87xaJQs88-nqyw@mail.gmail.com>
+References: <20180511054307.3410-1-jagan@amarulasolutions.com> <CAGb2v67ZDUqLGiWfocZXzGY54dYcSVUMC-xz87xaJQs88-nqyw@mail.gmail.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Fri, 11 May 2018 11:37:04 +0530
+Message-ID: <CAMty3ZCM7Sxsp4MwDRYq9NSfWJfj6XKK6JN9DKyk91MNrLvPAg@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: allwinner: a64: Add Amarula A64 Relic initial support
+To: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+On Fri, May 11, 2018 at 11:20 AM, Chen-Yu Tsai <wens@csie.org> wrote:
+> On Thu, May 10, 2018 at 10:43 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>> Amarula A64 Relic is Allwinner A64 based IoT device, which support
+>> - Allwinner A64 Cortex-A53
+>> - Mali-400MP2 GPU
+>> - AXP803 PMIC
+>> - 1GB DDR3 RAM
+>> - 8GB eMMC
+>> - AP6330 Wifi/BLE
+>> - MIPI-DSI
+>> - CSI: OV5640 sensor
+>> - USB OTG
+>> - 12V DC power supply
+>>
+>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>> ---
+>> Changes for v2:
+>> - Rename dts name to sun50i-a64-relic.dts which is simple to use
+>
+> This is subjective. For other users this hardly qualifies to
+> identify the board. Please keep the vendor / brand name in
+> the file name.
 
-> diff --git a/arch/powerpc/mm/ioremap.c b/arch/powerpc/mm/ioremap.c
-> new file mode 100644
-> index 000000000000..5d2645193568
-> --- /dev/null
-> +++ b/arch/powerpc/mm/ioremap.c
-> @@ -0,0 +1,350 @@
-> +/*
-> + * This file contains the routines for mapping IO areas
-> + *
-> + *  Derived from arch/powerpc/mm/pgtable_32.c and
-> + *  arch/powerpc/mm/pgtable_64.c
-> + *
-> + * SPDX-License-Identifier: GPL-2.0
-
-This goes at the top of the file as:
-
-// SPDX-License-Identifier: GPL-2.0
-
-See:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/license-rules.rst?#n56
-
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/types.h>
-> +#include <linux/mm.h>
-> +#include <linux/vmalloc.h>
-> +#include <linux/init.h>
-> +#include <linux/highmem.h>
-> +#include <linux/memblock.h>
-> +#include <linux/slab.h>
-> +
-> +#include <asm/pgtable.h>
-> +#include <asm/pgalloc.h>
-> +#include <asm/fixmap.h>
-> +#include <asm/io.h>
-> +#include <asm/setup.h>
-> +#include <asm/sections.h>
-
-I needed:
-
-+#include <asm/machdep.h>
-
-To fix:
-
-../arch/powerpc/mm/ioremap.c: In function ‘ioremap_wc’:
-../arch/powerpc/mm/ioremap.c:290:6: error: ‘ppc_md’ undeclared (first use in this function)
-  if (ppc_md.ioremap)
-      ^~~~~~
-
-cheers
+Which I thought initially, but adding vendor makes long string which
+become lengthy for next boards to add it in future. So we make
+notation with <SOC_name>_<board_name> like sun50i-a64-teres-i.dts
+does.
