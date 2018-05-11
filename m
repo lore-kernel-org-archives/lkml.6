@@ -1,80 +1,457 @@
 Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526036974; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1526036973; cv=none;
         d=google.com; s=arc-20160816;
-        b=MUe9QVchb5ZUfcfqhmm7SP94PlPJTjHjD45ZagbR9jVu92jh5fj9YJm3cY1s6eRDiV
-         QDrRXtc3HmuTUS5ETJ5sTIkfozVTUvZKgv/GOkYd1askNwQkgFotxOPJa53KhdTLXJyO
-         W1MgCXzwteuIikCFDd/bNjw9pdJtqbDQeMbQJBSYJniwzlf+092FYL/6dXefzb5C+YPm
-         dBczYiCAZNQdmTnW4LqFJM0UzECJB38xB62CPApk7ggVzTIFaNiIxwDJnLzbCmZy+zKH
-         7ScrJW+5ncwgsMYy6afKa/YqR830AiO0nS56FJviQoPiEJApLseVm8TW01Itur4k41v+
-         Y7uA==
+        b=HpT22/11gjY6zZalN7YrvJBMi5Vjw8UUF0lrUZOMHU8Y7UDwi66xeTKzTdkeuqduN+
+         8ShVDRKYxZ1l83Lxl83k/vt60wYXHJTat/YwNhLYRzvtcYCRrvb//34epvHJu15gUzGE
+         nbZy+OPiTFHqm8UTcnvCDTnnOZDqDEvAvxBWmMkImLDiXqNvMdLtdN/9nYkOpezPmIoD
+         zgkoIQQu2UAwJX6A5BMyhyty/ySl+cTY/46qvrrv5MswLHuEAPJPMsOemq0tPLLjsnDW
+         Pcq1wPwpt5z40AHX5qC0SHWugDKKDGC2NwOhuqi3xPMH8SkyB1reUsG75uY+EhgCuHnA
+         tF9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=oZHKLnNhfOD1TR9nUEnOw2v6BtOs+0YTR6k9PM6W1Ns=;
-        b=nhp/ByraerqF+T0FNerIzqR8aHD7fCS3oQ2zqDTtdzaU/+nCcYMB6Qetzat5lqlgzw
-         SACRP8B9xGVMVZLA9sJaQMlRvH9aeN8bSwtGRM07bIpPvFGBtAIpyF4b9hMJ6TCNhfM3
-         gwrhN6OvP7KZ0M2cJ3hjf3l1z3m/BwqHCpCIyiUnhMES3ONwo8MoFwNJnTclHE9yiKQ/
-         fsWPt7MByCP23YWbEAgRXkriG4DirFo/Bx2VYhoyKMOF+smkctI5498AdfrukBDauPeW
-         1DvxQ0LVMSaHIUqCXT8XjHWKg05BSHRfQPpiNmSyTOGp11nLE4DDgjBtC5lnhG0MHKTO
-         H9Rw==
+        bh=VwzKhZgF5B3zqhxC+I0FIaUy5JAqnE+AvbHnfDdBwIo=;
+        b=f+bNOcXCN+jFtVodEmDgcaUMtsEouDrvfXEdbYO+x81oYDK2VaN41pxNGvNtDPEj4L
+         yUeraOatgBHE8+7nhltMja2QwswZ99Hwh250bz2v2s22VitJbgwC5WEBbyi2LTUcwFW4
+         MlVQYy+1SURH9pMdU88WHhaQxDy/aE4qb88Wsmno0khYyJxc37gZoyEemlNosUDh29E8
+         23W52lkSwOOkq5ec+TWo8sJU+p6pnGFgQG9g0mY8wIJRrGVh3Mm7EKCnXPPxW2hoM9Cc
+         dGclAWuK0bVJTZ/Ej/A9RrtpxuVQSB5Y6Oerwe4vfCaeJGWO09rT7SSTbhaj7D3O8NI6
+         9SqQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=b1NSEzoB;
+       dkim=pass header.i=@linaro.org header.s=google header.b=hPY/OMRG;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=b1NSEzoB;
+       dkim=pass header.i=@linaro.org header.s=google header.b=hPY/OMRG;
        spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZqiQ7Ty5/VNksFRmKvvpstZ6Yj8cM27HtsKpmcJ1tSPd4TeBnoNxibjJsJHXYYpptcWPavd3w==
+X-Google-Smtp-Source: AB8JxZp4fwEyG5OrVzWspP/YJZ4gf4PaXifEFV/xjqaSM7F0yXefdd0ZF43Fb8pzvK9gPBujuV0kmQ==
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	srinivas.kandagatla@linaro.org,
-	Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH 5/8] nvmem: meson-efuse: simplify read callback
-Date: Fri, 11 May 2018 12:07:00 +0100
-Message-Id: <20180511110703.4924-6-srinivas.kandagatla@linaro.org>
+	Andrey Smirnov <andrew.smirnov@gmail.com>,
+	Chris Healy <cphealy@gmail.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Aleksander Morgado <aleksander@aleksander.es>
+Subject: [PATCH 3/8] nvmem: Add RAVE SP EEPROM driver
+Date: Fri, 11 May 2018 12:06:58 +0100
+Message-Id: <20180511110703.4924-4-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
 References: <20180511110703.4924-1-srinivas.kandagatla@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600165747000522714?=
-X-GMAIL-MSGID: =?utf-8?q?1600165747000522714?=
+X-GMAIL-THRID: =?utf-8?q?1600165744691255259?=
+X-GMAIL-MSGID: =?utf-8?q?1600165744691255259?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Most of the code and variables in the read callback is not necessary.
-Keep only what is required.
+Add driver providing access to EEPROMs connected to RAVE SP devices
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Aleksander Morgado <aleksander@aleksander.es>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/meson-efuse.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ drivers/nvmem/Kconfig          |   6 +
+ drivers/nvmem/Makefile         |   3 +
+ drivers/nvmem/rave-sp-eeprom.c | 357 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 366 insertions(+)
+ create mode 100644 drivers/nvmem/rave-sp-eeprom.c
 
-diff --git a/drivers/nvmem/meson-efuse.c b/drivers/nvmem/meson-efuse.c
-index 2df9b0094f45..4623249dfd87 100644
---- a/drivers/nvmem/meson-efuse.c
-+++ b/drivers/nvmem/meson-efuse.c
-@@ -24,15 +24,8 @@
- static int meson_efuse_read(void *context, unsigned int offset,
- 			    void *val, size_t bytes)
- {
--	u8 *buf = val;
--	int ret;
--
--	ret = meson_sm_call_read(buf, bytes, SM_EFUSE_READ, offset,
--				 bytes, 0, 0, 0);
--	if (ret < 0)
--		return ret;
--
--	return 0;
-+	return meson_sm_call_read((u8 *)val, bytes, SM_EFUSE_READ, offset,
-+				  bytes, 0, 0, 0);
- }
+diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
+index 1090924efdb1..54a3c298247b 100644
+--- a/drivers/nvmem/Kconfig
++++ b/drivers/nvmem/Kconfig
+@@ -175,4 +175,10 @@ config NVMEM_SNVS_LPGPR
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called nvmem-snvs-lpgpr.
  
- static const struct of_device_id meson_efuse_match[] = {
++config RAVE_SP_EEPROM
++	tristate "Rave SP EEPROM Support"
++	depends on RAVE_SP_CORE
++	help
++	  Say y here to enable Rave SP EEPROM support.
++
+ endif
+diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
+index e54dcfa6565a..27e96a8efd1c 100644
+--- a/drivers/nvmem/Makefile
++++ b/drivers/nvmem/Makefile
+@@ -37,3 +37,6 @@ obj-$(CONFIG_MESON_MX_EFUSE)	+= nvmem_meson_mx_efuse.o
+ nvmem_meson_mx_efuse-y		:= meson-mx-efuse.o
+ obj-$(CONFIG_NVMEM_SNVS_LPGPR)	+= nvmem_snvs_lpgpr.o
+ nvmem_snvs_lpgpr-y		:= snvs_lpgpr.o
++obj-$(CONFIG_RAVE_SP_EEPROM)	+= nvmem-rave-sp-eeprom.o
++nvmem-rave-sp-eeprom-y		:= rave-sp-eeprom.o
++
+diff --git a/drivers/nvmem/rave-sp-eeprom.c b/drivers/nvmem/rave-sp-eeprom.c
+new file mode 100644
+index 000000000000..50aeea6ec6cc
+--- /dev/null
++++ b/drivers/nvmem/rave-sp-eeprom.c
+@@ -0,0 +1,357 @@
++// SPDX-License-Identifier: GPL-2.0+
++
++/*
++ * EEPROM driver for RAVE SP
++ *
++ * Copyright (C) 2018 Zodiac Inflight Innovations
++ *
++ */
++#include <linux/kernel.h>
++#include <linux/mfd/rave-sp.h>
++#include <linux/module.h>
++#include <linux/nvmem-provider.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/sizes.h>
++
++/**
++ * enum rave_sp_eeprom_access_type - Supported types of EEPROM access
++ *
++ * @RAVE_SP_EEPROM_WRITE:	EEPROM write
++ * @RAVE_SP_EEPROM_READ:	EEPROM read
++ */
++enum rave_sp_eeprom_access_type {
++	RAVE_SP_EEPROM_WRITE = 0,
++	RAVE_SP_EEPROM_READ  = 1,
++};
++
++/**
++ * enum rave_sp_eeprom_header_size - EEPROM command header sizes
++ *
++ * @RAVE_SP_EEPROM_HEADER_SMALL: EEPROM header size for "small" devices (< 8K)
++ * @RAVE_SP_EEPROM_HEADER_BIG:	 EEPROM header size for "big" devices (> 8K)
++ */
++enum rave_sp_eeprom_header_size {
++	RAVE_SP_EEPROM_HEADER_SMALL = 4U,
++	RAVE_SP_EEPROM_HEADER_BIG   = 5U,
++};
++
++#define	RAVE_SP_EEPROM_PAGE_SIZE	32U
++
++/**
++ * struct rave_sp_eeprom_page - RAVE SP EEPROM page
++ *
++ * @type:	Access type (see enum rave_sp_eeprom_access_type)
++ * @success:	Success flag (Success = 1, Failure = 0)
++ * @data:	Read data
++
++ * Note this structure corresponds to RSP_*_EEPROM payload from RAVE
++ * SP ICD
++ */
++struct rave_sp_eeprom_page {
++	u8  type;
++	u8  success;
++	u8  data[RAVE_SP_EEPROM_PAGE_SIZE];
++} __packed;
++
++/**
++ * struct rave_sp_eeprom - RAVE SP EEPROM device
++ *
++ * @sp:			Pointer to parent RAVE SP device
++ * @mutex:		Lock protecting access to EEPROM
++ * @address:		EEPROM device address
++ * @header_size:	Size of EEPROM command header for this device
++ * @dev:		Pointer to corresponding struct device used for logging
++ */
++struct rave_sp_eeprom {
++	struct rave_sp *sp;
++	struct mutex mutex;
++	u8 address;
++	unsigned int header_size;
++	struct device *dev;
++};
++
++/**
++ * rave_sp_eeprom_io - Low-level part of EEPROM page access
++ *
++ * @eeprom:	EEPROM device to write to
++ * @type:	EEPROM access type (read or write)
++ * @idx:	number of the EEPROM page
++ * @page:	Data to write or buffer to store result (via page->data)
++ *
++ * This function does all of the low-level work required to perform a
++ * EEPROM access. This includes formatting correct command payload,
++ * sending it and checking received results.
++ *
++ * Returns zero in case of success or negative error code in
++ * case of failure.
++ */
++static int rave_sp_eeprom_io(struct rave_sp_eeprom *eeprom,
++			     enum rave_sp_eeprom_access_type type,
++			     u16 idx,
++			     struct rave_sp_eeprom_page *page)
++{
++	const bool is_write = type == RAVE_SP_EEPROM_WRITE;
++	const unsigned int data_size = is_write ? sizeof(page->data) : 0;
++	const unsigned int cmd_size = eeprom->header_size + data_size;
++	const unsigned int rsp_size =
++		is_write ? sizeof(*page) - sizeof(page->data) : sizeof(*page);
++	unsigned int offset = 0;
++	u8 cmd[cmd_size];
++	int ret;
++
++	cmd[offset++] = eeprom->address;
++	cmd[offset++] = 0;
++	cmd[offset++] = type;
++	cmd[offset++] = idx;
++
++	/*
++	 * If there's still room in this command's header it means we
++	 * are talkin to EEPROM that uses 16-bit page numbers and we
++	 * have to specify index's MSB in payload as well.
++	 */
++	if (offset < eeprom->header_size)
++		cmd[offset++] = idx >> 8;
++	/*
++	 * Copy our data to write to command buffer first. In case of
++	 * a read data_size should be zero and memcpy would become a
++	 * no-op
++	 */
++	memcpy(&cmd[offset], page->data, data_size);
++
++	ret = rave_sp_exec(eeprom->sp, cmd, cmd_size, page, rsp_size);
++	if (ret)
++		return ret;
++
++	if (page->type != type)
++		return -EPROTO;
++
++	if (!page->success)
++		return -EIO;
++
++	return 0;
++}
++
++/**
++ * rave_sp_eeprom_page_access - Access single EEPROM page
++ *
++ * @eeprom:	EEPROM device to access
++ * @type:	Access type to perform (read or write)
++ * @offset:	Offset within EEPROM to access
++ * @data:	Data buffer
++ * @data_len:	Size of the data buffer
++ *
++ * This function performs a generic access to a single page or a
++ * portion thereof. Requested access MUST NOT cross the EEPROM page
++ * boundary.
++ *
++ * Returns zero in case of success or negative error code in
++ * case of failure.
++ */
++static int
++rave_sp_eeprom_page_access(struct rave_sp_eeprom *eeprom,
++			   enum rave_sp_eeprom_access_type type,
++			   unsigned int offset, u8 *data,
++			   size_t data_len)
++{
++	const unsigned int page_offset = offset % RAVE_SP_EEPROM_PAGE_SIZE;
++	const unsigned int page_nr     = offset / RAVE_SP_EEPROM_PAGE_SIZE;
++	struct rave_sp_eeprom_page page;
++	int ret;
++
++	/*
++	 * This function will not work if data access we've been asked
++	 * to do is crossing EEPROM page boundary. Normally this
++	 * should never happen and getting here would indicate a bug
++	 * in the code.
++	 */
++	if (WARN_ON(data_len > sizeof(page.data) - page_offset))
++		return -EINVAL;
++
++	if (type == RAVE_SP_EEPROM_WRITE) {
++		/*
++		 * If doing a partial write we need to do a read first
++		 * to fill the rest of the page with correct data.
++		 */
++		if (data_len < RAVE_SP_EEPROM_PAGE_SIZE) {
++			ret = rave_sp_eeprom_io(eeprom, RAVE_SP_EEPROM_READ,
++						page_nr, &page);
++			if (ret)
++				return ret;
++		}
++
++		memcpy(&page.data[page_offset], data, data_len);
++	}
++
++	ret = rave_sp_eeprom_io(eeprom, type, page_nr, &page);
++	if (ret)
++		return ret;
++
++	/*
++	 * Since we receive the result of the read via 'page.data'
++	 * buffer we need to copy that to 'data'
++	 */
++	if (type == RAVE_SP_EEPROM_READ)
++		memcpy(data, &page.data[page_offset], data_len);
++
++	return 0;
++}
++
++/**
++ * rave_sp_eeprom_access - Access EEPROM data
++ *
++ * @eeprom:	EEPROM device to access
++ * @type:	Access type to perform (read or write)
++ * @offset:	Offset within EEPROM to access
++ * @data:	Data buffer
++ * @data_len:	Size of the data buffer
++ *
++ * This function performs a generic access (either read or write) at
++ * arbitrary offset (not necessary page aligned) of arbitrary length
++ * (is not constrained by EEPROM page size).
++ *
++ * Returns zero in case of success or negative error code in case of
++ * failure.
++ */
++static int rave_sp_eeprom_access(struct rave_sp_eeprom *eeprom,
++				 enum rave_sp_eeprom_access_type type,
++				 unsigned int offset, u8 *data,
++				 unsigned int data_len)
++{
++	unsigned int residue;
++	unsigned int chunk;
++	unsigned int head;
++	int ret;
++
++	mutex_lock(&eeprom->mutex);
++
++	head    = offset % RAVE_SP_EEPROM_PAGE_SIZE;
++	residue = data_len;
++
++	do {
++		/*
++		 * First iteration, if we are doing an access that is
++		 * not 32-byte aligned, we need to access only data up
++		 * to a page boundary to avoid corssing it in
++		 * rave_sp_eeprom_page_access()
++		 */
++		if (unlikely(head)) {
++			chunk = RAVE_SP_EEPROM_PAGE_SIZE - head;
++			/*
++			 * This can only happen once per
++			 * rave_sp_eeprom_access() call, so we set
++			 * head to zero to process all the other
++			 * iterations normally.
++			 */
++			head  = 0;
++		} else {
++			chunk = RAVE_SP_EEPROM_PAGE_SIZE;
++		}
++
++		/*
++		 * We should never read more that 'residue' bytes
++		 */
++		chunk = min(chunk, residue);
++		ret = rave_sp_eeprom_page_access(eeprom, type, offset,
++						 data, chunk);
++		if (ret)
++			goto out;
++
++		residue -= chunk;
++		offset  += chunk;
++		data    += chunk;
++	} while (residue);
++out:
++	mutex_unlock(&eeprom->mutex);
++	return ret;
++}
++
++static int rave_sp_eeprom_reg_read(void *eeprom, unsigned int offset,
++				   void *val, size_t bytes)
++{
++	return rave_sp_eeprom_access(eeprom, RAVE_SP_EEPROM_READ,
++				     offset, val, bytes);
++}
++
++static int rave_sp_eeprom_reg_write(void *eeprom, unsigned int offset,
++				    void *val, size_t bytes)
++{
++	return rave_sp_eeprom_access(eeprom, RAVE_SP_EEPROM_WRITE,
++				     offset, val, bytes);
++}
++
++static int rave_sp_eeprom_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rave_sp *sp = dev_get_drvdata(dev->parent);
++	struct device_node *np = dev->of_node;
++	struct nvmem_config config = { 0 };
++	struct rave_sp_eeprom *eeprom;
++	struct nvmem_device *nvmem;
++	u32 reg[2], size;
++
++	if (of_property_read_u32_array(np, "reg", reg, ARRAY_SIZE(reg))) {
++		dev_err(dev, "Failed to parse \"reg\" property\n");
++		return -EINVAL;
++	}
++
++	size = reg[1];
++	/*
++	 * Per ICD, we have no more than 2 bytes to specify EEPROM
++	 * page.
++	 */
++	if (size > U16_MAX * RAVE_SP_EEPROM_PAGE_SIZE) {
++		dev_err(dev, "Specified size is too big\n");
++		return -EINVAL;
++	}
++
++	eeprom = devm_kzalloc(dev, sizeof(*eeprom), GFP_KERNEL);
++	if (!eeprom)
++		return -ENOMEM;
++
++	eeprom->address = reg[0];
++	eeprom->sp      = sp;
++	eeprom->dev     = dev;
++
++	if (size > SZ_8K)
++		eeprom->header_size = RAVE_SP_EEPROM_HEADER_BIG;
++	else
++		eeprom->header_size = RAVE_SP_EEPROM_HEADER_SMALL;
++
++	mutex_init(&eeprom->mutex);
++
++	config.id		= -1;
++	of_property_read_string(np, "zii,eeprom-name", &config.name);
++	config.priv		= eeprom;
++	config.dev		= dev;
++	config.size		= size;
++	config.reg_read		= rave_sp_eeprom_reg_read;
++	config.reg_write	= rave_sp_eeprom_reg_write;
++	config.word_size	= 1;
++	config.stride		= 1;
++
++	nvmem = devm_nvmem_register(dev, &config);
++
++	return PTR_ERR_OR_ZERO(nvmem);
++}
++
++static const struct of_device_id rave_sp_eeprom_of_match[] = {
++	{ .compatible = "zii,rave-sp-eeprom" },
++	{}
++};
++MODULE_DEVICE_TABLE(of, rave_sp_eeprom_of_match);
++
++static struct platform_driver rave_sp_eeprom_driver = {
++	.probe = rave_sp_eeprom_probe,
++	.driver	= {
++		.name = KBUILD_MODNAME,
++		.of_match_table = rave_sp_eeprom_of_match,
++	},
++};
++module_platform_driver(rave_sp_eeprom_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Andrey Vostrikov <andrey.vostrikov@cogentembedded.com>");
++MODULE_AUTHOR("Nikita Yushchenko <nikita.yoush@cogentembedded.com>");
++MODULE_AUTHOR("Andrey Smirnov <andrew.smirnov@gmail.com>");
++MODULE_DESCRIPTION("RAVE SP EEPROM driver");
 -- 
 2.16.2
