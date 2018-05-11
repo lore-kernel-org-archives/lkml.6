@@ -1,66 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751953AbeEKQDS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:03:18 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:57542 "EHLO mail.skyhub.de"
+        id S1751756AbeEKQGT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:06:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750711AbeEKQDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:03:16 -0400
-Date: Fri, 11 May 2018 18:02:53 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Alex G." <mr.nuke.me@gmail.com>
-Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        devel@acpica.org
-Subject: Re: [RFC PATCH v4 3/3] acpi: apei: Do not panic() on PCIe errors
- reported through GHES
-Message-ID: <20180511160253.GF12705@pd.tnic>
-References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-3-mr.nuke.me@gmail.com>
- <20180511154039.GD12705@pd.tnic>
- <8e3c0cc6-9c5c-85ce-650c-8f498f5907da@gmail.com>
+        id S1750876AbeEKQGS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 12:06:18 -0400
+X-Google-Smtp-Source: AB8JxZrogaGTUvypsBTWDSq+l9QZsef2Ca+YfWm0+h6zSDjLY5pX/0wk+elF9WWL7T2FGrRR42h6nQOepyfvW4SzOiI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8e3c0cc6-9c5c-85ce-650c-8f498f5907da@gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <8725a726-0733-b0bc-fcf8-4e22399c0e22@arm.com>
+References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
+ <1525165857-11096-6-git-send-email-suzuki.poulose@arm.com>
+ <20180501131057.GA15706@rob-hp-laptop> <CANLsYkwzD0gpAo9be5ii4=+tn8GOL6psHcRA24=EMq=MRAzBoQ@mail.gmail.com>
+ <8725a726-0733-b0bc-fcf8-4e22399c0e22@arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 11 May 2018 11:05:56 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJsZDPHxWA5tax4_ecBtR7Yvhi+DzxQkyh4bpnu1Za0yg@mail.gmail.com>
+Message-ID: <CAL_JsqJsZDPHxWA5tax4_ecBtR7Yvhi+DzxQkyh4bpnu1Za0yg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/27] dts: bindings: Document device tree binding for CATU
+To: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        John Horley <john.horley@arm.com>, devicetree@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 10:54:09AM -0500, Alex G. wrote:
-> That being clarified, should I replace "crackmonkey" with "broken" in
-> the commit message?
+On Tue, May 8, 2018 at 10:40 AM, Suzuki K Poulose
+<Suzuki.Poulose@arm.com> wrote:
+>
+>
+> Rob, Mathieu,
+>
+>
+> On 03/05/18 18:42, Mathieu Poirier wrote:
+>>
+>> On 1 May 2018 at 07:10, Rob Herring <robh@kernel.org> wrote:
+>>>
+>>> On Tue, May 01, 2018 at 10:10:35AM +0100, Suzuki K Poulose wrote:
+>>>>
+>>>> Document CATU device-tree bindings. CATU augments the TMC-ETR
+>>>> by providing an improved Scatter Gather mechanism for streaming
+>>>> trace data to non-contiguous system RAM pages.
+>>>>
+>>>> Cc: devicetree@vger.kernel.org
+>>>> Cc: frowand.list@gmail.com
+>>>> Cc: Rob Herring <robh@kernel.org>
+>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>> Cc: Mathieu Poirier <mathieu.poirier@arm.com>
+>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>> ---
+>>>>   .../devicetree/bindings/arm/coresight.txt          | 52
+>>>> ++++++++++++++++++++++
+>>>>   1 file changed, 52 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt
+>>>> b/Documentation/devicetree/bindings/arm/coresight.txt
+>>>> index 15ac8e8..cdd84d0 100644
+>>>> --- a/Documentation/devicetree/bindings/arm/coresight.txt
+>>>> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
+>>>> @@ -39,6 +39,8 @@ its hardware characteristcs.
+>>>>
+>>>>                - System Trace Macrocell:
+>>>>                        "arm,coresight-stm", "arm,primecell"; [1]
+>>>> +             - Coresight Address Translation Unit (CATU)
+>>>> +                     "arm, coresight-catu", "arm,primecell";
+>>>
+>>>
+>>> spurious space               ^
+>
+>
+> Thanks for spotting, will fix it.
+>
+>>>
+>>>>
+>>>>        * reg: physical base address and length of the register
+>>>>          set(s) of the component.
+>>>> @@ -86,6 +88,9 @@ its hardware characteristcs.
+>>>>        * arm,buffer-size: size of contiguous buffer space for TMC ETR
+>>>>         (embedded trace router)
+>>>>
+>>>> +* Optional property for CATU :
+>>>> +     * interrupts : Exactly one SPI may be listed for reporting the
+>>>> address
+>>>> +       error
+>>>
+>>>
+>>> Somewhere you need to define the ports for the CATU.
+>
+>
+> The ports are defined common to all the coresight components. Would you
+> like it to be added just for the CATU ?
 
-Keep your opinion *outside* of commit messages - their goal is to
-explain *why* the change is being made in strictly technical language so
-that when someone looks at git history, someone can know *why*.
+Yeah, that's probably how we got into this problem with the port
+numbering in the first place.
 
-> Borislav, I sense some confusion. AER is not a "reporting" driver. It
-> handles the errors. You can't leave these errors unhandled. They
-> propagate to the root complex and can cause fatal MCEs when not handled.
-> The window to handle the error is pretty large, so it's not a concern
-> when you're handling it.
 
-I think *you* didn't get it: IS_ENABLED(CONFIG_ACPI_APEI_PCIEAER) is not
-enough of a check to confirm that there actually *is* an AER driver to
-handle the errors. If you really want to make sure the driver is loaded
-and functioning, then you need an explicit registering mechanism or some
-other way of checking it really is there and handling errors.
+>>>>   Example:
+>>>>
+>>>> @@ -118,6 +123,35 @@ Example:
+>>>>                };
+>>>>        };
+>>>>
+>>>> +     etr@20070000 {
+>>>> +             compatible = "arm,coresight-tmc", "arm,primecell";
+>>>> +             reg = <0 0x20070000 0 0x1000>;
+>>>> +
+>>>> +                     /* input port */
+>>>> +                     port@0 {
+>>>> +                             reg =  <0>;
+>>>> +                             etr_in_port: endpoint {
+>>>> +                                     slave-mode;
+>>>> +                                     remote-endpoint =
+>>>> <&replicator2_out_port0>;
+>>>> +                             };
+>>>> +                     };
+>>>> +
+>>>> +                     /* CATU link represented by output port */
+>>>> +                     port@1 {
+>>>> +                             reg = <0>;
+>>>
+>>>
+>>> While common in the Coresight bindings, having unit-address and reg not
+>>> match is an error. Mathieu and I discussed this a bit as dtc now warns
+>>> on these.
+>>>
+>>> Either reg should be 1 here, or 'ports' needs to be split into input and
+>>> output ports. My preference would be the former, but Mathieu objected to
+>>> this not reflecting the the h/w numbering.
+>>
+>>
+>> Suzuki, as we discuss this is related to your work on revamping CS
+>> bindings for ACPI.  Until that gets done and to move forward with this
+>> set I suggest you abide to Rob's request.
+>
+>
+> Ok, I can change it to <1>, as we don't expect any other output port for an
+> ETR.
 
--- 
-Regards/Gruss,
-    Boris.
+Better let Mathieu confirm he's okay with the first option because he
+wasn't okay with changing the port reg when we discussed. But maybe
+that was just on existing things like TPIU.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Rob
