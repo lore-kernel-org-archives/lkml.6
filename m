@@ -1,46 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752018AbeEKQRE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:17:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40461 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751474AbeEKQRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:17:03 -0400
-Date: Fri, 11 May 2018 16:17:00 +0000
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, ast@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] coredump: rename umh_pipe_setup() to
- coredump_pipe_setup()
-Message-ID: <20180511161700.GH27853@wotan.suse.de>
-References: <20180507233002.5571-1-mcgrof@kernel.org>
- <20180510231907.xbok4h6rjopwdq6e@ast-mbp>
- <20180510233247.GG27853@wotan.suse.de>
- <20180511024851.GB30522@ZenIV.linux.org.uk>
+        id S1751856AbeEKQTU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:19:20 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:44608 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751147AbeEKQTS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 12:19:18 -0400
+Date: Sat, 12 May 2018 00:19:13 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-crypto@vger.kernel.org, linuxppc-dev@ozlabs.org,
+        linux-kernel@vger.kernel.org, mhcerri@linux.vnet.ibm.com,
+        pfsmorigo@linux.vnet.ibm.com
+Subject: Re: [PATCH 1/2] crypto: vmx - Remove overly verbose printk from AES
+ init routines
+Message-ID: <20180511161913.nr7woksn2jejipzm@gondor.apana.org.au>
+References: <20180503122930.17448-1-mpe@ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180511024851.GB30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+In-Reply-To: <20180503122930.17448-1-mpe@ellerman.id.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 03:48:51AM +0100, Al Viro wrote:
-> On Thu, May 10, 2018 at 11:32:47PM +0000, Luis R. Rodriguez wrote:
+On Thu, May 03, 2018 at 10:29:29PM +1000, Michael Ellerman wrote:
+> In the vmx AES init routines we do a printk(KERN_INFO ...) to report
+> the fallback implementation we're using.
 > 
-> > I think net-next makes sense if Al Viro is OK with that. This way it could go
-> > in regardless of the state of your series, but it also lines up with your work.
+> However with a slow console this can significantly affect the speed of
+> crypto operations. Using 'cryptsetup benchmark' the removal of the
+> printk() leads to a ~5x speedup for aes-cbc decryption.
 > 
-> Fine by me...
+> So remove them.
+> 
+> Fixes: 8676590a1593 ("crypto: vmx - Adding AES routines for VMX module")
+> Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
+> Fixes: 4f7f60d312b3 ("crypto: vmx - Adding CTR routines for VMX module")
+> Fixes: cc333cd68dfa ("crypto: vmx - Adding GHASH routines for VMX module")
+> Cc: stable@vger.kernel.org # v4.1+
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> ---
+>  drivers/crypto/vmx/aes.c     | 2 --
+>  drivers/crypto/vmx/aes_cbc.c | 3 ---
+>  drivers/crypto/vmx/aes_ctr.c | 2 --
+>  drivers/crypto/vmx/ghash.c   | 2 --
+>  4 files changed, 9 deletions(-)
 
-OK thanks.
+Patch applied.  Thanks.
 
-Dave, I'll bounce a copy of the original patch to you, if anything else is needed
-please let me know.
+> If this is the wrong fix please let me know, I'm not a crypto expert.
+> 
+> What we see is 'cryptsetup benchmark' causing thousands of these printks() to
+> happen. The call trace is something like:
+> 
+> [c000001e47867a60] [c0000000009cf6b4] p8_aes_cbc_init+0x74/0xf0
+> [c000001e47867ae0] [c000000000551a80] __crypto_alloc_tfm+0x1d0/0x2c0
+> [c000001e47867b20] [c00000000055aea4] crypto_skcipher_init_tfm+0x124/0x280
+> [c000001e47867b60] [c00000000055138c] crypto_create_tfm+0x9c/0x1a0
+> [c000001e47867ba0] [c000000000552220] crypto_alloc_tfm+0xa0/0x140
+> [c000001e47867c00] [c00000000055b168] crypto_alloc_skcipher+0x48/0x70
+> [c000001e47867c40] [c00000000057af28] skcipher_bind+0x38/0x50
+> [c000001e47867c80] [c00000000057a07c] alg_bind+0xbc/0x220
+> [c000001e47867d10] [c000000000a016a0] __sys_bind+0x90/0x100
+> [c000001e47867df0] [c000000000a01750] sys_bind+0x40/0x60
+> [c000001e47867e30] [c00000000000b320] system_call+0x58/0x6c
+> 
+> 
+> Is it normal for init to be called on every system call?
 
-  Luis
+This is the tfm init function, so yes it is called every time
+you allocate a tfm.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
