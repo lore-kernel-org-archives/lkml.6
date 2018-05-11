@@ -1,75 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752874AbeEKK3r (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 06:29:47 -0400
-Received: from mail-wr0-f174.google.com ([209.85.128.174]:33433 "EHLO
-        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752627AbeEKK3p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 06:29:45 -0400
-X-Google-Smtp-Source: AB8JxZpv9T8Bx5HtITOy46BATQKSuoIsrOZqroQMcmRxYajIzo/VzYdEc+e8qTWk6jPDkj4UV+32sg==
-Subject: Re: [RFC] regmap: allow volatile register writes with cached only
- read maps
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-References: <1525817169-29233-1-git-send-email-jramirez@baylibre.com>
- <20180509083919.GU13402@sirena.org.uk>
- <65607fde-d0e9-0f08-3042-f6a58b760896@baylibre.com>
- <20180511020049.GD949@sirena.org.uk>
-From: Jorge Ramirez-Ortiz <jramirez@baylibre.com>
-Message-ID: <7cc158bb-3471-4d8e-d066-2e7f535812eb@baylibre.com>
-Date: Fri, 11 May 2018 12:29:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752987AbeEKKjM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 06:39:12 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39488 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752596AbeEKKjL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 06:39:11 -0400
+Date: Fri, 11 May 2018 11:39:01 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: =?utf-8?B?77+977+9yKPvv73vv70=?= <hoeun.ryu@lge.com>
+Cc: "'Hoeun Ryu'" <hoeun.ryu@lge.com.com>,
+        "'Will Deacon'" <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] armpmu: broadcast overflow irq on multi-core system
+ having one muxed SPI for PMU.
+Message-ID: <20180511103901.osi5lckq55jrms64@lakrids.cambridge.arm.com>
+References: <1525941385-12766-1-git-send-email-hoeun.ryu@lge.com.com>
+ <20180510102114.obmctt3nn7xakggi@lakrids.cambridge.arm.com>
+ <010c01d3e8b5$8839a480$98aced80$@lge.com>
 MIME-Version: 1.0
-In-Reply-To: <20180511020049.GD949@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <010c01d3e8b5$8839a480$98aced80$@lge.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2018 04:00 AM, Mark Brown wrote:
-> On Wed, May 09, 2018 at 01:49:21PM +0200, Jorge Ramirez-Ortiz wrote:
->> On 05/09/2018 10:39 AM, Mark Brown wrote:
->>> I don't understand what voltile access means for write only devices.
->>> Volatile means that we don't read the cache but go direct to the
->>> hardware so if we can't read the hardware that's pretty redundant, a
->>> volatile read that goes to the cache is just a default read.
->> 1. only cached reads: (as a consequence every regmap write must succeed).
->> 2. cached writes: do not access the hardware unless the value differs from
->> what is in the cache already or (3) applies.
->> 3. support for selectable volatile writes: those that will always access the
->> device no matter what the cache holds.
-> We don't currently suppress writes except when regmap_update_bits()
-> notices that the modification was a noop.  You probably want to be using
-> regmap_write_bits() here instead of regmap_update_bits(), that will
-> always do the write.
+On Fri, May 11, 2018 at 08:20:49AM +0900, ï¿½ï¿½È£ï¿½ï¿½ wrote:
+> Thank you for the reply.
+> 
+> > -----Original Message-----
+> > From: Mark Rutland [mailto:mark.rutland@arm.com]
+> > Sent: Thursday, May 10, 2018 7:21 PM
+> > To: Hoeun Ryu <hoeun.ryu@lge.com.com>
+> > Cc: Will Deacon <will.deacon@arm.com>; Hoeun Ryu <hoeun.ryu@lge.com>;
+> > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH] armpmu: broadcast overflow irq on multi-core system
+> > having one muxed SPI for PMU.
 
-but isnt that interface at a different level?
-I am not sure if you are asking me to review my patch or just discarding 
-the RFC and highlighting that I have a configuration problem.
+> > Muxing the PMU IRQs is a really broken system design, and there's no good
+> > way of supporting it.
 
-In my use case and what triggered this RFC (config below), an 'amixer 
-set' might never reach the driver's .reg_write interface even though the 
-register is configured as volatile (to me this is not consistent since 
-volatile_reg is being silently ignored).
+> > What we should do for such systems is:
+> > 
+> > * Add a flag to the DT to describe that the IRQs are muxed, as this
+> >   cannot be probed.
+> > 
+> > * Add hrtimer code to periodically update the counters, to avoid
+> >   overflow (e.g. as we do in the l2x0 PMU).
+> > 
+> > * Reject sampling for such systems, as this cannot be done reliably or
+> >   efficiently.
+> > 
+> > NAK to broadcasting the IRQ -- there are a number of issues with the
+> > general approach.
+> 
+> The second solution would be good if sampling is necessary even like those
+> systems.
 
-So I dont see where/how your recommendation fits; maybe you could 
-clarify a bit more please?
+Please note that I mean *all* of the above. There would be no sampling
+on systems with muxed PMU IRQs, since there's no correlation between
+overflow events and the hrtimer interrupts -- the results of sampling
+would be misleading.
 
-static const struct regmap_config foo_regmap = {
-     .reg_write           = foo_write_reg,
+> Actually I'm working on FIQ available ARM32 system and trying to enable the
+> hard lockup detector by routing the PMU IRQ to FIQ.
+> Because of that, I really need the interrupt event if it is a muxed SPI,
+> beside I also need to make an dedicated IPI FIQ to broadcast the IRQ in
+> this approach.
+> What would you do if you were in the same situation ?
 
-     .reg_bits            = 32,
-     .val_bits            = 32,
-     .reg_stride          = 1,
+I don't think that this can work with a muxed IRQ, sorry.
 
-     .volatile_reg        = foo_volatile_reg,
+It would be better to use some kind of timer.
 
-     .max_register        = CODEC_ENABLE_DEBUG_CTRL_REG,
-     .reg_defaults        = foo_reg_defaults,
-     .num_reg_defaults    = ARRAY_SIZE(foo_reg_defaults),
-     .cache_type          = REGCACHE_RBTREE,
-};
+[...]
+
+> > Futher, If you ever encounter a case where you need to avoid preemption
+> > across enabling IRQs, preemption must be disabled *before* enabling IRQs.
+> 
+> Ah, OK.
+> Enabling IRQs can cause scheduling tasks in the end of exception or other
+> scheduling points, right ?
+
+Yes. If an IRQ was taken *between* enabling IRQs and disabling
+preemption, preemption may occur as part of the exception return.
+
+Thanks,
+Mark.
