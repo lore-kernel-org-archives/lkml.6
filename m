@@ -1,134 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752654AbeEKIbO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 04:31:14 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:35785 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750852AbeEKIbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 04:31:12 -0400
-From: "chenyao (F)" <chenyao11@huawei.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: songxiaowei <songxiaowei@hisilicon.com>,
-        Wangbinghui <wangbinghui@hisilicon.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "xuwei (O)" <xuwei5@huawei.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Suzhuangluan <suzhuangluan@hisilicon.com>,
-        Kongfei <kongfei@hisilicon.com>,
-        "dimitrysh@google.com" <dimitrysh@google.com>,
-        "guodong.xu@linaro.org" <guodong.xu@linaro.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: RE: [PATCH v2 1/2] PCI: kirin: Add MSI support
-Thread-Topic: [PATCH v2 1/2] PCI: kirin: Add MSI support
-Thread-Index: AQHT526WA9UdXFlyM0ODTWQlj6GhcaQoeqiAgAG23kA=
-Date: Fri, 11 May 2018 08:30:59 +0000
-Message-ID: <1F615B5A909C3342A3B7B4843796B9151C35E2A4@dggemi502-mbs.china.huawei.com>
-References: <1525854012-24228-1-git-send-email-chenyao11@huawei.com>
- <1525854012-24228-2-git-send-email-chenyao11@huawei.com>
- <20180510140431.GJ173327@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20180510140431.GJ173327@bhelgaas-glaptop.roam.corp.google.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.151.30.91]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+        id S1752695AbeEKIbg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 04:31:36 -0400
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:55008 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750852AbeEKIbf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 04:31:35 -0400
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: byungchul.park@lge.com
+X-Original-SENDERIP: 10.177.222.33
+X-Original-MAILFROM: byungchul.park@lge.com
+From: Byungchul Park <byungchul.park@lge.com>
+To: jiangshanlai@gmail.com, paulmck@linux.vnet.ibm.com,
+        josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org, kernel-team@lge.com
+Subject: [PATCH] rcu: Report a quiescent state when it's exactly in the state
+Date: Fri, 11 May 2018 17:30:34 +0900
+Message-Id: <1526027434-21237-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+We expect a quiescent state of TASKS_RCU when cond_resched_tasks_rcu_qs()
+is called, no matter whether it actually be scheduled or not. However,
+it currently doesn't report the quiescent state when the task enters
+into __schedule() as it's called with preempt = true. So make it report
+the quiescent state unconditionally when cond_resched_tasks_rcu_qs() is
+called.
 
-> 
-> [+cc Tejun, Wolfram]
-> 
-> On Wed, May 09, 2018 at 04:20:11PM +0800, Yao Chen wrote:
-> > Add support for MSI.
-> > ...
-> 
-> > @@ -448,6 +467,26 @@ static int kirin_pcie_host_init(struct pcie_port
-> > *pp)  static int __init kirin_add_pcie_port(struct dw_pcie *pci,
-> >  				      struct platform_device *pdev)  {
-> > +	int ret;
-> > +
-> > +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> > +		pci->pp.msi_irq = platform_get_irq(pdev, 0);
-> > +		if (!pci->pp.msi_irq) {
-> 
-> I think this test is incorrect.  platform_get_irq() returns a negative errno
-> value when it fails.  Most calls test "irq < 0" to check for failure.
-> 
-> There's a lot of duplicated code like this, so maybe we should consider
-> putting that check into devm_request_irq(), similar to what
-> devm_ioremap_resource() does, so the driver code could look like this:
-> 
->   pci->pp.msi_irq = platform_get_irq(pdev, 0);
->   ret = devm_request_irq(&pdev->dev, pci->pp.msi_irq, ...);
->   if (ret) {
->     dev_err(&pdev->dev, "failed to request MSI IRQ\n");
->     return ret;
->   }
-> 
-> The basic devm_ioremap_resource() motivation is here: 72f8c0bfa0de ("lib:
-> devres: add convenience function to remap a resource") and the same
-> considerations seem to apply here.
-> 
-> But that's more than you need to do for *this* series.  So for now, I would
-> simply fix the test to check for "irq < 0" and update the messages as I
-> mention below.
+And in TINY_RCU, even though the quiescent state of rcu_bh also should
+be reported when the tick interrupt comes from user, it doesn't. So make
+it reported.
 
-Thank you for pointing out my mistake.  I'll fix it.
+Lastly in TREE_RCU, rcu_note_voluntary_context_switch() should be
+reported when the tick interrupt comes from not only user but also idle,
+as an extended quiescent state.
 
-> 
-> > +			dev_err(&pdev->dev, "failed to get msi irq[%d]\n",
-> > +				pci->pp.msi_irq);
-> > +			return -ENODEV;
-> > +		}
-> > +		ret = devm_request_irq(&pdev->dev, pci->pp.msi_irq,
-> > +				       kirin_pcie_msi_irq_handler,
-> > +				       IRQF_SHARED | IRQF_NO_THREAD,
-> > +				       "kirin_pcie_msi", &pci->pp);
-> > +		if (ret) {
-> > +			dev_err(&pdev->dev, "failed to request msi
-> irq[%d]\n",
-> 
-> s/msi irq/MSI IRQ/ in both dev_err() messages above.  This is because the
-> message is English text (not code), and the convention is that non-words like
-> these initialisms written in all caps.
-> 
-> I would style the first one as "failed to get MSI IRQ (%d)" because the %d
-> there is a return code, probably -ENXIO.
-> 
-> The second one should be "failed to request MSI IRQ %d" because here
-> the %d is the actual IRQ.
-> 
+Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+---
+ include/linux/rcupdate.h | 4 ++--
+ kernel/rcu/tiny.c        | 6 +++---
+ kernel/rcu/tree.c        | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-I'll fix it. Thanks again.
-
-> > +				pci->pp.msi_irq);
-> > +			return ret;
-> > +		}
-> > +	}
-> > +
-> >  	pci->pp.ops = &kirin_pcie_host_ops;
-> >
-> >  	return dw_pcie_host_init(&pci->pp);
-> > --
-> > 1.9.1
-> >
-
-Best regards,
-Yao
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index ee8cf5fc..7432261 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -195,8 +195,8 @@ static inline void exit_tasks_rcu_finish(void) { }
+  */
+ #define cond_resched_tasks_rcu_qs() \
+ do { \
+-	if (!cond_resched()) \
+-		rcu_note_voluntary_context_switch_lite(current); \
++	rcu_note_voluntary_context_switch_lite(current); \
++	cond_resched(); \
+ } while (0)
+ 
+ /*
+diff --git a/kernel/rcu/tiny.c b/kernel/rcu/tiny.c
+index a64eee0..68d2332 100644
+--- a/kernel/rcu/tiny.c
++++ b/kernel/rcu/tiny.c
+@@ -120,12 +120,12 @@ void rcu_bh_qs(void)
+  */
+ void rcu_check_callbacks(int user)
+ {
+-	if (user)
++	if (user) {
+ 		rcu_sched_qs();
+-	else if (!in_softirq())
+ 		rcu_bh_qs();
+-	if (user)
+ 		rcu_note_voluntary_context_switch(current);
++	} else if (!in_softirq())
++		rcu_bh_qs();
+ }
+ 
+ /*
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 36075dd..1abe29a 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2595,6 +2595,7 @@ void rcu_check_callbacks(int user)
+ 
+ 		rcu_sched_qs();
+ 		rcu_bh_qs();
++		rcu_note_voluntary_context_switch(current);
+ 
+ 	} else if (!in_softirq()) {
+ 
+@@ -2610,8 +2611,7 @@ void rcu_check_callbacks(int user)
+ 	rcu_preempt_check_callbacks();
+ 	if (rcu_pending())
+ 		invoke_rcu_core();
+-	if (user)
+-		rcu_note_voluntary_context_switch(current);
++
+ 	trace_rcu_utilization(TPS("End scheduler-tick"));
+ }
+ 
+-- 
+1.9.1
