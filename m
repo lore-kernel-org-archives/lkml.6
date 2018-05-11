@@ -1,49 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752235AbeEKD3B (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 23:29:01 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:39192 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750758AbeEKD27 (ORCPT
+        id S1752376AbeEKD3P (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 23:29:15 -0400
+Received: from regular1.263xmail.com ([211.150.99.133]:37678 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752033AbeEKD3M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 23:28:59 -0400
-Date: Fri, 11 May 2018 13:28:57 +1000 (AEST)
-From: Finn Thain <fthain@telegraphics.com.au>
-To: Michael Schmitz <schmitzmic@gmail.com>
-cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH net] macmace: Set platform device coherent_dma_mask
-In-Reply-To: <CAOmrzkLL0ZNzAh7rwiDy=BkNqqXgbqfv3vkN6K8CTF8VGbT8zA@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1805111221180.8@nippy.intranet>
-References: <S1751632AbeECEYA/20180503042400Z+254@vger.kernel.org> <CAMuHMdUAxmVZLekekvVrnMbbL18oyY86sF9QX087idSqcKMiPQ@mail.gmail.com> <alpine.LNX.2.21.1805031801310.8@nippy.intranet> <CAMuHMdU1XBqt7hwEW6JTas64ZNGCGCMr5HMZwuLo0O-ZBCOWyA@mail.gmail.com>
- <alpine.LNX.2.21.1805091805130.72@nippy.intranet> <CAOmrzkKNPemq5RySvza+Y8_jgwg2fkUZodR794cgOxpQpfh+SA@mail.gmail.com> <alpine.LNX.2.21.1805110921020.8@nippy.intranet> <CAOmrzkLL0ZNzAh7rwiDy=BkNqqXgbqfv3vkN6K8CTF8VGbT8zA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 10 May 2018 23:29:12 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: zhangqing@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-UNIQUE-TAG: <a88d8074078057ce5e092c515003f237>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: heiko@sntech.de, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: devicetree@vger.kernel.org, rjw@rjwysocki.net, khilman@kernel.org,
+        ulf.hansson@linaro.org, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        wxt@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
+        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>,
+        Finley Xiao <finley.xiao@rock-chips.com>
+Subject: [PATCH v1 11/13] dt-bindings: power: add PX30 SoCs header for power-domain
+Date: Fri, 11 May 2018 11:34:32 +0800
+Message-Id: <1526009672-2097-1-git-send-email-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1526009458-28579-1-git-send-email-zhangqing@rock-chips.com>
+References: <1526009458-28579-1-git-send-email-zhangqing@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 May 2018, Michael Schmitz wrote:
+According to a description from TRM, add all the power domains.
 
-> > > Which begs the question: why can' you set up all Nubus bus devices' 
-> > > DMA masks in nubus_device_register(), or nubus_add_board()?
-> >
-> > I am expecting to see the same WARNING from the nubus sonic driver but 
-> > it hasn't happened yet, so I don't have a patch for it yet. In 
-> > anycase, the nubus fix would be a lot like the zorro bus fix, so I 
-> > don't see a problem.
-> 
-> That's odd. But what I meant to say is that by setting up 
-> dma_coherent_mask in nubus_add_board(), and pointing dma_mask to that, 
-> ypu won't need any patches to Nubus device drivers.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+---
+ include/dt-bindings/power/px30-power.h | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 include/dt-bindings/power/px30-power.h
 
-Right. I think I've already acknowledged that. But it's off-topic, because 
-the patches under review are for platform drivers. Those patches fix an 
-actual bug that I've observed. Whereas, the nubus driver dma mask issue 
-that you raised is purely theoretical at this stage.
-
+diff --git a/include/dt-bindings/power/px30-power.h b/include/dt-bindings/power/px30-power.h
+new file mode 100644
+index 000000000000..4ed482e80950
+--- /dev/null
++++ b/include/dt-bindings/power/px30-power.h
+@@ -0,0 +1,32 @@
++/*
++ * Copyright (c) 2017 Fuzhou Rockchip Electronics Co., Ltd
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ */
++
++#ifndef __DT_BINDINGS_POWER_PX30_POWER_H__
++#define __DT_BINDINGS_POWER_PX30_POWER_H__
++
++/* VD_CORE */
++#define PX30_PD_A35_0		0
++#define PX30_PD_A35_1		1
++#define PX30_PD_A35_2		2
++#define PX30_PD_A35_3		3
++#define PX30_PD_SCU		4
++
++/* VD_LOGIC */
++#define PX30_PD_USB		5
++#define PX30_PD_DDR		6
++#define PX30_PD_SDCARD		7
++#define PX30_PD_CRYPTO		8
++#define PX30_PD_GMAC		9
++#define PX30_PD_MMC_NAND	10
++#define PX30_PD_VPU		11
++#define PX30_PD_VO		12
++#define PX30_PD_VI		13
++#define PX30_PD_GPU		14
++
++/* VD_PMU */
++#define PX30_PD_PMU		15
++
++#endif
 -- 
+1.9.1
