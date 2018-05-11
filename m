@@ -1,15 +1,15 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751398AbeEKRB5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 13:01:57 -0400
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:38020 "EHLO
-        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750950AbeEKRBz (ORCPT
+        id S1751474AbeEKRD0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 13:03:26 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:36809 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750876AbeEKRDX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 13:01:55 -0400
-X-Google-Smtp-Source: AB8JxZr0qYRWE4WZPjbanKbeweDSAvCRCAqz6Cz/SkVIaktWqOrPYInUNOY+AflC518DFA8HtUmwJA==
-Subject: Re: [RFC PATCH v4 3/3] acpi: apei: Do not panic() on PCIe errors
- reported through GHES
+        Fri, 11 May 2018 13:03:23 -0400
+X-Google-Smtp-Source: AB8JxZp9ebuIpgHerZCiEWgYLb/PIOcizp+XeaT35Y6WXe7z+fBgS9hkDekMwGYAgEKRG8ROO4ai4g==
+Subject: Re: [RFC PATCH v4 2/3] acpi: apei: Rename ghes_severity() to
+ ghes_cper_severity()
 To: Borislav Petkov <bp@alien8.de>
 Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
@@ -26,18 +26,18 @@ Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
         devel@acpica.org
 References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
  <20180430213358.8319-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-3-mr.nuke.me@gmail.com> <20180511154039.GD12705@pd.tnic>
- <8e3c0cc6-9c5c-85ce-650c-8f498f5907da@gmail.com>
- <20180511160253.GF12705@pd.tnic>
- <45b7be09-c9b3-8006-6ea0-36b4ff38607c@gmail.com>
- <20180511162951.GH12705@pd.tnic>
+ <20180430213358.8319-2-mr.nuke.me@gmail.com> <20180511153947.GC12705@pd.tnic>
+ <56d445b2-ace3-6ee2-9699-f2a684518de9@gmail.com>
+ <20180511155833.GE12705@pd.tnic>
+ <f70e209d-00ec-1969-16de-09d6142668da@gmail.com>
+ <20180511161933.GG12705@pd.tnic>
 From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <95bcbc2d-0f8c-e51a-f0fc-08ea8c5fca26@gmail.com>
-Date: Fri, 11 May 2018 12:01:52 -0500
+Message-ID: <70c2b5f2-ec54-da9c-4ab0-1ff22be9a142@gmail.com>
+Date: Fri, 11 May 2018 12:03:21 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180511162951.GH12705@pd.tnic>
+In-Reply-To: <20180511161933.GG12705@pd.tnic>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -45,60 +45,32 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2018 11:29 AM, Borislav Petkov wrote:
-> On Fri, May 11, 2018 at 11:12:25AM -0500, Alex G. wrote:
->>> I think *you* didn't get it: IS_ENABLED(CONFIG_ACPI_APEI_PCIEAER) is not
->>> enough of a check to confirm that there actually *is* an AER driver to
->>> handle the errors. If you really want to make sure the driver is loaded
->>> and functioning, then you need an explicit registering mechanism or some
->>> other way of checking it really is there and handling errors.
->>
->> config ACPI_APEI_PCIEAER
->> 	bool "APEI PCIe AER logging/recovering support"
->> 	depends on ACPI_APEI && PCIEAER
->> 	help
->> 	  PCIe AER errors may be reported via APEI firmware first mode.
->> 	  Turn on this option to enable the corresponding support.
->>
->> PCIAER is not modularizable. QED
+
+
+On 05/11/2018 11:19 AM, Borislav Petkov wrote:
+> On Fri, May 11, 2018 at 11:12:24AM -0500, Alex G. wrote:
+>> Because the GHES structure uses CPER values, but all the code is written
+>> to use GHES_SEV_ values. GHES_SEV_ is a made up enum, specifically for
+>> linux.
 > 
-> QED my ass.
+> Again, what does that even matter?
+
+I will shorten the commit message.
+
+
+> They're defines in both cases. The *actual* value means shit.
 > 
-> Read the f*ck my email again: the presence of the *code* is
-> not enough of a check to confirm the error has been handled.
-> aer_recover_work_func() can fail as that kfifo_put() in
-> aer_recover_queue() can too.
+> Ah, I see it:
 > 
-> You need an *actual* confirmation that the error has been handled
-> properly and *only* *then* not panic the system. Otherwise you are
-> potentially leaving those errors unhandled.
+> 	...
+> 		sec_sev = ghes_sec_pcie_severity(gdata);
+> 
+> 	worst_sev = max(worst_sev, sec_sev);
+> 
+> 
+> Yeah, no, you can't do that. No apples and oranges comparisons.
 
-
-"How is PCIe error severity dependent on whether the AER error reporting
- driver is enabled (and possibly not even loaded) on the system?"
-
-Little about confirmation of error being handled was talked about either
-in your **** email, or previous versions of this series.  And quite
-frankly it's besides the scope of this patch.
-
-The scope is to enable SURPRISE!!! removal of NVMe drives and PCIe
-devices. For that purpose, we don't need confirmation that the error was
-handled. Such a confirmation requires a rework of GHES handling, or at
-least the interaction between GHES and AER, both of which I find to be
-mostly satisfactory.
-
-You can't at this point know if the error is going to be handled.
-There's code further downstream to handle this. You also didn't like it
-when I wanted to handle things downstream.
-
-I understand your concern with unhandled AER errors evolving into MCE's.
-That's extremely rare, but when it happens you still panic due to the
-MCE. To give you an idea of the rarity, in several months of testing, I
-was only able to reproduce MCEs once, and that was with a very defective
-drive, and a very idiotic test case.
-
-If you find this solution unacceptable, that's fine. We can fix it in
-firmware. We can hide all the events from the OS, contain the downstream
-ports, and simulate hot-remove interrupts. All in firmware, all the time.
+That was a mistake on my part. Despite my godlike ability to produce
+great fixes, I am, in fact, human.
 
 Alex
