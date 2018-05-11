@@ -1,87 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751963AbeEKAnf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 20:43:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38066 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750805AbeEKAne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 20:43:34 -0400
-From: NeilBrown <neilb@suse.com>
-To: Justin Skists <justin.skists@juzza.co.uk>, devel@driverdev.osuosl.org,
-        lustre-devel@lists.lustre.org, James Simmons <jsimmons@infradead.org>,
-        Andreas Dilger <andreas.dilger@intel.com>,
-        Oleg Drokin <oleg.drokin@intel.com>
-Date: Fri, 11 May 2018 10:43:23 +1000
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: lustre: lnet: add static to libcfs_dev declaration
-In-Reply-To: <20180510194128.GA19653@tanglefoot>
-References: <20180510194128.GA19653@tanglefoot>
-Message-ID: <87d0y39g44.fsf@notabene.neil.brown.name>
+        id S1751333AbeEKArq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 20:47:46 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49608 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750746AbeEKAro (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 20:47:44 -0400
+Subject: Re: mmotm 2018-05-10-16-34 uploaded (objtool)
+To: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+References: <20180510233519.eYStA%akpm@linux-foundation.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Message-ID: <aa27dcd5-8121-3da9-a6d8-2108a849986e@infradead.org>
+Date: Thu, 10 May 2018 17:47:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <20180510233519.eYStA%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On 05/10/2018 04:35 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2018-05-10-16-34 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (4.x
+> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+> 
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
+> 
+> This tree is partially included in linux-next.  To see which patches are
+> included in linux-next, consult the `series' file.  Only the patches
+> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+> linux-next.
+> 
+> A git tree which contains the memory management portion of this tree is
+> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+> by Michal Hocko.  It contains the patches which are between the
+> "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+> file, http://www.ozlabs.org/~akpm/mmotm/series.
+> 
+> 
+> A full copy of the full kernel tree with the linux-next and mmotm patches
+> already applied is available through git within an hour of the mmotm
+> release.  Individual mmotm releases are tagged.  The master branch always
+> points to the latest release, so it's constantly rebasing.
+> 
+> http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
 
-On Thu, May 10 2018, Justin Skists wrote:
+Hi Josh, Peter:
 
-> Add a static prefix to the declaration for libcfs_dev. This would fix
-> the following sparse warning:
->
-> drivers/staging/lustre/lnet/libcfs/module.c:317:19: warning: symbol
-> 'libcfs_dev' was not declared. Should it be static?
+Is this something that you already have fixes for?
 
-Thanks - that was my fault. (b4ded66db93b)
-Reviewed-by: NeilBrown <neilb@suse.com>
 
-Thanks,
-NeilBrown
+on x86_64:
 
->
-> Signed-off-by: Justin Skists <justin.skists@juzza.co.uk>
-> ---
->  drivers/staging/lustre/lnet/libcfs/module.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/lustre/lnet/libcfs/module.c b/drivers/stagin=
-g/lustre/lnet/libcfs/module.c
-> index ca942f474a55..e021e439f140 100644
-> --- a/drivers/staging/lustre/lnet/libcfs/module.c
-> +++ b/drivers/staging/lustre/lnet/libcfs/module.c
-> @@ -314,7 +314,7 @@ static const struct file_operations libcfs_fops =3D {
->  	.unlocked_ioctl	=3D libcfs_psdev_ioctl,
->  };
->=20=20
-> -struct miscdevice libcfs_dev =3D {
-> +static struct miscdevice libcfs_dev =3D {
->  	.minor =3D MISC_DYNAMIC_MINOR,
->  	.name =3D "lnet",
->  	.fops =3D &libcfs_fops,
-> --=20
-> 2.17.0
+drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_suspend()+0xbb8: sibling call from callable instruction with modified stack frame
+drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_resume()+0xcc5: sibling call from callable instruction with modified stack frame
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlr05ywACgkQOeye3VZi
-gblZwA//RE4ywCRcp1E/cowFjkJ+aL9/VylOJwXb25cx0A5jaopZtObQ8n5eZwJ7
-pbzmJ9n8Ma6SbWQA4jpJEcIdc8y9PxW+RywfD1bsIuYbokpw0A23qz8tVfp7V5tg
-C4VxlAcGcZ5mfj9EeA09OIlWrrHvLDgaqV03a+YG7Bve0wV2dBWObvd3oPalk39w
-/LN3EAVXmOXs5Ae8sW1dzDK1OikRgrMPI9HvGdlQHKNLAgH7da3vJUMt53ZQxuOl
-GE8gZwuQts7P0sqUUcgqFLp7MM3hFoGDi3038wkiNFK+7ziUR2zS9pUBNvJ25npt
-2I23sSqsGxPG6jT70oZmD+xzhFB3y6oE5P8fd4pZP7ehjJALApetxWAjm73bd2XE
-bpGJslvZjG1BQ4FC1m6UHNE9UTvAnwl+EjaXVg038a8En7lMl5U18fRy3klEkowv
-9aobv8rZzyUbtBU+5X/OV4LrOkviIMgzqhtPWaSsbjUPpu0aIPFtNoPE0EqHCv2s
-v9/6Ma61uuVpmJLnWJwOew814BCymeH5IhnJjD3J5g/TN3Ab30eMwaVkV3E1e6T7
-MtjoDbZPHLFWca8w5rmzH9m9DDSyIjVvLfad3oI9v7Va7vBYoAwqwhq3QC8V587j
-k60NipePvgRAwS9P01yAfLsx1hDuKnubGhQC+xYcEVMSn6PIiSk=
-=9LCa
------END PGP SIGNATURE-----
---=-=-=--
+thanks,
+-- 
+~Randy
