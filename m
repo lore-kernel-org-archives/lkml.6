@@ -1,146 +1,176 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752242AbeEKGJd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 02:09:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52082 "EHLO mail.kernel.org"
+        id S1752281AbeEKGMA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 02:12:00 -0400
+Received: from mga04.intel.com ([192.55.52.120]:38111 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750805AbeEKGJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 02:09:32 -0400
-Date: Fri, 11 May 2018 15:09:28 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Shuah Khan <shuah@kernel.org>
-Cc: rostedt@goodmis.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/24] selftests: ftrace: return Kselftest Skip code for
- skipped tests
-Message-Id: <20180511150928.6e9b5fb7fdf9a90b4720a575@kernel.org>
-In-Reply-To: <34a4aa44-75f0-b868-cfc8-37fc716af0a5@kernel.org>
-References: <20180505011328.32078-1-shuah@kernel.org>
-        <20180505011328.32078-9-shuah@kernel.org>
-        <20180508123812.874ff8d2a22abd62148b293d@kernel.org>
-        <34a4aa44-75f0-b868-cfc8-37fc716af0a5@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1750858AbeEKGL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 02:11:58 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,387,1520924400";
+   d="scan'208";a="38476307"
+Date: Fri, 11 May 2018 14:11:22 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: kbuild-all@01.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
+        edubezval@gmail.com, kevin.wangtao@linaro.org, leo.yan@linaro.org,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
+        javi.merino@kernel.org, rui.zhang@intel.com, linux-pm@vger.kernel.org,
+        daniel.thompson@linaro.org
+Subject: Re: [PATCH] powercap/drivers/idle_injection: Add an idle injection
+ framework
+Message-ID: <201805111348.jwOOmfVZ%fengguang.wu@intel.com>
+References: <1525948458-23488-1-git-send-email-daniel.lezcano@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525948458-23488-1-git-send-email-daniel.lezcano@linaro.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 May 2018 14:18:16 -0600
-Shuah Khan <shuah@kernel.org> wrote:
+Hi Daniel,
 
-> Hi Masami,
-> 
-> On 05/07/2018 09:38 PM, Masami Hiramatsu wrote:
-> > On Fri,  4 May 2018 19:13:13 -0600
-> > "Shuah Khan (Samsung OSG)" <shuah@kernel.org> wrote:
-> > 
-> >> When ftrace test is skipped because of unmet dependencies and/or
-> >> unsupported configuration, it returns 0 which is treated as a pass
-> >> by the Kselftest framework. This leads to false positive result even
-> >> when the test could not be run.
-> >>
-> >> Change it to return kselftest skip code when a test gets skipped to
-> >> clearly report that the test could not be run.
-> >>
-> >> Kselftest framework SKIP code is 4 and the framework prints appropriate
-> >> messages to indicate that the test is skipped.
-> >>
-> >> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-> >> ---
-> >>  tools/testing/selftests/ftrace/ftracetest | 8 ++++++--
-> >>  1 file changed, 6 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-> >> index f9a9d424c980..b731c8cdcffb 100755
-> >> --- a/tools/testing/selftests/ftrace/ftracetest
-> >> +++ b/tools/testing/selftests/ftrace/ftracetest
-> >> @@ -23,6 +23,9 @@ echo "		            If <dir> is -, all logs output in console only"
-> >>  exit $1
-> >>  }
-> >>  
-> >> +# Kselftest framework requirement - SKIP code is 4.
-> >> +ksft_skip=4
-> >> +
-> >>  errexit() { # message
-> >>    echo "Error: $1" 1>&2
-> >>    exit 1
-> >> @@ -30,7 +33,8 @@ errexit() { # message
-> >>  
-> >>  # Ensuring user privilege
-> >>  if [ `id -u` -ne 0 ]; then
-> >> -  errexit "this must be run by root user"
-> >> +  echo "Skipping: test must be run by root user"
-> >> +  exit $ksft_skip
-> >>  fi
-> >>  
-> >>  # Utilities
-> >> @@ -249,7 +253,7 @@ trap 'SIG_RESULT=$UNTESTED' $SIG_UNTESTED
-> >>  SIG_UNSUPPORTED=$((SIG_BASE + UNSUPPORTED))
-> >>  exit_unsupported () {
-> >>    kill -s $SIG_UNSUPPORTED $SIG_PID
-> >> -  exit 0
-> >> +  exit $ksft_skip
-> > 
-> > This should return 0. If you want to change the result code,
-> > you have to change the last part as below.
-> > (Note that we need a switch option of return code, so that
-> >  ftracetest user can continue to use same way...)
-> 
-> Doesn't this existing option take care of this:
-> 
-> --fail-unsupported Treat UNSUPPORTED as a failure"
+I love your patch! Perhaps something to improve:
 
-No, that is an opposite option... it makes UNSUPPORTED result
-as a failure. What the option we need is to ignore UNSUPPORTED
-results because it is expected.
+[auto build test WARNING on pm/linux-next]
+[also build test WARNING on v4.17-rc4 next-20180510]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-> Is there a need for another. This indicates that the default
-> mode is UNSUPPORTED isn't a failure.
-
-Right, currently UNSUPPORTED/UNRESOLVED/UNTESTED are not failure.
+url:    https://github.com/0day-ci/linux/commits/Daniel-Lezcano/powercap-drivers-idle_injection-Add-an-idle-injection-framework/20180511-074751
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-> 
-> > 
-> > diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
-> > index f9a9d424c980..d6ce56a2a937 100755
-> > --- a/tools/testing/selftests/ftrace/ftracetest
-> > +++ b/tools/testing/selftests/ftrace/ftracetest
-> > @@ -326,5 +326,15 @@ prlog "# of unsupported: " `echo $UNSUPPORTED_CASES | wc -w`
-> >  prlog "# of xfailed: " `echo $XFAILED_CASES | wc -w`
-> >  prlog "# of undefined(test bug): " `echo $UNDEFINED_CASES | wc -w`
-> >  
-> > -# if no error, return 0
-> > -exit $TOTAL_RESULT
-> > +# following kselftest result code
-> > +if [ $UNSUPPORTED_CASES -ne 0 -o \
-> > +       $UNTESTED_CASES -ne 0 -o \
-> > +       $UNRESOLVED_CASES -ne 0]; then # There are skipped tests
-> > +  exit 4
-> > +elif [ $XAILED_CASES -ne 0 -o ]; then # XFAILs
+sparse warnings: (new ones prefixed by >>)
 
-Ah, I missed to remove the last "-o"
+>> drivers/powercap/idle_injection.c:242:36: sparse: incorrect type in initializer (different address spaces) @@    expected struct task_struct [noderef] <asn:3>**store @@    got struct task_struct [noderef] <asn:3>**store @@
+   drivers/powercap/idle_injection.c:242:36:    expected struct task_struct [noderef] <asn:3>**store
+   drivers/powercap/idle_injection.c:242:36:    got struct task_struct *[noderef] <asn:3>*<noident>
 
-> > +  exit 2
-> > +elif [ $FAILED_CASES -ne 0 -o ]; then # FAILs
+vim +242 drivers/powercap/idle_injection.c
 
-ditto.
+   138	
+   139	/**
+   140	 * idle_injection_set_duration - idle and run duration helper
+   141	 * @run_duration_ms: an unsigned int giving the running time in milliseconds
+   142	 * @idle_duration_ms: an unsigned int giving the idle time in milliseconds
+   143	 */
+ > 144	void idle_injection_set_duration(struct idle_injection_device *ii_dev,
+   145					 unsigned int run_duration_ms,
+   146					 unsigned int idle_duration_ms)
+   147	{
+   148		atomic_set(&ii_dev->run_duration_ms, run_duration_ms);
+   149		atomic_set(&ii_dev->idle_duration_ms, idle_duration_ms);
+   150	}
+   151	
+   152	
+   153	/**
+   154	 * idle_injection_get_duration - idle and run duration helper
+   155	 * @run_duration_ms: a pointer to an unsigned int to store the running time
+   156	 * @idle_duration_ms: a pointer to an unsigned int to store the idle time
+   157	 */
+   158	void idle_injection_get_duration(struct idle_injection_device *ii_dev,
+   159					 unsigned int *run_duration_ms,
+   160					 unsigned int *idle_duration_ms)
+   161	{
+   162		*run_duration_ms = atomic_read(&ii_dev->run_duration_ms);
+   163		*idle_duration_ms = atomic_read(&ii_dev->idle_duration_ms);
+   164	}
+   165	
+   166	/**
+   167	 * idle_injection_start - starts the idle injections
+   168	 * @ii_dev: a pointer to an idle_injection_device structure
+   169	 *
+   170	 * The function starts the idle injection cycles by first waking up
+   171	 * all the tasks the ii_dev is attached to and let them handle the
+   172	 * idle-run periods
+   173	 *
+   174	 * Returns -EINVAL if the idle or the running duration are not set
+   175	 */
+   176	int idle_injection_start(struct idle_injection_device *ii_dev)
+   177	{
+   178		if (!atomic_read(&ii_dev->idle_duration_ms))
+   179			return -EINVAL;
+   180	
+   181		if (!atomic_read(&ii_dev->run_duration_ms))
+   182			return -EINVAL;
+   183	
+   184		pr_debug("Starting injecting idle cycles on CPUs '%*pbl'\n",
+   185			 cpumask_pr_args(ii_dev->smp_hotplug_thread->cpumask));
+   186	
+   187		idle_injection_wakeup(ii_dev);
+   188	
+   189		return 0;
+   190	}
+   191	
+   192	/**
+   193	 * idle_injection_stop - stops the idle injections
+   194	 * @ii_dev: a pointer to an idle injection_device structure
+   195	 *
+   196	 * The function stops the idle injection by canceling the timer in
+   197	 * charge of waking up the tasks to inject idle and unset the idle and
+   198	 * running durations.
+   199	 */
+   200	void idle_injection_stop(struct idle_injection_device *ii_dev)
+   201	{
+   202		pr_debug("Stopping injecting idle cycles on CPUs '%*pbl'\n",
+   203			 cpumask_pr_args(ii_dev->smp_hotplug_thread->cpumask));
+   204	
+   205		hrtimer_cancel(&ii_dev->timer);
+   206	
+   207		idle_injection_set_duration(ii_dev, 0, 0);
+   208	}
+   209	
+   210	/**
+   211	 * idle_injection_setup - initialize the current task as a RT task
+   212	 * @cpu: the CPU number where the kthread is running on (not used)
+   213	 *
+   214	 */
+   215	static void idle_injection_setup(unsigned int cpu)
+   216	{
+   217		struct sched_param param = { .sched_priority = MAX_USER_RT_PRIO/2 };
+   218	
+   219		set_freezable();
+   220	
+   221		sched_setscheduler(current, SCHED_FIFO, &param);
+   222	}
+   223	
+   224	/**
+   225	 * idle_injection_should_run - function helper for the smpboot API
+   226	 * @cpu: the CPU number where the kthread is running on
+   227	 *
+   228	 * Returns the boolean telling if the thread can run
+   229	 */
+   230	static int idle_injection_should_run(unsigned int cpu)
+   231	{
+   232		struct idle_injection_thread *iit =
+   233			per_cpu_ptr(&idle_injection_thread, cpu);
+   234	
+   235		return iit->should_run;
+   236	}
+   237	
+   238	/*
+   239	 * idle_injection_threads - smp hotplug threads ops
+   240	 */
+   241	static struct smp_hotplug_thread idle_injection_threads = {
+ > 242		.store                  = &idle_injection_thread.tsk,
+   243		.thread_fn              = idle_injection_fn,
+   244		.thread_should_run	= idle_injection_should_run,
+   245		.setup                  = idle_injection_setup,
+   246	};
+   247	
 
-Thanks,
-
-> > +  exit 1
-> > +else # PASS
-> > +  exit 0
-> > +fi
-> > 
-> 
-> Thanks for pointing out the right change to make.
-> 
-> -- Shuah
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
