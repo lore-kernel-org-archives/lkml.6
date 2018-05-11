@@ -1,61 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752851AbeEKKSp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 06:18:45 -0400
-Received: from mga09.intel.com ([134.134.136.24]:13367 "EHLO mga09.intel.com"
+        id S1752863AbeEKKTo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 06:19:44 -0400
+Received: from mga06.intel.com ([134.134.136.31]:53165 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752386AbeEKKSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 06:18:39 -0400
+        id S1750806AbeEKKTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 06:19:42 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,388,1520924400";
-   d="scan'208";a="57774905"
-Date: Fri, 11 May 2018 13:18:34 +0300
+   d="scan'208";a="55026393"
+Date: Fri, 11 May 2018 13:19:38 +0300
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: "'Jason Gunthorpe'" <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
-        "'linux-security-module@vger.kernel.org'"
-        <linux-security-module@vger.kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-Message-ID: <20180511101834.GE20210@linux.intel.com>
-References: <20180424160328.GA5119@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
- <20180502133246.GA6091@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
- <20180503063508.GA8702@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9427B9A6@hasmsx108.ger.corp.intel.com>
- <20180504081634.GB6373@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9427D284@hasmsx108.ger.corp.intel.com>
- <20180509122621.GB8271@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D895BA3@hasmsx109.ger.corp.intel.com>
+To: Laurent Bigonville <bigon@debian.org>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH] tpm_tis: verify locality released before returning from
+ release_locality
+Message-ID: <20180511101938.GF20210@linux.intel.com>
+References: <20180505195453.10431-1-jsnitsel@redhat.com>
+ <20180505200315.x7jt33j7psizmfyi@cantor>
+ <e2d0e88a-d4b7-9a4e-45c5-b2409d6c6cab@debian.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D895BA3@hasmsx109.ger.corp.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e2d0e88a-d4b7-9a4e-45c5-b2409d6c6cab@debian.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 09:49:49PM +0000, Winkler, Tomas wrote:
+On Thu, May 10, 2018 at 01:21:39PM +0200, Laurent Bigonville wrote:
+> Le 05/05/18 à 22:03, Jerry Snitselaar a écrit :
+> > On Sat May 05 18, Jerry Snitselaar wrote:
+> > > [...]
+> > > 
 > > 
-> > On Sat, May 05, 2018 at 09:07:21PM +0000, Winkler, Tomas wrote:
-> > > There is already one 'out' label in that function, what would you prefer for
-> > this new label name?
-> > > Thanks
-> > > Tomas
+> > Laurent,
+> 
+> Hello Jerry,
+> 
+> > Can you try this patch with your system since it is the one
+> > that has exhibited the problem so far. I've tested on a
+> > tpm2.0 and tpm1.2 system here.
+> 
+> I just tested the patch and the driver is loading fine again and the device
+> in /dev is present again, so it seems to work.
+> 
+> But for some reason the tpm is again locked (for no visible reason) due to
+> "dictionary attack" so I cannot test further ATM :/
+> 
+> Regards,
+> 
+> Laurent
+> 
 > > 
-> > Aah, of course. My bad that I did not notice it but please just point me if I
-> > miss something obvious like that :-) I'll apply the patch today..
-> > 
-> Thanks
-> Tomas
+> > Regards,
+> > Jerry
+> 
 
-It's also in next now!
+Can you response with the tested-by tag as soon as you can? Before we
+have tested-by, I cannot land the fix.
 
 /Jarkko
