@@ -1,59 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752459AbeEKQXr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:23:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43854 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752410AbeEKQXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:23:24 -0400
-Date: Fri, 11 May 2018 12:23:21 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Byungchul Park <byungchul.park@lge.com>, jiangshanlai@gmail.com,
-        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        peterz@infradead.org
-Subject: Re: [PATCH] rcu: Report a quiescent state when it's exactly in the
- state
-Message-ID: <20180511122321.722a12cc@gandalf.local.home>
-In-Reply-To: <20180511161746.GX26088@linux.vnet.ibm.com>
-References: <1526027434-21237-1-git-send-email-byungchul.park@lge.com>
-        <3af4cec0-4019-e3ac-77f9-8631252fb6da@lge.com>
-        <20180511161746.GX26088@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752470AbeEKQYI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:24:08 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:42790 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752150AbeEKQVi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 12:21:38 -0400
+X-Google-Smtp-Source: AB8JxZoflVKessD47qxg4FfJa+PsiBty6n6onRgTPy870NJFsXY6MkuxZv62hIOjsXoN9/5dnC9Cgw==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>, Johan Hovold <johan@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 06/12] of: add a new flag for OF device nodes
+Date: Fri, 11 May 2018 18:20:22 +0200
+Message-Id: <20180511162028.20616-7-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180511162028.20616-1-brgl@bgdev.pl>
+References: <20180511162028.20616-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 May 2018 09:17:46 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> > >index ee8cf5fc..7432261 100644
-> > >--- a/include/linux/rcupdate.h
-> > >+++ b/include/linux/rcupdate.h
-> > >@@ -195,8 +195,8 @@ static inline void exit_tasks_rcu_finish(void) { }
-> > >   */
-> > >  #define cond_resched_tasks_rcu_qs() \
-> > >  do { \
-> > >-	if (!cond_resched()) \
-> > >-		rcu_note_voluntary_context_switch_lite(current); \
-> > >+	rcu_note_voluntary_context_switch_lite(current); \
-> > >+	cond_resched(); \  
-> 
-> Ah, good point.
-> 
-> Peter, I have to ask...  Why is "cond_resched()" considered a preemption
-> while "schedule()" is not?
+This flag indicates that a device node has been populated early and
+that it needs different handling when called from
+of_platform_populate().
 
-I would argue that cond_resched() not be considered a preemption.
-Although, it may be called a "preemption point". A place that can be
-preempted, but may not be. Maybe that's the answer. schedule() will
-always schedule (even though it may pick the same task to run, but
-not guaranteed to), where as, cond_resched() will only schedule if the
-conditions are right. And maybe that's not really a "voluntary
-schedule", although I think that can be argued against.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ include/linux/of.h | 1 +
+ 1 file changed, 1 insertion(+)
 
--- Steve
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 4d25e4f952d9..49ba6427c6b2 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -143,6 +143,7 @@ extern raw_spinlock_t devtree_lock;
+ #define OF_DETACHED	2 /* node has been detached from the device tree */
+ #define OF_POPULATED	3 /* device already created for the node */
+ #define OF_POPULATED_BUS	4 /* of_platform_populate recursed to children of this node */
++#define OF_POPULATED_EARLY	5 /* device is already allocated */
+ 
+ #define OF_BAD_ADDR	((u64)-1)
+ 
+-- 
+2.17.0
