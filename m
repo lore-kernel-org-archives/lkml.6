@@ -1,124 +1,186 @@
-Return-Path: <poza@codeaurora.org>
-X-Google-Smtp-Source: AB8JxZr6oms9xeGLK5JaQxrIYEuK508U4LXhz44Qx28G5pxbghsjysRYgVjN1zgQv3VTNwqLcLfg
-ARC-Seal: i=1; a=rsa-sha256; t=1526055084; cv=none;
+Return-Path: <poza@qualcomm.com>
+X-Google-Smtp-Source: AB8JxZrliyhg+6K1X1rOKw0NbrPqIZHBFy4FnkmOYFX6kvWg4bW1g21nRW5u9qogw9045v50ssiO
+ARC-Seal: i=1; a=rsa-sha256; t=1526035415; cv=none;
         d=google.com; s=arc-20160816;
-        b=fGUo2r/Bpu60rxCKv/IfLS1dqNnnGD22QTUllcdgHvwVVXniGyWEuL6fU5zJY7PYxo
-         XEt3qNf964QhdSHwalzsqEnPB8aB9B5agd8mJqSMfutvDQWxfJWP09WrJvz82DP0WC8Z
-         PXZpR/cFtrgfc1gijheBX1dvLPVmxn8dRga4S5uGSXqKzVchsq6aR2rKf2/SzWovoM3H
-         8n2qvHUdf41QG9qMIv5uf/7B9FQAdQxNYO75xjb8Rdbh2Csb3fTEwugZoroQhuWYGN/u
-         ZM5p8VACAfHl1h6A7IBusxu1mPC3JzXgAE19vjLcHiIq5Xg4dZlkkECMtoyEBBnbXFCU
-         y7wQ==
+        b=PErF6RsXapBJxYR5gAVIcJWoNp8Kpnvh+2+9fQMHYZJwOJKQWdnJ19aInAUoCKPNld
+         2mOQk1wIOGUux4JH91opPEqArC8Bnswfi2lLaRYbYGO3/sCKJg9vVHY1RNd5TBnYhAhv
+         6yM59cGszfQG6PFekzHdxoqkJnlfhKuRAAhZnQcbuZAqBoqAZLaWoZg6rmG3ua23rCEj
+         wuNuqRoFM2E3t9czk6wpYcSFyVbLXp+bJTK0e3mwf/dfSE+E0h+jMIPsgjnIBpBDBjH/
+         jN9q+Q3FZ7+miZhUkeicMfXR7d9DLc4Qh15BpW5LizAsbqQG6JlDWY0XGK+gUYs5FzAa
+         nvtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:message-id:references:in-reply-to:subject:cc:to:from
-         :date:content-transfer-encoding:mime-version:dkim-signature
-         :dkim-signature:arc-authentication-results;
-        bh=lhpXCwwaxshKPWafHJpZUTUZ1Ob+HxadHkwD+/Wq3Y0=;
-        b=I6cJMvAdb+kCVm2mLViId1vJGSeeF3HWxP8wBEy6i2wAL/Jpe4NCAgOYCRiRjaHS2C
-         BWREvp24ay/dFDlIyGWC94mczEYqYUmEGyC2mQF8Y+8g7szPNILuvFbaEvgdKSjhNlNq
-         NbS6rm7u8gaQJNrAfrUECw9oncpDPAupixHRPNR5MGO9lXxKb3SUuerOBk5X9FANFbmG
-         066+T9ObRO9oPRJCswXZqVrSTKUEdHP5ur3utdq7ufAV9AskEJV5CjRqzU3RtVQMptKd
-         pLQaNovG6HAbief++mN6ihuF7pOLozRkjs7DgcOCZ4usD2+2YGjqE3+p3xE7fCD+IbBo
-         nZtw==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=BI/bIlwpt0QcXf2z+cu73dOhRJzklg5ml2BrUn25d34=;
+        b=rBNklhHSUlwNM0qlwuFGjhjRGJVj7q2HAWGMm88gTdXe7jK4TJK0j1nF5n7dYe7DTz
+         mZc3yFR7JQ5Wwc+89h4w/+bx7RulZ9B6HO8p84CCf90DqXBl8XVnT+/EudTu4y/HD+gq
+         d+q4f5YbzwBcuyxAR3FIqVpqJMIIZPB0TrglnBn5dhMrOYe8QuhdtYc0ZrJQOoyJKeec
+         tJ/wX0N/eNSosv4OiTzm3mw933glIanwjpqx5hFuunto4M+5NtNqZt4R33oOPp2nz1RF
+         KL7LMfrzMsdPLV6Z2vPSdKXUH5az43uZ6MYpWchDGeckKYoeCoiRm4zIUyMqq51jezuU
+         im+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=jKGngqfR;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=dTl6fp2i;
-       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
+       spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.251 as permitted sender) smtp.mailfrom=poza@qualcomm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=jKGngqfR;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=dTl6fp2i;
-       spf=pass (google.com: domain of poza@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=poza@codeaurora.org
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Fri, 11 May 2018 21:41:22 +0530
-From: poza@codeaurora.org
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Philippe Ombredanne
- <pombredanne@nexb.com>, Thomas Gleixner <tglx@linutronix.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Kate Stewart
- <kstewart@linuxfoundation.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>, Keith
- Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>, Sinan Kaya
- <okaya@codeaurora.org>, Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH v16 5/9] PCI/AER: Factor out error reporting from AER
-In-Reply-To: <20180511155422.GA333@wunner.de>
+       spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.251 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+X-IronPort-AV: E=Sophos;i="5.49,388,1520924400";
+   d="scan'208";a="435728393"
+From: Oza Pawandeep <poza@codeaurora.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dongdong Liu <liudongdong3@huawei.com>,
+	Keith Busch <keith.busch@intel.com>,
+	Wei Zhang <wzhang@fb.com>,
+	Sinan Kaya <okaya@codeaurora.org>,
+	Timur Tabi <timur@codeaurora.org>
+Cc: Oza Pawandeep <poza@codeaurora.org>
+Subject: [PATCH v16 6/9] PCI/PORTDRV: Implement generic find service
+Date: Fri, 11 May 2018 06:43:25 -0400
+Message-Id: <1526035408-31328-7-git-send-email-poza@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526035408-31328-1-git-send-email-poza@codeaurora.org>
 References: <1526035408-31328-1-git-send-email-poza@codeaurora.org>
- <1526035408-31328-6-git-send-email-poza@codeaurora.org>
- <20180511125857.GA23225@wunner.de>
- <7317531a7a85404d590008a27131955f@codeaurora.org>
- <20180511155422.GA333@wunner.de>
-Message-ID: <78a5edb7e5f785a14dd4241f53b69933@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600164111757123236?=
-X-GMAIL-MSGID: =?utf-8?q?1600184736130400697?=
+X-GMAIL-THRID: =?utf-8?q?1600164111686652735?=
+X-GMAIL-MSGID: =?utf-8?q?1600164111686652735?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018-05-11 21:24, Lukas Wunner wrote:
-> On Fri, May 11, 2018 at 09:04:36PM +0530, poza@codeaurora.org wrote:
->> On 2018-05-11 18:28, Lukas Wunner wrote:
->> >On Fri, May 11, 2018 at 06:43:24AM -0400, Oza Pawandeep wrote:
->> >>+void pcie_do_fatal_recovery(struct pci_dev *dev)
->> >>+{
->> >>+	struct pci_dev *udev;
->> >>+	struct pci_bus *parent;
->> >>+	struct pci_dev *pdev, *temp;
->> >>+	pci_ers_result_t result = PCI_ERS_RESULT_RECOVERED;
->> >>+	struct aer_broadcast_data result_data;
->> >>+
->> >>+	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE)
->> >>+		udev = dev;
->> >>+	else
->> >>+		udev = dev->bus->self;
->> >>+
->> >>+	parent = udev->subordinate;
->> >>+	pci_lock_rescan_remove();
->> >>+	list_for_each_entry_safe_reverse(pdev, temp, &parent->devices,
->> >>+				 bus_list) {
->> >>+		pci_dev_get(pdev);
->> >>+		pci_dev_set_disconnected(pdev, NULL);
->> >>+		if (pci_has_subordinate(pdev))
->> >>+			pci_walk_bus(pdev->subordinate,
->> >>+				     pci_dev_set_disconnected, NULL);
->> >>+		pci_stop_and_remove_bus_device(pdev);
->> >>+		pci_dev_put(pdev);
->> >>+	}
->> >
->> >Any reason not to simply call
->> >
->> >	pci_walk_bus(udev->subordinate, pci_dev_set_disconnected, NULL);
->> >
->> >before the list_for_each_entry_safe_reverse() iteration, instead of
->> >calling it for each device on the subordinate bus and for each
->> >device's children?  Should be semantically identical, saves 3 LoC
->> >and saves wasted cycles of acquiring pci_bus_sem over and over again
->> >for each device on the subordinate bus.
->> 
->> Well this is borrowed code from DPC driver, hence I thought to keep 
->> the
->> same.
->> but to me it looks like its taking care of PCIe switch where is goes 
->> through
->> all the subordinates, and which could turn out to be more swicthes 
->> down the
->> line, and son on...
->> it goes all the way down to the tree
-> 
-> ... which is precisely what the one line I suggested above does.
-> 
-> You don't need to respin for this alone as far as I'm concerned,
-> but please post a follow-up refactoring patch.  I have a patch
-> in the pipeline which makes the same change in pciehp, hence this
-> caught my eye.
-> 
-> Thanks,
-> 
-> Lukas
+This patch implements generic pcie_port_find_service() routine.
 
-Thanks Lukas, I will keep this in my pipeline as an optimization.
-appreciate your input.
+Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
 
-Regards,
-Oza.
+diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+index 4fa1ee4..fdfc474 100644
+--- a/drivers/pci/pcie/aer/aerdrv_core.c
++++ b/drivers/pci/pcie/aer/aerdrv_core.c
+@@ -228,32 +228,6 @@ static bool find_source_device(struct pci_dev *parent,
+ 	return true;
+ }
+ 
+-static int find_aer_service_iter(struct device *device, void *data)
+-{
+-	struct pcie_port_service_driver *service_driver, **drv;
+-
+-	drv = (struct pcie_port_service_driver **) data;
+-
+-	if (device->bus == &pcie_port_bus_type && device->driver) {
+-		service_driver = to_service_driver(device->driver);
+-		if (service_driver->service == PCIE_PORT_SERVICE_AER) {
+-			*drv = service_driver;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev)
+-{
+-	struct pcie_port_service_driver *drv = NULL;
+-
+-	device_for_each_child(&dev->dev, &drv, find_aer_service_iter);
+-
+-	return drv;
+-}
+-
+ /**
+  * handle_error_source - handle logging error into an event log
+  * @aerdev: pointer to pcie_device data structure of the root port
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index c4ded88..33a16b1 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -199,10 +199,8 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
+ 		udev = dev->bus->self;
+ 	}
+ 
+-#if IS_ENABLED(CONFIG_PCIEAER)
+ 	/* Use the aer driver of the component firstly */
+-	driver = find_aer_service(udev);
+-#endif
++	driver = pcie_port_find_service(udev, PCIE_PORT_SERVICE_AER);
+ 
+ 	if (driver && driver->reset_link) {
+ 		status = driver->reset_link(udev);
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index 47c9824..ba6c963 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -112,5 +112,6 @@ static inline bool pcie_pme_no_msi(void) { return false; }
+ static inline void pcie_pme_interrupt_enable(struct pci_dev *dev, bool en) {}
+ #endif /* !CONFIG_PCIE_PME */
+ 
+-struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev);
++struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
++							u32 service);
+ #endif /* _PORTDRV_H_ */
+diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+index c9c0663..d843055 100644
+--- a/drivers/pci/pcie/portdrv_core.c
++++ b/drivers/pci/pcie/portdrv_core.c
+@@ -18,6 +18,10 @@
+ 
+ #include "../pci.h"
+ #include "portdrv.h"
++struct portdrv_service_data {
++	struct pcie_port_service_driver *drv;
++	u32 service;
++};
+ 
+ /**
+  * release_pcie_device - free PCI Express port service device structure
+@@ -398,6 +402,46 @@ static int remove_iter(struct device *dev, void *data)
+ 	return 0;
+ }
+ 
++static int find_service_iter(struct device *device, void *data)
++{
++	struct pcie_port_service_driver *service_driver;
++	struct portdrv_service_data *pdrvs;
++	u32 service;
++
++	pdrvs = (struct portdrv_service_data *) data;
++	service = pdrvs->service;
++
++	if (device->bus == &pcie_port_bus_type && device->driver) {
++		service_driver = to_service_driver(device->driver);
++		if (service_driver->service == service) {
++			pdrvs->drv = service_driver;
++			return 1;
++		}
++	}
++
++	return 0;
++}
++/**
++ * pcie_port_find_service - find the service driver
++ * @dev: PCI Express port the service devices associated with
++ * @service: Service to find
++ *
++ * Find PCI Express port service driver associated with given service
++ */
++struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
++							u32 service)
++{
++	struct pcie_port_service_driver *drv;
++	struct portdrv_service_data pdrvs;
++
++	pdrvs.drv = NULL;
++	pdrvs.service = service;
++	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
++
++	drv = pdrvs.drv;
++	return drv;
++}
++
+ /**
+  * pcie_port_device_remove - unregister PCI Express port service devices
+  * @dev: PCI Express port the service devices to unregister are associated with
+-- 
+2.7.4
