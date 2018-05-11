@@ -1,109 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753049AbeEKNPc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 09:15:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41202 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752952AbeEKNPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 09:15:30 -0400
-From: Patrick Bellasi <patrick.bellasi@arm.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>
-Subject: [PATCH v2 1/3] sched/cpufreq: always consider blocked FAIR utilization
-Date: Fri, 11 May 2018 14:15:07 +0100
-Message-Id: <20180511131509.16275-2-patrick.bellasi@arm.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180511131509.16275-1-patrick.bellasi@arm.com>
-References: <20180511131509.16275-1-patrick.bellasi@arm.com>
+        id S1753088AbeEKN0V (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 09:26:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39838 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752394AbeEKN0U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 09:26:20 -0400
+Date: Fri, 11 May 2018 06:26:13 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Huaisheng HS1 Ye <yehs1@lenovo.com>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@suse.com" <mhocko@suse.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
+        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [External]  Re: [PATCH v1] include/linux/gfp.h: getting rid of
+ GFP_ZONE_TABLE/BAD
+Message-ID: <20180511132613.GA30263@bombadil.infradead.org>
+References: <1525968625-40825-1-git-send-email-yehs1@lenovo.com>
+ <20180510163023.GB30442@bombadil.infradead.org>
+ <HK2PR03MB16843E14AD56B3E546D9F52D929F0@HK2PR03MB1684.apcprd03.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <HK2PR03MB16843E14AD56B3E546D9F52D929F0@HK2PR03MB1684.apcprd03.prod.outlook.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the refactoring introduced by:
+On Fri, May 11, 2018 at 03:24:34AM +0000, Huaisheng HS1 Ye wrote:
+> > From: owner-linux-mm@kvack.org [mailto:owner-linux-mm@kvack.org] On Behalf Of Matthew
+> > Wilcox
+> > On Fri, May 11, 2018 at 12:10:25AM +0800, Huaisheng Ye wrote:
+> > > -#define __GFP_DMA	((__force gfp_t)___GFP_DMA)
+> > > -#define __GFP_HIGHMEM	((__force gfp_t)___GFP_HIGHMEM)
+> > > -#define __GFP_DMA32	((__force gfp_t)___GFP_DMA32)
+> > > +#define __GFP_DMA	((__force gfp_t)OPT_ZONE_DMA ^ ZONE_NORMAL)
+> > > +#define __GFP_HIGHMEM	((__force gfp_t)ZONE_MOVABLE ^ ZONE_NORMAL)
+> > > +#define __GFP_DMA32	((__force gfp_t)OPT_ZONE_DMA32 ^ ZONE_NORMAL)
+> > 
+> > No, you've made gfp_zone even more complex than it already is.
+> > If you can't use OPT_ZONE_HIGHMEM here, then this is a waste of time.
+> > 
+> Dear Matthew,
+> 
+> The reason why I don't use OPT_ZONE_HIGHMEM for __GFP_HIGHMEM	 directly is that, for x86_64 platform there is no CONFIG_HIGHMEM, so OPT_ZONE_HIGHMEM shall always be equal to ZONE_NORMAL.
 
-   commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
+Right.  On 64-bit platforms, if somebody asks for HIGHMEM, they should
+get NORMAL pages.
 
-we aggregate FAIR utilization only if this class has runnable tasks.
-This was mainly due to avoid the risk to stay on an high frequency just
-because of the blocked utilization of a CPU not being properly decayed
-while the CPU was idle.
+> For gfp_zone it is impossible to distinguish the meaning of lowest 3 bits in flags. How can gfp_zone to understand it comes from OPT_ZONE_HIGHMEM or ZONE_NORMAL?
+> And the most pained thing is that, if __GFP_HIGHMEM with movable flag enabled, it means that ZONE_MOVABLE shall be returned.
+> That is different from ZONE_DMA, ZONE_DMA32 and ZONE_NORMAL.
 
-However, since:
+The point of this exercise is to actually encode the zone number in
+the bottom bits of the GFP flags instead of something which has to be
+interpreted into a zone number.  When somebody sets __GFP_MOVABLE, they
+should also be setting ZONE_MOVABLE:
 
-   commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
+-#define __GFP_MOVABLE   ((__force gfp_t)___GFP_MOVABLE)  /* ZONE_MOVABLE allowed */
++#define __GFP_MOVABLE   ((__force gfp_t)(___GFP_MOVABLE | (ZONE_MOVABLE ^ ZONE_NORMAL)))
 
-the FAIR blocked utilization is properly decayed also for IDLE CPUs.
+One thing that does need to change is:
 
-This allows us to use the FAIR blocked utilization as a safe mechanism
-to gracefully reduce the frequency only if no FAIR tasks show up on a
-CPU for a reasonable period of time.
+-#define GFP_HIGHUSER_MOVABLE    (GFP_HIGHUSER | __GFP_MOVABLE)
++#define GFP_HIGHUSER_MOVABLE    (GFP_USER | __GFP_MOVABLE)
 
-Moreover, we also reduce the frequency drops of CPUs running periodic
-tasks which, depending on the task periodicity and the time required
-for a frequency switch, was increasing the chances to introduce some
-undesirable performance variations.
+otherwise we'll be OR'ing ZONE_MOVABLE and ZONE_HIGHMEM together.
 
-Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-
----
-
-Changes in v2:
- - add "Acked-by" Viresh tag
----
- kernel/sched/cpufreq_schedutil.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index d2c6083304b4..a74d05160e66 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -183,22 +183,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
- static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
- {
- 	struct rq *rq = cpu_rq(sg_cpu->cpu);
--	unsigned long util;
- 
--	if (rq->rt.rt_nr_running) {
--		util = sg_cpu->max;
--	} else {
--		util = sg_cpu->util_dl;
--		if (rq->cfs.h_nr_running)
--			util += sg_cpu->util_cfs;
--	}
-+	if (rq->rt.rt_nr_running)
-+		return sg_cpu->max;
- 
- 	/*
-+	 * Utilization required by DEADLINE must always be granted while, for
-+	 * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
-+	 * gracefully reduce the frequency when no tasks show up for longer
-+	 * periods of time.
-+	 *
- 	 * Ideally we would like to set util_dl as min/guaranteed freq and
- 	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
- 	 * ready for such an interface. So, we only do the latter for now.
- 	 */
--	return min(util, sg_cpu->max);
-+	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
- }
- 
- static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
--- 
-2.15.1
+> I was thinking...
+> Whether it is possible to use other judgement condition to decide OPT_ZONE_HIGHMEM or ZONE_MOVABLE shall be returned from gfp_zone.
+> 
+> Sincerely,
+> Huaisheng Ye
+> 
+> 
+> > >  static inline enum zone_type gfp_zone(gfp_t flags)
+> > >  {
+> > >  	enum zone_type z;
+> > > -	int bit = (__force int) (flags & GFP_ZONEMASK);
+> > > +	z = ((__force unsigned int)flags & ___GFP_ZONE_MASK) ^ ZONE_NORMAL;
+> > > +
+> > > +	if (z > OPT_ZONE_HIGHMEM)
+> > > +		z = OPT_ZONE_HIGHMEM +
+> > > +			!!((__force unsigned int)flags & ___GFP_MOVABLE);
+> > >
+> > > -	z = (GFP_ZONE_TABLE >> (bit * GFP_ZONES_SHIFT)) &
+> > > -					 ((1 << GFP_ZONES_SHIFT) - 1);
+> > > -	VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
+> > > +	VM_BUG_ON(z > ZONE_MOVABLE);
+> > >  	return z;
+> > >  }
+> 
