@@ -1,88 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751333AbeEKArq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 20:47:46 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49608 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750746AbeEKAro (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 20:47:44 -0400
-Subject: Re: mmotm 2018-05-10-16-34 uploaded (objtool)
-To: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
-References: <20180510233519.eYStA%akpm@linux-foundation.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Message-ID: <aa27dcd5-8121-3da9-a6d8-2108a849986e@infradead.org>
-Date: Thu, 10 May 2018 17:47:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751962AbeEKAvV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 20:51:21 -0400
+Received: from mga06.intel.com ([134.134.136.31]:38285 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750758AbeEKAvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 20:51:18 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,387,1520924400";
+   d="scan'208";a="223323381"
+Date: Fri, 11 May 2018 08:50:25 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Steve French <smfrench@gmail.com>
+Cc: kbuild-all@01.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>, linux-kernel@vger.kernel.org
+Subject: [cifs:for-next 12/12] fs/cifs/cifsfs.c:1056:5: sparse: symbol
+ 'cifs_dir_fsync' was not declared. Should it be static?
+Message-ID: <201805110802.lpBxehxn%fengguang.wu@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180510233519.eYStA%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/10/2018 04:35 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2018-05-10-16-34 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (4.x
-> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
-> 
-> The file broken-out.tar.gz contains two datestamp files: .DATE and
-> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> followed by the base kernel version against which this patch series is to
-> be applied.
-> 
-> This tree is partially included in linux-next.  To see which patches are
-> included in linux-next, consult the `series' file.  Only the patches
-> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-> linux-next.
-> 
-> A git tree which contains the memory management portion of this tree is
-> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-> by Michal Hocko.  It contains the patches which are between the
-> "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-> file, http://www.ozlabs.org/~akpm/mmotm/series.
-> 
-> 
-> A full copy of the full kernel tree with the linux-next and mmotm patches
-> already applied is available through git within an hour of the mmotm
-> release.  Individual mmotm releases are tagged.  The master branch always
-> points to the latest release, so it's constantly rebasing.
-> 
-> http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-Hi Josh, Peter:
-
-Is this something that you already have fixes for?
+tree:   git://git.samba.org/sfrench/cifs-2.6.git for-next
+head:   c3d5c2a93abfc181d9f274dd5e4b18749dc0643f
+commit: c3d5c2a93abfc181d9f274dd5e4b18749dc0643f [12/12] smb3: directory sync should not return an error
+reproduce:
+        # apt-get install sparse
+        git checkout c3d5c2a93abfc181d9f274dd5e4b18749dc0643f
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-on x86_64:
+sparse warnings: (new ones prefixed by >>)
 
-drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_suspend()+0xbb8: sibling call from callable instruction with modified stack frame
-drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_resume()+0xcc5: sibling call from callable instruction with modified stack frame
+   fs/cifs/cifsglob.h:1653:41: sparse: symbol 'cifs_tcp_ses_list' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1664:41: sparse: symbol 'cifs_tcp_ses_lock' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1676:28: sparse: symbol 'GlobalCurrentXid' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1677:28: sparse: symbol 'GlobalTotalActiveXid' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1678:28: sparse: symbol 'GlobalMaxActiveXid' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1679:26: sparse: symbol 'GlobalMid_Lock' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1684:24: sparse: symbol 'sesInfoAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1685:24: sparse: symbol 'tconInfoAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1686:24: sparse: symbol 'tcpSesAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1687:24: sparse: symbol 'tcpSesReconnectCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1688:24: sparse: symbol 'tconInfoReconnectCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1691:24: sparse: symbol 'bufAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1693:24: sparse: symbol 'totBufAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1694:24: sparse: symbol 'totSmBufAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1696:24: sparse: symbol 'smBufAllocCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1697:24: sparse: symbol 'midCount' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1700:20: sparse: symbol 'enable_oplocks' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1701:20: sparse: symbol 'lookupCacheEnabled' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1702:28: sparse: symbol 'global_secflags' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1704:28: sparse: symbol 'sign_CIFS_PDUs' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1705:20: sparse: symbol 'linuxExtEnabled' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1706:28: sparse: symbol 'CIFSMaxBufSize' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1707:28: sparse: symbol 'cifs_min_rcv' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1708:28: sparse: symbol 'cifs_min_small' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1709:28: sparse: symbol 'cifs_max_pending' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1712:30: sparse: symbol 'uidtree' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1713:30: sparse: symbol 'gidtree' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1714:26: sparse: symbol 'siduidlock' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1715:26: sparse: symbol 'sidgidlock' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1716:30: sparse: symbol 'siduidtree' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1717:30: sparse: symbol 'sidgidtree' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1718:26: sparse: symbol 'uidsidlock' was not declared. Should it be static?
+   fs/cifs/cifsglob.h:1719:26: sparse: symbol 'gidsidlock' was not declared. Should it be static?
+>> fs/cifs/cifsfs.c:1056:5: sparse: symbol 'cifs_dir_fsync' was not declared. Should it be static?
 
+Please review and possibly fold the followup patch.
 
-
-thanks,
--- 
-~Randy
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
