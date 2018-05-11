@@ -1,73 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753212AbeEKO3s (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 10:29:48 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42396 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753050AbeEKO3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 10:29:23 -0400
-From: Robin Murphy <robin.murphy@arm.com>
-To: will.deacon@arm.com, mark.rutland@arm.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        pawel.moll@arm.com, suzuki.poulose@arm.com
-Subject: [PATCH 2/3] perf/arm-cci: Remove pointless PMU disabling
-Date: Fri, 11 May 2018 15:29:13 +0100
-Message-Id: <0278134025d69817f28ee50a704fb63715a397d8.1526048005.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.17.0.dirty
-In-Reply-To: <cover.1526048005.git.robin.murphy@arm.com>
-References: <cover.1526048005.git.robin.murphy@arm.com>
+        id S1753178AbeEKOcg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 10:32:36 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:46484 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753002AbeEKOcc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 10:32:32 -0400
+X-Google-Smtp-Source: AB8JxZpARKKoOF2NjOG+IBOzSqSA8AHOVUtVDPjdJPFjiPiW1vkdwQKCHufe4qnl6VoBv9NiA3aJ/g==
+Date: Fri, 11 May 2018 07:32:28 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Shuah Khan <shuah@kernel.org>
+Cc: Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, kernel-team@fb.com,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] selftests/cgroup: memory controller self-tests
+Message-ID: <20180511143228.GU2368884@devbig577.frc2.facebook.com>
+References: <20180510163701.28936-1-guro@fb.com>
+ <20180510183224.GP2368884@devbig577.frc2.facebook.com>
+ <a652ce44-07f9-d229-70d4-4376bfbafa40@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a652ce44-07f9-d229-70d4-4376bfbafa40@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CCI PMU driver bears some legacy remnants of the arm_pmu framework
-from when it was split in c6f85cb4305b ("bus: cci: move away from
-arm_pmu framework"). In particular this perf_pmu_{dis,en}able() dance
-around pmu->add which was fixed for arm_pmu in a9e469d1c89b
-("drivers/perf: arm_pmu: remove pointless PMU disabling").
+Hello, Shuah.
 
-For the exact same reasons (i.e. perf core already does this around the
-call anyway), give cci_pmu_add() the exact same change, which also
-prevents having to export those core functions to build it as a module.
+On Thu, May 10, 2018 at 01:29:07PM -0600, Shuah Khan wrote:
+> Don't pull them yet. If Roman can redo the patches on linux-kselftest next,
+> he can pick up the SKIP changes.
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
- drivers/perf/arm-cci.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+So, what we can do is either fix that up during / after the merge
+window or creating a separate branch which pulls from both cgroup and
+kselftest.  Please let me know which way you wanna go and if the
+latter which branch I should pull (it gotta be a stable branch).
 
-diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
-index 53c774b20563..7029d8fe8f44 100644
---- a/drivers/perf/arm-cci.c
-+++ b/drivers/perf/arm-cci.c
-@@ -1184,16 +1184,11 @@ static int cci_pmu_add(struct perf_event *event, int flags)
- 	struct cci_pmu_hw_events *hw_events = &cci_pmu->hw_events;
- 	struct hw_perf_event *hwc = &event->hw;
- 	int idx;
--	int err = 0;
--
--	perf_pmu_disable(event->pmu);
- 
- 	/* If we don't have a space for the counter then finish early. */
- 	idx = pmu_get_event_idx(hw_events, event);
--	if (idx < 0) {
--		err = idx;
--		goto out;
--	}
-+	if (idx < 0)
-+		return idx;
- 
- 	event->hw.idx = idx;
- 	hw_events->events[idx] = event;
-@@ -1205,9 +1200,7 @@ static int cci_pmu_add(struct perf_event *event, int flags)
- 	/* Propagate our changes to the userspace mapping. */
- 	perf_event_update_userpage(event);
- 
--out:
--	perf_pmu_enable(event->pmu);
--	return err;
-+	return 0;
- }
- 
- static void cci_pmu_del(struct perf_event *event, int flags)
+Thanks.
+
 -- 
-2.17.0.dirty
+tejun
