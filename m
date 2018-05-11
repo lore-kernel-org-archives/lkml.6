@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3845081-1526037300-2-16843076021736565848
+X-Cyrus-Session-Id: sloti22d1t05-3845081-1526037270-2-11168415911043307321
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526037299; b=kdmJtD44MVK0gQQxU0D2o9kVl9PTuzz0KagccFt1/z3sWYeBS0
-    94nrbJvETanVAcLlvBv0/xUkVihtPqgvyYnHQ4+dX84eUkKv+GNvqkjSA3rvzgrV
-    Yux5/y0laKpqnQXMD13nwxwxY/TC0vMjJa/FpU6KDpm/vMHvInQlAxGqcVvEhSf/
-    YfykTbshSc8zI3lylMl2024e6RZfA+OAkoGDFJwLIKty5OVCOjl2EiQuWfZNilhz
-    NTuFwNA55409VpkxVpX0bEn6bXno0croaifXCO48NTPsDF1RffLguB7pZ/cvBw0x
-    NPpaLpu9wT8PAUVz7tqAydMnx7cLCDlvZ+0Q==
+    1526037270; b=PggnauKuFNBGXCn/RuGzH4XeRFoXh2yyUS6pIFDBPL2nvPvSc/
+    b9Q9o6f55diX/ebKB/nVyCMWvYPjvCeTZQBuSYpywBSEyn2URlDrEUvJOaQAwXxO
+    iiSxAC8PJ/5M0VyV1YNBVBg6WjU4lpYakTnV4HOMPcoSU0fzuMQxXFhW2jtBM+gh
+    rQOHxuxSxCtcCA4EEu4ugN7scZInODeVoZWtV82MGPkhNfLJSkYOsD77o/nR2hP8
+    A78bakSRovJiyc+qVaMsUqqnfd1ZEiaPbMGTt+zmJ6YzbC5OIPDqtB7XOJfj7btp
+    MWITrXNNgAMvVTo7gHmUt9iS/tUAtfy48Cug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526037299; bh=
-    OG/3FkKUPa/C2IpkpEYuVJ6JevawRbIXYMusu9CDMWY=; b=CclaHWmDu9bBHHhT
-    RAY+ouO28J6wU0ydALxfKwJ/xJYo8renyj7TOmSjj0rvXMPzuyzYLAmbNB4XDU4w
-    i4eRPDGK6S01qKLcvP8ZM/n4MD8qsT4CRAM9HbY4fV6ne0kk7+lkbj0RqGTiHY8B
-    ApbFEvvU5lKu2ErpHr70GxxBYxsBqE22/HiZH7+7nwaGLlup5O1ooqcWAzwc4r8q
-    NRwtQ2FmkiFyNLUpW+MFRkZWmSJSsocpzTRjcS4epJYTz008pII3TaY82oq/Xe/Y
-    UB52r2toe1w7sbVsOrJ0JHd9yChWlZTgmWVSgPpEmhg5jH3OZRScotLI0A8mNmuq
-    7h+RVQ==
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526037270; bh=
+    wBgMHnIzTinHJ7/71n1pkOZkev56TvpSxLS0UnCZQZg=; b=JnF5S3I1ZdgvaY6c
+    xry7tVTrF+ij9l/UZHu9LqsFfip9g5aRjIvfYyf1HeXuKPB7sECE5OlpMk68ukzW
+    T8lyyajhIZUz8q711koCWccTqE3BD5nDw1TFwWQRglGUT8gNWPVl/DIFZgz+ENyl
+    CtX/YHPsWPrctbSPPzA7HIlD+qyDjxoeZjW9Qmz/Ij4uUY33BcI8FjXf20a8P1U/
+    5QZn82RAbMj6C63P+RlUXxSwQIz8j++msZQ9fD6KXESA8Lc2U2Fiya7nCB3mVHN9
+    FfLYkoBBtDE9EWEKFQK66Owb52qMQ7uzcLRpsCJA87JqltqXJG4xJgMABvfYhqW6
+    6xL8WQ==
 ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=Ux/vamup
+    header.d=infradead.org header.i=@infradead.org header.b=bdeVKg8Q
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
 Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=Ux/vamup
+      header.d=infradead.org header.i=@infradead.org header.b=bdeVKg8Q
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -63,28 +63,28 @@ Authentication-Results: mx2.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLFRvvHuUi+0cqZ7tKQnpbb3/s8T7wayRhDNdSW64c0EhlPv6T9quzeVVw6PIUqYn7pfcl8HuxkKJfRDuCxTeZ5r4YWQa7asevThNUFOeMEKZVRYx2Nf
-    fAzIoMs1UgdmGVpJHGnIMAS441gaQPQVP5fI/P0nN++39iWd8jAvHZy6MdmmCsWrqa6jsWCSnEjtY11x+UgWdm3CDlRXXRDlGm/Ct7uhcehMwlver2BME5FA
+X-CM-Envelope: MS4wfHOwvPWPwS7YTDzKn3MxWx+XHkPglZjbWOdmhjf7lC959Q8aev49ifNfthDN09gWViC6zSdG9XdJMTpPdleNJ+sGHb0JF59u2CyXsGI4cKZwt112CEGX
+    E5UOU9RDfDIFbcbnPoGXx1GO1gy7QKs9vMAoMw1Un/3z4e8zWPmZ+EKoov2+kYQN/CzJciHY2qoYxWRx4NWQEfkJGuF3XK/4tO0NMWyG6T3hpbTPofpx1hPJ
 X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=2Q-G4Ex131KUB3becfsA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=2Ns_JZRm6thByNElF-kA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753421AbeEKLOf (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 11 May 2018 07:14:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47508 "EHLO
+        id S1753352AbeEKLJ0 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 11 May 2018 07:09:26 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47500 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753345AbeEKLJZ (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Fri, 11 May 2018 07:09:25 -0400
+        with ESMTP id S1753315AbeEKLJY (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Fri, 11 May 2018 07:09:24 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
         linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 25/32] net/phonet: convert to ->poll_mask
-Date: Fri, 11 May 2018 13:07:56 +0200
-Message-Id: <20180511110803.10910-26-hch@lst.de>
+Subject: [PATCH 24/32] net/nfc: convert to ->poll_mask
+Date: Fri, 11 May 2018 13:07:55 +0200
+Message-Id: <20180511110803.10910-25-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180511110803.10910-1-hch@lst.de>
 References: <20180511110803.10910-1-hch@lst.de>
@@ -97,39 +97,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- net/phonet/socket.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ net/nfc/llcp_sock.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/net/phonet/socket.c b/net/phonet/socket.c
-index 9ecf02def928..ea2bfc3aafb9 100644
---- a/net/phonet/socket.c
-+++ b/net/phonet/socket.c
-@@ -340,15 +340,12 @@ static int pn_socket_getname(struct socket *sock, struct sockaddr *addr,
- 	return sizeof(struct sockaddr_pn);
+diff --git a/net/nfc/llcp_sock.c b/net/nfc/llcp_sock.c
+index ea0c0c6f1874..ab5bb14b49af 100644
+--- a/net/nfc/llcp_sock.c
++++ b/net/nfc/llcp_sock.c
+@@ -548,16 +548,13 @@ static inline __poll_t llcp_accept_poll(struct sock *parent)
+ 	return 0;
  }
  
--static __poll_t pn_socket_poll(struct file *file, struct socket *sock,
--					poll_table *wait)
-+static __poll_t pn_socket_poll_mask(struct socket *sock, __poll_t events)
+-static __poll_t llcp_sock_poll(struct file *file, struct socket *sock,
+-				   poll_table *wait)
++static __poll_t llcp_sock_poll_mask(struct socket *sock, __poll_t events)
  {
  	struct sock *sk = sock->sk;
- 	struct pep_sock *pn = pep_sk(sk);
  	__poll_t mask = 0;
  
--	poll_wait(file, sk_sleep(sk), wait);
+ 	pr_debug("%p\n", sk);
+ 
+-	sock_poll_wait(file, sk_sleep(sk), wait);
 -
- 	if (sk->sk_state == TCP_CLOSE)
- 		return EPOLLERR;
- 	if (!skb_queue_empty(&sk->sk_receive_queue))
-@@ -473,7 +470,7 @@ const struct proto_ops phonet_stream_ops = {
- 	.socketpair	= sock_no_socketpair,
- 	.accept		= pn_socket_accept,
- 	.getname	= pn_socket_getname,
--	.poll		= pn_socket_poll,
-+	.poll_mask	= pn_socket_poll_mask,
- 	.ioctl		= pn_socket_ioctl,
- 	.listen		= pn_socket_listen,
- 	.shutdown	= sock_no_shutdown,
+ 	if (sk->sk_state == LLCP_LISTEN)
+ 		return llcp_accept_poll(sk);
+ 
+@@ -899,7 +896,7 @@ static const struct proto_ops llcp_sock_ops = {
+ 	.socketpair     = sock_no_socketpair,
+ 	.accept         = llcp_sock_accept,
+ 	.getname        = llcp_sock_getname,
+-	.poll           = llcp_sock_poll,
++	.poll_mask      = llcp_sock_poll_mask,
+ 	.ioctl          = sock_no_ioctl,
+ 	.listen         = llcp_sock_listen,
+ 	.shutdown       = sock_no_shutdown,
+@@ -919,7 +916,7 @@ static const struct proto_ops llcp_rawsock_ops = {
+ 	.socketpair     = sock_no_socketpair,
+ 	.accept         = sock_no_accept,
+ 	.getname        = llcp_sock_getname,
+-	.poll           = llcp_sock_poll,
++	.poll_mask      = llcp_sock_poll_mask,
+ 	.ioctl          = sock_no_ioctl,
+ 	.listen         = sock_no_listen,
+ 	.shutdown       = sock_no_shutdown,
 -- 
 2.17.0
 
