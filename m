@@ -1,145 +1,265 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3750221-1526032053-2-3185546977383141130
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526032052; b=gt28CPqyMFVtnfX2zXI0F/1Lnv+zOEA1vGItD7tUH4YDxA4fOW
-    tIZ/zcIgDZh1s0sPyQkKLJW87fY3D9eS9TLdVew1Ea95xDNOiuyP/6QvtvrVW+NW
-    EAidkaFPILuUe2NFC6E2QopOkbBC3M1hL/thoNrWEjEVnMK7YG08FUq+VEplaPr2
-    OWNDQIcCBOWBC0i/aQIWBRKwlkbwr93Ji+f0gG08GK2gwQa/KffRfqPy5BfC+k1m
-    0139Mn599iODxDHBYWPT6ZHBxuEJpZVGWgl7SrrNaV4X+LCzYMEqTX+7d13+kv7O
-    qWjWYfx0s9VtopQBSabjUX7BTvCZ5oyc4icw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526032052; bh=o4tRp
-    tE4xzSfwsHvZ83WFVm58CoPvklIsFjF6h9itJk=; b=bSkJN31IZnbMSfsFCILfk
-    IkI3uEEc6IOdLL4ZQo0tzdPRvma1yIfy1UQ3Soj9yX4PIGVNPlj+EEN0k/Pui/xx
-    ouPjFuJz+09MoJmC+3kXbQm6x/9oFvjaKdPbKaW1Yf2c5RF2uHC9e13PkeKdzo/O
-    Hum8Na3e8JePkNKdM6rj7/nOYmMR7F+AiqNsEPN7jOMT6W1tqDWU/YIoqUYvf9T0
-    byRnbdzRAt9pwrpAPXcKwOzyI0gvIkgZ3hP+0LTEbjeqSVS3z0Uie02q/qn4hWZ8
-    3uVbhoQFYVkMYnxN/ivOkBx+O6r+6s4hyCLzmWWrT4DZw1nb+bGWdOcl5MxknR75
-    g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-    header.d=kernel.org header.i=@kernel.org header.b=R80CLh/c x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-    x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=linuxfoundation.org
-    header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-      header.d=kernel.org header.i=@kernel.org header.b=R80CLh/c x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-      x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=linuxfoundation.org
-      header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMM2y1FWHIRcUFfMKiDeU9RlsM2+7EJSDdtFMwy7t4EZXiOnp3qr1axohmYxAgvAHKDedNpGPLNXXTgGoOY3Q+187qUR9SJ79y0KCjRZwxm+qjxmaqsF
-    4zfScx0wc0+42zLmXAijsEOlsAatbOtqQPhK/WImISdYoVGbd4yJCI5rUWgHQxGU9Sl81TLMyttzh2+qks/iLTi3+9+Xwes/279EfHlO5SmKxNwptvJ0YvbJ
-    omkYvlIN2cPA9qMmWIl2bw==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8
-    a=DDOyTI_5AAAA:8 a=M62ClyTdAMHlj1xKk5wA:9 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Fri, 11 May 2018 11:47:07 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Doug Oucharek <dougso@me.com>
-Subject: Re: [PATCH v2] staging: lustre: o2iblnd: Fix crash in
- kiblnd_handle_early_rxs()
-Message-ID: <20180511094707.GB18687@kroah.com>
-References: <1525975621-4978-1-git-send-email-dougso@me.com>
+Return-Path: <gladkov.alexey@gmail.com>
+X-Google-Smtp-Source: AB8JxZoKSsqskNilJd5A90LeU2NdtwQIKW/ed6o0hk99AzHhI1MBlO/T4ieF1UI7frmnaxlOJlKJ
+ARC-Seal: i=1; a=rsa-sha256; t=1526032003; cv=none;
+        d=google.com; s=arc-20160816;
+        b=aliwndKJA61Lg0NxVDnMeMh0gFLvW4PNzcZAd7PrmWDN3mCnBmAkSg5S7dGT8aGBIU
+         KdN3uW+A4/OdRxIG5SlBCELSne20RSKyWNQ0xS+TTiuJrltX3ajXWPY5Y1bRxkNol95A
+         SHnKaOyTk5QTfY8m9XFk2xe/SG2z4Ny1ux95k918qFiaF6eVksPKuY7ZWWIeSGzUvNPi
+         bll/bK0JvPw5P2UiCr9k90RQLO+HdlODI+2YfJrw99OHdmSwm353kBeezHpbScBSkfYl
+         hDx8dHFC6/Tp/38ASFZ2iGupeggP6XS4i9JH0arHos3ZEwWKN1cg0OIy8Tuzou3vvpb3
+         9vVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=uDFBzXNfutadFONYghTX3AG4c3h6HKmgtG+K5QFwAEA=;
+        b=ZRQgnDaMsjyjJ1V9d7RA1tYAb8AFK6BVs1iEmedx4Z1p1aVFYR09oPq8aCOEuKz08d
+         nGqoF19Vk+FEJeSOO9wBg6erBl/PR3/XtkY6SL2MATJxiASihfWnJdoHTqTguzKZxD7a
+         OFREWl5WuIsBSQIpD3J2Y+W2AWdMND4yIyJjrI6FD9m8x34IV1X2wlixgRh5KFHtX6v2
+         zOgY8S68i7DQ+8wOgeawAkLWMkGVPJ7aNxSH5Cy7aiuPslGTfiiTF/2tPpntu58zRAuH
+         Mwc9SbY9MTzhAhVfjJY+WkgSF86jvX6BAYM59qy+VSsPDbJn1/deWi2zfV9AgmaR9Paj
+         CPFw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning gladkov.alexey@gmail.com does not designate 5.9.28.80 as permitted sender) smtp.mailfrom=gladkov.alexey@gmail.com;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning gladkov.alexey@gmail.com does not designate 5.9.28.80 as permitted sender) smtp.mailfrom=gladkov.alexey@gmail.com;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Date: Fri, 11 May 2018 11:36:45 +0200
+From: Alexey Gladkov <gladkov.alexey@gmail.com>
+To: Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Akinobu Mita <akinobu.mita@gmail.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Jeff Layton <jlayton@poochiereds.net>,
+	Ingo Molnar <mingo@kernel.org>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	aniel Micay <danielmicay@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, bfields@fieldses.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>, solar@openwall.com,
+	"Dmitry V. Levin" <ldv@altlinux.org>,
+	Djalal Harouni <tixxdz@gmail.com>
+Subject: [PATCH v5 6/7] proc: flush task dcache entries from all procfs
+ instances
+Message-ID: <20180511093645.GA1365@comp-core-i7-2640m-0182e6>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1525975621-4978-1-git-send-email-dougso@me.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Oleg Drokin <oleg.drokin@intel.com>,
- Lustre Development List <lustre-devel@lists.lustre.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600160534143415772?=
+X-GMAIL-MSGID: =?utf-8?q?1600160534143415772?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 10, 2018 at 11:07:01AM -0700, Doug Oucharek wrote:
-> Under upstream staging commit 5a2ca43fa54f561c252c2, the list handling
-> code in kiblnd_handle_early_rxs() got changed to list_for_each_safe().
-> That protects against the current thread from deleting the current entry
-> it is looking at. It does not protect against another thread from deleting
-> the next item in the list (which the tmp variable points to). The way this
-> routine holds then releases a lock opens the door to other threads doing
-> just that.
-> 
-> This patch reverts this commit on this routine.
-> 
-> Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-9886
+From: Djalal Harouni <tixxdz@gmail.com>
 
-Please add a line like:
-	Fixes: 5a2ca43fa54f ("Staging: lustre: Iterate list using list_for_each_entry")
+This allows to flush dcache entries of a task on multiple procfs mounts
+per pid namespace.
 
-when you know this information.
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
+---
+ fs/proc/base.c                | 27 ++++++++++++++++++++++-----
+ fs/proc/inode.c               |  9 ++++++++-
+ fs/proc/root.c                | 10 ++++++++++
+ include/linux/pid_namespace.h | 42 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/proc_fs.h       |  2 ++
+ 5 files changed, 84 insertions(+), 6 deletions(-)
 
-Also, I'm guessing you want this backported to the stable trees?  Or
-does no one who actually runs lustre run a kernel.org stable kernel?
-
-thanks,
-
-greg k-h
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 31baeef..987d702 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3068,7 +3068,8 @@ static const struct inode_operations proc_tgid_base_inode_operations = {
+ 	.permission	= proc_pid_permission,
+ };
+ 
+-static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
++static void proc_flush_task_mnt_root(struct dentry *mnt_root,
++				     pid_t pid, pid_t tgid)
+ {
+ 	struct dentry *dentry, *leader, *dir;
+ 	char buf[10 + 1];
+@@ -3077,7 +3078,7 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
+ 	name.name = buf;
+ 	name.len = snprintf(buf, sizeof(buf), "%u", pid);
+ 	/* no ->d_hash() rejects on procfs */
+-	dentry = d_hash_and_lookup(mnt->mnt_root, &name);
++	dentry = d_hash_and_lookup(mnt_root, &name);
+ 	if (dentry) {
+ 		d_invalidate(dentry);
+ 		dput(dentry);
+@@ -3088,7 +3089,7 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
+ 
+ 	name.name = buf;
+ 	name.len = snprintf(buf, sizeof(buf), "%u", tgid);
+-	leader = d_hash_and_lookup(mnt->mnt_root, &name);
++	leader = d_hash_and_lookup(mnt_root, &name);
+ 	if (!leader)
+ 		goto out;
+ 
+@@ -3143,14 +3144,30 @@ void proc_flush_task(struct task_struct *task)
+ 	int i;
+ 	struct pid *pid, *tgid;
+ 	struct upid *upid;
++	struct proc_fs_info *fs_info_entry;
++	struct pid_namespace *pid_ns;
++	struct dentry *mnt_root;
+ 
+ 	pid = task_pid(task);
+ 	tgid = task_tgid(task);
+ 
+ 	for (i = 0; i <= pid->level; i++) {
+ 		upid = &pid->numbers[i];
+-		proc_flush_task_mnt(upid->ns->proc_mnt, upid->nr,
+-					tgid->numbers[i].nr);
++		pid_ns = upid->ns;
++
++		pidns_proc_lock_shared(pid_ns);
++		list_for_each_entry(fs_info_entry, &pid_ns->procfs_mounts,
++				    pidns_entry) {
++			if (proc_fs_newinstance(fs_info_entry)) {
++				mnt_root = fs_info_entry->sb->s_root;
++				proc_flush_task_mnt_root(mnt_root, upid->nr,
++							 tgid->numbers[i].nr);
++			}
++		}
++		pidns_proc_unlock_shared(pid_ns);
++
++		mnt_root = pid_ns->proc_mnt->mnt_root;
++		proc_flush_task_mnt_root(mnt_root, upid->nr, tgid->numbers[i].nr);
+ 	}
+ }
+ 
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index 985df4b..5e62598 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -498,10 +498,17 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
+ int proc_fill_super(struct super_block *s, void *data, int silent)
+ {
+ 	struct proc_fs_info *fs_info = proc_sb(s);
++	struct pid_namespace *ns = get_pid_ns(fs_info->pid_ns);
+ 	struct inode *root_inode;
+ 	int ret;
+ 
+-	get_pid_ns(fs_info->pid_ns);
++	fs_info->sb = s;
++
++	if (proc_fs_newinstance(fs_info)) {
++		pidns_proc_lock(ns);
++		list_add_tail(&fs_info->pidns_entry, &ns->procfs_mounts);
++		pidns_proc_unlock(ns);
++	}
+ 
+ 	if (!proc_parse_options(data, fs_info))
+ 		return -EINVAL;
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index c5ce241..c72d22c 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -249,6 +249,13 @@ static void proc_kill_sb(struct super_block *sb)
+ 		dput(fs_info->proc_self);
+ 	if (fs_info->proc_thread_self)
+ 		dput(fs_info->proc_thread_self);
++
++	if (proc_fs_newinstance(fs_info)) {
++		pidns_proc_lock(ns);
++		list_del(&fs_info->pidns_entry);
++		pidns_proc_unlock(ns);
++	}
++
+ 	kill_anon_super(sb);
+ 	put_pid_ns(ns);
+ 	kfree(fs_info);
+@@ -357,6 +364,9 @@ int pid_ns_prepare_proc(struct pid_namespace *ns)
+ 		return PTR_ERR(mnt);
+ 
+ 	ns->proc_mnt = mnt;
++	init_rwsem(&ns->rw_procfs_mnts);
++	INIT_LIST_HEAD(&ns->procfs_mounts);
++
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
+index f91a8bf..767fc96 100644
+--- a/include/linux/pid_namespace.h
++++ b/include/linux/pid_namespace.h
+@@ -32,6 +32,8 @@ struct pid_namespace {
+ 	struct pid_namespace *parent;
+ #ifdef CONFIG_PROC_FS
+ 	struct vfsmount *proc_mnt; /* Internal proc mounted during each new pidns */
++	struct rw_semaphore rw_procfs_mnts;
++	struct list_head procfs_mounts; /* list of separated procfs mounts */
+ #endif
+ #ifdef CONFIG_BSD_PROCESS_ACCT
+ 	struct fs_pin *bacct;
+@@ -98,4 +100,44 @@ extern struct pid_namespace *task_active_pid_ns(struct task_struct *tsk);
+ void pidhash_init(void);
+ void pid_idr_init(void);
+ 
++#ifdef CONFIG_PROC_FS
++static inline void pidns_proc_lock(struct pid_namespace *pid_ns)
++{
++	down_write(&pid_ns->rw_procfs_mnts);
++}
++
++static inline void pidns_proc_unlock(struct pid_namespace *pid_ns)
++{
++	up_write(&pid_ns->rw_procfs_mnts);
++}
++
++static inline void pidns_proc_lock_shared(struct pid_namespace *pid_ns)
++{
++	down_read(&pid_ns->rw_procfs_mnts);
++}
++
++static inline void pidns_proc_unlock_shared(struct pid_namespace *pid_ns)
++{
++	up_read(&pid_ns->rw_procfs_mnts);
++}
++#else /* !CONFIG_PROC_FS */
++
++static inline void pidns_proc_lock(struct pid_namespace *pid_ns)
++{
++}
++
++static inline void pidns_proc_unlock(struct pid_namespace *pid_ns)
++{
++}
++
++static inline void pidns_proc_lock_shared(struct pid_namespace *pid_ns)
++{
++}
++
++static inline void pidns_proc_unlock_shared(struct pid_namespace *pid_ns)
++{
++}
++
++#endif /* CONFIG_PROC_FS */
++
+ #endif /* _LINUX_PID_NS_H */
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index 2d16d0e..70e8b10 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -19,7 +19,9 @@ enum { /* definitions for proc mount option limit_pids */
+ };
+ 
+ struct proc_fs_info {
++	struct super_block *sb;
+ 	struct pid_namespace *pid_ns;
++	struct list_head pidns_entry; /* Node in procfs_mounts of a pidns */
+ 	struct dentry *proc_self; /* For /proc/self */
+ 	struct dentry *proc_thread_self; /* For /proc/thread-self/ */
+ 	bool newinstance; /* Private flag for new separated instances */
+-- 
+2.10.5
