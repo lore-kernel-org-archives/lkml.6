@@ -1,121 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751617AbeEKRKZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 13:10:25 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:40490 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750711AbeEKRKX (ORCPT
+        id S1751373AbeEKRSs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 13:18:48 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47602 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750711AbeEKRSq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 13:10:23 -0400
-X-Google-Smtp-Source: AB8JxZruwLif94rsr6oy6XtPFcw/66g74uFvhKNVI7jD9BfuqzJtvjYNOEkVlnSexz07vtr8DL1jdoUmXux6B2y6Huc=
+        Fri, 11 May 2018 13:18:46 -0400
+Subject: Re: [PATCH v5 05/13] s390: vfio-ap: register matrix device with VFIO
+ mdev framework
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+From: Halil Pasic <pasic@linux.ibm.com>
+Date: Fri, 11 May 2018 19:18:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Fri, 11 May 2018 10:10:22 -0700
-Message-ID: <CAPcyv4g5p72aiXYh8Tf03tvZq8HNYmTFU95PJGG1iQ4JHcr9PA@mail.gmail.com>
-Subject: use memcpy_mcsafe() for copy_to_iter() (was: Re: [PATCH v3 0/9]
- Series short description)
-To: linux-nvdimm <linux-nvdimm@lists.01.org>
-Cc: "Luck, Tony" <tony.luck@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1525705912-12815-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18051117-0040-0000-0000-000004589718
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051117-0041-0000-0000-000020FCADC8
+Message-Id: <5471b194-d7ca-c9c6-132e-fa9539fe44f0@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805110161
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ingo, Thomas, Al, any concerns with this series?
 
-On Thu, May 3, 2018 at 5:06 PM, Dan Williams <dan.j.williams@intel.com> wrote:
-> Changes since v2 [1]:
->
-> * Fix source address increment in mcsafe_handle_tail() (Mika)
->
-> * Extend the unit test to inject simulated write faults and validate
->   that data is properly transferred.
->
-> * Rename MCSAFE_DEBUG to MCSAFE_TEST
->
-> [1]: https://lists.01.org/pipermail/linux-nvdimm/2018-May/015583.html
->
-> ---
->
-> Currently memcpy_mcsafe() is only deployed in the pmem driver when
-> reading through a /dev/pmemX block device. However, a filesystem in dax
-> mode mounted on a /dev/pmemX block device will bypass the block layer
-> and the driver for reads. The filesystem-dax (fsdax) read case uses
-> dax_direct_access() and copy_to_iter() to bypass the block layer.
->
-> The result of the bypass is that the kernel treats machine checks during
-> read as system fatal (reboot) when they could simply be flagged as an
-> I/O error, similar to performing reads through the pmem driver. Prevent
-> this fatal condition by deploying memcpy_mcsafe() in the fsdax read
-> path.
->
-> The main differences between this copy_to_user_mcsafe() and
-> copy_user_generic_unrolled() are:
->
-> * Typical tail/residue handling after a fault retries the copy
->   byte-by-byte until the fault happens again. Re-triggering machine
->   checks is potentially fatal so the implementation uses source alignment
->   and poison alignment assumptions to avoid re-triggering machine
->   checks.
->
-> * SMAP coordination is handled external to the assembly with
->   __uaccess_begin() and __uaccess_end().
->
-> * ITER_KVEC and ITER_BVEC can now end prematurely with an error.
->
-> The new MCSAFE_TEST facility is proposed as a way to unit test the
-> exception handling without requiring an ACPI EINJ capable platform.
->
-> ---
->
-> Dan Williams (9):
->       x86, memcpy_mcsafe: remove loop unrolling
->       x86, memcpy_mcsafe: add labels for write fault handling
->       x86, memcpy_mcsafe: return bytes remaining
->       x86, memcpy_mcsafe: add write-protection-fault handling
->       x86, memcpy_mcsafe: define copy_to_iter_mcsafe()
->       dax: introduce a ->copy_to_iter dax operation
->       dax: report bytes remaining in dax_iomap_actor()
->       pmem: switch to copy_to_iter_mcsafe()
->       x86, nfit_test: unit test for memcpy_mcsafe()
->
->
->  arch/x86/Kconfig                   |    1
->  arch/x86/Kconfig.debug             |    3 +
->  arch/x86/include/asm/mcsafe_test.h |   75 ++++++++++++++++++++++++
->  arch/x86/include/asm/string_64.h   |   10 ++-
->  arch/x86/include/asm/uaccess_64.h  |   14 +++++
->  arch/x86/lib/memcpy_64.S           |  112 +++++++++++++++++-------------------
->  arch/x86/lib/usercopy_64.c         |   21 +++++++
->  drivers/dax/super.c                |   10 +++
->  drivers/md/dm-linear.c             |   16 +++++
->  drivers/md/dm-log-writes.c         |   15 +++++
->  drivers/md/dm-stripe.c             |   21 +++++++
->  drivers/md/dm.c                    |   25 ++++++++
->  drivers/nvdimm/claim.c             |    3 +
->  drivers/nvdimm/pmem.c              |   13 +++-
->  drivers/s390/block/dcssblk.c       |    7 ++
->  fs/dax.c                           |   21 ++++---
->  include/linux/dax.h                |    5 ++
->  include/linux/device-mapper.h      |    5 +-
->  include/linux/string.h             |    4 +
->  include/linux/uio.h                |   15 +++++
->  lib/iov_iter.c                     |   61 ++++++++++++++++++++
->  tools/testing/nvdimm/test/nfit.c   |  104 +++++++++++++++++++++++++++++++++
->  22 files changed, 482 insertions(+), 79 deletions(-)
->  create mode 100644 arch/x86/include/asm/mcsafe_test.h
-> _______________________________________________
-> Linux-nvdimm mailing list
-> Linux-nvdimm@lists.01.org
-> https://lists.01.org/mailman/listinfo/linux-nvdimm
+
+On 05/07/2018 05:11 PM, Tony Krowiak wrote:
+> Registers the matrix device created by the VFIO AP device
+> driver with the VFIO mediated device framework.
+> Registering the matrix device will create the sysfs
+> structures needed to create mediated matrix devices
+> each of which will be used to configure the AP matrix
+> for a guest and connect it to the VFIO AP device driver.
+> 
+[..]
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> new file mode 100644
+> index 0000000..d7d36fb
+> --- /dev/null
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -0,0 +1,106 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Adjunct processor matrix VFIO device driver callbacks.
+> + *
+> + * Copyright IBM Corp. 2017
+> + * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> + *
+> + */
+> +#include <linux/string.h>
+> +#include <linux/vfio.h>
+> +#include <linux/device.h>
+> +#include <linux/list.h>
+> +#include <linux/ctype.h>
+> +
+> +#include "vfio_ap_private.h"
+> +
+> +#define VFOP_AP_MDEV_TYPE_HWVIRT "passthrough"
+> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
+> +
+> +static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
+> +{
+> +	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
+> +
+> +	ap_matrix->available_instances--;
+> +
+> +	return 0;
+> +}
+> +
+> +static int vfio_ap_mdev_remove(struct mdev_device *mdev)
+> +{
+> +	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
+> +
+> +	ap_matrix->available_instances++;
+> +
+> +	return 0;
+> +}
+> +
+
+The above functions seem to be called with the lock of this auto-generated
+mdev parent device held. That's why we don't have to care about synchronization
+ourselves, right?
+
+A small comment in the code could be helpful for mdev non-experts. Hell, I would
+even consider documenting it for all mdev -- took me some time to figure out.
+
+[..]
+
+
+> +int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
+> +{
+> +	int ret;
+> +
+> +	ret = mdev_register_device(&ap_matrix->device, &vfio_ap_matrix_ops);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ap_matrix->available_instances = AP_MATRIX_MAX_AVAILABLE_INSTANCES;
+> +
+> +	return 0;
+> +}
+> +
+> +void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix)
+> +{
+> +	ap_matrix->available_instances--;
+
+What is this for? I don't understand.
+
+Regards,
+Halil
+
+> +	mdev_unregister_device(&ap_matrix->device);
+> +}
