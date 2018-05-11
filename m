@@ -1,99 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751986AbeEKQJh (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:09:37 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:34664 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751096AbeEKQJf (ORCPT
+        id S1752042AbeEKQMd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:12:33 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:34218 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751717AbeEKQM2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:09:35 -0400
-X-Google-Smtp-Source: AB8JxZrZYJLsY/yyTQKEczN5L2qEZrQaedXbS73cUQb0ps4AswDjOZT4Cl/8/Q82mTsy95PGp16NkejJscBTCpNnPAU=
+        Fri, 11 May 2018 12:12:28 -0400
+X-Google-Smtp-Source: AB8JxZqfPLil9Qr3KAX22dBU25EH/efrZFPuVTefS0TNFJ6aP/E/uU88atvefrK1Hy7xXHwoCnIvHA==
+Subject: Re: [RFC PATCH v4 3/3] acpi: apei: Do not panic() on PCIe errors
+ reported through GHES
+To: Borislav Petkov <bp@alien8.de>
+Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Tyler Baicar <tbaicar@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        devel@acpica.org
+References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
+ <20180430213358.8319-1-mr.nuke.me@gmail.com>
+ <20180430213358.8319-3-mr.nuke.me@gmail.com> <20180511154039.GD12705@pd.tnic>
+ <8e3c0cc6-9c5c-85ce-650c-8f498f5907da@gmail.com>
+ <20180511160253.GF12705@pd.tnic>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <45b7be09-c9b3-8006-6ea0-36b4ff38607c@gmail.com>
+Date: Fri, 11 May 2018 11:12:25 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180511144305.GP33053@art_vandelay>
-References: <1525861364-26323-1-git-send-email-hl@rock-chips.com>
- <1525861364-26323-3-git-send-email-hl@rock-chips.com> <20180511144305.GP33053@art_vandelay>
-From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Fri, 11 May 2018 18:09:33 +0200
-Message-ID: <CAFqH_51esHUZP4htLYYqHTCotb6P=fA4ozpENU7bXTaCBg8Cbg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] Documentation: bindings: add phy_config for
- Rockchip USB Type-C PHY
-To: Sean Paul <seanpaul@chromium.org>
-Cc: Lin Huang <hl@rock-chips.com>, David Airlie <airlied@linux.ie>,
-        Chris Zhong <zyw@rock-chips.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        daniel.vetter@intel.com, jani.nikula@linux.intel.com,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180511160253.GF12705@pd.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lin,
 
-2018-05-11 16:43 GMT+02:00 Sean Paul <seanpaul@chromium.org>:
-> On Wed, May 09, 2018 at 06:22:43PM +0800, Lin Huang wrote:
->> If want to do training outside DP Firmware, need phy voltage swing
->> and pre_emphasis value.
->>
->> Signed-off-by: Lin Huang <hl@rock-chips.com>
->
-> Adding Rob Herring so he has a hope of seeing this.
->
 
-And adding the devicetree ML, otherwise Rob will probably ignore the patch.
+On 05/11/2018 11:02 AM, Borislav Petkov wrote:
+> On Fri, May 11, 2018 at 10:54:09AM -0500, Alex G. wrote:
+>> That being clarified, should I replace "crackmonkey" with "broken" in
+>> the commit message?
+> 
+> Keep your opinion *outside* of commit messages - their goal is to
+> explain *why* the change is being made in strictly technical language so
+> that when someone looks at git history, someone can know *why*.
+> 
+>> Borislav, I sense some confusion. AER is not a "reporting" driver. It
+>> handles the errors. You can't leave these errors unhandled. They
+>> propagate to the root complex and can cause fatal MCEs when not handled.
+>> The window to handle the error is pretty large, so it's not a concern
+>> when you're handling it.
+> 
+> I think *you* didn't get it: IS_ENABLED(CONFIG_ACPI_APEI_PCIEAER) is not
+> enough of a check to confirm that there actually *is* an AER driver to
+> handle the errors. If you really want to make sure the driver is loaded
+> and functioning, then you need an explicit registering mechanism or some
+> other way of checking it really is there and handling errors.
 
->> ---
->> Changes in v2:
->> - rebase
->>
->>  Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
->> index 960da7f..eda26dd 100644
->> --- a/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
->> +++ b/Documentation/devicetree/bindings/phy/phy-rockchip-typec.txt
->> @@ -17,7 +17,9 @@ Required properties:
->>
->>  Optional properties:
->>   - extcon : extcon specifier for the Power Delivery
->> -
->> + - rockchip,phy_config : That's phy voltage swing and pre_emphasis
->> +                      setting, if want to do dp training outside
->> +                      dp firmware, need to add these value.
->
-> What are the units?
->
+config ACPI_APEI_PCIEAER
+	bool "APEI PCIe AER logging/recovering support"
+	depends on ACPI_APEI && PCIEAER
+	help
+	  PCIe AER errors may be reported via APEI firmware first mode.
+	  Turn on this option to enable the corresponding support.
 
-Also, I think that will be good add an example or include the property
-in the current examples to see how works. It's not clear from the
-property description. I suppose it is an array of pairs <swing
-pre-emphasis>?
+PCIAER is not modularizable. QED
 
-nit:
-
--rockchip,phy_config: A list of voltage swing (unit) and pre-emphasis
-(unit) pairs. Use this property to enable software link training
-instead of hardware link training.
-
-Best regards,
- Enric
-
-> Sean
->
->>  Required nodes : a sub-node is required for each port the phy provides.
->>                The sub-node name is used to identify dp or usb3 port,
->>                and shall be the following entries:
->> --
->> 2.7.4
->>
->
-> --
-> Sean Paul, Software Engineer, Google / Chromium OS
+Alex
