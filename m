@@ -1,49 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752356AbeEKQWi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:22:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:60438 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752334AbeEKQWf (ORCPT
+        id S1752391AbeEKQWz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:22:55 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36489 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752186AbeEKQVn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:22:35 -0400
-Date: Fri, 11 May 2018 18:22:29 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] perf/ring_buffer: ensure atomicity and order of updates
-Message-ID: <20180511162229.GK12217@hirez.programming.kicks-ass.net>
-References: <20180510130632.34497-1-mark.rutland@arm.com>
- <20180511105931.yyarmtz2gjkbuq2a@lakrids.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180511105931.yyarmtz2gjkbuq2a@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Fri, 11 May 2018 12:21:43 -0400
+X-Google-Smtp-Source: AB8JxZoWdZyWR/ENI6FhOVdOQErUKvho9si99/cpZD3QUfOkF5HbamTZI5bLtf0MiJ2rthMPK7RC5Q==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>, Johan Hovold <johan@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 09/12] platform/early: add an init section for early driver data
+Date: Fri, 11 May 2018 18:20:25 +0200
+Message-Id: <20180511162028.20616-10-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180511162028.20616-1-brgl@bgdev.pl>
+References: <20180511162028.20616-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 11:59:32AM +0100, Mark Rutland wrote:
-> READ_ONCE() and WRITE_ONCE() "helpfully" make a silent fallback to a
-> memcpy in this case, so we're broken today, regardless of this change.
-> 
-> I suspect that in practice we get single-copy-atomicity for the 32-bit
-> halves, and sessions likely produce less than 4GiB of ringbuffer data,
-> so failures would be rare.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This should not be a problem because of the 32bit adress space limit,
-which would necessarily limit us to the low word.
+Provide a separate section in which pointers to early platform driver
+structs will be stored.
 
-Also note that in perf_output_put_handle(), where we write ->data_head,
-the store is from an 'unsigned long'. So on 32bit that will result in a
-zero high word. Similarly, in __perf_output_begin() we read ->data_tail
-into an unsigned long, which will discard the high word.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ include/asm-generic/vmlinux.lds.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-So userspace should always read (head) a zero high word, irrespective of
-a split store (2x32bit), and the kernel will disregard the high word on
-reading (tail), irrespective of what userspace put there.
-
-This is all a bit subtle, and could probably use a comment, but it ought
-to work..
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index af240573e482..6b5205f30ef2 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -214,6 +214,16 @@
+ #define CPU_METHOD_OF_TABLES()	OF_TABLE(CONFIG_SMP, cpu_method)
+ #define CPUIDLE_METHOD_OF_TABLES() OF_TABLE(CONFIG_CPU_IDLE, cpuidle_method)
+ 
++#ifdef CONFIG_EARLY_PLATFORM
++#define EARLY_PLATFORM_DRIVERS_TABLE()					\
++	. = ALIGN(8);							\
++	VMLINUX_SYMBOL(__early_platform_drivers_table) = .;		\
++	KEEP(*(__early_platform_drivers_table))				\
++	VMLINUX_SYMBOL(__early_platform_drivers_table_end) = .;
++#else
++#define EARLY_PLATFORM_DRIVERS_TABLE()
++#endif
++
+ #ifdef CONFIG_ACPI
+ #define ACPI_PROBE_TABLE(name)						\
+ 	. = ALIGN(8);							\
+@@ -593,6 +603,7 @@
+ 	RESERVEDMEM_OF_TABLES()						\
+ 	TIMER_OF_TABLES()						\
+ 	IOMMU_OF_TABLES()						\
++	EARLY_PLATFORM_DRIVERS_TABLE()					\
+ 	CPU_METHOD_OF_TABLES()						\
+ 	CPUIDLE_METHOD_OF_TABLES()					\
+ 	KERNEL_DTB()							\
+-- 
+2.17.0
