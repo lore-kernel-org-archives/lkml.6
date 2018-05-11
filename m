@@ -1,82 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752635AbeEKMFD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 08:05:03 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38899 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbeEKMFA (ORCPT
+        id S1752656AbeEKMIx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 08:08:53 -0400
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:46985 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750726AbeEKMIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 08:05:00 -0400
-X-Google-Smtp-Source: AB8JxZoWTcHmENNwfW5YN4kPBazXmRKECB+x4aNZJ0YsNFTAWlCszEp6XRIv9GAR/bFogy7h+Cap1A==
-Date: Fri, 11 May 2018 17:34:57 +0530
-From: Vinod Koul <vinod.koul@linaro.org>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
-        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>, dmaengine@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] dmaengine: sprd: Add Spreadtrum DMA configuration
-Message-ID: <20180511120457.GD30118@vkoul-mobl>
-References: <b115795adf9e9a9e611ee0ff353fae5850d1e287.1525863923.git.baolin.wang@linaro.org>
- <67447aabb8e4e051ff39b814a0e169e6a91bb66e.1525863923.git.baolin.wang@linaro.org>
- <20180511112225.GA30118@vkoul-mobl>
- <CAMz4kuKi884zyOgXAvYXzUFGv7ea1L0Wxv8AHbf+XjEez+jJTQ@mail.gmail.com>
- <20180511115306.GC30118@vkoul-mobl>
- <CAMz4kuLXCB9RipP6zicc6efMaKWHycGFwsbMZNiQDAobsUCpvw@mail.gmail.com>
+        Fri, 11 May 2018 08:08:51 -0400
+X-Google-Smtp-Source: AB8JxZq8hXvL9azaelH6EiOknm126eXPDQVQt0EvHQ89etkawlDruD7YC5HgnSlHDYuDWRWnTDzQBg==
+Subject: Re: [PATCH V2 1/2] Revert "ssb: Prevent build of PCI host features in
+ module"
+To: Kalle Valo <kvalo@codeaurora.org>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        Hauke Mehrtens <hauke@hauke-m.de>, LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+References: <20180511091715.1989-1-zajec5@gmail.com>
+ <CACna6ry-91oR1u697NRymLsN28fnnHDp9OQrdiVwA7A3KTV1fg@mail.gmail.com>
+ <87bmdmcxf6.fsf@codeaurora.org>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <727571cb-5d1f-2d99-b050-979edd02106f@lwfinger.net>
+Date: Fri, 11 May 2018 07:08:48 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMz4kuLXCB9RipP6zicc6efMaKWHycGFwsbMZNiQDAobsUCpvw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <87bmdmcxf6.fsf@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11-05-18, 19:58, Baolin Wang wrote:
-> On 11 May 2018 at 19:53, Vinod Koul <vkoul@kernel.org> wrote:
-> >> >
-> >> >> +/*
-> >> >> + * struct sprd_dma_config - DMA configuration structure
-> >> >> + * @cfg: dma slave channel runtime config
-> >> >> + * @src_addr: the source physical address
-> >> >> + * @dst_addr: the destination physical address
-> >> >> + * @block_len: specify one block transfer length
-> >> >> + * @transcation_len: specify one transcation transfer length
-> >> >> + * @src_step: source transfer step
-> >> >> + * @dst_step: destination transfer step
-> >> >> + * @wrap_ptr: wrap pointer address, once the transfer address reaches the
-> >> >> + * 'wrap_ptr', the next transfer address will jump to the 'wrap_to' address.
-> >> >> + * @wrap_to: wrap jump to address
-> >> >> + * @req_mode: specify the DMA request mode
-> >> >> + * @int_mode: specify the DMA interrupt type
-> >> >> + */
-> >> >> +struct sprd_dma_config {
-> >> >> +     struct dma_slave_config cfg;
-> >> >> +     phys_addr_t src_addr;
-> >> >> +     phys_addr_t dst_addr;
-> >> >
-> >> > these are already in cfg so why duplicate, same for few more here.
-> >>
-> >> We save them in 'struct sprd_dma_config' as one parameter for
-> >> sprd_dma_config(), otherwise we need add 2 more parameters (src and
-> >> dst) for sprd_dma_config().
-> >
-> > I am not sure I follow...
-> >
-> > I meant you can use sprd_dma_config.cfg->src_addr/dst_addr and remove src_addr &
-> > dst_addr in the sprd_dma_config. It duplicate..
+On 05/11/2018 05:13 AM, Kalle Valo wrote:
+> Rafał Miłecki <zajec5@gmail.com> writes:
 > 
-> But we can not set values if dir == DMA_MEM_TO_DEV, since they
-> represent the device address, right?
-> sprd_dma_config.cfg->src_addr = sg_dma_address(sg);
+>> On 11 May 2018 at 11:17, Rafał Miłecki <zajec5@gmail.com> wrote:
+>>> From: Rafał Miłecki <rafal@milecki.pl>
+>>>
+>>> This reverts commit 882164a4a928bcaa53280940436ca476e6b1db8e.
+>>>
+>>> Above commit added "SSB = y" dependency to the wrong symbol
+>>> SSB_DRIVER_PCICORE_POSSIBLE and prevented SSB_DRIVER_PCICORE from being
+>>> selected when needed. PCI core driver for core running in clienthost
+>>> mode is important for bus initialization. It's perfectly valid scenario
+>>> to have ssb built as module and use it with buses on PCI cards.
+>>>
+>>> This fixes regression that affected all *module* users with PCI cards.
+>>>
+>>> Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1572349
+>>> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+>>
+>> As these patches fix regression/build error, I believe both should get
+>> into 4.17.
+> 
+> How much confidence do we have that we don't need to end up reverting
+> patch 2 as well? I rather be pushing patch 2 to 4.18 so that there's
+> more time for testing and waiting for feedback.
 
-Ah right and that is another issue to fix then :) we should not store addresses
-you get for prep_ calls. They are supposed to be stored in the descriptor.
-Current approach is not correct.
+Although I do not have the hardware to test the builds, I worked closely with 
+the OP in the bug at b.r.c noted above. From that effort, it became clear what 
+configuration variables were missing to cause the x86 failures. Patch 2 
+satisfies the requirement, and prevents the build problems found by the MIPS 
+users. Both patches are needed in 4.17.
 
-You can get different prepare calls  (i think fixing this will remove 1 sg
-limitation).. and use the argument values and store in respective descriptors.
-Pls do see the other driver examples..
-
--- 
-~Vinod
+Larry
