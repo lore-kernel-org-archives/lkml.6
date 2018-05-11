@@ -1,157 +1,142 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4175019-1526053211-2-4764684692416449826
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-4098225-1526051193-2-12597147625285608875
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='fr', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526053210; b=HQ5YQNkiHp5nun7qhVq2t/dMA1KJKiNhbwE/jUHyI1/CdbpMMe
-    TfgCX5I4TwcIGrtbNqznbBmwe5qZTWFQldAP/mz1rPk5rdm3lNyY/aEWHte1JAWi
-    +nHQS0rCVe2ZLmyxK7aM+0yM2AsAMvUai7J3Whh0atV7xBYpyKxf0XLK8MN9DFZ0
-    nixhOTKU0apWeCftc++hGRXq7aobJLx2vYgb6c/VrQOHTDTscfOb9SYx0sDGsZC1
-    s9ipS9UgII0XQgV+kTW+J0nA+ADIUPvhHTBUJtQWCFo0F1sUi5AVoPI/OxdZzWeD
-    0w/Z4POHtBsSvhDCHfG64iE//in+Tbw6m/8A==
+    1526051192; b=iEWFb0eP5ClzKM0EgdOE35d4VxLAjN8I1rvyVehyGwpvmAj3IP
+    9j0MDTL84i7IeonjF9zxJG0DWq4YaUSJWviAKOURwQsW45LLTrbjxZ1bsTae23aO
+    4cwqzFH6LTjVsD6YpvjqH1xErAzO5AGAX9vJT/dhbcST6811n75YGywJ4YW1YHBf
+    U3sA5qr5AFcjKxGVvXw4hnSzcI0bgp1usU18buxOn4wM+hf5Rm9bHBeBPk04j2MU
+    ucp4kzLg/iFjOi0nu7mB523rPSokvMivt2tll8PxljbYfc60/n09oCDJancWQRdQ
+    Q7Sw7f8spVz+tEw+xtLqeDA15NriBZk7nKQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :mime-version:content-type:content-transfer-encoding:sender
-    :list-id; s=fm2; t=1526053210; bh=h0NuoORhQ4iw1OKDb+Uji+4Njt54T3
-    fzovJ5WmxmcI8=; b=NwJ9ANCOTNqUd90fOeAxyINqkwDGxy6s2JsIWGpUFs9rRq
-    4v6cepzEpUoxp+DScFWoBTjefhAquqBjnBBwdw74tTKMiCBOjZTz7ZQaQG9CmHip
-    qWhBFgZC69ybicpTCM/+/UK/acdexW/l2FYW18bPMCqkKNXF7P74A/hrBXO+WNQI
-    bkvNuDJ5hCn0r06dGJR+iDFunoSKIomsFtz3J+tfE1Odl/hMQ15AZELKX5NWoYyS
-    TIde+ZuiVTkwhaROBeCnriZdmLENZiedm5OTFP2fzzJ4NnwF4oUWeSg1cJ3xklxl
-    pXyhBBwzoaVk6PQTENSDmTB2YMich98jcieIOsng==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1526051192; bh=RZEXP
+    a/pQEnOK/XlA6ib94iBFg6opIUQ4wjMWw4xquo=; b=dG1vpwJtt9RxjNPoysxLN
+    ipl6zUqYRu/Of9hERallGDelIC1zxvEuu387xJwwt/+g5mMVIgNT3fTsYCWkaKCt
+    AxkFGJ+YOXQ8mlLXnG9yZYqMIHZo6N7Ob+JtIJbz89hQS3iOK50IPH3/9uvf9Rxg
+    pI8JKWuudyNa1fBMUxxXp0AFwsUKChdHRaWPz6z35lYNYUUAQwewF0oEnWpQWodu
+    /r15S1SgR/Ep9FjOOagWO2IJajVGkRvur/2FOpxu1sX8sQTvwpEsUX4vkLhoOEyN
+    ctlDIkmb58ak1z9VT6C4/3aSrNCxAm4rAaDlNkpfalL01Uf2y7E3bIX7rKkT3g7d
+    A==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=wanadoo.fr;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+    smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+    smtp_is_org_domain=yes header.domain=wanadoo.fr header.result=pass
+    header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=goodmis.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=wanadoo.fr;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+      smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=goodmis.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+      smtp_is_org_domain=yes header.domain=wanadoo.fr header.result=pass
+      header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfM0AHUv+rLI06PiX1ctwWXmufNS8PKK/EygHHxbR1q6q5KKnKfuNA88Hix+21vUT2hfmfwjAylvqTyUC52t1URz9qA5oI4Y+CbMlb7p4A7hIuAePYBZD
-    HQ4tpI7TNeNzjpFL8h0F83mnfWiszF86t1wqGmkMNH9PVaoPxIGpjB3MTb43ZweXFCaCE/LJZCqOUXHixruArQYsXUFzB8FXdgYQI8fdB+2et1lcniWoULTs
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=meVymXHHAAAA:8 a=Z3TViDYMNVcoLodJPusA:9
-    a=xwFVHlgjZqdO3xLz:21 a=I0xmZmH6WzsuNfxn:21 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=2JgSa4NbpEOStq-L5dxp:22
+X-CM-Envelope: MS4wfFf4PItFNRTdtm/SzUadIHOlK3g2YonzUJkiBGRtSI8AgHlL89WmkIkxujfJxd8hOSDoM4RWz5sy7Hdvd5j8LqBrTbrqtRb5TpMFeA0kreXvtaD2gKHV
+    aF8QOR7RY5uuW8a1zM7ZrKPWkaFOh4CzH8Bh+I+Rz/lrzMfMu/Af0XwNJ37p+n0+qCNBQ1PwsSvN/a6hXMehnYvDChhuDs4Enh1+2NpXh23O7lw79SLCO7yT
+    ygu3q1Pw6SNY/SB76WaLjw==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8
+    a=chjP6sQugMFXrh-HTt0A:9 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751564AbeEKPkA (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 11 May 2018 11:40:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750950AbeEKPj5 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 11 May 2018 11:39:57 -0400
-Date: Fri, 11 May 2018 11:39:55 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org
-Subject: [GIT PULL] tracing: Fix regex_match_front() to not over compare the
- test string
-Message-ID: <20180511113955.2a789dee@gandalf.local.home>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-ME-Helo: ubuntu-CJ.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 11 May 2018 17:06:20 +0200
+X-ME-IP: 86.244.116.1
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: alan@linux.intel.com, sakari.ailus@linux.intel.com, mchehab@kernel.org,
+ gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
+ chen.chenchacha@foxmail.com, keescook@chromium.org,
+ arvind.yadav.cs@gmail.com
+Subject: [PATCH 0/3] media: staging: atomisp: 
+Date: Fri, 11 May 2018 17:06:15 +0200
+Message-Id: <cover.1526048313.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.17.0
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+These 3 patches fixes (at least I hope) some issues found in or around
+'lm3554_probe()'.
 
-Linus,
+Please review them carefully. I've only compile tested the changes and
+I propose them because they sound logical to me.
 
-Working on some new updates to trace filtering, I noticed that the
-regex_match_front() test was updated to be limited to the size
-of the pattern instead of the full test string. But as the test string
-is not guaranteed to be nul terminated, it still needs to consider
-the size of the test string.
+The first one, return an error code instead of 0 if the call to an
+initialisation function fails.
+The 2nd one reorders own some label are reached in order to have a logical
+flow (first error goes to last label, last error goes to first label)
+The 3rd one fix the use 'media_entity_cleanup()'. If this one is correct,
+some other drivers will need to be fixed the same way.  
 
+Christophe JAILLET (3):
+  media: staging: atomisp: Return an error code in case
+    of error in 'lm3554_probe()'
+  media: staging: atomisp: Fix an error handling path in
+    'lm3554_probe()'
+  media: staging: atomisp: Fix usage of 'media_entity_cleanup()'
 
-Please pull the latest trace-v4.17-rc4 tree, which can be found at:
+ .../media/atomisp/i2c/atomisp-lm3554.c        | 20 +++++++++----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
+-- 
+2.17.0
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
-trace-v4.17-rc4
-
-Tag SHA1: cb82e07247fa5f1a91940a2928fb260256727a14
-Head SHA1: dc432c3d7f9bceb3de6f5b44fb9c657c9810ed6d
-
-
-Steven Rostedt (VMware) (1):
-      tracing: Fix regex_match_front() to not over compare the test string
-
-----
- kernel/trace/trace_events_filter.c | 3 +++
- 1 file changed, 3 insertions(+)
----------------------------
-commit dc432c3d7f9bceb3de6f5b44fb9c657c9810ed6d
-Author: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Date:   Wed May 9 11:59:32 2018 -0400
-
-    tracing: Fix regex_match_front() to not over compare the test string
-    
-    The regex match function regex_match_front() in the tracing filter logic,
-    was fixed to test just the pattern length from testing the entire test
-    string. That is, it went from strncmp(str, r->pattern, len) to
-    strcmp(str, r->pattern, r->len).
-    
-    The issue is that str is not guaranteed to be nul terminated, and if r->len
-    is greater than the length of str, it can access more memory than is
-    allocated.
-    
-    The solution is to add a simple test if (len < r->len) return 0.
-    
-    Cc: stable@vger.kernel.org
-    Fixes: 285caad415f45 ("tracing/filters: Fix MATCH_FRONT_ONLY filter matching")
-    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index 1f951b3df60c..7d306b74230f 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -762,6 +762,9 @@ static int regex_match_full(char *str, struct regex *r, int len)
- 
- static int regex_match_front(char *str, struct regex *r, int len)
- {
-+	if (len < r->len)
-+		return 0;
-+
- 	if (strncmp(str, r->pattern, r->len) == 0)
- 		return 1;
- 	return 0;
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
