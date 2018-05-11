@@ -1,160 +1,298 @@
-Return-Path: <ktkhai@virtuozzo.com>
-X-Google-Smtp-Source: AB8JxZrGY1BAFl7UW+E63CovmuXDPW4VfW4mci6Nj3kSpZ24Bz8ezM3t3FVGvWwSSAjMgaOE17Kf
-ARC-Seal: i=1; a=rsa-sha256; t=1526632916; cv=none;
+Return-Path: <gladkov.alexey@gmail.com>
+X-Google-Smtp-Source: AB8JxZq0J5ZkEL94BmvtOCdnQzmQoHtUqLkRSnJbzIo8lecQDpcEM2sPLXdxhdbYxGz+V4K7nsXe
+ARC-Seal: i=1; a=rsa-sha256; t=1526031926; cv=none;
         d=google.com; s=arc-20160816;
-        b=fwFvffucQZ+odcliztjwckfC4z/8VT5u5dtrcNUgHqWmGIVTdBUGXfw3d5m6eF7HGS
-         bJlZ+bfKaIbyjvYA6GKFx5HzaGDKAff5WLIKxlbOxGTdYelul9KZ1/i5S90izFDfzUvV
-         A7f3Zh+4gExn5IQD0HrX3l15fX9t23+OtSJjQJ08FF+alWcpSDGRJj0srb0n0od4sWq/
-         bHeEVtfz96gypRTM3bPuYyj9FtvrK9Oh0zMZ3ns88gkkhA8smGnzkReIwNN+mfpL/5/Y
-         dhOK+R4p1zz6ZJ+aD4SO+ug/HWYwpVwJtYXkAnzL7xhEG+jYoVoqZ2AHSFbyuaXLvSVQ
-         1XiA==
+        b=C+ZHK+x335C+TT5eB+nBExSzDkJHxIQ60HWzvg8gFwHD6ighjOPead94rTRXrNTAZl
+         pc3iSETE8vwCd7zdsZ4z5qiJmQQbM+OHqyPc+UzAuaVEugN6uVYL3MZFIqqBdgB95pYz
+         fBXy7cxzXapJEsCWDX/A6f9wnRkA5faWeqnV8LQ/CdY1DuYh4AJDlk4qkQ6Uf0oudn4s
+         eWtFg7I2KL/yAtvX03646kLq2rXVkfOcwLM1Dk/alE1/lCaZ1eBbg7Xe6ukszczzliHN
+         VsMH9T9zafERAiogfzFUAEidxv58MjvBnv2zaqJpjyO2YDPMmC84tW4XktA3mUdph2wF
+         vJvw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=spamdiagnosticmetadata:spamdiagnosticoutput
-         :content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:message-id:date:to:from:subject:dkim-signature
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :arc-authentication-results;
-        bh=oW11i30zBrKa96sU5BVO6oG7fycJJIVLB7zRwT+/oyo=;
-        b=yiv52iDopAekkkUt4cADkqdZpcZOmm+1jVxyiEwLvU6P9Jc+F3y+jA4G3+8l0RDm5A
-         ESmLJdHMhiVnZwMLAbpeX5j4KjjfU0GIXjlkzpLEm0Ny68Y3SdgAczTi6gsk4IGmt9Fj
-         nYYey3l8En39RC89s1pcHfwg4zY97y3yT2ecBIay+MUSS/iGFIsOpasqH2hFchn1ol4d
-         BhChOxSRwcZm5YtC1YFEjp9Ao52s1qXj1clUBBQJyeiN99vsbx6s94Ke+P1XPRULj1p6
-         ReHB1wunYE22LxQafjr3JKwGi+olV/yHCzvVZlkoDCH9P8c1eLR79rV59nfeRB/ku42O
-         SWyA==
+        bh=PUxxvyO+geLRGKp/u1+7+g9cJxunRWpZoNQ2sEtr2Ck=;
+        b=Ojt/s6MMudb1159bnGGcyrP+dUX5+DPrec+dUaUgkB6BlNEwIMMz3qL7lqnu5g2tqD
+         Bl4Q7AOIaRBTzckMmZstcMAkFH9RE0/ej7ELmn/zZgvymDrnLQq8iu8JIDGbImviF67o
+         xM3Up+Cs1rmEOlhtRB9GHrD3nx+8f7gE3kRchczWGE4Yl+Rsp+ftGEaFii0ifM66s+oe
+         sExvK6ivh1CF2Rj4T23qVPg+qYBC8MKUWg+KyPvIR4XM/Oio5ysXxm3AelVlBBCmVHd2
+         uE9g7zOIgk45Zi7KpVhtpUoctsHXTDgpuf3JuvQ2XEqpLB3VlMnGupqDwlYYnWQ0Zm0i
+         M3gg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=g452Jfh0;
-       spf=pass (google.com: domain of ktkhai@virtuozzo.com designates 40.107.5.134 as permitted sender) smtp.mailfrom=ktkhai@virtuozzo.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=virtuozzo.com
+       spf=softfail (google.com: domain of transitioning gladkov.alexey@gmail.com does not designate 5.9.28.80 as permitted sender) smtp.mailfrom=gladkov.alexey@gmail.com;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=g452Jfh0;
-       spf=pass (google.com: domain of ktkhai@virtuozzo.com designates 40.107.5.134 as permitted sender) smtp.mailfrom=ktkhai@virtuozzo.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=virtuozzo.com
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com;
-Subject: [PATCH v6 01/17] list_lru: Combine code under the same define
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
-To: akpm@linux-foundation.org, vdavydov.dev@gmail.com, shakeelb@google.com,
- viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
- ktkhai@virtuozzo.com, tglx@linutronix.de, pombredanne@nexb.com,
- stummala@codeaurora.org, gregkh@linuxfoundation.org, sfr@canb.auug.org.au,
- guro@fb.com, mka@chromium.org, penguin-kernel@I-love.SAKURA.ne.jp,
- chris@chris-wilson.co.uk, longman@redhat.com, minchan@kernel.org,
- ying.huang@intel.com, mgorman@techsingularity.net, jbacik@fb.com,
- linux@roeck-us.net, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- willy@infradead.org, lirongqing@baidu.com, aryabinin@virtuozzo.com
-Date: Fri, 18 May 2018 11:41:47 +0300
-Message-ID: <152663290733.5308.16296237702670050699.stgit@localhost.localdomain>
-In-Reply-To: <152663268383.5308.8660992135988724014.stgit@localhost.localdomain>
-References: <152663268383.5308.8660992135988724014.stgit@localhost.localdomain>
-User-Agent: StGit/0.18
+       spf=softfail (google.com: domain of transitioning gladkov.alexey@gmail.com does not designate 5.9.28.80 as permitted sender) smtp.mailfrom=gladkov.alexey@gmail.com;
+       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Date: Fri, 11 May 2018 11:35:28 +0200
+From: Alexey Gladkov <gladkov.alexey@gmail.com>
+To: Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-hardening@lists.openwall.com,
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Akinobu Mita <akinobu.mita@gmail.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Jeff Layton <jlayton@poochiereds.net>,
+	Ingo Molnar <mingo@kernel.org>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	aniel Micay <danielmicay@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, bfields@fieldses.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>, solar@openwall.com,
+	"Dmitry V. Levin" <ldv@altlinux.org>,
+	Djalal Harouni <tixxdz@gmail.com>
+Subject: [PATCH v5 3/7] proc: add helpers to set and get proc hidepid and gid
+ mount options
+Message-ID: <20180511093528.GA1250@comp-core-i7-2640m-0182e6>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [195.214.232.6]
-X-ClientProxiedBy: HE1PR05CA0128.eurprd05.prod.outlook.com
- (2603:10a6:7:28::15) To VI1PR0801MB1344.eurprd08.prod.outlook.com
- (2603:10a6:800:3b::8)
-X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0801MB1344;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1344;3:V4EF+s4z18HRiq9syr54QRXGP1QNk1VCBIaHqCFEdZ0zoz1IkFQGTmpqSpEe26Ry9sL14xWQyujHNjQTpzcKmSWswiEyYJrScRsvVglSyoZu0dNjrYwQH2IimKabEIp86NAvsNPw4m/u/e/RlM3QGjk2Z1UWcJe9VD6fLiHLg37ZlukM4fqnjdAti/mqJ5AZqeLbsXwrGBHVxDve3oy4sIkWZcYTZJ7YqDAFGrDdTVOiCyG4+nM7mdFOSrJVfHtQ;25:eZKyv/VYQwaAwhtQW/PLD59ndSBNIJKhQ8Pnb2j6ChUp9LoI8oXCDCdqwiHtrz+Cva3Fe1hDvL4lC527LBwxK2R3+cwm44DpAXCkFotRcwRqivodtM8J+7w+lCbB5lF58qpqSzk9UEpBEh6KQ/9CJkgLie39wbL32lxZaeaaZah7IH1Js8AT7G9QY9ypywG2QQgw0kfa5qH42Z+1WJ9CxINWuADm9bCzzV43ppkNY0rUNH8MELxFo6zzejVrFPZ4zo3R2HRHtfbOPUdb+RpQve4EbNdvn2VoPfviF8fdJdM7AWlnzhI9UsYlm3zOXHHwF8SFiS6nAjd+0kXEFpg7Dg==;31:ihoOViVt68JNvKgTg3CpWeF7BcY6mg0k0tRc1+72gByv+LDjBobnjxUJW4qxr9Nj4Op7D0sfic051nAgBH3qrv2u7D8lIz92ov9+IrrXf17p/FpD9kpVv8AVQxtRogfVmpignOwNh23RoohN8CjzmvAX9IM8CcUenJsaOYvUXkJ96gjhOdNIsVEW0TC1q7vSvVRzFnYJPhWPMwjqjXXMvIHyLELUgom3b8t9mn2AMDI=
-X-MS-TrafficTypeDiagnostic: VI1PR0801MB1344:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1344;20:WGH+n7t9/pHsU9QMnfokkV0/3mRm4XmGLSMxy0hpf2Dcazx8ohiH+zzpJU+OY3k5ClUlor08sEZp3ACmH+6+Hlgg+XnlcmVw0IWznP+6vO1TFusi5sIbc4KPjAG4rONppezS+nOPCYGJ/FboCgy5o0qE3EiKgUuRNdBDFOGddR3AbcZPXSv6/c3Kmwe072yaDCMoUkDZls5gdiQpw5/TRXKUjLpUOr7osqvqaMGZr2LrtJPK/JpIOUA1xx0Arvgad5J+wieSEInmwSG0bfpNSr2+HdzdBau+71/W/3otH0UX94fGcSki/vQcYSSffwsLro+0nDkIA4W2Uq1ShU6ErelQfAdsX0PTS4GZaMpHU3E6JDPyaLxIZzCeMTSk3cNQRmCY/DSOWbnBDSzCS2zyHZripnHvGB0ffewg+732dLzMmsLBIm2ymclVgZk+LM6oFspl9+0p4UGjQyv/HrFXoubX4FMrLM3tCwdZtu/RwgjRTQgVA4mL3TD8mjLXfmdE;4:fbu1gTfj1mG6sI/rTQvW6g1ycPyLxRM92bfHILXWHxAYkh5ttDxgoh4FpCNMxKh+1G42A+5NB3VHPXVH2lz91sxPKGQ3BUB+7KfIXfWy2KBu9+Jut6+aiEIPF/F8dTdq2d89ERm/CP27uSLwDYEZtMZDMG1hBTGzUn2hClZ6Ct9cB6Zj02AAnKvjqNiHUFZ4JLJl6YNvslWi67KWLe+p6WpaXyK7btqUEMYqFDMYlYPrGkoik9WT+AWvthBvkyjNhH8k7fnwvkZquJOLEtBUJQ==
-X-Microsoft-Antispam-PRVS: <VI1PR0801MB134440499C31851F7FF701E2CD900@VI1PR0801MB1344.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:VI1PR0801MB1344;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0801MB1344;
-X-Forefront-PRVS: 0676F530A9
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(376002)(366004)(346002)(396003)(39850400004)(39380400002)(189003)(199004)(6636002)(3846002)(6116002)(9686003)(6666003)(97736004)(58126008)(53936002)(8676002)(446003)(486006)(81166006)(81156014)(476003)(47776003)(66066001)(956004)(230700001)(86362001)(8936002)(11346002)(55016002)(478600001)(103116003)(50466002)(26005)(25786009)(68736007)(316002)(2486003)(7696005)(23676004)(7736002)(39060400002)(52116002)(305945005)(105586002)(55236004)(106356001)(5660300001)(7416002)(6506007)(16526019)(186003)(61506002)(2906002)(33896004)(76176011)(386003)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0801MB1344;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjA4MDFNQjEzNDQ7MjM6d3RoS1J4RDdVclJsSW5lK0hyU0NiWWtN?=
- =?utf-8?B?UlhZTWNBNVp1MUZ2K2trM0xualRaZTBQdUpmNzRPS1FNaWFIVzRreHFGYlZN?=
- =?utf-8?B?bjdIcFhMU25VRVNiOHVYUXBTZkpFSnQ3VlE2TWpOazVVVVE1bW8wSGFNNUpp?=
- =?utf-8?B?OFI5bjhHcXl4R21vNnBDelFIcjlSM3ZkcTd5WkFqeHphR3hWYi9vMXJEeFZH?=
- =?utf-8?B?YXU1MDZsem1qWmRjMlB5MUk5ZGFKaFdKQWsxZE1nbnZiZHJQamloY3FLVDJa?=
- =?utf-8?B?UDU3WEYyUklJQSt0RUJSby81MTZNSElxdkxiakZOR2xYVzBuZk5XY1g0MVBF?=
- =?utf-8?B?eFJteGRUbmt2RERlK3JmUWZVaDJTY3ZjaFM4dy9JUFhNL3A3SG5jOWVaQmpl?=
- =?utf-8?B?b3Q1bnE3TUV5ZEpRd1lNQXBNSG0wWFFxL29WVGJveU1ONEwzdzJjaWhUNWpN?=
- =?utf-8?B?QVBiVzJmVHhOTWVhQmFnNjJTR2Vnckcza2h3bUxXUUZ4eFcwNXlVSWlXZ1F6?=
- =?utf-8?B?Tm1oVzdRdTYvMExXYlZxRGRnMURhL211dHJOMXJsSzV3eUx5SUN5ZXpEMk42?=
- =?utf-8?B?cmZUZmVFYzhESUZvK2p6QVVTRmpZUVVYSUsrVExoZ0JTZXl1YjRyWTZmeEo2?=
- =?utf-8?B?YUk4OXRObmUrb2dsaG5NR2JIYldTa1lWNmk3K2ZWRjNpcDJrUEJCalROSHZR?=
- =?utf-8?B?Umd0WDVEVlNUaWVFcWVHTER3amRKcXZIWVllNjF5dFV4N1Q1L09sNjZaaVBW?=
- =?utf-8?B?ZG9ieWJwOU5oSmU1VFdDdHNCRXhmZHFmdmw1N2NGYThOdjhrZ2pPUXNsNDBo?=
- =?utf-8?B?R3dsa0ROMVNYUXFwWE5hTVFyOVprNEZXOXc4am1uazNaaS9YOUNLa2c0Wm9v?=
- =?utf-8?B?TVhFQTRBS0ZrQ0pOaTd1NlVVZW40WmhnKzZNc0t6TktwUVNFVDhtTUxCSmZI?=
- =?utf-8?B?dDNCaC9ZNzZBVTI2MFVpNXBnVnBpVXhNeDF0VFVqY1JLMFBLb25OMlEwWjZ3?=
- =?utf-8?B?U1BvTlh4M0dBMmNzZmtRZVhvZFZrd1d1dWN2Ykdzd2dnZDRHNHc3UEwwQWVl?=
- =?utf-8?B?MWQ2RVBOV2w3OXg4am0ySXMrWEtqRlNzSHIwYTBNZTF0SlByQWdSSno0S21Y?=
- =?utf-8?B?eDUybytQalh3dm8wcFhrd0g1UEdYTEszYWVpYmNlMkVuQkJWRnJ3Q3piUUQx?=
- =?utf-8?B?NGdFTUZMRHN3bnd6S3lhOXVlYkhXaGRkY09zVzRGMnZRZzdWVHhGVDJiMkoz?=
- =?utf-8?B?YkhaelVmRmZuN2dTczNWNldDMTFhVHhwZ2s3MldwemlQK2M5enVUNHRYK1ZE?=
- =?utf-8?B?M3lkbzVOWFlMU0xHR3R1eC8yT0pSTU5tKzhPVk1DZXVIbzkxSGxvclBxdXJ2?=
- =?utf-8?B?SWF6Z3BMTmtWWXN2VnFKeTZVYkNYaUhPTVlIOEY2YlNnbWFVNW44dlRBbHBR?=
- =?utf-8?B?YVJGY0JTeWdqUm1IcTE4NUdEQmFGTDB5RmhQaXZlVjh6THpKMzFKNlQ3aENU?=
- =?utf-8?B?WEJXVGt6cVRFNHVnZGttdFh3WUpETFhCNzBXWlJZNVpQdzFmUGd3cmRKaUpB?=
- =?utf-8?B?UFA2d0c3SkFzdkVwcG9XYWt2Y1d4Vy94ajhKTHpJdWRYVEtBK0JLTGJQOUhE?=
- =?utf-8?B?SE9yWkJZS1Jha3NwMkp5aGZLYXBRTUszYi9kQjZvd0VNbFBkVDFNMG0vYS9D?=
- =?utf-8?B?MVdxSUZqdGVTMU1tTHJNTWUxSlpFTXczOEltOHFVOTQydUhpekxDTm1LY3ZX?=
- =?utf-8?B?TDZCaWs5bFprQjJmZm5sL0xnUG1leEtFaVRoTXZJWXB6QTVRc1dERjlZWGk2?=
- =?utf-8?Q?wPld0g8qUtAt5/x?=
-X-Microsoft-Antispam-Message-Info: Xwn7/M4UyNoz1oAh5p22mRwnoBlumqQDSg5alhOxnxNiJe7+yLU0SlTpWHf998FJcfAg/LljqPZydGfhaG3UOKGYgSR8hJv6q/fBGEA6pXUddCAbQsFHQm3sE9VtAaZikC2JMNn5+IxrQMuEO883NC6Afxgz+lUAp7QfJfJ75juU6VnH99A+t193AP4K3uN1
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1344;6:ZgHRkxbWcqh/7eJyi0p3Gsu0GADfanDHkITWUGrrkt17qv2eaS1DBdThdcwGP6ZmBoS93vLhL6qPZbPxijsMi3PDR32+kQqMWun7N/PZGpQQ/DKyAcJ7+Y79IMGf0rkq1jU+RYDYDboBAj9JTeuC8z60dQBbtQl+geSMp+TKkuVHai49GGQHT/mlMFlJso48MyM07YCfAQs5EmfF2D6aSE/ULyjnz3QNyy5Sl8PusVvZIKp/gPEYsmnK14zwdsdRBSiILHbNwIJJMyzCZQV4LXSwwTriW7F4pCJ53R/i3y7cjog1MQ3EZqJJcIRDLyq9VFXoX7NJ7NY8IQ0erfe9cUJIKFz+QM8T5kVBvQGP1kEthWUkYl9i5faZCubIFZK0DZOMqUekQrnf7KDimAdx5dyS+NBczQXwRbIwuhvHK90mPdmRG/zB4dnoPccUSoSIMyxk5A8kyfI6/HUmIWzv+A==;5:aUTS7TllX/wGLX30ht3u+dcBxa3yjLhmwbhxkXtEU5/VqHRfBRh7FCDkKzEY9APMs0IufF7c9Kc1+AfgEWB+3ZFkFOjhwvk4LDJ1EFFg+fr/gbSGKXJiqqhcqvVSzZg7Btum19XupiYKhkWj58EnalDI9CQFfb7cr91FMmbdIec=;24:PxKDFb/5T8FI2Lud0spAV7IpEiSlW+BRBbwClP38GN8838PPZZUy5quUK82UkJuVNJcXnPCtY8afT0KJPA3IDWYL7FDARWIoWkyfYvHM1Ws=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0801MB1344;7:3lYCNRtZsJD9nJBKlycd8iKPSWyUwkcYs6+nvwZhJI6qzZE+Cd9SOFFc+M6uUezsuzioj8TH0vDByNiSxVl2m92KNMuX8r7JcwChjD8OeoWcuvO4ejaInz3/k8WsfRqsyi5LHuDSqFKYaC231WyfzbKdbeILxwx9ZVOErvDXvcKiBKYD/zDFbWT1ho4B3Pe6JLf3PWcbMtMHMTw9Hs/DzZO/9zUiMEGv+FmLrJEb7p0xGxwP/CpeF/64ETjyRbcn;20:258c3sVkSkFex+Rl7tZ8M6mJ+RmoqXw3rlMYN+lkOngp8C7VVjPpW9r1tjok9C56N+BKBI8NWLoc8oUvaidnju6xTYK2wbW+/Jual309MbRpWEl/SU4hz669Sc6jN1OzVg55Wbt4IMrCb3CX3PFKDQxa4lC4JhELXeP/clBFQko=
-X-MS-Office365-Filtering-Correlation-Id: 4a817e13-4f4d-43b4-5096-08d5bc9b3434
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2018 08:41:50.5370 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a817e13-4f4d-43b4-5096-08d5bc9b3434
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0801MB1344
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600790637106627986?=
-X-GMAIL-MSGID: =?utf-8?q?1600790637106627986?=
+X-GMAIL-THRID: =?utf-8?q?1600160453547987751?=
+X-GMAIL-MSGID: =?utf-8?q?1600160453547987751?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-These two pairs of blocks of code are under
-the same #ifdef #else #endif.
+From: Djalal Harouni <tixxdz@gmail.com>
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+This is a cleaning patch to add helpers to set and get proc mount
+options instead of directly using them. This make it easy to track
+what's happening and easy to update in future.
+
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Djalal Harouni <tixxdz@gmail.com>
 ---
- mm/list_lru.c |   18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+ fs/proc/base.c          | 16 +++++++++-------
+ fs/proc/inode.c         |  5 +++--
+ fs/proc/internal.h      |  2 +-
+ fs/proc/root.c          | 15 ++++++++++-----
+ include/linux/proc_fs.h | 44 ++++++++++++++++++++++++++++++++++++++++++--
+ 5 files changed, 65 insertions(+), 17 deletions(-)
 
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index d9c84c5bda1d..37d712924e56 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -30,17 +30,7 @@ static void list_lru_unregister(struct list_lru *lru)
- 	list_del(&lru->list);
- 	mutex_unlock(&list_lrus_mutex);
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index e0c2afc..57fc895 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -684,13 +684,16 @@ int proc_setattr(struct dentry *dentry, struct iattr *attr)
+  * May current process learn task's sched/cmdline info (for hide_pid_min=1)
+  * or euid/egid (for hide_pid_min=2)?
+  */
+-static bool has_pid_permissions(struct pid_namespace *pid,
++static bool has_pid_permissions(struct proc_fs_info *fs_info,
+ 				 struct task_struct *task,
+ 				 int hide_pid_min)
+ {
+-	if (pid->hide_pid < hide_pid_min)
++	int hide_pid = proc_fs_hide_pid(fs_info);
++	kgid_t gid = proc_fs_pid_gid(fs_info);
++
++	if (hide_pid < hide_pid_min)
+ 		return true;
+-	if (in_group_p(pid->pid_gid))
++	if (in_group_p(gid))
+ 		return true;
+ 	return ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS);
  }
--#else
--static void list_lru_register(struct list_lru *lru)
--{
--}
--
--static void list_lru_unregister(struct list_lru *lru)
--{
--}
--#endif /* CONFIG_MEMCG && !CONFIG_SLOB */
+@@ -706,7 +709,7 @@ static int proc_pid_permission(struct inode *inode, int mask)
+ 	task = get_proc_task(inode);
+ 	if (!task)
+ 		return -ESRCH;
+-	has_perms = has_pid_permissions(pid, task, HIDEPID_NO_ACCESS);
++	has_perms = has_pid_permissions(fs_info, task, HIDEPID_NO_ACCESS);
+ 	put_task_struct(task);
  
--#if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
- static inline bool list_lru_memcg_aware(struct list_lru *lru)
+ 	if (!has_perms) {
+@@ -1786,7 +1789,6 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+ 	struct task_struct *task;
+ 	struct inode *inode = d_inode(path->dentry);
+ 	struct proc_fs_info *fs_info = proc_sb(inode->i_sb);
+-	struct pid_namespace *pid = fs_info->pid_ns;
+ 
+ 	generic_fillattr(inode, stat);
+ 
+@@ -1795,7 +1797,7 @@ int pid_getattr(const struct path *path, struct kstat *stat,
+ 	stat->gid = GLOBAL_ROOT_GID;
+ 	task = pid_task(proc_pid(inode), PIDTYPE_PID);
+ 	if (task) {
+-		if (!has_pid_permissions(pid, task, HIDEPID_INVISIBLE)) {
++		if (!has_pid_permissions(fs_info, task, HIDEPID_INVISIBLE)) {
+ 			rcu_read_unlock();
+ 			/*
+ 			 * This doesn't prevent learning whether PID exists,
+@@ -3272,7 +3274,7 @@ int proc_pid_readdir(struct file *file, struct dir_context *ctx)
+ 		int len;
+ 
+ 		cond_resched();
+-		if (!has_pid_permissions(ns, iter.task, HIDEPID_INVISIBLE))
++		if (!has_pid_permissions(fs_info, iter.task, HIDEPID_INVISIBLE))
+ 			continue;
+ 
+ 		len = snprintf(name, sizeof(name), "%u", iter.tgid);
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index e34b89a..9585727 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -494,11 +494,12 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
+ int proc_fill_super(struct super_block *s, void *data, int silent)
  {
- 	/*
-@@ -90,6 +80,14 @@ list_lru_from_kmem(struct list_lru_node *nlru, void *ptr)
- 	return list_lru_from_memcg_idx(nlru, memcg_cache_id(memcg));
+ 	struct proc_fs_info *fs_info = proc_sb(s);
+-	struct pid_namespace *ns = get_pid_ns(fs_info->pid_ns);
+ 	struct inode *root_inode;
+ 	int ret;
+ 
+-	if (!proc_parse_options(data, ns))
++	get_pid_ns(fs_info->pid_ns);
++
++	if (!proc_parse_options(data, fs_info))
+ 		return -EINVAL;
+ 
+ 	/* User space would break if executables or devices appear on proc */
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 0f1692e..facc2d9 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -253,7 +253,7 @@ static inline void proc_tty_init(void) {}
+  * root.c
+  */
+ extern struct proc_dir_entry proc_root;
+-extern int proc_parse_options(char *options, struct pid_namespace *pid);
++extern int proc_parse_options(char *options, struct proc_fs_info *fs_info);
+ 
+ extern void proc_self_init(void);
+ extern int proc_remount(struct super_block *, int *, char *);
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index 184c42b..bdea220 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -37,11 +37,12 @@ static const match_table_t tokens = {
+ 	{Opt_err, NULL},
+ };
+ 
+-int proc_parse_options(char *options, struct pid_namespace *pid)
++int proc_parse_options(char *options, struct proc_fs_info *fs_info)
+ {
+ 	char *p;
+ 	substring_t args[MAX_OPT_ARGS];
+ 	int option;
++	kgid_t gid;
+ 
+ 	if (!options)
+ 		return 1;
+@@ -57,7 +58,12 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
+ 		case Opt_gid:
+ 			if (match_int(&args[0], &option))
+ 				return 0;
+-			pid->pid_gid = make_kgid(current_user_ns(), option);
++			gid = make_kgid(current_user_ns(), option);
++			if (!gid_valid(gid)) {
++				pr_err("proc: invalid gid mount option.\n");
++				return 0;
++			}
++			proc_fs_set_pid_gid(fs_info, gid);
+ 			break;
+ 		case Opt_hidepid:
+ 			if (match_int(&args[0], &option))
+@@ -67,7 +73,7 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
+ 				pr_err("proc: hidepid value must be between 0 and 2.\n");
+ 				return 0;
+ 			}
+-			pid->hide_pid = option;
++			proc_fs_set_hide_pid(fs_info, option);
+ 			break;
+ 		default:
+ 			pr_err("proc: unrecognized mount option \"%s\" "
+@@ -82,10 +88,9 @@ int proc_parse_options(char *options, struct pid_namespace *pid)
+ int proc_remount(struct super_block *sb, int *flags, char *data)
+ {
+ 	struct proc_fs_info *fs_info = proc_sb(sb);
+-	struct pid_namespace *pid = fs_info->pid_ns;
+ 
+ 	sync_filesystem(sb);
+-	return !proc_parse_options(data, pid);
++	return !proc_parse_options(data, fs_info);
  }
- #else
-+static void list_lru_register(struct list_lru *lru)
+ 
+ static int proc_test_super(struct super_block *s, void *data)
+diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+index 5e461f6..a7fc6a1 100644
+--- a/include/linux/proc_fs.h
++++ b/include/linux/proc_fs.h
+@@ -8,6 +8,10 @@
+ #include <linux/types.h>
+ #include <linux/fs.h>
+ #include <linux/refcount.h>
++#include <linux/pid_namespace.h>
++
++struct proc_dir_entry;
++struct pid_namespace;
+ 
+ struct proc_fs_info {
+ 	struct pid_namespace *pid_ns;
+@@ -15,8 +19,6 @@ struct proc_fs_info {
+ 	struct dentry *proc_thread_self; /* For /proc/thread-self/ */
+ };
+ 
+-struct proc_dir_entry;
+-
+ #ifdef CONFIG_PROC_FS
+ 
+ static inline struct proc_fs_info *proc_sb(struct super_block *sb)
+@@ -24,6 +26,26 @@ static inline struct proc_fs_info *proc_sb(struct super_block *sb)
+ 	return sb->s_fs_info;
+ }
+ 
++static inline void proc_fs_set_hide_pid(struct proc_fs_info *fs_info, int hide_pid)
 +{
++	fs_info->pid_ns->hide_pid = hide_pid;
 +}
 +
-+static void list_lru_unregister(struct list_lru *lru)
++static inline void proc_fs_set_pid_gid(struct proc_fs_info *fs_info, kgid_t gid)
 +{
++	fs_info->pid_ns->pid_gid = gid;
 +}
 +
- static inline bool list_lru_memcg_aware(struct list_lru *lru)
++static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
++{
++	return fs_info->pid_ns->hide_pid;
++}
++
++static inline kgid_t proc_fs_pid_gid(struct proc_fs_info *fs_info)
++{
++	return fs_info->pid_ns->pid_gid;
++}
++
+ extern void proc_root_init(void);
+ extern void proc_flush_task(struct task_struct *);
+ 
+@@ -60,6 +82,24 @@ static inline void proc_flush_task(struct task_struct *task)
  {
- 	return false;
+ }
+ 
++static inline void proc_fs_set_hide_pid(struct proc_fs_info *fs_info, int hide_pid)
++{
++}
++
++static inline void proc_fs_set_pid_gid(struct proc_info_fs *fs_info, kgid_t gid)
++{
++}
++
++static inline int proc_fs_hide_pid(struct proc_fs_info *fs_info)
++{
++	return 0;
++}
++
++extern kgid_t proc_fs_pid_gid(struct proc_fs_info *fs_info)
++{
++	return GLOBAL_ROOT_GID;
++}
++
+ extern inline struct proc_fs_info *proc_sb(struct super_block *sb) { return NULL;}
+ static inline struct proc_dir_entry *proc_symlink(const char *name,
+ 		struct proc_dir_entry *parent,const char *dest) { return NULL;}
+-- 
+2.10.5
