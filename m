@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752474AbeEKQY1 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:24:27 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:39546 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752047AbeEKQVd (ORCPT
+        id S1752116AbeEKQVc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:21:32 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34421 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752047AbeEKQV1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:21:33 -0400
-X-Google-Smtp-Source: AB8JxZrYeTBwPLqP8KW9XfkVUTQ+AdzA8AivDmNSMMvzNiE4x2G+qo9aefrt2AdPWVhxUpmSAVDCYw==
+        Fri, 11 May 2018 12:21:27 -0400
+X-Google-Smtp-Source: AB8JxZqSCERBlPbK2yceggxOj2ZZzdi/aeYf4cYWpI4rxsKzAF3ooFovIGgWv2avdAbFhI2xVay4Mg==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         David Lechner <david@lechnology.com>,
@@ -30,9 +30,9 @@ To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 04/12] platform: provide a separate function for initializing platform devices
-Date: Fri, 11 May 2018 18:20:20 +0200
-Message-Id: <20180511162028.20616-5-brgl@bgdev.pl>
+Subject: [PATCH 01/12] platform/early: add a new field to struct device
+Date: Fri, 11 May 2018 18:20:17 +0200
+Message-Id: <20180511162028.20616-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180511162028.20616-1-brgl@bgdev.pl>
 References: <20180511162028.20616-1-brgl@bgdev.pl>
@@ -42,71 +42,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-The early platform driver framework will allocate platform devices
-using its own internal mechanisms. Provide a function that allows to
-initialize a platform device object without allocating it.
+Add a new single-bit field to struct device which will be used to
+indicate that a device was probed early in the boot sequence.
+
+This does not affect the size of struct device on any architecture
+I built on (ARM, ARM64, x86_64).
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/base/platform.c         | 24 ++++++++++++++++++++----
- include/linux/platform_device.h |  2 ++
- 2 files changed, 22 insertions(+), 4 deletions(-)
+ include/linux/device.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 0c53e3e3e5aa..0ba4effb9618 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -252,6 +252,25 @@ static void platform_device_release(struct device *dev)
- 	kfree(pa);
- }
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 477956990f5e..bcff8b598b20 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -992,6 +992,7 @@ struct device {
+ 	bool			offline_disabled:1;
+ 	bool			offline:1;
+ 	bool			of_node_reused:1;
++	bool			early:1;
+ };
  
-+/**
-+ * platform_device_init - initialize a platform device
-+ * @pdev: platform device to initialize
-+ * @name: base name of the device we're adding, NOTE: it's not copied
-+ * @id: instance id
-+ *
-+ * Initiate an already allocated platform device. This routine does not set
-+ * the release device callback.
-+ */
-+void platform_device_init(struct platform_device *pdev,
-+			  const char *name, int id)
-+{
-+	pdev->name = name;
-+	pdev->id = id;
-+	device_initialize(&pdev->dev);
-+	arch_setup_pdev_archdata(pdev);
-+}
-+EXPORT_SYMBOL_GPL(platform_device_init);
-+
- /**
-  * platform_device_alloc - create a platform device
-  * @name: base name of the device we're adding
-@@ -267,11 +286,8 @@ struct platform_device *platform_device_alloc(const char *name, int id)
- 	pa = kzalloc(sizeof(*pa) + strlen(name) + 1, GFP_KERNEL);
- 	if (pa) {
- 		strcpy(pa->name, name);
--		pa->pdev.name = pa->name;
--		pa->pdev.id = id;
--		device_initialize(&pa->pdev.dev);
-+		platform_device_init(&pa->pdev, pa->name, id);
- 		pa->pdev.dev.release = platform_device_release;
--		arch_setup_pdev_archdata(&pa->pdev);
- 	}
- 
- 	return pa ? &pa->pdev : NULL;
-diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-index 099aaf804b50..46bfd5ff666f 100644
---- a/include/linux/platform_device.h
-+++ b/include/linux/platform_device.h
-@@ -165,6 +165,8 @@ static inline struct platform_device *platform_device_register_data(
- 			NULL, 0, data, size);
- }
- 
-+extern void platform_device_init(struct platform_device *pdev,
-+				 const char *name, int id);
- extern struct platform_device *platform_device_alloc(const char *name, int id);
- extern int platform_device_add_resources(struct platform_device *pdev,
- 					 const struct resource *res,
+ static inline struct device *kobj_to_dev(struct kobject *kobj)
 -- 
 2.17.0
