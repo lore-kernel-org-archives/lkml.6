@@ -1,29 +1,28 @@
 Return-Path: <poza@qualcomm.com>
-X-Google-Smtp-Source: AB8JxZoJS0x3jtCWkdJPGqMlX1KoO9stmpKcEC+Ez2QGAni/7DVvFCl/kyMVR4jRGOF+j25shfF1
+X-Google-Smtp-Source: AB8JxZqrCDxsLfBJgpdXWSCiQHVkVtfYeVFifUbeDBQR86j2FjapGzzfliqZAUgBPbU7Hrad7x7L
 ARC-Seal: i=1; a=rsa-sha256; t=1526035414; cv=none;
         d=google.com; s=arc-20160816;
-        b=thnijyALua52vI8stfONCDlAUnwXIwACcSJt7aPSM8pWx5kubJIynJcb5C8BXK1DG1
-         /hZfp5JvV8zfIb+k4OOHVq3OGc1h6UCEZNu0oCwLEQbv40LK4qhfnultWpyK1QNZM8dH
-         tZ35ZPIoRMn0VG2pfeHn+6oaWKRUKa2iqZhdoLeGCPpYqtNn6FQaPmt1Ycu7qNLCVmIO
-         6dUOYNvPIPjdddsiSnfu/J7efMB4c2qY7cf1rg9ZcKCP5sMvZRkDxiWrO0rQZyYCxgLV
-         qOyMBkRM6An7BHeDG/SyRRLXHZT7+tXEPcn71R2AygLKo2qYNACx6BPfp+f2iQHslFFF
-         4jwg==
+        b=HhS04ArccBZRsETkW4AY/DNJo2VPbxPVibKCojrWoC6mAzwGH5Q5IW7Wo8jxNuRSES
+         tf0zh+0ISglQO9WsMoUxDpBkTRXhaTgy4OMhjig7vOvocYR/Ouq0/hAhCLx/tPK1uj+K
+         pZuaZmV0HuAus3KKPEVc4P90VUrJ1LBr9nhPgUdewwPqxIPIV57OQh3twl0kd5gVQ2P2
+         EYhYLZb/0C654iZQkRckBQuEdRwD+7T3rpaf6M9SuRH4NgqS+OYZbLaezVGF2E8AHdG9
+         lmoTNMIXuH6auZ0A3INjVWWqCSybJq9jn6SgQR3yLUjVRbFd4MF79Oo6iMHrBqyOq48w
+         Fw1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=hbeO4XfohJBcyyd41JIedMDgRCkC8nFkwL/10yzrx9c=;
-        b=COHMXc3aoUjTV8RZ3XMJa0RHPhRUjZum/7k8tEVrw2AGg6tL2v7C1SH9oaSqgrlWw2
-         qclS+yPqXwkMULMifQqWlx7Tqjn6Zw2PxiJDtJcsiGeiF8mtGwVagzkBF2NzJiZh99OW
-         yZZphDWMdGii/+irGB07uQeIe5GwOQVDIJwqUKkZ5oxuXKtdpnSxSyQbXtxubgpiwjMB
-         Z85tUcL2nyKxQ2pnjwe3c60gLM/eu+q3j/nTA6mDZP/ZjTwX4Qw7Y97dWPukjJXQGbhW
-         al/c0Fls8fz0xCgLsh7tD1OWlrqZcgIVpMb8V3EP1LEt5u0mQ79bKuIz8YVPJEU5Cn0S
-         msHQ==
+        bh=Uamu9nTixlFw/nVi39a2NIxDgFepUNEIpAxUJNxh8H4=;
+        b=UJUODV+Y0d75CudvSn8S5J0t2i0lBcTbkXe+FaOh81GcqUGJMnvixx2eDdzEg5cU70
+         2RcWdqD8F3DVwR/Q18vs6NAqeN3BhJoahv+RYBgnuHhas6gtUqZN+r0/wWdGp+aqAp4f
+         XFctNyQA0OX3/b9SdkQAzUIZdarW6JLwBFh4W8zCYJ2JNLvG4k74Y6GAWdKG1dsQmn1D
+         6VIqlHlyD7hemF/bqJbNK/Pix1SqZeH/jDaxTy/G4VK1ZHMHcszEM7G9tgCV2MYktMnf
+         T+PUiScFAxExJBSYADkrqzwjS2ncAoIE1mE/kelI8lFS0eOeF1qAC1IMxagZnVUkdFbV
+         2s5A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.251 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+       spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.38 as permitted sender) smtp.mailfrom=poza@qualcomm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.251 as permitted sender) smtp.mailfrom=poza@qualcomm.com
-X-IronPort-AV: E=Sophos;i="5.49,388,1520924400";
-   d="scan'208";a="435728396"
+       spf=pass (google.com: domain of poza@qualcomm.com designates 199.106.114.38 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+X-IronPort-AV: E=McAfee;i="5900,7806,8889"; a="82987134"
 From: Oza Pawandeep <poza@codeaurora.org>
 To: Bjorn Helgaas <bhelgaas@google.com>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
@@ -38,56 +37,81 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
 	Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH v16 9/9] PCI/DPC: Disable ERR_NONFATAL and enable ERR_FATAL for DPC
-Date: Fri, 11 May 2018 06:43:28 -0400
-Message-Id: <1526035408-31328-10-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v16 7/9] PCI/PORTDRV: Implement generic find device
+Date: Fri, 11 May 2018 06:43:26 -0400
+Message-Id: <1526035408-31328-8-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526035408-31328-1-git-send-email-poza@codeaurora.org>
 References: <1526035408-31328-1-git-send-email-poza@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600164110297990629?=
-X-GMAIL-MSGID: =?utf-8?q?1600164110297990629?=
+X-GMAIL-THRID: =?utf-8?q?1600164110804285465?=
+X-GMAIL-MSGID: =?utf-8?q?1600164110804285465?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch disables ERR_NONFATAL trigger for DPC, so now DPC
-handles only ERR_FATAL.
+This patch implements generic pcie_port_find_device() routine.
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
 
-diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-index 5680c13..358b4324 100644
---- a/drivers/pci/pcie/dpc.c
-+++ b/drivers/pci/pcie/dpc.c
-@@ -273,7 +273,7 @@ static int dpc_probe(struct pcie_device *dev)
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index ba6c963..896608a 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -114,4 +114,6 @@ static inline void pcie_pme_interrupt_enable(struct pci_dev *dev, bool en) {}
+ 
+ struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
+ 							u32 service);
++struct device *pcie_port_find_device(struct pci_dev *dev,
++				     u32 service);
+ #endif /* _PORTDRV_H_ */
+diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+index d843055..bc2c337 100644
+--- a/drivers/pci/pcie/portdrv_core.c
++++ b/drivers/pci/pcie/portdrv_core.c
+@@ -20,6 +20,7 @@
+ #include "portdrv.h"
+ struct portdrv_service_data {
+ 	struct pcie_port_service_driver *drv;
++	struct device *dev;
+ 	u32 service;
+ };
+ 
+@@ -415,6 +416,7 @@ static int find_service_iter(struct device *device, void *data)
+ 		service_driver = to_service_driver(device->driver);
+ 		if (service_driver->service == service) {
+ 			pdrvs->drv = service_driver;
++			pdrvs->dev = device;
+ 			return 1;
  		}
  	}
- 
--	ctl = (ctl & 0xfff4) | PCI_EXP_DPC_CTL_EN_NONFATAL | PCI_EXP_DPC_CTL_INT_EN;
-+	ctl = (ctl & 0xfff4) | PCI_EXP_DPC_CTL_EN_FATAL | PCI_EXP_DPC_CTL_INT_EN;
- 	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
- 
- 	dev_info(device, "DPC error containment capabilities: Int Msg #%d, RPExt%c PoisonedTLP%c SwTrigger%c RP PIO Log %d, DL_ActiveErr%c\n",
-@@ -291,7 +291,7 @@ static void dpc_remove(struct pcie_device *dev)
- 	u16 ctl;
- 
- 	pci_read_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, &ctl);
--	ctl &= ~(PCI_EXP_DPC_CTL_EN_NONFATAL | PCI_EXP_DPC_CTL_INT_EN);
-+	ctl &= ~(PCI_EXP_DPC_CTL_EN_FATAL | PCI_EXP_DPC_CTL_INT_EN);
- 	pci_write_config_word(pdev, dpc->cap_pos + PCI_EXP_DPC_CTL, ctl);
+@@ -443,6 +445,27 @@ struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
  }
  
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index 103ba79..5182e0d 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -981,6 +981,7 @@
- #define  PCI_EXP_DPC_CAP_DL_ACTIVE	0x1000	/* ERR_COR signal on DL_Active supported */
- 
- #define PCI_EXP_DPC_CTL			6	/* DPC control */
-+#define  PCI_EXP_DPC_CTL_EN_FATAL 	0x0001	/* Enable trigger on ERR_FATAL message */
- #define  PCI_EXP_DPC_CTL_EN_NONFATAL 	0x0002	/* Enable trigger on ERR_NONFATAL message */
- #define  PCI_EXP_DPC_CTL_INT_EN 	0x0008	/* DPC Interrupt Enable */
- 
+ /**
++ * pcie_port_find_device - find the struct device
++ * @dev: PCI Express port the service devices associated with
++ * @service: For the service to find
++ *
++ * Find PCI Express port service driver associated with given service
++ */
++struct device *pcie_port_find_device(struct pci_dev *dev,
++				      u32 service)
++{
++	struct device *device;
++	struct portdrv_service_data pdrvs;
++
++	pdrvs.dev = NULL;
++	pdrvs.service = service;
++	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
++
++	device = pdrvs.dev;
++	return device;
++}
++
++/**
+  * pcie_port_device_remove - unregister PCI Express port service devices
+  * @dev: PCI Express port the service devices to unregister are associated with
+  *
 -- 
 2.7.4
