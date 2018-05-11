@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751830AbeEKUJ3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 16:09:29 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:33586 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751159AbeEKUJ1 (ORCPT
+        id S1751907AbeEKUJp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 16:09:45 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33529 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751859AbeEKUJn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 16:09:27 -0400
-X-Google-Smtp-Source: AB8JxZptIG9M8x46M1CLpcabcKuUTO2y3Z3gRyD+C5WuLZQIHOKlkSUlIHB6og6H2DqHs257u6WwCA==
-Subject: Re: [PATCH v1 6/9] iommu/tegra: gart: Ignore devices without IOMMU
- phandle in DT
+        Fri, 11 May 2018 16:09:43 -0400
+X-Google-Smtp-Source: AB8JxZooHMPFIe2T8cvJ+oHFLtHO0lOaNfRtkuP0fFpCe4aKv2ONVCroZN0aP6GQ75J4SYJFDqzYbw==
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH v1 8/9] iommu: Introduce iotlb_sync_map callback
 To: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc: linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
 References: <20180508181700.5169-1-digetx@gmail.com>
- <20180508181700.5169-7-digetx@gmail.com>
- <a3293da9-b750-6c5c-6f84-53b1aafc5e53@arm.com>
-From: Dmitry Osipenko <digetx@gmail.com>
+ <20180508181700.5169-9-digetx@gmail.com>
+ <da823a61-5bda-042b-c61f-d0d98f9b6e6f@arm.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
  xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
@@ -44,12 +43,12 @@ Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
  DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
  90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
  c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <000ce2c8-2b20-3fb5-8942-b9e60ba34422@gmail.com>
-Date: Fri, 11 May 2018 18:34:49 +0300
+Message-ID: <fd1fc335-bd06-d7ac-7839-786957144cf8@gmail.com>
+Date: Fri, 11 May 2018 22:58:59 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <a3293da9-b750-6c5c-6f84-53b1aafc5e53@arm.com>
+In-Reply-To: <da823a61-5bda-042b-c61f-d0d98f9b6e6f@arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -57,72 +56,64 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robin,
-
-On 11.05.2018 14:34, Robin Murphy wrote:
-> Hi Dmitry,
-> 
+On 11.05.2018 16:02, Robin Murphy wrote:
 > On 08/05/18 19:16, Dmitry Osipenko wrote:
->> GART can't handle all devices, ignore devices that aren't related to GART.
->> Device tree must explicitly assign GART IOMMU to the devices.
->>
+>> Introduce iotlb_sync_map() callback that is invoked in the end of
+>> iommu_map(). This new callback allows IOMMU drivers to avoid syncing
+>> on mapping of each contiguous chunk and sync only when whole mapping
+>> is completed, optimizing performance of the mapping operation.
+> 
+> This looks like a reasonable compromise - for users of
+> IO_PGTABLE_QUIRK_TLBI_ON_MAP we can leave the implicit add_flush() in place for
+> each individual map call, but at least move the sync() out to this callback,
+> which should still be beneficial overall.
+> 
+> Modulo one possible nit below,
+> 
+> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+> 
 >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>   drivers/iommu/tegra-gart.c | 33 ++++++++++++++++++++++++++++++++-
->>   1 file changed, 32 insertions(+), 1 deletion(-)
+>>   drivers/iommu/iommu.c | 8 ++++++--
+>>   include/linux/iommu.h | 1 +
+>>   2 files changed, 7 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
->> index 39305224c48d..5b2d27620350 100644
->> --- a/drivers/iommu/tegra-gart.c
->> +++ b/drivers/iommu/tegra-gart.c
->> @@ -366,6 +366,26 @@ static void gart_iommu_remove_device(struct device *dev)
->>       iommu_device_unlink(&gart_handle->iommu, dev);
->>   }
->>   +static int gart_iommu_check_device(struct gart_device *gart,
->> +                   struct device *dev);
->> +
->> +struct iommu_group *gart_iommu_device_group(struct device *dev)
->> +{
->> +    int err;
->> +
->> +    err = gart_iommu_check_device(gart_handle, dev);
->> +    if (err)
->> +        return ERR_PTR(err);
->> +
->> +    return generic_device_group(dev);
->> +}
->> +
->> +static int gart_iommu_of_xlate(struct device *dev,
->> +                   struct of_phandle_args *args)
->> +{
->> +    return 0;
->> +}
->> +
->>   static const struct iommu_ops gart_iommu_ops = {
->>       .capable    = gart_iommu_capable,
->>       .domain_alloc    = gart_iommu_domain_alloc,
->> @@ -374,14 +394,24 @@ static const struct iommu_ops gart_iommu_ops = {
->>       .detach_dev    = gart_iommu_detach_dev,
->>       .add_device    = gart_iommu_add_device,
->>       .remove_device    = gart_iommu_remove_device,
->> -    .device_group    = generic_device_group,
->> +    .device_group    = gart_iommu_device_group,
->>       .map        = gart_iommu_map,
->>       .map_sg        = default_iommu_map_sg,
->>       .unmap        = gart_iommu_unmap,
->>       .iova_to_phys    = gart_iommu_iova_to_phys,
->>       .pgsize_bitmap    = GART_IOMMU_PGSIZES,
->> +    .of_xlate    = gart_iommu_of_xlate,
->>   };
->>   +static int gart_iommu_check_device(struct gart_device *gart,
->> +                   struct device *dev)
->> +{
->> +    if (!dev->iommu_fwspec || dev->iommu_fwspec->ops != &gart_iommu_ops)
->> +        return -ENODEV;
+>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>> index d2aa23202bb9..39b2ee66aa96 100644
+>> --- a/drivers/iommu/iommu.c
+>> +++ b/drivers/iommu/iommu.c
+>> @@ -1508,13 +1508,14 @@ static size_t iommu_pgsize(struct iommu_domain *domain,
+>>   int iommu_map(struct iommu_domain *domain, unsigned long iova,
+>>             phys_addr_t paddr, size_t size, int prot)
+>>   {
+>> +    const struct iommu_ops *ops = domain->ops;
+>>       unsigned long orig_iova = iova;
+>>       unsigned int min_pagesz;
+>>       size_t orig_size = size;
+>>       phys_addr_t orig_paddr = paddr;
+>>       int ret = 0;
+>>   -    if (unlikely(domain->ops->map == NULL ||
+>> +    if (unlikely(ops->map == NULL ||
+>>                domain->pgsize_bitmap == 0UL))
+>>           return -ENODEV;
+>>   @@ -1543,7 +1544,7 @@ int iommu_map(struct iommu_domain *domain, unsigned
+>> long iova,
+>>           pr_debug("mapping: iova 0x%lx pa %pa pgsize 0x%zx\n",
+>>                iova, &paddr, pgsize);
+>>   -        ret = domain->ops->map(domain, iova, paddr, pgsize, prot);
+>> +        ret = ops->map(domain, iova, paddr, pgsize, prot);
+>>           if (ret)
+>>               break;
+>>   @@ -1552,6 +1553,9 @@ int iommu_map(struct iommu_domain *domain, unsigned
+>> long iova,
+>>           size -= pgsize;
+>>       }
+>>   +    if (ops->iotlb_sync_map)
+>> +        ops->iotlb_sync_map(domain);
 > 
-> Conceptually, it would be better to verify this in .add_device *before* calling
-> iommu_group_get_for_dev(). That would also align with what other drivers do, and
-> let you save introducing the .device_group callback until the real
-> implementation in the later patch.
+> Is it worth trying to skip this in the error case when we're just going to undo
+> it immediately?
 
-Indeed, thank you for the suggestion.
+I can imagine an IOMMU driver that could handle syncing of mapping differently
+from the unmapping, in this case it may not worth skipping sync_map in the error
+case.
