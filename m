@@ -1,97 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751313AbeEKPyO (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 11:54:14 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:37295 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750746AbeEKPyM (ORCPT
+        id S1751865AbeEKPyc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 11:54:32 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:37767 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751634AbeEKPy3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 11:54:12 -0400
-X-Google-Smtp-Source: AB8JxZoh0WxXFOJmHDuCn2wEtIBbp/IFZLBDZgZt8wNswhiGRW8+18J4egqvGnqxYE2ZXTC9JTWz2w==
-Subject: Re: [RFC PATCH v4 3/3] acpi: apei: Do not panic() on PCIe errors
- reported through GHES
-To: Borislav Petkov <bp@alien8.de>
-Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-        devel@acpica.org
-References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-3-mr.nuke.me@gmail.com> <20180511154039.GD12705@pd.tnic>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <8e3c0cc6-9c5c-85ce-650c-8f498f5907da@gmail.com>
-Date: Fri, 11 May 2018 10:54:09 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 11 May 2018 11:54:29 -0400
+X-Google-Smtp-Source: AB8JxZq5jKCYbH4qkT+Nk52TIxQrLPZF8DekkVkfd7n4/rp8koAOuLYgAYSEmRxfuesDiGYmp2v/IgqUg3xz5MwH91U=
 MIME-Version: 1.0
-In-Reply-To: <20180511154039.GD12705@pd.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <e9348b12b59e6236a7965ceba94011a1e5b72720.1525447375.git-series.maxime.ripard@bootlin.com>
+References: <cover.0c9a2cb0b38deb7304c60c507f45cf50352b752a.1525447375.git-series.maxime.ripard@bootlin.com>
+ <e9348b12b59e6236a7965ceba94011a1e5b72720.1525447375.git-series.maxime.ripard@bootlin.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 11 May 2018 17:54:27 +0200
+Message-ID: <CACRpkdY+W02YfJb1zswy40Q0TGKupCFEG7=w78_A3VmFJ97GaA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] drm/panel: Add Ilitek ILI9881c panel driver
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Maxime,
 
+sorry that noone had much time to look at the driver.
+But I can help out, hopefully.
 
-On 05/11/2018 10:40 AM, Borislav Petkov wrote:
-> On Mon, Apr 30, 2018 at 04:33:52PM -0500, Alexandru Gagniuc wrote:
->> The policy was to panic() when GHES said that an error is "Fatal".
->> This logic is wrong for several reasons, as it doesn't take into
->> account what caused the error.
->>
->> PCIe fatal errors indicate that the link to a device is either
->> unstable or unusable. They don't indicate that the machine is on fire,
->> and they are not severe enough that we need to panic(). Instead of
->> relying on crackmonkey firmware, evaluate the error severity based on
-> 	     ^^^^^^^^^^^^
-> 
-> Please keep the smartass formulations for the ML only and do not let
-> them leak into commit messages.
+On Fri, May 4, 2018 at 5:23 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-You're right. The monkeys are not crack. Instead, what a lot of
-manufacturers do is maintain large monkey farms with electronic
-typewriters. Given a sufficiently large farm, they take those results
-which compile. Of those results, they pick and ship the one that takes
-longest to boot, without the customers complaining.
+> The LHR050H41 panel is the panel shipped with the BananaPi M2-Magic, and is
+> based on the Ilitek ILI9881c Controller. Add a driver for it, modelled
+> after the other Ilitek controller drivers.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-That being clarified, should I replace "crackmonkey" with "broken" in
-the commit message?
+Nice, I have some experience with those.
 
-(snip)
+> +config DRM_PANEL_ILITEK_ILI9881C
+> +       tristate "Ilitek ILI9881C-based panels"
+> +       depends on OF
+> +       depends on DRM_MIPI_DSI
+> +       depends on BACKLIGHT_CLASS_DEVICE
 
->> +/* PCIe errors should not cause a panic. */
->> +static int ghes_sec_pcie_severity(struct acpi_hest_generic_data *gdata)
->> +{
->> +	struct cper_sec_pcie *pcie_err = acpi_hest_get_payload(gdata);
->> +
->> +	if (pcie_err->validation_bits & CPER_PCIE_VALID_DEVICE_ID &&
->> +	    pcie_err->validation_bits & CPER_PCIE_VALID_AER_INFO &&
->> +	    IS_ENABLED(CONFIG_ACPI_APEI_PCIEAER))
-> 
-> How is PCIe error severity dependent on whether the AER error reporting
-> driver is enabled (and possibly not even loaded) on the system?
+If it absolutely needs DRM_MIPI_DSI and
+BACKLIGHT_CLASS_DEVICE it maybe you should
+be more helpful to the user to just select it?
 
-Borislav, I sense some confusion. AER is not a "reporting" driver. It
-handles the errors. You can't leave these errors unhandled. They
-propagate to the root complex and can cause fatal MCEs when not handled.
-The window to handle the error is pretty large, so it's not a concern
-when you're handling it.
+Depending on OF is fine, that is more of a platform
+property.
 
-Alex
+> +struct ili9881c {
+> +       struct drm_panel        panel;
+> +       struct mipi_dsi_device  *dsi;
+> +
+> +       struct backlight_device *backlight;
+> +       struct gpio_desc        *power;
 
->> +		return CPER_SEV_RECOVERABLE;
->> +
->> +	return ghes_cper_severity(gdata->error_severity);
->> +}
->> +/*
-> 
+Should this not be modeled using a fixed regulator instead?
+
+> +       struct gpio_desc        *reset;
+> +};
+
+> +enum ili9881c_op {
+> +       ILI9881C_SWITCH_PAGE,
+> +       ILI9881C_COMMAND,
+> +};
+> +
+> +struct ili9881c_instr {
+> +       enum ili9881c_op        op;
+> +
+> +       union arg {
+> +               struct cmd {
+> +                       u8      cmd;
+> +                       u8      data;
+> +               } cmd;
+> +               u8      page;
+> +       } arg;
+> +};
+> +
+> +#define ILI9881C_SWITCH_PAGE_INSTR(_page)      \
+> +       {                                       \
+> +               .op = ILI9881C_SWITCH_PAGE,     \
+> +               .arg = {                        \
+> +                       .page = (_page),        \
+> +               },                              \
+> +       }
+> +
+> +#define ILI9881C_COMMAND_INSTR(_cmd, _data)            \
+> +       {                                               \
+> +               .op = ILI9881C_COMMAND,         \
+> +               .arg = {                                \
+> +                       .cmd = {                        \
+> +                               .cmd = (_cmd),          \
+> +                               .data = (_data),        \
+> +                       },                              \
+> +               },                                      \
+> +       }
+
+That looks clever.
+
+> +static const struct ili9881c_instr ili9881c_init[] = {
+> +       ILI9881C_SWITCH_PAGE_INSTR(3),
+> +       ILI9881C_COMMAND_INSTR(0x01, 0x00),
+> +       ILI9881C_COMMAND_INSTR(0x02, 0x00),
+> +       ILI9881C_COMMAND_INSTR(0x03, 0x73),
+> +       ILI9881C_COMMAND_INSTR(0x04, 0x03),
+> +       ILI9881C_COMMAND_INSTR(0x05, 0x00),
+> +       ILI9881C_COMMAND_INSTR(0x06, 0x06),
+> +       ILI9881C_COMMAND_INSTR(0x07, 0x06),
+(...)
+
+This is a bit hard to understand to say the least. If this comes from
+a datasheet some more elaborate construction of the commands
+would be nice, maybe using some #defines?
+
+If this just comes from some code drop or reverse engineering,
+OK bad luck, I can live with it :)
+
+It looks a bit like you're uploading a small firmware.
+
+> +static int ili9881c_switch_page(struct ili9881c *ctx, u8 page)
+> +{
+> +       u8 buf[4] = { 0xff, 0x98, 0x81, page };
+
+That is also a bit unclear wrt what is going on.
+
+> +static int ili9881c_prepare(struct drm_panel *panel)
+> +{
+> +       struct ili9881c *ctx = panel_to_ili9881c(panel);
+> +       unsigned int i;
+> +       int ret;
+> +
+> +       /* Power the panel */
+> +       gpiod_set_value(ctx->power, 1);
+> +       msleep(5);
+
+So isn't this a fixed regulator using a GPIO?
+
+> +static const struct drm_display_mode default_mode = {
+> +       .clock          = 62000,
+> +       .vrefresh       = 60,
+> +
+> +       .hdisplay       = 720,
+> +       .hsync_start    = 720 + 10,
+> +       .hsync_end      = 720 + 10 + 20,
+> +       .htotal         = 720 + 10 + 20 + 30,
+> +
+> +       .vdisplay       = 1280,
+> +       .vsync_start    = 1280 + 10,
+> +       .vsync_end      = 1280 + 10 + 10,
+> +       .vtotal         = 1280 + 10 + 10 + 20,
+> +};
+
+Is that the default mode for this Ilitek device or just for the
+BananaPi? If it is the latter it should be named
+bananapi_default_mode or something so as not to confuse
+the next user of this driver.
+
+> +       ctx->power = devm_gpiod_get(&dsi->dev, "power", GPIOD_OUT_LOW);
+> +       if (IS_ERR(ctx->power)) {
+> +               dev_err(&dsi->dev, "Couldn't get our power GPIO\n");
+> +               return PTR_ERR(ctx->power);
+> +       }
+
+So I'm a bit sceptical about this one.
+
+Yours,
+Linus Walleij
