@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752145AbeEKQVe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 12:21:34 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:34935 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752090AbeEKQVa (ORCPT
+        id S1752178AbeEKQVm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 12:21:42 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:42788 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752147AbeEKQVh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 12:21:30 -0400
-X-Google-Smtp-Source: AB8JxZqoTIsbbuiCS+dnSbBIWCSpZS0IzW81w68xeyJxzbI0NMboNEiukQWY9nVi+a4OJNd7tOrxPw==
+        Fri, 11 May 2018 12:21:37 -0400
+X-Google-Smtp-Source: AB8JxZpRvn5r8Ql0ms9vDGBpVqiyG9YCbH+m9Qr0ZQvQPVoK0Nfi2Em1rvj5qJdsmFtKk618qIaxsg==
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         David Lechner <david@lechnology.com>,
@@ -30,9 +30,9 @@ To: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 03/12] platform/early: export platform_match() locally
-Date: Fri, 11 May 2018 18:20:19 +0200
-Message-Id: <20180511162028.20616-4-brgl@bgdev.pl>
+Subject: [PATCH 05/12] platform: export platform_device_release() locally
+Date: Fri, 11 May 2018 18:20:21 +0200
+Message-Id: <20180511162028.20616-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180511162028.20616-1-brgl@bgdev.pl>
 References: <20180511162028.20616-1-brgl@bgdev.pl>
@@ -42,38 +42,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We will use this function to match devices in the early platform core
-code. Export it locally in drivers/base.
+The early platform driver mechanism will use this function as the
+device release callback. Make it available in drivers/base.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/base/base.h     | 3 +++
+ drivers/base/base.h     | 1 +
  drivers/base/platform.c | 2 +-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/base/base.h b/drivers/base/base.h
-index d800de650fa5..7a72ae72a98e 100644
+index 7a72ae72a98e..514a6d198f14 100644
 --- a/drivers/base/base.h
 +++ b/drivers/base/base.h
-@@ -161,3 +161,6 @@ extern void device_links_driver_cleanup(struct device *dev);
- extern void device_links_no_driver(struct device *dev);
- extern bool device_links_busy(struct device *dev);
- extern void device_links_unbind_consumers(struct device *dev);
-+
-+/* Platform device helpers. */
-+extern int platform_match(struct device *dev, struct device_driver *drv);
+@@ -164,3 +164,4 @@ extern void device_links_unbind_consumers(struct device *dev);
+ 
+ /* Platform device helpers. */
+ extern int platform_match(struct device *dev, struct device_driver *drv);
++extern void platform_device_release(struct device *dev);
 diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 70b156ee267a..0c53e3e3e5aa 100644
+index 0ba4effb9618..417ab6071350 100644
 --- a/drivers/base/platform.c
 +++ b/drivers/base/platform.c
-@@ -961,7 +961,7 @@ static const struct platform_device_id *platform_match_id(
-  * and compare it against the name of the driver. Return whether they match
-  * or not.
-  */
--static int platform_match(struct device *dev, struct device_driver *drv)
-+int platform_match(struct device *dev, struct device_driver *drv)
+@@ -239,7 +239,7 @@ void platform_device_put(struct platform_device *pdev)
+ }
+ EXPORT_SYMBOL_GPL(platform_device_put);
+ 
+-static void platform_device_release(struct device *dev)
++void platform_device_release(struct device *dev)
  {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct platform_driver *pdrv = to_platform_driver(drv);
+ 	struct platform_object *pa = container_of(dev, struct platform_object,
+ 						  pdev.dev);
 -- 
 2.17.0
