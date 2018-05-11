@@ -1,33 +1,32 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3632397-1526025612-3-6481445731123577098
+X-Cyrus-Session-Id: sloti22d1t05-4027354-1526047001-2-4020425899973495661
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: 
+X-Spam-charsets: plain='windows-1252'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526025612; b=jT3rSlCg3UGrEpYhVEAnVGVNz4Icqp1tfZaULtZEruhUMopQS7
-    HnWQ+qEsgzXA2xdZn1fsqbmAHTnZpE/Hs3N1oN4uLkGARz5OWW/i1zcffVi6N9Ye
-    zqhaxIbRv40jqxXamwW+gBbXK5cbRawjiZs+t+ClHlp4BPAH1CSiBA7OC/4jV82J
-    D9NR0wYioJQ1ZkZN9AehExNQRNQFfQHyUJsQv5uzmJwOLmB2s1Ia0lpL8Jl6kP9U
-    ri9iLbz5nZwRAJuiR2rqBHbWcfssQBJvwwLWTdFaaT1vrsHLwYb+h2qhoF4xAtRU
-    TavAfsfJParMZkkNC4ySwb/70UNJVgJcdzlg==
+    1526047001; b=i4O/a8xqU5lLMNmtT54nHHRH030crfRySLWpB7NPtTOe591LfI
+    6j1eJVYUyt7NgI42KXlQ+21eS9scCNzvyeJ1XM4Jp0QYpMr8dsy4DCVyhwqXzQG3
+    JG+uPjcDbxSoAH9nvO3i+z/0BzyQlqfbu+axZC7uudFH3zcZHXVT/eF3+XMdDvCB
+    kqj6hTi7vCqVuGYRti+59z4o5ykhc1h1ra7WZYzez55WSn5msAvMKN6F5ltEP4/Q
+    r030/LRFlnbC9Or2XjXruK1l1HCFj2bAL4YxHcR8Iu1sZOLfGIwkgqFwGnZRkQ4o
+    a2a7RcTeahZpQlr7YlAjv0JLcf/Gj8pVGNOg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1526025612; bh=WD4YEmTLDWiMTyG4hKguROqugKwHZG
-    J1sWE5bD4H65k=; b=TDic9OX3hJnfSVscdSFMcorXHkwncQyDR+d90pV3Nq8hjU
-    y9mf5KX7L2j51PM2/bnswk/lf6Wn79UvW9ED+Hnh2ihTv35XPb1ZjO5xh84TNQnF
-    uwtsxbuJ0FUoeV6Vrkw/7EuFbX0Lpqm9zuLMMM2YWTYlfzpGdf0CZkqYlVRS1HHF
-    U37RygogNv1Qqpfq43uDGauL35xaf5rik+KFIvwo8/EjWpi+hOCQAj5E1cl09mlG
-    hEm5JvrJOd8lY5HYNAU14dWOEmjBuP1R286PllDfHai3gDkR8hcsLX2Bgf5Gbaa6
-    PzFF5bctRfD1mEsRYmcuqTXTkV96WRJplpEp8HDA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=mlDYQETF
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256
-    x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    messagingengine.com; h=subject:to:references:cc:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526047001;
+    bh=UT/Qy7g5ZeS3x10lsPbhQyLGzSsp+OPI6ReSw/GZGxU=; b=ky4mmbzgAaJ8
+    5Xh4yLKUVVXhG2hINe6VKmr/9ordRIWVd6a5zepoqcD8FdU401rzJweXg8uBuTPd
+    YOU//50VeHBTu/GntEVblF7miVlwLHVc1hNnh/ODKw+QTL0iDYsU5EQwSqzSRZ45
+    CdStPE07b6qBqBdfoG0+zAhIRKzupFYmnYzWdPFUoAGPfQn/XJ8SBKWNrKOu0VSz
+    170htoHobYnWnj1DrrWE3CXtbJHoxWazugvYHO/sRV06j2EMJOJ96toRAn16z3dF
+    qiOgf/m8JAd/t+xf5TIvHk4JBgr0zqAcrX2mVRwYZCbWhk5Ougq72Mr0YsgOK9wv
+    pH2bFLudIQ==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -36,15 +35,12 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=lst.de header.result=pass header_is_org_domain=yes;
+    header.domain=huawei.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=mlDYQETF
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256
-      x-selector=bombadil.20170209;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=huawei.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -53,76 +49,83 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=lst.de header.result=pass header_is_org_domain=yes;
+      header.domain=huawei.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJ/JGm2/+0B6/C5FUtnbnNQjH30zX8KvzCPHi0U5bfG7OyNHr5caQgsDYoH0hywr/jPd9HwSsaucjfkfnIwQrHp1Cc5CSUwuLamaMJtk9CQuzfI6viO2
-    QQl7i1C3To3zrhKHhcAc/ai2m7CoM3TxsHZC+VSy7YKRX9t63mGHeSOGJ3gZJp+b3SD15uilVuWF5hBnQoFmc6XTkSTgJ6gxVRgpQrIXnPzAdQzA2txoIMr+
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=JfrnYn6hAAAA:8
-    a=LuXZDtCTQf_X7ep-_PIA:9 a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19
-    a=1CNFftbPRP8L7MoqJWF3:22
+X-CM-Envelope: MS4wfKJWpWvQe+N+RDUAG9DAHjFJm36FSoSaz87jjTpbZ78W0lTEMP/UDMCj/ZiR9c8NerdlizHedhgmVlQUnoaheee3CaKnljfXjpNqu+aiBHWX/zajyu9t
+    ARYtyCPR9kbf3RmT2y6BWQXh6/LzVSIutw2GWHRsDbheHa/pY+DEYv+bhjzBmdwZ/GAlL/lJFx7RKdUqx0NZ4hZDlx5mSpMIFBEdtWHSJH62RhpOfko1Ktbh
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=fnsVjXYF8_4A:10 a=N659UExz7-8A:10
+    a=VUJBJC2UJ8kA:10 a=IDgwzHRtDfHMOwfLCEIA:9 a=pILNOxqGKmIA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752563AbeEKIAJ (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 11 May 2018 04:00:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33426 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751406AbeEKIAI (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Fri, 11 May 2018 04:00:08 -0400
-From: Christoph Hellwig <hch@lst.de>
-To: iommu@lists.linux-foundation.org
-Cc: linux-arch@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
-        Greentime Hu <green.hu@gmail.com>,
+        id S1753122AbeEKN4h (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 11 May 2018 09:56:37 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56793 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752974AbeEKN4g (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Fri, 11 May 2018 09:56:36 -0400
+Subject: Re: [PATCH 04/20] arm-nommu: use generic dma_noncoherent_ops
+To: Christoph Hellwig <hch@lst.de>, <iommu@lists.linux-foundation.org>
+References: <20180511075945.16548-1-hch@lst.de>
+ <20180511075945.16548-5-hch@lst.de>
+CC: <linux-arch@vger.kernel.org>, <linux-xtensa@linux-xtensa.org>,
+        "Michal Simek" <monstr@monstr.eu>,
         Vincent Chen <deanbo422@gmail.com>,
-        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        linux-hexagon@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-kernel@vger.kernel.org
-Subject: common non-cache coherent direct dma mapping ops
-Date: Fri, 11 May 2018 09:59:25 +0200
-Message-Id: <20180511075945.16548-1-hch@lst.de>
-X-Mailer: git-send-email 2.17.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        <linux-c6x-dev@linux-c6x.org>, <linux-parisc@vger.kernel.org>,
+        <linux-sh@vger.kernel.org>, <linux-hexagon@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-m68k@lists.linux-m68k.org>,
+        <openrisc@lists.librecores.org>, Greentime Hu <green.hu@gmail.com>,
+        <linux-alpha@vger.kernel.org>, <sparclinux@vger.kernel.org>,
+        <nios2-dev@lists.rocketboards.org>,
+        <linux-snps-arc@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <73603c68-da05-22bd-efab-d0387a98225d@huawei.com>
+Date: Fri, 11 May 2018 14:56:16 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180511075945.16548-5-hch@lst.de>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.47.90.114]
+X-CFilter-Loop: Reflected
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi all,
+On 11/05/2018 08:59, Christoph Hellwig wrote:
+> Switch to the generic noncoherent direct mapping implementation for
+> the nommu dma map implementation.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/arc/Kconfig                |   1 +
+>  arch/arm/Kconfig                |   4 +
+>  arch/arm/mm/dma-mapping-nommu.c | 139 +++++---------------------------
+>  3 files changed, 23 insertions(+), 121 deletions(-)
+>
+> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+> index 89d47eac18b2..3a492a9aeaad 100644
+> --- a/arch/arc/Kconfig
+> +++ b/arch/arc/Kconfig
+> @@ -9,6 +9,7 @@
+>  config ARC
+>  	def_bool y
+>  	select ARC_TIMERS
+> +	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+>  	select ARCH_HAS_SYNC_DMA_FOR_CPU
+>  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
 
-this series continues consolidating the dma-mapping code, with a focus
-on architectures that do not (always) provide cache coherence for DMA.
-Three architectures (arm, mips and powerpc) are still left to be
-converted later due to complexity of their dma ops selection.
+I guess that this arc change is here by accident, no? And isn't 
+ARCH_HAS_SYNC_DMA_FOR_DEVICE already selected (by 3/20)?
 
-The dma-noncoherent ops calls the dma-direct ops for the actual
-translation of streaming mappins and allow the architecture to provide
-any cache flushing required for cpu to device and/or device to cpu
-ownership transfers.  The dma coherent allocator is for now still left
-entirely to architecture supplied implementations due the amount of
-variations.  Hopefully we can do some consolidation for them later on
-as well.
-
-A lot of architectures are currently doing very questionable things
-in their dma mapping routines, which are documented in the changelogs
-for each patch.  Please review them very careful and correct me on
-incorrect assumptions.
-
-Because this series sits on top of two previously submitted series
-a git tree might be useful to actually test it.  It is provided here:
-
-    git://git.infradead.org/users/hch/misc.git generic-dma-noncoherent
-
-Gitweb:
-
-    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/generic-dma-noncoherent
-
-Changes since RFC:
- - fix a typo accidentally disabling the device to cpu transfer sync
- - fixed a few compile failures
+>  	select ARCH_HAS_SG_CHAIN
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index c43f5bb55ac8..76ddd0064f87 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
