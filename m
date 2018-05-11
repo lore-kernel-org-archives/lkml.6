@@ -1,89 +1,230 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751375AbeEKPPr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 11:15:47 -0400
-Received: from mout.gmx.net ([212.227.17.22]:58753 "EHLO mout.gmx.net"
+        id S1751147AbeEKPW6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 11:22:58 -0400
+Received: from foss.arm.com ([217.140.101.70]:43430 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750746AbeEKPPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 11:15:46 -0400
-Message-ID: <1526051730.23162.3.camel@gmx.de>
-Subject: [patch] swiotlb: fix ignored DMA_ATTR_NO_WARN request
-From: Mike Galbraith <efault@gmx.de>
-To: nouveau <nouveau@lists.freedesktop.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Roger He <Hongbo.He@amd.com>, Christoph Hellwig <hch@lst.de>
-Date: Fri, 11 May 2018 17:15:30 +0200
-In-Reply-To: <1526022830.6288.3.camel@gmx.de>
-References: <1525943427.8013.11.camel@gmx.de>
-         <1525948096.29445.4.camel@gmx.de> <1526022830.6288.3.camel@gmx.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
+        id S1750726AbeEKPW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 11:22:57 -0400
+Subject: Re: [PATCH v6 1/2] iommu - Enable debugfs exposure of IOMMU driver
+ internals
+To: Gary R Hook <gary.hook@amd.com>, iommu@lists.linux-foundation.org
+Cc: linux-kernel@vger.kernel.org
+References: <152604905217.106201.15533883255216330970.stgit@sosxen2.amd.com>
+ <152604925157.106201.5299224478351644530.stgit@sosxen2.amd.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <474751d1-02ec-9e00-26c8-36988ad83092@arm.com>
+Date: Fri, 11 May 2018 16:22:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <152604925157.106201.5299224478351644530.stgit@sosxen2.amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:8GHCwJNqycaaCt2knY+4eAUmZJhraSn4K2b7nrAmrlUs3izOR99
- OUXMzT6F9ayhVWWJHUT3dV0Ixl7AIN+6/nfUU7HNSY1VI3ljGVJTOEeiA5Z3MlobvaJSIOx
- AqsD8TE4yTnAdgZ2P7vksXJIUuviv6hWNcjdiyUHiEr3dFj99SkyqtuYZZEHyTN4EhyFXrW
- AKahxqpF5y4TBxkC1YpeA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:WtwOm/OLYyM=:4xQ+TF2MO98w3lkJ3P/G9q
- L1XCVEbYOBUPkaVHjU4gov7DYvyMrc5frSPc58L/d32linO6V4tbmHJnukfxjdhCXQA4GHZ1T
- MGD5VYqb8MyTeYekj64GdwqLq39Nn5kdZPpvv0370jIND2eZDHw2SfEQyxKrEi5uAzeWHirfu
- egaloTwIBhfAUr3oflcerLzoYGDiH54RzJhnBlDyr02zmJOfFAm9CD1TJgdZG9hz/YgTyC8Fp
- xpW2Mptq0jNjxBzv4RS0FCa725RRctElQoS6ZHYyrGDFDzNq2O5DLQ8aAfeOI+lBZXE+jfRL6
- 25gKIV4Y31NfySLvAUoRAk7566GKzxr/gDTUCcTW3Kgt53M7gc/1eEai0O82PKaq7duhLxwGC
- QMfRFTX3dH81dzAsZIow9xpJat0S+lviuXWZaApaiTYEnLIcCXvttiokSltBfcKGFjDd4Ar3I
- +Y4csKbH3ImqomW96r8XdgGr7eGtcI2mgGnc20xGvuj3mUunFq/FHj+0PTb/H7QWcIK461J+u
- HfdM1tP5u1BMXtgMk28VRjQfV6GYTwDgA55j5f4UUeG5vi64sDHYHzTYIFD/7+pQAhL1Znqx5
- oNBFF10vxSW09r34+Lv+cAx0Y4nuZ/4Z1lgMv118Q3X8chIJJWtUqSkev2z5eW6qReY8Y2F02
- x5ahay+Lllo2ffegdWQ30wge5gjQ1lLuarIn/RUnCu64aPbztTNIDnUtj+bT7t/ZD5pc6YG9n
- Vwk9jDHcDIxolUhd4TfJyvT2kRO9Zb63UjKWLTGBzLuUYQWIIufeYTrYFDVK6hyY217Eadmyv
- Dq/0MX+
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Gary,
 
-In the trace below, swiotlb_alloc() is called with __GFP_NOWARN, it ors
-attrs with DMA_ATTR_NO_WARN and passes it to swiotlb_alloc_buffer(),
-which does NOT pass it on to swiotlb_tbl_map_single(), leading to an
-ever repeating warning that the caller of swiotlb_alloc() explicitly
-asked to be squelched.  Pass the caller's request for silence onward.
+Just a few trivial nitpicks below, otherwise:
 
- Xorg-3170  [006] ....   963.866098: swiotlb_alloc+0x1d/0x1a0: gfp & __GFP_NOWARN
- Xorg-3170  [006] ....   963.866101: <stack trace>
- => ttm_dma_populate+0x250/0x310 [ttm]
- => ttm_tt_populate+0x28/0x70 [ttm]
- => ttm_tt_bind+0x26/0x60 [ttm]
- => ttm_bo_handle_move_mem+0x51a/0x580 [ttm]
- => ttm_bo_validate+0xfa/0x110 [ttm]
- => ttm_bo_init_reserved+0x296/0x450 [ttm]
- => ttm_bo_init+0x73/0xd0 [ttm]
- => nouveau_bo_new+0x3eb/0x5c0 [nouveau]
- => nouveau_gem_new+0x66/0x110 [nouveau]
- => nouveau_gem_ioctl_new+0x48/0xc0 [nouveau]
- => drm_ioctl_kernel+0x66/0xb0 [drm]
- => drm_ioctl+0x28d/0x340 [drm]
- => nouveau_drm_ioctl+0x50/0xb0 [nouveau]
- => do_vfs_ioctl+0x92/0x5e0
- => ksys_ioctl+0x3a/0x70
- => __x64_sys_ioctl+0x16/0x20
- => do_syscall_64+0x5b/0x180
- => entry_SYSCALL_64_after_hwframe+0x44/0xa9
- Xorg-3170  [006] ....   963.866917: swiotlb_tbl_map_single+0x29b/0x2d0: swiotlb buffer is full (sz: 2097152 bytes)
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
-Signed-off-by: Mike Galbraith <efault@gmx.de>
----
- lib/swiotlb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 11/05/18 15:34, Gary R Hook wrote:
+> Provide base enablement for using debugfs to expose internal data of an
+> IOMMU driver. When called, create the /sys/kernel/debug/iommu directory.
+> 
+> Emit a strong warning at boot time to indicate that this feature is
+> enabled.
+> 
+> This function is called from iommu_init, and creates the initial DebugFS
+> directory. Drivers may then call iommu_debugfs_new_driver_dir() to
+> instantiate a device-specific directory to expose internal data.
+> It will return a pointer to the new dentry structure created in
+> /sys/kernel/debug/iommu, or NULL in the event of a failure.
+> 
+> Since the IOMMU driver can not be removed from the running system, there
+> is no need for an "off" function.
+> 
+> Signed-off-by: Gary R Hook <gary.hook@amd.com>
+> ---
+>   drivers/iommu/Kconfig         |   11 ++++++
+>   drivers/iommu/Makefile        |    1 +
+>   drivers/iommu/iommu-debugfs.c |   70 +++++++++++++++++++++++++++++++++++++++++
+>   drivers/iommu/iommu.c         |    2 +
+>   include/linux/iommu.h         |   10 ++++++
+>   5 files changed, 94 insertions(+)
+>   create mode 100644 drivers/iommu/iommu-debugfs.c
+> 
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index f3a21343e636..ff511fa8ca7d 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -60,6 +60,17 @@ config IOMMU_IO_PGTABLE_ARMV7S_SELFTEST
+>   
+>   endmenu
+>   
+> +config IOMMU_DEBUGFS
+> +	bool "Export IOMMU internals in DebugFS"
+> +	depends on DEBUG_FS
+> +	default n
 
---- a/lib/swiotlb.c
-+++ b/lib/swiotlb.c
-@@ -714,7 +714,7 @@ swiotlb_alloc_buffer(struct device *dev,
- 
- 	phys_addr = swiotlb_tbl_map_single(dev,
- 			__phys_to_dma(dev, io_tlb_start),
--			0, size, DMA_FROM_DEVICE, 0);
-+			0, size, DMA_FROM_DEVICE, attrs);
- 	if (phys_addr == SWIOTLB_MAP_ERROR)
- 		goto out_warn;
- 
+bool implicitly defaults to n anyway, so you don't really need to say it.
+
+> +	help
+> +	  Allows exposure of IOMMU device internals. This option enables
+> +	  the use of debugfs by IOMMU drivers as required. Devices can,
+> +	  at initialization time, cause the IOMMU code to create a top-level
+> +	  debug/iommu directory, and then populate a subdirectory with
+> +	  entries as required.
+> +
+>   config IOMMU_IOVA
+>   	tristate
+>   
+> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+> index 1fb695854809..74cfbc392862 100644
+> --- a/drivers/iommu/Makefile
+> +++ b/drivers/iommu/Makefile
+> @@ -2,6 +2,7 @@
+>   obj-$(CONFIG_IOMMU_API) += iommu.o
+>   obj-$(CONFIG_IOMMU_API) += iommu-traces.o
+>   obj-$(CONFIG_IOMMU_API) += iommu-sysfs.o
+> +obj-$(CONFIG_IOMMU_DEBUGFS) += iommu-debugfs.o
+>   obj-$(CONFIG_IOMMU_DMA) += dma-iommu.o
+>   obj-$(CONFIG_IOMMU_IO_PGTABLE) += io-pgtable.o
+>   obj-$(CONFIG_IOMMU_IO_PGTABLE_ARMV7S) += io-pgtable-arm-v7s.o
+> diff --git a/drivers/iommu/iommu-debugfs.c b/drivers/iommu/iommu-debugfs.c
+> new file mode 100644
+> index 000000000000..9df3b44aef55
+> --- /dev/null
+> +++ b/drivers/iommu/iommu-debugfs.c
+> @@ -0,0 +1,70 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * IOMMU driver
+
+"driver"? ;) I'd have thought something like "IOMMU debugfs core 
+infrastructure", but arguably it's self-evident enough that it doesn't 
+necessarily need describing at all.
+
+> + *
+> + * Copyright (C) 2018 Advanced Micro Devices, Inc.
+> + *
+> + * Author: Gary R Hook <gary.hook@amd.com>
+> + */
+> +
+> +#include <linux/pci.h>
+> +#include <linux/iommu.h>
+> +#include <linux/debugfs.h>
+> +
+> +static struct dentry *iommu_debugfs_dir;
+> +
+> +/**
+> + * iommu_debugfs_setup - create the top-level iommu directory in debugfs
+> + *
+> + * Provide base enablement for using debugfs to expose internal data of an
+> + * IOMMU driver. When called, this function creates the
+> + * /sys/kernel/debug/iommu directory.
+> + *
+> + * Emit a strong warning at boot time to indicate that this feature is
+> + * enabled.
+> + *
+> + * This function is called from iommu_init; drivers may then call
+> + * iommu_debugfs_new_driver_dir() to instantiate a vendor-specific
+> + * directory to be used to expose internal data.
+> + */
+> +void iommu_debugfs_setup(void)
+> +{
+> +	if (!iommu_debugfs_dir) {
+> +		iommu_debugfs_dir = debugfs_create_dir("iommu", NULL);
+> +		if (iommu_debugfs_dir) {
+> +			pr_warn("\n");
+> +			pr_warn("*************************************************************\n");
+> +			pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **\n");
+> +			pr_warn("**                                                         **\n");
+> +			pr_warn("**  IOMMU DebugFS SUPPORT HAS BEEN ENABLED IN THIS KERNEL  **\n");
+> +			pr_warn("**                                                         **\n");
+> +			pr_warn("** This means that this kernel is built to expose internal **\n");
+> +			pr_warn("** IOMMU data structures, which may compromise security on **\n");
+> +			pr_warn("** your system.                                            **\n");
+> +			pr_warn("**                                                         **\n");
+> +			pr_warn("** If you see this message and you are not debugging the   **\n");
+> +			pr_warn("** kernel, report this immediately to your vendor!         **\n");
+> +			pr_warn("**                                                         **\n");
+> +			pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **\n");
+> +			pr_warn("*************************************************************\n");
+> +		}
+> +	}
+> +}
+> +
+> +/**
+> + * iommu_debugfs_new_driver_dir - create a vendor directory under debugfs/iommu
+> + * @vendor: name of the vendor-specific subdirectory to create
+> + *
+> + * This function is called by an IOMMU driver to create the top-level debugfs
+> + * directory for that driver. The return value is the dentry for the requested
+> + * vendor directory, or NULL in case of failure.
+
+According to kernel-doc.rst, return values should be in a dedicated 
+section (i.e. "Return: The dentry...") rather than as part of the 
+function description.
+
+> + */
+> +struct dentry *iommu_debugfs_new_driver_dir(char *vendor)
+
+const char *?
+
+> +{
+> +	struct dentry *d_new;
+> +
+> +	d_new = debugfs_create_dir(vendor, iommu_debugfs_dir);
+> +
+> +	return d_new;
+> +}
+> +EXPORT_SYMBOL_GPL(iommu_debugfs_new_driver_dir);
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index d2aa23202bb9..350819f1c5e1 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -1747,6 +1747,8 @@ static int __init iommu_init(void)
+>   					       NULL, kernel_kobj);
+>   	BUG_ON(!iommu_group_kset);
+>   
+> +	iommu_debugfs_setup();
+> +
+>   	return 0;
+>   }
+>   core_initcall(iommu_init);
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 19938ee6eb31..25018ac0fdab 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -698,4 +698,14 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+>   
+>   #endif /* CONFIG_IOMMU_API */
+>   
+> +#ifdef CONFIG_IOMMU_DEBUGFS
+> +void iommu_debugfs_setup(void);
+> +struct dentry *iommu_debugfs_new_driver_dir(char *vendor);
+> +#else
+> +static inline void iommu_debugfs_setup(void) {}
+> +static inline struct dentry *iommu_debugfs_new_driver_dir(char *vendor) { \
+
+Since this is a function, not a macro, it doesn't really need the line 
+continuations.
+
+Robin.
+
+> +	return NULL; \
+> +}
+> +#endif
+> +
+>   #endif /* __LINUX_IOMMU_H */
+> 
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> 
