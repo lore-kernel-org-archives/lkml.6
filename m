@@ -1,89 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751959AbeEKPpc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 11:45:32 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:34642 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751449AbeEKPp3 (ORCPT
+        id S1752003AbeEKPpz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 11:45:55 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:42919 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750711AbeEKPpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 11:45:29 -0400
-Date: Fri, 11 May 2018 11:44:58 -0400
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To: Wanpeng Li <kernellwp@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Tim Shearer <tshearer@advaoptical.com>,
-        Liran Alon <liran.alon@oracle.com>
-Subject: Re: [PATCH 3/3] KVM: VMX: Allow I/O port 0x80 bypass when userspace
- prefer
-Message-ID: <20180511154458.GI27459@char.us.oracle.com>
-References: <1523943962-25415-1-git-send-email-wanpengli@tencent.com>
- <1523943962-25415-4-git-send-email-wanpengli@tencent.com>
+        Fri, 11 May 2018 11:45:52 -0400
+X-Google-Smtp-Source: AB8JxZqzIvEEeA7WRAVB3b0QePEcy3BSsQIsKEiqV5jp9Z6x3Ypmf4tJp8SdAUPZD3oQFzTQW58kKA==
+Subject: Re: [RFC PATCH v4 2/3] acpi: apei: Rename ghes_severity() to
+ ghes_cper_severity()
+To: Borislav Petkov <bp@alien8.de>
+Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Tyler Baicar <tbaicar@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        devel@acpica.org
+References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
+ <20180430213358.8319-1-mr.nuke.me@gmail.com>
+ <20180430213358.8319-2-mr.nuke.me@gmail.com> <20180511153947.GC12705@pd.tnic>
+From: "Alex G." <mr.nuke.me@gmail.com>
+Message-ID: <56d445b2-ace3-6ee2-9699-f2a684518de9@gmail.com>
+Date: Fri, 11 May 2018 10:45:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <20180511153947.GC12705@pd.tnic>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1523943962-25415-4-git-send-email-wanpengli@tencent.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8890 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805110148
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4BFjaXX021245
 
-On Mon, Apr 16, 2018 at 10:46:02PM -0700, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Tim Shearer reported that "There is a guest which is running a packet 
-> forwarding app based on the DPDK (dpdk.org). The packet receive routine 
-> writes to 0xc070 using glibc's "outw_p" function which does an additional 
-> write to I/O port 80. It does this write for every packet that's received, 
-> causing a flood of KVM userspace context switches". He uses mpstat to 
-> observe a CPU performing L2 packet forwarding on a pinned guest vCPU, 
-> the guest time is 95 percent when allowing I/O port 0x80 bypass, however, 
-> it is 65.78 percent when I/O port 0x80 bypss is disabled.  
-> 
-> This patch allows I/O port 0x80 bypass when userspace prefer.
 
-s/prefer/requests it/
+
+On 05/11/2018 10:39 AM, Borislav Petkov wrote:
+> On Mon, Apr 30, 2018 at 04:33:51PM -0500, Alexandru Gagniuc wrote:
+>> ghes_severity() is a misnomer in this case, as it implies the severity
+>> of the entire GHES structure. Instead, it maps one CPER value to a
+>> monotonically increasing number.
+> 
+> ... as opposed to CPER severity which is something else or what is this
+> formulation trying to express?
 > 
 
-Perhaps:
+CPER madness goes like this:
+	0 - Recoverable
+	1 - Fatal
+	2 - Corrected
+	3 - None
 
-Reported-by: Tim Shearer as well?
+As you can see, the numbering was created by crackmonkeys. GHES_* is an
+internal enum that goes up in order of severity, as you'd expect.
 
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Tim Shearer <tshearer@advaoptical.com>
-> Cc: Liran Alon <liran.alon@oracle.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  arch/x86/kvm/vmx.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index ebf1140..d3e5fef 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -10118,6 +10118,13 @@ static int vmx_vm_init(struct kvm *kvm)
->  			goto out;
->  		memset(kvm_vmx->vmx_io_bitmap[i], 0xff, PAGE_SIZE);
->  	}
-> +	if (kvm->arch.ioport_disable_intercept)	{
-> +		/*
-> +		 * Allow direct access to the PC debug port (it is often used for I/O
-> +		 * delays, but the vmexits simply slow things down).
-> +		 */
-> +		clear_bit(0x80, kvm_vmx->vmx_io_bitmap[VMX_IO_BITMAP_A]);
-> +	}
->  	return 0;
->  
->  out:
-> -- 
-> 2.7.4
-> 
+If you're confused, you're not alone. I've seen several commit messages
+that get this terminology wrong.
+
+Alex
