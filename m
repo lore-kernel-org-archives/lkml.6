@@ -1,85 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751917AbeEKFDp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 01:03:45 -0400
-Received: from smtp4-g21.free.fr ([212.27.42.4]:43242 "EHLO smtp4-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750751AbeEKFDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 01:03:44 -0400
-Subject: Re: [PATCH v2 2/2] mtd: rawnand: fsl_ifc: use bit-wise majority to
-To: "Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: "shreeya.patel23498@gmail.com" <shreeya.patel23498@gmail.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "Bos, Ties (Nokia - US/Sunnyvale)" <ties.bos@nokia.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "jagdish.gediya@nxp.com" <jagdish.gediya@nxp.com>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-References: <VI1PR07MB161553DA5D3EF35C9052B1CA81860@VI1PR07MB1615.eurprd07.prod.outlook.com>
-From: Chris Moore <moore@free.fr>
-Message-ID: <d05c6b9d-4b67-9fa1-88f4-9cc3a01c1a71@free.fr>
-Date: Fri, 11 May 2018 07:03:31 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751932AbeEKFR2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 01:17:28 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:40318 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750758AbeEKFR0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 01:17:26 -0400
+X-Google-Smtp-Source: AB8JxZqpEJROcoF1ETohxKAEllX40d/Ai1qaaPBGYqvO++eL/MVK5w3VePUb13yO64jhwS8JK2NhzqT/qLNN9jM20f4=
 MIME-Version: 1.0
-In-Reply-To: <VI1PR07MB161553DA5D3EF35C9052B1CA81860@VI1PR07MB1615.eurprd07.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+In-Reply-To: <CAK8P3a1xDCS1X-4UETB5WW5txD38hrRUGKAfqU=SUy93o3DH5g@mail.gmail.com>
+References: <4ccb747b-fb3b-18c8-8737-2cc02d7b1c34@roeck-us.net>
+ <CAEbi=3cr5i3HKLKOacFih9pz00c7UBKrd=o4ER8HAUT1j_oqGg@mail.gmail.com>
+ <CAK8P3a2cogDMEdvhNt8CsJwaONWOgBR7zR3sABun4u8pAgTtqQ@mail.gmail.com>
+ <CAEbi=3d11ZcxgyoL-ZEruUzj0odDZ2GZXALNTtC7p55nfkkObA@mail.gmail.com> <CAK8P3a1xDCS1X-4UETB5WW5txD38hrRUGKAfqU=SUy93o3DH5g@mail.gmail.com>
+From: Kito Cheng <kito.cheng@gmail.com>
+Date: Fri, 11 May 2018 13:17:05 +0800
+X-Google-Sender-Auth: P5a5bQBqRw8CdZScFkVnFNCnmU8
+Message-ID: <CA+yXCZBqrz5Ftmen8wH5uBWGAKQ0cxPiK_nqKS6meUxXCPQ3Og@mail.gmail.com>
+Subject: Re: nds32 build failures
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Greentime Hu <green.hu@gmail.com>,
+        Guenter Roeck <private@roeck-us.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vincent Chen <vincentc@andestech.com>,
+        Greentime Hu <greentime@andestech.com>,
+        =?UTF-8?B?QWxlYyBJLVdlaSBXdSjlkLPlpZXnt68p?= <wuiw@andestech.com>,
+        Chung-Ju Wu <jasonwucj@gmail.com>, Kito Cheng <kito@andestech.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Arnd:
 
-Le 04/05/2018 à 04:09, Wan, Jane (Nokia - US/Sunnyvale) a écrit
-> The following is the reposting of patch with v2 version indication based on comment on "[PATCH 1/2]" (also in the attachment).
+I am GCC guy from Andes, we've missed the release schedule for GCC 8,
+we didn't upstream the Linux support on time.
+
+Our plan is put our GCC 8 on github and continue commit rest patches
+to upstream.
+And we'll put our source on github after our internal testing done.
+
+Thanks.
+
+On Fri, May 11, 2018 at 10:40 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wed, Apr 18, 2018 at 3:19 AM, Greentime Hu <green.hu@gmail.com> wrote:
+>> 2018-04-17 20:47 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
+>>> On Mon, Apr 16, 2018 at 11:06 AM, Greentime Hu <green.hu@gmail.com> wrote:
+>>>> 2018-04-16 11:58 GMT+08:00 Guenter Roeck <private@roeck-us.net>:
+>>>>
+>>>> This built failure is because the toolchain version you used is not
+>>>> supported the latest intrinsic function/macro.
+>>>> We are sending the latest patchset now and we expect the whole new
+>>>> features will be supported in gcc8.0.0 and binutil2.31+.
+>>>>
+>>>> If you'd like to get these new features of toolchain, you may use the
+>>>> github version.
+>>>> This is the built-script repo. https://github.com/andestech/build_script.git
+>>>
+>>> I've taken the gcc-6.3 sources from there, and updated them to gcc-6.4.0
+>>> in order to build a nds32le-linux toolchain based on the same version as
+>>> the other ones.
+>>>
+>>> Unfortunately neither the usual binutils-2.29.1 nor your binutils worked
+>>> for me, but I eventually managed to get a build using the binutils-2.30
+>>> release.
+>>>
+>>> With this, I could build a mainline kernel with a couple of warnings,
+>>> but an 'allmodconfig' build still failed.
+>>>
+>>> Guenter, can you try my binary from
+>>> www.kernel.org/pub/tools/crosstool/files/bin/x86_64/6.4.0/x86_64-gcc-6.4.0-nolibc-nds32le-linux.tar.xz
+>>> ?
+>>>
+>>> If that works for you, I'll update the front-page and remove the nds32-elf
+>>> toolchains.
+>>>
+>>> Greentime, do you have a patch set for gcc-7.3 as well, or are 6.3 and 8.0 the
+>>> only working compilers for nds32le-linux?
+>>>
+>>
+>> Hi, all:
+>>
+>> I just discuss with our toolchain colleagues. We have only gcc6.3 and
+>> gcc8.0 for nds32le-linux.
+>> I have the ld segmentation fault issue too when building kernel with
+>> 'allmodconfig'. We are dealing with it.
 >
-> Subject: [PATCH v2 2/2] mtd: rawnand: fsl_ifc: use bit-wise majority to
->   recover the contents of ONFI parameter
+> I've tried building the mainline gcc-8.1 sources for nds32le-linux and
+> still got a failure with those (building gcc), building a nds32le-elf gcc-8.1.0
+> worked fine, but that fails to build the vdso (no support for -fPIC), so
+> it's again unusable for building kernels. Any other ideas?
 >
-> Per ONFI specification (Rev. 4.0), if all parameter pages have invalid
-> CRC values, the bit-wise majority may be used to recover the contents of
-> the parameter pages from the parameter page copies present.
->
-> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
-> ---
->   drivers/mtd/nand/raw/nand_base.c |   36 ++++++++++++++++++++++++++++++------
->   1 file changed, 30 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index 72f3a89..464c4fb 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-
-[snip]
-
->   
-> +		pr_info("Recover ONFI params with bit-wise majority\n");
-> +		for (j = 0; j < pagesize; j++) {
-> +			v = 0;
-> +			for (k = 0; k < 8; k++) {
-> +				m = 0;
-> +				for (l = 0; l < 3; l++)
-> +					m += GET_BIT(k, buf[l*pagesize + j]);
-> +				if (m > 1)
-> +					v |= BIT(k);
-> +			}
-> +			((u8 *)p)[j] = v;
-> +		}
-
-I am not familiar with the context of this but the three way bit-wise 
-majority can be implemented much more efficiently  using the identity:
-majority3(a, b, c) = (a & b) | (a & c) | (b & c)
-This can be factorized slightly to (a & (b | c)) | (b & c)
-This enables the operation to be performed 8, 16, 32 or even 64 bits at 
-a time depending on the hardware.
-
-Cheers,
-Chris
+>           Arnd
