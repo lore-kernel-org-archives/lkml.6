@@ -1,91 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752562AbeEKMU0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 08:20:26 -0400
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:33254 "EHLO
-        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750726AbeEKMUZ (ORCPT
+        id S1752833AbeEKMUe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 08:20:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41750 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750726AbeEKMU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 08:20:25 -0400
-X-Google-Smtp-Source: AB8JxZqNyXBO2zn3eTplJT4ipwK0d4du/kxbtwCPNctoJWtmLnTJ1Tg3jVMJ9Kyh96Q9h4dBmcTEwdVjQNG05c5brWg=
+        Fri, 11 May 2018 08:20:28 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 94B5C6022C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgens?= =?utf-8?Q?en?=
+        <toke@toke.dk>
+Subject: Re: linux-next: build warning after merge of the mac80211-next tree
+References: <20180509145624.643d2e56@canb.auug.org.au>
+Date: Fri, 11 May 2018 15:20:23 +0300
+In-Reply-To: <20180509145624.643d2e56@canb.auug.org.au> (Stephen Rothwell's
+        message of "Wed, 9 May 2018 14:56:24 +1000")
+Message-ID: <87po221j08.fsf@purkki.adurom.net>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180511120457.GD30118@vkoul-mobl>
-References: <b115795adf9e9a9e611ee0ff353fae5850d1e287.1525863923.git.baolin.wang@linaro.org>
- <67447aabb8e4e051ff39b814a0e169e6a91bb66e.1525863923.git.baolin.wang@linaro.org>
- <20180511112225.GA30118@vkoul-mobl> <CAMz4kuKi884zyOgXAvYXzUFGv7ea1L0Wxv8AHbf+XjEez+jJTQ@mail.gmail.com>
- <20180511115306.GC30118@vkoul-mobl> <CAMz4kuLXCB9RipP6zicc6efMaKWHycGFwsbMZNiQDAobsUCpvw@mail.gmail.com>
- <20180511120457.GD30118@vkoul-mobl>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Fri, 11 May 2018 20:20:24 +0800
-Message-ID: <CAMz4kuKP2+SGoAqQPkt2sFuh3DZiO=7tQ=KHrbPUwQBqn-Mkgw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dmaengine: sprd: Add Spreadtrum DMA configuration
-To: Vinod Koul <vinod.koul@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
-        Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>, dmaengine@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 May 2018 at 20:04, Vinod Koul <vinod.koul@linaro.org> wrote:
-> On 11-05-18, 19:58, Baolin Wang wrote:
->> On 11 May 2018 at 19:53, Vinod Koul <vkoul@kernel.org> wrote:
->> >> >
->> >> >> +/*
->> >> >> + * struct sprd_dma_config - DMA configuration structure
->> >> >> + * @cfg: dma slave channel runtime config
->> >> >> + * @src_addr: the source physical address
->> >> >> + * @dst_addr: the destination physical address
->> >> >> + * @block_len: specify one block transfer length
->> >> >> + * @transcation_len: specify one transcation transfer length
->> >> >> + * @src_step: source transfer step
->> >> >> + * @dst_step: destination transfer step
->> >> >> + * @wrap_ptr: wrap pointer address, once the transfer address reaches the
->> >> >> + * 'wrap_ptr', the next transfer address will jump to the 'wrap_to' address.
->> >> >> + * @wrap_to: wrap jump to address
->> >> >> + * @req_mode: specify the DMA request mode
->> >> >> + * @int_mode: specify the DMA interrupt type
->> >> >> + */
->> >> >> +struct sprd_dma_config {
->> >> >> +     struct dma_slave_config cfg;
->> >> >> +     phys_addr_t src_addr;
->> >> >> +     phys_addr_t dst_addr;
->> >> >
->> >> > these are already in cfg so why duplicate, same for few more here.
->> >>
->> >> We save them in 'struct sprd_dma_config' as one parameter for
->> >> sprd_dma_config(), otherwise we need add 2 more parameters (src and
->> >> dst) for sprd_dma_config().
->> >
->> > I am not sure I follow...
->> >
->> > I meant you can use sprd_dma_config.cfg->src_addr/dst_addr and remove src_addr &
->> > dst_addr in the sprd_dma_config. It duplicate..
->>
->> But we can not set values if dir == DMA_MEM_TO_DEV, since they
->> represent the device address, right?
->> sprd_dma_config.cfg->src_addr = sg_dma_address(sg);
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+
+> After merging the mac80211-next tree, today's linux-next build (arm_multi
+> v7_defconfig) produced this warning:
 >
-> Ah right and that is another issue to fix then :) we should not store addresses
-> you get for prep_ calls. They are supposed to be stored in the descriptor.
-> Current approach is not correct.
-
-OK. But we do not want to touch the descriptor structure, so we plan
-to add 2 more parameters for sprd_dma_config().
-And remove these 2 values from struct sprd_dma_config.
-
+> drivers/net/wireless/marvell/mwifiex/uap_event.c: In function 'mwifiex_process_uap_event':
+> drivers/net/wireless/marvell/mwifiex/uap_event.c:333:1: warning: the frame size of 1680 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>  }
+>  ^
+> drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c: In function 'brcmf_notify_connect_status_ap':
+> drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c:5530:1: warning: the frame size of 1680 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>  }
+>  ^
 >
-> You can get different prepare calls  (i think fixing this will remove 1 sg
-> limitation).. and use the argument values and store in respective descriptors.
-> Pls do see the other driver examples..
+> Maybe introduced by commit
 >
-> --
-> ~Vinod
+>   52539ca89f36 ("cfg80211: Expose TXQ stats and parameters to userspace")
 
-
+Btw Stephen for mac80211 reports it would be a good idea to also cc
+linux-wireless list, in case Johannes is not around etc.
 
 -- 
-Baolin.wang
-Best Regards
+Kalle Valo
