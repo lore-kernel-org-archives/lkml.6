@@ -1,110 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752081AbeEKChK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 22:37:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33496 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751209AbeEKChI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 22:37:08 -0400
-Date: Fri, 11 May 2018 04:37:05 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Rich Felker <dalias@libc.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH 4/9] arm: Split breakpoint validation into "check" and
- "commit"
-Message-ID: <20180511023703.GA18521@lerouge>
-References: <1525634395-23380-1-git-send-email-frederic@kernel.org>
- <1525634395-23380-5-git-send-email-frederic@kernel.org>
- <20180508111323.mmjo4ky4txzi4gx4@lakrids.cambridge.arm.com>
- <20180509113257.hl6frl424trdt2em@lakrids.cambridge.arm.com>
- <CALCETrVswHMf2YxqBN-EczKUcQ8ShpKgL02b9HJ9LCLycGEHOw@mail.gmail.com>
+        id S1752045AbeEKCkX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 22:40:23 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:40373 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751258AbeEKCkW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 22:40:22 -0400
+X-Google-Smtp-Source: AB8JxZoie4kOQL7q/cufl5iY9CRMcK4cFEJOTQgM6X5WcP45qxFHMtVvNxrWDdv+N5rBltnSbF0bLZWDb8x6dV5pgcw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrVswHMf2YxqBN-EczKUcQ8ShpKgL02b9HJ9LCLycGEHOw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAEbi=3d11ZcxgyoL-ZEruUzj0odDZ2GZXALNTtC7p55nfkkObA@mail.gmail.com>
+References: <4ccb747b-fb3b-18c8-8737-2cc02d7b1c34@roeck-us.net>
+ <CAEbi=3cr5i3HKLKOacFih9pz00c7UBKrd=o4ER8HAUT1j_oqGg@mail.gmail.com>
+ <CAK8P3a2cogDMEdvhNt8CsJwaONWOgBR7zR3sABun4u8pAgTtqQ@mail.gmail.com> <CAEbi=3d11ZcxgyoL-ZEruUzj0odDZ2GZXALNTtC7p55nfkkObA@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Thu, 10 May 2018 22:40:20 -0400
+X-Google-Sender-Auth: ehmc4KFkWr6y0-iDusB_nsIiWhs
+Message-ID: <CAK8P3a1xDCS1X-4UETB5WW5txD38hrRUGKAfqU=SUy93o3DH5g@mail.gmail.com>
+Subject: Re: nds32 build failures
+To: Greentime Hu <green.hu@gmail.com>
+Cc: Guenter Roeck <private@roeck-us.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vincent Chen <vincentc@andestech.com>,
+        Greentime Hu <greentime@andestech.com>, kito.cheng@gmail.com,
+        wuiw@andestech.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 07:51:28PM +0000, Andy Lutomirski wrote:
-> On Wed, May 9, 2018 at 4:33 AM Mark Rutland <mark.rutland@arm.com> wrote:
-> 
-> > On Tue, May 08, 2018 at 12:13:23PM +0100, Mark Rutland wrote:
-> > > Hi Frederick,
-> > >
-> > > On Sun, May 06, 2018 at 09:19:50PM +0200, Frederic Weisbecker wrote:
-> > > > The breakpoint code mixes up attribute check and commit into a single
-> > > > code entity. Therefore the validation may return an error due to
-> > > > incorrect atributes while still leaving halfway modified architecture
-> > > > breakpoint struct.
-> > > >
-> > > > Prepare fox fixing this misdesign and separate both logics.
-> > >
-> > > Could you elaborate on what the problem is? I would have expected that
-> > > when arch_build_bp_info() returns an error code, we wouldn't
-> > > subsequently use the arch_hw_breakpoint information. Where does that
-> > > happen?
-> 
-> >  From digging, I now see that this is a problem when
-> > modify_user_hw_breakpoint() is called on an existing breakpoint. It
-> > would be nice to mention that in the commit message.
-> 
-> > > I also see that the check and commit hooks have to duplicate a
-> > > reasonable amount of logic, e.g. the switch on bp->attr.type. Can we
-> > > instead refactor the existing arch_build_bp_info() hooks to use a
-> > > temporary arch_hw_breakpoint, and then struct assign it after all the
-> > > error cases, > e.g.
-> > >
-> > > static int arch_build_bp_info(struct perf_event *bp)
-> > > {
-> > >       struct arch_hw_breakpoint hbp;
-> > >
-> > >       if (some_condition(bp))
-> > >               hbp->field = 0xf00;
-> > >
-> > >       switch (bp->attr.type) {
-> > >       case FOO:
-> > >               return -EINVAL;
-> > >       case BAR:
-> > >               hbp->other_field = 7;
-> > >               break;
-> > >       };
-> > >
-> > >       if (failure_case(foo))
-> > >               return err;
-> > >
-> > >       *counter_arch_bp(bp) = hbp;
-> > > }
-> > >
-> > > ... or is that also problematic?
-> 
-> > IIUC, this *would* work, but it is a little opaque.
-> 
-> > Perhaps we could explicitly pass the temporary arch_hw_breakpoint in,
-> > and have the core code struct-assign it after checking for errors?
-> 
-> Hmm, maybe.  OTOH, I'm not really convinced that arch_hw_breakpoint is even
-> needed.  x86 at least could probably just regenerate the DRn and DR7 bits
-> on the fly as needed rather than caching them with basically no loss in
-> performance.
+On Wed, Apr 18, 2018 at 3:19 AM, Greentime Hu <green.hu@gmail.com> wrote:
+> 2018-04-17 20:47 GMT+08:00 Arnd Bergmann <arnd@arndb.de>:
+>> On Mon, Apr 16, 2018 at 11:06 AM, Greentime Hu <green.hu@gmail.com> wrote:
+>>> 2018-04-16 11:58 GMT+08:00 Guenter Roeck <private@roeck-us.net>:
+>>>
+>>> This built failure is because the toolchain version you used is not
+>>> supported the latest intrinsic function/macro.
+>>> We are sending the latest patchset now and we expect the whole new
+>>> features will be supported in gcc8.0.0 and binutil2.31+.
+>>>
+>>> If you'd like to get these new features of toolchain, you may use the
+>>> github version.
+>>> This is the built-script repo. https://github.com/andestech/build_script.git
+>>
+>> I've taken the gcc-6.3 sources from there, and updated them to gcc-6.4.0
+>> in order to build a nds32le-linux toolchain based on the same version as
+>> the other ones.
+>>
+>> Unfortunately neither the usual binutils-2.29.1 nor your binutils worked
+>> for me, but I eventually managed to get a build using the binutils-2.30
+>> release.
+>>
+>> With this, I could build a mainline kernel with a couple of warnings,
+>> but an 'allmodconfig' build still failed.
+>>
+>> Guenter, can you try my binary from
+>> www.kernel.org/pub/tools/crosstool/files/bin/x86_64/6.4.0/x86_64-gcc-6.4.0-nolibc-nds32le-linux.tar.xz
+>> ?
+>>
+>> If that works for you, I'll update the front-page and remove the nds32-elf
+>> toolchains.
+>>
+>> Greentime, do you have a patch set for gcc-7.3 as well, or are 6.3 and 8.0 the
+>> only working compilers for nds32le-linux?
+>>
+>
+> Hi, all:
+>
+> I just discuss with our toolchain colleagues. We have only gcc6.3 and
+> gcc8.0 for nds32le-linux.
+> I have the ld segmentation fault issue too when building kernel with
+> 'allmodconfig'. We are dealing with it.
 
-I'm not sure, we would need to translate the length and types everytime we
-schedule in/out a perf breakpoint event. Maybe it's not too much a big deal
-but perf event sched in/out is something I would consider a fast path and
-there is quite a few switch/case involved there.
+I've tried building the mainline gcc-8.1 sources for nds32le-linux and
+still got a failure with those (building gcc), building a nds32le-elf gcc-8.1.0
+worked fine, but that fails to build the vdso (no support for -fPIC), so
+it's again unusable for building kernels. Any other ideas?
+
+          Arnd
