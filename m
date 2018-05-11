@@ -1,81 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751764AbeEKCzm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 22:55:42 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33322 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750751AbeEKCzk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 22:55:40 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Jun Nie <jun.nie@linaro.org>,
-        Baoyou Xie <baoyou.xie@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: zx-i2s: fix spelling mistake: "timeing" -> "timing"" to the asoc tree
-In-Reply-To: 
-Message-Id: <20180511025516.0816E440084@finisterre.ee.mobilebroadband>
-Date: Fri, 11 May 2018 03:55:15 +0100 (BST)
+        id S1752077AbeEKC4P (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 22:56:15 -0400
+Received: from mga01.intel.com ([192.55.52.88]:41658 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751983AbeEKC4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 22:56:13 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,387,1520924400";
+   d="scan'208";a="40899853"
+Date: Fri, 11 May 2018 10:53:24 +0800
+From: Ye Xiaolong <xiaolong.ye@intel.com>
+To: Joe Lawrence <joe.lawrence@redhat.com>
+Cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Philip Li <philip.li@intel.com>
+Subject: Re: [PATCH v4 0/1] Add livepatch kselftests
+Message-ID: <20180511025324.GA17456@yexl-desktop>
+References: <1524680930-28168-1-git-send-email-joe.lawrence@redhat.com>
+ <148c3baf-ab6f-c1f2-2911-79e5c8b361bd@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <148c3baf-ab6f-c1f2-2911-79e5c8b361bd@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi, Joe
 
-   ASoC: zx-i2s: fix spelling mistake: "timeing" -> "timing"
+Sorry for the late response.
 
-has been applied to the asoc tree at
+On 04/26, Joe Lawrence wrote:
+>>On 04/25/2018 02:28 PM, Joe Lawrence wrote:
+>
+>> [ ... snip ... ]
+>> 
+>> base-commit: 0adb32858b0bddf4ada5f364a84ed60b196dbcda
+>> prerequisite-patch-id: 5ed747c1a89a5dc4bba08186e21f927d7f3bf049
+>> prerequisite-patch-id: e9800288b71a9f339ea066e58d9ef70dece67083
+>> prerequisite-patch-id: 415f2e190b1b50142c78f2940c7b8dd39b5321a0
+>> prerequisite-patch-id: d229d9cf08af087e0a758d9df1da467103c2c200
+>> prerequisite-patch-id: b8c7ef99b13c6b321cba5e8919ed0b3e29f213e9
+>> prerequisite-patch-id: 4e10c0d08f151b18310fe0b1e5013d62db94cfeb
+>> prerequisite-patch-id: 33046b190c114d202f3a52e0e274dbb2b1907a4c
+>> prerequisite-patch-id: 6978944a725756317dd4e005d479b6101784aaf0
+>> prerequisite-patch-id: cce9d3c7e1ae8887f387ca9e072552dc63479749
+>> prerequisite-patch-id: c44ccc5dd7b1be6fe2b1f32ca6abde1da73fae79
+>> 
+>
+>Hi kbuild test robot folks,
+>
+>I attempted to use the --base option with git format-patch as suggested
+>by Philip, but the bot still sent me mail (addressed only to myself and
+>cc'd kbuild-all@01.org) about build test ERRORs against the wrong base:
+>
+>> [auto build test ERROR on v4.16]
+>> [also build test ERROR on next-20180424]
+>> [cannot apply to linus/master jikos-livepatching/for-next]
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+I noticed this error report was for [PATCH v3] selftests/livepatch: introduce tests
+which doesn't include the base commit info.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+>
+>I'm assuming operator error :(  Here's a summary of my workflow:
+>
+>* Save an .mbox of the entire base patchset, as posted to the
+>live-patching list:
+>
+>  https://lkml.org/lkml/2018/3/23/665
+>
+>* Create a "base" branch and apply the mbox:
+>
+>  % git checkout -b test_base v4.16
+>  Switched to a new branch 'test_base'
+>
+>  % git am /tmp/pm.mbox
+>  Applying: livepatch: Use lists to manage patches, objects and functions
+>  Applying: livepatch: Free only structures with initialized kobject
+>  Applying: livepatch: Add atomic replace
+>  Applying: livepatch: Add an extra flag to distinguish registered   patches
+>  Applying: livepatch: Remove replaced patches from the stack
+>  Applying: livepatch: Remove Nop structures when unused
+>  Applying: livepatch: Allow to replace even disabled patches
+>  Applying: livepatch: Atomic replace and cumulative patches documentation
+>
+>* Create a new dev branch from the base, make a trivial change and commit:
+>
+>  % git checkout -b test_branch test_base
+>  % sed -i 's/^EXTRAVERSION =/EXTRAVERSION = .test/' Makefile
+>  % git commit Makefile -m 'test commit'
+>
+>* Create .patch files with --base:
+>
+>  % git format-patch --base=v4.16 -1 --cover-letter
+>  % grep -e '^base-commit' -e 'prereq' 0000-cover-letter.patch
+>  base-commit: 0adb32858b0bddf4ada5f364a84ed60b196dbcda
+>  prerequisite-patch-id: 5ed747c1a89a5dc4bba08186e21f927d7f3bf049
+>  prerequisite-patch-id: e9800288b71a9f339ea066e58d9ef70dece67083
+>  prerequisite-patch-id: 415f2e190b1b50142c78f2940c7b8dd39b5321a0
+>  prerequisite-patch-id: d229d9cf08af087e0a758d9df1da467103c2c200
+>  prerequisite-patch-id: b8c7ef99b13c6b321cba5e8919ed0b3e29f213e9
+>  prerequisite-patch-id: 4e10c0d08f151b18310fe0b1e5013d62db94cfeb
+>  prerequisite-patch-id: 33046b190c114d202f3a52e0e274dbb2b1907a4c
+>  prerequisite-patch-id: 6978944a725756317dd4e005d479b6101784aaf0
+>
+>I notice that these patch-ids are only added to the cover-letter... do I
+>need to force them each individual patch as well?  /confused
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+I think the work flow you described above is ok, you can just send them with
+git send-email after doing that, and base commit/prerequisite patch info in
+cover-letter is fine, the question here is I can't find the patch emails of
+your patchset except the cover letter in 0day's mail archive, do you send them
+as a whole series, could you tell the subjects of them so I can take a look in
+0day's log.
 
 Thanks,
-Mark
+Xiaolong
 
->From d165b5a86fcad715aea1f164186224fe0c2f57f3 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Thu, 10 May 2018 15:58:38 +0100
-Subject: [PATCH] ASoC: zx-i2s: fix spelling mistake: "timeing" -> "timing"
-
-Trivial fix to spelling mistake in dev_err message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/zte/zx-i2s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/zte/zx-i2s.c b/sound/soc/zte/zx-i2s.c
-index 9a0565937d1f..b6b056c607fa 100644
---- a/sound/soc/zte/zx-i2s.c
-+++ b/sound/soc/zte/zx-i2s.c
-@@ -197,7 +197,7 @@ static int zx_i2s_set_fmt(struct snd_soc_dai *cpu_dai, unsigned int fmt)
- 		val |= (ZX_I2S_TIMING_I2S | ZX_I2S_TIMING_LSB_JUSTIF);
- 		break;
- 	default:
--		dev_err(cpu_dai->dev, "Unknown i2s timeing\n");
-+		dev_err(cpu_dai->dev, "Unknown i2s timing\n");
- 		return -EINVAL;
- 	}
- 
--- 
-2.17.0
+>
+>Thanks,
+>
+>-- Joe
