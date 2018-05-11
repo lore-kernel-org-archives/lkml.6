@@ -1,89 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752651AbeEKGQe (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 02:16:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54322 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751981AbeEKGPA (ORCPT
+        id S1752442AbeEKGV6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 02:21:58 -0400
+Received: from mail-pf0-f182.google.com ([209.85.192.182]:41304 "EHLO
+        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752383AbeEKGV4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 02:15:00 -0400
-From: "Alastair D'Silva" <alastair@au1.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        mikey@neuling.org, vaibhav@linux.vnet.ibm.com,
-        aneesh.kumar@linux.vnet.ibm.com, malat@debian.org,
-        felix@linux.vnet.ibm.com, pombredanne@nexb.com,
-        sukadev@linux.vnet.ibm.com, npiggin@gmail.com,
-        gregkh@linuxfoundation.org, arnd@arndb.de,
-        andrew.donnellan@au1.ibm.com, fbarrat@linux.vnet.ibm.com,
-        corbet@lwn.net, "Alastair D'Silva" <alastair@d-silva.org>
-Subject: [PATCH v5 1/7] powerpc: Add TIDR CPU feature for POWER9
-Date: Fri, 11 May 2018 16:12:57 +1000
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180511061303.10728-1-alastair@au1.ibm.com>
-References: <20180511061303.10728-1-alastair@au1.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18051106-0020-0000-0000-0000041C2466
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051106-0021-0000-0000-000042B12597
-Message-Id: <20180511061303.10728-2-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+        Fri, 11 May 2018 02:21:56 -0400
+X-Google-Smtp-Source: AB8JxZrHt6EjUhrdKpb3QwnoODrg7gF+upqTlrW0x7ERg2auFdkHNI38XJjLr5i4AaPZVh93jrepdQ==
+Date: Fri, 11 May 2018 15:21:51 +0900
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        pmladek@suse.com, dvyukov@google.com, sergey.senozhatsky@gmail.com,
+        syzkaller@googlegroups.com, rostedt@goodmis.org,
+        fengguang.wu@intel.com, linux-kernel@vger.kernel.org
+Subject: Re: printk feature for syzbot?
+Message-ID: <20180511062151.GA18160@jagdpanzerIV>
+References: <201805102350.JJH73950.tVJHQLFSOMOOFF@I-love.SAKURA.ne.jp>
+ <20180511014515.GA895@jagdpanzerIV>
+ <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805110057
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201805110238.w4B2cIGH079602@www262.sakura.ne.jp>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alastair D'Silva <alastair@d-silva.org>
+On (05/11/18 11:38), Tetsuo Handa wrote:
+> > 
+> > So you basically want to have one more con_msg_format_flags? Do
+> > you want to track a context which prints out a messages or the
+> > context which "generated" the message? A CPU/task that stores
+> > a logbuf entry - vprintk_emit() - is not always the same as the
+> > CPU/task that prints it to consoles - console_unlock().
+> > 
+> 
+> Well, below is the (partial) patch.
 
-This patch adds a CPU feature bit to show whether the CPU has
-the TIDR register available, enabling as_notify/wait in userspace.
+Hi,
 
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
----
- arch/powerpc/include/asm/cputable.h | 3 ++-
- arch/powerpc/kernel/dt_cpu_ftrs.c   | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Tetsuo, I will take a look a bit later, but at glance, there are several
+ways to achieve what you are trying to do. The first one is the way you
+did it - add additional buffer and make that context tracking info part of
+the message body. Another one would be to extend struct printk_log and add
+pid/cpu/flag there, which you then can convert into text in msg_print_text().
+So far we talked about extending printk_log. Yet another one could be - add
+vsprintf specifiers that would add pid/cpu/flag to the vsprintf-ed message.
+You then can re-define pr_fmt, for instance, in the code you want to track
+pr_fmt "%zZ" fmt, or somehow force printk to add that "%zZ" to every
+message.
 
-diff --git a/arch/powerpc/include/asm/cputable.h b/arch/powerpc/include/asm/cputable.h
-index 66fcab13c8b4..9c0a3083571b 100644
---- a/arch/powerpc/include/asm/cputable.h
-+++ b/arch/powerpc/include/asm/cputable.h
-@@ -215,6 +215,7 @@ static inline void cpu_feature_keys_init(void) { }
- #define CPU_FTR_P9_TM_HV_ASSIST		LONG_ASM_CONST(0x0000100000000000)
- #define CPU_FTR_P9_TM_XER_SO_BUG	LONG_ASM_CONST(0x0000200000000000)
- #define CPU_FTR_P9_TLBIE_BUG		LONG_ASM_CONST(0x0000400000000000)
-+#define CPU_FTR_P9_TIDR			LONG_ASM_CONST(0x0000800000000000)
- 
- #ifndef __ASSEMBLY__
- 
-@@ -462,7 +463,7 @@ static inline void cpu_feature_keys_init(void) { }
- 	    CPU_FTR_CFAR | CPU_FTR_HVMODE | CPU_FTR_VMX_COPY | \
- 	    CPU_FTR_DBELL | CPU_FTR_HAS_PPR | CPU_FTR_ARCH_207S | \
- 	    CPU_FTR_TM_COMP | CPU_FTR_ARCH_300 | CPU_FTR_PKEY | \
--	    CPU_FTR_P9_TLBIE_BUG)
-+	    CPU_FTR_P9_TLBIE_BUG | CPU_FTR_P9_TIDR)
- #define CPU_FTRS_POWER9_DD1 ((CPU_FTRS_POWER9 | CPU_FTR_POWER9_DD1) & \
- 			     (~CPU_FTR_SAO))
- #define CPU_FTRS_POWER9_DD2_0 CPU_FTRS_POWER9
-diff --git a/arch/powerpc/kernel/dt_cpu_ftrs.c b/arch/powerpc/kernel/dt_cpu_ftrs.c
-index 8ab51f6ca03a..415555e5b69f 100644
---- a/arch/powerpc/kernel/dt_cpu_ftrs.c
-+++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
-@@ -716,6 +716,7 @@ static __init void cpufeatures_cpu_quirks(void)
- 	if ((version & 0xffff0000) == 0x004e0000) {
- 		cur_cpu_spec->cpu_features &= ~(CPU_FTR_DAWR);
- 		cur_cpu_spec->cpu_features |= CPU_FTR_P9_TLBIE_BUG;
-+		cur_cpu_spec->cpu_features |= CPU_FTR_P9_TIDR;
- 	}
- 
- 	/*
--- 
-2.17.0
+> By the way, when I tried to make similar change for printk_safe_log_store(),
+> I noticed that printk_safe_log_store() is not safe because it is reusing
+> the va_list variable after "goto again;". We need to use va_copy(), or
+> we will get crash like an example shown below.
+
+Oh, right. Can you send a patch?
+
+	-ss
