@@ -1,114 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751928AbeEKTDj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 15:03:39 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45569 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751012AbeEKTDh (ORCPT
+        id S1752072AbeEKTIx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 15:08:53 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45877 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752022AbeEKTIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 15:03:37 -0400
-X-Google-Smtp-Source: AB8JxZqYjL+lCxgKRahUVwYZxVtMokImrBwdVFN6ZX4rIFk24cD/1kW0fFY1iV/wzfhsRjZPQQ6osA==
-Date: Sat, 12 May 2018 00:35:42 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: akpm@linux-foundation.org, dan.j.williams@intel.com, jack@suse.cz,
-        ross.zwisler@linux.intel.com, riel@redhat.com, willy@infradead.org,
-        hughd@google.com, pasha.tatashin@oracle.com, mhocko@suse.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mm: Adding new return type vm_fault_t
-Message-ID: <20180511190542.GA2412@jordon-HP-15-Notebook-PC>
+        Fri, 11 May 2018 15:08:36 -0400
+X-Google-Smtp-Source: AB8JxZrMFFAVfpk/xNVKN4vzOyyjG6MZT5SP1n2dJJdRgLfsyq1wJtjdhY/eq0AwYxfUqgXR1E/vvg==
+Subject: Re: INFO: rcu detected stall in kfree_skbmem
+To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+fc78715ba3b3257caf6a@syzkaller.appspotmail.com>,
+        Vladislav Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>, linux-sctp@vger.kernel.org,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        David Miller <davem@davemloft.net>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <000000000000a9b0e3056b14bfb2@google.com>
+ <CACT4Y+Z_+=VLbELVW69B7WEVqvri1xBMM5RMnMQynec_XgaE=w@mail.gmail.com>
+ <20180511184141.GW5105@localhost.localdomain>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <683d1ead-d35b-27ee-0f0c-f7e815d989fc@gmail.com>
+Date: Fri, 11 May 2018 12:08:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180511184141.GW5105@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler
-in struct vm_operations_struct. For now, this is
-just documenting that the function returns a 
-VM_FAULT value rather than an errno.  Once all
-instances are converted, vm_fault_t will become
-a distinct type.
 
-commit 1c8f422059ae ("mm: change return type to
-vm_fault_t")
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
----
-v2: updated the change log
+On 05/11/2018 11:41 AM, Marcelo Ricardo Leitner wrote:
 
- include/linux/mm.h | 4 ++--
- mm/filemap.c       | 8 ++++----
- mm/nommu.c         | 2 +-
- 3 files changed, 7 insertions(+), 7 deletions(-)
+> But calling ip6_xmit with rcu_read_lock is expected. tcp stack also
+> does it.
+> Thus I think this is more of an issue with IPv6 stack. If a host has
+> an extensive ip6tables ruleset, it probably generates this more
+> easily.
+> 
+>>>  sctp_v6_xmit+0x4a5/0x6b0 net/sctp/ipv6.c:225
+>>>  sctp_packet_transmit+0x26f6/0x3ba0 net/sctp/output.c:650
+>>>  sctp_outq_flush+0x1373/0x4370 net/sctp/outqueue.c:1197
+>>>  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
+>>>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
+>>>  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+>>>  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
+>>>  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
+>>>  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
+>>>  expire_timers kernel/time/timer.c:1363 [inline]
+> 
+> Having this call from a timer means it wasn't processing sctp stack
+> for too long.
+>
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ad06d42..7fc4baf 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2281,10 +2281,10 @@ extern void truncate_inode_pages_range(struct address_space *,
- extern void truncate_inode_pages_final(struct address_space *);
+I feel the problem is that this part is looping, in some infinite loop.
 
- /* generic vm_area_ops exported for stackable file systems */
--extern int filemap_fault(struct vm_fault *vmf);
-+extern vm_fault_t filemap_fault(struct vm_fault *vmf);
- extern void filemap_map_pages(struct vm_fault *vmf,
- 		pgoff_t start_pgoff, pgoff_t end_pgoff);
--extern int filemap_page_mkwrite(struct vm_fault *vmf);
-+extern vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf);
+I have seen this stack traces in other reports.
 
- /* mm/page-writeback.c */
- int __must_check write_one_page(struct page *page);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 693f622..cae7e4f 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2491,7 +2491,7 @@ static void do_async_mmap_readahead(struct vm_area_struct *vma,
-  *
-  * We never return with VM_FAULT_RETRY and a bit from VM_FAULT_ERROR set.
-  */
--int filemap_fault(struct vm_fault *vmf)
-+vm_fault_t filemap_fault(struct vm_fault *vmf)
- {
- 	int error;
- 	struct file *file = vmf->vma->vm_file;
-@@ -2501,7 +2501,7 @@ int filemap_fault(struct vm_fault *vmf)
- 	pgoff_t offset = vmf->pgoff;
- 	pgoff_t max_off;
- 	struct page *page;
--	int ret = 0;
-+	vm_fault_t ret = 0;
-
- 	max_off = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
- 	if (unlikely(offset >= max_off))
-@@ -2696,11 +2696,11 @@ void filemap_map_pages(struct vm_fault *vmf,
- }
- EXPORT_SYMBOL(filemap_map_pages);
-
--int filemap_page_mkwrite(struct vm_fault *vmf)
-+vm_fault_t filemap_page_mkwrite(struct vm_fault *vmf)
- {
- 	struct page *page = vmf->page;
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
--	int ret = VM_FAULT_LOCKED;
-+	vm_fault_t ret = VM_FAULT_LOCKED;
-
- 	sb_start_pagefault(inode->i_sb);
- 	file_update_time(vmf->vma->vm_file);
-diff --git a/mm/nommu.c b/mm/nommu.c
-index ebb6e61..90456a6 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -1788,7 +1788,7 @@ unsigned long arch_get_unmapped_area(struct file *file, unsigned long addr,
- 	return -ENOMEM;
- }
-
--int filemap_fault(struct vm_fault *vmf)
-+vm_fault_t filemap_fault(struct vm_fault *vmf)
- {
- 	BUG();
- 	return 0;
---
-1.9.1
+Maybe some kind of list corruption.
