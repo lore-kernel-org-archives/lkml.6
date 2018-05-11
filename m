@@ -1,23 +1,23 @@
 Return-Path: <jeremy.linton@arm.com>
-X-Google-Smtp-Source: AB8JxZooT/UCkFrs8yhvtQ9434wP7Pqg4SaFkB5rxoyH5SufLPC1PvT9z8AslNLeo9hmCN0X2Jc2
+X-Google-Smtp-Source: AB8JxZr+bkfmUliOvqB6eVALtMA/UF0idx3LB7vPnuaxil3B3c32fxvavsQCalxrWs6WdYsrqvNC
 ARC-Seal: i=1; a=rsa-sha256; t=1526083151; cv=none;
         d=google.com; s=arc-20160816;
-        b=vz7LJR/1pSmPi/kjeq2Ek5igpl8lc2btg/78m8mOhzO3OQTVxxf5mh16pKMcQ3XBUn
-         5G45zWcTySNHrUbY0wtvhc6I3F474qzj8VvcAk8E4Aikpiqje+cXvMbdKiaWoiQACZXk
-         Yov4O8rvJz9bSlWUIVte28kWxOHWii5zgRApsUq8podBBcXnIv0Ay+t7hS2UyQfbDbjj
-         FDfOuPih7vEuE1Preb2T8GbJeb62lteOTKDxFx529tz9/C+cwCUCcrZlNMA+peqE9lzt
-         om5YufMK8pr1B9sARQACoyJ/ElUbL2XYU7bHCQJO4MU02F+6nhI0kDerOVqY0GyyA0fo
-         lhNw==
+        b=F3grA5k5t4dav7X6luFfFyfNkp8jr6o6SRYXFiAA/w1wXJV706heibi3RSCd9HsyyD
+         lprYVnbXmaaWqdYc9614EUOOtsJ0lc/StKcoJmqiduBuJIG61aRWlfDyNLhHzF1tWpA5
+         F/3qMz4fJVBYxNHsgoTd6xwlxPGQm5Z5wEmYQmgSs08U5DqjYeQBjA73IHvDbC+cguGg
+         HRBwX+cO3/gVjBKm7FvlD+wvuFdGyc/+hS7k58Uvdk9/8BAHEAQyhGWHtuM3Fc753KnC
+         yxxhNatGUTY5ePeWV2Jw025ruD0OubPe3Sh3uxR+Kx87QuedIm6b9PAZ6fonvu5UA9jl
+         MwAg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=G8RoyA6JUCJ5uM5SN8vKVFtdmlJHzHZYyC8RjTzFmm8=;
-        b=gZ0ND4oI1cbvFf6muGoL1f7wKfY2IfynHP6v9rHaK3nNBD5pheNEvhiVDLVSAySZdm
-         Ol+B0DCD2YSF2ubqbkPjwHZDx2LUjlPgvM2dT6j2N9FJ7/CAn9qykTJ+7WCH4pubYXoF
-         MaF2gjiaiTkG8NcLFw0t0/3sypvX/fC63mwMb6hBXt2/0Vei8g/Sl0HbCq05CXX6lFs/
-         ACv5En84Fyjv6vBG6yZ5QN1MePdoCJkIex3AwU8NgRUlLBC24r40jVeWdwcNuS2MKq/k
-         NlakiWNkR7E+Rzvhj1M2s3vvnTTKeI10l63I/owl6xFYgArtt19oBMMTswJh/bDDHnYJ
-         SqAQ==
+        bh=r0R89/oaVUYtoarW9PUGEEZtoOJYcJjvSBR+IoYm+hw=;
+        b=ui3jk25P81JIj/WzFEz5LK2GachlZMBu8r2daY5susWii8PEG+B7HkS1xRv2YoTuYV
+         KezM7ADKM/dIAYZ4tC1Nu3afIcH3nKcZbPlCHqVHOsEZZvEC5R8+XlLjatyKb3UMB2VM
+         RFC5gUcOx9KSiMqgKBxi1Mynoab+PEHK1pMu2ANWcmNw1kxi7ZQ3AYZsO9gVEsmZKdm2
+         Z/Ydr83gZvivokeHwKMUp/iqfd6fmfyIuc1VZU8ZEocVWT4ZfS4UOSeS+S4c4jEIyt/G
+         uvvJSFvnK8nULEGfL2TSlWElGSlxr1yeXJj0jnD3OvnlHPuCZv5n4RsXXsDJ5mzmMXbD
+         MMhQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of jeremy.linton@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=jeremy.linton@arm.com
 Authentication-Results: mx.google.com;
@@ -48,107 +48,78 @@ Cc: Sudeep.Holla@arm.com,
 	jhugo@codeaurora.org,
 	ard.biesheuvel@linaro.org,
 	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v9 07/12] drivers: base cacheinfo: Add support for ACPI based firmware tables
-Date: Fri, 11 May 2018 18:58:02 -0500
-Message-Id: <20180511235807.30834-8-jeremy.linton@arm.com>
+Subject: [PATCH v9 08/12] arm64: Add support for ACPI based firmware tables
+Date: Fri, 11 May 2018 18:58:03 -0500
+Message-Id: <20180511235807.30834-9-jeremy.linton@arm.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180511235807.30834-1-jeremy.linton@arm.com>
 References: <20180511235807.30834-1-jeremy.linton@arm.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600214166387104037?=
-X-GMAIL-MSGID: =?utf-8?q?1600214166387104037?=
+X-GMAIL-THRID: =?utf-8?q?1600214166964323495?=
+X-GMAIL-MSGID: =?utf-8?q?1600214166964323495?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Call ACPI cache parsing routines from base cacheinfo code if ACPI
-is enabled. Also stub out cache_setup_acpi and acpi_find_last_cache_level
-so that individual architectures can enable ACPI topology parsing.
+The /sys cache entries should support ACPI/PPTT generated cache
+topology information.  For arm64, if ACPI is enabled, determine
+the max number of cache levels and populate them using the PPTT
+table if one is available.
 
 Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Tested-by: Vijaya Kumar K <vkilari@codeaurora.org>
 Tested-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
 Tested-by: Tomasz Nowicki <Tomasz.Nowicki@cavium.com>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/base/cacheinfo.c  | 14 ++++++++++----
- include/linux/cacheinfo.h | 17 +++++++++++++++++
- 2 files changed, 27 insertions(+), 4 deletions(-)
+ arch/arm64/kernel/cacheinfo.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-index 597aacb233fc..2880e2ab01f5 100644
---- a/drivers/base/cacheinfo.c
-+++ b/drivers/base/cacheinfo.c
-@@ -206,7 +206,7 @@ static inline bool cache_leaves_are_shared(struct cacheinfo *this_leaf,
- 					   struct cacheinfo *sib_leaf)
- {
- 	/*
--	 * For non-DT systems, assume unique level 1 cache, system-wide
-+	 * For non-DT/ACPI systems, assume unique level 1 caches, system-wide
- 	 * shared caches for all other levels. This will be used only if
- 	 * arch specific code has not populated shared_cpu_map
- 	 */
-@@ -214,6 +214,11 @@ static inline bool cache_leaves_are_shared(struct cacheinfo *this_leaf,
- }
- #endif
+diff --git a/arch/arm64/kernel/cacheinfo.c b/arch/arm64/kernel/cacheinfo.c
+index 380f2e2fbed5..0bf0a835122f 100644
+--- a/arch/arm64/kernel/cacheinfo.c
++++ b/arch/arm64/kernel/cacheinfo.c
+@@ -17,6 +17,7 @@
+  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
  
-+int __weak cache_setup_acpi(unsigned int cpu)
-+{
-+	return -ENOTSUPP;
-+}
-+
- static int cache_shared_cpu_map_setup(unsigned int cpu)
++#include <linux/acpi.h>
+ #include <linux/cacheinfo.h>
+ #include <linux/of.h>
+ 
+@@ -46,7 +47,7 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
+ 
+ static int __init_cache_level(unsigned int cpu)
  {
+-	unsigned int ctype, level, leaves, of_level;
++	unsigned int ctype, level, leaves, fw_level;
  	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
-@@ -227,8 +232,8 @@ static int cache_shared_cpu_map_setup(unsigned int cpu)
- 	if (of_have_populated_dt())
- 		ret = cache_setup_of_node(cpu);
- 	else if (!acpi_disabled)
--		/* No cache property/hierarchy support yet in ACPI */
--		ret = -ENOTSUPP;
-+		ret = cache_setup_acpi(cpu);
-+
- 	if (ret)
- 		return ret;
  
-@@ -279,7 +284,8 @@ static void cache_shared_cpu_map_remove(unsigned int cpu)
- 			cpumask_clear_cpu(cpu, &sib_leaf->shared_cpu_map);
- 			cpumask_clear_cpu(sibling, &this_leaf->shared_cpu_map);
- 		}
--		of_node_put(this_leaf->fw_token);
-+		if (of_have_populated_dt())
-+			of_node_put(this_leaf->fw_token);
+ 	for (level = 1, leaves = 0; level <= MAX_CACHE_LEVEL; level++) {
+@@ -59,15 +60,19 @@ static int __init_cache_level(unsigned int cpu)
+ 		leaves += (ctype == CACHE_TYPE_SEPARATE) ? 2 : 1;
  	}
- }
  
-diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
-index 0c6f658054d2..89397e30e269 100644
---- a/include/linux/cacheinfo.h
-+++ b/include/linux/cacheinfo.h
-@@ -97,6 +97,23 @@ int func(unsigned int cpu)					\
- struct cpu_cacheinfo *get_cpu_cacheinfo(unsigned int cpu);
- int init_cache_level(unsigned int cpu);
- int populate_cache_leaves(unsigned int cpu);
-+int cache_setup_acpi(unsigned int cpu);
-+#ifndef CONFIG_ACPI
-+/*
-+ * acpi_find_last_cache_level is only called on ACPI enabled
-+ * platforms using the PPTT for topology. This means that if
-+ * the platform supports other firmware configuration methods
-+ * we need to stub out the call when ACPI is disabled.
-+ * ACPI enabled platforms not using PPTT won't be making calls
-+ * to this function so we need not worry about them.
-+ */
-+static inline int acpi_find_last_cache_level(unsigned int cpu)
-+{
-+	return 0;
-+}
-+#else
-+int acpi_find_last_cache_level(unsigned int cpu);
-+#endif
+-	of_level = of_find_last_cache_level(cpu);
+-	if (level < of_level) {
++	if (acpi_disabled)
++		fw_level = of_find_last_cache_level(cpu);
++	else
++		fw_level = acpi_find_last_cache_level(cpu);
++
++	if (level < fw_level) {
+ 		/*
+ 		 * some external caches not specified in CLIDR_EL1
+ 		 * the information may be available in the device tree
+ 		 * only unified external caches are considered here
+ 		 */
+-		leaves += (of_level - level);
+-		level = of_level;
++		leaves += (fw_level - level);
++		level = fw_level;
+ 	}
  
- const struct attribute_group *cache_get_priv_group(struct cacheinfo *this_leaf);
- 
+ 	this_cpu_ci->num_levels = level;
 -- 
 2.13.6
