@@ -1,105 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752506AbeEKD17 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 23:27:59 -0400
-Received: from regular1.263xmail.com ([211.150.99.141]:38914 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750937AbeEKD15 (ORCPT
+        id S1752235AbeEKD3B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 23:29:01 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:39192 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750758AbeEKD27 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 23:27:57 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-IP-DOMAINF: 1
-X-RL-SENDER: zhangqing@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-UNIQUE-TAG: <cb808838abf6ed99f69fe932a3bc74cc>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Elaine Zhang <zhangqing@rock-chips.com>
-To: heiko@sntech.de, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: devicetree@vger.kernel.org, rjw@rjwysocki.net, khilman@kernel.org,
-        ulf.hansson@linaro.org, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        wxt@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
-        huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1 07/13] soc: rockchip: power-domain: add power domain support for rk3128
-Date: Fri, 11 May 2018 11:33:12 +0800
-Message-Id: <1526009592-1906-1-git-send-email-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1526009458-28579-1-git-send-email-zhangqing@rock-chips.com>
-References: <1526009458-28579-1-git-send-email-zhangqing@rock-chips.com>
+        Thu, 10 May 2018 23:28:59 -0400
+Date: Fri, 11 May 2018 13:28:57 +1000 (AEST)
+From: Finn Thain <fthain@telegraphics.com.au>
+To: Michael Schmitz <schmitzmic@gmail.com>
+cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH net] macmace: Set platform device coherent_dma_mask
+In-Reply-To: <CAOmrzkLL0ZNzAh7rwiDy=BkNqqXgbqfv3vkN6K8CTF8VGbT8zA@mail.gmail.com>
+Message-ID: <alpine.LNX.2.21.1805111221180.8@nippy.intranet>
+References: <S1751632AbeECEYA/20180503042400Z+254@vger.kernel.org> <CAMuHMdUAxmVZLekekvVrnMbbL18oyY86sF9QX087idSqcKMiPQ@mail.gmail.com> <alpine.LNX.2.21.1805031801310.8@nippy.intranet> <CAMuHMdU1XBqt7hwEW6JTas64ZNGCGCMr5HMZwuLo0O-ZBCOWyA@mail.gmail.com>
+ <alpine.LNX.2.21.1805091805130.72@nippy.intranet> <CAOmrzkKNPemq5RySvza+Y8_jgwg2fkUZodR794cgOxpQpfh+SA@mail.gmail.com> <alpine.LNX.2.21.1805110921020.8@nippy.intranet> <CAOmrzkLL0ZNzAh7rwiDy=BkNqqXgbqfv3vkN6K8CTF8VGbT8zA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver is modified to support RK3128 SoC.
+On Fri, 11 May 2018, Michael Schmitz wrote:
 
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/soc/rockchip/pm_domains.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> > > Which begs the question: why can' you set up all Nubus bus devices' 
+> > > DMA masks in nubus_device_register(), or nubus_add_board()?
+> >
+> > I am expecting to see the same WARNING from the nubus sonic driver but 
+> > it hasn't happened yet, so I don't have a patch for it yet. In 
+> > anycase, the nubus fix would be a lot like the zorro bus fix, so I 
+> > don't see a problem.
+> 
+> That's odd. But what I meant to say is that by setting up 
+> dma_coherent_mask in nubus_add_board(), and pointing dma_mask to that, 
+> ypu won't need any patches to Nubus device drivers.
 
-diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
-index 01d4ba26a054..99a2dd8a7801 100644
---- a/drivers/soc/rockchip/pm_domains.c
-+++ b/drivers/soc/rockchip/pm_domains.c
-@@ -19,6 +19,7 @@
- #include <linux/regmap.h>
- #include <linux/mfd/syscon.h>
- #include <dt-bindings/power/rk3036-power.h>
-+#include <dt-bindings/power/rk3128-power.h>
- #include <dt-bindings/power/rk3288-power.h>
- #include <dt-bindings/power/rk3328-power.h>
- #include <dt-bindings/power/rk3366-power.h>
-@@ -720,6 +721,14 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
- 	[RK3036_PD_SYS]		= DOMAIN_RK3036(8, 22, 29, false),
- };
- 
-+static const struct rockchip_domain_info rk3128_pm_domains[] = {
-+	[RK3128_PD_CORE]	= DOMAIN_RK3288(0, 0, 4, false),
-+	[RK3128_PD_MSCH]	= DOMAIN_RK3288(-1, -1, 6, true),
-+	[RK3128_PD_VIO]		= DOMAIN_RK3288(3, 3, 2, false),
-+	[RK3128_PD_VIDEO]	= DOMAIN_RK3288(2, 2, 1, false),
-+	[RK3128_PD_GPU]		= DOMAIN_RK3288(1, 1, 3, false),
-+};
-+
- static const struct rockchip_domain_info rk3288_pm_domains[] = {
- 	[RK3288_PD_VIO]		= DOMAIN_RK3288(7, 7, 4, false),
- 	[RK3288_PD_HEVC]	= DOMAIN_RK3288(14, 10, 9, false),
-@@ -796,6 +805,17 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
- 	.domain_info = rk3036_pm_domains,
- };
- 
-+static const struct rockchip_pmu_info rk3128_pmu = {
-+	.pwr_offset = 0x04,
-+	.status_offset = 0x08,
-+	.req_offset = 0x0c,
-+	.idle_offset = 0x10,
-+	.ack_offset = 0x10,
-+
-+	.num_domains = ARRAY_SIZE(rk3128_pm_domains),
-+	.domain_info = rk3128_pm_domains,
-+};
-+
- static const struct rockchip_pmu_info rk3288_pmu = {
- 	.pwr_offset = 0x08,
- 	.status_offset = 0x0c,
-@@ -875,6 +895,10 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
- 		.data = (void *)&rk3036_pmu,
- 	},
- 	{
-+		.compatible = "rockchip,rk3128-power-controller",
-+		.data = (void *)&rk3128_pmu,
-+	},
-+	{
- 		.compatible = "rockchip,rk3288-power-controller",
- 		.data = (void *)&rk3288_pmu,
- 	},
+Right. I think I've already acknowledged that. But it's off-topic, because 
+the patches under review are for platform drivers. Those patches fix an 
+actual bug that I've observed. Whereas, the nubus driver dma mask issue 
+that you raised is purely theoretical at this stage.
+
 -- 
-1.9.1
