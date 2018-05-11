@@ -1,75 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751478AbeEKV4R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 17:56:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52304 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750876AbeEKV4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 17:56:16 -0400
-Date: Fri, 11 May 2018 22:56:12 +0100
-From: James Hogan <jhogan@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] MIPS: c-r4k: fix data corruption related to cache
- coherence.
-Message-ID: <20180511215611.GB20355@jamesdev>
-References: <87sh7klyhc.fsf@notabene.neil.brown.name>
- <20180425214650.GA25917@saruman>
- <87h8nzlzf1.fsf@notabene.neil.brown.name>
- <20180425220834.GC25917@saruman>
- <87vacdlf8d.fsf@notabene.neil.brown.name>
- <87lgcwcvj2.fsf@notabene.neil.brown.name>
- <20180507201655.GA27369@jamesdev>
- <87o9hraqlf.fsf@notabene.neil.brown.name>
+        id S1751660AbeEKWCO (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 18:02:14 -0400
+Received: from mail-pl0-f41.google.com ([209.85.160.41]:38485 "EHLO
+        mail-pl0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750989AbeEKWCM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 May 2018 18:02:12 -0400
+X-Google-Smtp-Source: AB8JxZrfVg4AILpTk6KRzWTZb+apPy3LRELyyEs7bQALfvUTQ3Fol+4Mii8caMH9TINRkLeC5vGsCw==
+Subject: Re: [PATCH net] macmace: Set platform device coherent_dma_mask
+To: Finn Thain <fthain@telegraphics.com.au>
+References: <S1751632AbeECEYA/20180503042400Z+254@vger.kernel.org>
+ <CAMuHMdUAxmVZLekekvVrnMbbL18oyY86sF9QX087idSqcKMiPQ@mail.gmail.com>
+ <alpine.LNX.2.21.1805031801310.8@nippy.intranet>
+ <CAMuHMdU1XBqt7hwEW6JTas64ZNGCGCMr5HMZwuLo0O-ZBCOWyA@mail.gmail.com>
+ <alpine.LNX.2.21.1805091805130.72@nippy.intranet>
+ <CAOmrzkKNPemq5RySvza+Y8_jgwg2fkUZodR794cgOxpQpfh+SA@mail.gmail.com>
+ <alpine.LNX.2.21.1805110921020.8@nippy.intranet>
+ <CAOmrzkLL0ZNzAh7rwiDy=BkNqqXgbqfv3vkN6K8CTF8VGbT8zA@mail.gmail.com>
+ <alpine.LNX.2.21.1805111221180.8@nippy.intranet>
+ <0b13a08d-ba2d-b9dc-4fd9-1f6bad5cd1ee@gmail.com>
+ <alpine.LNX.2.21.1805111451220.8@nippy.intranet>
+ <8c2c3ad5-eeb5-cf61-b9fb-c6096619e310@gmail.com>
+ <alpine.LNX.2.21.1805112003250.8@nippy.intranet>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-m68k <linux-m68k@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+From: Michael Schmitz <schmitzmic@gmail.com>
+X-Enigmail-Draft-Status: N1110
+Message-ID: <23ed7ff8-c1d7-a069-3058-3944c7586116@gmail.com>
+Date: Sat, 12 May 2018 10:02:03 +1200
+User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
+ Icedove/45.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="XOIedfhf+7KOe/yw"
-Content-Disposition: inline
-In-Reply-To: <87o9hraqlf.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <alpine.LNX.2.21.1805112003250.8@nippy.intranet>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Finn,
 
---XOIedfhf+7KOe/yw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Am 11.05.2018 um 22:06 schrieb Finn Thain:
+>> You would have to be careful not to overwrite a pdev->dev.dma_mask and 
+>> pdev->dev.dma_coherent_mask that might have been set in a platform 
+>> device passed via platform_device_register here. Coldfire is the only 
+>> m68k platform currently using that, but there might be others in future.
+>>
+> 
+> That Coldfire patch could be reverted if this is a better solution.
 
-On Tue, May 08, 2018 at 11:22:36AM +1000, NeilBrown wrote:
-> On Mon, May 07 2018, James Hogan wrote:
->=20
-> > On Mon, May 07, 2018 at 07:40:49AM +1000, NeilBrown wrote:
-> >>=20
-> >> Hi James,
-> >>  this hasn't appear in linux-next yet, or in any branch
-> >>  of
-> >>    git://git.kernel.org/pub/scm/linux/kernel/git/jhogan/mips.git
-> >>=20
-> >>  Should I expect it to?
-> >
-> > Sorry Neil, I haven't applied it yet. I'm planning to get a few fixes
-> > sorted this week, at which point it would land in the mips-fixes branch
-> > at the above repo.
->=20
-> Cool, thanks.  I just wanted to be sure it hadn't got lost somehow.
+True, but there might be other uses for deviating from a platform
+default (I'm thinking of Atari SCSI and floppy drivers here). But we
+could chose the correct mask to set in arch_setup_pdev_archdata()
+instead, as it's a platform property not a driver property in that case.
 
-Now pushed.
+>> ... But I don't think there are smaller DMA masks used by m68k drivers 
+>> that use the platform device mechanism at present. I've only looked at 
+>> arch/m68k though.
+> 
+> So we're back at the same problem that Geert's suggestion also raised: how 
+> to identify potentially affected platform devices and drivers?
+> 
+> Maybe we can take a leaf out of Christoph's book, and leave a noisy 
+> WARNING splat in the log.
+> 
+> void arch_setup_pdev_archdata(struct platform_device *pdev)
+> {
+>         WARN_ON_ONCE(pdev->dev.coherent_dma_mask != DMA_MASK_NONE ||
+>                      pdev->dev.dma_mask != NULL);
 
-Thanks
-James
+I'd suggest using WARN_ON() so we catch all uses on a particular platform.
 
---XOIedfhf+7KOe/yw
-Content-Type: application/pgp-signature; name="signature.asc"
+I initially thought it necessary to warn on unset mask here, but I see
+that would throw up a lot of redundant false positives.
 
------BEGIN PGP SIGNATURE-----
+Cheers,
 
-iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWvYRegAKCRA1zuSGKxAj
-8k+cAPwINk3TzhEwI2ihwliaC2od+nT6EC7fExzUTqgV/oRjNwEAxDNL493COhi0
-X1TZWyeMreE6ETF8yPlL5483oyRagQ0=
-=p3I8
------END PGP SIGNATURE-----
-
---XOIedfhf+7KOe/yw--
+	Michael
