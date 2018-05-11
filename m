@@ -1,127 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752077AbeEKC4P (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 10 May 2018 22:56:15 -0400
-Received: from mga01.intel.com ([192.55.52.88]:41658 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751983AbeEKC4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 May 2018 22:56:13 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,387,1520924400";
-   d="scan'208";a="40899853"
-Date: Fri, 11 May 2018 10:53:24 +0800
-From: Ye Xiaolong <xiaolong.ye@intel.com>
-To: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Philip Li <philip.li@intel.com>
-Subject: Re: [PATCH v4 0/1] Add livepatch kselftests
-Message-ID: <20180511025324.GA17456@yexl-desktop>
-References: <1524680930-28168-1-git-send-email-joe.lawrence@redhat.com>
- <148c3baf-ab6f-c1f2-2911-79e5c8b361bd@redhat.com>
+        id S1752141AbeEKC4U (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 10 May 2018 22:56:20 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:46982 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752028AbeEKC4O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 May 2018 22:56:14 -0400
+X-Google-Smtp-Source: AB8JxZr38lDwqB3WX+Nimjbq98+hyujDW9LqL5AWNv2+5xGqXj6Aejhf8aOiwm0S9g4ElB/Xvk4JmA==
+Date: Fri, 11 May 2018 10:52:17 +0800
+From: Wang YanQing <udknight@gmail.com>
+To: linux@armlinux.org.uk
+Cc: daniel@iogearbox.net, ast@fb.com, illusionist.neo@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] bpf, arm32: Fix inconsistent naming about
+ emit_a32_lsr_r64|emit_a32_lsr_i64
+Message-ID: <20180511025217.GA7621@udknight>
+Mail-Followup-To: Wang YanQing <udknight@gmail.com>, linux@armlinux.org.uk,
+        daniel@iogearbox.net, ast@fb.com, illusionist.neo@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <148c3baf-ab6f-c1f2-2911-79e5c8b361bd@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mutt/1.7.1 (2016-10-04)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Joe
+The names for BPF_ALU64 | BPF_ARSH are emit_a32_arsh_*,
+the names for BPF_ALU64 | BPF_LSH are emit_a32_lsh_*, but
+the names for BPF_ALU64 | BPF_RSH are emit_a32_lsr_*.
 
-Sorry for the late response.
+For consistence reason, let's rename emit_a32_lsr_* to
+emit_a32_rsh_*.
 
-On 04/26, Joe Lawrence wrote:
->>On 04/25/2018 02:28 PM, Joe Lawrence wrote:
->
->> [ ... snip ... ]
->> 
->> base-commit: 0adb32858b0bddf4ada5f364a84ed60b196dbcda
->> prerequisite-patch-id: 5ed747c1a89a5dc4bba08186e21f927d7f3bf049
->> prerequisite-patch-id: e9800288b71a9f339ea066e58d9ef70dece67083
->> prerequisite-patch-id: 415f2e190b1b50142c78f2940c7b8dd39b5321a0
->> prerequisite-patch-id: d229d9cf08af087e0a758d9df1da467103c2c200
->> prerequisite-patch-id: b8c7ef99b13c6b321cba5e8919ed0b3e29f213e9
->> prerequisite-patch-id: 4e10c0d08f151b18310fe0b1e5013d62db94cfeb
->> prerequisite-patch-id: 33046b190c114d202f3a52e0e274dbb2b1907a4c
->> prerequisite-patch-id: 6978944a725756317dd4e005d479b6101784aaf0
->> prerequisite-patch-id: cce9d3c7e1ae8887f387ca9e072552dc63479749
->> prerequisite-patch-id: c44ccc5dd7b1be6fe2b1f32ca6abde1da73fae79
->> 
->
->Hi kbuild test robot folks,
->
->I attempted to use the --base option with git format-patch as suggested
->by Philip, but the bot still sent me mail (addressed only to myself and
->cc'd kbuild-all@01.org) about build test ERRORs against the wrong base:
->
->> [auto build test ERROR on v4.16]
->> [also build test ERROR on next-20180424]
->> [cannot apply to linus/master jikos-livepatching/for-next]
+This patch also correct a wrong comment.
 
-I noticed this error report was for [PATCH v3] selftests/livepatch: introduce tests
-which doesn't include the base commit info.
+Signed-off-by: Wang YanQing <udknight@gmail.com>
+---
+ Changes v1-v2:
+ 1:Rewords the changelog.
 
->
->I'm assuming operator error :(  Here's a summary of my workflow:
->
->* Save an .mbox of the entire base patchset, as posted to the
->live-patching list:
->
->  https://lkml.org/lkml/2018/3/23/665
->
->* Create a "base" branch and apply the mbox:
->
->  % git checkout -b test_base v4.16
->  Switched to a new branch 'test_base'
->
->  % git am /tmp/pm.mbox
->  Applying: livepatch: Use lists to manage patches, objects and functions
->  Applying: livepatch: Free only structures with initialized kobject
->  Applying: livepatch: Add atomic replace
->  Applying: livepatch: Add an extra flag to distinguish registered   patches
->  Applying: livepatch: Remove replaced patches from the stack
->  Applying: livepatch: Remove Nop structures when unused
->  Applying: livepatch: Allow to replace even disabled patches
->  Applying: livepatch: Atomic replace and cumulative patches documentation
->
->* Create a new dev branch from the base, make a trivial change and commit:
->
->  % git checkout -b test_branch test_base
->  % sed -i 's/^EXTRAVERSION =/EXTRAVERSION = .test/' Makefile
->  % git commit Makefile -m 'test commit'
->
->* Create .patch files with --base:
->
->  % git format-patch --base=v4.16 -1 --cover-letter
->  % grep -e '^base-commit' -e 'prereq' 0000-cover-letter.patch
->  base-commit: 0adb32858b0bddf4ada5f364a84ed60b196dbcda
->  prerequisite-patch-id: 5ed747c1a89a5dc4bba08186e21f927d7f3bf049
->  prerequisite-patch-id: e9800288b71a9f339ea066e58d9ef70dece67083
->  prerequisite-patch-id: 415f2e190b1b50142c78f2940c7b8dd39b5321a0
->  prerequisite-patch-id: d229d9cf08af087e0a758d9df1da467103c2c200
->  prerequisite-patch-id: b8c7ef99b13c6b321cba5e8919ed0b3e29f213e9
->  prerequisite-patch-id: 4e10c0d08f151b18310fe0b1e5013d62db94cfeb
->  prerequisite-patch-id: 33046b190c114d202f3a52e0e274dbb2b1907a4c
->  prerequisite-patch-id: 6978944a725756317dd4e005d479b6101784aaf0
->
->I notice that these patch-ids are only added to the cover-letter... do I
->need to force them each individual patch as well?  /confused
+ arch/arm/net/bpf_jit_32.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-I think the work flow you described above is ok, you can just send them with
-git send-email after doing that, and base commit/prerequisite patch info in
-cover-letter is fine, the question here is I can't find the patch emails of
-your patchset except the cover letter in 0day's mail archive, do you send them
-as a whole series, could you tell the subjects of them so I can take a look in
-0day's log.
-
-Thanks,
-Xiaolong
-
->
->Thanks,
->
->-- Joe
+diff --git a/arch/arm/net/bpf_jit_32.c b/arch/arm/net/bpf_jit_32.c
+index b5030e1..caccc78 100644
+--- a/arch/arm/net/bpf_jit_32.c
++++ b/arch/arm/net/bpf_jit_32.c
+@@ -708,7 +708,7 @@ static inline void emit_a32_arsh_r64(const u8 dst[], const u8 src[], bool dstk,
+ }
+ 
+ /* dst = dst >> src */
+-static inline void emit_a32_lsr_r64(const u8 dst[], const u8 src[], bool dstk,
++static inline void emit_a32_rsh_r64(const u8 dst[], const u8 src[], bool dstk,
+ 				     bool sstk, struct jit_ctx *ctx) {
+ 	const u8 *tmp = bpf2a32[TMP_REG_1];
+ 	const u8 *tmp2 = bpf2a32[TMP_REG_2];
+@@ -724,7 +724,7 @@ static inline void emit_a32_lsr_r64(const u8 dst[], const u8 src[], bool dstk,
+ 		emit(ARM_LDR_I(rm, ARM_SP, STACK_VAR(dst_hi)), ctx);
+ 	}
+ 
+-	/* Do LSH operation */
++	/* Do RSH operation */
+ 	emit(ARM_RSB_I(ARM_IP, rt, 32), ctx);
+ 	emit(ARM_SUBS_I(tmp2[0], rt, 32), ctx);
+ 	emit(ARM_MOV_SR(ARM_LR, rd, SRTYPE_LSR, rt), ctx);
+@@ -774,7 +774,7 @@ static inline void emit_a32_lsh_i64(const u8 dst[], bool dstk,
+ }
+ 
+ /* dst = dst >> val */
+-static inline void emit_a32_lsr_i64(const u8 dst[], bool dstk,
++static inline void emit_a32_rsh_i64(const u8 dst[], bool dstk,
+ 				    const u32 val, struct jit_ctx *ctx) {
+ 	const u8 *tmp = bpf2a32[TMP_REG_1];
+ 	const u8 *tmp2 = bpf2a32[TMP_REG_2];
+@@ -1330,7 +1330,7 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx)
+ 	case BPF_ALU64 | BPF_RSH | BPF_K:
+ 		if (unlikely(imm > 63))
+ 			return -EINVAL;
+-		emit_a32_lsr_i64(dst, dstk, imm, ctx);
++		emit_a32_rsh_i64(dst, dstk, imm, ctx);
+ 		break;
+ 	/* dst = dst << src */
+ 	case BPF_ALU64 | BPF_LSH | BPF_X:
+@@ -1338,7 +1338,7 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx)
+ 		break;
+ 	/* dst = dst >> src */
+ 	case BPF_ALU64 | BPF_RSH | BPF_X:
+-		emit_a32_lsr_r64(dst, src, dstk, sstk, ctx);
++		emit_a32_rsh_r64(dst, src, dstk, sstk, ctx);
+ 		break;
+ 	/* dst = dst >> src (signed) */
+ 	case BPF_ALU64 | BPF_ARSH | BPF_X:
+-- 
+1.8.5.6.2.g3d8a54e.dirty
