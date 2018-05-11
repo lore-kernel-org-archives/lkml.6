@@ -1,73 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752689AbeEKJgS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 05:36:18 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46484 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752174AbeEKJgQ (ORCPT
+        id S1752685AbeEKJif (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 05:38:35 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:1853 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752476AbeEKJid (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 05:36:16 -0400
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH RFC 1/2] s390/cio: export hsch to modules
-To: Cornelia Huck <cohuck@redhat.com>,
-        Dong Jia Shi <bjsdjshi@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, qemu-s390x@nongnu.org,
-        qemu-devel@nongnu.org
-References: <20180509154822.23510-1-cohuck@redhat.com>
- <20180509154822.23510-2-cohuck@redhat.com>
-From: Pierre Morel <pmorel@linux.ibm.com>
-Date: Fri, 11 May 2018 11:36:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 11 May 2018 05:38:33 -0400
+X-UUID: 3342a34c9688491e998f225b46b3913d-20180511
+Message-ID: <1526031506.24653.5.camel@mtksdaap41>
+Subject: Re: [PATCH 0/2] Add basic support for Mediatek MT8183 SoC
+From: Erin Lo <erin.lo@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date: Fri, 11 May 2018 17:38:26 +0800
+In-Reply-To: <782e13c1-057b-164b-9270-d37c151aa9b4@gmail.com>
+References: <1526019083-20237-1-git-send-email-erin.lo@mediatek.com>
+         <782e13c1-057b-164b-9270-d37c151aa9b4@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20180509154822.23510-2-cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18051109-0040-0000-0000-000004587149
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051109-0041-0000-0000-000020FC8590
-Message-Id: <f93c7d39-0924-c3e6-d954-987d82252cb6@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805110092
+Content-Transfer-Encoding: 7bit
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/05/2018 17:48, Cornelia Huck wrote:
-> The vfio-ccw code will need this, and it matches treatment of ssch
-> and csch.
->
-> Signed-off-by: Cornelia Huck <cohuck@redhat.com>
-> ---
->   drivers/s390/cio/ioasm.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/s390/cio/ioasm.c b/drivers/s390/cio/ioasm.c
-> index 14d328338ce2..08eb10283b18 100644
-> --- a/drivers/s390/cio/ioasm.c
-> +++ b/drivers/s390/cio/ioasm.c
-> @@ -233,6 +233,7 @@ int hsch(struct subchannel_id schid)
->   
->   	return ccode;
->   }
-> +EXPORT_SYMBOL(hsch);
->   
->   static inline int __xsch(struct subchannel_id schid)
->   {
+On Fri, 2018-05-11 at 10:29 +0200, Matthias Brugger wrote:
+> Hi Erin,
+> 
+> Please include the linux-mediatek and arm-linux-kernel mailinglists in the next
+> round.
+> 
+> Some comments in the patches.
+> 
+> Regards,
+> Matthias
 
-hsch already defined in ioasm.h so, all OK
+I will add linux-mediatek, linux-arm-kernel, linux-kernel, linux-serial
+mailinglists in next round.
+Thanks for your reminder.
 
-Reviewed-by: Pierre Morel<pmorel@linux.vnet.ibm.com>
+Regards,
+Erin
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+> 
+> On 05/11/2018 08:11 AM, Erin Lo wrote:
+> > MT8183 is a SoC based on 64bit ARMv8 architecture.
+> > It contains 4 CA53 and 4 CA73 cores.
+> > MT8183 share many HW IP with MT65xx series.
+> > This patchset was tested on MT8183 evaluation board, and boot to shell ok.
+> > 
+> > This series contains document bindings, device tree including interrupt, uart.
+> > 
+> > Ben Ho (1):
+> >   arm64: dts: Add Mediatek SoC MT8183 and evaluation board dts and
+> >     Makefile
+> > 
+> > Erin Lo (1):
+> >   dt-bindings: arm: Add bindings for Mediatek MT8183 SoC Platform
+> > 
+> >  Documentation/devicetree/bindings/arm/mediatek.txt |   4 +
+> >  .../interrupt-controller/mediatek,sysirq.txt       |   1 +
+> >  .../devicetree/bindings/serial/mtk-uart.txt        |   1 +
+> >  arch/arm64/boot/dts/mediatek/Makefile              |   1 +
+> >  arch/arm64/boot/dts/mediatek/mt8183-evb.dts        |  31 ++++
+> >  arch/arm64/boot/dts/mediatek/mt8183.dtsi           | 178 +++++++++++++++++++++
+> >  6 files changed, 216 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8183.dtsi
+> > 
+> > --
+> > 1.9.1
+> > 
