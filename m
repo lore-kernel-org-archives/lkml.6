@@ -1,115 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751664AbeEKV32 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 17:29:28 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:33424 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751313AbeEKV30 (ORCPT
+        id S1752027AbeEKVac (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 17:30:32 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:46207 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751947AbeEKVa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 17:29:26 -0400
-From: Paul Cercueil <paul@crapouillou.net>
-To: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bolin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc: linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH] mtd: nand: Add support for reading ooblayout from device tree
-Date: Fri, 11 May 2018 23:29:12 +0200
-Message-Id: <20180511212912.1426-1-paul@crapouillou.net>
+        Fri, 11 May 2018 17:30:28 -0400
+Date: Fri, 11 May 2018 14:30:22 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: James Hogan <jhogan@kernel.org>
+Cc: Paul Cercueil <paul@crapouillou.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        linux-mips@linux-mips.org
+Subject: Re: [PATCH v3 5/8] MIPS: jz4740: dts: Add bindings for the
+ jz4740-wdt driver
+Message-ID: <20180511213022.GA11705@roeck-us.net>
+References: <5af5c20f.1c69fb81.e968b.17c0SMTPIN_ADDED_MISSING@mx.google.com>
+ <20180511205413.GA18694@jamesdev>
+ <20180511211416.GA10947@roeck-us.net>
+ <20180511211554.GA20264@jamesdev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180511211554.GA20264@jamesdev>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By specifying the properties "mtd-oob-ecc" and "mtd-oob-free", it is
-now possible to specify from devicetree where the ECC data is located
-inside the OOB region.
+On Fri, May 11, 2018 at 10:15:55PM +0100, James Hogan wrote:
+> On Fri, May 11, 2018 at 02:14:16PM -0700, Guenter Roeck wrote:
+> > On Fri, May 11, 2018 at 09:54:14PM +0100, James Hogan wrote:
+> > > On Fri, May 11, 2018 at 01:17:04PM -0300, Paul Cercueil wrote:
+> > > > Le 11 mai 2018 11:52, James Hogan <jhogan@kernel.org> a écrit :
+> > > > > Otherwise 
+> > > > > Acked-by: James Hogan <jhogan@kernel.org> 
+> > > > >
+> > > > > I'm happy to apply for 4.18 with that change if you want it to go 
+> > > > > through the MIPS tree. 
+> > > > 
+> > > > Yes please!
+> > > 
+> > > Done
+> > > 
+> > Does that include the watchdog changes ? No problem with it, just asking to make
+> > sure that those don't get lost.
+> 
+> Yes, I suppose I was taking your reviewed-by as an ack.
+> 
+Ok.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- Documentation/devicetree/bindings/mtd/nand.txt |  7 +++++
- drivers/mtd/nand/raw/nand_base.c               | 42 ++++++++++++++++++++++++++
- 2 files changed, 49 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
-index 8bb11d809429..118ea92787cb 100644
---- a/Documentation/devicetree/bindings/mtd/nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/nand.txt
-@@ -45,6 +45,13 @@ Optional NAND chip properties:
- 		     as reliable as possible.
- - nand-rb: shall contain the native Ready/Busy ids.
- 
-+- nand-oob-ecc: <offset, length> couples of integers, specifying the offset
-+		     and length of the ECC data in the OOB region. There can be more
-+		     than one couple.
-+- nand-oob-free: <offset, length> couples of integers, specifying the offset
-+		     and length of a free-to-use area in the OOB region. There can be
-+		     more than one couple.
-+
- The ECC strength and ECC step size properties define the correction capability
- of a controller. Together, they say a controller can correct "{strength} bit
- errors per {size} bytes".
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index 72f3a89da513..c905531effb0 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -213,6 +213,43 @@ static const struct mtd_ooblayout_ops nand_ooblayout_lp_hamming_ops = {
- 	.free = nand_ooblayout_free_lp_hamming,
- };
- 
-+static int nand_oob_of(struct device_node *np, int section,
-+		       struct mtd_oob_region *oobregion, const char *prop)
-+{
-+	int ret = of_property_read_u32_index(np, prop,
-+			section * 2, &oobregion->offset);
-+	if (ret == -EOVERFLOW)
-+		return -ERANGE; /* We're done */
-+	if (ret)
-+		return ret;
-+
-+	ret = of_property_read_u32_index(np, prop,
-+			section * 2 + 1, &oobregion->length);
-+	if (ret == -EOVERFLOW)
-+		return -EINVAL; /* We must have an even number of integers */
-+
-+	return ret;
-+}
-+
-+static int nand_ooblayout_ecc_of(struct mtd_info *mtd, int section,
-+				 struct mtd_oob_region *oobregion)
-+{
-+	return nand_oob_of(mtd->dev.of_node, section,
-+			oobregion, "nand-oob-ecc");
-+}
-+
-+static int nand_ooblayout_free_of(struct mtd_info *mtd, int section,
-+				 struct mtd_oob_region *oobregion)
-+{
-+	return nand_oob_of(mtd->dev.of_node, section,
-+			oobregion, "nand-oob-free");
-+}
-+
-+static const struct mtd_ooblayout_ops nand_ooblayout_of_ops = {
-+	.ecc = nand_ooblayout_ecc_of,
-+	.free = nand_ooblayout_free_of,
-+};
-+
- static int check_offs_len(struct mtd_info *mtd,
- 					loff_t ofs, uint64_t len)
- {
-@@ -5843,6 +5880,11 @@ static int nand_dt_init(struct nand_chip *chip)
- 	if (of_property_read_bool(dn, "nand-ecc-maximize"))
- 		chip->ecc.options |= NAND_ECC_MAXIMIZE;
- 
-+	if (!chip->mtd.ooblayout &&
-+				of_property_read_bool(dn, "nand-oob-ecc") &&
-+				of_property_read_bool(dn, "nand-oob-free"))
-+		chip->mtd.ooblayout = &nand_ooblayout_of_ops;
-+
- 	return 0;
- }
- 
--- 
-2.11.0
+Thanks,
+Guenter
