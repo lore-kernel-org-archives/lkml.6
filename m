@@ -1,107 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752565AbeEKHOt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 03:14:49 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:35524 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752514AbeEKHOr (ORCPT
+        id S1752481AbeEKHRV convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 03:17:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57876 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752153AbeEKHRT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 03:14:47 -0400
-X-Google-Smtp-Source: AB8JxZpKnNFusyIYmQJDQDpBDmiMcAF/keGYt8oFMnDXaDoXyfjoNlwt4pZ00tlIkawlGNnsB7zK+3DVKcqwVS+EoK0=
+        Fri, 11 May 2018 03:17:19 -0400
+Date: Fri, 11 May 2018 10:17:05 +0300
+User-Agent: K-9 Mail for Android
+In-Reply-To: <91e95111-eb0c-205b-722b-18016da93c04@infradead.org>
+References: <20180510172842.2619e058@canb.auug.org.au> <e55fad49-6c19-7c43-ef37-eb148bd3d55d@infradead.org> <20180510134825.372f4a7ec17ce3e945640ac2@linux-foundation.org> <91e95111-eb0c-205b-722b-18016da93c04@infradead.org>
 MIME-Version: 1.0
-X-Originating-IP: [62.219.136.235]
-In-Reply-To: <1526021972.6192.7.camel@abdul>
-References: <1526021972.6192.7.camel@abdul>
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Date: Fri, 11 May 2018 10:14:45 +0300
-Message-ID: <CAOtvUMd4RGVmkahgFY0L0pWKautxs8qXZXkXx-tAtsNaSB0TPg@mail.gmail.com>
-Subject: Re: [next-20180509][bisected a794d8d] ppc boot warnings at crypto/testmgr.c:3720
-To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-next <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, mpe <mpe@ellerman.id>,
-        sachinp <sachinp@linux.vnet.ibm.com>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: linux-next: Tree for May 10 (mm/ksm.c)
+To: Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>
+From: Mike Rapoprt <rppt@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18051107-0020-0000-0000-0000041C2A41
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051107-0021-0000-0000-000042B12BAB
+Message-Id: <5574BF43-F2BB-4A19-BCCE-37F402DCED06@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805110068
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 9:59 AM, Abdul Haleem
-<abdhalee@linux.vnet.ibm.com> wrote:
-> Greeting's
+
+
+On May 11, 2018 1:03:04 AM GMT+03:00, Randy Dunlap <rdunlap@infradead.org> wrote:
+>On 05/10/2018 01:48 PM, Andrew Morton wrote:
+>> On Thu, 10 May 2018 09:37:51 -0700 Randy Dunlap
+><rdunlap@infradead.org> wrote:
+>> 
+>>> On 05/10/2018 12:28 AM, Stephen Rothwell wrote:
+>>>> Hi all,
+>>>>
+>>>> Changes since 20180509:
+>>>>
+>>>
+>>> on i386:
+>>>
+>>> ../mm/ksm.c: In function 'try_to_merge_one_page':
+>>> ../mm/ksm.c:1244:4: error: implicit declaration of function
+>'set_page_stable_node' [-Werror=implicit-function-declaration]
+>>>     set_page_stable_node(page, NULL);
+
+Oops, missed that, sorry.
+
+>> Thanks.
+>> 
+>> From: Andrew Morton <akpm@linux-foundation.org>
+>> Subject: mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix
+>> 
+>> fix SYSFS=n build
+>> 
+>> Cc: Andrea Arcangeli <aarcange@redhat.com>
+>> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+>> Cc: Randy Dunlap <rdunlap@infradead.org>
 >
-> Today's next kernel on powerpc machine has boot warnings with commit
->
-> a794d8d : crypto: ccree - enable support for hardware keys
+>Acked-by: Randy Dunlap <rdunlap@infradead.org>
+>Reported-by: Randy Dunlap <rdunlap@infradead.org>
+>Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
-Adding the crypto list and maintainer as it came in via the crypto tree.
+Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
->
-> Warning disappears when above commit is reverted.
->
-> Machine Type: Power8 PowerVM LPAR
-> kernel : 4.17.0-rc4-next-20180509
-> config: attached.
-> test: kexec boot
->
-> trace logs:
-> -----------
-> Initialise system trusted keyrings
-> workingset: timestamp_bits=38 max_order=18 bucket_order=0
-> zbud: loaded
-> pstore: using deflate compression
-> WARNING: CPU: 6 PID: 109 at crypto/testmgr.c:3720 alg_test.part.6+0xd4/0x460
-> Modules linked in:
-> CPU: 6 PID: 109 Comm: cryptomgr_test Not tainted 4.17.0-rc4-next-20180509-autotest-00002-g0244ae7 #2
-> NIP:  c0000000004a60f4 LR: c0000000004a60e4 CTR: c0000000004a0200
-> REGS: c000000289acb9d0 TRAP: 0700   Not tainted  (4.17.0-rc4-next-20180509-autotest-00002-g0244ae7)
-> MSR:  8000000000029033 <SF,EE,ME,IR,DR,RI,LE>  CR: 24000484  XER: 20000000
-> CFAR: c0000000009b9110 SOFTE: 0
-> GPR00: c0000000004a0260 c000000289acbc50 c00000000115df00 0000000000000001
-> GPR04: c000000000c13e64 000000000000000d 0000000000000400 0000000000000000
-> GPR08: 0000000000000000 0000000000000001 000000000000006b 0000000000000000
-> GPR12: 0000000000000000 c00000000eca7800 c000000000128918 c0000002812a3600
-> GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> GPR20: 0000000000000000 c000000000c13560 c000000288c29880 0000000000000400
-> GPR24: c000000288c29800 000000000000000d c000000000c135a8 c000000000a1db38
-> GPR28: c000000000c13128 c000000000c13e60 c000000000a1c788 0000000000000001
-> NIP [c0000000004a60f4] alg_test.part.6+0xd4/0x460
-> LR [c0000000004a60e4] alg_test.part.6+0xc4/0x460
-> Call Trace:
-> [c000000289acbc50] [c000000289acbcc0] 0xc000000289acbcc0 (unreliable)
-> [c000000289acbd90] [c0000000004a0260] cryptomgr_test+0x60/0x80
-> [c000000289acbdc0] [c000000000128a68] kthread+0x158/0x1a0
-> [c000000289acbe30] [c00000000000b628] ret_from_kernel_thread+0x5c/0xb4
-> Instruction dump:
-> 3b5a56a8 48000024 60000000 eb9effc8 ebbe0000 7f83e378 7fa4eb78 48513001
-> 60000000 7c7f1b78 7d3f00d0 79290fe0 <0b090000> 2f9f0000 419d013c 7fe90034
-> ---[ end trace f8ddd7633e720997 ]---
-> testmgr: alg_test_descs entries in wrong order: 'ecb(paes)' before 'ecb(khazad)'
->
-
-Oouch! this is is my bad. I've changed the cipher name (from haes to
-paes) based on review feedback
-but forgot that the cipher test names are alphabetically ordered.
-
-I wonder why I didn't see this myself as I'm 100% sure booted this fix
-on 2 different platforms.
-
-Maybe because Khazad was not enabled in my test setup and I guess
-there are no other cipher starting in I, L,M,N,O ?
-
-Fix coming up shortly. Sorry about this.
-
-Gilad
-
-
-
--- 
-Gilad Ben-Yossef
-Chief Coffee Drinker
-
-"If you take a class in large-scale robotics, can you end up in a
-situation where the homework eats your dog?"
- -- Jean-Baptiste Queru
+>> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>> ---
+>> 
+>>  mm/ksm.c |    9 ++++-----
+>>  1 file changed, 4 insertions(+), 5 deletions(-)
+>> 
+>> diff -puN
+>include/linux/ksm.h~mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix
+>include/linux/ksm.h
+>> diff -puN mm/ksm.c~mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix
+>mm/ksm.c
+>> --- a/mm/ksm.c~mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix
+>> +++ a/mm/ksm.c
+>> @@ -823,11 +823,6 @@ static int unmerge_ksm_pages(struct vm_a
+>>  	return err;
+>>  }
+>>  
+>> -#ifdef CONFIG_SYSFS
+>> -/*
+>> - * Only called through the sysfs control interface:
+>> - */
+>> -
+>>  static inline struct stable_node *page_stable_node(struct page
+>*page)
+>>  {
+>>  	return PageKsm(page) ? page_rmapping(page) : NULL;
+>> @@ -839,6 +834,10 @@ static inline void set_page_stable_node(
+>>  	page->mapping = (void *)((unsigned long)stable_node |
+>PAGE_MAPPING_KSM);
+>>  }
+>>  
+>> +#ifdef CONFIG_SYSFS
+>> +/*
+>> + * Only called through the sysfs control interface:
+>> + */
+>>  static int remove_stable_node(struct stable_node *stable_node)
+>>  {
+>>  	struct page *page;
+>> _
