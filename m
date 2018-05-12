@@ -1,48 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751254AbeELIzK (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 04:55:10 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41434 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750778AbeELIzI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 04:55:08 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D008B601EA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        id S1750876AbeELJBB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 05:01:01 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:55022 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750722AbeELJBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 May 2018 05:01:00 -0400
+Date: Sat, 12 May 2018 11:00:33 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        Tyler Baicar <tbaicar@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
+        Dongjiu Geng <gengdongjiu@huawei.com>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+        devel@acpica.org
+Subject: Re: [RFC PATCH v4 1/3] EDAC, GHES: Remove unused argument to
+ ghes_edac_report_mem_error
+Message-ID: <20180512090033.GA27593@pd.tnic>
+References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
+ <20180430213358.8319-1-mr.nuke.me@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: rsi: fix spelling mistake: "thead" -> "thread"
-From: Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20180510143217.23488-1-colin.king@canonical.com>
-References: <20180510143217.23488-1-colin.king@canonical.com>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Amitkumar Karwar <amit.karwar@redpinesignals.com>,
-        Prameela Rani Garnepudi <prameela.j04cs@gmail.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20180512085508.173276019F@smtp.codeaurora.org>
-Date: Sat, 12 May 2018 08:55:07 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180430213358.8319-1-mr.nuke.me@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin Ian King <colin.king@canonical.com> wrote:
-
-> From: Colin Ian King <colin.king@canonical.com>
+On Mon, Apr 30, 2018 at 04:33:50PM -0500, Alexandru Gagniuc wrote:
+> The use of the 'ghes' argument was removed in a previous commit, but
+> function signature was not updated to reflect this.
 > 
-> Trivial fix to spelling mistake in rsi_dbg debug message text
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Fixes: 0fe5f281f749 ("EDAC, ghes: Model a single, logical memory controller")
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> ---
+>  drivers/acpi/apei/ghes.c | 2 +-
+>  drivers/edac/ghes_edac.c | 3 +--
+>  include/acpi/ghes.h      | 5 ++---
+>  3 files changed, 4 insertions(+), 6 deletions(-)
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-b41c39367669 rsi: fix spelling mistake: "thead" -> "thread"
+Applied, thanks.
 
 -- 
-https://patchwork.kernel.org/patch/10391879/
+Regards/Gruss,
+    Boris.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Good mailing practices for 400: avoid top-posting and trim the reply.
