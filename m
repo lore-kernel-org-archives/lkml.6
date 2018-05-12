@@ -1,81 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751375AbeELLPw (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 07:15:52 -0400
-Received: from 4.mo173.mail-out.ovh.net ([46.105.34.219]:53956 "EHLO
-        4.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750950AbeELLPv (ORCPT
+        id S1751632AbeELLYl (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 07:24:41 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36276 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751089AbeELLYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 07:15:51 -0400
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date: Sat, 12 May 2018 12:00:07 +0200
-From: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
-To: =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
-Cc: Kalle Valo <kvalo@codeaurora.org>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>,
-        Matt Redfearn <matt.redfearn@mips.com>, linux-wireless@vger.kernel.org,
-        Hauke Mehrtens <hauke@hauke-m.de>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 1/2] Revert "ssb: Prevent build of PCI host features in
- module"
-In-Reply-To: <20180512100136.1d26e6d3@wiggum>
-References: <20180511091715.1989-1-zajec5@gmail.com>
- <CACna6ry-91oR1u697NRymLsN28fnnHDp9OQrdiVwA7A3KTV1fg@mail.gmail.com>
- <87bmdmcxf6.fsf@codeaurora.org>
- <727571cb-5d1f-2d99-b050-979edd02106f@lwfinger.net>
- <877eo9b9d9.fsf@codeaurora.org> <20180512100136.1d26e6d3@wiggum>
-Message-ID: <2a401060858a337f84039eddef4b3b87@milecki.pl>
-User-Agent: Roundcube Webmail/1.3.6
-X-Originating-IP: 194.187.74.233
-X-Webmail-UserID: rafal@milecki.pl
-X-Ovh-Tracer-Id: 13488562359336799861
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedthedrvddugddvgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+        Sat, 12 May 2018 07:24:38 -0400
+X-Google-Smtp-Source: AB8JxZpPNhg8apfK7bCjjrYJaoR6ZTj/EQNKopZpPGqP+22B2hiJhTRwBPBNrUWSajRjGto0rm9MdQ==
+From: Daniel Scheller <d.scheller.oss@gmail.com>
+To: linux-media@vger.kernel.org, mchehab@kernel.org,
+        mchehab@s-opensource.com, mchehab+samsung@kernel.org
+Cc: linux-doc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/3] Documentation: ioctl-number: add ddbridge IOCTLs
+Date: Sat, 12 May 2018 13:24:30 +0200
+Message-Id: <20180512112432.30887-2-d.scheller.oss@gmail.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180512112432.30887-1-d.scheller.oss@gmail.com>
+References: <20180512112432.30887-1-d.scheller.oss@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-12 10:01, Michael Büsch wrote:
-> On Sat, 12 May 2018 10:50:42 +0300
-> Kalle Valo <kvalo@codeaurora.org> wrote:
-> 
->> Larry Finger <Larry.Finger@lwfinger.net> writes:
->> 
->> > On 05/11/2018 05:13 AM, Kalle Valo wrote:
->> >> Rafał Miłecki <zajec5@gmail.com> writes:
->> >>
->> >>> On 11 May 2018 at 11:17, Rafał Miłecki <zajec5@gmail.com> wrote:
->>  [...]
->> >>>
->> >>> As these patches fix regression/build error, I believe both should get
->> >>> into 4.17.
->> >>
->> >> How much confidence do we have that we don't need to end up reverting
->> >> patch 2 as well? I rather be pushing patch 2 to 4.18 so that there's
->> >> more time for testing and waiting for feedback.
->> >
->> > Although I do not have the hardware to test the builds, I worked
->> > closely with the OP in the bug at b.r.c noted above. From that effort,
->> > it became clear what configuration variables were missing to cause the
->> > x86 failures. Patch 2 satisfies the requirement, and prevents the
->> > build problems found by the MIPS users. Both patches are needed in
->> > 4.17.
->> 
->> And I assume Michael is ok with this approach as well as I haven't 
->> heard
->> from him. I'll then push both of these to 4.17.
->> 
-> 
-> Yes, I'm OK with the patch, if we have a third patch that cleans up the
-> PCI_DRIVERS_LEGACY dependency by moving it to SSB_PCICORE_HOSTMODE
-> where it belongs. (This doesn't need to go into the stable tree.)
-> We currently implicitly get that via dependency chain, so this is OK
-> for now as-is.
+From: Daniel Scheller <d.scheller@gmx.net>
 
-I'm planning to handle PCI_DRIVERS_LEGACY cleanup once my patches hit
-net-next.git and then wireless-drivers-next.git. It's to avoid
-conflicts.
+drivers/media/pci/ddbridge exposes a few IOCTLs which are used by userspace
+utilities to ie. update PCIe card's FPGA firmware.
+
+The IOCTLs chosen are in the range 0xDD/0xE0 up to 0xDD/0xFF, with 0xDD as
+sort of gimmick for "Digital Devices". To not conflict with the zfpc driver
+the upper range (0xE0-0xFF) is used. It is not clear if and which IOCTL
+numbers the zfpc driver really uses, from reading the sources at
+drivers/s390/scsi/ I couldn't really determine if IOCTLs are in use at all.
+Maybe the S390 maintainers can double-check or comment, thus Cc linux-s390.
+
+The upstream dddvb driver currently exposes 12 IOCTLs from which we're
+going to handle two at the moment (DDB_FLASHIO and DDB_ID), which is all
+that's required to perform the FPGA update on this hardware. The
+"reservation" of 32 IDs may seem way too much in this regard, however,
+we'd like to be able to stay compatible with the upstream out-of-tree
+driver as much as possible, so should any of the remaining 10 IOCTLs be
+required at any time (or even more, should upstream add more in the
+future), we can just add them into this range without any hassles or
+without creating conflicts anywhere.
+
+Cc: linux-doc@vger.kernel.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Daniel Scheller <d.scheller@gmx.net>
+---
+ Documentation/ioctl/ioctl-number.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+index 84bb74dcae12..feac1b56900b 100644
+--- a/Documentation/ioctl/ioctl-number.txt
++++ b/Documentation/ioctl/ioctl-number.txt
+@@ -334,6 +334,7 @@ Code  Seq#(hex)	Include File		Comments
+ 0xDB	00-0F	drivers/char/mwave/mwavepub.h
+ 0xDD	00-3F	ZFCP device driver	see drivers/s390/scsi/
+ 					<mailto:aherrman@de.ibm.com>
++0xDD	E0-FF	linux/ddbridge-ioctl.h
+ 0xE5	00-3F	linux/fuse.h
+ 0xEC	00-01	drivers/platform/chrome/cros_ec_dev.h	ChromeOS EC driver
+ 0xF3	00-3F	drivers/usb/misc/sisusbvga/sisusb.h	sisfb (in development)
+-- 
+2.16.1
