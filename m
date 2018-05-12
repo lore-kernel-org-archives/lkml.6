@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750835AbeELGZm (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 02:25:42 -0400
-Received: from mail-lf0-f42.google.com ([209.85.215.42]:45418 "EHLO
-        mail-lf0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeELGZk (ORCPT
+        id S1750950AbeELG0j (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 02:26:39 -0400
+Received: from mail-lf0-f44.google.com ([209.85.215.44]:44180 "EHLO
+        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750739AbeELG0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 02:25:40 -0400
-X-Google-Smtp-Source: AB8JxZpgFcAsHXoEWkbTTHjTW+bdn+D6E7vsyA3Li64GzqlaFI82CmMeesennwnLZD5P95hgYPhStJc/7PJtvLTmiaM=
+        Sat, 12 May 2018 02:26:38 -0400
+X-Google-Smtp-Source: AB8JxZoSTZsgT9TTlD+M/2G64Ygo1Im3Nq4Tcx2Ku9VTMdfhEoplQYNQft3xshQAxUU57X1pKhs7vTiCUrHWpVklHqI=
 MIME-Version: 1.0
-In-Reply-To: <e194731158f7f89145ed0ae28f46aac5726fc32d.camel@perches.com>
-References: <20180512061712.GA26660@jordon-HP-15-Notebook-PC> <e194731158f7f89145ed0ae28f46aac5726fc32d.camel@perches.com>
+In-Reply-To: <CAFqt6zbauQJb29BSP5bdRNXxhfS9Y9FH+=yqODKWF6cnksG20w@mail.gmail.com>
+References: <20180512061712.GA26660@jordon-HP-15-Notebook-PC>
+ <e194731158f7f89145ed0ae28f46aac5726fc32d.camel@perches.com> <CAFqt6zbauQJb29BSP5bdRNXxhfS9Y9FH+=yqODKWF6cnksG20w@mail.gmail.com>
 From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Sat, 12 May 2018 11:55:38 +0530
-Message-ID: <CAFqt6zbauQJb29BSP5bdRNXxhfS9Y9FH+=yqODKWF6cnksG20w@mail.gmail.com>
+Date: Sat, 12 May 2018 11:56:36 +0530
+Message-ID: <CAFqt6zZUitt-eNsbsY9tZqM8wSK2_UAct=08NH1HefB+UwrBPg@mail.gmail.com>
 Subject: Re: [PATCH v3] mm: Change return type to vm_fault_t
 To: Joe Perches <joe@perches.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -29,36 +30,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 12, 2018 at 11:50 AM, Joe Perches <joe@perches.com> wrote:
-> On Sat, 2018-05-12 at 11:47 +0530, Souptick Joarder wrote:
->> Use new return type vm_fault_t for fault handler
->> in struct vm_operations_struct. For now, this is
->> just documenting that the function returns a
->> VM_FAULT value rather than an errno.  Once all
->> instances are converted, vm_fault_t will become
->> a distinct type.
+On Sat, May 12, 2018 at 11:55 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> On Sat, May 12, 2018 at 11:50 AM, Joe Perches <joe@perches.com> wrote:
+>> On Sat, 2018-05-12 at 11:47 +0530, Souptick Joarder wrote:
+>>> Use new return type vm_fault_t for fault handler
+>>> in struct vm_operations_struct. For now, this is
+>>> just documenting that the function returns a
+>>> VM_FAULT value rather than an errno.  Once all
+>>> instances are converted, vm_fault_t will become
+>>> a distinct type.
+>>
+>> trivia:
+>>
+>>> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+>> []
+>>> @@ -627,7 +627,7 @@ struct vm_special_mapping {
+>>>        * If non-NULL, then this is called to resolve page faults
+>>>        * on the special mapping.  If used, .pages is not checked.
+>>>        */
+>>> -     int (*fault)(const struct vm_special_mapping *sm,
+>>> +     vm_fault_t (*fault)(const struct vm_special_mapping *sm,
+>>>                    struct vm_area_struct *vma,
+>>>                    struct vm_fault *vmf);
+>>
+>>
+>> It'd be nicer to realign the 2nd and 3rd arguments
+>> on the subsequent lines.
+>>
+>>         vm_fault_t (*fault)(const struct vm_special_mapping *sm,
+>>                             struct vm_area_struct *vma,
+>>                             struct vm_fault *vmf);
+>>
 >
-> trivia:
->
->> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> []
->> @@ -627,7 +627,7 @@ struct vm_special_mapping {
->>        * If non-NULL, then this is called to resolve page faults
->>        * on the special mapping.  If used, .pages is not checked.
->>        */
->> -     int (*fault)(const struct vm_special_mapping *sm,
->> +     vm_fault_t (*fault)(const struct vm_special_mapping *sm,
->>                    struct vm_area_struct *vma,
->>                    struct vm_fault *vmf);
->
->
-> It'd be nicer to realign the 2nd and 3rd arguments
-> on the subsequent lines.
->
->         vm_fault_t (*fault)(const struct vm_special_mapping *sm,
->                             struct vm_area_struct *vma,
->                             struct vm_fault *vmf);
->
+> Just now posted v3. Do you want me to send v4 again with
+> realignment ?
 
-Just now posted v3. Do you want me to send v4 again with
-realignment ?
+Sorry, please ignore this mail.
