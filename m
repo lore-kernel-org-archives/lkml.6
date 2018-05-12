@@ -1,118 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751379AbeELRBG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 13:01:06 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:44296 "EHLO
-        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751010AbeELRBD (ORCPT
+        id S1751654AbeELRJT (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 13:09:19 -0400
+Received: from smtp12.smtpout.orange.fr ([80.12.242.134]:53654 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbeELRJS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 13:01:03 -0400
-X-Google-Smtp-Source: AB8JxZo5OxTzb/Xhe1GutNzxHULBl3GS46qs0wfjR5pwBt6al0Ud1bs27nnooqRTUeAgPAMeyyEpKFw83SdNq8y598OXLAGlhlEA
-MIME-Version: 1.0
-Date: Sat, 12 May 2018 10:01:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008fa9d3056c053291@google.com>
-Subject: general protection fault in kernfs_kill_sb (2)
-From: syzbot <syzbot+481ad819c717f6b78df9@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Sat, 12 May 2018 13:09:18 -0400
+X-ME-Helo: ubuntu-CJ.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 12 May 2018 19:09:16 +0200
+X-ME-IP: 86.244.116.1
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: saeedm@mellanox.com, matanb@mellanox.com, leon@kernel.org,
+        davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net/mlx5: Use 'kvfree()' for memory allocated by 'kvzalloc()'
+Date: Sat, 12 May 2018 19:09:25 +0200
+Message-Id: <20180512170925.23690-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+'out' is allocated with 'kvzalloc()'. 'kvfree()' must be used to free it.
 
-syzbot found the following crash on:
-
-HEAD commit:    f0ab773f5c96 Merge branch 'akpm' (patches from Andrew)
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=140ce817800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fcce42b221691ff9
-dashboard link: https://syzkaller.appspot.com/bug?extid=481ad819c717f6b78df9
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=15078e97800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12bf3697800000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+481ad819c717f6b78df9@syzkaller.appspotmail.com
-
-RBP: 00007ffc558bda60 R08: 0000000000000000 R09: 0000000300000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000004 R14: 0000000000001380 R15: 00007ffc558bd2f8
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4540 Comm: syz-executor884 Not tainted 4.17.0-rc4+ #43
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__list_del_entry_valid+0x84/0xf3 lib/list_debug.c:51
-RSP: 0018:ffff8801aca6f860 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffff8801ac528498 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8801ac5284a0
-RBP: ffff8801aca6f878 R08: fffffbfff11cc855 R09: fffffbfff11cc854
-R10: ffff8801aca6f878 R11: ffffffff88e642a7 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff8801aca6f908 R15: ffff8801ac528498
-FS:  0000000000f86880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004b6f3c CR3: 00000001d9730000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __list_del_entry include/linux/list.h:117 [inline]
-  list_del include/linux/list.h:125 [inline]
-  kernfs_kill_sb+0xa0/0x350 fs/kernfs/mount.c:361
-  sysfs_kill_sb+0x22/0x40 fs/sysfs/mount.c:50
-  deactivate_locked_super+0x97/0x100 fs/super.c:316
-  kernfs_mount_ns+0x753/0x8e0 fs/kernfs/mount.c:335
-  sysfs_mount+0xdf/0x200 fs/sysfs/mount.c:36
-  mount_fs+0xae/0x328 fs/super.c:1267
-  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:1027 [inline]
-  do_new_mount fs/namespace.c:2518 [inline]
-  do_mount+0x564/0x3070 fs/namespace.c:2848
-  ksys_mount+0x12d/0x140 fs/namespace.c:3064
-  __do_sys_mount fs/namespace.c:3078 [inline]
-  __se_sys_mount fs/namespace.c:3075 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4426a9
-RSP: 002b:00007ffc558bd1b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004426a9
-RDX: 00000000200000c0 RSI: 0000000020000080 RDI: 0000000020000040
-RBP: 00007ffc558bda60 R08: 0000000000000000 R09: 0000000300000000
-R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000004 R14: 0000000000001380 R15: 00007ffc558bd2f8
-Code: c5 0f 84 cc 00 00 00 48 b8 00 02 00 00 00 00 ad de 49 39 c4 0f 84 a5  
-00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00  
-75 5f 49 8b 14 24 48 39 da 0f 85 ba 00 00 00 48 b8
-RIP: __list_del_entry_valid+0x84/0xf3 lib/list_debug.c:51 RSP:  
-ffff8801aca6f860
----[ end trace d148f307a34e229f ]---
-
-
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/net/ethernet/mellanox/mlx5/core/vport.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/vport.c b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
+index 177e076b8d17..49968a4db758 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/vport.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/vport.c
+@@ -511,7 +511,7 @@ int mlx5_query_nic_vport_system_image_guid(struct mlx5_core_dev *mdev,
+ 	*system_image_guid = MLX5_GET64(query_nic_vport_context_out, out,
+ 					nic_vport_context.system_image_guid);
+ 
+-	kfree(out);
++	kvfree(out);
+ 
+ 	return 0;
+ }
+-- 
+2.17.0
