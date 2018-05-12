@@ -1,98 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751839AbeELPAj convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 11:00:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36706 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750847AbeELPAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 11:00:38 -0400
-Date: Sat, 12 May 2018 17:00:34 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Boris Brezillon <boris.brezillon@bolin.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH] mtd: nand: Add support for reading ooblayout from
- device tree
-Message-ID: <20180512170034.12779313@bbrezillon>
-In-Reply-To: <1526135906.4971.0@smtp.crapouillou.net>
-References: <20180512115551.56C6E20787@mail.bootlin.com>
-        <20180512154223.3b81c7f7@bbrezillon>
-        <1526135906.4971.0@smtp.crapouillou.net>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751379AbeELPT0 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 11:19:26 -0400
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:41049 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751033AbeELPTZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 May 2018 11:19:25 -0400
+X-Google-Smtp-Source: AB8JxZqAK5vci4mzOGnWFE3jvbReVHuJ7IlvEWNhkwqUSJSv89jcdgJP/csEshw3+JpSjk+FmR3PPQ==
+To: Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
+From: Igor Stoppa <igor.stoppa@gmail.com>
+Subject: [RFC: Coding Style] Best way to split a long function declaration
+ with modifiers
+Message-ID: <4fdc0980-d0af-3a02-02e7-0beed8ba05e2@gmail.com>
+Date: Sat, 12 May 2018 18:19:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 12 May 2018 11:38:26 -0300
-Paul Cercueil <paul@crapouillou.net> wrote:
+Hi,
+I have been wondering if it's ok to break a long (function declaration) 
+line in the following way:
 
-> Le sam. 12 mai 2018 à 10:42, Boris Brezillon 
-> <boris.brezillon@bootlin.com> a écrit :
-> > On Sat, 12 May 2018 08:55:40 -0300
-> > Paul Cercueil <paul@crapouillou.net> wrote:
-> >   
-> >>  Hi Boris,
-> >> 
-> >>  Le 12 mai 2018 02:55, Boris Brezillon <boris.brezillon@bootlin.com> 
-> >> a écrit :  
-> >>  >
-> >>  > Hi Paul,
-> >>  >
-> >>  > On Fri, 11 May 2018 23:29:12 +0200
-> >>  > Paul Cercueil <paul@crapouillou.net> wrote:
-> >>  >  
-> >>  > > By specifying the properties "mtd-oob-ecc" and "mtd-oob-free",   
-> >> it is  
-> >>  > > now possible to specify from devicetree where the ECC data is   
-> >> located  
-> >>  > > inside the OOB region.  
-> >>  >
-> >>  > Why would we want to do that? I mean, ECC/free regions are ECC
-> >>  > controller dependent (and NAND chip dependent for the OOB size   
-> >> part),  
-> >>  > so there's no reason to describe it in the DT. And more   
-> >> importantly,  
-> >>  > people are likely to get it wrong.
-> >>  >
-> >>  > I'm curious, why do you need that?  
-> >> 
-> >>  Good question.
-> >> 
-> >>  The reason is that some SoCs have no ECC controller.
-> >>  The various boards for these SoCs then all use a different layout.  
-> > 
-> > Okay. Still think defining the layouts in the DT is a bad idea. We
-> > can add a jz4740 specific property to define the layout id
-> > (ingenic,nand-oob-layout = <layout-id>), but not a generic way to
-> > define custom layouts for all kind of NAND controller.  
-> 
-> Okay.
-> 
-> >> 
-> >>  My motivation is to get rid of this (move it to devicetree):
-> >>  
-> >> https://elixir.bootlin.com/linux/latest/source/arch/mips/jz4740/board-qi_lb60.c#L93
-> >>  And enable the support of other boards with custom OOB layouts.  
-> > 
-> > Can you list the different layouts you have? I'm pretty sure there's a
-> > pattern. Maybe we can even deduce the layout from the page size or OOB
-> > size.  
-> 
-> This is the other layout I have for another ingenic device:
-> http://projects.qi-hardware.com/index.php/p/qi-kernel/source/tree/od-2011-09-18/arch/mips/jz4740/board-a320.c#L125
-> 
-> Page size and OOB size are the same between these two devices.
+static __always_inline
+struct foo_bar *__get_foo_bar(type1 parm1, type2 parm2, type3 parm3)
 
-Indeed. Do you know if there are other kind of layouts in the wild?
-Note that <layout-id> can be a string, so if each each board is
-defining its own layout, you could specify the board name here.
-Otherwise, if you just have those 2 patterns, you can just name them
-"contiguous" and "interleaved".
+
+instead of:
+
+static __always_inline struct foo_bar *__get_foo_bar(type1 parm1,
+						     type2 parm2,
+						     type3 parm3)
+
+
+I personally like more the former, not to mention that it uses also one 
+line less, but it seems less common in the sources.
+The coding style references do not seem to say anything explicit about 
+which style to prefer.
+
+And not all the code in the kernel is of the same quality, so finding an 
+example doesn't automatically mean that it's a good practice to follow :-)
+
+--
+thanks, igor
