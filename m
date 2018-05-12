@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751226AbeELFBP (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 01:01:15 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44388 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751017AbeELFBL (ORCPT
+        id S1751362AbeELFBZ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 01:01:25 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36739 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751130AbeELFBU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 01:01:11 -0400
-X-Google-Smtp-Source: AB8JxZqIJNWGRHfBhBD/joZ/lit+HxFMQGEHzsjUl4Bd1Ux3e0780zsbvNiMTmO66GeD8ITu5EUNVQ==
+        Sat, 12 May 2018 01:01:20 -0400
+X-Google-Smtp-Source: AB8JxZrYcvLDTFYD/NoTQ1KYLD2i66I0gtXcigNxSgOvlDFr4EEAXSrCElBXwvOwiq9EK831EBwq5A==
 From: Deepa Dinamani <deepa.kernel@gmail.com>
 To: viro@zeniv.linux.org.uk, tglx@linutronix.de
 Cc: arnd@arndb.de, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, y2038@lists.linaro.org
-Subject: [PATCH 1/6] fs: add timespec64_truncate()
-Date: Fri, 11 May 2018 21:59:16 -0700
-Message-Id: <20180512045921.18311-2-deepa.kernel@gmail.com>
+        linux-fsdevel@vger.kernel.org, y2038@lists.linaro.org,
+        andreas.dilger@intel.com
+Subject: [PATCH 2/6] lustre: Use long long type to print inode time
+Date: Fri, 11 May 2018 21:59:17 -0700
+Message-Id: <20180512045921.18311-3-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180512045921.18311-1-deepa.kernel@gmail.com>
 References: <20180512045921.18311-1-deepa.kernel@gmail.com>
@@ -22,67 +23,105 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As vfs moves to using struct timespec64 to represent times,
-update the argument to timespec_truncate() to use
-struct timespec64. Also change the name of the function.
-The rest of the implementation logic is the same.
+Subsequent patches in the series convert inode timestamps
+to use struct timespec64 instead of struct timespec as
+part of solving the y2038 problem.
 
-Move this to fs/inode.c instead of kernel/time/time.c as all the
-users of this api are filesystems.
+Convert these print formats to use long long types to
+avoid warnings and errors on conversion.
 
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: <viro@zeniv.linux.org.uk>
+CC: andreas.dilger@intel.com
 ---
- fs/inode.c         | 24 ++++++++++++++++++++++++
- include/linux/fs.h |  1 +
- 2 files changed, 25 insertions(+)
+ drivers/staging/lustre/lustre/llite/llite_lib.c | 12 +++++++-----
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c     |  7 ++++---
+ drivers/staging/lustre/lustre/mdc/mdc_reint.c   |  6 +++---
+ drivers/staging/lustre/lustre/obdclass/obdo.c   |  6 +++---
+ 4 files changed, 17 insertions(+), 14 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 13ceb98c3bd3..93af998ee290 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2110,6 +2110,30 @@ void inode_nohighmem(struct inode *inode)
- }
- EXPORT_SYMBOL(inode_nohighmem);
+diff --git a/drivers/staging/lustre/lustre/llite/llite_lib.c b/drivers/staging/lustre/lustre/llite/llite_lib.c
+index 60dbe888e336..dc31966bbf3c 100644
+--- a/drivers/staging/lustre/lustre/llite/llite_lib.c
++++ b/drivers/staging/lustre/lustre/llite/llite_lib.c
+@@ -1482,8 +1482,9 @@ int ll_setattr_raw(struct dentry *dentry, struct iattr *attr, bool hsm_import)
+ 	}
  
-+/**
-+ * timespec64_trunc - Truncate timespec64 to a granularity
-+ * @t: Timespec64
-+ * @gran: Granularity in ns.
-+ *
-+ * Truncate a timespec64 to a granularity. Always rounds down. gran must
-+ * not be 0 nor greater than a second (NSEC_PER_SEC, or 10^9 ns).
-+ */
-+struct timespec64 timespec64_trunc(struct timespec64 t, unsigned gran)
-+{
-+	/* Avoid division in the common cases 1 ns and 1 s. */
-+	if (gran == 1) {
-+		/* nothing */
-+	} else if (gran == NSEC_PER_SEC) {
-+		t.tv_nsec = 0;
-+	} else if (gran > 1 && gran < NSEC_PER_SEC) {
-+		t.tv_nsec -= t.tv_nsec % gran;
-+	} else {
-+		WARN(1, "illegal file time granularity: %u", gran);
-+	}
-+	return t;
-+}
-+EXPORT_SYMBOL(timespec64_trunc);
-+
- /**
-  * current_time - Return FS time
-  * @inode: inode.
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 0eedf745667b..381c77a37404 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1477,6 +1477,7 @@ static inline void i_gid_write(struct inode *inode, gid_t gid)
- 	inode->i_gid = make_kgid(inode->i_sb->s_user_ns, gid);
- }
+ 	if (attr->ia_valid & (ATTR_MTIME | ATTR_CTIME))
+-		CDEBUG(D_INODE, "setting mtime %lu, ctime %lu, now = %llu\n",
+-		       LTIME_S(attr->ia_mtime), LTIME_S(attr->ia_ctime),
++		CDEBUG(D_INODE, "setting mtime %llu, ctime %llu, now = %llu\n",
++		       (unsigned long long)LTIME_S(attr->ia_mtime),
++		       (unsigned long long)LTIME_S(attr->ia_ctime),
+ 		       (s64)ktime_get_real_seconds());
  
-+extern struct timespec64 timespec64_trunc(struct timespec64 t, unsigned gran);
- extern struct timespec current_time(struct inode *inode);
+ 	if (S_ISREG(inode->i_mode))
+@@ -1760,9 +1761,10 @@ int ll_update_inode(struct inode *inode, struct lustre_md *md)
+ 	if (body->mbo_valid & OBD_MD_FLMTIME) {
+ 		if (body->mbo_mtime > LTIME_S(inode->i_mtime)) {
+ 			CDEBUG(D_INODE,
+-			       "setting ino %lu mtime from %lu to %llu\n",
+-			       inode->i_ino, LTIME_S(inode->i_mtime),
+-			       body->mbo_mtime);
++			       "setting ino %lu mtime from %llu to %llu\n",
++			       inode->i_ino,
++			       (unsigned long long)LTIME_S(inode->i_mtime),
++			       (unsigned long long)body->mbo_mtime);
+ 			LTIME_S(inode->i_mtime) = body->mbo_mtime;
+ 		}
+ 		lli->lli_mtime = body->mbo_mtime;
+diff --git a/drivers/staging/lustre/lustre/lmv/lmv_obd.c b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+index 7198a6384028..88e05a53716e 100644
+--- a/drivers/staging/lustre/lustre/lmv/lmv_obd.c
++++ b/drivers/staging/lustre/lustre/lmv/lmv_obd.c
+@@ -3029,11 +3029,12 @@ static int lmv_merge_attr(struct obd_export *exp,
+ 	for (i = 0; i < lsm->lsm_md_stripe_count; i++) {
+ 		struct inode *inode = lsm->lsm_md_oinfo[i].lmo_root;
  
- /*
+-		CDEBUG(D_INFO, "" DFID " size %llu, blocks %llu nlink %u, atime %lu ctime %lu, mtime %lu.\n",
++		CDEBUG(D_INFO, "" DFID " size %llu, blocks %llu nlink %u, atime %llu ctime %llu, mtime %llu.\n",
+ 		       PFID(&lsm->lsm_md_oinfo[i].lmo_fid),
+ 		       i_size_read(inode), (unsigned long long)inode->i_blocks,
+-		       inode->i_nlink, LTIME_S(inode->i_atime),
+-		       LTIME_S(inode->i_ctime), LTIME_S(inode->i_mtime));
++		       inode->i_nlink, (unsigned long long)LTIME_S(inode->i_atime),
++		       (unsigned long long)LTIME_S(inode->i_ctime),
++		       (unsigned long long)LTIME_S(inode->i_mtime));
+ 
+ 		/* for slave stripe, it needs to subtract nlink for . and .. */
+ 		if (i)
+diff --git a/drivers/staging/lustre/lustre/mdc/mdc_reint.c b/drivers/staging/lustre/lustre/mdc/mdc_reint.c
+index 488b98007558..f1ccf8d26ddc 100644
+--- a/drivers/staging/lustre/lustre/mdc/mdc_reint.c
++++ b/drivers/staging/lustre/lustre/mdc/mdc_reint.c
+@@ -129,9 +129,9 @@ int mdc_setattr(struct obd_export *exp, struct md_op_data *op_data,
+ 	}
+ 
+ 	if (op_data->op_attr.ia_valid & (ATTR_MTIME | ATTR_CTIME))
+-		CDEBUG(D_INODE, "setting mtime %ld, ctime %ld\n",
+-		       LTIME_S(op_data->op_attr.ia_mtime),
+-		       LTIME_S(op_data->op_attr.ia_ctime));
++		CDEBUG(D_INODE, "setting mtime %lld, ctime %lld\n",
++		       (long long)LTIME_S(op_data->op_attr.ia_mtime),
++		       (long long)LTIME_S(op_data->op_attr.ia_ctime));
+ 	mdc_setattr_pack(req, op_data, ea, ealen);
+ 
+ 	ptlrpc_request_set_replen(req);
+diff --git a/drivers/staging/lustre/lustre/obdclass/obdo.c b/drivers/staging/lustre/lustre/obdclass/obdo.c
+index c4503bc36591..8f4054aa970b 100644
+--- a/drivers/staging/lustre/lustre/obdclass/obdo.c
++++ b/drivers/staging/lustre/lustre/obdclass/obdo.c
+@@ -60,9 +60,9 @@ void obdo_from_inode(struct obdo *dst, struct inode *src, u32 valid)
+ 	u32 newvalid = 0;
+ 
+ 	if (valid & (OBD_MD_FLCTIME | OBD_MD_FLMTIME))
+-		CDEBUG(D_INODE, "valid %x, new time %lu/%lu\n",
+-		       valid, LTIME_S(src->i_mtime),
+-		       LTIME_S(src->i_ctime));
++		CDEBUG(D_INODE, "valid %x, new time %llu/%llu\n",
++		       valid, (long long)LTIME_S(src->i_mtime),
++		       (long long)LTIME_S(src->i_ctime));
+ 
+ 	if (valid & OBD_MD_FLATIME) {
+ 		dst->o_atime = LTIME_S(src->i_atime);
 -- 
 2.17.0
