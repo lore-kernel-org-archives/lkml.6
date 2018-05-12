@@ -1,84 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750974AbeELIVX (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 04:21:23 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:37526 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750846AbeELIVW (ORCPT
+        id S1750879AbeELI1J (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 04:27:09 -0400
+Received: from mail-lf0-f52.google.com ([209.85.215.52]:43290 "EHLO
+        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750739AbeELI1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 04:21:22 -0400
-Date: Sat, 12 May 2018 18:21:16 +1000
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH] powerpc: Fix "integer constant is too large" build failure
+        Sat, 12 May 2018 04:27:07 -0400
+X-Google-Smtp-Source: AB8JxZo222xP+TYF8wYQfsXxWss7vr22VkTXPMj+5Cf+MzHXJCz35abuTzxlk2fOrfK3pM3djkzeV/3GPLu8r6NRmh8=
+MIME-Version: 1.0
+From: Weiwei Jia <harrynjit@gmail.com>
+Date: Sat, 12 May 2018 16:27:04 +0800
+Message-ID: <CA+scX6kYH8Y9_f1PLcMHG-MD9bhXgd4gGpkJanjzvwwj9L=aOQ@mail.gmail.com>
+Subject: [RFC][PATCH] KVM: APPLES can improve the performance of applications
+ and virtualized systems by up to 49%
+To: linux-kernel@vger.kernel.org
+Cc: kvm@vger.kernel.org, xen-devel@lists.xenproject.org, dingxn@gmail.com,
+        jianchen.shan@gmail.com, Weiwei Jia <harryxiyou@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-Id: <S1750974AbeELIVX/20180512082124Z+17@vger.kernel.org>
 
-My powerpc-linux-gnu-gcc v4.4.5 compiler can't build a 32-bit kernel
-any more:
+Dear all,
 
-arch/powerpc/lib/sstep.c: In function 'do_popcnt':
-arch/powerpc/lib/sstep.c:1068: error: integer constant is too large for 'long' type
-arch/powerpc/lib/sstep.c:1069: error: integer constant is too large for 'long' type
-arch/powerpc/lib/sstep.c:1069: error: integer constant is too large for 'long' type
-arch/powerpc/lib/sstep.c:1070: error: integer constant is too large for 'long' type
-arch/powerpc/lib/sstep.c:1079: error: integer constant is too large for 'long' type
-arch/powerpc/lib/sstep.c: In function 'do_prty':
-arch/powerpc/lib/sstep.c:1117: error: integer constant is too large for 'long' type
+Recently, we made a few improvements on effectively utilizing Pause
+Loop Exiting (PLE) support for higher throughput on virtualized
+systems. Basically, it solves two problems: 1) how to adjust
+PLE_Window; 2) how to select virtual CPUs to schedule on VM_EXITs
+caused by PLE. Our tests with standard benchmarks show that the
+approach can improve performance by up to 49%. The approach shows
+promising performance and is easy to implement. We think that it would
+be wonderful if Linux/KVM and XEN can consider the approach.
 
-This file gets compiled with -std=gnu89 which means a constant can be
-given the type 'long' even if it won't fit. Fix the errors with a 'ULL'
-suffix on the relevant constants.
+We already have a prototype implementation based on KVM (Linux Kernel
+3.19.8). Our patch for Linux Kernel 3.19.8 and the paper describing
+our idea are available in Github repository [1][2][3]. We are pleased
+to revise our patch in order to merge it into Linux/KVM and XEN. We
+hope that you can test and adopt our approach/techniques. We are
+pleased to get some comments/suggestions on the approach and on how
+the idea can be adopted/tested by Linux/KVM and XEN. Thank you.
 
-Fixes: 2c979c489fee ("powerpc/lib/sstep: Add prty instruction emulation")
-Fixes: dcbd19b48d31 ("powerpc/lib/sstep: Add popcnt instruction emulation")
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
----
-This change was compile tested but not regression tested.
----
- arch/powerpc/lib/sstep.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+[1] APPLES paper: https://github.com/sysmen/apples/tree/master/paper
+[2] APPLES patch:
+https://github.com/sysmen/apples/blob/master/patches/3.19.8-APPLES.patch
+[3] APPLES patch README:
+https://github.com/sysmen/apples/blob/master/patches/README.txt
 
-diff --git a/arch/powerpc/lib/sstep.c b/arch/powerpc/lib/sstep.c
-index 34d68f1b1b40..49427a3ee104 100644
---- a/arch/powerpc/lib/sstep.c
-+++ b/arch/powerpc/lib/sstep.c
-@@ -1065,9 +1065,10 @@ static nokprobe_inline void do_popcnt(const struct pt_regs *regs,
- {
- 	unsigned long long out = v1;
- 
--	out -= (out >> 1) & 0x5555555555555555;
--	out = (0x3333333333333333 & out) + (0x3333333333333333 & (out >> 2));
--	out = (out + (out >> 4)) & 0x0f0f0f0f0f0f0f0f;
-+	out -= (out >> 1) & 0x5555555555555555ULL;
-+	out = (0x3333333333333333ULL & out) +
-+	      (0x3333333333333333ULL & (out >> 2));
-+	out = (out + (out >> 4)) & 0x0f0f0f0f0f0f0f0fULL;
- 
- 	if (size == 8) {	/* popcntb */
- 		op->val = out;
-@@ -1076,7 +1077,7 @@ static nokprobe_inline void do_popcnt(const struct pt_regs *regs,
- 	out += out >> 8;
- 	out += out >> 16;
- 	if (size == 32) {	/* popcntw */
--		op->val = out & 0x0000003f0000003f;
-+		op->val = out & 0x0000003f0000003fULL;
- 		return;
- 	}
- 
-@@ -1114,7 +1115,7 @@ static nokprobe_inline void do_prty(const struct pt_regs *regs,
- 
- 	res ^= res >> 16;
- 	if (size == 32) {		/* prtyw */
--		op->val = res & 0x0000000100000001;
-+		op->val = res & 0x0000000100000001ULL;
- 		return;
- 	}
- 
--- 
-2.16.1
+Best Regards,
+Sysmen Research Group
