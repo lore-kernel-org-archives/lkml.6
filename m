@@ -1,106 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751282AbeELKLV (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 06:11:21 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:40416 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750854AbeELKLT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 06:11:19 -0400
-X-Google-Smtp-Source: AB8JxZqjEsqijZgoX9V3TRbmvHkxeoqyQSRdlllPPDI0xdvTRRgLq7PAm1luBn9Yh8vgOWupCNpdDk3fCpkyKy4y8X8=
+        id S1751089AbeELKPn (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 06:15:43 -0400
+Received: from bues.ch ([80.190.117.144]:57834 "EHLO bues.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750793AbeELKPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 May 2018 06:15:42 -0400
+Date: Sat, 12 May 2018 12:14:58 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+Cc: Kalle Valo <kvalo@codeaurora.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        Matt Redfearn <matt.redfearn@mips.com>, linux-wireless@vger.kernel.org,
+        Hauke Mehrtens <hauke@hauke-m.de>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 1/2] Revert "ssb: Prevent build of PCI host features
+ in module"
+Message-ID: <20180512121458.58570198@wiggum>
+In-Reply-To: <2a401060858a337f84039eddef4b3b87@milecki.pl>
+References: <20180511091715.1989-1-zajec5@gmail.com>
+ <CACna6ry-91oR1u697NRymLsN28fnnHDp9OQrdiVwA7A3KTV1fg@mail.gmail.com>
+ <87bmdmcxf6.fsf@codeaurora.org>
+ <727571cb-5d1f-2d99-b050-979edd02106f@lwfinger.net>
+ <877eo9b9d9.fsf@codeaurora.org>
+ <20180512100136.1d26e6d3@wiggum>
+ <2a401060858a337f84039eddef4b3b87@milecki.pl>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+awLWP3o0opx5CbAYpD4HpwVpQhPA-dDHmxAzJMs8_orQ@mail.gmail.com>
-References: <001a11449aa2faf11805643af581@google.com> <CACT4Y+YOmbZGdBbFpmjRJXABGe1tD=F+3na77DwoPCEaROADyw@mail.gmail.com>
- <20180202221829.tdiji2332t7orcxj@gmail.com> <CACT4Y+afpDQ7A3caRmskML06h8Q6+NkVAn6HtV93ExPec-g2pA@mail.gmail.com>
- <CAKv+Gu_Lh1TroS4BJJp4PQNYbqZ8KR=6Z5hHX2+UiBfxC=sxQA@mail.gmail.com> <CACT4Y+awLWP3o0opx5CbAYpD4HpwVpQhPA-dDHmxAzJMs8_orQ@mail.gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Sat, 12 May 2018 12:11:17 +0200
-Message-ID: <CAKv+Gu_Kigt9ouktBjFacFHbburot2i=-_m88-o4-XhtmhozVA@mail.gmail.com>
-Subject: Re: WARNING: kernel stack regs has bad 'bp' value (3)
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Eric Biggers <ebiggers3@gmail.com>,
-        syzbot <syzbot+ffa3a158337bbc01ff09@syzkaller.appspotmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
-        <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/JJmf7D3tMaMVh7Ub.huXVw3"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 May 2018 at 11:50, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Sat, May 12, 2018 at 11:09 AM, Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> (+ Arnd)
->>
->> On 12 May 2018 at 10:43, Dmitry Vyukov <dvyukov@google.com> wrote:
->>> On Fri, Feb 2, 2018 at 11:18 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
->>>> On Fri, Feb 02, 2018 at 02:57:32PM +0100, Dmitry Vyukov wrote:
->>>>> On Fri, Feb 2, 2018 at 2:48 PM, syzbot
->>>>> <syzbot+ffa3a158337bbc01ff09@syzkaller.appspotmail.com> wrote:
->>>>> > Hello,
->>>>> >
->>>>> > syzbot hit the following crash on upstream commit
->>>>> > 7109a04eae81c41ed529da9f3c48c3655ccea741 (Thu Feb 1 17:37:30 2018 +0000)
->>>>> > Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/ide
->>>>> >
->>>>> > So far this crash happened 4 times on net-next, upstream.
->>>>> > C reproducer is attached.
->>>>> > syzkaller reproducer is attached.
->>>>> > Raw console output is attached.
->>>>> > compiler: gcc (GCC) 7.1.1 20170620
->>>>> > .config is attached.
->>>>>
->>>>>
->>>>> From suspicious frames I see salsa20_asm_crypt there, so +crypto maintainers.
->>>>>
->>>>
->>>> Looks like the x86 implementations of Salsa20 (both i586 and x86_64) need to be
->>>> updated to not use %ebp/%rbp.
->>>
->>> Ard,
->>>
->>> This was bisected as introduced by:
->>>
->>> commit 83dee2ce1ae791c3dc0c9d4d3a8d42cb109613f6
->>> Author: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>> Date:   Fri Jan 19 12:04:34 2018 +0000
->>>
->>>     crypto: sha3-generic - rewrite KECCAK transform to help the
->>> compiler optimize
->>>
->>> https://gist.githubusercontent.com/dvyukov/47f93f5a0679170dddf93bc019b42f6d/raw/65beac8ddd30003bbd4e9729236dc8572094abf7/gistfile1.txt
->>
->> Ouch.
->>
->> I'm not an expert in x86 assembly. Could someone please check the
->> generated code to see what's going on? The C code changes are not that
->> intricate, they basically unroll a loop, replacing accesses to
->> 'array[indirect_index[i]]' with 'array[constant]'.
->>
->> As mentioned in the commit log, the speedup is more than significant
->> for architectures with lots of GPRs so I'd prefer fixing the patch
->> over reverting it (if there is anything wrong with the code in the
->> first place)
->
-> I suspect the problem is with __attribute__((__optimize__("O3"))). It
-> makes compiler use rbp register, which must not be used.
+--Sig_/JJmf7D3tMaMVh7Ub.huXVw3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-IIRC, the additional speedup from adding that was significant but not
-huge. Given that we don't use O3 anywhere else, I guess we should just
-remove it.
+On Sat, 12 May 2018 12:00:07 +0200
+Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl> wrote:
 
-Could you please check whether that makes the issue go away?
+> > Yes, I'm OK with the patch, if we have a third patch that cleans up the
+> > PCI_DRIVERS_LEGACY dependency by moving it to SSB_PCICORE_HOSTMODE
+> > where it belongs. (This doesn't need to go into the stable tree.)
+> > We currently implicitly get that via dependency chain, so this is OK
+> > for now as-is. =20
+>=20
+> I'm planning to handle PCI_DRIVERS_LEGACY cleanup once my patches hit
+> net-next.git and then wireless-drivers-next.git. It's to avoid
+> conflicts.
 
-If so,
+Yes, thanks. Take your time. We're not in a hurry. :)
+This change should not make a functional difference.
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+--=20
+Michael
 
-for any patch that removes the O3 attribute override from keccakf()
+--Sig_/JJmf7D3tMaMVh7Ub.huXVw3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Thanks,
-Ard.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlr2vqIACgkQ9TK+HZCN
+iw6jrhAAoQwH39a/jFaYOxzLTrpcHGjLrRtp4BJcm472fSwu3xxd3ko2fMX9plhg
+tOVXTA4IVKrBLpJb/ybt3NYXoEltNPrthYvcPtNWkcBMT/qQyK9vPQTSyRsiXLkc
+ObA5GcPfv3ycH/YYtp4UpeSniXadCC2PJ5EWoioyiuKY6Rxm9v3+S97YhTijyP76
+9aLaAJSwOO3jKfDKZUeVbtiXCUy5CIFicwTg9+2QMAKMajwzS/YGehvy/bjfE49p
+151Udz5g40ebULrtlxY1MbB7V0k3iHlSmQXlb/biQZoeU56sbEyG2LQWAG4zKUYG
+3asvVBfABaGWcVVYaigRqWueunHqgbmkSV4VuEnuYpV6TF4f0nTSyQd4+zxBDbgX
+HRUKottcx8RDAxIOUAPLodAnOZnv3gkj7p0Fbwu+Zm5NujHQgnD2goGo92VzvIGP
+DZkLpEHMQp5CfKBb6BVC9pig0eL9iYJM8y6DOliXjae/6D6iDFGhEK+BXX0RDqrk
+E7AL1LZhGh2pY9CkvlWcCc9aqAlGmWCbSuTaISbJ/VTU9IHXQPnw2h4DT894sKz4
+txEzfQRBSww/yN0W/BGH5vNQ377qONMfteX48LPYbyC59Z0mLeEFxzp9SZBNAl/j
+HG5SpVwnBInusLQm4gstJ0FfxJiA2wPi45/qx0j7tz5v5xl0Fz0=
+=GPI2
+-----END PGP SIGNATURE-----
+
+--Sig_/JJmf7D3tMaMVh7Ub.huXVw3--
