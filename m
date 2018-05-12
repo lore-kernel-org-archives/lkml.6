@@ -1,88 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751370AbeELO7w (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 10:59:52 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36375 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750756AbeELO7u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 10:59:50 -0400
-X-Google-Smtp-Source: AB8JxZpx8Vb25GFuxZQ7qHUAwWa/CRFfm0Ho5+a8BEEg56jw6/7uyIAkwSM7erpwxR/DMaAt1ulw/w==
-From: Larry Finger <Larry.Finger@lwfinger.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org
-Subject: [RFC] acpi: Declare memory allocations in acpi_ut_create_internal_object_dbg as non-leaks
-Date: Sat, 12 May 2018 09:59:38 -0500
-Message-Id: <20180512145938.7936-1-Larry.Finger@lwfinger.net>
-X-Mailer: git-send-email 2.16.3
+        id S1751839AbeELPAj convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 11:00:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36706 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750847AbeELPAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 May 2018 11:00:38 -0400
+Date: Sat, 12 May 2018 17:00:34 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Boris Brezillon <boris.brezillon@bolin.com>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH] mtd: nand: Add support for reading ooblayout from
+ device tree
+Message-ID: <20180512170034.12779313@bbrezillon>
+In-Reply-To: <1526135906.4971.0@smtp.crapouillou.net>
+References: <20180512115551.56C6E20787@mail.bootlin.com>
+        <20180512154223.3b81c7f7@bbrezillon>
+        <1526135906.4971.0@smtp.crapouillou.net>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In kernel 4.17.0-rcX, kmemleak reports 9 leaks with tracebacks similat to
-the following:
+On Sat, 12 May 2018 11:38:26 -0300
+Paul Cercueil <paul@crapouillou.net> wrote:
 
-unreferenced object 0xffff880224a077e0 (size 72):
-  comm "swapper/0", pid 1, jiffies 4294892358 (age 1022.636s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 0e 01 01 00 00 00 00 01  ................
-    00 00 00 80 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<000000004f506615>] acpi_ut_create_internal_object_dbg+0x4d/0x10e
-    [<000000006e7730e3>] acpi_ds_build_internal_object+0xed/0x1cd
-    [<00000000272b7c73>] acpi_ds_build_internal_package_obj+0x245/0x3a2
-    [<000000000b64c50e>] acpi_ds_eval_data_object_operands+0x17b/0x21b
-    [<00000000589647ac>] acpi_ds_exec_end_op+0x433/0x6c1
-    [<000000001d69bcbf>] acpi_ps_parse_loop+0x926/0x9be
-    [<000000005d6fa97d>] acpi_ps_parse_aml+0x1a2/0x4af
-    [<00000000c4bef823>] acpi_ps_execute_table+0xbb/0x119
-    [<00000000fd9632e4>] acpi_ns_execute_table+0x20c/0x260
-    [<00000000e6ae17ac>] acpi_ns_parse_table+0x7d/0x1b3
-    [<0000000008e1e148>] acpi_ns_load_table+0x8d/0x1c0
-    [<000000009fc8346f>] acpi_tb_load_namespace+0x176/0x278
-    [<0000000073f98b3b>] acpi_load_tables+0x6e/0xfd
-    [<00000000d2ef13d2>] acpi_init+0x8c/0x340
-    [<000000007da19d8d>] do_one_initcall+0x46/0x1fa
-    [<0000000024681a1d>] kernel_init_freeable+0x1a2/0x237
+> Le sam. 12 mai 2018 à 10:42, Boris Brezillon 
+> <boris.brezillon@bootlin.com> a écrit :
+> > On Sat, 12 May 2018 08:55:40 -0300
+> > Paul Cercueil <paul@crapouillou.net> wrote:
+> >   
+> >>  Hi Boris,
+> >> 
+> >>  Le 12 mai 2018 02:55, Boris Brezillon <boris.brezillon@bootlin.com> 
+> >> a écrit :  
+> >>  >
+> >>  > Hi Paul,
+> >>  >
+> >>  > On Fri, 11 May 2018 23:29:12 +0200
+> >>  > Paul Cercueil <paul@crapouillou.net> wrote:
+> >>  >  
+> >>  > > By specifying the properties "mtd-oob-ecc" and "mtd-oob-free",   
+> >> it is  
+> >>  > > now possible to specify from devicetree where the ECC data is   
+> >> located  
+> >>  > > inside the OOB region.  
+> >>  >
+> >>  > Why would we want to do that? I mean, ECC/free regions are ECC
+> >>  > controller dependent (and NAND chip dependent for the OOB size   
+> >> part),  
+> >>  > so there's no reason to describe it in the DT. And more   
+> >> importantly,  
+> >>  > people are likely to get it wrong.
+> >>  >
+> >>  > I'm curious, why do you need that?  
+> >> 
+> >>  Good question.
+> >> 
+> >>  The reason is that some SoCs have no ECC controller.
+> >>  The various boards for these SoCs then all use a different layout.  
+> > 
+> > Okay. Still think defining the layouts in the DT is a bad idea. We
+> > can add a jz4740 specific property to define the layout id
+> > (ingenic,nand-oob-layout = <layout-id>), but not a generic way to
+> > define custom layouts for all kind of NAND controller.  
+> 
+> Okay.
+> 
+> >> 
+> >>  My motivation is to get rid of this (move it to devicetree):
+> >>  
+> >> https://elixir.bootlin.com/linux/latest/source/arch/mips/jz4740/board-qi_lb60.c#L93
+> >>  And enable the support of other boards with custom OOB layouts.  
+> > 
+> > Can you list the different layouts you have? I'm pretty sure there's a
+> > pattern. Maybe we can even deduce the layout from the page size or OOB
+> > size.  
+> 
+> This is the other layout I have for another ingenic device:
+> http://projects.qi-hardware.com/index.php/p/qi-kernel/source/tree/od-2011-09-18/arch/mips/jz4740/board-a320.c#L125
+> 
+> Page size and OOB size are the same between these two devices.
 
-According to gdb, the offending code is
-              object =
-                  acpi_ut_allocate_object_desc_dbg(module_name, line_number,
-                                                   component_id);
-
-As it is not possible to unload the acpi code to test that this is a real
-leak and not a false positive, and that only these 9 appear no matter how
-long the system is up, a kmemleak_not_leak(object) call is inserted.
-
-Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-Cc: Len Brown <lenb@kernel.org>
-Cc: linux-acpi@vger.kernel.org
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
----
- drivers/acpi/acpica/utobject.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/acpi/acpica/utobject.c b/drivers/acpi/acpica/utobject.c
-index 5b78fe08d7d7..ae6d8cc18cec 100644
---- a/drivers/acpi/acpica/utobject.c
-+++ b/drivers/acpi/acpica/utobject.c
-@@ -8,6 +8,7 @@
-  *****************************************************************************/
- 
- #include <acpi/acpi.h>
-+#include <linux/kmemleak.h>
- #include "accommon.h"
- #include "acnamesp.h"
- 
-@@ -70,6 +71,7 @@ union acpi_operand_object *acpi_ut_create_internal_object_dbg(const char
- 	if (!object) {
- 		return_PTR(NULL);
- 	}
-+	kmemleak_not_leak(object);
- 
- 	switch (type) {
- 	case ACPI_TYPE_REGION:
--- 
-2.16.3
+Indeed. Do you know if there are other kind of layouts in the wild?
+Note that <layout-id> can be a string, so if each each board is
+defining its own layout, you could specify the board name here.
+Otherwise, if you just have those 2 patterns, you can just name them
+"contiguous" and "interleaved".
