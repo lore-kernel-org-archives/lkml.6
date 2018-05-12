@@ -1,99 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750799AbeELGPI (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 02:15:08 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:38144 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750722AbeELGPG (ORCPT
+        id S1750812AbeELGUk (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 02:20:40 -0400
+Received: from smtprelay0009.hostedemail.com ([216.40.44.9]:33963 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750735AbeELGUj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 02:15:06 -0400
-X-Google-Smtp-Source: AB8JxZrt3cCZAwXzqiPpdD0BlhleJPA4ckDzpGr8aYIIXXZMrdUCnk6kcb206bgFz4mGqxlxaB7mEw==
-Date: Sat, 12 May 2018 11:47:12 +0530
-From: Souptick Joarder <jrdr.linux@gmail.com>
-To: akpm@linux-foundation.org, mhocko@suse.com, hughd@google.com,
-        dan.j.williams@intel.com, rientjes@google.com, mike.kravetz@oracle.com,
+        Sat, 12 May 2018 02:20:39 -0400
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::,RULES_HIT:41:355:379:541:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2693:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3870:3871:3872:3874:4321:5007:10004:10400:10848:11026:11232:11658:11914:12048:12296:12438:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21433:21627:30054:30070:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
+X-HE-Tag: shirt92_4846adce2553
+X-Filterd-Recvd-Size: 1993
+Message-ID: <e194731158f7f89145ed0ae28f46aac5726fc32d.camel@perches.com>
+Subject: Re: [PATCH v3] mm: Change return type to vm_fault_t
+From: Joe Perches <joe@perches.com>
+To: Souptick Joarder <jrdr.linux@gmail.com>, akpm@linux-foundation.org,
+        mhocko@suse.com, hughd@google.com, dan.j.williams@intel.com,
+        rientjes@google.com, mike.kravetz@oracle.com,
         n-horiguchi@ah.jp.nec.com, aneesh.kumar@linux.vnet.ibm.com
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: [PATCH v3] mm: Change return type to vm_fault_t
-Message-ID: <20180512061712.GA26660@jordon-HP-15-Notebook-PC>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Date: Fri, 11 May 2018 23:20:29 -0700
+In-Reply-To: <20180512061712.GA26660@jordon-HP-15-Notebook-PC>
+References: <20180512061712.GA26660@jordon-HP-15-Notebook-PC>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use new return type vm_fault_t for fault handler
-in struct vm_operations_struct. For now, this is
-just documenting that the function returns a
-VM_FAULT value rather than an errno.  Once all
-instances are converted, vm_fault_t will become
-a distinct type.
+On Sat, 2018-05-12 at 11:47 +0530, Souptick Joarder wrote:
+> Use new return type vm_fault_t for fault handler
+> in struct vm_operations_struct. For now, this is
+> just documenting that the function returns a
+> VM_FAULT value rather than an errno.  Once all
+> instances are converted, vm_fault_t will become
+> a distinct type.
 
-commit 1c8f422059ae ("mm: change return type to
-vm_fault_t")
+trivia:
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
----
-v2: updated the change log
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+[]
+> @@ -627,7 +627,7 @@ struct vm_special_mapping {
+>  	 * If non-NULL, then this is called to resolve page faults
+>  	 * on the special mapping.  If used, .pages is not checked.
+>  	 */
+> -	int (*fault)(const struct vm_special_mapping *sm,
+> +	vm_fault_t (*fault)(const struct vm_special_mapping *sm,
+>  		     struct vm_area_struct *vma,
+>  		     struct vm_fault *vmf);
 
-v3: added <linux/mm_types.h> changes
-    into the same patch
 
- include/linux/mm_types.h | 2 +-
- mm/hugetlb.c             | 2 +-
- mm/mmap.c                | 4 ++--
- 3 files changed, 4 insertions(+), 4 deletions(-)
+It'd be nicer to realign the 2nd and 3rd arguments
+on the subsequent lines.
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 2161234..11acfdb 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -627,7 +627,7 @@ struct vm_special_mapping {
- 	 * If non-NULL, then this is called to resolve page faults
- 	 * on the special mapping.  If used, .pages is not checked.
- 	 */
--	int (*fault)(const struct vm_special_mapping *sm,
-+	vm_fault_t (*fault)(const struct vm_special_mapping *sm,
- 		     struct vm_area_struct *vma,
- 		     struct vm_fault *vmf);
- 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 2186791..7e00bd3 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3159,7 +3159,7 @@ static unsigned long hugetlb_vm_op_pagesize(struct vm_area_struct *vma)
-  * hugegpage VMA.  do_page_fault() is supposed to trap this, so BUG is we get
-  * this far.
-  */
--static int hugetlb_vm_op_fault(struct vm_fault *vmf)
-+static vm_fault_t hugetlb_vm_op_fault(struct vm_fault *vmf)
- {
- 	BUG();
- 	return 0;
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 188f195..bdd4ba9a 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3228,7 +3228,7 @@ void vm_stat_account(struct mm_struct *mm, vm_flags_t flags, long npages)
- 		mm->data_vm += npages;
- }
- 
--static int special_mapping_fault(struct vm_fault *vmf);
-+static vm_fault_t special_mapping_fault(struct vm_fault *vmf);
- 
- /*
-  * Having a close hook prevents vma merging regardless of flags.
-@@ -3267,7 +3267,7 @@ static int special_mapping_mremap(struct vm_area_struct *new_vma)
- 	.fault = special_mapping_fault,
- };
- 
--static int special_mapping_fault(struct vm_fault *vmf)
-+static vm_fault_t special_mapping_fault(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- 	pgoff_t pgoff;
--- 
-1.9.1
+	vm_fault_t (*fault)(const struct vm_special_mapping *sm,
+			    struct vm_area_struct *vma,
+			    struct vm_fault *vmf);
