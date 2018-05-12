@@ -1,94 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751333AbeELC2R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 22:28:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34164 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750793AbeELC2P (ORCPT
+        id S1751130AbeELCiJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 22:38:09 -0400
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:38796 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750740AbeELCiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 22:28:15 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BBB11601EA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-From: David Collins <collinsd@codeaurora.org>
-To: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: David Collins <collinsd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rnayak@codeaurora.org, sboyd@kernel.org,
-        dianders@chromium.org
-Subject: [PATCH v3 0/2] regulator: add QCOM RPMh regulator driver
-Date: Fri, 11 May 2018 19:28:04 -0700
-Message-Id: <cover.1526088081.git.collinsd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Fri, 11 May 2018 22:38:07 -0400
+X-Google-Smtp-Source: AB8JxZoS9WKnhLlCANK0XJbFUceSFEQqwmUST3tittOkwcrKd+yePYNMflnDGYnVSJTYfjgfwH6zNjUWPjn+DaQkEt0=
+MIME-Version: 1.0
+In-Reply-To: <20180511165752.GG190385@bhelgaas-glaptop.roam.corp.google.com>
+References: <CAObL_7G5k7XNqXqDZASChiQd1mt+AJPAdNKz-DE+xQawhUy6ZA@mail.gmail.com>
+ <20180511165752.GG190385@bhelgaas-glaptop.roam.corp.google.com>
+From: Ming Lei <tom.leiming@gmail.com>
+Date: Sat, 12 May 2018 10:38:05 +0800
+Message-ID: <CACVXFVOieYJ3EJDNydoWWX91n7o8RT7UXvTfo0ExEPLsit9mxg@mail.gmail.com>
+Subject: Re: Another NVMe failure, this time with AER info
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrew Lutomirski <amluto@gmail.com>, Jesse Vincent <jesse@fsck.com>,
+        Sagi Grimberg <sagi@grimberg.me>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvme <linux-nvme@lists.infradead.org>, Jens Axboe <axboe@fb.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series adds a driver and device tree binding documentation for
-PMIC regulator control via Resource Power Manager-hardened (RPMh) on some
-Qualcomm Technologies, Inc. SoCs such as SDM845.  RPMh is a hardware block
-which contains several accelerators which are used to manage various
-hardware resources that are shared between the processors of the SoC.  The
-final hardware state of a regulator is determined within RPMh by performing
-max aggregation of the requests made by all of the processors.
+On Sat, May 12, 2018 at 12:57 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> Andrew wrote:
+>> A friend of mine has a brand new LG laptop that has intermittent NVMe
+>> failures.  They mostly happen during a suspend/resume cycle
+>> (apparently during suspend, not resume).  Unlike the earlier
+>> Dell/Samsung issue, the NVMe device isn't completely gone -- MMIO
+>> reads fail, but PCI configuration space is apparently still there:
+>
+>> nvme nvme0: controller is down; will reset: CSTS=0xffffffff, PCI_STATUS=0x10
+>
+>> and it comes with a nice AER dump:
+>
+>> [12720.894411] pcieport 0000:00:1c.0: AER: Multiple Corrected error received: id=00e0
+>> [12720.909747] pcieport 0000:00:1c.0: PCIe Bus Error: severity=Corrected, type=Physical Layer, id=00e0(Transmitter ID)
+>> [12720.909751] pcieport 0000:00:1c.0:   device [8086:9d14] error status/mask=00001001/00002000
+>> [12720.909754] pcieport 0000:00:1c.0:    [ 0] Receiver Error         (First)
+>> [12720.909756] pcieport 0000:00:1c.0:    [12] Replay Timer Timeout
+>
+> I opened this bugzilla and attached the dmesg and lspci -vv output to
+> it: https://bugzilla.kernel.org/show_bug.cgi?id=199695
+>
+> The root port at 00:1c.0 leads to the NVMe device at 01:00.0 (this is
+> nvme0):
+>
+>   00:1c.0 PCI bridge: Intel Corporation Sunrise Point-LP PCI Express Root Port #5 (rev f1) (prog-if 00 [Normal decode])
+>         Bus: primary=00, secondary=01, subordinate=01, sec-latency=0
+>   01:00.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller SM961/PM961 (prog-if 02 [NVM Express])
+>         Subsystem: Samsung Electronics Co Ltd Device a801
+>
+> We reported several corrected errors before the nvme timeout:
+>
+>   [12750.281158] nvme nvme0: controller is down; will reset: CSTS=0xffffffff, PCI_STATUS=0x10
+>   [12750.297594] nvme nvme0: I/O 455 QID 2 timeout, disable controller
+>   [12750.305196] nvme 0000:01:00.0: enabling device (0000 -> 0002)
+>   [12750.305465] nvme nvme0: Removing after probe failure status: -19
+>   [12750.313188] nvme nvme0: I/O 456 QID 2 timeout, disable controller
+>   [12750.329152] nvme nvme0: I/O 457 QID 2 timeout, disable controller
+>
+> The corrected errors are supposedly recovered in hardware without
+> software intervention, and AER logs them for informational purposes.
+>
+> But it seems very likely that these corrected errors are related to
+> the nvme timeout: the first corrected errors were logged at
+> 12720.894411, nvme_io_timeout defaults to 30 seconds, and the nvme
+> timeout was at 12750.281158.
 
-The RPMh regulator driver depends upon the RPMh driver [1] and command DB
-driver [2] which are both still undergoing review.  It also depends upon
-two recent of_regulator changes: [3] and [4].
+The following patchset might help this issue:
 
-Changes since v2 [5]:
- - Replaced '_' with '-' in device tree supply property names
- - Renamed qcom_rpmh-regulator.c to be qcom-rpmh-regulator.c
- - Updated various DT property names to use "microvolt" and "microamp"
- - Moved allowed modes constraint specification out of the driver [4]
- - Replaced rpmh_client with device pointer to match new RPMh API [1]
- - Corrected drms mode threshold checking
- - Initialized voltage_selector to -EINVAL when not specified in DT
- - Added constants for PMIC regulator hardware modes
- - Corrected type sign of mode mapping tables
- - Made variable names for mode arrays plural
- - Simplified Kconfig depends on
- - Removed unnecessary constants and struct fields
- - Added some descriptive comments
+https://marc.info/?l=linux-block&m=152604179903505&w=2
 
-Changes since v1 [6]:
- - Addressed review feedback from Doug, Mark, and Stephen
- - Replaced set_voltage()/get_voltage() callbacks with set_voltage_sel()/
-   get_voltage_sel()
- - Added set_bypass()/get_bypass() callbacks for BOB pass-through mode
-   control
- - Removed top-level PMIC data structures
- - Removed initialization variables from structs and passed them as
-   function parameters
- - Removed various comments and error messages
- - Simplified mode handling
- - Refactored per-PMIC rpmh-regulator data specification
- - Simplified probe function
- - Moved header into DT patch
- - Removed redundant property listings from DT binding documentation
-
-[1]: https://lkml.org/lkml/2018/5/9/729
-[2]: https://lkml.org/lkml/2018/4/10/714
-[3]: https://patchwork.kernel.org/patch/10348629
-[4]: https://lkml.org/lkml/2018/5/11/696
-[5]: https://lkml.org/lkml/2018/4/13/687
-[6]: https://lkml.org/lkml/2018/3/16/1431
-
-David Collins (2):
-  regulator: dt-bindings: add QCOM RPMh regulator bindings
-  regulator: add QCOM RPMh regulator driver
-
- .../bindings/regulator/qcom,rpmh-regulator.txt     | 208 +++++
- drivers/regulator/Kconfig                          |   9 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/qcom-rpmh-regulator.c            | 925 +++++++++++++++++++++
- .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 +
- 5 files changed, 1179 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
- create mode 100644 drivers/regulator/qcom-rpmh-regulator.c
- create mode 100644 include/dt-bindings/regulator/qcom,rpmh-regulator.h
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--
+Ming Lei
