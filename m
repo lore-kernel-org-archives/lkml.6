@@ -1,97 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751062AbeELNlp (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 09:41:45 -0400
-Received: from mail-it0-f45.google.com ([209.85.214.45]:35803 "EHLO
-        mail-it0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750793AbeELNlo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 09:41:44 -0400
-X-Google-Smtp-Source: AB8JxZoqUpqDFkBe1Xrj8hye/jrjmIIhzGoPdkVAT428RrT/C7yIDCbVN1H/NhZkInim8Rj09rxbSg/qAy+/AobtVQo=
+        id S1751375AbeELNmd convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 09:42:33 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36105 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751270AbeELNmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 May 2018 09:42:31 -0400
+Date: Sat, 12 May 2018 15:42:23 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Boris Brezillon <boris.brezillon@bolin.com>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH] mtd: nand: Add support for reading ooblayout from
+ device tree
+Message-ID: <20180512154223.3b81c7f7@bbrezillon>
+In-Reply-To: <20180512115551.56C6E20787@mail.bootlin.com>
+References: <20180512115551.56C6E20787@mail.bootlin.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAEAjamvki9pQ_T9uymdU4dBhU=eqbOQwdXkXJQ9fHWfTV0fcRQ@mail.gmail.com>
-References: <CAEAjamvki9pQ_T9uymdU4dBhU=eqbOQwdXkXJQ9fHWfTV0fcRQ@mail.gmail.com>
-From: Kyungtae Kim <kt0755@gmail.com>
-Date: Sat, 12 May 2018 09:41:42 -0400
-Message-ID: <CAEAjamt_NAzx5tj6ZjTym1eq5ynjNoyh-1V2NXiXed+K_3ptbg@mail.gmail.com>
-Subject: Fwd: BUG: unable to handle kernel paging request in write_port
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
----------- Forwarded message ----------
-From: Kyungtae Kim <kt0755@gmail.com>
-Date: Sat, May 12, 2018 at 9:40 AM
-Subject: BUG: unable to handle kernel paging request in write_port
-To: Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org,
-linux-kernel@vger.kernel.org
-Cc: Byoungyoung Lee <lifeasageek@gmail.com>, DaeRyong Jeong
-<threeearcat@gmail.com>
+On Sat, 12 May 2018 08:55:40 -0300
+Paul Cercueil <paul@crapouillou.net> wrote:
 
+> Hi Boris,
+> 
+> Le 12 mai 2018 02:55, Boris Brezillon <boris.brezillon@bootlin.com> a écrit :
+> >
+> > Hi Paul, 
+> >
+> > On Fri, 11 May 2018 23:29:12 +0200 
+> > Paul Cercueil <paul@crapouillou.net> wrote: 
+> >  
+> > > By specifying the properties "mtd-oob-ecc" and "mtd-oob-free", it is 
+> > > now possible to specify from devicetree where the ECC data is located 
+> > > inside the OOB region.   
+> >
+> > Why would we want to do that? I mean, ECC/free regions are ECC 
+> > controller dependent (and NAND chip dependent for the OOB size part), 
+> > so there's no reason to describe it in the DT. And more importantly, 
+> > people are likely to get it wrong. 
+> >
+> > I'm curious, why do you need that?   
+> 
+> Good question.
+> 
+> The reason is that some SoCs have no ECC controller.
+> The various boards for these SoCs then all use a different layout.
 
-We report the crash:
-"BUG: unable to handle kernel paging request in write_port"
+Okay. Still think defining the layouts in the DT is a bad idea. We
+can add a jz4740 specific property to define the layout id
+(ingenic,nand-oob-layout = <layout-id>), but not a generic way to
+define custom layouts for all kind of NAND controller.
 
-This crash was found in v4.17-rc3.
+> 
+> My motivation is to get rid of this (move it to devicetree):
+> https://elixir.bootlin.com/linux/latest/source/arch/mips/jz4740/board-qi_lb60.c#L93
+> And enable the support of other boards with custom OOB layouts.
 
-C repro code:
- https://kiwi.cs.purdue.edu/static/alexkkid-fuzzer/repro-0cc6c.c
-kernel config:
- https://kiwi.cs.purdue.edu/static/alexkkid-fuzzer/kernel-config-v4.17-rc3
-
-Crash log:
-
-BUG: unable to handle kernel paging request at ffffc90001eb5f90
-PGD 1150c2067 P4D 1150c2067 PUD 1150c3067 PMD 10cd1e067 PTE 0
-Oops: 0002 [#1] SMP KASAN PTI
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 2925 Comm: syz-executor7 Not tainted 4.17.0-rc3 #2
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-RIP: 0010:outb arch/x86/include/asm/io.h:333 [inline]
-RIP: 0010:write_port+0xda/0x190 drivers/char/mem.c:640
-RSP: 0018:ffff88011095fc40 EFLAGS: 00010286
-RAX: 000000001095feaf RBX: 000000002000163f RCX: ffffffff8286ca77
-RDX: 0000000000010000 RSI: ffffc90001eb6000 RDI: ffff880114403f58
-RBP: ffff88011095fc78 R08: ffffffffa9c6c9a0 R09: 0000000000000000
-R10: ffff880115622813 R11: ffffed0022ac4503 R12: 000000000000007f
-R13: 000000000000000c R14: 0000000000000000 R15: ffff88011095feaf
-FS:  00007f40dbe46700(0000) GS:ffff880115600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90001eb5f90 CR3: 00000001117ca000 CR4: 00000000000006f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __vfs_write+0x10d/0x610 fs/read_write.c:485
- vfs_write+0x187/0x500 fs/read_write.c:549
- ksys_write+0xd4/0x1a0 fs/read_write.c:598
- __do_sys_write fs/read_write.c:610 [inline]
- __se_sys_write fs/read_write.c:607 [inline]
- __x64_sys_write+0x73/0xb0 fs/read_write.c:607
- do_syscall_64+0xa4/0x460 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4497b9
-RSP: 002b:00007f40dbe45c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f40dbe466cc RCX: 00000000004497b9
-RDX: 000000000000008c RSI: 00000000200015c0 RDI: 0000000000000013
-RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000009ee8 R14: 00000000006f0f88 R15: 00007f40dbe46700
-Code: 49 81 fc ff ff 00 00 4c 8d 6b ff 0f 87 af 00 00 00 48 85 db 0f
-84 a6 00 00 00 48 8b 5d d0 45 31 f6 eb 2c e8 59 00 b1 fe 44 89 f8 <44>
-89 66 90 49 83 c4 01 48 83 c3 01 4d 85 ed 0f 95 c2 49 81 fc
-RIP: outb arch/x86/include/asm/io.h:333 [inline] RSP: ffff88011095fc40
-RIP: write_port+0xda/0x190 drivers/char/mem.c:640 RSP: ffff88011095fc40
-CR2: ffffc90001eb5f90
----[ end trace 6917feb3b143574b ]---
-Kernel panic - not syncing: Fatal exception
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Kernel Offset: 0x27400000 from 0xffffffff81000000 (relocation range:
-0xffffffff80000000-0xffffffffbfffffff)
-
-Thanks,
-Kyungtae Kim
+Can you list the different layouts you have? I'm pretty sure there's a
+pattern. Maybe we can even deduce the layout from the page size or OOB
+size.
