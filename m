@@ -1,55 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751660AbeELSY1 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 14:24:27 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33983 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751048AbeELSYZ (ORCPT
+        id S1751894AbeELSZQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 14:25:16 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53683 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751805AbeELSZP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 14:24:25 -0400
-X-Google-Smtp-Source: AB8JxZqwoOR9GwdQ5W0Pw8Bys32+RDqE9rmkZQAD7MCJ9yoQhunMgQ0GaYyuoPS3DnhHJXnMM9Q7Og==
+        Sat, 12 May 2018 14:25:15 -0400
+X-Google-Smtp-Source: AB8JxZr+ioltbbPC0SnpiQRKycE/N2HnM4YjEIQAdVY7lu3K7j69DOanOUhwWdFZyx7jwrJA+TO2lg==
 From: Thomas Hollstegge <thomas.hollstegge@gmail.com>
 To: linux-media@vger.kernel.org
-Cc: thomas.hollstegge@gmail.com,
+Cc: thomas.hollstegge@gmail.com, Antti Palosaari <crope@iki.fi>,
         Mauro Carvalho Chehab <mchehab@kernel.org>, Sean Young <sean@mess.org>,
         Hans Verkuil <hans.verkuil@cisco.com>,
         =?UTF-8?q?Stefan=20Br=C3=BCns?= <stefan.bruens@rwth-aachen.de>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/2] media: dvbsky: Add support for MyGica T230C v2
-Date: Sat, 12 May 2018 20:23:40 +0200
-Message-Id: <1526149422-8971-1-git-send-email-thomas.hollstegge@gmail.com>
+Subject: [PATCH v3 1/2] si2168: Set TS clock mode and frequency
+Date: Sat, 12 May 2018 20:24:58 +0200
+Message-Id: <1526149500-9256-1-git-send-email-thomas.hollstegge@gmail.com>
 X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for newer revisions of the USB DVB-C/DVB-T/DVB-T2 stick MyGica
-T230C, sometimes referred to as MyGica T230C2. The device needs a fixed TS
-clock frequency of 10MHz to be able to demod some channels. This is done by
-adding two new optional configuration options for the Si2168 demod
-(ts_clock_mode and ts_clock_freq).
+Some devices require a higher TS clock frequency to demodulate some
+muxes. This adds two optional parameters to control the TS clock
+frequency mode as well as the frequency.
 
-Although there is a third TS clock mode available (AUTO_FIXED = 0x00), I chose
-not to implement it yet as I don't have a device that uses this mode.
+Signed-off-by: Thomas Hollstegge <thomas.hollstegge@gmail.com>
+---
+ drivers/media/dvb-frontends/si2168.c      | 20 +++++++++++++++++++-
+ drivers/media/dvb-frontends/si2168.h      |  8 ++++++++
+ drivers/media/dvb-frontends/si2168_priv.h |  2 ++
+ 3 files changed, 29 insertions(+), 1 deletion(-)
 
-Tested with all available DVB-T2 HEVC and DVB-C muxes in my region (Germany).
-
-Patch v3 notes: Fixed issue with other Si2168 devices. Tested with MyGica T230,
-T230C and T230C v2.
-
-Thomas Hollstegge (2):
-  si2168: Set TS clock mode and frequency
-  dvbsky: Add support for MyGica T230C v2
-
- drivers/media/dvb-frontends/si2168.c      | 20 ++++++-
- drivers/media/dvb-frontends/si2168.h      |  8 +++
- drivers/media/dvb-frontends/si2168_priv.h |  2 +
- drivers/media/usb/dvb-usb-v2/dvbsky.c     | 90 +++++++++++++++++++++++++++++++
- include/media/dvb-usb-ids.h               |  1 +
- 5 files changed, 120 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/media/dvb-frontends/si2168.c b/drivers/media/dvb-frontends/si2168.c
+index 324493e..b05e677 100644
+--- a/drivers/media/dvb-frontends/si2168.c
++++ b/drivers/media/dvb-frontends/si2168.c
+@@ -92,13 +92,15 @@ static int si2168_ts_bus_ctrl(struct dvb_frontend *fe, int acquire)
+ 	dev_dbg(&client->dev, "%s acquire: %d\n", __func__, acquire);
+ 
+ 	/* set TS_MODE property */
+-	memcpy(cmd.args, "\x14\x00\x01\x10\x10\x00", 6);
++	memcpy(cmd.args, "\x14\x00\x01\x10\x00\x00", 6);
+ 	if (acquire)
+ 		cmd.args[4] |= dev->ts_mode;
+ 	else
+ 		cmd.args[4] |= SI2168_TS_TRISTATE;
+ 	if (dev->ts_clock_gapped)
+ 		cmd.args[4] |= 0x40;
++	cmd.args[4] |= (dev->ts_clock_mode & 0x03) << 4;
++
+ 	cmd.wlen = 6;
+ 	cmd.rlen = 4;
+ 	ret = si2168_cmd_execute(client, &cmd);
+@@ -398,6 +400,18 @@ static int si2168_set_frontend(struct dvb_frontend *fe)
+ 	if (ret)
+ 		goto err;
+ 
++	/* set TS frequency */
++	if (dev->ts_clock_freq) {
++		memcpy(cmd.args, "\x14\x00\x0d\x10", 4);
++		cmd.args[4] = ((dev->ts_clock_freq / 10000) >> 0) & 0xff;
++		cmd.args[5] = ((dev->ts_clock_freq / 10000) >> 8) & 0xff;
++		cmd.wlen = 6;
++		cmd.rlen = 4;
++		ret = si2168_cmd_execute(client, &cmd);
++		if (ret)
++			goto err;
++	}
++
+ 	memcpy(cmd.args, "\x14\x00\x08\x10\xd7\x05", 6);
+ 	cmd.args[5] |= dev->ts_clock_inv ? 0x00 : 0x10;
+ 	cmd.wlen = 6;
+@@ -806,6 +820,10 @@ static int si2168_probe(struct i2c_client *client,
+ 	dev->ts_mode = config->ts_mode;
+ 	dev->ts_clock_inv = config->ts_clock_inv;
+ 	dev->ts_clock_gapped = config->ts_clock_gapped;
++	dev->ts_clock_mode = config->ts_clock_mode;
++	if (dev->ts_clock_mode == 0)
++		dev->ts_clock_mode = SI2168_TS_CLOCK_MODE_AUTO_ADAPT;
++	dev->ts_clock_freq = config->ts_clock_freq;
+ 	dev->spectral_inversion = config->spectral_inversion;
+ 
+ 	dev_info(&client->dev, "Silicon Labs Si2168-%c%d%d successfully identified\n",
+diff --git a/drivers/media/dvb-frontends/si2168.h b/drivers/media/dvb-frontends/si2168.h
+index d519edd..3f52ee8 100644
+--- a/drivers/media/dvb-frontends/si2168.h
++++ b/drivers/media/dvb-frontends/si2168.h
+@@ -47,6 +47,14 @@ struct si2168_config {
+ 	/* TS clock gapped */
+ 	bool ts_clock_gapped;
+ 
++	/* TS clock mode */
++#define SI2168_TS_CLOCK_MODE_AUTO_ADAPT	0x01
++#define SI2168_TS_CLOCK_MODE_MANUAL	0x02
++	u8 ts_clock_mode;
++
++	/* TS clock frequency (for manual mode) */
++	u32 ts_clock_freq;
++
+ 	/* Inverted spectrum */
+ 	bool spectral_inversion;
+ };
+diff --git a/drivers/media/dvb-frontends/si2168_priv.h b/drivers/media/dvb-frontends/si2168_priv.h
+index 2d362e1..8173d6c 100644
+--- a/drivers/media/dvb-frontends/si2168_priv.h
++++ b/drivers/media/dvb-frontends/si2168_priv.h
+@@ -48,6 +48,8 @@ struct si2168_dev {
+ 	u8 ts_mode;
+ 	bool ts_clock_inv;
+ 	bool ts_clock_gapped;
++	u8 ts_clock_mode;
++	u32 ts_clock_freq;
+ 	bool spectral_inversion;
+ };
+ 
 -- 
 2.7.4
