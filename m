@@ -1,51 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750879AbeELI1J (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 04:27:09 -0400
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:43290 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750739AbeELI1H (ORCPT
+        id S1751003AbeELIgE (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 04:36:04 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41559 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750722AbeELIgC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 04:27:07 -0400
-X-Google-Smtp-Source: AB8JxZo222xP+TYF8wYQfsXxWss7vr22VkTXPMj+5Cf+MzHXJCz35abuTzxlk2fOrfK3pM3djkzeV/3GPLu8r6NRmh8=
+        Sat, 12 May 2018 04:36:02 -0400
+Date: Sat, 12 May 2018 10:35:59 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Baolin Wang <baolin.wang@linaro.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, xiaotong.lu@spreadtrum.com, broonie@kernel.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
+ controller driver
+Message-ID: <20180512083559.GB8944@amd>
+References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
+ <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
+ <20180509142539.GB25131@amd>
+ <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
+ <20180510113749.GG6977@amd>
+ <6289571e-7224-ca5e-1acf-5b099be57302@gmail.com>
 MIME-Version: 1.0
-From: Weiwei Jia <harrynjit@gmail.com>
-Date: Sat, 12 May 2018 16:27:04 +0800
-Message-ID: <CA+scX6kYH8Y9_f1PLcMHG-MD9bhXgd4gGpkJanjzvwwj9L=aOQ@mail.gmail.com>
-Subject: [RFC][PATCH] KVM: APPLES can improve the performance of applications
- and virtualized systems by up to 49%
-To: linux-kernel@vger.kernel.org
-Cc: kvm@vger.kernel.org, xen-devel@lists.xenproject.org, dingxn@gmail.com,
-        jianchen.shan@gmail.com, Weiwei Jia <harryxiyou@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="v9Ux+11Zm5mwPlX6"
+Content-Disposition: inline
+In-Reply-To: <6289571e-7224-ca5e-1acf-5b099be57302@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear all,
 
-Recently, we made a few improvements on effectively utilizing Pause
-Loop Exiting (PLE) support for higher throughput on virtualized
-systems. Basically, it solves two problems: 1) how to adjust
-PLE_Window; 2) how to select virtual CPUs to schedule on VM_EXITs
-caused by PLE. Our tests with standard benchmarks show that the
-approach can improve performance by up to 49%. The approach shows
-promising performance and is easy to implement. We think that it would
-be wonderful if Linux/KVM and XEN can consider the approach.
+--v9Ux+11Zm5mwPlX6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We already have a prototype implementation based on KVM (Linux Kernel
-3.19.8). Our patch for Linux Kernel 3.19.8 and the paper describing
-our idea are available in Github repository [1][2][3]. We are pleased
-to revise our patch in order to merge it into Linux/KVM and XEN. We
-hope that you can test and adopt our approach/techniques. We are
-pleased to get some comments/suggestions on the approach and on how
-the idea can be adopted/tested by Linux/KVM and XEN. Thank you.
+Hi!
 
-[1] APPLES paper: https://github.com/sysmen/apples/tree/master/paper
-[2] APPLES patch:
-https://github.com/sysmen/apples/blob/master/patches/3.19.8-APPLES.patch
-[3] APPLES patch README:
-https://github.com/sysmen/apples/blob/master/patches/README.txt
+> >>I disagree here. We already had the same discussion at the occasion
+> >>of the patch [0] and it turned out to be a dead-end [1]. Now we have
+> >>neither the driver nor the generic pattern interface.
+> >>
+> >>We also already have some older LED class drivers that implement custom
+> >>pattern interfaces (e.g. drivers/leds/leds-lm3533.c) and the same
+> >>approach can be applied in this case.
+> >
+> >Please don't. It was mistake to implement custom pattern interfaces
+> >back then, it is still mistake now.
+>=20
+> It turned out to be really hard to cover all known pattern generator
+> implementations with generic interface. Sure, it would be nice to have
+> one, but the whole discussion around [0] only unveiled the diversity of
+> parameters to cover. And still new devices appear on the market.
+>=20
+> We would have to propose a set of pattern schemes and allow to
+> add new ones to it.
 
-Best Regards,
-Sysmen Research Group
+I believe that what I'm proposing below is close enough to universal.
+
+> >If we really need solution now, I'd recommend "pattern" file with
+> >
+> >"<delta time> <brightness> <delta time> <brightness>".
+> >
+> >In this specific case, hardware only supports patterns in this format:
+> >
+> >low_time 0 rise_time 255 high_time 255 fall_time 0
+> >
+> >so driver would simply -EINVAL on anything else.
+>=20
+> I'm fine with the pattern file, but the pattern format would have
+> to be defined in the per-driver ABI documentation. It wouldn't much
+> differ from the custom pattern approach though, unless I'm missing some
+> gain of having pattern setting in a uniformly named single sysfs file
+> (with semantics differing from driver to driver).
+
+I'm proposing "<delta time> <brightness> ..." sysfs file. It certainly
+covers this hardware, it would be enough to cover the Qualcomm Pulse
+generator (IIRC), and it would cover most uses cases of Nokia N900's
+LED.
+
+Yes, we would need to document limitations of each chip. But it should
+be easily possible to run pattern designed for Spreadtrum on N900,
+even if it would not work the other way around.
+
+(If someone really wants to run complex patterns on simple hardware,
+we can provide software emulation using same file format. I believe I
+still have that patch somewhere.)
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--v9Ux+11Zm5mwPlX6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlr2p28ACgkQMOfwapXb+vIf9gCfbc7J1DbeydXSF6VfCfDj6MY8
+6JMAoMAEpqFV5gkVpTTIJ/6wvGYtGh0s
+=FSXM
+-----END PGP SIGNATURE-----
+
+--v9Ux+11Zm5mwPlX6--
