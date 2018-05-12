@@ -1,93 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751903AbeELRpx (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 13:45:53 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:46811 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751110AbeELRpv (ORCPT
+        id S1751934AbeELRr3 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 13:47:29 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41540 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751284AbeELRr1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 13:45:51 -0400
-X-Google-Smtp-Source: AB8JxZppRegdyr5e3LqJf0AH4JjPois7Mn3kajbvhHLRdO0VTsk1sjrv4ELzG8eZIUIP3VWhn5G+TGGhGlHIQIyKtrs=
-MIME-Version: 1.0
-In-Reply-To: <20180512065724.GA19716@beast>
-References: <20180512065724.GA19716@beast>
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-Date: Sat, 12 May 2018 10:45:50 -0700
-Message-ID: <CABeXuvpdH190cc5vhiqUkjK6B3UD9Bjy_TVPD=C-kBbHTUZmug@mail.gmail.com>
-Subject: Re: [PATCH] pstore: Convert internal records to timespec64
-To: Kees Cook <keescook@chromium.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 12 May 2018 13:47:27 -0400
+X-Google-Smtp-Source: AB8JxZqU7BAfgW72jRumFxNnxIbf7jPw1O59arFgRsRIzkLd2ZWOsHciJXNhpqn9I+BsguZ+4Mrw9w==
+From: sumeet p <srplinux2008@gmail.com>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org
+Cc: rui.zhang@intel.com, edubezval@gmail.com, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, srplinux2008@gmail.com
+Subject: [PATCH V2] thermal: tegra: soctherm: add const to struct thermal_cooling_device_ops
+Date: Sat, 12 May 2018 23:17:08 +0530
+Message-Id: <1526147228-5317-1-git-send-email-srplinux2008@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- Acked-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Correct the typecast with const to struct thermal_cooling_device_ops.
+It is the last argument to the function thermal_of_cooling_device_register
+and this argument is of type const. So, declare this structure
+thermal_cooling_device_ops as constant.
 
-I will rebase the vfs series on top of this.
-I'm a little worried about merge strategy.
-Whoever is taking that series should pull in this patch as well?
-I could include it as one of the patches in the series if you prefer.
+Signed-off-by: sumeet p <srplinux2008@gmail.com>
+---
+Changes in V2:
+- Updated Signed-off-by with correct name.
 
--Deepa
+---
+ drivers/thermal/tegra/soctherm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, May 11, 2018 at 11:57 PM, Kees Cook <keescook@chromium.org> wrote:
-> This prepares pstore for converting the VFS layer to timespec64.
->
-> Cc: Deepa Dinamani <deepa.kernel@gmail.com>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  fs/pstore/inode.c      | 3 ++-
->  fs/pstore/platform.c   | 2 +-
->  include/linux/pstore.h | 2 +-
->  3 files changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-> index 5fcb845b9fec..75afe5eb0574 100644
-> --- a/fs/pstore/inode.c
-> +++ b/fs/pstore/inode.c
-> @@ -392,7 +392,8 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
->         inode->i_private = private;
->
->         if (record->time.tv_sec)
-> -               inode->i_mtime = inode->i_ctime = record->time;
-> +               inode->i_mtime = inode->i_ctime =
-> +                       timespec64_to_timespec(record->time);
->
->         d_add(dentry, inode);
->
-> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-> index dc720573fd53..c238ab8ba31d 100644
-> --- a/fs/pstore/platform.c
-> +++ b/fs/pstore/platform.c
-> @@ -328,7 +328,7 @@ void pstore_record_init(struct pstore_record *record,
->         record->psi = psinfo;
->
->         /* Report zeroed timestamp if called before timekeeping has resumed. */
-> -       record->time = ns_to_timespec(ktime_get_real_fast_ns());
-> +       record->time = ns_to_timespec64(ktime_get_real_fast_ns());
->  }
->
->  /*
-> diff --git a/include/linux/pstore.h b/include/linux/pstore.h
-> index 61f806a7fe29..a15bc4d48752 100644
-> --- a/include/linux/pstore.h
-> +++ b/include/linux/pstore.h
-> @@ -71,7 +71,7 @@ struct pstore_record {
->         struct pstore_info      *psi;
->         enum pstore_type_id     type;
->         u64                     id;
-> -       struct timespec         time;
-> +       struct timespec64       time;
->         char                    *buf;
->         ssize_t                 size;
->         ssize_t                 ecc_notice_size;
-> --
-> 2.17.0
->
->
-> --
-> Kees Cook
-> Pixel Security
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 455b58c..72da745 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -926,7 +926,7 @@ static int throt_set_cdev_state(struct thermal_cooling_device *cdev,
+ 	return 0;
+ }
+ 
+-static struct thermal_cooling_device_ops throt_cooling_ops = {
++static const struct thermal_cooling_device_ops throt_cooling_ops = {
+ 	.get_max_state = throt_get_cdev_max_state,
+ 	.get_cur_state = throt_get_cdev_cur_state,
+ 	.set_cur_state = throt_set_cdev_state,
+-- 
+2.7.4
