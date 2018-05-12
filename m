@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751969AbeELVKD (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 17:10:03 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:32897 "EHLO
+        id S1751978AbeELVKr (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 17:10:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35467 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751739AbeELVKC (ORCPT
+        with ESMTP id S1751739AbeELVKp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 17:10:02 -0400
-Date: Sat, 12 May 2018 14:09:47 -0700
-From: tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-f8b64d08dde2714c62751d18ba77f4aeceb161d3@git.kernel.org>
-Cc: hpa@zytor.com, mingo@kernel.org, suravee.suthikulpanit@amd.com,
-        linux-kernel@vger.kernel.org, bpetkov@suse.de, tglx@linutronix.de,
-        bp@suse.de
-Reply-To: suravee.suthikulpanit@amd.com, bp@suse.de, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, bpetkov@suse.de, hpa@zytor.com,
-        mingo@kernel.org
-In-Reply-To: <1524864877-111962-2-git-send-email-suravee.suthikulpanit@amd.com>
-References: <1524864877-111962-2-git-send-email-suravee.suthikulpanit@amd.com>
+        Sat, 12 May 2018 17:10:45 -0400
+Date: Sat, 12 May 2018 14:10:17 -0700
+From: tip-bot for Suravee Suthikulpanit <tipbot@zytor.com>
+Message-ID: <tip-812af433038f984fd951224e8239b09188e36a13@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        suravee.suthikulpanit@amd.com, Janakarajan.Natarajan@amd.com,
+        bp@suse.de, mingo@kernel.org, peterz@infradead.org
+Reply-To: tglx@linutronix.de, suravee.suthikulpanit@amd.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@kernel.org,
+        Janakarajan.Natarajan@amd.com, bp@suse.de
+In-Reply-To: <1524864877-111962-3-git-send-email-suravee.suthikulpanit@amd.com>
+References: <1524864877-111962-3-git-send-email-suravee.suthikulpanit@amd.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/CPU/AMD: Have smp_num_siblings and cpu_llc_id
- always be present
-Git-Commit-ID: f8b64d08dde2714c62751d18ba77f4aeceb161d3
+Subject: [tip:x86/cpu] perf/events/amd/uncore: Fix amd_uncore_llc ID to use
+ pre-defined cpu_llc_id
+Git-Commit-ID: 812af433038f984fd951224e8239b09188e36a13
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,124 +34,68 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f8b64d08dde2714c62751d18ba77f4aeceb161d3
-Gitweb:     https://git.kernel.org/tip/f8b64d08dde2714c62751d18ba77f4aeceb161d3
-Author:     Borislav Petkov <bpetkov@suse.de>
-AuthorDate: Fri, 27 Apr 2018 16:34:34 -0500
+Commit-ID:  812af433038f984fd951224e8239b09188e36a13
+Gitweb:     https://git.kernel.org/tip/812af433038f984fd951224e8239b09188e36a13
+Author:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+AuthorDate: Fri, 27 Apr 2018 16:34:35 -0500
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 6 May 2018 12:49:14 +0200
+CommitDate: Sun, 6 May 2018 12:49:15 +0200
 
-x86/CPU/AMD: Have smp_num_siblings and cpu_llc_id always be present
+perf/events/amd/uncore: Fix amd_uncore_llc ID to use pre-defined cpu_llc_id
 
-Move smp_num_siblings and cpu_llc_id to cpu/common.c so that they're
-always present as symbols and not only in the CONFIG_SMP case. Then,
-other code using them doesn't need ugly ifdeffery anymore. Get rid of
-some ifdeffery.
+Current logic iterates over CPUID Fn8000001d leafs (Cache Properties)
+to detect the last level cache, and derive the last-level cache ID.
+However, this information is already available in the cpu_llc_id.
+Therefore, make use of it instead.
 
-Signed-off-by: Borislav Petkov <bpetkov@suse.de>
 Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1524864877-111962-2-git-send-email-suravee.suthikulpanit@amd.com
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Link: http://lkml.kernel.org/r/1524864877-111962-3-git-send-email-suravee.suthikulpanit@amd.com
 
 ---
- arch/x86/include/asm/smp.h   |  1 -
- arch/x86/kernel/cpu/amd.c    | 10 +---------
- arch/x86/kernel/cpu/common.c |  7 +++++++
- arch/x86/kernel/smpboot.c    |  7 -------
- 4 files changed, 8 insertions(+), 17 deletions(-)
+ arch/x86/events/amd/uncore.c | 21 ++-------------------
+ 1 file changed, 2 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index f75bff8f9d82..547c4fe50711 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -171,7 +171,6 @@ static inline int wbinvd_on_all_cpus(void)
- 	wbinvd();
- 	return 0;
- }
--#define smp_num_siblings	1
- #endif /* CONFIG_SMP */
+diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+index f5cbbba99283..981ba5e8241b 100644
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -19,6 +19,7 @@
+ #include <asm/cpufeature.h>
+ #include <asm/perf_event.h>
+ #include <asm/msr.h>
++#include <asm/smp.h>
  
- extern unsigned disabled_cpus;
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 12bc0a1139da..a37a83809665 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -297,7 +297,6 @@ static int nearby_node(int apicid)
- }
- #endif
- 
--#ifdef CONFIG_SMP
- /*
-  * Fix up cpu_core_id for pre-F17h systems to be in the
-  * [0 .. cores_per_node - 1] range. Not really needed but
-@@ -375,7 +374,6 @@ static void amd_get_topology(struct cpuinfo_x86 *c)
- 		legacy_fixup_core_id(c);
+ #define NUM_COUNTERS_NB		4
+ #define NUM_COUNTERS_L2		4
+@@ -399,26 +400,8 @@ static int amd_uncore_cpu_starting(unsigned int cpu)
  	}
- }
--#endif
  
- /*
-  * On a AMD dual core setup the lower bits of the APIC id distinguish the cores.
-@@ -383,7 +381,6 @@ static void amd_get_topology(struct cpuinfo_x86 *c)
-  */
- static void amd_detect_cmp(struct cpuinfo_x86 *c)
- {
--#ifdef CONFIG_SMP
- 	unsigned bits;
- 	int cpu = smp_processor_id();
- 
-@@ -395,16 +392,11 @@ static void amd_detect_cmp(struct cpuinfo_x86 *c)
- 	/* use socket ID also for last level cache */
- 	per_cpu(cpu_llc_id, cpu) = c->phys_proc_id;
- 	amd_get_topology(c);
--#endif
- }
- 
- u16 amd_get_nb_id(int cpu)
- {
--	u16 id = 0;
--#ifdef CONFIG_SMP
--	id = per_cpu(cpu_llc_id, cpu);
--#endif
--	return id;
-+	return per_cpu(cpu_llc_id, cpu);
- }
- EXPORT_SYMBOL_GPL(amd_get_nb_id);
- 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 8a5b185735e1..37c7c8334a00 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -66,6 +66,13 @@ cpumask_var_t cpu_callin_mask;
- /* representing cpus for which sibling maps can be computed */
- cpumask_var_t cpu_sibling_setup_mask;
- 
-+/* Number of siblings per CPU package */
-+int smp_num_siblings = 1;
-+EXPORT_SYMBOL(smp_num_siblings);
-+
-+/* Last level cache ID of each logical CPU */
-+DEFINE_PER_CPU_READ_MOSTLY(u16, cpu_llc_id) = BAD_APICID;
-+
- /* correctly size the local cpu masks */
- void __init setup_cpu_local_masks(void)
- {
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index ff99e2b6fc54..91d48f3eeda8 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -78,13 +78,6 @@
- #include <asm/misc.h>
- #include <asm/qspinlock.h>
- 
--/* Number of siblings per CPU package */
--int smp_num_siblings = 1;
--EXPORT_SYMBOL(smp_num_siblings);
+ 	if (amd_uncore_llc) {
+-		unsigned int apicid = cpu_data(cpu).apicid;
+-		unsigned int nshared, subleaf, prev_eax = 0;
 -
--/* Last level cache ID of each logical CPU */
--DEFINE_PER_CPU_READ_MOSTLY(u16, cpu_llc_id) = BAD_APICID;
+ 		uncore = *per_cpu_ptr(amd_uncore_llc, cpu);
+-		/*
+-		 * Iterate over Cache Topology Definition leaves until no
+-		 * more cache descriptions are available.
+-		 */
+-		for (subleaf = 0; subleaf < 5; subleaf++) {
+-			cpuid_count(0x8000001d, subleaf, &eax, &ebx, &ecx, &edx);
 -
- /* representing HT siblings of each logical CPU */
- DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_sibling_map);
- EXPORT_PER_CPU_SYMBOL(cpu_sibling_map);
+-			/* EAX[0:4] gives type of cache */
+-			if (!(eax & 0x1f))
+-				break;
+-
+-			prev_eax = eax;
+-		}
+-		nshared = ((prev_eax >> 14) & 0xfff) + 1;
+-
+-		uncore->id = apicid - (apicid % nshared);
++		uncore->id = per_cpu(cpu_llc_id, cpu);
+ 
+ 		uncore = amd_uncore_find_online_sibling(uncore, amd_uncore_llc);
+ 		*per_cpu_ptr(amd_uncore_llc, cpu) = uncore;
