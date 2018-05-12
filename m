@@ -1,136 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750846AbeELF4B (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 01:56:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33037 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750722AbeELF4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 01:56:00 -0400
-Date: Sat, 12 May 2018 07:55:56 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bolin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: nand: Add support for reading ooblayout from
- device tree
-Message-ID: <20180512075556.2e590e06@bbrezillon>
-In-Reply-To: <20180511212912.1426-1-paul@crapouillou.net>
-References: <20180511212912.1426-1-paul@crapouillou.net>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1750842AbeELGD2 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 02:03:28 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:32778 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750731AbeELGD1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 May 2018 02:03:27 -0400
+X-Google-Smtp-Source: AB8JxZqYo5utW4AtGzLvxEl0D8w9sRagKZL2MTtvnGna1VqFfo42biIZoC4n3Lck58r6tY9xjsoLPQ==
+Date: Fri, 11 May 2018 23:03:25 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel.opensrc@gmail.com, torvalds@linux-foundation.org,
+        npiggin@gmail.com
+Subject: Re: [tip/core/rcu,16/21] rcu: Add funnel locking to
+ rcu_start_this_gp()
+Message-ID: <20180512060325.GA53808@joelaf.mtv.corp.google.com>
+References: <1524452624-27589-16-git-send-email-paulmck@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524452624-27589-16-git-send-email-paulmck@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
-
-On Fri, 11 May 2018 23:29:12 +0200
-Paul Cercueil <paul@crapouillou.net> wrote:
-
-> By specifying the properties "mtd-oob-ecc" and "mtd-oob-free", it is
-> now possible to specify from devicetree where the ECC data is located
-> inside the OOB region.
-
-Why would we want to do that? I mean, ECC/free regions are ECC
-controller dependent (and NAND chip dependent for the OOB size part),
-so there's no reason to describe it in the DT. And more importantly,
-people are likely to get it wrong.
-
-I'm curious, why do you need that?
-
-Regards,
-
-Boris
-
+On Sun, Apr 22, 2018 at 08:03:39PM -0700, Paul E. McKenney wrote:
+> The rcu_start_this_gp() function had a simple form of funnel locking that
+> used only the leaves and root of the rcu_node tree, which is fine for
+> systems with only a few hundred CPUs, but sub-optimal for systems having
+> thousands of CPUs.  This commit therefore adds full-tree funnel locking.
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> This variant of funnel locking is unusual in the following ways:
+> 
+> 1.	The leaf-level rcu_node structure's ->lock is held throughout.
+> 	Other funnel-locking implementations drop the leaf-level lock
+> 	before progressing to the next level of the tree.
+> 
+> 2.	Funnel locking can be started at the root, which is convenient
+> 	for code that already holds the root rcu_node structure's ->lock.
+> 	Other funnel-locking implementations start at the leaves.
+> 
+> 3.	If an rcu_node structure other than the initial one believes
+> 	that a grace period is in progress, it is not necessary to
+> 	go further up the tree.  This is because grace-period cleanup
+> 	scans the full tree, so that marking the need for a subsequent
+> 	grace period anywhere in the tree suffices -- but only if
+> 	a grace period is currently in progress.
+> 
+> 4.	It is possible that the RCU grace-period kthread has not yet
+> 	started, and this case must be handled appropriately.
+> 
+> However, the general approach of using a tree to control lock contention
+> is still in place.
+> 
+> Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 > ---
->  Documentation/devicetree/bindings/mtd/nand.txt |  7 +++++
->  drivers/mtd/nand/raw/nand_base.c               | 42 ++++++++++++++++++++++++++
->  2 files changed, 49 insertions(+)
+>  kernel/rcu/tree.c | 92 +++++++++++++++++++++----------------------------------
+>  1 file changed, 35 insertions(+), 57 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
-> index 8bb11d809429..118ea92787cb 100644
-> --- a/Documentation/devicetree/bindings/mtd/nand.txt
-> +++ b/Documentation/devicetree/bindings/mtd/nand.txt
-> @@ -45,6 +45,13 @@ Optional NAND chip properties:
->  		     as reliable as possible.
->  - nand-rb: shall contain the native Ready/Busy ids.
->  
-> +- nand-oob-ecc: <offset, length> couples of integers, specifying the offset
-> +		     and length of the ECC data in the OOB region. There can be more
-> +		     than one couple.
-> +- nand-oob-free: <offset, length> couples of integers, specifying the offset
-> +		     and length of a free-to-use area in the OOB region. There can be
-> +		     more than one couple.
-> +
->  The ECC strength and ECC step size properties define the correction capability
->  of a controller. Together, they say a controller can correct "{strength} bit
->  errors per {size} bytes".
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index 72f3a89da513..c905531effb0 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -213,6 +213,43 @@ static const struct mtd_ooblayout_ops nand_ooblayout_lp_hamming_ops = {
->  	.free = nand_ooblayout_free_lp_hamming,
->  };
->  
-> +static int nand_oob_of(struct device_node *np, int section,
-> +		       struct mtd_oob_region *oobregion, const char *prop)
-> +{
-> +	int ret = of_property_read_u32_index(np, prop,
-> +			section * 2, &oobregion->offset);
-> +	if (ret == -EOVERFLOW)
-> +		return -ERANGE; /* We're done */
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = of_property_read_u32_index(np, prop,
-> +			section * 2 + 1, &oobregion->length);
-> +	if (ret == -EOVERFLOW)
-> +		return -EINVAL; /* We must have an even number of integers */
-> +
-> +	return ret;
-> +}
-> +
-> +static int nand_ooblayout_ecc_of(struct mtd_info *mtd, int section,
-> +				 struct mtd_oob_region *oobregion)
-> +{
-> +	return nand_oob_of(mtd->dev.of_node, section,
-> +			oobregion, "nand-oob-ecc");
-> +}
-> +
-> +static int nand_ooblayout_free_of(struct mtd_info *mtd, int section,
-> +				 struct mtd_oob_region *oobregion)
-> +{
-> +	return nand_oob_of(mtd->dev.of_node, section,
-> +			oobregion, "nand-oob-free");
-> +}
-> +
-> +static const struct mtd_ooblayout_ops nand_ooblayout_of_ops = {
-> +	.ecc = nand_ooblayout_ecc_of,
-> +	.free = nand_ooblayout_free_of,
-> +};
-> +
->  static int check_offs_len(struct mtd_info *mtd,
->  					loff_t ofs, uint64_t len)
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 94519c7d552f..d3c769502929 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -1682,74 +1682,52 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
 >  {
-> @@ -5843,6 +5880,11 @@ static int nand_dt_init(struct nand_chip *chip)
->  	if (of_property_read_bool(dn, "nand-ecc-maximize"))
->  		chip->ecc.options |= NAND_ECC_MAXIMIZE;
+>  	bool ret = false;
+>  	struct rcu_state *rsp = rdp->rsp;
+> -	struct rcu_node *rnp_root = rcu_get_root(rsp);
+> -
+> -	raw_lockdep_assert_held_rcu_node(rnp);
+> -
+> -	/* If the specified GP is already known needed, return to caller. */
+> -	trace_rcu_this_gp(rnp, rdp, c, TPS("Startleaf"));
+> -	if (need_future_gp_element(rnp, c)) {
+> -		trace_rcu_this_gp(rnp, rdp, c, TPS("Prestartleaf"));
+> -		goto out;
+> -	}
+> +	struct rcu_node *rnp_root;
 >  
-> +	if (!chip->mtd.ooblayout &&
-> +				of_property_read_bool(dn, "nand-oob-ecc") &&
-> +				of_property_read_bool(dn, "nand-oob-free"))
-> +		chip->mtd.ooblayout = &nand_ooblayout_of_ops;
-> +
->  	return 0;
->  }
+>  	/*
+> -	 * If this rcu_node structure believes that a grace period is in
+> -	 * progress, then we must wait for the one following, which is in
+> -	 * "c".  Because our request will be noticed at the end of the
+> -	 * current grace period, we don't need to explicitly start one.
+> +	 * Use funnel locking to either acquire the root rcu_node
+> +	 * structure's lock or bail out if the need for this grace period
+> +	 * has already been recorded -- or has already started.  If there
+> +	 * is already a grace period in progress in a non-leaf node, no
+> +	 * recording is needed because the end of the grace period will
+> +	 * scan the leaf rcu_node structures.  Note that rnp->lock must
+> +	 * not be released.
+>  	 */
+> -	if (rnp->gpnum != rnp->completed) {
+> -		need_future_gp_element(rnp, c) = true;
+> -		trace_rcu_this_gp(rnp, rdp, c, TPS("Startedleaf"));
+> -		goto out;
+
+Referring to the above negative diff as [1] (which I wanted to refer to later
+in this message..)
+
+> +	raw_lockdep_assert_held_rcu_node(rnp);
+> +	trace_rcu_this_gp(rnp, rdp, c, TPS("Startleaf"));
+> +	for (rnp_root = rnp; 1; rnp_root = rnp_root->parent) {
+> +		if (rnp_root != rnp)
+> +			raw_spin_lock_rcu_node(rnp_root);
+> +		if (need_future_gp_element(rnp_root, c) ||
+> +		    ULONG_CMP_GE(rnp_root->gpnum, c) ||
+> +		    (rnp != rnp_root &&
+> +		     rnp_root->gpnum != rnp_root->completed)) {
+> +			trace_rcu_this_gp(rnp_root, rdp, c, TPS("Prestarted"));
+> +			goto unlock_out;
+
+I was a bit confused about the implementation of the above for loop:
+
+In the previous code (which I refer to in the negative diff [1]), we were
+checking the leaf, and if the leaf believed that RCU was not idle, then we
+were marking the need for the future GP and quitting this function. In the
+new code, it seems like even if the leaf believes RCU is not-idle, we still
+go all the way up the tree.
+
+I think the big change is, in the above new for loop, we either bail of if a
+future GP need was already marked by an intermediate node, or we go marking
+up the whole tree about the need for one.
+
+If a leaf believes RCU is not idle, can we not just mark the future GP need
+like before and return? It seems we would otherwise increase the lock
+contention since now we lock intermediate nodes and then finally even the
+root. Where as before we were not doing that if the leaf believed RCU was not
+idle.
+
+I am sorry if I missed something obvious.
+
+The other thing is we now don't have the 'Startedleaf' trace like we did
+before. I sent a patch to remove it, but I think the removal of that is
+somehow connected to what I was just talking about.. and I was thinking if we
+should really remove it. Should we add the case for checking leaves only back
+or is that a bad thing to do?
+
+thanks,
+
+- Joel
+
+
+> +		}
+> +		need_future_gp_element(rnp_root, c) = true;
+> +		if (rnp_root != rnp && rnp_root->parent != NULL)
+> +			raw_spin_unlock_rcu_node(rnp_root);
+> +		if (!rnp_root->parent)
+> +			break;  /* At root, and perhaps also leaf. */
+>  	}
 >  
+
+[...]
