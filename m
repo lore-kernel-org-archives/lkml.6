@@ -1,70 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751150AbeELLOI (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 07:14:08 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:47205 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeELLOG (ORCPT
+        id S1751375AbeELLPw (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 07:15:52 -0400
+Received: from 4.mo173.mail-out.ovh.net ([46.105.34.219]:53956 "EHLO
+        4.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750950AbeELLPv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 07:14:06 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
-Date: Sat, 12 May 2018 13:13:36 +0200
-Message-ID: <1937901.oyadCYFYNo@aspire.rjw.lan>
-In-Reply-To: <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de> <20180305102524.5905-4-o.rempel@pengutronix.de> <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
+        Sat, 12 May 2018 07:15:51 -0400
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Sat, 12 May 2018 12:00:07 +0200
+From: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+To: =?UTF-8?Q?Michael_B=C3=BCsch?= <m@bues.ch>
+Cc: Kalle Valo <kvalo@codeaurora.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>,
+        Matt Redfearn <matt.redfearn@mips.com>, linux-wireless@vger.kernel.org,
+        Hauke Mehrtens <hauke@hauke-m.de>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 1/2] Revert "ssb: Prevent build of PCI host features in
+ module"
+In-Reply-To: <20180512100136.1d26e6d3@wiggum>
+References: <20180511091715.1989-1-zajec5@gmail.com>
+ <CACna6ry-91oR1u697NRymLsN28fnnHDp9OQrdiVwA7A3KTV1fg@mail.gmail.com>
+ <87bmdmcxf6.fsf@codeaurora.org>
+ <727571cb-5d1f-2d99-b050-979edd02106f@lwfinger.net>
+ <877eo9b9d9.fsf@codeaurora.org> <20180512100136.1d26e6d3@wiggum>
+Message-ID: <2a401060858a337f84039eddef4b3b87@milecki.pl>
+User-Agent: Roundcube Webmail/1.3.6
+X-Originating-IP: 194.187.74.233
+X-Webmail-UserID: rafal@milecki.pl
+X-Ovh-Tracer-Id: 13488562359336799861
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedthedrvddugddvgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, May 4, 2018 8:50:52 PM CEST Oleksij Rempel wrote:
-> Hallo Andrew,
-> I need your ACK or NACK for this patch.
+On 2018-05-12 10:01, Michael Büsch wrote:
+> On Sat, 12 May 2018 10:50:42 +0300
+> Kalle Valo <kvalo@codeaurora.org> wrote:
 > 
-> This function is used to configure external PMIC to interpret
-> signal which will be triggered by pm_power_off as power off.
-> Since same signal can be used for stand by, I linked PMIC configuration
-> with pm_power_off_prepare to avoid possible conflicts.
+>> Larry Finger <Larry.Finger@lwfinger.net> writes:
+>> 
+>> > On 05/11/2018 05:13 AM, Kalle Valo wrote:
+>> >> Rafał Miłecki <zajec5@gmail.com> writes:
+>> >>
+>> >>> On 11 May 2018 at 11:17, Rafał Miłecki <zajec5@gmail.com> wrote:
+>>  [...]
+>> >>>
+>> >>> As these patches fix regression/build error, I believe both should get
+>> >>> into 4.17.
+>> >>
+>> >> How much confidence do we have that we don't need to end up reverting
+>> >> patch 2 as well? I rather be pushing patch 2 to 4.18 so that there's
+>> >> more time for testing and waiting for feedback.
+>> >
+>> > Although I do not have the hardware to test the builds, I worked
+>> > closely with the OP in the bug at b.r.c noted above. From that effort,
+>> > it became clear what configuration variables were missing to cause the
+>> > x86 failures. Patch 2 satisfies the requirement, and prevents the
+>> > build problems found by the MIPS users. Both patches are needed in
+>> > 4.17.
+>> 
+>> And I assume Michael is ok with this approach as well as I haven't 
+>> heard
+>> from him. I'll then push both of these to 4.17.
+>> 
 > 
-> On Mon, Mar 05, 2018 at 11:25:20AM +0100, Oleksij Rempel wrote:
-> > Export pm_power_off_prepare. It is needed to implement power off on
-> > Freescale/NXP iMX6 based boards with external power management
-> > integrated circuit (PMIC).
-> > 
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > ---
-> >  kernel/reboot.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/kernel/reboot.c b/kernel/reboot.c
-> > index e4ced883d8de..350be6baa60d 100644
-> > --- a/kernel/reboot.c
-> > +++ b/kernel/reboot.c
-> > @@ -49,6 +49,7 @@ int reboot_force;
-> >   */
-> >  
-> >  void (*pm_power_off_prepare)(void);
-> > +EXPORT_SYMBOL(pm_power_off_prepare);
+> Yes, I'm OK with the patch, if we have a third patch that cleans up the
+> PCI_DRIVERS_LEGACY dependency by moving it to SSB_PCICORE_HOSTMODE
+> where it belongs. (This doesn't need to go into the stable tree.)
+> We currently implicitly get that via dependency chain, so this is OK
+> for now as-is.
 
-Why not EXPORT_SYMBOL_GPL() ?
-
-> >  
-> >  /**
-> >   *	emergency_restart - reboot the system
-> 
-> 
+I'm planning to handle PCI_DRIVERS_LEGACY cleanup once my patches hit
+net-next.git and then wireless-drivers-next.git. It's to avoid
+conflicts.
