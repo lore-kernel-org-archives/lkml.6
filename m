@@ -1,43 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751129AbeELQEF (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 12:04:05 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:40957 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750835AbeELQEE (ORCPT
+        id S1751226AbeELQKX (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 12:10:23 -0400
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:34089 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750756AbeELQKV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 12:04:04 -0400
-X-Google-Smtp-Source: AB8JxZq+A4AmCUINwliIta16XGxnhqsC3SYOArDpoCI+JXFS4hiJD7I8k5k0yKZ2HtrgCs/0Y3cxzqgXbKYUokaIDug=
+        Sat, 12 May 2018 12:10:21 -0400
+X-Google-Smtp-Source: AB8JxZpLycfUIFKnSbCFkN+EoYEYaTe3sZN4FiO765r1M6ynISQfJwPkEPP2hwcqkfsSlmfGTZq+yw==
+Subject: Re: [RFC: Coding Style] Best way to split a long function declaration
+ with modifiers
+To: Joe Perches <joe@perches.com>, Jonathan Corbet <corbet@lwn.net>,
+        linux-kernel@vger.kernel.org
+References: <4fdc0980-d0af-3a02-02e7-0beed8ba05e2@gmail.com>
+ <2d0127b079b8c9547519ee8c38a42042ad946d50.camel@perches.com>
+From: Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <79c58d1a-5d30-e3be-b7ad-c561f81d7b16@gmail.com>
+Date: Sat, 12 May 2018 19:10:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sat, 12 May 2018 09:03:42 -0700
-Message-ID: <CAADnVQKVEmD4RrcTAiuMn-uua5TP0N-buvRHXq6Mgp1ZeF=G_Q@mail.gmail.com>
-Subject: Re: [PATCH bpf v3] x86/cpufeature: bpf hack for clang not supporting
- asm goto
-To: Borislav Petkov <bp@alien8.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, Yonghong Song <yhs@fb.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexei Starovoitov <ast@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <2d0127b079b8c9547519ee8c38a42042ad946d50.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 10:58 AM, Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
-> I see no option, but to fix the kernel.
-> Regardless whether it's called user space breakage or kernel breakage.
+On 12/05/18 18:41, Joe Perches wrote:
 
-Peter,
+>> I personally like more the former, not to mention that it uses also one
+>> line less, but it seems less common in the sources.
+>> The coding style references do not seem to say anything explicit about
+>> which style to prefer.
 
-could you please ack the patch or better yet take it into tip tree
-and send to Linus asap ?
-rc5 is almost here and we didn't have full test coverage
-for more than a month due to this issue.
+thank you, I could provide a patch to the docs for this case, if it's 
+not considered too much of a corner case.
 
-Thanks
+--
+igor
