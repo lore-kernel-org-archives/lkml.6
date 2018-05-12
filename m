@@ -1,102 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751805AbeELSao (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 14:30:44 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:33148 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751110AbeELSam (ORCPT
+        id S1751855AbeELScM (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 14:32:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53418 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751096AbeELScL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 14:30:42 -0400
-Date: Sat, 12 May 2018 20:30:29 +0200
-From: Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH] mtd: nand: Add support for reading ooblayout from device
- tree
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        David Woodhouse <dwmw2@infradead.org>, linux-mtd@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Boris Brezillon <boris.brezillon@bolin.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Message-Id: <1526149829.1594.1@smtp.crapouillou.net>
-In-Reply-To: <20180512200219.6ded51a6@bbrezillon>
-References: <20180512115551.56C6E20787@mail.bootlin.com>
-        <20180512154223.3b81c7f7@bbrezillon>
-        <1526135906.4971.0@smtp.crapouillou.net>
-        <20180512170034.12779313@bbrezillon>
-        <1526146969.1594.0@smtp.crapouillou.net>
-        <20180512200219.6ded51a6@bbrezillon>
+        Sat, 12 May 2018 14:32:11 -0400
+Date: Sat, 12 May 2018 11:32:07 -0700
+From: Darren Hart <dvhart@infradead.org>
+To: kbuild test robot <lkp@intel.com>
+Cc: Mario Limonciello <mario.limonciello@dell.com>, kbuild-all@01.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: drivers/platform/x86/dell-smbios-smm.c:99: undefined reference
+ to `dcdbas_smi_request'
+Message-ID: <20180512183207.GA5102@fedora>
+References: <201805121703.jgrY5zId%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201805121703.jgrY5zId%fengguang.wu@intel.com>
+User-Agent: Mutt/1.8.0 (2017-02-23)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4CIUpR9020490
 
-
-
-Le sam. 12 mai 2018 à 20:02, Boris Brezillon 
-<boris.brezillon@bootlin.com> a écrit :
-> On Sat, 12 May 2018 19:42:49 +0200
-> Paul Cercueil <paul@crapouillou.net> wrote:
+On Sat, May 12, 2018 at 05:28:05PM +0800, kbuild test robot wrote:
+> Hi Mario,
 > 
->>  >>  >>  My motivation is to get rid of this (move it to devicetree):
->>  >>  >>
->>  >>  >>
->>  >> 
->> https://elixir.bootlin.com/linux/latest/source/arch/mips/jz4740/board-qi_lb60.c#L93
->>  >>  >>  And enable the support of other boards with custom OOB 
->> layouts.
->>  >>  >
->>  >>  > Can you list the different layouts you have? I'm pretty sure
->>  >> there's a
->>  >>  > pattern. Maybe we can even deduce the layout from the page 
->> size
->>  >> or OOB
->>  >>  > size.
->>  >>
->>  >>  This is the other layout I have for another ingenic device:
->>  >>
->>  >> 
->> http://projects.qi-hardware.com/index.php/p/qi-kernel/source/tree/od-2011-09-18/arch/mips/jz4740/board-a320.c#L125
->>  >>
->>  >>  Page size and OOB size are the same between these two devices.
->>  >
->>  > Indeed. Do you know if there are other kind of layouts in the 
->> wild?
->> 
->>  I'm getting a new board in a few weeks, I'll be able to check that 
->> out.
->> 
->>  > Note that <layout-id> can be a string, so if each each board is
->>  > defining its own layout, you could specify the board name here.
->>  > Otherwise, if you just have those 2 patterns, you can just name 
->> them
->>  > "contiguous" and "interleaved".
->> 
->>  I don't like the idea of adding board-specific data inside the 
->> driver...
->>  I'd prefer to use the method I used in this patch, but inside the
->>  jz4740-nand driver, if you're OK with it.
+> FYI, the error/warning still remains.
 > 
-> Please don't. Encoding such detailed description in the DT has almost
-> always proven to be poor choice. Also, people are likely to get it
-> wrong, and then you'll have to fix all DTs, while, with a single 
-> unique
-> ID representing the layout, you can
-> - re-use existing layouts easily without having to describe everything
->   again in the DT
-> - fix the driver without getting in trouble with people who claim
->   that DT is a stable ABI and don't want to update their DT
-> 
-> So, please just pick user-friendly IDs and add layout definitions in
-> the driver. If you don't want to leak board info in the driver, then
-> don't name the layout with the board name. BTW, I still hope you'll 
-> only
-> have 2 kind of layouts (contiguous and interleaved).
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   f0ab773f5c96c29a5227234c4b5a820f5591b74d
+> commit: 25d47027e1003546bfd8964b4423cb39bc2d53e9 platform/x86: dell-smbios: Link all dell-smbios-* modules together
+> date:   9 weeks ago
+> config: x86_64-randconfig-s5-05121617 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+> reproduce:
+>         git checkout 25d47027e1003546bfd8964b4423cb39bc2d53e9
 
-Alright. Thanks for the insights.
+This failure:
 
--Paul
+$ zcat config.gz | grep DCDBAS
+CONFIG_DCDBAS=m            <----------
+
+$ zcat config.gz | grep SMBIOS
+CONFIG_DELL_SMBIOS=y       <----------
+ddCONFIG_DELL_SMBIOS_WMI=y
+CONFIG_DELL_SMBIOS_SMM=y   <----------
+
+Is no longer possible as of:
+
+cc69c88 platform/x86: dell-smbios: Resolve dependency error on DCDBAS
+
++#
++# If the DELL_SMBIOS_SMM feature is enabled, the DELL_SMBIOS driver
++# becomes dependent on the DCDBAS driver. The "depends" line prevents a
++# configuration where DELL_SMBIOS=y while DCDBAS=m.
++#
+ config DELL_SMBIOS
+        tristate "Dell SMBIOS driver"
++       depends on DCDBAS || DCDBAS=n
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
