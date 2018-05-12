@@ -1,51 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751293AbeELQYp (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 12:24:45 -0400
-Received: from smtprelay0169.hostedemail.com ([216.40.44.169]:40061 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750854AbeELQYo (ORCPT
+        id S1751379AbeELRBG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 13:01:06 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:44296 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751010AbeELRBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 12:24:44 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:541:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2110:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3871:3872:3873:4321:5007:7514:10004:10400:10848:11232:11658:11914:12296:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:14721:21080:21627:30054:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: cloth77_2932b06e6052e
-X-Filterd-Recvd-Size: 1623
-Message-ID: <f7cbb08dded668f07401276266689933f31dd23d.camel@perches.com>
-Subject: Re: [RFC: Coding Style] Best way to split a long function
- declaration with modifiers
-From: Joe Perches <joe@perches.com>
-To: "igor.stoppa@gmail.com" <igor.stoppa@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
-Date: Sat, 12 May 2018 09:24:41 -0700
-In-Reply-To: <CAH2bzCT0BhTy6-hTkaevt1VyYaZpq=AvF6cRpPHs=tzzU76twg@mail.gmail.com>
-References: <4fdc0980-d0af-3a02-02e7-0beed8ba05e2@gmail.com>
-         <2d0127b079b8c9547519ee8c38a42042ad946d50.camel@perches.com>
-         <CAH2bzCT0BhTy6-hTkaevt1VyYaZpq=AvF6cRpPHs=tzzU76twg@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 12 May 2018 13:01:03 -0400
+X-Google-Smtp-Source: AB8JxZo5OxTzb/Xhe1GutNzxHULBl3GS46qs0wfjR5pwBt6al0Ud1bs27nnooqRTUeAgPAMeyyEpKFw83SdNq8y598OXLAGlhlEA
+MIME-Version: 1.0
+Date: Sat, 12 May 2018 10:01:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008fa9d3056c053291@google.com>
+Subject: general protection fault in kernfs_kill_sb (2)
+From: syzbot <syzbot+481ad819c717f6b78df9@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-05-12 at 19:07 +0300, igor.stoppa@gmail.com wrote:
-> On 12 May 2018 at 18:41, Joe Perches <joe@perches.com> wrote:
-> 
-> > 
-> > I think the first style should be preferred when the
-> > combined character length of <type> <function_name> is
-> > relatively long.
-> > 
-> 
-> thank you, I could provide a patch to the docs for this case, if it's not
-> considered too much of a corner case.
+Hello,
 
-I think it should not considered anything like a mandate.
+syzbot found the following crash on:
 
-Perhaps it could be described as an optional/possible style
-but perhaps as well it's not necessary as coding_style for
-this does not have to be rigidly specified.
+HEAD commit:    f0ab773f5c96 Merge branch 'akpm' (patches from Andrew)
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=140ce817800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fcce42b221691ff9
+dashboard link: https://syzkaller.appspot.com/bug?extid=481ad819c717f6b78df9
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=15078e97800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12bf3697800000
 
-cheers, Joe
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+481ad819c717f6b78df9@syzkaller.appspotmail.com
+
+RBP: 00007ffc558bda60 R08: 0000000000000000 R09: 0000000300000000
+R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+R13: 0000000000000004 R14: 0000000000001380 R15: 00007ffc558bd2f8
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4540 Comm: syz-executor884 Not tainted 4.17.0-rc4+ #43
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__list_del_entry_valid+0x84/0xf3 lib/list_debug.c:51
+RSP: 0018:ffff8801aca6f860 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff8801ac528498 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8801ac5284a0
+RBP: ffff8801aca6f878 R08: fffffbfff11cc855 R09: fffffbfff11cc854
+R10: ffff8801aca6f878 R11: ffffffff88e642a7 R12: 0000000000000000
+R13: 0000000000000000 R14: ffff8801aca6f908 R15: ffff8801ac528498
+FS:  0000000000f86880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004b6f3c CR3: 00000001d9730000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __list_del_entry include/linux/list.h:117 [inline]
+  list_del include/linux/list.h:125 [inline]
+  kernfs_kill_sb+0xa0/0x350 fs/kernfs/mount.c:361
+  sysfs_kill_sb+0x22/0x40 fs/sysfs/mount.c:50
+  deactivate_locked_super+0x97/0x100 fs/super.c:316
+  kernfs_mount_ns+0x753/0x8e0 fs/kernfs/mount.c:335
+  sysfs_mount+0xdf/0x200 fs/sysfs/mount.c:36
+  mount_fs+0xae/0x328 fs/super.c:1267
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2518 [inline]
+  do_mount+0x564/0x3070 fs/namespace.c:2848
+  ksys_mount+0x12d/0x140 fs/namespace.c:3064
+  __do_sys_mount fs/namespace.c:3078 [inline]
+  __se_sys_mount fs/namespace.c:3075 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4426a9
+RSP: 002b:00007ffc558bd1b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004426a9
+RDX: 00000000200000c0 RSI: 0000000020000080 RDI: 0000000020000040
+RBP: 00007ffc558bda60 R08: 0000000000000000 R09: 0000000300000000
+R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+R13: 0000000000000004 R14: 0000000000001380 R15: 00007ffc558bd2f8
+Code: c5 0f 84 cc 00 00 00 48 b8 00 02 00 00 00 00 ad de 49 39 c4 0f 84 a5  
+00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00  
+75 5f 49 8b 14 24 48 39 da 0f 85 ba 00 00 00 48 b8
+RIP: __list_del_entry_valid+0x84/0xf3 lib/list_debug.c:51 RSP:  
+ffff8801aca6f860
+---[ end trace d148f307a34e229f ]---
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
