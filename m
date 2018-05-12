@@ -1,125 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751953AbeELUa3 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 16:30:29 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:47567 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751847AbeELUa1 (ORCPT
+        id S1751887AbeELUp4 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 16:45:56 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37169 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751270AbeELUpx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 16:30:27 -0400
-Date: Sat, 12 May 2018 22:30:02 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-cc: Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
-        Yonghong Song <yhs@fb.com>, Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexei Starovoitov <ast@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>
-Subject: Re: [PATCH bpf v3] x86/cpufeature: bpf hack for clang not supporting
- asm goto
-In-Reply-To: <CAADnVQKVEmD4RrcTAiuMn-uua5TP0N-buvRHXq6Mgp1ZeF=G_Q@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1805122110230.1582@nanos.tec.linutronix.de>
-References: <CAADnVQKVEmD4RrcTAiuMn-uua5TP0N-buvRHXq6Mgp1ZeF=G_Q@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 12 May 2018 16:45:53 -0400
+X-Google-Smtp-Source: AB8JxZoBhgly9E4aVxEe1lYauN4cP5WE36TMM0Tlwf1Bz+/0n4G2sThpCtdEI6D+3FP2W3eB7Zz9pg==
+Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
+ controller driver
+To: Pavel Machek <pavel@ucw.cz>
+References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
+ <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
+ <20180509142539.GB25131@amd> <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
+ <20180510113749.GG6977@amd> <6289571e-7224-ca5e-1acf-5b099be57302@gmail.com>
+ <20180512083559.GB8944@amd>
+Cc: Baolin Wang <baolin.wang@linaro.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, xiaotong.lu@spreadtrum.com, broonie@kernel.org,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <7c9d5eec-4e6b-9b26-470c-f8002cca5f27@gmail.com>
+Date: Sat, 12 May 2018 22:44:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20180512083559.GB8944@amd>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 12 May 2018, Alexei Starovoitov wrote:
-> On Thu, May 10, 2018 at 10:58 AM, Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> > I see no option, but to fix the kernel.
-> > Regardless whether it's called user space breakage or kernel breakage.
+Hi Pavel,
 
-There is a big difference. If you are abusing a kernel internal header in a
-user space tool, then there is absolutely ZERO excuse for requesting that
-the header in question has to be modified.
+On 05/12/2018 10:35 AM, Pavel Machek wrote:
+> Hi!
+>
+>>>> I disagree here. We already had the same discussion at the occasion
+>>>> of the patch [0] and it turned out to be a dead-end [1]. Now we have
+>>>> neither the driver nor the generic pattern interface.
+>>>>
+>>>> We also already have some older LED class drivers that implement custom
+>>>> pattern interfaces (e.g. drivers/leds/leds-lm3533.c) and the same
+>>>> approach can be applied in this case.
+>>>
+>>> Please don't. It was mistake to implement custom pattern interfaces
+>>> back then, it is still mistake now.
+>>
+>> It turned out to be really hard to cover all known pattern generator
+>> implementations with generic interface. Sure, it would be nice to have
+>> one, but the whole discussion around [0] only unveiled the diversity of
+>> parameters to cover. And still new devices appear on the market.
+>>
+>> We would have to propose a set of pattern schemes and allow to
+>> add new ones to it.
+>
+> I believe that what I'm proposing below is close enough to universal.
+>
+>>> If we really need solution now, I'd recommend "pattern" file with
+>>>
+>>> "<delta time> <brightness> <delta time> <brightness>".
+>>>
+>>> In this specific case, hardware only supports patterns in this format:
+>>>
+>>> low_time 0 rise_time 255 high_time 255 fall_time 0
+>>>
+>>> so driver would simply -EINVAL on anything else.
+>>
+>> I'm fine with the pattern file, but the pattern format would have
+>> to be defined in the per-driver ABI documentation. It wouldn't much
+>> differ from the custom pattern approach though, unless I'm missing some
+>> gain of having pattern setting in a uniformly named single sysfs file
+>> (with semantics differing from driver to driver).
+>
+> I'm proposing "<delta time> <brightness> ..." sysfs file. It certainly
+> covers this hardware, it would be enough to cover the Qualcomm Pulse
+> generator (IIRC), and it would cover most uses cases of Nokia N900's
+> LED.
+>
+> Yes, we would need to document limitations of each chip. But it should
+> be easily possible to run pattern designed for Spreadtrum on N900,
+> even if it would not work the other way around.
+>
+> (If someone really wants to run complex patterns on simple hardware,
+> we can provide software emulation using same file format. I believe I
+> still have that patch somewhere.)
 
-But yes, the situation is slightly different here because tools which
-create trace event magic _HAVE_ to pull in kernel headers. At the same time
-these tools depend on a compiler which failed to implement asm_goto for
-fricking 8 years.
+OK, I've revised the discussion under Qualcomm LPG patch set and
+it seems that we have almost ready solution in [0], except the
+pattern_repeat file you mention in [1]. So probably Baolin could
+address your remarks from [1] and add pattern_repeat file to the
+patch that begins thread [0].
 
-So while Boris is right, that nothing has to fiddle with a kernel only
-header, I grumpily agree with you that we need a workaround in the kernel
-for this particular issue.
+[0] https://lkml.org/lkml/2017/11/15/27
+[1] https://lkml.org/lkml/2017/12/8/470
 
-> could you please ack the patch or better yet take it into tip tree
-> and send to Linus asap ?
-
-Nope. The patch is a horrible hack.
-
-Why the heck do we need that extra fugly define? That has exactly zero
-value simply because we already have a define which denotes availablity of
-ASM GOTO: CC_HAVE_ASM_GOTO.
-
-In case of samples/bpf/ and libbcc the compile does not go through the
-arch/x86 Makefile which stops the build anyway when ASM_GOTO is
-missing. Those builds merily pull in the headers and have their own build
-magic, which is broken btw: Changing a kernel header which gets pulled into
-the build does not rebuild anything in samples/bpf. Qualitee..
-
-So we can just use CC_HAVE_ASM_GOTO and be done with it.
-
-But we also want the tools which needs this to be aware of this. Peter
-requested -D __BPF__ several times which got ignored. It's not too much of
-a request to add that.
-
-Find a patch which deos exactly this for samples/bpf, but also allows other
-tools to build with a warning emitted so they get fixed.
-
-Thanks,
-
-	tglx
-
-8<----------------
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -140,6 +140,20 @@ extern void clear_cpu_cap(struct cpuinfo
- 
- #define setup_force_cpu_bug(bit) setup_force_cpu_cap(bit)
- 
-+#ifndef CC_HAVE_ASM_GOTO
-+
-+/*
-+ * Workaround for the sake of BPF compilation which utilizes kernel
-+ * headers, but clang does not support ASM GOTO and fails the build.
-+ */
-+#ifndef __BPF__
-+#warning "Compiler lacks ASM_GOTO support. Add -D __BPF__ to your compiler arguments"
-+#endif
-+
-+#define static_cpu_has(bit)		boot_cpu_has(bit)
-+
-+#else
-+
- /*
-  * Static testing of CPU features.  Used the same as boot_cpu_has().
-  * These will statically patch the target code for additional
-@@ -195,6 +209,7 @@ static __always_inline __pure bool _stat
- 		boot_cpu_has(bit) :				\
- 		_static_cpu_has(bit)				\
- )
-+#endif
- 
- #define cpu_has_bug(c, bit)		cpu_has(c, (bit))
- #define set_cpu_bug(c, bit)		set_cpu_cap(c, (bit))
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -255,7 +255,7 @@ verify_target_bpf: verify_cmds
- $(obj)/%.o: $(src)/%.c
- 	$(CLANG) $(NOSTDINC_FLAGS) $(LINUXINCLUDE) $(EXTRA_CFLAGS) -I$(obj) \
- 		-I$(srctree)/tools/testing/selftests/bpf/ \
--		-D__KERNEL__ -Wno-unused-value -Wno-pointer-sign \
-+		-D__KERNEL__ -D__BPF__ -Wno-unused-value -Wno-pointer-sign \
- 		-D__TARGET_ARCH_$(ARCH) -Wno-compare-distinct-pointer-types \
- 		-Wno-gnu-variable-sized-type-not-at-end \
- 		-Wno-address-of-packed-member -Wno-tautological-compare \
+-- 
+Best regards,
+Jacek Anaszewski
