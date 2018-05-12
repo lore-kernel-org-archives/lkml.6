@@ -1,58 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751846AbeELBr0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 21:47:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47218 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750805AbeELBq4 (ORCPT
+        id S1751373AbeELB4v (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 21:56:51 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:40204 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750805AbeELB4s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 21:46:56 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C8AF5601EA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-From: David Collins <collinsd@codeaurora.org>
-To: broonie@kernel.org, lgirdwood@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc: David Collins <collinsd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rnayak@codeaurora.org, sboyd@kernel.org,
-        dianders@chromium.org
-Subject: [PATCH 1/2] regulator: of: add property for allowed modes specification
-Date: Fri, 11 May 2018 18:46:46 -0700
-Message-Id: <f3aa166ddd11c8f9813602be68aa5b10e5c90979.1526088289.git.collinsd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1526088289.git.collinsd@codeaurora.org>
-References: <cover.1526088289.git.collinsd@codeaurora.org>
-In-Reply-To: <cover.1526088289.git.collinsd@codeaurora.org>
-References: <cover.1526088289.git.collinsd@codeaurora.org>
+        Fri, 11 May 2018 21:56:48 -0400
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] rcu: Add comment documenting how rcu_seq_snap works
+To: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, paulmck@linux.vnet.ibm.com
+References: <20180512003306.GA170941@joelaf.mtv.corp.google.com>
+Message-ID: <9506a0d5-e761-f280-74de-95cb61819ded@infradead.org>
+Date: Fri, 11 May 2018 18:56:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180512003306.GA170941@joelaf.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a common device tree property for regulator nodes to support
-the specification of allowed operating modes.
+On 05/11/2018 05:33 PM, Joel Fernandes (Google) wrote:
+> rcu_seq_snap may be tricky for someone looking at it for the first time.
+> Lets document how it works with an example to make it easier.
+> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+>  kernel/rcu/rcu.h | 23 ++++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+> index 003671825d62..004ace3d22c2 100644
+> --- a/kernel/rcu/rcu.h
+> +++ b/kernel/rcu/rcu.h
+> @@ -91,7 +91,28 @@ static inline void rcu_seq_end(unsigned long *sp)
+>  	WRITE_ONCE(*sp, rcu_seq_endval(sp));
+>  }
+>  
+> -/* Take a snapshot of the update side's sequence number. */
+> +/*
+> + * Take a snapshot of the update side's sequence number.
+> + *
+> + * This function predicts what the grace period number will be the next
+> + * time an RCU callback will be executed, given the current grace period's
+> + * number. This can be gp+1 if RCU is idle, or gp+2 if a grace period is
+> + * already in progress.
+> + *
+> + * We do this with a single addition and masking.
+> + * For example, if RCU_SEQ_STATE_MASK=1 and the least significant bit (LSB) of
+> + * the seq is used to track if a GP is in progress or not, its sufficient if we
+> + * add (2+1) and mask with ~1. Lets see why with an example:
+> + *
+> + * Say the current seq is 6 which is 0x110 (gp is 3 and state bit is 0).
 
-Signed-off-by: David Collins <collinsd@codeaurora.org>
----
- Documentation/devicetree/bindings/regulator/regulator.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+                                        0b110
+                                   or   0x6
 
-diff --git a/Documentation/devicetree/bindings/regulator/regulator.txt b/Documentation/devicetree/bindings/regulator/regulator.txt
-index 2babe15b..c627aa0 100644
---- a/Documentation/devicetree/bindings/regulator/regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/regulator.txt
-@@ -59,6 +59,11 @@ Optional properties:
- - regulator-initial-mode: initial operating mode. The set of possible operating
-   modes depends on the capabilities of every hardware so each device binding
-   documentation explains which values the regulator supports.
-+- regulator-allowed-modes: list of operating modes that software is allowed to
-+  configure for the regulator at run-time.  Elements may be specified in any
-+  order.  The set of possible operating modes depends on the capabilities of
-+  every hardware so each device binding document explains which values the
-+  regulator supports.
- - regulator-system-load: Load in uA present on regulator that is not captured by
-   any consumer request.
- - regulator-pull-down: Enable pull down resistor when the regulator is disabled.
+> + * To get the next GP number, we have to atleast add 0x10 to this (0x1 << 1) to
+
+                                            at least add 0b10
+
+> + * account for the state bit. However, if the current seq is 7 (GP num is 3
+> + * and state bit is 1), then it means the current grace period is already
+> + * in progress so the next the callback will run is at gp+2. To account for
+
+                  so the next time? the callback will run
+
+> + * the extra +1, we just overflow the LSB by adding another 0x1 and masking
+> + * with ~0x1. Incase no GP was in progress (RCU is idle), then the adding
+
+                 In case
+
+> + * by 0x1 and masking will have no effect. This is calculated as below.
+> + */
+>  static inline unsigned long rcu_seq_snap(unsigned long *sp)
+>  {
+>  	unsigned long s;
+> 
+
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+~Randy
