@@ -1,241 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751053AbeELEf3 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 00:35:29 -0400
-Received: from ozlabs.org ([203.11.71.1]:50431 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750735AbeELEf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 00:35:27 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Sat, 12 May 2018 14:35:23 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linux-kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        0-Day Mailing List <lkp@lists.01.org>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Linus <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: linux-next: a new pending-fixes branch
-Message-ID: <20180512143523.250ab803@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ro8BT7A4pCVS5HwS8XpjFbT"; protocol="application/pgp-signature"
+        id S1750902AbeELFBG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 01:01:06 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:37290 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750722AbeELFBD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 May 2018 01:01:03 -0400
+X-Google-Smtp-Source: AB8JxZrGOCnlYfADuigs/W+LJG56XwB59HGPCF41BC6t8TFLgiHJlHA6Sls8O7A1fkzSbHakB1DHVQ==
+From: Deepa Dinamani <deepa.kernel@gmail.com>
+To: viro@zeniv.linux.org.uk, tglx@linutronix.de
+Cc: arnd@arndb.de, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, y2038@lists.linaro.org,
+        andreas.dilger@intel.com, anton@tuxera.com, balbi@kernel.org,
+        bfields@fieldses.org, ceph-devel@vger.kernel.org,
+        darrick.wong@oracle.com, dhowells@redhat.com, dsterba@suse.com,
+        dwmw2@infradead.org, hch@lst.de, hirofumi@mail.parknet.co.jp,
+        hubcap@omnibond.com, jack@suse.com, jaegeuk@kernel.org,
+        jaharkes@cs.cmu.edu, jslaby@suse.com, keescook@chromium.org,
+        mark@fasheh.com, miklos@szeredi.hu, nico@linaro.org,
+        reiserfs-devel@vger.kernel.org, richard@nod.at, sage@redhat.com,
+        sfrench@samba.org, swhiteho@redhat.com, tj@kernel.org,
+        trond.myklebust@primarydata.com, tytso@mit.edu, zyan@redhat.com
+Subject: [PATCH 0/6] Transition vfs to 64-bit timestamps
+Date: Fri, 11 May 2018 21:59:15 -0700
+Message-Id: <20180512045921.18311-1-deepa.kernel@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ro8BT7A4pCVS5HwS8XpjFbT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The series aims to switch vfs timestamps to use
+struct timespec64. Currently vfs uses struct timespec,
+which is not y2038 safe.
 
-Hi all,
+The series involves the following:
+1. Add vfs helper functions for supporting struct timepec64 timestamps.
+2. Cast prints of vfs timestamps to avoid warnings after the switch.
+3. Simplify code using vfs timestamps so that the actual
+   replacement becomes easy.
+4. Convert vfs timestamps to use struct timespec64 using a script.
+   This is a flag day patch.
 
-As an outcome of some discussion, I have added a pending-fixes branch
-to linux-next.  This branch contains Linus' tree merged with branches
-containing only fixes pending for the current release.  The branch is a
-strict subset of linux-next each day (as so rebases like linux-next
-does).
+I've tried to keep the conversions with the script simple, to
+aid in the reviews. I've kept all the internal filesystem data
+structures and function signatures the same.
 
-It would be good if this branch could be tested by the 0-Day service
-and any other testing that people do - in the hope of sending fewer
-"fixes causing bugs" patches to Linus.
+Next steps:
+1. Convert APIs that can handle timespec64, instead of converting
+   timestamps at the boundaries.
+2. Update internal data structures to avoid timestamp conversions.
 
-There is not intention that bug fixes for Linus' tree should
-necessarily be tested in linux-next before being forwarded, but
-(especially for slightly less urgent bugs, at least) it seems like a
-good idea.
+Deepa Dinamani (6):
+  fs: add timespec64_truncate()
+  lustre: Use long long type to print inode time
+  ceph: make inode time prints to be long long
+  fs: nfs: get rid of memcpys for inode times
+  udf: Simplify calls to udf_disk_stamp_to_time
+  vfs: change inode times to use struct timespec64
 
-I currently have 55 branches of bug fixes included.  As of yesterday
-the branch contains 165 commits and looks like this:
+ .../staging/lustre/lustre/llite/llite_lib.c   | 12 +--
+ drivers/staging/lustre/lustre/lmv/lmv_obd.c   |  7 +-
+ drivers/staging/lustre/lustre/mdc/mdc_reint.c |  6 +-
+ drivers/staging/lustre/lustre/obdclass/obdo.c |  6 +-
+ drivers/tty/tty_io.c                          | 15 +++-
+ drivers/usb/gadget/function/f_fs.c            |  2 +-
+ fs/adfs/inode.c                               |  7 +-
+ fs/afs/fsclient.c                             |  2 +-
+ fs/attr.c                                     | 14 +--
+ fs/bad_inode.c                                |  2 +-
+ fs/btrfs/file.c                               |  6 +-
+ fs/btrfs/inode.c                              |  8 +-
+ fs/btrfs/ioctl.c                              |  4 +-
+ fs/btrfs/root-tree.c                          |  4 +-
+ fs/btrfs/transaction.c                        |  2 +-
+ fs/ceph/addr.c                                | 12 +--
+ fs/ceph/cache.c                               |  4 +-
+ fs/ceph/caps.c                                |  6 +-
+ fs/ceph/file.c                                |  6 +-
+ fs/ceph/inode.c                               | 86 ++++++++++---------
+ fs/ceph/mds_client.c                          |  7 +-
+ fs/ceph/snap.c                                |  6 +-
+ fs/cifs/cache.c                               |  4 +-
+ fs/cifs/fscache.c                             |  8 +-
+ fs/cifs/inode.c                               | 26 +++---
+ fs/coda/coda_linux.c                          | 12 +--
+ fs/configfs/inode.c                           | 12 +--
+ fs/cramfs/inode.c                             |  2 +-
+ fs/ext4/ext4.h                                | 34 +++++---
+ fs/ext4/ialloc.c                              |  4 +-
+ fs/ext4/namei.c                               |  2 +-
+ fs/f2fs/f2fs.h                                | 10 ++-
+ fs/f2fs/file.c                                | 12 +--
+ fs/f2fs/inode.c                               | 12 +--
+ fs/f2fs/namei.c                               |  4 +-
+ fs/fat/inode.c                                | 20 +++--
+ fs/fat/namei_msdos.c                          | 21 +++--
+ fs/fat/namei_vfat.c                           | 22 +++--
+ fs/fuse/inode.c                               |  2 +-
+ fs/gfs2/dir.c                                 |  6 +-
+ fs/gfs2/glops.c                               |  4 +-
+ fs/hfs/inode.c                                |  4 +-
+ fs/hfsplus/inode.c                            | 12 +--
+ fs/hostfs/hostfs_kern.c                       |  6 +-
+ fs/inode.c                                    | 58 +++++++++----
+ fs/jffs2/dir.c                                | 18 ++--
+ fs/jffs2/file.c                               |  2 +-
+ fs/jffs2/fs.c                                 | 12 +--
+ fs/kernfs/dir.c                               |  4 +-
+ fs/kernfs/inode.c                             |  8 +-
+ fs/locks.c                                    |  2 +-
+ fs/nfs/callback_proc.c                        |  4 +-
+ fs/nfs/fscache-index.c                        |  4 +-
+ fs/nfs/fscache.c                              | 12 +--
+ fs/nfs/inode.c                                | 39 +++++----
+ fs/nfs/nfs2xdr.c                              | 25 +++---
+ fs/nfs/nfs3xdr.c                              |  8 +-
+ fs/nfs/nfs4xdr.c                              |  7 +-
+ fs/nfsd/blocklayout.c                         |  8 +-
+ fs/nfsd/nfs3xdr.c                             | 14 +--
+ fs/nfsd/nfs4xdr.c                             |  7 +-
+ fs/nfsd/nfsxdr.c                              |  2 +-
+ fs/ntfs/inode.c                               | 30 +++----
+ fs/ocfs2/dlmglue.c                            | 20 +++--
+ fs/ocfs2/file.c                               |  6 +-
+ fs/orangefs/inode.c                           |  2 +-
+ fs/orangefs/orangefs-kernel.h                 |  2 +-
+ fs/overlayfs/inode.c                          |  2 +-
+ fs/overlayfs/overlayfs.h                      |  2 +-
+ fs/proc/uptime.c                              |  2 +-
+ fs/pstore/inode.c                             |  2 +-
+ fs/reiserfs/namei.c                           |  2 +-
+ fs/reiserfs/xattr.c                           |  4 +-
+ fs/ubifs/dir.c                                |  4 +-
+ fs/ubifs/file.c                               | 23 ++---
+ fs/ubifs/ubifs.h                              |  2 +-
+ fs/udf/ialloc.c                               |  4 +-
+ fs/udf/inode.c                                | 59 +++++++------
+ fs/udf/super.c                                | 16 ++--
+ fs/udf/udfdecl.h                              |  4 +-
+ fs/udf/udftime.c                              |  9 +-
+ fs/xfs/xfs_inode.c                            |  2 +-
+ fs/xfs/xfs_iops.c                             |  2 +-
+ fs/xfs/xfs_trans_inode.c                      |  2 +-
+ include/linux/fs.h                            | 24 +++---
+ include/linux/stat.h                          |  8 +-
+ 86 files changed, 522 insertions(+), 408 deletions(-)
 
 
- .mailmap                                           |   3 +
- .../devicetree/bindings/net/can/rcar_canfd.txt     |   4 +-
- MAINTAINERS                                        |   8 +-
- arch/arm/boot/compressed/Makefile                  |   8 +-
- arch/arm/boot/compressed/head.S                    |  20 +-
- arch/arm/boot/dts/dm8148-evm.dts                   |   2 +-
- arch/arm/boot/dts/dm8148-t410.dts                  |   2 +-
- arch/arm/boot/dts/dm8168-evm.dts                   |   2 +-
- arch/arm/boot/dts/dra62x-j5eco-evm.dts             |   2 +-
- arch/arm/boot/dts/imx35.dtsi                       |   4 +-
- arch/arm/boot/dts/imx53.dtsi                       |   4 +-
- arch/arm/boot/dts/logicpd-som-lv.dtsi              |  11 +-
- arch/arm/kernel/machine_kexec.c                    |  36 ++--
- arch/arm/mach-omap1/ams-delta-fiq.c                |  28 +--
- arch/arm/mach-omap2/powerdomain.c                  |   4 +-
- arch/powerpc/include/asm/ftrace.h                  |  29 ++-
- arch/powerpc/include/asm/paca.h                    |   1 -
- arch/powerpc/include/asm/topology.h                |  13 +-
- drivers/atm/firestream.c                           |   2 +-
- drivers/atm/zatm.c                                 |   3 +
- drivers/bluetooth/btusb.c                          |  19 +-
- drivers/dma/pl330.c                                |  28 ---
- drivers/gpu/drm/bridge/Kconfig                     |   1 +
- drivers/gpu/drm/drm_atomic.c                       |   8 +
- drivers/gpu/drm/i915/intel_cdclk.c                 |  41 ++++-
- drivers/gpu/drm/i915/intel_display.c               |   2 +
- drivers/gpu/drm/i915/intel_dp.c                    |  20 --
- drivers/gpu/drm/i915/intel_lvds.c                  |   3 +-
- drivers/gpu/drm/omapdrm/dss/dispc.c                |  20 +-
- drivers/gpu/drm/omapdrm/dss/hdmi4.c                |   2 +-
- drivers/gpu/drm/omapdrm/dss/hdmi4_core.c           |   7 +-
- drivers/gpu/drm/omapdrm/dss/hdmi5.c                |   2 +-
- drivers/gpu/drm/omapdrm/omap_connector.c           |  10 +
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c           |   6 +-
- drivers/gpu/drm/omapdrm/tcm-sita.c                 |   2 +-
- drivers/gpu/drm/vc4/vc4_dpi.c                      |  25 ++-
- drivers/gpu/drm/vc4/vc4_plane.c                    |   2 +-
- drivers/hwmon/k10temp.c                            |  40 +++-
- drivers/iio/adc/Kconfig                            |   1 +
- drivers/iio/adc/ad7793.c                           |  75 +++-----
- drivers/iio/adc/at91-sama5d2_adc.c                 |  41 ++++-
- drivers/iio/adc/stm32-dfsdm-adc.c                  |  17 +-
- drivers/iio/buffer/industrialio-buffer-dma.c       |   2 +-
- drivers/iio/buffer/kfifo_buf.c                     |  11 +-
- .../iio/common/hid-sensors/hid-sensor-trigger.c    |   8 +-
- drivers/media/usb/uvc/uvc_ctrl.c                   |  17 +-
- drivers/mtd/nand/onenand/omap2.c                   | 105 ++++-------
- drivers/mtd/nand/raw/marvell_nand.c                |  12 +-
- drivers/mtd/nand/raw/nand_base.c                   |   5 +
- drivers/net/can/dev.c                              |   2 +-
- drivers/net/can/flexcan.c                          |  26 +--
- drivers/net/can/spi/hi311x.c                       |  11 +-
- drivers/net/can/usb/kvaser_usb.c                   |   2 +-
- drivers/net/dsa/mv88e6xxx/chip.c                   |  26 +++
- drivers/net/dsa/mv88e6xxx/chip.h                   |   1 +
- drivers/net/dsa/mv88e6xxx/global2.c                |   2 +-
- drivers/net/ethernet/aquantia/atlantic/aq_nic.c    |   3 +
- drivers/net/ethernet/aquantia/atlantic/aq_nic.h    |   1 +
- .../net/ethernet/aquantia/atlantic/aq_pci_func.c   |  20 +-
- drivers/net/ethernet/broadcom/tg3.c                |   9 +-
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c    |   7 +-
- drivers/net/ethernet/mellanox/mlx4/en_ethtool.c    |  16 ++
- drivers/net/ethernet/mellanox/mlx4/en_netdev.c     |   8 +-
- drivers/net/ethernet/mellanox/mlx4/mlx4_en.h       |   7 +-
- drivers/net/ethernet/netronome/nfp/bpf/main.c      |   2 +-
- drivers/net/ethernet/netronome/nfp/flower/main.c   |  19 --
- drivers/net/ethernet/ni/nixge.c                    |  10 +-
- drivers/net/ethernet/qlogic/qed/qed_l2.c           |   6 +-
- drivers/net/ethernet/qlogic/qed/qed_main.c         |   2 +-
- drivers/net/ethernet/qlogic/qede/qede_rdma.c       |   2 +-
- drivers/net/ethernet/realtek/r8169.c               |   3 +
- drivers/net/ethernet/sun/niu.c                     |   5 +-
- drivers/net/hyperv/netvsc_drv.c                    |   3 +-
- drivers/net/hyperv/rndis_filter.c                  |   2 +-
- drivers/net/ieee802154/atusb.c                     |   2 +-
- drivers/net/ieee802154/mcr20a.c                    |  15 +-
- drivers/net/phy/broadcom.c                         |  10 +
- drivers/net/phy/sfp-bus.c                          |   2 +-
- drivers/net/wireless/mac80211_hwsim.c              |   1 +
- drivers/reset/reset-uniphier.c                     |   6 +-
- drivers/spi/spi-bcm-qspi.c                         |  28 ++-
- drivers/spi/spi-bcm2835aux.c                       |   5 +
- drivers/spi/spi-cadence.c                          |   8 +
- drivers/spi/spi-imx.c                              |   2 +-
- drivers/spi/spi-pxa2xx.h                           |   2 +-
- drivers/spi/spi-sh-msiof.c                         |   1 +
- drivers/video/backlight/as3711_bl.c                |  45 +++--
- drivers/video/backlight/max8925_bl.c               |   4 +-
- drivers/video/backlight/tps65217_bl.c              |   4 +-
- include/linux/brcmphy.h                            |   1 +
- include/linux/iio/buffer_impl.h                    |   6 +-
- include/linux/mfd/as3711.h                         |   4 +-
- include/net/flow_dissector.h                       |   2 +-
- include/net/mac80211.h                             |   2 +-
- include/net/netfilter/nf_tables.h                  |   5 +
- include/net/xfrm.h                                 |   1 +
- include/sound/soc-dai.h                            |   4 +-
- include/uapi/linux/netfilter/nf_conntrack_tcp.h    |   3 +
- include/uapi/linux/nl80211.h                       |   2 +
- kernel/bpf/syscall.c                               |  19 +-
- lib/radix-tree.c                                   |   6 +-
- net/9p/trans_common.c                              |   2 +-
- net/9p/trans_fd.c                                  |   4 +-
- net/9p/trans_rdma.c                                |   4 +-
- net/9p/trans_virtio.c                              |   5 +-
- net/9p/trans_xen.c                                 |   2 +-
- net/atm/lec.c                                      |   9 +-
- net/bridge/netfilter/ebt_stp.c                     |   4 +-
- net/ieee802154/6lowpan/6lowpan_i.h                 |   4 +-
- net/ieee802154/6lowpan/reassembly.c                |  14 +-
- net/ipv4/netfilter/ip_tables.c                     |   1 +
- net/ipv4/route.c                                   |   1 +
- net/ipv4/udp.c                                     |   4 +-
- net/ipv6/Kconfig                                   |   9 +-
- net/ipv6/ip6_vti.c                                 |   4 +-
- net/ipv6/netfilter/ip6_tables.c                    |   1 +
- net/ipv6/udp.c                                     |   4 +-
- net/ipv6/xfrm6_tunnel.c                            |   3 +
- net/key/af_key.c                                   |  45 ++++-
- net/llc/af_llc.c                                   |   3 +
- net/mac80211/agg-tx.c                              |   4 +
- net/mac80211/mlme.c                                |  27 ++-
- net/mac80211/tx.c                                  |   3 +-
- net/netfilter/core.c                               |   3 +-
- net/netfilter/ipvs/ip_vs_conn.c                    |  17 +-
- net/netfilter/ipvs/ip_vs_core.c                    |  12 ++
- net/netfilter/nf_conntrack_proto_tcp.c             |  11 ++
- net/netfilter/nf_tables_api.c                      |  71 ++++++--
- net/netfilter/nf_tables_core.c                     |  21 ++-
- net/netfilter/nfnetlink_acct.c                     |   2 +-
- net/netfilter/nfnetlink_cthelper.c                 |   7 +-
- net/netfilter/nft_compat.c                         | 201 ++++++++++++++++-=
-----
- net/netfilter/nft_immediate.c                      |  15 +-
- net/netfilter/x_tables.c                           |   6 +
- net/netlink/af_netlink.c                           |   6 +-
- net/nsh/nsh.c                                      |   4 +
- net/openvswitch/flow_netlink.c                     |   9 +-
- net/rfkill/rfkill-gpio.c                           |   7 +-
- net/sctp/associola.c                               |  30 ++-
- net/sctp/sm_make_chunk.c                           |   2 +-
- net/sctp/sm_statefuns.c                            |  86 +++++----
- net/sctp/ulpevent.c                                |   1 -
- net/tipc/node.c                                    |  15 +-
- net/tipc/socket.c                                  |   3 +-
- net/tls/tls_main.c                                 |  12 +-
- net/wireless/core.c                                |   3 +
- net/wireless/nl80211.c                             |   1 +
- net/wireless/reg.c                                 |   1 +
- net/xfrm/xfrm_state.c                              |   6 +
- sound/soc/cirrus/edb93xx.c                         |   2 +-
- sound/soc/cirrus/ep93xx-i2s.c                      |  26 +--
- sound/soc/cirrus/snappercl15.c                     |   2 +-
- sound/soc/codecs/cs35l35.c                         |   1 +
- sound/soc/intel/boards/bytcr_rt5651.c              |   5 +-
- .../soc/mediatek/common/mtk-afe-platform-driver.c  |   4 +-
- sound/soc/omap/n810.c                              |  10 +-
- sound/soc/soc-compress.c                           |  52 +++---
- tools/include/linux/spinlock.h                     |   3 +-
- tools/testing/radix-tree/Makefile                  |   6 +-
- tools/testing/radix-tree/multiorder.c              |  63 +++++++
- tools/testing/radix-tree/test.c                    |  19 ++
- tools/testing/radix-tree/test.h                    |   3 +
- tools/testing/selftests/intel_pstate/run.sh        |  24 +--
- tools/testing/selftests/net/Makefile               |   2 +-
- .../selftests/tc-testing/tc-tests/actions/bpf.json |  11 +-
- tools/testing/selftests/x86/protection_keys.c      |  40 ++--
- 166 files changed, 1358 insertions(+), 727 deletions(-)
+base-commit: 1c25af77721fa388cb01b2afc7fbe4f1f98685fd
+-- 
+2.17.0
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ro8BT7A4pCVS5HwS8XpjFbT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr2bwsACgkQAVBC80lX
-0GySXggAm9wRf2fE2HjwFMEngV9EPNSdIVuM007ZBcG/v4KXV89E5w6DWfRaZUfQ
-G9+eHjFPylhGZb4fJn7DIIqznfxGFX7ftW61byQYmi24FS5L/At6bkbW3xewe9KS
-QjVb+tPXnCDXnEeb4rLgAe9NHIXyTHKRcnTmVqa+6V4ue8+GeFwON64ckenR4utx
-N+YI5+M2hOWQjPu6JyQYyR0j7nYdxRdiT+dmznT/SUinKnl9lq0KTMlKdRMSpGax
-HNSVggKk2hVFTM+bdrTYb7ljPGZ3fNCcc7VWOaaoDbUmkleVBw/JKfEHZrnMXFKM
-PFqCRmQjLplVDYxOn/BVh7mC8UQSNA==
-=PoPi
------END PGP SIGNATURE-----
-
---Sig_/ro8BT7A4pCVS5HwS8XpjFbT--
+CC: andreas.dilger@intel.com
+Cc: <anton@tuxera.com>
+Cc: <balbi@kernel.org>
+Cc: <bfields@fieldses.org>
+Cc: ceph-devel@vger.kernel.org
+Cc: <darrick.wong@oracle.com>
+Cc: <dhowells@redhat.com>
+Cc: <dsterba@suse.com>
+Cc: <dwmw2@infradead.org>
+Cc: <hch@lst.de>
+Cc: <hirofumi@mail.parknet.co.jp>
+Cc: <hubcap@omnibond.com>
+Cc: <jack@suse.com>
+Cc: jack@suse.com
+Cc: <jaegeuk@kernel.org>
+Cc: <jaharkes@cs.cmu.edu>
+Cc: <jslaby@suse.com>
+Cc: <keescook@chromium.org>
+Cc: <mark@fasheh.com>
+Cc: <miklos@szeredi.hu>
+Cc: <nico@linaro.org>
+Cc: <reiserfs-devel@vger.kernel.org>
+Cc: <richard@nod.at>
+Cc: <sage@redhat.com>
+Cc: <sfrench@samba.org>
+Cc: <swhiteho@redhat.com>
+Cc: <tj@kernel.org>
+Cc: <trond.myklebust@primarydata.com>
+Cc: trond.myklebust@primarydata.com
+Cc: <tytso@mit.edu>
+Cc: <viro@zeniv.linux.org.uk>
+Cc: zyan@redhat.com
