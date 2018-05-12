@@ -1,99 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751307AbeELIB6 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 04:01:58 -0400
-Received: from bues.ch ([80.190.117.144]:57694 "EHLO bues.ch"
+        id S1750835AbeELIUy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 04:20:54 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:33722 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750739AbeELIB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 04:01:57 -0400
-Date: Sat, 12 May 2018 10:01:36 +0200
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJl?= =?UTF-8?B?Y2tp?= <zajec5@gmail.com>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        Hauke Mehrtens <hauke@hauke-m.de>, LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-Subject: Re: [PATCH V2 1/2] Revert "ssb: Prevent build of PCI host features
- in module"
-Message-ID: <20180512100136.1d26e6d3@wiggum>
-In-Reply-To: <877eo9b9d9.fsf@codeaurora.org>
-References: <20180511091715.1989-1-zajec5@gmail.com>
- <CACna6ry-91oR1u697NRymLsN28fnnHDp9OQrdiVwA7A3KTV1fg@mail.gmail.com>
- <87bmdmcxf6.fsf@codeaurora.org>
- <727571cb-5d1f-2d99-b050-979edd02106f@lwfinger.net>
- <877eo9b9d9.fsf@codeaurora.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1750722AbeELIUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 May 2018 04:20:53 -0400
+Date: Sat, 12 May 2018 10:20:40 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Jane Wan <Jane.Wan@nokia.com>
+Cc: miquel.raynal@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, richard@nod.at, marek.vasut@gmail.com,
+        yamada.masahiro@socionext.com, prabhakar.kushwaha@nxp.com,
+        shawnguo@kernel.org, jagdish.gediya@nxp.com,
+        shreeya.patel23498@gmail.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, ties.bos@nokia.com
+Subject: Re: [PATCH v6] mtd: rawnand: use bit-wise majority to recover the
+ contents of ONFI parameter
+Message-ID: <20180512102040.3e5c2cbe@bbrezillon>
+In-Reply-To: <1525987717-31675-1-git-send-email-Jane.Wan@nokia.com>
+References: <1525987717-31675-1-git-send-email-Jane.Wan@nokia.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/y0/esRxeuCrNiC5ERnZP_M1"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/y0/esRxeuCrNiC5ERnZP_M1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Thu, 10 May 2018 14:28:37 -0700
+Jane Wan <Jane.Wan@nokia.com> wrote:
 
-On Sat, 12 May 2018 10:50:42 +0300
-Kalle Valo <kvalo@codeaurora.org> wrote:
+> Per ONFI specification (Rev. 4.0), if all parameter pages have invalid
+> CRC values, the bit-wise majority may be used to recover the contents of
+> the parameter pages from the parameter page copies present.
+> 
+> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
+> ---
+> v6: support the cases that srcbufs are not contiguous
+> v5: make the bit-wise majority functon generic
+> v4: move the bit-wise majority code in a separate function
+> v3: fix warning message detected by kbuild test robot
+> v2: rebase the changes on top of v4.17-rc1
+> 
+>  drivers/mtd/nand/raw/nand_base.c |   52 ++++++++++++++++++++++++++++++++++----
+>  1 file changed, 47 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> index 72f3a89..acf905c 100644
+> --- a/drivers/mtd/nand/raw/nand_base.c
+> +++ b/drivers/mtd/nand/raw/nand_base.c
+> @@ -5087,6 +5087,35 @@ static int nand_flash_detect_ext_param_page(struct nand_chip *chip,
+>  }
+>  
+>  /*
+> + * Recover data with bit-wise majority
+> + */
+> +static void nand_bit_wise_majority(const void **srcbufs,
+> +				   unsigned int nsrcbufs,
+> +				   void *dstbuf,
+> +				   unsigned int bufsize)
+> +{
+> +	int i, j, k;
+> +
+> +	for (i = 0; i < bufsize; i++) {
+> +		u8 cnt, val;
+> +
+> +		val = 0;
+> +		for (j = 0; j < 8; j++) {
+> +			cnt = 0;
+> +			for (k = 0; k < nsrcbufs; k++) {
+> +				const u8 *srcbuf = srcbufs[k];
+> +
+> +				if (srcbuf[i] & BIT(j))
+> +					cnt++;
+> +			}
+> +			if (cnt > nsrcbufs / 2)
+> +				val |= BIT(j);
+> +		}
+> +		((u8 *)dstbuf)[i] = val;
+> +	}
+> +}
+> +
+> +/*
+>   * Check if the NAND chip is ONFI compliant, returns 1 if it is, 0 otherwise.
+>   */
+>  static int nand_flash_detect_onfi(struct nand_chip *chip)
+> @@ -5102,7 +5131,7 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>  		return 0;
+>  
+>  	/* ONFI chip: allocate a buffer to hold its parameter page */
+> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
+> +	p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
+>  	if (!p)
+>  		return -ENOMEM;
+>  
+> @@ -5113,21 +5142,34 @@ static int nand_flash_detect_onfi(struct nand_chip *chip)
+>  	}
+>  
+>  	for (i = 0; i < 3; i++) {
+> -		ret = nand_read_data_op(chip, p, sizeof(*p), true);
+> +		ret = nand_read_data_op(chip, &p[i], sizeof(*p), true);
+>  		if (ret) {
+>  			ret = 0;
+>  			goto free_onfi_param_page;
+>  		}
+>  
+> -		if (onfi_crc16(ONFI_CRC_BASE, (uint8_t *)p, 254) ==
+> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)&p[i], 254) ==
+>  				le16_to_cpu(p->crc)) {
+> +			if (i)
+> +				memcpy(p, &p[i], sizeof(*p));
+>  			break;
+>  		}
+>  	}
+>  
+>  	if (i == 3) {
+> -		pr_err("Could not find valid ONFI parameter page; aborting\n");
+> -		goto free_onfi_param_page;
+> +		const void *srcbufs[3] = {p, p + 1, p + 2};
+> +
+> +		pr_err("Could not find valid ONFI parameter page\n");
 
-> Larry Finger <Larry.Finger@lwfinger.net> writes:
->=20
-> > On 05/11/2018 05:13 AM, Kalle Valo wrote: =20
-> >> Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com> writes:
-> >> =20
-> >>> On 11 May 2018 at 11:17, Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com> w=
-rote: =20
->  [...] =20
-> >>>
-> >>> As these patches fix regression/build error, I believe both should get
-> >>> into 4.17. =20
-> >>
-> >> How much confidence do we have that we don't need to end up reverting
-> >> patch 2 as well? I rather be pushing patch 2 to 4.18 so that there's
-> >> more time for testing and waiting for feedback. =20
-> >
-> > Although I do not have the hardware to test the builds, I worked
-> > closely with the OP in the bug at b.r.c noted above. From that effort,
-> > it became clear what configuration variables were missing to cause the
-> > x86 failures. Patch 2 satisfies the requirement, and prevents the
-> > build problems found by the MIPS users. Both patches are needed in
-> > 4.17. =20
->=20
-> And I assume Michael is ok with this approach as well as I haven't heard
-> from him. I'll then push both of these to 4.17.
->=20
+Maybe pr_warn() here
 
-Yes, I'm OK with the patch, if we have a third patch that cleans up the
-PCI_DRIVERS_LEGACY dependency by moving it to SSB_PCICORE_HOSTMODE
-where it belongs. (This doesn't need to go into the stable tree.)
-We currently implicitly get that via dependency chain, so this is OK
-for now as-is.
+> +		pr_info("Recover ONFI params with bit-wise majority\n");
 
---=20
-Michael
+and maybe you can pack the 2 messages:
 
---Sig_/y0/esRxeuCrNiC5ERnZP_M1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+		pr_warn("Could not find a valid ONFI parameter page, trying bit-wise majority to recover it");
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlr2n2AACgkQ9TK+HZCN
-iw695BAAhoC7EPb+kHIBFNjdHD2KndNs+tkhA6AhdG+l+IKrddKIip+dn7B7g++I
-cHUkpn9492Tu0ZCpk9QKODJtIG9hxli7E96AP+kFcpRQ9kxKmx9a259b9CqrYLNp
-A2MeNxbb2Ix8kSbSeKar80IXH4x7GpR3SKRhUGdIbvWgVMuiqiSMSWvZLnVX3Q/s
-Uf1I65uon6ElQTo6CBVrSc0D3F/WBvwKly8gCEPkktVdL5TqrE3SMqkI4u2rDt8A
-tazmBeco+qs0oFFCE7OxncFI0XURFqtaDGQQZpf7fBE0b+JutDcJcLE6BkMu71OJ
-6cFPsQgcf5Cv5Kv+qG0k7oYcYie5C9K7PF2Kqh+/NGUfu93VrKwmHto9p6SyHsrz
-1sfkl0/E0QG8K5Ezi//jvlPKCIEbgTiSoFe5Lem1GT9fI+4BIxDpdTwbzGxNAklJ
-0EkLK2LDGhj2EgBTR9O9fW+GUlv1kRUy47LBHCImojrdCuw/acnw/Hg012BQSMcr
-rCz0P+3dSKKIKgZu0pgNWJD6yDQaxLJWfRd9f985t8ijPtdFfjZubQcCYjz1O5i0
-/o5EnFJBnDhc/gsGqBuffK+uJq1ML2OY50zDIN97OMNfrUCw+Voq/UbjIg40eYT8
-gZXYyrQEQuG25TnG+wlF2uDKKFwOqDqZSHdSSOh9e3lMq2TYBa8=
-=YIVI
------END PGP SIGNATURE-----
-
---Sig_/y0/esRxeuCrNiC5ERnZP_M1--
+> +
+> +		nand_bit_wise_majority(srcbufs, ARRAY_SIZE(srcbufs), p,
+> +				       sizeof(*p));
+> +
+> +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)p, 254) !=
+> +				le16_to_cpu(p->crc)) {
+> +			pr_err("ONFI parameter recovery failed, aborting\n");
+> +			goto free_onfi_param_page;
+> +		}
+>  	}
+>  
+>  	/* Check version */
