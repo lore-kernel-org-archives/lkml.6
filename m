@@ -1,59 +1,244 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751110AbeELWGE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 18:06:04 -0400
-Received: from vern.gendns.com ([206.190.152.46]:56263 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750756AbeELWGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 18:06:02 -0400
-From: David Lechner <david@lechnology.com>
-To: linux-kernel@vger.kernel.org
-Cc: David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
-        Sebastian Reichel <sre@kernel.org>
-Subject: [PATCH] MAINTAINERS: add entry for LEGO MINDSTORMS EV3
-Date: Sat, 12 May 2018 17:05:44 -0500
-Message-Id: <20180512220544.24016-1-david@lechnology.com>
-X-Mailer: git-send-email 2.17.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        id S1751664AbeELXxF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 19:53:05 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:44018 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750916AbeELXxE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 May 2018 19:53:04 -0400
+X-Google-Smtp-Source: AB8JxZr4tncbxxJaXPMve5AGsUdAWQnXnEmdWUkFtZIWb1lIJD5AShdoy+L6NudzvhcjbAQUWvliaQ==
+Date: Sat, 12 May 2018 16:53:01 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel.opensrc@gmail.com, torvalds@linux-foundation.org,
+        npiggin@gmail.com
+Subject: Re: [tip/core/rcu,16/21] rcu: Add funnel locking to
+ rcu_start_this_gp()
+Message-ID: <20180512235301.GD192642@joelaf.mtv.corp.google.com>
+References: <1524452624-27589-16-git-send-email-paulmck@linux.vnet.ibm.com>
+ <20180512060325.GA53808@joelaf.mtv.corp.google.com>
+ <20180512144002.GI26088@linux.vnet.ibm.com>
+ <20180512144438.GA12826@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180512144438.GA12826@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds an entry to MAINTAINERS for LEGO MINDSTORMS EV3 (an ARM-based
-robotics platform). The files listed are exclusive to this device. Add
-me as reviewer so that I will be cc'ed for any changes to these files.
+On Sat, May 12, 2018 at 07:44:38AM -0700, Paul E. McKenney wrote:
+> On Sat, May 12, 2018 at 07:40:02AM -0700, Paul E. McKenney wrote:
+> > On Fri, May 11, 2018 at 11:03:25PM -0700, Joel Fernandes wrote:
+> > > On Sun, Apr 22, 2018 at 08:03:39PM -0700, Paul E. McKenney wrote:
+> > > > The rcu_start_this_gp() function had a simple form of funnel locking that
+> > > > used only the leaves and root of the rcu_node tree, which is fine for
+> > > > systems with only a few hundred CPUs, but sub-optimal for systems having
+> > > > thousands of CPUs.  This commit therefore adds full-tree funnel locking.
+> > > > 
+> > > > This variant of funnel locking is unusual in the following ways:
+> > > > 
+> > > > 1.	The leaf-level rcu_node structure's ->lock is held throughout.
+> > > > 	Other funnel-locking implementations drop the leaf-level lock
+> > > > 	before progressing to the next level of the tree.
+> > > > 
+> > > > 2.	Funnel locking can be started at the root, which is convenient
+> > > > 	for code that already holds the root rcu_node structure's ->lock.
+> > > > 	Other funnel-locking implementations start at the leaves.
+> > > > 
+> > > > 3.	If an rcu_node structure other than the initial one believes
+> > > > 	that a grace period is in progress, it is not necessary to
+> > > > 	go further up the tree.  This is because grace-period cleanup
+> > > > 	scans the full tree, so that marking the need for a subsequent
+> > > > 	grace period anywhere in the tree suffices -- but only if
+> > > > 	a grace period is currently in progress.
+> > > > 
+> > > > 4.	It is possible that the RCU grace-period kthread has not yet
+> > > > 	started, and this case must be handled appropriately.
+> > > > 
+> > > > However, the general approach of using a tree to control lock contention
+> > > > is still in place.
+> > > > 
+> > > > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > > ---
+> > > >  kernel/rcu/tree.c | 92 +++++++++++++++++++++----------------------------------
+> > > >  1 file changed, 35 insertions(+), 57 deletions(-)
+> > > > 
+> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > > index 94519c7d552f..d3c769502929 100644
+> > > > --- a/kernel/rcu/tree.c
+> > > > +++ b/kernel/rcu/tree.c
+> > > > @@ -1682,74 +1682,52 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+> > > >  {
+> > > >  	bool ret = false;
+> > > >  	struct rcu_state *rsp = rdp->rsp;
+> > > > -	struct rcu_node *rnp_root = rcu_get_root(rsp);
+> > > > -
+> > > > -	raw_lockdep_assert_held_rcu_node(rnp);
+> > > > -
+> > > > -	/* If the specified GP is already known needed, return to caller. */
+> > > > -	trace_rcu_this_gp(rnp, rdp, c, TPS("Startleaf"));
+> > > > -	if (need_future_gp_element(rnp, c)) {
+> > > > -		trace_rcu_this_gp(rnp, rdp, c, TPS("Prestartleaf"));
+> > > > -		goto out;
+> > > > -	}
+> > > > +	struct rcu_node *rnp_root;
+> > > >  
+> > > >  	/*
+> > > > -	 * If this rcu_node structure believes that a grace period is in
+> > > > -	 * progress, then we must wait for the one following, which is in
+> > > > -	 * "c".  Because our request will be noticed at the end of the
+> > > > -	 * current grace period, we don't need to explicitly start one.
+> > > > +	 * Use funnel locking to either acquire the root rcu_node
+> > > > +	 * structure's lock or bail out if the need for this grace period
+> > > > +	 * has already been recorded -- or has already started.  If there
+> > > > +	 * is already a grace period in progress in a non-leaf node, no
+> > > > +	 * recording is needed because the end of the grace period will
+> > > > +	 * scan the leaf rcu_node structures.  Note that rnp->lock must
+> > > > +	 * not be released.
+> > > >  	 */
+> > > > -	if (rnp->gpnum != rnp->completed) {
+> > > > -		need_future_gp_element(rnp, c) = true;
+> > > > -		trace_rcu_this_gp(rnp, rdp, c, TPS("Startedleaf"));
+> > > > -		goto out;
+> > > 
+> > > Referring to the above negative diff as [1] (which I wanted to refer to later
+> > > in this message..)
+> > > 
+> > > > +	raw_lockdep_assert_held_rcu_node(rnp);
+> > > > +	trace_rcu_this_gp(rnp, rdp, c, TPS("Startleaf"));
+> > > > +	for (rnp_root = rnp; 1; rnp_root = rnp_root->parent) {
+> > > > +		if (rnp_root != rnp)
+> > > > +			raw_spin_lock_rcu_node(rnp_root);
+> > > > +		if (need_future_gp_element(rnp_root, c) ||
+> > > > +		    ULONG_CMP_GE(rnp_root->gpnum, c) ||
+> > > > +		    (rnp != rnp_root &&
+> > > > +		     rnp_root->gpnum != rnp_root->completed)) {
+> > > > +			trace_rcu_this_gp(rnp_root, rdp, c, TPS("Prestarted"));
+> > > > +			goto unlock_out;
+> > > 
+> > > I was a bit confused about the implementation of the above for loop:
+> > > 
+> > > In the previous code (which I refer to in the negative diff [1]), we were
+> > > checking the leaf, and if the leaf believed that RCU was not idle, then we
+> > > were marking the need for the future GP and quitting this function. In the
+> > > new code, it seems like even if the leaf believes RCU is not-idle, we still
+> > > go all the way up the tree.
+> > > 
+> > > I think the big change is, in the above new for loop, we either bail of if a
+> > > future GP need was already marked by an intermediate node, or we go marking
+> > > up the whole tree about the need for one.
+> > > 
+> > > If a leaf believes RCU is not idle, can we not just mark the future GP need
+> > > like before and return? It seems we would otherwise increase the lock
+> > > contention since now we lock intermediate nodes and then finally even the
+> > > root. Where as before we were not doing that if the leaf believed RCU was not
+> > > idle.
+> > > 
+> > > I am sorry if I missed something obvious.
+> > 
+> > The trick is that we do the check before we have done the marking.
+> > So if we bailed, we would not have marked at all.  If we are at an
+> > intermediate node and a grace period is in progress, we do bail.
+> > 
+> > You are right that this means that we (perhaps unnecessarily) acquire
+> > the lock of the parent rcu_node, which might or might not be the root.
+> > And on systems with default fanout with 1024 CPUs or fewer, yes, it will
+> > be the root, and yes, this is the common case.  So might be well worth
+> > improving.
+> > 
+> > One way to implement the old mark-and-return approach as you suggest
+> > above would be as shown below (untested, probably doesn't build, and
+> > against current rcu/dev).  What do you think?
+> > 
+> > > The other thing is we now don't have the 'Startedleaf' trace like we did
+> > > before. I sent a patch to remove it, but I think the removal of that is
+> > > somehow connected to what I was just talking about.. and I was thinking if we
+> > > should really remove it. Should we add the case for checking leaves only back
+> > > or is that a bad thing to do?
+> > 
+> > Suppose I got hit by a bus and you were stuck with the job of debugging
+> > this.  What traces would you want and where would they be?  Keeping in
+> > mind that too-frequent traces have their problems as well.
+> > 
+> > (Yes, I will be trying very hard to avoid this scenario for as long as
+> > I can, but this might be a good way for you (and everyone else) to be
+> > thinking about this.)
+> > 
+> > 							Thanx, Paul
+> > 
+> > ------------------------------------------------------------------------
+> > 
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index 1abe29a43944..abf3195e01dc 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -1585,6 +1585,8 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+> >  			goto unlock_out;
+> >  		}
+> >  		rnp_root->gp_seq_needed = c;
+e 
+> > +		if (rcu_seq_statn(rcu_seq_current(&rnp_root->gp_seq)))
+> > +		if (rcu_seq_state(rcu_seq_current(&rnp_root->gp_seq)))
+> Right...  Make that rnp->gp_seq.  Memory locality and all that...
+> 
+> 							Thanx, Paul
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Yes, I think this condition would be right to add. I could roll it into my
+clean up patch.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index df6e9bb2559a..2e057e0138b7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7960,6 +7960,13 @@ S:	Maintained
- F:	Documentation/misc-devices/eeprom
- F:	drivers/misc/eeprom/eeprom.c
+Also, I think its better if we split the conditions for prestarted into
+separate if conditions and comment them so its clear, I have started to do
+that in my tree.
+
+If you don't mind going through the if conditions in the funnel locking loop
+with me, it would be quite helpful so that I don't mess the code up and would
+also help me add tracing correctly.
+
+The if condition for prestarted is this:
+
+               if (need_future_gp_element(rnp_root, c) ||
+                   ULONG_CMP_GE(rnp_root->gpnum, c) ||
+                   (rnp != rnp_root &&
+                    rnp_root->gpnum != rnp_root->completed)) {
+                       trace_rcu_this_gp(rnp_root, rdp, c, TPS("Prestarted"));
+                       goto unlock_out;
+		need_future_gp_element(rnp_root, c) = true;
+
+As of 16/21, the heart of the loop is the above (excluding the locking bits)
+
+In this what confuses me is the second and the third condition for
+pre-started.
+
+The second condition is:  ULONG_CMP_GE(rnp_root->gpnum, c). 
+AIUI the goal of this condition is to check whether the requested grace
+period has already started. I believe then the above check is insufficient. 
+The reason I think its insufficient is I believe we should also check the
+state of the grace period to augment this check.
+IMO the condition should really be:
+(ULONG_CMP_GT(rnp_root->gpnum, c) ||
+  (rnp_root->gpnum == c && rnp_root->gpnum != rnp_root->completed))
+In a later patch you replaced this with rseq_done(&rnp_root->gp_seq, c) which
+kind of accounts for the state, except that rseq_done uses ULONG_CMP_GE,
+whereas to fix this, rseq_done IMO should be using ULONG_CMP_GT to be equivalent
+to the above check. Do you agree?
+
+The third condition for pre-started is:
+                   (rnp != rnp_root && rnp_root->gpnum != rnp_root->completed))
+This as I followed from your commit message is if an intermediate node thinks
+RCU is non-idle, then its not necessary to mark the tree and we can bail out
+since the clean up will scan the whole tree anyway. That makes sense to me
+but I think I will like to squash the diff in your previous email into this
+condition as well to handle both conditions together.
+
+thanks,
+
+- Joel
  
-+LEGO MINDSTORMS EV3
-+R:	David Lechner <david@lechnology.com>
-+S:	Maintained
-+F:	arch/arm/boot/dts/da850-lego-ev3.dts
-+F:	Documentation/devicetree/bindings/power/supply/lego_ev3_battery.txt
-+F:	drivers/power/supply/lego_ev3_battery.c
-+
- LEGO USB Tower driver
- M:	Juergen Stuber <starblue@users.sourceforge.net>
- L:	legousb-devel@lists.sourceforge.net
--- 
-2.17.0
