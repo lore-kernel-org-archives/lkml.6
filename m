@@ -1,59 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751226AbeELJdd (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 05:33:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37038 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750722AbeELJdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 05:33:31 -0400
-Date: Sat, 12 May 2018 10:33:24 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Fabrice Gasnier <fabrice.gasnier@st.com>, alexandre.torgue@st.com,
-        mark.rutland@arm.com, mcoquelin.stm32@gmail.com, lars@metafoo.de,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, benjamin.gaignard@linaro.org,
-        arnaud.pouliquen@st.com
-Subject: Re: [PATCH] iio: adc: stm32-dfsdm: Add support for stm32mp1
-Message-ID: <20180512103324.5068c893@archlinux>
-In-Reply-To: <20180507205151.GA25321@rob-hp-laptop>
-References: <1525266323-4922-1-git-send-email-fabrice.gasnier@st.com>
-        <20180507205151.GA25321@rob-hp-laptop>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1750916AbeELJu7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 05:50:59 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:40708 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750756AbeELJu5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 May 2018 05:50:57 -0400
+X-Google-Smtp-Source: AB8JxZqVTiY/BX6iAkFD1gSqlaasvZjDuFKfoQVizN6sp5ZuSeKPjvvFAxCWjBfN3r8iYS4MgN+SmZhYwZucYEx3MzI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAKv+Gu_Lh1TroS4BJJp4PQNYbqZ8KR=6Z5hHX2+UiBfxC=sxQA@mail.gmail.com>
+References: <001a11449aa2faf11805643af581@google.com> <CACT4Y+YOmbZGdBbFpmjRJXABGe1tD=F+3na77DwoPCEaROADyw@mail.gmail.com>
+ <20180202221829.tdiji2332t7orcxj@gmail.com> <CACT4Y+afpDQ7A3caRmskML06h8Q6+NkVAn6HtV93ExPec-g2pA@mail.gmail.com>
+ <CAKv+Gu_Lh1TroS4BJJp4PQNYbqZ8KR=6Z5hHX2+UiBfxC=sxQA@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Sat, 12 May 2018 11:50:36 +0200
+Message-ID: <CACT4Y+awLWP3o0opx5CbAYpD4HpwVpQhPA-dDHmxAzJMs8_orQ@mail.gmail.com>
+Subject: Re: WARNING: kernel stack regs has bad 'bp' value (3)
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Eric Biggers <ebiggers3@gmail.com>,
+        syzbot <syzbot+ffa3a158337bbc01ff09@syzkaller.appspotmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        David Miller <davem@davemloft.net>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE"
+        <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 7 May 2018 15:51:51 -0500
-Rob Herring <robh@kernel.org> wrote:
+On Sat, May 12, 2018 at 11:09 AM, Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+> (+ Arnd)
+>
+> On 12 May 2018 at 10:43, Dmitry Vyukov <dvyukov@google.com> wrote:
+>> On Fri, Feb 2, 2018 at 11:18 PM, Eric Biggers <ebiggers3@gmail.com> wrote:
+>>> On Fri, Feb 02, 2018 at 02:57:32PM +0100, Dmitry Vyukov wrote:
+>>>> On Fri, Feb 2, 2018 at 2:48 PM, syzbot
+>>>> <syzbot+ffa3a158337bbc01ff09@syzkaller.appspotmail.com> wrote:
+>>>> > Hello,
+>>>> >
+>>>> > syzbot hit the following crash on upstream commit
+>>>> > 7109a04eae81c41ed529da9f3c48c3655ccea741 (Thu Feb 1 17:37:30 2018 +0000)
+>>>> > Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/ide
+>>>> >
+>>>> > So far this crash happened 4 times on net-next, upstream.
+>>>> > C reproducer is attached.
+>>>> > syzkaller reproducer is attached.
+>>>> > Raw console output is attached.
+>>>> > compiler: gcc (GCC) 7.1.1 20170620
+>>>> > .config is attached.
+>>>>
+>>>>
+>>>> From suspicious frames I see salsa20_asm_crypt there, so +crypto maintainers.
+>>>>
+>>>
+>>> Looks like the x86 implementations of Salsa20 (both i586 and x86_64) need to be
+>>> updated to not use %ebp/%rbp.
+>>
+>> Ard,
+>>
+>> This was bisected as introduced by:
+>>
+>> commit 83dee2ce1ae791c3dc0c9d4d3a8d42cb109613f6
+>> Author: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>> Date:   Fri Jan 19 12:04:34 2018 +0000
+>>
+>>     crypto: sha3-generic - rewrite KECCAK transform to help the
+>> compiler optimize
+>>
+>> https://gist.githubusercontent.com/dvyukov/47f93f5a0679170dddf93bc019b42f6d/raw/65beac8ddd30003bbd4e9729236dc8572094abf7/gistfile1.txt
+>
+> Ouch.
+>
+> I'm not an expert in x86 assembly. Could someone please check the
+> generated code to see what's going on? The C code changes are not that
+> intricate, they basically unroll a loop, replacing accesses to
+> 'array[indirect_index[i]]' with 'array[constant]'.
+>
+> As mentioned in the commit log, the speedup is more than significant
+> for architectures with lots of GPRs so I'd prefer fixing the patch
+> over reverting it (if there is anything wrong with the code in the
+> first place)
 
-> On Wed, May 02, 2018 at 03:05:23PM +0200, Fabrice Gasnier wrote:
-> > Add support for DFSDM (Digital Filter For Sigma Delta Modulators)
-> > to STM32MP1. This variant is close to STM32H7 DFSDM, it implements
-> > 6 filter instances. Registers map is also increased.
-> > 
-> > Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-> > ---
-> >  .../bindings/iio/adc/st,stm32-dfsdm-adc.txt         |  7 +++++--
-> >  drivers/iio/adc/stm32-dfsdm-core.c                  | 21 +++++++++++++++++++++
-> >  2 files changed, 26 insertions(+), 2 deletions(-)  
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-Applied.   Whilst doing this I note that I'm getting a few sparse
-warnings for this driver that would be nice to clean up...
-
-  CHECK   drivers/iio/adc/stm32-dfsdm-adc.c
-drivers/iio/adc/stm32-dfsdm-adc.c:503:21: warning: expression using sizeof(void)
-drivers/iio/adc/stm32-dfsdm-adc.c:503:21: warning: expression using sizeof(void)
-
-Which is mystifying at first glance... Something deep and dirty in the min macro
-but I can't see what..
-
-drivers/iio/adc/stm32-dfsdm-adc.c:680:5: warning: symbol 'stm32_dfsdm_get_buff_cb' was not declared. Should it be static?
-drivers/iio/adc/stm32-dfsdm-adc.c:703:5: warning: symbol 'stm32_dfsdm_release_buff_cb' was not declared. Should it be static?
-
-Are rather more obvious
+I suspect the problem is with __attribute__((__optimize__("O3"))). It
+makes compiler use rbp register, which must not be used.
