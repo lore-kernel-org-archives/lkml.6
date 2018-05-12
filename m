@@ -1,111 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750950AbeELLM0 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 07:12:26 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:38028 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750735AbeELLMY (ORCPT
+        id S1751150AbeELLOI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 07:14:08 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:47205 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750735AbeELLOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 07:12:24 -0400
-X-Google-Smtp-Source: AB8JxZpGLPoaBVg8tzZsOp8Oq7ogEEnRVkyAzZ9NGYfIQpIGUaam31nz90xmg+q0Gr3HuEE95n44E+AGjqLdiYWrrzk=
+        Sat, 12 May 2018 07:14:06 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
+Date: Sat, 12 May 2018 13:13:36 +0200
+Message-ID: <1937901.oyadCYFYNo@aspire.rjw.lan>
+In-Reply-To: <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de> <20180305102524.5905-4-o.rempel@pengutronix.de> <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJW2h4PqMkRFEc1G1yqxXm+oZyDfE13pkVxJJjDw6XS3A@mail.gmail.com>
-References: <20180413212412.18205-1-labbott@redhat.com> <CAGXu5jJW2h4PqMkRFEc1G1yqxXm+oZyDfE13pkVxJJjDw6XS3A@mail.gmail.com>
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Date: Sat, 12 May 2018 14:11:53 +0300
-Message-ID: <CAFCwf12_WPFpX6Vr-aLcNgtW6ySi_OfW-hajgX_iNfnWn633+A@mail.gmail.com>
-Subject: Re: [PATCHv3] drm/amdkfd: Remove vla
-To: Kees Cook <keescook@chromium.org>
-Cc: Laura Abbott <labbott@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Maling list - DRI developers
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4CBCWxO028149
 
-On Thu, May 3, 2018 at 12:49 AM, Kees Cook <keescook@chromium.org> wrote:
-> On Fri, Apr 13, 2018 at 2:24 PM, Laura Abbott <labbott@redhat.com> wrote:
->>
->> There's an ongoing effort to remove VLAs[1] from the kernel to eventually
->> turn on -Wvla. Switch to a constant value that covers all hardware.
->>
->> [1] https://lkml.org/lkml/2018/3/7/621
->>
->> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
->> Acked-by: Christian König <christian.koenig@amd.com>
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
->
-> Friendly ping -- I don't see this in -next yet. Oded, does this look
-> okay to apply?
->
-> Thanks!
->
-> -Kees
+On Friday, May 4, 2018 8:50:52 PM CEST Oleksij Rempel wrote:
+> Hallo Andrew,
+> I need your ACK or NACK for this patch.
+> 
+> This function is used to configure external PMIC to interpret
+> signal which will be triggered by pm_power_off as power off.
+> Since same signal can be used for stand by, I linked PMIC configuration
+> with pm_power_off_prepare to avoid possible conflicts.
+> 
+> On Mon, Mar 05, 2018 at 11:25:20AM +0100, Oleksij Rempel wrote:
+> > Export pm_power_off_prepare. It is needed to implement power off on
+> > Freescale/NXP iMX6 based boards with external power management
+> > integrated circuit (PMIC).
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > ---
+> >  kernel/reboot.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/kernel/reboot.c b/kernel/reboot.c
+> > index e4ced883d8de..350be6baa60d 100644
+> > --- a/kernel/reboot.c
+> > +++ b/kernel/reboot.c
+> > @@ -49,6 +49,7 @@ int reboot_force;
+> >   */
+> >  
+> >  void (*pm_power_off_prepare)(void);
+> > +EXPORT_SYMBOL(pm_power_off_prepare);
 
-Thanks!
-Applied to amdkfd-next
+Why not EXPORT_SYMBOL_GPL() ?
 
-Oded
-
->
->> ---
->> v3: Introduced a #define for the max value, switched to pr_err_once to
->> avoid log flood, switched to sizeof(array) per private suggestion.
->> ---
->>  drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c | 8 +++++---
->>  drivers/gpu/drm/amd/amdkfd/kfd_priv.h      | 2 ++
->>  2 files changed, 7 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c b/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
->> index 035c351f47c5..db6d9336b80d 100644
->> --- a/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
->> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
->> @@ -139,10 +139,12 @@ static void interrupt_wq(struct work_struct *work)
->>  {
->>         struct kfd_dev *dev = container_of(work, struct kfd_dev,
->>                                                 interrupt_work);
->> +       uint32_t ih_ring_entry[KFD_MAX_RING_ENTRY_SIZE];
->>
->> -       uint32_t ih_ring_entry[DIV_ROUND_UP(
->> -                               dev->device_info->ih_ring_entry_size,
->> -                               sizeof(uint32_t))];
->> +       if (dev->device_info->ih_ring_entry_size > sizeof(ih_ring_entry)) {
->> +               dev_err_once(kfd_chardev(), "Ring entry too small\n");
->> +               return;
->> +       }
->>
->>         while (dequeue_ih_ring_entry(dev, ih_ring_entry))
->>                 dev->device_info->event_interrupt_class->interrupt_wq(dev,
->> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
->> index 96a9cc0f02c9..a90db05dfe61 100644
->> --- a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
->> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
->> @@ -39,6 +39,8 @@
->>
->>  #include "amd_shared.h"
->>
->> +#define KFD_MAX_RING_ENTRY_SIZE        8
->> +
->>  #define KFD_SYSFS_FILE_MODE 0444
->>
->>  #define KFD_MMAP_DOORBELL_MASK 0x8000000000000ull
->> --
->> 2.14.3
->>
->
->
->
-> --
-> Kees Cook
-> Pixel Security
+> >  
+> >  /**
+> >   *	emergency_restart - reboot the system
+> 
+> 
