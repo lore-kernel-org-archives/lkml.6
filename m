@@ -1,88 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751634AbeELCia (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 11 May 2018 22:38:30 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49062 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751297AbeELCi2 (ORCPT
+        id S1751273AbeELCxM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 11 May 2018 22:53:12 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43138 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750793AbeELCxL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 May 2018 22:38:28 -0400
-Subject: Re: [PATCH v2] rcu: Add comment documenting how rcu_seq_snap works
-To: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org
-Cc: paulmck@linux.vnet.ibm.com
-References: <20180512022032.GA194946@joelaf.mtv.corp.google.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5d6bfed3-2552-8ff5-5ad9-4d002740e08a@infradead.org>
-Date: Fri, 11 May 2018 19:38:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Fri, 11 May 2018 22:53:11 -0400
+Date: Fri, 11 May 2018 19:54:36 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Joel Fernandes <joel@joelfernandes.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rcu: trace: Remove Startedleaf from trace events comment
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180512012900.GA183767@joelaf.mtv.corp.google.com>
+ <CAEXW_YSmadNG1AbdSa=ujofbZ1oQLrthWdeB+_HNMOFZQzGaxA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180512022032.GA194946@joelaf.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEXW_YSmadNG1AbdSa=ujofbZ1oQLrthWdeB+_HNMOFZQzGaxA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18051202-0052-0000-0000-000002ED5160
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009009; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01031010; UDB=6.00526960; IPR=6.00810141;
+ MB=3.00021060; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-12 02:53:09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051202-0053-0000-0000-00005CA71851
+Message-Id: <20180512025436.GD26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-11_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805120022
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2018 07:20 PM, Joel Fernandes (Google) wrote:
-> rcu_seq_snap may be tricky for someone looking at it for the first time.
-> Lets document how it works with an example to make it easier.
+On Fri, May 11, 2018 at 06:29:57PM -0700, Joel Fernandes wrote:
+> On Fri, May 11, 2018 at 6:29 PM, Joel Fernandes (Google)
+> <joel@joelfernandes.org> wrote:
+> >
+> > As part of the gp_seq clean up, the Startleaf condition doesn't occur
+> > anymore. Remove it from the comment in the trace event file.
 > 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
-> v2 changes: Corrections as suggested by Randy.
-> 
->  kernel/rcu/rcu.h | 24 +++++++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-> index 003671825d62..533bc1087371 100644
-> --- a/kernel/rcu/rcu.h
-> +++ b/kernel/rcu/rcu.h
-> @@ -91,7 +91,29 @@ static inline void rcu_seq_end(unsigned long *sp)
->  	WRITE_ONCE(*sp, rcu_seq_endval(sp));
->  }
->  
-> -/* Take a snapshot of the update side's sequence number. */
-> +/*
-> + * Take a snapshot of the update side's sequence number.
-> + *
-> + * This function predicts what the grace period number will be the next
-> + * time an RCU callback will be executed, given the current grace period's
-> + * number. This can be gp+1 if RCU is idle, or gp+2 if a grace period is
-> + * already in progress.
-> + *
-> + * We do this with a single addition and masking.
-> + * For example, if RCU_SEQ_STATE_MASK=1 and the least significant bit (LSB) of
-> + * the seq is used to track if a GP is in progress or not, its sufficient if we
+> Sorry, I meant here Startedleaf. Let me know if you want me to resend the patch.
 
-                                                              it's
+Please do, as it saves me making another typo when attempting to fix it.
 
-> + * add (2+1) and mask with ~1. Lets see why with an example:
-
-                                  Let's
-
-I.e., Let's not be so casual with (dropping) apostrophes.
-But v3 can wait for other comments. :)
-
-> + *
-> + * Say the current seq is 6 which is 0b110 (gp is 3 and state bit is 0).
-> + * To get the next GP number, we have to at least add 0b10 to this (0x1 << 1)
-> + * to account for the state bit. However, if the current seq is 7 (gp is 3 and
-> + * state bit is 1), then it means the current grace period is already in
-> + * progress so the next time the callback will run is at the end of grace
-> + * period number gp+2. To account for the extra +1, we just overflow the LSB by
-> + * adding another 0x1 and masking with ~0x1. In case no GP was in progress (RCU
-> + * is idle), then the addition of the extra 0x1 and masking will have no
-> + * effect. This is calculated as below.
-> + */
->  static inline unsigned long rcu_seq_snap(unsigned long *sp)
->  {
->  	unsigned long s;
-> 
-
-
--- 
-~Randy
+							Thanx, Paul
