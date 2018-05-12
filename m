@@ -1,64 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751098AbeELLBE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 07:01:04 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43971 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750735AbeELLBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 07:01:03 -0400
-From: <liuqifa@huawei.com>
-To: <davem@davemloft.net>, <dsahern@gmail.com>, <maheshb@google.com>,
-        <weiyongjun1@huawei.com>, <maowenan@huawei.com>,
-        <dingtianhong@huawei.com>, <liuqifa@huawei.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] ipvlan: flush arp table when mac address changed
-Date: Sat, 12 May 2018 19:00:37 +0800
-Message-ID: <20180512110037.9116-1-liuqifa@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1750950AbeELLM0 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 07:12:26 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:38028 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750735AbeELLMY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 May 2018 07:12:24 -0400
+X-Google-Smtp-Source: AB8JxZpGLPoaBVg8tzZsOp8Oq7ogEEnRVkyAzZ9NGYfIQpIGUaam31nz90xmg+q0Gr3HuEE95n44E+AGjqLdiYWrrzk=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.68.80]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAGXu5jJW2h4PqMkRFEc1G1yqxXm+oZyDfE13pkVxJJjDw6XS3A@mail.gmail.com>
+References: <20180413212412.18205-1-labbott@redhat.com> <CAGXu5jJW2h4PqMkRFEc1G1yqxXm+oZyDfE13pkVxJJjDw6XS3A@mail.gmail.com>
+From: Oded Gabbay <oded.gabbay@gmail.com>
+Date: Sat, 12 May 2018 14:11:53 +0300
+Message-ID: <CAFCwf12_WPFpX6Vr-aLcNgtW6ySi_OfW-hajgX_iNfnWn633+A@mail.gmail.com>
+Subject: Re: [PATCHv3] drm/amdkfd: Remove vla
+To: Kees Cook <keescook@chromium.org>
+Cc: Laura Abbott <labbott@redhat.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Maling list - DRI developers
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4CBCWxO028149
 
-From: Keefe Liu <liuqifa@huawei.com>
+On Thu, May 3, 2018 at 12:49 AM, Kees Cook <keescook@chromium.org> wrote:
+> On Fri, Apr 13, 2018 at 2:24 PM, Laura Abbott <labbott@redhat.com> wrote:
+>>
+>> There's an ongoing effort to remove VLAs[1] from the kernel to eventually
+>> turn on -Wvla. Switch to a constant value that covers all hardware.
+>>
+>> [1] https://lkml.org/lkml/2018/3/7/621
+>>
+>> Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+>> Acked-by: Christian König <christian.koenig@amd.com>
+>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>
+> Friendly ping -- I don't see this in -next yet. Oded, does this look
+> okay to apply?
+>
+> Thanks!
+>
+> -Kees
 
-When master device's mac has been changed, the
-commit <32c10bbfe914> "ipvlan: always use the current L2
-addr of the master" makes the IPVlan devices's mac changed
-also, but it doesn't flush the IPVlan's arp table.
+Thanks!
+Applied to amdkfd-next
 
-Signed-off-by: Keefe Liu <liuqifa@huawei.com>
----
- drivers/net/ipvlan/ipvlan_main.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Oded
 
-diff --git a/drivers/net/ipvlan/ipvlan_main.c b/drivers/net/ipvlan/ipvlan_main.c
-index 450eec2..a1edfe1 100644
---- a/drivers/net/ipvlan/ipvlan_main.c
-+++ b/drivers/net/ipvlan/ipvlan_main.c
-@@ -7,6 +7,8 @@
-  *
-  */
- 
-+#include <net/neighbour.h>
-+#include <net/arp.h>
- #include "ipvlan.h"
- 
- static unsigned int ipvlan_netid __read_mostly;
-@@ -792,8 +794,10 @@ static int ipvlan_device_event(struct notifier_block *unused,
- 		break;
- 
- 	case NETDEV_CHANGEADDR:
--		list_for_each_entry(ipvlan, &port->ipvlans, pnode)
-+		list_for_each_entry(ipvlan, &port->ipvlans, pnode) {
- 			ether_addr_copy(ipvlan->dev->dev_addr, dev->dev_addr);
-+			neigh_changeaddr(&arp_tbl, ipvlan->dev);
-+		}
- 		break;
- 
- 	case NETDEV_PRE_TYPE_CHANGE:
--- 
-1.8.3.1
+>
+>> ---
+>> v3: Introduced a #define for the max value, switched to pr_err_once to
+>> avoid log flood, switched to sizeof(array) per private suggestion.
+>> ---
+>>  drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c | 8 +++++---
+>>  drivers/gpu/drm/amd/amdkfd/kfd_priv.h      | 2 ++
+>>  2 files changed, 7 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c b/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
+>> index 035c351f47c5..db6d9336b80d 100644
+>> --- a/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
+>> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c
+>> @@ -139,10 +139,12 @@ static void interrupt_wq(struct work_struct *work)
+>>  {
+>>         struct kfd_dev *dev = container_of(work, struct kfd_dev,
+>>                                                 interrupt_work);
+>> +       uint32_t ih_ring_entry[KFD_MAX_RING_ENTRY_SIZE];
+>>
+>> -       uint32_t ih_ring_entry[DIV_ROUND_UP(
+>> -                               dev->device_info->ih_ring_entry_size,
+>> -                               sizeof(uint32_t))];
+>> +       if (dev->device_info->ih_ring_entry_size > sizeof(ih_ring_entry)) {
+>> +               dev_err_once(kfd_chardev(), "Ring entry too small\n");
+>> +               return;
+>> +       }
+>>
+>>         while (dequeue_ih_ring_entry(dev, ih_ring_entry))
+>>                 dev->device_info->event_interrupt_class->interrupt_wq(dev,
+>> diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
+>> index 96a9cc0f02c9..a90db05dfe61 100644
+>> --- a/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
+>> +++ b/drivers/gpu/drm/amd/amdkfd/kfd_priv.h
+>> @@ -39,6 +39,8 @@
+>>
+>>  #include "amd_shared.h"
+>>
+>> +#define KFD_MAX_RING_ENTRY_SIZE        8
+>> +
+>>  #define KFD_SYSFS_FILE_MODE 0444
+>>
+>>  #define KFD_MMAP_DOORBELL_MASK 0x8000000000000ull
+>> --
+>> 2.14.3
+>>
+>
+>
+>
+> --
+> Kees Cook
+> Pixel Security
