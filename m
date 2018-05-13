@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751227AbeEMHTB (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 03:19:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41339 "EHLO mx2.suse.de"
+        id S1751226AbeEMHc7 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 03:32:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41819 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750910AbeEMHTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 03:19:00 -0400
-Date: Sun, 13 May 2018 09:18:57 +0200
-Message-ID: <s5hpo2081lq.wl-tiwai@suse.de>
+        id S1751022AbeEMHc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 03:32:58 -0400
+Date: Sun, 13 May 2018 09:32:56 +0200
+Message-ID: <s5hmux480yf.wl-tiwai@suse.de>
 From: Takashi Iwai <tiwai@suse.de>
 To: "Connor McAdams" <conmanx360@gmail.com>
 Cc: <alsa-devel@alsa-project.org>,
         =?UTF-8?B?IkrDqXLDqW15IExlZmF1cmUi?= <jeremy.lefaure@lse.epita.fr>,
         "Jaroslav Kysela" <perex@perex.cz>, <o-takashi@sakamocchi.jp>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 03/13] ALSA: hda/ca0132: Add PCI region2 iomap for SBZ
-In-Reply-To: <1525800015-2920-4-git-send-email-conmanx360@gmail.com>
+Subject: Re: [PATCH v5 00/13] ALSA: hda/ca0132: Patch Series for Recon3Di and Sound Blaster Z Support
+In-Reply-To: <1525800015-2920-1-git-send-email-conmanx360@gmail.com>
 References: <1525800015-2920-1-git-send-email-conmanx360@gmail.com>
-        <1525800015-2920-4-git-send-email-conmanx360@gmail.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -27,40 +26,116 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 08 May 2018 19:20:03 +0200,
+On Tue, 08 May 2018 19:20:00 +0200,
 Connor McAdams wrote:
 > 
-> This patch adds iomapping for the region2 section of memory on the SBZ.
-> This memory region is used in later patches for setting inputs and
-> outputs. If the mapping fails, the quirk is changed back to QUIRK_NONE
-> to avoid attempts to write to uninitialized memory.
+> This patchset adds support for the Sound Blaster Z and the Recon3Di.
 > 
-> It also adds a new exit sequence to unmap the iomem for the SBZ.
+> In order to figure out how to get these cards to work, I made a program called
+> QemuHDADump[1], which uses the trace function of qemu to see interactions with
+> the memory mapped pci BAR space of the card being used in the virtual machine.
+> With this, I obtain the CORB buffer location to get the command verbs, and then
+> dump them each time the buffer rolls over. This program may be useful for fixing
+> other HDA related driver issues where there is no documentation for the device.
 > 
-> Signed-off-by: Connor McAdams <conmanx360@gmail.com>
-> ---
->  sound/pci/hda/patch_ca0132.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+> So far, I have been able to get all features supported on the Sound Blaster Z
+> and the Recon3Di. All output and input effects work, all inputs and outputs
+> work, and just about anything else I can think of. I have also added new
+> controls in order to select the new inputs and outputs, as well as controls to
+> change the effect levels and presets.
 > 
-> diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-> index 02238fe..78d2c26 100644
-> --- a/sound/pci/hda/patch_ca0132.c
-> +++ b/sound/pci/hda/patch_ca0132.c
-> @@ -29,6 +29,9 @@
->  #include <linux/firmware.h>
->  #include <linux/kernel.h>
->  #include <sound/core.h>
-> +#include <linux/types.h>
-> +#include <linux/io.h>
-> +#include <linux/pci.h>
->  #include "hda_codec.h"
->  #include "hda_local.h"
->  #include "hda_auto_parser.h"
+> I have also added the ability to use firmware taken from the Windows drivers of
+> both the Sound Blaster Z and Recon3Di. I am trying to get into contact with
+> Creative to get permission to redistribute these along with the current
+> file included with the Chromebook, but they have not been very responsive.
+> Luckily, the cards work with the Chromebook firmware just fine, although I
+> believe there has to be a reason they have different firmware in Windows. I
+> will not link to the firmwares here, but if you look up my thread on Creative
+> Labs forums, you will find the link to download the firmwares there.
+> 
+> I am willing to help get the other non-working cards such as the ZxR and the
+> newer AE-5 working too, but I will need someone willing to run QemuHDADump in a
+> virtual machine in order to get the commands.
+> 
+> So, in summary:
+> -This patchset makes the cards work better than they did before (they really
+>  didn't work before)
+> 
+> -This patchset leaves the original chromebook related stuff alone.
+> 
+> Thanks.
+> 
+> [1] https://github.com/Conmanx360/QemuHDADump
+> 
+> Bugs:
+> -------------------------------------------------------------------------------
+> Recon3Di: (Reported by Mariusz Ceier)
+> *******************
+> -Occasionally switching between rear and front mic breaks the input until
+>  computer is shutdown or put to sleep.
+> 
+> -Surround Sound works, but is inconsistent. Sometimes, just updating the volume
+>  fixes it, and sometimes, it requires a restart.
+> 
+> Sound Blaster Z:
+> *******************
+> -none that I'm aware of.
+> 
+> 
+> Version changes:
+> -------------------------------------------------------------------------------
+> v1:
+> *******************
+> -Massive patch formatting failure, please ignore v1.
+> 
+> v2:
+> *******************
+> -Fixed patch formatting failure.
+> 
+> v3:
+> *******************
+> -Fixed mem_base unmap, instead of checking for QUIRK_SBZ on exit, have it check
+>  if the area is mapped, and if it is, unmap it. Also make it unmap after all
+>  other commands are finished.
+> 
+> -Change notification of failure to map mem_base from codec_dbg to codec_warn,
+>  and use codec_info to tell the user that their card might have been incorrectly
+>  identified as a Sound Blaster Z.
+> 
+> -Remove commented out commands in sbz_exit_chip function, only reintroduce them
+>  when their functions are defined.
+> 
+> v4:
+> *******************
+> -Split patch into smaller pieces.
+> 
+> -Added const to alt_out_presets array.
+> 
+> -Fixed command that was commented out and only put it in when
+>  it was actually used.
+> 
+> v5:
+> *******************
+> -Fixed issue identified by kbuild test robot, where patch 12 didn't compile
+>  individually.
+> 
+> Connor McAdams (13):
+>   ALSA: hda/ca0132: R3Di and SBZ quirk entires + alt firmware loading
+>   ALSA: hda/ca0132: Add pincfg for SBZ + R3Di, add fp hp auto-detect
+>   ALSA: hda/ca0132: Add PCI region2 iomap for SBZ
+>   ALSA: hda/ca0132: Add extra exit functions for R3Di and SBZ
+>   ALSA: hda/ca0132: add extra init functions for r3di + sbz
+>   ALSA: hda/ca0132: update core functions for sbz + r3di
+>   ALSA: hda/ca0132: add dsp setup related commands for the sbz
+>   ALSA: hda/ca0132: Add dsp setup + gpio functions for r3di
+>   ALSA: hda/ca0132: add the ability to set src_id on scp commands
+>   ALSA: hda/ca0132: add alt_select_in/out for R3Di + SBZ
+>   ALSA: hda/ca0132: Add DSP Volume set and New mixers for SBZ + R3Di
+>   ALSA: hda/ca0132: add ca0132_alt_set_vipsource
+>   ALSA: hda/ca0132: Add new control changes for SBZ + R3Di
 
-The linux/*.h inclusion should be before sound/*.h.
-But never mind, I fixed it locally, so no need for resubmission.
+Now I applied all patches to for-next branch.
+Thanks for your work, it has been a PITA for long time!
 
-
-thanks,
 
 Takashi
