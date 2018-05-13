@@ -1,62 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751890AbeEMCGV (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 22:06:21 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:14851 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751307AbeEMCGT (ORCPT
+        id S1751903AbeEMCTk (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 22:19:40 -0400
+Received: from mail-ot0-f172.google.com ([74.125.82.172]:42088 "EHLO
+        mail-ot0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751634AbeEMCTi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 22:06:19 -0400
-To: ebiggers3@gmail.com,
-        bot+e38be687a2450270a3b593bacb6b5795a7a74edb@syzkaller.appspotmail.com,
-        peter@hurleysoftware.com
-Cc: dvyukov@google.com, gregkh@linuxfoundation.org,
-        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, pombredanne@nexb.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Subject: Re: BUG: workqueue lockup (2)
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <94eb2c03c9bc75aff2055f70734c@google.com>
-        <001a113f711a528a3f0560b08e76@google.com>
-        <20180512215222.GC817@sol.localdomain>
-In-Reply-To: <20180512215222.GC817@sol.localdomain>
-Message-Id: <201805131106.GFF73973.OOtMVQFSFOJFHL@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Sun, 13 May 2018 11:06:17 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Sat, 12 May 2018 22:19:38 -0400
+X-Google-Smtp-Source: AB8JxZrzmymm4XRPKP7JUrgRMcHCaGNdr0O/4+g/48yHmzoETfGVXF6FJih5sosY+rkK6NJbWvzDlfm0qJz3ERjB+Zo=
+MIME-Version: 1.0
+In-Reply-To: <7c9d5eec-4e6b-9b26-470c-f8002cca5f27@gmail.com>
+References: <f393ca5a99059e7086307b99fc435777fe09018b.1525757122.git.baolin.wang@linaro.org>
+ <9a2a07b8eb313ae3ba64af911337ee7ff7c9ad43.1525757122.git.baolin.wang@linaro.org>
+ <20180509142539.GB25131@amd> <bddc1f89-8c2c-ba6e-3c7e-d89710ed5424@gmail.com>
+ <20180510113749.GG6977@amd> <6289571e-7224-ca5e-1acf-5b099be57302@gmail.com>
+ <20180512083559.GB8944@amd> <7c9d5eec-4e6b-9b26-470c-f8002cca5f27@gmail.com>
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Sun, 13 May 2018 10:19:37 +0800
+Message-ID: <CAMz4kuLJbq0G4TGoRp_if1mwe_4pa69haJvmT9SoRJ-UwGDa_g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] leds: Add Spreadtrum SC27xx breathing light
+ controller driver
+To: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, xiaotong.lu@spreadtrum.com,
+        Mark Brown <broonie@kernel.org>, linux-leds@vger.kernel.org,
+        DTML <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric Biggers wrote:
-> The bug that this reproducer reproduces was fixed a while ago by commit
-> 966031f340185e, so I'm marking this bug report fixed by it:
-> 
-> #syz fix: n_tty: fix EXTPROC vs ICANON interaction with TIOCINQ (aka FIONREAD)
+Hi Jacek and Pavel,
 
-Nope. Commit 966031f340185edd ("n_tty: fix EXTPROC vs ICANON interaction with
-TIOCINQ (aka FIONREAD)") is "Wed Dec 20 17:57:06 2017 -0800" but the last
-occurrence on linux.git (commit 008464a9360e31b1 ("Merge branch 'for-linus' of
-git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid")) is only a few days ago
-("Wed May 9 10:49:52 2018 -1000").
+On 13 May 2018 at 04:44, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
+> Hi Pavel,
+>
+>
+> On 05/12/2018 10:35 AM, Pavel Machek wrote:
+>>
+>> Hi!
+>>
+>>>>> I disagree here. We already had the same discussion at the occasion
+>>>>> of the patch [0] and it turned out to be a dead-end [1]. Now we have
+>>>>> neither the driver nor the generic pattern interface.
+>>>>>
+>>>>> We also already have some older LED class drivers that implement custom
+>>>>> pattern interfaces (e.g. drivers/leds/leds-lm3533.c) and the same
+>>>>> approach can be applied in this case.
+>>>>
+>>>>
+>>>> Please don't. It was mistake to implement custom pattern interfaces
+>>>> back then, it is still mistake now.
+>>>
+>>>
+>>> It turned out to be really hard to cover all known pattern generator
+>>> implementations with generic interface. Sure, it would be nice to have
+>>> one, but the whole discussion around [0] only unveiled the diversity of
+>>> parameters to cover. And still new devices appear on the market.
+>>>
+>>> We would have to propose a set of pattern schemes and allow to
+>>> add new ones to it.
+>>
+>>
+>> I believe that what I'm proposing below is close enough to universal.
+>>
+>>>> If we really need solution now, I'd recommend "pattern" file with
+>>>>
+>>>> "<delta time> <brightness> <delta time> <brightness>".
+>>>>
+>>>> In this specific case, hardware only supports patterns in this format:
+>>>>
+>>>> low_time 0 rise_time 255 high_time 255 fall_time 0
+>>>>
+>>>> so driver would simply -EINVAL on anything else.
+>>>
+>>>
+>>> I'm fine with the pattern file, but the pattern format would have
+>>> to be defined in the per-driver ABI documentation. It wouldn't much
+>>> differ from the custom pattern approach though, unless I'm missing some
+>>> gain of having pattern setting in a uniformly named single sysfs file
+>>> (with semantics differing from driver to driver).
+>>
+>>
+>> I'm proposing "<delta time> <brightness> ..." sysfs file. It certainly
+>> covers this hardware, it would be enough to cover the Qualcomm Pulse
+>> generator (IIRC), and it would cover most uses cases of Nokia N900's
+>> LED.
+>>
+>> Yes, we would need to document limitations of each chip. But it should
+>> be easily possible to run pattern designed for Spreadtrum on N900,
+>> even if it would not work the other way around.
+>>
+>> (If someone really wants to run complex patterns on simple hardware,
+>> we can provide software emulation using same file format. I believe I
+>> still have that patch somewhere.)
+>
+>
+> OK, I've revised the discussion under Qualcomm LPG patch set and
+> it seems that we have almost ready solution in [0], except the
+> pattern_repeat file you mention in [1]. So probably Baolin could
+> address your remarks from [1] and add pattern_repeat file to the
+> patch that begins thread [0].
+>
+> [0] https://lkml.org/lkml/2017/11/15/27
+> [1] https://lkml.org/lkml/2017/12/8/470
 
-> 
-> Note that the error message was not always "BUG: workqueue lockup"; it was also
-> sometimes like "watchdog: BUG: soft lockup - CPU#5 stuck for 22s!".
-> 
-> syzbot still is hitting the "BUG: workqueue lockup" error sometimes, but it must
-> be for other reasons.  None has a reproducer currently.
+Thanks for your suggestion. So I will remove the sysfs part from the
+new driver, then send incremental patches when introducing some common
+LED interfaces.
 
-The last occurrence on linux.git is considered as a duplicate of
-
-  [upstream] INFO: rcu detected stall in n_tty_receive_char_special
-  https://syzkaller.appspot.com/bug?id=3d7481a346958d9469bebbeb0537d5f056bdd6e8
-
-which we already have a reproducer at
-https://groups.google.com/d/msg/syzkaller-bugs/O4DbPiJZFBY/YCVPocx3AgAJ
-and debug output is available at
-https://groups.google.com/d/msg/syzkaller-bugs/O4DbPiJZFBY/TxQ7WS5ZAwAJ .
-
-We are currently waiting for comments from Peter Hurley who added that code.
+-- 
+Baolin.wang
+Best Regards
