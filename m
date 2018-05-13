@@ -1,93 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751891AbeEMQCa (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 12:02:30 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:46198 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751489AbeEMQC2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 12:02:28 -0400
-X-Google-Smtp-Source: AB8JxZolO4Fu0DwcjS4S9shxLdQ/CEk6c9NaqvgnH+HEuYMg+BdxPimTEz8peDfhUw0qUQS8y84Phw==
-Date: Sun, 13 May 2018 13:02:23 -0300
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+fc78715ba3b3257caf6a@syzkaller.appspotmail.com>,
-        Vladislav Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>, linux-sctp@vger.kernel.org,
-        Andrei Vagin <avagin@virtuozzo.com>,
-        David Miller <davem@davemloft.net>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: INFO: rcu detected stall in kfree_skbmem
-Message-ID: <20180513160223.GR4977@localhost.localdomain>
-References: <000000000000a9b0e3056b14bfb2@google.com>
- <CACT4Y+Z_+=VLbELVW69B7WEVqvri1xBMM5RMnMQynec_XgaE=w@mail.gmail.com>
- <20180511184141.GW5105@localhost.localdomain>
- <683d1ead-d35b-27ee-0f0c-f7e815d989fc@gmail.com>
- <20180511204228.GO4977@localhost.localdomain>
- <CACT4Y+ZG6igbhgimA=oFz4k=x_P4tSYGQgFk0EVrjznm8V8fLA@mail.gmail.com>
+        id S1752009AbeEMQEL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 12:04:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53420 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751584AbeEMQEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 12:04:09 -0400
+Date: Sun, 13 May 2018 18:04:04 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: DEBUG_RWSEMS warning from thaw_super()
+Message-ID: <20180513160404.GA19620@redhat.com>
+References: <CAOQ4uxgxP-0OZzT866=RR5rGQZ89EOy-mFF50v_5Y644OrV7tA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+ZG6igbhgimA=oFz4k=x_P4tSYGQgFk0EVrjznm8V8fLA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAOQ4uxgxP-0OZzT866=RR5rGQZ89EOy-mFF50v_5Y644OrV7tA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 03:52:01PM +0200, Dmitry Vyukov wrote:
-> On Fri, May 11, 2018 at 10:42 PM, Marcelo Ricardo Leitner
-> <marcelo.leitner@gmail.com> wrote:
-> > On Fri, May 11, 2018 at 12:08:33PM -0700, Eric Dumazet wrote:
-> >>
-> >>
-> >> On 05/11/2018 11:41 AM, Marcelo Ricardo Leitner wrote:
-> >>
-> >> > But calling ip6_xmit with rcu_read_lock is expected. tcp stack also
-> >> > does it.
-> >> > Thus I think this is more of an issue with IPv6 stack. If a host has
-> >> > an extensive ip6tables ruleset, it probably generates this more
-> >> > easily.
-> >> >
-> >> >>>  sctp_v6_xmit+0x4a5/0x6b0 net/sctp/ipv6.c:225
-> >> >>>  sctp_packet_transmit+0x26f6/0x3ba0 net/sctp/output.c:650
-> >> >>>  sctp_outq_flush+0x1373/0x4370 net/sctp/outqueue.c:1197
-> >> >>>  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
-> >> >>>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
-> >> >>>  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
-> >> >>>  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
-> >> >>>  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
-> >> >>>  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
-> >> >>>  expire_timers kernel/time/timer.c:1363 [inline]
-> >> >
-> >> > Having this call from a timer means it wasn't processing sctp stack
-> >> > for too long.
-> >> >
-> >>
-> >> I feel the problem is that this part is looping, in some infinite loop.
-> >>
-> >> I have seen this stack traces in other reports.
-> >
-> > Checked mail history now, seems at least two other reports on RCU
-> > stalls had sctp_generate_heartbeat_event involved.
-> >
-> >>
-> >> Maybe some kind of list corruption.
-> >
-> > Could be.
-> > Do we know if it generated a flood of packets?
+On 05/13, Amir Goldstein wrote:
 >
-> We only know what's in the bug reports. Do the other ones have
+> Since kernel v4.17-rc1 and DEBUG_RWSEMS, I see the
+> warning below after filesystem freeze/thaw.
+>
+> This is a case where one process acquires a bunch of rwsem
+> and another process releases them.
+>
+> To convey this use case to lockdep, freeze_super() calls
+> lockdep_sb_freeze_release() on exit and thaw_super()
+> calls lockdep_sb_freeze_acquire() on entry.
 
-Ok.
+This was already discussed, but I forgot the result...
 
-> reproducers? It can make sense to mark them as duplicates to not have
+So once again, why we can't simply update percpu_rwsem_acquire() ?
+Or we can check CONFIG_RWSEM_SPIN_ON_OWNER to match percpu_rwsem_release(),
+but CONFIG_DEBUG_RWSEMS explains the purpose better.
 
-No.
+Oleg.
 
-> a placer of open bugs about the same root cause.
-
-They may have the same root cause, but right now I cannot tell for
-sure.
+--- x/include/linux/percpu-rwsem.h
++++ x/include/linux/percpu-rwsem.h
+@@ -141,6 +141,10 @@ static inline void percpu_rwsem_acquire(
+ 					bool read, unsigned long ip)
+ {
+ 	lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
++#ifdef CONFIG_DEBUG_RWSEMS
++	if (!read)
++		sem->rw_sem.owner = current;
++#endif
+ }
+ 
+ #endif
