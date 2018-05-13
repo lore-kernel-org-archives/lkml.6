@@ -1,119 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751847AbeEMVPG (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 17:15:06 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34058 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750985AbeEMVPE (ORCPT
+        id S1751881AbeEMVTL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 17:19:11 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:40030 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750985AbeEMVTJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 17:15:04 -0400
-X-Google-Smtp-Source: AB8JxZoflE4xilKFHRfLivDRi2UVvSCUMo9dcc8NFdl/HSlDjSLaQQmqc4wyURNpLAQ61ej3lSdX3Q==
+        Sun, 13 May 2018 17:19:09 -0400
+X-Google-Smtp-Source: AB8JxZqkKTzpCqU7XJxTf/RzyMR2HnYYkYrlNuWLCXfTstdYLWQ+wxun8FD35gxk2CLUUpKE07FsIA==
 From: Dmitry Osipenko <digetx@gmail.com>
-To: Wolfram Sang <wsa@the-dreams.de>,
+To: Lee Jones <lee.jones@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
+        Jonathan Hunter <jonathanh@nvidia.com>
 Cc: linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1] i2c: tegra: Remove suspend-resume
-Date: Mon, 14 May 2018 00:13:47 +0300
-Message-Id: <20180513211347.7187-1-digetx@gmail.com>
+Subject: [PATCH v1] mfd: tps6586x: Move interrupt handling into workqueue
+Date: Mon, 14 May 2018 00:18:42 +0300
+Message-Id: <20180513211842.7819-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nothing prevents I2C clients to access I2C while Tegra's driver is being
-suspended, this results in -EBUSY error returned to the clients and that
-may have unfortunate consequences. In particular this causes problems
-for the TPS6586x MFD driver which emits hundreds of "failed to read
-interrupt status" error messages on resume from suspend. This happens if
-TPS6586X is used to wake system from suspend by the expired RTC alarm
-timer because TPS6586X is an I2C device driver and its IRQ handler reads
-the status register while Tegra's I2C driver is suspended, i.e. just after
-kernel enabled IRQ's during of resume-from-suspend process.
-
-Note that the removed tegra_i2c_resume() invoked tegra_i2c_init() which
-performs HW reset. That seems was also not entirely correct because moving
-tegra_i2c_resume to an earlier stage of resume-from-suspend process causes
-I2C transfer to fail in the case of TPS6586X. It is fine to remove the
-HW-reinitialization for now because it should be only needed in a case of
-using lowest power-mode during suspend, which upstream kernel doesn't
-support.
+Reading of status register within the interrupt handler fails with -EAGAIN
+if I2C is busy with handling some other request at the same time. Move the
+actual interrupt handling into a workqueue to avoid the unfortunate I2C
+failure and to avoid hanging CPU in interrupt up to 1 second (transfer
+timeout in the Tegra I2C driver).
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Cc: <stable@vger.kernel.org>
 ---
- drivers/i2c/busses/i2c-tegra.c | 33 ---------------------------------
- 1 file changed, 33 deletions(-)
+ drivers/mfd/tps6586x.c | 40 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 29 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 60292d243e24..5fccd1f1bca8 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -173,7 +173,6 @@ struct tegra_i2c_hw_feature {
-  * @msg_buf_remaining: size of unsent data in the message buffer
-  * @msg_read: identifies read transfers
-  * @bus_clk_rate: current i2c bus clock rate
-- * @is_suspended: prevents i2c controller accesses after suspend is called
-  */
- struct tegra_i2c_dev {
- 	struct device *dev;
-@@ -194,7 +193,6 @@ struct tegra_i2c_dev {
- 	int msg_read;
- 	u32 bus_clk_rate;
- 	u16 clk_divisor_non_hs_mode;
--	bool is_suspended;
- 	bool is_multimaster_mode;
- 	spinlock_t xfer_lock;
+diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+index b89379782741..9896e080b274 100644
+--- a/drivers/mfd/tps6586x.c
++++ b/drivers/mfd/tps6586x.c
+@@ -133,6 +133,7 @@ struct tps6586x {
+ 	u32			irq_en;
+ 	u8			mask_reg[5];
+ 	struct irq_domain	*irq_domain;
++	struct work_struct	isr_work;
  };
-@@ -734,9 +732,6 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 	int i;
- 	int ret = 0;
  
--	if (i2c_dev->is_suspended)
--		return -EBUSY;
+ static inline struct tps6586x *dev_to_tps6586x(struct device *dev)
+@@ -309,18 +310,19 @@ static const struct irq_domain_ops tps6586x_domain_ops = {
+ 	.xlate  = irq_domain_xlate_twocell,
+ };
+ 
+-static irqreturn_t tps6586x_irq(int irq, void *data)
++static void tps6586x_isr_work(struct work_struct *work)
+ {
+-	struct tps6586x *tps6586x = data;
++	struct tps6586x *tps6586x = container_of(work, struct tps6586x,
++						 isr_work);
+ 	u32 acks;
+-	int ret = 0;
++	int err;
+ 
+-	ret = tps6586x_reads(tps6586x->dev, TPS6586X_INT_ACK1,
++	err = tps6586x_reads(tps6586x->dev, TPS6586X_INT_ACK1,
+ 			     sizeof(acks), (uint8_t *)&acks);
 -
- 	ret = pm_runtime_get_sync(i2c_dev->dev);
- 	if (ret < 0) {
- 		dev_err(i2c_dev->dev, "runtime resume failed %d\n", ret);
-@@ -1051,37 +1046,9 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+-	if (ret < 0) {
+-		dev_err(tps6586x->dev, "failed to read interrupt status\n");
+-		return IRQ_NONE;
++	if (err < 0) {
++		dev_err(tps6586x->dev,
++			"failed to read interrupt status %d\n", err);
++		return;
+ 	}
+ 
+ 	acks = le32_to_cpu(acks);
+@@ -335,6 +337,16 @@ static irqreturn_t tps6586x_irq(int irq, void *data)
+ 		acks &= ~(1 << i);
+ 	}
+ 
++	enable_irq(tps6586x->irq);
++}
++
++static irqreturn_t tps6586x_irq(int irq, void *data)
++{
++	struct tps6586x *tps6586x = data;
++
++	disable_irq_nosync(irq);
++	schedule_work(&tps6586x->isr_work);
++
+ 	return IRQ_HANDLED;
  }
  
- #ifdef CONFIG_PM_SLEEP
--static int tegra_i2c_suspend(struct device *dev)
--{
--	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+@@ -542,8 +554,9 @@ static int tps6586x_i2c_probe(struct i2c_client *client,
+ 		return ret;
+ 	}
+ 
 -
--	i2c_lock_adapter(&i2c_dev->adapter);
--	i2c_dev->is_suspended = true;
--	i2c_unlock_adapter(&i2c_dev->adapter);
--
--	return 0;
--}
--
--static int tegra_i2c_resume(struct device *dev)
--{
--	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
--	int ret;
--
--	i2c_lock_adapter(&i2c_dev->adapter);
--
--	ret = tegra_i2c_init(i2c_dev);
--	if (!ret)
--		i2c_dev->is_suspended = false;
--
--	i2c_unlock_adapter(&i2c_dev->adapter);
--
--	return ret;
--}
--
- static const struct dev_pm_ops tegra_i2c_pm = {
- 	SET_RUNTIME_PM_OPS(tegra_i2c_runtime_suspend, tegra_i2c_runtime_resume,
- 			   NULL)
--	SET_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
- };
- #define TEGRA_I2C_PM	(&tegra_i2c_pm)
- #else
+ 	if (client->irq) {
++		INIT_WORK(&tps6586x->isr_work, tps6586x_isr_work);
++
+ 		ret = tps6586x_irq_init(tps6586x, client->irq,
+ 					pdata->irq_base);
+ 		if (ret) {
+@@ -585,10 +598,15 @@ static int tps6586x_i2c_remove(struct i2c_client *client)
+ {
+ 	struct tps6586x *tps6586x = i2c_get_clientdata(client);
+ 
++	if (client->irq) {
++		disable_irq(client->irq);
++		flush_work(&tps6586x->isr_work);
++		free_irq(client->irq, tps6586x);
++	}
++
+ 	tps6586x_remove_subdevs(tps6586x);
+ 	mfd_remove_devices(tps6586x->dev);
+-	if (client->irq)
+-		free_irq(client->irq, tps6586x);
++
+ 	return 0;
+ }
+ 
 -- 
 2.17.0
