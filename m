@@ -1,117 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751654AbeEML4Y (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 07:56:24 -0400
-Received: from mail-pg0-f41.google.com ([74.125.83.41]:41039 "EHLO
-        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751263AbeEML4W (ORCPT
+        id S1751357AbeEMMB3 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 08:01:29 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45113 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751092AbeEMMB2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 07:56:22 -0400
-X-Google-Smtp-Source: AB8JxZrGjJ/XqbO8Ea9l/yFxvK4VbrfcHyun4CXICzWopvhNzXZhq+W8+P0XVT9m8nWlbE6Hk2v8kQCMm8oYo7+tuow=
+        Sun, 13 May 2018 08:01:28 -0400
+Date: Sun, 13 May 2018 05:01:20 -0700
+From: tip-bot for David Wang <tipbot@zytor.com>
+Message-ID: <tip-2cc61be60e37b1856a97ccbdcca3e86e593bf06a@git.kernel.org>
+Cc: davidwang@zhaoxin.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com
+Reply-To: davidwang@zhaoxin.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com
+In-Reply-To: <1525314766-18910-2-git-send-email-davidwang@zhaoxin.com>
+References: <1525314766-18910-2-git-send-email-davidwang@zhaoxin.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cpu] x86/CPU: Make intel_num_cpu_cores() generic
+Git-Commit-ID: 2cc61be60e37b1856a97ccbdcca3e86e593bf06a
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <201805131947.IJC65168.OOFOMFJHLVQStF@I-love.SAKURA.ne.jp>
-References: <000000000000eec34b056c128997@google.com> <CACT4Y+aRyMWXS0K0bqAVgBOTh=vXEY0dwM91vdSkJ75zgy+k-A@mail.gmail.com>
- <201805131920.GJJ58398.OHFVOOSQtLMJFF@I-love.SAKURA.ne.jp>
- <CACT4Y+asb-Anvn3ENyUVDGVivFUDT5XXz750ioi5MqWDtgvwRg@mail.gmail.com> <201805131947.IJC65168.OOFOMFJHLVQStF@I-love.SAKURA.ne.jp>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sun, 13 May 2018 13:56:01 +0200
-Message-ID: <CACT4Y+ZwLPx1uQo=oxvOtbo4Jjb-J-S-QJ_wMhP=DkCPQjbzZg@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in corrupted
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: syzbot <syzbot+3417712847e7219a60ee@syzkaller.appspotmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 12:47 PM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> Dmitry Vyukov wrote:
->> On Sun, May 13, 2018 at 12:20 PM, Tetsuo Handa
->> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->> > Dmitry Vyukov wrote:
->> >> This looks very similar to "KASAN: use-after-free Read in fuse_kill_sb_blk":
->> >> https://groups.google.com/d/msg/syzkaller-bugs/4C4oiBX8vZ0/0NTQRcUYBgAJ
->> >>
->> >> which you fixed with "fuse: don't keep dead fuse_conn at fuse_fill_super().":
->> >> https://groups.google.com/d/msg/syzkaller-bugs/4C4oiBX8vZ0/W6pi8NdbBgAJ
->> >>
->> >> However, here we have use-after-free in fuse_kill_sb_anon instead of
->> >> use_kill_sb_blk. Do you think your patch will fix this as well?
->> >
->> > Yes, for fuse_kill_sb_anon() and fuse_kill_sb_blk() are symmetrical.
->> > I'm waiting for Miklos Szeredi to apply that patch.
->>
->>
->> Thanks for confirming. Let's do:
->>
->> #syz fix: fuse: don't keep dead fuse_conn at fuse_fill_super().
->>
-> Excuse me, but that patch is not yet applied to any git tree. Isn't the rule that
->
->   If you forgot to add the Reported-by tag, once the fix for this bug is merged into any tree, please reply to this email with:
->   #syz fix: exact-commit-title
+Commit-ID:  2cc61be60e37b1856a97ccbdcca3e86e593bf06a
+Gitweb:     https://git.kernel.org/tip/2cc61be60e37b1856a97ccbdcca3e86e593bf06a
+Author:     David Wang <davidwang@zhaoxin.com>
+AuthorDate: Thu, 3 May 2018 10:32:44 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sun, 13 May 2018 12:06:12 +0200
 
-Sorry, the doc is not 100% precisely express the situation. I think
-this was discussed several times, but the info is scattered.
-What matters in the end is that syzbot discovers the commit using the
-title in the tested trees. For example, consider that a commit is
-merged into some sub-sub-system tree, its commit title can still
-change (for example, an upper subsystem maintainer decided to fix it
-up, unlikely, but possible), or the commit can be simply dropped if
-upper subsystem maintainer does not like it.
-On the other hand, for significant portion of commits once they are
-just mailed we are reasonably sure that they will appear upstream
-under the original title.
+x86/CPU: Make intel_num_cpu_cores() generic
 
-So the full situation is more like:
-First you need to decide if you want to deal with this bug sooner or
-later (we usually want to deal with them sooner).
-If you want to deal with it sooner, the criteria is that you are
-"reasonably sure that the commit will reach upstream under this
-title", for whatever reason. If it turns out to be wrong, then we will
-need to get back to it later and fix up commit title.
-If you want to deal with it later, then you can wait till it reaches
-upstream and then use syz fix with the actual title.
+intel_num_cpu_cores() is a static function in intel.c which can't be used
+by other files. Define another function called detect_num_cpu_cores() in
+common.c to replace this function so it can be reused.
 
-So I did "syz fix" in the hope that the commit will be taken upstream
-as-is, and we don't need to get back to it later.
-It also has a useful consequence that the commit that at least was
-_meant_ to fix it is recorded on mailing lists. So if it's not fixed
-after 3 months, we can find the commit and check if it was forgotten
-or renamed or something else.
+Signed-off-by: David Wang <davidwang@zhaoxin.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: lukelin@viacpu.com
+Cc: qiyuanwang@zhaoxin.com
+Cc: gregkh@linuxfoundation.org
+Cc: brucechang@via-alliance.com
+Cc: timguo@zhaoxin.com
+Cc: cooperyan@zhaoxin.com
+Cc: hpa@zytor.com
+Cc: benjaminpan@viatech.com
+Link: https://lkml.kernel.org/r/1525314766-18910-2-git-send-email-davidwang@zhaoxin.com
 
-What do you think of this update to docs:
-https://github.com/dvyukov/syzkaller/commit/90075c45aa4422c4656020a3c4e1d6d7a04424ed
-Does it make situation clearer?
+---
+ arch/x86/kernel/cpu/common.c | 14 ++++++++++++++
+ arch/x86/kernel/cpu/cpu.h    |  1 +
+ arch/x86/kernel/cpu/intel.c  | 20 +-------------------
+ 3 files changed, 16 insertions(+), 19 deletions(-)
 
-
-> ? That's the reason I keep
->
->   KASAN: use-after-free Read in fuse_kill_sb_blk
->   https://syzkaller.appspot.com/bug?id=a07a680ed0a9290585ca424546860464dd9658db
->
-> report "open()" table but I want keyword column available in the "open()" table
-> so that we can announce that "patch is proposed and waiting for review" state.
-
-I wonder if marking the bug with "syz fix" is actually the right way
-to handle this. There will be a note about the commit that is supposed
-to fix this for both humans reading the email thread and syzbot. Then,
-on dashboard it will go to "fix pending" state, which clearly
-distinguishes them from other "open" bugs. And we can see that the
-commit is still not present in any tested trees by looking at the last
-column (Patched: 0/6). I was also thinking of recording time when "syz
-fix" command was issued and then marking bugs with red if "syz fix"
-was issued more than X months ago, but syzbot still has not discovered
-the commit in any trees (useful for detecting typos in commit titles,
-or renamed commits).
-When we issue such command, we could say something like "Tentatively
-marking this as fixed with: ..." to make it clear what happens.
-What do you think?
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 37c7c8334a00..6993842e788c 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -584,6 +584,20 @@ static void get_model_name(struct cpuinfo_x86 *c)
+ 	*(s + 1) = '\0';
+ }
+ 
++int detect_num_cpu_cores(struct cpuinfo_x86 *c)
++{
++	unsigned int eax, ebx, ecx, edx;
++
++	if (!IS_ENABLED(CONFIG_SMP) || c->cpuid_level < 4)
++		return 1;
++
++	cpuid_count(4, 0, &eax, &ebx, &ecx, &edx);
++	if (eax & 0x1f)
++		return (eax >> 26) + 1;
++	else
++		return 1;
++}
++
+ void cpu_detect_cache_sizes(struct cpuinfo_x86 *c)
+ {
+ 	unsigned int n, dummy, ebx, ecx, edx, l2size;
+diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
+index c415f99e9599..efd6ef8ad14e 100644
+--- a/arch/x86/kernel/cpu/cpu.h
++++ b/arch/x86/kernel/cpu/cpu.h
+@@ -54,6 +54,7 @@ extern u32 get_scattered_cpuid_leaf(unsigned int level,
+ extern unsigned int init_intel_cacheinfo(struct cpuinfo_x86 *c);
+ extern void init_amd_cacheinfo(struct cpuinfo_x86 *c);
+ 
++extern int detect_num_cpu_cores(struct cpuinfo_x86 *c);
+ extern int detect_extended_topology(struct cpuinfo_x86 *c);
+ extern void detect_ht(struct cpuinfo_x86 *c);
+ 
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index b9693b80fc21..b54535be254a 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -453,24 +453,6 @@ static void srat_detect_node(struct cpuinfo_x86 *c)
+ #endif
+ }
+ 
+-/*
+- * find out the number of processor cores on the die
+- */
+-static int intel_num_cpu_cores(struct cpuinfo_x86 *c)
+-{
+-	unsigned int eax, ebx, ecx, edx;
+-
+-	if (!IS_ENABLED(CONFIG_SMP) || c->cpuid_level < 4)
+-		return 1;
+-
+-	/* Intel has a non-standard dependency on %ecx for this CPUID level. */
+-	cpuid_count(4, 0, &eax, &ebx, &ecx, &edx);
+-	if (eax & 0x1f)
+-		return (eax >> 26) + 1;
+-	else
+-		return 1;
+-}
+-
+ static void detect_vmx_virtcap(struct cpuinfo_x86 *c)
+ {
+ 	/* Intel VMX MSR indicated features */
+@@ -671,7 +653,7 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 		 * let's use the legacy cpuid vector 0x1 and 0x4 for topology
+ 		 * detection.
+ 		 */
+-		c->x86_max_cores = intel_num_cpu_cores(c);
++		c->x86_max_cores = detect_num_cpu_cores(c);
+ #ifdef CONFIG_X86_32
+ 		detect_ht(c);
+ #endif
