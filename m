@@ -1,29 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751928AbeEMOFf (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 10:05:35 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58819 "EHLO
+        id S1751916AbeEMOGF (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 10:06:05 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56051 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751338AbeEMOFe (ORCPT
+        with ESMTP id S1751247AbeEMOGE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 10:05:34 -0400
-Date: Sun, 13 May 2018 07:05:23 -0700
+        Sun, 13 May 2018 10:06:04 -0400
+Date: Sun, 13 May 2018 07:05:52 -0700
 From: tip-bot for Marc Zyngier <tipbot@zytor.com>
-Message-ID: <tip-8a22a3e1e768c309b718f99bd86f9f25a453e0dc@git.kernel.org>
-Cc: jason@lakedaemon.net, mingo@kernel.org, hpa@zytor.com,
-        ard.biesheuvel@linaro.org, tglx@linutronix.de,
-        srinivas.kandagatla@linaro.org, robh@kernel.org,
+Message-ID: <tip-6461934371bfc1bfe6b424b197a546b4effd0a32@git.kernel.org>
+Cc: ard.biesheuvel@linaro.org, hpa@zytor.com, miquel.raynal@bootlin.com,
+        tglx@linutronix.de, jason@lakedaemon.net,
+        srinivas.kandagatla@linaro.org, marc.zyngier@arm.com, mingo@kernel.org,
+        robh@kernel.org, thomas.petazzoni@bootlin.com,
+        linux-kernel@vger.kernel.org
+Reply-To: miquel.raynal@bootlin.com, hpa@zytor.com,
+        srinivas.kandagatla@linaro.org, tglx@linutronix.de,
+        jason@lakedaemon.net, ard.biesheuvel@linaro.org,
         linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-        miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com
-Reply-To: tglx@linutronix.de, srinivas.kandagatla@linaro.org, robh@kernel.org,
-        thomas.petazzoni@bootlin.com, miquel.raynal@bootlin.com,
-        linux-kernel@vger.kernel.org, marc.zyngier@arm.com, hpa@zytor.com,
-        jason@lakedaemon.net, mingo@kernel.org, ard.biesheuvel@linaro.org
-In-Reply-To: <20180508121438.11301-5-marc.zyngier@arm.com>
-References: <20180508121438.11301-5-marc.zyngier@arm.com>
+        thomas.petazzoni@bootlin.com, robh@kernel.org, mingo@kernel.org
+In-Reply-To: <20180508121438.11301-6-marc.zyngier@arm.com>
+References: <20180508121438.11301-6-marc.zyngier@arm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] dma-iommu: Fix compilation when !CONFIG_IOMMU_DMA
-Git-Commit-ID: 8a22a3e1e768c309b718f99bd86f9f25a453e0dc
+Subject: [tip:irq/core] irqdomain: Let irq_find_host default to
+ DOMAIN_BUS_WIRED
+Git-Commit-ID: 6461934371bfc1bfe6b424b197a546b4effd0a32
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,28 +38,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8a22a3e1e768c309b718f99bd86f9f25a453e0dc
-Gitweb:     https://git.kernel.org/tip/8a22a3e1e768c309b718f99bd86f9f25a453e0dc
+Commit-ID:  6461934371bfc1bfe6b424b197a546b4effd0a32
+Gitweb:     https://git.kernel.org/tip/6461934371bfc1bfe6b424b197a546b4effd0a32
 Author:     Marc Zyngier <marc.zyngier@arm.com>
-AuthorDate: Tue, 8 May 2018 13:14:33 +0100
+AuthorDate: Tue, 8 May 2018 13:14:34 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sun, 13 May 2018 15:59:00 +0200
 
-dma-iommu: Fix compilation when !CONFIG_IOMMU_DMA
+irqdomain: Let irq_find_host default to DOMAIN_BUS_WIRED
 
-Inclusion of include/dma-iommu.h when CONFIG_IOMMU_DMA is not selected
-results in the following splat:
+At the beginning of times, irq_find_host() was simple. Each device node
+implemented at most one irq domain, and we were happy. Over time, things
+have become more complex, and we now have nodes implementing a plurality
+of domains, tagged by "bus_token".
 
-In file included from drivers/irqchip/irq-gic-v3-mbi.c:20:0:
-./include/linux/dma-iommu.h:95:69: error: unknown type name ‘dma_addr_t’
- static inline int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base)
-                                                                     ^~~~~~~~~~
-./include/linux/dma-iommu.h:108:74: warning: ‘struct list_head’ declared inside parameter list will not be visible outside of this definition or declaration
- static inline void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
-                                                                          ^~~~~~~~~
-scripts/Makefile.build:312: recipe for target 'drivers/irqchip/irq-gic-v3-mbi.o' failed
+Crutially, users of irq_find_host() all expect the most basic domain
+to be returned, and not any other domain such as a bus-specific MSI
+domain.
 
-Fix it by including linux/types.h.
+So let's change irq_find_host() to first look for a DOMAIN_BUS_WIRED
+domain, and only if this fails fallback to DOMAIN_BUS_ANY. Note that
+this is consistent with what irq_create_fwspec_mapping is already
+doing, see 530cbe100ef7 ("irqdomain: Allow domain lookup with
+DOMAIN_BUS_WIRED token").
 
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -67,21 +70,28 @@ Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Link: https://lkml.kernel.org/r/20180508121438.11301-5-marc.zyngier@arm.com
+Link: https://lkml.kernel.org/r/20180508121438.11301-6-marc.zyngier@arm.com
 
 ---
- include/linux/dma-iommu.h | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/irqdomain.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/dma-iommu.h b/include/linux/dma-iommu.h
-index 92f20832fd28..e8ca5e654277 100644
---- a/include/linux/dma-iommu.h
-+++ b/include/linux/dma-iommu.h
-@@ -17,6 +17,7 @@
- #define __DMA_IOMMU_H
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index 48c7e86bb556..dccfa65aee96 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -301,7 +301,13 @@ static inline struct irq_domain *irq_find_matching_host(struct device_node *node
  
- #ifdef __KERNEL__
-+#include <linux/types.h>
- #include <asm/errno.h>
+ static inline struct irq_domain *irq_find_host(struct device_node *node)
+ {
+-	return irq_find_matching_host(node, DOMAIN_BUS_ANY);
++	struct irq_domain *d;
++
++	d = irq_find_matching_host(node, DOMAIN_BUS_WIRED);
++	if (!d)
++		d = irq_find_matching_host(node, DOMAIN_BUS_ANY);
++
++	return d;
+ }
  
- #ifdef CONFIG_IOMMU_DMA
+ /**
