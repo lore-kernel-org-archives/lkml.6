@@ -1,70 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752045AbeEMUFq (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 16:05:46 -0400
-Received: from mga17.intel.com ([192.55.52.151]:40949 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751690AbeEMUFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 16:05:44 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,397,1520924400";
-   d="scan'208";a="55544948"
-Date: Sun, 13 May 2018 23:05:41 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] x86/boot/compressed/64: Fix moving page table out of
- trampoline memory
-Message-ID: <20180513200541.5lywvjfoppjtivpa@black.fi.intel.com>
-References: <20180510173806.4332-1-kirill.shutemov@linux.intel.com>
- <20180510173806.4332-3-kirill.shutemov@linux.intel.com>
- <alpine.DEB.2.21.1805132045150.1582@nanos.tec.linutronix.de>
+        id S1751981AbeEMUaP (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 16:30:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52192 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751449AbeEMUaN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 16:30:13 -0400
+Subject: Re: [PATCH 1/2] bcachefs: On disk data structures
+To: Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-bcache@vger.kernel.org
+Cc: Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>, hare@suse.com
+References: <20180508221800.2642-1-kent.overstreet@gmail.com>
+ <20180508221800.2642-2-kent.overstreet@gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <dea41935-a52c-e720-0ca3-eef4367d3641@infradead.org>
+Date: Sun, 13 May 2018 13:30:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1805132045150.1582@nanos.tec.linutronix.de>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+In-Reply-To: <20180508221800.2642-2-kent.overstreet@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 06:56:14PM +0000, Thomas Gleixner wrote:
-> On Thu, 10 May 2018, Kirill A. Shutemov wrote:
-> 
-> > top_pgtable address has to be calculated relative to where the kernel
-> > image will be relocated for decompression, not relative to position of
-> > kernel is running at the moment. We do the same for the rest of page
-> > table we use the stage. It makes them safe from being overwritten during
-> > decompression.
-> > 
-> > Calculate the address of top_pgtable in assembly and pass down to
-> > cleanup_trampoline().
-> > 
-> > Move the page table to .pgtable section where the rest of page tables
-> > are. The section is @nobits so we save 4k in kernel image.
-> 
-> So this is supposed to be a fix, but the whole changelog talks about WHAT
-> the patch does and not WHY. Darn, we need proper description of the failure
-> which is about to be fixed.
+Hi.
 
-"It makes them safe from being overwritten during decompression."
-
-> It's not that hard and I'm really tired to tell you that over and over.
+On 05/08/2018 03:17 PM, Kent Overstreet wrote:
+> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+> ---
+>  fs/bcachefs/bcachefs_format.h | 1448 +++++++++++++++++++++++++++++++++
+>  1 file changed, 1448 insertions(+)
+>  create mode 100644 fs/bcachefs/bcachefs_format.h
 > 
-> >  	/*
-> >  	 * cleanup_trampoline() would restore trampoline memory.
-> >  	 *
-> > +	 * RDI is address of the page table to use instead of page table
-> > +	 * in trampoline memory (if required).
-> 
-> Do you really believe that you understand that comment 6 month from now?
+> diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
+> new file mode 100644
+> index 0000000000..0961585c7e
+> --- /dev/null
+> +++ b/fs/bcachefs/bcachefs_format.h
+> @@ -0,0 +1,1448 @@
+> +#ifndef _BCACHEFS_FORMAT_H
+> +#define _BCACHEFS_FORMAT_H
+> +
+> +/*
+> + * bcachefs on disk data structures
+> + *
+> + * OVERVIEW:
+> + *
+> + * There are three main types of on disk data structures in bcachefs (this is
+> + * reduced from 5 in bcache)
+> + *
+> + *  - superblock
+> + *  - journal
+> + *  - btree
+> + *
+> + * The btree is the primary structure, most metadata exists as keys in the
 
-Yes, I think I will.
+s/,/;/
 
+> + * various btrees. There are only a small number of btrees, they're not
+> + * sharded - we have one btree for extents, another for inodes, et cetera.
+
+   or shared?
+
+> + *
+> + * SUPERBLOCK:
+> + *
+> + * The superblock contains the location of the journal, the list of devices in
+> + * the filesystem, and in general any metadata we need in order to decide
+> + * whether we can start a filesystem or prior to reading the journal/btree
+> + * roots.
+
+
+[snip]
+
+> +struct bkey_format {
+> +	__u8		key_u64s;
+> +	__u8		nr_fields;
+> +	/* One unused slot for now: */
+> +	__u8		bits_per_field[6];
+> +	__le64		field_offset[6];
+> +};
+> +
+> +/* Btree keys - all units are in sectors */
+
+Are sectors fixed size?  I.e., can 2 different physical storage devices have
+different sized sectors?
+or is this just the "traditional" 512-byte sector?
+
+
+[snip]
+
+
+
+> +/* Extents */
+> +
+> +/*
+> + * In extent bkeys, the value is a list of pointers (bch_extent_ptr), optionally
+> + * preceded by checksum/compression information (bch_extent_crc32 or
+> + * bch_extent_crc64).
+> + *
+> + * One major determining factor in the format of extents is how we handle and
+> + * represent extents that have been partially overwritten and thus trimmed:
+> + *
+> + * If an extent is not checksummed or compressed, when the extent is trimmed we
+> + * don't have to remember the extent we originally allocated and wrote: we can
+> + * merely adjust ptr->offset to point to the start of the start of the data that
+
+                                         to the start of the start  [intentional?]
+
+> + * is currently live. The size field in struct bkey records the current (live)
+> + * size of the extent, and is also used to mean "size of region on disk that we
+> + * point to" in this case.
+
+
+[snip]
+
+
+> +/*
+> + * @offset	- sector where this sb was written
+> + * @version	- on disk format version
+> + * @magic	- identifies as a bcachefs superblock (BCACHE_MAGIC)
+> + * @seq		- incremented each time superblock is written
+> + * @uuid	- used for generating various magic numbers and identifying
+> + *                member devices, never changes
+> + * @user_uuid	- user visible UUID, may be changed
+> + * @label	- filesystem label
+> + * @seq		- identifies most recent superblock, incremented each time
+> + *		  superblock is written
+> + * @features	- enabled incompatible features
+> + */
+> +struct bch_sb {
+> +	struct bch_csum		csum;
+> +	__le64			version;
+> +	uuid_le			magic;
+> +	uuid_le			uuid;
+> +	uuid_le			user_uuid;
+> +	__u8			label[BCH_SB_LABEL_SIZE];
+> +	__le64			offset;
+> +	__le64			seq;
+> +
+> +	__le16			block_size;
+> +	__u8			dev_idx;
+> +	__u8			nr_devices;
+> +	__le32			u64s;
+> +
+> +	__le64			time_base_lo;
+> +	__le32			time_base_hi;
+> +	__le32			time_precision;
+> +
+> +	__le64			flags[8];
+> +	__le64			features[2];
+> +	__le64			compat[2];
+> +
+> +	struct bch_sb_layout	layout;
+> +
+> +	union {
+> +		struct bch_sb_field start[0];
+> +		__le64		_data[0];
+> +	};
+> +} __attribute__((packed, aligned(8)));
+
+
+I know that you have already answered a few comments about endianness,
+so maybe you answered this and I missed it.
+
+Can a bcachefs fs be shared, a la NFS?  I.e., can multiple different-endian
+clients be accessing the same bcachefs?
+
+thanks,
 -- 
- Kirill A. Shutemov
+~Randy
