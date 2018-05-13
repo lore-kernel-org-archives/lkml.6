@@ -1,110 +1,89 @@
-Return-Path: <zohar@linux.vnet.ibm.com>
-X-Google-Smtp-Source: AB8JxZpB7/hXPIC1XMZdpuxO/iWBxwSaupgHvJg94l1W/Qnxzi/7s2FXNpVzSFzKkDsVwQw9pw9t
-ARC-Seal: i=1; a=rsa-sha256; t=1525388582; cv=none;
+Return-Path: <starnight@g.ncu.edu.tw>
+ARC-Seal: i=1; a=rsa-sha256; t=1526205307; cv=none;
         d=google.com; s=arc-20160816;
-        b=Q3Nk4GRG5f8a0yVOf2DDay+s49DRLBOuJecrnJZRmNCkE54APMj34Pk+0iXhW8wbtr
-         9R/JrUNycYl0asmURJoXklmjWyHudo3DRAODKSRgPhE70ePsFcz8LB0Eo4mAMwPiFPRK
-         ZxMmguRpS+hgory4W3EE88BkbUOfJY/ofkzwOlNm1lE3WCSoNibAbZbfffiIEF6xfjPb
-         XuJ/3U+PaGXeE8xTnHQ/45GhRP6a8PvnMwP+NUmtuCZGbLBXeCX4IhMvtpAKXjKfFuTj
-         ORhCCMtaWXj1qPZ4zPR46h3dhJAVoXw7Tsctzp7pijtRkmR3ewFAgqWRbUQQ8w4ZbWe8
-         ffmw==
+        b=Q+7Pa1DlBIRGftmMj/zkeUc8V6F9MbLt2bWKx704XSjhEKIbEzQAhYRhIY8kXDcaLA
+         YAJ2hZDflgBUMgaabiqnWPcVhs/4NCk7EKBRkgY4iN2PlD/Aij8Q9u+W8eJOMr2JEWPJ
+         hlSbVeBvOSuf8wjVzLV1jMkUZX1qD+fPl9ItFqxVEPp40rY8VqXErpjjm17HVVxuF+Vg
+         BPlXlYcPkj+HEYdR9GrtpZPnGOrBKeXJsW59xevKFsV8QlWTaRJpyVDneuUPf/17WGRv
+         mRX+AP9CS99dZ6t79JT7Y8wcl75SzuJ1+76cwMDOqNr/OT13OjdtPiDLlzuxvVYjx9ou
+         U6PA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-transfer-encoding:mime-version:references
-         :in-reply-to:date:cc:to:from:subject:arc-authentication-results;
-        bh=UZytqJS86/Hq21uBL89VA+cG7ZiXXnFoOkEdhDT23qM=;
-        b=FkvrZrrwFjsiabia0WabSMKXjMd3Cs7oI6uxFSDqzSy/c39guSyJmoFhWCOiWSlOjk
-         xLDeHIYteNKXlBXeUKwwIMC6DptxXzE6W2taiFiOU3nus2BGQssYtQdsnv+qS8gsDmE2
-         pMqNiw2oupQhfedidDrspBlqBQx3KElz8yyWe1bHZCm0s0daKWy4ir8BkSkbMJEoVkCK
-         XNtDQjJrYZiDqNs/M8GDkyq/9CxLUQysDTcdAPQS9TuwWkvV4fjXKiRSbD5I5OG0iB4W
-         nKEOdM3sxQdNsDPZ3iwwf4VX7gXYZBDDeDbXfWxCDl22ThGP/fwW6lsGNXgN6W8mnqo9
-         Rh8Q==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=m7iw/FTQWqm2t9AyvEwTTxR21OlrwIZeJ4/l1FUN1nk=;
+        b=FYlty2Wruce2Slt0RQTr3G/AmWE2DnAtKV6UemXWz1UTQbsMkc0xesqCTBykNqfORS
+         Mqa/OtgwHEOjTO2N+fPUQM6XbI3KyWro6JpTh4eyIWvuMR6VV/cspFce1K7uvj1O7fa/
+         m1bQ9T4LYmJhafeJXr+NbqqvxgzKDx0i4s0e/6U5HY7e3KI5tzc3fpQdLpzABqPReK6v
+         vOLmL/zjGrgtCeWlqMlHgqwZw+Wo2+2jAVO4jlquMqalMRzF9Tgu71+5SaMNdSPoUj5V
+         Q50LSYwf4logQ0zS6Lt2+bD37bs/hueafCQTZFVBBhZmA+YB/VKoLGritHnR6IvLyJLU
+         AagQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 148.163.158.5 is neither permitted nor denied by best guess record for domain of zohar@linux.vnet.ibm.com) smtp.mailfrom=zohar@linux.vnet.ibm.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       dkim=pass header.i=@g.ncu.edu.tw header.s=google header.b=K1obxIM/;
+       spf=pass (google.com: domain of starnight@g.ncu.edu.tw designates 209.85.220.65 as permitted sender) smtp.mailfrom=starnight@g.ncu.edu.tw
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 148.163.158.5 is neither permitted nor denied by best guess record for domain of zohar@linux.vnet.ibm.com) smtp.mailfrom=zohar@linux.vnet.ibm.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH v5 2/5] efi: Add embedded peripheral firmware support
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel
- <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Peter Jones
- <pjones@redhat.com>,
-        Dave Olsthoorn <dave@bewaar.me>, Will Deacon
- <will.deacon@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Matt Fleming
- <matt@codeblueprint.co.uk>,
-        David Howells <dhowells@redhat.com>,
-        Josh
- Triplett <josh@joshtriplett.org>, dmitry.torokhov@gmail.com,
-        mfuzzey@parkeon.com, Kalle Valo <kvalo@codeaurora.org>,
-        Arend Van Spriel
- <arend.vanspriel@broadcom.com>,
-        Linus Torvalds
- <torvalds@linux-foundation.org>, nbroeking@me.com,
-        bjorn.andersson@linaro.org, Torsten Duwe <duwe@suse.de>,
-        Kees Cook
- <keescook@chromium.org>, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module
- <linux-security-module@vger.kernel.org>
-Date: Thu, 03 May 2018 19:02:43 -0400
-In-Reply-To: <20180503222329.GD27853@wotan.suse.de>
-References: <20180429093558.5411-1-hdegoede@redhat.com>
-	 <20180429093558.5411-3-hdegoede@redhat.com>
-	 <1525185374.5669.49.camel@linux.vnet.ibm.com>
-	 <dc122066-9973-a1be-3456-6d6181a8fc9f@redhat.com>
-	 <1525202847.5669.64.camel@linux.vnet.ibm.com>
-	 <20180503222329.GD27853@wotan.suse.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18050323-0044-0000-0000-0000054EBC2C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050323-0045-0000-0000-0000288FE53B
-Message-Id: <1525388563.3539.97.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805030200
+       dkim=pass header.i=@g.ncu.edu.tw header.s=google header.b=K1obxIM/;
+       spf=pass (google.com: domain of starnight@g.ncu.edu.tw designates 209.85.220.65 as permitted sender) smtp.mailfrom=starnight@g.ncu.edu.tw
+X-Google-Smtp-Source: AB8JxZrDt8EGrBrvYMGKV3Zsn2TOQuuqiy83e02HiCNtWg9noCU2G6bOMEgWy830mXbPFTpp8AYKcg==
+From: Jian-Hong Pan <starnight@g.ncu.edu.tw>
+To: Philippe Ombredanne <pombredanne@nexb.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jian-Hong Pan <starnight@g.ncu.edu.tw>
+Subject: [RFC PATCH] net: Remove a confusing comment of macro SIOCDEVPRIVATE
+Date: Sun, 13 May 2018 17:54:58 +0800
+Message-Id: <20180513095458.16148-1-starnight@g.ncu.edu.tw>
+X-Mailer: git-send-email 2.17.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599072709046551146?=
-X-GMAIL-MSGID: =?utf-8?q?1599485857896041441?=
+X-GMAIL-THRID: =?utf-8?q?1600342256765812470?=
+X-GMAIL-MSGID: =?utf-8?q?1600342256765812470?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 2018-05-03 at 22:23 +0000, Luis R. Rodriguez wrote:
-> On Tue, May 01, 2018 at 03:27:27PM -0400, Mimi Zohar wrote:
-> > On Tue, 2018-05-01 at 21:11 +0200, Hans de Goede wrote:
-> > > Only the pre hook?  I believe the post-hook should still be called too,
-> > > right? So that we've hashes of all loaded firmwares in the IMA core.
-> > 
-> > Good catch!  Right, if IMA-measurement is enabled, then we would want
-> > to add the measurement.
-> 
-> Mimi, just a heads up, we only use the post hook for the syfs fallback
-> mechanism, ie, we don't even use the post hook for direct fs lookup.
-> Do we want that there?
+I have been reading the NET related header files recently.  I found
+there is a macro "#define SIOCDEVPRIVATE 0x89F0" defined in
+include/uapi/linux/sockios.h which is useful for private controls of net
+devices.  When I read this section:
 
-The direct fs lookup calls kernel_read_file_from_path(), which calls
-the security_kernel_read_file() and security_kernel_post_read_file()
-hooks.  So there is no need to add a direct call to either of these
-security calls.
+/* Device private ioctl calls */
 
-Mimi
+/*
+ *	These 16 ioctls are available to devices via the do_ioctl() device
+ *	vector. Each device should include this file and redefine these names
+ *	as their own. Because these are device dependent it is a good idea
+ *	_NOT_ to issue them to random objects and hope.
+ *
+ *	THESE IOCTLS ARE _DEPRECATED_ AND WILL DISAPPEAR IN 2.5.X -DaveM
+ */
 
+I notice there is a string in the comment:
+"THESE IOCTLS ARE _DEPRECATED_ AND WILL DISAPPEAR IN 2.5.X -DaveM"
+which makes me confused.  Because, there are still a lot of devices or
+subsystems using this macro, for example, ethernet, appletalk,
+usb/rtl8150 ..., etc.
 
+Therefore, I make this patch to remove the confusing comment.
 
-  
+Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
+---
+ include/uapi/linux/sockios.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/include/uapi/linux/sockios.h b/include/uapi/linux/sockios.h
+index d393e9ed3964..c166f8c6b20f 100644
+--- a/include/uapi/linux/sockios.h
++++ b/include/uapi/linux/sockios.h
+@@ -139,8 +139,6 @@
+  *	vector. Each device should include this file and redefine these names
+  *	as their own. Because these are device dependent it is a good idea
+  *	_NOT_ to issue them to random objects and hope.
+- *
+- *	THESE IOCTLS ARE _DEPRECATED_ AND WILL DISAPPEAR IN 2.5.X -DaveM
+  */
+  
+ #define SIOCDEVPRIVATE	0x89F0	/* to 89FF */
+-- 
+2.17.0
