@@ -1,130 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751892AbeEMOVE (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 10:21:04 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:37552 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751449AbeEMOVC (ORCPT
+        id S1751919AbeEMOVd (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 10:21:33 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:50030 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751295AbeEMOVb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 10:21:02 -0400
-X-Google-Smtp-Source: AB8JxZqKK5fFu3g5xWJxy5CMK8RILN9aoOcc65OnPAWW5gEXYVw/+UJrXnjYCnefWNmOomf7N/wLwkjfSFXc+P/41PF4EqJvHsvH
+        Sun, 13 May 2018 10:21:31 -0400
+Date: Sun, 13 May 2018 16:21:07 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Guenter Roeck <linux@roeck-us.net>
+cc: Clemens Ladisch <clemens@ladisch.de>, Jean Delvare <jdelvare@suse.com>,
+        Borislav Petkov <bp@suse.de>, Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Brian Woods <brian.woods@amd.com>, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] x86/amd_nb: Add support for Raven Ridge CPUs
+In-Reply-To: <1525464093-20280-1-git-send-email-linux@roeck-us.net>
+Message-ID: <alpine.DEB.2.21.1805131620170.1582@nanos.tec.linutronix.de>
+References: <1525464093-20280-1-git-send-email-linux@roeck-us.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Date: Sun, 13 May 2018 07:21:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002d64fe056c1714a3@google.com>
-Subject: KASAN: slab-out-of-bounds Read in vmx_vcpu_run
-From: syzbot <syzbot+d8f8a4d784b336549b5b@syzkaller.appspotmail.com>
-To: hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, 4 May 2018, Guenter Roeck wrote:
 
-syzbot found the following crash on:
+> Add Raven Ridge root bridge and data fabric PCI IDs.
+> This is required for amd_pci_dev_to_node_id() and amd_smn_read().
+> 
+> Tested-by: Gabriel Craciunescu <nix.or.die@gmail.com>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 
-HEAD commit:    036db8bd9637 Merge branch 'for-4.17-fixes' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11228e07800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=31f4b3733894ef79
-dashboard link: https://syzkaller.appspot.com/bug?extid=d8f8a4d784b336549b5b
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+Guenter, if you want to take that through hwmon:
 
-Unfortunately, I don't have any reproducer for this crash yet.
+	 Acked-by: Thomas Gleixner <tglx@linutronix.de>
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d8f8a4d784b336549b5b@syzkaller.appspotmail.com
+If not, let me know.
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in msr_write_intercepted  
-arch/x86/kvm/vmx.c:2126 [inline]
-BUG: KASAN: slab-out-of-bounds in vmx_vcpu_run+0x2379/0x25f0  
-arch/x86/kvm/vmx.c:9869
-Read of size 8 at addr ffff8801d3efc840 by task syz-executor1/11848
-
-CPU: 1 PID: 11848 Comm: syz-executor1 Not tainted 4.17.0-rc4+ #39
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  msr_write_intercepted arch/x86/kvm/vmx.c:2126 [inline]
-  vmx_vcpu_run+0x2379/0x25f0 arch/x86/kvm/vmx.c:9869
-
-Allocated by task 11848:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x780 mm/slab.c:3620
-  kmalloc include/linux/slab.h:512 [inline]
-  kzalloc include/linux/slab.h:701 [inline]
-  tcp_sendmsg_fastopen net/ipv4/tcp.c:1145 [inline]
-  tcp_sendmsg_locked+0x2ff7/0x3ee0 net/ipv4/tcp.c:1209
-  tcp_sendmsg+0x2f/0x50 net/ipv4/tcp.c:1447
-  inet_sendmsg+0x19f/0x690 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:629 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:639
-  __sys_sendto+0x3d7/0x670 net/socket.c:1789
-  __do_sys_sendto net/socket.c:1801 [inline]
-  __se_sys_sendto net/socket.c:1797 [inline]
-  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1797
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 2388:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  inotify_free_event+0x15/0x20 fs/notify/inotify/inotify_fsnotify.c:182
-  fsnotify_destroy_event.part.1+0x1a8/0x270 fs/notify/notification.c:87
-  fsnotify_destroy_event+0x69/0x80 fs/notify/notification.c:74
-  inotify_read+0x5a8/0x9b0 fs/notify/inotify/inotify_user.c:246
-  __vfs_read+0x10f/0xa50 fs/read_write.c:416
-  vfs_read+0x17f/0x3d0 fs/read_write.c:452
-  ksys_read+0xf9/0x250 fs/read_write.c:578
-  __do_sys_read fs/read_write.c:588 [inline]
-  __se_sys_read fs/read_write.c:586 [inline]
-  __x64_sys_read+0x73/0xb0 fs/read_write.c:586
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801d3efc800
-  which belongs to the cache kmalloc-64 of size 64
-The buggy address is located 0 bytes to the right of
-  64-byte region [ffff8801d3efc800, ffff8801d3efc840)
-The buggy address belongs to the page:
-page:ffffea00074fbf00 count:1 mapcount:0 mapping:ffff8801d3efc000 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffff8801d3efc000 0000000000000000 0000000100000020
-raw: ffffea00076687a0 ffffea000766e660 ffff8801da800340 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801d3efc700: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-  ffff8801d3efc780: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-> ffff8801d3efc800: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
-                                            ^
-  ffff8801d3efc880: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-  ffff8801d3efc900: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+> ---
+> v3: No change.
+> v2: Use naming scheme suggested by Borislav Petkov.
+> 
+>  arch/x86/kernel/amd_nb.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+> index c88e0b127810..b481b95bd8f6 100644
+> --- a/arch/x86/kernel/amd_nb.c
+> +++ b/arch/x86/kernel/amd_nb.c
+> @@ -14,8 +14,11 @@
+>  #include <asm/amd_nb.h>
+>  
+>  #define PCI_DEVICE_ID_AMD_17H_ROOT	0x1450
+> +#define PCI_DEVICE_ID_AMD_17H_M10H_ROOT	0x15d0
+>  #define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
+>  #define PCI_DEVICE_ID_AMD_17H_DF_F4	0x1464
+> +#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3 0x15eb
+> +#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F4 0x15ec
+>  
+>  /* Protect the PCI config register pairs used for SMN and DF indirect access. */
+>  static DEFINE_MUTEX(smn_mutex);
+> @@ -24,6 +27,7 @@ static u32 *flush_words;
+>  
+>  static const struct pci_device_id amd_root_ids[] = {
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_ROOT) },
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_ROOT) },
+>  	{}
+>  };
+>  
+> @@ -39,6 +43,7 @@ const struct pci_device_id amd_nb_misc_ids[] = {
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F3) },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F3) },
+>  	{}
+>  };
+> @@ -51,6 +56,7 @@ static const struct pci_device_id amd_nb_link_ids[] = {
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F4) },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F4) },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F4) },
+> +	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F4) },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F4) },
+>  	{}
+>  };
+> -- 
+> 2.7.4
+> 
+> 
