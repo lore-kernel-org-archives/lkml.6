@@ -1,77 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751293AbeEMDYo (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 23:24:44 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36631 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750985AbeEMDYm (ORCPT
+        id S1751169AbeEMDaR (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 23:30:17 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:43905 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750812AbeEMDaQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 23:24:42 -0400
-X-Google-Smtp-Source: AB8JxZqpu1tiCOmFHQuAoi9N7mY6f3/41hHoGD3k+1WKt1Sxa+YYtRiHbRiLxmmfZAA30pfnnDQA3A==
-From: Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Junaid Shahid <junaids@google.com>
-Subject: [PATCH 2/2] KVM: X86: Fix loss of CR3_PCID_INVD bit when guest writes CR3
-Date: Sat, 12 May 2018 20:24:14 -0700
-Message-Id: <1526181854-3631-1-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
+        Sat, 12 May 2018 23:30:16 -0400
+X-Google-Smtp-Source: AB8JxZoVJEFtXsLBJUGBBDOHYwru2UUKKP3f582gbSMdVhTbfUQbfheguxjQd61Okl42KswE5O0q2A==
+Date: Sat, 12 May 2018 20:32:20 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: bot+e38be687a2450270a3b593bacb6b5795a7a74edb@syzkaller.appspotmail.com,
+        peter@hurleysoftware.com, dvyukov@google.com,
+        gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, pombredanne@nexb.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Subject: Re: BUG: workqueue lockup (2)
+Message-ID: <20180513033220.GA654@sol.localdomain>
+References: <94eb2c03c9bc75aff2055f70734c@google.com>
+ <001a113f711a528a3f0560b08e76@google.com>
+ <20180512215222.GC817@sol.localdomain>
+ <201805131106.GFF73973.OOtMVQFSFOJFHL@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201805131106.GFF73973.OOtMVQFSFOJFHL@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+Hi Tetsuo,
 
-SDM volume 3, section 4.10.4:
+On Sun, May 13, 2018 at 11:06:17AM +0900, Tetsuo Handa wrote:
+> Eric Biggers wrote:
+> > The bug that this reproducer reproduces was fixed a while ago by commit
+> > 966031f340185e, so I'm marking this bug report fixed by it:
+> > 
+> > #syz fix: n_tty: fix EXTPROC vs ICANON interaction with TIOCINQ (aka FIONREAD)
+> 
+> Nope. Commit 966031f340185edd ("n_tty: fix EXTPROC vs ICANON interaction with
+> TIOCINQ (aka FIONREAD)") is "Wed Dec 20 17:57:06 2017 -0800" but the last
+> occurrence on linux.git (commit 008464a9360e31b1 ("Merge branch 'for-linus' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid")) is only a few days ago
+> ("Wed May 9 10:49:52 2018 -1000").
+> 
+> > 
+> > Note that the error message was not always "BUG: workqueue lockup"; it was also
+> > sometimes like "watchdog: BUG: soft lockup - CPU#5 stuck for 22s!".
+> > 
+> > syzbot still is hitting the "BUG: workqueue lockup" error sometimes, but it must
+> > be for other reasons.  None has a reproducer currently.
+> 
+> The last occurrence on linux.git is considered as a duplicate of
+> 
+>   [upstream] INFO: rcu detected stall in n_tty_receive_char_special
+>   https://syzkaller.appspot.com/bug?id=3d7481a346958d9469bebbeb0537d5f056bdd6e8
+> 
+> which we already have a reproducer at
+> https://groups.google.com/d/msg/syzkaller-bugs/O4DbPiJZFBY/YCVPocx3AgAJ
+> and debug output is available at
+> https://groups.google.com/d/msg/syzkaller-bugs/O4DbPiJZFBY/TxQ7WS5ZAwAJ .
+> 
+> We are currently waiting for comments from Peter Hurley who added that code.
+> 
 
-* MOV to CR3. The behavior of the instruction depends on the value of CR4.PCIDE:
-— If CR4.PCIDE = 1 and bit 63 of the instruction’s source operand is 1, the 
-  instruction is not required to invalidate any TLB entries or entries in 
-  paging-structure caches.
+Actually I did verify that the C reproducer is fixed by the commit I said, and I
+also simplified the reproducer and turned it into an LTP test
+(http://lists.linux.it/pipermail/ltp/2018-May/008071.html).  Like I said, syzbot
+is still occasionally hitting the same "BUG: workqueue lockup" error, but
+apparently for other reasons.  The one on 008464a9360e31b even looks like it's
+in the TTY layer too, and it very well could be a very similar bug, but based on
+what I observed it's not the same bug that syzbot reproduced on f3b5ad89de16f5d.
+Generally it's best to close syzbot bug reports once the original cause is
+fixed, so that syzbot can continue to report other bugs with the same signature.
+Otherwise they sit on the syzbot dashboard where few people are looking at them.
+Though of course, if you are up to it, you're certainly free to look into any of
+the crashes already there even before a new bug report gets created.
 
-The CR3_PCID_INVD bit should not be removed if CR4.PCIDE = 1 when guest writes 
-CR3, this patch fixes it.
+Note also that a "workqueue lockup" can be caused by almost anything in the
+kernel, I think.  This one for example is probably in the sound subsystem:
+https://syzkaller.appspot.com/text?tag=CrashReport&x=1767232b800000
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Junaid Shahid <junaids@google.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- arch/x86/kvm/x86.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Thanks!
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 9a90668..438f140 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -849,11 +849,13 @@ EXPORT_SYMBOL_GPL(kvm_set_cr4);
- 
- int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
- {
-+	unsigned long cr3_check = cr3;
-+
- #ifdef CONFIG_X86_64
- 	bool pcid_enabled = kvm_read_cr4_bits(vcpu, X86_CR4_PCIDE);
- 
- 	if (pcid_enabled)
--		cr3 &= ~CR3_PCID_INVD;
-+		cr3_check &= ~CR3_PCID_INVD;
- #endif
- 
- 	if (cr3 == kvm_read_cr3(vcpu) && !pdptrs_changed(vcpu)) {
-@@ -863,7 +865,7 @@ int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
- 	}
- 
- 	if (is_long_mode(vcpu) &&
--	    (cr3 & rsvd_bits(cpuid_maxphyaddr(vcpu), 63)))
-+	    (cr3_check & rsvd_bits(cpuid_maxphyaddr(vcpu), 63)))
- 		return 1;
- 	else if (is_pae(vcpu) && is_paging(vcpu) &&
- 		   !load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3))
--- 
-2.7.4
+Eric
