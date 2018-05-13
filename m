@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751364AbeEMInd (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 04:43:33 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:64200 "EHLO
+        id S1751695AbeEMIoX (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 04:44:23 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:45730 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750850AbeEMInc (ORCPT
+        with ESMTP id S1750862AbeEMIoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 04:43:32 -0400
+        Sun, 13 May 2018 04:44:21 -0400
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 To: Doug Smythies <doug.smythies@gmail.com>,
         srinivas.pandruvada@linux.intel.com
 Cc: dsmythies@telus.net, linux-kernel@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: Re: [PATCH] tools/power/x86/intel_pstate_tracer: Add optional setting of trace buffer memory allocation
-Date: Sun, 13 May 2018 10:43:02 +0200
-Message-ID: <23851272.hyr4RImLsD@aspire.rjw.lan>
-In-Reply-To: <1525441582-23855-1-git-send-email-dsmythies@telus.net>
-References: <1525441582-23855-1-git-send-email-dsmythies@telus.net>
+Subject: Re: [PATCH V5] cpufreq: intel_pstate: allow trace in passive mode
+Date: Sun, 13 May 2018 10:43:51 +0200
+Message-ID: <3708753.N4DSO893cq@aspire.rjw.lan>
+In-Reply-To: <1525328567-23747-1-git-send-email-dsmythies@telus.net>
+References: <1525328567-23747-1-git-send-email-dsmythies@telus.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -24,179 +24,135 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday, May 4, 2018 3:46:22 PM CEST Doug Smythies wrote:
-> Allow the user to override the default trace buffer memory allocation
-> by adding a command line option to override the default.
+On Thursday, May 3, 2018 8:22:47 AM CEST Doug Smythies wrote:
+> Allow use of the trace_pstate_sample trace function
+> when the intel_pstate driver is in passive mode.
+> Since the core_busy and scaled_busy fields are not
+> used, and it might be desirable to know which path
+> through the driver was used, either intel_cpufreq_target
+> or intel_cpufreq_fast_switch, re-task the core_busy
+> field as a flag indicator.
 > 
-> The patch also:
+> The user can then use the intel_pstate_tracer.py utility
+> to summarize and plot the trace.
 > 
-> Adds a SIGINT (i.e. CTRL C exit) handler,
-> so that things can be cleaned up before exit.
+> Note: The core_busy feild still goes by that name
+> in include/trace/events/power.h and within the
+> intel_pstate_tracer.py script and csv file headers,
+> but it is graphed as "performance", and called
+> core_avg_perf now in the intel_pstate driver.
 > 
-> Moves the postion of some other cleanup from after to
-> before the potential "No valid data to plot" exit.
-> 
-> Replaces all quit() calls with sys.exit, because
-> quit() is not supposed to be used in scripts.
+> Sometimes, in passive mode, the driver is not called for
+> many tens or even hundreds of seconds. The user
+> needs to understand, and not be confused by, this limitation.
 > 
 > Signed-off-by: Doug Smythies <dsmythies@telus.net>
 
-Srinivas, any comments here?
+Srinivas, any comments or concerns?
 
-> ---
->  .../x86/intel_pstate_tracer/intel_pstate_tracer.py | 54 ++++++++++++++--------
->  1 file changed, 35 insertions(+), 19 deletions(-)
 > 
-> diff --git a/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py b/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
-> index 29f50d4..84e2b64 100755
-> --- a/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
-> +++ b/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
-> @@ -28,6 +28,7 @@ import subprocess
->  import os
->  import time
->  import re
-> +import signal
->  import sys
->  import getopt
->  import Gnuplot
-> @@ -78,11 +79,12 @@ def print_help():
->      print('    Or')
->      print('      ./intel_pstate_tracer.py [--cpu cpus] ---trace_file <trace_file> --name <test_name>')
->      print('    To generate trace file, parse and plot, use (sudo required):')
-> -    print('      sudo ./intel_pstate_tracer.py [-c cpus] -i <interval> -n <test_name>')
-> +    print('      sudo ./intel_pstate_tracer.py [-c cpus] -i <interval> -n <test_name> -m <kbytes>')
->      print('    Or')
-> -    print('      sudo ./intel_pstate_tracer.py [--cpu cpus] --interval <interval> --name <test_name>')
-> +    print('      sudo ./intel_pstate_tracer.py [--cpu cpus] --interval <interval> --name <test_name> --memory <kbytes>')
->      print('    Optional argument:')
-> -    print('      cpus:  comma separated list of CPUs')
-> +    print('      cpus:   comma separated list of CPUs')
-> +    print('      kbytes: Kilo bytes of memory per CPU to allocate to the trace buffer. Default: 10240')
->      print('  Output:')
->      print('    If not already present, creates a "results/test_name" folder in the current working directory with:')
->      print('      cpu.csv - comma seperated values file with trace contents and some additional calculations.')
-> @@ -379,7 +381,7 @@ def clear_trace_file():
->          f_handle.close()
->      except:
->          print('IO error clearing trace file ')
-> -        quit()
-> +        sys.exit(2)
+> ---
+> 
+> V5: Changes as per Rafael J. Wysocki feedback.
+>     See: https://lkml.org/lkml/2018/1/7/270
+> 
+> V4: Only execute the trace specific overhead code if trace
+>     is enabled. Suggested by Srinivas Pandruvada.
+> 
+> V3: Move largely duplicate code to a subroutine.
+>     Suggested by Rafael J. Wysocki.
+> 
+> V2: prepare for resend. Rebase to current kernel, 4.15-rc3.
+> 
+> ---
+>  drivers/cpufreq/intel_pstate.c | 44 ++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 42 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+> index 17e566af..4a08686 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -1939,13 +1939,49 @@ static int intel_cpufreq_verify_policy(struct cpufreq_policy *policy)
+>  	return 0;
+>  }
 >  
->  def enable_trace():
->      """ Enable trace """
-> @@ -389,7 +391,7 @@ def enable_trace():
->                   , 'w').write("1")
->      except:
->          print('IO error enabling trace ')
-> -        quit()
-> +        sys.exit(2)
->  
->  def disable_trace():
->      """ Disable trace """
-> @@ -399,17 +401,17 @@ def disable_trace():
->                   , 'w').write("0")
->      except:
->          print('IO error disabling trace ')
-> -        quit()
-> +        sys.exit(2)
->  
->  def set_trace_buffer_size():
->      """ Set trace buffer size """
->  
->      try:
-> -       open('/sys/kernel/debug/tracing/buffer_size_kb'
-> -                 , 'w').write("10240")
-> +       with open('/sys/kernel/debug/tracing/buffer_size_kb', 'w') as fp:
-> +          fp.write(memory)
->      except:
-> -        print('IO error setting trace buffer size ')
-> -        quit()
-> +       print('IO error setting trace buffer size ')
-> +       sys.exit(2)
->  
->  def free_trace_buffer():
->      """ Free the trace buffer memory """
-> @@ -418,8 +420,8 @@ def free_trace_buffer():
->         open('/sys/kernel/debug/tracing/buffer_size_kb'
->                   , 'w').write("1")
->      except:
-> -        print('IO error setting trace buffer size ')
-> -        quit()
-> +        print('IO error freeing trace buffer ')
-> +        sys.exit(2)
->  
->  def read_trace_data(filename):
->      """ Read and parse trace data """
-> @@ -431,7 +433,7 @@ def read_trace_data(filename):
->          data = open(filename, 'r').read()
->      except:
->          print('Error opening ', filename)
-> -        quit()
-> +        sys.exit(2)
->  
->      for line in data.splitlines():
->          search_obj = \
-> @@ -489,10 +491,22 @@ def read_trace_data(filename):
->  # Now seperate the main overall csv file into per CPU csv files.
->      split_csv()
->  
-> +def signal_handler(signal, frame):
-> +    print(' SIGINT: Forcing cleanup before exit.')
-> +    if interval:
-> +        disable_trace()
-> +        clear_trace_file()
-> +        # Free the memory
-> +        free_trace_buffer()
-> +        sys.exit(0)
+> +/* Use of trace in passive mode:
+> + *
+> + * In passive mode the trace core_busy field (also known as the
+> + * performance field, and lablelled as such on the graphs; also known as
+> + * core_avg_perf) is not needed and so is re-assigned to indicate if the
+> + * driver call was via the normal or fast switch path. Various graphs
+> + * output from the intel_pstate_tracer.py utility that include core_busy
+> + * (or performance or core_avg_perf) have a fixed y-axis from 0 to 100%,
+> + * so we use 10 to indicate the the normal path through the driver, and
+> + * 90 to indicate the fast switch path through the driver.
+> + * The scaled_busy field is not used, and is set to 0.
+> + */
 > +
-> +signal.signal(signal.SIGINT, signal_handler)
+> +#define	INTEL_PSTATE_TRACE_TARGET 10
+> +#define	INTEL_PSTATE_TRACE_FAST_SWITCH 90
 > +
->  interval = ""
->  filename = ""
->  cpu_list = ""
->  testname = ""
-> +memory = "10240"
->  graph_data_present = False;
->  
->  valid1 = False
-> @@ -501,7 +515,7 @@ valid2 = False
->  cpu_mask = zeros((MAX_CPUS,), dtype=int)
->  
->  try:
-> -    opts, args = getopt.getopt(sys.argv[1:],"ht:i:c:n:",["help","trace_file=","interval=","cpu=","name="])
-> +    opts, args = getopt.getopt(sys.argv[1:],"ht:i:c:n:m:",["help","trace_file=","interval=","cpu=","name=","memory="])
->  except getopt.GetoptError:
->      print_help()
->      sys.exit(2)
-> @@ -521,6 +535,8 @@ for opt, arg in opts:
->      elif opt in ("-n", "--name"):
->          valid2 = True
->          testname = arg
-> +    elif opt in ("-m", "--memory"):
-> +        memory = arg
->  
->  if not (valid1 and valid2):
->      print_help()
-> @@ -569,6 +585,11 @@ current_max_cpu = 0
->  
->  read_trace_data(filename)
->  
-> +clear_trace_file()
-> +# Free the memory
-> +if interval:
-> +    free_trace_buffer()
+> +static void intel_cpufreq_trace(struct cpudata *cpu, unsigned int trace_type, int old_pstate)
+> +{
+> +	struct sample *sample;
 > +
->  if graph_data_present == False:
->      print('No valid data to plot')
->      sys.exit(2)
-> @@ -593,9 +614,4 @@ for root, dirs, files in os.walk('.'):
->      for f in files:
->          fix_ownership(f)
+> +	if (!trace_pstate_sample_enabled())
+> +		return;
+> +	if (!intel_pstate_sample(cpu, ktime_get()))
+> +		return;
+> +	sample = &cpu->sample;
+> +	trace_pstate_sample(trace_type,
+> +		0,
+> +		old_pstate,
+> +		cpu->pstate.current_pstate,
+> +		sample->mperf,
+> +		sample->aperf,
+> +		sample->tsc,
+> +		get_avg_frequency(cpu),
+> +		fp_toint(cpu->iowait_boost * 100));
+> +}
+> +
+>  static int intel_cpufreq_target(struct cpufreq_policy *policy,
+>  				unsigned int target_freq,
+>  				unsigned int relation)
+>  {
+>  	struct cpudata *cpu = all_cpu_data[policy->cpu];
+>  	struct cpufreq_freqs freqs;
+> -	int target_pstate;
+> +	int target_pstate, old_pstate;
 >  
-> -clear_trace_file()
-> -# Free the memory
-> -if interval:
-> -    free_trace_buffer()
-> -
->  os.chdir('../../')
+>  	update_turbo_state();
+>  
+> @@ -1965,12 +2001,14 @@ static int intel_cpufreq_target(struct cpufreq_policy *policy,
+>  		break;
+>  	}
+>  	target_pstate = intel_pstate_prepare_request(cpu, target_pstate);
+> +	old_pstate = cpu->pstate.current_pstate;
+>  	if (target_pstate != cpu->pstate.current_pstate) {
+>  		cpu->pstate.current_pstate = target_pstate;
+>  		wrmsrl_on_cpu(policy->cpu, MSR_IA32_PERF_CTL,
+>  			      pstate_funcs.get_val(cpu, target_pstate));
+>  	}
+>  	freqs.new = target_pstate * cpu->pstate.scaling;
+> +	intel_cpufreq_trace(cpu, INTEL_PSTATE_TRACE_TARGET, old_pstate);
+>  	cpufreq_freq_transition_end(policy, &freqs, false);
+>  
+>  	return 0;
+> @@ -1980,13 +2018,15 @@ static unsigned int intel_cpufreq_fast_switch(struct cpufreq_policy *policy,
+>  					      unsigned int target_freq)
+>  {
+>  	struct cpudata *cpu = all_cpu_data[policy->cpu];
+> -	int target_pstate;
+> +	int target_pstate, old_pstate;
+>  
+>  	update_turbo_state();
+>  
+>  	target_pstate = DIV_ROUND_UP(target_freq, cpu->pstate.scaling);
+>  	target_pstate = intel_pstate_prepare_request(cpu, target_pstate);
+> +	old_pstate = cpu->pstate.current_pstate;
+>  	intel_pstate_update_pstate(cpu, target_pstate);
+> +	intel_cpufreq_trace(cpu, INTEL_PSTATE_TRACE_FAST_SWITCH, old_pstate);
+>  	return target_pstate * cpu->pstate.scaling;
+>  }
+>  
 > 
