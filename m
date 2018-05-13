@@ -1,23 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751977AbeEMQ2E (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 12:28:04 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:35140 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751885AbeEMQ2D (ORCPT
+        id S1751989AbeEMQiE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 12:38:04 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:38885 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751892AbeEMQiC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 12:28:03 -0400
-X-Google-Smtp-Source: AB8JxZr/7TuHxmC4pzSoJHSVixAtP7vNNUCOsKBodIk+CeQvuT5PgfFoElTY3BFWHQ4M/8SKGSB7qNHX7h0CHgcR9gl9RiN14qvj
+        Sun, 13 May 2018 12:38:02 -0400
+X-Google-Smtp-Source: AB8JxZq3KdBOV/HnsXgi9hPxfOJSxvytYe9cVofMEVCVfwBbbduic33oaUqfNMlM6Vm8Hjkg6Q62JFXZ8GDCLdM7wBZPWSrvLhH1
 MIME-Version: 1.0
-Date: Sun, 13 May 2018 09:28:02 -0700
+Date: Sun, 13 May 2018 09:38:02 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000628fe1056c18da7f@google.com>
-Subject: WARNING in iov_iter_revert
-From: syzbot <syzbot+c226690f7b3126c5ee04@syzkaller.appspotmail.com>
-To: aviadye@mellanox.com, davejwatson@fb.com, davem@davemloft.net,
-        ilyal@mellanox.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000001f5921056c18fe1a@google.com>
+Subject: KMSAN: uninit-value in tipc_conn_rcv_sub
+From: syzbot <syzbot+8951a3065ee7fd6d6e23@syzkaller.appspotmail.com>
+To: davem@davemloft.net, jon.maloy@ericsson.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net,
+        ying.xue@windriver.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -27,65 +28,67 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    427fbe89261d Merge branch 'next' of git://git.kernel.org/p..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b33477800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fcce42b221691ff9
-dashboard link: https://syzkaller.appspot.com/bug?extid=c226690f7b3126c5ee04
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=144f1997800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=141d5417800000
+HEAD commit:    74ee2200b89f kmsan: bump .config.example to v4.17-rc3
+git tree:       https://github.com/google/kmsan.git/master
+console output: https://syzkaller.appspot.com/x/log.txt?x=12ab8637800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4ca1e57bafa8ab1f
+dashboard link: https://syzkaller.appspot.com/bug?extid=8951a3065ee7fd6d6e23
+compiler:       clang version 7.0.0 (trunk 329391)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=15a497f7800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177c1907800000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c226690f7b3126c5ee04@syzkaller.appspotmail.com
+Reported-by: syzbot+8951a3065ee7fd6d6e23@syzkaller.appspotmail.com
 
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-WARNING: CPU: 1 PID: 4542 at lib/iov_iter.c:857 iov_iter_revert+0x2ee/0xaa0  
-lib/iov_iter.c:857
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 4542 Comm: syz-executor650 Not tainted 4.17.0-rc4+ #44
+==================================================================
+BUG: KMSAN: uninit-value in tipc_conn_rcv_sub+0x184/0x950  
+net/tipc/topsrv.c:373
+CPU: 0 PID: 66 Comm: kworker/u4:4 Not tainted 4.17.0-rc3+ #88
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+Workqueue: tipc_rcv tipc_conn_recv_work
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:iov_iter_revert+0x2ee/0xaa0 lib/iov_iter.c:857
-RSP: 0018:ffff8801ad1bf700 EFLAGS: 00010293
-RAX: ffff8801ac55e6c0 RBX: 00000000ffffffff RCX: ffffffff835104a1
-RDX: 0000000000000000 RSI: ffffffff8351074e RDI: 0000000000000007
-RBP: ffff8801ad1bf760 R08: ffff8801ac55e6c0 R09: ffffed003b5e46c2
-R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000001
-R13: ffff8801ad1bfd60 R14: 0000000000000011 R15: ffff8801ae9ac040
-  tls_sw_sendmsg+0xf1c/0x12d0 net/tls/tls_sw.c:448
-  inet_sendmsg+0x19f/0x690 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:629 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:639
-  ___sys_sendmsg+0x805/0x940 net/socket.c:2117
-  __sys_sendmsg+0x115/0x270 net/socket.c:2155
-  __do_sys_sendmsg net/socket.c:2164 [inline]
-  __se_sys_sendmsg net/socket.c:2162 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2162
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4403a9
-RSP: 002b:00007ffdcdfbd6c8 EFLAGS: 00000207 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004403a9
-RDX: 0000000000000000 RSI: 0000000020001340 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 000000000000001c R09: 000000000000001c
-R10: 0000000020000180 R11: 0000000000000207 R12: 0000000000401cd0
-R13: 0000000000401d60 R14: 0000000000000000 R15: 0000000000000000
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  tipc_conn_rcv_sub+0x184/0x950 net/tipc/topsrv.c:373
+  tipc_conn_rcv_from_sock net/tipc/topsrv.c:409 [inline]
+  tipc_conn_recv_work+0x3cd/0x560 net/tipc/topsrv.c:424
+  process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2145
+  worker_thread+0x113c/0x24f0 kernel/workqueue.c:2279
+  kthread+0x539/0x720 kernel/kthread.c:239
+  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:412
+
+Local variable description: ----s.i@tipc_conn_recv_work
+Variable was created at:
+  tipc_conn_recv_work+0x65/0x560 net/tipc/topsrv.c:419
+  process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2145
+==================================================================
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 0 PID: 66 Comm: kworker/u4:4 Tainted: G    B             4.17.0-rc3+  
+#88
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: tipc_rcv tipc_conn_recv_work
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+  panic+0x39d/0x940 kernel/panic.c:184
+  kmsan_report+0x238/0x240 mm/kmsan/kmsan.c:1083
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  tipc_conn_rcv_sub+0x184/0x950 net/tipc/topsrv.c:373
+  tipc_conn_rcv_from_sock net/tipc/topsrv.c:409 [inline]
+  tipc_conn_recv_work+0x3cd/0x560 net/tipc/topsrv.c:424
+  process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2145
+  worker_thread+0x113c/0x24f0 kernel/workqueue.c:2279
+  kthread+0x539/0x720 kernel/kthread.c:239
+  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:412
 Dumping ftrace buffer:
     (ftrace buffer empty)
 Kernel Offset: disabled
