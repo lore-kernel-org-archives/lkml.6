@@ -1,162 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752036AbeEMT5m (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 15:57:42 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35128 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751664AbeEMT53 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 15:57:29 -0400
-X-Google-Smtp-Source: AB8JxZr+kLjc3pJDAcrosHlPiLqmw2MiLzSYAOIvmGgP1FgYNQrmWNlUlotg/3gx8bh4+w9a00gz4g==
-Date: Sun, 13 May 2018 12:59:35 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot <syzbot+3659f05802671eb8af9c@syzkaller.appspotmail.com>
-Cc: coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
-        kadlec@blackhole.kfki.hu, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        pablo@netfilter.org, syzkaller-bugs@googlegroups.com
-Subject: Re: INFO: trying to register non-static key in del_timer_sync
-Message-ID: <20180513195935.GC677@sol.localdomain>
-References: <001a114387b66c88ce0563dab5b8@google.com>
+        id S1751982AbeEMUCn (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 16:02:43 -0400
+Received: from imap.thunk.org ([74.207.234.97]:46550 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751664AbeEMUCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 16:02:42 -0400
+Date: Sun, 13 May 2018 16:02:36 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: Re: [PATCH v2] fs: ext4: Adding new return type vm_fault_t
+Message-ID: <20180513200236.GF14763@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Souptick Joarder <jrdr.linux@gmail.com>, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org
+References: <20180510144136.GA26160@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <001a114387b66c88ce0563dab5b8@google.com>
+In-Reply-To: <20180510144136.GA26160@jordon-HP-15-Notebook-PC>
 User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 28, 2018 at 10:58:01AM -0800, syzbot wrote:
-> Hello,
+On Thu, May 10, 2018 at 08:11:36PM +0530, Souptick Joarder wrote:
+> Use new return type vm_fault_t for fault handler. For now,
+> this is just documenting that the function returns a
+> VM_FAULT value rather than an errno. Once all instances are
+> converted, vm_fault_t will become a distinct type.
 > 
-> syzbot hit the following crash on upstream commit
-> c4e0ca7fa24137e372d6135fe16e8df8e123f116 (Fri Jan 26 23:10:50 2018 +0000)
-> Merge tag 'riscv-for-linus-4.15-maintainers' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux
+> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 > 
-> So far this crash happened 3 times on net-next, upstream.
-> C reproducer is attached.
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+3659f05802671eb8af9c@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> audit: type=1400 audit(1517074079.617:7): avc:  denied  { map } for
-> pid=3685 comm="syzkaller985951" path="/root/syzkaller985951088" dev="sda1"
-> ino=16481 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
-> tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-> INFO: trying to register non-static key.
-> the code is fine but needs lockdep annotation.
-> turning off the locking correctness validator.
-> CPU: 1 PID: 3685 Comm: syzkaller985951 Not tainted 4.15.0-rc9+ #283
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  register_lock_class+0x542/0x2cd0 kernel/locking/lockdep.c:752
->  __lock_acquire+0x1de/0x3e00 kernel/locking/lockdep.c:3314
->  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3914
->  del_timer_sync+0xba/0x240 kernel/time/timer.c:1275
->  led_tg_destroy+0x2dd/0x3f0 net/netfilter/xt_LED.c:185
->  cleanup_entry+0x218/0x350 net/ipv4/netfilter/ip_tables.c:659
->  __do_replace+0x7d7/0xa90 net/ipv4/netfilter/ip_tables.c:1096
->  do_replace net/ipv4/netfilter/ip_tables.c:1152 [inline]
->  do_ipt_set_ctl+0x40f/0x5f0 net/ipv4/netfilter/ip_tables.c:1682
->  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
->  nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
->  ip_setsockopt+0xa1/0xb0 net/ipv4/ip_sockglue.c:1256
->  tcp_setsockopt+0x82/0xd0 net/ipv4/tcp.c:2875
->  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2968
->  SYSC_setsockopt net/socket.c:1831 [inline]
->  SyS_setsockopt+0x189/0x360 net/socket.c:1810
->  entry_SYSCALL_64_fastpath+0x29/0xa0
-> RIP: 0033:0x4449fa
-> RSP: 002b:00007ffee653a948 EFLAGS: 00000206 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 00000000006cd0fc RCX: 00000000004449fa
-> RDX: 0000000000000040 RSI: 0000000000000000 RDI: 0000000000000003
-> RBP: 00000000006cd0fc R08: 00000000000002d8 R09: 000000000117c880
-> R10: 00000000006cd528 R11: 0000000000000206 R12: 0000000000000003
-> R13: 00000000006d00a4 R14: 00000000006d0050 R15: 00000000004a39ae
-> ------------[ cut here ]------------
-> ODEBUG: assert_init not available (active state 0) object type: timer_list
-> hint:           (null)
-> WARNING: CPU: 1 PID: 3685 at lib/debugobjects.c:291
-> debug_print_object+0x166/0x220 lib/debugobjects.c:288
-> Kernel panic - not syncing: panic_on_warn set ...
-> 
-> CPU: 1 PID: 3685 Comm: syzkaller985951 Not tainted 4.15.0-rc9+ #283
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  panic+0x1e4/0x41c kernel/panic.c:183
->  __warn+0x1dc/0x200 kernel/panic.c:547
->  report_bug+0x211/0x2d0 lib/bug.c:184
->  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
->  fixup_bug arch/x86/kernel/traps.c:247 [inline]
->  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
->  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
->  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1096
-> RIP: 0010:debug_print_object+0x166/0x220 lib/debugobjects.c:288
-> RSP: 0018:ffff8801d9adf7d0 EFLAGS: 00010282
-> RAX: dffffc0000000008 RBX: 0000000000000005 RCX: ffffffff8159ebae
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000293
-> RBP: ffff8801d9adf810 R08: 0000000000000000 R09: 1ffff1003b35be97
-> R10: ffff8801d9adf6d0 R11: ffffffff86b38678 R12: 0000000000000001
-> R13: ffffffff86b49d00 R14: ffffffff86010440 R15: ffffffff815f1530
->  debug_object_assert_init+0x303/0x570 lib/debugobjects.c:654
->  debug_timer_assert_init kernel/time/timer.c:707 [inline]
->  debug_assert_init kernel/time/timer.c:759 [inline]
->  try_to_del_timer_sync+0x74/0x130 kernel/time/timer.c:1215
->  del_timer_sync+0x18a/0x240 kernel/time/timer.c:1285
->  led_tg_destroy+0x2dd/0x3f0 net/netfilter/xt_LED.c:185
->  cleanup_entry+0x218/0x350 net/ipv4/netfilter/ip_tables.c:659
->  __do_replace+0x7d7/0xa90 net/ipv4/netfilter/ip_tables.c:1096
->  do_replace net/ipv4/netfilter/ip_tables.c:1152 [inline]
->  do_ipt_set_ctl+0x40f/0x5f0 net/ipv4/netfilter/ip_tables.c:1682
->  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
->  nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
->  ip_setsockopt+0xa1/0xb0 net/ipv4/ip_sockglue.c:1256
->  tcp_setsockopt+0x82/0xd0 net/ipv4/tcp.c:2875
->  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2968
->  SYSC_setsockopt net/socket.c:1831 [inline]
->  SyS_setsockopt+0x189/0x360 net/socket.c:1810
->  entry_SYSCALL_64_fastpath+0x29/0xa0
-> RIP: 0033:0x4449fa
-> RSP: 002b:00007ffee653a948 EFLAGS: 00000206 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 00000000006cd0fc RCX: 00000000004449fa
-> RDX: 0000000000000040 RSI: 0000000000000000 RDI: 0000000000000003
-> RBP: 00000000006cd0fc R08: 00000000000002d8 R09: 000000000117c880
-> R10: 00000000006cd528 R11: 0000000000000206 R12: 0000000000000003
-> R13: 00000000006d00a4 R14: 00000000006d0050 R15: 00000000004a39ae
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
 
-This was fixed by commit 10414014bc085a:
+Applied, thanks.
 
-#syz fix: netfilter: x_tables: fix missing timer initialization in xt_LED
-
-- Eric
+					- Ted
