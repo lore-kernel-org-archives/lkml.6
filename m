@@ -1,164 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751664AbeEMMYS (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 08:24:18 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40235 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbeEMMYQ (ORCPT
+        id S1751424AbeEMM6E (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 08:58:04 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:38557 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751260AbeEMM56 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 08:24:16 -0400
-X-Google-Smtp-Source: AB8JxZq0N/wQlu/csg32wKsAOyP0Jdmd1Xxr/kRJOb50U27uFP7Ja4RJgQfIewt1jBbEMynb2cuncw==
-Date: Sun, 13 May 2018 14:24:12 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        b.zolnierkie@samsung.com, m.szyprowski@samsung.com
-Subject: Re: [PATCH] ARM: dts: exynos: Use dedicated DT bindings for Odroid
- X/X2, U3
-Message-ID: <20180513122412.shxdxtxt2phb46l5@kozik-lap>
-References: <CGME20180511081032epcas2p30f381cf699cb7524d9a143390e9c74b5@epcas2p3.samsung.com>
- <20180511080947.3057-1-s.nawrocki@samsung.com>
+        Sun, 13 May 2018 08:57:58 -0400
+X-Google-Smtp-Source: AB8JxZqle4wIDCUJC5At0y9PmkxN4b0rvfHE5SwvgIvNmXeRJMJHZhhph502Jt5f3U1lSxa27TOnsA==
+Date: Sun, 13 May 2018 14:57:55 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: laurent.pinchart@ideasonboard.com, horms@verge.net.au, geert@glider.be,
+        magnus.damm@gmail.com, robh+dt@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: draak: Describe HDMI input
+Message-ID: <20180513125755.GQ18974@bigcity.dyn.berto.se>
+References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526032802-14376-4-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180511080947.3057-1-s.nawrocki@samsung.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1526032802-14376-4-git-send-email-jacopo+renesas@jmondi.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 10:09:47AM +0200, Sylwester Nawrocki wrote:
-> Use dedicated Odroid audio subsystem DT bindings instead of the simple-card.
-> This adds support for audio on the HDMI interface.
+Hi Jacopo,
 
-How about changing the subject to "Add suppor for audio over HDMI for
-Odroid X/X2/U3"?
+Thanks for your patch.
 
-
+On 2018-05-11 12:00:02 +0200, Jacopo Mondi wrote:
+> Describe HDMI input connected to VIN4 interface for R-Car D3 Draak
+> development board.
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > ---
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 33 ++++++++++++++-----------
->  arch/arm/boot/dts/exynos4412-odroidu3.dts       |  7 +++---
->  arch/arm/boot/dts/exynos4412-odroidx.dts        |  7 +++---
->  3 files changed, 27 insertions(+), 20 deletions(-)
+>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 68 ++++++++++++++++++++++++++
+>  1 file changed, 68 insertions(+)
 > 
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index d7ad07fd48f9..bad08e70358a 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -37,20 +37,12 @@
->  	};
->  
->  	sound: sound {
-> -		compatible = "simple-audio-card";
-> -
-> -		simple-audio-card,format = "i2s";
-> -		simple-audio-card,bitclock-master = <&link0_codec>;
-> -		simple-audio-card,frame-master = <&link0_codec>;
-> -
-> -		simple-audio-card,cpu {
-> +		cpu {
->  			sound-dai = <&i2s0 0>;
-> -			system-clock-frequency = <19200000>;
->  		};
->  
-> -		link0_codec: simple-audio-card,codec {
-> -			sound-dai = <&max98090>;
-> -			clocks = <&i2s0 CLK_I2S_CDCLK>;
-> +		codec {
-> +			sound-dai = <&hdmi>, <&max98090>;
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> index d03f194..e0ce462 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> @@ -59,6 +59,17 @@
 >  		};
 >  	};
 >  
-> @@ -142,14 +134,25 @@
->  	pinctrl-0 = <>;
+> +	hdmi-in {
+> +		compatible = "hdmi-connector";
+> +		type = "a";
+> +
+> +		port {
+> +			hdmi_con_in: endpoint {
+> +				remote-endpoint = <&adv7612_in>;
+> +			};
+> +		};
+> +	};
+> +
+>  	memory@48000000 {
+>  		device_type = "memory";
+>  		/* first 128MB is reserved for secure area. */
+> @@ -142,6 +153,11 @@
+>  		groups = "usb0";
+>  		function = "usb0";
+>  	};
+> +
+> +	vin4_pins: vin4 {
+> +		groups = "vin4_data24", "vin4_sync", "vin4_clk", "vin4_clkenb";
+> +		function = "vin4";
+> +	};
 >  };
 >  
-> +&clock {
-> +	assigned-clocks = <&clock CLK_FOUT_EPLL>;
-> +	assigned-clock-rates = <45158401>;
-> +};
+>  &i2c0 {
+> @@ -154,6 +170,35 @@
+>  		reg = <0x50>;
+>  		pagesize = <8>;
+>  	};
 > +
->  &clock_audss {
->  	assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
->  			<&clock_audss EXYNOS_MOUT_I2S>,
->  			<&clock_audss EXYNOS_DOUT_SRP>,
-> -			<&clock_audss EXYNOS_DOUT_AUD_BUS>;
-> +			<&clock_audss EXYNOS_DOUT_AUD_BUS>,
-> +			<&clock_audss EXYNOS_DOUT_I2S>;
+> +	hdmi-decoder@4c {
+> +		compatible = "adi,adv7612";
+> +		reg = <0x4c>;
+> +		default-input = <0>;
 > +
->  	assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
-> -			<&clock_audss EXYNOS_MOUT_AUDSS>;
-> -	assigned-clock-rates = <0>, <0>, <192000000>, <19200000>;
-> +			  <&clock_audss EXYNOS_MOUT_AUDSS>;
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
 > +
-> +	assigned-clock-rates = <0>, <0>,
-> +			<196608001>,
-> +			<(196608001 / 2)>,
-> +			<(196608001 / 8)>;
+> +			port@0 {
+> +				reg = <0>;
+> +				adv7612_in: endpoint {
+> +					remote-endpoint = <&hdmi_con_in>;
+> +				};
+> +			};
+> +
+> +			port@2 {
+> +				reg = <2>;
+> +				adv7612_out: endpoint {
+> +					pclk-sample = <0>;
+> +					hsync-active = <0>;
+> +					vsync-active = <0>;
+
+This differs from the Gen2 DT bindings which is a very similar hardware 
+setup using the same components. Defining these properties will make the 
+bus marked as V4L2_MBUS_PARALLEL instead of V4L2_MBUS_BT656.
+
+This will change how the hardware is configured for capture if the media 
+bus is in a UYVY format, see VNMC_INF register in rvin_setup(). Maybe 
+this it not an issue here but still I'm curious to why this differ 
+between Gen2 and Gen3 :-)
+
+> +
+> +					remote-endpoint = <&vin4_in>;
+> +				};
+> +			};
+> +		};
+> +	};
 >  };
 >  
->  &cpu0 {
-> @@ -498,6 +501,8 @@
->  	pinctrl-0 = <&i2s0_bus>;
->  	pinctrl-names = "default";
+>  &i2c1 {
+> @@ -246,3 +291,26 @@
+>  	timeout-sec = <60>;
 >  	status = "okay";
-> +	assigned-clocks = <&i2s0 CLK_I2S_RCLK_SRC>;
-> +	assigned-clock-parents = <&clock_audss EXYNOS_SCLK_I2S>;
 >  };
->  
->  &mixer {
-> diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> index bdcd4523cc1c..7a94a423097d 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> @@ -113,11 +113,12 @@
->  };
->  
->  &sound {
-> -	simple-audio-card,name = "Odroid-U3";
-> -	simple-audio-card,widgets =
-> +	compatible = "hardkernel,odroid-xu4-audio";
+> +
+> +&vin4 {
+> +	pinctrl-0 = <&vin4_pins>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +
+> +	ports {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		port@0 {
+> +			reg = <0>;
+> +
+> +			vin4_in: endpoint {
+> +				hsync-active = <0>;
+> +				vsync-active = <0>;
 
-The compatible is the same for all users using DTSI so it could be moved
-to the exynos4412-odroid-common.dtsi itself.
+Comparing this to the Gen2 bindings some properties are missing,
 
-Best regards,
-Krzysztof
+bus-width = <24>;
+pclk-sample = <1>;
+data-active = <1>;
 
-> +	model = "Odroid-U3";
-> +	samsung,audio-widgets =
->  		"Headphone", "Headphone Jack",
->  		"Speakers", "Speakers";
-> -	simple-audio-card,routing =
-> +	samsung,audio-routing =
->  		"Headphone Jack", "HPL",
->  		"Headphone Jack", "HPR",
->  		"Headphone Jack", "MICBIAS",
-> diff --git a/arch/arm/boot/dts/exynos4412-odroidx.dts b/arch/arm/boot/dts/exynos4412-odroidx.dts
-> index 2dff129bc2ad..f0d5037f3a5d 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroidx.dts
-> +++ b/arch/arm/boot/dts/exynos4412-odroidx.dts
-> @@ -97,12 +97,13 @@
->  };
->  
->  &sound {
-> -	simple-audio-card,name = "Odroid-X";
-> -	simple-audio-card,widgets =
-> +	compatible = "hardkernel,odroid-xu4-audio";
-> +	model = "Odroid-X";
-> +	samsung,audio-widgets =
->  		"Headphone", "Headphone Jack",
->  		"Microphone", "Mic Jack",
->  		"Microphone", "DMIC";
-> -	simple-audio-card,routing =
-> +	samsung,audio-routing =
->  		"Headphone Jack", "HPL",
->  		"Headphone Jack", "HPR",
->  		"IN1", "Mic Jack",
+This is not a big deal as the VIN driver don't use these properties so 
+no functional change should come of this but still a difference.  
+
+Over all I'm happy with this change but before I add my tag I would like 
+to understand why it differs from the Gen2 configuration for the adv7612 
+properties.
+
+Also on a side not it is possible with hardware switches on the board 
+switch the VIN4 source to a completely different pipeline CVBS connector 
+-> adv7180 -> VIN4. But I think it's best we keep the HDMI as default as 
+this seems to be how the boards are shipped. But maybe mentioning this 
+in the commit message would not hurt if you end-up resending the patch.
+
+> +
+> +				remote-endpoint = <&adv7612_out>;
+> +			};
+> +		};
+> +	};
+> +};
 > -- 
-> 2.14.2
+> 2.7.4
 > 
+
+-- 
+Regards,
+Niklas Söderlund
