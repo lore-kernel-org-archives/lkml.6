@@ -1,65 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751307AbeEMKrI (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 06:47:08 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:30413 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbeEMKrH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 06:47:07 -0400
-To: dvyukov@google.com
-Cc: syzbot+3417712847e7219a60ee@syzkaller.appspotmail.com,
-        miklos@szeredi.hu, akpm@linux-foundation.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, pombredanne@nexb.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Subject: Re: KASAN: use-after-free Read in corrupted
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <000000000000eec34b056c128997@google.com>
-        <CACT4Y+aRyMWXS0K0bqAVgBOTh=vXEY0dwM91vdSkJ75zgy+k-A@mail.gmail.com>
-        <201805131920.GJJ58398.OHFVOOSQtLMJFF@I-love.SAKURA.ne.jp>
-        <CACT4Y+asb-Anvn3ENyUVDGVivFUDT5XXz750ioi5MqWDtgvwRg@mail.gmail.com>
-In-Reply-To: <CACT4Y+asb-Anvn3ENyUVDGVivFUDT5XXz750ioi5MqWDtgvwRg@mail.gmail.com>
-Message-Id: <201805131947.IJC65168.OOFOMFJHLVQStF@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Sun, 13 May 2018 19:47:05 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1751295AbeEMLMw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 07:12:52 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:40646 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750941AbeEMLMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 07:12:51 -0400
+Date: Sun, 13 May 2018 13:12:24 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Tony Luck <tony.luck@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Edac Mailing List <linux-edac@vger.kernel.org>
+Subject: Re: [PATCH] edac: fix skx_edac build error when ACPI_NFIT=m
+Message-ID: <20180513111224.GA16568@pd.tnic>
+References: <2a09f7f3-c129-d4c4-76cc-223550601bdb@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2a09f7f3-c129-d4c4-76cc-223550601bdb@infradead.org>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov wrote:
-> On Sun, May 13, 2018 at 12:20 PM, Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> > Dmitry Vyukov wrote:
-> >> This looks very similar to "KASAN: use-after-free Read in fuse_kill_sb_blk":
-> >> https://groups.google.com/d/msg/syzkaller-bugs/4C4oiBX8vZ0/0NTQRcUYBgAJ
-> >>
-> >> which you fixed with "fuse: don't keep dead fuse_conn at fuse_fill_super().":
-> >> https://groups.google.com/d/msg/syzkaller-bugs/4C4oiBX8vZ0/W6pi8NdbBgAJ
-> >>
-> >> However, here we have use-after-free in fuse_kill_sb_anon instead of
-> >> use_kill_sb_blk. Do you think your patch will fix this as well?
-> >
-> > Yes, for fuse_kill_sb_anon() and fuse_kill_sb_blk() are symmetrical.
-> > I'm waiting for Miklos Szeredi to apply that patch.
+On Sat, May 12, 2018 at 06:02:12PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
+> Prevent build error when CONFIG_ACPI_NFIT=m and CONFIG_EDAC_SKX=y
+> by limiting EDAC_SKX based on how ACPI_NFIT is set.
 > 
-> Thanks for confirming. Let's do:
+> Fixes this build error:
+> drivers/edac/skx_edac.o: In function `get_nvdimm_info':
+> ../drivers/edac/skx_edac.c:399: undefined reference to `nfit_get_smbios_id'
 > 
-> #syz fix: fuse: don't keep dead fuse_conn at fuse_fill_super().
+> Fixes: 58ca9ac1463d ("EDAC, skx_edac: Detect non-volatile DIMMs")
 > 
-Excuse me, but that patch is not yet applied to any git tree. Isn't the rule that
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: stable@vger.kernel.org
+> ---
+>  drivers/edac/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- lnx-417-rc4.orig/drivers/edac/Kconfig
+> +++ lnx-417-rc4/drivers/edac/Kconfig
+> @@ -232,6 +232,7 @@ config EDAC_SBRIDGE
+>  config EDAC_SKX
+>  	tristate "Intel Skylake server Integrated MC"
+>  	depends on PCI && X86_64 && X86_MCE_INTEL && PCI_MMCONFIG
+> +	depends on ACPI_NFIT || !ACPI_NFIT
 
-  If you forgot to add the Reported-by tag, once the fix for this bug is merged into any tree, please reply to this email with:
-  #syz fix: exact-commit-title 
+I guess...
 
-? That's the reason I keep
+Although this reads really non-sensical. But it looks like enforcing the
+state of the dependent symbol is being done in other places so please
+add a comment similar to like it is done in those other places so that
+it is clear:
 
-  KASAN: use-after-free Read in fuse_kill_sb_blk
-  https://syzkaller.appspot.com/bug?id=a07a680ed0a9290585ca424546860464dd9658db
+drivers/usb/phy/Kconfig:25:     depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
+drivers/usb/phy/Kconfig:34:     depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
+drivers/usb/phy/Kconfig:57:     depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, NOP can't be built-in
+drivers/usb/phy/Kconfig:93:     depends on USB_GADGET || !USB_GADGET # if USB_GADGET=m, this can't be 'y'
+...
 
-report "open()" table but I want keyword column available in the "open()" table
-so that we can announce that "patch is proposed and waiting for review" state.
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
