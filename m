@@ -1,77 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752052AbeEMW3z (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 18:29:55 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:44289 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbeEMW3x (ORCPT
+        id S1752059AbeEMWe4 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 18:34:56 -0400
+Received: from mail-qk0-f180.google.com ([209.85.220.180]:43312 "EHLO
+        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751847AbeEMWey (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 18:29:53 -0400
-X-Google-Smtp-Source: AB8JxZq3VoRHMht2RXdI6cKe24XbLlnG9iTcJK7v5E0G4gFiC5dXfYoHUCZVigUkor7cU5l2k7to2g==
-Date: Sun, 13 May 2018 18:29:48 -0400
-From: Kent Overstreet <kent.overstreet@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-bcache@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>, hare@suse.com
-Subject: Re: [PATCH 1/2] bcachefs: On disk data structures
-Message-ID: <20180513222948.GA20114@kmo-pixel>
-References: <20180508221800.2642-1-kent.overstreet@gmail.com>
- <20180508221800.2642-2-kent.overstreet@gmail.com>
- <dea41935-a52c-e720-0ca3-eef4367d3641@infradead.org>
+        Sun, 13 May 2018 18:34:54 -0400
+X-Google-Smtp-Source: AB8JxZqPURC9lAkEL7j8PizXREUlCM7xhU/rEzLLvhnLJagiMW/w8KZpCmHcNqJM3urmMghwqBRc2mU67qtYSL1mg8g=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dea41935-a52c-e720-0ca3-eef4367d3641@infradead.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAG=yYwkWt9bbKVWD93YT2S3jFQCt7s5yV7gxOw=JScFJtgO0NA@mail.gmail.com>
+References: <CAG=yYwkWt9bbKVWD93YT2S3jFQCt7s5yV7gxOw=JScFJtgO0NA@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 14 May 2018 01:34:53 +0300
+Message-ID: <CAHp75Vc4FhSOfyN=UG=xXNOH6C4JUpnfMh9+Mp1_FiM44F0FtA@mail.gmail.com>
+Subject: Re: PROBLEM: "ACPI Error: Method parse/execution failed" and "ACPI
+ BIOS Error (bug): Failure looking up" related
+To: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Cc: Robert Moore <robert.moore@intel.com>, erik.schmauss@intel.com,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>, devel@acpica.org,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 01:30:06PM -0700, Randy Dunlap wrote:
-> On 05/08/2018 03:17 PM, Kent Overstreet wrote:
-> > + * The btree is the primary structure, most metadata exists as keys in the
-> 
-> s/,/;/
+On Sun, May 13, 2018 at 5:20 PM, Jeffrin Thalakkottoor
+<jeffrin@rajagiritech.edu.in> wrote:
+> hello ,
+>
+> the error from "dmesg -l err"  related ...
+>
+> ------------------------------------------------------------------------------------------------->
+>
+> [    1.709950] ACPI BIOS Error (bug): Failure looking up
+> [\_SB.PCI0.LPCB.HEC.ECWT], AE_NOT_FOUND (20180313/psargs-330)
+> [    1.710045] ACPI Error: Method parse/execution failed
+> \_TZ.FN00._ON, AE_NOT_FOUND (20180313/psparse-516)
+> [    1.710208] ACPI BIOS Error (bug): Failure looking up
+> [\_SB.PCI0.LPCB.HEC.ECWT], AE_NOT_FOUND (20180313/psargs-330)
+> [    1.710267] ACPI Error: Method parse/execution failed
+> \_TZ.FN00._ON, AE_NOT_FOUND (20180313/psparse-516)
+> [    1.710338] acpi PNP0C0B:00: Failed to set initial power state
+> [    1.710846] ACPI BIOS Error (bug): Failure looking up
+> [\_SB.PCI0.LPCB.HEC.ECRD], AE_NOT_FOUND (20180313/psargs-330)
+> [    1.710938] ACPI Error: Method parse/execution failed
+> \_TZ.TZ00._TMP, AE_NOT_FOUND (20180313/psparse-516)
+> [    1.711588] ACPI BIOS Error (bug): Failure looking up
+> [\_SB.PCI0.LPCB.HEC.ECRD], AE_NOT_FOUND (20180313/psargs-330)
+> [    1.711681] ACPI Error: Method parse/execution failed
+> \_TZ.TZ00._TMP, AE_NOT_FOUND (20180313/psparse-516)
+> [    1.711960] ACPI BIOS Error (bug): Failure looking up
+> [\_SB.PCI0.LPCB.HEC.ECRD], AE_NOT_FOUND (20180313/psargs-330)
+> [    1.712054] ACPI Error: Method parse/execution failed
+> \_TZ.TZ01._TMP, AE_NOT_FOUND (20180313/psparse-516)
+> [    1.712471] ACPI BIOS Error (bug): Failure looking up
+> [\_SB.PCI0.LPCB.HEC.ECRD], AE_NOT_FOUND (20180313/psargs-330)
+> [    1.712552] ACPI Error: Method parse/execution failed
+> \_TZ.TZ01._TMP, AE_NOT_FOUND (20180313/psparse-516)
+>
+> ----------------------------------------------------------------------------------------------------->
+>
 
-nitpicky, but ok :P
+Is there any regressions or change in behaviour due to which these
+messages are printed out? If so, which regressions you are pointing
+out?
 
-> > + * various btrees. There are only a small number of btrees, they're not
-> > + * sharded - we have one btree for extents, another for inodes, et cetera.
-> 
->    or shared?
+>
+>
+> $awk -f scripts/ver_linux
+> If some fields are empty or look unusual you may have an old version.
+> Compare to the current minimal requirements in Documentation/Changes.
+>
+> Linux debian 4.17.0-rc4+ #24 SMP Sat May 12 19:26:27 IST 2018 x86_64 GNU/Linux
+>
+> GNU Make            4.2.1
+> Binutils            2.30
+> Util-linux          2.31.1
+> Mount                2.31.1
+> Linux C Library      2.27
+> Dynamic linker (ldd) 2.27
+> readlink: missing operand
+> Try 'readlink --help' for more information.
+> Procps              3.3.14
+> Kbd                  2.0.4
+> Console-tools        2.0.4
+> Sh-utils            8.28
+> Udev                238
+> Modules Loaded      ac acpi_pad acpi_thermal_rel ahci autofs4 battery
+> binfmt_misc bluetooth bnep btbcm btintel btrfs btrtl btusb button
+> cdrom cfg80211 cmac coretemp cpuid crc32c_intel crc32_pclmul
+> crct10dif_pclmul cryptd drm drm_kms_helper ecdh_generic efi_pstore
+> efivarfs efivars ehci_hcd ehci_pci evdev fan fat fuse
+> ghash_clmulni_intel hid hp_wireless hp_wmi i2c_algo_bit i2c_hid
+> i2c_i801 i915 int3400_thermal int340x_thermal_zone intel_cstate
+> intel_pch_thermal intel_powerclamp intel_rapl intel_rapl_perf
+> intel_soc_dts_iosf intel_uncore ip_tables irqbypass
+> iTCO_vendor_support iTCO_wdt joydev kvm kvm_intel libahci libata
+> libcrc32c loop lp lpc_ich media mei mei_me mfd_core mii nls_ascii
+> nls_cp437 parport parport_pc pcspkr ppdev processor_thermal_device
+> psmouse r8169 raid6_pq rfcomm rfkill scsi_mod sd_mod serio_raw sg
+> shpchp snd snd_hda_codec snd_hda_codec_generic snd_hda_codec_hdmi
+> snd_hda_codec_realtek snd_hda_core snd_hda_intel snd_hwdep snd_pcm
+> snd_timer soundcore sparse_keymap sr_mod sunrpc thermal usbcore
+> uvcvideo vfat video videobuf2_common videobuf2_memops videobuf2_v4l2
+> videobuf2_vmalloc videodev wl wmi wmi_bmof x86_pkg_temp_thermal xfs
+> xhci_hcd xhci_pci xor x_tables xxhash zstd_compress zstd_decompress
+>
+>
+> $uname -a
+> Linux debian 4.17.0-rc4+ #24 SMP Sat May 12 19:26:27 IST 2018 x86_64 GNU/Linux
+> $
+>
+> Reported-by: Jeffrin Jose T  <jeffrin@rajagiritech.edu.in>
+>
+> --
+> software engineer
+> rajagiri school of engineering and technology
 
-No, I mean sharded - we're e.g. not splitting up the extents btree into one
-btree per inode. 
-
-> > +/* Btree keys - all units are in sectors */
-> 
-> Are sectors fixed size?  I.e., can 2 different physical storage devices have
-> different sized sectors?
-> or is this just the "traditional" 512-byte sector?
-
-512 byte sectors.
-
-Multi device filesystems must use the same block size for each device, but
-actually it just occurred to me that it probably wouldn't be that difficult to
-lift that restriction. The main reason we care about block size is that btree
-node entries and journal entries don't record how much padding we wrote - to
-figure out where to look for the next journal/btree node entry, we take the size
-of the current entry and round it up by the block size.
-
-But adding the block size that particular entry was written with to the header
-would be pretty easy.
 
 
->                                          to the start of the start  [intentional?]
-
-Whoops, thanks
-
-> I know that you have already answered a few comments about endianness,
-> so maybe you answered this and I missed it.
-> 
-> Can a bcachefs fs be shared, a la NFS?  I.e., can multiple different-endian
-> clients be accessing the same bcachefs?
-
-NFS works. I haven't tested NFS to different endian clients, wasn't aware there
-was any reason to... are there potential issues there I'm not aware of?
+-- 
+With Best Regards,
+Andy Shevchenko
