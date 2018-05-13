@@ -1,422 +1,242 @@
-Return-Path: <mperttunen@nvidia.com>
-X-Google-Smtp-Source: AB8JxZr+GRVy8jayyt5XbMT0ubl0+muynOYgwmtFlNgBvRUHPQJhoOhNAPhEU0trQdK0DePFuw01
-ARC-Seal: i=1; a=rsa-sha256; t=1525780180; cv=none;
-        d=google.com; s=arc-20160816;
-        b=wl8xVMQOLROY+yIELeSsCIV0/pAEQ28mPCs2/FAOuIhOmloeQrOtyDJD2KQfxXhaXj
-         fdqyIwVqJ5aw3Hg8cZGMs9I548V5bzBuoWbc4rGoc8paJhWzdiOpY0eqqzKGBO/rcthR
-         mRZkHAslWOFZ6y4pDadQuB/WnNiYd5KAZubGQS5njTwExogXrBztp06rtc0hAlODd8LG
-         NulLUC+8Rpp51hRR0GaaG+JCyLwHrtOsxkJSp+lLPT/fofKKYjvzVNaUtJ/C22QfJ6G7
-         BJpSxDfZAFLHHtCifUp6Xe2WtHN/hTkcKvHtEdRGfGPZNA2Pxy+/TQ3hBpxolGAoyd4q
-         p68w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:arc-authentication-results;
-        bh=y+JKOmxcjSPFoHlsMeqEKHDIday4nDdfTG1h2RG0H3w=;
-        b=xW+0HdpgYHKTWT+dC4TDjR+7HylSt8kkkwgbgYveEMgR56L45S+4UM2stRi4iNJFT0
-         U59su2M6IW52LuggtMoijDpEnmiFhGW7B4LlHTrbLrXfNLAxPgShtWLqvg+h8CFawflo
-         lo0nVUu79F3K9qMvHLlqn2M1GWS0ZfVxLsrfLNSiyNhid/eLtng7W1ak63Nqt0mnma8h
-         DIPyTg6Ks9RylyW5Cl0jjbrVP1oaujSQ5eGMur3Pe6yFZ9SuSHIr1mHYsTpb0iZr2BJq
-         Hq+Lt1KQ9YoXN8Gx5HaWrfZaXiuPXAYQRpwAhUPZp/HrH2VvTBC6nLB7e8PtrDUua+5z
-         91Mg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of mperttunen@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=mperttunen@nvidia.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of mperttunen@nvidia.com designates 216.228.121.143 as permitted sender) smtp.mailfrom=mperttunen@nvidia.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
-X-PGP-Universal: processed;
-	by hqpgpgate102.nvidia.com on Tue, 08 May 2018 04:49:34 -0700
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <jassisinghbrar@gmail.com>,
-	<gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>
-CC: <araza@nvidia.com>, <devicetree@vger.kernel.org>,
-	<linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Mikko
- Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH 6/8] serial: Add Tegra Combined UART driver
-Date: Tue, 8 May 2018 14:44:01 +0300
-Message-ID: <20180508114403.14499-7-mperttunen@nvidia.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180508114403.14499-1-mperttunen@nvidia.com>
-References: <20180508114403.14499-1-mperttunen@nvidia.com>
-X-NVConfidentiality: public
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3117659-1526221014-2-6552991307900805544
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES roenca, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526221014; b=XMKzsLeIsMjevllH1EhChEpwZC2f+5f8oNxQBhrylOz9A369+n
+    e9vZxpyNQjAS/0P4oTAZ11b2MGNrqCck7TvsP+eHpEeLSIT7XKEZ+7x3KgASDsHX
+    iZBIJbtaUdC5Y2PNuF3u0ZQa43dJMKehmZPrN+5TWBn8p37rKd8SkSNBoS14N5J/
+    smFRE7f1x5vW5GQqqaxoNUpB/Ah2Eq35+B4VEmYD521Wk/aDRTfvlWwb8e0dw1zc
+    mpmEE5dEjv6IhH/BgHiSClF7pGgOJX2GVpx1LI8FwqbkUcdRehhnN/CZXuiN8GfE
+    aiYQ1dwSIU9H5EecaM22Nt9+htTJ4sQ3oBHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1526221014; bh=zZ9EIKWW2meZUKxgQfWpoHUyv4GkaIYB2vyYGWFbUP
+    c=; b=UvzQ6Zu9284TlKU4FtZmgD6M1clm7+v3qDSZvO9GypKRrjOHCgFNjBDODi
+    h40rx8ruW5t21v96Jr2L/dRbPlthwuCIbOi5rAGiYUGRVI9VPcGc3dWzwNzkuwnP
+    60TUyMxegls1L2fZEKTt5FJWkL9NwiGLXlrg3xqWM6Tc9/rrPE4P46mIW7DUdfb+
+    lKw9ljDSteotPTFr4GHCPYyOV/ihCxeEREZUX2Q2pQXzf+hwP1yyz9p07P587/9p
+    wza0OvJPJCm0gGNqFf9s59ZCWWzvb7y36nWMItJ+dYwrEGO5xVbJXAM8KTqHeJPG
+    aGqDJVcwZB5/tIJbKX+iuzQWsyrg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=gmail.com header.i=@gmail.com header.b=VybkLJyf x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=qiZPQ3YT;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=gmail.com header.i=@gmail.com header.b=VybkLJyf x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=qiZPQ3YT;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfHYLJUHx3SplOXfXoJHo6U7IfHVhcCWDXSKH2w1ghfOniSm74F/UF5s+9Dlp2bCHyCA22/h6YIfFQH80wV6Q8y+LusfAA4wGg1JSAeXP04/MMJ9byDaI
+    gG1S6dPD/zSrknq+sbQzbQFWs/ITwhZyqgDAxlNASsmR6ulnefvvCcI0mjyO9C9W5ei4f5QA4sE/adKXz+09uJVm7l14s/4zz8d1AtJGEajm9gpbaldEp3mI
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+    a=fbV3Th2LUxsA:10 a=VUJBJC2UJ8kA:10 a=Ikd4Dj_1AAAA:8 a=VwQbUJbxAAAA:8
+    a=2BhvgM1lhYKaxuubGdYA:9 a=CdO5dvL8khfHbho6:21 a=MjiXGEToQtuOHOdd:21
+    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751449AbeEMOQj (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 13 May 2018 10:16:39 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:33968 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751295AbeEMOQh (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Sun, 13 May 2018 10:16:37 -0400
+X-Google-Smtp-Source: AB8JxZrHzGqBR5dehSBdatsvDrGiqQ9ukPm4BdRP5vdG3jc3gzCXqCY9kATAFQxLjc2I2hYfE45YlR3fRuchpNPq8EE=
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180508114403.14499-7-mperttunen@nvidia.com>
+References: <20180508114403.14499-1-mperttunen@nvidia.com> <20180508114403.14499-7-mperttunen@nvidia.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 13 May 2018 17:16:36 +0300
+Message-ID: <CAHp75VfYF_u2bZ+temGbReEB9K-t3A75aUNYwffyv9-=zEi0Lw@mail.gmail.com>
+Subject: Re: [PATCH 6/8] serial: Add Tegra Combined UART driver
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, araza@nvidia.com,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599896478847127946?=
-X-GMAIL-MSGID: =?utf-8?q?1599896478847127946?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
-multiplexing multiple "virtual UARTs" into a single hardware serial
-port. The TCU is the primary serial port on Tegra194 devices.
+On Tue, May 8, 2018 at 2:44 PM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
+> The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
+> multiplexing multiple "virtual UARTs" into a single hardware serial
+> port. The TCU is the primary serial port on Tegra194 devices.
+>
+> Add a TCU driver utilizing the mailbox framework, as the used mailboxes
+> are part of Tegra HSP blocks that are already controlled by the Tegra
+> HSP mailbox driver.
 
-Add a TCU driver utilizing the mailbox framework, as the used mailboxes
-are part of Tegra HSP blocks that are already controlled by the Tegra
-HSP mailbox driver.
+First question, can it be done utilizing SERDEV framework?
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/tty/serial/Kconfig       |   9 ++
- drivers/tty/serial/Makefile      |   1 +
- drivers/tty/serial/tegra-tcu.c   | 302 +++++++++++++++++++++++++++++++++++++++
- include/uapi/linux/serial_core.h |   3 +
- 4 files changed, 315 insertions(+)
- create mode 100644 drivers/tty/serial/tegra-tcu.c
+> +static void tegra_tcu_uart_set_mctrl(struct uart_port *port, unsigned int mctrl)
+> +{
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index eca55187539a..494db7afe230 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -322,6 +322,15 @@ config SERIAL_TEGRA
- 	  are enabled). This driver uses the APB DMA to achieve higher baudrate
- 	  and better performance.
- 
-+config SERIAL_TEGRA_TCU
-+	tristate "NVIDIA Tegra Combined UART"
-+	depends on ARCH_TEGRA && MAILBOX
-+	select SERIAL_CORE
-+	help
-+	  Support for the mailbox-based TCU (Tegra Combined UART) serial port.
-+	  TCU is a virtual serial port that allows multiplexing multiple data
-+	  streams into a single hardware serial port.
-+
- config SERIAL_MAX3100
- 	tristate "MAX3100 support"
- 	depends on SPI
-diff --git a/drivers/tty/serial/Makefile b/drivers/tty/serial/Makefile
-index daac675612df..4ad82231ff8a 100644
---- a/drivers/tty/serial/Makefile
-+++ b/drivers/tty/serial/Makefile
-@@ -76,6 +76,7 @@ obj-$(CONFIG_SERIAL_LANTIQ)	+= lantiq.o
- obj-$(CONFIG_SERIAL_XILINX_PS_UART) += xilinx_uartps.o
- obj-$(CONFIG_SERIAL_SIRFSOC) += sirfsoc_uart.o
- obj-$(CONFIG_SERIAL_TEGRA) += serial-tegra.o
-+obj-$(CONFIG_SERIAL_TEGRA_TCU) += tegra-tcu.o
- obj-$(CONFIG_SERIAL_AR933X)   += ar933x_uart.o
- obj-$(CONFIG_SERIAL_EFM32_UART) += efm32-uart.o
- obj-$(CONFIG_SERIAL_ARC)	+= arc_uart.o
-diff --git a/drivers/tty/serial/tegra-tcu.c b/drivers/tty/serial/tegra-tcu.c
-new file mode 100644
-index 000000000000..8b46fe3a4b0c
---- /dev/null
-+++ b/drivers/tty/serial/tegra-tcu.c
-@@ -0,0 +1,302 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#include <linux/console.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/serial.h>
-+#include <linux/serial_core.h>
-+#include <linux/slab.h>
-+#include <linux/tty.h>
-+#include <linux/tty_flip.h>
-+
-+static struct uart_driver tegra_tcu_uart_driver;
-+static struct uart_port tegra_tcu_uart_port;
-+
-+struct tegra_tcu {
-+	struct mbox_client tx_client, rx_client;
-+	struct mbox_chan *tx, *rx;
-+};
-+
-+static unsigned int tegra_tcu_uart_tx_empty(struct uart_port *port)
-+{
-+	return TIOCSER_TEMT;
-+}
-+
-+static void tegra_tcu_uart_set_mctrl(struct uart_port *port, unsigned int mctrl)
-+{
-+	(void)port;
-+	(void)mctrl;
-+}
-+
-+static unsigned int tegra_tcu_uart_get_mctrl(struct uart_port *port)
-+{
-+	return 0;
-+}
-+
-+static void tegra_tcu_uart_stop_tx(struct uart_port *port)
-+{
-+	(void)port;
-+}
-+
-+static void tegra_tcu_write(const char *s, unsigned int count)
-+{
-+	struct tegra_tcu *tcu = tegra_tcu_uart_port.private_data;
-+	unsigned int written = 0, i = 0;
-+	bool insert_nl = false;
-+	uint32_t value = 0;
-+
-+	while (i < count) {
-+		if (insert_nl) {
-+			value |= '\n' << (written++ * 8);
-+			insert_nl = false;
-+			i++;
-+		} else if (s[i] == '\n') {
-+			value |= '\r' << (written++ * 8);
-+			insert_nl = true;
-+		} else {
-+			value |= s[i++] << (written++ * 8);
-+		}
-+
-+		if (written == 3) {
-+			value |= 3 << 24;
-+			value |= BIT(26);
-+			mbox_send_message(tcu->tx, &value);
-+			value = 0;
-+			written = 0;
-+		}
-+	}
-+
-+	if (written) {
-+		value |= written << 24;
-+		value |= BIT(26);
-+		mbox_send_message(tcu->tx, &value);
-+	}
-+}
-+
-+static void tegra_tcu_uart_start_tx(struct uart_port *port)
-+{
-+	struct circ_buf *xmit = &port->state->xmit;
-+	unsigned long count;
-+
-+	for (;;) {
-+		count = CIRC_CNT_TO_END(xmit->head, xmit->tail, UART_XMIT_SIZE);
-+		if (!count)
-+			break;
-+
-+		tegra_tcu_write(&xmit->buf[xmit->tail], count);
-+		xmit->tail = (xmit->tail + count) & (UART_XMIT_SIZE - 1);
-+	}
-+
-+	uart_write_wakeup(port);
-+}
-+
-+static void tegra_tcu_uart_stop_rx(struct uart_port *port)
-+{
-+	(void)port;
-+}
-+
-+static void tegra_tcu_uart_break_ctl(struct uart_port *port, int ctl)
-+{
-+	(void)port;
-+	(void)ctl;
-+}
-+
-+static int tegra_tcu_uart_startup(struct uart_port *port)
-+{
-+	(void)port;
-+
-+	return 0;
-+}
-+
-+static void tegra_tcu_uart_shutdown(struct uart_port *port)
-+{
-+	(void)port;
-+}
-+
-+static void tegra_tcu_uart_set_termios(struct uart_port *port,
-+				       struct ktermios *new,
-+				       struct ktermios *old)
-+{
-+	(void)port;
-+	(void)new;
-+	(void)old;
-+}
-+
-+static const struct uart_ops tegra_tcu_uart_ops = {
-+	.tx_empty = tegra_tcu_uart_tx_empty,
-+	.set_mctrl = tegra_tcu_uart_set_mctrl,
-+	.get_mctrl = tegra_tcu_uart_get_mctrl,
-+	.stop_tx = tegra_tcu_uart_stop_tx,
-+	.start_tx = tegra_tcu_uart_start_tx,
-+	.stop_rx = tegra_tcu_uart_stop_rx,
-+	.break_ctl = tegra_tcu_uart_break_ctl,
-+	.startup = tegra_tcu_uart_startup,
-+	.shutdown = tegra_tcu_uart_shutdown,
-+	.set_termios = tegra_tcu_uart_set_termios,
-+};
-+
-+static void tegra_tcu_console_write(struct console *cons, const char *s,
-+				    unsigned int count)
-+{
-+	(void)cons;
-+
-+	tegra_tcu_write(s, count);
-+}
-+
-+static int tegra_tcu_console_setup(struct console *cons, char *options)
-+{
-+	(void)options;
-+
-+	if (!tegra_tcu_uart_port.private_data)
-+		return -ENODEV;
-+
-+	return uart_set_options(&tegra_tcu_uart_port, cons,
-+				115200, 'n', 8, 'n');
-+}
-+
-+static struct console tegra_tcu_console = {
-+	.name = "ttyTCU",
-+	.device = uart_console_device,
-+	.flags = CON_PRINTBUFFER | CON_ANYTIME,
-+	.index = -1,
-+	.write = tegra_tcu_console_write,
-+	.setup = tegra_tcu_console_setup,
-+	.data = &tegra_tcu_uart_driver,
-+};
-+
-+static struct uart_driver tegra_tcu_uart_driver = {
-+	.owner = THIS_MODULE,
-+	.driver_name = "tegra-tcu",
-+	.dev_name = "ttyTCU",
-+	.cons = &tegra_tcu_console,
-+	.nr = 1,
-+};
-+
-+static void tegra_tcu_receive(struct mbox_client *client, void *msg_p)
-+{
-+	struct tty_port *port = &tegra_tcu_uart_port.state->port;
-+	uint32_t msg = *(uint32_t *)msg_p;
-+	unsigned int num_bytes;
-+	int i;
-+
-+	num_bytes = (msg >> 24) & 0x3;
-+	for (i = 0; i < num_bytes; i++)
-+		tty_insert_flip_char(port, (msg >> (i*8)) & 0xff, TTY_NORMAL);
-+
-+	tty_flip_buffer_push(port);
-+}
-+
-+static int tegra_tcu_probe(struct platform_device *pdev)
-+{
-+	struct uart_port *port = &tegra_tcu_uart_port;
-+	struct tegra_tcu *tcu;
-+	int err;
-+
-+	tcu = devm_kzalloc(&pdev->dev, sizeof(*tcu), GFP_KERNEL);
-+	if (!tcu)
-+		return -ENOMEM;
-+
-+	tcu->tx_client.dev = &pdev->dev;
-+	tcu->rx_client.dev = &pdev->dev;
-+	tcu->rx_client.rx_callback = tegra_tcu_receive;
-+
-+	tcu->tx = mbox_request_channel_byname(&tcu->tx_client, "tx");
-+	if (IS_ERR(tcu->tx)) {
-+		err = PTR_ERR(tcu->tx);
-+		dev_err(&pdev->dev, "failed to get tx mailbox: %d\n", err);
-+		return err;
-+	}
-+
-+	tcu->rx = mbox_request_channel_byname(&tcu->rx_client, "rx");
-+	if (IS_ERR(tcu->rx)) {
-+		err = PTR_ERR(tcu->rx);
-+		dev_err(&pdev->dev, "failed to get rx mailbox: %d\n", err);
-+		goto free_tx;
-+	}
-+
-+	err = uart_register_driver(&tegra_tcu_uart_driver);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to register UART driver: %d\n",
-+			err);
-+		goto free_rx;
-+	}
-+
-+	spin_lock_init(&port->lock);
-+	port->dev = &pdev->dev;
-+	port->type = PORT_TEGRA_TCU;
-+	port->ops = &tegra_tcu_uart_ops;
-+	port->fifosize = 1;
-+	port->iotype = UPIO_MEM;
-+	port->flags = UPF_BOOT_AUTOCONF;
-+	port->private_data = tcu;
-+
-+	err = uart_add_one_port(&tegra_tcu_uart_driver, port);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to add UART port: %d\n", err);
-+		goto unregister_uart;
-+	}
-+
-+	return 0;
-+
-+unregister_uart:
-+	uart_unregister_driver(&tegra_tcu_uart_driver);
-+free_rx:
-+	mbox_free_channel(tcu->rx);
-+free_tx:
-+	mbox_free_channel(tcu->tx);
-+
-+	return err;
-+}
-+
-+static int tegra_tcu_remove(struct platform_device *pdev)
-+{
-+	uart_remove_one_port(&tegra_tcu_uart_driver, &tegra_tcu_uart_port);
-+	uart_unregister_driver(&tegra_tcu_uart_driver);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id tegra_tcu_match[] = {
-+	{ .compatible = "nvidia,tegra194-tcu" },
-+	{ }
-+};
-+
-+static struct platform_driver tegra_tcu_driver = {
-+	.driver = {
-+		.name = "tegra-tcu",
-+		.of_match_table = tegra_tcu_match,
-+	},
-+	.probe = tegra_tcu_probe,
-+	.remove = tegra_tcu_remove,
-+};
-+
-+static int __init tegra_tcu_init(void)
-+{
-+	int err;
-+
-+	err = platform_driver_register(&tegra_tcu_driver);
-+	if (err)
-+		return err;
-+
-+	register_console(&tegra_tcu_console);
-+
-+	return 0;
-+}
-+module_init(tegra_tcu_init);
-+
-+static void __exit tegra_tcu_exit(void)
-+{
-+	unregister_console(&tegra_tcu_console);
-+	platform_driver_unregister(&tegra_tcu_driver);
-+}
-+module_exit(tegra_tcu_exit);
-+
-+MODULE_AUTHOR("Mikko Perttunen <mperttunen@nvidia.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("NVIDIA Tegra Combined UART driver");
-diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
-index dce5f9dae121..eaf3c303cba6 100644
---- a/include/uapi/linux/serial_core.h
-+++ b/include/uapi/linux/serial_core.h
-@@ -281,4 +281,7 @@
- /* MediaTek BTIF */
- #define PORT_MTK_BTIF	117
- 
-+/* NVIDIA Tegra Combined UART */
-+#define PORT_TEGRA_TCU	118
-+
- #endif /* _UAPILINUX_SERIAL_CORE_H */
+> +       (void)port;
+> +       (void)mctrl;
+
+Huh?
+
+> +}
+
+> +static void tegra_tcu_uart_stop_tx(struct uart_port *port)
+> +{
+> +       (void)port;
+> +}
+
+Ditto.
+
+> +               if (written == 3) {
+> +                       value |= 3 << 24;
+> +                       value |= BIT(26);
+> +                       mbox_send_message(tcu->tx, &value);
+
+> +               }
+
+(1)
+
+> +       }
+> +
+> +       if (written) {
+> +               value |= written << 24;
+> +               value |= BIT(26);
+> +               mbox_send_message(tcu->tx, &value);
+> +       }
+
+(2)
+
+These are code duplications.
+
+> +static void tegra_tcu_uart_stop_rx(struct uart_port *port)
+> +{
+> +       (void)port;
+> +}
+> +
+> +static void tegra_tcu_uart_break_ctl(struct uart_port *port, int ctl)
+> +{
+> +       (void)port;
+> +       (void)ctl;
+> +}
+> +
+> +static int tegra_tcu_uart_startup(struct uart_port *port)
+> +{
+> +       (void)port;
+> +
+> +       return 0;
+> +}
+> +
+> +static void tegra_tcu_uart_shutdown(struct uart_port *port)
+> +{
+> +       (void)port;
+> +}
+> +
+> +static void tegra_tcu_uart_set_termios(struct uart_port *port,
+> +                                      struct ktermios *new,
+> +                                      struct ktermios *old)
+> +{
+> +       (void)port;
+> +       (void)new;
+> +       (void)old;
+> +}
+
+Remove those unused stub contents.
+
+> +       return uart_set_options(&tegra_tcu_uart_port, cons,
+> +                               115200, 'n', 8, 'n');
+
+Can't it be one line?
+
+> +static void tegra_tcu_receive(struct mbox_client *client, void *msg_p)
+> +{
+> +       struct tty_port *port = &tegra_tcu_uart_port.state->port;
+
+> +       uint32_t msg = *(uint32_t *)msg_p;
+
+Redundant casting.
+
+> +       unsigned int num_bytes;
+> +       int i;
+> +
+
+> +       num_bytes = (msg >> 24) & 0x3;
+
+Two magic numbers.
+
+> +       for (i = 0; i < num_bytes; i++)
+> +               tty_insert_flip_char(port, (msg >> (i*8)) & 0xff, TTY_NORMAL);
+> +
+> +       tty_flip_buffer_push(port);
+> +}
+
+> +MODULE_AUTHOR("Mikko Perttunen <mperttunen@nvidia.com>");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_DESCRIPTION("NVIDIA Tegra Combined UART driver");
+> diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
+> index dce5f9dae121..eaf3c303cba6 100644
+> --- a/include/uapi/linux/serial_core.h
+> +++ b/include/uapi/linux/serial_core.h
+> @@ -281,4 +281,7 @@
+>  /* MediaTek BTIF */
+>  #define PORT_MTK_BTIF  117
+>
+> +/* NVIDIA Tegra Combined UART */
+> +#define PORT_TEGRA_TCU 118
+
+Check if there is an unused gap. IIRC we still have one near to 40ish.
+
 -- 
-2.16.1
+With Best Regards,
+Andy Shevchenko
