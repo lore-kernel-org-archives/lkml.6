@@ -1,181 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751954AbeEMSpK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 14:45:10 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:46788 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751596AbeEMSpI (ORCPT
+        id S1751887AbeEMSz4 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 14:55:56 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:50849 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751596AbeEMSzz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 14:45:08 -0400
-X-Google-Smtp-Source: AB8JxZqFJCvJfCFrP0a/IcjkpoLJjs3OETf7IMy6NijZ5max7YbNN/4bW5pyP40JE9EZiMNacvm3Rw==
-Date: Sun, 13 May 2018 11:47:14 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: linux-wireless@vger.kernel.org,
-        Johannes Berg <johannes@sipsolutions.net>
-Cc: syzbot <syzbot+e64565577af34b3768dc@syzkaller.appspotmail.com>,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: WARNING in dev_vprintk_emit
-Message-ID: <20180513184714.GA677@sol.localdomain>
-References: <001a113a36724a053a0562f93c05@google.com>
+        Sun, 13 May 2018 14:55:55 -0400
+Date: Sun, 13 May 2018 20:55:46 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+cc: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] x86/boot/compressed/64: Set up GOT for paging_prepare()
+ and cleanup_trampoline()
+In-Reply-To: <20180510173806.4332-2-kirill.shutemov@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1805132019490.1582@nanos.tec.linutronix.de>
+References: <20180510173806.4332-1-kirill.shutemov@linux.intel.com> <20180510173806.4332-2-kirill.shutemov@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001a113a36724a053a0562f93c05@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+MAC80211 list and maintainer]
+On Thu, 10 May 2018, Kirill A. Shutemov wrote:
 
-On Wed, Jan 17, 2018 at 05:58:01AM -0800, syzbot wrote:
-> Hello,
-> 
-> syzkaller hit the following crash on
-> c92a9a461dff6140c539c61e457aa97df29517d6
-> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached
-> Raw console output is attached.
-> C reproducer is attached
-> syzkaller reproducer is attached. See https://goo.gl/kgGztJ
-> for information about syzkaller reproducers
-> 
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+e64565577af34b3768dc@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> WARNING: CPU: 1 PID: 3652 at drivers/base/core.c:2884 create_syslog_header
-> drivers/base/core.c:2884 [inline]
-> WARNING: CPU: 1 PID: 3652 at drivers/base/core.c:2884
-> dev_vprintk_emit+0x159/0x510 drivers/base/core.c:2894
-> Kernel panic - not syncing: panic_on_warn set ...
-> 
-> CPU: 1 PID: 3652 Comm: syzkaller376059 Not tainted 4.15.0-rc7+ #260
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x257 lib/dump_stack.c:53
->  panic+0x1e4/0x41c kernel/panic.c:183
->  __warn+0x1dc/0x200 kernel/panic.c:547
->  report_bug+0x211/0x2d0 lib/bug.c:184
->  fixup_bug.part.11+0x37/0x80 arch/x86/kernel/traps.c:178
->  fixup_bug arch/x86/kernel/traps.c:247 [inline]
->  do_error_trap+0x2d7/0x3e0 arch/x86/kernel/traps.c:296
->  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
->  invalid_op+0x22/0x40 arch/x86/entry/entry_64.S:1079
-> RIP: 0010:create_syslog_header drivers/base/core.c:2884 [inline]
-> RIP: 0010:dev_vprintk_emit+0x159/0x510 drivers/base/core.c:2894
-> RSP: 0018:ffff8801bc40ee68 EFLAGS: 00010286
-> RAX: dffffc0000000008 RBX: ffff8801bc080980 RCX: ffffffff8159da9e
-> RDX: 0000000000000000 RSI: 1ffff100378f9d2d RDI: 0000000000000293
-> RBP: ffff8801bc40efa8 R08: 1ffff10037881d60 R09: 0000000000000000
-> R10: ffff8801bc40f090 R11: 0000000000000000 R12: 1ffff10037881dd4
-> R13: ffff8801d472c400 R14: ffff8801bc40eec0 R15: ffff8801bc40efe0
->  dev_printk_emit+0xc0/0xf0 drivers/base/core.c:2907
->  __dev_printk+0xa7/0x120 drivers/base/core.c:2919
->  dev_printk+0x111/0x170 drivers/base/core.c:2936
->  ieee80211_init_rate_ctrl_alg+0x2d5/0x4a0 net/mac80211/rate.c:978
->  ieee80211_register_hw+0x1448/0x3100 net/mac80211/main.c:1091
->  mac80211_hwsim_new_radio+0x1b2e/0x2b90
-> drivers/net/wireless/mac80211_hwsim.c:2700
->  hwsim_new_radio_nl+0x5b7/0x7c0 drivers/net/wireless/mac80211_hwsim.c:3152
->  genl_family_rcv_msg+0x7b7/0xfb0 net/netlink/genetlink.c:599
->  genl_rcv_msg+0xb2/0x140 net/netlink/genetlink.c:624
->  netlink_rcv_skb+0x224/0x470 net/netlink/af_netlink.c:2408
->  genl_rcv+0x28/0x40 net/netlink/genetlink.c:635
->  netlink_unicast_kernel net/netlink/af_netlink.c:1275 [inline]
->  netlink_unicast+0x4ee/0x700 net/netlink/af_netlink.c:1301
->  netlink_sendmsg+0xa4a/0xe60 net/netlink/af_netlink.c:1864
->  sock_sendmsg_nosec net/socket.c:638 [inline]
->  sock_sendmsg+0xca/0x110 net/socket.c:648
->  ___sys_sendmsg+0x767/0x8b0 net/socket.c:2028
->  __sys_sendmsg+0xe5/0x210 net/socket.c:2062
->  SYSC_sendmsg net/socket.c:2073 [inline]
->  SyS_sendmsg+0x2d/0x50 net/socket.c:2069
->  entry_SYSCALL_64_fastpath+0x23/0x9a
-> RIP: 0033:0x43fd89
-> RSP: 002b:00007ffe0ab23e98 EFLAGS: 00000203 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd89
-> RDX: 0000000000000000 RSI: 0000000020b3dfc8 RDI: 0000000000000003
-> RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000203 R12: 00000000004016f0
-> R13: 0000000000401780 R14: 0000000000000000 R15: 0000000000000000
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
+> +	/*
+> +	 * paging_prepare() and cleanup_trampoline() below can have GOT
+> +	 * references. Adjust the table with address we are running at.
+> +	 */
+> +
+> +	/* The GOP was not adjusted before */
 
-The bug is that mac80211_hwsim allows creating device names that are too long,
-via HWSIM_CMD_NEW_RADIO.  Commit a7cfebcb7594a2 ("cfg80211: limit wiphy names to
-128 bytes") limited them to 128 bytes, but it's not enough because
-dev_vprintk_emit() needs the device name plus some other stuff to not exceed 128
-bytes.  Here's a reproducer that works on Linus' tree (commit ccda3c4b777),
-provided that CONFIG_MAC80211_HWSIM=y.  Note that you'll probably need to change
-the hardcoded MAC80211_HWSIM generic netlink family ID for it to work.
-Johannes, what would you say about limiting the name length to 64 bytes instead?
+GOP == EFI speak for Graphics Output Protocol. What the heck? 
 
-#include <linux/genetlink.h>
-#include <sys/socket.h>
-#include <unistd.h>
+> +	xorq	%rax, %rax
 
-#define HWSIM_CMD_NEW_RADIO     4
-#define HWSIM_ATTR_RADIO_NAME   17
+And this clearing of RAX is related to this because? Sure you need it for
+adjust_got() but adding a comment to that is too much asked for, right?
 
-/* Replace with `genl-ctrl-list | awk '/MAC80211_HWSIM/{print $1}'` */
-#define MAC80211_HWSIM_GENL_ID  0x17
+> +	/* Calculate the address the binary is loaded at. */
+> +	call	1f
+> +1:	popq	%rdi
+> +	subq	$1b, %rdi
+> +
+> +	call	adjust_gop
+> +
+>  	/*
+>  	 * At this point we are in long mode with 4-level paging enabled,
+>  	 * but we might want to enable 5-level paging or vice versa.
+> @@ -381,6 +396,24 @@ trampoline_return:
+>  	pushq	$0
+>  	popfq
+>  
+> +	/*
+> +	 * Previously we've adjusted the GOT with address the binary was
+> +	 * loaded at. Now we need to re-adjust for relocation address.
+> +	 */
 
-/* Length of name to test */
-#define NAMELEN 128
+Breaking up those comments makes it more readable, right?
 
-int main()
-{
-        struct {
-                struct nlmsghdr         hdr;
-                struct genlmsghdr       ghdr;
-                struct nlattr           attr;
-                char radio_name[NLA_ALIGN(NAMELEN)];
-        } msg = {
-                .hdr = {
-                        .nlmsg_len = sizeof(msg),
-                        .nlmsg_type = MAC80211_HWSIM_GENL_ID,
-                        .nlmsg_flags = NLM_F_REQUEST,
-                },
-                .ghdr = { .cmd = HWSIM_CMD_NEW_RADIO },
-                .attr = {
-                        .nla_len = sizeof(struct nlattr) + NAMELEN,
-                        .nla_type = HWSIM_ATTR_RADIO_NAME,
-                },
-                .radio_name = {[0 ... NAMELEN-1] = 'A'},
-        };
+> +	/*
+> +	 * Calculate the address the binary is loaded at.
+> +	 * This address was used to adjust the table before and we need to
+> +	 * undo the change.
+> +	 */
+> +	call	1f
+> +1:	popq	%rax
+> +	subq	$1b, %rax
+> +
+> +	/* The new adjustment is relocation address */
 
-        int fd = socket(AF_NETLINK, SOCK_RAW, NETLINK_GENERIC);
-        write(fd, &msg, sizeof(msg));
-}
+  is the relocation address
+
+> +	movq	%rbx, %rdi
+> +	call	adjust_gop
+> +
+>  /*
+>   * Copy the compressed kernel to the end of our buffer
+>   * where decompression in place becomes safe.
+> @@ -481,19 +514,6 @@ relocated:
+>  	shrq	$3, %rcx
+>  	rep	stosq
+>  
+> -/*
+> - * Adjust our own GOT
+> - */
+> -	leaq	_got(%rip), %rdx
+> -	leaq	_egot(%rip), %rcx
+> -1:
+> -	cmpq	%rcx, %rdx
+> -	jae	2f
+> -	addq	%rbx, (%rdx)
+> -	addq	$8, %rdx
+> -	jmp	1b
+> -2:
+> -	
+>  /*
+>   * Do the extraction, and jump to the new kernel..
+>   */
+> @@ -512,6 +532,26 @@ relocated:
+>   */
+>  	jmp	*%rax
+>  
+> +/*
+> + * Adjust global offest table
+
+offest? 
+
+> + *
+> + * RAX is previous adjustment of the table to undo (0 if it's the first time we touch GOP).
+
+  is the previous
+
+And there is no reason to make that line overly long.
+
+> + * RDI is the new adjustment to apply.
+> + */
+> +adjust_gop:
+> +	/* Walk through the GOT adding the address to the entries */
+> +	leaq	_got(%rip), %rdx
+> +	leaq	_egot(%rip), %rcx
+> +1:
+> +	cmpq	%rcx, %rdx
+> +	jae	2f
+> +	subq	%rax, (%rdx)	/* Undo previous adjustment */
+> +	addq	%rdi, (%rdx)	/* Apply the new adjustment */
+> +	addq	$8, %rdx
+> +	jmp	1b
+> +2:
+> +	ret
+
+I'm really tired of your carelessness. The amount of half baken stuff you
+submit is way above the tolerance level by now. I asked you several times
+to be more careful, but you simply do not care at all. Get your act
+together finally.
+
+Thanks,
+
+	tglx
