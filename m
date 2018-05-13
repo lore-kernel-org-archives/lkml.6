@@ -1,60 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752006AbeEMRar (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 13:30:47 -0400
-Received: from smtprelay0124.hostedemail.com ([216.40.44.124]:51880 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751926AbeEMRaq (ORCPT
+        id S1752023AbeEMRfS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 13:35:18 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55808 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751787AbeEMRfQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 13:30:46 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:541:599:800:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:10004:10400:10848:11232:11658:11914:12296:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21433:21451:21627:30054:30070:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: soda65_5dd694680380a
-X-Filterd-Recvd-Size: 1975
-Message-ID: <92cfb1fbbcae16f4acd0096f598339d3d050b139.camel@perches.com>
-Subject: Re: [PATCH 1/6] x86/early-quirks: Rename duplicate define of dev_err
-From: Joe Perches <joe@perches.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>
-Date: Sun, 13 May 2018 10:30:43 -0700
-In-Reply-To: <alpine.DEB.2.21.1805131503050.1582@nanos.tec.linutronix.de>
-References: <cover.1525878372.git.joe@perches.com>
-         <8fb4b2a77d50e21ae1f7e4e267e68691efe2c270.1525878372.git.joe@perches.com>
-         <alpine.DEB.2.21.1805131503050.1582@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 13 May 2018 13:35:16 -0400
+X-Google-Smtp-Source: AB8JxZp0rID49Cp7zQMevwKdMcYucZ/MDM2qANwO2nRvmWV7m8dBXslhkHeUR6D/XnDw9/OzeQIdvg==
+From: Alban Crequy <alban.crequy@gmail.com>
+X-Google-Original-From: Alban Crequy <alban@kinvolk.io>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, cgroups@vger.kernel.org
+Cc: Alban Crequy <alban@kinvolk.io>
+Subject: [PATCH] [RFC] bpf: tracing: new helper bpf_get_current_cgroup_ino
+Date: Sun, 13 May 2018 19:33:18 +0200
+Message-Id: <20180513173318.21680-1-alban@kinvolk.io>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-05-13 at 15:03 +0200, Thomas Gleixner wrote:
-> On Wed, 9 May 2018, Joe Perches wrote:
-> 
-> > dev_err is becoming a macro calling _dev_err to allow prefixing of
-> > dev_fmt to any dev_<level> use that has a #define dev_fmt(fmt) similar
-> > to the existing #define pr_fmt(fmt) uses.
-> > 
-> > Remove this dev_err macro and convert the existing two uses to pr_err.
-> > This allows clean compilation in the patch that introduces dev_fmt which
-> > can prefix dev_<level> logging macros with arbitrary content similar to
-> > the #define pr_fmt macro.
-> > 
-> > Signed-off-by: Joe Perches <joe@perches.com>
-> 
-> I assume you want to take them as block, so:
-> 
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+From: Alban Crequy <alban@kinvolk.io>
 
-I do not have a tree that Linus pulls.
+bpf_get_current_cgroup_ino() allows BPF trace programs to get the inode
+of the cgroup where the current process resides.
 
-I think it'd be fine if you apply this one as it's a
-simple rename deduplication.
+My use case is to get statistics about syscalls done by a specific
+Kubernetes container. I have a tracepoint on raw_syscalls/sys_enter and
+a BPF map containing the cgroup inode that I want to trace. I use
+bpf_get_current_cgroup_ino() and I quickly return from the tracepoint if
+the inode is not in the BPF hash map.
 
-Corey Minyard has already taken the ipmi changes
-separately.
+Without this BPF helper, I would need to keep track of all pids in the
+container. The Netlink proc connector can be used to follow process
+creation and destruction but it is racy.
 
-Patch 2/6 could go separately, probably via Greg KH's
-tree, after this 1/6 change is in the tree.
+This patch only looks at the memory cgroup, which was enough for me
+since each Kubernetes container is placed in a different mem cgroup.
+For a generic implementation, I'm not sure how to proceed: it seems I
+would need to use 'for_each_root(root)' (see example in
+proc_cgroup_show() from kernel/cgroup/cgroup.c) but I don't know if
+taking the cgroup mutex is possible in the BPF helper function. It might
+be ok in the tracepoint raw_syscalls/sys_enter but could the mutex
+already be taken in some other tracepoints?
+
+Signed-off-by: Alban Crequy <alban@kinvolk.io>
+---
+ include/uapi/linux/bpf.h | 11 ++++++++++-
+ kernel/trace/bpf_trace.c | 25 +++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index c5ec89732a8d..38ac3959cdf3 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -755,6 +755,14 @@ union bpf_attr {
+  *     @addr: pointer to struct sockaddr to bind socket to
+  *     @addr_len: length of sockaddr structure
+  *     Return: 0 on success or negative error code
++ *
++ * u64 bpf_get_current_cgroup_ino(hierarchy, flags)
++ *     Get the cgroup{1,2} inode of current task under the specified hierarchy.
++ *     @hierarchy: cgroup hierarchy
++ *     @flags: reserved for future use
++ *     Return:
++ *       == 0 error
++ *        > 0 inode of the cgroup
+  */
+ #define __BPF_FUNC_MAPPER(FN)		\
+ 	FN(unspec),			\
+@@ -821,7 +829,8 @@ union bpf_attr {
+ 	FN(msg_apply_bytes),		\
+ 	FN(msg_cork_bytes),		\
+ 	FN(msg_pull_data),		\
+-	FN(bind),
++	FN(bind),			\
++	FN(get_current_cgroup_ino),
+ 
+ /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+  * function eBPF program intends to call
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 56ba0f2a01db..9bf92a786639 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -524,6 +524,29 @@ static const struct bpf_func_proto bpf_probe_read_str_proto = {
+ 	.arg3_type	= ARG_ANYTHING,
+ };
+ 
++BPF_CALL_2(bpf_get_current_cgroup_ino, u32, hierarchy, u64, flags)
++{
++	// TODO: pick the correct hierarchy instead of the mem controller
++	struct cgroup *cgrp = task_cgroup(current, memory_cgrp_id);
++
++	if (unlikely(!cgrp))
++		return -EINVAL;
++	if (unlikely(hierarchy))
++		return -EINVAL;
++	if (unlikely(flags))
++		return -EINVAL;
++
++	return cgrp->kn->id.ino;
++}
++
++static const struct bpf_func_proto bpf_get_current_cgroup_ino_proto = {
++	.func           = bpf_get_current_cgroup_ino,
++	.gpl_only       = false,
++	.ret_type       = RET_INTEGER,
++	.arg1_type      = ARG_DONTCARE,
++	.arg2_type      = ARG_DONTCARE,
++};
++
+ static const struct bpf_func_proto *
+ tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ {
+@@ -564,6 +587,8 @@ tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+ 		return &bpf_get_prandom_u32_proto;
+ 	case BPF_FUNC_probe_read_str:
+ 		return &bpf_probe_read_str_proto;
++	case BPF_FUNC_get_current_cgroup_ino:
++		return &bpf_get_current_cgroup_ino_proto;
+ 	default:
+ 		return NULL;
+ 	}
+-- 
+2.14.3
