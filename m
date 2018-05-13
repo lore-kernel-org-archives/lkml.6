@@ -1,369 +1,392 @@
-Return-Path: <ard.biesheuvel@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526211790; cv=none;
+Return-Path: <hdegoede@redhat.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1526217986; cv=none;
         d=google.com; s=arc-20160816;
-        b=s83ZcpCbqMgarYrfXPU0uHRFEILv5g330ShJ3f4zWFNzmDPEfTSFp2WaTIzlozcEIq
-         d71C1ejOIpss2DxQaK+fIju9TLeFv7NxYObL8aXKFkh9A5AaHNSUVJskRhcU+FL0FfKa
-         YAMl5iAbBgS/fJ+lfGy+bx/YmQTe6qP27IfFWdOh39DTgzSSzgc7o/RV+pdtq9ouXfKW
-         XsZjehn4BonWAq1RzGjik/l3z+yPoGEo9A8LAg2ZXXurmGcD+a+s5Av3ZWwcIadwsjjM
-         TfVQWFsariqg0EJKh3aSsa1x2dOtGgrVSyFyl+ctOi4Nr8G6UI+IsH/zvjunvcT08iAG
-         46sA==
+        b=O2kZ+eGnrt2UAaoThIg8Si3m+8+S0bDyjX/EhRI8TfZkr+mVKWyZ973qyQ0jS4HRji
+         C3sLaLDRTQsWiqWjXZo20hEk9mJPNU3Qk36662TeHU3RN7jGD9DgEo40pFNkc/GYYnAt
+         jSdycOVhO6HDOqLwNHZOFFvmph3V9JBml+SYGY+2fqhNOfWOWfY1z2b/Rsf1aE5JcAlY
+         0NTOHaSJwTkLZGgOjV5G2mi2krifLmhQnRzeYkwBItngqMa368gbDvxPaRKEI9d6VN9M
+         2h5NTit76WHZo2LUA+vGBWEW/oGLPahWP0AQ/D5bEaRLyKL/gxUAL1EgUClSabobS9Af
+         Nrsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=HDlO4bqLb+U2BSYT976bgs0oIBesXRx1N7J4/HTHgcU=;
-        b=eJBMArZnrvwD9GKG9YJAwzt0OajMvCP25Mb5TBFrwuv9tb790SSbxnhj2AATiDJXF4
-         JSShd1hhavi8Nap5fRDOiDg97UcPmyuLbker29v8Trn9kV7xlj4GFKgzWFH38++6OlBI
-         BdgO1sgh9dBhXq4gsemCz+5kuU2KmPCj7sz6VXpVlXR5QnFqbkPlx81MfVmjsPWONg9+
-         nJMrg6CTlflAh+xKJo61gNpYZZPwa07ltnwoTxp5RN0rqr5XGK3fiIyFRLd2IQ89+LG3
-         thFztyQN286rNIA89BmR785ZBssZqrdlFLClpHBgKmZA0hsXrrwAmjVQQjVZpKYNcABh
-         m8LA==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=Puu0w9z1PzSLCZUICUW+b2jcfK1tmn3cJoMWslil49o=;
+        b=hEvzATivUVWZ1hKPjrO1pWWNJjuUC2P5Bx49TONUJAdshxQHjgCGHb7rjzPSGtSfKf
+         swlGgQT6/PdwK2+QEI3iBLaogOjQMH3awlSEtThK9IgfDAminCnCXIHCfvDPBAmQHs6K
+         vioyh3/HojBXZMNz0MpVoqLZBQdEQVV1tWdDpFBpnIu1oJXKfG/CWMjThh1gF+KGSwmi
+         q104KVz/BJfhLYgKn0XXYoPXbb4etX33ztI9PTx6yh998vCgvJg3jbJJ86Zpy3julr6l
+         czQjkB6I0v5iqg9b60oN7spXsPLrA/XRf3BmiyrDaYQkvnY0G8OX4Oi4lxg6+x71EVz8
+         nQuA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Kgjnul21;
-       spf=pass (google.com: domain of ard.biesheuvel@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ard.biesheuvel@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Kgjnul21;
-       spf=pass (google.com: domain of ard.biesheuvel@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=ard.biesheuvel@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZqzcc6Nz6vUW+bH/KrMiR4qijj47qqzWd6qJsslVNl0kcfS4c/Lc852+o4OsiTfES35g6/OlrK3qOgRUDHnnbo=
-MIME-Version: 1.0
-In-Reply-To: <7bc779ac-864c-cf43-dda7-bd9705f76be6@redhat.com>
-References: <20180429093558.5411-1-hdegoede@redhat.com> <20180429093558.5411-3-hdegoede@redhat.com>
- <CAKv+Gu-+4weyNzExQPF75+WNUwQbbwd2mVk0mL1zH96Q16Sf6w@mail.gmail.com> <7bc779ac-864c-cf43-dda7-bd9705f76be6@redhat.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Sun, 13 May 2018 13:43:08 +0200
-Message-ID: <CAKv+Gu-tEtnXrA=guuW=JtX=LcN8kme6MB1esBQP122559ye7Q@mail.gmail.com>
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+X-Google-Smtp-Source: AB8JxZoWCYxhcCAu8Hux5OdvEVv5E08LuE3BROBmlG2IUf2woTL+rZ3lsml/GxCOgd4o7Wxl/VFLKg==
 Subject: Re: [PATCH v5 2/5] efi: Add embedded peripheral firmware support
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
-	Peter Jones <pjones@redhat.com>, Dave Olsthoorn <dave@bewaar.me>, Will Deacon <will.deacon@arm.com>,
-	Andy Lutomirski <luto@kernel.org>, Matt Fleming <matt@codeblueprint.co.uk>,
-	David Howells <dhowells@redhat.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
-	Josh Triplett <josh@joshtriplett.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Martin Fuzzey <mfuzzey@parkeon.com>, Kalle Valo <kvalo@codeaurora.org>,
-	Arend Van Spriel <arend.vanspriel@broadcom.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Nicolas Broeking <nbroeking@me.com>,
-	Bjorn Andersson <bjorn.andersson@linaro.org>, Torsten Duwe <duwe@suse.de>,
-	Kees Cook <keescook@chromium.org>, "the arch/x86 maintainers" <x86@kernel.org>, linux-efi@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: "Luis R . Rodriguez" <mcgrof@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H . Peter Anvin" <hpa@zytor.com>, Peter Jones <pjones@redhat.com>,
+ Dave Olsthoorn <dave@bewaar.me>, Will Deacon <will.deacon@arm.com>,
+ Andy Lutomirski <luto@kernel.org>, Matt Fleming <matt@codeblueprint.co.uk>,
+ David Howells <dhowells@redhat.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+ Josh Triplett <josh@joshtriplett.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Martin Fuzzey <mfuzzey@parkeon.com>, Kalle Valo <kvalo@codeaurora.org>,
+ Arend Van Spriel <arend.vanspriel@broadcom.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Nicolas Broeking <nbroeking@me.com>,
+ Bjorn Andersson <bjorn.andersson@linaro.org>, Torsten Duwe <duwe@suse.de>,
+ Kees Cook <keescook@chromium.org>, the arch/x86 maintainers
+ <x86@kernel.org>, linux-efi@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180429093558.5411-1-hdegoede@redhat.com>
+ <20180429093558.5411-3-hdegoede@redhat.com>
+ <CAKv+Gu-+4weyNzExQPF75+WNUwQbbwd2mVk0mL1zH96Q16Sf6w@mail.gmail.com>
+ <7bc779ac-864c-cf43-dda7-bd9705f76be6@redhat.com>
+ <CAKv+Gu-tEtnXrA=guuW=JtX=LcN8kme6MB1esBQP122559ye7Q@mail.gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <b5e0171c-a4bc-4a6a-034f-389779f3a64a@redhat.com>
+Date: Sun, 13 May 2018 14:26:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAKv+Gu-tEtnXrA=guuW=JtX=LcN8kme6MB1esBQP122559ye7Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599072709046551146?=
-X-GMAIL-MSGID: =?utf-8?q?1600349054115494211?=
+X-GMAIL-MSGID: =?utf-8?q?1600355551757244325?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 13 May 2018 at 13:03, Hans de Goede <hdegoede@redhat.com> wrote:
-> Hi,
->
->
-> On 05/04/2018 06:56 AM, Ard Biesheuvel wrote:
->>
->> Hi Hans,
->>
->> One comment below, which I missed in review before.
->>
->> On 29 April 2018 at 11:35, Hans de Goede <hdegoede@redhat.com> wrote:
->>>
->>> Just like with PCI options ROMs, which we save in the setup_efi_pci*
->>> functions from arch/x86/boot/compressed/eboot.c, the EFI code / ROM
->>> itself
->>> sometimes may contain data which is useful/necessary for peripheral
->>> drivers
->>> to have access to.
->>>
->>> Specifically the EFI code may contain an embedded copy of firmware which
->>> needs to be (re)loaded into the peripheral. Normally such firmware would
->>> be
->>> part of linux-firmware, but in some cases this is not feasible, for 2
->>> reasons:
->>>
->>> 1) The firmware is customized for a specific use-case of the chipset /
->>> use
->>> with a specific hardware model, so we cannot have a single firmware file
->>> for the chipset. E.g. touchscreen controller firmwares are compiled
->>> specifically for the hardware model they are used with, as they are
->>> calibrated for a specific model digitizer.
->>>
->>> 2) Despite repeated attempts we have failed to get permission to
->>> redistribute the firmware. This is especially a problem with customized
->>> firmwares, these get created by the chip vendor for a specific ODM and
->>> the
->>> copyright may partially belong with the ODM, so the chip vendor cannot
->>> give a blanket permission to distribute these.
->>>
->>> This commit adds support for finding peripheral firmware embedded in the
->>> EFI code and making this available to peripheral drivers through the
->>> standard firmware loading mechanism.
->>>
->>> Note we check the EFI_BOOT_SERVICES_CODE for embedded firmware near the
->>> end
->>> of start_kernel(), just before calling rest_init(), this is on purpose
->>> because the typical EFI_BOOT_SERVICES_CODE memory-segment is too large
->>> for
->>> early_memremap(), so the check must be done after mm_init(). This relies
->>> on EFI_BOOT_SERVICES_CODE not being free-ed until
->>> efi_free_boot_services()
->>> is called, which means that this will only work on x86 for now.
->>>
->>> Reported-by: Dave Olsthoorn <dave@bewaar.me>
->>> Suggested-by: Peter Jones <pjones@redhat.com>
->>> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->>> ---
->>
->> [...]
->>>
->>> diff --git a/drivers/firmware/efi/embedded-firmware.c
->>> b/drivers/firmware/efi/embedded-firmware.c
->>> new file mode 100644
->>> index 000000000000..22a0f598b53d
->>> --- /dev/null
->>> +++ b/drivers/firmware/efi/embedded-firmware.c
->>> @@ -0,0 +1,149 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Support for extracting embedded firmware for peripherals from EFI
->>> code,
->>> + *
->>> + * Copyright (c) 2018 Hans de Goede <hdegoede@redhat.com>
->>> + */
->>> +
->>> +#include <linux/crc32.h>
->>> +#include <linux/dmi.h>
->>> +#include <linux/efi.h>
->>> +#include <linux/efi_embedded_fw.h>
->>> +#include <linux/io.h>
->>> +#include <linux/types.h>
->>> +#include <linux/vmalloc.h>
->>> +
->>> +struct embedded_fw {
->>> +       struct list_head list;
->>> +       const char *name;
->>> +       void *data;
->>> +       size_t length;
->>> +};
->>> +
->>> +static LIST_HEAD(found_fw_list);
->>> +
->>> +static const struct dmi_system_id * const embedded_fw_table[] = {
->>> +       NULL
->>> +};
->>> +
->>> +/*
->>> + * Note the efi_check_for_embedded_firmwares() code currently makes the
->>> + * following 2 assumptions. This may needs to be revisited if embedded
->>> firmware
->>> + * is found where this is not true:
->>> + * 1) The firmware is only found in EFI_BOOT_SERVICES_CODE memory
->>> segments
->>> + * 2) The firmware always starts at an offset which is a multiple of 8
->>> bytes
->>> + */
->>> +static int __init efi_check_md_for_embedded_firmware(
->>> +       efi_memory_desc_t *md, const struct efi_embedded_fw_desc *desc)
->>> +{
->>> +       struct embedded_fw *fw;
->>> +       u64 i, size;
->>> +       u32 crc;
->>> +       u8 *mem;
->>> +
->>> +       size = md->num_pages << EFI_PAGE_SHIFT;
->>> +       mem = memremap(md->phys_addr, size, MEMREMAP_WB);
->>> +       if (!mem) {
->>> +               pr_err("Error mapping EFI mem at %#llx\n",
->>> md->phys_addr);
->>> +               return -ENOMEM;
->>> +       }
->>> +
->>> +       size -= desc->length;
->>> +       for (i = 0; i < size; i += 8) {
->>> +               if (*((u64 *)(mem + i)) != *((u64 *)desc->prefix))
->>> +                       continue;
->>> +
->>
->>
->> Please use the proper APIs here to cast u8* to u64*, i.e., either use
->> get_unaligned64() or use memcmp()
->
->
-> But we know the memory addresses are 64 bit aligned, so using
-> get_unaligned64 seems wrong, and I'm not sure if the compiler is
-> smart enough to optimize a memcmp to the single 64 bit integer comparison
-> we want done here.
->
+Hi,
 
-Fair enough. The memory regions are indeed guaranteed to be 4k aligned.
-
-So in that case, please make mem a u64* and cast the other way where needed.
-
+On 05/13/2018 12:43 PM, Ard Biesheuvel wrote:
+> On 13 May 2018 at 13:03, Hans de Goede <hdegoede@redhat.com> wrote:
+>> Hi,
 >>
->>> +               /* Seed with ~0, invert to match crc32 userspace utility
->>> */
->>> +               crc = ~crc32(~0, mem + i, desc->length);
->>> +               if (crc == desc->crc)
->>> +                       break;
->>> +       }
->>> +
->>> +       memunmap(mem);
->>> +
->>> +       if (i >= size)
->>> +               return -ENOENT;
->>> +
->>> +       pr_info("Found EFI embedded fw '%s' crc %08x\n", desc->name,
->>> desc->crc);
->>> +
->>> +       fw = kmalloc(sizeof(*fw), GFP_KERNEL);
->>> +       if (!fw)
->>> +               return -ENOMEM;
->>> +
->>> +       mem = memremap(md->phys_addr + i, desc->length, MEMREMAP_WB);
->>> +       if (!mem) {
->>> +               pr_err("Error mapping embedded firmware\n");
->>> +               goto error_free_fw;
->>> +       }
->>> +       fw->data = kmemdup(mem, desc->length, GFP_KERNEL);
->>> +       memunmap(mem);
->>> +       if (!fw->data)
->>> +               goto error_free_fw;
->>> +
->>> +       fw->name = desc->name;
->>> +       fw->length = desc->length;
->>> +       list_add(&fw->list, &found_fw_list);
->>> +
->>> +       return 0;
->>> +
->>> +error_free_fw:
->>> +       kfree(fw);
->>> +       return -ENOMEM;
->>> +}
->>> +
->>> +void __init efi_check_for_embedded_firmwares(void)
->>> +{
->>> +       const struct efi_embedded_fw_desc *fw_desc;
->>> +       const struct dmi_system_id *dmi_id;
->>> +       efi_memory_desc_t *md;
->>> +       int i, r;
->>> +
->>> +       for (i = 0; embedded_fw_table[i]; i++) {
->>> +               dmi_id = dmi_first_match(embedded_fw_table[i]);
->>> +               if (!dmi_id)
->>> +                       continue;
->>> +
->>> +               fw_desc = dmi_id->driver_data;
->>> +               for_each_efi_memory_desc(md) {
->>> +                       if (md->type != EFI_BOOT_SERVICES_CODE)
->>> +                               continue;
->>> +
->>> +                       r = efi_check_md_for_embedded_firmware(md,
->>> fw_desc);
->>> +                       if (r == 0)
->>> +                               break;
->>> +               }
->>> +       }
->>> +}
->>> +
->>> +int efi_get_embedded_fw(const char *name, void **data, size_t *size,
->>> +                       size_t msize)
->>> +{
->>> +       struct embedded_fw *iter, *fw = NULL;
->>> +       void *buf = *data;
->>> +
->>> +       list_for_each_entry(iter, &found_fw_list, list) {
->>> +               if (strcmp(name, iter->name) == 0) {
->>> +                       fw = iter;
->>> +                       break;
->>> +               }
->>> +       }
->>> +
->>> +       if (!fw)
->>> +               return -ENOENT;
->>> +
->>> +       if (msize && msize < fw->length)
->>> +               return -EFBIG;
->>> +
->>> +       if (!buf) {
->>> +               buf = vmalloc(fw->length);
->>> +               if (!buf)
->>> +                       return -ENOMEM;
->>> +       }
->>> +
->>> +       memcpy(buf, fw->data, fw->length);
->>> +       *size = fw->length;
->>> +       *data = buf;
->>> +
->>> +       return 0;
->>> +}
->>> +EXPORT_SYMBOL_GPL(efi_get_embedded_fw);
->>> diff --git a/include/linux/efi.h b/include/linux/efi.h
->>> index 791088360c1e..23e8a9c26ce2 100644
->>> --- a/include/linux/efi.h
->>> +++ b/include/linux/efi.h
->>> @@ -1575,6 +1575,12 @@ static inline void
->>>   efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg) {
->>> }
->>>   #endif
+>>
+>> On 05/04/2018 06:56 AM, Ard Biesheuvel wrote:
 >>>
->>> +#ifdef CONFIG_EFI_EMBEDDED_FIRMWARE
->>> +void efi_check_for_embedded_firmwares(void);
->>> +#else
->>> +static inline void efi_check_for_embedded_firmwares(void) { }
->>> +#endif
->>> +
->>>   void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table);
+>>> Hi Hans,
 >>>
->>>   /*
->>> diff --git a/include/linux/efi_embedded_fw.h
->>> b/include/linux/efi_embedded_fw.h
->>> new file mode 100644
->>> index 000000000000..0f7d4df3f57a
->>> --- /dev/null
->>> +++ b/include/linux/efi_embedded_fw.h
->>> @@ -0,0 +1,25 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 */
->>> +#ifndef _LINUX_EFI_EMBEDDED_FW_H
->>> +#define _LINUX_EFI_EMBEDDED_FW_H
->>> +
->>> +#include <linux/mod_devicetable.h>
->>> +
->>> +/**
->>> + * struct efi_embedded_fw_desc - This struct is used by the EFI
->>> embedded-fw
->>> + *                               code to search for embedded firmwares.
->>> + *
->>> + * @name:   Name to register the firmware with if found
->>> + * @prefix: First 8 bytes of the firmware
->>> + * @length: Length of the firmware in bytes including prefix
->>> + * @crc:    Inverted little endian Ethernet style CRC32, with 0xffffffff
->>> seed
->>> + */
->>> +struct efi_embedded_fw_desc {
->>> +       const char *name;
->>> +       u8 prefix[8];
->>> +       u32 length;
->>> +       u32 crc;
->>> +};
->>> +
->>> +int efi_get_embedded_fw(const char *name, void **dat, size_t *sz, size_t
->>> msize);
->>> +
->>> +#endif
->>> diff --git a/init/main.c b/init/main.c
->>> index b795aa341a3a..ab29775b35db 100644
->>> --- a/init/main.c
->>> +++ b/init/main.c
->>> @@ -729,6 +729,9 @@ asmlinkage __visible void __init start_kernel(void)
->>>          arch_post_acpi_subsys_init();
->>>          sfi_init_late();
+>>> One comment below, which I missed in review before.
 >>>
->>> +       if (efi_enabled(EFI_PRESERVE_BS_REGIONS))
->>> +               efi_check_for_embedded_firmwares();
->>> +
->>>          if (efi_enabled(EFI_RUNTIME_SERVICES)) {
->>>                  efi_free_boot_services();
->>>          }
->>> --
->>> 2.17.0
+>>> On 29 April 2018 at 11:35, Hans de Goede <hdegoede@redhat.com> wrote:
+>>>>
+>>>> Just like with PCI options ROMs, which we save in the setup_efi_pci*
+>>>> functions from arch/x86/boot/compressed/eboot.c, the EFI code / ROM
+>>>> itself
+>>>> sometimes may contain data which is useful/necessary for peripheral
+>>>> drivers
+>>>> to have access to.
+>>>>
+>>>> Specifically the EFI code may contain an embedded copy of firmware which
+>>>> needs to be (re)loaded into the peripheral. Normally such firmware would
+>>>> be
+>>>> part of linux-firmware, but in some cases this is not feasible, for 2
+>>>> reasons:
+>>>>
+>>>> 1) The firmware is customized for a specific use-case of the chipset /
+>>>> use
+>>>> with a specific hardware model, so we cannot have a single firmware file
+>>>> for the chipset. E.g. touchscreen controller firmwares are compiled
+>>>> specifically for the hardware model they are used with, as they are
+>>>> calibrated for a specific model digitizer.
+>>>>
+>>>> 2) Despite repeated attempts we have failed to get permission to
+>>>> redistribute the firmware. This is especially a problem with customized
+>>>> firmwares, these get created by the chip vendor for a specific ODM and
+>>>> the
+>>>> copyright may partially belong with the ODM, so the chip vendor cannot
+>>>> give a blanket permission to distribute these.
+>>>>
+>>>> This commit adds support for finding peripheral firmware embedded in the
+>>>> EFI code and making this available to peripheral drivers through the
+>>>> standard firmware loading mechanism.
+>>>>
+>>>> Note we check the EFI_BOOT_SERVICES_CODE for embedded firmware near the
+>>>> end
+>>>> of start_kernel(), just before calling rest_init(), this is on purpose
+>>>> because the typical EFI_BOOT_SERVICES_CODE memory-segment is too large
+>>>> for
+>>>> early_memremap(), so the check must be done after mm_init(). This relies
+>>>> on EFI_BOOT_SERVICES_CODE not being free-ed until
+>>>> efi_free_boot_services()
+>>>> is called, which means that this will only work on x86 for now.
+>>>>
+>>>> Reported-by: Dave Olsthoorn <dave@bewaar.me>
+>>>> Suggested-by: Peter Jones <pjones@redhat.com>
+>>>> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>>> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>>>> ---
 >>>
->
+>>> [...]
+>>>>
+>>>> diff --git a/drivers/firmware/efi/embedded-firmware.c
+>>>> b/drivers/firmware/efi/embedded-firmware.c
+>>>> new file mode 100644
+>>>> index 000000000000..22a0f598b53d
+>>>> --- /dev/null
+>>>> +++ b/drivers/firmware/efi/embedded-firmware.c
+>>>> @@ -0,0 +1,149 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +/*
+>>>> + * Support for extracting embedded firmware for peripherals from EFI
+>>>> code,
+>>>> + *
+>>>> + * Copyright (c) 2018 Hans de Goede <hdegoede@redhat.com>
+>>>> + */
+>>>> +
+>>>> +#include <linux/crc32.h>
+>>>> +#include <linux/dmi.h>
+>>>> +#include <linux/efi.h>
+>>>> +#include <linux/efi_embedded_fw.h>
+>>>> +#include <linux/io.h>
+>>>> +#include <linux/types.h>
+>>>> +#include <linux/vmalloc.h>
+>>>> +
+>>>> +struct embedded_fw {
+>>>> +       struct list_head list;
+>>>> +       const char *name;
+>>>> +       void *data;
+>>>> +       size_t length;
+>>>> +};
+>>>> +
+>>>> +static LIST_HEAD(found_fw_list);
+>>>> +
+>>>> +static const struct dmi_system_id * const embedded_fw_table[] = {
+>>>> +       NULL
+>>>> +};
+>>>> +
+>>>> +/*
+>>>> + * Note the efi_check_for_embedded_firmwares() code currently makes the
+>>>> + * following 2 assumptions. This may needs to be revisited if embedded
+>>>> firmware
+>>>> + * is found where this is not true:
+>>>> + * 1) The firmware is only found in EFI_BOOT_SERVICES_CODE memory
+>>>> segments
+>>>> + * 2) The firmware always starts at an offset which is a multiple of 8
+>>>> bytes
+>>>> + */
+>>>> +static int __init efi_check_md_for_embedded_firmware(
+>>>> +       efi_memory_desc_t *md, const struct efi_embedded_fw_desc *desc)
+>>>> +{
+>>>> +       struct embedded_fw *fw;
+>>>> +       u64 i, size;
+>>>> +       u32 crc;
+>>>> +       u8 *mem;
+>>>> +
+>>>> +       size = md->num_pages << EFI_PAGE_SHIFT;
+>>>> +       mem = memremap(md->phys_addr, size, MEMREMAP_WB);
+>>>> +       if (!mem) {
+>>>> +               pr_err("Error mapping EFI mem at %#llx\n",
+>>>> md->phys_addr);
+>>>> +               return -ENOMEM;
+>>>> +       }
+>>>> +
+>>>> +       size -= desc->length;
+>>>> +       for (i = 0; i < size; i += 8) {
+>>>> +               if (*((u64 *)(mem + i)) != *((u64 *)desc->prefix))
+>>>> +                       continue;
+>>>> +
+>>>
+>>>
+>>> Please use the proper APIs here to cast u8* to u64*, i.e., either use
+>>> get_unaligned64() or use memcmp()
+>>
+>>
+>> But we know the memory addresses are 64 bit aligned, so using
+>> get_unaligned64 seems wrong, and I'm not sure if the compiler is
+>> smart enough to optimize a memcmp to the single 64 bit integer comparison
+>> we want done here.
+>>
+> 
+> Fair enough. The memory regions are indeed guaranteed to be 4k aligned.
+> 
+> So in that case, please make mem a u64* and cast the other way where needed.
+
+Ok, I've reworked the code to get rid of the compares in the if condition.
+
+Regards,
+
+Hans
+
+
+
+> 
+>>>
+>>>> +               /* Seed with ~0, invert to match crc32 userspace utility
+>>>> */
+>>>> +               crc = ~crc32(~0, mem + i, desc->length);
+>>>> +               if (crc == desc->crc)
+>>>> +                       break;
+>>>> +       }
+>>>> +
+>>>> +       memunmap(mem);
+>>>> +
+>>>> +       if (i >= size)
+>>>> +               return -ENOENT;
+>>>> +
+>>>> +       pr_info("Found EFI embedded fw '%s' crc %08x\n", desc->name,
+>>>> desc->crc);
+>>>> +
+>>>> +       fw = kmalloc(sizeof(*fw), GFP_KERNEL);
+>>>> +       if (!fw)
+>>>> +               return -ENOMEM;
+>>>> +
+>>>> +       mem = memremap(md->phys_addr + i, desc->length, MEMREMAP_WB);
+>>>> +       if (!mem) {
+>>>> +               pr_err("Error mapping embedded firmware\n");
+>>>> +               goto error_free_fw;
+>>>> +       }
+>>>> +       fw->data = kmemdup(mem, desc->length, GFP_KERNEL);
+>>>> +       memunmap(mem);
+>>>> +       if (!fw->data)
+>>>> +               goto error_free_fw;
+>>>> +
+>>>> +       fw->name = desc->name;
+>>>> +       fw->length = desc->length;
+>>>> +       list_add(&fw->list, &found_fw_list);
+>>>> +
+>>>> +       return 0;
+>>>> +
+>>>> +error_free_fw:
+>>>> +       kfree(fw);
+>>>> +       return -ENOMEM;
+>>>> +}
+>>>> +
+>>>> +void __init efi_check_for_embedded_firmwares(void)
+>>>> +{
+>>>> +       const struct efi_embedded_fw_desc *fw_desc;
+>>>> +       const struct dmi_system_id *dmi_id;
+>>>> +       efi_memory_desc_t *md;
+>>>> +       int i, r;
+>>>> +
+>>>> +       for (i = 0; embedded_fw_table[i]; i++) {
+>>>> +               dmi_id = dmi_first_match(embedded_fw_table[i]);
+>>>> +               if (!dmi_id)
+>>>> +                       continue;
+>>>> +
+>>>> +               fw_desc = dmi_id->driver_data;
+>>>> +               for_each_efi_memory_desc(md) {
+>>>> +                       if (md->type != EFI_BOOT_SERVICES_CODE)
+>>>> +                               continue;
+>>>> +
+>>>> +                       r = efi_check_md_for_embedded_firmware(md,
+>>>> fw_desc);
+>>>> +                       if (r == 0)
+>>>> +                               break;
+>>>> +               }
+>>>> +       }
+>>>> +}
+>>>> +
+>>>> +int efi_get_embedded_fw(const char *name, void **data, size_t *size,
+>>>> +                       size_t msize)
+>>>> +{
+>>>> +       struct embedded_fw *iter, *fw = NULL;
+>>>> +       void *buf = *data;
+>>>> +
+>>>> +       list_for_each_entry(iter, &found_fw_list, list) {
+>>>> +               if (strcmp(name, iter->name) == 0) {
+>>>> +                       fw = iter;
+>>>> +                       break;
+>>>> +               }
+>>>> +       }
+>>>> +
+>>>> +       if (!fw)
+>>>> +               return -ENOENT;
+>>>> +
+>>>> +       if (msize && msize < fw->length)
+>>>> +               return -EFBIG;
+>>>> +
+>>>> +       if (!buf) {
+>>>> +               buf = vmalloc(fw->length);
+>>>> +               if (!buf)
+>>>> +                       return -ENOMEM;
+>>>> +       }
+>>>> +
+>>>> +       memcpy(buf, fw->data, fw->length);
+>>>> +       *size = fw->length;
+>>>> +       *data = buf;
+>>>> +
+>>>> +       return 0;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(efi_get_embedded_fw);
+>>>> diff --git a/include/linux/efi.h b/include/linux/efi.h
+>>>> index 791088360c1e..23e8a9c26ce2 100644
+>>>> --- a/include/linux/efi.h
+>>>> +++ b/include/linux/efi.h
+>>>> @@ -1575,6 +1575,12 @@ static inline void
+>>>>    efi_enable_reset_attack_mitigation(efi_system_table_t *sys_table_arg) {
+>>>> }
+>>>>    #endif
+>>>>
+>>>> +#ifdef CONFIG_EFI_EMBEDDED_FIRMWARE
+>>>> +void efi_check_for_embedded_firmwares(void);
+>>>> +#else
+>>>> +static inline void efi_check_for_embedded_firmwares(void) { }
+>>>> +#endif
+>>>> +
+>>>>    void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table);
+>>>>
+>>>>    /*
+>>>> diff --git a/include/linux/efi_embedded_fw.h
+>>>> b/include/linux/efi_embedded_fw.h
+>>>> new file mode 100644
+>>>> index 000000000000..0f7d4df3f57a
+>>>> --- /dev/null
+>>>> +++ b/include/linux/efi_embedded_fw.h
+>>>> @@ -0,0 +1,25 @@
+>>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>>> +#ifndef _LINUX_EFI_EMBEDDED_FW_H
+>>>> +#define _LINUX_EFI_EMBEDDED_FW_H
+>>>> +
+>>>> +#include <linux/mod_devicetable.h>
+>>>> +
+>>>> +/**
+>>>> + * struct efi_embedded_fw_desc - This struct is used by the EFI
+>>>> embedded-fw
+>>>> + *                               code to search for embedded firmwares.
+>>>> + *
+>>>> + * @name:   Name to register the firmware with if found
+>>>> + * @prefix: First 8 bytes of the firmware
+>>>> + * @length: Length of the firmware in bytes including prefix
+>>>> + * @crc:    Inverted little endian Ethernet style CRC32, with 0xffffffff
+>>>> seed
+>>>> + */
+>>>> +struct efi_embedded_fw_desc {
+>>>> +       const char *name;
+>>>> +       u8 prefix[8];
+>>>> +       u32 length;
+>>>> +       u32 crc;
+>>>> +};
+>>>> +
+>>>> +int efi_get_embedded_fw(const char *name, void **dat, size_t *sz, size_t
+>>>> msize);
+>>>> +
+>>>> +#endif
+>>>> diff --git a/init/main.c b/init/main.c
+>>>> index b795aa341a3a..ab29775b35db 100644
+>>>> --- a/init/main.c
+>>>> +++ b/init/main.c
+>>>> @@ -729,6 +729,9 @@ asmlinkage __visible void __init start_kernel(void)
+>>>>           arch_post_acpi_subsys_init();
+>>>>           sfi_init_late();
+>>>>
+>>>> +       if (efi_enabled(EFI_PRESERVE_BS_REGIONS))
+>>>> +               efi_check_for_embedded_firmwares();
+>>>> +
+>>>>           if (efi_enabled(EFI_RUNTIME_SERVICES)) {
+>>>>                   efi_free_boot_services();
+>>>>           }
+>>>> --
+>>>> 2.17.0
+>>>>
+>>
