@@ -1,38 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751584AbeEMNIK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 09:08:10 -0400
-Received: from mail-it0-f44.google.com ([209.85.214.44]:55719 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751247AbeEMNIJ (ORCPT
+        id S1751747AbeEMNJ4 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 09:09:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43777 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751345AbeEMNJz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 09:08:09 -0400
-X-Google-Smtp-Source: AB8JxZpz0X5AzLkZBkgi8tGUZiiSYPmPwzTbdzIyxpnG7MgjO4C3N27mPPBybggowWUfipYo+rgonBpcPSWZ7gkwhog=
+        Sun, 13 May 2018 09:09:55 -0400
+Date: Sun, 13 May 2018 06:09:44 -0700
+From: tip-bot for Sudeep Holla <tipbot@zytor.com>
+Message-ID: <tip-1332a90558013ae4242e3dd7934bdcdeafb06c0d@git.kernel.org>
+Cc: mingo@kernel.org, fweisbec@gmail.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, sudeep.holla@arm.com, hpa@zytor.com
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, sudeep.holla@arm.com,
+        fweisbec@gmail.com, tglx@linutronix.de, mingo@kernel.org
+In-Reply-To: <1525881728-4858-1-git-send-email-sudeep.holla@arm.com>
+References: <1525881728-4858-1-git-send-email-sudeep.holla@arm.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] tick: Prefer a lower rating device only if it's
+ CPU local device
+Git-Commit-ID: 1332a90558013ae4242e3dd7934bdcdeafb06c0d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-From: Dmitry Tunin <hanipouspilot@gmail.com>
-Date: Sun, 13 May 2018 16:08:07 +0300
-Message-ID: <CANoib0FoY86caY-zABHssXq_G8zmt3zJemvYrTyvQ1R58xseoQ@mail.gmail.com>
-Subject: [REGRESSION] And a drity fix for 0cf3:3004 QCA Rome device
-To: Marcel Holtmann <marcel@holtmann.org>,
-        linux-bluetooth <linux-bluetooth@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Marcel
+Commit-ID:  1332a90558013ae4242e3dd7934bdcdeafb06c0d
+Gitweb:     https://git.kernel.org/tip/1332a90558013ae4242e3dd7934bdcdeafb06c0d
+Author:     Sudeep Holla <sudeep.holla@arm.com>
+AuthorDate: Wed, 9 May 2018 17:02:08 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sun, 13 May 2018 15:07:41 +0200
 
-Since  f44cb4b older AR3012 devices stopped working. We discussed that
-before that QCA released a ROME device with a duplicate code.
+tick: Prefer a lower rating device only if it's CPU local device
 
-If there is no easy way to check which one is used, then it may be a
-good decision to change the kernel code for the newer device in new
-kernels.
+Checking the equality of cpumask for both new and old tick device doesn't
+ensure that it's CPU local device. This will cause issue if a low rating
+clockevent tick device is registered first followed by the registration
+of higher rating clockevent tick device.
 
-But anyway it should be made cleaner. The device is still listed in
-ath3k.o as an AR3012.
+In such case, clockevents_released list will never get emptied as both
+the devices get selected as preferred one and we will loop forever in
+clockevents_notify_released.
 
-Regards,
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Link: https://lkml.kernel.org/r/1525881728-4858-1-git-send-email-sudeep.holla@arm.com
 
-Dmitry.
+---
+ kernel/time/tick-common.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+index 49edc1c4f3e6..78e598334007 100644
+--- a/kernel/time/tick-common.c
++++ b/kernel/time/tick-common.c
+@@ -277,7 +277,8 @@ static bool tick_check_preferred(struct clock_event_device *curdev,
+ 	 */
+ 	return !curdev ||
+ 		newdev->rating > curdev->rating ||
+-	       !cpumask_equal(curdev->cpumask, newdev->cpumask);
++	       (!cpumask_equal(curdev->cpumask, newdev->cpumask) &&
++	        !tick_check_percpu(curdev, newdev, smp_processor_id()));
+ }
+ 
+ /*
