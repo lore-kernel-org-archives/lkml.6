@@ -1,120 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751882AbeEMUlQ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 16:41:16 -0400
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:35890 "EHLO
-        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751295AbeEMUlO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 16:41:14 -0400
-X-Google-Smtp-Source: AB8JxZpUH5bFAlZ90R/yogXHHG7g5wIjb+mDZIjb3wDpvApw/EAGxae+q8uTkOuSANcBhX+hwiyAlA==
-Date: Sun, 13 May 2018 13:43:20 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot <syzbot+29f08ad5cb6820798dfe@syzkaller.appspotmail.com>
-Cc: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com
-Subject: Re: BUG: unable to handle kernel paging request in memset_erms (2)
-Message-ID: <20180513204320.GD677@sol.localdomain>
-References: <001a114099b0994a5e0563282c1c@google.com>
+        id S1752041AbeEMUxO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 16:53:14 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:36964 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751438AbeEMUxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 16:53:13 -0400
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Tao Huang <huangtao@rock-chips.com>
+Cc: Elaine Zhang <zhangqing@rock-chips.com>, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, ulf.hansson@linaro.org, khilman@kernel.org,
+        xxx@rock-chips.com, linux-pm@vger.kernel.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, xf@rock-chips.com,
+        linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        linux-arm-kernel@lists.infradead.org, wxt@rock-chips.com
+Subject: Re: [PATCH v1 11/13] dt-bindings: power: add PX30 SoCs header for power-domain
+Date: Sun, 13 May 2018 22:53:00 +0200
+Message-ID: <1550439.0mAU4944n0@diego>
+In-Reply-To: <9c9606f0-5c97-1a6e-a3c5-f6380c16fea4@rock-chips.com>
+References: <1526009458-28579-1-git-send-email-zhangqing@rock-chips.com> <508694354.7btLQf7nsA@phil> <9c9606f0-5c97-1a6e-a3c5-f6380c16fea4@rock-chips.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001a114099b0994a5e0563282c1c@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 19, 2018 at 01:58:01PM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot hit the following crash on mmots commit
-> 2164355612187e55e8d60a28d2cc6b2337841a7e (Fri Jan 19 01:07:54 2018 +0000)
-> pci: test for unexpectedly disabled bridges
-> 
-> So far this crash happened 2 times on mmots.
-> C reproducer is attached.
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+29f08ad5cb6820798dfe@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> BUG: unable to handle kernel paging request at ffffc90001691000
-> IP: memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:65
-> PGD 1dad2c067 P4D 1dad2c067 PUD 1dad2d067 PMD 1c6a8f067 PTE 0
-> Oops: 0002 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 1 PID: 5739 Comm: syzkaller592073 Not tainted 4.15.0-rc8-mm1+ #57
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:65
-> RSP: 0018:ffff8801cbbdfb78 EFLAGS: 00010246
-> RAX: fffff520002d3f00 RBX: ffffc90001691000 RCX: 000000000000ee51
-> RDX: 000000000000ee51 RSI: 0000000000000000 RDI: ffffc90001691000
-> RBP: ffff8801cbbdfb98 R08: fffff520002d3fcb R09: ffffc90001691000
-> R10: 0000000000001dcb R11: fffff520002d3fca R12: 000000000000ee51
-> R13: 0000000000000000 R14: 00007ffffffff000 R15: 000000002001be51
-> FS:  00007f88ae7d7700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffffc90001691000 CR3: 00000001ccefa005 CR4: 00000000001606e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  memset include/linux/string.h:329 [inline]
->  _copy_from_user+0xe9/0x110 lib/usercopy.c:16
->  copy_from_user include/linux/uaccess.h:147 [inline]
->  snd_pcm_oss_write1 sound/core/oss/pcm_oss.c:1347 [inline]
->  snd_pcm_oss_write+0x438/0x880 sound/core/oss/pcm_oss.c:2659
->  __vfs_write+0xef/0x970 fs/read_write.c:480
->  vfs_write+0x189/0x510 fs/read_write.c:544
->  SYSC_write fs/read_write.c:589 [inline]
->  SyS_write+0xef/0x220 fs/read_write.c:581
->  entry_SYSCALL_64_fastpath+0x29/0xa0
-> RIP: 0033:0x44a559
-> RSP: 002b:00007f88ae7d6da8 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00000000006dcc24 RCX: 000000000044a559
-> RDX: 000000000000fe51 RSI: 000000002000c000 RDI: 0000000000000003
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000293 R12: 00000000006dcc20
-> R13: 7073642f7665642f R14: 00800000c0045006 R15: 0000000000000001
-> Code: 48 c1 e9 03 40 0f b6 f6 48 b8 01 01 01 01 01 01 01 01 48 0f af c6 f3
-> 48 ab 89 d1 f3 aa 4c 89 c8 c3 90 49 89 f9 40 88 f0 48 89 d1 <f3> aa 4c 89 c8
-> c3 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01
-> RIP: memset_erms+0x9/0x10 arch/x86/lib/memset_64.S:65 RSP: ffff8801cbbdfb78
-> CR2: ffffc90001691000
-> ---[ end trace 8f421641f3e10f44 ]---
-> Kernel panic - not syncing: Fatal exception
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
+Hi,
 
-The reproducer is unreliable, but this is another one that seems to have been
-fixed by commit 02a5d6925cd34:
+Am Sonntag, 13. Mai 2018, 17:18:12 CEST schrieb Tao Huang:
+> Hi Heiko:
+> 
+> On 2018年05月12日 06:11, Heiko Stuebner wrote:
+> > Here I have a naming question. When looking at the vendor kernel
+> > it looks like the px30 is largely related to the rk3326.
+> > (rk3326.dtsi includeing the px30.dtsi)
+> > 
+> > What is the reason for basing the naming on the px30 this time? And could
+> > we possibly keep to rkXXXX names for the basic things in the kernel, thus
+> > keeping the pxXX as second name, like with the other px-variants before?
+> 
+> PX30 and RK3326 are different chips. PX30 has more features. You can simply
+> think that RK3326 is a subset of PX30. The RK3326 is more like a PX30
+> derivative chip. This is not the same as the previous chips. So we use PX30
+> instead of RK3326 for name, and the opening document is only for PX30, we
+> think this is more convenient for developers.
 
-#syz fix: ALSA: pcm: Avoid potential races between OSS ioctls and read/write
+ok, sounds reasonable :-) ... So we'll stay with the PX30.
 
-The reproducer is opening /dev/dsp1, then concurrently doing write() and
-ioctl(SNDCTL_DSP_CHANNELS).
 
-- Eric
+Heiko
