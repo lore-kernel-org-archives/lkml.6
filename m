@@ -1,78 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751850AbeEMNwZ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 09:52:25 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:40202 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751345AbeEMNwX (ORCPT
+        id S1751518AbeEMOB3 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 10:01:29 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38047 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751247AbeEMOB2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 09:52:23 -0400
-X-Google-Smtp-Source: AB8JxZrCD5DlUKod3WgVHwLaQeOhMK/gLhbMMHP6j7Ne1o/jb2UQEuqBg/+Brn29MZ6pXWPXqHbnS/j5sjpwFWdR7PY=
+        Sun, 13 May 2018 10:01:28 -0400
+Date: Sun, 13 May 2018 07:01:16 -0700
+From: tip-bot for Chen Lin <tipbot@zytor.com>
+Message-ID: <tip-ed772ec873cb0d378c0329d266ae656ec1f2b511@git.kernel.org>
+Cc: tglx@linutronix.de, chen45464546@163.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org
+Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, chen45464546@163.com
+In-Reply-To: <1526053649-24229-1-git-send-email-chen45464546@163.com>
+References: <1526053649-24229-1-git-send-email-chen45464546@163.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] timer_list: Remove unused function pointer
+ typedef
+Git-Commit-ID: ed772ec873cb0d378c0329d266ae656ec1f2b511
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20180511204228.GO4977@localhost.localdomain>
-References: <000000000000a9b0e3056b14bfb2@google.com> <CACT4Y+Z_+=VLbELVW69B7WEVqvri1xBMM5RMnMQynec_XgaE=w@mail.gmail.com>
- <20180511184141.GW5105@localhost.localdomain> <683d1ead-d35b-27ee-0f0c-f7e815d989fc@gmail.com>
- <20180511204228.GO4977@localhost.localdomain>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Sun, 13 May 2018 15:52:01 +0200
-Message-ID: <CACT4Y+ZG6igbhgimA=oFz4k=x_P4tSYGQgFk0EVrjznm8V8fLA@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in kfree_skbmem
-To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc: Eric Dumazet <eric.dumazet@gmail.com>,
-        syzbot <syzbot+fc78715ba3b3257caf6a@syzkaller.appspotmail.com>,
-        Vladislav Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>, linux-sctp@vger.kernel.org,
-        Andrei Vagin <avagin@virtuozzo.com>,
-        David Miller <davem@davemloft.net>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 10:42 PM, Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
-> On Fri, May 11, 2018 at 12:08:33PM -0700, Eric Dumazet wrote:
->>
->>
->> On 05/11/2018 11:41 AM, Marcelo Ricardo Leitner wrote:
->>
->> > But calling ip6_xmit with rcu_read_lock is expected. tcp stack also
->> > does it.
->> > Thus I think this is more of an issue with IPv6 stack. If a host has
->> > an extensive ip6tables ruleset, it probably generates this more
->> > easily.
->> >
->> >>>  sctp_v6_xmit+0x4a5/0x6b0 net/sctp/ipv6.c:225
->> >>>  sctp_packet_transmit+0x26f6/0x3ba0 net/sctp/output.c:650
->> >>>  sctp_outq_flush+0x1373/0x4370 net/sctp/outqueue.c:1197
->> >>>  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
->> >>>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
->> >>>  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
->> >>>  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
->> >>>  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
->> >>>  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
->> >>>  expire_timers kernel/time/timer.c:1363 [inline]
->> >
->> > Having this call from a timer means it wasn't processing sctp stack
->> > for too long.
->> >
->>
->> I feel the problem is that this part is looping, in some infinite loop.
->>
->> I have seen this stack traces in other reports.
->
-> Checked mail history now, seems at least two other reports on RCU
-> stalls had sctp_generate_heartbeat_event involved.
->
->>
->> Maybe some kind of list corruption.
->
-> Could be.
-> Do we know if it generated a flood of packets?
+Commit-ID:  ed772ec873cb0d378c0329d266ae656ec1f2b511
+Gitweb:     https://git.kernel.org/tip/ed772ec873cb0d378c0329d266ae656ec1f2b511
+Author:     Chen Lin <chen45464546@163.com>
+AuthorDate: Fri, 11 May 2018 23:47:29 +0800
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sun, 13 May 2018 15:56:01 +0200
 
-We only know what's in the bug reports. Do the other ones have
-reproducers? It can make sense to mark them as duplicates to not have
-a placer of open bugs about the same root cause.
+timer_list: Remove unused function pointer typedef
+
+Remove the 'printf_fn_t' typedef as it is not used.
+
+Signed-off-by: Chen Lin <chen45464546@163.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: sboyd@kernel.org
+Cc: john.stultz@linaro.org
+Link: https://lkml.kernel.org/r/1526053649-24229-1-git-send-email-chen45464546@163.com
+---
+ kernel/time/timer_list.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
+index 0ed768b56c60..ddc1d58f96c7 100644
+--- a/kernel/time/timer_list.c
++++ b/kernel/time/timer_list.c
+@@ -28,8 +28,6 @@ struct timer_list_iter {
+ 	u64 now;
+ };
+ 
+-typedef void (*print_fn_t)(struct seq_file *m, unsigned int *classes);
+-
+ /*
+  * This allows printing both to /proc/timer_list and
+  * to the console (on SysRq-Q):
