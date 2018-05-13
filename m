@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751381AbeEMHG3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 03:06:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40941 "EHLO mx2.suse.de"
+        id S1751227AbeEMHTB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 03:19:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41339 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751264AbeEMHG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 03:06:28 -0400
-Date: Sun, 13 May 2018 09:06:26 +0200
-Message-ID: <s5hvabs826l.wl-tiwai@suse.de>
+        id S1750910AbeEMHTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 03:19:00 -0400
+Date: Sun, 13 May 2018 09:18:57 +0200
+Message-ID: <s5hpo2081lq.wl-tiwai@suse.de>
 From: Takashi Iwai <tiwai@suse.de>
-To: "Wenwen Wang" <wang6495@umn.edu>
-Cc: "moderated list:SOUND" <alsa-devel@alsa-project.org>,
-        "Jaroslav Kysela" <perex@perex.cz>, "Kangjie Lu" <kjlu@umn.edu>,
-        "open list" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: control: fix a redundant-copy issue
-In-Reply-To: <1525545485-12183-1-git-send-email-wang6495@umn.edu>
-References: <1525545485-12183-1-git-send-email-wang6495@umn.edu>
+To: "Connor McAdams" <conmanx360@gmail.com>
+Cc: <alsa-devel@alsa-project.org>,
+        =?UTF-8?B?IkrDqXLDqW15IExlZmF1cmUi?= <jeremy.lefaure@lse.epita.fr>,
+        "Jaroslav Kysela" <perex@perex.cz>, <o-takashi@sakamocchi.jp>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 03/13] ALSA: hda/ca0132: Add PCI region2 iomap for SBZ
+In-Reply-To: <1525800015-2920-4-git-send-email-conmanx360@gmail.com>
+References: <1525800015-2920-1-git-send-email-conmanx360@gmail.com>
+        <1525800015-2920-4-git-send-email-conmanx360@gmail.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -25,27 +27,40 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 05 May 2018 20:38:03 +0200,
-Wenwen Wang wrote:
+On Tue, 08 May 2018 19:20:03 +0200,
+Connor McAdams wrote:
 > 
-> In snd_ctl_elem_add_compat(), the fields of the struct 'data' need to be
-> copied from the corresponding fields of the struct 'data32' in userspace.
-> This is achieved by invoking copy_from_user() and get_user() functions. The
-> problem here is that the 'type' field is copied twice. One is by
-> copy_from_user() and one is by get_user(). Given that the 'type' field is
-> not used between the two copies, the second copy is *completely* redundant
-> and should be removed for better performance and cleanup. Also, these two
-> copies can cause inconsistent data: as the struct 'data32' resides in
-> userspace and a malicious userspace process can race to change the 'type'
-> field between the two copies to cause inconsistent data. Depending on how
-> the data is used in the future, such an inconsistency may cause potential
-> security risks.
+> This patch adds iomapping for the region2 section of memory on the SBZ.
+> This memory region is used in later patches for setting inputs and
+> outputs. If the mapping fails, the quirk is changed back to QUIRK_NONE
+> to avoid attempts to write to uninitialized memory.
 > 
-> For above reasons, we should take out the second copy.
+> It also adds a new exit sequence to unmap the iomem for the SBZ.
 > 
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> Signed-off-by: Connor McAdams <conmanx360@gmail.com>
+> ---
+>  sound/pci/hda/patch_ca0132.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+> index 02238fe..78d2c26 100644
+> --- a/sound/pci/hda/patch_ca0132.c
+> +++ b/sound/pci/hda/patch_ca0132.c
+> @@ -29,6 +29,9 @@
+>  #include <linux/firmware.h>
+>  #include <linux/kernel.h>
+>  #include <sound/core.h>
+> +#include <linux/types.h>
+> +#include <linux/io.h>
+> +#include <linux/pci.h>
+>  #include "hda_codec.h"
+>  #include "hda_local.h"
+>  #include "hda_auto_parser.h"
 
-Applied now, thanks.
+The linux/*.h inclusion should be before sound/*.h.
+But never mind, I fixed it locally, so no need for resubmission.
 
+
+thanks,
 
 Takashi
