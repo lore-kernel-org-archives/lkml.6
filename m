@@ -1,94 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751998AbeEMSJz (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 14:09:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54683 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751893AbeEMSJw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 14:09:52 -0400
-Date: Sun, 13 May 2018 11:09:46 -0700
-From: tip-bot for Joe Perches <tipbot@zytor.com>
-Message-ID: <tip-a7a3153a98d581196ce092e0b83cac2c4ee1fd1f@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-        joe@perches.com, tglx@linutronix.de
-Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        joe@perches.com, mingo@kernel.org
-In-Reply-To: <8fb4b2a77d50e21ae1f7e4e267e68691efe2c270.1525878372.git.joe@perches.com>
-References: <8fb4b2a77d50e21ae1f7e4e267e68691efe2c270.1525878372.git.joe@perches.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/early-quirks: Rename duplicate define of
- dev_err
-Git-Commit-ID: a7a3153a98d581196ce092e0b83cac2c4ee1fd1f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1751984AbeEMSLt (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 14:11:49 -0400
+Received: from smtp4-g21.free.fr ([212.27.42.4]:15470 "EHLO smtp4-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751295AbeEMSLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 14:11:48 -0400
+From: fcami@fedoraproject.org
+To: tj@kernel.org, hdegoede@redhat.com, linux-kernel@vger.kernel.org,
+        linux-ide@vger.kernel.org
+Cc: =?UTF-8?q?Fran=C3=A7ois=20Cami?= <fcami@fedoraproject.org>
+Subject: [PATCH] libata: Apply NOLPM quirk for SAMSUNG PM830 CXM13D1Q.
+Date: Sun, 13 May 2018 20:11:15 +0200
+Message-Id: <20180513181115.20541-1-fcami@fedoraproject.org>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a7a3153a98d581196ce092e0b83cac2c4ee1fd1f
-Gitweb:     https://git.kernel.org/tip/a7a3153a98d581196ce092e0b83cac2c4ee1fd1f
-Author:     Joe Perches <joe@perches.com>
-AuthorDate: Wed, 9 May 2018 08:15:45 -0700
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 13 May 2018 20:04:35 +0200
+From: François Cami <fcami@fedoraproject.org>
 
-x86/early-quirks: Rename duplicate define of dev_err
+Without this patch the drive errors out regularly:
 
-dev_err is becoming a macro calling _dev_err to allow prefixing of
-dev_fmt to any dev_<level> use that has a #define dev_fmt(fmt) similar
-to the existing #define pr_fmt(fmt) uses.
+[    1.090154] ata1.00: ATA-8: SAMSUNG SSD PM830 mSATA 256GB,
+CXM13D1Q, max UDMA/133
+(...)
+[  345.154996] ata1.00: exception Emask 0x40 SAct 0x0 SErr 0xc0800 action 0x6
+[  345.155006] ata1.00: irq_stat 0x40000001
+[  345.155013] ata1: SError: { HostInt CommWake 10B8B }
+[  345.155018] ata1.00: failed command: SET FEATURES
+[  345.155032] ata1.00: cmd ef/05:e1:00:00:00/00:00:00:00:00/40 tag 7
+                        res 51/04:e1:00:00:00/00:00:00:00:00/40 Emask 0x41 (internal error)
+[  345.155038] ata1.00: status: { DRDY ERR }
+[  345.155042] ata1.00: error: { ABRT }
+[  345.155051] ata1: hard resetting link
+[  345.465661] ata1: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
+[  345.466955] ata1.00: configured for UDMA/133
+[  345.467085] ata1: EH complete
 
-Remove this dev_err macro and convert the existing two uses to pr_err.
-This allows clean compilation in the patch that introduces dev_fmt which
-can prefix dev_<level> logging macros with arbitrary content similar to
-the #define pr_fmt macro.
-
-Signed-off-by: Joe Perches <joe@perches.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/8fb4b2a77d50e21ae1f7e4e267e68691efe2c270.1525878372.git.joe@perches.com
-
+Signed-off-by: François Cami <fcami@fedoraproject.org>
+Acked-by: Hans de Goede <hdegoede@redhat.com>
 ---
- arch/x86/kernel/early-quirks.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/ata/libata-core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/early-quirks.c b/arch/x86/kernel/early-quirks.c
-index bae0d32e327b..da5d8ac60062 100644
---- a/arch/x86/kernel/early-quirks.c
-+++ b/arch/x86/kernel/early-quirks.c
-@@ -28,8 +28,6 @@
- #include <asm/irq_remapping.h>
- #include <asm/early_ioremap.h>
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 68596bd4cf06..1ca365f13040 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4549,8 +4549,9 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM |
+ 						ATA_HORKAGE_NOLPM, },
  
--#define dev_err(msg)  pr_err("pci 0000:%02x:%02x.%d: %s", bus, slot, func, msg)
--
- static void __init fix_hypertransport_config(int num, int slot, int func)
- {
- 	u32 htcfg;
-@@ -617,7 +615,8 @@ static void __init apple_airport_reset(int bus, int slot, int func)
+-	/* This specific Samsung model/firmware-rev does not handle LPM well */
++	/* These specific Samsung models/firmware-revs do not handle LPM well */
+ 	{ "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
++	{ "SAMSUNG SSD PM830 mSATA *",  "CXM13D1Q", ATA_HORKAGE_NOLPM, },
  
- 		pmcsr = read_pci_config_16(bus, slot, func, BCM4331_PM_CAP + PCI_PM_CTRL);
- 		if ((pmcsr & PCI_PM_CTRL_STATE_MASK) != PCI_D0) {
--			dev_err("Cannot power up Apple AirPort card\n");
-+			pr_err("pci 0000:%02x:%02x.%d: Cannot power up Apple AirPort card\n",
-+			       bus, slot, func);
- 			return;
- 		}
- 	}
-@@ -628,7 +627,8 @@ static void __init apple_airport_reset(int bus, int slot, int func)
- 
- 	mmio = early_ioremap(addr, BCM4331_MMIO_SIZE);
- 	if (!mmio) {
--		dev_err("Cannot iomap Apple AirPort card\n");
-+		pr_err("pci 0000:%02x:%02x.%d: Cannot iomap Apple AirPort card\n",
-+		       bus, slot, func);
- 		return;
- 	}
- 
+ 	/* Sandisk devices which are known to not handle LPM well */
+ 	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
+-- 
+2.17.0
