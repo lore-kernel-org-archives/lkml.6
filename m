@@ -1,63 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751804AbeEMRyf (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 13:54:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51062 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751270AbeEMRye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 13:54:34 -0400
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] thermal: exynos: Reduce severity of too early temperature read
-Date: Sun, 13 May 2018 19:54:02 +0200
-Message-Id: <20180513175402.28887-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        id S1751978AbeEMRzK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 13:55:10 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37977 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751881AbeEMRzI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 13:55:08 -0400
+Date: Sun, 13 May 2018 10:54:45 -0700
+From: tip-bot for Tetsuo Handa <tipbot@zytor.com>
+Message-ID: <tip-a466ef76b815b86748d9870ef2a430af7b39c710@git.kernel.org>
+Cc: tglx@linutronix.de, penguin-kernel@I-love.SAKURA.ne.jp,
+        mingo@kernel.org, bhe@redhat.com, ying.huang@intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org,
+        syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com
+Reply-To: tglx@linutronix.de, mingo@kernel.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, bhe@redhat.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, ying.huang@intel.com,
+        syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com
+In-Reply-To: <201805091942.DGG12448.tMFVFSJFQOOLHO@I-love.SAKURA.ne.jp>
+References: <201805091942.DGG12448.tMFVFSJFQOOLHO@I-love.SAKURA.ne.jp>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/kexec: Avoid double free_page() upon
+ do_kexec_load() failure
+Git-Commit-ID: a466ef76b815b86748d9870ef2a430af7b39c710
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thermal core tries to read temperature during sensor registering in
-thermal_zone_of_sensor_register().  In that time Exynos TMU driver and
-hardware are not yet initialized.  Commit 0eb875d88aaa ("thermal:
-exynos: Reading temperature makes sense only when TMU is turned on")
-added a boolean flag to prevent reading bogus temperature in such
-case but it exposed warning message during boot:
-	[    3.864913] thermal thermal_zone0: failed to read out thermal zone (-22)
+Commit-ID:  a466ef76b815b86748d9870ef2a430af7b39c710
+Gitweb:     https://git.kernel.org/tip/a466ef76b815b86748d9870ef2a430af7b39c710
+Author:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+AuthorDate: Wed, 9 May 2018 19:42:20 +0900
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sun, 13 May 2018 19:50:06 +0200
 
-Return EAGAIN in such case to skip omitting such message because it
-might mislead user.
+x86/kexec: Avoid double free_page() upon do_kexec_load() failure
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>From ff82bedd3e12f0d3353282054ae48c3bd8c72012 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Wed, 9 May 2018 12:12:39 +0900
+Subject: [PATCH v3] x86/kexec: avoid double free_page() upon do_kexec_load() failure.
+
+syzbot is reporting crashes after memory allocation failure inside
+do_kexec_load() [1]. This is because free_transition_pgtable() is called
+by both init_transition_pgtable() and machine_kexec_cleanup() when memory
+allocation failed inside init_transition_pgtable().
+
+Regarding 32bit code, machine_kexec_free_page_tables() is called by both
+machine_kexec_alloc_page_tables() and machine_kexec_cleanup() when memory
+allocation failed inside machine_kexec_alloc_page_tables().
+
+Fix this by leaving the error handling to machine_kexec_cleanup()
+(and optionally setting NULL after free_page()).
+
+[1] https://syzkaller.appspot.com/bug?id=91e52396168cf2bdd572fe1e1bc0bc645c1c6b40
+
+Fixes: f5deb79679af6eb4 ("x86: kexec: Use one page table in x86_64 machine_kexec")
+Fixes: 92be3d6bdf2cb349 ("kexec/i386: allocate page table pages dynamically")
+Reported-by: syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Baoquan He <bhe@redhat.com>
+Cc: thomas.lendacky@amd.com
+Cc: prudo@linux.vnet.ibm.com
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: syzkaller-bugs@googlegroups.com
+Cc: takahiro.akashi@linaro.org
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: akpm@linux-foundation.org
+Cc: dyoung@redhat.com
+Cc: kirill.shutemov@linux.intel.com
+Link: https://lkml.kernel.org/r/201805091942.DGG12448.tMFVFSJFQOOLHO@I-love.SAKURA.ne.jp
+
 ---
- drivers/thermal/samsung/exynos_tmu.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/x86/kernel/machine_kexec_32.c | 6 +++++-
+ arch/x86/kernel/machine_kexec_64.c | 5 ++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 3b20309789e3..c24969d740d1 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -666,8 +666,14 @@ static int exynos_get_temp(void *p, int *temp)
- 	struct exynos_tmu_data *data = p;
- 	int value, ret = 0;
+diff --git a/arch/x86/kernel/machine_kexec_32.c b/arch/x86/kernel/machine_kexec_32.c
+index 60cdec6628b0..d1ab07ec8c9a 100644
+--- a/arch/x86/kernel/machine_kexec_32.c
++++ b/arch/x86/kernel/machine_kexec_32.c
+@@ -57,12 +57,17 @@ static void load_segments(void)
+ static void machine_kexec_free_page_tables(struct kimage *image)
+ {
+ 	free_page((unsigned long)image->arch.pgd);
++	image->arch.pgd = NULL;
+ #ifdef CONFIG_X86_PAE
+ 	free_page((unsigned long)image->arch.pmd0);
++	image->arch.pmd0 = NULL;
+ 	free_page((unsigned long)image->arch.pmd1);
++	image->arch.pmd1 = NULL;
+ #endif
+ 	free_page((unsigned long)image->arch.pte0);
++	image->arch.pte0 = NULL;
+ 	free_page((unsigned long)image->arch.pte1);
++	image->arch.pte1 = NULL;
+ }
  
--	if (!data || !data->tmu_read || !data->enabled)
-+	if (!data || !data->tmu_read)
- 		return -EINVAL;
-+	else if (!data->enabled)
-+		/*
-+		 * Called too early, probably
-+		 * from thermal_zone_of_sensor_register().
-+		 */
-+		return -EAGAIN;
+ static int machine_kexec_alloc_page_tables(struct kimage *image)
+@@ -79,7 +84,6 @@ static int machine_kexec_alloc_page_tables(struct kimage *image)
+ 	    !image->arch.pmd0 || !image->arch.pmd1 ||
+ #endif
+ 	    !image->arch.pte0 || !image->arch.pte1) {
+-		machine_kexec_free_page_tables(image);
+ 		return -ENOMEM;
+ 	}
+ 	return 0;
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index a5e55d832d0a..6010449ca6d2 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -39,9 +39,13 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
+ static void free_transition_pgtable(struct kimage *image)
+ {
+ 	free_page((unsigned long)image->arch.p4d);
++	image->arch.p4d = NULL;
+ 	free_page((unsigned long)image->arch.pud);
++	image->arch.pud = NULL;
+ 	free_page((unsigned long)image->arch.pmd);
++	image->arch.pmd = NULL;
+ 	free_page((unsigned long)image->arch.pte);
++	image->arch.pte = NULL;
+ }
  
- 	mutex_lock(&data->lock);
- 	clk_enable(data->clk);
--- 
-2.14.1
+ static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
+@@ -91,7 +95,6 @@ static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
+ 	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, PAGE_KERNEL_EXEC_NOENC));
+ 	return 0;
+ err:
+-	free_transition_pgtable(image);
+ 	return result;
+ }
+ 
