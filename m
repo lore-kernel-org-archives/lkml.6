@@ -1,176 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751787AbeEMO4r (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 10:56:47 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33205 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751270AbeEMO4o (ORCPT
+        id S1751764AbeEMPSa (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 11:18:30 -0400
+Received: from regular1.263xmail.com ([211.150.99.131]:34294 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751438AbeEMPS2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 10:56:44 -0400
-X-Google-Smtp-Source: AB8JxZp/3x2/4d0N02SOjSeP9RCM2xtWOkHUh8JovVl1Z7EdLSgLvjqUwwgf85Hwbj/VTCusT9vgVk3KAxs44mQ3yMg=
+        Sun, 13 May 2018 11:18:28 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-RL-SENDER: huangtao@rock-chips.com
+X-FST-TO: huangtao@rock-chips.com
+X-SENDER-IP: 110.90.96.23
+X-LOGIN-NAME: huangtao@rock-chips.com
+X-UNIQUE-TAG: <d31b5fe9abac2ef1539f56b195c1405d>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 7
+Subject: Re: [PATCH v1 11/13] dt-bindings: power: add PX30 SoCs header for
+ power-domain
+To: Heiko Stuebner <heiko@sntech.de>,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
+        ulf.hansson@linaro.org, khilman@kernel.org, xxx@rock-chips.com,
+        linux-pm@vger.kernel.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, xf@rock-chips.com,
+        linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        linux-arm-kernel@lists.infradead.org, wxt@rock-chips.com
+References: <1526009458-28579-1-git-send-email-zhangqing@rock-chips.com>
+ <1526009672-2097-1-git-send-email-zhangqing@rock-chips.com>
+ <508694354.7btLQf7nsA@phil>
+From: Tao Huang <huangtao@rock-chips.com>
+Message-ID: <9c9606f0-5c97-1a6e-a3c5-f6380c16fea4@rock-chips.com>
+Date: Sun, 13 May 2018 23:18:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1526048528-3613-1-git-send-email-mark.jonas@de.bosch.com>
-References: <1521651874-15379-1-git-send-email-mark.jonas@de.bosch.com> <1526048528-3613-1-git-send-email-mark.jonas@de.bosch.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 13 May 2018 17:56:43 +0300
-Message-ID: <CAHp75Vf=eJbJPv5=y3fDKZapAnmABD0=v+WRhrBhMv+RSoBnKg@mail.gmail.com>
-Subject: Re: [PATCH v3] Input: add bu21029 touch driver
-To: Mark Jonas <mark.jonas@de.bosch.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Heiko Schocher <hs@denx.de>, Zhu Yi <yi.zhu5@cn.bosch.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <508694354.7btLQf7nsA@phil>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 5:22 PM, Mark Jonas <mark.jonas@de.bosch.com> wrote:
+Hi Heiko:
+On 2018年05月12日 06:11, Heiko Stuebner wrote:
+> Here I have a naming question. When looking at the vendor kernel
+> it looks like the px30 is largely related to the rk3326.
+> (rk3326.dtsi includeing the px30.dtsi)
+>
+> What is the reason for basing the naming on the px30 this time? And could
+> we possibly keep to rkXXXX names for the basic things in the kernel, thus
+> keeping the pxXX as second name, like with the other px-variants before?
+>
+PX30 and RK3326 are different chips. PX30 has more features. You can simply think that RK3326 is a subset of PX30. The RK3326 is more like a PX30 derivative chip. This is not the same as the previous chips.
+So we use PX30 instead of RK3326 for name, and the opening document is only for PX30, we think this is more convenient for developers.
 
-> Add Rohm BU21029 resistive touch panel controller support with I2C
-> interface.
-
-> +#include <linux/of.h>
-
-This becomes redundant (see below).
-
-> +#define STOP_DELAY_US  50L
-> +#define START_DELAY_MS 2L
-> +#define BUF_LEN        8L
-
-No need to use L for such small numbers. Integer promotion is a part
-of C standard.
-
-> +#define SCALE_12BIT    (1 << 12)
-> +#define MAX_12BIT      ((1 << 12) - 1)
-
-BIT(12)
-GENMASK(11, 0)
-
-> +static int bu21029_touch_report(struct bu21029_ts_data *bu21029)
-> +{
-> +       struct i2c_client *i2c = bu21029->client;
-> +       u8 buf[BUF_LEN];
-> +       int error = bu21029_touch_report(bu21029);
-
-> +
-
-Redundant empty line.
-
-> +       if (error) {
-
-> +               dev_err(&i2c->dev, "failed to report (error: %d)\n", error);
-
-Potential spamming case.
-
-> +               return IRQ_NONE;
-> +       }
-
-> +static void bu21029_stop_chip(struct input_dev *dev)
-> +{
-> +       struct bu21029_ts_data *bu21029 = input_get_drvdata(dev);
-> +
-> +       disable_irq(bu21029->client->irq);
-> +       del_timer_sync(&bu21029->timer);
-> +
-> +       /* put chip into reset */
-> +       gpiod_set_value_cansleep(bu21029->reset_gpios, 1);
-
-> +       udelay(STOP_DELAY_US);
-
-udelay() ?!
-
-> +}
-> +
-
-> +static int bu21029_start_chip(struct input_dev *dev)
-> +{
-
-> +       u16 hwid;
-> +
-> +       /* take chip out of reset */
-> +       gpiod_set_value_cansleep(bu21029->reset_gpios, 0);
-
-> +       mdelay(START_DELAY_MS);
-
-mdelay()?!
-
-> +
-> +       error = i2c_smbus_read_i2c_block_data(i2c,
-> +                                             BU21029_HWID_REG,
-> +                                             2,
-> +                                             (u8 *)&hwid);
-> +       if (error < 0) {
-> +               dev_err(&i2c->dev, "failed to read HW ID\n");
-> +               goto out;
-> +       }
-> +
-
-> +       if (cpu_to_be16(hwid) != SUPPORTED_HWID) {
-
-Hmm... Why cpu_to_be16() is required?
-
-> +               dev_err(&i2c->dev, "unsupported HW ID 0x%x\n", hwid);
-> +               error = -ENODEV;
-> +               goto out;
-> +       }
-> +}
-
-> +static int bu21029_parse_dt(struct bu21029_ts_data *bu21029)
-
-You can get rid of DT requirement by...
-
-> +{
-> +       struct device *dev = &bu21029->client->dev;
-> +       struct device_node *np = dev->of_node;
-> +       u32 val32;
-> +       int error;
-
-> +       if (!np) {
-> +               dev_err(dev, "no device tree data\n");
-> +               return -EINVAL;
-> +       }
-
-(this becomes redundant)
-
-> +
-> +       bu21029->reset_gpios = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
-> +       if (IS_ERR(bu21029->reset_gpios)) {
-> +               error = PTR_ERR(bu21029->reset_gpios);
-> +               if (error != -EPROBE_DEFER)
-> +                       dev_err(dev, "invalid 'reset-gpios':%d\n", error);
-> +               return error;
-> +       }
-> +
-
-> +       if (of_property_read_u32(np, "rohm,x-plate-ohms", &val32)) {
-
-...simple calling device_property_read_u32() instead.
-
-> +               dev_err(dev, "invalid 'x-plate-ohms' supplied\n");
-> +               return -EINVAL;
-> +       }
-> +       bu21029->x_plate_ohms = val32;
-> +
-> +       touchscreen_parse_properties(bu21029->in_dev, false, &bu21029->prop);
-> +
-> +       return 0;
-> +}
-
-> +#ifdef CONFIG_PM_SLEEP
-
-Instead...
-
-> +static int bu21029_suspend(struct device *dev)
-
-...use __maby_unused annotation.
-
-> +static int bu21029_resume(struct device *dev)
-
-Ditto.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Best Regards,
+Tao Huang
