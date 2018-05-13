@@ -1,44 +1,284 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751928AbeEMTXU (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 15:23:20 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:50909 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751617AbeEMTXU (ORCPT
+        id S1751882AbeEMT1z (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 15:27:55 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56929 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751263AbeEMT1y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 15:23:20 -0400
-Date: Sun, 13 May 2018 21:23:07 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-cc: Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] x86/mtrr: Convert to use match_string() helper
-In-Reply-To: <20180503211217.47822-1-andriy.shevchenko@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1805132119510.1582@nanos.tec.linutronix.de>
-References: <20180503211217.47822-1-andriy.shevchenko@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 13 May 2018 15:27:54 -0400
+Date: Sun, 13 May 2018 12:27:45 -0700
+From: tip-bot for Joe Perches <tipbot@zytor.com>
+Message-ID: <tip-1de392f5d5e803663abbd8ed084233f154152bcd@git.kernel.org>
+Cc: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de, joe@perches.com,
+        linux-kernel@vger.kernel.org
+Reply-To: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de, joe@perches.com,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <e7b709a2b040af7faa81b0aa2c3a125aed628a82.1525964383.git.joe@perches.com>
+References: <e7b709a2b040af7faa81b0aa2c3a125aed628a82.1525964383.git.joe@perches.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cleanups] x86: Remove pr_fmt duplicate logging prefixes
+Git-Commit-ID: 1de392f5d5e803663abbd8ed084233f154152bcd
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 4 May 2018, Andy Shevchenko wrote:
+Commit-ID:  1de392f5d5e803663abbd8ed084233f154152bcd
+Gitweb:     https://git.kernel.org/tip/1de392f5d5e803663abbd8ed084233f154152bcd
+Author:     Joe Perches <joe@perches.com>
+AuthorDate: Thu, 10 May 2018 08:45:30 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Sun, 13 May 2018 21:25:18 +0200
 
-> The new helper returns index of the matching string in an array.
+x86: Remove pr_fmt duplicate logging prefixes
 
-new helper? match_string() is in tree for 2 years.
+Converting pr_fmt from a default simple #define to use KBUILD_MODNAME
+added some duplicate prefixes.
 
-> We are going to use it here.
+Remove the duplicate prefixes.
 
-Are we going to use it ? When?
+Signed-off-by: Joe Perches <joe@perches.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lkml.kernel.org/r/e7b709a2b040af7faa81b0aa2c3a125aed628a82.1525964383.git.joe@perches.com
 
-"Replace the open coded array lookup." or something like that would be more
-appropriate.
+---
+ arch/x86/events/amd/ibs.c |  2 +-
+ arch/x86/kernel/e820.c    | 32 +++++++++++++++++---------------
+ arch/x86/kernel/hpet.c    |  5 ++---
+ arch/x86/kernel/uprobes.c |  4 ++--
+ arch/x86/mm/numa.c        | 22 +++++++++++-----------
+ 5 files changed, 33 insertions(+), 32 deletions(-)
 
-Thanks,
-
-	tglx
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index 786fd875de92..4b98101209a1 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -889,7 +889,7 @@ static void force_ibs_eilvt_setup(void)
+ 	if (!ibs_eilvt_valid())
+ 		goto out;
+ 
+-	pr_info("IBS: LVT offset %d assigned\n", offset);
++	pr_info("LVT offset %d assigned\n", offset);
+ 
+ 	return;
+ out:
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index 6a2cb1442e05..d1f25c831447 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -155,7 +155,8 @@ static void __init __e820__range_add(struct e820_table *table, u64 start, u64 si
+ 	int x = table->nr_entries;
+ 
+ 	if (x >= ARRAY_SIZE(table->entries)) {
+-		pr_err("e820: too many entries; ignoring [mem %#010llx-%#010llx]\n", start, start + size - 1);
++		pr_err("too many entries; ignoring [mem %#010llx-%#010llx]\n",
++		       start, start + size - 1);
+ 		return;
+ 	}
+ 
+@@ -190,9 +191,10 @@ void __init e820__print_table(char *who)
+ 	int i;
+ 
+ 	for (i = 0; i < e820_table->nr_entries; i++) {
+-		pr_info("%s: [mem %#018Lx-%#018Lx] ", who,
+-		       e820_table->entries[i].addr,
+-		       e820_table->entries[i].addr + e820_table->entries[i].size - 1);
++		pr_info("%s: [mem %#018Lx-%#018Lx] ",
++			who,
++			e820_table->entries[i].addr,
++			e820_table->entries[i].addr + e820_table->entries[i].size - 1);
+ 
+ 		e820_print_type(e820_table->entries[i].type);
+ 		pr_cont("\n");
+@@ -574,7 +576,7 @@ void __init e820__update_table_print(void)
+ 	if (e820__update_table(e820_table))
+ 		return;
+ 
+-	pr_info("e820: modified physical RAM map:\n");
++	pr_info("modified physical RAM map:\n");
+ 	e820__print_table("modified");
+ }
+ 
+@@ -636,9 +638,8 @@ __init void e820__setup_pci_gap(void)
+ 	if (!found) {
+ #ifdef CONFIG_X86_64
+ 		gapstart = (max_pfn << PAGE_SHIFT) + 1024*1024;
+-		pr_err(
+-			"e820: Cannot find an available gap in the 32-bit address range\n"
+-			"e820: PCI devices with unassigned 32-bit BARs may not work!\n");
++		pr_err("Cannot find an available gap in the 32-bit address range\n");
++		pr_err("PCI devices with unassigned 32-bit BARs may not work!\n");
+ #else
+ 		gapstart = 0x10000000;
+ #endif
+@@ -649,7 +650,8 @@ __init void e820__setup_pci_gap(void)
+ 	 */
+ 	pci_mem_start = gapstart;
+ 
+-	pr_info("e820: [mem %#010lx-%#010lx] available for PCI devices\n", gapstart, gapstart + gapsize - 1);
++	pr_info("[mem %#010lx-%#010lx] available for PCI devices\n",
++		gapstart, gapstart + gapsize - 1);
+ }
+ 
+ /*
+@@ -711,7 +713,7 @@ void __init e820__memory_setup_extended(u64 phys_addr, u32 data_len)
+ 	memcpy(e820_table_firmware, e820_table, sizeof(*e820_table_firmware));
+ 
+ 	early_memunmap(sdata, data_len);
+-	pr_info("e820: extended physical RAM map:\n");
++	pr_info("extended physical RAM map:\n");
+ 	e820__print_table("extended");
+ }
+ 
+@@ -780,7 +782,7 @@ u64 __init e820__memblock_alloc_reserved(u64 size, u64 align)
+ 	addr = __memblock_alloc_base(size, align, MEMBLOCK_ALLOC_ACCESSIBLE);
+ 	if (addr) {
+ 		e820__range_update_kexec(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
+-		pr_info("e820: update e820_table_kexec for e820__memblock_alloc_reserved()\n");
++		pr_info("update e820_table_kexec for e820__memblock_alloc_reserved()\n");
+ 		e820__update_table_kexec();
+ 	}
+ 
+@@ -830,8 +832,8 @@ static unsigned long __init e820_end_pfn(unsigned long limit_pfn, enum e820_type
+ 	if (last_pfn > max_arch_pfn)
+ 		last_pfn = max_arch_pfn;
+ 
+-	pr_info("e820: last_pfn = %#lx max_arch_pfn = %#lx\n",
+-			 last_pfn, max_arch_pfn);
++	pr_info("last_pfn = %#lx max_arch_pfn = %#lx\n",
++		last_pfn, max_arch_pfn);
+ 	return last_pfn;
+ }
+ 
+@@ -1005,7 +1007,7 @@ void __init e820__finish_early_params(void)
+ 		if (e820__update_table(e820_table) < 0)
+ 			early_panic("Invalid user supplied memory map");
+ 
+-		pr_info("e820: user-defined physical RAM map:\n");
++		pr_info("user-defined physical RAM map:\n");
+ 		e820__print_table("user");
+ 	}
+ }
+@@ -1238,7 +1240,7 @@ void __init e820__memory_setup(void)
+ 	memcpy(e820_table_kexec, e820_table, sizeof(*e820_table_kexec));
+ 	memcpy(e820_table_firmware, e820_table, sizeof(*e820_table_firmware));
+ 
+-	pr_info("e820: BIOS-provided physical RAM map:\n");
++	pr_info("BIOS-provided physical RAM map:\n");
+ 	e820__print_table(who);
+ }
+ 
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index 8ce4212e2b8d..b6be34ee88e9 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -975,8 +975,7 @@ int __init hpet_enable(void)
+ 	cfg &= ~(HPET_CFG_ENABLE | HPET_CFG_LEGACY);
+ 	hpet_writel(cfg, HPET_CFG);
+ 	if (cfg)
+-		pr_warn("HPET: Unrecognized bits %#x set in global cfg\n",
+-			cfg);
++		pr_warn("Unrecognized bits %#x set in global cfg\n", cfg);
+ 
+ 	for (i = 0; i <= last; ++i) {
+ 		cfg = hpet_readl(HPET_Tn_CFG(i));
+@@ -988,7 +987,7 @@ int __init hpet_enable(void)
+ 			 | HPET_TN_64BIT_CAP | HPET_TN_32BIT | HPET_TN_ROUTE
+ 			 | HPET_TN_FSB | HPET_TN_FSB_CAP);
+ 		if (cfg)
+-			pr_warn("HPET: Unrecognized bits %#x set in cfg#%u\n",
++			pr_warn("Unrecognized bits %#x set in cfg#%u\n",
+ 				cfg, i);
+ 	}
+ 	hpet_print_config();
+diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+index 85c7ef23d99f..d1c468741915 100644
+--- a/arch/x86/kernel/uprobes.c
++++ b/arch/x86/kernel/uprobes.c
+@@ -1079,8 +1079,8 @@ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr, struct pt_regs
+ 		return orig_ret_vaddr;
+ 
+ 	if (nleft != rasize) {
+-		pr_err("uprobe: return address clobbered: pid=%d, %%sp=%#lx, "
+-			"%%ip=%#lx\n", current->pid, regs->sp, regs->ip);
++		pr_err("return address clobbered: pid=%d, %%sp=%#lx, %%ip=%#lx\n",
++		       current->pid, regs->sp, regs->ip);
+ 
+ 		force_sig_info(SIGSEGV, SEND_SIG_FORCED, current);
+ 	}
+diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+index 25504d5aa816..fa150855647c 100644
+--- a/arch/x86/mm/numa.c
++++ b/arch/x86/mm/numa.c
+@@ -136,13 +136,13 @@ static int __init numa_add_memblk_to(int nid, u64 start, u64 end,
+ 
+ 	/* whine about and ignore invalid blks */
+ 	if (start > end || nid < 0 || nid >= MAX_NUMNODES) {
+-		pr_warning("NUMA: Warning: invalid memblk node %d [mem %#010Lx-%#010Lx]\n",
+-			   nid, start, end - 1);
++		pr_warn("Warning: invalid memblk node %d [mem %#010Lx-%#010Lx]\n",
++			nid, start, end - 1);
+ 		return 0;
+ 	}
+ 
+ 	if (mi->nr_blks >= NR_NODE_MEMBLKS) {
+-		pr_err("NUMA: too many memblk ranges\n");
++		pr_err("too many memblk ranges\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -267,14 +267,14 @@ int __init numa_cleanup_meminfo(struct numa_meminfo *mi)
+ 			 */
+ 			if (bi->end > bj->start && bi->start < bj->end) {
+ 				if (bi->nid != bj->nid) {
+-					pr_err("NUMA: node %d [mem %#010Lx-%#010Lx] overlaps with node %d [mem %#010Lx-%#010Lx]\n",
++					pr_err("node %d [mem %#010Lx-%#010Lx] overlaps with node %d [mem %#010Lx-%#010Lx]\n",
+ 					       bi->nid, bi->start, bi->end - 1,
+ 					       bj->nid, bj->start, bj->end - 1);
+ 					return -EINVAL;
+ 				}
+-				pr_warning("NUMA: Warning: node %d [mem %#010Lx-%#010Lx] overlaps with itself [mem %#010Lx-%#010Lx]\n",
+-					   bi->nid, bi->start, bi->end - 1,
+-					   bj->start, bj->end - 1);
++				pr_warn("Warning: node %d [mem %#010Lx-%#010Lx] overlaps with itself [mem %#010Lx-%#010Lx]\n",
++					bi->nid, bi->start, bi->end - 1,
++					bj->start, bj->end - 1);
+ 			}
+ 
+ 			/*
+@@ -364,7 +364,7 @@ static int __init numa_alloc_distance(void)
+ 	phys = memblock_find_in_range(0, PFN_PHYS(max_pfn_mapped),
+ 				      size, PAGE_SIZE);
+ 	if (!phys) {
+-		pr_warning("NUMA: Warning: can't allocate distance table!\n");
++		pr_warn("Warning: can't allocate distance table!\n");
+ 		/* don't retry until explicitly reset */
+ 		numa_distance = (void *)1LU;
+ 		return -ENOMEM;
+@@ -410,14 +410,14 @@ void __init numa_set_distance(int from, int to, int distance)
+ 
+ 	if (from >= numa_distance_cnt || to >= numa_distance_cnt ||
+ 			from < 0 || to < 0) {
+-		pr_warn_once("NUMA: Warning: node ids are out of bound, from=%d to=%d distance=%d\n",
+-			    from, to, distance);
++		pr_warn_once("Warning: node ids are out of bound, from=%d to=%d distance=%d\n",
++			     from, to, distance);
+ 		return;
+ 	}
+ 
+ 	if ((u8)distance != distance ||
+ 	    (from == to && distance != LOCAL_DISTANCE)) {
+-		pr_warn_once("NUMA: Warning: invalid distance parameter, from=%d to=%d distance=%d\n",
++		pr_warn_once("Warning: invalid distance parameter, from=%d to=%d distance=%d\n",
+ 			     from, to, distance);
+ 		return;
+ 	}
