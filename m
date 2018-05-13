@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752027AbeEMXTQ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 19:19:16 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:40102 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752006AbeEMXTN (ORCPT
+        id S1752056AbeEMXUM (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 19:20:12 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:41243 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752006AbeEMXUK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 19:19:13 -0400
-X-Google-Smtp-Source: AB8JxZoImnE/nBEjLfLujpNC/I/yQHKGcwYOx5N47dG8zEFJQIfR40TAoDLDq0qhGp52DEVZiYcWbg==
+        Sun, 13 May 2018 19:20:10 -0400
+X-Google-Smtp-Source: AB8JxZpTVni9TnevLoxXXqT+wcRTbArLnEVAyFjGhB0qFxPqLEYRsWDD56OBmKPvdIs6KroB238sKA==
 From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
 To: bcousson@baylibre.com
 Cc: tony@atomide.com, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
-Subject: [PATCH] ARM: dts: am335x-baltos.dtsi: Use IRQ_TYPE specifier
-Date: Sun, 13 May 2018 20:19:03 -0300
-Message-Id: <1526253543-3395-1-git-send-email-hernan@vanguardiasur.com.ar>
+Subject: [PATCH] ARM: dts: am335x-boneblue: Use IRQ_TYPE specifier
+Date: Sun, 13 May 2018 20:19:56 -0300
+Message-Id: <1526253596-3468-1-git-send-email-hernan@vanguardiasur.com.ar>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -30,21 +30,21 @@ IRQ_TYPE_EDGE_RISING instead. This improves DT readability.
 
 Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
 ---
- arch/arm/boot/dts/am335x-baltos.dtsi | 2 +-
+ arch/arm/boot/dts/am335x-boneblue.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/am335x-baltos.dtsi b/arch/arm/boot/dts/am335x-baltos.dtsi
-index ec6052c..ed7a5a3 100644
---- a/arch/arm/boot/dts/am335x-baltos.dtsi
-+++ b/arch/arm/boot/dts/am335x-baltos.dtsi
-@@ -249,7 +249,7 @@
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		interrupt-parent = <&gpio1>;
--		interrupts = <28 GPIO_ACTIVE_LOW>;
-+		interrupts = <28 IRQ_TYPE_EDGE_RISING>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&tps65910_pins>;
- 	};
+diff --git a/arch/arm/boot/dts/am335x-boneblue.dts b/arch/arm/boot/dts/am335x-boneblue.dts
+index 58baee1..7bcd726 100644
+--- a/arch/arm/boot/dts/am335x-boneblue.dts
++++ b/arch/arm/boot/dts/am335x-boneblue.dts
+@@ -364,7 +364,7 @@
+ 		compatible = "invensense,mpu9250";
+ 		reg = <0x68>;
+ 		interrupt-parent = <&gpio3>;
+-		interrupts = <21 GPIO_ACTIVE_LOW>;
++		interrupts = <21 IRQ_TYPE_EDGE_RISING>;
+ 		i2c-gate {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
 -- 
 2.7.4
