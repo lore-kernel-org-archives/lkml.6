@@ -1,60 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeEMQEL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 12:04:11 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53420 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751584AbeEMQEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 12:04:09 -0400
-Date: Sun, 13 May 2018 18:04:04 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: DEBUG_RWSEMS warning from thaw_super()
-Message-ID: <20180513160404.GA19620@redhat.com>
-References: <CAOQ4uxgxP-0OZzT866=RR5rGQZ89EOy-mFF50v_5Y644OrV7tA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgxP-0OZzT866=RR5rGQZ89EOy-mFF50v_5Y644OrV7tA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1751942AbeEMQFf (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 12:05:35 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:33236 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751584AbeEMQFd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 12:05:33 -0400
+X-Google-Smtp-Source: AB8JxZouanyq9K567iW/p5RMiAdi1CI6Bt75Way/Fl4vygBKDNXZsxRTPwevn678jbTjavnGrBzarQ==
+From: Oleg Keri <ezhi99@gmail.com>
+Cc: Oleg Keri <ezhi99@gmail.com>, Ike Panhc <ike.pan@canonical.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>, linux-kernel@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH v2] platform/x86: ideapad-laptop: Add fn-lock setting
+Date: Sun, 13 May 2018 19:05:07 +0300
+Message-Id: <20180513160507.9136-1-ezhi99@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <CAHp75VdjYxp7QGYdtY3EXNrLZkgEUvQ8C5XssUeLh=0V6zT1jg@mail.gmail.com>
+References: <CAHp75VdjYxp7QGYdtY3EXNrLZkgEUvQ8C5XssUeLh=0V6zT1jg@mail.gmail.com>
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/13, Amir Goldstein wrote:
->
-> Since kernel v4.17-rc1 and DEBUG_RWSEMS, I see the
-> warning below after filesystem freeze/thaw.
->
-> This is a case where one process acquires a bunch of rwsem
-> and another process releases them.
->
-> To convey this use case to lockdep, freeze_super() calls
-> lockdep_sb_freeze_release() on exit and thaw_super()
-> calls lockdep_sb_freeze_acquire() on entry.
+Some of latest Lenovo ideapad laptops do not have UEFI/BIOS setting for
+switching fn-lock mode. This commit adds related acpi calls to ideapad
+platform driver. However setting is available via sysfs.
 
-This was already discussed, but I forgot the result...
+Signed-off-by: Oleg Keri <ezhi99@gmail.com>
+---
+ .../ABI/testing/sysfs-platform-ideapad-laptop | 13 +++++
+ drivers/platform/x86/ideapad-laptop.c         | 52 +++++++++++++++++--
+ 2 files changed, 62 insertions(+), 3 deletions(-)
 
-So once again, why we can't simply update percpu_rwsem_acquire() ?
-Or we can check CONFIG_RWSEM_SPIN_ON_OWNER to match percpu_rwsem_release(),
-but CONFIG_DEBUG_RWSEMS explains the purpose better.
-
-Oleg.
-
---- x/include/linux/percpu-rwsem.h
-+++ x/include/linux/percpu-rwsem.h
-@@ -141,6 +141,10 @@ static inline void percpu_rwsem_acquire(
- 					bool read, unsigned long ip)
- {
- 	lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
-+#ifdef CONFIG_DEBUG_RWSEMS
-+	if (!read)
-+		sem->rw_sem.owner = current;
-+#endif
+diff --git a/Documentation/ABI/testing/sysfs-platform-ideapad-laptop b/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
+index 597a2f3d..bc1e712d 100644
+--- a/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
++++ b/Documentation/ABI/testing/sysfs-platform-ideapad-laptop
+@@ -25,3 +25,16 @@ Description:
+ 		Control touchpad mode.
+ 			* 1 -> Switched On
+ 			* 0 -> Switched Off
++
++What:		/sys/bus/pci/devices/<bdf>/<device>/VPC2004:00/fn_lock
++Date:		May 2018
++KernelVersion:	4.17
++Contact:	"Oleg Keri <ezhi99@gmail.com>"
++Description:
++		Control fn-lock mode.
++			* 1 -> Switched On
++			* 0 -> Switched Off
++
++		For example:
++		# echo "0" >	\
++		/sys/bus/pci/devices/0000:00:1f.0/PNP0C09:00/VPC2004:00/fn_lock
+diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+index 535199c9..2f4991fb 100644
+--- a/drivers/platform/x86/ideapad-laptop.c
++++ b/drivers/platform/x86/ideapad-laptop.c
+@@ -43,6 +43,7 @@
+ #define IDEAPAD_RFKILL_DEV_NUM	(3)
+ 
+ #define BM_CONSERVATION_BIT (5)
++#define HA_FNLOCK_BIT       (10)
+ 
+ #define CFG_BT_BIT	(16)
+ #define CFG_3G_BIT	(17)
+@@ -59,6 +60,8 @@ static const char *const ideapad_wmi_fnesc_events[] = {
+ enum {
+ 	BMCMD_CONSERVATION_ON = 3,
+ 	BMCMD_CONSERVATION_OFF = 5,
++	HACMD_FNLOCK_ON = 0xe,
++	HACMD_FNLOCK_OFF = 0xf,
+ };
+ 
+ enum {
+@@ -139,11 +142,11 @@ static int method_gbmd(acpi_handle handle, unsigned long *ret)
+ 	return result;
  }
  
- #endif
+-static int method_sbmc(acpi_handle handle, int cmd)
++static int method_int1(acpi_handle handle, char *method, int cmd)
+ {
+ 	acpi_status status;
+ 
+-	status = acpi_execute_simple_method(handle, "SBMC", cmd);
++	status = acpi_execute_simple_method(handle, method, cmd);
+ 	return ACPI_FAILURE(status) ? -1 : 0;
+ }
+ 
+@@ -487,7 +490,7 @@ static ssize_t conservation_mode_store(struct device *dev,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = method_sbmc(priv->adev->handle, state ?
++	ret = method_int1(priv->adev->handle, "SBMC", state ?
+ 					      BMCMD_CONSERVATION_ON :
+ 					      BMCMD_CONSERVATION_OFF);
+ 	if (ret < 0)
+@@ -497,11 +500,51 @@ static ssize_t conservation_mode_store(struct device *dev,
+ 
+ static DEVICE_ATTR_RW(conservation_mode);
+ 
++static ssize_t fn_lock_show(struct device *dev,
++			    struct device_attribute *attr,
++			    char *buf)
++{
++	struct ideapad_private *priv = dev_get_drvdata(dev);
++	unsigned long result;
++	int hals;
++	int fail = read_method_int(priv->adev->handle, "HALS", &hals);
++
++	if (fail)
++		return sprintf(buf, "-1\n");
++
++	result = hals;
++	return sprintf(buf, "%u\n", test_bit(HA_FNLOCK_BIT, &result));
++}
++
++static ssize_t fn_lock_store(struct device *dev,
++			     struct device_attribute *attr,
++			     const char *buf, size_t count)
++{
++	struct ideapad_private *priv = dev_get_drvdata(dev);
++	bool state;
++	int ret;
++
++	ret = kstrtobool(buf, &state);
++	if (ret)
++		return ret;
++
++	ret = method_int1(priv->adev->handle, "SALS", state ?
++			  HACMD_FNLOCK_ON :
++			  HACMD_FNLOCK_OFF);
++	if (ret < 0)
++		return -EIO;
++	return count;
++}
++
++static DEVICE_ATTR_RW(fn_lock);
++
++
+ static struct attribute *ideapad_attributes[] = {
+ 	&dev_attr_camera_power.attr,
+ 	&dev_attr_fan_mode.attr,
+ 	&dev_attr_touchpad.attr,
+ 	&dev_attr_conservation_mode.attr,
++	&dev_attr_fn_lock.attr,
+ 	NULL
+ };
+ 
+@@ -522,6 +565,9 @@ static umode_t ideapad_is_visible(struct kobject *kobj,
+ 	} else if (attr == &dev_attr_conservation_mode.attr) {
+ 		supported = acpi_has_method(priv->adev->handle, "GBMD") &&
+ 			    acpi_has_method(priv->adev->handle, "SBMC");
++	} else if (attr == &dev_attr_fn_lock.attr) {
++		supported = acpi_has_method(priv->adev->handle, "HALS") &&
++			acpi_has_method(priv->adev->handle, "SALS");
+ 	} else
+ 		supported = true;
+ 
+-- 
+2.17.0
