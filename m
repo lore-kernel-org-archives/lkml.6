@@ -1,79 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751830AbeEMJNQ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 05:13:16 -0400
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:40269 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751132AbeEMJNP (ORCPT
+        id S1751868AbeEMJOx (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 05:14:53 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:45773 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751052AbeEMJOv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 05:13:15 -0400
-Subject: Re: [PATCH 1/5] media: docs: selection: fix typos
-To: Luca Ceresoli <luca@lucaceresoli.net>, linux-media@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <1522790146-16061-1-git-send-email-luca@lucaceresoli.net>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <e96a3e14-ccdb-a18b-816b-c4023853a4cb@xs4all.nl>
-Date: Sun, 13 May 2018 11:13:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Sun, 13 May 2018 05:14:51 -0400
+X-Google-Smtp-Source: AB8JxZrXpMwY6wzR8b/Pa00GnZP1ZPQLXVL/IO0zMU34or6/q+GHesIo+citY92eqfDX/CEEKDBSBtX8npGqpXF4xsI=
 MIME-Version: 1.0
-In-Reply-To: <1522790146-16061-1-git-send-email-luca@lucaceresoli.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfCU0rxn3KS21gbMtlGn6FBoAvMP3cZVE9/H3tBvvsvYsGSNTuRBR4/9grYBQyUSTwf1kjpe4sec0Xgecp87J6tQK6VGkz5SyEEgcfmrAAEyXkMk2USvP
- jBCFpW46dX3F+h7lnUsBrBbomFxB3KJSmM3QCJ25ux/Sl+2QTOq/dFtUjfbhbI/GSTQHOXVia7QhvkUpYNB2vF972Rkfqa/43uaJya6s6aUwBXbBn5hBXXEh
- uy94fJSz8Z/h9+UmwR6zzfNwCcMk4br5voeKeZH+EDE=
+In-Reply-To: <1712698c-9539-4d62-b92f-53c937b1749b@default>
+References: <1712698c-9539-4d62-b92f-53c937b1749b@default>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Sun, 13 May 2018 17:14:50 +0800
+Message-ID: <CANRm+CxeLocYkhbw0KTCU9Ypii7NqcLMH=KwXPZxJbGDhxoiJQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] KVM: X86: Fix CR3 reserve bits
+To: Liran Alon <liran.alon@oracle.com>
+Cc: Radim Krcmar <rkrcmar@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Junaid Shahid <junaids@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4D9Ewvf011163
 
-On 04/03/2018 11:15 PM, Luca Ceresoli wrote:
+2018-05-13 17:09 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
+>
+> ----- kernellwp@gmail.com wrote:
+>
+>> 2018-05-13 16:28 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
+>> >
+>> > ----- kernellwp@gmail.com wrote:
+>> >
+>> >> 2018-05-13 15:53 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
+>> >> >
+>> >> > ----- kernellwp@gmail.com wrote:
+>> >> >
+>> >> >> From: Wanpeng Li <wanpengli@tencent.com>
+>> >> >>
+>> >> >> MSB of CR3 is a reserved bit if the PCIDE bit is not set in
+>> CR4.
+>> >> >> It should be checked when PCIDE bit is not set, however commit
+>> >> >> 'd1cd3ce900441 ("KVM: MMU: check guest CR3 reserved bits based
+>> on
+>> >> >> its physical address width")' removes the bit 63 checking
+>> >> >> unconditionally. This patch fixes it by checking bit 63 of CR3
+>> >> >> when PCIDE bit is not set in CR4.
+>> >> >>
+>> >> >> Fixes: d1cd3ce900441 (KVM: MMU: check guest CR3 reserved bits
+>> based
+>> >> on
+>> >> >> its physical address width)
+>> >> >> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>> >> >> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> >> >> Cc: Junaid Shahid <junaids@google.com>
+>> >> >> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>> >> >> ---
+>> >> >>  arch/x86/kvm/emulate.c | 4 +++-
+>> >> >>  arch/x86/kvm/x86.c     | 2 +-
+>> >> >>  2 files changed, 4 insertions(+), 2 deletions(-)
+>> >> >>
+>> >> >> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+>> >> >> index b3705ae..b21f427 100644
+>> >> >> --- a/arch/x86/kvm/emulate.c
+>> >> >> +++ b/arch/x86/kvm/emulate.c
+>> >> >> @@ -4189,7 +4189,9 @@ static int check_cr_write(struct
+>> >> >> x86_emulate_ctxt *ctxt)
+>> >> >>                               maxphyaddr = eax & 0xff;
+>> >> >>                       else
+>> >> >>                               maxphyaddr = 36;
+>> >> >> -                     rsvd = rsvd_bits(maxphyaddr, 62);
+>> >> >> +                     if (ctxt->ops->get_cr(ctxt, 4) &
+>> >> X86_CR4_PCIDE)
+>> >> >> +                             new_val &= ~CR3_PCID_INVD;
+>> >> >> +                     rsvd = rsvd_bits(maxphyaddr, 63);
+>> >> >
+>> >> > I would prefer instead to do this:
+>> >> > if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_PCIDE)
+>> >> >     rsvd &= ~CR3_PCID_INVD;
+>> >> > It makes more sense as opposed to temporary removing the
+>> >> CR3_PCID_INVD bit from new_val.
+>> >>
+>> >> It tries the same way
+>> >>
+>> https://urldefense.proofpoint.com/v2/url?u=https-3A__git.kernel.org_pub_scm_virt_kvm_kvm.git_commit_-3Fid-3Dc19986fea873f3c745122bf79013a872a190f212&d=DwIFaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=Jk6Q8nNzkQ6LJ6g42qARkg6ryIDGQr-yKXPNGZbpTx0&m=r52WDgKBorUHwe_B_5Nw2Le_F_E0ne8lqqWW6n-3bSg&s=ufTcXvhhAMkY3XP6gAx-HiKCT8ynPWo2fs2z9DqCzM4&e=
+>> >> pointed out.
+>> >>
+>> >> Regards,
+>> >> Wanpeng Li
+>> >
+>> > Yes but there it makes sense as new CR3 value should not have bit 63
+>> set in vcpu->arch.cr3.
+>>
+>> When X86_CR4_PCIDE == 0 and CR3 63 bit is set, a #GP is missing in
+>> your suggestion.
+>>
+>> Regards,
+>> Wanpeng Li
+>
+> Why?
+>
+> I suggest the following change:
+> - rsvd = rsvd_bits(maxphyaddr, 62);
+> + rsvd = rsvd_bits(maxphyaddr, 63);
+> + if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_PCIDE)
+> +     rsvd &= ~CR3_PCID_INVD;
+>
+> In this case, if PCIDE=0 then bit 63 is set in rsvd and therefore check_cr_write() will emulate_gp() as needed.
 
-Please add a commit message here. Yes, it can be as simple as 'Fixed typos in the
-selection documentation.'
+Ok, I misread your first reply, will send out v2.
 
 Regards,
-
-	Hans
-
-> Cc: Hans Verkuil <hverkuil@xs4all.nl>
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> ---
->  Documentation/media/uapi/v4l/selection-api-004.rst | 2 +-
->  Documentation/media/uapi/v4l/selection.svg         | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/media/uapi/v4l/selection-api-004.rst b/Documentation/media/uapi/v4l/selection-api-004.rst
-> index d782cd5b2117..0a4ddc2d71db 100644
-> --- a/Documentation/media/uapi/v4l/selection-api-004.rst
-> +++ b/Documentation/media/uapi/v4l/selection-api-004.rst
-> @@ -41,7 +41,7 @@ The driver may further adjust the requested size and/or position
->  according to hardware limitations.
->  
->  Each capture device has a default source rectangle, given by the
-> -``V4L2_SEL_TGT_CROP_DEFAULT`` target. This rectangle shall over what the
-> +``V4L2_SEL_TGT_CROP_DEFAULT`` target. This rectangle shall cover what the
->  driver writer considers the complete picture. Drivers shall set the
->  active crop rectangle to the default when the driver is first loaded,
->  but not later.
-> diff --git a/Documentation/media/uapi/v4l/selection.svg b/Documentation/media/uapi/v4l/selection.svg
-> index a93e3b59786d..911062bd2844 100644
-> --- a/Documentation/media/uapi/v4l/selection.svg
-> +++ b/Documentation/media/uapi/v4l/selection.svg
-> @@ -1128,11 +1128,11 @@
->     </text>
->    </g>
->    <text transform="matrix(.96106 0 0 1.0405 48.571 195.53)" x="2438.062" y="1368.429" enable-background="new" font-size="50" style="line-height:125%">
-> -   <tspan x="2438.062" y="1368.429">COMPOSE_BONDS</tspan>
-> +   <tspan x="2438.062" y="1368.429">COMPOSE_BOUNDS</tspan>
->    </text>
->    <g font-size="40">
->     <text transform="translate(48.571 195.53)" x="8.082" y="1438.896" enable-background="new" style="line-height:125%">
-> -    <tspan x="8.082" y="1438.896" font-size="50">CROP_BONDS</tspan>
-> +    <tspan x="8.082" y="1438.896" font-size="50">CROP_BOUNDS</tspan>
->     </text>
->     <text transform="translate(48.571 195.53)" x="1455.443" y="-26.808" enable-background="new" style="line-height:125%">
->      <tspan x="1455.443" y="-26.808" font-size="50">overscan area</tspan>
-> 
+Wanpeng Li
