@@ -1,23 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751664AbeEMBmH (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 21:42:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51324 "EHLO
+        id S1751868AbeEMBsy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 21:48:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51730 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751110AbeEMBmG (ORCPT
+        with ESMTP id S1751227AbeEMBsx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 21:42:06 -0400
-To: LKML <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
+        Sat, 12 May 2018 21:48:53 -0400
+To: LKML <linux-kernel@vger.kernel.org>, linux-hexagon@vger.kernel.org,
+        Richard Kuo <rkuo@codeaurora.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] ASoC: omap: add sdma-pcm.c MODULE_LICENSE
-Message-ID: <2bf2991a-da55-00a4-bc39-a0ee61bad4d0@infradead.org>
-Date: Sat, 12 May 2018 18:41:51 -0700
+Subject: [PATCH] hexagon: fix printk format warning in setup.c
+Message-ID: <adce8db5-4b01-dc10-7fbb-6a64e0787eb5@infradead.org>
+Date: Sat, 12 May 2018 18:48:49 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
@@ -30,34 +26,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Randy Dunlap <rdunlap@infradead.org>
 
-ASoC: omap: add sdma-pcm.c MODULE_LICENSE
+Fix printk format warning in hexagon/kernel/setup.c:
 
-Fixes this build warning:
+../arch/hexagon/kernel/setup.c: In function 'setup_arch':
+../arch/hexagon/kernel/setup.c:69:2: warning: format '%x' expects argument of type 'unsigned int', but argument 2 has type 'long unsigned int' [-Wformat]
 
-WARNING: modpost: missing MODULE_LICENSE() in sound/soc/omap/snd-soc-sdma.o
+where:
+extern unsigned long	__phys_offset;
+#define PHYS_OFFSET	__phys_offset
 
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Jarkko Nikula <jarkko.nikula@bitmer.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
+Cc: Richard Kuo <rkuo@codeaurora.org>
+Cc: linux-hexagon@vger.kernel.org
 ---
- sound/soc/omap/sdma-pcm.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/hexagon/kernel/setup.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20180510.orig/sound/soc/omap/sdma-pcm.c
-+++ linux-next-20180510/sound/soc/omap/sdma-pcm.c
-@@ -9,6 +9,7 @@
- #include <sound/pcm_params.h>
- #include <sound/soc.h>
- #include <sound/dmaengine_pcm.h>
-+#include <linux/module.h>
- #include <linux/omap-dma.h>
+--- linux-next-20180510.orig/arch/hexagon/kernel/setup.c
++++ linux-next-20180510/arch/hexagon/kernel/setup.c
+@@ -66,7 +66,7 @@ void __init setup_arch(char **cmdline_p)
+ 	 */
+ 	__vmsetvec(_K_VM_event_vector);
  
- #include "sdma-pcm.h"
-@@ -66,3 +67,5 @@ int sdma_pcm_platform_register(struct de
- 	return devm_snd_dmaengine_pcm_register(dev, config, flags);
- }
- EXPORT_SYMBOL_GPL(sdma_pcm_platform_register);
-+
-+MODULE_LICENSE("GPL v2");
+-	printk(KERN_INFO "PHYS_OFFSET=0x%08x\n", PHYS_OFFSET);
++	printk(KERN_INFO "PHYS_OFFSET=0x%08lx\n", PHYS_OFFSET);
+ 
+ 	/*
+ 	 * Simulator has a few differences from the hardware.
