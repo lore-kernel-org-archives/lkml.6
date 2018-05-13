@@ -1,62 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751747AbeEMBAy (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 21:00:54 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57766 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751227AbeEMBAw (ORCPT
+        id S1751908AbeEMBCS (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 21:02:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47426 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750902AbeEMBCR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 21:00:52 -0400
-Date: Sun, 13 May 2018 11:00:50 +1000
-To: linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Christoph Hellwig <hch@lst.de>
-From: Finn Thain <fthain@telegraphics.com.au>
-Subject: [RFC] m68k: Set up dma mask for platform devices
+        Sat, 12 May 2018 21:02:17 -0400
+To: LKML <linux-kernel@vger.kernel.org>, Tony Luck <tony.luck@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Edac Mailing List <linux-edac@vger.kernel.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] edac: fix skx_edac build error when ACPI_NFIT=m
+Message-ID: <2a09f7f3-c129-d4c4-76cc-223550601bdb@infradead.org>
+Date: Sat, 12 May 2018 18:02:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-Id: <S1751747AbeEMBAy/20180513010055Z+396@vger.kernel.org>
 
-This avoids a WARNING splat when loading the macsonic or macmace driver.
-Please see commit 205e1b7f51e4 ("dma-mapping: warn when there is no
-coherent_dma_mask").
+From: Randy Dunlap <rdunlap@infradead.org>
 
-This implementation of arch_setup_pdev_archdata() differs from the one
-in arch/powerpc in that this one avoids clobbering an existing dma mask.
-For example, this approach preserves the mask set by the initializer for
-struct platform_device mcf_fec0.
+Prevent build error when CONFIG_ACPI_NFIT=m and CONFIG_EDAC_SKX=y
+by limiting EDAC_SKX based on how ACPI_NFIT is set.
 
-Note that either approach would make that initializer redundant and
-commit f61e64310b75 ("m68k: set dma and coherent masks for platform
-FEC ethernets") could be reverted.
+Fixes this build error:
+drivers/edac/skx_edac.o: In function `get_nvdimm_info':
+../drivers/edac/skx_edac.c:399: undefined reference to `nfit_get_smbios_id'
+
+Fixes: 58ca9ac1463d ("EDAC, skx_edac: Detect non-volatile DIMMs")
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: stable@vger.kernel.org
 ---
- arch/m68k/kernel/dma.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/edac/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/m68k/kernel/dma.c b/arch/m68k/kernel/dma.c
-index c01b9b8f97bf..463572c4943f 100644
---- a/arch/m68k/kernel/dma.c
-+++ b/arch/m68k/kernel/dma.c
-@@ -9,6 +9,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/device.h>
- #include <linux/kernel.h>
-+#include <linux/platform_device.h>
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
-@@ -165,3 +166,12 @@ const struct dma_map_ops m68k_dma_ops = {
- 	.sync_sg_for_device	= m68k_dma_sync_sg_for_device,
- };
- EXPORT_SYMBOL(m68k_dma_ops);
-+
-+void arch_setup_pdev_archdata(struct platform_device *pdev)
-+{
-+	if (pdev->dev.coherent_dma_mask == DMA_MASK_NONE &&
-+	    pdev->dev.dma_mask == NULL) {
-+		pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-+		pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
-+	}
-+}
--- 
-2.16.1
+--- lnx-417-rc4.orig/drivers/edac/Kconfig
++++ lnx-417-rc4/drivers/edac/Kconfig
+@@ -232,6 +232,7 @@ config EDAC_SBRIDGE
+ config EDAC_SKX
+ 	tristate "Intel Skylake server Integrated MC"
+ 	depends on PCI && X86_64 && X86_MCE_INTEL && PCI_MMCONFIG
++	depends on ACPI_NFIT || !ACPI_NFIT
+ 	select DMI
+ 	help
+ 	  Support for error detection and correction the Intel
