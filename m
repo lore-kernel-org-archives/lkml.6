@@ -1,178 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751981AbeEMUaP (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 16:30:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52192 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751449AbeEMUaN (ORCPT
+        id S1752013AbeEMUdh (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 16:33:37 -0400
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:45861 "EHLO
+        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbeEMUdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 16:30:13 -0400
-Subject: Re: [PATCH 1/2] bcachefs: On disk data structures
-To: Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-bcache@vger.kernel.org
-Cc: Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>, hare@suse.com
-References: <20180508221800.2642-1-kent.overstreet@gmail.com>
- <20180508221800.2642-2-kent.overstreet@gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <dea41935-a52c-e720-0ca3-eef4367d3641@infradead.org>
-Date: Sun, 13 May 2018 13:30:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sun, 13 May 2018 16:33:36 -0400
+X-Google-Smtp-Source: AB8JxZq6qu83JAi0KHzk0O/eRG+E98Yul7GNAn2zhC8dnc3X9Da2ZS9Ci565BKAwRWQalxf3Z8XF2IzjJ30IAjIJmkI=
 MIME-Version: 1.0
-In-Reply-To: <20180508221800.2642-2-kent.overstreet@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <alpine.DEB.2.21.1805132007200.1582@nanos.tec.linutronix.de>
+References: <20180503102810.59657-1-andriy.shevchenko@linux.intel.com> <alpine.DEB.2.21.1805132007200.1582@nanos.tec.linutronix.de>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 13 May 2018 23:33:35 +0300
+Message-ID: <CAHp75Vc7uFDbHcf+mbaBxu2adiDD9CY7Z-fhn5E_3dZDZiTYoA@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/io: Define readq()/writeq() to use 64-bit type
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+On Sun, May 13, 2018 at 9:09 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Thu, 3 May 2018, Andy Shevchenko wrote:
+>>  #ifdef CONFIG_X86_64
+>>
+>> -build_mmio_read(readq, "q", unsigned long, "=r", :"memory")
+>> -build_mmio_read(__readq, "q", unsigned long, "=r", )
+>> -build_mmio_write(writeq, "q", unsigned long, "r", :"memory")
+>> -build_mmio_write(__writeq, "q", unsigned long, "r", )
+>> +build_mmio_read(readq, "q", unsigned long long, "=r", :"memory")
+>> +build_mmio_read(__readq, "q", unsigned long long, "=r", )
+>> +build_mmio_write(writeq, "q", unsigned long long, "r", :"memory")
+>> +build_mmio_write(__writeq, "q", unsigned long long, "r", )
+>
+> What's wrong with u64 which we use for expressing io access to a 64bit wide
+> resource?
 
-On 05/08/2018 03:17 PM, Kent Overstreet wrote:
-> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
-> ---
->  fs/bcachefs/bcachefs_format.h | 1448 +++++++++++++++++++++++++++++++++
->  1 file changed, 1448 insertions(+)
->  create mode 100644 fs/bcachefs/bcachefs_format.h
-> 
-> diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
-> new file mode 100644
-> index 0000000000..0961585c7e
-> --- /dev/null
-> +++ b/fs/bcachefs/bcachefs_format.h
-> @@ -0,0 +1,1448 @@
-> +#ifndef _BCACHEFS_FORMAT_H
-> +#define _BCACHEFS_FORMAT_H
-> +
-> +/*
-> + * bcachefs on disk data structures
-> + *
-> + * OVERVIEW:
-> + *
-> + * There are three main types of on disk data structures in bcachefs (this is
-> + * reduced from 5 in bcache)
-> + *
-> + *  - superblock
-> + *  - journal
-> + *  - btree
-> + *
-> + * The btree is the primary structure, most metadata exists as keys in the
+Same answer as per v1, i.e. I would like to be consistent with other
+types in this file (unsigned int for readl() and similar for the
+rest).
+If we would need them, we might change at once for all accessors.
 
-s/,/;/
-
-> + * various btrees. There are only a small number of btrees, they're not
-> + * sharded - we have one btree for extents, another for inodes, et cetera.
-
-   or shared?
-
-> + *
-> + * SUPERBLOCK:
-> + *
-> + * The superblock contains the location of the journal, the list of devices in
-> + * the filesystem, and in general any metadata we need in order to decide
-> + * whether we can start a filesystem or prior to reading the journal/btree
-> + * roots.
-
-
-[snip]
-
-> +struct bkey_format {
-> +	__u8		key_u64s;
-> +	__u8		nr_fields;
-> +	/* One unused slot for now: */
-> +	__u8		bits_per_field[6];
-> +	__le64		field_offset[6];
-> +};
-> +
-> +/* Btree keys - all units are in sectors */
-
-Are sectors fixed size?  I.e., can 2 different physical storage devices have
-different sized sectors?
-or is this just the "traditional" 512-byte sector?
-
-
-[snip]
-
-
-
-> +/* Extents */
-> +
-> +/*
-> + * In extent bkeys, the value is a list of pointers (bch_extent_ptr), optionally
-> + * preceded by checksum/compression information (bch_extent_crc32 or
-> + * bch_extent_crc64).
-> + *
-> + * One major determining factor in the format of extents is how we handle and
-> + * represent extents that have been partially overwritten and thus trimmed:
-> + *
-> + * If an extent is not checksummed or compressed, when the extent is trimmed we
-> + * don't have to remember the extent we originally allocated and wrote: we can
-> + * merely adjust ptr->offset to point to the start of the start of the data that
-
-                                         to the start of the start  [intentional?]
-
-> + * is currently live. The size field in struct bkey records the current (live)
-> + * size of the extent, and is also used to mean "size of region on disk that we
-> + * point to" in this case.
-
-
-[snip]
-
-
-> +/*
-> + * @offset	- sector where this sb was written
-> + * @version	- on disk format version
-> + * @magic	- identifies as a bcachefs superblock (BCACHE_MAGIC)
-> + * @seq		- incremented each time superblock is written
-> + * @uuid	- used for generating various magic numbers and identifying
-> + *                member devices, never changes
-> + * @user_uuid	- user visible UUID, may be changed
-> + * @label	- filesystem label
-> + * @seq		- identifies most recent superblock, incremented each time
-> + *		  superblock is written
-> + * @features	- enabled incompatible features
-> + */
-> +struct bch_sb {
-> +	struct bch_csum		csum;
-> +	__le64			version;
-> +	uuid_le			magic;
-> +	uuid_le			uuid;
-> +	uuid_le			user_uuid;
-> +	__u8			label[BCH_SB_LABEL_SIZE];
-> +	__le64			offset;
-> +	__le64			seq;
-> +
-> +	__le16			block_size;
-> +	__u8			dev_idx;
-> +	__u8			nr_devices;
-> +	__le32			u64s;
-> +
-> +	__le64			time_base_lo;
-> +	__le32			time_base_hi;
-> +	__le32			time_precision;
-> +
-> +	__le64			flags[8];
-> +	__le64			features[2];
-> +	__le64			compat[2];
-> +
-> +	struct bch_sb_layout	layout;
-> +
-> +	union {
-> +		struct bch_sb_field start[0];
-> +		__le64		_data[0];
-> +	};
-> +} __attribute__((packed, aligned(8)));
-
-
-I know that you have already answered a few comments about endianness,
-so maybe you answered this and I missed it.
-
-Can a bcachefs fs be shared, a la NFS?  I.e., can multiple different-endian
-clients be accessing the same bcachefs?
-
-thanks,
 -- 
-~Randy
+With Best Regards,
+Andy Shevchenko
