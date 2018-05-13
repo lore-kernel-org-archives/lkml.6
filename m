@@ -1,64 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751961AbeEMCUE (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 22:20:04 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:23340 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751634AbeEMCUD (ORCPT
+        id S1751998AbeEMCWI (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 22:22:08 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39740 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751654AbeEMCWH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 22:20:03 -0400
-Subject: Re: general protection fault in kernfs_kill_sb (2)
-To: syzbot <syzbot+481ad819c717f6b78df9@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Al Viro <viro@ZenIV.linux.org.uk>
-References: <0000000000008fa9d3056c053291@google.com>
-Cc: gregkh@linuxfoundation.org, tj@kernel.org
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <14892403-d680-dc5d-1927-bc4a279514fb@I-love.SAKURA.ne.jp>
-Date: Sun, 13 May 2018 11:19:46 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sat, 12 May 2018 22:22:07 -0400
+Date: Sun, 13 May 2018 11:22:02 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Jorge Ramirez-Ortiz <jramirez@baylibre.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [RFC] regmap: allow volatile register writes with cached only
+ read maps
+Message-ID: <20180513022202.GA17611@sirena.org.uk>
+References: <1525817169-29233-1-git-send-email-jramirez@baylibre.com>
+ <20180509083919.GU13402@sirena.org.uk>
+ <65607fde-d0e9-0f08-3042-f6a58b760896@baylibre.com>
+ <20180511020049.GD949@sirena.org.uk>
+ <7cc158bb-3471-4d8e-d066-2e7f535812eb@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <0000000000008fa9d3056c053291@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+Content-Disposition: inline
+In-Reply-To: <7cc158bb-3471-4d8e-d066-2e7f535812eb@baylibre.com>
+X-Cookie: Boy!  Eucalyptus!
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/05/13 2:01, syzbot wrote:
-> Call Trace:
->  __list_del_entry include/linux/list.h:117 [inline]
->  list_del include/linux/list.h:125 [inline]
->  kernfs_kill_sb+0xa0/0x350 fs/kernfs/mount.c:361
->  sysfs_kill_sb+0x22/0x40 fs/sysfs/mount.c:50
->  deactivate_locked_super+0x97/0x100 fs/super.c:316
->  kernfs_mount_ns+0x753/0x8e0 fs/kernfs/mount.c:335
->  sysfs_mount+0xdf/0x200 fs/sysfs/mount.c:36
->  mount_fs+0xae/0x328 fs/super.c:1267
->  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
->  vfs_kern_mount fs/namespace.c:1027 [inline]
->  do_new_mount fs/namespace.c:2518 [inline]
->  do_mount+0x564/0x3070 fs/namespace.c:2848
->  ksys_mount+0x12d/0x140 fs/namespace.c:3064
->  __do_sys_mount fs/namespace.c:3078 [inline]
->  __se_sys_mount fs/namespace.c:3075 [inline]
->  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x4426a9
-> RSP: 002b:00007ffc558bd1b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004426a9
-> RDX: 00000000200000c0 RSI: 0000000020000080 RDI: 0000000020000040
-> RBP: 00007ffc558bda60 R08: 0000000000000000 R09: 0000000300000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-> R13: 0000000000000004 R14: 0000000000001380 R15: 00007ffc558bd2f8
-> Code: c5 0f 84 cc 00 00 00 48 b8 00 02 00 00 00 00 ad de 49 39 c4 0f 84 a5 00 00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 75 5f 49 8b 14 24 48 39 da 0f 85 ba 00 00 00 48 b8
-> RIP: __list_del_entry_valid+0x84/0xf3 lib/list_debug.c:51 RSP: ffff8801aca6f860
-> ---[ end trace d148f307a34e229f ]---
 
-This is what I reported at
-https://groups.google.com/d/msg/syzkaller-bugs/ISOJlV2I2QM/qHslGMi3AwAJ .
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-We are currently waiting for comments from Al Viro.
+On Fri, May 11, 2018 at 12:29:42PM +0200, Jorge Ramirez-Ortiz wrote:
+> On 05/11/2018 04:00 AM, Mark Brown wrote:
+
+> > We don't currently suppress writes except when regmap_update_bits()
+> > notices that the modification was a noop.  You probably want to be using
+> > regmap_write_bits() here instead of regmap_update_bits(), that will
+> > always do the write.
+
+> but isnt that interface at a different level?
+
+It's at the level where we suppress writes - the write suppression isn't
+a feature of the caching, it's something that regmap_update_bits() does
+if it notices that it won't change anything.  It'll happen even if
+there's no cache at all.
+
+> I am not sure if you are asking me to review my patch or just discarding the
+> RFC and highlighting that I have a configuration problem.
+
+I don't understand your patch as-is.
+
+> In my use case and what triggered this RFC (config below), an 'amixer set'
+> might never reach the driver's .reg_write interface even though the register
+> is configured as volatile (to me this is not consistent since volatile_reg
+> is being silently ignored).
+
+I'm not seeing any inconsistency there.  Volatility means the register
+can't be cached as it might change underneath us, it doesn't have any
+impact on writes and it's happening at a lower level.  Like I say if you
+absolutely need a write to happen you should be explicitly doing a
+write, though if you need a write to happen for a noop control change it
+sounds like there's something weird with that control that's possibly a
+problem anyway.
+
+> So I dont see where/how your recommendation fits; maybe you could clarify a
+> bit more please?
+
+As I've been saying if you explicitly need a write to happen don't use
+regmap_update_bits(), do something that guarantees you'll get a write
+like regmap_write() or regmap_write_bits().
+
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlr3oUcACgkQJNaLcl1U
+h9BqWQf+J/FO1A4fGK5nlXvar2tkRXv3Z1XbKO9W6XctjGQv1dwlaROBKIBSOm7V
+dhIutCcd9m7lONj5Ibqe1Q8BkM3M8L8PkyQxT76d/5nZup6tSVgXD+/CPzVhHF+j
+EQ7only3SkEUb/vzLQCDhIAghf2+Qk/8BEEQT3JAu5JPXCis8prPRKeD6yt4Sklo
+vqKS9oHXNJ2c3M8dDeEQajaOPjxj8rCO5akbe2vFyHxIuKMGRSLOv9qJxyMlqRVE
+fVl4T3aiFNkBA2umWBPyp4v+iB3SFzKezpJRhfGbjr5Z2QzA9zWPy5vew8AyltgJ
+Ou34KtTScwIb09fAwZzUuBBVQbsFZQ==
+=Q90z
+-----END PGP SIGNATURE-----
+
+--PNTmBPCT7hxwcZjr--
