@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751882AbeEMT1z (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 15:27:55 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56929 "EHLO
+        id S1751982AbeEMT22 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 15:28:28 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36577 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751263AbeEMT1y (ORCPT
+        with ESMTP id S1751901AbeEMT21 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 15:27:54 -0400
-Date: Sun, 13 May 2018 12:27:45 -0700
+        Sun, 13 May 2018 15:28:27 -0400
+Date: Sun, 13 May 2018 12:28:20 -0700
 From: tip-bot for Joe Perches <tipbot@zytor.com>
-Message-ID: <tip-1de392f5d5e803663abbd8ed084233f154152bcd@git.kernel.org>
-Cc: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de, joe@perches.com,
-        linux-kernel@vger.kernel.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de, joe@perches.com,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <e7b709a2b040af7faa81b0aa2c3a125aed628a82.1525964383.git.joe@perches.com>
-References: <e7b709a2b040af7faa81b0aa2c3a125aed628a82.1525964383.git.joe@perches.com>
+Message-ID: <tip-e6d8c84a58380030457759ad6085f3792a76b2ce@git.kernel.org>
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        joe@perches.com, mingo@kernel.org
+Reply-To: tglx@linutronix.de, joe@perches.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org
+In-Reply-To: <ae1fa81a0d1fad87571967b91ea90f70f486e853.1525964384.git.joe@perches.com>
+References: <ae1fa81a0d1fad87571967b91ea90f70f486e853.1525964384.git.joe@perches.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86: Remove pr_fmt duplicate logging prefixes
-Git-Commit-ID: 1de392f5d5e803663abbd8ed084233f154152bcd
+Subject: [tip:x86/cleanups] x86/mtrr: Rename main.c to mtrr.c and remove
+ duplicate prefixes
+Git-Commit-ID: e6d8c84a58380030457759ad6085f3792a76b2ce
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -31,254 +32,166 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1de392f5d5e803663abbd8ed084233f154152bcd
-Gitweb:     https://git.kernel.org/tip/1de392f5d5e803663abbd8ed084233f154152bcd
+Commit-ID:  e6d8c84a58380030457759ad6085f3792a76b2ce
+Gitweb:     https://git.kernel.org/tip/e6d8c84a58380030457759ad6085f3792a76b2ce
 Author:     Joe Perches <joe@perches.com>
-AuthorDate: Thu, 10 May 2018 08:45:30 -0700
+AuthorDate: Thu, 10 May 2018 08:45:31 -0700
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sun, 13 May 2018 21:25:18 +0200
 
-x86: Remove pr_fmt duplicate logging prefixes
+x86/mtrr: Rename main.c to mtrr.c and remove duplicate prefixes
 
-Converting pr_fmt from a default simple #define to use KBUILD_MODNAME
-added some duplicate prefixes.
+Kbuild uses the first file as the name for KBUILD_MODNAME.
+mtrr uses main.c as its first file, so rename that file to mtrr.c
+and fixup the Makefile.
 
-Remove the duplicate prefixes.
+Remove the now duplicate "mtrr: " prefixes from the logging calls.
 
 Signed-off-by: Joe Perches <joe@perches.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/e7b709a2b040af7faa81b0aa2c3a125aed628a82.1525964383.git.joe@perches.com
+Link: https://lkml.kernel.org/r/ae1fa81a0d1fad87571967b91ea90f70f486e853.1525964384.git.joe@perches.com
 
 ---
- arch/x86/events/amd/ibs.c |  2 +-
- arch/x86/kernel/e820.c    | 32 +++++++++++++++++---------------
- arch/x86/kernel/hpet.c    |  5 ++---
- arch/x86/kernel/uprobes.c |  4 ++--
- arch/x86/mm/numa.c        | 22 +++++++++++-----------
- 5 files changed, 33 insertions(+), 32 deletions(-)
+ arch/x86/kernel/cpu/mtrr/Makefile           |  2 +-
+ arch/x86/kernel/cpu/mtrr/{main.c => mtrr.c} | 33 ++++++++++++++---------------
+ 2 files changed, 17 insertions(+), 18 deletions(-)
 
-diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-index 786fd875de92..4b98101209a1 100644
---- a/arch/x86/events/amd/ibs.c
-+++ b/arch/x86/events/amd/ibs.c
-@@ -889,7 +889,7 @@ static void force_ibs_eilvt_setup(void)
- 	if (!ibs_eilvt_valid())
- 		goto out;
+diff --git a/arch/x86/kernel/cpu/mtrr/Makefile b/arch/x86/kernel/cpu/mtrr/Makefile
+index ad9e5ed81181..2ad9107ee980 100644
+--- a/arch/x86/kernel/cpu/mtrr/Makefile
++++ b/arch/x86/kernel/cpu/mtrr/Makefile
+@@ -1,3 +1,3 @@
+-obj-y		:= main.o if.o generic.o cleanup.o
++obj-y		:= mtrr.o if.o generic.o cleanup.o
+ obj-$(CONFIG_X86_32) += amd.o cyrix.o centaur.o
  
--	pr_info("IBS: LVT offset %d assigned\n", offset);
-+	pr_info("LVT offset %d assigned\n", offset);
+diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/mtrr.c
+similarity index 96%
+rename from arch/x86/kernel/cpu/mtrr/main.c
+rename to arch/x86/kernel/cpu/mtrr/mtrr.c
+index 7468de429087..0c4f4fba9ec1 100644
+--- a/arch/x86/kernel/cpu/mtrr/main.c
++++ b/arch/x86/kernel/cpu/mtrr/mtrr.c
+@@ -100,7 +100,7 @@ static int have_wrcomb(void)
+ 		if (dev->vendor == PCI_VENDOR_ID_SERVERWORKS &&
+ 		    dev->device == PCI_DEVICE_ID_SERVERWORKS_LE &&
+ 		    dev->revision <= 5) {
+-			pr_info("mtrr: Serverworks LE rev < 6 detected. Write-combining disabled.\n");
++			pr_info("Serverworks LE rev < 6 detected. Write-combining disabled.\n");
+ 			pci_dev_put(dev);
+ 			return 0;
+ 		}
+@@ -110,7 +110,7 @@ static int have_wrcomb(void)
+ 		 */
+ 		if (dev->vendor == PCI_VENDOR_ID_INTEL &&
+ 		    dev->device == PCI_DEVICE_ID_INTEL_82451NX) {
+-			pr_info("mtrr: Intel 450NX MMC detected. Write-combining disabled.\n");
++			pr_info("Intel 450NX MMC detected. Write-combining disabled.\n");
+ 			pci_dev_put(dev);
+ 			return 0;
+ 		}
+@@ -312,24 +312,24 @@ int mtrr_add_page(unsigned long base, unsigned long size,
+ 		return error;
  
- 	return;
- out:
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index 6a2cb1442e05..d1f25c831447 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -155,7 +155,8 @@ static void __init __e820__range_add(struct e820_table *table, u64 start, u64 si
- 	int x = table->nr_entries;
- 
- 	if (x >= ARRAY_SIZE(table->entries)) {
--		pr_err("e820: too many entries; ignoring [mem %#010llx-%#010llx]\n", start, start + size - 1);
-+		pr_err("too many entries; ignoring [mem %#010llx-%#010llx]\n",
-+		       start, start + size - 1);
- 		return;
- 	}
- 
-@@ -190,9 +191,10 @@ void __init e820__print_table(char *who)
- 	int i;
- 
- 	for (i = 0; i < e820_table->nr_entries; i++) {
--		pr_info("%s: [mem %#018Lx-%#018Lx] ", who,
--		       e820_table->entries[i].addr,
--		       e820_table->entries[i].addr + e820_table->entries[i].size - 1);
-+		pr_info("%s: [mem %#018Lx-%#018Lx] ",
-+			who,
-+			e820_table->entries[i].addr,
-+			e820_table->entries[i].addr + e820_table->entries[i].size - 1);
- 
- 		e820_print_type(e820_table->entries[i].type);
- 		pr_cont("\n");
-@@ -574,7 +576,7 @@ void __init e820__update_table_print(void)
- 	if (e820__update_table(e820_table))
- 		return;
- 
--	pr_info("e820: modified physical RAM map:\n");
-+	pr_info("modified physical RAM map:\n");
- 	e820__print_table("modified");
- }
- 
-@@ -636,9 +638,8 @@ __init void e820__setup_pci_gap(void)
- 	if (!found) {
- #ifdef CONFIG_X86_64
- 		gapstart = (max_pfn << PAGE_SHIFT) + 1024*1024;
--		pr_err(
--			"e820: Cannot find an available gap in the 32-bit address range\n"
--			"e820: PCI devices with unassigned 32-bit BARs may not work!\n");
-+		pr_err("Cannot find an available gap in the 32-bit address range\n");
-+		pr_err("PCI devices with unassigned 32-bit BARs may not work!\n");
- #else
- 		gapstart = 0x10000000;
- #endif
-@@ -649,7 +650,8 @@ __init void e820__setup_pci_gap(void)
- 	 */
- 	pci_mem_start = gapstart;
- 
--	pr_info("e820: [mem %#010lx-%#010lx] available for PCI devices\n", gapstart, gapstart + gapsize - 1);
-+	pr_info("[mem %#010lx-%#010lx] available for PCI devices\n",
-+		gapstart, gapstart + gapsize - 1);
- }
- 
- /*
-@@ -711,7 +713,7 @@ void __init e820__memory_setup_extended(u64 phys_addr, u32 data_len)
- 	memcpy(e820_table_firmware, e820_table, sizeof(*e820_table_firmware));
- 
- 	early_memunmap(sdata, data_len);
--	pr_info("e820: extended physical RAM map:\n");
-+	pr_info("extended physical RAM map:\n");
- 	e820__print_table("extended");
- }
- 
-@@ -780,7 +782,7 @@ u64 __init e820__memblock_alloc_reserved(u64 size, u64 align)
- 	addr = __memblock_alloc_base(size, align, MEMBLOCK_ALLOC_ACCESSIBLE);
- 	if (addr) {
- 		e820__range_update_kexec(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
--		pr_info("e820: update e820_table_kexec for e820__memblock_alloc_reserved()\n");
-+		pr_info("update e820_table_kexec for e820__memblock_alloc_reserved()\n");
- 		e820__update_table_kexec();
- 	}
- 
-@@ -830,8 +832,8 @@ static unsigned long __init e820_end_pfn(unsigned long limit_pfn, enum e820_type
- 	if (last_pfn > max_arch_pfn)
- 		last_pfn = max_arch_pfn;
- 
--	pr_info("e820: last_pfn = %#lx max_arch_pfn = %#lx\n",
--			 last_pfn, max_arch_pfn);
-+	pr_info("last_pfn = %#lx max_arch_pfn = %#lx\n",
-+		last_pfn, max_arch_pfn);
- 	return last_pfn;
- }
- 
-@@ -1005,7 +1007,7 @@ void __init e820__finish_early_params(void)
- 		if (e820__update_table(e820_table) < 0)
- 			early_panic("Invalid user supplied memory map");
- 
--		pr_info("e820: user-defined physical RAM map:\n");
-+		pr_info("user-defined physical RAM map:\n");
- 		e820__print_table("user");
- 	}
- }
-@@ -1238,7 +1240,7 @@ void __init e820__memory_setup(void)
- 	memcpy(e820_table_kexec, e820_table, sizeof(*e820_table_kexec));
- 	memcpy(e820_table_firmware, e820_table, sizeof(*e820_table_firmware));
- 
--	pr_info("e820: BIOS-provided physical RAM map:\n");
-+	pr_info("BIOS-provided physical RAM map:\n");
- 	e820__print_table(who);
- }
- 
-diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
-index 8ce4212e2b8d..b6be34ee88e9 100644
---- a/arch/x86/kernel/hpet.c
-+++ b/arch/x86/kernel/hpet.c
-@@ -975,8 +975,7 @@ int __init hpet_enable(void)
- 	cfg &= ~(HPET_CFG_ENABLE | HPET_CFG_LEGACY);
- 	hpet_writel(cfg, HPET_CFG);
- 	if (cfg)
--		pr_warn("HPET: Unrecognized bits %#x set in global cfg\n",
--			cfg);
-+		pr_warn("Unrecognized bits %#x set in global cfg\n", cfg);
- 
- 	for (i = 0; i <= last; ++i) {
- 		cfg = hpet_readl(HPET_Tn_CFG(i));
-@@ -988,7 +987,7 @@ int __init hpet_enable(void)
- 			 | HPET_TN_64BIT_CAP | HPET_TN_32BIT | HPET_TN_ROUTE
- 			 | HPET_TN_FSB | HPET_TN_FSB_CAP);
- 		if (cfg)
--			pr_warn("HPET: Unrecognized bits %#x set in cfg#%u\n",
-+			pr_warn("Unrecognized bits %#x set in cfg#%u\n",
- 				cfg, i);
- 	}
- 	hpet_print_config();
-diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
-index 85c7ef23d99f..d1c468741915 100644
---- a/arch/x86/kernel/uprobes.c
-+++ b/arch/x86/kernel/uprobes.c
-@@ -1079,8 +1079,8 @@ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr, struct pt_regs
- 		return orig_ret_vaddr;
- 
- 	if (nleft != rasize) {
--		pr_err("uprobe: return address clobbered: pid=%d, %%sp=%#lx, "
--			"%%ip=%#lx\n", current->pid, regs->sp, regs->ip);
-+		pr_err("return address clobbered: pid=%d, %%sp=%#lx, %%ip=%#lx\n",
-+		       current->pid, regs->sp, regs->ip);
- 
- 		force_sig_info(SIGSEGV, SEND_SIG_FORCED, current);
- 	}
-diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-index 25504d5aa816..fa150855647c 100644
---- a/arch/x86/mm/numa.c
-+++ b/arch/x86/mm/numa.c
-@@ -136,13 +136,13 @@ static int __init numa_add_memblk_to(int nid, u64 start, u64 end,
- 
- 	/* whine about and ignore invalid blks */
- 	if (start > end || nid < 0 || nid >= MAX_NUMNODES) {
--		pr_warning("NUMA: Warning: invalid memblk node %d [mem %#010Lx-%#010Lx]\n",
--			   nid, start, end - 1);
-+		pr_warn("Warning: invalid memblk node %d [mem %#010Lx-%#010Lx]\n",
-+			nid, start, end - 1);
- 		return 0;
- 	}
- 
- 	if (mi->nr_blks >= NR_NODE_MEMBLKS) {
--		pr_err("NUMA: too many memblk ranges\n");
-+		pr_err("too many memblk ranges\n");
+ 	if (type >= MTRR_NUM_TYPES) {
+-		pr_warn("mtrr: type: %u invalid\n", type);
++		pr_warn("type: %u invalid\n", type);
  		return -EINVAL;
  	}
  
-@@ -267,14 +267,14 @@ int __init numa_cleanup_meminfo(struct numa_meminfo *mi)
- 			 */
- 			if (bi->end > bj->start && bi->start < bj->end) {
- 				if (bi->nid != bj->nid) {
--					pr_err("NUMA: node %d [mem %#010Lx-%#010Lx] overlaps with node %d [mem %#010Lx-%#010Lx]\n",
-+					pr_err("node %d [mem %#010Lx-%#010Lx] overlaps with node %d [mem %#010Lx-%#010Lx]\n",
- 					       bi->nid, bi->start, bi->end - 1,
- 					       bj->nid, bj->start, bj->end - 1);
- 					return -EINVAL;
- 				}
--				pr_warning("NUMA: Warning: node %d [mem %#010Lx-%#010Lx] overlaps with itself [mem %#010Lx-%#010Lx]\n",
--					   bi->nid, bi->start, bi->end - 1,
--					   bj->start, bj->end - 1);
-+				pr_warn("Warning: node %d [mem %#010Lx-%#010Lx] overlaps with itself [mem %#010Lx-%#010Lx]\n",
-+					bi->nid, bi->start, bi->end - 1,
-+					bj->start, bj->end - 1);
+ 	/* If the type is WC, check that this processor supports it */
+ 	if ((type == MTRR_TYPE_WRCOMB) && !have_wrcomb()) {
+-		pr_warn("mtrr: your processor doesn't support write-combining\n");
++		pr_warn("your processor doesn't support write-combining\n");
+ 		return -ENOSYS;
+ 	}
+ 
+ 	if (!size) {
+-		pr_warn("mtrr: zero sized request\n");
++		pr_warn("zero sized request\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if ((base | (base + size - 1)) >>
+ 	    (boot_cpu_data.x86_phys_bits - PAGE_SHIFT)) {
+-		pr_warn("mtrr: base or size exceeds the MTRR width\n");
++		pr_warn("base or size exceeds the MTRR width\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -360,8 +360,7 @@ int mtrr_add_page(unsigned long base, unsigned long size,
+ 				} else if (types_compatible(type, ltype))
+ 					continue;
  			}
- 
- 			/*
-@@ -364,7 +364,7 @@ static int __init numa_alloc_distance(void)
- 	phys = memblock_find_in_range(0, PFN_PHYS(max_pfn_mapped),
- 				      size, PAGE_SIZE);
- 	if (!phys) {
--		pr_warning("NUMA: Warning: can't allocate distance table!\n");
-+		pr_warn("Warning: can't allocate distance table!\n");
- 		/* don't retry until explicitly reset */
- 		numa_distance = (void *)1LU;
- 		return -ENOMEM;
-@@ -410,14 +410,14 @@ void __init numa_set_distance(int from, int to, int distance)
- 
- 	if (from >= numa_distance_cnt || to >= numa_distance_cnt ||
- 			from < 0 || to < 0) {
--		pr_warn_once("NUMA: Warning: node ids are out of bound, from=%d to=%d distance=%d\n",
--			    from, to, distance);
-+		pr_warn_once("Warning: node ids are out of bound, from=%d to=%d distance=%d\n",
-+			     from, to, distance);
- 		return;
+-			pr_warn("mtrr: 0x%lx000,0x%lx000 overlaps existing"
+-				" 0x%lx000,0x%lx000\n", base, size, lbase,
++			pr_warn("0x%lx000,0x%lx000 overlaps existing 0x%lx000,0x%lx000\n", base, size, lbase,
+ 				lsize);
+ 			goto out;
+ 		}
+@@ -369,7 +368,7 @@ int mtrr_add_page(unsigned long base, unsigned long size,
+ 		if (ltype != type) {
+ 			if (types_compatible(type, ltype))
+ 				continue;
+-			pr_warn("mtrr: type mismatch for %lx000,%lx000 old: %s new: %s\n",
++			pr_warn("type mismatch for %lx000,%lx000 old: %s new: %s\n",
+ 				base, size, mtrr_attrib_to_str(ltype),
+ 				mtrr_attrib_to_str(type));
+ 			goto out;
+@@ -395,7 +394,7 @@ int mtrr_add_page(unsigned long base, unsigned long size,
+ 			}
+ 		}
+ 	} else {
+-		pr_info("mtrr: no more MTRRs available\n");
++		pr_info("no more MTRRs available\n");
+ 	}
+ 	error = i;
+  out:
+@@ -407,8 +406,8 @@ int mtrr_add_page(unsigned long base, unsigned long size,
+ static int mtrr_check(unsigned long base, unsigned long size)
+ {
+ 	if ((base & (PAGE_SIZE - 1)) || (size & (PAGE_SIZE - 1))) {
+-		pr_warn("mtrr: size and base must be multiples of 4 kiB\n");
+-		pr_debug("mtrr: size: 0x%lx  base: 0x%lx\n", size, base);
++		pr_warn("size and base must be multiples of 4 kiB\n");
++		pr_debug("size: 0x%lx  base: 0x%lx\n", size, base);
+ 		dump_stack();
+ 		return -1;
+ 	}
+@@ -499,22 +498,22 @@ int mtrr_del_page(int reg, unsigned long base, unsigned long size)
+ 			}
+ 		}
+ 		if (reg < 0) {
+-			pr_debug("mtrr: no MTRR for %lx000,%lx000 found\n",
++			pr_debug("no MTRR for %lx000,%lx000 found\n",
+ 				 base, size);
+ 			goto out;
+ 		}
+ 	}
+ 	if (reg >= max) {
+-		pr_warn("mtrr: register: %d too big\n", reg);
++		pr_warn("register: %d too big\n", reg);
+ 		goto out;
+ 	}
+ 	mtrr_if->get(reg, &lbase, &lsize, &ltype);
+ 	if (lsize < 1) {
+-		pr_warn("mtrr: MTRR %d not used\n", reg);
++		pr_warn("MTRR %d not used\n", reg);
+ 		goto out;
+ 	}
+ 	if (mtrr_usage_table[reg] < 1) {
+-		pr_warn("mtrr: reg: %d has count=0\n", reg);
++		pr_warn("reg: %d has count=0\n", reg);
+ 		goto out;
+ 	}
+ 	if (--mtrr_usage_table[reg] < 1)
+@@ -775,7 +774,7 @@ void __init mtrr_bp_init(void)
  	}
  
- 	if ((u8)distance != distance ||
- 	    (from == to && distance != LOCAL_DISTANCE)) {
--		pr_warn_once("NUMA: Warning: invalid distance parameter, from=%d to=%d distance=%d\n",
-+		pr_warn_once("Warning: invalid distance parameter, from=%d to=%d distance=%d\n",
- 			     from, to, distance);
- 		return;
- 	}
+ 	if (!mtrr_enabled()) {
+-		pr_info("MTRR: Disabled\n");
++		pr_info("Disabled\n");
+ 
+ 		/*
+ 		 * PAT initialization relies on MTRR's rendezvous handler.
