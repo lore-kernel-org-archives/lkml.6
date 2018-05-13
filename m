@@ -1,116 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751868AbeEMJOx (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 05:14:53 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:45773 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751052AbeEMJOv (ORCPT
+        id S1751899AbeEMJPX (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 05:15:23 -0400
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:37576 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751227AbeEMJPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 05:14:51 -0400
-X-Google-Smtp-Source: AB8JxZrXpMwY6wzR8b/Pa00GnZP1ZPQLXVL/IO0zMU34or6/q+GHesIo+citY92eqfDX/CEEKDBSBtX8npGqpXF4xsI=
+        Sun, 13 May 2018 05:15:22 -0400
+Subject: Re: [PATCH 3/5] media: docs: selection: rename files to something
+ meaningful
+To: Luca Ceresoli <luca@lucaceresoli.net>, linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <1522790146-16061-1-git-send-email-luca@lucaceresoli.net>
+ <1522790146-16061-3-git-send-email-luca@lucaceresoli.net>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <a343a036-3caf-865c-89e9-8db42ea9063a@xs4all.nl>
+Date: Sun, 13 May 2018 11:15:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <1712698c-9539-4d62-b92f-53c937b1749b@default>
-References: <1712698c-9539-4d62-b92f-53c937b1749b@default>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Sun, 13 May 2018 17:14:50 +0800
-Message-ID: <CANRm+CxeLocYkhbw0KTCU9Ypii7NqcLMH=KwXPZxJbGDhxoiJQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] KVM: X86: Fix CR3 reserve bits
-To: Liran Alon <liran.alon@oracle.com>
-Cc: Radim Krcmar <rkrcmar@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Junaid Shahid <junaids@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1522790146-16061-3-git-send-email-luca@lucaceresoli.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfNdadfRR9oDhSaeowgwnTvzFcX/EarMDnFifO0mogknh57fSYJY3bgmBFylfHIiACX6j9cKS0Yb541Pa+RA0VQqYHWFlZ4vmjf0qUVJgyvMouudTR8Bs
+ 7m3qHj8bM4gtgraOp//Ks1XaGqXbo7Hw1+Q8OZM9etuf+9p+KvwlQLvm/k2YZcjgFKWbd2OX4wvcITs/4E0HgQf1enbq6LhsKSscteK3UCeUMB3PxMusAfkP
+ nVLnRg1YCuum9hrz5mCvKfCnBH5WC8CiFFdrY5dMqOs=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4D9Ewvf011163
 
-2018-05-13 17:09 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
->
-> ----- kernellwp@gmail.com wrote:
->
->> 2018-05-13 16:28 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
->> >
->> > ----- kernellwp@gmail.com wrote:
->> >
->> >> 2018-05-13 15:53 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
->> >> >
->> >> > ----- kernellwp@gmail.com wrote:
->> >> >
->> >> >> From: Wanpeng Li <wanpengli@tencent.com>
->> >> >>
->> >> >> MSB of CR3 is a reserved bit if the PCIDE bit is not set in
->> CR4.
->> >> >> It should be checked when PCIDE bit is not set, however commit
->> >> >> 'd1cd3ce900441 ("KVM: MMU: check guest CR3 reserved bits based
->> on
->> >> >> its physical address width")' removes the bit 63 checking
->> >> >> unconditionally. This patch fixes it by checking bit 63 of CR3
->> >> >> when PCIDE bit is not set in CR4.
->> >> >>
->> >> >> Fixes: d1cd3ce900441 (KVM: MMU: check guest CR3 reserved bits
->> based
->> >> on
->> >> >> its physical address width)
->> >> >> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> >> >> Cc: Radim Krčmář <rkrcmar@redhat.com>
->> >> >> Cc: Junaid Shahid <junaids@google.com>
->> >> >> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
->> >> >> ---
->> >> >>  arch/x86/kvm/emulate.c | 4 +++-
->> >> >>  arch/x86/kvm/x86.c     | 2 +-
->> >> >>  2 files changed, 4 insertions(+), 2 deletions(-)
->> >> >>
->> >> >> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
->> >> >> index b3705ae..b21f427 100644
->> >> >> --- a/arch/x86/kvm/emulate.c
->> >> >> +++ b/arch/x86/kvm/emulate.c
->> >> >> @@ -4189,7 +4189,9 @@ static int check_cr_write(struct
->> >> >> x86_emulate_ctxt *ctxt)
->> >> >>                               maxphyaddr = eax & 0xff;
->> >> >>                       else
->> >> >>                               maxphyaddr = 36;
->> >> >> -                     rsvd = rsvd_bits(maxphyaddr, 62);
->> >> >> +                     if (ctxt->ops->get_cr(ctxt, 4) &
->> >> X86_CR4_PCIDE)
->> >> >> +                             new_val &= ~CR3_PCID_INVD;
->> >> >> +                     rsvd = rsvd_bits(maxphyaddr, 63);
->> >> >
->> >> > I would prefer instead to do this:
->> >> > if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_PCIDE)
->> >> >     rsvd &= ~CR3_PCID_INVD;
->> >> > It makes more sense as opposed to temporary removing the
->> >> CR3_PCID_INVD bit from new_val.
->> >>
->> >> It tries the same way
->> >>
->> https://urldefense.proofpoint.com/v2/url?u=https-3A__git.kernel.org_pub_scm_virt_kvm_kvm.git_commit_-3Fid-3Dc19986fea873f3c745122bf79013a872a190f212&d=DwIFaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=Jk6Q8nNzkQ6LJ6g42qARkg6ryIDGQr-yKXPNGZbpTx0&m=r52WDgKBorUHwe_B_5Nw2Le_F_E0ne8lqqWW6n-3bSg&s=ufTcXvhhAMkY3XP6gAx-HiKCT8ynPWo2fs2z9DqCzM4&e=
->> >> pointed out.
->> >>
->> >> Regards,
->> >> Wanpeng Li
->> >
->> > Yes but there it makes sense as new CR3 value should not have bit 63
->> set in vcpu->arch.cr3.
->>
->> When X86_CR4_PCIDE == 0 and CR3 63 bit is set, a #GP is missing in
->> your suggestion.
->>
->> Regards,
->> Wanpeng Li
->
-> Why?
->
-> I suggest the following change:
-> - rsvd = rsvd_bits(maxphyaddr, 62);
-> + rsvd = rsvd_bits(maxphyaddr, 63);
-> + if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_PCIDE)
-> +     rsvd &= ~CR3_PCID_INVD;
->
-> In this case, if PCIDE=0 then bit 63 is set in rsvd and therefore check_cr_write() will emulate_gp() as needed.
+On 04/03/2018 11:15 PM, Luca Ceresoli wrote:
+> These files have an automatically-generated numbering. Replaname them
 
-Ok, I misread your first reply, will send out v2.
+Replaname -> Replace
+
+> to something that suggests their meaning.
+
+to -> with
 
 Regards,
-Wanpeng Li
+
+	Hans
+
+> 
+> Reported-by: Hans Verkuil <hverkuil@xs4all.nl>
+> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> ---
+>  .../{selection-api-004.rst => selection-api-configuration.rst} |  0
+>  .../v4l/{selection-api-006.rst => selection-api-examples.rst}  |  0
+>  .../v4l/{selection-api-002.rst => selection-api-intro.rst}     |  0
+>  .../v4l/{selection-api-003.rst => selection-api-targets.rst}   |  0
+>  .../{selection-api-005.rst => selection-api-vs-crop-api.rst}   |  0
+>  Documentation/media/uapi/v4l/selection-api.rst                 | 10 +++++-----
+>  6 files changed, 5 insertions(+), 5 deletions(-)
+>  rename Documentation/media/uapi/v4l/{selection-api-004.rst => selection-api-configuration.rst} (100%)
+>  rename Documentation/media/uapi/v4l/{selection-api-006.rst => selection-api-examples.rst} (100%)
+>  rename Documentation/media/uapi/v4l/{selection-api-002.rst => selection-api-intro.rst} (100%)
+>  rename Documentation/media/uapi/v4l/{selection-api-003.rst => selection-api-targets.rst} (100%)
+>  rename Documentation/media/uapi/v4l/{selection-api-005.rst => selection-api-vs-crop-api.rst} (100%)
+> 
+> diff --git a/Documentation/media/uapi/v4l/selection-api-004.rst b/Documentation/media/uapi/v4l/selection-api-configuration.rst
+> similarity index 100%
+> rename from Documentation/media/uapi/v4l/selection-api-004.rst
+> rename to Documentation/media/uapi/v4l/selection-api-configuration.rst
+> diff --git a/Documentation/media/uapi/v4l/selection-api-006.rst b/Documentation/media/uapi/v4l/selection-api-examples.rst
+> similarity index 100%
+> rename from Documentation/media/uapi/v4l/selection-api-006.rst
+> rename to Documentation/media/uapi/v4l/selection-api-examples.rst
+> diff --git a/Documentation/media/uapi/v4l/selection-api-002.rst b/Documentation/media/uapi/v4l/selection-api-intro.rst
+> similarity index 100%
+> rename from Documentation/media/uapi/v4l/selection-api-002.rst
+> rename to Documentation/media/uapi/v4l/selection-api-intro.rst
+> diff --git a/Documentation/media/uapi/v4l/selection-api-003.rst b/Documentation/media/uapi/v4l/selection-api-targets.rst
+> similarity index 100%
+> rename from Documentation/media/uapi/v4l/selection-api-003.rst
+> rename to Documentation/media/uapi/v4l/selection-api-targets.rst
+> diff --git a/Documentation/media/uapi/v4l/selection-api-005.rst b/Documentation/media/uapi/v4l/selection-api-vs-crop-api.rst
+> similarity index 100%
+> rename from Documentation/media/uapi/v4l/selection-api-005.rst
+> rename to Documentation/media/uapi/v4l/selection-api-vs-crop-api.rst
+> diff --git a/Documentation/media/uapi/v4l/selection-api.rst b/Documentation/media/uapi/v4l/selection-api.rst
+> index e4e623824b30..390233f704a3 100644
+> --- a/Documentation/media/uapi/v4l/selection-api.rst
+> +++ b/Documentation/media/uapi/v4l/selection-api.rst
+> @@ -9,8 +9,8 @@ Cropping, composing and scaling -- the SELECTION API
+>  .. toctree::
+>      :maxdepth: 1
+>  
+> -    selection-api-002
+> -    selection-api-003
+> -    selection-api-004
+> -    selection-api-005
+> -    selection-api-006
+> +    selection-api-intro.rst
+> +    selection-api-targets.rst
+> +    selection-api-configuration.rst
+> +    selection-api-vs-crop-api.rst
+> +    selection-api-examples.rst
+> 
