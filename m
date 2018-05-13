@@ -1,31 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751860AbeEMOEe (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 10:04:34 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49859 "EHLO
+        id S1751924AbeEMOFE (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 10:05:04 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38571 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751263AbeEMOEc (ORCPT
+        with ESMTP id S1751648AbeEMOFD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 10:04:32 -0400
-Date: Sun, 13 May 2018 07:04:19 -0700
+        Sun, 13 May 2018 10:05:03 -0400
+Date: Sun, 13 May 2018 07:04:51 -0700
 From: tip-bot for Marc Zyngier <tipbot@zytor.com>
-Message-ID: <tip-6988e0e0d28328467e218f59589b2770675a9ebd@git.kernel.org>
-Cc: ard.biesheuvel@linaro.org, thomas.petazzoni@bootlin.com,
-        marc.zyngier@arm.com, miquel.raynal@bootlin.com, tglx@linutronix.de,
-        mingo@kernel.org, robh@kernel.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, srinivas.kandagatla@linaro.org,
-        jason@lakedaemon.net
-Reply-To: marc.zyngier@arm.com, miquel.raynal@bootlin.com,
-        ard.biesheuvel@linaro.org, thomas.petazzoni@bootlin.com,
-        srinivas.kandagatla@linaro.org, jason@lakedaemon.net, hpa@zytor.com,
-        robh@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        tglx@linutronix.de
-In-Reply-To: <20180508121438.11301-3-marc.zyngier@arm.com>
-References: <20180508121438.11301-3-marc.zyngier@arm.com>
+Message-ID: <tip-25eaaabb51c9925dc65f5b54fd9a362bf118e70a@git.kernel.org>
+Cc: hpa@zytor.com, ard.biesheuvel@linaro.org, linux-kernel@vger.kernel.org,
+        miquel.raynal@bootlin.com, robh@kernel.org,
+        srinivas.kandagatla@linaro.org, mingo@kernel.org, marc.zyngier@arm.com,
+        jason@lakedaemon.net, thomas.petazzoni@bootlin.com, tglx@linutronix.de
+Reply-To: srinivas.kandagatla@linaro.org, robh@kernel.org,
+        miquel.raynal@bootlin.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        ard.biesheuvel@linaro.org, tglx@linutronix.de, jason@lakedaemon.net,
+        thomas.petazzoni@bootlin.com, marc.zyngier@arm.com, mingo@kernel.org
+In-Reply-To: <20180508121438.11301-4-marc.zyngier@arm.com>
+References: <20180508121438.11301-4-marc.zyngier@arm.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] genirq/msi: Limit level-triggered MSI to platform
- devices
-Git-Commit-ID: 6988e0e0d28328467e218f59589b2770675a9ebd
+Subject: [tip:irq/core] irqchip/mvebu-gicp: Use level-triggered MSIs between
+ ICU and GICP
+Git-Commit-ID: 25eaaabb51c9925dc65f5b54fd9a362bf118e70a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,87 +36,209 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6988e0e0d28328467e218f59589b2770675a9ebd
-Gitweb:     https://git.kernel.org/tip/6988e0e0d28328467e218f59589b2770675a9ebd
+Commit-ID:  25eaaabb51c9925dc65f5b54fd9a362bf118e70a
+Gitweb:     https://git.kernel.org/tip/25eaaabb51c9925dc65f5b54fd9a362bf118e70a
 Author:     Marc Zyngier <marc.zyngier@arm.com>
-AuthorDate: Tue, 8 May 2018 13:14:31 +0100
+AuthorDate: Tue, 8 May 2018 13:14:32 +0100
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 13 May 2018 15:58:59 +0200
+CommitDate: Sun, 13 May 2018 15:59:00 +0200
 
-genirq/msi: Limit level-triggered MSI to platform devices
+irqchip/mvebu-gicp: Use level-triggered MSIs between ICU and GICP
 
-Nobody would be insane enough to try and use level triggered
-MSIs on PCI, but let's make sure it doesn't happen. Also,
-let's mandate that the irqchip backing the platform MSI domain
-is providing the IRQCHIP_SUPPORTS_LEVEL_MSI flag.
+The ICU and GICP drivers are using an ugly side-band mechanism to
+find out about the "clear" doorbell when using level interrupts.
+
+Let's convert it to level-triggered MSIs, which result in a nice
+cleanup.
 
 Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Cc: Rob Herring <robh@kernel.org>
 Cc: Jason Cooper <jason@lakedaemon.net>
 Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Link: https://lkml.kernel.org/r/20180508121438.11301-3-marc.zyngier@arm.com
+Link: https://lkml.kernel.org/r/20180508121438.11301-4-marc.zyngier@arm.com
 
 ---
- drivers/base/platform-msi.c     | 3 +++
- drivers/bus/fsl-mc/fsl-mc-msi.c | 2 ++
- drivers/pci/msi.c               | 3 +++
- include/linux/irq.h             | 1 +
- 4 files changed, 9 insertions(+)
+ drivers/irqchip/irq-mvebu-gicp.c | 38 +++++++++++---------------------------
+ drivers/irqchip/irq-mvebu-gicp.h | 12 ------------
+ drivers/irqchip/irq-mvebu-icu.c  | 33 +++++++++++++++++----------------
+ 3 files changed, 28 insertions(+), 55 deletions(-)
 
-diff --git a/drivers/base/platform-msi.c b/drivers/base/platform-msi.c
-index 8e22073aeeed..60d6cc618f1c 100644
---- a/drivers/base/platform-msi.c
-+++ b/drivers/base/platform-msi.c
-@@ -101,6 +101,9 @@ static void platform_msi_update_chip_ops(struct msi_domain_info *info)
- 		chip->irq_set_affinity = msi_domain_set_affinity;
- 	if (!chip->irq_write_msi_msg)
- 		chip->irq_write_msi_msg = platform_msi_write_msg;
-+	if (WARN_ON((info->flags & MSI_FLAG_LEVEL_CAPABLE) &&
-+		    !(chip->flags & IRQCHIP_SUPPORTS_LEVEL_MSI)))
-+		info->flags &= ~MSI_FLAG_LEVEL_CAPABLE;
+diff --git a/drivers/irqchip/irq-mvebu-gicp.c b/drivers/irqchip/irq-mvebu-gicp.c
+index 17a4a7b6cdbb..4e17f7081efc 100644
+--- a/drivers/irqchip/irq-mvebu-gicp.c
++++ b/drivers/irqchip/irq-mvebu-gicp.c
+@@ -19,8 +19,6 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-#include "irq-mvebu-gicp.h"
+-
+ #define GICP_SETSPI_NSR_OFFSET	0x0
+ #define GICP_CLRSPI_NSR_OFFSET	0x8
+ 
+@@ -55,34 +53,18 @@ static int gicp_idx_to_spi(struct mvebu_gicp *gicp, int idx)
+ 	return -EINVAL;
  }
  
- static void platform_msi_free_descs(struct device *dev, int base, int nvec)
-diff --git a/drivers/bus/fsl-mc/fsl-mc-msi.c b/drivers/bus/fsl-mc/fsl-mc-msi.c
-index ec35e255b496..8b9c66d7c4ff 100644
---- a/drivers/bus/fsl-mc/fsl-mc-msi.c
-+++ b/drivers/bus/fsl-mc/fsl-mc-msi.c
-@@ -163,6 +163,8 @@ struct irq_domain *fsl_mc_msi_create_irq_domain(struct fwnode_handle *fwnode,
+-int mvebu_gicp_get_doorbells(struct device_node *dn, phys_addr_t *setspi,
+-			     phys_addr_t *clrspi)
+-{
+-	struct platform_device *pdev;
+-	struct mvebu_gicp *gicp;
+-
+-	pdev = of_find_device_by_node(dn);
+-	if (!pdev)
+-		return -ENODEV;
+-
+-	gicp = platform_get_drvdata(pdev);
+-	if (!gicp)
+-		return -ENODEV;
+-
+-	*setspi = gicp->res->start + GICP_SETSPI_NSR_OFFSET;
+-	*clrspi = gicp->res->start + GICP_CLRSPI_NSR_OFFSET;
+-
+-	return 0;
+-}
+-
+ static void gicp_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
  {
- 	struct irq_domain *domain;
- 
-+	if (WARN_ON((info->flags & MSI_FLAG_LEVEL_CAPABLE)))
-+		info->flags &= ~MSI_FLAG_LEVEL_CAPABLE;
- 	if (info->flags & MSI_FLAG_USE_DEF_DOM_OPS)
- 		fsl_mc_msi_update_dom_ops(info);
- 	if (info->flags & MSI_FLAG_USE_DEF_CHIP_OPS)
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index 30250631efe7..f45b74fcc059 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -1434,6 +1434,9 @@ struct irq_domain *pci_msi_create_irq_domain(struct fwnode_handle *fwnode,
- {
- 	struct irq_domain *domain;
- 
-+	if (WARN_ON(info->flags & MSI_FLAG_LEVEL_CAPABLE))
-+		info->flags &= ~MSI_FLAG_LEVEL_CAPABLE;
+ 	struct mvebu_gicp *gicp = data->chip_data;
+ 	phys_addr_t setspi = gicp->res->start + GICP_SETSPI_NSR_OFFSET;
+-
+-	msg->data = data->hwirq;
+-	msg->address_lo = lower_32_bits(setspi);
+-	msg->address_hi = upper_32_bits(setspi);
++	phys_addr_t clrspi = gicp->res->start + GICP_CLRSPI_NSR_OFFSET;
 +
- 	if (info->flags & MSI_FLAG_USE_DEF_DOM_OPS)
- 		pci_msi_domain_update_dom_ops(info);
- 	if (info->flags & MSI_FLAG_USE_DEF_CHIP_OPS)
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 65916a305f3d..b2067083aa94 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -512,6 +512,7 @@ enum {
- 	IRQCHIP_SKIP_SET_WAKE		= (1 <<  4),
- 	IRQCHIP_ONESHOT_SAFE		= (1 <<  5),
- 	IRQCHIP_EOI_THREADED		= (1 <<  6),
-+	IRQCHIP_SUPPORTS_LEVEL_MSI	= (1 <<  7),
++	msg[0].data = data->hwirq;
++	msg[0].address_lo = lower_32_bits(setspi);
++	msg[0].address_hi = upper_32_bits(setspi);
++	msg[1].data = data->hwirq;
++	msg[1].address_lo = lower_32_bits(clrspi);
++	msg[1].address_hi = upper_32_bits(clrspi);
+ }
+ 
+ static struct irq_chip gicp_irq_chip = {
+@@ -170,13 +152,15 @@ static const struct irq_domain_ops gicp_domain_ops = {
+ static struct irq_chip gicp_msi_irq_chip = {
+ 	.name		= "GICP",
+ 	.irq_set_type	= irq_chip_set_type_parent,
++	.flags		= IRQCHIP_SUPPORTS_LEVEL_MSI,
  };
  
- #include <linux/irqdesc.h>
+ static struct msi_domain_ops gicp_msi_ops = {
+ };
+ 
+ static struct msi_domain_info gicp_msi_domain_info = {
+-	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS),
++	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
++		   MSI_FLAG_LEVEL_CAPABLE),
+ 	.ops	= &gicp_msi_ops,
+ 	.chip	= &gicp_msi_irq_chip,
+ };
+diff --git a/drivers/irqchip/irq-mvebu-gicp.h b/drivers/irqchip/irq-mvebu-gicp.h
+deleted file mode 100644
+index eaa12fb72102..000000000000
+--- a/drivers/irqchip/irq-mvebu-gicp.h
++++ /dev/null
+@@ -1,12 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef __MVEBU_GICP_H__
+-#define __MVEBU_GICP_H__
+-
+-#include <linux/types.h>
+-
+-struct device_node;
+-
+-int mvebu_gicp_get_doorbells(struct device_node *dn, phys_addr_t *setspi,
+-			     phys_addr_t *clrspi);
+-
+-#endif /* __MVEBU_GICP_H__ */
+diff --git a/drivers/irqchip/irq-mvebu-icu.c b/drivers/irqchip/irq-mvebu-icu.c
+index e18c48d3a92e..13063339b416 100644
+--- a/drivers/irqchip/irq-mvebu-icu.c
++++ b/drivers/irqchip/irq-mvebu-icu.c
+@@ -21,8 +21,6 @@
+ 
+ #include <dt-bindings/interrupt-controller/mvebu-icu.h>
+ 
+-#include "irq-mvebu-gicp.h"
+-
+ /* ICU registers */
+ #define ICU_SETSPI_NSR_AL	0x10
+ #define ICU_SETSPI_NSR_AH	0x14
+@@ -43,6 +41,7 @@ struct mvebu_icu {
+ 	void __iomem *base;
+ 	struct irq_domain *domain;
+ 	struct device *dev;
++	atomic_t initialized;
+ };
+ 
+ struct mvebu_icu_irq_data {
+@@ -51,6 +50,18 @@ struct mvebu_icu_irq_data {
+ 	unsigned int type;
+ };
+ 
++static void mvebu_icu_init(struct mvebu_icu *icu, struct msi_msg *msg)
++{
++	if (atomic_cmpxchg(&icu->initialized, false, true))
++		return;
++
++	/* Set Clear/Set ICU SPI message address in AP */
++	writel_relaxed(msg[0].address_hi, icu->base + ICU_SETSPI_NSR_AH);
++	writel_relaxed(msg[0].address_lo, icu->base + ICU_SETSPI_NSR_AL);
++	writel_relaxed(msg[1].address_hi, icu->base + ICU_CLRSPI_NSR_AH);
++	writel_relaxed(msg[1].address_lo, icu->base + ICU_CLRSPI_NSR_AL);
++}
++
+ static void mvebu_icu_write_msg(struct msi_desc *desc, struct msi_msg *msg)
+ {
+ 	struct irq_data *d = irq_get_irq_data(desc->irq);
+@@ -59,6 +70,8 @@ static void mvebu_icu_write_msg(struct msi_desc *desc, struct msi_msg *msg)
+ 	unsigned int icu_int;
+ 
+ 	if (msg->address_lo || msg->address_hi) {
++		/* One off initialization */
++		mvebu_icu_init(icu, msg);
+ 		/* Configure the ICU with irq number & type */
+ 		icu_int = msg->data | ICU_INT_ENABLE;
+ 		if (icu_irqd->type & IRQ_TYPE_EDGE_RISING)
+@@ -197,9 +210,7 @@ static int mvebu_icu_probe(struct platform_device *pdev)
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct device_node *gicp_dn;
+ 	struct resource *res;
+-	phys_addr_t setspi, clrspi;
+-	u32 i, icu_int;
+-	int ret;
++	int i;
+ 
+ 	icu = devm_kzalloc(&pdev->dev, sizeof(struct mvebu_icu),
+ 			   GFP_KERNEL);
+@@ -242,22 +253,12 @@ static int mvebu_icu_probe(struct platform_device *pdev)
+ 	if (!gicp_dn)
+ 		return -ENODEV;
+ 
+-	ret = mvebu_gicp_get_doorbells(gicp_dn, &setspi, &clrspi);
+-	if (ret)
+-		return ret;
+-
+-	/* Set Clear/Set ICU SPI message address in AP */
+-	writel_relaxed(upper_32_bits(setspi), icu->base + ICU_SETSPI_NSR_AH);
+-	writel_relaxed(lower_32_bits(setspi), icu->base + ICU_SETSPI_NSR_AL);
+-	writel_relaxed(upper_32_bits(clrspi), icu->base + ICU_CLRSPI_NSR_AH);
+-	writel_relaxed(lower_32_bits(clrspi), icu->base + ICU_CLRSPI_NSR_AL);
+-
+ 	/*
+ 	 * Clean all ICU interrupts with type SPI_NSR, required to
+ 	 * avoid unpredictable SPI assignments done by firmware.
+ 	 */
+ 	for (i = 0 ; i < ICU_MAX_IRQS ; i++) {
+-		icu_int = readl(icu->base + ICU_INT_CFG(i));
++		u32 icu_int = readl_relaxed(icu->base + ICU_INT_CFG(i));
+ 		if ((icu_int >> ICU_GROUP_SHIFT) == ICU_GRP_NSR)
+ 			writel_relaxed(0x0, icu->base + ICU_INT_CFG(i));
+ 	}
