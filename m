@@ -1,44 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751816AbeEMAVA (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 20:21:00 -0400
-Received: from onstation.org ([52.200.56.107]:59726 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751129AbeEMAU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 20:20:59 -0400
-From: Brian Masney <masneyb@onstation.org>
-To: jic23@kernel.org, linux-iio@vger.kernel.org
-Cc: knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: tsl2583: correct values in integration_time_available
-Date: Sat, 12 May 2018 20:20:39 -0400
-Message-Id: <20180513002039.6984-1-masneyb@onstation.org>
-X-Mailer: git-send-email 2.14.3
+        id S1751747AbeEMBAy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 21:00:54 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57766 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751227AbeEMBAw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 12 May 2018 21:00:52 -0400
+Date: Sun, 13 May 2018 11:00:50 +1000
+To: linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>
+From: Finn Thain <fthain@telegraphics.com.au>
+Subject: [RFC] m68k: Set up dma mask for platform devices
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-Id: <S1751747AbeEMBAy/20180513010055Z+396@vger.kernel.org>
 
-The times reported by the in_illuminance_integration_time_available
-sysfs attribute are actually in milliseconds, not microseconds. This
-patch corrects the times with the correct unit.
+This avoids a WARNING splat when loading the macsonic or macmace driver.
+Please see commit 205e1b7f51e4 ("dma-mapping: warn when there is no
+coherent_dma_mask").
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
+This implementation of arch_setup_pdev_archdata() differs from the one
+in arch/powerpc in that this one avoids clobbering an existing dma mask.
+For example, this approach preserves the mask set by the initializer for
+struct platform_device mcf_fec0.
+
+Note that either approach would make that initializer redundant and
+commit f61e64310b75 ("m68k: set dma and coherent masks for platform
+FEC ethernets") could be reverted.
 ---
- drivers/iio/light/tsl2583.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/m68k/kernel/dma.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/iio/light/tsl2583.c b/drivers/iio/light/tsl2583.c
-index f2e50edaa242..4b5d9988f025 100644
---- a/drivers/iio/light/tsl2583.c
-+++ b/drivers/iio/light/tsl2583.c
-@@ -600,7 +600,7 @@ static ssize_t in_illuminance_lux_table_store(struct device *dev,
- 
- static IIO_CONST_ATTR(in_illuminance_calibscale_available, "1 8 16 111");
- static IIO_CONST_ATTR(in_illuminance_integration_time_available,
--		      "0.000050 0.000100 0.000150 0.000200 0.000250 0.000300 0.000350 0.000400 0.000450 0.000500 0.000550 0.000600 0.000650");
-+		      "0.050 0.100 0.150 0.200 0.250 0.300 0.350 0.400 0.450 0.500 0.550 0.600 0.650");
- static IIO_DEVICE_ATTR_RW(in_illuminance_input_target, 0);
- static IIO_DEVICE_ATTR_WO(in_illuminance_calibrate, 0);
- static IIO_DEVICE_ATTR_RW(in_illuminance_lux_table, 0);
+diff --git a/arch/m68k/kernel/dma.c b/arch/m68k/kernel/dma.c
+index c01b9b8f97bf..463572c4943f 100644
+--- a/arch/m68k/kernel/dma.c
++++ b/arch/m68k/kernel/dma.c
+@@ -9,6 +9,7 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/device.h>
+ #include <linux/kernel.h>
++#include <linux/platform_device.h>
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
+@@ -165,3 +166,12 @@ const struct dma_map_ops m68k_dma_ops = {
+ 	.sync_sg_for_device	= m68k_dma_sync_sg_for_device,
+ };
+ EXPORT_SYMBOL(m68k_dma_ops);
++
++void arch_setup_pdev_archdata(struct platform_device *pdev)
++{
++	if (pdev->dev.coherent_dma_mask == DMA_MASK_NONE &&
++	    pdev->dev.dma_mask == NULL) {
++		pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
++		pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
++	}
++}
 -- 
-2.14.3
+2.16.1
