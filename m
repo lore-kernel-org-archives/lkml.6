@@ -1,203 +1,348 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751104AbeEMGT3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 02:19:29 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38633 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750860AbeEMGT1 (ORCPT
+        id S1751155AbeEMGZl (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 02:25:41 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:46576 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750862AbeEMGZk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 02:19:27 -0400
-X-Google-Smtp-Source: AB8JxZrRvQbn9JT3OblgI7bB3pCq5cj9p0l3NWaS7ukcaBVpWKYZkZJakH+vaMXGE3IMUp71+KgHSw==
-Date: Sat, 12 May 2018 23:21:31 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Tianyu Lan <lantianyu1986@gmail.com>
-Cc: "Lan, Tianyu" <tianyu.lan@intel.com>,
-        syzbot
-        <bot+7ad82526b98c64c90062275162dacfa48c20dbd3@syzkaller.appspotmail.com>,
-        borntraeger@de.ibm.com, cornelia.huck@de.ibm.com, david@redhat.com,
-        Dmitry Vyukov <dvyukov@google.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        jschoenh@amazon.de, kvm <kvm@vger.kernel.org>,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>, syzkaller-bugs@googlegroups.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: KASAN: use-after-free Write in irq_bypass_register_consumer
-Message-ID: <20180513062131.GB654@sol.localdomain>
-References: <001a1143e716efd3a9055cc8696b@google.com>
- <001a1146f1146fe0b505605e42c1@google.com>
- <CAOLK0pxR1qJC3sT2QoHgj-ys7FgFqY8724Xo9CLjWxi439ZrTw@mail.gmail.com>
- <91a32ec1-64e7-8b6b-9464-6599dd6735ad@intel.com>
- <20180126232755.z3gtqrm2oz6sp2t6@gmail.com>
- <d630a4c9-04ba-9e41-1f7b-11c59b2cd8e4@gmail.com>
- <20180406031524.GB21382@sol.localdomain>
+        Sun, 13 May 2018 02:25:40 -0400
+X-Google-Smtp-Source: AB8JxZqiIiSDH1lAKlP+MiEEMupVvBW1Vm9W3igwn/RSIIUB85aPb2Z3jbVSTyAXIWCBDy+ofJxAtQ==
+Date: Sat, 12 May 2018 23:25:38 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH 3/3] sched/fair: schedutil: explicit update only when
+ required
+Message-ID: <20180513062538.GA116730@joelaf.mtv.corp.google.com>
+References: <20180510150553.28122-1-patrick.bellasi@arm.com>
+ <20180510150553.28122-4-patrick.bellasi@arm.com>
+ <20180513060443.GB64158@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180406031524.GB21382@sol.localdomain>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180513060443.GB64158@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 05, 2018 at 08:15:24PM -0700, Eric Biggers wrote:
-> On Mon, Jan 29, 2018 at 01:29:48PM +0800, Tianyu Lan wrote:
+On Sat, May 12, 2018 at 11:04:43PM -0700, Joel Fernandes wrote:
+> On Thu, May 10, 2018 at 04:05:53PM +0100, Patrick Bellasi wrote:
+> > Schedutil updates for FAIR tasks are triggered implicitly each time a
+> > cfs_rq's utilization is updated via cfs_rq_util_change(), currently
+> > called by update_cfs_rq_load_avg(), when the utilization of a cfs_rq has
+> > changed, and {attach,detach}_entity_load_avg().
 > > 
-> > 
-> > On 1/27/2018 7:27 AM, Eric Biggers wrote:
-> > > On Sat, Dec 16, 2017 at 04:37:02PM +0800, Lan, Tianyu wrote:
-> > > > The root cause is that kvm_irqfd_assign() and kvm_irqfd_deassign() can't
-> > > > be run in parallel. Some data structure(e.g, irqfd->consumer) will be
-> > > > crashed because irqfd may be freed in deassign path before they are used
-> > > > in assign path. The other data maybe used in deassign path before
-> > > > initialization. Syzbot test hit such case. Add mutx between
-> > > > kvm_irqfd_assign() and kvm_irqfd_deassign() can fix such issue. Will
-> > > > send patch to fix it.
-> > > > 
-> > > > On 12/16/2017 12:53 PM, Tianyu Lan wrote:
-> > > > > I reproduced the issue. Will have a look.
-> > > > > 
-> > > > > -- Best regards Tianyu Lan 2017-12-15 18:14 GMT+08:00 syzbot
-> > > > > <bot+7ad82526b98c64c90062275162dacfa48c20dbd3@syzkaller.appspotmail.com>:
-> > > > > > syzkaller has found reproducer for the following crash on
-> > > > > > 82bcf1def3b5f1251177ad47c44f7e17af039b4b
-> > > > > > git://git.cmpxchg.org/linux-mmots.git/master
-> > > > > > compiler: gcc (GCC) 7.1.1 20170620
-> > > > > > .config is attached
-> > > > > > Raw console output is attached.
-> > > > > > C reproducer is attached
-> > > > > > syzkaller reproducer is attached. Seehttps://goo.gl/kgGztJ
-> > > > > > for information about syzkaller reproducers
-> > > > > > 
-> > > > > > 
-> > > > > > ==================================================================
-> > > > > > BUG: KASAN: use-after-free in __list_add include/linux/list.h:64 [inline]
-> > > > > > BUG: KASAN: use-after-free in list_add include/linux/list.h:79 [inline]
-> > > > > > BUG: KASAN: use-after-free in irq_bypass_register_consumer+0x4b4/0x500
-> > > > > > virt/lib/irqbypass.c:217
-> > > > > > Write of size 8 at addr ffff8801cdf51180 by task syzkaller436086/15031
-> > > > > > 
-> > > > > > CPU: 1 PID: 15031 Comm: syzkaller436086 Not tainted 4.15.0-rc2-mm1+ #39
-> > > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > > > > > Google 01/01/2011
-> > > > > > Call Trace:
-> > > > > >    __dump_stack lib/dump_stack.c:17 [inline]
-> > > > > >    dump_stack+0x194/0x257 lib/dump_stack.c:53
-> > > > > >    print_address_description+0x73/0x250 mm/kasan/report.c:252
-> > > > > >    kasan_report_error mm/kasan/report.c:351 [inline]
-> > > > > >    kasan_report+0x25b/0x340 mm/kasan/report.c:409
-> > > > > >    __asan_report_store8_noabort+0x17/0x20 mm/kasan/report.c:435
-> > > > > >    __list_add include/linux/list.h:64 [inline]
-> > > > > >    list_add include/linux/list.h:79 [inline]
-> > > > > >    irq_bypass_register_consumer+0x4b4/0x500 virt/lib/irqbypass.c:217
-> > > > > >    kvm_irqfd_assign arch/x86/kvm/../../../virt/kvm/eventfd.c:417 [inline]
-> > > > > >    kvm_irqfd+0x137f/0x1d50 arch/x86/kvm/../../../virt/kvm/eventfd.c:572
-> > > > > >    kvm_vm_ioctl+0x1079/0x1c40 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2992
-> > > > > >    vfs_ioctl fs/ioctl.c:46 [inline]
-> > > > > >    do_vfs_ioctl+0x1b1/0x1530 fs/ioctl.c:686
-> > > > > >    SYSC_ioctl fs/ioctl.c:701 [inline]
-> > > > > >    SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-> > > > > >    entry_SYSCALL_64_fastpath+0x1f/0x96
-> > > > > > RIP: 0033:0x44d379
-> > > > > > RSP: 002b:00007fc5ff9a9d08 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> > > > > > RAX: ffffffffffffffda RBX: 00007fc5ff9aa700 RCX: 000000000044d379
-> > > > > > RDX: 0000000020080fe0 RSI: 000000004020ae76 RDI: 0000000000000005
-> > > > > > RBP: 00000000007ff900 R08: 00007fc5ff9aa700 R09: 00007fc5ff9aa700
-> > > > > > R10: 00007fc5ff9aa700 R11: 0000000000000246 R12: 0000000000000000
-> > > > > > R13: 00000000007ff8ff R14: 00007fc5ff9aa9c0 R15: 0000000000000000
-> > > > > > 
-> > > > > > Allocated by task 15031:
-> > > > > >    save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-> > > > > >    set_track mm/kasan/kasan.c:459 [inline]
-> > > > > >    kasan_kmalloc+0xad/0xe0 mm/kasan/kasan.c:551
-> > > > > >    kmem_cache_alloc_trace+0x136/0x750 mm/slab.c:3614
-> > > > > >    kmalloc include/linux/slab.h:516 [inline]
-> > > > > >    kzalloc include/linux/slab.h:705 [inline]
-> > > > > >    kvm_irqfd_assign arch/x86/kvm/../../../virt/kvm/eventfd.c:296 [inline]
-> > > > > >    kvm_irqfd+0x16c/0x1d50 arch/x86/kvm/../../../virt/kvm/eventfd.c:572
-> > > > > >    kvm_vm_ioctl+0x1079/0x1c40 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2992
-> > > > > >    vfs_ioctl fs/ioctl.c:46 [inline]
-> > > > > >    do_vfs_ioctl+0x1b1/0x1530 fs/ioctl.c:686
-> > > > > >    SYSC_ioctl fs/ioctl.c:701 [inline]
-> > > > > >    SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-> > > > > >    entry_SYSCALL_64_fastpath+0x1f/0x96
-> > > > > > 
-> > > > > > Freed by task 1402:
-> > > > > >    save_stack+0x43/0xd0 mm/kasan/kasan.c:447
-> > > > > >    set_track mm/kasan/kasan.c:459 [inline]
-> > > > > >    kasan_slab_free+0x71/0xc0 mm/kasan/kasan.c:524
-> > > > > >    __cache_free mm/slab.c:3492 [inline]
-> > > > > >    kfree+0xca/0x250 mm/slab.c:3807
-> > > > > >    irqfd_shutdown+0x13c/0x1a0 arch/x86/kvm/../../../virt/kvm/eventfd.c:148
-> > > > > >    process_one_work+0xbfd/0x1bc0 kernel/workqueue.c:2113
-> > > > > >    worker_thread+0x223/0x1990 kernel/workqueue.c:2247
-> > > > > >    kthread+0x37a/0x440 kernel/kthread.c:238
-> > > > > >    ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:524
-> > > > > > 
-> > > > > > The buggy address belongs to the object at ffff8801cdf51000
-> > > > > >    which belongs to the cache kmalloc-512 of size 512
-> > > > > > The buggy address is located 384 bytes inside of
-> > > > > >    512-byte region [ffff8801cdf51000, ffff8801cdf51200)
-> > > > > > The buggy address belongs to the page:
-> > > > > > page:00000000d08a0d63 count:1 mapcount:0 mapping:00000000d54c7be6 index:0x0
-> > > > > > flags: 0x2fffc0000000100(slab)
-> > > > > > raw: 02fffc0000000100 ffff8801cdf51000 0000000000000000 0000000100000006
-> > > > > > raw: ffffea00073a7660 ffffea000737f3a0 ffff8801dac00940 0000000000000000
-> > > > > > page dumped because: kasan: bad access detected
-> > > > > > 
-> > > > > > Memory state around the buggy address:
-> > > > > >    ffff8801cdf51080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > > > > >    ffff8801cdf51100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > > > > > > ffff8801cdf51180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > > > > >                      ^
-> > > > > >    ffff8801cdf51200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > > > > >    ffff8801cdf51280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > > > > > ==================================================================
-> > > > > > 
-> > > Tianyu, are you still planning to send a patch for this?  This is still
-> > > happening.
-> > > 
-> > > - Eric
-> > Yes, I sent out fix patch and wait for review.
-> >  https://patchwork.kernel.org/patch/10128925/
-> > 
+> > This design is based on the idea that "we should callback schedutil
+> > frequently enough" to properly update the CPU frequency at every
+> > utilization change. However, such an integration strategy has also
+> > some downsides:
 > 
-> This is still happening.  Can you please resend your patch?
+> Hi Patrick,
 > 
+> I agree making the call explicit would make schedutil integration easier so
+> that's really awesome. However I also fear that if some path in the fair
+> class in the future changes the utilization but forgets to update schedutil
+> explicitly (because they forgot to call the explicit public API) then the
+> schedutil update wouldn't go through. In this case the previous design of
+> doing the schedutil update in the wrapper kind of was a nice to have
+> 
+> Just thinking out loud but is there a way you could make the implicit call
+> anyway incase the explicit call wasn't requested for some reason? That's
+> probably hard to do correctly though..
+> 
+> Some more comments below:
+> 
+> > 
+> >  - schedutil updates are triggered by RQ's load updates, which makes
+> >    sense in general but it does not allow to know exactly which other RQ
+> >    related information have been updated.
+> >    Recently, for example, we had issues due to schedutil dependencies on
+> >    cfs_rq->h_nr_running and estimated utilization updates.
+> > 
+> >  - cfs_rq_util_change() is mainly a wrapper function for an already
+> >    existing "public API", cpufreq_update_util(), which is required
+> >    just to ensure we actually update schedutil only when we are updating
+> >    a root cfs_rq.
+> >    Thus, especially when task groups are in use, most of the calls to
+> >    this wrapper function are not required.
+> > 
+> >  - the usage of a wrapper function is not completely consistent across
+> >    fair.c, since we could still need additional explicit calls to
+> >    cpufreq_update_util().
+> >    For example this already happens to report the IOWAIT boot flag in
+> >    the wakeup path.
+> > 
+> >  - it makes it hard to integrate new features since it could require to
+> >    change other function prototypes just to pass in an additional flag,
+> >    as it happened for example in commit:
+> > 
+> >       ea14b57e8a18 ("sched/cpufreq: Provide migration hint")
+> > 
+> > All the above considered, let's make schedutil updates more explicit in
+> > fair.c by removing the cfs_rq_util_change() wrapper function in favour
+> > of the existing cpufreq_update_util() public API.
+> > This can be done by calling cpufreq_update_util() explicitly in the few
+> > call sites where it really makes sense and when all the (potentially)
+> > required cfs_rq's information have been updated.
+> > 
+> > This patch mainly removes code and adds explicit schedutil updates
+> > only when we:
+> >  - {enqueue,dequeue}_task_fair() a task to/from the root cfs_rq
+> >  - (un)throttle_cfs_rq() a set of tasks up to the root cfs_rq
+> >  - task_tick_fair() to update the utilization of the root cfs_rq
+> > 
+> > All the other code paths, currently _indirectly_ covered by a call to
+> > update_load_avg(), are still covered. Indeed, some paths already imply
+> > enqueue/dequeue calls:
+> >  - switch_{to,from}_fair()
+> >  - sched_move_task()
+> > while others are followed by enqueue/dequeue calls:
+> >  - cpu_cgroup_fork() and
+> >    post_init_entity_util_avg():
+> >      are used at wakeup_new_task() time and thus already followed by an
+> >      enqueue_task_fair()
+> >  - migrate_task_rq_fair():
+> >      updates the removed utilization but not the actual cfs_rq
+> >      utilization, which is updated by a following sched event
+> > 
+> > This new proposal allows also to better aggregate schedutil related
+> > flags, which are required only at enqueue_task_fair() time.
+> > IOWAIT and MIGRATION flags are now requested only when a task is
+> > actually visible at the root cfs_rq level.
+> > 
+> > Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> > Cc: Joel Fernandes <joelaf@google.com>
+> > Cc: Juri Lelli <juri.lelli@redhat.com>
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: linux-pm@vger.kernel.org
+> > 
+> > ---
+> > 
+> > NOTE: this patch changes the behavior of the IOWAIT flag: in case of a
+> > task waking up on a throttled RQ we do not assert the flag to schedutil
+> > anymore. However, this seems to make sense since the task will not be
+> > running anyway.
+> > ---
+> >  kernel/sched/fair.c | 81 ++++++++++++++++++++++++-----------------------------
+> >  1 file changed, 36 insertions(+), 45 deletions(-)
+> > 
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 01dfc47541e6..87f092151a6e 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -772,7 +772,7 @@ void post_init_entity_util_avg(struct sched_entity *se)
+> >  			 * For !fair tasks do:
+> >  			 *
+> >  			update_cfs_rq_load_avg(now, cfs_rq);
+> > -			attach_entity_load_avg(cfs_rq, se, 0);
+> > +			attach_entity_load_avg(cfs_rq, se);
+> >  			switched_from_fair(rq, p);
+> >  			 *
+> >  			 * such that the next switched_to_fair() has the
+> > @@ -3009,29 +3009,6 @@ static inline void update_cfs_group(struct sched_entity *se)
+> >  }
+> >  #endif /* CONFIG_FAIR_GROUP_SCHED */
+> >  
+> > -static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq, int flags)
+> > -{
+> > -	struct rq *rq = rq_of(cfs_rq);
+> > -
+> > -	if (&rq->cfs == cfs_rq || (flags & SCHED_CPUFREQ_MIGRATION)) {
+> > -		/*
+> > -		 * There are a few boundary cases this might miss but it should
+> > -		 * get called often enough that that should (hopefully) not be
+> > -		 * a real problem.
+> > -		 *
+> > -		 * It will not get called when we go idle, because the idle
+> > -		 * thread is a different class (!fair), nor will the utilization
+> > -		 * number include things like RT tasks.
+> > -		 *
+> > -		 * As is, the util number is not freq-invariant (we'd have to
+> > -		 * implement arch_scale_freq_capacity() for that).
+> > -		 *
+> > -		 * See cpu_util().
+> > -		 */
+> > -		cpufreq_update_util(rq, flags);
+> > -	}
+> > -}
+> > -
+> >  #ifdef CONFIG_SMP
+> >  /*
+> >   * Approximate:
+> > @@ -3712,9 +3689,6 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+> >  	cfs_rq->load_last_update_time_copy = sa->last_update_time;
+> >  #endif
+> >  
+> > -	if (decayed)
+> > -		cfs_rq_util_change(cfs_rq, 0);
+> > -
+> >  	return decayed;
+> >  }
+> >  
+> > @@ -3726,7 +3700,7 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+> >   * Must call update_cfs_rq_load_avg() before this, since we rely on
+> >   * cfs_rq->avg.last_update_time being current.
+> >   */
+> > -static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+> > +static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+> >  {
+> >  	u32 divider = LOAD_AVG_MAX - 1024 + cfs_rq->avg.period_contrib;
+> >  
+> > @@ -3762,7 +3736,6 @@ static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+> >  
+> >  	add_tg_cfs_propagate(cfs_rq, se->avg.load_sum);
+> >  
+> > -	cfs_rq_util_change(cfs_rq, flags);
+> >  }
+> >  
+> >  /**
+> > @@ -3781,7 +3754,6 @@ static void detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+> >  
+> >  	add_tg_cfs_propagate(cfs_rq, -se->avg.load_sum);
+> >  
+> > -	cfs_rq_util_change(cfs_rq, 0);
+> >  }
+> >  
+> >  /*
+> > @@ -3818,7 +3790,7 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+> >  		 *
+> >  		 * IOW we're enqueueing a task on a new CPU.
+> >  		 */
+> > -		attach_entity_load_avg(cfs_rq, se, SCHED_CPUFREQ_MIGRATION);
+> > +		attach_entity_load_avg(cfs_rq, se);
+> >  		update_tg_load_avg(cfs_rq, 0);
+> >  
+> >  	} else if (decayed && (flags & UPDATE_TG))
+> > @@ -4028,13 +4000,12 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+> >  
+> >  static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int not_used1)
+> >  {
+> > -	cfs_rq_util_change(cfs_rq, 0);
+> 
+> How about kill that extra line by doing:
+> 
+> static inline void update_load_avg(struct cfs_rq *cfs_rq,
+> 				   struct sched_entity *se, int not_used1) {}
+> 
+> >  }
+> >  
+> >  static inline void remove_entity_load_avg(struct sched_entity *se) {}
+> >  
+> >  static inline void
+> > -attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags) {}
+> > +attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) {}
+> >  static inline void
+> >  detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) {}
+> >  
+> > @@ -4762,8 +4733,11 @@ static void throttle_cfs_rq(struct cfs_rq *cfs_rq)
+> >  			dequeue = 0;
+> >  	}
+> >  
+> > -	if (!se)
+> > +	/* The tasks are no more visible from the root cfs_rq */
+> > +	if (!se) {
+> >  		sub_nr_running(rq, task_delta);
+> > +		cpufreq_update_util(rq, 0);
+> > +	}
+> >  
+> >  	cfs_rq->throttled = 1;
+> >  	cfs_rq->throttled_clock = rq_clock(rq);
+> > @@ -4825,8 +4799,11 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+> >  			break;
+> >  	}
+> >  
+> > -	if (!se)
+> > +	/* The tasks are now visible from the root cfs_rq */
+> > +	if (!se) {
+> >  		add_nr_running(rq, task_delta);
+> > +		cpufreq_update_util(rq, 0);
+> > +	}
+> >  
+> >  	/* Determine whether we need to wake up potentially idle CPU: */
+> >  	if (rq->curr == rq->idle && rq->cfs.nr_running)
+> > @@ -5359,14 +5336,6 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+> >  	/* Estimated utilization must be updated before schedutil */
+> >  	util_est_enqueue(&rq->cfs, p);
+> >  
+> >  -	/*
+> > -	 * If in_iowait is set, the code below may not trigger any cpufreq
+> > -	 * utilization updates, so do it here explicitly with the IOWAIT flag
+> > -	 * passed.
+> > -	 */
+> > -	if (p->in_iowait)
+> > -		cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
+> > -
+> >  	for_each_sched_entity(se) {
+> >  		if (se->on_rq)
+> >  			break;
+> > @@ -5397,9 +5366,27 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+> >  		update_cfs_group(se);
+> >  	}
+> >  
+> > -	if (!se)
+> > +	/* The task is visible from the root cfs_rq */
+> > +	if (!se) {
+> > +		unsigned int flags = 0;
+> > +
+> >  		add_nr_running(rq, 1);
+> >  
+> > +		if (p->in_iowait)
+> > +			flags |= SCHED_CPUFREQ_IOWAIT;
+> > +
+> > +		/*
+> > +		 * !last_update_time means we've passed through
+> > +		 * migrate_task_rq_fair() indicating we migrated.
+> > +		 *
+> > +		 * IOW we're enqueueing a task on a new CPU.
+> > +		 */
+> > +		if (!p->se.avg.last_update_time)
+> > +			flags |= SCHED_CPUFREQ_MIGRATION;
+> > +
+> > +		cpufreq_update_util(rq, flags);
+> > +	}
+> > +
+> >  	hrtick_update(rq);
+> >  }
+> >  
+> > @@ -5456,10 +5443,12 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+> >  		update_cfs_group(se);
+> >  	}
+> >  
+> > +	/* The task is no more visible from the root cfs_rq */
+> >  	if (!se)
+> >  		sub_nr_running(rq, 1);
+> >  
+> >  	util_est_dequeue(&rq->cfs, p, task_sleep);
+> > +	cpufreq_update_util(rq, 0);
+> 
+> One question about this change. In enqueue, throttle and unthrottle - you are
+> conditionally calling cpufreq_update_util incase the task was
+> visible/not-visible in the hierarchy.
+> 
+> But in dequeue you're unconditionally calling it. Seems a bit inconsistent.
+> Is this because of util_est or something? Could you add a comment here
+> explaining why this is so?
 
-Still happening; it's pretty easily reproducible, using the program below.
-(Sometimes it crashes in different ways too.  It also spams the log, ignore
-that.)  Tianyu's patch at https://patchwork.kernel.org/patch/10128925/ fixes it,
-though the locking is difficult to understand so I'm not sure it's correct yet.
-Probably the comment that says "do not drop the file until the irqfd is fully
-initialized, otherwise we might race against the EPOLLHUP" would be obsoleted
-and should be removed?  Can the KVM maintainers please review the patch too?
+The big question I have is incase se != NULL, then its still visible at the
+root RQ level. In that case should we still call the util_est_dequeue and the
+cpufreq_update_util?
 
-#include <fcntl.h>
-#include <linux/kvm.h>
-#include <pthread.h>
-#include <sys/eventfd.h>
-#include <sys/ioctl.h>
+Sorry if I missed something obvious.
 
-static int dev, vm, event;
+thanks!
 
-static void *irqfd_thrproc(void *_flags)
-{
-        struct kvm_irqfd irqfd = { .fd = event, .flags = (long)_flags };
-
-        for (;;)
-                ioctl(vm, KVM_IRQFD, &irqfd);
-}
-
-int main()
-{
-        pthread_t t;
-
-        event = eventfd(0, 0);
-        dev = open("/dev/kvm", 0);
-        vm = ioctl(dev, KVM_CREATE_VM, 0);
-        ioctl(vm, KVM_CREATE_IRQCHIP, 0);
-        pthread_create(&t, NULL, irqfd_thrproc, (void *)(long)0);
-        irqfd_thrproc((void *)(long)KVM_IRQFD_FLAG_DEASSIGN);
-}
+- Joel
