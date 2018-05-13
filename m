@@ -1,158 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751695AbeEMIoX (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 04:44:23 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:45730 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750862AbeEMIoV (ORCPT
+        id S1751868AbeEMIo5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 04:44:57 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:46500 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751165AbeEMIoz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 04:44:21 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Doug Smythies <doug.smythies@gmail.com>,
-        srinivas.pandruvada@linux.intel.com
-Cc: dsmythies@telus.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH V5] cpufreq: intel_pstate: allow trace in passive mode
-Date: Sun, 13 May 2018 10:43:51 +0200
-Message-ID: <3708753.N4DSO893cq@aspire.rjw.lan>
-In-Reply-To: <1525328567-23747-1-git-send-email-dsmythies@telus.net>
-References: <1525328567-23747-1-git-send-email-dsmythies@telus.net>
+        Sun, 13 May 2018 04:44:55 -0400
+X-Google-Smtp-Source: AB8JxZrRXZQt4NcTK/Z3dG4NA5w14hrevFs3/VYb/wm/Azlpzk414OdZajDgiZcJcBBhL1rA1N1pGKwTuLAwGkP1Sow=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <f0028b5a-101a-4f19-80b8-a00926bc68dd@default>
+References: <f0028b5a-101a-4f19-80b8-a00926bc68dd@default>
+From: Wanpeng Li <kernellwp@gmail.com>
+Date: Sun, 13 May 2018 16:44:54 +0800
+Message-ID: <CANRm+CzisB6YPW96k_WPMzJDZVLxQKGeHnC0Gr+QOcuN5gM_aw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] KVM: X86: Fix loss of CR3_PCID_INVD bit when guest
+ writes CR3
+To: Liran Alon <liran.alon@oracle.com>
+Cc: Radim Krcmar <rkrcmar@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Junaid Shahid <junaids@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4D8j0n4007677
 
-On Thursday, May 3, 2018 8:22:47 AM CEST Doug Smythies wrote:
-> Allow use of the trace_pstate_sample trace function
-> when the intel_pstate driver is in passive mode.
-> Since the core_busy and scaled_busy fields are not
-> used, and it might be desirable to know which path
-> through the driver was used, either intel_cpufreq_target
-> or intel_cpufreq_fast_switch, re-task the core_busy
-> field as a flag indicator.
-> 
-> The user can then use the intel_pstate_tracer.py utility
-> to summarize and plot the trace.
-> 
-> Note: The core_busy feild still goes by that name
-> in include/trace/events/power.h and within the
-> intel_pstate_tracer.py script and csv file headers,
-> but it is graphed as "performance", and called
-> core_avg_perf now in the intel_pstate driver.
-> 
-> Sometimes, in passive mode, the driver is not called for
-> many tens or even hundreds of seconds. The user
-> needs to understand, and not be confused by, this limitation.
-> 
-> Signed-off-by: Doug Smythies <dsmythies@telus.net>
+2018-05-13 16:03 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
+>
+> ----- kernellwp@gmail.com wrote:
+>
+>> From: Wanpeng Li <wanpengli@tencent.com>
+>>
+>> SDM volume 3, section 4.10.4:
+>>
+>> * MOV to CR3. The behavior of the instruction depends on the value of
+>> CR4.PCIDE:
+>> — If CR4.PCIDE = 1 and bit 63 of the instruction’s source operand is
+>> 1, the
+>>   instruction is not required to invalidate any TLB entries or entries
+>> in
+>>   paging-structure caches.
+>>
+>> The CR3_PCID_INVD bit should not be removed if CR4.PCIDE = 1 when
+>> guest writes
+>> CR3, this patch fixes it.
+>>
+>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>> Cc: Junaid Shahid <junaids@google.com>
+>> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+>> ---
+>>  arch/x86/kvm/x86.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>> index 9a90668..438f140 100644
+>> --- a/arch/x86/kvm/x86.c
+>> +++ b/arch/x86/kvm/x86.c
+>> @@ -849,11 +849,13 @@ EXPORT_SYMBOL_GPL(kvm_set_cr4);
+>>
+>>  int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
+>>  {
+>> +     unsigned long cr3_check = cr3;
+>> +
+>>  #ifdef CONFIG_X86_64
+>>       bool pcid_enabled = kvm_read_cr4_bits(vcpu, X86_CR4_PCIDE);
+>>
+>>       if (pcid_enabled)
+>> -             cr3 &= ~CR3_PCID_INVD;
+>> +             cr3_check &= ~CR3_PCID_INVD;
+>>  #endif
+>>
+>>       if (cr3 == kvm_read_cr3(vcpu) && !pdptrs_changed(vcpu)) {
+>> @@ -863,7 +865,7 @@ int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned
+>> long cr3)
+>>       }
+>>
+>>       if (is_long_mode(vcpu) &&
+>> -         (cr3 & rsvd_bits(cpuid_maxphyaddr(vcpu), 63)))
+>> +         (cr3_check & rsvd_bits(cpuid_maxphyaddr(vcpu), 63)))
+>>               return 1;
+>>       else if (is_pae(vcpu) && is_paging(vcpu) &&
+>>                  !load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3))
+>> --
+>> 2.7.4
+>
+> This commit doesn't seem correct to me.
+>
+> According to Intel SDM "MOV—Move to/from Control Registers":
+> "If CR4.PCIDE = 1, bit 63 of the source operand to MOV to CR3 determines whether the instruction
+> invalidates entries in the TLBs and the paging-structure caches
+> (see Section 4.10.4.1, “Operations that Invalidate TLBs and Paging-Structure Caches,”
+> in the Intel® 64 and IA-32 Architectures Software Developer’s Manual, Volume 3A).
+> The instruction does not modify bit 63 of CR3, which is reserved and always 0."
+>
+> However, after this commit kvm_set_cr3() will update vcpu->arch.cr3 to have bit CR3_PCID_INVD set.
+> Which is wrong as it should be reserved and always 0.
 
-Srinivas, any comments or concerns?
+You are right, thanks Liran.
 
-> 
-> ---
-> 
-> V5: Changes as per Rafael J. Wysocki feedback.
->     See: https://lkml.org/lkml/2018/1/7/270
-> 
-> V4: Only execute the trace specific overhead code if trace
->     is enabled. Suggested by Srinivas Pandruvada.
-> 
-> V3: Move largely duplicate code to a subroutine.
->     Suggested by Rafael J. Wysocki.
-> 
-> V2: prepare for resend. Rebase to current kernel, 4.15-rc3.
-> 
-> ---
->  drivers/cpufreq/intel_pstate.c | 44 ++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 42 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-> index 17e566af..4a08686 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -1939,13 +1939,49 @@ static int intel_cpufreq_verify_policy(struct cpufreq_policy *policy)
->  	return 0;
->  }
->  
-> +/* Use of trace in passive mode:
-> + *
-> + * In passive mode the trace core_busy field (also known as the
-> + * performance field, and lablelled as such on the graphs; also known as
-> + * core_avg_perf) is not needed and so is re-assigned to indicate if the
-> + * driver call was via the normal or fast switch path. Various graphs
-> + * output from the intel_pstate_tracer.py utility that include core_busy
-> + * (or performance or core_avg_perf) have a fixed y-axis from 0 to 100%,
-> + * so we use 10 to indicate the the normal path through the driver, and
-> + * 90 to indicate the fast switch path through the driver.
-> + * The scaled_busy field is not used, and is set to 0.
-> + */
-> +
-> +#define	INTEL_PSTATE_TRACE_TARGET 10
-> +#define	INTEL_PSTATE_TRACE_FAST_SWITCH 90
-> +
-> +static void intel_cpufreq_trace(struct cpudata *cpu, unsigned int trace_type, int old_pstate)
-> +{
-> +	struct sample *sample;
-> +
-> +	if (!trace_pstate_sample_enabled())
-> +		return;
-> +	if (!intel_pstate_sample(cpu, ktime_get()))
-> +		return;
-> +	sample = &cpu->sample;
-> +	trace_pstate_sample(trace_type,
-> +		0,
-> +		old_pstate,
-> +		cpu->pstate.current_pstate,
-> +		sample->mperf,
-> +		sample->aperf,
-> +		sample->tsc,
-> +		get_avg_frequency(cpu),
-> +		fp_toint(cpu->iowait_boost * 100));
-> +}
-> +
->  static int intel_cpufreq_target(struct cpufreq_policy *policy,
->  				unsigned int target_freq,
->  				unsigned int relation)
->  {
->  	struct cpudata *cpu = all_cpu_data[policy->cpu];
->  	struct cpufreq_freqs freqs;
-> -	int target_pstate;
-> +	int target_pstate, old_pstate;
->  
->  	update_turbo_state();
->  
-> @@ -1965,12 +2001,14 @@ static int intel_cpufreq_target(struct cpufreq_policy *policy,
->  		break;
->  	}
->  	target_pstate = intel_pstate_prepare_request(cpu, target_pstate);
-> +	old_pstate = cpu->pstate.current_pstate;
->  	if (target_pstate != cpu->pstate.current_pstate) {
->  		cpu->pstate.current_pstate = target_pstate;
->  		wrmsrl_on_cpu(policy->cpu, MSR_IA32_PERF_CTL,
->  			      pstate_funcs.get_val(cpu, target_pstate));
->  	}
->  	freqs.new = target_pstate * cpu->pstate.scaling;
-> +	intel_cpufreq_trace(cpu, INTEL_PSTATE_TRACE_TARGET, old_pstate);
->  	cpufreq_freq_transition_end(policy, &freqs, false);
->  
->  	return 0;
-> @@ -1980,13 +2018,15 @@ static unsigned int intel_cpufreq_fast_switch(struct cpufreq_policy *policy,
->  					      unsigned int target_freq)
->  {
->  	struct cpudata *cpu = all_cpu_data[policy->cpu];
-> -	int target_pstate;
-> +	int target_pstate, old_pstate;
->  
->  	update_turbo_state();
->  
->  	target_pstate = DIV_ROUND_UP(target_freq, cpu->pstate.scaling);
->  	target_pstate = intel_pstate_prepare_request(cpu, target_pstate);
-> +	old_pstate = cpu->pstate.current_pstate;
->  	intel_pstate_update_pstate(cpu, target_pstate);
-> +	intel_cpufreq_trace(cpu, INTEL_PSTATE_TRACE_FAST_SWITCH, old_pstate);
->  	return target_pstate * cpu->pstate.scaling;
->  }
->  
-> 
+Regards,
+Wanpeng Li
