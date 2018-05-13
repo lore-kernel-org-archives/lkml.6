@@ -1,296 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751847AbeEMVis (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 17:38:48 -0400
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:38982 "EHLO
-        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750985AbeEMViq (ORCPT
+        id S1751947AbeEMVqY convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 17:46:24 -0400
+Received: from static-87-79-237-121.netcologne.de ([87.79.237.121]:14806 "EHLO
+        herc.mirbsd.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbeEMVqX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 17:38:46 -0400
-X-Google-Smtp-Source: AB8JxZrgtUjOLAdG7fObaA6YdGxpmYcVM0IkoliDbffruDa/bAoj1ugmE5xfWGqs6LwLrzed8hG7zw==
-Date: Sun, 13 May 2018 14:40:52 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot <syzbot+bab86ea70f6f74bd9199@syzkaller.appspotmail.com>
-Cc: fweisbec@gmail.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Subject: Re: general protection fault in account_system_index_time
-Message-ID: <20180513214052.GF677@sol.localdomain>
-References: <001a1140ccc4eee83c05687391f9@google.com>
+        Sun, 13 May 2018 17:46:23 -0400
+Date: Sun, 13 May 2018 21:23:39 +0000 (UTC)
+From: Thorsten Glaser <tg@mirbsd.de>
+X-X-Sender: tg@herc.mirbsd.org
+To: Adrian Bunk <bunk@debian.org>
+cc: Ben Hutchings <ben@decadent.org.uk>,
+        Debian release team <debian-release@lists.debian.org>,
+        Debian kernel maintainers <debian-kernel@lists.debian.org>,
+        krb5@packages.debian.org, libbsd@packages.debian.org,
+        systemd@packages.debian.org, Michael Kerrisk <mtk.manpages@gmail.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org
+Subject: Re: Fixing Linux getrandom() in stable
+In-Reply-To: <20180513204828.GI10643@localhost>
+Message-ID: <Pine.BSM.4.64L.1805132113450.15657@herc.mirbsd.org>
+References: <75577b3d2efd01aaf563f1a1400a2c655556b258.camel@decadent.org.uk>
+ <20180513204828.GI10643@localhost>
+Content-Language: de-DE-1901, en-GB
+X-Message-Flag: Your mailer is broken. Get an update at http://www.washington.edu/pine/getpine/pcpine.html for free.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <001a1140ccc4eee83c05687391f9@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: TEXT/PLAIN; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 28, 2018 at 12:01:02AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot hit the following crash on upstream commit
-> 3eb2ce825ea1ad89d20f7a3b5780df850e4be274 (Sun Mar 25 22:44:30 2018 +0000)
-> Linux 4.16-rc7
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=bab86ea70f6f74bd9199
-> 
-> So far this crash happened 2 times on upstream.
-> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=4644092092874752
-> syzkaller reproducer:
-> https://syzkaller.appspot.com/x/repro.syz?id=4728333984071680
-> Raw console output:
-> https://syzkaller.appspot.com/x/log.txt?id=6080200710291456
-> Kernel config:
-> https://syzkaller.appspot.com/x/.config?id=-8440362230543204781
-> compiler: gcc (GCC) 7.1.1 20170620
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+bab86ea70f6f74bd9199@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> IPVS: ftp: loaded support on port[0] = 21
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 0 PID: 164097 Comm:  �  Not tainted 4.16.0-rc7+ #368
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-> RIP: 0010:get_running_cputimer include/linux/sched/cputime.h:85 [inline]
-> RIP: 0010:account_group_system_time include/linux/sched/cputime.h:149
-> [inline]
-> RIP: 0010:account_system_index_time+0xdd/0x5e0 kernel/sched/cputime.c:172
-> RSP: 0018:ffff8801db207930 EFLAGS: 00010006
-> RAX: 0002810100028101 RBX: ffff8801b22d0300 RCX: 0000502020005047
-> RDX: dffffc0000000000 RSI: 00000000000f4240 RDI: 0002810100028239
-> RBP: ffff8801db207a10 R08: 0000000000028101 R09: fffffbfff0f6a2bb
-> R10: ffff8801db2079e8 R11: fffffbfff0f6a2ba R12: 1ffff1003b640f29
-> R13: 000000000002c5c0 R14: 00000000000f4240 R15: 0000000000000002
-> FS:  00000000019fd880(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000421d60 CR3: 00000001b1963003 CR4: 00000000001606f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <IRQ>
->  account_system_time+0x7f/0xb0 kernel/sched/cputime.c:203
->  account_process_tick+0xd4/0x3e0 kernel/sched/cputime.c:502
->  update_process_times+0x23/0x60 kernel/time/timer.c:1634
->  tick_sched_handle+0x85/0x160 kernel/time/tick-sched.c:162
->  tick_sched_timer+0x42/0x120 kernel/time/tick-sched.c:1194
->  __run_hrtimer kernel/time/hrtimer.c:1349 [inline]
->  __hrtimer_run_queues+0x39c/0xec0 kernel/time/hrtimer.c:1411
->  hrtimer_interrupt+0x2a5/0x6f0 kernel/time/hrtimer.c:1469
->  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
->  smp_apic_timer_interrupt+0x14a/0x700 arch/x86/kernel/apic/apic.c:1050
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:857
->  </IRQ>
-> Code: ea 03 80 3c 02 00 0f 85 8b 04 00 00 48 8b 83 f8 06 00 00 48 ba 00 00
-> 00 00 00 fc ff df 48 8d b8 38 01 00 00 48 89 f9 48 c1 e9 03 <0f> b6 14 11 48
-> 89 f9 83 e1 07 38 ca 7f 08 84 d2 0f 85 90 03 00
-> RIP: __read_once_size include/linux/compiler.h:188 [inline] RSP:
-> ffff8801db207930
-> RIP: get_running_cputimer include/linux/sched/cputime.h:85 [inline] RSP:
-> ffff8801db207930
-> RIP: account_group_system_time include/linux/sched/cputime.h:149 [inline]
-> RSP: ffff8801db207930
-> RIP: account_system_index_time+0xdd/0x5e0 kernel/sched/cputime.c:172 RSP:
-> ffff8801db207930
-> 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 4.16.0-rc7+ #368 Not tainted
-> ------------------------------------------------------
-> rcu_sched/8 is trying to acquire lock:
->  ((console_sem).lock){..-.}, at: [<0000000011a525fb>] down_trylock+0x13/0x70
-> kernel/locking/semaphore.c:136
-> 
-> but task is already holding lock:
->  (&rq->lock){-.-.}, at: [<000000004637b5ed>] rq_lock_irqsave
-> kernel/sched/sched.h:1744 [inline]
->  (&rq->lock){-.-.}, at: [<000000004637b5ed>] load_balance+0xb10/0x34c0
-> kernel/sched/fair.c:8548
-> 
-> which lock already depends on the new lock.
-> 
-> 
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #2 (&rq->lock){-.-.}:
->        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
->        _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:144
->        rq_lock kernel/sched/sched.h:1760 [inline]
->        task_fork_fair+0x7a/0x690 kernel/sched/fair.c:9471
->        sched_fork+0x450/0xc10 kernel/sched/core.c:2405
->        copy_process.part.38+0x17c9/0x4bd0 kernel/fork.c:1763
->        copy_process kernel/fork.c:1606 [inline]
->        _do_fork+0x1f7/0xf70 kernel/fork.c:2087
->        kernel_thread+0x34/0x40 kernel/fork.c:2146
->        rest_init+0x22/0xf0 init/main.c:403
->        start_kernel+0x7f1/0x819 init/main.c:717
->        x86_64_start_reservations+0x2a/0x2c arch/x86/kernel/head64.c:378
->        x86_64_start_kernel+0x77/0x7a arch/x86/kernel/head64.c:359
->        secondary_startup_64+0xa5/0xb0 arch/x86/kernel/head_64.S:239
-> 
-> -> #1 (&p->pi_lock){-.-.}:
->        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
->        try_to_wake_up+0xbc/0x15f0 kernel/sched/core.c:1989
->        wake_up_process+0x10/0x20 kernel/sched/core.c:2152
->        __up.isra.0+0x1cc/0x2c0 kernel/locking/semaphore.c:262
->        up+0x13b/0x1d0 kernel/locking/semaphore.c:187
->        __up_console_sem+0xb2/0x1a0 kernel/printk/printk.c:242
->        console_unlock+0x5af/0xfb0 kernel/printk/printk.c:2417
->        do_con_write+0x106e/0x1f70 drivers/tty/vt/vt.c:2433
->        con_write+0x25/0xb0 drivers/tty/vt/vt.c:2782
->        process_output_block drivers/tty/n_tty.c:579 [inline]
->        n_tty_write+0x5ef/0xec0 drivers/tty/n_tty.c:2308
->        do_tty_write drivers/tty/tty_io.c:958 [inline]
->        tty_write+0x3fa/0x840 drivers/tty/tty_io.c:1042
->        __vfs_write+0xef/0x970 fs/read_write.c:480
->        vfs_write+0x189/0x510 fs/read_write.c:544
->        SYSC_write fs/read_write.c:589 [inline]
->        SyS_write+0xef/0x220 fs/read_write.c:581
->        do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
->        entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> 
-> -> #0 ((console_sem).lock){..-.}:
->        lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
->        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->        _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
->        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
->        __down_trylock_console_sem+0xa2/0x1e0 kernel/printk/printk.c:225
->        console_trylock+0x15/0x70 kernel/printk/printk.c:2229
->        console_trylock_spinning kernel/printk/printk.c:1643 [inline]
->        vprintk_emit+0x5b5/0xb90 kernel/printk/printk.c:1906
->        vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
->        vprintk_func+0x57/0xc0 kernel/printk/printk_safe.c:379
->        printk+0xaa/0xca kernel/printk/printk.c:1980
->        kasan_die_handler+0x31/0x3f arch/x86/mm/kasan_init_64.c:247
->        notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
->        __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
->        atomic_notifier_call_chain+0x77/0x140 kernel/notifier.c:193
->        notify_die+0x18c/0x280 kernel/notifier.c:549
->        do_general_protection+0x331/0x3e0 arch/x86/kernel/traps.c:558
->        general_protection+0x25/0x50 arch/x86/entry/entry_64.S:1150
->        task_group kernel/sched/sched.h:1203 [inline]
->        can_migrate_task+0xe2/0x1c20 kernel/sched/fair.c:7102
->        detach_tasks kernel/sched/fair.c:7251 [inline]
->        load_balance+0xdab/0x34c0 kernel/sched/fair.c:8555
->        idle_balance kernel/sched/fair.c:8837 [inline]
->        pick_next_task_fair+0xe03/0x1630 kernel/sched/fair.c:6757
->        pick_next_task kernel/sched/core.c:3286 [inline]
->        __schedule+0x4fc/0x1ec0 kernel/sched/core.c:3414
->        schedule+0xf5/0x430 kernel/sched/core.c:3499
->        schedule_timeout+0x118/0x230 kernel/time/timer.c:1801
->        rcu_gp_kthread+0x9dd/0x18e0 kernel/rcu/tree.c:2230
->        kthread+0x33c/0x400 kernel/kthread.c:238
->        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-> 
-> other info that might help us debug this:
-> 
-> Chain exists of:
->   (console_sem).lock --> &p->pi_lock --> &rq->lock
-> 
->  Possible unsafe locking scenario:
-> 
->        CPU0                    CPU1
->        ----                    ----
->   lock(&rq->lock);
->                                lock(&p->pi_lock);
->                                lock(&rq->lock);
->   lock((console_sem).lock);
-> 
->  *** DEADLOCK ***
-> 
-> 3 locks held by rcu_sched/8:
->  #0:  (rcu_read_lock){....}, at: [<0000000024de6645>] rcu_read_lock+0x0/0x70
-> include/linux/compiler.h:188
->  #1:  (&rq->lock){-.-.}, at: [<000000004637b5ed>] rq_lock_irqsave
-> kernel/sched/sched.h:1744 [inline]
->  #1:  (&rq->lock){-.-.}, at: [<000000004637b5ed>] load_balance+0xb10/0x34c0
-> kernel/sched/fair.c:8548
->  #2:  (rcu_read_lock){....}, at: [<00000000c60bf25c>] rcu_read_unlock
-> include/linux/rcupdate.h:682 [inline]
->  #2:  (rcu_read_lock){....}, at: [<00000000c60bf25c>]
-> atomic_notifier_call_chain+0x0/0x140 kernel/notifier.c:184
-> 
-> stack backtrace:
-> CPU: 1 PID: 8 Comm: rcu_sched Not tainted 4.16.0-rc7+ #368
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:17 [inline]
->  dump_stack+0x194/0x24d lib/dump_stack.c:53
->  print_circular_bug.isra.38+0x2cd/0x2dc kernel/locking/lockdep.c:1223
->  check_prev_add kernel/locking/lockdep.c:1863 [inline]
->  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
->  validate_chain kernel/locking/lockdep.c:2417 [inline]
->  __lock_acquire+0x30a8/0x3e00 kernel/locking/lockdep.c:3431
->  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
->  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
->  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
->  __down_trylock_console_sem+0xa2/0x1e0 kernel/printk/printk.c:225
->  console_trylock+0x15/0x70 kernel/printk/printk.c:2229
->  console_trylock_spinning kernel/printk/printk.c:1643 [inline]
->  vprintk_emit+0x5b5/0xb90 kernel/printk/printk.c:1906
->  vprintk_default+0x28/0x30 kernel/printk/printk.c:1947
->  vprintk_func+0x57/0xc0 kernel/printk/printk_safe.c:379
->  printk+0xaa/0xca kernel/printk/printk.c:1980
->  kasan_die_handler+0x31/0x3f arch/x86/mm/kasan_init_64.c:247
->  notifier_call_chain+0x136/0x2c0 kernel/notifier.c:93
->  __atomic_notifier_call_chain kernel/notifier.c:183 [inline]
->  atomic_notifier_call_chain+0x77/0x140 kernel/notifier.c:193
->  notify_die+0x18c/0x280 kernel/notifier.c:549
->  do_general_protection+0x331/0x3e0 arch/x86/kernel/traps.c:558
->  general_protection+0x25/0x50 arch/x86/entry/entry_64.S:1150
-> RIP: 0010:task_group kernel/sched/sched.h:1203 [inline]
-> RIP: 0010:can_migrate_task+0xe2/0x1c20 kernel/sched/fair.c:7102
-> RSP: 0018:ffff8801d9af6c88 EFLAGS: 00010006
-> RAX: dffffc0000000000 RBX: 0002810100028101 RCX: ffff8801d9af7098
-> RDX: ffff8801d9af6d30 RSI: 000050202000503c RDI: 00028101000281e1
-> RBP: ffff8801d9af6d58 R08: 1ffff1003b35ed9a R09: ffff88021fff8048
-> R10: 0000000000000001 R11: ffff88021fff805d R12: ffff8801b22d0300
-> R13: ffffffff87d5df20 R14: ffff8801b22d0300 R15: ffff8801b22d03f0
->  detach_tasks kernel/sched/fair.c:7251 [inline]
->  load_balance+0xdab/0x34c0 kernel/sched/fair.c:8555
->  idle_balance kernel/sched/fair.c:8837 [inline]
->  pick_next_task_fair+0xe03/0x1630 kernel/sched/fair.c:6757
->  pick_next_task kernel/sched/core.c:3286 [inline]
->  __schedule+0x4fc/0x1ec0 kernel/sched/core.c:3414
->  schedule+0xf5/0x430 kernel/sched/core.c:3499
->  schedule_timeout+0x118/0x230 kernel/time/timer.c:1801
->  rcu_gp_kthread+0x9dd/0x18e0 kernel/rcu/tree.c:2230
->  ? __schedule+0x1
-> Lost 10 message(s)!
-> ---[ end trace 948581b189460493 ]---
-> general protection fault: 0000 [#2] SMP KASAN
-> Dumping ftrace buffer:
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
+Adrian Bunk dixit:
 
-This was fixed by commit ae4745730cf8e69:
+>As an example, what happens if I debootstrap and deploy the resulting
+>filesytem to a large number of identical embedded systems without
+>entropy sources?
 
-#syz fix: net: Fix untag for vlan packets without ethernet header
+Just get into a habit of not doing so, for example by modifying the
+image during each writing process.
 
-- Eric
+Having the bootloader inject entropy into the kernel would of course
+help (something OpenBSD actually did, which I’d dreamt of only until).
+Reuse is only problematic then if the system actually booted, i.e. an
+early userspace thing reading and immediately writing to a file will
+stave off the remaining issues.
+
+>As far as I can see, any solution above would either give me boot hangs
+>or might result in nasty security issues due to the same (known) entropy
+>being fed to /dev/random on many machines.
+>
+>Similar problems for cases like live CDs and installers.
+
+And CPUs, and architectures, without usable boot entropy.
+
+For the “CD image” case, though, adding stuff like the MAC addresses
+of the onboard NICs and the current time would at least shuffle the
+existing (albeit known) entropy around enough for it to begin to differ.
+
+A web service for getting random bits sounds like an idea, until you
+get to the privacy implications of that (as well as reliability). But
+if it’s inhouse, it’s doable.
+
+>I wonder whether the current issue is just the tip of the iceberg,
+>and usage of /dev/urandom is a gazillion CVEs waiting to be reported.
+
+Did you see the fallback code for Linux in OpenBSD’s code for libbsd?
+It’s… like trying to find randomly-looking things on an 1990s Unix.
+
+This is best fixed in the kernel and earlier, plus an extra read/write
+in early userspace. Of course, embedding some entropy into the kernel
+image itself will make the reproducible-builds people entirely unhappy…
+(this one *is* implemented in MirBSD, complete with a tool to update
+it).
+
+>Due to the gdm bugs mentioned above we know that there are real-life
+>situations where gdm currently uses "random" data that might be
+>predictable.
+
+The question is which uses actually need entropy estimated good enough?
+
+>>    b. Tolerate a longer wait for getrandom() to return
+>
+>I suspect there might be no guaranteed upper bound for the waiting time.
+
+On a discless system with no hardware sources (possibly no network)
+and no keyboard interaction? Infinite.
+
+Of course, if early userspace could reliably update a file, then the
+file’s content could be estimated as good enough and be credited to
+the RNG, at least for non-identical/readonly-/shared-media systems.
+
+>never block but might return predictable data in some cases.
+
+“What level of predictability?”
+
+>It would then be up to the application to decide whether predictable
+>data is acceptable, and what to do in entropy-starved situations.
+
+I guess most application authors have no answer for you here.
+
+It’s also no solution for the arc4random API… seems like a cultural
+clash (BSD expectations vs. what Linux can actually deliver).
+
+bye,
+//mirabilos
+-- 
+  “Having a smoking section in a restaurant is like having
+          a peeing section in a swimming pool.”
+						-- Edward Burr
