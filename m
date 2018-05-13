@@ -1,89 +1,164 @@
-Return-Path: <starnight@g.ncu.edu.tw>
-ARC-Seal: i=1; a=rsa-sha256; t=1526205307; cv=none;
+Return-Path: <rjw@rjwysocki.net>
+X-Google-Smtp-Source: AB8JxZoqgCqG93s9G0aJXPRDyO+04oNZJgQtShgTN2eQFcvxIMoqaUptnsfuib2jeMot3vG8Htjm
+ARC-Seal: i=1; a=rsa-sha256; t=1526201246; cv=none;
         d=google.com; s=arc-20160816;
-        b=Q+7Pa1DlBIRGftmMj/zkeUc8V6F9MbLt2bWKx704XSjhEKIbEzQAhYRhIY8kXDcaLA
-         YAJ2hZDflgBUMgaabiqnWPcVhs/4NCk7EKBRkgY4iN2PlD/Aij8Q9u+W8eJOMr2JEWPJ
-         hlSbVeBvOSuf8wjVzLV1jMkUZX1qD+fPl9ItFqxVEPp40rY8VqXErpjjm17HVVxuF+Vg
-         BPlXlYcPkj+HEYdR9GrtpZPnGOrBKeXJsW59xevKFsV8QlWTaRJpyVDneuUPf/17WGRv
-         mRX+AP9CS99dZ6t79JT7Y8wcl75SzuJ1+76cwMDOqNr/OT13OjdtPiDLlzuxvVYjx9ou
-         U6PA==
+        b=W2Igr6cHo5KPoAwSnRZBvEwc0svP8fzAKxBYruAYOHHKGAXSVdhcpaz+CfW+6WEi/O
+         fXBE5U3W/3jMAZvBt2WrGX1yu+UNPH+oHQlHLloQ5mgg0RX2xfPMO3cA1tr1CS9Q9Koi
+         y/e/I5NOpm/RUPmvuox/j77/kGOPbtWiKJPvDYEsHgWhDv35Sh5geZfhWswDohLc6n13
+         zvQLALnQOlBBWcN5GKDJY7BT3BixFvBexdWrQZ5RVjXCD0tw3rcgyAJuCnJeb2PWP4oz
+         oM69IWZ5sXaNEsAYT/EZQPQ67mhB6YUXnfFssHP46POsDXDiigmrZ8bF55BBVFvZEsW3
+         Gr5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=m7iw/FTQWqm2t9AyvEwTTxR21OlrwIZeJ4/l1FUN1nk=;
-        b=FYlty2Wruce2Slt0RQTr3G/AmWE2DnAtKV6UemXWz1UTQbsMkc0xesqCTBykNqfORS
-         Mqa/OtgwHEOjTO2N+fPUQM6XbI3KyWro6JpTh4eyIWvuMR6VV/cspFce1K7uvj1O7fa/
-         m1bQ9T4LYmJhafeJXr+NbqqvxgzKDx0i4s0e/6U5HY7e3KI5tzc3fpQdLpzABqPReK6v
-         vOLmL/zjGrgtCeWlqMlHgqwZw+Wo2+2jAVO4jlquMqalMRzF9Tgu71+5SaMNdSPoUj5V
-         Q50LSYwf4logQ0zS6Lt2+bD37bs/hueafCQTZFVBBhZmA+YB/VKoLGritHnR6IvLyJLU
-         AagQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=rwULMl7YY+0IiC5Qa/QbKu8rtayAMyvvIGCqh9I+vyI=;
+        b=WfkmQ1X4xQP5UG0n6xlNSufWB8Av5Csw4jAT+RoSR3Rgislxwu4bIOfbpxq0L/kPdZ
+         twYjonsXVzK0030xph4JqlsD23yVn/2S0ZXBtUj+u+Wq1AU9A8FuQ5RnUxqL+sXZCGxq
+         bkNUldQXuhXbHaew0vjicu4IKiwb2GSquLxSBGnNP4aS6S/USqdGqS0Wgsl4JmuEQIFP
+         /RDhk4QJaP7h04S1l/TiqWoVBdsJKbrfJn3Aa2fCSErcrMaTgoCpbxgBv27F8Qg+/K8a
+         /scDYQ/9nY6dxLJLeSwWO2wjMQcnI73mVX3qJsMhGnUcdSHi8Ul5lPt9jBSxPy8Vo+gr
+         brYA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@g.ncu.edu.tw header.s=google header.b=K1obxIM/;
-       spf=pass (google.com: domain of starnight@g.ncu.edu.tw designates 209.85.220.65 as permitted sender) smtp.mailfrom=starnight@g.ncu.edu.tw
+       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@g.ncu.edu.tw header.s=google header.b=K1obxIM/;
-       spf=pass (google.com: domain of starnight@g.ncu.edu.tw designates 209.85.220.65 as permitted sender) smtp.mailfrom=starnight@g.ncu.edu.tw
-X-Google-Smtp-Source: AB8JxZrDt8EGrBrvYMGKV3Zsn2TOQuuqiy83e02HiCNtWg9noCU2G6bOMEgWy830mXbPFTpp8AYKcg==
-From: Jian-Hong Pan <starnight@g.ncu.edu.tw>
-To: Philippe Ombredanne <pombredanne@nexb.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Subject: [RFC PATCH] net: Remove a confusing comment of macro SIOCDEVPRIVATE
-Date: Sun, 13 May 2018 17:54:58 +0800
-Message-Id: <20180513095458.16148-1-starnight@g.ncu.edu.tw>
-X-Mailer: git-send-email 2.17.0
+       spf=pass (google.com: domain of rjw@rjwysocki.net designates 79.96.170.134 as permitted sender) smtp.mailfrom=rjw@rjwysocki.net
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Ganesh Mahendran <opensource.ganesh@gmail.com>
+Cc: pavel@ucw.cz, len.brown@intel.com, rafael@kernel.org, gregkh@linuxfoundation.org, geert@linux-m68k.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] PM / wakeup: use seq_open() to show wakeup stats
+Date: Sun, 13 May 2018 10:46:57 +0200
+Message-ID: <2754294.zfdF7jmEWy@aspire.rjw.lan>
+In-Reply-To: <1524653971-10425-1-git-send-email-opensource.ganesh@gmail.com>
+References: <1524653971-10425-1-git-send-email-opensource.ganesh@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600342256765812470?=
-X-GMAIL-MSGID: =?utf-8?q?1600342256765812470?=
+X-GMAIL-THRID: =?utf-8?q?1598715584055641513?=
+X-GMAIL-MSGID: =?utf-8?q?1600337998673327049?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-I have been reading the NET related header files recently.  I found
-there is a macro "#define SIOCDEVPRIVATE 0x89F0" defined in
-include/uapi/linux/sockios.h which is useful for private controls of net
-devices.  When I read this section:
+On Wednesday, April 25, 2018 12:59:31 PM CEST Ganesh Mahendran wrote:
+> single_open() interface requires that the whole output must
+> fit into a single buffer. This will lead to timeout when
+> system memory is not in a good situation.
+> 
+> This patch use seq_open() to show wakeup stats. This method
+> need only one page, so timeout will not be observed.
+> 
+> Signed-off-by: Ganesh Mahendran <opensource.ganesh@gmail.com>
+> ----
+> v3: simplify wakeup_sources_stats_seq_start
+> v2: use srcu_read_lock instead of rcu_read_lock
+> ---
+>  drivers/base/power/wakeup.c | 75 +++++++++++++++++++++++++++++++++++----------
+>  1 file changed, 59 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
+> index ea01621..5872705 100644
+> --- a/drivers/base/power/wakeup.c
+> +++ b/drivers/base/power/wakeup.c
+> @@ -1029,32 +1029,75 @@ static int print_wakeup_source_stats(struct seq_file *m,
+>  	return 0;
+>  }
+>  
+> -/**
+> - * wakeup_sources_stats_show - Print wakeup sources statistics information.
+> - * @m: seq_file to print the statistics into.
+> - */
+> -static int wakeup_sources_stats_show(struct seq_file *m, void *unused)
+> +static void *wakeup_sources_stats_seq_start(struct seq_file *m,
+> +					loff_t *pos)
+>  {
+>  	struct wakeup_source *ws;
+> -	int srcuidx;
+> +	loff_t n = *pos;
+> +	int *srcuidx = m->private;
+>  
+> -	seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
+> -		"expire_count\tactive_since\ttotal_time\tmax_time\t"
+> -		"last_change\tprevent_suspend_time\n");
+> +	if (n == 0) {
+> +		seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
+> +			"expire_count\tactive_since\ttotal_time\tmax_time\t"
+> +			"last_change\tprevent_suspend_time\n");
+> +	}
+>  
+> -	srcuidx = srcu_read_lock(&wakeup_srcu);
+> -	list_for_each_entry_rcu(ws, &wakeup_sources, entry)
+> -		print_wakeup_source_stats(m, ws);
+> -	srcu_read_unlock(&wakeup_srcu, srcuidx);
+> +	*srcuidx = srcu_read_lock(&wakeup_srcu);
+> +	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
+> +		if (n-- <= 0)
+> +			return ws;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static void *wakeup_sources_stats_seq_next(struct seq_file *m,
+> +					void *v, loff_t *pos)
+> +{
+> +	struct wakeup_source *ws = v;
+> +	struct wakeup_source *next_ws = NULL;
+> +
+> +	++(*pos);
+>  
+> -	print_wakeup_source_stats(m, &deleted_ws);
+> +	list_for_each_entry_continue_rcu(ws, &wakeup_sources, entry) {
+> +		next_ws = ws;
+> +		break;
+> +	}
+> +
+> +	return next_ws;
+> +}
+> +
+> +static void wakeup_sources_stats_seq_stop(struct seq_file *m, void *v)
+> +{
+> +	int *srcuidx = m->private;
+> +
+> +	srcu_read_unlock(&wakeup_srcu, *srcuidx);
+> +}
+> +
+> +/**
+> + * wakeup_sources_stats_seq_show - Print wakeup sources statistics information.
+> + * @m: seq_file to print the statistics into.
+> + * @v: wakeup_source of each iteration
+> + */
+> +static int wakeup_sources_stats_seq_show(struct seq_file *m, void *v)
+> +{
+> +	struct wakeup_source *ws = v;
+> +
+> +	print_wakeup_source_stats(m, ws);
+>  
+>  	return 0;
+>  }
+>  
+> +static const struct seq_operations wakeup_sources_stats_seq_ops = {
+> +	.start = wakeup_sources_stats_seq_start,
+> +	.next  = wakeup_sources_stats_seq_next,
+> +	.stop  = wakeup_sources_stats_seq_stop,
+> +	.show  = wakeup_sources_stats_seq_show,
+> +};
+> +
+>  static int wakeup_sources_stats_open(struct inode *inode, struct file *file)
+>  {
+> -	return single_open(file, wakeup_sources_stats_show, NULL);
+> +	return seq_open_private(file, &wakeup_sources_stats_seq_ops, sizeof(int));
+>  }
+>  
+>  static const struct file_operations wakeup_sources_stats_fops = {
+> @@ -1062,7 +1105,7 @@ static int wakeup_sources_stats_open(struct inode *inode, struct file *file)
+>  	.open = wakeup_sources_stats_open,
+>  	.read = seq_read,
+>  	.llseek = seq_lseek,
+> -	.release = single_release,
+> +	.release = seq_release_private,
+>  };
+>  
+>  static int __init wakeup_sources_debugfs_init(void)
+> 
 
-/* Device private ioctl calls */
-
-/*
- *	These 16 ioctls are available to devices via the do_ioctl() device
- *	vector. Each device should include this file and redefine these names
- *	as their own. Because these are device dependent it is a good idea
- *	_NOT_ to issue them to random objects and hope.
- *
- *	THESE IOCTLS ARE _DEPRECATED_ AND WILL DISAPPEAR IN 2.5.X -DaveM
- */
-
-I notice there is a string in the comment:
-"THESE IOCTLS ARE _DEPRECATED_ AND WILL DISAPPEAR IN 2.5.X -DaveM"
-which makes me confused.  Because, there are still a lot of devices or
-subsystems using this macro, for example, ethernet, appletalk,
-usb/rtl8150 ..., etc.
-
-Therefore, I make this patch to remove the confusing comment.
-
-Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
----
- include/uapi/linux/sockios.h | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/include/uapi/linux/sockios.h b/include/uapi/linux/sockios.h
-index d393e9ed3964..c166f8c6b20f 100644
---- a/include/uapi/linux/sockios.h
-+++ b/include/uapi/linux/sockios.h
-@@ -139,8 +139,6 @@
-  *	vector. Each device should include this file and redefine these names
-  *	as their own. Because these are device dependent it is a good idea
-  *	_NOT_ to issue them to random objects and hope.
-- *
-- *	THESE IOCTLS ARE _DEPRECATED_ AND WILL DISAPPEAR IN 2.5.X -DaveM
-  */
-  
- #define SIOCDEVPRIVATE	0x89F0	/* to 89FF */
--- 
-2.17.0
+Applied, thanks!
