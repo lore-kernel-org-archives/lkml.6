@@ -1,21 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751908AbeEMBCS (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 21:02:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47426 "EHLO
+        id S1751664AbeEMBmH (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 21:42:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51324 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750902AbeEMBCR (ORCPT
+        with ESMTP id S1751110AbeEMBmG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 21:02:17 -0400
-To: LKML <linux-kernel@vger.kernel.org>, Tony Luck <tony.luck@intel.com>
+        Sat, 12 May 2018 21:42:06 -0400
+To: LKML <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Edac Mailing List <linux-edac@vger.kernel.org>
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] edac: fix skx_edac build error when ACPI_NFIT=m
-Message-ID: <2a09f7f3-c129-d4c4-76cc-223550601bdb@infradead.org>
-Date: Sat, 12 May 2018 18:02:12 -0700
+Subject: [PATCH -next] ASoC: omap: add sdma-pcm.c MODULE_LICENSE
+Message-ID: <2bf2991a-da55-00a4-bc39-a0ee61bad4d0@infradead.org>
+Date: Sat, 12 May 2018 18:41:51 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
@@ -28,32 +30,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Randy Dunlap <rdunlap@infradead.org>
 
-Prevent build error when CONFIG_ACPI_NFIT=m and CONFIG_EDAC_SKX=y
-by limiting EDAC_SKX based on how ACPI_NFIT is set.
+ASoC: omap: add sdma-pcm.c MODULE_LICENSE
 
-Fixes this build error:
-drivers/edac/skx_edac.o: In function `get_nvdimm_info':
-../drivers/edac/skx_edac.c:399: undefined reference to `nfit_get_smbios_id'
+Fixes this build warning:
 
-Fixes: 58ca9ac1463d ("EDAC, skx_edac: Detect non-volatile DIMMs")
+WARNING: modpost: missing MODULE_LICENSE() in sound/soc/omap/snd-soc-sdma.o
 
-Reported-by: kbuild test robot <lkp@intel.com>
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: stable@vger.kernel.org
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Jarkko Nikula <jarkko.nikula@bitmer.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
 ---
- drivers/edac/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/omap/sdma-pcm.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- lnx-417-rc4.orig/drivers/edac/Kconfig
-+++ lnx-417-rc4/drivers/edac/Kconfig
-@@ -232,6 +232,7 @@ config EDAC_SBRIDGE
- config EDAC_SKX
- 	tristate "Intel Skylake server Integrated MC"
- 	depends on PCI && X86_64 && X86_MCE_INTEL && PCI_MMCONFIG
-+	depends on ACPI_NFIT || !ACPI_NFIT
- 	select DMI
- 	help
- 	  Support for error detection and correction the Intel
+--- linux-next-20180510.orig/sound/soc/omap/sdma-pcm.c
++++ linux-next-20180510/sound/soc/omap/sdma-pcm.c
+@@ -9,6 +9,7 @@
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
+ #include <sound/dmaengine_pcm.h>
++#include <linux/module.h>
+ #include <linux/omap-dma.h>
+ 
+ #include "sdma-pcm.h"
+@@ -66,3 +67,5 @@ int sdma_pcm_platform_register(struct de
+ 	return devm_snd_dmaengine_pcm_register(dev, config, flags);
+ }
+ EXPORT_SYMBOL_GPL(sdma_pcm_platform_register);
++
++MODULE_LICENSE("GPL v2");
