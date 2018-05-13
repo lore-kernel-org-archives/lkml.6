@@ -1,66 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752190AbeEMWiS (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 18:38:18 -0400
-Received: from mail-qk0-f182.google.com ([209.85.220.182]:38175 "EHLO
-        mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751847AbeEMWiQ (ORCPT
+        id S1752105AbeEMWta (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 18:49:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46664 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752018AbeEMWt2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 18:38:16 -0400
-X-Google-Smtp-Source: AB8JxZobc2C3bytn5goKbVHmYMVdhK4CLaSyD8EmHhqim+vGn6toSTGsjNl2J/GL9B7wRZFaA8wVjX9CD6Zl6mHH7ro=
+        Sun, 13 May 2018 18:49:28 -0400
+Subject: Re: [PATCH 1/2] bcachefs: On disk data structures
+To: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-bcache@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>, hare@suse.com
+References: <20180508221800.2642-1-kent.overstreet@gmail.com>
+ <20180508221800.2642-2-kent.overstreet@gmail.com>
+ <dea41935-a52c-e720-0ca3-eef4367d3641@infradead.org>
+ <20180513222948.GA20114@kmo-pixel>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <3bf4a87c-20fc-0b9f-1c27-c43d1c194b47@infradead.org>
+Date: Sun, 13 May 2018 15:49:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180513140212.3961-1-boris.brezillon@bootlin.com>
-References: <20180513140212.3961-1-boris.brezillon@bootlin.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 14 May 2018 01:38:15 +0300
-Message-ID: <CAHp75Veu2Uapp-=ATL7v7uscsP+46eYcRi7MEoLt_QPR4BLZOQ@mail.gmail.com>
-Subject: Re: [PATCH] m68k: Implement ndelay() as an inline function to force
- type checking/casting
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180513222948.GA20114@kmo-pixel>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 5:02 PM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> ndelay() is supposed to take an unsigned long, but if you define
-> ndelay() as a macro and the caller pass an unsigned long long instead
-> of an unsigned long, the unsigned long long to unsigned long cast is
-> not done and we end up with an "undefined reference to `__udivdi3'"
-> error at link time.
+On 05/13/2018 03:29 PM, Kent Overstreet wrote:
+> On Sun, May 13, 2018 at 01:30:06PM -0700, Randy Dunlap wrote:
+>> On 05/08/2018 03:17 PM, Kent Overstreet wrote:
+> 
+>>> + * various btrees. There are only a small number of btrees, they're not
+>>> + * sharded - we have one btree for extents, another for inodes, et cetera.
+>>
+>>    or shared?
+> 
+> No, I mean sharded - we're e.g. not splitting up the extents btree into one
+> btree per inode. 
 
-> -#define ndelay(n) __delay(DIV_ROUND_UP((n) * ((((HZSCALE) >> 11) * (loops_per_jiffy >> 11)) >> 6), 1000))
-> +static inline void ndelay(unsigned long nsec)
-> +{
-> +       __delay(DIV_ROUND_UP(nsec *
-> +                            ((((HZSCALE) >> 11) *
+Got it, thanks.
 
-One pair of parens is redundant.
+>> I know that you have already answered a few comments about endianness,
+>> so maybe you answered this and I missed it.
+>>
+>> Can a bcachefs fs be shared, a la NFS?  I.e., can multiple different-endian
+>> clients be accessing the same bcachefs?
+> 
+> NFS works. I haven't tested NFS to different endian clients, wasn't aware there
+> was any reason to... are there potential issues there I'm not aware of?
 
-> +                              (loops_per_jiffy >> 11)) >> 6),
-> +                            1000));
+Not that I know of.
 
-Can't you keep as one line as in original?
-
-> +}
-> +#define ndelay(n) ndelay(n)
->
->  #endif /* defined(_M68K_DELAY_H) */
-> --
-> 2.14.1
->
-
-
-
+thanks,
 -- 
-With Best Regards,
-Andy Shevchenko
+~Randy
