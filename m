@@ -1,66 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751984AbeEMSLt (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 14:11:49 -0400
-Received: from smtp4-g21.free.fr ([212.27.42.4]:15470 "EHLO smtp4-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751295AbeEMSLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 14:11:48 -0400
-From: fcami@fedoraproject.org
-To: tj@kernel.org, hdegoede@redhat.com, linux-kernel@vger.kernel.org,
-        linux-ide@vger.kernel.org
-Cc: =?UTF-8?q?Fran=C3=A7ois=20Cami?= <fcami@fedoraproject.org>
-Subject: [PATCH] libata: Apply NOLPM quirk for SAMSUNG PM830 CXM13D1Q.
-Date: Sun, 13 May 2018 20:11:15 +0200
-Message-Id: <20180513181115.20541-1-fcami@fedoraproject.org>
-X-Mailer: git-send-email 2.17.0
+        id S1752021AbeEMSau (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 14:30:50 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:57653 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751903AbeEMSas (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 14:30:48 -0400
+X-Originating-IP: 2.224.242.101
+Date: Sun, 13 May 2018 20:30:35 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Simon Horman <horms@verge.net.au>
+Cc: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart@ideasonboard.com, geert@glider.be,
+        magnus.damm@gmail.com, robh+dt@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a77995: Add VIN4
+Message-ID: <20180513183035.6ufwkdtlyg4gyco3@apu3b>
+References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526032802-14376-3-git-send-email-jacopo+renesas@jmondi.org>
+ <20180511112523.GK18974@bigcity.dyn.berto.se>
+ <20180511134516.omsv25i2wi4cxypc@verge.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180511134516.omsv25i2wi4cxypc@verge.net.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: François Cami <fcami@fedoraproject.org>
+Hi Simon,
 
-Without this patch the drive errors out regularly:
+On Fri, May 11, 2018 at 03:45:16PM +0200, Simon Horman wrote:
+> On Fri, May 11, 2018 at 01:25:23PM +0200, Niklas Söderlund wrote:
+> > Hi Jacopo,
+> > 
+> > Thanks for your work.
+> > 
+> > On 2018-05-11 12:00:01 +0200, Jacopo Mondi wrote:
+> > > Describe VIN4 interface for R-Car D3 R8A77995 SoC.
+> > > 
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > 
+> > Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > 
+> > > ---
+> > >  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 11 +++++++++++
+> > >  1 file changed, 11 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> > > index 82aed7e..bdf7017 100644
+> > > --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> > > +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> > > @@ -783,6 +783,17 @@
+> > >  				};
+> > >  			};
+> > >  		};
+> > > +
+> > > +		vin4: video@e6ef4000 {
+> > > +			compatible = "renesas,vin-r8a77995";
+> > > +			reg = <0 0xe6ef4000 0 0x1000>;
+> > > +			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+> > > +			clocks = <&cpg CPG_MOD 807>;
+> > > +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> > > +			resets = <&cpg 807>;
+> > > +			renesas,id = <4>;
+> > > +			status = "disabled";
+> > > +		};
+> > >  	};
+> 
+> Thanks, I have moved the new node to preserve sorting of nodes by bus
+> address and applied the result. It is as follows:
 
-[    1.090154] ata1.00: ATA-8: SAMSUNG SSD PM830 mSATA 256GB,
-CXM13D1Q, max UDMA/133
-(...)
-[  345.154996] ata1.00: exception Emask 0x40 SAct 0x0 SErr 0xc0800 action 0x6
-[  345.155006] ata1.00: irq_stat 0x40000001
-[  345.155013] ata1: SError: { HostInt CommWake 10B8B }
-[  345.155018] ata1.00: failed command: SET FEATURES
-[  345.155032] ata1.00: cmd ef/05:e1:00:00:00/00:00:00:00:00/40 tag 7
-                        res 51/04:e1:00:00:00/00:00:00:00:00/40 Emask 0x41 (internal error)
-[  345.155038] ata1.00: status: { DRDY ERR }
-[  345.155042] ata1.00: error: { ABRT }
-[  345.155051] ata1: hard resetting link
-[  345.465661] ata1: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
-[  345.466955] ata1.00: configured for UDMA/133
-[  345.467085] ata1: EH complete
+Great, thanks for doing this, I should have take care of sorting nodes
+opprtunely.
 
-Signed-off-by: François Cami <fcami@fedoraproject.org>
-Acked-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/ata/libata-core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks
+   j
 
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 68596bd4cf06..1ca365f13040 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4549,8 +4549,9 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
- 						ATA_HORKAGE_ZERO_AFTER_TRIM |
- 						ATA_HORKAGE_NOLPM, },
- 
--	/* This specific Samsung model/firmware-rev does not handle LPM well */
-+	/* These specific Samsung models/firmware-revs do not handle LPM well */
- 	{ "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
-+	{ "SAMSUNG SSD PM830 mSATA *",  "CXM13D1Q", ATA_HORKAGE_NOLPM, },
- 
- 	/* Sandisk devices which are known to not handle LPM well */
- 	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
--- 
-2.17.0
+> 
+> From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Subject: [PATCH] arm64: dts: renesas: r8a77995: Add VIN4
+> 
+> Describe VIN4 interface for R-Car D3 R8A77995 SoC.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> [simon: sorted node by bus address]
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> index ba98865b0c9b..2506f46293e8 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
+> @@ -610,6 +610,17 @@
+>  			status = "disabled";
+>  		};
+s  
+> +		vin4: video@e6ef4000 {
+> +			compatible = "renesas,vin-r8a77995";
+> +			reg = <0 0xe6ef4000 0 0x1000>;
+> +			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 807>;
+> +			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
+> +			resets = <&cpg 807>;
+> +			renesas,id = <4>;
+> +			status = "disabled";
+> +		};
+> +
+>  		ohci0: usb@ee080000 {
+>  			compatible = "generic-ohci";
+>  			reg = <0 0xee080000 0 0x100>;
+> -- 
+> 2.11.0
+> 
