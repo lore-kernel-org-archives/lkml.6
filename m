@@ -1,114 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751328AbeEMJJo (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 05:09:44 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:40424 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750850AbeEMJJn (ORCPT
+        id S1751489AbeEMJMT (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 05:12:19 -0400
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:39110 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750850AbeEMJMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 05:09:43 -0400
+        Sun, 13 May 2018 05:12:18 -0400
+Subject: Re: [PATCH 2/5] media: docs: clarify relationship between crop and
+ selection APIs
+To: Luca Ceresoli <luca@lucaceresoli.net>, linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <1522790146-16061-1-git-send-email-luca@lucaceresoli.net>
+ <1522790146-16061-2-git-send-email-luca@lucaceresoli.net>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <fca47fb0-a299-af1d-4485-268907bb1007@xs4all.nl>
+Date: Sun, 13 May 2018 11:12:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Message-ID: <1712698c-9539-4d62-b92f-53c937b1749b@default>
-Date: Sun, 13 May 2018 02:09:16 -0700 (PDT)
-From: Liran Alon <liran.alon@oracle.com>
-To: <kernellwp@gmail.com>
-Cc: <rkrcmar@redhat.com>, <pbonzini@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <junaids@google.com>
-Subject: Re: [PATCH 1/2] KVM: X86: Fix CR3 reserve bits
-X-Mailer: Zimbra on Oracle Beehive
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8891 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=855
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805130095
+In-Reply-To: <1522790146-16061-2-git-send-email-luca@lucaceresoli.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfJttJpfbxlvcCqPQssUHc3QLZhTBswzoQAiMwfuwALPUHnoEwxR/2ZTuv2WKB2CE0mmv0Qqe/0kUKL64unjhgzBH+Ff3erskpX8C44fudIpxuwUyEtH8
+ Q6eVX6ofk6YtkJyFgYckfIqa9aCcInmBt2xQ+0cwGsr2b71EKjkkTsCPE4dDGUJxAB7EzEuIjQCUOHQlAcNBQBdM5zQoRI7xorLi4fjqFztQc00cpFY1qaJ3
+ fUPlhof9s8xKDp6He2MMAEecBlQAlSvnY3HazDdbPC4=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4D99n3U011142
 
-
------ kernellwp@gmail.com wrote:
-
-> 2018-05-13 16:28 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
-> >
-> > ----- kernellwp@gmail.com wrote:
-> >
-> >> 2018-05-13 15:53 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
-> >> >
-> >> > ----- kernellwp@gmail.com wrote:
-> >> >
-> >> >> From: Wanpeng Li <wanpengli@tencent.com>
-> >> >>
-> >> >> MSB of CR3 is a reserved bit if the PCIDE bit is not set in
-> CR4.
-> >> >> It should be checked when PCIDE bit is not set, however commit
-> >> >> 'd1cd3ce900441 ("KVM: MMU: check guest CR3 reserved bits based
-> on
-> >> >> its physical address width")' removes the bit 63 checking
-> >> >> unconditionally. This patch fixes it by checking bit 63 of CR3
-> >> >> when PCIDE bit is not set in CR4.
-> >> >>
-> >> >> Fixes: d1cd3ce900441 (KVM: MMU: check guest CR3 reserved bits
-> based
-> >> on
-> >> >> its physical address width)
-> >> >> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> >> >> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> >> >> Cc: Junaid Shahid <junaids@google.com>
-> >> >> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> >> >> ---
-> >> >>  arch/x86/kvm/emulate.c | 4 +++-
-> >> >>  arch/x86/kvm/x86.c     | 2 +-
-> >> >>  2 files changed, 4 insertions(+), 2 deletions(-)
-> >> >>
-> >> >> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> >> >> index b3705ae..b21f427 100644
-> >> >> --- a/arch/x86/kvm/emulate.c
-> >> >> +++ b/arch/x86/kvm/emulate.c
-> >> >> @@ -4189,7 +4189,9 @@ static int check_cr_write(struct
-> >> >> x86_emulate_ctxt *ctxt)
-> >> >>                               maxphyaddr = eax & 0xff;
-> >> >>                       else
-> >> >>                               maxphyaddr = 36;
-> >> >> -                     rsvd = rsvd_bits(maxphyaddr, 62);
-> >> >> +                     if (ctxt->ops->get_cr(ctxt, 4) &
-> >> X86_CR4_PCIDE)
-> >> >> +                             new_val &= ~CR3_PCID_INVD;
-> >> >> +                     rsvd = rsvd_bits(maxphyaddr, 63);
-> >> >
-> >> > I would prefer instead to do this:
-> >> > if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_PCIDE)
-> >> >     rsvd &= ~CR3_PCID_INVD;
-> >> > It makes more sense as opposed to temporary removing the
-> >> CR3_PCID_INVD bit from new_val.
-> >>
-> >> It tries the same way
-> >>
-> https://urldefense.proofpoint.com/v2/url?u=https-3A__git.kernel.org_pub_scm_virt_kvm_kvm.git_commit_-3Fid-3Dc19986fea873f3c745122bf79013a872a190f212&d=DwIFaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=Jk6Q8nNzkQ6LJ6g42qARkg6ryIDGQr-yKXPNGZbpTx0&m=r52WDgKBorUHwe_B_5Nw2Le_F_E0ne8lqqWW6n-3bSg&s=ufTcXvhhAMkY3XP6gAx-HiKCT8ynPWo2fs2z9DqCzM4&e=
-> >> pointed out.
-> >>
-> >> Regards,
-> >> Wanpeng Li
-> >
-> > Yes but there it makes sense as new CR3 value should not have bit 63
-> set in vcpu->arch.cr3.
+On 04/03/2018 11:15 PM, Luca Ceresoli wrote:
+> Having two somewhat similar and largely overlapping APIs is confusing,
+> especially since the older one appears in the docs before the newer
+> and most featureful counterpart.
 > 
-> When X86_CR4_PCIDE == 0 and CR3 63 bit is set, a #GP is missing in
-> your suggestion.
+> Clarify all of this in several ways:
+>  - swap the two sections
+>  - give a name to the two APIs in the section names
+>  - add a note at the beginning of the CROP API section
 > 
-> Regards,
-> Wanpeng Li
+> Also remove a note that is incorrect (correct wording is in
+> vidioc-cropcap.rst).
+> 
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> Based on info from: Hans Verkuil <hverkuil@xs4all.nl>
+> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+> ---
+>  Documentation/media/uapi/v4l/common.rst            |  2 +-
+>  Documentation/media/uapi/v4l/crop.rst              | 21 ++++++++++++---------
+>  Documentation/media/uapi/v4l/selection-api-005.rst |  2 ++
+>  Documentation/media/uapi/v4l/selection-api.rst     |  4 ++--
+>  4 files changed, 17 insertions(+), 12 deletions(-)
+> 
+> diff --git a/Documentation/media/uapi/v4l/common.rst b/Documentation/media/uapi/v4l/common.rst
+> index 13f2ed3fc5a6..5f93e71122ef 100644
+> --- a/Documentation/media/uapi/v4l/common.rst
+> +++ b/Documentation/media/uapi/v4l/common.rst
+> @@ -41,6 +41,6 @@ applicable to all devices.
+>      extended-controls
+>      format
+>      planar-apis
+> -    crop
+>      selection-api
+> +    crop
+>      streaming-par
+> diff --git a/Documentation/media/uapi/v4l/crop.rst b/Documentation/media/uapi/v4l/crop.rst
+> index 182565b9ace4..83fa16eb347e 100644
+> --- a/Documentation/media/uapi/v4l/crop.rst
+> +++ b/Documentation/media/uapi/v4l/crop.rst
+> @@ -2,9 +2,18 @@
+>  
+>  .. _crop:
+>  
+> -*************************************
+> -Image Cropping, Insertion and Scaling
+> -*************************************
+> +*****************************************************
+> +Image Cropping, Insertion and Scaling -- the CROP API
+> +*****************************************************
+> +
+> +.. note::
+> +
+> +   The CROP API is mostly superseded by the newer :ref:`SELECTION API
+> +   <selection-api>`. The new API should be preferred in most cases,
+> +   with the exception of pixel aspect ratio detection, which is
+> +   implemented by :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` and has no
+> +   equivalent in the SELECTION API. See :ref:`selection-vs-crop` for a
+> +   comparison of the two APIs.
+>  
+>  Some video capture devices can sample a subsection of the picture and
+>  shrink or enlarge it to an image of arbitrary size. We call these
+> @@ -40,12 +49,6 @@ support scaling or the :ref:`VIDIOC_G_CROP <VIDIOC_G_CROP>` and
+>  :ref:`VIDIOC_S_CROP <VIDIOC_G_CROP>` ioctls. Their size (and position
+>  where applicable) will be fixed in this case.
+>  
+> -.. note::
+> -
+> -   All capture and output devices must support the
+> -   :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` ioctl such that applications
+> -   can determine if scaling takes place.
 
-Why?
+This note should be rewritten, not deleted:
 
-I suggest the following change:
-- rsvd = rsvd_bits(maxphyaddr, 62);
-+ rsvd = rsvd_bits(maxphyaddr, 63);
-+ if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_PCIDE)
-+     rsvd &= ~CR3_PCID_INVD;
+	All capture and output devices that support the CROP or SELECTION API
+	will also support the :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` ioctl.
 
-In this case, if PCIDE=0 then bit 63 is set in rsvd and therefore check_cr_write() will emulate_gp() as needed.
+Regards,
+
+	Hans
+
+> -
+>  
+>  Cropping Structures
+>  ===================
+> diff --git a/Documentation/media/uapi/v4l/selection-api-005.rst b/Documentation/media/uapi/v4l/selection-api-005.rst
+> index 5b47a28ac6d7..2ad30a49184f 100644
+> --- a/Documentation/media/uapi/v4l/selection-api-005.rst
+> +++ b/Documentation/media/uapi/v4l/selection-api-005.rst
+> @@ -1,5 +1,7 @@
+>  .. -*- coding: utf-8; mode: rst -*-
+>  
+> +.. _selection-vs-crop:
+> +
+>  ********************************
+>  Comparison with old cropping API
+>  ********************************
+> diff --git a/Documentation/media/uapi/v4l/selection-api.rst b/Documentation/media/uapi/v4l/selection-api.rst
+> index 81ea52d785b9..e4e623824b30 100644
+> --- a/Documentation/media/uapi/v4l/selection-api.rst
+> +++ b/Documentation/media/uapi/v4l/selection-api.rst
+> @@ -2,8 +2,8 @@
+>  
+>  .. _selection-api:
+>  
+> -API for cropping, composing and scaling
+> -=======================================
+> +Cropping, composing and scaling -- the SELECTION API
+> +====================================================
+>  
+>  
+>  .. toctree::
+> 
