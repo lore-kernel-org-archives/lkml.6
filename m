@@ -1,125 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752000AbeEMTix (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 15:38:53 -0400
-Received: from mail-pg0-f44.google.com ([74.125.83.44]:45072 "EHLO
-        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751961AbeEMTiv (ORCPT
+        id S1752005AbeEMTtw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 15:49:52 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:45866 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751892AbeEMTtu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 15:38:51 -0400
-X-Google-Smtp-Source: AB8JxZpkCFw8k0/vVm5iml652C+tRCAZONPQAsxY8x1BUX/KVe3KUecTx6aynPyKpBhB5bIGVdt9UA==
-Date: Sun, 13 May 2018 12:40:56 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: syzbot <syzbot+2a2c48fc189ed5125b9c@syzkaller.appspotmail.com>
-Cc: dledford@redhat.com, jgg@ziepe.ca, johannes.berg@intel.com,
-        leonro@mellanox.com, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, monis@mellanox.com,
-        muneendra.kumar@broadcom.com, pabeni@redhat.com, parav@mellanox.com,
-        roland@purestorage.com, swise@opengridcomputing.com,
-        syzkaller-bugs@googlegroups.com, yuval.shaia@oracle.com
-Subject: Re: general protection fault in rdma_addr_size
-Message-ID: <20180513194056.GB677@sol.localdomain>
-References: <001a1140e0de40f8e2056819e283@google.com>
+        Sun, 13 May 2018 15:49:50 -0400
+X-Google-Smtp-Source: AB8JxZp9dzb1jZRoaXik2R74vE4gYw9T7XgFhsENPDwEfNRPdIVwwgnmIn0hMy697YsA2/A/Xvrz1g==
+From: Anders Roxell <anders.roxell@linaro.org>
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] net: ipv4: ipconfig: fix unused variable
+Date: Sun, 13 May 2018 21:48:30 +0200
+Message-Id: <20180513194830.29946-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <001a1140e0de40f8e2056819e283@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Mar 23, 2018 at 01:01:02PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot hit the following crash on upstream commit
-> 8f5fd927c3a7576d57248a2d7a0861c3f2795973 (Fri Mar 16 20:37:42 2018 +0000)
-> Merge tag 'for-4.16-rc5-tag' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=2a2c48fc189ed5125b9c
-> 
-> So far this crash happened 2 times on upstream.
-> C reproducer is attached.
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> .config is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+2a2c48fc189ed5125b9c@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> audit: type=1400 audit(1521277737.761:7): avc:  denied  { map } for
-> pid=4234 comm="syzkaller098821" path="/root/syzkaller098821515" dev="sda1"
-> ino=16481 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
-> tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 0 PID: 4236 Comm: syzkaller098821 Not tainted 4.16.0-rc5+ #357
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:rdma_addr_size+0x1e/0x70 drivers/infiniband/core/addr.c:197
-> RSP: 0018:ffff8801b9cc7870 EFLAGS: 00010202
-> RAX: dffffc0000000000 RBX: 0000000000000020 RCX: ffffffff841374bd
-> RDX: 0000000000000004 RSI: 0000000000000000 RDI: 0000000000000020
-> RBP: ffff8801b9cc7878 R08: ffffed0037398f3a R09: ffff8801b9cc78c0
-> R10: 0000000000000022 R11: ffffed0037398f39 R12: ffff8801b9cc78c0
-> R13: ffff8801b260a1f0 R14: ffff8801b9cc7a00 R15: 0000000000000020
-> FS:  00007fd9212b2700(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fd9212b1e78 CR3: 00000001b7af4006 CR4: 00000000001606f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  ucma_query_addr.isra.7+0xce/0x4f0 drivers/infiniband/core/ucma.c:871
->  ucma_query+0x1bb/0x230 drivers/infiniband/core/ucma.c:991
->  ucma_write+0x2d6/0x3d0 drivers/infiniband/core/ucma.c:1633
->  __vfs_write+0xef/0x970 fs/read_write.c:480
->  vfs_write+0x189/0x510 fs/read_write.c:544
->  SYSC_write fs/read_write.c:589 [inline]
->  SyS_write+0xef/0x220 fs/read_write.c:581
->  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x445959
-> RSP: 002b:00007fd9212b1da8 EFLAGS: 00000297 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00000000006dac5c RCX: 0000000000445959
-> RDX: 0000000000000018 RSI: 00000000200022c0 RDI: 0000000000000003
-> RBP: 00000000006dac58 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000297 R12: 006d635f616d6472
-> R13: 2f646e6162696e69 R14: 666e692f7665642f R15: 0000000000000008
-> Code: 29 e4 95 fd e9 f8 fe ff ff 90 90 90 90 55 48 89 e5 53 48 89 fb e8 e3
-> a2 5d fd 48 89 da 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <0f> b6 14 02 48
-> 89 d8 83 e0 07 83 c0 01 38 d0 7c 04 84 d2 75 2f
-> RIP: rdma_addr_size+0x1e/0x70 drivers/infiniband/core/addr.c:197 RSP:
-> ffff8801b9cc7870
-> ---[ end trace 6c753cc522bb59ed ]---
-> Kernel panic - not syncing: Fatal exception
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
+When CONFIG_PROC_FS isn't set, variable ipconfig_dir isn't used.
+net/ipv4/ipconfig.c:167:31: warning: ‘ipconfig_dir’ defined but not used [-Wunused-variable]
+ static struct proc_dir_entry *ipconfig_dir;
+                               ^~~~~~~~~~~~
+Move the declaration of ipconfig_dir inside the CONFIG_PROC_FS ifdef to
+fix the warning.
 
-This seems to have been fixed by commit e8980d67d6017:
+Fixes: c04d2cb2009f ("ipconfig: Write NTP server IPs to /proc/net/ipconfig/ntp_servers")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ net/ipv4/ipconfig.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-#syz fix: RDMA/ucma: Ensure that CM_ID exists prior to access it
-
-- Eric
+diff --git a/net/ipv4/ipconfig.c b/net/ipv4/ipconfig.c
+index d839d74853fc..86c9f755de3d 100644
+--- a/net/ipv4/ipconfig.c
++++ b/net/ipv4/ipconfig.c
+@@ -163,9 +163,6 @@ static u8 ic_domain[64];		/* DNS (not NIS) domain name */
+  * Private state.
+  */
+ 
+-/* proc_dir_entry for /proc/net/ipconfig */
+-static struct proc_dir_entry *ipconfig_dir;
+-
+ /* Name of user-selected boot device */
+ static char user_dev_name[IFNAMSIZ] __initdata = { 0, };
+ 
+@@ -1292,6 +1289,8 @@ static int __init ic_dynamic(void)
+ #endif /* IPCONFIG_DYNAMIC */
+ 
+ #ifdef CONFIG_PROC_FS
++/* proc_dir_entry for /proc/net/ipconfig */
++static struct proc_dir_entry *ipconfig_dir;
+ 
+ /* Name servers: */
+ static int pnp_seq_show(struct seq_file *seq, void *v)
+-- 
+2.17.0
