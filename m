@@ -1,53 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752041AbeEMUxO convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 16:53:14 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:36964 "EHLO gloria.sntech.de"
+        id S1751926AbeEMU5N (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 16:57:13 -0400
+Received: from mail.stustanet.de ([141.84.69.5]:58241 "EHLO mail.stusta.mhn.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751438AbeEMUxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 16:53:13 -0400
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Tao Huang <huangtao@rock-chips.com>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, ulf.hansson@linaro.org, khilman@kernel.org,
-        xxx@rock-chips.com, linux-pm@vger.kernel.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, xf@rock-chips.com,
-        linux-rockchip@lists.infradead.org, robh+dt@kernel.org,
-        Finley Xiao <finley.xiao@rock-chips.com>,
-        linux-arm-kernel@lists.infradead.org, wxt@rock-chips.com
-Subject: Re: [PATCH v1 11/13] dt-bindings: power: add PX30 SoCs header for power-domain
-Date: Sun, 13 May 2018 22:53:00 +0200
-Message-ID: <1550439.0mAU4944n0@diego>
-In-Reply-To: <9c9606f0-5c97-1a6e-a3c5-f6380c16fea4@rock-chips.com>
-References: <1526009458-28579-1-git-send-email-zhangqing@rock-chips.com> <508694354.7btLQf7nsA@phil> <9c9606f0-5c97-1a6e-a3c5-f6380c16fea4@rock-chips.com>
+        id S1751362AbeEMU5L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 16:57:11 -0400
+Date: Sun, 13 May 2018 23:48:28 +0300
+From: Adrian Bunk <bunk@debian.org>
+To: Ben Hutchings <ben@decadent.org.uk>
+Cc: Debian release team <debian-release@lists.debian.org>,
+        Debian kernel maintainers <debian-kernel@lists.debian.org>,
+        krb5@packages.debian.org, libbsd@packages.debian.org,
+        systemd@packages.debian.org, Michael Kerrisk <mtk.manpages@gmail.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org
+Subject: Re: Fixing Linux getrandom() in stable
+Message-ID: <20180513204828.GI10643@localhost>
+References: <75577b3d2efd01aaf563f1a1400a2c655556b258.camel@decadent.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <75577b3d2efd01aaf563f1a1400a2c655556b258.camel@decadent.org.uk>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Am Sonntag, 13. Mai 2018, 17:18:12 CEST schrieb Tao Huang:
-> Hi Heiko:
+On Wed, May 09, 2018 at 11:46:00PM +0100, Ben Hutchings wrote:
+>...
+> # Security flaw and initial fix
 > 
-> On 2018年05月12日 06:11, Heiko Stuebner wrote:
-> > Here I have a naming question. When looking at the vendor kernel
-> > it looks like the px30 is largely related to the rk3326.
-> > (rk3326.dtsi includeing the px30.dtsi)
-> > 
-> > What is the reason for basing the naming on the px30 this time? And could
-> > we possibly keep to rkXXXX names for the basic things in the kernel, thus
-> > keeping the pxXX as second name, like with the other px-variants before?
+> Recently it was discovered that getrandom() could return successfully
+> before the RNG was really ready to produce unpredictable data.  This
+> issue was designated as CVE-2018-1108, and was fixed in Linux 4.17-rc2 
+> and various stable updates.
 > 
-> PX30 and RK3326 are different chips. PX30 has more features. You can simply
-> think that RK3326 is a subset of PX30. The RK3326 is more like a PX30
-> derivative chip. This is not the same as the previous chips. So we use PX30
-> instead of RK3326 for name, and the opening document is only for PX30, we
-> think this is more convenient for developers.
+> We fixed CVE-2018-1108 with an update to stretch last week
+> (DSA-4188-1).  The kernel versions in wheezy and jessie do not provide
+> getrandom().
+> 
+> # Regression
+> 
+> The version of glibc in stretch does not provide access to getrandom(),
+> but some packages in stable use syscall() to call it anyway, including:
+> 
+> * krb5: k5_get_os_entropy()
+> * libbsd: arc4_random_buf().  This is used by many other packages
+>   including libICE, and so indirectly by gnome-session.
+> 
+> Following DSA-4188-1, it turned out that the RNG did not become ready
+> on some systems until several minutes after boot, causing severe
+> regressions for GNOME/gdm (#897631, #897632) and Kerberos (#897599,
+> #897917).  We therefore reverted the fix in yesterday's update
+> (DSA-4196-1).
+> 
+> # Options for a new fix
+> 
+> It is unlikely that any further fix will be forthcoming on the kernel
+> side, so I believe that we need to do one of:
+> 
+> 1. Add entropy to the kernel during boot; either:
+>    a. Improve systemd-random-seed
+>    b. Recommend use of haveged
 
-ok, sounds reasonable :-) ... So we'll stay with the PX30.
+I don't see any solution above that both always works and never results
+in new CVEs.
 
+As an example, what happens if I debootstrap and deploy the resulting
+filesytem to a large number of identical embedded systems without
+entropy sources?
 
-Heiko
+As far as I can see, any solution above would either give me boot hangs
+or might result in nasty security issues due to the same (known) entropy
+being fed to /dev/random on many machines.
+
+Similar problems for cases like live CDs and installers.
+
+> 2. For each affected userland package, either:
+>    a. Revert to using /dev/urandom
+
+I wonder whether the current issue is just the tip of the iceberg,
+and usage of /dev/urandom is a gazillion CVEs waiting to be reported.
+
+In that case the CVE-2018-1108 fix only revealed a long existing 
+vulnerability in some packages that already switched to getrandom().
+
+/dev/urandom is documented in a very misleading way, quoting random(4):
+   When read during early boot time, /dev/urandom may return data prior to
+   the entropy pool being initialized.  If this  is  of  concern  in  your
+   application, use getrandom(2) or /dev/random instead.
+
+What is the worst case for "early boot time" here? "always"?
+
+Due to the gdm bugs mentioned above we know that there are real-life 
+situations where gdm currently uses "random" data that might be 
+predictable.
+
+grep tells me:
+daemon/gdm-x-session.c:        auth_entry.data = gdm_generate_random_bytes (auth_entry.data_length, &error);
+daemon/gdm-display-access-file.c:        *cookie = gdm_generate_random_bytes (GDM_DISPLAY_ACCESS_COOKIE_SIZE,
+
+Repeat the same for every package that uses /dev/urandom.
+
+>    b. Tolerate a longer wait for getrandom() to return
+
+I suspect there might be no guaranteed upper bound for the waiting time.
+
+>...
+> The libbsd maintainer (Guillem Jover) favours option 2a.
+> 
+> One of the krb5 maintainers (Benjamin Kaduk) favours option 2b, and
+> also proposed that systemd could provide a wait-for-rng-ready unit to
+> support this.
+
+I don't see any general solution that is both correct and easy.
+
+The proper way forward might be to deprecate /dev/urandom and add a 
+third option GRND_UNSAFE_RANDOM to getrandom() that is documented to 
+never block but might return predictable data in some cases.
+
+It would then be up to the application to decide whether predictable
+data is acceptable, and what to do in entropy-starved situations.
+
+Regarding the suggested wait-for-rng-ready systemd unit for others to 
+wait on, this only makes sense for cases where "do not start at all"
+is the best handling for a "no entropy" situation.
+
+> Ben.
+
+cu
+Adrian
+
+-- 
+
+       "Is there not promise of rain?" Ling Tan asked suddenly out
+        of the darkness. There had been need of rain for many days.
+       "Only a promise," Lao Er said.
+                                       Pearl S. Buck - Dragon Seed
