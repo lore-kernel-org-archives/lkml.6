@@ -1,109 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750980AbeEMFHA (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 01:07:00 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:41217 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750850AbeEMFG7 (ORCPT
+        id S1751093AbeEMFTg (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 01:19:36 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:45562 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750910AbeEMFTf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 01:06:59 -0400
-X-Google-Smtp-Source: AB8JxZqhiWY9hY5uaX87nhS1J0rKfDn69Frwv7Wwiue7D5fS3Du4vS2FGdeH+1hZfEgzPDUAvrOlBtwq9QZpuTFaN4c=
+        Sun, 13 May 2018 01:19:35 -0400
+X-Google-Smtp-Source: AB8JxZoq8+a2zWcJfC759Ar7du8n7e2PyC/BnLa0OzxDWtn48oGm3faLubCrpVokW+7PYOGEIZrZhg==
+Date: Sat, 12 May 2018 22:19:33 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Quentin Perret <quentin.perret@arm.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-pm@vger.kernel.org, Pavan Kondeti <pkondeti@codeaurora.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+Subject: Re: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to
+ related_cpus unnecessarily"
+Message-ID: <20180513051933.GA64158@joelaf.mtv.corp.google.com>
+References: <20180508073340.13114-1-dietmar.eggemann@arm.com>
+ <20180508082242.bre6sjfvefhz6xc3@vireshk-i7>
+ <8cf21b1a-ca6e-fed7-43c5-94c66ff5986b@arm.com>
+ <20180508094237.GA3752@e108498-lin.cambridge.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <CABeXuvpdH190cc5vhiqUkjK6B3UD9Bjy_TVPD=C-kBbHTUZmug@mail.gmail.com>
-References: <20180512065724.GA19716@beast> <CABeXuvpdH190cc5vhiqUkjK6B3UD9Bjy_TVPD=C-kBbHTUZmug@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Sat, 12 May 2018 22:06:57 -0700
-X-Google-Sender-Auth: QJiXWoVahBcowe9t6IwMOQwyXkI
-Message-ID: <CAGXu5jJGnPUdvuB099WbbWTFNAkKy6eyvW_95v_D2EJYh2R3fg@mail.gmail.com>
-Subject: Re: [PATCH] pstore: Convert internal records to timespec64
-To: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Anton Vorontsov <anton@enomsg.org>, Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180508094237.GA3752@e108498-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 12, 2018 at 10:45 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->  Acked-by: Deepa Dinamani <deepa.kernel@gmail.com>
+On Tue, May 08, 2018 at 10:42:37AM +0100, Quentin Perret wrote:
+> On Tuesday 08 May 2018 at 11:09:57 (+0200), Dietmar Eggemann wrote:
+> > On 05/08/2018 10:22 AM, Viresh Kumar wrote:
+> > > On 08-05-18, 08:33, Dietmar Eggemann wrote:
+> > > > This reverts commit e2cabe48c20efb174ce0c01190f8b9c5f3ea1d13.
+> > > > 
+> > > > Lifting the restriction that the sugov kthread is bound to the
+> > > > policy->related_cpus for a system with a slow switching cpufreq driver,
+> > > > which is able to perform DVFS from any cpu (e.g. cpufreq-dt), is not
+> > > > only not beneficial it also harms Enery-Aware Scheduling (EAS) on
+> > > > systems with asymmetric cpu capacities (e.g. Arm big.LITTLE).
+> > > > 
+> > > > The sugov kthread which does the update for the little cpus could
+> > > > potentially run on a big cpu. It could prevent that the big cluster goes
+> > > > into deeper idle states although all the tasks are running on the little
+> > > > cluster.
+> > > 
+> > > I think the original patch did the right thing, but that doesn't suit
+> > > everybody as you explained.
+> > > 
+> > > I wouldn't really revert the patch but fix my platform's cpufreq
+> > > driver to set dvfs_possible_from_any_cpu = false, so that other
+> > > platforms can still benefit from the original commit.
+> > 
+> > This would make sure that the kthreads are bound to the correct set of cpus
+> > for platforms with those cpufreq drivers (cpufreq-dt (h960), scmi-cpufreq,
+> > scpi-cpufreq) but it will also change the logic (e.g.
+> > sugov_should_update_freq() -> cpufreq_can_do_remote_dvfs()).
+> > 
+> > I'm still struggling to understand when a driver/platform should set
+> > dvfs_possible_from_any_cpu to true and what the actual benefit would be.
+> 
+> I assume it might be beneficial to have the kthread moving around freely
+> in some cases, but since it is a SCHED_DEADLINE task now it can't really
+> migrate anywhere anyway. So I'm not sure either if this commits still makes
+> sense now. Or is there another use case for this ?
 
-Thanks for checking this over!
+The usecase I guess is, as Dietmar was saying, that it makes sense for
+kthread to update its own cluster and not disturb other clusters or random
+CPUs. I agree with this point.
 
-> I will rebase the vfs series on top of this.
-> I'm a little worried about merge strategy.
-> Whoever is taking that series should pull in this patch as well?
-> I could include it as one of the patches in the series if you prefer.
-
-I'll send a v2, I found some problems in my testing. I'll see if Linus
-will take it for v4.17, so it'll be out of your way for v4.18.
-
--Kees
-
->
-> -Deepa
->
-> On Fri, May 11, 2018 at 11:57 PM, Kees Cook <keescook@chromium.org> wrote:
->> This prepares pstore for converting the VFS layer to timespec64.
->>
->> Cc: Deepa Dinamani <deepa.kernel@gmail.com>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->> ---
->>  fs/pstore/inode.c      | 3 ++-
->>  fs/pstore/platform.c   | 2 +-
->>  include/linux/pstore.h | 2 +-
->>  3 files changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
->> index 5fcb845b9fec..75afe5eb0574 100644
->> --- a/fs/pstore/inode.c
->> +++ b/fs/pstore/inode.c
->> @@ -392,7 +392,8 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
->>         inode->i_private = private;
->>
->>         if (record->time.tv_sec)
->> -               inode->i_mtime = inode->i_ctime = record->time;
->> +               inode->i_mtime = inode->i_ctime =
->> +                       timespec64_to_timespec(record->time);
->>
->>         d_add(dentry, inode);
->>
->> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
->> index dc720573fd53..c238ab8ba31d 100644
->> --- a/fs/pstore/platform.c
->> +++ b/fs/pstore/platform.c
->> @@ -328,7 +328,7 @@ void pstore_record_init(struct pstore_record *record,
->>         record->psi = psinfo;
->>
->>         /* Report zeroed timestamp if called before timekeeping has resumed. */
->> -       record->time = ns_to_timespec(ktime_get_real_fast_ns());
->> +       record->time = ns_to_timespec64(ktime_get_real_fast_ns());
->>  }
->>
->>  /*
->> diff --git a/include/linux/pstore.h b/include/linux/pstore.h
->> index 61f806a7fe29..a15bc4d48752 100644
->> --- a/include/linux/pstore.h
->> +++ b/include/linux/pstore.h
->> @@ -71,7 +71,7 @@ struct pstore_record {
->>         struct pstore_info      *psi;
->>         enum pstore_type_id     type;
->>         u64                     id;
->> -       struct timespec         time;
->> +       struct timespec64       time;
->>         char                    *buf;
->>         ssize_t                 size;
->>         ssize_t                 ecc_notice_size;
->> --
->> 2.17.0
->>
->>
->> --
->> Kees Cook
->> Pixel Security
-
-
-
--- 
-Kees Cook
-Pixel Security
+- Joel
