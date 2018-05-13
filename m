@@ -1,73 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751260AbeEMJEu (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 05:04:50 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33405 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750862AbeEMJEs (ORCPT
+        id S1751328AbeEMJJo (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 05:09:44 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:40424 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750850AbeEMJJn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 05:04:48 -0400
-X-Google-Smtp-Source: AB8JxZo206uFccLrEuI1Rq9g9oQJz3gqTcrzuMyzg9T88sYwZlXdfPbAwtiZR+bGM0OvKaPygVNaJA==
-Subject: Re: [PATCH] scsi: libosd: Remove VLA usage
-To: Kees Cook <keescook@chromium.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <20180502225545.GA45533@beast>
-Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Boaz Harrosh <ooo@electrozaur.com>
-Message-ID: <6713469a-3f36-6768-c6d7-04edbf8714e8@electrozaur.com>
-Date: Sun, 13 May 2018 12:04:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Sun, 13 May 2018 05:09:43 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180502225545.GA45533@beast>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <1712698c-9539-4d62-b92f-53c937b1749b@default>
+Date: Sun, 13 May 2018 02:09:16 -0700 (PDT)
+From: Liran Alon <liran.alon@oracle.com>
+To: <kernellwp@gmail.com>
+Cc: <rkrcmar@redhat.com>, <pbonzini@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+        <junaids@google.com>
+Subject: Re: [PATCH 1/2] KVM: X86: Fix CR3 reserve bits
+X-Mailer: Zimbra on Oracle Beehive
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8891 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=855
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805130095
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4D99n3U011142
 
-On 03/05/18 01:55, Kees Cook wrote:
-> On the quest to remove all VLAs from the kernel[1] this rearranges the
-> code to avoid a VLA warning under -Wvla (gcc doesn't recognize "const"
-> variables as not triggering VLA creation). Additionally cleans up variable
-> naming to avoid 80 character column limit.
-> 
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> 
 
-ACK-BY: Boaz Harrosh <ooo@electrozaur.com>
+----- kernellwp@gmail.com wrote:
 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  drivers/scsi/osd/osd_initiator.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+> 2018-05-13 16:28 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
+> >
+> > ----- kernellwp@gmail.com wrote:
+> >
+> >> 2018-05-13 15:53 GMT+08:00 Liran Alon <liran.alon@oracle.com>:
+> >> >
+> >> > ----- kernellwp@gmail.com wrote:
+> >> >
+> >> >> From: Wanpeng Li <wanpengli@tencent.com>
+> >> >>
+> >> >> MSB of CR3 is a reserved bit if the PCIDE bit is not set in
+> CR4.
+> >> >> It should be checked when PCIDE bit is not set, however commit
+> >> >> 'd1cd3ce900441 ("KVM: MMU: check guest CR3 reserved bits based
+> on
+> >> >> its physical address width")' removes the bit 63 checking
+> >> >> unconditionally. This patch fixes it by checking bit 63 of CR3
+> >> >> when PCIDE bit is not set in CR4.
+> >> >>
+> >> >> Fixes: d1cd3ce900441 (KVM: MMU: check guest CR3 reserved bits
+> based
+> >> on
+> >> >> its physical address width)
+> >> >> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> >> >> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> >> >> Cc: Junaid Shahid <junaids@google.com>
+> >> >> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> >> >> ---
+> >> >>  arch/x86/kvm/emulate.c | 4 +++-
+> >> >>  arch/x86/kvm/x86.c     | 2 +-
+> >> >>  2 files changed, 4 insertions(+), 2 deletions(-)
+> >> >>
+> >> >> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+> >> >> index b3705ae..b21f427 100644
+> >> >> --- a/arch/x86/kvm/emulate.c
+> >> >> +++ b/arch/x86/kvm/emulate.c
+> >> >> @@ -4189,7 +4189,9 @@ static int check_cr_write(struct
+> >> >> x86_emulate_ctxt *ctxt)
+> >> >>                               maxphyaddr = eax & 0xff;
+> >> >>                       else
+> >> >>                               maxphyaddr = 36;
+> >> >> -                     rsvd = rsvd_bits(maxphyaddr, 62);
+> >> >> +                     if (ctxt->ops->get_cr(ctxt, 4) &
+> >> X86_CR4_PCIDE)
+> >> >> +                             new_val &= ~CR3_PCID_INVD;
+> >> >> +                     rsvd = rsvd_bits(maxphyaddr, 63);
+> >> >
+> >> > I would prefer instead to do this:
+> >> > if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_PCIDE)
+> >> >     rsvd &= ~CR3_PCID_INVD;
+> >> > It makes more sense as opposed to temporary removing the
+> >> CR3_PCID_INVD bit from new_val.
+> >>
+> >> It tries the same way
+> >>
+> https://urldefense.proofpoint.com/v2/url?u=https-3A__git.kernel.org_pub_scm_virt_kvm_kvm.git_commit_-3Fid-3Dc19986fea873f3c745122bf79013a872a190f212&d=DwIFaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=Jk6Q8nNzkQ6LJ6g42qARkg6ryIDGQr-yKXPNGZbpTx0&m=r52WDgKBorUHwe_B_5Nw2Le_F_E0ne8lqqWW6n-3bSg&s=ufTcXvhhAMkY3XP6gAx-HiKCT8ynPWo2fs2z9DqCzM4&e=
+> >> pointed out.
+> >>
+> >> Regards,
+> >> Wanpeng Li
+> >
+> > Yes but there it makes sense as new CR3 value should not have bit 63
+> set in vcpu->arch.cr3.
 > 
-> diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
-> index e18877177f1b..917a86a2ae8c 100644
-> --- a/drivers/scsi/osd/osd_initiator.c
-> +++ b/drivers/scsi/osd/osd_initiator.c
-> @@ -1842,14 +1842,14 @@ int osd_req_decode_sense_full(struct osd_request *or,
->  		case osd_sense_response_integrity_check:
->  		{
->  			struct osd_sense_response_integrity_check_descriptor
-> -				*osricd = cur_descriptor;
-> -			const unsigned len =
-> -					  sizeof(osricd->integrity_check_value);
-> -			char key_dump[len*4 + 2]; /* 2nibbles+space+ASCII */
-> -
-> -			hex_dump_to_buffer(osricd->integrity_check_value, len,
-> -				       32, 1, key_dump, sizeof(key_dump), true);
-> -			OSD_SENSE_PRINT2("response_integrity [%s]\n", key_dump);
-> +				*d = cur_descriptor;
-> +			/* 2nibbles+space+ASCII */
-> +			char dump[sizeof(d->integrity_check_value) * 4 + 2];
-> +
-> +			hex_dump_to_buffer(d->integrity_check_value,
-> +					sizeof(d->integrity_check_value),
-> +					32, 1, dump, sizeof(dump), true);
-> +			OSD_SENSE_PRINT2("response_integrity [%s]\n", dump);
->  		}
->  		case osd_sense_attribute_identification:
->  		{
+> When X86_CR4_PCIDE == 0 and CR3 63 bit is set, a #GP is missing in
+> your suggestion.
 > 
+> Regards,
+> Wanpeng Li
+
+Why?
+
+I suggest the following change:
+- rsvd = rsvd_bits(maxphyaddr, 62);
++ rsvd = rsvd_bits(maxphyaddr, 63);
++ if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_PCIDE)
++     rsvd &= ~CR3_PCID_INVD;
+
+In this case, if PCIDE=0 then bit 63 is set in rsvd and therefore check_cr_write() will emulate_gp() as needed.
