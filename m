@@ -1,51 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751884AbeEMNUr (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 09:20:47 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53316 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751846AbeEMNUq (ORCPT
+        id S1751850AbeEMNwZ (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 09:52:25 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:40202 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751345AbeEMNwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 09:20:46 -0400
-X-Google-Smtp-Source: AB8JxZq/fQCm31UG5KVk4wUniRYV1B9kvoJsYGRWE4ebJmNgM8+JP8v1RchSx3MvXbjPRvNSri9lag==
-Date: Sun, 13 May 2018 15:20:42 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andi Shyti <andi.shyti@samsung.com>
-Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andi Shyti <andi@etezian.org>
-Subject: Re: [PATCH v2] ARM: dts: exynos: Update x and y properties for
- mms114 touchscreen
-Message-ID: <20180513132042.go3xqkcyox76qocs@kozik-lap>
-References: <20180510212533.27163-1-andi.shyti@samsung.com>
+        Sun, 13 May 2018 09:52:23 -0400
+X-Google-Smtp-Source: AB8JxZrCD5DlUKod3WgVHwLaQeOhMK/gLhbMMHP6j7Ne1o/jb2UQEuqBg/+Brn29MZ6pXWPXqHbnS/j5sjpwFWdR7PY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180510212533.27163-1-andi.shyti@samsung.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180511204228.GO4977@localhost.localdomain>
+References: <000000000000a9b0e3056b14bfb2@google.com> <CACT4Y+Z_+=VLbELVW69B7WEVqvri1xBMM5RMnMQynec_XgaE=w@mail.gmail.com>
+ <20180511184141.GW5105@localhost.localdomain> <683d1ead-d35b-27ee-0f0c-f7e815d989fc@gmail.com>
+ <20180511204228.GO4977@localhost.localdomain>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Sun, 13 May 2018 15:52:01 +0200
+Message-ID: <CACT4Y+ZG6igbhgimA=oFz4k=x_P4tSYGQgFk0EVrjznm8V8fLA@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in kfree_skbmem
+To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>,
+        syzbot <syzbot+fc78715ba3b3257caf6a@syzkaller.appspotmail.com>,
+        Vladislav Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>, linux-sctp@vger.kernel.org,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        David Miller <davem@davemloft.net>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        LKML <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 06:25:33AM +0900, Andi Shyti wrote:
-> The mms114 binding [1] specifies that the 'x' and 'y' should be
-> called respectively 'touchscreen-size-x' and 'touchscreen-size-y'
-> in coherence with the touchscreen [2] binding.
-> 
-> Update the mms114 node for trats2 and trats dts according to the
-> binding.
-> 
-> [1] Documentation/devicetree/bindings/input/touchscreen/mms114.txt
-> [2] Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
-> 
-> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4210-trats.dts      | 4 ++--
->  arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
+On Fri, May 11, 2018 at 10:42 PM, Marcelo Ricardo Leitner
+<marcelo.leitner@gmail.com> wrote:
+> On Fri, May 11, 2018 at 12:08:33PM -0700, Eric Dumazet wrote:
+>>
+>>
+>> On 05/11/2018 11:41 AM, Marcelo Ricardo Leitner wrote:
+>>
+>> > But calling ip6_xmit with rcu_read_lock is expected. tcp stack also
+>> > does it.
+>> > Thus I think this is more of an issue with IPv6 stack. If a host has
+>> > an extensive ip6tables ruleset, it probably generates this more
+>> > easily.
+>> >
+>> >>>  sctp_v6_xmit+0x4a5/0x6b0 net/sctp/ipv6.c:225
+>> >>>  sctp_packet_transmit+0x26f6/0x3ba0 net/sctp/output.c:650
+>> >>>  sctp_outq_flush+0x1373/0x4370 net/sctp/outqueue.c:1197
+>> >>>  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
+>> >>>  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
+>> >>>  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+>> >>>  sctp_do_sm+0x596/0x7160 net/sctp/sm_sideeffect.c:1191
+>> >>>  sctp_generate_heartbeat_event+0x218/0x450 net/sctp/sm_sideeffect.c:406
+>> >>>  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
+>> >>>  expire_timers kernel/time/timer.c:1363 [inline]
+>> >
+>> > Having this call from a timer means it wasn't processing sctp stack
+>> > for too long.
+>> >
+>>
+>> I feel the problem is that this part is looping, in some infinite loop.
+>>
+>> I have seen this stack traces in other reports.
+>
+> Checked mail history now, seems at least two other reports on RCU
+> stalls had sctp_generate_heartbeat_event involved.
+>
+>>
+>> Maybe some kind of list corruption.
+>
+> Could be.
+> Do we know if it generated a flood of packets?
 
-Thanks, applied.
-
-Best regards,
-Krzysztof
+We only know what's in the bug reports. Do the other ones have
+reproducers? It can make sense to mark them as duplicates to not have
+a placer of open bugs about the same root cause.
