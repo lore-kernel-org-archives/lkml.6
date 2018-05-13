@@ -1,200 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751660AbeEMVIy (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 17:08:54 -0400
-Received: from mail-pf0-f176.google.com ([209.85.192.176]:43217 "EHLO
-        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750931AbeEMVIw (ORCPT
+        id S1751847AbeEMVPG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 17:15:06 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:34058 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750985AbeEMVPE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 17:08:52 -0400
-X-Google-Smtp-Source: AB8JxZqC5FBowyOslYuLbmSwLIVYQ7Kgkjn8pCcaPKIrlKWAaEXrTnmDAlERHaT6m0Tozll9ff49sQ==
-Date: Sun, 13 May 2018 14:10:58 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
-        santosh.shilimkar@oracle.com
-Cc: syzbot <syzbot+b51c77ef956678a65834@syzkaller.appspotmail.com>,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: general protection fault in rds_ib_get_mr
-Message-ID: <20180513211058.GE677@sol.localdomain>
-References: <089e082ce58896ad350567ee4825@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <089e082ce58896ad350567ee4825@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Sun, 13 May 2018 17:15:04 -0400
+X-Google-Smtp-Source: AB8JxZoflE4xilKFHRfLivDRi2UVvSCUMo9dcc8NFdl/HSlDjSLaQQmqc4wyURNpLAQ61ej3lSdX3Q==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Wolfram Sang <wsa@the-dreams.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] i2c: tegra: Remove suspend-resume
+Date: Mon, 14 May 2018 00:13:47 +0300
+Message-Id: <20180513211347.7187-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 21, 2018 at 09:00:01AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot hit the following crash on upstream commit
-> 3215b9d57a2c75c4305a3956ca303d7004485200 (Wed Mar 21 00:44:27 2018 +0000)
-> Merge tag 'clk-fixes-for-linus' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux
-> syzbot dashboard link:
-> https://syzkaller.appspot.com/bug?extid=b51c77ef956678a65834
-> 
-> So far this crash happened 4 times on net-next, upstream.
-> C reproducer is attached.
-> syzkaller reproducer is attached.
-> Raw console output is attached.
-> compiler: gcc (GCC) 7.1.1 20170620
-> .config is attached.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+b51c77ef956678a65834@syzkaller.appspotmail.com
-> It will help syzbot understand when the bug is fixed. See footer for
-> details.
-> If you forward the report, please keep this part and the footer.
-> 
-> audit: type=1400 audit(1521615317.627:7): avc:  denied  { map } for
-> pid=4240 comm="syzkaller468044" path="/root/syzkaller468044973" dev="sda1"
-> ino=16481 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023
-> tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in:
-> CPU: 1 PID: 4244 Comm: syzkaller468044 Not tainted 4.16.0-rc6+ #361
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:rds_ib_get_mr+0x5c/0x230 net/rds/ib_rdma.c:544
-> RSP: 0018:ffff8801b059f890 EFLAGS: 00010202
-> RAX: dffffc0000000000 RBX: ffff8801b07e1300 RCX: ffffffff8562d96e
-> RDX: 000000000000000d RSI: 0000000000000001 RDI: 0000000000000068
-> RBP: ffff8801b059f8b8 R08: ffffed0036274244 R09: ffff8801b13a1200
-> R10: 0000000000000004 R11: ffffed0036274243 R12: ffff8801b13a1200
-> R13: 0000000000000001 R14: ffff8801ca09fa9c R15: 0000000000000000
-> FS:  00007f4d050af700(0000) GS:ffff8801db300000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f4d050aee78 CR3: 00000001b0d9b006 CR4: 00000000001606e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  __rds_rdma_map+0x710/0x1050 net/rds/rdma.c:271
->  rds_get_mr_for_dest+0x1d4/0x2c0 net/rds/rdma.c:357
->  rds_setsockopt+0x6cc/0x980 net/rds/af_rds.c:347
->  SYSC_setsockopt net/socket.c:1849 [inline]
->  SyS_setsockopt+0x189/0x360 net/socket.c:1828
->  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x42/0xb7
-> RIP: 0033:0x4456d9
-> RSP: 002b:00007f4d050aedb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 00000000006dac3c RCX: 00000000004456d9
-> RDX: 0000000000000007 RSI: 0000000000000114 RDI: 0000000000000004
-> RBP: 00000000006dac38 R08: 00000000000000a0 R09: 0000000000000000
-> R10: 0000000020000380 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007fffbfb36d6f R14: 00007f4d050af9c0 R15: 0000000000000005
-> Code: fa 48 c1 ea 03 80 3c 02 00 0f 85 cc 01 00 00 4c 8b bb 80 04 00 00 48
-> b8 00 00 00 00 00 fc ff df 49 8d 7f 68 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f
-> 85 9c 01 00 00 4d 8b 7f 68 48 b8 00 00 00 00 00
-> RIP: rds_ib_get_mr+0x5c/0x230 net/rds/ib_rdma.c:544 RSP: ffff8801b059f890
-> ---[ end trace 7e1cea13b85473b0 ]---
-> Kernel panic - not syncing: Fatal exception
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
-> 
-> 
-> ---
-> This bug is generated by a dumb bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for details.
-> Direct all questions to syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> If you want to test a patch for this bug, please reply with:
-> #syz test: git://repo/address.git branch
-> and provide the patch inline or as an attachment.
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
+Nothing prevents I2C clients to access I2C while Tegra's driver is being
+suspended, this results in -EBUSY error returned to the clients and that
+may have unfortunate consequences. In particular this causes problems
+for the TPS6586x MFD driver which emits hundreds of "failed to read
+interrupt status" error messages on resume from suspend. This happens if
+TPS6586X is used to wake system from suspend by the expired RTC alarm
+timer because TPS6586X is an I2C device driver and its IRQ handler reads
+the status register while Tegra's I2C driver is suspended, i.e. just after
+kernel enabled IRQ's during of resume-from-suspend process.
 
-Still reproducible on Linus' tree (commit 66e1c94db3cd4) and linux-next
-(next-20180511).  Here's a simplified reproducer:
+Note that the removed tegra_i2c_resume() invoked tegra_i2c_init() which
+performs HW reset. That seems was also not entirely correct because moving
+tegra_i2c_resume to an earlier stage of resume-from-suspend process causes
+I2C transfer to fail in the case of TPS6586X. It is fine to remove the
+HW-reinitialization for now because it should be only needed in a case of
+using lowest power-mode during suspend, which upstream kernel doesn't
+support.
 
-#include <linux/rds.h>
-#include <netinet/in.h>
-#include <unistd.h>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Cc: <stable@vger.kernel.org>
+---
+ drivers/i2c/busses/i2c-tegra.c | 33 ---------------------------------
+ 1 file changed, 33 deletions(-)
 
-int main()
-{
-        int transport = RDS_TRANS_IB;
-        int fd;
-
-        fd = socket(AF_RDS, SOCK_SEQPACKET, 0);
-        setsockopt(fd, SOL_RDS, SO_RDS_TRANSPORT, &transport, sizeof(transport));
-
-        if (fork()) {
-                for (;;) {
-                        struct sockaddr_in addr = {
-                                .sin_family = AF_INET,
-                                .sin_port = 0,
-                                .sin_addr = { htobe32(0x7f000001) },
-                        };
-                        bind(fd, (struct sockaddr *)&addr, sizeof(addr));
-                }
-        } else {
-                for (;;) {
-                        char buf[128] = { 0 };
-                        struct rds_get_mr_for_dest_args args = {
-                                .vec = {
-                                        .addr = (unsigned long)buf,
-                                        .bytes = sizeof(buf),
-                                },
-                        };
-
-                        setsockopt(fd, SOL_RDS, RDS_GET_MR_FOR_DEST, &args, sizeof(args));
-                }
-        }
-}
-
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000068
-PGD 0 P4D 0
-Oops: 0000 [#1] SMP
-CPU: 4 PID: 224 Comm: syz_rdma Not tainted 4.17.0-rc4-next-20180511 #40
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-RIP: 0010:rds_ib_get_mr+0x23/0xb0 net/rds/ib_rdma.c:547
-Code: 93 5a a6 ff 5b 5d c3 55 48 89 e5 41 57 49 89 cf 41 56 41 55 49 89 f5 41 54 49 89 fc 53 48 8b 82 68 04 00 00 8b ba 50 04 00 00 <48> 8b 40 68 4c 8b b0 98 00 00 00 e8 fd ef ff ff 48 85 c0 0f 84 a6
-RSP: 0018:ffffb39f4088fd10 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8c69f8f05a80 RCX: ffff8c69f986f49c
-RDX: ffff8c69f8d75840 RSI: 0000000000000002 RDI: 000000000100007f
-RBP: ffffb39f4088fd38 R08: ffff8c69f9a1a980 R09: 0000000000000002
-R10: 0000000087654321 R11: 0000000000000000 R12: ffff8c69f8f05a80
-R13: 0000000000000002 R14: ffff8c69f986f480 R15: ffff8c69f986f49c
-FS:  00007f140caf4740(0000) GS:ffff8c69ffd00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000068 CR3: 0000000078c2d000 CR4: 00000000003406e0
-Call Trace:
- __rds_rdma_map+0x36f/0x4c0 net/rds/rdma.c:271
- rds_get_mr_for_dest+0x84/0xb0 net/rds/rdma.c:357
- rds_setsockopt+0x176/0x360 net/rds/af_rds.c:350
- __sys_setsockopt+0x6d/0xd0 net/socket.c:1910
- __do_sys_setsockopt net/socket.c:1921 [inline]
- __se_sys_setsockopt net/socket.c:1918 [inline]
- __x64_sys_setsockopt+0x1f/0x30 net/socket.c:1918
- do_syscall_64+0x4a/0x180 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f140c1fd20a
-Code: 9c 2b 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 36 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e6 9b 2b 00 f7 d8 64 89 01 48
-RSP: 002b:00007fffcaa06f18 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00007fffcaa06f30 RCX: 00007f140c1fd20a
-RDX: 0000000000000007 RSI: 0000000000000114 RDI: 0000000000000003
-RBP: 00007fffcaa06fd0 R08: 00000000000000a0 R09: 00007f140c8da010
-R10: 00007fffcaa06f30 R11: 0000000000000246 R12: 0000000000000003
-R13: 00007fffcaa06f30 R14: 0000000000000000 R15: 0000000000000000
-CR2: 0000000000000068
----[ end trace fd75e4e4e9b87576 ]---
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 60292d243e24..5fccd1f1bca8 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -173,7 +173,6 @@ struct tegra_i2c_hw_feature {
+  * @msg_buf_remaining: size of unsent data in the message buffer
+  * @msg_read: identifies read transfers
+  * @bus_clk_rate: current i2c bus clock rate
+- * @is_suspended: prevents i2c controller accesses after suspend is called
+  */
+ struct tegra_i2c_dev {
+ 	struct device *dev;
+@@ -194,7 +193,6 @@ struct tegra_i2c_dev {
+ 	int msg_read;
+ 	u32 bus_clk_rate;
+ 	u16 clk_divisor_non_hs_mode;
+-	bool is_suspended;
+ 	bool is_multimaster_mode;
+ 	spinlock_t xfer_lock;
+ };
+@@ -734,9 +732,6 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+ 	int i;
+ 	int ret = 0;
+ 
+-	if (i2c_dev->is_suspended)
+-		return -EBUSY;
+-
+ 	ret = pm_runtime_get_sync(i2c_dev->dev);
+ 	if (ret < 0) {
+ 		dev_err(i2c_dev->dev, "runtime resume failed %d\n", ret);
+@@ -1051,37 +1046,9 @@ static int tegra_i2c_remove(struct platform_device *pdev)
+ }
+ 
+ #ifdef CONFIG_PM_SLEEP
+-static int tegra_i2c_suspend(struct device *dev)
+-{
+-	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+-
+-	i2c_lock_adapter(&i2c_dev->adapter);
+-	i2c_dev->is_suspended = true;
+-	i2c_unlock_adapter(&i2c_dev->adapter);
+-
+-	return 0;
+-}
+-
+-static int tegra_i2c_resume(struct device *dev)
+-{
+-	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
+-	int ret;
+-
+-	i2c_lock_adapter(&i2c_dev->adapter);
+-
+-	ret = tegra_i2c_init(i2c_dev);
+-	if (!ret)
+-		i2c_dev->is_suspended = false;
+-
+-	i2c_unlock_adapter(&i2c_dev->adapter);
+-
+-	return ret;
+-}
+-
+ static const struct dev_pm_ops tegra_i2c_pm = {
+ 	SET_RUNTIME_PM_OPS(tegra_i2c_runtime_suspend, tegra_i2c_runtime_resume,
+ 			   NULL)
+-	SET_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
+ };
+ #define TEGRA_I2C_PM	(&tegra_i2c_pm)
+ #else
+-- 
+2.17.0
