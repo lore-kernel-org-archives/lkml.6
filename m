@@ -1,75 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751920AbeEMCm2 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 22:42:28 -0400
-Received: from mail-ot0-f180.google.com ([74.125.82.180]:44204 "EHLO
-        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751307AbeEMCmZ (ORCPT
+        id S1751899AbeEMCvT (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 22:51:19 -0400
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:40351 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751370AbeEMCvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 22:42:25 -0400
-X-Google-Smtp-Source: AB8JxZqQ0KkuMTNNluTYn8G7xAz9R6H+cd6SNuDbz/mxsAOWz4TnfEbAYzY88+5SI2yoFu9UDcm6oQ==
+        Sat, 12 May 2018 22:51:18 -0400
+X-Google-Smtp-Source: AB8JxZp/+v74RA1IRvxjkueQBB6nEJxhzfxj2RoyGlht78DXHkY/dAQTokqWhdmJNCisn++EF3WKi3Np45ITjfL+0ac=
 MIME-Version: 1.0
-In-Reply-To: <677E6987-24AE-4D7C-9BF2-6BE3F43212C7@holtmann.org>
-References: <CAC=mGzijVyqEG=DXH4v9WkD0kXR2WOJC4KBPzoT7g5wqVrPGXA@mail.gmail.com>
- <677E6987-24AE-4D7C-9BF2-6BE3F43212C7@holtmann.org>
-From: Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Date: Sun, 13 May 2018 10:42:23 +0800
-X-Gmail-Original-Message-ID: <CAC=mGzj-GNQ0Xz3PodDHyypNtFsOEfBdNBnNkysW2ZZ8Wwuijg@mail.gmail.com>
-Message-ID: <CAC=mGzj-GNQ0Xz3PodDHyypNtFsOEfBdNBnNkysW2ZZ8Wwuijg@mail.gmail.com>
-Subject: Re: [RFC] net: Add new LoRaWAN subsystem
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@osg.samsung.com>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+In-Reply-To: <CAFqt6zb9KzPw0ih3fOs6DNd3RCcy9GYmxZ607_w7obn0Kym7Kw@mail.gmail.com>
+References: <20180512061712.GA26660@jordon-HP-15-Notebook-PC>
+ <e194731158f7f89145ed0ae28f46aac5726fc32d.camel@perches.com>
+ <20180512142451.GB24215@bombadil.infradead.org> <CAFqt6zb9KzPw0ih3fOs6DNd3RCcy9GYmxZ607_w7obn0Kym7Kw@mail.gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Sat, 12 May 2018 19:51:17 -0700
+Message-ID: <CAPcyv4gYp4_9h1hsQOiHeEUX3TBZCsFWZkzrdcCi+YZ2QOKhxw@mail.gmail.com>
+Subject: Re: [PATCH v3] mm: Change return type to vm_fault_t
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>,
+        David Rientjes <rientjes@google.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4D2gYbw016377
 
-Hi Jiri and Marcel,
-
-2018-05-11 23:39 GMT+08:00 Marcel Holtmann <marcel@holtmann.org>:
-> Hi Jian-Hong,
+On Sat, May 12, 2018 at 12:14 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>>> It'd be nicer to realign the 2nd and 3rd arguments
+>>> on the subsequent lines.
 >
->> A Low-Power Wide-Area Network (LPWAN) is a type of wireless
->> telecommunication wide area network designed to allow long range
->> communications at a low bit rate among things (connected objects), such
->> as sensors operated on a battery.  It can be used widely in IoT area.
->> LoRaWAN, which is one kind of implementation of LPWAN, is a medium
->> access control (MAC) layer protocol for managing communication between
->> LPWAN gateways and end-node devices, maintained by the LoRa Alliance.
->> LoRaWAN™ Specification could be downloaded at:
->> https://lora-alliance.org/lorawan-for-developers
+>>>
+>>>       vm_fault_t (*fault)(const struct vm_special_mapping *sm,
+>>>                           struct vm_area_struct *vma,
+>>>                           struct vm_fault *vmf);
+>>>
 >>
->> However, LoRaWAN is not implemented in Linux kernel right now, so I am
->> trying to develop it.  Here is my repository:
->> https://github.com/starnight/LoRa/tree/lorawan-ndo/LoRaWAN
->>
->> Because it is a kind of network, the ideal usage in an user space
->> program should be like "socket(PF_LORAWAN, SOCK_DGRAM, 0)" and with
->> other socket APIs.  Therefore, the definitions like AF_LORAWAN,
->> PF_LORAWAN ..., must be listed in the header files of glibc.
->> For the driver in kernel space, the definitions also must be listed in
->> the corresponding Linux socket header files.
->> Especially, both are for the testing programs.
->>
->> Back to the mentioned "LoRaWAN is not implemented in Linux kernel now".
->> Could or should we add the definitions into corresponding kernel header
->> files now, if LoRaWAN will be accepted as a subsystem in Linux?
 >
-> when you submit your LoRaWAN subsystem to netdev for review, include a patch that adds these new address family definitions. Just pick the next one available. There will be no pre-allocation of numbers until your work has been accepted upstream. Meaning, that the number might change if other address families get merged before yours. So you have to keep updating. glibc will eventually follow the number assigned by the kernel.
-
-Thanks for your guidance.  I will follow the steps.
-
-Thanks a lot,
-
-Jian-Hong Pan
-
-> Regards
+>> It'd be nicer if people didn't try to line up arguments at all and
+>> just indented by an extra two tabs when they had to break a logical
+>> line due to the 80-column limit.
 >
-> Marcel
->
+> Matthew, there are two different opinions. Which one to take ?
+
+Unfortunately this is one of those "maintainer's choice" preferences
+that drives new contributors crazy. Just go with the two tabs like
+Matthew said and be done.
