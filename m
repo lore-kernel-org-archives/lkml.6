@@ -1,24 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751357AbeEMMB3 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 08:01:29 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45113 "EHLO
+        id S1751648AbeEMMB5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 08:01:57 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41987 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751092AbeEMMB2 (ORCPT
+        with ESMTP id S1751092AbeEMMB4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 08:01:28 -0400
-Date: Sun, 13 May 2018 05:01:20 -0700
+        Sun, 13 May 2018 08:01:56 -0400
+Date: Sun, 13 May 2018 05:01:51 -0700
 From: tip-bot for David Wang <tipbot@zytor.com>
-Message-ID: <tip-2cc61be60e37b1856a97ccbdcca3e86e593bf06a@git.kernel.org>
-Cc: davidwang@zhaoxin.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com
-Reply-To: davidwang@zhaoxin.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com
-In-Reply-To: <1525314766-18910-2-git-send-email-davidwang@zhaoxin.com>
-References: <1525314766-18910-2-git-send-email-davidwang@zhaoxin.com>
+Message-ID: <tip-606e20959ef49f22cddb611f2cefef8e6501e3dd@git.kernel.org>
+Cc: tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, davidwang@zhaoxin.com
+Reply-To: linux-kernel@vger.kernel.org, davidwang@zhaoxin.com, hpa@zytor.com,
+        mingo@kernel.org, tglx@linutronix.de
+In-Reply-To: <1525314766-18910-3-git-send-email-davidwang@zhaoxin.com>
+References: <1525314766-18910-3-git-send-email-davidwang@zhaoxin.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cpu] x86/CPU: Make intel_num_cpu_cores() generic
-Git-Commit-ID: 2cc61be60e37b1856a97ccbdcca3e86e593bf06a
+Subject: [tip:x86/cpu] x86/CPU: Move cpu_detect_cache_sizes() into
+ init_intel_cacheinfo()
+Git-Commit-ID: 606e20959ef49f22cddb611f2cefef8e6501e3dd
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -31,18 +32,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2cc61be60e37b1856a97ccbdcca3e86e593bf06a
-Gitweb:     https://git.kernel.org/tip/2cc61be60e37b1856a97ccbdcca3e86e593bf06a
+Commit-ID:  606e20959ef49f22cddb611f2cefef8e6501e3dd
+Gitweb:     https://git.kernel.org/tip/606e20959ef49f22cddb611f2cefef8e6501e3dd
 Author:     David Wang <davidwang@zhaoxin.com>
-AuthorDate: Thu, 3 May 2018 10:32:44 +0800
+AuthorDate: Thu, 3 May 2018 10:32:45 +0800
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Sun, 13 May 2018 12:06:12 +0200
 
-x86/CPU: Make intel_num_cpu_cores() generic
+x86/CPU: Move cpu_detect_cache_sizes() into init_intel_cacheinfo()
 
-intel_num_cpu_cores() is a static function in intel.c which can't be used
-by other files. Define another function called detect_num_cpu_cores() in
-common.c to replace this function so it can be reused.
+There is no point in having the conditional cpu_detect_cache_sizes() call
+at the callsite of init_intel_cacheinfo().
+
+Move it into init_intel_cacheinfo() and make init_intel_cacheinfo() void.
+
+[ tglx: Made the init_intel_cacheinfo() void as the return value was
+  	pointless. Adjust changelog accordingly ]
 
 Signed-off-by: David Wang <davidwang@zhaoxin.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -54,86 +59,85 @@ Cc: timguo@zhaoxin.com
 Cc: cooperyan@zhaoxin.com
 Cc: hpa@zytor.com
 Cc: benjaminpan@viatech.com
-Link: https://lkml.kernel.org/r/1525314766-18910-2-git-send-email-davidwang@zhaoxin.com
+Link: https://lkml.kernel.org/r/1525314766-18910-3-git-send-email-davidwang@zhaoxin.com
 
 ---
- arch/x86/kernel/cpu/common.c | 14 ++++++++++++++
- arch/x86/kernel/cpu/cpu.h    |  1 +
- arch/x86/kernel/cpu/intel.c  | 20 +-------------------
- 3 files changed, 16 insertions(+), 19 deletions(-)
+ arch/x86/kernel/cpu/cacheinfo.c |  5 +++--
+ arch/x86/kernel/cpu/cpu.h       |  2 +-
+ arch/x86/kernel/cpu/intel.c     | 13 +++----------
+ 3 files changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 37c7c8334a00..6993842e788c 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -584,6 +584,20 @@ static void get_model_name(struct cpuinfo_x86 *c)
- 	*(s + 1) = '\0';
+diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+index 58d472c84ba2..38354c66df81 100644
+--- a/arch/x86/kernel/cpu/cacheinfo.c
++++ b/arch/x86/kernel/cpu/cacheinfo.c
+@@ -691,7 +691,7 @@ void init_amd_cacheinfo(struct cpuinfo_x86 *c)
+ 	}
  }
  
-+int detect_num_cpu_cores(struct cpuinfo_x86 *c)
-+{
-+	unsigned int eax, ebx, ecx, edx;
-+
-+	if (!IS_ENABLED(CONFIG_SMP) || c->cpuid_level < 4)
-+		return 1;
-+
-+	cpuid_count(4, 0, &eax, &ebx, &ecx, &edx);
-+	if (eax & 0x1f)
-+		return (eax >> 26) + 1;
-+	else
-+		return 1;
-+}
-+
- void cpu_detect_cache_sizes(struct cpuinfo_x86 *c)
+-unsigned int init_intel_cacheinfo(struct cpuinfo_x86 *c)
++void init_intel_cacheinfo(struct cpuinfo_x86 *c)
  {
- 	unsigned int n, dummy, ebx, ecx, edx, l2size;
+ 	/* Cache sizes */
+ 	unsigned int trace = 0, l1i = 0, l1d = 0, l2 = 0, l3 = 0;
+@@ -843,7 +843,8 @@ unsigned int init_intel_cacheinfo(struct cpuinfo_x86 *c)
+ 
+ 	c->x86_cache_size = l3 ? l3 : (l2 ? l2 : (l1i+l1d));
+ 
+-	return l2;
++	if (!l2)
++		cpu_detect_cache_sizes(c);
+ }
+ 
+ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
 diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
-index c415f99e9599..efd6ef8ad14e 100644
+index efd6ef8ad14e..49bf8a080105 100644
 --- a/arch/x86/kernel/cpu/cpu.h
 +++ b/arch/x86/kernel/cpu/cpu.h
-@@ -54,6 +54,7 @@ extern u32 get_scattered_cpuid_leaf(unsigned int level,
- extern unsigned int init_intel_cacheinfo(struct cpuinfo_x86 *c);
+@@ -51,7 +51,7 @@ extern void init_scattered_cpuid_features(struct cpuinfo_x86 *c);
+ extern u32 get_scattered_cpuid_leaf(unsigned int level,
+ 				    unsigned int sub_leaf,
+ 				    enum cpuid_regs_idx reg);
+-extern unsigned int init_intel_cacheinfo(struct cpuinfo_x86 *c);
++extern void init_intel_cacheinfo(struct cpuinfo_x86 *c);
  extern void init_amd_cacheinfo(struct cpuinfo_x86 *c);
  
-+extern int detect_num_cpu_cores(struct cpuinfo_x86 *c);
- extern int detect_extended_topology(struct cpuinfo_x86 *c);
- extern void detect_ht(struct cpuinfo_x86 *c);
- 
+ extern int detect_num_cpu_cores(struct cpuinfo_x86 *c);
 diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index b9693b80fc21..b54535be254a 100644
+index b54535be254a..615870420be2 100644
 --- a/arch/x86/kernel/cpu/intel.c
 +++ b/arch/x86/kernel/cpu/intel.c
-@@ -453,24 +453,6 @@ static void srat_detect_node(struct cpuinfo_x86 *c)
- #endif
- }
+@@ -635,8 +635,6 @@ static void init_intel_misc_features(struct cpuinfo_x86 *c)
  
--/*
-- * find out the number of processor cores on the die
-- */
--static int intel_num_cpu_cores(struct cpuinfo_x86 *c)
--{
--	unsigned int eax, ebx, ecx, edx;
--
--	if (!IS_ENABLED(CONFIG_SMP) || c->cpuid_level < 4)
--		return 1;
--
--	/* Intel has a non-standard dependency on %ecx for this CPUID level. */
--	cpuid_count(4, 0, &eax, &ebx, &ecx, &edx);
--	if (eax & 0x1f)
--		return (eax >> 26) + 1;
--	else
--		return 1;
--}
--
- static void detect_vmx_virtcap(struct cpuinfo_x86 *c)
+ static void init_intel(struct cpuinfo_x86 *c)
  {
- 	/* Intel VMX MSR indicated features */
-@@ -671,7 +653,7 @@ static void init_intel(struct cpuinfo_x86 *c)
- 		 * let's use the legacy cpuid vector 0x1 and 0x4 for topology
- 		 * detection.
- 		 */
--		c->x86_max_cores = intel_num_cpu_cores(c);
-+		c->x86_max_cores = detect_num_cpu_cores(c);
- #ifdef CONFIG_X86_32
- 		detect_ht(c);
+-	unsigned int l2 = 0;
+-
+ 	early_init_intel(c);
+ 
+ 	intel_workarounds(c);
+@@ -659,13 +657,7 @@ static void init_intel(struct cpuinfo_x86 *c)
  #endif
+ 	}
+ 
+-	l2 = init_intel_cacheinfo(c);
+-
+-	/* Detect legacy cache sizes if init_intel_cacheinfo did not */
+-	if (l2 == 0) {
+-		cpu_detect_cache_sizes(c);
+-		l2 = c->x86_cache_size;
+-	}
++	init_intel_cacheinfo(c);
+ 
+ 	if (c->cpuid_level > 9) {
+ 		unsigned eax = cpuid_eax(10);
+@@ -678,7 +670,8 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 		set_cpu_cap(c, X86_FEATURE_LFENCE_RDTSC);
+ 
+ 	if (boot_cpu_has(X86_FEATURE_DS)) {
+-		unsigned int l1;
++		unsigned int l1, l2;
++
+ 		rdmsr(MSR_IA32_MISC_ENABLE, l1, l2);
+ 		if (!(l1 & (1<<11)))
+ 			set_cpu_cap(c, X86_FEATURE_BTS);
