@@ -1,81 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751890AbeEMV1g (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 17:27:36 -0400
-Received: from ozlabs.org ([203.11.71.1]:43669 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751153AbeEMV1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 17:27:35 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 14 May 2018 07:27:22 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: another branch for linux-next
-Message-ID: <20180514072647.24ea383b@canb.auug.org.au>
-In-Reply-To: <20180513070359.GA25669@lst.de>
-References: <20180513070359.GA25669@lst.de>
+        id S1752009AbeEMVaX (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 17:30:23 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:51155 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751233AbeEMVaV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 17:30:21 -0400
+Date: Sun, 13 May 2018 23:30:11 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+cc: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] x86/boot/compressed/64: Set up GOT for paging_prepare()
+ and cleanup_trampoline()
+In-Reply-To: <20180513200356.2a4si345f76j2leb@black.fi.intel.com>
+Message-ID: <alpine.DEB.2.21.1805132317380.1582@nanos.tec.linutronix.de>
+References: <20180510173806.4332-1-kirill.shutemov@linux.intel.com> <20180510173806.4332-2-kirill.shutemov@linux.intel.com> <alpine.DEB.2.21.1805132019490.1582@nanos.tec.linutronix.de> <20180513200356.2a4si345f76j2leb@black.fi.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/rDbnTC=vvAP=wInwvoB6kTU"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/rDbnTC=vvAP=wInwvoB6kTU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, 13 May 2018, Kirill A. Shutemov wrote:
+> On Sun, May 13, 2018 at 06:55:46PM +0000, Thomas Gleixner wrote:
+> > On Thu, 10 May 2018, Kirill A. Shutemov wrote:
+> > 
+> > > +	/*
+> > > +	 * paging_prepare() and cleanup_trampoline() below can have GOT
+> > > +	 * references. Adjust the table with address we are running at.
+> > > +	 */
+> > > +
+> > > +	/* The GOP was not adjusted before */
+> > 
+> > GOP == EFI speak for Graphics Output Protocol. What the heck? 
+> 
+> I was not aware about Graphics Output Protocol.
 
-Hi Christoph,
+That does not matter. GOP what ever you think it is has nothing to do
+here. This is about GOT or am I missing something? 
 
-On Sun, 13 May 2018 09:03:59 +0200 Christoph Hellwig <hch@lst.de> wrote:
->
-> can you please add the for-linus branch of
->=20
->    git://git.infradead.org/users/hch/dma-mapping.git
->=20
-> to linux-next?  You already carry the for-next branch, but it turns
-> out I'll need another branch for late fixes so that for-next can
-> remain unmerged and unrebased.
+> > > +	xorq	%rax, %rax
+> > 
+> > And this clearing of RAX is related to this because? Sure you need it for
+> > adjust_got() but adding a comment to that is too much asked for, right?
+> 
+> Huh? The comment just above the line describes why it's needed.
 
-Added from today.
+No it does not. It is a comment which has only value when you first read
+the comment above the function which is called 5 lines later. Comments
+should make sense on their own. To be honest I did not even make the
+connection when I read the function later.
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+> > > +	/* Calculate the address the binary is loaded at. */
+> > > +	call	1f
+> > > +1:	popq	%rdi
+> > > +	subq	$1b, %rdi
+> > > +
+> > > +	call	adjust_gop
+> > > +
+> > >  	/*
+> > >  	 * At this point we are in long mode with 4-level paging enabled,
+> > >  	 * but we might want to enable 5-level paging or vice versa.
+> > > @@ -381,6 +396,24 @@ trampoline_return:
+> > >  	pushq	$0
+> > >  	popfq
+> > >  
+> > > +	/*
+> > > +	 * Previously we've adjusted the GOT with address the binary was
+> > > +	 * loaded at. Now we need to re-adjust for relocation address.
+> > > +	 */
+> > 
+> > Breaking up those comments makes it more readable, right?
+> 
+> Yes, I think so.
+> 
+> The first comment is for the whole block of code below. The second is the
+> comment for the first step.
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+Sorry no. It's just confusing as hell and a few weeks down the road it
+looks like somebody removed the code between the comments and forgot to
+update them. You can put an empty line into one comment block to separate
+paragraphs.
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+> Yes, I have hard time write correctly, even in my native languages.
+> I'm blind to mistakes I do. I'm sorry about them.
 
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Sorry, that you have a problem with that, but you could have told me
+offlist long ago and we would have found a solution for this.
 
---Sig_/rDbnTC=vvAP=wInwvoB6kTU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Not knowing that, it just looks like being careless to the other side.
 
------BEGIN PGP SIGNATURE-----
+Thanks,
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr4rboACgkQAVBC80lX
-0GzbDgf+N2q6CEXj24QIutHkZmjtZxFARUqvhLMEY0UZ8EFMttFKg5e2uSz7UArm
-rZgl68rDxIpjDLcRkuZfb3wwzvIRxXgyFitiY37Uui4+6Byn1qqg6ZpIreZoLO1y
-zKV9ixM4AhCPBMrA6StoEcIkVoaSJkt9KYgCQh3llqg5ze1GsMe7ftUGdNtY6N34
-6CZUG/ix4MWF5X+rjeYpquj2DDEa9blzshPB1gAWBjaNVCdjuZUw7EF8vjtCtl0F
-6iSBYd4r7bqsgnBj9Ox1jEarcRDGfVfSftiqOjMB2mSlgsy16fU9PfyoyTfuRaRu
-m3AQwDi20ZH2JJe0UuJAsh7CycTHjw==
-=iroy
------END PGP SIGNATURE-----
-
---Sig_/rDbnTC=vvAP=wInwvoB6kTU--
+	tglx
