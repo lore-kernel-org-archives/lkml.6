@@ -1,72 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751449AbeEMXQL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 19:16:11 -0400
-Received: from mail-qt0-f180.google.com ([209.85.216.180]:37668 "EHLO
-        mail-qt0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbeEMXQJ (ORCPT
+        id S1751985AbeEMXSa (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 19:18:30 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:43920 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751690AbeEMXS2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 19:16:09 -0400
-X-Google-Smtp-Source: AB8JxZqWXs3UBJpjzT5i5L5lf6/GkaPB5Y5BpS2hDqlmKY+O4Ozer1fAGdBmxGLpkFALgxeLcR8nMtXPUKdti5PyZ1I=
+        Sun, 13 May 2018 19:18:28 -0400
+X-Google-Smtp-Source: AB8JxZoS+jJm+o+qVhGg75stzwq/EGnOOHusrXlk/6pAtOAT66gSfEUwmJw6ubOP/6YX7nv0FckEBw==
+From: =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+To: bcousson@baylibre.com
+Cc: tony@atomide.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Hern=C3=A1n=20Gonzalez?= <hernan@vanguardiasur.com.ar>
+Subject: [PATCH] ARM: dts: am335x-baltos-ir5221: Use IRQ_TYPE specifier
+Date: Sun, 13 May 2018 20:18:14 -0300
+Message-Id: <1526253494-3333-1-git-send-email-hernan@vanguardiasur.com.ar>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <1526030149-23985-2-git-send-email-chenyao11@huawei.com>
-References: <1526030149-23985-1-git-send-email-chenyao11@huawei.com> <1526030149-23985-2-git-send-email-chenyao11@huawei.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 14 May 2018 02:16:08 +0300
-Message-ID: <CAHp75VfqfnTw6PkQq_sGeTe+RpV6iqNEf5JV1TQgpNhMk=VyeA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] PCI: kirin: Add MSI support
-To: Yao Chen <chenyao11@huawei.com>
-Cc: songxiaowei@hisilicon.com, wangbinghui@hisilicon.com,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "xuwei (O)" <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>, dimitrysh@google.com,
-        guodong.xu@linaro.org, suzhuangluan@hisilicon.com,
-        kongfei@hisilicon.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 12:15 PM, Yao Chen <chenyao11@huawei.com> wrote:
-> Add support for MSI.
+GPIO_ACTIVE_LOW was being used to specify an interrupt, use
+IRQ_TYPE_EDGE_RISING instead. This improves DT readability.
 
+Signed-off-by: Hernán Gonzalez <hernan@vanguardiasur.com.ar>
+---
+ arch/arm/boot/dts/am335x-baltos-ir5221.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +       int ret;
-> +
-> +       if (IS_ENABLED(CONFIG_PCI_MSI)) {
-
-> +               pci->pp.msi_irq = platform_get_irq(pdev, 0);
-> +               if (pci->pp.msi_irq < 0) {
-> +                       dev_err(&pdev->dev, "failed to get MSI IRQ (%d)\n",
-> +                               pci->pp.msi_irq);
-
-> +                       return -ENODEV;
-
-Why shadowing actual error code?
-
-> +               }
-> +               ret = devm_request_irq(&pdev->dev, pci->pp.msi_irq,
-> +                                      kirin_pcie_msi_irq_handler,
-> +                                      IRQF_SHARED | IRQF_NO_THREAD,
-> +                                      "kirin_pcie_msi", &pci->pp);
-> +               if (ret) {
-> +                       dev_err(&pdev->dev, "failed to request MSI IRQ %d\n",
-> +                               pci->pp.msi_irq);
-> +                       return ret;
-> +               }
-
-It would be easy to read and maintain if this would be a separate function.
-
-> +       }
-
-
-
+diff --git a/arch/arm/boot/dts/am335x-baltos-ir5221.dts b/arch/arm/boot/dts/am335x-baltos-ir5221.dts
+index 5d56355..832ead8 100644
+--- a/arch/arm/boot/dts/am335x-baltos-ir5221.dts
++++ b/arch/arm/boot/dts/am335x-baltos-ir5221.dts
+@@ -94,7 +94,7 @@
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 		interrupt-parent = <&gpio0>;
+-		interrupts = <20 GPIO_ACTIVE_LOW>;
++		interrupts = <20 IRQ_TYPE_EDGE_RISING>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&tca6416_pins>;
+ 	};
 -- 
-With Best Regards,
-Andy Shevchenko
+2.7.4
