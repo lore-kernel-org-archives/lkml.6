@@ -1,29 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751978AbeEMRzK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 13:55:10 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37977 "EHLO
+        id S1751903AbeEMR6U (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 13:58:20 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40579 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751881AbeEMRzI (ORCPT
+        with ESMTP id S1751270AbeEMR6S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 13:55:08 -0400
-Date: Sun, 13 May 2018 10:54:45 -0700
-From: tip-bot for Tetsuo Handa <tipbot@zytor.com>
-Message-ID: <tip-a466ef76b815b86748d9870ef2a430af7b39c710@git.kernel.org>
-Cc: tglx@linutronix.de, penguin-kernel@I-love.SAKURA.ne.jp,
-        mingo@kernel.org, bhe@redhat.com, ying.huang@intel.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org,
-        syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com
-Reply-To: tglx@linutronix.de, mingo@kernel.org,
-        penguin-kernel@I-love.SAKURA.ne.jp, bhe@redhat.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, ying.huang@intel.com,
-        syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com
-In-Reply-To: <201805091942.DGG12448.tMFVFSJFQOOLHO@I-love.SAKURA.ne.jp>
-References: <201805091942.DGG12448.tMFVFSJFQOOLHO@I-love.SAKURA.ne.jp>
+        Sun, 13 May 2018 13:58:18 -0400
+Date: Sun, 13 May 2018 10:57:46 -0700
+From: tip-bot for Masami Hiramatsu <tipbot@zytor.com>
+Message-ID: <tip-ee6a7354a3629f9b65bc18dbe393503e9440d6f5@git.kernel.org>
+Cc: hpa@zytor.com, ricardo.neri-calderon@linux.intel.com, oleg@redhat.com,
+        davem@davemloft.net, ast@kernel.org, yhs@fb.com, bp@suse.de,
+        luto@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        francis.deslauriers@efficios.com, mingo@kernel.org,
+        mhiramat@kernel.org
+Reply-To: rostedt@goodmis.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, francis.deslauriers@efficios.com,
+        mhiramat@kernel.org, mingo@kernel.org, hpa@zytor.com, oleg@redhat.com,
+        ricardo.neri-calderon@linux.intel.com, davem@davemloft.net,
+        ast@kernel.org, yhs@fb.com, bp@suse.de, luto@kernel.org,
+        tglx@linutronix.de
+In-Reply-To: <152587069574.17316.3311695234863248641.stgit@devbox>
+References: <152587069574.17316.3311695234863248641.stgit@devbox>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/kexec: Avoid double free_page() upon
- do_kexec_load() failure
-Git-Commit-ID: a466ef76b815b86748d9870ef2a430af7b39c710
+Subject: [tip:x86/urgent] kprobes/x86: Prohibit probing on exception masking
+ instructions
+Git-Commit-ID: ee6a7354a3629f9b65bc18dbe393503e9440d6f5
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,109 +40,89 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a466ef76b815b86748d9870ef2a430af7b39c710
-Gitweb:     https://git.kernel.org/tip/a466ef76b815b86748d9870ef2a430af7b39c710
-Author:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-AuthorDate: Wed, 9 May 2018 19:42:20 +0900
+Commit-ID:  ee6a7354a3629f9b65bc18dbe393503e9440d6f5
+Gitweb:     https://git.kernel.org/tip/ee6a7354a3629f9b65bc18dbe393503e9440d6f5
+Author:     Masami Hiramatsu <mhiramat@kernel.org>
+AuthorDate: Wed, 9 May 2018 21:58:15 +0900
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Sun, 13 May 2018 19:50:06 +0200
+CommitDate: Sun, 13 May 2018 19:52:55 +0200
 
-x86/kexec: Avoid double free_page() upon do_kexec_load() failure
+kprobes/x86: Prohibit probing on exception masking instructions
 
->From ff82bedd3e12f0d3353282054ae48c3bd8c72012 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Wed, 9 May 2018 12:12:39 +0900
-Subject: [PATCH v3] x86/kexec: avoid double free_page() upon do_kexec_load() failure.
+Since MOV SS and POP SS instructions will delay the exceptions until the
+next instruction is executed, single-stepping on it by kprobes must be
+prohibited.
 
-syzbot is reporting crashes after memory allocation failure inside
-do_kexec_load() [1]. This is because free_transition_pgtable() is called
-by both init_transition_pgtable() and machine_kexec_cleanup() when memory
-allocation failed inside init_transition_pgtable().
+However, kprobes usually executes those instructions directly on trampoline
+buffer (a.k.a. kprobe-booster), except for the kprobes which has
+post_handler. Thus if kprobe user probes MOV SS with post_handler, it will
+do single-stepping on the MOV SS.
 
-Regarding 32bit code, machine_kexec_free_page_tables() is called by both
-machine_kexec_alloc_page_tables() and machine_kexec_cleanup() when memory
-allocation failed inside machine_kexec_alloc_page_tables().
+This means it is safe that if it is used via ftrace or perf/bpf since those
+don't use the post_handler.
 
-Fix this by leaving the error handling to machine_kexec_cleanup()
-(and optionally setting NULL after free_page()).
+Anyway, since the stack switching is a rare case, it is safer just
+rejecting kprobes on such instructions.
 
-[1] https://syzkaller.appspot.com/bug?id=91e52396168cf2bdd572fe1e1bc0bc645c1c6b40
-
-Fixes: f5deb79679af6eb4 ("x86: kexec: Use one page table in x86_64 machine_kexec")
-Fixes: 92be3d6bdf2cb349 ("kexec/i386: allocate page table pages dynamically")
-Reported-by: syzbot <syzbot+d96f60296ef613fe1d69@syzkaller.appspotmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Baoquan He <bhe@redhat.com>
-Cc: thomas.lendacky@amd.com
-Cc: prudo@linux.vnet.ibm.com
-Cc: Huang Ying <ying.huang@intel.com>
-Cc: syzkaller-bugs@googlegroups.com
-Cc: takahiro.akashi@linaro.org
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: akpm@linux-foundation.org
-Cc: dyoung@redhat.com
-Cc: kirill.shutemov@linux.intel.com
-Link: https://lkml.kernel.org/r/201805091942.DGG12448.tMFVFSJFQOOLHO@I-love.SAKURA.ne.jp
+Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: Francis Deslauriers <francis.deslauriers@efficios.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Yonghong Song <yhs@fb.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "David S . Miller" <davem@davemloft.net>
+Link: https://lkml.kernel.org/r/152587069574.17316.3311695234863248641.stgit@devbox
 
 ---
- arch/x86/kernel/machine_kexec_32.c | 6 +++++-
- arch/x86/kernel/machine_kexec_64.c | 5 ++++-
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/insn.h    | 18 ++++++++++++++++++
+ arch/x86/kernel/kprobes/core.c |  4 ++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/arch/x86/kernel/machine_kexec_32.c b/arch/x86/kernel/machine_kexec_32.c
-index 60cdec6628b0..d1ab07ec8c9a 100644
---- a/arch/x86/kernel/machine_kexec_32.c
-+++ b/arch/x86/kernel/machine_kexec_32.c
-@@ -57,12 +57,17 @@ static void load_segments(void)
- static void machine_kexec_free_page_tables(struct kimage *image)
- {
- 	free_page((unsigned long)image->arch.pgd);
-+	image->arch.pgd = NULL;
- #ifdef CONFIG_X86_PAE
- 	free_page((unsigned long)image->arch.pmd0);
-+	image->arch.pmd0 = NULL;
- 	free_page((unsigned long)image->arch.pmd1);
-+	image->arch.pmd1 = NULL;
- #endif
- 	free_page((unsigned long)image->arch.pte0);
-+	image->arch.pte0 = NULL;
- 	free_page((unsigned long)image->arch.pte1);
-+	image->arch.pte1 = NULL;
+diff --git a/arch/x86/include/asm/insn.h b/arch/x86/include/asm/insn.h
+index b3e32b010ab1..c2c01f84df75 100644
+--- a/arch/x86/include/asm/insn.h
++++ b/arch/x86/include/asm/insn.h
+@@ -208,4 +208,22 @@ static inline int insn_offset_immediate(struct insn *insn)
+ 	return insn_offset_displacement(insn) + insn->displacement.nbytes;
  }
  
- static int machine_kexec_alloc_page_tables(struct kimage *image)
-@@ -79,7 +84,6 @@ static int machine_kexec_alloc_page_tables(struct kimage *image)
- 	    !image->arch.pmd0 || !image->arch.pmd1 ||
- #endif
- 	    !image->arch.pte0 || !image->arch.pte1) {
--		machine_kexec_free_page_tables(image);
- 		return -ENOMEM;
- 	}
- 	return 0;
-diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
-index a5e55d832d0a..6010449ca6d2 100644
---- a/arch/x86/kernel/machine_kexec_64.c
-+++ b/arch/x86/kernel/machine_kexec_64.c
-@@ -39,9 +39,13 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
- static void free_transition_pgtable(struct kimage *image)
- {
- 	free_page((unsigned long)image->arch.p4d);
-+	image->arch.p4d = NULL;
- 	free_page((unsigned long)image->arch.pud);
-+	image->arch.pud = NULL;
- 	free_page((unsigned long)image->arch.pmd);
-+	image->arch.pmd = NULL;
- 	free_page((unsigned long)image->arch.pte);
-+	image->arch.pte = NULL;
- }
++#define POP_SS_OPCODE 0x1f
++#define MOV_SREG_OPCODE 0x8e
++
++/*
++ * Intel SDM Vol.3A 6.8.3 states;
++ * "Any single-step trap that would be delivered following the MOV to SS
++ * instruction or POP to SS instruction (because EFLAGS.TF is 1) is
++ * suppressed."
++ * This function returns true if @insn is MOV SS or POP SS. On these
++ * instructions, single stepping is suppressed.
++ */
++static inline int insn_masking_exception(struct insn *insn)
++{
++	return insn->opcode.bytes[0] == POP_SS_OPCODE ||
++		(insn->opcode.bytes[0] == MOV_SREG_OPCODE &&
++		 X86_MODRM_REG(insn->modrm.bytes[0]) == 2);
++}
++
+ #endif /* _ASM_X86_INSN_H */
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index 0715f827607c..6f4d42377fe5 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -370,6 +370,10 @@ int __copy_instruction(u8 *dest, u8 *src, u8 *real, struct insn *insn)
+ 	if (insn->opcode.bytes[0] == BREAKPOINT_INSTRUCTION)
+ 		return 0;
  
- static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
-@@ -91,7 +95,6 @@ static int init_transition_pgtable(struct kimage *image, pgd_t *pgd)
- 	set_pte(pte, pfn_pte(paddr >> PAGE_SHIFT, PAGE_KERNEL_EXEC_NOENC));
- 	return 0;
- err:
--	free_transition_pgtable(image);
- 	return result;
- }
- 
++	/* We should not singlestep on the exception masking instructions */
++	if (insn_masking_exception(insn))
++		return 0;
++
+ #ifdef CONFIG_X86_64
+ 	/* Only x86_64 has RIP relative instructions */
+ 	if (insn_rip_relative(insn)) {
