@@ -1,44 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751917AbeEMQWT (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 12:22:19 -0400
-Received: from mail-pl0-f43.google.com ([209.85.160.43]:40586 "EHLO
-        mail-pl0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751926AbeEMQV3 (ORCPT
+        id S1751977AbeEMQ2E (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 12:28:04 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:35140 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751885AbeEMQ2D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 12:21:29 -0400
-X-Google-Smtp-Source: AB8JxZr+75l/OAKpw+BaePoDWhnLtkVr+WlhAl+j8b0gOQM/QnskWnBGOX892AE1ho/vV7QU0lQeag==
-Subject: Re: [PATCH v2] {net, IB}/mlx5: Use 'kvfree()' for memory allocated by
- 'kvzalloc()'
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        saeedm@mellanox.com, matanb@mellanox.com, leon@kernel.org,
-        dledford@redhat.com, jgg@ziepe.ca, davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20180513070041.24246-1-christophe.jaillet@wanadoo.fr>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <91c6f7a0-e099-5b93-1b3a-f16f650adc2e@gmail.com>
-Date: Sun, 13 May 2018 09:21:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Sun, 13 May 2018 12:28:03 -0400
+X-Google-Smtp-Source: AB8JxZr/7TuHxmC4pzSoJHSVixAtP7vNNUCOsKBodIk+CeQvuT5PgfFoElTY3BFWHQ4M/8SKGSB7qNHX7h0CHgcR9gl9RiN14qvj
 MIME-Version: 1.0
-In-Reply-To: <20180513070041.24246-1-christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Date: Sun, 13 May 2018 09:28:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000628fe1056c18da7f@google.com>
+Subject: WARNING in iov_iter_revert
+From: syzbot <syzbot+c226690f7b3126c5ee04@syzkaller.appspotmail.com>
+To: aviadye@mellanox.com, davejwatson@fb.com, davem@davemloft.net,
+        ilyal@mellanox.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    427fbe89261d Merge branch 'next' of git://git.kernel.org/p..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16b33477800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fcce42b221691ff9
+dashboard link: https://syzkaller.appspot.com/bug?extid=c226690f7b3126c5ee04
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=144f1997800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=141d5417800000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+c226690f7b3126c5ee04@syzkaller.appspotmail.com
+
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+WARNING: CPU: 1 PID: 4542 at lib/iov_iter.c:857 iov_iter_revert+0x2ee/0xaa0  
+lib/iov_iter.c:857
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 4542 Comm: syz-executor650 Not tainted 4.17.0-rc4+ #44
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  panic+0x22f/0x4de kernel/panic.c:184
+  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:iov_iter_revert+0x2ee/0xaa0 lib/iov_iter.c:857
+RSP: 0018:ffff8801ad1bf700 EFLAGS: 00010293
+RAX: ffff8801ac55e6c0 RBX: 00000000ffffffff RCX: ffffffff835104a1
+RDX: 0000000000000000 RSI: ffffffff8351074e RDI: 0000000000000007
+RBP: ffff8801ad1bf760 R08: ffff8801ac55e6c0 R09: ffffed003b5e46c2
+R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000001
+R13: ffff8801ad1bfd60 R14: 0000000000000011 R15: ffff8801ae9ac040
+  tls_sw_sendmsg+0xf1c/0x12d0 net/tls/tls_sw.c:448
+  inet_sendmsg+0x19f/0x690 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:629 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:639
+  ___sys_sendmsg+0x805/0x940 net/socket.c:2117
+  __sys_sendmsg+0x115/0x270 net/socket.c:2155
+  __do_sys_sendmsg net/socket.c:2164 [inline]
+  __se_sys_sendmsg net/socket.c:2162 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2162
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4403a9
+RSP: 002b:00007ffdcdfbd6c8 EFLAGS: 00000207 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004403a9
+RDX: 0000000000000000 RSI: 0000000020001340 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 000000000000001c R09: 000000000000001c
+R10: 0000000020000180 R11: 0000000000000207 R12: 0000000000401cd0
+R13: 0000000000401d60 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
-On 05/13/2018 12:00 AM, Christophe JAILLET wrote:
-> When 'kvzalloc()' is used to allocate memory, 'kvfree()' must be used to
-> free it.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> v1 -> v2: More places to update have been added to the patch
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-
-Please add relevant Fixes: tag(s)
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
