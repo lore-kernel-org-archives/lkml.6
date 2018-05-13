@@ -1,45 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751695AbeEMNUg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 09:20:36 -0400
-Received: from mail-it0-f49.google.com ([209.85.214.49]:51154 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751263AbeEMNUe (ORCPT
+        id S1751884AbeEMNUr (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 09:20:47 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53316 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751846AbeEMNUq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 09:20:34 -0400
-X-Google-Smtp-Source: AB8JxZqrft+x11ifVVtSGDUJDSi8j+0rl1G7zJv7h2D9ULtDLFEhUdbMuCR1TtRMGB93A+8zSJYFI1+9hVcmniERyAE=
+        Sun, 13 May 2018 09:20:46 -0400
+X-Google-Smtp-Source: AB8JxZq/fQCm31UG5KVk4wUniRYV1B9kvoJsYGRWE4ebJmNgM8+JP8v1RchSx3MvXbjPRvNSri9lag==
+Date: Sun, 13 May 2018 15:20:42 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andi Shyti <andi.shyti@samsung.com>
+Cc: Simon Shields <simon@lineageos.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andi Shyti <andi@etezian.org>
+Subject: Re: [PATCH v2] ARM: dts: exynos: Update x and y properties for
+ mms114 touchscreen
+Message-ID: <20180513132042.go3xqkcyox76qocs@kozik-lap>
+References: <20180510212533.27163-1-andi.shyti@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <CANoib0FoY86caY-zABHssXq_G8zmt3zJemvYrTyvQ1R58xseoQ@mail.gmail.com>
-References: <CANoib0FoY86caY-zABHssXq_G8zmt3zJemvYrTyvQ1R58xseoQ@mail.gmail.com>
-From: Dmitry Tunin <hanipouspilot@gmail.com>
-Date: Sun, 13 May 2018 16:20:33 +0300
-Message-ID: <CANoib0ENa5LX4hFrQJvdBsHFVs6+3eH+VbzNJ=iW-nGd11Ga-g@mail.gmail.com>
-Subject: Re: [REGRESSION] And a drity fix for 0cf3:3004 QCA Rome device
-To: Marcel Holtmann <marcel@holtmann.org>,
-        linux-bluetooth <linux-bluetooth@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180510212533.27163-1-andi.shyti@samsung.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-And the worst thing is that if has been CCed to
-stable@vger.kernel.org. This means that the regression will affect all
-supported kernels soon. This should be fixed!!
+On Fri, May 11, 2018 at 06:25:33AM +0900, Andi Shyti wrote:
+> The mms114 binding [1] specifies that the 'x' and 'y' should be
+> called respectively 'touchscreen-size-x' and 'touchscreen-size-y'
+> in coherence with the touchscreen [2] binding.
+> 
+> Update the mms114 node for trats2 and trats dts according to the
+> binding.
+> 
+> [1] Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+> [2] Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
+> 
+> Signed-off-by: Andi Shyti <andi.shyti@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4210-trats.dts      | 4 ++--
+>  arch/arm/boot/dts/exynos4412-galaxy-s3.dtsi | 4 ++--
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
 
-2018-05-13 16:08 GMT+03:00 Dmitry Tunin <hanipouspilot@gmail.com>:
-> Hi, Marcel
->
-> Since  f44cb4b older AR3012 devices stopped working. We discussed that
-> before that QCA released a ROME device with a duplicate code.
->
-> If there is no easy way to check which one is used, then it may be a
-> good decision to change the kernel code for the newer device in new
-> kernels.
->
-> But anyway it should be made cleaner. The device is still listed in
-> ath3k.o as an AR3012.
->
-> Regards,
->
-> Dmitry.
+Thanks, applied.
+
+Best regards,
+Krzysztof
