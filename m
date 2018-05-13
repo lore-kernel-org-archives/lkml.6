@@ -1,79 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751881AbeEMCcR (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 22:32:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56822 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751129AbeEMCcQ (ORCPT
+        id S1751920AbeEMCm2 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 22:42:28 -0400
+Received: from mail-ot0-f180.google.com ([74.125.82.180]:44204 "EHLO
+        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751307AbeEMCmZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 22:32:16 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: hisilicon: fix spelling mistake: "uknown" -> "unknown"" to the asoc tree
-In-Reply-To: <20180511132818.16728-1-colin.king@canonical.com>
-Message-Id: <20180513023204.CCAB944007C@finisterre.ee.mobilebroadband>
-Date: Sun, 13 May 2018 03:32:04 +0100 (BST)
+        Sat, 12 May 2018 22:42:25 -0400
+X-Google-Smtp-Source: AB8JxZqQ0KkuMTNNluTYn8G7xAz9R6H+cd6SNuDbz/mxsAOWz4TnfEbAYzY88+5SI2yoFu9UDcm6oQ==
+MIME-Version: 1.0
+In-Reply-To: <677E6987-24AE-4D7C-9BF2-6BE3F43212C7@holtmann.org>
+References: <CAC=mGzijVyqEG=DXH4v9WkD0kXR2WOJC4KBPzoT7g5wqVrPGXA@mail.gmail.com>
+ <677E6987-24AE-4D7C-9BF2-6BE3F43212C7@holtmann.org>
+From: Jian-Hong Pan <starnight@g.ncu.edu.tw>
+Date: Sun, 13 May 2018 10:42:23 +0800
+X-Gmail-Original-Message-ID: <CAC=mGzj-GNQ0Xz3PodDHyypNtFsOEfBdNBnNkysW2ZZ8Wwuijg@mail.gmail.com>
+Message-ID: <CAC=mGzj-GNQ0Xz3PodDHyypNtFsOEfBdNBnNkysW2ZZ8Wwuijg@mail.gmail.com>
+Subject: Re: [RFC] net: Add new LoRaWAN subsystem
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Alexander Aring <alex.aring@gmail.com>,
+        Stefan Schmidt <stefan@osg.samsung.com>,
+        linux-wpan - ML <linux-wpan@vger.kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4D2gYbw016377
 
-The patch
+Hi Jiri and Marcel,
 
-   ASoC: hisilicon: fix spelling mistake: "uknown" -> "unknown"
+2018-05-11 23:39 GMT+08:00 Marcel Holtmann <marcel@holtmann.org>:
+> Hi Jian-Hong,
+>
+>> A Low-Power Wide-Area Network (LPWAN) is a type of wireless
+>> telecommunication wide area network designed to allow long range
+>> communications at a low bit rate among things (connected objects), such
+>> as sensors operated on a battery.  It can be used widely in IoT area.
+>> LoRaWAN, which is one kind of implementation of LPWAN, is a medium
+>> access control (MAC) layer protocol for managing communication between
+>> LPWAN gateways and end-node devices, maintained by the LoRa Alliance.
+>> LoRaWAN™ Specification could be downloaded at:
+>> https://lora-alliance.org/lorawan-for-developers
+>>
+>> However, LoRaWAN is not implemented in Linux kernel right now, so I am
+>> trying to develop it.  Here is my repository:
+>> https://github.com/starnight/LoRa/tree/lorawan-ndo/LoRaWAN
+>>
+>> Because it is a kind of network, the ideal usage in an user space
+>> program should be like "socket(PF_LORAWAN, SOCK_DGRAM, 0)" and with
+>> other socket APIs.  Therefore, the definitions like AF_LORAWAN,
+>> PF_LORAWAN ..., must be listed in the header files of glibc.
+>> For the driver in kernel space, the definitions also must be listed in
+>> the corresponding Linux socket header files.
+>> Especially, both are for the testing programs.
+>>
+>> Back to the mentioned "LoRaWAN is not implemented in Linux kernel now".
+>> Could or should we add the definitions into corresponding kernel header
+>> files now, if LoRaWAN will be accepted as a subsystem in Linux?
+>
+> when you submit your LoRaWAN subsystem to netdev for review, include a patch that adds these new address family definitions. Just pick the next one available. There will be no pre-allocation of numbers until your work has been accepted upstream. Meaning, that the number might change if other address families get merged before yours. So you have to keep updating. glibc will eventually follow the number assigned by the kernel.
 
-has been applied to the asoc tree at
+Thanks for your guidance.  I will follow the steps.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Thanks a lot,
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Jian-Hong Pan
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 2b8eae795580ca13ce6f035cac599f6a85c81bbf Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 11 May 2018 14:28:18 +0100
-Subject: [PATCH] ASoC: hisilicon: fix spelling mistake: "uknown" -> "unknown"
-
-Trivial fix to spelling mistake in dev_err message text
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/hisilicon/hi6210-i2s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/hisilicon/hi6210-i2s.c b/sound/soc/hisilicon/hi6210-i2s.c
-index 07a57209e055..53344a3b7a60 100644
---- a/sound/soc/hisilicon/hi6210-i2s.c
-+++ b/sound/soc/hisilicon/hi6210-i2s.c
-@@ -498,7 +498,7 @@ static int hi6210_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
- 			hi6210_i2s_txctrl(cpu_dai, 0);
- 		break;
- 	default:
--		dev_err(cpu_dai->dev, "uknown cmd\n");
-+		dev_err(cpu_dai->dev, "unknown cmd\n");
- 		return -EINVAL;
- 	}
- 	return 0;
--- 
-2.17.0
+> Regards
+>
+> Marcel
+>
