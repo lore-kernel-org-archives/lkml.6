@@ -1,61 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751092AbeEMDLw (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 12 May 2018 23:11:52 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:41446 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750844AbeEMDLu (ORCPT
+        id S1751110AbeEMDWg (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 12 May 2018 23:22:36 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:37689 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750812AbeEMDWe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 12 May 2018 23:11:50 -0400
-X-Google-Smtp-Source: AB8JxZr3mHaYg/Qvk0wqA2rXdXvma3Xlss+Ko/bqJq+ck9d742fYll0yFTjghmguVkDBx9lBqpqlDQ==
-From: Jacob Enders <jacobenders1@gmail.com>
-To: geert@linux-m68k.org
-Cc: linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jacob <jacobenders1@gmail.com>
-Subject: [PATCH] drivers: zorro: zorro.c: Added a blank line after declarations.
-Date: Sat, 12 May 2018 23:11:40 -0400
-Message-Id: <20180513031140.7474-1-jacobenders1@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        Sat, 12 May 2018 23:22:34 -0400
+X-Google-Smtp-Source: AB8JxZpogCga/5W49nXafyGyfch3S3yKKpJAp71OgVGRbGGJ8BMIeXAiWW2f//2Jyz5FkeLHUdq7dA==
+From: Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Junaid Shahid <junaids@google.com>
+Subject: [PATCH 1/2] KVM: X86: Fix CR3 reserve bits
+Date: Sat, 12 May 2018 20:22:05 -0700
+Message-Id: <1526181725-3568-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacob <jacobenders1@gmail.com>
+From: Wanpeng Li <wanpengli@tencent.com>
 
-Fixed a coding style issue.
+MSB of CR3 is a reserved bit if the PCIDE bit is not set in CR4. 
+It should be checked when PCIDE bit is not set, however commit 
+'d1cd3ce900441 ("KVM: MMU: check guest CR3 reserved bits based on 
+its physical address width")' removes the bit 63 checking 
+unconditionally. This patch fixes it by checking bit 63 of CR3 
+when PCIDE bit is not set in CR4.
 
-Signed-off-by: Jacob Enders <jacobenders1@gmail.com>
+Fixes: d1cd3ce900441 (KVM: MMU: check guest CR3 reserved bits based on its physical address width)
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Junaid Shahid <junaids@google.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 ---
- drivers/zorro/zorro.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kvm/emulate.c | 4 +++-
+ arch/x86/kvm/x86.c     | 2 +-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/zorro/zorro.c b/drivers/zorro/zorro.c
-index 47728477297e..67fa900572a9 100644
---- a/drivers/zorro/zorro.c
-+++ b/drivers/zorro/zorro.c
-@@ -101,6 +101,7 @@ static void __init mark_region(unsigned long start, unsigned long end,
- 	end = end > Z2RAM_END ? Z2RAM_SIZE : end-Z2RAM_START;
- 	while (start < end) {
- 		u32 chunk = start>>Z2RAM_CHUNKSHIFT;
-+
- 		if (flag)
- 			set_bit(chunk, zorro_unused_z2ram);
- 		else
-@@ -117,6 +118,7 @@ static struct resource __init *zorro_find_parent_resource(
- 
- 	for (i = 0; i < bridge->num_resources; i++) {
- 		struct resource *r = &bridge->resource[i];
-+
- 		if (zorro_resource_start(z) >= r->start &&
- 		    zorro_resource_end(z) <= r->end)
- 			return r;
-@@ -168,6 +170,7 @@ static int __init amiga_zorro_probe(struct platform_device *pdev)
- 		if (z->id == ZORRO_PROD_GVP_EPC_BASE) {
- 			/* GVP quirk */
- 			unsigned long magic = zi->boardaddr + 0x8000;
-+
- 			z->id |= *(u16 *)ZTWO_VADDR(magic) & GVP_PRODMASK;
+diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+index b3705ae..b21f427 100644
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -4189,7 +4189,9 @@ static int check_cr_write(struct x86_emulate_ctxt *ctxt)
+ 				maxphyaddr = eax & 0xff;
+ 			else
+ 				maxphyaddr = 36;
+-			rsvd = rsvd_bits(maxphyaddr, 62);
++			if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_PCIDE)
++				new_val &= ~CR3_PCID_INVD;
++			rsvd = rsvd_bits(maxphyaddr, 63);
  		}
- 		z->slotaddr = zi->slotaddr;
+ 
+ 		if (new_val & rsvd)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 87e4805..9a90668 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -863,7 +863,7 @@ int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
+ 	}
+ 
+ 	if (is_long_mode(vcpu) &&
+-	    (cr3 & rsvd_bits(cpuid_maxphyaddr(vcpu), 62)))
++	    (cr3 & rsvd_bits(cpuid_maxphyaddr(vcpu), 63)))
+ 		return 1;
+ 	else if (is_pae(vcpu) && is_paging(vcpu) &&
+ 		   !load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3))
 -- 
-2.11.0
+2.7.4
