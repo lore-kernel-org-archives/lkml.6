@@ -1,264 +1,156 @@
-Return-Path: <kys@linuxonhyperv2.linuxonhyperv.com>
-X-Google-Smtp-Source: AB8JxZo8gQ3w2wbNSKWqpam6FoMmEwpZhcJFLev2PfR7nKjax1H55hNg58FA5Kmjjjp8Q8Re4UT0
-ARC-Seal: i=1; a=rsa-sha256; t=1526117497; cv=none;
-        d=google.com; s=arc-20160816;
-        b=jxuBGodoIUti1+0csmrN0JfTN11+a8iEd6havtVFMJQWY/Hr4PXkZXmA/SFTMaYj2J
-         Ef7rad5OI9rOOYRcG5689uPVmFmP38AWiB5LPpeBZvIWhfi+Zn8jbOgqkL/qKV4MEP3a
-         1DGfxeBT0FFOw60Oi3Hfhq1otfK7GR8aQZzfEEo0ivXeKHa+9ZOSJABmxfkyA1GzBEDy
-         zfWaIcrSoiX3z5XDsN9AGLn2F1R469OUdMgIBY380nPbADuQZVcowjJBsytUcLeHw2zr
-         ePByDpdzuzpuGyk8uReMBVb6RLjaKmF9S+JsHD0I2Qy4yG389gJuBdqp8otIIKrsGKQu
-         Jkow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=reply-to:message-id:date:subject:cc:to:from
-         :arc-authentication-results;
-        bh=cpkOU7203qJd1BDjRHwnX5pW7oX8IBMABoscvaiPU18=;
-        b=S/evQVx5UWVe4s0JzOnrbtdstXP+INqZ1Rb57UhkC/gMQQ4LE5JCSG5PX6Ag3pEJ/I
-         cgoKj9S61Qc56pRq+XZVlzDCX2e5D5jM9zvzPbzr0mtrvx/J5xIV/+74uE87IJVdlGF9
-         C983HyKx4Md64R2Iq7ppFUP0KoncHgoiK3gdjsg+Sn0Z3jqITX/+mBaeMgClnjww4gF2
-         NqKJjMvyY8kBsBEO58QUJgQmlFbm4QAc0hnWmfHZ8XByroYJRQdT5jAAFdvo6AV5YJDp
-         JZr5tisaUAYn3ixvOX6qaoIYb8S22Jv0xdToQ80rdv7L+4LEmkngj5RvScLY4wzQMNOc
-         iIiQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 198.71.225.49 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com
-Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 198.71.225.49 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com
-x-originating-ip: 107.180.71.197
-From: kys@linuxonhyperv.com
-To: gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	devel@linuxdriverproject.org,
-	olaf@aepfle.de,
-	apw@canonical.com,
-	jasowang@redhat.com,
-	vkuznets@redhat.com
-Cc: Dexuan Cui <decui@microsoft.com>,
-	Stephen Hemminger <sthemmin@microsoft.com>,
-	"K . Y . Srinivasan" <kys@microsoft.com>,
-	Michael Kelley <mikelley@microsoft.com>
-Subject: [PATCH 1/1] Drivers: hv: vmbus: enable VMBus protocol version 5.0
-Date: Sat, 12 May 2018 02:30:33 -0700
-Message-Id: <20180512093033.12325-1-kys@linuxonhyperv.com>
-X-Mailer: git-send-email 2.15.1
-Reply-To: kys@microsoft.com
-X-CMAE-Envelope: MS4wfGL4+zOBVEatMcBtpsZOZC4DlCHguqkSeaDHwB6XT/UFe2dHMVDeeUUyJ6NoGZGH1Va8gHPfDats7+S0tEKzHIsYAzjZcP/RaLUzK0NfQyj5GrQOiV8D
- jRH2M1I187PIz+x9GjpVThXjnZQrPQjncikpKFnTxW9v4S4YciotVOIab6y0sIxz8O9lYxt/ow6luDIRD/0jMnlTUJ5MRuw8iyAwuSbkapdbn/X5c/6mhTX7
- ELiMJRl5vF+sWzpTxonnteU/1Y/oFkfraQf3M8ZSuqyaWWEEesOwNgFF/nNl4z3hrRPnoUUtTH4e7yB+kgEdR9DEcy4D5E7RT/B22mrzVT41mGzwWAVIkZRG
- 7EGOEfna0vnvdKpx3r5gppUFuQgVwTcgcFPbtbIoEC7L5dVQ49W9UjIXLQemzNzWsbKAmuvzC3NZagJc9Edn8igKmtdd72kHd4YGZh+h/Be6X4EJa7ZqPXbg
- +KfMEecJ2SZQhmglXRuNvGsA/PIZRrk0den9shwE5TBxvl1y0saYJmj9L5IxjM+z+W/WroytW6kKElbq
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3343056-1526232260-2-13886750046229830087
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526232259; b=l2DM6tSCDdwSinJHYIXE4zubl1GD0NwcPaggrwr2M/3qxLo/sR
+    Au5aOWEgFLQxOmtMXbO5UjczZxbvXF8FSRlmsb8pV4QMs+SugQv5SH+51OZw2AXU
+    UFiBEb9GxhGVqydDERlcz3Cg4OVcwU+RzdmsxLH9YJTVsO0I8k/fvA2nx0Euz8zb
+    gDx6+UJ3zVEOQggZI3kfp873q7d1YpXT9+5m9QY7I8AW1MPmAlqopy7UKW021t+t
+    0c50wjNGs4UgHaI4hs3P64RlfVwSKC6KsQaMsn1MOwaPsOICwDuUnmPoVPH5+c+k
+    +gxyAy1sxBQsL6zdpi7i+QIwJ02wdNbeJ/Pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:subject:message-id
+    :in-reply-to:references:mime-version:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1526232259; bh=3sfi4
+    xPFd1yKQT+/4SD7+8dGvec3vnujkmP8ayx6v1Q=; b=XZKh6ocs9Lr/BrLF/NMLx
+    KWfq3gGo7MVKL6e205wG7qYLHeY50vGRb/zp9+BmJrNwEmZ7BCsnScWLBVUvk9CM
+    jQA3wciPAd6B6OZmiw9OmqpSa7JFznT+PW7u2NgTYqYqMtuZZRKcMcCRRpRg/+ky
+    m9W4bb877XkfL6FqqV0fD4ziPrGnVPsg9mYVFmyr5mzuJ2/1NAXjynZK1LYsjC9s
+    jUJx2JuDRx4UQqxnL0S9CdkqCKCVUD+2OS66QgZ7U3Akm8IqCHYyHZd1BGCNomHU
+    S+fz3UTf8/ooxXh+wamLI3KJpCnrl6vxLSC1k6FzYHmNuTv8PpH00u84kHHxsuYn
+    A==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=networkplumber-org.20150623.gappssmtp.com
+    header.i=@networkplumber-org.20150623.gappssmtp.com header.b=qAq0tABJ
+    x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=networkplumber.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+    smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=G4jjiLCe;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+    smtp_is_org_domain=yes header.domain=networkplumber.org
+    header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=networkplumber-org.20150623.gappssmtp.com
+      header.i=@networkplumber-org.20150623.gappssmtp.com header.b=qAq0tABJ
+      x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=networkplumber.org;
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+      smtp.helo=silver.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=G4jjiLCe;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+      smtp_is_org_domain=yes header.domain=networkplumber.org
+      header.result=pass header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfIeDKN8xkeRpctuj23HBwq4hgM7w0urr3vqBMBUYChy8rHBdQ1SXr7D3dNB+9QZfC/7Wq/dT0nviUKRV8qL3gPBZDHHzqVDa/i4AwSC4b+z7TcJxAeQm
+    iOrYg2Hnkw2re1WVaYhTSkTJzMaEVt96i9Xf2l2+V++ahyl7PnfmsIQ5wYXkqO+qcAOtJXQJODUGZJLspcFjH85fEkBkgazQFEVab0/0Z55yFjGjq1j0giq2
+    0T4J/F5uZhL3dFYc4KbDJw==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Odnh0R2cAAAA:8 a=DDOyTI_5AAAA:8
+    a=x31kuQR1FX0c29EMMfcA:9 a=CjuIK1q_8ugA:10 a=lNAA6UHySJB7qmBR1x20:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Google-Smtp-Source: AB8JxZq86v4h0pe0AeMXFb/8eqcdIEmYthyt5jEcAMNTd1UnPorB+iB+L81cJH+NPq03YxTvJI3kZw==
+Date: Sun, 13 May 2018 10:24:09 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: kys@linuxonhyperv.com
+Subject: Re: [PATCH 1/1] Drivers: hv: vmbus: enable VMBus protocol version 5.0
+Message-ID: <20180513102409.4adc5200@xeon-e3>
+In-Reply-To: <20180512093033.12325-1-kys@linuxonhyperv.com>
+References: <20180512093033.12325-1-kys@linuxonhyperv.com>
+MIME-Version: 1.0
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: olaf@aepfle.de, Stephen Hemminger <sthemmin@microsoft.com>,
+ gregkh@linuxfoundation.org, jasowang@redhat.com, linux-kernel@vger.kernel.org,
+ Michael Kelley <mikelley@microsoft.com>, apw@canonical.com,
+ devel@linuxdriverproject.org, vkuznets@redhat.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600250180438237407?=
-X-GMAIL-MSGID: =?utf-8?q?1600250180438237407?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dexuan Cui <decui@microsoft.com>
+On Sat, 12 May 2018 02:30:33 -0700
+kys@linuxonhyperv.com wrote:
 
-With VMBus protocol 5.0, we're able to better support new features, e.g.
-running two or more VMBus drivers simultaneously in a single VM -- note:
-we can't simply load the current VMBus driver twice, instead, a secondary
-VMBus driver must be implemented.
+>  int vmbus_post_msg(void *buffer, size_t buflen, bool can_sleep)
+>  {
+> +	struct vmbus_channel_message_header *hdr;
+>  	union hv_connection_id conn_id;
+>  	int ret = 0;
+>  	int retries = 0;
+>  	u32 usec = 1;
+>  
+>  	conn_id.asu32 = 0;
+> -	conn_id.u.id = VMBUS_MESSAGE_CONNECTION_ID;
+> +	conn_id.u.id = vmbus_connection.msg_conn_id;
+>  
+>  	/*
+>  	 * hv_post_message() can have transient failures because of
+> @@ -372,6 +400,18 @@ int vmbus_post_msg(void *buffer, size_t buflen, bool can_sleep)
+>  
+>  		switch (ret) {
+>  		case HV_STATUS_INVALID_CONNECTION_ID:
+> +			/*
+> +			 * See vmbus_negotiate_version(): VMBus protocol 5.0
+> +			 * requires that we must use
+> +			 * VMBUS_MESSAGE_CONNECTION_ID_4 for the Initiate
+> +			 * Contact message, but on old hosts that only
+> +			 * support VMBus protocol 4.0 or lower, here we get
+> +			 * HV_STATUS_INVALID_CONNECTION_ID and we should
+> +			 * return an error immediately without retrying.
+> +			 */
+> +			hdr = (struct vmbus_channel_message_header *)buffer;
 
-This patch adds the support for the new VMBus protocol, which is available
-on new Windows hosts, by:
-
-1) We still use SINT2 for compatibility;
-2) We must use Connection ID 4 for the Initiate Contact Message, and for
-subsequent messages, we must use the Message Connection ID field in
-the host-returned VersionResponse Message.
-
-Notes for developers of the secondary VMBus driver:
-1) Must use VMBus protocol 5.0 as well;
-2) Must use a different SINT number that is not in use.
-3) Must use Connection ID 4 for the Initiate Contact Message, and for
-subsequent messages, must use the Message Connection ID field in
-the host-returned VersionResponse Message.
-4) It's possible that the primary VMBus driver using protocol version 4.0
-can work with a secondary VMBus driver using protocol version 5.0, but it's
-recommended that both should use 5.0 for new Hyper-V features in the future.
-
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
----
- drivers/hv/connection.c   | 44 ++++++++++++++++++++++++++++++++++++++++++--
- drivers/hv/hyperv_vmbus.h |  3 +++
- include/linux/hyperv.h    | 26 ++++++++++++++++++++++++--
- 3 files changed, 69 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/hv/connection.c b/drivers/hv/connection.c
-index 72855182b191..19e046820fda 100644
---- a/drivers/hv/connection.c
-+++ b/drivers/hv/connection.c
-@@ -63,6 +63,9 @@ static __u32 vmbus_get_next_version(__u32 current_version)
- 	case (VERSION_WIN10):
- 		return VERSION_WIN8_1;
- 
-+	case (VERSION_WIN10_V5):
-+		return VERSION_WIN10;
-+
- 	case (VERSION_WS2008):
- 	default:
- 		return VERSION_INVAL;
-@@ -80,9 +83,29 @@ static int vmbus_negotiate_version(struct vmbus_channel_msginfo *msginfo,
- 
- 	msg = (struct vmbus_channel_initiate_contact *)msginfo->msg;
- 
-+	memset(msg, 0, sizeof(*msg));
- 	msg->header.msgtype = CHANNELMSG_INITIATE_CONTACT;
- 	msg->vmbus_version_requested = version;
--	msg->interrupt_page = virt_to_phys(vmbus_connection.int_page);
-+
-+	/*
-+	 * VMBus protocol 5.0 (VERSION_WIN10_V5) requires that we must use
-+	 * VMBUS_MESSAGE_CONNECTION_ID_4 for the Initiate Contact Message,
-+	 * and for subsequent messages, we must use the Message Connection ID
-+	 * field in the host-returned Version Response Message. And, with
-+	 * VERSION_WIN10_V5, we don't use msg->interrupt_page, but we tell
-+	 * the host explicitly that we still use VMBUS_MESSAGE_SINT(2) for
-+	 * compatibility.
-+	 *
-+	 * On old hosts, we should always use VMBUS_MESSAGE_CONNECTION_ID (1).
-+	 */
-+	if (version >= VERSION_WIN10_V5) {
-+		msg->msg_sint = VMBUS_MESSAGE_SINT;
-+		vmbus_connection.msg_conn_id = VMBUS_MESSAGE_CONNECTION_ID_4;
-+	} else {
-+		msg->interrupt_page = virt_to_phys(vmbus_connection.int_page);
-+		vmbus_connection.msg_conn_id = VMBUS_MESSAGE_CONNECTION_ID;
-+	}
-+
- 	msg->monitor_page1 = virt_to_phys(vmbus_connection.monitor_pages[0]);
- 	msg->monitor_page2 = virt_to_phys(vmbus_connection.monitor_pages[1]);
- 	/*
-@@ -137,6 +160,10 @@ static int vmbus_negotiate_version(struct vmbus_channel_msginfo *msginfo,
- 	/* Check if successful */
- 	if (msginfo->response.version_response.version_supported) {
- 		vmbus_connection.conn_state = CONNECTED;
-+
-+		if (version >= VERSION_WIN10_V5)
-+			vmbus_connection.msg_conn_id =
-+				msginfo->response.version_response.msg_conn_id;
- 	} else {
- 		return -ECONNREFUSED;
- 	}
-@@ -354,13 +381,14 @@ void vmbus_on_event(unsigned long data)
-  */
- int vmbus_post_msg(void *buffer, size_t buflen, bool can_sleep)
- {
-+	struct vmbus_channel_message_header *hdr;
- 	union hv_connection_id conn_id;
- 	int ret = 0;
- 	int retries = 0;
- 	u32 usec = 1;
- 
- 	conn_id.asu32 = 0;
--	conn_id.u.id = VMBUS_MESSAGE_CONNECTION_ID;
-+	conn_id.u.id = vmbus_connection.msg_conn_id;
- 
- 	/*
- 	 * hv_post_message() can have transient failures because of
-@@ -372,6 +400,18 @@ int vmbus_post_msg(void *buffer, size_t buflen, bool can_sleep)
- 
- 		switch (ret) {
- 		case HV_STATUS_INVALID_CONNECTION_ID:
-+			/*
-+			 * See vmbus_negotiate_version(): VMBus protocol 5.0
-+			 * requires that we must use
-+			 * VMBUS_MESSAGE_CONNECTION_ID_4 for the Initiate
-+			 * Contact message, but on old hosts that only
-+			 * support VMBus protocol 4.0 or lower, here we get
-+			 * HV_STATUS_INVALID_CONNECTION_ID and we should
-+			 * return an error immediately without retrying.
-+			 */
-+			hdr = (struct vmbus_channel_message_header *)buffer;
-+			if (hdr->msgtype == CHANNELMSG_INITIATE_CONTACT)
-+				return -EINVAL;
- 			/*
- 			 * We could get this if we send messages too
- 			 * frequently.
-diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
-index f761bef36e77..72eaba3d50fc 100644
---- a/drivers/hv/hyperv_vmbus.h
-+++ b/drivers/hv/hyperv_vmbus.h
-@@ -187,6 +187,7 @@ struct hv_input_post_message {
- 
- enum {
- 	VMBUS_MESSAGE_CONNECTION_ID	= 1,
-+	VMBUS_MESSAGE_CONNECTION_ID_4	= 4,
- 	VMBUS_MESSAGE_PORT_ID		= 1,
- 	VMBUS_EVENT_CONNECTION_ID	= 2,
- 	VMBUS_EVENT_PORT_ID		= 2,
-@@ -302,6 +303,8 @@ struct vmbus_connection {
- 	 */
- 	int connect_cpu;
- 
-+	u32 msg_conn_id;
-+
- 	atomic_t offer_in_progress;
- 
- 	enum vmbus_connect_state conn_state;
-diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
-index 192ed8fbc403..11b5612dc066 100644
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -163,6 +163,7 @@ static inline u32 hv_get_bytes_to_write(const struct hv_ring_buffer_info *rbi)
-  * 2 . 4  (Windows 8)
-  * 3 . 0  (Windows 8 R2)
-  * 4 . 0  (Windows 10)
-+ * 5 . 0  (Newer Windows 10)
-  */
- 
- #define VERSION_WS2008  ((0 << 16) | (13))
-@@ -170,10 +171,11 @@ static inline u32 hv_get_bytes_to_write(const struct hv_ring_buffer_info *rbi)
- #define VERSION_WIN8    ((2 << 16) | (4))
- #define VERSION_WIN8_1    ((3 << 16) | (0))
- #define VERSION_WIN10	((4 << 16) | (0))
-+#define VERSION_WIN10_V5 ((5 << 16) | (0))
- 
- #define VERSION_INVAL -1
- 
--#define VERSION_CURRENT VERSION_WIN10
-+#define VERSION_CURRENT VERSION_WIN10_V5
- 
- /* Make maximum size of pipe payload of 16K */
- #define MAX_PIPE_DATA_PAYLOAD		(sizeof(u8) * 16384)
-@@ -570,7 +572,14 @@ struct vmbus_channel_initiate_contact {
- 	struct vmbus_channel_message_header header;
- 	u32 vmbus_version_requested;
- 	u32 target_vcpu; /* The VCPU the host should respond to */
--	u64 interrupt_page;
-+	union {
-+		u64 interrupt_page;
-+		struct {
-+			u8	msg_sint;
-+			u8	padding1[3];
-+			u32	padding2;
-+		};
-+	};
- 	u64 monitor_page1;
- 	u64 monitor_page2;
- } __packed;
-@@ -585,6 +594,19 @@ struct vmbus_channel_tl_connect_request {
- struct vmbus_channel_version_response {
- 	struct vmbus_channel_message_header header;
- 	u8 version_supported;
-+
-+	u8 connection_state;
-+	u16 padding;
-+
-+	/*
-+	 * On new hosts that support VMBus protocol 5.0, we must use
-+	 * VMBUS_MESSAGE_CONNECTION_ID_4 for the Initiate Contact Message,
-+	 * and for subsequent messages, we must use the Message Connection ID
-+	 * field in the host-returned Version Response Message.
-+	 *
-+	 * On old hosts, we should always use VMBUS_MESSAGE_CONNECTION_ID (1).
-+	 */
-+	u32 msg_conn_id;
- } __packed;
- 
- enum vmbus_channel_state {
--- 
-2.15.1
+Hate to pick o the details, but buffer is void * so cast is not necessary here.
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
