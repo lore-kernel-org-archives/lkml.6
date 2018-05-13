@@ -1,110 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751830AbeEMOcm (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 10:32:42 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:38231 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751338AbeEMOck (ORCPT
+        id S1751830AbeEMOfy (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 10:35:54 -0400
+Received: from mail-pg0-f41.google.com ([74.125.83.41]:37897 "EHLO
+        mail-pg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751270AbeEMOfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 10:32:40 -0400
-X-Google-Smtp-Source: AB8JxZr2U+HPJg6LqS35fEYbeRyGyyBn4kn5QN6nJGvgYPtoruLXfsNqNuZ6Ud4U5N+jytXc0edhKg==
-Subject: Re: [PATCH v3 1/2] x86/amd_nb: Add support for Raven Ridge CPUs
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Clemens Ladisch <clemens@ladisch.de>, Jean Delvare <jdelvare@suse.com>,
-        Borislav Petkov <bp@suse.de>, Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        Brian Woods <brian.woods@amd.com>, linux-kernel@vger.kernel.org,
-        linux-hwmon@vger.kernel.org
-References: <1525464093-20280-1-git-send-email-linux@roeck-us.net>
- <alpine.DEB.2.21.1805131620170.1582@nanos.tec.linutronix.de>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <abcb0e98-7872-95a6-21c2-4e021b54f8cb@roeck-us.net>
-Date: Sun, 13 May 2018 07:32:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sun, 13 May 2018 10:35:52 -0400
+X-Google-Smtp-Source: AB8JxZpGo+Sw/8f6bNEj5JCAl07mG0ZE+o2vkMOwhZN7SpDKUt1RS+5UUCi2+k/YlTDKJBqTmxTlGUEqpc/V4bIFY9o=
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1805131620170.1582@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <201805132329.CEB90134.OFFSMHOFtVJQLO@I-love.SAKURA.ne.jp>
+References: <94eb2c03c9bc75aff2055f70734c@google.com> <001a113f711a528a3f0560b08e76@google.com>
+ <20180512215222.GC817@sol.localdomain> <201805131106.GFF73973.OOtMVQFSFOJFHL@I-love.SAKURA.ne.jp>
+ <20180513033220.GA654@sol.localdomain> <201805132329.CEB90134.OFFSMHOFtVJQLO@I-love.SAKURA.ne.jp>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Sun, 13 May 2018 16:35:31 +0200
+Message-ID: <CACT4Y+YzZJHnjeBwKV8ZgOVG_+g0yPq2tw1Jhx4A2qdbsVggtQ@mail.gmail.com>
+Subject: Re: BUG: workqueue lockup (2)
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Eric Biggers <ebiggers3@gmail.com>,
+        syzbot
+        <bot+e38be687a2450270a3b593bacb6b5795a7a74edb@syzkaller.appspotmail.com>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/13/2018 07:21 AM, Thomas Gleixner wrote:
-> On Fri, 4 May 2018, Guenter Roeck wrote:
-> 
->> Add Raven Ridge root bridge and data fabric PCI IDs.
->> This is required for amd_pci_dev_to_node_id() and amd_smn_read().
+On Sun, May 13, 2018 at 4:29 PM, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> Eric Biggers wrote:
+>> Generally it's best to close syzbot bug reports once the original cause is
+>> fixed, so that syzbot can continue to report other bugs with the same signature.
+>
+> That's difficult to judge. Closing as soon as the original cause is fixed allows
+> syzbot to try to report different reproducer for different bugs. But at the same time,
+> different/similar bugs which were reported in that report (or comments in the discussion
+> for that report) will become almost invisible from users (because users unlikely check
+> other reports in already fixed bugs).
+>
+> An example is
+>
+>   general protection fault in kernfs_kill_sb (2)
+>   https://syzkaller.appspot.com/bug?id=903af3e08fc7ec60e57d9c9b93b035f4fb038d9a
+>
+> where the cause of above report was already pointed out in the discussion for
+> the below report.
+>
+>   general protection fault in kernfs_kill_sb
+>   https://syzkaller.appspot.com/bug?id=d7db6ecf34f099248e4ff404cd381a19a4075653
+>
+> Since the latter is marked as "fixed on May 08 18:30", I worry that quite few
+> users would check the relationship.
+>
+>> Note also that a "workqueue lockup" can be caused by almost anything in the
+>> kernel, I think.  This one for example is probably in the sound subsystem:
+>> https://syzkaller.appspot.com/text?tag=CrashReport&x=1767232b800000
 >>
->> Tested-by: Gabriel Craciunescu <nix.or.die@gmail.com>
->> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> 
-> Guenter, if you want to take that through hwmon:
-> 
+>
+> Right. Maybe we should not stop the test upon "workqueue lockup" message, for
+> it is likely that the cause of lockup is that somebody is busy looping which
+> should have been reported shortly as "rcu detected stall".
+>
+> Of course, there is possibility that "workqueue lockup" is reported because
+> cond_resched() was used when explicit schedule_timeout_*() is required, which
+> was the reason commit 82607adcf9cdf40f ("workqueue: implement lockup detector")
+> was added.
+>
+> If we stop the test upon "workqueue lockup" message, maybe longer timeout (e.g.
+> 300 seconds) is better so that rcu stall or hung task messages are reported
+> if rcu stall or hung task is occurring.
 
-Yes, that was the idea.
-
-> 	 Acked-by: Thomas Gleixner <tglx@linutronix.de>
-> 
-Thanks!
-
-Guenter
-
-> If not, let me know.
-> 
->> ---
->> v3: No change.
->> v2: Use naming scheme suggested by Borislav Petkov.
->>
->>   arch/x86/kernel/amd_nb.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
->> index c88e0b127810..b481b95bd8f6 100644
->> --- a/arch/x86/kernel/amd_nb.c
->> +++ b/arch/x86/kernel/amd_nb.c
->> @@ -14,8 +14,11 @@
->>   #include <asm/amd_nb.h>
->>   
->>   #define PCI_DEVICE_ID_AMD_17H_ROOT	0x1450
->> +#define PCI_DEVICE_ID_AMD_17H_M10H_ROOT	0x15d0
->>   #define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
->>   #define PCI_DEVICE_ID_AMD_17H_DF_F4	0x1464
->> +#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3 0x15eb
->> +#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F4 0x15ec
->>   
->>   /* Protect the PCI config register pairs used for SMN and DF indirect access. */
->>   static DEFINE_MUTEX(smn_mutex);
->> @@ -24,6 +27,7 @@ static u32 *flush_words;
->>   
->>   static const struct pci_device_id amd_root_ids[] = {
->>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_ROOT) },
->> +	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_ROOT) },
->>   	{}
->>   };
->>   
->> @@ -39,6 +43,7 @@ const struct pci_device_id amd_nb_misc_ids[] = {
->>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
->>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
->>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
->> +	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F3) },
->>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F3) },
->>   	{}
->>   };
->> @@ -51,6 +56,7 @@ static const struct pci_device_id amd_nb_link_ids[] = {
->>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F4) },
->>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F4) },
->>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F4) },
->> +	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F4) },
->>   	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F4) },
->>   	{}
->>   };
->> -- 
->> 2.7.4
->>
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+Yes, we need order different stalls/lockups/hangs/etc according to
+what can trigger what. E.g. rcu stall can trigger task hung and
+workqueue lockup, but not the other way around.
+There is https://github.com/google/syzkaller/issues/516 to track this.
+But I did not yet have time to figure out all required changes.
+If you have additional details, please add them there.
