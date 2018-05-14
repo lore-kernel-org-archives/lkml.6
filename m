@@ -1,39 +1,38 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqzQAXpl8aHA0hrdnwYOUGPuEnFiPTMlWz8sTO3FyZHgtxRCwXHUAgNm9QFSd7QX9sERq8u
-ARC-Seal: i=1; a=rsa-sha256; t=1526281086; cv=none;
+X-Google-Smtp-Source: AB8JxZpvnBmuWwr2bTFBRJAFXRGuT6Q7QnEbd/JuQz9iCifJc9ks9w4hXrTm6mspCCRv7liOGhP2
+ARC-Seal: i=1; a=rsa-sha256; t=1526281083; cv=none;
         d=google.com; s=arc-20160816;
-        b=dr4xK5o4MF4bwTMu3ucOBmBWj0kWDfTfjYFZzijYzSCEFW2NYrao0NBICZAHko/vDV
-         5m4chX6Mmv7mU0ucWJqOM2SuWkty5iUlGo0luxMdPO9BgcGEo47zk+uFxh1tKpP7/Mkz
-         DAKXCK68gspp3+zTd9PW+F6mKlbPtzKn9ssa1+tVpA6m5r5Pd1eXvxWZCUThMzfuVVWf
-         yFNXtz1chP7iEOeRPVAVsU77A7Ean1OSWVGxIOUI2WnU/dUZ96CGTABE+ibJWv6dCjWQ
-         zrQofe6/RyW6oPH0rclbcbs6W1Kpuo0buBqeoOXFYZa5vMc5vupXPYzKCW4ZcHursENX
-         Dsmw==
+        b=QJH1r0HduCNnE8UYwJdRB+Qk8GLxbQgMIvGIyKrS3OV4FL3pr9NkhQItIy2TzkjdDu
+         lIT7uw/FBRQcxkjGv4na6OIcu55071jKhoBc3TmfqVCWkuwADsM2mh2xgZfNaV/nEhA5
+         z+kClEIWvHplMD9J0Pzxy7mB8sK8foL16LWIp8q6eWuERIXU42s+PEbk40Mzq1dZNymP
+         fJhKiFYtdFyE73FZ6owLrxoFObov8g4I9CINPTMyU5+JXoy4pdvj8A5tKt2eoxwbRHhv
+         aa1eeVdo9MH8uX+G8WGw+gfl3qY9x0ZHTRLTSwwhvGgOxDqVQCa73xp8BLSMRa4nvFbi
+         KOhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=k0bGLeResQ/TgtX7Ye6rrv0bVtn5fie3lMUYZZlGazk=;
-        b=mVO3CiBjC2xQoXFDR4eXSch/KwHmYM0G6nMghaVu3GhQDOIcOyNH8NU0g95f7Y3N6g
-         eMk19glEx50Sy9GQ+k4amYpnsuNkXk52bB9IUZLMkK+gg+0lbd8jrkoZqGTXReKIqVAk
-         BP3G64gwtCaDDy3elTXRSDeoD6rrIXZnptX0HdkIV0TytNGPXQlUqo778PQI2d8wBAap
-         xX8s7NiyAX1o8HBwnZxgcx5/jJIbI8sOQ5OLrJjvVDFPBqvkBctmVFwl7R4XxnZbhRDn
-         hPjrERBvv6284iuEUZ4FA6xf9Jcwtz4ZKfhhGKproXx1/RsUHtlNiUctdgnUD2adAMM3
-         q/uQ==
+        bh=BSspt8jwrKTCt93AwmW7n7K6BNdHgpfntgbv9NKfDD4=;
+        b=uImvHfStRvqS/XtGA9YXWHQVnFEoRX92F9+/aW33RxEmgc8XCwJoaW65G3Zbfia8hh
+         B7g0Ns6ICvhiP6Kx5nz8v4GlOWnKqJh1VqBeAozu1H8ZQBQ6uG+SEGsPwP6leBCfBTqV
+         VL0aGXNGbQijoMEsacKBWS1nc7EXKUiTybl0+pO03n/qd2SlQxKSjiuMAikWOHr3YQst
+         E5cJRpaFsv9wUt5Cr3sPqpRgSFnWQC7oT4mNXAfSY7oirE1CuWhhSL89sdFiNoP7xYJo
+         spCGEZGiLdsBTL5HibqJjs/0HtK2SLQtFU/0x357frde89kl9RKtwJxg8PNXPhvr5zIn
+         s1zQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Dh/PtyE0;
+       dkim=pass header.i=@kernel.org header.s=default header.b=0Xu74FoZ;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Dh/PtyE0;
+       dkim=pass header.i=@kernel.org header.s=default header.b=0Xu74FoZ;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 13/72] soreuseport: initialise timewait reuseport field
-Date: Mon, 14 May 2018 08:48:30 +0200
-Message-Id: <20180514064823.611355466@linuxfoundation.org>
+Subject: [PATCH 4.16 12/72] ipv4: fix uninit-value in ip_route_output_key_hash_rcu()
+Date: Mon, 14 May 2018 08:48:29 +0200
+Message-Id: <20180514064823.571761843@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421251042067241?=
-X-GMAIL-MSGID: =?utf-8?q?1600421716754436746?=
+X-GMAIL-THRID: =?utf-8?q?1600421533096477895?=
+X-GMAIL-MSGID: =?utf-8?q?1600421713553827647?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,145 +53,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Dumazet <edumazet@google.com>
 
-commit 3099a52918937ab86ec47038ad80d377ba16c531 upstream.
+commit d0ea2b12500543535be3f54e17920fffc9bb45f6 upstream.
 
-syzbot reported an uninit-value in inet_csk_bind_conflict() [1]
+syzbot complained that res.type could be used while not initialized.
 
-It turns out we never propagated sk->sk_reuseport into timewait socket.
+Using RTN_UNSPEC as initial value seems better than using garbage.
 
-[1]
-BUG: KMSAN: uninit-value in inet_csk_bind_conflict+0x5f9/0x990 net/ipv4/inet_connection_sock.c:151
-CPU: 1 PID: 3589 Comm: syzkaller008242 Not tainted 4.16.0+ #82
+BUG: KMSAN: uninit-value in __mkroute_output net/ipv4/route.c:2200 [inline]
+BUG: KMSAN: uninit-value in ip_route_output_key_hash_rcu+0x31f0/0x3940 net/ipv4/route.c:2493
+CPU: 1 PID: 12207 Comm: syz-executor0 Not tainted 4.16.0+ #81
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  __dump_stack lib/dump_stack.c:17 [inline]
  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
- inet_csk_bind_conflict+0x5f9/0x990 net/ipv4/inet_connection_sock.c:151
- inet_csk_get_port+0x1d28/0x1e40 net/ipv4/inet_connection_sock.c:320
- inet6_bind+0x121c/0x1820 net/ipv6/af_inet6.c:399
- SYSC_bind+0x3f2/0x4b0 net/socket.c:1474
- SyS_bind+0x54/0x80 net/socket.c:1460
+ __mkroute_output net/ipv4/route.c:2200 [inline]
+ ip_route_output_key_hash_rcu+0x31f0/0x3940 net/ipv4/route.c:2493
+ ip_route_output_key_hash net/ipv4/route.c:2322 [inline]
+ __ip_route_output_key include/net/route.h:126 [inline]
+ ip_route_output_flow+0x1eb/0x3c0 net/ipv4/route.c:2577
+ raw_sendmsg+0x1861/0x3ed0 net/ipv4/raw.c:653
+ inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:764
+ sock_sendmsg_nosec net/socket.c:630 [inline]
+ sock_sendmsg net/socket.c:640 [inline]
+ SYSC_sendto+0x6c3/0x7e0 net/socket.c:1747
+ SyS_sendto+0x8a/0xb0 net/socket.c:1715
  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x4416e9
-RSP: 002b:00007ffce6d15c88 EFLAGS: 00000217 ORIG_RAX: 0000000000000031
-RAX: ffffffffffffffda RBX: 0100000000000000 RCX: 00000000004416e9
-RDX: 000000000000001c RSI: 0000000020402000 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 00000000e6d15e08 R09: 00000000e6d15e08
-R10: 0000000000000004 R11: 0000000000000217 R12: 0000000000009478
-R13: 00000000006cd448 R14: 0000000000000000 R15: 0000000000000000
+RIP: 0033:0x455259
+RSP: 002b:00007fdc0625dc68 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00007fdc0625e6d4 RCX: 0000000000455259
+RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000013
+RBP: 000000000072bea0 R08: 0000000020000080 R09: 0000000000000010
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000000004f7 R14: 00000000006fa7c8 R15: 0000000000000000
 
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
- kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
- __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
- tcp_time_wait+0xf17/0xf50 net/ipv4/tcp_minisocks.c:283
- tcp_rcv_state_process+0xebe/0x6490 net/ipv4/tcp_input.c:6003
- tcp_v6_do_rcv+0x11dd/0x1d90 net/ipv6/tcp_ipv6.c:1331
- sk_backlog_rcv include/net/sock.h:908 [inline]
- __release_sock+0x2d6/0x680 net/core/sock.c:2271
- release_sock+0x97/0x2a0 net/core/sock.c:2786
- tcp_close+0x277/0x18f0 net/ipv4/tcp.c:2269
- inet_release+0x240/0x2a0 net/ipv4/af_inet.c:427
- inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:435
- sock_release net/socket.c:595 [inline]
- sock_close+0xe0/0x300 net/socket.c:1149
- __fput+0x49e/0xa10 fs/file_table.c:209
- ____fput+0x37/0x40 fs/file_table.c:243
- task_work_run+0x243/0x2c0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x10e1/0x38d0 kernel/exit.c:867
- do_group_exit+0x1a0/0x360 kernel/exit.c:970
- SYSC_exit_group+0x21/0x30 kernel/exit.c:981
- SyS_exit_group+0x25/0x30 kernel/exit.c:979
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
- kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
- __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
- inet_twsk_alloc+0xaef/0xc00 net/ipv4/inet_timewait_sock.c:182
- tcp_time_wait+0xd9/0xf50 net/ipv4/tcp_minisocks.c:258
- tcp_rcv_state_process+0xebe/0x6490 net/ipv4/tcp_input.c:6003
- tcp_v6_do_rcv+0x11dd/0x1d90 net/ipv6/tcp_ipv6.c:1331
- sk_backlog_rcv include/net/sock.h:908 [inline]
- __release_sock+0x2d6/0x680 net/core/sock.c:2271
- release_sock+0x97/0x2a0 net/core/sock.c:2786
- tcp_close+0x277/0x18f0 net/ipv4/tcp.c:2269
- inet_release+0x240/0x2a0 net/ipv4/af_inet.c:427
- inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:435
- sock_release net/socket.c:595 [inline]
- sock_close+0xe0/0x300 net/socket.c:1149
- __fput+0x49e/0xa10 fs/file_table.c:209
- ____fput+0x37/0x40 fs/file_table.c:243
- task_work_run+0x243/0x2c0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x10e1/0x38d0 kernel/exit.c:867
- do_group_exit+0x1a0/0x360 kernel/exit.c:970
- SYSC_exit_group+0x21/0x30 kernel/exit.c:981
- SyS_exit_group+0x25/0x30 kernel/exit.c:979
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
- kmem_cache_alloc+0xaab/0xb90 mm/slub.c:2756
- inet_twsk_alloc+0x13b/0xc00 net/ipv4/inet_timewait_sock.c:163
- tcp_time_wait+0xd9/0xf50 net/ipv4/tcp_minisocks.c:258
- tcp_rcv_state_process+0xebe/0x6490 net/ipv4/tcp_input.c:6003
- tcp_v6_do_rcv+0x11dd/0x1d90 net/ipv6/tcp_ipv6.c:1331
- sk_backlog_rcv include/net/sock.h:908 [inline]
- __release_sock+0x2d6/0x680 net/core/sock.c:2271
- release_sock+0x97/0x2a0 net/core/sock.c:2786
- tcp_close+0x277/0x18f0 net/ipv4/tcp.c:2269
- inet_release+0x240/0x2a0 net/ipv4/af_inet.c:427
- inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:435
- sock_release net/socket.c:595 [inline]
- sock_close+0xe0/0x300 net/socket.c:1149
- __fput+0x49e/0xa10 fs/file_table.c:209
- ____fput+0x37/0x40 fs/file_table.c:243
- task_work_run+0x243/0x2c0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x10e1/0x38d0 kernel/exit.c:867
- do_group_exit+0x1a0/0x360 kernel/exit.c:970
- SYSC_exit_group+0x21/0x30 kernel/exit.c:981
- SyS_exit_group+0x25/0x30 kernel/exit.c:979
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+Local variable description: ----res.i.i@ip_route_output_flow
+Variable was created at:
+ ip_route_output_flow+0x75/0x3c0 net/ipv4/route.c:2576
+ raw_sendmsg+0x1861/0x3ed0 net/ipv4/raw.c:653
 
-Fixes: da5e36308d9f ("soreuseport: TCP/IPv4 implementation")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/net/inet_timewait_sock.h |    1 +
- net/ipv4/inet_timewait_sock.c    |    1 +
- 2 files changed, 2 insertions(+)
+ net/ipv4/route.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/include/net/inet_timewait_sock.h
-+++ b/include/net/inet_timewait_sock.h
-@@ -43,6 +43,7 @@ struct inet_timewait_sock {
- #define tw_family		__tw_common.skc_family
- #define tw_state		__tw_common.skc_state
- #define tw_reuse		__tw_common.skc_reuse
-+#define tw_reuseport		__tw_common.skc_reuseport
- #define tw_ipv6only		__tw_common.skc_ipv6only
- #define tw_bound_dev_if		__tw_common.skc_bound_dev_if
- #define tw_node			__tw_common.skc_nulls_node
---- a/net/ipv4/inet_timewait_sock.c
-+++ b/net/ipv4/inet_timewait_sock.c
-@@ -178,6 +178,7 @@ struct inet_timewait_sock *inet_twsk_all
- 		tw->tw_dport	    = inet->inet_dport;
- 		tw->tw_family	    = sk->sk_family;
- 		tw->tw_reuse	    = sk->sk_reuse;
-+		tw->tw_reuseport    = sk->sk_reuseport;
- 		tw->tw_hash	    = sk->sk_hash;
- 		tw->tw_ipv6only	    = 0;
- 		tw->tw_transparent  = inet->transparent;
+--- a/net/ipv4/route.c
++++ b/net/ipv4/route.c
+@@ -2306,13 +2306,14 @@ struct rtable *ip_route_output_key_hash(
+ 					const struct sk_buff *skb)
+ {
+ 	__u8 tos = RT_FL_TOS(fl4);
+-	struct fib_result res;
++	struct fib_result res = {
++		.type		= RTN_UNSPEC,
++		.fi		= NULL,
++		.table		= NULL,
++		.tclassid	= 0,
++	};
+ 	struct rtable *rth;
+ 
+-	res.tclassid	= 0;
+-	res.fi		= NULL;
+-	res.table	= NULL;
+-
+ 	fl4->flowi4_iif = LOOPBACK_IFINDEX;
+ 	fl4->flowi4_tos = tos & IPTOS_RT_MASK;
+ 	fl4->flowi4_scope = ((tos & RTO_ONLINK) ?
