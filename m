@@ -1,105 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753978AbeENOnj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:43:39 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44032 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753284AbeENOnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:43:37 -0400
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: kvmarm@lists.cs.columbia.edu
-Cc: Punit Agrawal <punit.agrawal@arm.com>,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
-        suzuki.poulose@arm.com, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v3 2/4] KVM: arm/arm64: Introduce helpers to manupulate page table entries
-Date: Mon, 14 May 2018 15:43:02 +0100
-Message-Id: <20180514144304.10484-3-punit.agrawal@arm.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180514144304.10484-1-punit.agrawal@arm.com>
-References: <20180514144304.10484-1-punit.agrawal@arm.com>
-X-ARM-No-Footer: FoSSMail
+        id S932388AbeENOno (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:43:44 -0400
+Received: from foss.arm.com ([217.140.101.70]:44042 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753284AbeENOnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 10:43:41 -0400
+Date: Mon, 14 May 2018 15:43:36 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+        james.morse@arm.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 10/18] arm64: convert native/compat syscall entry to C
+Message-ID: <20180514144331.GL7753@e103592.cambridge.arm.com>
+References: <20180514094640.27569-1-mark.rutland@arm.com>
+ <20180514094640.27569-11-mark.rutland@arm.com>
+ <20180514110729.GF7753@e103592.cambridge.arm.com>
+ <20180514115805.bdlcxsw6q3xsbjb7@lakrids.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180514115805.bdlcxsw6q3xsbjb7@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce helpers to abstract architectural handling of the conversion
-of pfn to page table entries and marking a PMD page table entry as a
-block entry.
+On Mon, May 14, 2018 at 12:58:05PM +0100, Mark Rutland wrote:
+> On Mon, May 14, 2018 at 12:07:30PM +0100, Dave Martin wrote:
+> > On Mon, May 14, 2018 at 10:46:32AM +0100, Mark Rutland wrote:
+> 
+> > > diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
+> > > index 5df857e32b48..4706f841e758 100644
+> > > --- a/arch/arm64/kernel/syscall.c
+> > > +++ b/arch/arm64/kernel/syscall.c
+> > > @@ -6,7 +6,9 @@
+> > >  #include <linux/ptrace.h>
+> > >  
+> > >  #include <asm/daifflags.h>
+> > > +#include <asm/fpsimd.h>
+> > >  #include <asm/thread_info.h>
+> > > +#include <asm/unistd.h>
+> > >  
+> > >  long do_ni_syscall(struct pt_regs *regs);
+> > >  
+> > > @@ -41,8 +43,8 @@ static inline bool has_syscall_work(unsigned long flags)
+> > >  int syscall_trace_enter(struct pt_regs *regs);
+> > >  void syscall_trace_exit(struct pt_regs *regs);
+> > >  
+> > > -asmlinkage void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
+> > > -			       syscall_fn_t syscall_table[])
+> > > +static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
+> > > +			   syscall_fn_t syscall_table[])
+> > >  {
+> > >  	unsigned long flags = current_thread_info()->flags;
+> > >  
+> > > @@ -79,3 +81,37 @@ asmlinkage void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
+> > >  trace_exit:
+> > >  	syscall_trace_exit(regs);
+> > >  }
+> > > +
+> > > +static inline void sve_user_reset(void)
+> > 
+> > Static function with no caller...
+> 
+> Ugh, this was intended to be called below in el0_svc_handler().
+> 
+> > > +{
+> > > +	if (!system_supports_sve())
+> > > +		return;
+> > > +
+> > > +	/*
+> > > +	 * task_fpsimd_load() won't be called to update CPACR_EL1 in
+> > > +	 * ret_to_user unless TIF_FOREIGN_FPSTATE is still set, which only
+> > > +	 * happens if a context switch or kernel_neon_begin() or context
+> > > +	 * modification (sigreturn, ptrace) intervenes.
+> > > +	 * So, ensure that CPACR_EL1 is already correct for the fast-path case.
+> > > +	 */
+> > > +	if (test_and_clear_thread_flag(TIF_SVE))
+> > > +		sve_user_disable();
+> > 
+> > sve_user_disable() is already inline, and incorporates the if()
+> > internally via sysreg_clear_set().
+> > 
+> > So, should this just be
+> > 
+> > 	clear_thread_flag(TIF_SVE);
+> > 	sve_user_disable();
+> 
+> Sure. That does mean we'll unconditionally read cpacr_el1, but I assume
+> you're happy with that. I'll note the difference in the commit message.
 
-The helpers are introduced in preparation for supporting PUD hugepages
-at stage 2 - which are supported on arm64 but do not exist on arm.
+This is what the code does today, conditioned no system_supports_sve().
 
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
----
- arch/arm/include/asm/kvm_mmu.h   | 5 +++++
- arch/arm64/include/asm/kvm_mmu.h | 5 +++++
- virt/kvm/arm/mmu.c               | 7 ++++---
- 3 files changed, 14 insertions(+), 3 deletions(-)
+I'm assuming that reading CPACR_EL1 is cheap ... or have you come across
+counterexamples to that?
 
-diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-index 707a1f06dc5d..5907a81ad5c1 100644
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -75,6 +75,11 @@ phys_addr_t kvm_get_idmap_vector(void);
- int kvm_mmu_init(void);
- void kvm_clear_hyp_idmap(void);
- 
-+#define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
-+#define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
-+
-+#define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
-+
- static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
- {
- 	*pmd = new_pmd;
-diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index 082110993647..d962508ce4b3 100644
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -173,6 +173,11 @@ void kvm_clear_hyp_idmap(void);
- #define	kvm_set_pte(ptep, pte)		set_pte(ptep, pte)
- #define	kvm_set_pmd(pmdp, pmd)		set_pmd(pmdp, pmd)
- 
-+#define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
-+#define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
-+
-+#define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
-+
- static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
- {
- 	pte_val(pte) |= PTE_S2_RDWR;
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index 07ae1e003762..0beefcc5e090 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1553,8 +1553,9 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 		invalidate_icache_guest_page(pfn, vma_pagesize);
- 
- 	if (vma_pagesize == PMD_SIZE) {
--		pmd_t new_pmd = pfn_pmd(pfn, mem_type);
--		new_pmd = pmd_mkhuge(new_pmd);
-+		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
-+
-+		new_pmd = kvm_pmd_mkhuge(new_pmd);
- 		if (writable)
- 			new_pmd = kvm_s2pmd_mkwrite(new_pmd);
- 
-@@ -1563,7 +1564,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 
- 		ret = stage2_set_pmd_huge(kvm, memcache, fault_ipa, &new_pmd);
- 	} else {
--		pte_t new_pte = pfn_pte(pfn, mem_type);
-+		pte_t new_pte = kvm_pfn_pte(pfn, mem_type);
- 
- 		if (writable) {
- 			new_pte = kvm_s2pte_mkwrite(new_pte);
--- 
-2.17.0
+> > > +}
+> > > +
+> > > +extern syscall_fn_t sys_call_table[];
+> > > +
+> > > +asmlinkage void el0_svc_handler(struct pt_regs *regs)
+> > > +{
+> > 
+> > if (system_supports_sve()) ?
+> > 
+> > > +	sve_user_disable();
+> > 
+> > Or should this be replaced by a call to sve_user_reset()?
+> > 
+> > I suspect the latter, since we do want to be clearing TIF_SVE here too.
+> 
+> Yes, this was mean to be sve_user_reset().
+
+OK.  Just to be clear, I think there should be a system_supports_sve()
+check here (in case that wasn't obvious from my previous reply).
+
+Cheers
+---Dave
