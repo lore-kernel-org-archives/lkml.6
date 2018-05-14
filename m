@@ -1,61 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753934AbeENHM7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:12:59 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:52615 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752196AbeENHM5 (ORCPT
+        id S1753898AbeENHQ6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:16:58 -0400
+Received: from mail-qt0-f179.google.com ([209.85.216.179]:42918 "EHLO
+        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752988AbeENHQz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:12:57 -0400
-Date: Mon, 14 May 2018 09:12:46 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] x86/io: Define readq()/writeq() to use 64-bit type
-In-Reply-To: <CAHp75Vc7uFDbHcf+mbaBxu2adiDD9CY7Z-fhn5E_3dZDZiTYoA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1805140910480.1582@nanos.tec.linutronix.de>
-References: <20180503102810.59657-1-andriy.shevchenko@linux.intel.com> <alpine.DEB.2.21.1805132007200.1582@nanos.tec.linutronix.de> <CAHp75Vc7uFDbHcf+mbaBxu2adiDD9CY7Z-fhn5E_3dZDZiTYoA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 14 May 2018 03:16:55 -0400
+X-Google-Smtp-Source: AB8JxZpfweBkmGzB5k/2ZFUcWPQk4fP+HUxryXJuhQdYzKKxH6I2UPY1l2tBvJ5UeMB/6QepL7Ar+C819d8e4FOgDEQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <99B4C6BADD9E3241B25E52B02BA737C54127E3BF@DGGEMA505-MBS.china.huawei.com>
+References: <99B4C6BADD9E3241B25E52B02BA737C54127E3BF@DGGEMA505-MBS.china.huawei.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 14 May 2018 10:16:54 +0300
+Message-ID: <CAHp75VfHfUCNKNun4-bb2BhwV6D9jg2+hzVjrDER+af0SrzqjA@mail.gmail.com>
+Subject: Re: reply: [PATCH v3 1/2] PCI: kirin: Add MSI support
+To: songxiaowei <songxiaowei@hisilicon.com>
+Cc: "chenyao (F)" <chenyao11@huawei.com>,
+        Wangbinghui <wangbinghui@hisilicon.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, "xuwei (O)" <xuwei5@huawei.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "dimitrysh@google.com" <dimitrysh@google.com>,
+        "guodong.xu@linaro.org" <guodong.xu@linaro.org>,
+        Suzhuangluan <suzhuangluan@hisilicon.com>,
+        Kongfei <kongfei@hisilicon.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 13 May 2018, Andy Shevchenko wrote:
-> On Sun, May 13, 2018 at 9:09 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > On Thu, 3 May 2018, Andy Shevchenko wrote:
-> >>  #ifdef CONFIG_X86_64
-> >>
-> >> -build_mmio_read(readq, "q", unsigned long, "=r", :"memory")
-> >> -build_mmio_read(__readq, "q", unsigned long, "=r", )
-> >> -build_mmio_write(writeq, "q", unsigned long, "r", :"memory")
-> >> -build_mmio_write(__writeq, "q", unsigned long, "r", )
-> >> +build_mmio_read(readq, "q", unsigned long long, "=r", :"memory")
-> >> +build_mmio_read(__readq, "q", unsigned long long, "=r", )
-> >> +build_mmio_write(writeq, "q", unsigned long long, "r", :"memory")
-> >> +build_mmio_write(__writeq, "q", unsigned long long, "r", )
-> >
-> > What's wrong with u64 which we use for expressing io access to a 64bit wide
-> > resource?
-> 
-> Same answer as per v1, i.e. I would like to be consistent with other
-> types in this file (unsigned int for readl() and similar for the
-> rest).
-> If we would need them, we might change at once for all accessors.
+On Mon, May 14, 2018 at 4:11 AM, songxiaowei <songxiaowei@hisilicon.com> wrote:
 
-I don;t think we need to fixup everything in one go. Having the patch which
-addresses the issue at hand first using u64 makes a lot of sense on its own.
+>> > +       int ret;
+>> > +
+>> > +       if (IS_ENABLED(CONFIG_PCI_MSI)) {
+>>
+>> > +               pci->pp.msi_irq = platform_get_irq(pdev, 0);
+>> > +               if (pci->pp.msi_irq < 0) {
+>> > +                       dev_err(&pdev->dev, "failed to get MSI IRQ
+>> (%d)\n",
+>> > +                               pci->pp.msi_irq);
+>>
+>> > +                       return -ENODEV;
+>>
+>> Why shadowing actual error code?
+> [songxiaowei]  Sorry, I can't get your point about this, would you explain it for me.
 
-Changing the other instances can be done as a follow up patch. Having
-explicit with types for such kind of accessors makes a lot of sense.
+platform_get_irq() returns either correct IRQ number or negative error code.
+In the code above you shadow the actual error (as returned by that
+call) by -ENODEV. Any reason why?
 
-Thanks,
-
-	tglx
+-- 
+With Best Regards,
+Andy Shevchenko
