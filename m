@@ -1,53 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752594AbeENWmj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 18:42:39 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:38078 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752149AbeENWmh (ORCPT
+        id S1752178AbeENWt1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 18:49:27 -0400
+Received: from mail-ot0-f175.google.com ([74.125.82.175]:34337 "EHLO
+        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752077AbeENWtZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 18:42:37 -0400
-X-Google-Smtp-Source: AB8JxZqFWjf2+M9hh9v/olLckGX7KrUiBS1v/D28YtIwLntRGILg12GVy9tiIqXwLIWanxc6PIg3sA==
-From: Douglas Anderson <dianders@chromium.org>
-To: kishon@ti.com
-Cc: Douglas Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Varadarajan Narayanan <varada@codeaurora.org>
-Subject: [PATCH 1/2] phy: qcom-qmp: Quiet -EPROBE_DEFER from qcom_qmp_phy_probe()
-Date: Mon, 14 May 2018 15:42:21 -0700
-Message-Id: <20180514224222.54495-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Mon, 14 May 2018 18:49:25 -0400
+X-Google-Smtp-Source: AB8JxZpBQZaNWhA+/LFp8Zrik5npBh2XDsK5Li4eaxcx1TUbMbGHheOb/qLp8KtETh7us3NEbjnR3g==
+Subject: Re: [PATCHv5] gpio: Remove VLA from gpiolib
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+        Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-hardening@lists.openwall.com
+References: <20180413212427.18261-1-labbott@redhat.com>
+ <CAMuHMdWDysLemM3PNNjC-Aircpu=Y-z=e79zgG8LPzvGCSEetg@mail.gmail.com>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <067d073f-556c-9df0-37f8-fd63fcdc7eb9@redhat.com>
+Date: Mon, 14 May 2018 15:49:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWDysLemM3PNNjC-Aircpu=Y-z=e79zgG8LPzvGCSEetg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The -EPROBE_DEFER virus demands special case code to avoid printing
-error messages when the error is only -EPROBE_DEFER.  Spread the virus
-to a new host: qcom_qmp_phy_probe().  Specifically handle when our
-regulators might not be ready yet.
+On 04/20/2018 02:02 AM, Geert Uytterhoeven wrote:
+> Hi Laura,
+> 
+> Thanks for your patch!
+> 
+> On Fri, Apr 13, 2018 at 11:24 PM, Laura Abbott <labbott@redhat.com> wrote:
+>> The new challenge is to remove VLAs from the kernel
+>> (see https://lkml.org/lkml/2018/3/7/621) to eventually
+>> turn on -Wvla.
+>>
+>> Using a kmalloc array is the easy way to fix this but kmalloc is still
+>> more expensive than stack allocation. Introduce a fast path with a
+>> fixed size stack array to cover most chip with gpios below some fixed
+>> amount. The slow path dynamically allocates an array to cover those
+>> chips with a large number of gpios.
+> 
+> Blindly replacing VLAs by allocated arrays is IMHO not such a good solution.
+> On the largest systems, NR_GPIOS is 2048, so that makes 2 arrays of 256
+> bytes. That's an uppper limit, and assumes they are all on the same gpiochip,
+> which they probably aren't.
+> 
+> Still, 2 x 256 bytes is a lot, so I agree it should be fixed.
+> 
+> So, wouldn't it make more sense to not allocate memory, but just process
+> the request in chunks (say, at most 128 gpios per chunk, i.e. 2 x
+> 16 bytes)? The code already caters for handling chunks due to not all gpios
+> belonging to the same gpiochip. That will probably also be faster than
+> allocating memory, which is the main idea behind this API.
+> 
+>> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
+>> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> 
+>> --- a/drivers/gpio/gpiolib.c
+>> +++ b/drivers/gpio/gpiolib.c
+> 
+>> @@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+>>                  goto err_free_descs;
+>>          }
+>>
+>> +       if (chip->ngpio > FASTPATH_NGPIO)
+>> +               chip_warn(chip, "line cnt %d is greater than fast path cnt %d\n",
+>> +               chip->ngpio, FASTPATH_NGPIO);
+> 
+> FWIW, can this warning be triggered from userspace?
+> 
+>> @@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>>
+>>          while (i < array_size) {
+>>                  struct gpio_chip *chip = desc_array[i]->gdev->chip;
+>> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
+>> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
+> 
+> Hence just use a fixed size here...
+> 
+>> +               unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
+>> +               unsigned long *mask, *bits;
+>>                  int first, j, ret;
+>>
+>> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
+>> +                       memset(fastpath, 0, sizeof(fastpath));
+>> +                       mask = fastpath;
+>> +                       bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
+>> +               } else {
+>> +                       mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
+>> +                                          sizeof(*mask),
+>> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
+>> +                       if (!mask)
+>> +                               return -ENOMEM;
+>> +                       bits = mask + BITS_TO_LONGS(chip->ngpio);
+>> +               }
+>> +
+>>                  if (!can_sleep)
+>>                          WARN_ON(chip->can_sleep);
+>>
+>>                  /* collect all inputs belonging to the same chip */
+>>                  first = i;
+>> -               memset(mask, 0, sizeof(mask));
+>>                  do {
+>>                          const struct gpio_desc *desc = desc_array[i];
+>>                          int hwgpio = gpio_chip_hwgpio(desc);
+> 
+> Out-of-context, the code does:
+> 
+> |                       __set_bit(hwgpio, mask);
+> |                       i++;
+> |                 } while ((i < array_size) &&
+> 
+> ... and change this limit to "(i < min(array_size, first +
+> ARRAY_SIZE(mask) * BITS_PER_BYTE))"
+> 
+> |                         (desc_array[i]->gdev->chip == chip));
+> 
+> ... and you're done?
+> 
+I don't think this approach will work since gpio_chip_{get,set}_multiple
+expect to be working on arrays for the entire chip. There doesn't seem
+to be a nice way to work on a subset of GPIOs without defeating the point
+of the multiple API.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+is 2*256 = 512 bytes really too much stack space? I guess we could
+switch to a Kconfig to allow for better bounds.
 
- drivers/phy/qualcomm/phy-qcom-qmp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks,
+Laura
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
-index 6470c5d61d1c..a740daa58b31 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-@@ -1447,7 +1447,9 @@ static int qcom_qmp_phy_probe(struct platform_device *pdev)
- 
- 	ret = qcom_qmp_phy_vreg_init(dev);
- 	if (ret) {
--		dev_err(dev, "failed to get regulator supplies\n");
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "failed to get regulator supplies: %d\n",
-+				ret);
- 		return ret;
- 	}
- 
--- 
-2.17.0.441.gb46fe60e1d-goog
+>> @@ -2878,7 +2904,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
+>>          }
+>>   }
+>>
+>> -void gpiod_set_array_value_complex(bool raw, bool can_sleep,
+>> +int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+> 
+> Same here.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
+> 
