@@ -1,71 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751992AbeENFFi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 01:05:38 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35246 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751387AbeENFFh (ORCPT
+        id S1752011AbeENFK6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 01:10:58 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:47173 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751847AbeENFK4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 01:05:37 -0400
-X-Google-Smtp-Source: AB8JxZprPiLLANkRwYfzB27uXJZht6G6rXGz4FCJ2gtsifNdpzJXeDpCu2ubeN9XH5ETZiHYFVHRcw==
-Date: Sun, 13 May 2018 22:05:36 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com
-Subject: Re: [PATCH RFC 1/8] rcu: Add comment documenting how rcu_seq_snap
- works
-Message-ID: <20180514050536.GB80415@joelaf.mtv.corp.google.com>
-References: <20180514031541.67247-1-joel@joelfernandes.org>
- <20180514031541.67247-2-joel@joelfernandes.org>
- <d13d5fca-d98c-c657-316d-aed10fd3eff0@infradead.org>
+        Mon, 14 May 2018 01:10:56 -0400
+Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+        Mark Brown <broonie@kernel.org>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+ <20180305102524.5905-4-o.rempel@pengutronix.de>
+ <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
+ <1937901.oyadCYFYNo@aspire.rjw.lan>
+ <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
+Message-ID: <091ccf85-ae4c-f6fd-0455-1a70e973c85c@pengutronix.de>
+Date: Mon, 14 May 2018 07:10:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d13d5fca-d98c-c657-316d-aed10fd3eff0@infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="RtB0pzA4sEIikWDKYFSjABFlnFe6ToT2P"
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
+X-SA-Exim-Mail-From: o.rempel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 08:47:24PM -0700, Randy Dunlap wrote:
-> On 05/13/2018 08:15 PM, Joel Fernandes (Google) wrote:
-> > rcu_seq_snap may be tricky for someone looking at it for the first time.
-> > Lets document how it works with an example to make it easier.
-> > 
-> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > ---
-> >  kernel/rcu/rcu.h | 24 +++++++++++++++++++++++-
-> >  1 file changed, 23 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-> > index 003671825d62..fc3170914ac7 100644
-> > --- a/kernel/rcu/rcu.h
-> > +++ b/kernel/rcu/rcu.h
-> > @@ -91,7 +91,29 @@ static inline void rcu_seq_end(unsigned long *sp)
-> >  	WRITE_ONCE(*sp, rcu_seq_endval(sp));
-> >  }
-> >  
-> > -/* Take a snapshot of the update side's sequence number. */
-> > +/*
-> > + * Take a snapshot of the update side's sequence number.
-> > + *
-> > + * This function predicts what the grace period number will be the next
-> > + * time an RCU callback will be executed, given the current grace period's
-> > + * number. This can be gp+1 if RCU is idle, or gp+2 if a grace period is
-> > + * already in progress.
-> > + *
-> > + * We do this with a single addition and masking.
-> > + * For example, if RCU_SEQ_STATE_MASK=1 and the least significant bit (LSB) of
-> > + * the seq is used to track if a GP is in progress or not, its sufficient if we
-> 
->                                                               it's
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--RtB0pzA4sEIikWDKYFSjABFlnFe6ToT2P
+Content-Type: multipart/mixed; boundary="CRLiw7b3SfKPy3MVyt35HefVydl0PKi0x";
+ protected-headers="v1"
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+ Mark Brown <broonie@kernel.org>
+Message-ID: <091ccf85-ae4c-f6fd-0455-1a70e973c85c@pengutronix.de>
+Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+ <20180305102524.5905-4-o.rempel@pengutronix.de>
+ <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
+ <1937901.oyadCYFYNo@aspire.rjw.lan>
+ <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
+In-Reply-To: <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
 
-Pardon my english. Fixed, thanks,
+--CRLiw7b3SfKPy3MVyt35HefVydl0PKi0x
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-- Joel
+
+
+On 14.05.2018 06:33, Oleksij Rempel wrote:
+>=20
+>=20
+> On 12.05.2018 13:13, Rafael J. Wysocki wrote:
+>> On Friday, May 4, 2018 8:50:52 PM CEST Oleksij Rempel wrote:
+>>> Hallo Andrew,
+>>> I need your ACK or NACK for this patch.
+>>>
+>>> This function is used to configure external PMIC to interpret
+>>> signal which will be triggered by pm_power_off as power off.
+>>> Since same signal can be used for stand by, I linked PMIC configurati=
+on
+>>> with pm_power_off_prepare to avoid possible conflicts.
+>>>
+>>> On Mon, Mar 05, 2018 at 11:25:20AM +0100, Oleksij Rempel wrote:
+>>>> Export pm_power_off_prepare. It is needed to implement power off on
+>>>> Freescale/NXP iMX6 based boards with external power management
+>>>> integrated circuit (PMIC).
+>>>>
+>>>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+>>>> ---
+>>>>  kernel/reboot.c | 1 +
+>>>>  1 file changed, 1 insertion(+)
+>>>>
+>>>> diff --git a/kernel/reboot.c b/kernel/reboot.c
+>>>> index e4ced883d8de..350be6baa60d 100644
+>>>> --- a/kernel/reboot.c
+>>>> +++ b/kernel/reboot.c
+>>>> @@ -49,6 +49,7 @@ int reboot_force;
+>>>>   */
+>>>> =20
+>>>>  void (*pm_power_off_prepare)(void);
+>>>> +EXPORT_SYMBOL(pm_power_off_prepare);
+>>
+>> Why not EXPORT_SYMBOL_GPL() ?
+>=20
+> No special reason. Fixed.
+> Any other comments?
+>=20
+
+Or with other words, will it be enough to get your Signed-of-by for this
+patch?
+
+
+--CRLiw7b3SfKPy3MVyt35HefVydl0PKi0x--
+
+--RtB0pzA4sEIikWDKYFSjABFlnFe6ToT2P
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlr5GlIACgkQdQOiSHVI
+77Rh4wgAwEu/IcL9h9DDgNxT7+bLULmv3Idsqw2YuCkCPyoqdzZMba4+xNxfzyzt
+fP7Mm0m1yYFfM0ZJ8xYJeSlhcb0Y991+YCRBPWv00zQplUPONo6Z8E5hmnmvqHav
+jmaBw+jLhosfgbdyzRlheDr/HQKgojWe8M2SkFyVnkwgk9tWvV/nEwgxtef177bB
+cDFVV48p8mpEPMcdn7OaAlDrHD2sLC8YmLYdM4PqUdwzrWTuAaOuuNkPOsgrNI29
+C+IHaIB/jG/JvWCTIbU7O0G7wGhAuhFhFqU4NwWjnZIrTfLpCgqMo7zW6E/ktmcy
+Kfqp7JlWNFroTiGOoHzBRbET/uIK1w==
+=Usu/
+-----END PGP SIGNATURE-----
+
+--RtB0pzA4sEIikWDKYFSjABFlnFe6ToT2P--
