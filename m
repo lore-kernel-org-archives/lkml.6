@@ -1,66 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752131AbeENRug (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:50:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37412 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752045AbeENRue (ORCPT
+        id S1752160AbeENRx4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:53:56 -0400
+Received: from mail-pl0-f54.google.com ([209.85.160.54]:46922 "EHLO
+        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751515AbeENRxx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:50:34 -0400
-Subject: Re: [PATCH v7 2/2] iommu/amd: Add basic debugfs infrastructure for
- AMD IOMMU
-To: Gary R Hook <gary.hook@amd.com>, iommu@lists.linux-foundation.org
-Cc: joro@8bytes.org, linux-kernel@vger.kernel.org
-References: <152631818082.18929.13970142119193316487.stgit@sosxen2.amd.com>
- <152631842907.18929.8819955271544326298.stgit@sosxen2.amd.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ba2bb6f7-77ea-4431-af0f-d20c19820d5d@infradead.org>
-Date: Mon, 14 May 2018 10:50:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <152631842907.18929.8819955271544326298.stgit@sosxen2.amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 14 May 2018 13:53:53 -0400
+X-Google-Smtp-Source: AB8JxZp43iUfbtl3UjO9votRI9bV52LInDHYp7H45+yWJELOxJTuOs5LEpzSLQFj1A0G4ecokZSEfw==
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: use memcpy_mcsafe() for copy_to_iter() (was: Re: [PATCH v3 0/9] Series short description)
+From: Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15E302)
+In-Reply-To: <CAPcyv4j2HQH1wdsGGWUAiXEKXeoMUWN_HeUEMmkv8PG7RUTtfw@mail.gmail.com>
+Date: Mon, 14 May 2018 10:53:51 -0700
+Cc: Ingo Molnar <mingo@kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        =?utf-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Message-Id: <3CEE65FC-2314-4837-9854-80E73ECBF0EE@amacapital.net>
+References: <CAPcyv4g5p72aiXYh8Tf03tvZq8HNYmTFU95PJGG1iQ4JHcr9PA@mail.gmail.com> <20180514072603.GA14099@gmail.com> <CAPcyv4j2HQH1wdsGGWUAiXEKXeoMUWN_HeUEMmkv8PG7RUTtfw@mail.gmail.com>
+To: Dan Williams <dan.j.williams@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4EHs1an027094
 
-On 05/14/2018 10:20 AM, Gary R Hook wrote:
-> Implement a skeleton framework for debugfs support in the
-> AMD IOMMU.
+
+
+> On May 14, 2018, at 8:52 AM, Dan Williams <dan.j.williams@intel.com> wrote:
 > 
-> Signed-off-by: Gary R Hook <gary.hook@amd.com>
-> ---
->  drivers/iommu/Makefile            |    5 +++++
->  drivers/iommu/amd_iommu_debugfs.c |   39 +++++++++++++++++++++++++++++++++++++
->  drivers/iommu/amd_iommu_init.c    |    6 ++++--
->  drivers/iommu/amd_iommu_proto.h   |    6 ++++++
->  drivers/iommu/amd_iommu_types.h   |    3 +++
->  5 files changed, 57 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/iommu/amd_iommu_debugfs.c
+
 > 
-> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-> index 74cfbc392862..dd980f7dd8b6 100644
-> --- a/drivers/iommu/Makefile
-> +++ b/drivers/iommu/Makefile
-> @@ -30,3 +30,8 @@ obj-$(CONFIG_EXYNOS_IOMMU) += exynos-iommu.o
->  obj-$(CONFIG_FSL_PAMU) += fsl_pamu.o fsl_pamu_domain.o
->  obj-$(CONFIG_S390_IOMMU) += s390-iommu.o
->  obj-$(CONFIG_QCOM_IOMMU) += qcom_iommu.o
-> +
-> +# This ensures that only the required files are compiled
-> +ifeq ($(CONFIG_IOMMU_DEBUGFS), y)
+> I think "happy" is a strong word when it comes to x86 machine check
+> handling. My interpretation is that he and Andy acquiesced that this
+> is about the best we can do with dax+mce as things stand today.
 
-Most Makefiles don't use a space before the 'y', but since you tested it,
-I guess either way works.
 
-But why do this in the Makefile at all?  Why not just add another Kconfig
-symbol and simplify the Makefile?
-
-> +obj-$(CONFIG_AMD_IOMMU) += amd_iommu_debugfs.o
-> +endif
-
--- 
-~Randy
+Agreed. I think it’s plausible that we could do slightly better for MCEs related to bad memory accessed through the direct map, but the code would be complicated and miserable to test, and it’s not even clear that it would materially decrease the chance that we survive as compared to these patches.
