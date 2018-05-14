@@ -1,72 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752369AbeENWfK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 18:35:10 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37392 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752133AbeENWfI (ORCPT
+        id S1752430AbeENWgF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 18:36:05 -0400
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:36192 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752190AbeENWgD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 18:35:08 -0400
-X-Google-Smtp-Source: AB8JxZrKNZrSi4guxM9MGZa3/kHBuEksYmY5boyY/X1tlWr7xURssFNwhkRuKjcjDzE1rwZHVMRkJA==
-Date: Tue, 15 May 2018 01:35:04 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: jpoimboe@redhat.com, peterz@infradead.org, mingo@kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] objtool: ignore INT3 padding
-Message-ID: <20180514223504.GA14804@avx2>
+        Mon, 14 May 2018 18:36:03 -0400
+X-Google-Smtp-Source: AB8JxZpsJvW+6rkx8C0n8fzZzeDq1Ggrh+z+lhToVmHO4j7W0FXkOe8jpXorP5+s7ovyWE8KJQ9EBkaxMK6qxy5ezJQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180514.145642.989041199343505570.davem@davemloft.net>
+References: <20180512170925.23690-1-christophe.jaillet@wanadoo.fr> <20180514.145642.989041199343505570.davem@davemloft.net>
+From: Saeed Mahameed <saeedm@dev.mellanox.co.il>
+Date: Mon, 14 May 2018 15:35:41 -0700
+Message-ID: <CALzJLG9_Yqv96DoRLPZ1641FY5s99vR4Z3_Q=NJHiVMadpnO-A@mail.gmail.com>
+Subject: Re: [PATCH] net/mlx5: Use 'kvfree()' for memory allocated by 'kvzalloc()'
+To: David Miller <davem@davemloft.net>
+Cc: christophe.jaillet@wanadoo.fr, Saeed Mahameed <saeedm@mellanox.com>,
+        Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NOP padding doesn't count as unreachable instruction
-neither should INT3.
+On Mon, May 14, 2018 at 11:56 AM, David Miller <davem@davemloft.net> wrote:
+> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Date: Sat, 12 May 2018 19:09:25 +0200
+>
+>> 'out' is allocated with 'kvzalloc()'. 'kvfree()' must be used to free it.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>
+> Saeed, I assume I will see this in one of your forthcoming pull
+> requests.
+>
+> Thanks.
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+In case this is for net-next,  I will apply v3 to mlx5-next once
+Christophe adds the "Fixes" tags according to Eric's request.
+if it is for net (RC) then you can go ahead and apply v3 to net branch.
 
- tools/objtool/arch.h            |    3 ++-
- tools/objtool/arch/x86/decode.c |    4 ++++
- tools/objtool/check.c           |    3 +++
- 3 files changed, 9 insertions(+), 1 deletion(-)
-
---- a/tools/objtool/arch.h
-+++ b/tools/objtool/arch.h
-@@ -34,7 +34,8 @@
- #define INSN_BUG		9
- #define INSN_NOP		10
- #define INSN_OTHER		11
--#define INSN_LAST		INSN_OTHER
-+#define INSN_INT3		12
-+#define INSN_LAST		INSN_INT3
- 
- enum op_dest_type {
- 	OP_DEST_REG,
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -440,6 +440,10 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
- 		*type = INSN_CONTEXT_SWITCH;
- 		break;
- 
-+	case 0xcc:
-+		*type = INSN_INT3;
-+		break;
-+
- 	case 0xe8:
- 		*type = INSN_CALL;
- 		break;
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1998,6 +1998,9 @@ static bool ignore_unreachable_insn(struct instruction *insn)
- 
- 	if (insn->ignore || insn->type == INSN_NOP)
- 		return true;
-+	/* Inter-function padding. */
-+	if (insn->type == INSN_INT3)
-+		return true;
- 
- 	/*
- 	 * Ignore any unused exceptions.  This can happen when a whitelisted
+Thanks,
+Saeed.
