@@ -1,167 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752381AbeENVuJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:50:09 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:40732 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752038AbeENVuH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:50:07 -0400
-Date: Tue, 15 May 2018 00:50:04 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, hans.verkuil@cisco.com,
-        mchehab@kernel.org, robh+dt@kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] media: i2c: mt9t112: Add device tree support
-Message-ID: <20180514215004.5oy6jr7f32jpfhx2@valkosipuli.retiisi.org.uk>
-References: <1524654014-17852-1-git-send-email-jacopo+renesas@jmondi.org>
- <1524654014-17852-3-git-send-email-jacopo+renesas@jmondi.org>
- <20180507093219.hrhaliadccaytenj@valkosipuli.retiisi.org.uk>
- <20180514143044.GK5956@w540>
+        id S1752358AbeENVvC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:51:02 -0400
+Received: from mga09.intel.com ([134.134.136.24]:38085 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752042AbeENVvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 17:51:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,401,1520924400";
+   d="scan'208";a="55159479"
+Date: Tue, 15 May 2018 00:50:57 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] x86/mm: Introduce 'no5lvl' kernel parameter
+Message-ID: <20180514215057.yodhn3nk37fnsxui@black.fi.intel.com>
+References: <20180511120859.26375-1-kirill.shutemov@linux.intel.com>
+ <20180511120859.26375-3-kirill.shutemov@linux.intel.com>
+ <alpine.DEB.2.21.1805132339240.1582@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180514143044.GK5956@w540>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <alpine.DEB.2.21.1805132339240.1582@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+On Sun, May 13, 2018 at 09:55:00PM +0000, Thomas Gleixner wrote:
+> On Fri, 11 May 2018, Kirill A. Shutemov wrote:
+> > --- a/arch/x86/kernel/cpu/common.c
+> > +++ b/arch/x86/kernel/cpu/common.c
+> > @@ -1008,6 +1008,12 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+> >  	 */
+> >  	setup_clear_cpu_cap(X86_FEATURE_PCID);
+> >  #endif
+> > +
+> > +#ifdef CONFIG_X86_5LEVEL
+> > +	/* Clear the 5-level paging feature if user asked for 'no5lvl' */
+> 
+> no5lvl is only one reason why 5 level paging is not available.
 
-On Mon, May 14, 2018 at 04:30:44PM +0200, jacopo mondi wrote:
-> Hi Sakari,
-> 
-> On Mon, May 07, 2018 at 12:32:19PM +0300, Sakari Ailus wrote:
-> > Hi Jacopo,
-> >
-> > On Wed, Apr 25, 2018 at 01:00:14PM +0200, Jacopo Mondi wrote:
-> 
-> [snip]
-> 
-> > >  static int mt9t112_probe(struct i2c_client *client,
-> > >  			 const struct i2c_device_id *did)
-> > >  {
-> > >  	struct mt9t112_priv *priv;
-> > >  	int ret;
-> > >
-> > > -	if (!client->dev.platform_data) {
-> > > +	if (!client->dev.of_node && !client->dev.platform_data) {
-> > >  		dev_err(&client->dev, "mt9t112: missing platform data!\n");
-> > >  		return -EINVAL;
-> > >  	}
-> > > @@ -1081,23 +1118,39 @@ static int mt9t112_probe(struct i2c_client *client,
-> > >  	if (!priv)
-> > >  		return -ENOMEM;
-> > >
-> > > -	priv->info = client->dev.platform_data;
-> > >  	priv->init_done = false;
-> > > -
-> > > -	v4l2_i2c_subdev_init(&priv->subdev, client, &mt9t112_subdev_ops);
-> > > -
-> > > -	priv->clk = devm_clk_get(&client->dev, "extclk");
-> > > -	if (PTR_ERR(priv->clk) == -ENOENT) {
-> > > +	priv->dev = &client->dev;
-> > > +
-> > > +	if (client->dev.platform_data) {
-> > > +		priv->info = client->dev.platform_data;
-> > > +
-> > > +		priv->clk = devm_clk_get(&client->dev, "extclk");
-> >
-> > extclk needs to be documented in DT binding documentation.
-> >
-> > > +		if (PTR_ERR(priv->clk) == -ENOENT) {
-> > > +			priv->clk = NULL;
-> > > +		} else if (IS_ERR(priv->clk)) {
-> > > +			dev_err(&client->dev,
-> > > +				"Unable to get clock \"extclk\"\n");
-> > > +			return PTR_ERR(priv->clk);
-> > > +		}
-> > > +	} else {
-> > > +		/*
-> > > +		 * External clock frequencies != 24MHz are only supported
-> > > +		 * for non-OF systems.
-> > > +		 */
-> >
-> > Shouldn't you actually set the frequency? Or perhaps even better to check
-> > it, and use assigned-clocks and assigned-clock-rates properties?
-> >
-> 
-> I might be confused, but my intention was to use an external clock
-> reference, with a configurable frequency only in the platform data use
-> case. As you can see in this 'else' branch, in OF case, the priv->clk
-> field is null, and all the PLL and clock computations are performed
-> assuming a 24MHz input clock.
-> 
-> In my opinion, as the driver when running on OF systems does not
-> get any reference to 'extclk' clock, it should not be documented in
-> bindings. Do you agree?
+The 5-level paging may not be available for few reasons:
+ - CONFIG_X86_5LEVEL=n
+ - Machine doesn't support X86_FEATURE_LA57 -- clearing is nop;
+ - User asked for 'no5lvl'.
 
-Uh, isn't the clock generally controlled by the driver on OF-based systems?
-You could assign the frequency in DT though, and not in the driver, but
-that should be documented in binding documentation.
+To me the one-line comment reflects the situation reasonably well.
 
-The register configuration the driver does not appear to be dependent on
-the clock frequency, which suggests that it is only applicable to a
-particular frequency --- 24 MHz?
+Do you want more verbose comment here?
 
+> > +	if (!__pgtable_l5_enabled)
+> > +		setup_clear_cpu_cap(X86_FEATURE_LA57);
+> > +#endif
 > 
-> Thanks
->    j
+> And that #ifdeffery can be avoided by simply doing:
 > 
-> > >  		priv->clk = NULL;
-> > > -	} else if (IS_ERR(priv->clk)) {
-> > > -		dev_err(&client->dev, "Unable to get clock \"extclk\"\n");
-> > > -		return PTR_ERR(priv->clk);
-> > > +		priv->info = &mt9t112_default_pdata_24MHz;
-> > > +
-> > > +		ret = mt9t112_parse_dt(priv);
-> > > +		if (ret)
-> > > +			return ret;
-> > >  	}
-> > >
-> > > -	priv->standby_gpio = devm_gpiod_get_optional(&client->dev, "standby",
-> > > +	v4l2_i2c_subdev_init(&priv->subdev, client, &mt9t112_subdev_ops);
-> > > +
-> > > +	priv->standby_gpio = devm_gpiod_get_optional(&client->dev, "powerdown",
-> > >  						     GPIOD_OUT_HIGH);
-> > >  	if (IS_ERR(priv->standby_gpio)) {
-> > > -		dev_err(&client->dev, "Unable to get gpio \"standby\"\n");
-> > > +		dev_err(&client->dev, "Unable to get gpio \"powerdown\"\n");
-> > >  		return PTR_ERR(priv->standby_gpio);
-> > >  	}
-> > >
-> > > @@ -1124,9 +1177,19 @@ static const struct i2c_device_id mt9t112_id[] = {
-> > >  };
-> > >  MODULE_DEVICE_TABLE(i2c, mt9t112_id);
-> > >
-> > > +#if IS_ENABLED(CONFIG_OF)
-> > > +static const struct of_device_id mt9t112_of_match[] = {
-> > > +	{ .compatible = "micron,mt9t111", },
-> > > +	{ .compatible = "micron,mt9t112", },
-> > > +	{ /* sentinel */ },
-> > > +};
-> > > +MODULE_DEVICE_TABLE(of, mt9t112_of_match);
-> > > +#endif
-> > > +
-> > >  static struct i2c_driver mt9t112_i2c_driver = {
-> > >  	.driver = {
-> > >  		.name = "mt9t112",
-> > > +		.of_match_table = of_match_ptr(mt9t112_of_match),
-> >
-> > No need to use of_match_ptr().
-> >
-> > >  	},
-> > >  	.probe    = mt9t112_probe,
-> > >  	.remove   = mt9t112_remove,
-> >
-> > --
-> > Sakari Ailus
-> > e-mail: sakari.ailus@iki.fi
+> 	if (IS_ENABLED(CONFIG_X86_5LEVEL) && !pgtable_l5_enabled)
+> 		setup_clear_cpu_cap(X86_FEATURE_LA57);
+> 
+> Hmm?
 
+Unfortunately, no.
 
+pgtable_l5_enabled is defined as cpu_feature_enabled(X86_FEATURE_LA57).
+So with such change we would only clear the feature bit if it's already
+clear.
 
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+ Kirill A. Shutemov
