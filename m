@@ -1,39 +1,94 @@
-Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqbG5FONFjInax1ejor0wWQSuexOVi9yoL2tCKXzyVFpvKX/gaQg/6OcTa7Rvlb6nj5PXw8
-ARC-Seal: i=1; a=rsa-sha256; t=1526280793; cv=none;
-        d=google.com; s=arc-20160816;
-        b=FqkIR1EFGXCm0hFpKVH0n0g11+EFiJDy5KZ+n5ueRAM/IFbrpPXVVLRCQfpitfxcYl
-         jdS4WcK/LwkH7C+ecxOvDPWDtmoVcfw/CKuoibf3g5GMUB/qOYowk5BtlvBG0gOltkSW
-         zVs3WmNBbCKvnkiVXBD6JVZJnR5TuWHj8zFsagmZetdDUKpXNWVeEg73mUs2hGs6lUH6
-         CDYwHGvEBJH2MRw2UCWOLF3Lfylld4/yQgxtu5oAgdrxJCEKlaste8XE+MGfJ3E+sz+f
-         uM7ySZUgfPhXZrNr7/WVt2NwiD4Fq04KvbzZuCVRr5DMo5IsYBy+4khdx5daiwDF9CS1
-         8LmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=spV7c41ZQUcbfxqASjMsHqec+cGmrkl3OHTSEI+r4Ww=;
-        b=DaHvY9Hr/NNNsrE2LBsi8zyYKztrteiyTQ1XHyi6CakCMjqjQ/seOcn0f9mMW/GjJu
-         5Jd4zHaQ7mVzsAph0tJ2N2+87XHZQJ5rAChtNXnbNR2vxXK+Nhbd70/yIFPQqhwmapxF
-         Nsn3aw7aX7fOI9mm9U1fs06Km0NphuNJFO/uuIRBnkiZzcpYBlhLWd5UQnEjOhUvVjvJ
-         N/fpRlZtpv3jCw98u1aQD4BEyrm550lgGv8FkpGbfjx1Q0sIYpXwJmK8tTKHrG6J340s
-         /xLTyxcbSqY227SK+3PqBIKmS6rDvE0EYsQMPtNSAKp3kyBK45MgS+GhC8lmmBupKj0a
-         jKCA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=t8qztNpL;
-       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=t8qztNpL;
-       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-289078-1526280791-2-3053792876945416002
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526280790; b=NmPZGxe8WrruQvgsngxGgddgobIdJn4TLHbr3RfEuAEPCbDmjH
+    xAsZE0XtRBORS/pkBNGp0JnA0VD6GPUuMoosYkzyYARmy1voXtGtyE9K3wqwRBQn
+    1AIYKadJX+V2jgxgxbLAgoP4/0S1qHHhNHGMUlIxG6uwqxtNeBqQ3EMubuOXv+b4
+    IRgoUd+MFEQ0nMbtTcPvt2Htf8/fXJ9FuoasYfqt+xcg+NIfcta7PXoDaU7l9G+J
+    zK3zWPi47quw/mxTnBBIOIKqQS1BT85tPZLw0gWJdNHbpyPgslOcWIy+VW+WGDEV
+    5xbLWqnfEudgQMiuFmD1UUcDndzkAPguFNsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526280790; bh=R3X7g12jhq7IlYGomK8BZREEgOCSnx
+    B2McFPPHaVKFc=; b=OGp2yTlmII9iCLeZiBEzyK9HZ/26095G/eRgevVqrS90DS
+    AdwFgj1uOvnGBHi0VvHtFjeZ0GFWWXd7zwilDMOnQjjXMF/AHi9E70h3kordSJ2Z
+    t1kofkgPjVpJv/D60SUPRF0fyHQ8cIiTkZ6Lmovm3p6ViLlVvov7xQdLJh+fx7DP
+    tILVsPFyorDaQyZ48ayemxwR6pptQWLslcOnPWSprPOS/jrQHlb3NdzaDUVxx4tp
+    DGaZmpALVlzyg3Nf09pEFrw5xN7sQalOW1X1JSJqPoqwQx7Ty7lKUsrlY8RcXjM1
+    3zYFpAsJi79RXxJYBWIovlMbGSkrRduJgzGUMPZg==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=lpcde7g1 x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=lpcde7g1 x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfFslhUOAyFiSkJzNhWwp1uwAVFXBwwzE7AW4gTmfZcmNEuJSppZHATS47C6c4aSiIe2N1QIQACRbgeDfesmfvN3Ksw/uOQUecbbS5ojXhx15IeJeg335
+    Z0DiHw+FL/IxL0Ew65JtT4J0OjvItgQv6QUwQaPZEXUc6IQYVkMEilI0OXDk5OxlBitEYS0PW/pvvfMQ4lQUzofwSNCG5TLnGzy+uQ688yD/TUSgn5+uD+EN
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=Dei6p5SHAAAA:8 a=ag1SF4gXAAAA:8
+    a=o-gZSQgVR2yriO6fCZ4A:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=M-Yerj1wOn-OpK7r_3ei:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752750AbeENGwx (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 02:52:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752391AbeENGwv (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 14 May 2018 02:52:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 34/56] net: fix rtnh_ok()
-Date: Mon, 14 May 2018 08:48:39 +0200
-Message-Id: <20180514064758.079254201@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.4 50/56] Revert "Bluetooth: btusb: Fix quirk for Atheros 1525/QCA6174"
+Date: Mon, 14 May 2018 08:48:55 +0200
+Message-Id: <20180514064759.425741588@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -41,10 +96,9 @@ User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421242429293362?=
-X-GMAIL-MSGID: =?utf-8?q?1600421409579767892?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,37 +106,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit b1993a2de12c9e75c35729e2ffbc3a92d50c0d31 upstream.
+commit 544a591668813583021474fa5c7ff4942244d654 upstream.
 
-syzbot reported :
+Commit f44cb4b19ed4 ("Bluetooth: btusb: Fix quirk for Atheros
+1525/QCA6174") is causing bluetooth to no longer work for several
+people, see: https://bugzilla.redhat.com/show_bug.cgi?id=1568911
 
-BUG: KMSAN: uninit-value in rtnh_ok include/net/nexthop.h:11 [inline]
-BUG: KMSAN: uninit-value in fib_count_nexthops net/ipv4/fib_semantics.c:469 [inline]
-BUG: KMSAN: uninit-value in fib_create_info+0x554/0x8d20 net/ipv4/fib_semantics.c:1091
+So lets revert it for now and try to find another solution for
+devices which need the modified quirk.
 
-@remaining is an integer, coming from user space.
-If it is negative we want rtnh_ok() to return false.
-
-Fixes: 4e902c57417c ("[IPv4]: FIB configuration using struct fib_config")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Cc: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/net/nexthop.h |    2 +-
+ drivers/bluetooth/btusb.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/net/nexthop.h
-+++ b/include/net/nexthop.h
-@@ -6,7 +6,7 @@
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -216,6 +216,7 @@ static const struct usb_device_id blackl
+ 	{ USB_DEVICE(0x0930, 0x0227), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0b05, 0x17d0), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0cf3, 0x0036), .driver_info = BTUSB_ATH3012 },
++	{ USB_DEVICE(0x0cf3, 0x3004), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0cf3, 0x3008), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0cf3, 0x311d), .driver_info = BTUSB_ATH3012 },
+ 	{ USB_DEVICE(0x0cf3, 0x311e), .driver_info = BTUSB_ATH3012 },
+@@ -246,7 +247,6 @@ static const struct usb_device_id blackl
+ 	{ USB_DEVICE(0x0489, 0xe03c), .driver_info = BTUSB_ATH3012 },
  
- static inline int rtnh_ok(const struct rtnexthop *rtnh, int remaining)
- {
--	return remaining >= sizeof(*rtnh) &&
-+	return remaining >= (int)sizeof(*rtnh) &&
- 	       rtnh->rtnh_len >= sizeof(*rtnh) &&
- 	       rtnh->rtnh_len <= remaining;
- }
+ 	/* QCA ROME chipset */
+-	{ USB_DEVICE(0x0cf3, 0x3004), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x0cf3, 0xe007), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x0cf3, 0xe300), .driver_info = BTUSB_QCA_ROME },
+ 	{ USB_DEVICE(0x0cf3, 0xe360), .driver_info = BTUSB_QCA_ROME },
