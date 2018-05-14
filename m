@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752730AbeENVcJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:32:09 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:39771 "EHLO
+        id S1752340AbeENVZH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:25:07 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:33827 "EHLO
         mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752582AbeENVcE (ORCPT
+        with ESMTP id S1752295AbeENVZE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:32:04 -0400
-X-Google-Smtp-Source: AB8JxZp6fDm6Yx9oV0uMQw2KMAkjvkh5Im8yhwCWGhEGb4Yn2ndKZxRMQrAvXzMjVhqDt2DWW4YR2IIofAt7di44omk=
+        Mon, 14 May 2018 17:25:04 -0400
+X-Google-Smtp-Source: AB8JxZrR37cCjN/i7OmlLAyArRNeceQebRlNoV47K80WiMQh1zyAtW78OriX0CZE395dEg5DxvSqzlsc4Nhx1D1ynhA=
 MIME-Version: 1.0
-In-Reply-To: <20180511162028.20616-13-brgl@bgdev.pl>
-References: <20180511162028.20616-1-brgl@bgdev.pl> <20180511162028.20616-13-brgl@bgdev.pl>
+In-Reply-To: <20180511162028.20616-4-brgl@bgdev.pl>
+References: <20180511162028.20616-1-brgl@bgdev.pl> <20180511162028.20616-4-brgl@bgdev.pl>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 May 2018 23:32:02 +0200
-X-Google-Sender-Auth: _tJGpww_npuLInz__AuWwdwvX2M
-Message-ID: <CAMuHMdWrOL7gN4Uxx5KipD6ZZ971LmP2yZe3XERz8jQ4TGwDCw@mail.gmail.com>
-Subject: Re: [PATCH 12/12] of/platform: make the OF code aware of early
- platform drivers
+Date: Mon, 14 May 2018 23:25:03 +0200
+X-Google-Sender-Auth: 0lvLFBwuzPEV9jqPwONVplMw8Jk
+Message-ID: <CAMuHMdW+Ma4BE61+U0J5bBaBG6i3Nf9Ei9h0WVzY+gn84469pw@mail.gmail.com>
+Subject: Re: [PATCH 03/12] platform/early: export platform_match() locally
 To: Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         David Lechner <david@lechnology.com>,
@@ -46,53 +45,15 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bartosz,
-
 On Fri, May 11, 2018 at 6:20 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >
-> Check the relevant flag in the device node and skip the allocation
-> part for devices that were populated early.
+> We will use this function to match devices in the early platform core
+> code. Export it locally in drivers/base.
 >
 > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Thanks for your patch!
-
-> --- a/drivers/of/platform.c
-> +++ b/drivers/of/platform.c
-
-> @@ -196,9 +197,17 @@ static struct platform_device *of_platform_device_create_pdata(
->             of_node_test_and_set_flag(np, OF_POPULATED))
->                 return NULL;
->
-> -       dev = of_device_alloc(np, bus_id, parent);
-> -       if (!dev)
-> -               goto err_clear_flag;
-> +       if (of_node_check_flag(np, OF_POPULATED_EARLY)) {
-> +               dev = of_early_to_platform_device(np);
-> +               if (IS_ERR(dev))
-> +                       goto err_clear_flag;
-> +
-> +               of_device_init(dev, np, bus_id, parent);
-> +       } else {
-> +               dev = of_device_alloc(np, bus_id, parent);
-> +               if (!dev)
-> +                       goto err_clear_flag;
-> +       }
-
-The above may become cleaner if:
-  1. of_early_to_platform_device() would return NULL instead -ENOENT,
-  2. of_device_alloc() would be split in alloc and init phases, too.
-
-Then you can do:
-
-        dev = of_node_check_flag(np, OF_POPULATED_EARLY)
-                ? of_early_to_platform_device(np)
-                 : __of_device_alloc(np, bus_id, parent);
-        if (!dev)
-                goto err_clear_flag;
-
-        of_device_init(dev, np, bus_id, parent);
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
