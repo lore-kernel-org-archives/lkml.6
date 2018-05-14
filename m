@@ -1,38 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrMbwBZEGn10SpP27q7RJZVP4B30E6HP8Lr6b8QsT4x4dkAXDQ52HMVgzETA2xha8Gx8T5B
-ARC-Seal: i=1; a=rsa-sha256; t=1526281205; cv=none;
+X-Google-Smtp-Source: AB8JxZrjXEW8pm9WMqGgCZxlNWVbFchYWZk6l0rorlXsZt2QiFWiJok23BRee8igTImAyhJb0fkZ
+ARC-Seal: i=1; a=rsa-sha256; t=1526281199; cv=none;
         d=google.com; s=arc-20160816;
-        b=odYOd/ukorSlCUSSCgTcC1ON8fqKqkYSy0LSPtymHblSIsjsrLWGyqV7fO5SZKsnwx
-         3y94lpqz/QK/Gni/NFira+OYqJY+epd7Q/wpKPVoggz1tq3euw6VA337bIkA1z/HK3dq
-         sDy1lvF+HOoO4kworkMTT6UNbGbQZMaoDuRPqesInCVKv6sqzCKII8FPnRDBlpzqkK21
-         iRJ9pJao1UvNwrz6R/H+8epQ6Fbg3BPVjwuWLgY92DijfFXqfW0pqaN89zWxYBg8A6jx
-         4EEGhHRpu78PI+SYL3MRq47FvnF3muvPp+FksOcjs5wIrWEt07EUibK3gs5mzpEvyvOt
-         uUfw==
+        b=aXU5QwgOO31/y7VbYWFWryPxLHfwRB3Ds2t6bzQd5FZGkJ4ObXXvo3SzF7pGCvM5VN
+         T17SCjGhAsLgeGs+YcN0epn0RL7dVX1VZZHP/uRCAt4/rfKwCNvmkD9vwM77efAGp9/5
+         xa5FXWOgQMfmXe9WAYpFpQezcw4TkisaFcN4VjZejUGxTBCOmNF9ceCHpvvh/h9sRYmi
+         7v9GASiyR94Bh5tXL8NHkEwhqTPPuVRoe7NbtQgmbRSqShsTbYJ5JUaEcQ7P3v6/QWZY
+         gnAux1mNMTawfd44uqpkdgTPa/DjzCkc6LaX3VrsxW8quKcU/Ql0ptX0RGhkLGCfBhc8
+         +o+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=NAEij0GIBmFRPA2mM0zSZUAL3kzLfe8TC/NX17ajyd8=;
-        b=BZ07kG08h+35CS7jJ2GrH19yUj0oVymf70Vth+LfJlz29eeIibLcEsMt2RiJywPr12
-         LkdiQ9z5X0GbPTb6itxwrNoE9vm/5cuHrX7OBg6GVH94q7NlRc1etjMzW+5qeqcMw8Gq
-         L8uxDx5bHYs8sWuBBD31YMJGtkqEePuR2PzjTOyNutIOWVoOoJUcRCN1dueF6rFkJxdE
-         ySAFO7Rcn0o+L6Oflpfpb/4Sz7cC0L07j0O1pFB9e4spghtfEjVAiDLa2Qt8zyBABBMQ
-         hLRqCxDih1siX1guKNfQU7+hNaObnEnZDGul6vaeWnJmY9vwBfXm+WtrHoR8NMUJNK0O
-         mBYQ==
+        bh=OcZ3m152QAAI9AuGvM7cN/54E40aMAHPfPONrK7pyyE=;
+        b=ZZpW634bPndwBHasV/MuHyPxq1qBP9EEL3kuJLE0PZz7HcRMcZgOrhH2lAYBMp9BBG
+         8lfMZAi0w9PGs0nriHej9SeCevAQ3bSNEi0U7REIHmcbuwpyg5RpsRxcQO91+BP5gLLR
+         S2Oz1SRI/Zlk/fVhbi/28hwP+I9hKIKuDine0F5KVU3BDhh6pbQEZeJUmcOs/sC1Dgtp
+         2OlpjgXU6EOD/2EJiuFwm9HgJbHh0IsFaLhtUmQT0qrVGeCARLk7hEtpultkZV+22OjO
+         6eUOTmarNkl41PhMvYAYm2XRY4RemEEWBzqtEBEMw1v7F29FBHSmVkHDaD1p/On6lH0a
+         PfGw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=a1KVcDec;
+       dkim=pass header.i=@kernel.org header.s=default header.b=hLWB/6pj;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=a1KVcDec;
+       dkim=pass header.i=@kernel.org header.s=default header.b=hLWB/6pj;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.16 55/72] arm: dts: imx[35]*: declare flexcan devices to be compatible to imx25s flexcan
-Date: Mon, 14 May 2018 08:49:12 +0200
-Message-Id: <20180514064826.797908061@linuxfoundation.org>
+	Joseph Salisbury <joseph.salisbury@canonical.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.16 53/72] PCI / PM: Check device_may_wakeup() in pci_enable_wake()
+Date: Mon, 14 May 2018 08:49:10 +0200
+Message-Id: <20180514064826.368925494@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421840577580267?=
-X-GMAIL-MSGID: =?utf-8?q?1600421840577580267?=
+X-GMAIL-THRID: =?utf-8?q?1600421633007831027?=
+X-GMAIL-MSGID: =?utf-8?q?1600421835106801552?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,63 +52,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 9a62dcf486c10daf5366f29df1c799f69b1510f9 upstream.
+commit cfcadfaad7251d8b640713724b388164d75465b2 upstream.
 
-Commit d50f4630c2e1 ("arm: dts: Remove p1010-flexcan compatible from imx
-series dts") removed the fallback compatible "fsl,p1010-flexcan" from
-the imx device trees. As the flexcan cores on i.MX25, i.MX35 and i.MX53
-are identical, introduce the first as fallback for the two latter ones.
+Commit 0847684cfc5f0 (PCI / PM: Simplify device wakeup settings code)
+went too far and dropped the device_may_wakeup() check from
+pci_enable_wake() which causes wakeup to be enabled during system
+suspend, hibernation or shutdown for some PCI devices that are not
+allowed by user space to wake up the system from sleep (or power off).
 
-Fixes: d50f4630c2e1 ("arm: dts: Remove p1010-flexcan compatible from imx series dts")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Cc: linux-stable <stable@vger.kernel.org> # >= v4.16
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+As a result of this, excessive power is drawn by some of the affected
+systems while in sleep states or off.
+
+Restore the device_may_wakeup() check in pci_enable_wake(), but make
+sure that the PCI bus type's runtime suspend callback will not call
+device_may_wakeup() which is about system wakeup from sleep and not
+about device wakeup from runtime suspend.
+
+Fixes: 0847684cfc5f0 (PCI / PM: Simplify device wakeup settings code)
+Reported-by: Joseph Salisbury <joseph.salisbury@canonical.com>
+Cc: 4.13+ <stable@vger.kernel.org> # 4.13+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/imx35.dtsi |    4 ++--
- arch/arm/boot/dts/imx53.dtsi |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/pci/pci.c |   29 +++++++++++++++++++++++------
+ 1 file changed, 23 insertions(+), 6 deletions(-)
 
---- a/arch/arm/boot/dts/imx35.dtsi
-+++ b/arch/arm/boot/dts/imx35.dtsi
-@@ -303,7 +303,7 @@
- 			};
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1897,7 +1897,7 @@ void pci_pme_active(struct pci_dev *dev,
+ EXPORT_SYMBOL(pci_pme_active);
  
- 			can1: can@53fe4000 {
--				compatible = "fsl,imx35-flexcan";
-+				compatible = "fsl,imx35-flexcan", "fsl,imx25-flexcan";
- 				reg = <0x53fe4000 0x1000>;
- 				clocks = <&clks 33>, <&clks 33>;
- 				clock-names = "ipg", "per";
-@@ -312,7 +312,7 @@
- 			};
+ /**
+- * pci_enable_wake - enable PCI device as wakeup event source
++ * __pci_enable_wake - enable PCI device as wakeup event source
+  * @dev: PCI device affected
+  * @state: PCI state from which device will issue wakeup events
+  * @enable: True to enable event generation; false to disable
+@@ -1915,7 +1915,7 @@ EXPORT_SYMBOL(pci_pme_active);
+  * Error code depending on the platform is returned if both the platform and
+  * the native mechanism fail to enable the generation of wake-up events
+  */
+-int pci_enable_wake(struct pci_dev *dev, pci_power_t state, bool enable)
++static int __pci_enable_wake(struct pci_dev *dev, pci_power_t state, bool enable)
+ {
+ 	int ret = 0;
  
- 			can2: can@53fe8000 {
--				compatible = "fsl,imx35-flexcan";
-+				compatible = "fsl,imx35-flexcan", "fsl,imx25-flexcan";
- 				reg = <0x53fe8000 0x1000>;
- 				clocks = <&clks 34>, <&clks 34>;
- 				clock-names = "ipg", "per";
---- a/arch/arm/boot/dts/imx53.dtsi
-+++ b/arch/arm/boot/dts/imx53.dtsi
-@@ -551,7 +551,7 @@
- 			};
+@@ -1956,6 +1956,23 @@ int pci_enable_wake(struct pci_dev *dev,
  
- 			can1: can@53fc8000 {
--				compatible = "fsl,imx53-flexcan";
-+				compatible = "fsl,imx53-flexcan", "fsl,imx25-flexcan";
- 				reg = <0x53fc8000 0x4000>;
- 				interrupts = <82>;
- 				clocks = <&clks IMX5_CLK_CAN1_IPG_GATE>,
-@@ -561,7 +561,7 @@
- 			};
+ 	return ret;
+ }
++
++/**
++ * pci_enable_wake - change wakeup settings for a PCI device
++ * @pci_dev: Target device
++ * @state: PCI state from which device will issue wakeup events
++ * @enable: Whether or not to enable event generation
++ *
++ * If @enable is set, check device_may_wakeup() for the device before calling
++ * __pci_enable_wake() for it.
++ */
++int pci_enable_wake(struct pci_dev *pci_dev, pci_power_t state, bool enable)
++{
++	if (enable && !device_may_wakeup(&pci_dev->dev))
++		return -EINVAL;
++
++	return __pci_enable_wake(pci_dev, state, enable);
++}
+ EXPORT_SYMBOL(pci_enable_wake);
  
- 			can2: can@53fcc000 {
--				compatible = "fsl,imx53-flexcan";
-+				compatible = "fsl,imx53-flexcan", "fsl,imx25-flexcan";
- 				reg = <0x53fcc000 0x4000>;
- 				interrupts = <83>;
- 				clocks = <&clks IMX5_CLK_CAN2_IPG_GATE>,
+ /**
+@@ -1968,9 +1985,9 @@ EXPORT_SYMBOL(pci_enable_wake);
+  * should not be called twice in a row to enable wake-up due to PCI PM vs ACPI
+  * ordering constraints.
+  *
+- * This function only returns error code if the device is not capable of
+- * generating PME# from both D3_hot and D3_cold, and the platform is unable to
+- * enable wake-up power for it.
++ * This function only returns error code if the device is not allowed to wake
++ * up the system from sleep or it is not capable of generating PME# from both
++ * D3_hot and D3_cold and the platform is unable to enable wake-up power for it.
+  */
+ int pci_wake_from_d3(struct pci_dev *dev, bool enable)
+ {
+@@ -2101,7 +2118,7 @@ int pci_finish_runtime_suspend(struct pc
+ 
+ 	dev->runtime_d3cold = target_state == PCI_D3cold;
+ 
+-	pci_enable_wake(dev, target_state, pci_dev_run_wake(dev));
++	__pci_enable_wake(dev, target_state, pci_dev_run_wake(dev));
+ 
+ 	error = pci_set_power_state(dev, target_state);
+ 
