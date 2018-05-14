@@ -1,40 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrh87i7ldsYRRZgDoSJA7OJilb+DNKYRfsWiFLN46cJz+m1uznQQDSbuVBx1tLz3olNvKHV
-ARC-Seal: i=1; a=rsa-sha256; t=1526280728; cv=none;
+X-Google-Smtp-Source: AB8JxZoBhNeWPdRF2F/Q2Li1/psBxSvKmBs2zdjOMiM+N8jI4Ow4Z0qD9CNgUdXLKaIw4H7AUz2n
+ARC-Seal: i=1; a=rsa-sha256; t=1526280725; cv=none;
         d=google.com; s=arc-20160816;
-        b=YeMCOuPFsB/kWnzGYsk1+t0R7x2bswiCXu3XJPKoy04E5zFumIfPLm0EQpw5oMYgvn
-         ue20YYCHprGJYFVFS15wCSk9keuuCXlHwJ4Wt/oVRUdsVwDXKE5DKfplU87B7mToZoJW
-         ziTGv5v12Yfktf1ZZi1bWq1XK89VUaL8Xl0HbvLzcGY1KKoT6UTmcE1J97b4qCyxiuSk
-         x8xQAdU7ruwjPU6UbR2nSv0K5sWnQYAlQWoHZ0gb7vnRDQAT+TxStOMr/O4j78qgXMNE
-         MwL2rE1DFLIQnk5ShJLAVVTO1harowGBpJRiJIY+W80p4zoZUuJQMmXiQ7liW8+7tdE4
-         mGFg==
+        b=eeABAHC2YzzOR1uoUnZHx61suKeA0u3GQ70+JNgPx9dk0dZwPDIuSJ/J6n6/5CmB1N
+         RXl0oIFnUpIKLLIbe/WSE5MrOBmOGGEU75CoHRG9H3Jqnd4huPKI2JF4ir3WhLKHnblc
+         ybHc+JATMcxiRljguvZUbO6bj2Egy/QyKWQI06o8sBb49Y2BrSf4o6fE2IhjHwk5s1HY
+         bCDUvT7Plo8Oj90UFTYWh9AsAz3TDy+Fn9AN1nIHw9t/I3CinML+9LijU2VjUDi00esP
+         cyz91dyHOy9hZcOzFk0ZLg3dJzm75T+SepqNT/iPGwcLyoRAFMKA2zR/dM9IDPtObc1z
+         1hDg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=j93v8iqXLENHxZIv/z+tgCXmg6+t6j112IsTTejPm0k=;
-        b=0d4k+g/OeZSvyaoZP+DCxUeV1BXhwmFQbjr3vRvVgjiVQ8iCpBMqMoaxCX6I8uEAWc
-         GlBJY8QJ0ub1NdZm6vjw+mt+vMnBhq4aececG5vzOUtsEjktwDdbKRQJy7WRazRKZ79M
-         qYpb18fsjj+juH2Zh0OYcj6mOOINwObbN0IVUZ61KBPsZPm5lpQMA6EpFXu1Sx52mUNH
-         eJsPUub0YfLLPKztw0kWnzbUTIhPSFpkHu8Gd8yM/2fNvVOrxZrNbB7jBUMcUzPFfRD+
-         JndpMraCojKhIHp5SzekFU4+VbqyCZirqC+HgzUniyZHXagzxkruQJzAsRdxm7nqhOVt
-         kucQ==
+        bh=yGVtmGeITtZGYBU53grf+pNBuqj+sZGg6Vzzg0u+Ky8=;
+        b=UWyOFj6O8IYbyOLGBTKSgTkLIxg5Hq2v/5WhcNdAbHOttTLhojzbGmvCfvy6nPt1kF
+         j/froLQge7m5TWF6WFi6JH46d1HkFbzaP0OxfoyUmqQLSbHgocvqw4iznWX96NX5dR2l
+         H83bu09iPDTu/mju4H2R6PxIjFq2LJny+GZnyMBmdJ1uf9dx1Q7W2qRJzK1ra0evwV1u
+         wTBHSFkcArJ/2QPEc/yWHlElxWWssayYWNxkE+XKhFT4VJLYCzQU9HxvYXmKvZQO4SGu
+         4hzPtW3hzBy+liDF2/qpuc5eecICtkzpgtNac+sctyJprZh82kRIyVBQw2MtMDGB/oOd
+         7EWA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=hiaUZOs0;
+       dkim=pass header.i=@kernel.org header.s=default header.b=kU3Zi9V3;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=hiaUZOs0;
+       dkim=pass header.i=@kernel.org header.s=default header.b=kU3Zi9V3;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Manikanta Pubbisetty <mpubbise@qti.qualcomm.com>,
 	Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>,
 	Kalle Valo <kvalo@qca.qualcomm.com>,
 	Sriram R <srirrama@codeaurora.org>
-Subject: [PATCH 4.4 09/56] ath10k: rebuild crypto header in rx data frames
-Date: Mon, 14 May 2018 08:48:14 +0200
-Message-Id: <20180514064755.924711730@linuxfoundation.org>
+Subject: [PATCH 4.4 08/56] ath10k: fix rfc1042 header retrieval in QCA4019 with eth decap mode
+Date: Mon, 14 May 2018 08:48:13 +0200
+Message-Id: <20180514064755.718467503@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421341166129465?=
-X-GMAIL-MSGID: =?utf-8?q?1600421341166129465?=
+X-GMAIL-THRID: =?utf-8?q?1600421338205908005?=
+X-GMAIL-MSGID: =?utf-8?q?1600421338205908005?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,280 +54,101 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
 
-commit 7eccb738fce57cbe53ed903ccf43f9ab257b15b3 upstream.
+commit 2f38c3c01de945234d23dd163e3528ccb413066d upstream.
 
-Rx data frames notified through HTT_T2H_MSG_TYPE_RX_IND and
-HTT_T2H_MSG_TYPE_RX_FRAG_IND expect PN/TSC check to be done
-on host (mac80211) rather than firmware. Rebuild cipher header
-in every received data frames (that are notified through those
-HTT interfaces) from the rx_hdr_status tlv available in the
-rx descriptor of the first msdu. Skip setting RX_FLAG_IV_STRIPPED
-flag for the packets which requires mac80211 PN/TSC check support
-and set appropriate RX_FLAG for stripped crypto tail. Hw QCA988X,
-QCA9887, QCA99X0, QCA9984, QCA9888 and QCA4019 currently need the
-rebuilding of cipher header to perform PN/TSC check for replay
-attack.
+Chipset from QCA99X0 onwards (QCA99X0, QCA9984, QCA4019 & future)
+rx_hdr_status is not padded to align in 4-byte boundary. Define a
+new hw_params field to handle different alignment behaviour between
+different hw. This patch fixes improper retrieval of rfc1042 header
+with QCA4019. This patch along with "ath10k: Properly remove padding
+from the start of rx payload" will fix traffic failure in ethernet
+decap mode for QCA4019.
 
-Please note that removing crypto tail for CCMP-256, GCMP and GCMP-256 ciphers
-in raw mode needs to be fixed. Since Rx with these ciphers in raw
-mode does not work in the current form even without this patch and
-removing crypto tail for these chipers needs clean up, raw mode related
-issues in CCMP-256, GCMP and GCMP-256 can be addressed in follow up
-patches.
-
-Tested-by: Manikanta Pubbisetty <mpubbise@qti.qualcomm.com>
 Signed-off-by: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
 Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Sriram R <srirrama@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/ath10k/htt_rx.c |   98 +++++++++++++++++++++++++------
- 1 file changed, 82 insertions(+), 16 deletions(-)
+ drivers/net/wireless/ath/ath10k/core.c |    8 ++++++++
+ drivers/net/wireless/ath/ath10k/core.h |    4 ++++
+ 2 files changed, 12 insertions(+)
 
---- a/drivers/net/wireless/ath/ath10k/htt_rx.c
-+++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
-@@ -1076,7 +1076,21 @@ static void ath10k_htt_rx_h_undecap_raw(
- 	hdr = (void *)msdu->data;
+--- a/drivers/net/wireless/ath/ath10k/core.c
++++ b/drivers/net/wireless/ath/ath10k/core.c
+@@ -67,6 +67,7 @@ static const struct ath10k_hw_params ath
+ 			.board_size = QCA988X_BOARD_DATA_SZ,
+ 			.board_ext_size = QCA988X_BOARD_EXT_DATA_SZ,
+ 		},
++		.decap_align_bytes = 4,
+ 	},
+ 	{
+ 		.id = QCA6174_HW_2_1_VERSION,
+@@ -85,6 +86,7 @@ static const struct ath10k_hw_params ath
+ 			.board_size = QCA6174_BOARD_DATA_SZ,
+ 			.board_ext_size = QCA6174_BOARD_EXT_DATA_SZ,
+ 		},
++		.decap_align_bytes = 4,
+ 	},
+ 	{
+ 		.id = QCA6174_HW_2_1_VERSION,
+@@ -103,6 +105,7 @@ static const struct ath10k_hw_params ath
+ 			.board_size = QCA6174_BOARD_DATA_SZ,
+ 			.board_ext_size = QCA6174_BOARD_EXT_DATA_SZ,
+ 		},
++		.decap_align_bytes = 4,
+ 	},
+ 	{
+ 		.id = QCA6174_HW_3_0_VERSION,
+@@ -121,6 +124,7 @@ static const struct ath10k_hw_params ath
+ 			.board_size = QCA6174_BOARD_DATA_SZ,
+ 			.board_ext_size = QCA6174_BOARD_EXT_DATA_SZ,
+ 		},
++		.decap_align_bytes = 4,
+ 	},
+ 	{
+ 		.id = QCA6174_HW_3_2_VERSION,
+@@ -140,6 +144,7 @@ static const struct ath10k_hw_params ath
+ 			.board_size = QCA6174_BOARD_DATA_SZ,
+ 			.board_ext_size = QCA6174_BOARD_EXT_DATA_SZ,
+ 		},
++		.decap_align_bytes = 4,
+ 	},
+ 	{
+ 		.id = QCA99X0_HW_2_0_DEV_VERSION,
+@@ -159,6 +164,7 @@ static const struct ath10k_hw_params ath
+ 			.board_size = QCA99X0_BOARD_DATA_SZ,
+ 			.board_ext_size = QCA99X0_BOARD_EXT_DATA_SZ,
+ 		},
++		.decap_align_bytes = 1,
+ 	},
+ 	{
+ 		.id = QCA9377_HW_1_0_DEV_VERSION,
+@@ -177,6 +183,7 @@ static const struct ath10k_hw_params ath
+ 			.board_size = QCA9377_BOARD_DATA_SZ,
+ 			.board_ext_size = QCA9377_BOARD_EXT_DATA_SZ,
+ 		},
++		.decap_align_bytes = 4,
+ 	},
+ 	{
+ 		.id = QCA9377_HW_1_1_DEV_VERSION,
+@@ -195,6 +202,7 @@ static const struct ath10k_hw_params ath
+ 			.board_size = QCA9377_BOARD_DATA_SZ,
+ 			.board_ext_size = QCA9377_BOARD_EXT_DATA_SZ,
+ 		},
++		.decap_align_bytes = 4,
+ 	},
+ };
  
- 	/* Tail */
--	skb_trim(msdu, msdu->len - ath10k_htt_rx_crypto_tail_len(ar, enctype));
-+	if (status->flag & RX_FLAG_IV_STRIPPED) {
-+		skb_trim(msdu, msdu->len -
-+			 ath10k_htt_rx_crypto_tail_len(ar, enctype));
-+	} else {
-+		/* MIC */
-+		if ((status->flag & RX_FLAG_MIC_STRIPPED) &&
-+		    enctype == HTT_RX_MPDU_ENCRYPT_AES_CCM_WPA2)
-+			skb_trim(msdu, msdu->len - 8);
+--- a/drivers/net/wireless/ath/ath10k/core.h
++++ b/drivers/net/wireless/ath/ath10k/core.h
+@@ -670,6 +670,10 @@ struct ath10k {
+ 			size_t board_size;
+ 			size_t board_ext_size;
+ 		} fw;
 +
-+		/* ICV */
-+		if (status->flag & RX_FLAG_ICV_STRIPPED &&
-+		    enctype != HTT_RX_MPDU_ENCRYPT_AES_CCM_WPA2)
-+			skb_trim(msdu, msdu->len -
-+				 ath10k_htt_rx_crypto_tail_len(ar, enctype));
-+	}
- 
- 	/* MMIC */
- 	if (!ieee80211_has_morefrags(hdr->frame_control) &&
-@@ -1095,12 +1109,14 @@ static void ath10k_htt_rx_h_undecap_raw(
- static void ath10k_htt_rx_h_undecap_nwifi(struct ath10k *ar,
- 					  struct sk_buff *msdu,
- 					  struct ieee80211_rx_status *status,
--					  const u8 first_hdr[64])
-+					  const u8 first_hdr[64],
-+					  enum htt_rx_mpdu_encrypt_type enctype)
- {
- 	struct ieee80211_hdr *hdr;
- 	size_t hdr_len;
- 	u8 da[ETH_ALEN];
- 	u8 sa[ETH_ALEN];
-+	int bytes_aligned = ar->hw_params.decap_align_bytes;
- 
- 	/* Delivered decapped frame:
- 	 * [nwifi 802.11 header] <-- replaced with 802.11 hdr
-@@ -1123,6 +1139,14 @@ static void ath10k_htt_rx_h_undecap_nwif
- 	/* push original 802.11 header */
- 	hdr = (struct ieee80211_hdr *)first_hdr;
- 	hdr_len = ieee80211_hdrlen(hdr->frame_control);
++		/* Number of bytes used for alignment in rx_hdr_status */
++		int decap_align_bytes;
 +
-+	if (!(status->flag & RX_FLAG_IV_STRIPPED)) {
-+		memcpy(skb_push(msdu,
-+				ath10k_htt_rx_crypto_param_len(ar, enctype)),
-+		       (void *)hdr + round_up(hdr_len, bytes_aligned),
-+			ath10k_htt_rx_crypto_param_len(ar, enctype));
-+	}
-+
- 	memcpy(skb_push(msdu, hdr_len), hdr, hdr_len);
+ 	} hw_params;
  
- 	/* original 802.11 header has a different DA and in
-@@ -1180,6 +1204,7 @@ static void ath10k_htt_rx_h_undecap_eth(
- 	void *rfc1042;
- 	u8 da[ETH_ALEN];
- 	u8 sa[ETH_ALEN];
-+	int bytes_aligned = ar->hw_params.decap_align_bytes;
- 
- 	/* Delivered decapped frame:
- 	 * [eth header] <-- replaced with 802.11 hdr & rfc1042/llc
-@@ -1203,6 +1228,14 @@ static void ath10k_htt_rx_h_undecap_eth(
- 	/* push original 802.11 header */
- 	hdr = (struct ieee80211_hdr *)first_hdr;
- 	hdr_len = ieee80211_hdrlen(hdr->frame_control);
-+
-+	if (!(status->flag & RX_FLAG_IV_STRIPPED)) {
-+		memcpy(skb_push(msdu,
-+				ath10k_htt_rx_crypto_param_len(ar, enctype)),
-+		       (void *)hdr + round_up(hdr_len, bytes_aligned),
-+			ath10k_htt_rx_crypto_param_len(ar, enctype));
-+	}
-+
- 	memcpy(skb_push(msdu, hdr_len), hdr, hdr_len);
- 
- 	/* original 802.11 header has a different DA and in
-@@ -1216,10 +1249,12 @@ static void ath10k_htt_rx_h_undecap_eth(
- static void ath10k_htt_rx_h_undecap_snap(struct ath10k *ar,
- 					 struct sk_buff *msdu,
- 					 struct ieee80211_rx_status *status,
--					 const u8 first_hdr[64])
-+					 const u8 first_hdr[64],
-+					 enum htt_rx_mpdu_encrypt_type enctype)
- {
- 	struct ieee80211_hdr *hdr;
- 	size_t hdr_len;
-+	int bytes_aligned = ar->hw_params.decap_align_bytes;
- 
- 	/* Delivered decapped frame:
- 	 * [amsdu header] <-- replaced with 802.11 hdr
-@@ -1231,6 +1266,14 @@ static void ath10k_htt_rx_h_undecap_snap
- 
- 	hdr = (struct ieee80211_hdr *)first_hdr;
- 	hdr_len = ieee80211_hdrlen(hdr->frame_control);
-+
-+	if (!(status->flag & RX_FLAG_IV_STRIPPED)) {
-+		memcpy(skb_push(msdu,
-+				ath10k_htt_rx_crypto_param_len(ar, enctype)),
-+		       (void *)hdr + round_up(hdr_len, bytes_aligned),
-+			ath10k_htt_rx_crypto_param_len(ar, enctype));
-+	}
-+
- 	memcpy(skb_push(msdu, hdr_len), hdr, hdr_len);
- }
- 
-@@ -1265,13 +1308,15 @@ static void ath10k_htt_rx_h_undecap(stru
- 					    is_decrypted);
- 		break;
- 	case RX_MSDU_DECAP_NATIVE_WIFI:
--		ath10k_htt_rx_h_undecap_nwifi(ar, msdu, status, first_hdr);
-+		ath10k_htt_rx_h_undecap_nwifi(ar, msdu, status, first_hdr,
-+					      enctype);
- 		break;
- 	case RX_MSDU_DECAP_ETHERNET2_DIX:
- 		ath10k_htt_rx_h_undecap_eth(ar, msdu, status, first_hdr, enctype);
- 		break;
- 	case RX_MSDU_DECAP_8023_SNAP_LLC:
--		ath10k_htt_rx_h_undecap_snap(ar, msdu, status, first_hdr);
-+		ath10k_htt_rx_h_undecap_snap(ar, msdu, status, first_hdr,
-+					     enctype);
- 		break;
- 	}
- }
-@@ -1314,7 +1359,8 @@ static void ath10k_htt_rx_h_csum_offload
- 
- static void ath10k_htt_rx_h_mpdu(struct ath10k *ar,
- 				 struct sk_buff_head *amsdu,
--				 struct ieee80211_rx_status *status)
-+				 struct ieee80211_rx_status *status,
-+				 bool fill_crypt_header)
- {
- 	struct sk_buff *first;
- 	struct sk_buff *last;
-@@ -1324,7 +1370,6 @@ static void ath10k_htt_rx_h_mpdu(struct
- 	enum htt_rx_mpdu_encrypt_type enctype;
- 	u8 first_hdr[64];
- 	u8 *qos;
--	size_t hdr_len;
- 	bool has_fcs_err;
- 	bool has_crypto_err;
- 	bool has_tkip_err;
-@@ -1345,15 +1390,17 @@ static void ath10k_htt_rx_h_mpdu(struct
- 	 * decapped header. It'll be used for undecapping of each MSDU.
- 	 */
- 	hdr = (void *)rxd->rx_hdr_status;
--	hdr_len = ieee80211_hdrlen(hdr->frame_control);
--	memcpy(first_hdr, hdr, hdr_len);
-+	memcpy(first_hdr, hdr, RX_HTT_HDR_STATUS_LEN);
- 
- 	/* Each A-MSDU subframe will use the original header as the base and be
- 	 * reported as a separate MSDU so strip the A-MSDU bit from QoS Ctl.
- 	 */
- 	hdr = (void *)first_hdr;
--	qos = ieee80211_get_qos_ctl(hdr);
--	qos[0] &= ~IEEE80211_QOS_CTL_A_MSDU_PRESENT;
-+
-+	if (ieee80211_is_data_qos(hdr->frame_control)) {
-+		qos = ieee80211_get_qos_ctl(hdr);
-+		qos[0] &= ~IEEE80211_QOS_CTL_A_MSDU_PRESENT;
-+	}
- 
- 	/* Some attention flags are valid only in the last MSDU. */
- 	last = skb_peek_tail(amsdu);
-@@ -1387,11 +1434,17 @@ static void ath10k_htt_rx_h_mpdu(struct
- 	if (has_tkip_err)
- 		status->flag |= RX_FLAG_MMIC_ERROR;
- 
--	if (is_decrypted)
-+	if (is_decrypted) {
- 		status->flag |= RX_FLAG_DECRYPTED |
--				RX_FLAG_IV_STRIPPED |
- 				RX_FLAG_MMIC_STRIPPED;
- 
-+		if (fill_crypt_header)
-+			status->flag |= RX_FLAG_MIC_STRIPPED |
-+					RX_FLAG_ICV_STRIPPED;
-+		else
-+			status->flag |= RX_FLAG_IV_STRIPPED;
-+	}
-+
- 	skb_queue_walk(amsdu, msdu) {
- 		ath10k_htt_rx_h_csum_offload(msdu);
- 		ath10k_htt_rx_h_undecap(ar, msdu, status, first_hdr, enctype,
-@@ -1404,6 +1457,9 @@ static void ath10k_htt_rx_h_mpdu(struct
- 		if (!is_decrypted)
- 			continue;
- 
-+		if (fill_crypt_header)
-+			continue;
-+
- 		hdr = (void *)msdu->data;
- 		hdr->frame_control &= ~__cpu_to_le16(IEEE80211_FCTL_PROTECTED);
- 	}
-@@ -1414,6 +1470,9 @@ static void ath10k_htt_rx_h_deliver(stru
- 				    struct ieee80211_rx_status *status)
- {
- 	struct sk_buff *msdu;
-+	struct sk_buff *first_subframe;
-+
-+	first_subframe = skb_peek(amsdu);
- 
- 	while ((msdu = __skb_dequeue(amsdu))) {
- 		/* Setup per-MSDU flags */
-@@ -1422,6 +1481,13 @@ static void ath10k_htt_rx_h_deliver(stru
- 		else
- 			status->flag |= RX_FLAG_AMSDU_MORE;
- 
-+		if (msdu == first_subframe) {
-+			first_subframe = NULL;
-+			status->flag &= ~RX_FLAG_ALLOW_SAME_PN;
-+		} else {
-+			status->flag |= RX_FLAG_ALLOW_SAME_PN;
-+		}
-+
- 		ath10k_process_rx(ar, status, msdu);
- 	}
- }
-@@ -1607,7 +1673,7 @@ static void ath10k_htt_rx_handler(struct
- 		ath10k_htt_rx_h_ppdu(ar, &amsdu, rx_status, 0xffff);
- 		ath10k_htt_rx_h_unchain(ar, &amsdu, ret > 0);
- 		ath10k_htt_rx_h_filter(ar, &amsdu, rx_status);
--		ath10k_htt_rx_h_mpdu(ar, &amsdu, rx_status);
-+		ath10k_htt_rx_h_mpdu(ar, &amsdu, rx_status, true);
- 		ath10k_htt_rx_h_deliver(ar, &amsdu, rx_status);
- 	}
- 
-@@ -1653,7 +1719,7 @@ static void ath10k_htt_rx_frag_handler(s
- 
- 	ath10k_htt_rx_h_ppdu(ar, &amsdu, rx_status, 0xffff);
- 	ath10k_htt_rx_h_filter(ar, &amsdu, rx_status);
--	ath10k_htt_rx_h_mpdu(ar, &amsdu, rx_status);
-+	ath10k_htt_rx_h_mpdu(ar, &amsdu, rx_status, true);
- 	ath10k_htt_rx_h_deliver(ar, &amsdu, rx_status);
- 
- 	if (fw_desc_len > 0) {
-@@ -1952,7 +2018,7 @@ static void ath10k_htt_rx_in_ord_ind(str
- 			 */
- 			ath10k_htt_rx_h_ppdu(ar, &amsdu, status, vdev_id);
- 			ath10k_htt_rx_h_filter(ar, &amsdu, status);
--			ath10k_htt_rx_h_mpdu(ar, &amsdu, status);
-+			ath10k_htt_rx_h_mpdu(ar, &amsdu, status, false);
- 			ath10k_htt_rx_h_deliver(ar, &amsdu, status);
- 			break;
- 		case -EAGAIN:
+ 	const struct firmware *board;
