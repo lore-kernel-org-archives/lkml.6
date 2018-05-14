@@ -1,39 +1,38 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrjXEW8pm9WMqGgCZxlNWVbFchYWZk6l0rorlXsZt2QiFWiJok23BRee8igTImAyhJb0fkZ
-ARC-Seal: i=1; a=rsa-sha256; t=1526281199; cv=none;
+X-Google-Smtp-Source: AB8JxZppOdbYi+79geArLhIZqf3W1ZTcjtek5FRel2bTOW3ZRcjDaaYxzIuNCEd+3d/2/PbHeBur
+ARC-Seal: i=1; a=rsa-sha256; t=1526281194; cv=none;
         d=google.com; s=arc-20160816;
-        b=aXU5QwgOO31/y7VbYWFWryPxLHfwRB3Ds2t6bzQd5FZGkJ4ObXXvo3SzF7pGCvM5VN
-         T17SCjGhAsLgeGs+YcN0epn0RL7dVX1VZZHP/uRCAt4/rfKwCNvmkD9vwM77efAGp9/5
-         xa5FXWOgQMfmXe9WAYpFpQezcw4TkisaFcN4VjZejUGxTBCOmNF9ceCHpvvh/h9sRYmi
-         7v9GASiyR94Bh5tXL8NHkEwhqTPPuVRoe7NbtQgmbRSqShsTbYJ5JUaEcQ7P3v6/QWZY
-         gnAux1mNMTawfd44uqpkdgTPa/DjzCkc6LaX3VrsxW8quKcU/Ql0ptX0RGhkLGCfBhc8
-         +o+Q==
+        b=0sM0iDgdQLL9dQ+JWGVJLAviJRIfayTtlKfhdYrvLHTjw/F4x9/7S1HTLFiASyNgEA
+         iD4qCtcIL59PEA+2+ZJRkOjXbIH5XssL6QLXVM7XjjvLPNmQU5voop2i3WaTa8/xVbwa
+         FhMYwMEM4hndD6uGcLc/U1inBdYBsv/guVQgr/ib3GX9O9P0i3wRG2e33BGkaq+GQBzd
+         rNEDBWasXAGmUKSajpGcYYY7UAGTbNzTEXzeL+He4UuS+z/qZhtSWy23qYXZuj3lNma5
+         LFJjTOdBDLaC90dl8T8Gr419wcDV2cme0d2YS/FP4XEhRK7wYFxh8xV43ZSmeEdB56w2
+         9dKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=OcZ3m152QAAI9AuGvM7cN/54E40aMAHPfPONrK7pyyE=;
-        b=ZZpW634bPndwBHasV/MuHyPxq1qBP9EEL3kuJLE0PZz7HcRMcZgOrhH2lAYBMp9BBG
-         8lfMZAi0w9PGs0nriHej9SeCevAQ3bSNEi0U7REIHmcbuwpyg5RpsRxcQO91+BP5gLLR
-         S2Oz1SRI/Zlk/fVhbi/28hwP+I9hKIKuDine0F5KVU3BDhh6pbQEZeJUmcOs/sC1Dgtp
-         2OlpjgXU6EOD/2EJiuFwm9HgJbHh0IsFaLhtUmQT0qrVGeCARLk7hEtpultkZV+22OjO
-         6eUOTmarNkl41PhMvYAYm2XRY4RemEEWBzqtEBEMw1v7F29FBHSmVkHDaD1p/On6lH0a
-         PfGw==
+        bh=7YrD5LgFdG9Pyr3MJm33Nkjej9lC1ZtG2Etef+kpUxM=;
+        b=UAVJJmVE5xVNACsP7sX+BGevaZ5cc2dO2johzz17mkCICqgDgN+gdHSHrCFS9AnPSC
+         7VS5I8wO8dO7wke6fZx1SQ7hdpHO/+YPYT+QzNKNPVNeaoZKLI1isotS4U9X4p2T4kFX
+         S1IZMGzQtmZRC+pbnez+z37lrezVmaIYvT8CzEZUQ4zN6WbDntbSMwJHiSZJGxD3PXMz
+         1iiYUaJlpcARXTH1IupyPhhh2t/SA2IUrjOfUw85rqJ+hCsjIgyrVUWwL1nc9emJAKuC
+         3lrbqCdAjodQ9scrVJAzhJeJdENdf4JGJeajLKAYCcaZGzwXw+4QujEvIUOYB75t/b1P
+         NZSQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=hLWB/6pj;
+       dkim=pass header.i=@kernel.org header.s=default header.b=pfJPcPGx;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=hLWB/6pj;
+       dkim=pass header.i=@kernel.org header.s=default header.b=pfJPcPGx;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Joseph Salisbury <joseph.salisbury@canonical.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.16 53/72] PCI / PM: Check device_may_wakeup() in pci_enable_wake()
-Date: Mon, 14 May 2018 08:49:10 +0200
-Message-Id: <20180514064826.368925494@linuxfoundation.org>
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 51/72] atm: zatm: Fix potential Spectre v1
+Date: Mon, 14 May 2018 08:49:08 +0200
+Message-Id: <20180514064825.671477735@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421633007831027?=
-X-GMAIL-MSGID: =?utf-8?q?1600421835106801552?=
+X-GMAIL-THRID: =?utf-8?q?1600421383113753187?=
+X-GMAIL-MSGID: =?utf-8?q?1600421829369274907?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,98 +51,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit cfcadfaad7251d8b640713724b388164d75465b2 upstream.
+commit 2be147f7459db5bbf292e0a6f135037b55e20b39 upstream.
 
-Commit 0847684cfc5f0 (PCI / PM: Simplify device wakeup settings code)
-went too far and dropped the device_may_wakeup() check from
-pci_enable_wake() which causes wakeup to be enabled during system
-suspend, hibernation or shutdown for some PCI devices that are not
-allowed by user space to wake up the system from sleep (or power off).
+pool can be indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-As a result of this, excessive power is drawn by some of the affected
-systems while in sleep states or off.
+This issue was detected with the help of Smatch:
 
-Restore the device_may_wakeup() check in pci_enable_wake(), but make
-sure that the PCI bus type's runtime suspend callback will not call
-device_may_wakeup() which is about system wakeup from sleep and not
-about device wakeup from runtime suspend.
+drivers/atm/zatm.c:1462 zatm_ioctl() warn: potential spectre issue
+'zatm_dev->pool_info' (local cap)
 
-Fixes: 0847684cfc5f0 (PCI / PM: Simplify device wakeup settings code)
-Reported-by: Joseph Salisbury <joseph.salisbury@canonical.com>
-Cc: 4.13+ <stable@vger.kernel.org> # 4.13+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Fix this by sanitizing pool before using it to index
+zatm_dev->pool_info
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/pci.c |   29 +++++++++++++++++++++++------
- 1 file changed, 23 insertions(+), 6 deletions(-)
+ drivers/atm/zatm.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -1897,7 +1897,7 @@ void pci_pme_active(struct pci_dev *dev,
- EXPORT_SYMBOL(pci_pme_active);
+--- a/drivers/atm/zatm.c
++++ b/drivers/atm/zatm.c
+@@ -28,6 +28,7 @@
+ #include <asm/io.h>
+ #include <linux/atomic.h>
+ #include <linux/uaccess.h>
++#include <linux/nospec.h>
  
- /**
-- * pci_enable_wake - enable PCI device as wakeup event source
-+ * __pci_enable_wake - enable PCI device as wakeup event source
-  * @dev: PCI device affected
-  * @state: PCI state from which device will issue wakeup events
-  * @enable: True to enable event generation; false to disable
-@@ -1915,7 +1915,7 @@ EXPORT_SYMBOL(pci_pme_active);
-  * Error code depending on the platform is returned if both the platform and
-  * the native mechanism fail to enable the generation of wake-up events
-  */
--int pci_enable_wake(struct pci_dev *dev, pci_power_t state, bool enable)
-+static int __pci_enable_wake(struct pci_dev *dev, pci_power_t state, bool enable)
- {
- 	int ret = 0;
- 
-@@ -1956,6 +1956,23 @@ int pci_enable_wake(struct pci_dev *dev,
- 
- 	return ret;
- }
-+
-+/**
-+ * pci_enable_wake - change wakeup settings for a PCI device
-+ * @pci_dev: Target device
-+ * @state: PCI state from which device will issue wakeup events
-+ * @enable: Whether or not to enable event generation
-+ *
-+ * If @enable is set, check device_may_wakeup() for the device before calling
-+ * __pci_enable_wake() for it.
-+ */
-+int pci_enable_wake(struct pci_dev *pci_dev, pci_power_t state, bool enable)
-+{
-+	if (enable && !device_may_wakeup(&pci_dev->dev))
-+		return -EINVAL;
-+
-+	return __pci_enable_wake(pci_dev, state, enable);
-+}
- EXPORT_SYMBOL(pci_enable_wake);
- 
- /**
-@@ -1968,9 +1985,9 @@ EXPORT_SYMBOL(pci_enable_wake);
-  * should not be called twice in a row to enable wake-up due to PCI PM vs ACPI
-  * ordering constraints.
-  *
-- * This function only returns error code if the device is not capable of
-- * generating PME# from both D3_hot and D3_cold, and the platform is unable to
-- * enable wake-up power for it.
-+ * This function only returns error code if the device is not allowed to wake
-+ * up the system from sleep or it is not capable of generating PME# from both
-+ * D3_hot and D3_cold and the platform is unable to enable wake-up power for it.
-  */
- int pci_wake_from_d3(struct pci_dev *dev, bool enable)
- {
-@@ -2101,7 +2118,7 @@ int pci_finish_runtime_suspend(struct pc
- 
- 	dev->runtime_d3cold = target_state == PCI_D3cold;
- 
--	pci_enable_wake(dev, target_state, pci_dev_run_wake(dev));
-+	__pci_enable_wake(dev, target_state, pci_dev_run_wake(dev));
- 
- 	error = pci_set_power_state(dev, target_state);
- 
+ #include "uPD98401.h"
+ #include "uPD98402.h"
+@@ -1458,6 +1459,8 @@ static int zatm_ioctl(struct atm_dev *de
+ 					return -EFAULT;
+ 				if (pool < 0 || pool > ZATM_LAST_POOL)
+ 					return -EINVAL;
++				pool = array_index_nospec(pool,
++							  ZATM_LAST_POOL + 1);
+ 				spin_lock_irqsave(&zatm_dev->lock, flags);
+ 				info = zatm_dev->pool_info[pool];
+ 				if (cmd == ZATM_GETPOOLZ) {
