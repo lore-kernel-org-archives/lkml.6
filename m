@@ -1,101 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752155AbeENVEP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:04:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752061AbeENVAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:00:00 -0400
-Message-Id: <20180514205958.349218767@goodmis.org>
-User-Agent: quilt/0.63-1
-Date: Mon, 14 May 2018 16:58:52 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
-        linux-rt-users@vger.kernel.org
-Subject: [PATCH v2 07/14] tracing: Have zero size length in filter logic be full string
-References: <20180514205845.017925650@goodmis.org>
+        id S1752430AbeENVFI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:05:08 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34770 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752650AbeENVEO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 17:04:14 -0400
+X-Google-Smtp-Source: AB8JxZqHuWIUxRtFxQKpQV8cUgKzBOtJzMo8FwfcuPV3XdPcHcNgpLgnSlk8BJWj+rcVFzL3pt10ig==
+Date: Mon, 14 May 2018 15:04:08 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>
+Cc: Hal Rosenstock <hal@dev.mellanox.co.il>,
+        Doug Ledford <dledford@redhat.com>, Don Hiatt <don.hiatt@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH IB/core 2/2] IB/cm: Send authentic pkey in REQ msg and
+ check eligibility of the pkeys
+Message-ID: <20180514210408.GO21531@ziepe.ca>
+References: <20180509093020.24503-1-Haakon.Bugge@oracle.com>
+ <20180509093020.24503-3-Haakon.Bugge@oracle.com>
+ <ab1f16cd-aa60-0c43-841c-aed301fd2a7e@dev.mellanox.co.il>
+ <F9802EE9-4420-44EE-93DC-27CC799B427E@oracle.com>
+ <3bee76df-49a6-cf3c-6df4-749a6309358e@dev.mellanox.co.il>
+ <B3360947-5905-47BD-ABC4-6C4BB32F5DA6@oracle.com>
+ <325ba4af-b52e-4f70-9d89-38dafe10ba99@dev.mellanox.co.il>
+ <23B160D2-6631-42A6-8A4D-644E90E8A704@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0007-tracing-Have-zero-size-length-in-filter-logic-be-ful.patch
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <23B160D2-6631-42A6-8A4D-644E90E8A704@oracle.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On Fri, May 11, 2018 at 12:55:00PM +0200, Håkon Bugge wrote:
+> > I'll check upstream OpenSM when I get a chance to see if same problem
+> > exists. Oracle OpenSM forked from upstream long time ago and not sure
+> > how similar the path record code is. There were various impacts for the
+> > shared port virtualization (for CX-3) in terms of adding the ability to
+> > allow both pkeys.
+> 
+> I just had a chat with Line H. here in Oracle. She confirms that Oracle’s SM and the upstream one act similar in this matter.
+> 
+> Further, using shared port virtualization, OpenSM will adhere to the
+> physical ports only, and doesn’t even know the PKey assignments to
+> the VFs assigned the VMs.
 
-As strings in trace events may not have a nul terminating character, the
-filter string compares use the defined string length for the field for the
-compares.
+Yes, but that isn't the point. If the VM receives a PR with a pkey
+that is not found in the VM's table then it should not even send a CM
+REQ in the first place.
 
-The trace_marker records data slightly different than do normal events. It's
-size is zero, meaning that the string is the rest of the array, and that the
-string also ends with '\0'.
-
-If the size is zero, assume that the string is nul terminated and read the
-string in question as is.
-
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_events_filter.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
-
-diff --git a/kernel/trace/trace_events_filter.c b/kernel/trace/trace_events_filter.c
-index 7d306b74230f..0171407d231f 100644
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -750,31 +750,32 @@ static int filter_pred_none(struct filter_pred *pred, void *event)
-  *
-  * Note:
-  * - @str might not be NULL-terminated if it's of type DYN_STRING
-- *   or STATIC_STRING
-+ *   or STATIC_STRING, unless @len is zero.
-  */
- 
- static int regex_match_full(char *str, struct regex *r, int len)
- {
--	if (strncmp(str, r->pattern, len) == 0)
--		return 1;
--	return 0;
-+	/* len of zero means str is dynamic and ends with '\0' */
-+	if (!len)
-+		return strcmp(str, r->pattern) == 0;
-+
-+	return strncmp(str, r->pattern, len) == 0;
- }
- 
- static int regex_match_front(char *str, struct regex *r, int len)
- {
--	if (len < r->len)
-+	if (len && len < r->len)
- 		return 0;
- 
--	if (strncmp(str, r->pattern, r->len) == 0)
--		return 1;
--	return 0;
-+	return strncmp(str, r->pattern, r->len) == 0;
- }
- 
- static int regex_match_middle(char *str, struct regex *r, int len)
- {
--	if (strnstr(str, r->pattern, len))
--		return 1;
--	return 0;
-+	if (!len)
-+		return strstr(str, r->pattern) != NULL;
-+
-+	return strnstr(str, r->pattern, len) != NULL;
- }
- 
- static int regex_match_end(char *str, struct regex *r, int len)
--- 
-2.17.0
+Jason
