@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752761AbeENLZq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:25:46 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:35792 "EHLO
+        id S1752747AbeENLZo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:25:44 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:35782 "EHLO
         lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752722AbeENLZl (ORCPT
+        with ESMTP id S1752720AbeENLZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 May 2018 07:25:41 -0400
 From: Richard Weinberger <richard@nod.at>
 To: linux-mtd@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, goliath@sigma-star.at,
         Richard Weinberger <richard@nod.at>
-Subject: [PATCH 4/5] libubigen: Maintain a eraseblock association table
-Date: Mon, 14 May 2018 13:25:27 +0200
-Message-Id: <20180514112528.24092-5-richard@nod.at>
+Subject: [PATCH 3/5] libubigen: Carry image path and size in volume info
+Date: Mon, 14 May 2018 13:25:26 +0200
+Message-Id: <20180514112528.24092-4-richard@nod.at>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20180514112528.24092-1-richard@nod.at>
 References: <20180514112528.24092-1-richard@nod.at>
@@ -21,99 +21,190 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The EBA is needed later for preseeded fastmap support.
+...instead of passing them a extra parameters.
 
 Signed-off-by: Richard Weinberger <richard@nod.at>
 ---
- include/libubigen.h |  1 +
- lib/libubigen.c     | 14 ++++++++++++++
- ubi-utils/ubinize.c |  2 ++
- 3 files changed, 17 insertions(+)
+ include/libubigen.h |  7 +++++--
+ lib/libubigen.c     |  3 ++-
+ ubi-utils/ubinize.c | 41 ++++++++++++++++++++---------------------
+ 3 files changed, 27 insertions(+), 24 deletions(-)
 
 diff --git a/include/libubigen.h b/include/libubigen.h
-index 8084d0ecddb2..6073a2d72e05 100644
+index c25ac20fbdc2..8084d0ecddb2 100644
 --- a/include/libubigen.h
 +++ b/include/libubigen.h
-@@ -92,6 +92,7 @@ struct ubigen_vol_info
+@@ -74,6 +74,8 @@ struct ubigen_info
+  * @bytes: size of the volume contents in bytes (relevant for static volumes
+  *         only)
+  * @flags: volume flags (%UBI_VTBL_AUTORESIZE_FLG)
++ * @image_file: file to read volume contents from, can be NULL
++ * @image_file_len: length of %image_file in bytes
+  */
+ struct ubigen_vol_info
+ {
+@@ -88,6 +90,8 @@ struct ubigen_vol_info
+ 	int used_ebs;
+ 	long long bytes;
  	uint8_t flags;
- 	const char *image_file;
- 	size_t image_file_len;
-+	int *eba;
++	const char *image_file;
++	size_t image_file_len;
  };
  
  /**
+@@ -159,7 +163,6 @@ int ubigen_add_volume(const struct ubigen_info *ui,
+  * @ui: libubigen information
+  * @vi: volume information
+  * @ec: erase counter value to put to EC headers
+- * @bytes: volume size in bytes
+  * @in: input file descriptor (has to be properly seeked)
+  * @out: output file descriptor
+  *
+@@ -169,7 +172,7 @@ int ubigen_add_volume(const struct ubigen_info *ui,
+  */
+ int ubigen_write_volume(const struct ubigen_info *ui,
+ 			const struct ubigen_vol_info *vi, long long ec,
+-			long long bytes, int in, int out);
++			int in, int out);
+ 
+ /**
+  * ubigen_write_layout_vol - write UBI layout volume
 diff --git a/lib/libubigen.c b/lib/libubigen.c
-index 900c984229fb..f509d4d072bd 100644
+index d2a949be90c2..900c984229fb 100644
 --- a/lib/libubigen.c
 +++ b/lib/libubigen.c
-@@ -176,6 +176,10 @@ int ubigen_write_volume(const struct ubigen_info *ui,
- 	long long bytes = vi->image_file_len;
+@@ -170,9 +170,10 @@ void ubigen_init_vid_hdr(const struct ubigen_info *ui,
+ 
+ int ubigen_write_volume(const struct ubigen_info *ui,
+ 			const struct ubigen_vol_info *vi, long long ec,
+-			long long bytes, int in, int out)
++			int in, int out)
+ {
+ 	int len = vi->usable_leb_size, rd, lnum = 0;
++	long long bytes = vi->image_file_len;
  	char *inbuf, *outbuf;
  
-+	for (lnum = 0; lnum < vi->used_ebs; lnum++)
-+		vi->eba[lnum] = -1;
-+
-+
  	if (vi->id >= ui->max_volumes) {
- 		errmsg("too high volume id %d, max. volumes is %d",
- 		       vi->id, ui->max_volumes);
-@@ -203,6 +207,7 @@ int ubigen_write_volume(const struct ubigen_info *ui,
- 	memset(outbuf, 0xFF, ui->data_offs);
- 	ubigen_init_ec_hdr(ui, (struct ubi_ec_hdr *)outbuf, ec);
- 
-+	lnum = 0;
- 	while (bytes) {
- 		int l;
- 		struct ubi_vid_hdr *vid_hdr;
-@@ -229,6 +234,12 @@ int ubigen_write_volume(const struct ubigen_info *ui,
- 		memset(outbuf + ui->data_offs + len, 0xFF,
- 		       ui->peb_size - ui->data_offs - len);
- 
-+		vi->eba[lnum] = lseek(out, 0, SEEK_CUR) / ui->peb_size;
-+		if (vi->eba[lnum] == -1) {
-+			sys_errmsg("cannot get offset of output file");
-+			goto out_free1;
-+		}
-+
- 		if (write(out, outbuf, ui->peb_size) != ui->peb_size) {
- 			sys_errmsg("cannot write %d bytes to the output file", ui->peb_size);
- 			goto out_free1;
-@@ -285,6 +296,7 @@ int ubigen_write_layout_vol(const struct ubigen_info *ui, int peb1, int peb2,
- 		sys_errmsg("cannot seek output file");
- 		goto out_free;
- 	}
-+	vi->eba[0] = peb1;
- 
- 	ubigen_init_ec_hdr(ui, (struct ubi_ec_hdr *)outbuf, ec1);
- 	ubigen_init_vid_hdr(ui, &vi, vid_hdr, 0, NULL, 0);
-@@ -299,6 +311,8 @@ int ubigen_write_layout_vol(const struct ubigen_info *ui, int peb1, int peb2,
- 		sys_errmsg("cannot seek output file");
- 		goto out_free;
- 	}
-+	vi->eba[1] = peb2;
-+
- 	ubigen_init_ec_hdr(ui, (struct ubi_ec_hdr *)outbuf, ec2);
- 	ubigen_init_vid_hdr(ui, &vi, vid_hdr, 1, NULL, 0);
- 	ret = write(fd, outbuf, ui->peb_size);
 diff --git a/ubi-utils/ubinize.c b/ubi-utils/ubinize.c
-index bffb66ebcbd9..62ddd7b85296 100644
+index 3390d0d95305..bffb66ebcbd9 100644
 --- a/ubi-utils/ubinize.c
 +++ b/ubi-utils/ubinize.c
-@@ -398,6 +398,7 @@ static int read_section(const struct ubigen_info *ui, const char *sname,
- 	else
- 		vi->used_ebs = (st.st_size + vi->usable_leb_size - 1) / vi->usable_leb_size;
- 	vi->compat = 0;
-+	vi->eba = xcalloc(vi->used_ebs, sizeof(int));
- 	return 0;
+@@ -241,13 +241,13 @@ static int parse_opt(int argc, char * const argv[])
  }
  
-@@ -563,6 +564,7 @@ int main(int argc, char * const argv[])
+ static int read_section(const struct ubigen_info *ui, const char *sname,
+-			struct ubigen_vol_info *vi, const char **img,
+-			struct stat *st)
++			struct ubigen_vol_info *vi)
+ {
+ 	char buf[256];
+ 	const char *p;
++	struct stat st;
  
- 	verbose(args.verbose, "done");
+-	*img = NULL;
++	vi->image_file = NULL;
  
-+	free(vi->eba);
- 	free(vi);
- 	iniparser_freedict(args.dict);
- 	free(vtbl);
+ 	if (strlen(sname) > 128)
+ 		return errmsg("too long section name \"%s\"", sname);
+@@ -294,13 +294,14 @@ static int read_section(const struct ubigen_info *ui, const char *sname,
+ 	sprintf(buf, "%s:image", sname);
+ 	p = iniparser_getstring(args.dict, buf, NULL);
+ 	if (p) {
+-		*img = p;
+-		if (stat(p, st))
++		vi->image_file = p;
++		if (stat(p, &st))
+ 			return sys_errmsg("cannot stat \"%s\" referred from section \"%s\"",
+ 					  p, sname);
+-		if (st->st_size == 0)
++		if (st.st_size == 0)
+ 			return errmsg("empty file \"%s\" referred from section \"%s\"",
+ 				       p, sname);
++		vi->image_file_len = st.st_size;
+ 	} else if (vi->type == UBI_VID_STATIC)
+ 		return errmsg("image is not specified for static volume in section \"%s\"",
+ 			      sname);
+@@ -329,24 +330,24 @@ static int read_section(const struct ubigen_info *ui, const char *sname,
+ 				      p, sname);
+ 
+ 		/* Make sure the image size is not larger than volume size */
+-		if (*img && st->st_size > vi->bytes)
++		if (vi->image_file && st.st_size > vi->bytes)
+ 			return errmsg("error in section \"%s\": size of the image file "
+ 				      "\"%s\" is %lld, which is larger than volume size %lld",
+-				      sname, *img, (long long)st->st_size, vi->bytes);
++				      sname, vi->image_file, (long long)st.st_size, vi->bytes);
+ 		verbose(args.verbose, "volume size: %lld bytes", vi->bytes);
+ 	} else {
+-		if (!*img)
++		if (!vi->image_file)
+ 			return errmsg("neither image file (\"image=\") nor volume size "
+ 				      "(\"vol_size=\") specified in section \"%s\"", sname);
+ 
+-		vi->bytes = st->st_size;
++		vi->bytes = st.st_size;
+ 
+ 		if (vi->bytes == 0)
+ 			return errmsg("file \"%s\" referred from section \"%s\" is empty",
+-				      *img, sname);
++				      vi->image_file, sname);
+ 
+ 		normsg_cont("volume size was not specified in section \"%s\", assume"
+-			    " minimum to fit image \"%s\"", sname, *img);
++			    " minimum to fit image \"%s\"", sname, vi->image_file);
+ 		util_print_bytes(vi->bytes, 1);
+ 		printf("\n");
+ 	}
+@@ -395,7 +396,7 @@ static int read_section(const struct ubigen_info *ui, const char *sname,
+ 	if (vi->type == UBI_VID_DYNAMIC)
+ 		vi->used_ebs = (vi->bytes + vi->usable_leb_size - 1) / vi->usable_leb_size;
+ 	else
+-		vi->used_ebs = (st->st_size + vi->usable_leb_size - 1) / vi->usable_leb_size;
++		vi->used_ebs = (st.st_size + vi->usable_leb_size - 1) / vi->usable_leb_size;
+ 	vi->compat = 0;
+ 	return 0;
+ }
+@@ -476,8 +477,6 @@ int main(int argc, char * const argv[])
+ 
+ 	for (i = 0; i < sects; i++) {
+ 		const char *sname = iniparser_getsecname(args.dict, i);
+-		const char *img = NULL;
+-		struct stat st;
+ 		int fd, j;
+ 
+ 		if (!sname) {
+@@ -490,7 +489,7 @@ int main(int argc, char * const argv[])
+ 			printf("\n");
+ 		verbose(args.verbose, "parsing section \"%s\"", sname);
+ 
+-		err = read_section(&ui, sname, &vi[i], &img, &st);
++		err = read_section(&ui, sname, &vi[i]);
+ 		if (err == -1)
+ 			goto out_free;
+ 
+@@ -531,18 +530,18 @@ int main(int argc, char * const argv[])
+ 			goto out_free;
+ 		}
+ 
+-		if (img) {
+-			fd = open(img, O_RDONLY);
++		if (vi[i].image_file) {
++			fd = open(vi[i].image_file, O_RDONLY);
+ 			if (fd == -1) {
+ 				err = fd;
+-				sys_errmsg("cannot open \"%s\"", img);
++				sys_errmsg("cannot open \"%s\"", vi[i].image_file);
+ 				goto out_free;
+ 			}
+ 
+ 			verbose(args.verbose, "writing volume %d", vi[i].id);
+-			verbose(args.verbose, "image file: %s", img);
++			verbose(args.verbose, "image file: %s", vi[i].image_file);
+ 
+-			err = ubigen_write_volume(&ui, &vi[i], args.ec, st.st_size, fd, args.out_fd);
++			err = ubigen_write_volume(&ui, &vi[i], args.ec, fd, args.out_fd);
+ 			close(fd);
+ 			if (err) {
+ 				errmsg("cannot write volume for section \"%s\"", sname);
 -- 
 2.13.6
