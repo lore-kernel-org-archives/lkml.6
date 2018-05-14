@@ -1,122 +1,228 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932388AbeENOno (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:43:44 -0400
-Received: from foss.arm.com ([217.140.101.70]:44042 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753284AbeENOnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:43:41 -0400
-Date: Mon, 14 May 2018 15:43:36 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        james.morse@arm.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 10/18] arm64: convert native/compat syscall entry to C
-Message-ID: <20180514144331.GL7753@e103592.cambridge.arm.com>
-References: <20180514094640.27569-1-mark.rutland@arm.com>
- <20180514094640.27569-11-mark.rutland@arm.com>
- <20180514110729.GF7753@e103592.cambridge.arm.com>
- <20180514115805.bdlcxsw6q3xsbjb7@lakrids.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514115805.bdlcxsw6q3xsbjb7@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S932458AbeENOnv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:43:51 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44064 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932394AbeENOns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 10:43:48 -0400
+From: Punit Agrawal <punit.agrawal@arm.com>
+To: kvmarm@lists.cs.columbia.edu
+Cc: Punit Agrawal <punit.agrawal@arm.com>,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
+        suzuki.poulose@arm.com, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH v3 4/4] KVM: arm64: Add support for PUD hugepages at stage 2
+Date: Mon, 14 May 2018 15:43:04 +0100
+Message-Id: <20180514144304.10484-5-punit.agrawal@arm.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180514144304.10484-1-punit.agrawal@arm.com>
+References: <20180514144304.10484-1-punit.agrawal@arm.com>
+X-ARM-No-Footer: FoSSMail
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 12:58:05PM +0100, Mark Rutland wrote:
-> On Mon, May 14, 2018 at 12:07:30PM +0100, Dave Martin wrote:
-> > On Mon, May 14, 2018 at 10:46:32AM +0100, Mark Rutland wrote:
-> 
-> > > diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
-> > > index 5df857e32b48..4706f841e758 100644
-> > > --- a/arch/arm64/kernel/syscall.c
-> > > +++ b/arch/arm64/kernel/syscall.c
-> > > @@ -6,7 +6,9 @@
-> > >  #include <linux/ptrace.h>
-> > >  
-> > >  #include <asm/daifflags.h>
-> > > +#include <asm/fpsimd.h>
-> > >  #include <asm/thread_info.h>
-> > > +#include <asm/unistd.h>
-> > >  
-> > >  long do_ni_syscall(struct pt_regs *regs);
-> > >  
-> > > @@ -41,8 +43,8 @@ static inline bool has_syscall_work(unsigned long flags)
-> > >  int syscall_trace_enter(struct pt_regs *regs);
-> > >  void syscall_trace_exit(struct pt_regs *regs);
-> > >  
-> > > -asmlinkage void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
-> > > -			       syscall_fn_t syscall_table[])
-> > > +static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
-> > > +			   syscall_fn_t syscall_table[])
-> > >  {
-> > >  	unsigned long flags = current_thread_info()->flags;
-> > >  
-> > > @@ -79,3 +81,37 @@ asmlinkage void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
-> > >  trace_exit:
-> > >  	syscall_trace_exit(regs);
-> > >  }
-> > > +
-> > > +static inline void sve_user_reset(void)
-> > 
-> > Static function with no caller...
-> 
-> Ugh, this was intended to be called below in el0_svc_handler().
-> 
-> > > +{
-> > > +	if (!system_supports_sve())
-> > > +		return;
-> > > +
-> > > +	/*
-> > > +	 * task_fpsimd_load() won't be called to update CPACR_EL1 in
-> > > +	 * ret_to_user unless TIF_FOREIGN_FPSTATE is still set, which only
-> > > +	 * happens if a context switch or kernel_neon_begin() or context
-> > > +	 * modification (sigreturn, ptrace) intervenes.
-> > > +	 * So, ensure that CPACR_EL1 is already correct for the fast-path case.
-> > > +	 */
-> > > +	if (test_and_clear_thread_flag(TIF_SVE))
-> > > +		sve_user_disable();
-> > 
-> > sve_user_disable() is already inline, and incorporates the if()
-> > internally via sysreg_clear_set().
-> > 
-> > So, should this just be
-> > 
-> > 	clear_thread_flag(TIF_SVE);
-> > 	sve_user_disable();
-> 
-> Sure. That does mean we'll unconditionally read cpacr_el1, but I assume
-> you're happy with that. I'll note the difference in the commit message.
+KVM only supports PMD hugepages at stage 2. Extend the stage 2 fault
+handling to add support for PUD hugepages.
 
-This is what the code does today, conditioned no system_supports_sve().
+Addition of pud hugepage support enables additional hugepage
+sizes (e.g., 1G with 4K granule) which can be useful on cores that
+support mapping larger block sizes in the TLB entries.
 
-I'm assuming that reading CPACR_EL1 is cheap ... or have you come across
-counterexamples to that?
+Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm/include/asm/kvm_mmu.h         | 19 ++++++++++++
+ arch/arm64/include/asm/kvm_mmu.h       | 15 ++++++++++
+ arch/arm64/include/asm/pgtable-hwdef.h |  4 +++
+ arch/arm64/include/asm/pgtable.h       |  2 ++
+ virt/kvm/arm/mmu.c                     | 40 ++++++++++++++++++++++++--
+ 5 files changed, 77 insertions(+), 3 deletions(-)
 
-> > > +}
-> > > +
-> > > +extern syscall_fn_t sys_call_table[];
-> > > +
-> > > +asmlinkage void el0_svc_handler(struct pt_regs *regs)
-> > > +{
-> > 
-> > if (system_supports_sve()) ?
-> > 
-> > > +	sve_user_disable();
-> > 
-> > Or should this be replaced by a call to sve_user_reset()?
-> > 
-> > I suspect the latter, since we do want to be clearing TIF_SVE here too.
-> 
-> Yes, this was mean to be sve_user_reset().
-
-OK.  Just to be clear, I think there should be a system_supports_sve()
-check here (in case that wasn't obvious from my previous reply).
-
-Cheers
----Dave
+diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
+index 224c22c0a69c..155916dbdd7e 100644
+--- a/arch/arm/include/asm/kvm_mmu.h
++++ b/arch/arm/include/asm/kvm_mmu.h
+@@ -77,8 +77,11 @@ void kvm_clear_hyp_idmap(void);
+ 
+ #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
+ #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
++#define kvm_pfn_pud(pfn, prot)	(__pud(0))
+ 
+ #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
++/* No support for pud hugepages */
++#define kvm_pud_mkhuge(pud)	(pud)
+ 
+ /*
+  * The following kvm_*pud*() functionas are provided strictly to allow
+@@ -95,6 +98,22 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
+ 	return false;
+ }
+ 
++static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
++{
++	BUG();
++}
++
++static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
++{
++	BUG();
++	return pud;
++}
++
++static inline pud_t kvm_s2pud_mkexec(pud_t pud)
++{
++	BUG();
++	return pud;
++}
+ 
+ static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
+ {
+diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
+index f440cf216a23..f49a68fcbf26 100644
+--- a/arch/arm64/include/asm/kvm_mmu.h
++++ b/arch/arm64/include/asm/kvm_mmu.h
+@@ -172,11 +172,14 @@ void kvm_clear_hyp_idmap(void);
+ 
+ #define	kvm_set_pte(ptep, pte)		set_pte(ptep, pte)
+ #define	kvm_set_pmd(pmdp, pmd)		set_pmd(pmdp, pmd)
++#define kvm_set_pud(pudp, pud)		set_pud(pudp, pud)
+ 
+ #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
+ #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
++#define kvm_pfn_pud(pfn, prot)		pfn_pud(pfn, prot)
+ 
+ #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
++#define kvm_pud_mkhuge(pud)		pud_mkhuge(pud)
+ 
+ static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
+ {
+@@ -190,6 +193,12 @@ static inline pmd_t kvm_s2pmd_mkwrite(pmd_t pmd)
+ 	return pmd;
+ }
+ 
++static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
++{
++	pud_val(pud) |= PUD_S2_RDWR;
++	return pud;
++}
++
+ static inline pte_t kvm_s2pte_mkexec(pte_t pte)
+ {
+ 	pte_val(pte) &= ~PTE_S2_XN;
+@@ -202,6 +211,12 @@ static inline pmd_t kvm_s2pmd_mkexec(pmd_t pmd)
+ 	return pmd;
+ }
+ 
++static inline pud_t kvm_s2pud_mkexec(pud_t pud)
++{
++	pud_val(pud) &= ~PUD_S2_XN;
++	return pud;
++}
++
+ static inline void kvm_set_s2pte_readonly(pte_t *ptep)
+ {
+ 	pteval_t old_pteval, pteval;
+diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+index fd208eac9f2a..e327665e94d1 100644
+--- a/arch/arm64/include/asm/pgtable-hwdef.h
++++ b/arch/arm64/include/asm/pgtable-hwdef.h
+@@ -193,6 +193,10 @@
+ #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
+ #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
+ 
++#define PUD_S2_RDONLY		(_AT(pudval_t, 1) << 6)   /* HAP[2:1] */
++#define PUD_S2_RDWR		(_AT(pudval_t, 3) << 6)   /* HAP[2:1] */
++#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
++
+ /*
+  * Memory Attribute override for Stage-2 (MemAttr[3:0])
+  */
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 7c4c8f318ba9..31ea9fda07e3 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -386,6 +386,8 @@ static inline int pmd_protnone(pmd_t pmd)
+ 
+ #define pud_write(pud)		pte_write(pud_pte(pud))
+ 
++#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
++
+ #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
+ #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
+ #define pud_pfn(pud)		((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT)
+diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+index 671d3c0825f2..b0931fa2d64e 100644
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -1036,6 +1036,26 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
+ 	return 0;
+ }
+ 
++static int stage2_set_pud_huge(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
++			       phys_addr_t addr, const pud_t *new_pud)
++{
++	pud_t *pud, old_pud;
++
++	pud = stage2_get_pud(kvm, cache, addr);
++	VM_BUG_ON(!pud);
++
++	old_pud = *pud;
++	if (pud_present(old_pud)) {
++		pud_clear(pud);
++		kvm_tlb_flush_vmid_ipa(kvm, addr);
++	} else {
++		get_page(virt_to_page(pud));
++	}
++
++	kvm_set_pud(pud, *new_pud);
++	return 0;
++}
++
+ static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
+ {
+ 	pmd_t *pmdp;
+@@ -1467,9 +1487,12 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 	}
+ 
+ 	vma_pagesize = vma_kernel_pagesize(vma);
+-	if (vma_pagesize == PMD_SIZE && !logging_active) {
++	if ((vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE) &&
++	    !logging_active) {
++		struct hstate *h = hstate_vma(vma);
++
+ 		hugetlb = true;
+-		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
++		gfn = (fault_ipa & huge_page_mask(h)) >> PAGE_SHIFT;
+ 	} else {
+ 		/*
+ 		 * Pages belonging to memslots that don't have the same
+@@ -1555,7 +1578,18 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 	if (exec_fault)
+ 		invalidate_icache_guest_page(pfn, vma_pagesize);
+ 
+-	if (vma_pagesize == PMD_SIZE) {
++	if (vma_pagesize == PUD_SIZE) {
++		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
++
++		new_pud = kvm_pud_mkhuge(new_pud);
++		if (writable)
++			new_pud = kvm_s2pud_mkwrite(new_pud);
++
++		if (stage2_should_exec(kvm, fault_ipa, exec_fault, fault_status))
++			new_pud = kvm_s2pud_mkexec(new_pud);
++
++		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
++	} else if (vma_pagesize == PMD_SIZE) {
+ 		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
+ 
+ 		new_pmd = kvm_pmd_mkhuge(new_pmd);
+-- 
+2.17.0
