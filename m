@@ -1,38 +1,42 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZppOdbYi+79geArLhIZqf3W1ZTcjtek5FRel2bTOW3ZRcjDaaYxzIuNCEd+3d/2/PbHeBur
-ARC-Seal: i=1; a=rsa-sha256; t=1526281194; cv=none;
+X-Google-Smtp-Source: AB8JxZodH73L4+kQNBDo34uw1xmoFj4lSGOih5Xi1vkz93EUO7exE7rAfhfdLSR1iiXbFMEOaywm
+ARC-Seal: i=1; a=rsa-sha256; t=1526281191; cv=none;
         d=google.com; s=arc-20160816;
-        b=0sM0iDgdQLL9dQ+JWGVJLAviJRIfayTtlKfhdYrvLHTjw/F4x9/7S1HTLFiASyNgEA
-         iD4qCtcIL59PEA+2+ZJRkOjXbIH5XssL6QLXVM7XjjvLPNmQU5voop2i3WaTa8/xVbwa
-         FhMYwMEM4hndD6uGcLc/U1inBdYBsv/guVQgr/ib3GX9O9P0i3wRG2e33BGkaq+GQBzd
-         rNEDBWasXAGmUKSajpGcYYY7UAGTbNzTEXzeL+He4UuS+z/qZhtSWy23qYXZuj3lNma5
-         LFJjTOdBDLaC90dl8T8Gr419wcDV2cme0d2YS/FP4XEhRK7wYFxh8xV43ZSmeEdB56w2
-         9dKg==
+        b=xukYo4TpbWcF4u3m24Te2NOJbAaocLpnrKxITDYZhoyGhAS6dpx74Uge7CMnphq2nk
+         mIdcvBC5JA50tGVK4yJpa8qmvodygWvyrZAzj2AQn9w3ASypv3wq1CFl2SRW8UPH4KHB
+         xDswI380RFEJ3syY3YTCFes53bvmaLcMmUXCevywpwWoBbX7bdwKfqhmWj4qp0MpUUAL
+         15D/9oLk7aaxQh3Uh6mViB4QVV+UYeZV4ZADJki/pjuwWOCBXl80KIuolxNHK08QbMrv
+         /XZSLfnXTsgYmYSXzB5y0tgR2R9GtBja29TsNNDIDsu0tFL97/q8jXrsCNnpPBs2rdMR
+         1nlA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=7YrD5LgFdG9Pyr3MJm33Nkjej9lC1ZtG2Etef+kpUxM=;
-        b=UAVJJmVE5xVNACsP7sX+BGevaZ5cc2dO2johzz17mkCICqgDgN+gdHSHrCFS9AnPSC
-         7VS5I8wO8dO7wke6fZx1SQ7hdpHO/+YPYT+QzNKNPVNeaoZKLI1isotS4U9X4p2T4kFX
-         S1IZMGzQtmZRC+pbnez+z37lrezVmaIYvT8CzEZUQ4zN6WbDntbSMwJHiSZJGxD3PXMz
-         1iiYUaJlpcARXTH1IupyPhhh2t/SA2IUrjOfUw85rqJ+hCsjIgyrVUWwL1nc9emJAKuC
-         3lrbqCdAjodQ9scrVJAzhJeJdENdf4JGJeajLKAYCcaZGzwXw+4QujEvIUOYB75t/b1P
-         NZSQ==
+        bh=lxRYL7HWNmwDumhSiqT8C5v2jm9kkRtLiP2oSEHEHQs=;
+        b=hIjYA7XNIiRIh2CJdBHi/cs3X98WHw4+DCPyJ4LixwvvlYZH2JaJ/WudZstWRKcqkz
+         Ex2k3iCKuiG2jUYcg40q68fVH9N9vBWpRil6OI4IJaA2Z0pKDA4sLXf9+hsfaZM3OO7Y
+         0zUW4GrOAx+AHb4ZwaqhLS2uIZT2YDpV/pevGjHJ2swoW47veJ07oGKDLSkgEkfqBJdc
+         G2aQq7pzHvRlJp9NHtd3vbjQdZq81diAyLik3FpJos4/ytDFR6HGD242W0Lfbh8qTKvQ
+         ahsVwTsB5Kmaufz20/YCaICuW2nEFXsYRDEmcbPSYdPuk8sL/5ACQc6fdPdnTOwvGv++
+         jOZw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=pfJPcPGx;
+       dkim=pass header.i=@kernel.org header.s=default header.b=enxCQYJJ;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=pfJPcPGx;
+       dkim=pass header.i=@kernel.org header.s=default header.b=enxCQYJJ;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 51/72] atm: zatm: Fix potential Spectre v1
-Date: Mon, 14 May 2018 08:49:08 +0200
-Message-Id: <20180514064825.671477735@linuxfoundation.org>
+	David Rientjes <rientjes@google.com>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.16 33/72] mm, oom: fix concurrent munlock and oom reaper unmap, v3
+Date: Mon, 14 May 2018 08:48:50 +0200
+Message-Id: <20180514064824.534798031@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -42,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421383113753187?=
-X-GMAIL-MSGID: =?utf-8?q?1600421829369274907?=
+X-GMAIL-THRID: =?utf-8?q?1600421690247914376?=
+X-GMAIL-MSGID: =?utf-8?q?1600421826812622187?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,52 +55,244 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: David Rientjes <rientjes@google.com>
 
-commit 2be147f7459db5bbf292e0a6f135037b55e20b39 upstream.
+commit 27ae357fa82be5ab73b2ef8d39dcb8ca2563483a upstream.
 
-pool can be indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Since exit_mmap() is done without the protection of mm->mmap_sem, it is
+possible for the oom reaper to concurrently operate on an mm until
+MMF_OOM_SKIP is set.
 
-This issue was detected with the help of Smatch:
+This allows munlock_vma_pages_all() to concurrently run while the oom
+reaper is operating on a vma.  Since munlock_vma_pages_range() depends
+on clearing VM_LOCKED from vm_flags before actually doing the munlock to
+determine if any other vmas are locking the same memory, the check for
+VM_LOCKED in the oom reaper is racy.
 
-drivers/atm/zatm.c:1462 zatm_ioctl() warn: potential spectre issue
-'zatm_dev->pool_info' (local cap)
+This is especially noticeable on architectures such as powerpc where
+clearing a huge pmd requires serialize_against_pte_lookup().  If the pmd
+is zapped by the oom reaper during follow_page_mask() after the check
+for pmd_none() is bypassed, this ends up deferencing a NULL ptl or a
+kernel oops.
 
-Fix this by sanitizing pool before using it to index
-zatm_dev->pool_info
+Fix this by manually freeing all possible memory from the mm before
+doing the munlock and then setting MMF_OOM_SKIP.  The oom reaper can not
+run on the mm anymore so the munlock is safe to do in exit_mmap().  It
+also matches the logic that the oom reaper currently uses for
+determining when to set MMF_OOM_SKIP itself, so there's no new risk of
+excessive oom killing.
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
+This issue fixes CVE-2018-1000200.
 
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1804241526320.238665@chino.kir.corp.google.com
+Fixes: 212925802454 ("mm: oom: let oom_reap_task and exit_mmap run concurrently")
+Signed-off-by: David Rientjes <rientjes@google.com>
+Suggested-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: <stable@vger.kernel.org>	[4.14+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/atm/zatm.c |    3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/oom.h |    2 +
+ mm/mmap.c           |   44 ++++++++++++++++------------
+ mm/oom_kill.c       |   81 +++++++++++++++++++++++++++-------------------------
+ 3 files changed, 71 insertions(+), 56 deletions(-)
 
---- a/drivers/atm/zatm.c
-+++ b/drivers/atm/zatm.c
-@@ -28,6 +28,7 @@
- #include <asm/io.h>
- #include <linux/atomic.h>
- #include <linux/uaccess.h>
-+#include <linux/nospec.h>
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -95,6 +95,8 @@ static inline int check_stable_address_s
+ 	return 0;
+ }
  
- #include "uPD98401.h"
- #include "uPD98402.h"
-@@ -1458,6 +1459,8 @@ static int zatm_ioctl(struct atm_dev *de
- 					return -EFAULT;
- 				if (pool < 0 || pool > ZATM_LAST_POOL)
- 					return -EINVAL;
-+				pool = array_index_nospec(pool,
-+							  ZATM_LAST_POOL + 1);
- 				spin_lock_irqsave(&zatm_dev->lock, flags);
- 				info = zatm_dev->pool_info[pool];
- 				if (cmd == ZATM_GETPOOLZ) {
++void __oom_reap_task_mm(struct mm_struct *mm);
++
+ extern unsigned long oom_badness(struct task_struct *p,
+ 		struct mem_cgroup *memcg, const nodemask_t *nodemask,
+ 		unsigned long totalpages);
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2997,6 +2997,32 @@ void exit_mmap(struct mm_struct *mm)
+ 	/* mm's last user has gone, and its about to be pulled down */
+ 	mmu_notifier_release(mm);
+ 
++	if (unlikely(mm_is_oom_victim(mm))) {
++		/*
++		 * Manually reap the mm to free as much memory as possible.
++		 * Then, as the oom reaper does, set MMF_OOM_SKIP to disregard
++		 * this mm from further consideration.  Taking mm->mmap_sem for
++		 * write after setting MMF_OOM_SKIP will guarantee that the oom
++		 * reaper will not run on this mm again after mmap_sem is
++		 * dropped.
++		 *
++		 * Nothing can be holding mm->mmap_sem here and the above call
++		 * to mmu_notifier_release(mm) ensures mmu notifier callbacks in
++		 * __oom_reap_task_mm() will not block.
++		 *
++		 * This needs to be done before calling munlock_vma_pages_all(),
++		 * which clears VM_LOCKED, otherwise the oom reaper cannot
++		 * reliably test it.
++		 */
++		mutex_lock(&oom_lock);
++		__oom_reap_task_mm(mm);
++		mutex_unlock(&oom_lock);
++
++		set_bit(MMF_OOM_SKIP, &mm->flags);
++		down_write(&mm->mmap_sem);
++		up_write(&mm->mmap_sem);
++	}
++
+ 	if (mm->locked_vm) {
+ 		vma = mm->mmap;
+ 		while (vma) {
+@@ -3018,24 +3044,6 @@ void exit_mmap(struct mm_struct *mm)
+ 	/* update_hiwater_rss(mm) here? but nobody should be looking */
+ 	/* Use -1 here to ensure all VMAs in the mm are unmapped */
+ 	unmap_vmas(&tlb, vma, 0, -1);
+-
+-	if (unlikely(mm_is_oom_victim(mm))) {
+-		/*
+-		 * Wait for oom_reap_task() to stop working on this
+-		 * mm. Because MMF_OOM_SKIP is already set before
+-		 * calling down_read(), oom_reap_task() will not run
+-		 * on this "mm" post up_write().
+-		 *
+-		 * mm_is_oom_victim() cannot be set from under us
+-		 * either because victim->mm is already set to NULL
+-		 * under task_lock before calling mmput and oom_mm is
+-		 * set not NULL by the OOM killer only if victim->mm
+-		 * is found not NULL while holding the task_lock.
+-		 */
+-		set_bit(MMF_OOM_SKIP, &mm->flags);
+-		down_write(&mm->mmap_sem);
+-		up_write(&mm->mmap_sem);
+-	}
+ 	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
+ 	tlb_finish_mmu(&tlb, 0, -1);
+ 
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -474,7 +474,6 @@ bool process_shares_mm(struct task_struc
+ 	return false;
+ }
+ 
+-
+ #ifdef CONFIG_MMU
+ /*
+  * OOM Reaper kernel thread which tries to reap the memory used by the OOM
+@@ -485,16 +484,54 @@ static DECLARE_WAIT_QUEUE_HEAD(oom_reape
+ static struct task_struct *oom_reaper_list;
+ static DEFINE_SPINLOCK(oom_reaper_lock);
+ 
+-static bool __oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
++void __oom_reap_task_mm(struct mm_struct *mm)
+ {
+-	struct mmu_gather tlb;
+ 	struct vm_area_struct *vma;
++
++	/*
++	 * Tell all users of get_user/copy_from_user etc... that the content
++	 * is no longer stable. No barriers really needed because unmapping
++	 * should imply barriers already and the reader would hit a page fault
++	 * if it stumbled over a reaped memory.
++	 */
++	set_bit(MMF_UNSTABLE, &mm->flags);
++
++	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
++		if (!can_madv_dontneed_vma(vma))
++			continue;
++
++		/*
++		 * Only anonymous pages have a good chance to be dropped
++		 * without additional steps which we cannot afford as we
++		 * are OOM already.
++		 *
++		 * We do not even care about fs backed pages because all
++		 * which are reclaimable have already been reclaimed and
++		 * we do not want to block exit_mmap by keeping mm ref
++		 * count elevated without a good reason.
++		 */
++		if (vma_is_anonymous(vma) || !(vma->vm_flags & VM_SHARED)) {
++			const unsigned long start = vma->vm_start;
++			const unsigned long end = vma->vm_end;
++			struct mmu_gather tlb;
++
++			tlb_gather_mmu(&tlb, mm, start, end);
++			mmu_notifier_invalidate_range_start(mm, start, end);
++			unmap_page_range(&tlb, vma, start, end, NULL);
++			mmu_notifier_invalidate_range_end(mm, start, end);
++			tlb_finish_mmu(&tlb, start, end);
++		}
++	}
++}
++
++static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
++{
+ 	bool ret = true;
+ 
+ 	/*
+ 	 * We have to make sure to not race with the victim exit path
+ 	 * and cause premature new oom victim selection:
+-	 * __oom_reap_task_mm		exit_mm
++	 * oom_reap_task_mm		exit_mm
+ 	 *   mmget_not_zero
+ 	 *				  mmput
+ 	 *				    atomic_dec_and_test
+@@ -539,39 +576,8 @@ static bool __oom_reap_task_mm(struct ta
+ 
+ 	trace_start_task_reaping(tsk->pid);
+ 
+-	/*
+-	 * Tell all users of get_user/copy_from_user etc... that the content
+-	 * is no longer stable. No barriers really needed because unmapping
+-	 * should imply barriers already and the reader would hit a page fault
+-	 * if it stumbled over a reaped memory.
+-	 */
+-	set_bit(MMF_UNSTABLE, &mm->flags);
+-
+-	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
+-		if (!can_madv_dontneed_vma(vma))
+-			continue;
++	__oom_reap_task_mm(mm);
+ 
+-		/*
+-		 * Only anonymous pages have a good chance to be dropped
+-		 * without additional steps which we cannot afford as we
+-		 * are OOM already.
+-		 *
+-		 * We do not even care about fs backed pages because all
+-		 * which are reclaimable have already been reclaimed and
+-		 * we do not want to block exit_mmap by keeping mm ref
+-		 * count elevated without a good reason.
+-		 */
+-		if (vma_is_anonymous(vma) || !(vma->vm_flags & VM_SHARED)) {
+-			const unsigned long start = vma->vm_start;
+-			const unsigned long end = vma->vm_end;
+-
+-			tlb_gather_mmu(&tlb, mm, start, end);
+-			mmu_notifier_invalidate_range_start(mm, start, end);
+-			unmap_page_range(&tlb, vma, start, end, NULL);
+-			mmu_notifier_invalidate_range_end(mm, start, end);
+-			tlb_finish_mmu(&tlb, start, end);
+-		}
+-	}
+ 	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+ 			task_pid_nr(tsk), tsk->comm,
+ 			K(get_mm_counter(mm, MM_ANONPAGES)),
+@@ -592,13 +598,12 @@ static void oom_reap_task(struct task_st
+ 	struct mm_struct *mm = tsk->signal->oom_mm;
+ 
+ 	/* Retry the down_read_trylock(mmap_sem) a few times */
+-	while (attempts++ < MAX_OOM_REAP_RETRIES && !__oom_reap_task_mm(tsk, mm))
++	while (attempts++ < MAX_OOM_REAP_RETRIES && !oom_reap_task_mm(tsk, mm))
+ 		schedule_timeout_idle(HZ/10);
+ 
+ 	if (attempts <= MAX_OOM_REAP_RETRIES)
+ 		goto done;
+ 
+-
+ 	pr_info("oom_reaper: unable to reap pid:%d (%s)\n",
+ 		task_pid_nr(tsk), tsk->comm);
+ 	debug_show_all_locks();
