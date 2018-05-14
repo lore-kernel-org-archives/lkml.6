@@ -1,161 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752259AbeENLRj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:17:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42916 "EHLO mail.bootlin.com"
+        id S1752334AbeENLSj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:18:39 -0400
+Received: from ozlabs.org ([203.11.71.1]:54595 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752039AbeENLRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:17:38 -0400
-Date: Mon, 14 May 2018 13:17:26 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>
-Subject: Re: Allwinner A64: Issue on external rtc clock to wifi chip
-Message-ID: <20180514111726.lnxpegipqklyetmv@flea>
-References: <CAMty3ZCNyuEwmLGdDZLM_9qKJ2NsT33rodug7ZpKAE-OHymVEg@mail.gmail.com>
- <20180514075727.uxggyhmbahvhestx@flea>
- <CAMty3ZDew=+zytKUx5+nX27CjCe0UfJpyYOy2s07NoJvbe57mQ@mail.gmail.com>
- <20180514082744.ydmfg5mzsbol5onu@flea>
- <CAMty3ZC3ggxkZwirpQ-aRP8Udg=aYypBArb0KcR0_Z0AG8wATA@mail.gmail.com>
- <20180514090618.r5xc3elzpvfp47f4@flea>
- <CAMty3ZCAWBHtemeeWcgLy5PoYLn10MwxpHdirqpsxFY3BA7=4g@mail.gmail.com>
+        id S1751198AbeENLSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 07:18:38 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-crypto@vger.kernel.org, linuxppc-dev@ozlabs.org,
+        linux-kernel@vger.kernel.org, mhcerri@linux.vnet.ibm.com,
+        pfsmorigo@linux.vnet.ibm.com
+Subject: Re: [PATCH 1/2] crypto: vmx - Remove overly verbose printk from AES init routines
+In-Reply-To: <20180511161913.nr7woksn2jejipzm@gondor.apana.org.au>
+References: <20180503122930.17448-1-mpe@ellerman.id.au> <20180511161913.nr7woksn2jejipzm@gondor.apana.org.au>
+Date: Mon, 14 May 2018 21:18:35 +1000
+Message-ID: <87po1ypjsk.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rwemxfhk4a6ebnef"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZCAWBHtemeeWcgLy5PoYLn10MwxpHdirqpsxFY3BA7=4g@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Herbert Xu <herbert@gondor.apana.org.au> writes:
 
---rwemxfhk4a6ebnef
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Thu, May 03, 2018 at 10:29:29PM +1000, Michael Ellerman wrote:
+>> In the vmx AES init routines we do a printk(KERN_INFO ...) to report
+>> the fallback implementation we're using.
+>> 
+>> However with a slow console this can significantly affect the speed of
+>> crypto operations. Using 'cryptsetup benchmark' the removal of the
+>> printk() leads to a ~5x speedup for aes-cbc decryption.
+>> 
+>> So remove them.
+>> 
+>> Fixes: 8676590a1593 ("crypto: vmx - Adding AES routines for VMX module")
+>> Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
+>> Fixes: 4f7f60d312b3 ("crypto: vmx - Adding CTR routines for VMX module")
+>> Fixes: cc333cd68dfa ("crypto: vmx - Adding GHASH routines for VMX module")
+>> Cc: stable@vger.kernel.org # v4.1+
+>> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+>> ---
+>>  drivers/crypto/vmx/aes.c     | 2 --
+>>  drivers/crypto/vmx/aes_cbc.c | 3 ---
+>>  drivers/crypto/vmx/aes_ctr.c | 2 --
+>>  drivers/crypto/vmx/ghash.c   | 2 --
+>>  4 files changed, 9 deletions(-)
+>
+> Patch applied.  Thanks.
 
-On Mon, May 14, 2018 at 03:12:49PM +0530, Jagan Teki wrote:
-> On Mon, May 14, 2018 at 2:36 PM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > On Mon, May 14, 2018 at 02:34:22PM +0530, Jagan Teki wrote:
-> >> On Mon, May 14, 2018 at 1:57 PM, Maxime Ripard
-> >> <maxime.ripard@bootlin.com> wrote:
-> >> > On Mon, May 14, 2018 at 01:34:56PM +0530, Jagan Teki wrote:
-> >> >> On Mon, May 14, 2018 at 1:27 PM, Maxime Ripard
-> >> >> <maxime.ripard@bootlin.com> wrote:
-> >> >> > Hi,
-> >> >> >
-> >> >> > On Mon, May 14, 2018 at 12:37:49PM +0530, Jagan Teki wrote:
-> >> >> >> Hi Maxime and All,
-> >> >> >>
-> >> >> >> We are trying to bring-up AP6330 Wifi chip for A64 board. We not=
-iced
-> >> >> >> to have an external rtc clock has driven from wifi chip.
-> >> >> >>
-> >> >> >> So the devicetree is configured according to this as below.
-> >> >> >>
-> >> >> >> / {
-> >> >> >>         wifi_pwrseq: wifi-pwrseq {
-> >> >> >>                 compatible =3D "mmc-pwrseq-simple";
-> >> >> >>                 clocks =3D <&rtc 1>;
-> >> >> >>                 clock-names =3D "ext_clock";
-> >> >> >>                 reset-gpios =3D <&r_pio 0 2 GPIO_ACTIVE_LOW>; /*=
- PL2 */
-> >> >> >>                 post-power-on-delay-ms =3D <400>;
-> >> >> >>         };
-> >> >> >> };
-> >> >> >>
-> >> >> >> &rtc {
-> >> >> >>         clock-output-names =3D "rtc-osc32k", "rtc-osc32k-out";
-> >> >> >>         clocks =3D <&osc32k>;
-> >> >> >>         #clock-cells =3D <1>;
-> >> >> >> };
-> >> >> >>
-> >> >> >> &mmc1 {
-> >> >> >>         pinctrl-names =3D "default";
-> >> >> >>         pinctrl-0 =3D <&mmc1_pins>;
-> >> >> >>         vmmc-supply =3D <&reg_dcdc1>;
-> >> >> >>         vqmmc-supply =3D <&reg_eldo1>;
-> >> >> >>         mmc-pwrseq =3D <&wifi_pwrseq>;
-> >> >> >>         bus-width =3D <4>;
-> >> >> >>         non-removable;
-> >> >> >>         status =3D "okay";
-> >> >> >>
-> >> >> >>         brcmf: wifi@1 {
-> >> >> >>                 reg =3D <1>;
-> >> >> >>                 compatible =3D "brcm,bcm4329-fmac";
-> >> >> >>                 interrupt-parent =3D <&r_pio>;
-> >> >> >>                 interrupts =3D <0 3 IRQ_TYPE_LEVEL_LOW>;  /* WL-=
-WAKE-AP: PL3 */
-> >> >> >>                 interrupt-names =3D "host-wake";
-> >> >> >>         };
-> >> >> >> };
-> >> >> >>
-> >> >> >> And observed rtc-osc32k-out clock is never enabled[1] and the va=
-lue of
-> >> >> >> LOSC_OUT_GATING is 0x0 which eventually not enabling
-> >> >> >> LOSC_OUT_GATING_EN
-> >> >> >>
-> >> >> >> Pls. let us know if we miss anything here?
-> >> >> >>
-> >> >> >> [1] https://paste.ubuntu.com/p/X2By4q8kD2/
-> >> >> >
-> >> >> > Could you paste your config and the logs from a boot to?
-> >> >>
-> >> >> .config
-> >> >> https://paste.ubuntu.com/p/w9w2KB7RFc/
-> >> >>
-> >> >> dmesg
-> >> >> https://paste.ubuntu.com/p/mrZGk5bWRR/
-> >> >
-> >> > This is kind of weird. Have you tested with a 4.17 kernel? We have
-> >> > runtime_pm changes lined up in next, so that might be a regression
-> >> > there, even though we tested it with Quentin at some point.
-> >>
-> >> This is 4.17-rc4 do you want to try it on 4.16 ?
-> >
-> > No, this is next-20180503. Please try with 4.17-rc4
->=20
-> Couldn't find any different in behaviour [2]
->=20
-> [2] https://paste.ubuntu.com/p/m3PGBwrv6W/
+Thanks.
 
-It's hard to tell without the board, but have you looked at the return
-value of devm_clk_get in the pwrseq code?
+>> If this is the wrong fix please let me know, I'm not a crypto expert.
+>> 
+>> What we see is 'cryptsetup benchmark' causing thousands of these printks() to
+>> happen. The call trace is something like:
+>> 
+>> [c000001e47867a60] [c0000000009cf6b4] p8_aes_cbc_init+0x74/0xf0
+>> [c000001e47867ae0] [c000000000551a80] __crypto_alloc_tfm+0x1d0/0x2c0
+>> [c000001e47867b20] [c00000000055aea4] crypto_skcipher_init_tfm+0x124/0x280
+>> [c000001e47867b60] [c00000000055138c] crypto_create_tfm+0x9c/0x1a0
+>> [c000001e47867ba0] [c000000000552220] crypto_alloc_tfm+0xa0/0x140
+>> [c000001e47867c00] [c00000000055b168] crypto_alloc_skcipher+0x48/0x70
+>> [c000001e47867c40] [c00000000057af28] skcipher_bind+0x38/0x50
+>> [c000001e47867c80] [c00000000057a07c] alg_bind+0xbc/0x220
+>> [c000001e47867d10] [c000000000a016a0] __sys_bind+0x90/0x100
+>> [c000001e47867df0] [c000000000a01750] sys_bind+0x40/0x60
+>> [c000001e47867e30] [c00000000000b320] system_call+0x58/0x6c
+>> 
+>> 
+>> Is it normal for init to be called on every system call?
+>
+> This is the tfm init function, so yes it is called every time
+> you allocate a tfm.
 
-Enabling the clk ftrace events would also help.
+OK thanks. So we just shouldn't be printk'ing in there in the non-error
+path, good to know.
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---rwemxfhk4a6ebnef
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr5cEUACgkQ0rTAlCFN
-r3SGOg//U+w+Ojukr19zd4krXZ6U5Whz9g0rxvaLjGZGM/EzSOe4ZFxlB52TgjgQ
-Vb/c0BxR+LL2oBxO8sWYIgHpy7IOAm6AS3M6uhTyMFk7XrKBJ72LVfpd1mPoh780
-tTZbUT2Lx7ecuosYalSLN06GfXEbMlhc415MCiKHPELLwIDpgXeVi0UEYahkzskP
-BdsULGQGwMDHO3+vjUTcSSl9ByrboISua974SMONklEBe3757toLmzAonqEOoVNb
-UhSl97BX5v1+ZtZQArEtQ6XFse7CZdyRZXxUrHxy/cB+ByeRiUSX7zr+4UKnd23n
-DbYtTk0zhZbaM8Hs4/x0XSijizSstwNZctUTCamFIhInAaqmgEf6pebqy3GKCtw5
-9edYXMWPPfb7O16ad1UvwJ2oPnumRkqZpzPeuJELV9TratoVa/HDNk3N3acZm+Ri
-ZxdL8GjhRM2fVNg0eW3bTOH+U+UrLoX0NtrUyyK2mKdwtCx3MNWGkLR/JlKQYejx
-OjRnF9kNumqaWvY3gBayyb1dm84Ev/zEiX4u3UKLOoeCzXJLSEsOpGfp+A5qNic2
-BuyOGoLQ9BIg3Q+Gde8tYOgJBrQAJL6uSWwQCon1RMFcYHJXwaXa6+SBoCcyYo58
-LuSW0oM18A93l024nOw9l7mP5sGfPvPhErcE2hFxlbhuMqjFmu8=
-=rx9p
------END PGP SIGNATURE-----
-
---rwemxfhk4a6ebnef--
+cheers
