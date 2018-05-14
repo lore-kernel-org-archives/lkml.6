@@ -1,65 +1,76 @@
-Return-Path: <shuah@kernel.org>
-X-Google-Smtp-Source: AB8JxZoPPLZIw0wLNzwAcmJN+dOYg/B15nATkHthWOJB1ft+4klIx0Bakj1/KzJ1a2iW49ZXcwBy
-ARC-Seal: i=1; a=rsa-sha256; t=1525800965; cv=none;
+Return-Path: <mingo.kernel.org@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1526290341; cv=none;
         d=google.com; s=arc-20160816;
-        b=lFUy2+S3kLjx5aa6+Ad2ZMqaOuc+qZ2tDRjLHkGdYMHWXT+LA8D2I2zZbLQRuWnp1+
-         GuTJ62k48qfE9Pi6tFvqej+TKfPfAvTgwGTRER+YULGYlOaXgL6wfWZfcYNkP4b1V7h2
-         SkNBzyP/X4B4j6eGqIiwVOmE2j7uLvD1njnc1Jjbq4hysoDd44pW12nRK4an1Gjkq1B7
-         hagUkwKC4PSnIjg2xlFQw6C6W9DvmulAs1X7kN+eFiXJYqjruvAo3pleVtz97y0I1DA4
-         FZWN3Aq12Qqr40ZCuqx0uu/EzSbt09sLTlHvPdIqrnVqrI/zntkp5N4qHTCYZNuhJ8l2
-         Kmog==
+        b=GlhACjXmBBN1HPd1ohHx19M+f2uqWpAnNgVsoMNsA8Hr1PwPa3rJcSJLAH5ICGCv1v
+         0msfpXkNK9r/KvMN1Si0uGN94jrI3fVGeOT/NLcWLsB+E9VxvfT+dwxzD4gcVyPn8oiB
+         K/VS0yecTbnVOKlQMu7jVpGy2UVksSQ+PSHqmwX8X4swZ+k8Zk5+1yp/YyeL7kg+5HNy
+         vL2OUBNRfwmb90KRwuzl8lmpc8gGOse70TAoFI3NOsdeJ98NEa/6vly35s1d6zo9UFJk
+         RXRJQa1rORjOMBMorIpCVk1bS+Kb/aqIJS7fVupqdzQhlojJzP5qZq2qIUrhmsilA7t/
+         YDAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:sender:dkim-signature
          :arc-authentication-results;
-        bh=rEbcB5h10asSZxlMmoHw7VW/Fo0+GwDvJ2h1qTViE60=;
-        b=Na/Ah4yca44N6+rHnw+y+mBUpIjp1xgBQ0TJHPvwwv/Xkdq6LBJ8G5zTk0baOnPfAU
-         eR2d4n1arO377BRtsniYYK5CYAkPZe0LfuAh9I/IUcE2xce/0ztHatbSCzCNGlHbvFh+
-         +UtLid5F5OyIU3/u48qqpomAfGVgwziOg293of7adXH3/vGdQ7y6ds2jeRB4q062Pvx7
-         KFcgAmj3gWyMoObJ+xqd/YzfYGpAFHH8fx9lMQzUjDlQKQ38BQMDkrNbaUbyt5OpDcmU
-         d9KpUZMZ01Z5MjKORvbS/3iuIAmK9dgTDRSMN+CsWZa+B6ofct+JgQlyfmqtU5slTjAt
-         +wKg==
+        bh=i8+gatwKueyp5heLIESeGr+o+fgoJMbKMbooZpTvFh4=;
+        b=qAtylVIRbul70WAFttW1EbXoAUl62rUrrTKl6jbrgWcin7ntn2nyfwS3bwJBD9wuBg
+         1pDVtOJw2MzJEviytYVpNlYwCY2fOuTqt1E0hbBYNWVBcEpSV86PQ5SMfzg33z2tjQGM
+         adthOXu+YcypcIPjfbhJq6C/z/LJzyWhpUMWGxXihfw1V5kXLuHXEen5CqqtxWRNUZ4h
+         J8eNxbYh6E/OzaXxJuu82KwFz41rXVU8Gd5mELlRGkBOAemkWf0jkU3vfw9+iR1w5ubK
+         yqEQPMeBnb5z+kxeFpFVt8C+CRhg1ivOKWxx5qXlq+g3JqNNjF4kX1O+IQONtZmYr57K
+         fIXw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=softfail (google.com: domain of transitioning shuah@kernel.org does not designate 64.68.200.34 as permitted sender) smtp.mailfrom=shuah@kernel.org;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=a1AKkv1z;
+       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       spf=softfail (google.com: domain of transitioning shuah@kernel.org does not designate 64.68.200.34 as permitted sender) smtp.mailfrom=shuah@kernel.org;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=a1AKkv1z;
+       spf=pass (google.com: domain of mingo.kernel.org@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=mingo.kernel.org@gmail.com;
        dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+X-Google-Smtp-Source: AB8JxZrQ2L6RNT/V6KoXUhwS0ewfr/jZEJ6SutVjSXeznGvNNA/RC50PI4hHzUH1FsvgCxCM+GrlPA==
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Mon, 14 May 2018 11:31:57 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Shuah Khan <shuah@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>,
+	Li Zhijian <lizhijian@cn.fujitsu.com>,
+	linux-kselftest@vger.kernel.org, tglx@linutronix.de,
+	gregkh@linuxfoundation.org, pombredanne@nexb.com,
+	ebiederm@xmission.com, luto@kernel.org,
+	linux-kernel@vger.kernel.org, philip.li@intel.com,
+	leist.fnst@cn.fujitsu.com, zhijianx.li@intel.com
 Subject: Re: [PATCH 1/2] tools/testing/selftests/x86: fix warning:
  "SEGV_PKUERR|SEGV_BNDERR" redefined
-To: Dave Hansen <dave.hansen@intel.com>, Li Zhijian
- <lizhijian@cn.fujitsu.com>, linux-kselftest@vger.kernel.org
-Cc: mingo@kernel.org, tglx@linutronix.de, gregkh@linuxfoundation.org,
- pombredanne@nexb.com, ebiederm@xmission.com, luto@kernel.org,
- linux-kernel@vger.kernel.org, philip.li@intel.com,
- leist.fnst@cn.fujitsu.com, zhijianx.li@intel.com,
- Shuah Khan <shuah@kernel.org>
+Message-ID: <20180514093157.GB27428@gmail.com>
 References: <1525770870-19067-1-git-send-email-lizhijian@cn.fujitsu.com>
  <8f91739f-5d63-e6c9-7bf9-4c970237bcf8@intel.com>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <486b5b09-d45f-5d79-cb8a-9ea3537ae048@kernel.org>
-Date: Tue, 8 May 2018 11:35:45 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ <486b5b09-d45f-5d79-cb8a-9ea3537ae048@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <8f91739f-5d63-e6c9-7bf9-4c970237bcf8@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <486b5b09-d45f-5d79-cb8a-9ea3537ae048@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599886734267032257?=
-X-GMAIL-MSGID: =?utf-8?q?1599918272341442572?=
+X-GMAIL-MSGID: =?utf-8?q?1600431420804744132?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/08/2018 10:25 AM, Dave Hansen wrote:
-> On 05/08/2018 02:14 AM, Li Zhijian wrote:
->> SEGV_PKUERR and SEGV_BNDERR are defined since glibc-2.27
-> 
-> 
-> Acked-by: Dave Hansen <dave.hansen@intel.com>
-> 
 
-Thanks. Queuing this up for 4.17-rc5
+* Shuah Khan <shuah@kernel.org> wrote:
 
--- Shuah
+> On 05/08/2018 10:25 AM, Dave Hansen wrote:
+> > On 05/08/2018 02:14 AM, Li Zhijian wrote:
+> >> SEGV_PKUERR and SEGV_BNDERR are defined since glibc-2.27
+> > 
+> > 
+> > Acked-by: Dave Hansen <dave.hansen@intel.com>
+> > 
+> 
+> Thanks. Queuing this up for 4.17-rc5
+
+Please drop these patches, I have fixed them slightly differently and there are 
+dependencies with followup patches.
+
+Tanks,
+
+	Ingo
