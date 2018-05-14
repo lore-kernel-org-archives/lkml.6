@@ -1,42 +1,40 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr5s2fD+JlhXHZG0dWAOzy3uqDBGVLC06bHW8k0+F5+NqBtu0viW7A1LGU7pMUnyG+B3WzT
-ARC-Seal: i=1; a=rsa-sha256; t=1526280744; cv=none;
+X-Google-Smtp-Source: AB8JxZpsFpp1CS6oRmAL0xDx/ON8cWLZYWG72Vy3o2AGcHUXuvcyFFa3OyRLygM3Swg4SoCqZUId
+ARC-Seal: i=1; a=rsa-sha256; t=1526280742; cv=none;
         d=google.com; s=arc-20160816;
-        b=vEav0REKvMT0P/4R2M77O8Fle8AToagh9LwTMmq8TMUcQnMjMOb0T+TL3ZVXd5YKuG
-         u+GyWqXRbD+Y2FwiPT/o6p8gD1D3eP3MIo/2mqZRp9yyZXtbomwRICe6wAe3Fcat4Ho3
-         wy7H9lw7HSymZ4D0e09heDVKbl9l4Okf+TqXkvqW+tgi5DmTOV2V101NfM159zveJ0BP
-         WbpybhFCA9ozBktsRPjeSH5xecD3bG58c//qWq3Q708bjmM92d+apvwW68Sqod5OSgSD
-         66MMRTGV+NsEEOG13eQeFdY9VaJNZT7bZPoNxBSe978c8asuT45Aae4Brd2sLWmWBpVZ
-         VEVg==
+        b=SnT01ZfudFYjtVxsY/QDv3BxHJCfFSzjetjbDpTYXVWaM5/1a24iBfZsNac56SxUpX
+         mMN44c+5IlB2tfXwOk5eaNKPPJrCHihByavI7dXMYoHOz0hKztv8UWD5K+ImhqTOLT4F
+         QxqFS5YjlgmR0XMuxqCmoLLMia0aPEfRz5BoLXwyAUZhXhLEP8VO/CReiT/m+KZzEP+s
+         f06QEPb6vYTrnRBfEnPUyupgjLJP74uSreaeylDP182bswPvwlwFFAiWOfZSRETANvnQ
+         JyUr+0HMKo0tAJqFnrb5D4uVbIvmDz3Ty5ZOzHZIbFwpO+c7u+dSKhm05WgjwJ4RqUjX
+         m1zg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=dHlcsbucE6E10TrwewBBFKoVm0/y5Q7sbHZarf4Sg50=;
-        b=Zf9V9OLFYm2tzToYFpcYdgk1hoXw2SBlPhZTysoq0wCbEOCOM5U+5UC7Y35DvtgTpY
-         SUBKki4i0SZpOr5QB9cwTqYBFnRSMbYJ5CN5dwjHgS7HrWQDAarG6TzscseUXsZVY5fh
-         ACmwOPzuWJak9/NtSzxJ2ytoPOVUVj2E9BxTUQLs9a0bY9r07z8iLYwoNGThlLq6qKay
-         mjJc7ZaUCaJd+UIKTWwVdtFahuypmVox7fNXQMhUe6mcCDYQfcYun/20Sck7WhKQsUaN
-         bq/+Ox4O2xqpf5BAQW00scM/94n/CPbOhxFMhvULs+UaLhHwx/iHF3ugn46PM6NvyD3h
-         ldGA==
+        bh=j2KIzCpwN0IwPya6T5Vs9YL8xlygYwa3tS/0NBKzWdE=;
+        b=rderNiL2VgZQFKxNrU7kWSRPqMCZp0gJN1T9ss3Ml6ytlivNoyoZg0+lj86f0DUYDz
+         5Y5UqjTSV8FXGPW0CpV7crTcx+ZthbLITSenVyywVH6TXokmRG5RhR1lkq1T6CZrwsrr
+         4VFvbh8Y9ZX73dCk/m87RE/MLAcnAMaRcFOuNKVQZsWlDUgPBrOaJ0D7cTjhirs9ZtGo
+         YD8M5H/oxMK3i/QJL4TnH8MOerVXwZJHhTf3M8IJfc8EdYfmUfjpsn6xJodH6bh8IJ9s
+         sti8u9HlsjdefJZUXzclIjIkcfvPwxIXrL3FsSqcZRlyFSE3jkNG5keJmKc8+fFEpGe6
+         29qw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=TPQ4fT/e;
+       dkim=pass header.i=@kernel.org header.s=default header.b=PcYLq3oN;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=TPQ4fT/e;
+       dkim=pass header.i=@kernel.org header.s=default header.b=PcYLq3oN;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Tejun Heo <tj@kernel.org>,
-	syzbot <syzbot+9873874c735f2892e7e9@syzkaller.appspotmail.com>,
-	Dave Chinner <dchinner@redhat.com>,
-	Jan Kara <jack@suse.cz>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.4 41/56] bdi: Fix oops in wb_workfn()
-Date: Mon, 14 May 2018 08:48:46 +0200
-Message-Id: <20180514064758.581040850@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
+	Pavel Emelyanov <xemul@parallels.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 40/56] tcp: fix TCP_REPAIR_QUEUE bound checking
+Date: Mon, 14 May 2018 08:48:45 +0200
+Message-Id: <20180514064758.515820440@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421358029134796?=
-X-GMAIL-MSGID: =?utf-8?q?1600421358029134796?=
+X-GMAIL-THRID: =?utf-8?q?1600421256400782370?=
+X-GMAIL-MSGID: =?utf-8?q?1600421355399474212?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,50 +53,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Eric Dumazet <edumazet@google.com>
 
-commit b8b784958eccbf8f51ebeee65282ca3fd59ea391 upstream.
+commit bf2acc943a45d2b2e8a9f1a5ddff6b6e43cc69d9 upstream.
 
-Syzbot has reported that it can hit a NULL pointer dereference in
-wb_workfn() due to wb->bdi->dev being NULL. This indicates that
-wb_workfn() was called for an already unregistered bdi which should not
-happen as wb_shutdown() called from bdi_unregister() should make sure
-all pending writeback works are completed before bdi is unregistered.
-Except that wb_workfn() itself can requeue the work with:
+syzbot is able to produce a nasty WARN_ON() in tcp_verify_left_out()
+with following C-repro :
 
-	mod_delayed_work(bdi_wq, &wb->dwork, 0);
+socket(PF_INET, SOCK_STREAM, IPPROTO_IP) = 3
+setsockopt(3, SOL_TCP, TCP_REPAIR, [1], 4) = 0
+setsockopt(3, SOL_TCP, TCP_REPAIR_QUEUE, [-1], 4) = 0
+bind(3, {sa_family=AF_INET, sin_port=htons(20002), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
+sendto(3, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
+	1242, MSG_FASTOPEN, {sa_family=AF_INET, sin_port=htons(20002), sin_addr=inet_addr("127.0.0.1")}, 16) = 1242
+setsockopt(3, SOL_TCP, TCP_REPAIR_WINDOW, "\4\0\0@+\205\0\0\377\377\0\0\377\377\377\177\0\0\0\0", 20) = 0
+writev(3, [{"\270", 1}], 1)             = 1
+setsockopt(3, SOL_TCP, TCP_REPAIR_OPTIONS, "\10\0\0\0\0\0\0\0\0\0\0\0|\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 386) = 0
+writev(3, [{"\210v\r[\226\320t\231qwQ\204\264l\254\t\1\20\245\214p\350H\223\254;\\\37\345\307p$"..., 3144}], 1) = 3144
 
-and if this happens while wb_shutdown() is waiting in:
+The 3rd system call looks odd :
+setsockopt(3, SOL_TCP, TCP_REPAIR_QUEUE, [-1], 4) = 0
 
-	flush_delayed_work(&wb->dwork);
+This patch makes sure bound checking is using an unsigned compare.
 
-the dwork can get executed after wb_shutdown() has finished and
-bdi_unregister() has cleared wb->bdi->dev.
-
-Make wb_workfn() use wakeup_wb() for requeueing the work which takes all
-the necessary precautions against racing with bdi unregistration.
-
-CC: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-CC: Tejun Heo <tj@kernel.org>
-Fixes: 839a8e8660b6777e7fe4e80af1a048aebe2b5977
-Reported-by: syzbot <syzbot+9873874c735f2892e7e9@syzkaller.appspotmail.com>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: ee9952831cfd ("tcp: Initial repair mode")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Pavel Emelyanov <xemul@parallels.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fs-writeback.c |    2 +-
+ net/ipv4/tcp.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1906,7 +1906,7 @@ void wb_workfn(struct work_struct *work)
- 	}
- 
- 	if (!list_empty(&wb->work_list))
--		mod_delayed_work(bdi_wq, &wb->dwork, 0);
-+		wb_wakeup(wb);
- 	else if (wb_has_dirty_io(wb) && dirty_writeback_interval)
- 		wb_wakeup_delayed(wb);
- 
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2450,7 +2450,7 @@ static int do_tcp_setsockopt(struct sock
+ 	case TCP_REPAIR_QUEUE:
+ 		if (!tp->repair)
+ 			err = -EPERM;
+-		else if (val < TCP_QUEUES_NR)
++		else if ((unsigned int)val < TCP_QUEUES_NR)
+ 			tp->repair_queue = val;
+ 		else
+ 			err = -EINVAL;
