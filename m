@@ -1,151 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752536AbeENIKE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:10:04 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:32830 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752276AbeENIHU (ORCPT
+        id S1752540AbeENIKR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:10:17 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:51762 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751853AbeENIKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:07:20 -0400
-X-Google-Smtp-Source: AB8JxZoGzgurVAjNs1Y47qc7W/RY/+hNVXjnxCHMhX9Xnjy3+ZG2UR2YEqL3MUeFahZAFjKFVx+C6A==
-From: Linus Walleij <linus.walleij@linaro.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 14/19 v3] regulator: core: Only support passing enable GPIO descriptors
-Date: Mon, 14 May 2018 10:06:35 +0200
-Message-Id: <20180514080640.12515-15-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180514080640.12515-1-linus.walleij@linaro.org>
-References: <20180514080640.12515-1-linus.walleij@linaro.org>
+        Mon, 14 May 2018 04:10:13 -0400
+X-Google-Smtp-Source: AB8JxZrOOlMfr8Z1LScDxP+jsnZtMKlYBs0SQrafqoIwv4Asn2WsFbcNDnhu+dxaSqlu5LRmIG6xuQ==
+Date: Mon, 14 May 2018 10:10:09 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Jiri Slaby <jslaby@suse.cz>
+Cc: mingo@redhat.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH -resend 00/27] New macros for assembler symbols
+Message-ID: <20180514081009.GC6607@gmail.com>
+References: <20180510080644.19752-1-jslaby@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510080644.19752-1-jslaby@suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we changed all providers to pass descriptors into the core
-for enable GPIOs instead of a global GPIO number, delete the support
-for passing GPIO numbers in, and we get a cleanup and size reduction
-in the core, and from a GPIO point of view we use the modern, cleaner
-interface.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v2->v3:
-- Resending.
-ChangeLog v1->v2:
-- Rebase the patch on the other changes.
----
- drivers/regulator/core.c         | 32 ++++++--------------------------
- include/linux/regulator/driver.h | 10 +---------
- 2 files changed, 7 insertions(+), 35 deletions(-)
+* Jiri Slaby <jslaby@suse.cz> wrote:
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index d4803460a557..8d56f9b906b0 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -23,7 +23,6 @@
- #include <linux/mutex.h>
- #include <linux/suspend.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
- #include <linux/gpio/consumer.h>
- #include <linux/of.h>
- #include <linux/regmap.h>
-@@ -1935,35 +1934,19 @@ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
- {
- 	struct regulator_enable_gpio *pin;
- 	struct gpio_desc *gpiod;
--	int ret;
- 
--	if (config->ena_gpiod)
--		gpiod = config->ena_gpiod;
--	else
--		gpiod = gpio_to_desc(config->ena_gpio);
-+	gpiod = config->ena_gpiod;
- 
- 	list_for_each_entry(pin, &regulator_ena_gpio_list, list) {
- 		if (pin->gpiod == gpiod) {
--			rdev_dbg(rdev, "GPIO %d is already used\n",
--				config->ena_gpio);
-+			rdev_dbg(rdev, "GPIO is already used\n");
- 			goto update_ena_gpio_to_rdev;
- 		}
- 	}
- 
--	if (!config->ena_gpiod) {
--		ret = gpio_request_one(config->ena_gpio,
--				       GPIOF_DIR_OUT | config->ena_gpio_flags,
--				       rdev_get_name(rdev));
--		if (ret)
--			return ret;
--	}
--
- 	pin = kzalloc(sizeof(struct regulator_enable_gpio), GFP_KERNEL);
--	if (pin == NULL) {
--		if (!config->ena_gpiod)
--			gpio_free(config->ena_gpio);
-+	if (pin == NULL)
- 		return -ENOMEM;
--	}
- 
- 	pin->gpiod = gpiod;
- 	pin->ena_gpio_invert = config->ena_gpio_invert;
-@@ -1987,7 +1970,6 @@ static void regulator_ena_gpio_free(struct regulator_dev *rdev)
- 		if (pin->gpiod == rdev->ena_pin->gpiod) {
- 			if (pin->request_count <= 1) {
- 				pin->request_count = 0;
--				gpiod_put(pin->gpiod);
- 				list_del(&pin->list);
- 				kfree(pin);
- 				rdev->ena_pin = NULL;
-@@ -4160,15 +4142,13 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 			goto clean;
- 	}
- 
--	if (config->ena_gpiod ||
--	    ((config->ena_gpio || config->ena_gpio_initialized) &&
--	     gpio_is_valid(config->ena_gpio))) {
-+	if (config->ena_gpiod) {
- 		mutex_lock(&regulator_list_mutex);
- 		ret = regulator_ena_gpio_request(rdev, config);
- 		mutex_unlock(&regulator_list_mutex);
- 		if (ret != 0) {
--			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
--				 config->ena_gpio, ret);
-+			rdev_err(rdev, "Failed to request enable GPIO: %d\n",
-+				 ret);
- 			goto clean;
- 		}
- 	}
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 4fc96cb8e5d7..8900c230c899 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -384,13 +384,8 @@ struct regulator_desc {
-  *           NULL).
-  * @regmap: regmap to use for core regmap helpers if dev_get_regmap() is
-  *          insufficient.
-- * @ena_gpio_initialized: GPIO controlling regulator enable was properly
-- *                        initialized, meaning that >= 0 is a valid gpio
-- *                        identifier and < 0 is a non existent gpio.
-- * @ena_gpio: GPIO controlling regulator enable.
-- * @ena_gpiod: GPIO descriptor controlling regulator enable.
-+ * @ena_gpiod: GPIO controlling regulator enable.
-  * @ena_gpio_invert: Sense for GPIO enable control.
-- * @ena_gpio_flags: Flags to use when calling gpio_request_one()
-  */
- struct regulator_config {
- 	struct device *dev;
-@@ -399,11 +394,8 @@ struct regulator_config {
- 	struct device_node *of_node;
- 	struct regmap *regmap;
- 
--	bool ena_gpio_initialized;
--	int ena_gpio;
- 	struct gpio_desc *ena_gpiod;
- 	unsigned int ena_gpio_invert:1;
--	unsigned int ena_gpio_flags;
- };
- 
- /*
--- 
-2.17.0
+> This series introduces new macros for assembly as was discussed [1].
+> The macros are introduced in the first patch of the series. The rest
+> of patches start using these new macros in x86, converting *all* uses
+> of the old macros to the new ones throughout the last patch. With
+> every last user of some old macro, the macro is immediatelly made
+> forbidden for x86.
+> 
+> When this settles down, conversion of other architectures can be done
+> too.
+> 
+> For introduction, documentation, use and examples, please see
+> Documentation/asm-annotations.rst from the first patch of the series.
+> 
+> [1] https://lkml.org/lkml/2017/3/1/742
+> 
+> Jiri Slaby (27):
+>   linkage: new macros for assembler symbols
+>   x86: assembly, use SYM_DATA for data
+>   x86: assembly, annotate relocate_kernel
+>   x86: entry, annotate THUNKs
+>   x86: assembly, annotate local pseudo-functions
+>   x86: crypto, annotate local functions
+>   x86: boot, annotate local functions
+>   x86: assembly, annotate aliases
+>   x86: entry, annotate interrupt symbols properly
+>   x86: head, annotate data appropriatelly
+>   x86: boot, annotate data appropriatelly
+>   x86: um, annotate data appropriatelly
+>   x86: xen-pvh, annotate data appropriatelly
+>   x86: purgatory, start using annotations
+>   x86: assembly, do not annotate functions by GLOBAL
+>   x86: assembly, use SYM_CODE_INNER_LABEL instead of GLOBAL
+>   x86: realmode, use SYM_DATA_* instead of GLOBAL
+>   x86: assembly, remove GLOBAL macro
+>   x86: assembly, make some functions local
+>   x86: ftrace, mark function_hook as function
+>   x86_64: assembly, add ENDs to some functions and relabel with SYM_CODE_*
+>   x86_64: assembly, change all ENTRY+END to SYM_CODE_*
+>   x86_64: assembly, change all ENTRY+ENDPROC to SYM_FUNC_*
+>   x86_32: assembly, add ENDs to some functions and relabel with SYM_CODE_*
+>   x86_32: assembly, change all ENTRY+END to SYM_CODE_*
+>   x86_32: assembly, change all ENTRY+ENDPROC to SYM_FUNC_*
+>   x86: assembly, replace WEAK uses
+
+So since this is going to be a lot of commits I'd rather not edit every title, but 
+every single patch you sent has a non-standard title that looks totally out of 
+place if you look at existing commits to those same files.
+
+For example:
+
+>   x86: boot, annotate local functions
+
+Modifies files whose existing commit title format to be:
+
+974f221c84b0: x86/boot: Move compressed kernel to the end of the decompression buffer
+c04028813221: x86/boot: Clarify purpose of functions in misc.c
+
+So could you please use the proper x86 titles?
+
+In fact I'd suggest using the same subsystem identifier for most patches, i.e.:
+
+   x86/asm: Annotate xen-pvh symbols ....
+
+because these are really mostly assembly code annotations.
+
+Thanks,
+
+	Ingo
