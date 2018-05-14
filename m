@@ -1,42 +1,38 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrmnRLQ63ctuZRVbyaKcig5mfiC90l0HvlYJwZvexBGRupLQr8oEeDrVGtzB+jxSc5z50E2
-ARC-Seal: i=1; a=rsa-sha256; t=1526280854; cv=none;
+X-Google-Smtp-Source: AB8JxZrdJOkNEdrFGSLoAm9UHgH25erXv/TzwMyC28r5zNYuOUmJOFOXEh3nfJNB9AH9XjSAj7pf
+ARC-Seal: i=1; a=rsa-sha256; t=1526280851; cv=none;
         d=google.com; s=arc-20160816;
-        b=QAX68hq0wwi/ss14e7X4irEU7D+BsLjXHdvfHKeeh1K7AH7f3P0EcNG10tXdYGbPth
-         ON41XQN433zvv5AGEIG1RDyg0EgoVEk9Wx7ZW8MaXTAE2YfLeokaMJEXFj4BCVaiVt3z
-         +SDLjNV4fmSmpCNkwdcksbQyZJOYng5TXqxdAh1ufIvnYKYQQx2KMX6vmkVWCI45rqIB
-         1A6jLrSeru/Rqhtu78CrQpxXEDZadDz6fXnsDgGjgAaKI1n/Lk1t1sItWyvbxlaHBRVd
-         OjdljiTpEvLSbFN7BxGYSFZawnh58/rBqdoJSQNdH0WPUr6EmspJeffI7iiDwTXP/ebG
-         VtqQ==
+        b=U1pqQyOqaZC7XOXI3yURs5XZ30WdEdnIaNaU6D1cuUkUqKbhU1nRVc0LYqEQ5SHcuz
+         iAG8R6ebSIp/99QBYKWleVB4yyoFESOZE+tfHV2Ynb2h0CB76rMBoIRDmEcNq7ejbhYl
+         ppG0jdAJtDQdYo33MS/IuuDEKUcQSWfW4xoB+Z/kv52EaxcmA6cyVq75wdZCA3yBXMjJ
+         VjAhvMor4cD5LVJPfeupRWRXRIfJ+D/C8JXZCKKmGwm/d7+5wjA8x++VBZD2zVIig9mH
+         BO/OMpHrjJs5+bJvKQBfvm4WClzCD/PBax8h0oZGQNx1nyYbuY4yAZTWnRaw53xUlfnx
+         eXNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=oob/RSUTJjkXRsLbABs7WaHQ7224e6Xfg2pRXPJEmbI=;
-        b=zBvt5Qxkt1fvhKuQD8JJj5FAgzWKmKfmXgf1OXCBIboSZ3vas6gZwI32TIN7ugBfHl
-         UYi5bTMOJGBRM84WD6Xpwui75hhPLd7hHjqDhBf/WUk7A6ADLmSCX8B5QA/hRAZE8GHY
-         rzVgXRHsITSs5qDmlG0hIgq2065BiFyOnpFy5KYAESZuVzm3US/gmyL78arC0tX0uXRs
-         k3+ERY3rY7SRqUMj6GAf74d5isabQYx3vVg6jILTE2HfBjHGM8ZFSH9wkcrq1joP7gUc
-         udV2XrUT6LhY2Ph6n+MpIdHq9ndWthuEJaZTqjcGhj/8LncSRnkArz25RwAX/z1lVwL2
-         lM0Q==
+        bh=FTCSLAr85VEbIlXBpj6PdYaLZnCKf9WnJ8KfuiHl0Uk=;
+        b=XwaJ4X7J8UpdOgOgywdrKqjt7Mr6lGRQrujzuxp6/XjYA8Kg9+p4bqVbNzXLC8GwyR
+         R+5cdg/oWRUvJFDssgmJqR3Zxan80tYnnXkzj3IWSJpqNHpFTA+ZozdeTKNIGRacIL3R
+         YTi6eoXYqFrxOLGdqXauXBbm6p2RftLxgWS+RKg+FHKABDMn4TEM48SIN7F5a56kqOrL
+         t4ooXiVADnWO+loeMuL2ebE70+a/E3sCBpsHKTPRBBExsG0Gxe7JMbnhOMSeA3sAcWpK
+         RleZ7nizmPZzHZYOjsHYdZruzIh8SLjPGi8yorpb0uZR0tqX2fgewgjwSa66EeBd67Qs
+         qwBQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=LMRZqqip;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ACuGJ1Fi;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=LMRZqqip;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ACuGJ1Fi;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florent Flament <contact@florentflament.com>,
-	Pavel Petrovic <ppetrovic@acm.org>,
-	"=?UTF-8?q?S=C3=A9rgio=20M . =20Basto?=" <sergio@serjux.com>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.9 25/36] drm/i915: Fix drm:intel_enable_lvds ERROR message in kernel log
-Date: Mon, 14 May 2018 08:48:59 +0200
-Message-Id: <20180514064806.204410220@linuxfoundation.org>
+	Boris Brezillon <boris.brezillon@bootlin.com>,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH 4.9 24/36] drm/vc4: Fix scaling of uni-planar formats
+Date: Mon, 14 May 2018 08:48:58 +0200
+Message-Id: <20180514064806.152478320@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064804.252823817@linuxfoundation.org>
 References: <20180514064804.252823817@linuxfoundation.org>
@@ -46,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421473062509095?=
-X-GMAIL-MSGID: =?utf-8?q?1600421473062509095?=
+X-GMAIL-THRID: =?utf-8?q?1600421470287342593?=
+X-GMAIL-MSGID: =?utf-8?q?1600421470287342593?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,58 +51,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florent Flament <contact@florentflament.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-commit e8f48f96db7e482995743f461b3e8a5c1a102533 upstream.
+commit 9a0e9802217291e54c4dd1fc5462f189a4be14ec upstream.
 
-Fix `[drm:intel_enable_lvds] *ERROR* timed out waiting for panel to
-power on` in kernel log at boot time.
+When using uni-planar formats (like RGB), the scaling parameters are
+stored in plane 0, not plane 1.
 
-Toshiba Satellite Z930 laptops needs between 1 and 2 seconds to power
-on its screen during Intel i915 DRM initialization. This currently
-results in a `[drm:intel_enable_lvds] *ERROR* timed out waiting for
-panel to power on` message appearing in the kernel log during boot
-time and when stopping the machine.
-
-This change increases the timeout of the `intel_enable_lvds` function
-from 1 to 5 seconds, letting enough time for the Satellite 930 LCD
-screen to power on, and suppressing the error message from the kernel
-log.
-
-This patch has been successfully tested on Linux 4.14 running on a
-Toshiba Satellite Z930.
-
-[vsyrjala: bump the timeout from 2 to 5 seconds to match the DP
- code and properly cover the max hw timeout of ~4 seconds, and
- drop the comment about the specific machine since this is not
- a particulary surprising issue, nor specific to that one machine]
-
-Signed-off-by: Florent Flament <contact@florentflament.com>
+Fixes: fc04023fafec ("drm/vc4: Add support for YUV planes.")
 Cc: stable@vger.kernel.org
-Cc: Pavel Petrovic <ppetrovic@acm.org>
-Cc: Sérgio M. Basto <sergio@serjux.com>
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=103414
-References: https://bugzilla.kernel.org/show_bug.cgi?id=57591
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180419160700.19828-1-ville.syrjala@linux.intel.com
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-(cherry picked from commit 280b54ade5914d3b4abe4f0ebe083ddbd4603246)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180507121303.5610-1-boris.brezillon@bootlin.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_lvds.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/vc4/vc4_plane.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_lvds.c
-+++ b/drivers/gpu/drm/i915/intel_lvds.c
-@@ -321,7 +321,8 @@ static void intel_enable_lvds(struct int
- 
- 	I915_WRITE(PP_CONTROL(0), I915_READ(PP_CONTROL(0)) | PANEL_POWER_ON);
- 	POSTING_READ(lvds_encoder->reg);
--	if (intel_wait_for_register(dev_priv, PP_STATUS(0), PP_ON, PP_ON, 1000))
-+
-+	if (intel_wait_for_register(dev_priv, PP_STATUS(0), PP_ON, PP_ON, 5000))
- 		DRM_ERROR("timed out waiting for panel to power on\n");
- 
- 	intel_panel_enable_backlight(intel_connector);
+--- a/drivers/gpu/drm/vc4/vc4_plane.c
++++ b/drivers/gpu/drm/vc4/vc4_plane.c
+@@ -533,7 +533,7 @@ static int vc4_plane_mode_set(struct drm
+ 	 * the scl fields here.
+ 	 */
+ 	if (num_planes == 1) {
+-		scl0 = vc4_get_scl_field(state, 1);
++		scl0 = vc4_get_scl_field(state, 0);
+ 		scl1 = scl0;
+ 	} else {
+ 		scl0 = vc4_get_scl_field(state, 1);
