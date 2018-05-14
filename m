@@ -1,89 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752135AbeENUbz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 16:31:55 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50632 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751865AbeENUby (ORCPT
+        id S1752045AbeENUds (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 16:33:48 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:33847 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751865AbeENUdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 16:31:54 -0400
-Date: Mon, 14 May 2018 13:33:20 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com
-Subject: Re: [PATCH RFC 8/8] rcu: Fix cpustart tracepoint gp_seq number
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180514031541.67247-1-joel@joelfernandes.org>
- <20180514031541.67247-9-joel@joelfernandes.org>
+        Mon, 14 May 2018 16:33:46 -0400
+X-Google-Smtp-Source: AB8JxZqjBB6/krZneC+KOG5NpVrxHWOuBpa3w+1JBXj5c8EqXBXDOJnBjK6CiyugC92cX1AZayVJa8qkQYnup+04E+M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514031541.67247-9-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18051420-2213-0000-0000-000002A53301
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009025; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032323; UDB=6.00527748; IPR=6.00811454;
- MB=3.00021111; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 20:31:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051420-2214-0000-0000-00005A1E4D69
-Message-Id: <20180514203320.GK26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805140206
+In-Reply-To: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
+References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 May 2018 22:33:44 +0200
+X-Google-Sender-Auth: ogf1LNZWLDT96M4A8yBEvp1i3Ws
+Message-ID: <CAMuHMdXdDZdbrpLTogyR=djwtQYMf1dgAA_z+8HaFZBG6R+e6g@mail.gmail.com>
+Subject: Re: [PATCH 0/3] arm64: dts: Draak: Enable HDMI input and VIN4
+To: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 08:15:41PM -0700, Joel Fernandes (Google) wrote:
-> cpustart shows a stale gp_seq. This is because rdp->gp_seq is updated
-> only at the end of the __note_gp_changes function. For this reason, use
-> rnp->gp_seq instead. I believe we can't update rdp->gp_seq too early so
-> lets just use the gp_seq from rnp instead.
-> 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Hi Jacopo,
 
-I took this one with the usual commit-log update.  Please take a look!
+On Fri, May 11, 2018 at 11:59 AM, Jacopo Mondi
+<jacopo+renesas@jmondi.org> wrote:
+>    this series enables HDMI input and VIN4 on R-Car D3 Draak board.
+>
+> The Draak board has an HDMI input connected to an HDMI decoder that feeds
+> the VIN capture interface through its parallel video interface.
+>
+> The series requires the just sent:
+> [PATCH 0/5] rcar-vin: Add support for digital input on Gen3
+>
+> and enables image capture operations on D3 Draak board.
+>
+> The series has been developed on top of media-master tree but applies cleanly
+> on top of latest renesas-driver.
+>
+> Geert: would you like a topic branch for this series to be included in
+> renesas-drivers?
 
-							Thanx, Paul
+It seems patch 2 has been applied by Simon already, but there is some
+discussion pending on patch 3?
 
-------------------------------------------------------------------------
+> Patches for testing are available at:
+> git://jmondi.org/linux d3/media-master/driver
+> git://jmondi.org/linux d3/media-master/dts
+> git://jmondi.org/linux d3/media-master/test
+> git://jmondi.org/vin-tests d3
+>
+> Thanks
+>     j
+>
+> Jacopo Mondi (3):
+>   dt-bindings: media: rcar-vin: Add R8A77995 support
+>   arm64: dts: renesas: r8a77995: Add VIN4
+>   arm64: dts: renesas: draak: Describe HDMI input
+>
+>  .../devicetree/bindings/media/rcar_vin.txt         |  1 +
+>  arch/arm64/boot/dts/renesas/r8a77995-draak.dts     | 68 ++++++++++++++++++++++
+>  arch/arm64/boot/dts/renesas/r8a77995.dtsi          | 11 ++++
+>  3 files changed, 80 insertions(+)
 
-commit 3e14c6a5225d201776edd9a96d9c9b4435855446
-Author: Joel Fernandes (Google) <joel@joelfernandes.org>
-Date:   Sun May 13 20:15:41 2018 -0700
+Gr{oetje,eeting}s,
 
-    rcu: Fix cpustart tracepoint gp_seq number
-    
-    The "cpustart" trace event shows a stale gp_seq. This is because it uses
-    rdp->gp_seq, which is updated only at the end of the __note_gp_changes()
-    function. This commit therefore instead uses rnp->gp_seq.
-    
-    An alternative fix would be to update rdp->gp_seq earlier, but this would
-    break RCU's detection of the beginning of a new-to-this-CPU grace period.
-    
-    Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+                        Geert
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index de6447dd73de..23b855f5c5cb 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1796,7 +1796,7 @@ static bool __note_gp_changes(struct rcu_state *rsp, struct rcu_node *rnp,
- 		 * set up to detect a quiescent state, otherwise don't
- 		 * go looking for one.
- 		 */
--		trace_rcu_grace_period(rsp->name, rdp->gp_seq, TPS("cpustart"));
-+		trace_rcu_grace_period(rsp->name, rnp->gp_seq, TPS("cpustart"));
- 		need_gp = !!(rnp->qsmask & rdp->grpmask);
- 		rdp->cpu_no_qs.b.norm = need_gp;
- 		rdp->rcu_qs_ctr_snap = __this_cpu_read(rcu_dynticks.rcu_qs_ctr);
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
