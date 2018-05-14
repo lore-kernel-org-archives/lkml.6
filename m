@@ -1,39 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrL1U7JMVTT9iIj3M/lK8Ey3jFZrLvnXR9Wt3jorqFl6qemvb2Hqhw52NkwvGtCtiMc2FnM
-ARC-Seal: i=1; a=rsa-sha256; t=1526281178; cv=none;
+X-Google-Smtp-Source: AB8JxZoIa88hVPDdknLWn3c9dgJ3Unu91svPNqPirjYVapGfQPrRKJM5y3N34Cnhpkn7hj+q11g/
+ARC-Seal: i=1; a=rsa-sha256; t=1526281175; cv=none;
         d=google.com; s=arc-20160816;
-        b=VU+xbroVVqRV4KyqTLbX76ftVjLzeu1MqHNyPWoPVJ5rwubWBSQNVfFQJIOTxZqcoc
-         Ln68XVIe8DSjkkYbT+0WNIx23mZ9/yDrg+Bmt+qiIknvhOLnqzXUNIm7EuzOVSgWmNfO
-         qOYXtBj9uxNaEfrsFUGiIhCH86QJ54mrbzjDX6T14JsWANRfLV5vYYKDkMGeYTiew4V7
-         EawWC5XJX5uMNkQJ96jlTASRvQz9WxdMpvYgqZxp9M1P5Eh0bzhRVa/NdQTw77kWkPEz
-         TbzSKx4T+QQzwTWkNFPi7zBKGsrJzEm0o1VocdA0BGwffaycp3Opyt123ZhO/sQpqRp5
-         KeBA==
+        b=Q+yRCj9aF/I9/Lnc88Z0XQvTw8+V95/azpJJMZ9o2GhRmJ3a4PGajd8N+BjxzTFhFo
+         BHLNagksk5zF1VMfhr3KLtxvRuDA9myU6nrpeDjnDKFi+wSBc/O8TF9jqOqau07iQf0a
+         hV/3dr6+SQZDkbJwj72RzHBEK+77tx00u4GrrbPcSBVJU+bankYFsG4llpjHRvGMbVyj
+         ubAZ4bcOJ9HJK2azMd4rqF2hVQJDEJDAlgEZVDJuUWz2p5QbvIMw9ydIWjyJM7SAilLK
+         FO+7ZZhhV+u90tbUPaTtCsRGfUBIL1I3JYevyGT0AP+h5GmBWv4eK26nMo0onaYkWwfQ
+         pmZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=/FayC7eT9zsv2eMsmIb9yQS/plCVP4QEQKqx4l6Rfco=;
-        b=CMFqE3JBm0Q6NWa09FyzwKUOaJfCwTKRTIj5Ya7b0fhL56ZG/wQ9sg+a8vqcqHu6sO
-         lYEZ4QtpKw8Q/BqIXeqPHJ4yYPsRtdqQ1vcHdk9QeQ49uMaKBZqKbrLhgK4Y7tg2oJB9
-         r3pXY3eZytLOsI1p/EFSdXG8zos3I+VBY4IkDB198rAkQ6ii+JJscl7ouwzulwryHRx/
-         RRxTTS3VJHcdLC9dR2cjCnnYu7zBLN98EMhm7XEuekQVjXMVpkCjdwpB8FRzD7CqaExw
-         u1fFxV+7GCtr9CCtfw3ub/ZiVqYYJpverRW74BkSx54+kg0jVejNmUSmayyNKA+cdhW2
-         2n8g==
+        bh=8VEGeX9xyfDTXy9WlT8ef209rP8Qb2BUSY9k1NkESAA=;
+        b=yQIGgnv/0Pv8pFZI3QD6C75tgka56As0fNnmVIf1uY2OU49RaqySZTPwQz76+PeUHf
+         yfZogwOXhjHgO2WJWNtLxwBR9wjAqIqhPNT/+DOdBxHUJuJKkn8IZRlrPTVxBb5rbfn0
+         XvbWb1Vbc+cL6H76bwHQOFtDulWdiF2v3Lltu9GkwhMBOpGU/nkZV2u2XvSRblL3PozL
+         6F3ESmMcXlYIQ08OBceUVKNHfEOaKY7rWJfM5Z1ahgIKx7CcXbtmZq2T6Yw3hk2c3SUS
+         Oi7ueVCGbWtXWlS08WYUSh9HmqYp+uuR8nEPhEgWprIUICEwiy4XXKDLogsgP8cYhTcx
+         Lkuw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=q0a4NdGT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=zHC9fUDF;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=q0a4NdGT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=zHC9fUDF;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Lyude Paul <lyude@redhat.com>,
-	Karol Herbst <kherbst@redhat.com>,
-	Ben Skeggs <bskeggs@redhat.com>
-Subject: [PATCH 4.16 46/72] drm/nouveau: Fix deadlock in nv50_mstm_register_connector()
-Date: Mon, 14 May 2018 08:49:03 +0200
-Message-Id: <20180514064825.155592631@linuxfoundation.org>
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH 4.16 45/72] drm/i915: Adjust eDPs logical vco in a reliable place.
+Date: Mon, 14 May 2018 08:49:02 +0200
+Message-Id: <20180514064825.108511394@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421616584396678?=
-X-GMAIL-MSGID: =?utf-8?q?1600421812717466697?=
+X-GMAIL-THRID: =?utf-8?q?1600421810433517549?=
+X-GMAIL-MSGID: =?utf-8?q?1600421810433517549?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,213 +52,138 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-commit 352672db857290ab5b0e2b6a99c414f92bee024c upstream.
+commit 9d219554d9bf59875b4e571a0392d620e8954879 upstream.
 
-Currently; we're grabbing all of the modesetting locks before adding MST
-connectors to fbdev. This isn't actually necessary, and causes a
-deadlock as well:
+On intel_dp_compute_config() we were calculating the needed vco
+for eDP on gen9 and we stashing it in
+intel_atomic_state.cdclk.logical.vco
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.17.0-rc3Lyude-Test+ #1 Tainted: G           O
-------------------------------------------------------
-kworker/1:0/18 is trying to acquire lock:
-00000000c832f62d (&helper->lock){+.+.}, at: drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
+However few moments later on intel_modeset_checks() we fully
+replace entire intel_atomic_state.cdclk.logical with
+dev_priv->cdclk.logical fully overwriting the logical desired
+vco for eDP on gen9.
 
-but task is already holding lock:
-00000000942e28e2 (crtc_ww_class_mutex){+.+.}, at: drm_modeset_backoff+0x8e/0x1c0 [drm]
+So, with wrong VCO value we end up with wrong desired cdclk, but
+also it will raise a lot of WARNs: On gen9, when we read
+CDCLK_CTL to verify if we configured properly the desired
+frequency the CD Frequency Select bits [27:26] == 10b can mean
+337.5 or 308.57 MHz depending on the VCO. So if we have wrong
+VCO value stashed we will believe the frequency selection didn't
+stick and start to raise WARNs of cdclk mismatch.
 
-which lock already depends on the new lock.
+[   42.857519] [drm:intel_dump_cdclk_state [i915]] Changing CDCLK to 308571 kHz, VCO 8640000 kHz, ref 24000 kHz, bypass 24000 kHz, voltage level 0
+[   42.897269] cdclk state doesn't match!
+[   42.901052] WARNING: CPU: 5 PID: 1116 at drivers/gpu/drm/i915/intel_cdclk.c:2084 intel_set_cdclk+0x5d/0x110 [i915]
+[   42.938004] RIP: 0010:intel_set_cdclk+0x5d/0x110 [i915]
+[   43.155253] WARNING: CPU: 5 PID: 1116 at drivers/gpu/drm/i915/intel_cdclk.c:2084 intel_set_cdclk+0x5d/0x110 [i915]
+[   43.170277] [drm:intel_dump_cdclk_state [i915]] [hw state] 337500 kHz, VCO 8100000 kHz, ref 24000 kHz, bypass 24000 kHz, voltage level 0
+[   43.182566] [drm:intel_dump_cdclk_state [i915]] [sw state] 308571 kHz, VCO 8640000 kHz, ref 24000 kHz, bypass 24000 kHz, voltage level 0
 
-the existing dependency chain (in reverse order) is:
+v2: Move the entire eDP's vco logical adjustment to inside
+    the skl_modeset_calc_cdclk as suggested by Ville.
 
--> #3 (crtc_ww_class_mutex){+.+.}:
-       ww_mutex_lock+0x43/0x80
-       drm_modeset_lock+0x71/0x130 [drm]
-       drm_helper_probe_single_connector_modes+0x7d/0x6b0 [drm_kms_helper]
-       drm_setup_crtcs+0x15e/0xc90 [drm_kms_helper]
-       __drm_fb_helper_initial_config_and_unlock+0x29/0x480 [drm_kms_helper]
-       nouveau_fbcon_init+0x138/0x1a0 [nouveau]
-       nouveau_drm_load+0x173/0x7e0 [nouveau]
-       drm_dev_register+0x134/0x1c0 [drm]
-       drm_get_pci_dev+0x8e/0x160 [drm]
-       nouveau_drm_probe+0x1a9/0x230 [nouveau]
-       pci_device_probe+0xcd/0x150
-       driver_probe_device+0x30b/0x480
-       __driver_attach+0xbc/0xe0
-       bus_for_each_dev+0x67/0x90
-       bus_add_driver+0x164/0x260
-       driver_register+0x57/0xc0
-       do_one_initcall+0x4d/0x323
-       do_init_module+0x5b/0x1f8
-       load_module+0x20e5/0x2ac0
-       __do_sys_finit_module+0xb7/0xd0
-       do_syscall_64+0x60/0x1b0
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #2 (crtc_ww_class_acquire){+.+.}:
-       drm_helper_probe_single_connector_modes+0x58/0x6b0 [drm_kms_helper]
-       drm_setup_crtcs+0x15e/0xc90 [drm_kms_helper]
-       __drm_fb_helper_initial_config_and_unlock+0x29/0x480 [drm_kms_helper]
-       nouveau_fbcon_init+0x138/0x1a0 [nouveau]
-       nouveau_drm_load+0x173/0x7e0 [nouveau]
-       drm_dev_register+0x134/0x1c0 [drm]
-       drm_get_pci_dev+0x8e/0x160 [drm]
-       nouveau_drm_probe+0x1a9/0x230 [nouveau]
-       pci_device_probe+0xcd/0x150
-       driver_probe_device+0x30b/0x480
-       __driver_attach+0xbc/0xe0
-       bus_for_each_dev+0x67/0x90
-       bus_add_driver+0x164/0x260
-       driver_register+0x57/0xc0
-       do_one_initcall+0x4d/0x323
-       do_init_module+0x5b/0x1f8
-       load_module+0x20e5/0x2ac0
-       __do_sys_finit_module+0xb7/0xd0
-       do_syscall_64+0x60/0x1b0
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #1 (&dev->mode_config.mutex){+.+.}:
-       drm_setup_crtcs+0x10c/0xc90 [drm_kms_helper]
-       __drm_fb_helper_initial_config_and_unlock+0x29/0x480 [drm_kms_helper]
-       nouveau_fbcon_init+0x138/0x1a0 [nouveau]
-       nouveau_drm_load+0x173/0x7e0 [nouveau]
-       drm_dev_register+0x134/0x1c0 [drm]
-       drm_get_pci_dev+0x8e/0x160 [drm]
-       nouveau_drm_probe+0x1a9/0x230 [nouveau]
-       pci_device_probe+0xcd/0x150
-       driver_probe_device+0x30b/0x480
-       __driver_attach+0xbc/0xe0
-       bus_for_each_dev+0x67/0x90
-       bus_add_driver+0x164/0x260
-       driver_register+0x57/0xc0
-       do_one_initcall+0x4d/0x323
-       do_init_module+0x5b/0x1f8
-       load_module+0x20e5/0x2ac0
-       __do_sys_finit_module+0xb7/0xd0
-       do_syscall_64+0x60/0x1b0
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 (&helper->lock){+.+.}:
-       __mutex_lock+0x70/0x9d0
-       drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
-       nv50_mstm_register_connector+0x2c/0x50 [nouveau]
-       drm_dp_add_port+0x2f5/0x420 [drm_kms_helper]
-       drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
-       drm_dp_add_port+0x33f/0x420 [drm_kms_helper]
-       drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
-       drm_dp_check_and_send_link_address+0x87/0xd0 [drm_kms_helper]
-       drm_dp_mst_link_probe_work+0x4d/0x80 [drm_kms_helper]
-       process_one_work+0x20d/0x650
-       worker_thread+0x3a/0x390
-       kthread+0x11e/0x140
-       ret_from_fork+0x3a/0x50
-
-other info that might help us debug this:
-Chain exists of:
-  &helper->lock --> crtc_ww_class_acquire --> crtc_ww_class_mutex
- Possible unsafe locking scenario:
-       CPU0                    CPU1
-       ----                    ----
-  lock(crtc_ww_class_mutex);
-                               lock(crtc_ww_class_acquire);
-                               lock(crtc_ww_class_mutex);
-  lock(&helper->lock);
-
- *** DEADLOCK ***
-5 locks held by kworker/1:0/18:
- #0: 000000004a05cd50 ((wq_completion)"events_long"){+.+.}, at: process_one_work+0x187/0x650
- #1: 00000000601c11d1 ((work_completion)(&mgr->work)){+.+.}, at: process_one_work+0x187/0x650
- #2: 00000000586ca0df (&dev->mode_config.mutex){+.+.}, at: drm_modeset_lock_all+0x3a/0x1b0 [drm]
- #3: 00000000d3ca0ffa (crtc_ww_class_acquire){+.+.}, at: drm_modeset_lock_all+0x44/0x1b0 [drm]
- #4: 00000000942e28e2 (crtc_ww_class_mutex){+.+.}, at: drm_modeset_backoff+0x8e/0x1c0 [drm]
-
-stack backtrace:
-CPU: 1 PID: 18 Comm: kworker/1:0 Tainted: G           O      4.17.0-rc3Lyude-Test+ #1
-Hardware name: Gateway FX6840/FX6840, BIOS P01-A3         05/17/2010
-Workqueue: events_long drm_dp_mst_link_probe_work [drm_kms_helper]
-Call Trace:
- dump_stack+0x85/0xcb
- print_circular_bug.isra.38+0x1ce/0x1db
- __lock_acquire+0x128f/0x1350
- ? lock_acquire+0x9f/0x200
- ? lock_acquire+0x9f/0x200
- ? __ww_mutex_lock.constprop.13+0x8f/0x1000
- lock_acquire+0x9f/0x200
- ? drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
- ? drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
- __mutex_lock+0x70/0x9d0
- ? drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
- ? ww_mutex_lock+0x43/0x80
- ? _cond_resched+0x15/0x30
- ? ww_mutex_lock+0x43/0x80
- ? drm_modeset_lock+0xb2/0x130 [drm]
- ? drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
- drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
- nv50_mstm_register_connector+0x2c/0x50 [nouveau]
- drm_dp_add_port+0x2f5/0x420 [drm_kms_helper]
- ? mark_held_locks+0x50/0x80
- ? kfree+0xcf/0x2a0
- ? drm_dp_check_mstb_guid+0xd6/0x120 [drm_kms_helper]
- ? trace_hardirqs_on_caller+0xed/0x180
- ? drm_dp_check_mstb_guid+0xd6/0x120 [drm_kms_helper]
- drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
- drm_dp_add_port+0x33f/0x420 [drm_kms_helper]
- ? nouveau_connector_aux_xfer+0x7c/0xb0 [nouveau]
- ? find_held_lock+0x2d/0x90
- ? drm_dp_dpcd_access+0xd9/0xf0 [drm_kms_helper]
- ? __mutex_unlock_slowpath+0x3b/0x280
- ? drm_dp_dpcd_access+0xd9/0xf0 [drm_kms_helper]
- drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
- drm_dp_check_and_send_link_address+0x87/0xd0 [drm_kms_helper]
- drm_dp_mst_link_probe_work+0x4d/0x80 [drm_kms_helper]
- process_one_work+0x20d/0x650
- worker_thread+0x3a/0x390
- ? process_one_work+0x650/0x650
- kthread+0x11e/0x140
- ? kthread_create_worker_on_cpu+0x50/0x50
- ret_from_fork+0x3a/0x50
-
-Taking example from i915, the only time we need to hold any modesetting
-locks is when changing the port on the mstc, and in that case we only
-need to hold the connection mutex.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Karol Herbst <kherbst@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Fixes: bb0f4aab0e76 ("drm/i915: Track full cdclk state for the logical and actual cdclk frequencies")
+Cc: <stable@vger.kernel.org> # v4.12+
+Link: https://patchwork.freedesktop.org/patch/msgid/20180502175255.5344-1-rodrigo.vivi@intel.com
+(cherry picked from commit 3297234a05ab1e90091b0574db4c397ef0e90d5f)
+Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/nv50_display.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/i915/intel_cdclk.c |   41 +++++++++++++++++++++++++++++++++----
+ drivers/gpu/drm/i915/intel_dp.c    |   20 ------------------
+ 2 files changed, 37 insertions(+), 24 deletions(-)
 
---- a/drivers/gpu/drm/nouveau/nv50_display.c
-+++ b/drivers/gpu/drm/nouveau/nv50_display.c
-@@ -3272,10 +3272,11 @@ nv50_mstm_destroy_connector(struct drm_d
+--- a/drivers/gpu/drm/i915/intel_cdclk.c
++++ b/drivers/gpu/drm/i915/intel_cdclk.c
+@@ -2108,9 +2108,44 @@ static int bdw_modeset_calc_cdclk(struct
+ 	return 0;
+ }
  
- 	drm_connector_unregister(&mstc->connector);
- 
--	drm_modeset_lock_all(drm->dev);
- 	drm_fb_helper_remove_one_connector(&drm->fbcon->helper, &mstc->connector);
++static int skl_dpll0_vco(struct intel_atomic_state *intel_state)
++{
++	struct drm_i915_private *dev_priv = to_i915(intel_state->base.dev);
++	struct intel_crtc *crtc;
++	struct intel_crtc_state *crtc_state;
++	int vco, i;
 +
-+	drm_modeset_lock(&drm->dev->mode_config.connection_mutex, NULL);
- 	mstc->port = NULL;
--	drm_modeset_unlock_all(drm->dev);
-+	drm_modeset_unlock(&drm->dev->mode_config.connection_mutex);
- 
- 	drm_connector_unreference(&mstc->connector);
- }
-@@ -3285,9 +3286,7 @@ nv50_mstm_register_connector(struct drm_
++	vco = intel_state->cdclk.logical.vco;
++	if (!vco)
++		vco = dev_priv->skl_preferred_vco_freq;
++
++	for_each_new_intel_crtc_in_state(intel_state, crtc, crtc_state, i) {
++		if (!crtc_state->base.enable)
++			continue;
++
++		if (!intel_crtc_has_type(crtc_state, INTEL_OUTPUT_EDP))
++			continue;
++
++		/*
++		 * DPLL0 VCO may need to be adjusted to get the correct
++		 * clock for eDP. This will affect cdclk as well.
++		 */
++		switch (crtc_state->port_clock / 2) {
++		case 108000:
++		case 216000:
++			vco = 8640000;
++			break;
++		default:
++			vco = 8100000;
++			break;
++		}
++	}
++
++	return vco;
++}
++
+ static int skl_modeset_calc_cdclk(struct drm_atomic_state *state)
  {
- 	struct nouveau_drm *drm = nouveau_drm(connector->dev);
+-	struct drm_i915_private *dev_priv = to_i915(state->dev);
+ 	struct intel_atomic_state *intel_state = to_intel_atomic_state(state);
+ 	int min_cdclk, cdclk, vco;
  
--	drm_modeset_lock_all(drm->dev);
- 	drm_fb_helper_add_one_connector(&drm->fbcon->helper, connector);
--	drm_modeset_unlock_all(drm->dev);
+@@ -2118,9 +2153,7 @@ static int skl_modeset_calc_cdclk(struct
+ 	if (min_cdclk < 0)
+ 		return min_cdclk;
  
- 	drm_connector_register(connector);
- }
+-	vco = intel_state->cdclk.logical.vco;
+-	if (!vco)
+-		vco = dev_priv->skl_preferred_vco_freq;
++	vco = skl_dpll0_vco(intel_state);
+ 
+ 	/*
+ 	 * FIXME should also account for plane ratio
+--- a/drivers/gpu/drm/i915/intel_dp.c
++++ b/drivers/gpu/drm/i915/intel_dp.c
+@@ -1794,26 +1794,6 @@ found:
+ 				reduce_m_n);
+ 	}
+ 
+-	/*
+-	 * DPLL0 VCO may need to be adjusted to get the correct
+-	 * clock for eDP. This will affect cdclk as well.
+-	 */
+-	if (intel_dp_is_edp(intel_dp) && IS_GEN9_BC(dev_priv)) {
+-		int vco;
+-
+-		switch (pipe_config->port_clock / 2) {
+-		case 108000:
+-		case 216000:
+-			vco = 8640000;
+-			break;
+-		default:
+-			vco = 8100000;
+-			break;
+-		}
+-
+-		to_intel_atomic_state(pipe_config->base.state)->cdclk.logical.vco = vco;
+-	}
+-
+ 	if (!HAS_DDI(dev_priv))
+ 		intel_dp_set_clock(encoder, pipe_config);
+ 
