@@ -1,197 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932247AbeENODp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:03:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45158 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753422AbeENODn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:03:43 -0400
-Reply-To: dwalsh@redhat.com
-Subject: Re: [PATCH v2 22/35] vfs: don't open real
-To: Vivek Goyal <vgoyal@redhat.com>, Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org, Paul Moore <pmoore@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-References: <20180507083807.28792-1-mszeredi@redhat.com>
- <20180507083807.28792-23-mszeredi@redhat.com>
- <20180511185430.GE6044@redhat.com> <20180511194248.GF6044@redhat.com>
-From: Daniel Walsh <dwalsh@redhat.com>
-Organization: Red Hat
-Message-ID: <1569d80a-209f-ea51-8658-b471e5b883ce@redhat.com>
-Date: Mon, 14 May 2018 10:03:42 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932307AbeENOFn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:05:43 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50158 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753422AbeENOFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 10:05:41 -0400
+Date: Mon, 14 May 2018 16:05:30 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Danny Milosavljevic <dannym@scratchpost.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Andrea Bondavalli <andrea.bondavalli74@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.xyz>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v14 2/8] ASoC: sun4i-codec: Add Mic1 Boost Volume, Mic2
+ Boost Volume
+Message-ID: <20180514140530.bnedijfm6hvnpyq4@flea>
+References: <20180502210800.1971-1-dannym@scratchpost.org>
+ <20180502210800.1971-3-dannym@scratchpost.org>
+ <20180503143319.4vyh2y5sluatssnv@flea>
+ <20180505090513.7e3f02c2@scratchpost.org>
 MIME-Version: 1.0
-In-Reply-To: <20180511194248.GF6044@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="a6p7tq4lwuvkohwp"
+Content-Disposition: inline
+In-Reply-To: <20180505090513.7e3f02c2@scratchpost.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2018 03:42 PM, Vivek Goyal wrote:
-> On Fri, May 11, 2018 at 02:54:30PM -0400, Vivek Goyal wrote:
->> On Mon, May 07, 2018 at 10:37:54AM +0200, Miklos Szeredi wrote:
->>> Let overlayfs do its thing when opening a file.
->>>
->>> This enables stacking and fixes the corner case when a file is opened for
->>> read, modified through a writable open, and data is read from the read-only
->>> file.  After this patch the read-only open will not return stale data even
->>> in this case.
->> [CC Dan, Steven, Paul, linux-security-module list]
->>
->> Hi Miklos,
->>
->> I was running selinux-testsuite and one of the tests seems to fail. I
->> think this is side effect of installing overlay inode in file->f_inode
->> instead of real underlying inode.
->>
->> Following test is failing.
->>
->> sub test_90_1 {
->>      print "Attempting to enter domain with bad entrypoint, should fail.\n";
->>      $result = system(
->> "runcon -t test_overlay_client_t -l s0:c10,c20 $basedir/container1/merged/badentrypoint >/dev/null 2>&1"
->>      );
->>      ok($result);
->>      return;
->> }
-> I am wondering, shouldn't do_open_execat() have failed. It should have called
-> into inode_permission(MAY_EXEC). And then ovl_inode_permission()
-> will in turn call inode_permission(realinode, MAY_EXEC) with mounter's
-> creds. Shouldn't selinux_inode_permission() have returned that mounter
-> does not have MAY_EXEC permission on inode.
+
+--a6p7tq4lwuvkohwp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, May 05, 2018 at 09:05:13AM +0200, Danny Milosavljevic wrote:
+> Hi Maxime,
+>=20
+> On Thu, 3 May 2018 16:33:19 +0200
+> Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>=20
+> > > +struct sun4i_codec_quirks {
+> > > +	const struct regmap_config *regmap_config;
+> > > +	const struct snd_soc_component_driver *codec;
+> > > +	struct snd_soc_card * (*create_card)(struct device *dev);
+> > > +	struct reg_field reg_adc_fifoc;	/* used for regmap_field */
+> > > +	unsigned int reg_dac_txdata;	/* TX FIFO offset for DMA config */
+> > > +	unsigned int reg_adc_rxdata;	/* RX FIFO offset for DMA config */
+> > > +	bool has_reset;
+> > > +	const struct snd_kcontrol_new *controls;
+> > > +	unsigned int num_controls;
+> > > +};
+> > > +
+> > > +static int sun4i_codec_component_driver_probe(struct snd_soc_compone=
+nt *codec)
+> > > +{
+> > > +	const struct sun4i_codec_quirks *quirks;
+> > > +
+> > > +	quirks =3D of_device_get_match_data(codec->dev);
+> > > +	return snd_soc_add_component_controls(codec,
+> > > +					      quirks->controls,
+> > > +					      quirks->num_controls); =20
+> >=20
+> > Why not just extending the sun4i_codec_controls to add it, and create
+> > a duplicate one for the A20?
+>=20
+> Because sun4i_codec_controls has five controls shared between A10 and A20,
+> and only two not shared.
 >
-> Dan, I am wondering if this is a selinux policy issue? In my testing
-> on upstream kernel, do_open_execat() succeeds and it fails much later.
-> I am wondering why that's the case. Is it expected.
->
-> Thanks
-> Vivek
->
->
->> Basically, this test has an executable named "badentrypoint" with selinux
->> label "unconfined_u:object_r:test_overlay_files_ro_t:s0". And we mount
->> overlay with context=unconfined_u:object_r:test_overlay_files_rwx_t:s0:c10,c20
->>
->> So effectively overlay inode of "badentrypoint" now gets the label
->> specified by "context=".
->>
->> I think intent of test is that this file's real label is "...ro_t". That
->> means this file is not supposed to be executed and any attempt to execute
->> it should be denied.
->>
->> Currently test works and execution fails with following avc.
->>
->> AVC avc:  denied  { entrypoint } for  pid=1425 comm="runcon" path="/root/git/selinux-testsuite/tests/overlay/container1/merged/badentrypoint" dev="dm-0" ino=34515261 scontext=unconfined_u:unconfined_r:test_overlay_client_t:s0:c10,c20 tcontext=unconfined_u:object_r:test_overlay_files_ro_t:s0 tclass=file permissive=0
->>
->> But with new patches, this test starts passing.
->>
->> I think currently selinux_bprm_set_creds() returns error. It does
->> checks on inode returned by file_inode() and as of now that inode is
->> real inode and that inode has real lable of "...ro_t" and permission
->> to execute that file is denied.
->>
->> But after the patches file_inode() returns overlay inode. Which has
->> the label specified by context= mount option "...rwx_t". And that
->> label allows executing file, so file execution is not blocked by
->> selinux.
->>
->> I feel that even now code is working accidently. Ideally our theme was
->> that task's credential as checked against overlay inode and mounter's
->> creds are checked against underlying inode to determine if certain
->> permission is allowed. So ideally mounter should not have been allwed
->> to execute a file of type "...ro_t". But we don't have that workflow
->> and VFS calls into selinux and selinux checks the underlying file's
->> label against task.
->>
->> It worked so far but the moment we install overlay inode in file, selinux
->> checks it against overlay inode label and allows permission to execute and
->> mounter is never checked against real inode.
->>
->> I am not sure what's the right solution. So far selinux is not aware of
->> two levels of checks and if two levels of checks are to be performed, it
->> somehow needs to be enforced by overlay and call same hook on two levels.
->>
->> Thought of atleast starting a conversation on this.
->>
->> Thanks
->> Vivek
->>
->>
->>> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->>> ---
->>>   fs/open.c | 7 +------
->>>   1 file changed, 1 insertion(+), 6 deletions(-)
->>>
->>> diff --git a/fs/open.c b/fs/open.c
->>> index 6e52fd6fea7c..244cd2ecfefd 100644
->>> --- a/fs/open.c
->>> +++ b/fs/open.c
->>> @@ -897,13 +897,8 @@ EXPORT_SYMBOL(file_path);
->>>   int vfs_open(const struct path *path, struct file *file,
->>>   	     const struct cred *cred)
->>>   {
->>> -	struct dentry *dentry = d_real(path->dentry, NULL, file->f_flags, 0);
->>> -
->>> -	if (IS_ERR(dentry))
->>> -		return PTR_ERR(dentry);
->>> -
->>>   	file->f_path = *path;
->>> -	return do_dentry_open(file, d_backing_inode(dentry), NULL, cred);
->>> +	return do_dentry_open(file, d_backing_inode(path->dentry), NULL, cred);
->>>   }
->>>   
->>>   /**
->>> -- 
->>> 2.14.3
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> And if we extended sun4i_codec_controls, we'd also have to duplicate
+> sun4i_codec_codec in order to use sun4i_codec_controls vs. sun7i_codec_co=
+ntrols,
+> which really contains exactly the same data otherwise.
 
-Vivek and I talked, and I believe the SELinux check on Entrypoint is 
-wrong.  We should be checking on the overlay context not on the lower 
-level label for entrypoint.
+What I don't really like is that with this patch we have two variants
+of the same mechanism: one to add the controls that are mostly shared,
+and one to add the controls that are not shared, without any clear
+definition of when you should add a new control to one list or the
+other.
 
+So far, we had one mechanism, it was easy to understand and to know
+what to do about it. And the code was simple as well.
 
-A little back ground.  Entrypoint check is looking at the target domain 
-whether it can be entered via the executable.
+> The quirks here are just for two controls, Mic1 Boost Volume and
+> Mic2 Boost Volume, and there not even for the names or anything -
+> just for some reason the register moved away.
+>=20
+> The simplest way was to add it to the quirks - which already have a
+> variant selection etc.
 
+Actually, I think that having to do add a new control explicitly to an
+A10 and an A20 list is a feature if the two controls set aren't
+exactly the same. It makes you explicitly think about what you're
+doing, and hopefully double check if it is actually shared or not,
+instead of exposing a control because one didn't pay attention that it
+was shared.
 
-For example we might have a label like apache_t and apache_exec_t, we 
-would write a rules like:
+Chen-Yu, any opinion on this?
 
+Maxime
 
-allow apache_t apache_exec_t:file entrypoint.
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-allow user_t apache_t:process transition
+--a6p7tq4lwuvkohwp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-allow user_t apache_file_t:file execute
+-----BEGIN PGP SIGNATURE-----
 
-allow user_t bin_t:file execute
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr5l6kACgkQ0rTAlCFN
+r3SWZw//abRI9OE2fDIEEJpKrOcj8UwhvkXOubxrvM3fDVnqCHHVYP82AZwOdbUW
+7lOzZSzz5McmfhthMrLCLgR7c2upUn2youAVUtpEwwehEKM2rV+nM3oR4V6SlXJK
+XIjNyLuLHM+NaBuEKclQG+loE+Vmo0/m9IQXwW+H2lUZC17r7sEpbLQp3GhUfFBL
+OI69LhvsVYtkHqe0xRixlcLc6oGQOAP3qwJYaKuD2hRPHe7v9BsqBtTagybiK0iq
+J4aG74VyWNmM0lA90YBnxOP5DdHGSo8+fdYBgo77dJlH3U4aVv+rWf/gTYEhGGD9
+pMP+9s3NRqEfD2MgGuOBUnJjAk8NnYcx6IORUBcxLtkmzwoJKylgtoCPcqgvnWv/
+P+KAGvMwDHmWkyfUmhDyHBQhLV4hfXosjyHQ2OWsFlAuHpqFGrZNhOj/VJbMae0W
+Wf2YVGEjOTHALg9ReXQY08cdJeG7kS2yy57IIl6/tfgcP918rL9lc4C5PEIRRVNl
+xfNiPmklL4dgUQsRFUNMrHqLuHZGX8YNGTnZtb734jes0qoUytB0Q3J+GGHYkVRb
+6t38IgiNbS7vPZC/ugIrz8Yemfu/b8ytm+vINnNeTPwq+47xn0gCMVtj4Xu5CnVZ
+cSc2T+P21wymZa6bjcwpG7SPCk06Jo2rG4UzeBnTfcm244ck094=
+=HsIE
+-----END PGP SIGNATURE-----
 
-
-These rules say a process running as user_t can execute files labeles 
-apache_exec_t and bin_t.  It also says that the user_t type can 
-transition or start a process as apache_t, BUT since we have the 
-entrypoint rule, the only type that user_t can transition to apache_t is 
-the apache_exec_t type.
-
-This would prevent user_t from executing something like
-
-runcon -t apache_t /bin/sh
-
-
-In the case of these tests currently SELinux is verifying that the 
-mounter is able to mount a directory with a different label rwx_t, and 
-then providing the user with content via this label. So the entrypoint 
-check should happen on the new context label, not on the lower label.  
-We need to fix the SELinux test suite to reflect the new behaviour.  I 
-think the current test and current code is actually a bug.
-
-
-would say that the apache_t process type can be entered via
+--a6p7tq4lwuvkohwp--
