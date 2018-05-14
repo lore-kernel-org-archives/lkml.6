@@ -1,76 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751626AbeENEcn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 00:32:43 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:47614 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750760AbeENEcm (ORCPT
+        id S1751998AbeENEdo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 00:33:44 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58985 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751855AbeENEdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 00:32:42 -0400
-Date: Mon, 14 May 2018 05:32:39 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: syzbot <syzbot+481ad819c717f6b78df9@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        gregkh@linuxfoundation.org, tj@kernel.org
-Subject: Re: general protection fault in kernfs_kill_sb (2)
-Message-ID: <20180514043239.GE30522@ZenIV.linux.org.uk>
-References: <14892403-d680-dc5d-1927-bc4a279514fb@I-love.SAKURA.ne.jp>
- <20180514024726.GB30522@ZenIV.linux.org.uk>
- <201805140320.w4E3KG2o056158@www262.sakura.ne.jp>
- <20180514040415.GD30522@ZenIV.linux.org.uk>
+        Mon, 14 May 2018 00:33:43 -0400
+Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+        Mark Brown <broonie@kernel.org>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+ <20180305102524.5905-4-o.rempel@pengutronix.de>
+ <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
+ <1937901.oyadCYFYNo@aspire.rjw.lan>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
+Date: Mon, 14 May 2018 06:33:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514040415.GD30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1937901.oyadCYFYNo@aspire.rjw.lan>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="guq0sp4rSU1SNUAcQxYjs9jesGI0bByNP"
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
+X-SA-Exim-Mail-From: o.rempel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 05:04:15AM +0100, Al Viro wrote:
-> diff --git a/fs/sysfs/mount.c b/fs/sysfs/mount.c
-> index b428d317ae92..92682fcc41f6 100644
-> --- a/fs/sysfs/mount.c
-> +++ b/fs/sysfs/mount.c
-> @@ -25,7 +25,7 @@ static struct dentry *sysfs_mount(struct file_system_type *fs_type,
->  {
->  	struct dentry *root;
->  	void *ns;
-> -	bool new_sb;
-> +	bool new_sb = false;
->  
->  	if (!(flags & SB_KERNMOUNT)) {
->  		if (!kobj_ns_current_may_mount(KOBJ_NS_TYPE_NET))
-> @@ -35,9 +35,9 @@ static struct dentry *sysfs_mount(struct file_system_type *fs_type,
->  	ns = kobj_ns_grab_current(KOBJ_NS_TYPE_NET);
->  	root = kernfs_mount_ns(fs_type, flags, sysfs_root,
->  				SYSFS_MAGIC, &new_sb, ns);
-> -	if (IS_ERR(root) || !new_sb)
-> +	if (!new_sb)
->  		kobj_ns_drop(KOBJ_NS_TYPE_NET, ns);
-> -	else if (new_sb)
-> +	else if (!IS_ERR(root))
->  		root->d_sb->s_iflags |= SB_I_USERNS_VISIBLE;
->  
->  	return root;
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--guq0sp4rSU1SNUAcQxYjs9jesGI0bByNP
+Content-Type: multipart/mixed; boundary="H2u0RczUq28YJQFfyQp017tZrWHiIKswr";
+ protected-headers="v1"
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Liam Girdwood <lgirdwood@gmail.com>,
+ Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
+ Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
+ Mark Brown <broonie@kernel.org>
+Message-ID: <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
+Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+ <20180305102524.5905-4-o.rempel@pengutronix.de>
+ <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
+ <1937901.oyadCYFYNo@aspire.rjw.lan>
+In-Reply-To: <1937901.oyadCYFYNo@aspire.rjw.lan>
 
-What we want for that kobj_ns_drop() is "no fs instances created" (== no
-->kill_sb(), be it now or later, to drop that kobj reference); for setting
-->s_iflags - "new instance successfully set up".
+--H2u0RczUq28YJQFfyQp017tZrWHiIKswr
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-That's it; all we need is new_sb that would be accurate on its own.
-The problem is with kludging over the cases when it's left uninitialized
-(early exits from kernfs_mount_ns()) with IS_ERR(root), which happens to
-grab the cases when new_sb *was* set to true.  So the fix is to initialize
-new_sb properly and get rid of that kludge.  Which turns the whole thing
-into
-	if (!new_sb)
-		...
-	if (!IS_ERR(root) && new_sb)
-		...
-i.e.
-	if (!new_sb)
-		...
-	else if (!IS_ERR(root))
-		...
+
+
+On 12.05.2018 13:13, Rafael J. Wysocki wrote:
+> On Friday, May 4, 2018 8:50:52 PM CEST Oleksij Rempel wrote:
+>> Hallo Andrew,
+>> I need your ACK or NACK for this patch.
+>>
+>> This function is used to configure external PMIC to interpret
+>> signal which will be triggered by pm_power_off as power off.
+>> Since same signal can be used for stand by, I linked PMIC configuratio=
+n
+>> with pm_power_off_prepare to avoid possible conflicts.
+>>
+>> On Mon, Mar 05, 2018 at 11:25:20AM +0100, Oleksij Rempel wrote:
+>>> Export pm_power_off_prepare. It is needed to implement power off on
+>>> Freescale/NXP iMX6 based boards with external power management
+>>> integrated circuit (PMIC).
+>>>
+>>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+>>> ---
+>>>  kernel/reboot.c | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/kernel/reboot.c b/kernel/reboot.c
+>>> index e4ced883d8de..350be6baa60d 100644
+>>> --- a/kernel/reboot.c
+>>> +++ b/kernel/reboot.c
+>>> @@ -49,6 +49,7 @@ int reboot_force;
+>>>   */
+>>> =20
+>>>  void (*pm_power_off_prepare)(void);
+>>> +EXPORT_SYMBOL(pm_power_off_prepare);
+>=20
+> Why not EXPORT_SYMBOL_GPL() ?
+
+No special reason. Fixed.
+Any other comments?
+
+
+--H2u0RczUq28YJQFfyQp017tZrWHiIKswr--
+
+--guq0sp4rSU1SNUAcQxYjs9jesGI0bByNP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlr5EY8ACgkQdQOiSHVI
+77Romwf+Oud20PXLIhkk9kB9S1hdjhqEs/O32pH5DS8/+iBA4q85Icq2u6welZLQ
+rEZvCD8HVefVmmB1+nHLOK/0h1KHZX/IR6+92KE5icdaLYESTLCw3/gtDyT1hRv2
+rlH4B4CZIM/vYUn0C9mmfX3T8GZyTclbjpkwrbHetMse8z/hYL5upz0PyiCvBLw6
+YQQ8F9DS+OVjnHmFBooCI9itH6LAVkpCf3d8AmNAtHSNq66yTEENTQiPrRghLcb1
+fcQj9nEpa4uE1XDKT+F+AQ2QwC2gY0ET1tGfLeUSk3we4y5UNxa4rESC9CZKJScF
+nvzvgIAEwGP9A19o/P9fq7Kak3NTWA==
+=a7B0
+-----END PGP SIGNATURE-----
+
+--guq0sp4rSU1SNUAcQxYjs9jesGI0bByNP--
