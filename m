@@ -1,124 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753032AbeENL4F (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:56:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52528 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752432AbeENLz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:55:59 -0400
-Date: Mon, 14 May 2018 13:55:54 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Halil Pasic <pasic@linux.ibm.com>
-Cc: "Dong Jia Shi" <bjsdjshi@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 1/1] s390: vfio-ccw: push down unsupported IDA check
-Message-ID: <20180514135554.29569999.cohuck@redhat.com>
-In-Reply-To: <20180509173647.61367-1-pasic@linux.ibm.com>
-References: <20180509173647.61367-1-pasic@linux.ibm.com>
-Organization: Red Hat GmbH
+        id S1753190AbeENL4Q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:56:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:40932 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753075AbeENL4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 07:56:13 -0400
+Subject: Re: [PATCH 02/18] arm64: move SCTLR_EL{1,2} assertions to
+ <asm/sysreg.h>
+To: Dave Martin <Dave.Martin@arm.com>, Mark Rutland <mark.rutland@arm.com>
+Cc: marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+        james.morse@arm.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20180514094640.27569-1-mark.rutland@arm.com>
+ <20180514094640.27569-3-mark.rutland@arm.com>
+ <20180514100053.GX7753@e103592.cambridge.arm.com>
+ <20180514100858.4xjp5d3axbyy74ap@lakrids.cambridge.arm.com>
+ <20180514112036.GI7753@e103592.cambridge.arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <8d66d231-d8a2-07c1-6c5b-24c9474c851f@arm.com>
+Date: Mon, 14 May 2018 12:56:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180514112036.GI7753@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  9 May 2018 19:36:47 +0200
-Halil Pasic <pasic@linux.ibm.com> wrote:
-
-> There is at least one relevant control program (CP) that don't set the
-
-I'd prefer not to talk about 'control program' here, as it is not a
-term commonly used in Linux. Call it 'guest'?
-
-Also, s/don't/doesn't/
-
-
-> IDA flags in the ORB as we would like them, but never uses any IDA. So
-> instead of saying -EOPNOTSUPP when observing an ORB such that a channel
-> program specified by it could be a not supported one, let us say
-> -EOPNOTSUPP only if the channel program is a not supported one.
+On 14/05/18 12:20, Dave Martin wrote:
+> On Mon, May 14, 2018 at 11:08:59AM +0100, Mark Rutland wrote:
+>> On Mon, May 14, 2018 at 11:00:53AM +0100, Dave Martin wrote:
+>>> On Mon, May 14, 2018 at 10:46:24AM +0100, Mark Rutland wrote:
+>>>> -/* Check all the bits are accounted for */
+>>>> -#define SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != ~0)
+>>>> -
+>>>> +#if (SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != 0xffffffff
+>>>> +#error "Inconsistent SCTLR_EL2 set/clear bits"
+>>>> +#endif
+>>>
+>>> Can we have a comment on the != 0xffffffff versus != ~0 here?
+>>>
+>>> The subtle differences in evaluation semantics between #if and
+>>> other contexts here may well trip people up during maintenance...
+>>
+>> Do you have any suggestion as to the wording?
+>>
+>> I'm happy to add a comment, but I don't really know what to say.
 > 
-> Of course, the real solution would be doing proper translation for all
-> IDA. This is possible, but given the current code not straight forward.
-
-I agree, this seems useful for now, but we really need to support the
-different ida flags to be fully architecture compliant.
-
 > 
-> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-> Tested-by: Jason J. Herne <jjherne@linux.ibm.com>
-> ---
+> How about the following?
 > 
-> QEMU counterpart comming soon.
-> ---
->  drivers/s390/cio/vfio_ccw_cp.c | 19 ++++++++++++++++---
->  1 file changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
-> index 2c7550797ec2..adfff492dc83 100644
-> --- a/drivers/s390/cio/vfio_ccw_cp.c
-> +++ b/drivers/s390/cio/vfio_ccw_cp.c
-> @@ -365,6 +365,9 @@ static void cp_unpin_free(struct channel_program *cp)
->   * This is the chain length not considering any TICs.
->   * You need to do a new round for each TIC target.
->   *
-> + * The program is also validated for absence of not yet supported
-> + * indirect data addressing scenarios.
-> + *
->   * Returns: the length of the ccw chain or -errno.
->   */
->  static int ccwchain_calc_length(u64 iova, struct channel_program *cp)
-> @@ -391,6 +394,14 @@ static int ccwchain_calc_length(u64 iova, struct channel_program *cp)
->  	do {
->  		cnt++;
->  
-> +		/*
-> +		 * 2k byte block IDAWs (fmt1 or fmt2) are not yet supported.
-> +		 * There are however CPs that don't use IDA at all, and can
-> +		 * benefit from not failing until failure is eminent.
+> /* Watch out for #if evaluation rules: ~0 is not ~(int)0! */
 
-The second sentence is confusing (What is 'CP' referring to here?
-'Control program' or struct channel_program?)
+Or, more formally, perhaps something even less vague like "Note that in 
+preprocessor arithmetic these constants are effectively of type 
+intmax_t, which is 64-bit, thus ~0 is not what we want."
 
-What about:
-
-"As we don't want to fail direct addressing even if the orb specified
-one of the unsupported formats, we defer checking for IDAWs in
-unsupported formats to here."
-
-> +		 */
-> +		if ((!cp->orb.cmd.c64 || cp->orb.cmd.i2k) && ccw_is_idal(ccw))
-> +			return -EOPNOTSUPP;
-> +
->  		if ((!ccw_is_chain(ccw)) && (!ccw_is_tic(ccw)))
->  			break;
->  
-> @@ -656,10 +667,8 @@ int cp_init(struct channel_program *cp, struct device *mdev, union orb *orb)
->  	/*
->  	 * XXX:
->  	 * Only support prefetch enable mode now.
-> -	 * Only support 64bit addressing idal.
-> -	 * Only support 4k IDAW.
->  	 */
-> -	if (!orb->cmd.pfch || !orb->cmd.c64 || orb->cmd.i2k)
-> +	if (!orb->cmd.pfch)
->  		return -EOPNOTSUPP;
->  
->  	INIT_LIST_HEAD(&cp->ccwchain_list);
-> @@ -688,6 +697,10 @@ int cp_init(struct channel_program *cp, struct device *mdev, union orb *orb)
->  	ret = ccwchain_loop_tic(chain, cp);
->  	if (ret)
->  		cp_unpin_free(cp);
-> +	/* It is safe to force: if not set but idals used
-> +	 * ccwchain_calc_length returns an error.
-
-s/returns/already returned/ ?
-
-> +	 */
-> +	cp->orb.cmd.c64 = 1;
->  
->  	return ret;
->  }
-
-The patch looks sane, I have only issues with the description/comments.
+Robin.
