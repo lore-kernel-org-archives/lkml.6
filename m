@@ -1,28 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752474AbeENHuy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:50:54 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53229 "EHLO
+        id S1752019AbeENHvZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:51:25 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50361 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751780AbeENHuw (ORCPT
+        with ESMTP id S1751584AbeENHvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:50:52 -0400
-Date: Mon, 14 May 2018 00:50:23 -0700
-From: tip-bot for Hans de Goede <tipbot@zytor.com>
-Message-ID: <tip-1de3a1be8a9345fd0c7d9bb1009b21afe6b6b10f@git.kernel.org>
-Cc: matt@codeblueprint.co.uk, torvalds@linux-foundation.org,
-        hdegoede@redhat.com, peterz@infradead.org, mingo@kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        Mon, 14 May 2018 03:51:23 -0400
+Date: Mon, 14 May 2018 00:50:55 -0700
+From: tip-bot for Shunyong Yang <tipbot@zytor.com>
+Message-ID: <tip-83f0a7c7b265a56d757f7e3a80622e5b0b7ebc46@git.kernel.org>
+Cc: yu.zheng@hxt-semitech.com, peterz@infradead.org,
+        shunyong.yang@hxt-semitech.com, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, matt@codeblueprint.co.uk,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
         ard.biesheuvel@linaro.org
-Reply-To: linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
-        hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-        peterz@infradead.org, hdegoede@redhat.com,
-        torvalds@linux-foundation.org, matt@codeblueprint.co.uk
-In-Reply-To: <20180504060003.19618-16-ard.biesheuvel@linaro.org>
-References: <20180504060003.19618-16-ard.biesheuvel@linaro.org>
+Reply-To: ard.biesheuvel@linaro.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de, matt@codeblueprint.co.uk,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
+        shunyong.yang@hxt-semitech.com, peterz@infradead.org,
+        yu.zheng@hxt-semitech.com
+In-Reply-To: <20180504060003.19618-17-ard.biesheuvel@linaro.org>
+References: <20180504060003.19618-17-ard.biesheuvel@linaro.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/core] efi/x86: Ignore unrealistically large option ROMs
-Git-Commit-ID: 1de3a1be8a9345fd0c7d9bb1009b21afe6b6b10f
+Subject: [tip:efi/core] efi/capsule-loader: Don't output reset log when
+ reset flags are not set
+Git-Commit-ID: 83f0a7c7b265a56d757f7e3a80622e5b0b7ebc46
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -35,66 +38,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1de3a1be8a9345fd0c7d9bb1009b21afe6b6b10f
-Gitweb:     https://git.kernel.org/tip/1de3a1be8a9345fd0c7d9bb1009b21afe6b6b10f
-Author:     Hans de Goede <hdegoede@redhat.com>
-AuthorDate: Fri, 4 May 2018 08:00:01 +0200
+Commit-ID:  83f0a7c7b265a56d757f7e3a80622e5b0b7ebc46
+Gitweb:     https://git.kernel.org/tip/83f0a7c7b265a56d757f7e3a80622e5b0b7ebc46
+Author:     Shunyong Yang <shunyong.yang@hxt-semitech.com>
+AuthorDate: Fri, 4 May 2018 08:00:02 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 14 May 2018 08:57:49 +0200
 
-efi/x86: Ignore unrealistically large option ROMs
+efi/capsule-loader: Don't output reset log when reset flags are not set
 
-setup_efi_pci() tries to save a copy of each PCI option ROM as this may
-be necessary for the device driver for the PCI device to have access too.
+When reset flags in capsule header are not set, it means firmware
+attempts to immediately process or launch the capsule. Moreover, reset
+is not needed in this case. The current code will output log to indicate
+reset.
 
-On some systems the efi_pci_io_protocol's romimage and romsize fields
-contain invalid data, which looks a bit like pointers pointing back into
-other EFI code or data. Interpreting these pointers as romsize leads to
-a very large value and if we then try to alloc this amount of memory to
-save a copy the alloc call fails.
+This patch adds a branch to avoid reset log output when the flags are not
+set.
 
-This leads to a "Failed to alloc mem for rom" error being printed on the
-EFI console for each PCI device.
-
-This commit avoids the printing of these errors, by checking romsize before
-doing the alloc and if it is larger then the EFI spec limit of 16 MiB
-silently ignore the ROM fields instead of trying to alloc mem and fail.
-
-Tested-by: Hans de Goede <hdegoede@redhat.com>
-[ardb: deduplicate 32/64 bit changes, use SZ_16M symbolic constant]
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+[ardb: use braces in multi-line 'if', clarify comment and commit log]
+Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Matt Fleming <matt@codeblueprint.co.uk>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180504060003.19618-16-ard.biesheuvel@linaro.org
+Link: http://lkml.kernel.org/r/20180504060003.19618-17-ard.biesheuvel@linaro.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/boot/compressed/eboot.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/firmware/efi/capsule-loader.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
-index dadf32312082..a8a8642d2b0b 100644
---- a/arch/x86/boot/compressed/eboot.c
-+++ b/arch/x86/boot/compressed/eboot.c
-@@ -123,10 +123,17 @@ __setup_efi_pci(efi_pci_io_protocol_t *pci, struct pci_setup_rom **__rom)
- 	if (status != EFI_SUCCESS)
- 		return status;
+diff --git a/drivers/firmware/efi/capsule-loader.c b/drivers/firmware/efi/capsule-loader.c
+index e456f4602df1..96688986da56 100644
+--- a/drivers/firmware/efi/capsule-loader.c
++++ b/drivers/firmware/efi/capsule-loader.c
+@@ -134,10 +134,16 @@ static ssize_t efi_capsule_submit_update(struct capsule_info *cap_info)
  
-+	/*
-+	 * Some firmware images contain EFI function pointers at the place where the
-+	 * romimage and romsize fields are supposed to be. Typically the EFI
-+	 * code is mapped at high addresses, translating to an unrealistically
-+	 * large romsize. The UEFI spec limits the size of option ROMs to 16
-+	 * MiB so we reject any ROMs over 16 MiB in size to catch this.
-+	 */
- 	romimage = (void *)(unsigned long)efi_table_attr(efi_pci_io_protocol,
- 							 romimage, pci);
- 	romsize = efi_table_attr(efi_pci_io_protocol, romsize, pci);
--	if (!romimage || !romsize)
-+	if (!romimage || !romsize || romsize > SZ_16M)
- 		return EFI_INVALID_PARAMETER;
+ 	/* Indicate capsule binary uploading is done */
+ 	cap_info->index = NO_FURTHER_WRITE_ACTION;
+-	pr_info("Successfully upload capsule file with reboot type '%s'\n",
+-		!cap_info->reset_type ? "RESET_COLD" :
+-		cap_info->reset_type == 1 ? "RESET_WARM" :
+-		"RESET_SHUTDOWN");
++
++	if (cap_info->header.flags & EFI_CAPSULE_PERSIST_ACROSS_RESET) {
++		pr_info("Successfully uploaded capsule file with reboot type '%s'\n",
++			!cap_info->reset_type ? "RESET_COLD" :
++			cap_info->reset_type == 1 ? "RESET_WARM" :
++			"RESET_SHUTDOWN");
++	} else {
++		pr_info("Successfully processed capsule file\n");
++	}
++
+ 	return 0;
+ }
  
- 	size = romsize + sizeof(*rom);
