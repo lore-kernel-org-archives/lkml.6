@@ -1,98 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932274AbeENQJC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 12:09:02 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:32828 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753446AbeENQI7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 12:08:59 -0400
-X-Google-Smtp-Source: AB8JxZo8ilStsN4s2h/GUtaHX+yup00Oyn1HrgmJaWNVw2TAYGFDII+VJ47pmX9lXZfiYxwGLusoLz7KnH2shF3XOZw=
+        id S1754846AbeENQMA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 12:12:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56022 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753644AbeENQL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 12:11:58 -0400
+Date: Mon, 14 May 2018 13:11:54 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Holger Freyther <automatic+kernel@freyther.de>
+Cc: linux-perf-users@vger.kernel.org,
+        Holger Hans Peter Freyther <holgar+kernel@google.com>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>, Wang Nan <wangnan0@huawei.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC 0/6] perf probe: Attempt to improve C++ probing
+Message-ID: <20180514161154.GU13491@kernel.org>
+References: <20180513110617.91669-1-automatic+kernel@freyther.de>
 MIME-Version: 1.0
-In-Reply-To: <b8af4f6a-c2df-7382-9a1c-9c1a9ea5f8c4@arm.com>
-References: <20180225135134.GA14529@arx-s1> <b8af4f6a-c2df-7382-9a1c-9c1a9ea5f8c4@arm.com>
-From: Hao Zhang <hao5781286@gmail.com>
-Date: Tue, 15 May 2018 00:08:57 +0800
-Message-ID: <CAJeuY7876=WEpg9M240ygNv6KW68_+tpP9PxpSQfKHNR7=FO-Q@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v2 2/4] ARM: dtsi: add pwm node for sun8i.
-To: =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, robh+dt@kernel.org,
-        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux@armlinux.org.uk, linux-gpio@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support"
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-pwm@vger.kernel.org, linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180513110617.91669-1-automatic+kernel@freyther.de>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4EG9M0Q008089
 
-2018-02-28 9:53 GMT+08:00 André Przywara <andre.przywara@arm.com>:
-> Hi,
->
-> The subject line should mention the R40, there are far too many sun8i SoCs.
+Em Sun, May 13, 2018 at 07:06:11PM +0800, Holger Freyther escreveu:
+> From: Holger Hans Peter Freyther <holgar+kernel@google.com>
+ 
+> Currently perf probe -x app --funcs will list and demangle C++ functions
+> but the other probe actions can't work with them. When asking probe to not
+> demangle it will not list any of the application symbols creating the
+> impression that there are no symbols at all.
+ 
+> Make --funcs --no-demangle list all C++ functions and modify the handling
+> for listing code, variables and adding the uprobe work with the demangled
+> C++ function name.
+ 
+> I tried to keep this as minimal as possible but having to keep the dso in
+> the debuginfo and passing it everywhere to be able to demangle the linkage
+> name isn't pretty (and for C++ demangling the struct dso is not of much
+> use. Maybe having a static "empty" dso could avoid a lot of the changes).
+ 
+> Maybe the easiest first patch is to default to --no-demangle and change
+> the DEFAULT_FUNC_FILTER to not include mangled C++ symbols. The remaining
+> tooling would work then.
+ 
+> My test set includes:
+ 
+>  ./perf probe -x . -L "std::vector<int, std::allocator<int> >::at"
+>  ./perf probe -x . -L "std::vector<int, std::allocator<int> >::at:2-3"
+> 
+>  ./perf probe -x . -V "std::vector<int, std::allocator<int> >::at"
+>  ./perf probe -x . -V "std::vector<int, std::allocator<int> >::at:2"
+>  ./perf probe -x . -V "std::vector<int, std::allocator<int> >::size%return"
 
-Okey.
+Great stuff! Masami already gave his Acked-by, please address Namhyung's
+concerns and consider adding a 'perf test' entry for C++ symbols found
+in libstdc++, placing some probe in place and then running some program
+that uses that function, then parsing the output of some tool using that
+probe, something like you'll find in "perf test inet_pton", see:
 
->
-> On 25/02/18 13:51, hao_zhang wrote:
->> This patch adds pwm node for sun8i.
->>
->> Signed-off-by: hao_zhang <hao5781286@gmail.com>
->> ---
->>  arch/arm/boot/dts/sun8i-r40.dtsi | 13 +++++++++++++
->>  1 file changed, 13 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
->> index 173dcc1..99a0261 100644
->> --- a/arch/arm/boot/dts/sun8i-r40.dtsi
->> +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
->> @@ -295,6 +295,11 @@
->>                               bias-pull-up;
->>                       };
->>
->> +                     pwm_ch0_pin: pwm-ch0-pin {
->> +                             pins = "PB2";
->> +                             function = "pwm";
->> +                     };
->> +
->>                       uart0_pb_pins: uart0-pb-pins {
->>                               pins = "PB22", "PB23";
->>                               function = "uart0";
->> @@ -306,6 +311,14 @@
->>                       reg = <0x01c20c90 0x10>;
->>               };
->>
->> +             pwm: pwm@1c23400 {
->> +                          compatible = "allwinner,sun8i-r40-pwm";
->> +                          reg = <0x01c23400 0x154>;
->
-> Following my comments on the binding document:
->                         interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
->
->> +                          clocks = <&osc24M>;
->
-> And possibly multiple clocks here (though I fail to find the APB1 clock
-> being exposed by our CCU).
+[acme@jouet perf]$ ls -la tools/perf/tests/shell/
+total 28
+drwxrwxr-x. 3 acme acme 4096 May 11 11:53 .
+drwxrwxr-x. 4 acme acme 4096 May 11 11:53 ..
+drwxrwxr-x. 2 acme acme 4096 Apr 12 14:48 lib
+-rwxrwxr-x. 1 acme acme  302 Apr 12 14:48 probe_vfs_getname.sh
+-rwxrwxr-x. 1 acme acme 2050 May 11 11:53 record+probe_libc_inet_pton.sh
+-rwxrwxr-x. 1 acme acme 1185 Apr 12 14:48 record+script_probe_vfs_getname.sh
+-rwxrwxr-x. 1 acme acme 1176 Apr 12 14:48 trace+probe_vfs_getname.sh
+[acme@jouet perf]$ 
 
-It seem CCU dosen't support APB1 clock for R40 PWM...
+[root@jouet ~]# perf test inet_pton
+64: probe libc's inet_pton & backtrace it with ping       : Ok
+[root@jouet ~]# perf test -v inet_pton
+64: probe libc's inet_pton & backtrace it with ping       :
+--- start ---
+test child forked, pid 2441
+ping 2478 0 143807.377533: probe_libc:inet_pton: (7f7259040e40)
+113e40 __GI___inet_pton (/usr/lib64/libc-2.26.so)
+e02b4 getaddrinfo (/usr/lib64/libc-2.26.so)
+2f40 [unknown] (/usr/bin/ping)
+test child finished with 0
+---- end ----
+probe libc's inet_pton & backtrace it with ping: Ok
+[root@jouet ~]#
 
->
-> Cheers,
-> Andre.
->
->> +                          #pwm-cells = <3>;
->> +                          status = "disabled";
->> +             };
->> +
->>               uart0: serial@1c28000 {
->>                       compatible = "snps,dw-apb-uart";
->>                       reg = <0x01c28000 0x400>;
->>
->
+- Arnaldo
