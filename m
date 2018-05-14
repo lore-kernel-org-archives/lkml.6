@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-289078-1526281333-2-17122594119034488991
+X-Cyrus-Session-Id: sloti22d1t05-402196-1526281317-2-12868567647131413696
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526281333; b=g4DSzcaraQD3bAZAHAXFvpep2N1NtXe4ElXiENQcuYdUm9I5sq
-    oO1WjxBwmEK958moNr3F/duBGNo7KBzUXDj2L5P/DPUJ3M+8UNOwHxP1LAAWsnQZ
-    Sz/TzqUHl4dHTdm+QuGb5iq79xHLvjNsWLNihBeDzYor3fH+lTPnrZPtj09c2nHi
-    8a+aWZSN8FmsmXyz7rwN6u7iCfzWdY9dGjbcPe3Vc5hG7Q8keahSvCF4VvmolG4d
-    w3BAJW0+DFWsLxVRRX/37IWGxgvcQ05PMsbBSjSFDYOJ/BuIdztRQG38l+pi3ExY
-    DIUtf0lmA9L1qQ5xnm4AmAV+m2f2HsmDAUYg==
+    1526281315; b=ZvH8B1ivTY0RapHzBrEgLCx293HOB9Yeh8Pf+f715ETC9qmPn8
+    +ksZSRNeJtRQzbyJnlBsijYAnDsWDsBvzEP9T93gFp0QHKPT/DlNjWdKzm9OVPdY
+    Ly3KZsVWu5nQQ6nYbM0kzrZ9dVXDtbGWrvJtsrFs6ygfqGo3Xft9olAgxUk8gCyg
+    LiMUVztALKYzKZAtVkF0hKy/xc1wFGJp9vVsE4Dt5V1kTXqJm+ee13sSZ16qzYye
+    hAzGPDHFGjia+BOMjOLu9TgS4eCaGcBTLkr0uym342/lEHc0kLLjgxL3f0tyRBLJ
+    hCBEoLWqzkNvFEtecDPxlTPpJvuVvSCo3yEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526281333; bh=tZceLMQQ8/OnsCCgplidyS7Zl+vKoI
-    UEg+2g6kFbLs8=; b=nv9do1bHNS8ediYWCmKA+9kBaPeh2cdS9wNdy+Zh3I3DV9
-    AfYfK+37MWZS/EHXEa5QdQwbbEXt+MiB9+Ksj5IDAKDRA393/TdVY4zCf/48QHe6
-    JDUrLHskB5dtisdx6CpHJeMFAaZjwfOz0HZLSD2xiFUEfkE3fux1DClSyEivWDcG
-    y4WMHKuXMkIbh60+TTR68x4EimJKX0bA/7pkUuvdFegvm2o31Mt0lEz22viQ6jsW
-    6NqX9DpSwSFc5wl8mQVa/8fHEtEazF9pcgQuiHfCtDVZCcpJnohCl1F4VKx6OiYA
-    7LJIPlGhYrSjoHF0h6PSWak2v1MY1VzW65qLBTkA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526281315; bh=oK6DjaLPIJgfWeRU2lp2W+AMxihQQt
+    Er+FjTJCPINLs=; b=WT9QLbGalI253iIYSiHJD50A1jpoey35aX6quAs1WfSPeo
+    hzAxUO5zrlRUBBUEVq4vUWYQjsRQv3/dTBX9eCUf2K2w9YQG+INBIUSqKlIjyNrq
+    inaCZCCNa5CdY4bnY7GbtikD0D879iGEhhf9dcEQJcznvc6LJ+fBmDybLCVnHTPO
+    hfZ+TvGlG2Sh0X4uzkCNU0YJBKgy0QjdIy94/l1kWNiJpG2TmFGB6/X6E5n2FxWx
+    ase1fKU1MUf5ZLbtXJ9TzzH8umhnWIf1ZDi7seOmKpwcnxjmP/FGynbvoKVo85QI
+    EopZ5hHgOP7o/r2YaPnze3FlnWuxWwTUFTpooAIw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=1eWCfkEp x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=bCFq0ZMD x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=1eWCfkEp x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=bCFq0ZMD x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,33 +64,34 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLg6qVhDOhn/3GLzgSwAUb9ZKZcb6AA1JkBp4dxAXk0l0EUZrHc8q4B29bJ+rm0n6mRDog7Uay4KeNqqWJYvybRIjaKXBG6XTmjCByeY3R4r937koFaC
-    Ken1Kyr8pMHYLyfMY3Vw6w4L7X7jq6qN8co+/bWAzNxW6hw2kj9USujaw2e5PuEmaB6V+/MIr4SAd87ur2UMByl0gAOMlXb4+Tht5Sy0XbhzOaJV9Tv/uBGm
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfDcKZw0Fa4oV9Dysl/MRdN3WRzWGtgBJjLY3qXCitMwt7MFDvYM8jP/va+R9Xxlnq/G7hclBWtfiXqsa/sMfyIilgOwR+3z4Q2fj9iaIiBy5U8IOzZS3
+    E2y7y6AWzHhFe+HQyZHkgLuQK77n1JRgwvE0AJQLXhDkvCi2jKlDwCsUyMUyyqf2d7C59b71YBntEgQMEOWvuXtEJ+fGIOSByrx1zmuCygKrQq+U0ZRMYM8n
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=QtX7IHQTAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=DvgNF8sHIdjzDlHExykA:9
-    a=QEXdDO2ut3YA:10 a=iAbFv2jvUoy42RkRxxYv:22 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=QtX7IHQTAAAA:8 a=20KFwNOVAAAA:8 a=ag1SF4gXAAAA:8
+    a=N82DllkQ5cT1b0L5LWQA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=iAbFv2jvUoy42RkRxxYv:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754038AbeENHB5 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 03:01:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37638 "EHLO mail.kernel.org"
+        id S1754216AbeENHAt (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 03:00:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754211AbeENHAs (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 03:00:48 -0400
+        id S1754173AbeENHAq (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 14 May 2018 03:00:46 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Mathias Duckeck <m.duckeck@kunbus.de>,
         Akshay Bhat <akshay.bhat@timesys.com>,
         Casey Fitzpatrick <casey.fitzpatrick@timesys.com>,
+        Stef Walter <stefw@redhat.com>, Karel Zak <kzak@redhat.com>,
         Lukas Wunner <lukas@wunner.de>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.16 38/72] can: hi311x: Work around TX complete interrupt erratum
-Date: Mon, 14 May 2018 08:48:55 +0200
-Message-Id: <20180514064824.811806438@linuxfoundation.org>
+Subject: [PATCH 4.16 37/72] can: hi311x: Acquire SPI lock on ->do_get_berr_counter
+Date: Mon, 14 May 2018 08:48:54 +0200
+Message-Id: <20180514064824.770300229@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -110,65 +111,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Lukas Wunner <lukas@wunner.de>
 
-commit 32bee8f48fa048a3198109de50e51c092507ff52 upstream.
+commit 5cec9425b41dcf834c3d48776900d6acb7e96f38 upstream.
 
-When sending packets as fast as possible using "cangen -g 0 -i -x", the
-HI-3110 occasionally latches the interrupt pin high on completion of a
-packet, but doesn't set the TXCPLT bit in the INTF register.  The INTF
-register contains 0x00 as if no interrupt has occurred.  Even waiting
-for a few milliseconds after the interrupt doesn't help.
+hi3110_get_berr_counter() may run concurrently to the rest of the driver
+but neglects to acquire the lock protecting access to the SPI device.
+As a result, it and the rest of the driver may clobber each other's tx
+and rx buffers.
 
-Work around this apparent erratum by instead checking the TXMTY bit in
-the STATF register ("TX FIFO empty").  We know that we've queued up a
-packet for transmission if priv->tx_len is nonzero.  If the TX FIFO is
-empty, transmission of that packet must have completed.
+We became aware of this issue because transmission of packets with
+"cangen -g 0 -i -x" frequently hung.  It turns out that agetty executes
+->do_get_berr_counter every few seconds via the following call stack:
 
-Note that this is congruent with our handling of received packets, which
-likewise gleans from the STATF register whether a packet is waiting in
-the RX FIFO, instead of looking at the INTF register.
+    CPU: 2 PID: 1605 Comm: agetty
+    [<7f3f7500>] (hi3110_get_berr_counter [hi311x])
+    [<7f130204>] (can_fill_info [can_dev])
+    [<80693bc0>] (rtnl_fill_ifinfo)
+    [<806949ec>] (rtnl_dump_ifinfo)
+    [<806b4834>] (netlink_dump)
+    [<806b4bc8>] (netlink_recvmsg)
+    [<8065f180>] (sock_recvmsg)
+    [<80660f90>] (___sys_recvmsg)
+    [<80661e7c>] (__sys_recvmsg)
+    [<80661ec0>] (SyS_recvmsg)
+    [<80108b20>] (ret_fast_syscall+0x0/0x1c)
+
+agetty listens to netlink messages in order to update the login prompt
+when IP addresses change (if /etc/issue contains \4 or \6 escape codes):
+https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git/commit/?id=e36deb6424e8
+
+It's a useful feature, though it seems questionable that it causes CAN
+bit error statistics to be queried.
+
+Be that as it may, if hi3110_get_berr_counter() is invoked while a frame
+is sent by hi3110_hw_tx(), bogus SPI transfers like the following may
+occur:
+
+    => 12 00             (hi3110_get_berr_counter() wanted to transmit
+                          EC 00 to query the transmit error counter,
+                          but the first byte was overwritten by
+                          hi3110_hw_tx_frame())
+
+    => EA 00 3E 80 01 FB (hi3110_hw_tx_frame() wanted to transmit a
+                          frame, but the first byte was overwritten by
+                          hi3110_get_berr_counter() because it wanted
+                          to query the receive error counter)
+
+This sequence hangs the transmission because the driver believes it has
+sent a frame and waits for the interrupt signaling completion, but in
+reality the chip has never sent away the frame since the commands it
+received were malformed.
+
+Fix by acquiring the SPI lock in hi3110_get_berr_counter().
+
+I've scrutinized the entire driver for further unlocked SPI accesses but
+found no others.
 
 Cc: Mathias Duckeck <m.duckeck@kunbus.de>
 Cc: Akshay Bhat <akshay.bhat@timesys.com>
 Cc: Casey Fitzpatrick <casey.fitzpatrick@timesys.com>
+Cc: Stef Walter <stefw@redhat.com>
+Cc: Karel Zak <kzak@redhat.com>
 Cc: stable@vger.kernel.org # v4.12+
 Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Acked-by: Akshay Bhat <akshay.bhat@timesys.com>
+Reviewed-by: Akshay Bhat <akshay.bhat@timesys.com>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/spi/hi311x.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/can/spi/hi311x.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
 --- a/drivers/net/can/spi/hi311x.c
 +++ b/drivers/net/can/spi/hi311x.c
-@@ -91,6 +91,7 @@
- #define HI3110_STAT_BUSOFF BIT(2)
- #define HI3110_STAT_ERRP BIT(3)
- #define HI3110_STAT_ERRW BIT(4)
-+#define HI3110_STAT_TXMTY BIT(7)
+@@ -427,8 +427,10 @@ static int hi3110_get_berr_counter(const
+ 	struct hi3110_priv *priv = netdev_priv(net);
+ 	struct spi_device *spi = priv->spi;
  
- #define HI3110_BTR0_SJW_SHIFT 6
- #define HI3110_BTR0_BRP_SHIFT 0
-@@ -737,10 +738,7 @@ static irqreturn_t hi3110_can_ist(int ir
- 			}
- 		}
++	mutex_lock(&priv->hi3110_lock);
+ 	bec->txerr = hi3110_read(spi, HI3110_READ_TEC);
+ 	bec->rxerr = hi3110_read(spi, HI3110_READ_REC);
++	mutex_unlock(&priv->hi3110_lock);
  
--		if (intf == 0)
--			break;
--
--		if (intf & HI3110_INT_TXCPLT) {
-+		if (priv->tx_len && statf & HI3110_STAT_TXMTY) {
- 			net->stats.tx_packets++;
- 			net->stats.tx_bytes += priv->tx_len - 1;
- 			can_led_event(net, CAN_LED_EVENT_TX);
-@@ -750,6 +748,9 @@ static irqreturn_t hi3110_can_ist(int ir
- 			}
- 			netif_wake_queue(net);
- 		}
-+
-+		if (intf == 0)
-+			break;
- 	}
- 	mutex_unlock(&priv->hi3110_lock);
- 	return IRQ_HANDLED;
+ 	return 0;
+ }
