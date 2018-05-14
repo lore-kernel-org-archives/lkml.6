@@ -1,135 +1,91 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1071218-1526316727-2-13212036353158287225
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526316726; b=mU88QXbRoZdfnZMGgOCbZqsqbPSOSQ8Z6LktsT5laf/N7kM8OE
-    WqB2gvWfn+hLYj/RUlvzTnDUbX7m22ZJUr7/DgCSnc30QO2/SXBuQOvfOz3eDwa9
-    tDe7cDd9cg3oKr1Qn1kGzlFbZ+nTY2EO4G69gqhSGjSLQSKmwjbMgluGhGLp/Ten
-    izPdueunoLFVy5b7PAQhBpO9dsApPuJEBVbMyQkPF9KeN2pPFENoHq27Zrl2ozn2
-    sSvZ/kiyVl/7mPRgYmTq7KJhnBwJibx2N9ZLNKj21GtzvMPK/nD2Qyq8xNckgpRC
-    Y5O6pF4j6Ih/XJ+jPyTGcFPK+K1WLCakgibA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526316726; bh=FIkNNO4cZ6dyzu9n4LQDU5Aqva6/XP
-    8FotwHO1PFMFk=; b=chbS9rCeKNTHOepQV5rcOLZsLHiEPQLoOMuxmm9GjfCrK9
-    mQaW30t27RBtsHrGfdMkLv+gAQGTqSXSXDVnDfMWP+RjX/D/a59fotEt0WBxxsfS
-    UJlHgkozj5u9xRwBa59TBEdEH0fXpHq3YapupFFdBfEgUpdEKtfg8m2EqcnVI3FN
-    kz/2l1kS6ipMtH1JhH8usS6LcLFBIgbpCOCM3QgRKNDFoqXvS75vEbSvqQ3Q73w0
-    xv4kygrJ6z6IPg/HdaoIxh/8BG+mfkncw3lCl3cbUGdyfqK+kll7id5dOZkRDxqI
-    +/Uc93584d1mFRdYCdZVxacucUYDTcq2nrfzKfig==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=SIPySUW0 x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=SIPySUW0 x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCv61RJwB1/D3KdUwTIwVr/3jClzb/W1CYYgv3fyhpImOGCo7nDx1bVdZZ+5NvwvpGetGFvFvD6BJ5id7OnNZMp+5ZusWXIjNke3pu5VNkKTVnUPfsqR
-    K4k4gxXXJ8+/P0FfV3qBNH8bvMTvyHdRWcufVakiVhsOT+NCGX5WudLC4PM3V8n32i21DXwSKjaYHikpUGAms+LT5d4Zj3rqU/k0Qt+Onb4D4vp1M73byIsB
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=9wKpNP2GB4IA:10
-    a=VUJBJC2UJ8kA:10 a=Sa7_cZkHc4GODgtWD58A:9 a=CjuIK1q_8ugA:10
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932552AbeENQwF (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 12:52:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932550AbeENQwE (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 12:52:04 -0400
-Date: Mon, 14 May 2018 18:51:47 +0200
+Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZpfj2R9NBrBRAPrdeiFgo6MifcGT28Q2HBOUPWKNqwq+mkxBAgzro4nfRxBaqr3brO1zRrP
+ARC-Seal: i=1; a=rsa-sha256; t=1526281164; cv=none;
+        d=google.com; s=arc-20160816;
+        b=mj4Wgo02tioJUmo2UgZi+b9uMbodw8tIU8aQncG5d0S3dDkIufmHbt/HYyqzSmmn7k
+         UF9QPQso1EiQbb5qTcQ/N0zfM031mPaLhC42oSXKaqXJZglMxFwr7Zqq3Z7ukM+zDe6z
+         hX4f5NjYqhtEwvXPtV3ZMYvx/2JyDVeHBI33GRCVJ4dWYyrzlAzlTBYbV5P6tydqu+Tn
+         enRr/ek9DARCcogXFOZTCWeyGbvQfK1JhFbeyYuGGRLT9urVlFRcsjceDiUCKpIFihgo
+         zsLyOOAcoPH25t75bospeeHO388DJ2t8Abksz61UgekO1+xJ6ABYULur4J/qBs8L9Dz9
+         2acA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=LR/Y05Ur6lG4rVd3g8YiojBiPiFENRFPTe7bwPx10oo=;
+        b=iwCG8VQf6rN0BH8dZ+2ouQoKiYWhUvS1tcbZWg1gCjmT3Qe/H+7hZchNBIEQme/g2S
+         FXTF2DWtOLvZ1lq49Eq1viIG77ch3zfFskZeUuLA1yNtFdZeYKWYXl64yRWz4BuivC2W
+         aArgvBySCiclrnrz12xtnxUeG4wUU4BAPpaGc2OroZtGqOh2QpfDfj7DSpl/5pHr24o1
+         UOp2/nA2aujBQsXGqVcQQhbueyh+ybz3Jni1ILSkNMXzGuGJxmpMmGEqZAZvAKlAR6tB
+         9tlzU0GCF9TgPtjIn28W2acgssk6oGjQJCY6XLuIZCpVbGX+4vGWOyKFC3bOCnGSpY/M
+         vCIg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=oPWEeukP;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=oPWEeukP;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.16 00/72] 4.16.9-stable review
-Message-ID: <20180514165147.GB30141@kroah.com>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Boris Brezillon <boris.brezillon@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 4.16 41/72] mtd: rawnand: Make sure we wait tWB before polling the STATUS reg
+Date: Mon, 14 May 2018 08:48:58 +0200
+Message-Id: <20180514064824.942453369@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
- <20180514162758.GE31622@roeck-us.net>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514162758.GE31622@roeck-us.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1600421798169787074?=
+X-GMAIL-MSGID: =?utf-8?q?1600421798169787074?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 14, 2018 at 09:27:58AM -0700, Guenter Roeck wrote:
-> On Mon, May 14, 2018 at 08:48:17AM +0200, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.16.9 release.
-> > There are 72 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed May 16 06:47:58 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> 
-> Build results:
-> 	total: 143 pass: 142 fail: 1
-> Failed builds: 
-> 	m68k:allmodconfig
-> Qemu test results:
-> 	total: 139 pass: 139 fail: 0
-> 
-> Building m68k:allmodconfig ... failed:
-> 
-> ERROR: "__udivdi3" [drivers/mtd/nand/nand.ko] undefined!
-> ERROR: "__divdi3" [drivers/mtd/nand/nand.ko] undefined!
-> 
-> The problem is caused by upstream commit 3057fcef3853 ("mtd: rawnand: Make
-> sure we wait tWB before polling the STATUS reg"). This is one of the "bug
-> for bug compatible with upstream" situations, meaning the upstream build
-> is broken as well.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-I've dropped the offending patch for now, and pushed out a -rc2.
+------------------
 
-Thanks for testing all of these and letting me know.
+From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-greg k-h
+commit 3057fcef385348fe85173f1b0c824d89f1176f72 upstream.
+
+NAND chips require a bit of time to take the NAND operation into
+account and set the BUSY bit in the STATUS reg. Make sure we don't poll
+the STATUS reg too early in nand_soft_waitrdy().
+
+Fixes: 8878b126df76 ("mtd: nand: add ->exec_op() implementation")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/mtd/nand/nand_base.c |    5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- a/drivers/mtd/nand/nand_base.c
++++ b/drivers/mtd/nand/nand_base.c
+@@ -707,12 +707,17 @@ static void nand_wait_status_ready(struc
+  */
+ int nand_soft_waitrdy(struct nand_chip *chip, unsigned long timeout_ms)
+ {
++	const struct nand_sdr_timings *timings;
+ 	u8 status = 0;
+ 	int ret;
+ 
+ 	if (!chip->exec_op)
+ 		return -ENOTSUPP;
+ 
++	/* Wait tWB before polling the STATUS reg. */
++	timings = nand_get_sdr_timings(&chip->data_interface);
++	ndelay(PSEC_TO_NSEC(timings->tWB_max));
++
+ 	ret = nand_status_op(chip, NULL);
+ 	if (ret)
+ 		return ret;
