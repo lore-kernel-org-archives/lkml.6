@@ -1,84 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752233AbeENVXb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:23:31 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:44897 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752204AbeENVX2 (ORCPT
+        id S1752094AbeENVY1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:24:27 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:43615 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752013AbeENVYY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:23:28 -0400
-X-Google-Smtp-Source: AB8JxZoAt85Gt4m5EHklzVD8I6NZVX+lggD5AI3ueckU1ouv+0gLXiHdJkdJLxCmhIgEyzSCs2Hdj4ATr9dR1cXlFP4=
+        Mon, 14 May 2018 17:24:24 -0400
+X-Google-Smtp-Source: AB8JxZoogVMvt/yndAUi87HWJ0Yl+lSWmbZI8j6BZZABsTy7d0jyTkjEybbUKlSTfrcAOjbs8TaQGDjV6DPuTmv/J4Y=
 MIME-Version: 1.0
-In-Reply-To: <cb51c6f8eb93452d405180d9da0f1e203b469d2a.camel@wdc.com>
-References: <20180514184634.2160-1-bart.vanassche@wdc.com> <20180514184634.2160-2-bart.vanassche@wdc.com>
- <CAMo8Bf+Wgm2VrZiY+CfjN=CM=ysYBpRyTMdozV+6A8Brk4DKDQ@mail.gmail.com> <cb51c6f8eb93452d405180d9da0f1e203b469d2a.camel@wdc.com>
+In-Reply-To: <20180511162028.20616-2-brgl@bgdev.pl>
+References: <20180511162028.20616-1-brgl@bgdev.pl> <20180511162028.20616-2-brgl@bgdev.pl>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 May 2018 23:23:26 +0200
-X-Google-Sender-Auth: 9f5YcRDtK39AvLx1G_AkExD1hvs
-Message-ID: <CAMuHMdWqegF9Akr4N9VwB8bEN+ryMWEybWc7wtcWhMRoHdFYYQ@mail.gmail.com>
-Subject: Re: [PATCH v9 1/2] arch/*: Add CONFIG_ARCH_HAVE_CMPXCHG64
-To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "jcmvbkbc@gmail.com" <jcmvbkbc@gmail.com>,
-        "schwidefsky@de.ibm.com" <schwidefsky@de.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "deller@gmx.de" <deller@gmx.de>,
-        "heiko.carstens@de.ibm.com" <heiko.carstens@de.ibm.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>, "hpa@zytor.com" <hpa@zytor.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "jejb@parisc-linux.org" <jejb@parisc-linux.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "chris@zankel.net" <chris@zankel.net>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "paulus@samba.org" <paulus@samba.org>
+Date: Mon, 14 May 2018 23:24:23 +0200
+X-Google-Sender-Auth: PcvJNfPxlicAOTG0BdUbfasifHM
+Message-ID: <CAMuHMdX-QbDTgzpeigMQmHe3LmBQL3DCWXN2=zDqohHm2tpUWA@mail.gmail.com>
+Subject: Re: [PATCH 01/12] platform/early: add a new field to struct device
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, Johan Hovold <johan@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart,
-
-On Mon, May 14, 2018 at 10:42 PM, Bart Van Assche
-<Bart.VanAssche@wdc.com> wrote:
-> On Mon, 2018-05-14 at 11:50 -0700, Max Filippov wrote:
->> On Mon, May 14, 2018 at 11:46 AM, Bart Van Assche
->> <bart.vanassche@wdc.com> wrote:
->> > The next patch in this series introduces a call to cmpxchg64()
->> > in the block layer core for those architectures on which this
->> > functionality is available. Make it possible to test whether
->> > cmpxchg64() is available by introducing CONFIG_ARCH_HAVE_CMPXCHG64.
->> >
->> > ---
->>
->> [...]
->>
->> > diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
->> > index c921e8bccdc8..8234278a821d 100644
->> > --- a/arch/xtensa/Kconfig
->> > +++ b/arch/xtensa/Kconfig
->> > @@ -23,6 +23,7 @@ config XTENSA
->> >         select HAVE_DMA_CONTIGUOUS
->> >         select HAVE_EXIT_THREAD
->> >         select HAVE_FUNCTION_TRACER
->> > +       select ARCH_HAVE_CMPXCHG64
->>
->> This breaks alphabetical sorting of Kconfig entries.
+On Fri, May 11, 2018 at 6:20 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >
-> Hello Max,
+> Add a new single-bit field to struct device which will be used to
+> indicate that a device was probed early in the boot sequence.
 >
-> Thanks for the feedback. Do you perhaps know whether keeping names in
-> alphabetical order is a requirement for arch/xtensa/Kconfig only or
-> whether this is required for all arch/*/Kconfig files?
+> This does not affect the size of struct device on any architecture
+> I built on (ARM, ARM64, x86_64).
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-It's a good practice anyway, as it reduces the probability of merge conflicts.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
