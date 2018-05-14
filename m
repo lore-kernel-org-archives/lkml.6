@@ -1,38 +1,42 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrqe8uBnh9Uh/Ew+DLPWiWhNDGWwWuUg8sfv5nQza41FTlPMaO3ArGDiPNHidi74r3DQEuq
-ARC-Seal: i=1; a=rsa-sha256; t=1526280690; cv=none;
+X-Google-Smtp-Source: AB8JxZpEjs3tI/q+5CH7cJiLfdn/ZQlIP21TpqViYMWHL1gZSuJhwYN3CwtNUFzwteXoNTJ49Khu
+ARC-Seal: i=1; a=rsa-sha256; t=1526280687; cv=none;
         d=google.com; s=arc-20160816;
-        b=J083ilFXcbWVg3SLaRduMAm52eOZsuBhN4UuPIiTIlR2l+OKhX5XOFYSYGwy8AvjjX
-         L46L/P78bMk9eitiNKQRwCZBKpAy+k/5cG9ThyHDFYEQnPvkj/hMvvlI8SZ3O59SuG7g
-         4INq59C9lkvmMm4Uh+qfNAxTsPA24V6tmf6sBYzoh5uqJEE/NRQ5FULpSbCx+GSi6ZFT
-         vJ1Kt88u6FRQZl9CA/AWpKwbJxOjynyKXOPwwXjbVAptZptdjWvDpuZfz6C7Nq4sT7hf
-         ZJxR9N1QMP3U7HIUG0nRRQJWd8CDDyWCZoFY6C3EduSqU/8KmxND+kuQZH8QdGDrEutX
-         hYXQ==
+        b=r43maKvMt42O9Dd+LH0dvIJPjmRkb1PSUz3UyDmP7ECy0qjkZOOkqcLSKJxx/b4Xia
+         zWrTLJOnBRgMWcKxWcUIAZ5cAt+66Sv2/m3Kac71ny/KbfFK/87PcRjmDqs+v1IOMfJA
+         2yCqy8kJP+QT+V1HaM9KR3FSWFW/sd1hv6f9cwOhBdWAy7ZD1lwS07owiriGwhpYqAdZ
+         fNkdzqCjjjBgs0BcmYBBtzV6aCc8kEwOC07jtmwYCIJpT5VhaNnIy7YV0dFB3Yj85vW7
+         nebT+9BRX39yFkYrlfQvCn57pJ+pgmjF8v372Hh2nMCW49AhkTDagjlTBa/TuHDvYgzu
+         9OUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=qlAvMWsMv/ZjyXT8ggSALPoHtAqicikMWsNLRBgEA7U=;
-        b=tQnGvtllTEkBBDkecG7zHnvDlBYqYOxdXCRj+hHLIw1mf40trSxTLbCiW8gpenVFHp
-         gLzTrJQjXTh0Y+9GjbSrR7+MMSCBwHb1nAsKxRXDITWsiaVRW8ENAjwcy1GBixnaEqzG
-         6dEXjKopqjxExAaQ1xA5eccNOYmnIBd9zBhxiANxpJojFhZgXZFYSJnGFXbctyWqTvkT
-         SmU7W7cdLNRtTwj/ZrBGq+PWvA9GtX2yNBgHJOCMUG5sp/grjMQnSbWPH1822BrmAmRq
-         xHGfUcStx1jhW0bR5jM0/lMa1pAJbDQPcpvLc1z1iU741xeizrUYjpAdNg1WwQSQG+Yq
-         SKlQ==
+        bh=rrTJVqH0AssdxjMCMCxskc0Q/dsooBAlwXAszzCrUGI=;
+        b=zwoit/z46QKxx9Pq/JyNderX4+urT90TiVnvOC1koPKQUwB2Cxq1jDDTnMo4vf6bBH
+         KCQsGaCKuU3zjitCyTrQD4w0BCXslJ049bsWm4G7CK7fSS4Ubq7td1sUtGUq3eTubO/D
+         9ijRdFoKXi5F+9uJM3vIXQMdO4nOqloP00eGYsRurBX7ZhXN1g63diWKz+65bQWFAu6t
+         E1A2f3G2ziBd+LbCAedQ8+VTe7ZFdSItiQM7RR618QlvPlWBA6rFiRffr9hYRFUBEc/F
+         08y1fVaS7PwHir/a108AOlDFqLv/NW3iXdYfVqSOy42GiEfbhavUJIP+c9RPQaY6JAJj
+         xpIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=nuPQZObe;
+       dkim=pass header.i=@kernel.org header.s=default header.b=fCq112mN;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=nuPQZObe;
+       dkim=pass header.i=@kernel.org header.s=default header.b=fCq112mN;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Roland Dreier <roland@purestorage.com>,
-	Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.4 20/56] RDMA/ucma: Allow resolving address w/o specifying source address
-Date: Mon, 14 May 2018 08:48:25 +0200
-Message-Id: <20180514064756.869083830@linuxfoundation.org>
+	Teng Qin <qinteng@fb.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Chenbo Feng <fengc@google.com>,
+	Lorenzo Colitti <lorenzo@google.com>
+Subject: [PATCH 4.4 02/56] bpf: map_get_next_key to return first key on NULL
+Date: Mon, 14 May 2018 08:48:07 +0200
+Message-Id: <20180514064755.103747262@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -42,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421301209174699?=
-X-GMAIL-MSGID: =?utf-8?q?1600421301209174699?=
+X-GMAIL-THRID: =?utf-8?q?1600421298698641649?=
+X-GMAIL-MSGID: =?utf-8?q?1600421298698641649?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,37 +55,98 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Roland Dreier <roland@purestorage.com>
+From: Teng Qin <qinteng@fb.com>
 
-commit 09abfe7b5b2f442a85f4c4d59ecf582ad76088d7 upstream.
+commit 8fe45924387be6b5c1be59a7eb330790c61d5d10 upstream.
 
-The RDMA CM will select a source device and address by consulting
-the routing table if no source address is passed into
-rdma_resolve_address().  Userspace will ask for this by passing an
-all-zero source address in the RESOLVE_IP command.  Unfortunately
-the new check for non-zero address size rejects this with EINVAL,
-which breaks valid userspace applications.
+When iterating through a map, we need to find a key that does not exist
+in the map so map_get_next_key will give us the first key of the map.
+This often requires a lot of guessing in production systems.
 
-Fix this by explicitly allowing a zero address family for the source.
+This patch makes map_get_next_key return the first key when the key
+pointer in the parameter is NULL.
 
-Fixes: 2975d5de6428 ("RDMA/ucma: Check AF family prior resolving address")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Roland Dreier <roland@purestorage.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Teng Qin <qinteng@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Chenbo Feng <fengc@google.com>
+Cc: Lorenzo Colitti <lorenzo@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/bpf/arraymap.c |    2 +-
+ kernel/bpf/hashtab.c  |    9 +++++----
+ kernel/bpf/syscall.c  |   18 +++++++++++-------
+ 3 files changed, 17 insertions(+), 12 deletions(-)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -675,7 +675,7 @@ static ssize_t ucma_resolve_ip(struct uc
- 	if (copy_from_user(&cmd, inbuf, sizeof(cmd)))
- 		return -EFAULT;
+--- a/kernel/bpf/arraymap.c
++++ b/kernel/bpf/arraymap.c
+@@ -102,7 +102,7 @@ static void *array_map_lookup_elem(struc
+ static int array_map_get_next_key(struct bpf_map *map, void *key, void *next_key)
+ {
+ 	struct bpf_array *array = container_of(map, struct bpf_array, map);
+-	u32 index = *(u32 *)key;
++	u32 index = key ? *(u32 *)key : U32_MAX;
+ 	u32 *next = (u32 *)next_key;
  
--	if (!rdma_addr_size_in6(&cmd.src_addr) ||
-+	if ((cmd.src_addr.sin6_family && !rdma_addr_size_in6(&cmd.src_addr)) ||
- 	    !rdma_addr_size_in6(&cmd.dst_addr))
- 		return -EINVAL;
+ 	if (index >= array->map.max_entries) {
+--- a/kernel/bpf/hashtab.c
++++ b/kernel/bpf/hashtab.c
+@@ -169,12 +169,15 @@ static int htab_map_get_next_key(struct
+ 	struct hlist_head *head;
+ 	struct htab_elem *l, *next_l;
+ 	u32 hash, key_size;
+-	int i;
++	int i = 0;
  
+ 	WARN_ON_ONCE(!rcu_read_lock_held());
+ 
+ 	key_size = map->key_size;
+ 
++	if (!key)
++		goto find_first_elem;
++
+ 	hash = htab_map_hash(key, key_size);
+ 
+ 	head = select_bucket(htab, hash);
+@@ -182,10 +185,8 @@ static int htab_map_get_next_key(struct
+ 	/* lookup the key */
+ 	l = lookup_elem_raw(head, hash, key, key_size);
+ 
+-	if (!l) {
+-		i = 0;
++	if (!l)
+ 		goto find_first_elem;
+-	}
+ 
+ 	/* key was found, get next key in the same bucket */
+ 	next_l = hlist_entry_safe(rcu_dereference_raw(hlist_next_rcu(&l->hash_node)),
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -390,14 +390,18 @@ static int map_get_next_key(union bpf_at
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+ 
+-	err = -ENOMEM;
+-	key = kmalloc(map->key_size, GFP_USER);
+-	if (!key)
+-		goto err_put;
++	if (ukey) {
++		err = -ENOMEM;
++		key = kmalloc(map->key_size, GFP_USER);
++		if (!key)
++			goto err_put;
+ 
+-	err = -EFAULT;
+-	if (copy_from_user(key, ukey, map->key_size) != 0)
+-		goto free_key;
++		err = -EFAULT;
++		if (copy_from_user(key, ukey, map->key_size) != 0)
++			goto free_key;
++	} else {
++		key = NULL;
++	}
+ 
+ 	err = -ENOMEM;
+ 	next_key = kmalloc(map->key_size, GFP_USER);
