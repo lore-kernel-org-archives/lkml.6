@@ -1,102 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752610AbeENV5x (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:57:53 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:52038 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752577AbeENV5s (ORCPT
+        id S1752646AbeENV6W (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:58:22 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:41527 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752044AbeENV6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:57:48 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180514215746epoutp0345e279582d3cf9a11796d817e67ce4ff~uoafcb2YB1251112511epoutp036
-X-AuditID: b6c32a45-8f3ff70000001020-f4-5afa0656d41b
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Message-id: <5AFA0656.6040701@samsung.com>
-Date: Tue, 15 May 2018 06:57:42 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: myungjoo.ham@samsung.com,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "dbasehore@chromium.org" <dbasehore@chromium.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "groeck@chromium.org" <groeck@chromium.org>,
-        "kernel@collabora.com" <kernel@collabora.com>,
-        "hl@rock-chips.com" <hl@rock-chips.com>
-Subject: Re: [PATCH v4 6/6] devfreq: rk3399_dmc: fix spelling mistakes.
-In-reply-to: <20180514102355epcms1p5baf3df2741827f9b9bf3e1de37e27880@epcms1p5>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0gUYRTt29mZHaOtac36MNJtQChJc3bdHCsjy2wgEaHoYZQOOrnmPmRn
-        17KCVql89MAsRE0qIyo2DdMePjN2xUJxe2i6lQq9zdJKe5hgNrtj5K/v3MO5373ncHFEcRXz
-        xVMNZs5kYHUkNlN6x7FUE7QNG48P6fwqoQdrGjH6QosTpSte2gHdNngFoSdff0Lpsao2hK5x
-        nkDpjuzPMrqzvgyjR0+2APpl1jWMPtrUIqMfVG5bK2fOWZ9Imdq+y4CptuVhTG93I8ZMlDZL
-        mVO3bIC5230eYUar/eLweG61lmOTOZOSMyQZk1MNKRHkps0J6xM0K0KoICqcDiOVBlbPRZBR
-        MXFB0ak6YWVSmcHqLAIVx/I8uXzNapPRYuaUWiNvjiB3UpQqmAoJC1aphFe9a6VKI0gSOW32
-        JxdIz0X3D2XrrOC4NB944ZAIhSP3K7B8MBNXELUADjuyZGLxC8DC2wNCgXtUzfk+7gYFUQXg
-        i8Hlbiwn5sKxM/1StwQh/GHL0zQ3jRBL4cD3Qqn4TR+AR0bOIqI+EPZ2OzyDpUQAbP3W4MGY
-        wDcPuDA3nkMshs/G3gA39iG2w7oLPz37zCMqAbw80u4pEOIRAv+cuYO6J3sTG+G9yVXuBi8i
-        Ftb86vC4gUSODBYVXZKJNqNg8ZcriIi94eCDW1P8QvjedhNMNQCY03QeEYuzADp7+iWiSg3f
-        l+dLRHOzYa5jYioWOcw9phAlDCz52I6KOBJedLVO+T8qgcOF9ZIC4Fc6LbLS/5GVTovsIkBs
-        YD6XzutTOF6VTgXzrJ63GFKCk4z6auA50sANtaDYGWMHBA7IWfLEot/xCpTN4DP1dgBxhJwn
-        b1AJlDyZzTzAmYwJJouO4+1AIyR+GvH1STIKJ28wJ1AalVqtpjVh4eqQcHKBvIL8Ea8gUlgz
-        l8Zx6ZzpX58E9/K1gtYbsO1D9bqqIWpL83OZJtJunf8ODbWV99B7luXNCHUtyfn+JCA6dtSo
-        zyJ7KzcyhzRfuybKfK4v1mr9d9cVDFPKqq3jeVGN6EHL2/KDx9uWdPi/nl3cuXflo5jMKGuP
-        y2/HinMFr3Jwvy7jovCymsaGfY5o72PtJc5lDw/3bn36mJTyWpYKREw8+xfIca6SugMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42I5/e+xoG4Y268og94VihavNu9hs5h/5Byr
-        xZrbhxgtTr1axmzx/9FrVosfG04xW2w+18NqcbbpDbvF5V1z2Cw+9x5htLjduILNonXvEXaL
-        42vDHXg9ZjdcZPHYcXcJo8emVZ1sHneu7WHz+DtrP4tH35ZVjB7br81j9vi8SS6AI4rLJiU1
-        J7MstUjfLoEro+n1DcaCDtaKt005DYzdLF2MHBwSAiYS+7tEuxg5OYQE1jFKfO2rBLF5BQQl
-        fky+B1bCLCAvceRSNoSpLjFlSi5E9X1GiSdb9SCqtSTuXDvMAmKzCKhKHPu4G8xmA4rvf3GD
-        DcTmF1CUuPrjMSPIGFGBCInuE2CLRATWM0rsO8/RxcgFNP0ys8SF05+YQWqEBdwl9v23BokL
-        CbQySUxY1ccK0sAp4Cex+ftZtgmMArOQHDoL4dBZCIcuYGRexSiZWlCcm55bbFRglJdarlec
-        mFtcmpeul5yfu4kRGDfbDmv172B8vCT+EKMAB6MSD2/CtJ9RQqyJZcWVuYcYJTiYlUR4dxsB
-        hXhTEiurUovy44tKc1KLDzFKc7AoifPy5x+LFBJITyxJzU5NLUgtgskycXBKNTCmMkgJlf2P
-        t2d/kv9x14cnhyI65DT051seCmWTC3s+b8uEF4a7ZhjOFjI/t6Y1403Zx/9+1zinnBRg2XLT
-        8hO/zqLHFVq6ZT++aa3/YbtKMYFnRXXuA+XstTdvFjHetP1zsp9XhX/m5T3WW7KcGc53nFvo
-        e/J825MTq5pmMc5nnztnxvnvkq+mKbEUZyQaajEXFScCAK61DnqXAgAA
-X-CMS-MailID: 20180514215742epcas2p276f9519d47450c9c29b2969e6b55d8fe
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180509125806epcas3p42927285eece7f031ad7c9e422ee0a43c
-X-RootMTR: 20180509125806epcas3p42927285eece7f031ad7c9e422ee0a43c
-References: <20180509125749.31318-7-enric.balletbo@collabora.com>
-        <20180509125749.31318-1-enric.balletbo@collabora.com>
-        <CGME20180509125806epcas3p42927285eece7f031ad7c9e422ee0a43c@epcms1p5>
-        <20180514102355epcms1p5baf3df2741827f9b9bf3e1de37e27880@epcms1p5>
+        Mon, 14 May 2018 17:58:19 -0400
+X-Google-Smtp-Source: AB8JxZoD4ytNln7FBeyizcWRpqA2hxTx3yNTyDRRfOKmW0rKIcfJJ83v4gTy+T8I4yIW1EcVAljKyQ==
+From: Thomas Hebb <tommyhebb@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Thomas Hebb <tommyhebb@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org (open list:PWM SUBSYSTEM)
+Subject: [PATCH 1/2] pwm: berlin: Don't use broken prescaler values
+Date: Mon, 14 May 2018 17:58:14 -0400
+Message-Id: <da60a97a0c6f754faa1f996334b3568ddb2f5ed0.1526334654.git.tommyhebb@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018년 05월 14일 19:23, MyungJoo Ham wrote:
->> Fix some spelling mistakes in error and debug messages.
->>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> ---
->>
->> Changes in v4:
->> - [6/6] Introduce this new patch that fixes some spelling.
->>
->> Changes in v3: None
->> Changes in v2: None
->>
->> drivers/devfreq/rk3399_dmc.c | 12 ++++++------
->> 1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Six of the eight prescaler values available for Berlin PWM are not true
+prescalers but rather internal shifts that throw away the high bits of
+TCNT. Currently, we attempt to use those high bits, leading to erratic
+behavior. Restrict the prescaler configurations we select to only the
+two that respect the full range of TCNT.
 
-Maybe, when you apply this patch on devfreq.git,
-you are missing the my reviewed-by tag.
+Tested on BG2CD.
 
+Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
+---
+ drivers/pwm/pwm-berlin.c | 45 ++++++++++++++++++++++------------------
+ 1 file changed, 25 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/pwm/pwm-berlin.c b/drivers/pwm/pwm-berlin.c
+index 771859aca4be..7c8d6a168ceb 100644
+--- a/drivers/pwm/pwm-berlin.c
++++ b/drivers/pwm/pwm-berlin.c
+@@ -21,8 +21,18 @@
+ #define BERLIN_PWM_EN			0x0
+ #define  BERLIN_PWM_ENABLE		BIT(0)
+ #define BERLIN_PWM_CONTROL		0x4
+-#define  BERLIN_PWM_PRESCALE_MASK	0x7
+-#define  BERLIN_PWM_PRESCALE_MAX	4096
++/*
++ * The prescaler claims to support 8 different moduli, configured using the
++ * low three bits of PWM_CONTROL. (Sequentially, they are 1, 4, 8, 16, 64,
++ * 256, 1024, and 4096.)  However, the moduli from 4 to 1024 appear to be
++ * implemented by internally shifting TCNT left without adding additional
++ * bits. So, the max TCNT that actually works for a modulus of 4 is 0x3fff;
++ * for 8, 0x1fff; and so on. This means that those moduli are entirely
++ * useless, as we could just do the shift ourselves. The 4096 modulus is
++ * implemented with a real prescaler, so we do use that, but we treat it
++ * as a flag instead of pretending the modulus is actually configurable.
++ */
++#define  BERLIN_PWM_PRESCALE_4096	0x7
+ #define  BERLIN_PWM_INVERT_POLARITY	BIT(3)
+ #define BERLIN_PWM_DUTY			0x8
+ #define BERLIN_PWM_TCNT			0xc
+@@ -46,10 +56,6 @@ static inline struct berlin_pwm_chip *to_berlin_pwm_chip(struct pwm_chip *chip)
+ 	return container_of(chip, struct berlin_pwm_chip, chip);
+ }
+ 
+-static const u32 prescaler_table[] = {
+-	1, 4, 8, 16, 64, 256, 1024, 4096
+-};
+-
+ static inline u32 berlin_pwm_readl(struct berlin_pwm_chip *chip,
+ 				   unsigned int channel, unsigned long offset)
+ {
+@@ -86,33 +92,32 @@ static int berlin_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm_dev,
+ 			     int duty_ns, int period_ns)
+ {
+ 	struct berlin_pwm_chip *pwm = to_berlin_pwm_chip(chip);
+-	unsigned int prescale;
++	bool prescale_4096 = false;
+ 	u32 value, duty, period;
+-	u64 cycles, tmp;
++	u64 cycles;
+ 
+ 	cycles = clk_get_rate(pwm->clk);
+ 	cycles *= period_ns;
+ 	do_div(cycles, NSEC_PER_SEC);
+ 
+-	for (prescale = 0; prescale < ARRAY_SIZE(prescaler_table); prescale++) {
+-		tmp = cycles;
+-		do_div(tmp, prescaler_table[prescale]);
++	if (cycles > BERLIN_PWM_MAX_TCNT) {
++		prescale_4096 = true;
++		cycles >>= 12; // Prescaled by 4096
+ 
+-		if (tmp <= BERLIN_PWM_MAX_TCNT)
+-			break;
++		if (cycles > BERLIN_PWM_MAX_TCNT)
++			return -ERANGE;
+ 	}
+ 
+-	if (tmp > BERLIN_PWM_MAX_TCNT)
+-		return -ERANGE;
+-
+-	period = tmp;
+-	cycles = tmp * duty_ns;
++	period = cycles;
++	cycles *= duty_ns;
+ 	do_div(cycles, period_ns);
+ 	duty = cycles;
+ 
+ 	value = berlin_pwm_readl(pwm, pwm_dev->hwpwm, BERLIN_PWM_CONTROL);
+-	value &= ~BERLIN_PWM_PRESCALE_MASK;
+-	value |= prescale;
++	if (prescale_4096)
++		value |= BERLIN_PWM_PRESCALE_4096;
++	else
++		value &= ~BERLIN_PWM_PRESCALE_4096;
+ 	berlin_pwm_writel(pwm, pwm_dev->hwpwm, value, BERLIN_PWM_CONTROL);
+ 
+ 	berlin_pwm_writel(pwm, pwm_dev->hwpwm, duty, BERLIN_PWM_DUTY);
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.17.0
