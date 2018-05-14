@@ -1,82 +1,180 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754414AbeENRRH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:17:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37444 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754389AbeENRRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:17:01 -0400
-Subject: Re: [PATCH v3] selftests: add headers_install to lib.mk
-To: Anders Roxell <anders.roxell@linaro.org>,
-        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        shuah@kernel.org, bamv2005@gmail.com, brgl@bgdev.pl,
-        akpm@linux-foundation.org, rppt@linux.vnet.ibm.com,
-        aarcange@redhat.com
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
-References: <20180413090351.25662-1-anders.roxell@linaro.org>
- <20180514115809.9803-1-anders.roxell@linaro.org>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
- UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
- AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
- sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
- FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
- VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
- Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
- znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
- IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
- du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
- dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
- utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
- Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
- wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
- fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
- 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
- zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
- oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
- uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
- plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
- HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
- 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
- iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
- 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
- /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
- 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <3aae54a1-8f94-f9c4-a7e9-5a7b32f18818@redhat.com>
-Date: Mon, 14 May 2018 19:16:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180514115809.9803-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1754471AbeENRSP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:18:15 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46952 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753995AbeENRP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 13:15:27 -0400
+From: Dave Martin <Dave.Martin@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arch@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>
+Subject: [RFC PATCH 03/11] MIPS: Remove unused task argument from prctl functions
+Date: Mon, 14 May 2018 18:14:19 +0100
+Message-Id: <1526318067-4964-4-git-send-email-Dave.Martin@arm.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1526318067-4964-1-git-send-email-Dave.Martin@arm.com>
+References: <1526318067-4964-1-git-send-email-Dave.Martin@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/05/2018 13:58, Anders Roxell wrote:
-> If the kernel headers aren't installed we can't build all the tests.
-> Add a new make target rule 'khdr' in the file lib.mk to generate the
-> kernel headers and that gets include for every test-dir Makefile that
-> includes lib.mk If the testdir in turn have its own sub-dirs the
-> top_srcdir needs to be set to the linux-rootdir to be able to generate
-> the kernel headers.
-> 
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> Reviewed-by: Fathi Boudra <fathi.boudra@linaro.org>
+Some MIPS-specific prctl backends take a task argument that is
+redundant, since the only thing ever passed is "current".
 
-Ack for KVM parts.
+This patch gets rid of the redundant arguments.
 
-Paolo
+No functional change.
+
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+---
+ arch/mips/include/asm/processor.h |  4 ++--
+ arch/mips/kernel/process.c        | 23 +++++++++++------------
+ arch/mips/kernel/syscall.c        |  1 +
+ kernel/sys.c                      |  8 ++++----
+ 4 files changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/arch/mips/include/asm/processor.h b/arch/mips/include/asm/processor.h
+index af34afb..8f06608 100644
+--- a/arch/mips/include/asm/processor.h
++++ b/arch/mips/include/asm/processor.h
+@@ -420,7 +420,7 @@ extern int mips_get_process_fp_mode(struct task_struct *task);
+ extern int mips_set_process_fp_mode(struct task_struct *task,
+ 				    unsigned int value);
+ 
+-#define GET_FP_MODE(task)		mips_get_process_fp_mode(task)
+-#define SET_FP_MODE(task,value)		mips_set_process_fp_mode(task, value)
++#define GET_FP_MODE()			mips_get_process_fp_mode()
++#define SET_FP_MODE(value)		mips_set_process_fp_mode(value)
+ 
+ #endif /* _ASM_PROCESSOR_H */
+diff --git a/arch/mips/kernel/process.c b/arch/mips/kernel/process.c
+index b9e9bf6..7db1989 100644
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -679,13 +679,13 @@ void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
+ 	put_cpu();
+ }
+ 
+-int mips_get_process_fp_mode(struct task_struct *task)
++int mips_get_process_fp_mode(void)
+ {
+ 	int value = 0;
+ 
+-	if (!test_tsk_thread_flag(task, TIF_32BIT_FPREGS))
++	if (!test_thread_flag(TIF_32BIT_FPREGS))
+ 		value |= PR_FP_MODE_FR;
+-	if (test_tsk_thread_flag(task, TIF_HYBRID_FPREGS))
++	if (test_thread_flag(TIF_HYBRID_FPREGS))
+ 		value |= PR_FP_MODE_FRE;
+ 
+ 	return value;
+@@ -699,14 +699,14 @@ static void prepare_for_fp_mode_switch(void *info)
+ 		lose_fpu(1);
+ }
+ 
+-int mips_set_process_fp_mode(struct task_struct *task, unsigned int value)
++int mips_set_process_fp_mode(unsigned int value)
+ {
+ 	const unsigned int known_bits = PR_FP_MODE_FR | PR_FP_MODE_FRE;
+ 	struct task_struct *t;
+ 	int max_users;
+ 
+ 	/* If nothing to change, return right away, successfully.  */
+-	if (value == mips_get_process_fp_mode(task))
++	if (value == mips_get_process_fp_mode())
+ 		return 0;
+ 
+ 	/* Only accept a mode change if 64-bit FP enabled for o32.  */
+@@ -736,11 +736,10 @@ int mips_set_process_fp_mode(struct task_struct *task, unsigned int value)
+ 	preempt_disable();
+ 
+ 	/* Save FP & vector context, then disable FPU & MSA */
+-	if (task->signal == current->signal)
+-		lose_fpu(1);
++	lose_fpu(1);
+ 
+ 	/* Prevent any threads from obtaining live FP context */
+-	atomic_set(&task->mm->context.fp_mode_switching, 1);
++	atomic_set(&current->mm->context.fp_mode_switching, 1);
+ 	smp_mb__after_atomic();
+ 
+ 	/*
+@@ -750,7 +749,7 @@ int mips_set_process_fp_mode(struct task_struct *task, unsigned int value)
+ 	 */
+ 	if (num_online_cpus() > 1) {
+ 		/* No need to send an IPI for the local CPU */
+-		max_users = (task->mm == current->mm) ? 1 : 0;
++		max_users = (current->mm == current->mm) ? 1 : 0;
+ 
+ 		if (atomic_read(&current->mm->mm_users) > max_users)
+ 			smp_call_function(prepare_for_fp_mode_switch,
+@@ -761,7 +760,7 @@ int mips_set_process_fp_mode(struct task_struct *task, unsigned int value)
+ 	 * There are now no threads of the process with live FP context, so it
+ 	 * is safe to proceed with the FP mode switch.
+ 	 */
+-	for_each_thread(task, t) {
++	for_each_thread(current, t) {
+ 		/* Update desired FP register width */
+ 		if (value & PR_FP_MODE_FR) {
+ 			clear_tsk_thread_flag(t, TIF_32BIT_FPREGS);
+@@ -778,10 +777,10 @@ int mips_set_process_fp_mode(struct task_struct *task, unsigned int value)
+ 	}
+ 
+ 	/* Allow threads to use FP again */
+-	atomic_set(&task->mm->context.fp_mode_switching, 0);
++	atomic_set(&current->mm->context.fp_mode_switching, 0);
+ 	preempt_enable();
+ 
+-	wake_up_var(&task->mm->context.fp_mode_switching);
++	wake_up_var(&current->mm->context.fp_mode_switching);
+ 
+ 	return 0;
+ }
+diff --git a/arch/mips/kernel/syscall.c b/arch/mips/kernel/syscall.c
+index 69c17b5..15f33f0 100644
+--- a/arch/mips/kernel/syscall.c
++++ b/arch/mips/kernel/syscall.c
+@@ -12,6 +12,7 @@
+ #include <linux/linkage.h>
+ #include <linux/fs.h>
+ #include <linux/smp.h>
++#include <linux/prctl.h>
+ #include <linux/ptrace.h>
+ #include <linux/string.h>
+ #include <linux/syscalls.h>
+diff --git a/kernel/sys.c b/kernel/sys.c
+index f917d78..520d2e8 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -108,10 +108,10 @@
+ # define MPX_DISABLE_MANAGEMENT()	(-EINVAL)
+ #endif
+ #ifndef GET_FP_MODE
+-# define GET_FP_MODE(a)		(-EINVAL)
++# define GET_FP_MODE()		(-EINVAL)
+ #endif
+ #ifndef SET_FP_MODE
+-# define SET_FP_MODE(a,b)	(-EINVAL)
++# define SET_FP_MODE(a)		(-EINVAL)
+ #endif
+ 
+ /*
+@@ -2433,10 +2433,10 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 		error = MPX_DISABLE_MANAGEMENT();
+ 		break;
+ 	case PR_SET_FP_MODE:
+-		error = SET_FP_MODE(me, arg2);
++		error = SET_FP_MODE(arg2);
+ 		break;
+ 	case PR_GET_FP_MODE:
+-		error = GET_FP_MODE(me);
++		error = GET_FP_MODE();
+ 		break;
+ 	default:
+ 		error = prctl_arch(option, arg2, arg3, arg4, arg5);
+-- 
+2.1.4
