@@ -1,38 +1,52 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqJpte8tPoeFttG2nW4cs0hxAShrrPOFqrn3F/2svWaT7oVWBLZw6fhx5vrDCZKLqPK6nyJ
-ARC-Seal: i=1; a=rsa-sha256; t=1526280604; cv=none;
+X-Google-Smtp-Source: AB8JxZoZVg5G+eUgBApDDzgCMm/qM4p6srKXoYNbXz11PUHIHjxN8c5C4wV32764s4B7hzJCOt/g
+ARC-Seal: i=1; a=rsa-sha256; t=1526280600; cv=none;
         d=google.com; s=arc-20160816;
-        b=IONCSAXyPjXF3j6HbozTtGki65QtCee79EGL+h2YVliVXwnynhBCDmSjAQxdWpOGeT
-         P42jjudOWPaHJbhuCvEsTayR5god4VTQgpw76O3lO4UsHFsAf41Ar4rU1UD99ikXKIQi
-         oJ8tIsoDAqRc9Ufk393Bn+Ck759uQOlIBd3Xz4isiYAg9mfxX6BPPQbkQBCThYI1emIf
-         VK0W0dSGzFOyuNjexB1p1XVbm73VET9Mk4Tiyr11fPEEaNhDTn4c9tPirwzDxPAywJRz
-         N3LDhoyYyqlMyxm7Ziai1sTQsmlNXnHwVR1o0aJvF0h7rEpMPj/5WP67lfTyj6B+UhSH
-         J89Q==
+        b=cQyOCE6OoOdrWAJX7p7sQ7e0AgqQtguKcWeGtBRhaUMgRGXoOyKSZqFbFSvPW9DZEy
+         a73oVvBa3j/9XMJR/hUOooYZhLEuxdZB4GmQ7FUWTSe4WRHGlQdICuX8Pi5AiXkSQofo
+         CqrOb7vXFKwv1hEYqbfaFHF2vjrHZ3akdpCP/PE85RNqBqY1vDTU6DsavSysFdd2zWPC
+         QG+WUGsKuI9p7GHf1fvlbursvTu3qsOvFnR/B4TMQx0F/dJimbmLtUjgE//VzDe1bflL
+         4/1yjq4hqebPxga+LULxKHGMip3xvtW/2lXz5OykPDpiQaezL8+8Lnm7H9R7GV8yWV4/
+         ec0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=3aJCnW+IloPaJ6Xt17iWJXr9SjtYrE2lWjuFkkeNPq8=;
-        b=YO+jK8RMnf0qEX38ir9YyGcQtx+c1sS6HLZtZrlVeOFr/NRYHqUH8Cwx/j+C2ntajE
-         WfZF9pI+lVUtuk2GPq+tliO1v4w3BXVHGgPv+WJEPKkDnh/Vtbbb4YW7cJ13gPUFu7TT
-         Pabn+0nvpy/boxjFN3AsiSw4e0rhGtvHu89fw2ADKDRKAHWWbh5nV97vskHojFMHZMwh
-         sU1BXXDu4UMM5NDUpQDbKuNR9wCvR3NkWTl3J0mjTR5nqfSMGhROcaw0eYOhfuIrT5Qn
-         ni3//G6++ip71sCqMuv1Ffs1h2J+2b9DsdTHsVLxqHJevapDo7g8bcelC02zNDixLLmA
-         XU2A==
+        bh=+GzaKqvaQcHtp/jzpplK++CqyqnxGkBGnG/eSuyI7sU=;
+        b=jtaZR1tj9va1HW27bCLvYIQkBkeQl4fz1jkZzF7EuzPOl5MAKM/ihlBt9IxFGwORNC
+         SJPqZVsIa1Tr7p9bUzj23Yh8V97ZwFkshEJYTfKSNU8AuTDJTYkiG8Xxu3ljemozagk1
+         o1fnz537T3tPuZQ9KwRTBOyl8HuFhatAC1pwODde7ST4Z2H8I9ozWjACNDl2IGA/LCl0
+         Zn9FCt6HR4Y5hmH6u1QaoNfcHTgH41pXzBnRbC4hySgu4DCdzGHRZj0k5F07uBvFpRL2
+         z1kYv+Y5Vpxh/GMJJX1Ta03IuESIoNV1B29sx1++jpaksox4JvrmC+TNlKYqFOL8YoLB
+         ilJA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=vEdIMXES;
+       dkim=pass header.i=@kernel.org header.s=default header.b=1HTsyFF+;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=vEdIMXES;
+       dkim=pass header.i=@kernel.org header.s=default header.b=1HTsyFF+;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org,
+	muriloo@linux.ibm.com
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+1dac3a4f6bc9c1c675d4@syzkaller.appspotmail.com,
-	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 04/23] ALSA: pcm: Check PCM state at xfern compat ioctl
-Date: Mon, 14 May 2018 08:48:33 +0200
-Message-Id: <20180514064704.234842443@linuxfoundation.org>
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	David Carrillo-Cisneros <davidcc@google.com>,
+	He Kuang <hekuang@huawei.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Paul Mackerras <paulus@samba.org>,
+	Paul Turner <pjt@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sasha Levin <alexander.levin@microsoft.com>,
+	Simon Que <sque@chromium.org>,
+	Stephane Eranian <eranian@google.com>,
+	Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 3.18 03/23] perf session: Fix undeclared oe
+Date: Mon, 14 May 2018 08:48:32 +0200
+Message-Id: <20180514064704.191796012@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064704.046463679@linuxfoundation.org>
 References: <20180514064704.046463679@linuxfoundation.org>
@@ -42,8 +56,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421211019570544?=
-X-GMAIL-MSGID: =?utf-8?q?1600421211019570544?=
+X-GMAIL-THRID: =?utf-8?q?1600421207032592915?=
+X-GMAIL-MSGID: =?utf-8?q?1600421207032592915?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,36 +65,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
 
-commit f13876e2c33a657a71bcbb10f767c0951b165020 upstream.
+Using linux-3.18.y branch, perf build fails with the following:
 
-Since snd_pcm_ioctl_xfern_compat() has no PCM state check, it may go
-further and hit the sanity check pcm_sanity_check() when the ioctl is
-called right after open.  It may eventually spew a kernel warning, as
-triggered by syzbot, depending on kconfig.
+    $ make -s -j16 -C tools/perf V=1 WERROR=0 NO_LIBUNWIND=1 HAVE_CPLUS_DEMANGLE=1 NO_GTK2=1 NO_LIBNUMA=1 NO_STRLCPY=1 NO_BIONIC=1 prefix=/usr DESTDIR=/tmp/builddir/build all
+    [...]
+    util/session.c: In function ‘__perf_session__process_pipe_events’:
+    util/session.c:1093:36: error: ‘oe’ undeclared (first use in this function)
+      ordered_events__set_copy_on_queue(oe, true);
+                                        ^
+    util/session.c:1093:36: note: each undeclared identifier is reported only once for each function it appears in
 
-The lack of PCM state check there was just an oversight.  Although
-it's no real crash, the spurious kernel warning is annoying, so let's
-add the proper check.
+This patch fixes it for linux-3.18.y branch.
 
-Reported-by: syzbot+1dac3a4f6bc9c1c675d4@syzkaller.appspotmail.com
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 95b33b99cdd6 ("perf inject: Copy events when reordering events in pipe mode")
+Cc: <stable@vger.kernel.org> # 3.18.x
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: David Carrillo-Cisneros <davidcc@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: He Kuang <hekuang@huawei.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Paul Turner <pjt@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sasha Levin <alexander.levin@microsoft.com>
+Cc: Simon Que <sque@chromium.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Signed-off-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/core/pcm_compat.c |    2 ++
- 1 file changed, 2 insertions(+)
+Hi, Greg.
 
---- a/sound/core/pcm_compat.c
-+++ b/sound/core/pcm_compat.c
-@@ -333,6 +333,8 @@ static int snd_pcm_ioctl_xfern_compat(st
- 		return -ENOTTY;
- 	if (substream->stream != dir)
- 		return -EINVAL;
-+	if (substream->runtime->status->state == SNDRV_PCM_STATE_OPEN)
-+		return -EBADFD;
- 
- 	if ((ch = substream->runtime->channels) > 128)
- 		return -EINVAL;
+Perf build on linux-3.18.y is broken since v3.18.101 (v3.18.100 worked just
+fine). This fixes it.
+
+Changes since v2:
+ - rebased on v3.18.108
+
+ tools/perf/util/session.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1073,6 +1073,7 @@ volatile int session_done;
+ static int __perf_session__process_pipe_events(struct perf_session *session,
+ 					       struct perf_tool *tool)
+ {
++	struct ordered_events *oe = &session->ordered_events;
+ 	int fd = perf_data_file__fd(session->file);
+ 	union perf_event *event;
+ 	uint32_t size, cur_size = 0;
