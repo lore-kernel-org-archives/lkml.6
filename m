@@ -1,41 +1,230 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752201AbeENUsF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 16:48:05 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:58666 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752044AbeENUsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 16:48:03 -0400
-Date: Mon, 14 May 2018 22:47:54 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
-        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
-Subject: Re: [PATCH net-next v3 1/7] dt-bindings: net: add DT bindings for
- Microsemi MIIM
-Message-ID: <20180514204754.GA1057@lunn.ch>
-References: <20180514200500.2953-1-alexandre.belloni@bootlin.com>
- <20180514200500.2953-2-alexandre.belloni@bootlin.com>
+        id S1752011AbeENUtu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 16:49:50 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38780 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752000AbeENUts (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 16:49:48 -0400
+X-Google-Smtp-Source: AB8JxZpi4Dl61lctMwd/QDeYgI9JOKmhpeWG+UhrUHozD3zYLB/fdhZPSwppML7+0B5B5X0y+4ixxQ==
+Subject: Re: [PATCH v5 1/2] dt: bindings: lm3601x: Introduce the lm3601x
+ driver
+To: Dan Murphy <dmurphy@ti.com>, Pavel Machek <pavel@ucw.cz>
+Cc: robh+dt@kernel.org, mark.rutland@arm.com, afd@ti.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <20180510174717.26540-1-dmurphy@ti.com>
+ <20180510185401.GB12846@amd> <80e7346f-e8cd-79d2-6d4e-d638c2be01eb@ti.com>
+ <dc3dfb5b-92a9-54bc-b93b-804e64bd8a66@ti.com>
+ <fd68c674-f842-5877-698a-3a74922cb384@gmail.com>
+ <10ab412f-7206-2a01-9876-2a8beeec2287@ti.com>
+ <2dd155f5-ce82-88b2-699e-897ef7d55fee@gmail.com>
+ <7d399662-9806-7bb2-e27f-de66557d043c@ti.com>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <ec33ac83-ff26-4b11-82a2-7ce700504a3c@gmail.com>
+Date: Mon, 14 May 2018 22:48:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514200500.2953-2-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <7d399662-9806-7bb2-e27f-de66557d043c@ti.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 10:04:54PM +0200, Alexandre Belloni wrote:
-> DT bindings for the Microsemi MII Management Controller found on Microsemi
-> SoCs
+Dan,
+
+On 05/14/2018 10:07 PM, Dan Murphy wrote:
+> Jacek
 > 
-> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> On 05/11/2018 03:27 PM, Jacek Anaszewski wrote:
+>> Dan,
+>>
+>> On 05/11/2018 02:12 PM, Dan Murphy wrote:
+>>> Jacek
+>>>
+>>> Thanks for the review
+>>>
+>>> On 05/10/2018 03:17 PM, Jacek Anaszewski wrote:
+>>>> Hi Dan,
+>>>>
+>>>> On 05/10/2018 09:10 PM, Dan Murphy wrote:
+>>>>> On 05/10/2018 02:06 PM, Dan Murphy wrote:
+>>>>>> Pavel
+>>>>>>
+>>>>>> On 05/10/2018 01:54 PM, Pavel Machek wrote:
+>>>>>>> Hi!
+>>>>>>>
+>>>>>>>> Introduce the device tree bindings for the lm3601x
+>>>>>>>> family of LED torch, flash and IR drivers.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>>>>>>
+>>>>>>> Better, thanks.
+>>>>>>>> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+>>>>>>>> @@ -0,0 +1,50 @@
+>>>>>>>> +* Texas Instruments - lm3601x Single-LED Flash Driver
+>>>>>>>
+>>>>>>> Ok, so is it single-LED driver, or can it driver ir & white LEDs at
+>>>>>>> the same time?
+>>>>>>
+>>>>>> It is a single LED driver.  It can drive a Torch white LED or IR LED indefinitely or if the driver
+>>>>>> is programmed to strobe mode the driver will drive the configured LED for the flash timeout specified.
+>>>>>>
+>>>>>> Basically a flash and a flash light. IR or White LED.
+>>>>>>
+>>>>>>
+>>>>>>>
+>>>>>>>> +Example:
+>>>>>>>> +led-controller@64 {
+>>>>>>>> +    compatible = "ti,lm36010";
+>>>>>>>> +    #address-cells = <1>;
+>>>>>>>> +    #size-cells = <0>;
+>>>>>>>> +    reg = <0x64>;
+>>>>>>>> +
+>>>>>>>> +    led@0 {
+>>>>>>>> +        reg = <0>;
+>>>>>>>> +        label = "white:torch";
+>>>>>>>> +        led-max-microamp = <10000>;
+>>>>>>>> +    };
+>>>>>>>> +
+>>>>>>>> +    led@1 {
+>>>>>>>> +        reg = <1>;
+>>>>>>>> +        label = "white:flash";
+>>>>>>>> +        flash-max-microamp = <10000>;
+>>>>>>>> +        flash-max-timeout-us = <800>;
+>>>>>>>> +    };
+>>>>>>>
+>>>>>>> Is this realistic config? I'd expect flash to use more power than
+>>>>>>> torch, and would expect longer timeout than 0.8msec.
+>>>>>>
+>>>>>> Timeout in the spreadsheet is ms I will update this example and code
+>>>>>> Current in the spreadsheet is mA I will update this example and code
+>>>>>>
+>>>>>>>
+>>>>>>> Also.. if this is physically one white LED, it should not be
+>>>>>>> spread over reg = <0> and reg = <1>...
+>>>>>>
+>>>>>> If the torch LED and strobe LED are the same LED how do I expose them both to the user.
+>>>>>> It is up to consumer to configure the required interfaces they want to expose to the filesystem.
+>>>>
+>>>> LED flash class interface is prepared for it.
+>>>> led_clasdev_flash_register() internally calls led_classdev_register(),
+>>>> so there is brightness file available for torch related operations.
+>>>
+>>> Yes the flash class may handle this and expose the brightness node but the HW has two different registers to set the
+>>> corresponding brightness so one set brightness node does not work.
+>>> There is no way to differentiate between the strobe brightness (register 4) and the torch brightness (register 3).
+>>
+>> Hmm? There is brightness file (with brightness_set{_blocking} op) from
+>> LED class and flash_brightness file (with flash_brightness_set op) from
+>> LED class flash.
+>>
+>> I've only now realized that you're not using flash_brightness_set op for
+>> the "strobe_node" in your driver. I assume that you overlooked it.
+>> Please don't introduce "strobe_brightness" naming convention - we
+>> already have "flash_brightness" for that.
+>>
+>>> When the enable register is written the driver will read the corresponding register and set
+>>> the current for the LED.
+>>>
+>>> This is why I separated out the strobe from the torch into 2 different LED nodes.
+>>>
+>>> I cannot seem to find the data sheet on line for the max77693 so I cannot verify that the device only has
+>>> a single brightness register for both torch and strobe.
+>>
+>> It wasn't openly available at least at the time when I had an access
+>> to it.
+>>
+>> But - please look at the functions max77693_set_torch_current() and
+>> max77693_set_flash_current(). The device has separate registers
+>> for torch and flash brightnesses.
+> 
+> 
+> I have looked at these functions and the parse dt function that dictates if there is 1 fled or 2 fled.
+> I am having trouble associating what these mean because the led-sources is being used to define how many LEDs.
+> 
+> In the common.txt it says
+> "- led-sources : List of device current outputs the LED is connected to. The
+> 		outputs are identified by the numbers that must be defined
+> 		in the LED device binding documentation."
+> 
+> I cannot find the max77693 dt documentation or even a dt file that defines what the led-sources could be defined as.
+> In addition, per the common.txt, the led sources should define the current outputs the LED is connected to.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+You can find more details in 
+Documentation/devicetree/bindings/mfd/max77693.txt.
 
-    Andrew
+Generally the led-sources property was introduced to solve this
+particular case when there are two IOUTS that can have connected
+two LEDs or a single LED which allows to feed it with greater current.
+
+> 
+> Is one to assume that it is referring to the physical current pin connection or the devices internal current routing?
+> 
+> When I first referenced this driver as template driver it was misleading to say fled1 and fled2 as I took it to mean, and I still do, that the
+> driver supports 2 LED connections and not a single output pin with different internal current routing.
+> 
+> Without the data sheet or the dt documentation it makes understanding a little difficult.
+
+There are more straightforward LED flash class drivers, e.g. 
+drivers/leds/leds-aat1290, you can refer to.
+
+> I will fix it up how ever you would like it to be but I am thinking we need to fix up the max77693 as well so we can have 2 reference
+> drivers.  
+
+There is also drivers/leds/leds-as3645a.c and one greybus driver.
+So we have in fact four LED flash class drivers in the tree :-)
+
+> It is very difficult to derive the driver without a public version of the data sheet.
+
+I agree, but mfd documentation I pointed should be enough to
+increase your comprehension of the subject, I hope. If not, then
+we can extend it basing on your remarks and my memory.
+
+>>>>>> Maybe they don't want the strobe feature and just want LED on/off and switch between IR and White.
+>>>>>>
+>>>>>> The IR is driven via a different output pin.
+>>>>>
+>>>>> Correction.  There is only one LED drive pin.  The mode selected determines how the device will drive the
+>>>>> LED.  So you may have one device to drive a Torch and another device to drive the LED.
+>>>>
+>>>> But only one type of LED can be soldered on the board at a time, right?
+>>>> If yes, then this is clearly a DT related configuration, and only
+>>>> one child DT node should be defined for given board.
+>>>
+>>> But see above.  There is not a clean way to expose the torch/ir and strobe separately.
+>>>
+>>> Dan
+>>>
+>>>
+>>>>
+>>>>> Strobe is available in either case but not always required if strobe is not desired by the customer hence
+>>>>> why I have a separate DT node for it.
+>>>>>
+>>>>> Dan
+>>>>>
+>>>>>>
+>>>>>> Dan
+>>>>>>
+>>>>>>>
+>>>>>>> Best regards,
+>>>>>>>                                       Pavel
+>>>>>>>
+>>>>>>
+>>>>>>
+>>>>>
+>>>>>
+>>>>
+>>>
+>>>
+>>
+> 
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
