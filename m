@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752714AbeENV36 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:29:58 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:40326 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752119AbeENV3z (ORCPT
+        id S1752769AbeENVax (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:30:53 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:45808 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752456AbeENVZW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:29:55 -0400
-X-Google-Smtp-Source: AB8JxZpsGDdeFsQRSD6onrtnCW09Wrse9RrZoDCV/hb4c5eIIVrarRNWOv3zySsQe8u8j2zkcQt1ARxhNF66hUqKSyE=
+        Mon, 14 May 2018 17:25:22 -0400
+X-Google-Smtp-Source: AB8JxZrDkvWIzPzXv6mX/NOSdcJK5Kxp1anI8x1mpsXhfHKwPIaLIdL3k34kJhnZn/BDS7ZRBvT0cMerIMSg14s+/5Q=
 MIME-Version: 1.0
-In-Reply-To: <20180511162028.20616-10-brgl@bgdev.pl>
-References: <20180511162028.20616-1-brgl@bgdev.pl> <20180511162028.20616-10-brgl@bgdev.pl>
+In-Reply-To: <20180511162028.20616-5-brgl@bgdev.pl>
+References: <20180511162028.20616-1-brgl@bgdev.pl> <20180511162028.20616-5-brgl@bgdev.pl>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 May 2018 23:29:53 +0200
-X-Google-Sender-Auth: Ld_suVq3IvAgDJiAxOcULm27d5M
-Message-ID: <CAMuHMdUnG0YLg=HXMrUVJ34sZEDuuZRYxnrPPC45-KpAkO3bcw@mail.gmail.com>
-Subject: Re: [PATCH 09/12] platform/early: add an init section for early
- driver data
+Date: Mon, 14 May 2018 23:25:21 +0200
+X-Google-Sender-Auth: CNobnZ7VM8OO6ovlhFmCo56dXPY
+Message-ID: <CAMuHMdX1F6dj5AbWB_LZRb1gDS3dqifa5+p_t5jH7ViFrTe2EA@mail.gmail.com>
+Subject: Re: [PATCH 04/12] platform: provide a separate function for
+ initializing platform devices
 To: Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         David Lechner <david@lechnology.com>,
@@ -46,36 +46,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bartosz,
-
 On Fri, May 11, 2018 at 6:20 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >
-> Provide a separate section in which pointers to early platform driver
-> structs will be stored.
+> The early platform driver framework will allocate platform devices
+> using its own internal mechanisms. Provide a function that allows to
+> initialize a platform device object without allocating it.
 >
 > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Thanks for your patch!
-
-> --- a/include/asm-generic/vmlinux.lds.h
-> +++ b/include/asm-generic/vmlinux.lds.h
-> @@ -214,6 +214,16 @@
->  #define CPU_METHOD_OF_TABLES() OF_TABLE(CONFIG_SMP, cpu_method)
->  #define CPUIDLE_METHOD_OF_TABLES() OF_TABLE(CONFIG_CPU_IDLE, cpuidle_method)
->
-> +#ifdef CONFIG_EARLY_PLATFORM
-> +#define EARLY_PLATFORM_DRIVERS_TABLE()                                 \
-> +       . = ALIGN(8);                                                   \
-
-Should this use STRUCT_ALIGN() instead?
-
-> +       VMLINUX_SYMBOL(__early_platform_drivers_table) = .;             \
-> +       KEEP(*(__early_platform_drivers_table))                         \
-> +       VMLINUX_SYMBOL(__early_platform_drivers_table_end) = .;
-> +#else
-> +#define EARLY_PLATFORM_DRIVERS_TABLE()
-> +#endif
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
