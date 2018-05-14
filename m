@@ -1,11 +1,11 @@
 Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-616870-1526293479-2-10352798935972793110
+X-Cyrus-Session-Id: sloti22d1t05-616870-1526293412-2-11572751501550989941
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
   ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001,
-  LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+  LANGUAGES enfrda, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: 
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526293478; b=UaEuHIpGgNE1Kr5r+TWstlSfIbVDLkbyYzfGCzM1K/DVUPAnPY
-    9lfb3wQ89OiO5rA26XSS/BZRF0XQgcfPkNopgqggDekklVaRFBUEUfs3TaT7KYkG
-    2ewz+Gk7kIZP75+E4WwnI2jdbkopFlwl9gip5ZwSH0Re/g4L6xvG0z1jvZ1OBHzZ
-    dxEDc6VzrqYBix1r4Q4QgKhWempoiOIH85oFYS8LJOao41c3U1VMT235CyQB6YLm
-    8awqPNSteVlIS3Y05sn0VNb8SoBJslbinGBcvj52kX3nLI7kE9dMNPFmuEQKOG7C
-    sDcwss453ReYYmas4S6NrxRe8cr4Z2/8In3w==
+    1526293412; b=EyRwkYAQC04QqlavUQZJEJez4Q4UJ1OZ2ejJxJNl1U36PYouMp
+    /QNfdFgUcbFC5yxyJYXTUssWPeUu89ZJ99pPZloB5I/k8J/6rqyke0HzCbOSSkCI
+    f8VpIqyXk/lQYIlaOuE+EeAgJTkb2gX7QgJpLkUOVgjYeIOiKR/iKL3eNNNV03aj
+    YakMTycrpq21FmqrmqX6sfOQqwODDVpbaX0Og6ZMW0CXZKuCmlSHIwLgVq9ogobS
+    MB0EAQe3HhqNYpB9XUxfy2Fl0ncRjOGR0MmDpKmj81Y3Rc7lmzZ83ZKSoBn9ns5H
+    qy2Bq9MnGJy5Yoj5T9SCsnhE+5UPJMc/zJgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526293478; bh=4nIZyQVZPOvUN5Bj0dvDWHoEfOd+nd
-    85Mp96I1w5Uik=; b=en40Q9xWdHfvczNinmBeL2WMG8HM9IaWdTItZ5e/8cU30p
-    QWTTQFR/tNd4T4d7EXda0/0JBDAHfoWZCw2YkIRWEXEizTPtcvlACdyti+y3ALMI
-    4deqBUnTOjtk9XfO5KQAXwmoL5O12+wdn3Qo+qRjKRHlzdXAmyZH+jE9ZtYVwY93
-    HZy1tx6XLecWz1SL7hbZz9x6/dZi578SKZlHD3l/8E/Kf2TCMBggmrydOyd8pvaY
-    hT872olMUQYTQLwXzgDhn487mbkzKb2+9wOyBZOz94nAWSF5HlRXCF1oAX65pCTS
-    jzMcX68PoNWTRMoWOOks9lLF1kc9y6dtfzv4aF0w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526293412; bh=+hMT3vhK6c+E8uNdJ5XKUYVPWZyyAh
+    x641JM4jOTkqg=; b=Yov1Xxd4pU+EqJ+fJbrwQv+XBRs57pWsqNqyxFXy0GIwQ9
+    EfB94v7Kss6P61rk5MO07bbkCZCmXbDnriufVZmWJGba3Ear69bcNU31UnzkyVAN
+    9atm1JDWxSGbXS2+GHSiJkOJTiXk3SypiE7ZS5T0Sc8Zh8Vyj/AdjGnPf1FtKLx6
+    9G0MZG+xB6XxId3Srb9f0A1hcJaAx+AMIf9NqPATtV21/5+dqfJ8TYWw2LVozYC1
+    WVENtakGS/dYa9cdzvFWZSVKAoqxSp1yKkmNzs3EYZ5KS3r/P7VtlDbBvxp3tRj6
+    hi9pfJJJBY5Frm45oetjOOXeXMD0BbJA7ARfNDFQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -43,7 +43,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=mediatek.com header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
@@ -59,23 +59,23 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK4XKGxu8837iCUAnHNKVRgcPvPRwTpXCxRyM0HPJY8xE3oTIx8qkMlpaInurs4F6A6LvibCHatDT55cvbgIkF9KE/OqvzE9OLPaDJTGsGvw66nYVV/U
-    85EUqCY35tLJ/2jVW4HGipi5rL2yoEmceE/efl7/du8AGBT0CahEsD4EjF9NGTFh0hCOtRQKnIjwbrIhtgEa+vnmohqvSqjoZokZe0CWgDiXxHR9+AUhK05N
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOfXLGKD/DgDxVMXqr746lYJeqVDk3XfzvYA7ffGB+a4weVLPd/JDGIGyXcC4Ng7EW5970f5fXILpsc3a4d/xK4FIm7/s/D5N2IIXSlH4dI/LxywAgfM
+    aQ/PJ4zg3JuIfhQERpXcpNxQQU0gIwT9LoCsD2G9TbArKo5G8f5d/N5wNrsz0388VzlTBvHT/4DZHgAtV7Hk9aayjuGf4ajN5clRD3yAiCGONu9bv8mAJ+6g
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=mpaa-ttXAAAA:8
-    a=VwQbUJbxAAAA:8 a=AYVfP_-Pn8nHgOjBFCMA:9 a=x8gzFH9gYPwA:10
+    a=VwQbUJbxAAAA:8 a=DZ5kIsXVIk4IAhlZaa4A:9 a=x8gzFH9gYPwA:10
     a=6heAxKwa5pAsJatQ0mat:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752149AbeENKXK (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 06:23:10 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:51059 "EHLO
+        id S1752104AbeENKXR (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 06:23:17 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:30580 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752130AbeENKXI (ORCPT
+        with ESMTP id S1752147AbeENKXL (ORCPT
         <rfc822;linux-serial@vger.kernel.org>);
-        Mon, 14 May 2018 06:23:08 -0400
-X-UUID: cf05d103c80349fb9a711ea56b58613a-20180514
+        Mon, 14 May 2018 06:23:11 -0400
+X-UUID: 8e5c3922d80846d69b98a89f02a045e3-20180514
 From: Erin Lo <erin.lo@mediatek.com>
 To: Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -91,9 +91,9 @@ CC: <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
         <mars.cheng@mediatek.com>
-Subject: [PATCH v2 2/4] dt-bindings: mtk-sysirq: Add compatible for Mediatek MT8183
-Date: Mon, 14 May 2018 18:22:29 +0800
-Message-ID: <1526293351-32794-3-git-send-email-erin.lo@mediatek.com>
+Subject: [PATCH v2 3/4] dt-bindings: serial: Add compatible for Mediatek MT8183
+Date: Mon, 14 May 2018 18:22:30 +0800
+Message-ID: <1526293351-32794-4-git-send-email-erin.lo@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526293351-32794-1-git-send-email-erin.lo@mediatek.com>
 References: <1526293351-32794-1-git-send-email-erin.lo@mediatek.com>
@@ -106,26 +106,26 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This adds dt-binding documentation of SYSIRQ for Mediatek MT8183 SoC
+This adds dt-binding documentation of uart for Mediatek MT8183 SoC
 Platform.
 
 Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 ---
- .../devicetree/bindings/interrupt-controller/mediatek,sysirq.txt         | 1 +
+ Documentation/devicetree/bindings/serial/mtk-uart.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-index 07bf0b9..5ff48a8 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-+++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-@@ -5,6 +5,7 @@ interrupt.
+diff --git a/Documentation/devicetree/bindings/serial/mtk-uart.txt b/Documentation/devicetree/bindings/serial/mtk-uart.txt
+index f73abff..4783336 100644
+--- a/Documentation/devicetree/bindings/serial/mtk-uart.txt
++++ b/Documentation/devicetree/bindings/serial/mtk-uart.txt
+@@ -15,6 +15,7 @@ Required properties:
+   * "mediatek,mt8127-uart" for MT8127 compatible UARTS
+   * "mediatek,mt8135-uart" for MT8135 compatible UARTS
+   * "mediatek,mt8173-uart" for MT8173 compatible UARTS
++  * "mediatek,mt8183-uart", "mediatek,mt6577-uart" for MT8183 compatible UARTS
+   * "mediatek,mt6577-uart" for MT6577 and all of the above
  
- Required properties:
- - compatible: should be
-+	"mediatek,mt8183-sysirq", "mediatek,mt6577-sysirq": for MT8183
- 	"mediatek,mt8173-sysirq", "mediatek,mt6577-sysirq": for MT8173
- 	"mediatek,mt8135-sysirq", "mediatek,mt6577-sysirq": for MT8135
- 	"mediatek,mt8127-sysirq", "mediatek,mt6577-sysirq": for MT8127
+ - reg: The base address of the UART register bank.
 -- 
 1.9.1
 
