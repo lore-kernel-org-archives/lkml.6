@@ -1,42 +1,41 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrYNg+UWgL5ce/TpJcyRUz9+OqslTfunZyfFaGL0p7wet26cXWLyIwltL+Wzb8bhjGo2n4L
-ARC-Seal: i=1; a=rsa-sha256; t=1526280988; cv=none;
+X-Google-Smtp-Source: AB8JxZpYlhcOQstYjQf/IA9QW6YjoICzb5V2XkCU1XyZFxf1chIEL763tLv4PtiWjutELb84KhKR
+ARC-Seal: i=1; a=rsa-sha256; t=1526280983; cv=none;
         d=google.com; s=arc-20160816;
-        b=YKKhuCusR0MJG/gcJHPWrdv6ngVUThxP3JG3JLrmw3SU0pJOtDgBk66ZhFkfizR9He
-         sIxbVHCA7jwMu+hWMm3jR/w78hJj5JUL1qRbch3OqAxYzKVCOaRynLG8U/colW9+Q8sr
-         LoDeTaFYWegs8nBvabaKr5ujAVPh96+e7/nw/jqiKVUqo7dDG+LPONFKJC5dmx4KP9Pg
-         KtoNXEIfVaWtej/2EWVv8rZ2/EoCjTfLP2MDJQXkwo4M1zE/CNlSCijp65OrVpsCaxwn
-         2j2E+NGnLN7n7R2QGqrQlJLA5wZt7UC7L7Wk9cWUSS3VAHPUZ9KujNKGlvKQgQrpYByg
-         wzdg==
+        b=I800RV5rc7hq/mOAzvCKsQi3H6vIb6REeLAhqSH3724m9VS1YdsVHpBdKq1ypBBR1Z
+         J3J4w/7luTpiGeEEAeC+HpcptM1MKCz+DSozoLBS9Ji13XTbkJuWkR9APHCs+5kCQE7Q
+         IqSSXWnqSkM1YwqJNboh/UsIE/nCykcbtexk5cxXWHc6t6fXrBRIesYwTcx9bUzf1Jr1
+         Kw/8+xNjM8xBBrs58clfdw9iG148RyJKeD5Go6rNYNqy1WwzJJSnjNPRlcNZIHAf7nY6
+         9Y7tCm0brnqmMEjFha1pmjXSO6TUrFRsnmcuH5JiCc/fPPQ9GuhX09vu5CdbzEpexQnK
+         eRKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=O0PHVTkV0uOVBfBgoOj9EgNajFSH+biOiTqFcyrGXjY=;
-        b=JC7Cvm8XtL6X7d9RdidW3AZSyZ+I0wuTzNGOsX6JwQfNTUx6XwYix/Vhi0dgq4QGR8
-         5phHYAP2mXYvIa291pVmWHyBgmH1jYUsk8u+/HQ0Ju+jzyePOXe914omteY75tma4gDA
-         0/Ddk+AvkDvrcWOpVv+169lNwiN7Mb6TNLeXOMKiO1wdmRYgrAl8r/S4eaRR0XcGZsGO
-         J2TCHSvEacr3hjsrVsWCFuVl0T/Ttqh8uN3zG3uiee/9ZyIvuP8aP+duTfJhmOgLy0kd
-         99DgWFY7LX+q/pvMsvYhjJkxtAEN6GLKt1qzVqcKgZz94w80pRB94wwZ1wZIQBW2k6KS
-         FUIw==
+        bh=F6k6LJ84XvBJN4dfsNqgYXzZe1wiD5rNqsv8Q3RSvhg=;
+        b=jFHLuDMrkS9vt7PPxqjfjZJP7gkI1bqIjAuKIFxhJ9rKAu1pPmlMONqltYWYsYZMax
+         CMPajEK5LaZWwweA7tTtdLg9UzPGSjoMLypylUJbx4u2csdPTYEhYArVkR/ucFaiXBvd
+         yTEMrYVA638xDVkY3xuX1QCpN8oGDvlOUV6zIpIzEgW7RBK+Uo+TW6jr3cPTheOQmsvj
+         di45u3ijlViCFK+et8xazbC+TVdf7UDGmhgYlqESpei7lJTzHLuJL2rwz8cKvjD29Zxm
+         viXMab55HeY8RxzvcjYgFk9H7fzs2PQrQNBpIYKTZ4Vx4qNlKoOdQVtmnsIxGudcc1DP
+         axoQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=2I0Bz3GM;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ieWSRBR5;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=2I0Bz3GM;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ieWSRBR5;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florent Flament <contact@florentflament.com>,
-	Pavel Petrovic <ppetrovic@acm.org>,
-	"=?UTF-8?q?S=C3=A9rgio=20M . =20Basto?=" <sergio@serjux.com>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.14 38/62] drm/i915: Fix drm:intel_enable_lvds ERROR message in kernel log
-Date: Mon, 14 May 2018 08:48:54 +0200
-Message-Id: <20180514064818.486047503@linuxfoundation.org>
+	Mathias Duckeck <m.duckeck@kunbus.de>,
+	Akshay Bhat <akshay.bhat@timesys.com>,
+	Casey Fitzpatrick <casey.fitzpatrick@timesys.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.14 36/62] can: hi311x: Work around TX complete interrupt erratum
+Date: Mon, 14 May 2018 08:48:52 +0200
+Message-Id: <20180514064818.385778650@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -46,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421473062509095?=
-X-GMAIL-MSGID: =?utf-8?q?1600421612978795704?=
+X-GMAIL-THRID: =?utf-8?q?1600421608296051163?=
+X-GMAIL-MSGID: =?utf-8?q?1600421608296051163?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,58 +54,67 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florent Flament <contact@florentflament.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit e8f48f96db7e482995743f461b3e8a5c1a102533 upstream.
+commit 32bee8f48fa048a3198109de50e51c092507ff52 upstream.
 
-Fix `[drm:intel_enable_lvds] *ERROR* timed out waiting for panel to
-power on` in kernel log at boot time.
+When sending packets as fast as possible using "cangen -g 0 -i -x", the
+HI-3110 occasionally latches the interrupt pin high on completion of a
+packet, but doesn't set the TXCPLT bit in the INTF register.  The INTF
+register contains 0x00 as if no interrupt has occurred.  Even waiting
+for a few milliseconds after the interrupt doesn't help.
 
-Toshiba Satellite Z930 laptops needs between 1 and 2 seconds to power
-on its screen during Intel i915 DRM initialization. This currently
-results in a `[drm:intel_enable_lvds] *ERROR* timed out waiting for
-panel to power on` message appearing in the kernel log during boot
-time and when stopping the machine.
+Work around this apparent erratum by instead checking the TXMTY bit in
+the STATF register ("TX FIFO empty").  We know that we've queued up a
+packet for transmission if priv->tx_len is nonzero.  If the TX FIFO is
+empty, transmission of that packet must have completed.
 
-This change increases the timeout of the `intel_enable_lvds` function
-from 1 to 5 seconds, letting enough time for the Satellite 930 LCD
-screen to power on, and suppressing the error message from the kernel
-log.
+Note that this is congruent with our handling of received packets, which
+likewise gleans from the STATF register whether a packet is waiting in
+the RX FIFO, instead of looking at the INTF register.
 
-This patch has been successfully tested on Linux 4.14 running on a
-Toshiba Satellite Z930.
-
-[vsyrjala: bump the timeout from 2 to 5 seconds to match the DP
- code and properly cover the max hw timeout of ~4 seconds, and
- drop the comment about the specific machine since this is not
- a particulary surprising issue, nor specific to that one machine]
-
-Signed-off-by: Florent Flament <contact@florentflament.com>
-Cc: stable@vger.kernel.org
-Cc: Pavel Petrovic <ppetrovic@acm.org>
-Cc: Sérgio M. Basto <sergio@serjux.com>
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=103414
-References: https://bugzilla.kernel.org/show_bug.cgi?id=57591
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180419160700.19828-1-ville.syrjala@linux.intel.com
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-(cherry picked from commit 280b54ade5914d3b4abe4f0ebe083ddbd4603246)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>
+Cc: Akshay Bhat <akshay.bhat@timesys.com>
+Cc: Casey Fitzpatrick <casey.fitzpatrick@timesys.com>
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Acked-by: Akshay Bhat <akshay.bhat@timesys.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_lvds.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/can/spi/hi311x.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_lvds.c
-+++ b/drivers/gpu/drm/i915/intel_lvds.c
-@@ -317,7 +317,8 @@ static void intel_enable_lvds(struct int
+--- a/drivers/net/can/spi/hi311x.c
++++ b/drivers/net/can/spi/hi311x.c
+@@ -91,6 +91,7 @@
+ #define HI3110_STAT_BUSOFF BIT(2)
+ #define HI3110_STAT_ERRP BIT(3)
+ #define HI3110_STAT_ERRW BIT(4)
++#define HI3110_STAT_TXMTY BIT(7)
  
- 	I915_WRITE(PP_CONTROL(0), I915_READ(PP_CONTROL(0)) | PANEL_POWER_ON);
- 	POSTING_READ(lvds_encoder->reg);
--	if (intel_wait_for_register(dev_priv, PP_STATUS(0), PP_ON, PP_ON, 1000))
+ #define HI3110_BTR0_SJW_SHIFT 6
+ #define HI3110_BTR0_BRP_SHIFT 0
+@@ -737,10 +738,7 @@ static irqreturn_t hi3110_can_ist(int ir
+ 			}
+ 		}
+ 
+-		if (intf == 0)
+-			break;
+-
+-		if (intf & HI3110_INT_TXCPLT) {
++		if (priv->tx_len && statf & HI3110_STAT_TXMTY) {
+ 			net->stats.tx_packets++;
+ 			net->stats.tx_bytes += priv->tx_len - 1;
+ 			can_led_event(net, CAN_LED_EVENT_TX);
+@@ -750,6 +748,9 @@ static irqreturn_t hi3110_can_ist(int ir
+ 			}
+ 			netif_wake_queue(net);
+ 		}
 +
-+	if (intel_wait_for_register(dev_priv, PP_STATUS(0), PP_ON, PP_ON, 5000))
- 		DRM_ERROR("timed out waiting for panel to power on\n");
- 
- 	intel_panel_enable_backlight(pipe_config, conn_state);
++		if (intf == 0)
++			break;
+ 	}
+ 	mutex_unlock(&priv->hi3110_lock);
+ 	return IRQ_HANDLED;
