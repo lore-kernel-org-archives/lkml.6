@@ -1,126 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754445AbeENRSO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:18:14 -0400
-Received: from foss.arm.com ([217.140.101.70]:46960 "EHLO foss.arm.com"
+        id S1752269AbeENRUj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:20:39 -0400
+Received: from foss.arm.com ([217.140.101.70]:47110 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754004AbeENRP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:15:28 -0400
-From: Dave Martin <Dave.Martin@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-arch@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>
-Subject: [RFC PATCH 04/11] MIPS: Move arch-specific prctls out of core code
-Date: Mon, 14 May 2018 18:14:20 +0100
-Message-Id: <1526318067-4964-5-git-send-email-Dave.Martin@arm.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1526318067-4964-1-git-send-email-Dave.Martin@arm.com>
-References: <1526318067-4964-1-git-send-email-Dave.Martin@arm.com>
+        id S1752056AbeENRUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 13:20:00 -0400
+Date: Mon, 14 May 2018 12:19:59 -0500
+From: Kim Phillips <kim.phillips@arm.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] coresight: documentation: update sysfs section
+Message-Id: <20180514121959.a9a3d2fb3d3d270849ffbc39@arm.com>
+In-Reply-To: <CANLsYkyQLan3XajOz2uuoOF8OQchGfeu2ZkZJ9H1Xm9q==aXTw@mail.gmail.com>
+References: <20180507172915.c032cd71c07b1849bf419a5f@arm.com>
+        <CANLsYkyQLan3XajOz2uuoOF8OQchGfeu2ZkZJ9H1Xm9q==aXTw@mail.gmail.com>
+Organization: Arm
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch moves the MIPS-specific prctl call implementations out
-of core code and removes redundant boilerplate associated with
-them.
+- Align and show updated ls devices output from the TC2, based on
+  current driver
 
-No functional change.
+- Provide an example from an ETMv4 based system (Juno)
 
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
+- Reflect changes to the way the RAM write pointer is accessed since
+  it got changed in commit 7d83d17795ef ("coresight: tmc: adding sysFS
+  management entries").
+
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Signed-off-by: Kim Phillips <kim.phillips@arm.com>
 ---
- arch/mips/Kconfig                 |  1 +
- arch/mips/include/asm/processor.h |  3 ---
- arch/mips/kernel/syscall.c        | 14 ++++++++++++++
- kernel/sys.c                      | 12 ------------
- 4 files changed, 15 insertions(+), 15 deletions(-)
+v2: address Mathieu's comment about clarifying the sinks on the Juno
+vs. TC2 platforms.
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 225c95d..99eb2ef 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -61,6 +61,7 @@ config MIPS
- 	select HAVE_NMI
- 	select HAVE_OPROFILE
- 	select HAVE_PERF_EVENTS
-+	select HAVE_PRCTL_ARCH
- 	select HAVE_REGS_AND_STACK_ACCESS_API
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_VIRT_CPU_ACCOUNTING_GEN if 64BIT || !SMP
-diff --git a/arch/mips/include/asm/processor.h b/arch/mips/include/asm/processor.h
-index 8f06608..4a8079a 100644
---- a/arch/mips/include/asm/processor.h
-+++ b/arch/mips/include/asm/processor.h
-@@ -420,7 +420,4 @@ extern int mips_get_process_fp_mode(struct task_struct *task);
- extern int mips_set_process_fp_mode(struct task_struct *task,
- 				    unsigned int value);
+ Documentation/trace/coresight.txt | 41 +++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 16 deletions(-)
+
+diff --git a/Documentation/trace/coresight.txt
+b/Documentation/trace/coresight.txt index 6f0120c3a4f1..134994e9fa6d
+100644
+--- a/Documentation/trace/coresight.txt
++++ b/Documentation/trace/coresight.txt
+@@ -144,10 +144,22 @@ If everything goes well during the registration
+process the new devices will show up under /sys/bus/coresight/devices,
+as showns here for a TC2 platform: 
+ root:~# ls /sys/bus/coresight/devices/
+-replicator  20030000.tpiu    2201c000.ptm  2203c000.etm  2203e000.etm
+-20010000.etb         20040000.funnel  2201d000.ptm  2203d000.etm
++20010000.etb   20040000.funnel	2201d000.ptm  2203d000.etm
+replicator +20030000.tpiu  2201c000.ptm	2203c000.etm
+2203e000.etm root:~#
  
--#define GET_FP_MODE()			mips_get_process_fp_mode()
--#define SET_FP_MODE(value)		mips_set_process_fp_mode(value)
--
- #endif /* _ASM_PROCESSOR_H */
-diff --git a/arch/mips/kernel/syscall.c b/arch/mips/kernel/syscall.c
-index 15f33f0..aa8157c 100644
---- a/arch/mips/kernel/syscall.c
-+++ b/arch/mips/kernel/syscall.c
-@@ -35,6 +35,7 @@
- #include <asm/cachectl.h>
- #include <asm/cacheflush.h>
- #include <asm/asm-offsets.h>
-+#include <asm/processor.h>
- #include <asm/signal.h>
- #include <asm/sim.h>
- #include <asm/shmparam.h>
-@@ -237,6 +238,19 @@ SYSCALL_DEFINE3(cachectl, char *, addr, int, nbytes, int, op)
- 	return -ENOSYS;
- }
- 
-+int prctl_arch(int option, unsigned long arg2, unsigned long arg3,
-+	       unsigned long arg4, unsigned long arg5)
-+{
-+	switch (option) {
-+	case PR_SET_FP_MODE:
-+		return mips_set_process_fp_mode(arg2);
-+	case PR_GET_FP_MODE:
-+		return mips_get_process_fp_mode();
-+	default:
-+		return -EINVAL;
-+	}
-+}
++and here for a Juno platform:
 +
- /*
-  * If we ever come here the user sp is bad.  Zap the process right away.
-  * Due to the bad stack signaling wouldn't work.
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 520d2e8..63228e7 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -107,12 +107,6 @@
- #ifndef MPX_DISABLE_MANAGEMENT
- # define MPX_DISABLE_MANAGEMENT()	(-EINVAL)
- #endif
--#ifndef GET_FP_MODE
--# define GET_FP_MODE()		(-EINVAL)
--#endif
--#ifndef SET_FP_MODE
--# define SET_FP_MODE(a)		(-EINVAL)
--#endif
++root@juno:~# ls /sys/bus/coresight/devices/
++20010000.etf	 20120000.replicator  22040000.etm
+230c0000.funnel +20030000.tpiu	 20130000.funnel
+220c0000.funnel  23140000.etm +20040000.funnel
+20140000.etf	      22140000.etm     23240000.etm
++20070000.etr	 20150000.funnel      23040000.etm
+23340000.etm +root@juno:~# +
++Note that on Juno users can select the ETF, ETR and TPIU as a sink
+target while +on TC2, the ETB and TPIU can be selected.
++
+ The functions take a "struct coresight_device", which looks like this:
  
- /*
-  * this is where the system-wide overflow UID and GID are defined, for
-@@ -2432,12 +2426,6 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 			return -EINVAL;
- 		error = MPX_DISABLE_MANAGEMENT();
- 		break;
--	case PR_SET_FP_MODE:
--		error = SET_FP_MODE(arg2);
--		break;
--	case PR_GET_FP_MODE:
--		error = GET_FP_MODE();
--		break;
- 	default:
- 		error = prctl_arch(option, arg2, arg3, arg4, arg5);
- 		break;
+ struct coresight_desc {
+@@ -193,16 +205,16 @@ the information carried in "THIS_MODULE".
+ How to use the tracer modules
+ -----------------------------
+ 
+-Before trace collection can start, a coresight sink needs to be
+identify. +Before trace collection can start, a coresight sink needs to
+be identified. There is no limit on the amount of sinks (nor sources)
+that can be enabled at any given moment.  As a generic operation, all
+device pertaining to the sink class will have an "active" entry in
+sysfs: 
+ root:/sys/bus/coresight/devices# ls
+-replicator  20030000.tpiu    2201c000.ptm  2203c000.etm  2203e000.etm
+-20010000.etb         20040000.funnel  2201d000.ptm  2203d000.etm
++20010000.etb   20040000.funnel	2201d000.ptm  2203d000.etm
+replicator +20030000.tpiu  2201c000.ptm	2203c000.etm
+2203e000.etm root:/sys/bus/coresight/devices# ls 20010000.etb
+-enable_sink  status  trigger_cntr
++enable_sink  mgmt  power  subsystem  trigger_cntr  uevent
+ root:/sys/bus/coresight/devices# echo 1 > 20010000.etb/enable_sink
+ root:/sys/bus/coresight/devices# cat 20010000.etb/enable_sink
+ 1
+@@ -216,16 +228,13 @@ trigger a trace capture:
+ root:/sys/bus/coresight/devices# echo 1 > 2201c000.ptm/enable_source
+ root:/sys/bus/coresight/devices# cat 2201c000.ptm/enable_source
+ 1
+-root:/sys/bus/coresight/devices# cat 20010000.etb/status
+-Depth:          0x2000
+-Status:         0x1
+-RAM read ptr:   0x0
+-RAM wrt ptr:    0x19d3   <----- The write pointer is moving
+-Trigger cnt:    0x0
+-Control:        0x1
+-Flush status:   0x0
+-Flush ctrl:     0x2001
+-root:/sys/bus/coresight/devices#
++
++Observe the write pointer moving:
++
++root:/sys/bus/coresight/devices# cat 20010000.etb/mgmt/rwp
++0x1a8
++root:/sys/bus/coresight/devices# cat 20010000.etb/mgmt/rwp
++0x19a6
+ 
+ Trace collection is stopped the same way:
+ 
 -- 
-2.1.4
+2.17.0
