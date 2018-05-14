@@ -1,35 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752195AbeENSuI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 14:50:08 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:40088 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751422AbeENSuG (ORCPT
+        id S1752211AbeENSuY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 14:50:24 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:46013 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752070AbeENSuV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 14:50:06 -0400
-Date: Mon, 14 May 2018 14:50:04 -0400 (EDT)
-Message-Id: <20180514.145004.1655310548325135142.davem@davemloft.net>
-To: vivien.didelot@savoirfairelinux.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@savoirfairelinux.com, andrew@lunn.ch, f.fainelli@gmail.com
-Subject: Re: [PATCH net-next 0/3] net: dsa: mv88e6xxx: remove Global 1 setup
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180511211636.25995-1-vivien.didelot@savoirfairelinux.com>
-References: <20180511211636.25995-1-vivien.didelot@savoirfairelinux.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Mon, 14 May 2018 14:50:21 -0400
+X-Google-Smtp-Source: AB8JxZr8amx0zXSFK2F/kyTGa3ld00swnWtFMm6yv1LGgxwqNPr2aUbOrTnRp+biQ9p5xslcaJjP3govK735fCIvffg=
+MIME-Version: 1.0
+In-Reply-To: <20180514184634.2160-2-bart.vanassche@wdc.com>
+References: <20180514184634.2160-1-bart.vanassche@wdc.com> <20180514184634.2160-2-bart.vanassche@wdc.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Mon, 14 May 2018 11:50:20 -0700
+Message-ID: <CAMo8Bf+Wgm2VrZiY+CfjN=CM=ysYBpRyTMdozV+6A8Brk4DKDQ@mail.gmail.com>
+Subject: Re: [PATCH v9 1/2] arch/*: Add CONFIG_ARCH_HAVE_CMPXCHG64
+To: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vivien Didelot <vivien.didelot@savoirfairelinux.com>
-Date: Fri, 11 May 2018 17:16:33 -0400
+On Mon, May 14, 2018 at 11:46 AM, Bart Van Assche
+<bart.vanassche@wdc.com> wrote:
+> The next patch in this series introduces a call to cmpxchg64()
+> in the block layer core for those architectures on which this
+> functionality is available. Make it possible to test whether
+> cmpxchg64() is available by introducing CONFIG_ARCH_HAVE_CMPXCHG64.
+>
+> ---
 
-> The mv88e6xxx driver is still writing arbitrary registers at setup time,
-> e.g. priority override bits. Add ops for them and provide specific setup
-> functions for priority and stats before getting rid of the erroneous
-> mv88e6xxx_g1_setup code, as previously done with Global 2.
+[...]
 
-Series applied, thanks Vivien.
+> diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
+> index c921e8bccdc8..8234278a821d 100644
+> --- a/arch/xtensa/Kconfig
+> +++ b/arch/xtensa/Kconfig
+> @@ -23,6 +23,7 @@ config XTENSA
+>         select HAVE_DMA_CONTIGUOUS
+>         select HAVE_EXIT_THREAD
+>         select HAVE_FUNCTION_TRACER
+> +       select ARCH_HAVE_CMPXCHG64
+
+This breaks alphabetical sorting of Kconfig entries.
+
+>         select HAVE_FUTEX_CMPXCHG if !MMU
+>         select HAVE_HW_BREAKPOINT if PERF_EVENTS
+>         select HAVE_IRQ_TIME_ACCOUNTING
+
+-- 
+Thanks.
+-- Max
