@@ -1,46 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752137AbeENJPr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 05:15:47 -0400
-Received: from mail-lf0-f52.google.com ([209.85.215.52]:39210 "EHLO
-        mail-lf0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751617AbeENJPp (ORCPT
+        id S1752177AbeENJQf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 05:16:35 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:40669 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751626AbeENJQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 05:15:45 -0400
-X-Google-Smtp-Source: AB8JxZr9P763mTOr9UwNdd85gJlrI2+/YdXtvsBkvcmHkqQyvfp0LjF1TcE2wbJ7DO5D+L8hQHjvSpE5vdD947YZ0oQ=
+        Mon, 14 May 2018 05:16:33 -0400
+X-Google-Smtp-Source: AB8JxZra0gkEYr3deUJOPGSLdmczTRkLdcL4pDy2eJu64ppor3ts90SR9BNlNFKQvM6eBEnj7K3wbD2RO6IX2YstZUg=
 MIME-Version: 1.0
-In-Reply-To: <20180514090252.a6mb2hszh25q7hm2@sirius.home.kraxel.org>
-References: <20180417133844.GA30256@jordon-HP-15-Notebook-PC>
- <20180423104924.ozalv7x5ppjifnxc@sirius.home.kraxel.org> <20180424121151.GX31310@phenom.ffwll.local>
- <20180424123513.53opt3ufe47i5db7@sirius.home.kraxel.org> <CAFqt6zYwCgzBkbeRFgOHGRaYT5EqaAybXQ5_E73cBLEc7Hzv8A@mail.gmail.com>
- <20180514090252.a6mb2hszh25q7hm2@sirius.home.kraxel.org>
-From: Souptick Joarder <jrdr.linux@gmail.com>
-Date: Mon, 14 May 2018 14:45:43 +0530
-Message-ID: <CAFqt6zZTGu9HGZ+acgTupwpip-KrN3oDJCjy9x0f9Pgxp4m2ZQ@mail.gmail.com>
-Subject: Re: [PATCH] gpu: drm: qxl: Adding new typedef vm_fault_t
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: airlied@linux.ie, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        virtualization@lists.linux-foundation.org,
-        dri-devel@lists.freedesktop.org, airlied@redhat.com,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>
+In-Reply-To: <20180511131509.16275-2-patrick.bellasi@arm.com>
+References: <20180511131509.16275-1-patrick.bellasi@arm.com> <20180511131509.16275-2-patrick.bellasi@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 14 May 2018 11:16:12 +0200
+Message-ID: <CAKfTPtD3GJH3LLp6tpYoz7Uf0eXb-ZLMbGdQdRUsAgczZMr47g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] sched/cpufreq: always consider blocked FAIR utilization
+To: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 2:32 PM, Gerd Hoffmann <kraxel@redhat.com> wrote:
->   Hi,
->
->> > So my expectation that a backmerge happens anyway after -rc1/2 is in
->> > line with reality, it is just to be delayed this time.  I'll stay
->> > tuned ;)
->>
->> Is this patch already merged in drm-misc-next tree ?
->
-> Pushed now.
->
+Hi Patrick,
 
-Thanks Gerd :)
+On 11 May 2018 at 15:15, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> Since the refactoring introduced by:
+>
+>    commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
+>
+> we aggregate FAIR utilization only if this class has runnable tasks.
+> This was mainly due to avoid the risk to stay on an high frequency just
+> because of the blocked utilization of a CPU not being properly decayed
+> while the CPU was idle.
+>
+> However, since:
+>
+>    commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
+>
+> the FAIR blocked utilization is properly decayed also for IDLE CPUs.
+>
+> This allows us to use the FAIR blocked utilization as a safe mechanism
+> to gracefully reduce the frequency only if no FAIR tasks show up on a
+> CPU for a reasonable period of time.
+>
+> Moreover, we also reduce the frequency drops of CPUs running periodic
+> tasks which, depending on the task periodicity and the time required
+> for a frequency switch, was increasing the chances to introduce some
+> undesirable performance variations.
+>
+> Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
+> Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Joel Fernandes <joelaf@google.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+
+With this patch, I can't see the spurious OPP changes that I was seeing before
+
+FWIW
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
+
+Regards,
+Vincent
+
+>
+> ---
+>
+> Changes in v2:
+>  - add "Acked-by" Viresh tag
+> ---
+>  kernel/sched/cpufreq_schedutil.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
+>
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index d2c6083304b4..a74d05160e66 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -183,22 +183,21 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
+>  static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
+>  {
+>         struct rq *rq = cpu_rq(sg_cpu->cpu);
+> -       unsigned long util;
+>
+> -       if (rq->rt.rt_nr_running) {
+> -               util = sg_cpu->max;
+> -       } else {
+> -               util = sg_cpu->util_dl;
+> -               if (rq->cfs.h_nr_running)
+> -                       util += sg_cpu->util_cfs;
+> -       }
+> +       if (rq->rt.rt_nr_running)
+> +               return sg_cpu->max;
+>
+>         /*
+> +        * Utilization required by DEADLINE must always be granted while, for
+> +        * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
+> +        * gracefully reduce the frequency when no tasks show up for longer
+> +        * periods of time.
+> +        *
+>          * Ideally we would like to set util_dl as min/guaranteed freq and
+>          * util_cfs + util_dl as requested freq. However, cpufreq is not yet
+>          * ready for such an interface. So, we only do the latter for now.
+>          */
+> -       return min(util, sg_cpu->max);
+> +       return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
+>  }
+>
+>  static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
+> --
+> 2.15.1
+>
