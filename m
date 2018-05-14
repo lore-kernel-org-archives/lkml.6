@@ -1,30 +1,30 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1587535-1526340729-2-3331669708423417486
+X-Cyrus-Session-Id: sloti22d1t05-1587535-1526340890-2-4850924176467215222
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='UTF-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526340729; b=WhyQyx/nlywf/Fl3JSHZbLoQm55/Q5ZSDrKmapt6ED2SL0I8t2
-    jZ+5IPT4zulzM3dybVFzyEGRUizEMBfldxifcU2v1CT9DxgdINs8AZTs7j78QmQy
-    G/zbrDqI7ycDInfZnx39IlgyniKINq0eo8zengQCyCzWG+EDvGlScRK1oOeumLRg
-    wK7EvF9VR4WEGJdAZM0aLaDefLZtLJLNL0aR3Emsi33PgU/nbsVmek5SjAoZ2trd
-    t8jXlNdM1dFYZZ8njIWZv1SKwNe92vZvTVIB18h08SLA+kPHD11aR5rXPcCp+fXE
-    f6NBLM1GxpPJxN1PShsQodcsJfCqDOrK/sqw==
+    1526340890; b=h5BJSNzccudCjXhx9M+YqZVgUoMVfHl5N6lgELDTx3gH0yMmdm
+    Ux4OV3fBvXfhUu1TMl8XDGz07kKAtNs2BBMiO9AAwTbG0Lj7VueehEOcZHOSN1ek
+    QwgA+iijBUXh+0/citGq6c8NojVUKkDfXpMlc3M18KHgzohyaxhcDfWV/PoqzViv
+    ER/FMjvhB4lO6k+44BnkOJhS+lIX6kXDBg19IuzbnrNBBtgPcjiFbkyqfkwUu/F/
+    dxMqcx1Fes0HnxuUDgGjHht9xwXRtCJWqcEsFtr1u5xFd4/RsSzOENhqzEdtrCZn
+    WJ5Me7AMvR9ZwA4b7GwT8MsNGxbdxfbbbrqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:reply-to
-    :mime-version:content-type:message-id:sender:list-id; s=fm2; t=
-    1526340729; bh=GjX3tl8ggFxGbGNED5unFWqaWeKNj9jyDs3KtWWlrTs=; b=G
-    V7CkCMnSxqZVilwAVmyAHpBTI3p6vN89083Bi/sL0WslS4q/MwM4ROki+LZ2Lzlv
-    niFtQFlTL92UJovFO5ENgVzpDGd7Y1akpAvgrUVxUCZnjAcycX27dSZ2BJ8BIws6
-    FcC20w6BysbL7SY0Udqby8v0/Ltek+mjCjKWpfFri2uMS0xmM7OOxrXk8zZ+4uS4
-    RYhkkoz/9+ypnOnuG/ehtcNxXeEENlfFaxkIKprN0kpy4soyN/gbhu4M+UZMRGdJ
-    flWhLt3sMWZ4LrA//QsprUWwXg3iIKku2qGbuTWMXzOR3gwpfuDHQNWFQf1ekEqb
-    2YDOgifrqOcwgi10R4lrg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:in-reply-to
+    :references:mime-version:content-type:content-transfer-encoding
+    :message-id:sender:list-id; s=fm2; t=1526340890; bh=Kd9DcNpVNurz
+    4PQaYcjaNODYshXAkxegN7IxU6PGWm4=; b=DUR0oZlZcYABVeyZ1KiBbhsv4OAa
+    bBeEOgGtvk4e7OSdIi2V8OoAjGYuwCOr5I5yeD/dr7e5O56ttDwxVxhvm9Z31QMz
+    oqqMN0imJlJHWwEMhwkVZdjnTG0PZ0Scf/McmyZoGQUNiBcuZm07DJ5vCh/RddHK
+    lrjJhIc/zWtgL2bv7UNMpwbQUGSmoxWkwyTXqBrLeqfFcHtbpqGeUGjieOfuQ8n+
+    L8c4mXTWY8HEbuuOwnnotPYMGaUPO8uQnYlU5uswU208AvMsE91xy3lkJGOikGYH
+    iptwPFjHP8i7jgWzdu4PvptIDzPDeboPeKeq30Xjxt6zpcGYjWBcfZvI9A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
     header.from=linux.vnet.ibm.com;
@@ -39,8 +39,8 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     header.domain=linux.vnet.ibm.com header.result=pass
     header_org.domain=ibm.com header_org.result=pass
     header_is_org_domain=no;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx1.messagingengine.com;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
@@ -56,46 +56,53 @@ Authentication-Results: mx1.messagingengine.com;
       header.domain=linux.vnet.ibm.com header.result=pass
       header_org.domain=ibm.com header_org.result=pass
       header_is_org_domain=no;
-    x-vs=clean score=0 state=0
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLaG91tq4co1ni39V1LEkkE/pmuQANw99sjdxIu3FL/H3/IesjK9iqQ5zQiyvTTRuDbIHaRSGuCVmErUP8XfrcffHj08IpzilOH4L77F+dZpsOpQBp9o
-    J6PStTyqh5TNHtVAC2Xrgd/ViFjGOJ4u9fW2BIcT7Jd+tt+JBiAXUT06vwt7bb5ovrfA0goEWprcp2oX6MLbj1iM1rZswCGVvEaRclbY4sUgIYkooqNXzf6W
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=SajGqXo6GS7U7wIx0SAA:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfE8Y1t6xzq366cZaTrKcqA8S4FlIPFIRmhr1PHVC+N26byzpaISK3QTNzuB3nyem1fou/eH45accodlS8pmQRJCydzLh38ocZIolTKKOpQAmrdJ2Q4Ru
+    Kl+ZdAW9w+q2OpweUyMff6cfvfjOH8OwRgFep5JIvIiex7+NjQ2PHPQDHCPGXRXBr2LaZa5JePYz0DUpfEDWRTOxhpAWm3bd64pgaYJWh1Q8IA8pyQ+f3J2+
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=iP-xVBlJAAAA:8 a=7CQSdrXTAAAA:8 a=JfrnYn6hAAAA:8 a=pGLkceISAAAA:8
+    a=20KFwNOVAAAA:8 a=yyJd0-ZHAAAA:8 a=VnNF1IyMAAAA:8 a=ZOzjf2MOAAAA:8
+    a=Q4tLxrQX0-Gmlr7mPIUA:9 a=QEXdDO2ut3YA:10 a=lHLH-nfn2y1bM_0xSXwp:22
+    a=a-qgeE7W1pNrGK8U0ZQC:22 a=1CNFftbPRP8L7MoqJWF3:22 a=tZ66tqNesld6_HzJrOHp:22
+    a=1Mhi-5-LkjG4w5oc0yAU:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752185AbeENXcG (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 14 May 2018 19:32:06 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41134 "EHLO
+        id S1752558AbeENXes (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 14 May 2018 19:34:48 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45410 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752112AbeENXcF (ORCPT
+        by vger.kernel.org with ESMTP id S1752380AbeENXce (ORCPT
         <rfc822;linux-arch@vger.kernel.org>);
-        Mon, 14 May 2018 19:32:05 -0400
-Date: Mon, 14 May 2018 16:33:28 -0700
+        Mon, 14 May 2018 19:32:34 -0400
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         mingo@kernel.org
 Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com,
         will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
         npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com
-Subject: [PATCH memory-model 0/19] Updates to the formal memory model
-Reply-To: paulmck@linux.vnet.ibm.com
+        luc.maranget@inria.fr, akiyks@gmail.com,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH memory-model 18/19] tools/memory-model: Update ASPLOS information
+Date: Mon, 14 May 2018 16:33:56 -0700
+X-Mailer: git-send-email 2.5.2
+In-Reply-To: <20180514233328.GA7601@linux.vnet.ibm.com>
+References: <20180514233328.GA7601@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18051423-0048-0000-0000-0000026CF2FB
+x-cbid: 18051423-2213-0000-0000-000002A53F85
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009026; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032383; UDB=6.00527784; IPR=6.00811514;
- MB=3.00021114; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 23:32:01
+ PH=3.00000004; SC=3.00000260; SDB=6.01032383; UDB=6.00527784; IPR=6.00811515;
+ MB=3.00021114; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 23:32:33
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051423-0049-0000-0000-0000451F4830
-Message-Id: <20180514233328.GA7601@linux.vnet.ibm.com>
+x-cbparentid: 18051423-2214-0000-0000-00005A1EAED1
+Message-Id: <1526340837-12222-18-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -109,78 +116,101 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello!
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-This series contains updates to the Linux kernel's formal memory model in
-tools/memory-model.  These are ready for inclusion into -tip.
+ASPLOS 2018 was held in March: make sure this is reflected in
+header comments and references.
 
-1.	Rename LKMM's "link" and "rcu-path" relations to "rcu-link"
-	and "rb", respectively, courtesy of Alan Stern.
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+Cc: Luc Maranget <luc.maranget@inria.fr>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Akira Yokosawa <akiyks@gmail.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+---
+ tools/memory-model/Documentation/references.txt | 11 ++++++-----
+ tools/memory-model/linux-kernel.bell            |  4 ++--
+ tools/memory-model/linux-kernel.cat             |  4 ++--
+ tools/memory-model/linux-kernel.def             |  4 ++--
+ 4 files changed, 12 insertions(+), 11 deletions(-)
 
-2.	Redefine LKMM's "rb" relation in terms of rcu-fence in order
-	to match the structure of LKMM's other strong fences, courtesy
-	of Alan Stern.
-
-3.	Update required version of herdtools7, courtesy of Akira Yokosawa.
-
-4.	 Fix cheat sheet typo: "RWM" should be "RMW", courtesy of Paolo Bonzini.
-
-5.	Improve cheatsheet.txt key for SELF and SV.
-
-6.	Fix cheatsheet.txt to note that smp_mb__after_atomic() orders
-	later RMW operations.
-
-7.	Model smp_store_mb(), courtesy of Andrea Parri.
-
-8.	Fix coding style in 'linux-kernel.def', courtesy of Andrea Parri.
-
-9.	Add scripts to test the memory model.
-
-10.	Add model support for spin_is_locked(), courtesy of Luc Maranget.
-
-11.	Flag the tests that exercise "cumulativity" and "propagation".
-
-12.	Remove duplicated code from lock.cat, courtesy of Alan Stern.
-
-13.	Improve comments in lock.cat, courtesy of Alan Stern.
-
-14.	Improve mixed-access checking in lock.cat, courtesy of Alan Stern.
-
-15.	Remove out-of-date comments and code from lock.cat, which have
-	been obsoleted by the settled-upon spin_is_locked() semantics,
-	courtesy of Alan Stern.
-
-16.	Fix coding style in 'lock.cat', bringing the indentation to
-	Linux-kernel standard, courtesy of Andrea Parri.
-
-17.	Update Andrea Parri's email address in the MAINTAINERS file,
-	oddly enough courtesy of Andrea Parri.  ;-)
-
-18.	Update ASPLOS information now that ASPLOS has come and gone,
-	courtesy of Andrea Parri.
-
-19.	Add reference for 'Simplifying ARM concurrency', courtesy
-	of Andrea Parri.
-
-								Thanx, Paul
-
-------------------------------------------------------------------------
-
- MAINTAINERS                                                               |    2 
- tools/memory-model/Documentation/cheatsheet.txt                           |    7 
- tools/memory-model/Documentation/explanation.txt                          |  261 +++++-----
- tools/memory-model/Documentation/references.txt                           |   17 
- tools/memory-model/README                                                 |    2 
- tools/memory-model/linux-kernel.bell                                      |    4 
- tools/memory-model/linux-kernel.cat                                       |   53 +-
- tools/memory-model/linux-kernel.def                                       |   34 -
- tools/memory-model/litmus-tests/.gitignore                                |    1 
- tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus          |    2 
- tools/memory-model/litmus-tests/MP+polockmbonce+poacquiresilsil.litmus    |   35 +
- tools/memory-model/litmus-tests/MP+polockonce+poacquiresilsil.litmus      |   34 +
- tools/memory-model/litmus-tests/README                                    |   19 
- tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus |    4 
- tools/memory-model/lock.cat                                               |  197 ++++---
- tools/memory-model/scripts/checkalllitmus.sh                              |   73 ++
- tools/memory-model/scripts/checklitmus.sh                                 |   86 +++
- 17 files changed, 595 insertions(+), 236 deletions(-)
+diff --git a/tools/memory-model/Documentation/references.txt b/tools/memory-model/Documentation/references.txt
+index ba2e34c2ec3f..74f448f2616a 100644
+--- a/tools/memory-model/Documentation/references.txt
++++ b/tools/memory-model/Documentation/references.txt
+@@ -67,11 +67,12 @@ o	Shaked Flur, Susmit Sarkar, Christopher Pulte, Kyndylan Nienhuis,
+ Linux-kernel memory model
+ =========================
+ 
+-o	Andrea Parri, Alan Stern, Luc Maranget, Paul E. McKenney,
+-	and Jade Alglave.  2017. "A formal model of
+-	Linux-kernel memory ordering - companion webpage".
+-	http://moscova.inria.fr/∼maranget/cats7/linux/. (2017). [Online;
+-	accessed 30-January-2017].
++o	Jade Alglave, Luc Maranget, Paul E. McKenney, Andrea Parri, and
++	Alan Stern.  2018. "Frightening small children and disconcerting
++	grown-ups: Concurrency in the Linux kernel". In Proceedings of
++	the 23rd International Conference on Architectural Support for
++	Programming Languages and Operating Systems (ASPLOS 2018). ACM,
++	New York, NY, USA, 405-418.  Webpage: http://diy.inria.fr/linux/.
+ 
+ o	Jade Alglave, Luc Maranget, Paul E. McKenney, Andrea Parri, and
+ 	Alan Stern.  2017.  "A formal kernel memory-ordering model (part 1)"
+diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+index 432c7cf71b23..64f5740e0e75 100644
+--- a/tools/memory-model/linux-kernel.bell
++++ b/tools/memory-model/linux-kernel.bell
+@@ -5,10 +5,10 @@
+  * Copyright (C) 2017 Alan Stern <stern@rowland.harvard.edu>,
+  *                    Andrea Parri <parri.andrea@gmail.com>
+  *
+- * An earlier version of this file appears in the companion webpage for
++ * An earlier version of this file appeared in the companion webpage for
+  * "Frightening small children and disconcerting grown-ups: Concurrency
+  * in the Linux kernel" by Alglave, Maranget, McKenney, Parri, and Stern,
+- * which is to appear in ASPLOS 2018.
++ * which appeared in ASPLOS 2018.
+  *)
+ 
+ "Linux-kernel memory consistency model"
+diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+index 1e5c4653dd12..59b5cbe6b624 100644
+--- a/tools/memory-model/linux-kernel.cat
++++ b/tools/memory-model/linux-kernel.cat
+@@ -5,10 +5,10 @@
+  * Copyright (C) 2017 Alan Stern <stern@rowland.harvard.edu>,
+  *                    Andrea Parri <parri.andrea@gmail.com>
+  *
+- * An earlier version of this file appears in the companion webpage for
++ * An earlier version of this file appeared in the companion webpage for
+  * "Frightening small children and disconcerting grown-ups: Concurrency
+  * in the Linux kernel" by Alglave, Maranget, McKenney, Parri, and Stern,
+- * which is to appear in ASPLOS 2018.
++ * which appeared in ASPLOS 2018.
+  *)
+ 
+ "Linux-kernel memory consistency model"
+diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
+index f0553bd37c08..6fa3eb28d40b 100644
+--- a/tools/memory-model/linux-kernel.def
++++ b/tools/memory-model/linux-kernel.def
+@@ -1,9 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0+
+ //
+-// An earlier version of this file appears in the companion webpage for
++// An earlier version of this file appeared in the companion webpage for
+ // "Frightening small children and disconcerting grown-ups: Concurrency
+ // in the Linux kernel" by Alglave, Maranget, McKenney, Parri, and Stern,
+-// which is to appear in ASPLOS 2018.
++// which appeared in ASPLOS 2018.
+ 
+ // ONCE
+ READ_ONCE(X) __load{once}(X)
+-- 
+2.5.2
