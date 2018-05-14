@@ -1,40 +1,42 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZogqh5fT8+WQahTy2YXj/4Ycc3c/DsL5szvLtVl4ihwMEt9uTyvBkpw1kXeVpKK+CZcBZbM
-ARC-Seal: i=1; a=rsa-sha256; t=1526281117; cv=none;
+X-Google-Smtp-Source: AB8JxZpUcfCu56t78wsJMG84OKvCWY2Srfc+/REdWjVdHS57EKDsFkY0ts3sWfP+RX177hqr4p3p
+ARC-Seal: i=1; a=rsa-sha256; t=1526281114; cv=none;
         d=google.com; s=arc-20160816;
-        b=DahJ9o26FnZYFJmHEs2Ku34u6Byahk6NiKXxKbeR14V91gvqvKTfb/LN8u+Isgz37v
-         C93jW3Tpy7AGUZt1smXH4Ozda1F22vvOOrIT+hTeX8rCaOHRe/Mvhc5JGMchZPQTsgXd
-         rPqU5HuLgNh4BQ52GVdwSyUckkNOjWPivSeN+x6ltozxyOCCrGamAyU6iyZrOnpQBoKO
-         niQLkHNNUvS8BOqMtmbjT1vitCffEk+ks/UcRoHfFfmph1gZecqUKHRcH/OM6yxoHt3V
-         oxh5oCQMS2FTleZ+lYP4mDWONvqtVbk/yDtfv4GSFYqZmEGF3p7E7TKrr5jhoTS6A79f
-         0KWg==
+        b=ZCu6ZWWkXmiOJ9jXdbtufStZ/NgbtjhipPxDRxIn2CKC0V2dQknary+b/8JOSz5uMg
+         Crz9ugl0NovfeEvUAsSVqN86W8Pv95IP+jxUFT+2KEw/xGAKaktR3VqZ+2vAyd0QQtzo
+         o4DhowSSlI2bWYXUuaC88XQMxRGmDbspTtqelSoaPbn436MnJC5x79lnKuPE/524vbXi
+         ikJLZDphpXwimgTOW6dQeW5cUu6aTUCTOj7nxRb0iYzIbIgeU9puJvOktOhru2/fbr/F
+         o8eaWoqUulzZDuLasZW9yIOj6vU1XX+HV03CploN3n9hHCFMs1JnECQdI1pprLIueec+
+         +m1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=peD5+3zO36XKIyF4FZBLjiBqRHqvOZQEujctBlN6Y+M=;
-        b=KwXH5sV7NM/xIHcJ5aqbZqnM2IWXPt4TkvzKNoLyKjr+jBVAMk8+sOR+tzYfdUVI61
-         K7rYSQiF7i4HUSHvtc+FscLVN1EaX4gyg6piV5exgL/rUk9GVqDOVOw2Yk9n9QiG0yI0
-         NfrGXMjgOQna8XWXgYugLni7ljXDRugh3NAPIQ/VMn/oo0qpILLyZsewBiWfXYt/SCAb
-         JceglTONmMz+SMp8wFZwrrqkh8rMFf8afZpiXQgK/csAOkiIlZvGYuwNyVhCLbq8JqMZ
-         Nx+4nbV0cvxrx5UwfRMQU19vcSi3SwBwHLjqKAQMXzgiUqyyVK5Vh3yf1ahpb1vJoAUv
-         0w2g==
+        bh=G1xJScuVyKQ+Qw4r5SsS5wGsZH55zcsjCuFAu1Iu+No=;
+        b=SHyV/hc+vk48wgUrh+e6fYIy2J6ckj4GEel+o5QFvZlCHJTB2CKVZrXvzgDl+mYNHa
+         yAXMexirJMQnhjN2Uw4E9LflCpZ8DIbu4FZ5QBolbCyh47A7izwNcQ5kQ4BPyHIc3YV/
+         DEeLPa4d/EyVYQGKEbL7eQu4VyLOm3DXallgxM0CTeqgUIqHHPODK3X/JlkiktmTzgsB
+         vcQOSGLTBOuzIJgM/fbCsKz36qf4cCgHexgTGgSu7VZfBqgKDRqWjxfnfgWcwDQShVh2
+         EJqNAcYDdnPgXP1TsyNkgGWdwlpYH501vjtEtF5P315H1gdynN6Be7Asb5Qg9Jcxod9O
+         FUlw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=xq7NHKjs;
+       dkim=pass header.i=@kernel.org header.s=default header.b=lCYvdsFO;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=xq7NHKjs;
+       dkim=pass header.i=@kernel.org header.s=default header.b=lCYvdsFO;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jann Horn <jannh@google.com>,
-	Kees Cook <keescook@chromium.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 23/72] compat: fix 4-byte infoleak via uninitialized struct field
-Date: Mon, 14 May 2018 08:48:40 +0200
-Message-Id: <20180514064824.013866096@linuxfoundation.org>
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Tejun Heo <tj@kernel.org>,
+	syzbot <syzbot+9873874c735f2892e7e9@syzkaller.appspotmail.com>,
+	Dave Chinner <dchinner@redhat.com>,
+	Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.16 22/72] bdi: Fix oops in wb_workfn()
+Date: Mon, 14 May 2018 08:48:39 +0200
+Message-Id: <20180514064823.971684983@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -44,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421570040873746?=
-X-GMAIL-MSGID: =?utf-8?q?1600421748541696227?=
+X-GMAIL-THRID: =?utf-8?q?1600421358029134796?=
+X-GMAIL-MSGID: =?utf-8?q?1600421745772404211?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,39 +55,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 0a0b98734479aa5b3c671d5190e86273372cab95 upstream.
+commit b8b784958eccbf8f51ebeee65282ca3fd59ea391 upstream.
 
-Commit 3a4d44b61625 ("ntp: Move adjtimex related compat syscalls to
-native counterparts") removed the memset() in compat_get_timex().  Since
-then, the compat adjtimex syscall can invoke do_adjtimex() with an
-uninitialized ->tai.
+Syzbot has reported that it can hit a NULL pointer dereference in
+wb_workfn() due to wb->bdi->dev being NULL. This indicates that
+wb_workfn() was called for an already unregistered bdi which should not
+happen as wb_shutdown() called from bdi_unregister() should make sure
+all pending writeback works are completed before bdi is unregistered.
+Except that wb_workfn() itself can requeue the work with:
 
-If do_adjtimex() doesn't write to ->tai (e.g.  because the arguments are
-invalid), compat_put_timex() then copies the uninitialized ->tai field
-to userspace.
+	mod_delayed_work(bdi_wq, &wb->dwork, 0);
 
-Fix it by adding the memset() back.
+and if this happens while wb_shutdown() is waiting in:
 
-Fixes: 3a4d44b61625 ("ntp: Move adjtimex related compat syscalls to native counterparts")
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+	flush_delayed_work(&wb->dwork);
+
+the dwork can get executed after wb_shutdown() has finished and
+bdi_unregister() has cleared wb->bdi->dev.
+
+Make wb_workfn() use wakeup_wb() for requeueing the work which takes all
+the necessary precautions against racing with bdi unregistration.
+
+CC: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+CC: Tejun Heo <tj@kernel.org>
+Fixes: 839a8e8660b6777e7fe4e80af1a048aebe2b5977
+Reported-by: syzbot <syzbot+9873874c735f2892e7e9@syzkaller.appspotmail.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/compat.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/fs-writeback.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/compat.c
-+++ b/kernel/compat.c
-@@ -34,6 +34,7 @@ int compat_get_timex(struct timex *txc,
- {
- 	struct compat_timex tx32;
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1961,7 +1961,7 @@ void wb_workfn(struct work_struct *work)
+ 	}
  
-+	memset(txc, 0, sizeof(struct timex));
- 	if (copy_from_user(&tx32, utp, sizeof(struct compat_timex)))
- 		return -EFAULT;
+ 	if (!list_empty(&wb->work_list))
+-		mod_delayed_work(bdi_wq, &wb->dwork, 0);
++		wb_wakeup(wb);
+ 	else if (wb_has_dirty_io(wb) && dirty_writeback_interval)
+ 		wb_wakeup_delayed(wb);
  
