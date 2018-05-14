@@ -1,52 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754522AbeENPE5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 11:04:57 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:37499 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752585AbeENPEy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 11:04:54 -0400
-Subject: Re: [PATCH v3 0/3] ti_am335x_tsc: Fix suspend/resume
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC: Grygorii Strashko <grygorii.strashko@ti.com>,
-        <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
-References: <20180424062741.7891-1-vigneshr@ti.com>
-From: Vignesh R <vigneshr@ti.com>
-Message-ID: <45161a15-8804-561c-18af-0c9b45a2eac1@ti.com>
-Date: Mon, 14 May 2018 20:34:50 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932202AbeENPFE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 11:05:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39154 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754525AbeENPFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 11:05:00 -0400
+Date: Mon, 14 May 2018 10:04:58 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Jiri Slaby <jslaby@suse.cz>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org
+Subject: Re: [PATCH v2 3/6] x86/stacktrace: remove STACKTRACE_DUMP_ONCE from
+ __save_stack_trace_reliable
+Message-ID: <20180514150458.bf2u6cki4ocheiv2@treble>
+References: <20180514140653.23678-1-jslaby@suse.cz>
+ <20180514140653.23678-3-jslaby@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180424062741.7891-1-vigneshr@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180514140653.23678-3-jslaby@suse.cz>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 14, 2018 at 04:06:50PM +0200, Jiri Slaby wrote:
+> The stack unwinding can sometimes fail yet. Especially with the
+> generated debug info. So do not yell at users -- live patching (the only
+> user of this interface) will inform the user about the failure
+> gracefully.
+> 
+> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> ---
+>  arch/x86/kernel/stacktrace.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
+> index 3a4602c2324f..e0169b128523 100644
+> --- a/arch/x86/kernel/stacktrace.c
+> +++ b/arch/x86/kernel/stacktrace.c
+> @@ -125,20 +125,16 @@ __save_stack_trace_reliable(struct stack_trace *trace,
+>  		 * generated code which __kernel_text_address() doesn't know
+>  		 * about.
+>  		 */
+> -		if (!addr) {
+> -			STACKTRACE_DUMP_ONCE(task);
+> +		if (!addr)
+>  			return -EINVAL;
+> -		}
+>  
+>  		if (save_stack_address(trace, addr, false))
+>  			return -EINVAL;
+>  	}
+>  
+>  	/* Check for stack corruption */
+> -	if (unwind_error(&state)) {
+> -		STACKTRACE_DUMP_ONCE(task);
+> +	if (unwind_error(&state))
+>  		return -EINVAL;
+> -	}
+>  
+>  	/* Success path for non-user tasks, i.e. kthreads and idle tasks */
+>  	if (!(task->flags & (PF_KTHREAD | PF_IDLE)))
 
+The STACKTRACE_DUMP_ONCE macro itself can also be removed.
 
-On 24-Apr-18 11:57 AM, Vignesh R wrote:
-> This patch series fixes couple of issues wrt suspend/resume with TI AM335x
-> TSC driver. Disable and clear any pending IRQs before suspend, and
-> handle case where TSC wakeup would fail, if there were touch events
-> during suspend.
-> 
-> 
+Also the subject is a bit long, how about
 
-Gentle ping on this series... Any comments?
+  x86/stacktrace: Remove STACKTRACE_DUMP_ONCE
 
-> Grygorii Strashko (2):
->   Input: ti_am335x_tsc - Ack pending IRQs at probe and before suspend
->   Input: ti_am335x_tsc - Prevent system suspend when TSC is in use
-> 
-> Vignesh R (1):
->   Input: ti_am335x_tsc - Mark IRQ as wakeup capable
-> 
->  drivers/input/touchscreen/ti_am335x_tsc.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
+-- 
+Josh
