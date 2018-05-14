@@ -1,135 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752112AbeENI1t (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:27:49 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33839 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751364AbeENI1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:27:47 -0400
-Date: Mon, 14 May 2018 10:27:45 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>
-Subject: Re: Allwinner A64: Issue on external rtc clock to wifi chip
-Message-ID: <20180514082744.ydmfg5mzsbol5onu@flea>
-References: <CAMty3ZCNyuEwmLGdDZLM_9qKJ2NsT33rodug7ZpKAE-OHymVEg@mail.gmail.com>
- <20180514075727.uxggyhmbahvhestx@flea>
- <CAMty3ZDew=+zytKUx5+nX27CjCe0UfJpyYOy2s07NoJvbe57mQ@mail.gmail.com>
+        id S1752230AbeENI3Z (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:29:25 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39063 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751364AbeENI3W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 04:29:22 -0400
+X-Google-Smtp-Source: AB8JxZpbRboPYfK+9SKHn+3hF60yT7HGdaqpchqDxXz1Kbfe04qY/Ygud68HeRouBT2m9Gw7Jw9pyQ==
+Date: Mon, 14 May 2018 10:29:18 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linuxram@us.ibm.com,
+        tglx@linutronix.de, dave.hansen@intel.com, mpe@ellerman.id.au,
+        akpm@linux-foundation.org, shuah@kernel.org, shakeelb@google.com
+Subject: Re: [PATCH 00/13] [v4] x86, pkeys: two protection keys bug fixes
+Message-ID: <20180514082918.GA21574@gmail.com>
+References: <20180509171336.76636D88@viggo.jf.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ko2m32o4savwftrl"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMty3ZDew=+zytKUx5+nX27CjCe0UfJpyYOy2s07NoJvbe57mQ@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180509171336.76636D88@viggo.jf.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ko2m32o4savwftrl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+* Dave Hansen <dave.hansen@linux.intel.com> wrote:
 
-On Mon, May 14, 2018 at 01:34:56PM +0530, Jagan Teki wrote:
-> On Mon, May 14, 2018 at 1:27 PM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > Hi,
-> >
-> > On Mon, May 14, 2018 at 12:37:49PM +0530, Jagan Teki wrote:
-> >> Hi Maxime and All,
-> >>
-> >> We are trying to bring-up AP6330 Wifi chip for A64 board. We noticed
-> >> to have an external rtc clock has driven from wifi chip.
-> >>
-> >> So the devicetree is configured according to this as below.
-> >>
-> >> / {
-> >>         wifi_pwrseq: wifi-pwrseq {
-> >>                 compatible =3D "mmc-pwrseq-simple";
-> >>                 clocks =3D <&rtc 1>;
-> >>                 clock-names =3D "ext_clock";
-> >>                 reset-gpios =3D <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
-> >>                 post-power-on-delay-ms =3D <400>;
-> >>         };
-> >> };
-> >>
-> >> &rtc {
-> >>         clock-output-names =3D "rtc-osc32k", "rtc-osc32k-out";
-> >>         clocks =3D <&osc32k>;
-> >>         #clock-cells =3D <1>;
-> >> };
-> >>
-> >> &mmc1 {
-> >>         pinctrl-names =3D "default";
-> >>         pinctrl-0 =3D <&mmc1_pins>;
-> >>         vmmc-supply =3D <&reg_dcdc1>;
-> >>         vqmmc-supply =3D <&reg_eldo1>;
-> >>         mmc-pwrseq =3D <&wifi_pwrseq>;
-> >>         bus-width =3D <4>;
-> >>         non-removable;
-> >>         status =3D "okay";
-> >>
-> >>         brcmf: wifi@1 {
-> >>                 reg =3D <1>;
-> >>                 compatible =3D "brcm,bcm4329-fmac";
-> >>                 interrupt-parent =3D <&r_pio>;
-> >>                 interrupts =3D <0 3 IRQ_TYPE_LEVEL_LOW>;  /* WL-WAKE-A=
-P: PL3 */
-> >>                 interrupt-names =3D "host-wake";
-> >>         };
-> >> };
-> >>
-> >> And observed rtc-osc32k-out clock is never enabled[1] and the value of
-> >> LOSC_OUT_GATING is 0x0 which eventually not enabling
-> >> LOSC_OUT_GATING_EN
-> >>
-> >> Pls. let us know if we miss anything here?
-> >>
-> >> [1] https://paste.ubuntu.com/p/X2By4q8kD2/
-> >
-> > Could you paste your config and the logs from a boot to?
->=20
-> .config
-> https://paste.ubuntu.com/p/w9w2KB7RFc/
->=20
-> dmesg
-> https://paste.ubuntu.com/p/mrZGk5bWRR/
+> Hi x86 maintainers,
+> 
+> This set has been seen quite a few changes and additions since the
+> last post.  Details below.
+> 
+> Changes from v3:
+>  * Reordered patches following Ingo's recommendations: Introduce
+>    failing selftests first, then the kernel code to fix the test
+>    failure.
+>  * Increase verbosity and accuracy of do_not_expect_pk_fault()
+>    messages.
+>  * Removed abort() use from tests.  Crashing is not nice.
+>  * Remove some dead debugging code, fixing dprint_in_signal.
+>  * Fix deadlocks from using printf() and friends in signal
+>    handlers.
+> 
+> Changes from v2:
+>  * Clarified commit message in patch 1/9 taking some feedback from
+>    Shuah.
+> 
+> Changes from v1:
+>  * Added Fixes: and cc'd stable.  No code changes.
+> 
+> --
+> 
+> This fixes two bugs, and adds selftests to make sure they stay fixed:
+> 
+> 1. pkey 0 was not usable via mprotect_pkey() because it had never
+>    been explicitly allocated.
+> 2. mprotect(PROT_EXEC) memory could sometimes be left with the
+>    implicit exec-only protection key assigned.
+> 
+> I already posted #1 previously.  I'm including them both here because
+> I don't think it's been picked up in case folks want to pull these
+> all in a single bundle.
+> 
+> Dave Hansen (13):
+>       x86/pkeys/selftests: give better unexpected fault error messages
+>       x86/pkeys/selftests: Stop using assert()
+>       x86/pkeys/selftests: remove dead debugging code, fix dprint_in_signal
+>       x86/pkeys/selftests: avoid printf-in-signal deadlocks
+>       x86/pkeys/selftests: Allow faults on unknown keys
+>       x86/pkeys/selftests: Factor out "instruction page"
+>       x86/pkeys/selftests: Add PROT_EXEC test
+>       x86/pkeys/selftests: Fix pkey exhaustion test off-by-one
+>       x86/pkeys: Override pkey when moving away from PROT_EXEC
+>       x86/pkeys/selftests: Fix pointer math
+>       x86/pkeys/selftests: Save off 'prot' for allocations
+>       x86/pkeys/selftests: Add a test for pkey 0
+>       x86/pkeys: Do not special case protection key 0
+> 
+>  arch/x86/include/asm/mmu_context.h            |   2 +-
+>  arch/x86/include/asm/pkeys.h                  |  18 +-
+>  arch/x86/mm/pkeys.c                           |  21 +-
+>  tools/testing/selftests/x86/pkey-helpers.h    |  20 +-
+>  tools/testing/selftests/x86/protection_keys.c | 187 +++++++++++++-----
+>  5 files changed, 173 insertions(+), 75 deletions(-)
 
-This is kind of weird. Have you tested with a 4.17 kernel? We have
-runtime_pm changes lined up in next, so that might be a regression
-there, even though we tested it with Quentin at some point.
+So this series is looking good to me in principle, but trying to build it I got 
+warnings and errors - see the build log below.
 
-Maxime
+Note that this is on a box with "Ubuntu 18.04 LTS (Bionic Beaver)".
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
 
---ko2m32o4savwftrl
-Content-Type: application/pgp-signature; name="signature.asc"
+	Ingo
 
------BEGIN PGP SIGNATURE-----
+================>
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr5SIAACgkQ0rTAlCFN
-r3SREQ//Sd9Vzci56gaoyeqJquVHEj0I9cyPBRIGk+3DwMfke5cCN8xoPpbK2epJ
-slxXhGW0oiuB1zm6azMb0xkE6TnpaImVQp4Vx1wUzjnQgKAvKwuFq+tCpjP3bqUY
-wkO4SI4pE841l4XaWyJ6M7fEyCJrIGf396xRcaVtRD7/5WHec6w2+T26H41McKek
-kTlYQkg01j3b5HFMXX0SJ0i415x+eGFRW9xoOjM/WYznnUlM60GikJ06LQKe2zim
-s86eqX8V0+Ef+7LRXVv99qgzv655afCu7/9n42aC+fIPqSgFRHllO0hu+qQCQSaU
-3ISkC1OGlGTBOI1iGhajFyNOJDG5Pw3MT7Wvk03P4HDjgHAh1ErX/44D9zjt0mQB
-b+AyNP9uP5c2QnBYGAxGG2fjbyFI5rgk8WRFNGnE6eQzEexNKJN1UZ28w4OmlYKx
-YV1sBn/Gd1GAIjYUHB72CoArTtG7uVhYtqnJAoTJ8/koaPFKZdIQklihrE6dpCr9
-lUHsruEosYqXzNTy7vbWFTU1hr4ollZqt6PsocZA82aMQW3epNrAp/xatIqyCSVc
-b/hJ6uHwim8+zAlv5l43EUJRxP4a+YJ132nJpFVJ2k8dCNSP40oVAkHmE4lkI04A
-yzx0KL+PpmqmLaG/6Ex+yaGisS3TZ9Uvp76PFWkuDkqWgpIrj64=
-=6V4c
------END PGP SIGNATURE-----
-
---ko2m32o4savwftrl--
+gcc -m32 -o /home/mingo/tip/tools/testing/selftests/x86/protection_keys_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 protection_keys.c -lrt -ldl -lm
+protection_keys.c:232:0: warning: "SEGV_BNDERR" redefined
+ #define SEGV_BNDERR     3  /* failed address bound checks */
+ 
+In file included from /usr/include/signal.h:58:0,
+                 from protection_keys.c:33:
+/usr/include/bits/siginfo-consts.h:117:0: note: this is the location of the previous definition
+ #  define SEGV_BNDERR SEGV_BNDERR
+ 
+protection_keys.c:233:0: warning: "SEGV_PKUERR" redefined
+ #define SEGV_PKUERR     4
+ 
+In file included from /usr/include/signal.h:58:0,
+                 from protection_keys.c:33:
+/usr/include/bits/siginfo-consts.h:119:0: note: this is the location of the previous definition
+ #  define SEGV_PKUERR SEGV_PKUERR
+ 
+protection_keys.c:387:5: error: conflicting types for ‘pkey_get’
+ u32 pkey_get(int pkey, unsigned long flags)
+     ^~~~~~~~
+In file included from /usr/include/bits/mman-linux.h:115:0,
+                 from /usr/include/bits/mman.h:45,
+                 from /usr/include/sys/mman.h:41,
+                 from protection_keys.c:37:
+/usr/include/bits/mman-shared.h:64:5: note: previous declaration of ‘pkey_get’ was here
+ int pkey_get (int __key) __THROW;
+     ^~~~~~~~
+protection_keys.c:409:5: error: conflicting types for ‘pkey_set’
+ int pkey_set(int pkey, unsigned long rights, unsigned long flags)
+     ^~~~~~~~
+In file included from /usr/include/bits/mman-linux.h:115:0,
+                 from /usr/include/bits/mman.h:45,
+                 from /usr/include/sys/mman.h:41,
+                 from protection_keys.c:37:
+/usr/include/bits/mman-shared.h:60:5: note: previous declaration of ‘pkey_set’ was here
+ int pkey_set (int __key, unsigned int __access_rights) __THROW;
+     ^~~~~~~~
+Makefile:67: recipe for target '/home/mingo/tip/tools/testing/selftests/x86/protection_keys_32' failed
+make: *** [/home/mingo/tip/tools/testing/selftests/x86/protection_keys_32] Error 1
