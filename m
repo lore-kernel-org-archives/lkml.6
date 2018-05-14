@@ -1,62 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752067AbeENTd7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 15:33:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50620 "EHLO mx1.redhat.com"
+        id S1752024AbeENTgo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 15:36:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47432 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751962AbeENTdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 15:33:45 -0400
+        id S1751422AbeENTgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 15:36:42 -0400
+Subject: Re: [PATCH] locking/rwsem: Add up_write_non_owner() for
+ percpu_up_write()
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>
+References: <1522852646-2196-1-git-send-email-longman@redhat.com>
+ <20180409112013.GA23240@redhat.com>
+ <38c89c59-5ff0-20df-2628-880db397006e@redhat.com>
+ <20180409142208.GA25893@redhat.com>
 From: Waiman Long <longman@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Oleg Nesterov <oleg@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Waiman Long <longman@redhat.com>
-Subject: [RFC PATCH v2 2/2] locking/percpu-rwsem: Mark rwsem as non-spinnable in percpu_rwsem_release()
-Date: Mon, 14 May 2018 15:31:07 -0400
-Message-Id: <1526326267-22501-3-git-send-email-longman@redhat.com>
-In-Reply-To: <1526326267-22501-1-git-send-email-longman@redhat.com>
-References: <1526326267-22501-1-git-send-email-longman@redhat.com>
+Organization: Red Hat
+Message-ID: <63c13bd6-7f42-7d3f-3cda-f989f6982ae4@redhat.com>
+Date: Mon, 14 May 2018 15:36:41 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180409142208.GA25893@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The percpu_rwsem_release() is called when the ownership of the embedded
-rwsem is to be transferred to another task. The new owner, however, may
-take a while to get the ownership of the lock via percpu_rwsem_acquire().
-During that period, the rwsem is now marked as writer-owned with no
-optimistic spinning.
+On 04/09/2018 10:22 AM, Oleg Nesterov wrote:
+> On 04/09, Waiman Long wrote:
+>> On 04/09/2018 07:20 AM, Oleg Nesterov wrote:
+>>> Hmm. Can you look at lockdep_sb_freeze_release() and lockdep_sb_freeze_acquire()?
+>> These 2 functions are there to deal with the lockdep code.
+> Plus they clearly document why sem->owner check is not right when it comes
+> to super_block->s_writers[]. Not only freeze and thaw can be called by
+> different processes, we need to return to user-space with rwsem held for
+> writing.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- include/linux/percpu-rwsem.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Sorry for the late reply as I was busy on other work.
 
-diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-index b1f37a8..dd37102 100644
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -131,16 +131,16 @@ static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
- 					bool read, unsigned long ip)
- {
- 	lock_release(&sem->rw_sem.dep_map, 1, ip);
--#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- 	if (!read)
--		sem->rw_sem.owner = NULL;
--#endif
-+		rwsem_set_writer_owned_nospin(&sem->rw_sem);
- }
- 
- static inline void percpu_rwsem_acquire(struct percpu_rw_semaphore *sem,
- 					bool read, unsigned long ip)
- {
- 	lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
-+	if (!read)
-+		rwsem_set_writer_owned(&sem->rw_sem, current);
- }
- 
- #endif
--- 
-1.8.3.1
+I have just sent out a v2 patch to hopefully address your concern.
+Please let me know your thought on that.
+
+Thanks,
+Longman
