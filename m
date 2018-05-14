@@ -1,79 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752628AbeENLnP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:43:15 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:42225 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752655AbeENLnM (ORCPT
+        id S1752692AbeENLnU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:43:20 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:22431 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752659AbeENLnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:43:12 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180514114310epoutp021fb5a7cb3ffb87cb9bff8d63dd6c2f1c~ugB4Jg8iR1663216632epoutp02w
-X-AuditID: b6c32a47-bdfff70000001011-10-5af9764da734
+        Mon, 14 May 2018 07:43:15 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180514114313epoutp016f675f3ee000118126b2c331b6547733~ugB7X-Ftv0435504355epoutp01k
+X-AuditID: b6c32a36-b55ff70000001027-4f-5af9765118f0
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To: Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>
 Cc: Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH 02/14] thermal: ti-soc-thermal: fix comment in
- omap5xxx-bandgap.h
-Date: Mon, 14 May 2018 13:42:09 +0200
-Message-id: <1526298141-14045-3-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 03/14] thermal: ti-soc-thermal: fix comments in
+ omap4-thermal-data.c
+Date: Mon, 14 May 2018 13:42:10 +0200
+Message-id: <1526298141-14045-4-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCIsWRmVeSWpSXmKPExsWy7bCmqa5v2c8og5UHhCw2zljPajH/yjVW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCmnm5g2c8og/dXJSw2zljPajH/yjVW
         i1Pbm5gsLu+aw2Yxe0k/i8Xn3iOMFk8e9rE5sHvsnHWX3WPxnpdMHn1bVjF6HL+xncnj8ya5
-        ANYoLpuU1JzMstQifbsEroz9j+YwF7xhq9g1ewJjA+M/1i5GTg4JAROJGY9OMnYxcnEICexg
-        lNi4+xOU851R4lnXdEaYqqlTpzNDJHYzShw7tJcVwvnFKHGmdwozSBWbgJXExPZVYB0iAm4S
-        s5b8AbOZBaYySmyaUA9iCwsES3Qe3csGYrMIqEos3rGDqYuRg4NXwEPi4xl2iGVyEiePTQY7
-        j1PAU2JD+0s2kF0SAhPYJOZdPg51kYvEip+7oH4Qlnh1fAtUs7TEs1UbGSEamhklvu3YwwyR
-        mMAosWe9EIRtLXH4+EVWiOP4JDoO/2UHOUJCgFeiow2qxEPi8oKdTBC2o8TyO9OgHp7DKNG/
-        eCrzBEapBYwMqxjFUguKc9NTi40KjPWKE3OLS/PS9ZLzczcxguNSy30H47ZzPocYBTgYlXh4
-        A5b/iBJiTSwrrsw9xCjBwawkwrvb6GeUEG9KYmVValF+fFFpTmrxIUZpDhYlcd41Sl+jhATS
-        E0tSs1NTC1KLYLJMHJxSDYwKDBff7O/PMelu1Xpy3Vb19TvBvdzzNRsm81fN0NnhcZhzy6uP
-        iVImLAULDA5Lrfx+7sXk8pDbFdM7etr4v27/p8W+4eNrc8eDFy/vz1+yKVrRJmwPy5undfb3
-        H70PnDrF6Nb7GAOZmd2nTDIPp2vfPXxsx6qw5tPB35duZPs4+5XNRI8FhpZvlFiKMxINtZiL
-        ihMBujMTP8cCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphluLIzCtJLcpLzFFi42I5/e+xgK5P2c8og5PrjS02zljPajH/yjVW
+        ANYoLpuU1JzMstQifbsErow1LUkF0zkq/l3tYmlgfMbWxcjJISFgItFy6B9jFyMXh5DADkaJ
+        J8ffMEE43xkl/nWcgKua9fsqO0RiN6PE+v0LWSGcX4wSp39cYwWpYhOwkpjYvooRxBYRcJOY
+        teQPmM0sMJVRYtOEehBbWCBMYtWELewgNouAqkT/5ClMIDavgIfE851HoLbJSZw8NhlsJqeA
+        p8SG9pdsIMskBHrYJFb/vARV5CKxbuduVghbWOLVcZChHEC2tMSlo7YQ9c2MEt927GGGqJnA
+        KLFnvRCEbS1x+PhFVojj+CTefe1hhejllehogyrxkNg87SkjhO0o0X94GZgtJDCHUeJca8YE
+        RqkFjAyrGMVSC4pz01OLDQuM9IoTc4tL89L1kvNzNzGCY1LLbAfjonM+hxgFOBiVeHgDlv+I
+        EmJNLCuuzD3EKMHBrCTCu9voZ5QQb0piZVVqUX58UWlOavEhRmkOFiVx3jlKX6OEBNITS1Kz
+        U1MLUotgskwcnFINjCx8J5wK0vgXhIT7nvQNT9zxuU+ZVc20/4LHtSl/Zk3qsM1KUNA+Gxe8
+        5E1c1aSg/Zt2PchW3Lfdh3/9H+HU5Vm5Qtvffr6c8GFHxp9oqUNfZvQ6GArwmMdss9ujnzK3
+        KSio78eywzOCLitWMTIeDvthNCP0/Z21N9gZ99vNOlqsW9q0t+XNNyWW4oxEQy3mouJEAMRe
+        nTzFAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphluLIzCtJLcpLzFFi42I5/e+xgG5A2c8og+Wn1Cw2zljPajH/yjVW
         i1Pbm5gsLu+aw2Yxe0k/i8Xn3iOMFk8e9rE5sHvsnHWX3WPxnpdMHn1bVjF6HL+xncnj8ya5
-        ANYoLpuU1JzMstQifbsEroz9j+YwF7xhq9g1ewJjA+M/1i5GTg4JAROJqVOnM3cxcnEICexk
-        lLjz4iSU84tR4vSNH2wgVWwCVhIT21cxgtgiAm4Ss5b8YQQpYhaYyigx+dMpsCJhgWCJzqN7
-        wWwWAVWJxTt2MHUxcnDwCnhIfDzDDrFNTuLksclgmzkFPCU2tL8EKxcCKrn9u4VtAiPPAkaG
-        VYySqQXFuem5xUYFRnmp5XrFibnFpXnpesn5uZsYgWG07bBW/w7Gx0viDzEKcDAq8fAGLP8R
-        JcSaWFZcmXuIUYKDWUmEd7fRzygh3pTEyqrUovz4otKc1OJDjNIcLErivPz5xyKFBNITS1Kz
-        U1MLUotgskwcnFINjBttn8XU2C4XcJZtPHIo4MyaE731DIrcv4NUV3y9FLadK+fjKUFhpUMu
-        Wc/eBrmbl12KPXloqu+kp1XL109+GTvP8kN1qu/HQwIyV5cGCQqZXvVcbPPFSr73cNCbTftS
-        NPJO3lO5X7bBYmKc95aPyhllErbPfzOKVU158PJrj0vF9CjTo3nz1iuxFGckGmoxFxUnAgAp
-        8w0VHwIAAA==
-X-CMS-MailID: 20180514114308epcas2p3bba580c5500889f22d50549994b227db
+        ANYoLpuU1JzMstQifbsErow1LUkF0zkq/l3tYmlgfMbWxcjJISFgIjHr91X2LkYuDiGBnYwS
+        U6YtZoNwfjFK3Jy0jR2kik3ASmJi+ypGEFtEwE1i1pI/jCBFzAJTGSUmfzoFNkpYIExi1YQt
+        YA0sAqoS/ZOnMIHYvAIeEs93HoFaJydx8thkVhCbU8BTYkP7S7C4EFDN7d8tbBMYeRYwMqxi
+        lEwtKM5Nzy02KjDMSy3XK07MLS7NS9dLzs/dxAgMo22Htfp2MN5fEn+IUYCDUYmHd8XKH1FC
+        rIllxZW5hxglOJiVRHh3G/2MEuJNSaysSi3Kjy8qzUktPsQozcGiJM57O+9YpJBAemJJanZq
+        akFqEUyWiYNTqoHRdNXip+1X33y1UJJnTGsRT5MqtpqcoLlB8TRL6KwvMWbXbX5s/y049/XN
+        N87Tj0cLNGpVOTiEvb3jt8E88OqGHUesGwS9D5rf2/zs+B7jV2WHmZKU03KOTzC/LLzqa0qg
+        MNfla1mrr+WktO1YY332cfyFw+79p5dfmvt/tfTsym//tpxXTV5/WomlOCPRUIu5qDgRAI9W
+        e78fAgAA
+X-CMS-MailID: 20180514114312epcas1p19fffd35baae3018f47df0fe31ca1b1b0
 X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180514114308epcas2p3bba580c5500889f22d50549994b227db
-X-RootMTR: 20180514114308epcas2p3bba580c5500889f22d50549994b227db
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180514114312epcas1p19fffd35baae3018f47df0fe31ca1b1b0
+X-RootMTR: 20180514114312epcas1p19fffd35baae3018f47df0fe31ca1b1b0
 References: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180514114308epcas2p3bba580c5500889f22d50549994b227db@epcas2p3.samsung.com>
+        <CGME20180514114312epcas1p19fffd35baae3018f47df0fe31ca1b1b0@epcas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The comment for OMAP5430.CORE register offsets is incorrect. Fix it.
+The comments about ADC code values are incorrect. Fix them.
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/thermal/ti-soc-thermal/omap4-thermal-data.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-index 9096403..dcbf903 100644
---- a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-@@ -55,7 +55,7 @@
- #define OMAP5430_BGAP_DTEMP_MPU_1_OFFSET		0x1E4
- #define OMAP5430_BGAP_DTEMP_MPU_2_OFFSET		0x1E8
+diff --git a/drivers/thermal/ti-soc-thermal/omap4-thermal-data.c b/drivers/thermal/ti-soc-thermal/omap4-thermal-data.c
+index c12211e..85ba9dc 100644
+--- a/drivers/thermal/ti-soc-thermal/omap4-thermal-data.c
++++ b/drivers/thermal/ti-soc-thermal/omap4-thermal-data.c
+@@ -46,7 +46,7 @@
  
--/* OMAP5430.MPU register offsets */
-+/* OMAP5430.CORE register offsets */
- #define OMAP5430_FUSE_OPP_BGAP_CORE			0x8
- #define OMAP5430_TEMP_SENSOR_CORE_OFFSET		0x154
- #define OMAP5430_BGAP_THRESHOLD_CORE_OFFSET		0x1AC
+ /*
+  * Temperature values in milli degree celsius
+- * ADC code values from 530 to 923
++ * ADC code values from 0 to 127
+  */
+ static const int
+ omap4430_adc_to_temp[OMAP4430_ADC_END_VALUE - OMAP4430_ADC_START_VALUE + 1] = {
+@@ -136,7 +136,7 @@
+ 
+ /*
+  * Temperature values in milli degree celsius
+- * ADC code values from 530 to 923
++ * ADC code values from 530 to 932
+  */
+ static const int
+ omap4460_adc_to_temp[OMAP4460_ADC_END_VALUE - OMAP4460_ADC_START_VALUE + 1] = {
 -- 
 1.9.1
