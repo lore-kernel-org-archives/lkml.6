@@ -1,40 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZraaESi32rLpit/3/cR94d2a5akqAYqgk9pA/TF/Ta1dSZ3hhiBr/PcHUrw0aO6V3JtteX9
-ARC-Seal: i=1; a=rsa-sha256; t=1526280906; cv=none;
+X-Google-Smtp-Source: AB8JxZoZ9OcA5Ph1wTjSgPffZtdSPruhB+kEJ6dRaHEeERd6SXvAZDFxdkWV5Y6MMHmUUalglvp+
+ARC-Seal: i=1; a=rsa-sha256; t=1526280902; cv=none;
         d=google.com; s=arc-20160816;
-        b=nawdqV57FCTHx6yuU80zkpQDE1buHI23gEmfyQhxXj7Jq90W+eCp8InKj+1F92djZE
-         GRXwIRT04sfJ+YH0J4Ckorlsm4UQs9ASWXdEbLUeLJOpyl1mDFH+/Vt1K/J6H+8vX9Z4
-         BZT/5Uu24EvsguU4k6Hk9IJVC3LXhR4rSKloi8ViBBHGg3HRqOTFdZDV9TxS8So7K/XB
-         8DDQPfbOH1Zok8NQmA2QzfuIzuTtLVtoy4cwjIyAoTnW2+4D857WbWNPCYNhd1YSjLQP
-         K1dqKyv9kIvwW09fnJcEl/7xcp9ZbYVfd3qMxdT0ZNb+ZFgAWKYC6Fk2mVinaUYRYwQD
-         dn7g==
+        b=DonO2TvHAtskUi6tSHLKWJX6i62Tl10L8d0W1xVzBHaK6D6EJuwor7M2DT6MM41Ltf
+         Ug7yrRtnhuIo8509EYhc3H5grMdZHI83ugPMCjG2OQnVo3CHj+kZJkWzyAUix0eOuNcU
+         7rZ0D/6d9h8siKUzyv4HzwRk6ZvF5UXzWgFj7qNTZXPFMji7tbvXMvvlMCS4Oxhvr55C
+         w7EnTtPdZTMwq1xlrnsWkwC5hSiCaO5SUIvquNKAtnBdnqSAUwHo475o3FbHeyU8LKeu
+         APCnKrp/+lu3E2PuhY2fUxPtq9N8DwnfxA6HCmSZ9GdYww4jBCgjvuguKuU7ozQnrhG7
+         mLUA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Of1R19FpZ+Jy80N3mUFBBzfauDxZTasZn311Hc4BlQA=;
-        b=CS1n+PTRK3xLmZ6AW2a1L64wFN2x5F5AMsWJoKHewCrcEtz6Yphf+Mrg1n2lUmh92o
-         BDRJVF+AmPi8esAwYcFH/KEjfbkY3caQsGOy+DHLcLzXJcpWMKjNfc/Ou8HXVrO0QjAC
-         voJ5NgvLbOw1lnd05AhTlSEaRFiYPWw3cVzP7t89WfylTtBWN8Phj5t7FmxsumDRNQh7
-         ZgnFyjrJTMGkUs7lVluu94EXneZAtfAmBpTlSAVwge04yMj+juRwRXRmGq6ucLtL8aYm
-         l80Cv9tJq9cH+oolxtMLPZ3U9yKnUo8O59UIddnsuAu+SJDLXCBS71YXkINZTD7GqgSk
-         Mt8A==
+        bh=+rrBWuLA1DfvJkuMrKygUQbLRLXYy319ekb0t0xcpTc=;
+        b=K+k1ZgC3f1IazbYKjk0KA8ox4TY9sAPrvkrC/M78oTuihRGxFl4FLe04jZlsgh6yua
+         AECTEEphgDCppf+PTNugRJaXdcPu5P4shaGMJELGRQGreeNyikyqwxbD+ue6GHYLRo4o
+         BC/zs8FXFmMe8fOoNogmYDLlrPbD9qwLNgErf894bntmjA4/k+hp4BvWSBHqQHPPlNGx
+         l6DZDUPcSRlaaVjCKhqUvnt4cf4veIKGwEsrSfawdAc5Ru+721jKD7Q66fx5MbyrI8bv
+         ae0cQY7B5Png1LYWVRAee6YZtjowtFHG4jruxjLdPeU3yl9olbnwny/YW5kD/P5DoNW2
+         TR8Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=04vTARQ7;
+       dkim=pass header.i=@kernel.org header.s=default header.b=yL3b2/S9;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=04vTARQ7;
+       dkim=pass header.i=@kernel.org header.s=default header.b=yL3b2/S9;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	Pavel Emelyanov <xemul@parallels.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 12/36] tcp: fix TCP_REPAIR_QUEUE bound checking
-Date: Mon, 14 May 2018 08:48:46 +0200
-Message-Id: <20180514064805.199097707@linuxfoundation.org>
+	"Richard W.M. Jones" <rjones@redhat.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.9 21/36] libata: Apply NOLPM quirk for SanDisk SD7UB3Q*G1001 SSDs
+Date: Mon, 14 May 2018 08:48:55 +0200
+Message-Id: <20180514064805.921745797@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064804.252823817@linuxfoundation.org>
 References: <20180514064804.252823817@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421256400782370?=
-X-GMAIL-MSGID: =?utf-8?q?1600421527216589948?=
+X-GMAIL-THRID: =?utf-8?q?1600421262061858656?=
+X-GMAIL-MSGID: =?utf-8?q?1600421523995257819?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,48 +52,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit bf2acc943a45d2b2e8a9f1a5ddff6b6e43cc69d9 upstream.
+commit 184add2ca23ce5edcac0ab9c3b9be13f91e7b567 upstream.
 
-syzbot is able to produce a nasty WARN_ON() in tcp_verify_left_out()
-with following C-repro :
+Richard Jones has reported that using med_power_with_dipm on a T450s
+with a Sandisk SD7UB3Q256G1001 SSD (firmware version X2180501) is
+causing the machine to hang.
 
-socket(PF_INET, SOCK_STREAM, IPPROTO_IP) = 3
-setsockopt(3, SOL_TCP, TCP_REPAIR, [1], 4) = 0
-setsockopt(3, SOL_TCP, TCP_REPAIR_QUEUE, [-1], 4) = 0
-bind(3, {sa_family=AF_INET, sin_port=htons(20002), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
-sendto(3, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
-	1242, MSG_FASTOPEN, {sa_family=AF_INET, sin_port=htons(20002), sin_addr=inet_addr("127.0.0.1")}, 16) = 1242
-setsockopt(3, SOL_TCP, TCP_REPAIR_WINDOW, "\4\0\0@+\205\0\0\377\377\0\0\377\377\377\177\0\0\0\0", 20) = 0
-writev(3, [{"\270", 1}], 1)             = 1
-setsockopt(3, SOL_TCP, TCP_REPAIR_OPTIONS, "\10\0\0\0\0\0\0\0\0\0\0\0|\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 386) = 0
-writev(3, [{"\210v\r[\226\320t\231qwQ\204\264l\254\t\1\20\245\214p\350H\223\254;\\\37\345\307p$"..., 3144}], 1) = 3144
+Switching the LPM to max_performance fixes this, so it seems that
+this Sandisk SSD does not handle LPM well.
 
-The 3rd system call looks odd :
-setsockopt(3, SOL_TCP, TCP_REPAIR_QUEUE, [-1], 4) = 0
+Note in the past there have been bug-reports about the following
+Sandisk models not working with min_power, so we may need to extend
+the quirk list in the future: name - firmware
+Sandisk SD6SB2M512G1022I   - X210400
+Sandisk SD6PP4M-256G-1006  - A200906
 
-This patch makes sure bound checking is using an unsigned compare.
-
-Fixes: ee9952831cfd ("tcp: Initial repair mode")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Pavel Emelyanov <xemul@parallels.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Cc: Richard W.M. Jones <rjones@redhat.com>
+Reported-and-tested-by: Richard W.M. Jones <rjones@redhat.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/tcp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ata/libata-core.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2523,7 +2523,7 @@ static int do_tcp_setsockopt(struct sock
- 	case TCP_REPAIR_QUEUE:
- 		if (!tp->repair)
- 			err = -EPERM;
--		else if (val < TCP_QUEUES_NR)
-+		else if ((unsigned int)val < TCP_QUEUES_NR)
- 			tp->repair_queue = val;
- 		else
- 			err = -EINVAL;
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4422,6 +4422,9 @@ static const struct ata_blacklist_entry
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM |
+ 						ATA_HORKAGE_NOLPM, },
+ 
++	/* Sandisk devices which are known to not handle LPM well */
++	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
++
+ 	/* devices that don't properly handle queued TRIM commands */
+ 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
