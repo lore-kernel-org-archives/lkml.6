@@ -1,5 +1,5 @@
 Return-Path: <ksummit-discuss-bounces@lists.linuxfoundation.org>
-X-Cyrus-Session-Id: sloti22d1t05-460432-1526285572-2-1769229033214610382
+X-Cyrus-Session-Id: sloti22d1t05-460432-1526286560-2-2543851314970622029
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -7,89 +7,89 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MU
   RCVD_IN_DNSWL_MED -2.3, SPF_HELO_PASS -0.001, SPF_PASS -0.001,
   LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.169.12', Host='mail.linuxfoundation.org', Country='US',
-  FromHeader='com', MailFrom='org'
+  FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: ksummit-discuss-bounces@lists.linuxfoundation.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526285572; b=W+2q7UQvk6R4DfjDZwFAu9M/PMrEpuNuGh2IggTXtuS4IzkUJv
-    udAA0keGwqM0YNb2rReRAibqPkcYJUsAoE8ujxDO2HYNmhd1BUFQy6EjDVBqIRx2
-    NPBuHZiFuJ+BdIEe+SjnPRx/UZ0BawS0D8nee74tZh+u5LNgU1IbnejM9+u5RniC
-    5Fr8uLt49yF/jtElW5t5JlnOamT2eOmffJ5yqZTWoZ+FrslOSg5l8yyIOyHOh9Nm
-    CBLTSTYWqfWIlM/cgfcdXkVlhiig6B9DSTyUJlt3DmoaSbZikd7fGl4Ur3yFczUX
-    pe1QEiG53wzWiuC4kPzdVnHssil1Bh94KktA==
+    1526286559; b=QM/5eRsCq037WC8l1vLwFQx6cbRrwpAsR85NN4etrTWgGxi/Wm
+    RkMVGbyq7vGcy5j4q2v2YRuaeX2+TlA62ggdOvdcpNA5nkmVrR85pLSgvlx9DHek
+    lIiASVNR6WPLxGCLpDPMAb20Iv8tH9Wx56W+OklZC/t3xEZpcKA9hJzBMrhj+5WU
+    P6bIrPBL/HSPtOWWVbsAO5u3K4WW0WhNENiVb6tlvCYeAGJO9JOVLRhN64Wa2H0r
+    DEdrlpKDERhTBzJcfZNV7lEDmYPNHxf7Yaa2r6gi8n0N2uIZxcdDwedWKI6OZEyj
+    l1jpGiyLKiK2uJICSbYZOstSnXB4iyEjRh2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:message-id:in-reply-to
-    :references:mime-version:cc:subject:list-id:list-unsubscribe
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:to:cc:subject:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526285572; bh=HAmYN
-    T9xA/2GygCv24kWSLud5mWjgHFiNz6ycewdlCo=; b=POVH8piuiSoVJ1AqQUr6o
-    3LpOrTXO1ktREX9UkYe60tCsCvPd+SSdVxtc3knYJePPJIbMZ/uyjYhe5OvVCF9/
-    KdrezGoulMyKqWbe7kdtBSDC5GC4+e1BsgcDP7ghFzEdt8w09RtT0Y++5x1iW7mk
-    i6IE8KExXUHUmAOFtY2gwyDzw+B3CWzbcifr7MDeCFsSYZU/YjEm/hME+QyZ3fA5
-    t4wNzQCIwiGSMGBgulGA15lggXB85b0t3UMygRcK2R+HPeroZeIlCYKkdmLwdT7f
-    FbJSPcPeF5Kz4xw5PzVx+rV/vuhtPm98bPZAZ1qpnZzoH3jixymtQCdI+ivex3mj
-    g==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=bootlin.com;
+    :content-transfer-encoding:sender; s=fm2; t=1526286559; bh=IgLwn
+    iaCWg2F6IRLAL+J5PxpsYpZG39vkHnWM7dVITc=; b=Q1dA7zRjSyVqujL6dUJqE
+    +w1vnwMRTGv2e3N2/qcuUvQHUZQ8/Uo4TSR7QRceM8VOcOwBQNque+Y3cS4srjxZ
+    Eo2S5K6N9VNbM5+r5XwCb2IrERaHMmkRCVjr9BtUsgeZjagX9coqAUpZThNFrLbn
+    HmBEiWeMNHWr3Vaq5VZoiowOV+ft8uM4NPVbna98EPdAmTcmuafMBdjPvPb0dncd
+    5D3PC4EZiJf/fk/YN411/ognxrB5IJwK/v6PgnBDmAY0ne72YHnD6Lfc9F2LJGGp
+    tmh6FNPbBw/AMDXrNtT9ojnklWIxNnEy1dc3bJ933Dt7NPFPNr5GTBqAPfV5N4Sv
+    w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=gmail.com header.i=@gmail.com header.b=ArPVPolu x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
     iprev=pass policy.iprev=140.211.169.12 (mail.linuxfoundation.org);
     spf=pass smtp.mailfrom=ksummit-discuss-bounces@lists.linuxfoundation.org
     smtp.helo=mail.linuxfoundation.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=DqvR7w8E;
     x-ptr=pass x-ptr-helo=mail.linuxfoundation.org
     x-ptr-lookup=mail.linuxfoundation.org;
     x-return-mx=pass smtp.domain=lists.linuxfoundation.org smtp.result=pass
     smtp_org.domain=linuxfoundation.org smtp_org.result=pass
-    smtp_is_org_domain=no header.domain=bootlin.com header.result=pass
+    smtp_is_org_domain=no header.domain=linux-m68k.org header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=bootlin.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=gmail.com header.i=@gmail.com header.b=ArPVPolu x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
     iprev=pass policy.iprev=140.211.169.12 (mail.linuxfoundation.org);
     spf=pass smtp.mailfrom=ksummit-discuss-bounces@lists.linuxfoundation.org
       smtp.helo=mail.linuxfoundation.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=DqvR7w8E;
     x-ptr=pass x-ptr-helo=mail.linuxfoundation.org
       x-ptr-lookup=mail.linuxfoundation.org;
     x-return-mx=pass smtp.domain=lists.linuxfoundation.org smtp.result=pass
       smtp_org.domain=linuxfoundation.org smtp_org.result=pass
-      smtp_is_org_domain=no header.domain=bootlin.com header.result=pass
+      smtp_is_org_domain=no header.domain=linux-m68k.org header.result=pass
       header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfI0IVrVsugqQ1MG5re8R/Ozk0Agvb+rfuCwJLPfXHxKIvLYF/eEVQ/dbwdZ8XFb6VGZwttm79bJ/KV7PSAQqbnGJYBRF9HmJRGuLwV1FUPZbXRMwz2rW
-    NaTCyjIXlra/7V16Lin1UZZ18wzFPLEOVupGavcTsoGdsRCmVfs6ERgkKxL7rwC2VO9NBvdfq/SZDj9OXXgGp5tNtc95/E80irWLivJqAGKJk+E3ePZmF8Yc
-    yrgrpycqKStYLoR8UMh0Yw==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=5MPDoNpceV4HFXFrvkM3CQ==:117
+X-CM-Envelope: MS4wfG9a5NdX8R8I/zHWEvtaCwOH82MB3XZjQleaH2+hHr8LTd4r9URtXaUSv7EsKkV0lj0eMhbsRvBniHjfaAyx0A/jEFDm30ZXjM9XDZVOYoLlxNNkkzO7
+    AQkTeulVo8pbUgFVUrAWvmP9PresJIqu6xohuhSIhC/MBYUxO3nHm+eujZLaAWTEp5FbSje2Spmn5vXTV1i/ifSDhtfAjc3mr7kIAqG89P+XG1Nhe9xMAhyn
+    Wz/D3W5VCVqNZK3Fl7ROQQ==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=5MPDoNpceV4HFXFrvkM3CQ==:117
     a=5MPDoNpceV4HFXFrvkM3CQ==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=tBb2bbeoAAAA:8 a=yMhMjlubAAAA:8
-    a=07d9gI8wAAAA:8 a=ag1SF4gXAAAA:8 a=b2RJ4TRWfEuBCW9GwKIA:9
-    a=miHagS1hSC2Ll7Qz:21 a=FEKnWoJA12h7dRJS:21 a=CjuIK1q_8ugA:10
-    a=Oj-tNtZlA1e06AYgeCfH:22 a=e2CUPOnPG4QKp8I52DXD:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=P-IC7800AAAA:8 a=tBb2bbeoAAAA:8
+    a=yMhMjlubAAAA:8 a=ag1SF4gXAAAA:8 a=t8gs_pqlxmHI8oLnPFsA:9 a=CjuIK1q_8ugA:10
+    a=d3PnA9EDa4IxuAV0gXij:22 a=Oj-tNtZlA1e06AYgeCfH:22 a=Yupwre4RP9_Eg_Bd0iYG:22
     cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: ksummit-discuss@mail.linuxfoundation.org
-X-Remote-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on
-	smtp1.linux-foundation.org
-X-Remote-Spam-Level: 
-X-Remote-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE
-	autolearn=ham version=3.3.1
-Date: Mon, 14 May 2018 10:12:37 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Message-ID: <20180514101237.5df1e0d7@bbrezillon>
-In-Reply-To: <CAMuHMdUHK=kmJB-=G-Y7YEneZityMzi5YZ3nJFD6uCs61bOaiQ@mail.gmail.com>
+X-Google-Smtp-Source: AB8JxZqpGrCdbgYVxC+kCUmwp6jVu83tBZA/rw6crWmltP8FzreSfkvbM98OKV+c9Q8RiqEfAeN4l1S0hBRKZKMgMxM=
+MIME-Version: 1.0
+In-Reply-To: <20180514101237.5df1e0d7@bbrezillon>
 References: <20180502194632.GB18390@sasha-vm>
 	<20180503020550.GP2714@sirena.org.uk>
 	<20180503031000.GC29205@thunk.org>
@@ -103,8 +103,17 @@ References: <20180502194632.GB18390@sasha-vm>
 	<20180510164722.GH8514@sasha-vm>
 	<CAMuHMdWDNjsba29id4Svjy_tauKivWDUixub3qf82Nx_6rYueA@mail.gmail.com>
 	<CAMuHMdUHK=kmJB-=G-Y7YEneZityMzi5YZ3nJFD6uCs61bOaiQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
+	<20180514101237.5df1e0d7@bbrezillon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 May 2018 10:29:04 +0200
+X-Google-Sender-Auth: rcd3CDXM5Rm0PeaZVZe1IX6ivto
+Message-ID: <CAMuHMdWQTOioXPmWX+_jetECpp9=SCK_BfWq9kJ7xj3WTnB_ng@mail.gmail.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+X-Remote-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID, FREEMAIL_FROM,
+	RCVD_IN_DNSWL_NONE autolearn=ham version=3.3.1
+X-Remote-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on
+	smtp1.linux-foundation.org
 Cc: Greg KH <gregkh@linuxfoundation.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"ksummit-discuss@lists.linuxfoundation.org"
@@ -127,78 +136,44 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 14 May 2018 10:00:30 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Hi Boris,
 
-> On Tue, May 1, 2018 at 10:00 PM, Sasha Levin
-> <Alexander.Levin@microsoft.com> wrote:
-> > On Tue, May 01, 2018 at 03:44:50PM -0400, Theodore Y. Ts'o wrote:  
-> >>On Tue, May 01, 2018 at 04:38:21PM +0000, Sasha Levin wrote:  
-> >>>  - A merge window commit spent 50% more days, on average, in -next than a -rc
-> >>>    commit.  
-> >>
-> >>So it *used* to be the case that after the merge window, I would queue
-> >>up bug fixes for the next merge window.  Greg K-H pushed for me to
-> >>send them to Linus sooner, instead of waiting for the next merge
-> >>window.  TBH, it's actually easier for me to just wait until the next
-> >>merge window, but please understand that there are multiple pressures
-> >>on maintainers going on here, and the latest efforts to try to use
-> >>AUTOSEL is just the most recent pressure placed on maintainers.
-> >>
-> >>The other thing is that when there is a regression users who are
-> >>testing linux-next want it fixed *fast*.  That's considered more
-> >>important to them than waiting for one, perfect patch, just to keep
-> >>AUTOSEL happy.
-> >>
-> >>So please understand that when you say that maintainers *need* to do X
-> >>or Y, that there you are not the only one standing in line putting
-> >>pressures on maintainers saying they *need* to do something.  And
-> >>quite frankly, I consider keeping people who are nice enough to test
-> >>linux-next happy to be **far** more important than AUTOSEL.  
-> >
-> > Ted,
-> >
-> > I'm not at all asking to wait before adding the patches to your tree,
-> > or to -next. I'm asking to hold on to them a bit longer before you
-> > push them to Linus because I can show that patches that don't spend
-> > enough time in -next are more likely to introduce bugs.
-> >
-> > Yes, linux-next users want it fixed *now* and I completely agree it
-> > should be done that way, but the fix should not be immediately pushed to
-> > Linus as well.
-> >
-> > I've just finished reading an interesting article on LWN about the
-> > PostgreSQL fsync issues (https://lwn.net/Articles/752952/). If you
-> > look at Willy's commit, he wrote the final version of it about 5 days
-> > ago, Jeff merged it in 3 days ago, and Linus merged it in the tree
-> > today. Did it spend any time getting -next testing? nope.
-> >
-> > What's worse is that that commit is tagged for stable, which means
-> > that (given Greg's schedule) it may find it's way to -stable users
-> > even before some -next users/bots had a chance to test it out.  
-> 
-> I just noticed a case where a commit was picked up for stable, while a
-> bot had flagged it as a build regression 18 hours earlier (with a CC to
-> lkml).
+On Mon, May 14, 2018 at 10:12 AM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Mon, 14 May 2018 10:00:30 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> On Tue, May 1, 2018 at 10:00 PM, Sasha Levin
+>> <Alexander.Levin@microsoft.com> wrote:
+>> > On Tue, May 01, 2018 at 03:44:50PM -0400, Theodore Y. Ts'o wrote:
+>> >>On Tue, May 01, 2018 at 04:38:21PM +0000, Sasha Levin wrote:
+>> > What's worse is that that commit is tagged for stable, which means
+>> > that (given Greg's schedule) it may find it's way to -stable users
+>> > even before some -next users/bots had a chance to test it out.
+>>
+>> I just noticed a case where a commit was picked up for stable, while a
+>> bot had flagged it as a build regression 18 hours earlier (with a CC to
+>> lkml).
+>
+> Also, this patch has been on a tree that I know is tested by Fengguang's
+> robots for more than a week (and in linux-next for 2 days, which, I
+> agree, is probably not enough), and still, I only received the bug
+> report when the patch reached mainline. Are there tests that are only
+> run on Linus' tree?
 
-Also, this patch has been on a tree that I know is tested by Fengguang's
-robots for more than a week (and in linux-next for 2 days, which, I
-agree, is probably not enough), and still, I only received the bug
-report when the patch reached mainline. Are there tests that are only
-run on Linus' tree?
+Have your received a success report from Fengguang's bot, listing all
+configs tested (the broken one should be included; it is included in the
+configs tested on my branches)?
 
-> 
-> So it looks like the script for backporting commits should be enhanced to
-> check for this (searching for the commit ID in my email archive found the
-> bot report).
-> 
-> Thanks!
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Gr{oetje,eeting}s,
 
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 _______________________________________________
 Ksummit-discuss mailing list
 Ksummit-discuss@lists.linuxfoundation.org
