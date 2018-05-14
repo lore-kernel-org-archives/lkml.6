@@ -1,69 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752073AbeENUNx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 16:13:53 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:46647 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751978AbeENUNu (ORCPT
+        id S1752101AbeENUPb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 16:15:31 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36041 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752017AbeENUP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 16:13:50 -0400
-Subject: Re: [PATCH v5 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-To: Pavel Machek <pavel@ucw.cz>
-CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <afd@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
-References: <20180510174717.26540-1-dmurphy@ti.com>
- <20180510174717.26540-2-dmurphy@ti.com>
- <41267191-1308-6b9b-78fa-2893a525b49a@gmail.com>
- <17630aca-1225-df61-7a5d-a921ecd9c78c@ti.com>
- <86c2bc2f-e622-9447-e4bb-b4ee37e2d44a@ti.com> <20180514200503.GB3276@amd>
-From: Dan Murphy <dmurphy@ti.com>
-Message-ID: <4a631a8e-18ba-0886-039e-004980ae0cc3@ti.com>
-Date: Mon, 14 May 2018 15:13:34 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 14 May 2018 16:15:28 -0400
+X-Google-Smtp-Source: AB8JxZrch9tzY7DZyTmJQuP2b6TUBrtt9DC3LjCU+1+dBlLAx0I+YTpdK9UlDFsbWwI8+w65Q2oirU2uyFSu143r9yM=
 MIME-Version: 1.0
-In-Reply-To: <20180514200503.GB3276@amd>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <d9b6713caf339af2346eacc1324280b180a519e1.1526173613.git.rgb@redhat.com>
+References: <cover.1526173613.git.rgb@redhat.com> <d9b6713caf339af2346eacc1324280b180a519e1.1526173613.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 14 May 2018 16:15:26 -0400
+Message-ID: <CAHC9VhSfrmQ=-LhC-1QZGkMTUf2u971tE0k7sg5Tebx=2tRzpA@mail.gmail.com>
+Subject: Re: [PATCH ghak81 RFC V2 2/5] audit: convert sessionid unset to a macro
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pavel
+On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Use a macro, "AUDIT_SID_UNSET", to replace each instance of
+> initialization and comparison to an audit session ID.
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  include/linux/audit.h      | 2 +-
+>  include/net/xfrm.h         | 2 +-
+>  include/uapi/linux/audit.h | 1 +
+>  init/init_task.c           | 3 ++-
+>  kernel/auditsc.c           | 4 ++--
+>  5 files changed, 7 insertions(+), 5 deletions(-)
 
-On 05/14/2018 03:05 PM, Pavel Machek wrote:
-> Hi!
-> 
->>> OK.
->>
->> OK I looked at the max776973 driver and well if the flash-max-microamp and
->> flash-max-timeout-us nodes are missing it sets a default value for each if the
->> node is not present.
->>
->> So should we remove this code from the Max77693 driver too and fail probe as being asked
->> in this driver?
-> 
-> Well, modifying driver without access to the hardware is tricky
-> :-(. If it does something stupid (like using other than minimum values
-> for the flash-max-microamp/flash-max-timeout-us), it needs to be
-> fixed.
+Merged, thanks.
 
-Well we should be able to test the probe/parse dt node and reject the probe if the node is not
-present.  That can be done without HW the setup is done pretty early in the probe without even attempting to communicate
-with the hardware.
+> diff --git a/include/linux/audit.h b/include/linux/audit.h
+> index 75d5b03..5f86f7c 100644
+> --- a/include/linux/audit.h
+> +++ b/include/linux/audit.h
+> @@ -513,7 +513,7 @@ static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
+>  }
+>  static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
+>  {
+> -       return -1;
+> +       return AUDIT_SID_UNSET;
+>  }
+>  static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
+>  { }
+> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+> index a872379..fcce8ee 100644
+> --- a/include/net/xfrm.h
+> +++ b/include/net/xfrm.h
+> @@ -751,7 +751,7 @@ static inline void xfrm_audit_helper_usrinfo(bool task_valid,
+>                                             audit_get_loginuid(current) :
+>                                             INVALID_UID);
+>         const unsigned int ses = task_valid ? audit_get_sessionid(current) :
+> -               (unsigned int) -1;
+> +               AUDIT_SID_UNSET;
+>
+>         audit_log_format(audit_buf, " auid=%u ses=%u", auid, ses);
+>         audit_log_task_context(audit_buf);
+> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> index 4e61a9e..04f9bd2 100644
+> --- a/include/uapi/linux/audit.h
+> +++ b/include/uapi/linux/audit.h
+> @@ -465,6 +465,7 @@ struct audit_tty_status {
+>  };
+>
+>  #define AUDIT_UID_UNSET (unsigned int)-1
+> +#define AUDIT_SID_UNSET ((unsigned int)-1)
+>
+>  /* audit_rule_data supports filter rules with both integer and string
+>   * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
+> diff --git a/init/init_task.c b/init/init_task.c
+> index 3ac6e75..74f60ba 100644
+> --- a/init/init_task.c
+> +++ b/init/init_task.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/init.h>
+>  #include <linux/fs.h>
+>  #include <linux/mm.h>
+> +#include <linux/audit.h>
+>
+>  #include <asm/pgtable.h>
+>  #include <linux/uaccess.h>
+> @@ -119,7 +120,7 @@ struct task_struct init_task
+>         .thread_node    = LIST_HEAD_INIT(init_signals.thread_head),
+>  #ifdef CONFIG_AUDITSYSCALL
+>         .loginuid       = INVALID_UID,
+> -       .sessionid      = (unsigned int)-1,
+> +       .sessionid      = AUDIT_SID_UNSET,
+>  #endif
+>  #ifdef CONFIG_PERF_EVENTS
+>         .perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 0d4e269..e157595 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -2050,7 +2050,7 @@ static void audit_log_set_loginuid(kuid_t koldloginuid, kuid_t kloginuid,
+>  int audit_set_loginuid(kuid_t loginuid)
+>  {
+>         struct task_struct *task = current;
+> -       unsigned int oldsessionid, sessionid = (unsigned int)-1;
+> +       unsigned int oldsessionid, sessionid = AUDIT_SID_UNSET;
+>         kuid_t oldloginuid;
+>         int rc;
+>
+> @@ -2064,7 +2064,7 @@ int audit_set_loginuid(kuid_t loginuid)
+>         /* are we setting or clearing? */
+>         if (uid_valid(loginuid)) {
+>                 sessionid = (unsigned int)atomic_inc_return(&session_id);
+> -               if (unlikely(sessionid == (unsigned int)-1))
+> +               if (unlikely(sessionid == AUDIT_SID_UNSET))
+>                         sessionid = (unsigned int)atomic_inc_return(&session_id);
+>         }
+>
+> --
+> 1.8.3.1
+>
 
-Dan
-
-> 
-> And maybe comment "don't copy this, its wrong" would be in order...
-> > Best regards,
-> 									Pavel
-> 
 
 
 -- 
-------------------
-Dan Murphy
+paul moore
+www.paul-moore.com
