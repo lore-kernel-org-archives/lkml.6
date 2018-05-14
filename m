@@ -1,475 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753776AbeENNUm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 09:20:42 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:42036 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932124AbeENNMT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 09:12:19 -0400
-From: William Kucharski <william.kucharski@oracle.com>
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Date: Mon, 14 May 2018 07:12:13 -0600
-Subject: [RFC] mm, THP: Map read-only text segments using large THP pages
-Message-Id: <5BB682E1-DD52-4AA9-83E9-DEF091E0C709@oracle.com>
-To: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-X-Mailer: Apple Mail (2.3445.8.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8892 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805140136
+        id S1753808AbeENNVX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 09:21:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752463AbeENNVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 09:21:19 -0400
+X-Google-Smtp-Source: AB8JxZoA4yQazgJCKJIzlAh0qJkLqugdPkLSFpkh4omO1ny/1exiNtPfi8a7Y91Beml3OpfZhC+aG7HCKCv9O0d9+G8=
+MIME-Version: 1.0
+In-Reply-To: <CAMRc=McDNYQ5uk8EyRkDf8eh9q7tyF=t7PcUd6DBLqXcseJ3AQ@mail.gmail.com>
+References: <20180511162028.20616-1-brgl@bgdev.pl> <CAL_JsqL3CWFSpKEGoGwQDxCQ04g4uT1hiDTxXzjz4XTjPbfsoQ@mail.gmail.com>
+ <CAMRc=McDNYQ5uk8EyRkDf8eh9q7tyF=t7PcUd6DBLqXcseJ3AQ@mail.gmail.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Mon, 14 May 2018 08:20:57 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ=DdkDR3LtnTMHPUpwaUbjPEBgkaCV8ja+p-mTvWZuYA@mail.gmail.com>
+Message-ID: <CAL_JsqJ=DdkDR3LtnTMHPUpwaUbjPEBgkaCV8ja+p-mTvWZuYA@mail.gmail.com>
+Subject: Re: [PATCH 00/12] introduce support for early platform drivers
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Magnus Damm <magnus.damm@gmail.com>, Johan Hovold <johan@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES"
+        <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4EDKmMW028711
 
-One of the downsides of THP as currently implemented is that it only supports
-large page mappings for anonymous pages.
+On Mon, May 14, 2018 at 6:38 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> 2018-05-11 22:13 GMT+02:00 Rob Herring <robh+dt@kernel.org>:
+>> On Fri, May 11, 2018 at 11:20 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>>> This series is a follow-up to the RFC[1] posted a couple days ago.
+>>>
+>>> NOTE: this series applies on top of my recent patches[2] that move the previous
+>>> implementation of early platform devices to arch/sh.
+>>>
+>>> Problem:
+>>>
+>>> Certain class of devices, such as timers, certain clock drivers and irq chip
+>>> drivers need to be probed early in the boot sequence. The currently preferred
+>>> approach is using one of the OF_DECLARE() macros. This however does not create
+>>> a platform device which has many drawbacks - such as not being able to use
+>>> devres routines, dev_ log functions or no way of deferring the init OF function
+>>> if some other resources are missing.
+>>
+>> I skimmed though this and it doesn't look horrible (how's that for
+>> positive feedback? ;) ). But before going into the details, I think
+>> first there needs to be agreement this is the right direction.
+>>
+>> The question does remain though as to whether this class of devices
+>> should be platform drivers. They can't be modules. They can't be
+>> hotplugged. Can they be runtime-pm enabled? So the advantage is ...
+>>
+>
+> The main (but not the only) advantage for drivers that can both be
+> platform drivers and OF_DECLARE drivers is that we get a single entry
+> point and can reuse code without resorting to checking if (!dev). It
+> results in more consistent code base. Another big advantage is
+> consolidation of device tree and machine code for SoC drivers used in
+> different boards of which some are still using board files and others
+> are defined in DT (see: DaVinci).
+>
+>> I assume that the clock maintainers had some reason to move clocks to
+>> be platform drivers. It's just not clear to me what that was.
+>>
+>>> For drivers that use both platform drivers and OF_DECLARE the situation is even
+>>> more complicated as the code needs to take into account that there can possibly
+>>> be no struct device present. For a specific use case that we're having problems
+>>> with, please refer to the recent DaVinci common-clock conversion patches and
+>>> the nasty workaround that this problem implies[3].
+>>
+>> So devm_kzalloc will work with this solution? Why did we need
+>> devm_kzalloc in the first place? The clocks can never be removed and
+>> cleaning up on error paths is kind of pointless. The system would be
+>> hosed, right?
+>>
+>
+> It depends - not all clocks are necessary for system to boot.
 
-I embarked upon this prototype on the theory that it would be advantageous to 
-be able to map large ranges of read-only text pages using THP as well.
+That doesn't matter. You have a single driver for all/most of the
+clocks, so the driver can't be removed.
 
-The idea is that the kernel will attempt to allocate and map the range using a 
-PMD sized THP page upon first fault; if the allocation is successful the page 
-will be populated (at present using a call to kernel_read()) and the page will 
-be mapped at the PMD level. If memory allocation fails, the page fault routines 
-will drop through to the conventional PAGESIZE-oriented routines for mapping 
-the faulting page.
+>>> We also used to have an early platform drivers implementation but they were not
+>>> integrated with the linux device model at all - they merely used the same data
+>>> structures. The users could not use devres, defer probe and the early devices
+>>> never became actual platform devices later on.
+>>>
+>>> Proposed solution:
+>>>
+>>> This series aims at solving this problem by (re-)introducing the concept of
+>>> early platform drivers and devices - this time however in a way that seamlessly
+>>> integrates with the existing platform drivers and also offers device-tree
+>>> support.
+>>>
+>>> The idea is to provide a way for users to probe devices early, while already
+>>> being able to use devres, devices resources and properties and also deferred
+>>> probing.
+>>>
+>>> New structures are introduced: the early platform driver contains the
+>>> early_probe callback which has the same signature as regular platform_device
+>>> probe. This callback is called early on. The user can have both the early and
+>>> regular probe speficied or only one of them and they both receive the same
+>>> platform device object as argument. Any device data allocated early will be
+>>> carried over to the normal probe.
+>>>
+>>> The architecture code is responsible for calling early_platform_start() in
+>>> which the early drivers will be registered and devices populated from DT.
+>>
+>> Can we really do this in one spot for different devices (clk, timers,
+>> irq). The sequence is all very carefully crafted. Platform specific
+>> hooks is another thing to consider.
+>>
+>
+> This is why I added support for early probe deferral - so that we can
+> stop caring for the order as long as the drivers are aware of other
+> resources they need and we call early_platform_start() the moment the
+> earliest of the early devices is needed.
 
-Since this approach will map a PMD size block of the memory map at a time, we 
-should see a slight uptick in time spent in disk I/O but a substantial drop in 
-page faults as well as a reduction in iTLB misses as address ranges will be 
-mapped with the larger page. Analysis of a test program that consists of a very 
-large text area (483,138,032 bytes in size) that thrashes D$ and I$ shows this 
-does occur and there is a slight reduction in program execution time.
+Deferred probe helps for inter-device dependencies, but I am more
+concerned about timing of trying to register clocksources, irqchips,
+etc. What happens if we probe drivers before the infrastructure is
+initialized?
 
-The text segment as seen from readelf:
-
-LOAD           0x0000000000000000 0x0000000000400000 0x0000000000400000
-               0x000000001ccc19f0 0x000000001ccc19f0  R E    0x200000
-
-As currently implemented for test purposes, the prototype will only use large 
-pages to map an executable with a particular filename ("testr"), enabling easy 
-comparison of the same executable using 4K and 2M (x64) pages on the same 
-kernel. It is understood that this is just a proof of concept implementation 
-and much more work regarding enabling the feature and overall system usage of 
-it would need to be done before it was submitted as a kernel patch. However, I 
-felt it would be worthy to send it out as an RFC so I can find out whether 
-there are huge objections from the community to doing this at all, or a better 
-understanding of the major concerns that must be assuaged before it would even 
-be considered. I currently hardcode CONFIG_TRANSPARENT_HUGEPAGE to the 
-equivalent of "always" and bypass some checks for anonymous pages by simply 
-#ifdefing the code out; obviously I would need to determine the right thing to 
-do in those cases.
-
-Current comparisons of 4K vs 2M pages as generated by "perf stat -d -d -d -r10" 
-follow; the 4K pagesize program was named "foo" and the 2M pagesize program 
-"testr" (as noted above) - please note that these numbers do vary from run to 
-run, but the orders of magnitude of the differences between the two versions 
-remain relatively constant:
-
-4K Pages:
-=========
-Performance counter stats for './foo' (10 runs):
-
-    307054.450421      task-clock:u (msec)       #    1.000 CPUs utilized            ( +-  0.21% )
-                0      context-switches:u        #    0.000 K/sec
-                0      cpu-migrations:u          #    0.000 K/sec
-            7,728      page-faults:u             #    0.025 K/sec                    ( +-  0.00% )
-1,401,295,823,265      cycles:u                  #    4.564 GHz                      ( +-  0.19% )  (30.77%)
-  562,704,668,718      instructions:u            #    0.40  insn per cycle           ( +-  0.00% )  (38.46%)
-   20,100,243,102      branches:u                #   65.461 M/sec                    ( +-  0.00% )  (38.46%)
-        2,628,944      branch-misses:u           #    0.01% of all branches          ( +-  3.32% )  (38.46%)
-  180,885,880,185      L1-dcache-loads:u         #  589.100 M/sec                    ( +-  0.00% )  (38.46%)
-   40,374,420,279      L1-dcache-load-misses:u   #   22.32% of all L1-dcache hits    ( +-  0.01% )  (38.46%)
-      232,184,583      LLC-loads:u               #    0.756 M/sec                    ( +-  1.48% )  (30.77%)
-       23,990,082      LLC-load-misses:u         #   10.33% of all LL-cache hits     ( +-  1.48% )  (30.77%)
-  <not supported>      L1-icache-loads:u
-   74,897,499,234      L1-icache-load-misses:u                                       ( +-  0.00% )  (30.77%)
-  180,990,026,447      dTLB-loads:u              #  589.440 M/sec                    ( +-  0.00% )  (30.77%)
-          707,373      dTLB-load-misses:u        #    0.00% of all dTLB cache hits   ( +-  4.62% )  (30.77%)
-        5,583,675      iTLB-loads:u              #    0.018 M/sec                    ( +-  0.31% )  (30.77%)
-    1,219,514,499      iTLB-load-misses:u        # 21840.71% of all iTLB cache hits  ( +-  0.01% )  (30.77%)
-  <not supported>      L1-dcache-prefetches:u
-  <not supported>      L1-dcache-prefetch-misses:u
-
-307.093088771 seconds time elapsed                                          ( +-  0.20% )
-
-2M Pages:
-=========
-Performance counter stats for './testr' (10 runs):
-
-    289504.209769      task-clock:u (msec)       #    1.000 CPUs utilized            ( +-  0.19% )
-                0      context-switches:u        #    0.000 K/sec
-                0      cpu-migrations:u          #    0.000 K/sec
-              598      page-faults:u             #    0.002 K/sec                    ( +-  0.03% )
-1,323,835,488,984      cycles:u                  #    4.573 GHz                      ( +-  0.19% )  (30.77%)
-  562,658,682,055      instructions:u            #    0.43  insn per cycle           ( +-  0.00% )  (38.46%)
-   20,099,662,528      branches:u                #   69.428 M/sec                    ( +-  0.00% )  (38.46%)
-        2,877,086      branch-misses:u           #    0.01% of all branches          ( +-  4.52% )  (38.46%)
-  180,899,297,017      L1-dcache-loads:u         #  624.859 M/sec                    ( +-  0.00% )  (38.46%)
-   40,209,140,089      L1-dcache-load-misses:u   #   22.23% of all L1-dcache hits    ( +-  0.00% )  (38.46%)
-      135,968,232      LLC-loads:u               #    0.470 M/sec                    ( +-  1.56% )  (30.77%)
-        6,704,890      LLC-load-misses:u         #    4.93% of all LL-cache hits     ( +-  1.92% )  (30.77%)
-  <not supported>      L1-icache-loads:u
-   74,955,673,747      L1-icache-load-misses:u                                       ( +-  0.00% )  (30.77%)
-  180,987,794,366      dTLB-loads:u              #  625.165 M/sec                    ( +-  0.00% )  (30.77%)
-              835      dTLB-load-misses:u        #    0.00% of all dTLB cache hits   ( +- 14.35% )  (30.77%)
-        6,386,207      iTLB-loads:u              #    0.022 M/sec                    ( +-  0.42% )  (30.77%)
-       51,929,869      iTLB-load-misses:u        #  813.16% of all iTLB cache hits   ( +-  1.61% )  (30.77%)
-  <not supported>      L1-dcache-prefetches:u
-  <not supported>      L1-dcache-prefetch-misses:u
-
-289.551551387 seconds time elapsed                                          ( +-  0.20% )
-
-A check of /proc/meminfo with the test program running shows the large mappings:
-
-ShmemPmdMapped:   471040 kB
-
-FAQ:
-====
-Q: What kernel is the prototype based on?
-A: 4.14.0-rc7
-
-Q: What is the biggest issue you haven't addressed?
-A: Given this is a prototype, there are many. Aside from the fact that I 
-   only map large pages for an  executable of a specific name ("testr"), the 
-   code must be integrated with large page size support in the page cache 
-   as currently multiple iterations of an executable would each use their 
-   own individually allocated THP pages and those pages filled with data 
-   using kernel_read(), which  allows for performance characterization but 
-   would never be acceptable for a production kernel.
-
-   A good example of the large page support required is the ext4 support
-   outlined in:
-
-     https://www.mail-archive.com/linux-block@vger.kernel.org/msg04012.html
-
-   There also need to be configuration options to enable this code at all, 
-   likely only for file systems that support large pages, and more 
-   reasonable fixes for the assumptions that all large THP pages are 
-   anonymous assertions in rmap.c (for the prototype I just "#if 0" them out.)
-
-Q: Which processes get their text as large pages?
-A: At this point with this implementation it's any process with a read-only
-   text area of the proper size/alignment.
-
-   An attempt is made to align the address for non-MAP_FIXED addresses.
-
-   I do not make any attempt to move mappings that take up a majority of a 
-   large page to a large page; I only map a large page if the address 
-   aligns and the map size is larger than or equal to a large page.  
-
-Q: Which architectures has this been tested on?
-A: At present, only x64.
-
-Q: How about architectures (ARM, for instance) with multiple large page 
-   sizes that are reasonable for text mappings?
-A: At present a "large page" is just PMD size; it would be possible with
-   additional effort to allow for mapping using PUD-sized pages.
-
-Q: What about the use of non-PMD large page sizes (on non-x86 architectures)?
-A: I haven't looked into that; I don't have an answer as to how to best 
-   map a page that wasn't sized to be a PMD or PUD.
-
-Signed-off-by: William Kucharski <william.kucharski@oracle.com>
-
-===============================================================
-
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index ed113ea..f4ac381 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -146,8 +146,8 @@ static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
-	if (vma->vm_pgoff & (~huge_page_mask(h) >> PAGE_SHIFT))
-		return -EINVAL;
-
--	vma_len = (loff_t)(vma->vm_end - vma->vm_start);
--	len = vma_len + ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
-+	vma_len = (loff_t)(vma->vm_end - vma->vm_start);	/* length of VMA */
-+	len = vma_len + ((loff_t)vma->vm_pgoff << PAGE_SHIFT);	/* add vma->vm_pgoff * PAGESIZE */
-	/* check for overflow */
-	if (len < vma_len)
-		return -EINVAL;
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 87067d2..353bec8 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -80,13 +80,15 @@ extern struct kobj_attribute shmem_enabled_attr;
-#define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
-
-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
--#define HPAGE_PMD_SHIFT PMD_SHIFT
--#define HPAGE_PMD_SIZE	((1UL) << HPAGE_PMD_SHIFT)
--#define HPAGE_PMD_MASK	(~(HPAGE_PMD_SIZE - 1))
--
--#define HPAGE_PUD_SHIFT PUD_SHIFT
--#define HPAGE_PUD_SIZE	((1UL) << HPAGE_PUD_SHIFT)
--#define HPAGE_PUD_MASK	(~(HPAGE_PUD_SIZE - 1))
-+#define HPAGE_PMD_SHIFT		PMD_SHIFT
-+#define HPAGE_PMD_SIZE		((1UL) << HPAGE_PMD_SHIFT)
-+#define	HPAGE_PMD_OFFSET	(HPAGE_PMD_SIZE - 1)
-+#define	HPAGE_PMD_MASK		(~(HPAGE_PMD_OFFSET))
-+
-+#define HPAGE_PUD_SHIFT		PUD_SHIFT
-+#define HPAGE_PUD_SIZE		((1UL) << HPAGE_PUD_SHIFT)
-+#define	HPAGE_PUD_OFFSET	(HPAGE_PUD_SIZE - 1)
-+#define HPAGE_PUD_MASK		(~(HPAGE_PUD_OFFSET))
-
-extern bool is_vma_temporary_stack(struct vm_area_struct *vma);
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1981ed6..7b61c92 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -445,6 +445,14 @@ subsys_initcall(hugepage_init);
-
-static int __init setup_transparent_hugepage(char *str)
-{
-+#if 1
-+	set_bit(TRANSPARENT_HUGEPAGE_FLAG,
-+		&transparent_hugepage_flags);
-+	clear_bit(TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG,
-+		  &transparent_hugepage_flags);
-+	printk("THP permanently set ON\n");
-+	return 1;
-+#else
-	int ret = 0;
-	if (!str)
-		goto out;
-@@ -471,6 +479,7 @@ static int __init setup_transparent_hugepage(char *str)
-	if (!ret)
-		pr_warn("transparent_hugepage= cannot parse, ignored\n");
-	return ret;
-+#endif
-}
-__setup("transparent_hugepage=", setup_transparent_hugepage);
-
-@@ -532,8 +541,11 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
-
-	if (addr)
-		goto out;
-+
-+#if 0
-	if (!IS_DAX(filp->f_mapping->host) || !IS_ENABLED(CONFIG_FS_DAX_PMD))
-		goto out;
-+#endif
-
-	addr = __thp_get_unmapped_area(filp, len, off, flags, PMD_SIZE);
-	if (addr)
-diff --git a/mm/memory.c b/mm/memory.c
-index a728bed..fc352d8 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3506,7 +3506,99 @@ late_initcall(fault_around_debugfs);
- * fault_around_pages() value (and therefore to page order).  This way it's
- * easier to guarantee that we don't cross page table boundaries.
- */
--static int do_fault_around(struct vm_fault *vmf)
-+
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+static
-+int do_fault_around_thp(struct vm_fault *vmf)
-+{
-+        struct file *file = vmf->vma->vm_file;
-+	unsigned long address = vmf->address;
-+	pgoff_t start_pgoff = vmf->pgoff;
-+	pgoff_t end_pgoff;
-+	int ret = VM_FAULT_FALLBACK;
-+	int off;
-+
-+	/*
-+	 * vmf->address will be the higher of (fault address & HPAGE_PMD_MASK)
-+	 * or the start of the VMA.
-+	 */
-+	vmf->address = max((address & HPAGE_PMD_MASK), vmf->vma->vm_start);
-+
-+	/*
-+	 * Not a candidate if the start address calculated above isnt properly
-+	 * aligned
-+	 */
-+	if (vmf->address & HPAGE_PMD_OFFSET)
-+		goto dfa_thp_out;
-+
-+	off = ((address - vmf->address) >> PAGE_SHIFT) & (PTRS_PER_PTE - 1);
-+	start_pgoff -= off;
-+
-+	/*
-+	 *  end_pgoff is either end of page table or end of vma
-+	 *  or fault_around_pages() from start_pgoff, depending what is
-+	 *  smallest.
-+	 */
-+	end_pgoff = start_pgoff -
-+		((vmf->address >> PAGE_SHIFT) & (PTRS_PER_PTE - 1)) +
-+		PTRS_PER_PTE - 1;
-+	end_pgoff = min3(end_pgoff, vma_pages(vmf->vma) + vmf->vma->vm_pgoff - 1,
-+			start_pgoff + PTRS_PER_PTE - 1);
-+
-+	/*
-+	 * Check to see if we could map this request with a large THP page
-+	 * instead.
-+	 */
-+	if (((strncmp(file->f_path.dentry->d_name.name, "testr", 5) == 0)) &&
-+		pmd_none(*vmf->pmd) &&
-+		((end_pgoff - start_pgoff) >=
-+		((HPAGE_PMD_SIZE >> PAGE_SHIFT) - 1))) {
-+		struct page *page;
-+
-+		page = alloc_pages_vma(vmf->gfp_mask | __GFP_COMP |
-+			__GFP_NORETRY, HPAGE_PMD_ORDER, vmf->vma,
-+			vmf->address, numa_node_id(), 1);
-+
-+		if ((likely(page)) && (PageTransCompound(page))) {
-+			ssize_t bytes_read;
-+			void *pg_vaddr;
-+
-+			prep_transhuge_page(page);
-+			pg_vaddr = page_address(page);
-+
-+			if (likely(pg_vaddr)) {
-+				loff_t loff = (loff_t)
-+					(start_pgoff << PAGE_SHIFT);
-+				bytes_read = kernel_read(file, pg_vaddr,
-+					HPAGE_PMD_SIZE, &loff);
-+				VM_BUG_ON(bytes_read != HPAGE_PMD_SIZE);
-+
-+				smp_wmb(); /* See comment in __pte_alloc() */
-+				ret = alloc_set_pte(vmf, NULL, page);
-+
-+				if (likely(ret == 0)) {
-+					VM_BUG_ON_PAGE(pmd_none(*vmf->pmd),
-+						page);
-+					vmf->page = page;
-+					ret = VM_FAULT_NOPAGE;
-+					goto dfa_thp_out;
-+				}
-+			}
-+
-+			put_page(page);
-+		}
-+	}
-+
-+dfa_thp_out:
-+	vmf->address = address;
-+	VM_BUG_ON(vmf->pte != NULL);
-+	return ret;
-+}
-+#endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
-+
-+
-+static
-+int do_fault_around(struct vm_fault *vmf)
-{
-	unsigned long address = vmf->address, nr_pages, mask;
-	pgoff_t start_pgoff = vmf->pgoff;
-@@ -3566,6 +3658,21 @@ static int do_read_fault(struct vm_fault *vmf)
-	struct vm_area_struct *vma = vmf->vma;
-	int ret = 0;
-
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	/*
-+	 * Check to see if we could map this request with a large THP page
-+	 * instead.
-+	 */
-+	if ((vma_pages(vmf->vma) >= PTRS_PER_PMD) &&
-+		((strncmp(vmf->vma->vm_file->f_path.dentry->d_name.name,
-+		"testr", 5)) == 0)) {
-+			ret = do_fault_around_thp(vmf);
-+
-+			if (ret == VM_FAULT_NOPAGE)
-+				return ret;
-+	}
-+#endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
-+
-	/*
-	 * Let's call ->map_pages() first and use ->fault() as fallback
-	 * if page by the offset is not ready to be mapped (cold cache or
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 680506f..1c281d7 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1327,6 +1327,10 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
-	struct mm_struct *mm = current->mm;
-	int pkey = 0;
-
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	unsigned long thp_maywrite = VM_MAYWRITE;
-+#endif
-+
-	*populate = 0;
-
-	if (!len)
-@@ -1361,7 +1365,32 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
-	/* Obtain the address to map to. we verify (or select) it and ensure
-	 * that it represents a valid section of the address space.
-	 */
--	addr = get_unmapped_area(file, addr, len, pgoff, flags);
-+
-+
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	/*
-+	 *
-+	 * If THP is enabled, and it's a read-only executable that is
-+	 * MAP_PRIVATE mapped, call the appropriate thp function to perhaps get a
-+	 * large page aligned virtual address, otherwise use the normal routine.
-+	 * 
-+	 * Note the THP routine will return a normal page size aligned start
-+	 * address in some cases.
-+	 */
-+	if ((prot & PROT_READ) && (prot & PROT_EXEC) && (!(prot & PROT_WRITE)) &&
-+		(len >= HPAGE_PMD_SIZE) && (flags & MAP_PRIVATE) &&
-+		((!(flags & MAP_FIXED)) || (!(addr & HPAGE_PMD_OFFSET)))) {
-+			addr = thp_get_unmapped_area(file, addr, len, pgoff,
-+				flags);
-+			if (addr && (!(addr & HPAGE_PMD_OFFSET)))
-+				thp_maywrite = 0;
-+	} else {
-+#endif
-+		addr = get_unmapped_area(file, addr, len, pgoff, flags);
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	}
-+#endif
-+
-	if (offset_in_page(addr))
-		return addr;
-
-@@ -1376,7 +1405,11 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
-	 * of the memory object, so we don't do any here.
-	 */
-	vm_flags |= calc_vm_prot_bits(prot, pkey) | calc_vm_flag_bits(flags) |
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+			mm->def_flags | VM_MAYREAD | thp_maywrite | VM_MAYEXEC;
-+#else
-			mm->def_flags | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC;
-+#endif
-
-	if (flags & MAP_LOCKED)
-		if (!can_do_mlock())
-diff --git a/mm/rmap.c b/mm/rmap.c
-index b874c47..4fc24f8 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1184,7 +1184,9 @@ void page_add_file_rmap(struct page *page, bool compound)
-		}
-		if (!atomic_inc_and_test(compound_mapcount_ptr(page)))
-			goto out;
-+#if 0
-		VM_BUG_ON_PAGE(!PageSwapBacked(page), page);
-+#endif
-		__inc_node_page_state(page, NR_SHMEM_PMDMAPPED);
-	} else {
-		if (PageTransCompound(page) && page_mapping(page)) {
-@@ -1224,7 +1226,9 @@ static void page_remove_file_rmap(struct page *page, bool compound)
-		}
-		if (!atomic_add_negative(-1, compound_mapcount_ptr(page)))
-			goto out;
-+#if 0
-		VM_BUG_ON_PAGE(!PageSwapBacked(page), page);
-+#endif
-		__dec_node_page_state(page, NR_SHMEM_PMDMAPPED);
-	} else {
-		if (!atomic_add_negative(-1, &page->_mapcount))
+Rob
