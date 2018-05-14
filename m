@@ -1,272 +1,631 @@
-Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1283123-1526326444-2-3868029976155318833
+Return-Path: <linux-efi-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-208113-1526280210-2-6176501328485819887
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: 
+X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-fsdevel-owner@vger.kernel.org
+X-Mail-from: linux-efi-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526326443; b=VPfdHKPomUJmXD8QDJmFJlLNsm7Uem64IcPCWpRWwJaQUJeFgf
-    vq/R/XxurgYfIVrgU4M2ksm3u6My0NKa3tL0vJxdaXTwglL24+n6D4AiyjM25t2x
-    kU2wOvtvnBo8h3L3WMXmO4XhsxPduxv62pQm0NgvKouXDz/DNNvvJioBdHWF/9Dz
-    64liQavskm0TTNHJnxL1xJpPAZt2Q2kLkaN7K4kjYhR/GM721OKphCjkq17TfOrQ
-    RLlIwwtE2MXqqzlCvprgXgIf/M9mjNmvxTHO4Pt5EJ157kfNlzT2zE8Uvjp1JY6B
-    AXEpEhnJxHZU8tluuMIhtLWD5/2OYvA5JvUg==
+    1526280210; b=hozigKzlTSnCajbQoxCwE+vKLNDvVoi86SCYp2Kp2HJYU3zvtg
+    eibg+ZOmmv4NgGMTOdKBXg4siUtTnJGYohjKZkb0gkvAxcL7dae/HqiLcCxgXIQ+
+    YsPQpho5prOMUddnZO4WCLpIXEcAea6cVSqEe+kHaj5JWHYF4BEOSJKTbE+AUdkD
+    k3mFk6cRBq7zswYpg28JJqbMawbez2uAHx3WiHJXt7A5iwQcxjo4yf7qkX6Ij7KS
+    dTJbPaHoJfYK+eY/7cOCUgE1EGaUGDfJ2Nwu53/KhMH0x3kfUeQEWOI3nrBw5yBG
+    A/nNwPepi6l1Od7yJnWgIvjhPrp5sJ5JFBPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1526326443; bh=
-    4JKPOTlCu0TvV9wZ5qvdJKLtHp8XDCOhcqft66W153g=; b=akJhUYfk0qEVYI5B
-    2UaHofB6EQOhG+CF0yDVjt3FdyrJtXpDGxjnS8Ly35ifmwP3e+2aNDF/uVkqEAQg
-    cYSTfdnQPCLaTPAg6UOl6itAKXOr78yce18C6xK3UWdY5mpGHtWgxsWHsIh3TD0C
-    6nGYSh6hkYaeFplB3+k1/HNBiaLfkvNa7uzoGa3hks4zp4I1F9aJak6b2xhNAUN2
-    j1rgQ+C5sKnGWorVEkf9UZyMYrWbMZLinw75P3tyHY926mpo8NIP6rHGvsaKdFiZ
-    e2IvEpXJqSvqponvCBXI84ySLrca6v6nkieFfm3It3kHMtOlU5b9K0G/dXRvbYSW
-    OrSd4g==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1526280210; bh=5zxxhU8qUZffSGfGWduJ33HIsQtEgc
+    w5jqUAHLtLgH0=; b=jTK+k548nRlWrkbnNtYcZejhZ9ZKs8h5TicsNy5cCv8DzO
+    sD54EE7V/bQjb1qnt2VbM+6/iBrSVmwPtl/+rYJMc80/jvdfkjRPDPO3wHcgWd2Y
+    OmQVD4nZxD9zZr2BPIfl1g/W1Tq1UJzXvBX6RIY/6RvmNND7vwJmyLp8WNgrA97Q
+    zUcdp/eYav87kXwFNooJUBzdx7EmEG1i1SmIvwQXnTCfSnUIjn39Qyr90lAKj1l3
+    08SyZegbiz08laHj65d3GvbL/iQGnJCcPVAUCDPUXH6y+LoX2YOCPcMJ5aDHyiL3
+    eqQrlyj/da7Ul+nnaOrz/rzbv5wWiR1pGFMEmHGQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=gmail.com header.i=@gmail.com header.b=DIlHnZkT x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=QV0uS7ny;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=gmail.com header.i=@gmail.com header.b=DIlHnZkT x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-efi-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=QV0uS7ny;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGRCIzBnOBPnJSdQWt749Fl2myXY7JjGStMbW7dC6luFAdu0t7ZStWcYHx76Woti/SKsoYkxmICfxyoGwphMa2Ck9QSJg9KUuxBc/xdCtxppobi+7YUf
-    IWUmdmlqlEk3Ku+nG2ZO5A3eD9kksMor9rsxoZs22RmznVKF//MS8IHT1+66PjmmmEOFnX1jld5M97TrIer4na7kSBYR4XBxWJa2qc38dbefIBBdA6OQyNQd
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
-    a=4CBHjKQC6pAkuscCNd4A:9
+X-CM-Envelope: MS4wfHEy7/KFh9N+beh8se5hAWKUWZ9oluSloM7jbuXloIm/1vla22V25gFGFx1SseNQ1DEIvVUOTePpLKf/4QmLHva8P9WTW4ZUxEN13grVbUfLWhU6JfCc
+    9hKYyANt3QFLBf5U7BMGjRiuzyIk6NFvVChjemobkSegWKhLzpKrjWV/La2cY2rLo1P+Q09LR1CRWomDU5stNk1HlaE0jBqLszNfTtFAkk0hDu1phzxzQ3wn
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=Z4Rwk6OoAAAA:8 a=CxaZg77CAAAA:8
+    a=JfrnYn6hAAAA:8 a=J2Pi4US2K3vEbnNH2K8A:9 a=It1joF6SiMHbtFjz:21
+    a=u0x1IimXBjC7YC7H:21 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22 a=HkZW87K1Qel5hWWM3VKY:22
+    a=HxQw6O0h_v37Y3_G5fB_:22 a=1CNFftbPRP8L7MoqJWF3:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752073AbeENTd7 (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 14 May 2018 15:33:59 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49882 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751855AbeENTdp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 May 2018 15:33:45 -0400
-From: Waiman Long <longman@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
-        Waiman Long <longman@redhat.com>
-Subject: [RFC PATCH v2 1/2] locking/rwsem: Add a new RWSEM_WRITER_OWNED_NOSPIN flag
-Date: Mon, 14 May 2018 15:31:06 -0400
-Message-Id: <1526326267-22501-2-git-send-email-longman@redhat.com>
-In-Reply-To: <1526326267-22501-1-git-send-email-longman@redhat.com>
-References: <1526326267-22501-1-git-send-email-longman@redhat.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-X-Mailing-List: linux-fsdevel@vger.kernel.org
+        id S1751533AbeENGn3 (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 14 May 2018 02:43:29 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:35281 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751198AbeENGn1 (ORCPT
+        <rfc822;linux-efi@vger.kernel.org>); Mon, 14 May 2018 02:43:27 -0400
+X-Google-Smtp-Source: AB8JxZpndsnAc0bK+xque98aGaCdWc8BzN6OVSGw13Yp2mpTOdAxnJvA87esbiRxab4GAhX/EG/KeA==
+Date: Mon, 14 May 2018 08:43:23 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] efi/x86: Clean up the eboot code a bit
+Message-ID: <20180514064323.GB16596@gmail.com>
+References: <20180504060003.19618-1-ard.biesheuvel@linaro.org>
+ <20180504060003.19618-16-ard.biesheuvel@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180504060003.19618-16-ard.biesheuvel@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+Sender: linux-efi-owner@vger.kernel.org
+X-Mailing-List: linux-efi@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-There are use cases where a rwsem can be acquired by one task, but
-released by another task. In thess cases, it may not be appropriate
-for the lock waiters to spin on the task that acquires the lock.
-One example will be the filesystem freeze/thaw code.
 
-To handle such use cases, a new RWSEM_WRITER_OWNED_NOSPIN
-flag can now be set in the owner field of the rwsem by the new
-rwsem_set_writer_owned_nospin() function to indicate that the rwsem is
-writer owned, but optimistic spinning on the rwsem should be disabled.
+So I looked at arch/x86/boot/compressed/eboot.c to improve a printk message and 
+ended up with the cleanups below.
 
-Later on, the new rwsem_set_writer_owned() function can be called to
-set the new owner, if it is known. This function should not be called
-without a prior rwsem_set_writer_owned_nospin() call.
+Only build tested.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
+Thanks,
+
+	Ingo
+
+=================>
+Subject: efi/x86: Clean up the eboot code
+From: Ingo Molnar <mingo@kernel.org>
+Date: Mon May 14 08:33:40 CEST 2018
+
+Various small cleanups:
+
+ - Standardize printk messages:
+
+     'alloc' => 'allocate'
+     'mem'   => 'memory'
+
+   also put variable names in printk messages between quotes.
+
+ - Align mass-assignments vertically for better readability
+
+ - Break multi-line function prototypes at the name where possible,
+   not in the middle of the parameter list
+
+ - Use a newline before return statements consistently.
+
+ - Use curly braces in a balanced fashion.
+
+ - Remove stray newlines.
+
+No change in functionality.
+
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/rwsem.h       | 10 ++++++++++
- kernel/locking/rwsem-xadd.c | 17 ++++++++---------
- kernel/locking/rwsem.c      | 16 +++++++++++++++-
- kernel/locking/rwsem.h      | 37 ++++++++++++++++++++++++++++++-------
- 4 files changed, 63 insertions(+), 17 deletions(-)
+ arch/x86/boot/compressed/eboot.c |  247 +++++++++++++++++++--------------------
+ 1 file changed, 126 insertions(+), 121 deletions(-)
 
-diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-index 56707d5..1ddf24b 100644
---- a/include/linux/rwsem.h
-+++ b/include/linux/rwsem.h
-@@ -145,6 +145,16 @@ static inline int rwsem_is_contended(struct rw_semaphore *sem)
-  */
- extern void downgrade_write(struct rw_semaphore *sem);
+Index: tip/arch/x86/boot/compressed/eboot.c
+===================================================================
+--- tip.orig/arch/x86/boot/compressed/eboot.c
++++ tip/arch/x86/boot/compressed/eboot.c
+@@ -34,9 +34,9 @@ static void setup_boot_services##bits(st
+ 									\
+ 	table = (typeof(table))sys_table;				\
+ 									\
+-	c->runtime_services = table->runtime;				\
+-	c->boot_services = table->boottime;				\
+-	c->text_output = table->con_out;				\
++	c->runtime_services	= table->runtime;			\
++	c->boot_services	= table->boottime;			\
++	c->text_output		= table->con_out;			\
+ }
+ BOOT_SERVICES(32);
+ BOOT_SERVICES(64);
+@@ -64,6 +64,7 @@ static inline efi_status_t __open_volume
+ 		efi_printk(sys_table, "Failed to open volume\n");
  
-+#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
-+extern void rwsem_set_writer_owned_nospin(struct rw_semaphore *sem);
-+extern void rwsem_set_writer_owned(struct rw_semaphore *sem,
-+				   struct task_struct *task);
-+#else
-+static inline void rwsem_set_writer_owned_nospin(struct rw_semaphore *sem) { }
-+extern inline void rwsem_set_writer_owned(struct rw_semaphore *sem,
-+					  struct task_struct *task) { }
-+#endif
+ 	*__fh = fh;
 +
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
- /*
-  * nested locking. NOTE: rwsems are not allowed to recurse
-diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index e795908..a27dbb4 100644
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -357,11 +357,8 @@ static inline bool rwsem_can_spin_on_owner(struct rw_semaphore *sem)
- 
- 	rcu_read_lock();
- 	owner = READ_ONCE(sem->owner);
--	if (!rwsem_owner_is_writer(owner)) {
--		/*
--		 * Don't spin if the rwsem is readers owned.
--		 */
--		ret = !rwsem_owner_is_reader(owner);
-+	if (!owner || !is_rwsem_owner_spinnable(owner)) {
-+		ret = !owner;	/* !owner is spinnable */
- 		goto done;
- 	}
- 
-@@ -382,8 +379,10 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
- {
- 	struct task_struct *owner = READ_ONCE(sem->owner);
- 
--	if (!rwsem_owner_is_writer(owner))
--		goto out;
-+	if (!owner)
-+		return true;
-+	else if (!is_rwsem_owner_spinnable(owner))
-+		return false;
- 
- 	rcu_read_lock();
- 	while (sem->owner == owner) {
-@@ -408,12 +407,12 @@ static noinline bool rwsem_spin_on_owner(struct rw_semaphore *sem)
- 		cpu_relax();
- 	}
- 	rcu_read_unlock();
--out:
-+
- 	/*
- 	 * If there is a new owner or the owner is not set, we continue
- 	 * spinning.
- 	 */
--	return !rwsem_owner_is_reader(READ_ONCE(sem->owner));
-+	return is_rwsem_owner_spinnable(READ_ONCE(sem->owner));
+ 	return status;
  }
  
- static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index 30465a2..90e89ee 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -130,7 +130,8 @@ void up_read(struct rw_semaphore *sem)
- void up_write(struct rw_semaphore *sem)
+@@ -90,6 +91,7 @@ static inline efi_status_t __open_volume
+ 		efi_printk(sys_table, "Failed to open volume\n");
+ 
+ 	*__fh = fh;
++
+ 	return status;
+ }
+ 
+@@ -140,16 +142,16 @@ __setup_efi_pci(efi_pci_io_protocol_t *p
+ 
+ 	status = efi_call_early(allocate_pool, EFI_LOADER_DATA, size, &rom);
+ 	if (status != EFI_SUCCESS) {
+-		efi_printk(sys_table, "Failed to alloc mem for rom\n");
++		efi_printk(sys_table, "Failed to allocate memory for 'rom'\n");
+ 		return status;
+ 	}
+ 
+ 	memset(rom, 0, sizeof(*rom));
+ 
+-	rom->data.type = SETUP_PCI;
+-	rom->data.len = size - sizeof(struct setup_data);
+-	rom->data.next = 0;
+-	rom->pcilen = pci->romsize;
++	rom->data.type	= SETUP_PCI;
++	rom->data.len	= size - sizeof(struct setup_data);
++	rom->data.next	= 0;
++	rom->pcilen	= pci->romsize;
+ 	*__rom = rom;
+ 
+ 	status = efi_call_proto(efi_pci_io_protocol, pci.read, pci,
+@@ -186,8 +188,7 @@ free_struct:
+ }
+ 
+ static void
+-setup_efi_pci32(struct boot_params *params, void **pci_handle,
+-		unsigned long size)
++setup_efi_pci32(struct boot_params *params, void **pci_handle, unsigned long size)
  {
- 	rwsem_release(&sem->dep_map, 1, _RET_IP_);
--	DEBUG_RWSEMS_WARN_ON(sem->owner != current);
-+	DEBUG_RWSEMS_WARN_ON((sem->owner != current) &&
-+			     (sem->owner != RWSEM_WRITER_OWNED_NOSPIN));
+ 	efi_pci_io_protocol_t *pci = NULL;
+ 	efi_guid_t pci_proto = EFI_PCI_IO_PROTOCOL_GUID;
+@@ -226,13 +227,11 @@ setup_efi_pci32(struct boot_params *para
+ 			params->hdr.setup_data = (unsigned long)rom;
  
- 	rwsem_clear_owner(sem);
- 	__up_write(sem);
-@@ -222,4 +223,17 @@ void up_read_non_owner(struct rw_semaphore *sem)
+ 		data = (struct setup_data *)rom;
+-
+ 	}
+ }
  
+ static void
+-setup_efi_pci64(struct boot_params *params, void **pci_handle,
+-		unsigned long size)
++setup_efi_pci64(struct boot_params *params, void **pci_handle, unsigned long size)
+ {
+ 	efi_pci_io_protocol_t *pci = NULL;
+ 	efi_guid_t pci_proto = EFI_PCI_IO_PROTOCOL_GUID;
+@@ -271,7 +270,6 @@ setup_efi_pci64(struct boot_params *para
+ 			params->hdr.setup_data = (unsigned long)rom;
+ 
+ 		data = (struct setup_data *)rom;
+-
+ 	}
+ }
+ 
+@@ -301,7 +299,7 @@ static void setup_efi_pci(struct boot_pa
+ 					size, (void **)&pci_handle);
+ 
+ 		if (status != EFI_SUCCESS) {
+-			efi_printk(sys_table, "Failed to alloc mem for pci_handle\n");
++			efi_printk(sys_table, "Failed to allocate memory for 'pci_handle'\n");
+ 			return;
+ 		}
+ 
+@@ -347,8 +345,7 @@ static void retrieve_apple_device_proper
+ 		status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
+ 					size + sizeof(struct setup_data), &new);
+ 		if (status != EFI_SUCCESS) {
+-			efi_printk(sys_table,
+-					"Failed to alloc mem for properties\n");
++			efi_printk(sys_table, "Failed to allocate memory for 'properties'\n");
+ 			return;
+ 		}
+ 
+@@ -364,9 +361,9 @@ static void retrieve_apple_device_proper
+ 	new->next = 0;
+ 
+ 	data = (struct setup_data *)(unsigned long)boot_params->hdr.setup_data;
+-	if (!data)
++	if (!data) {
+ 		boot_params->hdr.setup_data = (unsigned long)new;
+-	else {
++	} else {
+ 		while (data->next)
+ 			data = (struct setup_data *)(unsigned long)data->next;
+ 		data->next = (unsigned long)new;
+@@ -479,8 +476,8 @@ setup_uga64(void **uga_handle, unsigned
+ /*
+  * See if we have Universal Graphics Adapter (UGA) protocol
+  */
+-static efi_status_t setup_uga(struct screen_info *si, efi_guid_t *uga_proto,
+-			      unsigned long size)
++static efi_status_t
++setup_uga(struct screen_info *si, efi_guid_t *uga_proto, unsigned long size)
+ {
+ 	efi_status_t status;
+ 	u32 width, height;
+@@ -509,23 +506,24 @@ static efi_status_t setup_uga(struct scr
+ 		goto free_handle;
+ 
+ 	/* EFI framebuffer */
+-	si->orig_video_isVGA = VIDEO_TYPE_EFI;
++	si->orig_video_isVGA	= VIDEO_TYPE_EFI;
+ 
+-	si->lfb_depth = 32;
+-	si->lfb_width = width;
+-	si->lfb_height = height;
+-
+-	si->red_size = 8;
+-	si->red_pos = 16;
+-	si->green_size = 8;
+-	si->green_pos = 8;
+-	si->blue_size = 8;
+-	si->blue_pos = 0;
+-	si->rsvd_size = 8;
+-	si->rsvd_pos = 24;
++	si->lfb_depth		= 32;
++	si->lfb_width		= width;
++	si->lfb_height		= height;
++
++	si->red_size		= 8;
++	si->red_pos		= 16;
++	si->green_size		= 8;
++	si->green_pos		= 8;
++	si->blue_size		= 8;
++	si->blue_pos		= 0;
++	si->rsvd_size		= 8;
++	si->rsvd_pos		= 24;
+ 
+ free_handle:
+ 	efi_call_early(free_pool, uga_handle);
++
+ 	return status;
+ }
+ 
+@@ -607,7 +605,7 @@ struct boot_params *make_boot_params(str
+ 	status = efi_low_alloc(sys_table, 0x4000, 1,
+ 			       (unsigned long *)&boot_params);
+ 	if (status != EFI_SUCCESS) {
+-		efi_printk(sys_table, "Failed to alloc lowmem for boot params\n");
++		efi_printk(sys_table, "Failed to allocate lowmem for boot params\n");
+ 		return NULL;
+ 	}
+ 
+@@ -623,9 +621,9 @@ struct boot_params *make_boot_params(str
+ 	 * Fill out some of the header fields ourselves because the
+ 	 * EFI firmware loader doesn't load the first sector.
+ 	 */
+-	hdr->root_flags = 1;
+-	hdr->vid_mode = 0xffff;
+-	hdr->boot_flag = 0xAA55;
++	hdr->root_flags	= 1;
++	hdr->vid_mode	= 0xffff;
++	hdr->boot_flag	= 0xAA55;
+ 
+ 	hdr->type_of_loader = 0x21;
+ 
+@@ -633,6 +631,7 @@ struct boot_params *make_boot_params(str
+ 	cmdline_ptr = efi_convert_cmdline(sys_table, image, &options_size);
+ 	if (!cmdline_ptr)
+ 		goto fail;
++
+ 	hdr->cmd_line_ptr = (unsigned long)cmdline_ptr;
+ 	/* Fill in upper bits of command line address, NOP on 32 bit  */
+ 	boot_params->ext_cmd_line_ptr = (u64)(unsigned long)cmdline_ptr >> 32;
+@@ -669,10 +668,12 @@ struct boot_params *make_boot_params(str
+ 	boot_params->ext_ramdisk_size  = (u64)ramdisk_size >> 32;
+ 
+ 	return boot_params;
++
+ fail2:
+ 	efi_free(sys_table, options_size, hdr->cmd_line_ptr);
+ fail:
+ 	efi_free(sys_table, 0x4000, (unsigned long)boot_params);
++
+ 	return NULL;
+ }
+ 
+@@ -684,7 +685,7 @@ static void add_e820ext(struct boot_para
+ 	unsigned long size;
+ 
+ 	e820ext->type = SETUP_E820_EXT;
+-	e820ext->len = nr_entries * sizeof(struct boot_e820_entry);
++	e820ext->len  = nr_entries * sizeof(struct boot_e820_entry);
+ 	e820ext->next = 0;
+ 
+ 	data = (struct setup_data *)(unsigned long)params->hdr.setup_data;
+@@ -698,8 +699,8 @@ static void add_e820ext(struct boot_para
+ 		params->hdr.setup_data = (unsigned long)e820ext;
+ }
+ 
+-static efi_status_t setup_e820(struct boot_params *params,
+-			       struct setup_data *e820ext, u32 e820ext_size)
++static efi_status_t
++setup_e820(struct boot_params *params, struct setup_data *e820ext, u32 e820ext_size)
+ {
+ 	struct boot_e820_entry *entry = params->e820_table;
+ 	struct efi_info *efi = &params->efi_info;
+@@ -820,11 +821,11 @@ static efi_status_t alloc_e820ext(u32 nr
+ }
+ 
+ struct exit_boot_struct {
+-	struct boot_params *boot_params;
+-	struct efi_info *efi;
+-	struct setup_data *e820ext;
+-	__u32 e820ext_size;
+-	bool is64;
++	struct boot_params	*boot_params;
++	struct efi_info		*efi;
++	struct setup_data	*e820ext;
++	__u32			e820ext_size;
++	bool			is64;
+ };
+ 
+ static efi_status_t exit_boot_func(efi_system_table_t *sys_table_arg,
+@@ -854,15 +855,15 @@ static efi_status_t exit_boot_func(efi_s
+ 	signature = p->is64 ? EFI64_LOADER_SIGNATURE : EFI32_LOADER_SIGNATURE;
+ 	memcpy(&p->efi->efi_loader_signature, signature, sizeof(__u32));
+ 
+-	p->efi->efi_systab = (unsigned long)sys_table_arg;
+-	p->efi->efi_memdesc_size = *map->desc_size;
+-	p->efi->efi_memdesc_version = *map->desc_ver;
+-	p->efi->efi_memmap = (unsigned long)*map->map;
+-	p->efi->efi_memmap_size = *map->map_size;
++	p->efi->efi_systab		= (unsigned long)sys_table_arg;
++	p->efi->efi_memdesc_size	= *map->desc_size;
++	p->efi->efi_memdesc_version	= *map->desc_ver;
++	p->efi->efi_memmap		= (unsigned long)*map->map;
++	p->efi->efi_memmap_size		= *map->map_size;
+ 
+ #ifdef CONFIG_X86_64
+-	p->efi->efi_systab_hi = (unsigned long)sys_table_arg >> 32;
+-	p->efi->efi_memmap_hi = (unsigned long)*map->map >> 32;
++	p->efi->efi_systab_hi		= (unsigned long)sys_table_arg >> 32;
++	p->efi->efi_memmap_hi		= (unsigned long)*map->map >> 32;
  #endif
  
-+#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
-+void rwsem_set_writer_owned_nospin(struct rw_semaphore *sem)
-+{
-+	__rwsem_set_writer_owned_nospin(sem);
-+}
-+EXPORT_SYMBOL(rwsem_set_writer_owned_nospin);
+ 	return EFI_SUCCESS;
+@@ -880,17 +881,17 @@ static efi_status_t exit_boot(struct boo
+ 	struct efi_boot_memmap map;
+ 	struct exit_boot_struct priv;
  
-+void rwsem_set_writer_owned(struct rw_semaphore *sem, struct task_struct *task)
-+{
-+	DEBUG_RWSEMS_WARN_ON(sem->owner != RWSEM_WRITER_OWNED_NOSPIN);
-+	__rwsem_set_writer_owned(sem, task);
-+}
-+EXPORT_SYMBOL(rwsem_set_writer_owned);
-+#endif
-diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
-index a17cba8..bbbd5a3 100644
---- a/kernel/locking/rwsem.h
-+++ b/kernel/locking/rwsem.h
-@@ -11,10 +11,15 @@
-  *  2) RWSEM_READER_OWNED
-  *     - lock is currently or previously owned by readers (lock is free
-  *       or not set by owner yet)
-- *  3) Other non-zero value
-- *     - a writer owns the lock
-+ *  3) RWSEM_WRITER_OWNED_NOSPIN
-+ *     - lock is owned by a writer whose lock ownership may be transfered to
-+ *	 another task and so spinning on the lock owner should be disabled.
-+ *  4) Other non-zero value
-+ *     - a writer owns the lock and other writers can spin on the lock owner.
-  */
--#define RWSEM_READER_OWNED	((struct task_struct *)1UL)
-+#define RWSEM_READER_OWNED		((struct task_struct *)1UL)
-+#define RWSEM_WRITER_OWNED_NOSPIN	((struct task_struct *)2UL)
-+#define RWSEM_NOSPIN_MASK		3UL
+-	map.map =		&mem_map;
+-	map.map_size =		&map_sz;
+-	map.desc_size =		&desc_size;
+-	map.desc_ver =		&desc_version;
+-	map.key_ptr =		&key;
+-	map.buff_size =		&buff_size;
+-	priv.boot_params =	boot_params;
+-	priv.efi =		&boot_params->efi_info;
+-	priv.e820ext =		NULL;
+-	priv.e820ext_size =	0;
+-	priv.is64 =		is64;
++	map.map			= &mem_map;
++	map.map_size		= &map_sz;
++	map.desc_size		= &desc_size;
++	map.desc_ver		= &desc_version;
++	map.key_ptr		= &key;
++	map.buff_size		= &buff_size;
++	priv.boot_params	= boot_params;
++	priv.efi		= &boot_params->efi_info;
++	priv.e820ext		= NULL;
++	priv.e820ext_size	= 0;
++	priv.is64		= is64;
  
- #ifdef CONFIG_DEBUG_RWSEMS
- # define DEBUG_RWSEMS_WARN_ON(c)	DEBUG_LOCKS_WARN_ON(c)
-@@ -51,14 +56,32 @@ static inline void rwsem_set_reader_owned(struct rw_semaphore *sem)
- 		WRITE_ONCE(sem->owner, RWSEM_READER_OWNED);
- }
+ 	/* Might as well exit boot services now */
+ 	status = efi_exit_boot_services(sys_table, handle, &map, &priv,
+@@ -898,10 +899,11 @@ static efi_status_t exit_boot(struct boo
+ 	if (status != EFI_SUCCESS)
+ 		return status;
  
--static inline bool rwsem_owner_is_writer(struct task_struct *owner)
-+/*
-+ * Mark the rwsem as writer owned, but optimistic spinning should be
-+ * disabled.
-+ *
-+ * The caller must make sure that the rwsem is really writer owned
-+ * and the lock won't be freed concurrently with this call.
-+ */
-+static inline void __rwsem_set_writer_owned_nospin(struct rw_semaphore *sem)
-+{
-+	WRITE_ONCE(sem->owner, RWSEM_WRITER_OWNED_NOSPIN);
-+}
+-	e820ext = priv.e820ext;
+-	e820ext_size = priv.e820ext_size;
++	e820ext			= priv.e820ext;
++	e820ext_size		= priv.e820ext_size;
 +
-+static inline void __rwsem_set_writer_owned(struct rw_semaphore *sem,
-+					    struct task_struct *task)
- {
--	return owner && owner != RWSEM_READER_OWNED;
-+	WRITE_ONCE(sem->owner, task);
- }
+ 	/* Historic? */
+-	boot_params->alt_mem_k = 32 * 1024;
++	boot_params->alt_mem_k	= 32 * 1024;
  
--static inline bool rwsem_owner_is_reader(struct task_struct *owner)
-+/*
-+ * Return true if the a rwsem waiter can spin on the rwsem's owner
-+ * and steal the lock.
-+ * N.B. !owner is considered spinnable.
-+ */
-+static inline bool is_rwsem_owner_spinnable(struct task_struct *owner)
+ 	status = setup_e820(boot_params, e820ext, e820ext_size);
+ 	if (status != EFI_SUCCESS)
+@@ -914,8 +916,8 @@ static efi_status_t exit_boot(struct boo
+  * On success we return a pointer to a boot_params structure, and NULL
+  * on failure.
+  */
+-struct boot_params *efi_main(struct efi_config *c,
+-			     struct boot_params *boot_params)
++struct boot_params *
++efi_main(struct efi_config *c, struct boot_params *boot_params)
  {
--	return owner == RWSEM_READER_OWNED;
-+	return !((unsigned long)owner & RWSEM_NOSPIN_MASK);
+ 	struct desc_ptr *gdt = NULL;
+ 	efi_loaded_image_t *image;
+@@ -963,7 +965,7 @@ struct boot_params *efi_main(struct efi_
+ 	status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
+ 				sizeof(*gdt), (void **)&gdt);
+ 	if (status != EFI_SUCCESS) {
+-		efi_printk(sys_table, "Failed to alloc mem for gdt structure\n");
++		efi_printk(sys_table, "Failed to allocate memory for 'gdt' structure\n");
+ 		goto fail;
+ 	}
+ 
+@@ -971,7 +973,7 @@ struct boot_params *efi_main(struct efi_
+ 	status = efi_low_alloc(sys_table, gdt->size, 8,
+ 			   (unsigned long *)&gdt->address);
+ 	if (status != EFI_SUCCESS) {
+-		efi_printk(sys_table, "Failed to alloc mem for gdt\n");
++		efi_printk(sys_table, "Failed to allocate memory for 'gdt'\n");
+ 		goto fail;
+ 	}
+ 
+@@ -1008,19 +1010,20 @@ struct boot_params *efi_main(struct efi_
+ 
+ 	if (IS_ENABLED(CONFIG_X86_64)) {
+ 		/* __KERNEL32_CS */
+-		desc->limit0 = 0xffff;
+-		desc->base0 = 0x0000;
+-		desc->base1 = 0x0000;
+-		desc->type = SEG_TYPE_CODE | SEG_TYPE_EXEC_READ;
+-		desc->s = DESC_TYPE_CODE_DATA;
+-		desc->dpl = 0;
+-		desc->p = 1;
+-		desc->limit1 = 0xf;
+-		desc->avl = 0;
+-		desc->l = 0;
+-		desc->d = SEG_OP_SIZE_32BIT;
+-		desc->g = SEG_GRANULARITY_4KB;
+-		desc->base2 = 0x00;
++		desc->limit0	= 0xffff;
++		desc->base0	= 0x0000;
++		desc->base1	= 0x0000;
++		desc->type	= SEG_TYPE_CODE | SEG_TYPE_EXEC_READ;
++		desc->s		= DESC_TYPE_CODE_DATA;
++		desc->dpl	= 0;
++		desc->p		= 1;
++		desc->limit1	= 0xf;
++		desc->avl	= 0;
++		desc->l		= 0;
++		desc->d		= SEG_OP_SIZE_32BIT;
++		desc->g		= SEG_GRANULARITY_4KB;
++		desc->base2	= 0x00;
++
+ 		desc++;
+ 	} else {
+ 		/* Second entry is unused on 32-bit */
+@@ -1028,15 +1031,16 @@ struct boot_params *efi_main(struct efi_
+ 	}
+ 
+ 	/* __KERNEL_CS */
+-	desc->limit0 = 0xffff;
+-	desc->base0 = 0x0000;
+-	desc->base1 = 0x0000;
+-	desc->type = SEG_TYPE_CODE | SEG_TYPE_EXEC_READ;
+-	desc->s = DESC_TYPE_CODE_DATA;
+-	desc->dpl = 0;
+-	desc->p = 1;
+-	desc->limit1 = 0xf;
+-	desc->avl = 0;
++	desc->limit0	= 0xffff;
++	desc->base0	= 0x0000;
++	desc->base1	= 0x0000;
++	desc->type	= SEG_TYPE_CODE | SEG_TYPE_EXEC_READ;
++	desc->s		= DESC_TYPE_CODE_DATA;
++	desc->dpl	= 0;
++	desc->p		= 1;
++	desc->limit1	= 0xf;
++	desc->avl	= 0;
++
+ 	if (IS_ENABLED(CONFIG_X86_64)) {
+ 		desc->l = 1;
+ 		desc->d = 0;
+@@ -1044,41 +1048,41 @@ struct boot_params *efi_main(struct efi_
+ 		desc->l = 0;
+ 		desc->d = SEG_OP_SIZE_32BIT;
+ 	}
+-	desc->g = SEG_GRANULARITY_4KB;
+-	desc->base2 = 0x00;
++	desc->g		= SEG_GRANULARITY_4KB;
++	desc->base2	= 0x00;
+ 	desc++;
+ 
+ 	/* __KERNEL_DS */
+-	desc->limit0 = 0xffff;
+-	desc->base0 = 0x0000;
+-	desc->base1 = 0x0000;
+-	desc->type = SEG_TYPE_DATA | SEG_TYPE_READ_WRITE;
+-	desc->s = DESC_TYPE_CODE_DATA;
+-	desc->dpl = 0;
+-	desc->p = 1;
+-	desc->limit1 = 0xf;
+-	desc->avl = 0;
+-	desc->l = 0;
+-	desc->d = SEG_OP_SIZE_32BIT;
+-	desc->g = SEG_GRANULARITY_4KB;
+-	desc->base2 = 0x00;
++	desc->limit0	= 0xffff;
++	desc->base0	= 0x0000;
++	desc->base1	= 0x0000;
++	desc->type	= SEG_TYPE_DATA | SEG_TYPE_READ_WRITE;
++	desc->s		= DESC_TYPE_CODE_DATA;
++	desc->dpl	= 0;
++	desc->p		= 1;
++	desc->limit1	= 0xf;
++	desc->avl	= 0;
++	desc->l		= 0;
++	desc->d		= SEG_OP_SIZE_32BIT;
++	desc->g		= SEG_GRANULARITY_4KB;
++	desc->base2	= 0x00;
+ 	desc++;
+ 
+ 	if (IS_ENABLED(CONFIG_X86_64)) {
+ 		/* Task segment value */
+-		desc->limit0 = 0x0000;
+-		desc->base0 = 0x0000;
+-		desc->base1 = 0x0000;
+-		desc->type = SEG_TYPE_TSS;
+-		desc->s = 0;
+-		desc->dpl = 0;
+-		desc->p = 1;
+-		desc->limit1 = 0x0;
+-		desc->avl = 0;
+-		desc->l = 0;
+-		desc->d = 0;
+-		desc->g = SEG_GRANULARITY_4KB;
+-		desc->base2 = 0x00;
++		desc->limit0	= 0x0000;
++		desc->base0	= 0x0000;
++		desc->base1	= 0x0000;
++		desc->type	= SEG_TYPE_TSS;
++		desc->s		= 0;
++		desc->dpl	= 0;
++		desc->p		= 1;
++		desc->limit1	= 0x0;
++		desc->avl	= 0;
++		desc->l		= 0;
++		desc->d		= 0;
++		desc->g		= SEG_GRANULARITY_4KB;
++		desc->base2	= 0x00;
+ 		desc++;
+ 	}
+ 
+@@ -1088,5 +1092,6 @@ struct boot_params *efi_main(struct efi_
+ 	return boot_params;
+ fail:
+ 	efi_printk(sys_table, "efi_main() failed!\n");
++
+ 	return NULL;
  }
- #else
- static inline void rwsem_set_owner(struct rw_semaphore *sem)
--- 
-1.8.3.1
