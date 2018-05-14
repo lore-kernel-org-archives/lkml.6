@@ -1,39 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp1yZo+36MoSeCMz4CfzTrAyBbol2cnZ4Iogh6JMEgTb6pEsxovJU4OWl80/lLNxWGe2w0F
-ARC-Seal: i=1; a=rsa-sha256; t=1526281091; cv=none;
+X-Google-Smtp-Source: AB8JxZpxSJUD97B/Bz35kkY1TrHij4X4qJSDau4wUKJNX9tLExWYxV4ptJlISa6BFL3gtLiozka+
+ARC-Seal: i=1; a=rsa-sha256; t=1526281089; cv=none;
         d=google.com; s=arc-20160816;
-        b=085mnolgUz6oCUh/n9Zrde2Y394y+XbO0jdgDbc+FjtET3QwPg34GXvzmNgszcDOpU
-         Uj+zJ1s49notLslnDLMWnxfiht51RzKcbWKDj8yuhZUKJlL67U059Xu7QvGHA/mDEh4v
-         uZWcQDRFM+kDTqCCmWdTtTFF27K2gf1ET3cMNAnCZgVYONhJmBZ8kxTGyN9yaFxUpEEW
-         oiCEJBjEn4p7orMVKW24umJI1T+JJyIcvVWiVTyEZhKFkJr40p7C1tfLPSsfBdqPf8dS
-         Md40624IBv6Y5EwXZdpFStNPNb0rrPfCeHHnvqNel4QvRNk/+nzfyhggTjXJ0WQtc7Rm
-         Huhg==
+        b=j18YEAfLyByQc9paZyAQp2djK6f+yU3TiTGLJrRKjeUuW08a91OUz3iMAsvOXbWFPH
+         JDzSRaL/O/IY8OS9oSxlf0a10dpQzt6JFwLv8vYF21/QYvj4UYzEQcmq3IEN6exOU5bC
+         /jj3gnJKNo2+6BRCgonz+b8oPqU/X2YITjgOK8RPgb5T6suddaJEQ2mvkZiCj8Umx0YA
+         mBijYqF6y08zfyfrbYG5Un83nxi4oblhh67IS051wh83IqYhFgg/D/fU6cZsgi1KfLGD
+         D/UvW6EPP+nRxZptYuMu1FUveZv0oR5YH72XrLTYsHHdo609e+Uvu/d4LnrNY9h/Tfcs
+         OUZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=rvm9Q/XQ6BXYGRSIvXMzmxCGiBD3eRiJhMKii7TQ+zI=;
-        b=WPARChlVcHyRvmc6GAfPeqnwdWac/ASpAepNeSCoWntJv4r28+5IMt8iYAHpUSb9qL
-         BMUzTinlEHHVmjQQQdA1UHv20huLrXdQYnhtSb8vvaoxNYsRykAEAcRkTln37+DQA0ex
-         ymZzpA77b0J3trFbFnZfRpgaC/KIaUNP82og/fYt8PRiQuPDnAwxoNMtEg1tEoNCw1bc
-         7YETHLw5fR7KasI03YRqBC11E4I5uAxkaxik+h/+qgrpQ1du+LWe8B43e/conT7ogCUN
-         zNZI7KMOSqGkuAhu+6yrSTWYrs6ekJPgqr+EZxud03XVt77tVTgvn2g0L+udwhhuhPHE
-         9b+w==
+        bh=zqxu9rUJh4Qyt7OL//4kGe3R/C/Kr176rGp8qiD2LTo=;
+        b=Pi13xkqNFD6X8KpFQBmgsec91ur2Qg9jdwRPS044ARzkJpkZzGH60HT8gERuqXTdxg
+         ucdTFyBH/ydo0jX5lgWTJQjNBZQrYA83MFrR6MF+l7oQHck1SHMSImjlzWy9xDitkmuB
+         4EmK0O9YPky7wJusJTvdCZevISsJysYU9Oe6R5t0lUNg4713qdUg5LMey3O/mynCqTw6
+         nZ0LdBxJJRxsrNQ8rGV78kStAk3gxh2AhFkdmGkOnlp8WUEpEHrxXPEQpTfW7HtoUDv/
+         K1sJhwjVPsVOTqd9ONYJD57XEEdS4FahTwSHINompf2tIkWZevUsFTlQ/O2pNSy7or08
+         nDOA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=12bH4ULD;
+       dkim=pass header.i=@kernel.org header.s=default header.b=J6nzI/KN;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=12bH4ULD;
+       dkim=pass header.i=@kernel.org header.s=default header.b=J6nzI/KN;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+dc5ca0e4c9bfafaf2bae@syzkaller.appspotmail.com,
-	Yonghong Song <yhs@fb.com>,
-	Daniel Borkmann <daniel@iogearbox.net>
-Subject: [PATCH 4.16 15/72] bpf/tracing: fix a deadlock in perf_event_detach_bpf_prog
-Date: Mon, 14 May 2018 08:48:32 +0200
-Message-Id: <20180514064823.686485175@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.16 14/72] inetpeer: fix uninit-value in inet_getpeer
+Date: Mon, 14 May 2018 08:48:31 +0200
+Message-Id: <20180514064823.648455591@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421722275400984?=
-X-GMAIL-MSGID: =?utf-8?q?1600421722275400984?=
+X-GMAIL-THRID: =?utf-8?q?1600421538439220228?=
+X-GMAIL-MSGID: =?utf-8?q?1600421719223260860?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,243 +52,116 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Yonghong Song <yhs@fb.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 3a38bb98d9abdc3856f26b5ed4332803065cd7cf upstream.
+commit b6a37e5e25414df4b8e9140a5c6f5ee0ec6f3b90 upstream.
 
-syzbot reported a possible deadlock in perf_event_detach_bpf_prog.
-The error details:
-  ======================================================
-  WARNING: possible circular locking dependency detected
-  4.16.0-rc7+ #3 Not tainted
-  ------------------------------------------------------
-  syz-executor7/24531 is trying to acquire lock:
-   (bpf_event_mutex){+.+.}, at: [<000000008a849b07>] perf_event_detach_bpf_prog+0x92/0x3d0 kernel/trace/bpf_trace.c:854
+syzbot/KMSAN reported that p->dtime was read while it was
+not yet initialized in :
 
-  but task is already holding lock:
-   (&mm->mmap_sem){++++}, at: [<0000000038768f87>] vm_mmap_pgoff+0x198/0x280 mm/util.c:353
+	delta = (__u32)jiffies - p->dtime;
+	if (delta < ttl || !refcount_dec_if_one(&p->refcnt))
+		gc_stack[i] = NULL;
 
-  which lock already depends on the new lock.
+This is a false positive, because the inetpeer wont be erased
+from rb-tree if the refcount_dec_if_one(&p->refcnt) does not
+succeed. And this wont happen before first inet_putpeer() call
+for this inetpeer has been done, and ->dtime field is written
+exactly before the refcount_dec_and_test(&p->refcnt).
 
-  the existing dependency chain (in reverse order) is:
+The KMSAN report was :
 
-  -> #1 (&mm->mmap_sem){++++}:
-       __might_fault+0x13a/0x1d0 mm/memory.c:4571
-       _copy_to_user+0x2c/0xc0 lib/usercopy.c:25
-       copy_to_user include/linux/uaccess.h:155 [inline]
-       bpf_prog_array_copy_info+0xf2/0x1c0 kernel/bpf/core.c:1694
-       perf_event_query_prog_array+0x1c7/0x2c0 kernel/trace/bpf_trace.c:891
-       _perf_ioctl kernel/events/core.c:4750 [inline]
-       perf_ioctl+0x3e1/0x1480 kernel/events/core.c:4770
-       vfs_ioctl fs/ioctl.c:46 [inline]
-       do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
-       SYSC_ioctl fs/ioctl.c:701 [inline]
-       SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
-       do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-       entry_SYSCALL_64_after_hwframe+0x42/0xb7
+BUG: KMSAN: uninit-value in inet_peer_gc net/ipv4/inetpeer.c:163 [inline]
+BUG: KMSAN: uninit-value in inet_getpeer+0x1567/0x1e70 net/ipv4/inetpeer.c:228
+CPU: 0 PID: 9494 Comm: syz-executor5 Not tainted 4.16.0+ #82
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
+ inet_peer_gc net/ipv4/inetpeer.c:163 [inline]
+ inet_getpeer+0x1567/0x1e70 net/ipv4/inetpeer.c:228
+ inet_getpeer_v4 include/net/inetpeer.h:110 [inline]
+ icmpv4_xrlim_allow net/ipv4/icmp.c:330 [inline]
+ icmp_send+0x2b44/0x3050 net/ipv4/icmp.c:725
+ ip_options_compile+0x237c/0x29f0 net/ipv4/ip_options.c:472
+ ip_rcv_options net/ipv4/ip_input.c:284 [inline]
+ ip_rcv_finish+0xda8/0x16d0 net/ipv4/ip_input.c:365
+ NF_HOOK include/linux/netfilter.h:288 [inline]
+ ip_rcv+0x119d/0x16f0 net/ipv4/ip_input.c:493
+ __netif_receive_skb_core+0x47cf/0x4a80 net/core/dev.c:4562
+ __netif_receive_skb net/core/dev.c:4627 [inline]
+ netif_receive_skb_internal+0x49d/0x630 net/core/dev.c:4701
+ netif_receive_skb+0x230/0x240 net/core/dev.c:4725
+ tun_rx_batched drivers/net/tun.c:1555 [inline]
+ tun_get_user+0x6d88/0x7580 drivers/net/tun.c:1962
+ tun_chr_write_iter+0x1d4/0x330 drivers/net/tun.c:1990
+ do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
+ do_iter_write+0x30d/0xd40 fs/read_write.c:932
+ vfs_writev fs/read_write.c:977 [inline]
+ do_writev+0x3c9/0x830 fs/read_write.c:1012
+ SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
+ SyS_writev+0x56/0x80 fs/read_write.c:1082
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x455111
+RSP: 002b:00007fae0365cba0 EFLAGS: 00000293 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 000000000000002e RCX: 0000000000455111
+RDX: 0000000000000001 RSI: 00007fae0365cbf0 RDI: 00000000000000fc
+RBP: 0000000020000040 R08: 00000000000000fc R09: 0000000000000000
+R10: 000000000000002e R11: 0000000000000293 R12: 00000000ffffffff
+R13: 0000000000000658 R14: 00000000006fc8e0 R15: 0000000000000000
 
-  -> #0 (bpf_event_mutex){+.+.}:
-       lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
-       __mutex_lock_common kernel/locking/mutex.c:756 [inline]
-       __mutex_lock+0x16f/0x1a80 kernel/locking/mutex.c:893
-       mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
-       perf_event_detach_bpf_prog+0x92/0x3d0 kernel/trace/bpf_trace.c:854
-       perf_event_free_bpf_prog kernel/events/core.c:8147 [inline]
-       _free_event+0xbdb/0x10f0 kernel/events/core.c:4116
-       put_event+0x24/0x30 kernel/events/core.c:4204
-       perf_mmap_close+0x60d/0x1010 kernel/events/core.c:5172
-       remove_vma+0xb4/0x1b0 mm/mmap.c:172
-       remove_vma_list mm/mmap.c:2490 [inline]
-       do_munmap+0x82a/0xdf0 mm/mmap.c:2731
-       mmap_region+0x59e/0x15a0 mm/mmap.c:1646
-       do_mmap+0x6c0/0xe00 mm/mmap.c:1483
-       do_mmap_pgoff include/linux/mm.h:2223 [inline]
-       vm_mmap_pgoff+0x1de/0x280 mm/util.c:355
-       SYSC_mmap_pgoff mm/mmap.c:1533 [inline]
-       SyS_mmap_pgoff+0x462/0x5f0 mm/mmap.c:1491
-       SYSC_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
-       SyS_mmap+0x16/0x20 arch/x86/kernel/sys_x86_64.c:91
-       do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
-       entry_SYSCALL_64_after_hwframe+0x42/0xb7
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+ kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+ kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+ kmem_cache_alloc+0xaab/0xb90 mm/slub.c:2756
+ inet_getpeer+0xed8/0x1e70 net/ipv4/inetpeer.c:210
+ inet_getpeer_v4 include/net/inetpeer.h:110 [inline]
+ ip4_frag_init+0x4d1/0x740 net/ipv4/ip_fragment.c:153
+ inet_frag_alloc net/ipv4/inet_fragment.c:369 [inline]
+ inet_frag_create net/ipv4/inet_fragment.c:385 [inline]
+ inet_frag_find+0x7da/0x1610 net/ipv4/inet_fragment.c:418
+ ip_find net/ipv4/ip_fragment.c:275 [inline]
+ ip_defrag+0x448/0x67a0 net/ipv4/ip_fragment.c:676
+ ip_check_defrag+0x775/0xda0 net/ipv4/ip_fragment.c:724
+ packet_rcv_fanout+0x2a8/0x8d0 net/packet/af_packet.c:1447
+ deliver_skb net/core/dev.c:1897 [inline]
+ deliver_ptype_list_skb net/core/dev.c:1912 [inline]
+ __netif_receive_skb_core+0x314a/0x4a80 net/core/dev.c:4545
+ __netif_receive_skb net/core/dev.c:4627 [inline]
+ netif_receive_skb_internal+0x49d/0x630 net/core/dev.c:4701
+ netif_receive_skb+0x230/0x240 net/core/dev.c:4725
+ tun_rx_batched drivers/net/tun.c:1555 [inline]
+ tun_get_user+0x6d88/0x7580 drivers/net/tun.c:1962
+ tun_chr_write_iter+0x1d4/0x330 drivers/net/tun.c:1990
+ do_iter_readv_writev+0x7bb/0x970 include/linux/fs.h:1776
+ do_iter_write+0x30d/0xd40 fs/read_write.c:932
+ vfs_writev fs/read_write.c:977 [inline]
+ do_writev+0x3c9/0x830 fs/read_write.c:1012
+ SYSC_writev+0x9b/0xb0 fs/read_write.c:1085
+ SyS_writev+0x56/0x80 fs/read_write.c:1082
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-  other info that might help us debug this:
-
-   Possible unsafe locking scenario:
-
-         CPU0                    CPU1
-         ----                    ----
-    lock(&mm->mmap_sem);
-                                 lock(bpf_event_mutex);
-                                 lock(&mm->mmap_sem);
-    lock(bpf_event_mutex);
-
-   *** DEADLOCK ***
-  ======================================================
-
-The bug is introduced by Commit f371b304f12e ("bpf/tracing: allow
-user space to query prog array on the same tp") where copy_to_user,
-which requires mm->mmap_sem, is called inside bpf_event_mutex lock.
-At the same time, during perf_event file descriptor close,
-mm->mmap_sem is held first and then subsequent
-perf_event_detach_bpf_prog needs bpf_event_mutex lock.
-Such a senario caused a deadlock.
-
-As suggested by Daniel, moving copy_to_user out of the
-bpf_event_mutex lock should fix the problem.
-
-Fixes: f371b304f12e ("bpf/tracing: allow user space to query prog array on the same tp")
-Reported-by: syzbot+dc5ca0e4c9bfafaf2bae@syzkaller.appspotmail.com
-Signed-off-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/bpf.h      |    4 ++--
- kernel/bpf/core.c        |   45 +++++++++++++++++++++++++++++----------------
- kernel/trace/bpf_trace.c |   25 +++++++++++++++++++++----
- 3 files changed, 52 insertions(+), 22 deletions(-)
+ net/ipv4/inetpeer.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -335,8 +335,8 @@ int bpf_prog_array_copy_to_user(struct b
- void bpf_prog_array_delete_safe(struct bpf_prog_array __rcu *progs,
- 				struct bpf_prog *old_prog);
- int bpf_prog_array_copy_info(struct bpf_prog_array __rcu *array,
--			     __u32 __user *prog_ids, u32 request_cnt,
--			     __u32 __user *prog_cnt);
-+			     u32 *prog_ids, u32 request_cnt,
-+			     u32 *prog_cnt);
- int bpf_prog_array_copy(struct bpf_prog_array __rcu *old_array,
- 			struct bpf_prog *exclude_prog,
- 			struct bpf_prog *include_prog,
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -1572,13 +1572,32 @@ int bpf_prog_array_length(struct bpf_pro
- 	return cnt;
- }
- 
-+static bool bpf_prog_array_copy_core(struct bpf_prog **prog,
-+				     u32 *prog_ids,
-+				     u32 request_cnt)
-+{
-+	int i = 0;
-+
-+	for (; *prog; prog++) {
-+		if (*prog == &dummy_bpf_prog.prog)
-+			continue;
-+		prog_ids[i] = (*prog)->aux->id;
-+		if (++i == request_cnt) {
-+			prog++;
-+			break;
-+		}
-+	}
-+
-+	return !!(*prog);
-+}
-+
- int bpf_prog_array_copy_to_user(struct bpf_prog_array __rcu *progs,
- 				__u32 __user *prog_ids, u32 cnt)
- {
- 	struct bpf_prog **prog;
- 	unsigned long err = 0;
--	u32 i = 0, *ids;
- 	bool nospc;
-+	u32 *ids;
- 
- 	/* users of this function are doing:
- 	 * cnt = bpf_prog_array_length();
-@@ -1595,16 +1614,7 @@ int bpf_prog_array_copy_to_user(struct b
- 		return -ENOMEM;
- 	rcu_read_lock();
- 	prog = rcu_dereference(progs)->progs;
--	for (; *prog; prog++) {
--		if (*prog == &dummy_bpf_prog.prog)
--			continue;
--		ids[i] = (*prog)->aux->id;
--		if (++i == cnt) {
--			prog++;
--			break;
--		}
--	}
--	nospc = !!(*prog);
-+	nospc = bpf_prog_array_copy_core(prog, ids, cnt);
- 	rcu_read_unlock();
- 	err = copy_to_user(prog_ids, ids, cnt * sizeof(u32));
- 	kfree(ids);
-@@ -1683,22 +1693,25 @@ int bpf_prog_array_copy(struct bpf_prog_
- }
- 
- int bpf_prog_array_copy_info(struct bpf_prog_array __rcu *array,
--			     __u32 __user *prog_ids, u32 request_cnt,
--			     __u32 __user *prog_cnt)
-+			     u32 *prog_ids, u32 request_cnt,
-+			     u32 *prog_cnt)
- {
-+	struct bpf_prog **prog;
- 	u32 cnt = 0;
- 
- 	if (array)
- 		cnt = bpf_prog_array_length(array);
- 
--	if (copy_to_user(prog_cnt, &cnt, sizeof(cnt)))
--		return -EFAULT;
-+	*prog_cnt = cnt;
- 
- 	/* return early if user requested only program count or nothing to copy */
- 	if (!request_cnt || !cnt)
- 		return 0;
- 
--	return bpf_prog_array_copy_to_user(array, prog_ids, request_cnt);
-+	/* this function is called under trace/bpf_trace.c: bpf_event_mutex */
-+	prog = rcu_dereference_check(array, 1)->progs;
-+	return bpf_prog_array_copy_core(prog, prog_ids, request_cnt) ? -ENOSPC
-+								     : 0;
- }
- 
- static void bpf_prog_free_deferred(struct work_struct *work)
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -876,6 +876,7 @@ int perf_event_query_prog_array(struct p
- {
- 	struct perf_event_query_bpf __user *uquery = info;
- 	struct perf_event_query_bpf query = {};
-+	u32 *ids, prog_cnt, ids_len;
- 	int ret;
- 
- 	if (!capable(CAP_SYS_ADMIN))
-@@ -884,15 +885,31 @@ int perf_event_query_prog_array(struct p
- 		return -EINVAL;
- 	if (copy_from_user(&query, uquery, sizeof(query)))
- 		return -EFAULT;
--	if (query.ids_len > BPF_TRACE_MAX_PROGS)
-+
-+	ids_len = query.ids_len;
-+	if (ids_len > BPF_TRACE_MAX_PROGS)
- 		return -E2BIG;
-+	ids = kcalloc(ids_len, sizeof(u32), GFP_USER | __GFP_NOWARN);
-+	if (!ids)
-+		return -ENOMEM;
-+	/*
-+	 * The above kcalloc returns ZERO_SIZE_PTR when ids_len = 0, which
-+	 * is required when user only wants to check for uquery->prog_cnt.
-+	 * There is no need to check for it since the case is handled
-+	 * gracefully in bpf_prog_array_copy_info.
-+	 */
- 
- 	mutex_lock(&bpf_event_mutex);
- 	ret = bpf_prog_array_copy_info(event->tp_event->prog_array,
--				       uquery->ids,
--				       query.ids_len,
--				       &uquery->prog_cnt);
-+				       ids,
-+				       ids_len,
-+				       &prog_cnt);
- 	mutex_unlock(&bpf_event_mutex);
- 
-+	if (copy_to_user(&uquery->prog_cnt, &prog_cnt, sizeof(prog_cnt)) ||
-+	    copy_to_user(uquery->ids, ids, ids_len * sizeof(u32)))
-+		ret = -EFAULT;
-+
-+	kfree(ids);
- 	return ret;
- }
+--- a/net/ipv4/inetpeer.c
++++ b/net/ipv4/inetpeer.c
+@@ -210,6 +210,7 @@ struct inet_peer *inet_getpeer(struct in
+ 		p = kmem_cache_alloc(peer_cachep, GFP_ATOMIC);
+ 		if (p) {
+ 			p->daddr = *daddr;
++			p->dtime = (__u32)jiffies;
+ 			refcount_set(&p->refcnt, 2);
+ 			atomic_set(&p->rid, 0);
+ 			p->metrics[RTAX_LOCK-1] = INETPEER_METRICS_NEW;
