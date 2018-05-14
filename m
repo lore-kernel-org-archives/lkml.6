@@ -1,13 +1,13 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1405515-1526333126-2-15127162804894425200
+X-Cyrus-Session-Id: sloti22d1t05-1405515-1526333122-2-897798155620044088
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.248, FREEMAIL_FROM 0.001,
   HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enro,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enda,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
@@ -15,57 +15,57 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526333125; b=g5B85fu8jWMH/ZuIXnTqvoG12fl6wXc4NxcJpFijiuz4oVDj5B
-    N902tE8a6I29YKLdjEtdNrr4pNXTjkJgzGTlWiIjxJmQO/q+36cfIoHzlSVogXHY
-    WPmu7qfa1KvuOXAhpisy2yEA3heK35kgTXfi+2Xu8V4HW2UVZWMZp0M0Xkm0+edm
-    pGznCdqMPY+tX2iT8G7w0+qr7L5W81n1LVbvXSav8m6pb7vABtv6nGzg2SjPhxOD
-    FQ/Hz0jS5ZkOn09Wm6AD6qaqV94iMrfDN2Xt8NP5EtsnTknU6023KxSUA5dnRIgr
-    BUw9yOPekqv8MeGcTBdcG81lW/xX+D1CrMZw==
+    1526333121; b=jWap1kI0Ikp5EqFJIwYRY2nD1j40XrcQjkS0jVrCUJ25aJZXjT
+    z+oFjz8ly5tT68oBEklOOJT7GZ4NH/nXkadjvQ/1vm9mntH8MDxzBIeM1EqSRdcm
+    OPzWIimvMm6bSbUIwKdiVa5J2LZC+g50hjuMC8wkkSJp/zCFvnpLr8+kUWqPhrr8
+    8oO08P46R8ViOBYG9haahekWTQi/V23m8seIgOqlrCk087EZ2tptS3FE2uv0Sfr3
+    q3jNX8KXiR3uUq4cBBSwuI96WdGFJS9I4dRjCdmtNKJmlFq+mpGF9470GGA1OvtW
+    Q8DdbX/q+wtDIaCbLRVBRyMGgYKN8Ct+k1jA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526333125; bh=52pUv
-    xx4N5R60WaNhfN67kPHjB5uIgH43Q9oUuBn1GI=; b=Ax9xkyDQW0UfrmXpZRvtj
-    3DV3pQro26/UVkjgzajgRFHzuHMbJpyqzpM3advr1o0ezDaNY5LcQGpO0/GxaEBL
-    eehudpFPgpHNANdU25TNyTguglH/6gKpvEEN7DDKjyp2hm83DeXFZAoFVyVhARg5
-    h16rUKFUotYw8HcwQ0Ok6CJ/0NMsyQzBdBcid9MrwEsfdJ7SMm8rY3FaId4RzO7U
-    8dPdE2t9WfX4EC2wVAM8Op9Tdgz+9gsP43N13j35cSMF3N7Q9fqSOckIT6A4MZ8N
-    PgFliYSmL/D0Edp9cJFjFA9fxLOp7ptirFy/ohrvLdPqHm/4r8HtCpY10GTkC1IZ
-    A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1526333121; bh=4qCdg
+    +EJO7v/IZ5pAm/oBvjHQCOO+6gI0TcbHY++rPM=; b=DFQNPOsVsakmyXMfJdHOb
+    5On/7kI3RAuY1YyoLzg/L7j9icHhN5e9ig8ijg9Z2EHneElpRO+AS1K5V7d5X+YP
+    2bDl0t/sJd7oaxOT2ltVAFMyGmVZoX93rx2P6B8rgwY5xxiBaQ185sTnPvSYcaGq
+    5WbSZVO9GXEe/7nU2pw0jerMB60eco1B8y2M618YrhDR/ys4Fvo5/FUeVoHiCu6X
+    4GHKlqjLOAm4V6rHcyacVWAGyEz92JOKmO4Im3iD/WiuaYh7JCdXXrSLtM3oEacb
+    mcCCMe/QfiaJREilpnjxqLN/3yNTSxZ/POEeAnrzhauQrcV3H8EmMUWvIy/rT/+x
+    Q==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=Y8exUxAg x-bits=2048
+    header.d=gmail.com header.i=@gmail.com header.b=ulO5tRnu x-bits=2048
     x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=silver.osuosl.org;
+    smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
     x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=BjyR52sc;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    header.d=1e100.net header.i=@1e100.net header.b=oM4h5WJ1;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=0 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=Y8exUxAg x-bits=2048
+      header.d=gmail.com header.i=@gmail.com header.b=ulO5tRnu x-bits=2048
       x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=silver.osuosl.org;
+      smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
     x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=BjyR52sc;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+      header.d=1e100.net header.i=@1e100.net header.b=oM4h5WJ1;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
       header_is_org_domain=yes;
@@ -73,24 +73,24 @@ Authentication-Results: mx1.messagingengine.com;
       bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGuVFwDzs2eJlTaQ4EjfVPICBMw7jvhvcIBMpd/trN5UOx6UiwT38PfA8SN61VhjOzhSdm11czSEgCMnN2QYfhk/RiHYmOjHEWJGihqVYDidat56Xk74
-    scaIFKroJBw4y07YeS+dipAynbpseLgebhkQD9G3iW3J9bs9/r5owTYCO4v2sv7hsBjK5wo3DBZjs94fyH09/CLFle6rCAfsocILjtnbXW+FTglfoS+dw5UV
-    fpAswh8rSyIHBT4LCyod+Q==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+X-CM-Envelope: MS4wfGTituQhP0uUDQdli4ucTfuxcgi9D9Jecytz7Boohhqlf+AxeZ4vgk7E+BkpWOoYcXYEB80G29BaQdZkY6DClMabvtEqkEFZaedW2laaMl7tq20cWVQh
+    9izjSRTi96gBSTWQlNY8qoBwhaiqqea58FZv0XLpXQMPW2zBmLN7H+9vXpCDnPJUNOu3R1RLRtf9dl5TzWf6BY3Qsa4RfBWDLqTcG8J93yWm+t6zIukoj/ju
+    07vI/xShKXQrEVS8WlfAgQ==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
     a=o_dtBaZDOvUA:10 a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=-5xeK5i3hiI24sgovPEA:9 a=CjuIK1q_8ugA:10
+    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=7lWtn1aDIJh365hMJcUA:9 a=CjuIK1q_8ugA:10
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AB8JxZrETf5KFB9LIZ7Y+T04csFXLMvm6S/dQJfYjUKSOnGZSXNKVJrRKPXBK5vr6MudgGKO4zAVdg==
+X-Google-Smtp-Source: AB8JxZpqKkPXhraqOrw9Bs82z0Ug5j49CN5cRi3KtZuWi75o+tWHVGFZFB3JyXwGL4ZBRvnTjJ++Tw==
 From: John Whitmore <johnfwhitmore@gmail.com>
 To: gregkh@linuxfoundation.org
-Subject: [PATCH 07/27] drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc:
- correct indentation of switch statements
-Date: Mon, 14 May 2018 22:24:14 +0100
-Message-Id: <20180514212434.17514-8-johnfwhitmore@gmail.com>
+Subject: [PATCH 06/27] drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc:
+ correct braces of else statement
+Date: Mon, 14 May 2018 22:24:13 +0100
+Message-Id: <20180514212434.17514-7-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180514212434.17514-1-johnfwhitmore@gmail.com>
 References: <20180514212434.17514-1-johnfwhitmore@gmail.com>
@@ -117,77 +117,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 Coding style edit to clear the checkpatch.pl error:
-ERROR: switch and case should be at the same indent
+ERROR: space required after that close brace '}'
+
+And balanced the brace of the same else statement:
+CHECK: Unbalanced braces around else statement
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- .../staging/rtl8192u/ieee80211/rtl819x_HTProc.c    | 48 +++++++++++-----------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index beecdbfe401b..5591cde8a5a0 100644
+index ed3e3acd78a3..beecdbfe401b 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -177,35 +177,35 @@ void HTDebugHTInfo(u8 *InfoIE, u8 *TitleString)
- 	IEEE80211_DEBUG(IEEE80211_DL_HT, "\tPrimary channel = %d\n", pHTInfoEle->ControlChl);
- 	IEEE80211_DEBUG(IEEE80211_DL_HT, "\tSecondary channel =");
- 	switch (pHTInfoEle->ExtChlOffset) {
--		case 0:
--			IEEE80211_DEBUG(IEEE80211_DL_HT, "Not Present\n");
--			break;
--		case 1:
--			IEEE80211_DEBUG(IEEE80211_DL_HT, "Upper channel\n");
--			break;
--		case 2:
--			IEEE80211_DEBUG(IEEE80211_DL_HT, "Reserved. Eooro!!!\n");
--			break;
--		case 3:
--			IEEE80211_DEBUG(IEEE80211_DL_HT, "Lower Channel\n");
--			break;
-+	case 0:
-+		IEEE80211_DEBUG(IEEE80211_DL_HT, "Not Present\n");
-+		break;
-+	case 1:
-+		IEEE80211_DEBUG(IEEE80211_DL_HT, "Upper channel\n");
-+		break;
-+	case 2:
-+		IEEE80211_DEBUG(IEEE80211_DL_HT, "Reserved. Eooro!!!\n");
-+		break;
-+	case 3:
-+		IEEE80211_DEBUG(IEEE80211_DL_HT, "Lower Channel\n");
-+		break;
- 	}
- 	IEEE80211_DEBUG(IEEE80211_DL_HT, "\tRecommended channel width = %s\n", (pHTInfoEle->RecommemdedTxWidth) ? "20Mhz" : "40Mhz");
+@@ -132,9 +132,9 @@ void HTDebugHTCapability(u8 *CapIE, u8 *TitleString)
+ 		//EWC IE
+ 		IEEE80211_DEBUG(IEEE80211_DL_HT, "EWC IE in %s()\n", __func__);
+ 		pCapELE = (PHT_CAPABILITY_ELE)(&CapIE[4]);
+-	}else
++	} else {
+ 		pCapELE = (PHT_CAPABILITY_ELE)(&CapIE[0]);
+-
++	}
+ 	IEEE80211_DEBUG(IEEE80211_DL_HT, "<Log HT Capability>. Called by %s\n", TitleString);
  
- 	IEEE80211_DEBUG(IEEE80211_DL_HT, "\tOperation mode for protection = ");
- 	switch (pHTInfoEle->OptMode) {
--		case 0:
--			IEEE80211_DEBUG(IEEE80211_DL_HT, "No Protection\n");
--			break;
--		case 1:
--			IEEE80211_DEBUG(IEEE80211_DL_HT, "HT non-member protection mode\n");
--			break;
--		case 2:
--			IEEE80211_DEBUG(IEEE80211_DL_HT, "Suggest to open protection\n");
--			break;
--		case 3:
--			IEEE80211_DEBUG(IEEE80211_DL_HT, "HT mixed mode\n");
--			break;
-+	case 0:
-+		IEEE80211_DEBUG(IEEE80211_DL_HT, "No Protection\n");
-+		break;
-+	case 1:
-+		IEEE80211_DEBUG(IEEE80211_DL_HT, "HT non-member protection mode\n");
-+		break;
-+	case 2:
-+		IEEE80211_DEBUG(IEEE80211_DL_HT, "Suggest to open protection\n");
-+		break;
-+	case 3:
-+		IEEE80211_DEBUG(IEEE80211_DL_HT, "HT mixed mode\n");
-+		break;
- 	}
- 
- 	IEEE80211_DEBUG(IEEE80211_DL_HT, "\tBasic MCS Rate Set = [%x][%x][%x][%x][%x]\n", pHTInfoEle->BasicMSC[0],\
+ 	IEEE80211_DEBUG(IEEE80211_DL_HT,  "\tSupported Channel Width = %s\n", (pCapELE->ChlWidth) ? "20MHz" : "20/40MHz");
 -- 
 2.16.3
 
