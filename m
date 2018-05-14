@@ -1,121 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932072AbeENMrQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:47:16 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43583 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752011AbeENMrP (ORCPT
+        id S1753485AbeENMr3 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:47:29 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36713 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753281AbeENMr0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:47:15 -0400
-Date: Mon, 14 May 2018 05:46:50 -0700
-From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-2fa9d1cfaf0e02f8abef0757002bff12dfcfa4e6@git.kernel.org>
-Cc: peterz@infradead.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, shuah@kernel.org, mingo@kernel.org,
-        dave.hansen@linux.intel.com, linuxram@us.ibm.com, mpe@ellerman.id.au,
-        torvalds@linux-foundation.org, dave.hansen@intel.com
-Reply-To: mpe@ellerman.id.au, linuxram@us.ibm.com,
-        torvalds@linux-foundation.org, dave.hansen@intel.com, hpa@zytor.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        dave.hansen@linux.intel.com, mingo@kernel.org, tglx@linutronix.de,
-        shuah@kernel.org
-In-Reply-To: <20180509171358.47FD785E@viggo.jf.intel.com>
-References: <20180509171358.47FD785E@viggo.jf.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/pkeys: Do not special case protection key 0
-Git-Commit-ID: 2fa9d1cfaf0e02f8abef0757002bff12dfcfa4e6
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 14 May 2018 08:47:26 -0400
+X-Google-Smtp-Source: AB8JxZpr9K+Npawv0osAQst3BWH+qxkdXcHag7sqN/n5MkjpuDKttQIi9/bOQi2XwX/qtVSSmn6xOg==
+Date: Mon, 14 May 2018 14:47:23 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Dmitry Osipenko <digetx@gmail.com>, Wolfram Sang <wsa@the-dreams.de>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Shardar Shariff Md <smohammed@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
+Message-ID: <20180514124723.GJ18312@ulmo>
+References: <20180513211347.7187-1-digetx@gmail.com>
+ <20180514115933.GH18312@ulmo>
+ <d83fc1f7-d5e5-4211-1cd8-babcabdd9c4b@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="BEa57a89OpeoUzGD"
 Content-Disposition: inline
+In-Reply-To: <d83fc1f7-d5e5-4211-1cd8-babcabdd9c4b@nvidia.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2fa9d1cfaf0e02f8abef0757002bff12dfcfa4e6
-Gitweb:     https://git.kernel.org/tip/2fa9d1cfaf0e02f8abef0757002bff12dfcfa4e6
-Author:     Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate: Wed, 9 May 2018 10:13:58 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 14 May 2018 11:14:45 +0200
 
-x86/pkeys: Do not special case protection key 0
+--BEa57a89OpeoUzGD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-mm_pkey_is_allocated() treats pkey 0 as unallocated.  That is
-inconsistent with the manpages, and also inconsistent with
-mm->context.pkey_allocation_map.  Stop special casing it and only
-disallow values that are actually bad (< 0).
+On Mon, May 14, 2018 at 05:51:58PM +0530, Laxman Dewangan wrote:
+>=20
+>=20
+> On Monday 14 May 2018 05:29 PM, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Mon, May 14, 2018 at 12:13:47AM +0300, Dmitry Osipenko wrote:
+> > > Nothing prevents I2C clients to access I2C while Tegra's driver is be=
+ing
+> > > suspended, this results in -EBUSY error returned to the clients and t=
+hat
+> > > may have unfortunate consequences. In particular this causes problems
+> > > for the TPS6586x MFD driver which emits hundreds of "failed to read
+> > > interrupt status" error messages on resume from suspend. This happens=
+ if
+> > > TPS6586X is used to wake system from suspend by the expired RTC alarm
+> > > timer because TPS6586X is an I2C device driver and its IRQ handler re=
+ads
+> > > the status register while Tegra's I2C driver is suspended, i.e. just =
+after
+> > > kernel enabled IRQ's during of resume-from-suspend process.
+> > >=20
+> > > Note that the removed tegra_i2c_resume() invoked tegra_i2c_init() whi=
+ch
+> > > performs HW reset. That seems was also not entirely correct because m=
+oving
+> > > tegra_i2c_resume to an earlier stage of resume-from-suspend process c=
+auses
+> > > I2C transfer to fail in the case of TPS6586X. It is fine to remove the
+> > > HW-reinitialization for now because it should be only needed in a cas=
+e of
+> > > using lowest power-mode during suspend, which upstream kernel doesn't
+> > > support.
+> > >=20
+> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > > Cc: <stable@vger.kernel.org>
+> > > ---
+> > >   drivers/i2c/busses/i2c-tegra.c | 33 -------------------------------=
+--
+> > >   1 file changed, 33 deletions(-)
+> > Shardar, Laxman, any thoughts on this? The is_suspended thing looks to
+> > me like a workaround of some sort that may not be needed if clients have
+> > proper suspend/resume implementations. Even without suspend/resume
+> > support in client drivers, the driver core should resume devices in the
+> > right order (I2C adapter before any of the clients), so I don't see any
+> > cases where the is_suspended logic would be useful.
+> >=20
+>=20
+> Our I2C driver is based on the interrupt. So we have converted the
+> suspend/resume to suspend_noirq and reseume_noirq so that we will not all=
+ow
+> the transfer when system interrupt disabled in downstream.
+>           SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resu=
+me)
 
-The end-user visible effect of this is that you can now use
-mprotect_pkey() to set pkey=0.
+That seems to me like it shouldn't be necessary. If all clients are
+properly suspended, then when the I2C controller gets suspended there
+should be no pending transfers. That's provided that the driver model
+properly orders suspend of clients vs. their controller. I think it
+didn't use to do that (especially when deferred probing was involved)
+but I remember that getting fixed sometime in the last couple of years.
 
-This is a bit nicer than what Ram proposed[1] because it is simpler
-and removes special-casing for pkey 0.  On the other hand, it does
-allow applications to pkey_free() pkey-0, but that's just a silly
-thing to do, so we are not going to protect against it.
+> In shutdown path, where interrupt disabled and still need i2c, we use the
+> bit-bang method via GPIO for i2c transfer.
 
-The scenario that could happen is similar to what happens if you free
-any other pkey that is in use: it might get reallocated later and used
-to protect some other data.  The most likely scenario is that pkey-0
-comes back from pkey_alloc(), an access-disable or write-disable bit
-is set in PKRU for it, and the next stack access will SIGSEGV.  It's
-not horribly different from if you mprotect()'d your stack or heap to
-be unreadable or unwritable, which is generally very foolish, but also
-not explicitly prevented by the kernel.
+Do we really need to bit-bang the GPIOs? Couldn't the I2C controller
+operate in a polling mode where only the interrupt was disabled but we
+still polled the status register to know when a transfer was finished?
 
-1. http://lkml.kernel.org/r/1522112702-27853-1-git-send-email-linuxram@us.ibm.com
+Thierry
 
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>p
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Ellermen <mpe@ellerman.id.au>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ram Pai <linuxram@us.ibm.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Cc: stable@vger.kernel.org
-Fixes: 58ab9a088dda ("x86/pkeys: Check against max pkey to avoid overflows")
-Link: http://lkml.kernel.org/r/20180509171358.47FD785E@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/mmu_context.h | 2 +-
- arch/x86/include/asm/pkeys.h       | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+--BEa57a89OpeoUzGD
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 57e3785d0d26..cf9911b5a53c 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -193,7 +193,7 @@ static inline int init_new_context(struct task_struct *tsk,
- 
- #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
- 	if (cpu_feature_enabled(X86_FEATURE_OSPKE)) {
--		/* pkey 0 is the default and always allocated */
-+		/* pkey 0 is the default and allocated implicitly */
- 		mm->context.pkey_allocation_map = 0x1;
- 		/* -1 means unallocated or invalid */
- 		mm->context.execute_only_pkey = -1;
-diff --git a/arch/x86/include/asm/pkeys.h b/arch/x86/include/asm/pkeys.h
-index 39cd292805a9..851c04b7a092 100644
---- a/arch/x86/include/asm/pkeys.h
-+++ b/arch/x86/include/asm/pkeys.h
-@@ -51,10 +51,10 @@ bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
- {
- 	/*
- 	 * "Allocated" pkeys are those that have been returned
--	 * from pkey_alloc().  pkey 0 is special, and never
--	 * returned from pkey_alloc().
-+	 * from pkey_alloc() or pkey 0 which is allocated
-+	 * implicitly when the mm is created.
- 	 */
--	if (pkey <= 0)
-+	if (pkey < 0)
- 		return false;
- 	if (pkey >= arch_max_pkey())
- 		return false;
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5hVsACgkQ3SOs138+
+s6GL5Q/8Cl1aMjNKGqcGrhayr5QbjG5arrOLj90/fmCnVgZrX2XkCny8MkbXvPcz
+q/HNi2TRBwvaBOfGGODKM3NtTsxmMWmpSmDS1AChaVtyI0YLLbcof20dJylv4WAY
+RqSp3aDJs6254RjN3TUg5E2MlHA/f+sNeOyaL91j1XfN77dCGiqI4i7AflFfWJp+
+0s5r+hwGOGvt+BBXc6NZQlGM4M8TKwWDYSM+ae+nccKJSBcQo7Mjns/49vnOUD4G
+6Sd6zk5gceNokgK6YEWzGU/YmK06kDwkJU3HMFJ2XP6wzNgj+ayL10YJTv9Tjep1
+sO3vLYv9H62uoaFsNWXBXDpkwiMv+wgJGjderVeO4q/aF5SNm7K3iZdssoxQ3buH
+9zVFWWLR+ZkVPmnLRVnWlqmijaA0C1ISAVat5fG8SuQZdz43/ilBjlCO11EIDfcL
+a5wqYlsHpDrd5Aw7g/1fX0WxYiHRggV77+5eCTPPOceQEtweY+S1T9flBYeMGzOm
+KF53+gvwZ2x8HS3cOlb6GlU68RHDa0fk+pHkOimzyPs7+xdVucyzsTfynLuNAqXG
+2VQ/tkUgDq1+AHfkAy1FedpQc9/rEbzNT2UL0ZFLjMBaaxFt6+NBPFAjmNKLsyTu
+NrNV7eopWVtIkjtIafV1/zyRHjFq8mlfqCttcu2pj2//zIcw8CY=
+=cpLT
+-----END PGP SIGNATURE-----
+
+--BEa57a89OpeoUzGD--
