@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-402196-1526281440-2-7912114120528287829
+X-Cyrus-Session-Id: sloti22d1t05-402196-1526281436-2-8704791809064055864
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526281440; b=iNe1gwCy+QLS0jKPZXRqls9N+litPbuECUNrEGeqlLk2QSjQU3
-    Xdpcx1C5n9y+xB8+iOV+CMTH/z5SToWI5xAUzAqeV2yh00nLRQ3KkYawUbhkuh7s
-    tu/Si0zh9L7nhWohrLtPx+QNuJmlUD/cPeNFWQwkmKBeoMZ6Pg1LDbrv9u90mIMN
-    sAg8QpxarktthmcJ4ATVxTL7RUSbdfTu9NQvPTznuSPtOL5wBwSJfxpS9bOA9Yif
-    fPZmNVIm8u9Y7+qtP12K3qHe4y1fzusOsUk00kBhVc+fEbbyh7a23HK3ZC+HkNAQ
-    LPxp0GJTPCZlv8gYPwjZbkpueBpD9lJSWToQ==
+    1526281435; b=g6SUDZoBqMiqheO7mKL7txoO2pCO/ZjDu0wxuUlM7t9xp5Ir9D
+    BCvTI+RvArYnL8b1aGZVX8psLWrWjP5qqcQwZSgr8T8v3fjFqGcDKfaUihmbYcE9
+    HHN+UASF+HXutk7134EYI8Grwflmd5GpKQQtSCPW5eyxkKYYw4w0JCQIEut/Mu1u
+    MHMd/AcYezCO/+jMprw4O+nPfJn8YtXPZI+IsZpaT36bX12J9K74lnAhtfCIbDSa
+    q7z05BgMBZ3DFOpvTLC7Jm89w/BBTUqpTEODPmw6mYwU3/71qPh7CT+zAWLLWk9Y
+    /oZiHmbIEVYySL1THnh9gyj+my7i8hGBF/1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526281440; bh=6BcRXT7Ky3bg04kHtjFMcCN36jEHPT
-    LchPKmDHgtnok=; b=IeAKUkVhvG2fwzEIRrTFykElPUHm/8LQyftUpyEYsG7u9V
-    yjx6+hi/QDxjcjPPHdqKmZMjOqbUDRHQVkgDY+OavwzIYiNfeNQv0JUmm2v9c78Q
-    k/GQSP7ah/kUHj8gCKDSlBJioMIFcIJi5WmqF6xWw48tWpWwTy0xfbobkeCerrzG
-    X7WamOHNig2rhRPnHYGtiKsNKYajnMnmahmjq5/DA6bCeg/+3Q0i3ugeMz7MNCES
-    HL5qereIzpUK/PdDqv1z5+nahSYxqC7d8I7Ob+I5j1z9NAjVpB5Fo4RUL8+WCfP5
-    GVZoaOu8Ne5a+9OD4+K1gfNPDt5k5HBJ7YQjHWEQ==
+    :list-id; s=fm2; t=1526281435; bh=z5Q4LBXTHyFQLgYIVGwVDf22BZXKlk
+    +5srYr25zYvk8=; b=hR8vfQKV2jYf7cAgO891/Lbay1ngRAaYXYTIvok0fEdhTq
+    QHNC3B3bWfctCJt5X7g0FcB0Fv58AnNUIF2y7XQwDB7dG7ECd26Mu66WVX7Cwu/z
+    dCRSvSjWZcUVe0gyfbZ5xWJ28o82xtVTKvw35aJvwecVoGGVajzVbDaDGegFD8Cr
+    zLDQCzgml6dnIf/h86ovYpk8YA+4/XERbQutBWTOUdvPCW6FSWF3/oFZTw3KCWev
+    xM3ud2j2xfzwPxV6UbeLQm+RmNHZLh8CoaeaWfmBfzmpqX1v+uCzC1XsSQR5sds2
+    2E2CarUV8kpsQ6HSzvxfDZsiWdBGJjusZJOjuYxQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=2GPwfu+S x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=za1WtHNq x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=2GPwfu+S x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=za1WtHNq x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,32 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEQHR/0VW3uqXqnSzKSi5zwW477aqW/ZGcJIbzlYoqM9+VGg0ufcCL6UWlM3/t95xnHCIexOdCcbm3/e0u5c2XHzs9dJ5x+QeCyAa9Ne0mHEPUvU8+Ox
-    3tqA1fkSlMVftf/vJJ8s0Cbu6WaLLQJwqSDTK1XbrC7Lkb2SWzWVa09nRlVlJBd93/rjnPZ9Y070hhy4JCTuIcM41Cwvs08jjF+4+rWQXAlB8AuNkfsboCO/
+X-CM-Envelope: MS4wfLcBHl43ErUcUD92ZlUjBFWcmcADNuEmApIWVYhDd132kh59svgC39vOz3XQNz599m03qTr7v6KSg8LLhNmlzr5ea9di6siqbUf37UadFOLdjtd00BNX
+    EU7qLc9qV1NmyUyKeDff1nTc68MrmSH1ESkOm+nu1qmj5SuTEJKwZyfreiV0e9vREjArf5uzP//9Z9jvw8fAiIOJcHxVkQ1JH5sDtI1OgvuJeN0dJQqZkTGH
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=Dei6p5SHAAAA:8 a=ag1SF4gXAAAA:8
-    a=wZEJlFEmUFyI5RccdPIA:9 a=mEtu9yAtk2m4jspc:21 a=gIK4B3dAEqZ1CeIe:21
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=M-Yerj1wOn-OpK7r_3ei:22
+    a=hD80L64hAAAA:8 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8
+    a=hFfk2Y0vsrRpaPXOunYA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754000AbeENHAS (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 03:00:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37112 "EHLO mail.kernel.org"
+        id S1753144AbeENHDk (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 03:03:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754121AbeENHAO (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 03:00:14 -0400
+        id S1754118AbeENHAT (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 14 May 2018 03:00:19 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Cline <jcline@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.16 58/72] Bluetooth: btusb: Only check needs_reset_resume DMI table for QCA rome chipsets
-Date: Mon, 14 May 2018 08:49:15 +0200
-Message-Id: <20180514064827.064934511@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+Subject: [PATCH 4.16 60/72] thermal: exynos: Propagate error value from tmu_read()
+Date: Mon, 14 May 2018 08:49:17 +0200
+Message-Id: <20180514064827.220213835@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -107,64 +107,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-commit fc54910280eb38bde923cdf0898e74687d8e6989 upstream.
+commit c8da6cdef57b459ac0fd5d9d348f8460a575ae90 upstream.
 
-Jeremy Cline correctly points out in rhbz#1514836 that a device where the
-QCA rome chipset needs the USB_QUIRK_RESET_RESUME quirk, may also ship
-with a different wifi/bt chipset in some configurations.
+tmu_read() in case of Exynos4210 might return error for out of bound
+values. Current code ignores such value, what leads to reporting critical
+temperature value. Add proper error code propagation to exynos_get_temp()
+function.
 
-If that is the case then we are needlessly penalizing those other chipsets
-with a reset-resume quirk, typically causing 0.4W extra power use because
-this disables runtime-pm.
-
-This commit moves the DMI table check to a btusb_check_needs_reset_resume()
-helper (so that we can easily also call it for other chipsets) and calls
-this new helper only for QCA_ROME chipsets for now.
-
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1514836
-Cc: stable@vger.kernel.org
-Cc: Jeremy Cline <jcline@redhat.com>
-Suggested-by: Jeremy Cline <jcline@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+CC: stable@vger.kernel.org # v4.6+
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/btusb.c |   10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/thermal/samsung/exynos_tmu.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -2846,6 +2846,12 @@ static int btusb_config_oob_wake(struct
- }
- #endif
- 
-+static void btusb_check_needs_reset_resume(struct usb_interface *intf)
-+{
-+	if (dmi_check_system(btusb_needs_reset_resume_table))
-+		interface_to_usbdev(intf)->quirks |= USB_QUIRK_RESET_RESUME;
-+}
-+
- static int btusb_probe(struct usb_interface *intf,
- 		       const struct usb_device_id *id)
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -892,6 +892,7 @@ static void exynos7_tmu_control(struct p
+ static int exynos_get_temp(void *p, int *temp)
  {
-@@ -2968,9 +2974,6 @@ static int btusb_probe(struct usb_interf
- 	hdev->send   = btusb_send_frame;
- 	hdev->notify = btusb_notify;
+ 	struct exynos_tmu_data *data = p;
++	int value, ret = 0;
  
--	if (dmi_check_system(btusb_needs_reset_resume_table))
--		interface_to_usbdev(intf)->quirks |= USB_QUIRK_RESET_RESUME;
--
- #ifdef CONFIG_PM
- 	err = btusb_config_oob_wake(hdev);
- 	if (err)
-@@ -3109,6 +3112,7 @@ static int btusb_probe(struct usb_interf
- 			hdev->setup = btusb_setup_csr;
+ 	if (!data || !data->tmu_read || !data->enabled)
+ 		return -EINVAL;
+@@ -899,12 +900,16 @@ static int exynos_get_temp(void *p, int
+ 	mutex_lock(&data->lock);
+ 	clk_enable(data->clk);
  
- 		set_bit(HCI_QUIRK_SIMULTANEOUS_DISCOVERY, &hdev->quirks);
-+		btusb_check_needs_reset_resume(intf);
- 	}
+-	*temp = code_to_temp(data, data->tmu_read(data)) * MCELSIUS;
++	value = data->tmu_read(data);
++	if (value < 0)
++		ret = value;
++	else
++		*temp = code_to_temp(data, value) * MCELSIUS;
  
- 	if (id->driver_info & BTUSB_SNIFFER) {
+ 	clk_disable(data->clk);
+ 	mutex_unlock(&data->lock);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ #ifdef CONFIG_THERMAL_EMULATION
