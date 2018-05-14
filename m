@@ -1,161 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754593AbeENPfx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 11:35:53 -0400
-Received: from mga12.intel.com ([192.55.52.136]:23615 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754575AbeENPfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 11:35:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,400,1520924400";
-   d="scan'208";a="39184119"
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rjw@rjwysocki.net, doug.smythies@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        dsmythies@telus.net,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH V6] cpufreq: intel_pstate: allow trace in passive mode
-Date: Mon, 14 May 2018 08:35:49 -0700
-Message-Id: <20180514153549.33292-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.13.6
+        id S932202AbeENPhI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 11:37:08 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:54478 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752089AbeENPhH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 11:37:07 -0400
+X-Auth-Info: I53fHRED8/+pqYmvFFLPG4+Jf0j/RCdmcUXwoZ30bY8=
+Date: Mon, 14 May 2018 17:36:21 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Rob Herring <robh@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] display: panel: Add AUO g070vvn01 display support
+ (800x480)
+Message-ID: <20180514173621.797c6b8f@jawa>
+In-Reply-To: <20180509155913.7562-1-lukma@denx.de>
+References: <20180410102927.17787-1-lukma@denx.de>
+        <20180509155913.7562-1-lukma@denx.de>
+Organization: denx.de
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/bEOFgQ02ac65rt23.KWqx2G"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Doug Smythies <doug.smythies@gmail.com>
+--Sig_/bEOFgQ02ac65rt23.KWqx2G
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Allow use of the trace_pstate_sample trace function
-when the intel_pstate driver is in passive mode.
-Since the core_busy and scaled_busy fields are not
-used, and it might be desirable to know which path
-through the driver was used, either intel_cpufreq_target
-or intel_cpufreq_fast_switch, re-task the core_busy
-field as a flag indicator.
+Dear All,
 
-The user can then use the intel_pstate_tracer.py utility
-to summarize and plot the trace.
+> This commit adds support for AUO's 7.0" display.
 
-Note: The core_busy feild still goes by that name
-in include/trace/events/power.h and within the
-intel_pstate_tracer.py script and csv file headers,
-but it is graphed as "performance", and called
-core_avg_perf now in the intel_pstate driver.
+If I may gentle remind about this patch....=20
 
-Sometimes, in passive mode, the driver is not called for
-many tens or even hundreds of seconds. The user
-needs to understand, and not be confused by, this limitation.
+>=20
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+>=20
+> ---
+> Changes for v3:
+> - Remove not used 'bus-format-override =3D "rgb565";' property
+>=20
+> Changes for v2:
+> - Add *.txt suffix to the auo,g070wn01 file
+> ---
+>  .../bindings/display/panel/auo,g070vvn01.txt       | 29
+> ++++++++++++++++++++
+> drivers/gpu/drm/panel/panel-simple.c               | 31
+> ++++++++++++++++++++++ 2 files changed, 60 insertions(+) create mode
+> 100644
+> Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
+>=20
+> diff --git
+> a/Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
+> b/Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
+> new file mode 100644 index 000000000000..49e4105378f6 --- /dev/null
+> +++
+> b/Documentation/devicetree/bindings/display/panel/auo,g070vvn01.txt
+> @@ -0,0 +1,29 @@ +AU Optronics Corporation 7.0" FHD (800 x 480) TFT
+> LCD panel +
+> +Required properties:
+> +- compatible: should be "auo,g070vvn01"
+> +- backlight: phandle of the backlight device attached to the panel
+> +- power-supply: single regulator to provide the supply voltage
+> +
+> +Required nodes:
+> +- port: Parallel port mapping to connect this display
+> +
+> +This panel needs single power supply voltage. Its backlight is
+> conntrolled +via PWM signal.
+> +
+> +Example:
+> +--------
+> +
+> +Example device-tree definition when connected to iMX6Q based board
+> +
+> +	lcd_panel: lcd-panel {
+> +		compatible =3D "auo,g070vvn01";
+> +		backlight =3D <&backlight_lcd>;
+> +		power-supply =3D <&reg_display>;
+> +
+> +		port {
+> +			lcd_panel_in: endpoint {
+> +				remote-endpoint =3D <&lcd_display_out>;
+> +			};
+> +		};
+> +	};
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c
+> b/drivers/gpu/drm/panel/panel-simple.c index
+> cbf1ab404ee7..d9984bdb5bb5 100644 ---
+> a/drivers/gpu/drm/panel/panel-simple.c +++
+> b/drivers/gpu/drm/panel/panel-simple.c @@ -581,6 +581,34 @@ static
+> const struct panel_desc auo_b133htn01 =3D { },
+>  };
+> =20
+> +static const struct display_timing auo_g070vvn01_timings =3D {
+> +	.pixelclock =3D { 33300000, 34209000, 45000000 },
+> +	.hactive =3D { 800, 800, 800 },
+> +	.hfront_porch =3D { 20, 40, 200 },
+> +	.hback_porch =3D { 87, 40, 1 },
+> +	.hsync_len =3D { 1, 48, 87 },
+> +	.vactive =3D { 480, 480, 480 },
+> +	.vfront_porch =3D { 5, 13, 200 },
+> +	.vback_porch =3D { 31, 31, 29 },
+> +	.vsync_len =3D { 1, 1, 3 },
+> +};
+> +
+> +static const struct panel_desc auo_g070vvn01 =3D {
+> +	.timings =3D &auo_g070vvn01_timings,
+> +	.num_timings =3D 1,
+> +	.bpc =3D 8,
+> +	.size =3D {
+> +		.width =3D 152,
+> +		.height =3D 91,
+> +	},
+> +	.delay =3D {
+> +		.prepare =3D 200,
+> +		.enable =3D 50,
+> +		.disable =3D 50,
+> +		.unprepare =3D 1000,
+> +	},
+> +};
+> +
+>  static const struct drm_display_mode auo_g104sn02_mode =3D {
+>  	.clock =3D 40000,
+>  	.hdisplay =3D 800,
+> @@ -2095,6 +2123,9 @@ static const struct of_device_id
+> platform_of_match[] =3D { .compatible =3D "auo,b133xtn01",
+>  		.data =3D &auo_b133xtn01,
+>  	}, {
+> +		.compatible =3D "auo,g070vvn01",
+> +		.data =3D &auo_g070vvn01,
+> +	}, {
+>  		.compatible =3D "auo,g104sn02",
+>  		.data =3D &auo_g104sn02,
+>  	}, {
 
-Signed-off-by: Doug Smythies <dsmythies@telus.net>
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
 
-V6:
-    Just added new line after return
 
-V5: Changes as per Rafael J. Wysocki feedback.
-    See: https://lkml.org/lkml/2018/1/7/270
 
-V4: Only execute the trace specific overhead code if trace
-    is enabled. Suggested by Srinivas Pandruvada.
+Best regards,
 
-V3: Move largely duplicate code to a subroutine.
-    Suggested by Rafael J. Wysocki.
+Lukasz Majewski
 
-V2: prepare for resend. Rebase to current kernel, 4.15-rc3.
+--
 
- drivers/cpufreq/intel_pstate.c | 46 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 17e566afbb41..08960a55eb27 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1939,13 +1939,51 @@ static int intel_cpufreq_verify_policy(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
-+/* Use of trace in passive mode:
-+ *
-+ * In passive mode the trace core_busy field (also known as the
-+ * performance field, and lablelled as such on the graphs; also known as
-+ * core_avg_perf) is not needed and so is re-assigned to indicate if the
-+ * driver call was via the normal or fast switch path. Various graphs
-+ * output from the intel_pstate_tracer.py utility that include core_busy
-+ * (or performance or core_avg_perf) have a fixed y-axis from 0 to 100%,
-+ * so we use 10 to indicate the the normal path through the driver, and
-+ * 90 to indicate the fast switch path through the driver.
-+ * The scaled_busy field is not used, and is set to 0.
-+ */
-+
-+#define	INTEL_PSTATE_TRACE_TARGET 10
-+#define	INTEL_PSTATE_TRACE_FAST_SWITCH 90
-+
-+static void intel_cpufreq_trace(struct cpudata *cpu, unsigned int trace_type, int old_pstate)
-+{
-+	struct sample *sample;
-+
-+	if (!trace_pstate_sample_enabled())
-+		return;
-+
-+	if (!intel_pstate_sample(cpu, ktime_get()))
-+		return;
-+
-+	sample = &cpu->sample;
-+	trace_pstate_sample(trace_type,
-+		0,
-+		old_pstate,
-+		cpu->pstate.current_pstate,
-+		sample->mperf,
-+		sample->aperf,
-+		sample->tsc,
-+		get_avg_frequency(cpu),
-+		fp_toint(cpu->iowait_boost * 100));
-+}
-+
- static int intel_cpufreq_target(struct cpufreq_policy *policy,
- 				unsigned int target_freq,
- 				unsigned int relation)
- {
- 	struct cpudata *cpu = all_cpu_data[policy->cpu];
- 	struct cpufreq_freqs freqs;
--	int target_pstate;
-+	int target_pstate, old_pstate;
- 
- 	update_turbo_state();
- 
-@@ -1965,12 +2003,14 @@ static int intel_cpufreq_target(struct cpufreq_policy *policy,
- 		break;
- 	}
- 	target_pstate = intel_pstate_prepare_request(cpu, target_pstate);
-+	old_pstate = cpu->pstate.current_pstate;
- 	if (target_pstate != cpu->pstate.current_pstate) {
- 		cpu->pstate.current_pstate = target_pstate;
- 		wrmsrl_on_cpu(policy->cpu, MSR_IA32_PERF_CTL,
- 			      pstate_funcs.get_val(cpu, target_pstate));
- 	}
- 	freqs.new = target_pstate * cpu->pstate.scaling;
-+	intel_cpufreq_trace(cpu, INTEL_PSTATE_TRACE_TARGET, old_pstate);
- 	cpufreq_freq_transition_end(policy, &freqs, false);
- 
- 	return 0;
-@@ -1980,13 +2020,15 @@ static unsigned int intel_cpufreq_fast_switch(struct cpufreq_policy *policy,
- 					      unsigned int target_freq)
- {
- 	struct cpudata *cpu = all_cpu_data[policy->cpu];
--	int target_pstate;
-+	int target_pstate, old_pstate;
- 
- 	update_turbo_state();
- 
- 	target_pstate = DIV_ROUND_UP(target_freq, cpu->pstate.scaling);
- 	target_pstate = intel_pstate_prepare_request(cpu, target_pstate);
-+	old_pstate = cpu->pstate.current_pstate;
- 	intel_pstate_update_pstate(cpu, target_pstate);
-+	intel_cpufreq_trace(cpu, INTEL_PSTATE_TRACE_FAST_SWITCH, old_pstate);
- 	return target_pstate * cpu->pstate.scaling;
- }
- 
--- 
-2.13.6
+--Sig_/bEOFgQ02ac65rt23.KWqx2G
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlr5rPUACgkQAR8vZIA0
+zr0+MQgArAtQ6d8lcdAVuGNv+jkwYyAzyhnBxEORc4uT7yDaQJOwCZl0TIXdHLrm
+wXLj8q4CN6sbwrFosxi5YXaFSeXbo/D4QX+YbY5VSFqSMgfH9XQBIVOIFItmb5Sq
+S+pM8d8yhVnVezxGqj93yLAtciOmXracuCFrv6yzT/gP86aCbSf5m0ySdct8rzMQ
+fr2LDg00mZKrrQihG+Wt0/RiQ+XGyApRSdeqnLHV0HXOqkXuiAdaopLhIWgMWL3y
+Mux5rmY1hfEZsJy9KxvXG/qqTYcbDGUWCzrU4N/o8OiyYAOOVRsV8wJgP6FLm3WA
+cmP3lUaim90maOyFCiny/Av/B7n7hg==
+=z3az
+-----END PGP SIGNATURE-----
+
+--Sig_/bEOFgQ02ac65rt23.KWqx2G--
