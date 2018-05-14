@@ -1,221 +1,226 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752221AbeENWtz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 18:49:55 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:39072 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752049AbeENWtx (ORCPT
+        id S1752281AbeENWu5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 18:50:57 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:35215 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752078AbeENWuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 18:49:53 -0400
-X-Google-Smtp-Source: AB8JxZo/CUivBkPQtMu1nyncWVtVU1IQLiPoXCLcuaSyknN4unSx7vbM0zc+dhVRE3fneXr2sz+GiA==
-Reply-To: ahs3@redhat.com
-Subject: Re: [PATCH v3 3/3] mailbox: ACPI: erroneous error message when
- parsing the ACPI PCCT
-To: "Prakash, Prashanth" <pprakash@codeaurora.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Jassi Brar <jassisinghbrar@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
-References: <20180501003907.4322-1-ahs3@redhat.com>
- <20180501003907.4322-4-ahs3@redhat.com>
- <17197481-bd76-f2ec-9d6e-4cd0d94b9265@codeaurora.org>
-From: Al Stone <ahs3@redhat.com>
-Organization: Red Hat, Inc.
-Message-ID: <bb9eefb1-a22b-9fc1-4a51-d067bdbe3f99@redhat.com>
-Date: Mon, 14 May 2018 16:49:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 14 May 2018 18:50:55 -0400
+X-Google-Smtp-Source: AB8JxZrk/UMkCfXQAMjz1gQpw95G8XP9rM4WFRRVUH95UbF8GWrr8WFoG2OiHQpYaEjW5fOnkn/HtQ==
+Date: Mon, 14 May 2018 15:50:52 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v2] pstore: Convert internal records to timespec64
+Message-ID: <20180514225052.GA39419@beast>
 MIME-Version: 1.0
-In-Reply-To: <17197481-bd76-f2ec-9d6e-4cd0d94b9265@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/14/2018 03:04 PM, Prakash, Prashanth wrote:
-> 
-> 
-> On 4/30/2018 6:39 PM, Al Stone wrote:
->> There have been multiple reports of the following error message:
->>
->> [    0.068293] Error parsing PCC subspaces from PCCT
->>
->> This error message is not correct.  In multiple cases examined, the PCCT
->> (Platform Communications Channel Table) concerned is actually properly
->> constructed; the problem is that acpi_pcc_probe() which reads the PCCT
->> is making the assumption that the only valid PCCT is one that contains
->> subtables of one of two types: ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE or
->> ACPI_PCCT_TYPE_HW_REDUCED_TYPE2.  The number of subtables of these
->> types are counted and as long as there is at least one of the desired
->> types, the acpi_pcc_probe() succeeds.  When no subtables of these types
->> are found, regardless of whether or not any other subtable types are
->> present, the error mentioned above is reported.
->>
->> In the cases reported to me personally, the PCCT contains exactly one
->> subtable of type ACPI_PCCT_TYPE_GENERIC_SUBSPACE.  The function
->> acpi_pcc_probe() does not count it as a valid subtable, so believes
->> there to be no valid subtables, and hence outputs the error message.
->>
->> An example of the PCCT being reported as erroneous yet perfectly fine
->> is the following:
->>
->>                     Signature : "PCCT"
->>                  Table Length : 0000006E
->>                      Revision : 05
->>                      Checksum : A9
->>                        Oem ID : "XXXXXX"
->>                  Oem Table ID : "XXXXX   "
->>                  Oem Revision : 00002280
->>               Asl Compiler ID : "XXXX"
->>         Asl Compiler Revision : 00000002
->>
->>         Flags (decoded below) : 00000001
->>                      Platform : 1
->>                      Reserved : 0000000000000000
->>
->>                 Subtable Type : 00 [Generic Communications Subspace]
->>                        Length : 3E
->>
->>                      Reserved : 000000000000
->>                  Base Address : 00000000DCE43018
->>                Address Length : 0000000000001000
->>
->>             Doorbell Register : [Generic Address Structure]
->>                      Space ID : 01 [SystemIO]
->>                     Bit Width : 08
->>                    Bit Offset : 00
->>          Encoded Access Width : 01 [Byte Access:8]
->>                       Address : 0000000000001842
->>
->>                 Preserve Mask : 00000000000000FD
->>                    Write Mask : 0000000000000002
->>               Command Latency : 00001388
->>           Maximum Access Rate : 00000000
->>       Minimum Turnaround Time : 0000
->>
->> To fix this, we count up all of the possible subtable types for the
->> PCCT, and only report an error when there are none (which could mean
->> either no subtables, or no valid subtables), or there are too many.
->> We also change the logic so that if there is a valid subtable, we
->> do try to initialize it per the PCCT subtable contents.  This is a
->> change in functionality; previously, the probe would have returned
->> right after the error message and would not have tried to use any
->> other subtable definition.
->>
->> Tested on my personal laptop which showed the error previously; the
->> error message no longer appears and the laptop appears to operate
->> normally.
->>
->> Signed-off-by: Al Stone <ahs3@redhat.com>
->> Cc: Jassi Brar <jassisinghbrar@gmail.com>
->> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
->> Cc: Len Brown <lenb@kernel.org>
->> ---
->>  drivers/mailbox/pcc.c | 96 +++++++++++++++++++++++++++++++++------------------
->>  1 file changed, 63 insertions(+), 33 deletions(-)
->>
->> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
->> index 3ef7f036ceea..72af37d7e95e 100644
->> --- a/drivers/mailbox/pcc.c
->> +++ b/drivers/mailbox/pcc.c
->> @@ -372,13 +372,37 @@ static const struct mbox_chan_ops pcc_chan_ops = {
->>  	.send_data = pcc_send_data,
->>  };
->>  
->> +/*
->> + *
->> + * count_pcc_subspaces -- Count PCC subspaces not used in reduced HW systems.
->> + * @header: Pointer to the ACPI subtable header under the PCCT.
->> + * @end: End of subtable entry.
->> + *
->> + * Return: If we find a PCC subspace entry that is one of the types used
->> + *	in reduced hardware systems, return -EINVAL.  Otherwise, return 0.
->> + *
->> + * This gets called for each subtable in the PCC table.
->> + */
->> +static int count_pcc_subspaces(struct acpi_subtable_header *header,
->> +		const unsigned long end)
->> +{
->> +	struct acpi_pcct_subspace *pcct_ss = (struct acpi_pcct_subspace *) header;
->> +
->> +	if ((pcct_ss->header.type <= ACPI_PCCT_TYPE_RESERVED) &&
->> +	    (pcct_ss->header.type != ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE) &&
->> +	    (pcct_ss->header.type != ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2))
->> +		return 0;
->> +
->> +	return -EINVAL;
->> +}
->> +
->>  /**
->> - * parse_pcc_subspace - Parse the PCC table and verify PCC subspace
->> - *		entries. There should be one entry per PCC client.
->> + * parse_pcc_subspaces -- Count PCC subspaces used only in reduced HW systems.
->>   * @header: Pointer to the ACPI subtable header under the PCCT.
->>   * @end: End of subtable entry.
->>   *
->> - * Return: 0 for Success, else errno.
->> + * Return: If we find a PCC subspace entry that is one of the types used
->> + *	in reduced hardware systems, return 0.  Otherwise, return -EINVAL.
->>   *
->>   * This gets called for each entry in the PCC table.
->>   */
->> @@ -393,10 +417,8 @@ static int parse_pcc_subspace(struct acpi_subtable_header *header,
->>  		if ((pcct_ss->header.type !=
->>  				ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE)
->>  		    && (pcct_ss->header.type !=
->> -				ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2)) {
->> -			pr_err("Incorrect PCC Subspace type detected\n");
->> +				ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2))
->>  			return -EINVAL;
->> -		}
->>  	}
->>  
->>  	return 0;
-> Can't we combine  parse_pcc_subspace and count_pcc_subspaces into a
-> single function? parse_pcc_subspace can return 0 for supported subspace
-> types and -EINVAL for others.
+This prepares pstore for converting the VFS layer to timespec64.
 
-I did think about that.  The issue is that we have subspaces that are only
-valid in reduced hardware systems, and subspaces that are not.  It might make
-sense to use different names, as in 'count_reduced_hw_subspaces()' and
-'count_general_subspaces()' (or something like those) but we do have the two
-separate classes and hardware belonging to each of those classes.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+I can carry this for v4.18 unless you'd like to do it as part of your series?
+---
+ drivers/firmware/efi/efi-pstore.c | 27 ++++++++++++++-------------
+ fs/pstore/inode.c                 |  3 ++-
+ fs/pstore/platform.c              |  2 +-
+ fs/pstore/ram.c                   | 21 ++++++++++++++-------
+ include/linux/pstore.h            |  2 +-
+ 5 files changed, 32 insertions(+), 23 deletions(-)
 
-That being said, you raise a good point: this would only be useful if the
-mailbox code needed to know the classes of subspaces were different; I saw
-no such code but I could have missed it.  If you're aware of any such cases,
-let me know.  Otherwise, I'll combine the two counting routines and test it.
+diff --git a/drivers/firmware/efi/efi-pstore.c b/drivers/firmware/efi/efi-pstore.c
+index 5a0fa939d70f..cfe87b465819 100644
+--- a/drivers/firmware/efi/efi-pstore.c
++++ b/drivers/firmware/efi/efi-pstore.c
+@@ -28,10 +28,9 @@ static int efi_pstore_close(struct pstore_info *psi)
+ 	return 0;
+ }
+ 
+-static inline u64 generic_id(unsigned long timestamp,
+-			     unsigned int part, int count)
++static inline u64 generic_id(u64 timestamp, unsigned int part, int count)
+ {
+-	return ((u64) timestamp * 100 + part) * 1000 + count;
++	return (timestamp * 100 + part) * 1000 + count;
+ }
+ 
+ static int efi_pstore_read_func(struct efivar_entry *entry,
+@@ -42,7 +41,8 @@ static int efi_pstore_read_func(struct efivar_entry *entry,
+ 	int i;
+ 	int cnt;
+ 	unsigned int part;
+-	unsigned long time, size;
++	unsigned long size;
++	u64 time;
+ 
+ 	if (efi_guidcmp(entry->var.VendorGuid, vendor))
+ 		return 0;
+@@ -50,7 +50,7 @@ static int efi_pstore_read_func(struct efivar_entry *entry,
+ 	for (i = 0; i < DUMP_NAME_LEN; i++)
+ 		name[i] = entry->var.VariableName[i];
+ 
+-	if (sscanf(name, "dump-type%u-%u-%d-%lu-%c",
++	if (sscanf(name, "dump-type%u-%u-%d-%llu-%c",
+ 		   &record->type, &part, &cnt, &time, &data_type) == 5) {
+ 		record->id = generic_id(time, part, cnt);
+ 		record->part = part;
+@@ -62,7 +62,7 @@ static int efi_pstore_read_func(struct efivar_entry *entry,
+ 		else
+ 			record->compressed = false;
+ 		record->ecc_notice_size = 0;
+-	} else if (sscanf(name, "dump-type%u-%u-%d-%lu",
++	} else if (sscanf(name, "dump-type%u-%u-%d-%llu",
+ 		   &record->type, &part, &cnt, &time) == 4) {
+ 		record->id = generic_id(time, part, cnt);
+ 		record->part = part;
+@@ -71,7 +71,7 @@ static int efi_pstore_read_func(struct efivar_entry *entry,
+ 		record->time.tv_nsec = 0;
+ 		record->compressed = false;
+ 		record->ecc_notice_size = 0;
+-	} else if (sscanf(name, "dump-type%u-%u-%lu",
++	} else if (sscanf(name, "dump-type%u-%u-%llu",
+ 			  &record->type, &part, &time) == 3) {
+ 		/*
+ 		 * Check if an old format,
+@@ -250,9 +250,10 @@ static int efi_pstore_write(struct pstore_record *record)
+ 	/* Since we copy the entire length of name, make sure it is wiped. */
+ 	memset(name, 0, sizeof(name));
+ 
+-	snprintf(name, sizeof(name), "dump-type%u-%u-%d-%lu-%c",
++	snprintf(name, sizeof(name), "dump-type%u-%u-%d-%lld-%c",
+ 		 record->type, record->part, record->count,
+-		 record->time.tv_sec, record->compressed ? 'C' : 'D');
++		 (long long)record->time.tv_sec,
++		 record->compressed ? 'C' : 'D');
+ 
+ 	for (i = 0; i < DUMP_NAME_LEN; i++)
+ 		efi_name[i] = name[i];
+@@ -327,15 +328,15 @@ static int efi_pstore_erase(struct pstore_record *record)
+ 	char name[DUMP_NAME_LEN];
+ 	int ret;
+ 
+-	snprintf(name, sizeof(name), "dump-type%u-%u-%d-%lu",
++	snprintf(name, sizeof(name), "dump-type%u-%u-%d-%lld",
+ 		 record->type, record->part, record->count,
+-		 record->time.tv_sec);
++		 (long long)record->time.tv_sec);
+ 	ret = efi_pstore_erase_name(name);
+ 	if (ret != -ENOENT)
+ 		return ret;
+ 
+-	snprintf(name, sizeof(name), "dump-type%u-%u-%lu",
+-		record->type, record->part, record->time.tv_sec);
++	snprintf(name, sizeof(name), "dump-type%u-%u-%lld",
++		record->type, record->part, (long long)record->time.tv_sec);
+ 	ret = efi_pstore_erase_name(name);
+ 
+ 	return ret;
+diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
+index 5fcb845b9fec..75afe5eb0574 100644
+--- a/fs/pstore/inode.c
++++ b/fs/pstore/inode.c
+@@ -392,7 +392,8 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
+ 	inode->i_private = private;
+ 
+ 	if (record->time.tv_sec)
+-		inode->i_mtime = inode->i_ctime = record->time;
++		inode->i_mtime = inode->i_ctime =
++			timespec64_to_timespec(record->time);
+ 
+ 	d_add(dentry, inode);
+ 
+diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+index dc720573fd53..c238ab8ba31d 100644
+--- a/fs/pstore/platform.c
++++ b/fs/pstore/platform.c
+@@ -328,7 +328,7 @@ void pstore_record_init(struct pstore_record *record,
+ 	record->psi = psinfo;
+ 
+ 	/* Report zeroed timestamp if called before timekeeping has resumed. */
+-	record->time = ns_to_timespec(ktime_get_real_fast_ns());
++	record->time = ns_to_timespec64(ktime_get_real_fast_ns());
+ }
+ 
+ /*
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index 49b2bc114868..69e893076ab7 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -38,6 +38,11 @@
+ 
+ #define RAMOOPS_KERNMSG_HDR "===="
+ #define MIN_MEM_SIZE 4096UL
++#if __BITS_PER_LONG == 64
++# define TVSEC_FMT "%ld"
++#else
++# define TVSEC_FMT "%lld"
++#endif
+ 
+ static ulong record_size = MIN_MEM_SIZE;
+ module_param(record_size, ulong, 0400);
+@@ -153,21 +158,23 @@ ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint *c, uint max,
+ 	return prz;
+ }
+ 
+-static int ramoops_read_kmsg_hdr(char *buffer, struct timespec *time,
++static int ramoops_read_kmsg_hdr(char *buffer, struct timespec64 *time,
+ 				  bool *compressed)
+ {
+ 	char data_type;
+ 	int header_length = 0;
+ 
+-	if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lu.%lu-%c\n%n", &time->tv_sec,
+-			&time->tv_nsec, &data_type, &header_length) == 3) {
++	if (sscanf(buffer, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu-%c\n%n",
++		   &time->tv_sec, &time->tv_nsec, &data_type,
++		   &header_length) == 3) {
+ 		if (data_type == 'C')
+ 			*compressed = true;
+ 		else
+ 			*compressed = false;
+-	} else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lu.%lu\n%n",
+-			&time->tv_sec, &time->tv_nsec, &header_length) == 2) {
+-			*compressed = false;
++	} else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu\n%n",
++			  &time->tv_sec, &time->tv_nsec,
++			  &header_length) == 2) {
++		*compressed = false;
+ 	} else {
+ 		time->tv_sec = 0;
+ 		time->tv_nsec = 0;
+@@ -360,7 +367,7 @@ static size_t ramoops_write_kmsg_hdr(struct persistent_ram_zone *prz,
+ 	char *hdr;
+ 	size_t len;
+ 
+-	hdr = kasprintf(GFP_ATOMIC, RAMOOPS_KERNMSG_HDR "%lu.%lu-%c\n",
++	hdr = kasprintf(GFP_ATOMIC, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu-%c\n",
+ 		record->time.tv_sec,
+ 		record->time.tv_nsec / 1000,
+ 		record->compressed ? 'C' : 'D');
+diff --git a/include/linux/pstore.h b/include/linux/pstore.h
+index 61f806a7fe29..a15bc4d48752 100644
+--- a/include/linux/pstore.h
++++ b/include/linux/pstore.h
+@@ -71,7 +71,7 @@ struct pstore_record {
+ 	struct pstore_info	*psi;
+ 	enum pstore_type_id	type;
+ 	u64			id;
+-	struct timespec		time;
++	struct timespec64	time;
+ 	char			*buf;
+ 	ssize_t			size;
+ 	ssize_t			ecc_notice_size;
+-- 
+2.17.0
 
-> The limitation on number of subspaces(max = 256) applies to all types of PCC
-> subspaces (see Table 14-351 in ACPI 6.2).  The MAX_PCC_SUBSPACES check in
->  parse_pcc_subspace seems invalid as pcc_mbox_ctrl.num_chans will not be
-> initialized yet at that moment.
-
-Good catch.  Thanks.  That test was there prior to my patches, but I'll pull
-it out.
-
-> Given above, I think it is probably better to update parse_pcc_subspace to
-> only check for a valid PCC subspace type. The check to make sure overall count
-> of subspace is  less than 256 is already present following the call to
-> acpi_table_parse_entries_array().
-> 
-> --
-> Thanks,
-> Prashanth
-> 
-
-Thanks, Prashanth.
-
-Rafael: do you want me to just re-send this patch or the whole series?  Either
-way works for me; what's easiest for you since the first two have been applied?
 
 -- 
-ciao,
-al
------------------------------------
-Al Stone
-Software Engineer
-Red Hat, Inc.
-ahs3@redhat.com
------------------------------------
+Kees Cook
+Pixel Security
