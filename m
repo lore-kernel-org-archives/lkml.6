@@ -1,89 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751664AbeENDqn (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 23:46:43 -0400
-Received: from ozlabs.org ([203.11.71.1]:36255 "EHLO ozlabs.org"
+        id S1752069AbeENDq5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 23:46:57 -0400
+Received: from imap.thunk.org ([74.207.234.97]:50406 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751093AbeENDqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 23:46:42 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 14 May 2018 13:46:36 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nitzan Carmi <nitzanc@mellanox.com>,
-        Jianchao Wang <jianchao.w.wang@oracle.com>,
-        Keith Busch <keith.busch@intel.com>
-Subject: linux-next: manual merge of the rcu tree with Linus' tree
-Message-ID: <20180514134636.61831bcc@canb.auug.org.au>
+        id S1751976AbeENDq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 23:46:56 -0400
+Date: Sun, 13 May 2018 23:46:52 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@google.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3] ext4: handle errors on ext4_commit_super
+Message-ID: <20180514034652.GM14763@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@google.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org
+References: <20180330014429.27824-1-jaegeuk@kernel.org>
+ <20180419155957.GB81439@jaegeuk-macbookpro.roam.corp.google.com>
+ <20180423144626.GA31757@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=MXtluWoWD1TnJVOJ94aOq1"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180423144626.GA31757@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/=MXtluWoWD1TnJVOJ94aOq1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Apr 23, 2018 at 08:46:26AM -0600, Jaegeuk Kim wrote:
+> When remounting ext4 from ro to rw, currently it allows its transition,
+> even if ext4_commit_super() returns EIO. Even worse thing is, after that,
+> fs/buffer complains buffer dirty bits like:
+> 
+>  Call trace:
+>  [<ffffff9750c259dc>] mark_buffer_dirty+0x184/0x1a4
+>  [<ffffff9750cb398c>] __ext4_handle_dirty_super+0x4c/0xfc
+>  [<ffffff9750c7a9fc>] ext4_file_open+0x154/0x1c0
+>  [<ffffff9750bea51c>] do_dentry_open+0x114/0x2d0
+>  [<ffffff9750bea75c>] vfs_open+0x5c/0x94
+>  [<ffffff9750bf879c>] path_openat+0x668/0xfe8
+>  [<ffffff9750bf8088>] do_filp_open+0x74/0x120
+>  [<ffffff9750beac98>] do_sys_open+0x148/0x254
+>  [<ffffff9750beade0>] SyS_openat+0x10/0x18
+>  [<ffffff9750a83ab0>] el0_svc_naked+0x24/0x28
+>  EXT4-fs (dm-1): previous I/O error to superblock detected
+>  Buffer I/O error on dev dm-1, logical block 0, lost sync page write
+>  EXT4-fs (dm-1): re-mounted. Opts: (null)
+>  Buffer I/O error on dev dm-1, logical block 80, lost async page write
+> 
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+> Cc: linux-ext4@vger.kernel.org
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@google.com>
 
-Hi all,
+Applied with a fix up to ext4_fill_super() when it calls
+ext4_setup_super() with the changed error return semantics.
 
-Today's linux-next merge of the rcu tree got a conflict in:
+		   	    - Ted
 
-  drivers/nvme/host/core.c
-
-between commit:
-
-  12d9f07022dc ("nvme: fix use-after-free in nvme_free_ns_head")
-
-from Linus' tree and commit:
-
-  d9cf21bae6cf ("nvme: Avoid flush dependency in delete controller flow")
-
-from the rcu tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/nvme/host/core.c
-index 99b857e5a7a9,c3cea8a29843..000000000000
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@@ -351,8 -349,7 +351,8 @@@ static void nvme_free_ns_head(struct kr
-  	nvme_mpath_remove_disk(head);
-  	ida_simple_remove(&head->subsys->ns_ida, head->instance);
-  	list_del_init(&head->entry);
-- 	cleanup_srcu_struct(&head->srcu);
-+ 	cleanup_srcu_struct_quiesced(&head->srcu);
- +	nvme_put_subsystem(head->subsys);
-  	kfree(head);
-  }
- =20
-
---Sig_/=MXtluWoWD1TnJVOJ94aOq1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr5BpwACgkQAVBC80lX
-0GwlxAf/b4IxOHL6BjlJGOQEDsvCDL5p2PX8Fb3b+boAU9pavH8Ubsq9jYKaUZbe
-WtuhmNpnaqQ2qtj+aMT+VCRXP+rQpHsNJZsxhi8esF+dIVtyXbcnHMH3a+zmFZle
-ItwYavJr20Hb2hcrvoKForXHSxC567XvVq/5pLaRWW98Th2GLk0KHRcCGCxzopkc
-hdrCGUJTJlCkEm6zKvyBTx58lFJp9SaOp6AuVMoVUfXC9aQxKmHHh7O0bmTEP81X
-GnqBheDDGHSzucMWRU1huN8MUaWva2PFLiultXPcHLO9+928jXT2ddMLf1hhRsYK
-aIV5h7XHZ/5pJc7YzpiIzGfVBWDeoA==
-=rUci
------END PGP SIGNATURE-----
-
---Sig_/=MXtluWoWD1TnJVOJ94aOq1--
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index aac33c155363..1388e56bb3f5 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4254,8 +4254,12 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto failed_mount4;
+ 	}
+ 
+-	if (ext4_setup_super(sb, es, sb_rdonly(sb)))
++	ret = ext4_setup_super(sb, es, sb_rdonly(sb));
++	if (ret == -EROFS) {
+ 		sb->s_flags |= SB_RDONLY;
++		ret = 0;
++	} else if (ret)
++		goto failed_mount4a;
+ 
+ 	/* determine the minimum size of new large inodes, if present */
+ 	if (sbi->s_inode_size > EXT4_GOOD_OLD_INODE_SIZE &&
