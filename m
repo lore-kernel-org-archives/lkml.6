@@ -1,111 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752534AbeENKHP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 06:07:15 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38910 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752038AbeENKGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 06:06:47 -0400
-Date: Mon, 14 May 2018 11:06:40 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Alexander Popov <alex.popov@linux.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kernel-hardening@lists.openwall.com,
+        id S1752051AbeENKLS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 06:11:18 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:36172 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751219AbeENKLQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 06:11:16 -0400
+X-Google-Smtp-Source: AB8JxZoYO7rd7wJrYojXrCL/pt4CL/1tnapvyANXhGArFu065hWgdI9kwcY7nDdEIw4PrxuqgOvcCg==
+Date: Mon, 14 May 2018 12:11:13 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, horms@verge.net.au,
+        geert@glider.be, magnus.damm@gmail.com, robh+dt@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: Clear the stack
-Message-ID: <20180514100639.v3erlzbuv2e4awfh@lakrids.cambridge.arm.com>
-References: <20180502203326.9491-3-labbott@redhat.com>
- <20180503071917.xm2xvgagvzkworay@salmiak>
- <dd6ad26c-1d2c-88f3-8f01-e68d2b31d6ea@linux.com>
- <20180504110907.c2dw33kjmyybso6t@lakrids.cambridge.arm.com>
- <4badae50-be9b-2c6d-854b-57ab48664800@linux.com>
- <71199506-b46b-5f91-e489-e6450b6d1067@linux.com>
- <20180511161317.57k6prl54xjmsit3@lakrids.cambridge.arm.com>
- <f180b312-d1cf-3992-4e89-9632c1674cd6@linux.com>
- <20180514051555.bpbydgr56hyffjch@salmiak>
- <6c311899-7131-d21b-10f6-d2ba7380a392@linux.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: draak: Describe HDMI input
+Message-ID: <20180514101113.GA12488@bigcity.dyn.berto.se>
+References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526032802-14376-4-git-send-email-jacopo+renesas@jmondi.org>
+ <20180513125755.GQ18974@bigcity.dyn.berto.se>
+ <26780153.JLo9OE30iv@avalon>
+ <20180514094900.GF30519@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <6c311899-7131-d21b-10f6-d2ba7380a392@linux.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180514094900.GF30519@bigcity.dyn.berto.se>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 12:35:25PM +0300, Alexander Popov wrote:
-> On 14.05.2018 08:15, Mark Rutland wrote:
-> > On Sun, May 13, 2018 at 11:40:07AM +0300, Alexander Popov wrote:
-> >> So what would you think if I do the following in check_alloca():
-> >>
-> >> 	if (size >= stack_left) {
-> >> #if !defined(CONFIG_VMAP_STACK) && defined(CONFIG_SCHED_STACK_END_CHECK)
-> >> 		panic("alloca over the kernel stack boundary\n");
-> >> #else
-> >> 		BUG();
-> >> #endif
-> > 
-> > Given this is already out-of-line, how about we always use panic(), regardless
-> > of VMAP_STACK and SCHED_STACK_END_CHECK? i.e. just
-> > 
-> > 	if (unlikely(size >= stack_left))
-> > 		panic("alloca over the kernel stack boundary");
-> > 
-> > If we have VMAP_STACK selected, and overflow during the panic, it's the same as
-> > if we overflowed during the BUG(). It's likely that panic() will use less stack
-> > space than BUG(), and the compiler can put the call in a slow path that
-> > shouldn't affect most calls, so in all cases it's likely preferable.
+Hi again,
+
+On 2018-05-14 11:49:00 +0200, Niklas Söderlund wrote:
+> Hi Laurent,
 > 
-> I'm sure that maintainers and Linus will strongly dislike my patch if I always
-> use panic() here. panic() kills the whole kernel and we shouldn't use it when we
-> can safely continue to work.
+> On 2018-05-14 05:49:41 +0300, Laurent Pinchart wrote:
 > 
-> Let me describe my logic. So let's have size >= stack_left on a thread stack.
+> [snip]
 > 
-> 1. If CONFIG_VMAP_STACK is enabled, we can safely use BUG(). Even if BUG()
-> handling overflows the thread stack into the guard page, handle_stack_overflow()
-> is called and the neighbour memory is not corrupted. The kernel can proceed to live.
+> > > > +&vin4 {
+> > > > +	pinctrl-0 = <&vin4_pins>;
+> > > > +	pinctrl-names = "default";
+> > > > +
+> > > > +	status = "okay";
+> > > > +
+> > > > +	ports {
+> > > > +		#address-cells = <1>;
+> > > > +		#size-cells = <0>;
+> > > > +
+> > > > +		port@0 {
+> > > > +			reg = <0>;
+> > > > +
+> > > > +			vin4_in: endpoint {
+> > > > +				hsync-active = <0>;
+> > > > +				vsync-active = <0>;
+> > > 
+> > > Comparing this to the Gen2 bindings some properties are missing,
+> > > 
+> > > bus-width = <24>;
+> > > pclk-sample = <1>;
+> > > data-active = <1>;
+> > > 
+> > > This is not a big deal as the VIN driver don't use these properties so
+> > > no functional change should come of this but still a difference.
+> > 
+> > I think the VIN DT bindings should be updated to explicitly list the endpoint 
+> > properties that are mandatory, optional, or not allowed.
+> 
+> I think it's documented as it reference video-interfaces.txt which lists 
+> all these properties as optional. And in deed they are all optional.  If 
+> the VIN driver makes use of all the optional ones is another matter. How 
+> do we know that the remote subdevice is not looking at its remote 
+> endpoint for bus parameters not considered by the rcar-vin driver?
+> 
+> The thing is that the rcar-vin driver only looks at the remote endpoint 
+> for these properties and ignores the on its local endpoint. Maybe some 
+> v4l2 framework change is needed here to make sure the bus properties are 
+> the same on both endpoints of a link. But I fear such a change would 
+> break a lot of stuff.
 
-On arm64 with CONFIG_VMAP_STACK, a stack overflow will result in a
-panic(). My understanding was that the same is true on x86.
+Jacopo pointed out this statement is untrue. The rcar-vin only looks at 
+it's local endpoint not the remote endpoint for it's bus parameters. The 
+callback provided to v4l2_async_notifier_parse_fwnode_endpoints() 
+confused me as the subdevice passed to it is the one describe the remote 
+endpoint while the v4l2_fwnode_endpoint argument is that of the local 
+endpoint. Sorry for the confusion and thanks Jacopo for correcting me.
 
-> 2. If CONFIG_VMAP_STACK is disabled, BUG() handling can corrupt the neighbour
-> kernel memory and cause the undefined behaviour of the whole kernel. I see it on
-> my lkdtm test. That is a cogent reason for panic().
-
-In this case, panic() can also corrupt the neighbour stack, and could
-also fail.
-
-When CONFIG_VMAP_STACK is not selected, a stack overflow simply cannot
-be handled reliably -- while panic() may be more likely to succeed, it
-is not gauranteed to.
-
-> 2.a. If CONFIG_SCHED_STACK_END_CHECK is enabled, the kernel already does panic()
-> when STACK_END_MAGIC is corrupted. So we will _not_ break the safety policy if
-> we do panic() in a similar situation in check_alloca().
-
-Sure, I'm certainly happy with panic() here.
-
-> 2.b. If CONFIG_SCHED_STACK_END_CHECK is disabled, the user has some real reasons
-> not to do panic() when the kernel stack is corrupted. 
-
-I believe that CONFIG_SCHED_STACK_END_CHECK is seen as a debug feature,
-and hence people don't select it. I strongly doubt that people have
-reasons to disable it other than not wanting the overhead associated
-with debug features.
-
-I think it is reasonable to panic() here even with CONFIG_VMAP_STACK
-selected.
-
-> So we should not do it in check_alloca() as well, just use BUG() and
-> hope for the best.
-
-Regardless of whether we BUG() or panic(), we're hoping for the best.
-
-Consistently using panic() here will keep things simpler, so any failure
-reported will be easier to reason about, and easier to debug.
-
-Thanks,
-Mark.
+-- 
+Regards,
+Niklas Söderlund
