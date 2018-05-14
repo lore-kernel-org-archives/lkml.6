@@ -1,39 +1,39 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1793992-1526547717-2-5869917707174005831
+X-Cyrus-Session-Id: sloti22d1t05-1065765-1526314742-2-15370541180049754639
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: yes ("Address greg@kroah.com in From header is in addressbook");
- in-addressbook; shared/fdfaecbe-d8f0-4518-a17e-0d89bf6dc529 ("Greg")
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.248, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526547716; b=Yk7l+v2kS6r8B2hCsvCiWOd0gyAWSBGOaKkKQ/QxQdtax997XJ
-    DKLUmkjHS+3OGFT6dwa52NxZj6lh1zP55gtnaC9CFsVjAh2XaehJ9A2bLKoxq44C
-    Cba80TktPi+DSyPv2CxtMcS2vm36txsdyMzKBrcLHoA5E9Yi/KJWWjDY2mrRzK1I
-    9Uff2XarYerk0Wlh7qcyF9R3OqxJMJ0JHbM71JHaBy3A6XNNgimvHf5R4Ug5PSQY
-    XUSTA4bRBsjTSMPFZAiTkSRLYer12khPpmy+C8cZFEvWgne9gz7xnvU/EAvxF3US
-    fnF8qito54nmFE3ehXHUw45xTIBjeAs7EXKQ==
+    1526314741; b=KYeFkZqZQ67XJk3a4UZWOiuDPcK2XG1sh1jQZxlEkLRhvQ6byU
+    00Fpc+pcRbEAQJq7KstEuNjSzAyrxvAkubLsOItmTdvrCRfKiHQrEde7AUWUD9V2
+    +XelctUeLoX/K5Gr4gANYeBTQie1qR2I1Nnwbj19faTOGZKVR1q0QM3ZqZ+XtIUI
+    l21VT7RpVxKzIcuHfrdGoyNt+F45z/u6DBnNy78vo3+rl/qBvFez/vKJerVkr7Xj
+    q6IZIv3U6bhzMV3IVqAHWtkxcPV1Wfa/qT+pnpYQcvpxU0Tc1zKypD51U2v0UNFn
+    ufWNDOELbeWbQnxWSSy9/FPJH0JeViP/PaBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526547716; bh=xHES714DI/tOB122IyZI2/5CWJIXVi
-    KDhYtPFxd7G80=; b=l+QWxAL0vtiRvVQAOhVrXcd6j5qnfl/xwhwRHcY8s5Dbho
-    UApau7/JI5Q8RulNgBQNI5LflyJneIBh5KVk1g3xwDiN5ymb5yuKEVkHg9wqKa0S
-    l5xStVETz/4ILc3fS18W+lLUkOsL3RJLasF0Zq2QiZ0P0+CzeAyfAIrM7AzOPrJ3
-    cxbaGXqEM5cFnRkjIHXZrCoqX4BlpA0cyf8s22XkEhFM5ZRP15i1HX9HPwrgRssZ
-    5OI3SKLxwIpnubfWSsm5G4XI0qW3WjMdBRfcvVY1AbenR2tJ7KnsH0OUlj70vPF/
-    NNavHnyH/dqcoLg6j+frcNPDcM6Y2U9tNMUEtc2g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com
-    header.i=@messagingengine.com header.b=IxXlcTX5 x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
+    messagingengine.com; h=message-id:subject:from:to:cc:date
+    :in-reply-to:references:content-type:mime-version
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526314741;
+    bh=YPXxhTmNGl1lnJhgkp6yG2TfzjULFW2Ym8WABfdffS0=; b=Ih5xYQV/xhB9
+    Qzs3dm7rJP/QbXlriy/AyyC7LIKdmKm4NBxGo7NMEwJpiusq7s3y4OrD4O/mjIZj
+    FTiAjAugQ+Y46uSsijqmPD5lVE8aYmycC2QJz4HgvIuhsH9mKKd31vknjVsPiZJ8
+    yrlrX68iOTdwkvYZLc3UP3jPkzN5N7xfYtPh8DmZKAToshAQTmdcJzRTZmLH/i3M
+    Xr8Tx2yk/IZeYWa/cdM1lKuH6EEvaQCXyuDKP3eUtaYoHyVy89SjBO+4ZG8QD1aV
+    y0n2CZaNzJprqzbtMpnqYwP4r/zMPofuAX62Ym8XJb4iBNX3mPJzoBw+RjuNMd0D
+    6UzY+3k5eg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -42,14 +42,13 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kroah.com header.result=pass header_is_org_domain=yes;
+    header.domain=codethink.co.uk header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com
-      header.i=@messagingengine.com header.b=IxXlcTX5 x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=codethink.co.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -58,84 +57,97 @@ Authentication-Results: mx4.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kroah.com header.result=pass header_is_org_domain=yes;
+      header.domain=codethink.co.uk header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFMQz6D4vYE2mgAbCDNOjsPqpJ4v+fewLITt21Y4Llv0k7YEDWsYDJNKxR7awaGWV3kntz1nyG6/nQ7y1kssiS+C6oVIhXNStTOlvz112+to0AL3nSLu
-    70ajTC6B4/YwlON5B8OlSVS3S544r9aG1AURUIkO1bCog1lBRUnCoIWV5cfg2wRZEwag++cHDQ4vzcdzD6rUBnxKtK0irhLHLue+E7iFWWRoGysSwk0aJBdd
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=7CQSdrXTAAAA:8 a=5hbFD1BkjCuMjG_J0ygA:9 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22
+X-CM-Envelope: MS4wfMZdHTjvX3RdH0YR1v9Gf3FlGimU5mA7h+D5jYihy+ycpzZLYmGac+SvbmVUtsuscsiEI0Db8RC/d3QX3cNZGiXErZRnQuWpHvmEUiK01NPkSPeqlWJJ
+    LnJoOn/OzEfT/az7x/XruJsxm4mD7HOTkiudAOZ4erdk2VfoTxosO5IJIG6xGpDV/lR6lNt6AwTROqx0Y1ZFWONx4baJ5rxsekeZj6tbWGsN8NwVbx8XpngG
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=20KFwNOVAAAA:8 a=fe96YdYo3bmXweJLhvwA:9 a=QEXdDO2ut3YA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751017AbeEQJBg (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 17 May 2018 05:01:36 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35565 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750779AbeEQJBd (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 17 May 2018 05:01:33 -0400
-X-ME-Proxy: <xmx:7ET9WsTIeW3_WGxCqG6Bq30Konpn6GVCSlDOPdmJvkotafxGjQn7OA>
-X-ME-Proxy: <xmx:7ET9WvchA8mUI0SRO6nVOlSYbpVMnEZUBiicrVMgeyoxfcuFVjNVtA>
-X-ME-Proxy: <xmx:7ET9WrBy5i02yrKJRZaKk6gkf8WgF2jzN5dnTVrGJcak1upw5uxQAg>
-X-ME-Proxy: <xmx:7ET9Wt0u6TfUzmZldpJx1uvQB3m2x1IQ41zeb4p26pf-tsgvzOCiww>
-X-ME-Proxy: <xmx:7ET9WrTH-uoNq3rmoetw0Rp4uoyBQ-hb_CNsc0v4bFDQqJWbCEV5hQ>
-X-ME-Proxy: <xmx:7ET9WjhPkfqtFuIKGQb7eWAiFhCRJxyXBkLcKFrnIX1vNBMKrdWg4w>
-X-ME-Sender: <xms:7ET9WvVzSXXqB7hrlrTI0yGq1LOXfQKkhd3rYOTSnx338m7Z-65R6Q>
-Date: Thu, 17 May 2018 11:01:15 +0200
-From: Greg KH <greg@kroah.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, mark.rutland@arm.com, dave.martin@arm.com
-Subject: Re: [PATCH 2/2] [stable 4.4] arm64: Add work around for Arm
- Cortex-A55 Erratum 1024718
-Message-ID: <20180517090115.GE25318@kroah.com>
-References: <1526295664-22187-1-git-send-email-suzuki.poulose@arm.com>
- <1526295664-22187-2-git-send-email-suzuki.poulose@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526295664-22187-2-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1752720AbeENQS7 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 12:18:59 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:33715 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752717AbeENQS7 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Mon, 14 May 2018 12:18:59 -0400
+Message-ID: <1526314736.9159.13.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 24/72] audit: add tty field to LOGIN event
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org, Richard Guy Briggs <rgb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>
+Date: Mon, 14 May 2018 17:18:56 +0100
+In-Reply-To: <20180406084307.173351538@linuxfoundation.org>
+References: <20180406084305.210085169@linuxfoundation.org>
+         <20180406084307.173351538@linuxfoundation.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 14, 2018 at 12:01:04PM +0100, Suzuki K Poulose wrote:
-> commit ece1397cbc89c51914fae1aec729539cfd8bd62b upstream
+On Fri, 2018-04-06 at 15:23 +0200, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
 > 
-> Some variants of the Arm Cortex-55 cores (r0p0, r0p1, r1p0) suffer
-> from an erratum 1024718, which causes incorrect updates when DBM/AP
-> bits in a page table entry is modified without a break-before-make
-> sequence. The work around is to disable the hardware DBM feature
-> on the affected cores. The hardware Access Flag management features
-> is not affected.
+> ------------------
 > 
-> The hardware DBM feature is a non-conflicting capability, i.e, the
-> kernel could handle cores using the feature and those without having
-> the features running at the same time. So this work around is detected
-> at early boot time, rather than delaying it until the CPUs are brought
-> up into the kernel with MMU turned on. This also avoids other complexities
-> with late CPUs turning online, with or without the hardware DBM features.
+> From: Richard Guy Briggs <rgb@redhat.com>
 > 
-> Cc: stable@vger.kernel.org # v4.4
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
-> Note: The upstream commit is on top of a reworked capability
-> infrastructure for arm64 heterogeneous systems, which allows
-> delaying the CPU model checks. This backport is based on the
-> original version of the patch [0], which checks the affected
-> CPU models during the early boot.
-> 
-> [0] https://lkml.kernel.org/r/20180116102323.3470-1-suzuki.poulose@arm.com
+> commit db0a6fb5d97afe01fd9c47d37c6daa82d4d4001d upstream.
+[...]
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -1976,6 +1976,7 @@ static void audit_log_set_loginuid(kuid_
+>  {
+>  	struct audit_buffer *ab;
+>  	uid_t uid, oldloginuid, loginuid;
+> +	struct tty_struct *tty;
+>  
+>  	if (!audit_enabled)
+>  		return;
+> @@ -1983,14 +1984,17 @@ static void audit_log_set_loginuid(kuid_
+>  	uid = from_kuid(&init_user_ns, task_uid(current));
+>  	oldloginuid = from_kuid(&init_user_ns, koldloginuid);
+>  	loginuid = from_kuid(&init_user_ns, kloginuid),
+> +	tty = audit_get_tty(current);
+>  
+>  	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_LOGIN);
+>  	if (!ab)
+>  		return;
 
-Thanks for these, now queued up.
+This error path leaks the tty ref.  Fixed upstream by:
 
-greg k-h
+commit 76a658c20efd541a62838d9ff68ce94170d7a549
+Author: Richard Guy Briggs <rgb@redhat.com>
+Date:   Tue Jun 28 12:06:58 2016 -0400
+
+    audit: move calcs after alloc and check when logging set loginuid
+
+Ben.
+
+>  	audit_log_format(ab, "pid=%d uid=%u", task_pid_nr(current), uid);
+>  	audit_log_task_context(ab);
+> -	audit_log_format(ab, " old-auid=%u auid=%u old-ses=%u ses=%u res=%d",
+> -			 oldloginuid, loginuid, oldsessionid, sessionid, !rc);
+> +	audit_log_format(ab, " old-auid=%u auid=%u tty=%s old-ses=%u ses=%u res=%d",
+> +			 oldloginuid, loginuid, tty ? tty_name(tty) : "(none)",
+> +			 oldsessionid, sessionid, !rc);
+> +	audit_put_tty(tty);
+>  	audit_log_end(ab);
+>  }
+>  
+
+-- 
+Ben Hutchings
+Software Developer, Codethink Ltd.
