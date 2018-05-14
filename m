@@ -1,72 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752965AbeENR3R (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:29:17 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:46057 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752915AbeENR3P (ORCPT
+        id S1753024AbeENRbP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:31:15 -0400
+Received: from mail-it0-f42.google.com ([209.85.214.42]:37056 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753002AbeENRbN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:29:15 -0400
-X-Google-Smtp-Source: AB8JxZo35CV9/behbsaK3oJu5aQ1GVpRPaxlUhg8OTJNaa42xWaLN+mxC8L9PE13zhFVEbO4fyuP2Q==
-From: =?UTF-8?q?Josef=20=C5=A0im=C3=A1nek?= <josef.simanek@gmail.com>
-To: ming_qian@realsil.com.cn
-Cc: linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Josef=20=C5=A0im=C3=A1nek?= <josef.simanek@gmail.com>
-Subject: RE: media: uvcvideo: Support realtek's UVC 1.5 device
-Date: Mon, 14 May 2018 19:28:49 +0200
-Message-Id: <20180514172849.27224-1-josef.simanek@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
-References: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
+        Mon, 14 May 2018 13:31:13 -0400
+X-Google-Smtp-Source: AB8JxZoY0VYI7tKmaJ6aFYgcBBvoJ7vrviVTh142ckzA3y/kr9VVi36Mz+sy4XID+Z5QvZSyyv3A2w==
+Subject: Re: [PATCH BUGFIX] block, bfq: postpone rq preparation to insert or
+ merge
+To: Paolo Valente <paolo.valente@linaro.org>,
+        Bart Van Assche <bart.vanassche@wdc.com>
+Cc: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "bfq-iosched@googlegroups.com" <bfq-iosched@googlegroups.com>,
+        "oleksandr@natalenko.name" <oleksandr@natalenko.name>
+References: <20180504171701.6876-1-paolo.valente@linaro.org>
+ <d534de4765c0fbcc7bcd858c1d2f40391ece19ac.camel@wdc.com>
+ <8B9DC3A2-0DB0-4EEB-AFB2-C4D6560B7A4A@linaro.org>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <4ea9999a-e316-f0bc-a99f-70cd0e901e55@kernel.dk>
+Date: Mon, 14 May 2018 11:31:10 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <8B9DC3A2-0DB0-4EEB-AFB2-C4D6560B7A4A@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The length of UVC 1.5 video control is 48, and it id 34 for UVC 1.1.
-> Change it to 48 for UVC 1.5 device,
-> and the UVC 1.5 device can be recognized.
+On 5/14/18 11:16 AM, Paolo Valente wrote:
 > 
-> More changes to the driver are needed for full UVC 1.5 compatibility.
-> However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have
-> been reported to work well.
 > 
-> Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
-> Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Hello! I have sucessfully tested this patch on Kernel 4.16.1 (Fedora 28) with Dell XPS 9370
-using following device (output from lsusb):
-
-Bus 001 Device 002: ID 0bda:58f4 Realtek Semiconductor Corp.
-
-You can also find related dmesg output at https://bugs.launchpad.net/dell-sputnik/+bug/1763748/comments/35
-
-Tested-by: Josef Šimánek <josef.simanek@gmail.com>
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> ---
->  drivers/media/usb/uvc/uvc_video.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>> Il giorno 10 mag 2018, alle ore 18:14, Bart Van Assche <bart.vanassche@wdc.com> ha scritto:
+>>
+>> On Fri, 2018-05-04 at 19:17 +0200, Paolo Valente wrote:
+>>> When invoked for an I/O request rq, [ ... ]
+>>
+>> Tested-by: Bart Van Assche <bart.vanassche@wdc.com>
+>>
+>>
+>>
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> index aa0082f..32dfb32 100644
-> --- a/drivers/media/usb/uvc/uvc_video.c
-> +++ b/drivers/media/usb/uvc/uvc_video.c
-> @@ -171,6 +171,8 @@ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
->  	int ret;
->  
->  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
-> +	if (stream->dev->uvc_version >= 0x0150)
-> +		size = 48;
->  	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
->  			query == UVC_GET_DEF)
->  		return -EIO;
-> @@ -259,6 +261,8 @@ static int uvc_set_video_ctrl(struct uvc_streaming *stream,
->  	int ret;
->  
->  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
-> +	if (stream->dev->uvc_version >= 0x0150)
-> +		size = 48;
->  	data = kzalloc(size, GFP_KERNEL);
->  	if (data == NULL)
->  		return -ENOMEM;
+> Any decision for this fix, Jens?
+
+Guess I didn't reply, but I did commit this on Thursday.
+
+-- 
+Jens Axboe
