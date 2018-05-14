@@ -1,96 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752086AbeENDAB (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 23:00:01 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39029 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751953AbeENC77 (ORCPT
+        id S1752038AbeENDMD (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 23:12:03 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:33094 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751953AbeENDMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 22:59:59 -0400
-X-Google-Smtp-Source: AB8JxZpWpM/iZsQURyCty/btgy0bp6WkY81O+HyIj8lROuHb1JcodK2K61aCOxpvzM+aCHoO4y8AVw==
-Date: Sun, 13 May 2018 20:02:05 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: kvm@vger.kernel.org, dvyukov@google.com, karahmed@amazon.de
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: CONFIG_KCOV causing crash in svm_vcpu_run()
-Message-ID: <20180514030205.GI677@sol.localdomain>
-References: <20180514030007.GH677@sol.localdomain>
+        Sun, 13 May 2018 23:12:02 -0400
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: byungchul.park@lge.com
+X-Original-SENDERIP: 10.177.220.135
+X-Original-MAILFROM: byungchul.park@lge.com
+Subject: Re: [PATCH] rcu: Report a quiescent state when it's exactly in the
+ state
+To: Steven Rostedt <rostedt@goodmis.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>, jiangshanlai@gmail.com,
+        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com,
+        peterz@infradead.org
+References: <1526027434-21237-1-git-send-email-byungchul.park@lge.com>
+ <3af4cec0-4019-e3ac-77f9-8631252fb6da@lge.com>
+ <20180511161746.GX26088@linux.vnet.ibm.com>
+ <20180511224138.GA89902@joelaf.mtv.corp.google.com>
+ <20180512050824.GF26088@linux.vnet.ibm.com>
+ <20180512063037.GC192642@joelaf.mtv.corp.google.com>
+ <20180512144119.GJ26088@linux.vnet.ibm.com>
+ <20180512132647.2923f7cf@gandalf.local.home>
+From: Byungchul Park <byungchul.park@lge.com>
+Message-ID: <f35aa0d8-3bbf-0900-7bcd-81ba6e03fe86@lge.com>
+Date: Mon, 14 May 2018 12:11:59 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514030007.GH677@sol.localdomain>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180512132647.2923f7cf@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry, messed up address for KVM mailing list.  See message below.
 
-On Sun, May 13, 2018 at 08:00:07PM -0700, Eric Biggers wrote:
-> With CONFIG_KCOV=y and an AMD processor, running the following program crashes
-> the kernel with no output (I'm testing in a VM, so it's using nested
-> virtualization):
+
+On 2018-05-13 오전 2:26, Steven Rostedt wrote:
+> On Sat, 12 May 2018 07:41:19 -0700
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 > 
-> 	#include <fcntl.h>
-> 	#include <linux/kvm.h>
-> 	#include <sys/ioctl.h>
+>> Don't get me wrong, this discussion was quite useful to me.  We probably
+>> need to at least change the comments, and perhaps the code as well.  But
+>> I agree that we need input from Peter and Steven to make much more forward
+>> progress.
 > 
-> 	int main()
-> 	{
-> 		int dev, vm, cpu;
-> 		char page[4096] __attribute__((aligned(4096))) = { 0 };
-> 		struct kvm_userspace_memory_region memreg = {
-> 			.memory_size = 4096,
-> 			.userspace_addr = (unsigned long)page,
-> 		};
-> 		dev = open("/dev/kvm", O_RDONLY);
-> 		vm = ioctl(dev, KVM_CREATE_VM, 0);
-> 		cpu = ioctl(vm, KVM_CREATE_VCPU, 0);
-> 		ioctl(vm, KVM_SET_USER_MEMORY_REGION, &memreg);
-> 		ioctl(cpu, KVM_RUN, 0);
-> 	}
+> It's the weekend so I skimmed more than read this thread, but I will
+> just add this.
 > 
-> It bisects down to commit b2ac58f90540e39 ("KVM/SVM: Allow direct access to
-> MSR_IA32_SPEC_CTRL").  The bug is apparently that due to the new code for
-> managing the SPEC_CTRL MSR, __sanitizer_cov_trace_pc() is being called from
-> svm_vcpu_run() before the host's MSR_GS_BASE has been restored, which causes a
-> crash somehow.  The following patch fixes it, though I don't know that it's the
-> right solution; maybe KCOV should be disabled in the function instead, or maybe
-> there's a more fundamental problem.  What do people think?
+> The table Joel posted is interesting, and perhaps we should keep things
+> consistent with that. But that said, with respect to task-RCU, as
+> nothing on a trampoline should ever call cond_resched() (and perhaps I
+> should add code in lockdep that verifies this), we just want a
+> quiescent state that tells us that the task has left the trampoline. A
+> cond_resched() should be one of those points that does.
 > 
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index 1fc05e428aba8..d35ef241e66d8 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -5652,6 +5652,15 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
->  #endif
->  		);
->  
-> +#ifdef CONFIG_X86_64
-> +	wrmsrl(MSR_GS_BASE, svm->host.gs_base);
-> +#else
-> +	loadsegment(fs, svm->host.fs);
-> +#ifndef CONFIG_X86_32_LAZY_GS
-> +	loadsegment(gs, svm->host.gs);
-> +#endif
-> +#endif
-> +
->  	/*
->  	 * We do not use IBRS in the kernel. If this vCPU has used the
->  	 * SPEC_CTRL MSR it may have left it on; save the value and
-> @@ -5676,15 +5685,6 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
->  	/* Eliminate branch target predictions from guest mode */
->  	vmexit_fill_RSB();
->  
-> -#ifdef CONFIG_X86_64
-> -	wrmsrl(MSR_GS_BASE, svm->host.gs_base);
-> -#else
-> -	loadsegment(fs, svm->host.fs);
-> -#ifndef CONFIG_X86_32_LAZY_GS
-> -	loadsegment(gs, svm->host.gs);
-> -#endif
-> -#endif
-> -
->  	reload_tss(vcpu);
->  
->  	local_irq_disable();
+> It really has nothing to do with scheduling or preemption. The issue is
+> that if a task is on a trampoline and gets preempted, there's no
+> knowing when it is off that trampoline where we can free it. We need to
+> have places in the kernel that we know is a quiescent state to move
+> task-RCU forward. cond_resched() seems to be one of them. schedule
+> itself can not be, because it can be called from an interrupt preempting
+> a task while it is on the trampoline.
+
+Exactly. I think Steven explained how we should consider them exactly.
+
+> -- Steve
+-- 
+Thanks,
+Byungchul
