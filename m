@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752256AbeENSws (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 14:52:48 -0400
-Received: from mga06.intel.com ([134.134.136.31]:55035 "EHLO mga06.intel.com"
+        id S1752161AbeENSwp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 14:52:45 -0400
+Received: from mga02.intel.com ([134.134.136.20]:45332 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752087AbeENSwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752095AbeENSwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 May 2018 14:52:31 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,401,1520924400";
-   d="scan'208";a="39244653"
+   d="scan'208";a="39244666"
 From: Fenghua Yu <fenghua.yu@intel.com>
 To: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@elte.hu>,
         "H. Peter Anvin" <hpa@linux.intel.com>,
@@ -23,9 +23,9 @@ To: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@elte.hu>,
         "Alan Cox" <alan@linux.intel.com>
 Cc: "x86" <x86@kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>,
         Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH 11/15] x86/split_lock: Add sysfs interface to control user mode behavior
-Date: Mon, 14 May 2018 11:52:21 -0700
-Message-Id: <1526323945-211107-12-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH 15/15] x86/split_lock: Add split lock user space test in selftest
+Date: Mon, 14 May 2018 11:52:25 -0700
+Message-Id: <1526323945-211107-16-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
 References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
@@ -33,138 +33,223 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the interface /sys/kernel/split_lock/user_mode to allow user to
-choose to either generate SIGBUS (default) when hitting split lock in
-user or re-execute the user faulting instruction without generating
-SIGBUS signal.
+The test generates split locked access from user space. If #AC
+exception is enabled for split lock, a SIGBUS is delivered
+to the test.
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- arch/x86/kernel/cpu/split_lock.c | 89 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
+ tools/testing/selftests/x86/Makefile               |   3 +-
+ tools/testing/selftests/x86/split_lock_user_test.c | 187 +++++++++++++++++++++
+ 2 files changed, 189 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/x86/split_lock_user_test.c
 
-diff --git a/arch/x86/kernel/cpu/split_lock.c b/arch/x86/kernel/cpu/split_lock.c
-index 5d399b09c1c8..02b461c48b3c 100644
---- a/arch/x86/kernel/cpu/split_lock.c
-+++ b/arch/x86/kernel/cpu/split_lock.c
-@@ -32,6 +32,19 @@ static DECLARE_DELAYED_WORK(delayed_work, delayed_reenable_split_lock);
+diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
+index d744991c0f4f..19d65729b100 100644
+--- a/tools/testing/selftests/x86/Makefile
++++ b/tools/testing/selftests/x86/Makefile
+@@ -11,7 +11,8 @@ CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
  
- static DEFINE_MUTEX(split_lock_mutex);
- 
-+enum {
-+	USER_MODE_SIGBUS,
-+	USER_MODE_RE_EXECUTE,
-+	USER_MODE_LAST
-+};
+ TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
+ 			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
+-			protection_keys test_vdso test_vsyscall
++			protection_keys test_vdso test_vsyscall	\
++			split_lock_user_test
+ TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
+ 			test_FCMOV test_FCOMI test_FISTTP \
+ 			vdso_restorer
+diff --git a/tools/testing/selftests/x86/split_lock_user_test.c b/tools/testing/selftests/x86/split_lock_user_test.c
+new file mode 100644
+index 000000000000..e6f3367dfb6b
+--- /dev/null
++++ b/tools/testing/selftests/x86/split_lock_user_test.c
+@@ -0,0 +1,187 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2018 Intel Corporation
++ * Author: Fenghua Yu <fenghua.yu@intel.com>
++ *
++ * Pre-request:
++ * Kernel is built with CONFIG_SPLIT_LOCK_AC=y.
++ * Split lock is enabled. If not, enable it by:
++ * #echo 1 >/sys/kernel/split_lock/enable
++ *
++ * Usage:
++ * Run the test alone and it should show:
++ *      TEST PASS: locked instruction is re-executed.
++ *      TEST PASS: Caught SIGBUS/#AC due to split locked access
++ *
++ * Or launch the test from perf and watch "split_lock_user" event count.
++ * #/perf stat -e exceptions:split_lock* /root/split_lock_user_test_64
++ *      TEST PASS: locked instruction is re-executed.
++ *      TEST PASS: Caught SIGBUS/#AC due to split locked access
++ *
++ * Performance counter stats for '/root/split_lock_user_test_64':
++ *
++ *                1      exceptions:split_lock_user
++ *                0      exceptions:split_lock_kernel
++ *
++ *       1.000893458 seconds time elapsed
++ */
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <stdlib.h>
++#include <signal.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <string.h>
 +
-+static int user_mode_reaction = USER_MODE_SIGBUS;
++int split_lock_exception;
 +
-+static const char * const user_modes[USER_MODE_LAST] = {
-+	[USER_MODE_SIGBUS]     = "sigbus",
-+	[USER_MODE_RE_EXECUTE] = "re-execute",
-+};
-+
- /*
-  * On processors not supporting #AC exception for split lock feature,
-  * MSR_TEST_CTL may not exist or MSR_TEST_CTL exists but the bit 29 is
-@@ -214,6 +227,16 @@ static void delayed_reenable_split_lock(struct work_struct *w)
- 		_setup_split_lock(ENABLE_SPLIT_LOCK_AC);
- }
- 
-+static unsigned long eflags_ac(struct pt_regs *regs)
++void catch_sigbus(int sig)
 +{
-+	return regs->flags & X86_EFLAGS_AC;
++	split_lock_exception = 1;
++	printf("TEST PASS: Caught SIGBUS/#AC due to split locked access\n");
++
++	exit(-1);
 +}
 +
-+static unsigned long cr0_am(struct pt_regs *regs)
++int split_lock_ac_enabled(void)
 +{
-+	return read_cr0() & X86_CR0_AM;
++	int fd, enable, ret;
++	char buf[16];
++
++	fd = open("/sys/kernel/split_lock/enable", O_RDONLY);
++	if (fd < 0)
++		return 0;
++
++	if (read(fd, buf, sizeof(int)) < 0) {
++		ret = 0;
++		goto out;
++	}
++
++	enable = atoi(buf);
++	if (enable == 1)
++		ret = 1;
++	else
++		ret = 0;
++
++out:
++	close(fd);
++
++	return ret;
 +}
 +
- /* Will the faulting instruction be re-executed? */
- static bool re_execute(struct pt_regs *regs)
- {
-@@ -224,6 +247,24 @@ static bool re_execute(struct pt_regs *regs)
- 	if (!user_mode(regs))
- 		return true;
- 
++int setup_user_mode(char *user_mode_reaction)
++{
++	ssize_t count;
++	int fd;
++
++	if (strcmp(user_mode_reaction, "sigbus") &&
++	    strcmp(user_mode_reaction, "re-execute"))
++		return -1;
++
++	fd = open("/sys/kernel/split_lock/user_mode", O_RDWR);
++	if (fd < 0)
++		return -1;
++
++	count = write(fd, user_mode_reaction, strlen(user_mode_reaction));
++	if (count != strlen(user_mode_reaction))
++		return -1;
++
++	close(fd);
++
++	return 0;
++}
++
++void do_split_locked_inst(int a, int b, int *iptr)
++{
 +	/*
-+	 * Now check if the user faulting instruction can be re-executed.
++	 * Since eax is equal to *iptr, the instruction loads value in b
++	 * (i.e. 11) into iptr. If the instruction is executed correctly,
++	 * the content of *iptr is changed * to 11 from previous value 1.
 +	 *
-+	 * If both CR0.AM (Alignment Mask) and EFLAGS.AC (Alignment Check)
-+	 * are set in user space, any misalignment including split lock
-+	 * can trigger #AC. In this case, we just issue SIGBUS as standard
-+	 * #AC handler to the user process because split lock is not the
-+	 * definite reason for triggering this #AC.
-+	 *
-+	 * If either CR0.AM or EFLAGS.AC is zero, the only reason for
-+	 * triggering this #AC is split lock. So the faulting instruction
-+	 * can be re-executed if required by user.
++	 * Accessing iptr cross two cache lines will trigger #AC in hardware
++	 * and kernel either delivers SIGBUS to this process or re-execute
++	 * the instruction depending on /sys/kernel/split_lock/user_mode
++	 * setting.
 +	 */
-+	if (cr0_am(regs) == 0 || eflags_ac(regs) == 0)
-+		/* User faulting instruction will be re-executed if required. */
-+		if (user_mode_reaction == USER_MODE_RE_EXECUTE)
-+			return true;
-+
- 	return false;
- }
- 
-@@ -323,8 +364,56 @@ static ssize_t enable_store(struct kobject *kobj, struct kobj_attribute *attr,
- 
- static struct kobj_attribute split_lock_ac_enable = __ATTR_RW(enable);
- 
-+static ssize_t
-+user_mode_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
-+{
-+	char *s = buf;
-+	int reaction;
-+
-+	for (reaction = 0; reaction < USER_MODE_LAST; reaction++) {
-+		if (reaction == user_mode_reaction)
-+			s += sprintf(s, "[%s] ", user_modes[reaction]);
-+		else
-+			s += sprintf(s, "%s ", user_modes[reaction]);
-+	}
-+
-+	if (s != buf)
-+		/* convert the last space to a newline */
-+		*(s - 1) = '\n';
-+
-+	return s - buf;
++	asm volatile ("movl %1, %%eax\n\t"
++		      "movl %1, %0\n\t"
++		      "lock\n cmpxchgl %2, %0\n\t"
++		      : "=m" (*iptr)
++		      : "r"(a), "r"(b)
++		      : "%eax");
 +}
 +
-+static ssize_t
-+user_mode_store(struct kobject *kobj, struct kobj_attribute *attr,
-+		const char *buf, size_t count)
++void test_re_execute(int a, int b, int *iptr)
 +{
-+	int reaction, len, error = -EINVAL;
-+	const char * const *s, *p;
++	setup_user_mode("re-execute");
 +
-+	p = memchr(buf, '\n', count);
-+	len = p ? p - buf : count;
++	/* The locked instruction triggers #AC and then it's re-executed. */
++	do_split_locked_inst(a, b, iptr);
 +
-+	mutex_lock(&split_lock_mutex);
-+	reaction = USER_MODE_SIGBUS;
-+	for (s = &user_modes[reaction]; reaction <= USER_MODE_LAST;
-+	     s++, reaction++) {
-+		if (*s && len == strlen(*s) && !strncmp(buf, *s, len)) {
-+			user_mode_reaction = reaction;
-+			error = 0;
-+			break;
-+		}
++	if (*iptr == b) {
++		printf("TEST PASS: locked instruction is re-executed.\n");
++	} else {
++		printf("TEST FAIL: No #AC exception is caught and ");
++		printf("instruction is not executed correctly.\n");
 +	}
-+	mutex_unlock(&split_lock_mutex);
-+
-+	return error ? error : count;
 +}
 +
-+static struct kobj_attribute split_lock_ac_user = __ATTR_RW(user_mode);
++void test_sigbus(int a, int b, int *iptr)
++{
++	setup_user_mode("sigbus");
 +
- static struct attribute *split_lock_attrs[] = {
- 	&split_lock_ac_enable.attr,
-+	&split_lock_ac_user.attr,
- 	NULL,
- };
- 
++	/*
++	 * The locked instruction triggers #AC and kernel delivers SIGBUS
++	 * to this process.
++	 */
++	do_split_locked_inst(a, b, iptr);
++}
++
++int main(int argc, char **argv)
++{
++	int *iptr, a = 10, b = 11;
++	char *cptr;
++
++	if (!split_lock_ac_enabled()) {
++		printf("#AC exception for split lock is NOT enabled!!\n");
++		printf("Please make sure split lock feature is supported,\n");
++		printf("CONFIG_SPLIT_LOCK_AC is turned on,\n");
++		printf("and /sys/kernel/split_lock/enable is 1 before test!\n");
++
++		return 0;
++	}
++
++	signal(SIGBUS, catch_sigbus);
++
++	/*
++	 * Enable Alignment Checking on x86_64.
++	 * This will generate alignment check on not only split lock but also
++	 * on any misalignment.
++	 * Turn on this for reference only.
++	 */
++	/* __asm__("pushf\norl $0x40000,(%rsp)\npopf"); */
++
++	/* aligned_alloc() provides 64-byte aligned memory */
++	cptr = (char *)aligned_alloc(64, 128);
++
++	/* Increment the pointer by 61, making it misaligned */
++	iptr = (int *)(cptr + 61);
++
++	/* Initial value in iptr is 1. */
++	*iptr = 1;
++
++	test_re_execute(a, b, iptr);
++	/*
++	 * The split lock is disabled after the last locked instruction is
++	 * re-executed.
++	 *
++	 * Wait for the split lock is re-enabled again before next test.
++	 */
++	sleep(1);
++	test_sigbus(a, b, iptr);
++
++	free(cptr);
++
++	return 0;
++}
 -- 
 2.5.0
