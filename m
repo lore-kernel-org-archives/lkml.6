@@ -1,377 +1,301 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752830AbeENLnx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:43:53 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:59568 "EHLO
+        id S1752906AbeENLoH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:44:07 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:59646 "EHLO
         mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752659AbeENLnq (ORCPT
+        with ESMTP id S1752882AbeENLoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:43:46 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180514114345epoutp04e2f6426aaa95b8de849a9f91fa290553~ugCYlXx6m0865708657epoutp04N
-X-AuditID: b6c32a45-8f3ff70000001020-f2-5af97670249a
+        Mon, 14 May 2018 07:44:03 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180514114401epoutp0454a1e8d164e5e310673a3adced0043dc~ugCn_qFqk1061710617epoutp04L
+X-AuditID: b6c32a45-8dbff70000001020-1b-5af97681f4fe
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To: Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>
 Cc: Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH 10/14] thermal: ti-soc-thermal: use OMAP5 defines for DRA752
-Date: Mon, 14 May 2018 13:42:17 +0200
-Message-id: <1526298141-14045-11-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 14/14] thermal: ti-soc-thermal: remove SoC family config
+ options
+Date: Mon, 14 May 2018 13:42:21 +0200
+Message-id: <1526298141-14045-15-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCmhW5B2c8ogxmrdS02zljPajH/yjVW
-        i1Pbm5gsLu+aw2Yxe0k/i8Xn3iOMFk8e9rE5sHvsnHWX3WPxnpdMHn1bVjF6HL+xncnj8ya5
-        ANYoLpuU1JzMstQifbsEroyJBxcwFzzMrni4bzZjA+OzuC5GDg4JAROJ2Td0uxg5OYQEdjBK
-        tB8T7WLkArK/M0pc+32CESQBUrN3wydmiMRuRonXc2dDOb8YJbZ1L2QCqWITsJKY2L4KrENE
-        wE1i1pI/YDazwFRGiU0T6kFsYQEfiZ9d29lBbBYBVYm+TWdYQWxeAU+Jy5NOskBsk5M4eWwy
-        WJwTKL6h/SUbRLyHTWLiPzEI20XiwtNJ7BC2sMSr41ugbGmJZ6s2MoIcJyHQzCjxbcceZojE
-        BEaJPeuFIGxricPHL7JCHMcn0XH4LzskKHglOtqgSjwk/i67DrXXUaJl02RGiIfnMEocufCD
-        ZQKj1AJGhlWMYqkFxbnpqcVGBYZ6xYm5xaV56XrJ+bmbGMExqeW6g3HGOZ9DjAIcjEo8vCtW
-        /ogSYk0sK67MPcQowcGsJMK72+hnlBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeNUpfo4QE0hNL
-        UrNTUwtSi2CyTBycUg2MR26pOZxxv+sdbu0Z2eRRHD717dWLdpeDHfNvhpoKvf028dXt43G9
-        KUtvGc4KPn+x/VuT7z11nRzzU7M3Ss5VebncQZFV3yun+NzBd7+avj3fLBSt9S/cje9fhpD7
-        VCGOI/tq9keEb7j1LqJi4p6Tpc1JK6XqpoeXM/x5Hfq2cdq8Wf91ThwOUWIpzkg01GIuKk4E
-        AKuMA4fFAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42I5/e+xgG5+2c8og99PJC02zljPajH/yjVW
-        i1Pbm5gsLu+aw2Yxe0k/i8Xn3iOMFk8e9rE5sHvsnHWX3WPxnpdMHn1bVjF6HL+xncnj8ya5
-        ANYoLpuU1JzMstQifbsEroyJBxcwFzzMrni4bzZjA+OzuC5GTg4JAROJvRs+MXcxcnEICexk
-        lOj91s4I4fxilJj26RQbSBWbgJXExPZVjCC2iICbxKwlf8CKmAWmMkpMhioSFvCR+Nm1nR3E
-        ZhFQlejbdIYVxOYV8JS4POkkC8Q6OYmTxyaDxTmB4hvaX4L1Cgl4SNz+3cI2gZFnASPDKkbJ
-        1ILi3PTcYqMCo7zUcr3ixNzi0rx0veT83E2MwEDadlirfwfj4yXxhxgFOBiVeHgDlv+IEmJN
-        LCuuzD3EKMHBrCTCu9voZ5QQb0piZVVqUX58UWlOavEhRmkOFiVxXv78Y5FCAumJJanZqakF
-        qUUwWSYOTqkGxk6Lrb/jf6Sbn5n5g2FCXJaMKX+7h5T8avU6ZeGa5TtWCc+7vqqNy/HfhK4Z
-        /jxCp6Of6ez69fz5nNXL10/dZfC/OHH+9pfHJgu5rHopX2W9vfmTTuaW1NWzngYXfFls+zt0
-        jhoT03+P8rtaznvT/4qtlt6RkSrwzmGxbfBRhv2ul0sPn57J/FKJpTgj0VCLuag4EQAIrZiT
-        IAIAAA==
-X-CMS-MailID: 20180514114343epcas2p4280b4ff50611a223a1b3ae37dbe743ee
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCmqW5j2c8og6PNfBYbZ6xntZh/5Rqr
+        xantTUwWl3fNYbOYvaSfxeJz7xFGiycP+9gc2D12zrrL7rF4z0smj74tqxg9jt/YzuTxeZNc
+        AGsUl01Kak5mWWqRvl0CV0bbIuWCGR4Vh3bvZWxgXGnVxcjJISFgIvFiXytrFyMXh5DADkaJ
+        rp42FgjnO6PErP4fbDBVZ568ZoZI7GaU6PwzgR3C+cUocfP+VhaQKjYBK4mJ7asYQWwRATeJ
+        WUv+gNnMAlMZJTZNqAexhQWCJPYfXgNWzyKgKnF/0g9mEJtXwFNib2MPE8Q2OYmTxyazgtic
+        QPEN7S+hruhhk1g0JxDCdpHYPOMTVFxY4tXxLewQtrTEs1UbGUGOkxBoZpT4tmMPM0RiAqPE
+        nvVCELa1xOHjF1khjuOT6Dj8F6iZAyjOK9HRJgRhekhs/w/V6Sixd/ZGaBDNYZTob5vFPIFR
+        agEjwypGsdSC4tz01GKjAkO94sTc4tK8dL3k/NxNjOCY1HLdwTjjnM8hRgEORiUe3hUrf0QJ
+        sSaWFVfmHmKU4GBWEuHdbfQzSog3JbGyKrUoP76oNCe1+BCjNAeLkjjvGqWvUUIC6Yklqdmp
+        qQWpRTBZJg5OqQbG5YpdWx/cOu4TctSr1362n+O/Unm5kEdzFrhklv2f+7qkuOtJZVRk4pny
+        cwV3NPfZnL4dxaEn7Ls+xUNgxfyIwHPpWZzNvIEqX0zTWLKk+m1/8v34cP1UeK9ckJ7nk6/5
+        Dv/ym9aH/stjs0/xY+y+V3ai9evvX+VtHe7Mf5LM1j57d1CC4aISS3FGoqEWc1FxIgCirt7q
+        xQIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphluLIzCtJLcpLzFFi42I5/e+xgG5D2c8og67n3BYbZ6xntZh/5Rqr
+        xantTUwWl3fNYbOYvaSfxeJz7xFGiycP+9gc2D12zrrL7rF4z0smj74tqxg9jt/YzuTxeZNc
+        AGsUl01Kak5mWWqRvl0CV0bbIuWCGR4Vh3bvZWxgXGnVxcjJISFgInHmyWvmLkYuDiGBnYwS
+        7acb2CCcX4wSDdOPs4NUsQlYSUxsX8UIYosIuEnMWvKHEaSIWWAqo8TkT6fYQBLCAgESL26+
+        BStiEVCVuD/pBzOIzSvgKbG3sYcJYp2cxMljk1lBbE6g+Ib2l2C9QgIeErd/t7BNYORZwMiw
+        ilEytaA4Nz232KjAKC+1XK84Mbe4NC9dLzk/dxMjMIy2Hdbq38H4eEn8IUYBDkYlHt6A5T+i
+        hFgTy4orcw8xSnAwK4nw7jb6GSXEm5JYWZValB9fVJqTWnyIUZqDRUmclz//WKSQQHpiSWp2
+        ampBahFMlomDU6qBUSnxTsX9Y2XxL9hnp273y3Dv3L35VuYR16NJzx9wq2+TFRLaUvIzYWZJ
+        VJnBrPqWRV43l/GcUAqVNDJfUfvK4uUscfcfsV+3r/qbstywynrlpdSE9d7FkhzP0/z7mVKy
+        QtuPmz5jPbzHaqvkJY8rt27PEr9q4n0t3UXu64/dbAHbFlWfVD58V4mlOCPRUIu5qDgRAHwM
+        B00fAgAA
+X-CMS-MailID: 20180514114400epcas2p193e6f6643171575aab079329bed79c2c
 X-Msg-Generator: CA
 CMS-TYPE: 102P
-X-CMS-RootMailID: 20180514114343epcas2p4280b4ff50611a223a1b3ae37dbe743ee
-X-RootMTR: 20180514114343epcas2p4280b4ff50611a223a1b3ae37dbe743ee
+X-CMS-RootMailID: 20180514114400epcas2p193e6f6643171575aab079329bed79c2c
+X-RootMTR: 20180514114400epcas2p193e6f6643171575aab079329bed79c2c
 References: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180514114343epcas2p4280b4ff50611a223a1b3ae37dbe743ee@epcas2p4.samsung.com>
+        <CGME20180514114400epcas2p193e6f6643171575aab079329bed79c2c@epcas2p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use defines from omap5xxx-bandgap.h in dra752-thermal-data.c
-instead of defining duplicate ones in dra752-bandgap.h.
+Before latest changes:
 
-There should be no functional changes caused by this patch.
+$ size drivers/thermal/ti-soc-thermal/built-in.a
+   text    data     bss     dec     hex filename
+   9540     152       8    9700    25e4 drivers/thermal/ti-soc-thermal/ti-bandgap.o
+   1604      48       8    1660     67c drivers/thermal/ti-soc-thermal/ti-thermal-common.o
+    228    2264       0    2492     9bc drivers/thermal/ti-soc-thermal/dra752-thermal-data.o
+   1172     256       0    1428     594 drivers/thermal/ti-soc-thermal/omap3-thermal-data.o
+   2376     256       0    2632     a48 drivers/thermal/ti-soc-thermal/omap4-thermal-data.o
+    160    2008       0    2168     878 drivers/thermal/ti-soc-thermal/omap5-thermal-data.o
+
+After latest changes:
+
+$ size drivers/thermal/ti-soc-thermal/built-in.a
+   text    data     bss     dec     hex filename
+   9532     152       8    9692    25dc drivers/thermal/ti-soc-thermal/ti-bandgap.o
+   1604      48       8    1660     67c drivers/thermal/ti-soc-thermal/ti-thermal-common.o
+    392     200       0     592     250 drivers/thermal/ti-soc-thermal/dra752-thermal-data.o
+    152    1100       0    1252     4e4 drivers/thermal/ti-soc-thermal/omap5-thermal-data.o
+    644     224       0     868     364 drivers/thermal/ti-soc-thermal/omap3-thermal-data.o
+   1292     224       0    1516     5ec drivers/thermal/ti-soc-thermal/omap4-thermal-data.o
+
+Maximum possible space savings (CONFIG_OMAP3_THERMAL=y with
+other config options set to n) are down from ~7kB to ~3kB so
+it is not really worth to have extra complexity and keep SoC
+family config options. Just remove them.
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/thermal/ti-soc-thermal/dra752-bandgap.h    |  70 -----------
- .../thermal/ti-soc-thermal/dra752-thermal-data.c   | 129 +++++++++++----------
- 2 files changed, 65 insertions(+), 134 deletions(-)
+ drivers/thermal/ti-soc-thermal/Kconfig             | 63 +++-------------------
+ drivers/thermal/ti-soc-thermal/Makefile            |  8 +--
+ .../thermal/ti-soc-thermal/omap5-thermal-data.c    |  4 --
+ drivers/thermal/ti-soc-thermal/ti-bandgap.c        |  8 ---
+ drivers/thermal/ti-soc-thermal/ti-bandgap.h        | 19 -------
+ 5 files changed, 12 insertions(+), 90 deletions(-)
 
-diff --git a/drivers/thermal/ti-soc-thermal/dra752-bandgap.h b/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-index ac324b9..b9d65b4 100644
---- a/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-@@ -45,18 +45,9 @@
+diff --git a/drivers/thermal/ti-soc-thermal/Kconfig b/drivers/thermal/ti-soc-thermal/Kconfig
+index fe0e877..b16f239 100644
+--- a/drivers/thermal/ti-soc-thermal/Kconfig
++++ b/drivers/thermal/ti-soc-thermal/Kconfig
+@@ -2,8 +2,14 @@ config TI_SOC_THERMAL
+ 	tristate "Texas Instruments SoCs temperature sensor driver"
+ 	help
+ 	  If you say yes here you get support for the Texas Instruments
+-	  OMAP4460+ on die bandgap temperature sensor support. The register
+-	  set is part of system control module.
++	  on die bandgap temperature sensor support. The current chips
++	  supported are:
++	   - OMAP3430
++	   - OMAP4430
++	   - OMAP4460
++	   - OMAP4470
++	   - OMAP5430
++	   - DRA752
  
+ 	  This includes alert interrupts generation and also the TSHUT
+ 	  support.
+@@ -17,56 +23,3 @@ config TI_THERMAL
  
- /* DRA752.common register offsets */
--#define DRA752_BANDGAP_CTRL_1_OFFSET		0x1a0
--#define DRA752_BANDGAP_STATUS_1_OFFSET		0x1c8
- #define DRA752_BANDGAP_CTRL_2_OFFSET		0x39c
- #define DRA752_BANDGAP_STATUS_2_OFFSET		0x3b8
- 
--/* DRA752.core register offsets */
--#define DRA752_STD_FUSE_OPP_BGAP_CORE_OFFSET		0x8
--#define DRA752_TEMP_SENSOR_CORE_OFFSET			0x154
--#define DRA752_BANDGAP_THRESHOLD_CORE_OFFSET		0x1ac
--#define DRA752_DTEMP_CORE_1_OFFSET			0x20c
--#define DRA752_DTEMP_CORE_2_OFFSET			0x210
+ 	  This includes trip points definitions, extrapolation rules and
+ 	  CPU cooling device bindings.
 -
- /* DRA752.iva register offsets */
- #define DRA752_STD_FUSE_OPP_BGAP_IVA_OFFSET		0x388
- #define DRA752_TEMP_SENSOR_IVA_OFFSET			0x398
-@@ -64,13 +55,6 @@
- #define DRA752_DTEMP_IVA_1_OFFSET			0x3d4
- #define DRA752_DTEMP_IVA_2_OFFSET			0x3d8
- 
--/* DRA752.mpu register offsets */
--#define DRA752_STD_FUSE_OPP_BGAP_MPU_OFFSET		0x4
--#define DRA752_TEMP_SENSOR_MPU_OFFSET			0x14c
--#define DRA752_BANDGAP_THRESHOLD_MPU_OFFSET		0x1a4
--#define DRA752_DTEMP_MPU_1_OFFSET			0x1e4
--#define DRA752_DTEMP_MPU_2_OFFSET			0x1e8
+-config OMAP3_THERMAL
+-	bool "Texas Instruments OMAP3 thermal support"
+-	depends on TI_SOC_THERMAL
+-	depends on ARCH_OMAP3 || COMPILE_TEST
+-	help
+-	  If you say yes here you get thermal support for the Texas Instruments
+-	  OMAP3 SoC family. The current chips supported are:
+-	   - OMAP3430
 -
- /* DRA752.dspeve register offsets */
- #define DRA752_STD_FUSE_OPP_BGAP_DSPEVE_OFFSET			0x384
- #define DRA752_TEMP_SENSOR_DSPEVE_OFFSET			0x394
-@@ -78,13 +62,6 @@
- #define DRA752_DTEMP_DSPEVE_1_OFFSET				0x3c0
- #define DRA752_DTEMP_DSPEVE_2_OFFSET				0x3c4
- 
--/* DRA752.gpu register offsets */
--#define DRA752_STD_FUSE_OPP_BGAP_GPU_OFFSET		0x0
--#define DRA752_TEMP_SENSOR_GPU_OFFSET			0x150
--#define DRA752_BANDGAP_THRESHOLD_GPU_OFFSET		0x1a8
--#define DRA752_DTEMP_GPU_1_OFFSET			0x1f8
--#define DRA752_DTEMP_GPU_2_OFFSET			0x1fc
+-	  OMAP3 chips normally don't need thermal management, and sensors in
+-	  this generation are not accurate, nor they are very close to
+-	  the important hotspots.
 -
- /**
-  * Register bitfields for DRA752
-  *
-@@ -93,14 +70,6 @@
-  * grouped by register.
-  */
- 
--/* DRA752.BANDGAP_STATUS_1 */
--#define DRA752_BANDGAP_STATUS_1_HOT_CORE_MASK		BIT(5)
--#define DRA752_BANDGAP_STATUS_1_COLD_CORE_MASK		BIT(4)
--#define DRA752_BANDGAP_STATUS_1_HOT_GPU_MASK		BIT(3)
--#define DRA752_BANDGAP_STATUS_1_COLD_GPU_MASK		BIT(2)
--#define DRA752_BANDGAP_STATUS_1_HOT_MPU_MASK		BIT(1)
--#define DRA752_BANDGAP_STATUS_1_COLD_MPU_MASK		BIT(0)
+-	  Say 'N' here.
 -
- /* DRA752.BANDGAP_CTRL_2 */
- #define DRA752_BANDGAP_CTRL_2_FREEZE_IVA_MASK			BIT(22)
- #define DRA752_BANDGAP_CTRL_2_FREEZE_DSPEVE_MASK		BIT(21)
-@@ -115,43 +84,4 @@
- #define DRA752_BANDGAP_STATUS_2_HOT_DSPEVE_MASK			BIT(1)
- #define DRA752_BANDGAP_STATUS_2_COLD_DSPEVE_MASK		BIT(0)
- 
--/* DRA752.BANDGAP_CTRL_1 */
--#define DRA752_BANDGAP_CTRL_1_COUNTER_DELAY_MASK		(0x7 << 27)
--#define DRA752_BANDGAP_CTRL_1_FREEZE_CORE_MASK			BIT(23)
--#define DRA752_BANDGAP_CTRL_1_FREEZE_GPU_MASK			BIT(22)
--#define DRA752_BANDGAP_CTRL_1_FREEZE_MPU_MASK			BIT(21)
--#define DRA752_BANDGAP_CTRL_1_MASK_HOT_CORE_MASK		BIT(5)
--#define DRA752_BANDGAP_CTRL_1_MASK_COLD_CORE_MASK		BIT(4)
--#define DRA752_BANDGAP_CTRL_1_MASK_HOT_GPU_MASK			BIT(3)
--#define DRA752_BANDGAP_CTRL_1_MASK_COLD_GPU_MASK		BIT(2)
--#define DRA752_BANDGAP_CTRL_1_MASK_HOT_MPU_MASK			BIT(1)
--#define DRA752_BANDGAP_CTRL_1_MASK_COLD_MPU_MASK		BIT(0)
+-config OMAP4_THERMAL
+-	bool "Texas Instruments OMAP4 thermal support"
+-	depends on TI_SOC_THERMAL
+-	depends on ARCH_OMAP4 || COMPILE_TEST
+-	help
+-	  If you say yes here you get thermal support for the Texas Instruments
+-	  OMAP4 SoC family. The current chip supported are:
+-	   - OMAP4430
+-	   - OMAP4460
+-	   - OMAP4470
 -
--/* DRA752.TEMP_SENSOR */
--#define DRA752_TEMP_SENSOR_TMPSOFF_MASK		BIT(11)
--#define DRA752_TEMP_SENSOR_EOCZ_MASK		BIT(10)
--#define DRA752_TEMP_SENSOR_DTEMP_MASK		(0x3ff << 0)
+-	  This includes alert interrupts generation and also the TSHUT
+-	  support.
 -
--/**
-- * Temperature limits and thresholds for DRA752
-- *
-- * All the macros bellow are definitions for handling the
-- * ADC conversions and representation of temperature limits
-- * and thresholds for DRA752. Definitions are grouped
-- * by temperature domain.
-- */
+-config OMAP5_THERMAL
+-	bool "Texas Instruments OMAP5 thermal support"
+-	depends on TI_SOC_THERMAL
+-	depends on SOC_OMAP5 || COMPILE_TEST
+-	help
+-	  If you say yes here you get thermal support for the Texas Instruments
+-	  OMAP5 SoC family. The current chip supported are:
+-	   - OMAP5430
 -
--/* DRA752.common temperature definitions */
--/* ADC conversion table limits */
--#define DRA752_ADC_START_VALUE		540
--#define DRA752_ADC_END_VALUE		945
+-	  This includes alert interrupts generation and also the TSHUT
+-	  support.
 -
--/* DRA752 GPU/MPU/CORE/DSPEVE/IVA temperature definitions */
--/* bandgap clock limits */
--#define DRA752_MAX_FREQ				1500000
--#define DRA752_MIN_FREQ				1000000
--/* interrupts thresholds */
--#define DRA752_T_HOT				800
--#define DRA752_T_COLD				795
+-config DRA752_THERMAL
+-	bool "Texas Instruments DRA752 thermal support"
+-	depends on TI_SOC_THERMAL
+-	depends on SOC_DRA7XX || COMPILE_TEST
+-	help
+-	  If you say yes here you get thermal support for the Texas Instruments
+-	  DRA752 SoC family. The current chip supported are:
+-	   - DRA752
 -
- #endif /* __DRA752_BANDGAP_H */
-diff --git a/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c b/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c
-index 3372cd7..de412a2 100644
---- a/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c
-+++ b/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c
-@@ -21,6 +21,7 @@
- 
- #include "ti-thermal.h"
- #include "ti-bandgap.h"
-+#include "omap5xxx-bandgap.h"
- #include "dra752-bandgap.h"
- 
- /*
-@@ -34,22 +35,22 @@
-  */
- static struct temp_sensor_registers
- dra752_core_temp_sensor_registers = {
--	.temp_sensor_ctrl = DRA752_TEMP_SENSOR_CORE_OFFSET,
--	.bgap_tempsoff_mask = DRA752_TEMP_SENSOR_TMPSOFF_MASK,
--	.bgap_eocz_mask = DRA752_TEMP_SENSOR_EOCZ_MASK,
--	.bgap_dtemp_mask = DRA752_TEMP_SENSOR_DTEMP_MASK,
--	.bgap_mask_ctrl = DRA752_BANDGAP_CTRL_1_OFFSET,
--	.mask_hot_mask = DRA752_BANDGAP_CTRL_1_MASK_HOT_CORE_MASK,
--	.mask_cold_mask = DRA752_BANDGAP_CTRL_1_MASK_COLD_CORE_MASK,
--	.mask_counter_delay_mask = DRA752_BANDGAP_CTRL_1_COUNTER_DELAY_MASK,
--	.mask_freeze_mask = DRA752_BANDGAP_CTRL_1_FREEZE_CORE_MASK,
--	.bgap_threshold = DRA752_BANDGAP_THRESHOLD_CORE_OFFSET,
--	.bgap_status = DRA752_BANDGAP_STATUS_1_OFFSET,
--	.status_hot_mask = DRA752_BANDGAP_STATUS_1_HOT_CORE_MASK,
--	.status_cold_mask = DRA752_BANDGAP_STATUS_1_COLD_CORE_MASK,
--	.ctrl_dtemp_1 = DRA752_DTEMP_CORE_1_OFFSET,
--	.ctrl_dtemp_2 = DRA752_DTEMP_CORE_2_OFFSET,
--	.bgap_efuse = DRA752_STD_FUSE_OPP_BGAP_CORE_OFFSET,
-+	.temp_sensor_ctrl = OMAP5430_TEMP_SENSOR_CORE_OFFSET,
-+	.bgap_tempsoff_mask = OMAP5430_BGAP_TEMPSOFF_MASK,
-+	.bgap_eocz_mask = OMAP5430_BGAP_TEMP_SENSOR_EOCZ_MASK,
-+	.bgap_dtemp_mask = OMAP5430_BGAP_TEMP_SENSOR_DTEMP_MASK,
-+	.bgap_mask_ctrl = OMAP5430_BGAP_CTRL_OFFSET,
-+	.mask_hot_mask = OMAP5430_MASK_HOT_CORE_MASK,
-+	.mask_cold_mask = OMAP5430_MASK_COLD_CORE_MASK,
-+	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
-+	.mask_freeze_mask = OMAP5430_MASK_FREEZE_CORE_MASK,
-+	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_CORE_OFFSET,
-+	.bgap_status = OMAP5430_BGAP_STATUS_OFFSET,
-+	.status_hot_mask = OMAP5430_HOT_CORE_FLAG_MASK,
-+	.status_cold_mask = OMAP5430_COLD_CORE_FLAG_MASK,
-+	.ctrl_dtemp_1 = OMAP5430_BGAP_DTEMP_CORE_1_OFFSET,
-+	.ctrl_dtemp_2 = OMAP5430_BGAP_DTEMP_CORE_2_OFFSET,
-+	.bgap_efuse = OMAP5430_FUSE_OPP_BGAP_CORE,
+-	  This includes alert interrupts generation and also the TSHUT
+-	  support.
+diff --git a/drivers/thermal/ti-soc-thermal/Makefile b/drivers/thermal/ti-soc-thermal/Makefile
+index aa1c38d..2986e1e 100644
+--- a/drivers/thermal/ti-soc-thermal/Makefile
++++ b/drivers/thermal/ti-soc-thermal/Makefile
+@@ -2,7 +2,7 @@
+ obj-$(CONFIG_TI_SOC_THERMAL)		+= ti-soc-thermal.o
+ ti-soc-thermal-y			:= ti-bandgap.o
+ ti-soc-thermal-$(CONFIG_TI_THERMAL)	+= ti-thermal-common.o
+-ti-soc-thermal-$(CONFIG_DRA752_THERMAL)	+= dra752-thermal-data.o omap5-thermal-data.o
+-ti-soc-thermal-$(CONFIG_OMAP3_THERMAL)	+= omap3-thermal-data.o
+-ti-soc-thermal-$(CONFIG_OMAP4_THERMAL)	+= omap4-thermal-data.o
+-ti-soc-thermal-$(CONFIG_OMAP5_THERMAL)	+= omap5-thermal-data.o
++ti-soc-thermal-y			+= dra752-thermal-data.o
++ti-soc-thermal-y			+= omap3-thermal-data.o
++ti-soc-thermal-y			+= omap4-thermal-data.o
++ti-soc-thermal-y			+= omap5-thermal-data.o
+diff --git a/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c b/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
+index 98b250a..fd344f6 100644
+--- a/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
++++ b/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
+@@ -114,7 +114,6 @@ struct temp_sensor_registers
+ 	.bgap_efuse = OMAP5430_FUSE_OPP_BGAP_CORE,
  };
  
- /*
-@@ -58,13 +59,13 @@
- static struct temp_sensor_registers
- dra752_iva_temp_sensor_registers = {
- 	.temp_sensor_ctrl = DRA752_TEMP_SENSOR_IVA_OFFSET,
--	.bgap_tempsoff_mask = DRA752_TEMP_SENSOR_TMPSOFF_MASK,
--	.bgap_eocz_mask = DRA752_TEMP_SENSOR_EOCZ_MASK,
--	.bgap_dtemp_mask = DRA752_TEMP_SENSOR_DTEMP_MASK,
-+	.bgap_tempsoff_mask = OMAP5430_BGAP_TEMPSOFF_MASK,
-+	.bgap_eocz_mask = OMAP5430_BGAP_TEMP_SENSOR_EOCZ_MASK,
-+	.bgap_dtemp_mask = OMAP5430_BGAP_TEMP_SENSOR_DTEMP_MASK,
- 	.bgap_mask_ctrl = DRA752_BANDGAP_CTRL_2_OFFSET,
- 	.mask_hot_mask = DRA752_BANDGAP_CTRL_2_MASK_HOT_IVA_MASK,
- 	.mask_cold_mask = DRA752_BANDGAP_CTRL_2_MASK_COLD_IVA_MASK,
--	.mask_counter_delay_mask = DRA752_BANDGAP_CTRL_1_COUNTER_DELAY_MASK,
-+	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
- 	.mask_freeze_mask = DRA752_BANDGAP_CTRL_2_FREEZE_IVA_MASK,
- 	.bgap_threshold = DRA752_BANDGAP_THRESHOLD_IVA_OFFSET,
- 	.bgap_status = DRA752_BANDGAP_STATUS_2_OFFSET,
-@@ -80,22 +81,22 @@
-  */
- static struct temp_sensor_registers
- dra752_mpu_temp_sensor_registers = {
--	.temp_sensor_ctrl = DRA752_TEMP_SENSOR_MPU_OFFSET,
--	.bgap_tempsoff_mask = DRA752_TEMP_SENSOR_TMPSOFF_MASK,
--	.bgap_eocz_mask = DRA752_TEMP_SENSOR_EOCZ_MASK,
--	.bgap_dtemp_mask = DRA752_TEMP_SENSOR_DTEMP_MASK,
--	.bgap_mask_ctrl = DRA752_BANDGAP_CTRL_1_OFFSET,
--	.mask_hot_mask = DRA752_BANDGAP_CTRL_1_MASK_HOT_MPU_MASK,
--	.mask_cold_mask = DRA752_BANDGAP_CTRL_1_MASK_COLD_MPU_MASK,
--	.mask_counter_delay_mask = DRA752_BANDGAP_CTRL_1_COUNTER_DELAY_MASK,
--	.mask_freeze_mask = DRA752_BANDGAP_CTRL_1_FREEZE_MPU_MASK,
--	.bgap_threshold = DRA752_BANDGAP_THRESHOLD_MPU_OFFSET,
--	.bgap_status = DRA752_BANDGAP_STATUS_1_OFFSET,
--	.status_hot_mask = DRA752_BANDGAP_STATUS_1_HOT_MPU_MASK,
--	.status_cold_mask = DRA752_BANDGAP_STATUS_1_COLD_MPU_MASK,
--	.ctrl_dtemp_1 = DRA752_DTEMP_MPU_1_OFFSET,
--	.ctrl_dtemp_2 = DRA752_DTEMP_MPU_2_OFFSET,
--	.bgap_efuse = DRA752_STD_FUSE_OPP_BGAP_MPU_OFFSET,
-+	.temp_sensor_ctrl = OMAP5430_TEMP_SENSOR_MPU_OFFSET,
-+	.bgap_tempsoff_mask = OMAP5430_BGAP_TEMPSOFF_MASK,
-+	.bgap_eocz_mask = OMAP5430_BGAP_TEMP_SENSOR_EOCZ_MASK,
-+	.bgap_dtemp_mask = OMAP5430_BGAP_TEMP_SENSOR_DTEMP_MASK,
-+	.bgap_mask_ctrl = OMAP5430_BGAP_CTRL_OFFSET,
-+	.mask_hot_mask = OMAP5430_MASK_HOT_MPU_MASK,
-+	.mask_cold_mask = OMAP5430_MASK_COLD_MPU_MASK,
-+	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
-+	.mask_freeze_mask = OMAP5430_MASK_FREEZE_MPU_MASK,
-+	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_MPU_OFFSET,
-+	.bgap_status = OMAP5430_BGAP_STATUS_OFFSET,
-+	.status_hot_mask = OMAP5430_HOT_MPU_FLAG_MASK,
-+	.status_cold_mask = OMAP5430_COLD_MPU_FLAG_MASK,
-+	.ctrl_dtemp_1 = OMAP5430_BGAP_DTEMP_MPU_1_OFFSET,
-+	.ctrl_dtemp_2 = OMAP5430_BGAP_DTEMP_MPU_2_OFFSET,
-+	.bgap_efuse = OMAP5430_FUSE_OPP_BGAP_MPU,
+-#ifdef CONFIG_OMAP5_THERMAL
+ /* Thresholds and limits for OMAP5430 MPU/GPU/CORE temperature sensor */
+ static struct temp_sensor_data omap5430_temp_sensor_data = {
+ 	.tshut_hot = OMAP5430_TSHUT_HOT,
+@@ -124,7 +123,6 @@ struct temp_sensor_registers
+ 	.min_freq = OMAP5430_MIN_FREQ,
+ 	.max_freq = OMAP5430_MAX_FREQ,
  };
+-#endif /* CONFIG_OMAP5_THERMAL */
  
  /*
-@@ -104,13 +105,13 @@
- static struct temp_sensor_registers
- dra752_dspeve_temp_sensor_registers = {
- 	.temp_sensor_ctrl = DRA752_TEMP_SENSOR_DSPEVE_OFFSET,
--	.bgap_tempsoff_mask = DRA752_TEMP_SENSOR_TMPSOFF_MASK,
--	.bgap_eocz_mask = DRA752_TEMP_SENSOR_EOCZ_MASK,
--	.bgap_dtemp_mask = DRA752_TEMP_SENSOR_DTEMP_MASK,
-+	.bgap_tempsoff_mask = OMAP5430_BGAP_TEMPSOFF_MASK,
-+	.bgap_eocz_mask = OMAP5430_BGAP_TEMP_SENSOR_EOCZ_MASK,
-+	.bgap_dtemp_mask = OMAP5430_BGAP_TEMP_SENSOR_DTEMP_MASK,
- 	.bgap_mask_ctrl = DRA752_BANDGAP_CTRL_2_OFFSET,
- 	.mask_hot_mask = DRA752_BANDGAP_CTRL_2_MASK_HOT_DSPEVE_MASK,
- 	.mask_cold_mask = DRA752_BANDGAP_CTRL_2_MASK_COLD_DSPEVE_MASK,
--	.mask_counter_delay_mask = DRA752_BANDGAP_CTRL_1_COUNTER_DELAY_MASK,
-+	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
- 	.mask_freeze_mask = DRA752_BANDGAP_CTRL_2_FREEZE_DSPEVE_MASK,
- 	.bgap_threshold = DRA752_BANDGAP_THRESHOLD_DSPEVE_OFFSET,
- 	.bgap_status = DRA752_BANDGAP_STATUS_2_OFFSET,
-@@ -126,38 +127,38 @@
-  */
- static struct temp_sensor_registers
- dra752_gpu_temp_sensor_registers = {
--	.temp_sensor_ctrl = DRA752_TEMP_SENSOR_GPU_OFFSET,
--	.bgap_tempsoff_mask = DRA752_TEMP_SENSOR_TMPSOFF_MASK,
--	.bgap_eocz_mask = DRA752_TEMP_SENSOR_EOCZ_MASK,
--	.bgap_dtemp_mask = DRA752_TEMP_SENSOR_DTEMP_MASK,
--	.bgap_mask_ctrl = DRA752_BANDGAP_CTRL_1_OFFSET,
--	.mask_hot_mask = DRA752_BANDGAP_CTRL_1_MASK_HOT_GPU_MASK,
--	.mask_cold_mask = DRA752_BANDGAP_CTRL_1_MASK_COLD_GPU_MASK,
--	.mask_counter_delay_mask = DRA752_BANDGAP_CTRL_1_COUNTER_DELAY_MASK,
--	.mask_freeze_mask = DRA752_BANDGAP_CTRL_1_FREEZE_GPU_MASK,
--	.bgap_threshold = DRA752_BANDGAP_THRESHOLD_GPU_OFFSET,
--	.bgap_status = DRA752_BANDGAP_STATUS_1_OFFSET,
--	.status_hot_mask = DRA752_BANDGAP_STATUS_1_HOT_GPU_MASK,
--	.status_cold_mask = DRA752_BANDGAP_STATUS_1_COLD_GPU_MASK,
--	.ctrl_dtemp_1 = DRA752_DTEMP_GPU_1_OFFSET,
--	.ctrl_dtemp_2 = DRA752_DTEMP_GPU_2_OFFSET,
--	.bgap_efuse = DRA752_STD_FUSE_OPP_BGAP_GPU_OFFSET,
-+	.temp_sensor_ctrl = OMAP5430_TEMP_SENSOR_GPU_OFFSET,
-+	.bgap_tempsoff_mask = OMAP5430_BGAP_TEMPSOFF_MASK,
-+	.bgap_eocz_mask = OMAP5430_BGAP_TEMP_SENSOR_EOCZ_MASK,
-+	.bgap_dtemp_mask = OMAP5430_BGAP_TEMP_SENSOR_DTEMP_MASK,
-+	.bgap_mask_ctrl = OMAP5430_BGAP_CTRL_OFFSET,
-+	.mask_hot_mask = OMAP5430_MASK_HOT_GPU_MASK,
-+	.mask_cold_mask = OMAP5430_MASK_COLD_GPU_MASK,
-+	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
-+	.mask_freeze_mask = OMAP5430_MASK_FREEZE_GPU_MASK,
-+	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_GPU_OFFSET,
-+	.bgap_status = OMAP5430_BGAP_STATUS_OFFSET,
-+	.status_hot_mask = OMAP5430_HOT_GPU_FLAG_MASK,
-+	.status_cold_mask = OMAP5430_COLD_GPU_FLAG_MASK,
-+	.ctrl_dtemp_1 = OMAP5430_BGAP_DTEMP_GPU_1_OFFSET,
-+	.ctrl_dtemp_2 = OMAP5430_BGAP_DTEMP_GPU_2_OFFSET,
-+	.bgap_efuse = OMAP5430_FUSE_OPP_BGAP_GPU,
+  * OMAP54xx ES2.0 : Temperature values in milli degree celsius
+@@ -216,7 +214,6 @@ struct temp_sensor_registers
+ 	1238, 1242, 1246, 1249, 1250, 1250,
  };
  
- /* Thresholds and limits for DRA752 temperature sensor */
- static struct temp_sensor_data dra752_temp_sensor_data = {
--	.t_hot = DRA752_T_HOT,
--	.t_cold = DRA752_T_COLD,
--	.min_freq = DRA752_MIN_FREQ,
--	.max_freq = DRA752_MAX_FREQ,
-+	.t_hot = OMAP5430_T_HOT,
-+	.t_cold = OMAP5430_T_COLD,
-+	.min_freq = OMAP5430_MIN_FREQ,
-+	.max_freq = OMAP5430_MAX_FREQ,
+-#ifdef CONFIG_OMAP5_THERMAL
+ /* OMAP54xx ES2.0 data */
+ const struct ti_bandgap_data omap5430_data = {
+ 	.features = TI_BANDGAP_FEATURE_TSHUT_CONFIG |
+@@ -254,4 +251,3 @@ struct temp_sensor_registers
+ 	},
+ 	.sensor_count = 3,
  };
+-#endif /* CONFIG_OMAP5_THERMAL */
+diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+index 6b5a45f..3bba232 100644
+--- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
++++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+@@ -1219,7 +1219,6 @@ static SIMPLE_DEV_PM_OPS(ti_bandgap_dev_pm_ops, ti_bandgap_suspend,
+ #endif
  
- /*
-  * DRA752 : Temperature values in milli degree celsius
-  * ADC code values from 540 to 945
-  */
--static
--int dra752_adc_to_temp[DRA752_ADC_END_VALUE - DRA752_ADC_START_VALUE + 1] = {
-+static int
-+dra752_adc_to_temp[OMAP5430_ADC_END_VALUE - OMAP5430_ADC_START_VALUE + 1] = {
- 	/* Index 540 - 549 */
- 	-40000, -40000, -40000, -40000, -39800, -39400, -39000, -38600, -38200,
- 	-37800,
-@@ -292,8 +293,8 @@
- 	.fclock_name = "l3instr_ts_gclk_div",
- 	.div_ck_name = "l3instr_ts_gclk_div",
- 	.conv_table = dra752_adc_to_temp,
--	.adc_start_val = DRA752_ADC_START_VALUE,
--	.adc_end_val = DRA752_ADC_END_VALUE,
-+	.adc_start_val = OMAP5430_ADC_START_VALUE,
-+	.adc_end_val = OMAP5430_ADC_END_VALUE,
- 	.sensors = {
- 		{
- 		.registers = &dra752_mpu_temp_sensor_registers,
+ static const struct of_device_id of_ti_bandgap_match[] = {
+-#ifdef CONFIG_OMAP3_THERMAL
+ 	{
+ 		.compatible = "ti,omap34xx-bandgap",
+ 		.data = (void *)&omap34xx_data,
+@@ -1228,8 +1227,6 @@ static SIMPLE_DEV_PM_OPS(ti_bandgap_dev_pm_ops, ti_bandgap_suspend,
+ 		.compatible = "ti,omap36xx-bandgap",
+ 		.data = (void *)&omap36xx_data,
+ 	},
+-#endif
+-#ifdef CONFIG_OMAP4_THERMAL
+ 	{
+ 		.compatible = "ti,omap4430-bandgap",
+ 		.data = (void *)&omap4430_data,
+@@ -1242,19 +1239,14 @@ static SIMPLE_DEV_PM_OPS(ti_bandgap_dev_pm_ops, ti_bandgap_suspend,
+ 		.compatible = "ti,omap4470-bandgap",
+ 		.data = (void *)&omap4470_data,
+ 	},
+-#endif
+-#ifdef CONFIG_OMAP5_THERMAL
+ 	{
+ 		.compatible = "ti,omap5430-bandgap",
+ 		.data = (void *)&omap5430_data,
+ 	},
+-#endif
+-#ifdef CONFIG_DRA752_THERMAL
+ 	{
+ 		.compatible = "ti,dra752-bandgap",
+ 		.data = (void *)&dra752_data,
+ 	},
+-#endif
+ 	/* Sentinel */
+ 	{ },
+ };
+diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.h b/drivers/thermal/ti-soc-thermal/ti-bandgap.h
+index 0a53458..8e6d4cb 100644
+--- a/drivers/thermal/ti-soc-thermal/ti-bandgap.h
++++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.h
+@@ -350,33 +350,14 @@ int ti_bandgap_read_temperature(struct ti_bandgap *bgp, int id,
+ void *ti_bandgap_get_sensor_data(struct ti_bandgap *bgp, int id);
+ int ti_bandgap_get_trend(struct ti_bandgap *bgp, int id, int *trend);
+ 
+-#ifdef CONFIG_OMAP3_THERMAL
+ extern const struct ti_bandgap_data omap34xx_data;
+ extern const struct ti_bandgap_data omap36xx_data;
+-#else
+-#define omap34xx_data					NULL
+-#define omap36xx_data					NULL
+-#endif
+ 
+-#ifdef CONFIG_OMAP4_THERMAL
+ extern const struct ti_bandgap_data omap4430_data;
+ extern const struct ti_bandgap_data omap4460_data;
+ extern const struct ti_bandgap_data omap4470_data;
+-#else
+-#define omap4430_data					NULL
+-#define omap4460_data					NULL
+-#define omap4470_data					NULL
+-#endif
+ 
+-#ifdef CONFIG_OMAP5_THERMAL
+ extern const struct ti_bandgap_data omap5430_data;
+-#else
+-#define omap5430_data					NULL
+-#endif
+ 
+-#ifdef CONFIG_DRA752_THERMAL
+ extern const struct ti_bandgap_data dra752_data;
+-#else
+-#define dra752_data					NULL
+-#endif
+ #endif
 -- 
 1.9.1
