@@ -1,262 +1,208 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1800233-1525939611-2-11520321800466266717
+X-Cyrus-Session-Id: sloti22d1t05-457733-1526285157-2-2097161314215289983
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: 
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525939611; b=l4+pbfS6x2HWQdmUOiT6fNsfG5IEy8WnWxuTiQ8jTnyac25NoA
-    CnP9H8Y0zcqQLQkX0xZi8I+7SfDWTsQfHrMaJRMqIv6hM/Z02ZvbYzU7ec9Zb5wo
-    UHTdwZue6V1iQIZbOYWhblC5Jq7IfNyNW8yTSCcWFzaxhdoaIDIK07fe8BsXUubZ
-    MrLmx7wzQa0V9gSgrI+5cZv+ETSVnjC7kP/IXKuModVlaW514ZNqYIY1tTVql8TA
-    psYE3DkX78iTOu+67g6dJR+4+UrQe/Pdnr3SnrP8uubkvTbnXgaTkswlChyuKOSw
-    bxV2jH4DYTZXLmtmuGQmTp3CPBOzktIMcOVA==
+    1526285157; b=BNai5Gz9l3B3PjdNks3v9Vx1ayy0MsYXXcLLnHt07v0aVmi0cv
+    dnSwIGndmMwP77g9E84Xj2JkcBBkxnOid22LFU8K8hw6j/lCMNGcCwJb+HBLqvaK
+    Pl7eVnWC+xo4GNBJlHRdppFAM5VIB3xVo+BaR4KdD0bcwNFfQMZHnLDJv2NmnT9k
+    jJVOq7aEg4hGE4Fc7mUJVONM08Ui74QW+4I0Pu8WFlw8uq5vSaEq7toafH818BYI
+    2Ptlf3UPYkvQrxHOpBOvRx+eKaC4PG830J4N2ghvy5XEGlCKm1WM5zYbByKVJwKT
+    pttpIsYmAvi6tAahO+johEBrAE8tqR7E8qNQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1525939611; bh=33L/1xfYUtWsOs1dUgFCsFjQuULfQE
-    l72gIOmGLtByw=; b=UD0wJsdHTBURYB2CGVzZO0A4gUZ5qrAyIHouSXXXhDjg3l
-    afbKHMbJkBnUFAT5rX13pgQ5NXRf2gzT8wS38niyvQiweX1H+tnqpIB0rrcwm1k5
-    G/15w/n8OskHUsa67KOpj30GBAN3cvibrjG5SG58RPGDlzw6tXsClLTkCPj60BF4
-    S4lftb+VnrgBzm/J/EmYNvrZ9VGcZD3JH0baSOt0v0YGmHACpCs8mY4TcyhoLOur
-    b/yaYQK2MSQYW70pnKEyVpcSEApMZa3MCGdB6kJ86coX0s5cgqKaDni9Q4x8R1yN
-    gQkkOBUpmLyV4UW835ltODJeoNWIUIw0dAKy4F3Q==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1526285157; bh=z6OvBGkCTWxTKclqxpS1CnQJRsrCqg
+    +9TF/nwNugKLY=; b=Pmu9pxxoZdWN5OqcZ9islKkAs+UqTa2EmT4UJ7vvRUJIr0
+    ueyjSwS6gpgcCZ+4bDyWZ+PsQM9T0JnX7nh9o+mCAfnyKVw7G6Q2JW6BZVcEGq9q
+    dIxTbM+bPVpuz044CmdCFuAccVXZ0HB/1y99ZumKYUgufPNLhliRf+xpiGZpvPnB
+    ypqSg6OQKPevJhNTsNDydB5iXVamB4E427JYSGlWDTcMdFwAYkkyn1jGGLw5U7kt
+    rFfQhf2V4UL1L80EVBAxQTcUbk0wQtzXHVbOBRXpZI6LODg3s9kN9cuGEkdZmCus
+    3o54mDoXhAw/U+TdbsieItLlA2mhBzEdjQK5ZmQQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=gmail.com header.i=@gmail.com header.b=npJm+Vrt x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=lzcOyCce;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=suse.cz header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.cz;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=gmail.com header.i=@gmail.com header.b=npJm+Vrt x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=lzcOyCce;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=suse.cz header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFFzSvfJN458Bhg+FOl5FCLMShpEm5J7NN4M5qojgN5B4sS2TTdyrjcpNCekuN3JNThOYBfRAfj85WOHkUTvTEvS8AVQoapo/jmOMiaB40v6pObClVTK
-    9wuDI+PWTUwxIH6ly32td41GKMg6i9XJCOogJx8joxGSxA6prlwWDCskkWoKOEMDm2karTKQ7iVBbOm9gURKx2hYJtwEXGJXI9gapMR7dB837ESEj+/F6C2x
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=D19gQVrFAAAA:8
-    a=BKdDa2rpQK1DuId3AckA:9 a=W4TVW4IDbPiebHqcZpNg:22
+X-CM-Envelope: MS4wfC6do+3wRD28TcQMqhNaH6sadGZAbb1Ff7zOg7aGkiuGT14xcDa6pCG8CKu6IRD8EdFp91eEcmrTtK5d2x6q1wxfYL/pYKkM8IoW4Yduy9ERSqilnysL
+    2O6aVW5LikvIlSe1OvqHjoP6Mi9W9iyA+YeBt/p3ic2fb3LIKRJo0EVaQuX8fNgXOMlk1KKikIrcZOB+h2NTQMxsMEZ0pBzLJMbseTmpin3Xcf9XHZ809hzX
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=7g0x8hk2SQhkWdhNyNoA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756749AbeEJIGs (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 10 May 2018 04:06:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51684 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756726AbeEJIGq (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Thu, 10 May 2018 04:06:46 -0400
-From: Jiri Slaby <jslaby@suse.cz>
-To: mingo@redhat.com
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH -resend 00/27] New macros for assembler symbols
-Date: Thu, 10 May 2018 10:06:17 +0200
-Message-Id: <20180510080644.19752-1-jslaby@suse.cz>
-X-Mailer: git-send-email 2.16.3
+        id S1752043AbeENIF4 (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 14 May 2018 04:05:56 -0400
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:37824 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752029AbeENIFy (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Mon, 14 May 2018 04:05:54 -0400
+X-Google-Smtp-Source: AB8JxZrhRk8YLsHX7rRwgFSkXPjNvmHhXMHeVpaISslGve7V10SbNBGiMpbr6/rg9/0QpxPeD9gHKQ==
+Date: Mon, 14 May 2018 10:05:49 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Jiri Slaby <jslaby@suse.cz>
+Cc: mingo@redhat.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH -resend 02/27] x86: assembly, use SYM_DATA for data
+Message-ID: <20180514080549.GB6607@gmail.com>
+References: <20180510080644.19752-1-jslaby@suse.cz>
+ <20180510080644.19752-3-jslaby@suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510080644.19752-3-jslaby@suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This series introduces new macros for assembly as was discussed [1].
-The macros are introduced in the first patch of the series. The rest
-of patches start using these new macros in x86, converting *all* uses
-of the old macros to the new ones throughout the last patch. With
-every last user of some old macro, the macro is immediatelly made
-forbidden for x86.
 
-When this settles down, conversion of other architectures can be done
-too.
+* Jiri Slaby <jslaby@suse.cz> wrote:
 
-For introduction, documentation, use and examples, please see
-Documentation/asm-annotations.rst from the first patch of the series.
+> We make proper use of SYM_DATA on global data instead of marking them as
+> ENTRY. ENTRY is intended for functions and shall be paired with ENDPROC.
+> ENTRY also aligns symbols which creates unnecessary holes here between
+> data.
+> 
+> ENTRY from saved_eip in wakeup_32 and many saved_* in wakeup_64 is
+> simply dropped, as these symbols are local only.
 
-[1] https://lkml.org/lkml/2017/3/1/742
+Yeah, so this commit talks about ENTRY() and ENDPROC(), while the new methods are 
+SYM_FUNC_START()/END().
 
-Jiri Slaby (27):
-  linkage: new macros for assembler symbols
-  x86: assembly, use SYM_DATA for data
-  x86: assembly, annotate relocate_kernel
-  x86: entry, annotate THUNKs
-  x86: assembly, annotate local pseudo-functions
-  x86: crypto, annotate local functions
-  x86: boot, annotate local functions
-  x86: assembly, annotate aliases
-  x86: entry, annotate interrupt symbols properly
-  x86: head, annotate data appropriatelly
-  x86: boot, annotate data appropriatelly
-  x86: um, annotate data appropriatelly
-  x86: xen-pvh, annotate data appropriatelly
-  x86: purgatory, start using annotations
-  x86: assembly, do not annotate functions by GLOBAL
-  x86: assembly, use SYM_CODE_INNER_LABEL instead of GLOBAL
-  x86: realmode, use SYM_DATA_* instead of GLOBAL
-  x86: assembly, remove GLOBAL macro
-  x86: assembly, make some functions local
-  x86: ftrace, mark function_hook as function
-  x86_64: assembly, add ENDs to some functions and relabel with
-    SYM_CODE_*
-  x86_64: assembly, change all ENTRY+END to SYM_CODE_*
-  x86_64: assembly, change all ENTRY+ENDPROC to SYM_FUNC_*
-  x86_32: assembly, add ENDs to some functions and relabel with
-    SYM_CODE_*
-  x86_32: assembly, change all ENTRY+END to SYM_CODE_*
-  x86_32: assembly, change all ENTRY+ENDPROC to SYM_FUNC_*
-  x86: assembly, replace WEAK uses
+>  arch/x86/kernel/acpi/wakeup_32.S |  4 ++--
+>  arch/x86/kernel/acpi/wakeup_64.S | 14 +++++++-------
+>  arch/x86/kernel/head_32.S        |  6 ++----
+>  arch/x86/kernel/head_64.S        |  5 ++---
+>  4 files changed, 13 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/acpi/wakeup_32.S b/arch/x86/kernel/acpi/wakeup_32.S
+> index 0c26b1b44e51..feac1e5ecba0 100644
+> --- a/arch/x86/kernel/acpi/wakeup_32.S
+> +++ b/arch/x86/kernel/acpi/wakeup_32.S
+> @@ -89,8 +89,8 @@ ret_point:
+>  
+>  .data
+>  ALIGN
+> -ENTRY(saved_magic)	.long	0
+> -ENTRY(saved_eip)	.long	0
+> +SYM_DATA(saved_magic,	.long 0)
+> +saved_eip:		.long 0
+>  
+>  # saved registers
+>  saved_idt:	.long	0,0
+> diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
+> index 50b8ed0317a3..551758f48eb7 100644
+> --- a/arch/x86/kernel/acpi/wakeup_64.S
+> +++ b/arch/x86/kernel/acpi/wakeup_64.S
+> @@ -125,12 +125,12 @@ ENTRY(do_suspend_lowlevel)
+>  ENDPROC(do_suspend_lowlevel)
+>  
+>  .data
+> -ENTRY(saved_rbp)	.quad	0
+> -ENTRY(saved_rsi)	.quad	0
+> -ENTRY(saved_rdi)	.quad	0
+> -ENTRY(saved_rbx)	.quad	0
+> +saved_rbp:		.quad	0
+> +saved_rsi:		.quad	0
+> +saved_rdi:		.quad	0
+> +saved_rbx:		.quad	0
+>  
+> -ENTRY(saved_rip)	.quad	0
+> -ENTRY(saved_rsp)	.quad	0
+> +saved_rip:		.quad	0
+> +saved_rsp:		.quad	0
+>  
+> -ENTRY(saved_magic)	.quad	0
+> +SYM_DATA(saved_magic,	.quad	0)
+> diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
+> index b59e4fb40fd9..80965fd75fea 100644
+> --- a/arch/x86/kernel/head_32.S
+> +++ b/arch/x86/kernel/head_32.S
+> @@ -507,10 +507,8 @@ GLOBAL(early_recursion_flag)
+>  
+>  __REFDATA
+>  	.align 4
+> -ENTRY(initial_code)
+> -	.long i386_start_kernel
+> -ENTRY(setup_once_ref)
+> -	.long setup_once
+> +SYM_DATA(initial_code,		.long i386_start_kernel)
+> +SYM_DATA(setup_once_ref,	.long setup_once)
+>  
+>  /*
+>   * BSS section
+> diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
+> index 8344dd2f310a..17543533642d 100644
+> --- a/arch/x86/kernel/head_64.S
+> +++ b/arch/x86/kernel/head_64.S
+> @@ -463,9 +463,8 @@ early_gdt_descr:
+>  early_gdt_descr_base:
+>  	.quad	INIT_PER_CPU_VAR(gdt_page)
+>  
+> -ENTRY(phys_base)
+> -	/* This must match the first entry in level2_kernel_pgt */
+> -	.quad   0x0000000000000000
+> +/* This must match the first entry in level2_kernel_pgt */
+> +SYM_DATA(phys_base, .quad 0x0000000000000000)
+>  EXPORT_SYMBOL(phys_base)
+>  
+>  #include "../../x86/xen/xen-head.S"
 
- Documentation/asm-annotations.rst                  | 218 +++++++++++++++++
- arch/x86/boot/compressed/efi_stub_32.S             |   4 +-
- arch/x86/boot/compressed/efi_thunk_64.S            |  33 +--
- arch/x86/boot/compressed/head_32.S                 |  15 +-
- arch/x86/boot/compressed/head_64.S                 |  60 ++---
- arch/x86/boot/compressed/mem_encrypt.S             |  14 +-
- arch/x86/boot/copy.S                               |  16 +-
- arch/x86/boot/pmjump.S                             |   8 +-
- arch/x86/crypto/aes-i586-asm_32.S                  |   8 +-
- arch/x86/crypto/aes-x86_64-asm_64.S                |   4 +-
- arch/x86/crypto/aes_ctrby8_avx-x86_64.S            |  12 +-
- arch/x86/crypto/aesni-intel_asm.S                  | 114 ++++-----
- arch/x86/crypto/aesni-intel_avx-x86_64.S           |  24 +-
- arch/x86/crypto/blowfish-x86_64-asm_64.S           |  16 +-
- arch/x86/crypto/camellia-aesni-avx-asm_64.S        |  44 ++--
- arch/x86/crypto/camellia-aesni-avx2-asm_64.S       |  44 ++--
- arch/x86/crypto/camellia-x86_64-asm_64.S           |  16 +-
- arch/x86/crypto/cast5-avx-x86_64-asm_64.S          |  24 +-
- arch/x86/crypto/cast6-avx-x86_64-asm_64.S          |  32 +--
- arch/x86/crypto/chacha20-avx2-x86_64.S             |   4 +-
- arch/x86/crypto/chacha20-ssse3-x86_64.S            |   8 +-
- arch/x86/crypto/crc32-pclmul_asm.S                 |   4 +-
- arch/x86/crypto/crc32c-pcl-intel-asm_64.S          |   4 +-
- arch/x86/crypto/crct10dif-pcl-asm_64.S             |   4 +-
- arch/x86/crypto/des3_ede-asm_64.S                  |   8 +-
- arch/x86/crypto/ghash-clmulni-intel_asm.S          |  12 +-
- arch/x86/crypto/poly1305-avx2-x86_64.S             |   4 +-
- arch/x86/crypto/poly1305-sse2-x86_64.S             |   8 +-
- arch/x86/crypto/salsa20-i586-asm_32.S              |   4 +-
- arch/x86/crypto/salsa20-x86_64-asm_64.S            |   4 +-
- arch/x86/crypto/serpent-avx-x86_64-asm_64.S        |  32 +--
- arch/x86/crypto/serpent-avx2-asm_64.S              |  32 +--
- arch/x86/crypto/serpent-sse2-i586-asm_32.S         |   8 +-
- arch/x86/crypto/serpent-sse2-x86_64-asm_64.S       |   8 +-
- arch/x86/crypto/sha1-mb/sha1_mb_mgr_flush_avx2.S   |   8 +-
- arch/x86/crypto/sha1-mb/sha1_mb_mgr_submit_avx2.S  |   4 +-
- arch/x86/crypto/sha1-mb/sha1_x8_avx2.S             |   4 +-
- arch/x86/crypto/sha1_avx2_x86_64_asm.S             |   4 +-
- arch/x86/crypto/sha1_ni_asm.S                      |   4 +-
- arch/x86/crypto/sha1_ssse3_asm.S                   |   4 +-
- arch/x86/crypto/sha256-avx-asm.S                   |   4 +-
- arch/x86/crypto/sha256-avx2-asm.S                  |   4 +-
- .../crypto/sha256-mb/sha256_mb_mgr_flush_avx2.S    |   8 +-
- .../crypto/sha256-mb/sha256_mb_mgr_submit_avx2.S   |   4 +-
- arch/x86/crypto/sha256-mb/sha256_x8_avx2.S         |   4 +-
- arch/x86/crypto/sha256-ssse3-asm.S                 |   4 +-
- arch/x86/crypto/sha256_ni_asm.S                    |   4 +-
- arch/x86/crypto/sha512-avx-asm.S                   |   4 +-
- arch/x86/crypto/sha512-avx2-asm.S                  |   4 +-
- .../crypto/sha512-mb/sha512_mb_mgr_flush_avx2.S    |   8 +-
- .../crypto/sha512-mb/sha512_mb_mgr_submit_avx2.S   |   4 +-
- arch/x86/crypto/sha512-mb/sha512_x4_avx2.S         |   4 +-
- arch/x86/crypto/sha512-ssse3-asm.S                 |   4 +-
- arch/x86/crypto/twofish-avx-x86_64-asm_64.S        |  32 +--
- arch/x86/crypto/twofish-i586-asm_32.S              |   8 +-
- arch/x86/crypto/twofish-x86_64-asm_64-3way.S       |   8 +-
- arch/x86/crypto/twofish-x86_64-asm_64.S            |   8 +-
- arch/x86/entry/entry_32.S                          | 155 ++++++------
- arch/x86/entry/entry_64.S                          | 107 ++++-----
- arch/x86/entry/entry_64_compat.S                   |  16 +-
- arch/x86/entry/thunk_32.S                          |   4 +-
- arch/x86/entry/thunk_64.S                          |   8 +-
- arch/x86/entry/vdso/vdso32/system_call.S           |   2 +-
- arch/x86/include/asm/linkage.h                     |   4 -
- arch/x86/kernel/acpi/wakeup_32.S                   |  11 +-
- arch/x86/kernel/acpi/wakeup_64.S                   |  25 +-
- arch/x86/kernel/ftrace_32.S                        |  23 +-
- arch/x86/kernel/ftrace_64.S                        |  42 ++--
- arch/x86/kernel/head_32.S                          |  60 ++---
- arch/x86/kernel/head_64.S                          | 106 +++++----
- arch/x86/kernel/relocate_kernel_32.S               |  13 +-
- arch/x86/kernel/relocate_kernel_64.S               |  13 +-
- arch/x86/kernel/verify_cpu.S                       |   4 +-
- arch/x86/lib/atomic64_386_32.S                     |   4 +-
- arch/x86/lib/atomic64_cx8_32.S                     |  32 +--
- arch/x86/lib/checksum_32.S                         |  16 +-
- arch/x86/lib/clear_page_64.S                       |  12 +-
- arch/x86/lib/cmpxchg16b_emu.S                      |   4 +-
- arch/x86/lib/cmpxchg8b_emu.S                       |   4 +-
- arch/x86/lib/copy_page_64.S                        |   8 +-
- arch/x86/lib/copy_user_64.S                        |  16 +-
- arch/x86/lib/csum-copy_64.S                        |   4 +-
- arch/x86/lib/getuser.S                             |  24 +-
- arch/x86/lib/hweight.S                             |   8 +-
- arch/x86/lib/iomap_copy_64.S                       |   4 +-
- arch/x86/lib/memcpy_64.S                           |  20 +-
- arch/x86/lib/memmove_64.S                          |   8 +-
- arch/x86/lib/memset_64.S                           |  16 +-
- arch/x86/lib/msr-reg.S                             |   8 +-
- arch/x86/lib/putuser.S                             |  20 +-
- arch/x86/lib/retpoline.S                           |   4 +-
- arch/x86/lib/rwsem.S                               |  24 +-
- arch/x86/math-emu/div_Xsig.S                       |   4 +-
- arch/x86/math-emu/div_small.S                      |   4 +-
- arch/x86/math-emu/mul_Xsig.S                       |  12 +-
- arch/x86/math-emu/polynom_Xsig.S                   |   4 +-
- arch/x86/math-emu/reg_norm.S                       |   8 +-
- arch/x86/math-emu/reg_round.S                      |   4 +-
- arch/x86/math-emu/reg_u_add.S                      |   4 +-
- arch/x86/math-emu/reg_u_div.S                      |   4 +-
- arch/x86/math-emu/reg_u_mul.S                      |   4 +-
- arch/x86/math-emu/reg_u_sub.S                      |   4 +-
- arch/x86/math-emu/round_Xsig.S                     |   8 +-
- arch/x86/math-emu/shr_Xsig.S                       |   4 +-
- arch/x86/math-emu/wm_shrx.S                        |   8 +-
- arch/x86/math-emu/wm_sqrt.S                        |   4 +-
- arch/x86/mm/mem_encrypt_boot.S                     |   8 +-
- arch/x86/platform/efi/efi_stub_32.S                |   4 +-
- arch/x86/platform/efi/efi_stub_64.S                |   4 +-
- arch/x86/platform/efi/efi_thunk_64.S               |  16 +-
- arch/x86/platform/olpc/xo1-wakeup.S                |   3 +-
- arch/x86/power/hibernate_asm_32.S                  |   6 +-
- arch/x86/power/hibernate_asm_64.S                  |  14 +-
- arch/x86/purgatory/entry64.S                       |  21 +-
- arch/x86/purgatory/setup-x86_64.S                  |  14 +-
- arch/x86/purgatory/stack.S                         |   7 +-
- arch/x86/realmode/rm/header.S                      |   8 +-
- arch/x86/realmode/rm/reboot.S                      |  13 +-
- arch/x86/realmode/rm/stack.S                       |  14 +-
- arch/x86/realmode/rm/trampoline_32.S               |  16 +-
- arch/x86/realmode/rm/trampoline_64.S               |  29 ++-
- arch/x86/realmode/rm/trampoline_common.S           |   4 +-
- arch/x86/realmode/rm/wakeup_asm.S                  |  15 +-
- arch/x86/realmode/rmpiggy.S                        |  10 +-
- arch/x86/um/vdso/vdso.S                            |   6 +-
- arch/x86/xen/xen-asm.S                             |  20 +-
- arch/x86/xen/xen-asm_32.S                          |   7 +-
- arch/x86/xen/xen-asm_64.S                          |  34 +--
- arch/x86/xen/xen-head.S                            |   8 +-
- arch/x86/xen/xen-pvh.S                             |  15 +-
- include/linux/linkage.h                            | 261 ++++++++++++++++++++-
- 131 files changed, 1474 insertions(+), 982 deletions(-)
- create mode 100644 Documentation/asm-annotations.rst
+I'd also suggest splitting this patch into two:
 
--- 
-2.16.3
+  - one for the renaming of the existing ENTRY() uses
+
+  - and another one for the dropping of ENTRY() annotations
+
+Could you please also do this for other patches if necessary, i.e. there should be 
+'pure renaming' patches that are easy to review and verify, separate from patches 
+that actually change the symbol table?
+
+Thanks,
+
+	Ingo
