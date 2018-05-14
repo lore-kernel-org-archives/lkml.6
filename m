@@ -1,50 +1,51 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrVutHb9uRrLtYsMwowcoUb1Un5pEqVICopIJvlTdEr1erSPQ/bNUfkG9BNrVmMxHwSKtR6
-ARC-Seal: i=1; a=rsa-sha256; t=1526281078; cv=none;
+X-Google-Smtp-Source: AB8JxZq7+iZ80YlhUGd50vLYbmGpiRMZPO+Paaos5I0FBBnk4TRD87y9u0BedIF37J6w1IAp+ofH
+ARC-Seal: i=1; a=rsa-sha256; t=1526281074; cv=none;
         d=google.com; s=arc-20160816;
-        b=w9XTUavN4d/ciUtJpQQNB3jAicSGlrqHrBE+xVAaOJ7iVAyo0TRPnjM3A6kGgbNeVx
-         jjiHCxHxRxS8NQbAs9YLX8AYEonx33C4Mb3ae4tsoeYrcGF7JtcAHsW8b2t+0bAoKXv8
-         bsHPojc0TJxUBfd19HXIVsK7OahmPPritVt0O1/I0pmSfs+TqIi5LoT7MpN8pKbR+66R
-         Nk5fC7O73hWLkqDhoDFQqmmluLnz3ejGG/U9am9JnMe4bRmfHoWTC+QEMqe45P82q18j
-         NdzeK2dIq0BJqZqehCsNNyGC2zALIztE8VpikovDSEcvQHbxCZ4xumRAQrHOAohUiGvB
-         eoCQ==
+        b=f5nfVbVrPbJlgIKdbgRJ1G/ZUKzDzPVJyheOKk29SbCIo2BkwurpoFKvAfx27bV6/n
+         7HeScDIwx2sPJQkXHZne9UlzR2KT9VX7j6QIKDZXacOEg5y+iLpBI+DnTXsQo4wK8KRY
+         gKQByO+Yy8+bu451kFAlbcg52RLmITAwpmiszhnebPbfCKDtZHth/whPfW0d4CnUL5oX
+         2jKBHslHEenK2nDIDdzYDnTUeuyOjl8qI+LDaDRJPt+E/IBiat8+wqzBNplrcxTxY/ON
+         VII/CjRI04030U2FOUrm9psnexLUS4nHWEKlMiBfmLpRQGg/+vwMrkXPIdAxDi5D4nl5
+         +YnA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=dGy+JuR+5GSFdQl3Nj/nOjqXXgpHbOYumS2pmwiRV5o=;
-        b=PU/l0zb+I/7AkpUbHZQHj+Q1B9BsaaYZ1HLR2dcFwSu5NSX1m0tUgA4233rMl9WMx7
-         cawAJGWxSHDflqOGUlVWcKan/MwdHvLV9TLk7tCO+iTaZRmGXDFpSPwObZA9rjFL5ycp
-         ixsRsdTax3RYbmdjtiZqzrKU+3L/X0lC5ytMvcL0/rsaXL+yA2qMHyrodyvLNO1qLKPP
-         Qpdyc0qSEj9apeNzyVFir9YJ+gMVKggsx1nIX6eomqJjoJvzKriml9Kfu0K1IDsLnVxS
-         R8WwZVgu8yrfCcjFMN2F0y+GaHEtEuzN5rO6GljM0e8tDZI8TUaRuzPudZEysTcBee2B
-         OL2Q==
+        bh=teIJt+7duZEzDWNt+xsgSMj9eem4W+KXup8rCkhjZ/4=;
+        b=Yx1Ne8O3jGRQ3+F/cab08xeDS4UK3jp8NPJeipKPdOepAWGJ2Rzq9wSMGmOwaREYkQ
+         YC5xLs8bngj0D07Em31QXF+bT1mVEciAj4LN57cPscE23r8RFo2OUs4aLSOeJlD7vhQY
+         sR+Nic8MMTJ8fHsP6884TkXOA0gJAV++Qv+EXUhP90nxnOIjgyOofRHLh9cAPv4+RMEn
+         ZH5ASzaK6ydUfoopcZh1yN0BBULBF1MiQCx3NMCCQMdOPZ8TeAF+X8aD2OhkAPndHFBE
+         Tt+QehBk9Z33kcIrYyfrbujPDaGID2JG1RMublIvqIYBIUCQaQ171dqaDl6WfnS87scD
+         FCKg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=bnyso7k/;
+       dkim=pass header.i=@kernel.org header.s=default header.b=RcQZWp05;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=bnyso7k/;
+       dkim=pass header.i=@kernel.org header.s=default header.b=RcQZWp05;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 10/72] net: fix uninit-value in __hw_addr_add_ex()
-Date: Mon, 14 May 2018 08:48:27 +0200
-Message-Id: <20180514064823.481814672@linuxfoundation.org>
+	Julian Anastasov <ja@ssi.bg>,
+	Simon Horman <horms@verge.net.au>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Zubin Mithra <zsm@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>
+Subject: [PATCH 4.16 01/72] ipvs: fix rtnl_lock lockups caused by start_sync_thread
+Date: Mon, 14 May 2018 08:48:18 +0200
+Message-Id: <20180514064823.093678508@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421247484712480?=
-X-GMAIL-MSGID: =?utf-8?q?1600421708115930321?=
+X-GMAIL-THRID: =?utf-8?q?1600421401857727890?=
+X-GMAIL-MSGID: =?utf-8?q?1600421704230662838?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,54 +53,638 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Julian Anastasov <ja@ssi.bg>
 
-commit 77d36398d99f2565c0a8d43a86fd520a82e64bb8 upstream.
+commit 5c64576a77894a50be80be0024bed27171b55989 upstream.
 
-syzbot complained :
+syzkaller reports for wrong rtnl_lock usage in sync code [1] and [2]
 
-BUG: KMSAN: uninit-value in memcmp+0x119/0x180 lib/string.c:861
-CPU: 0 PID: 3 Comm: kworker/0:0 Not tainted 4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: ipv6_addrconf addrconf_dad_work
+We have 2 problems in start_sync_thread if error path is
+taken, eg. on memory allocation error or failure to configure
+sockets for mcast group or addr/port binding:
+
+1. recursive locking: holding rtnl_lock while calling sock_release
+which in turn calls again rtnl_lock in ip_mc_drop_socket to leave
+the mcast group, as noticed by Florian Westphal. Additionally,
+sock_release can not be called while holding sync_mutex (ABBA
+deadlock).
+
+2. task hung: holding rtnl_lock while calling kthread_stop to
+stop the running kthreads. As the kthreads do the same to leave
+the mcast group (sock_release -> ip_mc_drop_socket -> rtnl_lock)
+they hang.
+
+Fix the problems by calling rtnl_unlock early in the error path,
+now sock_release is called after unlocking both mutexes.
+
+Problem 3 (task hung reported by syzkaller [2]) is variant of
+problem 2: use _trylock to prevent one user to call rtnl_lock and
+then while waiting for sync_mutex to block kthreads that execute
+sock_release when they are stopped by stop_sync_thread.
+
+[1]
+IPVS: stopping backup sync thread 4500 ...
+WARNING: possible recursive locking detected
+4.16.0-rc7+ #3 Not tainted
+--------------------------------------------
+syzkaller688027/4497 is trying to acquire lock:
+  (rtnl_mutex){+.+.}, at: [<00000000bb14d7fb>] rtnl_lock+0x17/0x20
+net/core/rtnetlink.c:74
+
+but task is already holding lock:
+IPVS: stopping backup sync thread 4495 ...
+  (rtnl_mutex){+.+.}, at: [<00000000bb14d7fb>] rtnl_lock+0x17/0x20
+net/core/rtnetlink.c:74
+
+other info that might help us debug this:
+  Possible unsafe locking scenario:
+
+        CPU0
+        ----
+   lock(rtnl_mutex);
+   lock(rtnl_mutex);
+
+  *** DEADLOCK ***
+
+  May be due to missing lock nesting notation
+
+2 locks held by syzkaller688027/4497:
+  #0:  (rtnl_mutex){+.+.}, at: [<00000000bb14d7fb>] rtnl_lock+0x17/0x20
+net/core/rtnetlink.c:74
+  #1:  (ipvs->sync_mutex){+.+.}, at: [<00000000703f78e3>]
+do_ip_vs_set_ctl+0x10f8/0x1cc0 net/netfilter/ipvs/ip_vs_ctl.c:2388
+
+stack backtrace:
+CPU: 1 PID: 4497 Comm: syzkaller688027 Not tainted 4.16.0-rc7+ #3
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
 Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
- __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
- memcmp+0x119/0x180 lib/string.c:861
- __hw_addr_add_ex net/core/dev_addr_lists.c:60 [inline]
- __dev_mc_add+0x1c2/0x8e0 net/core/dev_addr_lists.c:670
- dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
- igmp6_group_added+0x2db/0xa00 net/ipv6/mcast.c:662
- ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
- addrconf_join_solict net/ipv6/addrconf.c:2078 [inline]
- addrconf_dad_begin net/ipv6/addrconf.c:3828 [inline]
- addrconf_dad_work+0x427/0x2150 net/ipv6/addrconf.c:3954
- process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2113
- worker_thread+0x113c/0x24f0 kernel/workqueue.c:2247
- kthread+0x539/0x720 kernel/kthread.c:239
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x194/0x24d lib/dump_stack.c:53
+  print_deadlock_bug kernel/locking/lockdep.c:1761 [inline]
+  check_deadlock kernel/locking/lockdep.c:1805 [inline]
+  validate_chain kernel/locking/lockdep.c:2401 [inline]
+  __lock_acquire+0xe8f/0x3e00 kernel/locking/lockdep.c:3431
+  lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
+  __mutex_lock_common kernel/locking/mutex.c:756 [inline]
+  __mutex_lock+0x16f/0x1a80 kernel/locking/mutex.c:893
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
+  rtnl_lock+0x17/0x20 net/core/rtnetlink.c:74
+  ip_mc_drop_socket+0x88/0x230 net/ipv4/igmp.c:2643
+  inet_release+0x4e/0x1c0 net/ipv4/af_inet.c:413
+  sock_release+0x8d/0x1e0 net/socket.c:595
+  start_sync_thread+0x2213/0x2b70 net/netfilter/ipvs/ip_vs_sync.c:1924
+  do_ip_vs_set_ctl+0x1139/0x1cc0 net/netfilter/ipvs/ip_vs_ctl.c:2389
+  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
+  nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
+  ip_setsockopt+0x97/0xa0 net/ipv4/ip_sockglue.c:1261
+  udp_setsockopt+0x45/0x80 net/ipv4/udp.c:2406
+  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:2975
+  SYSC_setsockopt net/socket.c:1849 [inline]
+  SyS_setsockopt+0x189/0x360 net/socket.c:1828
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x446a69
+RSP: 002b:00007fa1c3a64da8 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000446a69
+RDX: 000000000000048b RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00000000006e29fc R08: 0000000000000018 R09: 0000000000000000
+R10: 00000000200000c0 R11: 0000000000000246 R12: 00000000006e29f8
+R13: 00676e697279656b R14: 00007fa1c3a659c0 R15: 00000000006e2b60
 
-Fixes: f001fde5eadd ("net: introduce a list of device addresses dev_addr_list (v6)")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[2]
+IPVS: sync thread started: state = BACKUP, mcast_ifn = syz_tun, syncid = 4,
+id = 0
+IPVS: stopping backup sync thread 25415 ...
+INFO: task syz-executor7:25421 blocked for more than 120 seconds.
+       Not tainted 4.16.0-rc6+ #284
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor7   D23688 25421   4408 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2862 [inline]
+  __schedule+0x8fb/0x1ec0 kernel/sched/core.c:3440
+  schedule+0xf5/0x430 kernel/sched/core.c:3499
+  schedule_timeout+0x1a3/0x230 kernel/time/timer.c:1777
+  do_wait_for_common kernel/sched/completion.c:86 [inline]
+  __wait_for_common kernel/sched/completion.c:107 [inline]
+  wait_for_common kernel/sched/completion.c:118 [inline]
+  wait_for_completion+0x415/0x770 kernel/sched/completion.c:139
+  kthread_stop+0x14a/0x7a0 kernel/kthread.c:530
+  stop_sync_thread+0x3d9/0x740 net/netfilter/ipvs/ip_vs_sync.c:1996
+  do_ip_vs_set_ctl+0x2b1/0x1cc0 net/netfilter/ipvs/ip_vs_ctl.c:2394
+  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
+  nf_setsockopt+0x67/0xc0 net/netfilter/nf_sockopt.c:115
+  ip_setsockopt+0x97/0xa0 net/ipv4/ip_sockglue.c:1253
+  sctp_setsockopt+0x2ca/0x63e0 net/sctp/socket.c:4154
+  sock_common_setsockopt+0x95/0xd0 net/core/sock.c:3039
+  SYSC_setsockopt net/socket.c:1850 [inline]
+  SyS_setsockopt+0x189/0x360 net/socket.c:1829
+  do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x454889
+RSP: 002b:00007fc927626c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007fc9276276d4 RCX: 0000000000454889
+RDX: 000000000000048c RSI: 0000000000000000 RDI: 0000000000000017
+RBP: 000000000072bf58 R08: 0000000000000018 R09: 0000000000000000
+R10: 0000000020000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 000000000000051c R14: 00000000006f9b40 R15: 0000000000000001
+
+Showing all locks held in the system:
+2 locks held by khungtaskd/868:
+  #0:  (rcu_read_lock){....}, at: [<00000000a1a8f002>]
+check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
+  #0:  (rcu_read_lock){....}, at: [<00000000a1a8f002>] watchdog+0x1c5/0xd60
+kernel/hung_task.c:249
+  #1:  (tasklist_lock){.+.+}, at: [<0000000037c2f8f9>]
+debug_show_all_locks+0xd3/0x3d0 kernel/locking/lockdep.c:4470
+1 lock held by rsyslogd/4247:
+  #0:  (&f->f_pos_lock){+.+.}, at: [<000000000d8d6983>]
+__fdget_pos+0x12b/0x190 fs/file.c:765
+2 locks held by getty/4338:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4339:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4340:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4341:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4342:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4343:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+2 locks held by getty/4344:
+  #0:  (&tty->ldisc_sem){++++}, at: [<00000000bee98654>]
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1:  (&ldata->atomic_read_lock){+.+.}, at: [<00000000c1d180aa>]
+n_tty_read+0x2ef/0x1a40 drivers/tty/n_tty.c:2131
+3 locks held by kworker/0:5/6494:
+  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:
+[<00000000a062b18e>] work_static include/linux/workqueue.h:198 [inline]
+  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:
+[<00000000a062b18e>] set_work_data kernel/workqueue.c:619 [inline]
+  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:
+[<00000000a062b18e>] set_work_pool_and_clear_pending kernel/workqueue.c:646
+[inline]
+  #0:  ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:
+[<00000000a062b18e>] process_one_work+0xb12/0x1bb0 kernel/workqueue.c:2084
+  #1:  ((addr_chk_work).work){+.+.}, at: [<00000000278427d5>]
+process_one_work+0xb89/0x1bb0 kernel/workqueue.c:2088
+  #2:  (rtnl_mutex){+.+.}, at: [<00000000066e35ac>] rtnl_lock+0x17/0x20
+net/core/rtnetlink.c:74
+1 lock held by syz-executor7/25421:
+  #0:  (ipvs->sync_mutex){+.+.}, at: [<00000000d414a689>]
+do_ip_vs_set_ctl+0x277/0x1cc0 net/netfilter/ipvs/ip_vs_ctl.c:2393
+2 locks held by syz-executor7/25427:
+  #0:  (rtnl_mutex){+.+.}, at: [<00000000066e35ac>] rtnl_lock+0x17/0x20
+net/core/rtnetlink.c:74
+  #1:  (ipvs->sync_mutex){+.+.}, at: [<00000000e6d48489>]
+do_ip_vs_set_ctl+0x10f8/0x1cc0 net/netfilter/ipvs/ip_vs_ctl.c:2388
+1 lock held by syz-executor7/25435:
+  #0:  (rtnl_mutex){+.+.}, at: [<00000000066e35ac>] rtnl_lock+0x17/0x20
+net/core/rtnetlink.c:74
+1 lock held by ipvs-b:2:0/25415:
+  #0:  (rtnl_mutex){+.+.}, at: [<00000000066e35ac>] rtnl_lock+0x17/0x20
+net/core/rtnetlink.c:74
+
+Reported-and-tested-by: syzbot+a46d6abf9d56b1365a72@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+5fe074c01b2032ce9618@syzkaller.appspotmail.com
+Fixes: e0b26cc997d5 ("ipvs: call rtnl_lock early")
+Signed-off-by: Julian Anastasov <ja@ssi.bg>
+Signed-off-by: Simon Horman <horms@verge.net.au>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Zubin Mithra <zsm@chromium.org>
+Cc: Guenter Roeck <groeck@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/core/dev_addr_lists.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/netfilter/ipvs/ip_vs_ctl.c  |    8 --
+ net/netfilter/ipvs/ip_vs_sync.c |  155 ++++++++++++++++++++--------------------
+ 2 files changed, 80 insertions(+), 83 deletions(-)
 
---- a/net/core/dev_addr_lists.c
-+++ b/net/core/dev_addr_lists.c
-@@ -57,8 +57,8 @@ static int __hw_addr_add_ex(struct netde
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@ -2384,11 +2384,7 @@ do_ip_vs_set_ctl(struct sock *sk, int cm
+ 			strlcpy(cfg.mcast_ifn, dm->mcast_ifn,
+ 				sizeof(cfg.mcast_ifn));
+ 			cfg.syncid = dm->syncid;
+-			rtnl_lock();
+-			mutex_lock(&ipvs->sync_mutex);
+ 			ret = start_sync_thread(ipvs, &cfg, dm->state);
+-			mutex_unlock(&ipvs->sync_mutex);
+-			rtnl_unlock();
+ 		} else {
+ 			mutex_lock(&ipvs->sync_mutex);
+ 			ret = stop_sync_thread(ipvs, dm->state);
+@@ -3481,12 +3477,8 @@ static int ip_vs_genl_new_daemon(struct
+ 	if (ipvs->mixed_address_family_dests > 0)
  		return -EINVAL;
  
- 	list_for_each_entry(ha, &list->list, list) {
--		if (!memcmp(ha->addr, addr, addr_len) &&
--		    ha->type == addr_type) {
-+		if (ha->type == addr_type &&
-+		    !memcmp(ha->addr, addr, addr_len)) {
- 			if (global) {
- 				/* check if addr is already used as global */
- 				if (ha->global_use)
+-	rtnl_lock();
+-	mutex_lock(&ipvs->sync_mutex);
+ 	ret = start_sync_thread(ipvs, &c,
+ 				nla_get_u32(attrs[IPVS_DAEMON_ATTR_STATE]));
+-	mutex_unlock(&ipvs->sync_mutex);
+-	rtnl_unlock();
+ 	return ret;
+ }
+ 
+--- a/net/netfilter/ipvs/ip_vs_sync.c
++++ b/net/netfilter/ipvs/ip_vs_sync.c
+@@ -49,6 +49,7 @@
+ #include <linux/kthread.h>
+ #include <linux/wait.h>
+ #include <linux/kernel.h>
++#include <linux/sched/signal.h>
+ 
+ #include <asm/unaligned.h>		/* Used for ntoh_seq and hton_seq */
+ 
+@@ -1360,15 +1361,9 @@ static void set_mcast_pmtudisc(struct so
+ /*
+  *      Specifiy default interface for outgoing multicasts
+  */
+-static int set_mcast_if(struct sock *sk, char *ifname)
++static int set_mcast_if(struct sock *sk, struct net_device *dev)
+ {
+-	struct net_device *dev;
+ 	struct inet_sock *inet = inet_sk(sk);
+-	struct net *net = sock_net(sk);
+-
+-	dev = __dev_get_by_name(net, ifname);
+-	if (!dev)
+-		return -ENODEV;
+ 
+ 	if (sk->sk_bound_dev_if && dev->ifindex != sk->sk_bound_dev_if)
+ 		return -EINVAL;
+@@ -1396,19 +1391,14 @@ static int set_mcast_if(struct sock *sk,
+  *      in the in_addr structure passed in as a parameter.
+  */
+ static int
+-join_mcast_group(struct sock *sk, struct in_addr *addr, char *ifname)
++join_mcast_group(struct sock *sk, struct in_addr *addr, struct net_device *dev)
+ {
+-	struct net *net = sock_net(sk);
+ 	struct ip_mreqn mreq;
+-	struct net_device *dev;
+ 	int ret;
+ 
+ 	memset(&mreq, 0, sizeof(mreq));
+ 	memcpy(&mreq.imr_multiaddr, addr, sizeof(struct in_addr));
+ 
+-	dev = __dev_get_by_name(net, ifname);
+-	if (!dev)
+-		return -ENODEV;
+ 	if (sk->sk_bound_dev_if && dev->ifindex != sk->sk_bound_dev_if)
+ 		return -EINVAL;
+ 
+@@ -1423,15 +1413,10 @@ join_mcast_group(struct sock *sk, struct
+ 
+ #ifdef CONFIG_IP_VS_IPV6
+ static int join_mcast_group6(struct sock *sk, struct in6_addr *addr,
+-			     char *ifname)
++			     struct net_device *dev)
+ {
+-	struct net *net = sock_net(sk);
+-	struct net_device *dev;
+ 	int ret;
+ 
+-	dev = __dev_get_by_name(net, ifname);
+-	if (!dev)
+-		return -ENODEV;
+ 	if (sk->sk_bound_dev_if && dev->ifindex != sk->sk_bound_dev_if)
+ 		return -EINVAL;
+ 
+@@ -1443,24 +1428,18 @@ static int join_mcast_group6(struct sock
+ }
+ #endif
+ 
+-static int bind_mcastif_addr(struct socket *sock, char *ifname)
++static int bind_mcastif_addr(struct socket *sock, struct net_device *dev)
+ {
+-	struct net *net = sock_net(sock->sk);
+-	struct net_device *dev;
+ 	__be32 addr;
+ 	struct sockaddr_in sin;
+ 
+-	dev = __dev_get_by_name(net, ifname);
+-	if (!dev)
+-		return -ENODEV;
+-
+ 	addr = inet_select_addr(dev, 0, RT_SCOPE_UNIVERSE);
+ 	if (!addr)
+ 		pr_err("You probably need to specify IP address on "
+ 		       "multicast interface.\n");
+ 
+ 	IP_VS_DBG(7, "binding socket with (%s) %pI4\n",
+-		  ifname, &addr);
++		  dev->name, &addr);
+ 
+ 	/* Now bind the socket with the address of multicast interface */
+ 	sin.sin_family	     = AF_INET;
+@@ -1493,7 +1472,8 @@ static void get_mcast_sockaddr(union ipv
+ /*
+  *      Set up sending multicast socket over UDP
+  */
+-static struct socket *make_send_sock(struct netns_ipvs *ipvs, int id)
++static int make_send_sock(struct netns_ipvs *ipvs, int id,
++			  struct net_device *dev, struct socket **sock_ret)
+ {
+ 	/* multicast addr */
+ 	union ipvs_sockaddr mcast_addr;
+@@ -1505,9 +1485,10 @@ static struct socket *make_send_sock(str
+ 				  IPPROTO_UDP, &sock);
+ 	if (result < 0) {
+ 		pr_err("Error during creation of socket; terminating\n");
+-		return ERR_PTR(result);
++		goto error;
+ 	}
+-	result = set_mcast_if(sock->sk, ipvs->mcfg.mcast_ifn);
++	*sock_ret = sock;
++	result = set_mcast_if(sock->sk, dev);
+ 	if (result < 0) {
+ 		pr_err("Error setting outbound mcast interface\n");
+ 		goto error;
+@@ -1522,7 +1503,7 @@ static struct socket *make_send_sock(str
+ 		set_sock_size(sock->sk, 1, result);
+ 
+ 	if (AF_INET == ipvs->mcfg.mcast_af)
+-		result = bind_mcastif_addr(sock, ipvs->mcfg.mcast_ifn);
++		result = bind_mcastif_addr(sock, dev);
+ 	else
+ 		result = 0;
+ 	if (result < 0) {
+@@ -1538,19 +1519,18 @@ static struct socket *make_send_sock(str
+ 		goto error;
+ 	}
+ 
+-	return sock;
++	return 0;
+ 
+ error:
+-	sock_release(sock);
+-	return ERR_PTR(result);
++	return result;
+ }
+ 
+ 
+ /*
+  *      Set up receiving multicast socket over UDP
+  */
+-static struct socket *make_receive_sock(struct netns_ipvs *ipvs, int id,
+-					int ifindex)
++static int make_receive_sock(struct netns_ipvs *ipvs, int id,
++			     struct net_device *dev, struct socket **sock_ret)
+ {
+ 	/* multicast addr */
+ 	union ipvs_sockaddr mcast_addr;
+@@ -1562,8 +1542,9 @@ static struct socket *make_receive_sock(
+ 				  IPPROTO_UDP, &sock);
+ 	if (result < 0) {
+ 		pr_err("Error during creation of socket; terminating\n");
+-		return ERR_PTR(result);
++		goto error;
+ 	}
++	*sock_ret = sock;
+ 	/* it is equivalent to the REUSEADDR option in user-space */
+ 	sock->sk->sk_reuse = SK_CAN_REUSE;
+ 	result = sysctl_sync_sock_size(ipvs);
+@@ -1571,7 +1552,7 @@ static struct socket *make_receive_sock(
+ 		set_sock_size(sock->sk, 0, result);
+ 
+ 	get_mcast_sockaddr(&mcast_addr, &salen, &ipvs->bcfg, id);
+-	sock->sk->sk_bound_dev_if = ifindex;
++	sock->sk->sk_bound_dev_if = dev->ifindex;
+ 	result = sock->ops->bind(sock, (struct sockaddr *)&mcast_addr, salen);
+ 	if (result < 0) {
+ 		pr_err("Error binding to the multicast addr\n");
+@@ -1582,21 +1563,20 @@ static struct socket *make_receive_sock(
+ #ifdef CONFIG_IP_VS_IPV6
+ 	if (ipvs->bcfg.mcast_af == AF_INET6)
+ 		result = join_mcast_group6(sock->sk, &mcast_addr.in6.sin6_addr,
+-					   ipvs->bcfg.mcast_ifn);
++					   dev);
+ 	else
+ #endif
+ 		result = join_mcast_group(sock->sk, &mcast_addr.in.sin_addr,
+-					  ipvs->bcfg.mcast_ifn);
++					  dev);
+ 	if (result < 0) {
+ 		pr_err("Error joining to the multicast group\n");
+ 		goto error;
+ 	}
+ 
+-	return sock;
++	return 0;
+ 
+ error:
+-	sock_release(sock);
+-	return ERR_PTR(result);
++	return result;
+ }
+ 
+ 
+@@ -1778,13 +1758,12 @@ static int sync_thread_backup(void *data
+ int start_sync_thread(struct netns_ipvs *ipvs, struct ipvs_sync_daemon_cfg *c,
+ 		      int state)
+ {
+-	struct ip_vs_sync_thread_data *tinfo;
++	struct ip_vs_sync_thread_data *tinfo = NULL;
+ 	struct task_struct **array = NULL, *task;
+-	struct socket *sock;
+ 	struct net_device *dev;
+ 	char *name;
+ 	int (*threadfn)(void *data);
+-	int id, count, hlen;
++	int id = 0, count, hlen;
+ 	int result = -ENOMEM;
+ 	u16 mtu, min_mtu;
+ 
+@@ -1792,6 +1771,18 @@ int start_sync_thread(struct netns_ipvs
+ 	IP_VS_DBG(7, "Each ip_vs_sync_conn entry needs %zd bytes\n",
+ 		  sizeof(struct ip_vs_sync_conn_v0));
+ 
++	/* Do not hold one mutex and then to block on another */
++	for (;;) {
++		rtnl_lock();
++		if (mutex_trylock(&ipvs->sync_mutex))
++			break;
++		rtnl_unlock();
++		mutex_lock(&ipvs->sync_mutex);
++		if (rtnl_trylock())
++			break;
++		mutex_unlock(&ipvs->sync_mutex);
++	}
++
+ 	if (!ipvs->sync_state) {
+ 		count = clamp(sysctl_sync_ports(ipvs), 1, IPVS_SYNC_PORTS_MAX);
+ 		ipvs->threads_mask = count - 1;
+@@ -1810,7 +1801,8 @@ int start_sync_thread(struct netns_ipvs
+ 	dev = __dev_get_by_name(ipvs->net, c->mcast_ifn);
+ 	if (!dev) {
+ 		pr_err("Unknown mcast interface: %s\n", c->mcast_ifn);
+-		return -ENODEV;
++		result = -ENODEV;
++		goto out_early;
+ 	}
+ 	hlen = (AF_INET6 == c->mcast_af) ?
+ 	       sizeof(struct ipv6hdr) + sizeof(struct udphdr) :
+@@ -1827,26 +1819,30 @@ int start_sync_thread(struct netns_ipvs
+ 		c->sync_maxlen = mtu - hlen;
+ 
+ 	if (state == IP_VS_STATE_MASTER) {
++		result = -EEXIST;
+ 		if (ipvs->ms)
+-			return -EEXIST;
++			goto out_early;
+ 
+ 		ipvs->mcfg = *c;
+ 		name = "ipvs-m:%d:%d";
+ 		threadfn = sync_thread_master;
+ 	} else if (state == IP_VS_STATE_BACKUP) {
++		result = -EEXIST;
+ 		if (ipvs->backup_threads)
+-			return -EEXIST;
++			goto out_early;
+ 
+ 		ipvs->bcfg = *c;
+ 		name = "ipvs-b:%d:%d";
+ 		threadfn = sync_thread_backup;
+ 	} else {
+-		return -EINVAL;
++		result = -EINVAL;
++		goto out_early;
+ 	}
+ 
+ 	if (state == IP_VS_STATE_MASTER) {
+ 		struct ipvs_master_sync_state *ms;
+ 
++		result = -ENOMEM;
+ 		ipvs->ms = kcalloc(count, sizeof(ipvs->ms[0]), GFP_KERNEL);
+ 		if (!ipvs->ms)
+ 			goto out;
+@@ -1862,39 +1858,38 @@ int start_sync_thread(struct netns_ipvs
+ 	} else {
+ 		array = kcalloc(count, sizeof(struct task_struct *),
+ 				GFP_KERNEL);
++		result = -ENOMEM;
+ 		if (!array)
+ 			goto out;
+ 	}
+ 
+-	tinfo = NULL;
+ 	for (id = 0; id < count; id++) {
+-		if (state == IP_VS_STATE_MASTER)
+-			sock = make_send_sock(ipvs, id);
+-		else
+-			sock = make_receive_sock(ipvs, id, dev->ifindex);
+-		if (IS_ERR(sock)) {
+-			result = PTR_ERR(sock);
+-			goto outtinfo;
+-		}
++		result = -ENOMEM;
+ 		tinfo = kmalloc(sizeof(*tinfo), GFP_KERNEL);
+ 		if (!tinfo)
+-			goto outsocket;
++			goto out;
+ 		tinfo->ipvs = ipvs;
+-		tinfo->sock = sock;
++		tinfo->sock = NULL;
+ 		if (state == IP_VS_STATE_BACKUP) {
+ 			tinfo->buf = kmalloc(ipvs->bcfg.sync_maxlen,
+ 					     GFP_KERNEL);
+ 			if (!tinfo->buf)
+-				goto outtinfo;
++				goto out;
+ 		} else {
+ 			tinfo->buf = NULL;
+ 		}
+ 		tinfo->id = id;
++		if (state == IP_VS_STATE_MASTER)
++			result = make_send_sock(ipvs, id, dev, &tinfo->sock);
++		else
++			result = make_receive_sock(ipvs, id, dev, &tinfo->sock);
++		if (result < 0)
++			goto out;
+ 
+ 		task = kthread_run(threadfn, tinfo, name, ipvs->gen, id);
+ 		if (IS_ERR(task)) {
+ 			result = PTR_ERR(task);
+-			goto outtinfo;
++			goto out;
+ 		}
+ 		tinfo = NULL;
+ 		if (state == IP_VS_STATE_MASTER)
+@@ -1911,20 +1906,20 @@ int start_sync_thread(struct netns_ipvs
+ 	ipvs->sync_state |= state;
+ 	spin_unlock_bh(&ipvs->sync_buff_lock);
+ 
++	mutex_unlock(&ipvs->sync_mutex);
++	rtnl_unlock();
++
+ 	/* increase the module use count */
+ 	ip_vs_use_count_inc();
+ 
+ 	return 0;
+ 
+-outsocket:
+-	sock_release(sock);
+-
+-outtinfo:
+-	if (tinfo) {
+-		sock_release(tinfo->sock);
+-		kfree(tinfo->buf);
+-		kfree(tinfo);
+-	}
++out:
++	/* We do not need RTNL lock anymore, release it here so that
++	 * sock_release below and in the kthreads can use rtnl_lock
++	 * to leave the mcast group.
++	 */
++	rtnl_unlock();
+ 	count = id;
+ 	while (count-- > 0) {
+ 		if (state == IP_VS_STATE_MASTER)
+@@ -1932,13 +1927,23 @@ outtinfo:
+ 		else
+ 			kthread_stop(array[count]);
+ 	}
+-	kfree(array);
+-
+-out:
+ 	if (!(ipvs->sync_state & IP_VS_STATE_MASTER)) {
+ 		kfree(ipvs->ms);
+ 		ipvs->ms = NULL;
+ 	}
++	mutex_unlock(&ipvs->sync_mutex);
++	if (tinfo) {
++		if (tinfo->sock)
++			sock_release(tinfo->sock);
++		kfree(tinfo->buf);
++		kfree(tinfo);
++	}
++	kfree(array);
++	return result;
++
++out_early:
++	mutex_unlock(&ipvs->sync_mutex);
++	rtnl_unlock();
+ 	return result;
+ }
+ 
