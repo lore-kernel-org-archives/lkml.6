@@ -1,59 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752077AbeENVWb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:22:31 -0400
-Received: from ozlabs.org ([203.11.71.1]:35573 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751978AbeENVWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:22:30 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 15 May 2018 07:22:17 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: linux-next: Signed-off-by missing for commit in the arm-soc tree
-Message-ID: <20180515072217.0a2ffe25@canb.auug.org.au>
+        id S1752233AbeENVXb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:23:31 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:44897 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752204AbeENVX2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 17:23:28 -0400
+X-Google-Smtp-Source: AB8JxZoAt85Gt4m5EHklzVD8I6NZVX+lggD5AI3ueckU1ouv+0gLXiHdJkdJLxCmhIgEyzSCs2Hdj4ATr9dR1cXlFP4=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.9yCL6CB+.8Q=rtYcoWvhTg"; protocol="application/pgp-signature"
+In-Reply-To: <cb51c6f8eb93452d405180d9da0f1e203b469d2a.camel@wdc.com>
+References: <20180514184634.2160-1-bart.vanassche@wdc.com> <20180514184634.2160-2-bart.vanassche@wdc.com>
+ <CAMo8Bf+Wgm2VrZiY+CfjN=CM=ysYBpRyTMdozV+6A8Brk4DKDQ@mail.gmail.com> <cb51c6f8eb93452d405180d9da0f1e203b469d2a.camel@wdc.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 May 2018 23:23:26 +0200
+X-Google-Sender-Auth: 9f5YcRDtK39AvLx1G_AkExD1hvs
+Message-ID: <CAMuHMdWqegF9Akr4N9VwB8bEN+ryMWEybWc7wtcWhMRoHdFYYQ@mail.gmail.com>
+Subject: Re: [PATCH v9 1/2] arch/*: Add CONFIG_ARCH_HAVE_CMPXCHG64
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "jcmvbkbc@gmail.com" <jcmvbkbc@gmail.com>,
+        "schwidefsky@de.ibm.com" <schwidefsky@de.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "deller@gmx.de" <deller@gmx.de>,
+        "heiko.carstens@de.ibm.com" <heiko.carstens@de.ibm.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>, "hpa@zytor.com" <hpa@zytor.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "jejb@parisc-linux.org" <jejb@parisc-linux.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "chris@zankel.net" <chris@zankel.net>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "paulus@samba.org" <paulus@samba.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/.9yCL6CB+.8Q=rtYcoWvhTg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Bart,
 
-Hi all,
+On Mon, May 14, 2018 at 10:42 PM, Bart Van Assche
+<Bart.VanAssche@wdc.com> wrote:
+> On Mon, 2018-05-14 at 11:50 -0700, Max Filippov wrote:
+>> On Mon, May 14, 2018 at 11:46 AM, Bart Van Assche
+>> <bart.vanassche@wdc.com> wrote:
+>> > The next patch in this series introduces a call to cmpxchg64()
+>> > in the block layer core for those architectures on which this
+>> > functionality is available. Make it possible to test whether
+>> > cmpxchg64() is available by introducing CONFIG_ARCH_HAVE_CMPXCHG64.
+>> >
+>> > ---
+>>
+>> [...]
+>>
+>> > diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
+>> > index c921e8bccdc8..8234278a821d 100644
+>> > --- a/arch/xtensa/Kconfig
+>> > +++ b/arch/xtensa/Kconfig
+>> > @@ -23,6 +23,7 @@ config XTENSA
+>> >         select HAVE_DMA_CONTIGUOUS
+>> >         select HAVE_EXIT_THREAD
+>> >         select HAVE_FUNCTION_TRACER
+>> > +       select ARCH_HAVE_CMPXCHG64
+>>
+>> This breaks alphabetical sorting of Kconfig entries.
+>
+> Hello Max,
+>
+> Thanks for the feedback. Do you perhaps know whether keeping names in
+> alphabetical order is a requirement for arch/xtensa/Kconfig only or
+> whether this is required for all arch/*/Kconfig files?
 
-Commit
+It's a good practice anyway, as it reduces the probability of merge conflicts.
 
-  949a0c0dec85 ("ARM: dts: stm32: add USB Host (USBH) support to stm32mp157=
-c")
+Gr{oetje,eeting}s,
 
-is missing a Signed-off-by from its committer.
+                        Geert
 
---=20
-Cheers,
-Stephen Rothwell
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---Sig_/.9yCL6CB+.8Q=rtYcoWvhTg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr5/gkACgkQAVBC80lX
-0Gzk3gf/b6grPX/h+SXXksBQDkYi5T3LgtYvbqDaEdU6+JL01CFjxCS6LoFMcjBB
-uSAytNKApm+Dapg+dgK835tBP4bAcKXt4aak4PGT6lpxF6BLmA1+50xYLcpzdrqB
-F6tDQH84zSEZRARsBpO958RnQo5TKs8u1BeIp6G3bYsI7whOSqQtESYPvt/BxwRT
-zHg2Vraxdmg8VYKQ5t77RmlETqTEd3S3/xtJLnLlQQOTPiDOeXkBjWwcJgvjBxGJ
-M8Pa22NL/ExVucko11rEPDegPgN4O8j4z5ownmNWirB8ocYMzR2NNsaPHBJqXq3R
-ZA537QS05O4yfktrYRdN5uVzW+rrxw==
-=jp9s
------END PGP SIGNATURE-----
-
---Sig_/.9yCL6CB+.8Q=rtYcoWvhTg--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
