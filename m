@@ -1,5 +1,5 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-52765-1526270764-2-12459958512373129242
+X-Cyrus-Session-Id: sloti22d1t05-1146574-1526318711-2-15283834059903705464
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='UTF-8'
@@ -7,25 +7,25 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526270763; b=bOIh06p9IJIJ88ruGZXI24E98tWq2ZhVbRnLhGtFfHd5nLvtMw
-    nzw6eLSxU/d9IYUp4nbJEe7tU0b9Lc048BBAdi1GEUxQ/UUXA1TA09TXNu+9jJNd
-    rKjXzjjBrDQb5+tlgCB1k1m6knFXu3ZHL+j2KbZB8nKKbOtOqHC4Vy27MnDaLurO
-    wsj3Gc/sUOjh5iMhEsqUs4cjbhF95GoGQUJP8IZmXXIqccQmrPw7A5WMc9b9nMOs
-    UwkdzP1AAlF2ePM2736sMoYrNfyXT4gQLpx8haTU7chJjPLWZZ/Qv2ZFg/O0LUHL
-    qqsnXmRRsS4/lnZv012Ari7FpPe32Et0FTag==
+    1526318711; b=EA4urF34rQ8Ce9XH14v1nYRKvZhLFJjBSwOquK9MeA2AflAlY1
+    MTHK2oiIciJXhbowa0c4CX8v4QI2HhYPd/FaQgEbW+e55SVP7eZx6d61hNk8Img2
+    eO0d3azCwxmabnRjE4KTMbPNPBXH+Ng0xRnTwE2QL9WkdskpQ/1m02UHVCIvjS+S
+    kBNGWIkL06Y29WpmCGQvQ1JWIKpr++ZcfZlaVsfAFyk7wB++3HVSJ6EdXTiPg3tQ
+    Ila47L7m2Tt0VSzdSshigP2ndMbj3JeQVyu3PKKS5lu0UCpezj75mxoJAQPjz4iQ
+    T2X212Ky4EMbeXnAzax2Ex98CLc68/VicuvQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=mime-version:in-reply-to:references:from
     :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1526270763; bh=jDh+i07Pe9WEAalJkpyiaZWn9LJ6rsESkWXJWFyZxQ
-    4=; b=hFUj0vyewmo1RRnvPQpy4ldqSYKudJ+PhaPnFqyotQmQyMsvbATvYUma6F
-    mR7lN3BXR2kKEvQWPVKb/yOD1Bto3dqgZdS+nVnM8FdPxNqgBxk02EaEDnDoWTEy
-    PH2NrCV26jCzeDWLtmidksxmRz91qRkjN9d5m4KEQInvRQrY0hhCCiK1u9dsRCO1
-    VB8Ki4jNvolswHxd04GYlFpU8zNbYcieSX4uUwDEdjSswXyJfTl8nmIn4YGctDmu
-    VuDktpTd+Xwf8kvUYcTTMkByFvtVm/Gt12pa7rHzRH5mfnxdBgeNlmIOzOsyinGn
-    Q15RjV3Zvw4bn6TlrfeKqXtEAsQQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    fm2; t=1526318711; bh=G2XsUxKaW76IkM7zC3ywVLkBFjrUf8WtN8273hRxdD
+    0=; b=CXuYvlty5ikJm3yZKcfZyv5urSPYqiamLqizQYK0U+A7LECOW+3BpapbYJ
+    blcTd8Bj1Kxwar2ocvZ8UI1kA8ebfZX/1+EYizItFKPuRaGW6UIOX6WteY0tnyXr
+    W1fksTO9CIjdaaZGq2vXZiHxXSWnbXtZCn5AIDoIxOtuCLy5RtpJU/vY9wA5C8sq
+    t2y9Bw0UOmjJpCMQEWHOhBezHg8WUaZ1nJ/5deZLOT0CmtQWdbGXHdHcQiibuXBY
+    9DoCRlvYhRf11QI/irvhe9GFcN+A63cIq3TRlZ+Kry1Z2GgGubkTAeEsFwb2fC8j
+    KBvRTyqei4l+aplDTJZet5dfM4oQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-    header.i=@gmail.com header.b=BMxkfupR x-bits=2048 x-keytype=rsa
+    header.i=@gmail.com header.b=BJzvEn94 x-bits=2048 x-keytype=rsa
     x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -34,16 +34,16 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=UKSRLqZe;
+    header.i=@1e100.net header.b=kCeBr37Q;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-      header.i=@gmail.com header.b=BMxkfupR x-bits=2048 x-keytype=rsa
+      header.i=@gmail.com header.b=BJzvEn94 x-bits=2048 x-keytype=rsa
       x-algorithm=sha256 x-selector=20161025;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -52,38 +52,39 @@ Authentication-Results: mx4.messagingengine.com;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=UKSRLqZe;
+      header.i=@1e100.net header.b=kCeBr37Q;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=gmail.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfH+DFLLBByHl2Db3WmEDO56CPEgGXBH5zQzgBOxV/dK4dklGKjWnWWdK7AQNWwu2Eul6im3ylWgU756rjnGV8z76vpd0IjX7DXlEg3RoTlf5v2nrt5ci
-    rlwu7t1U+7M7Al2JM8CTceZZegFbYcBMKLXy+s35YHgnGoKFlrj+ZMsHbmJRz/i1MmhFxFhZaoc8fAafi8qdJShp244b9T4qAYrZLfJhtRkvlk5c95y3KFyP
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfILaa0/QF4uCXSacIn96mHPu8bmjuwl8cV88OBG+xwOfEXJcSf2FLLNil90PWf+8Py200S9FZ9+UYgo/kwZZ5aNXUKqIb64+AVn9OOkqZJOR/xmHMFDd
+    d2hC8lrRBwX/G3aYNDmVtFrpHp79IJ6gXUTTps3NBuVB09ruGT2e4oX4D4TObleJZFFDDOhIXiNzjDmvvx5Wzw+JJLr4+RXvDnGsAPPzOk2uHsySaQpY9GQv
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=uVShTw-VqmsA:10 a=VUJBJC2UJ8kA:10 a=D19gQVrFAAAA:8 a=cm27Pg_UAAAA:8
-    a=pGLkceISAAAA:8 a=yFAjnQmEBhT3Ed7f_j4A:9 a=QEXdDO2ut3YA:10
-    a=W4TVW4IDbPiebHqcZpNg:22 a=xmb-EsYY8bH0VWELuYED:22
+    a=uVShTw-VqmsA:10 a=VUJBJC2UJ8kA:10 a=cm27Pg_UAAAA:8 a=pGLkceISAAAA:8
+    a=D19gQVrFAAAA:8 a=fsyP9GYKqpdQhtufmK4A:9 a=QEXdDO2ut3YA:10
+    a=xmb-EsYY8bH0VWELuYED:22 a=W4TVW4IDbPiebHqcZpNg:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751449AbeENEGA (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 14 May 2018 00:06:00 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:38857 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751387AbeENEF7 (ORCPT
+        id S1752512AbeENRZJ (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 14 May 2018 13:25:09 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:39938 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752076AbeENRZI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 May 2018 00:05:59 -0400
-X-Google-Smtp-Source: AB8JxZp0nrZXZ+bSx9sL1oNS09DDgC+GQl4S6I5AVChuGuYatt6IW51+V77Cg1+zZDtN33NcxLiJ3RQVDGRy3kKZq2Y=
+        Mon, 14 May 2018 13:25:08 -0400
+X-Google-Smtp-Source: AB8JxZpnArzWtWrXAcMHME0CrW8VQrNhk5e5NLHjHWbOJ/QP9xu5yLeY9tK4CwsQ/iNwdIcU6UH03vGuSZ+b510wQ+8=
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLFHSE12La25QEvZawdBm84cLavtTD5LAA6MqeqBmbYuw@mail.gmail.com>
+In-Reply-To: <CAGXu5jJpO+z8k_=UuVY9WAeiEgABQg4gWE6nz82BX0_UhaPUWw@mail.gmail.com>
 References: <20180512045921.18311-1-deepa.kernel@gmail.com>
  <20180512045921.18311-7-deepa.kernel@gmail.com> <CAGXu5jLFHSE12La25QEvZawdBm84cLavtTD5LAA6MqeqBmbYuw@mail.gmail.com>
+ <CABeXuvpi_dm6TE3pH_KGehgNwW177hJFBmR8u29w6KJH1aA1Kg@mail.gmail.com> <CAGXu5jJpO+z8k_=UuVY9WAeiEgABQg4gWE6nz82BX0_UhaPUWw@mail.gmail.com>
 From: Deepa Dinamani <deepa.kernel@gmail.com>
-Date: Sun, 13 May 2018 21:05:58 -0700
-Message-ID: <CABeXuvpi_dm6TE3pH_KGehgNwW177hJFBmR8u29w6KJH1aA1Kg@mail.gmail.com>
+Date: Mon, 14 May 2018 10:25:06 -0700
+Message-ID: <CABeXuvrO5XLD5QhBPui-v_G6JX=FgcaZLOL0C6B40f4oCyqOWg@mail.gmail.com>
 Subject: Re: [PATCH 6/6] vfs: change inode times to use struct timespec64
 To: Kees Cook <keescook@chromium.org>
 Cc: Al Viro <viro@zeniv.linux.org.uk>,
@@ -120,49 +121,44 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Al,
+On Mon, May 14, 2018 at 9:30 AM, Kees Cook <keescook@chromium.org> wrote:
+> On Sun, May 13, 2018 at 9:05 PM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>> Kees mentioned that he wants to merge a patch to pstore that changes
+>> it to use timespec64 internally for 4.17:
+>> https://lkml.org/lkml/2018/5/13/3
+>
+> I'm still working on a v2 for pstore. What is the correct
+> cross-architecture format string for timespec64's tv_sec? In your
+> other patches, you're using %lld and a (long long) cast. I'd really
+> like to avoid the need for casts.
 
-Are you ok with this approach to changing vfs timestamps?
+We cannot really avoid it for now.
+struct timespec64 is defined this way for now:
 
-Kees mentioned that he wants to merge a patch to pstore that changes
-it to use timespec64 internally for 4.17:
-https://lkml.org/lkml/2018/5/13/3
+struct timespec {
+__kernel_time_t tv_sec; /* seconds */
+long tv_nsec; /* nanoseconds */
+};
 
-I'm not sure how we usually merge such flag day patches. Should this
-be targeted for 4.17 or 4.18? The above might or might not be a
-problem based on when this series is merged.
+#if __BITS_PER_LONG == 64
+/* this trick allows us to optimize out timespec64_to_timespec */
+# define timespec64 timespec
 
-If you are ok with this approach, I could post a v2 with a couple of
-requested fix-ups.
+#else
+
+struct timespec64 {
+time64_t tv_sec; /* seconds */
+long tv_nsec; /* nanoseconds */
+};
+
+#endif
+
+This will all lead to tv_sec being long on a 64 bit architecture and
+long long on a 32 bit architecture.
+So there is no way of avoiding the cast for now.
+
+We plan to get rid of this trick and to have a single definition for
+timespec64. But, that cleanup is planned for later when we cleanup all
+struct timespec uses internally.
 
 -Deepa
-
-On Fri, May 11, 2018 at 11:44 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Fri, May 11, 2018 at 9:59 PM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
->> index 5fcb845b9fec..fb681d302bb3 100644
->> --- a/fs/pstore/inode.c
->> +++ b/fs/pstore/inode.c
->> @@ -392,7 +392,7 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
->>         inode->i_private = private;
->>
->>         if (record->time.tv_sec)
->> -               inode->i_mtime = inode->i_ctime = record->time;
->> +               inode->i_mtime = inode->i_ctime = timespec_to_timespec64(record->time);
->>
->>         d_add(dentry, inode);
->
-> I'm fine to just convert pstore internally to timespec64 right now. Is
-> it correct to say that I should use timespec64_to_timespec() here
-> until this flag day patch? And I'd need to do this as well, yes?
->
-> fs/pstore/platform.c:     record->time =
-> ns_to_timespec64(ktime_get_real_fast_ns());
->
-> Thanks!
->
-> -Kees
->
-> --
-> Kees Cook
-> Pixel Security
