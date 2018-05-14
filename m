@@ -1,41 +1,37 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoBLwZDcLVqYzvGFI7Q9jpHcSbev4X8/OILnSH7OFgiRiASfTRub/VWKv7l5j0qEE6f9zRC
-ARC-Seal: i=1; a=rsa-sha256; t=1526281053; cv=none;
+X-Google-Smtp-Source: AB8JxZpQhjKpZK6sYMoTKLbueIMuE672YL8h7AHFuXACk/N2MyWjr0C3JddKrjTq4A7HOeA59Rti
+ARC-Seal: i=1; a=rsa-sha256; t=1526281051; cv=none;
         d=google.com; s=arc-20160816;
-        b=jWuHmdO5NcevzSWsw/jLgYX5idj/3FvPyX7ZjGfkRJU52QGZPqjVlYu/MHG57S4AfF
-         2dIQeVNw6f+G4fxk5ecmKSNrnLw3dwtXA1J4ecodc28x2srKSXVj6EciYcWt/CFMINjW
-         ilcBsr/6AEb+Ibyu7Ws9h8to8kuiNYmW3w/dbeULUeRxlo+odhjSkqtoZPC9RcR38GUs
-         6GzmW0iNef4rlI0qiYrbrkB4nWG3w7kVMYa0L9i4IN/ebfJFll8jLCwZUbX1fJZdQ/lM
-         fTgm5fnAO+C0NVe+yQS3Cb9L64dhLK8zRBBbRWxTyqjgklnkCfPB/d7OWu2GSLp1b0th
-         nbDA==
+        b=i0zKi3nvJvEx7pvMRNxGVbIYB4AoPunZe6i0b0yoQzzwM5Ls1pARzBygnSsTAUUgzT
+         Monp1zZYlqSO8NTB9MeKOrqG3VQY+jIPkuyYSbNMoBYd7oQbWFTGJmPZBQRAiiAL1Fhw
+         CYrHg8ZH8F8/fHaGKw7KktjeRye8z7bSZwUY7IX+A58qiln03tvE1JWhU4C0Zl/mN5r2
+         MN5tupSvuxgtqiitfU1WQm7nH8b2mmP2oEKVZunjLydCyY0/+kLSHjH4Ajmz+ZORLpBr
+         DR25zZ64d/o0oUvmcLZ1N5SQdZ4KJQ6NEfnTIE/IwOuaLIFGXuNbBYZLHWkGzDrzWbZv
+         +KHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Zn58Qme2KS1bMXDz+/leNCSinjvz/6HkjH6SDu7nd8k=;
-        b=mUASZ0/uzuL9fxHCeXyHTSBYMyZUlELVB00Ek1D75VGrfWOZ1h7f/Fx/WkZmCwvHzr
-         hVmb7M7gesaDTYA+hzKK/S2T5sJoI3k9DJRVzvekZtRgzAq/nGqm1X2xD84aFr2zf3Jd
-         HaCbKthzYsdk3twP3YxgbkhwaNQxqp5Cfvqiw413eOayD4qtIxNCcZ0ltWy3xMxSLY8U
-         blZ4rvelUfTuxLSG7W3I1U/Q6+um9QlCKAvwqOe4z+XMmeTVLJwL995nTmRde5iTrD8b
-         CSTLIFQ99n3mQ9vX/0rTex94O7JjklcLSN0yNl0jIb5AXdE3JR/y1yK7dmizTxfY3n9c
-         TTXQ==
+        bh=tBtdO1+1n7tqmMQqVyq04Xl0NNIdmsy4iy0ALJeJ9/s=;
+        b=BbaXEn4FEFpZX/OB8wAfPmHmLY8h6xBBtijUP9tgpM3IEh8OTsyiv4hL8hTzpBqTQ0
+         PCwKyl/Ab6Y4+bRywvZ5ualOAutCfnjyg7LrKxsdI0t1emgKXT8nOPikStxSgyQTtU7F
+         w8REUhj38gmmUJTuTwxoCKSVAGpGdU+pw3Z/crNo62EPRIVg+WQkSLxEcf4PX/YeeX+E
+         u7Pe5G/bSabM0o9zGmUcc9a+nepOTXNsJUs6a51UJNjIFVwbGbf05QGX9XwkVyugQN4J
+         atIfj2bi/5tWYIbrihtOjFb6lL97Fh60jzei8OPSiq2W7GP+jrKP1CMKul6tHPT/UWXz
+         5/XA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=S+/pIWtt;
+       dkim=pass header.i=@kernel.org header.s=default header.b=SPr3c8Uo;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=S+/pIWtt;
+       dkim=pass header.i=@kernel.org header.s=default header.b=SPr3c8Uo;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Mika=20Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-	Wanpeng Li <kernellwp@gmail.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Anthoine Bourgeois <anthoine.bourgeois@blade-group.com>,
-	=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH 4.14 62/62] KVM: x86: remove APIC Timer periodic/oneshot spikes
-Date: Mon, 14 May 2018 08:49:18 +0200
-Message-Id: <20180514064819.929970573@linuxfoundation.org>
+	Paul Mackerras <paulus@ozlabs.org>
+Subject: [PATCH 4.14 61/62] KVM: PPC: Book3S HV: Fix handling of large pages in radix page fault handler
+Date: Mon, 14 May 2018 08:49:17 +0200
+Message-Id: <20180514064819.879286275@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -45,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421681693060384?=
-X-GMAIL-MSGID: =?utf-8?q?1600421681693060384?=
+X-GMAIL-THRID: =?utf-8?q?1600421679160580473?=
+X-GMAIL-MSGID: =?utf-8?q?1600421679160580473?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,102 +50,178 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Anthoine Bourgeois <anthoine.bourgeois@blade-group.com>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-commit ecf08dad723d3e000aecff6c396f54772d124733 upstream.
+commit c3856aeb29402e94ad9b3879030165cc6a4fdc56 upstream.
 
-Since the commit "8003c9ae204e: add APIC Timer periodic/oneshot mode VMX
-preemption timer support", a Windows 10 guest has some erratic timer
-spikes.
+This fixes several bugs in the radix page fault handler relating to
+the way large pages in the memory backing the guest were handled.
+First, the check for large pages only checked for explicit huge pages
+and missed transparent huge pages.  Then the check that the addresses
+(host virtual vs. guest physical) had appropriate alignment was
+wrong, meaning that the code never put a large page in the partition
+scoped radix tree; it was always demoted to a small page.
 
-Here the results on a 150000 times 1ms timer without any load:
-	  Before 8003c9ae204e | After 8003c9ae204e
-Max           1834us          |  86000us
-Mean          1100us          |   1021us
-Deviation       59us          |    149us
-Here the results on a 150000 times 1ms timer with a cpu-z stress test:
-	  Before 8003c9ae204e | After 8003c9ae204e
-Max          32000us          | 140000us
-Mean          1006us          |   1997us
-Deviation      140us          |  11095us
+Fixing this exposed bugs in kvmppc_create_pte().  We were never
+invalidating a 2MB PTE, which meant that if a page was initially
+faulted in without write permission and the guest then attempted
+to store to it, we would never update the PTE to have write permission.
+If we find a valid 2MB PTE in the PMD, we need to clear it and
+do a TLB invalidation before installing either the new 2MB PTE or
+a pointer to a page table page.
 
-The root cause of the problem is starting hrtimer with an expiry time
-already in the past can take more than 20 milliseconds to trigger the
-timer function.  It can be solved by forward such past timers
-immediately, rather than submitting them to hrtimer_start().
-In case the timer is periodic, update the target expiration and call
-hrtimer_start with it.
+This also corrects an assumption that get_user_pages_fast would set
+the _PAGE_DIRTY bit if we are writing, which is not true.  Instead we
+mark the page dirty explicitly with set_page_dirty_lock().  This
+also means we don't need the dirty bit set on the host PTE when
+providing write access on a read fault.
 
-v2: Check if the tsc deadline is already expired. Thank you Mika.
-v3: Execute the past timers immediately rather than submitting them to
-hrtimer_start().
-v4: Rearm the periodic timer with advance_periodic_target_expiration() a
-simpler version of set_target_expiration(). Thank you Paolo.
+[paulus@ozlabs.org - use mark_pages_dirty instead of
+ kvmppc_update_dirty_map]
 
-Cc: Mika Penttilä <mika.penttila@nextfour.com>
-Cc: Wanpeng Li <kernellwp@gmail.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Anthoine Bourgeois <anthoine.bourgeois@blade-group.com>
-8003c9ae204e ("KVM: LAPIC: add APIC Timer periodic/oneshot mode VMX preemption timer support")
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/x86/kvm/lapic.c |   37 ++++++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+ arch/powerpc/kvm/book3s_64_mmu_radix.c |   72 +++++++++++++++++++++------------
+ 1 file changed, 46 insertions(+), 26 deletions(-)
 
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -1418,23 +1418,6 @@ static void start_sw_tscdeadline(struct
- 	local_irq_restore(flags);
+--- a/arch/powerpc/kvm/book3s_64_mmu_radix.c
++++ b/arch/powerpc/kvm/book3s_64_mmu_radix.c
+@@ -19,6 +19,9 @@
+ #include <asm/pgalloc.h>
+ #include <asm/pte-walk.h>
+ 
++static void mark_pages_dirty(struct kvm *kvm, struct kvm_memory_slot *memslot,
++			     unsigned long gfn, unsigned int order);
++
+ /*
+  * Supported radix tree geometry.
+  * Like p9, we support either 5 or 9 bits at the first (lowest) level,
+@@ -195,6 +198,12 @@ static void kvmppc_pte_free(pte_t *ptep)
+ 	kmem_cache_free(kvm_pte_cache, ptep);
  }
  
--static void start_sw_period(struct kvm_lapic *apic)
--{
--	if (!apic->lapic_timer.period)
--		return;
--
--	if (apic_lvtt_oneshot(apic) &&
--	    ktime_after(ktime_get(),
--			apic->lapic_timer.target_expiration)) {
--		apic_timer_expired(apic);
--		return;
--	}
--
--	hrtimer_start(&apic->lapic_timer.timer,
--		apic->lapic_timer.target_expiration,
--		HRTIMER_MODE_ABS_PINNED);
--}
--
- static bool set_target_expiration(struct kvm_lapic *apic)
- {
- 	ktime_t now;
-@@ -1491,6 +1474,26 @@ static void advance_periodic_target_expi
- 				apic->lapic_timer.period);
- }
- 
-+static void start_sw_period(struct kvm_lapic *apic)
++/* Like pmd_huge() and pmd_large(), but works regardless of config options */
++static inline int pmd_is_leaf(pmd_t pmd)
 +{
-+	if (!apic->lapic_timer.period)
-+		return;
-+
-+	if (ktime_after(ktime_get(),
-+			apic->lapic_timer.target_expiration)) {
-+		apic_timer_expired(apic);
-+
-+		if (apic_lvtt_oneshot(apic))
-+			return;
-+
-+		advance_periodic_target_expiration(apic);
-+	}
-+
-+	hrtimer_start(&apic->lapic_timer.timer,
-+		apic->lapic_timer.target_expiration,
-+		HRTIMER_MODE_ABS_PINNED);
++	return !!(pmd_val(pmd) & _PAGE_PTE);
 +}
 +
- bool kvm_lapic_hv_timer_in_use(struct kvm_vcpu *vcpu)
+ static int kvmppc_create_pte(struct kvm *kvm, pte_t pte, unsigned long gpa,
+ 			     unsigned int level, unsigned long mmu_seq)
  {
- 	if (!lapic_in_kernel(vcpu))
+@@ -219,7 +228,7 @@ static int kvmppc_create_pte(struct kvm
+ 	else
+ 		new_pmd = pmd_alloc_one(kvm->mm, gpa);
+ 
+-	if (level == 0 && !(pmd && pmd_present(*pmd)))
++	if (level == 0 && !(pmd && pmd_present(*pmd) && !pmd_is_leaf(*pmd)))
+ 		new_ptep = kvmppc_pte_alloc();
+ 
+ 	/* Check if we might have been invalidated; let the guest retry if so */
+@@ -244,12 +253,30 @@ static int kvmppc_create_pte(struct kvm
+ 		new_pmd = NULL;
+ 	}
+ 	pmd = pmd_offset(pud, gpa);
+-	if (pmd_large(*pmd)) {
+-		/* Someone else has instantiated a large page here; retry */
+-		ret = -EAGAIN;
+-		goto out_unlock;
+-	}
+-	if (level == 1 && !pmd_none(*pmd)) {
++	if (pmd_is_leaf(*pmd)) {
++		unsigned long lgpa = gpa & PMD_MASK;
++
++		/*
++		 * If we raced with another CPU which has just put
++		 * a 2MB pte in after we saw a pte page, try again.
++		 */
++		if (level == 0 && !new_ptep) {
++			ret = -EAGAIN;
++			goto out_unlock;
++		}
++		/* Valid 2MB page here already, remove it */
++		old = kvmppc_radix_update_pte(kvm, pmdp_ptep(pmd),
++					      ~0UL, 0, lgpa, PMD_SHIFT);
++		kvmppc_radix_tlbie_page(kvm, lgpa, PMD_SHIFT);
++		if (old & _PAGE_DIRTY) {
++			unsigned long gfn = lgpa >> PAGE_SHIFT;
++			struct kvm_memory_slot *memslot;
++			memslot = gfn_to_memslot(kvm, gfn);
++			if (memslot)
++				mark_pages_dirty(kvm, memslot, gfn,
++						 PMD_SHIFT - PAGE_SHIFT);
++		}
++	} else if (level == 1 && !pmd_none(*pmd)) {
+ 		/*
+ 		 * There's a page table page here, but we wanted
+ 		 * to install a large page.  Tell the caller and let
+@@ -412,28 +439,24 @@ int kvmppc_book3s_radix_page_fault(struc
+ 	} else {
+ 		page = pages[0];
+ 		pfn = page_to_pfn(page);
+-		if (PageHuge(page)) {
+-			page = compound_head(page);
+-			pte_size <<= compound_order(page);
++		if (PageCompound(page)) {
++			pte_size <<= compound_order(compound_head(page));
+ 			/* See if we can insert a 2MB large-page PTE here */
+ 			if (pte_size >= PMD_SIZE &&
+-			    (gpa & PMD_MASK & PAGE_MASK) ==
+-			    (hva & PMD_MASK & PAGE_MASK)) {
++			    (gpa & (PMD_SIZE - PAGE_SIZE)) ==
++			    (hva & (PMD_SIZE - PAGE_SIZE))) {
+ 				level = 1;
+ 				pfn &= ~((PMD_SIZE >> PAGE_SHIFT) - 1);
+ 			}
+ 		}
+ 		/* See if we can provide write access */
+ 		if (writing) {
+-			/*
+-			 * We assume gup_fast has set dirty on the host PTE.
+-			 */
+ 			pgflags |= _PAGE_WRITE;
+ 		} else {
+ 			local_irq_save(flags);
+ 			ptep = find_current_mm_pte(current->mm->pgd,
+ 						   hva, NULL, NULL);
+-			if (ptep && pte_write(*ptep) && pte_dirty(*ptep))
++			if (ptep && pte_write(*ptep))
+ 				pgflags |= _PAGE_WRITE;
+ 			local_irq_restore(flags);
+ 		}
+@@ -459,18 +482,15 @@ int kvmppc_book3s_radix_page_fault(struc
+ 		pte = pfn_pte(pfn, __pgprot(pgflags));
+ 		ret = kvmppc_create_pte(kvm, pte, gpa, level, mmu_seq);
+ 	}
+-	if (ret == 0 || ret == -EAGAIN)
+-		ret = RESUME_GUEST;
+ 
+ 	if (page) {
+-		/*
+-		 * We drop pages[0] here, not page because page might
+-		 * have been set to the head page of a compound, but
+-		 * we have to drop the reference on the correct tail
+-		 * page to match the get inside gup()
+-		 */
+-		put_page(pages[0]);
++		if (!ret && (pgflags & _PAGE_WRITE))
++			set_page_dirty_lock(page);
++		put_page(page);
+ 	}
++
++	if (ret == 0 || ret == -EAGAIN)
++		ret = RESUME_GUEST;
+ 	return ret;
+ }
+ 
+@@ -676,7 +696,7 @@ void kvmppc_free_radix(struct kvm *kvm)
+ 				continue;
+ 			pmd = pmd_offset(pud, 0);
+ 			for (im = 0; im < PTRS_PER_PMD; ++im, ++pmd) {
+-				if (pmd_huge(*pmd)) {
++				if (pmd_is_leaf(*pmd)) {
+ 					pmd_clear(pmd);
+ 					continue;
+ 				}
