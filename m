@@ -1,75 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752872AbeENL20 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:28:26 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33326 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752531AbeENL2X (ORCPT
+        id S1752769AbeENL2T (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:28:19 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:47457 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752386AbeENL2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:28:23 -0400
-Date: Mon, 14 May 2018 13:28:15 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] perf/ring_buffer: ensure atomicity and order of updates
-Message-ID: <20180514112815.GP12217@hirez.programming.kicks-ass.net>
-References: <20180510130632.34497-1-mark.rutland@arm.com>
- <20180511105931.yyarmtz2gjkbuq2a@lakrids.cambridge.arm.com>
- <20180511162229.GK12217@hirez.programming.kicks-ass.net>
- <20180514110532.kihs5ilrs67kvq7e@lakrids.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514110532.kihs5ilrs67kvq7e@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Mon, 14 May 2018 07:28:12 -0400
+From: Luca Ceresoli <luca@lucaceresoli.net>
+To: linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Subject: [PATCH v2 2/5] media: docs: clarify relationship between crop and selection APIs
+Date: Mon, 14 May 2018 13:27:24 +0200
+Message-Id: <1526297247-20881-2-git-send-email-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526297247-20881-1-git-send-email-luca@lucaceresoli.net>
+References: <1526297247-20881-1-git-send-email-luca@lucaceresoli.net>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 12:05:33PM +0100, Mark Rutland wrote:
-> On Fri, May 11, 2018 at 06:22:29PM +0200, Peter Zijlstra wrote:
-> > On Fri, May 11, 2018 at 11:59:32AM +0100, Mark Rutland wrote:
-> > > READ_ONCE() and WRITE_ONCE() "helpfully" make a silent fallback to a
-> > > memcpy in this case, so we're broken today, regardless of this change.
-> > > 
-> > > I suspect that in practice we get single-copy-atomicity for the 32-bit
-> > > halves, and sessions likely produce less than 4GiB of ringbuffer data,
-> > > so failures would be rare.
-> > 
-> > This should not be a problem because of the 32bit adress space limit,
-> > which would necessarily limit us to the low word.
-> 
-> For the wrapped values, yes.
-> 
-> I thought that the head and tail values were meant to be free-running,
-> but I can't see where I got that idea from now that I've gone digging
-> again.
+Having two somewhat similar and largely overlapping APIs is confusing,
+especially since the older one appears in the docs before the newer
+and most featureful counterpart.
 
-They are indeed free running.
+Clarify all of this in several ways:
+ - swap the two sections
+ - give a name to the two APIs in the section names
+ - add a note at the beginning of the CROP API section
+ - update note about VIDIOC_CROPCAP
 
-> > Also note that in perf_output_put_handle(), where we write ->data_head,
-> > the store is from an 'unsigned long'. So on 32bit that will result in a
-> > zero high word. Similarly, in __perf_output_begin() we read ->data_tail
-> > into an unsigned long, which will discard the high word.
-> 
-> Ah, that's a fair point. So it's just compat userspace that this is
-> potentially borked for. ;)
+Also remove a note that is incorrect (correct wording is in
+vidioc-cropcap.rst).
 
-Right.. #$$#@ compat. Hurmph.. not sure how to go about fixing that
-there.
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Based on info from: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>
 
-> > So userspace should always read (head) a zero high word, irrespective of
-> > a split store (2x32bit), and the kernel will disregard the high word on
-> > reading (tail), irrespective of what userspace put there.
-> > 
-> > This is all a bit subtle, and could probably use a comment, but it ought
-> > to work..
-> 
-> It would be nice to guarantee that we don't lose 32-bit atomicity by
-> virtue of {READ,WRITE}_ONCE() falling back to memcpy in this case, so
-> maybe we should wrap this in some helpers.
+---
 
-Our __READ_ONCE_SIZE / __write_once_size include case 8 unconditionally.
-So we'll always issue a volatile u64 load/store and let the compiler
-figure out how to do that -- typically 2 load/stores I would imagine.
+Changed v1 -> v2:
+ - Don't remove the note about VIDIOC_CROPCAP being mandatory, update
+   it (Hans)
+---
+ Documentation/media/uapi/v4l/common.rst            |  2 +-
+ Documentation/media/uapi/v4l/crop.rst              | 22 +++++++++++++++-------
+ Documentation/media/uapi/v4l/selection-api-005.rst |  2 ++
+ Documentation/media/uapi/v4l/selection-api.rst     |  4 ++--
+ 4 files changed, 20 insertions(+), 10 deletions(-)
+
+diff --git a/Documentation/media/uapi/v4l/common.rst b/Documentation/media/uapi/v4l/common.rst
+index 13f2ed3fc5a6..5f93e71122ef 100644
+--- a/Documentation/media/uapi/v4l/common.rst
++++ b/Documentation/media/uapi/v4l/common.rst
+@@ -41,6 +41,6 @@ applicable to all devices.
+     extended-controls
+     format
+     planar-apis
+-    crop
+     selection-api
++    crop
+     streaming-par
+diff --git a/Documentation/media/uapi/v4l/crop.rst b/Documentation/media/uapi/v4l/crop.rst
+index 182565b9ace4..45e8a895a320 100644
+--- a/Documentation/media/uapi/v4l/crop.rst
++++ b/Documentation/media/uapi/v4l/crop.rst
+@@ -2,9 +2,18 @@
+ 
+ .. _crop:
+ 
+-*************************************
+-Image Cropping, Insertion and Scaling
+-*************************************
++*****************************************************
++Image Cropping, Insertion and Scaling -- the CROP API
++*****************************************************
++
++.. note::
++
++   The CROP API is mostly superseded by the newer :ref:`SELECTION API
++   <selection-api>`. The new API should be preferred in most cases,
++   with the exception of pixel aspect ratio detection, which is
++   implemented by :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` and has no
++   equivalent in the SELECTION API. See :ref:`selection-vs-crop` for a
++   comparison of the two APIs.
+ 
+ Some video capture devices can sample a subsection of the picture and
+ shrink or enlarge it to an image of arbitrary size. We call these
+@@ -42,10 +51,9 @@ where applicable) will be fixed in this case.
+ 
+ .. note::
+ 
+-   All capture and output devices must support the
+-   :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` ioctl such that applications
+-   can determine if scaling takes place.
+-
++   All capture and output devices that support the CROP or SELECTION
++   API will also support the :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>`
++   ioctl.
+ 
+ Cropping Structures
+ ===================
+diff --git a/Documentation/media/uapi/v4l/selection-api-005.rst b/Documentation/media/uapi/v4l/selection-api-005.rst
+index 5b47a28ac6d7..2ad30a49184f 100644
+--- a/Documentation/media/uapi/v4l/selection-api-005.rst
++++ b/Documentation/media/uapi/v4l/selection-api-005.rst
+@@ -1,5 +1,7 @@
+ .. -*- coding: utf-8; mode: rst -*-
+ 
++.. _selection-vs-crop:
++
+ ********************************
+ Comparison with old cropping API
+ ********************************
+diff --git a/Documentation/media/uapi/v4l/selection-api.rst b/Documentation/media/uapi/v4l/selection-api.rst
+index 81ea52d785b9..e4e623824b30 100644
+--- a/Documentation/media/uapi/v4l/selection-api.rst
++++ b/Documentation/media/uapi/v4l/selection-api.rst
+@@ -2,8 +2,8 @@
+ 
+ .. _selection-api:
+ 
+-API for cropping, composing and scaling
+-=======================================
++Cropping, composing and scaling -- the SELECTION API
++====================================================
+ 
+ 
+ .. toctree::
+-- 
+2.7.4
