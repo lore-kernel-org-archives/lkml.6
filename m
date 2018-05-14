@@ -1,104 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932073AbeENMpq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:45:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60373 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753453AbeENMpo (ORCPT
+        id S932078AbeENMqG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:46:06 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:16227 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752891AbeENMqE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:45:44 -0400
-Date: Mon, 14 May 2018 05:45:20 -0700
-From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-3d64f4ed15c3c53dba4c514bf59c334464dee373@git.kernel.org>
-Cc: linuxram@us.ibm.com, mpe@ellerman.id.au, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, peterz@infradead.org, mingo@kernel.org,
-        hpa@zytor.com, dave.hansen@linux.intel.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, shuah@kernel.org
-Reply-To: linuxram@us.ibm.com, akpm@linux-foundation.org, mpe@ellerman.id.au,
-        mingo@kernel.org, torvalds@linux-foundation.org, peterz@infradead.org,
-        hpa@zytor.com, dave.hansen@intel.com, dave.hansen@linux.intel.com,
-        tglx@linutronix.de, shuah@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20180509171352.9BE09819@viggo.jf.intel.com>
-References: <20180509171352.9BE09819@viggo.jf.intel.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/pkeys/selftests: Fix pointer math
-Git-Commit-ID: 3d64f4ed15c3c53dba4c514bf59c334464dee373
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 14 May 2018 08:46:04 -0400
+Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not
+ compiled by default
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        <gabriel.fernandez@st.com>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>
+References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+ <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+ <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
+Date: Mon, 14 May 2018 14:45:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG6NODE1.st.com (10.75.127.16) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3d64f4ed15c3c53dba4c514bf59c334464dee373
-Gitweb:     https://git.kernel.org/tip/3d64f4ed15c3c53dba4c514bf59c334464dee373
-Author:     Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate: Wed, 9 May 2018 10:13:52 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 14 May 2018 11:14:45 +0200
 
-x86/pkeys/selftests: Fix pointer math
 
-We dump out the entire area of the siginfo where the si_pkey_ptr is
-supposed to be.  But, we do some math on the poitner, which is a u32.
-We intended to do byte math, not u32 math on the pointer.
+On 05/05/2018 04:45 AM, Stephen Boyd wrote:
+> Quoting Alexandre Torgue (2018-05-04 00:54:16)
+>> Stephen
+>>
+>> On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
+>>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>>
+>>> Clock driver is mandatory if the machine is selected.
+>>> Then don't use 'bool' and 'depends on' commands, but 'def_bool'
+>>> with the machine(s).
+>>>
+>>> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
+>>>
+>>
+>> Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4.17.
+> 
+> Thanks for the bump. I missed this one. Of course, the user can still select
+> the configs now, just it's annoying for upgrade path.
+> 
+>>
+>>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+>>> ---
+>>>    drivers/clk/Kconfig | 6 ++----
+>>>    1 file changed, 2 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+>>> index 24a5bc3..721572a 100644
+>>> --- a/drivers/clk/Kconfig
+>>> +++ b/drivers/clk/Kconfig
+>>> @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
+>>>          Support for stm32mp157 SoC family clocks
+>>>    
+>>>    config COMMON_CLK_STM32F
+>>> -     bool "Clock driver for stm32f4 and stm32f7 SoC families"
+>>> -     depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+>>> +     def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
+> 
+> But the point of the change this patch is fixing was to expose these to
+> the user to turn off they wanted. You'll need to do something like that
+> again here, instead of removing the prompt and replacing it with a
+> def_bool.
+> 
 
-Cast it over to a u8* so it works.
+Sorry I don't understand. Clock driver is mandatory to boot each 
+platform and depends on machine type. Do you see a use case where we 
+could need to disable the clock driver? (it would impose to change 
+devicetree to use fixed clocks and to have a booloader which configures 
+all PLL and clocks).
 
-Also, move this block of code to below th si_code check.  It doesn't
-hurt anything, but the si_pkey field is gibberish for other signal
-types.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Ellermen <mpe@ellerman.id.au>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ram Pai <linuxram@us.ibm.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180509171352.9BE09819@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/testing/selftests/x86/protection_keys.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/tools/testing/selftests/x86/protection_keys.c b/tools/testing/selftests/x86/protection_keys.c
-index 55a4e349a45e..ee8176358d12 100644
---- a/tools/testing/selftests/x86/protection_keys.c
-+++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -303,13 +303,6 @@ void signal_handler(int signum, siginfo_t *si, void *vucontext)
- 		dump_mem(pkru_ptr - 128, 256);
- 	pkey_assert(*pkru_ptr);
- 
--	si_pkey_ptr = (u32 *)(((u8 *)si) + si_pkey_offset);
--	dprintf1("si_pkey_ptr: %p\n", si_pkey_ptr);
--	dump_mem(si_pkey_ptr - 8, 24);
--	siginfo_pkey = *si_pkey_ptr;
--	pkey_assert(siginfo_pkey < NR_PKEYS);
--	last_si_pkey = siginfo_pkey;
--
- 	if ((si->si_code == SEGV_MAPERR) ||
- 	    (si->si_code == SEGV_ACCERR) ||
- 	    (si->si_code == SEGV_BNDERR)) {
-@@ -317,6 +310,13 @@ void signal_handler(int signum, siginfo_t *si, void *vucontext)
- 		exit(4);
- 	}
- 
-+	si_pkey_ptr = (u32 *)(((u8 *)si) + si_pkey_offset);
-+	dprintf1("si_pkey_ptr: %p\n", si_pkey_ptr);
-+	dump_mem((u8 *)si_pkey_ptr - 8, 24);
-+	siginfo_pkey = *si_pkey_ptr;
-+	pkey_assert(siginfo_pkey < NR_PKEYS);
-+	last_si_pkey = siginfo_pkey;
-+
- 	dprintf1("signal pkru from xsave: %08x\n", *pkru_ptr);
- 	/* need __rdpkru() version so we do not do shadow_pkru checking */
- 	dprintf1("signal pkru from  pkru: %08x\n", __rdpkru());
+> So this patch instead? It leaves it around for the whole arch, but
+> limits the default to be the machines that matter. I suppose we could
+> put an 'if EXPERT' on the bool part too if we don't even want to expose
+> the options to normal users.
+> 
+> -----8<-----
+> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Date: Thu, 3 May 2018 08:40:09 +0200
+> Subject: [PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
+>   default
+> Cc: <linux-kernel@vger.kernel.org>,
+>      <linux-arm-kernel@lists.infradead.org>
+> 
+> Clock driver is mandatory if the machine is selected. Add a default
+> of the machines that need the clk driver, so that the user can turn it
+> off if they want, but otherwise it's exposed on the SoCs the driver
+> is for.
+> 
+> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
+> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>   drivers/clk/Kconfig | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 41492e980ef4..ac3f0e2bc03f 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -267,15 +267,16 @@ config COMMON_CLK_STM32MP157
+>   
+>   config COMMON_CLK_STM32F
+>   	bool "Clock driver for stm32f4 and stm32f7 SoC families"
+> -	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+> +	depends on ARCH_STM32
+> +	default MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+>   	help
+>   	---help---
+>   	  Support for stm32f4 and stm32f7 SoC families clocks
+>   
+>   config COMMON_CLK_STM32H7
+>   	bool "Clock driver for stm32h7 SoC family"
+> -	depends on MACH_STM32H743
+> -	help
+> +	depends on ARCH_STM32
+> +	default MACH_STM32H743
+>   	---help---
+>   	  Support for stm32h7 SoC family clocks
+>   
+> 
