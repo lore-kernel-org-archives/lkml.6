@@ -1,29 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753374AbeENMom (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:44:42 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33509 "EHLO
+        id S1753147AbeENMpV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:45:21 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34433 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752933AbeENMok (ORCPT
+        with ESMTP id S1753038AbeENMpP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:44:40 -0400
-Date: Mon, 14 May 2018 05:43:16 -0700
+        Mon, 14 May 2018 08:45:15 -0400
+Date: Mon, 14 May 2018 05:44:47 -0700
 From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-3fcd2b2d928904cbf30b01e2c5e4f1dd2f9ab262@git.kernel.org>
-Cc: peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, mpe@ellerman.id.au,
-        dave.hansen@intel.com, dave.hansen@linux.intel.com, shuah@kernel.org,
-        linuxram@us.ibm.com, tglx@linutronix.de
-Reply-To: peterz@infradead.org, mingo@kernel.org, mpe@ellerman.id.au,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org, hpa@zytor.com,
+Message-ID: <tip-0a0b152083cfc44ec1bb599b57b7aab41327f998@git.kernel.org>
+Cc: mingo@kernel.org, shakeelb@google.com, shuah@kernel.org, hpa@zytor.com,
+        mpe@ellerman.id.au, akpm@linux-foundation.org, dave.hansen@intel.com,
+        dave.hansen@linux.intel.com, tglx@linutronix.de, linuxram@us.ibm.com,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org,
         torvalds@linux-foundation.org, linuxram@us.ibm.com, tglx@linutronix.de,
-        shuah@kernel.org, dave.hansen@linux.intel.com, dave.hansen@intel.com
-In-Reply-To: <20180509171347.C64AB733@viggo.jf.intel.com>
-References: <20180509171347.C64AB733@viggo.jf.intel.com>
+        dave.hansen@linux.intel.com, dave.hansen@intel.com,
+        akpm@linux-foundation.org, hpa@zytor.com, mpe@ellerman.id.au,
+        shuah@kernel.org, mingo@kernel.org, shakeelb@google.com
+In-Reply-To: <20180509171351.084C5A71@viggo.jf.intel.com>
+References: <20180509171351.084C5A71@viggo.jf.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/pkeys/selftests: Factor out "instruction page"
-Git-Commit-ID: 3fcd2b2d928904cbf30b01e2c5e4f1dd2f9ab262
+Subject: [tip:x86/urgent] x86/pkeys: Override pkey when moving away from
+ PROT_EXEC
+Git-Commit-ID: 0a0b152083cfc44ec1bb599b57b7aab41327f998
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,20 +38,39 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3fcd2b2d928904cbf30b01e2c5e4f1dd2f9ab262
-Gitweb:     https://git.kernel.org/tip/3fcd2b2d928904cbf30b01e2c5e4f1dd2f9ab262
+Commit-ID:  0a0b152083cfc44ec1bb599b57b7aab41327f998
+Gitweb:     https://git.kernel.org/tip/0a0b152083cfc44ec1bb599b57b7aab41327f998
 Author:     Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate: Wed, 9 May 2018 10:13:47 -0700
+AuthorDate: Wed, 9 May 2018 10:13:51 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 14 May 2018 11:14:45 +0200
 
-x86/pkeys/selftests: Factor out "instruction page"
+x86/pkeys: Override pkey when moving away from PROT_EXEC
 
-We currently have an execute-only test, but it is for
-the explicit mprotect_pkey() interface.  We will soon
-add a test for the implicit mprotect(PROT_EXEC)
-enterface.  We need this code in both tests.
+I got a bug report that the following code (roughly) was
+causing a SIGSEGV:
 
+	mprotect(ptr, size, PROT_EXEC);
+	mprotect(ptr, size, PROT_NONE);
+	mprotect(ptr, size, PROT_READ);
+	*ptr = 100;
+
+The problem is hit when the mprotect(PROT_EXEC)
+is implicitly assigned a protection key to the VMA, and made
+that key ACCESS_DENY|WRITE_DENY.  The PROT_NONE mprotect()
+failed to remove the protection key, and the PROT_NONE->
+PROT_READ left the PTE usable, but the pkey still in place
+and left the memory inaccessible.
+
+To fix this, we ensure that we always "override" the pkee
+at mprotect() if the VMA does not have execute-only
+permissions, but the VMA has the execute-only pkey.
+
+We had a check for PROT_READ/WRITE, but it did not work
+for PROT_NONE.  This entirely removes the PROT_* checks,
+which ensures that PROT_NONE now works.
+
+Reported-by: Shakeel Butt <shakeelb@google.com>
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
@@ -60,51 +81,91 @@ Cc: Ram Pai <linuxram@us.ibm.com>
 Cc: Shuah Khan <shuah@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180509171347.C64AB733@viggo.jf.intel.com
+Cc: stable@vger.kernel.org
+Fixes: 62b5f7d013f ("mm/core, x86/mm/pkeys: Add execute-only protection keys support")
+Link: http://lkml.kernel.org/r/20180509171351.084C5A71@viggo.jf.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/testing/selftests/x86/protection_keys.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/pkeys.h | 12 +++++++++++-
+ arch/x86/mm/pkeys.c          | 21 +++++++++++----------
+ 2 files changed, 22 insertions(+), 11 deletions(-)
 
-diff --git a/tools/testing/selftests/x86/protection_keys.c b/tools/testing/selftests/x86/protection_keys.c
-index 7d95acd2aec3..083ebd51b44e 100644
---- a/tools/testing/selftests/x86/protection_keys.c
-+++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -1253,12 +1253,9 @@ void test_ptrace_of_child(int *ptr, u16 pkey)
- 	free(plain_ptr_unaligned);
+diff --git a/arch/x86/include/asm/pkeys.h b/arch/x86/include/asm/pkeys.h
+index a0ba1ffda0df..39cd292805a9 100644
+--- a/arch/x86/include/asm/pkeys.h
++++ b/arch/x86/include/asm/pkeys.h
+@@ -2,6 +2,8 @@
+ #ifndef _ASM_X86_PKEYS_H
+ #define _ASM_X86_PKEYS_H
+ 
++#define ARCH_DEFAULT_PKEY	0
++
+ #define arch_max_pkey() (boot_cpu_has(X86_FEATURE_OSPKE) ? 16 : 1)
+ 
+ extern int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+@@ -15,7 +17,7 @@ extern int __execute_only_pkey(struct mm_struct *mm);
+ static inline int execute_only_pkey(struct mm_struct *mm)
+ {
+ 	if (!boot_cpu_has(X86_FEATURE_OSPKE))
+-		return 0;
++		return ARCH_DEFAULT_PKEY;
+ 
+ 	return __execute_only_pkey(mm);
+ }
+@@ -56,6 +58,14 @@ bool mm_pkey_is_allocated(struct mm_struct *mm, int pkey)
+ 		return false;
+ 	if (pkey >= arch_max_pkey())
+ 		return false;
++	/*
++	 * The exec-only pkey is set in the allocation map, but
++	 * is not available to any of the user interfaces like
++	 * mprotect_pkey().
++	 */
++	if (pkey == mm->context.execute_only_pkey)
++		return false;
++
+ 	return mm_pkey_allocation_map(mm) & (1U << pkey);
  }
  
--void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
-+void *get_pointer_to_instructions(void)
- {
- 	void *p1;
--	int scratch;
--	int ptr_contents;
--	int ret;
- 
- 	p1 = ALIGN_PTR_UP(&lots_o_noops_around_write, PAGE_SIZE);
- 	dprintf3("&lots_o_noops: %p\n", &lots_o_noops_around_write);
-@@ -1268,7 +1265,23 @@ void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
- 	/* Point 'p1' at the *second* page of the function: */
- 	p1 += PAGE_SIZE;
- 
-+	/*
-+	 * Try to ensure we fault this in on next touch to ensure
-+	 * we get an instruction fault as opposed to a data one
-+	 */
- 	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
+diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
+index d7bc0eea20a5..6e98e0a7c923 100644
+--- a/arch/x86/mm/pkeys.c
++++ b/arch/x86/mm/pkeys.c
+@@ -94,26 +94,27 @@ int __arch_override_mprotect_pkey(struct vm_area_struct *vma, int prot, int pkey
+ 	 */
+ 	if (pkey != -1)
+ 		return pkey;
+-	/*
+-	 * Look for a protection-key-drive execute-only mapping
+-	 * which is now being given permissions that are not
+-	 * execute-only.  Move it back to the default pkey.
+-	 */
+-	if (vma_is_pkey_exec_only(vma) &&
+-	    (prot & (PROT_READ|PROT_WRITE))) {
+-		return 0;
+-	}
 +
-+	return p1;
-+}
+ 	/*
+ 	 * The mapping is execute-only.  Go try to get the
+ 	 * execute-only protection key.  If we fail to do that,
+ 	 * fall through as if we do not have execute-only
+-	 * support.
++	 * support in this mm.
+ 	 */
+ 	if (prot == PROT_EXEC) {
+ 		pkey = execute_only_pkey(vma->vm_mm);
+ 		if (pkey > 0)
+ 			return pkey;
++	} else if (vma_is_pkey_exec_only(vma)) {
++		/*
++		 * Protections are *not* PROT_EXEC, but the mapping
++		 * is using the exec-only pkey.  This mapping was
++		 * PROT_EXEC and will no longer be.  Move back to
++		 * the default pkey.
++		 */
++		return ARCH_DEFAULT_PKEY;
+ 	}
 +
-+void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
-+{
-+	void *p1;
-+	int scratch;
-+	int ptr_contents;
-+	int ret;
-+
-+	p1 = get_pointer_to_instructions();
- 	lots_o_noops_around_write(&scratch);
- 	ptr_contents = read_ptr(p1);
- 	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
+ 	/*
+ 	 * This is a vanilla, non-pkey mprotect (or we failed to
+ 	 * setup execute-only), inherit the pkey from the VMA we
