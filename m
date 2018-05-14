@@ -1,118 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754350AbeENPBf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 11:01:35 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44476 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752766AbeENPBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 11:01:34 -0400
-Date: Mon, 14 May 2018 16:01:29 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        james.morse@arm.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 10/18] arm64: convert native/compat syscall entry to C
-Message-ID: <20180514150128.n65oafuw2ehvecrr@lakrids.cambridge.arm.com>
-References: <20180514094640.27569-1-mark.rutland@arm.com>
- <20180514094640.27569-11-mark.rutland@arm.com>
- <20180514110729.GF7753@e103592.cambridge.arm.com>
- <20180514115805.bdlcxsw6q3xsbjb7@lakrids.cambridge.arm.com>
- <20180514144331.GL7753@e103592.cambridge.arm.com>
+        id S1754372AbeENPBm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 11:01:42 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59180 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752379AbeENPBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 11:01:39 -0400
+Date: Mon, 14 May 2018 17:01:35 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Halil Pasic <pasic@linux.ibm.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 1/1] s390: vfio-ccw: push down unsupported IDA check
+Message-ID: <20180514170135.2cab4f7d.cohuck@redhat.com>
+In-Reply-To: <7bd8fc8b-0500-9905-a3a0-2ec56d3fc9f2@linux.ibm.com>
+References: <20180509173647.61367-1-pasic@linux.ibm.com>
+        <20180514135554.29569999.cohuck@redhat.com>
+        <d0eb5f47-bb71-f615-3780-e753a22daf5b@linux.ibm.com>
+        <20180514160016.3b689728.cohuck@redhat.com>
+        <7bd8fc8b-0500-9905-a3a0-2ec56d3fc9f2@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514144331.GL7753@e103592.cambridge.arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 03:43:36PM +0100, Dave Martin wrote:
-> On Mon, May 14, 2018 at 12:58:05PM +0100, Mark Rutland wrote:
-> > On Mon, May 14, 2018 at 12:07:30PM +0100, Dave Martin wrote:
-> > > On Mon, May 14, 2018 at 10:46:32AM +0100, Mark Rutland wrote:
-> > > > +{
-> > > > +	if (!system_supports_sve())
-> > > > +		return;
-> > > > +
-> > > > +	/*
-> > > > +	 * task_fpsimd_load() won't be called to update CPACR_EL1 in
-> > > > +	 * ret_to_user unless TIF_FOREIGN_FPSTATE is still set, which only
-> > > > +	 * happens if a context switch or kernel_neon_begin() or context
-> > > > +	 * modification (sigreturn, ptrace) intervenes.
-> > > > +	 * So, ensure that CPACR_EL1 is already correct for the fast-path case.
-> > > > +	 */
-> > > > +	if (test_and_clear_thread_flag(TIF_SVE))
-> > > > +		sve_user_disable();
-> > > 
-> > > sve_user_disable() is already inline, and incorporates the if()
-> > > internally via sysreg_clear_set().
-> > > 
-> > > So, should this just be
-> > > 
-> > > 	clear_thread_flag(TIF_SVE);
-> > > 	sve_user_disable();
+On Mon, 14 May 2018 16:44:29 +0200
+Halil Pasic <pasic@linux.ibm.com> wrote:
+
+> On 05/14/2018 04:00 PM, Cornelia Huck wrote:
+> > On Mon, 14 May 2018 15:37:17 +0200
+> > Halil Pasic <pasic@linux.ibm.com> wrote:
+> >   
+> >> On 05/14/2018 01:55 PM, Cornelia Huck wrote:  
+> >>> On Wed,  9 May 2018 19:36:47 +0200
+> >>> Halil Pasic <pasic@linux.ibm.com> wrote:
+> >>>      
+> >>>> +		/*
+> >>>> +		 * 2k byte block IDAWs (fmt1 or fmt2) are not yet supported.
+> >>>> +		 * There are however CPs that don't use IDA at all, and can
+> >>>> +		 * benefit from not failing until failure is eminent.  
+> >>>
+> >>> What about:
+> >>>
+> >>> "As we don't want to fail direct addressing even if the orb specified
+> >>> one of the unsupported formats, we defer checking for IDAWs in
+> >>> unsupported formats to here."  
+> >>
+> >> Was the second sentence only confusing because of CP? I'm not perfectly
+> >> satisfied with your version either:
+> >> * 'fail direct addressing even if the orb specified one of the unsupported formats'
+> >>      I wanted to say: 'hey it does not matter what format for IDA the orb implies
+> >>      if the channel program does not use any IDA at all'. That could be paraphrased
+> >>      as channel programs using direct addressing exclusively. But failing the direct
+> >>      addressing does not fit for me.  
 > > 
-> > Sure. That does mean we'll unconditionally read cpacr_el1, but I assume
-> > you're happy with that. I'll note the difference in the commit message.
+> > But that's effectively what happens now, no? We reject the orb out of
+> > hand due to unsupported flags that do not have any relevance for the
+> > channel program in that case.  
 > 
-> This is what the code does today, conditioned no system_supports_sve().
-> 
-> I'm assuming that reading CPACR_EL1 is cheap ... or have you come across
-> counterexamples to that?
+> Yes, that's what happens now, except that we make the whole channel program fail,
+> and not the direct addressing. But the comment should describe what happens
+> with the patch applied.
 
-I have no data either way. :)
+Even more, it should describe _why_ it is done that way (the reason
+being "we don't want to fail..."). That's where I've been coming from.
 
-> > > > +}
-> > > > +
-> > > > +extern syscall_fn_t sys_call_table[];
-> > > > +
-> > > > +asmlinkage void el0_svc_handler(struct pt_regs *regs)
-> > > > +{
-> > > 
-> > > if (system_supports_sve()) ?
-> > > 
-> > > > +	sve_user_disable();
-> > > 
-> > > Or should this be replaced by a call to sve_user_reset()?
-> > > 
-> > > I suspect the latter, since we do want to be clearing TIF_SVE here too.
+> >>> The patch looks sane, I have only issues with the description/comments.
+> >>>      
+> >>
+> >> Thanks for having a look. Please give me short feedback about the one
+> >> open point and I will respin with the requested changes.  
 > > 
-> > Yes, this was mean to be sve_user_reset().
+> > Does anybody else have feedback?
+> >   
 > 
-> OK.  Just to be clear, I think there should be a system_supports_sve()
-> check here (in case that wasn't obvious from my previous reply).
+> Will wait a day or so. Dong Jia and Jason have already seen the patch, and
+> they only complained about the text. Since that spin was mainly for the
+> tested-by tags, and I stated that any substantial discussion should happen
+> upstream, I ignored those complaints.
+> 
+> So yes I will wait a bit so everybody can chime in.
 
-I understood that; the check is inside sve_user_reset(), which I had
-mean to call here.
-
-With your above comments, I now have the following:
-
-static inline void sve_user_reset(void)
-{
-	if (!system_supports_sve())
-		return;
-
-	/*
-	 * task_fpsimd_load() won't be called to update CPACR_EL1 in
-	 * ret_to_user unless TIF_FOREIGN_FPSTATE is still set, which only
-	 * happens if a context switch or kernel_neon_begin() or context
-	 * modification (sigreturn, ptrace) intervenes.
-	 * So, ensure that CPACR_EL1 is already correct for the fast-path case.
-	 */
-	clear_thread_flag(TIF_SVE);
-	sve_user_disable();
-}
-
-asmlinkage void el0_svc_handler(struct pt_regs *regs)
-{
-	sve_user_reset();
-	el0_svc_common(regs, regs->regs[8], __NR_syscalls, sys_call_table);
-}
-
-... which I think alleviates that concern?
-
-Thanks,
-Mark.
+Sounds good.
