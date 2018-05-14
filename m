@@ -1,49 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752747AbeENJuH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 05:50:07 -0400
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:38025 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752017AbeENJuF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 05:50:05 -0400
-X-Google-Smtp-Source: AB8JxZo42gfvgstHITDHD3pZJc9tiB/PrtHj0uroKxgU+Y/1jJ6piYkveHDempuTNul8ludheHx+7w==
-Subject: Re: [PATCH v2] ipvlan: flush arp table when mac address changed
-To: liuqifa@huawei.com, davem@davemloft.net, dsahern@gmail.com,
-        maheshb@google.com, weiyongjun1@huawei.com, maowenan@huawei.com,
-        dingtianhong@huawei.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180514092256.10940-1-liuqifa@huawei.com>
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <cb228cce-be10-31dc-f4bf-acefe3f3d0e1@cogentembedded.com>
-Date: Mon, 14 May 2018 12:50:03 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752783AbeENJu0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 05:50:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34041 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752115AbeENJuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 05:50:24 -0400
+Date: Mon, 14 May 2018 11:50:22 +0200
+From: Jan Kara <jack@suse.cz>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Waiman Long <longman@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: DEBUG_RWSEMS warning from thaw_super()
+Message-ID: <20180514095022.nfp7vuepz4kfshni@quack2.suse.cz>
+References: <CAOQ4uxgxP-0OZzT866=RR5rGQZ89EOy-mFF50v_5Y644OrV7tA@mail.gmail.com>
+ <20180513160404.GA19620@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180514092256.10940-1-liuqifa@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180513160404.GA19620@redhat.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
-
-On 5/14/2018 12:22 PM, liuqifa@huawei.com wrote:
-
-> From: Keefe Liu <liuqifa@huawei.com>
+On Sun 13-05-18 18:04:04, Oleg Nesterov wrote:
+> On 05/13, Amir Goldstein wrote:
+> >
+> > Since kernel v4.17-rc1 and DEBUG_RWSEMS, I see the
+> > warning below after filesystem freeze/thaw.
+> >
+> > This is a case where one process acquires a bunch of rwsem
+> > and another process releases them.
+> >
+> > To convey this use case to lockdep, freeze_super() calls
+> > lockdep_sb_freeze_release() on exit and thaw_super()
+> > calls lockdep_sb_freeze_acquire() on entry.
 > 
-> When master device's mac has been changed, the
-> commit <32c10bbfe914> "ipvlan: always use the current L2
-> addr of the master" makes the IPVlan devices's mac changed
-
-commit 32c10bbfe914 ("ipvlan: always use the current L2
-addr of the master").
-
-> also, but it doesn't flush the IPVlan's arp table.
+> This was already discussed, but I forgot the result...
 > 
-> Signed-off-by: Keefe Liu <liuqifa@huawei.com>
-[...]
+> So once again, why we can't simply update percpu_rwsem_acquire() ?
+> Or we can check CONFIG_RWSEM_SPIN_ON_OWNER to match percpu_rwsem_release(),
+> but CONFIG_DEBUG_RWSEMS explains the purpose better.
 
-MBR, Sergei
+Yeah, what you suggests seems reasonable to me. So feel free to add:
+
+Acked-by: Jan Kara <jack@suse.cz>
+	
+								Honza
+
+> --- x/include/linux/percpu-rwsem.h
+> +++ x/include/linux/percpu-rwsem.h
+> @@ -141,6 +141,10 @@ static inline void percpu_rwsem_acquire(
+>  					bool read, unsigned long ip)
+>  {
+>  	lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
+> +#ifdef CONFIG_DEBUG_RWSEMS
+> +	if (!read)
+> +		sem->rw_sem.owner = current;
+> +#endif
+>  }
+>  
+>  #endif
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
