@@ -1,116 +1,1048 @@
-Return-Path: <rdunlap@infradead.org>
-X-Google-Smtp-Source: AB8JxZpr2boQNK9vQlWBeqJ7BTtjP6mmNfEzAIpcpT9mALevX7WOV/nDIiUrCiKzLGX6ni5/+1ff
-ARC-Seal: i=1; a=rsa-sha256; t=1526320906; cv=none;
-        d=google.com; s=arc-20160816;
-        b=hvTO2FwwhImouDuYrT3kpR9uKy9ns/H2i/F+aflbO8csZ+JOWHUhyuSgSEWRWkDAgn
-         macoyAY981PYVXgffk9vyiK3hQx6O6vI/n5NNi2FH17j6un14zeeZpQbg6Op4fgjTife
-         UNWmbLQWnudQ6SsPpDlvidhmzO1lGJrZ3az7qcWgX9uFw+MWAFGQ4ZZsIOrkP0IRBn3r
-         tokQoFwilgM9BPBSHZwllM0SgS2ne0GUdyWKyiN43oj6IhFYXRmXjdVh7/u4Y2S1exgC
-         FyQyy9kZmFD+olZXMvSaRD6tlwocywdiEXs8OapkkTfVOj0tZnrSgu7Rvj1kaeJ3iflA
-         dSnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=Xurd6BcuKGJ75DjgRyROHjPQuf98Q5fH7jOa7tA6jkM=;
-        b=dO4BNosTXGJGq2+epD9BaV/nF6EIZrgRw2jOCuoK1GL2P5+zzZEzp2hzwc5rrptyI9
-         oO6/PMaTxbohzLA4Z+lwEQbx+vO0YWw7eFLRTOM7u6PLvCz2diO4nAtxqrVQ7uSbOuMa
-         CVWnY0XBuIG3KFzKVkQ7zuyFgPV43zxtVAs3EJcBAbdtr+2xS2FoB6U/Rr/lnj+2MDaA
-         jD7VLRUmC2BrdU1NHhQC0TuUnr8Zat8BKJYxalaXlVGWszlHwatrsmZEBKRVp6jJjyIw
-         8/VrHO9vRVb88Fc8mvJ2SrGs1XKuIlJlG9I99IRQvCCu43wn4ZsNbfINkqsgnnoM4GHd
-         KTBw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=koxT9JOr;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=koxT9JOr;
-       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 198.137.202.133 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
-Subject: Re: [patch v20 1/4] drivers: jtag: Add JTAG core driver
-To: Oleksandr Shamray <oleksandrs@mellanox.com>, gregkh@linuxfoundation.org,
- arnd@arndb.de
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1065765-1526314938-2-18120212808890339310
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526314936; b=mylNMwEnQWas1llb9FZ/AK2u5Wlv/Vm7fKgfDa6RN4RiZSbChj
+    /ot2Vx5/28jweucCs6zXMVmPtB9oLuWRCX7hKM9XYGJIs/IwUC0fI1/RlQBy4c1M
+    MYhCJBQdRYaxofqsuaGF3xEy9XtEU139TeEEVjorevC4GnihmYAf5HBrR9g7KQYN
+    GcNeBG1VBsW6qkeBNAc+Jho7aRGlTW9LKZZVnGNBSuwRAXReZN3evpnfFPI2MhOG
+    jsEBdeb45vMhBSnMOZK/NTSGgwpZG4LL9WsgR56y0Q3jpVr6cTGXe5II/kepiFPb
+    p2Vt1li8EJWVdAce7fP+xDLvWr0jZxf+zNrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526314936; bh=
+    xtTYIlXuoS6Ptn+4Y8QIMvaaAesfLB3tUajIfWqM2Ug=; b=Cin7ldfFYfgBYCyz
+    7j1QQBLNz74sDNRDMVFToF6QE8By8VBzWeFyXnn2LBV2/42WGMsD5vxuRqPo1Wqy
+    57UbHQhreTDYvpwIrpSMPwpmcVY8RJlp41QrTGOkvju0byZiTZcaGkfClM735wlH
+    /hMeOe8/d2f11H0/AkHh+LbdTnBpqzdq6goj2Iw/9ymoKoZBWjpgLso45E2TWBfg
+    /OGzsZJUVEPYL2cNSflymmlhRA1dA/6ZgTOZyKC4nWlmEg24U5FxUk8F6fckA1GE
+    +ZimI8zcOLPgr41FLbjh5Ohz7mIeke0f2WgSwkp+V03+B77Xrzpl61AUFSEJ9KFs
+    xlxQ5w==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=mellanox.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=mellanox.com header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=mellanox.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=mellanox.com header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfMjf2zmApVt2SMlkNKBOWyMJ2Ihd/uc9JyAUhsnuOSGN2QFmVXR1ZY0UMRd/fRmZ/LyTp3cKhtG4o5gRG/Q2ILPFnwORhzbr24smr3ktPBvIq88kZyEt
+    rlNZQi/mFrw2ZIOa1vh1IlTmd8Pw/5Gl+lpRev27Qv4oJN2pSYyyeBZCYa6iKFDbZakMSR12upzGV9txI/7lmGUk3/o7lXHXEIb3IE3v83PBdoczq/8S0RoA
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=CbDCq_QkAAAA:8
+    a=x3zYZSmJAAAA:8 a=QyXUC8HyAAAA:8 a=pGLkceISAAAA:8 a=1XWaLZrsAAAA:8
+    a=WZNk9TXeAAAA:8 a=ag1SF4gXAAAA:8 a=IpJZQVW2AAAA:8 a=JfrnYn6hAAAA:8
+    a=VwQbUJbxAAAA:8 a=mCA1tx1Wd8qx9PRowVEA:9 a=xt9UN7cp9_5UIfCN:21
+    a=Md-EzKwd2KBs_1Kw:21 a=x8gzFH9gYPwA:10 a=1qrBK16LubpBFNPVNq2M:22
+    a=Mf0WTvVWf0_hbcvFJlB_:22 a=fEBet_Na2BBLfjun4ltz:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=IawgGOuG5U0WyFbmm1f5:22 a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1754961AbeENQU5 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 12:20:57 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:39814 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754875AbeENQUL (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Mon, 14 May 2018 12:20:11 -0400
+From: Oleksandr Shamray <oleksandrs@mellanox.com>
+To: gregkh@linuxfoundation.org, arnd@arndb.de
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, openbmc@lists.ozlabs.org, joel@jms.id.au,
- jiri@resnulli.us, tklauser@distanz.ch, linux-serial@vger.kernel.org,
- vadimp@mellanox.com, system-sw-low-level@mellanox.com, robh+dt@kernel.org,
- openocd-devel-owner@lists.sourceforge.net, linux-api@vger.kernel.org,
- davem@davemloft.net, mchehab@kernel.org, Jiri Pirko <jiri@mellanox.com>
+        devicetree@vger.kernel.org, openbmc@lists.ozlabs.org,
+        joel@jms.id.au, jiri@resnulli.us, tklauser@distanz.ch,
+        linux-serial@vger.kernel.org, vadimp@mellanox.com,
+        system-sw-low-level@mellanox.com, robh+dt@kernel.org,
+        openocd-devel-owner@lists.sourceforge.net,
+        linux-api@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
+        Oleksandr Shamray <oleksandrs@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>
+Subject: [patch v20 2/4] drivers: jtag: Add Aspeed SoC 24xx and 25xx families JTAG master driver
+Date: Mon, 14 May 2018 19:20:01 +0300
+Message-Id: <1526314803-3532-3-git-send-email-oleksandrs@mellanox.com>
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1526314803-3532-1-git-send-email-oleksandrs@mellanox.com>
 References: <1526314803-3532-1-git-send-email-oleksandrs@mellanox.com>
- <1526314803-3532-2-git-send-email-oleksandrs@mellanox.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <338d958b-f3c3-15b8-32b9-9d30bfb348b5@infradead.org>
-Date: Mon, 14 May 2018 11:01:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1526314803-3532-2-git-send-email-oleksandrs@mellanox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600457078695337845?=
-X-GMAIL-MSGID: =?utf-8?q?1600463471194149266?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/14/2018 09:20 AM, Oleksandr Shamray wrote:
+Driver adds support of Aspeed 2500/2400 series SOC JTAG master controller.
 
-Hi,
-Just a bit more Kconfig fixing below.
+Driver implements the following jtag ops:
+- freq_get;
+- freq_set;
+- status_get;
+- idle;
+- xfer;
 
-> ---
->  Documentation/ioctl/ioctl-number.txt |    2 +
->  MAINTAINERS                          |   10 ++
->  drivers/Kconfig                      |    2 +
->  drivers/Makefile                     |    1 +
->  drivers/jtag/Kconfig                 |   18 +++
->  drivers/jtag/Makefile                |    1 +
->  drivers/jtag/jtag.c                  |  274 ++++++++++++++++++++++++++++++++++
->  include/linux/jtag.h                 |   41 +++++
->  include/uapi/linux/jtag.h            |  105 +++++++++++++
->  9 files changed, 454 insertions(+), 0 deletions(-)
->  create mode 100644 drivers/jtag/Kconfig
->  create mode 100644 drivers/jtag/Makefile
->  create mode 100644 drivers/jtag/jtag.c
->  create mode 100644 include/linux/jtag.h
->  create mode 100644 include/uapi/linux/jtag.h
+It has been tested on Mellanox system with BMC equipped with
+Aspeed 2520 SoC for programming CPLD devices.
 
-> diff --git a/drivers/jtag/Kconfig b/drivers/jtag/Kconfig
-> new file mode 100644
-> index 0000000..ba72a2b
-> --- /dev/null
-> +++ b/drivers/jtag/Kconfig
-> @@ -0,0 +1,18 @@
-> +menuconfig JTAG
-> +	tristate "JTAG support"
-> +	help
-> +	  This provides basic core functionality support for JTAG class devices
+Signed-off-by: Oleksandr Shamray <oleksandrs@mellanox.com>
+Signed-off-by: Jiri Pirko <jiri@mellanox.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Philippe Ombredanne <pombredanne@nexb.com>
+Acked-by: Joel Stanley <joel@jms.id.au>
+---
+v19->v20
+Notifications from kbuild test robot <lkp@intel.com>
+- add static declaration to 'aspeed_jtag_init' and
+  'aspeed_jtag_deinit' functions
 
-(end sentence above with '.')                                           devices.
+v18->v19
+v17->v18
+v16->v17
+v15->v16
+Comments pointed by Joel Stanley <joel.stan@gmail.com>
+- Add reset_control on Jtag init/deinit
 
-> +	  Hardware that is equipped with a JTAG microcontroller can be
-> +	  supported by using this driver's interfaces.
-> +	  This driver exposes a set of IOCTL to the user space for
+v14->v15
+Comments pointed by Joel Stanley <joel.stan@gmail.com>
+- Add ARCH_ASPEED || COMPILE_TEST to Kconfig
+- remove unused offset variable
+- remove "aspeed_jtag" from dev_err and dev_dbg messages
+- change clk_prepare_enable initialisation order
 
-	                               IOCTLs
+v13->v14
+Comments pointed by Philippe Ombredanne <pombredanne@nexb.com>
+- Change style of head block comment from /**/ to //
 
-> +	  another commands:
+v12->v13
+Comments pointed by Philippe Ombredanne <pombredanne@nexb.com>
+- Change jtag-aspeed.c licence type to
+  SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
+  and reorder line with license in description
+Comments pointed by Kun Yi <kunyi@google.com>
+- Changed capability check for aspeed,ast2400-jtag/ast200-jtag
 
-	  various commands:
-or
-	  the following commands:
-or
-	  associated commands:
+v11->v12
+Comments pointed by Chip Bilbrey <chip@bilbrey.org>
+- Remove access mode from xfer and idle transactions
+- Add new ioctl JTAG_SIOCMODE for set hw mode
 
-> +	  SDR: (Scan Data Register) Performs an IEEE 1149.1 Data Register scan
-> +	  SIR: (Scan Instruction Register) Performs an IEEE 1149.1 Instruction
-> +	  Register scan.
-> +	  RUNTEST: Forces the IEEE 1149.1 bus to a run state for a specified
-> +	  number of clocks or a specified time period.
-> +
-> +	  If you want this support, you should say Y here.
-> +
-> +	  To compile this driver as a module, choose M here: the module will
-> +	  be called jtag.
-thanks,
+v10->v11
+v9->v10
+V8->v9
+Comments pointed by Arnd Bergmann <arnd@arndb.de>
+- add *data parameter to xfer function prototype
+
+v7->v8
+Comments pointed by Joel Stanley <joel.stan@gmail.com>
+- aspeed_jtag_init replace goto to return;
+- change input variables type from __u32 to u32
+  in functios freq_get, freq_set, status_get
+- change sm_ variables type from char to u8
+- in jatg_init add disable clocks on error case
+- remove release_mem_region on error case
+- remove devm_free_irq on jtag_deinit
+- Fix misspelling Disabe/Disable
+- Change compatible string to ast2400 and ast2000
+
+v6->v7
+Notifications from kbuild test robot <lkp@intel.com>
+- Add include <linux/types.h> to jtag-asapeed.c
+
+v5->v6
+v4->v5
+Comments pointed by Arnd Bergmann <arnd@arndb.de>
+- Added HAS_IOMEM dependence in Kconfig to avoid
+  "undefined reference to `devm_ioremap_resource'" error,
+  because in some arch this not supported
+
+v3->v4
+Comments pointed by Arnd Bergmann <arnd@arndb.de>
+- change transaction pointer tdio type  to __u64
+- change internal status type from enum to __u32
+
+v2->v3
+
+v1->v2
+Comments pointed by Greg KH <gregkh@linuxfoundation.org>
+- change license type from GPLv2/BSD to GPLv2
+
+Comments pointed by Neil Armstrong <narmstrong@baylibre.com>
+- Add clk_prepare_enable/clk_disable_unprepare in clock init/deinit
+- Change .compatible to soc-specific compatible names
+  aspeed,aspeed4000-jtag/aspeed5000-jtag
+- Added dt-bindings
+
+Comments pointed by Arnd Bergmann <arnd@arndb.de>
+- Reorder functions and removed the forward declarations
+- Add static const qualifier to state machine states transitions
+- Change .compatible to soc-specific compatible names
+  aspeed,aspeed4000-jtag/aspeed5000-jtag
+- Add dt-bindings
+
+Comments pointed by Randy Dunlap <rdunlap@infradead.org>
+- Change module name jtag-aspeed in description in Kconfig
+
+Comments pointed by kbuild test robot <lkp@intel.com>
+- Remove invalid include <asm/mach-types.h>
+- add resource_size instead of calculation
+---
+ drivers/jtag/Kconfig       |   14 +
+ drivers/jtag/Makefile      |    1 +
+ drivers/jtag/jtag-aspeed.c |  786 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 801 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/jtag/jtag-aspeed.c
+
+diff --git a/drivers/jtag/Kconfig b/drivers/jtag/Kconfig
+index ba72a2b..07950a6 100644
+--- a/drivers/jtag/Kconfig
++++ b/drivers/jtag/Kconfig
+@@ -16,3 +16,17 @@ menuconfig JTAG
+ 
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called jtag.
++
++menuconfig JTAG_ASPEED
++	tristate "Aspeed SoC JTAG controller support"
++	depends on JTAG && HAS_IOMEM
++	depends on ARCH_ASPEED || COMPILE_TEST
++	help
++	  This provides a support for Aspeed JTAG device, equipped on
++	  Aspeed SoC 24xx and 25xx families. Drivers allows programming
++	  of hardware devices, connected to SoC through the JTAG interface.
++
++	  If you want this support, you should say Y here.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called jtag-aspeed.
+diff --git a/drivers/jtag/Makefile b/drivers/jtag/Makefile
+index af37493..04a855e 100644
+--- a/drivers/jtag/Makefile
++++ b/drivers/jtag/Makefile
+@@ -1 +1,2 @@
+ obj-$(CONFIG_JTAG)		+= jtag.o
++obj-$(CONFIG_JTAG_ASPEED)	+= jtag-aspeed.o
+diff --git a/drivers/jtag/jtag-aspeed.c b/drivers/jtag/jtag-aspeed.c
+new file mode 100644
+index 0000000..2d22de0
+--- /dev/null
++++ b/drivers/jtag/jtag-aspeed.c
+@@ -0,0 +1,786 @@
++// SPDX-License-Identifier: GPL-2.0
++// drivers/jtag/aspeed-jtag.c
++//
++// Copyright (c) 2018 Mellanox Technologies. All rights reserved.
++// Copyright (c) 2018 Oleksandr Shamray <oleksandrs@mellanox.com>
++
++#include <linux/clk.h>
++#include <linux/device.h>
++#include <linux/interrupt.h>
++#include <linux/jtag.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/reset.h>
++#include <linux/slab.h>
++#include <linux/types.h>
++#include <uapi/linux/jtag.h>
++
++#define ASPEED_JTAG_DATA		0x00
++#define ASPEED_JTAG_INST		0x04
++#define ASPEED_JTAG_CTRL		0x08
++#define ASPEED_JTAG_ISR			0x0C
++#define ASPEED_JTAG_SW			0x10
++#define ASPEED_JTAG_TCK			0x14
++#define ASPEED_JTAG_EC			0x18
++
++#define ASPEED_JTAG_DATA_MSB		0x01
++#define ASPEED_JTAG_DATA_CHUNK_SIZE	0x20
++
++/* ASPEED_JTAG_CTRL: Engine Control */
++#define ASPEED_JTAG_CTL_ENG_EN		BIT(31)
++#define ASPEED_JTAG_CTL_ENG_OUT_EN	BIT(30)
++#define ASPEED_JTAG_CTL_FORCE_TMS	BIT(29)
++#define ASPEED_JTAG_CTL_INST_LEN(x)	((x) << 20)
++#define ASPEED_JTAG_CTL_LASPEED_INST	BIT(17)
++#define ASPEED_JTAG_CTL_INST_EN		BIT(16)
++#define ASPEED_JTAG_CTL_DR_UPDATE	BIT(10)
++#define ASPEED_JTAG_CTL_DATA_LEN(x)	((x) << 4)
++#define ASPEED_JTAG_CTL_LASPEED_DATA	BIT(1)
++#define ASPEED_JTAG_CTL_DATA_EN		BIT(0)
++
++/* ASPEED_JTAG_ISR : Interrupt status and enable */
++#define ASPEED_JTAG_ISR_INST_PAUSE	BIT(19)
++#define ASPEED_JTAG_ISR_INST_COMPLETE	BIT(18)
++#define ASPEED_JTAG_ISR_DATA_PAUSE	BIT(17)
++#define ASPEED_JTAG_ISR_DATA_COMPLETE	BIT(16)
++#define ASPEED_JTAG_ISR_INST_PAUSE_EN	BIT(3)
++#define ASPEED_JTAG_ISR_INST_COMPLETE_EN BIT(2)
++#define ASPEED_JTAG_ISR_DATA_PAUSE_EN	BIT(1)
++#define ASPEED_JTAG_ISR_DATA_COMPLETE_EN BIT(0)
++#define ASPEED_JTAG_ISR_INT_EN_MASK	GENMASK(3, 0)
++#define ASPEED_JTAG_ISR_INT_MASK	GENMASK(19, 16)
++
++/* ASPEED_JTAG_SW : Software Mode and Status */
++#define ASPEED_JTAG_SW_MODE_EN		BIT(19)
++#define ASPEED_JTAG_SW_MODE_TCK		BIT(18)
++#define ASPEED_JTAG_SW_MODE_TMS		BIT(17)
++#define ASPEED_JTAG_SW_MODE_TDIO	BIT(16)
++
++/* ASPEED_JTAG_TCK : TCK Control */
++#define ASPEED_JTAG_TCK_DIVISOR_MASK	GENMASK(10, 0)
++#define ASPEED_JTAG_TCK_GET_DIV(x)	((x) & ASPEED_JTAG_TCK_DIVISOR_MASK)
++
++/* ASPEED_JTAG_EC : Controller set for go to IDLE */
++#define ASPEED_JTAG_EC_GO_IDLE		BIT(0)
++
++#define ASPEED_JTAG_IOUT_LEN(len)	(ASPEED_JTAG_CTL_ENG_EN |\
++					 ASPEED_JTAG_CTL_ENG_OUT_EN |\
++					 ASPEED_JTAG_CTL_INST_LEN(len))
++
++#define ASPEED_JTAG_DOUT_LEN(len)	(ASPEED_JTAG_CTL_ENG_EN |\
++					 ASPEED_JTAG_CTL_ENG_OUT_EN |\
++					 ASPEED_JTAG_CTL_DATA_LEN(len))
++
++#define ASPEED_JTAG_TCK_WAIT		10
++#define ASPEED_JTAG_RESET_CNTR		10
++
++#define ASPEED_JTAG_NAME		"jtag-aspeed"
++
++struct aspeed_jtag {
++	void __iomem			*reg_base;
++	struct device			*dev;
++	struct clk			*pclk;
++	enum jtag_endstate		status;
++	int				irq;
++	struct reset_control		*rst;
++	u32				flag;
++	wait_queue_head_t		jtag_wq;
++	u32				mode;
++};
++
++static char *end_status_str[] = {"idle", "ir pause", "drpause"};
++
++static u32 aspeed_jtag_read(struct aspeed_jtag *aspeed_jtag, u32 reg)
++{
++	return readl(aspeed_jtag->reg_base + reg);
++}
++
++static void
++aspeed_jtag_write(struct aspeed_jtag *aspeed_jtag, u32 val, u32 reg)
++{
++	writel(val, aspeed_jtag->reg_base + reg);
++}
++
++static int aspeed_jtag_freq_set(struct jtag *jtag, u32 freq)
++{
++	struct aspeed_jtag *aspeed_jtag = jtag_priv(jtag);
++	unsigned long apb_frq;
++	u32 tck_val;
++	u16 div;
++
++	apb_frq = clk_get_rate(aspeed_jtag->pclk);
++	div = (apb_frq % freq == 0) ? (apb_frq / freq) - 1 : (apb_frq / freq);
++	tck_val = aspeed_jtag_read(aspeed_jtag, ASPEED_JTAG_TCK);
++	aspeed_jtag_write(aspeed_jtag,
++			  (tck_val & ASPEED_JTAG_TCK_DIVISOR_MASK) | div,
++			  ASPEED_JTAG_TCK);
++	return 0;
++}
++
++static int aspeed_jtag_freq_get(struct jtag *jtag, u32 *frq)
++{
++	struct aspeed_jtag *aspeed_jtag = jtag_priv(jtag);
++	u32 pclk;
++	u32 tck;
++
++	pclk = clk_get_rate(aspeed_jtag->pclk);
++	tck = aspeed_jtag_read(aspeed_jtag, ASPEED_JTAG_TCK);
++	*frq = pclk / (ASPEED_JTAG_TCK_GET_DIV(tck) + 1);
++
++	return 0;
++}
++
++static int aspeed_jtag_mode_set(struct jtag *jtag, u32 mode)
++{
++	struct aspeed_jtag *aspeed_jtag = jtag_priv(jtag);
++
++	aspeed_jtag->mode = mode;
++	return 0;
++}
++
++static void aspeed_jtag_sw_delay(struct aspeed_jtag *aspeed_jtag, int cnt)
++{
++	int i;
++
++	for (i = 0; i < cnt; i++)
++		aspeed_jtag_read(aspeed_jtag, ASPEED_JTAG_SW);
++}
++
++static char aspeed_jtag_tck_cycle(struct aspeed_jtag *aspeed_jtag,
++				  u8 tms, u8 tdi)
++{
++	char tdo = 0;
++
++	/* TCK = 0 */
++	aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_SW_MODE_EN |
++			  (tms * ASPEED_JTAG_SW_MODE_TMS) |
++			  (tdi * ASPEED_JTAG_SW_MODE_TDIO), ASPEED_JTAG_SW);
++
++	aspeed_jtag_sw_delay(aspeed_jtag, ASPEED_JTAG_TCK_WAIT);
++
++	/* TCK = 1 */
++	aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_SW_MODE_EN |
++			  ASPEED_JTAG_SW_MODE_TCK |
++			  (tms * ASPEED_JTAG_SW_MODE_TMS) |
++			  (tdi * ASPEED_JTAG_SW_MODE_TDIO), ASPEED_JTAG_SW);
++
++	if (aspeed_jtag_read(aspeed_jtag, ASPEED_JTAG_SW) &
++	    ASPEED_JTAG_SW_MODE_TDIO)
++		tdo = 1;
++
++	aspeed_jtag_sw_delay(aspeed_jtag, ASPEED_JTAG_TCK_WAIT);
++
++	/* TCK = 0 */
++	aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_SW_MODE_EN |
++			  (tms * ASPEED_JTAG_SW_MODE_TMS) |
++			  (tdi * ASPEED_JTAG_SW_MODE_TDIO), ASPEED_JTAG_SW);
++	return tdo;
++}
++
++static void aspeed_jtag_wait_instruction_pause(struct aspeed_jtag *aspeed_jtag)
++{
++	wait_event_interruptible(aspeed_jtag->jtag_wq, aspeed_jtag->flag &
++				 ASPEED_JTAG_ISR_INST_PAUSE);
++	aspeed_jtag->flag &= ~ASPEED_JTAG_ISR_INST_PAUSE;
++}
++
++static void
++aspeed_jtag_wait_instruction_complete(struct aspeed_jtag *aspeed_jtag)
++{
++	wait_event_interruptible(aspeed_jtag->jtag_wq, aspeed_jtag->flag &
++				 ASPEED_JTAG_ISR_INST_COMPLETE);
++	aspeed_jtag->flag &= ~ASPEED_JTAG_ISR_INST_COMPLETE;
++}
++
++static void
++aspeed_jtag_wait_data_pause_complete(struct aspeed_jtag *aspeed_jtag)
++{
++	wait_event_interruptible(aspeed_jtag->jtag_wq, aspeed_jtag->flag &
++				 ASPEED_JTAG_ISR_DATA_PAUSE);
++	aspeed_jtag->flag &= ~ASPEED_JTAG_ISR_DATA_PAUSE;
++}
++
++static void aspeed_jtag_wait_data_complete(struct aspeed_jtag *aspeed_jtag)
++{
++	wait_event_interruptible(aspeed_jtag->jtag_wq, aspeed_jtag->flag &
++				 ASPEED_JTAG_ISR_DATA_COMPLETE);
++	aspeed_jtag->flag &= ~ASPEED_JTAG_ISR_DATA_COMPLETE;
++}
++
++static void aspeed_jtag_sm_cycle(struct aspeed_jtag *aspeed_jtag, const u8 *tms,
++				 int len)
++{
++	int i;
++
++	for (i = 0; i < len; i++)
++		aspeed_jtag_tck_cycle(aspeed_jtag, tms[i], 0);
++}
++
++static void aspeed_jtag_run_test_idle_sw(struct aspeed_jtag *aspeed_jtag,
++					 struct jtag_run_test_idle *runtest)
++{
++	static const u8 sm_pause_irpause[] = {1, 1, 1, 1, 0, 1, 0};
++	static const u8 sm_pause_drpause[] = {1, 1, 1, 0, 1, 0};
++	static const u8 sm_idle_irpause[] = {1, 1, 0, 1, 0};
++	static const u8 sm_idle_drpause[] = {1, 0, 1, 0};
++	static const u8 sm_pause_idle[] = {1, 1, 0};
++	int i;
++
++	/* SW mode from idle/pause-> to pause/idle */
++	if (runtest->reset) {
++		for (i = 0; i < ASPEED_JTAG_RESET_CNTR; i++)
++			aspeed_jtag_tck_cycle(aspeed_jtag, 1, 0);
++	}
++
++	switch (aspeed_jtag->status) {
++	case JTAG_STATE_IDLE:
++		switch (runtest->endstate) {
++		case JTAG_STATE_PAUSEIR:
++			/* ->DRSCan->IRSCan->IRCap->IRExit1->PauseIR */
++			aspeed_jtag_sm_cycle(aspeed_jtag, sm_idle_irpause,
++					     sizeof(sm_idle_irpause));
++
++			aspeed_jtag->status = JTAG_STATE_PAUSEIR;
++			break;
++		case JTAG_STATE_PAUSEDR:
++			/* ->DRSCan->DRCap->DRExit1->PauseDR */
++			aspeed_jtag_sm_cycle(aspeed_jtag, sm_idle_drpause,
++					     sizeof(sm_idle_drpause));
++
++			aspeed_jtag->status = JTAG_STATE_PAUSEDR;
++			break;
++		case JTAG_STATE_IDLE:
++			/* IDLE */
++			aspeed_jtag_tck_cycle(aspeed_jtag, 0, 0);
++			aspeed_jtag->status = JTAG_STATE_IDLE;
++			break;
++		default:
++			break;
++		}
++		break;
++
++	case JTAG_STATE_PAUSEIR:
++	/* Fall-through */
++	case JTAG_STATE_PAUSEDR:
++		/* From IR/DR Pause */
++		switch (runtest->endstate) {
++		case JTAG_STATE_PAUSEIR:
++			/*
++			 * to Exit2 IR/DR->Updt IR/DR->DRSCan->IRSCan->IRCap->
++			 * IRExit1->PauseIR
++			 */
++			aspeed_jtag_sm_cycle(aspeed_jtag, sm_pause_irpause,
++					     sizeof(sm_pause_irpause));
++
++			aspeed_jtag->status = JTAG_STATE_PAUSEIR;
++			break;
++		case JTAG_STATE_PAUSEDR:
++			/*
++			 * to Exit2 IR/DR->Updt IR/DR->DRSCan->DRCap->
++			 * DRExit1->PauseDR
++			 */
++			aspeed_jtag_sm_cycle(aspeed_jtag, sm_pause_drpause,
++					     sizeof(sm_pause_drpause));
++			aspeed_jtag->status = JTAG_STATE_PAUSEDR;
++			break;
++		case JTAG_STATE_IDLE:
++			/* to Exit2 IR/DR->Updt IR/DR->IDLE */
++			aspeed_jtag_sm_cycle(aspeed_jtag, sm_pause_idle,
++					     sizeof(sm_pause_idle));
++			aspeed_jtag->status = JTAG_STATE_IDLE;
++			break;
++		default:
++			break;
++		}
++		break;
++
++	default:
++		dev_err(aspeed_jtag->dev, "aspeed_jtag_run_test_idle error\n");
++		break;
++	}
++
++	/* Stay on IDLE for at least  TCK cycle */
++	for (i = 0; i < runtest->tck; i++)
++		aspeed_jtag_tck_cycle(aspeed_jtag, 0, 0);
++}
++
++/**
++ * aspeed_jtag_run_test_idle:
++ * JTAG reset: generates at least 9 TMS high and 1 TMS low to force
++ * devices into Run-Test/Idle State.
++ */
++static int aspeed_jtag_idle(struct jtag *jtag,
++			    struct jtag_run_test_idle *runtest)
++{
++	struct aspeed_jtag *aspeed_jtag = jtag_priv(jtag);
++
++	dev_dbg(aspeed_jtag->dev, "runtest, status:%d, mode:%s, state:%s, reset:%d, tck:%d\n",
++		aspeed_jtag->status,
++		aspeed_jtag->mode & JTAG_XFER_HW_MODE ? "HW" : "SW",
++		end_status_str[runtest->endstate], runtest->reset,
++		runtest->tck);
++
++	if (!(aspeed_jtag->mode & JTAG_XFER_HW_MODE)) {
++		aspeed_jtag_run_test_idle_sw(aspeed_jtag, runtest);
++		return 0;
++	}
++
++	/* Disable sw mode */
++	aspeed_jtag_write(aspeed_jtag, 0, ASPEED_JTAG_SW);
++	/* x TMS high + 1 TMS low */
++	if (runtest->reset)
++		aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_CTL_ENG_EN |
++				  ASPEED_JTAG_CTL_ENG_OUT_EN |
++				  ASPEED_JTAG_CTL_FORCE_TMS, ASPEED_JTAG_CTRL);
++	else
++		aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_EC_GO_IDLE,
++				  ASPEED_JTAG_EC);
++
++	aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_SW_MODE_EN |
++			  ASPEED_JTAG_SW_MODE_TDIO, ASPEED_JTAG_SW);
++
++	aspeed_jtag->status = JTAG_STATE_IDLE;
++	return 0;
++}
++
++static void aspeed_jtag_xfer_sw(struct aspeed_jtag *aspeed_jtag,
++				struct jtag_xfer *xfer, unsigned long *data)
++{
++	unsigned long remain_xfer = xfer->length;
++	unsigned long shift_bits = 0;
++	unsigned long index = 0;
++	unsigned long tdi;
++	char          tdo;
++
++	if (xfer->direction == JTAG_READ_XFER)
++		tdi = UINT_MAX;
++	else
++		tdi = data[index];
++
++	while (remain_xfer > 1) {
++		tdo = aspeed_jtag_tck_cycle(aspeed_jtag, 0,
++					    tdi & ASPEED_JTAG_DATA_MSB);
++		data[index] |= tdo << (shift_bits %
++					    ASPEED_JTAG_DATA_CHUNK_SIZE);
++
++		tdi >>= 1;
++		shift_bits++;
++		remain_xfer--;
++
++		if (shift_bits % ASPEED_JTAG_DATA_CHUNK_SIZE == 0) {
++			dev_dbg(aspeed_jtag->dev, "R/W data[%lu]:%lx\n",
++				index, data[index]);
++
++			tdo = 0;
++			index++;
++
++			if (xfer->direction == JTAG_READ_XFER)
++				tdi = UINT_MAX;
++			else
++				tdi = data[index];
++		}
++	}
++
++	tdo = aspeed_jtag_tck_cycle(aspeed_jtag, 1, tdi & ASPEED_JTAG_DATA_MSB);
++	data[index] |= tdo << (shift_bits % ASPEED_JTAG_DATA_CHUNK_SIZE);
++}
++
++static void aspeed_jtag_xfer_push_data(struct aspeed_jtag *aspeed_jtag,
++				       enum jtag_xfer_type type, u32 bits_len)
++{
++	dev_dbg(aspeed_jtag->dev, "shift bits %d\n", bits_len);
++
++	if (type == JTAG_SIR_XFER) {
++		aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_IOUT_LEN(bits_len),
++				  ASPEED_JTAG_CTRL);
++		aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_DOUT_LEN(bits_len) |
++				  ASPEED_JTAG_CTL_INST_EN, ASPEED_JTAG_CTRL);
++	} else {
++		aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_DOUT_LEN(bits_len),
++				  ASPEED_JTAG_CTRL);
++		aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_DOUT_LEN(bits_len) |
++				  ASPEED_JTAG_CTL_DATA_EN, ASPEED_JTAG_CTRL);
++	}
++}
++
++static void aspeed_jtag_xfer_push_data_last(struct aspeed_jtag *aspeed_jtag,
++					    enum jtag_xfer_type type,
++					    u32 shift_bits,
++					    enum jtag_endstate endstate)
++{
++	if (endstate != JTAG_STATE_IDLE) {
++		if (type == JTAG_SIR_XFER) {
++			dev_dbg(aspeed_jtag->dev, "IR Keep Pause\n");
++
++			aspeed_jtag_write(aspeed_jtag,
++					  ASPEED_JTAG_IOUT_LEN(shift_bits),
++					  ASPEED_JTAG_CTRL);
++			aspeed_jtag_write(aspeed_jtag,
++					  ASPEED_JTAG_IOUT_LEN(shift_bits) |
++					  ASPEED_JTAG_CTL_INST_EN,
++					  ASPEED_JTAG_CTRL);
++			aspeed_jtag_wait_instruction_pause(aspeed_jtag);
++		} else {
++			dev_dbg(aspeed_jtag->dev, "DR Keep Pause\n");
++			aspeed_jtag_write(aspeed_jtag,
++					  ASPEED_JTAG_DOUT_LEN(shift_bits) |
++					  ASPEED_JTAG_CTL_DR_UPDATE,
++					  ASPEED_JTAG_CTRL);
++			aspeed_jtag_write(aspeed_jtag,
++					  ASPEED_JTAG_DOUT_LEN(shift_bits) |
++					  ASPEED_JTAG_CTL_DR_UPDATE |
++					  ASPEED_JTAG_CTL_DATA_EN,
++					  ASPEED_JTAG_CTRL);
++			aspeed_jtag_wait_data_pause_complete(aspeed_jtag);
++		}
++	} else {
++		if (type == JTAG_SIR_XFER) {
++			dev_dbg(aspeed_jtag->dev, "IR go IDLE\n");
++
++			aspeed_jtag_write(aspeed_jtag,
++					  ASPEED_JTAG_IOUT_LEN(shift_bits) |
++					  ASPEED_JTAG_CTL_LASPEED_INST,
++					  ASPEED_JTAG_CTRL);
++			aspeed_jtag_write(aspeed_jtag,
++					  ASPEED_JTAG_IOUT_LEN(shift_bits) |
++					  ASPEED_JTAG_CTL_LASPEED_INST |
++					  ASPEED_JTAG_CTL_INST_EN,
++					  ASPEED_JTAG_CTRL);
++			aspeed_jtag_wait_instruction_complete(aspeed_jtag);
++		} else {
++			dev_dbg(aspeed_jtag->dev, "DR go IDLE\n");
++
++			aspeed_jtag_write(aspeed_jtag,
++					  ASPEED_JTAG_DOUT_LEN(shift_bits) |
++					  ASPEED_JTAG_CTL_LASPEED_DATA,
++					  ASPEED_JTAG_CTRL);
++			aspeed_jtag_write(aspeed_jtag,
++					  ASPEED_JTAG_DOUT_LEN(shift_bits) |
++					  ASPEED_JTAG_CTL_LASPEED_DATA |
++					  ASPEED_JTAG_CTL_DATA_EN,
++					  ASPEED_JTAG_CTRL);
++			aspeed_jtag_wait_data_complete(aspeed_jtag);
++		}
++	}
++}
++
++static void aspeed_jtag_xfer_hw(struct aspeed_jtag *aspeed_jtag,
++				struct jtag_xfer *xfer, unsigned long *data)
++{
++	unsigned long remain_xfer = xfer->length;
++	unsigned long index = 0;
++	char shift_bits;
++	u32 data_reg;
++
++	data_reg = xfer->type == JTAG_SIR_XFER ?
++		   ASPEED_JTAG_INST : ASPEED_JTAG_DATA;
++	while (remain_xfer) {
++		if (xfer->direction == JTAG_WRITE_XFER) {
++			dev_dbg(aspeed_jtag->dev, "W dr->dr_data[%lu]:%lx\n",
++				index, data[index]);
++
++			aspeed_jtag_write(aspeed_jtag, data[index], data_reg);
++		} else {
++			aspeed_jtag_write(aspeed_jtag, 0, data_reg);
++		}
++
++		if (remain_xfer > ASPEED_JTAG_DATA_CHUNK_SIZE) {
++			shift_bits = ASPEED_JTAG_DATA_CHUNK_SIZE;
++
++			/*
++			 * Read bytes were not equals to column length
++			 * and go to Pause-DR
++			 */
++			aspeed_jtag_xfer_push_data(aspeed_jtag, xfer->type,
++						   shift_bits);
++		} else {
++			/*
++			 * Read bytes equals to column length =>
++			 * Update-DR
++			 */
++			shift_bits = remain_xfer;
++			aspeed_jtag_xfer_push_data_last(aspeed_jtag, xfer->type,
++							shift_bits,
++							xfer->endstate);
++		}
++
++		if (xfer->direction == JTAG_READ_XFER) {
++			if (shift_bits < ASPEED_JTAG_DATA_CHUNK_SIZE) {
++				data[index] = aspeed_jtag_read(aspeed_jtag,
++							       data_reg);
++
++				data[index] >>= ASPEED_JTAG_DATA_CHUNK_SIZE -
++								shift_bits;
++			} else {
++				data[index] = aspeed_jtag_read(aspeed_jtag,
++							       data_reg);
++			}
++			dev_dbg(aspeed_jtag->dev, "R dr->dr_data[%lu]:%lx\n",
++				index, data[index]);
++		}
++
++		remain_xfer = remain_xfer - shift_bits;
++		index++;
++		dev_dbg(aspeed_jtag->dev, "remain_xfer %lu\n", remain_xfer);
++	}
++}
++
++static int aspeed_jtag_xfer(struct jtag *jtag, struct jtag_xfer *xfer,
++			    u8 *xfer_data)
++{
++	static const u8 sm_update_shiftir[] = {1, 1, 0, 0};
++	static const u8 sm_update_shiftdr[] = {1, 0, 0};
++	static const u8 sm_pause_idle[] = {1, 1, 0};
++	static const u8 sm_pause_update[] = {1, 1};
++	struct aspeed_jtag *aspeed_jtag = jtag_priv(jtag);
++	unsigned long *data = (unsigned long *)xfer_data;
++	unsigned long remain_xfer = xfer->length;
++	char dbg_str[256];
++	int pos = 0;
++	int i;
++
++	for (i = 0; i <= xfer->length / BITS_PER_BYTE; i++) {
++		pos += snprintf(&dbg_str[pos], sizeof(dbg_str) - pos,
++				"0x%02x ", xfer_data[i]);
++	}
++
++	dev_dbg(aspeed_jtag->dev, " %s %s xfer, mode:%s, END:%d, len:%lu, TDI[%s]\n",
++		xfer->type == JTAG_SIR_XFER ? "SIR" : "SDR",
++		xfer->direction == JTAG_READ_XFER ? "READ" : "WRITE",
++		aspeed_jtag->mode & JTAG_XFER_HW_MODE ? "HW" : "SW",
++		xfer->endstate, remain_xfer, dbg_str);
++
++	if (!(aspeed_jtag->mode & JTAG_XFER_HW_MODE)) {
++		/* SW mode */
++		aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_SW_MODE_EN |
++				  ASPEED_JTAG_SW_MODE_TDIO, ASPEED_JTAG_SW);
++
++		if (aspeed_jtag->status != JTAG_STATE_IDLE) {
++			/*IR/DR Pause->Exit2 IR / DR->Update IR /DR */
++			aspeed_jtag_sm_cycle(aspeed_jtag, sm_pause_update,
++					     sizeof(sm_pause_update));
++		}
++
++		if (xfer->type == JTAG_SIR_XFER)
++			/* ->IRSCan->CapIR->ShiftIR */
++			aspeed_jtag_sm_cycle(aspeed_jtag, sm_update_shiftir,
++					     sizeof(sm_update_shiftir));
++		else
++			/* ->DRScan->DRCap->DRShift */
++			aspeed_jtag_sm_cycle(aspeed_jtag, sm_update_shiftdr,
++					     sizeof(sm_update_shiftdr));
++
++		aspeed_jtag_xfer_sw(aspeed_jtag, xfer, data);
++
++		/* DIPause/DRPause */
++		aspeed_jtag_tck_cycle(aspeed_jtag, 0, 0);
++
++		if (xfer->endstate == JTAG_STATE_IDLE) {
++			/* ->DRExit2->DRUpdate->IDLE */
++			aspeed_jtag_sm_cycle(aspeed_jtag, sm_pause_idle,
++					     sizeof(sm_pause_idle));
++		}
++	} else {
++		/* hw mode */
++		aspeed_jtag_write(aspeed_jtag, 0, ASPEED_JTAG_SW);
++		aspeed_jtag_xfer_hw(aspeed_jtag, xfer, data);
++	}
++
++	aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_SW_MODE_EN |
++			  ASPEED_JTAG_SW_MODE_TDIO, ASPEED_JTAG_SW);
++	aspeed_jtag->status = xfer->endstate;
++	return 0;
++}
++
++static int aspeed_jtag_status_get(struct jtag *jtag, u32 *status)
++{
++	struct aspeed_jtag *aspeed_jtag = jtag_priv(jtag);
++
++	*status = aspeed_jtag->status;
++	return 0;
++}
++
++static irqreturn_t aspeed_jtag_interrupt(s32 this_irq, void *dev_id)
++{
++	struct aspeed_jtag *aspeed_jtag = dev_id;
++	irqreturn_t ret;
++	u32 status;
++
++	status = aspeed_jtag_read(aspeed_jtag, ASPEED_JTAG_ISR);
++	dev_dbg(aspeed_jtag->dev, "status %x\n", status);
++
++	if (status & ASPEED_JTAG_ISR_INT_MASK) {
++		aspeed_jtag_write(aspeed_jtag,
++				  (status & ASPEED_JTAG_ISR_INT_MASK)
++				  | (status & ASPEED_JTAG_ISR_INT_EN_MASK),
++				  ASPEED_JTAG_ISR);
++		aspeed_jtag->flag |= status & ASPEED_JTAG_ISR_INT_MASK;
++	}
++
++	if (aspeed_jtag->flag) {
++		wake_up_interruptible(&aspeed_jtag->jtag_wq);
++		ret = IRQ_HANDLED;
++	} else {
++		dev_err(aspeed_jtag->dev, "irq status:%x\n",
++			status);
++		ret = IRQ_NONE;
++	}
++	return ret;
++}
++
++static int aspeed_jtag_init(struct platform_device *pdev,
++			    struct aspeed_jtag *aspeed_jtag)
++{
++	struct resource *res;
++	int err;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	aspeed_jtag->reg_base = devm_ioremap_resource(aspeed_jtag->dev, res);
++	if (IS_ERR(aspeed_jtag->reg_base))
++		return -ENOMEM;
++
++	aspeed_jtag->pclk = devm_clk_get(aspeed_jtag->dev, NULL);
++	if (IS_ERR(aspeed_jtag->pclk)) {
++		dev_err(aspeed_jtag->dev, "devm_clk_get failed\n");
++		return PTR_ERR(aspeed_jtag->pclk);
++	}
++
++	aspeed_jtag->irq = platform_get_irq(pdev, 0);
++	if (aspeed_jtag->irq < 0) {
++		dev_err(aspeed_jtag->dev, "no irq specified\n");
++		return -ENOENT;
++	}
++
++	clk_prepare_enable(aspeed_jtag->pclk);
++
++	aspeed_jtag->rst = devm_reset_control_get_shared(aspeed_jtag->dev,
++							 NULL);
++	if (IS_ERR(aspeed_jtag->rst)) {
++		dev_err(aspeed_jtag->dev,
++			"missing or invalid reset controller device tree entry");
++		return PTR_ERR(aspeed_jtag->rst);
++	}
++	reset_control_deassert(aspeed_jtag->rst);
++
++	/* Enable clock */
++	aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_CTL_ENG_EN |
++			  ASPEED_JTAG_CTL_ENG_OUT_EN, ASPEED_JTAG_CTRL);
++	aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_SW_MODE_EN |
++			  ASPEED_JTAG_SW_MODE_TDIO, ASPEED_JTAG_SW);
++
++	err = devm_request_irq(aspeed_jtag->dev, aspeed_jtag->irq,
++			       aspeed_jtag_interrupt, 0,
++			       "aspeed-jtag", aspeed_jtag);
++	if (err) {
++		dev_err(aspeed_jtag->dev, "unable to get IRQ");
++		goto clk_unprep;
++	}
++	dev_dbg(&pdev->dev, "IRQ %d.\n", aspeed_jtag->irq);
++
++	aspeed_jtag_write(aspeed_jtag, ASPEED_JTAG_ISR_INST_PAUSE |
++			  ASPEED_JTAG_ISR_INST_COMPLETE |
++			  ASPEED_JTAG_ISR_DATA_PAUSE |
++			  ASPEED_JTAG_ISR_DATA_COMPLETE |
++			  ASPEED_JTAG_ISR_INST_PAUSE_EN |
++			  ASPEED_JTAG_ISR_INST_COMPLETE_EN |
++			  ASPEED_JTAG_ISR_DATA_PAUSE_EN |
++			  ASPEED_JTAG_ISR_DATA_COMPLETE_EN,
++			  ASPEED_JTAG_ISR);
++
++	aspeed_jtag->flag = 0;
++	aspeed_jtag->mode = 0;
++	init_waitqueue_head(&aspeed_jtag->jtag_wq);
++	return 0;
++
++clk_unprep:
++	clk_disable_unprepare(aspeed_jtag->pclk);
++	return err;
++}
++
++static int aspeed_jtag_deinit(struct platform_device *pdev,
++			      struct aspeed_jtag *aspeed_jtag)
++{
++	aspeed_jtag_write(aspeed_jtag, 0, ASPEED_JTAG_ISR);
++	/* Disable clock */
++	aspeed_jtag_write(aspeed_jtag, 0, ASPEED_JTAG_CTRL);
++	reset_control_assert(aspeed_jtag->rst);
++	clk_disable_unprepare(aspeed_jtag->pclk);
++	return 0;
++}
++
++static const struct jtag_ops aspeed_jtag_ops = {
++	.freq_get = aspeed_jtag_freq_get,
++	.freq_set = aspeed_jtag_freq_set,
++	.status_get = aspeed_jtag_status_get,
++	.idle = aspeed_jtag_idle,
++	.xfer = aspeed_jtag_xfer,
++	.mode_set = aspeed_jtag_mode_set
++};
++
++static int aspeed_jtag_probe(struct platform_device *pdev)
++{
++	struct aspeed_jtag *aspeed_jtag;
++	struct device *dev;
++	struct jtag *jtag;
++	int err;
++
++	dev = &pdev->dev;
++	jtag = jtag_alloc(sizeof(*aspeed_jtag), &aspeed_jtag_ops);
++	if (!jtag)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, jtag);
++	aspeed_jtag = jtag_priv(jtag);
++	aspeed_jtag->dev = &pdev->dev;
++
++	/* Initialize device*/
++	err = aspeed_jtag_init(pdev, aspeed_jtag);
++	if (err)
++		goto err_jtag_init;
++
++	/* Initialize JTAG core structure*/
++	err = jtag_register(jtag);
++	if (err)
++		goto err_jtag_register;
++
++	return 0;
++
++err_jtag_register:
++	aspeed_jtag_deinit(pdev, aspeed_jtag);
++err_jtag_init:
++	jtag_free(jtag);
++	return err;
++}
++
++static int aspeed_jtag_remove(struct platform_device *pdev)
++{
++	struct jtag *jtag;
++
++	jtag = platform_get_drvdata(pdev);
++	aspeed_jtag_deinit(pdev, jtag_priv(jtag));
++	jtag_unregister(jtag);
++	jtag_free(jtag);
++	return 0;
++}
++
++static const struct of_device_id aspeed_jtag_of_match[] = {
++	{ .compatible = "aspeed,ast2400-jtag", },
++	{ .compatible = "aspeed,ast2500-jtag", },
++	{}
++};
++
++static struct platform_driver aspeed_jtag_driver = {
++	.probe = aspeed_jtag_probe,
++	.remove = aspeed_jtag_remove,
++	.driver = {
++		.name = ASPEED_JTAG_NAME,
++		.of_match_table = aspeed_jtag_of_match,
++	},
++};
++module_platform_driver(aspeed_jtag_driver);
++
++MODULE_AUTHOR("Oleksandr Shamray <oleksandrs@mellanox.com>");
++MODULE_DESCRIPTION("ASPEED JTAG driver");
++MODULE_LICENSE("GPL v2");
 -- 
-~Randy
+1.7.1
+
