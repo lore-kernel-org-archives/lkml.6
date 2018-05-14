@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-289078-1526281378-2-16967026750575187178
+X-Cyrus-Session-Id: sloti22d1t05-289078-1526281362-2-13742639173316494600
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526281377; b=XcFagfUp3/GAChAn0azzgDSFmbn4sOGU+cIybAgDMsZkb/1k2K
-    TI7VGQwZnACLoIXFqAjEn58RqBJyMFLJPVaUGGxS/evbXJBZQWCmiSi+RV4K8PAY
-    K5XKZADzmX9nXFKkIEtOzYntgWM67x/Qdv5r0bxvUPpGGrr2FNlZE3PLS3aZBAkC
-    bM9il/nCZEPtwYpOY6sHKkLwToxfy8GTb8LgSUCDu9zDBQdzZDGVbQX8hipjQD4A
-    p6+B5IlpYKwukShOZXK/oybZ+uxPBlNfg9FEl4ezmAXIIQE4qpkxEI+RzBKjfzuU
-    o+0hk0uj1TJDAuthLh2ijnHFCs0B450uZVlA==
+    1526281361; b=fJWQoAgf3vaPtkonvJqo8nkKFHEk2KP8prFw8SFJo3pb0xQqrX
+    kkAnrF9O53irJmYcyZ+GLATd6/DE4WtWmCMaw8yK1yb1+MXVtOc2U5xdh9pkQfae
+    0eNkyaaOE0KCMdkneMR1BU/bD/BpjNZPP0WkV7qfsqELsF+j9QS5w9BsNuUFfwKE
+    frzKpw5+1w5dH7ysziy1lRGb2FR9FINSeN4JbMWKVaWdBqQUxSshuqboNF4Jo3dG
+    gSxhfc/vV0LTVoRqV10ZKvT0oG3mqwz1Uu6XAwJE8FmAs1dIsFcV5kq5JVnZSy7Y
+    ZGw/qxhoflv7t2V3ShQz4ScthhNS9xVvX5Og==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526281377; bh=D27wHOh2W+gd0KhE9/H4vhxGHjySAb
-    VyTuwsRhJMeuQ=; b=ADLDQenEoNu9BUUSzR0UbZC6197x6qHTRyc3gLR8d+FHjS
-    RVhXcD645Ki6F9zgW+k1zX8KlJR7zcpTyPo1eQ87XrLOe2K9I9iSTjgWHUF8ee2F
-    AAX1dr0cZMwa782dVxn4mrGc0pwJF++ld/feFCGhZs8oL3ZBH/OuehjWhOY12RqE
-    3zHZ5tkpRoPsxPVa7IIKNn4b7EKaT61NFaObIH4XISmQ/f8OCZzDXRmIZ+Sv6MQj
-    0YIF31gTTCoxhQwTrKghlyAcxjyLXbu//gSKuVrleOgS0nrLr4S9WmEwjljVm77b
-    d8JUe0nXTEL3ex9A6BV6VidVH9pFtBal4xXDWJYw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526281361; bh=dsvQUC0639gqdBNnackTfLvIyZAh4M
+    SWho3tbXQJKHU=; b=f8H5WbNl1SqRoLegqkOdETsiIthcYcu+5xtq1veNtfk1p8
+    qfFggq6x7u74/2oH68o3oL8dgQcBQJmhaIu62VlKTBpk/2M5F6jm2x26AOUE9oap
+    7Ty45nmaIf2a/RuFHVUXAZy69GcipKXW4QP1z0AV7fuawWfRNnXGjtnIy8BVtPaj
+    ZSU6MhU1uxk8KVbG0tWZ4fls3vKLCxbqltwQ8B/9aJd1UMyX9smusjMplc5t4PJY
+    tu9gwxi5GLGObQlNrQhLWszP9NmV0MP1qmxGXPaSB3cKwE8ip1MrA7jPDJLbg137
+    9LkRFzJKpw3TSyEKQyCbYdfp0OyOPfSRj8MNDsKw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=cfd2Muek x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=wEX9LkHK x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=cfd2Muek x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=wEX9LkHK x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,30 +64,30 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFUZ4YA8AAN/s7W/f0TMUOgEXGJgDzikJxnXPeuh/lJQzzM0bXJ3qWT/GV9viVcMLZdWB06MxePx3ldTkfVkAy8b6hSL9RWNC2MVaHJx5fEWoKq0KBPT
-    OYRC1bNPKvVZCpRR3q1F25R+YeikFT31oxVRh09yMuBOEX7F8zAa+BG9iqTsAN3yU25m67qqTtCGVVgHi5dxejHVoc1A8VYMsEA5+3omnbjsS2qQ4LIED4OQ
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHS7pbyE/Xv2jyUoPK3pSdtBMuKk8GFkaAXteYQNyVnaVxX3KNVCqyJqT0WeGiuXhCUFtw4ca+LGOVJHdbMuQ1nyeur7hOXHyHpfmMKM6P/bx2nQXFA8
+    9wy7tmMwFIr1dS4NQHmxq1mKu2brGzw8We8zN14DEktLi0BPgyRhN6fyo5dPQg1G2+iEJ4PERcPe3Jfhz/Ido1OGN6j9ie6lo2TKm8CjyPkD7hCyQXn8O/gU
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=ag1SF4gXAAAA:8
-    a=KRWfvM35QsivoisIQukA:9 a=QEXdDO2ut3YA:10 a=HUqATDVKn4QA:10 a=HUwBG1PIX8wA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22 a=hdz0HP1aBki3x1LR5Ig0:22
+    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=eW09wEK5EOd5C51ZBwsA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754169AbeENHAZ (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 03:00:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37218 "EHLO mail.kernel.org"
+        id S1754171AbeENHA3 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 03:00:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754161AbeENHAW (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 03:00:22 -0400
+        id S1754161AbeENHA1 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 14 May 2018 03:00:27 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        "Yan, Zheng" <zyan@redhat.com>
-Subject: [PATCH 4.16 34/72] ceph: fix rsize/wsize capping in ceph_direct_read_write()
-Date: Mon, 14 May 2018 08:48:51 +0200
-Message-Id: <20180514064824.595090385@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Charles Machalow <charles.machalow@intel.com>,
+        Keith Busch <keith.busch@intel.com>
+Subject: [PATCH 4.16 62/72] nvme: Fix sync controller reset return
+Date: Mon, 14 May 2018 08:49:19 +0200
+Message-Id: <20180514064827.351002320@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -105,49 +105,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Charles Machalow <charles.machalow@intel.com>
 
-commit 3a15b38fd2efc1d648cb33186bf71e9138c93491 upstream.
+commit 4e50d9ebaeaa3c6761d2b513ef7039510c8cf213 upstream.
 
-rsize/wsize cap should be applied before ceph_osdc_new_request() is
-called.  Otherwise, if the size is limited by the cap instead of the
-stripe unit, ceph_osdc_new_request() would setup an extent op that is
-bigger than what dio_get_pages_alloc() would pin and add to the page
-vector, triggering asserts in the messenger.
+If a controller reset is requested while the device has no namespaces,
+we were incorrectly returning ENETRESET. This patch adds the check for
+ADMIN_ONLY controller state to indicate a successful reset.
 
-Cc: stable@vger.kernel.org
-Fixes: 95cca2b44e54 ("ceph: limit osd write size")
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Fixes: 8000d1fdb0  ("nvme-rdma: fix sysfs invoked reset_ctrl error flow ")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Charles Machalow <charles.machalow@intel.com>
+[changelog]
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ceph/file.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/nvme/host/core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -878,6 +878,11 @@ ceph_direct_read_write(struct kiocb *ioc
- 		size_t start = 0;
- 		ssize_t len;
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -122,7 +122,8 @@ int nvme_reset_ctrl_sync(struct nvme_ctr
+ 	ret = nvme_reset_ctrl(ctrl);
+ 	if (!ret) {
+ 		flush_work(&ctrl->reset_work);
+-		if (ctrl->state != NVME_CTRL_LIVE)
++		if (ctrl->state != NVME_CTRL_LIVE &&
++		    ctrl->state != NVME_CTRL_ADMIN_ONLY)
+ 			ret = -ENETRESET;
+ 	}
  
-+		if (write)
-+			size = min_t(u64, size, fsc->mount_options->wsize);
-+		else
-+			size = min_t(u64, size, fsc->mount_options->rsize);
-+
- 		vino = ceph_vino(inode);
- 		req = ceph_osdc_new_request(&fsc->client->osdc, &ci->i_layout,
- 					    vino, pos, &size, 0,
-@@ -893,11 +898,6 @@ ceph_direct_read_write(struct kiocb *ioc
- 			break;
- 		}
- 
--		if (write)
--			size = min_t(u64, size, fsc->mount_options->wsize);
--		else
--			size = min_t(u64, size, fsc->mount_options->rsize);
--
- 		len = size;
- 		pages = dio_get_pages_alloc(iter, len, &start, &num_pages);
- 		if (IS_ERR(pages)) {
