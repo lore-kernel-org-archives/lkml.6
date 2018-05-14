@@ -1,105 +1,105 @@
 Return-Path: <luwei.kang@intel.com>
-X-Google-Smtp-Source: AB8JxZo2eZjyD7gMSO9x4Ux4tUNq1AxPtvSwpj21pd1qapczH5/MLfa8gb8Q9q7+gEEQD/OSu3DD
-ARC-Seal: i=1; a=rsa-sha256; t=1526463782; cv=none;
+X-Google-Smtp-Source: AB8JxZpw5ihCKSo+eBxJAVuaT8Ms/XuimZw9RTaVv1jCoxULhzAKyYO6MlkNSYVKtr08eh+ysDdt
+ARC-Seal: i=1; a=rsa-sha256; t=1526288629; cv=none;
         d=google.com; s=arc-20160816;
-        b=Npr0eU4Ir/0fJ2IEnny13fqPWmbZISkmPEQLVK5X8K6AQP7p7fQbBRRohUxeWuZygE
-         WaEzegpoG/+6VmccXYnoOd2koSNS4VqRQTLDlwefSUs22oSoo8GW4DYX74MAP7UbCP7J
-         2RnU6kQJrKGKa9ewmr6bJBKWASWLPxyWmXP3AQGBVfyZzEANpvWZs18nfFCVRcruteGE
-         XrP11OhwXUs7WpOa5XfwMc0uFCZO7Z7NN3OO9BMkp9mvAUY5LAhYQZ1yJJ6QvPUYqMnn
-         MWXENaQeTG82DR7jJT57Rf3bvoaUnjhN1y82jScliGKj9tkcL+BgxatXeEdd4kuooik6
-         0EVQ==
+        b=ArASQCb/HWDsqyhdtsVswEgqJVCjPY8ws8wASaXqrh4V6b5zQ4XC3wFjBTmuUPLUib
+         z7FjXpDl2JpCoSdSqMRyKQWeV3uDtGTvBu0M2bb37TTuO87JQfOICFyhHUYjrDvvJJHq
+         thxH7mSPLxq9UnZ4aNC55dJ4Y1k67jxlhINSWq4uM75kuzP4DIhlBu02z+UgyXIOftMj
+         c8ass4QWHv1sQniYgRg3bT68c+pifrWsCXkfomwsT00N/mjj4J+6+E/Lb/vGTP0ERZqs
+         thk0tIdzoQu2pb2Ly2MZOY6Sv+CIPY2pAeHLuAM96QsbUDW9MGJE2wgAjJHffgZy4YU7
+         eMOw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:dlp-reaction:dlp-version
-         :dlp-product:content-language:accept-language:in-reply-to:references
-         :message-id:date:thread-index:thread-topic:subject:cc:to:from
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=HtEHNIifNNZ1uPULe5fgrbUzt9b42fxl29pRB9dmrcc=;
-        b=LOd0N85t1IZyCnST8igSd/3SaVUzQG4ztVPVoenu1lJB4C9znaJtj/xhF75pYBqCfZ
-         VpCh5XtagZp/1+eHYM4XVrQZjLQgSxuQw6cnwKC7RUYPeuk40Zzav79RCO7syltjW91n
-         mh4GAbd8S2KMjtoWHWVg2aIwhvoIcBSIKXQtgM2nxdiIuFgmtjsDdhUidlro+SdBrdhu
-         ZYvVBSqjeOBm7LixaGXrFrJdiKC5bZb9jl6r1wzE+wFa1QBFg7DMRktZcfpv2pIY2Dxb
-         GJC0ZOLpSeivZHm3imc62bpaH8GdwDQo8Yla80gE63107UHyEpeBild/O1TreFaBUUZ1
-         xaag==
+        bh=R4+wRut1Xg8c8aS+O6cnIQI8PthC3Jsa62XRQAoLc20=;
+        b=Jg4WbWzQBFyRcTXYiYamSb+SNxWXeA3D5b866M+qFnlD94kFUUSoKH6Efw/aod0V8E
+         szZofKI9hi6lrzuimEVPCqBccUrieGObB8ZszINFWo/hQuuDX5weZMvCsrODslIVam/Z
+         xqMkNLITiHP+BbZOgToHuUz0wWQzqPRDtZ1ectE61F+XrkeKdHdMBi27k5BRPlu9MFGg
+         Ff1m2KV8FPjrjtY+M9fyzYHmPLPLU5Jt911536PyC1jC3XJUJpp2SpE70k/m/vcfrrDo
+         BFQ1Aq8CblOSKl9xTMMzKw9seblq0tQxaG8BTOZltlM/S4iDZl+Ce3S/NZCs3MLgq8Gz
+         Vb0A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of luwei.kang@intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=luwei.kang@intel.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=intel.com
+       spf=pass (google.com: domain of luwei.kang@intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=luwei.kang@intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of luwei.kang@intel.com designates 134.134.136.65 as permitted sender) smtp.mailfrom=luwei.kang@intel.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=intel.com
+       spf=pass (google.com: domain of luwei.kang@intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=luwei.kang@intel.com
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,390,1520924400";
-   d="scan'208";a="39746658"
-From: "Kang, Luwei" <luwei.kang@intel.com>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com"
-	<hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-	"chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>,
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "bp@suse.de"
-	<bp@suse.de>, "Liang, Kan" <kan.liang@intel.com>,
-	"Janakarajan.Natarajan@amd.com" <Janakarajan.Natarajan@amd.com>,
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "peterz@infradead.org"
-	<peterz@infradead.org>, "mathieu.poirier@linaro.org"
-	<mathieu.poirier@linaro.org>, "kstewart@linuxfoundation.org"
-	<kstewart@linuxfoundation.org>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"rkrcmar@redhat.com" <rkrcmar@redhat.com>, "david@redhat.com"
-	<david@redhat.com>, "bsd@redhat.com" <bsd@redhat.com>,
-	"yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>, "joro@8bytes.org"
-	<joro@8bytes.org>
-Subject: RE: [PATCH v8 01/12] perf/x86/intel/pt: Move Intel-PT MSRs bit
- definitions to a public header
-Thread-Topic: [PATCH v8 01/12] perf/x86/intel/pt: Move Intel-PT MSRs bit
- definitions to a public header
-Thread-Index: AQHT62JliC5AtH9UP0+sBA4842ekgqQuffyAgAOeMWA=
-Date: Wed, 16 May 2018 09:42:58 +0000
-Message-ID: <82D7661F83C1A047AF7DC287873BF1E167F7B1B8@SHSMSX101.ccr.corp.intel.com>
+X-IronPort-AV: E=Sophos;i="5.49,399,1520924400";
+   d="scan'208";a="39701991"
+From: Luwei Kang <luwei.kang@intel.com>
+To: kvm@vger.kernel.org
+Cc: tglx@linutronix.de,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	x86@kernel.org,
+	chao.p.peng@linux.intel.com,
+	thomas.lendacky@amd.com,
+	bp@suse.de,
+	Kan.liang@intel.com,
+	Janakarajan.Natarajan@amd.com,
+	dwmw@amazon.co.uk,
+	linux-kernel@vger.kernel.org,
+	alexander.shishkin@linux.intel.com,
+	peterz@infradead.org,
+	mathieu.poirier@linaro.org,
+	kstewart@linuxfoundation.org,
+	gregkh@linuxfoundation.org,
+	pbonzini@redhat.com,
+	rkrcmar@redhat.com,
+	david@redhat.com,
+	bsd@redhat.com,
+	yu.c.zhang@linux.intel.com,
+	joro@8bytes.org,
+	Luwei Kang <luwei.kang@intel.com>
+Subject: [PATCH v8 12/12] KVM: x86: Disable Intel Processor Trace when VMXON in L1 guest
+Date: Mon, 14 May 2018 18:57:12 +0800
+Message-Id: <1526295432-20640-13-git-send-email-luwei.kang@intel.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1526295432-20640-1-git-send-email-luwei.kang@intel.com>
 References: <1526295432-20640-1-git-send-email-luwei.kang@intel.com>
- <1526295432-20640-2-git-send-email-luwei.kang@intel.com>
- <20180514102217.uc3kzhu6gs4wapuo@um.fi.intel.com>
-In-Reply-To: <20180514102217.uc3kzhu6gs4wapuo@um.fi.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZWRiZDRmOWItMjlkMS00MThmLWEwMGUtNWY5NTBhMTQxODRkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJNcUY2V09uXC9IQVNaYnBwa3dlT1ZESUU2d1wvWGY1U04wK0NTT3lwOGJaZ2VGM3F1VTd3NjhIYVFmOFNoSWRxV0IifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600429565340015294?=
-X-GMAIL-MSGID: =?utf-8?q?1600613287117968559?=
+X-GMAIL-THRID: =?utf-8?q?1600429625880390868?=
+X-GMAIL-MSGID: =?utf-8?q?1600429625880390868?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> > From: Chao Peng <chao.p.peng@linux.intel.com>
-> >
-> > Intel Processor Trace virtualization enabling in KVM guest need to
-> > access these MSRs bit definitions, so move them to public header file
-> > msr-index.h.
-> > @@ -115,6 +148,7 @@
-> >  #define MSR_IA32_RTIT_ADDR2_B		0x00000585
-> >  #define MSR_IA32_RTIT_ADDR3_A		0x00000586
-> >  #define MSR_IA32_RTIT_ADDR3_B		0x00000587
-> > +#define MSR_IA32_RTIT_ADDR_RANGE	4
->=20
-> This one wasn't there before, so belongs in a different patch.
+Currently, Intel Processor Trace do not support tracing in L1 guest
+VMX operation(IA32_VMX_MISC[bit 14] is 0). As mentioned in SDM,
+on these type of processors, execution of the VMXON instruction will
+clears IA32_RTIT_CTL.TraceEn and any attempt to write IA32_RTIT_CTL
+causes a general-protection exception (#GP).
 
-What about move this definition to "arch/x86/include/asm/intel_pt.h " and b=
-e added in patch 8 (implementation of context switch).
+Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+---
+ arch/x86/kvm/vmx.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Thanks,
-Luwei Kang
-
->=20
-> Regards,
-> --
-> Alex
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 170cd48..7ace11a 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -3996,7 +3996,8 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		break;
+ 	case MSR_IA32_RTIT_CTL:
+ 		if ((pt_mode != PT_MODE_HOST_GUEST) ||
+-			vmx_rtit_ctl_check(vcpu, data))
++			vmx_rtit_ctl_check(vcpu, data) ||
++			vmx->nested.vmxon)
+ 			return 1;
+ 		vmcs_write64(GUEST_IA32_RTIT_CTL, data);
+ 		pt_set_intercept_for_msr(vmx, !(data & RTIT_CTL_TRACEEN));
+@@ -8089,6 +8090,11 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
+ 	if (ret)
+ 		return ret;
+ 
++	if (pt_mode == PT_MODE_HOST_GUEST) {
++		vmx->pt_desc.guest.ctl = 0;
++		pt_set_intercept_for_msr(vmx, 1);
++	}
++
+ 	nested_vmx_succeed(vcpu);
+ 	return kvm_skip_emulated_instruction(vcpu);
+ }
+-- 
+1.8.3.1
