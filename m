@@ -1,50 +1,70 @@
-Return-Path: <jpoimboe@redhat.com>
-X-Google-Smtp-Source: AB8JxZoMC15MyspwpVufpSAExUVq1j4TQfNr0I5Raeam4AQnXQbdudmfAb094lMFeWfAuVCHvL4q
-ARC-Seal: i=1; a=rsa-sha256; t=1525923581; cv=none;
+Return-Path: <tipbot@zytor.com>
+X-Google-Smtp-Source: AB8JxZougwxYce9hk52GAoJ/o8l7x0+LCZeCYqUP9LstcI9RLzJCr8kICfAcmLMaXjQsBzucg8mY
+ARC-Seal: i=1; a=rsa-sha256; t=1526301519; cv=none;
         d=google.com; s=arc-20160816;
-        b=rnX+vNOXQup6LkECqGkgBDUG+84x7a06sqgHehLBZG5sXNavHa+tCJcjWUSGT7li/M
-         3i6ib2IQAwu7wZRg7RfEz87Ww5sFBP5S9m3aw38oigPcw3SefZKqt5+++6lWAYpzB482
-         Dlqn8U7SCDInheowA9UYI5li52gEG7LRFl5OHywIV2J3WhU9GMU5D+IIKvqEHO3CuA/R
-         94RQqOOOJ+rrR3xkiTGNIbXnwaqwoAYunrDJQ53cytqwNZb/Q1vVtZUab8I3Af2fGGoG
-         pd99+5S/ub9HtG85QYePFdyMh7Q+AWlj+wcrWEmPRgYBYtfxJbqJlaY/LYEU4Gn531/K
-         iSUQ==
+        b=BnvXHQnet7jvBJEHmlP9Xm1qNuKPnXaTK6BANxYg7txSZcknmI2uypsUMnei3Ev/J+
+         WVfpe1npQFKC45UeqkxIaJUrK3KboEGCE8Vqoq45cuiRKXPUQQxYFA4U3RjJZMbjXgWI
+         s1i/HC0jvMMZR2x0CCWsGRtsQKGbwZEKtjT0VnNEqirTGEOjBH2IxsfNW+YTJgYZJdYL
+         ZqDxQCzyWF24EdNWix02MPHUtxURNTh21uNpYAHvzj9+gTzvSjyJ27l+fMtotPVZGjBw
+         YlpqQaWAK1NXtG264gNm98GnfeqfJsN0+hP+yRdD+hCs7WWmCmsijvfXmVfGc8Ktttjl
+         Y1Tw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
+        h=precedence:content-disposition:content-transfer-encoding
+         :mime-version:robot-unsubscribe:robot-id:git-commit-id:subject:to
+         :references:in-reply-to:reply-to:cc:message-id:from:sender:date
          :arc-authentication-results;
-        bh=EpbCP6KrfjbUhIR6mUZ6Ht4ryRmwzOww+MhbA2StVJU=;
-        b=ibYuZERWskII4mgjJDyKG63DoIWxyh4pqL5ZJFKn6gj9T7WMHgyBitqWDGCRbIT3KK
-         Fd/08l6T+ng/3rzm3SfHBgZ3modxRr4DGaoecj8DPqfmk8v1dpElyJCBG/LmOoMCgpWM
-         QHAc4O/W+QBl1OpKF8qnmi4la0B3BrNFNDtES7gUUv5ac4iyi/htMjDagVMFJCuenEqC
-         3FDYsJlqFBvz7pdi02IXA/yTvvRDNfJBqBqI7elnXeqxNHUUQHGe9beKwq9HHepmzZs6
-         O5UDGzSIleP3U5dmdiY8ZmnoAROz3RCFHl3T4sJ5KbuIvAsiKtgOEOVqbDVmLUtVq5Z9
-         OHwA==
+        bh=/lccAsTEr6x7DsioTob7g13AwoUk2yZmt59XJcf9iZ0=;
+        b=WFPKFWvghw8GJtz1chAqnbtN7Iz3uT+yUNJ9AEvwrdGDWgWHVoKlDvCpu4WoTXnAma
+         aCrgLHgKEv9hVQCMZtMGcKkEmsXt+d75l7Q/YAz3lt/APh1wOc8CG3Y385Ot4ISlzq5n
+         XpJA2UAaOE4Cj5Cdcqze8HjjSZeqQSdNSO/X4FwLBlC8PBYs+FJrcpFIqwDLQGBRPJSS
+         HZM79enIzvFiw7sdPs1owjb/p75NxJcSrw722ubsb2XguG1u9jybx2aasVFx6EStSrLb
+         iAwZOKLLm2SvCWrOd1fISIrfZypAmIRsn1Pc9C2IhxwqpMQy19rBilWslz1IRUWEvEYJ
+         hIrA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of jpoimboe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of jpoimboe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=jpoimboe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	David Laight <David.Laight@ACULAB.COM>,
-	damian <damian.tometzki@icloud.com>
-Subject: [PATCH 2/3] objtool: Support GCC 8 cold subfunctions
-Date: Wed,  9 May 2018 22:39:15 -0500
-Message-Id: <0965e7fcfc5f31a276f0c7f298ff770c19b68706.1525923412.git.jpoimboe@redhat.com>
-In-Reply-To: <cover.1525923412.git.jpoimboe@redhat.com>
-References: <cover.1525923412.git.jpoimboe@redhat.com>
+       spf=pass (google.com: domain of tipbot@zytor.com designates 198.137.202.136 as permitted sender) smtp.mailfrom=tipbot@zytor.com
+Date: Mon, 14 May 2018 05:37:47 -0700
+Sender: tip tree robot <tipbot@zytor.com>
+From: tip-bot for Josh Poimboeuf <tipbot@zytor.com>
+Message-ID: <tip-13810435b9a7014fb92eb715f77da488f3b65b99@git.kernel.org>
+Cc: mingo@kernel.org, jpoimboe@redhat.com, damian.tometzki@icloud.com,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        rdunlap@infradead.org, arnd@arndb.de, peterz@infradead.org,
+        tglx@linutronix.de, torvalds@linux-foundation.org, hpa@zytor.com,
+        David.Laight@ACULAB.COM
+Reply-To: peterz@infradead.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, hpa@zytor.com, David.Laight@ACULAB.COM,
+        mingo@kernel.org, jpoimboe@redhat.com, gregkh@linuxfoundation.org,
+        damian.tometzki@icloud.com, linux-kernel@vger.kernel.org,
+        rdunlap@infradead.org, arnd@arndb.de
+In-Reply-To: <0965e7fcfc5f31a276f0c7f298ff770c19b68706.1525923412.git.jpoimboe@redhat.com>
+References: <0965e7fcfc5f31a276f0c7f298ff770c19b68706.1525923412.git.jpoimboe@redhat.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:core/urgent] objtool: Support GCC 8's cold subfunctions
+Git-Commit-ID: 13810435b9a7014fb92eb715f77da488f3b65b99
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600046845519592907?=
-X-GMAIL-MSGID: =?utf-8?q?1600046845519592907?=
+X-GMAIL-THRID: =?utf-8?q?1600443142986140379?=
+X-GMAIL-MSGID: =?utf-8?q?1600443142986140379?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
+
+Commit-ID:  13810435b9a7014fb92eb715f77da488f3b65b99
+Gitweb:     https://git.kernel.org/tip/13810435b9a7014fb92eb715f77da488f3b65b99
+Author:     Josh Poimboeuf <jpoimboe@redhat.com>
+AuthorDate: Wed, 9 May 2018 22:39:15 -0500
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 14 May 2018 10:20:53 +0200
+
+objtool: Support GCC 8's cold subfunctions
 
 GCC 8 moves a lot of unlikely code out of line to "cold" subfunctions in
 .text.unlikely.  Properly detect the new subfunctions and treat them as
@@ -57,13 +77,22 @@ This fixes a bunch of warnings like:
   kernel/cgroup/cgroup.o: warning: objtool: cgroup_apply_control_enable()+0x25b: sibling call from callable instruction with modified stack frame
   kernel/cgroup/cgroup.o: warning: objtool: rebind_subsystems()+0x325: sibling call from callable instruction with modified stack frame
 
-Reported-by: Arnd Bergmann <arnd@arndb.de>
 Reported-and-tested-by: damian <damian.tometzki@icloud.com>
+Reported-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/0965e7fcfc5f31a276f0c7f298ff770c19b68706.1525923412.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/objtool/check.c | 93 ++++++++++++++++++++++++-------------------
- tools/objtool/elf.c   | 42 ++++++++++++++++++-
- tools/objtool/elf.h   |  2 +
+ tools/objtool/check.c | 93 ++++++++++++++++++++++++++++-----------------------
+ tools/objtool/elf.c   | 42 +++++++++++++++++++++--
+ tools/objtool/elf.h   |  2 ++
  3 files changed, 93 insertions(+), 44 deletions(-)
 
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
@@ -169,7 +198,7 @@ index 264522d4e4af..14daf6a27d9f 100644
  				insn->ignore = true;
  		}
  	}
-@@ -786,9 +804,8 @@ static int add_special_section_alts(struct objtool_file *file)
+@@ -786,9 +804,8 @@ out:
  	return ret;
  }
  
@@ -367,5 +396,3 @@ index d86e2ff14466..de5cd2ddded9 100644
  struct symbol *find_symbol_containing(struct section *sec, unsigned long offset);
  struct rela *find_rela_by_dest(struct section *sec, unsigned long offset);
  struct rela *find_rela_by_dest_range(struct section *sec, unsigned long offset,
--- 
-2.17.0
