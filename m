@@ -1,95 +1,102 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1006072-1526313562-2-10805822080903774391
+X-Cyrus-Session-Id: sloti22d1t05-1006072-1526313277-2-11641163528411583793
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.248, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enda,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526313561; b=m1DWLjoQfJgoe5qbJeEDpETGVxT1XUGQ9JIIW1fRosCcVu8xZc
-    NLVSfY6/erQFIvaATyXB/Qk/ebugPmvdWn3HSBFFyW2lfBYSf80tE3/Op3e3M5SA
-    j1Sh5egcYCmTH1DvKdgY1rd+ahtQTgs3FwHwXj0nfFeksYJFqpecw5KVDWduEN9r
-    dGvh1JIB8/xYjJsnJSAvh4K9+w1dkIALlcrtGh+AjvFikmc5uoTLC+822WTK7ekP
-    GR4AhkG5NEm1nW0UT4YZYiBxyMaXlEcFPqjKZaXXpJO40Bj6YQm3PBjzOMwjDaVY
-    roBzZWGE54cRqKH6PGo7uMAsbENCqtlkX7Yw==
+    1526313277; b=CLZ7xb17bAO6rb/EVUIhsPFcmcWcVNjqcWDXqrOGTTUBGJJB1a
+    45lmU5FcrdGpgyWXXWYP5MvpI/nq8axt4bs7PmgLBaISuaPXB/MLoFZCCC2Waum5
+    jZ5lqEeizaJRgyqjH4SOWbz/qzaAtQ733czisQA9x0QkCiMl5Z0ELGxGEdfG20vM
+    GrGA2lM6fyt84dY+U89Koe1CaTzkNKYhJqiUPGO4Xwo9GdMgLBDILgNkFjD7DqI6
+    y5+1H+7iMsnLl3qjqdpoQu/EYYfJWzpq8Y1z8ry2LSD6/lQQbXPkCHLhQ1up7VJp
+    grQxehSrLgpFkff3n9Mczi7+FgoAF2OSMwcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526313561; bh=V+X9s
-    ORwcfX7NE2XGF6hmUhlG7LRFEqeyzaxJfA0QLU=; b=aITcBh0Pfk92YqMQ7+/du
-    fvdGcgOrfJtr5HH6PJjoFtFLgtbPkdlQjRsGtG0o7iYUlYakymsW0fjMKgV4xRxL
-    yngepXtf8kJ09P/QjPsX7jfoWcJNHPrzfPML3bUYzTQoKynV5q0PKYziNJ737yvP
-    YhRbjbZ3bsPebOMQ50bG51yfUlh3BdWwnskkaSVCrZQWYbfjnZRgNPpR3IPmJhoE
-    dLyU7dyoJTcLVaB3gTkVvQWDTojCdm1+PtjOr7IewGZRlfoHK9I1bphS3r7b7MfC
-    /B6/PlDiSkRO16JtyM74oB3QYwWmzZps85s5PQ/dYVwVbMZB9aQQy8jKlVBtWjOX
-    w==
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1526313277; bh=vbBOw
+    EXFwFan6r6fSdzQOo3iwnVa8Ge79mbtRpCNGjA=; b=jmlwcnob3k5XLsGOIcWBf
+    GboV39IMj2i/6jyIrMpxEiDjCm25hZ062NcDVA+/g9B4qj2XRVoBTxbI31rkXOMl
+    Gycwa05w0ytIG5EQdq5F0WfgENjOHNbyN17PQQ4EdZAg8SpnN8lMecHBxJdkm49C
+    Ae6Mg1ZZqJCNLQb030HPY64XsLgzIc+5kKaWoqBsPANKTtptRF3UkumWcntOYZ0S
+    upldUtCXjP+aMEmyo4xwrdqsmgOO/HSsXmGMnhsI3kgTRhRNB6mocaTIW4V5VT9m
+    yOsMuFOIxWP9ZefsSpc6mtsMDXIbU8dy50aV6+fx98s90C5u2ubKpP7k0R/P6NjO
+    g==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-    header.d=kernel.org header.i=@kernel.org header.b=2OLnu9O7 x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=gmail.com header.i=@gmail.com header.b=K/8t++p3 x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=fraxinus.osuosl.org;
+    smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=pMVhBNeA;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
+    x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=linuxfoundation.org
-    header.result=pass header_is_org_domain=yes;
+    smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
+    header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-      header.d=kernel.org header.i=@kernel.org header.b=2OLnu9O7 x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=gmail.com header.i=@gmail.com header.b=K/8t++p3 x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=fraxinus.osuosl.org;
+      smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=pMVhBNeA;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
+      x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=linuxfoundation.org
-      header.result=pass header_is_org_domain=yes;
+      smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
+      header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
       bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGPehQxEfjEQ/HGlp0Ie7Zap6mLUDFLs0dqyz8aqSAZfK+ZgIElkrtqNaC8CHmPhsLYvSzbeGvZ+uIY7IPxDLthBC+ZFaFgB3SRRsDak1hwdRzejMWt8
-    rIp5qihwkMnfo1ihZH2ORmv6SQT5sLf9PkVefHSApdPq8n66/tr20b1I8zN2+VUPQ5HPMB3p4/vCmgmaZXzHlewoiInA43yjSOI27/3UWhOiZsOVfEhfzyV4
-    JuKXxWjQMQw2JijolcwrmA==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=p5PzfHiyweZ2E6kWszwA:9
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfDIjyQ/PeOAQp4rv86m5b83oilhQFwb/6E4QriWRH9h6m+XzglL4vui1iQEbvJkym9dH8K0JmPxK+3vOSNIPzJId0czPzB/vPV6viEWRYRFRHooOzBcB
+    JL7rkH6rr0pOaO/WopyAtqyqBAeJL80Z5/zvHwAYElgwvrHdpeKe/hZr5zMjax7KHa79osa2BzoQJUPqklPnoIU3dCYH4xmH1THKH8BRqdyqt2XVSQysEEwN
+    Gbr5BdWCasv5QBGStq6KcA==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=o_dtBaZDOvUA:10 a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=Ow5VXoA4M8uD5j9QLQ0A:9
+    a=9zwnwFFF_nhLZQKY:21 a=vQs2kLsd4n3WDIzZ:21 a=CjuIK1q_8ugA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Mon, 14 May 2018 17:58:58 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: John Whitmore <johnfwhitmore@gmail.com>
-Subject: Re: [PATCH 01/13] Coding style changes to block comments
-Message-ID: <20180514155858.GA30973@kroah.com>
+X-Google-Smtp-Source: AB8JxZr9t43jGfIUk7Sgz+yFH5zKM8VnDT6HX2Bi15fJqzU23YPB1EbMBsJhT3g2p8yOTQsSko6RbA==
+From: John Whitmore <johnfwhitmore@gmail.com>
+To: gregkh@linuxfoundation.org
+Subject: [PATCH 12/13] Coding style,
+ removal of braces from single statement blocks
+Date: Mon, 14 May 2018 16:53:17 +0100
+Message-Id: <20180514155318.32195-13-johnfwhitmore@gmail.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180514155318.32195-1-johnfwhitmore@gmail.com>
 References: <20180514155318.32195-1-johnfwhitmore@gmail.com>
- <20180514155318.32195-2-johnfwhitmore@gmail.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180514155318.32195-2-johnfwhitmore@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -101,7 +108,9 @@ List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: kstewart@linuxfoundation.org, devel@driverdev.osuosl.org,
- tglx@linutronix.de, linux-kernel@vger.kernel.org, colin.king@canonical.com
+ linux-kernel@vger.kernel.org, johnfwhitmore@gmail.com,
+ colin.king@canonical.com, tglx@linutronix.de
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -110,28 +119,64 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 14, 2018 at 04:53:06PM +0100, John Whitmore wrote:
-> The file drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c has a lot of
-> coding style issues, this will be the first of many small patches which clear
-> up some, if not all, of the problems with the file.
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+---
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-This isn't a good changelog comment.  It should explain why you are
-doing what you are doing, and maybe what, at the very least.  Saying
-something will happen in the future isn't good.
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+index 742eb35ae442..af6508dfd897 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
+@@ -496,9 +496,8 @@ static u8 HTIOTActIsMgntUseCCK6M(struct ieee80211_network *network)
+ 	// 2008/01/25 MH Judeg if we need to use OFDM to sned MGNT frame for broadcom AP.
+ 	// 2008/01/28 MH We must prevent that we select null bssid to link.
+ 
+-	if (network->broadcom_cap_exist) {
++	if (network->broadcom_cap_exist)
+ 		retValue = 1;
+-	}
+ 
+ 	return retValue;
+ }
+@@ -768,10 +767,9 @@ static u8 HT_PickMCSRate(struct ieee80211_device *ieee, u8 *pOperateMCS)
+ 		//legacy rate routine handled at selectedrate
+ 
+ 		//no MCS rate
+-		for (i = 0; i <= 15; i++) {
++		for (i = 0; i <= 15; i++)
+ 			pOperateMCS[i] = 0;
+-		}
+-		break;
++ 		break;
+ 
+ 	case IEEE_N_24G:	//assume CCK rate ok
+ 	case IEEE_N_5G:
+@@ -834,8 +832,7 @@ u8 HTGetHighestMCSRate(struct ieee80211_device *ieee, u8 *pMCSRateSet, u8 *pMCSF
+ 	if (i == 16)
+ 		return false;
+ 
+-	for (i = 0; i < 16; i++)
+-	{
++	for (i = 0; i < 16; i++) {
+ 		if (availableMcsRate[i] != 0) {
+ 			bitMap = availableMcsRate[i];
+ 			for (j = 0; j < 8; j++) {
+@@ -865,9 +862,8 @@ static u8 HTFilterMCSRate(struct ieee80211_device *ieee, u8 *pSupportMCS,
+ 	u8 i = 0;
+ 
+ 	// filter out operational rate set not supported by AP, the length of it is 16
+-	for (i = 0; i <= 15; i++) {
++	for (i = 0; i <= 15; i++)
+ 		pOperateMCS[i] = ieee->Regdot11HTOperationalRateSet[i] & pSupportMCS[i];
+-	}
+ 
+ 	// TODO: adjust our operational rate set  according to our channel bandwidth, STBC and Antenna number
+ 
+-- 
+2.16.3
 
-Also your subject line should have the subsystem/driver in it, to make
-it more obvious.  Something like:
-	Subject: staging: rtl8192u: fix block comments in rtl819x_HTProc.c
-
-There are thousands of good examples of good changelog comments and
-subject lines in the email archives, and in the kernel log itself :)
-
-Please fix this up and redo the whole series and resend.
-
-thanks,
-
-greg k-h
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driver
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
