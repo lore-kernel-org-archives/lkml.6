@@ -1,31 +1,31 @@
 Return-Path: <baolin.wang@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526288264; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1526288253; cv=none;
         d=google.com; s=arc-20160816;
-        b=OCvoVkNEqCfqbgIP8mAzIJ6IgPKKAfhn1WzxztWjuNxnN4euvi19XZstQATwEgoWl8
-         7RmFpSjpVgnhxuR9BhEp9xciweiADkulovfs8Lyy7aIbviXXIRv0GXtLqlm3uFU3PYuS
-         ssJqN2kksWM9O06iGbnL5TKbi60espG8exUXvfm5Bh2giDOnApu/tvFAX3HsXge0UaeU
-         F0/arEIhpgH7cRkgBMzACvZHtbMd3TTg1zDxU9uGPWNEgFc+VtF2tHGyxCS7Dmf+r1CH
-         JqXxW4DRkeZT159FW21AQ2iTV4sQVC8PRJZcYHizMaAKZQqpVjiARKbvMAHVz1tKHkBE
-         S88A==
+        b=v1BbzO4eYVnqqYbYS+0TaQIcquRu22/qqxrLc+OeXu50hrRwzLaxTxdUQIN2uZOX3D
+         aulgt1VAt4GJn6Xq9SHffwcQhgb+ldTqDLRlW0FA8pDjH5+/CbpwpbOofMRkPAbaZ/VM
+         AV6HlmjnLh3ni1SUKJKGnmL5cMgFOgOEpb/TKINTtiPAm3aXmw6OcMBePeEcSNlalxce
+         Kww+c79qt8uCRKL6O+Asy2JvzM3c0bitzNARBnB86jnDYgRI2hLq3EQSSJ2cdBkDN23C
+         D33ly/sNV9rLsAhr29hCgxmwsj2wBb4EtLSfQkTwNfrOv0z9dnBNHovuTmP88EBYdruF
+         GsRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=sSEMab6IMNQz3/RjvLiWiFX+Zq0WYBiRrZjP2qAXMUY=;
-        b=WiXrlSDo5PP2MWgFzOdnDwsVBBFWe1VBEdn8FqmgyrdxmC9r1GeERph/kg2lzZJBGR
-         2pQ49OquVrXmvqU1TJq2Vnav5KZj403lVl2J67uYND2xJLczB/fTuBFE1Fsko5LQHUpJ
-         HA7m416YqrRTSkgoBzvU1Cy0STRNUiu9hQvRCK7t6r1dpHnVOZge7Dt2/lKwoNuEAJrt
-         gup/bhHZ+J4U7Hety3JZjyrkVNtv5UM8DmBzySrNVDEZhgZcx13lSxk3X9QeEQ1UBhYS
-         0jdNg2yz0HVmuuXAFGIgVBmem05MN4X6op/BfI4njvE/Ot/f7k0RYr3HYO36y1rZEQ9E
-         s4bQ==
+        bh=6dTncBxPB46L6hH2lsBRv+i0+ICaH1S5Yj0USGe1ULU=;
+        b=N8tUG5dzv9yyYHeQmXVKsHnfz+qKm2FD+WfQw582jnir92I0RAOhmvX/OKizQytn2Y
+         MiFKyFvBR16GLEN/9Sg00rLMGnIWKFM4IpHmGRfMn3h5LhVzHGBEjgWe2MR5Ejt94JFY
+         YJqIRSuwOse/+i3DMh+sXWq6ud0RwbRa4ZZ3g7qVRyNzM7TICrTngf/aPIj/sAd2FLW/
+         KozoP6vd79SKAvUxzSrrU5eeagV49xqxs75YthggPiWyW9t/jdn3YsX1mb2pX5a0vX03
+         65GWVCKPmJWVqV3VjIKgtjG4XXFptMEsgIa/1iTil9IDOuVgVQX9dqb96IqF+mMFVhay
+         f9Yw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=S3M7cEnx;
+       dkim=pass header.i=@linaro.org header.s=google header.b=O7LuXt9D;
        spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=S3M7cEnx;
+       dkim=pass header.i=@linaro.org header.s=google header.b=O7LuXt9D;
        spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZpLbxYEtKrezxZrPSNr8XP9twI5Iv1raRlQ3AOegErbKoWKXRD+i/2VeFcuM21IPn0GRtudAA==
+X-Google-Smtp-Source: AB8JxZo3EboH5j0rOkcgS5ID7lKGvWmJqXO/A+aUqM8m87TyP8zqOjsWDTHTk8Z65mB9gwai7pGAJA==
 From: Baolin Wang <baolin.wang@linaro.org>
 To: tglx@linutronix.de,
 	john.stultz@linaro.org,
@@ -61,73 +61,88 @@ Cc: baolin.wang@linaro.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-omap@vger.kernel.org
-Subject: [RFC PATCH 10/10] time: timekeeping: Remove time compensating from nonstop clocksources
-Date: Mon, 14 May 2018 16:55:36 +0800
-Message-Id: <a38362d75aed947756d84976265de5772b3787cb.1526285602.git.baolin.wang@linaro.org>
+Subject: [RFC PATCH 09/10] x86: tsc: Register the persistent clock
+Date: Mon, 14 May 2018 16:55:35 +0800
+Message-Id: <3b626f6d7dd5ca047e6835b10c3a4e662db2539f.1526285602.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
 References: <cover.1526285602.git.baolin.wang@linaro.org>
 In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
 References: <cover.1526285602.git.baolin.wang@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600429242846860107?=
-X-GMAIL-MSGID: =?utf-8?q?1600429242846860107?=
+X-GMAIL-THRID: =?utf-8?q?1600429232051472181?=
+X-GMAIL-MSGID: =?utf-8?q?1600429232051472181?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Since we have converted all nonstop clocksources to use persistent clock,
-thus we can simplify the time compensating by removing the nonstop
-clocksources. Now we can compensate the suspend time for the OS time from
-the persistent clock or rtc device.
+Register the tsc as one persistent clock to compensate the suspend time
+if the tsc clocksource is always available.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- kernel/time/timekeeping.c |   19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+ arch/x86/Kconfig      |    1 +
+ arch/x86/kernel/tsc.c |   16 ++++++++++++++++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 49cbcee..48d2a80 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -1666,7 +1666,6 @@ void timekeeping_inject_sleeptime64(struct timespec64 *delta)
- void timekeeping_resume(void)
- {
- 	struct timekeeper *tk = &tk_core.timekeeper;
--	struct clocksource *clock = tk->tkr_mono.clock;
- 	unsigned long flags;
- 	struct timespec64 ts_new, ts_delta;
- 	u64 cycle_now;
-@@ -1682,27 +1681,17 @@ void timekeeping_resume(void)
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c07f492..667e3a7 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -195,6 +195,7 @@ config X86
+ 	select USER_STACKTRACE_SUPPORT
+ 	select VIRT_TO_BUS
+ 	select X86_FEATURE_NAMES		if PROC_FS
++	select PERSISTENT_CLOCK
  
- 	/*
- 	 * After system resumes, we need to calculate the suspended time and
--	 * compensate it for the OS time. There are 3 sources that could be
--	 * used: Nonstop clocksource during suspend, persistent clock and rtc
--	 * device.
-+	 * compensate it for the OS time. There are 2 sources that could be
-+	 * used: persistent clock and rtc device.
- 	 *
- 	 * One specific platform may have 1 or 2 or all of them, and the
- 	 * preference will be:
--	 *	suspend-nonstop clocksource -> persistent clock -> rtc
-+	 *	persistent clock -> rtc
- 	 * The less preferred source will only be tried if there is no better
- 	 * usable source. The rtc part is handled separately in rtc core code.
- 	 */
- 	cycle_now = tk_clock_read(&tk->tkr_mono);
--	if ((clock->flags & CLOCK_SOURCE_SUSPEND_NONSTOP) &&
--		cycle_now > tk->tkr_mono.cycle_last) {
--		u64 nsec, cyc_delta;
--
--		cyc_delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last,
--					      tk->tkr_mono.mask);
--		nsec = mul_u64_u32_shr(cyc_delta, clock->mult, clock->shift);
--		ts_delta = ns_to_timespec64(nsec);
--		sleeptime_injected = true;
--	} else if (timespec64_compare(&ts_new, &timekeeping_suspend_time) > 0) {
-+	if (timespec64_compare(&ts_new, &timekeeping_suspend_time) > 0) {
- 		ts_delta = timespec64_sub(ts_new, timekeeping_suspend_time);
- 		sleeptime_injected = true;
- 	}
+ config INSTRUCTION_DECODER
+ 	def_bool y
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 74392d9..dd8d7c3 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -11,6 +11,7 @@
+ #include <linux/delay.h>
+ #include <linux/clocksource.h>
+ #include <linux/percpu.h>
++#include <linux/persistent_clock.h>
+ #include <linux/timex.h>
+ #include <linux/static_key.h>
+ 
+@@ -1032,6 +1033,11 @@ static u64 read_tsc(struct clocksource *cs)
+ 	return (u64)rdtsc_ordered();
+ }
+ 
++static u64 notrace tsc_read_persistent_clock(void)
++{
++	return (u64)rdtsc_ordered();
++}
++
+ static void tsc_cs_mark_unstable(struct clocksource *cs)
+ {
+ 	if (tsc_unstable)
+@@ -1300,6 +1306,11 @@ static void tsc_refine_calibration_work(struct work_struct *work)
+ 	if (boot_cpu_has(X86_FEATURE_ART))
+ 		art_related_clocksource = &clocksource_tsc;
+ 	clocksource_register_khz(&clocksource_tsc, tsc_khz);
++
++	if (clocksource_tsc.flags & CLOCK_SOURCE_SUSPEND_NONSTOP)
++		persistent_clock_init_and_register(tsc_read_persistent_clock,
++						   CLOCKSOURCE_MASK(64),
++						   tsc_khz, 0);
+ unreg:
+ 	clocksource_unregister(&clocksource_tsc_early);
+ }
+@@ -1327,6 +1338,11 @@ static int __init init_tsc_clocksource(void)
+ 		if (boot_cpu_has(X86_FEATURE_ART))
+ 			art_related_clocksource = &clocksource_tsc;
+ 		clocksource_register_khz(&clocksource_tsc, tsc_khz);
++
++		if (clocksource_tsc.flags & CLOCK_SOURCE_SUSPEND_NONSTOP)
++			persistent_clock_init_and_register(tsc_read_persistent_clock,
++							   CLOCKSOURCE_MASK(64),
++							   tsc_khz, 0);
+ unreg:
+ 		clocksource_unregister(&clocksource_tsc_early);
+ 		return 0;
 -- 
 1.7.9.5
