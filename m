@@ -1,39 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoWQCss4PA8Vsiw275amUjWtFUgj1M76MUKIkYAvByFpg2rRu9rL8QkMPL9meF7VujEb7Jd
-ARC-Seal: i=1; a=rsa-sha256; t=1526281130; cv=none;
+X-Google-Smtp-Source: AB8JxZpfuC9ZBUbA1c3/lfH1bNt3Wz394hyTEKiDckyBk0DC4J4QCxAZQDQ1xfHxwbf7zyBNnlWE
+ARC-Seal: i=1; a=rsa-sha256; t=1526281127; cv=none;
         d=google.com; s=arc-20160816;
-        b=V8PPS7wR6LKHuMulJqGdRoe4w3vW75DevEtKXqryCDwuMuGtncLVlJaOZ0cHLezIs5
-         fOmLpQpd39IM75nvxUCpWkjCr1SLJURQfOy6XJLnYDD6xTNuc03qKUq17FQKuA2fBwLN
-         JIm1LPr2G9a3Ml2gk5dRdGOkxgyv3jSiK6w6g2JRMKfGFJ9AjUEU1DVuRTXzz22SOwBj
-         SvAnuoYVR82Jfw8uGpy7V9AO2XgZ35jVBd+4M04dfjtwSG175FmWgY+6Z4/U0KjyEDAX
-         jjh5zd4yMzX2I/DlYonGPlpxrNFYlrakNi/k9Wz+v4pbWHiEm7DZdKcY7kM2yMF+QO87
-         7rYg==
+        b=1CMKgmdRpgMxqjq+gwBVgEJ9SUd0m1sWMFNIagPhKUioQMZJukSXwhTU80Vu3Lha5K
+         9tyR/uXkivDJCDnFLtUmmNA0+gEueCDMgsHv2jbxV+7XGWuczTpK5Hz2ijpbewiK/dkg
+         t0rHw9as7+nWjrvP/3nViryX6bmBSXSU0M/SlKPQkcW1dbexoqbu+teZL1VUNR4w26Nm
+         BILZLWk9a1DoOXYNOK4HGzPgP/oOzukzEum3iDJ0drJ70gPAmERt/YpgdANhTN6qfbhD
+         mai5ljOq9hIlvCVtbdXDvFFVHI1DlZxobZWC4mMoW+cd8ShvE1l/4CthKKMOPkgX+r6X
+         cM4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=gt+uI2yTzW1OqzbmdHbQXsYsxnEaWWeem5jtx+IvpFc=;
-        b=zFBxfPasKX8dABjs0SA/fGACpepqzhy2Ki3BZpCzHheupdjUsPdaqeFTZBmcN/bXEi
-         VL6MfsvMaV2TKBkBoqWjw3May4nWBpK9bKpmePQUgNchGUH0C/tWw0yFaQ9c3kuElK1/
-         /H5lUCdbreYp7ae6Ro4oz59ucY0AdYoglCg/VWTtqpwdCyKBB+T13t+oVCPydWHhCE7T
-         E1ua/G0BZcM9v9Lnt9fFANINFPx4gGHqIN2DKw2ontHFymH/GJKRFG4npHwQqc3Qot3W
-         jycqTJv3bi6bTySNu2iM7IeHK36Z/i3eo1mQ5C9pmzM0QIRQxgyAkFrF1cK1JUdVpdcY
-         xOwA==
+        bh=Qrczj/3/3St/XuzAeFD0rWh/Ooov5NVhBBiHZaFCU/8=;
+        b=jlBC84P59cAhnCUnghXU7zwTCIk8DErBlUY6LQHQ7LUO1Iem3Io9OBZFIkCOqKhUlD
+         +xp+3ipeylEcikolAg9NGKjmxfoz3DkgRonoAiVlNQvJCc5tsdDwaJkmgSkr+Qxf2eEB
+         fMWcp66NJZvH/LaBnNA9aRT01Xt91kVyYRoqhOK9O4CLP4AjdDdbWWiXeycZFKlC+el6
+         t2d1D0VvZBP49vPANjUVR7rYV4OY6iwCwNhOaUCNWDl9puANTZD6QesmFrz1K9Sj7OXO
+         zJfVj8+6D9uP9MGzg5mjFYTZOAZp80qsYrjyVmo/uHjmpxeSduFpbnp1d43RDzZaF3LX
+         7KUQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=LVeWmUqq;
+       dkim=pass header.i=@kernel.org header.s=default header.b=d3yMt+91;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=LVeWmUqq;
+       dkim=pass header.i=@kernel.org header.s=default header.b=d3yMt+91;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Richard W.M. Jones" <rjones@redhat.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.16 28/72] libata: Apply NOLPM quirk for SanDisk SD7UB3Q*G1001 SSDs
-Date: Mon, 14 May 2018 08:48:45 +0200
-Message-Id: <20180514064824.248043941@linuxfoundation.org>
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Johan Hovold <johan@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.16 27/72] rfkill: gpio: fix memory leak in probe error path
+Date: Mon, 14 May 2018 08:48:44 +0200
+Message-Id: <20180514064824.201071738@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421262061858656?=
-X-GMAIL-MSGID: =?utf-8?q?1600421763135003626?=
+X-GMAIL-THRID: =?utf-8?q?1600421258890786882?=
+X-GMAIL-MSGID: =?utf-8?q?1600421759779065993?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,43 +52,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 184add2ca23ce5edcac0ab9c3b9be13f91e7b567 upstream.
+commit 4bf01ca21e2e0e4561d1a03c48c3d740418702db upstream.
 
-Richard Jones has reported that using med_power_with_dipm on a T450s
-with a Sandisk SD7UB3Q256G1001 SSD (firmware version X2180501) is
-causing the machine to hang.
+Make sure to free the rfkill device in case registration fails during
+probe.
 
-Switching the LPM to max_performance fixes this, so it seems that
-this Sandisk SSD does not handle LPM well.
-
-Note in the past there have been bug-reports about the following
-Sandisk models not working with min_power, so we may need to extend
-the quirk list in the future: name - firmware
-Sandisk SD6SB2M512G1022I   - X210400
-Sandisk SD6PP4M-256G-1006  - A200906
-
-Cc: stable@vger.kernel.org
-Cc: Richard W.M. Jones <rjones@redhat.com>
-Reported-and-tested-by: Richard W.M. Jones <rjones@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Fixes: 5e7ca3937fbe ("net: rfkill: gpio: convert to resource managed allocation")
+Cc: stable <stable@vger.kernel.org>	# 3.13
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-core.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/rfkill/rfkill-gpio.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4549,6 +4549,9 @@ static const struct ata_blacklist_entry
- 						ATA_HORKAGE_ZERO_AFTER_TRIM |
- 						ATA_HORKAGE_NOLPM, },
+--- a/net/rfkill/rfkill-gpio.c
++++ b/net/rfkill/rfkill-gpio.c
+@@ -137,13 +137,18 @@ static int rfkill_gpio_probe(struct plat
  
-+	/* Sandisk devices which are known to not handle LPM well */
-+	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
+ 	ret = rfkill_register(rfkill->rfkill_dev);
+ 	if (ret < 0)
+-		return ret;
++		goto err_destroy;
+ 
+ 	platform_set_drvdata(pdev, rfkill);
+ 
+ 	dev_info(&pdev->dev, "%s device registered.\n", rfkill->name);
+ 
+ 	return 0;
 +
- 	/* devices that don't properly handle queued TRIM commands */
- 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
- 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
++err_destroy:
++	rfkill_destroy(rfkill->rfkill_dev);
++
++	return ret;
+ }
+ 
+ static int rfkill_gpio_remove(struct platform_device *pdev)
