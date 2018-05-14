@@ -1,84 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752498AbeENXJa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 19:09:30 -0400
-Received: from ozlabs.org ([203.11.71.1]:54205 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752414AbeENXJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 19:09:28 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 15 May 2018 09:09:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christoph Hellwig <hch@lst.de>, Olof Johansson <olof@lixom.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the samsung-krzk tree with the
- dma-mapping tree
-Message-ID: <20180515090901.74c9429e@canb.auug.org.au>
-In-Reply-To: <20180510091634.7fb3aaf2@canb.auug.org.au>
-References: <20180510091634.7fb3aaf2@canb.auug.org.au>
+        id S1752357AbeENXOx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 19:14:53 -0400
+Received: from icp-osb-irony-out5.external.iinet.net.au ([203.59.1.221]:20234
+        "EHLO icp-osb-irony-out5.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752078AbeENXOv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 19:14:51 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2DcAABmFPpa/6SIBjoNTxsBAQEBAwEBA?=
+ =?us-ascii?q?QkBAQGFR5k1BoEHIYEPlSqEdwKDMjgUAQIBAQEBAQEChjwBAQEBAgE4QQULCw0?=
+ =?us-ascii?q?BCi5XBgEMBgIBAYMfgXQFqxuDCRqEPoNugieJMYEHgTIMglyKRwKYNgmOS4dxh?=
+ =?us-ascii?q?QQrkV0zgXMzGggoCIJ+kGBdkQgBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2DcAABmFPpa/6SIBjoNTxsBAQEBAwEBAQkBAQGFR5k1BoE?=
+ =?us-ascii?q?HIYEPlSqEdwKDMjgUAQIBAQEBAQEChjwBAQEBAgE4QQULCw0BCi5XBgEMBgIBA?=
+ =?us-ascii?q?YMfgXQFqxuDCRqEPoNugieJMYEHgTIMglyKRwKYNgmOS4dxhQQrkV0zgXMzGgg?=
+ =?us-ascii?q?oCIJ+kGBdkQgBAQ?=
+X-IronPort-AV: E=Sophos;i="5.49,402,1520870400";
+   d="scan'208";a="133423000"
+Subject: Re: [PATCH 1/7] i2c: i2c-gpio: move header to platform_data
+To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Cc: Russell King <linux@armlinux.org.uk>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        Sergey Lapin <slapin@ossfans.org>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-media@vger.kernel.org
+References: <20180419200015.15095-1-wsa@the-dreams.de>
+ <20180419200015.15095-2-wsa@the-dreams.de>
+ <20180514213719.o6ceftp2quem3s7f@ninjato>
+From: Greg Ungerer <gerg@uclinux.org>
+Message-ID: <40bb677a-e6e1-7906-28fe-9e74cdfbefd7@uclinux.org>
+Date: Tue, 15 May 2018 09:03:08 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/GMW0qBhCSwxNPm2W8A8H_3S"; protocol="application/pgp-signature"
+In-Reply-To: <20180514213719.o6ceftp2quem3s7f@ninjato>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/GMW0qBhCSwxNPm2W8A8H_3S
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Wolfram,
 
-On Thu, 10 May 2018 09:16:34 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the samsung-krzk tree got a conflict in:
->=20
->   arch/arm/mach-exynos/Kconfig
->=20
-> between commit:
->=20
->   4965a68780c5 ("arch: define the ARCH_DMA_ADDR_T_64BIT config symbol in =
-lib/Kconfig")
->=20
-> from the dma-mapping tree and commit:
->=20
->   c5deb598089c ("ARM: exynos: Remove support for Exynos5440")
->=20
-> from the samsung-krzk tree.
->=20
-> I fixed it up (the latter removed the whole section modified by
-> the former, so I just removed the section) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+On 15/05/18 07:37, Wolfram Sang wrote:
+>>   arch/arm/mach-ks8695/board-acs5k.c               | 2 +-
+>>   arch/arm/mach-sa1100/simpad.c                    | 2 +-
+>>   arch/mips/alchemy/board-gpr.c                    | 2 +-
+> 
+> Those still need acks...
+> 
+>> diff --git a/arch/arm/mach-ks8695/board-acs5k.c b/arch/arm/mach-ks8695/board-acs5k.c
+>> index 937eb1d47e7b..ef835d82cdb9 100644
+>> --- a/arch/arm/mach-ks8695/board-acs5k.c
+>> +++ b/arch/arm/mach-ks8695/board-acs5k.c
+>> @@ -19,7 +19,7 @@
+>>   #include <linux/gpio/machine.h>
+>>   #include <linux/i2c.h>
+>>   #include <linux/i2c-algo-bit.h>
+>> -#include <linux/i2c-gpio.h>
+>> +#include <linux/platform_data/i2c-gpio.h>
+>>   #include <linux/platform_data/pca953x.h>
+>>   
+>>   #include <linux/mtd/mtd.h>
+> 
+> ...
+> 
+>> diff --git a/arch/arm/mach-sa1100/simpad.c b/arch/arm/mach-sa1100/simpad.c
+>> index ace010479eb6..49a61e6f3c5f 100644
+>> --- a/arch/arm/mach-sa1100/simpad.c
+>> +++ b/arch/arm/mach-sa1100/simpad.c
+>> @@ -37,7 +37,7 @@
+>>   #include <linux/input.h>
+>>   #include <linux/gpio_keys.h>
+>>   #include <linux/leds.h>
+>> -#include <linux/i2c-gpio.h>
+>> +#include <linux/platform_data/i2c-gpio.h>
+>>   
+>>   #include "generic.h"
+>>   
+>> diff --git a/arch/mips/alchemy/board-gpr.c b/arch/mips/alchemy/board-gpr.c
+>> index 4e79dbd54a33..fa75d75b5ba9 100644
+>> --- a/arch/mips/alchemy/board-gpr.c
+>> +++ b/arch/mips/alchemy/board-gpr.c
+>> @@ -29,7 +29,7 @@
+>>   #include <linux/leds.h>
+>>   #include <linux/gpio.h>
+>>   #include <linux/i2c.h>
+>> -#include <linux/i2c-gpio.h>
+>> +#include <linux/platform_data/i2c-gpio.h>
+>>   #include <linux/gpio/machine.h>
+>>   #include <asm/bootinfo.h>
+>>   #include <asm/idle.h>
+> 
+> ... and this was the shortened diff for those.
+> 
+> Greg, Russell, Ralf, James? Is it okay if I take this via my tree?
 
-This is now a conflict between the arm-soc tree and the dma-mapping tree.
+Yes, I have no problem with that for the ks8695 part.
 
---=20
-Cheers,
-Stephen Rothwell
+Acked-by: Greg Ungerer <gerg@uclinux.org>
 
---Sig_/GMW0qBhCSwxNPm2W8A8H_3S
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks
+Greg
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6Fw0ACgkQAVBC80lX
-0GzaRQgAhplWggt/EOx/th8EogHsYGQ62l0YeXwMjc7E5A2kUAo4JLNS/79hOL+w
-Kp1YoB3Yph38T0LyfqycMb6ibup5wemtRhr8PkDm9JJlqdSmhIMxTWv85qbYSJL3
-cDOX4eIap1KHL+/+SCMlNNQGyUGo6ihgvXbUZhehh/9R5fYZWYBahLGdwynByJog
-f9XLk8zJwPm93IRpJ7tMKN/miW5WiezD3Fv7Nqc3JjRWePKuW5gQEvP4pDgo7FEV
-h7P6FvRZnOwxCNutPyevCKH3PYnzFPQMOlEvGFmuTljEAZeGTS5U0slRn159U4kA
-UmZ1aBuiDMEb831JX4xRS4mfwvdEgw==
-=KATa
------END PGP SIGNATURE-----
-
---Sig_/GMW0qBhCSwxNPm2W8A8H_3S--
+> Thanks,
+> 
+>     Wolfram
+> 
