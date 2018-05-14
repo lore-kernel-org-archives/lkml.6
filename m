@@ -1,140 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752230AbeENI3Z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:29:25 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:39063 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751364AbeENI3W (ORCPT
+        id S1752312AbeENIaA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:30:00 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:35106 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752038AbeENI36 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:29:22 -0400
-X-Google-Smtp-Source: AB8JxZpbRboPYfK+9SKHn+3hF60yT7HGdaqpchqDxXz1Kbfe04qY/Ygud68HeRouBT2m9Gw7Jw9pyQ==
-Date: Mon, 14 May 2018 10:29:18 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linuxram@us.ibm.com,
-        tglx@linutronix.de, dave.hansen@intel.com, mpe@ellerman.id.au,
-        akpm@linux-foundation.org, shuah@kernel.org, shakeelb@google.com
-Subject: Re: [PATCH 00/13] [v4] x86, pkeys: two protection keys bug fixes
-Message-ID: <20180514082918.GA21574@gmail.com>
-References: <20180509171336.76636D88@viggo.jf.intel.com>
+        Mon, 14 May 2018 04:29:58 -0400
+X-Google-Smtp-Source: AB8JxZooODyE6PERTnXbHc2QaX2S7X1v0jwpcLOTzJs+9ETtGcWCC7sMfOHm5DoAMmfdbUhRH8XQ7HEi75g+cHIkATI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180509171336.76636D88@viggo.jf.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180509191215.77406-1-dmitry.torokhov@gmail.com>
+References: <20180509191215.77406-1-dmitry.torokhov@gmail.com>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date: Mon, 14 May 2018 10:29:56 +0200
+Message-ID: <CAO-hwJKp74oC5M1EWf5YS42G7fM2disWrW0mfOSnVi-PGH_ryA@mail.gmail.com>
+Subject: Re: [PATCH] HID: i2c-hid: check if device is there before really probing
+To: Dmitry Torokhov <dtor@google.com>
+Cc: Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 9, 2018 at 9:12 PM, Dmitry Torokhov <dtor@google.com> wrote:
+> From: Dmitry Torokhov <dtor@chromium.org>
+>
+> On many Chromebooks touch devices are multi-sourced; the components are
+> electrically compatible and one can be freely swapped for another without
+> changing the OS image or firmware.
+>
+> To avoid bunch of scary messages when device is not actually present in the
+> system let's try testing basic communication with it and if there is no
+> response terminate probe early with -ENXIO.
+>
+> Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
+> ---
 
-* Dave Hansen <dave.hansen@linux.intel.com> wrote:
+Looks good. Tested on a Dell XPS with an i2c-hid touchpad:
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-> Hi x86 maintainers,
-> 
-> This set has been seen quite a few changes and additions since the
-> last post.  Details below.
-> 
-> Changes from v3:
->  * Reordered patches following Ingo's recommendations: Introduce
->    failing selftests first, then the kernel code to fix the test
->    failure.
->  * Increase verbosity and accuracy of do_not_expect_pk_fault()
->    messages.
->  * Removed abort() use from tests.  Crashing is not nice.
->  * Remove some dead debugging code, fixing dprint_in_signal.
->  * Fix deadlocks from using printf() and friends in signal
->    handlers.
-> 
-> Changes from v2:
->  * Clarified commit message in patch 1/9 taking some feedback from
->    Shuah.
-> 
-> Changes from v1:
->  * Added Fixes: and cc'd stable.  No code changes.
-> 
+Cheers,
+Benjamin
+
+>  drivers/hid/i2c-hid/i2c-hid.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
+> index 7230243b94d30..a59d483ff316a 100644
+> --- a/drivers/hid/i2c-hid/i2c-hid.c
+> +++ b/drivers/hid/i2c-hid/i2c-hid.c
+> @@ -1048,6 +1048,14 @@ static int i2c_hid_probe(struct i2c_client *client,
+>         pm_runtime_enable(&client->dev);
+>         device_enable_async_suspend(&client->dev);
+>
+> +       /* Make sure there is something at this address */
+> +       ret = i2c_smbus_read_byte(client);
+> +       if (ret < 0) {
+> +               dev_dbg(&client->dev, "nothing at this address: %d\n", ret);
+> +               ret = -ENXIO;
+> +               goto err_pm;
+> +       }
+> +
+>         ret = i2c_hid_fetch_hid_descriptor(ihid);
+>         if (ret < 0)
+>                 goto err_pm;
 > --
-> 
-> This fixes two bugs, and adds selftests to make sure they stay fixed:
-> 
-> 1. pkey 0 was not usable via mprotect_pkey() because it had never
->    been explicitly allocated.
-> 2. mprotect(PROT_EXEC) memory could sometimes be left with the
->    implicit exec-only protection key assigned.
-> 
-> I already posted #1 previously.  I'm including them both here because
-> I don't think it's been picked up in case folks want to pull these
-> all in a single bundle.
-> 
-> Dave Hansen (13):
->       x86/pkeys/selftests: give better unexpected fault error messages
->       x86/pkeys/selftests: Stop using assert()
->       x86/pkeys/selftests: remove dead debugging code, fix dprint_in_signal
->       x86/pkeys/selftests: avoid printf-in-signal deadlocks
->       x86/pkeys/selftests: Allow faults on unknown keys
->       x86/pkeys/selftests: Factor out "instruction page"
->       x86/pkeys/selftests: Add PROT_EXEC test
->       x86/pkeys/selftests: Fix pkey exhaustion test off-by-one
->       x86/pkeys: Override pkey when moving away from PROT_EXEC
->       x86/pkeys/selftests: Fix pointer math
->       x86/pkeys/selftests: Save off 'prot' for allocations
->       x86/pkeys/selftests: Add a test for pkey 0
->       x86/pkeys: Do not special case protection key 0
-> 
->  arch/x86/include/asm/mmu_context.h            |   2 +-
->  arch/x86/include/asm/pkeys.h                  |  18 +-
->  arch/x86/mm/pkeys.c                           |  21 +-
->  tools/testing/selftests/x86/pkey-helpers.h    |  20 +-
->  tools/testing/selftests/x86/protection_keys.c | 187 +++++++++++++-----
->  5 files changed, 173 insertions(+), 75 deletions(-)
-
-So this series is looking good to me in principle, but trying to build it I got 
-warnings and errors - see the build log below.
-
-Note that this is on a box with "Ubuntu 18.04 LTS (Bionic Beaver)".
-
-Thanks,
-
-	Ingo
-
-================>
-
-gcc -m32 -o /home/mingo/tip/tools/testing/selftests/x86/protection_keys_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 protection_keys.c -lrt -ldl -lm
-protection_keys.c:232:0: warning: "SEGV_BNDERR" redefined
- #define SEGV_BNDERR     3  /* failed address bound checks */
- 
-In file included from /usr/include/signal.h:58:0,
-                 from protection_keys.c:33:
-/usr/include/bits/siginfo-consts.h:117:0: note: this is the location of the previous definition
- #  define SEGV_BNDERR SEGV_BNDERR
- 
-protection_keys.c:233:0: warning: "SEGV_PKUERR" redefined
- #define SEGV_PKUERR     4
- 
-In file included from /usr/include/signal.h:58:0,
-                 from protection_keys.c:33:
-/usr/include/bits/siginfo-consts.h:119:0: note: this is the location of the previous definition
- #  define SEGV_PKUERR SEGV_PKUERR
- 
-protection_keys.c:387:5: error: conflicting types for ‘pkey_get’
- u32 pkey_get(int pkey, unsigned long flags)
-     ^~~~~~~~
-In file included from /usr/include/bits/mman-linux.h:115:0,
-                 from /usr/include/bits/mman.h:45,
-                 from /usr/include/sys/mman.h:41,
-                 from protection_keys.c:37:
-/usr/include/bits/mman-shared.h:64:5: note: previous declaration of ‘pkey_get’ was here
- int pkey_get (int __key) __THROW;
-     ^~~~~~~~
-protection_keys.c:409:5: error: conflicting types for ‘pkey_set’
- int pkey_set(int pkey, unsigned long rights, unsigned long flags)
-     ^~~~~~~~
-In file included from /usr/include/bits/mman-linux.h:115:0,
-                 from /usr/include/bits/mman.h:45,
-                 from /usr/include/sys/mman.h:41,
-                 from protection_keys.c:37:
-/usr/include/bits/mman-shared.h:60:5: note: previous declaration of ‘pkey_set’ was here
- int pkey_set (int __key, unsigned int __access_rights) __THROW;
-     ^~~~~~~~
-Makefile:67: recipe for target '/home/mingo/tip/tools/testing/selftests/x86/protection_keys_32' failed
-make: *** [/home/mingo/tip/tools/testing/selftests/x86/protection_keys_32] Error 1
+> 2.17.0.441.gb46fe60e1d-goog
+>
