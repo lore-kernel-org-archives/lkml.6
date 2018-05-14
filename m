@@ -1,38 +1,44 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo3cTdG0FodyepvF0PyvSj7FBE9tnr0GihodLswplkKe2e87xlGRizrneNM6qLqqsTYnTnD
-ARC-Seal: i=1; a=rsa-sha256; t=1526281064; cv=none;
+X-Google-Smtp-Source: AB8JxZqZur5Rtk19BDt2uDOkSQuuYxC2avFYk0loLla0QOgkadgtl1qD2DNoAL1qoT7rt31bK3HG
+ARC-Seal: i=1; a=rsa-sha256; t=1526281058; cv=none;
         d=google.com; s=arc-20160816;
-        b=QiLGnqNsnhhRJ3GKHwnVSt4dqds05O0daJkqiL/27y7mQlH+TzH98f0Ocz81evkj0i
-         I6cqHeVurXYPGDSZVD8ob6S0zVV8A20NbKE8CfFLTPpT+iqFXSz25IyKG8s1irjIaom9
-         MjAk2LVNR4eqO32+isw6MLtB/xogVVEdV/l63D83RLBFk7RefIfad5BYudai4bP/S5wE
-         yrncTrV/CAciSsCp15ddD1mH7p75Okevq8FM73AFVvD7lEiI6M96wIRXnZkVbXYIlBJL
-         yxRZpH3acSjT8I9ZFrHq3g2hCp6dLM2nw+qRCWsADajyXssYnL8gymP38COuchXYtERj
-         /nbw==
+        b=CVzku/e5/gAP/HeE3HsAmhTZ1xChqG73VyK9rHBCbXKa9zH0HjYY3pK+buH8I5evAy
+         OUKglF9KQ67+qDTD8N4BNPkbLQMTtGI3Cl396V32CZ8CNQEfQFD6OG7tAMT/nYFS9ooo
+         ISSnJmsNqF2BSG6UHKAHj1FvrFkIDpNFubGaIIA8tQxyD/LUWcfcyqdEfIlROt+SICzY
+         Xjb2+TccNuTyPjYqy0SHxtfCh9lMMc0co/Nk5RV+vdBI+QlmokGgIC1cCSDw5eyLPsg0
+         i1md9QIUDENJ8c/p57jgxJQK1brlmzH+FaNJy6aSJTHYjWSuBW9AuPUcfjL/qNMFa63b
+         VCTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=F9CdQ1u3b7zgd35J7cQVFNOq6MYXoQ+TwuJ86WojnIk=;
-        b=UpoWpOwFvqZwN9DLiGidadaPJfdkikzJ3GbrWv2xyhWTw2LWYDX2KTVpaVIXoFoS6q
-         HvBDGWzvJ4yjQlmL1BUcsXyZwQiUKcU/X3x8b1Rs6Zh8tYuiDNS60Le/NQrXL3Ky0+XP
-         94elO6nf7boq6fvYUq3k8MpLZlmG9Y9vos2346mFTRSab1eyG2N+AzqUmaDAeJuehGut
-         rj1kXCm7oSctqKNr6USG+ri0WHhB006MegH1woJ33SxjPiMsFIa8Dz9nERABotBifPxD
-         NLM2wy6vSPBvJPeQPPg1kkpigReF9sTJ7xGeGaHfk/FV2aS7C5yxQTXvo0wNetyRCxxY
-         6WOA==
+        bh=CpJBqIRp2V7pJVI6ZEtchvvWfOo7YKCYjwfm5rPEjSM=;
+        b=UVO19M0pUqGN/uZCsVzn7ZJ6ZuyHhia0Ap7ZMugSppjat9wnHN/e13s/K+xpoKBlVe
+         XbX+V0vRpNrRlwvgGpWJB3EIs6q+T02RbraYG5VWyYUkG8l1fno5yOuAssIon5MlilSb
+         ETsABEQDxVGjpL1JXYBZbYlkyCWn1tKLHDM5m6WTSg4pe0XyTPTlK0x2nliYefePmr9a
+         q8tnEOydgqLCKp7C18l8z6eLVUK8X90nPBRpuyBkKExCaEyFslh4THTn5SGkQFk4jqzf
+         XwP9m6jDu8COE2AZpdCmYMlQnrdvX/vKUNIR5MxWxK74KWzq+Os7p/VZkRJkXoq+Cc2b
+         1b5w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=swa1Qbci;
+       dkim=pass header.i=@kernel.org header.s=default header.b=sfMM/G77;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=swa1Qbci;
+       dkim=pass header.i=@kernel.org header.s=default header.b=sfMM/G77;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ilya Dryomov <idryomov@gmail.com>,
-	"Yan, Zheng" <zyan@redhat.com>
-Subject: [PATCH 4.14 33/62] ceph: fix rsize/wsize capping in ceph_direct_read_write()
-Date: Mon, 14 May 2018 08:48:49 +0200
-Message-Id: <20180514064818.184108161@linuxfoundation.org>
+	Pavel Tatashin <pasha.tatashin@oracle.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Steven Sistare <steven.sistare@oracle.com>,
+	Daniel Jordan <daniel.m.jordan@oracle.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 31/62] mm: sections are not offlined during memory hotremove
+Date: Mon, 14 May 2018 08:48:47 +0200
+Message-Id: <20180514064818.091284600@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -42,8 +48,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421693083966559?=
-X-GMAIL-MSGID: =?utf-8?q?1600421693083966559?=
+X-GMAIL-THRID: =?utf-8?q?1600421687228109067?=
+X-GMAIL-MSGID: =?utf-8?q?1600421687228109067?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,49 +57,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
 
-commit 3a15b38fd2efc1d648cb33186bf71e9138c93491 upstream.
+commit 27227c733852f71008e9bf165950bb2edaed3a90 upstream.
 
-rsize/wsize cap should be applied before ceph_osdc_new_request() is
-called.  Otherwise, if the size is limited by the cap instead of the
-stripe unit, ceph_osdc_new_request() would setup an extent op that is
-bigger than what dio_get_pages_alloc() would pin and add to the page
-vector, triggering asserts in the messenger.
+Memory hotplug and hotremove operate with per-block granularity.  If the
+machine has a large amount of memory (more than 64G), the size of a
+memory block can span multiple sections.  By mistake, during hotremove
+we set only the first section to offline state.
 
-Cc: stable@vger.kernel.org
-Fixes: 95cca2b44e54 ("ceph: limit osd write size")
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+The bug was discovered because kernel selftest started to fail:
+  https://lkml.kernel.org/r/20180423011247.GK5563@yexl-desktop
+
+After commit, "mm/memory_hotplug: optimize probe routine".  But, the bug
+is older than this commit.  In this optimization we also added a check
+for sections to be in a proper state during hotplug operation.
+
+Link: http://lkml.kernel.org/r/20180427145257.15222-1-pasha.tatashin@oracle.com
+Fixes: 2d070eab2e82 ("mm: consider zone which is not fully populated to have holes")
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Steven Sistare <steven.sistare@oracle.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ceph/file.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ mm/sparse.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -873,6 +873,11 @@ ceph_direct_read_write(struct kiocb *ioc
- 		size_t start = 0;
- 		ssize_t len;
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -661,7 +661,7 @@ void offline_mem_sections(unsigned long
+ 	unsigned long pfn;
  
-+		if (write)
-+			size = min_t(u64, size, fsc->mount_options->wsize);
-+		else
-+			size = min_t(u64, size, fsc->mount_options->rsize);
-+
- 		vino = ceph_vino(inode);
- 		req = ceph_osdc_new_request(&fsc->client->osdc, &ci->i_layout,
- 					    vino, pos, &size, 0,
-@@ -888,11 +893,6 @@ ceph_direct_read_write(struct kiocb *ioc
- 			break;
- 		}
+ 	for (pfn = start_pfn; pfn < end_pfn; pfn += PAGES_PER_SECTION) {
+-		unsigned long section_nr = pfn_to_section_nr(start_pfn);
++		unsigned long section_nr = pfn_to_section_nr(pfn);
+ 		struct mem_section *ms;
  
--		if (write)
--			size = min_t(u64, size, fsc->mount_options->wsize);
--		else
--			size = min_t(u64, size, fsc->mount_options->rsize);
--
- 		len = size;
- 		pages = dio_get_pages_alloc(iter, len, &start, &num_pages);
- 		if (IS_ERR(pages)) {
+ 		/*
