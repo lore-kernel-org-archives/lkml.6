@@ -1,85 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752132AbeENKaV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 06:30:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37010 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751487AbeENKaU (ORCPT
+        id S1752194AbeENKbT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 06:31:19 -0400
+Received: from mail-io0-f179.google.com ([209.85.223.179]:44580 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752035AbeENKbR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 06:30:20 -0400
-Date: Mon, 14 May 2018 12:30:13 +0200
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Ingo Molnar <mingo@kernel.org>, Andre Wild <wild@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [bisected] 051f3ca02e46 "Introduce NUMA identity node sched
- domain" breaks fake NUMA on s390
-References: <20180512100233.GB3738@osiris>
- <20180514093909.GO12217@hirez.programming.kicks-ass.net>
+        Mon, 14 May 2018 06:31:17 -0400
+X-Google-Smtp-Source: AB8JxZpPXCMmZRtTu7Y+ReQ2kr9Fiahn556xW6HMg91Afolz0AqOvl/N1JYL30JOv39eTcfyH11B/oGDYayEO7TBp/A=
 MIME-Version: 1.0
-In-Reply-To: <20180514093909.GO12217@hirez.programming.kicks-ass.net>
-X-TM-AS-GCONF: 00
-x-cbid: 18051410-0044-0000-0000-0000055242CD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051410-0045-0000-0000-00002893A093
-Message-Id: <20180514103013.GA3603@osiris>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805140109
+In-Reply-To: <20180514084050.ix5corfuvx33gsyn@flea>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-10-jagan@amarulasolutions.com> <20180502113413.vv2r3ubfoh7gm3ms@flea>
+ <CAMty3ZBheurXewQ8R53G_0gNLgv1jQkZbjAbaN30JQ6_ZVn7Eg@mail.gmail.com> <20180514084050.ix5corfuvx33gsyn@flea>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Mon, 14 May 2018 16:01:15 +0530
+Message-ID: <CAMty3ZDCubM2sLBfNVar-kA9djZ8PJDQJOS0Jwi6wWNVeK9mCg@mail.gmail.com>
+Subject: Re: [PATCH 09/21] arm64: dts: allwinner: a64: Add HDMI support
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 11:39:09AM +0200, Peter Zijlstra wrote:
-> On Sat, May 12, 2018 at 12:02:33PM +0200, Heiko Carstens wrote:
-> > Hello,
-> > 
-> > Andre Wild reported that fake NUMA doesn't work on s390 anymore. Doesn't
-> > work means it crashed for Andre, or it is in an endless loop within
-> > init_sched_groups_capacity() for me (sg != sd->groups is always true).
-> > 
-> > I could reproduce this with a very simple setup with only two nodes, where
-> > each node has only one CPU. This allowed me to bisect it down to commit
-> > 051f3ca02e46 ("sched/topology: Introduce NUMA identity node sched domain").
-> > 
-> > With that commit reverted the system comes up again and the scheduling
-> > domains look like this:
-> > 
-> > [    0.148592] smp: Bringing up secondary CPUs ...
-> > [    0.148984] smp: Brought up 2 nodes, 2 CPUs
-> > [    0.149097] CPU0 attaching sched-domain(s):
-> > [    0.149099]  domain-0: span=0-1 level=NUMA
-> > [    0.149101]   groups: 0:{ span=0 }, 1:{ span=1 }
-> > [    0.149106] CPU1 attaching sched-domain(s):
-> > [    0.149107]  domain-0: span=0-1 level=NUMA
-> > [    0.149108]   groups: 1:{ span=1 }, 0:{ span=0 }
-> > [    0.149111] span: 0-1 (max cpu_capacity = 1024)
-> > 
-> > Any idea what's going wrong?
-> 
-> Not yet; still trying to decipher your fake nume implementation.
-> 
-> But meanwhile; could you provide me with:
-> 
-> $ cat /sys/devices/system/node/node*/distance
-> $ cat /sys/devices/system/node/node*/cpulist
+On Mon, May 14, 2018 at 2:10 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Mon, May 14, 2018 at 02:03:36PM +0530, Jagan Teki wrote:
+>> On Wed, May 2, 2018 at 5:04 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>> > Hi,
+>> >
+>> > On Mon, Apr 30, 2018 at 05:10:46PM +0530, Jagan Teki wrote:
+>> >> +             hdmi_phy: hdmi-phy@1ef0000 {
+>> >> +                     compatible = "allwinner,sun50i-a64-hdmi-phy",
+>> >> +                                  "allwinner,sun8i-h3-hdmi-phy";
+>> >> +                     reg = <0x01ef0000 0x10000>;
+>> >> +                     clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
+>> >> +                              <&ccu CLK_PLL_VIDEO1>;
+>> >
+>> > You were discussing that the PLL0 could also be used to clock the PHY,
+>> > has that been figured out?
+>>
+>> This is what I understand from Fig: 3-3. Module Clock Diagram, both
+>> tcon0 and tcon1 are using HDMI. I'm thinking based on the tcon
+>> configuration we need use proper PLL or some logic to get common PLL
+>> don't know yet. Since this series adding tcon1 I've attached PLL1.
+>
+> You're not describing the TCON node here though, but the HDMI one, and
+> the HDMI block is listed in both the PLL video 0 and 1.
 
-Yes, of course:
-
-$ cat /sys/devices/system/node/node0/distance
-0 10
-$ cat /sys/devices/system/node/node1/distance
-10 0
-
-$ cat /sys/devices/system/node/node0/cpulist
-0
-$ cat /sys/devices/system/node/node1/cpulist
-1
+So how can we attach particular PLL with particular HDMI(PLL0 to HDMI0
+and so-on) or do we need to attached both the PLL's any suggestion?
