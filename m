@@ -1,153 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751660AbeENACd (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 20:02:33 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36973 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751093AbeENACb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 20:02:31 -0400
-X-Google-Smtp-Source: AB8JxZp2CAZ0HUFlleUgiFVcvJOGXzlPqrD21iI5h2DLKZ+8WBQEKRLxEI2AW9BpB63FRUf0RUPaNg==
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Ursula Braun <ubraun@linux.ibm.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org
-Cc: netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>
-Subject: [PATCH] net/smc: check for missing nlattrs in SMC_PNETID messages
-Date: Sun, 13 May 2018 17:01:30 -0700
-Message-Id: <20180514000130.13780-1-ebiggers3@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <001a113f9bb83e4d560568457853@google.com>
-References: <001a113f9bb83e4d560568457853@google.com>
+        id S1751927AbeENADm (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 20:03:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750991AbeENADl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 20:03:41 -0400
+Date: Mon, 14 May 2018 09:03:36 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>, Josef Bacik <jbacik@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [RFC PATCH -tip 2/4] kprobes: Remove jprobe generic code
+Message-Id: <20180514090336.e6f3ec9e750cc14faf38714c@kernel.org>
+In-Reply-To: <alpine.DEB.2.21.1805132154220.1582@nanos.tec.linutronix.de>
+References: <152578658468.31022.8952561651556318637.stgit@devbox>
+        <152578664349.31022.13591383815605124106.stgit@devbox>
+        <alpine.DEB.2.21.1805132154220.1582@nanos.tec.linutronix.de>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Sun, 13 May 2018 21:55:38 +0200 (CEST)
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-It's possible to crash the kernel in several different ways by sending
-messages to the SMC_PNETID generic netlink family that are missing the
-expected attributes:
+> On Tue, 8 May 2018, Masami Hiramatsu wrote:
+> 
+> > Remove jprobe arch independent generic code
+> > from kernel/kprobes.c.
+> 
+> # git grep register_jprobes
+> include/linux/kprobes.h:static inline int register_jprobes(struct jprobe **jps, int num)
+> include/linux/kprobes.h:static inline void unregister_jprobes(struct jprobe **jps, int num)
+> kernel/test_kprobes.c:  ret = register_jprobes(jps, 2);
+> kernel/test_kprobes.c:          pr_err("register_jprobes returned %d\n", ret);
+> kernel/test_kprobes.c:  unregister_jprobes(jps, 2);
+> 
+> You forgot to remove a few things ...
 
-- Missing SMC_PNETID_NAME => null pointer dereference when comparing
-  names.
-- Missing SMC_PNETID_ETHNAME => null pointer dereference accessing
-  smc_pnetentry::ndev.
-- Missing SMC_PNETID_IBNAME => null pointer dereference accessing
-  smc_pnetentry::smcibdev.
-- Missing SMC_PNETID_IBPORT => out of bounds array access to
-  smc_ib_device::pattr[-1].
+Ah, thoes are already disabled (with #if 0) but it is better to remove it first.
 
-Fix it by validating that all expected attributes are present and that
-SMC_PNETID_IBPORT is nonzero.
+Thanks!
 
-Reported-by: syzbot+5cd61039dc9b8bfa6e47@syzkaller.appspotmail.com
-Fixes: 6812baabf24d ("smc: establish pnet table management")
-Cc: <stable@vger.kernel.org> # v4.11+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- net/smc/smc_pnet.c | 71 ++++++++++++++++++++++++++--------------------
- 1 file changed, 40 insertions(+), 31 deletions(-)
+> 
+> Thanks,
+> 
+> 	tglx
 
-diff --git a/net/smc/smc_pnet.c b/net/smc/smc_pnet.c
-index 74568cdbca708..d7b88b2d1b224 100644
---- a/net/smc/smc_pnet.c
-+++ b/net/smc/smc_pnet.c
-@@ -245,40 +245,45 @@ static struct smc_ib_device *smc_pnet_find_ib(char *ib_name)
- static int smc_pnet_fill_entry(struct net *net, struct smc_pnetentry *pnetelem,
- 			       struct nlattr *tb[])
- {
--	char *string, *ibname = NULL;
--	int rc = 0;
-+	char *string, *ibname;
-+	int rc;
- 
- 	memset(pnetelem, 0, sizeof(*pnetelem));
- 	INIT_LIST_HEAD(&pnetelem->list);
--	if (tb[SMC_PNETID_NAME]) {
--		string = (char *)nla_data(tb[SMC_PNETID_NAME]);
--		if (!smc_pnetid_valid(string, pnetelem->pnet_name)) {
--			rc = -EINVAL;
--			goto error;
--		}
--	}
--	if (tb[SMC_PNETID_ETHNAME]) {
--		string = (char *)nla_data(tb[SMC_PNETID_ETHNAME]);
--		pnetelem->ndev = dev_get_by_name(net, string);
--		if (!pnetelem->ndev)
--			return -ENOENT;
--	}
--	if (tb[SMC_PNETID_IBNAME]) {
--		ibname = (char *)nla_data(tb[SMC_PNETID_IBNAME]);
--		ibname = strim(ibname);
--		pnetelem->smcibdev = smc_pnet_find_ib(ibname);
--		if (!pnetelem->smcibdev) {
--			rc = -ENOENT;
--			goto error;
--		}
--	}
--	if (tb[SMC_PNETID_IBPORT]) {
--		pnetelem->ib_port = nla_get_u8(tb[SMC_PNETID_IBPORT]);
--		if (pnetelem->ib_port > SMC_MAX_PORTS) {
--			rc = -EINVAL;
--			goto error;
--		}
--	}
-+
-+	rc = -EINVAL;
-+	if (!tb[SMC_PNETID_NAME])
-+		goto error;
-+	string = (char *)nla_data(tb[SMC_PNETID_NAME]);
-+	if (!smc_pnetid_valid(string, pnetelem->pnet_name))
-+		goto error;
-+
-+	rc = -EINVAL;
-+	if (!tb[SMC_PNETID_ETHNAME])
-+		goto error;
-+	rc = -ENOENT;
-+	string = (char *)nla_data(tb[SMC_PNETID_ETHNAME]);
-+	pnetelem->ndev = dev_get_by_name(net, string);
-+	if (!pnetelem->ndev)
-+		goto error;
-+
-+	rc = -EINVAL;
-+	if (!tb[SMC_PNETID_IBNAME])
-+		goto error;
-+	rc = -ENOENT;
-+	ibname = (char *)nla_data(tb[SMC_PNETID_IBNAME]);
-+	ibname = strim(ibname);
-+	pnetelem->smcibdev = smc_pnet_find_ib(ibname);
-+	if (!pnetelem->smcibdev)
-+		goto error;
-+
-+	rc = -EINVAL;
-+	if (!tb[SMC_PNETID_IBPORT])
-+		goto error;
-+	pnetelem->ib_port = nla_get_u8(tb[SMC_PNETID_IBPORT]);
-+	if (pnetelem->ib_port < 1 || pnetelem->ib_port > SMC_MAX_PORTS)
-+		goto error;
-+
- 	return 0;
- 
- error:
-@@ -307,6 +312,8 @@ static int smc_pnet_get(struct sk_buff *skb, struct genl_info *info)
- 	void *hdr;
- 	int rc;
- 
-+	if (!info->attrs[SMC_PNETID_NAME])
-+		return -EINVAL;
- 	pnetelem = smc_pnet_find_pnetid(
- 				(char *)nla_data(info->attrs[SMC_PNETID_NAME]));
- 	if (!pnetelem)
-@@ -359,6 +366,8 @@ static int smc_pnet_add(struct sk_buff *skb, struct genl_info *info)
- 
- static int smc_pnet_del(struct sk_buff *skb, struct genl_info *info)
- {
-+	if (!info->attrs[SMC_PNETID_NAME])
-+		return -EINVAL;
- 	return smc_pnet_remove_by_pnetid(
- 				(char *)nla_data(info->attrs[SMC_PNETID_NAME]));
- }
+
 -- 
-2.17.0
+Masami Hiramatsu <mhiramat@kernel.org>
