@@ -1,121 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752238AbeENH5c (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:57:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60129 "EHLO mail.bootlin.com"
+        id S1752009AbeENH7l (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:59:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751387AbeENH5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:57:30 -0400
-Date: Mon, 14 May 2018 09:57:27 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>
-Subject: Re: Allwinner A64: Issue on external rtc clock to wifi chip
-Message-ID: <20180514075727.uxggyhmbahvhestx@flea>
-References: <CAMty3ZCNyuEwmLGdDZLM_9qKJ2NsT33rodug7ZpKAE-OHymVEg@mail.gmail.com>
+        id S1750750AbeENH7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 03:59:40 -0400
+X-Google-Smtp-Source: AB8JxZqUQodlLP9doHdy243SUSuEbrTm4UGH0esowN+GZEqgfFORByW4u+nekFMUqOsTTHAJA2Cy9Tz9bjuCF977G4A=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kx3hdnajnzxhcs2n"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZCNyuEwmLGdDZLM_9qKJ2NsT33rodug7ZpKAE-OHymVEg@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180422230742.3729-10-linus.walleij@linaro.org>
+References: <20180422230742.3729-1-linus.walleij@linaro.org> <20180422230742.3729-10-linus.walleij@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Mon, 14 May 2018 09:59:37 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfqxLZQHJn5qXq_J3oNVp1QBXbdzrdrbb2ejToabWtnPw@mail.gmail.com>
+Message-ID: <CAJKOXPfqxLZQHJn5qXq_J3oNVp1QBXbdzrdrbb2ejToabWtnPw@mail.gmail.com>
+Subject: Re: [PATCH 10/18 v2] regulator: s2mps11: Pass descriptor instead of
+ GPIO number
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Apr 23, 2018 at 1:07 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> Instead of passing a global GPIO number for the enable GPIO, pass
+> a descriptor looked up with the standard devm_gpiod_get_optional()
+> call.
+>
+> This regulator supports passing platform data, but enable/sleep
+> regulators are looked up from the device tree exclusively, so
+> we can need not touch other files.
+>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sangbeom Kim <sbkim73@samsung.com>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v1->v2:
+> - Rebase the patch on the other changes.
+> ---
+>  drivers/regulator/s2mps11.c | 46 ++++++++++++++++++++++-----------------------
+>  1 file changed, 23 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+> index 7726b874e539..9a1dca26362e 100644
+> --- a/drivers/regulator/s2mps11.c
+> +++ b/drivers/regulator/s2mps11.c
+> @@ -18,7 +18,7 @@
+>
+>  #include <linux/bug.h>
+>  #include <linux/err.h>
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/slab.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> @@ -27,7 +27,6 @@
+>  #include <linux/regulator/driver.h>
+>  #include <linux/regulator/machine.h>
+>  #include <linux/regulator/of_regulator.h>
+> -#include <linux/of_gpio.h>
+>  #include <linux/mfd/samsung/core.h>
+>  #include <linux/mfd/samsung/s2mps11.h>
+>  #include <linux/mfd/samsung/s2mps13.h>
+> @@ -57,7 +56,7 @@ struct s2mps11_info {
+>          * Array (size: number of regulators) with GPIO-s for external
+>          * sleep control.
+>          */
+> -       int *ext_control_gpio;
+> +       struct gpio_desc **ext_control_gpiod;
+>  };
+>
+>  static int get_ramp_delay(int ramp_delay)
+> @@ -524,7 +523,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
+>         case S2MPS14X:
+>                 if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
+>                         val = S2MPS14_ENABLE_SUSPEND;
+> -               else if (gpio_is_valid(s2mps11->ext_control_gpio[rdev_get_id(rdev)]))
+> +               else if (s2mps11->ext_control_gpiod[rdev_get_id(rdev)])
+>                         val = S2MPS14_ENABLE_EXT_CONTROL;
+>                 else
+>                         val = rdev->desc->enable_mask;
+> @@ -818,7 +817,7 @@ static int s2mps14_pmic_enable_ext_control(struct s2mps11_info *s2mps11,
+>  static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+>                 struct of_regulator_match *rdata, struct s2mps11_info *s2mps11)
+>  {
+> -       int *gpio = s2mps11->ext_control_gpio;
+> +       struct gpio_desc **gpio = s2mps11->ext_control_gpiod;
+>         unsigned int i;
+>         unsigned int valid_regulators[3] = { S2MPS14_LDO10, S2MPS14_LDO11,
+>                 S2MPS14_LDO12 };
+> @@ -829,11 +828,20 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+>                 if (!rdata[reg].init_data || !rdata[reg].of_node)
+>                         continue;
+>
+> -               gpio[reg] = of_get_named_gpio(rdata[reg].of_node,
+> -                               "samsung,ext-control-gpios", 0);
+> -               if (gpio_is_valid(gpio[reg]))
+> -                       dev_dbg(&pdev->dev, "Using GPIO %d for ext-control over %d/%s\n",
+> -                                       gpio[reg], reg, rdata[reg].name);
+> +               gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
+> +                                                       rdata[reg].of_node,
+> +                                                       "samsung,ext-control-gpios",
+> +                                                       0,
+> +                                                       GPIOD_OUT_HIGH,
+> +                                                       "s2mps11-LDO");
 
---kx3hdnajnzxhcs2n
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The same as with max77686 - this can be also for bucks so how about
+the name of "s2mps11-regulator"?
 
-Hi,
+Rest looks good.
 
-On Mon, May 14, 2018 at 12:37:49PM +0530, Jagan Teki wrote:
-> Hi Maxime and All,
->=20
-> We are trying to bring-up AP6330 Wifi chip for A64 board. We noticed
-> to have an external rtc clock has driven from wifi chip.
->=20
-> So the devicetree is configured according to this as below.
->=20
-> / {
->         wifi_pwrseq: wifi-pwrseq {
->                 compatible =3D "mmc-pwrseq-simple";
->                 clocks =3D <&rtc 1>;
->                 clock-names =3D "ext_clock";
->                 reset-gpios =3D <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
->                 post-power-on-delay-ms =3D <400>;
->         };
-> };
->=20
-> &rtc {
->         clock-output-names =3D "rtc-osc32k", "rtc-osc32k-out";
->         clocks =3D <&osc32k>;
->         #clock-cells =3D <1>;
-> };
->=20
-> &mmc1 {
->         pinctrl-names =3D "default";
->         pinctrl-0 =3D <&mmc1_pins>;
->         vmmc-supply =3D <&reg_dcdc1>;
->         vqmmc-supply =3D <&reg_eldo1>;
->         mmc-pwrseq =3D <&wifi_pwrseq>;
->         bus-width =3D <4>;
->         non-removable;
->         status =3D "okay";
->=20
->         brcmf: wifi@1 {
->                 reg =3D <1>;
->                 compatible =3D "brcm,bcm4329-fmac";
->                 interrupt-parent =3D <&r_pio>;
->                 interrupts =3D <0 3 IRQ_TYPE_LEVEL_LOW>;  /* WL-WAKE-AP: =
-PL3 */
->                 interrupt-names =3D "host-wake";
->         };
-> };
->=20
-> And observed rtc-osc32k-out clock is never enabled[1] and the value of
-> LOSC_OUT_GATING is 0x0 which eventually not enabling
-> LOSC_OUT_GATING_EN
->=20
-> Pls. let us know if we miss anything here?
->=20
-> [1] https://paste.ubuntu.com/p/X2By4q8kD2/
-
-Could you paste your config and the logs from a boot to?
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---kx3hdnajnzxhcs2n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr5QWYACgkQ0rTAlCFN
-r3SrtA/9GuZDqH3zmlBuHDU3zz9r657hhP6rc96xIVjb7hWNDLfrjc/w64LhmMiB
-eZKWja/PO/31QhpU/wcHUjZgjoWaMSHCNhpZr0mVbw9DoVs9oJuEM/9wEH5NbqUj
-ILC1px2uWVBaQW3AqTW2bow8MXMlX8bm0BpHf14bQsgcu0I2mVp/s+n8TJF0xPM7
-/af61LG07HPLo+LNpq2RB60RhIHksx1+MfI4Rd5my6r1tMmrQBKYi0EE1M0BYY+u
-p0V7znu1Q1Utqw/lHFgBQ9Np06GOUOVUsnjiOCQhbg3VX6TeUqUEJPefudr/QOwO
-+kdcI6hvfHQLM6H8QNJXJxj2E3ep9TfWVTz5Bn5lqy6IS/cPwFr+5qKjvtUyhqvG
-nwQH69b15Ww2riOc7CJYLBZfGSEwyIBt7kTu6O3R9YJw8PY/Jneu5uBBWQvzT02s
-knVk6h46NU53LC06rqmHZ5ZI5iVPQP6e8tHEVn5ctcFmkZQ2CoB59wuxhMIznAFM
-/zbuLfZf3k9yk4MH0M0w2bs9FmGgJ2wcQuq/LPw7xfOFjhrpJMrJjh2DcyDGqNMx
-0XVzOUSNE1s/hjk+5r3RqMI0NTbwTZMdXKQtMS3pL3uZbqMOQLhOQKTlivCPJ2c+
-kjz5aouVlL8w7Sid2lRCRPT1YMW4xWdqLXmzwzaRY6TVIe+VzbQ=
-=b7od
------END PGP SIGNATURE-----
-
---kx3hdnajnzxhcs2n--
+Best regards,
+Krzysztof
