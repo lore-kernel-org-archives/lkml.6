@@ -1,75 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932512AbeENNPf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 09:15:35 -0400
-Received: from ec2-52-9-186-167.us-west-1.compute.amazonaws.com ([52.9.186.167]:33302
-        "EHLO mail.suchdamage.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932189AbeENNPd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 09:15:33 -0400
-From: Sam Hartman <hartmans@debian.org>
-To: Thorsten Glaser <tg@mirbsd.de>
-Cc: Adrian Bunk <bunk@debian.org>, Ben Hutchings <ben@decadent.org.uk>,
-        Debian release team <debian-release@lists.debian.org>,
-        Debian kernel maintainers <debian-kernel@lists.debian.org>,
-        krb5@packages.debian.org, libbsd@packages.debian.org,
-        systemd@packages.debian.org, Michael Kerrisk <mtk.manpages@gmail.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org
-Subject: Re: Fixing Linux getrandom() in stable
-References: <75577b3d2efd01aaf563f1a1400a2c655556b258.camel@decadent.org.uk>
-        <20180513204828.GI10643@localhost>
-        <Pine.BSM.4.64L.1805132113450.15657@herc.mirbsd.org>
-Date: Mon, 14 May 2018 09:05:58 -0400
-In-Reply-To: <Pine.BSM.4.64L.1805132113450.15657@herc.mirbsd.org> (Thorsten
-        Glaser's message of "Sun, 13 May 2018 21:23:39 +0000 (UTC)")
-Message-ID: <tsld0xygzex.fsf@suchdamage.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S932509AbeENNPV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 09:15:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47568 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932384AbeENNPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 09:15:14 -0400
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
+Subject: [PATCH v2 04/10] crypto: inside-secure - make the context control size dynamic
+Date: Mon, 14 May 2018 15:10:58 +0200
+Message-Id: <20180514131104.25552-5-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180514131104.25552-1-antoine.tenart@bootlin.com>
+References: <20180514131104.25552-1-antoine.tenart@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>>>> "Thorsten" == Thorsten Glaser <tg@mirbsd.de> writes:
+This patch makes the context control size computation dynamic, not to
+rely on hardcoded values. This is better for the future, and will help
+adding the AEAD support.
 
-    Thorsten> Adrian Bunk dixit:
-    >> As an example, what happens if I debootstrap and deploy the
-    >> resulting filesytem to a large number of identical embedded
-    >> systems without entropy sources?
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+---
+ drivers/crypto/inside-secure/safexcel_cipher.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-    Thorsten> Just get into a habit of not doing so, for example by
-    Thorsten> modifying the image during each writing process.
-
-I'm sorry, but modifying the image before each write is simply not
-realistic.
-
-My company has found that it's easy to get suppliers to deploy a static
-image to the storage of appliances we're constructing during the
-manufacturing process.
-They do not have tools for modifying the image.  We do detect first boot
-and do things like change filesystem UUIDs.
-Mixing in any entropy we can obtain during the first boot is relatively
-easy.  However, very quickly, we're going to need to do things like
-generate ssh keys for management and generate a few other public keys.
-
-Similar situations show up in cloud environments.  There you can use
-virtio-rng or similar.
-
-However, the fact is that when we design systems, we are constrained by
-constraints placed by other parts of the process out of our control.
-Delivering an image that is static and that will be deployed onto
-multiple systems is something that does happen and it happens because
-it's the best design tradeoff available.
-It does have security implications, and in fact may decrease security of
-random numbers overall.  On the other hand, it can increase security of
-code integrity and tends to be associated with design methodologies that
-create reproducible environments.
-
-So, you can try and sweep static images under the rug, but all you're
-doing is dsmissing people with real problems they need to solve.
-It would be much more constructive to acknowledge that people will use
-static images, discuss the security implications, solve the problems we
-can solve, and document the residual security implications so our users
-and the broader community are aware of our limitations.
-
---Sam
+diff --git a/drivers/crypto/inside-secure/safexcel_cipher.c b/drivers/crypto/inside-secure/safexcel_cipher.c
+index 9ed3f2641ef3..26f6e05726ea 100644
+--- a/drivers/crypto/inside-secure/safexcel_cipher.c
++++ b/drivers/crypto/inside-secure/safexcel_cipher.c
+@@ -118,21 +118,20 @@ static int safexcel_context_control(struct safexcel_cipher_ctx *ctx,
+ 	switch (ctx->key_len) {
+ 	case AES_KEYSIZE_128:
+ 		cdesc->control_data.control0 |= CONTEXT_CONTROL_CRYPTO_ALG_AES128;
+-		ctrl_size = 4;
+ 		break;
+ 	case AES_KEYSIZE_192:
+ 		cdesc->control_data.control0 |= CONTEXT_CONTROL_CRYPTO_ALG_AES192;
+-		ctrl_size = 6;
+ 		break;
+ 	case AES_KEYSIZE_256:
+ 		cdesc->control_data.control0 |= CONTEXT_CONTROL_CRYPTO_ALG_AES256;
+-		ctrl_size = 8;
+ 		break;
+ 	default:
+ 		dev_err(priv->dev, "aes keysize not supported: %u\n",
+ 			ctx->key_len);
+ 		return -EINVAL;
+ 	}
++
++	ctrl_size = ctx->key_len / sizeof(u32);
+ 	cdesc->control_data.control0 |= CONTEXT_CONTROL_SIZE(ctrl_size);
+ 
+ 	return 0;
+-- 
+2.17.0
