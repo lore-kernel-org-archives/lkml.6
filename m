@@ -1,43 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754721AbeENQG5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 12:06:57 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35690 "EHLO
+        id S932216AbeENQHq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 12:07:46 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52482 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753401AbeENQGz (ORCPT
+        by vger.kernel.org with ESMTP id S1754627AbeENQHn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 12:06:55 -0400
-Date: Mon, 14 May 2018 09:08:21 -0700
+        Mon, 14 May 2018 12:07:43 -0400
+Date: Mon, 14 May 2018 09:09:07 -0700
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        Christoph Hellwig <hch@infradead.org>, Hannes Reinecke <hare@suse.de>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] nvme: fix lockdep warning in
- nvme_mpath_clear_current_path
+To: Nicholas Piggin <nicholas.piggin@gmail.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
+        dipankar@in.ibm.com, akpm@linux-foundation.org,
+        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
+        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel.opensrc@gmail.com, torvalds@linux-foundation.org,
+        npiggin@gmail.com
+Subject: Re: [PATCH tip/core/rcu 0/21] Contention reduction for v4.18
 Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180514121312.13624-1-jthumshirn@suse.de>
- <20180514124230.GA654@infradead.org>
- <20180514125725.uobtf2nf4corisea@linux-x5ow.site>
- <20180514133849.GV26088@linux.vnet.ibm.com>
- <20180514135622.3fks4w7c6joqxbqp@linux-x5ow.site>
+References: <20180423030258.GA23370@linux.vnet.ibm.com>
+ <20180514164233.7c7bff00@roar.ozlabs.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180514135622.3fks4w7c6joqxbqp@linux-x5ow.site>
+In-Reply-To: <20180514164233.7c7bff00@roar.ozlabs.ibm.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-TM-AS-GCONF: 00
-x-cbid: 18051416-0008-0000-0000-000003074A05
+x-cbid: 18051416-0008-0000-0000-000003074A16
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009024; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032234; UDB=6.00527695; IPR=6.00811366;
- MB=3.00021109; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 16:06:52
+ PH=3.00000004; SC=3.00000260; SDB=6.01032235; UDB=6.00527695; IPR=6.00811366;
+ MB=3.00021109; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 16:07:40
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051416-0009-0000-0000-0000393F1BF7
-Message-Id: <20180514160821.GW26088@linux.vnet.ibm.com>
+x-cbparentid: 18051416-0009-0000-0000-0000393F1C88
+Message-Id: <20180514160907.GX26088@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -49,80 +46,32 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 03:56:22PM +0200, Johannes Thumshirn wrote:
-> On Mon, May 14, 2018 at 06:38:49AM -0700, Paul E. McKenney wrote:
-> > On Mon, May 14, 2018 at 02:57:25PM +0200, Johannes Thumshirn wrote:
-> > > On Mon, May 14, 2018 at 05:42:30AM -0700, Christoph Hellwig wrote:
-> > > > >  extern unsigned int nvme_io_timeout;
-> > > > >  #define NVME_IO_TIMEOUT	(nvme_io_timeout * HZ)
-> > > > > @@ -454,7 +455,9 @@ static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
-> > > > >  {
-> > > > >  	struct nvme_ns_head *head = ns->head;
-> > > > >  
-> > > > > -	if (head && ns == srcu_dereference(head->current_path, &head->srcu))
-> > > > > +	if (head &&
-> > > > > +	    ns == rcu_dereference_protected(head->current_path,
-> > > > > +				lockdep_is_held(&ns->ctrl->subsys->lock)))
-> > > > >  		rcu_assign_pointer(head->current_path, NULL);
-> > > > >  }
-> > > > >  struct nvme_ns *nvme_find_path(struct nvme_ns_head *head);
-> > > > 
-> > > > We don't really dereference it at all in fact, but just check the
-> > > > pointers for equality.  I wonder if there is a better way to do this,
-> > > > as my ANA patches add a caller without the lock (and withou SRU
-> > > > protection either now that I think of it) - for a pure pointer compare
-> > > > we really should not need any sort of protection.
-> > > 
-> > > Uff maybe, but are you sure a comparison of two pointer is always
-> > > atomic (on all architectures)?
-> > > 
-> > > Paul, can you shed some light on us mere mortal, whether the above
-> > > rcu_dereference_protected() is needed or if a simple ns ==
-> > > head->current_path is sufficient.
-> > 
-> > One approach is the following:
-> > 
-> > static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
-> > {
-> > 	struct nvme_ns_head *head = ns->head;
-> >  
-> > 	if (head && ns == rcu_access_pointer(head->current_path))
-> > 		rcu_assign_pointer(head->current_path, NULL);
-> > }
+On Mon, May 14, 2018 at 04:42:33PM +1000, Nicholas Piggin wrote:
+> On Sun, 22 Apr 2018 20:02:58 -0700
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
 > 
-> Yes that's what I have now as well, and it tests fine.
+> > Hello!
+> > 
+> > This series reduces lock contention on the root rcu_node structure,
+> > and is also the first precursor to TBD changes to consolidate the
+> > three RCU flavors (RCU-bh, RCU-preempt, and RCU-sched) into one.
+> 
+> Hi Paul,
+> 
+> I've been running your rcu/dev branch and haven't noticed any problems
+> yet. The irqsoff latency improvement is a little hard to measure
+> because the scheduler, but I've tried turning balancing parameters
+> right down and I'm yet to see any sign of RCU in traces (down to about
+> 100us on a 176 CPU machine), so that's great.
 
-Very good!  If it turns out to be useful, you can of course directly
-use lockdep_assert_held() to verify that the lock is held.
+Good to hear!!!
+
+> (Not that RCU was ever the worst contributor to latency as I said, just
+> that I noticed those couple of traces where it showed up.)
+> 
+> Thanks very much for the fast response, sorry I've taken a while to
+> test.
+
+Would you be willing to give me a Tested-by on that series of patches?
 
 							Thanx, Paul
-
-> > Without the rcu_access_pointer(), sparse (and thus the 0-day test robot)
-> > will complain that you are accessing an RCU-protected pointer without
-> > using RCU.  However, rcu_access_pointer() won't ever give any lockdep
-> > splats about there being no RCU read-side critical section.
-> > 
-> > You might still want rcu_dereference_protected() because it will yell
-> > at you if the lock is not held.  Yes, the comparison will still be valid
-> > without the lock (at least at the exact moment when the load occurred),
-> > but the rcu_assign_pointer() might be a bit problematic if that lock is
-> > not held, right?
-> > 
-> > But it is your guys' code, so I must defer to you for the intent.
-> > 
-> > 							Thanx, Paul
-> > 
-> > 
-> > _______________________________________________
-> > Linux-nvme mailing list
-> > Linux-nvme@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-nvme
-> 
-> -- 
-> Johannes Thumshirn                                          Storage
-> jthumshirn@suse.de                                +49 911 74053 689
-> SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-> GF: Felix Imendörffer, Jane Smithard, Graham Norton
-> HRB 21284 (AG Nürnberg)
-> Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
-> 
