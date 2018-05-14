@@ -1,28 +1,28 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZr9jXJnT7t2CB82WB4ButAfiC527qX9KMQ3y0ZRWhahO2ZovZWff9f0IizG7MhEzzg0wFUn
-ARC-Seal: i=1; a=rsa-sha256; t=1526280964; cv=none;
+X-Google-Smtp-Source: AB8JxZo1awIrn3XuNeSZ6S/qs+jZR20Gg9j5esnuXI4MXFiW2qCfyiaLSW8+FEtfQvk3pkJ1VE3U
+ARC-Seal: i=1; a=rsa-sha256; t=1526280960; cv=none;
         d=google.com; s=arc-20160816;
-        b=etVbSK+fG7fxh/rCt0mX3MwQn+E8VOAUDltYx/ZTIaNKhvBe5Wab/LuWog+ZdZby1B
-         ODzl+fudEUR7VKEslOLk8zcwbmqFDUnktJTRsV5MVSDNaGSd+IoeqSCwxvLjbcb/qF3y
-         XFFQLUl3emxX330PZ0jtgKAjmYIbKghe+ctYBeLk3gx++ZeQ+LH+owm4m6RLkdnBFVJv
-         HBRhFC/0SSpI635LaWjEihy6oMhbz2Cmmvk75zkA3fQisJeqYZyHu+bMCfnFTcBMT2IY
-         UzOd0d5rIzWjf+hzXrmydiDqrkx2dfaHMnlckrwX8Xbe2JRrqVxNR2rBT/kSgcPRBBNk
-         3usg==
+        b=kd0oCjJDqFQFAnwwmIy1fxa/hrYBNvK9cGJQ7cVtIg58OtOSZiO3BYLCUcs/gBB7pD
+         +/XMWCUFyCM5qTRUJcqWqkiZJ89BILcV+Mo3I/GmgTiGYjmO7Cgw04GH4urQVE70agei
+         qeCZxcL93ChAvuNPtjiW/eDwbXdLpn5JCq+VjJ6c5Di+RMEI/8Qn6/qJ3LQGtjgj+hp6
+         fgDfj1eO2gHXbn86OoBeKttxwADtNnJtbBiYCZMkjOFK7Y97nz2JKEX5TdYla3ojqntB
+         ZwbNHUqimHuQoed/qwKucpqnB6h5o9VfLz5LMolk/lycG/jkSilR2bzx/xnXplSyJ2Z5
+         E3fA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=RY6VrC9lzmAjGxBlcrv9ls0oK2+q6n1wK1sFKNFk6FQ=;
-        b=b6dvNmn/Laxv/0hwNOW4cGNf6xOGXIPfPJ7TO48g1/5y2KkRhmK5nndtJo7xeIhhJ5
-         NXUgMJ7W7NWxnt3WQgnwneGZWnieG6VfgM2teAmcvsiQR9PjZ/ruutTJIaW0m6FGy/I0
-         DoJxBL6DOfvSj60EwrlbLv5F8Jh9PKXaiRGq+f06G3weDhvQIIF0fndS8OlmwIYJCefC
-         /qfHZGjQzn3ZVciteiFkvgIKj/LyvMZohhltxRDWREvfTjIqgbKOjfMFFAKuz/5HjvDN
-         rafdvidC/JkFEBDiW9W5chAu1g6IN1UsezBYyVAxq7uhoFm5tOT98BPfcp8/5lQwGnmc
-         ijUg==
+        bh=K5uI7pfmIry/j0YIX7pQZ4FKNV9pPJwPYcISBq8WOm4=;
+        b=VBy34w/EIK/e/jauJVOtVQw1fOWzCocvPkU1dg7YXSELNouRjyurmByrMYCGovYXoZ
+         KkQioG85PX6pqyYm6BLjt+xgWJ35cCX/S2yCCGStPrfP0/MqzYJQSkRFN0Ynb4AKIVSM
+         TkJQuSTbB7I6vbSaXj6784tFBCZTKzuDbYEoUMRQTNeiS1HGoCJ89SJwOTYVM7rZ+NdK
+         gprAXMlna/lpV/PUlcp2ku01IgBHBoZ5rqSy/8Btn0Mx09e4K+SMPxQ9y6iIjaRP93p9
+         S62ZZg9GBcNKztj5yQnY+0be42iplaed03ugV18z/nAPv2067rACim5zo5wL5m2K6vWc
+         6CRQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=qJ8iXLVq;
+       dkim=pass header.i=@kernel.org header.s=default header.b=pumHYSnN;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=qJ8iXLVq;
+       dkim=pass header.i=@kernel.org header.s=default header.b=pumHYSnN;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -30,10 +30,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Eric Dumazet <edumazet@google.com>,
 	syzbot <syzkaller@googlegroups.com>,
+	Stephan Mueller <smueller@chronox.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 05/62] netlink: fix uninit-value in netlink_sendmsg
-Date: Mon, 14 May 2018 08:48:21 +0200
-Message-Id: <20180514064816.742112290@linuxfoundation.org>
+Subject: [PATCH 4.14 04/62] crypto: af_alg - fix possible uninit-value in alg_bind()
+Date: Mon, 14 May 2018 08:48:20 +0200
+Message-Id: <20180514064816.694010271@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421231527145500?=
-X-GMAIL-MSGID: =?utf-8?q?1600421588414442843?=
+X-GMAIL-THRID: =?utf-8?q?1600421404075424649?=
+X-GMAIL-MSGID: =?utf-8?q?1600421584105980968?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,31 +56,46 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Dumazet <edumazet@google.com>
 
-commit 6091f09c2f79730d895149bcfe3d66140288cd0e upstream.
+commit a466856e0b7ab269cdf9461886d007e88ff575b0 upstream.
 
 syzbot reported :
 
-BUG: KMSAN: uninit-value in ffs arch/x86/include/asm/bitops.h:432 [inline]
-BUG: KMSAN: uninit-value in netlink_sendmsg+0xb26/0x1310 net/netlink/af_netlink.c:1851
+BUG: KMSAN: uninit-value in alg_bind+0xe3/0xd90 crypto/af_alg.c:162
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+We need to check addr_len before dereferencing sa (or uaddr)
+
+Fixes: bb30b8848c85 ("crypto: af_alg - whitelist mask and type")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Stephan Mueller <smueller@chronox.de>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netlink/af_netlink.c |    2 ++
- 1 file changed, 2 insertions(+)
+ crypto/af_alg.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -1813,6 +1813,8 @@ static int netlink_sendmsg(struct socket
+--- a/crypto/af_alg.c
++++ b/crypto/af_alg.c
+@@ -158,16 +158,16 @@ static int alg_bind(struct socket *sock,
+ 	void *private;
+ 	int err;
  
- 	if (msg->msg_namelen) {
- 		err = -EINVAL;
-+		if (msg->msg_namelen < sizeof(struct sockaddr_nl))
-+			goto out;
- 		if (addr->nl_family != AF_NETLINK)
- 			goto out;
- 		dst_portid = addr->nl_pid;
+-	/* If caller uses non-allowed flag, return error. */
+-	if ((sa->salg_feat & ~allowed) || (sa->salg_mask & ~allowed))
+-		return -EINVAL;
+-
+ 	if (sock->state == SS_CONNECTED)
+ 		return -EINVAL;
+ 
+ 	if (addr_len < sizeof(*sa))
+ 		return -EINVAL;
+ 
++	/* If caller uses non-allowed flag, return error. */
++	if ((sa->salg_feat & ~allowed) || (sa->salg_mask & ~allowed))
++		return -EINVAL;
++
+ 	sa->salg_type[sizeof(sa->salg_type) - 1] = 0;
+ 	sa->salg_name[sizeof(sa->salg_name) + addr_len - sizeof(*sa) - 1] = 0;
+ 
