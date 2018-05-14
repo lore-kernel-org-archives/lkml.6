@@ -1,65 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751982AbeENFwc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 01:52:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42623 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751198AbeENFwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 01:52:30 -0400
-Date: Mon, 14 May 2018 07:52:28 +0200
-From: Hannes Reinecke <hare@suse.de>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] scsi: clean up generated file scsi_devinfo_tbl.c
-Message-ID: <20180514075228.784a475f@pentland.suse.de>
-In-Reply-To: <6e64c815-43dd-3945-6c58-66b1e0533403@infradead.org>
-References: <6e64c815-43dd-3945-6c58-66b1e0533403@infradead.org>
-Organization: SUSE Linux GmbH
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S1751991AbeENFy0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 01:54:26 -0400
+Received: from mail-io0-f180.google.com ([209.85.223.180]:41107 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751481AbeENFyY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 01:54:24 -0400
+X-Google-Smtp-Source: AB8JxZo7XOzp987lzIRmgFCCT01bk1/oO83oXFpCmWRurJanrt6cQA8/DjACkcM/EXm0HzK95do+hyspRoJdZxT6vT8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180419150119.5yhf3uupdolg3cnv@localhost.localdomain>
+References: <20180212131717.27193-1-linus.walleij@linaro.org>
+ <20180212131717.27193-17-linus.walleij@linaro.org> <20180213111147.kr4kecqbhmcoq6w2@localhost.localdomain>
+ <CACRpkdZVoYsdWy6GwnnSfaSc2_wycEse3JswqufqDoz=GFb5FQ@mail.gmail.com> <20180419150119.5yhf3uupdolg3cnv@localhost.localdomain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 14 May 2018 07:54:22 +0200
+Message-ID: <CACRpkdahS9VGvRKKedfgAqa8zpDj3ASGa3atwtF=BY794ne5tw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: s3c64xx: Tidy up handling of regulator GPIO lookups
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        patches@opensource.cirrus.com, Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 13 May 2018 17:10:52 -0700
-Randy Dunlap <rdunlap@infradead.org> wrote:
+On Thu, Apr 19, 2018 at 5:01 PM, Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
 
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> "make clean" should remove the generated file "scsi_devinfo_tbl.c",
-> so list it in the clean-files variable so that the file gets
-> cleaned up.
-> 
-> Fixes: 345e29608b4b ("scsi: scsi: Export blacklist flags to sysfs")
-> 
-> Cc: Hannes Reinecke <hare@suse.de>
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> From: Charles Keepax <ckeepax@opensource.cirrus.com>
+>
+> Rather than unconditionally registering the GPIO lookup table only do so
+> for devices that require it.
+>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 > ---
->  drivers/scsi/Makefile |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- linux-4.17-rc4.orig/drivers/scsi/Makefile
-> +++ linux-4.17-rc4/drivers/scsi/Makefile
-> @@ -182,7 +182,7 @@ zalon7xx-objs	:= zalon.o ncr53c8xx.o
->  NCR_Q720_mod-objs	:= NCR_Q720.o ncr53c8xx.o
->  
->  # Files generated that shall be removed upon make clean
-> -clean-files :=	53c700_d.h 53c700_u.h
-> +clean-files :=	53c700_d.h 53c700_u.h scsi_devinfo_tbl.c
->  
->  $(obj)/53c700.o $(MODVERDIR)/$(obj)/53c700.ver: $(obj)/53c700_d.h
->  
-> 
-> 
+>
+> Do you have any objections to the following?
+>
+> If we are lucky I might be able to find time to test these early
+> next week. Well at least there is reasonable chance I can test
+> the 5102 stuff when you resend, not sure I have a device to
+> test the wm1277 but will have a look. Also I haven't run up
+> Cragganmore in a little while so might depend a little on how
+> much people have broken it since last I did :-)
 
-Reviewed-by: Hannes Reinecke <hare@suse.com>
+I folded this in on top of my series, also adding the table entries
+for wm5102 and wm5102 reva.
 
-Cheers,
+Sorry for the delay, I was sidetracked...
 
-Hannes
+Yours,
+Linus Walleij
