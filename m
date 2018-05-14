@@ -1,55 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752124AbeENIdC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:33:02 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:36466 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752041AbeENIdB (ORCPT
+        id S1752173AbeENIdj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:33:39 -0400
+Received: from mail-it0-f49.google.com ([209.85.214.49]:37066 "EHLO
+        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751894AbeENIdh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:33:01 -0400
-X-Google-Smtp-Source: AB8JxZpi9CvxAcGbmWsK+jbgmTSi4nhlkgZAaMKi+VzwGZwo2xgl/J4UOavhtGiNOPACbP+AgfKOgg==
-Date: Mon, 14 May 2018 10:32:57 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH RFC 10/19] perf tools: Create maps for x86_64 KPTI entry
- trampolines
-Message-ID: <20180514083257.GA29509@gmail.com>
-References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
- <1525866228-30321-11-git-send-email-adrian.hunter@intel.com>
+        Mon, 14 May 2018 04:33:37 -0400
+X-Google-Smtp-Source: AB8JxZoGxhgDJ5Tv6AvFmkVPkmqkvbRPLd8n31ojF0+oCii1JVATGTA5GPJCoHzYWdx4sjjbfZ8U12gxza9EdG55fto=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525866228-30321-11-git-send-email-adrian.hunter@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180502113413.vv2r3ubfoh7gm3ms@flea>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-10-jagan@amarulasolutions.com> <20180502113413.vv2r3ubfoh7gm3ms@flea>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Mon, 14 May 2018 14:03:36 +0530
+Message-ID: <CAMty3ZBheurXewQ8R53G_0gNLgv1jQkZbjAbaN30JQ6_ZVn7Eg@mail.gmail.com>
+Subject: Re: [PATCH 09/21] arm64: dts: allwinner: a64: Add HDMI support
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 2, 2018 at 5:04 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> Hi,
+>
+> On Mon, Apr 30, 2018 at 05:10:46PM +0530, Jagan Teki wrote:
+>> +             hdmi_phy: hdmi-phy@1ef0000 {
+>> +                     compatible = "allwinner,sun50i-a64-hdmi-phy",
+>> +                                  "allwinner,sun8i-h3-hdmi-phy";
+>> +                     reg = <0x01ef0000 0x10000>;
+>> +                     clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
+>> +                              <&ccu CLK_PLL_VIDEO1>;
+>
+> You were discussing that the PLL0 could also be used to clock the PHY,
+> has that been figured out?
 
-* Adrian Hunter <adrian.hunter@intel.com> wrote:
+This is what I understand from Fig: 3-3. Module Clock Diagram, both
+tcon0 and tcon1 are using HDMI. I'm thinking based on the tcon
+configuration we need use proper PLL or some logic to get common PLL
+don't know yet. Since this series adding tcon1 I've attached PLL1.
 
-> Create maps for x86_64 KPTI entry trampolines, based on symbols found in
-> kallsyms. It is also necessary to keep track of whether the trampolines
-> have been mapped particularly when the kernel dso is kcore.
-> 
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> ---
->  tools/perf/util/machine.c | 138 ++++++++++++++++++++++++++++++++++++++++++++--
->  tools/perf/util/machine.h |   1 +
->  tools/perf/util/symbol.c  |  17 ++++++
->  3 files changed, 150 insertions(+), 6 deletions(-)
+Jagan.
 
-Minor detail, please call it 'x86 PTI'.
-
-Thanks,
-
-	Ingo
+-- 
+Jagan Teki
+Senior Linux Kernel Engineer | Amarula Solutions
+U-Boot, Linux | Upstream Maintainer
+Hyderabad, India.
