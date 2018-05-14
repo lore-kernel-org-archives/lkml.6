@@ -1,81 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752135AbeENTio (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 15:38:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33918 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751865AbeENTim (ORCPT
+        id S1752155AbeENTjX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 15:39:23 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:41859 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751422AbeENTjV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 15:38:42 -0400
-Date: Mon, 14 May 2018 12:40:07 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: Re: [PATCH 10/18] rcu: rcupdate.h: get rid of Sphinx warnings at
- rcu_pointer_handoff()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
- <a87d742e81124ddfeaa5b83daf10c91758c1b025.1525684985.git.mchehab+samsung@kernel.org>
- <20180507142322.GW26088@linux.vnet.ibm.com>
- <20180509085533.54951174@vento.lan>
+        Mon, 14 May 2018 15:39:21 -0400
+X-Google-Smtp-Source: AB8JxZqcR2BI4KEXUpRQ8J/OzxPh4T+HBZumex49KOsZon9y/WXSA+FWmOF+lg2/AEdqaZUtMjU4JUi1Sy38pwoMGXg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180509085533.54951174@vento.lan>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18051419-0056-0000-0000-0000044E2F9C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009025; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032305; UDB=6.00527737; IPR=6.00811437;
- MB=3.00021111; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 19:38:39
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051419-0057-0000-0000-000008924335
-Message-Id: <20180514194007.GH26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805140196
+In-Reply-To: <20180513173318.21680-1-alban@kinvolk.io>
+References: <20180513173318.21680-1-alban@kinvolk.io>
+From: Y Song <ys114321@gmail.com>
+Date: Mon, 14 May 2018 12:38:39 -0700
+Message-ID: <CAH3MdRUe7K8zJHuGAfnY6_VEkBLAWY1F_WaJgcLs4qDdQv1bTA@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] bpf: tracing: new helper bpf_get_current_cgroup_ino
+To: Alban Crequy <alban.crequy@gmail.com>
+Cc: netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, cgroups@vger.kernel.org,
+        Alban Crequy <alban@kinvolk.io>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 09, 2018 at 08:55:33AM -0300, Mauro Carvalho Chehab wrote:
-> Em Mon, 7 May 2018 07:23:22 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> escreveu:
-> 
-> > On Mon, May 07, 2018 at 06:35:46AM -0300, Mauro Carvalho Chehab wrote:
-> > > The code example at rcupdate.h currently produce lots of warnings:
-> > > 
-> > > 	./include/linux/rcupdate.h:572: WARNING: Unexpected indentation.
-> > > 	./include/linux/rcupdate.h:576: WARNING: Unexpected indentation.
-> > > 	./include/linux/rcupdate.h:580: WARNING: Block quote ends without a blank line; unexpected unindent.
-> > > 	./include/linux/rcupdate.h:582: WARNING: Block quote ends without a blank line; unexpected unindent.
-> > > 	./include/linux/rcupdate.h:582: WARNING: Inline literal start-string without end-string.
-> > > 
-> > > Change it to a code-block.
-> > > 
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
-> > 
-> > Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> > 
-> > If you don't tell me otherwise, I will assume that you are pushing this.
-> > If you would rather that I take it, please let me know!
-> 
-> Hi Paul,
-> 
-> Feel free to merge it via your tree. It seems that Jon prefers to have
-> code changes merged via the usual maintainers.
+On Sun, May 13, 2018 at 10:33 AM, Alban Crequy <alban.crequy@gmail.com> wrote:
+> From: Alban Crequy <alban@kinvolk.io>
+>
+> bpf_get_current_cgroup_ino() allows BPF trace programs to get the inode
+> of the cgroup where the current process resides.
+>
+> My use case is to get statistics about syscalls done by a specific
+> Kubernetes container. I have a tracepoint on raw_syscalls/sys_enter and
+> a BPF map containing the cgroup inode that I want to trace. I use
+> bpf_get_current_cgroup_ino() and I quickly return from the tracepoint if
+> the inode is not in the BPF hash map.
 
-I have queued it for v4.19, thank you!
+Alternatively, the kernel already has bpf_current_task_under_cgroup helper
+which uses a cgroup array to store cgroup fd's. If the current task is
+in the hierarchy of a particular cgroup, the helper will return true.
 
-							Thanx, Paul
+One difference between your helper and bpf_current_task_under_cgroup() is
+that your helper tests against a particular cgroup, not including its
+children, but
+bpf_current_task_under_cgroup() will return true even the task is in a
+nested cgroup.
+
+Maybe this will work for you?
+
+>
+> Without this BPF helper, I would need to keep track of all pids in the
+> container. The Netlink proc connector can be used to follow process
+> creation and destruction but it is racy.
+>
+> This patch only looks at the memory cgroup, which was enough for me
+> since each Kubernetes container is placed in a different mem cgroup.
+> For a generic implementation, I'm not sure how to proceed: it seems I
+> would need to use 'for_each_root(root)' (see example in
+> proc_cgroup_show() from kernel/cgroup/cgroup.c) but I don't know if
+> taking the cgroup mutex is possible in the BPF helper function. It might
+> be ok in the tracepoint raw_syscalls/sys_enter but could the mutex
+> already be taken in some other tracepoints?
+
+mutex is not allowed in a helper since it can block.
+
+>
+> Signed-off-by: Alban Crequy <alban@kinvolk.io>
+> ---
+>  include/uapi/linux/bpf.h | 11 ++++++++++-
+>  kernel/trace/bpf_trace.c | 25 +++++++++++++++++++++++++
+>  2 files changed, 35 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> index c5ec89732a8d..38ac3959cdf3 100644
+> --- a/include/uapi/linux/bpf.h
+> +++ b/include/uapi/linux/bpf.h
+> @@ -755,6 +755,14 @@ union bpf_attr {
+>   *     @addr: pointer to struct sockaddr to bind socket to
+>   *     @addr_len: length of sockaddr structure
+>   *     Return: 0 on success or negative error code
+> + *
+> + * u64 bpf_get_current_cgroup_ino(hierarchy, flags)
+> + *     Get the cgroup{1,2} inode of current task under the specified hierarchy.
+> + *     @hierarchy: cgroup hierarchy
+
+Not sure what is the value to specify hierarchy here.
+A cgroup directory fd?
+
+> + *     @flags: reserved for future use
+> + *     Return:
+> + *       == 0 error
+
+looks like < 0 means error.
+
+> + *        > 0 inode of the cgroup
+               >= 0 means good?
+>   */
+>  #define __BPF_FUNC_MAPPER(FN)          \
+>         FN(unspec),                     \
+> @@ -821,7 +829,8 @@ union bpf_attr {
+>         FN(msg_apply_bytes),            \
+>         FN(msg_cork_bytes),             \
+>         FN(msg_pull_data),              \
+> -       FN(bind),
+> +       FN(bind),                       \
+> +       FN(get_current_cgroup_ino),
+>
+>  /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+>   * function eBPF program intends to call
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index 56ba0f2a01db..9bf92a786639 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -524,6 +524,29 @@ static const struct bpf_func_proto bpf_probe_read_str_proto = {
+>         .arg3_type      = ARG_ANYTHING,
+>  };
+>
+> +BPF_CALL_2(bpf_get_current_cgroup_ino, u32, hierarchy, u64, flags)
+> +{
+> +       // TODO: pick the correct hierarchy instead of the mem controller
+> +       struct cgroup *cgrp = task_cgroup(current, memory_cgrp_id);
+> +
+> +       if (unlikely(!cgrp))
+> +               return -EINVAL;
+> +       if (unlikely(hierarchy))
+> +               return -EINVAL;
+> +       if (unlikely(flags))
+> +               return -EINVAL;
+> +
+> +       return cgrp->kn->id.ino;
+> +}
+> +
+> +static const struct bpf_func_proto bpf_get_current_cgroup_ino_proto = {
+> +       .func           = bpf_get_current_cgroup_ino,
+> +       .gpl_only       = false,
+> +       .ret_type       = RET_INTEGER,
+> +       .arg1_type      = ARG_DONTCARE,
+> +       .arg2_type      = ARG_DONTCARE,
+> +};
+> +
+>  static const struct bpf_func_proto *
+>  tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+>  {
+> @@ -564,6 +587,8 @@ tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
+>                 return &bpf_get_prandom_u32_proto;
+>         case BPF_FUNC_probe_read_str:
+>                 return &bpf_probe_read_str_proto;
+> +       case BPF_FUNC_get_current_cgroup_ino:
+> +               return &bpf_get_current_cgroup_ino_proto;
+>         default:
+>                 return NULL;
+>         }
+> --
+> 2.14.3
+>
