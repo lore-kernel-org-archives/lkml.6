@@ -1,5 +1,5 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-36588-1526267081-2-5183186899977468499
+X-Cyrus-Session-Id: sloti22d1t05-36588-1526267079-2-15221009234504658223
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='utf-8'
@@ -7,23 +7,23 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526267081; b=aQzspZbc+kqBWqef0IwmlAombuOz3FmYg1T0B8+IS47lqNpNB4
-    4Srog7JW0JZKhzf6ZpNtoN95CFBOGzTJkFczhtoeQOMs8ilCD42NXd04vGzrgE3c
-    5xByZlqSuf9DW9K9uor7j9/AT8UBdHLsaAup7ishIv9nLe7aPp+WNhv2rgJwGCz9
-    afEFog7UFqatAkn/p96n0Uesij7fax36wjOhViynVDbIjlENli0IUYmKlWzD9IEI
-    ja7LqeQBhvrJVkomHKN/IXX904uowA0GeShss474W9Macc6kUH3LZ6osmmXQ+suV
-    XIS3iswyJ4faPyoG9pk806W1RXXc1igqXRMw==
+    1526267079; b=E/4slhkxtoNtwLZSrUA6t7kGo9VM6PhU8BiQPXSPdQdcKqHHlx
+    ik44wovdOYFrQgyzo0viD2BQdMWqW3fwJ8tOlIbu7CKeqZw3PP8ygydEbwQRaqtH
+    43eF11Jx36Ma5oAjyGDpUq052052vVf76YLICd21yoO+Wtj65ZTwA/uLWlCn4o+e
+    Cp0xQtkkCSVb1vOrCLx/AtMFiy3g15kqi8XtEKAACJj/GShCghCNnXv5+uCn6Hsb
+    X4KOvjOdPCtztZprFPaP7OayJ4Zl211BLPvdK46O2SRczC1f8KDIctvvt5gT3xNi
+    oMmsWW4NGxQMuiKv+o+C8sEmQJfunuY0xlFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=subject:from:to:cc:date:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526267081;
-    bh=F771auczyIvSojz8L5PacWlnw5jjE89/9TLlamhFoW8=; b=DkWc2heHqk8i
-    XLgYpOaptz5HO5p6zCNz14b5yNosZ27P3PF9xcVmGb0tuYjyc5ahajbViW9fgx2r
-    p/Lj2vI6xBXjATdlZSNj5hwwAT3R7XWefh+aGUZIobjuF8twStauQ/SRC2HYij22
-    Hn0ebcfvEyQ6YTgBZAnLz9sU1i38gmjUb1BiQYKi71FXunlpXSnkndZznevhx8tC
-    NmfjkDJOrheviEdRd7mvudZYXsIE1hzgx6opDLaB6FAxx1I5QyVun6Y1cK3Y5HZQ
-    T+gYyDjAhnOoiQL4pCRtomiSmgddzv+IQ26he7pXybLSZTwTyAb8zgpbKt7T+yXx
-    QqlOLQ90Ig==
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1526267079;
+    bh=uo14rSYhlYzjQBFCRxlSUqb0KSCgj7gDivisrTgCXyc=; b=DbMQiTl+IcyW
+    i10/b5DTM+DQQPEG+DPfeW3s+gJhohRWqJVkkDmA6CFovHnbK3+xgxsUF0NmEOAq
+    AR19RFZlKUIpWZtlmEyFeZgU7HWpgUZSo3128jU5k45jIzbEhG+oAx0eJG7Vh7im
+    AIJQj7AYjAKAGA9y86XCXztbVcHAx5Ad+dQywkk4wY1xU1ckpnOlP7vY5mfvo8/N
+    39jrf3yUDhorBvd7XaQ+9yye6AKzEm+hS7Wf2x3X5FWzQx8Xzq7WXYKWYU9s1dOd
+    M2rK+lR+Ywr43/Lqdl6gQYNfdoBCNm5vmdxadrK8xKkvagGW60c4XB4bHJuYyyM6
+    t1obz0b9xQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=themaw.net;
@@ -52,42 +52,41 @@ Authentication-Results: mx6.messagingengine.com;
       header.domain=themaw.net header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDpz1OneKf9OZrDTbJRWrdSNpfONMKXqDE5kTKjuQH41wdUozlAoFbTq1Tc17HA+zHOh5yN1xJmX6T7EXL52DFnfMreeJ6nS7FwuQYzgySXKzDIAAT2+
-    Qt9W2mjpETD13uQ6250ll7ijxRI38kG/nYy59R/VpUvcjWcsWSiwvW8tvBHxs4ieaIw+1EwkLB7HXL8H6X1yZP2V/wsxESYskZnbMzYWK9nr8JkpCme6J+C7
+X-CM-Envelope: MS4wfAETZE2rN738Fh6By1EFDEx+QPyPad0XBa3xy1W9fOOugD3wlP7cP7Uvtu7GgFkRhDfdCBCtqIpz8oJ4vykRFDcg4yUdp3Cmkfxjs4CRUSp+2Qbkzx8E
+    tQUVi3/C7jS8TWJbdChk7TUmmOAP4PoK4cKvrM5kp/G+4T33/AGdYpHyZgNMmvAhg4kvTz0qp7R9wVrhL6fjQnji8vRhZMcgKSDeVsrGXVm0CzK5acz77/4e
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=jUFqNg-nAAAA:8 a=VwQbUJbxAAAA:8 a=GX-Q3UpT-RqOhBGqDUsA:9 a=QEXdDO2ut3YA:10
-    a=-tElvS_Zar9K8zhlwiSp:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=jUFqNg-nAAAA:8 a=Ns_SaZoR5cbUQq6wK4gA:9 a=QEXdDO2ut3YA:10
+    a=-tElvS_Zar9K8zhlwiSp:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752046AbeENDEf (ORCPT <rfc822;linux@kroah.com>);
-        Sun, 13 May 2018 23:04:35 -0400
-Received: from icp-osb-irony-out8.external.iinet.net.au ([203.59.1.225]:38052
+        id S1752053AbeENDEg (ORCPT <rfc822;linux@kroah.com>);
+        Sun, 13 May 2018 23:04:36 -0400
+Received: from icp-osb-irony-out8.external.iinet.net.au ([203.59.1.225]:37992
         "EHLO icp-osb-irony-out8.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751953AbeENDEc (ORCPT
+        by vger.kernel.org with ESMTP id S1752041AbeENDEd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 May 2018 23:04:32 -0400
+        Sun, 13 May 2018 23:04:33 -0400
 X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2C4CwBP/Pha/+U/0XZcHgEGDINDYXsog?=
- =?us-ascii?q?3KUcEUBAQEDBoEHNHyTRoFkHhAIAYRAAoMJITcVAQIBAQEBAQECbBwMhSkGI1Y?=
- =?us-ascii?q?QGAEMAhgOAgJHEAYTgyWBcgwQqW2CHBoCiCCCIgWBCYccgQyBB4E+hygPgxiCV?=
- =?us-ascii?q?AKHOIRgYos8CY5RgTaDZYJQhQSHSIpAMiKBUk0uCoJuAQEBDYsQhUsyMHoBAY0?=
- =?us-ascii?q?bgkYBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2C4CwBP/Pha/+U/0XZcHgEGDINDYXsog3KUcEUBAQEDBoE?=
- =?us-ascii?q?HNHyTRoFkHhAIAYRAAoMJITcVAQIBAQEBAQECbBwMhSkGI1YQGAEMAhgOAgJHE?=
- =?us-ascii?q?AYTgyWBcgwQqW2CHBoCiCCCIgWBCYccgQyBB4E+hygPgxiCVAKHOIRgYos8CY5?=
- =?us-ascii?q?RgTaDZYJQhQSHSIpAMiKBUk0uCoJuAQEBDYsQhUsyMHoBAY0bgkYBAQ?=
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2DGCgBP/Pha/+U/0XZcHAEBAQQBAQoBA?=
+ =?us-ascii?q?YNDgVwog3KUcEUBAQEDBoEHNHyOQYZpHhgBhEACgwkhNxUBAgEBAQEBAQJsKIU?=
+ =?us-ascii?q?pBiNWEBgBDAIYDgICRxAGE4UXDKl9ghwaAogggieBCYccgQyBB4E+hxiDN4I0I?=
+ =?us-ascii?q?AKMeos8CY5RgSgOhjWFBIdIikAyIoFSTS4Kgn6QWzIwegEBjRuCRgEB?=
+X-IPAS-Result: =?us-ascii?q?A2DGCgBP/Pha/+U/0XZcHAEBAQQBAQoBAYNDgVwog3KUcEU?=
+ =?us-ascii?q?BAQEDBoEHNHyOQYZpHhgBhEACgwkhNxUBAgEBAQEBAQJsKIUpBiNWEBgBDAIYD?=
+ =?us-ascii?q?gICRxAGE4UXDKl9ghwaAogggieBCYccgQyBB4E+hxiDN4I0IAKMeos8CY5RgSg?=
+ =?us-ascii?q?OhjWFBIdIikAyIoFSTS4Kgn6QWzIwegEBjRuCRgEB?=
 X-IronPort-AV: E=Sophos;i="5.49,398,1520870400";
-   d="scan'208";a="126179598"
-Subject: [PATCH 05/10] autofs - update fs/autofs4/Kconfig
+   d="scan'208";a="126179625"
+Subject: [PATCH 06/10] autofs - update fs/autofs4/Makefile
 From: Ian Kent <raven@themaw.net>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         autofs mailing list <autofs@vger.kernel.org>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Mon, 14 May 2018 11:04:21 +0800
-Message-ID: <152626706133.28589.11994171621899212952.stgit@pluto.themaw.net>
+Date: Mon, 14 May 2018 11:04:28 +0800
+Message-ID: <152626706824.28589.1915028175544560855.stgit@pluto.themaw.net>
 In-Reply-To: <152626703024.28589.9571964661718767929.stgit@pluto.themaw.net>
 References: <152626703024.28589.9571964661718767929.stgit@pluto.themaw.net>
 User-Agent: StGit/0.17.1-dirty
@@ -100,57 +99,23 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Update Kconfig and add a depricated warning.
+Update Makefile to build from source in fs/autofs instead of
+fs/autofs4.
 
 Signed-off-by: Ian Kent <raven@themaw.net>
 ---
- fs/autofs4/Kconfig |   32 ++++++++++++++++++++++----------
- 1 file changed, 22 insertions(+), 10 deletions(-)
+ fs/autofs4/Makefile |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/autofs4/Kconfig b/fs/autofs4/Kconfig
-index 44727bf18297..53bc592a250d 100644
---- a/fs/autofs4/Kconfig
-+++ b/fs/autofs4/Kconfig
-@@ -1,5 +1,6 @@
- config AUTOFS4_FS
--	tristate "Kernel automounter version 4 support (also supports v3)"
-+	tristate "Kernel automounter version 4 support (also supports v3 and v5)"
-+	default n
- 	help
- 	  The automounter is a tool to automatically mount remote file systems
- 	  on demand. This implementation is partially kernel-based to reduce
-@@ -7,14 +8,25 @@ config AUTOFS4_FS
- 	  automounter (amd), which is a pure user space daemon.
+diff --git a/fs/autofs4/Makefile b/fs/autofs4/Makefile
+index a811c1f7d9ab..417dd726d9ef 100644
+--- a/fs/autofs4/Makefile
++++ b/fs/autofs4/Makefile
+@@ -4,4 +4,6 @@
  
- 	  To use the automounter you need the user-space tools from
--	  <https://www.kernel.org/pub/linux/daemons/autofs/v4/>; you also
--	  want to answer Y to "NFS file system support", below.
-+	  <https://www.kernel.org/pub/linux/daemons/autofs/>; you also want
-+	  to answer Y to "NFS file system support", below.
+ obj-$(CONFIG_AUTOFS4_FS) += autofs4.o
  
--	  To compile this support as a module, choose M here: the module will be
--	  called autofs4.  You will need to add "alias autofs autofs4" to your
--	  modules configuration file.
-+	  This module is in the process of being renamed from autofs4 to
-+	  autofs. Since autofs is now the only module that provides the
-+	  autofs file system the module is not version 4 specific.
- 
--	  If you are not a part of a fairly large, distributed network or
--	  don't have a laptop which needs to dynamically reconfigure to the
--	  local network, you probably do not need an automounter, and can say
--	  N here.
-+	  The autofs4 module is now built from the source located in
-+	  fs/autofs. The autofs4 directory and its configuration entry
-+	  will be removed two kernel versions from the inclusion of this
-+	  change.
-+
-+	  Changes that will need to be made should be limited to:
-+	  - source include statments should be changed from autofs_fs4.h to
-+	    autofs_fs.h since these two header files have been merged.
-+	  - user space scripts that manually load autofs4.ko should be
-+	    changed to load autofs.ko. But since the module directory name
-+	    and the module name are the same as the file system name there
-+	    is no need to manually load module.
-+	  - any "alias autofs autofs4" will need to be removed.
-+
-+	  Please configure AUTOFS_FS instead of AUTOFS4_FS from now on.
+-autofs4-objs := init.o inode.o root.o symlink.o waitq.o expire.o dev-ioctl.o
++autofs4-objs := ../autofs/init.o ../autofs/inode.o ../autofs/root.o \
++	../autofs/symlink.o ../autofs/waitq.o ../autofs/expire.o \
++	../autofs/dev-ioctl.o
