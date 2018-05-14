@@ -1,139 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752392AbeENSyw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 14:54:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46744 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752250AbeENSyu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 14:54:50 -0400
-Subject: Re: [PATCH v2] coresight: documentation: update sysfs section
-To: Kim Phillips <kim.phillips@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <20180507172915.c032cd71c07b1849bf419a5f@arm.com>
- <CANLsYkyQLan3XajOz2uuoOF8OQchGfeu2ZkZJ9H1Xm9q==aXTw@mail.gmail.com>
- <20180514121959.a9a3d2fb3d3d270849ffbc39@arm.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a09cbbb5-0237-31f5-dc81-d816c9ec26c5@infradead.org>
-Date: Mon, 14 May 2018 11:54:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180514121959.a9a3d2fb3d3d270849ffbc39@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1752406AbeENSzK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 14:55:10 -0400
+Received: from mga02.intel.com ([134.134.136.20]:45332 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752013AbeENSwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 14:52:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,401,1520924400";
+   d="scan'208";a="39244644"
+From: Fenghua Yu <fenghua.yu@intel.com>
+To: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        "Ashok Raj" <ashok.raj@intel.com>,
+        "Ravi V Shankar" <ravi.v.shankar@intel.com>,
+        "Tony Luck" <tony.luck@intel.com>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Rafael Wysocki" <rafael.j.wysocki@intel.com>,
+        "Arjan van de Ven" <arjan@infradead.org>,
+        "Alan Cox" <alan@linux.intel.com>
+Cc: "x86" <x86@kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH 08/15] x86/split_lock: Set split lock during EFI runtime service
+Date: Mon, 14 May 2018 11:52:18 -0700
+Message-Id: <1526323945-211107-9-git-send-email-fenghua.yu@intel.com>
+X-Mailer: git-send-email 2.5.0
+In-Reply-To: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
+References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/14/2018 10:19 AM, Kim Phillips wrote:
-> - Align and show updated ls devices output from the TC2, based on
->   current driver
-> 
-> - Provide an example from an ETMv4 based system (Juno)
-> 
-> - Reflect changes to the way the RAM write pointer is accessed since
->   it got changed in commit 7d83d17795ef ("coresight: tmc: adding sysFS
->   management entries").
-> 
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Signed-off-by: Kim Phillips <kim.phillips@arm.com>
-> ---
-> v2: address Mathieu's comment about clarifying the sinks on the Juno
-> vs. TC2 platforms.
-> 
->  Documentation/trace/coresight.txt | 41 +++++++++++++++++++------------
->  1 file changed, 25 insertions(+), 16 deletions(-)
-> 
-> diff --git a/Documentation/trace/coresight.txt
-> b/Documentation/trace/coresight.txt index 6f0120c3a4f1..134994e9fa6d
-> 100644
-> --- a/Documentation/trace/coresight.txt
-> +++ b/Documentation/trace/coresight.txt
-> @@ -144,10 +144,22 @@ If everything goes well during the registration
-> process the new devices will show up under /sys/bus/coresight/devices,
-> as showns here for a TC2 platform: 
+If kernel enables #AC for split locked accesses, EFI runtime service may
+hit #AC exception, treat it as fatal fault, and cause system hang.
 
-  as shown here
+To avoid debugging potential buggy EFI runtime service code in BIOS,
+restore to BIOS split lock setting before entering EFI runtime service
+and restore to kernel split lock setting after exiting EFI runtime service.
 
->  root:~# ls /sys/bus/coresight/devices/
-> -replicator  20030000.tpiu    2201c000.ptm  2203c000.etm  2203e000.etm
-> -20010000.etb         20040000.funnel  2201d000.ptm  2203d000.etm
-> +20010000.etb   20040000.funnel	2201d000.ptm  2203d000.etm
-> replicator +20030000.tpiu  2201c000.ptm	2203c000.etm
-> 2203e000.etm root:~#
->  
-> +and here for a Juno platform:
-> +
-> +root@juno:~# ls /sys/bus/coresight/devices/
-> +20010000.etf	 20120000.replicator  22040000.etm
-> 230c0000.funnel +20030000.tpiu	 20130000.funnel
-> 220c0000.funnel  23140000.etm +20040000.funnel
-> 20140000.etf	      22140000.etm     23240000.etm
-> +20070000.etr	 20150000.funnel      23040000.etm
-> 23340000.etm +root@juno:~# +
-> +Note that on Juno users can select the ETF, ETR and TPIU as a sink
-> target while +on TC2, the ETB and TPIU can be selected.
-> +
->  The functions take a "struct coresight_device", which looks like this:
->  
->  struct coresight_desc {
-> @@ -193,16 +205,16 @@ the information carried in "THIS_MODULE".
->  How to use the tracer modules
->  -----------------------------
->  
-> -Before trace collection can start, a coresight sink needs to be
-> identify. +Before trace collection can start, a coresight sink needs to
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+---
+ arch/x86/include/asm/efi.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-The - and + lines seems to be merged...
-
-> be identified. There is no limit on the amount of sinks (nor sources)
-> that can be enabled at any given moment.  As a generic operation, all
-> device pertaining to the sink class will have an "active" entry in
-> sysfs: 
->  root:/sys/bus/coresight/devices# ls
-> -replicator  20030000.tpiu    2201c000.ptm  2203c000.etm  2203e000.etm
-> -20010000.etb         20040000.funnel  2201d000.ptm  2203d000.etm
-> +20010000.etb   20040000.funnel	2201d000.ptm  2203d000.etm
-> replicator +20030000.tpiu  2201c000.ptm	2203c000.etm
-> 2203e000.etm root:/sys/bus/coresight/devices# ls 20010000.etb
-> -enable_sink  status  trigger_cntr
-> +enable_sink  mgmt  power  subsystem  trigger_cntr  uevent
->  root:/sys/bus/coresight/devices# echo 1 > 20010000.etb/enable_sink
->  root:/sys/bus/coresight/devices# cat 20010000.etb/enable_sink
->  1
-> @@ -216,16 +228,13 @@ trigger a trace capture:
->  root:/sys/bus/coresight/devices# echo 1 > 2201c000.ptm/enable_source
->  root:/sys/bus/coresight/devices# cat 2201c000.ptm/enable_source
->  1
-> -root:/sys/bus/coresight/devices# cat 20010000.etb/status
-> -Depth:          0x2000
-> -Status:         0x1
-> -RAM read ptr:   0x0
-> -RAM wrt ptr:    0x19d3   <----- The write pointer is moving
-> -Trigger cnt:    0x0
-> -Control:        0x1
-> -Flush status:   0x0
-> -Flush ctrl:     0x2001
-> -root:/sys/bus/coresight/devices#
-> +
-> +Observe the write pointer moving:
-> +
-> +root:/sys/bus/coresight/devices# cat 20010000.etb/mgmt/rwp
-> +0x1a8
-> +root:/sys/bus/coresight/devices# cat 20010000.etb/mgmt/rwp
-> +0x19a6
->  
->  Trace collection is stopped the same way:
->  
-> 
-
-
+diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
+index cec5fae23eb3..6dcd0717a3cf 100644
+--- a/arch/x86/include/asm/efi.h
++++ b/arch/x86/include/asm/efi.h
+@@ -8,6 +8,7 @@
+ #include <asm/tlb.h>
+ #include <asm/nospec-branch.h>
+ #include <asm/mmu_context.h>
++#include <asm/cpu.h>
+ 
+ /*
+  * We map the EFI regions needed for runtime services non-contiguously,
+@@ -41,12 +42,14 @@ extern asmlinkage unsigned long efi_call_phys(void *, ...);
+ #define arch_efi_call_virt_setup()					\
+ ({									\
+ 	kernel_fpu_begin();						\
++	restore_split_lock_ac_bios(NULL);				\
+ 	firmware_restrict_branch_speculation_start();			\
+ })
+ 
+ #define arch_efi_call_virt_teardown()					\
+ ({									\
+ 	firmware_restrict_branch_speculation_end();			\
++	restore_split_lock_ac_kernel(NULL);				\
+ 	kernel_fpu_end();						\
+ })
+ 
+@@ -84,6 +87,7 @@ struct efi_scratch {
+ 	efi_sync_low_kernel_mappings();					\
+ 	preempt_disable();						\
+ 	__kernel_fpu_begin();						\
++	restore_split_lock_ac_bios(NULL);				\
+ 	firmware_restrict_branch_speculation_start();			\
+ 									\
+ 	if (!efi_enabled(EFI_OLD_MEMMAP))				\
+@@ -99,6 +103,7 @@ struct efi_scratch {
+ 		efi_switch_mm(efi_scratch.prev_mm);			\
+ 									\
+ 	firmware_restrict_branch_speculation_end();			\
++	restore_split_lock_ac_kernel(NULL);				\
+ 	__kernel_fpu_end();						\
+ 	preempt_enable();						\
+ })
 -- 
-~Randy
+2.5.0
