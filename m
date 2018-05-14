@@ -1,31 +1,31 @@
 Return-Path: <baolin.wang@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526288185; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1526288176; cv=none;
         d=google.com; s=arc-20160816;
-        b=UUCVH6Ui+3rpt+sj+5H6xj20POnJvKgCVErivwQhBWTQUG+zX+7agm+FeuRkKebgPO
-         hcdfwi0dx2H48I7zLMv+KtLpkYXiMpsm8Ndon2af8O5RxeRTdl9YX2l77OSnwcRAR+uG
-         88sQGYW+Cz4s6dikGabaY/j6bSM5D5kskkWnQrB3sMJSFGZU4cRh3PNo+ckcxzZoAMtZ
-         WIFIrN5WR2CA8uVVscwob8bhsFQtvxUl85nZJCIBbYUYMfRUg2iGZUi09nlFjhpFxeSI
-         Ri29OS6n4syRazHLTSAgkWmdWCIcrokRY9MQzlL9ohNuSHNN9XSltfLuI/BIPN+A1ejx
-         Sysg==
+        b=ybAxVrKNeHvs4hC9BhwJRBfZRxTjYuMJNU0JfxuQJRWf2tjdaF4h5UeLEY+P9E5Rte
+         sw8jruJKOt89wTRGyLjKkM67FRjcvQwqkhqb611QBG3jWpTpQZEZZ59uEFh7BNv+dL2x
+         Bgt2dLHaYTsWD4+cAzZNSvTNEfsu4WOkE5QHbDefcUIlQ10dcIb4IoRdVOdRKeaFNRtS
+         F6CIZ8aLIBlIg855kdbPH6zsI4HuDg3Wd1VyEjOJ3G0IUmLlWUUFiU+Ojsucx7APfzWq
+         U2Yn/udUKJ0/RGGyFkYbGAk94fWtSiP6aqLN4S2mYGURYBLQnY9iN8Dvd8TLSGZjpxQ9
+         wP+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=otXnHrArHRqD0yr3/v6hok4GHpBR10tlTjRkrESI19A=;
-        b=qmLZ2Q9EGswBwZr8gq1noL7mNMr2F4UZUgKtKIUQSJA0VRButoNUnv0J5/2TtIxMA2
-         cAfW22jPxtgAwQXNLMNcqi9ohHnrk5Ck3hnT5atBLJz9KWoPqkdlQf2oRNcA24sSBmvY
-         66wpdj89X9y0kGAXmItjohF/Hp0GR2KbnKqUQ2gE4Gso99oEC8dFu8UeR4CuNgX2MyQa
-         jJ3NSfyh7VCtvSyAQAnl8kEsffhMLQ6QFI+vLuGbzczfkkqIjIIu0MCQ3HPf/bfD4N0m
-         s+uKvo3iAi72a28809yRo6ese8oxeKGOSi7qOf7X+tB3UHl8FYWL2gq1ymRdoNssFdhh
-         IJbg==
+        bh=HSeeHyNJ7QNAWZBUB1p2ib+cxOTqsBDGE2rkHjUOTeg=;
+        b=PX1zC8bj4K5zZ3s7kgkKJaPnRvy15akMwwCn3YIJB/s8UDxqaCisBC7mIyHv5ez+xv
+         cPySFuP3uvRlPoJK4ipmM9V1iB73uKO+a46KmVoem5MWi2kc4Bltwz+oaIsTeSCFX5AZ
+         9RISyTqmDukmMO0kSJZehpRuG+ooy1apJY7kQjAD3RELeBsxS52APQ+QBbbDI9dG5TV5
+         OgJUk8Xb7CjN+OwiLTtnbBK0rhKFTBUmRe5KYAsTv1ojHqaQOHmYlcn4KnHaw+stip4n
+         zJYTkfX+t0H+tRWHSO+SiDGJbG2GB+5nPVIajkFMNzItQuydUp7L5NNkB7Ef1ZYOeb4K
+         5Cmw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=a56a65JF;
+       dkim=pass header.i=@linaro.org header.s=google header.b=XW/Zg3jx;
        spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=a56a65JF;
+       dkim=pass header.i=@linaro.org header.s=google header.b=XW/Zg3jx;
        spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZrNBLVMB6bvW1TE564WDye+cQF5N9CwsJWuicQiIaCGPNuJFeOzURlr1BZicQ8VHNB1gdTLMg==
+X-Google-Smtp-Source: AB8JxZpBoDuGx3Xjz23r/UQq093yq7IIihnYJvZwkZayyA8QcwWW0+3G3OMWOzIe898o9t/OpwcYsw==
 From: Baolin Wang <baolin.wang@linaro.org>
 To: tglx@linutronix.de,
 	john.stultz@linaro.org,
@@ -61,140 +61,287 @@ Cc: baolin.wang@linaro.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-omap@vger.kernel.org
-Subject: [RFC PATCH 02/10] clocksource: sprd: Add one persistent timer for Spreadtrum platform
-Date: Mon, 14 May 2018 16:55:28 +0800
-Message-Id: <d96b50111a419b920b1b8fe183f538b2d6268af0.1526285602.git.baolin.wang@linaro.org>
+Subject: [RFC PATCH 01/10] time: Add persistent clock support
+Date: Mon, 14 May 2018 16:55:27 +0800
+Message-Id: <c83f14e7a03fdd6dd4570531eb0e88ae045ac62a.1526285602.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
 References: <cover.1526285602.git.baolin.wang@linaro.org>
 In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
 References: <cover.1526285602.git.baolin.wang@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600429160095072934?=
-X-GMAIL-MSGID: =?utf-8?q?1600429160095072934?=
+X-GMAIL-THRID: =?utf-8?q?1600429151454364967?=
+X-GMAIL-MSGID: =?utf-8?q?1600429151454364967?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Spreadtrum SC9860 platform, we need one persistent timer to calculate
-the suspend time to compensate the OS time.
+On our Spreadtrum SC9860 platform, we registered the high resolution
+ARM generic timer as one clocksource to update the OS time, but the
+ARM generic timer will be stopped in suspend state. So we use one 64bit
+always-on timer (but low resolution) of Spreadtrum to calculate the
+suspend time to compensate the OS time. Though we can register the
+always-on timer as one clocksource, we need re-calculate the
+mult/shift with one larger conversion range to calculate the suspend
+time.
 
-This patch registers one Spreadtrum AON timer as persistent timer, which
-runs at 32bit and periodic mode.
+But now we have too many different ways of dealing with persistent
+timekeeping across architectures, and there will be many duplicate
+code if we register one timer to be one persistent clock. Thus it
+will be more helpful if we add one common framework for timer drivers
+to be registered as one persistent clock and implement the common
+read_persistent_clock64() to compensate the OS time.
+
+Moreover we can register the clocksource with CLOCK_SOURCE_SUSPEND_NONSTOP
+to be one persistent clock, then we can simplify the suspend/resume
+accounting by removing CLOCK_SOURCE_SUSPEND_NONSTOP timing. After that
+we can only compensate the OS time by persistent clock or RTC.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/clocksource/Kconfig      |    1 +
- drivers/clocksource/timer-sprd.c |   80 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 81 insertions(+)
+ include/linux/persistent_clock.h |   21 +++++
+ kernel/time/Kconfig              |    4 +
+ kernel/time/Makefile             |    1 +
+ kernel/time/persistent_clock.c   |  180 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 206 insertions(+)
+ create mode 100644 include/linux/persistent_clock.h
+ create mode 100644 kernel/time/persistent_clock.c
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 8e8a097..d7dddcc 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -453,6 +453,7 @@ config SPRD_TIMER
- 	bool "Spreadtrum timer driver" if COMPILE_TEST
- 	depends on HAS_IOMEM
- 	select TIMER_OF
-+	select PERSISTENT_CLOCK
- 	help
- 	  Enables support for the Spreadtrum timer driver.
+diff --git a/include/linux/persistent_clock.h b/include/linux/persistent_clock.h
+new file mode 100644
+index 0000000..4917980
+--- /dev/null
++++ b/include/linux/persistent_clock.h
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef __PERSISTENT_CLOCK_H__
++#define __PERSISTENT_CLOCK_H__
++
++#ifdef CONFIG_PERSISTENT_CLOCK
++extern int __init persistent_clock_init_and_register(u64 (*read)(void),
++						     u64 mask, u32 freq,
++						     u64 maxsec);
++extern void __init persistent_clock_cleanup(void);
++#else
++static inline int persistent_clock_init_and_register(u64 (*read)(void),
++						     u64 mask, u32 freq,
++						     u64 maxsec)
++{
++	return 0;
++}
++
++static inline void persistent_clock_cleanup(void) { }
++#endif
++
++#endif
+diff --git a/kernel/time/Kconfig b/kernel/time/Kconfig
+index 78eabc4..7188600 100644
+--- a/kernel/time/Kconfig
++++ b/kernel/time/Kconfig
+@@ -47,6 +47,10 @@ config GENERIC_CLOCKEVENTS_MIN_ADJUST
+ config GENERIC_CMOS_UPDATE
+ 	bool
  
-diff --git a/drivers/clocksource/timer-sprd.c b/drivers/clocksource/timer-sprd.c
-index ef9ebea..c6f657a 100644
---- a/drivers/clocksource/timer-sprd.c
-+++ b/drivers/clocksource/timer-sprd.c
-@@ -3,8 +3,11 @@
-  * Copyright (C) 2017 Spreadtrum Communications Inc.
-  */
++# Persistent clock support
++config PERSISTENT_CLOCK
++	bool
++
+ if GENERIC_CLOCKEVENTS
+ menu "Timers subsystem"
  
-+#include <linux/clk.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-+#include <linux/of_address.h>
+diff --git a/kernel/time/Makefile b/kernel/time/Makefile
+index f1e46f3..f6d368f 100644
+--- a/kernel/time/Makefile
++++ b/kernel/time/Makefile
+@@ -18,3 +18,4 @@ obj-$(CONFIG_GENERIC_SCHED_CLOCK)		+= sched_clock.o
+ obj-$(CONFIG_TICK_ONESHOT)			+= tick-oneshot.o tick-sched.o
+ obj-$(CONFIG_DEBUG_FS)				+= timekeeping_debug.o
+ obj-$(CONFIG_TEST_UDELAY)			+= test_udelay.o
++obj-$(CONFIG_PERSISTENT_CLOCK)			+= persistent_clock.o
+diff --git a/kernel/time/persistent_clock.c b/kernel/time/persistent_clock.c
+new file mode 100644
+index 0000000..1410cb3
+--- /dev/null
++++ b/kernel/time/persistent_clock.c
+@@ -0,0 +1,180 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2018 Linaro, Inc.
++ *
++ * Author: Baolin Wang <baolin.wang@linaro.org>
++ */
++
++#include <linux/alarmtimer.h>
++#include <linux/clocksource.h>
 +#include <linux/persistent_clock.h>
- 
- #include "timer-of.h"
- 
-@@ -157,3 +160,80 @@ static int __init sprd_timer_init(struct device_node *np)
- }
- 
- TIMER_OF_DECLARE(sc9860_timer, "sprd,sc9860-timer", sprd_timer_init);
 +
-+void __iomem *pbase;
++/**
++ * persistent_clock_read_data - data required to read persistent clock
++ * @read: Returns a cycle value from persistent clock.
++ * @last_cycles: Clock cycle value at last update.
++ * @last_ns: Time value (nanoseconds) at last update.
++ * @mask: Bitmask for two's complement subtraction of non 64bit clocks.
++ * @mult: Cycle to nanosecond multiplier.
++ * @shift: Cycle to nanosecond divisor.
++ */
++struct persistent_clock_read_data {
++	u64 (*read)(void);
++	u64 last_cycles;
++	u64 last_ns;
++	u64 mask;
++	u32 mult;
++	u32 shift;
++};
 +
-+static u64 sprd_persistent_timer_read(void)
-+{
-+	return ~(u64)readl_relaxed(pbase + TIMER_VALUE_SHDW_LO) &
-+		CLOCKSOURCE_MASK(32);
-+}
-+
-+static void sprd_persistent_timer_disable(void)
-+{
-+	sprd_timer_disable(pbase);
-+}
-+
-+static void sprd_persistent_timer_enable(void)
-+{
-+	sprd_timer_disable(pbase);
-+	sprd_timer_update_counter(pbase, TIMER_VALUE_LO_MASK);
-+	sprd_timer_enable(pbase, TIMER_CTL_PERIOD_MODE);
-+}
-+
-+static int __init sprd_persistent_timer_init(struct device_node *np)
-+{
-+	struct clk *clk;
++/**
++ * persistent_clock - represent the persistent clock
++ * @read_data: Data required to read from persistent clock.
++ * @seq: Sequence counter for protecting updates.
++ * @freq: The frequency of the persistent clock.
++ * @wrap: Duration for persistent clock can run before wrapping.
++ * @alarm: Update timeout for persistent clock wrap.
++ */
++struct persistent_clock {
++	struct persistent_clock_read_data read_data;
++	seqcount_t seq;
 +	u32 freq;
-+	int ret;
++	ktime_t wrap;
++	struct alarm alarm;
++};
 +
-+	clk = of_clk_get(np, 0);
-+	if (IS_ERR(clk)) {
-+		pr_err("Can't get timer clock for %pOF\n", np);
-+		return PTR_ERR(clk);
++static struct persistent_clock p;
++
++void read_persistent_clock64(struct timespec64 *ts)
++{
++	struct persistent_clock_read_data *read_data = &p.read_data;
++	unsigned long seq;
++	u64 delta, nsecs;
++
++	if (!read_data->read) {
++		ts->tv_sec = 0;
++		ts->tv_nsec = 0;
++		return;
 +	}
 +
-+	ret = clk_prepare_enable(clk);
-+	if (ret) {
-+		pr_err("Failed to enable clock for %pOF\n", np);
-+		clk_put(clk);
-+		return ret;
++	do {
++		seq = read_seqcount_begin(&p.seq);
++		delta = (read_data->read() - read_data->last_cycles) &
++			read_data->mask;
++
++		nsecs = read_data->last_ns +
++			clocksource_cyc2ns(delta, read_data->mult,
++					   read_data->shift);
++		*ts = ns_to_timespec64(nsecs);
++	} while (read_seqcount_retry(&p.seq, seq));
++}
++
++static void persistent_clock_update(void)
++{
++	struct persistent_clock_read_data *read_data = &p.read_data;
++	u64 cycles, delta;
++
++	write_seqcount_begin(&p.seq);
++
++	cycles = read_data->read();
++	delta = (cycles - read_data->last_cycles) & read_data->mask;
++	read_data->last_ns += clocksource_cyc2ns(delta, read_data->mult,
++						 read_data->shift);
++	read_data->last_cycles = cycles;
++
++	write_seqcount_end(&p.seq);
++}
++
++static enum alarmtimer_restart persistent_clock_alarm_fired(struct alarm *alarm,
++							    ktime_t now)
++{
++	persistent_clock_update();
++
++	alarm_forward(&p.alarm, now, p.wrap);
++	return ALARMTIMER_RESTART;
++}
++
++int __init persistent_clock_init_and_register(u64 (*read)(void), u64 mask,
++					      u32 freq, u64 maxsec)
++{
++	struct persistent_clock_read_data *read_data = &p.read_data;
++	u64 wrap, res, secs = maxsec;
++
++	if (!read || !mask || !freq)
++		return -EINVAL;
++
++	if (!secs) {
++		/*
++		 * If the timer driver did not specify the maximum conversion
++		 * seconds of the persistent clock, then we calculate the
++		 * conversion range with the persistent clock's bits and
++		 * frequency.
++		 */
++		secs = mask;
++		do_div(secs, freq);
++
++		/*
++		 * Some persistent counter can be larger than 32bit, so we
++		 * need limit the max suspend time to have a good conversion
++		 * precision. So 24 hours may be enough usually.
++		 */
++		if (secs > 86400)
++			secs = 86400;
 +	}
 +
-+	freq = clk_get_rate(clk);
-+	if (!freq) {
-+		pr_err("Failed to get clock rate for %pOF\n", np);
-+		ret = -EINVAL;
-+		goto clk_rate_err;
-+	}
++	/* Calculate the mult/shift to convert cycles to ns. */
++	clocks_calc_mult_shift(&read_data->mult, &read_data->shift, freq,
++			       NSEC_PER_SEC, (u32)secs);
 +
-+	pbase = of_io_request_and_map(np, 0, of_node_full_name(np));
-+	if (IS_ERR(pbase)) {
-+		pr_err("Can't map timer registers for %pOF\n", np);
-+		ret = PTR_ERR(pbase);
-+		goto clk_rate_err;
-+	}
++	/* Calculate how many nanoseconds until we risk wrapping. */
++	wrap = clocks_calc_max_nsecs(read_data->mult, read_data->shift, 0,
++				     mask, NULL);
++	p.wrap = ns_to_ktime(wrap);
 +
-+	sprd_persistent_timer_enable();
++	p.freq = freq;
++	read_data->mask = mask;
++	read_data->read = read;
 +
-+	ret = persistent_clock_init_and_register(sprd_persistent_timer_read,
-+						 CLOCKSOURCE_MASK(32), freq, 0);
-+	if (ret) {
-+		pr_err("Failed to register persistent clock for %pOF\n", np);
-+		goto persist_err;
-+	}
++	persistent_clock_update();
++
++	/* Calculate the ns resolution of this persistent clock. */
++	res = clocksource_cyc2ns(1ULL, read_data->mult, read_data->shift);
++
++	pr_info("persistent clock: mask %llu at %uHz, resolution %lluns, wraps every %lluns\n",
++		mask, freq, res, wrap);
++	return 0;
++}
++
++void __init persistent_clock_cleanup(void)
++{
++	p.read_data.read = NULL;
++	alarm_cancel(&p.alarm);
++}
++
++static int __init persistent_clock_start_alarmtimer(void)
++{
++	struct persistent_clock_read_data *read_data = &p.read_data;
++	ktime_t now;
++
++	/*
++	 * If no persistent clock function has been provided at that point,
++	 * just return.
++	 */
++	if (!read_data->read)
++		return 0;
++
++	persistent_clock_update();
++
++	/*
++	 * Since the persistent clock will not be stopped when system enters the
++	 * suspend state, thus we need start one alarmtimer to wakeup the system
++	 * to update the persistent clock before wrapping. We should start the
++	 * update alarmtimer after the alarmtimer subsystem was initialized.
++	 */
++	alarm_init(&p.alarm, ALARM_BOOTTIME, persistent_clock_alarm_fired);
++	now = ktime_get_boottime();
++	alarm_start(&p.alarm, ktime_add(now, p.wrap));
 +
 +	return 0;
-+
-+persist_err:
-+	sprd_persistent_timer_disable();
-+	iounmap(pbase);
-+clk_rate_err:
-+	clk_disable_unprepare(clk);
-+	clk_put(clk);
-+
-+	return ret;
 +}
-+
-+TIMER_OF_DECLARE(sc9860_persistent_timer, "sprd,sc9860-persistent-timer",
-+		 sprd_persistent_timer_init);
++late_initcall(persistent_clock_start_alarmtimer);
 -- 
 1.7.9.5
