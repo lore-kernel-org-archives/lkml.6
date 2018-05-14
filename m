@@ -1,57 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752170AbeENLUn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:20:43 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40430 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750760AbeENLUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:20:41 -0400
-Date: Mon, 14 May 2018 12:20:37 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        james.morse@arm.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 02/18] arm64: move SCTLR_EL{1,2} assertions to
- <asm/sysreg.h>
-Message-ID: <20180514112036.GI7753@e103592.cambridge.arm.com>
-References: <20180514094640.27569-1-mark.rutland@arm.com>
- <20180514094640.27569-3-mark.rutland@arm.com>
- <20180514100053.GX7753@e103592.cambridge.arm.com>
- <20180514100858.4xjp5d3axbyy74ap@lakrids.cambridge.arm.com>
+        id S1752249AbeENLXj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:23:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:43191 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751198AbeENLXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 07:23:38 -0400
+Date: Mon, 14 May 2018 13:23:24 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-mtd@lists.infradead.org, linux-m68k@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: nand: Fix return type of __DIVIDE() when called
+ with 32-bit
+Message-ID: <20180514132324.595b63eb@bbrezillon>
+In-Reply-To: <1526294977-32303-1-git-send-email-geert@linux-m68k.org>
+References: <1526294977-32303-1-git-send-email-geert@linux-m68k.org>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514100858.4xjp5d3axbyy74ap@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 11:08:59AM +0100, Mark Rutland wrote:
-> On Mon, May 14, 2018 at 11:00:53AM +0100, Dave Martin wrote:
-> > On Mon, May 14, 2018 at 10:46:24AM +0100, Mark Rutland wrote:
-> > > -/* Check all the bits are accounted for */
-> > > -#define SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != ~0)
-> > > -
-> > > +#if (SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != 0xffffffff
-> > > +#error "Inconsistent SCTLR_EL2 set/clear bits"
-> > > +#endif
-> > 
-> > Can we have a comment on the != 0xffffffff versus != ~0 here?
-> > 
-> > The subtle differences in evaluation semantics between #if and
-> > other contexts here may well trip people up during maintenance...
+On Mon, 14 May 2018 12:49:37 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+
+> The __DIVIDE() macro checks whether it is called with a 32-bit or 64-bit
+> dividend, to select the appropriate divide-and-round-up routine.
+> As the check uses the ternary operator, the result will always be
+> promoted to a type that can hold both results, i.e. unsigned long long.
 > 
-> Do you have any suggestion as to the wording?
+> When using this result in a division on a 32-bit system, this may lead
+> to link errors like:
 > 
-> I'm happy to add a comment, but I don't really know what to say.
+>     ERROR: "__udivdi3" [drivers/mtd/nand/raw/nand.ko] undefined!
+> 
+> Fix this by casting the result of the 64-bit division to the type of the
+> dividend.
+> 
+> Fixes: 8878b126df769831 ("mtd: nand: add ->exec_op() implementation")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> This fixes the root cause of the link failure seen with
+> m68k/allmodconfig since commit 3057fcef385348fe ("mtd: rawnand: Make
+> sure we wait tWB before polling the STATUS reg").
+> 
+> An alternative mitigation was posted as "[PATCH] m68k: Implement
+> ndelay() as an inline function to force type checking/casting"
+> (https://lkml.org/lkml/2018/5/13/102).
+> ---
+>  include/linux/mtd/rawnand.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+> index 5dad59b312440a9c..d06dc428ea0102ae 100644
+> --- a/include/linux/mtd/rawnand.h
+> +++ b/include/linux/mtd/rawnand.h
+> @@ -871,7 +871,7 @@ struct nand_op_instr {
+>  #define __DIVIDE(dividend, divisor) ({					\
+>  	sizeof(dividend) == sizeof(u32) ?				\
+>  		DIV_ROUND_UP(dividend, divisor) :			\
+> -		DIV_ROUND_UP_ULL(dividend, divisor);			\
+> +		(__typeof__(dividend))DIV_ROUND_UP_ULL(dividend, divisor); \
 
+Hm, it's a bit hard to follow when you place the cast here. One could
+wonder why a cast to (__typeof__(dividend)) is needed since
+DIV_ROUND_UP_ULL() already returns a (__typeof__(dividend)) type.
 
-How about the following?
+How about:
 
-/* Watch out for #if evaluation rules: ~0 is not ~(int)0! */
+	/*
+	 * Cast to type of dividend is needed here to guarantee that the
+	 * result won't be an unsigned long long when the dividend is an
+	 * unsigned long, which is what the compiler does when it sees a
+	 * ternary operator with 2 different return types.
+	 */
+	(__typeof__(dividend))(sizeof(dividend) == sizeof(u32) ?	\
+			       DIV_ROUND_UP(dividend, divisor) :	\
+			       DIV_ROUND_UP_ULL(dividend, divisor));
 
-Cheers
----Dave
+Actually, I'm not even sure we care about the truncation that could
+happen on an unsigned long long -> unsigned long cast because the
+delays we express here will anyway be hundreds of nanosecs/millisecs,
+so nothing close to the billions of nanosecs/millisecs you can express
+with an unsigned long.
+
+So, maybe we should just do:
+
+	(unsigned long)(sizeof(dividend) == sizeof(u32) ?		\
+			DIV_ROUND_UP(dividend, divisor) :		\
+			DIV_ROUND_UP_ULL(dividend, divisor));
+
+to make things more readable.
+
+>  		})
+>  #define PSEC_TO_NSEC(x) __DIVIDE(x, 1000)
+>  #define PSEC_TO_MSEC(x) __DIVIDE(x, 1000000000)
