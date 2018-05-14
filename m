@@ -1,37 +1,37 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpQhjKpZK6sYMoTKLbueIMuE672YL8h7AHFuXACk/N2MyWjr0C3JddKrjTq4A7HOeA59Rti
-ARC-Seal: i=1; a=rsa-sha256; t=1526281051; cv=none;
+X-Google-Smtp-Source: AB8JxZqo43oIKaoPU2wQ6X4M8oSHAA3N/PppNwOIhPs/GXZlkmbNvJ60FNrwpO/0rD2G/XoHddoO
+ARC-Seal: i=1; a=rsa-sha256; t=1526281038; cv=none;
         d=google.com; s=arc-20160816;
-        b=i0zKi3nvJvEx7pvMRNxGVbIYB4AoPunZe6i0b0yoQzzwM5Ls1pARzBygnSsTAUUgzT
-         Monp1zZYlqSO8NTB9MeKOrqG3VQY+jIPkuyYSbNMoBYd7oQbWFTGJmPZBQRAiiAL1Fhw
-         CYrHg8ZH8F8/fHaGKw7KktjeRye8z7bSZwUY7IX+A58qiln03tvE1JWhU4C0Zl/mN5r2
-         MN5tupSvuxgtqiitfU1WQm7nH8b2mmP2oEKVZunjLydCyY0/+kLSHjH4Ajmz+ZORLpBr
-         DR25zZ64d/o0oUvmcLZ1N5SQdZ4KJQ6NEfnTIE/IwOuaLIFGXuNbBYZLHWkGzDrzWbZv
-         +KHg==
+        b=BdGJzb/66WlYSd2xAl7EQ0k4FpX6c9qSddnLRCfQtP74NxNfbIMUqDM38cBEyjBfOX
+         BqrXlao4KTI81nv2oW6CMqGyodV2JGeXjx9khQ2UmOMjOCmjktkFl+xaSaUojvR/jJHN
+         /P0xnr50Dg3bqQyg89Wh2WJ22m2FKOaf6HwJTI0jyvXIl4W2AQH0y9hqDms7QrxGgyE3
+         oOAH2WYxHXvvqk9lnNYDytFzQOee3eojOKyjFPNv/vLz6or2NvbIuJpIX2rGRII893fE
+         /xegOwbF/3YBp2ODvOw53JKAt5EEL8yxfzEVYuABKIkVvMDuSfkT7Iox5VIXKTvG+BJj
+         sJ5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=tBtdO1+1n7tqmMQqVyq04Xl0NNIdmsy4iy0ALJeJ9/s=;
-        b=BbaXEn4FEFpZX/OB8wAfPmHmLY8h6xBBtijUP9tgpM3IEh8OTsyiv4hL8hTzpBqTQ0
-         PCwKyl/Ab6Y4+bRywvZ5ualOAutCfnjyg7LrKxsdI0t1emgKXT8nOPikStxSgyQTtU7F
-         w8REUhj38gmmUJTuTwxoCKSVAGpGdU+pw3Z/crNo62EPRIVg+WQkSLxEcf4PX/YeeX+E
-         u7Pe5G/bSabM0o9zGmUcc9a+nepOTXNsJUs6a51UJNjIFVwbGbf05QGX9XwkVyugQN4J
-         atIfj2bi/5tWYIbrihtOjFb6lL97Fh60jzei8OPSiq2W7GP+jrKP1CMKul6tHPT/UWXz
-         5/XA==
+        bh=kTKtzLfLQeFe9UCSfRkftXSw+/yiEdOz4uf0XuGCZ5I=;
+        b=ayErKl0Q5qIa/EwdtyL3f4J3BgoPR8jkaoEKIglYo85INMxpVa4vOrthXJCfNc4nA9
+         hM9hMlNAB7Qed7uCTB1NlACWfOmDJo4mXEB6l6o5DnczBOQOVkLRGJuAeYD4MzIOOBQR
+         t+3i3KtgSbn1x82MGNoRlmmHWfmcRNQIxwqWDLzU6YH4v1m3vtXUxlW7W7A3FFkUAm7f
+         55p3IP196G0cgKi7ic/dPX9AGDQC7OO+AsUhXVyLTj/+ejdxhYtLZQsPTNV0yJgnK2GU
+         XeKn5FJdGYqRxuJ5WzogATC+Nh//1wgf99dQHZDromls/il1T9zOH2VgXt8EmTYFXRuo
+         UDRw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=SPr3c8Uo;
+       dkim=pass header.i=@kernel.org header.s=default header.b=qhX3eRq8;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=SPr3c8Uo;
+       dkim=pass header.i=@kernel.org header.s=default header.b=qhX3eRq8;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Paul Mackerras <paulus@ozlabs.org>
-Subject: [PATCH 4.14 61/62] KVM: PPC: Book3S HV: Fix handling of large pages in radix page fault handler
-Date: Mon, 14 May 2018 08:49:17 +0200
-Message-Id: <20180514064819.879286275@linuxfoundation.org>
+	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 29/62] tracing: Fix regex_match_front() to not over compare the test string
+Date: Mon, 14 May 2018 08:48:45 +0200
+Message-Id: <20180514064817.977118104@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421679160580473?=
-X-GMAIL-MSGID: =?utf-8?q?1600421679160580473?=
+X-GMAIL-THRID: =?utf-8?q?1600421234253584189?=
+X-GMAIL-MSGID: =?utf-8?q?1600421666546093143?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,178 +50,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Paul Mackerras <paulus@ozlabs.org>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit c3856aeb29402e94ad9b3879030165cc6a4fdc56 upstream.
+commit dc432c3d7f9bceb3de6f5b44fb9c657c9810ed6d upstream.
 
-This fixes several bugs in the radix page fault handler relating to
-the way large pages in the memory backing the guest were handled.
-First, the check for large pages only checked for explicit huge pages
-and missed transparent huge pages.  Then the check that the addresses
-(host virtual vs. guest physical) had appropriate alignment was
-wrong, meaning that the code never put a large page in the partition
-scoped radix tree; it was always demoted to a small page.
+The regex match function regex_match_front() in the tracing filter logic,
+was fixed to test just the pattern length from testing the entire test
+string. That is, it went from strncmp(str, r->pattern, len) to
+strcmp(str, r->pattern, r->len).
 
-Fixing this exposed bugs in kvmppc_create_pte().  We were never
-invalidating a 2MB PTE, which meant that if a page was initially
-faulted in without write permission and the guest then attempted
-to store to it, we would never update the PTE to have write permission.
-If we find a valid 2MB PTE in the PMD, we need to clear it and
-do a TLB invalidation before installing either the new 2MB PTE or
-a pointer to a page table page.
+The issue is that str is not guaranteed to be nul terminated, and if r->len
+is greater than the length of str, it can access more memory than is
+allocated.
 
-This also corrects an assumption that get_user_pages_fast would set
-the _PAGE_DIRTY bit if we are writing, which is not true.  Instead we
-mark the page dirty explicitly with set_page_dirty_lock().  This
-also means we don't need the dirty bit set on the host PTE when
-providing write access on a read fault.
+The solution is to add a simple test if (len < r->len) return 0.
 
-[paulus@ozlabs.org - use mark_pages_dirty instead of
- kvmppc_update_dirty_map]
-
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Cc: stable@vger.kernel.org
+Fixes: 285caad415f45 ("tracing/filters: Fix MATCH_FRONT_ONLY filter matching")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kvm/book3s_64_mmu_radix.c |   72 +++++++++++++++++++++------------
- 1 file changed, 46 insertions(+), 26 deletions(-)
+ kernel/trace/trace_events_filter.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/kvm/book3s_64_mmu_radix.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_radix.c
-@@ -19,6 +19,9 @@
- #include <asm/pgalloc.h>
- #include <asm/pte-walk.h>
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -338,6 +338,9 @@ static int regex_match_full(char *str, s
  
-+static void mark_pages_dirty(struct kvm *kvm, struct kvm_memory_slot *memslot,
-+			     unsigned long gfn, unsigned int order);
-+
- /*
-  * Supported radix tree geometry.
-  * Like p9, we support either 5 or 9 bits at the first (lowest) level,
-@@ -195,6 +198,12 @@ static void kvmppc_pte_free(pte_t *ptep)
- 	kmem_cache_free(kvm_pte_cache, ptep);
- }
- 
-+/* Like pmd_huge() and pmd_large(), but works regardless of config options */
-+static inline int pmd_is_leaf(pmd_t pmd)
-+{
-+	return !!(pmd_val(pmd) & _PAGE_PTE);
-+}
-+
- static int kvmppc_create_pte(struct kvm *kvm, pte_t pte, unsigned long gpa,
- 			     unsigned int level, unsigned long mmu_seq)
+ static int regex_match_front(char *str, struct regex *r, int len)
  {
-@@ -219,7 +228,7 @@ static int kvmppc_create_pte(struct kvm
- 	else
- 		new_pmd = pmd_alloc_one(kvm->mm, gpa);
- 
--	if (level == 0 && !(pmd && pmd_present(*pmd)))
-+	if (level == 0 && !(pmd && pmd_present(*pmd) && !pmd_is_leaf(*pmd)))
- 		new_ptep = kvmppc_pte_alloc();
- 
- 	/* Check if we might have been invalidated; let the guest retry if so */
-@@ -244,12 +253,30 @@ static int kvmppc_create_pte(struct kvm
- 		new_pmd = NULL;
- 	}
- 	pmd = pmd_offset(pud, gpa);
--	if (pmd_large(*pmd)) {
--		/* Someone else has instantiated a large page here; retry */
--		ret = -EAGAIN;
--		goto out_unlock;
--	}
--	if (level == 1 && !pmd_none(*pmd)) {
-+	if (pmd_is_leaf(*pmd)) {
-+		unsigned long lgpa = gpa & PMD_MASK;
++	if (len < r->len)
++		return 0;
 +
-+		/*
-+		 * If we raced with another CPU which has just put
-+		 * a 2MB pte in after we saw a pte page, try again.
-+		 */
-+		if (level == 0 && !new_ptep) {
-+			ret = -EAGAIN;
-+			goto out_unlock;
-+		}
-+		/* Valid 2MB page here already, remove it */
-+		old = kvmppc_radix_update_pte(kvm, pmdp_ptep(pmd),
-+					      ~0UL, 0, lgpa, PMD_SHIFT);
-+		kvmppc_radix_tlbie_page(kvm, lgpa, PMD_SHIFT);
-+		if (old & _PAGE_DIRTY) {
-+			unsigned long gfn = lgpa >> PAGE_SHIFT;
-+			struct kvm_memory_slot *memslot;
-+			memslot = gfn_to_memslot(kvm, gfn);
-+			if (memslot)
-+				mark_pages_dirty(kvm, memslot, gfn,
-+						 PMD_SHIFT - PAGE_SHIFT);
-+		}
-+	} else if (level == 1 && !pmd_none(*pmd)) {
- 		/*
- 		 * There's a page table page here, but we wanted
- 		 * to install a large page.  Tell the caller and let
-@@ -412,28 +439,24 @@ int kvmppc_book3s_radix_page_fault(struc
- 	} else {
- 		page = pages[0];
- 		pfn = page_to_pfn(page);
--		if (PageHuge(page)) {
--			page = compound_head(page);
--			pte_size <<= compound_order(page);
-+		if (PageCompound(page)) {
-+			pte_size <<= compound_order(compound_head(page));
- 			/* See if we can insert a 2MB large-page PTE here */
- 			if (pte_size >= PMD_SIZE &&
--			    (gpa & PMD_MASK & PAGE_MASK) ==
--			    (hva & PMD_MASK & PAGE_MASK)) {
-+			    (gpa & (PMD_SIZE - PAGE_SIZE)) ==
-+			    (hva & (PMD_SIZE - PAGE_SIZE))) {
- 				level = 1;
- 				pfn &= ~((PMD_SIZE >> PAGE_SHIFT) - 1);
- 			}
- 		}
- 		/* See if we can provide write access */
- 		if (writing) {
--			/*
--			 * We assume gup_fast has set dirty on the host PTE.
--			 */
- 			pgflags |= _PAGE_WRITE;
- 		} else {
- 			local_irq_save(flags);
- 			ptep = find_current_mm_pte(current->mm->pgd,
- 						   hva, NULL, NULL);
--			if (ptep && pte_write(*ptep) && pte_dirty(*ptep))
-+			if (ptep && pte_write(*ptep))
- 				pgflags |= _PAGE_WRITE;
- 			local_irq_restore(flags);
- 		}
-@@ -459,18 +482,15 @@ int kvmppc_book3s_radix_page_fault(struc
- 		pte = pfn_pte(pfn, __pgprot(pgflags));
- 		ret = kvmppc_create_pte(kvm, pte, gpa, level, mmu_seq);
- 	}
--	if (ret == 0 || ret == -EAGAIN)
--		ret = RESUME_GUEST;
- 
- 	if (page) {
--		/*
--		 * We drop pages[0] here, not page because page might
--		 * have been set to the head page of a compound, but
--		 * we have to drop the reference on the correct tail
--		 * page to match the get inside gup()
--		 */
--		put_page(pages[0]);
-+		if (!ret && (pgflags & _PAGE_WRITE))
-+			set_page_dirty_lock(page);
-+		put_page(page);
- 	}
-+
-+	if (ret == 0 || ret == -EAGAIN)
-+		ret = RESUME_GUEST;
- 	return ret;
- }
- 
-@@ -676,7 +696,7 @@ void kvmppc_free_radix(struct kvm *kvm)
- 				continue;
- 			pmd = pmd_offset(pud, 0);
- 			for (im = 0; im < PTRS_PER_PMD; ++im, ++pmd) {
--				if (pmd_huge(*pmd)) {
-+				if (pmd_is_leaf(*pmd)) {
- 					pmd_clear(pmd);
- 					continue;
- 				}
+ 	if (strncmp(str, r->pattern, r->len) == 0)
+ 		return 1;
+ 	return 0;
