@@ -1,28 +1,28 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpzvHVIydKSKSUqH4Vplft+Kine8YrAuI5JHbzJ6r7jyGSf3vMPWaw1jN5IfK5CVcH3IkHP
-ARC-Seal: i=1; a=rsa-sha256; t=1526282396; cv=none;
+X-Google-Smtp-Source: AB8JxZpNGDFbGFdTDfX9BLfnf/l7jvkCLQr6erau0IXJ/w82gPqvyssK5bxgjeeSYeAFse/tEJWw
+ARC-Seal: i=1; a=rsa-sha256; t=1526282394; cv=none;
         d=google.com; s=arc-20160816;
-        b=ATt79FuF+Jjvvootmbed9ysIatVitGYFgCYq9ha9TteobeGlprgtBQGPkp9wMH39CY
-         JBfsBhxG4W1tDZYUa+vG3/50Hl328zkOLEOOkqEVQdnji1vkf4lNAcD+qMPrs422ryJ5
-         PHR958p89kt91qE9EcgekQD+qpGK4lFMMvsW54MQiVH9NfENY/Ns3SQpmGQJnkJc6Fhh
-         cRM39bH8NKpDs7MBYoSkobkNHQ9sJu2QQxnR1Uv1H0S1w0WwZOO2QMMkdlikRZXxXvs8
-         LVJDlalWufa1JdCEtOOw/cBE9mpJu+SyB1bm6FdeLpI5t9LmvVeolM/sKE+CbKv8a+U+
-         CQgw==
+        b=gdptvC1R8KhfJRP8f9W7qNjtGjfpCxpre7nlJ6GHInVQGFP5k1mFF1DcUkeEWceP/P
+         CgC4EmxF/aCp1e5LZzWdc0SnUaj84Rkl+m3EqL5BNYNSOJ1rnbzNY7dz5QbyvVQmT/Yg
+         qVkkzsNX/K18s+lJbaXP5qMq1c7n7HW/JOPnQUWoIzGemmpx7+a342q0bJ/RCZkGgxOY
+         uZWhJuGMQhREsdE8n3aM4tceRRjy9CEtgEUSy5eibdj1Faf3VQ9ED8HPc6oLIfHxYiX1
+         wM6E8tjl74Z+hYSRMNvyV7E6bx9d+Ivk39uHf25SO6cssPz40RAUOI+hUvlB8DpyMD9r
+         dFTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=a6KI1gIF8jCOpzGNI/YP1UohhiE3JD+xSvwwip8hxxg=;
-        b=FuU77av345Z7RmRznZadH3A33fUIlJuZdCJiRaTXpRU8hBGnJwLSFWInGwZ6EopDTw
-         pxFywscS7h6DvTcLbIEO7M9mdYRSBeSFe3P33JbFZFvGeGNLkvGPExkRPQz+CBJ4/IH0
-         lCy1baWHI6aQft+0UiygHCGk4eBtGLOzrgyV6tP24xO6ANcILJ7SGr5AsCd5DFIjMfoj
-         FIKEyj5l16DnIMOsBy02ekRgVW40NY/PQL64OOdflMLSdcjW/Hw4HufKHj2DkOEweLUC
-         tEDp2fi8P4wEJnMMlmc5DTX9dGpTtsqIIRHiRrsiJ7b4m1ddBuwH2wxZYaoRTS9CjJWc
-         B7rQ==
+        bh=CYSUTY3n79BkXQIU5fgnF17V6I8HyKMnIjucrd+0kig=;
+        b=p5fQhrjhY4UM1sSh39MVrGUdUn3eiC5pSv3sk2wEjI1MwYzb/IjOw6/n+76R+lubwc
+         LEUYPvulbhV47uE4Z1JGMuJSFwE+0+uyolwxCBJRzHgezcIU2CQMZwce+vLfehJuUpIN
+         jsMKggW7vCV9sKA2LuMWZWsBoekvY9v6Bl/OrdqE2bbqGAvoJkGbwDr8kh4CFrjqvz3A
+         rpWKfbDHeWIldT9WVA64LhV4OtUHs58FPdU6gt70sKSzdqo5ypMGSreQmfjSbxQyK25T
+         RZNFOKctBnc6/O57UgpKr2jaWFIYvQ9c4oLfYslVXeQGTbEgmY8nlj70RI8d3/c0s7p+
+         X8MQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=vFYZ3Lmp;
+       dkim=pass header.i=@kernel.org header.s=default header.b=QGTru99h;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=vFYZ3Lmp;
+       dkim=pass header.i=@kernel.org header.s=default header.b=QGTru99h;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -38,9 +38,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Vince Weaver <vincent.weaver@maine.edu>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.16 72/72] perf/x86: Fix possible Spectre-v1 indexing for x86_pmu::event_map()
-Date: Mon, 14 May 2018 08:49:29 +0200
-Message-Id: <20180514064828.121897585@linuxfoundation.org>
+Subject: [PATCH 4.16 71/72] perf/core: Fix possible Spectre-v1 indexing for ->aux_pages[]
+Date: Mon, 14 May 2018 08:49:28 +0200
+Message-Id: <20180514064828.057552342@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -50,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600422464525970940?=
-X-GMAIL-MSGID: =?utf-8?q?1600423090479059529?=
+X-GMAIL-THRID: =?utf-8?q?1600422462427122236?=
+X-GMAIL-MSGID: =?utf-8?q?1600423088113803226?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,17 +61,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-commit 46b1b577229a091b137831becaa0fae8690ee15a upstream.
+commit 4411ec1d1993e8dbff2898390e3fed280d88e446 upstream.
 
-> arch/x86/events/intel/cstate.c:307 cstate_pmu_event_init() warn: potential spectre issue 'pkg_msr' (local cap)
-> arch/x86/events/intel/core.c:337 intel_pmu_event_map() warn: potential spectre issue 'intel_perfmon_event_map'
-> arch/x86/events/intel/knc.c:122 knc_pmu_event_map() warn: potential spectre issue 'knc_perfmon_event_map'
-> arch/x86/events/intel/p4.c:722 p4_pmu_event_map() warn: potential spectre issue 'p4_general_events'
-> arch/x86/events/intel/p6.c:116 p6_pmu_event_map() warn: potential spectre issue 'p6_perfmon_event_map'
-> arch/x86/events/amd/core.c:132 amd_pmu_event_map() warn: potential spectre issue 'amd_perfmon_event_map'
+> kernel/events/ring_buffer.c:871 perf_mmap_to_page() warn: potential spectre issue 'rb->aux_pages'
 
-Userspace controls @attr, sanitize @attr->config before passing it on
-to x86_pmu::event_map().
+Userspace controls @pgoff through the fault address. Sanitize the
+array index before doing the array dereference.
 
 Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -88,25 +83,29 @@ Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/core.c |    3 +++
- 1 file changed, 3 insertions(+)
+ kernel/events/ring_buffer.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -27,6 +27,7 @@
- #include <linux/cpu.h>
- #include <linux/bitops.h>
- #include <linux/device.h>
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -14,6 +14,7 @@
+ #include <linux/slab.h>
+ #include <linux/circ_buf.h>
+ #include <linux/poll.h>
 +#include <linux/nospec.h>
  
- #include <asm/apic.h>
- #include <asm/stacktrace.h>
-@@ -424,6 +425,8 @@ int x86_setup_perfctr(struct perf_event
- 	if (attr->config >= x86_pmu.max_events)
- 		return -EINVAL;
+ #include "internal.h"
  
-+	attr->config = array_index_nospec((unsigned long)attr->config, x86_pmu.max_events);
-+
- 	/*
- 	 * The generic map:
- 	 */
+@@ -867,8 +868,10 @@ perf_mmap_to_page(struct ring_buffer *rb
+ 			return NULL;
+ 
+ 		/* AUX space */
+-		if (pgoff >= rb->aux_pgoff)
+-			return virt_to_page(rb->aux_pages[pgoff - rb->aux_pgoff]);
++		if (pgoff >= rb->aux_pgoff) {
++			int aux_pgoff = array_index_nospec(pgoff - rb->aux_pgoff, rb->aux_nr_pages);
++			return virt_to_page(rb->aux_pages[aux_pgoff]);
++		}
+ 	}
+ 
+ 	return __perf_mmap_to_page(rb, pgoff);
