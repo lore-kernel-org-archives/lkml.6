@@ -1,84 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754217AbeENHIF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:08:05 -0400
-Received: from mail-io0-f170.google.com ([209.85.223.170]:45326 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753913AbeENHHu (ORCPT
+        id S932084AbeENHIn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:08:43 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53467 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753656AbeENG64 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:07:50 -0400
-X-Google-Smtp-Source: AB8JxZr8VkgIgE2/MxoKJnj8FLyUFVlBdqdMACIL0NpLtHw6/F71FAl7F8S6C3vNxYsOD4ScVC6ODsrnAHtCf8CdVRc=
+        Mon, 14 May 2018 02:58:56 -0400
+X-Google-Smtp-Source: AB8JxZpDloHEAq6TZVKBZXOQI8tg79Z8CLlZJd9sZ/In5U92tw7MqjF1B8wo2X2m5wSyuo5Mq+6J2Q==
+Date: Mon, 14 May 2018 08:58:52 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] efi/x86: Clean up the eboot code a bit
+Message-ID: <20180514065852.GE16596@gmail.com>
+References: <20180504060003.19618-1-ard.biesheuvel@linaro.org>
+ <20180504060003.19618-16-ard.biesheuvel@linaro.org>
+ <20180514064323.GB16596@gmail.com>
+ <CAKv+Gu-v-dw28pjo_8of_dNR7mEMK3ngDUksFYUTWwro14PFfw@mail.gmail.com>
 MIME-Version: 1.0
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Mon, 14 May 2018 12:37:49 +0530
-Message-ID: <CAMty3ZCNyuEwmLGdDZLM_9qKJ2NsT33rodug7ZpKAE-OHymVEg@mail.gmail.com>
-Subject: Allwinner A64: Issue on external rtc clock to wifi chip
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu-v-dw28pjo_8of_dNR7mEMK3ngDUksFYUTWwro14PFfw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime and All,
 
-We are trying to bring-up AP6330 Wifi chip for A64 board. We noticed
-to have an external rtc clock has driven from wifi chip.
+* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
 
-So the devicetree is configured according to this as below.
+> On 14 May 2018 at 08:43, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > So I looked at arch/x86/boot/compressed/eboot.c to improve a printk message and
+> > ended up with the cleanups below.
+> >
+> > Only build tested.
+> >
+> > Thanks,
+> >
+> >         Ingo
+> >
+> > =================>
+> > Subject: efi/x86: Clean up the eboot code
+> > From: Ingo Molnar <mingo@kernel.org>
+> > Date: Mon May 14 08:33:40 CEST 2018
+> >
+> > Various small cleanups:
+> >
+> >  - Standardize printk messages:
+> >
+> >      'alloc' => 'allocate'
+> >      'mem'   => 'memory'
+> >
+> >    also put variable names in printk messages between quotes.
+> >
+> >  - Align mass-assignments vertically for better readability
+> >
+> >  - Break multi-line function prototypes at the name where possible,
+> >    not in the middle of the parameter list
+> >
+> >  - Use a newline before return statements consistently.
+> >
+> >  - Use curly braces in a balanced fashion.
+> >
+> >  - Remove stray newlines.
+> >
+> > No change in functionality.
+> >
+> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: Matt Fleming <matt@codeblueprint.co.uk>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: linux-efi@vger.kernel.org
+> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> 
+> Thanks Ingo
+> 
+> Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-/ {
-        wifi_pwrseq: wifi-pwrseq {
-                compatible = "mmc-pwrseq-simple";
-                clocks = <&rtc 1>;
-                clock-names = "ext_clock";
-                reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
-                post-power-on-delay-ms = <400>;
-        };
-};
+Thanks - mind picking it up into your tree? I only did minimal testing and don't 
+want to interfere with your patch flow either.
 
-&rtc {
-        clock-output-names = "rtc-osc32k", "rtc-osc32k-out";
-        clocks = <&osc32k>;
-        #clock-cells = <1>;
-};
+Thanks,
 
-&mmc1 {
-        pinctrl-names = "default";
-        pinctrl-0 = <&mmc1_pins>;
-        vmmc-supply = <&reg_dcdc1>;
-        vqmmc-supply = <&reg_eldo1>;
-        mmc-pwrseq = <&wifi_pwrseq>;
-        bus-width = <4>;
-        non-removable;
-        status = "okay";
-
-        brcmf: wifi@1 {
-                reg = <1>;
-                compatible = "brcm,bcm4329-fmac";
-                interrupt-parent = <&r_pio>;
-                interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>;  /* WL-WAKE-AP: PL3 */
-                interrupt-names = "host-wake";
-        };
-};
-
-And observed rtc-osc32k-out clock is never enabled[1] and the value of
-LOSC_OUT_GATING is 0x0 which eventually not enabling
-LOSC_OUT_GATING_EN
-
-Pls. let us know if we miss anything here?
-
-[1] https://paste.ubuntu.com/p/X2By4q8kD2/
-
-Jagan.
-
--- 
-Jagan Teki
-Senior Linux Kernel Engineer | Amarula Solutions
-U-Boot, Linux | Upstream Maintainer
-Hyderabad, India.
+	Ingo
