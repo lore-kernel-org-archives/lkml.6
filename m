@@ -1,10 +1,10 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-402196-1526281452-2-505331789603812539
+X-Cyrus-Session-Id: sloti22d1t05-402196-1526281440-2-7912114120528287829
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='UTF-8'
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526281451; b=UFl0tLIW3BLdaChufTe+zDWxJimbq6nxJByMYPg2UdJ3f5YLfB
-    ISzKRoXHsYQZXblHVocLp+ahhrzRxxi/KFZDdxWx2fo+n4+HeIxu4A5q5k5RXTEC
-    zxuYmkKa2mhElD7QndMw6kUmaILh3FBSTyoNKKxLn3vr6eZHTZFzt72LLP1N9ias
-    OTAckyn6vLOx1Y9hx+nlpzKVNsvmWElcxCnzkLWpT/+oNwmwpVBgkVhbzzZ+zBGN
-    mW+AqEuimKvnZR6ZVIvDN4xYE4nWR0pSftU0OWbBjgaCCLmrSbG5V+mXf2Mt7b/m
-    ggQ9JesCIUz1eTmv2wO/c84SERhLZAmjgxpg==
+    1526281440; b=iNe1gwCy+QLS0jKPZXRqls9N+litPbuECUNrEGeqlLk2QSjQU3
+    Xdpcx1C5n9y+xB8+iOV+CMTH/z5SToWI5xAUzAqeV2yh00nLRQ3KkYawUbhkuh7s
+    tu/Si0zh9L7nhWohrLtPx+QNuJmlUD/cPeNFWQwkmKBeoMZ6Pg1LDbrv9u90mIMN
+    sAg8QpxarktthmcJ4ATVxTL7RUSbdfTu9NQvPTznuSPtOL5wBwSJfxpS9bOA9Yif
+    fPZmNVIm8u9Y7+qtP12K3qHe4y1fzusOsUk00kBhVc+fEbbyh7a23HK3ZC+HkNAQ
+    LPxp0GJTPCZlv8gYPwjZbkpueBpD9lJSWToQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526281451; bh=bRInLx8sFU2DQlsKDPpNw69CfJhTuF
-    gkmuwwgOOiPng=; b=k8NjMnoqth/M/LoirvJtJ8A+6CHBaJlDJh9+bgIuPAwPvi
-    Y/86x3DT+eC71gnqIOUq5z6R9NwZ70hty+fwd/ch48lwtgUjagCjVCSc0bgAGclA
-    tVteW6mnwBpaORiscUkbtlZh0YmfplAPVTO1OfW6bEByPc+1u9mx7RCBz8gJ+ZpA
-    0FuFIUMcM6VEYMaR8oQhtv5U1TqVvep3NuzglQmmKpu3dnodfSY31pp9E1GowN7F
-    eGP/8sSpAGfOkYB8uzHxFfTGtB0qvWgKZfmljyhW1gi+K1flE0t4GYUBbLFc9dFx
-    OG/x6qnjzxV/5NBKZXnyV2z438FFwIJ4cT8yiWLA==
+    :list-id; s=fm2; t=1526281440; bh=6BcRXT7Ky3bg04kHtjFMcCN36jEHPT
+    LchPKmDHgtnok=; b=IeAKUkVhvG2fwzEIRrTFykElPUHm/8LQyftUpyEYsG7u9V
+    yjx6+hi/QDxjcjPPHdqKmZMjOqbUDRHQVkgDY+OavwzIYiNfeNQv0JUmm2v9c78Q
+    k/GQSP7ah/kUHj8gCKDSlBJioMIFcIJi5WmqF6xWw48tWpWwTy0xfbobkeCerrzG
+    X7WamOHNig2rhRPnHYGtiKsNKYajnMnmahmjq5/DA6bCeg/+3Q0i3ugeMz7MNCES
+    HL5qereIzpUK/PdDqv1z5+nahSYxqC7d8I7Ob+I5j1z9NAjVpB5Fo4RUL8+WCfP5
+    GVZoaOu8Ne5a+9OD4+K1gfNPDt5k5HBJ7YQjHWEQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=QNBVg874 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=2GPwfu+S x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -48,7 +48,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=QNBVg874 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=2GPwfu+S x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,31 +64,32 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHowE6aQWwtApKRJhiYBJbxbevlQkAk9JwD4C5qow31co32I8VC5oZHh2mqMkrSnJyOTV5hoWUGAr+j5tsiTtXf6zQZGz5U3Qdlaajhfu/w/uDIzMmea
-    J5JCG8lx/1qUAwEUCmfL5gjJNXCwvLceJxW+6XnIoxJSagWER7tpFYYfExIVvjj+4pNYhET/Qp7hvitkiNxSnPZOAFCneW2GfEiPns4f/dq8zXH76B7AwDIo
+X-CM-Envelope: MS4wfEQHR/0VW3uqXqnSzKSi5zwW477aqW/ZGcJIbzlYoqM9+VGg0ufcCL6UWlM3/t95xnHCIexOdCcbm3/e0u5c2XHzs9dJ5x+QeCyAa9Ne0mHEPUvU8+Ox
+    3tqA1fkSlMVftf/vJJ8s0Cbu6WaLLQJwqSDTK1XbrC7Lkb2SWzWVa09nRlVlJBd93/rjnPZ9Y070hhy4JCTuIcM41Cwvs08jjF+4+rWQXAlB8AuNkfsboCO/
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
     a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=Dei6p5SHAAAA:8 a=ag1SF4gXAAAA:8
-    a=o-gZSQgVR2yriO6fCZ4A:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=M-Yerj1wOn-OpK7r_3ei:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=wZEJlFEmUFyI5RccdPIA:9 a=mEtu9yAtk2m4jspc:21 a=gIK4B3dAEqZ1CeIe:21
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=M-Yerj1wOn-OpK7r_3ei:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932126AbeENHAL (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 03:00:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37026 "EHLO mail.kernel.org"
+        id S1754000AbeENHAS (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 03:00:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753673AbeENHAI (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 03:00:08 -0400
+        id S1754121AbeENHAO (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 14 May 2018 03:00:14 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Jeremy Cline <jcline@redhat.com>,
         Hans de Goede <hdegoede@redhat.com>,
         Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.16 56/72] Revert "Bluetooth: btusb: Fix quirk for Atheros 1525/QCA6174"
-Date: Mon, 14 May 2018 08:49:13 +0200
-Message-Id: <20180514064826.910066392@linuxfoundation.org>
+Subject: [PATCH 4.16 58/72] Bluetooth: btusb: Only check needs_reset_resume DMI table for QCA rome chipsets
+Date: Mon, 14 May 2018 08:49:15 +0200
+Message-Id: <20180514064827.064934511@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -108,40 +109,62 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Hans de Goede <hdegoede@redhat.com>
 
-commit 544a591668813583021474fa5c7ff4942244d654 upstream.
+commit fc54910280eb38bde923cdf0898e74687d8e6989 upstream.
 
-Commit f44cb4b19ed4 ("Bluetooth: btusb: Fix quirk for Atheros
-1525/QCA6174") is causing bluetooth to no longer work for several
-people, see: https://bugzilla.redhat.com/show_bug.cgi?id=1568911
+Jeremy Cline correctly points out in rhbz#1514836 that a device where the
+QCA rome chipset needs the USB_QUIRK_RESET_RESUME quirk, may also ship
+with a different wifi/bt chipset in some configurations.
 
-So lets revert it for now and try to find another solution for
-devices which need the modified quirk.
+If that is the case then we are needlessly penalizing those other chipsets
+with a reset-resume quirk, typically causing 0.4W extra power use because
+this disables runtime-pm.
 
+This commit moves the DMI table check to a btusb_check_needs_reset_resume()
+helper (so that we can easily also call it for other chipsets) and calls
+this new helper only for QCA_ROME chipsets for now.
+
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1514836
 Cc: stable@vger.kernel.org
-Cc: Takashi Iwai <tiwai@suse.de>
+Cc: Jeremy Cline <jcline@redhat.com>
+Suggested-by: Jeremy Cline <jcline@redhat.com>
 Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/bluetooth/btusb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bluetooth/btusb.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
 --- a/drivers/bluetooth/btusb.c
 +++ b/drivers/bluetooth/btusb.c
-@@ -231,6 +231,7 @@ static const struct usb_device_id blackl
- 	{ USB_DEVICE(0x0930, 0x0227), .driver_info = BTUSB_ATH3012 },
- 	{ USB_DEVICE(0x0b05, 0x17d0), .driver_info = BTUSB_ATH3012 },
- 	{ USB_DEVICE(0x0cf3, 0x0036), .driver_info = BTUSB_ATH3012 },
-+	{ USB_DEVICE(0x0cf3, 0x3004), .driver_info = BTUSB_ATH3012 },
- 	{ USB_DEVICE(0x0cf3, 0x3008), .driver_info = BTUSB_ATH3012 },
- 	{ USB_DEVICE(0x0cf3, 0x311d), .driver_info = BTUSB_ATH3012 },
- 	{ USB_DEVICE(0x0cf3, 0x311e), .driver_info = BTUSB_ATH3012 },
-@@ -263,7 +264,6 @@ static const struct usb_device_id blackl
- 	{ USB_DEVICE(0x0489, 0xe03c), .driver_info = BTUSB_ATH3012 },
+@@ -2846,6 +2846,12 @@ static int btusb_config_oob_wake(struct
+ }
+ #endif
  
- 	/* QCA ROME chipset */
--	{ USB_DEVICE(0x0cf3, 0x3004), .driver_info = BTUSB_QCA_ROME },
- 	{ USB_DEVICE(0x0cf3, 0xe007), .driver_info = BTUSB_QCA_ROME },
- 	{ USB_DEVICE(0x0cf3, 0xe009), .driver_info = BTUSB_QCA_ROME },
- 	{ USB_DEVICE(0x0cf3, 0xe010), .driver_info = BTUSB_QCA_ROME },
++static void btusb_check_needs_reset_resume(struct usb_interface *intf)
++{
++	if (dmi_check_system(btusb_needs_reset_resume_table))
++		interface_to_usbdev(intf)->quirks |= USB_QUIRK_RESET_RESUME;
++}
++
+ static int btusb_probe(struct usb_interface *intf,
+ 		       const struct usb_device_id *id)
+ {
+@@ -2968,9 +2974,6 @@ static int btusb_probe(struct usb_interf
+ 	hdev->send   = btusb_send_frame;
+ 	hdev->notify = btusb_notify;
+ 
+-	if (dmi_check_system(btusb_needs_reset_resume_table))
+-		interface_to_usbdev(intf)->quirks |= USB_QUIRK_RESET_RESUME;
+-
+ #ifdef CONFIG_PM
+ 	err = btusb_config_oob_wake(hdev);
+ 	if (err)
+@@ -3109,6 +3112,7 @@ static int btusb_probe(struct usb_interf
+ 			hdev->setup = btusb_setup_csr;
+ 
+ 		set_bit(HCI_QUIRK_SIMULTANEOUS_DISCOVERY, &hdev->quirks);
++		btusb_check_needs_reset_resume(intf);
+ 	}
+ 
+ 	if (id->driver_info & BTUSB_SNIFFER) {
