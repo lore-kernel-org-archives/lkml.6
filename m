@@ -1,83 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932171AbeENNLl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 09:11:41 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:39640 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753270AbeENNLi (ORCPT
+        id S1753676AbeENNLo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 09:11:44 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43271 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753270AbeENNLl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 09:11:38 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: David Miller <davem@davemloft.net>
-Cc: rahul.lakkireddy@chelsio.com, netdev@vger.kernel.org,
-        kexec@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        stephen@networkplumber.org, akpm@linux-foundation.org,
-        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
-        nirranjan@chelsio.com, indranil@chelsio.com
-References: <cover.1525253481.git.rahul.lakkireddy@chelsio.com>
-        <20180513.201131.1649805811466916646.davem@davemloft.net>
-Date: Mon, 14 May 2018 08:11:24 -0500
-In-Reply-To: <20180513.201131.1649805811466916646.davem@davemloft.net> (David
-        Miller's message of "Sun, 13 May 2018 20:11:31 -0400 (EDT)")
-Message-ID: <87a7t2mlfn.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fIDGJ-0003e1-CA;;;mid=<87a7t2mlfn.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.90.247.198;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19Q6dDyJAP4aZhN9lyB6Kpn1tjXjoTW7Jo=
-X-SA-Exim-Connect-IP: 97.90.247.198
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4672]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;David Miller <davem@davemloft.net>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1057 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 2.9 (0.3%), b_tie_ro: 1.93 (0.2%), parse: 1.17 (0.1%),
-        extract_message_metadata: 29 (2.7%), get_uri_detail_list: 1.47 (0.1%),
-        tests_pri_-1000: 12 (1.1%), tests_pri_-950: 2.0 (0.2%), tests_pri_-900: 1.65
-        (0.2%), tests_pri_-400: 31 (2.9%), check_bayes: 29 (2.7%), b_tokenize: 10
-        (0.9%), b_tok_get_all: 8 (0.7%), b_comp_prob: 3.4 (0.3%), b_tok_touch_all:
-        3.5 (0.3%), b_finish: 2.3 (0.2%), tests_pri_0: 308 (29.2%),
-        check_dkim_signature: 0.84 (0.1%), check_dkim_adsp: 4.5 (0.4%),
-        tests_pri_500: 664 (62.9%), poll_dns_idle: 656 (62.0%), rewrite_mail: 0.00
-        (0.0%)
-Subject: Re: [PATCH net-next v8 0/3] kernel: add support to collect hardware logs in crash recovery kernel
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Mon, 14 May 2018 09:11:41 -0400
+Message-ID: <1526303498.3494.11.camel@pengutronix.de>
+Subject: Re: Delivery Status Notification (Failure)
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Pintu Kumar <pintu.ping@gmail.com>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kernelnewbies@kernelnewbies.org
+Date: Mon, 14 May 2018 15:11:38 +0200
+In-Reply-To: <CAOuPNLiFr3qbNVAwF4wj2aAG0UXRVsgRo-8JfaKFCsoL+Ggk9w@mail.gmail.com>
+References: <CAOuPNLjqJVsPOVPCnswtFyXudAJ88_F0QVUq-Z6qWE=UpH0mBA@mail.gmail.com>
+         <5af57fea.1c69fb81.885f0.2377.GMRIR@mx.google.com>
+         <CAOuPNLgbT59h=Jm5YiOCbrqFkDokJ8xutQ_OkpsFYzKazKhTHg@mail.gmail.com>
+         <20180511123915.GC16141@n2100.armlinux.org.uk>
+         <f6f7b18644136323f4485d6123b330d0dde207a4.camel@pengutronix.de>
+         <CAOuPNLgRHCasmsXTVwcy5ohq8TYjbr4MThxm4Q-HFWihJ7ARww@mail.gmail.com>
+         <CAOuPNLiFr3qbNVAwF4wj2aAG0UXRVsgRo-8JfaKFCsoL+Ggk9w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Miller <davem@davemloft.net> writes:
+Am Montag, den 14.05.2018, 17:42 +0530 schrieb Pintu Kumar:
+> Hi,
+> 
+> Is there any work around possible to set IRQ affinity for some GPIO
+> interrupt ?
+> How to avoid CPU0 to receive the current GPIO interrupt ?
+> How do we assign GPIO interrupts to any CPU other than CPU0 ?
+> Is it possible to isolate CPU0 for a sometime, from my GPIO driver so
+> that GPIO interrupt can be served by another CPU ?
+> 
+> Need your inputs to decide whether it is still possible to set
+> affinity for GPIO interrupt, or its impossible ?
 
-> I'm deferring this patch series.
->
-> If we can't get a reasonable review from an interested party in 10+
-> days, that is not reasonable.
->
-> Resubmit this once someone reviews it properly.
+This is not possible. The GPIO IRQs are aggregated into one GPC/GIC IRQ
+line per GPIO bank, so it is not possible to change affinity of a
+single GPIO interrupt to another CPU. Best we could do is change the
+affinity of the whole bank, but given the limited usefulness of
+something like that, nobody bothered to implement such a thing.
 
-David I am out on vacation this week and last (the reason for the delay).
+Regards,
+Lucas
 
-The last version of this that I looked at I gave my ack.  All of my ABI
-concerns had been addressed. The only outstanding change I believe was
-the Eric Dumazet's asking about something being reviewed.
-
-I just glanced over it again and I don't see any new issues introduced
-by the last round of changes.
-
->From 10,000 feet flyover design perspectie and from an ABI perspective
-this patchset seems fine.
-
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-
-Eric
+> 
+> 
+> On Fri, May 11, 2018 at 8:07 PM, Pintu Kumar <pintu.ping@gmail.com>
+> wrote:
+> > On Fri, May 11, 2018 at 6:34 PM, Lucas Stach <l.stach@pengutronix.d
+> > e> wrote:
+> > > Am Freitag, den 11.05.2018, 13:39 +0100 schrieb Russell King -
+> > > ARM Linux:
+> > > > On Fri, May 11, 2018 at 05:07:37PM +0530, Pintu Kumar wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > I need one help.
+> > > > > I am using i.MX7 Sabre board with kernel version 4.1.15
+> > > > > 
+> > > > > Let's say I am interested in GPIO number: 21
+> > > > > I wanted to set CPU affinity for particular GPIO->IRQ number,
+> > > > > so I
+> > > > > tried the below steps:
+> > > > > root@10:~# echo 21 > /sys/class/gpio/export
+> > > > > root@10:~# echo "rising" > /sys/class/gpio/gpio21/edge
+> > > > > root@10:~# cat /proc/interrupts | grep 21
+> > > > >   47: 0 0 gpio-mxc 21 Edge gpiolib
+> > > > > root@10:~# cat /sys/class/gpio/gpio21/direction
+> > > > > in
+> > > > > root@10:~# cat /proc/irq/47/smp_affinity
+> > > > > 3
+> > > > > root@10:~# echo 2 > /proc/irq/47/smp_affinity
+> > > > > -bash: echo: write error: Input/output error
+> > > > > 
+> > > > > But I get input/output error.
+> > > > > When I debug further, found that irq_can_set_affinity is
+> > > > > returning 0:
+> > > > > [    0.000000] genirq: irq_can_set_affinity (0): balance: 1,
+> > > > > irq_data.chip: a81b7e48, irq_set_affinity:   (null)
+> > > > > [    0.000000] write_irq_affinity: FAIL
+> > > > > 
+> > > > > I also tried first setting /proc/irq/default_smp_affinity to
+> > > > > 2 (from 3).
+> > > > > This change is working, but the smp_affinity setting for the
+> > > > > new IRQ
+> > > > > is not working.
+> > > > > 
+> > > > > When I try to set smp_affinity for mmc0, then it works.
+> > > > > # cat /proc/interrupts | grep mmc
+> > > > > 295:         55          0     GPCV2  22 Edge      mmc0
+> > > > > 296:          0          0     GPCV2  23 Edge      mmc1
+> > > > > 297:         52          0     GPCV2  24 Edge      mmc2
+> > > > > 
+> > > > > root@10:~# echo 2 > /proc/irq/295/smp_affinity
+> > > > > root@10:~#
+> > > > > 
+> > > > > 
+> > > > > So, I wanted to know what are the conditions for which
+> > > > > setting
+> > > > > smp_affinity for an IRQ will work ?
+> > > > > 
+> > > > > Is there any way by which I can set CPU affinity to a GPIO ->
+> > > > > IRQ ?
+> > > > > Whether, irq_set_affinity_hint() will work in this case ?
+> > > > 
+> > > > IRQ affinity is only supported where interrupts are _directly_
+> > > > wired to
+> > > > the GIC.  It's the GIC which does the interrupt steering to the
+> > > > CPU
+> > > > cores.
+> > > > 
+> > > > Interrupts on downstream interrupt controllers (such as GPCV2)
+> > > > have no
+> > > > ability to be directed independently to other CPUs - the only
+> > > > possible
+> > > > way to change the mapping is to move _all_ interrupts on that
+> > > > controller,
+> > > > and any downstream chained interrupts at GIC level.
+> > > > 
+> > > > Hence why Interrupt 295 has no irq_set_affinity function: there
+> > > > is no way
+> > > > for the interrupt controller itself to change the affinity of
+> > > > the input
+> > > > interrupt.
+> > > 
+> > > The GPCv2 though is a secondary IRQ controller which has a 1:1
+> > > mapping
+> > > of its input IRQs to the upstream GIC IRQ lines. Affinity can
+> > > thus be
+> > > handled by forwarding the request to the GIC by
+> > > irq_chip_set_affinity_parent().
+> > > 
+> > > As this is handled correctly in the upstream kernel since the
+> > > first
+> > > commit introducing support for the GPCv2, it seems the issue is
+> > > only
+> > > present in some downstream kernel.
+> > > 
+> > 
+> > OK. Thanks so much for your reply.
+> > 
+> > I saw some of the drivers using irq_set_affinity_hint() to force
+> > the
+> > IRQ affinity to a particular CPU.
+> > This is the sample:
+> > {
+> > cpumask_clear(mask);
+> > cpumask_set_cpu(cpu, mask);
+> > irq_set_affinity_hint(irq, mask);
+> > }
+> > 
+> > Whether this logic will work for a particular GPIO pin ?
+> > 
+> > 
+> > > Regards,
+> > > Lucas
