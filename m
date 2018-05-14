@@ -1,5 +1,5 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1429261-1526333161-2-13253476082990313620
+X-Cyrus-Session-Id: sloti22d1t05-1429261-1526333157-2-9603804168794300783
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
@@ -15,27 +15,27 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526333160; b=LHt6OndHLR04fBaGesCBoA21ltDnCEKkeu7VzsrHe1ZUtce+Ha
-    LaxIADOw3/vXvgApuU60rshmzJ6rbe1FVZXt9zSdu8xuV9COKxSLEut+oszWnq0u
-    7jvxdnqPgNHA6wbny8QrTb/ad94SEygR02iuo6GBkHJgI4Lw2MzFibd5fHW4NF/N
-    CCUqo0FLtdAFYfLm8IV94Xn5I9LFIqpf57E+eZ/OWexidxUZ61ifdMOkVAYRzKat
-    YTNm7vDCorCyKRrLYXAo9k36a6f2jfZEH9GrvLozVqyVG/c3rqih9yD9glrh7xTU
-    yBUFNr8E+HoKlLcviT92fUY7S4S5NJg0pRNQ==
+    1526333156; b=STY9Ap4Mlk/WCUweJpCHNgY5jj1n3EJg/+WQ0TqoQ9ostZh73d
+    Nd1n8fW/foSunrjhXobk3q0S5GIx5TAoDCnWGuDBqxJADtVbm/wwJ3lk04jcZhQZ
+    4VGAzP8LXQJn9nVHvNSmJ0wsJPdyYJekJ2829bWukbSqmvoGv+ohyc3ZmMPpPfcX
+    gbwZTnio7SrbUtKc3Ue4hO4jp6t8wLimh7ABxrJA9yvvzcVnt7g1dR+PHeUUxTKW
+    7SB5yQkycleHNPvOnFnCriQtz883FrP3j2lrvUPIAevma9i2wu14WP6b4lYokBAD
+    lbkMd6aS7dfcWdL/GPNpVMgvLDTiNk1PPglQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526333160; bh=V7emw
-    7n9K+dDiEWXjWjQM4At/kCtheFClYYUGOs4rIw=; b=ly+cfGwVy98AXBacxbtji
-    WbNVqlhKmAE0Sn5d77+aYLR+UfVtP85Zgn7/wglwF3svniTaTNBWYeWHcoW8h7GA
-    fY7y/kEJQ3u2+fMIf9WfWl8NdQ/ohvNhotiMl3nZbfiS5GpnJk2JxDrTpre8tLT/
-    PcO+EydHVhtXaUjpMOCAHRm8OaqHvC7ZAEQM/PJ/u9qd3fvyIekGoZ1Twm6BU6Xy
-    R/iIXh11GirHx69p7RWiGyAuwcPW3XVhprI0itHBgC7fW2CynOvWe9/DGIfUTki5
-    pXSA+ABlKEHvoTyDddH1WKLOdIX6V7iZUazgxaxY5tCISB/Z/Bt9/Z6Rvaxn0SMf
+    :content-transfer-encoding:sender; s=fm2; t=1526333156; bh=f+wsP
+    ZyWSgtLmmXv5poe0WJyAjEfQ8/1NvfYq+r8l0c=; b=TL61viOuRRUnQ2hKufDfC
+    Z//f+jXzwTkkEjyF3pV76GrIEJjZqMoNBhi2JIMHbWlR/bCMralDq/MrHfV/V8Ii
+    WIYOcRatK+kRFJDV5GQJekr7P7kVktUovokl91l8KAgfw+AqGw6WVb+rFVuo6Z2/
+    4nmMMmH/9p+2zuT09hOlUNp9FGbubljnY6H7EL/NPsKsPqBNsPcs1viFfG+XzAuR
+    UaWfuKnSDIbxPdpVGp3Nrwux6iyjazdUXDpni3cLcz+WTVVKUHB3N+SZ+tWNB+Yi
+    Cvl12SNUCpov6Y6Qul1lbQnnurtTCTXY9Zl2hR3f6m8zOCaCuhNX7bl+vj2iOrUi
     g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=UsQIe3m0 x-bits=2048
+    header.d=gmail.com header.i=@gmail.com header.b=jt3M7spI x-bits=2048
     x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
@@ -44,7 +44,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=discussion score=0;
     x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=F394+Auu;
+    header.d=1e100.net header.i=@1e100.net header.b=QAB0EkI0;
     x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
@@ -52,10 +52,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=UsQIe3m0 x-bits=2048
+      header.d=gmail.com header.i=@gmail.com header.b=jt3M7spI x-bits=2048
       x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
@@ -64,7 +64,7 @@ Authentication-Results: mx3.messagingengine.com;
     x-aligned-from=fail;
     x-cm=discussion score=0;
     x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=F394+Auu;
+      header.d=1e100.net header.i=@1e100.net header.b=QAB0EkI0;
     x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
@@ -73,24 +73,24 @@ Authentication-Results: mx3.messagingengine.com;
       bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEFNoehjxRW1k2oJRDjlB4VIo16mZ6iF2Lhm3QzI11X5QgxxYJly+3MNf3tqrYAiMgXfsI9RBBPDeQLSORHGHIKDAj1y/F86Q4BB0+knWo0SeZa6/hs7
-    RBT5StlEo27EyqhvuRsBI0fDQZm9ALJTKjP4IV/7E+T0pp6HlKoWdccWvVEGJpIEivKekLvMOKNBx5qxqP5ZS3rGfKtCi6jSKAJcqwhu5Zs7q1B+/wua87sT
-    Zt3/+QdmE9uhWpcuzdNoUA==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+X-CM-Envelope: MS4wfF4pAHYuHC6Ht0jU70C1WLIO8Ql0IEzQJzREYvLCyv6gJ+qbD1lW8LjHPl2hXDm80G/qTdYYKZU3tcu9KRfBEcD6FOWXvMjrz6QTNVeKcLri3hbF8r0W
+    5Jzr+TgwVBOTayLDXr8RisDYshxHFpCUfBthCAi8VEFpccizJTU5CcsO0TPR8MZ5Qx0AoraOhgS+jzR5XfH0JH1h6lrNeLYfDUgXndYXIca4AANNUoeA3/U+
+    bcFoESpehyrwNH17U0aEFw==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
     a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
     a=o_dtBaZDOvUA:10 a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=WITqQn567fJKR0clYb8A:9 a=CjuIK1q_8ugA:10
+    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=ndpnUl0PqxmXaaDuWOgA:9 a=CjuIK1q_8ugA:10
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AB8JxZqGN1HLbPdBQqKY9Oud/qs0W0CFSRuYCOu/rI394GRDDlmxTinoEgtsRkh8gxlNt6Aud3JaXQ==
+X-Google-Smtp-Source: AB8JxZqCDA+LSUX9JPhZKNhmN1hReyiw52RNoSTL7D+x8baF/O0lYh2CScXfJ5VXA2bHhmq7xlOQNg==
 From: John Whitmore <johnfwhitmore@gmail.com>
 To: gregkh@linuxfoundation.org
-Subject: [PATCH 16/27] drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc:
- removed blank lines before closing brace
-Date: Mon, 14 May 2018 22:24:23 +0100
-Message-Id: <20180514212434.17514-17-johnfwhitmore@gmail.com>
+Subject: [PATCH 14/27] drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc:
+ corrected block comment style
+Date: Mon, 14 May 2018 22:24:21 +0100
+Message-Id: <20180514212434.17514-15-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180514212434.17514-1-johnfwhitmore@gmail.com>
 References: <20180514212434.17514-1-johnfwhitmore@gmail.com>
@@ -116,80 +116,52 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Coding style edit to clear the checkpatch.pl check:
-CHECK: Blank lines aren't necessary before a close brace '}'
+Coding style edit to clear the checkpatch.pl warning:
+WARNING: Block comments use * on subsequent lines
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 13 -------------
- 1 file changed, 13 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index 8a15d1c6bffa..169ab97458bb 100644
+index 34d319ed5cc5..3a636807226e 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -111,8 +111,6 @@ void HTUpdateDefaultSetting(struct ieee80211_device *ieee)
- 	pHTInfo->UsbRxFwAggrPacketNum = 8;
- 	pHTInfo->UsbRxFwAggrTimeout = 16; ////usb rx FW aggregation timeout threshold.It's in units of 64us
- #endif
--
--
- }
- /********************************************************************************************************************
-  *function:  This function print out each field on HT capability IE mainly from (Beacon/ProbeRsp/AssocReq)
-@@ -148,7 +146,6 @@ void HTDebugHTCapability(u8 *CapIE, u8 *TitleString)
- 	IEEE80211_DEBUG(IEEE80211_DL_HT,  "\tMCS Rate Set = [%x][%x][%x][%x][%x]\n", pCapELE->MCS[0],\
- 				pCapELE->MCS[1], pCapELE->MCS[2], pCapELE->MCS[3], pCapELE->MCS[4]);
- 	return;
--
- }
- /********************************************************************************************************************
-  *function:  This function print out each field on HT Information IE mainly from (Beacon/ProbeRsp)
-@@ -627,7 +624,6 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
- 	//Print each field in detail. Driver should not print out this message by default
- //	HTDebugHTCapability(posHTCap, (u8*)"HTConstructCapability()");
- 	return;
--
- }
- /*******************************************************************************
-  *function:  Construct  Information Element in Beacon... if HTEnable is turned on
-@@ -746,10 +742,6 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
+@@ -721,7 +721,7 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
+ 	*posRT2RTAgg++ = 0x4c;
+ 	*posRT2RTAgg++ = 0x02;
+ 	*posRT2RTAgg++ = 0x01;
+-	*posRT2RTAgg = 0x10;//*posRT2RTAgg = 0x02;
++	*posRT2RTAgg = 0x10;    // *posRT2RTAgg = 0x02;
  
- 	posRT2RTAgg->Length = 6;
- #endif
--
--
--
--
- }
+ 	if (ieee->bSupportRemoteWakeUp)
+ 		*posRT2RTAgg |= 0x08;//RT_HT_CAP_USE_WOW;
+@@ -731,16 +731,14 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
+ #ifdef TODO
+ #if (HAL_CODE_BASE == RTL8192 && DEV_BUS_TYPE == USB_INTERFACE)
+ 	/*
+-	//Emily. If it is required to Ask Realtek AP to send AMPDU during AES mode, enable this
+-	   section of code.
+-	if(IS_UNDER_11N_AES_MODE(Adapter))
+-	{
+-		posRT2RTAgg->Octet[5] |=RT_HT_CAP_USE_AMPDU;
+-	}else
+-	{
+-		posRT2RTAgg->Octet[5] &= 0xfb;
+-	}
+-	*/
++	 * Emily. If it is required to Ask Realtek AP to send AMPDU during AES
++	 * mode, enable this section of code.
++	 *    if(IS_UNDER_11N_AES_MODE(Adapter)) {
++	 *            posRT2RTAgg->Octet[5] |=RT_HT_CAP_USE_AMPDU;
++	 *    } else {
++	 *            posRT2RTAgg->Octet[5] &= 0xfb;
++	 *    }
++	 */
  
- 
-@@ -797,7 +789,6 @@ static u8 HT_PickMCSRate(struct ieee80211_device *ieee, u8 *pOperateMCS)
- 	default:
- 
- 			break;
--
- 	}
- 
- 	return true;
-@@ -1064,9 +1055,6 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
- 	// Config current operation mode.
- 	//
- 	pHTInfo->CurrentOpMode = pPeerHTInfo->OptMode;
--
--
--
- }
- 
- void HTSetConnectBwModeCallback(struct ieee80211_device *ieee);
-@@ -1247,7 +1235,6 @@ void HTResetSelfAndSavePeerSetting(struct ieee80211_device *ieee,	struct ieee802
- 
- 		pHTInfo->IOTAction = 0;
- 	}
--
- }
- 
- void HTUpdateSelfAndPeerSetting(struct ieee80211_device *ieee,	struct ieee80211_network *pNetwork)
+ #else
+ 	// Do Nothing
 -- 
 2.16.3
 
