@@ -1,136 +1,217 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752469AbeENXqy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 19:46:54 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:37332 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752380AbeENXqv (ORCPT
+        id S1752483AbeENX5I (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 19:57:08 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56598 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752196AbeENX5G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 19:46:51 -0400
-X-Google-Smtp-Source: AB8JxZokRhLDTl7Fnzx8PNEDuOJlThBT6ndHKaOZ2J5XrgQzcjFu/yMEP4nh0QQKHAls0beSdlj3Aw==
-Subject: Re: Lack of suspend/resume/shutdown ordering between GPIO providers
- and consumers
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Joseph Lo <josephl@nvidia.com>, Doug Berger <opendmb@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-References: <dc0c15eb-3dab-f512-aed6-045528fcec2c@gmail.com>
- <CAL_JsqJ6Avm+zPRd40aUq=BWFE45xQpaOWG-8d5d8+dqJZCZaQ@mail.gmail.com>
- <20180425181435.GA200812@dtor-ws>
-From: Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- xsDiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
- xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
- X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
- AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
- ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
- SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
- nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
- qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz80nRmxvcmlhbiBG
- YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+wmYEExECACYCGyMGCwkIBwMCBBUCCAME
- FgIDAQIeAQIXgAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2DvCVAJ4u4/bPF4P3jxb4qEY8I2gS
- 6hG0gACffNWlqJ2T4wSSn+3o7CCZNd7SLSDOw00ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
- WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
- pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
- hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
- OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
- Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
- oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
- 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
- BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
- +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
- FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
- 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
- vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
- WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
- HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
- HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
- Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
- kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
- aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
- y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
- X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <299a564f-f2eb-aa5a-067e-688424b91e58@gmail.com>
-Date: Mon, 14 May 2018 16:46:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 14 May 2018 19:57:06 -0400
+Date: Mon, 14 May 2018 16:58:32 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Joe Perches <joe@perches.com>
+Cc: Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Davidlohr Bueso <dave@stgolabs.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 18/18] rcu: Use pr_fmt to prefix "rcu: " to logging output
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <cover.1525964381.git.joe@perches.com>
+ <41d9686471d67f6f98d160e5891bf61061515b6d.1525964386.git.joe@perches.com>
+ <20180514202910.GI26088@linux.vnet.ibm.com>
+ <32216d8f154b29400d4c11bae91850591114f7f8.camel@perches.com>
+ <20180514222456.GO26088@linux.vnet.ibm.com>
+ <3c7770a062355650fb61e48a5fbeb9653d98d85a.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <20180425181435.GA200812@dtor-ws>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c7770a062355650fb61e48a5fbeb9653d98d85a.camel@perches.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18051423-0048-0000-0000-0000026CF447
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009026; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032391; UDB=6.00527789; IPR=6.00811523;
+ MB=3.00021114; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 23:57:03
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051423-0049-0000-0000-0000451F5318
+Message-Id: <20180514235832.GR26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805140234
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/25/2018 11:14 AM, Dmitry Torokhov wrote:
-> On Wed, Apr 25, 2018 at 10:00:31AM -0500, Rob Herring wrote:
->> On Tue, Apr 24, 2018 at 5:58 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
->>> Hi Linus, Rafael, all
->>>
->>> Our GPIO controller driver: gpio-brcmstb.c has a shutdown callback which
->>> gets invoked when the system is brought into poweroff aka S5. So far so
->>> good, except that we also wish to use gpio_keys.c as a possible wake-up
->>> source, so we may have a number of GPIO pins declared as gpio-keys that
->>> allow the system to wake-up from deep slumber.
->>>
->>> Recently we noticed that we could easily get into a state where
->>> gpio-brcmstb.c::brcmstb_gpio_shutdown() gets called first, and then
->>> gpio_keys.c::gpio_keys_suspend() gets called later, which is too late to
->>> have the enable_irq_wake() call do anything sensible since we have
->>> suspend its parent interrupt controller before. This is completely
->>> expected unfortunately because these two drivers are both platform
->>> device instances with no connection to one another except via Device
->>> Tree and the use of the GPIOLIB APIs.
->>>
->>> First solution is to make sure that gpio-keys nodes are declared in
->>> Device Tree *before* the GPIO controller. This works because Device Tree
->>> nodes are probed in the order in which they are declared in Device Tree
->>> and that directly influences the order in which platform devices are
->>> created. Problem with that is that this is easy to miss and it may not
->>> work with overlays, kexec reconstructing DT etc. etc.
->>
->> I'm going to make of_platform_populate randomize the order it creates devices...
->>
->>> Another possible solution would be have the GPIO controller nodes have
->>> the GPIO consumers nodes such as gpio-keys, gpio-leds etc., and that
->>> would allow the Linux device driver model to create an appropriate
->>> child/parent relationship. This would unfortunately require Device Tree
->>> changes everywhere to make that consistent, and it would be a special
->>> case, because not all GPIO consumers are eligible as child nodes of
->>> their parent GPIO controller, there are plenty of other consumers that
->>> are not suitable for being moved under a parent GPIO controller node.
->>> This would also mean that we need to "probe" GPIO controller nodes to
->>> populate their child nodes (e.g: of_platform_bus_populate).
->>>
->>> I am thinking a more generic solution might involve some more complex
->>> tracking of the provider <-> consumer, but there is room for breakage.
->>
->> That's what device connections are for. It probably just needs the
->> GPIO core to create the links. (but I've not looked into it at all).
+On Mon, May 14, 2018 at 03:54:13PM -0700, Joe Perches wrote:
+> On Mon, 2018-05-14 at 15:24 -0700, Paul E. McKenney wrote:
+> > On Mon, May 14, 2018 at 02:41:59PM -0700, Joe Perches wrote:
+> > > On Mon, 2018-05-14 at 13:29 -0700, Paul E. McKenney wrote:
+> > > > On Thu, May 10, 2018 at 08:45:44AM -0700, Joe Perches wrote:
+> > > > > Use a consistent logging prefix for all rcu related output.
+> > > > > 
+> > > > > Signed-off-by: Joe Perches <joe@perches.com>
+> > > > 
+> > > > I took parts of this (thank you!) but have concerns about other parts.
+> > > 
+> > > []
+> > > > > diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+> > > > > index 076a50fb22ad..ebdd77b45470 100644
+> > > > > --- a/kernel/rcu/rcuperf.c
+> > > > > +++ b/kernel/rcu/rcuperf.c
+> > > > > @@ -19,6 +19,9 @@
+> > > > >   *
+> > > > >   * Authors: Paul E. McKenney <paulmck@us.ibm.com>
+> > > > >   */
+> > > > > +
+> > > > > +#define pr_fmt(fmt) "rcu: " fmt
+> > > > 
+> > > > This is going to get us messages of the form "rcu: rcu-perf:", not?
+> > > > (And other odd combinations, depending on the flavor of RCU under test.)
+> > > > If so, this does not seem to be an improvement.
+> > > 
+> > > That depends on the existing embedded content of the format.
+> > > This will prefix just "rcu: " to pr_<level> output.
+> > 
+> > OK, so to make this work, I need to create special-purpose pr_fmt()
+> > definitions for torture, rcutorture, locktorture, and rcuperf.  Most
+> > of the rest don't care.
 > 
-> Not all APIs accept device as parameter to easily create links. But I
-> wonder, for cases like this, if we could not simply move the device to
-> the end of the dpm list after successful binding it to a driver. The
-> assumption that when GOPIs or other resources are not ready they'll
-> return -EPROBE_DEFER and probing would fail.
+> Yes, or allow the new generic #define for pr_fmt
+> to set those prefixes for you
+> 
+> #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> 
+> will do the appropriate thing for rcutorture,
 
-Dmitry, do you see any reason why we are enabling the gpio_keys.c button
-interrupts for wake-up during suspend/resume only, and not right from
-the probe() function?
+OK.  For rcutorture, there are special prefixes.  More on this at the end.
 
-button->wakeup is effectively read-only past the probe function, if we
-moved the logic to enable/disable the interrupts that would greatly
-simplify things. I am assuming whomever added that functionality must
-have been worried about spurious wake-up events somehow and wanted to do
-it as late as possible?
+> > Or am I missing something basic here?
+> > 
+> > > > > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+> > > 
+> > > []
+> > > > > @@ -908,7 +909,7 @@ rcu_torture_writer(void *arg)
+> > > > >  	VERBOSE_TOROUT_STRING("rcu_torture_writer task started");
+> > > > >  	if (!can_expedite)
+> > > > >  		pr_alert("%s" TORTURE_FLAG
+> > > > > -			 " GP expediting controlled from boot/sysfs for %s.\n",
+> > > > > +			 " GP expediting controlled from boot/sysfs for %s\n",
+> > > > >  			 torture_type, cur_ops->name);
+> > > 
+> > > As there is _no_ pr_fmt #defined in this file,
+> > > output will/could be prefixed with KBUILD_MODNAME ": "
+> > > (in this case "rcutorture: ") if/when the generic
+> > > pr_fmt conversion patch is applied.
+> > 
+> > Not a fan, NACK.
+> > 
+> > > > >  	} else if (gp_sync && !cur_ops->sync) {
+> > > > > -		pr_alert("%s: gp_sync without primitives.\n", __func__);
+> > > > > +		pr_alert("%s: gp_sync without primitives\n", __func__);
+> > > > 
+> > > > I used a CDC Cyber 73 in the 1970s.
+> > > 
+> > > Fancy.  I used a CDC 6400 and an IBM 1620, but
+> > > those were pretty old when I started.
+> > 
+> > ;-)
+> > 
+> > > > It had tiny memory by today's
+> > > > standards, but even it had periods in its error messages.  We can easily
+> > > > afford them today, especially given that rcutorture is not included in
+> > > > small-memory Linux configurations.
+> > > 
+> > > OK, but I like consistency too.
+> > > 
+> > > ~90 percent of linux logging does not use terminating periods.
+> > > For instance, on my laptop:
+> > > 
+> > > $ uptime -p
+> > > up 1 week, 1 day, 13 hours, 37 minute
+> > > $ dmesg | wc -l
+> > > 4240
+> > > $ dmesg | grep -P "\w\.$"| wc -l
+> > > 381
+> > 
+> > Why is this a problem worth fixing?  From where I sit, it is not.
+> 
+> It's not a _problem_.  It's just an inconsistency.
+> I modify them passively when I see them.
+> If you don't like it, don't take it.
 
-Thanks
--- 
-Florian
+OK, fair enough.  I will pass.
+
+> > Even assuming that this is somehow worth solving, why is it buried
+> > in an unrelated patch?
+> 
+> Touches each line fewer times.
+> 
+> > > > > @@ -1711,11 +1712,11 @@ static void rcu_test_debug_objects(void)
+> > > > > 
+> > > > >  	/* Wait for them all to get done so we can safely return. */
+> > > > >  	rcu_barrier();
+> > > > > -	pr_alert("%s: WARN: Duplicate call_rcu() test complete.\n", KBUILD_MODNAME);
+> > > > > +	pr_alert("WARN: Duplicate call_rcu() test complete\n");
+> > > > 
+> > > > I would like to keep these, as they mark the region of console output where
+> > > > splats are expected.
+> > > 
+> > > The prefixes are still there...
+> > > 
+> > > > >  	if (cur_ops->fqs == NULL && fqs_duration != 0) {
+> > > > > -		pr_alert("rcu-torture: ->fqs NULL and non-zero fqs_duration, fqs disabled.\n");
+> > > > > +		pr_alert("->fqs NULL and non-zero fqs_duration, fqs disabled\n");
+> > > > 
+> > > > This I would like to keep.  Easier to find.
+> > > 
+> > > One thing that you could use to validate the
+> > > output string format is after compilation:
+> > > 
+> > > $ strings kernel/rcu/rcutorture.o | grep -P "^[0-6]\w+:"
+> > > 
+> > > With your change, you will see duplicated prefixes.
+> > 
+> > Except that right now there are not duplicated prefixes.  Those
+> > apparently only show up after some earlier patch in/before your set is
+> > applied, correct? 
+> 
+> yes.
+> [PATCH 03/18] printk: Convert pr_fmt from blank define to KBUILD_MODNAME
+> 
+> > Is there some C-preprocessor macro indicating whether or not your changes
+> > have been applied?
+> 
+> ?  pr_fmt would either be blank or something else.
+
+OK, so if I define pr_fmt as follows, I get the old behavior?
+
+	#define pr_fmt(fmt) fmt
+
+If so, I can add this to the torture files, and then define pr_fmt more
+sensibly for the torture files once your changes hit mainline.
+
+Or if we can agree on the defintion, perhaps we get the sensible
+definition into your patch series.  But I would much prefer the former
+given the high rate of change in RCU at the moment.
+
+Note that my concerns apply only to kernel/torture.c, kernel/rcu/rcuperf.c,
+kernel/rcu/rcutorture.c, and kernel/locking/locktorture.c (despite my
+earlier ack).  The other RCU files, including kernel/rcu/rcu_segcblist.c,
+should be just fine with "#define pr_fmt()" added.  And I just queued
+a commit to be squashed into my version of your patch 18/18 that adds
+this to kernel/rcu/rcu_segcblist.c.  This joins the ones that your
+patch added to kernel/rcu/srcutree.c and kernel/rcu/tree.c.
+
+Should I also add "#define pr_fmt(fmt) "rcu: " fmt" to these files?
+
+kernel/rcu/srcutiny.c
+kernel/rcu/sync.c
+kernel/rcu/tiny.c
+
+							Thanx, Paul
