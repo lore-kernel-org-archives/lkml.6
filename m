@@ -1,41 +1,40 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZovA7SPO1jqoR7eLxDqnNvvu8Mj1KqAkxwzYdfoZZNFQGYDrmF39ZHA1uOOTUiJW4RvY/+7
-ARC-Seal: i=1; a=rsa-sha256; t=1526281148; cv=none;
+X-Google-Smtp-Source: AB8JxZo1YlOujERExNodnru/bAXgqM99Ydcohv0qUcbQm6VkBp5q+e4hX2jnkuk6hmWFrMdhqZMy
+ARC-Seal: i=1; a=rsa-sha256; t=1526281145; cv=none;
         d=google.com; s=arc-20160816;
-        b=MX1IfvqB4Zbvww5oSZTqi6bP3RcTNQEUuICKQ31xReACeGd23euDdmPRq13h2KjwlF
-         HV/PM+w+Q7RxtfZeuid9kERM7CbatBakTWTOmxr3BJLPRQXSQzOmddY5FJgttUErbdjU
-         WuF2hOcJi80u2J6AEn7Eg+lngoQeXOq5iVO1XvI7ekRVPjmXZEUBNAvRlQgWh9QB+JP8
-         QZsiCK1ZBQgtkDBCMeF6d2H93VyfckRfMRUbIkVzSLjkTe0K3vwfQLqKPnweiXpLG/Hc
-         JkhUQZ8CJV0Dqd1Ga3NVTktS3DV5eF3S5Mph2b6TlPz8FXJwW1nUux9mOxbRvvhlcbA3
-         maQg==
+        b=o2tioIR3iGr2EbBTLLFdDOBOlRGD/Uw1Mp+8/Clkvxdl5gfzwliNRaZvPnKuDPl6iU
+         6egAmbPIF4NVNlfqOz1XSncZxyX8hRZQ7NIyRTrgrsGCN5v1nSdxmkX4SmXK9I7k8dxR
+         FSoL679PSCCn9bdRST0ME7Tdyx1oBtxyRMj0IvuaAkzgFUBAJm68KigS4TOvCKUa30pg
+         +Hj2wgx3bDsNasKSEyPQKX1g8fQE5CcUefCQAM9SRkbrQEipmAOI3O9KxZ9kAil+Uqq9
+         muCE3zj2CaKXU3Z+NhQ9jsp7sOxR445iIB8jCp3LHZJye00sX8D+elOZmfOBr2ONYaCD
+         BJnQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=zd0nVnluajNAUmILgJAK/I9AGpQQnJFR522z68tFG3o=;
-        b=V38cT48n9yeCHmdfiXA8CJtZza+tLHFzuKqIk3p5fSSV1LG4EXIVNntCIz2CifqOF4
-         ovclweL2ZiyE+gmxRcl0nD4bqLZrT7SnOA3bKzCHg/KKz5hT8rG3AcP9ozG0dBJ6kW5N
-         rjmB6AwcxJFcAvHamVD1OypaNkT+vMrWzJn9Ej9p20cjZjYjs5a5oaoj4A/ONC2lJsww
-         58Y50HbDKYru+sSJKejlLtwaHaFskuupJViTfU/yJEHPzrRREfoKD570myU6PkITeISY
-         OJREBqapdW3TIPqhuCz8xrxwl39ABGrtCqVw7PRTPcY7eTOvqHa6hKtKhnROlYkurb/a
-         N7ZQ==
+        bh=ixyc5Yy042tYvBJJ6gigePMd0XHcGFKi2jnrHkETjMU=;
+        b=HfxN37oWNzc8nil4+2XCPSxXJajGlyw4cNCgoWw1gIc6xP+O40i7jENUM3fCGlObIj
+         T5/3/l7FNxU0PhBI9Kss+X3yiRyxmtLAlL6WnTJF0JXLPDgAlTPw0ZOdGCA15ZB4o1vY
+         Eb1JbPvbZK0XoXCZXLCp42yFPjeeo3EZCcfhvfYLrSsuV1Jlenj2JwwC/YwN5DwMCEIB
+         WHYMIvRAnU7h06/w9u4YPv0ljZqVkFDF5uh/Y1vSkulVk+TQlfBEf7mIahIXtZkA0tgW
+         b+3ysMeiOkOSxvhrAANgSGc2K9dfZa3agDfZFDPCFgCxVwMqKA2hhzS1ecY0lKf34xWq
+         rBIQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=q0bd96Ha;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ORHnUwNO;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=q0bd96Ha;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ORHnUwNO;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	Stephan Mueller <smueller@chronox.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
+	syzbot+c68e51bb5e699d3f8d91@syzkaller.appspotmail.com,
+	Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+	Santosh Shilimkar <santosh.shilimkar@oracle.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.16 06/72] crypto: af_alg - fix possible uninit-value in alg_bind()
-Date: Mon, 14 May 2018 08:48:23 +0200
-Message-Id: <20180514064823.314950811@linuxfoundation.org>
+Subject: [PATCH 4.16 05/72] rds: tcp: must use spin_lock_irq* and not spin_lock_bh with rds_tcp_conn_lock
+Date: Mon, 14 May 2018 08:48:22 +0200
+Message-Id: <20180514064823.266716354@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -45,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421404075424649?=
-X-GMAIL-MSGID: =?utf-8?q?1600421781243095311?=
+X-GMAIL-THRID: =?utf-8?q?1600421778486757524?=
+X-GMAIL-MSGID: =?utf-8?q?1600421778486757524?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,48 +53,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
 
-commit a466856e0b7ab269cdf9461886d007e88ff575b0 upstream.
+commit 53d0e83f9329aa51dcc205b514dbee05cb4df309 upstream.
 
-syzbot reported :
+rds_tcp_connection allocation/free management has the potential to be
+called from __rds_conn_create after IRQs have been disabled, so
+spin_[un]lock_bh cannot be used with rds_tcp_conn_lock.
 
-BUG: KMSAN: uninit-value in alg_bind+0xe3/0xd90 crypto/af_alg.c:162
+Bottom-halves that need to synchronize for critical sections protected
+by rds_tcp_conn_lock should instead use rds_destroy_pending() correctly.
 
-We need to check addr_len before dereferencing sa (or uaddr)
-
-Fixes: bb30b8848c85 ("crypto: af_alg - whitelist mask and type")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Stephan Mueller <smueller@chronox.de>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Reported-by: syzbot+c68e51bb5e699d3f8d91@syzkaller.appspotmail.com
+Fixes: ebeeb1ad9b8a ("rds: tcp: use rds_destroy_pending() to synchronize
+       netns/module teardown and rds connection/workq management")
+Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Acked-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/af_alg.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/rds/tcp.c |   17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -158,16 +158,16 @@ static int alg_bind(struct socket *sock,
- 	void *private;
- 	int err;
+--- a/net/rds/tcp.c
++++ b/net/rds/tcp.c
+@@ -275,13 +275,14 @@ static int rds_tcp_laddr_check(struct ne
+ static void rds_tcp_conn_free(void *arg)
+ {
+ 	struct rds_tcp_connection *tc = arg;
++	unsigned long flags;
  
--	/* If caller uses non-allowed flag, return error. */
--	if ((sa->salg_feat & ~allowed) || (sa->salg_mask & ~allowed))
--		return -EINVAL;
--
- 	if (sock->state == SS_CONNECTED)
- 		return -EINVAL;
+ 	rdsdebug("freeing tc %p\n", tc);
  
- 	if (addr_len < sizeof(*sa))
- 		return -EINVAL;
+-	spin_lock_bh(&rds_tcp_conn_lock);
++	spin_lock_irqsave(&rds_tcp_conn_lock, flags);
+ 	if (!tc->t_tcp_node_detached)
+ 		list_del(&tc->t_tcp_node);
+-	spin_unlock_bh(&rds_tcp_conn_lock);
++	spin_unlock_irqrestore(&rds_tcp_conn_lock, flags);
  
-+	/* If caller uses non-allowed flag, return error. */
-+	if ((sa->salg_feat & ~allowed) || (sa->salg_mask & ~allowed))
-+		return -EINVAL;
-+
- 	sa->salg_type[sizeof(sa->salg_type) - 1] = 0;
- 	sa->salg_name[sizeof(sa->salg_name) + addr_len - sizeof(*sa) - 1] = 0;
+ 	kmem_cache_free(rds_tcp_conn_slab, tc);
+ }
+@@ -311,13 +312,13 @@ static int rds_tcp_conn_alloc(struct rds
+ 		rdsdebug("rds_conn_path [%d] tc %p\n", i,
+ 			 conn->c_path[i].cp_transport_data);
+ 	}
+-	spin_lock_bh(&rds_tcp_conn_lock);
++	spin_lock_irq(&rds_tcp_conn_lock);
+ 	for (i = 0; i < RDS_MPATH_WORKERS; i++) {
+ 		tc = conn->c_path[i].cp_transport_data;
+ 		tc->t_tcp_node_detached = false;
+ 		list_add_tail(&tc->t_tcp_node, &rds_tcp_conn_list);
+ 	}
+-	spin_unlock_bh(&rds_tcp_conn_lock);
++	spin_unlock_irq(&rds_tcp_conn_lock);
+ fail:
+ 	if (ret) {
+ 		for (j = 0; j < i; j++)
+@@ -529,7 +530,7 @@ static void rds_tcp_kill_sock(struct net
  
+ 	rtn->rds_tcp_listen_sock = NULL;
+ 	rds_tcp_listen_stop(lsock, &rtn->rds_tcp_accept_w);
+-	spin_lock_bh(&rds_tcp_conn_lock);
++	spin_lock_irq(&rds_tcp_conn_lock);
+ 	list_for_each_entry_safe(tc, _tc, &rds_tcp_conn_list, t_tcp_node) {
+ 		struct net *c_net = read_pnet(&tc->t_cpath->cp_conn->c_net);
+ 
+@@ -542,7 +543,7 @@ static void rds_tcp_kill_sock(struct net
+ 			tc->t_tcp_node_detached = true;
+ 		}
+ 	}
+-	spin_unlock_bh(&rds_tcp_conn_lock);
++	spin_unlock_irq(&rds_tcp_conn_lock);
+ 	list_for_each_entry_safe(tc, _tc, &tmp_list, t_tcp_node)
+ 		rds_conn_destroy(tc->t_cpath->cp_conn);
+ }
+@@ -590,7 +591,7 @@ static void rds_tcp_sysctl_reset(struct
+ {
+ 	struct rds_tcp_connection *tc, *_tc;
+ 
+-	spin_lock_bh(&rds_tcp_conn_lock);
++	spin_lock_irq(&rds_tcp_conn_lock);
+ 	list_for_each_entry_safe(tc, _tc, &rds_tcp_conn_list, t_tcp_node) {
+ 		struct net *c_net = read_pnet(&tc->t_cpath->cp_conn->c_net);
+ 
+@@ -600,7 +601,7 @@ static void rds_tcp_sysctl_reset(struct
+ 		/* reconnect with new parameters */
+ 		rds_conn_path_drop(tc->t_cpath, false);
+ 	}
+-	spin_unlock_bh(&rds_tcp_conn_lock);
++	spin_unlock_irq(&rds_tcp_conn_lock);
+ }
+ 
+ static int rds_tcp_skbuf_handler(struct ctl_table *ctl, int write,
