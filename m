@@ -1,57 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752057AbeENGm4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 02:42:56 -0400
-Received: from mail-pl0-f47.google.com ([209.85.160.47]:43032 "EHLO
-        mail-pl0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751626AbeENGmz (ORCPT
+        id S1752067AbeENGpz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 02:45:55 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:15131 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751533AbeENGpx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 02:42:55 -0400
-X-Google-Smtp-Source: AB8JxZrrC16xI0A7YGXN0JFVjvzNamTqFrSIOwAFD5naeQ5eUSqWUzrs1SvafHtoPJqA1/KgfWjPKQ==
-Date: Mon, 14 May 2018 16:42:33 +1000
-From: Nicholas Piggin <nicholas.piggin@gmail.com>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, jiangshanlai@gmail.com,
-        dipankar@in.ibm.com, akpm@linux-foundation.org,
-        mathieu.desnoyers@efficios.com, josh@joshtriplett.org,
-        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel.opensrc@gmail.com, torvalds@linux-foundation.org,
-        npiggin@gmail.com
-Subject: Re: [PATCH tip/core/rcu 0/21] Contention reduction for v4.18
-Message-ID: <20180514164233.7c7bff00@roar.ozlabs.ibm.com>
-In-Reply-To: <20180423030258.GA23370@linux.vnet.ibm.com>
-References: <20180423030258.GA23370@linux.vnet.ibm.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 14 May 2018 02:45:53 -0400
+Subject: Re: [PATCH -next] ASoC: omap: add sdma-pcm.c MODULE_LICENSE
+To: Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>
+CC: Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+References: <2bf2991a-da55-00a4-bc39-a0ee61bad4d0@infradead.org>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <05c6b697-c2ca-85f2-afd6-d234bc9c1560@ti.com>
+Date: Mon, 14 May 2018 09:45:52 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <2bf2991a-da55-00a4-bc39-a0ee61bad4d0@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 22 Apr 2018 20:02:58 -0700
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+Hi,
 
-> Hello!
+On 2018-05-13 04:41, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> This series reduces lock contention on the root rcu_node structure,
-> and is also the first precursor to TBD changes to consolidate the
-> three RCU flavors (RCU-bh, RCU-preempt, and RCU-sched) into one.
+> ASoC: omap: add sdma-pcm.c MODULE_LICENSE
+> 
+> Fixes this build warning:
+> 
+> WARNING: modpost: missing MODULE_LICENSE() in sound/soc/omap/snd-soc-sdma.o
 
-Hi Paul,
+I have already submitted a fix:
+http://mailman.alsa-project.org/pipermail/alsa-devel/2018-May/135940.html
 
-I've been running your rcu/dev branch and haven't noticed any problems
-yet. The irqsoff latency improvement is a little hard to measure
-because the scheduler, but I've tried turning balancing parameters
-right down and I'm yet to see any sign of RCU in traces (down to about
-100us on a 176 CPU machine), so that's great.
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> Cc: Jarkko Nikula <jarkko.nikula@bitmer.com>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> ---
+>  sound/soc/omap/sdma-pcm.c |    3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> --- linux-next-20180510.orig/sound/soc/omap/sdma-pcm.c
+> +++ linux-next-20180510/sound/soc/omap/sdma-pcm.c
+> @@ -9,6 +9,7 @@
+>  #include <sound/pcm_params.h>
+>  #include <sound/soc.h>
+>  #include <sound/dmaengine_pcm.h>
+> +#include <linux/module.h>
+>  #include <linux/omap-dma.h>
+>  
+>  #include "sdma-pcm.h"
+> @@ -66,3 +67,5 @@ int sdma_pcm_platform_register(struct de
+>  	return devm_snd_dmaengine_pcm_register(dev, config, flags);
+>  }
+>  EXPORT_SYMBOL_GPL(sdma_pcm_platform_register);
+> +
+> +MODULE_LICENSE("GPL v2");
+> 
 
-(Not that RCU was ever the worst contributor to latency as I said, just
-that I noticed those couple of traces where it showed up.)
+- Péter
 
-Thanks very much for the fast response, sorry I've taken a while to
-test.
-
-Thanks,
-Nick
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
