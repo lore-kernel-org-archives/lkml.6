@@ -1,88 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752339AbeENHw3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:52:29 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48777 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752196AbeENHwY (ORCPT
+        id S1752481AbeENHxB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:53:01 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:39062 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752363AbeENHwx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:52:24 -0400
-Date: Mon, 14 May 2018 00:51:58 -0700
-From: tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-a59a68fee05d46cccc4279ab6609421f7270398e@git.kernel.org>
-Cc: fengguang.wu@intel.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, efault@gmx.de, bigeasy@linutronix.de,
-        hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
-        tglx@linutronix.de
-Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        peterz@infradead.org, efault@gmx.de, bigeasy@linutronix.de,
-        fengguang.wu@intel.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20180504104224.20218-1-bigeasy@linutronix.de>
-References: <20180504104224.20218-1-bigeasy@linutronix.de>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/wait: Include <linux/wait.h> in
- <linux/swait.h>
-Git-Commit-ID: a59a68fee05d46cccc4279ab6609421f7270398e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 14 May 2018 03:52:53 -0400
+X-UUID: f3a02fc731dd4078bd4368700538052f-20180514
+From: Bibby Hsieh <bibby.hsieh@mediatek.com>
+To: David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>
+CC: Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Cawa Cheng <cawa.cheng@mediatek.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, YT Shen <yt.shen@mediatek.com>,
+        Thierry Reding <thierry.reding@gmail.com>, CK Hu <ck.hu@mediatek.com>,
+        Mao Huang <littlecvr@chromium.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>
+Subject: [PATCH v1 0/7] drm/mediatek: support hdmi output for mt2701 and mt7623
+Date: Mon, 14 May 2018 15:52:36 +0800
+Message-ID: <20180514075243.5442-1-bibby.hsieh@mediatek.com>
+X-Mailer: git-send-email 2.12.5
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a59a68fee05d46cccc4279ab6609421f7270398e
-Gitweb:     https://git.kernel.org/tip/a59a68fee05d46cccc4279ab6609421f7270398e
-Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Fri, 4 May 2018 12:42:24 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 14 May 2018 09:12:25 +0200
+In order to support HDMI on mt2701,
+we have to make some modifications.
+1) Add the HDMI driver.
+2) Add the DPI driver.
+3) Add a mechanism that config output component by dts.
 
-sched/wait: Include <linux/wait.h> in <linux/swait.h>
+Changes since v0:
+ - Correct some typos in commit message.
+ - Fixup the build warning (tmp variable didn't be initialized)
 
-kbuild bot reported against an intermediate RT patch that the build
-fails with:
+Bibby Hsieh (3):
+  drm/mediatek: implement connection from BLS to DPI0
+  drm/mediatek: add a error return value when clock driver has been
+    prepared
+  drm/mediatek: config component output by device node port
 
->    In file included from include/linux/completion.h:12:0,
->                     from include/linux/rcupdate_wait.h:10,
->                     from kernel/rcu/srcutiny.c:27:
->    kernel/rcu/srcutiny.c: In function 'srcu_drive_gp':
-> >> include/linux/swait.h:172:7: error: implicit declaration of function '___wait_is_interruptible'; did you mean '__swait_event_interruptible'?
->       if (___wait_is_interruptible(state) && __int) {  \
+chunhui dai (4):
+  drm/mediatek: move dpi private data to device
+  drm/mediatek: fix to get right bridge for dpi encoder
+  drm/mediatek: add dpi driver for mt2701 and mt7623
+  drm/mediatek: add hdmi driver for different hardware
 
-That error vanishes a few patches later (in the RT queue) because wait.h
-is then pulled in by other means. It does not seem to surface on !RT.
-I think that swait should include a header file for a function/macro
-(___wait_is_interruptible()) it is using.
+ drivers/gpu/drm/mediatek/Makefile              |   4 +-
+ drivers/gpu/drm/mediatek/mtk_dpi.c             | 125 +++++++---
+ drivers/gpu/drm/mediatek/mtk_dpi_regs.h        |   2 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c         |  14 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c    |   2 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c         |  38 ++-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h         |   4 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c            |  88 +++++--
+ drivers/gpu/drm/mediatek/mtk_hdmi.h            |  28 +++
+ drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 157 +++++++++++++
+ drivers/gpu/drm/mediatek/mtk_hdmi_regs.h       |   1 +
+ drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 307 +++++++++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c | 129 +----------
+ 13 files changed, 716 insertions(+), 183 deletions(-)
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+ create mode 100644 drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
 
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180504104224.20218-1-bigeasy@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/linux/swait.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/linux/swait.h b/include/linux/swait.h
-index c98aaf677466..84f9745365ff 100644
---- a/include/linux/swait.h
-+++ b/include/linux/swait.h
-@@ -5,6 +5,7 @@
- #include <linux/list.h>
- #include <linux/stddef.h>
- #include <linux/spinlock.h>
-+#include <linux/wait.h>
- #include <asm/current.h>
- 
- /*
+-- 
+2.12.5
