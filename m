@@ -1,77 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752871AbeENMB4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:01:56 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:45904 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752153AbeENMBx (ORCPT
+        id S1752735AbeENMDq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:03:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56378 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752507AbeENMDp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:01:53 -0400
-X-Google-Smtp-Source: AB8JxZrGeiTX3fgh+FKVW3o9AqWe6uiw2IoITo/atZ6bDw5g10EWt5hO+fr4kdkJ/HEtBM9Yb8SOPw==
-Subject: Re: [PATCH v1] mfd: tps6586x: Move interrupt handling into workqueue
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180513211842.7819-1-digetx@gmail.com>
- <20180514115135.GG18312@ulmo>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <739706a9-4925-a7a0-686e-8d352ece4bac@gmail.com>
-Date: Mon, 14 May 2018 15:01:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 14 May 2018 08:03:45 -0400
+Date: Mon, 14 May 2018 05:03:43 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Rich Felker <dalias@libc.org>, linux-kernel@vger.kernel.org,
+        linux-sh@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>
+Subject: Re: [PATCH] sh: switch to NO_BOOTMEM
+Message-ID: <20180514120343.GB5265@infradead.org>
+References: <20180511134559.13464-1-robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180514115135.GG18312@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180511134559.13464-1-robh@kernel.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.05.2018 14:51, Thierry Reding wrote:
-> On Mon, May 14, 2018 at 12:18:42AM +0300, Dmitry Osipenko wrote:
->> Reading of status register within the interrupt handler fails with -EAGAIN
->> if I2C is busy with handling some other request at the same time. Move the
->> actual interrupt handling into a workqueue to avoid the unfortunate I2C
->> failure and to avoid hanging CPU in interrupt up to 1 second (transfer
->> timeout in the Tegra I2C driver).
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/mfd/tps6586x.c | 40 +++++++++++++++++++++++++++++-----------
->>  1 file changed, 29 insertions(+), 11 deletions(-)
-> 
-> Could this not be achieved with a threaded interrupt handler?
-> 
-> Thierry
-> 
+> unflattening could also fix this, but removing bootmem is desired. So
+> enable NO_BOOTMEM on SH like other architectures have done.
 
-Seems yes. I completely forgot about the threaded interrupt handlers existence.
-Thank you very much for the suggestion, I'll try with the threaded IRQ and send
-v2 if it will be fine.
+Can you send out similarly shoot in the wild conversion for the
+remaining architectures while you are at it?  We still seem to be
+missing: alpha, c6x, hexagon, ia64, m68k, mips, nios2 and unicore32.
