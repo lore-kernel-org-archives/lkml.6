@@ -1,61 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753624AbeENQai (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 12:30:38 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:42682 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753429AbeENQaf (ORCPT
+        id S1755079AbeENQat (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 12:30:49 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:45708 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753661AbeENQaq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 12:30:35 -0400
-X-Google-Smtp-Source: AB8JxZqG0kZ4I8kbCZLVDM3ALkfe9uk2Hctb9dEoxv8TRGFl9H7pG0p0mIPTzvfEtauWvOcgMPEKNwA4sXwSEfj48ZQ=
+        Mon, 14 May 2018 12:30:46 -0400
+X-Google-Smtp-Source: AB8JxZobn4KSJTEGCnRrGwIoXT0/IFi4NGxLtQPRqcGS/eNacGyMcGKMqVeH9J80FvboQqH7vJ5Czw==
+Date: Mon, 14 May 2018 18:30:44 +0200
+From: Jiri Pirko <jiri@resnulli.us>
+To: Vlad Buslov <vladbu@mellanox.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
+        xiyou.wangcong@gmail.com, pablo@netfilter.org,
+        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
+        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, kliteyn@mellanox.com
+Subject: Re: [PATCH 03/14] net: sched: add 'delete' function to action ops
+Message-ID: <20180514163044.GE2134@nanopsycho.orion>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+ <1526308035-12484-4-git-send-email-vladbu@mellanox.com>
+ <20180514151222.GC1848@nanopsycho>
 MIME-Version: 1.0
-In-Reply-To: <CABeXuvpi_dm6TE3pH_KGehgNwW177hJFBmR8u29w6KJH1aA1Kg@mail.gmail.com>
-References: <20180512045921.18311-1-deepa.kernel@gmail.com>
- <20180512045921.18311-7-deepa.kernel@gmail.com> <CAGXu5jLFHSE12La25QEvZawdBm84cLavtTD5LAA6MqeqBmbYuw@mail.gmail.com>
- <CABeXuvpi_dm6TE3pH_KGehgNwW177hJFBmR8u29w6KJH1aA1Kg@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 14 May 2018 09:30:34 -0700
-X-Google-Sender-Auth: SbH6IkpnSIpPFCubwoh0rzan5ls
-Message-ID: <CAGXu5jJpO+z8k_=UuVY9WAeiEgABQg4gWE6nz82BX0_UhaPUWw@mail.gmail.com>
-Subject: Re: [PATCH 6/6] vfs: change inode times to use struct timespec64
-To: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>, anton@tuxera.com,
-        Felipe Balbi <balbi@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        David Howells <dhowells@redhat.com>, David Sterba <dsterba@suse.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Mike Marshall <hubcap@omnibond.com>, Jan Kara <jack@suse.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Harkes <jaharkes@cs.cmu.edu>,
-        Jiri Slaby <jslaby@suse.com>, Mark Fasheh <mark@fasheh.com>,
-        Miklos Szeredi <miklos@szeredi.hu>, Nicolas Pitre <nico@linaro.org>,
-        reiserfs-devel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        Sage Weil <sage@redhat.com>, Steve French <sfrench@samba.org>,
-        Steven Whitehouse <swhiteho@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        "Ted Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180514151222.GC1848@nanopsycho>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 9:05 PM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> Kees mentioned that he wants to merge a patch to pstore that changes
-> it to use timespec64 internally for 4.17:
-> https://lkml.org/lkml/2018/5/13/3
+Mon, May 14, 2018 at 05:12:22PM CEST, jiri@resnulli.us wrote:
+>Mon, May 14, 2018 at 04:27:04PM CEST, vladbu@mellanox.com wrote:
+>>Extend action ops with 'delete' function. Each action type to implement its
+>>own delete function that doesn't depend on rtnl lock.
+>>
+>>Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+>>---
+>> include/net/act_api.h | 1 +
+>> 1 file changed, 1 insertion(+)
+>>
+>>diff --git a/include/net/act_api.h b/include/net/act_api.h
+>>index e634014..73175a3 100644
+>>--- a/include/net/act_api.h
+>>+++ b/include/net/act_api.h
+>>@@ -100,6 +100,7 @@ struct tc_action_ops {
+>> 	void	(*stats_update)(struct tc_action *, u64, u32, u64);
+>> 	size_t  (*get_fill_size)(const struct tc_action *act);
+>> 	struct net_device *(*get_dev)(const struct tc_action *a);
+>>+	int     (*delete)(struct net *net, u32 index);
+>
+>Probably better to squash this to patch 14.
 
-I'm still working on a v2 for pstore. What is the correct
-cross-architecture format string for timespec64's tv_sec? In your
-other patches, you're using %lld and a (long long) cast. I'd really
-like to avoid the need for casts.
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Oh, I see you call it in patch 6. Fine.
