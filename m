@@ -1,87 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752613AbeENLt7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:49:59 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44436 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751364AbeENLt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:49:57 -0400
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: andrew@lunn.ch, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: armada-xp-98dx: Add NAND pinctrl information
-References: <20180504030638.31521-1-chris.packham@alliedtelesis.co.nz>
-        <20180504030638.31521-2-chris.packham@alliedtelesis.co.nz>
-Date: Mon, 14 May 2018 13:49:43 +0200
-In-Reply-To: <20180504030638.31521-2-chris.packham@alliedtelesis.co.nz> (Chris
-        Packham's message of "Fri, 4 May 2018 15:06:38 +1200")
-Message-ID: <87mux2319k.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1753103AbeENLvo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:51:44 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:50803 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753085AbeENLvj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 07:51:39 -0400
+X-Google-Smtp-Source: AB8JxZoqCmUT/zed86F9m9R7aHo0SXUTxBA1X5Wn6tPcojaUq99B/h+RGQZp3T8LQPBEEmTuHSfZrg==
+Date: Mon, 14 May 2018 13:51:35 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mfd: tps6586x: Move interrupt handling into workqueue
+Message-ID: <20180514115135.GG18312@ulmo>
+References: <20180513211842.7819-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="64j1qyTOoGvYcHb1"
+Content-Disposition: inline
+In-Reply-To: <20180513211842.7819-1-digetx@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chris,
- 
- On ven., mai 04 2018, Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
 
-> Add pin control information for the NAND interface on the Armada
-> 98DX3236 and variants.
->
+--64j1qyTOoGvYcHb1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-
-Applied on mvebu/dt
-
-Thanks,
-
-Gregory
-
-
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+On Mon, May 14, 2018 at 12:18:42AM +0300, Dmitry Osipenko wrote:
+> Reading of status register within the interrupt handler fails with -EAGAIN
+> if I2C is busy with handling some other request at the same time. Move the
+> actual interrupt handling into a workqueue to avoid the unfortunate I2C
+> failure and to avoid hanging CPU in interrupt up to 1 second (transfer
+> timeout in the Tegra I2C driver).
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  arch/arm/boot/dts/armada-xp-98dx3236.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
-> index 9a589abd0379..099dc2520082 100644
-> --- a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
-> +++ b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
-> @@ -312,6 +312,19 @@
->  &pinctrl {
->  	compatible = "marvell,98dx3236-pinctrl";
->  
-> +	nand_pins: nand-pins {
-> +		marvell,pins = "mpp20", "mpp21", "mpp22",
-> +			       "mpp23", "mpp24", "mpp25",
-> +			       "mpp26", "mpp27", "mpp28",
-> +			       "mpp29", "mpp30";
-> +		marvell,function = "dev";
-> +	};
-> +
-> +	nand_rb: nand-rb {
-> +		marvell,pins = "mpp19";
-> +		marvell,function = "nand";
-> +	};
-> +
->  	spi0_pins: spi0-pins {
->  		marvell,pins = "mpp0", "mpp1",
->  			       "mpp2", "mpp3";
-> -- 
-> 2.17.0
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>  drivers/mfd/tps6586x.c | 40 +++++++++++++++++++++++++++++-----------
+>  1 file changed, 29 insertions(+), 11 deletions(-)
 
--- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Could this not be achieved with a threaded interrupt handler?
+
+Thierry
+
+--64j1qyTOoGvYcHb1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5eEcACgkQ3SOs138+
+s6FAyhAAq80tkvFczYnA4GX2jq86xP/IB3C7Djg4zOp/dEpUFGTtH7jMHrMUiq7d
+lsNU2YRhorcT7cqslncYo6L6RSVTti65HBmww856j8f7GvOO+roMm/ysmvGP0mhr
+f0byAaXL3hcZbRL13Y9B8x9HQc3SD/r1YzFYUNwJb3eV6xjWO3dStq5C8OFIRm/A
+KQrdTO/VqIfWmzVSFwL8SlbTqhgfZBAkCs+YrY5Gm1TC7rFUtPh4hFpC+dHboq6v
+RFQTGUDj5TE+J8OZ79nQQBaOzRGymrNln3OvnfhZ92f//SF1uJGeh6Xm+WmjfFGe
+YqIhLgtpO6F3gTqAzxC+6N6Y7H9BaeBANwwJ0OOcsnkY6cuL2m4nj3nZWYqLgHYp
+blBA1FtbF2o1Zbo3VP3OyDWDWpFrkKXghVGScJtUdotRj7M6AQXglCaodHUBMTmt
+zoc9ZVinnt0Bm6GmeSKfeFvZnCi6FquXwIaUlxENzKv9AfYNktAUcRejuwZiAWy4
+GE36Ax1f1K9IpoHkC3GGJUpkHmqbl6ddUv0Yz89ipcc9X2sQ60RhVBD8V+FJJoqD
+jUgR4SLkRM9DXhGzUiogzhKdrPRw1VmfeGSVfe2H7ZbWdvl6NobUhNYVLxbLKl+1
+QGqvTdlJGymSLqTJSDIlLGZvlcN7nEDtzKIzBgsAWsT9U2aZhhs=
+=zJYC
+-----END PGP SIGNATURE-----
+
+--64j1qyTOoGvYcHb1--
