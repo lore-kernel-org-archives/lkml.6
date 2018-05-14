@@ -1,26 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753222AbeENMlN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:41:13 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48307 "EHLO
+        id S1753270AbeENMl1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:41:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34737 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752734AbeENMlM (ORCPT
+        with ESMTP id S1752985AbeENMlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 May 2018 08:41:12 -0400
-Date: Mon, 14 May 2018 05:40:20 -0700
-From: tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-59c2a7226fc5130032021c99f05ad5c0a56551cd@git.kernel.org>
-Cc: tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, peterz@infradead.org, luto@kernel.org, bp@alien8.de,
-        torvalds@linux-foundation.org
-Reply-To: luto@kernel.org, bp@alien8.de, torvalds@linux-foundation.org,
-        tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, peterz@infradead.org
-In-Reply-To: <67e08b69817171da8026e0eb3af0214b06b4d74f.1525800455.git.luto@kernel.org>
-References: <67e08b69817171da8026e0eb3af0214b06b4d74f.1525800455.git.luto@kernel.org>
+Date: Mon, 14 May 2018 05:40:50 -0700
+From: tip-bot for Dave Hansen <tipbot@zytor.com>
+Message-ID: <tip-55556b0b2016806b2e16a20b62d143383983a34a@git.kernel.org>
+Cc: dave.hansen@intel.com, mpe@ellerman.id.au, peterz@infradead.org,
+        shuah@kernel.org, dave.hansen@linux.intel.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, hpa@zytor.com,
+        akpm@linux-foundation.org, linuxram@us.ibm.com
+Reply-To: dave.hansen@intel.com, mpe@ellerman.id.au, shuah@kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+        linuxram@us.ibm.com, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, hpa@zytor.com
+In-Reply-To: <20180509171338.55D13B64@viggo.jf.intel.com>
+References: <20180509171338.55D13B64@viggo.jf.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/selftests: Add mov_to_ss test
-Git-Commit-ID: 59c2a7226fc5130032021c99f05ad5c0a56551cd
+Subject: [tip:x86/urgent] x86/pkeys/selftests: Give better unexpected fault
+ error messages
+Git-Commit-ID: 55556b0b2016806b2e16a20b62d143383983a34a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -33,330 +38,75 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  59c2a7226fc5130032021c99f05ad5c0a56551cd
-Gitweb:     https://git.kernel.org/tip/59c2a7226fc5130032021c99f05ad5c0a56551cd
-Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Tue, 8 May 2018 10:28:35 -0700
+Commit-ID:  55556b0b2016806b2e16a20b62d143383983a34a
+Gitweb:     https://git.kernel.org/tip/55556b0b2016806b2e16a20b62d143383983a34a
+Author:     Dave Hansen <dave.hansen@linux.intel.com>
+AuthorDate: Wed, 9 May 2018 10:13:38 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 14 May 2018 11:14:45 +0200
 
-x86/selftests: Add mov_to_ss test
+x86/pkeys/selftests: Give better unexpected fault error messages
 
-This exercises a nasty corner case of the x86 ISA.
+do_not_expect_pk_fault() is a helper that we call when we do not expect
+a PK fault to have occurred.  But, it is a function, which means that
+it obscures the line numbers from pkey_assert().  It also gives no
+details.
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
+Replace it with an implementation that gives nice line numbers and
+also lets callers pass in a more descriptive message about what
+happened that caused the unexpected fault.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/67e08b69817171da8026e0eb3af0214b06b4d74f.1525800455.git.luto@kernel.org
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180509171338.55D13B64@viggo.jf.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/testing/selftests/x86/Makefile      |   2 +-
- tools/testing/selftests/x86/mov_ss_trap.c | 285 ++++++++++++++++++++++++++++++
- 2 files changed, 286 insertions(+), 1 deletion(-)
+ tools/testing/selftests/x86/protection_keys.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index d744991c0f4f..39f66bc29b82 100644
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -11,7 +11,7 @@ CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
+diff --git a/tools/testing/selftests/x86/protection_keys.c b/tools/testing/selftests/x86/protection_keys.c
+index bbe80a5c31c7..a0f0a732784b 100644
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -954,10 +954,11 @@ void expected_pk_fault(int pkey)
+ 	last_si_pkey = -1;
+ }
  
- TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
- 			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
--			protection_keys test_vdso test_vsyscall
-+			protection_keys test_vdso test_vsyscall mov_ss_trap
- TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
- 			test_FCMOV test_FCOMI test_FISTTP \
- 			vdso_restorer
-diff --git a/tools/testing/selftests/x86/mov_ss_trap.c b/tools/testing/selftests/x86/mov_ss_trap.c
-new file mode 100644
-index 000000000000..3c3a022654f3
---- /dev/null
-+++ b/tools/testing/selftests/x86/mov_ss_trap.c
-@@ -0,0 +1,285 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * mov_ss_trap.c: Exercise the bizarre side effects of a watchpoint on MOV SS
-+ *
-+ * This does MOV SS from a watchpointed address followed by various
-+ * types of kernel entries.  A MOV SS that hits a watchpoint will queue
-+ * up a #DB trap but will not actually deliver that trap.  The trap
-+ * will be delivered after the next instruction instead.  The CPU's logic
-+ * seems to be:
-+ *
-+ *  - Any fault: drop the pending #DB trap.
-+ *  - INT $N, INT3, INTO, SYSCALL, SYSENTER: enter the kernel and then
-+ *    deliver #DB.
-+ *  - ICEBP: enter the kernel but do not deliver the watchpoint trap
-+ *  - breakpoint: only one #DB is delivered (phew!)
-+ *
-+ * There are plenty of ways for a kernel to handle this incorrectly.  This
-+ * test tries to exercise all the cases.
-+ *
-+ * This should mostly cover CVE-2018-1087 and CVE-2018-8897.
-+ */
-+#define _GNU_SOURCE
-+
-+#include <stdlib.h>
-+#include <sys/ptrace.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <sys/user.h>
-+#include <sys/syscall.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <stddef.h>
-+#include <stdio.h>
-+#include <err.h>
-+#include <string.h>
-+#include <setjmp.h>
-+#include <sys/prctl.h>
-+
-+#define X86_EFLAGS_RF (1UL << 16)
-+
-+#if __x86_64__
-+# define REG_IP REG_RIP
-+#else
-+# define REG_IP REG_EIP
-+#endif
-+
-+unsigned short ss;
-+extern unsigned char breakpoint_insn[];
-+sigjmp_buf jmpbuf;
-+static unsigned char altstack_data[SIGSTKSZ];
-+
-+static void enable_watchpoint(void)
-+{
-+	pid_t parent = getpid();
-+	int status;
-+
-+	pid_t child = fork();
-+	if (child < 0)
-+		err(1, "fork");
-+
-+	if (child) {
-+		if (waitpid(child, &status, 0) != child)
-+			err(1, "waitpid for child");
-+	} else {
-+		unsigned long dr0, dr1, dr7;
-+
-+		dr0 = (unsigned long)&ss;
-+		dr1 = (unsigned long)breakpoint_insn;
-+		dr7 = ((1UL << 1) |	/* G0 */
-+		       (3UL << 16) |	/* RW0 = read or write */
-+		       (1UL << 18) |	/* LEN0 = 2 bytes */
-+		       (1UL << 3));	/* G1, RW1 = insn */
-+
-+		if (ptrace(PTRACE_ATTACH, parent, NULL, NULL) != 0)
-+			err(1, "PTRACE_ATTACH");
-+
-+		if (waitpid(parent, &status, 0) != parent)
-+			err(1, "waitpid for child");
-+
-+		if (ptrace(PTRACE_POKEUSER, parent, (void *)offsetof(struct user, u_debugreg[0]), dr0) != 0)
-+			err(1, "PTRACE_POKEUSER DR0");
-+
-+		if (ptrace(PTRACE_POKEUSER, parent, (void *)offsetof(struct user, u_debugreg[1]), dr1) != 0)
-+			err(1, "PTRACE_POKEUSER DR1");
-+
-+		if (ptrace(PTRACE_POKEUSER, parent, (void *)offsetof(struct user, u_debugreg[7]), dr7) != 0)
-+			err(1, "PTRACE_POKEUSER DR7");
-+
-+		printf("\tDR0 = %lx, DR1 = %lx, DR7 = %lx\n", dr0, dr1, dr7);
-+
-+		if (ptrace(PTRACE_DETACH, parent, NULL, NULL) != 0)
-+			err(1, "PTRACE_DETACH");
-+
-+		exit(0);
-+	}
-+}
-+
-+static void sethandler(int sig, void (*handler)(int, siginfo_t *, void *),
-+		       int flags)
-+{
-+	struct sigaction sa;
-+	memset(&sa, 0, sizeof(sa));
-+	sa.sa_sigaction = handler;
-+	sa.sa_flags = SA_SIGINFO | flags;
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(sig, &sa, 0))
-+		err(1, "sigaction");
-+}
-+
-+static char const * const signames[] = {
-+	[SIGSEGV] = "SIGSEGV",
-+	[SIGBUS] = "SIBGUS",
-+	[SIGTRAP] = "SIGTRAP",
-+	[SIGILL] = "SIGILL",
-+};
-+
-+static void sigtrap(int sig, siginfo_t *si, void *ctx_void)
-+{
-+	ucontext_t *ctx = ctx_void;
-+
-+	printf("\tGot SIGTRAP with RIP=%lx, EFLAGS.RF=%d\n",
-+	       (unsigned long)ctx->uc_mcontext.gregs[REG_IP],
-+	       !!(ctx->uc_mcontext.gregs[REG_EFL] & X86_EFLAGS_RF));
-+}
-+
-+static void handle_and_return(int sig, siginfo_t *si, void *ctx_void)
-+{
-+	ucontext_t *ctx = ctx_void;
-+
-+	printf("\tGot %s with RIP=%lx\n", signames[sig],
-+	       (unsigned long)ctx->uc_mcontext.gregs[REG_IP]);
-+}
-+
-+static void handle_and_longjmp(int sig, siginfo_t *si, void *ctx_void)
-+{
-+	ucontext_t *ctx = ctx_void;
-+
-+	printf("\tGot %s with RIP=%lx\n", signames[sig],
-+	       (unsigned long)ctx->uc_mcontext.gregs[REG_IP]);
-+
-+	siglongjmp(jmpbuf, 1);
-+}
-+
-+int main()
-+{
-+	unsigned long nr;
-+
-+	asm volatile ("mov %%ss, %[ss]" : [ss] "=m" (ss));
-+	printf("\tSS = 0x%hx, &SS = 0x%p\n", ss, &ss);
-+
-+	if (prctl(PR_SET_PTRACER, PR_SET_PTRACER_ANY, 0, 0, 0) == 0)
-+		printf("\tPR_SET_PTRACER_ANY succeeded\n");
-+
-+	printf("\tSet up a watchpoint\n");
-+	sethandler(SIGTRAP, sigtrap, 0);
-+	enable_watchpoint();
-+
-+	printf("[RUN]\tRead from watched memory (should get SIGTRAP)\n");
-+	asm volatile ("mov %[ss], %[tmp]" : [tmp] "=r" (nr) : [ss] "m" (ss));
-+
-+	printf("[RUN]\tMOV SS; INT3\n");
-+	asm volatile ("mov %[ss], %%ss; int3" :: [ss] "m" (ss));
-+
-+	printf("[RUN]\tMOV SS; INT 3\n");
-+	asm volatile ("mov %[ss], %%ss; .byte 0xcd, 0x3" :: [ss] "m" (ss));
-+
-+	printf("[RUN]\tMOV SS; CS CS INT3\n");
-+	asm volatile ("mov %[ss], %%ss; .byte 0x2e, 0x2e; int3" :: [ss] "m" (ss));
-+
-+	printf("[RUN]\tMOV SS; CSx14 INT3\n");
-+	asm volatile ("mov %[ss], %%ss; .fill 14,1,0x2e; int3" :: [ss] "m" (ss));
-+
-+	printf("[RUN]\tMOV SS; INT 4\n");
-+	sethandler(SIGSEGV, handle_and_return, SA_RESETHAND);
-+	asm volatile ("mov %[ss], %%ss; int $4" :: [ss] "m" (ss));
-+
-+#ifdef __i386__
-+	printf("[RUN]\tMOV SS; INTO\n");
-+	sethandler(SIGSEGV, handle_and_return, SA_RESETHAND);
-+	nr = -1;
-+	asm volatile ("add $1, %[tmp]; mov %[ss], %%ss; into"
-+		      : [tmp] "+r" (nr) : [ss] "m" (ss));
-+#endif
-+
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; ICEBP\n");
-+
-+		/* Some emulators (e.g. QEMU TCG) don't emulate ICEBP. */
-+		sethandler(SIGILL, handle_and_longjmp, SA_RESETHAND);
-+
-+		asm volatile ("mov %[ss], %%ss; .byte 0xf1" :: [ss] "m" (ss));
-+	}
-+
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; CLI\n");
-+		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND);
-+		asm volatile ("mov %[ss], %%ss; cli" :: [ss] "m" (ss));
-+	}
-+
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; #PF\n");
-+		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND);
-+		asm volatile ("mov %[ss], %%ss; mov (-1), %[tmp]"
-+			      : [tmp] "=r" (nr) : [ss] "m" (ss));
-+	}
-+
-+	/*
-+	 * INT $1: if #DB has DPL=3 and there isn't special handling,
-+	 * then the kernel will die.
-+	 */
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; INT 1\n");
-+		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND);
-+		asm volatile ("mov %[ss], %%ss; int $1" :: [ss] "m" (ss));
-+	}
-+
-+#ifdef __x86_64__
-+	/*
-+	 * In principle, we should test 32-bit SYSCALL as well, but
-+	 * the calling convention is so unpredictable that it's
-+	 * not obviously worth the effort.
-+	 */
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; SYSCALL\n");
-+		sethandler(SIGILL, handle_and_longjmp, SA_RESETHAND);
-+		nr = SYS_getpid;
-+		/*
-+		 * Toggle the high bit of RSP to make it noncanonical to
-+		 * strengthen this test on non-SMAP systems.
-+		 */
-+		asm volatile ("btc $63, %%rsp\n\t"
-+			      "mov %[ss], %%ss; syscall\n\t"
-+			      "btc $63, %%rsp"
-+			      : "+a" (nr) : [ss] "m" (ss)
-+			      : "rcx"
-+#ifdef __x86_64__
-+				, "r11"
-+#endif
-+			);
-+	}
-+#endif
-+
-+	printf("[RUN]\tMOV SS; breakpointed NOP\n");
-+	asm volatile ("mov %[ss], %%ss; breakpoint_insn: nop" :: [ss] "m" (ss));
-+
-+	/*
-+	 * Invoking SYSENTER directly breaks all the rules.  Just handle
-+	 * the SIGSEGV.
-+	 */
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; SYSENTER\n");
-+		stack_t stack = {
-+			.ss_sp = altstack_data,
-+			.ss_size = SIGSTKSZ,
-+		};
-+		if (sigaltstack(&stack, NULL) != 0)
-+			err(1, "sigaltstack");
-+		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND | SA_ONSTACK);
-+		nr = SYS_getpid;
-+		asm volatile ("mov %[ss], %%ss; SYSENTER" : "+a" (nr)
-+			      : [ss] "m" (ss) : "flags", "rcx"
-+#ifdef __x86_64__
-+				, "r11"
-+#endif
-+			);
-+
-+		/* We're unreachable here.  SYSENTER forgets RIP. */
-+	}
-+
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; INT $0x80\n");
-+		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND);
-+		nr = 20;	/* compat getpid */
-+		asm volatile ("mov %[ss], %%ss; int $0x80"
-+			      : "+a" (nr) : [ss] "m" (ss)
-+			      : "flags"
-+#ifdef __x86_64__
-+				, "r8", "r9", "r10", "r11"
-+#endif
-+			);
-+	}
-+
-+	printf("[OK]\tI aten't dead\n");
-+	return 0;
-+}
+-void do_not_expect_pk_fault(void)
+-{
+-	pkey_assert(last_pkru_faults == pkru_faults);
+-}
++#define do_not_expect_pk_fault(msg)	do {			\
++	if (last_pkru_faults != pkru_faults)			\
++		dprintf0("unexpected PK fault: %s\n", msg);	\
++	pkey_assert(last_pkru_faults == pkru_faults);		\
++} while (0)
+ 
+ int test_fds[10] = { -1 };
+ int nr_test_fds;
+@@ -1243,7 +1244,7 @@ void test_ptrace_of_child(int *ptr, u16 pkey)
+ 	pkey_assert(ret != -1);
+ 	/* Now access from the current task, and expect NO exception: */
+ 	peek_result = read_ptr(plain_ptr);
+-	do_not_expect_pk_fault();
++	do_not_expect_pk_fault("read plain pointer after ptrace");
+ 
+ 	ret = ptrace(PTRACE_DETACH, child_pid, ignored, 0);
+ 	pkey_assert(ret != -1);
+@@ -1287,7 +1288,7 @@ void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
+ 	 */
+ 	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
+ 	lots_o_noops_around_write(&scratch);
+-	do_not_expect_pk_fault();
++	do_not_expect_pk_fault("executing on PROT_EXEC memory");
+ 	ptr_contents = read_ptr(p1);
+ 	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
+ 	expected_pk_fault(pkey);
