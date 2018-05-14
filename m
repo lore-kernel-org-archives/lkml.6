@@ -1,153 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752178AbeENWt1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 18:49:27 -0400
-Received: from mail-ot0-f175.google.com ([74.125.82.175]:34337 "EHLO
-        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752077AbeENWtZ (ORCPT
+        id S1752221AbeENWtz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 18:49:55 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:39072 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752049AbeENWtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 18:49:25 -0400
-X-Google-Smtp-Source: AB8JxZpBQZaNWhA+/LFp8Zrik5npBh2XDsK5Li4eaxcx1TUbMbGHheOb/qLp8KtETh7us3NEbjnR3g==
-Subject: Re: [PATCHv5] gpio: Remove VLA from gpiolib
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-        Kees Cook <keescook@chromium.org>, Lukas Wunner <lukas@wunner.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com
-References: <20180413212427.18261-1-labbott@redhat.com>
- <CAMuHMdWDysLemM3PNNjC-Aircpu=Y-z=e79zgG8LPzvGCSEetg@mail.gmail.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <067d073f-556c-9df0-37f8-fd63fcdc7eb9@redhat.com>
-Date: Mon, 14 May 2018 15:49:21 -0700
+        Mon, 14 May 2018 18:49:53 -0400
+X-Google-Smtp-Source: AB8JxZo/CUivBkPQtMu1nyncWVtVU1IQLiPoXCLcuaSyknN4unSx7vbM0zc+dhVRE3fneXr2sz+GiA==
+Reply-To: ahs3@redhat.com
+Subject: Re: [PATCH v3 3/3] mailbox: ACPI: erroneous error message when
+ parsing the ACPI PCCT
+To: "Prakash, Prashanth" <pprakash@codeaurora.org>,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jassi Brar <jassisinghbrar@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+References: <20180501003907.4322-1-ahs3@redhat.com>
+ <20180501003907.4322-4-ahs3@redhat.com>
+ <17197481-bd76-f2ec-9d6e-4cd0d94b9265@codeaurora.org>
+From: Al Stone <ahs3@redhat.com>
+Organization: Red Hat, Inc.
+Message-ID: <bb9eefb1-a22b-9fc1-4a51-d067bdbe3f99@redhat.com>
+Date: Mon, 14 May 2018 16:49:51 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWDysLemM3PNNjC-Aircpu=Y-z=e79zgG8LPzvGCSEetg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <17197481-bd76-f2ec-9d6e-4cd0d94b9265@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/20/2018 02:02 AM, Geert Uytterhoeven wrote:
-> Hi Laura,
+On 05/14/2018 03:04 PM, Prakash, Prashanth wrote:
 > 
-> Thanks for your patch!
 > 
-> On Fri, Apr 13, 2018 at 11:24 PM, Laura Abbott <labbott@redhat.com> wrote:
->> The new challenge is to remove VLAs from the kernel
->> (see https://lkml.org/lkml/2018/3/7/621) to eventually
->> turn on -Wvla.
+> On 4/30/2018 6:39 PM, Al Stone wrote:
+>> There have been multiple reports of the following error message:
 >>
->> Using a kmalloc array is the easy way to fix this but kmalloc is still
->> more expensive than stack allocation. Introduce a fast path with a
->> fixed size stack array to cover most chip with gpios below some fixed
->> amount. The slow path dynamically allocates an array to cover those
->> chips with a large number of gpios.
-> 
-> Blindly replacing VLAs by allocated arrays is IMHO not such a good solution.
-> On the largest systems, NR_GPIOS is 2048, so that makes 2 arrays of 256
-> bytes. That's an uppper limit, and assumes they are all on the same gpiochip,
-> which they probably aren't.
-> 
-> Still, 2 x 256 bytes is a lot, so I agree it should be fixed.
-> 
-> So, wouldn't it make more sense to not allocate memory, but just process
-> the request in chunks (say, at most 128 gpios per chunk, i.e. 2 x
-> 16 bytes)? The code already caters for handling chunks due to not all gpios
-> belonging to the same gpiochip. That will probably also be faster than
-> allocating memory, which is the main idea behind this API.
-> 
->> Reviewed-and-tested-by: Lukas Wunner <lukas@wunner.de>
->> Signed-off-by: Lukas Wunner <lukas@wunner.de>
->> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> 
->> --- a/drivers/gpio/gpiolib.c
->> +++ b/drivers/gpio/gpiolib.c
-> 
->> @@ -1192,6 +1196,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
->>                  goto err_free_descs;
->>          }
+>> [    0.068293] Error parsing PCC subspaces from PCCT
 >>
->> +       if (chip->ngpio > FASTPATH_NGPIO)
->> +               chip_warn(chip, "line cnt %d is greater than fast path cnt %d\n",
->> +               chip->ngpio, FASTPATH_NGPIO);
-> 
-> FWIW, can this warning be triggered from userspace?
-> 
->> @@ -2662,16 +2670,28 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
+>> This error message is not correct.  In multiple cases examined, the PCCT
+>> (Platform Communications Channel Table) concerned is actually properly
+>> constructed; the problem is that acpi_pcc_probe() which reads the PCCT
+>> is making the assumption that the only valid PCCT is one that contains
+>> subtables of one of two types: ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE or
+>> ACPI_PCCT_TYPE_HW_REDUCED_TYPE2.  The number of subtables of these
+>> types are counted and as long as there is at least one of the desired
+>> types, the acpi_pcc_probe() succeeds.  When no subtables of these types
+>> are found, regardless of whether or not any other subtable types are
+>> present, the error mentioned above is reported.
 >>
->>          while (i < array_size) {
->>                  struct gpio_chip *chip = desc_array[i]->gdev->chip;
->> -               unsigned long mask[BITS_TO_LONGS(chip->ngpio)];
->> -               unsigned long bits[BITS_TO_LONGS(chip->ngpio)];
-> 
-> Hence just use a fixed size here...
-> 
->> +               unsigned long fastpath[2 * BITS_TO_LONGS(FASTPATH_NGPIO)];
->> +               unsigned long *mask, *bits;
->>                  int first, j, ret;
+>> In the cases reported to me personally, the PCCT contains exactly one
+>> subtable of type ACPI_PCCT_TYPE_GENERIC_SUBSPACE.  The function
+>> acpi_pcc_probe() does not count it as a valid subtable, so believes
+>> there to be no valid subtables, and hence outputs the error message.
 >>
->> +               if (likely(chip->ngpio <= FASTPATH_NGPIO)) {
->> +                       memset(fastpath, 0, sizeof(fastpath));
->> +                       mask = fastpath;
->> +                       bits = fastpath + BITS_TO_LONGS(FASTPATH_NGPIO);
->> +               } else {
->> +                       mask = kcalloc(2 * BITS_TO_LONGS(chip->ngpio),
->> +                                          sizeof(*mask),
->> +                                          can_sleep ? GFP_KERNEL : GFP_ATOMIC);
->> +                       if (!mask)
->> +                               return -ENOMEM;
->> +                       bits = mask + BITS_TO_LONGS(chip->ngpio);
->> +               }
+>> An example of the PCCT being reported as erroneous yet perfectly fine
+>> is the following:
+>>
+>>                     Signature : "PCCT"
+>>                  Table Length : 0000006E
+>>                      Revision : 05
+>>                      Checksum : A9
+>>                        Oem ID : "XXXXXX"
+>>                  Oem Table ID : "XXXXX   "
+>>                  Oem Revision : 00002280
+>>               Asl Compiler ID : "XXXX"
+>>         Asl Compiler Revision : 00000002
+>>
+>>         Flags (decoded below) : 00000001
+>>                      Platform : 1
+>>                      Reserved : 0000000000000000
+>>
+>>                 Subtable Type : 00 [Generic Communications Subspace]
+>>                        Length : 3E
+>>
+>>                      Reserved : 000000000000
+>>                  Base Address : 00000000DCE43018
+>>                Address Length : 0000000000001000
+>>
+>>             Doorbell Register : [Generic Address Structure]
+>>                      Space ID : 01 [SystemIO]
+>>                     Bit Width : 08
+>>                    Bit Offset : 00
+>>          Encoded Access Width : 01 [Byte Access:8]
+>>                       Address : 0000000000001842
+>>
+>>                 Preserve Mask : 00000000000000FD
+>>                    Write Mask : 0000000000000002
+>>               Command Latency : 00001388
+>>           Maximum Access Rate : 00000000
+>>       Minimum Turnaround Time : 0000
+>>
+>> To fix this, we count up all of the possible subtable types for the
+>> PCCT, and only report an error when there are none (which could mean
+>> either no subtables, or no valid subtables), or there are too many.
+>> We also change the logic so that if there is a valid subtable, we
+>> do try to initialize it per the PCCT subtable contents.  This is a
+>> change in functionality; previously, the probe would have returned
+>> right after the error message and would not have tried to use any
+>> other subtable definition.
+>>
+>> Tested on my personal laptop which showed the error previously; the
+>> error message no longer appears and the laptop appears to operate
+>> normally.
+>>
+>> Signed-off-by: Al Stone <ahs3@redhat.com>
+>> Cc: Jassi Brar <jassisinghbrar@gmail.com>
+>> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+>> Cc: Len Brown <lenb@kernel.org>
+>> ---
+>>  drivers/mailbox/pcc.c | 96 +++++++++++++++++++++++++++++++++------------------
+>>  1 file changed, 63 insertions(+), 33 deletions(-)
+>>
+>> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+>> index 3ef7f036ceea..72af37d7e95e 100644
+>> --- a/drivers/mailbox/pcc.c
+>> +++ b/drivers/mailbox/pcc.c
+>> @@ -372,13 +372,37 @@ static const struct mbox_chan_ops pcc_chan_ops = {
+>>  	.send_data = pcc_send_data,
+>>  };
+>>  
+>> +/*
+>> + *
+>> + * count_pcc_subspaces -- Count PCC subspaces not used in reduced HW systems.
+>> + * @header: Pointer to the ACPI subtable header under the PCCT.
+>> + * @end: End of subtable entry.
+>> + *
+>> + * Return: If we find a PCC subspace entry that is one of the types used
+>> + *	in reduced hardware systems, return -EINVAL.  Otherwise, return 0.
+>> + *
+>> + * This gets called for each subtable in the PCC table.
+>> + */
+>> +static int count_pcc_subspaces(struct acpi_subtable_header *header,
+>> +		const unsigned long end)
+>> +{
+>> +	struct acpi_pcct_subspace *pcct_ss = (struct acpi_pcct_subspace *) header;
 >> +
->>                  if (!can_sleep)
->>                          WARN_ON(chip->can_sleep);
->>
->>                  /* collect all inputs belonging to the same chip */
->>                  first = i;
->> -               memset(mask, 0, sizeof(mask));
->>                  do {
->>                          const struct gpio_desc *desc = desc_array[i];
->>                          int hwgpio = gpio_chip_hwgpio(desc);
-> 
-> Out-of-context, the code does:
-> 
-> |                       __set_bit(hwgpio, mask);
-> |                       i++;
-> |                 } while ((i < array_size) &&
-> 
-> ... and change this limit to "(i < min(array_size, first +
-> ARRAY_SIZE(mask) * BITS_PER_BYTE))"
-> 
-> |                         (desc_array[i]->gdev->chip == chip));
-> 
-> ... and you're done?
-> 
-I don't think this approach will work since gpio_chip_{get,set}_multiple
-expect to be working on arrays for the entire chip. There doesn't seem
-to be a nice way to work on a subset of GPIOs without defeating the point
-of the multiple API.
+>> +	if ((pcct_ss->header.type <= ACPI_PCCT_TYPE_RESERVED) &&
+>> +	    (pcct_ss->header.type != ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE) &&
+>> +	    (pcct_ss->header.type != ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2))
+>> +		return 0;
+>> +
+>> +	return -EINVAL;
+>> +}
+>> +
+>>  /**
+>> - * parse_pcc_subspace - Parse the PCC table and verify PCC subspace
+>> - *		entries. There should be one entry per PCC client.
+>> + * parse_pcc_subspaces -- Count PCC subspaces used only in reduced HW systems.
+>>   * @header: Pointer to the ACPI subtable header under the PCCT.
+>>   * @end: End of subtable entry.
+>>   *
+>> - * Return: 0 for Success, else errno.
+>> + * Return: If we find a PCC subspace entry that is one of the types used
+>> + *	in reduced hardware systems, return 0.  Otherwise, return -EINVAL.
+>>   *
+>>   * This gets called for each entry in the PCC table.
+>>   */
+>> @@ -393,10 +417,8 @@ static int parse_pcc_subspace(struct acpi_subtable_header *header,
+>>  		if ((pcct_ss->header.type !=
+>>  				ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE)
+>>  		    && (pcct_ss->header.type !=
+>> -				ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2)) {
+>> -			pr_err("Incorrect PCC Subspace type detected\n");
+>> +				ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2))
+>>  			return -EINVAL;
+>> -		}
+>>  	}
+>>  
+>>  	return 0;
+> Can't we combine  parse_pcc_subspace and count_pcc_subspaces into a
+> single function? parse_pcc_subspace can return 0 for supported subspace
+> types and -EINVAL for others.
 
-is 2*256 = 512 bytes really too much stack space? I guess we could
-switch to a Kconfig to allow for better bounds.
+I did think about that.  The issue is that we have subspaces that are only
+valid in reduced hardware systems, and subspaces that are not.  It might make
+sense to use different names, as in 'count_reduced_hw_subspaces()' and
+'count_general_subspaces()' (or something like those) but we do have the two
+separate classes and hardware belonging to each of those classes.
 
-Thanks,
-Laura
+That being said, you raise a good point: this would only be useful if the
+mailbox code needed to know the classes of subspaces were different; I saw
+no such code but I could have missed it.  If you're aware of any such cases,
+let me know.  Otherwise, I'll combine the two counting routines and test it.
 
->> @@ -2878,7 +2904,7 @@ static void gpio_chip_set_multiple(struct gpio_chip *chip,
->>          }
->>   }
->>
->> -void gpiod_set_array_value_complex(bool raw, bool can_sleep,
->> +int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+> The limitation on number of subspaces(max = 256) applies to all types of PCC
+> subspaces (see Table 14-351 in ACPI 6.2).  The MAX_PCC_SUBSPACES check in
+>  parse_pcc_subspace seems invalid as pcc_mbox_ctrl.num_chans will not be
+> initialized yet at that moment.
+
+Good catch.  Thanks.  That test was there prior to my patches, but I'll pull
+it out.
+
+> Given above, I think it is probably better to update parse_pcc_subspace to
+> only check for a valid PCC subspace type. The check to make sure overall count
+> of subspace is  less than 256 is already present following the call to
+> acpi_table_parse_entries_array().
 > 
-> Same here.
+> --
+> Thanks,
+> Prashanth
 > 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
+
+Thanks, Prashanth.
+
+Rafael: do you want me to just re-send this patch or the whole series?  Either
+way works for me; what's easiest for you since the first two have been applied?
+
+-- 
+ciao,
+al
+-----------------------------------
+Al Stone
+Software Engineer
+Red Hat, Inc.
+ahs3@redhat.com
+-----------------------------------
