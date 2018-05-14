@@ -1,64 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751954AbeENA4k (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 20:56:40 -0400
-Received: from ozlabs.org ([203.11.71.1]:45603 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751031AbeENA4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 20:56:38 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 14 May 2018 10:56:32 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Al Viro <viro@ZenIV.linux.org.uk>
+        id S1752027AbeENA5O (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 20:57:14 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:39919 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751985AbeENA5M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 20:57:12 -0400
+X-Google-Smtp-Source: AB8JxZpCuSNUfJPyGswqF5ZazLAVqpXaPnsqqd5gvVejKSfQyW3u4zDBozuY9yJ4qL4Yw2Ubqaq8CQ==
+Date: Mon, 14 May 2018 08:56:32 +0800
+From: Shawn Guo <shawn.guo@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux-Arch Mailing List <linux-arch@vger.kernel.org>
-Subject: linux-next: build warning after merge of the vfs tree
-Message-ID: <20180514105632.391d0cd0@canb.auug.org.au>
+        Fabio Estevam <fabio.estevam@nxp.com>, Rob Herring <robh@kernel.org>
+Subject: Re: linux-next: build warning after merge of the imx-mxs tree
+Message-ID: <20180514005629.GA11867@dragon>
+References: <20180514092158.297b4fe4@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/T9vX==h=pKIziTO00Q7NwWc"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180514092158.297b4fe4@canb.auug.org.au>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/T9vX==h=pKIziTO00Q7NwWc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+On Mon, May 14, 2018 at 09:21:58AM +1000, Stephen Rothwell wrote:
+> Hi Shawn,
+> 
+> After merging the imx-mxs tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+> 
+> arch/arm/boot/dts/imx6dl-aristainetos_7.dtb: Warning (reg_format): /soc/ipu@2400000/port@2/endpoint@0:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+> arch/arm/boot/dts/imx6dl-aristainetos_7.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
+> arch/arm/boot/dts/imx6dl-aristainetos_7.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
+> arch/arm/boot/dts/imx6dl-aristainetos_7.dtb: Warning (avoid_default_addr_size): /soc/ipu@2400000/port@2/endpoint@0: Relying on default #address-cells value
+> 
+> and about 7000 more lines across several files ...
+> 
+> It is hard tell what introduced these warnings ...
 
-After merging the vfs tree, today's linux-next build (arm
-multi_v7_defconfig and others) produced this warning:
+Commit e6bb17850d1e ("ARM: dts: imx: fix IPU OF graph endpoint node
+names") introduced the warnings.  I will submit a patch to fix them.
+Sorry for this.
 
-<stdin>:1332:2: warning: #warning syscall io_pgetevents not implemented [-W=
-cpp]
-
-Introduced by commit
-
-  7a074e96dee6 ("aio: implement io_pgetevents")
-
-Just a heads up to all the other architectures.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/T9vX==h=pKIziTO00Q7NwWc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr43sAACgkQAVBC80lX
-0Gzv6wf/bmoWQVU3UNpEDBsJO9RwHJ2ARTojpLq1gPyuAoaCEvL8UygF5G+Iuc+t
-8vf33Zu/rHSPiXjNY1Dx+t3YlJwfRMJ4lUz+0M9AvQDkQsH80bUhfmcQRx6DJboP
-fxNIE3tZXIXhaiH47Ani/QZBFmiDeMiSpRrLEfPM9qEssHnrG5jzWY5qiTHZ94EX
-s4gE1AvbJ2UXiUtvxqXNEe36/vkJjiOEcE+7Gh3NYwTlvaX6M5rTUCC7wsP19Xbm
-8fmyBtSTM0ADcYdP5S/CW9VntoA3SqJrT4LS0IFKL/9zQ+XY7825N3QJuemlKnBH
-WoRq+vpm1yqWH8W02W0q8H7DuOfPFA==
-=y+25
------END PGP SIGNATURE-----
-
---Sig_/T9vX==h=pKIziTO00Q7NwWc--
+Shawn
