@@ -1,42 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp0rQZwQvvaIvB01lb/QdNMs8cnQc0nMHgLghvx1cXpm1vsk7ss7hEKxcbEveZPfUCAu3Ir
-ARC-Seal: i=1; a=rsa-sha256; t=1526281173; cv=none;
+X-Google-Smtp-Source: AB8JxZqCXCQ73adRr+JulIGs6l5n7AExsSPmhTb1Erc9VizaoOT57UNM+Y8n9jZSdqTzSOEUNKtL
+ARC-Seal: i=1; a=rsa-sha256; t=1526281170; cv=none;
         d=google.com; s=arc-20160816;
-        b=RwnY7zZ9qhuvWMiO3WstJZEoYZtlKwSLjcnJ9eVY7Ex1M2bKPNq2XzVkwM/UjuZCHu
-         8uDqeQp4Pq6Ys7gc0Dbn2ubs544udyfPF5Bv7e9yJy1KTOlu1L6m7Q8b8nU46hgSKLYu
-         bLM/dx5LoelFCNkXonbyZ8HHW/PBxZflviOuc+Kv+Xw4H2Vc6VcjQrWISOy7MCOboY+R
-         1QWkZ9Qvl9B4iszBQ28PpEe2N8rW1O9FUqdv3au6934kFEZHIZexfKIdjBShMd2gG8/l
-         bF8OgHCtuotN4PQb9R9wTSJ89iino6/ScNXG/UvXSmPVznNhN1BTwcYYIpqqBYMgnkRx
-         mcCQ==
+        b=x1kYAxNDIRL3+nozHZoDYq9hp+qsQezuIFEYpBVCUSbkh2QKNump2J0l0HzfqtgLam
+         OTCKcx0ghh0oWO0oCZsS7ul1j49WnNwXcDFkUfJvr2pYivEkR0UMkP1OS3ZsnbES4mOz
+         d4yCJTD3unZuJa9joCF1dtIPUHctMf32vML4Ywt9iPk46Nfvi2o7/wZU3CAWNpCFv5hh
+         QF/oyOYTHkUsPeY8uQKLOzQ/MnXM2LyyvuCSUsdao/Ewq4j6pD9PcClMnkKCOS26/kEo
+         Nx+ogIi+7svRjKNXgZTeRHc3fia3KTcB5/ZIYVAZNqkIu0qfqEuYo3zFXrHVkknuhS9T
+         bhhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=VY8pJK5vr0nAUL29q+Tz/0QURYzCd4VSOy1+w4xZlkE=;
-        b=ewpS6oBI2zVF9d7OyDhX6PIong+BuECen+ueI5d5sn+r7ADtAhMsfFfoL6XRiqmKiJ
-         7oscxmk+66QKHOsKXuIqfeQ/VlE8loxH+P5sLhffUbrt6XWf+NA1WW1Eq+9gO1gsQz1Z
-         1cTlrEL3CR6IBzis3tcJXRgauFRahbQDr6dAwfrjZuk0fvZiozZhnTNbLOpVNb0pw1dq
-         /ueXdbJJ3Sdwv6Z0onm7lMU7HJ+Ak5oxiw8JrCxBjctMpx+LxwsaIx+WDlOZKe9fKHrJ
-         Um/Qd81xd9eS7nPtdYK0RTi+NdrnXbnWL+Z/TSbCbDHnugJkcycRLeLeyBs3i3fFVJKt
-         a8Bg==
+        bh=CkU7M9kUr11ZGdBLQArPDD4oWgpysD+Li9mi4W1vOUA=;
+        b=RbMiWWSo/7fcfXy1m+aBczqgZVWPlnIdvqDk40JqVqJFWGd4ohxDiITlBV/zIm6kvE
+         A28dqAHEK0soVwt5uRc9rcfrl6awr+uisIRfyhkOsrnBEwUVXn/V/NRSJc52wcwvwIF9
+         sQeJSRWV1DRFH9qKBaA4EERsnRfzMAEKq5goYVjVxwHFa4YCyoJRrENYDaaOrJas/tUo
+         7bGncTj3ILn3V7iQ9orBgkSeQrDXJnMtTZpJyFSxrUenkr/Pd/+2pzMVpXold7Mw9ykH
+         E4d69EkZoDEO2hcVrbukgxVu+zlNdhEhzuKpKGsFY+jkkQ/Wr6+UBXWy1iDwxsch+t+5
+         wEXw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=iO+eYfGs;
+       dkim=pass header.i=@kernel.org header.s=default header.b=wleV3YWD;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=iO+eYfGs;
+       dkim=pass header.i=@kernel.org header.s=default header.b=wleV3YWD;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Florent Flament <contact@florentflament.com>,
-	Pavel Petrovic <ppetrovic@acm.org>,
-	"=?UTF-8?q?S=C3=A9rgio=20M . =20Basto?=" <sergio@serjux.com>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.16 44/72] drm/i915: Fix drm:intel_enable_lvds ERROR message in kernel log
-Date: Mon, 14 May 2018 08:49:01 +0200
-Message-Id: <20180514064825.067647117@linuxfoundation.org>
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.16 43/72] drm/ttm: Use GFP_TRANSHUGE_LIGHT for allocating huge pages
+Date: Mon, 14 May 2018 08:49:00 +0200
+Message-Id: <20180514064825.022994719@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -46,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421473062509095?=
-X-GMAIL-MSGID: =?utf-8?q?1600421807593063047?=
+X-GMAIL-THRID: =?utf-8?q?1600421804879220288?=
+X-GMAIL-MSGID: =?utf-8?q?1600421804879220288?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,58 +52,74 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Florent Flament <contact@florentflament.com>
+From: Michel Dänzer <michel.daenzer@amd.com>
 
-commit e8f48f96db7e482995743f461b3e8a5c1a102533 upstream.
+commit da291320baec914f0bb4e65a9dccb86bd6c728f2 upstream.
 
-Fix `[drm:intel_enable_lvds] *ERROR* timed out waiting for panel to
-power on` in kernel log at boot time.
+GFP_TRANSHUGE tries very hard to allocate huge pages, which can result
+in long delays with high memory pressure. I have observed firefox
+freezing for up to around a minute due to this while restic was taking
+a full system backup.
 
-Toshiba Satellite Z930 laptops needs between 1 and 2 seconds to power
-on its screen during Intel i915 DRM initialization. This currently
-results in a `[drm:intel_enable_lvds] *ERROR* timed out waiting for
-panel to power on` message appearing in the kernel log during boot
-time and when stopping the machine.
+Since we don't really need huge pages, use GFP_TRANSHUGE_LIGHT |
+__GFP_NORETRY instead, in order to fail quickly when there are no huge
+pages available.
 
-This change increases the timeout of the `intel_enable_lvds` function
-from 1 to 5 seconds, letting enough time for the Satellite 930 LCD
-screen to power on, and suppressing the error message from the kernel
-log.
+Set __GFP_KSWAPD_RECLAIM as well, in order for huge pages to be freed
+up in the background if necessary.
 
-This patch has been successfully tested on Linux 4.14 running on a
-Toshiba Satellite Z930.
+With these changes, I'm no longer seeing freezes during a restic backup.
 
-[vsyrjala: bump the timeout from 2 to 5 seconds to match the DP
- code and properly cover the max hw timeout of ~4 seconds, and
- drop the comment about the specific machine since this is not
- a particulary surprising issue, nor specific to that one machine]
-
-Signed-off-by: Florent Flament <contact@florentflament.com>
 Cc: stable@vger.kernel.org
-Cc: Pavel Petrovic <ppetrovic@acm.org>
-Cc: Sérgio M. Basto <sergio@serjux.com>
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=103414
-References: https://bugzilla.kernel.org/show_bug.cgi?id=57591
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180419160700.19828-1-ville.syrjala@linux.intel.com
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
-(cherry picked from commit 280b54ade5914d3b4abe4f0ebe083ddbd4603246)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_lvds.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/ttm/ttm_page_alloc.c     |   11 ++++++++---
+ drivers/gpu/drm/ttm/ttm_page_alloc_dma.c |    3 ++-
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_lvds.c
-+++ b/drivers/gpu/drm/i915/intel_lvds.c
-@@ -319,7 +319,8 @@ static void intel_enable_lvds(struct int
+--- a/drivers/gpu/drm/ttm/ttm_page_alloc.c
++++ b/drivers/gpu/drm/ttm/ttm_page_alloc.c
+@@ -904,7 +904,8 @@ static int ttm_get_pages(struct page **p
+ 			while (npages >= HPAGE_PMD_NR) {
+ 				gfp_t huge_flags = gfp_flags;
  
- 	I915_WRITE(PP_CONTROL(0), I915_READ(PP_CONTROL(0)) | PANEL_POWER_ON);
- 	POSTING_READ(lvds_encoder->reg);
--	if (intel_wait_for_register(dev_priv, PP_STATUS(0), PP_ON, PP_ON, 1000))
-+
-+	if (intel_wait_for_register(dev_priv, PP_STATUS(0), PP_ON, PP_ON, 5000))
- 		DRM_ERROR("timed out waiting for panel to power on\n");
+-				huge_flags |= GFP_TRANSHUGE;
++				huge_flags |= GFP_TRANSHUGE_LIGHT | __GFP_NORETRY |
++					__GFP_KSWAPD_RECLAIM;
+ 				huge_flags &= ~__GFP_MOVABLE;
+ 				huge_flags &= ~__GFP_COMP;
+ 				p = alloc_pages(huge_flags, HPAGE_PMD_ORDER);
+@@ -1021,11 +1022,15 @@ int ttm_page_alloc_init(struct ttm_mem_g
+ 				  GFP_USER | GFP_DMA32, "uc dma", 0);
  
- 	intel_panel_enable_backlight(pipe_config, conn_state);
+ 	ttm_page_pool_init_locked(&_manager->wc_pool_huge,
+-				  GFP_TRANSHUGE	& ~(__GFP_MOVABLE | __GFP_COMP),
++				  (GFP_TRANSHUGE_LIGHT | __GFP_NORETRY |
++				   __GFP_KSWAPD_RECLAIM) &
++				  ~(__GFP_MOVABLE | __GFP_COMP),
+ 				  "wc huge", order);
+ 
+ 	ttm_page_pool_init_locked(&_manager->uc_pool_huge,
+-				  GFP_TRANSHUGE	& ~(__GFP_MOVABLE | __GFP_COMP)
++				  (GFP_TRANSHUGE_LIGHT | __GFP_NORETRY |
++				   __GFP_KSWAPD_RECLAIM) &
++				  ~(__GFP_MOVABLE | __GFP_COMP)
+ 				  , "uc huge", order);
+ 
+ 	_manager->options.max_size = max_pages;
+--- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
++++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
+@@ -915,7 +915,8 @@ static gfp_t ttm_dma_pool_gfp_flags(stru
+ 		gfp_flags |= __GFP_ZERO;
+ 
+ 	if (huge) {
+-		gfp_flags |= GFP_TRANSHUGE;
++		gfp_flags |= GFP_TRANSHUGE_LIGHT | __GFP_NORETRY |
++			__GFP_KSWAPD_RECLAIM;
+ 		gfp_flags &= ~__GFP_MOVABLE;
+ 		gfp_flags &= ~__GFP_COMP;
+ 	}
