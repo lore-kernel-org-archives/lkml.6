@@ -1,49 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753701AbeENRSy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:18:54 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:45867 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752241AbeENRSm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:18:42 -0400
-X-Google-Smtp-Source: AB8JxZobnW5O/T3b4CgEAoYIXV372/1ASNzt46B/NjlpZ4JuXkSSqJAhqi0sPontL718PCZR8Oxh+mo8xYANB+NSMtc=
-MIME-Version: 1.0
-In-Reply-To: <20180514093326.30314-1-anders.roxell@linaro.org>
-References: <20180510152719.6e37b10e@endymion> <20180514093326.30314-1-anders.roxell@linaro.org>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 14 May 2018 20:18:37 +0300
-Message-ID: <CAHp75VdJEzDsvJmv812wvc5p=frqc3KU8HW=y4cGULYEp4=SKQ@mail.gmail.com>
-Subject: Re: [PATCH v2] i2c: i801: fix unused-function warning
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: Jean Delvare <jdelvare@suse.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1754445AbeENRSO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:18:14 -0400
+Received: from foss.arm.com ([217.140.101.70]:46960 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754004AbeENRP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 13:15:28 -0400
+From: Dave Martin <Dave.Martin@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arch@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>
+Subject: [RFC PATCH 04/11] MIPS: Move arch-specific prctls out of core code
+Date: Mon, 14 May 2018 18:14:20 +0100
+Message-Id: <1526318067-4964-5-git-send-email-Dave.Martin@arm.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1526318067-4964-1-git-send-email-Dave.Martin@arm.com>
+References: <1526318067-4964-1-git-send-email-Dave.Martin@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4EHJ2nb016224
 
-On Mon, May 14, 2018 at 12:33 PM, Anders Roxell
-<anders.roxell@linaro.org> wrote:
-> With CONFIG_PM, we get a harmless build warning:
-> drivers/i2c/busses/i2c-i801.c:1723:12: warning: ‘i801_resume’ defined but not used [-Wunused-function]
->  static int i801_resume(struct device *dev)
->             ^~~~~~~~~~~
-> drivers/i2c/busses/i2c-i801.c:1714:12: warning: ‘i801_suspend’ defined but not used [-Wunused-function]
->  static int i801_suspend(struct device *dev)
->             ^~~~~~~~~~~~
+This patch moves the MIPS-specific prctl call implementations out
+of core code and removes redundant boilerplate associated with
+them.
 
-> -#ifdef CONFIG_PM
-> +#ifdef CONFIG_PM_SLEEP
->  static int i801_suspend(struct device *dev)
+No functional change.
 
-The better pattern is to get rid of ugly ifdef and supply
-__maybe_unused annotation to each function in question.
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+---
+ arch/mips/Kconfig                 |  1 +
+ arch/mips/include/asm/processor.h |  3 ---
+ arch/mips/kernel/syscall.c        | 14 ++++++++++++++
+ kernel/sys.c                      | 12 ------------
+ 4 files changed, 15 insertions(+), 15 deletions(-)
 
-
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 225c95d..99eb2ef 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -61,6 +61,7 @@ config MIPS
+ 	select HAVE_NMI
+ 	select HAVE_OPROFILE
+ 	select HAVE_PERF_EVENTS
++	select HAVE_PRCTL_ARCH
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_VIRT_CPU_ACCOUNTING_GEN if 64BIT || !SMP
+diff --git a/arch/mips/include/asm/processor.h b/arch/mips/include/asm/processor.h
+index 8f06608..4a8079a 100644
+--- a/arch/mips/include/asm/processor.h
++++ b/arch/mips/include/asm/processor.h
+@@ -420,7 +420,4 @@ extern int mips_get_process_fp_mode(struct task_struct *task);
+ extern int mips_set_process_fp_mode(struct task_struct *task,
+ 				    unsigned int value);
+ 
+-#define GET_FP_MODE()			mips_get_process_fp_mode()
+-#define SET_FP_MODE(value)		mips_set_process_fp_mode(value)
+-
+ #endif /* _ASM_PROCESSOR_H */
+diff --git a/arch/mips/kernel/syscall.c b/arch/mips/kernel/syscall.c
+index 15f33f0..aa8157c 100644
+--- a/arch/mips/kernel/syscall.c
++++ b/arch/mips/kernel/syscall.c
+@@ -35,6 +35,7 @@
+ #include <asm/cachectl.h>
+ #include <asm/cacheflush.h>
+ #include <asm/asm-offsets.h>
++#include <asm/processor.h>
+ #include <asm/signal.h>
+ #include <asm/sim.h>
+ #include <asm/shmparam.h>
+@@ -237,6 +238,19 @@ SYSCALL_DEFINE3(cachectl, char *, addr, int, nbytes, int, op)
+ 	return -ENOSYS;
+ }
+ 
++int prctl_arch(int option, unsigned long arg2, unsigned long arg3,
++	       unsigned long arg4, unsigned long arg5)
++{
++	switch (option) {
++	case PR_SET_FP_MODE:
++		return mips_set_process_fp_mode(arg2);
++	case PR_GET_FP_MODE:
++		return mips_get_process_fp_mode();
++	default:
++		return -EINVAL;
++	}
++}
++
+ /*
+  * If we ever come here the user sp is bad.  Zap the process right away.
+  * Due to the bad stack signaling wouldn't work.
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 520d2e8..63228e7 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -107,12 +107,6 @@
+ #ifndef MPX_DISABLE_MANAGEMENT
+ # define MPX_DISABLE_MANAGEMENT()	(-EINVAL)
+ #endif
+-#ifndef GET_FP_MODE
+-# define GET_FP_MODE()		(-EINVAL)
+-#endif
+-#ifndef SET_FP_MODE
+-# define SET_FP_MODE(a)		(-EINVAL)
+-#endif
+ 
+ /*
+  * this is where the system-wide overflow UID and GID are defined, for
+@@ -2432,12 +2426,6 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 			return -EINVAL;
+ 		error = MPX_DISABLE_MANAGEMENT();
+ 		break;
+-	case PR_SET_FP_MODE:
+-		error = SET_FP_MODE(arg2);
+-		break;
+-	case PR_GET_FP_MODE:
+-		error = GET_FP_MODE();
+-		break;
+ 	default:
+ 		error = prctl_arch(option, arg2, arg3, arg4, arg5);
+ 		break;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.1.4
