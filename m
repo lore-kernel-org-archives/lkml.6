@@ -1,97 +1,38 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-289078-1526280776-2-5085565710805891340
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='198.145.29.99', Host='mail.kernel.org', Country='US', FromHeader='org',
-  MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526280775; b=YB2wYNhN8s3oqJlXbJAr10cE+iIhs6Km4N8JnItM5m+dgyIXf2
-    JjfbXMIqSyABjkls0GfDVY50RHRQWPazZd1CkfO7mxPyihy6OyDWcfAzPL5KZTCW
-    IX/MHAIquRKPxNrWPGYx4S6K8/fWcGOvMhNffjM07YC8t/ZtMeijYy3S4+b+bp4/
-    AzCNaBmU2ThTv6mzJsiFptK6aRQvqj2Xjvbe7N9o/ALL/XSp+pbFpnbin9K/0DSZ
-    kiRt0Qg0EDsII3m+suAJmcAHQqVMEuhz42VUA3nj27ICYtBO0y0x1Zmo91uxN0GL
-    6OBTzzibfOAOyntrq+fOo9c5AebkOn89TO9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type; s=fm2; t=
-    1526280775; bh=HYHcrzGhI8uEClqsnkdgNYN0mg9vEjbiOu8SN4xGYnQ=; b=L
-    mYrwHdQPZ9bj6D8QsDg8fhmhL4KXJfRg9gEcGgrX+0vXJrJQehhy1U/6cAiT0pQ1
-    xtYOTAHgWL8vlT70x28PHysLkODLPR4HoyCHkTT9yp6sXetbGqgBSWvFtCE+hKTF
-    qiK8ql7eLkiC3ZWeC7OjDZR1Nq+YGslLYYumEIR6LFV+ECuj9d+57yOaPtjFQbdn
-    BJyW+cw4Z8YE9kAXmoqi7allGgnL0TeQlrXjaAlNHCKQ5K5p5hRE8DMRnCVRkkP6
-    HnL/ItKFFrT19QZDmL8pOuA5DTexvVKssCSsoRx39n8InUwr1vw8A9lv0SGvqavV
-    KXlDU3f2DAcrfZS9T4EBg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=m9FhAbWC x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=pass
-    smtp.mailfrom="SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org"
-    smtp.helo=mail.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=linuxfoundation.org
-    header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=m9FhAbWC x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=pass
-      smtp.mailfrom="SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org"
-      smtp.helo=mail.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=linuxfoundation.org
-      header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIJJLB5kfxNVJz2hzRJIDlPZg9bvGcMcZpiN0o4crdG6fpjwRWKDtNOTyRJzm7jiRLA8IQAi3S5dIrzWp1YwbFe3M0Pu11jq4v2pYi8WG+ebrL/gppdj
-    O6+xsgNLj8Fsdmbn9GWDtmk+pk/9+L+RA3P40WdPG4T1rP5On2T6PGsurBg27QkmjyZeKmkln6TjzKxARUz5l7uONE8f1hVSzsrqQPz5tO2TaMnGWH77XulR
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=czNdAM+YcK12vDHDihaDnQ==:117
-    a=czNdAM+YcK12vDHDihaDnQ==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=Z4Rwk6OoAAAA:8 a=JfrnYn6hAAAA:8 a=FOH2dFAWAAAA:8
-    a=gnbuhwpKAAAA:8 a=ag1SF4gXAAAA:8 a=jgO6SH3aC7yEc3PU-okA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=HkZW87K1Qel5hWWM3VKY:22 a=1CNFftbPRP8L7MoqJWF3:22
-    a=i3VuKzQdj-NEYjvDI-p3:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-X-Remote-Delivered-To: security@kernel.org
+X-Google-Smtp-Source: AB8JxZqw8AwQhw/qRSwWyBZfMuwtY6inEAFFgFsbsOeE1vvdlUE/O5//Cdjmrr9CRVBU4ca7DEkk
+ARC-Seal: i=1; a=rsa-sha256; t=1526280768; cv=none;
+        d=google.com; s=arc-20160816;
+        b=NuLfpyuHH+8qHp6dZuFH/3wlROVcw2YhOhQixJRUhHSavgn5sMKJ7ht3Bz8U8Bxy04
+         mEHjH6gY9EIhhlDg35WI3nr6J4f0An8IXW31yr9WWA3kEva0m4t30wZGGuLKVgBGKrHX
+         W/z0z8iwEOpcl6rgdLcMNC0F18tiBOh4ZEbRL7vTSJBJLBi+eEdaQUWp73lyHzhPtq8a
+         8cWHoQ4yy4E5JyvtXK0sLjCrfnKY1jtZYETzY+CyHitDb8EbmCM6wm9SwgjW3TcdPbLR
+         kUUHzv5RuRFSL5YeclJefDad/sROj/GbZlBz8YVzkqDcN62ldFIo2SyOsRTGvfMEwi0L
+         Hf/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=dtahHsPKC+YdLGT5urxGPWdq54nguMZa5qk5YqYOSfQ=;
+        b=Y98TboHIpq3Gw3SQhlVq14GrKgIKFCURGEmqykOJVdtowviiPrwXeZ7Ao4feFh/wg7
+         LC/O/+N8LZ2Vj9fG8daOy1hlfkaSPzBEF/gDsJ1Ctl1cygxTJSMRmnbG+s0zVjfh6Mtf
+         R+htQfQwoBNIc8Go58ARafxu8ArkGFpus1fbQe/xXIOR+KKo3PUSKVJdNM3r0fQg462G
+         KtCqfq9rAzk+Vh3wsklXFnHjgNPk0Gq9NqaUoO/Am+tWakHJN3GRkE+q5eJhC+o7Dv0E
+         hSNI3R+I+GUZgTgWdBGy8km2M7qMDbvYDFdubT5YGwuKqUXadUjGy+h/gWIx51B64dAG
+         Cynw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ekvpdkLQ;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ekvpdkLQ;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Song Liu <songliubraving@fb.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	security@kernel.org,
-	=?UTF-8?q?=E8=8C=83=E9=BE=99=E9=A3=9E?= <long7573@126.com>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 51/56] tracing/uprobe_event: Fix strncpy corner case
-Date: Mon, 14 May 2018 08:48:56 +0200
-Message-Id: <20180514064759.562978584@linuxfoundation.org>
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 49/56] atm: zatm: Fix potential Spectre v1
+Date: Mon, 14 May 2018 08:48:54 +0200
+Message-Id: <20180514064759.341729745@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -100,6 +41,9 @@ X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1600421383113753187?=
+X-GMAIL-MSGID: =?utf-8?q?1600421383113753187?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -107,36 +51,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 50268a3d266ecfdd6c5873d62b2758d9732fc598 upstream.
+commit 2be147f7459db5bbf292e0a6f135037b55e20b39 upstream.
 
-Fix string fetch function to terminate with NUL.
-It is OK to drop the rest of string.
+pool can be indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: security@kernel.org
-Cc: 范龙飞 <long7573@126.com>
-Fixes: 5baaa59ef09e ("tracing/probes: Implement 'memory' fetch method for uprobes")
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+This issue was detected with the help of Smatch:
+
+drivers/atm/zatm.c:1462 zatm_ioctl() warn: potential spectre issue
+'zatm_dev->pool_info' (local cap)
+
+Fix this by sanitizing pool before using it to index
+zatm_dev->pool_info
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_uprobe.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/atm/zatm.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -149,6 +149,8 @@ static void FETCH_FUNC_NAME(memory, stri
- 		return;
- 
- 	ret = strncpy_from_user(dst, src, maxlen);
-+	if (ret == maxlen)
-+		dst[--ret] = '\0';
- 
- 	if (ret < 0) {	/* Failed to fetch string */
- 		((u8 *)get_rloc_data(dest))[0] = '\0';
+--- a/drivers/atm/zatm.c
++++ b/drivers/atm/zatm.c
+@@ -23,6 +23,7 @@
+ #include <linux/bitops.h>
+ #include <linux/wait.h>
+ #include <linux/slab.h>
++#include <linux/nospec.h>
+ #include <asm/byteorder.h>
+ #include <asm/string.h>
+ #include <asm/io.h>
+@@ -1456,6 +1457,8 @@ static int zatm_ioctl(struct atm_dev *de
+ 					return -EFAULT;
+ 				if (pool < 0 || pool > ZATM_LAST_POOL)
+ 					return -EINVAL;
++				pool = array_index_nospec(pool,
++							  ZATM_LAST_POOL + 1);
+ 				spin_lock_irqsave(&zatm_dev->lock, flags);
+ 				info = zatm_dev->pool_info[pool];
+ 				if (cmd == ZATM_GETPOOLZ) {
