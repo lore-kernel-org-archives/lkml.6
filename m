@@ -1,110 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752336AbeENJaA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 05:30:00 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:32864 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752067AbeENJ36 (ORCPT
+        id S1752321AbeENJdf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 05:33:35 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:37336 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751449AbeENJdd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 05:29:58 -0400
-X-Google-Smtp-Source: AB8JxZokUo/zaWSVAyPQ9Xh6/s63xSP8OlFrfPieFokf1QjTGj7yEZjYJRp4n8uFMVtgZEoaVWcIELTqDm1Q383MvAY=
+        Mon, 14 May 2018 05:33:33 -0400
+X-Google-Smtp-Source: AB8JxZrFvoX57+mVP8B7crC8GU9rnIhOOfAd+Xj4uHBq5bPp4F/nDy/Vrj8D4BDGRLN9Vdo1k/RlKg==
+From: Anders Roxell <anders.roxell@linaro.org>
+To: jdelvare@suse.com
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH v2] i2c: i801: fix unused-function warning
+Date: Mon, 14 May 2018 11:33:26 +0200
+Message-Id: <20180514093326.30314-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180510152719.6e37b10e@endymion>
+References: <20180510152719.6e37b10e@endymion>
 MIME-Version: 1.0
-In-Reply-To: <20180513140212.3961-1-boris.brezillon@bootlin.com>
-References: <20180513140212.3961-1-boris.brezillon@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 May 2018 11:29:57 +0200
-X-Google-Sender-Auth: 6T3ZfPszfdtYxfgwp2dzEbcfZ4E
-Message-ID: <CAMuHMdVdteVYjXkmZW+PouVsvPehT_GMfvEKo7OKqs4XYdiSpA@mail.gmail.com>
-Subject: Re: [PATCH] m68k: Implement ndelay() as an inline function to force
- type checking/casting
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: linux-m68k <linux-m68k@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Schmitz <schmitzmic@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+With CONFIG_PM, we get a harmless build warning:
+drivers/i2c/busses/i2c-i801.c:1723:12: warning: ‘i801_resume’ defined but not used [-Wunused-function]
+ static int i801_resume(struct device *dev)
+            ^~~~~~~~~~~
+drivers/i2c/busses/i2c-i801.c:1714:12: warning: ‘i801_suspend’ defined but not used [-Wunused-function]
+ static int i801_suspend(struct device *dev)
+            ^~~~~~~~~~~~
 
-On Sun, May 13, 2018 at 4:02 PM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> ndelay() is supposed to take an unsigned long, but if you define
-> ndelay() as a macro and the caller pass an unsigned long long instead
-> of an unsigned long, the unsigned long long to unsigned long cast is
-> not done and we end up with an "undefined reference to `__udivdi3'"
-> error at link time.
->
-> Fix that by making ndelay() an inline function and then defining dummy
-> ndelay() macro that redirects to the ndelay() function (it's how most
-> archs do to implement ndelay()).
->
-> Fixes: c8ee038bd148 ("m68k: Implement ndelay() based on the existing udelay() logic")
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> ---
-> Hello Geert,
->
-> This patch is fixing the bug reported by kbuild test robot here [1].
-> I could have patched the PSEC_TO_NSEC() macro to cast the result of
-> the division on a u32, but I thought making m68k consistent with what
-> other archs do would be preferable.
->
-> Let me know if don't like the solution, and I'll patch the ndelay()
-> caller instead.
+Follow design pattern from other drivers like i2c-brcmstb, i2c-mpc,
+i2c-ocores, i2c-pnx, i2c-puv3, i2c-st, i2c-stu300 and i2c-mux-pca954x
+and changing the ifdef CONFIG_PM to CONFIG_PM_SLEEP.
 
-Thanks for your patch!
+Fixes: a9c8088c7988 ("i2c: i801: Don't restore config registers on runtime PM")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/i2c/busses/i2c-i801.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-With the comment a few lines above removed:
-
-    - * This is a macro so that the const version can factor out the first
-    - * multiply and shift.
-
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
->
-> Regards,
->
-> Boris
->
-> [1]https://lkml.org/lkml/2018/5/13/72
-> ---
->  arch/m68k/include/asm/delay.h | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/m68k/include/asm/delay.h b/arch/m68k/include/asm/delay.h
-> index 7f474121e4ca..66ba159002a3 100644
-> --- a/arch/m68k/include/asm/delay.h
-> +++ b/arch/m68k/include/asm/delay.h
-> @@ -115,6 +115,13 @@ static inline void __udelay(unsigned long usecs)
->   */
->  #define        HZSCALE         (268435456 / (1000000 / HZ))
->
-> -#define ndelay(n) __delay(DIV_ROUND_UP((n) * ((((HZSCALE) >> 11) * (loops_per_jiffy >> 11)) >> 6), 1000))
-> +static inline void ndelay(unsigned long nsec)
-> +{
-> +       __delay(DIV_ROUND_UP(nsec *
-> +                            ((((HZSCALE) >> 11) *
-> +                              (loops_per_jiffy >> 11)) >> 6),
-> +                            1000));
-> +}
-> +#define ndelay(n) ndelay(n)
->
->  #endif /* defined(_M68K_DELAY_H) */
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
+index ed07f9002710..954fb3f3b7fc 100644
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -1710,7 +1710,7 @@ static void i801_shutdown(struct pci_dev *dev)
+ 	pci_write_config_byte(dev, SMBHSTCFG, priv->original_hstcfg);
+ }
+ 
+-#ifdef CONFIG_PM
++#ifdef CONFIG_PM_SLEEP
+ static int i801_suspend(struct device *dev)
+ {
+ 	struct pci_dev *pci_dev = to_pci_dev(dev);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.0
