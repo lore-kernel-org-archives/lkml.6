@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1557870-1526338456-2-5888719110360836146
+X-Cyrus-Session-Id: sloti22d1t05-1557870-1526338509-2-55737456032073330
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: 
@@ -8,23 +8,23 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526338456; b=ZQ8wUq9HCl8//GTxYz1inIPJjaBwjgEYe+AjowljXb83lt6BpI
-    +quRq4AQZ9W1NhI0C8iXie1mjnCUmXkJzeZjE6djvwyPd6rfeMmqJ/7PpIZZkLrZ
-    v/3lBAeK78TtImwSNrJRU3UV3bcusS0IIMt8LafSES3vAT00vjGdaggbzsFbY3XZ
-    cmAdXMwGH5MKAoQ+hFXeKNeLvAPTbdSHIAM33ZlXgXqFDMLAK6n6txB+hv36sxqh
-    A8ljgspicHNwdDg9eHJ49xbEd9aZdv+sI2LdqmTQ2KdnCxyUzNpd0r4LlFfLOaVR
-    OJMdly1BHCwvIsN+z1DSVm7ulFmQzjMnSdgw==
+    1526338509; b=SkhiMHd/L0OeA8M3vaeha6BUK8zitx/lR/KJmUDaaikMvVewr1
+    pZU+A3SJBft5b4apP+1NwO+xI4zmkZRjK2DyVMpIdjTwuEbkRS3WQfhsH4U3m/i/
+    0BH2nLLKvFA4Sr8ldeJx8k405SpH4y7p6qtngAwob1EHiUgQyVN78UO8OScCIAfI
+    3F/hqCCmiKHuQ4p33AnoyV8d1I6FV+pC8alr/rn+JTjGVjKECKv9CVsE6rFRivvQ
+    HZ/sVG541mt8JPv3oBsHrG4neqxdwLBDMlu5vU1BxiyuEraKdU3/0M4KarYRnbyB
+    5HJ0m0iKrZULjsKbYDmMqftUbenci3LyrCcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:in-reply-to
-    :references:message-id:sender:list-id; s=fm2; t=1526338456; bh=N
-    MLqrirnLcVd5nj6/4no2pV3et5+jKqyMe66srBXbvc=; b=LjWSNFvCbLgJXen9B
-    ynfYV0BplQhLkoCbFz7Tg2AAIN7M2X4qj/yO6oZkqUiiX8iFgz3SOTmqvg4N6EkI
-    wK0tOjrNPhv0/ITEzKsTYICbG2P8BN+j0f7zkWbHyn9K9D5gfaegzwdJpItiri5O
-    gPxMlHV+/gRXLna9oN7rETrHGQl8mzIJvVZ7tc5ZnJsWKzHLK11O9XRzLEHAxZP9
-    whrMwt5zoqmigCVxOPaWOQjJKLPZwwn4KJbPVyWcZsYLOfXkwlkwSSQ3MVyPA3J3
-    CFbd+0AdiBEm6W7Mhf6QZQbsdb7bCHYN1R654ntZwOWswkjKNDkk72gk1IBam39K
-    SuLRw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :references:message-id:sender:list-id; s=fm2; t=1526338509; bh=6
+    YhTpl+pJZcGca9zgzvyrH55JUpEROQCiLedBJigQwM=; b=B3z5u8iDdcJju64BX
+    2x7j5OeY0J4z5J4w2EZNVJksjf/sMMN+8xNc73yuX0WTtapXHXxKSJnwvLKThXYr
+    CJfqbveHP7JV+esrCF1F2v0lZKTWQ8X3y6xreFx4ulproGjWTAPkdt2wIHw6wUAq
+    t4jIhnVAm7TAfj7WBhDJpCiQWbdCWyzWdOPJwy6KC5UDlpiOBT3AlwMUF2Ea9XN5
+    ci3UUSKNVW6DxgqHqbNqE5j0+NLcTeE5IRDFzRZxKXhbptOgJ+5MU+T+B9o/ceaX
+    mszURb+iz7EeV7hoUHaRzSZ6Ar6Dbrf4ggBhiXL+K/2PpHO97/IxvZClKk822I0T
+    8wxRQ==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
     header.from=linux.vnet.ibm.com;
@@ -40,7 +40,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header_org.domain=ibm.com header_org.result=pass
     header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
@@ -58,21 +58,21 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMgXZ9P2Otj1kCa6Iv37iHVcqr/ikXL2kZwvjSncy+mNxCmcpOzg/2J/LN1S6Zb8kcxaRNj6aioM+C/PSeMtMzE76ZXf+P3CunudLsTElu09N17Dwx0T
-    FVEhFbuD7W7fgqrAtj4TL8gd0eyARAZkiq3URFNJUBdqs13MG7qrhcyDlL8DhAnNAT6p0gLWz4/2FSZxCrAJML1hOpDhVqPu5K6SQ+vKBsMY4C9GFBRIVWyk
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFl3ulmwNY4xKc7FpRcDyWrT8NboJ76HqYKQfQot1aEjVt+V7f5ymS9HsSAALnl5ee9Lc7oqqg1kvxx1jcUF/hp5GQXkClDQQKMFCNztMIbuQu6i6muQ
+    265agpRKFk3mGNIT3uit+VqhoMFAZtnhP0Tid/L5tkD7TZiAO2SoQ9KXlVx/KWkSPO4wjpGHYi6ecainuQK6oQ+FBFd4W71mFbxKn54JEWY5QhIEjtdEB6HZ
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=pGLkceISAAAA:8
-    a=VnNF1IyMAAAA:8 a=jfU3rlwaHHGLTXbPq6oA:9
+    a=VnNF1IyMAAAA:8 a=jjrtqIZLxSW9rhl--NUA:9
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752340AbeENWyN (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 14 May 2018 18:54:13 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51642 "EHLO
+        id S1752519AbeENWzF (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 14 May 2018 18:55:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56982 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752243AbeENWyK (ORCPT
+        by vger.kernel.org with ESMTP id S1752246AbeENWyL (ORCPT
         <rfc822;linux-arch@vger.kernel.org>);
-        Mon, 14 May 2018 18:54:10 -0400
+        Mon, 14 May 2018 18:54:11 -0400
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         mingo@kernel.org
@@ -82,20 +82,20 @@ Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com,
         luc.maranget@inria.fr, akiyks@gmail.com,
         SeongJae Park <sj38.park@gmail.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH memory-model 8/8] atomic_ops.rst: Use `warning` rst directive
-Date: Mon, 14 May 2018 15:55:33 -0700
+Subject: [PATCH memory-model 7/8] atomic_ops.rst: Fix wrong example code
+Date: Mon, 14 May 2018 15:55:32 -0700
 X-Mailer: git-send-email 2.5.2
 In-Reply-To: <20180514225457.GA5142@linux.vnet.ibm.com>
 References: <20180514225457.GA5142@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18051422-0048-0000-0000-0000026CF06D
+x-cbid: 18051422-0056-0000-0000-0000044E3E2A
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009026; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032370; UDB=6.00527776; IPR=6.00811502;
- MB=3.00021114; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 22:54:08
+ PH=3.00000004; SC=3.00000260; SDB=6.01032370; UDB=6.00527776; IPR=6.00811501;
+ MB=3.00021114; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 22:54:09
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051422-0049-0000-0000-0000451F3300
-Message-Id: <1526338533-6044-8-git-send-email-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18051422-0057-0000-0000-0000089251DD
+Message-Id: <1526338533-6044-7-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -111,36 +111,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: SeongJae Park <sj38.park@gmail.com>
 
-One warning message in 'atomic_ops.rst' is not using 'warning' rst
-directive while others does.  This commit modifies the message to use
-'warning' rst directive.
+Example code snippets for necessary of READ_ONCE() and WRITE_ONCE() has
+an unnecessary line of code and wrong condition.  This commit fixes
+them.
 
 Signed-off-by: SeongJae Park <sj38.park@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 ---
- Documentation/core-api/atomic_ops.rst | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ Documentation/core-api/atomic_ops.rst | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/Documentation/core-api/atomic_ops.rst b/Documentation/core-api/atomic_ops.rst
-index 4ea4af71e68a..2e7165f86f55 100644
+index fce929144ccd..4ea4af71e68a 100644
 --- a/Documentation/core-api/atomic_ops.rst
 +++ b/Documentation/core-api/atomic_ops.rst
-@@ -466,10 +466,12 @@ Like the above, except that these routines return a boolean which
- indicates whether the changed bit was set _BEFORE_ the atomic bit
- operation.
+@@ -111,7 +111,6 @@ If the compiler can prove that do_something() does not store to the
+ variable a, then the compiler is within its rights transforming this to
+ the following::
  
--WARNING! It is incredibly important that the value be a boolean,
--ie. "0" or "1".  Do not try to be fancy and save a few instructions by
--declaring the above to return "long" and just returning something like
--"old_val & mask" because that will not work.
-+
-+.. warning::
-+        It is incredibly important that the value be a boolean, ie. "0" or "1".
-+        Do not try to be fancy and save a few instructions by declaring the
-+        above to return "long" and just returning something like "old_val &
-+        mask" because that will not work.
+-	tmp = a;
+ 	if (a > 0)
+ 		for (;;)
+ 			do_something();
+@@ -119,7 +118,7 @@ the following::
+ If you don't want the compiler to do this (and you probably don't), then
+ you should use something like the following::
  
- For one thing, this return value gets truncated to int in many code
- paths using these interfaces, so on 64-bit if the bit is set in the
+-	while (READ_ONCE(a) < 0)
++	while (READ_ONCE(a) > 0)
+ 		do_something();
+ 
+ Alternatively, you could place a barrier() call in the loop.
 -- 
 2.5.2
