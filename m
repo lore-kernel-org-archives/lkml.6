@@ -1,95 +1,167 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752049AbeENB5G (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 21:57:06 -0400
-Received: from ozlabs.org ([203.11.71.1]:51275 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751853AbeENB5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 21:57:04 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 14 May 2018 11:57:00 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: linux-next: manual merge of the bpf-next tree with the bpf tree
-Message-ID: <20180514115700.0faadd6f@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0zqOct13ybwqAHaIe_T.X2i"; protocol="application/pgp-signature"
+        id S1752024AbeENCLu (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 22:11:50 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35786 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751219AbeENCLt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 22:11:49 -0400
+Message-ID: <71fc1f9e921f2a755e79563903ddf676de128478.camel@decadent.org.uk>
+Subject: Re: Fixing Linux getrandom() in stable
+From: Ben Hutchings <ben@decadent.org.uk>
+To: Adrian Bunk <bunk@debian.org>
+Cc: Debian release team <debian-release@lists.debian.org>,
+        Debian kernel maintainers <debian-kernel@lists.debian.org>,
+        krb5@packages.debian.org, libbsd@packages.debian.org,
+        systemd@packages.debian.org, Michael Kerrisk <mtk.manpages@gmail.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org
+Date: Mon, 14 May 2018 03:11:30 +0100
+In-Reply-To: <20180513204828.GI10643@localhost>
+References: <75577b3d2efd01aaf563f1a1400a2c655556b258.camel@decadent.org.uk>
+         <20180513204828.GI10643@localhost>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-fPt2BSZn9gfbAMq4dtff"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+X-SA-Exim-Connect-IP: 2a02:8011:400e:2:6f00:88c8:c921:d332
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/0zqOct13ybwqAHaIe_T.X2i
-Content-Type: text/plain; charset=US-ASCII
+
+--=-fPt2BSZn9gfbAMq4dtff
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Sun, 2018-05-13 at 23:48 +0300, Adrian Bunk wrote:
+> On Wed, May 09, 2018 at 11:46:00PM +0100, Ben Hutchings wrote:
+[...]
+> > # Options for a new fix
+> >=20
+> > It is unlikely that any further fix will be forthcoming on the kernel
+> > side, so I believe that we need to do one of:
+> >=20
+> > 1. Add entropy to the kernel during boot; either:
+> >    a. Improve systemd-random-seed
+> >    b. Recommend use of haveged
+>=20
+> I don't see any solution above that both always works and never results
+> in new CVEs.
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+Indeed.
 
-  tools/lib/bpf/libbpf.c
+> As an example, what happens if I debootstrap and deploy the resulting
+> filesytem to a large number of identical embedded systems without
+> entropy sources?
 
-between commit:
+Then it is your fault when they turn into a botnet. :-)  Availability
+of randomness must be considered in the design of embedded systems.
 
-  3597683c9da6 ("tools: bpf: handle NULL return in bpf_prog_load_xattr()")
+[...]
+> /dev/urandom is documented in a very misleading way, quoting random(4):
+>    When read during early boot time, /dev/urandom may return data prior t=
+o
+>    the entropy pool being initialized.  If this  is  of  concern  in  you=
+r
+>    application, use getrandom(2) or /dev/random instead.
+>=20
+> What is the worst case for "early boot time" here? "always"?
 
-from the bpf tree and commit:
+No, I don't think so.
 
-  17387dd5ac2c ("tools: bpf: don't complain about no kernel version for net=
-working code")
+> Due to the gdm bugs mentioned above we know that there are real-life=20
+> situations where gdm currently uses "random" data that might be=20
+> predictable.
+>=20
+> grep tells me:
+> daemon/gdm-x-session.c:        auth_entry.data =3D gdm_generate_random_by=
+tes (auth_entry.data_length, &error);
+> daemon/gdm-display-access-file.c:        *cookie =3D gdm_generate_random_=
+bytes (GDM_DISPLAY_ACCESS_COOKIE_SIZE,
+>=20
+> Repeat the same for every package that uses /dev/urandom.
 
-from the bpf-next tree.
+This is certain undesirable, but it's exploitable only by local users.=20
+(If you let the X server listen to the network, all authentication
+cookies are sent in the clear so you've already lost.  If you use ssh X
+forwarding, it generates a new authentication cookie for use with the X
+proxy on the remote machine.)
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+>=20
+> >    b. Tolerate a longer wait for getrandom() to return
+>=20
+> I suspect there might be no guaranteed upper bound for the waiting time.
 
+Interrupt timing feeds into the RNG, and as long as there's at least
+one interrupt per second then I think the RNG will reach the fully
+initialised state after a few minutes.  I just started a VM with a
+serial console and only a shell running as pid 1, which is about as
+idle a system as I can imagine, and it was seeing more than one
+interrupt per second.  However, other architectures (e.g. s390x) might
+achieve greater idleness.
+
+> > ...
+> > The libbsd maintainer (Guillem Jover) favours option 2a.
+> >=20
+> > One of the krb5 maintainers (Benjamin Kaduk) favours option 2b, and
+> > also proposed that systemd could provide a wait-for-rng-ready unit to
+> > support this.
+>=20
+> I don't see any general solution that is both correct and easy.
+
+Indeed.
+
+> The proper way forward might be to deprecate /dev/urandom and add a=20
+> third option GRND_UNSAFE_RANDOM to getrandom() that is documented to=20
+> never block but might return predictable data in some cases.
+
+This doesn't solve anything for us.  (It does help with the original
+problem of device nodes possibly being absent from a minimal container
+or chroot.)
+
+> It would then be up to the application to decide whether predictable
+> data is acceptable, and what to do in entropy-starved situations.
+>=20
+> Regarding the suggested wait-for-rng-ready systemd unit for others to=20
+> wait on, this only makes sense for cases where "do not start at all"
+> is the best handling for a "no entropy" situation.
+
+Yes.
+
+Ben.
+
+> > Ben.
+>=20
+> cu
+> Adrian
+>=20
 --=20
-Cheers,
-Stephen Rothwell
+Ben Hutchings
+For every action, there is an equal and opposite criticism. - Harrison
 
-diff --cc tools/lib/bpf/libbpf.c
-index 8da4eeb101a6,df54c4c9e48a..000000000000
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@@ -2163,9 -2193,12 +2193,12 @@@ int bpf_prog_load_xattr(const struct bp
- =20
-  	if (!attr)
-  		return -EINVAL;
-+ 	if (!attr->file)
-+ 		return -EINVAL;
- =20
-- 	obj =3D bpf_object__open(attr->file);
-+ 	obj =3D __bpf_object__open(attr->file, NULL, 0,
-+ 				 bpf_prog_type__needs_kver(attr->prog_type));
- -	if (IS_ERR(obj))
- +	if (IS_ERR_OR_NULL(obj))
-  		return -ENOENT;
- =20
-  	bpf_object__for_each_program(prog, obj) {
 
---Sig_/0zqOct13ybwqAHaIe_T.X2i
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--=-fPt2BSZn9gfbAMq4dtff
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr47OwACgkQAVBC80lX
-0GxZUQgAiLxjLkXzSOpYKbMoc4IeL0Lb9efzWO+2C8SR61CaUptHmUh8X4bNP2v+
-+QKj/i0Y+yyU9Z9SMbhtFpA0toFxNBMRTTvyO+6H4g9Wh1g3goHGjo6t05pvoIAF
-ogBVyk6xF94JSQ6avm9UyxrI67bksiAsck3q+Jk6Nzuzo7cjmR4Ge7ALrzZDGk2B
-nHlBnki4p6t42WHcD5vwdI8xd20FIm1wKBElvwS4f6mOz/II6ujbL4ILf0PjNpZ4
-3g1fqqcRiWYWiGx1JkBiH+vvINwpVgr7Lok9tSgkiynmc/VZIPguUeAgAW53rxve
-Fzj4ZN3ricH72G5kXzUGLGnlH/CHnw==
-=JkS+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlr48FIACgkQ57/I7JWG
+EQnPMQ//TTpdjIIzbRUJIMzMAyyrV9h9LkHvffK6oUsA4TfcJNNjkqbztRE2OkW1
+iMNBZ+KZrQk8CL1nmFjY6EKHilf/zvWjReCDAmAgg+G7bDyB7A+QmziP0nHzdzLj
+rtCgpjyRYuoT8QqxJwr3cXjeCee0wtCE+sDhCBsT9yAAmiQUzmXpoWWT3Zhr1FnM
+6wL18JP6/wd6P+3uVkjwifuCCXfDLk9hOFGzF63zpGtKJbAn8yDO+FRkpjcydrYH
+OyZgbWYw3bBrV7Wf+1CsDeBbpl2vt3UpJViX0T/3SogA2NUiLJpZrIyvA99KgZhv
+60qrS0HK2/goU/RYZLqszkZvfrFyu8CT7hFMJRzw/ye9hKxEZB0xjsdKkT1KfKdz
+gm4hsgDIWrS1eyxx38t6Qq2eTxFxBV5TZywiB8Hl3PCPbaobpYtqRH4+ehCPOkXm
+wfiGGWq4xp4hXYWgoGLrD4KxcDi0OzEMLqz+gIuXpMjPUAhpzwMNdm/a3ULqeyzp
+g0LLF2Vr9uhzKOJ8zPtZ1juexie9GdFWdKcaKCvng2bssc54nU5EcwJuznqaA1ls
+Red+OAk1yL7jM2s1Y3H8iGbfyY7vKxxV0ZPpqzsds1VvEgzqM6o3dcPn8kL3VzxA
+TLFEve8wZwV7mz9UufHi7GT9FbD/FCNv8r6ZibFvj72xJNiLgzk=
+=s6+y
 -----END PGP SIGNATURE-----
 
---Sig_/0zqOct13ybwqAHaIe_T.X2i--
+--=-fPt2BSZn9gfbAMq4dtff--
