@@ -1,28 +1,28 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqw8AwQhw/qRSwWyBZfMuwtY6inEAFFgFsbsOeE1vvdlUE/O5//Cdjmrr9CRVBU4ca7DEkk
-ARC-Seal: i=1; a=rsa-sha256; t=1526280768; cv=none;
+X-Google-Smtp-Source: AB8JxZpgdTBkWYuopB34JGt+i6iw+KeyhuA/8fMgN8z4uIg3aFR0Xk+8D7V/JBJDyPC5wZLteDq9
+ARC-Seal: i=1; a=rsa-sha256; t=1526280765; cv=none;
         d=google.com; s=arc-20160816;
-        b=NuLfpyuHH+8qHp6dZuFH/3wlROVcw2YhOhQixJRUhHSavgn5sMKJ7ht3Bz8U8Bxy04
-         mEHjH6gY9EIhhlDg35WI3nr6J4f0An8IXW31yr9WWA3kEva0m4t30wZGGuLKVgBGKrHX
-         W/z0z8iwEOpcl6rgdLcMNC0F18tiBOh4ZEbRL7vTSJBJLBi+eEdaQUWp73lyHzhPtq8a
-         8cWHoQ4yy4E5JyvtXK0sLjCrfnKY1jtZYETzY+CyHitDb8EbmCM6wm9SwgjW3TcdPbLR
-         kUUHzv5RuRFSL5YeclJefDad/sROj/GbZlBz8YVzkqDcN62ldFIo2SyOsRTGvfMEwi0L
-         Hf/w==
+        b=UtZJTyrUb8LHxqzRnlHRVPnbOfTC+jbJMOSg5F84a61LM+4mCD6Z9J3uPqXN9o8Tgt
+         XtPI6jn0vpJsfLr4LlJFNWO4OplVwIRxtM8skp5bpIotiHlmCVnIGy7LkVm29lprUa78
+         AGAkEqg9syxz2+2mlGFxZT4PnWIcWO5ByneLluI09ZbSm4g3N9nGpWHoo1CTixT0BC2S
+         jJ5/AZ86Hl328KKJ2KAY0W8EpGNGq3PbU98UBkIub0motEqPorbRIdLwPTww7w0gw8nU
+         tyCLqE9TxDTMJgiTkb7Ezz6MILxhUQmm7UKzcVnKtLdl4znF+XkY6dy2jmDfzHDld/Y8
+         0QTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=dtahHsPKC+YdLGT5urxGPWdq54nguMZa5qk5YqYOSfQ=;
-        b=Y98TboHIpq3Gw3SQhlVq14GrKgIKFCURGEmqykOJVdtowviiPrwXeZ7Ao4feFh/wg7
-         LC/O/+N8LZ2Vj9fG8daOy1hlfkaSPzBEF/gDsJ1Ctl1cygxTJSMRmnbG+s0zVjfh6Mtf
-         R+htQfQwoBNIc8Go58ARafxu8ArkGFpus1fbQe/xXIOR+KKo3PUSKVJdNM3r0fQg462G
-         KtCqfq9rAzk+Vh3wsklXFnHjgNPk0Gq9NqaUoO/Am+tWakHJN3GRkE+q5eJhC+o7Dv0E
-         hSNI3R+I+GUZgTgWdBGy8km2M7qMDbvYDFdubT5YGwuKqUXadUjGy+h/gWIx51B64dAG
-         Cynw==
+        bh=3C4qEeqCT+nxIeo0ZHBUFU3VWFJuB1A6SiaGmTLFzvY=;
+        b=ll9u9pHsouotDZ+iL5YOc4wjEK6dAHYrs3eQDgWZZRwXxiITBVEcwE36Rr+srDBDCq
+         9vz+1ZYmz+PY66VTSLna0TNENyh549bgW1gmQrhdcrzWm8cXM3VBL2hGloadSP8yCL7M
+         EfRn3TfPrFbAMoAHG4GFXfssjIhbUEXcRYmuJ1tZxsyU2vF91z4lpw7WPeh74XlhU6+n
+         FgZYYPEmeSzHzxN096/wR0UaXJAxTZ5Ef2eJjKBTC4sHjMEjPxkioBN+tM7DLv9n2jps
+         rI4rzI30LExYqYl+OMmHDs7WTRdbGgfw5lPD6q9weChdFeCIvqFfyOpQV7TVUEhoPhXB
+         PLag==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ekvpdkLQ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=KpkF9jGq;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ekvpdkLQ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=KpkF9jGq;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -30,9 +30,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 49/56] atm: zatm: Fix potential Spectre v1
-Date: Mon, 14 May 2018 08:48:54 +0200
-Message-Id: <20180514064759.341729745@linuxfoundation.org>
+Subject: [PATCH 4.4 48/56] net: atm: Fix potential Spectre v1
+Date: Mon, 14 May 2018 08:48:53 +0200
+Message-Id: <20180514064759.262649994@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421383113753187?=
-X-GMAIL-MSGID: =?utf-8?q?1600421383113753187?=
+X-GMAIL-THRID: =?utf-8?q?1600421380423998410?=
+X-GMAIL-MSGID: =?utf-8?q?1600421380423998410?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,18 +53,19 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 2be147f7459db5bbf292e0a6f135037b55e20b39 upstream.
+commit acf784bd0ce257fe43da7ca266f7a10b837479d2 upstream.
 
-pool can be indirectly controlled by user-space, hence leading to
+ioc_data.dev_num can be controlled by user-space, hence leading to
 a potential exploitation of the Spectre variant 1 vulnerability.
 
 This issue was detected with the help of Smatch:
+net/atm/lec.c:702 lec_vcc_attach() warn: potential spectre issue
+'dev_lec'
 
-drivers/atm/zatm.c:1462 zatm_ioctl() warn: potential spectre issue
-'zatm_dev->pool_info' (local cap)
-
-Fix this by sanitizing pool before using it to index
-zatm_dev->pool_info
+Fix this by sanitizing ioc_data.dev_num before using it to index
+dev_lec. Also, notice that there is another instance in which array
+dev_lec is being indexed using ioc_data.dev_num at line 705:
+lec_vcc_added(netdev_priv(dev_lec[ioc_data.dev_num]),
 
 Notice that given that speculation windows are large, the policy is
 to kill the speculation on the first load and not worry if it can be
@@ -78,25 +79,31 @@ Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/atm/zatm.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/atm/lec.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/atm/zatm.c
-+++ b/drivers/atm/zatm.c
-@@ -23,6 +23,7 @@
- #include <linux/bitops.h>
- #include <linux/wait.h>
- #include <linux/slab.h>
+--- a/net/atm/lec.c
++++ b/net/atm/lec.c
+@@ -41,6 +41,9 @@ static unsigned char bridge_ula_lec[] =
+ #include <linux/module.h>
+ #include <linux/init.h>
+ 
++/* Hardening for Spectre-v1 */
 +#include <linux/nospec.h>
- #include <asm/byteorder.h>
- #include <asm/string.h>
- #include <asm/io.h>
-@@ -1456,6 +1457,8 @@ static int zatm_ioctl(struct atm_dev *de
- 					return -EFAULT;
- 				if (pool < 0 || pool > ZATM_LAST_POOL)
- 					return -EINVAL;
-+				pool = array_index_nospec(pool,
-+							  ZATM_LAST_POOL + 1);
- 				spin_lock_irqsave(&zatm_dev->lock, flags);
- 				info = zatm_dev->pool_info[pool];
- 				if (cmd == ZATM_GETPOOLZ) {
++
+ #include "lec.h"
+ #include "lec_arpc.h"
+ #include "resources.h"
+@@ -697,8 +700,10 @@ static int lec_vcc_attach(struct atm_vcc
+ 	bytes_left = copy_from_user(&ioc_data, arg, sizeof(struct atmlec_ioc));
+ 	if (bytes_left != 0)
+ 		pr_info("copy from user failed for %d bytes\n", bytes_left);
+-	if (ioc_data.dev_num < 0 || ioc_data.dev_num >= MAX_LEC_ITF ||
+-	    !dev_lec[ioc_data.dev_num])
++	if (ioc_data.dev_num < 0 || ioc_data.dev_num >= MAX_LEC_ITF)
++		return -EINVAL;
++	ioc_data.dev_num = array_index_nospec(ioc_data.dev_num, MAX_LEC_ITF);
++	if (!dev_lec[ioc_data.dev_num])
+ 		return -EINVAL;
+ 	vpriv = kmalloc(sizeof(struct lec_vcc_priv), GFP_KERNEL);
+ 	if (!vpriv)
