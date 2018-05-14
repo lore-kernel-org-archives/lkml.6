@@ -1,99 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752644AbeENIkz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:40:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34720 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752447AbeENIkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:40:53 -0400
-Date: Mon, 14 May 2018 10:40:50 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 09/21] arm64: dts: allwinner: a64: Add HDMI support
-Message-ID: <20180514084050.ix5corfuvx33gsyn@flea>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-10-jagan@amarulasolutions.com>
- <20180502113413.vv2r3ubfoh7gm3ms@flea>
- <CAMty3ZBheurXewQ8R53G_0gNLgv1jQkZbjAbaN30JQ6_ZVn7Eg@mail.gmail.com>
+        id S1752059AbeENInO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:43:14 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52256 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752017AbeENInL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 04:43:11 -0400
+X-Google-Smtp-Source: AB8JxZrS8Uj+QqzMs8GLSDfGdQMOvHwjQZm33EZqvDr9RcfpW5yJdRlEgWZx6QHN/ysnORc+1IP7Zw==
+Date: Mon, 14 May 2018 10:43:08 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Emil Goode <emil.fsw@goode.io>
+Cc: Thierry Reding <treding@nvidia.com>, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] gpu: host1x: Fix compiler errors
+Message-ID: <20180514084308.GA18312@ulmo>
+References: <20180326144314.xeuocqp5fjpfjm3q@lianli>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jyer2q7sajz2ea4p"
+        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
 Content-Disposition: inline
-In-Reply-To: <CAMty3ZBheurXewQ8R53G_0gNLgv1jQkZbjAbaN30JQ6_ZVn7Eg@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180326144314.xeuocqp5fjpfjm3q@lianli>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---jyer2q7sajz2ea4p
-Content-Type: text/plain; charset=us-ascii
+--bp/iNruPH9dso1Pn
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 14, 2018 at 02:03:36PM +0530, Jagan Teki wrote:
-> On Wed, May 2, 2018 at 5:04 PM, Maxime Ripard <maxime.ripard@bootlin.com>=
- wrote:
-> > Hi,
-> >
-> > On Mon, Apr 30, 2018 at 05:10:46PM +0530, Jagan Teki wrote:
-> >> +             hdmi_phy: hdmi-phy@1ef0000 {
-> >> +                     compatible =3D "allwinner,sun50i-a64-hdmi-phy",
-> >> +                                  "allwinner,sun8i-h3-hdmi-phy";
-> >> +                     reg =3D <0x01ef0000 0x10000>;
-> >> +                     clocks =3D <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_D=
-DC>,
-> >> +                              <&ccu CLK_PLL_VIDEO1>;
-> >
-> > You were discussing that the PLL0 could also be used to clock the PHY,
-> > has that been figured out?
+On Mon, Mar 26, 2018 at 04:44:14PM +0200, Emil Goode wrote:
+> The compiler is complaining with the following errors:
 >=20
-> This is what I understand from Fig: 3-3. Module Clock Diagram, both
-> tcon0 and tcon1 are using HDMI. I'm thinking based on the tcon
-> configuration we need use proper PLL or some logic to get common PLL
-> don't know yet. Since this series adding tcon1 I've attached PLL1.
+> drivers/gpu/host1x/cdma.c:94:48: error:
+> 	passing argument 3 of =E2=80=98dma_alloc_wc=E2=80=99 from incompatible p=
+ointer type
+> 	[-Werror=3Dincompatible-pointer-types]
+>=20
+> drivers/gpu/host1x/cdma.c:113:48: error:
+> 	passing argument 3 of =E2=80=98dma_alloc_wc=E2=80=99 from incompatible p=
+ointer type
+> 	[-Werror=3Dincompatible-pointer-types]
+>=20
+> The expected pointer type of the third argument to dma_alloc_wc() is
+> dma_addr_t but phys_addr_t is passed. Fix this by adding casts to the
+> expected pointer type.
+>=20
+> Signed-off-by: Emil Goode <emil.fsw@goode.io>
+> ---
+>  drivers/gpu/host1x/cdma.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+> index 28541b280739..5e8b321a751e 100644
+> --- a/drivers/gpu/host1x/cdma.c
+> +++ b/drivers/gpu/host1x/cdma.c
+> @@ -91,8 +91,8 @@ static int host1x_pushbuffer_init(struct push_buffer *p=
+b)
+> =20
+>  		size =3D iova_align(&host1x->iova, size);
+> =20
+> -		pb->mapped =3D dma_alloc_wc(host1x->dev, size, &pb->phys,
+> -					  GFP_KERNEL);
+> +		pb->mapped =3D dma_alloc_wc(host1x->dev, size,
+> +					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
+>  		if (!pb->mapped)
+>  			return -ENOMEM;
+> =20
+> @@ -110,8 +110,8 @@ static int host1x_pushbuffer_init(struct push_buffer =
+*pb)
+>  		if (err)
+>  			goto iommu_free_iova;
+>  	} else {
+> -		pb->mapped =3D dma_alloc_wc(host1x->dev, size, &pb->phys,
+> -					  GFP_KERNEL);
+> +		pb->mapped =3D dma_alloc_wc(host1x->dev, size,
+> +					  (dma_addr_t *)&pb->phys, GFP_KERNEL);
+>  		if (!pb->mapped)
+>  			return -ENOMEM;
+> =20
 
-You're not describing the TCON node here though, but the HDMI one, and
-the HDMI block is listed in both the PLL video 0 and 1.
+This doesn't seem right. There's no guarantee that phys_addr_t and
+dma_addr_t will be compatible, so the above isn't always correct. Also,
+I don't see a need for pb->phys to ever be phys_addr_t. It's allocated
+through dma_alloc_wc() exclusively, so it should just be dma_addr_t.
 
-Maxime
+Note that the !pb->phys check in host1x_pushbuffer_destroy() becomes
+technically wrong if pb->phys is dma_addr_t (0 is a perfectly valid
+value for dma_addr_t), so make sure to flip that to !pb->mapped instead.
+pb->mapped and pb->phys are always set in tandem, and checking mapped
+for non-NULL is the right check to test whether the pair is valid or
+not.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thierry
 
---jyer2q7sajz2ea4p
+--bp/iNruPH9dso1Pn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr5S5EACgkQ0rTAlCFN
-r3TYgQ/+KAHn/sA0FQekmjFHCfuz97cMX7MGe8M8digLqQtx4rpOXT4+BF2YKBkm
-1KwGxI93LcfUDrWn7a5uf80ucr/+ENS6fxDvCN4LEIJwe2yruQF4KArv2hScReH7
-ApO6a6iUuNAZSVbRqSkvgBCcqEJQd8o5FAsMxQBfUGUxljTzMwgz3BJQpnlyNGuf
-64VHEfMJLbqAoMOHOK+5Z+3dEqZtnNkF3tMy6LPLQ7ci6V+DMDaNQkJex6yYihQF
-BbyXmmBScXd2/daWLF5neDFAe22RZNyY7VRZgQUIyPFWxXhANE8mZ/LtaKch8BXN
-Dge8Ma/Gkvq4te+YzdvHCjasyqcAdRLxvqVSlHX3Z/oPEGSuSkfroCdlVg1wqpUe
-U+pkAz1mGLLzx6CF8yy/Uk61d5wWrQ1CV6IQ4tLqcan8+IYS4c3T9rwKDtSabtJv
-FyHyHd6BQYXwrPK/BL12ScBivFyMFmPLyu9BIg66emhG0A0iSM74G1qgWkIBZ1Zz
-DcG2psCWjpT0tQzpBkZxOkEKDbTX3Lqj+Nx1IhAZ8Gy/7VY12TB4xpx+z6Gn9eJG
-Trz89sPLDiYbL+3r6liO56LbwTs9UOXQkYvpyNE4KC82N5KDVbMQKWStGttwknMU
-a/Yg6tVkcaKdRORO0C3yaUk4GTPltvYiusq5a/UMOHjJctOildk=
-=rPJa
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5TBkACgkQ3SOs138+
+s6G56g//VpYNFTGEXoQtF3mu6srEPteFaOn/GAVW/kBSUvL+ujF7mZQYM67KdBPH
+/ZxRkc+2oCZ025a91uVMWj8Qz8H3hUlSEZx4Ep7OQrJqlL9FO8cROnfAKt0Xq6zT
+PYsQGPecBeGURZ3G+QDT5gb3DBLdzF7GoTO0Aj7wrzG1A0QHqtgjcvQj1vhxrDPw
+T1iOZpax8iZdmZwLJRmGmGi/TUPd9LghmSy7Uy3zFwxU3Fzue9Y7qZ+jdtImD4bJ
+6ZkkVTyz2cbuUQo3P7nU6ic2LXnr8LTPCuIvKHN/OSjQWUOOhCWf/i0uS/qLlNeU
+RulA6dvHr29QqAFITwvULHApPTxz8u4Hu0lsvISWyIkXNUeg9iRmravS2JqDHFRp
+upFEdX3tdlFJFtlveIvBfuoCHwWQrzhGK4dIC4x2XMxBz5MPuvDMyAIil0HUCj6W
+pOLsbn57GKe9jr5UlpNNUFpm0epbNj/kIRVV6lsMoHzUQYwDyBNVyeWPpp04Ldov
+yRG+O4KG9ejXPkQp2X5vtl+zvFMx64ENVYISywbd9s7963+u96VyV8UgKmC/3bOO
+T+gZ9TOiTjWv0xKe3PmpHbaHxhgWmrO0V8uVCA/kNzhXfpTUEE/TLI0WZoQuRRzW
+iU4or6UysrLgMBl8lQTS35qgruAjQM38VxOeCai9DiIQHb4BTBQ=
+=Q7XC
 -----END PGP SIGNATURE-----
 
---jyer2q7sajz2ea4p--
+--bp/iNruPH9dso1Pn--
