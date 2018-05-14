@@ -1,134 +1,159 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-899735-1525478697-2-4834754045903753084
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525478696; b=KnBQQffsGi6TfkfQTnMr8FdC56V7gDBRM5Z2zPxpGhhM528Ucn
-    SlX3ydJyntmfONdHZY9qakD5WvN8q970laJn5mc1htNkh8swVNwxKGsAF91IIrZx
-    8Tx6tGOUkf43OhBRT3dsbOVwse7Uy87Fxep/I+FTwLfTgn8C44yOLr4Xz1/sD3oE
-    6bpJYG0YPmM7uUf5Yvlw0f20LXAKkDsznumU7/ivscquxo2mPSAHUyY4L4bb2Ctg
-    CKYXu+CnNW/S1v7f+2p+OHGpVN5R1KR+wjSgAu3BuaxZrKGqcDPdCZwIy7NE2Dtp
-    GwtlG4YO6RZxPCOb381Sdt4AsO/WHwbxrWNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1525478696; bh=HCZpwrV4WKt7uxNaw0MOgVXfPss+sx5RBN3gpieNqu
-    o=; b=KzM3FXrtbvyYDxYBymd5XdDcfqM4Y50Bs3yz7y2jNtGT+ZqdAGTHWSAnBe
-    4amfcAt+c+hpkTyYu791yHlWymhh1ph4WBiavy+fZX/7IiliRXrc4kJuizQmEbke
-    Fah4n5em41VGO6uvUXEfZPlDAfG2cyrQTqSMAH/p4AfXxrFRMqhtMBysF1BYRLAx
-    oHXzJxlLOlvxnalWxpOr1tXqQnKaQTv3+O58jvAyuErd46eyH3E0tVx0cXhZI0IC
-    Y7/db+WupF4tEpJ9WR/Xq5lGu6pKSJdtq/45Cq74G3/n0c797lc6ss8KC3b/IGnF
-    K6U0R2qcUOiEwW7uhHLR+bTz8Yjw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=A8wZd4QO x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=UUwmp+md;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=arndb.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=A8wZd4QO x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=UUwmp+md;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=arndb.de header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfF5MhPe6VhO74V393WT1mu5schd9Y7jOb75VJp5L85teqTwnUrN9ckZlcaXVR50/hZD5sZj9zPYomp/4Tr6PnMb4obcQXBtids+raQbssEZYviKSClXV
-    0a9AKT9q6h+r8Vntd2JwJzdKZ6U6I/ae3FQ/A/AQ7aiRyyKD2Cv+fKGsqliISJ4W/oR1KS5PmmjF8366YaQsL5118PM23Vbng0oKsLKM8OW0CxiLxL87hEdI
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=IpJZQVW2AAAA:8 a=VwQbUJbxAAAA:8 a=egY_P89lDLUMRGDEWWcA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=IawgGOuG5U0WyFbmm1f5:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751854AbeEEAEz (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 4 May 2018 20:04:55 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:34991 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751729AbeEEAEy (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Fri, 4 May 2018 20:04:54 -0400
-X-Google-Smtp-Source: AB8JxZrGgVv3WnQnrtJwgadlxpX0lWnaWjuAGeluYpgl6FUUtVqniMrir6IPlOCAmW6yvYe/I0CgekdxSq3E0Om7wKY=
+Return-Path: <brgl@bgdev.pl>
+ARC-Seal: i=1; a=rsa-sha256; t=1526297897; cv=none;
+        d=google.com; s=arc-20160816;
+        b=TOo9r6sFhWxMFDuZGfbnZZoVrzZRkjfgD+qSund9hixQsz04PSETUAHMw6dDuVLqh5
+         HvDrSw5/j3DhhYldJuDOUGEVOZehUSW1shBWWNCZ5NaOYpDpQv5mvqM1YlwKEYcK2t7h
+         IN/06PNXy8l2z2iXWVYvhAPyCAiW0zmQAy+/MhUpeuGgOXYuPKPDhoxoFGHsUaBe5urI
+         R4tjrsLzVXK8MZHiN+3QuNeTdVZfGi/mFTuIhhmCCekYacq11GbT4wx9QRxOukfC8pNV
+         o6hxa9Wl9rPzYte27fsmQGO90RjYsrjMR/sB1lt3wSvKBvS1RopXleOalgat0UbSTW9D
+         BqMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=Aym6qTP1VAcyYMXvqQMmDpjKygFNBfMKFJV1b0PqcVA=;
+        b=ipz4BE23Ho8+LR+y5yguoUsPFr2ywjg9MdiayM+4yZJsacMNFIS9B66C89QTCrekPk
+         nY83xKU2j0nEAwWlJH1X8eKUhkmnYAPpIYJt+FTEG4L+H8ASG2cmrtil5dlaFCHI4pvP
+         V9JGkicxV22PfO2QBJC6JuwO379HA3Za4HWPj6vGK5wbR6GBuXcGfVjFAb+MmLGH8Cgo
+         Biy97V5Bj1zTOaLcToPt9oPSRGmWAcsgNfb/AKFvVNgQVpFJKYyZCfVw/F90XA4XoZSY
+         yCYAO+8lyPfnyGqjJHo1zZsXhrq37TSs26xj2zHKyt5SPpDzYGN4As5sz38DroGNaGy+
+         sjoA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=yaEt3m6O;
+       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=yaEt3m6O;
+       spf=neutral (google.com: 209.85.220.41 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
+X-Google-Smtp-Source: AB8JxZrA2QduCSyZxmIJ2YfbZznBc3oLMdBSLDS0ToyGk60TgZ8HXbWX0WVmzH+B2TjOOpV19dlC+m9zHiuRhJOD+jk=
 MIME-Version: 1.0
-In-Reply-To: <20180504132731.14574-4-brgl@bgdev.pl>
-References: <20180504132731.14574-1-brgl@bgdev.pl> <20180504132731.14574-4-brgl@bgdev.pl>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 4 May 2018 20:04:52 -0400
-X-Google-Sender-Auth: BZfv5-9hrdqBBM4VrdxZeOC04mA
-Message-ID: <CAK8P3a3-2jyajsN+p0X_VEVG3B3GJ5fL0T90FV5_Sraz+Lzp4Q@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] sh: add the sh_ prefix to early platform symbols
-To: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <CAL_JsqL3CWFSpKEGoGwQDxCQ04g4uT1hiDTxXzjz4XTjPbfsoQ@mail.gmail.com>
+References: <20180511162028.20616-1-brgl@bgdev.pl> <CAL_JsqL3CWFSpKEGoGwQDxCQ04g4uT1hiDTxXzjz4XTjPbfsoQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 14 May 2018 13:38:16 +0200
+Message-ID: <CAMRc=McDNYQ5uk8EyRkDf8eh9q7tyF=t7PcUd6DBLqXcseJ3AQ@mail.gmail.com>
+Subject: Re: [PATCH 00/12] introduce support for early platform drivers
+To: Rob Herring <robh+dt@kernel.org>
 Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+	David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Rutland <mark.rutland@arm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Peter Rosin <peda@axentia.se>,
+	Jiri Slaby <jslaby@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
+	Magnus Damm <magnus.damm@gmail.com>, Johan Hovold <johan@kernel.org>,
+	Frank Rowand <frowand.list@gmail.com>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>,
+	"open list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600185365724813240?=
+X-GMAIL-MSGID: =?utf-8?q?1600439344033852308?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, May 4, 2018 at 9:27 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+2018-05-11 22:13 GMT+02:00 Rob Herring <robh+dt@kernel.org>:
+> On Fri, May 11, 2018 at 11:20 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> This series is a follow-up to the RFC[1] posted a couple days ago.
+>>
+>> NOTE: this series applies on top of my recent patches[2] that move the previous
+>> implementation of early platform devices to arch/sh.
+>>
+>> Problem:
+>>
+>> Certain class of devices, such as timers, certain clock drivers and irq chip
+>> drivers need to be probed early in the boot sequence. The currently preferred
+>> approach is using one of the OF_DECLARE() macros. This however does not create
+>> a platform device which has many drawbacks - such as not being able to use
+>> devres routines, dev_ log functions or no way of deferring the init OF function
+>> if some other resources are missing.
 >
-> Old early platform device support is now sh-specific. Before moving on
-> to implementing new early platform framework based on real platform
-> devices, prefix all early platform symbols with 'sh_'.
+> I skimmed though this and it doesn't look horrible (how's that for
+> positive feedback? ;) ). But before going into the details, I think
+> first there needs to be agreement this is the right direction.
 >
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> The question does remain though as to whether this class of devices
+> should be platform drivers. They can't be modules. They can't be
+> hotplugged. Can they be runtime-pm enabled? So the advantage is ...
+>
 
-Looks good. I was thinking of something shorter as the new namespace,
-but actually using a longer name like you do seems appropriate since
-we don't want anyone to actually use it. ;-)
+The main (but not the only) advantage for drivers that can both be
+platform drivers and OF_DECLARE drivers is that we get a single entry
+point and can reuse code without resorting to checking if (!dev). It
+results in more consistent code base. Another big advantage is
+consolidation of device tree and machine code for SoC drivers used in
+different boards of which some are still using board files and others
+are defined in DT (see: DaVinci).
 
-        Arnd
+> I assume that the clock maintainers had some reason to move clocks to
+> be platform drivers. It's just not clear to me what that was.
+>
+>> For drivers that use both platform drivers and OF_DECLARE the situation is even
+>> more complicated as the code needs to take into account that there can possibly
+>> be no struct device present. For a specific use case that we're having problems
+>> with, please refer to the recent DaVinci common-clock conversion patches and
+>> the nasty workaround that this problem implies[3].
+>
+> So devm_kzalloc will work with this solution? Why did we need
+> devm_kzalloc in the first place? The clocks can never be removed and
+> cleaning up on error paths is kind of pointless. The system would be
+> hosed, right?
+>
+
+It depends - not all clocks are necessary for system to boot.
+
+>> We also used to have an early platform drivers implementation but they were not
+>> integrated with the linux device model at all - they merely used the same data
+>> structures. The users could not use devres, defer probe and the early devices
+>> never became actual platform devices later on.
+>>
+>> Proposed solution:
+>>
+>> This series aims at solving this problem by (re-)introducing the concept of
+>> early platform drivers and devices - this time however in a way that seamlessly
+>> integrates with the existing platform drivers and also offers device-tree
+>> support.
+>>
+>> The idea is to provide a way for users to probe devices early, while already
+>> being able to use devres, devices resources and properties and also deferred
+>> probing.
+>>
+>> New structures are introduced: the early platform driver contains the
+>> early_probe callback which has the same signature as regular platform_device
+>> probe. This callback is called early on. The user can have both the early and
+>> regular probe speficied or only one of them and they both receive the same
+>> platform device object as argument. Any device data allocated early will be
+>> carried over to the normal probe.
+>>
+>> The architecture code is responsible for calling early_platform_start() in
+>> which the early drivers will be registered and devices populated from DT.
+>
+> Can we really do this in one spot for different devices (clk, timers,
+> irq). The sequence is all very carefully crafted. Platform specific
+> hooks is another thing to consider.
+>
+
+This is why I added support for early probe deferral - so that we can
+stop caring for the order as long as the drivers are aware of other
+resources they need and we call early_platform_start() the moment the
+earliest of the early devices is needed.
+
+>> Once the device and kobject mechanisms are ready, all early drivers and devices
+>> will be converted into real platform drivers and devices. Also: if any of the
+>> early platform registration functions will be called once early initialization
+>> is done, these functions will work like regular platform_device/driver ones.
+>
+> This could leave devices in a weird state. They've successfully probed
+> early, but then are on the deferred list for normal probe for example.
+>
+
+It's not really a weird state - once we're past the 'early' stage, the
+drivers' "earlyness" no longer plays any role. An early deferred
+device wouldn't be any different from other deferred devices. It's
+possible that we enabled some crucial resources in the early stage and
+then failed to fully probe the device later. I don't see a problem
+with that.
+
+Best regards,
+Bartosz Golaszewski
