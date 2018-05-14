@@ -1,46 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZookj6qZl4+e504Rs3/41kExMRVHPUlkEG/oYoNZfPQEQUlVAGTPXj48Y0/ZZ9c4dH1SSvL
-ARC-Seal: i=1; a=rsa-sha256; t=1526280739; cv=none;
+X-Google-Smtp-Source: AB8JxZq+uQImmfZYgn8IzHmqOmFMfaEE7D3Q0tcUdAG+h4L1UActF4+mZzqQCq6ovblnYE0OBgki
+ARC-Seal: i=1; a=rsa-sha256; t=1526280736; cv=none;
         d=google.com; s=arc-20160816;
-        b=Vp/GCa8wYudr2087WIwibSe2cd7pwe760eNF808DHmm9e5/MHaYU5Dfs/nOccE/lHw
-         LFgYU2cxcvt/dzvBR6Z0GfKWmk1LOQweib0oqXy7qmoUdnXM+SbAzZULUMPcjeWI0Oz9
-         phIPC0l1k3kj5hGCu91ucPd+g1alh6JrQdfXI+YS57LqENTu0voL+MumhH3tGcnhhBzu
-         qg+cU9IpksexZk8dxTUw3B3XTyhIbvqr3u/wYJFFORwy2JtG1A5GwY941igseYZCAwX/
-         zj4YlU+5lqDLL5pAj2rIIvOp8eCNxX38J8WU8LEkRRBcBc7Ty4lu1IkM9zG9NIhg344S
-         m+0A==
+        b=OWFiGYFVw4rQ1B4l59ohnibxUwRaMl8k/o0kC23c8/HVqH9WTWL84WabTbHwqGjgSl
+         2uoVx6owNoBjHIYbJxfjmqGHGiFyCkENtt+1jwoqFQ5it7gHd4gsDZ9hr+zTrgTM2+i0
+         jj1HoNoEPsFIZoOhcD9KNpweB2lchZa91Y5rmT3jaT9nRfNB0fdfyFYrGHYl0e9VY3Ay
+         vuBkhdcHcoqd076Q6S+yUreKC4WN+jXwxFYXcxh4OIzNt4kUMfFPP7OSlZBiADvalmX1
+         eLmx39cQZ6Hf8zq6KE7efEE7DKZLgp3Kxr2NbkAcKjb/LV5NTB+L0lBaxZ/9Kv3tuqaF
+         75vg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=HZfToDwv1HZBhThgsUvgvEro68siMYA94Bf9TO57RFE=;
-        b=MWLhnaSdy+PcAXEQlQfIgFkaWrmqGSRDSHqV7jX6Jf3nyjzcD8/+ZtLOzqLeNed0FO
-         rI1Em5aL+5m2i+ROhXal/vvldfjHi8klJ5TswM/AkTUYOj599jVtL5VgMX+dAzS6+M8r
-         1ClkovNycalRuxZyaWkv3134tFVFE+/VUY1kqgMOUzJg7q5pq7qVsqYogNwXAlgwnMQx
-         nxsJXgbfNW1U3Z3nqGHkpc0ZwLTpnWJ0GLcXv+8jDMd5Ay/TlhKS3nBM4Y8qbuyvOh3A
-         5ajT4Hc1JmnOKqWNUkuvw1ZZ8fFzuBP61l9vmGQPQ2paywdNNQxQ8O0a/T7YLiX+h9vR
-         uBhA==
+        bh=c5iANs+V1SWQJFIkwf2wqqMOXCpICwl3jUtoCoyoaAI=;
+        b=NxZKOx/Jk7zXLih52CNj/fdpA4P9o/2CjFsrjoh/+TP7aMWW5MD65UdBOvyL2gUHbl
+         3LZcBM0eOVKh+xUqE1OTdnyvvO6PetDynFF7hEdBcRNzsLwgN8D5icM2mdjFOeGbGKBD
+         b2HIseiI+M4anFK5b/H7l+Wdt+r+6rCICtnVcl7QJr+nmzLvSi8EaVOJkqla9AMi+o0g
+         aAegJ5IwIbJN1MBIjPPXXqzMSYV2TK8pgtFPYZ6Ozjkr+Dkoc09iIFwU19E9n+fgc70Q
+         iMzfo2QrUlXBFE2RG8/4P2QcVV7ACEzfesU5Cm9OZlOiihVCo3k95f6y4YL4Tn057deL
+         GHfg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Uqd9cBfy;
+       dkim=pass header.i=@kernel.org header.s=default header.b=n1NxTPbk;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=Uqd9cBfy;
+       dkim=pass header.i=@kernel.org header.s=default header.b=n1NxTPbk;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andi Kleen <andi@firstfloor.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	syzkaller-bugs@googlegroups.com,
-	x86@kernel.org
-Subject: [PATCH 4.4 39/56] perf: Remove superfluous allocation error check
-Date: Mon, 14 May 2018 08:48:44 +0200
-Message-Id: <20180514064758.448944787@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 38/56] soreuseport: initialise timewait reuseport field
+Date: Mon, 14 May 2018 08:48:43 +0200
+Message-Id: <20180514064758.418643816@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -50,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421253442175407?=
-X-GMAIL-MSGID: =?utf-8?q?1600421352457292813?=
+X-GMAIL-THRID: =?utf-8?q?1600421251042067241?=
+X-GMAIL-MSGID: =?utf-8?q?1600421349627054386?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -59,50 +52,147 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
 
-commit bfb3d7b8b906b66551424d7636182126e1d134c8 upstream.
+commit 3099a52918937ab86ec47038ad80d377ba16c531 upstream.
 
-If the get_callchain_buffers fails to allocate the buffer it will
-decrease the nr_callchain_events right away.
+syzbot reported an uninit-value in inet_csk_bind_conflict() [1]
 
-There's no point of checking the allocation error for
-nr_callchain_events > 1. Removing that check.
+It turns out we never propagated sk->sk_reuseport into timewait socket.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: syzkaller-bugs@googlegroups.com
-Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/20180415092352.12403-3-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[1]
+BUG: KMSAN: uninit-value in inet_csk_bind_conflict+0x5f9/0x990 net/ipv4/inet_connection_sock.c:151
+CPU: 1 PID: 3589 Comm: syzkaller008242 Not tainted 4.16.0+ #82
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
+ inet_csk_bind_conflict+0x5f9/0x990 net/ipv4/inet_connection_sock.c:151
+ inet_csk_get_port+0x1d28/0x1e40 net/ipv4/inet_connection_sock.c:320
+ inet6_bind+0x121c/0x1820 net/ipv6/af_inet6.c:399
+ SYSC_bind+0x3f2/0x4b0 net/socket.c:1474
+ SyS_bind+0x54/0x80 net/socket.c:1460
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x4416e9
+RSP: 002b:00007ffce6d15c88 EFLAGS: 00000217 ORIG_RAX: 0000000000000031
+RAX: ffffffffffffffda RBX: 0100000000000000 RCX: 00000000004416e9
+RDX: 000000000000001c RSI: 0000000020402000 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 00000000e6d15e08 R09: 00000000e6d15e08
+R10: 0000000000000004 R11: 0000000000000217 R12: 0000000000009478
+R13: 00000000006cd448 R14: 0000000000000000 R15: 0000000000000000
+
+Uninit was stored to memory at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+ kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
+ kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
+ __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
+ tcp_time_wait+0xf17/0xf50 net/ipv4/tcp_minisocks.c:283
+ tcp_rcv_state_process+0xebe/0x6490 net/ipv4/tcp_input.c:6003
+ tcp_v6_do_rcv+0x11dd/0x1d90 net/ipv6/tcp_ipv6.c:1331
+ sk_backlog_rcv include/net/sock.h:908 [inline]
+ __release_sock+0x2d6/0x680 net/core/sock.c:2271
+ release_sock+0x97/0x2a0 net/core/sock.c:2786
+ tcp_close+0x277/0x18f0 net/ipv4/tcp.c:2269
+ inet_release+0x240/0x2a0 net/ipv4/af_inet.c:427
+ inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:435
+ sock_release net/socket.c:595 [inline]
+ sock_close+0xe0/0x300 net/socket.c:1149
+ __fput+0x49e/0xa10 fs/file_table.c:209
+ ____fput+0x37/0x40 fs/file_table.c:243
+ task_work_run+0x243/0x2c0 kernel/task_work.c:113
+ exit_task_work include/linux/task_work.h:22 [inline]
+ do_exit+0x10e1/0x38d0 kernel/exit.c:867
+ do_group_exit+0x1a0/0x360 kernel/exit.c:970
+ SYSC_exit_group+0x21/0x30 kernel/exit.c:981
+ SyS_exit_group+0x25/0x30 kernel/exit.c:979
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+Uninit was stored to memory at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+ kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
+ kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
+ __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
+ inet_twsk_alloc+0xaef/0xc00 net/ipv4/inet_timewait_sock.c:182
+ tcp_time_wait+0xd9/0xf50 net/ipv4/tcp_minisocks.c:258
+ tcp_rcv_state_process+0xebe/0x6490 net/ipv4/tcp_input.c:6003
+ tcp_v6_do_rcv+0x11dd/0x1d90 net/ipv6/tcp_ipv6.c:1331
+ sk_backlog_rcv include/net/sock.h:908 [inline]
+ __release_sock+0x2d6/0x680 net/core/sock.c:2271
+ release_sock+0x97/0x2a0 net/core/sock.c:2786
+ tcp_close+0x277/0x18f0 net/ipv4/tcp.c:2269
+ inet_release+0x240/0x2a0 net/ipv4/af_inet.c:427
+ inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:435
+ sock_release net/socket.c:595 [inline]
+ sock_close+0xe0/0x300 net/socket.c:1149
+ __fput+0x49e/0xa10 fs/file_table.c:209
+ ____fput+0x37/0x40 fs/file_table.c:243
+ task_work_run+0x243/0x2c0 kernel/task_work.c:113
+ exit_task_work include/linux/task_work.h:22 [inline]
+ do_exit+0x10e1/0x38d0 kernel/exit.c:867
+ do_group_exit+0x1a0/0x360 kernel/exit.c:970
+ SYSC_exit_group+0x21/0x30 kernel/exit.c:981
+ SyS_exit_group+0x25/0x30 kernel/exit.c:979
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+ kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+ kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+ kmem_cache_alloc+0xaab/0xb90 mm/slub.c:2756
+ inet_twsk_alloc+0x13b/0xc00 net/ipv4/inet_timewait_sock.c:163
+ tcp_time_wait+0xd9/0xf50 net/ipv4/tcp_minisocks.c:258
+ tcp_rcv_state_process+0xebe/0x6490 net/ipv4/tcp_input.c:6003
+ tcp_v6_do_rcv+0x11dd/0x1d90 net/ipv6/tcp_ipv6.c:1331
+ sk_backlog_rcv include/net/sock.h:908 [inline]
+ __release_sock+0x2d6/0x680 net/core/sock.c:2271
+ release_sock+0x97/0x2a0 net/core/sock.c:2786
+ tcp_close+0x277/0x18f0 net/ipv4/tcp.c:2269
+ inet_release+0x240/0x2a0 net/ipv4/af_inet.c:427
+ inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:435
+ sock_release net/socket.c:595 [inline]
+ sock_close+0xe0/0x300 net/socket.c:1149
+ __fput+0x49e/0xa10 fs/file_table.c:209
+ ____fput+0x37/0x40 fs/file_table.c:243
+ task_work_run+0x243/0x2c0 kernel/task_work.c:113
+ exit_task_work include/linux/task_work.h:22 [inline]
+ do_exit+0x10e1/0x38d0 kernel/exit.c:867
+ do_group_exit+0x1a0/0x360 kernel/exit.c:970
+ SYSC_exit_group+0x21/0x30 kernel/exit.c:981
+ SyS_exit_group+0x25/0x30 kernel/exit.c:979
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+
+Fixes: da5e36308d9f ("soreuseport: TCP/IPv4 implementation")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/events/callchain.c |   10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ include/net/inet_timewait_sock.h |    1 +
+ net/ipv4/inet_timewait_sock.c    |    1 +
+ 2 files changed, 2 insertions(+)
 
---- a/kernel/events/callchain.c
-+++ b/kernel/events/callchain.c
-@@ -107,14 +107,8 @@ int get_callchain_buffers(void)
- 		goto exit;
- 	}
- 
--	if (count > 1) {
--		/* If the allocation failed, give up */
--		if (!callchain_cpus_entries)
--			err = -ENOMEM;
--		goto exit;
--	}
--
--	err = alloc_callchain_buffers();
-+	if (count == 1)
-+		err = alloc_callchain_buffers();
- exit:
- 	if (err)
- 		atomic_dec(&nr_callchain_events);
+--- a/include/net/inet_timewait_sock.h
++++ b/include/net/inet_timewait_sock.h
+@@ -55,6 +55,7 @@ struct inet_timewait_sock {
+ #define tw_family		__tw_common.skc_family
+ #define tw_state		__tw_common.skc_state
+ #define tw_reuse		__tw_common.skc_reuse
++#define tw_reuseport		__tw_common.skc_reuseport
+ #define tw_ipv6only		__tw_common.skc_ipv6only
+ #define tw_bound_dev_if		__tw_common.skc_bound_dev_if
+ #define tw_node			__tw_common.skc_nulls_node
+--- a/net/ipv4/inet_timewait_sock.c
++++ b/net/ipv4/inet_timewait_sock.c
+@@ -182,6 +182,7 @@ struct inet_timewait_sock *inet_twsk_all
+ 		tw->tw_dport	    = inet->inet_dport;
+ 		tw->tw_family	    = sk->sk_family;
+ 		tw->tw_reuse	    = sk->sk_reuse;
++		tw->tw_reuseport    = sk->sk_reuseport;
+ 		tw->tw_hash	    = sk->sk_hash;
+ 		tw->tw_ipv6only	    = 0;
+ 		tw->tw_transparent  = inet->transparent;
