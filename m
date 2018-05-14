@@ -1,140 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752101AbeENUPb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 16:15:31 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36041 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752017AbeENUP2 (ORCPT
+        id S1752118AbeENUPw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 16:15:52 -0400
+Received: from a9-54.smtp-out.amazonses.com ([54.240.9.54]:36582 "EHLO
+        a9-54.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751865AbeENUPv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 16:15:28 -0400
-X-Google-Smtp-Source: AB8JxZrch9tzY7DZyTmJQuP2b6TUBrtt9DC3LjCU+1+dBlLAx0I+YTpdK9UlDFsbWwI8+w65Q2oirU2uyFSu143r9yM=
+        Mon, 14 May 2018 16:15:51 -0400
+Date: Mon, 14 May 2018 20:15:50 +0000
+From: Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To: Johannes Weiner <hannes@cmpxchg.org>
+cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
+        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+Subject: Re: [PATCH 0/7] psi: pressure stall information for CPU, memory,
+ and IO
+In-Reply-To: <20180514185520.GA7398@cmpxchg.org>
+Message-ID: <01000163604b7e9e-c2729157-aed2-4f5b-bebe-1bf16261ab88-000000@email.amazonses.com>
+References: <20180507210135.1823-1-hannes@cmpxchg.org> <010001635f4e8be9-94e7be7a-e75c-438c-bffb-5b56301c4c55-000000@email.amazonses.com> <20180514185520.GA7398@cmpxchg.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <d9b6713caf339af2346eacc1324280b180a519e1.1526173613.git.rgb@redhat.com>
-References: <cover.1526173613.git.rgb@redhat.com> <d9b6713caf339af2346eacc1324280b180a519e1.1526173613.git.rgb@redhat.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 14 May 2018 16:15:26 -0400
-Message-ID: <CAHC9VhSfrmQ=-LhC-1QZGkMTUf2u971tE0k7sg5Tebx=2tRzpA@mail.gmail.com>
-Subject: Re: [PATCH ghak81 RFC V2 2/5] audit: convert sessionid unset to a macro
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
-        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
-        Linux Security Module list
-        <linux-security-module@vger.kernel.org>,
-        Integrity Measurement Architecture
-        <linux-integrity@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2018.05.14-54.240.9.54
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> Use a macro, "AUDIT_SID_UNSET", to replace each instance of
-> initialization and comparison to an audit session ID.
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  include/linux/audit.h      | 2 +-
->  include/net/xfrm.h         | 2 +-
->  include/uapi/linux/audit.h | 1 +
->  init/init_task.c           | 3 ++-
->  kernel/auditsc.c           | 4 ++--
->  5 files changed, 7 insertions(+), 5 deletions(-)
+On Mon, 14 May 2018, Johannes Weiner wrote:
 
-Merged, thanks.
+> Since I'm using the same model and infrastructure for memory and IO
+> load as well, IMO it makes more sense to present them in a coherent
+> interface instead of trying to retrofit and change the loadavg file,
+> which might not even be possible.
 
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 75d5b03..5f86f7c 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -513,7 +513,7 @@ static inline kuid_t audit_get_loginuid(struct task_struct *tsk)
->  }
->  static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
->  {
-> -       return -1;
-> +       return AUDIT_SID_UNSET;
->  }
->  static inline void audit_ipc_obj(struct kern_ipc_perm *ipcp)
->  { }
-> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-> index a872379..fcce8ee 100644
-> --- a/include/net/xfrm.h
-> +++ b/include/net/xfrm.h
-> @@ -751,7 +751,7 @@ static inline void xfrm_audit_helper_usrinfo(bool task_valid,
->                                             audit_get_loginuid(current) :
->                                             INVALID_UID);
->         const unsigned int ses = task_valid ? audit_get_sessionid(current) :
-> -               (unsigned int) -1;
-> +               AUDIT_SID_UNSET;
->
->         audit_log_format(audit_buf, " auid=%u ses=%u", auid, ses);
->         audit_log_task_context(audit_buf);
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> index 4e61a9e..04f9bd2 100644
-> --- a/include/uapi/linux/audit.h
-> +++ b/include/uapi/linux/audit.h
-> @@ -465,6 +465,7 @@ struct audit_tty_status {
->  };
->
->  #define AUDIT_UID_UNSET (unsigned int)-1
-> +#define AUDIT_SID_UNSET ((unsigned int)-1)
->
->  /* audit_rule_data supports filter rules with both integer and string
->   * fields.  It corresponds with AUDIT_ADD_RULE, AUDIT_DEL_RULE and
-> diff --git a/init/init_task.c b/init/init_task.c
-> index 3ac6e75..74f60ba 100644
-> --- a/init/init_task.c
-> +++ b/init/init_task.c
-> @@ -9,6 +9,7 @@
->  #include <linux/init.h>
->  #include <linux/fs.h>
->  #include <linux/mm.h>
-> +#include <linux/audit.h>
->
->  #include <asm/pgtable.h>
->  #include <linux/uaccess.h>
-> @@ -119,7 +120,7 @@ struct task_struct init_task
->         .thread_node    = LIST_HEAD_INIT(init_signals.thread_head),
->  #ifdef CONFIG_AUDITSYSCALL
->         .loginuid       = INVALID_UID,
-> -       .sessionid      = (unsigned int)-1,
-> +       .sessionid      = AUDIT_SID_UNSET,
->  #endif
->  #ifdef CONFIG_PERF_EVENTS
->         .perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 0d4e269..e157595 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -2050,7 +2050,7 @@ static void audit_log_set_loginuid(kuid_t koldloginuid, kuid_t kloginuid,
->  int audit_set_loginuid(kuid_t loginuid)
->  {
->         struct task_struct *task = current;
-> -       unsigned int oldsessionid, sessionid = (unsigned int)-1;
-> +       unsigned int oldsessionid, sessionid = AUDIT_SID_UNSET;
->         kuid_t oldloginuid;
->         int rc;
->
-> @@ -2064,7 +2064,7 @@ int audit_set_loginuid(kuid_t loginuid)
->         /* are we setting or clearing? */
->         if (uid_valid(loginuid)) {
->                 sessionid = (unsigned int)atomic_inc_return(&session_id);
-> -               if (unlikely(sessionid == (unsigned int)-1))
-> +               if (unlikely(sessionid == AUDIT_SID_UNSET))
->                         sessionid = (unsigned int)atomic_inc_return(&session_id);
->         }
->
-> --
-> 1.8.3.1
->
+Well I keep looking at the loadavg output from numerous tools and then in
+my mind I divide by the number of processors, guess if any of the threads
+would be doing I/O and if I cannot figure that out groan and run "vmstat"
+for awhile to figure that out.
 
-
-
--- 
-paul moore
-www.paul-moore.com
+Lets have some numbers there that make more sense please.
