@@ -1,82 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752180AbeENUbY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 16:31:24 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:49270 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752095AbeENUbV (ORCPT
+        id S1752135AbeENUbz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 16:31:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50632 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751865AbeENUby (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 16:31:21 -0400
-Subject: Re: [PATCH v5 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-To: Pavel Machek <pavel@ucw.cz>
-CC: Jacek Anaszewski <jacek.anaszewski@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <afd@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
-References: <20180510174717.26540-1-dmurphy@ti.com>
- <20180510174717.26540-2-dmurphy@ti.com>
- <41267191-1308-6b9b-78fa-2893a525b49a@gmail.com>
- <17630aca-1225-df61-7a5d-a921ecd9c78c@ti.com>
- <86c2bc2f-e622-9447-e4bb-b4ee37e2d44a@ti.com> <20180514200503.GB3276@amd>
- <4a631a8e-18ba-0886-039e-004980ae0cc3@ti.com> <20180514201631.GC3276@amd>
-From: Dan Murphy <dmurphy@ti.com>
-Message-ID: <fedc86a5-35ad-03f4-9739-8f995c96b097@ti.com>
-Date: Mon, 14 May 2018 15:31:04 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 14 May 2018 16:31:54 -0400
+Date: Mon, 14 May 2018 13:33:20 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com
+Subject: Re: [PATCH RFC 8/8] rcu: Fix cpustart tracepoint gp_seq number
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180514031541.67247-1-joel@joelfernandes.org>
+ <20180514031541.67247-9-joel@joelfernandes.org>
 MIME-Version: 1.0
-In-Reply-To: <20180514201631.GC3276@amd>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180514031541.67247-9-joel@joelfernandes.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18051420-2213-0000-0000-000002A53301
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009025; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032323; UDB=6.00527748; IPR=6.00811454;
+ MB=3.00021111; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 20:31:51
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051420-2214-0000-0000-00005A1E4D69
+Message-Id: <20180514203320.GK26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805140206
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/14/2018 03:16 PM, Pavel Machek wrote:
-> On Mon 2018-05-14 15:13:34, Dan Murphy wrote:
->> Pavel
->>
->> On 05/14/2018 03:05 PM, Pavel Machek wrote:
->>> Hi!
->>>
->>>>> OK.
->>>>
->>>> OK I looked at the max776973 driver and well if the flash-max-microamp and
->>>> flash-max-timeout-us nodes are missing it sets a default value for each if the
->>>> node is not present.
->>>>
->>>> So should we remove this code from the Max77693 driver too and fail probe as being asked
->>>> in this driver?
->>>
->>> Well, modifying driver without access to the hardware is tricky
->>> :-(. If it does something stupid (like using other than minimum values
->>> for the flash-max-microamp/flash-max-timeout-us), it needs to be
->>> fixed.
->>
->> Well we should be able to test the probe/parse dt node and reject the probe if the node is not
->> present.  That can be done without HW the setup is done pretty early in the probe without even attempting to communicate
->> with the hardware.
->>
+On Sun, May 13, 2018 at 08:15:41PM -0700, Joel Fernandes (Google) wrote:
+> cpustart shows a stale gp_seq. This is because rdp->gp_seq is updated
+> only at the end of the __note_gp_changes function. For this reason, use
+> rnp->gp_seq instead. I believe we can't update rdp->gp_seq too early so
+> lets just use the gp_seq from rnp instead.
 > 
-> Well, yes, you can do that.
-> 
-> But if someone is actively using board with DT w/o flash-max-microamp,
-> you'll make them unhappy.
-> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-I grepped the dt directories and I did not find any upstream dt files configuring the max77693
-with a flash led source.  Unless Jacek can point out an upstream file I may have over looked.
+I took this one with the usual commit-log update.  Please take a look!
 
-Unhappiness will come from not upstreaming your code ;)
+							Thanx, Paul
 
-Dan
+------------------------------------------------------------------------
 
-> Best regards,
-> 									Pavel
-> 
+commit 3e14c6a5225d201776edd9a96d9c9b4435855446
+Author: Joel Fernandes (Google) <joel@joelfernandes.org>
+Date:   Sun May 13 20:15:41 2018 -0700
 
+    rcu: Fix cpustart tracepoint gp_seq number
+    
+    The "cpustart" trace event shows a stale gp_seq. This is because it uses
+    rdp->gp_seq, which is updated only at the end of the __note_gp_changes()
+    function. This commit therefore instead uses rnp->gp_seq.
+    
+    An alternative fix would be to update rdp->gp_seq earlier, but this would
+    break RCU's detection of the beginning of a new-to-this-CPU grace period.
+    
+    Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
--- 
-------------------
-Dan Murphy
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index de6447dd73de..23b855f5c5cb 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1796,7 +1796,7 @@ static bool __note_gp_changes(struct rcu_state *rsp, struct rcu_node *rnp,
+ 		 * set up to detect a quiescent state, otherwise don't
+ 		 * go looking for one.
+ 		 */
+-		trace_rcu_grace_period(rsp->name, rdp->gp_seq, TPS("cpustart"));
++		trace_rcu_grace_period(rsp->name, rnp->gp_seq, TPS("cpustart"));
+ 		need_gp = !!(rnp->qsmask & rdp->grpmask);
+ 		rdp->cpu_no_qs.b.norm = need_gp;
+ 		rdp->rcu_qs_ctr_snap = __this_cpu_read(rcu_dynticks.rcu_qs_ctr);
