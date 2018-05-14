@@ -1,81 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752334AbeENLSj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:18:39 -0400
-Received: from ozlabs.org ([203.11.71.1]:54595 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751198AbeENLSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:18:38 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, linuxppc-dev@ozlabs.org,
-        linux-kernel@vger.kernel.org, mhcerri@linux.vnet.ibm.com,
-        pfsmorigo@linux.vnet.ibm.com
-Subject: Re: [PATCH 1/2] crypto: vmx - Remove overly verbose printk from AES init routines
-In-Reply-To: <20180511161913.nr7woksn2jejipzm@gondor.apana.org.au>
-References: <20180503122930.17448-1-mpe@ellerman.id.au> <20180511161913.nr7woksn2jejipzm@gondor.apana.org.au>
-Date: Mon, 14 May 2018 21:18:35 +1000
-Message-ID: <87po1ypjsk.fsf@concordia.ellerman.id.au>
+        id S1752170AbeENLUn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:20:43 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40430 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750760AbeENLUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 07:20:41 -0400
+Date: Mon, 14 May 2018 12:20:37 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+        james.morse@arm.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 02/18] arm64: move SCTLR_EL{1,2} assertions to
+ <asm/sysreg.h>
+Message-ID: <20180514112036.GI7753@e103592.cambridge.arm.com>
+References: <20180514094640.27569-1-mark.rutland@arm.com>
+ <20180514094640.27569-3-mark.rutland@arm.com>
+ <20180514100053.GX7753@e103592.cambridge.arm.com>
+ <20180514100858.4xjp5d3axbyy74ap@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180514100858.4xjp5d3axbyy74ap@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Herbert Xu <herbert@gondor.apana.org.au> writes:
+On Mon, May 14, 2018 at 11:08:59AM +0100, Mark Rutland wrote:
+> On Mon, May 14, 2018 at 11:00:53AM +0100, Dave Martin wrote:
+> > On Mon, May 14, 2018 at 10:46:24AM +0100, Mark Rutland wrote:
+> > > -/* Check all the bits are accounted for */
+> > > -#define SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != ~0)
+> > > -
+> > > +#if (SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != 0xffffffff
+> > > +#error "Inconsistent SCTLR_EL2 set/clear bits"
+> > > +#endif
+> > 
+> > Can we have a comment on the != 0xffffffff versus != ~0 here?
+> > 
+> > The subtle differences in evaluation semantics between #if and
+> > other contexts here may well trip people up during maintenance...
+> 
+> Do you have any suggestion as to the wording?
+> 
+> I'm happy to add a comment, but I don't really know what to say.
 
-> On Thu, May 03, 2018 at 10:29:29PM +1000, Michael Ellerman wrote:
->> In the vmx AES init routines we do a printk(KERN_INFO ...) to report
->> the fallback implementation we're using.
->> 
->> However with a slow console this can significantly affect the speed of
->> crypto operations. Using 'cryptsetup benchmark' the removal of the
->> printk() leads to a ~5x speedup for aes-cbc decryption.
->> 
->> So remove them.
->> 
->> Fixes: 8676590a1593 ("crypto: vmx - Adding AES routines for VMX module")
->> Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
->> Fixes: 4f7f60d312b3 ("crypto: vmx - Adding CTR routines for VMX module")
->> Fixes: cc333cd68dfa ("crypto: vmx - Adding GHASH routines for VMX module")
->> Cc: stable@vger.kernel.org # v4.1+
->> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
->> ---
->>  drivers/crypto/vmx/aes.c     | 2 --
->>  drivers/crypto/vmx/aes_cbc.c | 3 ---
->>  drivers/crypto/vmx/aes_ctr.c | 2 --
->>  drivers/crypto/vmx/ghash.c   | 2 --
->>  4 files changed, 9 deletions(-)
->
-> Patch applied.  Thanks.
 
-Thanks.
+How about the following?
 
->> If this is the wrong fix please let me know, I'm not a crypto expert.
->> 
->> What we see is 'cryptsetup benchmark' causing thousands of these printks() to
->> happen. The call trace is something like:
->> 
->> [c000001e47867a60] [c0000000009cf6b4] p8_aes_cbc_init+0x74/0xf0
->> [c000001e47867ae0] [c000000000551a80] __crypto_alloc_tfm+0x1d0/0x2c0
->> [c000001e47867b20] [c00000000055aea4] crypto_skcipher_init_tfm+0x124/0x280
->> [c000001e47867b60] [c00000000055138c] crypto_create_tfm+0x9c/0x1a0
->> [c000001e47867ba0] [c000000000552220] crypto_alloc_tfm+0xa0/0x140
->> [c000001e47867c00] [c00000000055b168] crypto_alloc_skcipher+0x48/0x70
->> [c000001e47867c40] [c00000000057af28] skcipher_bind+0x38/0x50
->> [c000001e47867c80] [c00000000057a07c] alg_bind+0xbc/0x220
->> [c000001e47867d10] [c000000000a016a0] __sys_bind+0x90/0x100
->> [c000001e47867df0] [c000000000a01750] sys_bind+0x40/0x60
->> [c000001e47867e30] [c00000000000b320] system_call+0x58/0x6c
->> 
->> 
->> Is it normal for init to be called on every system call?
->
-> This is the tfm init function, so yes it is called every time
-> you allocate a tfm.
+/* Watch out for #if evaluation rules: ~0 is not ~(int)0! */
 
-OK thanks. So we just shouldn't be printk'ing in there in the non-error
-path, good to know.
-
-cheers
+Cheers
+---Dave
