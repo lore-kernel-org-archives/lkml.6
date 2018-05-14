@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752246AbeENR4O (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:56:14 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57418 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752024AbeENR4N (ORCPT
+        id S1752028AbeENR71 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:59:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37448 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750750AbeENR70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:56:13 -0400
-Date: Mon, 14 May 2018 10:57:39 -0700
+        Mon, 14 May 2018 13:59:26 -0400
+Date: Mon, 14 May 2018 11:00:27 -0700
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
@@ -15,240 +15,130 @@ Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
         kernel-team@android.com
-Subject: Re: [PATCH RFC 4/8] rcu: Get rid of old c variable from places in
- tree RCU
+Subject: Re: [PATCH RFC 5/8] rcu: Use rcu_node as temporary variable in
+ funnel locking loop
 Reply-To: paulmck@linux.vnet.ibm.com
 References: <20180514031541.67247-1-joel@joelfernandes.org>
- <20180514031541.67247-5-joel@joelfernandes.org>
+ <20180514031541.67247-6-joel@joelfernandes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180514031541.67247-5-joel@joelfernandes.org>
+In-Reply-To: <20180514031541.67247-6-joel@joelfernandes.org>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-TM-AS-GCONF: 00
-x-cbid: 18051417-0040-0000-0000-0000042B2665
+x-cbid: 18051417-0008-0000-0000-00000307534E
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009025; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032271; UDB=6.00527717; IPR=6.00811402;
- MB=3.00021110; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 17:56:10
+ PH=3.00000004; SC=3.00000260; SDB=6.01032272; UDB=6.00527718; IPR=6.00811403;
+ MB=3.00021110; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 17:58:59
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051417-0041-0000-0000-000008313A22
-Message-Id: <20180514175739.GB26088@linux.vnet.ibm.com>
+x-cbparentid: 18051417-0009-0000-0000-0000393F5881
+Message-Id: <20180514180027.GC26088@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805140180
+ definitions=main-1805140181
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 08:15:37PM -0700, Joel Fernandes (Google) wrote:
-> The 'c' variable was used previously to store the grace period
-> that is being requested. However it is not very meaningful for
-> a code reader, this patch replaces it with gp_seq_start indicating that
-
-Good catch, but how about "gp_seq_req" instead of gp_seq_start?
-
-							Thanx, Paul
-
-> this is the grace period that was requested. Also updating tracing with
-> the new name.
+On Sun, May 13, 2018 at 08:15:38PM -0700, Joel Fernandes (Google) wrote:
+> The funnel locking loop in rcu_start_this_gp uses rcu_root as a
+> temporary variable while walking the combining tree. This causes a
+> tiresome exercise of a code reader reminding themselves that rcu_root
+> may not be root. Lets just call it rcu_node, and then finally when
+> rcu_node is the rcu_root, lets assign it at that time.
 > 
 > Just a clean up patch, no logical change.
 > 
 > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
+I agree that my names could use some improvement, but given that you
+called it rnp_node in the patch and rcu_node in the commit log, I would
+argue that rnp_node has a Hamming-distance problem.  ;-)
+
+How about rnp_start for the formal parameter, rnp for the cursor running
+up the tree, and retaining rnp_root for the root?
+
+I considered and rejected the thought of rnp_leaf for the formal
+parameter because this function is not necessarily called with a leaf
+rcu_node structure.
+
+							Thanx, Paul
+
 > ---
->  include/trace/events/rcu.h | 15 ++++++------
->  kernel/rcu/tree.c          | 47 ++++++++++++++++++++++----------------
->  2 files changed, 35 insertions(+), 27 deletions(-)
+>  kernel/rcu/tree.c | 34 ++++++++++++++++++----------------
+>  1 file changed, 18 insertions(+), 16 deletions(-)
 > 
-> diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
-> index ce9d1a1cac78..539900a9f8c7 100644
-> --- a/include/trace/events/rcu.h
-> +++ b/include/trace/events/rcu.h
-> @@ -103,15 +103,16 @@ TRACE_EVENT(rcu_grace_period,
->   */
->  TRACE_EVENT(rcu_future_grace_period,
-> 
-> -	TP_PROTO(const char *rcuname, unsigned long gp_seq, unsigned long c,
-> -		 u8 level, int grplo, int grphi, const char *gpevent),
-> +	TP_PROTO(const char *rcuname, unsigned long gp_seq,
-> +		 unsigned long gp_seq_start, u8 level, int grplo, int grphi,
-> +		 const char *gpevent),
-> 
-> -	TP_ARGS(rcuname, gp_seq, c, level, grplo, grphi, gpevent),
-> +	TP_ARGS(rcuname, gp_seq, gp_seq_start, level, grplo, grphi, gpevent),
-> 
->  	TP_STRUCT__entry(
->  		__field(const char *, rcuname)
->  		__field(unsigned long, gp_seq)
-> -		__field(unsigned long, c)
-> +		__field(unsigned long, gp_seq_start)
->  		__field(u8, level)
->  		__field(int, grplo)
->  		__field(int, grphi)
-> @@ -121,7 +122,7 @@ TRACE_EVENT(rcu_future_grace_period,
->  	TP_fast_assign(
->  		__entry->rcuname = rcuname;
->  		__entry->gp_seq = gp_seq;
-> -		__entry->c = c;
-> +		__entry->gp_seq_start = gp_seq_start;
->  		__entry->level = level;
->  		__entry->grplo = grplo;
->  		__entry->grphi = grphi;
-> @@ -129,7 +130,7 @@ TRACE_EVENT(rcu_future_grace_period,
->  	),
-> 
->  	TP_printk("%s %lu %lu %u %d %d %s",
-> -		  __entry->rcuname, __entry->gp_seq, __entry->c, __entry->level,
-> +		  __entry->rcuname, __entry->gp_seq, __entry->gp_seq_start, __entry->level,
->  		  __entry->grplo, __entry->grphi, __entry->gpevent)
->  );
-> 
-> @@ -751,7 +752,7 @@ TRACE_EVENT(rcu_barrier,
->  #else /* #ifdef CONFIG_RCU_TRACE */
-> 
->  #define trace_rcu_grace_period(rcuname, gp_seq, gpevent) do { } while (0)
-> -#define trace_rcu_future_grace_period(rcuname, gp_seq, c, \
-> +#define trace_rcu_future_grace_period(rcuname, gp_seq, gp_seq_start, \
->  				      level, grplo, grphi, event) \
->  				      do { } while (0)
->  #define trace_rcu_grace_period_init(rcuname, gp_seq, level, grplo, grphi, \
 > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 29ccc60bdbfc..9f5679ba413b 100644
+> index 9f5679ba413b..40670047d22c 100644
 > --- a/kernel/rcu/tree.c
 > +++ b/kernel/rcu/tree.c
-> @@ -1541,13 +1541,18 @@ void rcu_cpu_stall_reset(void)
-> 
->  /* Trace-event wrapper function for trace_rcu_future_grace_period.  */
->  static void trace_rcu_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
-> -			      unsigned long c, const char *s)
-> +			      unsigned long gp_seq_start, const char *s)
->  {
-> -	trace_rcu_future_grace_period(rdp->rsp->name, rnp->gp_seq, c,
-> +	trace_rcu_future_grace_period(rdp->rsp->name, rnp->gp_seq, gp_seq_start,
->  				      rnp->level, rnp->grplo, rnp->grphi, s);
->  }
-> 
->  /*
-> + * rcu_start_this_gp - Request the start of a particular grace period
-> + * @rnp: The leaf node of the CPU from which to start.
-> + * @rdp: The rcu_data corresponding to the CPU from which to start.
-> + * @gp_seq_start: The gp_seq of the grace period to start.
-> + *
->   * Start the specified grace period, as needed to handle newly arrived
->   * callbacks.  The required future grace periods are recorded in each
->   * rcu_node structure's ->gp_seq_needed field.  Returns true if there
-> @@ -1555,9 +1560,11 @@ static void trace_rcu_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
->   *
->   * The caller must hold the specified rcu_node structure's ->lock, which
->   * is why the caller is responsible for waking the grace-period kthread.
-> + *
-> + * Returns true if the GP thread needs to be awakened else false.
->   */
->  static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
-> -			      unsigned long c)
-> +			      unsigned long gp_seq_start)
+> @@ -1568,7 +1568,7 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
 >  {
 >  	bool ret = false;
 >  	struct rcu_state *rsp = rdp->rsp;
-> @@ -1573,18 +1580,19 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
->  	 * not be released.
+> -	struct rcu_node *rnp_root;
+> +	struct rcu_node *rnp_node, *rnp_root = NULL;
+> 
+>  	/*
+>  	 * Use funnel locking to either acquire the root rcu_node
+> @@ -1581,24 +1581,26 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
 >  	 */
 >  	raw_lockdep_assert_held_rcu_node(rnp);
-> -	trace_rcu_this_gp(rnp, rdp, c, TPS("Startleaf"));
-> +	trace_rcu_this_gp(rnp, rdp, gp_seq_start, TPS("Startleaf"));
->  	for (rnp_root = rnp; 1; rnp_root = rnp_root->parent) {
->  		if (rnp_root != rnp)
->  			raw_spin_lock_rcu_node(rnp_root);
-> -		if (ULONG_CMP_GE(rnp_root->gp_seq_needed, c) ||
-> -		    rcu_seq_done(&rnp_root->gp_seq, c) ||
-> +		if (ULONG_CMP_GE(rnp_root->gp_seq_needed, gp_seq_start) ||
-> +		    rcu_seq_done(&rnp_root->gp_seq, gp_seq_start) ||
->  		    (rnp != rnp_root &&
->  		     rcu_seq_state(rcu_seq_current(&rnp_root->gp_seq)))) {
-> -			trace_rcu_this_gp(rnp_root, rdp, c, TPS("Prestarted"));
-> +			trace_rcu_this_gp(rnp_root, rdp, gp_seq_start,
-> +					  TPS("Prestarted"));
+>  	trace_rcu_this_gp(rnp, rdp, gp_seq_start, TPS("Startleaf"));
+> -	for (rnp_root = rnp; 1; rnp_root = rnp_root->parent) {
+> -		if (rnp_root != rnp)
+> -			raw_spin_lock_rcu_node(rnp_root);
+> -		if (ULONG_CMP_GE(rnp_root->gp_seq_needed, gp_seq_start) ||
+> -		    rcu_seq_done(&rnp_root->gp_seq, gp_seq_start) ||
+> -		    (rnp != rnp_root &&
+> -		     rcu_seq_state(rcu_seq_current(&rnp_root->gp_seq)))) {
+> -			trace_rcu_this_gp(rnp_root, rdp, gp_seq_start,
+> +	for (rnp_node = rnp; 1; rnp_node = rnp_node->parent) {
+> +		if (rnp_node != rnp)
+> +			raw_spin_lock_rcu_node(rnp_node);
+> +		if (ULONG_CMP_GE(rnp_node->gp_seq_needed, gp_seq_start) ||
+> +		    rcu_seq_done(&rnp_node->gp_seq, gp_seq_start) ||
+> +		    (rnp != rnp_node &&
+> +		     rcu_seq_state(rcu_seq_current(&rnp_node->gp_seq)))) {
+> +			trace_rcu_this_gp(rnp_node, rdp, gp_seq_start,
+>  					  TPS("Prestarted"));
 >  			goto unlock_out;
 >  		}
-> -		rnp_root->gp_seq_needed = c;
-> +		rnp_root->gp_seq_needed = gp_seq_start;
+> -		rnp_root->gp_seq_needed = gp_seq_start;
+> +		rnp_node->gp_seq_needed = gp_seq_start;
 >  		if (rcu_seq_state(rcu_seq_current(&rnp->gp_seq)))
 >  			goto unlock_out;
->  		if (rnp_root != rnp && rnp_root->parent != NULL)
-> @@ -1595,14 +1603,14 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
+> -		if (rnp_root != rnp && rnp_root->parent != NULL)
+> -			raw_spin_unlock_rcu_node(rnp_root);
+> -		if (!rnp_root->parent)
+> +		if (rnp_node != rnp && rnp_node->parent != NULL)
+> +			raw_spin_unlock_rcu_node(rnp_node);
+> +		if (!rnp_node->parent) {
+> +			rnp_root = rnp_node;
+>  			break;  /* At root, and perhaps also leaf. */
+> +		}
+>  	}
 > 
 >  	/* If GP already in progress, just leave, otherwise start one. */
->  	if (rcu_gp_in_progress(rsp)) {
-> -		trace_rcu_this_gp(rnp_root, rdp, c, TPS("Startedleafroot"));
-> +		trace_rcu_this_gp(rnp_root, rdp, gp_seq_start, TPS("Startedleafroot"));
->  		goto unlock_out;
->  	}
-> -	trace_rcu_this_gp(rnp_root, rdp, c, TPS("Startedroot"));
-> +	trace_rcu_this_gp(rnp_root, rdp, gp_seq_start, TPS("Startedroot"));
->  	WRITE_ONCE(rsp->gp_flags, rsp->gp_flags | RCU_GP_FLAG_INIT);
->  	rsp->gp_req_activity = jiffies;
->  	if (!rsp->gp_kthread) {
-> -		trace_rcu_this_gp(rnp_root, rdp, c, TPS("NoGPkthread"));
-> +		trace_rcu_this_gp(rnp_root, rdp, gp_seq_start, TPS("NoGPkthread"));
->  		goto unlock_out;
->  	}
+> @@ -1616,10 +1618,10 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
 >  	trace_rcu_grace_period(rsp->name, READ_ONCE(rsp->gp_seq), TPS("newreq"));
-> @@ -1611,9 +1619,9 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
->  	if (rnp != rnp_root)
->  		raw_spin_unlock_rcu_node(rnp_root);
+>  	ret = true;  /* Caller must wake GP kthread. */
+>  unlock_out:
+> -	if (rnp != rnp_root)
+> -		raw_spin_unlock_rcu_node(rnp_root);
+> +	if (rnp != rnp_node)
+> +		raw_spin_unlock_rcu_node(rnp_node);
 >  	/* Push furthest requested GP to leaf node and rcu_data structure. */
-> -	if (ULONG_CMP_GE(rnp_root->gp_seq_needed, c)) {
-> -		rnp->gp_seq_needed = c;
-> -		rdp->gp_seq_needed = c;
-> +	if (ULONG_CMP_GE(rnp_root->gp_seq_needed, gp_seq_start)) {
-> +		rnp->gp_seq_needed = gp_seq_start;
-> +		rdp->gp_seq_needed = gp_seq_start;
+> -	if (ULONG_CMP_GE(rnp_root->gp_seq_needed, gp_seq_start)) {
+> +	if (ULONG_CMP_GE(rnp_node->gp_seq_needed, gp_seq_start)) {
+>  		rnp->gp_seq_needed = gp_seq_start;
+>  		rdp->gp_seq_needed = gp_seq_start;
 >  	}
->  	return ret;
->  }
-> @@ -1624,14 +1632,13 @@ static bool rcu_start_this_gp(struct rcu_node *rnp, struct rcu_data *rdp,
->   */
->  static bool rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
->  {
-> -	unsigned long c = rnp->gp_seq;
->  	bool needmore;
->  	struct rcu_data *rdp = this_cpu_ptr(rsp->rda);
-> 
->  	needmore = ULONG_CMP_LT(rnp->gp_seq, rnp->gp_seq_needed);
->  	if (!needmore)
->  		rnp->gp_seq_needed = rnp->gp_seq; /* Avoid counter wrap. */
-> -	trace_rcu_this_gp(rnp, rdp, c,
-> +	trace_rcu_this_gp(rnp, rdp, rnp->gp_seq,
->  			  needmore ? TPS("CleanupMore") : TPS("Cleanup"));
->  	return needmore;
->  }
-> @@ -1667,7 +1674,7 @@ static void rcu_gp_kthread_wake(struct rcu_state *rsp)
->  static bool rcu_accelerate_cbs(struct rcu_state *rsp, struct rcu_node *rnp,
->  			       struct rcu_data *rdp)
->  {
-> -	unsigned long c;
-> +	unsigned long gp_seq_start;
->  	bool ret = false;
-> 
->  	raw_lockdep_assert_held_rcu_node(rnp);
-> @@ -1686,9 +1693,9 @@ static bool rcu_accelerate_cbs(struct rcu_state *rsp, struct rcu_node *rnp,
->  	 * accelerating callback invocation to an earlier grace-period
->  	 * number.
->  	 */
-> -	c = rcu_seq_snap(&rsp->gp_seq);
-> -	if (rcu_segcblist_accelerate(&rdp->cblist, c))
-> -		ret = rcu_start_this_gp(rnp, rdp, c);
-> +	gp_seq_start = rcu_seq_snap(&rsp->gp_seq);
-> +	if (rcu_segcblist_accelerate(&rdp->cblist, gp_seq_start))
-> +		ret = rcu_start_this_gp(rnp, rdp, gp_seq_start);
-> 
->  	/* Trace depending on how much we were able to accelerate. */
->  	if (rcu_segcblist_restempty(&rdp->cblist, RCU_WAIT_TAIL))
 > -- 
 > 2.17.0.441.gb46fe60e1d-goog
 > 
