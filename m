@@ -1,240 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752675AbeENXfJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 19:35:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51926 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752465AbeENXce (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 19:32:34 -0400
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org
-Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        akiyks@gmail.com, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH memory-model 09/19] tools/memory-model: Add scripts to test memory model
-Date: Mon, 14 May 2018 16:33:47 -0700
-X-Mailer: git-send-email 2.5.2
-In-Reply-To: <20180514233328.GA7601@linux.vnet.ibm.com>
-References: <20180514233328.GA7601@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18051423-0008-0000-0000-000003076DBD
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009026; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032383; UDB=6.00527784; IPR=6.00811514;
- MB=3.00021114; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 23:32:31
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051423-0009-0000-0000-0000394010EC
-Message-Id: <1526340837-12222-9-git-send-email-paulmck@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805140230
+        id S1752394AbeENXkT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 19:40:19 -0400
+Received: from mga01.intel.com ([192.55.52.88]:52624 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752089AbeENXkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 19:40:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,402,1520924400";
+   d="scan'208";a="50833048"
+Date: Tue, 15 May 2018 07:39:51 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Vlad Buslov <vladbu@mellanox.com>
+Cc: kbuild-all@01.org, netdev@vger.kernel.org, davem@davemloft.net,
+        jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
+        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
+        ast@kernel.org, daniel@iogearbox.net, edumazet@google.com,
+        vladbu@mellanox.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, kliteyn@mellanox.com
+Subject: Re: [PATCH 01/14] net: sched: use rcu for action cookie update
+Message-ID: <201805150730.DS1Zaq1G%fengguang.wu@intel.com>
+References: <1526308035-12484-2-git-send-email-vladbu@mellanox.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1526308035-12484-2-git-send-email-vladbu@mellanox.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit adds a pair of scripts that run the memory model on litmus
-tests, checking that the verification result of each litmus test matches
-the result flagged in the litmus test itself.  These scripts permit easier
-checking of changes to the memory model against preconceived notions.
+Hi Vlad,
 
-To run the scripts, go to the tools/memory-model directory and type
-"scripts/checkalllitmus.sh".  If all is well, the last line printed will
-be "All litmus tests verified as was expected."
+Thank you for the patch! Perhaps something to improve:
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+[auto build test WARNING on net/master]
+[also build test WARNING on v4.17-rc5 next-20180514]
+[cannot apply to net-next/master]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Vlad-Buslov/Modify-action-API-for-implementing-lockless-actions/20180515-025420
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> net/sched/act_api.c:71:15: sparse: incorrect type in initializer (different address spaces) @@    expected struct tc_cookie [noderef] <asn:4>*__ret @@    got [noderef] <asn:4>*__ret @@
+   net/sched/act_api.c:71:15:    expected struct tc_cookie [noderef] <asn:4>*__ret
+   net/sched/act_api.c:71:15:    got struct tc_cookie *new_cookie
+>> net/sched/act_api.c:71:13: sparse: incorrect type in assignment (different address spaces) @@    expected struct tc_cookie *old @@    got struct tc_cookie [noderef] <struct tc_cookie *old @@
+   net/sched/act_api.c:71:13:    expected struct tc_cookie *old
+   net/sched/act_api.c:71:13:    got struct tc_cookie [noderef] <asn:4>*[assigned] __ret
+>> net/sched/act_api.c:132:48: sparse: dereference of noderef expression
+
+vim +71 net/sched/act_api.c
+
+    65	
+    66	static void tcf_set_action_cookie(struct tc_cookie __rcu **old_cookie,
+    67					  struct tc_cookie *new_cookie)
+    68	{
+    69		struct tc_cookie *old;
+    70	
+  > 71		old = xchg(old_cookie, new_cookie);
+    72		if (old)
+    73			call_rcu(&old->rcu, tcf_free_cookie_rcu);
+    74	}
+    75	
+    76	/* XXX: For standalone actions, we don't need a RCU grace period either, because
+    77	 * actions are always connected to filters and filters are already destroyed in
+    78	 * RCU callbacks, so after a RCU grace period actions are already disconnected
+    79	 * from filters. Readers later can not find us.
+    80	 */
+    81	static void free_tcf(struct tc_action *p)
+    82	{
+    83		free_percpu(p->cpu_bstats);
+    84		free_percpu(p->cpu_qstats);
+    85	
+    86		tcf_set_action_cookie(&p->act_cookie, NULL);
+    87		if (p->goto_chain)
+    88			tcf_action_goto_chain_fini(p);
+    89	
+    90		kfree(p);
+    91	}
+    92	
+    93	static void tcf_idr_remove(struct tcf_idrinfo *idrinfo, struct tc_action *p)
+    94	{
+    95		spin_lock_bh(&idrinfo->lock);
+    96		idr_remove(&idrinfo->action_idr, p->tcfa_index);
+    97		spin_unlock_bh(&idrinfo->lock);
+    98		gen_kill_estimator(&p->tcfa_rate_est);
+    99		free_tcf(p);
+   100	}
+   101	
+   102	int __tcf_idr_release(struct tc_action *p, bool bind, bool strict)
+   103	{
+   104		int ret = 0;
+   105	
+   106		ASSERT_RTNL();
+   107	
+   108		if (p) {
+   109			if (bind)
+   110				p->tcfa_bindcnt--;
+   111			else if (strict && p->tcfa_bindcnt > 0)
+   112				return -EPERM;
+   113	
+   114			p->tcfa_refcnt--;
+   115			if (p->tcfa_bindcnt <= 0 && p->tcfa_refcnt <= 0) {
+   116				if (p->ops->cleanup)
+   117					p->ops->cleanup(p);
+   118				tcf_idr_remove(p->idrinfo, p);
+   119				ret = ACT_P_DELETED;
+   120			}
+   121		}
+   122	
+   123		return ret;
+   124	}
+   125	EXPORT_SYMBOL(__tcf_idr_release);
+   126	
+   127	static size_t tcf_action_shared_attrs_size(const struct tc_action *act)
+   128	{
+   129		u32 cookie_len = 0;
+   130	
+   131		if (act->act_cookie)
+ > 132			cookie_len = nla_total_size(act->act_cookie->len);
+   133	
+   134		return  nla_total_size(0) /* action number nested */
+   135			+ nla_total_size(IFNAMSIZ) /* TCA_ACT_KIND */
+   136			+ cookie_len /* TCA_ACT_COOKIE */
+   137			+ nla_total_size(0) /* TCA_ACT_STATS nested */
+   138			/* TCA_STATS_BASIC */
+   139			+ nla_total_size_64bit(sizeof(struct gnet_stats_basic))
+   140			/* TCA_STATS_QUEUE */
+   141			+ nla_total_size_64bit(sizeof(struct gnet_stats_queue))
+   142			+ nla_total_size(0) /* TCA_OPTIONS nested */
+   143			+ nla_total_size(sizeof(struct tcf_t)); /* TCA_GACT_TM */
+   144	}
+   145	
+
 ---
- tools/memory-model/litmus-tests/.gitignore   |  1 +
- tools/memory-model/scripts/checkalllitmus.sh | 73 +++++++++++++++++++++++
- tools/memory-model/scripts/checklitmus.sh    | 86 ++++++++++++++++++++++++++++
- 3 files changed, 160 insertions(+)
- create mode 100644 tools/memory-model/litmus-tests/.gitignore
- create mode 100755 tools/memory-model/scripts/checkalllitmus.sh
- create mode 100755 tools/memory-model/scripts/checklitmus.sh
-
-diff --git a/tools/memory-model/litmus-tests/.gitignore b/tools/memory-model/litmus-tests/.gitignore
-new file mode 100644
-index 000000000000..6e2ddc54152f
---- /dev/null
-+++ b/tools/memory-model/litmus-tests/.gitignore
-@@ -0,0 +1 @@
-+*.litmus.out
-diff --git a/tools/memory-model/scripts/checkalllitmus.sh b/tools/memory-model/scripts/checkalllitmus.sh
-new file mode 100755
-index 000000000000..af0aa15ab84e
---- /dev/null
-+++ b/tools/memory-model/scripts/checkalllitmus.sh
-@@ -0,0 +1,73 @@
-+#!/bin/sh
-+#
-+# Run herd tests on all .litmus files in the specified directory (which
-+# defaults to litmus-tests) and check each file's result against a "Result:"
-+# comment within that litmus test.  If the verification result does not
-+# match that specified in the litmus test, this script prints an error
-+# message prefixed with "^^^".  It also outputs verification results to
-+# a file whose name is that of the specified litmus test, but with ".out"
-+# appended.
-+#
-+# Usage:
-+#	sh checkalllitmus.sh [ directory ]
-+#
-+# The LINUX_HERD_OPTIONS environment variable may be used to specify
-+# arguments to herd, whose default is defined by the checklitmus.sh script.
-+# Thus, one would normally run this in the directory containing the memory
-+# model, specifying the pathname of the litmus test to check.
-+#
-+# This script makes no attempt to run the litmus tests concurrently.
-+#
-+# This program is free software; you can redistribute it and/or modify
-+# it under the terms of the GNU General Public License as published by
-+# the Free Software Foundation; either version 2 of the License, or
-+# (at your option) any later version.
-+#
-+# This program is distributed in the hope that it will be useful,
-+# but WITHOUT ANY WARRANTY; without even the implied warranty of
-+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+# GNU General Public License for more details.
-+#
-+# You should have received a copy of the GNU General Public License
-+# along with this program; if not, you can access it online at
-+# http://www.gnu.org/licenses/gpl-2.0.html.
-+#
-+# Copyright IBM Corporation, 2018
-+#
-+# Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-+
-+litmusdir=${1-litmus-tests}
-+if test -d "$litmusdir" -a -r "$litmusdir" -a -x "$litmusdir"
-+then
-+	:
-+else
-+	echo ' --- ' error: $litmusdir is not an accessible directory
-+	exit 255
-+fi
-+
-+# Find the checklitmus script.  If it is not where we expect it, then
-+# assume that the caller has the PATH environment variable set
-+# appropriately.
-+if test -x scripts/checklitmus.sh
-+then
-+	clscript=scripts/checklitmus.sh
-+else
-+	clscript=checklitmus.sh
-+fi
-+
-+# Run the script on all the litmus tests in the specified directory
-+ret=0
-+for i in litmus-tests/*.litmus
-+do
-+	if ! $clscript $i
-+	then
-+		ret=1
-+	fi
-+done
-+if test "$ret" -ne 0
-+then
-+	echo " ^^^ VERIFICATION MISMATCHES"
-+else
-+	echo All litmus tests verified as was expected.
-+fi
-+exit $ret
-diff --git a/tools/memory-model/scripts/checklitmus.sh b/tools/memory-model/scripts/checklitmus.sh
-new file mode 100755
-index 000000000000..e2e477472844
---- /dev/null
-+++ b/tools/memory-model/scripts/checklitmus.sh
-@@ -0,0 +1,86 @@
-+#!/bin/sh
-+#
-+# Run a herd test and check the result against a "Result:" comment within
-+# the litmus test.  If the verification result does not match that specified
-+# in the litmus test, this script prints an error message prefixed with
-+# "^^^" and exits with a non-zero status.  It also outputs verification
-+# results to a file whose name is that of the specified litmus test, but
-+# with ".out" appended.
-+#
-+# Usage:
-+#	sh checklitmus.sh file.litmus
-+#
-+# The LINUX_HERD_OPTIONS environment variable may be used to specify
-+# arguments to herd, which default to "-conf linux-kernel.cfg".  Thus,
-+# one would normally run this in the directory containing the memory model,
-+# specifying the pathname of the litmus test to check.
-+#
-+# This program is free software; you can redistribute it and/or modify
-+# it under the terms of the GNU General Public License as published by
-+# the Free Software Foundation; either version 2 of the License, or
-+# (at your option) any later version.
-+#
-+# This program is distributed in the hope that it will be useful,
-+# but WITHOUT ANY WARRANTY; without even the implied warranty of
-+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+# GNU General Public License for more details.
-+#
-+# You should have received a copy of the GNU General Public License
-+# along with this program; if not, you can access it online at
-+# http://www.gnu.org/licenses/gpl-2.0.html.
-+#
-+# Copyright IBM Corporation, 2018
-+#
-+# Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-+
-+litmus=$1
-+herdoptions=${LINUX_HERD_OPTIONS--conf linux-kernel.cfg}
-+
-+if test -f "$litmus" -a -r "$litmus"
-+then
-+	:
-+else
-+	echo ' --- ' error: \"$litmus\" is not a readable file
-+	exit 255
-+fi
-+if grep -q '^ \* Result: ' $litmus
-+then
-+	outcome=`grep -m 1 '^ \* Result: ' $litmus | awk '{ print $3 }'`
-+else
-+	outcome=specified
-+fi
-+
-+echo Herd options: $herdoptions > $litmus.out
-+/usr/bin/time herd7 -o ~/tmp $herdoptions $litmus >> $litmus.out 2>&1
-+grep "Herd options:" $litmus.out
-+grep '^Observation' $litmus.out
-+if grep -q '^Observation' $litmus.out
-+then
-+	:
-+else
-+	cat $litmus.out
-+	echo ' ^^^ Verification error'
-+	echo ' ^^^ Verification error' >> $litmus.out 2>&1
-+	exit 255
-+fi
-+if test "$outcome" = DEADLOCK
-+then
-+	echo grep 3 and 4
-+	if grep '^Observation' $litmus.out | grep -q 'Never 0 0$'
-+	then
-+		ret=0
-+	else
-+		echo " ^^^ Unexpected non-$outcome verification"
-+		echo " ^^^ Unexpected non-$outcome verification" >> $litmus.out 2>&1
-+		ret=1
-+	fi
-+elif grep '^Observation' $litmus.out | grep -q $outcome || test "$outcome" = Maybe
-+then
-+	ret=0
-+else
-+	echo " ^^^ Unexpected non-$outcome verification"
-+	echo " ^^^ Unexpected non-$outcome verification" >> $litmus.out 2>&1
-+	ret=1
-+fi
-+tail -2 $litmus.out | head -1
-+exit $ret
--- 
-2.5.2
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
