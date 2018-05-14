@@ -1,130 +1,112 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-457733-1526285387-2-14369555264607169055
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.248, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526285387; b=bHR9hmoUtQGnmFdywA3jxe4SX41dFcLNucHueZiOsJwaDd9tHE
-    NEXVrUKBWqmef3wiUIEPoplja7keGK+ZXzSOgWcHUNpHzYFmtIjN9sXzDjtdei9R
-    GLAzD8FpuMAPHnCQaSrdDl7xEkBQyXx1nW2ZOxGD2+fEM3XqItAtkOMyFcykKskD
-    cT43g6Qk8Tphuze3qoDrwBVP95r16CunHvONGrEwgvulENjkTGtG4NVmR3Do7tbo
-    chdJmVcTSccsk7GFtPOX4APbxybVlzT2hCJ7XdHSr5ODthhzAgRApYoC/hnMjg/O
-    8jZuVNb1HwgsVascdps2YCy5f5YXWRTf0FeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526285387; bh=wTHOQ8hOJfohowWlyW86p/dkF8i5Bz
-    y541YAdBIm/ho=; b=hvGkB3eqSniyQ6ggqDnwBOJQ6VPDnET2HmyN60hXQRHO7p
-    Dd7tJp7kkrDVflT4sI6VuHeMud8tDtOSQH0I3Ct1W6YMJn8GsBhfC39qrg0rYBHx
-    bdwhuMCTESo2kzvyPIFak8q0ZItNSeHZ5MzDUsS/k+6mK161Xp6wTY66ph9fStgR
-    5HLpWXCl7yQPRj7YV0vDgJbCDOx15Ey7RxTzudD+Hv/mgZy1ojl/XJ1ZsHGCYCek
-    bCrpGChmSEc79QZwSmvJxk5MMKXajJp81Aok/39XPUR62qmTgsI+XrhFND/HykF8
-    K5dYX6Ta9yO4YbAETSD4JxQqwPe88fc6juInwOHQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-    header.i=@gmail.com header.b=rTNBEocT x-bits=2048 x-keytype=rsa
-    x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=sdsMdRc0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-      header.i=@gmail.com header.b=rTNBEocT x-bits=2048 x-keytype=rsa
-      x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=sdsMdRc0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOxvRFfH6yfhLXbvX13jq7C8sFdVgG9f+4E4XHAFbK3G042I5vcDWX3Gn685xmV4oKT+UexG6oVRlrEuSZF5mO74AgXPYJu4Vei51GgBYNF67NeQEjsd
-    uo3QXs/SQcjwEuaXKIdi3UcG/+5yD98jjQr88u9z38BcEhSf4EXjVvJUTizi6jhuPIrVwN3FKWwG+CJ0FUY2hLS/EqkhEx52oowQmyQMOCXqr/gdKqFMiwNU
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
-    a=vY_346TuTMEA:10 a=_yzArvceousA:10 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=1UYVNUpnIQWIgOdU3NYA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751894AbeENIJ0 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 04:09:26 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:46111 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752051AbeENIJW (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 14 May 2018 04:09:22 -0400
-X-Google-Smtp-Source: AB8JxZqnAKmBwFqTHg8dzv3JjLpgr/Q8BMHnuyb7v6e+TOmHKy+sb69zlJI4zb7waGxsOvehtEV0KQ==
-Date: Mon, 14 May 2018 01:09:18 -0700
-From: Nathan Chancellor <natechancellor@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/56] 4.4.132-stable review
-Message-ID: <20180514080918.GA6839@localhost>
-References: <20180514064754.853201981@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZqLZ6AkIpMbXuhsjtccAp3ZZ4vmU3wViYI0ckAeUCr0HTYyUnGyicI0dr47JCVzDJjKMx+N
+ARC-Seal: i=1; a=rsa-sha256; t=1526281799; cv=none;
+        d=google.com; s=arc-20160816;
+        b=WMi3CgLcBQfCn2sDtPwJC7sK6A/bbMWE6GPk5lXKcLW0Q8BSAs1IBnGTU/CV2l0gBr
+         tUBvI2hq/4PlpteJu850ev5IR6jkrZCUvK7h/5F8inPSYj+YdGEC1sr6P56pZkVUY3Us
+         80TCNb5a45nuMRE/MLYvMG0LCIxAZvHlBODDxCxWnPiJ7cac8pedXTWRf8PfCJZQqeU1
+         H0FcG3TBvym72IBBtl+XccZSIcE88GiOgfUAt8AKSg3ZsrJmzBzobcuFzcZmShk1LrzD
+         WE9EZRBsfX451aS/RITzf0SGn7JK/DNztxSi/RoT0gJZ+xD25yY9G6bAxYBzJ27Baly/
+         REnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=qVahjOU5i3IyoXVBekXXtdUZhrf/iSppk2y82d9u1uM=;
+        b=oheP2yX659hbTNW4n0NpDe3Ckg8so9ABrNANAInb1kM3s7RHOXxyk2AzoF0R4fc032
+         Si5cZuJttkBOZmPnygznnSCjf0XjQVEBuisCADz70vuB81bfzP384Q9dHmCkJEkAWW7V
+         IGfLBsu8LrLWCx5JBeI8/N3zmWefzRXUbavOcSznheR//NvcRu5nmGO8t84fOvQryb/i
+         N5f1V9m33IqNEorol/GJUfr6GAvamzDvnS+JBu5x+eEQ/ynPTskGJBaHeg7lbSfRlPV4
+         HTCDJmFhGCsxUTQivvz5xYarNSlWlB3foygm8/nLFpvnEYXi8BfhkJuMGZRrLSfBAc9M
+         DRbg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=er8zwe/a;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=er8zwe/a;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Stephane Eranian <eranian@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vince Weaver <vincent.weaver@maine.edu>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 56/56] perf/x86: Fix possible Spectre-v1 indexing for x86_pmu::event_map()
+Date: Mon, 14 May 2018 08:49:01 +0200
+Message-Id: <20180514064800.102939692@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+References: <20180514064754.853201981@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1600422464525970940?=
+X-GMAIL-MSGID: =?utf-8?q?1600422464525970940?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 14, 2018 at 08:48:05AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.132 release.
-> There are 56 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed May 16 06:47:39 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.132-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Merged, compiled, and installed  on to my Pixel 2 XL and OnePlus 5.
+------------------
 
-No initial issues noticed in general usage or dmesg.
+From: Peter Zijlstra <peterz@infradead.org>
 
-Thanks!
-Nathan
+commit 46b1b577229a091b137831becaa0fae8690ee15a upstream.
+
+> arch/x86/events/intel/cstate.c:307 cstate_pmu_event_init() warn: potential spectre issue 'pkg_msr' (local cap)
+> arch/x86/events/intel/core.c:337 intel_pmu_event_map() warn: potential spectre issue 'intel_perfmon_event_map'
+> arch/x86/events/intel/knc.c:122 knc_pmu_event_map() warn: potential spectre issue 'knc_perfmon_event_map'
+> arch/x86/events/intel/p4.c:722 p4_pmu_event_map() warn: potential spectre issue 'p4_general_events'
+> arch/x86/events/intel/p6.c:116 p6_pmu_event_map() warn: potential spectre issue 'p6_perfmon_event_map'
+> arch/x86/events/amd/core.c:132 amd_pmu_event_map() warn: potential spectre issue 'amd_perfmon_event_map'
+
+Userspace controls @attr, sanitize @attr->config before passing it on
+to x86_pmu::event_map().
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <stable@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/x86/kernel/cpu/perf_event.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/arch/x86/kernel/cpu/perf_event.c
++++ b/arch/x86/kernel/cpu/perf_event.c
+@@ -25,6 +25,7 @@
+ #include <linux/cpu.h>
+ #include <linux/bitops.h>
+ #include <linux/device.h>
++#include <linux/nospec.h>
+ 
+ #include <asm/apic.h>
+ #include <asm/stacktrace.h>
+@@ -407,6 +408,8 @@ int x86_setup_perfctr(struct perf_event
+ 	if (attr->config >= x86_pmu.max_events)
+ 		return -EINVAL;
+ 
++	attr->config = array_index_nospec((unsigned long)attr->config, x86_pmu.max_events);
++
+ 	/*
+ 	 * The generic map:
+ 	 */
