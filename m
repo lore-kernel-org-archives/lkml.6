@@ -1,42 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpEjs3tI/q+5CH7cJiLfdn/ZQlIP21TpqViYMWHL1gZSuJhwYN3CwtNUFzwteXoNTJ49Khu
-ARC-Seal: i=1; a=rsa-sha256; t=1526280687; cv=none;
+X-Google-Smtp-Source: AB8JxZpXeNWIHjn3D/Nr6O0+DCCNLk/OWREah6zwXGVFS2QMwEuflgdCBZljTj+XvA0mQrMTHUTz
+ARC-Seal: i=1; a=rsa-sha256; t=1526280684; cv=none;
         d=google.com; s=arc-20160816;
-        b=r43maKvMt42O9Dd+LH0dvIJPjmRkb1PSUz3UyDmP7ECy0qjkZOOkqcLSKJxx/b4Xia
-         zWrTLJOnBRgMWcKxWcUIAZ5cAt+66Sv2/m3Kac71ny/KbfFK/87PcRjmDqs+v1IOMfJA
-         2yCqy8kJP+QT+V1HaM9KR3FSWFW/sd1hv6f9cwOhBdWAy7ZD1lwS07owiriGwhpYqAdZ
-         fNkdzqCjjjBgs0BcmYBBtzV6aCc8kEwOC07jtmwYCIJpT5VhaNnIy7YV0dFB3Yj85vW7
-         nebT+9BRX39yFkYrlfQvCn57pJ+pgmjF8v372Hh2nMCW49AhkTDagjlTBa/TuHDvYgzu
-         9OUw==
+        b=PhN+NbSJ9XNLzXqprlN2IXBrmObtEfBmpZT5SaX96J+BD9oPTeOl/Yg1CA6SgIfzuc
+         e+l5oFttITIbQCUkGeaXI9t4oL7x0UbSTi4oqX1XLOM3uKad0WR8C7uhieC8roD0pdpY
+         cUold3jOlkoaoT53TUlaZE0jk4hh5evvTHQitMPIc84z3K5fcfUC0EmJflFsKNG3I+es
+         l4S82HoPJKxFjfX9sV9Q3H29lqJCor7TLVZlCJCpNh3BYJVcOh8VaJp6pfD0TzMJUjNx
+         U5/yybiK/Sv7MnkmeZfF7Z2kEYmzp7CkGnX/FpXX7F/YC5LlwBsFdAEX4/qkHsnhNStx
+         1jNA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=rrTJVqH0AssdxjMCMCxskc0Q/dsooBAlwXAszzCrUGI=;
-        b=zwoit/z46QKxx9Pq/JyNderX4+urT90TiVnvOC1koPKQUwB2Cxq1jDDTnMo4vf6bBH
-         KCQsGaCKuU3zjitCyTrQD4w0BCXslJ049bsWm4G7CK7fSS4Ubq7td1sUtGUq3eTubO/D
-         9ijRdFoKXi5F+9uJM3vIXQMdO4nOqloP00eGYsRurBX7ZhXN1g63diWKz+65bQWFAu6t
-         E1A2f3G2ziBd+LbCAedQ8+VTe7ZFdSItiQM7RR618QlvPlWBA6rFiRffr9hYRFUBEc/F
-         08y1fVaS7PwHir/a108AOlDFqLv/NW3iXdYfVqSOy42GiEfbhavUJIP+c9RPQaY6JAJj
-         xpIQ==
+        bh=9iPSzpzGc6HOvRZdesJ0EXMVA/Lt804cnXBvwJU6O+M=;
+        b=KJsLJGPtHzXHtpDSaz4pSOXz9gBfSlam0YrH0rP9YtDsZ0Y6+0qYogLml/RJCe5qdM
+         MV4gDttAX0VFLzYDLiTq04NUUNCioMA+qkJblUbD/G2cbpUVxE70hDztQ5y3DIqutkCJ
+         dL5D/NwajzSvXoykSk4jyCnKWrgODVa7fJoB3ThbjCphjmgGrTCxz7NAeZcElPK/UCf8
+         DgPhm07zyDbafxkpKbjQXp4drhgH4t+spdTTJXRftynyTcKOoN8grV2u5bg3cE+ALi+W
+         OqlnkB2odemo7ir9Ui/9+banj7yt2oUvKpjkAN+0KY2ZJLdEJ3TBVS9+bWuA+D2wOuD4
+         aTgQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=fCq112mN;
+       dkim=pass header.i=@kernel.org header.s=default header.b=nt6RFseZ;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=fCq112mN;
+       dkim=pass header.i=@kernel.org header.s=default header.b=nt6RFseZ;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Teng Qin <qinteng@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Chenbo Feng <fengc@google.com>,
-	Lorenzo Colitti <lorenzo@google.com>
-Subject: [PATCH 4.4 02/56] bpf: map_get_next_key to return first key on NULL
-Date: Mon, 14 May 2018 08:48:07 +0200
-Message-Id: <20180514064755.103747262@linuxfoundation.org>
+	Eric Biggers <ebiggers@google.com>,
+	Christoph Hellwig <hch@lst.de>,
+	"Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: [PATCH 4.4 19/56] xfs: prevent creating negative-sized file via INSERT_RANGE
+Date: Mon, 14 May 2018 08:48:24 +0200
+Message-Id: <20180514064756.810779737@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -46,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421298698641649?=
-X-GMAIL-MSGID: =?utf-8?q?1600421298698641649?=
+X-GMAIL-THRID: =?utf-8?q?1600421295105523065?=
+X-GMAIL-MSGID: =?utf-8?q?1600421295105523065?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,98 +52,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Teng Qin <qinteng@fb.com>
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-commit 8fe45924387be6b5c1be59a7eb330790c61d5d10 upstream.
+commit 7d83fb14258b9961920cd86f0b921caaeb3ebe85 upstream.
 
-When iterating through a map, we need to find a key that does not exist
-in the map so map_get_next_key will give us the first key of the map.
-This often requires a lot of guessing in production systems.
+During the "insert range" fallocate operation, i_size grows by the
+specified 'len' bytes.  XFS verifies that i_size + len < s_maxbytes, as
+it should.  But this comparison is done using the signed 'loff_t', and
+'i_size + len' can wrap around to a negative value, causing the check to
+incorrectly pass, resulting in an inode with "negative" i_size.  This is
+possible on 64-bit platforms, where XFS sets s_maxbytes = LLONG_MAX.
+ext4 and f2fs don't run into this because they set a smaller s_maxbytes.
 
-This patch makes map_get_next_key return the first key when the key
-pointer in the parameter is NULL.
+Fix it by using subtraction instead.
 
-Signed-off-by: Teng Qin <qinteng@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Chenbo Feng <fengc@google.com>
-Cc: Lorenzo Colitti <lorenzo@google.com>
+Reproducer:
+    xfs_io -f file -c "truncate $(((1<<63)-1))" -c "finsert 0 4096"
+
+Fixes: a904b1ca5751 ("xfs: Add support FALLOC_FL_INSERT_RANGE for fallocate")
+Cc: <stable@vger.kernel.org> # v4.1+
+Originally-From: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+[darrick: fix signed integer addition overflow too]
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bpf/arraymap.c |    2 +-
- kernel/bpf/hashtab.c  |    9 +++++----
- kernel/bpf/syscall.c  |   18 +++++++++++-------
- 3 files changed, 17 insertions(+), 12 deletions(-)
+ fs/xfs/xfs_file.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/kernel/bpf/arraymap.c
-+++ b/kernel/bpf/arraymap.c
-@@ -102,7 +102,7 @@ static void *array_map_lookup_elem(struc
- static int array_map_get_next_key(struct bpf_map *map, void *key, void *next_key)
- {
- 	struct bpf_array *array = container_of(map, struct bpf_array, map);
--	u32 index = *(u32 *)key;
-+	u32 index = key ? *(u32 *)key : U32_MAX;
- 	u32 *next = (u32 *)next_key;
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -969,22 +969,26 @@ xfs_file_fallocate(
+ 		if (error)
+ 			goto out_unlock;
+ 	} else if (mode & FALLOC_FL_INSERT_RANGE) {
+-		unsigned int blksize_mask = i_blocksize(inode) - 1;
++		unsigned int	blksize_mask = i_blocksize(inode) - 1;
++		loff_t		isize = i_size_read(inode);
  
- 	if (index >= array->map.max_entries) {
---- a/kernel/bpf/hashtab.c
-+++ b/kernel/bpf/hashtab.c
-@@ -169,12 +169,15 @@ static int htab_map_get_next_key(struct
- 	struct hlist_head *head;
- 	struct htab_elem *l, *next_l;
- 	u32 hash, key_size;
--	int i;
-+	int i = 0;
+-		new_size = i_size_read(inode) + len;
+ 		if (offset & blksize_mask || len & blksize_mask) {
+ 			error = -EINVAL;
+ 			goto out_unlock;
+ 		}
  
- 	WARN_ON_ONCE(!rcu_read_lock_held());
+-		/* check the new inode size does not wrap through zero */
+-		if (new_size > inode->i_sb->s_maxbytes) {
++		/*
++		 * New inode size must not exceed ->s_maxbytes, accounting for
++		 * possible signed overflow.
++		 */
++		if (inode->i_sb->s_maxbytes - isize < len) {
+ 			error = -EFBIG;
+ 			goto out_unlock;
+ 		}
++		new_size = isize + len;
  
- 	key_size = map->key_size;
- 
-+	if (!key)
-+		goto find_first_elem;
-+
- 	hash = htab_map_hash(key, key_size);
- 
- 	head = select_bucket(htab, hash);
-@@ -182,10 +185,8 @@ static int htab_map_get_next_key(struct
- 	/* lookup the key */
- 	l = lookup_elem_raw(head, hash, key, key_size);
- 
--	if (!l) {
--		i = 0;
-+	if (!l)
- 		goto find_first_elem;
--	}
- 
- 	/* key was found, get next key in the same bucket */
- 	next_l = hlist_entry_safe(rcu_dereference_raw(hlist_next_rcu(&l->hash_node)),
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -390,14 +390,18 @@ static int map_get_next_key(union bpf_at
- 	if (IS_ERR(map))
- 		return PTR_ERR(map);
- 
--	err = -ENOMEM;
--	key = kmalloc(map->key_size, GFP_USER);
--	if (!key)
--		goto err_put;
-+	if (ukey) {
-+		err = -ENOMEM;
-+		key = kmalloc(map->key_size, GFP_USER);
-+		if (!key)
-+			goto err_put;
- 
--	err = -EFAULT;
--	if (copy_from_user(key, ukey, map->key_size) != 0)
--		goto free_key;
-+		err = -EFAULT;
-+		if (copy_from_user(key, ukey, map->key_size) != 0)
-+			goto free_key;
-+	} else {
-+		key = NULL;
-+	}
- 
- 	err = -ENOMEM;
- 	next_key = kmalloc(map->key_size, GFP_USER);
+ 		/* Offset should be less than i_size */
+-		if (offset >= i_size_read(inode)) {
++		if (offset >= isize) {
+ 			error = -EINVAL;
+ 			goto out_unlock;
+ 		}
