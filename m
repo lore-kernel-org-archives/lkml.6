@@ -1,28 +1,28 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpcwaEm7Yej7HbLQdsPhZv9KiRJOG0DnKVohglsgk/20DOFzZHUt4IbjFFAAV9CSSJLSjKq
-ARC-Seal: i=1; a=rsa-sha256; t=1526280797; cv=none;
+X-Google-Smtp-Source: AB8JxZqbG5FONFjInax1ejor0wWQSuexOVi9yoL2tCKXzyVFpvKX/gaQg/6OcTa7Rvlb6nj5PXw8
+ARC-Seal: i=1; a=rsa-sha256; t=1526280793; cv=none;
         d=google.com; s=arc-20160816;
-        b=SsxPVFnRzoF7k1fqaP6ILdW+auLXn6dws1p8+WOrP1gCMfddvrwcWhtylCB3yJjO1/
-         142N074Zyk0unZJsX/biq1XXhTaiUfAW7H/S+rfXKb3efetr2cKSMbeuySVUSXUYoyoG
-         L1w2O7qGJZHT3OGNgaU+d8+Fpj5T3ASClqlPV3KutNYNoTjqzCcMvrobXBnAgldTn2kT
-         qVIQ+xpOLoWaEqis1bVFDVRJ65SzpXYp4i616cMXp6UZLCtdUdKPxNGWc70UoDECG15t
-         4BUv6HzFQtb/vXdrMeZaUgvMDqCz2MCagWG+273Vvjb3EVNXLI2YF0VuwEl4gwI4Ryn9
-         2o6A==
+        b=FqkIR1EFGXCm0hFpKVH0n0g11+EFiJDy5KZ+n5ueRAM/IFbrpPXVVLRCQfpitfxcYl
+         jdS4WcK/LwkH7C+ecxOvDPWDtmoVcfw/CKuoibf3g5GMUB/qOYowk5BtlvBG0gOltkSW
+         zVs3WmNBbCKvnkiVXBD6JVZJnR5TuWHj8zFsagmZetdDUKpXNWVeEg73mUs2hGs6lUH6
+         CDYwHGvEBJH2MRw2UCWOLF3Lfylld4/yQgxtu5oAgdrxJCEKlaste8XE+MGfJ3E+sz+f
+         uM7ySZUgfPhXZrNr7/WVt2NwiD4Fq04KvbzZuCVRr5DMo5IsYBy+4khdx5daiwDF9CS1
+         8LmQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=MaEKMbvtvgh6HsoSBb++yqVdqpVmSDhiTXXLv33Wy3c=;
-        b=tuXUskmI6g9yTWyEZ4Ns/kICp+L1RUi7t/byXaBMBH8DzfdIy9yOQfmmQuUZuqDjX+
-         ujU8O7wDQsz6G5/5/JVRslG0ZQXXefUqs23ry0wEn6kaKZXdOVCaAa32KdDJvDK0IQ83
-         fi7NHkEnONWVHGs3tJqmhcUfQsF5MidksnqCRI606VR1aaEMg478mFqZZEOg6Vtd5I2Q
-         m27W5JyIy+Zuvl32TgQToaiflISrQGw90ardX/COkeZ7mPUStvc80S4d112KkMGxZVZ4
-         0Lk316axZIGGdYy8r8XcXLlbbsoicYmAzCcabqeIHoWZ20u+c2bvuNleKbFj4JIyuVu4
-         e6tQ==
+        bh=spV7c41ZQUcbfxqASjMsHqec+cGmrkl3OHTSEI+r4Ww=;
+        b=DaHvY9Hr/NNNsrE2LBsi8zyYKztrteiyTQ1XHyi6CakCMjqjQ/seOcn0f9mMW/GjJu
+         5Jd4zHaQ7mVzsAph0tJ2N2+87XHZQJ5rAChtNXnbNR2vxXK+Nhbd70/yIFPQqhwmapxF
+         Nsn3aw7aX7fOI9mm9U1fs06Km0NphuNJFO/uuIRBnkiZzcpYBlhLWd5UQnEjOhUvVjvJ
+         N/fpRlZtpv3jCw98u1aQD4BEyrm550lgGv8FkpGbfjx1Q0sIYpXwJmK8tTKHrG6J340s
+         /xLTyxcbSqY227SK+3PqBIKmS6rDvE0EYsQMPtNSAKp3kyBK45MgS+GhC8lmmBupKj0a
+         jKCA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=jYTgAz2i;
+       dkim=pass header.i=@kernel.org header.s=default header.b=t8qztNpL;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=jYTgAz2i;
+       dkim=pass header.i=@kernel.org header.s=default header.b=t8qztNpL;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Eric Dumazet <edumazet@google.com>,
 	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 35/56] net: initialize skb->peeked when cloning
-Date: Mon, 14 May 2018 08:48:40 +0200
-Message-Id: <20180514064758.157135743@linuxfoundation.org>
+Subject: [PATCH 4.4 34/56] net: fix rtnh_ok()
+Date: Mon, 14 May 2018 08:48:39 +0200
+Message-Id: <20180514064758.079254201@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421244637782425?=
-X-GMAIL-MSGID: =?utf-8?q?1600421412849603816?=
+X-GMAIL-THRID: =?utf-8?q?1600421242429293362?=
+X-GMAIL-MSGID: =?utf-8?q?1600421409579767892?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,30 +54,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Dumazet <edumazet@google.com>
 
-commit b13dda9f9aa7caceeee61c080c2e544d5f5d85e5 upstream.
+commit b1993a2de12c9e75c35729e2ffbc3a92d50c0d31 upstream.
 
-syzbot reported __skb_try_recv_from_queue() was using skb->peeked
-while it was potentially unitialized.
+syzbot reported :
 
-We need to clear it in __skb_clone()
+BUG: KMSAN: uninit-value in rtnh_ok include/net/nexthop.h:11 [inline]
+BUG: KMSAN: uninit-value in fib_count_nexthops net/ipv4/fib_semantics.c:469 [inline]
+BUG: KMSAN: uninit-value in fib_create_info+0x554/0x8d20 net/ipv4/fib_semantics.c:1091
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+@remaining is an integer, coming from user space.
+If it is negative we want rtnh_ok() to return false.
+
+Fixes: 4e902c57417c ("[IPv4]: FIB configuration using struct fib_config")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/core/skbuff.c |    1 +
- 1 file changed, 1 insertion(+)
+ include/net/nexthop.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -827,6 +827,7 @@ static struct sk_buff *__skb_clone(struc
- 	n->hdr_len = skb->nohdr ? skb_headroom(skb) : skb->hdr_len;
- 	n->cloned = 1;
- 	n->nohdr = 0;
-+	n->peeked = 0;
- 	n->destructor = NULL;
- 	C(tail);
- 	C(end);
+--- a/include/net/nexthop.h
++++ b/include/net/nexthop.h
+@@ -6,7 +6,7 @@
+ 
+ static inline int rtnh_ok(const struct rtnexthop *rtnh, int remaining)
+ {
+-	return remaining >= sizeof(*rtnh) &&
++	return remaining >= (int)sizeof(*rtnh) &&
+ 	       rtnh->rtnh_len >= sizeof(*rtnh) &&
+ 	       rtnh->rtnh_len <= remaining;
+ }
