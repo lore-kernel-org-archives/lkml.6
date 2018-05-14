@@ -1,100 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752161AbeENWKI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 18:10:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36930 "EHLO mail.kernel.org"
+        id S1752115AbeENWNB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 18:13:01 -0400
+Received: from sauhun.de ([88.99.104.3]:57906 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751978AbeENWKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 18:10:06 -0400
-Content-Type: text/plain; charset="utf-8"
+        id S1751978AbeENWNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 18:13:00 -0400
+Date: Tue, 15 May 2018 00:12:58 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-i2c@vger.kernel.org
+Subject: Re: [PATCH] i2c: hix5hd2: remove some dead code
+Message-ID: <20180514221258.gpp4yfdylnxnhrlb@ninjato>
+References: <20180509194603.28986-1-peda@axentia.se>
 MIME-Version: 1.0
-To: "moderated list:ARM64 PORT AARCH64 ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Yossi Mansharoff <yossim@codeaurora.org>,
-        open list <linux-kernel@vger.kernel.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1523973390-2387-1-git-send-email-yossim@codeaurora.org>
-Cc: Yossi Mansharoff <yossim@codeaurora.org>
-References: <1523973390-2387-1-git-send-email-yossim@codeaurora.org>
-Message-ID: <152633580491.34267.3508281594437081335@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2] arm64: dts: qcom: Collapse usb support into one node
-Date: Mon, 14 May 2018 15:10:04 -0700
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ct3bz724acewibmw"
+Content-Disposition: inline
+In-Reply-To: <20180509194603.28986-1-peda@axentia.se>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4EMACJT012292
 
-Quoting Yossi Mansharoff (2018-04-17 06:56:30)
-> We currently have three device nodes for the same USB hardware
-> block, as evident by the reuse of the same reg address multiple
-> times. Now that the chipidea driver fully supports OTG with the
-> MSM wrapper we can collapse all these nodes into one USB device
-> node, reflecting the true nature of the hardware.
 
-None of this makes sense. Commit text is totally bogus now.
+--ct3bz724acewibmw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-> index 9ff8487..1505921 100644
-> --- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
-> @@ -371,18 +372,18 @@
->                         adp-disable;
->                         hnp-disable;
->                         srp-disable;
-> -                       dr_mode = "host";
-> -                       pinctrl-names = "default";
-> -                       pinctrl-0 = <&usb_sw_sel_pm>;
-> +                       mux-controls = <&usb_switch>;
-> +                       mux-control-names = "usb_switch";
-> +
->                         ulpi {
->                                 phy {
->                                         v1p8-supply = <&pm8916_l7>;
->                                         v3p3-supply = <&pm8916_l13>;
-> -                                       extcon = <&usb_id>;
->                                 };
->                         };
->                 };
->  
-> +
+On Wed, May 09, 2018 at 09:46:03PM +0200, Peter Rosin wrote:
+> The else branch cannot be taken as i will always equal num.
+> Get rid of the whole construct.
+>=20
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-Why the newline?
+Applied to for-next, thanks!
 
->                 lpass@7708000 {
->                         status = "okay";
->                 };
-> @@ -512,11 +513,17 @@
->  
->         usb_id: usb-id {
->                 compatible = "linux,extcon-usb-gpio";
-> -               vbus-gpio = <&msmgpio 121 GPIO_ACTIVE_HIGH>;
-> +               id-gpio = <&msmgpio 121 GPIO_ACTIVE_HIGH>;
 
-Hmm?
+--ct3bz724acewibmw
+Content-Type: application/pgp-signature; name="signature.asc"
 
->                 pinctrl-names = "default";
->                 pinctrl-0 = <&usb_id_default>;
->         };
->  
-> +       usb_switch: usb-switch {
-> +               compatible = "gpio-mux";
+-----BEGIN PGP SIGNATURE-----
 
-Needs a better compatible string for the actual mux part. The gpio-mux
-can come after that because it's generic, but it's good to record the
-actual mux part too.
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlr6CekACgkQFA3kzBSg
+KbYG6g//eWyJCZu2WfKrT2nRbqkTWMHisv/nng+sEjKlIAsEEKX+zTDgKIhD3p5m
+fYxsEN5ma3C83OWZ/z5KKs/OkuIEZ/vimwUOmQ06wxSApWA/Mi9DnEZbvcVfi4xD
+ZNLFuBR615RhULgQjuddkzyok/yi2xkxaP4clcaIsFgCQKVRf3WIngkzuh5c3BeJ
+PKww9Dj6q2T8JIxa3cAPN1Ua4L3vT7FMoBNX4IZoWXAxpXAST6Gx20r2FqdumNSV
+RMyJDlQDU05d6VACeHV4WRphS6eZvxgttOQkXSt3QAKX1KSAFV4aE/flCTMIWi5f
+HtKYZTikHre+91HUswy4sbBRtAHTXHhH3I+hD7rEJMwkyUcHJr9i6Y1NWNjcPQtN
+mwu5mCDltvSQZIRbhRk6kZN+GuzsV/3Pc8fmAe9yqZLTvg796srJJlRznM8wJqvZ
+lbdhTviHpX4fHZrhXIf+TbGD+fa0Ia2XZJcoRMbNmNNluD/W407QJfIJozRhge5h
+jBmNRy+fUewm+Zg9NcluubCAFU9qY1JyP7jZkCU6iHqrEQKYOVyorKZ6BaYNMVDs
+lal5MnyJV29nUGykXv4PNxhvmAgTGphgIFPLw+ytoPYNiEyCrGtXB8BPI5YcwJXf
+D4xD2KH/mzTUdwUWb/ATI1FLWCZpDb/aB7R4879ZE7d8ynOCbPo=
+=W/Pb
+-----END PGP SIGNATURE-----
 
-> +               mux-gpios = <&pm8916_gpios 4 GPIO_ACTIVE_HIGH>;
-> +               #mux-control-cells = <0>;
-> +       };
+--ct3bz724acewibmw--
