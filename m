@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752614AbeENIkN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:40:13 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:45918 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752403AbeENIkJ (ORCPT
+        id S1752626AbeENIk2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:40:28 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:42723 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752328AbeENIkM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:40:09 -0400
-X-Google-Smtp-Source: AB8JxZp8Swnx2heSXVo/1tYVZ2XfagWBNsYmKQFXj4V07IO5KeSMqGcMhwy/xZU7kUuEHr/gm6Se/g==
-Date: Mon, 14 May 2018 01:23:42 -0700
+        Mon, 14 May 2018 04:40:12 -0400
+X-Google-Smtp-Source: AB8JxZr/w6U/5bkVexElF/M5+HJ03mVs06qTw42+vuXUA8yQ3xmr9L06ubdVQnRgFA2kxikoI+9pRA==
+Date: Mon, 14 May 2018 01:28:28 -0700
 From: Olof Johansson <olof@lixom.net>
 To: Santosh Shilimkar <santosh.shilimkar@oracle.com>
 Cc: arm@kernel.org, linux-arm-kernel@lists.infradead.org,
         khilman@kernel.org, arnd@arndb.de, linux-kernel@vger.kernel.org
 Subject: Re: [GIT PULL 1/2] ARM: SOC driver update v4.18
-Message-ID: <20180514082342.wpqnj2jmsnjh5yro@localhost>
+Message-ID: <20180514082828.ap52ygg3kxsdz26k@localhost>
 References: <1525815697-6338-1-git-send-email-santosh.shilimkar@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -24,6 +24,8 @@ User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+
+Hi Santosh,
 
 On Tue, May 08, 2018 at 02:41:36PM -0700, Santosh Shilimkar wrote:
 > The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
@@ -46,7 +48,7 @@ On Tue, May 08, 2018 at 02:41:36PM -0700, Santosh Shilimkar wrote:
 >  - Use percpu counters for qmss datapath stats
 >  - License update for TI SCI
 
-Merged, thanks.
+Merged!
 
 
 -Olof
