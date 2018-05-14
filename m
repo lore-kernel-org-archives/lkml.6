@@ -1,58 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753827AbeENHXv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:23:51 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58547 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753544AbeENHXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:23:48 -0400
-Date: Mon, 14 May 2018 09:23:34 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] m68k: Implement ndelay() as an inline function to force
- type checking/casting
-Message-ID: <20180514092334.43b5ee3c@xps13>
-In-Reply-To: <20180513140212.3961-1-boris.brezillon@bootlin.com>
-References: <20180513140212.3961-1-boris.brezillon@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753895AbeENHYC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:24:02 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43436 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753510AbeENHYB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 03:24:01 -0400
+Date: Mon, 14 May 2018 09:23:55 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Gabriel C <nix.or.die@gmail.com>
+Cc: kevin.b.stanton@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
+Subject: Re: commit bd9240a18edfbfa72e957fc2ba831cf1f13ea073 seems to break
+ with intel-ucode 20180425
+Message-ID: <20180514072355.GB12198@hirez.programming.kicks-ass.net>
+References: <CAEJqkgjMMMwK0Y7xSJCGVnbPor1MirA30HrN=U2EsGZNRQFs8A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEJqkgjMMMwK0Y7xSJCGVnbPor1MirA30HrN=U2EsGZNRQFs8A@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
-
-On Sun, 13 May 2018 16:02:12 +0200, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-
-> ndelay() is supposed to take an unsigned long, but if you define
-> ndelay() as a macro and the caller pass an unsigned long long instead
-> of an unsigned long, the unsigned long long to unsigned long cast is
-> not done and we end up with an "undefined reference to `__udivdi3'"
-> error at link time.
+On Sat, May 12, 2018 at 12:55:35PM +0200, Gabriel C wrote:
+> Hi Peter,
 > 
-> Fix that by making ndelay() an inline function and then defining dummy
-> ndelay() macro that redirects to the ndelay() function (it's how most
-> archs do to implement ndelay()).
+> after updating ucode to 20180425 on my laptop I always hit the
+> 'TSC_DEADLINE disabled' error and so early microcode update from
+> inird breaks.
 > 
-> Fixes: c8ee038bd148 ("m68k: Implement ndelay() based on the existing udelay() logic")
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+> Also I'm able to late load the microcode from command line but
+> not from initrd.
+> 
+> Going back to ucode 20180312 make things work again.
+> 
+> I've tested on latest 4.16.8 kernel for now.
+> 
+> lscpu output:
 
-Thanks for fixing it.
+Please provide /proc/cpuinfo (a single cpu is sufficient) for both
+firmwares.
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-
--- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+lscpu (whatever that is) lacks useful information, like the microcode
+version.
