@@ -1,45 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753953AbeENRPC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:15:02 -0400
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:46337 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753148AbeENRO7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:14:59 -0400
-X-Google-Smtp-Source: AB8JxZqmisQAew2Q+ZD3Y7N847dRQ9Fyn2xvMOWnwBkmFCCPegH+KF8FX/SBZeSzNL8my5jIHMOy/AvG9PpLpVGphy8=
-MIME-Version: 1.0
-In-Reply-To: <20180514224006.06827f71@canb.auug.org.au>
-References: <20180514172042.093bd880@canb.auug.org.au> <CAHp75Vfs_Za5d8YLJ5FNJDmytRJE-P+q_Kds9V+ivBGy3v+p8g@mail.gmail.com>
- <20180514224006.06827f71@canb.auug.org.au>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 14 May 2018 20:14:57 +0300
-Message-ID: <CAHp75VcpLA2Y_98vUJrjzJwFoNq5Ys68Y4j6RFiK7B_dO=4vrw@mail.gmail.com>
-Subject: Re: linux-next: Tree for May 14
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1754179AbeENRPh (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:15:37 -0400
+Received: from foss.arm.com ([217.140.101.70]:47000 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754143AbeENRPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 13:15:33 -0400
+From: Dave Martin <Dave.Martin@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arch@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Subject: [RFC PATCH 08/11] ia64: Remove unused task argument from prctl functions
+Date: Mon, 14 May 2018 18:14:24 +0100
+Message-Id: <1526318067-4964-9-git-send-email-Dave.Martin@arm.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1526318067-4964-1-git-send-email-Dave.Martin@arm.com>
+References: <1526318067-4964-1-git-send-email-Dave.Martin@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 3:40 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Mon, 14 May 2018 10:26:07 +0300 Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+Some ia64-specific prctl backends take a task argument that is
+redundant, since the only thing ever passed is "current".
 
-> BTW, the drivers-x86 tree I have is
->
-> https://github.com/dvhart/linux-pdx86.git#for-next
->
-> and the contact is Darren Hart.  Is that expected?
+This patch gets rid of the redundant arguments.
 
-That URL was temporary workaround for kernel.org inavailability.
-Please, switch to URL I posted before with for-next branch.
+No functional change.
 
-Darren is aright contact, but not the only one. You might add me to
-the list as well.
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+---
+ arch/ia64/include/asm/processor.h | 8 ++++----
+ kernel/sys.c                      | 8 ++++----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/arch/ia64/include/asm/processor.h b/arch/ia64/include/asm/processor.h
+index 10061ccf..0489b80 100644
+--- a/arch/ia64/include/asm/processor.h
++++ b/arch/ia64/include/asm/processor.h
+@@ -259,15 +259,15 @@ typedef struct {
+ 		 (int __user *) (addr));							\
+ })
+ 
+-#define SET_FPEMU_CTL(task,value)								\
++#define SET_FPEMU_CTL(value)									\
+ ({												\
+-	(task)->thread.flags = (((task)->thread.flags & ~IA64_THREAD_FPEMU_MASK)		\
++	current->thread.flags = ((current->thread.flags & ~IA64_THREAD_FPEMU_MASK)		\
+ 			  | (((value) << IA64_THREAD_FPEMU_SHIFT) & IA64_THREAD_FPEMU_MASK));	\
+ 	0;											\
+ })
+-#define GET_FPEMU_CTL(task,addr)								\
++#define GET_FPEMU_CTL(addr)									\
+ ({												\
+-	put_user(((task)->thread.flags & IA64_THREAD_FPEMU_MASK) >> IA64_THREAD_FPEMU_SHIFT,	\
++	put_user((current->thread.flags & IA64_THREAD_FPEMU_MASK) >> IA64_THREAD_FPEMU_SHIFT,	\
+ 		 (int __user *) (addr));							\
+ })
+ 
+diff --git a/kernel/sys.c b/kernel/sys.c
+index b154561..5549505 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -78,10 +78,10 @@
+ # define GET_UNALIGN_CTL(a, b)	(-EINVAL)
+ #endif
+ #ifndef SET_FPEMU_CTL
+-# define SET_FPEMU_CTL(a, b)	(-EINVAL)
++# define SET_FPEMU_CTL(a)	(-EINVAL)
+ #endif
+ #ifndef GET_FPEMU_CTL
+-# define GET_FPEMU_CTL(a, b)	(-EINVAL)
++# define GET_FPEMU_CTL(a)	(-EINVAL)
+ #endif
+ 
+ /*
+@@ -2247,10 +2247,10 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+ 		error = GET_UNALIGN_CTL(me, arg2);
+ 		break;
+ 	case PR_SET_FPEMU:
+-		error = SET_FPEMU_CTL(me, arg2);
++		error = SET_FPEMU_CTL(arg2);
+ 		break;
+ 	case PR_GET_FPEMU:
+-		error = GET_FPEMU_CTL(me, arg2);
++		error = GET_FPEMU_CTL(arg2);
+ 		break;
+ 	case PR_GET_TIMING:
+ 		error = PR_TIMING_STATISTICAL;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.1.4
