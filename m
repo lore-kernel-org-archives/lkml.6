@@ -1,112 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752518AbeENJmx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 05:42:53 -0400
-Received: from mail-it0-f51.google.com ([209.85.214.51]:34789 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752291AbeENJmu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 05:42:50 -0400
-X-Google-Smtp-Source: AB8JxZqMLjIrsDyJ18dmcERid0mRjTzAtEnkwO0Ps0KpN1y1HOOqkEoGiMDyW/cK8hcPZTEg8irAIwcYLJt+c6K37bk=
+        id S1751903AbeENJpI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 05:45:08 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38126 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750760AbeENJpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 05:45:06 -0400
+Subject: Re: [PATCH v2] mm/ksm: ignore STABLE_FLAG of rmap_item->address in
+ rmap_walk_ksm
+To: Andrew Morton <akpm@linux-foundation.org>, Jia He <hejianet@gmail.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com,
+        Hugh Dickins <hughd@google.com>
+References: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
+ <1525403506-6750-1-git-send-email-hejianet@gmail.com>
+ <20180509163101.02f23de1842a822c61fc68ff@linux-foundation.org>
+From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <2cd6b39b-1496-bbd5-9e31-5e3dcb31feda@arm.com>
+Date: Mon, 14 May 2018 10:45:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180514090618.r5xc3elzpvfp47f4@flea>
-References: <CAMty3ZCNyuEwmLGdDZLM_9qKJ2NsT33rodug7ZpKAE-OHymVEg@mail.gmail.com>
- <20180514075727.uxggyhmbahvhestx@flea> <CAMty3ZDew=+zytKUx5+nX27CjCe0UfJpyYOy2s07NoJvbe57mQ@mail.gmail.com>
- <20180514082744.ydmfg5mzsbol5onu@flea> <CAMty3ZC3ggxkZwirpQ-aRP8Udg=aYypBArb0KcR0_Z0AG8wATA@mail.gmail.com>
- <20180514090618.r5xc3elzpvfp47f4@flea>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Mon, 14 May 2018 15:12:49 +0530
-Message-ID: <CAMty3ZCAWBHtemeeWcgLy5PoYLn10MwxpHdirqpsxFY3BA7=4g@mail.gmail.com>
-Subject: Re: Allwinner A64: Issue on external rtc clock to wifi chip
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180509163101.02f23de1842a822c61fc68ff@linux-foundation.org>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 2:36 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Mon, May 14, 2018 at 02:34:22PM +0530, Jagan Teki wrote:
->> On Mon, May 14, 2018 at 1:57 PM, Maxime Ripard
->> <maxime.ripard@bootlin.com> wrote:
->> > On Mon, May 14, 2018 at 01:34:56PM +0530, Jagan Teki wrote:
->> >> On Mon, May 14, 2018 at 1:27 PM, Maxime Ripard
->> >> <maxime.ripard@bootlin.com> wrote:
->> >> > Hi,
->> >> >
->> >> > On Mon, May 14, 2018 at 12:37:49PM +0530, Jagan Teki wrote:
->> >> >> Hi Maxime and All,
->> >> >>
->> >> >> We are trying to bring-up AP6330 Wifi chip for A64 board. We noticed
->> >> >> to have an external rtc clock has driven from wifi chip.
->> >> >>
->> >> >> So the devicetree is configured according to this as below.
->> >> >>
->> >> >> / {
->> >> >>         wifi_pwrseq: wifi-pwrseq {
->> >> >>                 compatible = "mmc-pwrseq-simple";
->> >> >>                 clocks = <&rtc 1>;
->> >> >>                 clock-names = "ext_clock";
->> >> >>                 reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
->> >> >>                 post-power-on-delay-ms = <400>;
->> >> >>         };
->> >> >> };
->> >> >>
->> >> >> &rtc {
->> >> >>         clock-output-names = "rtc-osc32k", "rtc-osc32k-out";
->> >> >>         clocks = <&osc32k>;
->> >> >>         #clock-cells = <1>;
->> >> >> };
->> >> >>
->> >> >> &mmc1 {
->> >> >>         pinctrl-names = "default";
->> >> >>         pinctrl-0 = <&mmc1_pins>;
->> >> >>         vmmc-supply = <&reg_dcdc1>;
->> >> >>         vqmmc-supply = <&reg_eldo1>;
->> >> >>         mmc-pwrseq = <&wifi_pwrseq>;
->> >> >>         bus-width = <4>;
->> >> >>         non-removable;
->> >> >>         status = "okay";
->> >> >>
->> >> >>         brcmf: wifi@1 {
->> >> >>                 reg = <1>;
->> >> >>                 compatible = "brcm,bcm4329-fmac";
->> >> >>                 interrupt-parent = <&r_pio>;
->> >> >>                 interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>;  /* WL-WAKE-AP: PL3 */
->> >> >>                 interrupt-names = "host-wake";
->> >> >>         };
->> >> >> };
->> >> >>
->> >> >> And observed rtc-osc32k-out clock is never enabled[1] and the value of
->> >> >> LOSC_OUT_GATING is 0x0 which eventually not enabling
->> >> >> LOSC_OUT_GATING_EN
->> >> >>
->> >> >> Pls. let us know if we miss anything here?
->> >> >>
->> >> >> [1] https://paste.ubuntu.com/p/X2By4q8kD2/
->> >> >
->> >> > Could you paste your config and the logs from a boot to?
->> >>
->> >> .config
->> >> https://paste.ubuntu.com/p/w9w2KB7RFc/
->> >>
->> >> dmesg
->> >> https://paste.ubuntu.com/p/mrZGk5bWRR/
->> >
->> > This is kind of weird. Have you tested with a 4.17 kernel? We have
->> > runtime_pm changes lined up in next, so that might be a regression
->> > there, even though we tested it with Quentin at some point.
+On 10/05/18 00:31, Andrew Morton wrote:
+> On Fri,  4 May 2018 11:11:46 +0800 Jia He <hejianet@gmail.com> wrote:
+> 
+>> In our armv8a server(QDF2400), I noticed lots of WARN_ON caused by PAGE_SIZE
+>> unaligned for rmap_item->address under memory pressure tests(start 20 guests
+>> and run memhog in the host).
 >>
->> This is 4.17-rc4 do you want to try it on 4.16 ?
->
-> No, this is next-20180503. Please try with 4.17-rc4
+>> ...
+>>
+>> In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
+>> then the start and end in handle_hva_to_gpa might not be PAGE_SIZE aligned.
+>> Thus it will cause exceptions in handle_hva_to_gpa on arm64.
+>>
+>> This patch fixes it by ignoring(not removing) the low bits of address when
+>> doing rmap_walk_ksm.
+>>
+>> Signed-off-by: jia.he@hxt-semitech.com
+> 
+> I assumed you wanted this patch to be committed as
+> From:jia.he@hxt-semitech.com rather than From:hejianet@gmail.com, so I
+> made that change.  Please let me know if this was inappropriate.
+> 
+> You can do this yourself by adding an explicit From: line to the very
+> start of the patch's email text.
+> 
+> Also, a storm of WARN_ONs is pretty poor behaviour.  Is that the only
+> misbehaviour which this bug causes?  Do you think the fix should be
+> backported into earlier kernels?
+> 
 
-Couldn't find any different in behaviour [2]
+I think its just not the WARN_ON(). We do more than what is probably
+intended with an unaligned address. i.e, We could be modifying the
+flags for other pages that were not affected.
 
-[2] https://paste.ubuntu.com/p/m3PGBwrv6W/
+e.g :
+
+In the original report [0], the trace looked like :
+
+
+[  800.511498] [<ffff0000080b4f2c>] kvm_age_hva_handler+0xcc/0xd4
+[  800.517324] [<ffff0000080b4838>] handle_hva_to_gpa+0xec/0x15c
+[  800.523063] [<ffff0000080b6c5c>] kvm_age_hva+0x5c/0xcc
+[  800.528194] [<ffff0000080a7c3c>] kvm_mmu_notifier_clear_flush_young+0x54/0x90
+[  800.535324] [<ffff00000827a0e8>] __mmu_notifier_clear_flush_young+0x6c/0xa8
+[  800.542279] [<ffff00000825a644>] page_referenced_one+0x1e0/0x1fc
+[  800.548279] [<ffff00000827e8f8>] rmap_walk_ksm+0x124/0x1a0
+[  800.553759] [<ffff00000825c974>] rmap_walk+0x94/0x98
+[  800.558717] [<ffff00000825ca98>] page_referenced+0x120/0x180
+[  800.564369] [<ffff000008228c58>] shrink_active_list+0x218/0x4a4
+[  800.570281] [<ffff000008229470>] shrink_node_memcg+0x58c/0x6fc
+[  800.576107] [<ffff0000082296c4>] shrink_node+0xe4/0x328
+[  800.581325] [<ffff000008229c9c>] do_try_to_free_pages+0xe4/0x3b8
+[  800.587324] [<ffff00000822a094>] try_to_free_pages+0x124/0x234
+[  800.593150] [<ffff000008216aa0>] __alloc_pages_nodemask+0x564/0xf7c
+[  800.599412] [<ffff000008292814>] khugepaged_alloc_page+0x38/0xb8
+[  800.605411] [<ffff0000082933bc>] collapse_huge_page+0x74/0xd70
+[  800.611238] [<ffff00000829470c>] khugepaged_scan_mm_slot+0x654/0xa98
+[  800.617585] [<ffff000008294e0c>] khugepaged+0x2bc/0x49c
+[  800.622803] [<ffff0000080ffb70>] kthread+0x124/0x150
+[  800.627762] [<ffff0000080849f0>] ret_from_fork+0x10/0x1c
+[  800.633066] ---[ end trace 944c130b5252fb01 ]---
+
+Now, the ksm wants to mark *a page* as referenced via page_referenced_one(),
+passing it an unaligned address. This could eventually turn out to be
+one of :
+
+ptep_clear_flush_young_notify(address, address + PAGE_SIZE)
+
+or
+
+pmdp_clear_flush_young_notify(address, address + PMD_SIZE)
+
+which now spans two pages/pmds and the notifier consumer might
+take an action on the second page as well, which is not something
+intended. So, I do think that old behavior is wrong and has other
+side effects as mentioned above.
+
+[0] https://lkml.kernel.org/r/1525244911-5519-1-git-send-email-hejianet@gmail.com
+
+Suzuki
