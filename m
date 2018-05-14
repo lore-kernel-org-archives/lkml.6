@@ -1,114 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753875AbeENOYD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:24:03 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:58231 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752359AbeENOYC (ORCPT
+        id S1753951AbeENOZO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:25:14 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44331 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753939AbeENOZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:24:02 -0400
-X-Google-Smtp-Source: AB8JxZrr0x4w2itkWPpmmNg8zSbE2muCo0FB4zpsiNEMNauDbV/5vZNg23T16L2lpY8F47EzrrJtpsjvUgUCRqNUmT1rqJF5mGr3
+        Mon, 14 May 2018 10:25:13 -0400
+X-Google-Smtp-Source: AB8JxZqnUEBfKKt3wLSKQyqBenh8s/kQWNqb4B6yXW6pe0JLI2NflJskHOYgCOroYpBPFOfrFDL1IlfLnp6YsLjXLZs=
 MIME-Version: 1.0
-Date: Mon, 14 May 2018 07:24:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b759cf056c2b3c12@google.com>
-Subject: WARNING in arch_uprobe_analyze_insn
-From: syzbot <syzbot+30d675e3ca03c1c351e7@syzkaller.appspotmail.com>
-To: bp@suse.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, oleg@redhat.com,
-        ricardo.neri-calderon@linux.intel.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, x86@kernel.org, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <9f2e445b-15b0-d1fa-832c-f801efc34d03@lge.com>
+References: <1526027434-21237-1-git-send-email-byungchul.park@lge.com>
+ <3af4cec0-4019-e3ac-77f9-8631252fb6da@lge.com> <20180511161746.GX26088@linux.vnet.ibm.com>
+ <20180511224138.GA89902@joelaf.mtv.corp.google.com> <9f2e445b-15b0-d1fa-832c-f801efc34d03@lge.com>
+From: Byungchul Park <max.byungchul.park@gmail.com>
+Date: Mon, 14 May 2018 23:25:10 +0900
+Message-ID: <CANrsvRNsKHdVBXMZraNMTzuVoU443uU1F34iVHvxYUKw73esRg@mail.gmail.com>
+Subject: Re: [PATCH] rcu: Report a quiescent state when it's exactly in the state
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        jiangshanlai@gmail.com, josh@joshtriplett.org, rostedt@goodmis.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel@vger.kernel.org, kernel-team@lge.com,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4EEPKbN032642
 
-Hello,
+On Mon, May 14, 2018 at 11:59 AM, Byungchul Park <byungchul.park@lge.com> wrote:
+>
+>
+> On 2018-05-12 오전 7:41, Joel Fernandes wrote:
+>>
+>> On Fri, May 11, 2018 at 09:17:46AM -0700, Paul E. McKenney wrote:
+>>>
+>>> On Fri, May 11, 2018 at 09:57:54PM +0900, Byungchul Park wrote:
+>>>>
+>>>> Hello folks,
+>>>>
+>>>> I think I wrote the title in a misleading way.
+>>>>
+>>>> Please change the title to something else such as,
+>>>> "rcu: Report a quiescent state when it's in the state" or,
+>>>> "rcu: Add points reporting quiescent states where proper" or so on.
+>>>>
+>>>> On 2018-05-11 오후 5:30, Byungchul Park wrote:
+>>>>>
+>>>>> We expect a quiescent state of TASKS_RCU when
+>>>>> cond_resched_tasks_rcu_qs()
+>>>>> is called, no matter whether it actually be scheduled or not. However,
+>>>>> it currently doesn't report the quiescent state when the task enters
+>>>>> into __schedule() as it's called with preempt = true. So make it report
+>>>>> the quiescent state unconditionally when cond_resched_tasks_rcu_qs() is
+>>>>> called.
+>>>>>
+>>>>> And in TINY_RCU, even though the quiescent state of rcu_bh also should
+>>>>> be reported when the tick interrupt comes from user, it doesn't. So
+>>>>> make
+>>>>> it reported.
+>>>>>
+>>>>> Lastly in TREE_RCU, rcu_note_voluntary_context_switch() should be
+>>>>> reported when the tick interrupt comes from not only user but also
+>>>>> idle,
+>>>>> as an extended quiescent state.
+>>>>>
+>>>>> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+>>>>> ---
+>>>>>   include/linux/rcupdate.h | 4 ++--
+>>>>>   kernel/rcu/tiny.c        | 6 +++---
+>>>>>   kernel/rcu/tree.c        | 4 ++--
+>>>>>   3 files changed, 7 insertions(+), 7 deletions(-)
+>>>>>
+>>>>> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+>>>>> index ee8cf5fc..7432261 100644
+>>>>> --- a/include/linux/rcupdate.h
+>>>>> +++ b/include/linux/rcupdate.h
+>>>>> @@ -195,8 +195,8 @@ static inline void exit_tasks_rcu_finish(void) { }
+>>>>>    */
+>>>>>   #define cond_resched_tasks_rcu_qs() \
+>>>>>   do { \
+>>>>> -       if (!cond_resched()) \
+>>>>> -               rcu_note_voluntary_context_switch_lite(current); \
+>>>>> +       rcu_note_voluntary_context_switch_lite(current); \
+>>>>> +       cond_resched(); \
+>>>
+>>>
+>>> Ah, good point.
+>>>
+>>> Peter, I have to ask...  Why is "cond_resched()" considered a preemption
+>>> while "schedule()" is not?
+>>
+>>
+>> Infact something interesting I inferred from the __schedule loop related
+>> to
+>> your question:
+>>
+>> switch_count can either be set to prev->invcsw or prev->nvcsw. If we can
+>> assume that switch_count reflects whether the context switch is
+>> involuntary
+>> or voluntary,
+>>                        task-running-state       preempt
+>> switch_count
+>> 0 (running)             1               involuntary
+>> 0                       0               involuntary
+>> 1                       0               voluntary
+>> 1                       1               involuntary
+>>
+>> According to the above table, both the task's running state and the
+>> preempt
+>> parameter to __schedule should be used together to determine if the switch
+>> is
+>> a voluntary one or not.
+>>
+>> So this code in rcu_note_context_switch should really be:
+>> if (!preempt && !(current->state & TASK_RUNNING))
+>>         rcu_note_voluntary_context_switch_lite(current);
+>>
+>> According to the above table, cond_resched always classifies as an
+>> involuntary switch which makes sense to me. Even though cond_resched is
+>
+>
+> Hello guys,
+>
+> The classification for nivcsw/nvcsw used in scheduler core, Joel, you
+> showed us is different from that used in when we distinguish between
+> non preemption/voluntary preemption/preemption/full and so on, even
+> they use the same word, "voluntary" though.
+>
+> The name, rcu_note_voluntary_context_switch_lite() used in RCU has
+> a lot to do with the latter, the term of preemption. Furthermore, I
+> think the function should be called even when calling schedule() for
+> sleep as well. I think it would be better to change the function
+> name to something else to prevent confusing, it's up to Paul tho. :)
 
-syzbot found the following crash on:
+Let me explain more what I did earlier.
 
-HEAD commit:    66e1c94db3cd Merge branch 'x86-pti-for-linus' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11817107800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fcce42b221691ff9
-dashboard link: https://syzkaller.appspot.com/bug?extid=30d675e3ca03c1c351e7
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=143d5417800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11178e97800000
+In the scheduler core when classifying nivcsw/nvcsw, they classify the
+tries as "voluntary", which go to the inactivate state i.e. sleep through
+a normal path w/o any disturbed e.g. by interrupt preemption.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+30d675e3ca03c1c351e7@syzkaller.appspotmail.com
+However, in RCU, it's for indicating the places trying to explicitly call
+scheduler which are quiescent states anyway for TASKS_RCU. Any
+explicit tries including voluntary preemption points are the cases.
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-WARNING: CPU: 0 PID: 4511 at arch/x86/kernel/uprobes.c:296 insn_complete  
-arch/x86/include/asm/insn.h:147 [inline]
-WARNING: CPU: 0 PID: 4511 at arch/x86/kernel/uprobes.c:296 uprobe_init_insn  
-arch/x86/kernel/uprobes.c:296 [inline]
-WARNING: CPU: 0 PID: 4511 at arch/x86/kernel/uprobes.c:296  
-arch_uprobe_analyze_insn+0x13d/0x15f0 arch/x86/kernel/uprobes.c:861
-Kernel panic - not syncing: panic_on_warn set ...
+That 's why I said they have different meaning from each other. But
+anyway I also think it would be much better if we can make them
+consistent by renaming or modifying both scheduler and rcu code.
 
-CPU: 0 PID: 4511 Comm: syz-executor347 Not tainted 4.17.0-rc4+ #46
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:insn_complete arch/x86/include/asm/insn.h:147 [inline]
-RIP: 0010:uprobe_init_insn arch/x86/kernel/uprobes.c:296 [inline]
-RIP: 0010:arch_uprobe_analyze_insn+0x13d/0x15f0  
-arch/x86/kernel/uprobes.c:861
-RSP: 0018:ffff8801cf277510 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8801cf277560 RCX: ffffffff876ccf2a
-RDX: 0000000000000004 RSI: ffffffff876ce6ab RDI: ffff8801cf27759c
-RBP: ffff8801cf277628 R08: ffff8801d8c0a5c0 R09: ffff8801cf277560
-R10: ffff8801d7ad81d0 R11: ffff8801cf2775af R12: 0000000000000000
-R13: dffffc0000000000 R14: ffff8801d7ad8080 R15: ffff8801cf277600
-  prepare_uprobe kernel/events/uprobes.c:610 [inline]
-  install_breakpoint.isra.21+0x710/0x830 kernel/events/uprobes.c:657
-  uprobe_mmap+0x6a0/0xcf0 kernel/events/uprobes.c:1089
-  mmap_region+0x5c8/0x1870 mm/mmap.c:1807
-  do_mmap+0xde2/0x1360 mm/mmap.c:1535
-  do_mmap_pgoff include/linux/mm.h:2237 [inline]
-  vm_mmap_pgoff+0x1fb/0x2a0 mm/util.c:357
-  ksys_mmap_pgoff+0x4c9/0x640 mm/mmap.c:1585
-  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
-  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
-  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43ff29
-RSP: 002b:00007ffc922a4898 EFLAGS: 00000212 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043ff29
-RDX: 0000000000000000 RSI: 0000000000002000 RDI: 000000002000c000
-RBP: 00000000006ca018 R08: 0000000000000003 R09: 0000000000000000
-R10: 0000000000000012 R11: 0000000000000212 R12: 0000000000401850
-R13: 00000000004018e0 R14: 0000000000000000 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+>> explicitly called, its still sort of involuntary in the sense its not
+>> called
+>> into the scheduler for sleeping, but rather for seeing if something else
+>> can
+>> run instead (a preemption point). Infact none of the task deactivation in
+>> the
+>> __schedule loop will run if cond_resched is used.
+>>
+>> I agree that if schedule was called directly but with TASK_RUNNING=1, then
+>> that could probably be classified an involuntary switch too...
+>>
+>> Also since we're deciding to call rcu_note_voluntary_context_switch_lite
+>> unconditionally, then IMO this comment on that macro:
+>>
+>> /*
+>>   * Note a voluntary context switch for RCU-tasks benefit.  This is a
+>>   * macro rather than an inline function to avoid #include hell.
+>>   */
+>>   #ifdef CONFIG_TASKS_RCU
+>>   #define rcu_note_voluntary_context_switch_lite(t)
+>>
+>> Should be changed to:
+>>
+>> /*
+>>   * Note a attempt to perform a voluntary context switch for RCU-tasks
+>>   * benefit.  This is called even in situations where a context switch
+>>   * didn't really happen even though it was requested. This is a
+>>   * macro rather than an inline function to avoid #include hell.
+>>   */
+>>   #ifdef CONFIG_TASKS_RCU
+>>   #define rcu_note_voluntary_context_switch_lite(t)
+>>
+>> Right?
+>>
+>> Correct me if I'm wrong about anything, thanks,
+>>
+>> - Joel
+>>
+>>
+>
+> --
+> Thanks,
+> Byungchul
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+Thanks,
+Byungchul
