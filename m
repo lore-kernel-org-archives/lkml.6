@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752290AbeENIhE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:37:04 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:10386 "EHLO
+        id S1752577AbeENIiK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:38:10 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:35735 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751992AbeENIhD (ORCPT
+        by vger.kernel.org with ESMTP id S1752306AbeENIiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:37:03 -0400
+        Mon, 14 May 2018 04:38:07 -0400
 From: Vincent ABRIOU <vincent.abriou@st.com>
 To: Philippe CORNU <philippe.cornu@st.com>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -17,14 +17,16 @@ CC: Andrzej Hajda <a.hajda@samsung.com>,
         Yannick FERTRE <yannick.fertre@st.com>,
         Benjamin Gaignard <benjamin.gaignard@linaro.org>,
         Alexandre TORGUE <alexandre.torgue@st.com>
-Subject: Re: [PATCH 1/4] drm/panel: otm8009a: fix backlight updates
-Thread-Topic: [PATCH 1/4] drm/panel: otm8009a: fix backlight updates
-Thread-Index: AQHT2wzpPb+fCe+VckaRZma5305BD6Qu5b6A
-Date: Mon, 14 May 2018 08:36:43 +0000
-Message-ID: <a33cea9b-d998-be36-dc8c-f13e58db4fde@st.com>
+Subject: Re: [PATCH 2/4] drm/panel: otm8009a: fix glitches by moving backlight
+ enable to otm8009a_enable()
+Thread-Topic: [PATCH 2/4] drm/panel: otm8009a: fix glitches by moving
+ backlight enable to otm8009a_enable()
+Thread-Index: AQHT2wzqkLCOwWi9IUOdtAQUq28LHqQu5hAA
+Date: Mon, 14 May 2018 08:37:52 +0000
+Message-ID: <14a3dc6e-0a59-7c63-5195-95d6c1da7c54@st.com>
 References: <20180423141054.13128-1-philippe.cornu@st.com>
- <20180423141054.13128-2-philippe.cornu@st.com>
-In-Reply-To: <20180423141054.13128-2-philippe.cornu@st.com>
+ <20180423141054.13128-3-philippe.cornu@st.com>
+In-Reply-To: <20180423141054.13128-3-philippe.cornu@st.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -35,7 +37,7 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-exchange-transport-fromentityheader: Hosted
 x-originating-ip: [10.75.127.46]
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <0F430959B1D2884AAF761788DC6B3E6F@st.com>
+Content-ID: <65224F9E2C7AED4B877E66B47ACE102D@st.com>
 MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_02:,,
  signatures=0
@@ -43,7 +45,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4E8c4wX008853
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4E8cEdu008857
 
 Hi Philippe,
 
@@ -53,60 +55,51 @@ BR
 Vincent
 
 On 04/23/2018 04:10 PM, Philippe Cornu wrote:
-> Backlight updates was not working anymore since the good
-> implementation of the dsi lpm mode in the dsi host driver.
-> After a longer analysis, the backlight updates in dsi video
-> mode require the dsi hs mode.
-> Note: it is important to keep the dsi lpm mode for the rest
-> of the driver as init sequence, sleep in/out... dsi commands
-> work in lp mode.
+> The backlight 1st update was in the otm8009a_prepare() function
+> for a bad reason: backlight was not working in video mode and the
+> otm8009a_prepare() is in command mode for the init sequence. As the
+> backlight is now fixed (no lpm), it is good to put it back in the
+> otm8009a_enable() function, avoiding also image glitches visible
+> on some "slow" devices.
 > 
 > Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
 > ---
->   drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 18 ++++++++++++++++--
->   1 file changed, 16 insertions(+), 2 deletions(-)
+>   drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 17 ++++++++++-------
+>   1 file changed, 10 insertions(+), 7 deletions(-)
 > 
 > diff --git a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-> index 90f1ae4af93c..0fd2e0144d2b 100644
+> index 0fd2e0144d2b..de4a16d5275c 100644
 > --- a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
 > +++ b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-> @@ -98,6 +98,20 @@ static void otm8009a_dcs_write_buf(struct otm8009a *ctx, const void *data,
->   		DRM_WARN("mipi dsi dcs write buffer failed\n");
->   }
+> @@ -330,13 +330,6 @@ static int otm8009a_prepare(struct drm_panel *panel)
 >   
-> +static void otm8009a_dcs_write_buf_hs(struct otm8009a *ctx, const void *data,
-> +				      size_t len)
-> +{
-> +	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-> +
-> +	/* data will be sent in dsi hs mode (ie. no lpm) */
-> +	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
-> +
-> +	otm8009a_dcs_write_buf(ctx, data, len);
-> +
-> +	/* restore back the dsi lpm mode */
-> +	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
-> +}
-> +
->   #define dcs_write_seq(ctx, seq...)			\
->   ({							\
->   	static const u8 d[] = { seq };			\
-> @@ -387,7 +401,7 @@ static int otm8009a_backlight_update_status(struct backlight_device *bd)
->   		 */
->   		data[0] = MIPI_DCS_SET_DISPLAY_BRIGHTNESS;
->   		data[1] = bd->props.brightness;
-> -		otm8009a_dcs_write_buf(ctx, data, ARRAY_SIZE(data));
-> +		otm8009a_dcs_write_buf_hs(ctx, data, ARRAY_SIZE(data));
+>   	ctx->prepared = true;
 >   
->   		/* set Brightness Control & Backlight on */
->   		data[1] = 0x24;
-> @@ -399,7 +413,7 @@ static int otm8009a_backlight_update_status(struct backlight_device *bd)
->   
->   	/* Update Brightness Control & Backlight */
->   	data[0] = MIPI_DCS_WRITE_CONTROL_DISPLAY;
-> -	otm8009a_dcs_write_buf(ctx, data, ARRAY_SIZE(data));
-> +	otm8009a_dcs_write_buf_hs(ctx, data, ARRAY_SIZE(data));
->   
+> -	/*
+> -	 * Power on the backlight. Note: end-user still controls brightness
+> -	 * Note: ctx->prepared must be true before updating the backlight.
+> -	 */
+> -	ctx->bl_dev->props.power = FB_BLANK_UNBLANK;
+> -	backlight_update_status(ctx->bl_dev);
+> -
 >   	return 0;
 >   }
+>   
+> @@ -344,6 +337,16 @@ static int otm8009a_enable(struct drm_panel *panel)
+>   {
+>   	struct otm8009a *ctx = panel_to_otm8009a(panel);
+>   
+> +	if (ctx->enabled)
+> +		return 0;
+> +
+> +	/*
+> +	 * Power on the backlight. Note: end-user still controls brightness
+> +	 * Note: ctx->prepared must be true before updating the backlight.
+> +	 */
+> +	ctx->bl_dev->props.power = FB_BLANK_UNBLANK;
+> +	backlight_update_status(ctx->bl_dev);
+> +
+>   	ctx->enabled = true;
+>   
+>   	return 0;
 > 
