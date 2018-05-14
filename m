@@ -1,41 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo1awIrn3XuNeSZ6S/qs+jZR20Gg9j5esnuXI4MXFiW2qCfyiaLSW8+FEtfQvk3pkJ1VE3U
-ARC-Seal: i=1; a=rsa-sha256; t=1526280960; cv=none;
+X-Google-Smtp-Source: AB8JxZogjS1USRUNx1ZTqtgyxT1P+sfav0oZjUczS1onhtOd3vQ8yoZLSbPZPUiqYa4ikzxGmAUL
+ARC-Seal: i=1; a=rsa-sha256; t=1526280957; cv=none;
         d=google.com; s=arc-20160816;
-        b=kd0oCjJDqFQFAnwwmIy1fxa/hrYBNvK9cGJQ7cVtIg58OtOSZiO3BYLCUcs/gBB7pD
-         +/XMWCUFyCM5qTRUJcqWqkiZJ89BILcV+Mo3I/GmgTiGYjmO7Cgw04GH4urQVE70agei
-         qeCZxcL93ChAvuNPtjiW/eDwbXdLpn5JCq+VjJ6c5Di+RMEI/8Qn6/qJ3LQGtjgj+hp6
-         fgDfj1eO2gHXbn86OoBeKttxwADtNnJtbBiYCZMkjOFK7Y97nz2JKEX5TdYla3ojqntB
-         ZwbNHUqimHuQoed/qwKucpqnB6h5o9VfLz5LMolk/lycG/jkSilR2bzx/xnXplSyJ2Z5
-         E3fA==
+        b=gFITTgH8MSKVzkZqPeS3AyfINgjBA2/2C4MpZRsQOqObK6jy7vKptasMF0dMHPL+7n
+         5iZM/4+ZGv/eg5aBn6KV94vsW/KQEP97HabbAvhLTc1dNuPkvyJF5SBKHbutjiTOOztg
+         2iI9EpRCZfLd1c69jaIh3zgCp4Ki5U42zMfi72dH3aa1E7z/o6r2SZXIS13do2Y4k6OO
+         rmNlPUw0Q8jl1k4wlFBPdAQcX9+Hhx26j7l1oNEjHO5Q9cWWVaSs38RkIm5pjh9yazgR
+         Gnnipmlc0EojlyXCSi8Lp7w3h98a6LVoZnm95W6BpphRUujKcDJUNOuDFbqvUdi9Vwy0
+         03Cw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=K5uI7pfmIry/j0YIX7pQZ4FKNV9pPJwPYcISBq8WOm4=;
-        b=VBy34w/EIK/e/jauJVOtVQw1fOWzCocvPkU1dg7YXSELNouRjyurmByrMYCGovYXoZ
-         KkQioG85PX6pqyYm6BLjt+xgWJ35cCX/S2yCCGStPrfP0/MqzYJQSkRFN0Ynb4AKIVSM
-         TkJQuSTbB7I6vbSaXj6784tFBCZTKzuDbYEoUMRQTNeiS1HGoCJ89SJwOTYVM7rZ+NdK
-         gprAXMlna/lpV/PUlcp2ku01IgBHBoZ5rqSy/8Btn0Mx09e4K+SMPxQ9y6iIjaRP93p9
-         S62ZZg9GBcNKztj5yQnY+0be42iplaed03ugV18z/nAPv2067rACim5zo5wL5m2K6vWc
-         6CRQ==
+        bh=kQz4XnB9eG0Wos0E2qditGWn/3OKLOnJszx19+IQd/g=;
+        b=iuR02KoNStuR2rB+ZRa4hMnk9v21kaKG+EQs+v/3vBiLlBfyEOcGdHp+dS5qQXwpnb
+         Ykb9PukE0llqyP1n+FpelLbVDfNLshuXycJOmGpGFqdLXPdGMH1eAn1elpcVZ00BKghE
+         bQkWE5dBeWgomm4kshqTKVYbjTJmYtZPX2iZrNvFQm4PrRDZHYiUHXTLwLkUZDDCK7x9
+         LjFZ5yw3xS4gLK/KJBaqTR64SGweTFTIIGjDjr49k8GffRifjyKgSnlXVCgP+U10PrX9
+         8NwbAj8HApJZZ36VSqjO/mqCqj2w+8MIpR9fTnZsriCyMTBkUGQjPvCCe3l21UZjkdgG
+         b2mA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=pumHYSnN;
+       dkim=pass header.i=@kernel.org header.s=default header.b=z9HjT7pi;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=pumHYSnN;
+       dkim=pass header.i=@kernel.org header.s=default header.b=z9HjT7pi;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	Stephan Mueller <smueller@chronox.de>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
+	syzbot+88dfb55e4c8b770d86e3@syzkaller.appspotmail.com,
+	Tom Herbert <tom@quantonium.net>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 04/62] crypto: af_alg - fix possible uninit-value in alg_bind()
-Date: Mon, 14 May 2018 08:48:20 +0200
-Message-Id: <20180514064816.694010271@linuxfoundation.org>
+Subject: [PATCH 4.14 03/62] kcm: Call strp_stop before strp_done in kcm_attach
+Date: Mon, 14 May 2018 08:48:19 +0200
+Message-Id: <20180514064816.634407998@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -45,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421404075424649?=
-X-GMAIL-MSGID: =?utf-8?q?1600421584105980968?=
+X-GMAIL-THRID: =?utf-8?q?1600421436477651736?=
+X-GMAIL-MSGID: =?utf-8?q?1600421581754841710?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,48 +52,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Tom Herbert <tom@quantonium.net>
 
-commit a466856e0b7ab269cdf9461886d007e88ff575b0 upstream.
+commit dff8baa261174de689a44572d0ea182d7aa70598 upstream.
 
-syzbot reported :
+In kcm_attach strp_done is called when sk_user_data is already
+set to fail the attach. strp_done needs the strp to be stopped and
+warns if it isn't. Call strp_stop in this case to eliminate the
+warning message.
 
-BUG: KMSAN: uninit-value in alg_bind+0xe3/0xd90 crypto/af_alg.c:162
-
-We need to check addr_len before dereferencing sa (or uaddr)
-
-Fixes: bb30b8848c85 ("crypto: af_alg - whitelist mask and type")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Stephan Mueller <smueller@chronox.de>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Reported-by: syzbot+88dfb55e4c8b770d86e3@syzkaller.appspotmail.com
+Fixes: e5571240236c5652f ("kcm: Check if sk_user_data already set in kcm_attach"
+Signed-off-by: Tom Herbert <tom@quantonium.net>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/af_alg.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/kcm/kcmsock.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -158,16 +158,16 @@ static int alg_bind(struct socket *sock,
- 	void *private;
- 	int err;
- 
--	/* If caller uses non-allowed flag, return error. */
--	if ((sa->salg_feat & ~allowed) || (sa->salg_mask & ~allowed))
--		return -EINVAL;
--
- 	if (sock->state == SS_CONNECTED)
- 		return -EINVAL;
- 
- 	if (addr_len < sizeof(*sa))
- 		return -EINVAL;
- 
-+	/* If caller uses non-allowed flag, return error. */
-+	if ((sa->salg_feat & ~allowed) || (sa->salg_mask & ~allowed))
-+		return -EINVAL;
-+
- 	sa->salg_type[sizeof(sa->salg_type) - 1] = 0;
- 	sa->salg_name[sizeof(sa->salg_name) + addr_len - sizeof(*sa) - 1] = 0;
- 
+--- a/net/kcm/kcmsock.c
++++ b/net/kcm/kcmsock.c
+@@ -1425,6 +1425,7 @@ static int kcm_attach(struct socket *soc
+ 	 */
+ 	if (csk->sk_user_data) {
+ 		write_unlock_bh(&csk->sk_callback_lock);
++		strp_stop(&psock->strp);
+ 		strp_done(&psock->strp);
+ 		kmem_cache_free(kcm_psockp, psock);
+ 		err = -EALREADY;
