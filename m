@@ -1,137 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752416AbeENVCV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:02:21 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:43784 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752179AbeENVCL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:02:11 -0400
-X-Google-Smtp-Source: AB8JxZrpjTEGH795V5wc2zNwls0K/H0CDRJHdPi+FwUr3vQEuA1w35aUcmuJc/zYlvxbgxNjk8/68A==
-Subject: Re: [RFCv2 PATCH 0/3] Salted build ids via linker sections
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Andy Lutomirski <luto@kernel.org>, mjw@fedoraproject.org,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-References: <20180329180112.11055-1-labbott@redhat.com>
- <CAK7LNATTfjpkG0PLR5_anZOW5zfSZxKgFO6sHXuMf50OEtx0PQ@mail.gmail.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <fb123c1f-7680-9e75-125a-e4e66f0f9c93@redhat.com>
-Date: Mon, 14 May 2018 14:02:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752535AbeENVCt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:02:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51386 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752495AbeENVAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 17:00:01 -0400
+Message-Id: <20180514205959.230719465@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Mon, 14 May 2018 16:58:58 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
+        linux-rt-users@vger.kernel.org
+Subject: [PATCH v2 13/14] tracing/selftest: Add selftests to test trace_marker histogram
+ triggers
+References: <20180514205845.017925650@goodmis.org>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNATTfjpkG0PLR5_anZOW5zfSZxKgFO6sHXuMf50OEtx0PQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0013-tracing-selftest-Add-selftests-to-test-trace_marker-.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/06/2018 11:28 PM, Masahiro Yamada wrote:
-> 2018-03-30 3:01 GMT+09:00 Laura Abbott <labbott@redhat.com>:
->> Hi,
->>
->> This is v2 of my proposal to allow unique build-ids in the kernel. from
->> last time:
->>
->> ""
->> In Fedora, the debug information is packaged separately (foo-debuginfo) and
->> can be installed separately. There's been a long standing issue where only one
->> version of a debuginfo info package can be installed at a time. Mark Wielaard
->> made an effort for Fedora 27 to allow parallel installation of debuginfo (see
->> https://fedoraproject.org/wiki/Changes/ParallelInstallableDebuginfo for
->> more details)
->>
->> Part of the requirement to allow this to work is that build ids are
->> unique between builds. The existing upstream rpm implementation ensures
->> this by re-calculating the build-id using the version and release as a
->> seed. This doesn't work 100% for the kernel because of the vDSO which is
->> its own binary and doesn't get updated. After poking holes in a few of my
->> ideas, there was a discussion with some people from the binutils team about
->> adding --build-id-salt to let ld do the calculation debugedit is doing. There
->> was a counter proposal made about adding some extra information via a .comment
->> which will affect the build id calculation but just get stripped out.
->> ""
-> 
-> 
-> I think you already know '--build-id=uuid' linker option.
-> 
-> Doesn't this solve your problem?
-> 
-> The disadvantage of this option is,
-> we will lose reproducible building because  --build-id=uuid
-> adds every time random salt.
-> 
-> The advantage is, the implementation is even simpler,
-> and easier to migrate to --build-id-salt once it is supported
-> in the future.
-> 
-> 
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-It could, theoretically. The reproducibility is nice though and
-I'd like to keep the kernel close to matching what other packages
-do though.
+Add a couple of tests that test the trace_marker histogram triggers.
+One does a straight histogram test, the other will create a synthetic event
+and test the latency between two different writes (using filters to
+differentiate between them).
 
-Thanks,
-Laura
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ .../trigger/trigger-trace-marker-synthetic.tc | 66 +++++++++++++++++++
+ .../test.d/trigger/trigger-trace-marker.tc    | 49 ++++++++++++++
+ 2 files changed, 115 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc
 
->> This v2 cleans up the naming to be consistent and also switches to a
->> config option vs. an environment variable. I've seen some sporadic
->> failures about missing the generated header so I think I'm still missing
->> a dependency somewhere.
-> 
-> Right.
-> 
-> There is no dependency between 'prepare' and 'scripts'
-> in the top Makefile.
-> Therefore, Kbuild can run them simultaneously,
-> which would cause a race in parallel building.
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
->   I'm still mostly looking for feedback whether
->> this would be acceptable for merging or if we should just persue a
->> --build-id-salt in binutils.
->>
->> Thanks,
->> Laura
->>
->>
->> Laura Abbott (3):
->>    kbuild: Introduce build-salt generated header
->>    kbuild: Link with generated build-salt header
->>    x86/vdso: Add build salt to the vDSO
->>
->>   Makefile                              | 13 +++++++++++--
->>   arch/x86/entry/vdso/vdso-layout.lds.S |  3 +++
->>   init/Kconfig                          |  8 ++++++++
->>   scripts/.gitignore                    |  1 +
->>   scripts/Makefile                      |  2 +-
->>   scripts/build-salt.lds.S              |  5 +++++
->>   scripts/gensalt                       | 21 +++++++++++++++++++++
->>   scripts/link-vmlinux.sh               |  3 ++-
->>   8 files changed, 52 insertions(+), 4 deletions(-)
->>   create mode 100644 scripts/build-salt.lds.S
->>   create mode 100755 scripts/gensalt
->>
->> --
->> 2.16.2
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+new file mode 100644
+index 000000000000..8e7a043da7fb
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker-synthetic.tc
+@@ -0,0 +1,66 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: event trigger - test histogram with synthetic event
++# flags:
++
++do_reset() {
++    reset_trigger
++    echo > set_event
++    echo > synthetic_events
++    clear_trace
++}
++
++fail() { #msg
++    do_reset
++    echo $1
++    exit_fail
++}
++
++if [ ! -f set_event ]; then
++    echo "event tracing is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f synthetic_events ]; then
++    echo "synthetic events not supported"
++    exit_unsupported
++fi
++
++if [ ! -d events/ftrace/print ]; then
++    echo "event trace_marker is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f events/ftrace/print/trigger ]; then
++    echo "event trigger is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f events/ftrace/print/hist ]; then
++    echo "hist trigger is not supported"
++    exit_unsupported
++fi
++
++do_reset
++
++echo "Test histogram trace_marker to trace_marker latency histogram trigger"
++
++echo 'latency u64 lat' > synthetic_events
++echo 'hist:keys=common_pid:ts0=common_timestamp.usecs if buf == "start"' > events/ftrace/print/trigger
++echo 'hist:keys=common_pid:lat=common_timestamp.usecs-$ts0:onmatch(ftrace.print).latency($lat) if buf == "end"' >> events/ftrace/print/trigger
++echo 'hist:keys=common_pid,lat:sort=lat' > events/synthetic/latency/trigger
++echo -n "start" > trace_marker
++echo -n "end" > trace_marker
++
++cnt=`grep 'hitcount: *1$' events/ftrace/print/hist | wc -l`
++
++if [ $cnt -ne 2 ]; then
++    fail "hist trace_marker trigger did not trigger correctly"
++fi
++
++grep 'hitcount: *1$' events/synthetic/latency/hist > /dev/null || \
++    fail "hist trigger did not trigger "
++
++do_reset
++
++exit 0
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc
+new file mode 100644
+index 000000000000..48e7ac1ccbc1
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-trace-marker.tc
+@@ -0,0 +1,49 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: event trigger - test histogram trigger
++# flags: instance
++
++do_reset() {
++    reset_trigger
++    echo > set_event
++    clear_trace
++}
++
++fail() { #msg
++    do_reset
++    echo $1
++    exit_fail
++}
++
++if [ ! -f set_event ]; then
++    echo "event tracing is not supported"
++    exit_unsupported
++fi
++
++if [ ! -d events/ftrace/print ]; then
++    echo "event trace_marker is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f events/ftrace/print/trigger ]; then
++    echo "event trigger is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f events/ftrace/print/hist ]; then
++    echo "hist trigger is not supported"
++    exit_unsupported
++fi
++
++do_reset
++
++echo "Test histogram trace_marker tigger"
++
++echo 'hist:keys=common_pid' > events/ftrace/print/trigger
++for i in `seq 1 10` ; do echo "hello" > trace_marker; done
++grep 'hitcount: *10$' events/ftrace/print/hist > /dev/null || \
++    fail "hist trigger did not trigger correct times on trace_marker"
++
++do_reset
++
++exit 0
+-- 
+2.17.0
