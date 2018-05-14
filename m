@@ -1,105 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752249AbeENLXj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:23:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43191 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751198AbeENLXi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:23:38 -0400
-Date: Mon, 14 May 2018 13:23:24 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-mtd@lists.infradead.org, linux-m68k@vger.kernel.org,
+        id S1752373AbeENLYK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:24:10 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:55209 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752060AbeENLYJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 07:24:09 -0400
+Subject: Re: [PATCH 2/5] media: docs: clarify relationship between crop and
+ selection APIs
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: nand: Fix return type of __DIVIDE() when called
- with 32-bit
-Message-ID: <20180514132324.595b63eb@bbrezillon>
-In-Reply-To: <1526294977-32303-1-git-send-email-geert@linux-m68k.org>
-References: <1526294977-32303-1-git-send-email-geert@linux-m68k.org>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+References: <1522790146-16061-1-git-send-email-luca@lucaceresoli.net>
+ <1522790146-16061-2-git-send-email-luca@lucaceresoli.net>
+ <fca47fb0-a299-af1d-4485-268907bb1007@xs4all.nl>
+From: Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <fefa4941-4465-ccb8-81be-d411c515c710@lucaceresoli.net>
+Date: Mon, 14 May 2018 13:24:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <fca47fb0-a299-af1d-4485-268907bb1007@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 May 2018 12:49:37 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Hi Hans,
 
-> The __DIVIDE() macro checks whether it is called with a 32-bit or 64-bit
-> dividend, to select the appropriate divide-and-round-up routine.
-> As the check uses the ternary operator, the result will always be
-> promoted to a type that can hold both results, i.e. unsigned long long.
+thanks for the review.
+
+On 13/05/2018 11:12, Hans Verkuil wrote:
+> On 04/03/2018 11:15 PM, Luca Ceresoli wrote:
+>> Having two somewhat similar and largely overlapping APIs is confusing,
+>> especially since the older one appears in the docs before the newer
+>> and most featureful counterpart.
+>>
+>> Clarify all of this in several ways:
+>>  - swap the two sections
+>>  - give a name to the two APIs in the section names
+>>  - add a note at the beginning of the CROP API section
+>>
+>> Also remove a note that is incorrect (correct wording is in
+>> vidioc-cropcap.rst).
+>>
+>> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+>> Based on info from: Hans Verkuil <hverkuil@xs4all.nl>
+>> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+>> ---
+>>  Documentation/media/uapi/v4l/common.rst            |  2 +-
+>>  Documentation/media/uapi/v4l/crop.rst              | 21 ++++++++++++---------
+>>  Documentation/media/uapi/v4l/selection-api-005.rst |  2 ++
+>>  Documentation/media/uapi/v4l/selection-api.rst     |  4 ++--
+>>  4 files changed, 17 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/Documentation/media/uapi/v4l/common.rst b/Documentation/media/uapi/v4l/common.rst
+>> index 13f2ed3fc5a6..5f93e71122ef 100644
+>> --- a/Documentation/media/uapi/v4l/common.rst
+>> +++ b/Documentation/media/uapi/v4l/common.rst
+>> @@ -41,6 +41,6 @@ applicable to all devices.
+>>      extended-controls
+>>      format
+>>      planar-apis
+>> -    crop
+>>      selection-api
+>> +    crop
+>>      streaming-par
+>> diff --git a/Documentation/media/uapi/v4l/crop.rst b/Documentation/media/uapi/v4l/crop.rst
+>> index 182565b9ace4..83fa16eb347e 100644
+>> --- a/Documentation/media/uapi/v4l/crop.rst
+>> +++ b/Documentation/media/uapi/v4l/crop.rst
+>> @@ -2,9 +2,18 @@
+>>  
+>>  .. _crop:
+>>  
+>> -*************************************
+>> -Image Cropping, Insertion and Scaling
+>> -*************************************
+>> +*****************************************************
+>> +Image Cropping, Insertion and Scaling -- the CROP API
+>> +*****************************************************
+>> +
+>> +.. note::
+>> +
+>> +   The CROP API is mostly superseded by the newer :ref:`SELECTION API
+>> +   <selection-api>`. The new API should be preferred in most cases,
+>> +   with the exception of pixel aspect ratio detection, which is
+>> +   implemented by :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` and has no
+>> +   equivalent in the SELECTION API. See :ref:`selection-vs-crop` for a
+>> +   comparison of the two APIs.
+>>  
+>>  Some video capture devices can sample a subsection of the picture and
+>>  shrink or enlarge it to an image of arbitrary size. We call these
+>> @@ -40,12 +49,6 @@ support scaling or the :ref:`VIDIOC_G_CROP <VIDIOC_G_CROP>` and
+>>  :ref:`VIDIOC_S_CROP <VIDIOC_G_CROP>` ioctls. Their size (and position
+>>  where applicable) will be fixed in this case.
+>>  
+>> -.. note::
+>> -
+>> -   All capture and output devices must support the
+>> -   :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` ioctl such that applications
+>> -   can determine if scaling takes place.
 > 
-> When using this result in a division on a 32-bit system, this may lead
-> to link errors like:
+> This note should be rewritten, not deleted:
 > 
->     ERROR: "__udivdi3" [drivers/mtd/nand/raw/nand.ko] undefined!
-> 
-> Fix this by casting the result of the 64-bit division to the type of the
-> dividend.
-> 
-> Fixes: 8878b126df769831 ("mtd: nand: add ->exec_op() implementation")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> This fixes the root cause of the link failure seen with
-> m68k/allmodconfig since commit 3057fcef385348fe ("mtd: rawnand: Make
-> sure we wait tWB before polling the STATUS reg").
-> 
-> An alternative mitigation was posted as "[PATCH] m68k: Implement
-> ndelay() as an inline function to force type checking/casting"
-> (https://lkml.org/lkml/2018/5/13/102).
-> ---
->  include/linux/mtd/rawnand.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> index 5dad59b312440a9c..d06dc428ea0102ae 100644
-> --- a/include/linux/mtd/rawnand.h
-> +++ b/include/linux/mtd/rawnand.h
-> @@ -871,7 +871,7 @@ struct nand_op_instr {
->  #define __DIVIDE(dividend, divisor) ({					\
->  	sizeof(dividend) == sizeof(u32) ?				\
->  		DIV_ROUND_UP(dividend, divisor) :			\
-> -		DIV_ROUND_UP_ULL(dividend, divisor);			\
-> +		(__typeof__(dividend))DIV_ROUND_UP_ULL(dividend, divisor); \
+> 	All capture and output devices that support the CROP or SELECTION API
+> 	will also support the :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` ioctl.
 
-Hm, it's a bit hard to follow when you place the cast here. One could
-wonder why a cast to (__typeof__(dividend)) is needed since
-DIV_ROUND_UP_ULL() already returns a (__typeof__(dividend)) type.
+I don't remember exactly the reationale for this removal, perhaps it's
+that I added a note above with similar content. But reading that again
+now I realize the added not does not clearly state "VIDIOC_CROPCAP is
+mandatory".
 
-How about:
+Thus I added the updated note to v2 as you suggested.
 
-	/*
-	 * Cast to type of dividend is needed here to guarantee that the
-	 * result won't be an unsigned long long when the dividend is an
-	 * unsigned long, which is what the compiler does when it sees a
-	 * ternary operator with 2 different return types.
-	 */
-	(__typeof__(dividend))(sizeof(dividend) == sizeof(u32) ?	\
-			       DIV_ROUND_UP(dividend, divisor) :	\
-			       DIV_ROUND_UP_ULL(dividend, divisor));
-
-Actually, I'm not even sure we care about the truncation that could
-happen on an unsigned long long -> unsigned long cast because the
-delays we express here will anyway be hundreds of nanosecs/millisecs,
-so nothing close to the billions of nanosecs/millisecs you can express
-with an unsigned long.
-
-So, maybe we should just do:
-
-	(unsigned long)(sizeof(dividend) == sizeof(u32) ?		\
-			DIV_ROUND_UP(dividend, divisor) :		\
-			DIV_ROUND_UP_ULL(dividend, divisor));
-
-to make things more readable.
-
->  		})
->  #define PSEC_TO_NSEC(x) __DIVIDE(x, 1000)
->  #define PSEC_TO_MSEC(x) __DIVIDE(x, 1000000000)
+Bye,
+-- 
+Luca
