@@ -1,77 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932264AbeENNfD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 09:35:03 -0400
-Received: from foss.arm.com ([217.140.101.70]:42712 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932193AbeENNfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 09:35:01 -0400
-From: Robin Murphy <robin.murphy@arm.com>
-To: will.deacon@arm.com, mark.rutland@arm.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        pawel.moll@arm.com, suzuki.poulose@arm.com
-Subject: [PATCH v2 2/3] perf/arm-cci: Remove pointless PMU disabling
-Date: Mon, 14 May 2018 14:34:52 +0100
-Message-Id: <2befe1cf83b94856fa574f7f483c08bb4c3cc8c6.1526303815.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.17.0.dirty
-In-Reply-To: <cover.1526303815.git.robin.murphy@arm.com>
-References: <cover.1526303815.git.robin.murphy@arm.com>
+        id S932297AbeENNfM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 09:35:12 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:35294 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932132AbeENNfI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 09:35:08 -0400
+Date: Mon, 14 May 2018 09:35:04 -0400 (EDT)
+Message-Id: <20180514.093504.1396660355199793729.davem@davemloft.net>
+To: acelan.kao@canonical.com
+Cc: jcliburn@gmail.com, chris.snook@gmail.com, rakesh@tuxera.com,
+        netdev@vger.kernel.org, emily.chien@canonical.com, andrew@lunn.ch,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Revert "alx: remove WoL support"
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180514032839.32079-1-acelan.kao@canonical.com>
+References: <20180514032839.32079-1-acelan.kao@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CCI PMU driver bears some legacy remnants of the arm_pmu framework
-from when it was split in c6f85cb4305b ("bus: cci: move away from
-arm_pmu framework"). In particular this perf_pmu_{dis,en}able() dance
-around pmu->add which was fixed for arm_pmu in a9e469d1c89b
-("drivers/perf: arm_pmu: remove pointless PMU disabling").
+From: AceLan Kao <acelan.kao@canonical.com>
+Date: Mon, 14 May 2018 11:28:39 +0800
 
-For the exact same reasons (i.e. perf core already does this around the
-call anyway), give cci_pmu_add() the exact same change, which also
-prevents having to export those core functions to build it as a module.
+> This reverts commit bc2bebe8de8ed4ba6482c9cc370b0dd72ffe8cd2.
+> 
+> The WoL feature is a must to pass Energy Star 6.1 and above,
+> the power consumption will be measured during S3 with WoL is enabled.
+> 
+> Reverting "alx: remove WoL support", and will try to fix the unintentional
+> wake up issue when WoL is enabled.
+> 
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=61651
+> 
+> Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
----
+First, we must fix the problem that caused WoL to be disabled.
 
-v2: Add Mark's ack
+Then, and only then, can you re-enable it.
 
- drivers/perf/arm-cci.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
-index 53c774b20563..7029d8fe8f44 100644
---- a/drivers/perf/arm-cci.c
-+++ b/drivers/perf/arm-cci.c
-@@ -1184,16 +1184,11 @@ static int cci_pmu_add(struct perf_event *event, int flags)
- 	struct cci_pmu_hw_events *hw_events = &cci_pmu->hw_events;
- 	struct hw_perf_event *hwc = &event->hw;
- 	int idx;
--	int err = 0;
--
--	perf_pmu_disable(event->pmu);
- 
- 	/* If we don't have a space for the counter then finish early. */
- 	idx = pmu_get_event_idx(hw_events, event);
--	if (idx < 0) {
--		err = idx;
--		goto out;
--	}
-+	if (idx < 0)
-+		return idx;
- 
- 	event->hw.idx = idx;
- 	hw_events->events[idx] = event;
-@@ -1205,9 +1200,7 @@ static int cci_pmu_add(struct perf_event *event, int flags)
- 	/* Propagate our changes to the userspace mapping. */
- 	perf_event_update_userpage(event);
- 
--out:
--	perf_pmu_enable(event->pmu);
--	return err;
-+	return 0;
- }
- 
- static void cci_pmu_del(struct perf_event *event, int flags)
--- 
-2.17.0.dirty
+Thank you.
