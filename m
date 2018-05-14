@@ -1,81 +1,76 @@
-Return-Path: <richard@sorico.fr>
-X-Google-Smtp-Source: AB8JxZqC8g4QKO+NRpbmwRqC+nP8NsFWR/LnXQeEOwupXKCIFG7XqTWN7MO7Mv6dLVBRwXDHx6H6
-ARC-Seal: i=1; a=rsa-sha256; t=1526390092; cv=none;
+Return-Path: <andy.shevchenko@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1526317007; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ki4dpHzWP1CfDPe2fIheH9TYGJ28P1RrSPTkKnzHcqlAu8RoTlwrQrit08oWG+W+vE
-         fg8EtxIN2lnE1dFPJgKbwsU71ufVjfuKpLPC92EgdVrCePz3K6fH1OPrPfipkvYgku5c
-         O9NxgFJYYOkYon371q+Oq8wTD54LLd/TE6RjD/d/0lSj04Rg+nr1hrzvfkUMG797Y/xO
-         tRayq6EmKOPCl3nf4btC3JnjwfwLEg0j5GaDlsUPX1DjuC16iXLz3bz0jU+xybBZj0G8
-         +6X7j4j5mNx1/yP9Oti8gGaEleOud1zWYTCYzjkwMFPzR6adfvn3XzlsurYPuJ6F4cND
-         LxwA==
+        b=rdl4GgNWU/r49/JA5wWbBzFypD9QOMMTfYhcUTVfjUsoDLbWAKHqWBh/ooaP7ydRnn
+         ABbWbQh7pbGeKSXhq2r8gRXMdUrSp/ELMSXUWO3GOomECWQtv6jkVybB+g7rUmnw14px
+         iurm8DEW1xJN9FG0NfuN5wg2qVbdSlE0fnz+TaZUgzJOUwoNmpjmuoNRQtIJTWlwamsX
+         akpkpun58TuJkEgcJkw5eUckZ4S3xgNt46WGQKqAolEuMEvXZqwNuqZz6IAh/klSR9N3
+         TOfBL6V/Yl+LOPeSS26uGrBmW4BRjXJeBFWNXa91VxyqAONeEgAKOoRMluS+tDiVn1F9
+         Ww8w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :arc-authentication-results;
-        bh=RCVv/ulXfSF8OB0RmfaqASwdgoH3IT/cYwmTlHBubkc=;
-        b=hsASIPFtnp/uIqm2+hXpyPThlXVQaqP3jsJ7SugYqfcjfpTU2u2EaAwZadeeD0EJVR
-         qhcsaDEtYmGRWz7QKlN6dX0ivIIwHf6goDT/nZqEwC0j0pM1nm6D8hL9fJrDoKJEl7w9
-         JWb7WmVS6HnKAwyDvLYxLJ9bA2o2Mwc+Pi9LrNPXmAciQn17G5azexWP3sFu4DyyzbKR
-         wycY43NQGPSo8CWUmNlFQ2Vor02gXchBeM8wvwSf0tGTZ0jNGsPWdOawLuaAl7q5Y00T
-         /yEqpXW73nHRGxEJvCPRBWRQzOpBYzKgsDCmLFn+caZTFTU8/iT9kDdG/sw1YiGDDfq9
-         zOJQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=VmLUsHRYVdiclamykuZ8flvj9y6PY8w7F+llYQz2PFI=;
+        b=cjLZ1bThKRO/Aeok091LGASDwrLQES6nHB/jEnJwUuHjY6QXmOMPb/yA1wBvXHkL66
+         NOALIJBK1gLXG3KUY4Fq6BJ6+CQ6SPMSFmxAoBh8YJIqcVrm+C8jk+83lJsYpz+0ljJS
+         OH2ZhDfhzu3Gs1UvpP9ScMbvcZeh8lfqLqDGZl8gJX26lS4OyFmfK8+iC2ni2KILui/T
+         /A5BEhAqWGZqR1Q1ahvzK8RyavYdYFuK66M5vSCW678WuagHFvDXsiiGpyQyJ1YgVrve
+         ZCOdYKut/oVm4SCfD9PteT6UxjkCGJlJvkyfxbheb/lu9NJYF5o6gIT/VjJPLLvq3G/9
+         J78A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of richard@sorico.fr designates 185.67.36.141 as permitted sender) smtp.mailfrom=richard@sorico.fr;
-       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GrnP4thf;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of richard@sorico.fr designates 185.67.36.141 as permitted sender) smtp.mailfrom=richard@sorico.fr;
-       dmarc=fail (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GrnP4thf;
+       spf=pass (google.com: domain of andy.shevchenko@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andy.shevchenko@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZoTu1aG3P4e+73oOpRfLv4Q7imeaJLVbi3YxS8tGjSZLoyooL+QlqBvT1lVYZrlBc3J9KNiu4ZK1mxjqt7DbGs=
+MIME-Version: 1.0
+In-Reply-To: <4a75568e-a52e-3872-f465-d707372a5c12@sorico.fr>
+References: <20180511103822.31698-1-radu.pirea@microchip.com>
+ <20180511103822.31698-7-radu.pirea@microchip.com> <4a75568e-a52e-3872-f465-d707372a5c12@sorico.fr>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 14 May 2018 19:56:47 +0300
+Message-ID: <CAHp75Vdcd0MmqCMGkFXcvKLrzcHtxBDcB8U1qTzysaH9By4Y8A@mail.gmail.com>
 Subject: Re: [PATCH v3 6/6] tty/serial: atmel: changed the driver to work
  under at91-usart mfd
-To: Radu Pirea <radu.pirea@microchip.com>, devicetree@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
-Cc: mark.rutland@arm.com, robh+dt@kernel.org, lee.jones@linaro.org,
- gregkh@linuxfoundation.org, jslaby@suse.com, alexandre.belloni@bootlin.com,
- nicolas.ferre@microchip.com, broonie@kernel.org
-References: <20180511103822.31698-1-radu.pirea@microchip.com>
- <20180511103822.31698-7-radu.pirea@microchip.com>
- <4a75568e-a52e-3872-f465-d707372a5c12@sorico.fr>
- <95a51c6c69bf1a2422f545ac1f06846ebcdb186a.camel@microchip.com>
-From: Richard Genoud <richard.genoud@gmail.com>
-Message-ID: <4d70c73e-9db7-bdff-7414-04a4843acae3@sorico.fr>
-Date: Tue, 15 May 2018 15:14:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <95a51c6c69bf1a2422f545ac1f06846ebcdb186a.camel@microchip.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: fr
-Content-Transfer-Encoding: 7bit
+To: Richard Genoud <richard.genoud@gmail.com>
+Cc: Radu Pirea <radu.pirea@microchip.com>, devicetree <devicetree@vger.kernel.org>,
+	"open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+	linux-spi <linux-spi@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Lee Jones <lee.jones@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>,
+	alexandre.belloni@bootlin.com, Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600163742597492266?=
-X-GMAIL-MSGID: =?utf-8?q?1600536017482329039?=
+X-GMAIL-MSGID: =?utf-8?q?1600459383068284255?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 15/05/2018 14:47, Radu Pirea wrote:
-> On Mon, 2018-05-14 at 12:57 +0200, Richard Genoud wrote:
->> After your patch, the DMA is not selected anymore:
->> atmel_usart_serial atmel_usart_serial.0.auto: TX channel not
->> available, switch to pio
->> instead of:
->> atmel_usart fffff200.serial: using dma1chan2 for tx DMA transfers
->>
-> Fixed.
->> And the kernel doesn't log anymore on the serial console, despite the
->> loglevel=8
->> (after reverting this series, the kernel logs reappears on the serial
->> console)
->>
-> Which serial are you using as console? 
-fffff200.serial (sam9g35-cm)
-( stdout-path = "serial0:115200n8"; in the DTS )
+On Mon, May 14, 2018 at 1:57 PM, Richard Genoud
+<richard.genoud@gmail.com> wrote:
+> On 11/05/2018 12:38, Radu Pirea wrote:
+>> This patch modifies the place where resources and device tree properties
+>> are searched.
 
-With this series applied, all the kernel log goes on the screen.
-Without, it goes on the serial debug.
+> I think it may be simpler with something like:
 
->> (tests done on sam9g35)
+> +       int size = mfd_pdev->resource[0].end - mfd_pdev->resource[0].start + 1;
+
+Isn't resource_size() macro for this very purpose?
+
+>> +     int size = to_platform_device(pdev->dev.parent)->resource[0].end -
+>> +             to_platform_device(pdev->dev.parent)->resource[0].start + 1;
 >>
-> I will consider the rest of suggestions. 
->> regards,
->> Richard
+> ditto
+
+Ditto.
+
+-- 
+With Best Regards,
+Andy Shevchenko
