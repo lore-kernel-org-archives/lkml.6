@@ -1,147 +1,217 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752462AbeENJJ5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 05:09:57 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37624 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752375AbeENJJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 05:09:52 -0400
-Subject: Re: [PATCH v2] mm/ksm: ignore STABLE_FLAG of rmap_item->address in
- rmap_walk_ksm
-To: Jia He <hejianet@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrea Arcangeli <aarcange@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com,
-        Hugh Dickins <hughd@google.com>, Marc Zyngier <Marc.Zyngier@arm.com>
-References: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
- <1525403506-6750-1-git-send-email-hejianet@gmail.com>
- <20180509163101.02f23de1842a822c61fc68ff@linux-foundation.org>
- <80070c0b-aecf-0dcf-2b36-fa6110ed8ad5@gmail.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <c3b3dba3-b7ec-1554-a1f7-5847d372f2b5@arm.com>
-Date: Mon, 14 May 2018 10:09:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <80070c0b-aecf-0dcf-2b36-fa6110ed8ad5@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1752163AbeENJLC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 05:11:02 -0400
+Received: from mail-ve1eur01on0085.outbound.protection.outlook.com ([104.47.1.85]:15072
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751626AbeENJLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 05:11:00 -0400
+From: Anson Huang <anson.huang@nxp.com>
+To: Bastian Stender <bst@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/3] thermal: imx: remove cpufreq cooling registration
+Thread-Topic: [PATCH 1/3] thermal: imx: remove cpufreq cooling registration
+Thread-Index: AQHT61tk/+/0R46BAU6q1UOin0CPU6Qu5tWAgAAIeeA=
+Date: Mon, 14 May 2018 09:10:56 +0000
+Message-ID: <AM3PR04MB1315B6320421800346313075F59C0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+References: <1526285359-17978-1-git-send-email-Anson.Huang@nxp.com>
+ <5a449fc0-4d3e-c7c7-0e9a-43efb4b909cf@pengutronix.de>
+In-Reply-To: <5a449fc0-4d3e-c7c7-0e9a-43efb4b909cf@pengutronix.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com;
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM3PR04MB1297;7:ZjGu7B/n3Mz23ZNftMln8q5+bPU75sS4KhoGnpbfYRonsOJ2CoOHXWLd3sVWq+XNz0vw29dRS4QPaGFZ85tJYUigbNS9hAMGqE2TC3lhvPG4VKW5U0rtpRy3iQtGzx+xbRY+LMxUj9QShOVEeCIiO4f6Po+XSZ2kOkw4z3g0g0v8C+9FT06GAY8cyU8wxJnKVG2+YvZbrCCwmapB2qHiVqoQIdMmcg1o0tDH0l+/y1mEkuKU7UxHURLzqszUBZHQ
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1297;
+x-ms-traffictypediagnostic: AM3PR04MB1297:
+x-microsoft-antispam-prvs: <AM3PR04MB1297C1CCBF611E1EF84950D6F59C0@AM3PR04MB1297.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(189930954265078)(185117386973197)(85827821059158)(258649278758335)(45079756050767)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AM3PR04MB1297;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1297;
+x-forefront-prvs: 067270ECAF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(39380400002)(366004)(376002)(346002)(13464003)(199004)(189003)(9686003)(3846002)(446003)(305945005)(6116002)(966005)(2900100001)(105586002)(11346002)(110136005)(102836004)(478600001)(2501003)(316002)(5250100002)(6306002)(33656002)(14454004)(45080400002)(54906003)(5660300001)(7736002)(97736004)(8936002)(66066001)(68736007)(55016002)(74316002)(7416002)(106356001)(81166006)(81156014)(8676002)(26005)(186003)(39060400002)(2906002)(59450400001)(486006)(4326008)(53936002)(3660700001)(6246003)(99286004)(44832011)(2201001)(229853002)(76176011)(86362001)(7696005)(575784001)(53546011)(3280700002)(476003)(25786009)(6436002)(6506007)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1297;H:AM3PR04MB1315.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: mrid7Sv9XS/7M0HfanM8HwMsbsyWjDyxXlLAUY6WKulfrcvzmmJLZtdZPgwtqu+Szlcpppbfx5ScRsLrO3pFjH0TVXwp7IfsFmbSdNoEVZ0K8187qCi6V5YqFQUXNaGJDDSuMJItcng+PuYA7TJz+NoQ6Y8m5TKOAToMRTG4SNwXLJA47JZsWZiF30EMWUvn
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: b5ec6129-271e-41bd-615a-08d5b97a9a3f
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5ec6129-271e-41bd-615a-08d5b97a9a3f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2018 09:10:56.6675
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1297
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4E9B8bt012665
 
-On 10/05/18 02:26, Jia He wrote:
-> Hi Andrew
+
+
+Anson Huang
+Best Regards!
+
+
+> -----Original Message-----
+> From: Bastian Stender [mailto:bst@pengutronix.de]
+> Sent: Monday, May 14, 2018 4:37 PM
+> To: Anson Huang <anson.huang@nxp.com>; shawnguo@kernel.org;
+> s.hauer@pengutronix.de; kernel@pengutronix.de; Fabio Estevam
+> <fabio.estevam@nxp.com>; robh+dt@kernel.org; mark.rutland@arm.com;
+> rjw@rjwysocki.net; viresh.kumar@linaro.org; rui.zhang@intel.com;
+> edubezval@gmail.com
+> Cc: devicetree@vger.kernel.org; linux-pm@vger.kernel.org; dl-linux-imx
+> <linux-imx@nxp.com>; linux-arm-kernel@lists.infradead.org;
+> linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 1/3] thermal: imx: remove cpufreq cooling registration
+> 
+> Hi,
+> 
+> On 05/14/2018 10:09 AM, Anson Huang wrote:
+> > This patch removes cpufreq cooling registration in thermal .probe
+> > function, cpufreq cooling should be done in cpufreq driver when it is
+> > ready.
+> >
+> > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> 
+> It seems you are trying to achieve something similar to a patch I sent a couple
+> of month ago. Unfortunately I did not have the time to rework it yet:
 > 
 > 
-> On 5/10/2018 7:31 AM, Andrew Morton Wrote:
->> On Fri,  4 May 2018 11:11:46 +0800 Jia He <hejianet@gmail.com> wrote:
->>
->>> In our armv8a server(QDF2400), I noticed lots of WARN_ON caused by PAGE_SIZE
->>> unaligned for rmap_item->address under memory pressure tests(start 20 guests
->>> and run memhog in the host).
->>>
->>> ...
->>>
->>> In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
->>> then the start and end in handle_hva_to_gpa might not be PAGE_SIZE aligned.
->>> Thus it will cause exceptions in handle_hva_to_gpa on arm64.
->>>
->>> This patch fixes it by ignoring(not removing) the low bits of address when
->>> doing rmap_walk_ksm.
->>>
->>> Signed-off-by: jia.he@hxt-semitech.com
->> I assumed you wanted this patch to be committed as
->> From:jia.he@hxt-semitech.com rather than From:hejianet@gmail.com, so I
->> made that change.  Please let me know if this was inappropriate.
-> Thanks, because there is still some issues in our company's mail server.
-> I have to use my gmail mailbox.
->>
->> You can do this yourself by adding an explicit From: line to the very
->> start of the patch's email text.
->>
->> Also, a storm of WARN_ONs is pretty poor behaviour.  Is that the only
->> misbehaviour which this bug causes?  Do you think the fix should be
->> backported into earlier kernels?
-> IMO, it should be backported to stable tree, seems that I missed CC to stable tree ;-)
-> the stom of WARN_ONs is very easy for me to reproduce.
-> More than that, I watched a panic (not reproducible) as follows:
-
-
-> [35380.805825] page:ffff7fe003742d80 count:-4871 mapcount:-2126053375 mapping:          (null) index:0x0
-> [35380.815024] flags: 0x1fffc00000000000()
-> [35380.818845] raw: 1fffc00000000000 0000000000000000 0000000000000000 ffffecf981470000
-> [35380.826569] raw: dead000000000100 dead000000000200 ffff8017c001c000 0000000000000000
-> [35380.834294] page dumped because: nonzero _refcount
-
-> [35380.908341] CPU: 29 PID: 18323 Comm: qemu-kvm Tainted: G W 4.14.15-5.hxt.aarch64 #1
-> [35380.917107] Hardware name: <snip for confidential issues>
-> [35380.930909] Call trace:
-> [35380.933345] [<ffff000008088f00>] dump_backtrace+0x0/0x22c
-> [35380.938723] [<ffff000008089150>] show_stack+0x24/0x2c
-> [35380.943759] [<ffff00000893c078>] dump_stack+0x8c/0xb0
-> [35380.948794] [<ffff00000820ab50>] bad_page+0xf4/0x154
-> [35380.953740] [<ffff000008211ce8>] free_pages_check_bad+0x90/0x9c
-> [35380.959642] [<ffff00000820c430>] free_pcppages_bulk+0x464/0x518
-> [35380.965545] [<ffff00000820db98>] free_hot_cold_page+0x22c/0x300
-> [35380.971448] [<ffff0000082176fc>] __put_page+0x54/0x60
-> [35380.976484] [<ffff0000080b1164>] unmap_stage2_range+0x170/0x2b4
-> [35380.982385] [<ffff0000080b12d8>] kvm_unmap_hva_handler+0x30/0x40
-> [35380.988375] [<ffff0000080b0104>] handle_hva_to_gpa+0xb0/0xec
-> [35380.994016] [<ffff0000080b2644>] kvm_unmap_hva_range+0x5c/0xd0
-> [35380.999833] [<ffff0000080a8054>] kvm_mmu_notifier_invalidate_range_start+0x60/0xb0
-> [35381.007387] [<ffff000008271f44>] __mmu_notifier_invalidate_range_start+0x64/0x8c
-> [35381.014765] [<ffff0000082547c8>] try_to_unmap_one+0x78c/0x7a4
-> [35381.020493] [<ffff000008276d04>] rmap_walk_ksm+0x124/0x1a0
-> [35381.025961] [<ffff0000082551b4>] rmap_walk+0x94/0x98
-> [35381.030909] [<ffff0000082555e4>] try_to_unmap+0x100/0x124
-> [35381.036293] [<ffff00000828243c>] unmap_and_move+0x480/0x6fc
-> [35381.041847] [<ffff000008282b6c>] migrate_pages+0x10c/0x288
-> [35381.047318] [<ffff00000823c164>] compact_zone+0x238/0x954
-> [35381.052697] [<ffff00000823c944>] compact_zone_order+0xc4/0xe8
-> [35381.058427] [<ffff00000823d25c>] try_to_compact_pages+0x160/0x294
-> [35381.064503] [<ffff00000820f074>] __alloc_pages_direct_compact+0x68/0x194
-> [35381.071187] [<ffff000008210138>] __alloc_pages_nodemask+0xc20/0xf7c
-> [35381.077437] [<ffff0000082709e4>] alloc_pages_vma+0x1a4/0x1c0
-> [35381.083080] [<ffff000008285b68>] do_huge_pmd_anonymous_page+0x128/0x324
-> [35381.089677] [<ffff000008248a24>] __handle_mm_fault+0x71c/0x7e8
-> [35381.095492] [<ffff000008248be8>] handle_mm_fault+0xf8/0x194
-> [35381.101049] [<ffff000008240dcc>] __get_user_pages+0x124/0x34c
-> [35381.106777] [<ffff000008241870>] populate_vma_page_range+0x90/0x9c
-> [35381.112941] [<ffff000008241940>] __mm_populate+0xc4/0x15c
-> [35381.118322] [<ffff00000824b294>] SyS_mlockall+0x100/0x164
-> [35381.123705] Exception stack(0xffff800dce5f3ec0 to 0xffff800dce5f4000)
-> [35381.130128] 3ec0: 0000000000000003 d6e6024cc9b87e00 0000aaaabe94f000 0000000000000000
-> [35381.137940] 3ee0: 0000000000000002 0000000000000000 0000000000000000 0000aaaacf6fc3c0
-> [35381.145753] 3f00: 00000000000000e6 0000aaaacf6fc490 0000ffffeeeab0f0 d6e6024cc9b87e00
-> [35381.153565] 3f20: 0000000000000000 0000aaaabe81b3c0 0000000000000020 00009e53eff806b5
-> [35381.161379] 3f40: 0000aaaabe94de48 0000ffffa7c269b0 0000000000000011 0000ffffeeeabf68
-> [35381.169190] 3f60: 0000aaaaceacfe60 0000aaaabe94f000 0000aaaabe9ba358 0000aaaabe7ffb80
-> [35381.177003] 3f80: 0000aaaabe9ba000 0000aaaabe959f64 0000000000000000 0000aaaabe94f000
-> [35381.184815] 3fa0: 0000000000000000 0000ffffeeeabdb0 0000aaaabe5f3bf8 0000ffffeeeabdb0
-> [35381.192628] 3fc0: 0000ffffa7c269b8 0000000060000000 0000000000000003 00000000000000e6
-> [35381.200440] 3fe0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-> [35381.208254] [<ffff00000808339c>] __sys_trace_return+0x0/0x4
-> [35381.213809] Disabling lock debugging due to kernel taint
+> https://emea01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatch
+> work.kernel.org%2Fpatch%2F10059085%2F&data=02%7C01%7Canson.huang
+> %40nxp.com%7C179da3635cab4a14deef08d5b975ecb6%7C686ea1d3bc2b4c6f
+> a92cd99c5c301635%7C0%7C0%7C636618838508978629&sdata=BcQ9tc%2BE
+> CZ%2Fk4AsZFxshgmvSsPg7eRN0ASzP8LO8yBI%3D&reserved=0
 > 
-> I ever injected a fault on purpose in kvm_unmap_hva_range by set size=size-0x200, the call trace is similar
-> as above. Thus, I thought the panic is similarly caused by the root cause of WARN_ON
+> Some of the comments might apply here too.
+ 
+Ah, I did NOT notice this thread, so how to proceed, will you continue to finish your patch?
+If yes, then you can just ignore/skip my patch, thanks.
 
+Anson.
 
-Please could you share your "changes" (that injected the fault) that triggered this Panic
-and the steps that triggered this ?
-
-The only reason we should get there is by trying to put a page that is not owned by the KVM
-Stage 2 page table either:
-
-1) It was free'd already ? - We has some race conditions there which were
-fixed.
-2) The code tries to access something that doesn't belong there. - If this happens
-that doesn't look good for a simple change you mentioned. So we would like to
-know better about the situation to see if there is something we need to address.
-
-Suzuki
+> 
+> Regards,
+> Bastian
+> 
+> > ---
+> >   drivers/thermal/imx_thermal.c | 16 ----------------
+> >   1 file changed, 16 deletions(-)
+> >
+> > diff --git a/drivers/thermal/imx_thermal.c
+> > b/drivers/thermal/imx_thermal.c index c30dc21..8eedb97 100644
+> > --- a/drivers/thermal/imx_thermal.c
+> > +++ b/drivers/thermal/imx_thermal.c
+> > @@ -9,7 +9,6 @@
+> >
+> >   #include <linux/clk.h>
+> >   #include <linux/cpufreq.h>
+> > -#include <linux/cpu_cooling.h>
+> >   #include <linux/delay.h>
+> >   #include <linux/device.h>
+> >   #include <linux/init.h>
+> > @@ -207,7 +206,6 @@ static struct thermal_soc_data thermal_imx7d_data
+> = {
+> >   struct imx_thermal_data {
+> >   	struct cpufreq_policy *policy;
+> >   	struct thermal_zone_device *tz;
+> > -	struct thermal_cooling_device *cdev;
+> >   	enum thermal_device_mode mode;
+> >   	struct regmap *tempmon;
+> >   	u32 c1, c2; /* See formula in imx_init_calib() */ @@ -729,22
+> > +727,12 @@ static int imx_thermal_probe(struct platform_device *pdev)
+> >   		return -EPROBE_DEFER;
+> >   	}
+> >
+> > -	data->cdev = cpufreq_cooling_register(data->policy);
+> > -	if (IS_ERR(data->cdev)) {
+> > -		ret = PTR_ERR(data->cdev);
+> > -		dev_err(&pdev->dev,
+> > -			"failed to register cpufreq cooling device: %d\n", ret);
+> > -		cpufreq_cpu_put(data->policy);
+> > -		return ret;
+> > -	}
+> > -
+> >   	data->thermal_clk = devm_clk_get(&pdev->dev, NULL);
+> >   	if (IS_ERR(data->thermal_clk)) {
+> >   		ret = PTR_ERR(data->thermal_clk);
+> >   		if (ret != -EPROBE_DEFER)
+> >   			dev_err(&pdev->dev,
+> >   				"failed to get thermal clk: %d\n", ret);
+> > -		cpufreq_cooling_unregister(data->cdev);
+> >   		cpufreq_cpu_put(data->policy);
+> >   		return ret;
+> >   	}
+> > @@ -759,7 +747,6 @@ static int imx_thermal_probe(struct platform_device
+> *pdev)
+> >   	ret = clk_prepare_enable(data->thermal_clk);
+> >   	if (ret) {
+> >   		dev_err(&pdev->dev, "failed to enable thermal clk: %d\n", ret);
+> > -		cpufreq_cooling_unregister(data->cdev);
+> >   		cpufreq_cpu_put(data->policy);
+> >   		return ret;
+> >   	}
+> > @@ -775,7 +762,6 @@ static int imx_thermal_probe(struct platform_device
+> *pdev)
+> >   		dev_err(&pdev->dev,
+> >   			"failed to register thermal zone device %d\n", ret);
+> >   		clk_disable_unprepare(data->thermal_clk);
+> > -		cpufreq_cooling_unregister(data->cdev);
+> >   		cpufreq_cpu_put(data->policy);
+> >   		return ret;
+> >   	}
+> > @@ -811,7 +797,6 @@ static int imx_thermal_probe(struct platform_device
+> *pdev)
+> >   		dev_err(&pdev->dev, "failed to request alarm irq: %d\n", ret);
+> >   		clk_disable_unprepare(data->thermal_clk);
+> >   		thermal_zone_device_unregister(data->tz);
+> > -		cpufreq_cooling_unregister(data->cdev);
+> >   		cpufreq_cpu_put(data->policy);
+> >   		return ret;
+> >   	}
+> > @@ -831,7 +816,6 @@ static int imx_thermal_remove(struct
+> platform_device *pdev)
+> >   		clk_disable_unprepare(data->thermal_clk);
+> >
+> >   	thermal_zone_device_unregister(data->tz);
+> > -	cpufreq_cooling_unregister(data->cdev);
+> >   	cpufreq_cpu_put(data->policy);
+> >
+> >   	return 0;
+> >
+> 
+> --
+> Pengutronix e.K.
+> Industrial Linux Solutions
+> https://emea01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.
+> pengutronix.de%2F&data=02%7C01%7Canson.huang%40nxp.com%7C179da36
+> 35cab4a14deef08d5b975ecb6%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0
+> %7C0%7C636618838508978629&sdata=kHHjnbmj2kV0aPlAvULXUh%2Fm%2Fp
+> gbu21luMQ6jfIUgLo%3D&reserved=0
+> Peiner Str. 6-8, 31137 Hildesheim, Germany Amtsgericht Hildesheim, HRA 2686
