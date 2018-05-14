@@ -1,93 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753911AbeENOKW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:10:22 -0400
-Received: from icp-osb-irony-out5.external.iinet.net.au ([203.59.1.221]:44310
-        "EHLO icp-osb-irony-out5.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753707AbeENOKU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:10:20 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2ClAAC6l/la/6SIBjoNTxoBAQEBAQIBA?=
- =?us-ascii?q?QEBCAEBAQGJOZU7AQEGfymBD5UqhHcCgzI4FAECAQEBAQEBAoY9AQEBAyMEEUE?=
- =?us-ascii?q?QCw0BCgICJgICVwYBDAgBAYMfgXSpaW2BaTMahD6DZYIngQmEeIMwgQeBDyOCO?=
- =?us-ascii?q?i6Hc4JUApg2CAGOS4E8g2WCUIUEkggzgXMzGggoCIJ/gh8XjimRQwEB?=
-X-IPAS-Result: =?us-ascii?q?A2ClAAC6l/la/6SIBjoNTxoBAQEBAQIBAQEBCAEBAQGJOZU?=
- =?us-ascii?q?7AQEGfymBD5UqhHcCgzI4FAECAQEBAQEBAoY9AQEBAyMEEUEQCw0BCgICJgICV?=
- =?us-ascii?q?wYBDAgBAYMfgXSpaW2BaTMahD6DZYIngQmEeIMwgQeBDyOCOi6Hc4JUApg2CAG?=
- =?us-ascii?q?OS4E8g2WCUIUEkggzgXMzGggoCIJ/gh8XjimRQwEB?=
-X-IronPort-AV: E=Sophos;i="5.49,400,1520870400";
-   d="scan'208";a="133346943"
-Subject: Re: [RFC] m68k: Set up dma mask for platform devices
-To: Finn Thain <fthain@telegraphics.com.au>, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: Christoph Hellwig <hch@lst.de>
-References: <S1751284AbeEMBAx/20180513010053Z+394@vger.kernel.org>
-From: Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <75ea772a-75d8-d24b-880c-2cd64706db9b@linux-m68k.org>
-Date: Tue, 15 May 2018 00:10:15 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753868AbeENOLj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:11:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50509 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753504AbeENOLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 10:11:38 -0400
+Date: Mon, 14 May 2018 16:11:26 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Danny Milosavljevic <dannym@scratchpost.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Andrea Bondavalli <andrea.bondavalli74@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.xyz>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v14 8/8] ASoC: sun4i-codec: Add Left Capture Select,
+ Right Capture Select
+Message-ID: <20180514141126.mv7iso2d4xrfnsax@flea>
+References: <20180502210800.1971-1-dannym@scratchpost.org>
+ <20180502210800.1971-9-dannym@scratchpost.org>
+ <20180503145408.yymk2ndt4sm2yt4i@flea>
+ <20180505124050.66f74999@scratchpost.org>
 MIME-Version: 1.0
-In-Reply-To: <S1751284AbeEMBAx/20180513010053Z+394@vger.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="udenmhxour2wcgz2"
+Content-Disposition: inline
+In-Reply-To: <20180505124050.66f74999@scratchpost.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
 
-On 13/05/18 11:00, Finn Thain wrote:
-> This avoids a WARNING splat when loading the macsonic or macmace driver.
-> Please see commit 205e1b7f51e4 ("dma-mapping: warn when there is no
-> coherent_dma_mask").
-> 
-> This implementation of arch_setup_pdev_archdata() differs from the one
-> in arch/powerpc in that this one avoids clobbering an existing dma mask.
-> For example, this approach preserves the mask set by the initializer for
-> struct platform_device mcf_fec0.
-> 
-> Note that either approach would make that initializer redundant and
-> commit f61e64310b75 ("m68k: set dma and coherent masks for platform
-> FEC ethernets") could be reverted.
+--udenmhxour2wcgz2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Seems reasonable to me. I would be happy to do this and the back out
-commit f61e64310b75 ("m68k: set dma and coherent masks for platform
-FEC ethernets").
+On Sat, May 05, 2018 at 12:40:50PM +0200, Danny Milosavljevic wrote:
+> Hi Maxime,
+>=20
+> On Thu, 3 May 2018 16:54:08 +0200
+> Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>=20
+> > > +static const char * const sun4i_codec_capture_source[] =3D {
+> > > +	"Line",
+> > > +	"FM",
+> > > +	"Mic1",
+> > > +	"Mic2",
+> > > +	"Mic1,Mic2",
+> > > +	"Mic1+Mic2",
+> > > +	"Output Mixer",
+> > > +	"Line,Mic1",
+> > > +}; =20
+> >=20
+> > Shouldn't that be defined in a more generic way? As far as I know,
+> > there's no way to tell what the difference between "Mic1,Mic2" and
+> > "Mic1+Mic2" would be from the userspace.
+>=20
+> Sounds good - but how?
+>=20
+> Here, "Mic1,Mic2" means the left channel captured is Mic1 and the right
+> channel captured is Mic2.
+>=20
+> On the other hand, "Mic1+Mic2" means that the signals from Mic1 and
+> Mic2 are added together and that is captured (both as left and as right).
+>=20
+> "Mic1" means both the left channel and the right channel captured is
+> from Mic1.  Likewise "Mic2".
 
-Regards
-Greg
+Right, and my point isn't that it is difficult to understand or
+remember once you get it, but that it's difficult to get it in the
+first place, and that this convention is solely based on the one used
+in the datasheet, which is an abstraction violation in itself.
 
+I guess that's really up to Mark here, but one solution would be to
+allow to couple the controls explicitly instead of relying solely on
+the fact that they share the same controls array pointer.
 
-> ---
->   arch/m68k/kernel/dma.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/m68k/kernel/dma.c b/arch/m68k/kernel/dma.c
-> index c01b9b8f97bf..463572c4943f 100644
-> --- a/arch/m68k/kernel/dma.c
-> +++ b/arch/m68k/kernel/dma.c
-> @@ -9,6 +9,7 @@
->   #include <linux/dma-mapping.h>
->   #include <linux/device.h>
->   #include <linux/kernel.h>
-> +#include <linux/platform_device.h>
->   #include <linux/scatterlist.h>
->   #include <linux/slab.h>
->   #include <linux/vmalloc.h>
-> @@ -165,3 +166,12 @@ const struct dma_map_ops m68k_dma_ops = {
->   	.sync_sg_for_device	= m68k_dma_sync_sg_for_device,
->   };
->   EXPORT_SYMBOL(m68k_dma_ops);
-> +
-> +void arch_setup_pdev_archdata(struct platform_device *pdev)
-> +{
-> +	if (pdev->dev.coherent_dma_mask == DMA_MASK_NONE &&
-> +	    pdev->dev.dma_mask == NULL) {
-> +		pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-> +		pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
-> +	}
-> +}
-> 
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--udenmhxour2wcgz2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr5mQ0ACgkQ0rTAlCFN
+r3QsDg/9EdT0/2F7120H272q4Ar3OgoeKeo7tmox58o6moOKy1Do0r+5b9el4RrE
+p6eFZp0wBaY9HaiW4gGso9x7fLSV1bOlbuZUUDzfQKpzaBdmhEeRpypMlxqqdqoT
+0oKCw0TGEduOTsdVAUn7UQsBfjyGsoac5ag1V6mUWas8E7ZT8ySJx5q4QX5zhTie
+nmTCGVXeFGjgS12ZVGhFKArf/zyF7ShPN2bPovVgYaLVAWwZx1JUXKm5XAu4po6o
+lNswFO8vDrgbyhJt0IaBnwTCzn2ikvKfhIX/9QLBsMFIU+6gMkxgyVUZY68UVG9F
+zm32dyF8OTm/rvf7ZLb0lexPIBVMeP7E6dguI9fMbP1y5wHAFrlWQQjyH79DCxsX
+tHbjuw19cDpaqBtYE/H2bFnBQNde8Z+RX1jnjTY0maZPKKPc0a+lmGE5Fll7lJ91
+GEos2FLKKdvY9uIrYqGgyN2HEUyT3Qb/+oHVydmq6ZDNQm+mIfx95vdFaLvKq7Z1
+urcBKxb5Lw7MRr8g++MYZkBs4JJDSigYn8i/ZzFZhL0NvBXNmQwGGSIUD95vN5Oz
+mAirCKcNHv1r3Fo9V3S8epBDk/HXAdCmTtOHAB+76lD/HYuRpWE+4eTfE7vgW+DY
+O6RX6Ji+IZfU7xQXYaW9Le9Ah8kfmvOBjRisJBoeNaObLSMpgfw=
+=hOx9
+-----END PGP SIGNATURE-----
+
+--udenmhxour2wcgz2--
