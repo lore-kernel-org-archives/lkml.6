@@ -1,61 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753214AbeENQY7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 12:24:59 -0400
-Received: from mail-pl0-f46.google.com ([209.85.160.46]:39085 "EHLO
-        mail-pl0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752179AbeENQY5 (ORCPT
+        id S1753305AbeENQ0W (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 12:26:22 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40816 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752956AbeENQ0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 12:24:57 -0400
-X-Google-Smtp-Source: AB8JxZoxePYzoQdFiQtt7jrhQ1waju/F4Tv2rlFhLyeBpPEfc953tifN0zp0tDHEljDHVlXNOYxZuQOpMVyFZzz1Si8=
+        Mon, 14 May 2018 12:26:21 -0400
+X-Google-Smtp-Source: AB8JxZqwKrN1ATKnm//1W7S0pvlWlZDuRLSMCddrt62UUam3lpZtPP7sNOx9/x6PJqj0+rY0mNwlnA==
+Date: Mon, 14 May 2018 18:26:17 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Souptick Joarder <jrdr.linux@gmail.com>, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] gpu: drm: vgem: Change return type to vm_fault_t
+Message-ID: <20180514162617.GD28661@phenom.ffwll.local>
+Mail-Followup-To: Sean Paul <seanpaul@chromium.org>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        dri-devel@lists.freedesktop.org
+References: <20180416150232.GA26745@jordon-HP-15-Notebook-PC>
+ <CAFqt6zZ6VaPXoPs+3exLjNZ6yzS=v9=2TMXdFqHf_Zv5zEvSAA@mail.gmail.com>
+ <20180510185138.GL33053@art_vandelay>
 MIME-Version: 1.0
-References: <CAAeHK+wDMH_G=3UuGOda2t0g4TH4TmDAeyG-ydJwg9vmThd3eQ@mail.gmail.com>
- <c61336a2-7c66-ea48-3daa-e644403d7a6e@arm.com> <CAAeHK+zpAnC3Ppjq2W=r-5fYh+ceEwYymER0iLTan7+pcFDiJg@mail.gmail.com>
-In-Reply-To: <CAAeHK+zpAnC3Ppjq2W=r-5fYh+ceEwYymER0iLTan7+pcFDiJg@mail.gmail.com>
-From: Nick Desaulniers <ndesaulniers@google.com>
-Date: Mon, 14 May 2018 09:24:45 -0700
-Message-ID: <CAKwvOdkedxmstRytbWeYU8Pj9ahgWOe7rODJJ8BDtRzUroQeXw@mail.gmail.com>
-Subject: Re: Clang arm64 build is broken
-To: Andrey Konovalov <andreyknvl@google.com>
-Cc: marc.zyngier@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>, christoffer.dall@arm.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180510185138.GL33053@art_vandelay>
+X-Operating-System: Linux phenom 4.15.0-3-amd64 
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 20, 2018 at 7:59 AM Andrey Konovalov <andreyknvl@google.com>
-wrote:
-> On Fri, Apr 20, 2018 at 10:13 AM, Marc Zyngier <marc.zyngier@arm.com>
-wrote:
-> >> The issue is that
-> >> clang doesn't know about the "S" asm constraint. I reported this to
-> >> clang [2], and hopefully this will get fixed. In the meantime, would
-> >> it possible to work around using the "S" constraint in the kernel?
-> >
-> > I have no idea, I've never used clang to build the kernel. Clang isn't
-> > really supported to build the arm64 kernel anyway (as you mention
-> > below), and working around clang deficiencies would mean that we leave
-> > with the workaround forever. I'd rather enable clang once it is at
-> > feature parity with GCC.
+On Thu, May 10, 2018 at 02:51:38PM -0400, Sean Paul wrote:
+> On Thu, May 10, 2018 at 07:58:11PM +0530, Souptick Joarder wrote:
+> > Hi Sean,
+> > 
+> > On Mon, Apr 16, 2018 at 8:32 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> > > Use new return type vm_fault_t for fault handler.
+> > >
+> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > > Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+> > > ---
+> > >  drivers/gpu/drm/vgem/vgem_drv.c | 5 ++---
+> > >  1 file changed, 2 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+> > > index 2524ff1..c64a859 100644
+> > > --- a/drivers/gpu/drm/vgem/vgem_drv.c
+> > > +++ b/drivers/gpu/drm/vgem/vgem_drv.c
+> > > @@ -61,13 +61,13 @@ static void vgem_gem_free_object(struct drm_gem_object *obj)
+> > >         kfree(vgem_obj);
+> > >  }
+> > >
+> > > -static int vgem_gem_fault(struct vm_fault *vmf)
+> > > +static vm_fault_t vgem_gem_fault(struct vm_fault *vmf)
+> > >  {
+> > >         struct vm_area_struct *vma = vmf->vma;
+> > >         struct drm_vgem_gem_object *obj = vma->vm_private_data;
+> > >         /* We don't use vmf->pgoff since that has the fake offset */
+> > >         unsigned long vaddr = vmf->address;
+> > > -       int ret;
+> > > +       vm_fault_t ret = VM_FAULT_SIGBUS;
+> > >         loff_t num_pages;
+> > >         pgoff_t page_offset;
+> > >         page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
+> > > @@ -77,7 +77,6 @@ static int vgem_gem_fault(struct vm_fault *vmf)
+> > >         if (page_offset > num_pages)
+> > >                 return VM_FAULT_SIGBUS;
+> > >
+> > > -       ret = -ENOENT;
+> > >         mutex_lock(&obj->pages_lock);
+> > >         if (obj->pages) {
+> > >                 get_page(obj->pages[page_offset]);
+> > > --
+> > > 1.9.1
+> > >
+> > 
+> > Any further comment on this patch ?
+> 
+> Patch looks good to me. My build test fails, though, since vm_fault_t doesn't
+> exist in drm-misc-next yet.
 
-> The fact that there are some existing issues with building arm64
-> kernel with clang doesn't sound like a good justification for adding
-> new issues :)
+vm_fault_t is already in upstream, just needs Maarten to do a backmerge.
+Which I think he's done by now ... Otherwise nag him more :-)
+-Daniel
 
-> However in this case I do believe that this is more of a bug in clang
-> that should be fixed.
-
-Just to follow up with this thread;
-
-Support for "S" constraints is being (re-)added to Clang in:
-https://reviews.llvm.org/D46745
+> 
+> So, for now,
+> 
+> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+> 
+> 
+> -- 
+> Sean Paul, Software Engineer, Google / Chromium OS
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
-Thanks,
-~Nick Desaulniers
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
