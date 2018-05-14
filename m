@@ -1,118 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeENH7l (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:59:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47254 "EHLO mail.kernel.org"
+        id S1752116AbeENIAE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:00:04 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60346 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750750AbeENH7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:59:40 -0400
-X-Google-Smtp-Source: AB8JxZqUQodlLP9doHdy243SUSuEbrTm4UGH0esowN+GZEqgfFORByW4u+nekFMUqOsTTHAJA2Cy9Tz9bjuCF977G4A=
+        id S1751219AbeENIAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 04:00:03 -0400
+Date: Mon, 14 May 2018 09:52:23 +0200
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Yan Markman <ymarkman@marvell.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Marcin Wojtas <mw@semihalf.com>, netdev@vger.kernel.org
+Subject: Re: [PATCH] net: mvpp2: fix mvpp2_tx()'s return type
+Message-ID: <20180514075223.GC24660@kwain>
+References: <20180424131656.4054-1-luc.vanoostenryck@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180422230742.3729-10-linus.walleij@linaro.org>
-References: <20180422230742.3729-1-linus.walleij@linaro.org> <20180422230742.3729-10-linus.walleij@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 14 May 2018 09:59:37 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPfqxLZQHJn5qXq_J3oNVp1QBXbdzrdrbb2ejToabWtnPw@mail.gmail.com>
-Message-ID: <CAJKOXPfqxLZQHJn5qXq_J3oNVp1QBXbdzrdrbb2ejToabWtnPw@mail.gmail.com>
-Subject: Re: [PATCH 10/18 v2] regulator: s2mps11: Pass descriptor instead of
- GPIO number
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180424131656.4054-1-luc.vanoostenryck@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 1:07 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> Instead of passing a global GPIO number for the enable GPIO, pass
-> a descriptor looked up with the standard devm_gpiod_get_optional()
-> call.
->
-> This regulator supports passing platform data, but enable/sleep
-> regulators are looked up from the device tree exclusively, so
-> we can need not touch other files.
->
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Sangbeom Kim <sbkim73@samsung.com>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Hi Luc,
+
+On Tue, Apr 24, 2018 at 03:16:53PM +0200, Luc Van Oostenryck wrote:
+> The method ndo_start_xmit() is defined as returning an 'netdev_tx_t',
+> which is a typedef for an enum type, but the implementation in this
+> driver returns an 'int'.
+> 
+> Fix this by returning 'netdev_tx_t' in this driver too.
+> 
+> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+
+I don't think this has been applied yet, so,
+
+Acked-by: Antoine Tenart <antoine.tenart@bootlin.com>
+
+Thanks!
+Antoine
+
 > ---
-> ChangeLog v1->v2:
-> - Rebase the patch on the other changes.
-> ---
->  drivers/regulator/s2mps11.c | 46 ++++++++++++++++++++++-----------------------
->  1 file changed, 23 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-> index 7726b874e539..9a1dca26362e 100644
-> --- a/drivers/regulator/s2mps11.c
-> +++ b/drivers/regulator/s2mps11.c
-> @@ -18,7 +18,7 @@
->
->  #include <linux/bug.h>
->  #include <linux/err.h>
-> -#include <linux/gpio.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> @@ -27,7 +27,6 @@
->  #include <linux/regulator/driver.h>
->  #include <linux/regulator/machine.h>
->  #include <linux/regulator/of_regulator.h>
-> -#include <linux/of_gpio.h>
->  #include <linux/mfd/samsung/core.h>
->  #include <linux/mfd/samsung/s2mps11.h>
->  #include <linux/mfd/samsung/s2mps13.h>
-> @@ -57,7 +56,7 @@ struct s2mps11_info {
->          * Array (size: number of regulators) with GPIO-s for external
->          * sleep control.
->          */
-> -       int *ext_control_gpio;
-> +       struct gpio_desc **ext_control_gpiod;
->  };
->
->  static int get_ramp_delay(int ramp_delay)
-> @@ -524,7 +523,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
->         case S2MPS14X:
->                 if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
->                         val = S2MPS14_ENABLE_SUSPEND;
-> -               else if (gpio_is_valid(s2mps11->ext_control_gpio[rdev_get_id(rdev)]))
-> +               else if (s2mps11->ext_control_gpiod[rdev_get_id(rdev)])
->                         val = S2MPS14_ENABLE_EXT_CONTROL;
->                 else
->                         val = rdev->desc->enable_mask;
-> @@ -818,7 +817,7 @@ static int s2mps14_pmic_enable_ext_control(struct s2mps11_info *s2mps11,
->  static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
->                 struct of_regulator_match *rdata, struct s2mps11_info *s2mps11)
+>  drivers/net/ethernet/marvell/mvpp2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/mvpp2.c b/drivers/net/ethernet/marvell/mvpp2.c
+> index 54a038943..355910345 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2.c
+> @@ -6926,7 +6926,7 @@ static int mvpp2_tx_tso(struct sk_buff *skb, struct net_device *dev,
+>  }
+>  
+>  /* Main tx processing */
+> -static int mvpp2_tx(struct sk_buff *skb, struct net_device *dev)
+> +static netdev_tx_t mvpp2_tx(struct sk_buff *skb, struct net_device *dev)
 >  {
-> -       int *gpio = s2mps11->ext_control_gpio;
-> +       struct gpio_desc **gpio = s2mps11->ext_control_gpiod;
->         unsigned int i;
->         unsigned int valid_regulators[3] = { S2MPS14_LDO10, S2MPS14_LDO11,
->                 S2MPS14_LDO12 };
-> @@ -829,11 +828,20 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
->                 if (!rdata[reg].init_data || !rdata[reg].of_node)
->                         continue;
->
-> -               gpio[reg] = of_get_named_gpio(rdata[reg].of_node,
-> -                               "samsung,ext-control-gpios", 0);
-> -               if (gpio_is_valid(gpio[reg]))
-> -                       dev_dbg(&pdev->dev, "Using GPIO %d for ext-control over %d/%s\n",
-> -                                       gpio[reg], reg, rdata[reg].name);
-> +               gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
-> +                                                       rdata[reg].of_node,
-> +                                                       "samsung,ext-control-gpios",
-> +                                                       0,
-> +                                                       GPIOD_OUT_HIGH,
-> +                                                       "s2mps11-LDO");
+>  	struct mvpp2_port *port = netdev_priv(dev);
+>  	struct mvpp2_tx_queue *txq, *aggr_txq;
+> -- 
+> 2.17.0
+> 
 
-The same as with max77686 - this can be also for bucks so how about
-the name of "s2mps11-regulator"?
-
-Rest looks good.
-
-Best regards,
-Krzysztof
+-- 
+Antoine Ténart, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
