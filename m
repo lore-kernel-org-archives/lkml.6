@@ -1,122 +1,164 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754271AbeENPAG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 11:00:06 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:55503 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754251AbeENPAD (ORCPT
+        id S1754291AbeENPAO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 11:00:14 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53364 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752898AbeENPAK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 11:00:03 -0400
-X-Google-Smtp-Source: AB8JxZpWoHUtnqZ+fS9tyEwlHO1E1IjYDqtM8jtvLjmJTlLROex+p2MtDORno/a7yfMxVIG9WegnHA==
-From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-To: bp@alien8.de
-Cc: alex_gagniuc@dellteam.com, austin_bolen@dell.com, shyam_iyer@dell.com,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        Dongjiu Geng <gengdongjiu@huawei.com>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] acpi: apei: Do not panic() on PCIe errors reported through GHES
-Date: Mon, 14 May 2018 09:59:29 -0500
-Message-Id: <20180514145933.10291-3-mr.nuke.me@gmail.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180514145933.10291-1-mr.nuke.me@gmail.com>
-References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
- <20180514145933.10291-1-mr.nuke.me@gmail.com>
+        Mon, 14 May 2018 11:00:10 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BB67360131
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Mon, 14 May 2018 09:00:08 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>
+Subject: Re: [PATCH v7 04/10] drivers: qcom: rpmh: add RPMH helper functions
+Message-ID: <20180514150008.GA25503@codeaurora.org>
+References: <20180502193749.31004-1-ilina@codeaurora.org>
+ <20180502193749.31004-5-ilina@codeaurora.org>
+ <CAD=FV=VVrqHnVTATzbXYsZgj8gA9sO=Ky_HRvztfRmjLZoq0=Q@mail.gmail.com>
+ <ccd6a8e7a11b55f1e54737712facf064@codeaurora.org>
+ <CAD=FV=X2k-g_LLuVZEbyJvc=_e68gcXREPRCOvvD=Fz566_Bgg@mail.gmail.com>
+ <20180511150611.GA30504@codeaurora.org>
+ <CAD=FV=XTV0zF1Hmf5CTx3_+dfhK-nWRZwqWznFp5ASe4E_TyUQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=XTV0zF1Hmf5CTx3_+dfhK-nWRZwqWznFp5ASe4E_TyUQ@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The policy was to panic() when GHES said that an error is "Fatal".
-This logic is wrong for several reasons, as it doesn't take into
-account what caused the error.
+On Fri, May 11 2018 at 14:14 -0600, Doug Anderson wrote:
+>Hi,
+>
+>On Fri, May 11, 2018 at 8:06 AM, Lina Iyer <ilina@codeaurora.org> wrote:
+>>> As I've said I haven't reviewed RPMh in any amount of detail and so
+>>> perhaps I don't understand something.
+>>>
+>>> OK, I dug a little more and coded up something for you.  Basically
+>>> you're doing a whole bunch of iteration / extra work here to try to
+>>> come up with a way to associate an extra bit of data with each "struct
+>>> rsc_drv".  Rather than that, just add an extra field into "struct
+>>> rsc_drv".  Problem solved.
+>>>
+>>> See http://crosreview.com/1054646 for what I mean.
+>>>
+>> I tried to avoid such pointer references and keep it object oriented
+>> with this approach. I agree that we run through a list of 2 (at the max)
+>> RSC to get the drv* from the rpmh_ctrlr. It is not going to be
+>> expensive.
+>
+>Even if you wanted to keep things "object oriented" then IMHO your
+>code still should change.  Sure, it's not computationally expensive to
+>iterate through this list, but it adds an extra level of complexity
+>that doesn't seem justified.
+>
+>If you _really_ needed an abstraction barrier then at least add a
+>"void *client_data" to "struct rsc_drv.c".  At least you'd get rid of
+>the ugly global list and store your pointer directly in the correct
+>structure rather than creating an external entity.  Now it becomes
+>100% obvious that there is exactly 1 "struct rpmh_ctrlr" for each
+>controller.  ...but IMO there's enough intertwining between "rpmh.c"
+>and "rpmh-rsc.c" that it would just be a waste because now you'd need
+>to do extra memory allocation and freeing.  ...and if you just
+>allocated the pointer in get_rpmh_ctrlr() it would also seem non-ideal
+>because this one-time allocation (that affects _all_ RPMh clients)
+>happens whenever one client happens to do the first access.  This is
+>one-time init so it makes sense to do it at init time.
+>
+>I say that there's intertwining between "rpmh.c" and "rpmh-rsc.c"
+>because both C files call directly into one another and have intimate
+>knowledge of how the other works.  They aren't really separate things.
+>Specifically I see that "rpmh-rsc" directly calls into "rpmh.c" when
+>it calls rpmh_tx_done(), and of coruse "rpmh-rsc.c" directly calls
+>into "rpmh.c".
+>
+>
+>OK, so I've been browsing through the source code more so I can be a
+>little more informed here.  As far as I can tell "rpmh.c"'s goal is:
+>
+>1. Put a simpler API atop "rpmh-rsc.c".  ...but why not just put that
+>API directly into "rpmh-rsc.c" anyway?  If there was someone that
+>needed the more complex API then having a "simpler" wrapper makes
+>sense, but that's not the case, is it?
+>
+>2. Add caching atop "rpmh-rsc"
+>
+>
+>I'll respond to some of your other patches too, but I think that the
+>amount of code for caching is not very much.  I don't see the benefit
+>of trying to split the code into two files.  Put them into one and
+>then delete all the extra code you needed just the try to maintain
+>some abstraction.
+>
+>
+>> Another things this helps with is that, if the driver is not a child of
+>> the RSC nodes in DT, then the drvdata of the parent would not a RSC node
+>> and accessing that would result in a crash. This offers a cleaner exit
+>> path for the error case.
+>
+>Why would the driver not be a child of the RSC nodes?  That's kinda
+>like saying "if you try to instantiate an i2c device as a platform
+>device then its probe will crash".  Yeah, it will.  Doctor, it hurts
+>if I poke myself in my eye with this sharp stick, do you have any
+>medicine that can help fix that?
+>
+>
+>>>>> I'll try to dig into this more so I could just be confused, but in
+>>>>> general it seems really odd to have a spinlock and something called a
+>>>>> "cache" at this level.  If we need some sort of mutual exclusion or
+>>>>> caching it seems like it should be stored in memory directly
+>>>>> associated with the RPMh device, not some external global.
+>>>>>
+>>>> The idea behind the locking is not to avoid the race between rpmh.c and
+>>>> rpmh-rsc.c. From the DT, the devices that are dependent on the RSCs are
+>>>> probed following the probe of the controller. And init is not that we are
+>>>> worried about.
+>>>> The condition here is to prevent the rpmh_rsc[] from being modified
+>>>> concurrently by drivers.
+>>>
+>>>
+>>> OK, I see the point of the locking now, but not the list still.
+>>> Sounds like Matthias agrees with me that the list isn't useful.  Seems
+>>> like you should squash my patch at http://crosreview.com/1042883 into
+>>> yours.
+>>>
+>> I saw your approach. I am okay with it for your tree,
+>
+>I'm not okay with it for the Chrome OS tree.  We need to match
+>upstream, not fork for style reasons.  I'd rather take a driver that I
+>think it overly complex but matches upstream than a private driver.
+>
+>
+>> my approach comes
+>> out of experiences in qcom platforms and how things tend to shape up in
+>> the future. I would want you to consider my reasoning as well, before we
+>> go forward.
+>
+>I suppose we can get advice from others who have worked in qcom
+>platforms and see what they think.  My opinions come out of years of
+>experience working with Linux drivers, so I guess we both have some
+>experience under our belts that we're trying to leverage.
+>
+Doug, I am sorry it came out the wrong way. I meant to say, knowing
+qualcomm platforms, as it has been in the past, we need this
+flexibility. Things change with hardware variants just a wee bit that it
+doesn't warrant a new interface, just a new driver or part of it to be
+re-written. Keeping code separate out like this helps us maintain the
+driver better.
 
-PCIe fatal errors indicate that the link to a device is either
-unstable or unusable. They don't indicate that the machine is on fire,
-and they are not severe enough that we need to panic(). Instead of
-relying on crackmonkey firmware, evaluate the error severity based on
-what caused the error (GHES subsections).
+Thanks for your reviews. I will try to address your comments before my
+vacation, but I doubt I will get to all of it.
 
-Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
----
- drivers/acpi/apei/ghes.c | 48 +++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 45 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index 7c1a16b106ba..9baaab798020 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -425,8 +425,7 @@ static void ghes_handle_memory_failure(struct acpi_hest_generic_data *gdata, int
-  * GHES_SEV_RECOVERABLE -> AER_NONFATAL
-  * GHES_SEV_RECOVERABLE && CPER_SEC_RESET -> AER_FATAL
-  *     These both need to be reported and recovered from by the AER driver.
-- * GHES_SEV_PANIC does not make it to this handling since the kernel must
-- *     panic.
-+ * GHES_SEV_PANIC -> AER_FATAL
-  */
- static void ghes_handle_aer(struct acpi_hest_generic_data *gdata)
- {
-@@ -459,6 +458,49 @@ static void ghes_handle_aer(struct acpi_hest_generic_data *gdata)
- #endif
- }
- 
-+/* PCIe errors should not cause a panic. */
-+static int ghes_sec_pcie_severity(struct acpi_hest_generic_data *gdata)
-+{
-+	struct cper_sec_pcie *pcie_err = acpi_hest_get_payload(gdata);
-+
-+	if (pcie_err->validation_bits & CPER_PCIE_VALID_DEVICE_ID &&
-+	    pcie_err->validation_bits & CPER_PCIE_VALID_AER_INFO &&
-+	    IS_ENABLED(CONFIG_ACPI_APEI_PCIEAER))
-+		return GHES_SEV_RECOVERABLE;
-+
-+	return ghes_cper_severity(gdata->error_severity);
-+}
-+
-+/*
-+ * The severity field in the status block is an unreliable metric for the
-+ * severity. A more reliable way is to look at each subsection and see how safe
-+ * it is to call the approproate error handler.
-+ * We're not conerned with handling the error. We're concerned with being able
-+ * to notify an error handler by crossing the NMI/IRQ boundary, being able to
-+ * schedule_work, and so forth.
-+ *   - SEC_PCIE: All PCIe errors can be handled by AER.
-+ */
-+static int ghes_severity(struct ghes *ghes)
-+{
-+	int worst_sev, sec_sev;
-+	struct acpi_hest_generic_data *gdata;
-+	const guid_t *section_type;
-+	const struct acpi_hest_generic_status *estatus = ghes->estatus;
-+
-+	worst_sev = GHES_SEV_NO;
-+	apei_estatus_for_each_section(estatus, gdata) {
-+		section_type = (guid_t *)gdata->section_type;
-+		sec_sev = ghes_cper_severity(gdata->error_severity);
-+
-+		if (guid_equal(section_type, &CPER_SEC_PCIE))
-+			sec_sev = ghes_sec_pcie_severity(gdata);
-+
-+		worst_sev = max(worst_sev, sec_sev);
-+	}
-+
-+	return worst_sev;
-+}
-+
- static void ghes_do_proc(struct ghes *ghes,
- 			 const struct acpi_hest_generic_status *estatus)
- {
-@@ -944,7 +986,7 @@ static int ghes_notify_nmi(unsigned int cmd, struct pt_regs *regs)
- 			ret = NMI_HANDLED;
- 		}
- 
--		sev = ghes_cper_severity(ghes->estatus->error_severity);
-+		sev = ghes_severity(ghes);
- 		if (sev >= GHES_SEV_PANIC) {
- 			oops_begin();
- 			ghes_print_queued_estatus();
--- 
-2.14.3
+Thanks,
+Lina
