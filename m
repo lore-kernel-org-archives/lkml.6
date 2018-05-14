@@ -1,117 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932557AbeENO2f (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:28:35 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35158 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753982AbeENO1l (ORCPT
+        id S932573AbeENO2q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:28:46 -0400
+Received: from mail-vk0-f45.google.com ([209.85.213.45]:43753 "EHLO
+        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932560AbeENO2o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:27:41 -0400
-From: Vlad Buslov <vladbu@mellanox.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
-        jiri@resnulli.us, pablo@netfilter.org, kadlec@blackhole.kfki.hu,
-        fw@strlen.de, ast@kernel.org, daniel@iogearbox.net,
-        edumazet@google.com, vladbu@mellanox.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: [PATCH 10/14] net: sched: extend act API for lockless actions
-Date: Mon, 14 May 2018 17:27:11 +0300
-Message-Id: <1526308035-12484-11-git-send-email-vladbu@mellanox.com>
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+        Mon, 14 May 2018 10:28:44 -0400
+X-Google-Smtp-Source: AB8JxZrCah0IMeNU5gvqU3CUrM9eT2wt4jkN5UJNRMsxl76Qu3QOet23YWOKvGHu+CyFDf73WjM3vCawBslBR+Gr2cg=
+MIME-Version: 1.0
+In-Reply-To: <1526303498.3494.11.camel@pengutronix.de>
+References: <CAOuPNLjqJVsPOVPCnswtFyXudAJ88_F0QVUq-Z6qWE=UpH0mBA@mail.gmail.com>
+ <5af57fea.1c69fb81.885f0.2377.GMRIR@mx.google.com> <CAOuPNLgbT59h=Jm5YiOCbrqFkDokJ8xutQ_OkpsFYzKazKhTHg@mail.gmail.com>
+ <20180511123915.GC16141@n2100.armlinux.org.uk> <f6f7b18644136323f4485d6123b330d0dde207a4.camel@pengutronix.de>
+ <CAOuPNLgRHCasmsXTVwcy5ohq8TYjbr4MThxm4Q-HFWihJ7ARww@mail.gmail.com>
+ <CAOuPNLiFr3qbNVAwF4wj2aAG0UXRVsgRo-8JfaKFCsoL+Ggk9w@mail.gmail.com> <1526303498.3494.11.camel@pengutronix.de>
+From: Pintu Kumar <pintu.ping@gmail.com>
+Date: Mon, 14 May 2018 19:58:42 +0530
+Message-ID: <CAOuPNLiZJrDveOHWwvJQ+JLg+j6FOk74oQBKaEq0oqY6w0ko=A@mail.gmail.com>
+Subject: Re: Delivery Status Notification (Failure)
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kernelnewbies@kernelnewbies.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement new action API function to atomically delete action with
-specified index and to atomically insert unique action. These functions are
-required to implement init and delete functions for specific actions that
-do not rely on rtnl lock.
+On Mon, May 14, 2018 at 6:41 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
+> Am Montag, den 14.05.2018, 17:42 +0530 schrieb Pintu Kumar:
+>> Hi,
+>>
+>> Is there any work around possible to set IRQ affinity for some GPIO
+>> interrupt ?
+>> How to avoid CPU0 to receive the current GPIO interrupt ?
+>> How do we assign GPIO interrupts to any CPU other than CPU0 ?
+>> Is it possible to isolate CPU0 for a sometime, from my GPIO driver so
+>> that GPIO interrupt can be served by another CPU ?
+>>
+>> Need your inputs to decide whether it is still possible to set
+>> affinity for GPIO interrupt, or its impossible ?
+>
+> This is not possible. The GPIO IRQs are aggregated into one GPC/GIC IRQ
+> line per GPIO bank, so it is not possible to change affinity of a
+> single GPIO interrupt to another CPU.
 
-Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
----
- include/net/act_api.h |  2 ++
- net/sched/act_api.c   | 45 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 47 insertions(+)
+OK. Thanks for your confirmation.
 
-diff --git a/include/net/act_api.h b/include/net/act_api.h
-index a8c8570..bce0cf1 100644
---- a/include/net/act_api.h
-+++ b/include/net/act_api.h
-@@ -153,7 +153,9 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
- 		   struct tc_action **a, const struct tc_action_ops *ops,
- 		   int bind, bool cpustats);
- void tcf_idr_insert(struct tc_action_net *tn, struct tc_action *a);
-+void tcf_idr_insert_unique(struct tc_action_net *tn, struct tc_action *a);
- 
-+int tcf_idr_find_delete(struct tc_action_net *tn, u32 index);
- int __tcf_idr_release(struct tc_action *a, bool bind, bool strict);
- 
- static inline int tcf_idr_release(struct tc_action *a, bool bind)
-diff --git a/net/sched/act_api.c b/net/sched/act_api.c
-index 2772276e..a5193dc 100644
---- a/net/sched/act_api.c
-+++ b/net/sched/act_api.c
-@@ -330,6 +330,41 @@ bool tcf_idr_check(struct tc_action_net *tn, u32 index, struct tc_action **a,
- }
- EXPORT_SYMBOL(tcf_idr_check);
- 
-+int tcf_idr_find_delete(struct tc_action_net *tn, u32 index)
-+{
-+	struct tcf_idrinfo *idrinfo = tn->idrinfo;
-+	struct tc_action *p;
-+	int ret = 0;
-+
-+	spin_lock_bh(&idrinfo->lock);
-+	p = idr_find(&idrinfo->action_idr, index);
-+	if (!p) {
-+		spin_unlock(&idrinfo->lock);
-+		return -ENOENT;
-+	}
-+
-+	if (!atomic_read(&p->tcfa_bindcnt)) {
-+		if (refcount_dec_and_test(&p->tcfa_refcnt)) {
-+			struct module *owner = p->ops->owner;
-+
-+			WARN_ON(p != idr_remove(&idrinfo->action_idr,
-+						p->tcfa_index));
-+			spin_unlock_bh(&idrinfo->lock);
-+
-+			tcf_action_cleanup(p);
-+			module_put(owner);
-+			return 0;
-+		}
-+		ret = 0;
-+	} else {
-+		ret = -EPERM;
-+	}
-+
-+	spin_unlock_bh(&idrinfo->lock);
-+	return ret;
-+}
-+EXPORT_SYMBOL(tcf_idr_find_delete);
-+
- int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
- 		   struct tc_action **a, const struct tc_action_ops *ops,
- 		   int bind, bool cpustats)
-@@ -407,6 +442,16 @@ void tcf_idr_insert(struct tc_action_net *tn, struct tc_action *a)
- }
- EXPORT_SYMBOL(tcf_idr_insert);
- 
-+void tcf_idr_insert_unique(struct tc_action_net *tn, struct tc_action *a)
-+{
-+	struct tcf_idrinfo *idrinfo = tn->idrinfo;
-+
-+	spin_lock_bh(&idrinfo->lock);
-+	WARN_ON(idr_replace(&idrinfo->action_idr, a, a->tcfa_index));
-+	spin_unlock_bh(&idrinfo->lock);
-+}
-+EXPORT_SYMBOL(tcf_idr_insert_unique);
-+
- void tcf_idrinfo_destroy(const struct tc_action_ops *ops,
- 			 struct tcf_idrinfo *idrinfo)
- {
--- 
-2.7.5
+> Best we could do is change the
+> affinity of the whole bank,
+
+OK. How can we do this on the fly from my driver code.
+If you have any reference please let me know.
+This is required only for experimental purpose to prove the point to be mgmt.
+My idea is, from the driver, change the affinity of the whole bank.
+So, the GPIO interrupt can be delivered on to this specific CPU bank.
+Once I am done, I will revert back to the old bank.
+Please give me some hint on how to do this from my kernel module....
+
+
+> but given the limited usefulness of
+> something like that, nobody bothered to implement such a thing.
+>
+> Regards,
+> Lucas
+>
+>>
+>>
+>> On Fri, May 11, 2018 at 8:07 PM, Pintu Kumar <pintu.ping@gmail.com>
+>> wrote:
+>> > On Fri, May 11, 2018 at 6:34 PM, Lucas Stach <l.stach@pengutronix.d
+>> > e> wrote:
+>> > > Am Freitag, den 11.05.2018, 13:39 +0100 schrieb Russell King -
+>> > > ARM Linux:
+>> > > > On Fri, May 11, 2018 at 05:07:37PM +0530, Pintu Kumar wrote:
+>> > > > > Hi,
+>> > > > >
+>> > > > > I need one help.
+>> > > > > I am using i.MX7 Sabre board with kernel version 4.1.15
+>> > > > >
+>> > > > > Let's say I am interested in GPIO number: 21
+>> > > > > I wanted to set CPU affinity for particular GPIO->IRQ number,
+>> > > > > so I
+>> > > > > tried the below steps:
+>> > > > > root@10:~# echo 21 > /sys/class/gpio/export
+>> > > > > root@10:~# echo "rising" > /sys/class/gpio/gpio21/edge
+>> > > > > root@10:~# cat /proc/interrupts | grep 21
+>> > > > >   47: 0 0 gpio-mxc 21 Edge gpiolib
+>> > > > > root@10:~# cat /sys/class/gpio/gpio21/direction
+>> > > > > in
+>> > > > > root@10:~# cat /proc/irq/47/smp_affinity
+>> > > > > 3
+>> > > > > root@10:~# echo 2 > /proc/irq/47/smp_affinity
+>> > > > > -bash: echo: write error: Input/output error
+>> > > > >
+>> > > > > But I get input/output error.
+>> > > > > When I debug further, found that irq_can_set_affinity is
+>> > > > > returning 0:
+>> > > > > [    0.000000] genirq: irq_can_set_affinity (0): balance: 1,
+>> > > > > irq_data.chip: a81b7e48, irq_set_affinity:   (null)
+>> > > > > [    0.000000] write_irq_affinity: FAIL
+>> > > > >
+>> > > > > I also tried first setting /proc/irq/default_smp_affinity to
+>> > > > > 2 (from 3).
+>> > > > > This change is working, but the smp_affinity setting for the
+>> > > > > new IRQ
+>> > > > > is not working.
+>> > > > >
+>> > > > > When I try to set smp_affinity for mmc0, then it works.
+>> > > > > # cat /proc/interrupts | grep mmc
+>> > > > > 295:         55          0     GPCV2  22 Edge      mmc0
+>> > > > > 296:          0          0     GPCV2  23 Edge      mmc1
+>> > > > > 297:         52          0     GPCV2  24 Edge      mmc2
+>> > > > >
+>> > > > > root@10:~# echo 2 > /proc/irq/295/smp_affinity
+>> > > > > root@10:~#
+>> > > > >
+>> > > > >
+>> > > > > So, I wanted to know what are the conditions for which
+>> > > > > setting
+>> > > > > smp_affinity for an IRQ will work ?
+>> > > > >
+>> > > > > Is there any way by which I can set CPU affinity to a GPIO ->
+>> > > > > IRQ ?
+>> > > > > Whether, irq_set_affinity_hint() will work in this case ?
+>> > > >
+>> > > > IRQ affinity is only supported where interrupts are _directly_
+>> > > > wired to
+>> > > > the GIC.  It's the GIC which does the interrupt steering to the
+>> > > > CPU
+>> > > > cores.
+>> > > >
+>> > > > Interrupts on downstream interrupt controllers (such as GPCV2)
+>> > > > have no
+>> > > > ability to be directed independently to other CPUs - the only
+>> > > > possible
+>> > > > way to change the mapping is to move _all_ interrupts on that
+>> > > > controller,
+>> > > > and any downstream chained interrupts at GIC level.
+>> > > >
+>> > > > Hence why Interrupt 295 has no irq_set_affinity function: there
+>> > > > is no way
+>> > > > for the interrupt controller itself to change the affinity of
+>> > > > the input
+>> > > > interrupt.
+>> > >
+>> > > The GPCv2 though is a secondary IRQ controller which has a 1:1
+>> > > mapping
+>> > > of its input IRQs to the upstream GIC IRQ lines. Affinity can
+>> > > thus be
+>> > > handled by forwarding the request to the GIC by
+>> > > irq_chip_set_affinity_parent().
+>> > >
+>> > > As this is handled correctly in the upstream kernel since the
+>> > > first
+>> > > commit introducing support for the GPCv2, it seems the issue is
+>> > > only
+>> > > present in some downstream kernel.
+>> > >
+>> >
+>> > OK. Thanks so much for your reply.
+>> >
+>> > I saw some of the drivers using irq_set_affinity_hint() to force
+>> > the
+>> > IRQ affinity to a particular CPU.
+>> > This is the sample:
+>> > {
+>> > cpumask_clear(mask);
+>> > cpumask_set_cpu(cpu, mask);
+>> > irq_set_affinity_hint(irq, mask);
+>> > }
+>> >
+>> > Whether this logic will work for a particular GPIO pin ?
+>> >
+>> >
+>> > > Regards,
+>> > > Lucas
