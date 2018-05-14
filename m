@@ -1,69 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753735AbeENM7H (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:59:07 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34668 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753438AbeENM7G (ORCPT
+        id S1753747AbeENM7l (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:59:41 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35611 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753590AbeENM7j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:59:06 -0400
-Date: Mon, 14 May 2018 14:58:56 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Gabriel C <nix.or.die@gmail.com>
-Cc: kevin.b.stanton@intel.com, Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
-Subject: Re: commit bd9240a18edfbfa72e957fc2ba831cf1f13ea073 seems to break
- with intel-ucode 20180425
-Message-ID: <20180514125856.GR12217@hirez.programming.kicks-ass.net>
-References: <CAEJqkgjMMMwK0Y7xSJCGVnbPor1MirA30HrN=U2EsGZNRQFs8A@mail.gmail.com>
- <20180514072355.GB12198@hirez.programming.kicks-ass.net>
- <CAEJqkgh2C_t+pq72Y8uOLYk7nCCtFRnrt1La0hsJL2taa4k35g@mail.gmail.com>
+        Mon, 14 May 2018 08:59:39 -0400
+X-Google-Smtp-Source: AB8JxZroPcmly/NFZY/6pjCznp5IzDjq4GnbaE/1RUyq9CSOeYyEsXyDZnPb+Ew3Q7BX7+rpbD8D7g==
+Date: Mon, 14 May 2018 14:59:36 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: airlied@linux.ie, jonathanh@nvidia.com,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: Re: [PATCH] gpu: drm: tegra: Adding new typedef vm_fault_t
+Message-ID: <20180514125936.GL18312@ulmo>
+References: <20180417134755.GA30291@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="9/GiYV45wF7IL3Iq"
 Content-Disposition: inline
-In-Reply-To: <CAEJqkgh2C_t+pq72Y8uOLYk7nCCtFRnrt1La0hsJL2taa4k35g@mail.gmail.com>
+In-Reply-To: <20180417134755.GA30291@jordon-HP-15-Notebook-PC>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 02:15:44PM +0200, Gabriel C wrote:
-> http://ftp.frugalware.org/pub/other/people/crazy/ucode/cpuinfo-ucode-20180312
-> http://ftp.frugalware.org/pub/other/people/crazy/ucode/cpuinfo-ucode-20180425
 
-That's 0xc2 and 0x9e respectively, for the microcode revision.
+--9/GiYV45wF7IL3Iq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For model 78 (INTEL_FAM6_SKYLAKE_MOBILE) we need at least 0xb2.
+On Tue, Apr 17, 2018 at 07:17:55PM +0530, Souptick Joarder wrote:
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
+>=20
+> Reference id -> 1c8f422059ae ("mm: change return type to
+> vm_fault_t")
+>=20
+> Previously vm_insert_page() returns err which driver
+> mapped into VM_FAULT_* type. The new function=20
+> vmf_insert_page() will replace this inefficiency by
+> returning VM_FAULT_* type.
+>=20
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> ---
+>  drivers/gpu/drm/tegra/gem.c | 18 ++----------------
+>  1 file changed, 2 insertions(+), 16 deletions(-)
 
-Now, obviously 0xc2 is in fact larger than 0xb2, however 0x9e is
-smaller and it is rightfully complaining.
+Applied, thanks.
 
-Now, I have (debian testing):
+Thierry
 
-$ apt-cache show intel-microcode
-Package: intel-microcode
-Version: 3.20180425.1
+--9/GiYV45wF7IL3Iq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-$ hexdump /lib/firmware/intel-ucode/06-4e-03 | head
-0000000 0001 0000 00c2 0000 2017 1116 06e3 0004
-0000010 f699 c6c6 0001 0000 00c0 0000 83d0 0001
-0000020 8400 0001 0000 0000 0000 0000 0000 0000
+-----BEGIN PGP SIGNATURE-----
 
-Which gives 0xc2 as version for your CPU.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5iDgACgkQ3SOs138+
+s6EEXg//bokguGEBwwTSDuDaSFIZw0Z+9pB2xoBEjsQXRZBQrKl/oZHAMbPGfkK4
+Wwa9hHqjvJ0w1nzBEQrVGZGB9bWGOoxExRz6gL560NcpFfgPUz00KIyszMZl90KJ
+eqnoC7N9RrnZ0mLE00S6dIf5QliY16djVK1Eb7S0ftKkmH/H38ntW6WNsq2AEgiH
+WcWmw26SC9uQjuDH7SpLVxrP6DGMwq4mgRfbrlqVRzYecjjQ8FD7ifX8rwhL0dLV
+zr9yhekFV/nEjtkVYWO2BWk6Qbx50qscWJITkTsQX/sibwuG+gs8y5WSH1Yt7nDh
+KmBnrX1mhayHZ9h6G3O4gncMEc4hculEwfw/yGznlfI3ljAyqVFU0RI8HpOXgDBP
+vMKm/J4ngaOnjM/27/uZTQTFoUx/DJnN6H9F8yUFEgzbzqe7EDorSpQCoJYD0rCC
+ZccMg5FJWZ67ui4q7fZ5hNm8UijO1XnBdqZbLfaAMZFaaeCZcuQAPy5MxMlvxZs8
+yXSR9agnvWQZx5/2YgurZCnztUAv9UHmENNsdKtQzLB07jxdOTpGwdVZMUe9eZjB
+ckmstNCZSBJ/GaqxzsFRAqWAei3dG3ECmEy4YPfPWdY0Gt+GtcRtJti+e6XRp5J7
+x42wcJXo0Gb6uuQTUrqoMpoRHGRh+Xeqgna4fGlG/nYe5dhdY1g=
+=9X7O
+-----END PGP SIGNATURE-----
 
-If I download microcode-20180425.tgz from:
-
-  https://downloadcenter.intel.com/download/27776/Linux-Processor-Microcode-Data-File
-
-I again get 0xc2 for 06-4e-03.
-
-So please double check your package...
-
-> Loading microcode manually is working
-
-IIRC late loading doesn't re-evaluate any of this. If you down-grade you
-can 'wreck' your system.
-
-> Also initramfs is made with dracut and his early microcode option.
-
-Yes, early microcode should be the right thing.
+--9/GiYV45wF7IL3Iq--
