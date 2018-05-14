@@ -1,39 +1,38 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZogjS1USRUNx1ZTqtgyxT1P+sfav0oZjUczS1onhtOd3vQ8yoZLSbPZPUiqYa4ikzxGmAUL
-ARC-Seal: i=1; a=rsa-sha256; t=1526280957; cv=none;
+X-Google-Smtp-Source: AB8JxZore8okluuHglJQs4xeJKaRM7KBCePuRxeFK32zcFiOg5v9+SohnXdjKlvbufKPsAnL0M00
+ARC-Seal: i=1; a=rsa-sha256; t=1526280955; cv=none;
         d=google.com; s=arc-20160816;
-        b=gFITTgH8MSKVzkZqPeS3AyfINgjBA2/2C4MpZRsQOqObK6jy7vKptasMF0dMHPL+7n
-         5iZM/4+ZGv/eg5aBn6KV94vsW/KQEP97HabbAvhLTc1dNuPkvyJF5SBKHbutjiTOOztg
-         2iI9EpRCZfLd1c69jaIh3zgCp4Ki5U42zMfi72dH3aa1E7z/o6r2SZXIS13do2Y4k6OO
-         rmNlPUw0Q8jl1k4wlFBPdAQcX9+Hhx26j7l1oNEjHO5Q9cWWVaSs38RkIm5pjh9yazgR
-         Gnnipmlc0EojlyXCSi8Lp7w3h98a6LVoZnm95W6BpphRUujKcDJUNOuDFbqvUdi9Vwy0
-         03Cw==
+        b=MHlZkgTJYdIUYKRXJ1c3YZAHGWvN6bqpVKOKSDVmDYjIH68WLhZ1VUPVT+lcyJ080S
+         z7g4vTLpvVge2GnNUQZlUAMZUvL4p7S5my9VtgqH+duSpoTcJ/tTOVCInm9j1wPAgST9
+         PttkF711kg0S5jfe7ch92+VGnRpeTuNIagAbw0AmMyG83gNao44Ur9PWXVEf4vUyCWb7
+         AuquBY2oGeJSh2uMt6HIwKq2o8mvvJOSo8jUBzBcvXgYxCANPbxWR7G/lZDm7g9vk8nk
+         pb45PW+3gkXovG40jwNTV6/5QdY7dwDl2zt3Jc0FV7hx6Vd3Z3jW0sydWi8jcojLsztL
+         waRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=kQz4XnB9eG0Wos0E2qditGWn/3OKLOnJszx19+IQd/g=;
-        b=iuR02KoNStuR2rB+ZRa4hMnk9v21kaKG+EQs+v/3vBiLlBfyEOcGdHp+dS5qQXwpnb
-         Ykb9PukE0llqyP1n+FpelLbVDfNLshuXycJOmGpGFqdLXPdGMH1eAn1elpcVZ00BKghE
-         bQkWE5dBeWgomm4kshqTKVYbjTJmYtZPX2iZrNvFQm4PrRDZHYiUHXTLwLkUZDDCK7x9
-         LjFZ5yw3xS4gLK/KJBaqTR64SGweTFTIIGjDjr49k8GffRifjyKgSnlXVCgP+U10PrX9
-         8NwbAj8HApJZZ36VSqjO/mqCqj2w+8MIpR9fTnZsriCyMTBkUGQjPvCCe3l21UZjkdgG
-         b2mA==
+        bh=YyYN11VaXC5heB72Rib2MzmW19KbYB19bEZ7NgkJvn8=;
+        b=LYHR0NUEb8RbMsypI8ZlYsU90ZCNZnbHgdq/V01KtGTqYo5GsKI3q2fS0rIoJKA4s+
+         ItZsv1RefAaC+aQuy99V2sfWt0XZMrL1EAAcHjRorFMMIB71T78S0+ngV7NtfKuur9lZ
+         x6GP/WCADymgJrQi5MU6Od33OT8InZnwXrr+zo6OK0LwGSLjtUeQn33+YBueDSKLQCUG
+         ZCoINrgsdb+T3OJq3K8zLEibci/D5QkxU3G1JhGfNx/kRQzs6vqBzhVyZogVNNkxBqF8
+         ZTO3M7aT9FOk1LQxGA15vgbTnLbdfR4NRsS649gBUj/f+vcbGjMZDYeMuKx7C5R13rjK
+         CwcQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=z9HjT7pi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=WtO19zFA;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=z9HjT7pi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=WtO19zFA;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+88dfb55e4c8b770d86e3@syzkaller.appspotmail.com,
-	Tom Herbert <tom@quantonium.net>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 03/62] kcm: Call strp_stop before strp_done in kcm_attach
-Date: Mon, 14 May 2018 08:48:19 +0200
-Message-Id: <20180514064816.634407998@linuxfoundation.org>
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.14 25/62] gpio: fix error path in lineevent_create
+Date: Mon, 14 May 2018 08:48:41 +0200
+Message-Id: <20180514064817.787715004@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421436477651736?=
-X-GMAIL-MSGID: =?utf-8?q?1600421581754841710?=
+X-GMAIL-THRID: =?utf-8?q?1600421518802204133?=
+X-GMAIL-MSGID: =?utf-8?q?1600421578731176721?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,32 +51,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tom Herbert <tom@quantonium.net>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-commit dff8baa261174de689a44572d0ea182d7aa70598 upstream.
+commit f001cc351ad3309ec8736c374e90e5a4bc472d41 upstream.
 
-In kcm_attach strp_done is called when sk_user_data is already
-set to fail the attach. strp_done needs the strp to be stopped and
-warns if it isn't. Call strp_stop in this case to eliminate the
-warning message.
+If gpiod_request() fails the cleanup must not call gpiod_free().
 
-Reported-by: syzbot+88dfb55e4c8b770d86e3@syzkaller.appspotmail.com
-Fixes: e5571240236c5652f ("kcm: Check if sk_user_data already set in kcm_attach"
-Signed-off-by: Tom Herbert <tom@quantonium.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Fixes: 61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/kcm/kcmsock.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpiolib.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/kcm/kcmsock.c
-+++ b/net/kcm/kcmsock.c
-@@ -1425,6 +1425,7 @@ static int kcm_attach(struct socket *soc
- 	 */
- 	if (csk->sk_user_data) {
- 		write_unlock_bh(&csk->sk_callback_lock);
-+		strp_stop(&psock->strp);
- 		strp_done(&psock->strp);
- 		kmem_cache_free(kcm_psockp, psock);
- 		err = -EALREADY;
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -813,7 +813,7 @@ static int lineevent_create(struct gpio_
+ 	desc = &gdev->descs[offset];
+ 	ret = gpiod_request(desc, le->label);
+ 	if (ret)
+-		goto out_free_desc;
++		goto out_free_label;
+ 	le->desc = desc;
+ 	le->eflags = eflags;
+ 
