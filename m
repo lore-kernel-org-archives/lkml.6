@@ -1,179 +1,348 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932573AbeENO2q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:28:46 -0400
-Received: from mail-vk0-f45.google.com ([209.85.213.45]:43753 "EHLO
-        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932560AbeENO2o (ORCPT
+        id S932501AbeENO2e (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:28:34 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35171 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753983AbeENO1m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:28:44 -0400
-X-Google-Smtp-Source: AB8JxZrCah0IMeNU5gvqU3CUrM9eT2wt4jkN5UJNRMsxl76Qu3QOet23YWOKvGHu+CyFDf73WjM3vCawBslBR+Gr2cg=
-MIME-Version: 1.0
-In-Reply-To: <1526303498.3494.11.camel@pengutronix.de>
-References: <CAOuPNLjqJVsPOVPCnswtFyXudAJ88_F0QVUq-Z6qWE=UpH0mBA@mail.gmail.com>
- <5af57fea.1c69fb81.885f0.2377.GMRIR@mx.google.com> <CAOuPNLgbT59h=Jm5YiOCbrqFkDokJ8xutQ_OkpsFYzKazKhTHg@mail.gmail.com>
- <20180511123915.GC16141@n2100.armlinux.org.uk> <f6f7b18644136323f4485d6123b330d0dde207a4.camel@pengutronix.de>
- <CAOuPNLgRHCasmsXTVwcy5ohq8TYjbr4MThxm4Q-HFWihJ7ARww@mail.gmail.com>
- <CAOuPNLiFr3qbNVAwF4wj2aAG0UXRVsgRo-8JfaKFCsoL+Ggk9w@mail.gmail.com> <1526303498.3494.11.camel@pengutronix.de>
-From: Pintu Kumar <pintu.ping@gmail.com>
-Date: Mon, 14 May 2018 19:58:42 +0530
-Message-ID: <CAOuPNLiZJrDveOHWwvJQ+JLg+j6FOk74oQBKaEq0oqY6w0ko=A@mail.gmail.com>
-Subject: Re: Delivery Status Notification (Failure)
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kernelnewbies@kernelnewbies.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 14 May 2018 10:27:42 -0400
+From: Vlad Buslov <vladbu@mellanox.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
+        jiri@resnulli.us, pablo@netfilter.org, kadlec@blackhole.kfki.hu,
+        fw@strlen.de, ast@kernel.org, daniel@iogearbox.net,
+        edumazet@google.com, vladbu@mellanox.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, kliteyn@mellanox.com
+Subject: [PATCH 11/14] net: core: add new/replace rate estimator lock parameter
+Date: Mon, 14 May 2018 17:27:12 +0300
+Message-Id: <1526308035-12484-12-git-send-email-vladbu@mellanox.com>
+X-Mailer: git-send-email 2.7.5
+In-Reply-To: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 6:41 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
-> Am Montag, den 14.05.2018, 17:42 +0530 schrieb Pintu Kumar:
->> Hi,
->>
->> Is there any work around possible to set IRQ affinity for some GPIO
->> interrupt ?
->> How to avoid CPU0 to receive the current GPIO interrupt ?
->> How do we assign GPIO interrupts to any CPU other than CPU0 ?
->> Is it possible to isolate CPU0 for a sometime, from my GPIO driver so
->> that GPIO interrupt can be served by another CPU ?
->>
->> Need your inputs to decide whether it is still possible to set
->> affinity for GPIO interrupt, or its impossible ?
->
-> This is not possible. The GPIO IRQs are aggregated into one GPC/GIC IRQ
-> line per GPIO bank, so it is not possible to change affinity of a
-> single GPIO interrupt to another CPU.
+Extend rate estimator new and replace APIs with additional spinlock
+parameter used by lockless actions to protect rate_est pointer from
+concurrent modification.
 
-OK. Thanks for your confirmation.
+Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+---
+ include/net/gen_stats.h    |  2 ++
+ net/core/gen_estimator.c   | 58 +++++++++++++++++++++++++++++++++++-----------
+ net/netfilter/xt_RATEEST.c |  2 +-
+ net/sched/act_api.c        |  2 +-
+ net/sched/act_police.c     |  2 +-
+ net/sched/sch_api.c        |  2 ++
+ net/sched/sch_cbq.c        |  4 ++--
+ net/sched/sch_drr.c        |  4 ++--
+ net/sched/sch_hfsc.c       |  4 ++--
+ net/sched/sch_htb.c        |  4 ++--
+ net/sched/sch_qfq.c        |  4 ++--
+ 11 files changed, 61 insertions(+), 27 deletions(-)
 
-> Best we could do is change the
-> affinity of the whole bank,
-
-OK. How can we do this on the fly from my driver code.
-If you have any reference please let me know.
-This is required only for experimental purpose to prove the point to be mgmt.
-My idea is, from the driver, change the affinity of the whole bank.
-So, the GPIO interrupt can be delivered on to this specific CPU bank.
-Once I am done, I will revert back to the old bank.
-Please give me some hint on how to do this from my kernel module....
-
-
-> but given the limited usefulness of
-> something like that, nobody bothered to implement such a thing.
->
-> Regards,
-> Lucas
->
->>
->>
->> On Fri, May 11, 2018 at 8:07 PM, Pintu Kumar <pintu.ping@gmail.com>
->> wrote:
->> > On Fri, May 11, 2018 at 6:34 PM, Lucas Stach <l.stach@pengutronix.d
->> > e> wrote:
->> > > Am Freitag, den 11.05.2018, 13:39 +0100 schrieb Russell King -
->> > > ARM Linux:
->> > > > On Fri, May 11, 2018 at 05:07:37PM +0530, Pintu Kumar wrote:
->> > > > > Hi,
->> > > > >
->> > > > > I need one help.
->> > > > > I am using i.MX7 Sabre board with kernel version 4.1.15
->> > > > >
->> > > > > Let's say I am interested in GPIO number: 21
->> > > > > I wanted to set CPU affinity for particular GPIO->IRQ number,
->> > > > > so I
->> > > > > tried the below steps:
->> > > > > root@10:~# echo 21 > /sys/class/gpio/export
->> > > > > root@10:~# echo "rising" > /sys/class/gpio/gpio21/edge
->> > > > > root@10:~# cat /proc/interrupts | grep 21
->> > > > >   47: 0 0 gpio-mxc 21 Edge gpiolib
->> > > > > root@10:~# cat /sys/class/gpio/gpio21/direction
->> > > > > in
->> > > > > root@10:~# cat /proc/irq/47/smp_affinity
->> > > > > 3
->> > > > > root@10:~# echo 2 > /proc/irq/47/smp_affinity
->> > > > > -bash: echo: write error: Input/output error
->> > > > >
->> > > > > But I get input/output error.
->> > > > > When I debug further, found that irq_can_set_affinity is
->> > > > > returning 0:
->> > > > > [    0.000000] genirq: irq_can_set_affinity (0): balance: 1,
->> > > > > irq_data.chip: a81b7e48, irq_set_affinity:   (null)
->> > > > > [    0.000000] write_irq_affinity: FAIL
->> > > > >
->> > > > > I also tried first setting /proc/irq/default_smp_affinity to
->> > > > > 2 (from 3).
->> > > > > This change is working, but the smp_affinity setting for the
->> > > > > new IRQ
->> > > > > is not working.
->> > > > >
->> > > > > When I try to set smp_affinity for mmc0, then it works.
->> > > > > # cat /proc/interrupts | grep mmc
->> > > > > 295:         55          0     GPCV2  22 Edge      mmc0
->> > > > > 296:          0          0     GPCV2  23 Edge      mmc1
->> > > > > 297:         52          0     GPCV2  24 Edge      mmc2
->> > > > >
->> > > > > root@10:~# echo 2 > /proc/irq/295/smp_affinity
->> > > > > root@10:~#
->> > > > >
->> > > > >
->> > > > > So, I wanted to know what are the conditions for which
->> > > > > setting
->> > > > > smp_affinity for an IRQ will work ?
->> > > > >
->> > > > > Is there any way by which I can set CPU affinity to a GPIO ->
->> > > > > IRQ ?
->> > > > > Whether, irq_set_affinity_hint() will work in this case ?
->> > > >
->> > > > IRQ affinity is only supported where interrupts are _directly_
->> > > > wired to
->> > > > the GIC.  It's the GIC which does the interrupt steering to the
->> > > > CPU
->> > > > cores.
->> > > >
->> > > > Interrupts on downstream interrupt controllers (such as GPCV2)
->> > > > have no
->> > > > ability to be directed independently to other CPUs - the only
->> > > > possible
->> > > > way to change the mapping is to move _all_ interrupts on that
->> > > > controller,
->> > > > and any downstream chained interrupts at GIC level.
->> > > >
->> > > > Hence why Interrupt 295 has no irq_set_affinity function: there
->> > > > is no way
->> > > > for the interrupt controller itself to change the affinity of
->> > > > the input
->> > > > interrupt.
->> > >
->> > > The GPCv2 though is a secondary IRQ controller which has a 1:1
->> > > mapping
->> > > of its input IRQs to the upstream GIC IRQ lines. Affinity can
->> > > thus be
->> > > handled by forwarding the request to the GIC by
->> > > irq_chip_set_affinity_parent().
->> > >
->> > > As this is handled correctly in the upstream kernel since the
->> > > first
->> > > commit introducing support for the GPCv2, it seems the issue is
->> > > only
->> > > present in some downstream kernel.
->> > >
->> >
->> > OK. Thanks so much for your reply.
->> >
->> > I saw some of the drivers using irq_set_affinity_hint() to force
->> > the
->> > IRQ affinity to a particular CPU.
->> > This is the sample:
->> > {
->> > cpumask_clear(mask);
->> > cpumask_set_cpu(cpu, mask);
->> > irq_set_affinity_hint(irq, mask);
->> > }
->> >
->> > Whether this logic will work for a particular GPIO pin ?
->> >
->> >
->> > > Regards,
->> > > Lucas
+diff --git a/include/net/gen_stats.h b/include/net/gen_stats.h
+index 0304ba2..d1ef63d 100644
+--- a/include/net/gen_stats.h
++++ b/include/net/gen_stats.h
+@@ -59,12 +59,14 @@ int gnet_stats_finish_copy(struct gnet_dump *d);
+ int gen_new_estimator(struct gnet_stats_basic_packed *bstats,
+ 		      struct gnet_stats_basic_cpu __percpu *cpu_bstats,
+ 		      struct net_rate_estimator __rcu **rate_est,
++		      spinlock_t *rate_est_lock,
+ 		      spinlock_t *stats_lock,
+ 		      seqcount_t *running, struct nlattr *opt);
+ void gen_kill_estimator(struct net_rate_estimator __rcu **ptr);
+ int gen_replace_estimator(struct gnet_stats_basic_packed *bstats,
+ 			  struct gnet_stats_basic_cpu __percpu *cpu_bstats,
+ 			  struct net_rate_estimator __rcu **ptr,
++			  spinlock_t *rate_est_lock,
+ 			  spinlock_t *stats_lock,
+ 			  seqcount_t *running, struct nlattr *opt);
+ bool gen_estimator_active(struct net_rate_estimator __rcu **ptr);
+diff --git a/net/core/gen_estimator.c b/net/core/gen_estimator.c
+index 98fd127..3512720 100644
+--- a/net/core/gen_estimator.c
++++ b/net/core/gen_estimator.c
+@@ -107,11 +107,43 @@ static void est_timer(struct timer_list *t)
+ 	mod_timer(&est->timer, est->next_jiffies);
+ }
+ 
++static void __replace_estimator(struct net_rate_estimator __rcu **rate_est,
++				struct net_rate_estimator *new)
++{
++	struct net_rate_estimator *old = rcu_dereference_protected(*rate_est,
++								   1);
++
++	if (old) {
++		del_timer_sync(&old->timer);
++		new->avbps = old->avbps;
++		new->avpps = old->avpps;
++	}
++
++	new->next_jiffies = jiffies + ((HZ/4) << new->intvl_log);
++	timer_setup(&new->timer, est_timer, 0);
++	mod_timer(&new->timer, new->next_jiffies);
++
++	rcu_assign_pointer(*rate_est, new);
++
++	if (old)
++		kfree_rcu(old, rcu);
++}
++
++static void replace_estimator(struct net_rate_estimator __rcu **rate_est,
++			      struct net_rate_estimator *new,
++			      spinlock_t *rate_est_lock)
++{
++	spin_lock(rate_est_lock);
++	__replace_estimator(rate_est, new);
++	spin_unlock(rate_est_lock);
++}
++
+ /**
+  * gen_new_estimator - create a new rate estimator
+  * @bstats: basic statistics
+  * @cpu_bstats: bstats per cpu
+  * @rate_est: rate estimator statistics
++ * @rate_est_lock: rate_est lock (might be NULL)
+  * @stats_lock: statistics lock
+  * @running: qdisc running seqcount
+  * @opt: rate estimator configuration TLV
+@@ -128,12 +160,13 @@ static void est_timer(struct timer_list *t)
+ int gen_new_estimator(struct gnet_stats_basic_packed *bstats,
+ 		      struct gnet_stats_basic_cpu __percpu *cpu_bstats,
+ 		      struct net_rate_estimator __rcu **rate_est,
++		      spinlock_t *rate_est_lock,
+ 		      spinlock_t *stats_lock,
+ 		      seqcount_t *running,
+ 		      struct nlattr *opt)
+ {
+ 	struct gnet_estimator *parm = nla_data(opt);
+-	struct net_rate_estimator *old, *est;
++	struct net_rate_estimator *est;
+ 	struct gnet_stats_basic_packed b;
+ 	int intvl_log;
+ 
+@@ -167,20 +200,15 @@ int gen_new_estimator(struct gnet_stats_basic_packed *bstats,
+ 		local_bh_enable();
+ 	est->last_bytes = b.bytes;
+ 	est->last_packets = b.packets;
+-	old = rcu_dereference_protected(*rate_est, 1);
+-	if (old) {
+-		del_timer_sync(&old->timer);
+-		est->avbps = old->avbps;
+-		est->avpps = old->avpps;
+-	}
+ 
+-	est->next_jiffies = jiffies + ((HZ/4) << intvl_log);
+-	timer_setup(&est->timer, est_timer, 0);
+-	mod_timer(&est->timer, est->next_jiffies);
++	if (rate_est_lock)
++		replace_estimator(rate_est, est, rate_est_lock);
++	else
++		/* If no spinlock argument provided,
++		 * then assume that caller is already synchronized.
++		 */
++		__replace_estimator(rate_est, est);
+ 
+-	rcu_assign_pointer(*rate_est, est);
+-	if (old)
+-		kfree_rcu(old, rcu);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(gen_new_estimator);
+@@ -209,6 +237,7 @@ EXPORT_SYMBOL(gen_kill_estimator);
+  * @bstats: basic statistics
+  * @cpu_bstats: bstats per cpu
+  * @rate_est: rate estimator statistics
++ * @rate_est_lock: rate_est lock (might be NULL)
+  * @stats_lock: statistics lock
+  * @running: qdisc running seqcount (might be NULL)
+  * @opt: rate estimator configuration TLV
+@@ -221,10 +250,11 @@ EXPORT_SYMBOL(gen_kill_estimator);
+ int gen_replace_estimator(struct gnet_stats_basic_packed *bstats,
+ 			  struct gnet_stats_basic_cpu __percpu *cpu_bstats,
+ 			  struct net_rate_estimator __rcu **rate_est,
++			  spinlock_t *rate_est_lock,
+ 			  spinlock_t *stats_lock,
+ 			  seqcount_t *running, struct nlattr *opt)
+ {
+-	return gen_new_estimator(bstats, cpu_bstats, rate_est,
++	return gen_new_estimator(bstats, cpu_bstats, rate_est, rate_est_lock,
+ 				 stats_lock, running, opt);
+ }
+ EXPORT_SYMBOL(gen_replace_estimator);
+diff --git a/net/netfilter/xt_RATEEST.c b/net/netfilter/xt_RATEEST.c
+index dec843c..8e79bd5 100644
+--- a/net/netfilter/xt_RATEEST.c
++++ b/net/netfilter/xt_RATEEST.c
+@@ -154,7 +154,7 @@ static int xt_rateest_tg_checkentry(const struct xt_tgchk_param *par)
+ 	cfg.est.interval	= info->interval;
+ 	cfg.est.ewma_log	= info->ewma_log;
+ 
+-	ret = gen_new_estimator(&est->bstats, NULL, &est->rate_est,
++	ret = gen_new_estimator(&est->bstats, NULL, &est->rate_est, NULL,
+ 				&est->lock, NULL, &cfg.opt);
+ 	if (ret < 0)
+ 		goto err2;
+diff --git a/net/sched/act_api.c b/net/sched/act_api.c
+index a5193dc..1dc092e 100644
+--- a/net/sched/act_api.c
++++ b/net/sched/act_api.c
+@@ -409,7 +409,7 @@ int tcf_idr_create(struct tc_action_net *tn, u32 index, struct nlattr *est,
+ 	p->tcfa_tm.firstuse = 0;
+ 	if (est) {
+ 		err = gen_new_estimator(&p->tcfa_bstats, p->cpu_bstats,
+-					&p->tcfa_rate_est,
++					&p->tcfa_rate_est, NULL,
+ 					&p->tcfa_lock, NULL, est);
+ 		if (err)
+ 			goto err4;
+diff --git a/net/sched/act_police.c b/net/sched/act_police.c
+index 86d9417..c480d68 100644
+--- a/net/sched/act_police.c
++++ b/net/sched/act_police.c
+@@ -133,7 +133,7 @@ static int tcf_act_police_init(struct net *net, struct nlattr *nla,
+ 
+ 	if (est) {
+ 		err = gen_replace_estimator(&police->tcf_bstats, NULL,
+-					    &police->tcf_rate_est,
++					    &police->tcf_rate_est, NULL,
+ 					    &police->tcf_lock,
+ 					    NULL, est);
+ 		if (err)
+diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
+index 106dae7e..de6a297 100644
+--- a/net/sched/sch_api.c
++++ b/net/sched/sch_api.c
+@@ -1178,6 +1178,7 @@ static struct Qdisc *qdisc_create(struct net_device *dev,
+ 					sch->cpu_bstats,
+ 					&sch->rate_est,
+ 					NULL,
++					NULL,
+ 					running,
+ 					tca[TCA_RATE]);
+ 		if (err) {
+@@ -1253,6 +1254,7 @@ static int qdisc_change(struct Qdisc *sch, struct nlattr **tca,
+ 				      sch->cpu_bstats,
+ 				      &sch->rate_est,
+ 				      NULL,
++				      NULL,
+ 				      qdisc_root_sleeping_running(sch),
+ 				      tca[TCA_RATE]);
+ 	}
+diff --git a/net/sched/sch_cbq.c b/net/sched/sch_cbq.c
+index f42025d..2a7ff53 100644
+--- a/net/sched/sch_cbq.c
++++ b/net/sched/sch_cbq.c
+@@ -1503,7 +1503,7 @@ cbq_change_class(struct Qdisc *sch, u32 classid, u32 parentid, struct nlattr **t
+ 
+ 		if (tca[TCA_RATE]) {
+ 			err = gen_replace_estimator(&cl->bstats, NULL,
+-						    &cl->rate_est,
++						    &cl->rate_est, NULL,
+ 						    NULL,
+ 						    qdisc_root_sleeping_running(sch),
+ 						    tca[TCA_RATE]);
+@@ -1605,7 +1605,7 @@ cbq_change_class(struct Qdisc *sch, u32 classid, u32 parentid, struct nlattr **t
+ 
+ 	if (tca[TCA_RATE]) {
+ 		err = gen_new_estimator(&cl->bstats, NULL, &cl->rate_est,
+-					NULL,
++					NULL, NULL,
+ 					qdisc_root_sleeping_running(sch),
+ 					tca[TCA_RATE]);
+ 		if (err) {
+diff --git a/net/sched/sch_drr.c b/net/sched/sch_drr.c
+index e0b0cf8..0896e23 100644
+--- a/net/sched/sch_drr.c
++++ b/net/sched/sch_drr.c
+@@ -95,7 +95,7 @@ static int drr_change_class(struct Qdisc *sch, u32 classid, u32 parentid,
+ 	if (cl != NULL) {
+ 		if (tca[TCA_RATE]) {
+ 			err = gen_replace_estimator(&cl->bstats, NULL,
+-						    &cl->rate_est,
++						    &cl->rate_est, NULL,
+ 						    NULL,
+ 						    qdisc_root_sleeping_running(sch),
+ 						    tca[TCA_RATE]);
+@@ -129,7 +129,7 @@ static int drr_change_class(struct Qdisc *sch, u32 classid, u32 parentid,
+ 
+ 	if (tca[TCA_RATE]) {
+ 		err = gen_replace_estimator(&cl->bstats, NULL, &cl->rate_est,
+-					    NULL,
++					    NULL, NULL,
+ 					    qdisc_root_sleeping_running(sch),
+ 					    tca[TCA_RATE]);
+ 		if (err) {
+diff --git a/net/sched/sch_hfsc.c b/net/sched/sch_hfsc.c
+index 3ae9877..f341324 100644
+--- a/net/sched/sch_hfsc.c
++++ b/net/sched/sch_hfsc.c
+@@ -972,7 +972,7 @@ hfsc_change_class(struct Qdisc *sch, u32 classid, u32 parentid,
+ 
+ 		if (tca[TCA_RATE]) {
+ 			err = gen_replace_estimator(&cl->bstats, NULL,
+-						    &cl->rate_est,
++						    &cl->rate_est, NULL,
+ 						    NULL,
+ 						    qdisc_root_sleeping_running(sch),
+ 						    tca[TCA_RATE]);
+@@ -1042,7 +1042,7 @@ hfsc_change_class(struct Qdisc *sch, u32 classid, u32 parentid,
+ 
+ 	if (tca[TCA_RATE]) {
+ 		err = gen_new_estimator(&cl->bstats, NULL, &cl->rate_est,
+-					NULL,
++					NULL, NULL,
+ 					qdisc_root_sleeping_running(sch),
+ 					tca[TCA_RATE]);
+ 		if (err) {
+diff --git a/net/sched/sch_htb.c b/net/sched/sch_htb.c
+index 2a4ab7c..acc0355 100644
+--- a/net/sched/sch_htb.c
++++ b/net/sched/sch_htb.c
+@@ -1407,7 +1407,7 @@ static int htb_change_class(struct Qdisc *sch, u32 classid,
+ 		if (htb_rate_est || tca[TCA_RATE]) {
+ 			err = gen_new_estimator(&cl->bstats, NULL,
+ 						&cl->rate_est,
+-						NULL,
++						NULL, NULL,
+ 						qdisc_root_sleeping_running(sch),
+ 						tca[TCA_RATE] ? : &est.nla);
+ 			if (err) {
+@@ -1473,7 +1473,7 @@ static int htb_change_class(struct Qdisc *sch, u32 classid,
+ 	} else {
+ 		if (tca[TCA_RATE]) {
+ 			err = gen_replace_estimator(&cl->bstats, NULL,
+-						    &cl->rate_est,
++						    &cl->rate_est, NULL,
+ 						    NULL,
+ 						    qdisc_root_sleeping_running(sch),
+ 						    tca[TCA_RATE]);
+diff --git a/net/sched/sch_qfq.c b/net/sched/sch_qfq.c
+index bb1a9c1..8026c1e 100644
+--- a/net/sched/sch_qfq.c
++++ b/net/sched/sch_qfq.c
+@@ -461,7 +461,7 @@ static int qfq_change_class(struct Qdisc *sch, u32 classid, u32 parentid,
+ 	if (cl != NULL) { /* modify existing class */
+ 		if (tca[TCA_RATE]) {
+ 			err = gen_replace_estimator(&cl->bstats, NULL,
+-						    &cl->rate_est,
++						    &cl->rate_est, NULL,
+ 						    NULL,
+ 						    qdisc_root_sleeping_running(sch),
+ 						    tca[TCA_RATE]);
+@@ -488,7 +488,7 @@ static int qfq_change_class(struct Qdisc *sch, u32 classid, u32 parentid,
+ 	if (tca[TCA_RATE]) {
+ 		err = gen_new_estimator(&cl->bstats, NULL,
+ 					&cl->rate_est,
+-					NULL,
++					NULL, NULL,
+ 					qdisc_root_sleeping_running(sch),
+ 					tca[TCA_RATE]);
+ 		if (err)
+-- 
+2.7.5
