@@ -1,57 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeENFtI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 01:49:08 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:45509 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751198AbeENFtG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 01:49:06 -0400
-X-ME-Sender: <xms:USP5WlznrTuqpZOKIws4TTOy8q9tsfECba9BiOP8VEDE9aMhd2s4RA>
-Subject: Re: [PATCH 01/10] autofs4 - merge auto_fs.h and auto_fs4.h
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        autofs mailing list <autofs@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <152626703024.28589.9571964661718767929.stgit@pluto.themaw.net>
- <20180514031509.GC30522@ZenIV.linux.org.uk>
-From: Ian Kent <raven@themaw.net>
-Message-ID: <5a7355b4-7bf1-c911-e010-263e3380794a@themaw.net>
-Date: Mon, 14 May 2018 13:49:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751982AbeENFwc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 01:52:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42623 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751198AbeENFwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 01:52:30 -0400
+Date: Mon, 14 May 2018 07:52:28 +0200
+From: Hannes Reinecke <hare@suse.de>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] scsi: clean up generated file scsi_devinfo_tbl.c
+Message-ID: <20180514075228.784a475f@pentland.suse.de>
+In-Reply-To: <6e64c815-43dd-3945-6c58-66b1e0533403@infradead.org>
+References: <6e64c815-43dd-3945-6c58-66b1e0533403@infradead.org>
+Organization: SUSE Linux GmbH
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180514031509.GC30522@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/05/18 11:15, Al Viro wrote:
-> On Mon, May 14, 2018 at 11:03:50AM +0800, Ian Kent wrote:
->> The autofs module has long since been removed so there's no need to have
->> two separate include files for autofs.
+On Sun, 13 May 2018 17:10:52 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
+
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> Umm...  Why does fs/compat_ioctl.c need either include, actually?
+> "make clean" should remove the generated file "scsi_devinfo_tbl.c",
+> so list it in the clean-files variable so that the file gets
+> cleaned up.
 > 
->> --- a/fs/compat_ioctl.c
->> +++ b/fs/compat_ioctl.c
->> @@ -39,7 +39,6 @@
->>  #include <linux/if_pppox.h>
->>  #include <linux/mtio.h>
->>  #include <linux/auto_fs.h>
->> -#include <linux/auto_fs4.h>
->>  #include <linux/tty.h>
->>  #include <linux/vt_kern.h>
->>  #include <linux/fb.h>
+> Fixes: 345e29608b4b ("scsi: scsi: Export blacklist flags to sysfs")
 > 
-> AFAICS, we can just delete both.  Matter of fact, a *lot* of those includes are
-> pointless nowadays...
+> Cc: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+>  drivers/scsi/Makefile |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> --- linux-4.17-rc4.orig/drivers/scsi/Makefile
+> +++ linux-4.17-rc4/drivers/scsi/Makefile
+> @@ -182,7 +182,7 @@ zalon7xx-objs	:= zalon.o ncr53c8xx.o
+>  NCR_Q720_mod-objs	:= NCR_Q720.o ncr53c8xx.o
+>  
+>  # Files generated that shall be removed upon make clean
+> -clean-files :=	53c700_d.h 53c700_u.h
+> +clean-files :=	53c700_d.h 53c700_u.h scsi_devinfo_tbl.c
+>  
+>  $(obj)/53c700.o $(MODVERDIR)/$(obj)/53c700.ver: $(obj)/53c700_d.h
+>  
+> 
 > 
 
-OK, I'll have a look at that and post a follow up patch.
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 
-Thanks for having a look at these Al.
+Cheers,
+
+Hannes
