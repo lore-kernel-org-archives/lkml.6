@@ -1,45 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752147AbeENTTE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 15:19:04 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41970 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752118AbeENTTB (ORCPT
+        id S1752168AbeENTTR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 15:19:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50332 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752121AbeENTTD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 15:19:01 -0400
-X-Google-Smtp-Source: AB8JxZo++v7NsIARho6IhcIOplu8rmgGSdXvMT9K8wXsOWeqjEYeACYhQKv93uWvYMOz1rFUWbuf6A==
-Date: Mon, 14 May 2018 15:11:10 -0400
-From: Kent Overstreet <kent.overstreet@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-mm@kvack.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 01/10] mempool: Add mempool_init()/mempool_exit()
-Message-ID: <20180514191110.GB8869@kmo-pixel>
-References: <20180509013358.16399-1-kent.overstreet@gmail.com>
- <20180509013358.16399-2-kent.overstreet@gmail.com>
- <f6b03dbb-a9d0-2b5b-c21a-e92572bc343a@kernel.dk>
+        Mon, 14 May 2018 15:19:03 -0400
+Date: Mon, 14 May 2018 12:20:28 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
+        kernel-team@android.com
+Subject: Re: [PATCH RFC 7/8] rcu: trace CleanupMore condition only if needed
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180514031541.67247-1-joel@joelfernandes.org>
+ <20180514031541.67247-8-joel@joelfernandes.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f6b03dbb-a9d0-2b5b-c21a-e92572bc343a@kernel.dk>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180514031541.67247-8-joel@joelfernandes.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18051419-0048-0000-0000-0000026CDF78
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009025; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032299; UDB=6.00527733; IPR=6.00811430;
+ MB=3.00021110; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 19:19:00
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051419-0049-0000-0000-0000451EBC3E
+Message-Id: <20180514192028.GG26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805140194
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 03:11:45PM -0600, Jens Axboe wrote:
-> On 5/8/18 7:33 PM, Kent Overstreet wrote:
-> > Allows mempools to be embedded in other structs, getting rid of a
-> > pointer indirection from allocation fastpaths.
-> > 
-> > mempool_exit() is safe to call on an uninitialized but zeroed mempool.
+On Sun, May 13, 2018 at 08:15:40PM -0700, Joel Fernandes (Google) wrote:
+> Currently the tree RCU clean up code records a CleanupMore trace event
+> even if the GP was already in progress. This makes CleanupMore show up
+> twice for no reason. Avoid it.
 > 
-> Looks fine to me. I'd like to carry it through the block branch, as some
-> of the following cleanups depend on it. Kent, can you post a v2 with
-> the destroy -> exit typo fixed up?
-> 
-> But would be nice to have someone sign off on it...
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-Done - it's now up in my git repo:
-http://evilpiepirate.org/git/bcachefs.git bcachefs-block
+Good catch, and I applied this patch.  I did rework the commit log
+a bit, so please look it over to make sure I didn't mess it up.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+commit 52c4e689efd975f5383895b1bc1b91bc90fdd372
+Author: Joel Fernandes (Google) <joel@joelfernandes.org>
+Date:   Sun May 13 20:15:40 2018 -0700
+
+    rcu: Produce last "CleanupMore" trace only if late-breaking request
+    
+    Currently the tree RCU clean-up code records a "CleanupMore" trace
+    event in response to late-arriving grace-period requests even if the
+    grace period was already requested. This makes "CleanupMore" show up an
+    extra time (in addition to once for each rcu_node structure that was
+    previously marked with the request) for no good reason.  This commit
+    therefore avoids emitting this trace message unless the only if the only
+    request for this next grace period arrived during or after the cleanup
+    scan of the rcu_node structures.
+    
+    Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 8063a0478870..de6447dd73de 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2072,7 +2072,7 @@ static void rcu_gp_cleanup(struct rcu_state *rsp)
+ 	rsp->gp_state = RCU_GP_IDLE;
+ 	/* Check for GP requests since above loop. */
+ 	rdp = this_cpu_ptr(rsp->rda);
+-	if (ULONG_CMP_LT(rnp->gp_seq, rnp->gp_seq_needed)) {
++	if (!needgp && ULONG_CMP_LT(rnp->gp_seq, rnp->gp_seq_needed)) {
+ 		trace_rcu_this_gp(rnp, rdp, rnp->gp_seq_needed,
+ 				  TPS("CleanupMore"));
+ 		needgp = true;
