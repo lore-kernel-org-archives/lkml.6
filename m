@@ -1,55 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752461AbeENU7R (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 16:59:17 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:36828 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752281AbeENU6P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 16:58:15 -0400
-X-Google-Smtp-Source: AB8JxZon4k1h7PPv9qCJTFSnSLEw67tVFuxU1zXcK3+zdvaOfmRwr24QnISRLRQLT2GiiYVIz5yK1Q==
-Date: Mon, 14 May 2018 13:52:41 -0700
-From: Olof Johansson <olof@lixom.net>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
-        Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL 5/5] ARM: exynos: mach/soc for v4.18
-Message-ID: <20180514205241.al6v4ejxwy26j4ue@localhost>
-References: <20180513154238.22508-1-krzk@kernel.org>
- <20180513154238.22508-6-krzk@kernel.org>
+        id S1752512AbeENVAC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:00:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752159AbeENU77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 16:59:59 -0400
+Message-Id: <20180514205957.505228054@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Mon, 14 May 2018 16:58:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
+        linux-rt-users@vger.kernel.org
+Subject: [PATCH v2 01/14] tracing: Do not reference event data in post call triggers
+References: <20180514205845.017925650@goodmis.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180513154238.22508-6-krzk@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0001-tracing-Do-not-reference-event-data-in-post-call-tri.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 05:42:38PM +0200, Krzysztof Kozlowski wrote:
-> The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-> 
->   Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-> 
-> are available in the git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.18
-> 
-> for you to fetch changes up to 9ad9a2183bf51da7f8840f2e7087816c0fc8c91d:
-> 
->   ARM: exynos: Remove unused soc_is_exynos{4,5} (2018-05-13 14:07:03 +0200)
-> 
-> ----------------------------------------------------------------
-> Samsung mach/soc changes for v4.18
-> 
-> 1. Remove at24_platform_data in S3C2440.
-> 2. Fix invalid SPDX identifier.
-> 3. Remove Exynos5440 entirely.
-> 4. Cleanups.
-> 5. Remove static mapping of SCU SFR and rely on DTS.
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Merged, thanks!
+Trace event triggers can be called before or after the event has been
+committed. If it has been called after the commit, there's a possibility
+that the event no longer exists. Currently, the two post callers is the
+trigger to disable tracing (traceoff) and the one that will record a stack
+dump (stacktrace). Neither of them reference the trace event entry record,
+as that would lead to a race condition that could pass in corrupted data.
 
+To prevent any other users of the post data triggers from using the trace
+event record, pass in NULL to the post call trigger functions for the event
+record, as they should never need to use them in the first place.
 
--Olof
+This does not fix any bug, but prevents bugs from happening by new post call
+trigger users.
+
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+ include/linux/trace_events.h        | 3 +--
+ kernel/trace/trace.h                | 4 ++--
+ kernel/trace/trace_events_trigger.c | 6 ++----
+ 3 files changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 2bde3eff564c..d1c442d9bd85 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -435,8 +435,7 @@ event_triggers_call(struct trace_event_file *file, void *rec,
+ 		    struct ring_buffer_event *event);
+ extern void
+ event_triggers_post_call(struct trace_event_file *file,
+-			 enum event_trigger_type tt,
+-			 void *rec, struct ring_buffer_event *event);
++			 enum event_trigger_type tt);
+ 
+ bool trace_event_ignore_this_pid(struct trace_event_file *trace_file);
+ 
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 6fb46a06c9dc..24b666891eaf 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1334,7 +1334,7 @@ event_trigger_unlock_commit(struct trace_event_file *file,
+ 		trace_buffer_unlock_commit(file->tr, buffer, event, irq_flags, pc);
+ 
+ 	if (tt)
+-		event_triggers_post_call(file, tt, entry, event);
++		event_triggers_post_call(file, tt);
+ }
+ 
+ /**
+@@ -1367,7 +1367,7 @@ event_trigger_unlock_commit_regs(struct trace_event_file *file,
+ 						irq_flags, pc, regs);
+ 
+ 	if (tt)
+-		event_triggers_post_call(file, tt, entry, event);
++		event_triggers_post_call(file, tt);
+ }
+ 
+ #define FILTER_PRED_INVALID	((unsigned short)-1)
+diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
+index d251cabcf69a..cc4148bfc01a 100644
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -97,7 +97,6 @@ EXPORT_SYMBOL_GPL(event_triggers_call);
+  * event_triggers_post_call - Call 'post_triggers' for a trace event
+  * @file: The trace_event_file associated with the event
+  * @tt: enum event_trigger_type containing a set bit for each trigger to invoke
+- * @rec: The trace entry for the event
+  *
+  * For each trigger associated with an event, invoke the trigger
+  * function registered with the associated trigger command, if the
+@@ -108,8 +107,7 @@ EXPORT_SYMBOL_GPL(event_triggers_call);
+  */
+ void
+ event_triggers_post_call(struct trace_event_file *file,
+-			 enum event_trigger_type tt,
+-			 void *rec, struct ring_buffer_event *event)
++			 enum event_trigger_type tt)
+ {
+ 	struct event_trigger_data *data;
+ 
+@@ -117,7 +115,7 @@ event_triggers_post_call(struct trace_event_file *file,
+ 		if (data->paused)
+ 			continue;
+ 		if (data->cmd_ops->trigger_type & tt)
+-			data->ops->func(data, rec, event);
++			data->ops->func(data, NULL, NULL);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(event_triggers_post_call);
+-- 
+2.17.0
