@@ -1,28 +1,28 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqKQ/9yIUJjtKk2OD0ucHTpeocgWOUE7cxW8Jt1IQs4/mhGJt1kJzwWAHQRQ9+lz492XvYe
-ARC-Seal: i=1; a=rsa-sha256; t=1526280642; cv=none;
+X-Google-Smtp-Source: AB8JxZpa7F4kuwOw8ufZdd2r/DIaZY7O8QfUZiudtAM9Ly1ghZHhvA86mwOYTZwsE9yRJcEmgl8D
+ARC-Seal: i=1; a=rsa-sha256; t=1526280639; cv=none;
         d=google.com; s=arc-20160816;
-        b=O/89x5wa11m/GBE+K59o3C4EPJfth8gYexb0ymSTR23hd5NbyISBVJ2WPbptbuN+tr
-         HxOpO5Q058+dVpEgOAHfvBE0ThxL9TdT2pjosWQsGP6LMxtsLtc/oFxZm3MdRgHYfr6q
-         i8s3xj/8+t8kn0/H1ohFlZQlst8CX9udaIM8jDWSzFhmEGVk/S0hW7lhs2NjPF7m7RwO
-         w1XTYeuqh9LCQShQrIklS3ncl8Aec884Ncr04/hv+8v48kZnhTWCfM7BOtLLMF8IIqQr
-         HEsRaY0kI2oorcHp/QiUrOgYotgzXz+n4BN/wMypPaHvu371xepZHXxpPF6tb8EBo4+A
-         s0+w==
+        b=QdPjf0x/BBInTMFtyyjxokbPU3HxJu1df3sr1d9ParTJP5GT7WRKPiKLReeC16wZBO
+         Fn8EJwOFhUZRl6aUA8+tmH+XFxbqNWC928b767GvSVkDszU2L8eeSAlNmOMbpUSDAUKi
+         syBK7OY846Pg8VT1iOzIK5w+0nbBImbR2CW/bGmgwAfB/EbcCJmtLG4KutnTSPQZPY3f
+         DO/kuKTwH8I9YIOTVcq7tJmLabV1YM3id3/FOttyX4w/C1nYyo9jycFbEZXzlOtmbGI1
+         bsS3eT7MK4JKnPH0URgiqt6dxAfTcY+ZyUngIC+oJetM2GKC//G0cdtm8JIysFOuvp8s
+         MSkg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=J+bNGjYKvnYgt67xt3E+VsXjV5BrMX54R4Of1MTHtsc=;
-        b=TGEJ6meh2BaPJDAgDLf3jlGmJrZYyZV1QL4ke9+rJX0+8oFEaRPOfoAOjS/BLXdwEq
-         4bJKYWvgaQ+Ihqm7qWKODEU+0W01tzZzdAH4qD2b8YomJZEr+5Cm1g91FP9V9LCgULR5
-         K7kHMl/q8eFh/Py3g4YCDxJZqt0XXFvOqVbXfT9NLdgTqoQu0OcEHtkOQ2u5uFoRdWzD
-         ebdzlA+Hlr5XROTBQXeIOcLz/sFK0k8HWndSE14p+XMUvZtEkPGol+RurOZbmBxDNz6d
-         kQu26VlN0H2pzgLTZLLjtWtMLPecy08xW551pU3mphS66yErfZRH0Oqssh9hGf3nFzBy
-         p0aQ==
+        bh=HYfFOJL8fn2baxeDOk7Hmu8Ya+1MD8xFLZCr1P+od1c=;
+        b=Cl+KYd+8HXo+Dzdb4baXnpnc5vee9GSEuA/AJ8JzdDt9XBhjOEVZsqtPcBS9vqPZp7
+         N9GWbyRLI3aoHdjVy/LTr5kK3dZJxxELz7JdxNAD9/mJFilSNqPEG1YAIcafBF2YrhuM
+         kfhNF1JTy9UHtfX+faEm5C4dnL8zz+tz3tKpfSmj/qp/GlLuKSkQAXKhhfhBJ0HCMNhG
+         s1HTEkbdRe7jKEdBMx81pq4ACSSQRURkTr96ijYmc31DPGYSbL/9ymfVmtiF7yIAaY0C
+         hnFgRcPQSnajPZcTsM2fZypWsYVhZO4CwVhoh9N2ZbdlYdXy8FAi/7yXQ2nwdeaGqEKL
+         BwCQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=EVaaLChi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=yCANs8fI;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=EVaaLChi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=yCANs8fI;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Eric Dumazet <edumazet@google.com>,
 	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 16/23] soreuseport: initialise timewait reuseport field
-Date: Mon, 14 May 2018 08:48:45 +0200
-Message-Id: <20180514064704.736376751@linuxfoundation.org>
+Subject: [PATCH 3.18 15/23] net: fix uninit-value in __hw_addr_add_ex()
+Date: Mon, 14 May 2018 08:48:44 +0200
+Message-Id: <20180514064704.698768457@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064704.046463679@linuxfoundation.org>
 References: <20180514064704.046463679@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421251042067241?=
-X-GMAIL-MSGID: =?utf-8?q?1600421251042067241?=
+X-GMAIL-THRID: =?utf-8?q?1600421247484712480?=
+X-GMAIL-MSGID: =?utf-8?q?1600421247484712480?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,145 +54,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Dumazet <edumazet@google.com>
 
-commit 3099a52918937ab86ec47038ad80d377ba16c531 upstream.
+commit 77d36398d99f2565c0a8d43a86fd520a82e64bb8 upstream.
 
-syzbot reported an uninit-value in inet_csk_bind_conflict() [1]
+syzbot complained :
 
-It turns out we never propagated sk->sk_reuseport into timewait socket.
-
-[1]
-BUG: KMSAN: uninit-value in inet_csk_bind_conflict+0x5f9/0x990 net/ipv4/inet_connection_sock.c:151
-CPU: 1 PID: 3589 Comm: syzkaller008242 Not tainted 4.16.0+ #82
+BUG: KMSAN: uninit-value in memcmp+0x119/0x180 lib/string.c:861
+CPU: 0 PID: 3 Comm: kworker/0:0 Not tainted 4.16.0+ #82
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: ipv6_addrconf addrconf_dad_work
 Call Trace:
  __dump_stack lib/dump_stack.c:17 [inline]
  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
- inet_csk_bind_conflict+0x5f9/0x990 net/ipv4/inet_connection_sock.c:151
- inet_csk_get_port+0x1d28/0x1e40 net/ipv4/inet_connection_sock.c:320
- inet6_bind+0x121c/0x1820 net/ipv6/af_inet6.c:399
- SYSC_bind+0x3f2/0x4b0 net/socket.c:1474
- SyS_bind+0x54/0x80 net/socket.c:1460
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x4416e9
-RSP: 002b:00007ffce6d15c88 EFLAGS: 00000217 ORIG_RAX: 0000000000000031
-RAX: ffffffffffffffda RBX: 0100000000000000 RCX: 00000000004416e9
-RDX: 000000000000001c RSI: 0000000020402000 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 00000000e6d15e08 R09: 00000000e6d15e08
-R10: 0000000000000004 R11: 0000000000000217 R12: 0000000000009478
-R13: 00000000006cd448 R14: 0000000000000000 R15: 0000000000000000
+ memcmp+0x119/0x180 lib/string.c:861
+ __hw_addr_add_ex net/core/dev_addr_lists.c:60 [inline]
+ __dev_mc_add+0x1c2/0x8e0 net/core/dev_addr_lists.c:670
+ dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
+ igmp6_group_added+0x2db/0xa00 net/ipv6/mcast.c:662
+ ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
+ addrconf_join_solict net/ipv6/addrconf.c:2078 [inline]
+ addrconf_dad_begin net/ipv6/addrconf.c:3828 [inline]
+ addrconf_dad_work+0x427/0x2150 net/ipv6/addrconf.c:3954
+ process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2113
+ worker_thread+0x113c/0x24f0 kernel/workqueue.c:2247
+ kthread+0x539/0x720 kernel/kthread.c:239
 
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
- kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
- __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
- tcp_time_wait+0xf17/0xf50 net/ipv4/tcp_minisocks.c:283
- tcp_rcv_state_process+0xebe/0x6490 net/ipv4/tcp_input.c:6003
- tcp_v6_do_rcv+0x11dd/0x1d90 net/ipv6/tcp_ipv6.c:1331
- sk_backlog_rcv include/net/sock.h:908 [inline]
- __release_sock+0x2d6/0x680 net/core/sock.c:2271
- release_sock+0x97/0x2a0 net/core/sock.c:2786
- tcp_close+0x277/0x18f0 net/ipv4/tcp.c:2269
- inet_release+0x240/0x2a0 net/ipv4/af_inet.c:427
- inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:435
- sock_release net/socket.c:595 [inline]
- sock_close+0xe0/0x300 net/socket.c:1149
- __fput+0x49e/0xa10 fs/file_table.c:209
- ____fput+0x37/0x40 fs/file_table.c:243
- task_work_run+0x243/0x2c0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x10e1/0x38d0 kernel/exit.c:867
- do_group_exit+0x1a0/0x360 kernel/exit.c:970
- SYSC_exit_group+0x21/0x30 kernel/exit.c:981
- SyS_exit_group+0x25/0x30 kernel/exit.c:979
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
- kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
- __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
- inet_twsk_alloc+0xaef/0xc00 net/ipv4/inet_timewait_sock.c:182
- tcp_time_wait+0xd9/0xf50 net/ipv4/tcp_minisocks.c:258
- tcp_rcv_state_process+0xebe/0x6490 net/ipv4/tcp_input.c:6003
- tcp_v6_do_rcv+0x11dd/0x1d90 net/ipv6/tcp_ipv6.c:1331
- sk_backlog_rcv include/net/sock.h:908 [inline]
- __release_sock+0x2d6/0x680 net/core/sock.c:2271
- release_sock+0x97/0x2a0 net/core/sock.c:2786
- tcp_close+0x277/0x18f0 net/ipv4/tcp.c:2269
- inet_release+0x240/0x2a0 net/ipv4/af_inet.c:427
- inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:435
- sock_release net/socket.c:595 [inline]
- sock_close+0xe0/0x300 net/socket.c:1149
- __fput+0x49e/0xa10 fs/file_table.c:209
- ____fput+0x37/0x40 fs/file_table.c:243
- task_work_run+0x243/0x2c0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x10e1/0x38d0 kernel/exit.c:867
- do_group_exit+0x1a0/0x360 kernel/exit.c:970
- SYSC_exit_group+0x21/0x30 kernel/exit.c:981
- SyS_exit_group+0x25/0x30 kernel/exit.c:979
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
- kmem_cache_alloc+0xaab/0xb90 mm/slub.c:2756
- inet_twsk_alloc+0x13b/0xc00 net/ipv4/inet_timewait_sock.c:163
- tcp_time_wait+0xd9/0xf50 net/ipv4/tcp_minisocks.c:258
- tcp_rcv_state_process+0xebe/0x6490 net/ipv4/tcp_input.c:6003
- tcp_v6_do_rcv+0x11dd/0x1d90 net/ipv6/tcp_ipv6.c:1331
- sk_backlog_rcv include/net/sock.h:908 [inline]
- __release_sock+0x2d6/0x680 net/core/sock.c:2271
- release_sock+0x97/0x2a0 net/core/sock.c:2786
- tcp_close+0x277/0x18f0 net/ipv4/tcp.c:2269
- inet_release+0x240/0x2a0 net/ipv4/af_inet.c:427
- inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:435
- sock_release net/socket.c:595 [inline]
- sock_close+0xe0/0x300 net/socket.c:1149
- __fput+0x49e/0xa10 fs/file_table.c:209
- ____fput+0x37/0x40 fs/file_table.c:243
- task_work_run+0x243/0x2c0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x10e1/0x38d0 kernel/exit.c:867
- do_group_exit+0x1a0/0x360 kernel/exit.c:970
- SYSC_exit_group+0x21/0x30 kernel/exit.c:981
- SyS_exit_group+0x25/0x30 kernel/exit.c:979
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-Fixes: da5e36308d9f ("soreuseport: TCP/IPv4 implementation")
+Fixes: f001fde5eadd ("net: introduce a list of device addresses dev_addr_list (v6)")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/net/inet_timewait_sock.h |    1 +
- net/ipv4/inet_timewait_sock.c    |    1 +
- 2 files changed, 2 insertions(+)
+ net/core/dev_addr_lists.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/include/net/inet_timewait_sock.h
-+++ b/include/net/inet_timewait_sock.h
-@@ -108,6 +108,7 @@ struct inet_timewait_sock {
- #define tw_family		__tw_common.skc_family
- #define tw_state		__tw_common.skc_state
- #define tw_reuse		__tw_common.skc_reuse
-+#define tw_reuseport		__tw_common.skc_reuseport
- #define tw_ipv6only		__tw_common.skc_ipv6only
- #define tw_bound_dev_if		__tw_common.skc_bound_dev_if
- #define tw_node			__tw_common.skc_nulls_node
---- a/net/ipv4/inet_timewait_sock.c
-+++ b/net/ipv4/inet_timewait_sock.c
-@@ -191,6 +191,7 @@ struct inet_timewait_sock *inet_twsk_all
- 		tw->tw_dport	    = inet->inet_dport;
- 		tw->tw_family	    = sk->sk_family;
- 		tw->tw_reuse	    = sk->sk_reuse;
-+		tw->tw_reuseport    = sk->sk_reuseport;
- 		tw->tw_hash	    = sk->sk_hash;
- 		tw->tw_ipv6only	    = 0;
- 		tw->tw_transparent  = inet->transparent;
+--- a/net/core/dev_addr_lists.c
++++ b/net/core/dev_addr_lists.c
+@@ -57,8 +57,8 @@ static int __hw_addr_add_ex(struct netde
+ 		return -EINVAL;
+ 
+ 	list_for_each_entry(ha, &list->list, list) {
+-		if (!memcmp(ha->addr, addr, addr_len) &&
+-		    ha->type == addr_type) {
++		if (ha->type == addr_type &&
++		    !memcmp(ha->addr, addr, addr_len)) {
+ 			if (global) {
+ 				/* check if addr is already used as global */
+ 				if (ha->global_use)
