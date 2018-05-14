@@ -1,223 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752428AbeENSz3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 14:55:29 -0400
-Received: from mga06.intel.com ([134.134.136.31]:55031 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751978AbeENSw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 14:52:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,401,1520924400";
-   d="scan'208";a="39244628"
-From: Fenghua Yu <fenghua.yu@intel.com>
-To: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        "Ashok Raj" <ashok.raj@intel.com>,
-        "Ravi V Shankar" <ravi.v.shankar@intel.com>,
-        "Tony Luck" <tony.luck@intel.com>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Rafael Wysocki" <rafael.j.wysocki@intel.com>,
-        "Arjan van de Ven" <arjan@infradead.org>,
-        "Alan Cox" <alan@linux.intel.com>
-Cc: "x86" <x86@kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH 03/15] x86/split_lock: Handle #AC exception for split lock in kernel mode
-Date: Mon, 14 May 2018 11:52:13 -0700
-Message-Id: <1526323945-211107-4-git-send-email-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.5.0
-In-Reply-To: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
-References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
+        id S1752447AbeENSzv (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 14:55:51 -0400
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com ([66.163.189.89]:36603
+        "EHLO sonic306-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751515AbeENSzs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 14:55:48 -0400
+X-YMail-OSG: i4_OKgMVM1mIRrau39lVN6Z4N9SywQvPXouXLntToVtsHZ65MrdhWE8PvOMiW1f
+ eVoyzAWlY90PHMq5dv3Iogr8jqUP4Dd1O_BYLia36RjXQOLwT4_i6876Q4UOee_MAIAV7JaVny6U
+ rrhGuWruW2NE9.ySf_AjvsZUT4P1KOKVu6hVYxB3gIsnqt98vlTGCNBUO3KRxYfzm9OdyPfoa8dZ
+ XW95CcKHgiYGYNaVs5lNAnf6UAPhR1Qm3ujUgcLMtadG7lRyJM.rG4ue_wua3ZNpWVcoMaSLYopa
+ aqyMoKe4MzEq5grnP8iY0PgONcgWFgonrOQeTbxCGPe9jDcQQ_luE_hp1OOsw1w1M1hlZ.0Pu5uV
+ rRW2DlXj5whTAYWUp1qZ15ZGea5HDGs1h950oswnOwrAbbgSHi9nyHl9zAkoERIC.e2Hdk9vMRYK
+ JoXmHZ.UAvkc_FLh5JHTa7exdZd6SgzLs.dQYLq8LDEm4kPCwHlWQ3HTUatpXqNiEyLJCGuEj_l1
+ oivWk9ixGJXEooMomz2fzo526ZXeGw24R5_obakkt6one5pS3bHNFTJi9hD9PKFueBS1bVvDzzSN
+ yxFUqeZtnVmwZbpS_lk2EC.cs799u9Bd04toFWHwBNU813MlwFoAWcUgUoE_vcZqLNsh_0l0KrH6
+ u_JyxHbZmKXo57FGy2SNyuyQyfcSJ04y2
+Subject: Re: [PATCH 20/23] LSM: Move common usercopy into
+To: Stephen Smalley <sds@tycho.nsa.gov>,
+        LSM <linux-security-module@vger.kernel.org>,
+        LKLM <linux-kernel@vger.kernel.org>, Paul Moore <paul@paul-moore.com>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        James Morris <jmorris@namei.org>
+References: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
+ <cb3455a2-b957-8a9a-f056-35f97fe51e71@schaufler-ca.com>
+ <a9e6b33b-3d17-2535-5798-bc092e8559c3@tycho.nsa.gov>
+ <992325e2-0f53-0b3d-ddd2-f4f8ba7ccf89@tycho.nsa.gov>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <0c6ec4e0-1562-8f30-09e9-9de0109b2cbc@schaufler-ca.com>
+Date: Mon, 14 May 2018 11:55:41 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <992325e2-0f53-0b3d-ddd2-f4f8ba7ccf89@tycho.nsa.gov>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When #AC exception for split lock happens in kernel code, disable
-further #AC exception for split lock in the handler. Then the
-faulting instruction is re-executed after exiting from the handler
-without triggering another #AC exception. Re-enable #AC exception
-for split lock later (after 1 ms).
+On 5/14/2018 9:53 AM, Stephen Smalley wrote:
+> On 05/14/2018 11:12 AM, Stephen Smalley wrote:
+>> On 05/10/2018 08:55 PM, Casey Schaufler wrote:
+>>> From: Casey Schaufler <casey@schaufler-ca.com>
+>>> Date: Thu, 10 May 2018 15:54:25 -0700
+>>> Subject: [PATCH 20/23] LSM: Move common usercopy into
+>>>  security_getpeersec_stream
+>>>
+>>> The modules implementing hook for getpeersec_stream
+>>> don't need to be duplicating the copy-to-user checks.
+>>> Moving the user copy part into the infrastructure makes
+>>> the security module code simpler and reduces the places
+>>> where user copy code may go awry.
+>>>
+>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>> ---
+>>>  include/linux/lsm_hooks.h  | 10 ++++------
+>>>  include/linux/security.h   |  6 ++++--
+>>>  security/apparmor/lsm.c    | 28 ++++++++++------------------
+>>>  security/security.c        | 17 +++++++++++++++--
+>>>  security/selinux/hooks.c   | 22 +++++++---------------
+>>>  security/smack/smack_lsm.c | 19 ++++++++-----------
+>>>  6 files changed, 48 insertions(+), 54 deletions(-)
+>>>
+>>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>>> index 81504623afb4..84bc9ec01931 100644
+>>> --- a/include/linux/lsm_hooks.h
+>>> +++ b/include/linux/lsm_hooks.h
+>>> @@ -841,9 +841,8 @@
+>>>   *	SO_GETPEERSEC.  For tcp sockets this can be meaningful if the
+>>>   *	socket is associated with an ipsec SA.
+>>>   *	@sock is the local socket.
+>>> - *	@optval userspace memory where the security state is to be copied.
+>>> - *	@optlen userspace int where the module should copy the actual length
+>>> - *	of the security state.
+>>> + *	@optval the security state.
+>>> + *	@optlen the actual length of the security state.
+>>>   *	@len as input is the maximum length to copy to userspace provided
+>>>   *	by the caller.
+>>>   *	Return 0 if all is well, otherwise, typical getsockopt return
+>>> @@ -1674,9 +1673,8 @@ union security_list_options {
+>>>  	int (*socket_setsockopt)(struct socket *sock, int level, int optname);
+>>>  	int (*socket_shutdown)(struct socket *sock, int how);
+>>>  	int (*socket_sock_rcv_skb)(struct sock *sk, struct sk_buff *skb);
+>>> -	int (*socket_getpeersec_stream)(struct socket *sock,
+>>> -					char __user *optval,
+>>> -					int __user *optlen, unsigned int len);
+>>> +	int (*socket_getpeersec_stream)(struct socket *sock, char **optval,
+>>> +					int *optlen, unsigned int len);
+>>>  	int (*socket_getpeersec_dgram)(struct socket *sock,
+>>>  					struct sk_buff *skb,
+>>>  					struct secids *secid);
+>>> diff --git a/include/linux/security.h b/include/linux/security.h
+>>> index ab70064c283f..712d138e0148 100644
+>>> --- a/include/linux/security.h
+>>> +++ b/include/linux/security.h
+>>> @@ -1369,8 +1369,10 @@ static inline int security_sock_rcv_skb(struct sock *sk,
+>>>  	return 0;
+>>>  }
+>>>  
+>>> -static inline int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
+>>> -						    int __user *optlen, unsigned len)
+>>> +static inline int security_socket_getpeersec_stream(struct socket *sock,
+>>> +						    char __user *optval,
+>>> +						    int __user *optlen,
+>>> +						    unsigned int len)
+>>>  {
+>>>  	return -ENOPROTOOPT;
+>>>  }
+>>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+>>> index 90453dbb4fac..7444cfa689b3 100644
+>>> --- a/security/apparmor/lsm.c
+>>> +++ b/security/apparmor/lsm.c
+>>> @@ -1017,10 +1017,8 @@ static struct aa_label *sk_peer_label(struct sock *sk)
+>>>   *
+>>>   * Note: for tcp only valid if using ipsec or cipso on lan
+>>>   */
+>>> -static int apparmor_socket_getpeersec_stream(struct socket *sock,
+>>> -					     char __user *optval,
+>>> -					     int __user *optlen,
+>>> -					     unsigned int len)
+>>> +static int apparmor_socket_getpeersec_stream(struct socket *sock, char **optval,
+>>> +					     int *optlen, unsigned int len)
+>>>  {
+>>>  	char *name;
+>>>  	int slen, error = 0;
+>>> @@ -1037,22 +1035,16 @@ static int apparmor_socket_getpeersec_stream(struct socket *sock,
+>>>  				 FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+>>>  				 FLAG_HIDDEN_UNCONFINED, GFP_KERNEL);
+>>>  	/* don't include terminating \0 in slen, it breaks some apps */
+>>> -	if (slen < 0) {
+>>> +	if (slen < 0)
+>>>  		error = -ENOMEM;
+>>> -	} else {
+>>> -		if (slen > len) {
+>>> -			error = -ERANGE;
+>>> -		} else if (copy_to_user(optval, name, slen)) {
+>>> -			error = -EFAULT;
+>>> -			goto out;
+>>> -		}
+>>> -		if (put_user(slen, optlen))
+>>> -			error = -EFAULT;
+>>> -out:
+>>> -		kfree(name);
+>>> -
+>>> +	else if (slen > len)
+>>> +		error = -ERANGE;
+>>> +	else {
+>>> +		*optlen = slen;
+>>> +		*optval = name;
+>>>  	}
+>>> -
+>>> +	if (error)
+>>> +		kfree(name);
+>>>  done:
+>>>  	end_current_label_crit_section(label);
+>>>  
+>>> diff --git a/security/security.c b/security/security.c
+>>> index cbe1a497ec5a..6144ff52d862 100644
+>>> --- a/security/security.c
+>>> +++ b/security/security.c
+>>> @@ -1924,8 +1924,21 @@ EXPORT_SYMBOL(security_sock_rcv_skb);
+>>>  int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
+>>>  				      int __user *optlen, unsigned len)
+>>>  {
+>>> -	return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
+>>> -				optval, optlen, len);
+>>> +	char *tval = NULL;
+>>> +	u32 tlen;
+>>> +	int rc;
+>>> +
+>>> +	rc = call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
+>>> +			   &tval, &tlen, len);
+>>> +	if (rc == 0) {
+>>> +		tlen = strlen(tval) + 1;
+>> Why are you recomputing tlen here from what the module provided, and further presuming it must be nul-terminated?
+> Also, at least for SELinux, we copy out the length even when returning ERANGE, and libselinux uses that to realloc the buffer and try again.
 
-During the period between disabling and re-enabling #AC exception for
-split lock, some split locked accesses may not be captured. And since
-the MSR_TEST_CTL is per core, disabling #AC exception for split
-lock on one thread disables the feature on all threads in the
-same core.
-
-Although it's not an accurate way, the delayed re-enabling code is
-simpler and cleaner than another possible method which sets single
-step execution in the #AC exception and re-enables #AC for split lock
-in debug trap triggered by the next instruction after the faulting
-instruction. The delayed re-enabling code can prevent split lock #AC
-flood caused by a lot split locks in short time (e.g. faulting
-instruction in a loop). And there is no missing split lock because
-the following few blocked split locks will show up once the first split
-lock issue is fixed
-
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
----
- arch/x86/include/asm/cpu.h       |  3 ++
- arch/x86/kernel/cpu/split_lock.c | 67 +++++++++++++++++++++++++++++++++++++++-
- arch/x86/kernel/traps.c          | 12 +++++++
- 3 files changed, 81 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
-index b4fe6496bb15..80dc27d73e81 100644
---- a/arch/x86/include/asm/cpu.h
-+++ b/arch/x86/include/asm/cpu.h
-@@ -43,8 +43,11 @@ unsigned int x86_stepping(unsigned int sig);
- #ifdef CONFIG_SPLIT_LOCK_AC
- int __init enumerate_split_lock(void);
- void setup_split_lock(void);
-+bool do_split_lock_exception(struct pt_regs *regs, unsigned long error_code);
- #else /* CONFIG_SPLIT_LOCK_AC */
- static inline int enumerate_split_lock(void) { return 0; }
- static inline void setup_split_lock(void) {}
-+static inline bool
-+do_split_lock_exception(struct pt_regs *regs, unsigned long error_code) {}
- #endif /* CONFIG_SPLIT_LOCK_AC */
- #endif /* _ASM_X86_CPU_H */
-diff --git a/arch/x86/kernel/cpu/split_lock.c b/arch/x86/kernel/cpu/split_lock.c
-index 98bbfb176cf4..efe6f39353d1 100644
---- a/arch/x86/kernel/cpu/split_lock.c
-+++ b/arch/x86/kernel/cpu/split_lock.c
-@@ -11,6 +11,8 @@
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
- #include <linux/printk.h>
-+#include <linux/workqueue.h>
-+#include <linux/cpu.h>
- #include <asm/msr.h>
- 
- static bool split_lock_ac_supported;
-@@ -20,6 +22,11 @@ static bool split_lock_ac_supported;
- 
- static int split_lock_ac = DISABLE_SPLIT_LOCK_AC;
- 
-+static DEFINE_SPINLOCK(sl_lock);
-+
-+static void delayed_reenable_split_lock(struct work_struct *w);
-+static DECLARE_DELAYED_WORK(delayed_work, delayed_reenable_split_lock);
-+
- /*
-  * On processors not supporting #AC exception for split lock feature,
-  * MSR_TEST_CTL may not exist or MSR_TEST_CTL exists but the bit 29 is
-@@ -76,6 +83,13 @@ static bool _setup_split_lock(int split_lock_ac_val)
- {
- 	u32 l, h;
- 
-+	/*
-+	 * The MSR_TEST_CTL is per core.
-+	 *
-+	 * We use spin lock to solve race condition when multiple threads
-+	 * on the same core generate #AC exception at the same time.
-+	 */
-+	spin_lock(&sl_lock);
- 	rdmsr(MSR_TEST_CTL, l, h);
- 
- 	/* No need to update MSR if same value. */
-@@ -90,11 +104,17 @@ static bool _setup_split_lock(int split_lock_ac_val)
- 		/* Clear the split lock bit to disable the feature. */
- 		l &= ~MSR_TEST_CTL_ENABLE_AC_SPLIT_LOCK;
- 	else
--		return false;
-+		goto out_fail;
- 
- 	wrmsr(MSR_TEST_CTL, l, h);
- out:
-+	spin_unlock(&sl_lock);
-+
- 	return true;
-+out_fail:
-+	spin_unlock(&sl_lock);
-+
-+	return false;
- }
- 
- void setup_split_lock(void)
-@@ -114,3 +134,48 @@ void setup_split_lock(void)
- out_fail:
- 	pr_warn("fail to set split lock #AC\n");
- }
-+
-+#define	delay_ms	1
-+
-+static void delayed_reenable_split_lock(struct work_struct *w)
-+{
-+	if (split_lock_ac == ENABLE_SPLIT_LOCK_AC)
-+		_setup_split_lock(ENABLE_SPLIT_LOCK_AC);
-+}
-+
-+/* Will the faulting instruction be re-executed? */
-+static bool re_execute(struct pt_regs *regs)
-+{
-+	/*
-+	 * The only reason for generating #AC from kernel is because of
-+	 * split lock. The kernel faulting instruction will be re-executed.
-+	 */
-+	if (!user_mode(regs))
-+		return true;
-+
-+	return false;
-+}
-+
-+/*
-+ * #AC handler for kernel split lock is called by generic #AC handler.
-+ *
-+ * Disable #AC for split lock on this CPU so that the faulting instruction
-+ * gets executed. The #AC for split lock is re-enabled later.
-+ */
-+bool do_split_lock_exception(struct pt_regs *regs, unsigned long error_code)
-+{
-+	unsigned long delay = msecs_to_jiffies(delay_ms);
-+	unsigned long address = read_cr2(); /* Get the faulting address */
-+	int this_cpu = smp_processor_id();
-+
-+	if (!re_execute(regs))
-+		return false;
-+
-+	pr_info_ratelimited("Alignment check for split lock at %lx\n", address);
-+
-+	_setup_split_lock(DISABLE_SPLIT_LOCK_AC);
-+
-+	schedule_delayed_work_on(this_cpu, &delayed_work, delay);
-+
-+	return true;
-+}
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 03f3d7695dac..c07b817bbbe9 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -61,6 +61,7 @@
- #include <asm/mpx.h>
- #include <asm/vm86.h>
- #include <asm/umip.h>
-+#include <asm/cpu.h>
- 
- #ifdef CONFIG_X86_64
- #include <asm/x86_init.h>
-@@ -286,10 +287,21 @@ static void do_error_trap(struct pt_regs *regs, long error_code, char *str,
- 			  unsigned long trapnr, int signr)
- {
- 	siginfo_t info;
-+	int ret;
- 
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
- 
- 	/*
-+	 * #AC exception could be handled by split lock handler.
-+	 * If the handler can't handle the exception, go to generic #AC handler.
-+	 */
-+	if (trapnr == X86_TRAP_AC) {
-+		ret = do_split_lock_exception(regs, error_code);
-+		if (ret)
-+			return;
-+	}
-+
-+	/*
- 	 * WARN*()s end up here; fix them up before we call the
- 	 * notifier chain.
- 	 */
--- 
-2.5.0
+All points acked and will be repaired. Thanks.
