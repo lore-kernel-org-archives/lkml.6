@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-289078-1526281392-2-12845850446209576126
+X-Cyrus-Session-Id: sloti22d1t05-289078-1526281378-2-16967026750575187178
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526281391; b=QMCL2h4kR4yQSww57yisale9xpC5H7HruYkOmWowp0155hlVsL
-    KeTnnsQJWGxpaQk3zdNlBLzcNmk+zb4IzQhd58DbkYqMlCdDQ6zmSfo1LfyPZWJ6
-    2zvfovEhcCocvzGo1mc29aoNNhDyPLedhfK7UTf6BLdUdaJ9wfGVZIjVNfv6YfIt
-    yl477caODD53gh2yH+14JzbqQq0eejmlUFEsHU4lfySSgyI7RlUu0qEXvCC7jWvE
-    M6R1Go/VGWHGtZGlqNIh4aiilw/W30NW4gSAFihZ8n4Z1yDqv/312fmXWK7MW0mv
-    M2OgyPL3QUv5rTPM4OV1bsdwReJFuMB2Tqkw==
+    1526281377; b=XcFagfUp3/GAChAn0azzgDSFmbn4sOGU+cIybAgDMsZkb/1k2K
+    TI7VGQwZnACLoIXFqAjEn58RqBJyMFLJPVaUGGxS/evbXJBZQWCmiSi+RV4K8PAY
+    K5XKZADzmX9nXFKkIEtOzYntgWM67x/Qdv5r0bxvUPpGGrr2FNlZE3PLS3aZBAkC
+    bM9il/nCZEPtwYpOY6sHKkLwToxfy8GTb8LgSUCDu9zDBQdzZDGVbQX8hipjQD4A
+    p6+B5IlpYKwukShOZXK/oybZ+uxPBlNfg9FEl4ezmAXIIQE4qpkxEI+RzBKjfzuU
+    o+0hk0uj1TJDAuthLh2ijnHFCs0B450uZVlA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526281391; bh=wfFxVKZ0jVm//tg9qg8Woxpck7/5Ht
-    AuNrc9M8t3cvY=; b=ahDKMcl6GiReJLQ36bGkZK9PGh6w0lW+uHV1fXha/Q2iF+
-    cEExz0ZpLAP9BX09walADRwTy5T7YToKCCOfG82BZvCmoKDGPjtfF6olPExaAkjv
-    yI56ztl6BA0N1d1/8C+fyOMxHQBnK1hvTwQTAoXyN/Aa5iTjfT9E8/aVxOEUFtWY
-    SKSu2MGOEyboIPOR9wpTd60Z7AeRw/gBS8O952SWZzdhjfHHRAji31Hak4u21yPx
-    8kblRlCDwqXV//M+s/YmlDPsspxYG0A6+koHCsTn5JX9x60NKg/vTWHShCRiHyFX
-    9TFzvDhSLnZaZdH9+55KCy0aasGdI56112mnb96A==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526281377; bh=D27wHOh2W+gd0KhE9/H4vhxGHjySAb
+    VyTuwsRhJMeuQ=; b=ADLDQenEoNu9BUUSzR0UbZC6197x6qHTRyc3gLR8d+FHjS
+    RVhXcD645Ki6F9zgW+k1zX8KlJR7zcpTyPo1eQ87XrLOe2K9I9iSTjgWHUF8ee2F
+    AAX1dr0cZMwa782dVxn4mrGc0pwJF++ld/feFCGhZs8oL3ZBH/OuehjWhOY12RqE
+    3zHZ5tkpRoPsxPVa7IIKNn4b7EKaT61NFaObIH4XISmQ/f8OCZzDXRmIZ+Sv6MQj
+    0YIF31gTTCoxhQwTrKghlyAcxjyLXbu//gSKuVrleOgS0nrLr4S9WmEwjljVm77b
+    d8JUe0nXTEL3ex9A6BV6VidVH9pFtBal4xXDWJYw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=hdOGiFmz x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=cfd2Muek x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=hdOGiFmz x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=cfd2Muek x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,29 +64,30 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIvQzZeZQEQ8Wc7W/w/4F9rcIUH2UPzKQMSmo61isO0C+kvjwC8CuNaUGM6d0CdsIQaiwJWMhCYfITTmLwQSGQvzLGrAIssrElK+NKKGIpI/3dsj6FXE
-    6HkgyrLEGN5pgJd1UudhVH3GUbLeZPjwrY20z8pLlTScoS+szZnOePfTtZg3M/4RzoRm9Uoia7K7iZDEcywuqXA60ZnGK7FgtlBlhN63o9JmVmJU0oQfTLgc
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFUZ4YA8AAN/s7W/f0TMUOgEXGJgDzikJxnXPeuh/lJQzzM0bXJ3qWT/GV9viVcMLZdWB06MxePx3ldTkfVkAy8b6hSL9RWNC2MVaHJx5fEWoKq0KBPT
+    OYRC1bNPKvVZCpRR3q1F25R+YeikFT31oxVRh09yMuBOEX7F8zAa+BG9iqTsAN3yU25m67qqTtCGVVgHi5dxejHVoc1A8VYMsEA5+3omnbjsS2qQ4LIED4OQ
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=ag1SF4gXAAAA:8 a=v7_0Sr9Y0SOqTs3S9F8A:9
-    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=ag1SF4gXAAAA:8
+    a=KRWfvM35QsivoisIQukA:9 a=QEXdDO2ut3YA:10 a=HUqATDVKn4QA:10 a=HUwBG1PIX8wA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22 a=hdz0HP1aBki3x1LR5Ig0:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932070AbeENHC6 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 03:02:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37258 "EHLO mail.kernel.org"
+        id S1754169AbeENHAZ (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 03:00:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753921AbeENHAY (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 03:00:24 -0400
+        id S1754161AbeENHAW (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 14 May 2018 03:00:22 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>
-Subject: [PATCH 4.16 61/72] nvme: add quirk to force medium priority for SQ creation
-Date: Mon, 14 May 2018 08:49:18 +0200
-Message-Id: <20180514064827.293635921@linuxfoundation.org>
+        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        "Yan, Zheng" <zyan@redhat.com>
+Subject: [PATCH 4.16 34/72] ceph: fix rsize/wsize capping in ceph_direct_read_write()
+Date: Mon, 14 May 2018 08:48:51 +0200
+Message-Id: <20180514064824.595090385@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -104,71 +105,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit 9abd68ef454c824bfd18629033367b4382b5f390 upstream.
+commit 3a15b38fd2efc1d648cb33186bf71e9138c93491 upstream.
 
-Some P3100 drives have a bug where they think WRRU (weighted round robin)
-is always enabled, even though the host doesn't set it. Since they think
-it's enabled, they also look at the submission queue creation priority. We
-used to set that to MEDIUM by default, but that was removed in commit
-81c1cd98351b. This causes various issues on that drive. Add a quirk to
-still set MEDIUM priority for that controller.
+rsize/wsize cap should be applied before ceph_osdc_new_request() is
+called.  Otherwise, if the size is limited by the cap instead of the
+stripe unit, ceph_osdc_new_request() would setup an extent op that is
+bigger than what dio_get_pages_alloc() would pin and add to the page
+vector, triggering asserts in the messenger.
 
-Fixes: 81c1cd98351b ("nvme/pci: Don't set reserved SQ create flags")
 Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Keith Busch <keith.busch@intel.com>
+Fixes: 95cca2b44e54 ("ceph: limit osd write size")
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvme/host/nvme.h |    5 +++++
- drivers/nvme/host/pci.c  |   12 +++++++++++-
- 2 files changed, 16 insertions(+), 1 deletion(-)
+ fs/ceph/file.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -83,6 +83,11 @@ enum nvme_quirks {
- 	 * Supports the LighNVM command set if indicated in vs[1].
- 	 */
- 	NVME_QUIRK_LIGHTNVM			= (1 << 6),
-+
-+	/*
-+	 * Set MEDIUM priority on SQ creation
-+	 */
-+	NVME_QUIRK_MEDIUM_PRIO_SQ		= (1 << 7),
- };
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -878,6 +878,11 @@ ceph_direct_read_write(struct kiocb *ioc
+ 		size_t start = 0;
+ 		ssize_t len;
  
- /*
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1091,10 +1091,19 @@ static int adapter_alloc_cq(struct nvme_
- static int adapter_alloc_sq(struct nvme_dev *dev, u16 qid,
- 						struct nvme_queue *nvmeq)
- {
-+	struct nvme_ctrl *ctrl = &dev->ctrl;
- 	struct nvme_command c;
- 	int flags = NVME_QUEUE_PHYS_CONTIG;
- 
- 	/*
-+	 * Some drives have a bug that auto-enables WRRU if MEDIUM isn't
-+	 * set. Since URGENT priority is zeroes, it makes all queues
-+	 * URGENT.
-+	 */
-+	if (ctrl->quirks & NVME_QUIRK_MEDIUM_PRIO_SQ)
-+		flags |= NVME_SQ_PRIO_MEDIUM;
++		if (write)
++			size = min_t(u64, size, fsc->mount_options->wsize);
++		else
++			size = min_t(u64, size, fsc->mount_options->rsize);
 +
-+	/*
- 	 * Note: we (ab)use the fact that the prp fields survive if no data
- 	 * is attached to the request.
- 	 */
-@@ -2684,7 +2693,8 @@ static const struct pci_device_id nvme_i
- 		.driver_data = NVME_QUIRK_STRIPE_SIZE |
- 				NVME_QUIRK_DEALLOCATE_ZEROES, },
- 	{ PCI_VDEVICE(INTEL, 0xf1a5),	/* Intel 600P/P3100 */
--		.driver_data = NVME_QUIRK_NO_DEEPEST_PS },
-+		.driver_data = NVME_QUIRK_NO_DEEPEST_PS |
-+				NVME_QUIRK_MEDIUM_PRIO_SQ },
- 	{ PCI_VDEVICE(INTEL, 0x5845),	/* Qemu emulated controller */
- 		.driver_data = NVME_QUIRK_IDENTIFY_CNS, },
- 	{ PCI_DEVICE(0x1c58, 0x0003),	/* HGST adapter */
+ 		vino = ceph_vino(inode);
+ 		req = ceph_osdc_new_request(&fsc->client->osdc, &ci->i_layout,
+ 					    vino, pos, &size, 0,
+@@ -893,11 +898,6 @@ ceph_direct_read_write(struct kiocb *ioc
+ 			break;
+ 		}
+ 
+-		if (write)
+-			size = min_t(u64, size, fsc->mount_options->wsize);
+-		else
+-			size = min_t(u64, size, fsc->mount_options->rsize);
+-
+ 		len = size;
+ 		pages = dio_get_pages_alloc(iter, len, &start, &num_pages);
+ 		if (IS_ERR(pages)) {
