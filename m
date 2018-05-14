@@ -1,142 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932078AbeENMqG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:46:06 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:16227 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752891AbeENMqE (ORCPT
+        id S1753470AbeENMqQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:46:16 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58609 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752891AbeENMqO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:46:04 -0400
-Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not
- compiled by default
-To: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        <gabriel.fernandez@st.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>
-References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
- <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
- <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <b7116836-28e0-f6a5-8791-b62a66774aff@st.com>
-Date: Mon, 14 May 2018 14:45:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 14 May 2018 08:46:14 -0400
+Date: Mon, 14 May 2018 05:45:50 -0700
+From: tip-bot for Dave Hansen <tipbot@zytor.com>
+Message-ID: <tip-acb25d761d6f2f64e785ccefc71e54f244f1eda4@git.kernel.org>
+Cc: akpm@linux-foundation.org, mingo@kernel.org, mpe@ellerman.id.au,
+        linux-kernel@vger.kernel.org, dave.hansen@intel.com,
+        peterz@infradead.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org, dave.hansen@linux.intel.com,
+        linuxram@us.ibm.com, hpa@zytor.com, shuah@kernel.org
+Reply-To: shuah@kernel.org, hpa@zytor.com, dave.hansen@linux.intel.com,
+        linuxram@us.ibm.com, torvalds@linux-foundation.org, tglx@linutronix.de,
+        dave.hansen@intel.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        mingo@kernel.org, mpe@ellerman.id.au
+In-Reply-To: <20180509171354.AA23E228@viggo.jf.intel.com>
+References: <20180509171354.AA23E228@viggo.jf.intel.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/pkeys/selftests: Save off 'prot' for
+ allocations
+Git-Commit-ID: acb25d761d6f2f64e785ccefc71e54f244f1eda4
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG6NODE1.st.com (10.75.127.16) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_03:,,
- signatures=0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  acb25d761d6f2f64e785ccefc71e54f244f1eda4
+Gitweb:     https://git.kernel.org/tip/acb25d761d6f2f64e785ccefc71e54f244f1eda4
+Author:     Dave Hansen <dave.hansen@linux.intel.com>
+AuthorDate: Wed, 9 May 2018 10:13:54 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 14 May 2018 11:14:45 +0200
 
+x86/pkeys/selftests: Save off 'prot' for allocations
 
-On 05/05/2018 04:45 AM, Stephen Boyd wrote:
-> Quoting Alexandre Torgue (2018-05-04 00:54:16)
->> Stephen
->>
->> On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
->>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
->>>
->>> Clock driver is mandatory if the machine is selected.
->>> Then don't use 'bool' and 'depends on' commands, but 'def_bool'
->>> with the machine(s).
->>>
->>> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
->>>
->>
->> Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4.17.
-> 
-> Thanks for the bump. I missed this one. Of course, the user can still select
-> the configs now, just it's annoying for upgrade path.
-> 
->>
->>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
->>> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
->>> ---
->>>    drivers/clk/Kconfig | 6 ++----
->>>    1 file changed, 2 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->>> index 24a5bc3..721572a 100644
->>> --- a/drivers/clk/Kconfig
->>> +++ b/drivers/clk/Kconfig
->>> @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
->>>          Support for stm32mp157 SoC family clocks
->>>    
->>>    config COMMON_CLK_STM32F
->>> -     bool "Clock driver for stm32f4 and stm32f7 SoC families"
->>> -     depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
->>> +     def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
-> 
-> But the point of the change this patch is fixing was to expose these to
-> the user to turn off they wanted. You'll need to do something like that
-> again here, instead of removing the prompt and replacing it with a
-> def_bool.
-> 
+This makes it possible to to tell what 'prot' a given allocation
+is supposed to have.  That way, if we want to change just the
+pkey, we know what 'prot' to pass to mprotect_pkey().
 
-Sorry I don't understand. Clock driver is mandatory to boot each 
-platform and depends on machine type. Do you see a use case where we 
-could need to disable the clock driver? (it would impose to change 
-devicetree to use fixed clocks and to have a booloader which configures 
-all PLL and clocks).
+Also, keep a record of the most recent allocation so the tests
+can easily find it.
 
-> So this patch instead? It leaves it around for the whole arch, but
-> limits the default to be the machines that matter. I suppose we could
-> put an 'if EXPERT' on the bool part too if we don't even want to expose
-> the options to normal users.
-> 
-> -----8<-----
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Date: Thu, 3 May 2018 08:40:09 +0200
-> Subject: [PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
->   default
-> Cc: <linux-kernel@vger.kernel.org>,
->      <linux-arm-kernel@lists.infradead.org>
-> 
-> Clock driver is mandatory if the machine is selected. Add a default
-> of the machines that need the clk driver, so that the user can turn it
-> off if they want, but otherwise it's exposed on the SoCs the driver
-> is for.
-> 
-> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->   drivers/clk/Kconfig | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 41492e980ef4..ac3f0e2bc03f 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -267,15 +267,16 @@ config COMMON_CLK_STM32MP157
->   
->   config COMMON_CLK_STM32F
->   	bool "Clock driver for stm32f4 and stm32f7 SoC families"
-> -	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
-> +	depends on ARCH_STM32
-> +	default MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
->   	help
->   	---help---
->   	  Support for stm32f4 and stm32f7 SoC families clocks
->   
->   config COMMON_CLK_STM32H7
->   	bool "Clock driver for stm32h7 SoC family"
-> -	depends on MACH_STM32H743
-> -	help
-> +	depends on ARCH_STM32
-> +	default MACH_STM32H743
->   	---help---
->   	  Support for stm32h7 SoC family clocks
->   
-> 
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180509171354.AA23E228@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ tools/testing/selftests/x86/protection_keys.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/tools/testing/selftests/x86/protection_keys.c b/tools/testing/selftests/x86/protection_keys.c
+index ee8176358d12..986ed38a2b25 100644
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -677,10 +677,12 @@ int mprotect_pkey(void *ptr, size_t size, unsigned long orig_prot,
+ struct pkey_malloc_record {
+ 	void *ptr;
+ 	long size;
++	int prot;
+ };
+ struct pkey_malloc_record *pkey_malloc_records;
++struct pkey_malloc_record *pkey_last_malloc_record;
+ long nr_pkey_malloc_records;
+-void record_pkey_malloc(void *ptr, long size)
++void record_pkey_malloc(void *ptr, long size, int prot)
+ {
+ 	long i;
+ 	struct pkey_malloc_record *rec = NULL;
+@@ -712,6 +714,8 @@ void record_pkey_malloc(void *ptr, long size)
+ 		(int)(rec - pkey_malloc_records), rec, ptr, size);
+ 	rec->ptr = ptr;
+ 	rec->size = size;
++	rec->prot = prot;
++	pkey_last_malloc_record = rec;
+ 	nr_pkey_malloc_records++;
+ }
+ 
+@@ -756,7 +760,7 @@ void *malloc_pkey_with_mprotect(long size, int prot, u16 pkey)
+ 	pkey_assert(ptr != (void *)-1);
+ 	ret = mprotect_pkey((void *)ptr, PAGE_SIZE, prot, pkey);
+ 	pkey_assert(!ret);
+-	record_pkey_malloc(ptr, size);
++	record_pkey_malloc(ptr, size, prot);
+ 	rdpkru();
+ 
+ 	dprintf1("%s() for pkey %d @ %p\n", __func__, pkey, ptr);
+@@ -777,7 +781,7 @@ void *malloc_pkey_anon_huge(long size, int prot, u16 pkey)
+ 	size = ALIGN_UP(size, HPAGE_SIZE * 2);
+ 	ptr = mmap(NULL, size, PROT_NONE, MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
+ 	pkey_assert(ptr != (void *)-1);
+-	record_pkey_malloc(ptr, size);
++	record_pkey_malloc(ptr, size, prot);
+ 	mprotect_pkey(ptr, size, prot, pkey);
+ 
+ 	dprintf1("unaligned ptr: %p\n", ptr);
+@@ -850,7 +854,7 @@ void *malloc_pkey_hugetlb(long size, int prot, u16 pkey)
+ 	pkey_assert(ptr != (void *)-1);
+ 	mprotect_pkey(ptr, size, prot, pkey);
+ 
+-	record_pkey_malloc(ptr, size);
++	record_pkey_malloc(ptr, size, prot);
+ 
+ 	dprintf1("mmap()'d hugetlbfs for pkey %d @ %p\n", pkey, ptr);
+ 	return ptr;
+@@ -872,7 +876,7 @@ void *malloc_pkey_mmap_dax(long size, int prot, u16 pkey)
+ 
+ 	mprotect_pkey(ptr, size, prot, pkey);
+ 
+-	record_pkey_malloc(ptr, size);
++	record_pkey_malloc(ptr, size, prot);
+ 
+ 	dprintf1("mmap()'d for pkey %d @ %p\n", pkey, ptr);
+ 	close(fd);
