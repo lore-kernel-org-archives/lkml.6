@@ -1,87 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754104AbeENG7j (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 02:59:39 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:41067 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753869AbeENG7e (ORCPT
+        id S1754361AbeENHCg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:02:36 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36783 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754173AbeENHCf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 02:59:34 -0400
-X-Google-Smtp-Source: AB8JxZp3fKwOm/9coSMJjoEgD3kcLqaTejNYFAK8JIXmXI0MpodmO5xihqKpHvQ8HjMBoKYZFs2xVPIkztFtLPZM/e8=
+        Mon, 14 May 2018 03:02:35 -0400
+X-Google-Smtp-Source: AB8JxZqHP2Ysx+kGaDQNNlurcZ1/JP+9a3oRrEImEYI4c98aWIkOvLYUVdHabWldEGmyrHkA3AC6FwbE85sXWmEowCM=
 MIME-Version: 1.0
-In-Reply-To: <20180514065852.GE16596@gmail.com>
+In-Reply-To: <20180514065744.GD16596@gmail.com>
 References: <20180504060003.19618-1-ard.biesheuvel@linaro.org>
- <20180504060003.19618-16-ard.biesheuvel@linaro.org> <20180514064323.GB16596@gmail.com>
- <CAKv+Gu-v-dw28pjo_8of_dNR7mEMK3ngDUksFYUTWwro14PFfw@mail.gmail.com> <20180514065852.GE16596@gmail.com>
+ <20180504060003.19618-13-ard.biesheuvel@linaro.org> <20180514065744.GD16596@gmail.com>
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 14 May 2018 08:59:33 +0200
-Message-ID: <CAKv+Gu9gzHXNfHwZAoXfOX4F-UbsGjbjZce-iD00E-uqRrC88Q@mail.gmail.com>
-Subject: Re: [PATCH] efi/x86: Clean up the eboot code a bit
+Date: Mon, 14 May 2018 09:02:34 +0200
+Message-ID: <CAKv+Gu8QVR_BFLMKttqfmCMqXU13grwr846oftFysB8B0CJCZw@mail.gmail.com>
+Subject: Re: [PATCH 12/17] efi: fix efi_pci_io_protocol32 prototype for mixed mode
 To: Ingo Molnar <mingo@kernel.org>
 Cc: linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Hans de Goede <hdegoede@redhat.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 May 2018 at 08:58, Ingo Molnar <mingo@kernel.org> wrote:
+On 14 May 2018 at 08:57, Ingo Molnar <mingo@kernel.org> wrote:
 >
 > * Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
 >
->> On 14 May 2018 at 08:43, Ingo Molnar <mingo@kernel.org> wrote:
->> >
->> > So I looked at arch/x86/boot/compressed/eboot.c to improve a printk message and
->> > ended up with the cleanups below.
->> >
->> > Only build tested.
->> >
->> > Thanks,
->> >
->> >         Ingo
->> >
->> > =================>
->> > Subject: efi/x86: Clean up the eboot code
->> > From: Ingo Molnar <mingo@kernel.org>
->> > Date: Mon May 14 08:33:40 CEST 2018
->> >
->> > Various small cleanups:
->> >
->> >  - Standardize printk messages:
->> >
->> >      'alloc' => 'allocate'
->> >      'mem'   => 'memory'
->> >
->> >    also put variable names in printk messages between quotes.
->> >
->> >  - Align mass-assignments vertically for better readability
->> >
->> >  - Break multi-line function prototypes at the name where possible,
->> >    not in the middle of the parameter list
->> >
->> >  - Use a newline before return statements consistently.
->> >
->> >  - Use curly braces in a balanced fashion.
->> >
->> >  - Remove stray newlines.
->> >
->> > No change in functionality.
->> >
->> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
->> > Cc: Matt Fleming <matt@codeblueprint.co.uk>
->> > Cc: Peter Zijlstra <peterz@infradead.org>
->> > Cc: Thomas Gleixner <tglx@linutronix.de>
->> > Cc: linux-efi@vger.kernel.org
->> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
->>
->> Thanks Ingo
->>
->> Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>> Mixed mode allows a kernel built for x86_64 to interact with 32-bit
+>> EFI firmware, but requires us to define all struct definitions carefully
+>> when it comes to pointer sizes. efi_pci_io_protocol32 currently uses a
+>> void* for the 'romimage' field, which will be interpreted as a 64-bit
+>> field on such kernels, potentially resulting in bogus memory references
+>> and subsequent crashes.
 >
-> Thanks - mind picking it up into your tree? I only did minimal testing and don't
-> want to interfere with your patch flow either.
+> Yeah, so the first confusion I ran into is:
+>
+>  s/efi_pci_io_protocol32
+>   /efi_pci_io_protocol_32
+>
+> Once I found it in the code I made this change:
+>
+>  s/efi: fix efi_pci_io_protocol32 prototype for mixed mode
+>   /efi: Fix 'struct efi_pci_io_protocol32' definition for mixed mode
+>
+> Because we normally use the 'prototype' name for function declarations, not for
+> data type definitions. Adding 'struct' and putting it between quotes makes it
+> obvious at a glance that we are talking about a structure definition here.
 >
 
-Will do, thanks.
+OK.
+
+> BTW., since it's marked -stable, due to:
+>
+>  > potentially resulting in bogus memory references
+>  > and subsequent crashes.
+>
+> I'm moving it to efi/urgent: the principle here is that if a patch is urgent
+> enough for -stable then it should generally not wait for the next merge window.
+>
+
+The issue was found by inspection rather than a crash report, so I was
+in doubt about this.
+
+> Also, because this actually fixes a crash, I extended the title to spell this out
+> more clearly:
+>
+>   Subject: efi: Avoid potential crashes, fix the 'struct efi_pci_io_protocol_32' definition for mixed mode
+>
+> ... which also makes it easier for maintainers of older stable kernels to decide
+> whether to backport the patch or not.
+>
+
+OK.
+
+> Anyway, the patch is looking good otherwise, no need to resend.
+>
+> Thanks,
+>
+>         Ingo
