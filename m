@@ -1,41 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpYlhcOQstYjQf/IA9QW6YjoICzb5V2XkCU1XyZFxf1chIEL763tLv4PtiWjutELb84KhKR
-ARC-Seal: i=1; a=rsa-sha256; t=1526280983; cv=none;
+X-Google-Smtp-Source: AB8JxZqtlnIO4n/YUKK2sOOvtq4XY24gZrsutfczN/u1OKmDOkJKm++msZTOeFfmDxqvAdSZNzue
+ARC-Seal: i=1; a=rsa-sha256; t=1526280980; cv=none;
         d=google.com; s=arc-20160816;
-        b=I800RV5rc7hq/mOAzvCKsQi3H6vIb6REeLAhqSH3724m9VS1YdsVHpBdKq1ypBBR1Z
-         J3J4w/7luTpiGeEEAeC+HpcptM1MKCz+DSozoLBS9Ji13XTbkJuWkR9APHCs+5kCQE7Q
-         IqSSXWnqSkM1YwqJNboh/UsIE/nCykcbtexk5cxXWHc6t6fXrBRIesYwTcx9bUzf1Jr1
-         Kw/8+xNjM8xBBrs58clfdw9iG148RyJKeD5Go6rNYNqy1WwzJJSnjNPRlcNZIHAf7nY6
-         9Y7tCm0brnqmMEjFha1pmjXSO6TUrFRsnmcuH5JiCc/fPPQ9GuhX09vu5CdbzEpexQnK
-         eRKw==
+        b=vPM2KqcX9WRG7EmEarYZLuHYrjEJjoBHJ6LVrfRVeDph0Y22lr/MNhI3euIYgncz/4
+         ZbuwukuwlDiSKGMeSNfwReXpYca6Q2NWzSkggb8nq5m1S9bvdwmvGjg3qRtmNH5qR2U0
+         BW4SvXFxq8aIk8J9eNwmrTtzC5Yzkx6zdOLR1KvQeyQdFhymtvt2yD3FCzk6efUJOJll
+         eg0oDCoMaiYekR8XXH/wU+/kqXXfgPrFo+nUeigcdyePecxf2VZqtraO6IQpTqUDcD0D
+         khiD6hrpcbu5LRN5eZLWgQ9tMQ13DbqmgvW9yaFMXHIZkQ82P8Es0Kf/BzIle+D9tuLY
+         hGPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=F6k6LJ84XvBJN4dfsNqgYXzZe1wiD5rNqsv8Q3RSvhg=;
-        b=jFHLuDMrkS9vt7PPxqjfjZJP7gkI1bqIjAuKIFxhJ9rKAu1pPmlMONqltYWYsYZMax
-         CMPajEK5LaZWwweA7tTtdLg9UzPGSjoMLypylUJbx4u2csdPTYEhYArVkR/ucFaiXBvd
-         yTEMrYVA638xDVkY3xuX1QCpN8oGDvlOUV6zIpIzEgW7RBK+Uo+TW6jr3cPTheOQmsvj
-         di45u3ijlViCFK+et8xazbC+TVdf7UDGmhgYlqESpei7lJTzHLuJL2rwz8cKvjD29Zxm
-         viXMab55HeY8RxzvcjYgFk9H7fzs2PQrQNBpIYKTZ4Vx4qNlKoOdQVtmnsIxGudcc1DP
-         axoQ==
+        bh=+56dm5rdShTFpFdj5pmmVVhICCT761CQR/gS6SalmWQ=;
+        b=mdr3s0TjH+Aoa86X9xiHoVbXK8703buk3TJAnJfGQsfZwmHjv9iY43JNLftLE//VrI
+         gw6YJoq1/9sHFPDIjyz0wAkMO5ntuqXxeiuzskknsE3WC2PflY1YJyfJozNTHEeYr8Gu
+         9t6x7yC/FsVcdstTrUgXa8MtRKpTkgQUfICT3CLd87X1j+iQIhljKD0wOZoqhGMempwd
+         Q4xpkJFk3SfaveOu6dItGJ3Rgu6iuOjpYxsLDFvZQOi7KmVKN6NBreL0V107JCwlIVa4
+         uUNVZ3tNj853jkGABA8uCTfM443vhwih9fBYg52X5lKPNk+iCshAIu+w6lgBjym2ttLL
+         7UHQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ieWSRBR5;
+       dkim=pass header.i=@kernel.org header.s=default header.b=2Sc3PXFP;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=ieWSRBR5;
+       dkim=pass header.i=@kernel.org header.s=default header.b=2Sc3PXFP;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mathias Duckeck <m.duckeck@kunbus.de>,
-	Akshay Bhat <akshay.bhat@timesys.com>,
-	Casey Fitzpatrick <casey.fitzpatrick@timesys.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.14 36/62] can: hi311x: Work around TX complete interrupt erratum
-Date: Mon, 14 May 2018 08:48:52 +0200
-Message-Id: <20180514064818.385778650@linuxfoundation.org>
+	"Richard W.M. Jones" <rjones@redhat.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.14 27/62] libata: Apply NOLPM quirk for SanDisk SD7UB3Q*G1001 SSDs
+Date: Mon, 14 May 2018 08:48:43 +0200
+Message-Id: <20180514064817.880897596@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -45,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421608296051163?=
-X-GMAIL-MSGID: =?utf-8?q?1600421608296051163?=
+X-GMAIL-THRID: =?utf-8?q?1600421262061858656?=
+X-GMAIL-MSGID: =?utf-8?q?1600421605218768440?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,67 +52,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 32bee8f48fa048a3198109de50e51c092507ff52 upstream.
+commit 184add2ca23ce5edcac0ab9c3b9be13f91e7b567 upstream.
 
-When sending packets as fast as possible using "cangen -g 0 -i -x", the
-HI-3110 occasionally latches the interrupt pin high on completion of a
-packet, but doesn't set the TXCPLT bit in the INTF register.  The INTF
-register contains 0x00 as if no interrupt has occurred.  Even waiting
-for a few milliseconds after the interrupt doesn't help.
+Richard Jones has reported that using med_power_with_dipm on a T450s
+with a Sandisk SD7UB3Q256G1001 SSD (firmware version X2180501) is
+causing the machine to hang.
 
-Work around this apparent erratum by instead checking the TXMTY bit in
-the STATF register ("TX FIFO empty").  We know that we've queued up a
-packet for transmission if priv->tx_len is nonzero.  If the TX FIFO is
-empty, transmission of that packet must have completed.
+Switching the LPM to max_performance fixes this, so it seems that
+this Sandisk SSD does not handle LPM well.
 
-Note that this is congruent with our handling of received packets, which
-likewise gleans from the STATF register whether a packet is waiting in
-the RX FIFO, instead of looking at the INTF register.
+Note in the past there have been bug-reports about the following
+Sandisk models not working with min_power, so we may need to extend
+the quirk list in the future: name - firmware
+Sandisk SD6SB2M512G1022I   - X210400
+Sandisk SD6PP4M-256G-1006  - A200906
 
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>
-Cc: Akshay Bhat <akshay.bhat@timesys.com>
-Cc: Casey Fitzpatrick <casey.fitzpatrick@timesys.com>
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Acked-by: Akshay Bhat <akshay.bhat@timesys.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: stable@vger.kernel.org
+Cc: Richard W.M. Jones <rjones@redhat.com>
+Reported-and-tested-by: Richard W.M. Jones <rjones@redhat.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/spi/hi311x.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/ata/libata-core.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/can/spi/hi311x.c
-+++ b/drivers/net/can/spi/hi311x.c
-@@ -91,6 +91,7 @@
- #define HI3110_STAT_BUSOFF BIT(2)
- #define HI3110_STAT_ERRP BIT(3)
- #define HI3110_STAT_ERRW BIT(4)
-+#define HI3110_STAT_TXMTY BIT(7)
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4539,6 +4539,9 @@ static const struct ata_blacklist_entry
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM |
+ 						ATA_HORKAGE_NOLPM, },
  
- #define HI3110_BTR0_SJW_SHIFT 6
- #define HI3110_BTR0_BRP_SHIFT 0
-@@ -737,10 +738,7 @@ static irqreturn_t hi3110_can_ist(int ir
- 			}
- 		}
- 
--		if (intf == 0)
--			break;
--
--		if (intf & HI3110_INT_TXCPLT) {
-+		if (priv->tx_len && statf & HI3110_STAT_TXMTY) {
- 			net->stats.tx_packets++;
- 			net->stats.tx_bytes += priv->tx_len - 1;
- 			can_led_event(net, CAN_LED_EVENT_TX);
-@@ -750,6 +748,9 @@ static irqreturn_t hi3110_can_ist(int ir
- 			}
- 			netif_wake_queue(net);
- 		}
++	/* Sandisk devices which are known to not handle LPM well */
++	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
 +
-+		if (intf == 0)
-+			break;
- 	}
- 	mutex_unlock(&priv->hi3110_lock);
- 	return IRQ_HANDLED;
+ 	/* devices that don't properly handle queued TRIM commands */
+ 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
