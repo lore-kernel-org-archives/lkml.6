@@ -1,50 +1,188 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752406AbeENWkr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 18:40:47 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42464 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752049AbeENWkl (ORCPT
+        id S1752510AbeENWky (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 18:40:54 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:36726 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752402AbeENWkr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 18:40:41 -0400
-X-Google-Smtp-Source: AB8JxZpz6G/ZxIPkPpLf9kFn/sTHjyv+LxweWVQq+TyQao+sWtDKS86upkckxl95gAr9MlBwHP1+dw==
-From: Douglas Anderson <dianders@chromium.org>
-To: broonie@kernel.org
-Cc: Douglas Anderson <dianders@chromium.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] regulator: core: Quiet -EPROBE_DEFER from regulator_bulk_get()
-Date: Mon, 14 May 2018 15:40:27 -0700
-Message-Id: <20180514224027.53748-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Mon, 14 May 2018 18:40:47 -0400
+X-Google-Smtp-Source: AB8JxZrl7J8Wx+yTkoqocn2vDg8nyKzq2Eh1a/AHVVzXzv/CB4WwdMso6XHunkXW32n9+qs/Kex6Vw==
+From: Neil Armstrong <narmstrong@baylibre.com>
+To: airlied@linux.ie, hans.verkuil@cisco.com, lee.jones@linaro.org,
+        olof@lixom.net, seanpaul@google.com
+Cc: Neil Armstrong <narmstrong@baylibre.com>, sadolfsson@google.com,
+        felixe@google.com, bleung@google.com, darekm@google.com,
+        marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 2/5] media: cec-notifier: Get notifier by device and connector name
+Date: Tue, 15 May 2018 00:40:36 +0200
+Message-Id: <1526337639-3568-3-git-send-email-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1526337639-3568-1-git-send-email-narmstrong@baylibre.com>
+References: <1526337639-3568-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The -EPROBE_DEFER virus demands special case code to avoid printing
-error messages when the error is only -EPROBE_DEFER.  Spread the virus
-to a new host: regulator_bulk_get()
+In non device-tree world, we can need to get the notifier by the driver
+name directly and eventually defer probe if not yet created.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
+This patch adds a variant of the get function by using the device name
+instead and will not create a notifier if not yet created.
+
+But the i915 driver exposes at least 2 HDMI connectors, this patch also
+adds the possibility to add a connector name tied to the notifier device
+to form a tuple and associate different CEC controllers for each HDMI
+connectors.
+
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
+ drivers/media/cec/cec-notifier.c | 30 ++++++++++++++++++++++++---
+ include/media/cec-notifier.h     | 44 ++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 69 insertions(+), 5 deletions(-)
 
- drivers/regulator/core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index d4803460a557..42e97fb85e95 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3696,8 +3696,9 @@ int regulator_bulk_get(struct device *dev, int num_consumers,
- 						      consumers[i].supply);
- 		if (IS_ERR(consumers[i].consumer)) {
- 			ret = PTR_ERR(consumers[i].consumer);
--			dev_err(dev, "Failed to get supply '%s': %d\n",
--				consumers[i].supply, ret);
-+			if (ret != -EPROBE_DEFER)
-+				dev_err(dev, "Failed to get supply '%s': %d\n",
-+					consumers[i].supply, ret);
- 			consumers[i].consumer = NULL;
- 			goto err;
- 		}
+diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-notifier.c
+index 16dffa0..716070a 100644
+--- a/drivers/media/cec/cec-notifier.c
++++ b/drivers/media/cec/cec-notifier.c
+@@ -21,6 +21,7 @@ struct cec_notifier {
+ 	struct list_head head;
+ 	struct kref kref;
+ 	struct device *dev;
++	const char *conn;
+ 	struct cec_adapter *cec_adap;
+ 	void (*callback)(struct cec_adapter *adap, u16 pa);
+ 
+@@ -30,13 +31,34 @@ struct cec_notifier {
+ static LIST_HEAD(cec_notifiers);
+ static DEFINE_MUTEX(cec_notifiers_lock);
+ 
+-struct cec_notifier *cec_notifier_get(struct device *dev)
++struct cec_notifier *cec_notifier_get_byname(const char *name,
++					     const char *conn)
+ {
+ 	struct cec_notifier *n;
+ 
+ 	mutex_lock(&cec_notifiers_lock);
+ 	list_for_each_entry(n, &cec_notifiers, head) {
+-		if (n->dev == dev) {
++		if (!strcmp(dev_name(n->dev), name) &&
++		    (!conn || !strcmp(n->conn, conn))) {
++			kref_get(&n->kref);
++			mutex_unlock(&cec_notifiers_lock);
++			return n;
++		}
++	}
++	mutex_unlock(&cec_notifiers_lock);
++
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(cec_notifier_get_byname);
++
++struct cec_notifier *cec_notifier_get_conn(struct device *dev, const char *conn)
++{
++	struct cec_notifier *n;
++
++	mutex_lock(&cec_notifiers_lock);
++	list_for_each_entry(n, &cec_notifiers, head) {
++		if (n->dev == dev &&
++		    (!conn || !strcmp(n->conn, conn))) {
+ 			kref_get(&n->kref);
+ 			mutex_unlock(&cec_notifiers_lock);
+ 			return n;
+@@ -46,6 +68,8 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
+ 	if (!n)
+ 		goto unlock;
+ 	n->dev = dev;
++	if (conn)
++		n->conn = devm_kstrdup(dev, conn, GFP_KERNEL);
+ 	n->phys_addr = CEC_PHYS_ADDR_INVALID;
+ 	mutex_init(&n->lock);
+ 	kref_init(&n->kref);
+@@ -54,7 +78,7 @@ struct cec_notifier *cec_notifier_get(struct device *dev)
+ 	mutex_unlock(&cec_notifiers_lock);
+ 	return n;
+ }
+-EXPORT_SYMBOL_GPL(cec_notifier_get);
++EXPORT_SYMBOL_GPL(cec_notifier_get_conn);
+ 
+ static void cec_notifier_release(struct kref *kref)
+ {
+diff --git a/include/media/cec-notifier.h b/include/media/cec-notifier.h
+index cf0add7..70f2974 100644
+--- a/include/media/cec-notifier.h
++++ b/include/media/cec-notifier.h
+@@ -20,6 +20,37 @@ struct cec_notifier;
+ #if IS_REACHABLE(CONFIG_CEC_CORE) && IS_ENABLED(CONFIG_CEC_NOTIFIER)
+ 
+ /**
++ * cec_notifier_get_byname - find a cec_notifier for the given device name
++ * and connector tuple.
++ * @name: device name that sends the events.
++ * @conn: the connector name from which the event occurs
++ *
++ * If a notifier for device @name exists, then increase the refcount and
++ * return that notifier.
++ *
++ * If it doesn't exist, return NULL
++ */
++struct cec_notifier *cec_notifier_get_byname(const char *name,
++					     const char *conn);
++
++/**
++ * cec_notifier_get_conn - find or create a new cec_notifier for the given
++ * device and connector tuple.
++ * @dev: device that sends the events.
++ * @conn: the connector name from which the event occurs
++ *
++ * If a notifier for device @dev already exists, then increase the refcount
++ * and return that notifier.
++ *
++ * If it doesn't exist, then allocate a new notifier struct and return a
++ * pointer to that new struct.
++ *
++ * Return NULL if the memory could not be allocated.
++ */
++struct cec_notifier *cec_notifier_get_conn(struct device *dev,
++					   const char *conn);
++
++/**
+  * cec_notifier_get - find or create a new cec_notifier for the given device.
+  * @dev: device that sends the events.
+  *
+@@ -31,7 +62,10 @@ struct cec_notifier;
+  *
+  * Return NULL if the memory could not be allocated.
+  */
+-struct cec_notifier *cec_notifier_get(struct device *dev);
++static inline struct cec_notifier *cec_notifier_get(struct device *dev)
++{
++	return cec_notifier_get_conn(dev, NULL);
++}
+ 
+ /**
+  * cec_notifier_put - decrease refcount and delete when the refcount reaches 0.
+@@ -85,12 +119,18 @@ void cec_register_cec_notifier(struct cec_adapter *adap,
+ 			       struct cec_notifier *notifier);
+ 
+ #else
+-static inline struct cec_notifier *cec_notifier_get(struct device *dev)
++static inline struct cec_notifier *cec_notifier_get_conn(struct device *dev,
++							 const char *conn)
+ {
+ 	/* A non-NULL pointer is expected on success */
+ 	return (struct cec_notifier *)0xdeadfeed;
+ }
+ 
++static inline struct cec_notifier *cec_notifier_get(struct device *dev)
++{
++	return cec_notifier_get_conn(dev, NULL);
++}
++
+ static inline void cec_notifier_put(struct cec_notifier *n)
+ {
+ }
 -- 
-2.17.0.441.gb46fe60e1d-goog
+2.7.4
