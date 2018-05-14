@@ -1,145 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752412AbeENVE1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:04:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37390 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752096AbeENVEZ (ORCPT
+        id S1752680AbeENVEi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:04:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53774 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752195AbeENVEg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:04:25 -0400
-Date: Mon, 14 May 2018 14:05:50 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Joe Perches <joe@perches.com>, Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Davidlohr Bueso <dave@stgolabs.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 18/18] rcu: Use pr_fmt to prefix "rcu: " to logging output
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <cover.1525964381.git.joe@perches.com>
- <41d9686471d67f6f98d160e5891bf61061515b6d.1525964386.git.joe@perches.com>
- <20180514202910.GI26088@linux.vnet.ibm.com>
- <2b66d372-dac9-0fad-af44-bfa84d996985@infradead.org>
+        Mon, 14 May 2018 17:04:36 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF74860A06
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pprakash@codeaurora.org
+Subject: Re: [PATCH v3 3/3] mailbox: ACPI: erroneous error message when
+ parsing the ACPI PCCT
+To: Al Stone <ahs3@redhat.com>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Jassi Brar <jassisinghbrar@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>
+References: <20180501003907.4322-1-ahs3@redhat.com>
+ <20180501003907.4322-4-ahs3@redhat.com>
+From: "Prakash, Prashanth" <pprakash@codeaurora.org>
+Message-ID: <17197481-bd76-f2ec-9d6e-4cd0d94b9265@codeaurora.org>
+Date: Mon, 14 May 2018 15:04:30 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2b66d372-dac9-0fad-af44-bfa84d996985@infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18051421-0052-0000-0000-000002EE6867
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009026; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032334; UDB=6.00527754; IPR=6.00811465;
- MB=3.00021113; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 21:04:21
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051421-0053-0000-0000-00005CAEF361
-Message-Id: <20180514210550.GM26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805140211
+In-Reply-To: <20180501003907.4322-4-ahs3@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 01:52:48PM -0700, Randy Dunlap wrote:
-> On 05/14/2018 01:29 PM, Paul E. McKenney wrote:
-> > On Thu, May 10, 2018 at 08:45:44AM -0700, Joe Perches wrote:
-> >> Use a consistent logging prefix for all rcu related output.
-> >>
-> >> Signed-off-by: Joe Perches <joe@perches.com>
-> > 
-> > I took parts of this (thank you!) but have concerns about other parts.
-> > 
-> >> ---
-> >>  kernel/rcu/rcu_segcblist.c |  2 ++
-> >>  kernel/rcu/rcuperf.c       | 10 ++++---
-> >>  kernel/rcu/rcutorture.c    | 46 +++++++++++++++----------------
-> >>  kernel/rcu/srcutiny.c      |  2 ++
-> >>  kernel/rcu/srcutree.c      |  5 +++-
-> >>  kernel/rcu/tiny.c          |  3 +++
-> >>  kernel/rcu/tree.c          |  8 +++---
-> >>  kernel/rcu/tree_plugin.h   | 67 +++++++++++++++++++++++++++-------------------
-> >>  kernel/rcu/update.c        | 19 ++++++++-----
-> >>  9 files changed, 96 insertions(+), 66 deletions(-)
-> >>
-> 
-> >> diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> >> index 648e1c25707d..45d98ff0d5b8 100644
-> >> --- a/kernel/rcu/rcutorture.c
-> >> +++ b/kernel/rcu/rcutorture.c
-> >> @@ -22,6 +22,7 @@
-> >>   *
-> >>   * See also:  Documentation/RCU/torture.txt
-> >>   */
-> >> +
-> >>  #include <linux/types.h>
-> >>  #include <linux/kernel.h>
-> >>  #include <linux/init.h>
-> >> @@ -908,7 +909,7 @@ rcu_torture_writer(void *arg)
-> >>  	VERBOSE_TOROUT_STRING("rcu_torture_writer task started");
-> >>  	if (!can_expedite)
-> >>  		pr_alert("%s" TORTURE_FLAG
-> >> -			 " GP expediting controlled from boot/sysfs for %s.\n",
-> >> +			 " GP expediting controlled from boot/sysfs for %s\n",
-> >>  			 torture_type, cur_ops->name);
-> >>
-> >>  	/* Initialize synctype[] array.  If none set, take default. */
-> >> @@ -916,27 +917,27 @@ rcu_torture_writer(void *arg)
-> >>  		gp_cond1 = gp_exp1 = gp_normal1 = gp_sync1 = true;
-> >>  	if (gp_cond1 && cur_ops->get_state && cur_ops->cond_sync) {
-> >>  		synctype[nsynctypes++] = RTWS_COND_GET;
-> >> -		pr_info("%s: Testing conditional GPs.\n", __func__);
-> >> +		pr_info("%s: Testing conditional GPs\n", __func__);
-> >>  	} else if (gp_cond && (!cur_ops->get_state || !cur_ops->cond_sync)) {
-> >> -		pr_alert("%s: gp_cond without primitives.\n", __func__);
-> >> +		pr_alert("%s: gp_cond without primitives\n", __func__);
-> >>  	}
-> >>  	if (gp_exp1 && cur_ops->exp_sync) {
-> >>  		synctype[nsynctypes++] = RTWS_EXP_SYNC;
-> >> -		pr_info("%s: Testing expedited GPs.\n", __func__);
-> >> +		pr_info("%s: Testing expedited GPs\n", __func__);
-> >>  	} else if (gp_exp && !cur_ops->exp_sync) {
-> >> -		pr_alert("%s: gp_exp without primitives.\n", __func__);
-> >> +		pr_alert("%s: gp_exp without primitives\n", __func__);
-> 
-> Unlike some of the others, the one above is not a sentence, so it doesn't
-> _need_ a period ... except for consistency.
-> 
-> But I don't care either way. :)
 
-;-) ;-) ;-)
 
-							Thanx, Paul
+On 4/30/2018 6:39 PM, Al Stone wrote:
+> There have been multiple reports of the following error message:
+>
+> [    0.068293] Error parsing PCC subspaces from PCCT
+>
+> This error message is not correct.  In multiple cases examined, the PCCT
+> (Platform Communications Channel Table) concerned is actually properly
+> constructed; the problem is that acpi_pcc_probe() which reads the PCCT
+> is making the assumption that the only valid PCCT is one that contains
+> subtables of one of two types: ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE or
+> ACPI_PCCT_TYPE_HW_REDUCED_TYPE2.  The number of subtables of these
+> types are counted and as long as there is at least one of the desired
+> types, the acpi_pcc_probe() succeeds.  When no subtables of these types
+> are found, regardless of whether or not any other subtable types are
+> present, the error mentioned above is reported.
+>
+> In the cases reported to me personally, the PCCT contains exactly one
+> subtable of type ACPI_PCCT_TYPE_GENERIC_SUBSPACE.  The function
+> acpi_pcc_probe() does not count it as a valid subtable, so believes
+> there to be no valid subtables, and hence outputs the error message.
+>
+> An example of the PCCT being reported as erroneous yet perfectly fine
+> is the following:
+>
+>                     Signature : "PCCT"
+>                  Table Length : 0000006E
+>                      Revision : 05
+>                      Checksum : A9
+>                        Oem ID : "XXXXXX"
+>                  Oem Table ID : "XXXXX   "
+>                  Oem Revision : 00002280
+>               Asl Compiler ID : "XXXX"
+>         Asl Compiler Revision : 00000002
+>
+>         Flags (decoded below) : 00000001
+>                      Platform : 1
+>                      Reserved : 0000000000000000
+>
+>                 Subtable Type : 00 [Generic Communications Subspace]
+>                        Length : 3E
+>
+>                      Reserved : 000000000000
+>                  Base Address : 00000000DCE43018
+>                Address Length : 0000000000001000
+>
+>             Doorbell Register : [Generic Address Structure]
+>                      Space ID : 01 [SystemIO]
+>                     Bit Width : 08
+>                    Bit Offset : 00
+>          Encoded Access Width : 01 [Byte Access:8]
+>                       Address : 0000000000001842
+>
+>                 Preserve Mask : 00000000000000FD
+>                    Write Mask : 0000000000000002
+>               Command Latency : 00001388
+>           Maximum Access Rate : 00000000
+>       Minimum Turnaround Time : 0000
+>
+> To fix this, we count up all of the possible subtable types for the
+> PCCT, and only report an error when there are none (which could mean
+> either no subtables, or no valid subtables), or there are too many.
+> We also change the logic so that if there is a valid subtable, we
+> do try to initialize it per the PCCT subtable contents.  This is a
+> change in functionality; previously, the probe would have returned
+> right after the error message and would not have tried to use any
+> other subtable definition.
+>
+> Tested on my personal laptop which showed the error previously; the
+> error message no longer appears and the laptop appears to operate
+> normally.
+>
+> Signed-off-by: Al Stone <ahs3@redhat.com>
+> Cc: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+> Cc: Len Brown <lenb@kernel.org>
+> ---
+>  drivers/mailbox/pcc.c | 96 +++++++++++++++++++++++++++++++++------------------
+>  1 file changed, 63 insertions(+), 33 deletions(-)
+>
+> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+> index 3ef7f036ceea..72af37d7e95e 100644
+> --- a/drivers/mailbox/pcc.c
+> +++ b/drivers/mailbox/pcc.c
+> @@ -372,13 +372,37 @@ static const struct mbox_chan_ops pcc_chan_ops = {
+>  	.send_data = pcc_send_data,
+>  };
+>  
+> +/*
+> + *
+> + * count_pcc_subspaces -- Count PCC subspaces not used in reduced HW systems.
+> + * @header: Pointer to the ACPI subtable header under the PCCT.
+> + * @end: End of subtable entry.
+> + *
+> + * Return: If we find a PCC subspace entry that is one of the types used
+> + *	in reduced hardware systems, return -EINVAL.  Otherwise, return 0.
+> + *
+> + * This gets called for each subtable in the PCC table.
+> + */
+> +static int count_pcc_subspaces(struct acpi_subtable_header *header,
+> +		const unsigned long end)
+> +{
+> +	struct acpi_pcct_subspace *pcct_ss = (struct acpi_pcct_subspace *) header;
+> +
+> +	if ((pcct_ss->header.type <= ACPI_PCCT_TYPE_RESERVED) &&
+> +	    (pcct_ss->header.type != ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE) &&
+> +	    (pcct_ss->header.type != ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2))
+> +		return 0;
+> +
+> +	return -EINVAL;
+> +}
+> +
+>  /**
+> - * parse_pcc_subspace - Parse the PCC table and verify PCC subspace
+> - *		entries. There should be one entry per PCC client.
+> + * parse_pcc_subspaces -- Count PCC subspaces used only in reduced HW systems.
+>   * @header: Pointer to the ACPI subtable header under the PCCT.
+>   * @end: End of subtable entry.
+>   *
+> - * Return: 0 for Success, else errno.
+> + * Return: If we find a PCC subspace entry that is one of the types used
+> + *	in reduced hardware systems, return 0.  Otherwise, return -EINVAL.
+>   *
+>   * This gets called for each entry in the PCC table.
+>   */
+> @@ -393,10 +417,8 @@ static int parse_pcc_subspace(struct acpi_subtable_header *header,
+>  		if ((pcct_ss->header.type !=
+>  				ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE)
+>  		    && (pcct_ss->header.type !=
+> -				ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2)) {
+> -			pr_err("Incorrect PCC Subspace type detected\n");
+> +				ACPI_PCCT_TYPE_HW_REDUCED_SUBSPACE_TYPE2))
+>  			return -EINVAL;
+> -		}
+>  	}
+>  
+>  	return 0;
+Can't we combine  parse_pcc_subspace and count_pcc_subspaces into a
+single function? parse_pcc_subspace can return 0 for supported subspace
+types and -EINVAL for others.
 
-> >>  	}
-> >>  	if (gp_normal1 && cur_ops->deferred_free) {
-> >>  		synctype[nsynctypes++] = RTWS_DEF_FREE;
-> >> -		pr_info("%s: Testing asynchronous GPs.\n", __func__);
-> >> +		pr_info("%s: Testing asynchronous GPs\n", __func__);
-> >>  	} else if (gp_normal && !cur_ops->deferred_free) {
-> >> -		pr_alert("%s: gp_normal without primitives.\n", __func__);
-> >> +		pr_alert("%s: gp_normal without primitives\n", __func__);
-> >>  	}
-> >>  	if (gp_sync1 && cur_ops->sync) {
-> >>  		synctype[nsynctypes++] = RTWS_SYNC;
-> >> -		pr_info("%s: Testing normal GPs.\n", __func__);
-> >> +		pr_info("%s: Testing normal GPs\n", __func__);
-> >>  	} else if (gp_sync && !cur_ops->sync) {
-> >> -		pr_alert("%s: gp_sync without primitives.\n", __func__);
-> >> +		pr_alert("%s: gp_sync without primitives\n", __func__);
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> 
-> -- 
-> ~Randy
-> 
+The limitation on number of subspaces(max = 256) applies to all types of PCC
+subspaces (see Table 14-351 in ACPI 6.2).  The MAX_PCC_SUBSPACES check in
+ parse_pcc_subspace seems invalid as pcc_mbox_ctrl.num_chans will not be
+initialized yet at that moment.
+
+Given above, I think it is probably better to update parse_pcc_subspace to
+only check for a valid PCC subspace type. The check to make sure overall count
+of subspace is  less than 256 is already present following the call to
+acpi_table_parse_entries_array().
+
+--
+Thanks,
+Prashanth
