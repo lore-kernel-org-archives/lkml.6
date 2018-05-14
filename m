@@ -1,141 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752011AbeENFK6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 01:10:58 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47173 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751847AbeENFK4 (ORCPT
+        id S1751578AbeENFPE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 01:15:04 -0400
+Received: from mail-pl0-f48.google.com ([209.85.160.48]:36161 "EHLO
+        mail-pl0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750750AbeENFPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 01:10:56 -0400
-Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180305102524.5905-4-o.rempel@pengutronix.de>
- <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
- <1937901.oyadCYFYNo@aspire.rjw.lan>
- <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
-Message-ID: <091ccf85-ae4c-f6fd-0455-1a70e973c85c@pengutronix.de>
-Date: Mon, 14 May 2018 07:10:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 14 May 2018 01:15:02 -0400
+X-Google-Smtp-Source: AB8JxZptukWvpvLY6tgGLk2xG4zZ90lV3uSzMGWQe5PWsYTegPwgovcd+4oCh0BDRYomeCaS9axyj5WdT2f8k/7D2dQ=
 MIME-Version: 1.0
-In-Reply-To: <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="RtB0pzA4sEIikWDKYFSjABFlnFe6ToT2P"
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
-X-SA-Exim-Mail-From: o.rempel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20180514030205.GI677@sol.localdomain>
+References: <20180514030007.GH677@sol.localdomain> <20180514030205.GI677@sol.localdomain>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 14 May 2018 07:14:41 +0200
+Message-ID: <CACT4Y+bV3HQTZ5+ugQmukiiJBkhN_FWqPRuNRYRbe6xoKstWVA@mail.gmail.com>
+Subject: Re: CONFIG_KCOV causing crash in svm_vcpu_run()
+To: Eric Biggers <ebiggers3@gmail.com>
+Cc: KVM list <kvm@vger.kernel.org>, karahmed@amazon.de,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---RtB0pzA4sEIikWDKYFSjABFlnFe6ToT2P
-Content-Type: multipart/mixed; boundary="CRLiw7b3SfKPy3MVyt35HefVydl0PKi0x";
- protected-headers="v1"
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Liam Girdwood <lgirdwood@gmail.com>,
- Leonard Crestez <leonard.crestez@nxp.com>, Rob Herring <robh+dt@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@codeaurora.org>, Fabio Estevam <fabio.estevam@nxp.com>,
- Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
- Mark Brown <broonie@kernel.org>
-Message-ID: <091ccf85-ae4c-f6fd-0455-1a70e973c85c@pengutronix.de>
-Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180305102524.5905-4-o.rempel@pengutronix.de>
- <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
- <1937901.oyadCYFYNo@aspire.rjw.lan>
- <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
-In-Reply-To: <a431b0e1-f4f4-1439-f0bf-736018c6ab0c@pengutronix.de>
-
---CRLiw7b3SfKPy3MVyt35HefVydl0PKi0x
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-
-
-On 14.05.2018 06:33, Oleksij Rempel wrote:
->=20
->=20
-> On 12.05.2018 13:13, Rafael J. Wysocki wrote:
->> On Friday, May 4, 2018 8:50:52 PM CEST Oleksij Rempel wrote:
->>> Hallo Andrew,
->>> I need your ACK or NACK for this patch.
->>>
->>> This function is used to configure external PMIC to interpret
->>> signal which will be triggered by pm_power_off as power off.
->>> Since same signal can be used for stand by, I linked PMIC configurati=
-on
->>> with pm_power_off_prepare to avoid possible conflicts.
->>>
->>> On Mon, Mar 05, 2018 at 11:25:20AM +0100, Oleksij Rempel wrote:
->>>> Export pm_power_off_prepare. It is needed to implement power off on
->>>> Freescale/NXP iMX6 based boards with external power management
->>>> integrated circuit (PMIC).
->>>>
->>>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
->>>> ---
->>>>  kernel/reboot.c | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/kernel/reboot.c b/kernel/reboot.c
->>>> index e4ced883d8de..350be6baa60d 100644
->>>> --- a/kernel/reboot.c
->>>> +++ b/kernel/reboot.c
->>>> @@ -49,6 +49,7 @@ int reboot_force;
->>>>   */
->>>> =20
->>>>  void (*pm_power_off_prepare)(void);
->>>> +EXPORT_SYMBOL(pm_power_off_prepare);
+On Mon, May 14, 2018 at 5:02 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
+> Sorry, messed up address for KVM mailing list.  See message below.
+>
+> On Sun, May 13, 2018 at 08:00:07PM -0700, Eric Biggers wrote:
+>> With CONFIG_KCOV=y and an AMD processor, running the following program crashes
+>> the kernel with no output (I'm testing in a VM, so it's using nested
+>> virtualization):
 >>
->> Why not EXPORT_SYMBOL_GPL() ?
->=20
-> No special reason. Fixed.
-> Any other comments?
->=20
+>>       #include <fcntl.h>
+>>       #include <linux/kvm.h>
+>>       #include <sys/ioctl.h>
+>>
+>>       int main()
+>>       {
+>>               int dev, vm, cpu;
+>>               char page[4096] __attribute__((aligned(4096))) = { 0 };
+>>               struct kvm_userspace_memory_region memreg = {
+>>                       .memory_size = 4096,
+>>                       .userspace_addr = (unsigned long)page,
+>>               };
+>>               dev = open("/dev/kvm", O_RDONLY);
+>>               vm = ioctl(dev, KVM_CREATE_VM, 0);
+>>               cpu = ioctl(vm, KVM_CREATE_VCPU, 0);
+>>               ioctl(vm, KVM_SET_USER_MEMORY_REGION, &memreg);
+>>               ioctl(cpu, KVM_RUN, 0);
+>>       }
+>>
+>> It bisects down to commit b2ac58f90540e39 ("KVM/SVM: Allow direct access to
+>> MSR_IA32_SPEC_CTRL").  The bug is apparently that due to the new code for
+>> managing the SPEC_CTRL MSR, __sanitizer_cov_trace_pc() is being called from
+>> svm_vcpu_run() before the host's MSR_GS_BASE has been restored, which causes a
+>> crash somehow.  The following patch fixes it, though I don't know that it's the
+>> right solution; maybe KCOV should be disabled in the function instead, or maybe
+>> there's a more fundamental problem.  What do people think?
 
-Or with other words, will it be enough to get your Signed-of-by for this
-patch?
+
+If __sanitizer_cov_trace_pc() crashes, I would expect there must be
+few more of them here:
+
+if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
+    svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+
+if (svm->spec_ctrl)
+    native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
+
+Compiler inserts these callbacks into every basic block/edge.. Aren't there?
+
+Unfortunately we don't have an attribute that disables instrumentation
+of a single function. This is currently possible only on file level.
 
 
---CRLiw7b3SfKPy3MVyt35HefVydl0PKi0x--
 
---RtB0pzA4sEIikWDKYFSjABFlnFe6ToT2P
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAlr5GlIACgkQdQOiSHVI
-77Rh4wgAwEu/IcL9h9DDgNxT7+bLULmv3Idsqw2YuCkCPyoqdzZMba4+xNxfzyzt
-fP7Mm0m1yYFfM0ZJ8xYJeSlhcb0Y991+YCRBPWv00zQplUPONo6Z8E5hmnmvqHav
-jmaBw+jLhosfgbdyzRlheDr/HQKgojWe8M2SkFyVnkwgk9tWvV/nEwgxtef177bB
-cDFVV48p8mpEPMcdn7OaAlDrHD2sLC8YmLYdM4PqUdwzrWTuAaOuuNkPOsgrNI29
-C+IHaIB/jG/JvWCTIbU7O0G7wGhAuhFhFqU4NwWjnZIrTfLpCgqMo7zW6E/ktmcy
-Kfqp7JlWNFroTiGOoHzBRbET/uIK1w==
-=Usu/
------END PGP SIGNATURE-----
-
---RtB0pzA4sEIikWDKYFSjABFlnFe6ToT2P--
+>> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+>> index 1fc05e428aba8..d35ef241e66d8 100644
+>> --- a/arch/x86/kvm/svm.c
+>> +++ b/arch/x86/kvm/svm.c
+>> @@ -5652,6 +5652,15 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
+>>  #endif
+>>               );
+>>
+>> +#ifdef CONFIG_X86_64
+>> +     wrmsrl(MSR_GS_BASE, svm->host.gs_base);
+>> +#else
+>> +     loadsegment(fs, svm->host.fs);
+>> +#ifndef CONFIG_X86_32_LAZY_GS
+>> +     loadsegment(gs, svm->host.gs);
+>> +#endif
+>> +#endif
+>> +
+>>       /*
+>>        * We do not use IBRS in the kernel. If this vCPU has used the
+>>        * SPEC_CTRL MSR it may have left it on; save the value and
+>> @@ -5676,15 +5685,6 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
+>>       /* Eliminate branch target predictions from guest mode */
+>>       vmexit_fill_RSB();
+>>
+>> -#ifdef CONFIG_X86_64
+>> -     wrmsrl(MSR_GS_BASE, svm->host.gs_base);
+>> -#else
+>> -     loadsegment(fs, svm->host.fs);
+>> -#ifndef CONFIG_X86_32_LAZY_GS
+>> -     loadsegment(gs, svm->host.gs);
+>> -#endif
+>> -#endif
+>> -
+>>       reload_tss(vcpu);
+>>
+>>       local_irq_disable();
