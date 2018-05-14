@@ -1,112 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753856AbeENROp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:14:45 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46848 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752611AbeENROm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:14:42 -0400
-From: Dave Martin <Dave.Martin@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-arch@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        James Hogan <jhogan@kernel.org>, Kees Cook <keescook@chromium.org>,
-        Matt Turner <mattst88@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>, Ralf Baechle <ralf@linux-mips.org>,
-        Richard Henderson <rth@twiddle.net>, Rich Felker <dalias@libc.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Tony Luck <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-Subject: [RFC PATCH 00/11] prctl: Modernise wiring for optional prctl() calls
-Date: Mon, 14 May 2018 18:14:16 +0100
-Message-Id: <1526318067-4964-1-git-send-email-Dave.Martin@arm.com>
-X-Mailer: git-send-email 2.1.4
+        id S1753953AbeENRPC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:15:02 -0400
+Received: from mail-qt0-f171.google.com ([209.85.216.171]:46337 "EHLO
+        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753148AbeENRO7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 13:14:59 -0400
+X-Google-Smtp-Source: AB8JxZqmisQAew2Q+ZD3Y7N847dRQ9Fyn2xvMOWnwBkmFCCPegH+KF8FX/SBZeSzNL8my5jIHMOy/AvG9PpLpVGphy8=
+MIME-Version: 1.0
+In-Reply-To: <20180514224006.06827f71@canb.auug.org.au>
+References: <20180514172042.093bd880@canb.auug.org.au> <CAHp75Vfs_Za5d8YLJ5FNJDmytRJE-P+q_Kds9V+ivBGy3v+p8g@mail.gmail.com>
+ <20180514224006.06827f71@canb.auug.org.au>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 14 May 2018 20:14:57 +0300
+Message-ID: <CAHp75VcpLA2Y_98vUJrjzJwFoNq5Ys68Y4j6RFiK7B_dO=4vrw@mail.gmail.com>
+Subject: Re: linux-next: Tree for May 14
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Reviewer note: this is a cross-arch series.  To reduce spam, I have
-tried not to Cc people on patches they aren't likely to care about.
-The complete series can be found in the LKML or linux-arch archives.]
+On Mon, May 14, 2018 at 3:40 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Mon, 14 May 2018 10:26:07 +0300 Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-The core framework for the prctl() syscall is unloved and looking
-rather crusty these days.  It also relies on defining ancillary
-boilerplate macros for each prctl() in order to control conditional
-compilation of the different prctl calls.  We have better ways to
-do this now.
+> BTW, the drivers-x86 tree I have is
+>
+> https://github.com/dvhart/linux-pdx86.git#for-next
+>
+> and the contact is Darren Hart.  Is that expected?
 
-This series attempts to modernise the code by defining a couple of new
-Kconfig variables HAVE_PRCTL_ARCH and HAVE_ARCH_PR_SET_GET_UNALIGN to
-allow architectures to provide hooks for arch-dependent prctls.
+That URL was temporary workaround for kernel.org inavailability.
+Please, switch to URL I posted before with for-next branch.
 
-
-For now this series has had minimal testing: some basic testing of
-arch-specific prctls using PR_SVE_SET_VL on arm64; build-tested on
-x86; otherwise untested.
-
-This is not polished yet... but I'm interested to know what people
-think about the approach.
-
-Cheers
----Dave
-
-
-Dave Martin (11):
-  prctl: Support movement of arch prctls out of common code
-  arm64: Move arch-specific prctls out of core code
-  MIPS: Remove unused task argument from prctl functions
-  MIPS: Move arch-specific prctls out of core code
-  x86: Move arch-specific prctls out of core code
-  powerpc: Remove unused task argument from prctl functions
-  powerpc: Move arch-specific prctls out of core code
-  ia64: Remove unused task argument from prctl functions
-  ia64: Move arch-specific prctls out of core code
-  prctl: Remove redundant task argument from PR_{SET,GET}_UNALIGN
-    backends
-  prctl: Refactor PR_{SET,GET}_UNALIGN to reduce boilerplate
-
- arch/Kconfig                         |   6 ++
- arch/alpha/Kconfig                   |   1 +
- arch/alpha/include/asm/thread_info.h |  23 --------
- arch/alpha/kernel/Makefile           |   2 +-
- arch/alpha/kernel/sys.c              |  36 ++++++++++++
- arch/arm64/Kconfig                   |   1 +
- arch/arm64/include/asm/processor.h   |   4 --
- arch/arm64/kernel/sys.c              |  15 +++++
- arch/ia64/Kconfig                    |   2 +
- arch/ia64/include/asm/processor.h    |  24 --------
- arch/ia64/kernel/sys_ia64.c          |  37 ++++++++++++
- arch/mips/Kconfig                    |   1 +
- arch/mips/include/asm/processor.h    |   3 -
- arch/mips/kernel/process.c           |  23 ++++----
- arch/mips/kernel/syscall.c           |  15 +++++
- arch/parisc/Kconfig                  |   1 +
- arch/parisc/include/asm/processor.h  |  14 -----
- arch/parisc/kernel/sys_parisc.c      |  15 +++++
- arch/powerpc/Kconfig                 |   2 +
- arch/powerpc/include/asm/processor.h |  20 ++-----
- arch/powerpc/kernel/process.c        |  38 ++++++------
- arch/powerpc/kernel/syscalls.c       |  17 ++++++
- arch/sh/Kconfig                      |   1 +
- arch/sh/include/asm/processor.h      |   7 ---
- arch/sh/mm/alignment.c               |  12 ++--
- arch/x86/Kconfig                     |   1 +
- arch/x86/include/asm/processor.h     |   6 --
- arch/x86/kernel/Makefile             |   1 +
- arch/x86/kernel/sys.c                |  26 +++++++++
- include/linux/prctl.h                |  27 +++++++++
- include/uapi/linux/prctl.h           |   6 +-
- kernel/sys.c                         | 110 ++++-------------------------------
- tools/include/uapi/linux/prctl.h     |   6 +-
- 33 files changed, 263 insertions(+), 240 deletions(-)
- create mode 100644 arch/alpha/kernel/sys.c
- create mode 100644 arch/x86/kernel/sys.c
- create mode 100644 include/linux/prctl.h
+Darren is aright contact, but not the only one. You might add me to
+the list as well.
 
 -- 
-2.1.4
+With Best Regards,
+Andy Shevchenko
