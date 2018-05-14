@@ -1,72 +1,155 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753103AbeENLvo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:51:44 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50803 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753085AbeENLvj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:51:39 -0400
-X-Google-Smtp-Source: AB8JxZoqCmUT/zed86F9m9R7aHo0SXUTxBA1X5Wn6tPcojaUq99B/h+RGQZp3T8LQPBEEmTuHSfZrg==
-Date: Mon, 14 May 2018 13:51:35 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mfd: tps6586x: Move interrupt handling into workqueue
-Message-ID: <20180514115135.GG18312@ulmo>
-References: <20180513211842.7819-1-digetx@gmail.com>
+        id S1753134AbeENLvz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:51:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52450 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753116AbeENLvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 07:51:54 -0400
+Date: Mon, 14 May 2018 13:51:49 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Waiman Long <longman@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: DEBUG_RWSEMS warning from thaw_super()
+Message-ID: <20180514115149.GA8905@redhat.com>
+References: <CAOQ4uxgxP-0OZzT866=RR5rGQZ89EOy-mFF50v_5Y644OrV7tA@mail.gmail.com>
+ <20180513160404.GA19620@redhat.com>
+ <20180514095022.nfp7vuepz4kfshni@quack2.suse.cz>
+ <CAOQ4uxiKQDB-5iFztNz8wPECi5fKMPxEi5cxaKM_zRc9yeticQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="64j1qyTOoGvYcHb1"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180513211842.7819-1-digetx@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAOQ4uxiKQDB-5iFztNz8wPECi5fKMPxEi5cxaKM_zRc9yeticQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 05/14, Amir Goldstein wrote:
+>
+> On Mon, May 14, 2018 at 12:50 PM, Jan Kara <jack@suse.cz> wrote:
+> > On Sun 13-05-18 18:04:04, Oleg Nesterov wrote:
+> >> On 05/13, Amir Goldstein wrote:
+> >> >
+> >> > Since kernel v4.17-rc1 and DEBUG_RWSEMS, I see the
+> >> > warning below after filesystem freeze/thaw.
+> >> >
+> >> > This is a case where one process acquires a bunch of rwsem
+> >> > and another process releases them.
+> >> >
+> >> > To convey this use case to lockdep, freeze_super() calls
+> >> > lockdep_sb_freeze_release() on exit and thaw_super()
+> >> > calls lockdep_sb_freeze_acquire() on entry.
+> >>
+> >> This was already discussed, but I forgot the result...
+> >>
+> >> So once again, why we can't simply update percpu_rwsem_acquire() ?
+> >> Or we can check CONFIG_RWSEM_SPIN_ON_OWNER to match percpu_rwsem_release(),
+> >> but CONFIG_DEBUG_RWSEMS explains the purpose better.
+> >
+> > Yeah, what you suggests seems reasonable to me. So feel free to add:
+> >
+> > Acked-by: Jan Kara <jack@suse.cz>
+> >
+>
+> How about this version? A bit more prudent and also addresses the
+> TODO in commit 55cc156505f2 ("percpu-rwsem: introduce
+> percpu_rwsem_release() and percpu_rwsem_acquire()")
 
---64j1qyTOoGvYcHb1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Well, to me this looks like unnecessary overcomplication...
 
-On Mon, May 14, 2018 at 12:18:42AM +0300, Dmitry Osipenko wrote:
-> Reading of status register within the interrupt handler fails with -EAGAIN
-> if I2C is busy with handling some other request at the same time. Move the
-> actual interrupt handling into a workqueue to avoid the unfortunate I2C
-> failure and to avoid hanging CPU in interrupt up to 1 second (transfer
-> timeout in the Tegra I2C driver).
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/mfd/tps6586x.c | 40 +++++++++++++++++++++++++++++-----------
->  1 file changed, 29 insertions(+), 11 deletions(-)
+In any case the patch looks technically wrong, afaics
+rwsem_can_spin_on_owner() will crash if it hits owner == RWSEM_USER_OWNED.
 
-Could this not be achieved with a threaded interrupt handler?
+Oleg.
 
-Thierry
-
---64j1qyTOoGvYcHb1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5eEcACgkQ3SOs138+
-s6FAyhAAq80tkvFczYnA4GX2jq86xP/IB3C7Djg4zOp/dEpUFGTtH7jMHrMUiq7d
-lsNU2YRhorcT7cqslncYo6L6RSVTti65HBmww856j8f7GvOO+roMm/ysmvGP0mhr
-f0byAaXL3hcZbRL13Y9B8x9HQc3SD/r1YzFYUNwJb3eV6xjWO3dStq5C8OFIRm/A
-KQrdTO/VqIfWmzVSFwL8SlbTqhgfZBAkCs+YrY5Gm1TC7rFUtPh4hFpC+dHboq6v
-RFQTGUDj5TE+J8OZ79nQQBaOzRGymrNln3OvnfhZ92f//SF1uJGeh6Xm+WmjfFGe
-YqIhLgtpO6F3gTqAzxC+6N6Y7H9BaeBANwwJ0OOcsnkY6cuL2m4nj3nZWYqLgHYp
-blBA1FtbF2o1Zbo3VP3OyDWDWpFrkKXghVGScJtUdotRj7M6AQXglCaodHUBMTmt
-zoc9ZVinnt0Bm6GmeSKfeFvZnCi6FquXwIaUlxENzKv9AfYNktAUcRejuwZiAWy4
-GE36Ax1f1K9IpoHkC3GGJUpkHmqbl6ddUv0Yz89ipcc9X2sQ60RhVBD8V+FJJoqD
-jUgR4SLkRM9DXhGzUiogzhKdrPRw1VmfeGSVfe2H7ZbWdvl6NobUhNYVLxbLKl+1
-QGqvTdlJGymSLqTJSDIlLGZvlcN7nEDtzKIzBgsAWsT9U2aZhhs=
-=zJYC
------END PGP SIGNATURE-----
-
---64j1qyTOoGvYcHb1--
+> diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
+> index b1f37a89e368..323d5ba6a60d 100644
+> --- a/include/linux/percpu-rwsem.h
+> +++ b/include/linux/percpu-rwsem.h
+> @@ -127,13 +127,16 @@ extern void percpu_free_rwsem(struct
+> percpu_rw_semaphore *);
+>  #define percpu_rwsem_assert_held(sem)                          \
+>         lockdep_assert_held(&(sem)->rw_sem)
+> 
+> +extern void percpu_rwsem_set_user_owned(struct percpu_rw_semaphore *sem);
+> +extern void percpu_rwsem_set_owner(struct percpu_rw_semaphore *sem);
+> +
+>  static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
+>                                         bool read, unsigned long ip)
+>  {
+>         lock_release(&sem->rw_sem.dep_map, 1, ip);
+>  #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
+>         if (!read)
+> -               sem->rw_sem.owner = NULL;
+> +               percpu_rwsem_set_user_owned(sem);
+>  #endif
+>  }
+> 
+> @@ -141,6 +144,10 @@ static inline void percpu_rwsem_acquire(struct
+> percpu_rw_semaphore *sem,
+>                                         bool read, unsigned long ip)
+>  {
+>         lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
+> +#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
+> +       if (!read)
+> +               percpu_rwsem_set_owner(sem);
+> +#endif
+>  }
+> 
+>  #endif
+> diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
+> index 883cf1b92d90..afa65915541f 100644
+> --- a/kernel/locking/percpu-rwsem.c
+> +++ b/kernel/locking/percpu-rwsem.c
+> @@ -7,6 +7,8 @@
+>  #include <linux/sched.h>
+>  #include <linux/errno.h>
+> 
+> +#include "rwsem.h"
+> +
+>  int __percpu_init_rwsem(struct percpu_rw_semaphore *sem,
+>                         const char *name, struct lock_class_key *rwsem_key)
+>  {
+> @@ -190,3 +192,17 @@ void percpu_up_write(struct percpu_rw_semaphore *sem)
+>         rcu_sync_exit(&sem->rss);
+>  }
+>  EXPORT_SYMBOL_GPL(percpu_up_write);
+> +
+> +void percpu_rwsem_set_user_owned(struct percpu_rw_semaphore *sem)
+> +{
+> +       DEBUG_RWSEMS_WARN_ON(sem->rw_sem.owner != current);
+> +       sem->rw_sem.owner = RWSEM_USER_OWNED;
+> +}
+> +EXPORT_SYMBOL_GPL(percpu_rwsem_set_user_owned);
+> +
+> +void percpu_rwsem_set_owner(struct percpu_rw_semaphore *sem)
+> +{
+> +       DEBUG_RWSEMS_WARN_ON(sem->rw_sem.owner != RWSEM_USER_OWNED);
+> +       sem->rw_sem.owner = current;
+> +}
+> +EXPORT_SYMBOL_GPL(percpu_rwsem_set_user_owned);
+> diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
+> index a17cba8d94bb..f686596ec033 100644
+> --- a/kernel/locking/rwsem.h
+> +++ b/kernel/locking/rwsem.h
+> @@ -11,10 +11,14 @@
+>   *  2) RWSEM_READER_OWNED
+>   *     - lock is currently or previously owned by readers (lock is free
+>   *       or not set by owner yet)
+> - *  3) Other non-zero value
+> + *  3) RWSEM_USER_OWNED
+> + *     - lock is currently owned by userspace (previously owned by writer
+> + *       and should be handed over to a new writer before being freed)
+> + *  4) Other non-zero value
+>   *     - a writer owns the lock
+>   */
+>  #define RWSEM_READER_OWNED     ((struct task_struct *)1UL)
+> +#define RWSEM_USER_OWNED       ((struct task_struct *)2UL)
+> 
+>  #ifdef CONFIG_DEBUG_RWSEMS
+>  # define DEBUG_RWSEMS_WARN_ON(c)       DEBUG_LOCKS_WARN_ON(c)
