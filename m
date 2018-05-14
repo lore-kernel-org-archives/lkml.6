@@ -1,134 +1,186 @@
-Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-995127-1526313126-2-14786833103967176285
+Return-Path: <linux-arch-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1587535-1526340729-2-3331669708423417486
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-fsdevel-owner@vger.kernel.org
+X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526313126; b=khwOfoHVjnsOyuvO7yJPDjEKtDboS+jMRe368Gog+e5tEKpYsQ
-    xjQqHdh/WBK+wUTLvm5aa0eCgPcXi4j1lB+nPDgttBlTEhk7QdUo5CkxH3rPlehV
-    8L1vSk6S0MmK2tD44ao7E18l/w/eTbLvxfrnhnAv821MjS9wG6cr7/He9K7+7/4G
-    nRd691LQz7/dR5+JaCAykXBewJ/QRKVpUcGiHb/Zn3UR6N6krN18YEYGdHt0rqmF
-    WiUGKBkY54nJ6Cu3bEbupsMSXwh6mg/0cL7TTg/cLYQlhcqF5e7LtS7RbmEt/kQQ
-    fCIlDgtdLxtypWG7KalkxqjCqHjn4c/ncz0g==
+    1526340729; b=WhyQyx/nlywf/Fl3JSHZbLoQm55/Q5ZSDrKmapt6ED2SL0I8t2
+    jZ+5IPT4zulzM3dybVFzyEGRUizEMBfldxifcU2v1CT9DxgdINs8AZTs7j78QmQy
+    G/zbrDqI7ycDInfZnx39IlgyniKINq0eo8zengQCyCzWG+EDvGlScRK1oOeumLRg
+    wK7EvF9VR4WEGJdAZM0aLaDefLZtLJLNL0aR3Emsi33PgU/nbsVmek5SjAoZ2trd
+    t8jXlNdM1dFYZZ8njIWZv1SKwNe92vZvTVIB18h08SLA+kPHD11aR5rXPcCp+fXE
+    f6NBLM1GxpPJxN1PShsQodcsJfCqDOrK/sqw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1526313126; bh=anAKFmZNfeHi3xHfJ4ejWlebwrKxCrxgc2LqYe9oTk
-    c=; b=VOeyn0PPtanjYikYACxNRo6pZJs55viRvZDpGTrv/73Xt6oAWpyrUXT20t
-    j4U/m6/KsuTvimwkcDf1/h4B7/r9ecNXHz34wVM8iUxUvIl6p3oW7p6HNQVpo8dv
-    +aK0xUlGkV7eVk58h+lGnGA0P2NaE92eOH39dM4J2OgVYxpp0CAB++SfslPUwQXZ
-    K6vbSFrx2n+gdiMpW3hNm0HfSDLZF/rPFt5amESjxfm2ES7gHgQcG90LSpA6M5HW
-    UcVUMXukIddDxMU7sALFAyjN22SJFNxLdWRAzH5S9RMuPKwvlIEknY7I5gMbmx/D
-    MdL3kwT7v8AfyBIuAgW6oOTuWDKw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256)
-    header.d=intel-com.20150623.gappssmtp.com
-    header.i=@intel-com.20150623.gappssmtp.com header.b=k1UoZKgD
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    messagingengine.com; h=date:from:to:cc:subject:reply-to
+    :mime-version:content-type:message-id:sender:list-id; s=fm2; t=
+    1526340729; bh=GjX3tl8ggFxGbGNED5unFWqaWeKNj9jyDs3KtWWlrTs=; b=G
+    V7CkCMnSxqZVilwAVmyAHpBTI3p6vN89083Bi/sL0WslS4q/MwM4ROki+LZ2Lzlv
+    niFtQFlTL92UJovFO5ENgVzpDGd7Y1akpAvgrUVxUCZnjAcycX27dSZ2BJ8BIws6
+    FcC20w6BysbL7SY0Udqby8v0/Ltek+mjCjKWpfFri2uMS0xmM7OOxrXk8zZ+4uS4
+    RYhkkoz/9+ypnOnuG/ehtcNxXeEENlfFaxkIKprN0kpy4soyN/gbhu4M+UZMRGdJ
+    flWhLt3sMWZ4LrA//QsprUWwXg3iIKku2qGbuTWMXzOR3gwpfuDHQNWFQf1ekEqb
+    2YDOgifrqOcwgi10R4lrg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+    header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=n0YedSXu;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+    header.domain=linux.vnet.ibm.com header.result=pass
+    header_org.domain=ibm.com header_org.result=pass
+    header_is_org_domain=no;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256)
-      header.d=intel-com.20150623.gappssmtp.com
-      header.i=@intel-com.20150623.gappssmtp.com header.b=k1UoZKgD
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+      header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=n0YedSXu;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=linux.vnet.ibm.com header.result=pass
+      header_org.domain=ibm.com header_org.result=pass
+      header_is_org_domain=no;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfH3SJuZItPdgpGpZX/Tl88J8lwAbOV47939Y6LiiyIzYpWppaFm58cwEDSXeXT+KF/Ny4LaMwtIf9EwjNChzcmqYXaSSa1KiyYPQH1FUSYAVpFy3tMrR
-    b7BUARryoaPI3/qXIctdL5XpEzYhidtnmeYBmmvjnPQzSSU3C77COwP+iXeag49PNz+Xsd7vrCm5qEBH2/NyPAsK7Wy9bfsGEActMwjlkboZ9WaHRAL7+5tE
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=pC25yzH5R2KbY8HCt64A:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfLaG91tq4co1ni39V1LEkkE/pmuQANw99sjdxIu3FL/H3/IesjK9iqQ5zQiyvTTRuDbIHaRSGuCVmErUP8XfrcffHj08IpzilOH4L77F+dZpsOpQBp9o
+    J6PStTyqh5TNHtVAC2Xrgd/ViFjGOJ4u9fW2BIcT7Jd+tt+JBiAXUT06vwt7bb5ovrfA0goEWprcp2oX6MLbj1iM1rZswCGVvEaRclbY4sUgIYkooqNXzf6W
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=SajGqXo6GS7U7wIx0SAA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752634AbeENPwE (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 14 May 2018 11:52:04 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:45976 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752121AbeENPwD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 May 2018 11:52:03 -0400
-X-Google-Smtp-Source: AB8JxZpGqQyFiLr9ZFu/gySYaio9OwqZ0dC8IPZwv2uHeZC+MbJDDtfNR6NyYsWdYKY974Ca01mKqa4XuBkmsAAxjU8=
+        id S1752185AbeENXcG (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 14 May 2018 19:32:06 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41134 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752112AbeENXcF (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>);
+        Mon, 14 May 2018 19:32:05 -0400
+Date: Mon, 14 May 2018 16:33:28 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org
+Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com
+Subject: [PATCH memory-model 0/19] Updates to the formal memory model
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
-In-Reply-To: <20180514072603.GA14099@gmail.com>
-References: <CAPcyv4g5p72aiXYh8Tf03tvZq8HNYmTFU95PJGG1iQ4JHcr9PA@mail.gmail.com>
- <20180514072603.GA14099@gmail.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Mon, 14 May 2018 08:52:02 -0700
-Message-ID: <CAPcyv4j2HQH1wdsGGWUAiXEKXeoMUWN_HeUEMmkv8PG7RUTtfw@mail.gmail.com>
-Subject: Re: use memcpy_mcsafe() for copy_to_iter() (was: Re: [PATCH v3 0/9]
- Series short description)
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-fsdevel-owner@vger.kernel.org
-X-Mailing-List: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18051423-0048-0000-0000-0000026CF2FB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009026; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032383; UDB=6.00527784; IPR=6.00811514;
+ MB=3.00021114; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 23:32:01
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051423-0049-0000-0000-0000451F4830
+Message-Id: <20180514233328.GA7601@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805140230
+Sender: linux-arch-owner@vger.kernel.org
+X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 14, 2018 at 12:26 AM, Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Dan Williams <dan.j.williams@intel.com> wrote:
->
->> Ingo, Thomas, Al, any concerns with this series?
->
-> Yeah, so:
->
->    "[PATCH v3 0/9] Series short description"
->
-> ... isn't the catchiest of titles to capture my [all too easily distracted]
-> attention! ;-)
+Hello!
 
-My bad! After that mistake it became a toss-up between more spam and
-hoping the distraction would not throw you off.
+This series contains updates to the Linux kernel's formal memory model in
+tools/memory-model.  These are ready for inclusion into -tip.
 
-> I have marked it now for -tip processing. Linus was happy with this and acked the
-> approach, right?
+1.	Rename LKMM's "link" and "rcu-path" relations to "rcu-link"
+	and "rb", respectively, courtesy of Alan Stern.
 
-I think "happy" is a strong word when it comes to x86 machine check
-handling. My interpretation is that he and Andy acquiesced that this
-is about the best we can do with dax+mce as things stand today.
+2.	Redefine LKMM's "rb" relation in terms of rcu-fence in order
+	to match the structure of LKMM's other strong fences, courtesy
+	of Alan Stern.
+
+3.	Update required version of herdtools7, courtesy of Akira Yokosawa.
+
+4.	 Fix cheat sheet typo: "RWM" should be "RMW", courtesy of Paolo Bonzini.
+
+5.	Improve cheatsheet.txt key for SELF and SV.
+
+6.	Fix cheatsheet.txt to note that smp_mb__after_atomic() orders
+	later RMW operations.
+
+7.	Model smp_store_mb(), courtesy of Andrea Parri.
+
+8.	Fix coding style in 'linux-kernel.def', courtesy of Andrea Parri.
+
+9.	Add scripts to test the memory model.
+
+10.	Add model support for spin_is_locked(), courtesy of Luc Maranget.
+
+11.	Flag the tests that exercise "cumulativity" and "propagation".
+
+12.	Remove duplicated code from lock.cat, courtesy of Alan Stern.
+
+13.	Improve comments in lock.cat, courtesy of Alan Stern.
+
+14.	Improve mixed-access checking in lock.cat, courtesy of Alan Stern.
+
+15.	Remove out-of-date comments and code from lock.cat, which have
+	been obsoleted by the settled-upon spin_is_locked() semantics,
+	courtesy of Alan Stern.
+
+16.	Fix coding style in 'lock.cat', bringing the indentation to
+	Linux-kernel standard, courtesy of Andrea Parri.
+
+17.	Update Andrea Parri's email address in the MAINTAINERS file,
+	oddly enough courtesy of Andrea Parri.  ;-)
+
+18.	Update ASPLOS information now that ASPLOS has come and gone,
+	courtesy of Andrea Parri.
+
+19.	Add reference for 'Simplifying ARM concurrency', courtesy
+	of Andrea Parri.
+
+								Thanx, Paul
+
+------------------------------------------------------------------------
+
+ MAINTAINERS                                                               |    2 
+ tools/memory-model/Documentation/cheatsheet.txt                           |    7 
+ tools/memory-model/Documentation/explanation.txt                          |  261 +++++-----
+ tools/memory-model/Documentation/references.txt                           |   17 
+ tools/memory-model/README                                                 |    2 
+ tools/memory-model/linux-kernel.bell                                      |    4 
+ tools/memory-model/linux-kernel.cat                                       |   53 +-
+ tools/memory-model/linux-kernel.def                                       |   34 -
+ tools/memory-model/litmus-tests/.gitignore                                |    1 
+ tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus          |    2 
+ tools/memory-model/litmus-tests/MP+polockmbonce+poacquiresilsil.litmus    |   35 +
+ tools/memory-model/litmus-tests/MP+polockonce+poacquiresilsil.litmus      |   34 +
+ tools/memory-model/litmus-tests/README                                    |   19 
+ tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus |    4 
+ tools/memory-model/lock.cat                                               |  197 ++++---
+ tools/memory-model/scripts/checkalllitmus.sh                              |   73 ++
+ tools/memory-model/scripts/checklitmus.sh                                 |   86 +++
+ 17 files changed, 595 insertions(+), 236 deletions(-)
