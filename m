@@ -1,226 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752281AbeENWu5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 18:50:57 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:35215 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752078AbeENWuz (ORCPT
+        id S1752387AbeENWyP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 18:54:15 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37002 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752228AbeENWyM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 18:50:55 -0400
-X-Google-Smtp-Source: AB8JxZrk/UMkCfXQAMjz1gQpw95G8XP9rM4WFRRVUH95UbF8GWrr8WFoG2OiHQpYaEjW5fOnkn/HtQ==
-Date: Mon, 14 May 2018 15:50:52 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>, Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v2] pstore: Convert internal records to timespec64
-Message-ID: <20180514225052.GA39419@beast>
+        Mon, 14 May 2018 18:54:12 -0400
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org
+Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        akiyks@gmail.com, SeongJae Park <sj38.park@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH memory-model 2/8] kokr/doc: READ_ONCE() now implies smp_barrier_depends()
+Date: Mon, 14 May 2018 15:55:27 -0700
+X-Mailer: git-send-email 2.5.2
+In-Reply-To: <20180514225457.GA5142@linux.vnet.ibm.com>
+References: <20180514225457.GA5142@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18051422-0056-0000-0000-0000044E3E29
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009026; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032370; UDB=6.00527776; IPR=6.00811501;
+ MB=3.00021114; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 22:54:08
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051422-0057-0000-0000-0000089251DB
+Message-Id: <1526338533-6044-2-git-send-email-paulmck@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805140226
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This prepares pstore for converting the VFS layer to timespec64.
+From: SeongJae Park <sj38.park@gmail.com>
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
+This commit applies an upstream change, commit 40555946447a ("doc:
+READ_ONCE() now implies smp_barrier_depends()") to the Korean version
+document.
+
+Signed-off-by: SeongJae Park <sj38.park@gmail.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
-I can carry this for v4.18 unless you'd like to do it as part of your series?
----
- drivers/firmware/efi/efi-pstore.c | 27 ++++++++++++++-------------
- fs/pstore/inode.c                 |  3 ++-
- fs/pstore/platform.c              |  2 +-
- fs/pstore/ram.c                   | 21 ++++++++++++++-------
- include/linux/pstore.h            |  2 +-
- 5 files changed, 32 insertions(+), 23 deletions(-)
+ Documentation/translations/ko_KR/memory-barriers.txt | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/firmware/efi/efi-pstore.c b/drivers/firmware/efi/efi-pstore.c
-index 5a0fa939d70f..cfe87b465819 100644
---- a/drivers/firmware/efi/efi-pstore.c
-+++ b/drivers/firmware/efi/efi-pstore.c
-@@ -28,10 +28,9 @@ static int efi_pstore_close(struct pstore_info *psi)
- 	return 0;
- }
+diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
+index 0a0930ab4156..edef154d77b2 100644
+--- a/Documentation/translations/ko_KR/memory-barriers.txt
++++ b/Documentation/translations/ko_KR/memory-barriers.txt
+@@ -255,17 +255,20 @@ CPU 에게 기대할 수 있는 최소한의 보장사항 몇가지가 있습니
+  (*) 어떤 CPU 든, 의존성이 존재하는 메모리 액세스들은 해당 CPU 자신에게
+      있어서는 순서대로 메모리 시스템에 수행 요청됩니다. 즉, 다음에 대해서:
  
--static inline u64 generic_id(unsigned long timestamp,
--			     unsigned int part, int count)
-+static inline u64 generic_id(u64 timestamp, unsigned int part, int count)
- {
--	return ((u64) timestamp * 100 + part) * 1000 + count;
-+	return (timestamp * 100 + part) * 1000 + count;
- }
+-	Q = READ_ONCE(P); smp_read_barrier_depends(); D = READ_ONCE(*Q);
++	Q = READ_ONCE(P); D = READ_ONCE(*Q);
  
- static int efi_pstore_read_func(struct efivar_entry *entry,
-@@ -42,7 +41,8 @@ static int efi_pstore_read_func(struct efivar_entry *entry,
- 	int i;
- 	int cnt;
- 	unsigned int part;
--	unsigned long time, size;
-+	unsigned long size;
-+	u64 time;
+      CPU 는 다음과 같은 메모리 오퍼레이션 시퀀스를 수행 요청합니다:
  
- 	if (efi_guidcmp(entry->var.VendorGuid, vendor))
- 		return 0;
-@@ -50,7 +50,7 @@ static int efi_pstore_read_func(struct efivar_entry *entry,
- 	for (i = 0; i < DUMP_NAME_LEN; i++)
- 		name[i] = entry->var.VariableName[i];
+ 	Q = LOAD P, D = LOAD *Q
  
--	if (sscanf(name, "dump-type%u-%u-%d-%lu-%c",
-+	if (sscanf(name, "dump-type%u-%u-%d-%llu-%c",
- 		   &record->type, &part, &cnt, &time, &data_type) == 5) {
- 		record->id = generic_id(time, part, cnt);
- 		record->part = part;
-@@ -62,7 +62,7 @@ static int efi_pstore_read_func(struct efivar_entry *entry,
- 		else
- 			record->compressed = false;
- 		record->ecc_notice_size = 0;
--	} else if (sscanf(name, "dump-type%u-%u-%d-%lu",
-+	} else if (sscanf(name, "dump-type%u-%u-%d-%llu",
- 		   &record->type, &part, &cnt, &time) == 4) {
- 		record->id = generic_id(time, part, cnt);
- 		record->part = part;
-@@ -71,7 +71,7 @@ static int efi_pstore_read_func(struct efivar_entry *entry,
- 		record->time.tv_nsec = 0;
- 		record->compressed = false;
- 		record->ecc_notice_size = 0;
--	} else if (sscanf(name, "dump-type%u-%u-%lu",
-+	} else if (sscanf(name, "dump-type%u-%u-%llu",
- 			  &record->type, &part, &time) == 3) {
- 		/*
- 		 * Check if an old format,
-@@ -250,9 +250,10 @@ static int efi_pstore_write(struct pstore_record *record)
- 	/* Since we copy the entire length of name, make sure it is wiped. */
- 	memset(name, 0, sizeof(name));
+-     그리고 그 시퀀스 내에서의 순서는 항상 지켜집니다.  대부분의 시스템에서
+-     smp_read_barrier_depends() 는 아무일도 안하지만 DEC Alpha 에서는
+-     명시적으로 사용되어야 합니다.  보통의 경우에는 smp_read_barrier_depends()
+-     를 직접 사용하는 대신 rcu_dereference() 같은 것들을 사용해야 함을
+-     알아두세요.
++     그리고 그 시퀀스 내에서의 순서는 항상 지켜집니다.  하지만, DEC Alpha 에서
++     READ_ONCE() 는 메모리 배리어 명령도 내게 되어 있어서, DEC Alpha CPU 는
++     다음과 같은 메모리 오퍼레이션들을 내놓게 됩니다:
++
++	Q = LOAD P, MEMORY_BARRIER, D = LOAD *Q, MEMORY_BARRIER
++
++     DEC Alpha 에서 수행되든 아니든, READ_ONCE() 는 컴파일러로부터의 악영향
++     또한 제거합니다.
  
--	snprintf(name, sizeof(name), "dump-type%u-%u-%d-%lu-%c",
-+	snprintf(name, sizeof(name), "dump-type%u-%u-%d-%lld-%c",
- 		 record->type, record->part, record->count,
--		 record->time.tv_sec, record->compressed ? 'C' : 'D');
-+		 (long long)record->time.tv_sec,
-+		 record->compressed ? 'C' : 'D');
- 
- 	for (i = 0; i < DUMP_NAME_LEN; i++)
- 		efi_name[i] = name[i];
-@@ -327,15 +328,15 @@ static int efi_pstore_erase(struct pstore_record *record)
- 	char name[DUMP_NAME_LEN];
- 	int ret;
- 
--	snprintf(name, sizeof(name), "dump-type%u-%u-%d-%lu",
-+	snprintf(name, sizeof(name), "dump-type%u-%u-%d-%lld",
- 		 record->type, record->part, record->count,
--		 record->time.tv_sec);
-+		 (long long)record->time.tv_sec);
- 	ret = efi_pstore_erase_name(name);
- 	if (ret != -ENOENT)
- 		return ret;
- 
--	snprintf(name, sizeof(name), "dump-type%u-%u-%lu",
--		record->type, record->part, record->time.tv_sec);
-+	snprintf(name, sizeof(name), "dump-type%u-%u-%lld",
-+		record->type, record->part, (long long)record->time.tv_sec);
- 	ret = efi_pstore_erase_name(name);
- 
- 	return ret;
-diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-index 5fcb845b9fec..75afe5eb0574 100644
---- a/fs/pstore/inode.c
-+++ b/fs/pstore/inode.c
-@@ -392,7 +392,8 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
- 	inode->i_private = private;
- 
- 	if (record->time.tv_sec)
--		inode->i_mtime = inode->i_ctime = record->time;
-+		inode->i_mtime = inode->i_ctime =
-+			timespec64_to_timespec(record->time);
- 
- 	d_add(dentry, inode);
- 
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index dc720573fd53..c238ab8ba31d 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -328,7 +328,7 @@ void pstore_record_init(struct pstore_record *record,
- 	record->psi = psinfo;
- 
- 	/* Report zeroed timestamp if called before timekeeping has resumed. */
--	record->time = ns_to_timespec(ktime_get_real_fast_ns());
-+	record->time = ns_to_timespec64(ktime_get_real_fast_ns());
- }
- 
- /*
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index 49b2bc114868..69e893076ab7 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -38,6 +38,11 @@
- 
- #define RAMOOPS_KERNMSG_HDR "===="
- #define MIN_MEM_SIZE 4096UL
-+#if __BITS_PER_LONG == 64
-+# define TVSEC_FMT "%ld"
-+#else
-+# define TVSEC_FMT "%lld"
-+#endif
- 
- static ulong record_size = MIN_MEM_SIZE;
- module_param(record_size, ulong, 0400);
-@@ -153,21 +158,23 @@ ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint *c, uint max,
- 	return prz;
- }
- 
--static int ramoops_read_kmsg_hdr(char *buffer, struct timespec *time,
-+static int ramoops_read_kmsg_hdr(char *buffer, struct timespec64 *time,
- 				  bool *compressed)
- {
- 	char data_type;
- 	int header_length = 0;
- 
--	if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lu.%lu-%c\n%n", &time->tv_sec,
--			&time->tv_nsec, &data_type, &header_length) == 3) {
-+	if (sscanf(buffer, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu-%c\n%n",
-+		   &time->tv_sec, &time->tv_nsec, &data_type,
-+		   &header_length) == 3) {
- 		if (data_type == 'C')
- 			*compressed = true;
- 		else
- 			*compressed = false;
--	} else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lu.%lu\n%n",
--			&time->tv_sec, &time->tv_nsec, &header_length) == 2) {
--			*compressed = false;
-+	} else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu\n%n",
-+			  &time->tv_sec, &time->tv_nsec,
-+			  &header_length) == 2) {
-+		*compressed = false;
- 	} else {
- 		time->tv_sec = 0;
- 		time->tv_nsec = 0;
-@@ -360,7 +367,7 @@ static size_t ramoops_write_kmsg_hdr(struct persistent_ram_zone *prz,
- 	char *hdr;
- 	size_t len;
- 
--	hdr = kasprintf(GFP_ATOMIC, RAMOOPS_KERNMSG_HDR "%lu.%lu-%c\n",
-+	hdr = kasprintf(GFP_ATOMIC, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu-%c\n",
- 		record->time.tv_sec,
- 		record->time.tv_nsec / 1000,
- 		record->compressed ? 'C' : 'D');
-diff --git a/include/linux/pstore.h b/include/linux/pstore.h
-index 61f806a7fe29..a15bc4d48752 100644
---- a/include/linux/pstore.h
-+++ b/include/linux/pstore.h
-@@ -71,7 +71,7 @@ struct pstore_record {
- 	struct pstore_info	*psi;
- 	enum pstore_type_id	type;
- 	u64			id;
--	struct timespec		time;
-+	struct timespec64	time;
- 	char			*buf;
- 	ssize_t			size;
- 	ssize_t			ecc_notice_size;
+  (*) 특정 CPU 내에서 겹치는 영역의 메모리에 행해지는 로드와 스토어 들은 해당
+      CPU 안에서는 순서가 바뀌지 않은 것으로 보여집니다.  즉, 다음에 대해서:
 -- 
-2.17.0
-
-
--- 
-Kees Cook
-Pixel Security
+2.5.2
