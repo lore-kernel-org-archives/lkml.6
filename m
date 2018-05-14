@@ -1,231 +1,499 @@
-Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-722281-1525689865-2-11863573238492059044
+Return-Path: <linux-fsdevel-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-36588-1526267041-2-1938342243188161152
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: 
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-arch-owner@vger.kernel.org
+X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525689865; b=mN9NYl0jN3wPfoPIdteehQpc82JFoO7TkyRZvVpkByH2p2EgMe
-    4vhNiJpaFmRB+G+GJ0FmlUAJIYdM+XJNwRm+1YTrvwnVKbdkTRt/Sy7gsA6yAOo1
-    HnmbB8D1XP+3lLdR5MKDBmYjddwwUo2R26e6eLbXXbaxKAGMaVXCC4El/5W2JbvU
-    oEucdHJz6x3SB8RniCh3IeKuPmMH9l1XZ7JPzJm4VZMuAjL88WE6xeJJWhK1GELY
-    1brIhr6n/sTgmH4A7enZtZinApv/QECrbgDsNCVSHn2TO0BhO2DF2chdfu67R9h7
-    +PJNq2Eb53tzXZ0B/PxsbVFcjRrPRqUeLOQQ==
+    1526267040; b=iFwNynrncBX853AW8KVwqbzPlbJ5NyZvQyL4BxiZ/nWgI2nOiD
+    yVaLpRfuHaXp2y41nE/HnSKWYYvSiwQpYP+Xt1swMI+g5kBGCyWpTJbuqFR2UCo2
+    MjBOClcWoFC4vfEBt+wnB5T2/qfnaNM6jpNcftN0hiWWHnPyzMEobTvxvsjPdNQF
+    OVVBwxBLwfPJtL9rbNPJJEkZztgLH5qxxBPK3yjeulwjf918lMc4LAjEQ0JxAMDE
+    q7lEnZVQZapL50igCOSEY7bSm2IqKPTKtGID6WRXs2OgmD4DLFe40lTw64np2OaF
+    9+oTrx0c52AUyOIqLhrKorgvA2/ZGUdGj6nQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525689865; bh=
-    fMK3bZ8DXYttf0uxQEWi+Q/Qkeszj88c6v7MKcLrIlU=; b=bJpc9fx6AGn634L8
-    CncKk3bYA8urd9lqGiT3PR8TiAy0X3TR9eEN5PSdeXx949I8BJWs27QQwYAXo2X/
-    Jm4LIxO6Cupy3TH6qX6kMHLCv4Uy2LfSmLxSzO46hxo6IZULwjcEt4zbQs0vIXLO
-    5DNzMAuaRt8I7KOVEzPX3G6CZumg/GjPdPBrsw9iZVocKolxJnJhBe0srH6ENa3S
-    DVbppeSsc3+spAJkwDMJdrx+mEdS0HUtWyQtG0l4iXjkeRd6AbM0w1K1ILf13Wzs
-    CJRXh0bFWe9D3InPPXTf5JAXt7ORlq1uKNMIrNAz6EQxZcckRK04foeARfn5yh43
-    sFntDw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=amarulasolutions.com
-    header.i=@amarulasolutions.com header.b=B59gCYWQ x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=amarulasolutions.com;
+    messagingengine.com; h=subject:from:to:cc:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1526267040; bh=hCwGqeZ6teq3MTUWoHODFUuoSAxpSS
+    CAFLcJWioTlNQ=; b=nYAaDT6xhB193CJk+qoAb6rVfzrYSccsac/OfCGW7OyNql
+    Ra9uVF0u3wUyKFpGJe+SlGRHQvDZjJy9Zh5X4qgSd5dkq1OljokG0HppHbJ/II7y
+    VxF22is0Qa8MeeS5iwcqNKe+I1lAzJvDm5BWJwCkgz0IWAURXqJxHEvhKsFs9nl0
+    UVjLMtJDRqa9QbgNi4j8jfQkBuHUoxd7e+JU3cEgsq1SdhQ3EMzfh1RSpnBuZJ/n
+    Fg1Se0nZV476xcRY2pNAGDxruaLXBJ7d7MryXKJGEXIwmg9Gf/vsTHsnrsCO+3o4
+    gEYzwUnr3ydFTtlcXqoRlpZ2JSH77sJmZuONcTAw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=themaw.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=qUynUSvs;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=amarulasolutions.com header.result=pass
-    header_is_org_domain=yes;
+    header.domain=themaw.net header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=amarulasolutions.com
-      header.i=@amarulasolutions.com header.b=B59gCYWQ x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=amarulasolutions.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=themaw.net;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=qUynUSvs;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=amarulasolutions.com header.result=pass
-      header_is_org_domain=yes;
+      header.domain=themaw.net header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPLeQCeBe+0jjmsBHp87iz8zwyQ3P6bh4k/Ah5Wp4LO4PtN0JJ1dqclT82Xpu/fnIjDEd6OoGzghlkUrcx7hkt/KmmtvDYEaheqH4plmVh9KuJL9sr95
-    lixVUzExAPg0Ikp9nt0S8WwxkEx31TalDLdY6M74BcS7k7/4TThWbXP5lNEEhEoY56nNigvqtqfP2iayXAmxmeusMAyTvjCQdjPQDQcuhWXursm8+bqN+qCX
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=iP-xVBlJAAAA:8 a=07d9gI8wAAAA:8 a=Z4Rwk6OoAAAA:8 a=B0E6lrpk_Zy5dAi6s1oA:9
-    a=AjGcO6oz07-iQ99wixmX:22 a=lHLH-nfn2y1bM_0xSXwp:22 a=e2CUPOnPG4QKp8I52DXD:22
-    a=HkZW87K1Qel5hWWM3VKY:22
+X-CM-Envelope: MS4wfB7I/HiZMX5X79cmHRD3/hJAzPFIaBD9I3jNUDjnuHto8sRSRX0NPH1A5LVOGPgf7GmWNhO7UgUsva9iY20kQXVNCk7sXdcX0cZBaPEpe7Y8J8Z7ZcxT
+    Fsa7ripzQ3anzAflV1FPm2fxTJ7wj2YE6jWiRu6CNFZ7Kk2BVY7+eFz1hzVfiGNb6UOLiDBbVlIO2ZEpsidnGFUg79fajkMfKcSCs44SXpXlVL9vXTxx8Zl8
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=jUFqNg-nAAAA:8 a=ZfRw4ET0AAAA:8 a=KXRqhX9D9Ypx03CsscsA:9
+    a=0RSJk1pKl1VMC7Zg:21 a=T8tm6bR_7pvZiNxF:21 a=QEXdDO2ut3YA:10
+    a=-tElvS_Zar9K8zhlwiSp:22 a=CCLsn7l-3eYpXwuFc0al:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752096AbeEGKoW (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 7 May 2018 06:44:22 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38255 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752007AbeEGKoT (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Mon, 7 May 2018 06:44:19 -0400
-X-Google-Smtp-Source: AB8JxZogeYrEcUnKsmeXt8zzdkFCD4xvpJZU7/iiBaO/+QNS5bJhe0vGWrRLVfFsInrxoyQSJtfe2Q==
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        paulmck@linux.vnet.ibm.com,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: [RFC PATCH v3 1/6] Documentation/features: Add script that refreshes the arch support status files in place
-Date: Mon,  7 May 2018 12:43:38 +0200
-Message-Id: <1525689823-3340-2-git-send-email-andrea.parri@amarulasolutions.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525689823-3340-1-git-send-email-andrea.parri@amarulasolutions.com>
-References: <1525689823-3340-1-git-send-email-andrea.parri@amarulasolutions.com>
-Sender: linux-arch-owner@vger.kernel.org
-X-Mailing-List: linux-arch@vger.kernel.org
+        id S1752013AbeENDD5 (ORCPT <rfc822;linux@kroah.com>);
+        Sun, 13 May 2018 23:03:57 -0400
+Received: from icp-osb-irony-out8.external.iinet.net.au ([203.59.1.225]:37880
+        "EHLO icp-osb-irony-out8.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751953AbeENDD4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 13 May 2018 23:03:56 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2A/BAAr+/ha/+U/0XZcHQEBBQELAYNDg?=
+ =?us-ascii?q?Vwog3KIBIxsRQEBAQMGgQc0fJMyFIFkHhgBhECDCyE0GAECAQEBAQEBAmwohVJ?=
+ =?us-ascii?q?WKAEMAhgOAkkWE4UXDKoCghwaAogggieBCYccgQyBB4EPL4cUI4MYglQChziEY?=
+ =?us-ascii?q?AtXizwJjlGHa4UEK5FdHDiBUk0uCoJ+giAXjiQyMHoBAY9hAQE?=
+X-IPAS-Result: =?us-ascii?q?A2A/BAAr+/ha/+U/0XZcHQEBBQELAYNDgVwog3KIBIxsRQE?=
+ =?us-ascii?q?BAQMGgQc0fJMyFIFkHhgBhECDCyE0GAECAQEBAQEBAmwohVJWKAEMAhgOAkkWE?=
+ =?us-ascii?q?4UXDKoCghwaAogggieBCYccgQyBB4EPL4cUI4MYglQChziEYAtXizwJjlGHa4U?=
+ =?us-ascii?q?EK5FdHDiBUk0uCoJ+giAXjiQyMHoBAY9hAQE?=
+X-IronPort-AV: E=Sophos;i="5.49,398,1520870400";
+   d="scan'208";a="126179404"
+Subject: [PATCH 01/10] autofs4 - merge auto_fs.h and auto_fs4.h
+From: Ian Kent <raven@themaw.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        autofs mailing list <autofs@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Mon, 14 May 2018 11:03:50 +0800
+Message-ID: <152626703024.28589.9571964661718767929.stgit@pluto.themaw.net>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: linux-fsdevel-owner@vger.kernel.org
+X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Provides the script:
+The autofs module has long since been removed so there's no need to have
+two separate include files for autofs.
 
-	Documentation/features/scripts/features-refresh.sh
-
-which operates on the arch-support.txt files and refreshes them in place.
-
-This way [1],
-
-   "[...] we soft- decouple the refreshing of the entries from the
-    introduction of the features, while still making it all easy to
-    keep sync and to extend."
-
-[1] http://lkml.kernel.org/r/20180328122211.GA25420@andrea
-
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Ian Kent <raven@themaw.net>
 ---
- Documentation/features/scripts/features-refresh.sh | 98 ++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
- create mode 100755 Documentation/features/scripts/features-refresh.sh
+ fs/autofs4/autofs_i.h         |    2 
+ fs/compat_ioctl.c             |    1 
+ include/uapi/linux/auto_fs.h  |  169 ++++++++++++++++++++++++++++++++++++++---
+ include/uapi/linux/auto_fs4.h |  153 +------------------------------------
+ 4 files changed, 161 insertions(+), 164 deletions(-)
 
-diff --git a/Documentation/features/scripts/features-refresh.sh b/Documentation/features/scripts/features-refresh.sh
-new file mode 100755
-index 0000000000000..9e72d38a0720e
---- /dev/null
-+++ b/Documentation/features/scripts/features-refresh.sh
-@@ -0,0 +1,98 @@
-+#
-+# Small script that refreshes the kernel feature support status in place.
-+#
+diff --git a/fs/autofs4/autofs_i.h b/fs/autofs4/autofs_i.h
+index 4737615f0eaa..01636f3945d5 100644
+--- a/fs/autofs4/autofs_i.h
++++ b/fs/autofs4/autofs_i.h
+@@ -9,7 +9,7 @@
+ 
+ /* Internal header file for autofs */
+ 
+-#include <linux/auto_fs4.h>
++#include <linux/auto_fs.h>
+ #include <linux/auto_dev-ioctl.h>
+ 
+ #include <linux/kernel.h>
+diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
+index ef80085ed564..b3e1768b636e 100644
+--- a/fs/compat_ioctl.c
++++ b/fs/compat_ioctl.c
+@@ -39,7 +39,6 @@
+ #include <linux/if_pppox.h>
+ #include <linux/mtio.h>
+ #include <linux/auto_fs.h>
+-#include <linux/auto_fs4.h>
+ #include <linux/tty.h>
+ #include <linux/vt_kern.h>
+ #include <linux/fb.h>
+diff --git a/include/uapi/linux/auto_fs.h b/include/uapi/linux/auto_fs.h
+index 2a4432c7a4b4..e13eec3dfb2f 100644
+--- a/include/uapi/linux/auto_fs.h
++++ b/include/uapi/linux/auto_fs.h
+@@ -1,6 +1,8 @@
+ /* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+ /*
+- *   Copyright 1997 Transmeta Corporation - All Rights Reserved
++ * Copyright 1997 Transmeta Corporation - All Rights Reserved
++ * Copyright 1999-2000 Jeremy Fitzhardinge <jeremy@goop.org>
++ * Copyright 2005-2006,2013,2017-2018 Ian Kent <raven@themaw.net>
+  *
+  * This file is part of the Linux kernel and is made available under
+  * the terms of the GNU General Public License, version 2, or at your
+@@ -8,7 +10,6 @@
+  *
+  * ----------------------------------------------------------------------- */
+ 
+-
+ #ifndef _UAPI_LINUX_AUTO_FS_H
+ #define _UAPI_LINUX_AUTO_FS_H
+ 
+@@ -18,13 +19,11 @@
+ #include <sys/ioctl.h>
+ #endif /* __KERNEL__ */
+ 
++#define AUTOFS_PROTO_VERSION		5
++#define AUTOFS_MIN_PROTO_VERSION	3
++#define AUTOFS_MAX_PROTO_VERSION	5
+ 
+-/* This file describes autofs v3 */
+-#define AUTOFS_PROTO_VERSION	3
+-
+-/* Range of protocol versions defined */
+-#define AUTOFS_MAX_PROTO_VERSION	AUTOFS_PROTO_VERSION
+-#define AUTOFS_MIN_PROTO_VERSION	AUTOFS_PROTO_VERSION
++#define AUTOFS_PROTO_SUBVERSION		2
+ 
+ /*
+  * The wait_queue_token (autofs_wqt_t) is part of a structure which is passed
+@@ -76,9 +75,155 @@ enum {
+ #define AUTOFS_IOC_READY        _IO(AUTOFS_IOCTL, AUTOFS_IOC_READY_CMD)
+ #define AUTOFS_IOC_FAIL         _IO(AUTOFS_IOCTL, AUTOFS_IOC_FAIL_CMD)
+ #define AUTOFS_IOC_CATATONIC    _IO(AUTOFS_IOCTL, AUTOFS_IOC_CATATONIC_CMD)
+-#define AUTOFS_IOC_PROTOVER     _IOR(AUTOFS_IOCTL, AUTOFS_IOC_PROTOVER_CMD, int)
+-#define AUTOFS_IOC_SETTIMEOUT32 _IOWR(AUTOFS_IOCTL, AUTOFS_IOC_SETTIMEOUT_CMD, compat_ulong_t)
+-#define AUTOFS_IOC_SETTIMEOUT   _IOWR(AUTOFS_IOCTL, AUTOFS_IOC_SETTIMEOUT_CMD, unsigned long)
+-#define AUTOFS_IOC_EXPIRE       _IOR(AUTOFS_IOCTL, AUTOFS_IOC_EXPIRE_CMD, struct autofs_packet_expire)
++#define AUTOFS_IOC_PROTOVER     _IOR(AUTOFS_IOCTL, \
++				     AUTOFS_IOC_PROTOVER_CMD, int)
++#define AUTOFS_IOC_SETTIMEOUT32 _IOWR(AUTOFS_IOCTL, \
++				      AUTOFS_IOC_SETTIMEOUT_CMD, \
++				      compat_ulong_t)
++#define AUTOFS_IOC_SETTIMEOUT   _IOWR(AUTOFS_IOCTL, \
++				      AUTOFS_IOC_SETTIMEOUT_CMD, \
++				      unsigned long)
++#define AUTOFS_IOC_EXPIRE       _IOR(AUTOFS_IOCTL, \
++				     AUTOFS_IOC_EXPIRE_CMD, \
++				     struct autofs_packet_expire)
 +
-+for F_FILE in Documentation/features/*/*/arch-support.txt; do
-+	F=$(grep "^#         Kconfig:" "$F_FILE" | cut -c26-)
++/* autofs version 4 and later definitions */
 +
-+	#
-+	# Each feature F is identified by a pair (O, K), where 'O' can
-+	# be either the empty string (for 'nop') or "not" (the logical
-+	# negation operator '!'); other operators are not supported.
-+	#
-+	O=""
-+	K=$F
-+	if [[ "$F" == !* ]]; then
-+		O="not"
-+		K=$(echo $F | sed -e 's/^!//g')
-+	fi
++/* Mask for expire behaviour */
++#define AUTOFS_EXP_IMMEDIATE		1
++#define AUTOFS_EXP_LEAVES		2
 +
-+	#
-+	# F := (O, K) is 'valid' iff there is a Kconfig file (for some
-+	# arch) which contains K.
-+	#
-+	# Notice that this definition entails an 'asymmetry' between
-+	# the case 'O = ""' and the case 'O = "not"'. E.g., F may be
-+	# _invalid_ if:
-+	#
-+	# [case 'O = ""']
-+	#   1) no arch provides support for F,
-+	#   2) K does not exist (e.g., it was renamed/mis-typed);
-+	#
-+	# [case 'O = "not"']
-+	#   3) all archs provide support for F,
-+	#   4) as in (2).
-+	#
-+	# The rationale for adopting this definition (and, thus, for
-+	# keeping the asymmetry) is:
-+	#
-+	#       We want to be able to 'detect' (2) (or (4)).
-+	#
-+	# (1) and (3) may further warn the developers about the fact
-+	# that K can be removed.
-+	#
-+	F_VALID="false"
-+	for ARCH_DIR in arch/*/; do
-+		K_FILES=$(find $ARCH_DIR -name "Kconfig*")
-+		K_GREP=$(grep "$K" $K_FILES)
-+		if [ ! -z "$K_GREP" ]; then
-+			F_VALID="true"
-+			break
-+		fi
-+	done
-+	if [ "$F_VALID" = "false" ]; then
-+		printf "WARNING: '%s' is not a valid Kconfig\n" "$F"
-+	fi
++#define AUTOFS_TYPE_ANY			0U
++#define AUTOFS_TYPE_INDIRECT		1U
++#define AUTOFS_TYPE_DIRECT		2U
++#define AUTOFS_TYPE_OFFSET		4U
 +
-+	T_FILE="$F_FILE.tmp"
-+	grep "^#" $F_FILE > $T_FILE
-+	echo "    -----------------------" >> $T_FILE
-+	echo "    |         arch |status|" >> $T_FILE
-+	echo "    -----------------------" >> $T_FILE
-+	for ARCH_DIR in arch/*/; do
-+		ARCH=$(echo $ARCH_DIR | sed -e 's/arch//g' | sed -e 's/\///g')
-+		K_FILES=$(find $ARCH_DIR -name "Kconfig*")
-+		K_GREP=$(grep "$K" $K_FILES)
-+		#
-+		# Arch support status values for (O, K) are updated according
-+		# to the following rules.
-+		#
-+		#   - ("", K) is 'supported by a given arch', if there is a
-+		#     Kconfig file for that arch which contains K;
-+		#
-+		#   - ("not", K) is 'supported by a given arch', if there is
-+		#     no Kconfig file for that arch which contains K;
-+		#
-+		#   - otherwise: preserve the previous status value (if any),
-+		#                default to 'not yet supported'.
-+		#
-+		# Notice that, according these rules, invalid features may be
-+		# updated/modified.
-+		#
-+		if [ "$O" = "" ] && [ ! -z "$K_GREP" ]; then
-+			printf "    |%12s: |  ok  |\n" "$ARCH" >> $T_FILE
-+		elif [ "$O" = "not" ] && [ -z "$K_GREP" ]; then
-+			printf "    |%12s: |  ok  |\n" "$ARCH" >> $T_FILE
-+		else
-+			S=$(grep -v "^#" "$F_FILE" | grep " $ARCH:")
-+			if [ ! -z "$S" ]; then
-+				echo "$S" >> $T_FILE
-+			else
-+				printf "    |%12s: | TODO |\n" "$ARCH" \
-+					>> $T_FILE
-+			fi
-+		fi
-+	done
-+	echo "    -----------------------" >> $T_FILE
-+	mv $T_FILE $F_FILE
-+done
--- 
-2.7.4
++static inline void set_autofs_type_indirect(unsigned int *type)
++{
++	*type = AUTOFS_TYPE_INDIRECT;
++}
++
++static inline unsigned int autofs_type_indirect(unsigned int type)
++{
++	return (type == AUTOFS_TYPE_INDIRECT);
++}
++
++static inline void set_autofs_type_direct(unsigned int *type)
++{
++	*type = AUTOFS_TYPE_DIRECT;
++}
++
++static inline unsigned int autofs_type_direct(unsigned int type)
++{
++	return (type == AUTOFS_TYPE_DIRECT);
++}
++
++static inline void set_autofs_type_offset(unsigned int *type)
++{
++	*type = AUTOFS_TYPE_OFFSET;
++}
++
++static inline unsigned int autofs_type_offset(unsigned int type)
++{
++	return (type == AUTOFS_TYPE_OFFSET);
++}
++
++static inline unsigned int autofs_type_trigger(unsigned int type)
++{
++	return (type == AUTOFS_TYPE_DIRECT || type == AUTOFS_TYPE_OFFSET);
++}
++
++/*
++ * This isn't really a type as we use it to say "no type set" to
++ * indicate we want to search for "any" mount in the
++ * autofs_dev_ioctl_ismountpoint() device ioctl function.
++ */
++static inline void set_autofs_type_any(unsigned int *type)
++{
++	*type = AUTOFS_TYPE_ANY;
++}
++
++static inline unsigned int autofs_type_any(unsigned int type)
++{
++	return (type == AUTOFS_TYPE_ANY);
++}
++
++/* Daemon notification packet types */
++enum autofs_notify {
++	NFY_NONE,
++	NFY_MOUNT,
++	NFY_EXPIRE
++};
++
++/* Kernel protocol version 4 packet types */
++
++/* Expire entry (umount request) */
++#define autofs_ptype_expire_multi	2
++
++/* Kernel protocol version 5 packet types */
++
++/* Indirect mount missing and expire requests. */
++#define autofs_ptype_missing_indirect	3
++#define autofs_ptype_expire_indirect	4
++
++/* Direct mount missing and expire requests */
++#define autofs_ptype_missing_direct	5
++#define autofs_ptype_expire_direct	6
++
++/* v4 multi expire (via pipe) */
++struct autofs_packet_expire_multi {
++	struct autofs_packet_hdr hdr;
++	autofs_wqt_t wait_queue_token;
++	int len;
++	char name[NAME_MAX+1];
++};
++
++union autofs_packet_union {
++	struct autofs_packet_hdr hdr;
++	struct autofs_packet_missing missing;
++	struct autofs_packet_expire expire;
++	struct autofs_packet_expire_multi expire_multi;
++};
++
++/* autofs v5 common packet struct */
++struct autofs_v5_packet {
++	struct autofs_packet_hdr hdr;
++	autofs_wqt_t wait_queue_token;
++	__u32 dev;
++	__u64 ino;
++	__u32 uid;
++	__u32 gid;
++	__u32 pid;
++	__u32 tgid;
++	__u32 len;
++	char name[NAME_MAX+1];
++};
++
++typedef struct autofs_v5_packet autofs_packet_missing_indirect_t;
++typedef struct autofs_v5_packet autofs_packet_expire_indirect_t;
++typedef struct autofs_v5_packet autofs_packet_missing_direct_t;
++typedef struct autofs_v5_packet autofs_packet_expire_direct_t;
++
++union autofs_v5_packet_union {
++	struct autofs_packet_hdr hdr;
++	struct autofs_v5_packet v5_packet;
++	autofs_packet_missing_indirect_t missing_indirect;
++	autofs_packet_expire_indirect_t expire_indirect;
++	autofs_packet_missing_direct_t missing_direct;
++	autofs_packet_expire_direct_t expire_direct;
++};
++
++enum {
++	AUTOFS_IOC_EXPIRE_MULTI_CMD = 0x66, /* AUTOFS_IOC_EXPIRE_CMD + 1 */
++	AUTOFS_IOC_PROTOSUBVER_CMD,
++	AUTOFS_IOC_ASKUMOUNT_CMD = 0x70, /* AUTOFS_DEV_IOCTL_VERSION_CMD - 1 */
++};
++
++#define AUTOFS_IOC_EXPIRE_MULTI		_IOW(AUTOFS_IOCTL, \
++					     AUTOFS_IOC_EXPIRE_MULTI_CMD, int)
++#define AUTOFS_IOC_PROTOSUBVER		_IOR(AUTOFS_IOCTL, \
++					     AUTOFS_IOC_PROTOSUBVER_CMD, int)
++#define AUTOFS_IOC_ASKUMOUNT		_IOR(AUTOFS_IOCTL, \
++					     AUTOFS_IOC_ASKUMOUNT_CMD, int)
+ 
+ #endif /* _UAPI_LINUX_AUTO_FS_H */
+diff --git a/include/uapi/linux/auto_fs4.h b/include/uapi/linux/auto_fs4.h
+index 1f608e27a06f..d01ef0a0189c 100644
+--- a/include/uapi/linux/auto_fs4.h
++++ b/include/uapi/linux/auto_fs4.h
+@@ -7,156 +7,9 @@
+  * option, any later version, incorporated herein by reference.
+  */
+ 
+-#ifndef _LINUX_AUTO_FS4_H
+-#define _LINUX_AUTO_FS4_H
++#ifndef _UAPI_LINUX_AUTO_FS4_H
++#define _UAPI_LINUX_AUTO_FS4_H
+ 
+-/* Include common v3 definitions */
+-#include <linux/types.h>
+ #include <linux/auto_fs.h>
+ 
+-/* autofs v4 definitions */
+-#undef AUTOFS_PROTO_VERSION
+-#undef AUTOFS_MIN_PROTO_VERSION
+-#undef AUTOFS_MAX_PROTO_VERSION
+-
+-#define AUTOFS_PROTO_VERSION		5
+-#define AUTOFS_MIN_PROTO_VERSION	3
+-#define AUTOFS_MAX_PROTO_VERSION	5
+-
+-#define AUTOFS_PROTO_SUBVERSION		2
+-
+-/* Mask for expire behaviour */
+-#define AUTOFS_EXP_IMMEDIATE		1
+-#define AUTOFS_EXP_LEAVES		2
+-
+-#define AUTOFS_TYPE_ANY			0U
+-#define AUTOFS_TYPE_INDIRECT		1U
+-#define AUTOFS_TYPE_DIRECT		2U
+-#define AUTOFS_TYPE_OFFSET		4U
+-
+-static inline void set_autofs_type_indirect(unsigned int *type)
+-{
+-	*type = AUTOFS_TYPE_INDIRECT;
+-}
+-
+-static inline unsigned int autofs_type_indirect(unsigned int type)
+-{
+-	return (type == AUTOFS_TYPE_INDIRECT);
+-}
+-
+-static inline void set_autofs_type_direct(unsigned int *type)
+-{
+-	*type = AUTOFS_TYPE_DIRECT;
+-}
+-
+-static inline unsigned int autofs_type_direct(unsigned int type)
+-{
+-	return (type == AUTOFS_TYPE_DIRECT);
+-}
+-
+-static inline void set_autofs_type_offset(unsigned int *type)
+-{
+-	*type = AUTOFS_TYPE_OFFSET;
+-}
+-
+-static inline unsigned int autofs_type_offset(unsigned int type)
+-{
+-	return (type == AUTOFS_TYPE_OFFSET);
+-}
+-
+-static inline unsigned int autofs_type_trigger(unsigned int type)
+-{
+-	return (type == AUTOFS_TYPE_DIRECT || type == AUTOFS_TYPE_OFFSET);
+-}
+-
+-/*
+- * This isn't really a type as we use it to say "no type set" to
+- * indicate we want to search for "any" mount in the
+- * autofs_dev_ioctl_ismountpoint() device ioctl function.
+- */
+-static inline void set_autofs_type_any(unsigned int *type)
+-{
+-	*type = AUTOFS_TYPE_ANY;
+-}
+-
+-static inline unsigned int autofs_type_any(unsigned int type)
+-{
+-	return (type == AUTOFS_TYPE_ANY);
+-}
+-
+-/* Daemon notification packet types */
+-enum autofs_notify {
+-	NFY_NONE,
+-	NFY_MOUNT,
+-	NFY_EXPIRE
+-};
+-
+-/* Kernel protocol version 4 packet types */
+-
+-/* Expire entry (umount request) */
+-#define autofs_ptype_expire_multi	2
+-
+-/* Kernel protocol version 5 packet types */
+-
+-/* Indirect mount missing and expire requests. */
+-#define autofs_ptype_missing_indirect	3
+-#define autofs_ptype_expire_indirect	4
+-
+-/* Direct mount missing and expire requests */
+-#define autofs_ptype_missing_direct	5
+-#define autofs_ptype_expire_direct	6
+-
+-/* v4 multi expire (via pipe) */
+-struct autofs_packet_expire_multi {
+-	struct autofs_packet_hdr hdr;
+-	autofs_wqt_t wait_queue_token;
+-	int len;
+-	char name[NAME_MAX+1];
+-};
+-
+-union autofs_packet_union {
+-	struct autofs_packet_hdr hdr;
+-	struct autofs_packet_missing missing;
+-	struct autofs_packet_expire expire;
+-	struct autofs_packet_expire_multi expire_multi;
+-};
+-
+-/* autofs v5 common packet struct */
+-struct autofs_v5_packet {
+-	struct autofs_packet_hdr hdr;
+-	autofs_wqt_t wait_queue_token;
+-	__u32 dev;
+-	__u64 ino;
+-	__u32 uid;
+-	__u32 gid;
+-	__u32 pid;
+-	__u32 tgid;
+-	__u32 len;
+-	char name[NAME_MAX+1];
+-};
+-
+-typedef struct autofs_v5_packet autofs_packet_missing_indirect_t;
+-typedef struct autofs_v5_packet autofs_packet_expire_indirect_t;
+-typedef struct autofs_v5_packet autofs_packet_missing_direct_t;
+-typedef struct autofs_v5_packet autofs_packet_expire_direct_t;
+-
+-union autofs_v5_packet_union {
+-	struct autofs_packet_hdr hdr;
+-	struct autofs_v5_packet v5_packet;
+-	autofs_packet_missing_indirect_t missing_indirect;
+-	autofs_packet_expire_indirect_t expire_indirect;
+-	autofs_packet_missing_direct_t missing_direct;
+-	autofs_packet_expire_direct_t expire_direct;
+-};
+-
+-enum {
+-	AUTOFS_IOC_EXPIRE_MULTI_CMD = 0x66, /* AUTOFS_IOC_EXPIRE_CMD + 1 */
+-	AUTOFS_IOC_PROTOSUBVER_CMD,
+-	AUTOFS_IOC_ASKUMOUNT_CMD = 0x70, /* AUTOFS_DEV_IOCTL_VERSION_CMD - 1 */
+-};
+-
+-#define AUTOFS_IOC_EXPIRE_MULTI    _IOW(AUTOFS_IOCTL, AUTOFS_IOC_EXPIRE_MULTI_CMD, int)
+-#define AUTOFS_IOC_PROTOSUBVER     _IOR(AUTOFS_IOCTL, AUTOFS_IOC_PROTOSUBVER_CMD, int)
+-#define AUTOFS_IOC_ASKUMOUNT       _IOR(AUTOFS_IOCTL, AUTOFS_IOC_ASKUMOUNT_CMD, int)
+-
+-#endif /* _LINUX_AUTO_FS4_H */
++#endif /* _UAPI_LINUX_AUTO_FS4_H */
