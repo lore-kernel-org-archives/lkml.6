@@ -1,84 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752146AbeENIYj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:24:39 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37987 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751961AbeENIYd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:24:33 -0400
-X-Google-Smtp-Source: AB8JxZqFREfHICQu6UFOO8XSKJ5tYCK4EqcmiWEqhkCtvo1eCMeNiLtMxiwFKVY7pI4HX8gfiTVHGwA/nM6PVTVducI=
+        id S1752170AbeENIZo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:25:44 -0400
+Received: from verein.lst.de ([213.95.11.211]:35173 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751894AbeENIZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 04:25:42 -0400
+Date: Mon, 14 May 2018 10:29:51 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <axboe@kernel.dk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: build warning after merge of the block tree
+Message-ID: <20180514082951.GA20978@lst.de>
+References: <20180514125139.459a058d@canb.auug.org.au>
 MIME-Version: 1.0
-From: Jinpu Wang <jinpu.wang@profitbricks.com>
-Date: Mon, 14 May 2018 10:24:11 +0200
-Message-ID: <CAMGffEkW-bXTJ7RoYER9uu4nSYKEfopTsWy87V9GUSojjhJ6dg@mail.gmail.com>
-Subject: Re: [PATCH] md/raid1: add error handling of read error from FailFast device
-To: Shaohua Li <shli@kernel.org>
-Cc: Gi-Oh Kim <gi-oh.kim@profitbricks.com>, linux-raid@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180514125139.459a058d@canb.auug.org.au>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4E8OllS008703
 
-On Wed, May 9, 2018 at 10:58 AM, Jack Wang <jack.wang.usish@gmail.com> wrote:
-> ---------- Forwarded message ----------
-> From: Gioh Kim <gi-oh.kim@profitbricks.com>
-> Date: 2018-05-02 13:08 GMT+02:00
-> Subject: [PATCH] md/raid1: add error handling of read error from FailFast device
-> To: shli@kernel.org
-> 抄送： linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, Gioh Kim
-> <gi-oh.kim@profitbricks.com>
->
->
-> Current handle_read_error() function calls fix_read_error()
-> only if md device is RW and rdev does not include FailFast flag.
-> It does not handle a read error from a RW device including
-> FailFast flag.
->
-> I am not sure it is intended. But I found that write IO error
-> sets rdev faulty. The md module should handle the read IO error and
-> write IO error equally. So I think read IO error should set rdev faulty.
->
-> Signed-off-by: Gioh Kim <gi-oh.kim@profitbricks.com>
-> ---
->  drivers/md/raid1.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index e9e3308cb0a7..4445179aa4c8 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -2474,6 +2474,8 @@ static void handle_read_error(struct r1conf
-> *conf, struct r1bio *r1_bio)
->                 fix_read_error(conf, r1_bio->read_disk,
->                                r1_bio->sector, r1_bio->sectors);
->                 unfreeze_array(conf);
-> +       } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
-> +               md_error(mddev, rdev);
->         } else {
->                 r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
->         }
-> --
-> 2.14.1
+On Mon, May 14, 2018 at 12:51:39PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the block tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 
-Patch looks good to me!
-Reviewed-by: Jack Wang <jinpu.wang@profitbricks.com>
+The look entirely correct, but oddly enough my compiler did not bother
+to warn.
+
+Fix below:
+
+--
+>From 6610bd5bbbf05fa1d925b0601a09e84cada9e0a2 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Mon, 14 May 2018 10:24:34 +0200
+Subject: memstick: remove unused variables
+
+Fixes: 7c2d748e8476 ("memstick: don't call blk_queue_bounce_limit")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/memstick/core/ms_block.c    | 1 -
+ drivers/memstick/core/mspro_block.c | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
+index b2d025f42d14..a15181fa45f7 100644
+--- a/drivers/memstick/core/ms_block.c
++++ b/drivers/memstick/core/ms_block.c
+@@ -2094,7 +2094,6 @@ static const struct block_device_operations msb_bdops = {
+ static int msb_init_disk(struct memstick_dev *card)
+ {
+ 	struct msb_data *msb = memstick_get_drvdata(card);
+-	struct memstick_host *host = card->host;
+ 	int rc;
+ 	unsigned long capacity;
+ 
+diff --git a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
+index a2fadc605750..5ee932631fae 100644
+--- a/drivers/memstick/core/mspro_block.c
++++ b/drivers/memstick/core/mspro_block.c
+@@ -1170,7 +1170,6 @@ static int mspro_block_init_card(struct memstick_dev *card)
+ static int mspro_block_init_disk(struct memstick_dev *card)
+ {
+ 	struct mspro_block_data *msb = memstick_get_drvdata(card);
+-	struct memstick_host *host = card->host;
+ 	struct mspro_devinfo *dev_info = NULL;
+ 	struct mspro_sys_info *sys_info = NULL;
+ 	struct mspro_sys_attr *s_attr = NULL;
 -- 
-Jack Wang
-Linux Kernel Developer
-
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
-
-Tel:       +49 30 577 008  042
-Fax:      +49 30 577 008 299
-Email:    jinpu.wang@profitbricks.com
-URL:      https://www.profitbricks.de
-
-Sitz der Gesellschaft: Berlin
-Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-Geschäftsführer: Achim Weiss, Matthias Steinberg, Christoph Steffens
+2.17.0
