@@ -1,90 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932084AbeENHIn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:08:43 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53467 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753656AbeENG64 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 02:58:56 -0400
-X-Google-Smtp-Source: AB8JxZpDloHEAq6TZVKBZXOQI8tg79Z8CLlZJd9sZ/In5U92tw7MqjF1B8wo2X2m5wSyuo5Mq+6J2Q==
-Date: Mon, 14 May 2018 08:58:52 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] efi/x86: Clean up the eboot code a bit
-Message-ID: <20180514065852.GE16596@gmail.com>
-References: <20180504060003.19618-1-ard.biesheuvel@linaro.org>
- <20180504060003.19618-16-ard.biesheuvel@linaro.org>
- <20180514064323.GB16596@gmail.com>
- <CAKv+Gu-v-dw28pjo_8of_dNR7mEMK3ngDUksFYUTWwro14PFfw@mail.gmail.com>
+        id S1753947AbeENHLU (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:11:20 -0400
+Received: from ozlabs.org ([203.11.71.1]:56335 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753916AbeENHLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 03:11:18 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Guenter Roeck <linux@roeck-us.net>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-hwmon@vger.kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, jdelvare@suse.com, stewart@linux.vnet.ibm.com
+Subject: Re: [PATCH 2/3] hwmon: (ibmpowernv): Add support to read 64 bit sensors
+In-Reply-To: <20180509172926.GA20996@roeck-us.net>
+References: <1525688738-9185-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com> <1525688738-9185-3-git-send-email-shilpa.bhat@linux.vnet.ibm.com> <20180509172926.GA20996@roeck-us.net>
+Date: Mon, 14 May 2018 17:11:14 +1000
+Message-ID: <87y3gmpv8t.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu-v-dw28pjo_8of_dNR7mEMK3ngDUksFYUTWwro14PFfw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Guenter Roeck <linux@roeck-us.net> writes:
 
-* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On Mon, May 07, 2018 at 03:55:37PM +0530, Shilpasri G Bhat wrote:
+>> The firmware has supported for reading sensor values of size u32.
+>> This patch adds support to use newer firmware functions which allows
+>> to read the sensors of size u64.
+>> 
+>> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+>
+> Acked-by: Guenter Roeck <linux@roeck-us.net>
+>
+> I won't apply for the time being since it depends on patch 1/3 which is
+> outside hwmon.
 
-> On 14 May 2018 at 08:43, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > So I looked at arch/x86/boot/compressed/eboot.c to improve a printk message and
-> > ended up with the cleanups below.
-> >
-> > Only build tested.
-> >
-> > Thanks,
-> >
-> >         Ingo
-> >
-> > =================>
-> > Subject: efi/x86: Clean up the eboot code
-> > From: Ingo Molnar <mingo@kernel.org>
-> > Date: Mon May 14 08:33:40 CEST 2018
-> >
-> > Various small cleanups:
-> >
-> >  - Standardize printk messages:
-> >
-> >      'alloc' => 'allocate'
-> >      'mem'   => 'memory'
-> >
-> >    also put variable names in printk messages between quotes.
-> >
-> >  - Align mass-assignments vertically for better readability
-> >
-> >  - Break multi-line function prototypes at the name where possible,
-> >    not in the middle of the parameter list
-> >
-> >  - Use a newline before return statements consistently.
-> >
-> >  - Use curly braces in a balanced fashion.
-> >
-> >  - Remove stray newlines.
-> >
-> > No change in functionality.
-> >
-> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > Cc: Matt Fleming <matt@codeblueprint.co.uk>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: linux-efi@vger.kernel.org
-> > Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> 
-> Thanks Ingo
-> 
-> Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Do you mind if I take the series via the powerpc tree?
 
-Thanks - mind picking it up into your tree? I only did minimal testing and don't 
-want to interfere with your patch flow either.
-
-Thanks,
-
-	Ingo
+cheers
