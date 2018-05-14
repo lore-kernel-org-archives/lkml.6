@@ -1,558 +1,229 @@
-Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525800075; cv=none;
+Return-Path: <aryabinin@virtuozzo.com>
+X-Google-Smtp-Source: AB8JxZpDj90LcWRerBiIh7PWWFE7XX6tPrVwkYK/3gNruGhaKcTSu858quVg4WXeLjBHucO7+wan
+ARC-Seal: i=1; a=rsa-sha256; t=1526316966; cv=none;
         d=google.com; s=arc-20160816;
-        b=AgiM7roU/7hLSot+kODw0JJ3eMzVbEYY1PG0OrORHd+J2CZ1oSXbmtNEIvjFeIG30L
-         PHfsQ+TtkoF+Id3NFfKNW3uJ4fxAambp9l2uVq+y1JnROLaobROnKRcNpWdJvyEeCeNE
-         InH0WPmW/BUM56OKD1X2SRj0cRWK2umVdinP5OaHquyc3T/YTR5uRJ8YNysB+61HLwQy
-         gkfhPeVQOF/fD8Mx9CEpyahmGGLhXZtlOYByGMoHBgYhgqvsSViYEaVLHJDdPgL1p7IP
-         wenNlEdi2utkxIlJX19YuImq83GQZlQ5z5aIEKVwo/6eAuW7hpN4xWrGxKRzy1mXnmNr
-         T68g==
+        b=G0bK+jQ0C2p2wLVQ4CPs2VpK7NK259yysM4dgLCf4dj1/Zaz0+89sepfyaleFqFPO6
+         W1aqPWBiqnNqdjovwGQzk/deJKNMqlv7qwh7SukdVraNSPhnCFFiOIxlX5hz3eyEtKXw
+         7KlvsQE/P5s/ds86UoAz/YSY64DIFYxPRXnH6FhFxnEdjnM4OzPaesYDNjrnwDWiQ/Nx
+         XPVMRYOVs67ePrBsTpWl9hx5VVVSCu+Tsy/hkzkRN7iEPWrHK/Xm9P7HOOeMgUfDjk6G
+         N7OsGGj3GTeEuIJ40cfKdUnrLWJzKnb5CLerd9S6YUTAIQYd9IpO4mFACTJ7ulh94T+W
+         hPvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=zxZyPeEQEDgi9UM5VUhrSZ9/lj6VU74Z67nBnAF7XSg=;
-        b=R60Vw7BXfeRYqlL0ECY8nvL7iIOtjNM2oCNad46ZJFxZ7RYBoGK5cRXzAk4qqZvOzF
-         /WqRfs3DubHIXDHs+cj6GngbDjVaU+e1NOH53WsEmlVWR46Q5SqbhyL0VGktyJCRdxqq
-         QeChrVLl9yCGTTC3Rqn4NQPt8MHimFOz3Q0bWwyCdm8hJHlwhnm2YviXRCGgnct8lsKm
-         pit9tFSVNosuEN3bcFQRSiVur7oicNLNp5Aober49OFMJRsl089TDBhOudRtz7rELJJV
-         oCQpfPcm7mZN8I4C+0+xoNp+nwxEdzEgx8VRT6LLwJufkWmFe8YEoRcXPITQeHoIoRfM
-         5zdg==
+        h=spamdiagnosticmetadata:spamdiagnosticoutput
+         :content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=mToqI71QciK+6PDSihoyIeRBRv/OYCmBNDaXRrAAzJ8=;
+        b=N7g0TocupmEVxlUGisICNJMsfbwjbBpAS4nAdvL3UN8LAAT6XqQk1SMgWrobe1Pgh7
+         MLUpLIo0klSCGcZ+uvBWZJil5sh+L7FocA8IC384xozBMHJSg2LWszy238XNX5Op4iWB
+         5KawZZyZ3hCe9d/hqcraRI57VPva28iTNFUyALzvVSUEXIg599OXrlgWUFwpn8de4NA7
+         SPzdqKDnZnvtFw7zZFLZw0cAADJJ9GqGVldNytSZPaXtDgOlzMyfWokYn7yQtSxPJ/AJ
+         Xvso9KuDz+xl6yYJM/w/5uwqPBHiPpnaCsbSUS7bOU8EPo+DUmLqr2zPXBd6+W8sbRAo
+         dNVw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=BBcnRZRl;
-       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=UVMqnaD0;
+       spf=pass (google.com: domain of aryabinin@virtuozzo.com designates 40.107.0.121 as permitted sender) smtp.mailfrom=aryabinin@virtuozzo.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=virtuozzo.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=BBcnRZRl;
-       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
-       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AB8JxZpDumM/TD0EjKCSoyz7ReszirZt0h9gGCRtd2LtCRQCo/ON8CiA155I5DxqaJQh8q+envuTNw==
-From: Andrey Konovalov <andreyknvl@google.com>
-To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Alexander Potapenko <glider@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	Christopher Li <sparse@chrisli.org>,
-	Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <yamada.masahiro@socionext.com>,
-	Michal Marek <michal.lkml@markovi.net>,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Yury Norov <ynorov@caviumnetworks.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	Kristina Martsenko <kristina.martsenko@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Punit Agrawal <punit.agrawal@arm.com>,
-	Dave Martin <dave.martin@arm.com>,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	James Morse <james.morse@arm.com>,
-	Michael Weiser <michael.weiser@gmx.de>,
-	Julien Thierry <julien.thierry@arm.com>,
-	Tyler Baicar <tbaicar@codeaurora.org>,
-	"Eric W . Biederman" <ebiederm@xmission.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Sandipan Das <sandipan@linux.vnet.ibm.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Paul Lawrence <paullawrence@google.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Josh Poimboeuf <jpoimboe@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Jan Kara <jack@suse.cz>,
-	Ross Zwisler <ross.zwisler@linux.intel.com>,
-	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-	Matthew Wilcox <mawilcox@microsoft.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Souptick Joarder <jrdr.linux@gmail.com>,
-	Hugh Dickins <hughd@google.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Philippe Ombredanne <pombredanne@nexb.com>,
-	Kate Stewart <kstewart@linuxfoundation.org>,
-	Laura Abbott <labbott@redhat.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Pintu Agarwal <pintu.ping@gmail.com>,
-	Doug Berger <opendmb@gmail.com>,
-	Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Pavel Tatashin <pasha.tatashin@oracle.com>,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	kasan-dev@googlegroups.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sparse@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kbuild@vger.kernel.org
-Cc: Kostya Serebryany <kcc@google.com>,
-	Evgeniy Stepanov <eugenis@google.com>,
-	Lee Smith <Lee.Smith@arm.com>,
-	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-	Jacob Bramley <Jacob.Bramley@arm.com>,
-	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-	Kees Cook <keescook@google.com>,
-	Jann Horn <jannh@google.com>,
-	Mark Brand <markbrand@google.com>,
-	Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v1 03/16] khwasan: add CONFIG_KASAN_GENERIC and CONFIG_KASAN_HW
-Date: Tue,  8 May 2018 19:20:49 +0200
-Message-Id: <b31260f782783e21ca2e2a45f9b05016998bf9ed.1525798753.git.andreyknvl@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
-In-Reply-To: <cover.1525798753.git.andreyknvl@google.com>
+       dkim=pass header.i=@virtuozzo.com header.s=selector1 header.b=UVMqnaD0;
+       spf=pass (google.com: domain of aryabinin@virtuozzo.com designates 40.107.0.121 as permitted sender) smtp.mailfrom=aryabinin@virtuozzo.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=virtuozzo.com
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=aryabinin@virtuozzo.com;
+Subject: Re: [PATCH v1 03/16] khwasan: add CONFIG_KASAN_GENERIC and
+ CONFIG_KASAN_HW
+To: Andrey Konovalov <andreyknvl@google.com>,
+ Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Jonathan Corbet <corbet@lwn.net>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will.deacon@arm.com>, Christopher Li <sparse@chrisli.org>,
+ Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Masahiro Yamada <yamada.masahiro@socionext.com>,
+ Michal Marek <michal.lkml@markovi.net>, Mark Rutland <mark.rutland@arm.com>,
+ Nick Desaulniers <ndesaulniers@google.com>,
+ Yury Norov <ynorov@caviumnetworks.com>, Marc Zyngier <marc.zyngier@arm.com>,
+ Kristina Martsenko <kristina.martsenko@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Punit Agrawal <punit.agrawal@arm.com>, Dave Martin <dave.martin@arm.com>,
+ Ard Biesheuvel <ard.biesheuvel@linaro.org>, James Morse
+ <james.morse@arm.com>, Michael Weiser <michael.weiser@gmx.de>,
+ Julien Thierry <julien.thierry@arm.com>,
+ Tyler Baicar <tbaicar@codeaurora.org>,
+ "Eric W . Biederman" <ebiederm@xmission.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ Kees Cook <keescook@chromium.org>, Sandipan Das
+ <sandipan@linux.vnet.ibm.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ Paul Lawrence <paullawrence@google.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Josh Poimboeuf <jpoimboe@redhat.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Tom Lendacky <thomas.lendacky@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Dan Williams <dan.j.williams@intel.com>, Michal Hocko <mhocko@suse.com>,
+ Jan Kara <jack@suse.cz>, Ross Zwisler <ross.zwisler@linux.intel.com>,
+ =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+ Matthew Wilcox <mawilcox@microsoft.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Souptick Joarder <jrdr.linux@gmail.com>, Hugh Dickins <hughd@google.com>,
+ Davidlohr Bueso <dave@stgolabs.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Philippe Ombredanne <pombredanne@nexb.com>,
+ Kate Stewart <kstewart@linuxfoundation.org>,
+ Laura Abbott <labbott@redhat.com>,
+ Boris Brezillon <boris.brezillon@bootlin.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Pintu Agarwal <pintu.ping@gmail.com>,
+ Doug Berger <opendmb@gmail.com>,
+ Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+ Mike Rapoport <rppt@linux.vnet.ibm.com>, Mel Gorman <mgorman@suse.de>,
+ Pavel Tatashin <pasha.tatashin@oracle.com>,
+ Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+ linux-kbuild@vger.kernel.org
+Cc: Kostya Serebryany <kcc@google.com>, Evgeniy Stepanov
+ <eugenis@google.com>, Lee Smith <Lee.Smith@arm.com>,
+ Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+ Jacob Bramley <Jacob.Bramley@arm.com>,
+ Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>, Kees Cook
+ <keescook@google.com>, Jann Horn <jannh@google.com>,
+ Mark Brand <markbrand@google.com>, Chintan Pandya <cpandya@codeaurora.org>
 References: <cover.1525798753.git.andreyknvl@google.com>
-In-Reply-To: <cover.1525798753.git.andreyknvl@google.com>
-References: <cover.1525798753.git.andreyknvl@google.com>
+ <b31260f782783e21ca2e2a45f9b05016998bf9ed.1525798753.git.andreyknvl@google.com>
+From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <658f02bd-e647-52e6-87cf-5d91f8243b66@virtuozzo.com>
+Date: Mon, 14 May 2018 19:57:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <b31260f782783e21ca2e2a45f9b05016998bf9ed.1525798753.git.andreyknvl@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.214.232.6]
+X-ClientProxiedBy: HE1PR0501CA0009.eurprd05.prod.outlook.com
+ (2603:10a6:3:1a::19) To DB7PR08MB3259.eurprd08.prod.outlook.com
+ (2603:10a6:5:1f::21)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB7PR08MB3259;
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3259;3:420c/K4PEKqPlf0Vq9fcx7gtF0E+DdrATgpeeAWohOMJFe049CGdI1DmdJe4DzsWHzvM95fm7XBY3AJzofNG/TXUYILYwurKqUcz9qle+oJmTKxp630cjutL+ckjdqhy1EU5Htlj+fmvcqobEMr281e+5kCcbNjudfyhxtIv75j6pN7pVUg17m7QBRAuoSxr+Y36w8n+GsIAv+x1vPvuQFG2NmoDX8GmAvUXUkBxZCkgqSVvUh+QJHi7MbFfQcMF;25:zQ56jCrqihSw+axqL+JQsZdS+pYGoC7ViX+GVvAw7hWuAnFKrm2bEYDVg1HipMD0SVuWTRYXKcWf/OX3/FpD+nH4/Y+ZUKLxIGzIqkT116G/878RiAkTjk0+6sjCBb58WZ7ulUH4atck9agMpwFAqA7KkRNcMYtlUx8MrMr5JHlt95oL3SNzxYIEiJZ6q6O+hstftkd4f2z1U+rnKKdPcFt4HepkhO3dBpDId+zkRbtWVB2Zd6hErRzZ3peu4Q4iLMPSKyNY7mQ0OhYNo57fo39Kj0rWzc9DQlzzA9crRlO2IHTU/aQg/btd0wIgUVc+OeNxUYNcdY+00ua0t4DvTQ==;31:pxAjMWek4kr4+JtGO66Ohkz+LcLv0IgI6X5e0Yy/LJjpUULNXT1w1+hogJpZUpx2y1nDd/LXcsVZVklavxSTtciSpaRlxkdga6v4xKh7AcvsnNlRH/gqFXsZQ78vILKUwQ7/WrV3ri+e5hHZUHWbjZ1eV4UQJb/kVtrEJLIol+oBL4f67FajFy3O193LmynC6GKEkg59V4cbHJX4oohpQP1bqyFlPF7Z6nA8YRIHkD0=
+X-MS-TrafficTypeDiagnostic: DB7PR08MB3259:
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3259;20:0HF4lgwTcC2/bb92mUOjEojh76p1JzDKsMzNhLF9hFeWXzk9pmKdV0+9QPsJN4fe+PaW3Vy5mc6ZTpbsRUaiZS8wdF6S8AZLwgyKVIsIyR77/7uVekWCEhgTsaaAonIpzj91JSgJ6k/tn3cJ4jrbN9qMW3L2o2TssFtRzru+Q0q4+gfEk9qhrYy/p8ZyV3yS34plgP7v5X+ZrBIrFNayHKgZi0Q71g4GnQneDhUlQ6pHb0Bt5G5frJRjyqN8+GjOrp54reljWtrAJ8f455u5tFPZR9yXEdY7H0ngSqBXTySrXDUI+rFxL1yM2u17AxVO299TZUzobtm95SFMDwRMDr1BLDXA1FELEPERoENK5vH4VjJEPQWOKNQOW5ivedJ9HJ7D4UGxnPxHF/19QkPRXqmGZWyimuSwKGPGfd9qdXXRbEZqbK0ZXG5B4ZEif2GkjkojpLLGkaHL6QG/PPH98WGyLNdCrSRP8grKw7xJVUYnliMZHAjhLjOrWKocfk30;4:koppj35lYwJSoEMnq0MhrGOn+IP3nhcYLVr9Pv09HKInXzUjnoCC92q0NjYo9dcPA4X2WP1fqKUME5qrIgkcPIUBX7AQZcyOotpBT0pY7zrwEaauCkE6FZh/521qLb+EZvIcRN918GLTQRbt66qrEE8G5UPZ7/YB8UcS4Kd64uxjK2R+ts7vH0cYW7iRXFPRJQowGQ5Rg1/g0zfBb64XNiEJxiEGqnonJsRZre58L38XAvHJ1eYy5/scnkyIm897sJwztfhd3SWg7giZUxbicQ==
+X-Microsoft-Antispam-PRVS: <DB7PR08MB325945C656EFE48DA1F0AA8FB09C0@DB7PR08MB3259.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011);SRVR:DB7PR08MB3259;BCL:0;PCL:0;RULEID:;SRVR:DB7PR08MB3259;
+X-Forefront-PRVS: 067270ECAF
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(39380400002)(346002)(376002)(396003)(39850400004)(366004)(199004)(189003)(58126008)(6666003)(8666007)(6246003)(478600001)(5660300001)(6486002)(31696002)(230700001)(86362001)(47776003)(110136005)(54906003)(1511001)(8676002)(81156014)(68736007)(16576012)(7336002)(7406005)(7416002)(65956001)(66066001)(7366002)(65806001)(8936002)(81166006)(229853002)(97736004)(316002)(53936002)(31686004)(105586002)(106356001)(2906002)(53546011)(386003)(59450400001)(55236004)(7736002)(1191002)(446003)(476003)(2486003)(65826007)(76176011)(52116002)(36756003)(23676004)(52146003)(25786009)(50466002)(16526019)(3846002)(186003)(4326008)(39060400002)(64126003)(11346002)(77096007)(6116002)(305945005)(2616005)(486006)(26005)(956004)(41533002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR08MB3259;H:[172.16.25.12];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjdQUjA4TUIzMjU5OzIzOms1QWg5NVVQMjljVlFNRWprZzNFd2tmOGpq?=
+ =?utf-8?B?VjBZRVRYMHlLNE1tbEVGZWRGUm5kRHRVOERobmlwQnYwc3I5NlhFQno1UDk3?=
+ =?utf-8?B?V1RkYW9mNWE0UVFkbnpXb05OTS9QcnIySGNGZWhERGtCbHV5V3AxU1NqdUlz?=
+ =?utf-8?B?a21OWEY1QmdYZUNpdlZiMHFBVFhNNHlzeWNMRGxEc1hmcE9xQkdhelQyZkl1?=
+ =?utf-8?B?bUdMcWxvUTZtRHZZdkxyODUvMVQvWC9UeVZxYTNMazJicVFaZTYyUzU5VndT?=
+ =?utf-8?B?T1U3VFplN2RaSWNBd3JzYzA0anNvRTMxdkE0TGswTy9Lek8vVnBocVYvTFd1?=
+ =?utf-8?B?dEVQTVplM0szdi9DSTFxcy9NRGpkYWNvbGZxMkRwbGw2VzVFZzlVNWF4cnVT?=
+ =?utf-8?B?K3dGbGZyeTRkQlB5NUdyQS9FMml3Z0hScENsTk1DaWtMRVkvb0FISzBQK1ZP?=
+ =?utf-8?B?aEo0UCtCRVNPeEVUbkt5cGxpMEcrUHRXL1JIOFFKUWhpamo1U2lmRk1RbHFl?=
+ =?utf-8?B?MTdBYXF1bmJOKzF3VDBwYXFrZ0RGUklSN2Z4aUk4LzNGSStjMDJxWnNrMFUw?=
+ =?utf-8?B?b0NpWTk3akNHVERnRERIeXcyQTg4VG90dWxOOU9JNzN6VFpEWDF5MVAyZGNu?=
+ =?utf-8?B?REc2R0ZJZ21CMHZtb3NibzIxRlVZdm1wNWZ6UDU5NUhSYnFiRzl1K2JZc3kr?=
+ =?utf-8?B?UlJoVDlHQ2duZWtjRGFBRDRtek8wZUVxMmhGaFZwaWhwQkFlN1F1NW14NVVj?=
+ =?utf-8?B?QVdobjZzbkFMS3JISmtQQ3JmZ3VQOE05ejNpMFZMcURyS2VWYmgxejV6NFdk?=
+ =?utf-8?B?VWlDbVlqYUJSeE9yMHlZampqa0hDVVJuUU1BOTBSUEJOaDBiUHQ3djFHM09X?=
+ =?utf-8?B?dSs1d2Y3bVEvSWFjb1k3TldQbDhZMmtJWFpEbFdYSWp2UTNQZHZLcG1HTGY5?=
+ =?utf-8?B?UEtCNFZGdHg4M1dDWFpKM2Q3SURnRjkyeE85Sk5XUCt2VVlPcDdYenpCOEtS?=
+ =?utf-8?B?ekN2c2pUQ05DTGtodFpJLzBnZjFhaldGeXpDWDJFc05XMlJqRHMrUGxzRGRP?=
+ =?utf-8?B?UFVVMHZ4MU1WY3pUWU54aHZUZjg5YTBkbVhCSDZqcXdMMS9JZ01pWUQ3bzRX?=
+ =?utf-8?B?a3lmcXpTSVhSVFA2bTJQd2M0SnhTanZEalFPN3FQNFBDZTMycDBuY3ZNb01M?=
+ =?utf-8?B?Q05qWGtDeUltaWp4T3N4YkxSdUlQbXJiZjNsWnpLZ2k2b25IUVdhRTdDbDEr?=
+ =?utf-8?B?bTJDeEhnU2VHVnF3ZXRrcmF6UEd4U3B4Y1h3YmQxSFNrRTR1RGhBSDhNemNS?=
+ =?utf-8?B?QUxlK0MzLzRhOSs5bVR6VGpKdnlXaUlYZUhWYUhTOTk3RFVISkpXc3RVVU5R?=
+ =?utf-8?B?V3BtUk05NHgxeHI4QkNKZmxMenpOWnFjcTVTNWowSTFnTEhDeGdPSENHc0V2?=
+ =?utf-8?B?enYrRUs0bk9TTit5SzJrTlNVZCtwd2ZsVXN0RWhXbVVIQmlPYUdsT096NTdr?=
+ =?utf-8?B?NGlrYVlXNE04UVJaNEZsQXRwV3I1WlVWS0tRMFZJQ2xOV2VDRkxEVGJGMTVW?=
+ =?utf-8?B?NkFqY0FrRmcvbElSUDhXM0YrNStwWStPZnphakhDUVN6U3BIWlc1WjA0LzEv?=
+ =?utf-8?B?MmV4N2dnbnV6Mkd4RVNMSUlHcnhTTFIwZU5ybjlJREFiWHNYVDJvM2tia29Z?=
+ =?utf-8?B?aUd3UXJQaXFhTWF1S3BkZHo4ZG1QUlJPb2xERkJTRkp2eTZBM0N3b0FtWGZ3?=
+ =?utf-8?B?VDVab3BHeThLaU8zeUFsWW9mK2h0UEJlMVZvRldKQkdHa09Hb09Xb2NicG1U?=
+ =?utf-8?B?MURJd0h5UjFyczRRTDJuOWpkTk5YcXlBSDJaSlBwSkp2WXQ3NGl3R08rU0Rm?=
+ =?utf-8?B?emlmM2tMdHhaMy9tZjBJNWp0d0pNYmsySWxqUUZLWHdlZCtsNk5GRkpPMGJE?=
+ =?utf-8?B?VzZIbHdpc0pjTDlwblVpSjBQYjd4UG8ySXhWYnQ4RnRKZmhsTkVlOUZuV0pS?=
+ =?utf-8?B?VWxoR1h4bHBBSXFLUkFQMDY2aGdCRE10T1BZakNaQU1kWlNPck1UY0FRQmIx?=
+ =?utf-8?B?MlQ5SHdBMnhHRlhqMkdENHUzc1NVbEp1ekxjaEJqVkRiZS9RN3U0S1E2VldP?=
+ =?utf-8?B?eEN1YTBRazFwa0lwak5zbHFwTjZ4aFROWDhUQjhZS1lKSVFWcUc0eGp1Y2lp?=
+ =?utf-8?B?cjNDWjE0N25UcXpVdjI3aVozRlAvOGQ3OHROeGczQnJuVUE5ZWFlRytXV213?=
+ =?utf-8?B?Q0o0MlVpTk5Gd1hjb1VTeHAzMzkxaDk0MUsvOG5QeXl6NGJzZlIzT2VPN0Nq?=
+ =?utf-8?Q?lDjMRcbzDBUMxZA8=3D?=
+X-Microsoft-Antispam-Message-Info: jsgLAydDMO1yaxSzEaaogFCvXPcUABQ3Rbsc0d8oCenqHvuCj5ZN5I1PBVJOBIFm8rby2RqXsB8Ls0GsVQ7j1CrlKKBXDAAC51ZQcLoRKJTiUio2ktBysm+fb8vM88/u99/zL5BDOQ9LkGpfisqlof3yjSWY6lbgAeaDRv1/qaVuHFNJZLd6Cn/R2Eq0dMqq
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3259;6:fXCreGVvvkR7QMoWhK51C3+qPTrZW+lLEwfEzzXLywzXOBTTIY0G6diBemcOztB8qk+QMnhGRwGuBf0+8DhhZXLCsrxLYE6KW9GVDpsxMAnQAxO/WA6hASzdzx4kyIAlasMu39ye7PyCXJjGhytHlOhy+HpODd25pj1V078wcrhNFMXdxBAId94awJYyk0lKelvuXAwoBbYQKoQZsj6Dngk9y1yclk/j0jD6Ax57wEXPSGxj3uMYvOiwS9bNJmDIl6TPJaYddWirbA8/LmAIrhq46EFNtcrVHfU1NhBieHHaV4/SfLRJcHidrq/xnqqCD5tpBrXRsZ3B0B/nIIz/wpsOtWhvnA1K9ZDcBiuc3Al/qE7UlvXE1bX13yH9/NSokl1o+Lmt7raNQDbWSF1VmX0XcD9f/ca7vfglnpdCucpS7Q3loew+xzbD9n/6najaxGBy0xdy7bHrpQ5t+1MNlQ==;5:xgqXi28X6wIdh+gLd9x3MthcB0f/if4WdzI0lfcUMrL0wdiB4CXGqJnX0Xffr9jO6HYSv+qgjs1Hnvfr7JCg6XGePvhz+JT6bWjuksdMuPmfvO+Gp+HT6jMyUCNfVJWheU7viWAcfS9ru0aim6Oub4CfHBsXUIRESurfPJmR7sM=;24:aGC8PcOTuJ4Wn2+HJeU7xNNArQcFM65t9PAfvifv3jFJDfJ3Q2HKtXuN6AmabA5hh2fGqBPpEc53/5juDNcfRX0q4imX8UV8c/Yle9mtb74=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3259;7:yMaCvk5BaORSP1AI0a6zNReof0EU2leegomPOQmFoF8L9tt0Sp6e6Rpq589wIRjZdd8PKFzFEvmcVSTe5rVBIVv4CtWshiQ2Yj59QdDMM0jZVbtT/uDjiV9gIpIQR54GEw+pdeETULxPtKtQ2FEyqQVTCEhcWUnGXr2XgHg+o6x+EOp4I6D442C+dVmhctKqXKxeddLn9mXPnFRPdd9BsJYsYNyvhPMG47wArBxnAN2UV/QK1vVIGFiswOTpNTeV;20:rOsnX424nJX0C/vUcCUyDwwJj08QqV+8Wd1ui52B5gTCVPWvxZ1vk5qI1VfUTWBFWJpM/qQcBoDZTEl4ASfxfxaJ7mfTOoXTKYe3WDyMxSnsoX7+yMFPz8E7YfO2dQiTQ0SGsGr/IZm0Bkmkiqpv/FVVznSbE/EbL0jffR9ndSk=
+X-MS-Office365-Filtering-Correlation-Id: a59993dc-5a6d-4822-6350-08d5b9bb91cf
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2018 16:55:54.1134 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a59993dc-5a6d-4822-6350-08d5b9bb91cf
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3259
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599917339726074425?=
-X-GMAIL-MSGID: =?utf-8?q?1599917339726074425?=
+X-GMAIL-MSGID: =?utf-8?q?1600459339012956794?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This commit splits the current CONFIG_KASAN config option into two:
-1. CONFIG_KASAN_GENERIC, that enables the generic software-only KASAN
-   version (the one that exists now);
-2. CONFIG_KASAN_HW, that enables KHWASAN.
 
-With CONFIG_KASAN_HW enabled, compiler options are changed to instrument
-kernel files wiht -fsantize=hwaddress (except the ones for which
-KASAN_SANITIZE := n is set).
 
-Both CONFIG_KASAN_GENERIC and CONFIG_KASAN_HW support both
-CONFIG_KASAN_INLINE and CONFIG_KASAN_OUTLINE instrumentation modes.
+On 05/08/2018 08:20 PM, Andrey Konovalov wrote:
 
-This commit also adds empty placeholder (for now) implementation of
-KHWASAN specific hooks inserted by the compiler and adjusts common hooks
-implementation to compile correctly with each of the config options.
+> diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
+> index 69552a39951d..47023daf5606 100644
+> --- a/scripts/Makefile.kasan
+> +++ b/scripts/Makefile.kasan
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -ifdef CONFIG_KASAN
+> +ifdef CONFIG_KASAN_GENERIC
+>  ifdef CONFIG_KASAN_INLINE
+>  	call_threshold := 10000
+>  else
+> @@ -45,3 +45,28 @@ endif
+>  CFLAGS_KASAN_NOSANITIZE := -fno-builtin
+>  
+>  endif
+> +
+> +ifdef CONFIG_KASAN_HW
+> +
+> +ifdef CONFIG_KASAN_INLINE
+> +    instrumentation_flags := -mllvm -hwasan-mapping-offset=$(KASAN_SHADOW_OFFSET)
+> +else
+> +    instrumentation_flags := -mllvm -hwasan-instrument-with-calls=1
+> +endif
+> +
+> +CFLAGS_KASAN_MINIMAL := -fsanitize=kernel-hwaddress
+> +
+> +ifeq ($(call cc-option, $(CFLAGS_KASAN_MINIMAL) -Werror),)
+> +    ifneq ($(CONFIG_COMPILE_TEST),y)
+> +        $(warning Cannot use CONFIG_KASAN_HW: \
+> +            -fsanitize=hwaddress is not supported by compiler)
+> +    endif
+> +else
+> +    CFLAGS_KASAN := $(call cc-option, -fsanitize=kernel-hwaddress \
+> +        -mllvm -hwasan-instrument-stack=0 \
+> +        $(instrumentation_flags))
+> +endif
 
-Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
----
- arch/arm64/Kconfig             |  1 +
- include/linux/compiler-clang.h |  5 ++-
- include/linux/compiler-gcc.h   |  4 ++
- include/linux/compiler.h       |  3 +-
- include/linux/kasan.h          | 16 +++++--
- lib/Kconfig.kasan              | 76 ++++++++++++++++++++++++++--------
- mm/kasan/Makefile              |  6 ++-
- mm/kasan/kasan.h               | 11 ++++-
- mm/kasan/khwasan.c             | 75 +++++++++++++++++++++++++++++++++
- mm/slub.c                      |  2 +-
- scripts/Makefile.kasan         | 27 +++++++++++-
- 11 files changed, 198 insertions(+), 28 deletions(-)
- create mode 100644 mm/kasan/khwasan.c
+So this code does the following:
+ 1) Warn if compiler doesn't support -fsanitize=kernel-hwaddress
+ 2) Compile the kernel with all necessary set of the '-fsanitize=kernel-hwaddress -mllvm -hwasan-*' flags if compiler supports all of them.
+ 3) Compile the kernel with empty CFLAGS_KASAN without a warning if compiler supports 'fsanitize=kernel-hwaddress',
+     but doesn't support the rest '-mllvm -hwasan-*' flags.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index eb2cf4938f6d..6553aaa61e6a 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -88,6 +88,7 @@ config ARM64
- 	select HAVE_ARCH_HUGE_VMAP
- 	select HAVE_ARCH_JUMP_LABEL
- 	select HAVE_ARCH_KASAN if !(ARM64_16K_PAGES && ARM64_VA_BITS_48)
-+	select HAVE_ARCH_KASAN_HW if !(ARM64_16K_PAGES && ARM64_VA_BITS_48)
- 	select HAVE_ARCH_KGDB
- 	select HAVE_ARCH_MMAP_RND_BITS
- 	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index 7d98e263e048..72681c6fd418 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -21,13 +21,16 @@
- #define KASAN_ABI_VERSION 5
- 
- /* emulate gcc's __SANITIZE_ADDRESS__ flag */
--#if __has_feature(address_sanitizer)
-+#if __has_feature(address_sanitizer) || __has_feature(hwaddress_sanitizer)
- #define __SANITIZE_ADDRESS__
- #endif
- 
- #undef __no_sanitize_address
- #define __no_sanitize_address __attribute__((no_sanitize("address")))
- 
-+#undef __no_sanitize_hwaddress
-+#define __no_sanitize_hwaddress __attribute__((no_sanitize("hwaddress")))
-+
- /* Clang doesn't have a way to turn it off per-function, yet. */
- #ifdef __noretpoline
- #undef __noretpoline
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index b4bf73f5e38f..00a51feb786d 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -338,6 +338,10 @@
- #define __no_sanitize_address
- #endif
- 
-+#if !defined(__no_sanitize_hwaddress)
-+#define __no_sanitize_hwaddress	/* gcc doesn't support KHWASAN */
-+#endif
-+
- /*
-  * A trick to suppress uninitialized variable warning without generating any
-  * code
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index ab4711c63601..6142bae513e8 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -195,7 +195,8 @@ void __read_once_size(const volatile void *p, void *res, int size)
-  * 	https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
-  * '__maybe_unused' allows us to avoid defined-but-not-used warnings.
-  */
--# define __no_kasan_or_inline __no_sanitize_address __maybe_unused
-+# define __no_kasan_or_inline __no_sanitize_address __no_sanitize_hwaddress \
-+			      __maybe_unused
- #else
- # define __no_kasan_or_inline __always_inline
- #endif
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index cbdc54543803..6608aa9b35ac 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -45,8 +45,6 @@ void kasan_free_pages(struct page *page, unsigned int order);
- 
- void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
- 			slab_flags_t *flags);
--void kasan_cache_shrink(struct kmem_cache *cache);
--void kasan_cache_shutdown(struct kmem_cache *cache);
- 
- void kasan_poison_slab(struct page *page);
- void kasan_unpoison_object_data(struct kmem_cache *cache, void *object);
-@@ -94,8 +92,6 @@ static inline void kasan_free_pages(struct page *page, unsigned int order) {}
- static inline void kasan_cache_create(struct kmem_cache *cache,
- 				      unsigned int *size,
- 				      slab_flags_t *flags) {}
--static inline void kasan_cache_shrink(struct kmem_cache *cache) {}
--static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
- 
- static inline void kasan_poison_slab(struct page *page) {}
- static inline void kasan_unpoison_object_data(struct kmem_cache *cache,
-@@ -141,4 +137,16 @@ static inline size_t kasan_metadata_size(struct kmem_cache *cache) { return 0; }
- 
- #endif /* CONFIG_KASAN */
- 
-+#ifdef CONFIG_KASAN_GENERIC
-+
-+void kasan_cache_shrink(struct kmem_cache *cache);
-+void kasan_cache_shutdown(struct kmem_cache *cache);
-+
-+#else /* CONFIG_KASAN_GENERIC */
-+
-+static inline void kasan_cache_shrink(struct kmem_cache *cache) {}
-+static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
-+
-+#endif /* CONFIG_KASAN_GENERIC */
-+
- #endif /* LINUX_KASAN_H */
-diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-index 3d35d062970d..baf2619b7ff4 100644
---- a/lib/Kconfig.kasan
-+++ b/lib/Kconfig.kasan
-@@ -1,33 +1,73 @@
- config HAVE_ARCH_KASAN
- 	bool
- 
-+config HAVE_ARCH_KASAN_HW
-+	bool
-+
- if HAVE_ARCH_KASAN
- 
- config KASAN
--	bool "KASan: runtime memory debugger"
-+	bool "KASAN: runtime memory debugger"
-+	help
-+	  Enables KASAN (KernelAddressSANitizer) - runtime memory debugger,
-+	  designed to find out-of-bounds accesses and use-after-free bugs.
-+
-+choice
-+	prompt "KASAN mode"
-+	depends on KASAN
-+	default KASAN_GENERIC
-+	help
-+	  KASAN has two modes: KASAN (a classic version, similar to userspace
-+	  ASan, enabled with CONFIG_KASAN_GENERIC) and KHWASAN (a version
-+	  based on pointer tagging, only for arm64, similar to userspace
-+	  HWASan, enabled with CONFIG_KASAN_HW).
-+
-+config KASAN_GENERIC
-+	bool "KASAN: the generic mode"
- 	depends on SLUB || (SLAB && !DEBUG_SLAB)
- 	select CONSTRUCTORS
- 	select STACKDEPOT
- 	help
--	  Enables kernel address sanitizer - runtime memory debugger,
--	  designed to find out-of-bounds accesses and use-after-free bugs.
--	  This is strictly a debugging feature and it requires a gcc version
--	  of 4.9.2 or later. Detection of out of bounds accesses to stack or
--	  global variables requires gcc 5.0 or later.
--	  This feature consumes about 1/8 of available memory and brings about
--	  ~x3 performance slowdown.
-+	  Enables the generic mode of KASAN.
-+	  This is strictly a debugging feature and it requires a GCC version
-+	  of 4.9.2 or later. Detection of out-of-bounds accesses to stack or
-+	  global variables requires GCC 5.0 or later.
-+	  This mode consumes about 1/8 of available memory at kernel start
-+	  and introduces an overhead of ~x1.5 for the rest of the allocations.
-+	  The performance slowdown is ~x3.
-+	  For better error detection enable CONFIG_STACKTRACE.
-+	  Currently CONFIG_KASAN_GENERIC doesn't work with CONFIG_DEBUG_SLAB
-+	  (the resulting kernel does not boot).
-+
-+if HAVE_ARCH_KASAN_HW
-+
-+config KASAN_HW
-+	bool "KHWASAN: the hardware assisted mode"
-+	depends on SLUB || (SLAB && !DEBUG_SLAB)
-+	select CONSTRUCTORS
-+	select STACKDEPOT
-+	help
-+	  Enabled KHWASAN (KASAN mode based on pointer tagging).
-+	  This mode requires Top Byte Ignore support by the CPU and therefore
-+	  only supported for arm64.
-+	  This feature requires clang revision 330044 or later.
-+	  This mode consumes about 1/16 of available memory at kernel start
-+	  and introduces an overhead of ~20% for the rest of the allocations.
- 	  For better error detection enable CONFIG_STACKTRACE.
--	  Currently CONFIG_KASAN doesn't work with CONFIG_DEBUG_SLAB
-+	  Currently CONFIG_KASAN_HW doesn't work with CONFIG_DEBUG_SLAB
- 	  (the resulting kernel does not boot).
- 
-+endif
-+
-+endchoice
-+
- config KASAN_EXTRA
--	bool "KAsan: extra checks"
--	depends on KASAN && DEBUG_KERNEL && !COMPILE_TEST
-+	bool "KASAN: extra checks"
-+	depends on KASAN_GENERIC && DEBUG_KERNEL && !COMPILE_TEST
- 	help
--	  This enables further checks in the kernel address sanitizer, for now
--	  it only includes the address-use-after-scope check that can lead
--	  to excessive kernel stack usage, frame size warnings and longer
--	  compile time.
-+	  This enables further checks in KASAN, for now it only includes the
-+	  address-use-after-scope check that can lead to excessive kernel
-+	  stack usage, frame size warnings and longer compile time.
- 	  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 has more
- 
- 
-@@ -52,16 +92,16 @@ config KASAN_INLINE
- 	  memory accesses. This is faster than outline (in some workloads
- 	  it gives about x2 boost over outline instrumentation), but
- 	  make kernel's .text size much bigger.
--	  This requires a gcc version of 5.0 or later.
-+	  For CONFIG_KASAN_GENERIC this requires GCC 5.0 or later.
- 
- endchoice
- 
- config TEST_KASAN
--	tristate "Module for testing kasan for bug detection"
-+	tristate "Module for testing KASAN for bug detection"
- 	depends on m && KASAN
- 	help
- 	  This is a test module doing various nasty things like
- 	  out of bounds accesses, use after free. It is useful for testing
--	  kernel debugging features like kernel address sanitizer.
-+	  kernel debugging features like KASAN.
- 
- endif
-diff --git a/mm/kasan/Makefile b/mm/kasan/Makefile
-index a6df14bffb6b..14955add96d3 100644
---- a/mm/kasan/Makefile
-+++ b/mm/kasan/Makefile
-@@ -2,6 +2,7 @@
- KASAN_SANITIZE := n
- UBSAN_SANITIZE_common.o := n
- UBSAN_SANITIZE_kasan.o := n
-+UBSAN_SANITIZE_khwasan.o := n
- KCOV_INSTRUMENT := n
- 
- CFLAGS_REMOVE_kasan.o = -pg
-@@ -10,5 +11,8 @@ CFLAGS_REMOVE_kasan.o = -pg
- 
- CFLAGS_common.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
- CFLAGS_kasan.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
-+CFLAGS_khwasan.o := $(call cc-option, -fno-conserve-stack -fno-stack-protector)
- 
--obj-y := common.o kasan.o report.o kasan_init.o quarantine.o
-+obj-$(CONFIG_KASAN) := common.o kasan_init.o report.o
-+obj-$(CONFIG_KASAN_GENERIC) += kasan.o quarantine.o
-+obj-$(CONFIG_KASAN_HW) += khwasan.o
-diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-index c39039308b98..5091a433f266 100644
---- a/mm/kasan/kasan.h
-+++ b/mm/kasan/kasan.h
-@@ -98,7 +98,15 @@ struct kasan_alloc_meta *get_alloc_info(struct kmem_cache *cache,
- 					const void *object);
- struct kasan_free_meta *get_free_info(struct kmem_cache *cache,
- 					const void *object);
-+
-+#ifdef CONFIG_KASAN_GENERIC
- unsigned int optimal_redzone(unsigned int object_size);
-+#else
-+static inline unsigned int optimal_redzone(unsigned int object_size)
-+{
-+	return 0;
-+}
-+#endif
- 
- static inline const void *kasan_shadow_to_mem(const void *shadow_addr)
- {
-@@ -115,7 +123,8 @@ void kasan_report(unsigned long addr, size_t size,
- 		bool is_write, unsigned long ip);
- void kasan_report_invalid_free(void *object, unsigned long ip);
- 
--#if defined(CONFIG_SLAB) || defined(CONFIG_SLUB)
-+#if defined(CONFIG_KASAN_GENERIC) && \
-+	(defined(CONFIG_SLAB) || defined(CONFIG_SLUB))
- void quarantine_put(struct kasan_free_meta *info, struct kmem_cache *cache);
- void quarantine_reduce(void);
- void quarantine_remove_cache(struct kmem_cache *cache);
-diff --git a/mm/kasan/khwasan.c b/mm/kasan/khwasan.c
-new file mode 100644
-index 000000000000..e2c3a7f7fd1f
---- /dev/null
-+++ b/mm/kasan/khwasan.c
-@@ -0,0 +1,75 @@
-+/*
-+ * This file contains core KHWASAN code.
-+ *
-+ * Copyright (c) 2018 Google, Inc.
-+ * Author: Andrey Konovalov <andreyknvl@google.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+#define DISABLE_BRANCH_PROFILING
-+
-+#include <linux/export.h>
-+#include <linux/interrupt.h>
-+#include <linux/init.h>
-+#include <linux/kasan.h>
-+#include <linux/kernel.h>
-+#include <linux/kmemleak.h>
-+#include <linux/linkage.h>
-+#include <linux/memblock.h>
-+#include <linux/memory.h>
-+#include <linux/mm.h>
-+#include <linux/module.h>
-+#include <linux/printk.h>
-+#include <linux/random.h>
-+#include <linux/sched.h>
-+#include <linux/sched/task_stack.h>
-+#include <linux/slab.h>
-+#include <linux/stacktrace.h>
-+#include <linux/string.h>
-+#include <linux/types.h>
-+#include <linux/vmalloc.h>
-+#include <linux/bug.h>
-+
-+#include "kasan.h"
-+#include "../slab.h"
-+
-+void check_memory_region(unsigned long addr, size_t size, bool write,
-+				unsigned long ret_ip)
-+{
-+}
-+
-+#define DEFINE_HWASAN_LOAD_STORE(size)					\
-+	void __hwasan_load##size##_noabort(unsigned long addr)		\
-+	{								\
-+	}								\
-+	EXPORT_SYMBOL(__hwasan_load##size##_noabort);			\
-+	void __hwasan_store##size##_noabort(unsigned long addr)		\
-+	{								\
-+	}								\
-+	EXPORT_SYMBOL(__hwasan_store##size##_noabort)
-+
-+DEFINE_HWASAN_LOAD_STORE(1);
-+DEFINE_HWASAN_LOAD_STORE(2);
-+DEFINE_HWASAN_LOAD_STORE(4);
-+DEFINE_HWASAN_LOAD_STORE(8);
-+DEFINE_HWASAN_LOAD_STORE(16);
-+
-+void __hwasan_loadN_noabort(unsigned long addr, unsigned long size)
-+{
-+}
-+EXPORT_SYMBOL(__hwasan_loadN_noabort);
-+
-+void __hwasan_storeN_noabort(unsigned long addr, unsigned long size)
-+{
-+}
-+EXPORT_SYMBOL(__hwasan_storeN_noabort);
-+
-+void __hwasan_tag_memory(unsigned long addr, u8 tag, unsigned long size)
-+{
-+}
-+EXPORT_SYMBOL(__hwasan_tag_memory);
-diff --git a/mm/slub.c b/mm/slub.c
-index 4fcd1442a761..b3118f7ea92a 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2989,7 +2989,7 @@ static __always_inline void slab_free(struct kmem_cache *s, struct page *page,
- 		do_slab_free(s, page, head, tail, cnt, addr);
- }
- 
--#ifdef CONFIG_KASAN
-+#ifdef CONFIG_KASAN_GENERIC
- void ___cache_free(struct kmem_cache *cache, void *x, unsigned long addr)
- {
- 	do_slab_free(cache, virt_to_head_page(x), x, NULL, 1, addr);
-diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
-index 69552a39951d..47023daf5606 100644
---- a/scripts/Makefile.kasan
-+++ b/scripts/Makefile.kasan
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--ifdef CONFIG_KASAN
-+ifdef CONFIG_KASAN_GENERIC
- ifdef CONFIG_KASAN_INLINE
- 	call_threshold := 10000
- else
-@@ -45,3 +45,28 @@ endif
- CFLAGS_KASAN_NOSANITIZE := -fno-builtin
- 
- endif
-+
-+ifdef CONFIG_KASAN_HW
-+
-+ifdef CONFIG_KASAN_INLINE
-+    instrumentation_flags := -mllvm -hwasan-mapping-offset=$(KASAN_SHADOW_OFFSET)
-+else
-+    instrumentation_flags := -mllvm -hwasan-instrument-with-calls=1
-+endif
-+
-+CFLAGS_KASAN_MINIMAL := -fsanitize=kernel-hwaddress
-+
-+ifeq ($(call cc-option, $(CFLAGS_KASAN_MINIMAL) -Werror),)
-+    ifneq ($(CONFIG_COMPILE_TEST),y)
-+        $(warning Cannot use CONFIG_KASAN_HW: \
-+            -fsanitize=hwaddress is not supported by compiler)
-+    endif
-+else
-+    CFLAGS_KASAN := $(call cc-option, -fsanitize=kernel-hwaddress \
-+        -mllvm -hwasan-instrument-stack=0 \
-+        $(instrumentation_flags))
-+endif
-+
-+CFLAGS_KASAN_NOSANITIZE := -fno-builtin
-+
-+endif
--- 
-2.17.0.441.gb46fe60e1d-goog
+The last one is just nonsense.
+
+
+> +
+> +CFLAGS_KASAN_NOSANITIZE := -fno-builtin
+> +
+
+Does it really has to declared twice?
