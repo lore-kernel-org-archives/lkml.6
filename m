@@ -1,99 +1,419 @@
-Return-Path: <foo00@h08.hostsharing.net>
-X-Google-Smtp-Source: AB8JxZoedt13gqFA798Okhg8y8BruqmdE1bzfwsN6qEr0BNEYI+7JNNhjyCBk1cDHspb20MkkIMz
-ARC-Seal: i=1; a=rsa-sha256; t=1526315181; cv=none;
+Return-Path: <ard.biesheuvel@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1526299703; cv=none;
         d=google.com; s=arc-20160816;
-        b=JxfL9boSjsDq0te0G/3JTB3osv3ToWdr4XolaqnNRM6Kt7NFc8WV6Mvwj6XyP7Xnyt
-         dFfv/CC3iluSL66ZRdV04PoZkFrjDwQOT9uCfjotuuxFhUpYdXaFEJ4wHOUTsgzPBm+2
-         kRnE4IqWKXfAksABIgXvLv5Azc3y9De1i7Jhg+pzTCG8lpD/6ZVIQJSWkpyMudqwg2kp
-         CSfgcJaXQg6QQDeAuLxXG5FW5cI079/x6qFFUkIb+A7u5tgy9hCsnXGkTP7xwwpglo85
-         s6EB1+XOfrDDL3oBN+jpq125hexmcDp1+xfzfshFjO/ZgRTq/AEcLATEDqqKgWKviuiz
-         5puQ==
+        b=Sm3iVJhah1NonSLdsjol0qQirsn1SXE7FpaF4zzHZRyGLWE5roCYrC+KDRD53y2fNY
+         15UWI9yLRnTXwG7ejXg6BtkD4nDl561tMyLVyzTPVAvn2elNvtgP4h/qDDm0JnsJf3gA
+         aC1ORjoyF/Cz4tI0itNPvn3b9+W+IwczMfzO6jCkOJi1PeMyEGsQqqJkhdqgHxW2sTSy
+         kvLA9iv9SXkFD5vBvBmNybOlJDTjVA5l/ldFq1vJplG6dxvHL/zVRccWj3blBS1bP9JN
+         zK6XnN7skyn9cclXY6Wd/+nKJxtPkczU6NuEldlvoRysM1qWCK5KWfGEKajC175K2fN8
+         ajCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=+foyy/rOZ2kCoEyy18HK4FOE6DdDhrZunk3JubF8Orw=;
-        b=qXc3zysidgdmrIevXowDcoA0v6dRzz+lnVvnV1Wz9H4LB+Zs99P8/bTNffc7N8WVTr
-         7iQBGvyLhbY6y9O3X9niZjtjDfKegTGPG+c98XZkDNd3pCUGJ3it4wStp0bBov+eCcHy
-         MexvOZsjML2krQHZeFGpngjH+waUW4xnJKzpVdYIf0Y6K9pHl9s9aAkYFKHa1I+nmEAw
-         OfF5UkvdJeIZbx6ortP1LdF3y0at2ipFP10hvevzMJVIHWTWdG817EGHPsWs+8sKjGoR
-         qk/2CWmtEd5a6C1Kh88iEtA5tZE5aa3vCFeW23J7LkGEufbpICyddp6ule1zHaHBYKkD
-         TFdw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=u3ySkxxTGXS+EfxD9jsZRGab9A11bM0P2edr9IniYMo=;
+        b=kMSo6PbYPQ8dpYv1D00Ol33IgPBBvRLtYzfoU9Oa0YswgGRDHz1txhjnmoXqbqT1FP
+         WzBPXbkOzNgqdF59RMUL7LmiugqIZg+MBkBgrsXn0g9J57ZQRuhMaUhE46QB+BSJfgvy
+         nbzKkkly02ZVXK/pNRKsvEOeCIaVJC0Qqf5VzzYL2r+m0/WMXABxZZ12+n3FW29Nt+lf
+         vi46pI0I87SrHWvi8CTzOBtnZYNkM5gr56a+KBHTYnoOyyS/dVPIBQ8oyotM+pVxHGPr
+         7EYofYORLV8B2k5rPbT9wl7PykhZsWZ6PZL7td0hpgiRBQaReM5DZwrvysq0fWOGpprQ
+         TPBg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of foo00@h08.hostsharing.net designates 83.223.95.100 as permitted sender) smtp.mailfrom=foo00@h08.hostsharing.net
+       dkim=pass header.i=@linaro.org header.s=google header.b=aKSI3bvl;
+       spf=pass (google.com: domain of ard.biesheuvel@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=ard.biesheuvel@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of foo00@h08.hostsharing.net designates 83.223.95.100 as permitted sender) smtp.mailfrom=foo00@h08.hostsharing.net
-Date: Mon, 14 May 2018 18:26:20 +0200
-From: Lukas Wunner <lukas@wunner.de>
+       dkim=pass header.i=@linaro.org header.s=google header.b=aKSI3bvl;
+       spf=pass (google.com: domain of ard.biesheuvel@linaro.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=ard.biesheuvel@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZo2VIks3CXeenOpcweRK2IENVGEJ4O1KmXwmdgTSiAgXbGrE/+HEt2giitcaHp8LfUnIgr/2kspgzZqERvwybQ=
+MIME-Version: 1.0
+In-Reply-To: <20180508131547.44366-1-andriy.shevchenko@linux.intel.com>
+References: <20180508131547.44366-1-andriy.shevchenko@linux.intel.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Mon, 14 May 2018 14:08:22 +0200
+Message-ID: <CAKv+Gu9wAVmVMV8fOPB3cQOx5iUU_GOMu0tqw-Jc+bSugNcBFg@mail.gmail.com>
+Subject: Re: [PATCH v2] device property: Get rid of union aliasing
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	linux-efi@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-efi@vger.kernel.org,
 	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Subject: Re: [PATCH v2] device property: Get rid of union aliasing
-Message-ID: <20180514162620.GA12132@wunner.de>
-References: <20180508131547.44366-1-andriy.shevchenko@linux.intel.com>
- <20180514121817.GA27869@wunner.de>
- <f2109d06a0755dd2d9dc807c1e13dd2c19903905.camel@linux.intel.com>
- <20180514154017.GA6734@wunner.de>
- <ddd9eae5cf848df9c25a49001845a3d80e429a6f.camel@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ddd9eae5cf848df9c25a49001845a3d80e429a6f.camel@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+	Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+	ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Lukas Wunner <lukas@wunner.de>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599901902158233534?=
-X-GMAIL-MSGID: =?utf-8?q?1600457467568019900?=
+X-GMAIL-MSGID: =?utf-8?q?1600441238639617708?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 14, 2018 at 07:13:24PM +0300, Andy Shevchenko wrote:
-> On Mon, 2018-05-14 at 17:40 +0200, Lukas Wunner wrote:
-> > On Mon, May 14, 2018 at 03:48:09PM +0300, Andy Shevchenko wrote:
-> > > On Mon, 2018-05-14 at 14:18 +0200, Lukas Wunner wrote:
-> > > > On Tue, May 08, 2018 at 04:15:47PM +0300, Andy Shevchenko wrote:
-> > > > > --- a/drivers/firmware/efi/apple-properties.c
-> > > > > +++ b/drivers/firmware/efi/apple-properties.c
-> > > > > @@ -13,6 +13,9 @@
-> > > > > + * FIXME: The approach is still based on union aliasing and
-> > > > > should be
-> > > > > + * replaced by a proper resource provider.
-> > > > 
-> > > > Why?  All Apple EFI properties are either boolean or u8 arrays.
-> > > > You've correctly changed this file to always supply u8 arrays,
-> > > > so I don't see where union aliasing is happening here?
-> > > 
-> > > the implementation is quite fragile in this sense, because it
-> > > doesn't discourage people to use device_property_read_string() in
-> > > case when it's indeed a string (I saw these kind of properties in
-> > > the very dump you posted on your GH page).
-> > 
-> > Well if that is your concern then you need to prevent functions which
-> > retrieve properties to use the wrong type.
-> > 
-> > E.g. to prevent retrieval of the u8 array as string, you'd have to
-> > amend drivers/base/property.c:pset_prop_read_string_array() to
-> > check the type of the property found and return -EINVAL if it's not
-> > string.
-> 
-> I think it's doable. I will hack a new version later this week.
+On 8 May 2018 at 15:15, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> The commit
+>
+>   318a19718261 ("device property: refactor built-in properties support")
+>
+> went way too far and brought a union aliasing. Partially revert it here
+> to get rid of union aliasing.
+>
+> Note, Apple properties support is still utilizing this trick.
+>
+> What union aliasing is?
+> ~~~~~~~~~~~~~~~~~~~~~~~
+> The C99 standard in section 6.2.5 paragraph 20 defines union type as
+> "an overlapping nonempty set of member objects". It also states in
+> section 6.7.2.1 paragraph 14 that "the value of at most one of the
+> members can be stored in a union object at any time'.
+>
+> Union aliasing is a type punning mechanism using union members to store
+> as one type and read back as another.
+>
+> Why it's not good?
+> ~~~~~~~~~~~~~~~~~~
+> Section 6.2.6.1 paragraph 6 says that a union object may not be a trap
+> representation, although its member objects may be.
+>
+> Meanwhile annex J.1 says that "the value of a union member other than
+> the last one stored into" is unspecified [removed in C11].
+>
+> In TC3, a footnote is added which specifies that accessing a member of a
+> union other than the last one stored causes "the object representation"
+> to be re-interpreted in the new type and specifically refers to this as
+> "type punning". This conflicts to some degree with Annex J.1.
+>
+> While it's working in Linux with GCC, the use of union members to do
+> type punning is not clear area in the C standard and might lead to
+> unspecified behaviour.
+>
+> More information is available in this [1] blog post.
+>
+> [1]: https://davmac.wordpress.com/2010/02/26/c99-revisited/
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Ok, thanks for doing this.
+For the EFI change
 
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-> But it still not a (best) solution for Apple properties. B/c as I told
-> already I saw in _your_ dump the _string_ properties. Someone might have
-> got an idea to use them as _strings_.
-
-That's kind of their problem then. ;-)  The Apple EFI properties are
-untyped, so making them available as u8 arrays is the best we can do.
-If people need them as strings, they should retrieve as u8 array and
-convert that to string themselves.
-
-Kind regards,
-
-Lukas
+> ---
+>
+> - extend commit message to explain what union aliasing is and why it's not good
+>
+>  drivers/base/property.c                 | 99 ++++++++++++++++++++-----
+>  drivers/firmware/efi/apple-properties.c |  8 +-
+>  include/linux/property.h                | 52 +++++++------
+>  3 files changed, 112 insertions(+), 47 deletions(-)
+>
+> diff --git a/drivers/base/property.c b/drivers/base/property.c
+> index 8f205f6461ed..de19d7cc073b 100644
+> --- a/drivers/base/property.c
+> +++ b/drivers/base/property.c
+> @@ -56,6 +56,67 @@ pset_prop_get(const struct property_set *pset, const char *name)
+>         return NULL;
+>  }
+>
+> +static const void *property_get_pointer(const struct property_entry *prop)
+> +{
+> +       switch (prop->type) {
+> +       case DEV_PROP_U8:
+> +               if (prop->is_array)
+> +                       return prop->pointer.u8_data;
+> +               return &prop->value.u8_data;
+> +       case DEV_PROP_U16:
+> +               if (prop->is_array)
+> +                       return prop->pointer.u16_data;
+> +               return &prop->value.u16_data;
+> +       case DEV_PROP_U32:
+> +               if (prop->is_array)
+> +                       return prop->pointer.u32_data;
+> +               return &prop->value.u32_data;
+> +       case DEV_PROP_U64:
+> +               if (prop->is_array)
+> +                       return prop->pointer.u64_data;
+> +               return &prop->value.u64_data;
+> +       default:
+> +               if (prop->is_array)
+> +                       return prop->pointer.str;
+> +               return &prop->value.str;
+> +       }
+> +}
+> +
+> +static void property_set_pointer(struct property_entry *prop, const void *pointer)
+> +{
+> +       switch (prop->type) {
+> +       case DEV_PROP_U8:
+> +               if (prop->is_array)
+> +                       prop->pointer.u8_data = pointer;
+> +               else
+> +                       prop->value.u8_data = *((u8 *)pointer);
+> +               break;
+> +       case DEV_PROP_U16:
+> +               if (prop->is_array)
+> +                       prop->pointer.u16_data = pointer;
+> +               else
+> +                       prop->value.u16_data = *((u16 *)pointer);
+> +               break;
+> +       case DEV_PROP_U32:
+> +               if (prop->is_array)
+> +                       prop->pointer.u32_data = pointer;
+> +               else
+> +                       prop->value.u32_data = *((u32 *)pointer);
+> +               break;
+> +       case DEV_PROP_U64:
+> +               if (prop->is_array)
+> +                       prop->pointer.u64_data = pointer;
+> +               else
+> +                       prop->value.u64_data = *((u64 *)pointer);
+> +               break;
+> +       default:
+> +               if (prop->is_array)
+> +                       prop->pointer.str = pointer;
+> +               else
+> +                       prop->value.str = pointer;
+> +       }
+> +}
+> +
+>  static const void *pset_prop_find(const struct property_set *pset,
+>                                   const char *propname, size_t length)
+>  {
+> @@ -65,10 +126,7 @@ static const void *pset_prop_find(const struct property_set *pset,
+>         prop = pset_prop_get(pset, propname);
+>         if (!prop)
+>                 return ERR_PTR(-EINVAL);
+> -       if (prop->is_array)
+> -               pointer = prop->pointer.raw_data;
+> -       else
+> -               pointer = &prop->value.raw_data;
+> +       pointer = property_get_pointer(prop);
+>         if (!pointer)
+>                 return ERR_PTR(-ENODATA);
+>         if (length > prop->length)
+> @@ -698,16 +756,17 @@ EXPORT_SYMBOL_GPL(fwnode_property_get_reference_args);
+>
+>  static void property_entry_free_data(const struct property_entry *p)
+>  {
+> +       const void *pointer = property_get_pointer(p);
+>         size_t i, nval;
+>
+>         if (p->is_array) {
+> -               if (p->is_string && p->pointer.str) {
+> +               if (p->type == DEV_PROP_STRING && p->pointer.str) {
+>                         nval = p->length / sizeof(const char *);
+>                         for (i = 0; i < nval; i++)
+>                                 kfree(p->pointer.str[i]);
+>                 }
+> -               kfree(p->pointer.raw_data);
+> -       } else if (p->is_string) {
+> +               kfree(pointer);
+> +       } else if (p->type == DEV_PROP_STRING) {
+>                 kfree(p->value.str);
+>         }
+>         kfree(p->name);
+> @@ -716,7 +775,7 @@ static void property_entry_free_data(const struct property_entry *p)
+>  static int property_copy_string_array(struct property_entry *dst,
+>                                       const struct property_entry *src)
+>  {
+> -       char **d;
+> +       const char **d;
+>         size_t nval = src->length / sizeof(*d);
+>         int i;
+>
+> @@ -734,40 +793,44 @@ static int property_copy_string_array(struct property_entry *dst,
+>                 }
+>         }
+>
+> -       dst->pointer.raw_data = d;
+> +       dst->pointer.str = d;
+>         return 0;
+>  }
+>
+>  static int property_entry_copy_data(struct property_entry *dst,
+>                                     const struct property_entry *src)
+>  {
+> +       const void *pointer = property_get_pointer(src);
+> +       const void *new;
+>         int error;
+>
+>         if (src->is_array) {
+>                 if (!src->length)
+>                         return -ENODATA;
+>
+> -               if (src->is_string) {
+> +               if (src->type == DEV_PROP_STRING) {
+>                         error = property_copy_string_array(dst, src);
+>                         if (error)
+>                                 return error;
+> +                       new = dst->pointer.str;
+>                 } else {
+> -                       dst->pointer.raw_data = kmemdup(src->pointer.raw_data,
+> -                                                       src->length, GFP_KERNEL);
+> -                       if (!dst->pointer.raw_data)
+> +                       new = kmemdup(pointer, src->length, GFP_KERNEL);
+> +                       if (!new)
+>                                 return -ENOMEM;
+>                 }
+> -       } else if (src->is_string) {
+> -               dst->value.str = kstrdup(src->value.str, GFP_KERNEL);
+> -               if (!dst->value.str && src->value.str)
+> +       } else if (src->type == DEV_PROP_STRING) {
+> +               new = kstrdup(src->value.str, GFP_KERNEL);
+> +               if (!new && src->value.str)
+>                         return -ENOMEM;
+>         } else {
+> -               dst->value.raw_data = src->value.raw_data;
+> +               new = pointer;
+>         }
+>
+>         dst->length = src->length;
+>         dst->is_array = src->is_array;
+> -       dst->is_string = src->is_string;
+> +       dst->type = src->type;
+> +
+> +       property_set_pointer(dst, new);
+>
+>         dst->name = kstrdup(src->name, GFP_KERNEL);
+>         if (!dst->name)
+> diff --git a/drivers/firmware/efi/apple-properties.c b/drivers/firmware/efi/apple-properties.c
+> index adaa9a3714b9..b2c2d5a45f91 100644
+> --- a/drivers/firmware/efi/apple-properties.c
+> +++ b/drivers/firmware/efi/apple-properties.c
+> @@ -13,6 +13,9 @@
+>   *
+>   * You should have received a copy of the GNU General Public License
+>   * along with this program; if not, see <http://www.gnu.org/licenses/>.
+> + *
+> + * FIXME: The approach is still based on union aliasing and should be
+> + * replaced by a proper resource provider.
+>   */
+>
+>  #define pr_fmt(fmt) "apple-properties: " fmt
+> @@ -96,12 +99,13 @@ static void __init unmarshal_key_value_pairs(struct dev_header *dev_header,
+>                 entry[i].name = key;
+>                 entry[i].length = val_len - sizeof(val_len);
+>                 entry[i].is_array = !!entry[i].length;
+> -               entry[i].pointer.raw_data = ptr + key_len + sizeof(val_len);
+> +               entry[i].type = DEV_PROP_U8;
+> +               entry[i].pointer.u8_data = ptr + key_len + sizeof(val_len);
+>
+>                 if (dump_properties) {
+>                         dev_info(dev, "property: %s\n", entry[i].name);
+>                         print_hex_dump(KERN_INFO, pr_fmt(), DUMP_PREFIX_OFFSET,
+> -                               16, 1, entry[i].pointer.raw_data,
+> +                               16, 1, entry[i].pointer.u8_data,
+>                                 entry[i].length, true);
+>                 }
+>
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index 2eea4b310fc2..ac8a1ebc4c1b 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -178,7 +178,7 @@ static inline int fwnode_property_read_u64(const struct fwnode_handle *fwnode,
+>   * @name: Name of the property.
+>   * @length: Length of data making up the value.
+>   * @is_array: True when the property is an array.
+> - * @is_string: True when property is a string.
+> + * @type: Type of the data in unions.
+>   * @pointer: Pointer to the property (an array of items of the given type).
+>   * @value: Value of the property (when it is a single item of the given type).
+>   */
+> @@ -186,10 +186,9 @@ struct property_entry {
+>         const char *name;
+>         size_t length;
+>         bool is_array;
+> -       bool is_string;
+> +       enum dev_prop_type type;
+>         union {
+>                 union {
+> -                       const void *raw_data;
+>                         const u8 *u8_data;
+>                         const u16 *u16_data;
+>                         const u32 *u32_data;
+> @@ -197,7 +196,6 @@ struct property_entry {
+>                         const char * const *str;
+>                 } pointer;
+>                 union {
+> -                       unsigned long long raw_data;
+>                         u8 u8_data;
+>                         u16 u16_data;
+>                         u32 u32_data;
+> @@ -213,55 +211,55 @@ struct property_entry {
+>   * and structs.
+>   */
+>
+> -#define PROPERTY_ENTRY_INTEGER_ARRAY(_name_, _type_, _val_)    \
+> -(struct property_entry) {                                      \
+> -       .name = _name_,                                         \
+> -       .length = ARRAY_SIZE(_val_) * sizeof(_type_),           \
+> -       .is_array = true,                                       \
+> -       .is_string = false,                                     \
+> -       { .pointer = { ._type_##_data = _val_ } },              \
+> +#define PROPERTY_ENTRY_INTEGER_ARRAY(_name_, _type_, _Type_, _val_)    \
+> +(struct property_entry) {                                              \
+> +       .name = _name_,                                                 \
+> +       .length = ARRAY_SIZE(_val_) * sizeof(_type_),                   \
+> +       .is_array = true,                                               \
+> +       .type = DEV_PROP_##_Type_,                                      \
+> +       { .pointer = { ._type_##_data = _val_ } },                      \
+>  }
+>
+>  #define PROPERTY_ENTRY_U8_ARRAY(_name_, _val_)                 \
+> -       PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u8, _val_)
+> +       PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u8, U8, _val_)
+>  #define PROPERTY_ENTRY_U16_ARRAY(_name_, _val_)                        \
+> -       PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u16, _val_)
+> +       PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u16, U16, _val_)
+>  #define PROPERTY_ENTRY_U32_ARRAY(_name_, _val_)                        \
+> -       PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u32, _val_)
+> +       PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u32, U32, _val_)
+>  #define PROPERTY_ENTRY_U64_ARRAY(_name_, _val_)                        \
+> -       PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u64, _val_)
+> +       PROPERTY_ENTRY_INTEGER_ARRAY(_name_, u64, U64, _val_)
+>
+>  #define PROPERTY_ENTRY_STRING_ARRAY(_name_, _val_)             \
+>  (struct property_entry) {                                      \
+>         .name = _name_,                                         \
+>         .length = ARRAY_SIZE(_val_) * sizeof(const char *),     \
+>         .is_array = true,                                       \
+> -       .is_string = true,                                      \
+> +       .type = DEV_PROP_STRING,                                \
+>         { .pointer = { .str = _val_ } },                        \
+>  }
+>
+> -#define PROPERTY_ENTRY_INTEGER(_name_, _type_, _val_)  \
+> -(struct property_entry) {                              \
+> -       .name = _name_,                                 \
+> -       .length = sizeof(_type_),                       \
+> -       .is_string = false,                             \
+> -       { .value = { ._type_##_data = _val_ } },        \
+> +#define PROPERTY_ENTRY_INTEGER(_name_, _type_, _Type_, _val_)  \
+> +(struct property_entry) {                                      \
+> +       .name = _name_,                                         \
+> +       .length = sizeof(_type_),                               \
+> +       .type = DEV_PROP_##_Type_,                              \
+> +       { .value = { ._type_##_data = _val_ } },                \
+>  }
+>
+>  #define PROPERTY_ENTRY_U8(_name_, _val_)               \
+> -       PROPERTY_ENTRY_INTEGER(_name_, u8, _val_)
+> +       PROPERTY_ENTRY_INTEGER(_name_, u8, U8, _val_)
+>  #define PROPERTY_ENTRY_U16(_name_, _val_)              \
+> -       PROPERTY_ENTRY_INTEGER(_name_, u16, _val_)
+> +       PROPERTY_ENTRY_INTEGER(_name_, u16, U16, _val_)
+>  #define PROPERTY_ENTRY_U32(_name_, _val_)              \
+> -       PROPERTY_ENTRY_INTEGER(_name_, u32, _val_)
+> +       PROPERTY_ENTRY_INTEGER(_name_, u32, U32, _val_)
+>  #define PROPERTY_ENTRY_U64(_name_, _val_)              \
+> -       PROPERTY_ENTRY_INTEGER(_name_, u64, _val_)
+> +       PROPERTY_ENTRY_INTEGER(_name_, u64, U64, _val_)
+>
+>  #define PROPERTY_ENTRY_STRING(_name_, _val_)           \
+>  (struct property_entry) {                              \
+>         .name = _name_,                                 \
+>         .length = sizeof(_val_),                        \
+> -       .is_string = true,                              \
+> +       .type = DEV_PROP_STRING,                        \
+>         { .value = { .str = _val_ } },                  \
+>  }
+>
+> --
+> 2.17.0
+>
