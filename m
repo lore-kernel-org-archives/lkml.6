@@ -1,69 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752015AbeEMXiv (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 19:38:51 -0400
-Received: from mail-ua0-f201.google.com ([209.85.217.201]:43181 "EHLO
-        mail-ua0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750991AbeEMXit (ORCPT
+        id S1751660AbeENACd (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 20:02:33 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36973 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751093AbeENACb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 19:38:49 -0400
-X-Google-Smtp-Source: AB8JxZoqgMhEKU9TVLxD8umdWjGJnQ7uT+Ab5GEshOaiQHRFXXFx+djvcrj5CJa6saIwzHIANLXgnDEVYB8=
-MIME-Version: 1.0
-Date: Sun, 13 May 2018 16:38:45 -0700
-Message-Id: <20180513233845.135290-1-tarick@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
-Subject: [PATCH v2] net/mlx4_core: Fix error handling in mlx4_init_port_info.
-From: Tarick Bedeir <tarick@google.com>
-To: tariqt@mellanox.com, gthelen@google.com, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tarick@google.com
-Cc: Greg Thelen <gthelen@google.com>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tarick Bedeir <tarick@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 13 May 2018 20:02:31 -0400
+X-Google-Smtp-Source: AB8JxZp2CAZ0HUFlleUgiFVcvJOGXzlPqrD21iI5h2DLKZ+8WBQEKRLxEI2AW9BpB63FRUf0RUPaNg==
+From: Eric Biggers <ebiggers3@gmail.com>
+To: Ursula Braun <ubraun@linux.ibm.com>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org
+Cc: netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>
+Subject: [PATCH] net/smc: check for missing nlattrs in SMC_PNETID messages
+Date: Sun, 13 May 2018 17:01:30 -0700
+Message-Id: <20180514000130.13780-1-ebiggers3@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <001a113f9bb83e4d560568457853@google.com>
+References: <001a113f9bb83e4d560568457853@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoid exiting the function with a lingering sysfs file (if the first
-call to device_create_file() fails while the second succeeds), and avoid
-calling devlink_port_unregister() twice.
+From: Eric Biggers <ebiggers@google.com>
 
-In other words, either mlx4_init_port_info() succeeds and returns zero, or
-it fails, returns non-zero, and requires no cleanup.
+It's possible to crash the kernel in several different ways by sending
+messages to the SMC_PNETID generic netlink family that are missing the
+expected attributes:
 
-Fixes: 096335b3f983 ("mlx4_core: Allow dynamic MTU configuration for IB
-ports")
-Signed-off-by: Tarick Bedeir <tarick@google.com>
+- Missing SMC_PNETID_NAME => null pointer dereference when comparing
+  names.
+- Missing SMC_PNETID_ETHNAME => null pointer dereference accessing
+  smc_pnetentry::ndev.
+- Missing SMC_PNETID_IBNAME => null pointer dereference accessing
+  smc_pnetentry::smcibdev.
+- Missing SMC_PNETID_IBPORT => out of bounds array access to
+  smc_ib_device::pattr[-1].
+
+Fix it by validating that all expected attributes are present and that
+SMC_PNETID_IBPORT is nonzero.
+
+Reported-by: syzbot+5cd61039dc9b8bfa6e47@syzkaller.appspotmail.com
+Fixes: 6812baabf24d ("smc: establish pnet table management")
+Cc: <stable@vger.kernel.org> # v4.11+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
-v1 -> v2: Added "Fixes" tag.
----
- drivers/net/ethernet/mellanox/mlx4/main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/smc/smc_pnet.c | 71 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 40 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/main.c b/drivers/net/ethernet/mellanox/mlx4/main.c
-index 4d84cab77105..e8a3a45d0b53 100644
---- a/drivers/net/ethernet/mellanox/mlx4/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/main.c
-@@ -3007,6 +3007,7 @@ static int mlx4_init_port_info(struct mlx4_dev *dev, int port)
- 		mlx4_err(dev, "Failed to create file for port %d\n", port);
- 		devlink_port_unregister(&info->devlink_port);
- 		info->port = -1;
-+		return err;
- 	}
+diff --git a/net/smc/smc_pnet.c b/net/smc/smc_pnet.c
+index 74568cdbca708..d7b88b2d1b224 100644
+--- a/net/smc/smc_pnet.c
++++ b/net/smc/smc_pnet.c
+@@ -245,40 +245,45 @@ static struct smc_ib_device *smc_pnet_find_ib(char *ib_name)
+ static int smc_pnet_fill_entry(struct net *net, struct smc_pnetentry *pnetelem,
+ 			       struct nlattr *tb[])
+ {
+-	char *string, *ibname = NULL;
+-	int rc = 0;
++	char *string, *ibname;
++	int rc;
  
- 	sprintf(info->dev_mtu_name, "mlx4_port%d_mtu", port);
-@@ -3028,9 +3029,10 @@ static int mlx4_init_port_info(struct mlx4_dev *dev, int port)
- 				   &info->port_attr);
- 		devlink_port_unregister(&info->devlink_port);
- 		info->port = -1;
-+		return err;
- 	}
+ 	memset(pnetelem, 0, sizeof(*pnetelem));
+ 	INIT_LIST_HEAD(&pnetelem->list);
+-	if (tb[SMC_PNETID_NAME]) {
+-		string = (char *)nla_data(tb[SMC_PNETID_NAME]);
+-		if (!smc_pnetid_valid(string, pnetelem->pnet_name)) {
+-			rc = -EINVAL;
+-			goto error;
+-		}
+-	}
+-	if (tb[SMC_PNETID_ETHNAME]) {
+-		string = (char *)nla_data(tb[SMC_PNETID_ETHNAME]);
+-		pnetelem->ndev = dev_get_by_name(net, string);
+-		if (!pnetelem->ndev)
+-			return -ENOENT;
+-	}
+-	if (tb[SMC_PNETID_IBNAME]) {
+-		ibname = (char *)nla_data(tb[SMC_PNETID_IBNAME]);
+-		ibname = strim(ibname);
+-		pnetelem->smcibdev = smc_pnet_find_ib(ibname);
+-		if (!pnetelem->smcibdev) {
+-			rc = -ENOENT;
+-			goto error;
+-		}
+-	}
+-	if (tb[SMC_PNETID_IBPORT]) {
+-		pnetelem->ib_port = nla_get_u8(tb[SMC_PNETID_IBPORT]);
+-		if (pnetelem->ib_port > SMC_MAX_PORTS) {
+-			rc = -EINVAL;
+-			goto error;
+-		}
+-	}
++
++	rc = -EINVAL;
++	if (!tb[SMC_PNETID_NAME])
++		goto error;
++	string = (char *)nla_data(tb[SMC_PNETID_NAME]);
++	if (!smc_pnetid_valid(string, pnetelem->pnet_name))
++		goto error;
++
++	rc = -EINVAL;
++	if (!tb[SMC_PNETID_ETHNAME])
++		goto error;
++	rc = -ENOENT;
++	string = (char *)nla_data(tb[SMC_PNETID_ETHNAME]);
++	pnetelem->ndev = dev_get_by_name(net, string);
++	if (!pnetelem->ndev)
++		goto error;
++
++	rc = -EINVAL;
++	if (!tb[SMC_PNETID_IBNAME])
++		goto error;
++	rc = -ENOENT;
++	ibname = (char *)nla_data(tb[SMC_PNETID_IBNAME]);
++	ibname = strim(ibname);
++	pnetelem->smcibdev = smc_pnet_find_ib(ibname);
++	if (!pnetelem->smcibdev)
++		goto error;
++
++	rc = -EINVAL;
++	if (!tb[SMC_PNETID_IBPORT])
++		goto error;
++	pnetelem->ib_port = nla_get_u8(tb[SMC_PNETID_IBPORT]);
++	if (pnetelem->ib_port < 1 || pnetelem->ib_port > SMC_MAX_PORTS)
++		goto error;
++
+ 	return 0;
  
--	return err;
-+	return 0;
+ error:
+@@ -307,6 +312,8 @@ static int smc_pnet_get(struct sk_buff *skb, struct genl_info *info)
+ 	void *hdr;
+ 	int rc;
+ 
++	if (!info->attrs[SMC_PNETID_NAME])
++		return -EINVAL;
+ 	pnetelem = smc_pnet_find_pnetid(
+ 				(char *)nla_data(info->attrs[SMC_PNETID_NAME]));
+ 	if (!pnetelem)
+@@ -359,6 +366,8 @@ static int smc_pnet_add(struct sk_buff *skb, struct genl_info *info)
+ 
+ static int smc_pnet_del(struct sk_buff *skb, struct genl_info *info)
+ {
++	if (!info->attrs[SMC_PNETID_NAME])
++		return -EINVAL;
+ 	return smc_pnet_remove_by_pnetid(
+ 				(char *)nla_data(info->attrs[SMC_PNETID_NAME]));
  }
- 
- static void mlx4_cleanup_port_info(struct mlx4_port_info *info)
 -- 
-2.17.0.441.gb46fe60e1d-goog
+2.17.0
