@@ -1,69 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932630AbeENOaD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:30:03 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35127 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753971AbeENO1l (ORCPT
+        id S932539AbeENOav (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:30:51 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:38279 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932172AbeENOat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:27:41 -0400
-From: Vlad Buslov <vladbu@mellanox.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
-        jiri@resnulli.us, pablo@netfilter.org, kadlec@blackhole.kfki.hu,
-        fw@strlen.de, ast@kernel.org, daniel@iogearbox.net,
-        edumazet@google.com, vladbu@mellanox.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: [PATCH 08/14] net: sched: account for temporary action reference
-Date: Mon, 14 May 2018 17:27:09 +0300
-Message-Id: <1526308035-12484-9-git-send-email-vladbu@mellanox.com>
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
+        Mon, 14 May 2018 10:30:49 -0400
+X-Originating-IP: 2.224.242.101
+Date: Mon, 14 May 2018 16:30:44 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, hans.verkuil@cisco.com,
+        mchehab@kernel.org, robh+dt@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] media: i2c: mt9t112: Add device tree support
+Message-ID: <20180514143044.GK5956@w540>
+References: <1524654014-17852-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1524654014-17852-3-git-send-email-jacopo+renesas@jmondi.org>
+ <20180507093219.hrhaliadccaytenj@valkosipuli.retiisi.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="TdMwOTenGjBWB1uY"
+Content-Disposition: inline
+In-Reply-To: <20180507093219.hrhaliadccaytenj@valkosipuli.retiisi.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tca_get_fill function has 'bind' and 'ref' arguments that get passed
-down to action dump function. These arguments values are subtracted from
-actual reference and bind counter values before writing them to skb.
 
-In order to prevent concurrent action delete, RTM_GETACTION handler
-acquires a reference to action before 'dumping' it and releases it
-afterwards. This reference is temporal and should not be accounted by
-userspace clients. (both logically and to preserver current API
-behavior)
+--TdMwOTenGjBWB1uY
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Use existing infrastructure of tca_get_fill arguments to subtract that
-temporary reference and not expose it to userspace.
+Hi Sakari,
 
-Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
----
- net/sched/act_api.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Mon, May 07, 2018 at 12:32:19PM +0300, Sakari Ailus wrote:
+> Hi Jacopo,
+>
+> On Wed, Apr 25, 2018 at 01:00:14PM +0200, Jacopo Mondi wrote:
 
-diff --git a/net/sched/act_api.c b/net/sched/act_api.c
-index 3f02cd1..2772276e 100644
---- a/net/sched/act_api.c
-+++ b/net/sched/act_api.c
-@@ -935,7 +935,7 @@ tcf_get_notify(struct net *net, u32 portid, struct nlmsghdr *n,
- 	if (!skb)
- 		return -ENOBUFS;
- 	if (tca_get_fill(skb, actions, portid, n->nlmsg_seq, 0, event,
--			 0, 0) <= 0) {
-+			 0, 1) <= 0) {
- 		NL_SET_ERR_MSG(extack, "Failed to fill netlink attributes while adding TC action");
- 		kfree_skb(skb);
- 		return -EINVAL;
-@@ -1125,7 +1125,7 @@ tcf_del_notify(struct net *net, struct nlmsghdr *n, struct list_head *actions,
- 		return -ENOBUFS;
- 
- 	if (tca_get_fill(skb, actions, portid, n->nlmsg_seq, 0, RTM_DELACTION,
--			 0, 1) <= 0) {
-+			 0, 2) <= 0) {
- 		NL_SET_ERR_MSG(extack, "Failed to fill netlink TC action attributes");
- 		kfree_skb(skb);
- 		return -EINVAL;
--- 
-2.7.5
+[snip]
+
+> >  static int mt9t112_probe(struct i2c_client *client,
+> >  			 const struct i2c_device_id *did)
+> >  {
+> >  	struct mt9t112_priv *priv;
+> >  	int ret;
+> >
+> > -	if (!client->dev.platform_data) {
+> > +	if (!client->dev.of_node && !client->dev.platform_data) {
+> >  		dev_err(&client->dev, "mt9t112: missing platform data!\n");
+> >  		return -EINVAL;
+> >  	}
+> > @@ -1081,23 +1118,39 @@ static int mt9t112_probe(struct i2c_client *client,
+> >  	if (!priv)
+> >  		return -ENOMEM;
+> >
+> > -	priv->info = client->dev.platform_data;
+> >  	priv->init_done = false;
+> > -
+> > -	v4l2_i2c_subdev_init(&priv->subdev, client, &mt9t112_subdev_ops);
+> > -
+> > -	priv->clk = devm_clk_get(&client->dev, "extclk");
+> > -	if (PTR_ERR(priv->clk) == -ENOENT) {
+> > +	priv->dev = &client->dev;
+> > +
+> > +	if (client->dev.platform_data) {
+> > +		priv->info = client->dev.platform_data;
+> > +
+> > +		priv->clk = devm_clk_get(&client->dev, "extclk");
+>
+> extclk needs to be documented in DT binding documentation.
+>
+> > +		if (PTR_ERR(priv->clk) == -ENOENT) {
+> > +			priv->clk = NULL;
+> > +		} else if (IS_ERR(priv->clk)) {
+> > +			dev_err(&client->dev,
+> > +				"Unable to get clock \"extclk\"\n");
+> > +			return PTR_ERR(priv->clk);
+> > +		}
+> > +	} else {
+> > +		/*
+> > +		 * External clock frequencies != 24MHz are only supported
+> > +		 * for non-OF systems.
+> > +		 */
+>
+> Shouldn't you actually set the frequency? Or perhaps even better to check
+> it, and use assigned-clocks and assigned-clock-rates properties?
+>
+
+I might be confused, but my intention was to use an external clock
+reference, with a configurable frequency only in the platform data use
+case. As you can see in this 'else' branch, in OF case, the priv->clk
+field is null, and all the PLL and clock computations are performed
+assuming a 24MHz input clock.
+
+In my opinion, as the driver when running on OF systems does not
+get any reference to 'extclk' clock, it should not be documented in
+bindings. Do you agree?
+
+Thanks
+   j
+
+> >  		priv->clk = NULL;
+> > -	} else if (IS_ERR(priv->clk)) {
+> > -		dev_err(&client->dev, "Unable to get clock \"extclk\"\n");
+> > -		return PTR_ERR(priv->clk);
+> > +		priv->info = &mt9t112_default_pdata_24MHz;
+> > +
+> > +		ret = mt9t112_parse_dt(priv);
+> > +		if (ret)
+> > +			return ret;
+> >  	}
+> >
+> > -	priv->standby_gpio = devm_gpiod_get_optional(&client->dev, "standby",
+> > +	v4l2_i2c_subdev_init(&priv->subdev, client, &mt9t112_subdev_ops);
+> > +
+> > +	priv->standby_gpio = devm_gpiod_get_optional(&client->dev, "powerdown",
+> >  						     GPIOD_OUT_HIGH);
+> >  	if (IS_ERR(priv->standby_gpio)) {
+> > -		dev_err(&client->dev, "Unable to get gpio \"standby\"\n");
+> > +		dev_err(&client->dev, "Unable to get gpio \"powerdown\"\n");
+> >  		return PTR_ERR(priv->standby_gpio);
+> >  	}
+> >
+> > @@ -1124,9 +1177,19 @@ static const struct i2c_device_id mt9t112_id[] = {
+> >  };
+> >  MODULE_DEVICE_TABLE(i2c, mt9t112_id);
+> >
+> > +#if IS_ENABLED(CONFIG_OF)
+> > +static const struct of_device_id mt9t112_of_match[] = {
+> > +	{ .compatible = "micron,mt9t111", },
+> > +	{ .compatible = "micron,mt9t112", },
+> > +	{ /* sentinel */ },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, mt9t112_of_match);
+> > +#endif
+> > +
+> >  static struct i2c_driver mt9t112_i2c_driver = {
+> >  	.driver = {
+> >  		.name = "mt9t112",
+> > +		.of_match_table = of_match_ptr(mt9t112_of_match),
+>
+> No need to use of_match_ptr().
+>
+> >  	},
+> >  	.probe    = mt9t112_probe,
+> >  	.remove   = mt9t112_remove,
+>
+> --
+> Sakari Ailus
+> e-mail: sakari.ailus@iki.fi
+
+--TdMwOTenGjBWB1uY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJa+Z2UAAoJEHI0Bo8WoVY8/Z4P/35XLRg9kU6iyZjc0Jt/Dwyg
+ynWBgR4jJRbb8ZG8V+XugpgDxRwbntMwnqRdGEwBY53lp+27+l6HqGJDnHJtEiSV
+4j1r10H5KOiqE3OmHCfH5dnuW6wFBbzjPmkRluOuiC6T4XgiDN54Mow70dvecpiw
+AP72j+FZraF1940RZn1i480VzztsStWx5I4qTgORXHKqqvt0ynk5+Dt8Q7Ty0vn6
+gys1uRKQ4/6c+lzYIrl4hkkfIZs7bvOZ1xUGwe+O7GvqaZqNxb8UlpWJm4930J0t
+TQQHVhZ0YpAXm4oBTc/x0EfSZNQuy+rSnpn+agIdPL6xUcEDjQ2AjBeVGf/Q3P9U
+vwLwYsrG0lKw9SaCKCoC6GGEiudheH2LpnxrZkDLiYjeSNy4mAYGwxVjdGVl6++J
+URBliqSxJ4MImbj9dPtQvYI62/KTVSUrtcYHagahWmuioqjn9WkkTmhQ5W7PJEai
+yUb0v+Mc1K16v0/aepu2It7Q2M/YCFDHZN30+ZIp5Tu3Gxgt/Ax15b2+6xI9BRnj
+hPELTaOqZaLquiM+dlDTvTvQOeowsj0W8ABd6YTxkO511K8bKR2vp/bB2k4shfNt
+U2FIZRTjNTvPH4npAlflHVrPKsV+jsQCINHAx6doIopcxn19CkyDAw7uR0t22sXX
+qvVEnJ5+FsVJa0So1Xgl
+=dxbg
+-----END PGP SIGNATURE-----
+
+--TdMwOTenGjBWB1uY--
