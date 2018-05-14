@@ -1,82 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752337AbeENVCM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:02:12 -0400
-Received: from mail-wm0-f43.google.com ([74.125.82.43]:40155 "EHLO
-        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752101AbeENVCH (ORCPT
+        id S1752416AbeENVCV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:02:21 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:43784 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752179AbeENVCL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:02:07 -0400
-X-Google-Smtp-Source: AB8JxZqbp7Au4Iq9GhtiMt5cLIIQGCJlCEJY4aR2pYmaY3zoCNSYCbcNhjAWPd+a3e3ZIc7E46fGgw==
-Date: Mon, 14 May 2018 15:02:00 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>
-Cc: Hal Rosenstock <hal@dev.mellanox.co.il>,
-        Doug Ledford <dledford@redhat.com>, Don Hiatt <don.hiatt@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Sean Hefty <sean.hefty@intel.com>,
-        OFED mailing list <linux-rdma@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH IB/core 2/2] IB/cm: Send authentic pkey in REQ msg and
- check eligibility of the pkeys
-Message-ID: <20180514210200.GN21531@ziepe.ca>
-References: <20180509093020.24503-1-Haakon.Bugge@oracle.com>
- <20180509093020.24503-3-Haakon.Bugge@oracle.com>
- <ab1f16cd-aa60-0c43-841c-aed301fd2a7e@dev.mellanox.co.il>
- <F9802EE9-4420-44EE-93DC-27CC799B427E@oracle.com>
- <3bee76df-49a6-cf3c-6df4-749a6309358e@dev.mellanox.co.il>
- <B3360947-5905-47BD-ABC4-6C4BB32F5DA6@oracle.com>
+        Mon, 14 May 2018 17:02:11 -0400
+X-Google-Smtp-Source: AB8JxZrpjTEGH795V5wc2zNwls0K/H0CDRJHdPi+FwUr3vQEuA1w35aUcmuJc/zYlvxbgxNjk8/68A==
+Subject: Re: [RFCv2 PATCH 0/3] Salted build ids via linker sections
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Andy Lutomirski <luto@kernel.org>, mjw@fedoraproject.org,
+        "H . J . Lu" <hjl.tools@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+References: <20180329180112.11055-1-labbott@redhat.com>
+ <CAK7LNATTfjpkG0PLR5_anZOW5zfSZxKgFO6sHXuMf50OEtx0PQ@mail.gmail.com>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <fb123c1f-7680-9e75-125a-e4e66f0f9c93@redhat.com>
+Date: Mon, 14 May 2018 14:02:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <B3360947-5905-47BD-ABC4-6C4BB32F5DA6@oracle.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAK7LNATTfjpkG0PLR5_anZOW5zfSZxKgFO6sHXuMf50OEtx0PQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 05:16:28PM +0200, Håkon Bugge wrote:
-
-> We are talking about two things here. The PKey in the BTH and the
-> PKey in the CM REQ payload. They differ.
+On 05/06/2018 11:28 PM, Masahiro Yamada wrote:
+> 2018-03-30 3:01 GMT+09:00 Laura Abbott <labbott@redhat.com>:
+>> Hi,
+>>
+>> This is v2 of my proposal to allow unique build-ids in the kernel. from
+>> last time:
+>>
+>> ""
+>> In Fedora, the debug information is packaged separately (foo-debuginfo) and
+>> can be installed separately. There's been a long standing issue where only one
+>> version of a debuginfo info package can be installed at a time. Mark Wielaard
+>> made an effort for Fedora 27 to allow parallel installation of debuginfo (see
+>> https://fedoraproject.org/wiki/Changes/ParallelInstallableDebuginfo for
+>> more details)
+>>
+>> Part of the requirement to allow this to work is that build ids are
+>> unique between builds. The existing upstream rpm implementation ensures
+>> this by re-calculating the build-id using the version and release as a
+>> seed. This doesn't work 100% for the kernel because of the vDSO which is
+>> its own binary and doesn't get updated. After poking holes in a few of my
+>> ideas, there was a discussion with some people from the binutils team about
+>> adding --build-id-salt to let ld do the calculation debugedit is doing. There
+>> was a counter proposal made about adding some extra information via a .comment
+>> which will affect the build id calculation but just get stripped out.
+>> ""
 > 
-> I am out of office, but if my memory serves me correct, the PKey in
-> the BTH in the MAD packet will be the default PKey. Further, we have
-> per IBTA:
+> 
+> I think you already know '--build-id=uuid' linker option.
+> 
+> Doesn't this solve your problem?
+> 
+> The disadvantage of this option is,
+> we will lose reproducible building because  --build-id=uuid
+> adds every time random salt.
+> 
+> The advantage is, the implementation is even simpler,
+> and easier to migrate to --build-id-salt once it is supported
+> in the future.
+> 
+> 
 
-This sounds like a Linux bug.
+It could, theoretically. The reproducibility is nice though and
+I'd like to keep the kernel close to matching what other packages
+do though.
 
-Linux does not do a PR to get a reversible path dedicated to the GMP,
-so it always uses the data flow path, thus the GMP path paramenters
-and those in the REQ should always exactly match.
+Thanks,
+Laura
 
-Where is Linux setting the BTH.PKey and how did it choose to use the
-default pkey? Lets fix that at least for sure.
-
-Once that is fixed the rest of the series makes no sense since a REQ
-with invalid PKey will never arrive.
-
-However...
-
-This series seems inconsistent with the spec.
-
-IIRC the spec doesn't say if a full or limited pkey should be placed
-in the REQ (Hal?). It is designed so that the requestor can get a
-single reversible path and put that results into the REQ without
-additional processing, however the PR returns only one PKey and again,
-itis not really specified if it should be the full or limited pkey
-(Hal?).
-
-Basically this means that any pkey in the REQ could randomly be the
-full or limited value, and that in-of-itself has not bearing on the
-connection.
-
-So it is quite wrong to insist that the pkey be limited or full when
-processing the REQ. The end port is expected to match against the
-local table.
-
-The real answer to your trap problem is to fix the SM to not create
-paths that are non-functional, that is just flat out broken SM
-behavior.
-
-Jason
+>> This v2 cleans up the naming to be consistent and also switches to a
+>> config option vs. an environment variable. I've seen some sporadic
+>> failures about missing the generated header so I think I'm still missing
+>> a dependency somewhere.
+> 
+> Right.
+> 
+> There is no dependency between 'prepare' and 'scripts'
+> in the top Makefile.
+> Therefore, Kbuild can run them simultaneously,
+> which would cause a race in parallel building.
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+>   I'm still mostly looking for feedback whether
+>> this would be acceptable for merging or if we should just persue a
+>> --build-id-salt in binutils.
+>>
+>> Thanks,
+>> Laura
+>>
+>>
+>> Laura Abbott (3):
+>>    kbuild: Introduce build-salt generated header
+>>    kbuild: Link with generated build-salt header
+>>    x86/vdso: Add build salt to the vDSO
+>>
+>>   Makefile                              | 13 +++++++++++--
+>>   arch/x86/entry/vdso/vdso-layout.lds.S |  3 +++
+>>   init/Kconfig                          |  8 ++++++++
+>>   scripts/.gitignore                    |  1 +
+>>   scripts/Makefile                      |  2 +-
+>>   scripts/build-salt.lds.S              |  5 +++++
+>>   scripts/gensalt                       | 21 +++++++++++++++++++++
+>>   scripts/link-vmlinux.sh               |  3 ++-
+>>   8 files changed, 52 insertions(+), 4 deletions(-)
+>>   create mode 100644 scripts/build-salt.lds.S
+>>   create mode 100755 scripts/gensalt
+>>
+>> --
+>> 2.16.2
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
