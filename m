@@ -1,152 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932212AbeENOkJ convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:40:09 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:23687 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752343AbeENOkG (ORCPT
+        id S1753890AbeENOkm (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:40:42 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35111 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753769AbeENOkj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:40:06 -0400
-From: Loic PALLARDY <loic.pallardy@st.com>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-CC: "ohad@wizery.com" <ohad@wizery.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
-Subject: RE: [PATCH v3 07/13] remoteproc: introduce
- rproc_find_carveout_by_name function
-Thread-Topic: [PATCH v3 07/13] remoteproc: introduce
- rproc_find_carveout_by_name function
-Thread-Index: AQHTsXm9BXRJDS4JpEaHD/3IhHRU+KQoZIWAgAdaddA=
-Date: Mon, 14 May 2018 14:40:03 +0000
-Message-ID: <3fd160a950374b71a5e1db03b7c55d66@SFHDAG7NODE2.st.com>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
- <1519921440-21356-8-git-send-email-loic.pallardy@st.com>
- <20180510001903.GD29093@builder>
-In-Reply-To: <20180510001903.GD29093@builder>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.51]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_03:,,
- signatures=0
+        Mon, 14 May 2018 10:40:39 -0400
+X-Google-Smtp-Source: AB8JxZqAlyxRwKgqp16GGlC+3FkOhHuFWx0bC/qF+JB/g4UPMGe2vz4h78jY+0LVdTqWomyvWMaHmw==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com,
+        jgross@suse.com, lyan@suse.com, boris.ostrovsky@oracle.com
+Cc: konrad.wilk@oracle.com, andr2000@gmail.com, andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH v3 1/2] xen/kbdif: Sync up with the canonical definition in Xen
+Date: Mon, 14 May 2018 17:40:28 +0300
+Message-Id: <20180514144029.16019-1-andr2000@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Thanks for the review
+This is the sync up with the canonical definition of the keyboard
+protocol in Xen:
+1. Add missing string constants for {feature|request}-raw-pointer
+   to align with the rest of the interface file.
 
-> -----Original Message-----
-> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
-> Sent: Thursday, May 10, 2018 2:19 AM
-> To: Loic PALLARDY <loic.pallardy@st.com>
-> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
-> benjamin.gaignard@linaro.org
-> Subject: Re: [PATCH v3 07/13] remoteproc: introduce
-> rproc_find_carveout_by_name function
-> 
-> On Thu 01 Mar 08:23 PST 2018, Loic Pallardy wrote:
-> 
-> > This patch provides a new function to find a carveout according
-> > to a name.
-> > If match found, this function returns a pointer on the corresponding
-> > carveout (rproc_mem_entry structure).
-> >
-> > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 43
-> ++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 43 insertions(+)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c
-> b/drivers/remoteproc/remoteproc_core.c
-> > index 91aa22b..7a500cb 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -216,6 +216,49 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da,
-> int len)
-> >  }
-> >  EXPORT_SYMBOL(rproc_da_to_va);
-> >
-> > +/**
-> > + * rproc_find_carveout_by_name() - lookup the carveout region by a
-> name
-> > + * @rproc: handle of a remote processor
-> > + * @name,..: carveout name to find (standard printf format)
-> > + *
-> > + * Platform driver has the capability to register some pre-allacoted
-> carveout
-> > + * (physically contiguous memory regions) before rproc firmware loading
-> and
-> > + * associated resource table analysis. These regions may be dedicated
-> memory
-> > + * regions internal to the coprocessor or specified DDR region with specific
-> > + * attributes
-> > + *
-> > + * This function is a helper function with which we can go over the
-> > + * allocated carveouts and return associated region characteristics like
-> > + * coprocessor address, length or processor virtual address.
-> > + *
-> > + * The function returns a valid pointer on carveout entry on success
-> > + * or NULL on failure.
-> 
-> The kerneldoc format for describing the return value is
-> 
->  * Return: description
-Yes I'll update
+2. Add new XenStore feature fields, so it is possible to individually
+   control set of exposed virtual devices for each guest OS:
+     - set feature-disable-keyboard to 1 if no keyboard device needs
+       to be created
+     - set feature-disable-pointer to 1 if no pointer device needs
+       to be created
 
-> 
-> > + */
-> > +struct rproc_mem_entry *
-> > +rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...)
-> > +{
-> > +	va_list args;
-> > +	char _name[32];
-> > +	struct rproc_mem_entry *carveout, *mem = NULL;
-> > +
-> > +	va_start(args, name);
-> > +	snprintf(_name, sizeof(_name), name, args);
-> > +	va_end(args);
-> > +
-> > +	if (!name)
-> > +		return NULL;
-> 
-> If you would like for it to actually be valid to pass NULL for name,
-> then I think you should move this check to the top of the function.
-> 
-> But I suspect that you're looking for (name[0] == '\0'), to check if we
-> where passed an empty string, e.g. from a resource table without
-> resource names.
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+---
+ include/xen/interface/io/kbdif.h | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-Good catch, I updated function prototype without changing associated test
+diff --git a/include/xen/interface/io/kbdif.h b/include/xen/interface/io/kbdif.h
+index 2a9510ade701..808ef7d02a65 100644
+--- a/include/xen/interface/io/kbdif.h
++++ b/include/xen/interface/io/kbdif.h
+@@ -51,6 +51,18 @@
+  * corresponding entries in XenStore and puts 1 as the value of the entry.
+  * If a feature is not supported then 0 must be set or feature entry omitted.
+  *
++ * feature-disable-keyboard
++ *      Values:         <uint>
++ *
++ *      If there is no need to expose a virtual keyboard device by the
++ *      frontend then this must be set to 1.
++ *
++ * feature-disable-pointer
++ *      Values:         <uint>
++ *
++ *      If there is no need to expose a virtual pointer device by the
++ *      frontend then this must be set to 1.
++ *
+  * feature-abs-pointer
+  *      Values:         <uint>
+  *
+@@ -63,6 +75,13 @@
+  *      Backends, which support reporting of multi-touch events
+  *      should set this to 1.
+  *
++ * feature-raw-pointer
++ *      Values:        <uint>
++ *
++ *      Backends, which support reporting raw (unscaled) absolute coordinates
++ *      for pointer devices should set this to 1. Raw (unscaled) values have
++ *      a range of [0, 0x7fff].
++ *
+  *------------------------- Pointer Device Parameters ------------------------
+  *
+  * width
+@@ -98,6 +117,13 @@
+  *
+  *      Request backend to report multi-touch events.
+  *
++ * request-raw-pointer
++ *      Values:         <uint>
++ *
++ *      Request backend to report raw unscaled absolute pointer coordinates.
++ *      This option is only valid if request-abs-pointer is also set.
++ *      Raw unscaled coordinates have the range [0, 0x7fff]
++ *
+  *----------------------- Request Transport Parameters -----------------------
+  *
+  * event-channel
+@@ -163,9 +189,13 @@
  
-> 
-> > +
-> > +	list_for_each_entry(carveout, &rproc->carveouts, node) {
-> > +		/* Compare carveout and requested names */
-> > +		if (!strcmp(carveout->name, name)) {
-> > +			mem = carveout;
-> > +			break;
-> 
-> Just return carveout when you find it.
-Sure
-
-> 
-> > +		}
-> > +	}
-> > +
-> > +	return mem;
-> > +}
-> > +
-> 
-> Regards,
-> Bjorn
+ #define XENKBD_DRIVER_NAME		"vkbd"
+ 
++#define XENKBD_FIELD_FEAT_DSBL_KEYBRD	"feature-disable-keyboard"
++#define XENKBD_FIELD_FEAT_DSBL_POINTER	"feature-disable-pointer"
+ #define XENKBD_FIELD_FEAT_ABS_POINTER	"feature-abs-pointer"
++#define XENKBD_FIELD_FEAT_RAW_POINTER	"feature-raw-pointer"
+ #define XENKBD_FIELD_FEAT_MTOUCH	"feature-multi-touch"
+ #define XENKBD_FIELD_REQ_ABS_POINTER	"request-abs-pointer"
++#define XENKBD_FIELD_REQ_RAW_POINTER	"request-raw-pointer"
+ #define XENKBD_FIELD_REQ_MTOUCH		"request-multi-touch"
+ #define XENKBD_FIELD_RING_GREF		"page-gref"
+ #define XENKBD_FIELD_EVT_CHANNEL	"event-channel"
+-- 
+2.17.0
