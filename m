@@ -1,31 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752019AbeENHvZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:51:25 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50361 "EHLO
+        id S1752309AbeENHwW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:52:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59775 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751584AbeENHvX (ORCPT
+        with ESMTP id S1752056AbeENHwJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:51:23 -0400
-Date: Mon, 14 May 2018 00:50:55 -0700
-From: tip-bot for Shunyong Yang <tipbot@zytor.com>
-Message-ID: <tip-83f0a7c7b265a56d757f7e3a80622e5b0b7ebc46@git.kernel.org>
-Cc: yu.zheng@hxt-semitech.com, peterz@infradead.org,
-        shunyong.yang@hxt-semitech.com, hpa@zytor.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, matt@codeblueprint.co.uk,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        ard.biesheuvel@linaro.org
-Reply-To: ard.biesheuvel@linaro.org, torvalds@linux-foundation.org,
-        tglx@linutronix.de, matt@codeblueprint.co.uk,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
-        shunyong.yang@hxt-semitech.com, peterz@infradead.org,
-        yu.zheng@hxt-semitech.com
-In-Reply-To: <20180504060003.19618-17-ard.biesheuvel@linaro.org>
-References: <20180504060003.19618-17-ard.biesheuvel@linaro.org>
+        Mon, 14 May 2018 03:52:09 -0400
+Date: Mon, 14 May 2018 00:51:26 -0700
+From: tip-bot for Mel Gorman <tipbot@zytor.com>
+Message-ID: <tip-1378447598432513d94ce2c607c412dc4f260f31@git.kernel.org>
+Cc: efault@gmx.de, tglx@linutronix.de, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        mgorman@techsingularity.net, matt@codeblueprint.co.uk,
+        mingo@kernel.org, hpa@zytor.com
+Reply-To: hpa@zytor.com, matt@codeblueprint.co.uk, mingo@kernel.org,
+        mgorman@techsingularity.net, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, efault@gmx.de, peterz@infradead.org,
+        tglx@linutronix.de
+In-Reply-To: <20180504154109.mvrha2qo5wdl65vr@techsingularity.net>
+References: <20180504154109.mvrha2qo5wdl65vr@techsingularity.net>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/core] efi/capsule-loader: Don't output reset log when
- reset flags are not set
-Git-Commit-ID: 83f0a7c7b265a56d757f7e3a80622e5b0b7ebc46
+Subject: [tip:sched/core] sched/numa: Stagger NUMA balancing scan periods
+ for new threads
+Git-Commit-ID: 1378447598432513d94ce2c607c412dc4f260f31
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -38,60 +36,191 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  83f0a7c7b265a56d757f7e3a80622e5b0b7ebc46
-Gitweb:     https://git.kernel.org/tip/83f0a7c7b265a56d757f7e3a80622e5b0b7ebc46
-Author:     Shunyong Yang <shunyong.yang@hxt-semitech.com>
-AuthorDate: Fri, 4 May 2018 08:00:02 +0200
+Commit-ID:  1378447598432513d94ce2c607c412dc4f260f31
+Gitweb:     https://git.kernel.org/tip/1378447598432513d94ce2c607c412dc4f260f31
+Author:     Mel Gorman <mgorman@techsingularity.net>
+AuthorDate: Fri, 4 May 2018 16:41:09 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 14 May 2018 08:57:49 +0200
+CommitDate: Mon, 14 May 2018 09:12:24 +0200
 
-efi/capsule-loader: Don't output reset log when reset flags are not set
+sched/numa: Stagger NUMA balancing scan periods for new threads
 
-When reset flags in capsule header are not set, it means firmware
-attempts to immediately process or launch the capsule. Moreover, reset
-is not needed in this case. The current code will output log to indicate
-reset.
+Threads share an address space and each can change the protections of the
+same address space to trap NUMA faults. This is redundant and potentially
+counter-productive as any thread doing the update will suffice. Potentially
+only one thread is required but that thread may be idle or it may not have
+any locality concerns and pick an unsuitable scan rate.
 
-This patch adds a branch to avoid reset log output when the flags are not
-set.
+This patch uses independent scan period but they are staggered based on
+the number of address space users when the thread is created.  The intent
+is that threads will avoid scanning at the same time and have a chance
+to adapt their scan rate later if necessary. This reduces the total scan
+activity early in the lifetime of the threads.
 
-[ardb: use braces in multi-line 'if', clarify comment and commit log]
-Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+The different in headline performance across a range of machines and
+workloads is marginal but the system CPU usage is reduced as well as overall
+scan activity.  The following is the time reported by NAS Parallel Benchmark
+using unbound openmp threads and a D size class:
+
+			      4.17.0-rc1             4.17.0-rc1
+				 vanilla           stagger-v1r1
+	Time bt.D      442.77 (   0.00%)      419.70 (   5.21%)
+	Time cg.D      171.90 (   0.00%)      180.85 (  -5.21%)
+	Time ep.D       33.10 (   0.00%)       32.90 (   0.60%)
+	Time is.D        9.59 (   0.00%)        9.42 (   1.77%)
+	Time lu.D      306.75 (   0.00%)      304.65 (   0.68%)
+	Time mg.D       54.56 (   0.00%)       52.38 (   4.00%)
+	Time sp.D     1020.03 (   0.00%)      903.77 (  11.40%)
+	Time ua.D      400.58 (   0.00%)      386.49 (   3.52%)
+
+Note it's not a universal win but we have no prior knowledge of which
+thread matters but the number of threads created often exceeds the size
+of the node when the threads are not bound. However, there is a reducation
+of overall system CPU usage:
+
+				    4.17.0-rc1             4.17.0-rc1
+				       vanilla           stagger-v1r1
+	sys-time-bt.D         48.78 (   0.00%)       48.22 (   1.15%)
+	sys-time-cg.D         25.31 (   0.00%)       26.63 (  -5.22%)
+	sys-time-ep.D          1.65 (   0.00%)        0.62 (  62.42%)
+	sys-time-is.D         40.05 (   0.00%)       24.45 (  38.95%)
+	sys-time-lu.D         37.55 (   0.00%)       29.02 (  22.72%)
+	sys-time-mg.D         47.52 (   0.00%)       34.92 (  26.52%)
+	sys-time-sp.D        119.01 (   0.00%)      109.05 (   8.37%)
+	sys-time-ua.D         51.52 (   0.00%)       45.13 (  12.40%)
+
+NUMA scan activity is also reduced:
+
+	NUMA alloc local               1042828     1342670
+	NUMA base PTE updates        140481138    93577468
+	NUMA huge PMD updates           272171      180766
+	NUMA page range updates      279832690   186129660
+	NUMA hint faults               1395972     1193897
+	NUMA hint local faults          877925      855053
+	NUMA hint local percent             62          71
+	NUMA pages migrated           12057909     9158023
+
+Similar observations are made for other thread-intensive workloads. System
+CPU usage is lower even though the headline gains in performance tend to be
+small. For example, specjbb 2005 shows almost no difference in performance
+but scan activity is reduced by a third on a 4-socket box. I didn't find
+a workload (thread intensive or otherwise) that suffered badly.
+
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Mike Galbraith <efault@gmx.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180504060003.19618-17-ard.biesheuvel@linaro.org
+Cc: linux-kernel@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180504154109.mvrha2qo5wdl65vr@techsingularity.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/firmware/efi/capsule-loader.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ kernel/sched/core.c  | 22 +---------------------
+ kernel/sched/fair.c  | 41 +++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/sched.h |  6 ++++++
+ 3 files changed, 48 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/firmware/efi/capsule-loader.c b/drivers/firmware/efi/capsule-loader.c
-index e456f4602df1..96688986da56 100644
---- a/drivers/firmware/efi/capsule-loader.c
-+++ b/drivers/firmware/efi/capsule-loader.c
-@@ -134,10 +134,16 @@ static ssize_t efi_capsule_submit_update(struct capsule_info *cap_info)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 4e0ebae045dc..102c36c317dc 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2177,27 +2177,7 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
+ 	INIT_HLIST_HEAD(&p->preempt_notifiers);
+ #endif
  
- 	/* Indicate capsule binary uploading is done */
- 	cap_info->index = NO_FURTHER_WRITE_ACTION;
--	pr_info("Successfully upload capsule file with reboot type '%s'\n",
--		!cap_info->reset_type ? "RESET_COLD" :
--		cap_info->reset_type == 1 ? "RESET_WARM" :
--		"RESET_SHUTDOWN");
-+
-+	if (cap_info->header.flags & EFI_CAPSULE_PERSIST_ACROSS_RESET) {
-+		pr_info("Successfully uploaded capsule file with reboot type '%s'\n",
-+			!cap_info->reset_type ? "RESET_COLD" :
-+			cap_info->reset_type == 1 ? "RESET_WARM" :
-+			"RESET_SHUTDOWN");
-+	} else {
-+		pr_info("Successfully processed capsule file\n");
-+	}
-+
- 	return 0;
+-#ifdef CONFIG_NUMA_BALANCING
+-	if (p->mm && atomic_read(&p->mm->mm_users) == 1) {
+-		p->mm->numa_next_scan = jiffies + msecs_to_jiffies(sysctl_numa_balancing_scan_delay);
+-		p->mm->numa_scan_seq = 0;
+-	}
+-
+-	if (clone_flags & CLONE_VM)
+-		p->numa_preferred_nid = current->numa_preferred_nid;
+-	else
+-		p->numa_preferred_nid = -1;
+-
+-	p->node_stamp = 0ULL;
+-	p->numa_scan_seq = p->mm ? p->mm->numa_scan_seq : 0;
+-	p->numa_scan_period = sysctl_numa_balancing_scan_delay;
+-	p->numa_work.next = &p->numa_work;
+-	p->numa_faults = NULL;
+-	p->last_task_numa_placement = 0;
+-	p->last_sum_exec_runtime = 0;
+-
+-	p->numa_group = NULL;
+-#endif /* CONFIG_NUMA_BALANCING */
++	init_numa_balancing(clone_flags, p);
  }
  
+ DEFINE_STATIC_KEY_FALSE(sched_numa_balancing);
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 43c7b45f20be..f32b97d4c63b 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1139,6 +1139,47 @@ static unsigned int task_scan_max(struct task_struct *p)
+ 	return max(smin, smax);
+ }
+ 
++void init_numa_balancing(unsigned long clone_flags, struct task_struct *p)
++{
++	int mm_users = 0;
++	struct mm_struct *mm = p->mm;
++
++	if (mm) {
++		mm_users = atomic_read(&mm->mm_users);
++		if (mm_users == 1) {
++			mm->numa_next_scan = jiffies + msecs_to_jiffies(sysctl_numa_balancing_scan_delay);
++			mm->numa_scan_seq = 0;
++		}
++	}
++	p->node_stamp			= 0;
++	p->numa_scan_seq		= mm ? mm->numa_scan_seq : 0;
++	p->numa_scan_period		= sysctl_numa_balancing_scan_delay;
++	p->numa_work.next		= &p->numa_work;
++	p->numa_faults			= NULL;
++	p->numa_group			= NULL;
++	p->last_task_numa_placement	= 0;
++	p->last_sum_exec_runtime	= 0;
++
++	/* New address space, reset the preferred nid */
++	if (!(clone_flags & CLONE_VM)) {
++		p->numa_preferred_nid = -1;
++		return;
++	}
++
++	/*
++	 * New thread, keep existing numa_preferred_nid which should be copied
++	 * already by arch_dup_task_struct but stagger when scans start.
++	 */
++	if (mm) {
++		unsigned int delay;
++
++		delay = min_t(unsigned int, task_scan_max(current),
++			current->numa_scan_period * mm_users * NSEC_PER_MSEC);
++		delay += 2 * TICK_NSEC;
++		p->node_stamp = delay;
++	}
++}
++
+ static void account_numa_enqueue(struct rq *rq, struct task_struct *p)
+ {
+ 	rq->nr_numa_running += (p->numa_preferred_nid != -1);
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 15750c222ca2..c9895d35c5f7 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1069,6 +1069,12 @@ enum numa_faults_stats {
+ extern void sched_setnuma(struct task_struct *p, int node);
+ extern int migrate_task_to(struct task_struct *p, int cpu);
+ extern int migrate_swap(struct task_struct *, struct task_struct *);
++extern void init_numa_balancing(unsigned long clone_flags, struct task_struct *p);
++#else
++static inline void
++init_numa_balancing(unsigned long clone_flags, struct task_struct *p)
++{
++}
+ #endif /* CONFIG_NUMA_BALANCING */
+ 
+ #ifdef CONFIG_SMP
