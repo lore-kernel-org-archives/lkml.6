@@ -1,100 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932362AbeENNhu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 09:37:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49380 "EHLO mail.kernel.org"
+        id S932205AbeENNil (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 09:38:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932212AbeENNhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 09:37:47 -0400
-X-Google-Smtp-Source: AB8JxZr0AlDnqhU3ZMN6q6pRgKG84YwUSo59mmqWyPMOse2nkQgFGYBKJ4IcLUovZ1QElhEoPiAKjub2+7COrNeY2Lg=
-MIME-Version: 1.0
-In-Reply-To: <20180511162028.20616-11-brgl@bgdev.pl>
-References: <20180511162028.20616-1-brgl@bgdev.pl> <20180511162028.20616-11-brgl@bgdev.pl>
-From: Rob Herring <robh+dt@kernel.org>
-Date: Mon, 14 May 2018 08:37:24 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJw8UXktcLK8ADUfo1P+1un+omJ31sGcq7GFbNwJMsHKg@mail.gmail.com>
-Message-ID: <CAL_JsqJw8UXktcLK8ADUfo1P+1un+omJ31sGcq7GFbNwJMsHKg@mail.gmail.com>
-Subject: Re: [PATCH 10/12] platform/early: implement support for early
- platform drivers
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>, Johan Hovold <johan@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES"
-        <linux-arch@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1752195AbeENNii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 09:38:38 -0400
+Date: Mon, 14 May 2018 22:38:33 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Joe Perches <joe@perches.com>
+Cc: Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>, Jessica Yu <jeyu@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>, Tejun Heo <tj@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-audit@redhat.com
+Subject: Re: [PATCH 01/18] kernel: Use pr_fmt
+Message-Id: <20180514223833.f3c2224e458e89949d3042d4@kernel.org>
+In-Reply-To: <28df5659605d7b2ace94deca3b831b462183303f.1525964381.git.joe@perches.com>
+References: <cover.1525964381.git.joe@perches.com>
+        <28df5659605d7b2ace94deca3b831b462183303f.1525964381.git.joe@perches.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 11:20 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> This introduces the core part of support for early platform drivers
-> and devices.
->
+On Thu, 10 May 2018 08:45:27 -0700
+Joe Perches <joe@perches.com> wrote:
 
-It looks like most of your prep patches are to separate the alloc and
-init of platform devices because you are essentially making early
-devices/drivers a sub-class. Maybe you could avoid doing that and
-simplify things a bit. Comments below based on doing that...
+> Sometime in the future, it would be useful to convert pr_fmt from a
+> default simple define to use a default prefix with KBUILD_MODNAME.
+> 
+> There are files in kernel/ that use pr_<level>, some with an embedded
+> prefix, that also do not have a specific pr_fmt define.
+> 
+> Add pr_fmt for those files.
+> 
+> There are some differences in output as some messages are now prefixed
+> with their KBUILD_MODNAME.
+> 
+> Miscellanea:
+> 
+> o Align multiline statements to open parenthesis
+> o Wrap and realign arguments to 80 columns where sensible
+> o Coalesce formats
+> 
+> Signed-off-by: Joe Perches <joe@perches.com>
 
-> +/**
-> + * struct early_platform_driver
-> + *
-> + * @pdrv: real platform driver associated with this early platform driver
-> + * @list: list head for the list of early platform drivers
-> + * @early_probe: early probe callback
-> + */
-> +struct early_platform_driver {
-> +       struct platform_driver pdrv;
-> +       struct list_head list;
+Kprobes part looks good to me.
 
-Couldn't you use an existing list in driver_private until you move
-over to the normal bus infra.
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-> +       int (*early_probe)(struct platform_device *);
+Thanks!
 
-Just add this to platform_driver.
-
-> +};
-> +
-> +/**
-> + * struct early_platform_device
-> + *
-> + * @pdev: real platform device associated with this early platform device
-> + * @list: list head for the list of early platform devices
-> + * @deferred: true if this device's early probe was deferred
-> + * @deferred_drv: early platform driver with which this device was matched
-> + */
-> +struct early_platform_device {
-> +       struct platform_device pdev;
-> +       struct list_head list;
-
-Use a list in device_private?
-
-> +       bool deferred;
-> +       struct early_platform_driver *deferred_drv;
-
-Can't you use the existing deferred probe list?
-
-Rob
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
