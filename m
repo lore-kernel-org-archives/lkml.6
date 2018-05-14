@@ -1,152 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752394AbeENXkT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 19:40:19 -0400
-Received: from mga01.intel.com ([192.55.52.88]:52624 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752089AbeENXkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 19:40:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,402,1520924400";
-   d="scan'208";a="50833048"
-Date: Tue, 15 May 2018 07:39:51 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Vlad Buslov <vladbu@mellanox.com>
-Cc: kbuild-all@01.org, netdev@vger.kernel.org, davem@davemloft.net,
-        jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
-        pablo@netfilter.org, kadlec@blackhole.kfki.hu, fw@strlen.de,
-        ast@kernel.org, daniel@iogearbox.net, edumazet@google.com,
-        vladbu@mellanox.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: Re: [PATCH 01/14] net: sched: use rcu for action cookie update
-Message-ID: <201805150730.DS1Zaq1G%fengguang.wu@intel.com>
-References: <1526308035-12484-2-git-send-email-vladbu@mellanox.com>
+        id S1752469AbeENXqy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 19:46:54 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:37332 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752380AbeENXqv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 19:46:51 -0400
+X-Google-Smtp-Source: AB8JxZokRhLDTl7Fnzx8PNEDuOJlThBT6ndHKaOZ2J5XrgQzcjFu/yMEP4nh0QQKHAls0beSdlj3Aw==
+Subject: Re: Lack of suspend/resume/shutdown ordering between GPIO providers
+ and consumers
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree@vger.kernel.org, Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Joseph Lo <josephl@nvidia.com>, Doug Berger <opendmb@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+References: <dc0c15eb-3dab-f512-aed6-045528fcec2c@gmail.com>
+ <CAL_JsqJ6Avm+zPRd40aUq=BWFE45xQpaOWG-8d5d8+dqJZCZaQ@mail.gmail.com>
+ <20180425181435.GA200812@dtor-ws>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <299a564f-f2eb-aa5a-067e-688424b91e58@gmail.com>
+Date: Mon, 14 May 2018 16:46:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526308035-12484-2-git-send-email-vladbu@mellanox.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <20180425181435.GA200812@dtor-ws>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vlad,
+On 04/25/2018 11:14 AM, Dmitry Torokhov wrote:
+> On Wed, Apr 25, 2018 at 10:00:31AM -0500, Rob Herring wrote:
+>> On Tue, Apr 24, 2018 at 5:58 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>>> Hi Linus, Rafael, all
+>>>
+>>> Our GPIO controller driver: gpio-brcmstb.c has a shutdown callback which
+>>> gets invoked when the system is brought into poweroff aka S5. So far so
+>>> good, except that we also wish to use gpio_keys.c as a possible wake-up
+>>> source, so we may have a number of GPIO pins declared as gpio-keys that
+>>> allow the system to wake-up from deep slumber.
+>>>
+>>> Recently we noticed that we could easily get into a state where
+>>> gpio-brcmstb.c::brcmstb_gpio_shutdown() gets called first, and then
+>>> gpio_keys.c::gpio_keys_suspend() gets called later, which is too late to
+>>> have the enable_irq_wake() call do anything sensible since we have
+>>> suspend its parent interrupt controller before. This is completely
+>>> expected unfortunately because these two drivers are both platform
+>>> device instances with no connection to one another except via Device
+>>> Tree and the use of the GPIOLIB APIs.
+>>>
+>>> First solution is to make sure that gpio-keys nodes are declared in
+>>> Device Tree *before* the GPIO controller. This works because Device Tree
+>>> nodes are probed in the order in which they are declared in Device Tree
+>>> and that directly influences the order in which platform devices are
+>>> created. Problem with that is that this is easy to miss and it may not
+>>> work with overlays, kexec reconstructing DT etc. etc.
+>>
+>> I'm going to make of_platform_populate randomize the order it creates devices...
+>>
+>>> Another possible solution would be have the GPIO controller nodes have
+>>> the GPIO consumers nodes such as gpio-keys, gpio-leds etc., and that
+>>> would allow the Linux device driver model to create an appropriate
+>>> child/parent relationship. This would unfortunately require Device Tree
+>>> changes everywhere to make that consistent, and it would be a special
+>>> case, because not all GPIO consumers are eligible as child nodes of
+>>> their parent GPIO controller, there are plenty of other consumers that
+>>> are not suitable for being moved under a parent GPIO controller node.
+>>> This would also mean that we need to "probe" GPIO controller nodes to
+>>> populate their child nodes (e.g: of_platform_bus_populate).
+>>>
+>>> I am thinking a more generic solution might involve some more complex
+>>> tracking of the provider <-> consumer, but there is room for breakage.
+>>
+>> That's what device connections are for. It probably just needs the
+>> GPIO core to create the links. (but I've not looked into it at all).
+> 
+> Not all APIs accept device as parameter to easily create links. But I
+> wonder, for cases like this, if we could not simply move the device to
+> the end of the dpm list after successful binding it to a driver. The
+> assumption that when GOPIs or other resources are not ready they'll
+> return -EPROBE_DEFER and probing would fail.
 
-Thank you for the patch! Perhaps something to improve:
+Dmitry, do you see any reason why we are enabling the gpio_keys.c button
+interrupts for wake-up during suspend/resume only, and not right from
+the probe() function?
 
-[auto build test WARNING on net/master]
-[also build test WARNING on v4.17-rc5 next-20180514]
-[cannot apply to net-next/master]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+button->wakeup is effectively read-only past the probe function, if we
+moved the logic to enable/disable the interrupts that would greatly
+simplify things. I am assuming whomever added that functionality must
+have been worried about spurious wake-up events somehow and wanted to do
+it as late as possible?
 
-url:    https://github.com/0day-ci/linux/commits/Vlad-Buslov/Modify-action-API-for-implementing-lockless-actions/20180515-025420
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-sparse warnings: (new ones prefixed by >>)
-
->> net/sched/act_api.c:71:15: sparse: incorrect type in initializer (different address spaces) @@    expected struct tc_cookie [noderef] <asn:4>*__ret @@    got [noderef] <asn:4>*__ret @@
-   net/sched/act_api.c:71:15:    expected struct tc_cookie [noderef] <asn:4>*__ret
-   net/sched/act_api.c:71:15:    got struct tc_cookie *new_cookie
->> net/sched/act_api.c:71:13: sparse: incorrect type in assignment (different address spaces) @@    expected struct tc_cookie *old @@    got struct tc_cookie [noderef] <struct tc_cookie *old @@
-   net/sched/act_api.c:71:13:    expected struct tc_cookie *old
-   net/sched/act_api.c:71:13:    got struct tc_cookie [noderef] <asn:4>*[assigned] __ret
->> net/sched/act_api.c:132:48: sparse: dereference of noderef expression
-
-vim +71 net/sched/act_api.c
-
-    65	
-    66	static void tcf_set_action_cookie(struct tc_cookie __rcu **old_cookie,
-    67					  struct tc_cookie *new_cookie)
-    68	{
-    69		struct tc_cookie *old;
-    70	
-  > 71		old = xchg(old_cookie, new_cookie);
-    72		if (old)
-    73			call_rcu(&old->rcu, tcf_free_cookie_rcu);
-    74	}
-    75	
-    76	/* XXX: For standalone actions, we don't need a RCU grace period either, because
-    77	 * actions are always connected to filters and filters are already destroyed in
-    78	 * RCU callbacks, so after a RCU grace period actions are already disconnected
-    79	 * from filters. Readers later can not find us.
-    80	 */
-    81	static void free_tcf(struct tc_action *p)
-    82	{
-    83		free_percpu(p->cpu_bstats);
-    84		free_percpu(p->cpu_qstats);
-    85	
-    86		tcf_set_action_cookie(&p->act_cookie, NULL);
-    87		if (p->goto_chain)
-    88			tcf_action_goto_chain_fini(p);
-    89	
-    90		kfree(p);
-    91	}
-    92	
-    93	static void tcf_idr_remove(struct tcf_idrinfo *idrinfo, struct tc_action *p)
-    94	{
-    95		spin_lock_bh(&idrinfo->lock);
-    96		idr_remove(&idrinfo->action_idr, p->tcfa_index);
-    97		spin_unlock_bh(&idrinfo->lock);
-    98		gen_kill_estimator(&p->tcfa_rate_est);
-    99		free_tcf(p);
-   100	}
-   101	
-   102	int __tcf_idr_release(struct tc_action *p, bool bind, bool strict)
-   103	{
-   104		int ret = 0;
-   105	
-   106		ASSERT_RTNL();
-   107	
-   108		if (p) {
-   109			if (bind)
-   110				p->tcfa_bindcnt--;
-   111			else if (strict && p->tcfa_bindcnt > 0)
-   112				return -EPERM;
-   113	
-   114			p->tcfa_refcnt--;
-   115			if (p->tcfa_bindcnt <= 0 && p->tcfa_refcnt <= 0) {
-   116				if (p->ops->cleanup)
-   117					p->ops->cleanup(p);
-   118				tcf_idr_remove(p->idrinfo, p);
-   119				ret = ACT_P_DELETED;
-   120			}
-   121		}
-   122	
-   123		return ret;
-   124	}
-   125	EXPORT_SYMBOL(__tcf_idr_release);
-   126	
-   127	static size_t tcf_action_shared_attrs_size(const struct tc_action *act)
-   128	{
-   129		u32 cookie_len = 0;
-   130	
-   131		if (act->act_cookie)
- > 132			cookie_len = nla_total_size(act->act_cookie->len);
-   133	
-   134		return  nla_total_size(0) /* action number nested */
-   135			+ nla_total_size(IFNAMSIZ) /* TCA_ACT_KIND */
-   136			+ cookie_len /* TCA_ACT_COOKIE */
-   137			+ nla_total_size(0) /* TCA_ACT_STATS nested */
-   138			/* TCA_STATS_BASIC */
-   139			+ nla_total_size_64bit(sizeof(struct gnet_stats_basic))
-   140			/* TCA_STATS_QUEUE */
-   141			+ nla_total_size_64bit(sizeof(struct gnet_stats_queue))
-   142			+ nla_total_size(0) /* TCA_OPTIONS nested */
-   143			+ nla_total_size(sizeof(struct tcf_t)); /* TCA_GACT_TM */
-   144	}
-   145	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Thanks
+-- 
+Florian
