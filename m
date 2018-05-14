@@ -1,122 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753793AbeENNxj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 09:53:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44746 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752482AbeENNxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 09:53:37 -0400
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] objtool: Detect RIP-relative switch table references
-Date: Mon, 14 May 2018 08:53:24 -0500
-Message-Id: <b6098294fd67afb69af8c47c9883d7a68bf0f8ea.1526305958.git.jpoimboe@redhat.com>
+        id S932202AbeENN4S (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 09:56:18 -0400
+Received: from mail3.advaoptical.com ([74.202.24.82]:56552 "EHLO
+        mail3.advaoptical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753435AbeENN4Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 09:56:16 -0400
+From: Tim Shearer <TShearer@advaoptical.com>
+To: Wanpeng Li <kernellwp@gmail.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+CC: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>
+Subject: RE: [PATCH 0/3] KVM: VMX: Allow to disable ioport intercept per-VM by
+ userspace
+Thread-Topic: [PATCH 0/3] KVM: VMX: Allow to disable ioport intercept per-VM
+ by userspace
+Thread-Index: AQHT1g9+PWMf5g7WBkaK0YvzIqSBF6QrE6qAgACdOACAA7Ca0A==
+Date: Mon, 14 May 2018 13:48:41 +0000
+Message-ID: <15cfb8d4b88c4eab84a474d32300118e@advaoptical.com>
+References: <1523943962-25415-1-git-send-email-wanpengli@tencent.com>
+ <20180511154019.GG27459@char.us.oracle.com>
+ <CANRm+CwkeQTLSOAWDMz8J+Ng5e6FPWABE94wWLZ2vbYA15H1DA@mail.gmail.com>
+In-Reply-To: <CANRm+CwkeQTLSOAWDMz8J+Ng5e6FPWABE94wWLZ2vbYA15H1DA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.16.5.40]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4EDuMf4032402
 
-Typically a switch table can be found by detecting a .rodata access
-followed an indirect jump:
+> From: Wanpeng Li <kernellwp@gmail.com>
+> Sent: Friday, May 11, 2018 9:03 PM
+> 
+> Yeah, both you and Liran give the original idea. :) Tim and Liran, any
+> review for the patchset?
+> 
 
-    1969:	4a 8b 0c e5 00 00 00 	mov    0x0(,%r12,8),%rcx
-    1970:	00
-			196d: R_X86_64_32S	.rodata+0x438
-    1971:	e9 00 00 00 00       	jmpq   1976 <dispc_runtime_suspend+0xb6a>
-			1972: R_X86_64_PC32	__x86_indirect_thunk_rcx-0x4
+> +Architectures: x86
+> +Parameters: args[0] defines whether ioport intercept
 
-Randy Dunlap reported a case (seen with GCC 4.8) where the .rodata
-access uses RIP-relative addressing:
+Agree with Konrad that the flexibility of specifying the ioport via args[1] could be valuable, otherwise this looks good to me. Thank you!
 
-    19bd:	48 8b 3d 00 00 00 00 	mov    0x0(%rip),%rdi        # 19c4 <dispc_runtime_suspend+0xbb8>
-			19c0: R_X86_64_PC32	.rodata+0x45c
-    19c4:	e9 00 00 00 00       	jmpq   19c9 <dispc_runtime_suspend+0xbbd>
-			19c5: R_X86_64_PC32	__x86_indirect_thunk_rdi-0x4
-
-In this case the relocation addend needs to be adjusted accordingly in
-order to find the location of the switch table.
-
-The fix is for case 3 (as described in the comments), but also make the
-existing case 1 & 2 checks more precise by only adjusting the addend for
-R_X86_64_PC32 relocations.
-
-This fixes the following warnings:
-
-  drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_suspend()+0xbb8: sibling call from callable instruction with modified stack frame
-  drivers/video/fbdev/omap2/omapfb/dss/dispc.o: warning: objtool: dispc_runtime_resume()+0xcc5: sibling call from callable instruction with modified stack frame
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
----
- tools/objtool/check.c | 33 ++++++++++++++++++---------------
- 1 file changed, 18 insertions(+), 15 deletions(-)
-
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 9bb04fddd3c8..f4bbce838433 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -903,24 +903,24 @@ static struct rela *find_switch_table(struct objtool_file *file,
- {
- 	struct rela *text_rela, *rodata_rela;
- 	struct instruction *orig_insn = insn;
-+	unsigned long table_offset;
- 
-+	/* case 1 & 2 */
- 	text_rela = find_rela_by_dest_range(insn->sec, insn->offset, insn->len);
- 	if (text_rela && text_rela->sym == file->rodata->sym &&
- 	    !find_symbol_containing(file->rodata, text_rela->addend)) {
- 
--		/* case 1 */
--		rodata_rela = find_rela_by_dest(file->rodata,
--						text_rela->addend);
--		if (rodata_rela)
--			return rodata_rela;
-+		table_offset = text_rela->addend;
-+		if (text_rela->type == R_X86_64_PC32) {
-+			/* case 2 */
-+			table_offset += 4;
-+			file->ignore_unreachables = true;
-+		}
- 
--		/* case 2 */
--		rodata_rela = find_rela_by_dest(file->rodata,
--						text_rela->addend + 4);
-+		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
- 		if (!rodata_rela)
- 			return NULL;
- 
--		file->ignore_unreachables = true;
- 		return rodata_rela;
- 	}
- 
-@@ -954,18 +954,21 @@ static struct rela *find_switch_table(struct objtool_file *file,
- 		if (!text_rela || text_rela->sym != file->rodata->sym)
- 			continue;
- 
-+		table_offset = text_rela->addend;
-+		if (text_rela->type == R_X86_64_PC32)
-+			table_offset += 4;
-+
- 		/*
- 		 * Make sure the .rodata address isn't associated with a
- 		 * symbol.  gcc jump tables are anonymous data.
- 		 */
--		if (find_symbol_containing(file->rodata, text_rela->addend))
--			continue;
--
--		rodata_rela = find_rela_by_dest(file->rodata, text_rela->addend);
--		if (!rodata_rela)
-+		if (find_symbol_containing(file->rodata, table_offset))
- 			continue;
- 
--		return rodata_rela;
-+		/* mov [rodata addr], %reg */
-+		rodata_rela = find_rela_by_dest(file->rodata, table_offset);
-+		if (rodata_rela)
-+			return rodata_rela;
- 	}
- 
- 	return NULL;
--- 
-2.17.0
+Reviewed-by: Tim Shearer <tshearer@advaoptical.com>
