@@ -1,40 +1,46 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpsFpp1CS6oRmAL0xDx/ON8cWLZYWG72Vy3o2AGcHUXuvcyFFa3OyRLygM3Swg4SoCqZUId
-ARC-Seal: i=1; a=rsa-sha256; t=1526280742; cv=none;
+X-Google-Smtp-Source: AB8JxZookj6qZl4+e504Rs3/41kExMRVHPUlkEG/oYoNZfPQEQUlVAGTPXj48Y0/ZZ9c4dH1SSvL
+ARC-Seal: i=1; a=rsa-sha256; t=1526280739; cv=none;
         d=google.com; s=arc-20160816;
-        b=SnT01ZfudFYjtVxsY/QDv3BxHJCfFSzjetjbDpTYXVWaM5/1a24iBfZsNac56SxUpX
-         mMN44c+5IlB2tfXwOk5eaNKPPJrCHihByavI7dXMYoHOz0hKztv8UWD5K+ImhqTOLT4F
-         QxqFS5YjlgmR0XMuxqCmoLLMia0aPEfRz5BoLXwyAUZhXhLEP8VO/CReiT/m+KZzEP+s
-         f06QEPb6vYTrnRBfEnPUyupgjLJP74uSreaeylDP182bswPvwlwFFAiWOfZSRETANvnQ
-         JyUr+0HMKo0tAJqFnrb5D4uVbIvmDz3Ty5ZOzHZIbFwpO+c7u+dSKhm05WgjwJ4RqUjX
-         m1zg==
+        b=Vp/GCa8wYudr2087WIwibSe2cd7pwe760eNF808DHmm9e5/MHaYU5Dfs/nOccE/lHw
+         LFgYU2cxcvt/dzvBR6Z0GfKWmk1LOQweib0oqXy7qmoUdnXM+SbAzZULUMPcjeWI0Oz9
+         phIPC0l1k3kj5hGCu91ucPd+g1alh6JrQdfXI+YS57LqENTu0voL+MumhH3tGcnhhBzu
+         qg+cU9IpksexZk8dxTUw3B3XTyhIbvqr3u/wYJFFORwy2JtG1A5GwY941igseYZCAwX/
+         zj4YlU+5lqDLL5pAj2rIIvOp8eCNxX38J8WU8LEkRRBcBc7Ty4lu1IkM9zG9NIhg344S
+         m+0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=j2KIzCpwN0IwPya6T5Vs9YL8xlygYwa3tS/0NBKzWdE=;
-        b=rderNiL2VgZQFKxNrU7kWSRPqMCZp0gJN1T9ss3Ml6ytlivNoyoZg0+lj86f0DUYDz
-         5Y5UqjTSV8FXGPW0CpV7crTcx+ZthbLITSenVyywVH6TXokmRG5RhR1lkq1T6CZrwsrr
-         4VFvbh8Y9ZX73dCk/m87RE/MLAcnAMaRcFOuNKVQZsWlDUgPBrOaJ0D7cTjhirs9ZtGo
-         YD8M5H/oxMK3i/QJL4TnH8MOerVXwZJHhTf3M8IJfc8EdYfmUfjpsn6xJodH6bh8IJ9s
-         sti8u9HlsjdefJZUXzclIjIkcfvPwxIXrL3FsSqcZRlyFSE3jkNG5keJmKc8+fFEpGe6
-         29qw==
+        bh=HZfToDwv1HZBhThgsUvgvEro68siMYA94Bf9TO57RFE=;
+        b=MWLhnaSdy+PcAXEQlQfIgFkaWrmqGSRDSHqV7jX6Jf3nyjzcD8/+ZtLOzqLeNed0FO
+         rI1Em5aL+5m2i+ROhXal/vvldfjHi8klJ5TswM/AkTUYOj599jVtL5VgMX+dAzS6+M8r
+         1ClkovNycalRuxZyaWkv3134tFVFE+/VUY1kqgMOUzJg7q5pq7qVsqYogNwXAlgwnMQx
+         nxsJXgbfNW1U3Z3nqGHkpc0ZwLTpnWJ0GLcXv+8jDMd5Ay/TlhKS3nBM4Y8qbuyvOh3A
+         5ajT4Hc1JmnOKqWNUkuvw1ZZ8fFzuBP61l9vmGQPQ2paywdNNQxQ8O0a/T7YLiX+h9vR
+         uBhA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=PcYLq3oN;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Uqd9cBfy;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=PcYLq3oN;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Uqd9cBfy;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	syzbot <syzkaller@googlegroups.com>,
-	Pavel Emelyanov <xemul@parallels.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 40/56] tcp: fix TCP_REPAIR_QUEUE bound checking
-Date: Mon, 14 May 2018 08:48:45 +0200
-Message-Id: <20180514064758.515820440@linuxfoundation.org>
+	Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andi Kleen <andi@firstfloor.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	syzkaller-bugs@googlegroups.com,
+	x86@kernel.org
+Subject: [PATCH 4.4 39/56] perf: Remove superfluous allocation error check
+Date: Mon, 14 May 2018 08:48:44 +0200
+Message-Id: <20180514064758.448944787@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -44,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421256400782370?=
-X-GMAIL-MSGID: =?utf-8?q?1600421355399474212?=
+X-GMAIL-THRID: =?utf-8?q?1600421253442175407?=
+X-GMAIL-MSGID: =?utf-8?q?1600421352457292813?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,48 +59,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-commit bf2acc943a45d2b2e8a9f1a5ddff6b6e43cc69d9 upstream.
+commit bfb3d7b8b906b66551424d7636182126e1d134c8 upstream.
 
-syzbot is able to produce a nasty WARN_ON() in tcp_verify_left_out()
-with following C-repro :
+If the get_callchain_buffers fails to allocate the buffer it will
+decrease the nr_callchain_events right away.
 
-socket(PF_INET, SOCK_STREAM, IPPROTO_IP) = 3
-setsockopt(3, SOL_TCP, TCP_REPAIR, [1], 4) = 0
-setsockopt(3, SOL_TCP, TCP_REPAIR_QUEUE, [-1], 4) = 0
-bind(3, {sa_family=AF_INET, sin_port=htons(20002), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
-sendto(3, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
-	1242, MSG_FASTOPEN, {sa_family=AF_INET, sin_port=htons(20002), sin_addr=inet_addr("127.0.0.1")}, 16) = 1242
-setsockopt(3, SOL_TCP, TCP_REPAIR_WINDOW, "\4\0\0@+\205\0\0\377\377\0\0\377\377\377\177\0\0\0\0", 20) = 0
-writev(3, [{"\270", 1}], 1)             = 1
-setsockopt(3, SOL_TCP, TCP_REPAIR_OPTIONS, "\10\0\0\0\0\0\0\0\0\0\0\0|\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 386) = 0
-writev(3, [{"\210v\r[\226\320t\231qwQ\204\264l\254\t\1\20\245\214p\350H\223\254;\\\37\345\307p$"..., 3144}], 1) = 3144
+There's no point of checking the allocation error for
+nr_callchain_events > 1. Removing that check.
 
-The 3rd system call looks odd :
-setsockopt(3, SOL_TCP, TCP_REPAIR_QUEUE, [-1], 4) = 0
-
-This patch makes sure bound checking is using an unsigned compare.
-
-Fixes: ee9952831cfd ("tcp: Initial repair mode")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Cc: Pavel Emelyanov <xemul@parallels.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: syzkaller-bugs@googlegroups.com
+Cc: x86@kernel.org
+Link: http://lkml.kernel.org/r/20180415092352.12403-3-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/tcp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/callchain.c |   10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2450,7 +2450,7 @@ static int do_tcp_setsockopt(struct sock
- 	case TCP_REPAIR_QUEUE:
- 		if (!tp->repair)
- 			err = -EPERM;
--		else if (val < TCP_QUEUES_NR)
-+		else if ((unsigned int)val < TCP_QUEUES_NR)
- 			tp->repair_queue = val;
- 		else
- 			err = -EINVAL;
+--- a/kernel/events/callchain.c
++++ b/kernel/events/callchain.c
+@@ -107,14 +107,8 @@ int get_callchain_buffers(void)
+ 		goto exit;
+ 	}
+ 
+-	if (count > 1) {
+-		/* If the allocation failed, give up */
+-		if (!callchain_cpus_entries)
+-			err = -ENOMEM;
+-		goto exit;
+-	}
+-
+-	err = alloc_callchain_buffers();
++	if (count == 1)
++		err = alloc_callchain_buffers();
+ exit:
+ 	if (err)
+ 		atomic_dec(&nr_callchain_events);
