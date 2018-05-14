@@ -1,97 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-208113-1526280634-2-5251965492823469597
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='198.145.29.99', Host='mail.kernel.org', Country='US', FromHeader='org',
-  MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526280633; b=jKGT+bE+s1Sg1+Wi9ak2FG6pSgAC9R9Rd6/cRjnZiiDjcPgZT/
-    eJgFGRL0JqYrJjV9Gma8qYEt+rE+IeLdw7IK18F7zELsnTrDPGJ5gVIdPV+YHoBZ
-    s8DxIO3w50jEbWMQGM4jTlNegS+FjkvjlmRd8q21dXDd1EVYBLcgXNYndznO+/Z3
-    VzjWDgQ4+J1LProHqsJ+xINrtWrdy+MVM02F43N2ZdRPTaoWTg55/+43+LCcDgdl
-    HS7rUo/XZAU1bjlsc4UiziqVP9qU4ank8Ry1mJ8oUOLxTrlJix1+uK9727p+y+65
-    gxXWfAaS6urnOHAbSRc/S2n2HUX7A1RioWxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type; s=fm2; t=
-    1526280633; bh=7HCKPHDD48MaTTsR5/CexnS/E/QyWWvzBYog3FNXFGs=; b=Q
-    HWMb0rt0YkV62Degz6Q101T/Cnfu6ZizPYKc2wm3lKfqNPJ1eyW1C18ErrcegjWf
-    lp/j2BoX8S+Y1IvhlNcbV0sBS7CjdcluONs1x2o3EzQwMi5j4LYkMRvVou03IEax
-    8vZEm1QCla/s7IETGx15rsFH0OO9u5NfMa2WPqtRw+M9XGdQfR7ruigxB5V1Qzmb
-    NHCv3K94RCcF0T0Tkb4r28PwerQqbu6DbBuQtpvmF59jO6w94Nno7ioURRVv0jYs
-    RepWbLmaXQSfnPAqmoXqJugD3QBaRgcTnlJSic2Qa12a72usA2SPyZ0yi2cVYL79
-    Klgte7SV0PyGFs+Z+xYIQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=O6f6gZpA x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=pass
-    smtp.mailfrom="SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org"
-    smtp.helo=mail.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=linuxfoundation.org
-    header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=O6f6gZpA x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=pass
-      smtp.mailfrom="SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org"
-      smtp.helo=mail.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=linuxfoundation.org
-      header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfClRzz2qGh4SRmXCyPCw8XJgqUYAFc/N8FY1MY/v8sandWQ73O8S6iS9Jo7efY9GIGKgHn4/F6uOvJhp86BJ/VPFppw2nJ4MVE8tLaBczF8X91FzXY+e
-    1i0gj6bOgifmtqPBb1q0vfPO/aT+XPBfp00Dv7e4dkC9SRxgeLBvUkEfk42Y/WscXY6Vs5RTDgaf/EseKpWmfRIJOMWOE2TQt24df0QsM6hDAooHtwJsovIv
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=czNdAM+YcK12vDHDihaDnQ==:117
-    a=czNdAM+YcK12vDHDihaDnQ==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=Z4Rwk6OoAAAA:8 a=JfrnYn6hAAAA:8 a=FOH2dFAWAAAA:8
-    a=gnbuhwpKAAAA:8 a=ag1SF4gXAAAA:8 a=jgO6SH3aC7yEc3PU-okA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=HkZW87K1Qel5hWWM3VKY:22 a=1CNFftbPRP8L7MoqJWF3:22
-    a=i3VuKzQdj-NEYjvDI-p3:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-X-Remote-Delivered-To: security@kernel.org
+X-Google-Smtp-Source: AB8JxZqOTdFDoBUZCirUHogrAPSipb7wJ77B4kgnNMDu/tEIDUEzjV7uIEI+X5erwj1KjO7Miknf
+ARC-Seal: i=1; a=rsa-sha256; t=1526280634; cv=none;
+        d=google.com; s=arc-20160816;
+        b=FV/ThYwtbSC75NgQoqrfhCw7lQKCvvRRxv4hjIrkOOnD8lRIiaGQ78hSXO47P/6trM
+         4flLRuqIqZAT5vfq68/uF4i0UzHSeijCtehq2wr6yF6ftqJjTqRsDx9Ng9SswzuiY/7c
+         FexNa3Ih5H/KU7eFVfXEBqDgats0YMaP1prL9j9kXQfZ8Mtge/l8br6IOZ7GwMxALNub
+         MevtO70GIo/E7Gjl8qDogcX9gdAhPb9fQkBgHd96t0yLpqKe5A2UwutWqqulPF2YgE1h
+         PPFMqm99pjc3J2NJTabgY4GEfjjP3Xtvn2tdXJCS8Vv8T+a1BHTMgfnTFNnsUG4lskc/
+         j96g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=GvobVdLpZrcoPi/79W8qTbDQj0y7z8/kOd+qYm75ij0=;
+        b=z1REZ+aGE+CkW8GWmWnfYSbnjS+wyqjyxOYrgFYZJJR/8fFQ8q4FU+/buNDc7evR5L
+         QIV7BoEQnkRog6tOr2mYaXnUyN3Lw54u44zejO1oPsNvEWTDLDVRQ2mgzz070YwwFlNJ
+         JgnI90evTBwxs5zbYEy+K7TL4PrVZt5H+qqyXIzTGOSnUJPdvjdiiAJ3QuY+rOoQ2rEO
+         172vNOq2RkFztEAFUn2b5x7cMlLLv0pZYzMF1xZYoOh46zasJSk2PBgrNr0PFARvBaHy
+         rBtP7ByXS8tCJesd/ui8tIBCWyhftJHnSEFAqXDVWCudvpiLC+2/bj9uLAvIu8uV40ha
+         GN7g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=gEnFZlnf;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=gEnFZlnf;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Song Liu <songliubraving@fb.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	security@kernel.org,
-	=?UTF-8?q?=E8=8C=83=E9=BE=99=E9=A3=9E?= <long7573@126.com>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 3.18 23/23] tracing/uprobe_event: Fix strncpy corner case
-Date: Mon, 14 May 2018 08:48:52 +0200
-Message-Id: <20180514064705.012127350@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 13/23] net: fix rtnh_ok()
+Date: Mon, 14 May 2018 08:48:42 +0200
+Message-Id: <20180514064704.622427901@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064704.046463679@linuxfoundation.org>
 References: <20180514064704.046463679@linuxfoundation.org>
@@ -100,6 +42,9 @@ X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1600421242429293362?=
+X-GMAIL-MSGID: =?utf-8?q?1600421242429293362?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -107,36 +52,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 50268a3d266ecfdd6c5873d62b2758d9732fc598 upstream.
+commit b1993a2de12c9e75c35729e2ffbc3a92d50c0d31 upstream.
 
-Fix string fetch function to terminate with NUL.
-It is OK to drop the rest of string.
+syzbot reported :
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: security@kernel.org
-Cc: 范龙飞 <long7573@126.com>
-Fixes: 5baaa59ef09e ("tracing/probes: Implement 'memory' fetch method for uprobes")
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+BUG: KMSAN: uninit-value in rtnh_ok include/net/nexthop.h:11 [inline]
+BUG: KMSAN: uninit-value in fib_count_nexthops net/ipv4/fib_semantics.c:469 [inline]
+BUG: KMSAN: uninit-value in fib_create_info+0x554/0x8d20 net/ipv4/fib_semantics.c:1091
+
+@remaining is an integer, coming from user space.
+If it is negative we want rtnh_ok() to return false.
+
+Fixes: 4e902c57417c ("[IPv4]: FIB configuration using struct fib_config")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_uprobe.c |    2 ++
- 1 file changed, 2 insertions(+)
+ include/net/nexthop.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -149,6 +149,8 @@ static void FETCH_FUNC_NAME(memory, stri
- 		return;
+--- a/include/net/nexthop.h
++++ b/include/net/nexthop.h
+@@ -6,7 +6,7 @@
  
- 	ret = strncpy_from_user(dst, src, maxlen);
-+	if (ret == maxlen)
-+		dst[--ret] = '\0';
- 
- 	if (ret < 0) {	/* Failed to fetch string */
- 		((u8 *)get_rloc_data(dest))[0] = '\0';
+ static inline int rtnh_ok(const struct rtnexthop *rtnh, int remaining)
+ {
+-	return remaining >= sizeof(*rtnh) &&
++	return remaining >= (int)sizeof(*rtnh) &&
+ 	       rtnh->rtnh_len >= sizeof(*rtnh) &&
+ 	       rtnh->rtnh_len <= remaining;
+ }
