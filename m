@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932842AbeENQRr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 12:17:47 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:38185 "EHLO
+        id S932827AbeENQRo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 12:17:44 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:38184 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932681AbeENQRk (ORCPT
+        with ESMTP id S932668AbeENQRj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 12:17:40 -0400
+        Mon, 14 May 2018 12:17:39 -0400
 From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
@@ -14,52 +14,32 @@ To: bhelgaas@google.com, lorenzo.pieralisi@arm.com,
 Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH 3/4] bindings: PCI: designware: Add support for EP in DesignWare driver
-Date: Mon, 14 May 2018 17:17:27 +0100
-Message-Id: <d14a48a1c9f554d78a8a93532f288259de032fc5.1526314398.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH 0/4] Add DesignWare EP support
+Date: Mon, 14 May 2018 17:17:24 +0100
+Message-Id: <cover.1526314398.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1526314398.git.gustavo.pimentel@synopsys.com>
-References: <cover.1526314398.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1526314398.git.gustavo.pimentel@synopsys.com>
-References: <cover.1526314398.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree binding documentation for the EP in PCIe DesignWare driver.
+The PCIe controller dual mode is capable of operating in RC mode as well
+as EP mode by configuration option. Till now only RC mode was supported,
+with this patch is add EP support to the DesignWare driver.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/pci/designware-pcie.txt | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Gustavo Pimentel (4):
+  bindings: PCI: designware: Example update
+  PCI: dwc: Add support for EP mode
+  bindings: PCI: designware: Add support for EP in DesignWare driver
+  misc: pci_endpoint_test: Add DesignWare EP entry
 
-diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-index 7f9804d..c124f9b 100644
---- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
-@@ -3,6 +3,7 @@
- Required properties:
- - compatible:
- 	"snps,dw-pcie" for RC mode;
-+	"snps,dw-pcie-ep" for EP mode;
- - reg: Should contain the configuration address space.
- - reg-names: Must be "config" for the PCIe configuration space.
-     (The old way of getting the configuration address space from "ranges"
-@@ -56,3 +57,14 @@ Example configuration:
- 		#interrupt-cells = <1>;
- 		num-lanes = <1>;
- 	};
-+or
-+	pcie: pcie@dfc00000 {
-+		compatible = "snps,dw-pcie-ep";
-+		reg = <0xdfc00000 0x0001000>, /* IP registers 1 */
-+		      <0xdfc01000 0x0001000>, /* IP registers 2 */
-+		      <0xd0000000 0x2000000>; /* Configuration space */
-+		reg-names = "dbi", "dbi2", "addr_space";
-+		num-ib-windows = <6>;
-+		num-ob-windows = <2>;
-+		num-lanes = <1>;
-+	};
+ .../devicetree/bindings/pci/designware-pcie.txt    |  24 +++-
+ drivers/misc/pci_endpoint_test.c                   |   1 +
+ drivers/pci/dwc/Kconfig                            |  41 ++++--
+ drivers/pci/dwc/pcie-designware-ep.c               |   3 +
+ drivers/pci/dwc/pcie-designware-plat.c             | 149 +++++++++++++++++++--
+ drivers/pci/endpoint/functions/pci-epf-test.c      |   7 +
+ include/linux/pci-epc.h                            |   8 ++
+ 7 files changed, 206 insertions(+), 27 deletions(-)
+
 -- 
 2.7.4
