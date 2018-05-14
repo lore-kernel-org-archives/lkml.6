@@ -1,92 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753162AbeENL7j (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:59:39 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40177 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752043AbeENL7g (ORCPT
+        id S1752883AbeENMAZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:00:25 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:45624 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752043AbeENMAV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:59:36 -0400
-X-Google-Smtp-Source: AB8JxZoV4RiUEE+sfKQUeJSnXSZeChbkdDNI3tAYGfjaXd+PvE7I55iIkWdGS3Ni2aq0Kp89vjNTaA==
-Date: Mon, 14 May 2018 13:59:33 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Shardar Shariff Md <smohammed@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
-Message-ID: <20180514115933.GH18312@ulmo>
-References: <20180513211347.7187-1-digetx@gmail.com>
+        Mon, 14 May 2018 08:00:21 -0400
+X-Google-Smtp-Source: AB8JxZq/g2AMXho3D++mJGqxDJDvL3HdAZqOsbDrEEbz6O9bIVQK3M0bhu5JlzV4G4NEMRTf1ni+HDm+3QfJ+TQmgtQ=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="82evfD9Ogz2JrdWZ"
-Content-Disposition: inline
-In-Reply-To: <20180513211347.7187-1-digetx@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180514134607.5dfb8d51@bbrezillon>
+References: <1526294977-32303-1-git-send-email-geert@linux-m68k.org>
+ <20180514132324.595b63eb@bbrezillon> <CAMuHMdUSHc2o5zXbZje89jo2dxTYv8pzcVSz-gYWh7KdZKwQeA@mail.gmail.com>
+ <20180514134607.5dfb8d51@bbrezillon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 May 2018 14:00:19 +0200
+X-Google-Sender-Auth: YyvbDOQAJG_AHGqfjAF60bRPl4Q
+Message-ID: <CAMuHMdVhAAGiGjGMCe26kyLAPqrvTfukADhipd8apk8UNBAXiA@mail.gmail.com>
+Subject: Re: [PATCH] mtd: nand: Fix return type of __DIVIDE() when called with 32-bit
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        "Linux/m68k" <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Boris,
 
---82evfD9Ogz2JrdWZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 14, 2018 at 1:46 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Mon, 14 May 2018 13:32:30 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> On Mon, May 14, 2018 at 1:23 PM, Boris Brezillon
+>> <boris.brezillon@bootlin.com> wrote:
+>> > On Mon, 14 May 2018 12:49:37 +0200
+>> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> >> The __DIVIDE() macro checks whether it is called with a 32-bit or 64-bit
+>> >> dividend, to select the appropriate divide-and-round-up routine.
+>> >> As the check uses the ternary operator, the result will always be
+>> >> promoted to a type that can hold both results, i.e. unsigned long long.
+>> >>
+>> >> When using this result in a division on a 32-bit system, this may lead
+>> >> to link errors like:
+>> >>
+>> >>     ERROR: "__udivdi3" [drivers/mtd/nand/raw/nand.ko] undefined!
+>> >>
+>> >> Fix this by casting the result of the 64-bit division to the type of the
+>> >> dividend.
+>> >>
+>> >> Fixes: 8878b126df769831 ("mtd: nand: add ->exec_op() implementation")
+>> >> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> >> ---
+>> >> This fixes the root cause of the link failure seen with
+>> >> m68k/allmodconfig since commit 3057fcef385348fe ("mtd: rawnand: Make
+>> >> sure we wait tWB before polling the STATUS reg").
+>> >>
+>> >> An alternative mitigation was posted as "[PATCH] m68k: Implement
+>> >> ndelay() as an inline function to force type checking/casting"
+>> >> (https://lkml.org/lkml/2018/5/13/102).
+>> >> ---
+>> >>  include/linux/mtd/rawnand.h | 2 +-
+>> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >>
+>> >> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+>> >> index 5dad59b312440a9c..d06dc428ea0102ae 100644
+>> >> --- a/include/linux/mtd/rawnand.h
+>> >> +++ b/include/linux/mtd/rawnand.h
+>> >> @@ -871,7 +871,7 @@ struct nand_op_instr {
+>> >>  #define __DIVIDE(dividend, divisor) ({                                       \
+>> >>       sizeof(dividend) == sizeof(u32) ?                               \
+>> >>               DIV_ROUND_UP(dividend, divisor) :                       \
+>> >> -             DIV_ROUND_UP_ULL(dividend, divisor);                    \
+>> >> +             (__typeof__(dividend))DIV_ROUND_UP_ULL(dividend, divisor); \
+>> >
+>> > Hm, it's a bit hard to follow when you place the cast here. One could
+>> > wonder why a cast to (__typeof__(dividend)) is needed since
+>> > DIV_ROUND_UP_ULL() already returns a (__typeof__(dividend)) type.
+>>
+>> DIV_ROUND_UP_ULL() does not return __typeof__(dividend), but
+>> unsigned long long.
+>
+> Except if you entered this branch, that means you passed an unsigned
+> long long dividend (AKA u64), otherwise you would go in DIV_ROUND_UP().
+> Am I missing something?
 
-On Mon, May 14, 2018 at 12:13:47AM +0300, Dmitry Osipenko wrote:
-> Nothing prevents I2C clients to access I2C while Tegra's driver is being
-> suspended, this results in -EBUSY error returned to the clients and that
-> may have unfortunate consequences. In particular this causes problems
-> for the TPS6586x MFD driver which emits hundreds of "failed to read
-> interrupt status" error messages on resume from suspend. This happens if
-> TPS6586X is used to wake system from suspend by the expired RTC alarm
-> timer because TPS6586X is an I2C device driver and its IRQ handler reads
-> the status register while Tegra's I2C driver is suspended, i.e. just after
-> kernel enabled IRQ's during of resume-from-suspend process.
->=20
-> Note that the removed tegra_i2c_resume() invoked tegra_i2c_init() which
-> performs HW reset. That seems was also not entirely correct because moving
-> tegra_i2c_resume to an earlier stage of resume-from-suspend process causes
-> I2C transfer to fail in the case of TPS6586X. It is fine to remove the
-> HW-reinitialization for now because it should be only needed in a case of
-> using lowest power-mode during suspend, which upstream kernel doesn't
-> support.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> Cc: <stable@vger.kernel.org>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 33 ---------------------------------
->  1 file changed, 33 deletions(-)
+Sure, inside that branch, it does.
+But the compiler considers the whole ternary operator construction, i.e.
+both branches.
 
-Shardar, Laxman, any thoughts on this? The is_suspended thing looks to
-me like a workaround of some sort that may not be needed if clients have
-proper suspend/resume implementations. Even without suspend/resume
-support in client drivers, the driver core should resume devices in the
-right order (I2C adapter before any of the clients), so I don't see any
-cases where the is_suspended logic would be useful.
+>> > How about:
+>> >
+>> >         /*
+>> >          * Cast to type of dividend is needed here to guarantee that the
+>> >          * result won't be an unsigned long long when the dividend is an
+>> >          * unsigned long, which is what the compiler does when it sees a
+>>
+>> s/an unsigned long/32-bit/
+>>
+>> >          * ternary operator with 2 different return types.
+>> >          */
+>> >         (__typeof__(dividend))(sizeof(dividend) == sizeof(u32) ?        \
+>
+> To be completely safe and handle cases where dividend is an unsigned
+> short or an unsigned, we should probably have:
+>
+>         (__typeof__(dividend))(sizeof(dividend) == sizeof(unsigned long long) ? \
 
-Thierry
+"> sizeof(u32)"?
 
---82evfD9Ogz2JrdWZ
-Content-Type: application/pgp-signature; name="signature.asc"
+/me starts to think about uint128_t...
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5eiUACgkQ3SOs138+
-s6HmcQ//aSgYhfohzOMno/sNXEmFWOsKYdWsSSlz7cjbGxeVb6Hmp1I+sxfVof+b
-XmMdH/Yq033hCIuUMU/zgRVTUhayDSngElbzGvZngCErYLe8mFn4uL5JSLElSH/j
-xSKmHG6UcYC/P6LMQ961jr5si9Fm23MXFBEEXVOdJ/3Cz4h3bbGft6k46fT3mlvG
-HdgYi0qEwGt/ujuHLqC/V8VYEiDJ0efkrOwuDaEquMjKYLVwJKiYYydT5LjQ4o7D
-NqVANSY0AnuiqgoPyq0qKHaVQMDom5cejB7o9LloschUtynQCWUQt+gxnZLSb/SH
-KwplDi4clocEwS0kwjUraiO9RLSF88+dwuJQE/cnNUsKAzBmiO523/UW0bcpwUGA
-ZW+5CFwx7/q5HexlaiTdtPwpsVqS4+7kBNBv5RiT8vh2lICJr4iaj9OnLveJGaJ6
-AxF+WPNbJbm9DLr5+nHCmMLWxkFhxSH/ydYQ8+SuvZ5jNn+Bm65aX8l9mH018MVt
-tChed0UY1YUMN+cOkJQrlFlKMWGChEPgV5MM1dmKTX1mLtyZO4CGVjQnU/HCfvOs
-3+uVJQ7GklqB4mOo0c8js/YaqGGhqQnLRZ04tRhIVI/lk3jhVQIkioaR0HNICmCr
-4kut2rs+HFy8KU+/GUH4nhtSJDrYYQ3tMGT11lmJfFeB7gZ7sis=
-=euGK
------END PGP SIGNATURE-----
+>                                DIV_ROUND_UP_ULL(dividend, divisor) :
+>                                DIV_ROUND_UP(dividend, divisor));
+>
+>> >                                DIV_ROUND_UP(dividend, divisor) :        \
+>> >                                DIV_ROUND_UP_ULL(dividend, divisor));
+>>
+>> Looks fine to me, too.
+>>
+>> > Actually, I'm not even sure we care about the truncation that could
+>> > happen on an unsigned long long -> unsigned long cast because the
+>> > delays we express here will anyway be hundreds of nanosecs/millisecs,
+>> > so nothing close to the billions of nanosecs/millisecs you can express
+>> > with an unsigned long.
+>> >
+>> > So, maybe we should just do:
+>> >
+>> >         (unsigned long)(sizeof(dividend) == sizeof(u32) ?               \
+>> >                         DIV_ROUND_UP(dividend, divisor) :               \
+>> >                         DIV_ROUND_UP_ULL(dividend, divisor));
+>> >
+>> > to make things more readable.
+>>
+>> That would break callers who pass a 64-bit dividend, and expect to receive
+>> a 64-bit quotient back (on 32-bit systems).
+>> Calling e.g. PSEC_TO_NSEC(1000000000000ULL) is valid, passing the
+>> result to ndelay() isn't ;-)
+>
+> Well, theoretically, yes it's possible, in practice, we only ever pass
+> u32 types to PSEC_TO_NSEC() and u64 types to PSEC_TO_MSEC(), so why
+> bother.
 
---82evfD9Ogz2JrdWZ--
+True. But __DIVIDE() sounds too generic to add such unobvious limitations.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
