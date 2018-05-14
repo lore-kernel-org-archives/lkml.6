@@ -1,104 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754634AbeENQr5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 12:47:57 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:34680 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753468AbeENQrz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 12:47:55 -0400
-X-Google-Smtp-Source: AB8JxZrPLoeLnWN08k5awNd0NNhxNUXXfi2x1XT2nR23OUADuWcMP3o0vntioLzTbsiOwIP9mgB1TA==
-Date: Mon, 14 May 2018 18:47:53 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Vlad Buslov <vladbu@mellanox.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, jhs@mojatatu.com,
-        xiyou.wangcong@gmail.com, pablo@netfilter.org,
-        kadlec@blackhole.kfki.hu, fw@strlen.de, ast@kernel.org,
-        daniel@iogearbox.net, edumazet@google.com, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: Re: [PATCH 06/14] net: sched: implement reference counted action
- release
-Message-ID: <20180514164753.GF2134@nanopsycho.orion>
-References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
- <1526308035-12484-7-git-send-email-vladbu@mellanox.com>
+        id S1755119AbeENQsT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 12:48:19 -0400
+Received: from foss.arm.com ([217.140.101.70]:46490 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754777AbeENQsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 12:48:17 -0400
+Date: Mon, 14 May 2018 17:48:12 +0100
+From: Patrick Bellasi <patrick.bellasi@arm.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>
+Subject: Re: [PATCH v2 1/3] sched/cpufreq: always consider blocked FAIR
+ utilization
+Message-ID: <20180514164812.GI30654@e110439-lin>
+References: <20180511131509.16275-1-patrick.bellasi@arm.com>
+ <20180511131509.16275-2-patrick.bellasi@arm.com>
+ <CAKfTPtD3GJH3LLp6tpYoz7Uf0eXb-ZLMbGdQdRUsAgczZMr47g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1526308035-12484-7-git-send-email-vladbu@mellanox.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAKfTPtD3GJH3LLp6tpYoz7Uf0eXb-ZLMbGdQdRUsAgczZMr47g@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mon, May 14, 2018 at 04:27:07PM CEST, vladbu@mellanox.com wrote:
+On 14-May 11:16, Vincent Guittot wrote:
+> Hi Patrick,
 
-[...]
-
-
->+static int tcf_action_del_1(struct net *net, char *kind, u32 index,
->+			    struct netlink_ext_ack *extack)
->+{
->+	const struct tc_action_ops *ops;
->+	int err = -EINVAL;
->+
->+	ops = tc_lookup_action_n(kind);
->+	if (!ops) {
-
-How this can happen? Apparently you hold reference to the module since
-you put it couple lines below. In that case, I don't really understand
-why you need to lookup and just don't use "ops" pointer you have in
-tcf_action_delete().
-
-
->+		NL_SET_ERR_MSG(extack, "Specified TC action not found");
->+		goto err_out;
->+	}
->+
->+	if (ops->delete)
->+		err = ops->delete(net, index);
->+
->+	module_put(ops->owner);
->+err_out:
->+	return err;
->+}
->+
-> static int tca_action_flush(struct net *net, struct nlattr *nla,
-> 			    struct nlmsghdr *n, u32 portid,
-> 			    struct netlink_ext_ack *extack)
->@@ -1052,6 +1088,36 @@ static int tca_action_flush(struct net *net, struct nlattr *nla,
-> 	return err;
-> }
+Hi Vincent,
+ 
+> On 11 May 2018 at 15:15, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > Since the refactoring introduced by:
+> >
+> >    commit 8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
+> >
+> > we aggregate FAIR utilization only if this class has runnable tasks.
+> > This was mainly due to avoid the risk to stay on an high frequency just
+> > because of the blocked utilization of a CPU not being properly decayed
+> > while the CPU was idle.
+> >
+> > However, since:
+> >
+> >    commit 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
+> >
+> > the FAIR blocked utilization is properly decayed also for IDLE CPUs.
+> >
+> > This allows us to use the FAIR blocked utilization as a safe mechanism
+> > to gracefully reduce the frequency only if no FAIR tasks show up on a
+> > CPU for a reasonable period of time.
+> >
+> > Moreover, we also reduce the frequency drops of CPUs running periodic
+> > tasks which, depending on the task periodicity and the time required
+> > for a frequency switch, was increasing the chances to introduce some
+> > undesirable performance variations.
+> >
+> > Reported-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> > Cc: Joel Fernandes <joelaf@google.com>
+> > Cc: linux-kernel@vger.kernel.org
+> > Cc: linux-pm@vger.kernel.org
 > 
->+static int tcf_action_delete(struct net *net, struct list_head *actions,
->+			     struct netlink_ext_ack *extack)
->+{
->+	int ret;
->+	struct tc_action *a, *tmp;
->+	char kind[IFNAMSIZ];
->+	u32 act_index;
->+
->+	list_for_each_entry_safe(a, tmp, actions, list) {
->+		const struct tc_action_ops *ops = a->ops;
->+
->+		/* Actions can be deleted concurrently
->+		 * so we must save their type and id to search again
->+		 * after reference is released.
->+		 */
->+		strncpy(kind, a->ops->kind, sizeof(kind) - 1);
->+		act_index = a->tcfa_index;
->+
->+		list_del(&a->list);
->+		if (tcf_action_put(a))
->+			module_put(ops->owner);
->+
->+		/* now do the delete */
->+		ret = tcf_action_del_1(net, kind, act_index, extack);
->+		if (ret < 0)
->+			return ret;
->+	}
->+	return 0;
->+}
->+
+> With this patch, I can't see the spurious OPP changes that I was seeing before
 
-[...]
+Cool thanks... regarding OPP updates I've added some more comments in
+my reply to Joel's comments to my last patch of this series.
+
+Would be nice if you can have a look... toward the end there are some
+considerations about schedutil updates (indirectly) triggered by your
+patches for blocked load updates on IDLE CPUs.
+
+> FWIW
+> Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+> Tested-by: Vincent Guittot <vincent.guittot@linaro.org>
+
+Thanks for testing, will add these to the next respin.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
