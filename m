@@ -1,172 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753281AbeENM3q (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:29:46 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:57916 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752477AbeENM3p (ORCPT
+        id S1753275AbeENMjM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:39:12 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:57663 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753036AbeENMjK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:29:45 -0400
-From: <hpreg@vmware.com>
-To: <netdev@vger.kernel.org>
-CC: Regis Duchesne <hpreg@vmware.com>, Ronak Doshi <doshir@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH net 1/2] vmxnet3: set the DMA mask before the first DMA map operation
-Date: Mon, 14 May 2018 08:14:34 -0400
-Message-ID: <1526300075-78296-1-git-send-email-hpreg@vmware.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 14 May 2018 08:39:10 -0400
+Date: Mon, 14 May 2018 05:38:47 -0700
+From: tip-bot for Alexander Potapenko <tipbot@zytor.com>
+Message-ID: <tip-4a09f0210c8b1221aae8afda8bd3a603fece0986@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        peterz@infradead.org, torvalds@linux-foundation.org, glider@google.com,
+        mingo@kernel.org, dave.hansen@intel.com
+Reply-To: dave.hansen@intel.com, glider@google.com, mingo@kernel.org,
+        peterz@infradead.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20180509091822.191810-1-glider@google.com>
+References: <20180509091822.191810-1-glider@google.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/boot/64/clang: Use fixup_pointer() to access
+ '__supported_pte_mask'
+Git-Commit-ID: 4a09f0210c8b1221aae8afda8bd3a603fece0986
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DMA mask must be set before, not after, the first DMA map operation, or
-the first DMA map operation could in theory fail on some systems.
+Commit-ID:  4a09f0210c8b1221aae8afda8bd3a603fece0986
+Gitweb:     https://git.kernel.org/tip/4a09f0210c8b1221aae8afda8bd3a603fece0986
+Author:     Alexander Potapenko <glider@google.com>
+AuthorDate: Wed, 9 May 2018 11:18:22 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 14 May 2018 11:14:30 +0200
 
-Fixes: b0eb57cb97e78 ("VMXNET3: Add support for virtual IOMMU")
-Signed-off-by: Regis Duchesne <hpreg@vmware.com>
-Acked-by: Ronak Doshi <doshir@vmware.com>
+x86/boot/64/clang: Use fixup_pointer() to access '__supported_pte_mask'
+
+Clang builds with defconfig started crashing after the following
+commit:
+
+  fb43d6cb91ef ("x86/mm: Do not auto-massage page protections")
+
+This was caused by introducing a new global access in __startup_64().
+
+Code in __startup_64() can be relocated during execution, but the compiler
+doesn't have to generate PC-relative relocations when accessing globals
+from that function. Clang actually does not generate them, which leads
+to boot-time crashes. To work around this problem, every global pointer
+must be adjusted using fixup_pointer().
+
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: dvyukov@google.com
+Cc: kirill.shutemov@linux.intel.com
+Cc: linux-mm@kvack.org
+Cc: md@google.com
+Cc: mka@chromium.org
+Fixes: fb43d6cb91ef ("x86/mm: Do not auto-massage page protections")
+Link: http://lkml.kernel.org/r/20180509091822.191810-1-glider@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/net/vmxnet3/vmxnet3_drv.c | 50 +++++++++++++++++++--------------------
- drivers/net/vmxnet3/vmxnet3_int.h |  8 ++++---
- 2 files changed, 30 insertions(+), 28 deletions(-)
+ arch/x86/kernel/head64.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
-index 9ebe2a6..ed58685 100644
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -2688,7 +2688,7 @@ vmxnet3_set_mac_addr(struct net_device *netdev, void *p)
- /* ==================== initialization and cleanup routines ============ */
- 
- static int
--vmxnet3_alloc_pci_resources(struct vmxnet3_adapter *adapter, bool *dma64)
-+vmxnet3_alloc_pci_resources(struct vmxnet3_adapter *adapter)
- {
- 	int err;
- 	unsigned long mmio_start, mmio_len;
-@@ -2700,30 +2700,12 @@ vmxnet3_alloc_pci_resources(struct vmxnet3_adapter *adapter, bool *dma64)
- 		return err;
- 	}
- 
--	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) == 0) {
--		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) != 0) {
--			dev_err(&pdev->dev,
--				"pci_set_consistent_dma_mask failed\n");
--			err = -EIO;
--			goto err_set_mask;
--		}
--		*dma64 = true;
--	} else {
--		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) != 0) {
--			dev_err(&pdev->dev,
--				"pci_set_dma_mask failed\n");
--			err = -EIO;
--			goto err_set_mask;
--		}
--		*dma64 = false;
--	}
--
- 	err = pci_request_selected_regions(pdev, (1 << 2) - 1,
- 					   vmxnet3_driver_name);
- 	if (err) {
- 		dev_err(&pdev->dev,
- 			"Failed to request region for adapter: error %d\n", err);
--		goto err_set_mask;
-+		goto err_enable_device;
- 	}
- 
- 	pci_set_master(pdev);
-@@ -2751,7 +2733,7 @@ vmxnet3_alloc_pci_resources(struct vmxnet3_adapter *adapter, bool *dma64)
- 	iounmap(adapter->hw_addr0);
- err_ioremap:
- 	pci_release_selected_regions(pdev, (1 << 2) - 1);
--err_set_mask:
-+err_enable_device:
- 	pci_disable_device(pdev);
- 	return err;
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 0c408f8c4ed4..2d29e47c056e 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -104,6 +104,12 @@ static bool __head check_la57_support(unsigned long physaddr)
  }
-@@ -3254,7 +3236,7 @@ vmxnet3_probe_device(struct pci_dev *pdev,
  #endif
- 	};
- 	int err;
--	bool dma64 = false; /* stupid gcc */
-+	bool dma64;
- 	u32 ver;
- 	struct net_device *netdev;
- 	struct vmxnet3_adapter *adapter;
-@@ -3300,6 +3282,24 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	adapter->rx_ring_size = VMXNET3_DEF_RX_RING_SIZE;
- 	adapter->rx_ring2_size = VMXNET3_DEF_RX_RING2_SIZE;
  
-+	if (pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) == 0) {
-+		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64)) != 0) {
-+			dev_err(&pdev->dev,
-+				"pci_set_consistent_dma_mask failed\n");
-+			err = -EIO;
-+			goto err_set_mask;
-+		}
-+		dma64 = true;
-+	} else {
-+		if (pci_set_dma_mask(pdev, DMA_BIT_MASK(32)) != 0) {
-+			dev_err(&pdev->dev,
-+				"pci_set_dma_mask failed\n");
-+			err = -EIO;
-+			goto err_set_mask;
-+		}
-+		dma64 = false;
-+	}
-+
- 	spin_lock_init(&adapter->cmd_lock);
- 	adapter->adapter_pa = dma_map_single(&adapter->pdev->dev, adapter,
- 					     sizeof(struct vmxnet3_adapter),
-@@ -3307,7 +3307,7 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	if (dma_mapping_error(&adapter->pdev->dev, adapter->adapter_pa)) {
- 		dev_err(&pdev->dev, "Failed to map dma\n");
- 		err = -EFAULT;
--		goto err_dma_map;
-+		goto err_set_mask;
- 	}
- 	adapter->shared = dma_alloc_coherent(
- 				&adapter->pdev->dev,
-@@ -3358,7 +3358,7 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	}
- #endif /* VMXNET3_RSS */
- 
--	err = vmxnet3_alloc_pci_resources(adapter, &dma64);
-+	err = vmxnet3_alloc_pci_resources(adapter);
- 	if (err < 0)
- 		goto err_alloc_pci;
- 
-@@ -3504,7 +3504,7 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- err_alloc_shared:
- 	dma_unmap_single(&adapter->pdev->dev, adapter->adapter_pa,
- 			 sizeof(struct vmxnet3_adapter), PCI_DMA_TODEVICE);
--err_dma_map:
-+err_set_mask:
- 	free_netdev(netdev);
- 	return err;
- }
-diff --git a/drivers/net/vmxnet3/vmxnet3_int.h b/drivers/net/vmxnet3/vmxnet3_int.h
-index a332646..b379bed 100644
---- a/drivers/net/vmxnet3/vmxnet3_int.h
-+++ b/drivers/net/vmxnet3/vmxnet3_int.h
-@@ -69,10 +69,12 @@
- /*
-  * Version numbers
-  */
--#define VMXNET3_DRIVER_VERSION_STRING   "1.4.14.0-k"
-+#define VMXNET3_DRIVER_VERSION_STRING   "1.4.15.0-k"
- 
--/* a 32-bit int, each byte encode a verion number in VMXNET3_DRIVER_VERSION */
--#define VMXNET3_DRIVER_VERSION_NUM      0x01040e00
-+/* Each byte of this 32-bit integer encodes a version number in
-+ * VMXNET3_DRIVER_VERSION_STRING.
++/* Code in __startup_64() can be relocated during execution, but the compiler
++ * doesn't have to generate PC-relative relocations when accessing globals from
++ * that function. Clang actually does not generate them, which leads to
++ * boot-time crashes. To work around this problem, every global pointer must
++ * be adjusted using fixup_pointer().
 + */
-+#define VMXNET3_DRIVER_VERSION_NUM      0x01040f00
+ unsigned long __head __startup_64(unsigned long physaddr,
+ 				  struct boot_params *bp)
+ {
+@@ -113,6 +119,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 	p4dval_t *p4d;
+ 	pudval_t *pud;
+ 	pmdval_t *pmd, pmd_entry;
++	pteval_t *mask_ptr;
+ 	bool la57;
+ 	int i;
+ 	unsigned int *next_pgt_ptr;
+@@ -196,7 +203,8 @@ unsigned long __head __startup_64(unsigned long physaddr,
  
- #if defined(CONFIG_PCI_MSI)
- 	/* RSS only makes sense if MSI-X is supported. */
--- 
-2.7.4
+ 	pmd_entry = __PAGE_KERNEL_LARGE_EXEC & ~_PAGE_GLOBAL;
+ 	/* Filter out unsupported __PAGE_KERNEL_* bits: */
+-	pmd_entry &= __supported_pte_mask;
++	mask_ptr = fixup_pointer(&__supported_pte_mask, physaddr);
++	pmd_entry &= *mask_ptr;
+ 	pmd_entry += sme_get_me_mask();
+ 	pmd_entry +=  physaddr;
+ 
