@@ -1,173 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752418AbeENWyU (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 18:54:20 -0400
-Received: from smtprelay0250.hostedemail.com ([216.40.44.250]:48894 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752115AbeENWyR (ORCPT
+        id S1752489AbeENWyf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 18:54:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36096 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752372AbeENWyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 18:54:17 -0400
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:541:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1535:1544:1593:1594:1605:1711:1730:1747:1777:1792:1981:2194:2199:2393:2553:2559:2562:2693:2739:2828:3138:3139:3140:3141:3142:3622:3673:3865:3866:3867:3868:3870:3871:3872:3873:3874:4117:4250:4321:5007:6119:6691:7903:8957:9040:10004:10848:11026:11232:11473:11658:11914:12043:12050:12051:12296:12438:12555:12740:12760:12895:12986:13439:13618:14181:14659:14721:14773:21080:21324:21433:21451:21611:21627:21740:30029:30054:30069:30070:30090:30091,0,RBL:47.151.150.235:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:20,LUA_SUMMARY:none
-X-HE-Tag: unit56_4233a7e47690f
-X-Filterd-Recvd-Size: 6136
-Message-ID: <3c7770a062355650fb61e48a5fbeb9653d98d85a.camel@perches.com>
-Subject: Re: [PATCH 18/18] rcu: Use pr_fmt to prefix "rcu: " to logging
- output
-From: Joe Perches <joe@perches.com>
-To: paulmck@linux.vnet.ibm.com
-Cc: Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Davidlohr Bueso <dave@stgolabs.net>, linux-kernel@vger.kernel.org
-Date: Mon, 14 May 2018 15:54:13 -0700
-In-Reply-To: <20180514222456.GO26088@linux.vnet.ibm.com>
-References: <cover.1525964381.git.joe@perches.com>
-         <41d9686471d67f6f98d160e5891bf61061515b6d.1525964386.git.joe@perches.com>
-         <20180514202910.GI26088@linux.vnet.ibm.com>
-         <32216d8f154b29400d4c11bae91850591114f7f8.camel@perches.com>
-         <20180514222456.GO26088@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 14 May 2018 18:54:15 -0400
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org
+Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        akiyks@gmail.com, SeongJae Park <sj38.park@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH memory-model 3/8] kokr/doc: De-emphasize smp_read_barrier_depends
+Date: Mon, 14 May 2018 15:55:28 -0700
+X-Mailer: git-send-email 2.5.2
+In-Reply-To: <20180514225457.GA5142@linux.vnet.ibm.com>
+References: <20180514225457.GA5142@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18051422-0008-0000-0000-000003076B41
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009026; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032370; UDB=6.00527776; IPR=6.00811502;
+ MB=3.00021114; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 22:54:07
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051422-0009-0000-0000-0000393FFBBE
+Message-Id: <1526338533-6044-3-git-send-email-paulmck@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805140226
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-05-14 at 15:24 -0700, Paul E. McKenney wrote:
-> On Mon, May 14, 2018 at 02:41:59PM -0700, Joe Perches wrote:
-> > On Mon, 2018-05-14 at 13:29 -0700, Paul E. McKenney wrote:
-> > > On Thu, May 10, 2018 at 08:45:44AM -0700, Joe Perches wrote:
-> > > > Use a consistent logging prefix for all rcu related output.
-> > > > 
-> > > > Signed-off-by: Joe Perches <joe@perches.com>
-> > > 
-> > > I took parts of this (thank you!) but have concerns about other parts.
-> > 
-> > []
-> > > > diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
-> > > > index 076a50fb22ad..ebdd77b45470 100644
-> > > > --- a/kernel/rcu/rcuperf.c
-> > > > +++ b/kernel/rcu/rcuperf.c
-> > > > @@ -19,6 +19,9 @@
-> > > >   *
-> > > >   * Authors: Paul E. McKenney <paulmck@us.ibm.com>
-> > > >   */
-> > > > +
-> > > > +#define pr_fmt(fmt) "rcu: " fmt
-> > > 
-> > > This is going to get us messages of the form "rcu: rcu-perf:", not?
-> > > (And other odd combinations, depending on the flavor of RCU under test.)
-> > > If so, this does not seem to be an improvement.
-> > 
-> > That depends on the existing embedded content of the format.
-> > This will prefix just "rcu: " to pr_<level> output.
-> 
-> OK, so to make this work, I need to create special-purpose pr_fmt()
-> definitions for torture, rcutorture, locktorture, and rcuperf.  Most
-> of the rest don't care.
+From: SeongJae Park <sj38.park@gmail.com>
 
-Yes, or allow the new generic #define for pr_fmt
-to set those prefixes for you
+This commit applies an upstream change, commit 9ad3c143d7d6 ("doc:
+De-emphasize smp_read_barrier_depends") to the Korean version document.
 
-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+Signed-off-by: SeongJae Park <sj38.park@gmail.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+---
+ Documentation/translations/ko_KR/memory-barriers.txt | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-will do the appropriate thing for rcutorture,
-
-> Or am I missing something basic here?
-> 
-> > > > diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-> > 
-> > []
-> > > > @@ -908,7 +909,7 @@ rcu_torture_writer(void *arg)
-> > > >  	VERBOSE_TOROUT_STRING("rcu_torture_writer task started");
-> > > >  	if (!can_expedite)
-> > > >  		pr_alert("%s" TORTURE_FLAG
-> > > > -			 " GP expediting controlled from boot/sysfs for %s.\n",
-> > > > +			 " GP expediting controlled from boot/sysfs for %s\n",
-> > > >  			 torture_type, cur_ops->name);
-> > 
-> > As there is _no_ pr_fmt #defined in this file,
-> > output will/could be prefixed with KBUILD_MODNAME ": "
-> > (in this case "rcutorture: ") if/when the generic
-> > pr_fmt conversion patch is applied.
-> 
-> Not a fan, NACK.
-> 
-> > > >  	} else if (gp_sync && !cur_ops->sync) {
-> > > > -		pr_alert("%s: gp_sync without primitives.\n", __func__);
-> > > > +		pr_alert("%s: gp_sync without primitives\n", __func__);
-> > > 
-> > > I used a CDC Cyber 73 in the 1970s.
-> > 
-> > Fancy.  I used a CDC 6400 and an IBM 1620, but
-> > those were pretty old when I started.
-> 
-> ;-)
-> 
-> > > It had tiny memory by today's
-> > > standards, but even it had periods in its error messages.  We can easily
-> > > afford them today, especially given that rcutorture is not included in
-> > > small-memory Linux configurations.
-> > 
-> > OK, but I like consistency too.
-> > 
-> > ~90 percent of linux logging does not use terminating periods.
-> > For instance, on my laptop:
-> > 
-> > $ uptime -p
-> > up 1 week, 1 day, 13 hours, 37 minute
-> > $ dmesg | wc -l
-> > 4240
-> > $ dmesg | grep -P "\w\.$"| wc -l
-> > 381
-> 
-> Why is this a problem worth fixing?  From where I sit, it is not.
-
-It's not a _problem_.  It's just an inconsistency.
-I modify them passively when I see them.
-If you don't like it, don't take it.
-
-> Even assuming that this is somehow worth solving, why is it buried
-> in an unrelated patch?
-
-Touches each line fewer times.
-
-> > > > @@ -1711,11 +1712,11 @@ static void rcu_test_debug_objects(void)
-> > > > 
-> > > >  	/* Wait for them all to get done so we can safely return. */
-> > > >  	rcu_barrier();
-> > > > -	pr_alert("%s: WARN: Duplicate call_rcu() test complete.\n", KBUILD_MODNAME);
-> > > > +	pr_alert("WARN: Duplicate call_rcu() test complete\n");
-> > > 
-> > > I would like to keep these, as they mark the region of console output where
-> > > splats are expected.
-> > 
-> > The prefixes are still there...
-> > 
-> > > >  	if (cur_ops->fqs == NULL && fqs_duration != 0) {
-> > > > -		pr_alert("rcu-torture: ->fqs NULL and non-zero fqs_duration, fqs disabled.\n");
-> > > > +		pr_alert("->fqs NULL and non-zero fqs_duration, fqs disabled\n");
-> > > 
-> > > This I would like to keep.  Easier to find.
-> > 
-> > One thing that you could use to validate the
-> > output string format is after compilation:
-> > 
-> > $ strings kernel/rcu/rcutorture.o | grep -P "^[0-6]\w+:"
-> > 
-> > With your change, you will see duplicated prefixes.
-> 
-> Except that right now there are not duplicated prefixes.  Those
-> apparently only show up after some earlier patch in/before your set is
-> applied, correct? 
-
-yes.
-[PATCH 03/18] printk: Convert pr_fmt from blank define to KBUILD_MODNAME
-
-> Is there some C-preprocessor macro indicating whether or not your changes
-> have been applied?
-
-?  pr_fmt would either be blank or something else.
+diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
+index edef154d77b2..44e47c2d33cf 100644
+--- a/Documentation/translations/ko_KR/memory-barriers.txt
++++ b/Documentation/translations/ko_KR/memory-barriers.txt
+@@ -1790,7 +1790,7 @@ CPU 메모리 배리어
+ 	범용		mb()			smp_mb()
+ 	쓰기		wmb()			smp_wmb()
+ 	읽기		rmb()			smp_rmb()
+-	데이터 의존성	read_barrier_depends()	smp_read_barrier_depends()
++	데이터 의존성				READ_ONCE()
+ 
+ 
+ 데이터 의존성 배리어를 제외한 모든 메모리 배리어는 컴파일러 배리어를
+@@ -2829,7 +2829,10 @@ CPU 2 는 C/D 를 갖습니다)가 병렬로 연결되어 있는 시스템을 
+ 다른 CPU 들도 분할된 캐시를 가지고 있을 수 있지만, 그런 CPU 들은 평범한 메모리
+ 액세스를 위해서도 이 분할된 캐시들 사이의 조정을 해야만 합니다.  Alpha 는 가장
+ 약한 메모리 순서 시맨틱 (semantic) 을 선택함으로써 메모리 배리어가 명시적으로
+-사용되지 않았을 때에는 그런 조정이 필요하지 않게 했습니다.
++사용되지 않았을 때에는 그런 조정이 필요하지 않게 했으며, 이는 Alpha 가 당시에
++더 높은 CPU 클락 속도를 가질 수 있게 했습니다.  하지만, Alpha 아키텍쳐 전용
++코드와 READ_ONCE() 매크로 내부에서를 제외하고는 smp_read_barrier_depends() 가
++사용되지 않아야 함을 알아두시기 바랍니다.
+ 
+ 
+ 캐시 일관성 VS DMA
+-- 
+2.5.2
