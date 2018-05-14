@@ -1,77 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752693AbeENJsF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 05:48:05 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38348 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752611AbeENJsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 05:48:01 -0400
-From: Mark Rutland <mark.rutland@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
-        dave.martin@arm.com, james.morse@arm.com, linux@dominikbrodowski.net,
-        linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, viro@zeniv.linux.org.uk, will.deacon@arm.com
-Subject: [PATCH 15/18] arm64: use {COMPAT,}SYSCALL_DEFINE0 for sigreturn
-Date: Mon, 14 May 2018 10:46:37 +0100
-Message-Id: <20180514094640.27569-16-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180514094640.27569-1-mark.rutland@arm.com>
-References: <20180514094640.27569-1-mark.rutland@arm.com>
+        id S1752717AbeENJtH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 05:49:07 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38306 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752076AbeENJtD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 05:49:03 -0400
+X-Google-Smtp-Source: AB8JxZroqPbuT1jPi33Qsx8gpJMDPKU+9CteKrDoCApu7+gWk0cr2j5I8uaRlVH3uaDlaJXDbaFO/g==
+Date: Mon, 14 May 2018 11:49:00 +0200
+From: Niklas =?iso-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, horms@verge.net.au,
+        geert@glider.be, magnus.damm@gmail.com, robh+dt@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: draak: Describe HDMI input
+Message-ID: <20180514094900.GF30519@bigcity.dyn.berto.se>
+References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
+ <1526032802-14376-4-git-send-email-jacopo+renesas@jmondi.org>
+ <20180513125755.GQ18974@bigcity.dyn.berto.se>
+ <26780153.JLo9OE30iv@avalon>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <26780153.JLo9OE30iv@avalon>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't currently annotate our various sigreturn functions as syscalls,
-as we need to do to use pt_regs syscall wrappers.
+Hi Laurent,
 
-Let's mark them as real syscalls.
+On 2018-05-14 05:49:41 +0300, Laurent Pinchart wrote:
 
-For compat_sys_sigreturn and compat_sys_rt_sigreturn, this changes the
-return type from int to long, matching the prototypes in sys32.c.
+[snip]
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
----
- arch/arm64/kernel/signal.c   | 2 +-
- arch/arm64/kernel/signal32.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+> > > +&vin4 {
+> > > +	pinctrl-0 = <&vin4_pins>;
+> > > +	pinctrl-names = "default";
+> > > +
+> > > +	status = "okay";
+> > > +
+> > > +	ports {
+> > > +		#address-cells = <1>;
+> > > +		#size-cells = <0>;
+> > > +
+> > > +		port@0 {
+> > > +			reg = <0>;
+> > > +
+> > > +			vin4_in: endpoint {
+> > > +				hsync-active = <0>;
+> > > +				vsync-active = <0>;
+> > 
+> > Comparing this to the Gen2 bindings some properties are missing,
+> > 
+> > bus-width = <24>;
+> > pclk-sample = <1>;
+> > data-active = <1>;
+> > 
+> > This is not a big deal as the VIN driver don't use these properties so
+> > no functional change should come of this but still a difference.
+> 
+> I think the VIN DT bindings should be updated to explicitly list the endpoint 
+> properties that are mandatory, optional, or not allowed.
 
-diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index caa7a68cf2d2..04a26dcbea32 100644
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -538,7 +538,7 @@ static int restore_sigframe(struct pt_regs *regs,
- 	return err;
- }
- 
--asmlinkage long sys_rt_sigreturn(void)
-+SYSCALL_DEFINE0(rt_sigreturn)
- {
- 	struct pt_regs *regs = current_pt_regs();
- 	struct rt_sigframe __user *frame;
-diff --git a/arch/arm64/kernel/signal32.c b/arch/arm64/kernel/signal32.c
-index cb10588a7cb2..1948566dcccf 100644
---- a/arch/arm64/kernel/signal32.c
-+++ b/arch/arm64/kernel/signal32.c
-@@ -282,7 +282,7 @@ static int compat_restore_sigframe(struct pt_regs *regs,
- 	return err;
- }
- 
--asmlinkage int compat_sys_sigreturn(void)
-+COMPAT_SYSCALL_DEFINE0(sigreturn)
- {
- 	struct pt_regs *regs = current_pt_regs();
- 	struct compat_sigframe __user *frame;
-@@ -313,7 +313,7 @@ asmlinkage int compat_sys_sigreturn(void)
- 	return 0;
- }
- 
--asmlinkage int compat_sys_rt_sigreturn(void)
-+COMPAT_SYSCALL_DEFINE0(rt_sigreturn)
- {
- 	struct pt_regs *regs = current_pt_regs();
- 	struct compat_rt_sigframe __user *frame;
+I think it's documented as it reference video-interfaces.txt which lists 
+all these properties as optional. And in deed they are all optional.  If 
+the VIN driver makes use of all the optional ones is another matter. How 
+do we know that the remote subdevice is not looking at its remote 
+endpoint for bus parameters not considered by the rcar-vin driver?
+
+The thing is that the rcar-vin driver only looks at the remote endpoint 
+for these properties and ignores the on its local endpoint. Maybe some 
+v4l2 framework change is needed here to make sure the bus properties are 
+the same on both endpoints of a link. But I fear such a change would 
+break a lot of stuff.
+
 -- 
-2.11.0
+Regards,
+Niklas Söderlund
