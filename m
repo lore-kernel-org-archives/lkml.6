@@ -1,111 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752076AbeENDNK (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 23:13:10 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:57679 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752019AbeENDNJ (ORCPT
+        id S1752305AbeENDPO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 23:15:14 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:46354 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752280AbeENDPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 23:13:09 -0400
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: namhyung@kernel.org
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date: Mon, 14 May 2018 12:13:22 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>, Joel Fernandes <joelaf@google.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>, linux-rt-users@vger.kernel.org,
-        kernel-team@lge.com
-Subject: Re: [RFC][PATCH 06/10] tracing: Add trigger file for trace_markers
- tracefs/ftrace/print
-Message-ID: <20180514031322.GB9220@sejong>
-References: <20180511194927.190877137@goodmis.org>
- <20180511195340.876528094@goodmis.org>
+        Sun, 13 May 2018 23:15:12 -0400
+Date: Mon, 14 May 2018 04:15:09 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Ian Kent <raven@themaw.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        autofs mailing list <autofs@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 01/10] autofs4 - merge auto_fs.h and auto_fs4.h
+Message-ID: <20180514031509.GC30522@ZenIV.linux.org.uk>
+References: <152626703024.28589.9571964661718767929.stgit@pluto.themaw.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180511195340.876528094@goodmis.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <152626703024.28589.9571964661718767929.stgit@pluto.themaw.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 03:49:33PM -0400, Steven Rostedt wrote:
-> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> 
-> Allow writing to the trace_markers file initiate triggers defined in
-> tracefs/ftrace/print/trigger file. This will allow of user space to trigger
-> the same type of triggers (including histograms) that the trace events use.
-> 
-> Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-> Cc: Clark Williams <williams@redhat.com>
-> Cc: Karim Yaghmour <karim.yaghmour@opersys.com>
-> Cc: Brendan Gregg <bgregg@netflix.com>
-> Suggested-by: Joel Fernandes <joelaf@google.com>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
+On Mon, May 14, 2018 at 11:03:50AM +0800, Ian Kent wrote:
+> The autofs module has long since been removed so there's no need to have
+> two separate include files for autofs.
 
-[SNIP]
-> diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-> index e3a658bac10f..de3fce14cd00 100644
-> --- a/kernel/trace/trace_entries.h
-> +++ b/kernel/trace/trace_entries.h
-> @@ -230,7 +230,7 @@ FTRACE_ENTRY(bprint, bprint_entry,
->  	FILTER_OTHER
->  );
->  
-> -FTRACE_ENTRY(print, print_entry,
-> +FTRACE_ENTRY_REG(print, print_entry,
->  
->  	TRACE_PRINT,
->  
-> @@ -242,7 +242,9 @@ FTRACE_ENTRY(print, print_entry,
->  	F_printk("%ps: %s",
->  		 (void *)__entry->ip, __entry->buf),
->  
-> -	FILTER_OTHER
-> +	FILTER_OTHER,
-> +
-> +	 ftrace_event_register
+Umm...  Why does fs/compat_ioctl.c need either include, actually?
 
-I wonder this is still needed since you added __find_event_file()
-which ignores the reg field.  Maybe I'm missing something..
+> --- a/fs/compat_ioctl.c
+> +++ b/fs/compat_ioctl.c
+> @@ -39,7 +39,6 @@
+>  #include <linux/if_pppox.h>
+>  #include <linux/mtio.h>
+>  #include <linux/auto_fs.h>
+> -#include <linux/auto_fs4.h>
+>  #include <linux/tty.h>
+>  #include <linux/vt_kern.h>
+>  #include <linux/fb.h>
 
-Anyway it looks whitespace damaged.
-
-Thanks,
-Namhyung
-
-
->  );
->  
->  FTRACE_ENTRY(raw_data, raw_data_entry,
-> diff --git a/kernel/trace/trace_export.c b/kernel/trace/trace_export.c
-> index d842f1eadfe5..45630a76ed3a 100644
-> --- a/kernel/trace/trace_export.c
-> +++ b/kernel/trace/trace_export.c
-> @@ -14,6 +14,13 @@
->  
->  #include "trace_output.h"
->  
-> +/* Stub function for events with triggers */
-> +static int ftrace_event_register(struct trace_event_call *call,
-> +				 enum trace_reg type, void *data)
-> +{
-> +	return 0;
-> +}
-> +
->  #undef TRACE_SYSTEM
->  #define TRACE_SYSTEM	ftrace
->  
-> -- 
-> 2.17.0
-> 
-> 
+AFAICS, we can just delete both.  Matter of fact, a *lot* of those includes are
+pointless nowadays...
