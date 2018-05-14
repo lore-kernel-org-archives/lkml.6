@@ -1,80 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752766AbeENV27 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:28:59 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34630 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752013AbeENV25 (ORCPT
+        id S1752736AbeENV2l (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:28:41 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:39373 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752530AbeENVZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:28:57 -0400
-Subject: Re: [PATCH v4 0/6] devfreq: rk3399_dmc: improve rk3399_dmc driver and
- it's documentation
-To: myungjoo.ham@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "dbasehore@chromium.org" <dbasehore@chromium.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dianders@google.com" <dianders@google.com>,
-        "groeck@chromium.org" <groeck@chromium.org>,
-        "kernel@collabora.com" <kernel@collabora.com>,
-        "hl@rock-chips.com" <hl@rock-chips.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180509125749.31318-1-enric.balletbo@collabora.com>
- <CGME20180509125801epcas2p29e23003ce1111e20bfcb3bdc5db94372@epcms1p4>
- <20180514103218epcms1p487dcebca93bacca64eca1775b2cd826d@epcms1p4>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <6d9eef64-1ebf-4c4b-dab5-f0cd00ff14f0@collabora.com>
-Date: Mon, 14 May 2018 23:28:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 14 May 2018 17:25:34 -0400
+X-Google-Smtp-Source: AB8JxZreQibFL9XgKd9G7+0XtNhEZADKQkCinDJpypfQAFoJODJ7U2RSNBnXiYWBgAMya3fJw/XV5PhCpqDuFgBkMJc=
 MIME-Version: 1.0
-In-Reply-To: <20180514103218epcms1p487dcebca93bacca64eca1775b2cd826d@epcms1p4>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180511162028.20616-6-brgl@bgdev.pl>
+References: <20180511162028.20616-1-brgl@bgdev.pl> <20180511162028.20616-6-brgl@bgdev.pl>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 May 2018 23:25:33 +0200
+X-Google-Sender-Auth: MJ3E1iZfbQYRSuIs0WhZ4h6i45o
+Message-ID: <CAMuHMdX6hvFgOqKopY+CLiktU-XeVZbAXcFma7r7RAXf3+oJbA@mail.gmail.com>
+Subject: Re: [PATCH 05/12] platform: export platform_device_release() locally
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>, Johan Hovold <johan@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, May 11, 2018 at 6:20 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> The early platform driver mechanism will use this function as the
+> device release callback. Make it available in drivers/base.
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On 14/05/18 12:32, MyungJoo Ham wrote:
->> Dear all,
->>
->> These patches is an attempt to improve a little bit the rk3399_dmc
->> driver and it's documentation in order to have all in a better shape for
->> a future work I am doing. My final intention is add ddrfreq support for
->> rockchip drm driver, but the patches for this are still
->> work-in-progress. So let's start with this first patchset that is
->> basically some fixes/improvements for the rk3399_dmc driver.
->>
->> The patches apply on top of current 4.17-rc3.
->>
->> Best regards,
->> Enric
->>
-> 
-> Dear Enric,
-> 
-> It appears that this patchset is ready to be applied.
-> 
-> Is "dt-binding" part going to be merged separatedly?
-> Or may I handle all the 6 commits? (assuming the three dt-binding got acks from dt maintainers)
-> 
+Gr{oetje,eeting}s,
 
-In my experience (based on other patches I sent for other subsystems) the
-dt-bindings goes through the same tree as the other patches. So, ideally, you
-should handle all the 6 commits, but this is a question for the DT maintainers I
-guess. Maybe Rob or Mark can give us a clue?
+                        Geert
 
-Thanks,
- Enric
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> Cheers,
-> MyungJoo
-> 
-> 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
