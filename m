@@ -1,312 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752935AbeENMGG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:06:06 -0400
-Received: from regular1.263xmail.com ([211.150.99.136]:59783 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752288AbeENMGE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:06:04 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-IP-DOMAINF: 1
-X-RL-SENDER: david.wu@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: david.wu@rock-chips.com
-X-UNIQUE-TAG: <e33cac8f0be5a8f5f6e52677acd8845c>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: David Wu <david.wu@rock-chips.com>
-To: heiko@sntech.de, linus.walleij@linaro.org
-Cc: huangtao@rock-chips.com, linux-rockchip@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Wu <david.wu@rock-chips.com>
-Subject: [PATCH] pinctrl: rockchip: Add pinctrl support for PX30
-Date: Mon, 14 May 2018 19:59:51 +0800
-Message-Id: <1526299191-1140-1-git-send-email-david.wu@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
+        id S1753119AbeENMGQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:06:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:41072 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753055AbeENMGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 08:06:15 -0400
+Date: Mon, 14 May 2018 13:06:10 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Dave Martin <Dave.Martin@arm.com>, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+        james.morse@arm.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 02/18] arm64: move SCTLR_EL{1,2} assertions to
+ <asm/sysreg.h>
+Message-ID: <20180514120609.3vd2s4l3rknd2b3e@lakrids.cambridge.arm.com>
+References: <20180514094640.27569-1-mark.rutland@arm.com>
+ <20180514094640.27569-3-mark.rutland@arm.com>
+ <20180514100053.GX7753@e103592.cambridge.arm.com>
+ <20180514100858.4xjp5d3axbyy74ap@lakrids.cambridge.arm.com>
+ <20180514112036.GI7753@e103592.cambridge.arm.com>
+ <8d66d231-d8a2-07c1-6c5b-24c9474c851f@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8d66d231-d8a2-07c1-6c5b-24c9474c851f@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are 4 banks (GPIO0 ~ GPIO3), bank0 is in PD_PMU
-subsystem, bank1/bank2/bank3 are in PD_BUS subsystem.
+On Mon, May 14, 2018 at 12:56:09PM +0100, Robin Murphy wrote:
+> On 14/05/18 12:20, Dave Martin wrote:
+> > On Mon, May 14, 2018 at 11:08:59AM +0100, Mark Rutland wrote:
+> > > On Mon, May 14, 2018 at 11:00:53AM +0100, Dave Martin wrote:
+> > > > On Mon, May 14, 2018 at 10:46:24AM +0100, Mark Rutland wrote:
+> > > > > -/* Check all the bits are accounted for */
+> > > > > -#define SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != ~0)
+> > > > > -
+> > > > > +#if (SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != 0xffffffff
+> > > > > +#error "Inconsistent SCTLR_EL2 set/clear bits"
+> > > > > +#endif
+> > > > 
+> > > > Can we have a comment on the != 0xffffffff versus != ~0 here?
+> > > > 
+> > > > The subtle differences in evaluation semantics between #if and
+> > > > other contexts here may well trip people up during maintenance...
+> > > 
+> > > Do you have any suggestion as to the wording?
+> > > 
+> > > I'm happy to add a comment, but I don't really know what to say.
+> > 
+> > 
+> > How about the following?
+> > 
+> > /* Watch out for #if evaluation rules: ~0 is not ~(int)0! */
+> 
+> Or, more formally, perhaps something even less vague like "Note that in
+> preprocessor arithmetic these constants are effectively of type intmax_t,
+> which is 64-bit, thus ~0 is not what we want."
 
-Signed-off-by: David Wu <david.wu@rock-chips.com>
----
- .../bindings/pinctrl/rockchip,pinctrl.txt          |   1 +
- drivers/pinctrl/pinctrl-rockchip.c                 | 194 +++++++++++++++++++++
- 2 files changed, 195 insertions(+)
+I'll drop something in the commit message to that effect, rather than a
+comment.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-index a01a3b8..0919db2 100644
---- a/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/rockchip,pinctrl.txt
-@@ -20,6 +20,7 @@ defined as gpio sub-nodes of the pinmux controller.
- 
- Required properties for iomux controller:
-   - compatible: should be
-+		"rockchip,px30-pinctrl":    for Rockchip PX30
- 		"rockchip,rv1108-pinctrl":  for Rockchip RV1108
- 		"rockchip,rk2928-pinctrl":  for Rockchip RK2928
- 		"rockchip,rk3066a-pinctrl": for Rockchip RK3066a
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 3924779..88d4077 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -59,6 +59,7 @@
- #define GPIO_LS_SYNC		0x60
- 
- enum rockchip_pinctrl_type {
-+	PX30,
- 	RV1108,
- 	RK2928,
- 	RK3066B,
-@@ -701,6 +702,66 @@ static void rockchip_get_recalced_mux(struct rockchip_pin_bank *bank, int pin,
- 	*bit = data->bit;
- }
- 
-+static struct rockchip_mux_route_data px30_mux_route_data[] = {
-+	{
-+		/* cif-d2m0 */
-+		.bank_num = 2,
-+		.pin = 0,
-+		.func = 1,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 7),
-+	}, {
-+		/* cif-d2m1 */
-+		.bank_num = 3,
-+		.pin = 3,
-+		.func = 3,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 7) | BIT(7),
-+	}, {
-+		/* pdm-m0 */
-+		.bank_num = 3,
-+		.pin = 22,
-+		.func = 2,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 8),
-+	}, {
-+		/* pdm-m1 */
-+		.bank_num = 2,
-+		.pin = 22,
-+		.func = 1,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 8) | BIT(8),
-+	}, {
-+		/* uart2-rxm0 */
-+		.bank_num = 1,
-+		.pin = 27,
-+		.func = 2,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 10),
-+	}, {
-+		/* uart2-rxm1 */
-+		.bank_num = 2,
-+		.pin = 14,
-+		.func = 2,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 10) | BIT(10),
-+	}, {
-+		/* uart3-rxm0 */
-+		.bank_num = 0,
-+		.pin = 17,
-+		.func = 2,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 9),
-+	}, {
-+		/* uart3-rxm1 */
-+		.bank_num = 1,
-+		.pin = 15,
-+		.func = 2,
-+		.route_offset = 0x184,
-+		.route_val = BIT(16 + 9) | BIT(9),
-+	},
-+};
-+
- static struct rockchip_mux_route_data rk3128_mux_route_data[] = {
- 	{
- 		/* spi-0 */
-@@ -1202,6 +1263,97 @@ static int rockchip_set_mux(struct rockchip_pin_bank *bank, int pin, int mux)
- 	return ret;
- }
- 
-+#define PX30_PULL_PMU_OFFSET		0x10
-+#define PX30_PULL_GRF_OFFSET		0x60
-+#define PX30_PULL_BITS_PER_PIN		2
-+#define PX30_PULL_PINS_PER_REG		8
-+#define PX30_PULL_BANK_STRIDE		16
-+
-+static void px30_calc_pull_reg_and_bit(struct rockchip_pin_bank *bank,
-+				       int pin_num, struct regmap **regmap,
-+				       int *reg, u8 *bit)
-+{
-+	struct rockchip_pinctrl *info = bank->drvdata;
-+
-+	/* The first 32 pins of the first bank are located in PMU */
-+	if (bank->bank_num == 0) {
-+		*regmap = info->regmap_pmu;
-+		*reg = PX30_PULL_PMU_OFFSET;
-+	} else {
-+		*regmap = info->regmap_base;
-+		*reg = PX30_PULL_GRF_OFFSET;
-+
-+		/* correct the offset, as we're starting with the 2nd bank */
-+		*reg -= 0x10;
-+		*reg += bank->bank_num * PX30_PULL_BANK_STRIDE;
-+	}
-+
-+	*reg += ((pin_num / PX30_PULL_PINS_PER_REG) * 4);
-+	*bit = (pin_num % PX30_PULL_PINS_PER_REG);
-+	*bit *= PX30_PULL_BITS_PER_PIN;
-+}
-+
-+#define PX30_DRV_PMU_OFFSET		0x20
-+#define PX30_DRV_GRF_OFFSET		0xf0
-+#define PX30_DRV_BITS_PER_PIN		2
-+#define PX30_DRV_PINS_PER_REG		8
-+#define PX30_DRV_BANK_STRIDE		16
-+
-+static void px30_calc_drv_reg_and_bit(struct rockchip_pin_bank *bank,
-+				      int pin_num, struct regmap **regmap,
-+				      int *reg, u8 *bit)
-+{
-+	struct rockchip_pinctrl *info = bank->drvdata;
-+
-+	/* The first 32 pins of the first bank are located in PMU */
-+	if (bank->bank_num == 0) {
-+		*regmap = info->regmap_pmu;
-+		*reg = PX30_DRV_PMU_OFFSET;
-+	} else {
-+		*regmap = info->regmap_base;
-+		*reg = PX30_DRV_GRF_OFFSET;
-+
-+		/* correct the offset, as we're starting with the 2nd bank */
-+		*reg -= 0x10;
-+		*reg += bank->bank_num * PX30_DRV_BANK_STRIDE;
-+	}
-+
-+	*reg += ((pin_num / PX30_DRV_PINS_PER_REG) * 4);
-+	*bit = (pin_num % PX30_DRV_PINS_PER_REG);
-+	*bit *= PX30_DRV_BITS_PER_PIN;
-+}
-+
-+#define PX30_SCHMITT_PMU_OFFSET			0x38
-+#define PX30_SCHMITT_GRF_OFFSET			0xc0
-+#define PX30_SCHMITT_PINS_PER_PMU_REG		16
-+#define PX30_SCHMITT_BANK_STRIDE		16
-+#define PX30_SCHMITT_PINS_PER_GRF_REG		8
-+
-+static int px30_calc_schmitt_reg_and_bit(struct rockchip_pin_bank *bank,
-+					 int pin_num,
-+					 struct regmap **regmap,
-+					 int *reg, u8 *bit)
-+{
-+	struct rockchip_pinctrl *info = bank->drvdata;
-+	int pins_per_reg;
-+
-+	if (bank->bank_num == 0) {
-+		*regmap = info->regmap_pmu;
-+		*reg = PX30_SCHMITT_PMU_OFFSET;
-+		pins_per_reg = PX30_SCHMITT_PINS_PER_PMU_REG;
-+	} else {
-+		*regmap = info->regmap_base;
-+		*reg = PX30_SCHMITT_GRF_OFFSET;
-+		pins_per_reg = PX30_SCHMITT_PINS_PER_GRF_REG;
-+		*reg += (bank->bank_num  - 1) * PX30_SCHMITT_BANK_STRIDE;
-+	}
-+
-+	*reg += ((pin_num / pins_per_reg) * 4);
-+	*bit = pin_num % pins_per_reg;
-+
-+	return 0;
-+}
-+
- #define RV1108_PULL_PMU_OFFSET		0x10
- #define RV1108_PULL_OFFSET		0x110
- #define RV1108_PULL_PINS_PER_REG	8
-@@ -1798,6 +1950,7 @@ static int rockchip_get_pull(struct rockchip_pin_bank *bank, int pin_num)
- 		return !(data & BIT(bit))
- 				? PIN_CONFIG_BIAS_PULL_PIN_DEFAULT
- 				: PIN_CONFIG_BIAS_DISABLE;
-+	case PX30:
- 	case RV1108:
- 	case RK3188:
- 	case RK3288:
-@@ -1841,6 +1994,7 @@ static int rockchip_set_pull(struct rockchip_pin_bank *bank,
- 			data |= BIT(bit);
- 		ret = regmap_write(regmap, reg, data);
- 		break;
-+	case PX30:
- 	case RV1108:
- 	case RK3188:
- 	case RK3288:
-@@ -2103,6 +2257,7 @@ static bool rockchip_pinconf_pull_valid(struct rockchip_pin_ctrl *ctrl,
- 					pull == PIN_CONFIG_BIAS_DISABLE);
- 	case RK3066B:
- 		return pull ? false : true;
-+	case PX30:
- 	case RV1108:
- 	case RK3188:
- 	case RK3288:
-@@ -3237,6 +3392,43 @@ static int rockchip_pinctrl_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static struct rockchip_pin_bank px30_pin_banks[] = {
-+	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", IOMUX_SOURCE_PMU,
-+					     IOMUX_SOURCE_PMU,
-+					     IOMUX_SOURCE_PMU,
-+					     IOMUX_SOURCE_PMU
-+			    ),
-+	PIN_BANK_IOMUX_FLAGS(1, 32, "gpio1", IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT
-+			    ),
-+	PIN_BANK_IOMUX_FLAGS(2, 32, "gpio2", IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT
-+			    ),
-+	PIN_BANK_IOMUX_FLAGS(3, 32, "gpio3", IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT,
-+					     IOMUX_WIDTH_4BIT
-+			    ),
-+};
-+
-+static struct rockchip_pin_ctrl px30_pin_ctrl = {
-+		.pin_banks		= px30_pin_banks,
-+		.nr_banks		= ARRAY_SIZE(px30_pin_banks),
-+		.label			= "PX30-GPIO",
-+		.type			= PX30,
-+		.grf_mux_offset		= 0x0,
-+		.pmu_mux_offset		= 0x0,
-+		.iomux_routes		= px30_mux_route_data,
-+		.niomux_routes		= ARRAY_SIZE(px30_mux_route_data),
-+		.pull_calc_reg		= px30_calc_pull_reg_and_bit,
-+		.drv_calc_reg		= px30_calc_drv_reg_and_bit,
-+		.schmitt_calc_reg	= px30_calc_schmitt_reg_and_bit,
-+};
-+
- static struct rockchip_pin_bank rv1108_pin_banks[] = {
- 	PIN_BANK_IOMUX_FLAGS(0, 32, "gpio0", IOMUX_SOURCE_PMU,
- 					     IOMUX_SOURCE_PMU,
-@@ -3545,6 +3737,8 @@ static struct rockchip_pin_ctrl rk3399_pin_ctrl = {
- };
- 
- static const struct of_device_id rockchip_pinctrl_dt_match[] = {
-+	{ .compatible = "rockchip,px30-pinctrl",
-+		.data = &px30_pin_ctrl },
- 	{ .compatible = "rockchip,rv1108-pinctrl",
- 		.data = &rv1108_pin_ctrl },
- 	{ .compatible = "rockchip,rk2928-pinctrl",
--- 
-2.7.4
+A comment will end up terse and vague or large and bloatsome (and
+redundant as we have this pattern twice).
+
+Anyone attempting to "clean" this up will find things break, and they can
+look at the git log to find out why it is the way it is...
+
+Thanks,
+Mark.
