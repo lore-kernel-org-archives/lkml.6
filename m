@@ -1,71 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeENGVN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 02:21:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751626AbeENGVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 02:21:12 -0400
-Date: Mon, 14 May 2018 09:21:09 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Tarick Bedeir <tarick@google.com>
-Cc: tariqt@mellanox.com, gthelen@google.com, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] net/mlx4_core: Fix error handling in
- mlx4_init_port_info.
-Message-ID: <20180514062109.GK10381@mtr-leonro.mtl.com>
-References: <20180513233845.135290-1-tarick@google.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Y1L3PTX8QE8cb2T+"
-Content-Disposition: inline
-In-Reply-To: <20180513233845.135290-1-tarick@google.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+        id S1751998AbeENG1x (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 02:27:53 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:38971 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751364AbeENG1w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 02:27:52 -0400
+X-Google-Smtp-Source: AB8JxZqTvN09lWBPhPVUWDoqQVn+YztFtopyV6gqIuqPd6CZPBXudAENZx4ViFMYq+SS9ThJvJahWA==
+From: Oleksandr Andrushchenko <andr2000@gmail.com>
+To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, jgross@suse.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, perex@perex.cz,
+        tiwai@suse.com
+Cc: andr2000@gmail.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH v3 0/6] ALSA: xen-front: Add Xen para-virtualized frontend driver
+Date: Mon, 14 May 2018 09:27:36 +0300
+Message-Id: <20180514062742.25879-1-andr2000@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
---Y1L3PTX8QE8cb2T+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please note: this patch series depends on [3].
 
-On Sun, May 13, 2018 at 04:38:45PM -0700, Tarick Bedeir wrote:
-> Avoid exiting the function with a lingering sysfs file (if the first
-> call to device_create_file() fails while the second succeeds), and avoid
-> calling devlink_port_unregister() twice.
->
-> In other words, either mlx4_init_port_info() succeeds and returns zero, or
-> it fails, returns non-zero, and requires no cleanup.
->
-> Fixes: 096335b3f983 ("mlx4_core: Allow dynamic MTU configuration for IB
-> ports")
+This patch series adds support for Xen [1] para-virtualized
+sound frontend driver. It implements the protocol from
+include/xen/interface/io/sndif.h with the following limitations:
+- mute/unmute is not supported
+- get/set volume is not supported
+Volume control is not supported for the reason that most of the
+use-cases (at the moment) are based on scenarious where
+unprivileged OS (e.g. Android, AGL etc) use software mixers.
 
-Please don't break "Fixes" lines, it complicates "grep".
+Both capture and playback are supported.
 
-IMHO, general cleanup exit point is needed in this function (goto ...),
-but your fix is good enough too. Thanks for doing it.
+Corresponding backend, implemented as a user-space application, can be
+found at [2].
 
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Thank you,
+Oleksandr
 
---Y1L3PTX8QE8cb2T+
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes since v2:
+*****************
 
------BEGIN PGP SIGNATURE-----
+1. Kconfig: select SND_PCM instead of depends
+2. Changed spinlock to mutex for protecting the rings since
+   all the interrupts are threaded. Make those per event channel,
+   not a single global one. This also addresses Juergen's comment
+   on calling xen_snd_front_alsa_handle_cur_pos.
+3. Fixed page leak on error while allocating an event channel
+4. Fixed comments to start from a capital letter
+5. Performed XEN_PAGE_SIZE != PAGE_SIZE check after xen_domain
+   and xen_has_pv_devices checks
+6. Changed driver specific structures names not to mislead with ALSA
+   structs
+7. Added comments on ring counters and overflows
+8. Added MAINTAINERS entry
 
-iQIcBAEBAgAGBQJa+SrVAAoJEORje4g2clinP+0P/2WCHSxqo1z6MnkYwbN24ix9
-hPxeRmGlfBBAIEVt54BFI248Y2pxeOpRmtct1SktOeidkR2sqfIvTwGuuUBq8Iw9
-gun9qfwgWXciGYNl/VR4udy65dwcd/YuRoeYbvpvFm3/7zYKZXKoXl1vEp9CvT0t
-Lo2MEiaSjTUSo9wzzJBfvppeqsoI+h5vOx+zmsHjm2b3CjuikiqQ5/wBT410glx1
-0EV5EY0Z0zfQROarzJViL2nn3Zeoai9VFfrVh2ujcZ9yOjF/K/GyO3ovE/h1DuhD
-3GiMPEh7s1Ua1w8x1VyIf7oRZkIOSRpOvc1vclwF8sMD4eIwxtTpLs/DaaNB4lCi
-YU3/hOfwfL3kAne79MTaK6PJPh3zVoeBFhwlu1xIkXR5D3VbmGnzU94iU7hzRiEN
-90+majc6aurhetVzUN0NxSXTaRagOZ7Ae2vmCchHxSTczNe/8e1pGNOwef4h7HH6
-QKQ5OHldp10A9s1tDh+wr2xt5VZsL1GKNfRVDXH/0H4nnBOyIopOkVtVbnSNUvYr
-WW78FSCFIsDPRH9kcJf/XFzhusY+9Ev4z6+lJbQoRfR0uOGEMtttJfIIIgEfuW1b
-W4AjihHqMeacQXOXRSevTtTnmpXJZm9rGd8kDZ1BqiCJo5PH+8Vl8uMQs8L9Tim+
-/8CQJ23NPZwyqyccy4xj
-=7qEX
------END PGP SIGNATURE-----
+Changes since v1:
+*****************
 
---Y1L3PTX8QE8cb2T+--
+1. Moved driver from sound/drivers to sound/xen
+
+2. Coding style changes to better meet Linux Kernel
+
+3. Added explicit back and front synchronization
+   In order to provide explicit synchronization between backend and
+   frontend the following changes are introduced in the protocol:
+    - add new ring buffer for sending asynchronous events from
+      backend to frontend to report number of bytes played by the
+      frontend (XENSND_EVT_CUR_POS)
+    - introduce trigger events for playback control: start/stop/pause/resume
+    - add "req-" prefix to event-channel and ring-ref to unify naming
+      of the Xen event channels for requests and events
+
+4. Added explicit back and front parameter negotiation
+   In order to provide explicit stream parameter negotiation between
+   backend and frontend the following changes are introduced in the protocol:
+   add XENSND_OP_HW_PARAM_QUERY request to read/update
+   configuration space for the parameters given: request passes
+   desired parameter's intervals/masks and the response to this request
+   returns allowed min/max intervals/masks to be used.
+
+[1] https://xenproject.org/
+[2] https://github.com/xen-troops/snd_be
+[3] https://lkml.org/lkml/2018/4/12/522
+
+Oleksandr Andrushchenko (6):
+  ALSA: xen-front: Introduce Xen para-virtualized sound frontend driver
+  ALSA: xen-front: Read sound driver configuration from Xen store
+  ALSA: xen-front: Implement Xen event channel handling
+  ALSA: xen-front: Implement handling of shared buffers
+  ALSA: xen-front: Implement ALSA virtual sound driver
+  MAINTAINERS: Add ALSA: xen-front: maintainer entry
+
+ MAINTAINERS                       |   7 +
+ sound/Kconfig                     |   2 +
+ sound/Makefile                    |   2 +-
+ sound/xen/Kconfig                 |  10 +
+ sound/xen/Makefile                |   9 +
+ sound/xen/xen_snd_front.c         | 397 +++++++++++++++
+ sound/xen/xen_snd_front.h         |  54 ++
+ sound/xen/xen_snd_front_alsa.c    | 821 ++++++++++++++++++++++++++++++
+ sound/xen/xen_snd_front_alsa.h    |  23 +
+ sound/xen/xen_snd_front_cfg.c     | 517 +++++++++++++++++++
+ sound/xen/xen_snd_front_cfg.h     |  46 ++
+ sound/xen/xen_snd_front_evtchnl.c | 496 ++++++++++++++++++
+ sound/xen/xen_snd_front_evtchnl.h |  95 ++++
+ sound/xen/xen_snd_front_shbuf.c   | 193 +++++++
+ sound/xen/xen_snd_front_shbuf.h   |  36 ++
+ 15 files changed, 2707 insertions(+), 1 deletion(-)
+ create mode 100644 sound/xen/Kconfig
+ create mode 100644 sound/xen/Makefile
+ create mode 100644 sound/xen/xen_snd_front.c
+ create mode 100644 sound/xen/xen_snd_front.h
+ create mode 100644 sound/xen/xen_snd_front_alsa.c
+ create mode 100644 sound/xen/xen_snd_front_alsa.h
+ create mode 100644 sound/xen/xen_snd_front_cfg.c
+ create mode 100644 sound/xen/xen_snd_front_cfg.h
+ create mode 100644 sound/xen/xen_snd_front_evtchnl.c
+ create mode 100644 sound/xen/xen_snd_front_evtchnl.h
+ create mode 100644 sound/xen/xen_snd_front_shbuf.c
+ create mode 100644 sound/xen/xen_snd_front_shbuf.h
+
+-- 
+2.17.0
