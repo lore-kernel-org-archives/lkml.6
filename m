@@ -1,37 +1,42 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqzCNmT+uYoXd6+Se9E2gy6FqmWAYA6vn+5ssXmWk64RbcDGAzo7dmwrGxYmit5uxEdgoO/
-ARC-Seal: i=1; a=rsa-sha256; t=1526280845; cv=none;
+X-Google-Smtp-Source: AB8JxZqIFQUWvHOucEoqAejPHnfD0x5TFG1udV1ZXWYVHGGi+WRVyQ467BELl1Mpx3DQBZBUE5VR
+ARC-Seal: i=1; a=rsa-sha256; t=1526280841; cv=none;
         d=google.com; s=arc-20160816;
-        b=hjGA6dWSZOT5XuOZ3qyYnkLEEFtIEsor2rT9lL1BqWLb5F9S3TOEbtVQ1PStFr+JxH
-         thSQxWx1vn+kVPhI7ke9NbOW7xjh08WNu5Q+cFtmFV64Xbyayom8DqX2QU3Otna4gZ1N
-         htqyyveDtiNkv0ApRPvmrdSZ2X8GDdPBcpOXU1UgYZu0E2THX2u6fwsVsmXZ3sPfxoQE
-         ZKcS6ttUkyfdyKtzO5WCUGVo57ptnfwpzUclMtusx7uWzPqvzLhAMBlqiDQ9X7HOTxU8
-         nYUxVcLULh8Vzv/Rt3NdhQm26pCfLj+UD/DSEIPQia1PKxdSXw9KOtoHQDo+s1fTizgR
-         e/+A==
+        b=CnLMXxWJNkD2eGqsvgsQGNuBmoajryUXecmx4nkoNcWNV0l6VAKTj/Zyh0/1icXgZc
+         KmaRlSY7jz6zV7Cr4gZKk2eRJ+mqWNdl1AE6pz9xnCXI0hagBMrP1EkupEMP2fcmOejS
+         Kk3ZKeCtXs+txC5OoGzqscgAyWC01ceIdkihCy+/Gw/z5VK9bsLHl9aYTx/OJgrZhd8d
+         r9RBveH+gxM6wxEIyvYEvXkotFEV3zm5am8hGkLtDcjsc+isVo8nSKII5AS68XqhuiP8
+         TwDIdDUNATtHEYqM/fIiPNCvrCTYkKqAZBOvm6f3GK7+PgefCa4oVYhy6LaUt+SuKIgD
+         IjwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=D+3WTyilwr+JUBjzETGz4vGxy9zDzjobI4StXDRfbKc=;
-        b=DyCJBihnIzw0Q7SCAwHmDJcD9d1DRPkh4MRCSdB1IUVSqPly12Z/hh2UcIBfjh0FhU
-         /07h7p122S4PoeAj3JKMmpqqt2ynZI5CxrDvUZs2sStjQAlClQKWdaYk67i0XFnKeg05
-         8F8e9tzRwKtNbOaEx57ywPqsExWd9/4hU8MssFnciz2mBiE9MObk2+5XIRUiyCRhE71a
-         3UFaZ6D2AgeyhFG6WXqY+4bzPZSGxQ/K8GVgUyJ3SgSy/Kn0qTfbtQl10uezESP4TkGN
-         YmVOcloI2X3PU4ZQwfjcquQbYbB8PCSNTOsGefzWKZIY6D0rFkGU81UypZs194SK3D03
-         b44Q==
+        bh=Si25NuTl6Jekk28W48CjLzhtxxdz4CflCOxl1586Mec=;
+        b=mv2Ij0Dybb+J5TPI9TfJx911Q0FeT1KlXKcojjSpXEnSPtAzCA1t7K5hGVZQESVXrY
+         xSaEVIA7htTxP2aNHXmRuSi8X5MZUQYoHi/VzdAPw/vQrOK0btkqStcFDeIQx6N1hGUb
+         ug43Z7ZRZuN/ir71Bs9jYjojGJVR2GQKEdL2h3gEo95MRf1JtK97RJAqn/+zuukC5RaK
+         39qf6av9yfQ+KpjyIJ00iLE/4CvGko2IqIIghhXYzCqrttKypiaMvVwfDy7rlVJJvpXu
+         03LUgJFYkMgNhvF2Kaoxc3ded75uWB2J9x9JOgb1X+sxgID44uk7uDJCn7ja7SqNkLs3
+         Gz/A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=y3py0vUw;
+       dkim=pass header.i=@kernel.org header.s=default header.b=zudxGalS;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=y3py0vUw;
+       dkim=pass header.i=@kernel.org header.s=default header.b=zudxGalS;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.9 22/36] tracing: Fix regex_match_front() to not over compare the test string
-Date: Mon, 14 May 2018 08:48:56 +0200
-Message-Id: <20180514064805.989102555@linuxfoundation.org>
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Tejun Heo <tj@kernel.org>,
+	syzbot <syzbot+9873874c735f2892e7e9@syzkaller.appspotmail.com>,
+	Dave Chinner <dchinner@redhat.com>,
+	Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 13/36] bdi: Fix oops in wb_workfn()
+Date: Mon, 14 May 2018 08:48:47 +0200
+Message-Id: <20180514064805.274404524@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064804.252823817@linuxfoundation.org>
 References: <20180514064804.252823817@linuxfoundation.org>
@@ -41,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421234253584189?=
-X-GMAIL-MSGID: =?utf-8?q?1600421463851298004?=
+X-GMAIL-THRID: =?utf-8?q?1600421358029134796?=
+X-GMAIL-MSGID: =?utf-8?q?1600421460054028766?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +55,50 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Jan Kara <jack@suse.cz>
 
-commit dc432c3d7f9bceb3de6f5b44fb9c657c9810ed6d upstream.
+commit b8b784958eccbf8f51ebeee65282ca3fd59ea391 upstream.
 
-The regex match function regex_match_front() in the tracing filter logic,
-was fixed to test just the pattern length from testing the entire test
-string. That is, it went from strncmp(str, r->pattern, len) to
-strcmp(str, r->pattern, r->len).
+Syzbot has reported that it can hit a NULL pointer dereference in
+wb_workfn() due to wb->bdi->dev being NULL. This indicates that
+wb_workfn() was called for an already unregistered bdi which should not
+happen as wb_shutdown() called from bdi_unregister() should make sure
+all pending writeback works are completed before bdi is unregistered.
+Except that wb_workfn() itself can requeue the work with:
 
-The issue is that str is not guaranteed to be nul terminated, and if r->len
-is greater than the length of str, it can access more memory than is
-allocated.
+	mod_delayed_work(bdi_wq, &wb->dwork, 0);
 
-The solution is to add a simple test if (len < r->len) return 0.
+and if this happens while wb_shutdown() is waiting in:
 
-Cc: stable@vger.kernel.org
-Fixes: 285caad415f45 ("tracing/filters: Fix MATCH_FRONT_ONLY filter matching")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+	flush_delayed_work(&wb->dwork);
+
+the dwork can get executed after wb_shutdown() has finished and
+bdi_unregister() has cleared wb->bdi->dev.
+
+Make wb_workfn() use wakeup_wb() for requeueing the work which takes all
+the necessary precautions against racing with bdi unregistration.
+
+CC: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+CC: Tejun Heo <tj@kernel.org>
+Fixes: 839a8e8660b6777e7fe4e80af1a048aebe2b5977
+Reported-by: syzbot <syzbot+9873874c735f2892e7e9@syzkaller.appspotmail.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events_filter.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/fs-writeback.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -322,6 +322,9 @@ static int regex_match_full(char *str, s
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1942,7 +1942,7 @@ void wb_workfn(struct work_struct *work)
+ 	}
  
- static int regex_match_front(char *str, struct regex *r, int len)
- {
-+	if (len < r->len)
-+		return 0;
-+
- 	if (strncmp(str, r->pattern, r->len) == 0)
- 		return 1;
- 	return 0;
+ 	if (!list_empty(&wb->work_list))
+-		mod_delayed_work(bdi_wq, &wb->dwork, 0);
++		wb_wakeup(wb);
+ 	else if (wb_has_dirty_io(wb) && dirty_writeback_interval)
+ 		wb_wakeup_delayed(wb);
+ 
