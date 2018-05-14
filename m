@@ -1,31 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752960AbeENLz5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:55:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44751 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752432AbeENLz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:55:56 -0400
-Date: Mon, 14 May 2018 13:55:43 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux/m68k <linux-m68k@vger.kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH] mtd: nand: Fix return type of __DIVIDE() when called
- with 32-bit
-Message-ID: <20180514135543.47bf28a6@bbrezillon>
-In-Reply-To: <20180514134607.5dfb8d51@bbrezillon>
-References: <1526294977-32303-1-git-send-email-geert@linux-m68k.org>
-        <20180514132324.595b63eb@bbrezillon>
-        <CAMuHMdUSHc2o5zXbZje89jo2dxTYv8pzcVSz-gYWh7KdZKwQeA@mail.gmail.com>
-        <20180514134607.5dfb8d51@bbrezillon>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1753032AbeENL4F (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:56:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52528 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752432AbeENLz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 07:55:59 -0400
+Date: Mon, 14 May 2018 13:55:54 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Halil Pasic <pasic@linux.ibm.com>
+Cc: "Dong Jia Shi" <bjsdjshi@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 1/1] s390: vfio-ccw: push down unsupported IDA check
+Message-ID: <20180514135554.29569999.cohuck@redhat.com>
+In-Reply-To: <20180509173647.61367-1-pasic@linux.ibm.com>
+References: <20180509173647.61367-1-pasic@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -33,121 +23,102 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 May 2018 13:46:07 +0200
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+On Wed,  9 May 2018 19:36:47 +0200
+Halil Pasic <pasic@linux.ibm.com> wrote:
 
-> On Mon, 14 May 2018 13:32:30 +0200
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> 
-> > Hi Boris,
-> > 
-> > On Mon, May 14, 2018 at 1:23 PM, Boris Brezillon
-> > <boris.brezillon@bootlin.com> wrote:  
-> > > On Mon, 14 May 2018 12:49:37 +0200
-> > > Geert Uytterhoeven <geert@linux-m68k.org> wrote:    
-> > >> The __DIVIDE() macro checks whether it is called with a 32-bit or 64-bit
-> > >> dividend, to select the appropriate divide-and-round-up routine.
-> > >> As the check uses the ternary operator, the result will always be
-> > >> promoted to a type that can hold both results, i.e. unsigned long long.
-> > >>
-> > >> When using this result in a division on a 32-bit system, this may lead
-> > >> to link errors like:
-> > >>
-> > >>     ERROR: "__udivdi3" [drivers/mtd/nand/raw/nand.ko] undefined!
-> > >>
-> > >> Fix this by casting the result of the 64-bit division to the type of the
-> > >> dividend.
-> > >>
-> > >> Fixes: 8878b126df769831 ("mtd: nand: add ->exec_op() implementation")
-> > >> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > >> ---
-> > >> This fixes the root cause of the link failure seen with
-> > >> m68k/allmodconfig since commit 3057fcef385348fe ("mtd: rawnand: Make
-> > >> sure we wait tWB before polling the STATUS reg").
-> > >>
-> > >> An alternative mitigation was posted as "[PATCH] m68k: Implement
-> > >> ndelay() as an inline function to force type checking/casting"
-> > >> (https://lkml.org/lkml/2018/5/13/102).
-> > >> ---
-> > >>  include/linux/mtd/rawnand.h | 2 +-
-> > >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >>
-> > >> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> > >> index 5dad59b312440a9c..d06dc428ea0102ae 100644
-> > >> --- a/include/linux/mtd/rawnand.h
-> > >> +++ b/include/linux/mtd/rawnand.h
-> > >> @@ -871,7 +871,7 @@ struct nand_op_instr {
-> > >>  #define __DIVIDE(dividend, divisor) ({                                       \
-> > >>       sizeof(dividend) == sizeof(u32) ?                               \
-> > >>               DIV_ROUND_UP(dividend, divisor) :                       \
-> > >> -             DIV_ROUND_UP_ULL(dividend, divisor);                    \
-> > >> +             (__typeof__(dividend))DIV_ROUND_UP_ULL(dividend, divisor); \    
-> > >
-> > > Hm, it's a bit hard to follow when you place the cast here. One could
-> > > wonder why a cast to (__typeof__(dividend)) is needed since
-> > > DIV_ROUND_UP_ULL() already returns a (__typeof__(dividend)) type.    
-> > 
-> > DIV_ROUND_UP_ULL() does not return __typeof__(dividend), but
-> > unsigned long long.  
-> 
-> Except if you entered this branch, that means you passed an unsigned
-> long long dividend (AKA u64), otherwise you would go in DIV_ROUND_UP().
-> Am I missing something?
-> 
-> >   
-> > > How about:
-> > >
-> > >         /*
-> > >          * Cast to type of dividend is needed here to guarantee that the
-> > >          * result won't be an unsigned long long when the dividend is an
-> > >          * unsigned long, which is what the compiler does when it sees a    
-> > 
-> > s/an unsigned long/32-bit/
-> >   
-> > >          * ternary operator with 2 different return types.
-> > >          */
-> > >         (__typeof__(dividend))(sizeof(dividend) == sizeof(u32) ?        \  
-> 
-> To be completely safe and handle cases where dividend is an unsigned
-> short or an unsigned, we should probably have:
-> 
-> 	(__typeof__(dividend))(sizeof(dividend) == sizeof(unsigned long long) ?	\
-> 			       DIV_ROUND_UP_ULL(dividend, divisor) :
-> 			       DIV_ROUND_UP(dividend, divisor));
-> 
-> > >                                DIV_ROUND_UP(dividend, divisor) :        \
-> > >                                DIV_ROUND_UP_ULL(dividend, divisor));    
-> > 
-> > Looks fine to me, too.
-> >   
-> > > Actually, I'm not even sure we care about the truncation that could
-> > > happen on an unsigned long long -> unsigned long cast because the
-> > > delays we express here will anyway be hundreds of nanosecs/millisecs,
-> > > so nothing close to the billions of nanosecs/millisecs you can express
-> > > with an unsigned long.
-> > >
-> > > So, maybe we should just do:
-> > >
-> > >         (unsigned long)(sizeof(dividend) == sizeof(u32) ?               \
-> > >                         DIV_ROUND_UP(dividend, divisor) :               \
-> > >                         DIV_ROUND_UP_ULL(dividend, divisor));
-> > >
-> > > to make things more readable.    
-> > 
-> > That would break callers who pass a 64-bit dividend, and expect to receive
-> > a 64-bit quotient back (on 32-bit systems).
-> > Calling e.g. PSEC_TO_NSEC(1000000000000ULL) is valid, passing the
-> > result to ndelay() isn't ;-)  
-> 
-> Well, theoretically, yes it's possible, in practice, we only ever pass
-> u32 types to PSEC_TO_NSEC() and u64 types to PSEC_TO_MSEC(), so why
-> bother.
+> There is at least one relevant control program (CP) that don't set the
 
-Anyway, will apply your patch with the comment (and the fix you
-suggested). I was just continuing the discussion to point out that we
-don't care that much about the return type here, an u32 would be just
-fine.
+I'd prefer not to talk about 'control program' here, as it is not a
+term commonly used in Linux. Call it 'guest'?
 
-Thanks,
+Also, s/don't/doesn't/
 
-Boris
+
+> IDA flags in the ORB as we would like them, but never uses any IDA. So
+> instead of saying -EOPNOTSUPP when observing an ORB such that a channel
+> program specified by it could be a not supported one, let us say
+> -EOPNOTSUPP only if the channel program is a not supported one.
+> 
+> Of course, the real solution would be doing proper translation for all
+> IDA. This is possible, but given the current code not straight forward.
+
+I agree, this seems useful for now, but we really need to support the
+different ida flags to be fully architecture compliant.
+
+> 
+> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+> Tested-by: Jason J. Herne <jjherne@linux.ibm.com>
+> ---
+> 
+> QEMU counterpart comming soon.
+> ---
+>  drivers/s390/cio/vfio_ccw_cp.c | 19 ++++++++++++++++---
+>  1 file changed, 16 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
+> index 2c7550797ec2..adfff492dc83 100644
+> --- a/drivers/s390/cio/vfio_ccw_cp.c
+> +++ b/drivers/s390/cio/vfio_ccw_cp.c
+> @@ -365,6 +365,9 @@ static void cp_unpin_free(struct channel_program *cp)
+>   * This is the chain length not considering any TICs.
+>   * You need to do a new round for each TIC target.
+>   *
+> + * The program is also validated for absence of not yet supported
+> + * indirect data addressing scenarios.
+> + *
+>   * Returns: the length of the ccw chain or -errno.
+>   */
+>  static int ccwchain_calc_length(u64 iova, struct channel_program *cp)
+> @@ -391,6 +394,14 @@ static int ccwchain_calc_length(u64 iova, struct channel_program *cp)
+>  	do {
+>  		cnt++;
+>  
+> +		/*
+> +		 * 2k byte block IDAWs (fmt1 or fmt2) are not yet supported.
+> +		 * There are however CPs that don't use IDA at all, and can
+> +		 * benefit from not failing until failure is eminent.
+
+The second sentence is confusing (What is 'CP' referring to here?
+'Control program' or struct channel_program?)
+
+What about:
+
+"As we don't want to fail direct addressing even if the orb specified
+one of the unsupported formats, we defer checking for IDAWs in
+unsupported formats to here."
+
+> +		 */
+> +		if ((!cp->orb.cmd.c64 || cp->orb.cmd.i2k) && ccw_is_idal(ccw))
+> +			return -EOPNOTSUPP;
+> +
+>  		if ((!ccw_is_chain(ccw)) && (!ccw_is_tic(ccw)))
+>  			break;
+>  
+> @@ -656,10 +667,8 @@ int cp_init(struct channel_program *cp, struct device *mdev, union orb *orb)
+>  	/*
+>  	 * XXX:
+>  	 * Only support prefetch enable mode now.
+> -	 * Only support 64bit addressing idal.
+> -	 * Only support 4k IDAW.
+>  	 */
+> -	if (!orb->cmd.pfch || !orb->cmd.c64 || orb->cmd.i2k)
+> +	if (!orb->cmd.pfch)
+>  		return -EOPNOTSUPP;
+>  
+>  	INIT_LIST_HEAD(&cp->ccwchain_list);
+> @@ -688,6 +697,10 @@ int cp_init(struct channel_program *cp, struct device *mdev, union orb *orb)
+>  	ret = ccwchain_loop_tic(chain, cp);
+>  	if (ret)
+>  		cp_unpin_free(cp);
+> +	/* It is safe to force: if not set but idals used
+> +	 * ccwchain_calc_length returns an error.
+
+s/returns/already returned/ ?
+
+> +	 */
+> +	cp->orb.cmd.c64 = 1;
+>  
+>  	return ret;
+>  }
+
+The patch looks sane, I have only issues with the description/comments.
