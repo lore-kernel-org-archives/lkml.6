@@ -1,23 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752342AbeENUxO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 16:53:14 -0400
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:35273 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752215AbeENUxK (ORCPT
+        id S1752251AbeENUyI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 16:54:08 -0400
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:53776 "EHLO
+        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752056AbeENUyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 16:53:10 -0400
-X-Google-Smtp-Source: AB8JxZreH9uwHBabsK2WHr/rQoltOPiFquzdjHDu3y4WPrKXdwaM4FFwkKqrArI7k0+UEB4bqnw59A==
-Subject: Re: [PATCH net-next v3 3/7] dt-bindings: net: add DT bindings for
- Microsemi Ocelot Switch
+        Mon, 14 May 2018 16:54:06 -0400
+X-Google-Smtp-Source: AB8JxZrgjUzK+2LGwO0CzuLMT9pDvihHkNejm5lNJzmLoNkifpTRmMFhorq6AC+1GIaN1YebigfUrA==
+Subject: Re: [PATCH net-next v3 6/7] MIPS: mscc: connect phys to ports on
+ ocelot_pcb123
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
         "David S . Miller" <davem@davemloft.net>
 Cc: Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
         po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        James Hogan <jhogan@kernel.org>
 References: <20180514200500.2953-1-alexandre.belloni@bootlin.com>
- <20180514200500.2953-4-alexandre.belloni@bootlin.com>
+ <20180514200500.2953-7-alexandre.belloni@bootlin.com>
 From: Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -53,12 +54,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <cfbd952f-6255-5542-089b-34278e36525d@gmail.com>
-Date: Mon, 14 May 2018 13:53:01 -0700
+Message-ID: <609ac546-55ad-15e3-0927-f4192bb8b774@gmail.com>
+Date: Mon, 14 May 2018 13:54:00 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180514200500.2953-4-alexandre.belloni@bootlin.com>
+In-Reply-To: <20180514200500.2953-7-alexandre.belloni@bootlin.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,9 +68,9 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 05/14/2018 01:04 PM, Alexandre Belloni wrote:
-> DT bindings for the Ethernet switch found on Microsemi Ocelot platforms.
+> Add phy to switch port connections for PCB123 for internal PHYs.
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Cc: James Hogan <jhogan@kernel.org>
 > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
