@@ -1,37 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrFkqIDUDOQ9EABqXbvtynrv2qzTBO/dry6w+tVUAxY5D0lxpmSaYVNo3irf86bo82DGaB3
-ARC-Seal: i=1; a=rsa-sha256; t=1526280626; cv=none;
+X-Google-Smtp-Source: AB8JxZosOFbrYQeJFp8oliVdbhNego4XRsfvPW0AN1Dw1bfH/HHPzloHUs0hoOTz34PBcDm6Kdba
+ARC-Seal: i=1; a=rsa-sha256; t=1526280623; cv=none;
         d=google.com; s=arc-20160816;
-        b=qb9+k5ebojxoGjz+XWnVJ1Zm53W4f13F5aaW7RlUVnPO2qugLRioZ3mMVDqcmPLJtk
-         qYb1crpGORvVgJ/4me3THLgpTdkYIOPGo0moAy+2r6r436dkXF66phFcViAdh2c6Hhs5
-         qVTJHb/+k6D+4ln36Yd3HNEgU7aQSmyCCRocv0c8pWW9OGKPv7oBFtET43FperMhk7Yr
-         UbcMKtwghmsuDonXDM23QB+7WZUOA+IO7Iq9Ir/SSfNIlQ7GS+x53snTf8YjWr3MUEln
-         13DGUm6f4YtLLP3LTkG+rXJapUV3+e8JRA4Ey/AO6ikRUVGq8wnQUZ2h+wenG3i3DVzb
-         mPHA==
+        b=rQtfTrbTmVBd9jpK8y89mUYboz/NYLVTdP6b1v1vzoAc+Ulbk0Q9RdnPRMqc0RTp5f
+         awY4Q6FhT5oLcMkotFfyq/+DIxFOECljzzlxqTQ9uxQg4VS5WPhUfBrml2xEcGrfJv+R
+         7esY5NjxXZnH+2kYFFDQYe58E5kYFX576pXFJVNm9t7hR+tFQqVGsh1AoZujGfeK3rws
+         aM7S2O0cd6QWk8cM1OLrh/9KSHZltEr8c/mb/f9jol2q9pClKwR37mSULuk3pJ41GkTy
+         b5Gl1UV7KeVMk4/5RlF00QAfxzeA3EjIoT0dRePiVLrO3XeYKGiDC/k9hE5iuw9Qf7VX
+         gUKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=xIBf8uUZszFZnaR8ahQtEePkLw5N08TYX6qx8ycQ124=;
-        b=V+/G6N+SQ0uA3WTOZp5y3XK08X350rU0VfzsgkkfEe2QDmGj9/4In8EBogGKsmda3e
-         vVNiEtWpmRdztYrowQZvv6DWgBstj6IUh9+lHYoz622B/KgLYjdIclcvU+oqXdnp1DNa
-         dmkjspofaClbKkgFyueye1hh4Oxz3WB3RpuabN4UER1+cJe/acihQ4v+kQD+AtLBcKyO
-         xMT3K4FXIixIIFgW4V/CP7jKYvTPWMfeu824YN/A8XTyf0+BlCHnlb82MWwiJrNlk13V
-         so287nnn/9jFBalsSZ4n2SKIsPZZ6fgWcNgSfQ0tdWZJQtuuzjNKBmQnL8AKlhGBFraW
-         we0Q==
+        bh=eaVbnodZCVZJWfFHyAfhlZBoDb4+DhtxP6DB3l+tBYU=;
+        b=VqN7R3A7VWM8eqiTG76Epau0QEn0SHXTj8aEEmB9Hv1YW/clE4MzDU4i3vpqb0H1OE
+         S2QVpr2sgNfDH2Ynn40MrHDFd2Qa8rPQwxkDFwrk33FAYq0lN7ZY3deaAnfUWy3hkFDH
+         n/UF9KL6aEyzjMR9lPQiV0csgS82/gjM99+sSE+3Y+u744/zsBh0HV6C6F0VwBPApvEg
+         uYylh6xGC//ZORApwGgzjBA5ru184WkbZnkp/L7LSjOBoXpCC5ctNxZFlzlRYrfN7tGV
+         1IpqsBalznqHS4pSP0NY3tlUnvmlXtWcUghoTaUoJycbc91bAYux7mU1vXNIqBkq0RQd
+         gFMQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=UrFzRoHK;
+       dkim=pass header.i=@kernel.org header.s=default header.b=oOSP6cwZ;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=UrFzRoHK;
+       dkim=pass header.i=@kernel.org header.s=default header.b=oOSP6cwZ;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 3.18 21/23] tracing: Fix regex_match_front() to not over compare the test string
-Date: Mon, 14 May 2018 08:48:50 +0200
-Message-Id: <20180514064704.936636221@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 12/23] netlink: fix uninit-value in netlink_sendmsg
+Date: Mon, 14 May 2018 08:48:41 +0200
+Message-Id: <20180514064704.577027752@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064704.046463679@linuxfoundation.org>
 References: <20180514064704.046463679@linuxfoundation.org>
@@ -41,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421234253584189?=
-X-GMAIL-MSGID: =?utf-8?q?1600421234253584189?=
+X-GMAIL-THRID: =?utf-8?q?1600421231527145500?=
+X-GMAIL-MSGID: =?utf-8?q?1600421231527145500?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +52,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Eric Dumazet <edumazet@google.com>
 
-commit dc432c3d7f9bceb3de6f5b44fb9c657c9810ed6d upstream.
+commit 6091f09c2f79730d895149bcfe3d66140288cd0e upstream.
 
-The regex match function regex_match_front() in the tracing filter logic,
-was fixed to test just the pattern length from testing the entire test
-string. That is, it went from strncmp(str, r->pattern, len) to
-strcmp(str, r->pattern, r->len).
+syzbot reported :
 
-The issue is that str is not guaranteed to be nul terminated, and if r->len
-is greater than the length of str, it can access more memory than is
-allocated.
+BUG: KMSAN: uninit-value in ffs arch/x86/include/asm/bitops.h:432 [inline]
+BUG: KMSAN: uninit-value in netlink_sendmsg+0xb26/0x1310 net/netlink/af_netlink.c:1851
 
-The solution is to add a simple test if (len < r->len) return 0.
-
-Cc: stable@vger.kernel.org
-Fixes: 285caad415f45 ("tracing/filters: Fix MATCH_FRONT_ONLY filter matching")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events_filter.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/netlink/af_netlink.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -273,6 +273,9 @@ static int regex_match_full(char *str, s
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -1641,6 +1641,8 @@ static int netlink_sendmsg(struct kiocb
  
- static int regex_match_front(char *str, struct regex *r, int len)
- {
-+	if (len < r->len)
-+		return 0;
-+
- 	if (strncmp(str, r->pattern, r->len) == 0)
- 		return 1;
- 	return 0;
+ 	if (msg->msg_namelen) {
+ 		err = -EINVAL;
++		if (msg->msg_namelen < sizeof(struct sockaddr_nl))
++			goto out;
+ 		if (addr->nl_family != AF_NETLINK)
+ 			goto out;
+ 		dst_portid = addr->nl_pid;
