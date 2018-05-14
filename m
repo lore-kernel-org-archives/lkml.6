@@ -1,150 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752505AbeENLcL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:32:11 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:37837 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751198AbeENLcJ (ORCPT
+        id S1752578AbeENLcd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:32:33 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:34842 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752189AbeENLcb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:32:09 -0400
-X-Google-Smtp-Source: AB8JxZqRHpJaPiQJqJEInLgrtVtIXtSCcn6TSO9BFWhLc1IVt5tkJj+wb90gCUWOUvxDuooxwGh0Okm1qQ4hRLBkdpA=
+        Mon, 14 May 2018 07:32:31 -0400
+X-Google-Smtp-Source: AB8JxZqCVq1fKIutfRsmeRrUy94A2Fch1Q7r1WWpW7Ra4BYnNvpjIlXQLcN4WgPm8K0qdfz7IRfnROGNCj2JtnIKdtE=
 MIME-Version: 1.0
-In-Reply-To: <20180514095022.nfp7vuepz4kfshni@quack2.suse.cz>
-References: <CAOQ4uxgxP-0OZzT866=RR5rGQZ89EOy-mFF50v_5Y644OrV7tA@mail.gmail.com>
- <20180513160404.GA19620@redhat.com> <20180514095022.nfp7vuepz4kfshni@quack2.suse.cz>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 14 May 2018 14:32:08 +0300
-Message-ID: <CAOQ4uxiKQDB-5iFztNz8wPECi5fKMPxEi5cxaKM_zRc9yeticQ@mail.gmail.com>
-Subject: Re: DEBUG_RWSEMS warning from thaw_super()
-To: Jan Kara <jack@suse.cz>
-Cc: Oleg Nesterov <oleg@redhat.com>, Waiman Long <longman@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
+In-Reply-To: <20180514132324.595b63eb@bbrezillon>
+References: <1526294977-32303-1-git-send-email-geert@linux-m68k.org> <20180514132324.595b63eb@bbrezillon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 May 2018 13:32:30 +0200
+X-Google-Sender-Auth: 53_iRuQjye0v7aNZYAkKX7BRFcY
+Message-ID: <CAMuHMdUSHc2o5zXbZje89jo2dxTYv8pzcVSz-gYWh7KdZKwQeA@mail.gmail.com>
+Subject: Re: [PATCH] mtd: nand: Fix return type of __DIVIDE() when called with 32-bit
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        "Linux/m68k" <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 12:50 PM, Jan Kara <jack@suse.cz> wrote:
-> On Sun 13-05-18 18:04:04, Oleg Nesterov wrote:
->> On 05/13, Amir Goldstein wrote:
->> >
->> > Since kernel v4.17-rc1 and DEBUG_RWSEMS, I see the
->> > warning below after filesystem freeze/thaw.
->> >
->> > This is a case where one process acquires a bunch of rwsem
->> > and another process releases them.
->> >
->> > To convey this use case to lockdep, freeze_super() calls
->> > lockdep_sb_freeze_release() on exit and thaw_super()
->> > calls lockdep_sb_freeze_acquire() on entry.
+Hi Boris,
+
+On Mon, May 14, 2018 at 1:23 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Mon, 14 May 2018 12:49:37 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> The __DIVIDE() macro checks whether it is called with a 32-bit or 64-bit
+>> dividend, to select the appropriate divide-and-round-up routine.
+>> As the check uses the ternary operator, the result will always be
+>> promoted to a type that can hold both results, i.e. unsigned long long.
 >>
->> This was already discussed, but I forgot the result...
+>> When using this result in a division on a 32-bit system, this may lead
+>> to link errors like:
 >>
->> So once again, why we can't simply update percpu_rwsem_acquire() ?
->> Or we can check CONFIG_RWSEM_SPIN_ON_OWNER to match percpu_rwsem_release(),
->> but CONFIG_DEBUG_RWSEMS explains the purpose better.
+>>     ERROR: "__udivdi3" [drivers/mtd/nand/raw/nand.ko] undefined!
+>>
+>> Fix this by casting the result of the 64-bit division to the type of the
+>> dividend.
+>>
+>> Fixes: 8878b126df769831 ("mtd: nand: add ->exec_op() implementation")
+>> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> ---
+>> This fixes the root cause of the link failure seen with
+>> m68k/allmodconfig since commit 3057fcef385348fe ("mtd: rawnand: Make
+>> sure we wait tWB before polling the STATUS reg").
+>>
+>> An alternative mitigation was posted as "[PATCH] m68k: Implement
+>> ndelay() as an inline function to force type checking/casting"
+>> (https://lkml.org/lkml/2018/5/13/102).
+>> ---
+>>  include/linux/mtd/rawnand.h | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+>> index 5dad59b312440a9c..d06dc428ea0102ae 100644
+>> --- a/include/linux/mtd/rawnand.h
+>> +++ b/include/linux/mtd/rawnand.h
+>> @@ -871,7 +871,7 @@ struct nand_op_instr {
+>>  #define __DIVIDE(dividend, divisor) ({                                       \
+>>       sizeof(dividend) == sizeof(u32) ?                               \
+>>               DIV_ROUND_UP(dividend, divisor) :                       \
+>> -             DIV_ROUND_UP_ULL(dividend, divisor);                    \
+>> +             (__typeof__(dividend))DIV_ROUND_UP_ULL(dividend, divisor); \
 >
-> Yeah, what you suggests seems reasonable to me. So feel free to add:
+> Hm, it's a bit hard to follow when you place the cast here. One could
+> wonder why a cast to (__typeof__(dividend)) is needed since
+> DIV_ROUND_UP_ULL() already returns a (__typeof__(dividend)) type.
+
+DIV_ROUND_UP_ULL() does not return __typeof__(dividend), but
+unsigned long long.
+
+> How about:
 >
-> Acked-by: Jan Kara <jack@suse.cz>
+>         /*
+>          * Cast to type of dividend is needed here to guarantee that the
+>          * result won't be an unsigned long long when the dividend is an
+>          * unsigned long, which is what the compiler does when it sees a
+
+s/an unsigned long/32-bit/
+
+>          * ternary operator with 2 different return types.
+>          */
+>         (__typeof__(dividend))(sizeof(dividend) == sizeof(u32) ?        \
+>                                DIV_ROUND_UP(dividend, divisor) :        \
+>                                DIV_ROUND_UP_ULL(dividend, divisor));
+
+Looks fine to me, too.
+
+> Actually, I'm not even sure we care about the truncation that could
+> happen on an unsigned long long -> unsigned long cast because the
+> delays we express here will anyway be hundreds of nanosecs/millisecs,
+> so nothing close to the billions of nanosecs/millisecs you can express
+> with an unsigned long.
 >
+> So, maybe we should just do:
+>
+>         (unsigned long)(sizeof(dividend) == sizeof(u32) ?               \
+>                         DIV_ROUND_UP(dividend, divisor) :               \
+>                         DIV_ROUND_UP_ULL(dividend, divisor));
+>
+> to make things more readable.
 
-How about this version? A bit more prudent and also addresses the
-TODO in commit 55cc156505f2 ("percpu-rwsem: introduce
-percpu_rwsem_release() and percpu_rwsem_acquire()")
+That would break callers who pass a 64-bit dividend, and expect to receive
+a 64-bit quotient back (on 32-bit systems).
+Calling e.g. PSEC_TO_NSEC(1000000000000ULL) is valid, passing the
+result to ndelay() isn't ;-)
 
-Sorry for spaces instead of tabs, I'll re-post properly if this is acked.
+Gr{oetje,eeting}s,
 
-Thanks,
-Amir.
+                        Geert
 
------
-diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-index b1f37a89e368..323d5ba6a60d 100644
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -127,13 +127,16 @@ extern void percpu_free_rwsem(struct
-percpu_rw_semaphore *);
- #define percpu_rwsem_assert_held(sem)                          \
-        lockdep_assert_held(&(sem)->rw_sem)
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-+extern void percpu_rwsem_set_user_owned(struct percpu_rw_semaphore *sem);
-+extern void percpu_rwsem_set_owner(struct percpu_rw_semaphore *sem);
-+
- static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
-                                        bool read, unsigned long ip)
- {
-        lock_release(&sem->rw_sem.dep_map, 1, ip);
- #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
-        if (!read)
--               sem->rw_sem.owner = NULL;
-+               percpu_rwsem_set_user_owned(sem);
- #endif
- }
-
-@@ -141,6 +144,10 @@ static inline void percpu_rwsem_acquire(struct
-percpu_rw_semaphore *sem,
-                                        bool read, unsigned long ip)
- {
-        lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
-+#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
-+       if (!read)
-+               percpu_rwsem_set_owner(sem);
-+#endif
- }
-
- #endif
-diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
-index 883cf1b92d90..afa65915541f 100644
---- a/kernel/locking/percpu-rwsem.c
-+++ b/kernel/locking/percpu-rwsem.c
-@@ -7,6 +7,8 @@
- #include <linux/sched.h>
- #include <linux/errno.h>
-
-+#include "rwsem.h"
-+
- int __percpu_init_rwsem(struct percpu_rw_semaphore *sem,
-                        const char *name, struct lock_class_key *rwsem_key)
- {
-@@ -190,3 +192,17 @@ void percpu_up_write(struct percpu_rw_semaphore *sem)
-        rcu_sync_exit(&sem->rss);
- }
- EXPORT_SYMBOL_GPL(percpu_up_write);
-+
-+void percpu_rwsem_set_user_owned(struct percpu_rw_semaphore *sem)
-+{
-+       DEBUG_RWSEMS_WARN_ON(sem->rw_sem.owner != current);
-+       sem->rw_sem.owner = RWSEM_USER_OWNED;
-+}
-+EXPORT_SYMBOL_GPL(percpu_rwsem_set_user_owned);
-+
-+void percpu_rwsem_set_owner(struct percpu_rw_semaphore *sem)
-+{
-+       DEBUG_RWSEMS_WARN_ON(sem->rw_sem.owner != RWSEM_USER_OWNED);
-+       sem->rw_sem.owner = current;
-+}
-+EXPORT_SYMBOL_GPL(percpu_rwsem_set_user_owned);
-diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
-index a17cba8d94bb..f686596ec033 100644
---- a/kernel/locking/rwsem.h
-+++ b/kernel/locking/rwsem.h
-@@ -11,10 +11,14 @@
-  *  2) RWSEM_READER_OWNED
-  *     - lock is currently or previously owned by readers (lock is free
-  *       or not set by owner yet)
-- *  3) Other non-zero value
-+ *  3) RWSEM_USER_OWNED
-+ *     - lock is currently owned by userspace (previously owned by writer
-+ *       and should be handed over to a new writer before being freed)
-+ *  4) Other non-zero value
-  *     - a writer owns the lock
-  */
- #define RWSEM_READER_OWNED     ((struct task_struct *)1UL)
-+#define RWSEM_USER_OWNED       ((struct task_struct *)2UL)
-
- #ifdef CONFIG_DEBUG_RWSEMS
- # define DEBUG_RWSEMS_WARN_ON(c)       DEBUG_LOCKS_WARN_ON(c)
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
