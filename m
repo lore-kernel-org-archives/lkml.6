@@ -1,57 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752386AbeENIfo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:35:44 -0400
-Received: from mail-ua0-f171.google.com ([209.85.217.171]:39274 "EHLO
-        mail-ua0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752105AbeENIfm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:35:42 -0400
-X-Google-Smtp-Source: AB8JxZqvboZjiC+rhG1Y9JlfEPQmZ4QdB5LDqCyxnX/5q8I0KszlrgIADGlN9oQETfpOse19GrmZxOoeNAzHEyjh9HA=
+        id S1752458AbeENIhH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:37:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34424 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752155AbeENIhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 04:37:04 -0400
+Date: Mon, 14 May 2018 10:37:03 +0200
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        kishon@ti.com, gregory.clement@bootlin.com, andrew@lunn.ch,
+        jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next v2 06/13] phy: add 2.5G SGMII mode to the
+ phy_mode enum
+Message-ID: <20180514083703.GG24660@kwain>
+References: <20180504135643.23466-1-antoine.tenart@bootlin.com>
+ <20180504135643.23466-7-antoine.tenart@bootlin.com>
+ <20180508123408.GK16141@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <1526286669-484-1-git-send-email-geert@linux-m68k.org>
-References: <1526286669-484-1-git-send-email-geert@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 May 2018 10:35:40 +0200
-X-Google-Sender-Auth: zpbSCyaMtcMb7vClbxVRsQZo7-U
-Message-ID: <CAMuHMdUoDmXZy+fF_-op6Pk8gdaOFDvzvpDOkXcZ3uvTpqVKOg@mail.gmail.com>
-Subject: Re: Build regressions/improvements in v4.17-rc5
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Linux-sh list <linux-sh@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180508123408.GK16141@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 10:31 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> JFYI, when comparing v4.17-rc5[1] to v4.17-rc4[3], the summaries are:
->   - build errors: +4/-1
+Hi Russell,
 
-  + /kisskb/src/arch/sh/boards/mach-landisk/setup.c: error: implicit
-declaration of function 'ioremap_prot'
-[-Werror=implicit-function-declaration]:  => 64:2
+On Tue, May 08, 2018 at 01:34:08PM +0100, Russell King - ARM Linux wrote:
+> On Fri, May 04, 2018 at 03:56:36PM +0200, Antoine Tenart wrote:
+> > This patch adds one more generic PHY mode to the phy_mode enum, to allow
+> > configuring generic PHYs to the 2.5G SGMII mode by using the set_mode
+> > callback.
+> > 
+> > Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+> > Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> 
+> Would it be possible to get the 2.5G SGMII comphy support merged
+> ahead of the rest of this series please - I don't think there's been
+> any objections to it, and having it in mainline would then mean I can
+> drop the Marvell Comphy code from my tree and transition to the bootlin
+> Comphy code instead.
+> 
+> Of course, the perfect solution would be to get the whole series merged,
+> but I'm just thinking about the situation where we're still discussing
+> points when the next merge window opens.
 
-sh-randconfig
+That would be great, and there are no dependency issue if patches 6 and
+7 are taken ahead.
 
-Probably not a regression, but I haven't seen this one before.
+Kishon: since there are no objection to these two phy patches, could you
+take them?
 
-  + error: "__udivdi3" [drivers/mtd/nand/raw/nand.ko] undefined!:  => N/A
-
-m68k-allmodconfig
-
-Patch available.
-
-> [1] http://kisskb.ellerman.id.au/kisskb/head/67b8d5c7081221efa252e111cd52532ec6d4266f/ (244 out of 246 configs)
-> [3] http://kisskb.ellerman.id.au/kisskb/head/75bc37fefc4471e718ba8e651aa74673d4e0a9eb/ (244 out of 246 configs)
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Thanks!
+Antoine
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Antoine Ténart, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
