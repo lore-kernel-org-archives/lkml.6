@@ -1,5 +1,5 @@
 Return-Path: <ksummit-discuss-bounces@lists.linuxfoundation.org>
-X-Cyrus-Session-Id: sloti22d1t05-436143-1526284444-2-2266062189529915993
+X-Cyrus-Session-Id: sloti22d1t05-457733-1526284849-2-4443232840007625910
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,27 +13,27 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: ksummit-discuss-bounces@lists.linuxfoundation.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526284443; b=ZMtQ1hSZ4VaPaXvRCxrqo+PYN8aR7bur9GQEygVn0gW2KX8fYx
-    /a+06HZZwfk83rQO4D1G37+7p+lxwRY2EglLFe8cDpgiRdcNAdLt0H/ORMI3Kplq
-    aBRl0utQfLFXsgcMDWUhmVqWsUkR5CfWdCAxSH1knt99lRc3UTrYuyFH3UtHk61Q
-    Dt2PO8ep06QagTUBgb0IFYTE7iD5s+c7ebSaKFdD9Rmh87jewVXHqjhAD1Q+cxO1
-    dimqTkr25fnO+fxAPAFTb2FBsqTZe4IydgXukr92eHpB/jCt+HNZpoyZX/KmPYFU
-    BSXiqrdaywNoS/Xqq6YQ80cB3xDxwZcG8K4Q==
+    1526284849; b=ftMXpZ7KOi7JtymVkc22FnNhHRT0wP42ZavjfM1W7bxIaRZljQ
+    QBExb+dL2uiw+uyPS2rFiQpKx2C5XY7mwvjDy5PdYk7QYYnAAGYwmCR3mNrriiMC
+    f88TE6jBTMsJn2DmBxX0VJCE05g9RPlQnsuVXYnQJNQVK1B+Lgz2Bqg24pwzFpPB
+    oEe1pqM7PwzGH5ziZTlsyIr4PLInA2xTupcCxc/xyWSzPMIWN9mLSTiCD4nzekZl
+    AU7cXfP7A8CZaLcSM7jXa/Q50VWMAZu5pNIVcZygY1eWSZ3vBxWsK/O2gc1+x12a
+    uqUQk5g/NIwWIMlxhGrOda1rqQ8Tldr93FoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=mime-version:in-reply-to:references:from
     :date:message-id:to:cc:subject:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526284443; bh=UlmmJ
-    HEOxQ3AQvK+j8C2FWHlM4Sm+Us2q7zrnHD7D7w=; b=d/EdFJCDYVbQj9ru4jqHC
-    6hZPRI0T+f60eCFzy00RBS2oV2ACNMYWv9DQKWi7haC2mO6QMsk1Px1m7oDQtmMH
-    auiM1H7xlQszRDYh6FCfarTv5w1MMHXX1qfTpDPTTvY92BwU7K+SBmh9fVqUnBYj
-    2XypEzEZKXcfzasfjQZQPsmI8nk4kbzpMKZaRo5UdceP4I6cgghE22eE0nwwmfie
-    XIZMaJfB0FeNCKy4gp3mLD5U96RnpEV9cf5HzDYO8V/UZRJ6Q1AUIceCCCBcmeT8
-    BEssKteEx8aLpUs7VYHp/RPVVQpqpz4v+UmZJaEAowhni8hlh/TKfAB09B+nvoxU
-    Q==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1526284849; bh=F46B0
+    WdEj4Yrmk37MXyaXSvgf20zha+xCQjb25WUzBA=; b=A5vTrVDt0dLzFYd9uDOMX
+    H3OO2IEyT1Tdmy4nCWLkkmwyl0BrueIDWJZ/GWlts0A9LiDxnWRpBZF1vW10dUI8
+    j4auwt7olIcueTcE96G7UlL2Htk9yM1/V5IxUjQz2+g/AcrxiJU+BmRkaswfoIsd
+    9eFJb7UqwQ/g09RU66HUD1kGgHb3RU6SsY3YO0Kxe+9zhk0sC7hjYMfgD5hqEtC3
+    VNMwW8nb8S8kV7+KVSMQ+TtZ9K5pC6JeiG7w2ko2WZAAED8OilzTzO8iDC8oWmnF
+    PPtuW5o5hyEixLG0hoGI/YltbeywSgO0Tyom2Ao9WXwgmQAHoBcXYgC+83iyEuhV
+    g==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=FD49KJcQ x-bits=2048
+    header.d=gmail.com header.i=@gmail.com header.b=OJbUFebl x-bits=2048
     x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
     iprev=pass policy.iprev=140.211.169.12 (mail.linuxfoundation.org);
@@ -42,7 +42,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=discussion score=0;
     x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=Gu5XQg5l;
+    header.d=1e100.net header.i=@1e100.net header.b=HlUUmHe1;
     x-ptr=pass x-ptr-helo=mail.linuxfoundation.org
     x-ptr-lookup=mail.linuxfoundation.org;
     x-return-mx=pass smtp.domain=lists.linuxfoundation.org smtp.result=pass
@@ -52,10 +52,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=FD49KJcQ x-bits=2048
+      header.d=gmail.com header.i=@gmail.com header.b=OJbUFebl x-bits=2048
       x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux-m68k.org;
     iprev=pass policy.iprev=140.211.169.12 (mail.linuxfoundation.org);
@@ -64,7 +64,7 @@ Authentication-Results: mx2.messagingengine.com;
     x-aligned-from=fail;
     x-cm=discussion score=0;
     x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=Gu5XQg5l;
+      header.d=1e100.net header.i=@1e100.net header.b=HlUUmHe1;
     x-ptr=pass x-ptr-helo=mail.linuxfoundation.org
       x-ptr-lookup=mail.linuxfoundation.org;
     x-return-mx=pass smtp.domain=lists.linuxfoundation.org smtp.result=pass
@@ -75,21 +75,22 @@ Authentication-Results: mx2.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAP0bIGOn70LEKHX3jNg+wOHWJ3eBlsR60UuYNJw6ae8wiP6SR65vXk6X9ndnbiu8kIai7JX+p5+Ifja+ctuwlZkpAymVamgMGyQPkJh/CMk3PIzQ3+L
-    O/87sVst88GIY+ANFmyih/kVSBkqQ+RsucloNGUQ2+kD8sJ8aPSg9DvyG2ObKBdLD7KLUpcHDXvGJehoWncyQYoVPCXIhtW0ENx3hQ8D/8HyG205rNTsOWOU
-    pY3E5h36rslMLV1Arx6rCA==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=5MPDoNpceV4HFXFrvkM3CQ==:117
+X-CM-Envelope: MS4wfMxlfwvTMzAy31pit80QnCBKp1hrzW8gpZAie6O4lIT7oA6jngoDzSAAL2j7APjPqReCVGY4a8mj2ov7Z/7GPoka1hf37MQUHO2ZMZJToJanLWUae4Ww
+    MOL1S+XM1CVn2SxJYRRR5KRPDL35wzDSCFwyhMINJq/9K4hskx3AsehQ6jiK03CRiOdwKN+T27scjIgOO5ATMgHBI94/sQPInlg6EIn7UQnTyImpScqJBb7C
+    5BFDrT8rjKHcDrbpW5cuSg==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=5MPDoNpceV4HFXFrvkM3CQ==:117
     a=5MPDoNpceV4HFXFrvkM3CQ==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=ag1SF4gXAAAA:8 a=OLL_FvSJAAAA:8
-    a=tBb2bbeoAAAA:8 a=ZYS5oAN53p8GJM-4HmsA:9 a=CjuIK1q_8ugA:10 a=j4zAYfkPPL4A:10
-    a=uBbYtLA2G74A:10 a=Yupwre4RP9_Eg_Bd0iYG:22 a=oIrB72frpwYPwTMnlWqB:22
-    a=Oj-tNtZlA1e06AYgeCfH:22 cc=dsc
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=yMhMjlubAAAA:8 a=07d9gI8wAAAA:8
+    a=tBb2bbeoAAAA:8 a=ag1SF4gXAAAA:8 a=J08iiUO3UqFeIJMw_-UA:9
+    a=V-hPLBU8PLYA7v1S:21 a=lwulGa-7TnRoNCsT:21 a=CjuIK1q_8ugA:10
+    a=e2CUPOnPG4QKp8I52DXD:22 a=Oj-tNtZlA1e06AYgeCfH:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: ksummit-discuss@mail.linuxfoundation.org
-X-Google-Smtp-Source: AB8JxZoz5+iwAkzACV7MfbojvYIF6RDlzF1YGoVP7Lt0DbwdXx2hgMVP1Ry2con84nddExXWrFyWuq2rZaep1ePxSvM=
+X-Google-Smtp-Source: AB8JxZrGlWDY8A2zvSO+2tZ/RafUcisz5rBAg1hVQ6VERVCokMld8xh1vpMNr2NkFYllyCbGHUmVRw5/y8lor+v8kVM=
 MIME-Version: 1.0
-In-Reply-To: <20180510164722.GH8514@sasha-vm>
+In-Reply-To: <CAMuHMdWDNjsba29id4Svjy_tauKivWDUixub3qf82Nx_6rYueA@mail.gmail.com>
 References: <20180502194632.GB18390@sasha-vm>
 	<20180503020550.GP2714@sirena.org.uk>
 	<20180503031000.GC29205@thunk.org>
@@ -101,20 +102,22 @@ References: <20180502194632.GB18390@sasha-vm>
 	<CAKMK7uEWYmhA3owSeYM9tNA0tpMm5=4Yqda2j=VfMWi7i8ya8w@mail.gmail.com>
 	<nycvar.YFH.7.76.1805101802150.27054@cbobk.fhfr.pm>
 	<20180510164722.GH8514@sasha-vm>
+	<CAMuHMdWDNjsba29id4Svjy_tauKivWDUixub3qf82Nx_6rYueA@mail.gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 May 2018 09:53:38 +0200
-X-Google-Sender-Auth: H7J244_gI0gLFERD4E-_DPNg1JI
-Message-ID: <CAMuHMdWDNjsba29id4Svjy_tauKivWDUixub3qf82Nx_6rYueA@mail.gmail.com>
+Date: Mon, 14 May 2018 10:00:30 +0200
+X-Google-Sender-Auth: x0ZM2ExNKWVEz32myW3TgGas6g0
+Message-ID: <CAMuHMdUHK=kmJB-=G-Y7YEneZityMzi5YZ3nJFD6uCs61bOaiQ@mail.gmail.com>
 To: Sasha Levin <Alexander.Levin@microsoft.com>
 X-Remote-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID, FREEMAIL_FROM,
 	RCVD_IN_DNSWL_NONE autolearn=ham version=3.3.1
 X-Remote-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on
 	smtp1.linux-foundation.org
-Cc: Greg KH <gregkh@linuxfoundation.org>, "w@1wt.eu" <w@1wt.eu>,
-	"ksummit-discuss@lists.linuxfoundation.org"
+Cc: "ksummit-discuss@lists.linuxfoundation.org"
 	<ksummit-discuss@lists.linuxfoundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+	Greg KH <gregkh@linuxfoundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"w@1wt.eu" <w@1wt.eu>
 Subject: Re: [Ksummit-discuss] bug-introducing patches
 X-BeenThere: ksummit-discuss@lists.linuxfoundation.org
 X-Mailman-Version: 2.1.12
@@ -133,65 +136,60 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 10, 2018 at 6:47 PM, Sasha Levin via Ksummit-discuss
-<ksummit-discuss@lists.linuxfoundation.org> wrote:
-> On Thu, May 10, 2018 at 06:03:22PM +0200, Jiri Kosina wrote:
->>On Wed, 9 May 2018, Daniel Vetter wrote:
->>> >> Then, why don't we have a pre-integration tree for fixes? That would
->>> >> at least simply automated testing of fixes separately from new
->>> >> material.
->>> >
->>> >> Perhaps this has already been discussed, and concluded and it's not
->>> >> worth it, then apologize for my ignorance.
->>> >
->>> > I think this is an excellent idea, copying in Stephen for his input.
->>> > I'm currently on holiday but unless someone convinces me it's a terrible
->>> > idea I'm willing to at least give it a go on a trial basis once I'm back
->>> > home.
->>>
->>> Since Stephen merges all -fixes branches first, before merging all the
->>> -next branches, he already generates that as part of linux-next. All
->>> he'd need to do is push that intermediate state out to some
->>> linux-fixes branch for consumption by test bots.
+On Tue, May 1, 2018 at 10:00 PM, Sasha Levin
+<Alexander.Levin@microsoft.com> wrote:
+> On Tue, May 01, 2018 at 03:44:50PM -0400, Theodore Y. Ts'o wrote:
+>>On Tue, May 01, 2018 at 04:38:21PM +0000, Sasha Levin wrote:
+>>>  - A merge window commit spent 50% more days, on average, in -next than a -rc
+>>>    commit.
 >>
->>What I do for my trees is that I actually merge the '-fixes' branch (that
->>is scheduled to go to Linus in the 'current' cycle) into my for-next
->>branch as well.
+>>So it *used* to be the case that after the merge window, I would queue
+>>up bug fixes for the next merge window.  Greg K-H pushed for me to
+>>send them to Linus sooner, instead of waiting for the next merge
+>>window.  TBH, it's actually easier for me to just wait until the next
+>>merge window, but please understand that there are multiple pressures
+>>on maintainers going on here, and the latest efforts to try to use
+>>AUTOSEL is just the most recent pressure placed on maintainers.
 >>
->>This has the advantage of (a) getting all the coverage linux-next does (b)
->>seeing any potential merge conflicts early
+>>The other thing is that when there is a regression users who are
+>>testing linux-next want it fixed *fast*.  That's considered more
+>>important to them than waiting for one, perfect patch, just to keep
+>>AUTOSEL happy.
 >>
->>Is this not feasible for other trees?
+>>So please understand that when you say that maintainers *need* to do X
+>>or Y, that there you are not the only one standing in line putting
+>>pressures on maintainers saying they *need* to do something.  And
+>>quite frankly, I consider keeping people who are nice enough to test
+>>linux-next happy to be **far** more important than AUTOSEL.
 >
-> When Linus tags -rc1, -next will start filling up with commits destined
-> for the next merge window. The resulting -next tree becomes very
-> unstable, and very difficult to test.
+> Ted,
 >
-> The idea behind next-fixes is to provide a tree that will contain fixes
-> for the current merge window, which will generate a much more stable
-> tree that users/bots could actually run and validate the fixes that will
-> be merged in the upcoming weeks.
+> I'm not at all asking to wait before adding the patches to your tree,
+> or to -next. I'm asking to hold on to them a bit longer before you
+> push them to Linus because I can show that patches that don't spend
+> enough time in -next are more likely to introduce bugs.
 >
-> Right now, with the method you've described, there is no easy way to
-> test your '-fixes' branch even though the commits in there will be
-> pulled in by Linus much sooner than your 'for-next' branch.
+> Yes, linux-next users want it fixed *now* and I completely agree it
+> should be done that way, but the fix should not be immediately pushed to
+> Linus as well.
 >
-> You'll still get the same coverage from -next, but if you provide your
-> -fixes branch seperately you'll also get more coverage for the fixes
-> you're about to send to Linus.
+> I've just finished reading an interesting article on LWN about the
+> PostgreSQL fsync issues (https://lwn.net/Articles/752952/). If you
+> look at Willy's commit, he wrote the final version of it about 5 days
+> ago, Jeff merged it in 3 days ago, and Linus merged it in the tree
+> today. Did it spend any time getting -next testing? nope.
+>
+> What's worse is that that commit is tagged for stable, which means
+> that (given Greg's schedule) it may find it's way to -stable users
+> even before some -next users/bots had a chance to test it out.
 
-I think you missed the "as well" in Jiri's response.
+I just noticed a case where a commit was picked up for stable, while a
+bot had flagged it as a build regression 18 hours earlier (with a CC to
+lkml).
 
-When I create the bi-weekly renesas-drivers release (see e.g.
-https://www.spinics.net/lists/linux-renesas-soc/msg27350.html), there are
-some subsystems that manage to have several conflicts between their
-for-next branch and their fixes in Linus' tree almost every single release.
-Hence I strongly support merging your own fixes branches into your own
-for-next branch, and resolve the conflicts yourself, to keep your for-next
-branch conflict free.
-
-(Note that the last release linked above was very atypical: it was one of
-the very few (first one ever?) that didn't have any conflicts).
+So it looks like the script for backporting commits should be enhanced to
+check for this (searching for the commit ID in my email archive found the
+bot report).
 
 Thanks!
 
