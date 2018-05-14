@@ -1,117 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932504AbeENOoG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:44:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:44060 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753985AbeENOno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:43:44 -0400
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: kvmarm@lists.cs.columbia.edu
-Cc: Punit Agrawal <punit.agrawal@arm.com>,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
-        suzuki.poulose@arm.com, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v3 3/4] KVM: arm64: Support dirty page tracking for PUD hugepages
-Date: Mon, 14 May 2018 15:43:03 +0100
-Message-Id: <20180514144304.10484-4-punit.agrawal@arm.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180514144304.10484-1-punit.agrawal@arm.com>
-References: <20180514144304.10484-1-punit.agrawal@arm.com>
-X-ARM-No-Footer: FoSSMail
+        id S1753959AbeENOoi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:44:38 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42044 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753770AbeENOog (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 10:44:36 -0400
+Subject: Re: [PATCH 1/1] s390: vfio-ccw: push down unsupported IDA check
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-s390@vger.kernel.org
+References: <20180509173647.61367-1-pasic@linux.ibm.com>
+ <20180514135554.29569999.cohuck@redhat.com>
+ <d0eb5f47-bb71-f615-3780-e753a22daf5b@linux.ibm.com>
+ <20180514160016.3b689728.cohuck@redhat.com>
+From: Halil Pasic <pasic@linux.ibm.com>
+Date: Mon, 14 May 2018 16:44:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180514160016.3b689728.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18051414-0008-0000-0000-000004F65D3F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051414-0009-0000-0000-00001E8ABD3D
+Message-Id: <7bd8fc8b-0500-9905-a3a0-2ec56d3fc9f2@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805140152
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for creating PUD hugepages at stage 2, add support for
-write protecting PUD hugepages when they are encountered. Write
-protecting guest tables is used to track dirty pages when migrating
-VMs.
 
-Also, provide trivial implementations of required kvm_s2pud_* helpers
-to allow sharing of code with arm32.
 
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
----
- arch/arm/include/asm/kvm_mmu.h   | 16 ++++++++++++++++
- arch/arm64/include/asm/kvm_mmu.h | 10 ++++++++++
- virt/kvm/arm/mmu.c               |  9 ++++++---
- 3 files changed, 32 insertions(+), 3 deletions(-)
+On 05/14/2018 04:00 PM, Cornelia Huck wrote:
+> On Mon, 14 May 2018 15:37:17 +0200
+> Halil Pasic <pasic@linux.ibm.com> wrote:
+> 
+>> On 05/14/2018 01:55 PM, Cornelia Huck wrote:
+>>> On Wed,  9 May 2018 19:36:47 +0200
+>>> Halil Pasic <pasic@linux.ibm.com> wrote:
+>>>    
 
-diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-index 5907a81ad5c1..224c22c0a69c 100644
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -80,6 +80,22 @@ void kvm_clear_hyp_idmap(void);
- 
- #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
- 
-+/*
-+ * The following kvm_*pud*() functionas are provided strictly to allow
-+ * sharing code with arm64. They should never be called in practice.
-+ */
-+static inline void kvm_set_s2pud_readonly(pud_t *pud)
-+{
-+	BUG();
-+}
-+
-+static inline bool kvm_s2pud_readonly(pud_t *pud)
-+{
-+	BUG();
-+	return false;
-+}
-+
-+
- static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
- {
- 	*pmd = new_pmd;
-diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index d962508ce4b3..f440cf216a23 100644
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -240,6 +240,16 @@ static inline bool kvm_s2pmd_exec(pmd_t *pmdp)
- 	return !(READ_ONCE(pmd_val(*pmdp)) & PMD_S2_XN);
- }
- 
-+static inline void kvm_set_s2pud_readonly(pud_t *pudp)
-+{
-+	kvm_set_s2pte_readonly((pte_t *)pudp);
-+}
-+
-+static inline bool kvm_s2pud_readonly(pud_t *pudp)
-+{
-+	return kvm_s2pte_readonly((pte_t *)pudp);
-+}
-+
- static inline bool kvm_page_empty(void *ptr)
- {
- 	struct page *ptr_page = virt_to_page(ptr);
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index 0beefcc5e090..671d3c0825f2 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1286,9 +1286,12 @@ static void  stage2_wp_puds(pgd_t *pgd, phys_addr_t addr, phys_addr_t end)
- 	do {
- 		next = stage2_pud_addr_end(addr, end);
- 		if (!stage2_pud_none(*pud)) {
--			/* TODO:PUD not supported, revisit later if supported */
--			BUG_ON(stage2_pud_huge(*pud));
--			stage2_wp_pmds(pud, addr, next);
-+			if (stage2_pud_huge(*pud)) {
-+				if (!kvm_s2pud_readonly(pud))
-+					kvm_set_s2pud_readonly(pud);
-+			} else {
-+				stage2_wp_pmds(pud, addr, next);
-+			}
- 		}
- 	} while (pud++, addr = next, addr != end);
- }
--- 
-2.17.0
+[..]
+
+>>>> +		/*
+>>>> +		 * 2k byte block IDAWs (fmt1 or fmt2) are not yet supported.
+>>>> +		 * There are however CPs that don't use IDA at all, and can
+>>>> +		 * benefit from not failing until failure is eminent.
+>>>
+>>> The second sentence is confusing (What is 'CP' referring to here?
+>>> 'Control program' or struct channel_program?)
+>>
+>> Control program. I was under impression that in mainframe context CP
+>> mostly stands for control program.
+> 
+> Yes, but it is very confusing as there is also a variable named 'cp' in
+> this function.
+> 
+
+Right. I was coming from the PoP side of things. But I do agree.
+
+>>
+>>>
+>>> What about:
+>>>
+>>> "As we don't want to fail direct addressing even if the orb specified
+>>> one of the unsupported formats, we defer checking for IDAWs in
+>>> unsupported formats to here."
+>>
+>> Was the second sentence only confusing because of CP? I'm not perfectly
+>> satisfied with your version either:
+>> * 'fail direct addressing even if the orb specified one of the unsupported formats'
+>>      I wanted to say: 'hey it does not matter what format for IDA the orb implies
+>>      if the channel program does not use any IDA at all'. That could be paraphrased
+>>      as channel programs using direct addressing exclusively. But failing the direct
+>>      addressing does not fit for me.
+> 
+> But that's effectively what happens now, no? We reject the orb out of
+> hand due to unsupported flags that do not have any relevance for the
+> channel program in that case.
+
+Yes, that's what happens now, except that we make the whole channel program fail,
+and not the direct addressing. But the comment should describe what happens
+with the patch applied.
+
+> 
+> Or maybe 'channel programs using direct addressing only'?
+> 
+>> * 'defer' is IMHO trivial from the perspective that we used to fence the unsupported
+>>      scenarios earlier (by just looking at the orb). But if one just reads the new code
+>>      defer does not make much sense to me.
+> 
+> I think it still makes sense if you look at how the functions are
+> called.
+> 
+>>
+>> But no strong opinions here. If you think your version is the way to go I
+>> will just take it.
+> 
+> I certainly don't want to dictate things :)
+> 
+
+No problem. I'm aware of my limitations when it comes to producing readable
+text. In particular, my judgment about well readable or not is not trustworthy.
+So your input is highly appreciated. I will take your version, unless there
+is development.
+
+>>
+>>>    
+>>>> +		 */
+>>>> +		if ((!cp->orb.cmd.c64 || cp->orb.cmd.i2k) && ccw_is_idal(ccw))
+>>>> +			return -EOPNOTSUPP;
+>>>> +
+>>>>    		if ((!ccw_is_chain(ccw)) && (!ccw_is_tic(ccw)))
+>>>>    			break;
+>>>>    
+>>>> @@ -656,10 +667,8 @@ int cp_init(struct channel_program *cp, struct device *mdev, union orb *orb)
+>>>>    	/*
+>>>>    	 * XXX:
+>>>>    	 * Only support prefetch enable mode now.
+>>>> -	 * Only support 64bit addressing idal.
+>>>> -	 * Only support 4k IDAW.
+>>>>    	 */
+>>>> -	if (!orb->cmd.pfch || !orb->cmd.c64 || orb->cmd.i2k)
+>>>> +	if (!orb->cmd.pfch)
+>>>>    		return -EOPNOTSUPP;
+>>>>    
+>>>>    	INIT_LIST_HEAD(&cp->ccwchain_list);
+>>>> @@ -688,6 +697,10 @@ int cp_init(struct channel_program *cp, struct device *mdev, union orb *orb)
+>>>>    	ret = ccwchain_loop_tic(chain, cp);
+>>>>    	if (ret)
+>>>>    		cp_unpin_free(cp);
+>>>> +	/* It is safe to force: if not set but idals used
+>>>> +	 * ccwchain_calc_length returns an error.
+>>>
+>>> s/returns/already returned/ ?
+>>>    
+>>
+>> Yes we can do that. I think returns is also grammatical. Present simple
+>> can be used for expressing something that is always true.
+> 
+> I think it makes it clearer that we already checked earlier in the call
+> sequence.
+> 
+
+Will do.
+
+>>
+>>>> +	 */
+>>>> +	cp->orb.cmd.c64 = 1;
+>>>>    
+>>>>    	return ret;
+>>>>    }
+>>>
+>>> The patch looks sane, I have only issues with the description/comments.
+>>>    
+>>
+>> Thanks for having a look. Please give me short feedback about the one
+>> open point and I will respin with the requested changes.
+> 
+> Does anybody else have feedback?
+> 
+
+Will wait a day or so. Dong Jia and Jason have already seen the patch, and
+they only complained about the text. Since that spin was mainly for the
+tested-by tags, and I stated that any substantial discussion should happen
+upstream, I ignored those complaints.
+
+So yes I will wait a bit so everybody can chime in.
+
+Regards,
+Halil
