@@ -1,180 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754471AbeENRSP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:18:15 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46952 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753995AbeENRP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:15:27 -0400
-From: Dave Martin <Dave.Martin@arm.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-arch@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>
-Subject: [RFC PATCH 03/11] MIPS: Remove unused task argument from prctl functions
-Date: Mon, 14 May 2018 18:14:19 +0100
-Message-Id: <1526318067-4964-4-git-send-email-Dave.Martin@arm.com>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1526318067-4964-1-git-send-email-Dave.Martin@arm.com>
-References: <1526318067-4964-1-git-send-email-Dave.Martin@arm.com>
+        id S1753701AbeENRSy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:18:54 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:45867 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752241AbeENRSm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 13:18:42 -0400
+X-Google-Smtp-Source: AB8JxZobnW5O/T3b4CgEAoYIXV372/1ASNzt46B/NjlpZ4JuXkSSqJAhqi0sPontL718PCZR8Oxh+mo8xYANB+NSMtc=
+MIME-Version: 1.0
+In-Reply-To: <20180514093326.30314-1-anders.roxell@linaro.org>
+References: <20180510152719.6e37b10e@endymion> <20180514093326.30314-1-anders.roxell@linaro.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 14 May 2018 20:18:37 +0300
+Message-ID: <CAHp75VdJEzDsvJmv812wvc5p=frqc3KU8HW=y4cGULYEp4=SKQ@mail.gmail.com>
+Subject: Re: [PATCH v2] i2c: i801: fix unused-function warning
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: Jean Delvare <jdelvare@suse.com>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4EHJ2nb016224
 
-Some MIPS-specific prctl backends take a task argument that is
-redundant, since the only thing ever passed is "current".
+On Mon, May 14, 2018 at 12:33 PM, Anders Roxell
+<anders.roxell@linaro.org> wrote:
+> With CONFIG_PM, we get a harmless build warning:
+> drivers/i2c/busses/i2c-i801.c:1723:12: warning: ‘i801_resume’ defined but not used [-Wunused-function]
+>  static int i801_resume(struct device *dev)
+>             ^~~~~~~~~~~
+> drivers/i2c/busses/i2c-i801.c:1714:12: warning: ‘i801_suspend’ defined but not used [-Wunused-function]
+>  static int i801_suspend(struct device *dev)
+>             ^~~~~~~~~~~~
 
-This patch gets rid of the redundant arguments.
+> -#ifdef CONFIG_PM
+> +#ifdef CONFIG_PM_SLEEP
+>  static int i801_suspend(struct device *dev)
 
-No functional change.
+The better pattern is to get rid of ugly ifdef and supply
+__maybe_unused annotation to each function in question.
 
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
----
- arch/mips/include/asm/processor.h |  4 ++--
- arch/mips/kernel/process.c        | 23 +++++++++++------------
- arch/mips/kernel/syscall.c        |  1 +
- kernel/sys.c                      |  8 ++++----
- 4 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/arch/mips/include/asm/processor.h b/arch/mips/include/asm/processor.h
-index af34afb..8f06608 100644
---- a/arch/mips/include/asm/processor.h
-+++ b/arch/mips/include/asm/processor.h
-@@ -420,7 +420,7 @@ extern int mips_get_process_fp_mode(struct task_struct *task);
- extern int mips_set_process_fp_mode(struct task_struct *task,
- 				    unsigned int value);
- 
--#define GET_FP_MODE(task)		mips_get_process_fp_mode(task)
--#define SET_FP_MODE(task,value)		mips_set_process_fp_mode(task, value)
-+#define GET_FP_MODE()			mips_get_process_fp_mode()
-+#define SET_FP_MODE(value)		mips_set_process_fp_mode(value)
- 
- #endif /* _ASM_PROCESSOR_H */
-diff --git a/arch/mips/kernel/process.c b/arch/mips/kernel/process.c
-index b9e9bf6..7db1989 100644
---- a/arch/mips/kernel/process.c
-+++ b/arch/mips/kernel/process.c
-@@ -679,13 +679,13 @@ void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
- 	put_cpu();
- }
- 
--int mips_get_process_fp_mode(struct task_struct *task)
-+int mips_get_process_fp_mode(void)
- {
- 	int value = 0;
- 
--	if (!test_tsk_thread_flag(task, TIF_32BIT_FPREGS))
-+	if (!test_thread_flag(TIF_32BIT_FPREGS))
- 		value |= PR_FP_MODE_FR;
--	if (test_tsk_thread_flag(task, TIF_HYBRID_FPREGS))
-+	if (test_thread_flag(TIF_HYBRID_FPREGS))
- 		value |= PR_FP_MODE_FRE;
- 
- 	return value;
-@@ -699,14 +699,14 @@ static void prepare_for_fp_mode_switch(void *info)
- 		lose_fpu(1);
- }
- 
--int mips_set_process_fp_mode(struct task_struct *task, unsigned int value)
-+int mips_set_process_fp_mode(unsigned int value)
- {
- 	const unsigned int known_bits = PR_FP_MODE_FR | PR_FP_MODE_FRE;
- 	struct task_struct *t;
- 	int max_users;
- 
- 	/* If nothing to change, return right away, successfully.  */
--	if (value == mips_get_process_fp_mode(task))
-+	if (value == mips_get_process_fp_mode())
- 		return 0;
- 
- 	/* Only accept a mode change if 64-bit FP enabled for o32.  */
-@@ -736,11 +736,10 @@ int mips_set_process_fp_mode(struct task_struct *task, unsigned int value)
- 	preempt_disable();
- 
- 	/* Save FP & vector context, then disable FPU & MSA */
--	if (task->signal == current->signal)
--		lose_fpu(1);
-+	lose_fpu(1);
- 
- 	/* Prevent any threads from obtaining live FP context */
--	atomic_set(&task->mm->context.fp_mode_switching, 1);
-+	atomic_set(&current->mm->context.fp_mode_switching, 1);
- 	smp_mb__after_atomic();
- 
- 	/*
-@@ -750,7 +749,7 @@ int mips_set_process_fp_mode(struct task_struct *task, unsigned int value)
- 	 */
- 	if (num_online_cpus() > 1) {
- 		/* No need to send an IPI for the local CPU */
--		max_users = (task->mm == current->mm) ? 1 : 0;
-+		max_users = (current->mm == current->mm) ? 1 : 0;
- 
- 		if (atomic_read(&current->mm->mm_users) > max_users)
- 			smp_call_function(prepare_for_fp_mode_switch,
-@@ -761,7 +760,7 @@ int mips_set_process_fp_mode(struct task_struct *task, unsigned int value)
- 	 * There are now no threads of the process with live FP context, so it
- 	 * is safe to proceed with the FP mode switch.
- 	 */
--	for_each_thread(task, t) {
-+	for_each_thread(current, t) {
- 		/* Update desired FP register width */
- 		if (value & PR_FP_MODE_FR) {
- 			clear_tsk_thread_flag(t, TIF_32BIT_FPREGS);
-@@ -778,10 +777,10 @@ int mips_set_process_fp_mode(struct task_struct *task, unsigned int value)
- 	}
- 
- 	/* Allow threads to use FP again */
--	atomic_set(&task->mm->context.fp_mode_switching, 0);
-+	atomic_set(&current->mm->context.fp_mode_switching, 0);
- 	preempt_enable();
- 
--	wake_up_var(&task->mm->context.fp_mode_switching);
-+	wake_up_var(&current->mm->context.fp_mode_switching);
- 
- 	return 0;
- }
-diff --git a/arch/mips/kernel/syscall.c b/arch/mips/kernel/syscall.c
-index 69c17b5..15f33f0 100644
---- a/arch/mips/kernel/syscall.c
-+++ b/arch/mips/kernel/syscall.c
-@@ -12,6 +12,7 @@
- #include <linux/linkage.h>
- #include <linux/fs.h>
- #include <linux/smp.h>
-+#include <linux/prctl.h>
- #include <linux/ptrace.h>
- #include <linux/string.h>
- #include <linux/syscalls.h>
-diff --git a/kernel/sys.c b/kernel/sys.c
-index f917d78..520d2e8 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -108,10 +108,10 @@
- # define MPX_DISABLE_MANAGEMENT()	(-EINVAL)
- #endif
- #ifndef GET_FP_MODE
--# define GET_FP_MODE(a)		(-EINVAL)
-+# define GET_FP_MODE()		(-EINVAL)
- #endif
- #ifndef SET_FP_MODE
--# define SET_FP_MODE(a,b)	(-EINVAL)
-+# define SET_FP_MODE(a)		(-EINVAL)
- #endif
- 
- /*
-@@ -2433,10 +2433,10 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 		error = MPX_DISABLE_MANAGEMENT();
- 		break;
- 	case PR_SET_FP_MODE:
--		error = SET_FP_MODE(me, arg2);
-+		error = SET_FP_MODE(arg2);
- 		break;
- 	case PR_GET_FP_MODE:
--		error = GET_FP_MODE(me);
-+		error = GET_FP_MODE();
- 		break;
- 	default:
- 		error = prctl_arch(option, arg2, arg3, arg4, arg5);
 -- 
-2.1.4
+With Best Regards,
+Andy Shevchenko
