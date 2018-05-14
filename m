@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752734AbeENJsN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 05:48:13 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38366 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752013AbeENJsJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 05:48:09 -0400
+        id S1752750AbeENJsV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 05:48:21 -0400
+Received: from foss.arm.com ([217.140.101.70]:38372 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752090AbeENJsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 05:48:12 -0400
 From: Mark Rutland <mark.rutland@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
         dave.martin@arm.com, james.morse@arm.com, linux@dominikbrodowski.net,
         linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
         mark.rutland@arm.com, viro@zeniv.linux.org.uk, will.deacon@arm.com
-Subject: [PATCH 17/18] arm64: convert compat wrappers to C
-Date: Mon, 14 May 2018 10:46:39 +0100
-Message-Id: <20180514094640.27569-18-mark.rutland@arm.com>
+Subject: [PATCH 18/18] arm64: implement syscall wrappers
+Date: Mon, 14 May 2018 10:46:40 +0100
+Message-Id: <20180514094640.27569-19-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180514094640.27569-1-mark.rutland@arm.com>
 References: <20180514094640.27569-1-mark.rutland@arm.com>
@@ -22,353 +22,243 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for converting to pt_regs syscall wrappers, convert our
-existing compat wrappers to C. This will allow the pt_regs wrappers to
-be automatically generated, and will allow for the compat register
-manipulation to be folded in with the pt_regs accesses.
+To minimize the risk of userspace-controlled values being used under
+speculation, this patch adds pt_regs based syscall wrappers for arm64,
+which pass the minimum set of required userspace values to syscall
+implementations. For each syscall, a wrapper which takes a pt_regs
+argument is automatically generated, and this extracts the arguments
+before calling the "real" syscall implementation.
 
-To avoid confusion with the upcoming pt_regs wrappers and existing
-compat wrappers provided by core code, the C wrappers are renamed to
-compat_sys_aarch32_<syscall>.
+Each syscall has three functions generated:
 
-With the assembly wrappers gone, we can get rid of entry32.S and the
-associated boilerplate.
+* __do_<compat_>sys_<name> is the "real" syscall implementation, with
+  the expected prototype.
 
-Note that these must call the ksys_* syscall entry points, as the usual
-sys_* entry points will be modified to take a single pt_regs pointer
-argument.
+* __se_<compat_>sys_<name> is the sign-extension/narrowing wrapper,
+  inherited from common code. This takes a series of long parameters,
+  casting each to the requisite types required by the "real" syscall
+  implementation in __do_<compat_>sys_<name>.
+
+  This wrapper *may* not be necessary on arm64 given the AAPCS rules on
+  unused register bits, but it seemed safer to keep the wrapper for now.
+
+* __arm64_<compat_>_sys_<name> takes a struct pt_regs pointer, and
+  extracts *only* the relevant register values, passing these on to the
+  __se_<compat_>sys_<name> wrapper.
+
+The syscall invocation code is updated to handle the calling convention
+required by __arm64_<compat_>_sys_<name>, and passes a single struct
+pt_regs pointer.
+
+The compiler can fold the syscall implementation and its wrappers, such
+that the overhead of this approach is minimized.
+
+Note that we play games with sys_ni_syscall(). It can't be defined with
+SYSCALL_DEFINE0() because we must avoid the possibility of error
+injection. Additionally, there are a couple of locations where we need
+to call it from C code, and we don't (currently) have a
+ksys_ni_syscall().  While it has no wrapper, passing in a redundant
+pt_regs pointer is benign per the AAPCS.
+
+When ARCH_HAS_SYSCALL_WRAPPER is selected, no prototype is define for
+sys_ni_syscall(). Since we need to treat it differently for in-kernel
+calls and the syscall tables, the prototype is defined as-required.
+
+Largely the wrappers are largely the same as their x86 counterparts, but
+simplified as we don't have a variety of compat calling conventions that
+require separate stubs. Unlike x86, we have some zero-argument compat
+syscalls, and must define COMPAT_SYSCALL_DEFINE0().
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/unistd32.h |  22 ++++----
- arch/arm64/kernel/Makefile        |   2 +-
- arch/arm64/kernel/entry32.S       | 111 --------------------------------------
- arch/arm64/kernel/sys32.c         | 103 +++++++++++++++++++++++++++++++----
- 4 files changed, 104 insertions(+), 134 deletions(-)
- delete mode 100644 arch/arm64/kernel/entry32.S
+ arch/arm64/Kconfig                       |  1 +
+ arch/arm64/include/asm/syscall_wrapper.h | 80 ++++++++++++++++++++++++++++++++
+ arch/arm64/kernel/sys.c                  | 10 +++-
+ arch/arm64/kernel/sys32.c                |  9 +++-
+ arch/arm64/kernel/syscall.c              |  8 +---
+ arch/arm64/kernel/traps.c                |  2 +
+ 6 files changed, 101 insertions(+), 9 deletions(-)
+ create mode 100644 arch/arm64/include/asm/syscall_wrapper.h
 
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index ab95554b1734..0e3dd3265993 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -382,9 +382,9 @@ __SYSCALL(__NR_rt_sigqueueinfo, compat_sys_rt_sigqueueinfo)
- #define __NR_rt_sigsuspend 179
- __SYSCALL(__NR_rt_sigsuspend, compat_sys_rt_sigsuspend)
- #define __NR_pread64 180
--__SYSCALL(__NR_pread64, compat_sys_pread64_wrapper)
-+__SYSCALL(__NR_pread64, compat_sys_aarch32_pread64)
- #define __NR_pwrite64 181
--__SYSCALL(__NR_pwrite64, compat_sys_pwrite64_wrapper)
-+__SYSCALL(__NR_pwrite64, compat_sys_aarch32_pwrite64)
- #define __NR_chown 182
- __SYSCALL(__NR_chown, sys_chown16)
- #define __NR_getcwd 183
-@@ -406,11 +406,11 @@ __SYSCALL(__NR_vfork, sys_vfork)
- #define __NR_ugetrlimit 191	/* SuS compliant getrlimit */
- __SYSCALL(__NR_ugetrlimit, compat_sys_getrlimit)		/* SuS compliant getrlimit */
- #define __NR_mmap2 192
--__SYSCALL(__NR_mmap2, compat_sys_mmap2_wrapper)
-+__SYSCALL(__NR_mmap2, compat_sys_aarch32_mmap2)
- #define __NR_truncate64 193
--__SYSCALL(__NR_truncate64, compat_sys_truncate64_wrapper)
-+__SYSCALL(__NR_truncate64, compat_sys_aarch32_truncate64)
- #define __NR_ftruncate64 194
--__SYSCALL(__NR_ftruncate64, compat_sys_ftruncate64_wrapper)
-+__SYSCALL(__NR_ftruncate64, compat_sys_aarch32_ftruncate64)
- #define __NR_stat64 195
- __SYSCALL(__NR_stat64, sys_stat64)
- #define __NR_lstat64 196
-@@ -472,7 +472,7 @@ __SYSCALL(223, sys_ni_syscall)
- #define __NR_gettid 224
- __SYSCALL(__NR_gettid, sys_gettid)
- #define __NR_readahead 225
--__SYSCALL(__NR_readahead, compat_sys_readahead_wrapper)
-+__SYSCALL(__NR_readahead, compat_sys_aarch32_readahead)
- #define __NR_setxattr 226
- __SYSCALL(__NR_setxattr, sys_setxattr)
- #define __NR_lsetxattr 227
-@@ -554,15 +554,15 @@ __SYSCALL(__NR_clock_getres, compat_sys_clock_getres)
- #define __NR_clock_nanosleep 265
- __SYSCALL(__NR_clock_nanosleep, compat_sys_clock_nanosleep)
- #define __NR_statfs64 266
--__SYSCALL(__NR_statfs64, compat_sys_statfs64_wrapper)
-+__SYSCALL(__NR_statfs64, compat_sys_aarch32_statfs64)
- #define __NR_fstatfs64 267
--__SYSCALL(__NR_fstatfs64, compat_sys_fstatfs64_wrapper)
-+__SYSCALL(__NR_fstatfs64, compat_sys_aarch32_fstatfs64)
- #define __NR_tgkill 268
- __SYSCALL(__NR_tgkill, sys_tgkill)
- #define __NR_utimes 269
- __SYSCALL(__NR_utimes, compat_sys_utimes)
- #define __NR_arm_fadvise64_64 270
--__SYSCALL(__NR_arm_fadvise64_64, compat_sys_fadvise64_64_wrapper)
-+__SYSCALL(__NR_arm_fadvise64_64, compat_sys_aarch32_fadvise64_64)
- #define __NR_pciconfig_iobase 271
- __SYSCALL(__NR_pciconfig_iobase, sys_pciconfig_iobase)
- #define __NR_pciconfig_read 272
-@@ -704,7 +704,7 @@ __SYSCALL(__NR_get_robust_list, compat_sys_get_robust_list)
- #define __NR_splice 340
- __SYSCALL(__NR_splice, sys_splice)
- #define __NR_sync_file_range2 341
--__SYSCALL(__NR_sync_file_range2, compat_sys_sync_file_range2_wrapper)
-+__SYSCALL(__NR_sync_file_range2, compat_sys_aarch32_sync_file_range2)
- #define __NR_tee 342
- __SYSCALL(__NR_tee, sys_tee)
- #define __NR_vmsplice 343
-@@ -726,7 +726,7 @@ __SYSCALL(__NR_timerfd_create, sys_timerfd_create)
- #define __NR_eventfd 351
- __SYSCALL(__NR_eventfd, sys_eventfd)
- #define __NR_fallocate 352
--__SYSCALL(__NR_fallocate, compat_sys_fallocate_wrapper)
-+__SYSCALL(__NR_fallocate, compat_sys_aarch32_fallocate)
- #define __NR_timerfd_settime 353
- __SYSCALL(__NR_timerfd_settime, compat_sys_timerfd_settime)
- #define __NR_timerfd_gettime 354
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index c22e8ace5ea3..5886bc53fc9f 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -28,7 +28,7 @@ $(obj)/%.stub.o: $(obj)/%.o FORCE
- 	$(call if_changed,objcopy)
- 
- arm64-obj-$(CONFIG_COMPAT)		+= sys32.o kuser32.o signal32.o 	\
--					   sys_compat.o entry32.o
-+					   sys_compat.o
- arm64-obj-$(CONFIG_FUNCTION_TRACER)	+= ftrace.o entry-ftrace.o
- arm64-obj-$(CONFIG_MODULES)		+= arm64ksyms.o module.o
- arm64-obj-$(CONFIG_ARM64_MODULE_PLTS)	+= module-plts.o
-diff --git a/arch/arm64/kernel/entry32.S b/arch/arm64/kernel/entry32.S
-deleted file mode 100644
-index f9461696dde4..000000000000
---- a/arch/arm64/kernel/entry32.S
-+++ /dev/null
-@@ -1,111 +0,0 @@
--/*
-- * Compat system call wrappers
-- *
-- * Copyright (C) 2012 ARM Ltd.
-- * Authors: Will Deacon <will.deacon@arm.com>
-- *	    Catalin Marinas <catalin.marinas@arm.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-- */
--
--#include <linux/linkage.h>
--#include <linux/const.h>
--
--#include <asm/assembler.h>
--#include <asm/asm-offsets.h>
--#include <asm/errno.h>
--#include <asm/page.h>
--
--/*
-- * System call wrappers for the AArch32 compatibility layer.
-- */
--
--ENTRY(compat_sys_statfs64_wrapper)
--	mov	w3, #84
--	cmp	w1, #88
--	csel	w1, w3, w1, eq
--	b	compat_sys_statfs64
--ENDPROC(compat_sys_statfs64_wrapper)
--
--ENTRY(compat_sys_fstatfs64_wrapper)
--	mov	w3, #84
--	cmp	w1, #88
--	csel	w1, w3, w1, eq
--	b	compat_sys_fstatfs64
--ENDPROC(compat_sys_fstatfs64_wrapper)
--
--/*
-- * Note: off_4k (w5) is always in units of 4K. If we can't do the
-- * requested offset because it is not page-aligned, we return -EINVAL.
-- */
--ENTRY(compat_sys_mmap2_wrapper)
--#if PAGE_SHIFT > 12
--	tst	w5, #~PAGE_MASK >> 12
--	b.ne	1f
--	lsr	w5, w5, #PAGE_SHIFT - 12
--#endif
--	b	sys_mmap_pgoff
--1:	mov	x0, #-EINVAL
--	ret
--ENDPROC(compat_sys_mmap2_wrapper)
--
--/*
-- * Wrappers for AArch32 syscalls that either take 64-bit parameters
-- * in registers or that take 32-bit parameters which require sign
-- * extension.
-- */
--ENTRY(compat_sys_pread64_wrapper)
--	regs_to_64	x3, x4, x5
--	b	sys_pread64
--ENDPROC(compat_sys_pread64_wrapper)
--
--ENTRY(compat_sys_pwrite64_wrapper)
--	regs_to_64	x3, x4, x5
--	b	sys_pwrite64
--ENDPROC(compat_sys_pwrite64_wrapper)
--
--ENTRY(compat_sys_truncate64_wrapper)
--	regs_to_64	x1, x2, x3
--	b	sys_truncate
--ENDPROC(compat_sys_truncate64_wrapper)
--
--ENTRY(compat_sys_ftruncate64_wrapper)
--	regs_to_64	x1, x2, x3
--	b	sys_ftruncate
--ENDPROC(compat_sys_ftruncate64_wrapper)
--
--ENTRY(compat_sys_readahead_wrapper)
--	regs_to_64	x1, x2, x3
--	mov	w2, w4
--	b	sys_readahead
--ENDPROC(compat_sys_readahead_wrapper)
--
--ENTRY(compat_sys_fadvise64_64_wrapper)
--	mov	w6, w1
--	regs_to_64	x1, x2, x3
--	regs_to_64	x2, x4, x5
--	mov	w3, w6
--	b	sys_fadvise64_64
--ENDPROC(compat_sys_fadvise64_64_wrapper)
--
--ENTRY(compat_sys_sync_file_range2_wrapper)
--	regs_to_64	x2, x2, x3
--	regs_to_64	x3, x4, x5
--	b	sys_sync_file_range2
--ENDPROC(compat_sys_sync_file_range2_wrapper)
--
--ENTRY(compat_sys_fallocate_wrapper)
--	regs_to_64	x2, x2, x3
--	regs_to_64	x3, x4, x5
--	b	sys_fallocate
--ENDPROC(compat_sys_fallocate_wrapper)
-diff --git a/arch/arm64/kernel/sys32.c b/arch/arm64/kernel/sys32.c
-index 1ef103c95410..1a84e79c47f3 100644
---- a/arch/arm64/kernel/sys32.c
-+++ b/arch/arm64/kernel/sys32.c
-@@ -27,17 +27,98 @@
- 
- asmlinkage long compat_sys_sigreturn(void);
- asmlinkage long compat_sys_rt_sigreturn(void);
--asmlinkage long compat_sys_statfs64_wrapper(void);
--asmlinkage long compat_sys_fstatfs64_wrapper(void);
--asmlinkage long compat_sys_pread64_wrapper(void);
--asmlinkage long compat_sys_pwrite64_wrapper(void);
--asmlinkage long compat_sys_truncate64_wrapper(void);
--asmlinkage long compat_sys_ftruncate64_wrapper(void);
--asmlinkage long compat_sys_readahead_wrapper(void);
--asmlinkage long compat_sys_fadvise64_64_wrapper(void);
--asmlinkage long compat_sys_sync_file_range2_wrapper(void);
--asmlinkage long compat_sys_fallocate_wrapper(void);
--asmlinkage long compat_sys_mmap2_wrapper(void);
-+
-+COMPAT_SYSCALL_DEFINE3(aarch32_statfs64, const char __user *, pathname,
-+		       compat_size_t, sz, struct compat_statfs64 __user *, buf)
-+{
-+	if (sz == 88)
-+		sz = 84;
-+
-+	return kcompat_sys_statfs64(pathname, sz, buf);
-+}
-+
-+COMPAT_SYSCALL_DEFINE3(aarch32_fstatfs64, unsigned int, fd, compat_size_t, sz,
-+		       struct compat_statfs64 __user *, buf)
-+{
-+	if (sz == 88)
-+		sz = 84;
-+
-+	return kcompat_sys_fstatfs64(fd, sz, buf);
-+}
-+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index eb2cf4938f6d..8e559b1fc555 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -21,6 +21,7 @@ config ARM64
+ 	select ARCH_HAS_SG_CHAIN
+ 	select ARCH_HAS_STRICT_KERNEL_RWX
+ 	select ARCH_HAS_STRICT_MODULE_RWX
++	select ARCH_HAS_SYSCALL_WRAPPER
+ 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+ 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+ 	select ARCH_INLINE_READ_LOCK if !PREEMPT
+diff --git a/arch/arm64/include/asm/syscall_wrapper.h b/arch/arm64/include/asm/syscall_wrapper.h
+new file mode 100644
+index 000000000000..a4477e515b79
+--- /dev/null
++++ b/arch/arm64/include/asm/syscall_wrapper.h
+@@ -0,0 +1,80 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Note: off_4k is always in units of 4K. If we can't do the
-+ * requested offset because it is not page-aligned, we return -EINVAL.
++ * syscall_wrapper.h - arm64 specific wrappers to syscall definitions
++ *
++ * Based on arch/x86/include/asm_syscall_wrapper.h
 + */
-+COMPAT_SYSCALL_DEFINE6(aarch32_mmap2, unsigned long, addr, unsigned long, len,
-+		       unsigned long, prot, unsigned long, flags,
-+		       unsigned long, fd, unsigned long, off_4k)
-+{
-+	if (off_4k & (~PAGE_MASK >> 12))
-+		return -EINVAL;
 +
-+	off_4k >>= (PAGE_SHIFT - 12);
++#ifndef __ASM_SYSCALL_WRAPPER_H
++#define __ASM_SYSCALL_WRAPPER_H
 +
-+	return ksys_mmap_pgoff(addr, len, prot, flags, fd, off_4k);
-+}
++#define SC_ARM64_REGS_TO_ARGS(x, ...)				\
++	__MAP(x,__SC_ARGS					\
++	      ,,regs->regs[0],,regs->regs[1],,regs->regs[2]	\
++	      ,,regs->regs[3],,regs->regs[4],,regs->regs[5])
 +
-+#ifdef CONFIG_CPU_BIG_ENDIAN
-+#define arg_u32p(name)	u32, name##_hi, u32, name##_lo
-+#else
-+#define arg_u32p(name)	u32, name##_lo, u32, name##_hi
++#ifdef CONFIG_COMPAT
++
++#define COMPAT_SYSCALL_DEFINEx(x, name, ...)						\
++	asmlinkage long __arm64_compat_sys##name(const struct pt_regs *regs);		\
++	ALLOW_ERROR_INJECTION(__arm64_compat_sys##name, ERRNO);				\
++	static long __se_compat_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));		\
++	static inline long __do_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));	\
++	asmlinkage long __arm64_compat_sys##name(const struct pt_regs *regs)		\
++	{										\
++		return __se_compat_sys##name(SC_ARM64_REGS_TO_ARGS(x,__VA_ARGS__));	\
++	}										\
++	static long __se_compat_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))		\
++	{										\
++		return __do_compat_sys##name(__MAP(x,__SC_DELOUSE,__VA_ARGS__));	\
++	}										\
++	static inline long __do_compat_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
++
++#define COMPAT_SYSCALL_DEFINE0(sname)					\
++	asmlinkage long __arm64_compat_sys_##sname(void);		\
++	ALLOW_ERROR_INJECTION(__arm64_compat_sys_##sname, ERRNO);	\
++	asmlinkage long __arm64_compat_sys_##sname(void)
++
++#define COND_SYSCALL_COMPAT(name) \
++	cond_syscall(__arm64_compat_sys_##name);
++
++#define COMPAT_SYS_NI(name) \
++	SYSCALL_ALIAS(__arm64_compat_sys_##name, sys_ni_posix_timers);
++
++#endif /* CONFIG_COMPAT */
++
++#define __SYSCALL_DEFINEx(x, name, ...)						\
++	asmlinkage long __arm64_sys##name(const struct pt_regs *regs);		\
++	ALLOW_ERROR_INJECTION(__arm64_sys##name, ERRNO);			\
++	static long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));		\
++	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));	\
++	asmlinkage long __arm64_sys##name(const struct pt_regs *regs)		\
++	{									\
++		return __se_sys##name(SC_ARM64_REGS_TO_ARGS(x,__VA_ARGS__));	\
++	}									\
++	static long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))		\
++	{									\
++		long ret = __do_sys##name(__MAP(x,__SC_CAST,__VA_ARGS__));	\
++		__MAP(x,__SC_TEST,__VA_ARGS__);					\
++		__PROTECT(x, ret,__MAP(x,__SC_ARGS,__VA_ARGS__));		\
++		return ret;							\
++	}									\
++	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
++
++#ifndef SYSCALL_DEFINE0
++#define SYSCALL_DEFINE0(sname)					\
++	SYSCALL_METADATA(_##sname, 0);				\
++	asmlinkage long __arm64_sys_##sname(void);		\
++	ALLOW_ERROR_INJECTION(__arm64_sys_##sname, ERRNO);	\
++	asmlinkage long __arm64_sys_##sname(void)
 +#endif
 +
-+#define arg_u64(name)	(((u64)name##_hi << 32) | name##_lo)
++#ifndef COND_SYSCALL
++#define COND_SYSCALL(name) cond_syscall(__arm64_sys_##name)
++#endif
 +
-+COMPAT_SYSCALL_DEFINE6(aarch32_pread64, unsigned int, fd, char __user *, buf,
-+		       size_t, count, u32, __pad, arg_u32p(pos))
-+{
-+	return ksys_pread64(fd, buf, count, arg_u64(pos));
-+}
++#ifndef SYS_NI
++#define SYS_NI(name) SYSCALL_ALIAS(__arm64_sys_##name, sys_ni_posix_timers);
++#endif
 +
-+COMPAT_SYSCALL_DEFINE6(aarch32_pwrite64, unsigned int, fd,
-+		       const char __user *, buf, size_t, count, u32, __pad,
-+		       arg_u32p(pos))
-+{
-+	return ksys_pwrite64(fd, buf, count, arg_u64(pos));
-+}
-+
-+COMPAT_SYSCALL_DEFINE4(aarch32_truncate64, const char __user *, pathname,
-+		       u32, __pad, arg_u32p(length))
-+{
-+	return ksys_truncate(pathname, arg_u64(length));
-+}
-+
-+COMPAT_SYSCALL_DEFINE4(aarch32_ftruncate64, unsigned int, fd, u32, __pad,
-+		       arg_u32p(length))
-+{
-+	return ksys_ftruncate(fd, arg_u64(length));
-+}
-+
-+COMPAT_SYSCALL_DEFINE5(aarch32_readahead, int, fd, u32, __pad,
-+		       arg_u32p(offset), size_t, count)
-+{
-+	return ksys_readahead(fd, arg_u64(offset), count);
-+}
-+
-+COMPAT_SYSCALL_DEFINE6(aarch32_fadvise64_64, int, fd, int, advice,
-+		       arg_u32p(offset), arg_u32p(len))
-+{
-+	return ksys_fadvise64_64(fd, arg_u64(offset), arg_u64(len), advice);
-+}
-+
-+COMPAT_SYSCALL_DEFINE6(aarch32_sync_file_range2, int, fd, unsigned int, flags,
-+		       arg_u32p(offset), arg_u32p(nbytes))
-+{
-+	return ksys_sync_file_range(fd, arg_u64(offset), arg_u64(nbytes),
-+				    flags);
-+}
-+
-+COMPAT_SYSCALL_DEFINE6(aarch32_fallocate, int, fd, int, mode,
-+		       arg_u32p(offset), arg_u32p(len))
-+{
-+	return ksys_fallocate(fd, mode, arg_u64(offset), arg_u64(len));
-+}
++#endif /* __ASM_SYSCALL_WRAPPER_H */
+diff --git a/arch/arm64/kernel/sys.c b/arch/arm64/kernel/sys.c
+index 2ad1497a184e..ee93bf789f0a 100644
+--- a/arch/arm64/kernel/sys.c
++++ b/arch/arm64/kernel/sys.c
+@@ -48,11 +48,17 @@ SYSCALL_DEFINE1(arm64_personality, unsigned int, personality)
+ /*
+  * Wrappers to pass the pt_regs argument.
+  */
+-asmlinkage long sys_rt_sigreturn(void);
+ #define sys_personality		sys_arm64_personality
  
++asmlinkage long sys_ni_syscall(const struct pt_regs *);
++#define __arm64_sys_ni_syscall	sys_ni_syscall
++
++#undef __SYSCALL
++#define __SYSCALL(nr, sym)	asmlinkage long __arm64_##sym(const struct pt_regs *);
++#include <asm/unistd.h>
++
  #undef __SYSCALL
- #define __SYSCALL(nr, sym)	[nr] = sym,
+-#define __SYSCALL(nr, sym)	[nr] = sym,
++#define __SYSCALL(nr, sym)	[nr] = __arm64_##sym,
+ 
+ /*
+  * The sys_call_table array must be 4K aligned to be accessible from
+diff --git a/arch/arm64/kernel/sys32.c b/arch/arm64/kernel/sys32.c
+index 1a84e79c47f3..8359b54a9c97 100644
+--- a/arch/arm64/kernel/sys32.c
++++ b/arch/arm64/kernel/sys32.c
+@@ -120,8 +120,15 @@ COMPAT_SYSCALL_DEFINE6(aarch32_fallocate, int, fd, int, mode,
+ 	return ksys_fallocate(fd, mode, arg_u64(offset), arg_u64(len));
+ }
+ 
++asmlinkage long sys_ni_syscall(const struct pt_regs *);
++#define __arm64_sys_ni_syscall	sys_ni_syscall
++
++#undef __SYSCALL
++#define __SYSCALL(nr, sym)	asmlinkage long __arm64_##sym(const struct pt_regs *);
++#include <asm/unistd32.h>
++
+ #undef __SYSCALL
+-#define __SYSCALL(nr, sym)	[nr] = sym,
++#define __SYSCALL(nr, sym)	[nr] = __arm64_##sym,
+ 
+ /*
+  * The sys_call_table array must be 4K aligned to be accessible from
+diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
+index 4706f841e758..15b5d18f6104 100644
+--- a/arch/arm64/kernel/syscall.c
++++ b/arch/arm64/kernel/syscall.c
+@@ -12,15 +12,11 @@
+ 
+ long do_ni_syscall(struct pt_regs *regs);
+ 
+-typedef long (*syscall_fn_t)(unsigned long, unsigned long,
+-			     unsigned long, unsigned long,
+-			     unsigned long, unsigned long);
++typedef long (*syscall_fn_t)(struct pt_regs *regs);
+ 
+ static void __invoke_syscall(struct pt_regs *regs, syscall_fn_t syscall_fn)
+ {
+-	regs->regs[0] = syscall_fn(regs->regs[0], regs->regs[1],
+-				   regs->regs[2], regs->regs[3],
+-				   regs->regs[4], regs->regs[5]);
++	regs->regs[0] = syscall_fn(regs);
+ }
+ 
+ static void invoke_syscall(struct pt_regs *regs, int scno, int sc_nr,
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index b8d3e0d8c616..8bfcc37cbc65 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -549,6 +549,8 @@ asmlinkage void __exception do_sysinstr(unsigned int esr, struct pt_regs *regs)
+ 
+ long compat_arm_syscall(struct pt_regs *regs);
+ 
++long sys_ni_syscall(void);
++
+ asmlinkage long do_ni_syscall(struct pt_regs *regs)
+ {
+ #ifdef CONFIG_COMPAT
 -- 
 2.11.0
