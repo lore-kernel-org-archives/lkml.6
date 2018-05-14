@@ -1,38 +1,38 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqxSKYXse2O+7KDtv8pRGbFNZxMstVvL6FwkyzdkluhCWB4Gmb3T47TEHYOhrNw7jq6P1aP
-ARC-Seal: i=1; a=rsa-sha256; t=1526280897; cv=none;
+X-Google-Smtp-Source: AB8JxZpF0WchSim7oXO73IlnOthqMeObG/NRL14N+BOyRQJBRVftzECGA1S8lg+263mh/lo6DknA
+ARC-Seal: i=1; a=rsa-sha256; t=1526280895; cv=none;
         d=google.com; s=arc-20160816;
-        b=DPErODyYxJycjyZ/6OWifuqmidfr6hM8OqY7md2stWTYeoNWcCuZnguW2d9zjg5ddv
-         Hd/NwDp3PnS34raLE6i4hGvWTKf8rqLyQz96dt8tGe2+E9VIRi+Q/LmgUREOi4IO16Af
-         t7jEV9vy+5KOSZJjrHx0zpz0KWzhe/9p5vWkMCuG6ol5929R46V3t8LSd0RCT4LNLRwp
-         PWLUGsHdOBfn+GlHvAWUN1KGC0lQf4g7BimMF+Vl+jdRzU97OZ1Mh7HYlynMS2jHxCu7
-         81SI+SaG6S6TVBaEDxBStaPm9SORPs1eJYrYSMvnvo+mbOlZFopFkBMZIM0WclhLcmDD
-         G1dQ==
+        b=tWRurwMVHz/7lBERfJMzbIhamfGJ1x/Vli6ITWahkemn39UWabRhPnt3upNUOFxyWs
+         eYIyaef3it+7VC4ZYU2eOSh4FcNzH+Uf2RhbPplKRVMTVUG0eGG8RuQhlV+molaqm+0a
+         +fXWloXOkt3A+k+hUHtmmvbvgV2x4lmxzlcHgbiqVb4oi+NUN6N1pYnk65XkpcEKjEGy
+         JC+LphUCdwo8fVE+sjRaJKmLI4vMuE2T+i9auOhkI92yqGIOtjZBOkADIvdw3rc9wW5V
+         2mDFXA8zsJLN1Igq3E8l8cGz5N0B8xDmBrFPjNnDEaiA2tXfVQ98pCJ84DMgRmMlaW6u
+         owxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=JKYwmmsCWT8wl24N04HGFQUHdhw8DPo6c1SZKiaBXZg=;
-        b=DTwXvu8FoVmLfPQBQ+dYeyf5BHVC1ixnx/0b1M7JqxfPEiXiIO3jwXNDOlvzW0lDF8
-         /fdAlRnP4qzBuOXZf/Gb+plx89VuDltxAVFRFAyMr2VqXa1cMFMLvQfB7Cojgui8zr6p
-         GJQuwqW2H3+md4ywzcpj7jjuEblnCBrBaUGzqrr6U2FY50soV9+f/5cezlvij985Qq/W
-         kM+dXNAODevw+7apaLztvGxTDm+7+QupKqwb9Iuq7xBx4JXLe5HF+rPP1IWvxGN6mwsQ
-         l58QBayMa1Qtz2HrcJC3KuE+poS4pJ/DjosE+IVYlm3tyYQF1U6IFuiXtOeWBflzndLA
-         SDPQ==
+        bh=QhBYp13AGo3V2AxK+0ahlloDr7mt+v26ePoT7pkyIJA=;
+        b=RQqZgSUIfoljPohjkQWxIj/uTEO36GROXTamPT/nXyHGxzEK+e1U/1x4ArX/+BwMrc
+         ZMGPupoaGC5uS9z2zWKjDj0usqqgkRwkwxTtc+W7hqK0sQOg7ifYJEV9jZeJC1OAhueQ
+         KWjc0zQJSzIPG84uJbGJohYNDsiVy28LFfQVmw3gOiv+BW/qllK0B99EkSbMaZmqKkNb
+         GwEwp330JVYWoQCW+lWLcgCEjLDOlFWuq1AWJDDl+9hQboMCN4NVtNn5h+n9lXtgJdeQ
+         gYxfoJvzBPhJP5Qp1P3d4gvL7l108Rip9bkOMjZrhwAWyOznZbP8gdfB27RsdbMM57R7
+         8mMw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=gE+qP8vc;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Qf51Iz0k;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=gE+qP8vc;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Qf51Iz0k;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Govert Overgaauw <govert.overgaauw@prodrive-technologies.com>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.9 19/36] gpio: fix error path in lineevent_create
-Date: Mon, 14 May 2018 08:48:53 +0200
-Message-Id: <20180514064805.746008850@linuxfoundation.org>
+Subject: [PATCH 4.9 18/36] gpio: fix aspeed_gpio unmask irq
+Date: Mon, 14 May 2018 08:48:52 +0200
+Message-Id: <20180514064805.680588266@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064804.252823817@linuxfoundation.org>
 References: <20180514064804.252823817@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421518802204133?=
-X-GMAIL-MSGID: =?utf-8?q?1600421518802204133?=
+X-GMAIL-THRID: =?utf-8?q?1600421515804350416?=
+X-GMAIL-MSGID: =?utf-8?q?1600421515804350416?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,30 +51,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+From: Govert Overgaauw <govert.overgaauw@prodrive-technologies.com>
 
-commit f001cc351ad3309ec8736c374e90e5a4bc472d41 upstream.
+commit f241632fd087d3d9fbd5450f4d8c8604badd8348 upstream.
 
-If gpiod_request() fails the cleanup must not call gpiod_free().
+The unmask function disables all interrupts in a bank when unmasking an
+interrupt. Only disable the given interrupt.
 
 Cc: stable@vger.kernel.org
-Fixes: 61f922db7221 ("gpio: userspace ABI for reading GPIO line events")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Govert Overgaauw <govert.overgaauw@prodrive-technologies.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpiolib.c |    2 +-
+ drivers/gpio/gpio-aspeed.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -795,7 +795,7 @@ static int lineevent_create(struct gpio_
- 	desc = &gdev->descs[offset];
- 	ret = gpiod_request(desc, le->label);
- 	if (ret)
--		goto out_free_desc;
-+		goto out_free_label;
- 	le->desc = desc;
- 	le->eflags = eflags;
+--- a/drivers/gpio/gpio-aspeed.c
++++ b/drivers/gpio/gpio-aspeed.c
+@@ -256,7 +256,7 @@ static void aspeed_gpio_irq_set_mask(str
+ 	if (set)
+ 		reg |= bit;
+ 	else
+-		reg &= bit;
++		reg &= ~bit;
+ 	iowrite32(reg, addr);
  
+ 	spin_unlock_irqrestore(&gpio->lock, flags);
