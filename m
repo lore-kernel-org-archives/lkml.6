@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752192AbeENSwq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 14:52:46 -0400
-Received: from mga06.intel.com ([134.134.136.31]:55031 "EHLO mga06.intel.com"
+        id S1752277AbeENSwu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 14:52:50 -0400
+Received: from mga02.intel.com ([134.134.136.20]:45335 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752094AbeENSwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752077AbeENSwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 May 2018 14:52:31 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,401,1520924400";
-   d="scan'208";a="39244660"
+   d="scan'208";a="39244663"
 From: Fenghua Yu <fenghua.yu@intel.com>
 To: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@elte.hu>,
         "H. Peter Anvin" <hpa@linux.intel.com>,
@@ -23,9 +23,9 @@ To: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@elte.hu>,
         "Alan Cox" <alan@linux.intel.com>
 Cc: "x86" <x86@kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>,
         Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH 13/15] x86/split_lock: Trace #AC exception for split lock
-Date: Mon, 14 May 2018 11:52:23 -0700
-Message-Id: <1526323945-211107-14-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH 14/15] x86/split_lock: Add CONFIG and testing sysfs interface
+Date: Mon, 14 May 2018 11:52:24 -0700
+Message-Id: <1526323945-211107-15-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
 References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
@@ -33,166 +33,127 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create two events x86_exceptions.split_lock_user to trace #AC
-exception for split lock triggered from user space and
-x86_exceptions.split_lock_kernel to trace #AC exception for split
-lock from triggered from kernel space.
+CONFIG_SPLIT_LOCK_AC_TEST is added to enable sysfs interface
+/sys/kernel/split_lock/test_kernel to test split lock in kernel.
+
+Writing 1 to the file triggers a split locked access in kernel.
+User can use this interface to test how split locked access
+happening in kernel is handled.
+
+The file is not readable.
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- arch/x86/include/asm/trace/common.h     |  8 ++++++
- arch/x86/include/asm/trace/exceptions.h | 21 ++++++++++++---
- arch/x86/kernel/cpu/split_lock.c        | 46 +++++++++++++++++++++++++++++++++
- 3 files changed, 72 insertions(+), 3 deletions(-)
+ arch/x86/Kconfig                 | 10 ++++++
+ arch/x86/kernel/cpu/split_lock.c | 71 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 81 insertions(+)
 
-diff --git a/arch/x86/include/asm/trace/common.h b/arch/x86/include/asm/trace/common.h
-index 57c8da027d99..5e61c7348349 100644
---- a/arch/x86/include/asm/trace/common.h
-+++ b/arch/x86/include/asm/trace/common.h
-@@ -8,9 +8,17 @@ DECLARE_STATIC_KEY_FALSE(trace_pagefault_key);
- DECLARE_STATIC_KEY_FALSE(trace_resched_ipi_key);
- #define trace_resched_ipi_enabled()			\
- 	static_branch_unlikely(&trace_resched_ipi_key)
-+
-+#ifdef CONFIG_SPLIT_LOCK_AC
-+DECLARE_STATIC_KEY_FALSE(trace_split_lock_key);
-+#define trace_split_lock_enabled()			\
-+	static_branch_unlikely(&trace_split_lock_key)
-+#endif
-+
- #else
- static inline bool trace_pagefault_enabled(void) { return false; }
- static inline bool trace_resched_ipi_enabled(void) { return false; }
-+static inline bool trace_split_lock_enabled(void) { return false; }
- #endif
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 38baf5fb8556..018596d80424 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -460,6 +460,16 @@ config SPLIT_LOCK_AC
  
- #endif
-diff --git a/arch/x86/include/asm/trace/exceptions.h b/arch/x86/include/asm/trace/exceptions.h
-index 69615e387973..2a4ea0c70963 100644
---- a/arch/x86/include/asm/trace/exceptions.h
-+++ b/arch/x86/include/asm/trace/exceptions.h
-@@ -2,8 +2,8 @@
- #undef TRACE_SYSTEM
- #define TRACE_SYSTEM exceptions
+ 	  Say N if unsure.
  
--#if !defined(_TRACE_PAGE_FAULT_H) || defined(TRACE_HEADER_MULTI_READ)
--#define _TRACE_PAGE_FAULT_H
-+#if !defined(_TRACE_EXCEPTIONS_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_EXCEPTIONS_H
- 
- #include <linux/tracepoint.h>
- #include <asm/trace/common.h>
-@@ -44,10 +44,25 @@ DEFINE_EVENT_FN(x86_exceptions, name,				\
- DEFINE_PAGE_FAULT_EVENT(page_fault_user);
- DEFINE_PAGE_FAULT_EVENT(page_fault_kernel);
- 
-+#ifdef CONFIG_SPLIT_LOCK_AC
-+int trace_split_lock_reg(void);
-+void trace_split_lock_unreg(void);
++config SPLIT_LOCK_AC_TEST
++	bool "Test #AC exception for split locked accesses"
++	default n
++	depends on SPLIT_LOCK_AC
++	help
++	  Select to enable testing #AC exception for split lock accesses.
++	  This adds interface /sys/kernel/split_lock/trigger_kernel to
++	  allow user to trigger split locked access in kernel and test
++	  split lock handling.
 +
-+#define DEFINE_SPLIT_LOCK_FAULT_EVENT(name)			\
-+DEFINE_EVENT_FN(x86_exceptions, name,				\
-+	TP_PROTO(unsigned long address,	struct pt_regs *regs,	\
-+		 unsigned long error_code),			\
-+	TP_ARGS(address, regs, error_code),			\
-+	trace_split_lock_reg, trace_split_lock_unreg)
-+
-+DEFINE_SPLIT_LOCK_FAULT_EVENT(split_lock_user);
-+DEFINE_SPLIT_LOCK_FAULT_EVENT(split_lock_kernel);
-+#endif
-+
- #undef TRACE_INCLUDE_PATH
- #define TRACE_INCLUDE_PATH .
- #define TRACE_INCLUDE_FILE exceptions
--#endif /*  _TRACE_PAGE_FAULT_H */
-+#endif /*  _TRACE_EXCEPTIONS_H */
- 
- /* This part must be outside protection */
- #include <trace/define_trace.h>
+ if X86_32
+ config X86_BIGSMP
+ 	bool "Support for big SMP systems with more than 8 CPUs"
 diff --git a/arch/x86/kernel/cpu/split_lock.c b/arch/x86/kernel/cpu/split_lock.c
-index 020af331594d..948a7fa948a2 100644
+index 948a7fa948a2..eef69283aa5d 100644
 --- a/arch/x86/kernel/cpu/split_lock.c
 +++ b/arch/x86/kernel/cpu/split_lock.c
-@@ -15,6 +15,8 @@
- #include <linux/cpu.h>
- #include <linux/reboot.h>
- #include <linux/syscore_ops.h>
-+#include <asm-generic/kprobes.h>
-+#include <asm/trace/exceptions.h>
- #include <asm/msr.h>
+@@ -490,10 +490,81 @@ bios_store(struct kobject *kobj, struct kobj_attribute *attr,
  
- static bool split_lock_ac_supported;
-@@ -45,6 +47,8 @@ static const char * const user_modes[USER_MODE_LAST] = {
- 	[USER_MODE_RE_EXECUTE] = "re-execute",
- };
+ static struct kobj_attribute split_lock_ac_bios_enable = __ATTR_RW(bios);
  
-+DEFINE_STATIC_KEY_FALSE(trace_split_lock_key);
-+
- /*
-  * On processors not supporting #AC exception for split lock feature,
-  * MSR_TEST_CTL may not exist or MSR_TEST_CTL exists but the bit 29 is
-@@ -116,6 +120,20 @@ static __init int setup_split_lock_ac(char *str)
- }
- __setup("split_lock_ac=", setup_split_lock_ac);
- 
-+int trace_split_lock_reg(void)
++#ifdef CONFIG_SPLIT_LOCK_AC_TEST
++/* Execute locked cmpxchg with split locked address. */
++static void split_lock_test_kernel(void)
 +{
-+	if (split_lock_ac_supported)
-+		static_branch_inc(&trace_split_lock_key);
++	char cptr[128] __aligned(64);
++	int *iptr, a = 10, b = 11;
 +
-+	return 0;
-+}
++	/* Increment the pointer, making it misaligned */
++	iptr = (int *)(cptr + 61);
 +
-+void trace_split_lock_unreg(void)
-+{
-+	if (split_lock_ac_supported)
-+		static_branch_dec(&trace_split_lock_key);
-+}
++	/* Initial value 1 in iptr */
++	*iptr = 1;
 +
- static bool _setup_split_lock(int split_lock_ac_val)
- {
- 	u32 l, h;
-@@ -268,6 +286,31 @@ static bool re_execute(struct pt_regs *regs)
- 	return false;
- }
- 
-+static nokprobe_inline void
-+trace_split_lock_entries(unsigned long address, struct pt_regs *regs,
-+			 unsigned long error_code)
-+{
++	pr_info("split lock test: misaligned address=%lx\n",
++		(unsigned long)iptr);
 +	/*
-+	 * If either CR0.AM or EFLAGS.AC is zero in user, the #AC must
-+	 * come from split lock. Trace the #AC in split_lock_user event.
++	 * Since eax is equal to *iptr, the instruction loads value in b
++	 * (i.e. 11) into iptr. If the instruction is executed correctly,
++	 * the content of *iptr is changed to 11 from previous value 1.
 +	 *
-+	 * For other cases, the #AC could be from split lock or from
-+	 * generic cache line misalignment. Don't trace the #AC. In
-+	 * theory, that means some split lock events may not be traced.
-+	 * But usually EFLAGS.AC is not set for user process; so this
-+	 * is not big issue.
++	 * Accessing iptr cross two cache lines will trigger #AC in hardware.
++	 * The instruction is re-executed during split lock is disabled and
++	 * re-enabled later.
 +	 */
-+	if (user_mode(regs) && (cr0_am(regs) == 0 || eflags_ac(regs) == 0))
-+		trace_split_lock_user(address, regs, error_code);
++	asm volatile ("movl %1, %%eax\n\t"
++		      "movl %1, %0\n\t"
++		      "lock\n cmpxchgl %2, %0\n\t"
++		      : "=m" (*iptr)
++		      : "r"(a), "r"(b)
++		      : "%eax");
 +
-+	/*
-+	 * Only split lock can trigger #AC from kernel. Trace the #AC in
-+	 * split_lock_kernel event.
-+	 */
-+	if (!user_mode(regs))
-+		trace_split_lock_kernel(address, regs, error_code);
++	if (*iptr == b)
++		pr_info("split lock kernel test passes\n");
++	else
++		pr_info("split lock kernel test fails\n");
 +}
 +
- /*
-  * #AC handler for kernel split lock is called by generic #AC handler.
-  *
-@@ -280,6 +323,9 @@ bool do_split_lock_exception(struct pt_regs *regs, unsigned long error_code)
- 	unsigned long address = read_cr2(); /* Get the faulting address */
- 	int this_cpu = smp_processor_id();
- 
-+	if (trace_split_lock_enabled())
-+		trace_split_lock_entries(address, regs, error_code);
++/*
++ * Writing 1 to /sys/kernel/split_lock/test_kernel triggers split locked
++ * access in kernel mode.
++ */
++static ssize_t
++test_kernel_store(struct kobject *kobj, struct kobj_attribute *attr,
++		  const char *buf, size_t count)
++{
++	u32 val;
++	int ret;
 +
- 	if (!re_execute(regs))
- 		return false;
++	if (split_lock_ac == DISABLE_SPLIT_LOCK_AC)
++		return -ENODEV;
++
++	ret = kstrtou32(buf, 10, &val);
++	if (ret)
++		return ret;
++
++	if (val != 1)
++		return -EINVAL;
++
++	mutex_lock(&split_lock_mutex);
++	split_lock_test_kernel();
++	mutex_unlock(&split_lock_mutex);
++
++	return count;
++}
++
++static struct kobj_attribute split_lock_ac_test = __ATTR_WO(test_kernel);
++#endif /* CONFIG_SPLIT_LOCK_AC_TEST */
++
+ static struct attribute *split_lock_attrs[] = {
+ 	&split_lock_ac_enable.attr,
+ 	&split_lock_ac_user.attr,
+ 	&split_lock_ac_bios_enable.attr,
++#ifdef CONFIG_SPLIT_LOCK_AC_TEST
++	&split_lock_ac_test.attr,
++#endif
+ 	NULL,
+ };
  
 -- 
 2.5.0
