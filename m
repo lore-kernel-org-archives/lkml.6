@@ -1,39 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrlSZRw/BYicsedsE8gIHbnI/I8BYaUT1izDqwLi3feZWhHqNjZk/bk2djxagUx7NA5zZIJ
-ARC-Seal: i=1; a=rsa-sha256; t=1526280752; cv=none;
+X-Google-Smtp-Source: AB8JxZp4g/nS2yL+x+Zs7UdMZ1JB46w4nddjonKf1lWwaoOEp2AmR/FQUaIfHfDPBXbDjoTpppYg
+ARC-Seal: i=1; a=rsa-sha256; t=1526280750; cv=none;
         d=google.com; s=arc-20160816;
-        b=rNaKpp4zk/1Q4mL1M0IvFPWz/D+hvKG6+UZ5RPtbfNga1XpQ9PGEWunso2c87dmVXm
-         oPcg3KNftf6Pn8JtW0vOuHiv0ovuYfuGn9SmqHS/1p1yxLkTBqtgDcJ6i89pGYhOwZPV
-         UkN+cOEUe2V1a3FNwjh1mkM9OumAVns/PLitsciMRRxyi0d66ul+aSmDxV1LSueFukkj
-         488IPxNoAmF+HIZ9dXOT9/btDkcPL0vyWxt+/oXyD9vjIKduHMxoV/TFICGYWCQvUy2W
-         WPVJp0C2mPuKVQsz9FCcLeBDpGFu9WwlzjDAMzZUb8gAo1fKte7eJJmCNHLyg7AlyDtd
-         ae7Q==
+        b=HDxi7Zv9rwjHEboBRzCXHwQIt53yvL4Y1xyqA1HUN+h6vLk/q1rXxnHUf7uygfkAsz
+         bgvw0VLLJYyeVi2IWi9tk2LmljvGkHIFBRReG3a0AgonmqIDDKH4r1EPHC5cxXOQaO7n
+         ZqMcdPAEjC3t+3k66lF9P4o2NWEKioWxWeqdVqPnlLAQ8aUjNtCXuaKsYLtNpbo8TQRe
+         rlkSYd6vy5a2FOVmvofq37BHnJTthb/lIABGFF95+iI4LN84Gnnlob7obB57F53lWJvj
+         AZZ6WuJlD/ewruVJFCD9LCl2A0R2ZxhNVw9CabQEQqrfA3q64GFMGaIppQ255onhJSBy
+         fsAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=nMkQiLGP8rQHS+NCZmsLsjwxqLWyHC6nSCfogNsPMt4=;
-        b=h26XXYJP5Xdi/fkmpshvkM77RykBWxhEGXnjqM/UDOfbdaQ+AlvFff0BuW2dSXQou+
-         bRVReopyeI4rW6fR5T+wnOvrL9+JOlVM/VrhqCfTn9CFmPqJkQ0wwYVxwE+8+c6/cNBz
-         9PcX9EuVnRX2oDiI6vreZpGduCvUggodGsp8wry+Cjvj8btLSOJSoVCthK3EK6HF5XDT
-         KdSe4OHfgY8qLr8AIQkVaKotMgXEGD1qKPj0e0lWrsIvVrRg5LpprRsk5qwnOIMalVfG
-         S8Zzr9giSDllZNR5KhSIrT9Z0w76JddmxkKbY62qpufqYn1EaWDI5QNsVXAL/MGm8mC/
-         RYsg==
+        bh=I5Zs9xNzKYNneblktpwgkmt3/71D/ULZech7zyrHVvk=;
+        b=j000+qoYephVpinsk5JE1UxG3zTtZaNS6yCAAlJ43U2HlA/W9BiFmWnMax6IllryRv
+         kMODuF3Grp2dzg3aT2mqorHZ4IBTLRJfx29wDMk37iGEZfs+8DiHHhBql+m8LOC/qjbN
+         BuviIcz8aXMsKey9CH/F5bGZ9Ba1rVJWtN6nqlv/Fk+lXojlMT3Z0is+uGVBKe6sipmG
+         mTwv4d7ebC0ufDIMqm+VMrXeLIATwDGyVtD2NfCki77O670uy/Oie2on53J0LnMU1hDj
+         TuuQ/gJg92D1HtW/4LXr9PJqfoT4nSvmpktGGwrQP7/I3H9mnyAfnkCS8fnpgAG4qXQ8
+         lX1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=d3JEh795;
+       dkim=pass header.i=@kernel.org header.s=default header.b=mTCOucvE;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=d3JEh795;
+       dkim=pass header.i=@kernel.org header.s=default header.b=mTCOucvE;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Johan Hovold <johan@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.4 44/56] rfkill: gpio: fix memory leak in probe error path
-Date: Mon, 14 May 2018 08:48:49 +0200
-Message-Id: <20180514064758.856899514@linuxfoundation.org>
+	Yi Zhao <yi.zhao@windriver.com>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Nathan Harold <nharold@google.com>
+Subject: [PATCH 4.4 43/56] xfrm_user: fix return value from xfrm_user_rcv_msg
+Date: Mon, 14 May 2018 08:48:48 +0200
+Message-Id: <20180514064758.800723206@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421258890786882?=
-X-GMAIL-MSGID: =?utf-8?q?1600421366856364391?=
+X-GMAIL-THRID: =?utf-8?q?1600421364023497129?=
+X-GMAIL-MSGID: =?utf-8?q?1600421364023497129?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,44 +52,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Yi Zhao <yi.zhao@windriver.com>
 
-commit 4bf01ca21e2e0e4561d1a03c48c3d740418702db upstream.
+commit 83e2d0587ae859aae75fd9d246c409b10a6bd137 upstream.
 
-Make sure to free the rfkill device in case registration fails during
-probe.
+It doesn't support to run 32bit 'ip' to set xfrm objdect on 64bit host.
+But the return value is unknown for user program:
 
-Fixes: 5e7ca3937fbe ("net: rfkill: gpio: convert to resource managed allocation")
-Cc: stable <stable@vger.kernel.org>	# 3.13
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+ip xfrm policy list
+RTNETLINK answers: Unknown error 524
+
+Replace ENOTSUPP with EOPNOTSUPP:
+
+ip xfrm policy list
+RTNETLINK answers: Operation not supported
+
+Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Nathan Harold <nharold@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/rfkill/rfkill-gpio.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/xfrm/xfrm_user.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/rfkill/rfkill-gpio.c
-+++ b/net/rfkill/rfkill-gpio.c
-@@ -140,13 +140,18 @@ static int rfkill_gpio_probe(struct plat
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -2480,7 +2480,7 @@ static int xfrm_user_rcv_msg(struct sk_b
  
- 	ret = rfkill_register(rfkill->rfkill_dev);
- 	if (ret < 0)
--		return ret;
-+		goto err_destroy;
+ #ifdef CONFIG_COMPAT
+ 	if (is_compat_task())
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ #endif
  
- 	platform_set_drvdata(pdev, rfkill);
- 
- 	dev_info(&pdev->dev, "%s device registered.\n", rfkill->name);
- 
- 	return 0;
-+
-+err_destroy:
-+	rfkill_destroy(rfkill->rfkill_dev);
-+
-+	return ret;
- }
- 
- static int rfkill_gpio_remove(struct platform_device *pdev)
+ 	type = nlh->nlmsg_type;
