@@ -1,286 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753011AbeENLp6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:45:58 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:22526 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752733AbeENLne (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:43:34 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180514114333epoutp01dd2e41ddb392100a9aebcab60d1d637e~ugCNm1-Cs0604106041epoutp01g
-X-AuditID: b6c32a45-8dbff70000001020-d9-5af97663c583
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-To: Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        b.zolnierkie@samsung.com
-Subject: [PATCH 06/14] thermal: ti-soc-thermal: remove
- ->threshold_[thot,tcold]_mask fields
-Date: Mon, 14 May 2018 13:42:13 +0200
-Message-id: <1526298141-14045-7-git-send-email-b.zolnierkie@samsung.com>
-X-Mailer: git-send-email 1.9.1
-In-reply-to: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsWy7bCmhW5K2c8og85fjBYbZ6xntZh/5Rqr
-        xantTUwWl3fNYbOYvaSfxeJz7xFGiycP+9gc2D12zrrL7rF4z0smj74tqxg9jt/YzuTxeZNc
-        AGsUl01Kak5mWWqRvl0CV8a1OzNZCo77V7w9cYetgfG7SxcjJ4eEgInEpq7tzF2MXBxCAjsY
-        JR492skO4XxnlDjbepoNpmrJ0XusEIndjBJfbm5iAUkICfxilFi+JhDEZhOwkpjYvooRxBYR
-        cJOYteQPmM0sMJVRYtOEehBbWCBW4sKlP2BDWQRUJaZPmg42h1fAQ+Jt5212iGVyEiePTWYF
-        sTkFPCU2tL9kA1ksITCBTeLQ8tNMEEUuEr/W/WWGsIUlXh3fAtUsLfFs1UZGiIZmRolvO/ZA
-        FU1glNizXgjCtpY4fPwiK8R1fBIdh/8CNXMAxXklOtqEIEwPiTv9URDVjhJH1x9mgXh+DqPE
-        ygV/mCYwSi1gZFjFKJZaUJybnlpsVGCoV5yYW1yal66XnJ+7iREclVquOxhnnPM5xCjAwajE
-        w7ti5Y8oIdbEsuLK3EOMEhzMSiK8u41+RgnxpiRWVqUW5ccXleakFh9ilOZgURLnXaP0NUpI
-        ID2xJDU7NbUgtQgmy8TBKdXA6KWqffQrF6ukb4rIyderefZfTE+VrC3Sexx2MFj82YkN1826
-        Ur4+9s517JqY/q4x3+6S3nn/V4dfq7tHXNYpeuyxI1fo8DetwFC+zAU9YjMWnTodYutyOKEz
-        7QSf8jSunWXbWz+o7Kn+UOXSt1x0y96jSq+WO5h1BW8VcYmNLGJa823BkTuJSizFGYmGWsxF
-        xYkAVUOWTcYCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphluLIzCtJLcpLzFFi42I5/e+xgG5y2c8og/dTxSw2zljPajH/yjVW
-        i1Pbm5gsLu+aw2Yxe0k/i8Xn3iOMFk8e9rE5sHvsnHWX3WPxnpdMHn1bVjF6HL+xncnj8ya5
-        ANYoLpuU1JzMstQifbsEroxrd2ayFBz3r3h74g5bA+N3ly5GTg4JAROJJUfvsXYxcnEICexk
-        lFj38i4TSEJI4BejRNt0YxCbTcBKYmL7KkYQW0TATWLWkj+MIA3MAlMZJSZ/OsUGkhAWiJW4
-        cOkPmM0ioCoxfdJ0FhCbV8BD4m3nbXaIbXISJ49NZgWxOQU8JTa0v2SDWOYhcft3C9sERp4F
-        jAyrGCVTC4pz03OLjQqM8lLL9YoTc4tL89L1kvNzNzECw2jbYa3+HYyPl8QfYhTgYFTi4Q1Y
-        /iNKiDWxrLgy9xCjBAezkgjvbqOfUUK8KYmVValF+fFFpTmpxYcYpTlYlMR5+fOPRQoJpCeW
-        pGanphakFsFkmTg4pRoYDffVm4j4Ceovkfnk0/eWTSUosGR3dIfRnruJiwymdH944al8aH99
-        esVnu7932i8aOX/y5vnlvJ/9ir8F95ZvD4qVP5QH7wnONvrXqL+Vp0xrU4PXQ4PVr6yDGJ4+
-        Uj3zpZ9TbLrdwo3SMzco7vjEMGulvVaZu7Lec96jbJbqohO4K6Oz1yxRYinOSDTUYi4qTgQA
-        H1tPkh8CAAA=
-X-CMS-MailID: 20180514114331epcas2p3d52dea1f2feda21ff2cce1548f3f5bd4
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180514114331epcas2p3d52dea1f2feda21ff2cce1548f3f5bd4
-X-RootMTR: 20180514114331epcas2p3d52dea1f2feda21ff2cce1548f3f5bd4
-References: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180514114331epcas2p3d52dea1f2feda21ff2cce1548f3f5bd4@epcas2p3.samsung.com>
+        id S1753039AbeENLqW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:46:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44300 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752671AbeENLqT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 07:46:19 -0400
+Date: Mon, 14 May 2018 13:46:07 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        MTD Maling List <linux-mtd@lists.infradead.org>,
+        "Linux/m68k" <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mtd: nand: Fix return type of __DIVIDE() when called
+ with 32-bit
+Message-ID: <20180514134607.5dfb8d51@bbrezillon>
+In-Reply-To: <CAMuHMdUSHc2o5zXbZje89jo2dxTYv8pzcVSz-gYWh7KdZKwQeA@mail.gmail.com>
+References: <1526294977-32303-1-git-send-email-geert@linux-m68k.org>
+        <20180514132324.595b63eb@bbrezillon>
+        <CAMuHMdUSHc2o5zXbZje89jo2dxTYv8pzcVSz-gYWh7KdZKwQeA@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-.threshold_[thot,tcold]_mask fields are set to identical values for
-all sensors supporting TALERT feature so remove them and use common
-defines instead.
+On Mon, 14 May 2018 13:32:30 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-There should be no functional changes caused by this patch.
+> Hi Boris,
+> 
+> On Mon, May 14, 2018 at 1:23 PM, Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
+> > On Mon, 14 May 2018 12:49:37 +0200
+> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:  
+> >> The __DIVIDE() macro checks whether it is called with a 32-bit or 64-bit
+> >> dividend, to select the appropriate divide-and-round-up routine.
+> >> As the check uses the ternary operator, the result will always be
+> >> promoted to a type that can hold both results, i.e. unsigned long long.
+> >>
+> >> When using this result in a division on a 32-bit system, this may lead
+> >> to link errors like:
+> >>
+> >>     ERROR: "__udivdi3" [drivers/mtd/nand/raw/nand.ko] undefined!
+> >>
+> >> Fix this by casting the result of the 64-bit division to the type of the
+> >> dividend.
+> >>
+> >> Fixes: 8878b126df769831 ("mtd: nand: add ->exec_op() implementation")
+> >> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> >> ---
+> >> This fixes the root cause of the link failure seen with
+> >> m68k/allmodconfig since commit 3057fcef385348fe ("mtd: rawnand: Make
+> >> sure we wait tWB before polling the STATUS reg").
+> >>
+> >> An alternative mitigation was posted as "[PATCH] m68k: Implement
+> >> ndelay() as an inline function to force type checking/casting"
+> >> (https://lkml.org/lkml/2018/5/13/102).
+> >> ---
+> >>  include/linux/mtd/rawnand.h | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+> >> index 5dad59b312440a9c..d06dc428ea0102ae 100644
+> >> --- a/include/linux/mtd/rawnand.h
+> >> +++ b/include/linux/mtd/rawnand.h
+> >> @@ -871,7 +871,7 @@ struct nand_op_instr {
+> >>  #define __DIVIDE(dividend, divisor) ({                                       \
+> >>       sizeof(dividend) == sizeof(u32) ?                               \
+> >>               DIV_ROUND_UP(dividend, divisor) :                       \
+> >> -             DIV_ROUND_UP_ULL(dividend, divisor);                    \
+> >> +             (__typeof__(dividend))DIV_ROUND_UP_ULL(dividend, divisor); \  
+> >
+> > Hm, it's a bit hard to follow when you place the cast here. One could
+> > wonder why a cast to (__typeof__(dividend)) is needed since
+> > DIV_ROUND_UP_ULL() already returns a (__typeof__(dividend)) type.  
+> 
+> DIV_ROUND_UP_ULL() does not return __typeof__(dividend), but
+> unsigned long long.
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/thermal/ti-soc-thermal/dra752-bandgap.h      |  4 ----
- drivers/thermal/ti-soc-thermal/dra752-thermal-data.c | 10 ----------
- drivers/thermal/ti-soc-thermal/omap4-thermal-data.c  |  2 --
- drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h    |  4 ----
- drivers/thermal/ti-soc-thermal/omap5-thermal-data.c  |  6 ------
- drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h    |  4 ----
- drivers/thermal/ti-soc-thermal/ti-bandgap.c          | 20 ++++++++++++++++----
- drivers/thermal/ti-soc-thermal/ti-bandgap.h          |  8 ++++----
- 8 files changed, 20 insertions(+), 38 deletions(-)
+Except if you entered this branch, that means you passed an unsigned
+long long dividend (AKA u64), otherwise you would go in DIV_ROUND_UP().
+Am I missing something?
 
-diff --git a/drivers/thermal/ti-soc-thermal/dra752-bandgap.h b/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-index 9490cd6..b7156bf 100644
---- a/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-@@ -132,10 +132,6 @@
- #define DRA752_TEMP_SENSOR_EOCZ_MASK		BIT(10)
- #define DRA752_TEMP_SENSOR_DTEMP_MASK		(0x3ff << 0)
- 
--/* DRA752.BANDGAP_THRESHOLD */
--#define DRA752_BANDGAP_THRESHOLD_HOT_MASK		(0x3ff << 16)
--#define DRA752_BANDGAP_THRESHOLD_COLD_MASK		(0x3ff << 0)
--
- /**
-  * Temperature limits and thresholds for DRA752
-  *
-diff --git a/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c b/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c
-index c854642..a88a0e5 100644
---- a/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c
-+++ b/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c
-@@ -44,8 +44,6 @@
- 	.mask_counter_delay_mask = DRA752_BANDGAP_CTRL_1_COUNTER_DELAY_MASK,
- 	.mask_freeze_mask = DRA752_BANDGAP_CTRL_1_FREEZE_CORE_MASK,
- 	.bgap_threshold = DRA752_BANDGAP_THRESHOLD_CORE_OFFSET,
--	.threshold_thot_mask = DRA752_BANDGAP_THRESHOLD_HOT_MASK,
--	.threshold_tcold_mask = DRA752_BANDGAP_THRESHOLD_COLD_MASK,
- 	.bgap_status = DRA752_BANDGAP_STATUS_1_OFFSET,
- 	.status_hot_mask = DRA752_BANDGAP_STATUS_1_HOT_CORE_MASK,
- 	.status_cold_mask = DRA752_BANDGAP_STATUS_1_COLD_CORE_MASK,
-@@ -69,8 +67,6 @@
- 	.mask_counter_delay_mask = DRA752_BANDGAP_CTRL_1_COUNTER_DELAY_MASK,
- 	.mask_freeze_mask = DRA752_BANDGAP_CTRL_2_FREEZE_IVA_MASK,
- 	.bgap_threshold = DRA752_BANDGAP_THRESHOLD_IVA_OFFSET,
--	.threshold_thot_mask = DRA752_BANDGAP_THRESHOLD_HOT_MASK,
--	.threshold_tcold_mask = DRA752_BANDGAP_THRESHOLD_COLD_MASK,
- 	.bgap_status = DRA752_BANDGAP_STATUS_2_OFFSET,
- 	.status_hot_mask = DRA752_BANDGAP_STATUS_2_HOT_IVA_MASK,
- 	.status_cold_mask = DRA752_BANDGAP_STATUS_2_COLD_IVA_MASK,
-@@ -94,8 +90,6 @@
- 	.mask_counter_delay_mask = DRA752_BANDGAP_CTRL_1_COUNTER_DELAY_MASK,
- 	.mask_freeze_mask = DRA752_BANDGAP_CTRL_1_FREEZE_MPU_MASK,
- 	.bgap_threshold = DRA752_BANDGAP_THRESHOLD_MPU_OFFSET,
--	.threshold_thot_mask = DRA752_BANDGAP_THRESHOLD_HOT_MASK,
--	.threshold_tcold_mask = DRA752_BANDGAP_THRESHOLD_COLD_MASK,
- 	.bgap_status = DRA752_BANDGAP_STATUS_1_OFFSET,
- 	.status_hot_mask = DRA752_BANDGAP_STATUS_1_HOT_MPU_MASK,
- 	.status_cold_mask = DRA752_BANDGAP_STATUS_1_COLD_MPU_MASK,
-@@ -119,8 +113,6 @@
- 	.mask_counter_delay_mask = DRA752_BANDGAP_CTRL_1_COUNTER_DELAY_MASK,
- 	.mask_freeze_mask = DRA752_BANDGAP_CTRL_2_FREEZE_DSPEVE_MASK,
- 	.bgap_threshold = DRA752_BANDGAP_THRESHOLD_DSPEVE_OFFSET,
--	.threshold_thot_mask = DRA752_BANDGAP_THRESHOLD_HOT_MASK,
--	.threshold_tcold_mask = DRA752_BANDGAP_THRESHOLD_COLD_MASK,
- 	.bgap_status = DRA752_BANDGAP_STATUS_2_OFFSET,
- 	.status_hot_mask = DRA752_BANDGAP_STATUS_2_HOT_DSPEVE_MASK,
- 	.status_cold_mask = DRA752_BANDGAP_STATUS_2_COLD_DSPEVE_MASK,
-@@ -144,8 +136,6 @@
- 	.mask_counter_delay_mask = DRA752_BANDGAP_CTRL_1_COUNTER_DELAY_MASK,
- 	.mask_freeze_mask = DRA752_BANDGAP_CTRL_1_FREEZE_GPU_MASK,
- 	.bgap_threshold = DRA752_BANDGAP_THRESHOLD_GPU_OFFSET,
--	.threshold_thot_mask = DRA752_BANDGAP_THRESHOLD_HOT_MASK,
--	.threshold_tcold_mask = DRA752_BANDGAP_THRESHOLD_COLD_MASK,
- 	.bgap_status = DRA752_BANDGAP_STATUS_1_OFFSET,
- 	.status_hot_mask = DRA752_BANDGAP_STATUS_1_HOT_GPU_MASK,
- 	.status_cold_mask = DRA752_BANDGAP_STATUS_1_COLD_GPU_MASK,
-diff --git a/drivers/thermal/ti-soc-thermal/omap4-thermal-data.c b/drivers/thermal/ti-soc-thermal/omap4-thermal-data.c
-index 14d9fe2..9545fe3 100644
---- a/drivers/thermal/ti-soc-thermal/omap4-thermal-data.c
-+++ b/drivers/thermal/ti-soc-thermal/omap4-thermal-data.c
-@@ -108,8 +108,6 @@
- 	.counter_mask = OMAP4460_COUNTER_MASK,
- 
- 	.bgap_threshold = OMAP4460_BGAP_THRESHOLD_OFFSET,
--	.threshold_thot_mask = OMAP4460_T_HOT_MASK,
--	.threshold_tcold_mask = OMAP4460_T_COLD_MASK,
- 
- 	.tshut_threshold = OMAP4460_BGAP_TSHUT_OFFSET,
- 	.tshut_hot_mask = OMAP4460_TSHUT_HOT_MASK,
-diff --git a/drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h b/drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h
-index b87c8659..c1da37d 100644
---- a/drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h
-@@ -130,10 +130,6 @@
- /* OMAP4460.BANDGAP_COUNTER bits */
- #define OMAP4460_COUNTER_MASK				(0xffffff << 0)
- 
--/* OMAP4460.BANDGAP_THRESHOLD bits */
--#define OMAP4460_T_HOT_MASK				(0x3ff << 16)
--#define OMAP4460_T_COLD_MASK				(0x3ff << 0)
--
- /* OMAP4460.TSHUT_THRESHOLD bits */
- #define OMAP4460_TSHUT_HOT_MASK				(0x3ff << 16)
- #define OMAP4460_TSHUT_COLD_MASK			(0x3ff << 0)
-diff --git a/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c b/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
-index 843faa7..51a6ab4 100644
---- a/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
-+++ b/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
-@@ -42,8 +42,6 @@
- 	.mask_freeze_mask = OMAP5430_MASK_FREEZE_MPU_MASK,
- 
- 	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_MPU_OFFSET,
--	.threshold_thot_mask = OMAP5430_T_HOT_MASK,
--	.threshold_tcold_mask = OMAP5430_T_COLD_MASK,
- 
- 	.tshut_threshold = OMAP5430_BGAP_TSHUT_MPU_OFFSET,
- 	.tshut_hot_mask = OMAP5430_TSHUT_HOT_MASK,
-@@ -75,8 +73,6 @@
- 	.mask_freeze_mask = OMAP5430_MASK_FREEZE_GPU_MASK,
- 
- 	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_GPU_OFFSET,
--	.threshold_thot_mask = OMAP5430_T_HOT_MASK,
--	.threshold_tcold_mask = OMAP5430_T_COLD_MASK,
- 
- 	.tshut_threshold = OMAP5430_BGAP_TSHUT_GPU_OFFSET,
- 	.tshut_hot_mask = OMAP5430_TSHUT_HOT_MASK,
-@@ -109,8 +105,6 @@
- 	.mask_freeze_mask = OMAP5430_MASK_FREEZE_CORE_MASK,
- 
- 	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_CORE_OFFSET,
--	.threshold_thot_mask = OMAP5430_T_HOT_MASK,
--	.threshold_tcold_mask = OMAP5430_T_COLD_MASK,
- 
- 	.tshut_threshold = OMAP5430_BGAP_TSHUT_CORE_OFFSET,
- 	.tshut_hot_mask = OMAP5430_TSHUT_HOT_MASK,
-diff --git a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-index 223c7a8..ec536d8 100644
---- a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-@@ -93,10 +93,6 @@
- #define OMAP5430_MASK_HOT_MPU_MASK			BIT(1)
- #define OMAP5430_MASK_COLD_MPU_MASK			BIT(0)
- 
--/* OMAP5430.BANDGAP_THRESHOLD */
--#define OMAP5430_T_HOT_MASK				(0x3ff << 16)
--#define OMAP5430_T_COLD_MASK				(0x3ff << 0)
--
- /* OMAP5430.TSHUT_THRESHOLD */
- #define OMAP5430_TSHUT_HOT_MASK				(0x3ff << 16)
- #define OMAP5430_TSHUT_COLD_MASK			(0x3ff << 0)
-diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-index 3ac74fe..cb9a27e 100644
---- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-+++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-@@ -92,6 +92,18 @@ static void ti_bandgap_writel(struct ti_bandgap *bgp, u32 val, u32 reg)
- 	ti_bandgap_writel(bgp, r, t->reg);			\
- } while (0)
- 
-+#define RMW_BITS2(bgp, id, reg, mask, val)			\
-+do {								\
-+	struct temp_sensor_registers *t;			\
-+	u32 r;							\
-+								\
-+	t = bgp->conf->sensors[(id)].registers;		\
-+	r = ti_bandgap_readl(bgp, t->reg);			\
-+	r &= ~mask;						\
-+	r |= (val) << __ffs(mask);				\
-+	ti_bandgap_writel(bgp, r, t->reg);			\
-+} while (0)
-+
- /***   Basic helper functions   ***/
- 
- /**
-@@ -980,10 +992,10 @@ int ti_bandgap_probe(struct platform_device *pdev)
- 
- 		if (TI_BANDGAP_HAS(bgp, TALERT)) {
- 			/* Set initial Talert thresholds */
--			RMW_BITS(bgp, i, bgap_threshold,
--				 threshold_tcold_mask, ts_data->t_cold);
--			RMW_BITS(bgp, i, bgap_threshold,
--				 threshold_thot_mask, ts_data->t_hot);
-+			RMW_BITS2(bgp, i, bgap_threshold,
-+				 OMAP_T_COLD_MASK, ts_data->t_cold);
-+			RMW_BITS2(bgp, i, bgap_threshold,
-+				 OMAP_T_HOT_MASK, ts_data->t_hot);
- 			/* Enable the alert events */
- 			RMW_BITS(bgp, i, bgap_mask_ctrl, mask_hot_mask, 1);
- 			RMW_BITS(bgp, i, bgap_mask_ctrl, mask_cold_mask, 1);
-diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.h b/drivers/thermal/ti-soc-thermal/ti-bandgap.h
-index 809dbdc..2e5b146 100644
---- a/drivers/thermal/ti-soc-thermal/ti-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.h
-@@ -68,6 +68,10 @@
-  * sensors, representing every sensor instance present in this bandgap.
-  */
- 
-+/* BANDGAP_THRESHOLD */
-+#define OMAP_T_HOT_MASK		(0x3ff << 16)
-+#define OMAP_T_COLD_MASK	(0x3ff << 0)
-+
- /**
-  * struct temp_sensor_registers - descriptor to access registers and bitfields
-  * @temp_sensor_ctrl: TEMP_SENSOR_CTRL register offset
-@@ -85,8 +89,6 @@
-  * @bgap_counter: BANDGAP_COUNTER register offset
-  * @counter_mask: mask to bandgap_counter.counter
-  * @bgap_threshold: BANDGAP_THRESHOLD register offset (TALERT thresholds)
-- * @threshold_thot_mask: mask to bandgap_threhold.thot
-- * @threshold_tcold_mask: mask to bandgap_threhold.tcold
-  * @tshut_threshold: TSHUT_THRESHOLD register offset (TSHUT thresholds)
-  * @tshut_hot_mask: mask to tshut_threhold.thot
-  * @tshut_cold_mask: mask to tshut_threhold.thot
-@@ -126,8 +128,6 @@ struct temp_sensor_registers {
- 	u32	counter_mask;
- 
- 	u32	bgap_threshold;
--	u32	threshold_thot_mask;
--	u32	threshold_tcold_mask;
- 
- 	u32	tshut_threshold;
- 	u32	tshut_hot_mask;
--- 
-1.9.1
+> 
+> > How about:
+> >
+> >         /*
+> >          * Cast to type of dividend is needed here to guarantee that the
+> >          * result won't be an unsigned long long when the dividend is an
+> >          * unsigned long, which is what the compiler does when it sees a  
+> 
+> s/an unsigned long/32-bit/
+> 
+> >          * ternary operator with 2 different return types.
+> >          */
+> >         (__typeof__(dividend))(sizeof(dividend) == sizeof(u32) ?        \
+
+To be completely safe and handle cases where dividend is an unsigned
+short or an unsigned, we should probably have:
+
+	(__typeof__(dividend))(sizeof(dividend) == sizeof(unsigned long long) ?	\
+			       DIV_ROUND_UP_ULL(dividend, divisor) :
+			       DIV_ROUND_UP(dividend, divisor));
+
+> >                                DIV_ROUND_UP(dividend, divisor) :        \
+> >                                DIV_ROUND_UP_ULL(dividend, divisor));  
+> 
+> Looks fine to me, too.
+> 
+> > Actually, I'm not even sure we care about the truncation that could
+> > happen on an unsigned long long -> unsigned long cast because the
+> > delays we express here will anyway be hundreds of nanosecs/millisecs,
+> > so nothing close to the billions of nanosecs/millisecs you can express
+> > with an unsigned long.
+> >
+> > So, maybe we should just do:
+> >
+> >         (unsigned long)(sizeof(dividend) == sizeof(u32) ?               \
+> >                         DIV_ROUND_UP(dividend, divisor) :               \
+> >                         DIV_ROUND_UP_ULL(dividend, divisor));
+> >
+> > to make things more readable.  
+> 
+> That would break callers who pass a 64-bit dividend, and expect to receive
+> a 64-bit quotient back (on 32-bit systems).
+> Calling e.g. PSEC_TO_NSEC(1000000000000ULL) is valid, passing the
+> result to ndelay() isn't ;-)
+
+Well, theoretically, yes it's possible, in practice, we only ever pass
+u32 types to PSEC_TO_NSEC() and u64 types to PSEC_TO_MSEC(), so why
+bother.
