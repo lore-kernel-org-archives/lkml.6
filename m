@@ -1,22 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752679AbeENV0R (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:26:17 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:40352 "EHLO
+        id S1752693AbeENV0d (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:26:33 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:32782 "EHLO
         mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752042AbeENV0L (ORCPT
+        with ESMTP id S1752222AbeENV0a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:26:11 -0400
-X-Google-Smtp-Source: AB8JxZq8Yxtu4Hw5qTsISqdDwzHbBOFO3z5MtQPHiAp3JfMUi127s47SEDay5gFkaGsrwxTy08fEHlWFcFDWDQFYrrE=
+        Mon, 14 May 2018 17:26:30 -0400
+X-Google-Smtp-Source: AB8JxZq3TcUVXsgPC7jTihQLrp36E5JeimsI+74AZt7ihjkNe3bHF2XHoi0tBJH33hiqEbn53sk06134MO0xT63mAOI=
 MIME-Version: 1.0
-In-Reply-To: <20180511162028.20616-8-brgl@bgdev.pl>
-References: <20180511162028.20616-1-brgl@bgdev.pl> <20180511162028.20616-8-brgl@bgdev.pl>
+In-Reply-To: <20180511162028.20616-9-brgl@bgdev.pl>
+References: <20180511162028.20616-1-brgl@bgdev.pl> <20180511162028.20616-9-brgl@bgdev.pl>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 May 2018 23:26:09 +0200
-X-Google-Sender-Auth: eEvManwknQrlaiS951-Snx1Cwq8
-Message-ID: <CAMuHMdU8vU=wHDfrSA4Y_cM9GgrY-ERH=9C1mvoAy9EzhRsjOw@mail.gmail.com>
-Subject: Re: [PATCH 07/12] of/platform: provide a separate routine for setting
- up device resources
+Date: Mon, 14 May 2018 23:26:28 +0200
+X-Google-Sender-Auth: _kNoVPy9uHREPqNj6VkP-pIodQQ
+Message-ID: <CAMuHMdX=Fsw=wJ1Gc6RkAcpVaJaFtrmacqhDM4AsjrWwJwX3yA@mail.gmail.com>
+Subject: Re: [PATCH 08/12] of/platform: provide a separate routine for device initialization
 To: Bartosz Golaszewski <brgl@bgdev.pl>
 Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         David Lechner <david@lechnology.com>,
@@ -49,10 +48,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Fri, May 11, 2018 at 6:20 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >
-> The early platform driver framework will need to setup the device
-> resources before the regular populating of the device tree happens.
->
-> Provide a separate function for that.
+> The early platform device framework will need to initialize the
+> platform device objects without them being allocated in
+> of_device_alloc(). Provide a routine that allows it.
 >
 > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
