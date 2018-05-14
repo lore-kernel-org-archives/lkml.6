@@ -1,140 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753039AbeENLqW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:46:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44300 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752671AbeENLqT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:46:19 -0400
-Date: Mon, 14 May 2018 13:46:07 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        "Linux/m68k" <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mtd: nand: Fix return type of __DIVIDE() when called
- with 32-bit
-Message-ID: <20180514134607.5dfb8d51@bbrezillon>
-In-Reply-To: <CAMuHMdUSHc2o5zXbZje89jo2dxTYv8pzcVSz-gYWh7KdZKwQeA@mail.gmail.com>
-References: <1526294977-32303-1-git-send-email-geert@linux-m68k.org>
-        <20180514132324.595b63eb@bbrezillon>
-        <CAMuHMdUSHc2o5zXbZje89jo2dxTYv8pzcVSz-gYWh7KdZKwQeA@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1752585AbeENLtj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:49:39 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:45636 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752148AbeENLte (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 07:49:34 -0400
+X-Google-Smtp-Source: AB8JxZpF9m+X6Mu4lgIY++dPAO89ZlwCVlhQLyeXvFrSB/YlJSaZ/mtLbdbydTVtlPsLAv4VxsUUbOfKokC8D4IeNjQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180514080640.12515-2-linus.walleij@linaro.org>
+References: <20180514080640.12515-1-linus.walleij@linaro.org> <20180514080640.12515-2-linus.walleij@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 May 2018 13:49:33 +0200
+X-Google-Sender-Auth: A-aKbW5c1W_i83GMfO733YD3qJA
+Message-ID: <CAMuHMdUa8Hp-FP8iqKAEKbeEvbd34NjaDyxpNedV_QjvV+mivg@mail.gmail.com>
+Subject: Re: [PATCH 01/19 v3] regulator: fixed: Convert to use GPIO descriptor only
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Daniel Mack <zonque@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Jacopo Mondi <jacopo@jmondi.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 May 2018 13:32:30 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Hi Linus,
 
-> Hi Boris,
-> 
-> On Mon, May 14, 2018 at 1:23 PM, Boris Brezillon
-> <boris.brezillon@bootlin.com> wrote:
-> > On Mon, 14 May 2018 12:49:37 +0200
-> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:  
-> >> The __DIVIDE() macro checks whether it is called with a 32-bit or 64-bit
-> >> dividend, to select the appropriate divide-and-round-up routine.
-> >> As the check uses the ternary operator, the result will always be
-> >> promoted to a type that can hold both results, i.e. unsigned long long.
-> >>
-> >> When using this result in a division on a 32-bit system, this may lead
-> >> to link errors like:
-> >>
-> >>     ERROR: "__udivdi3" [drivers/mtd/nand/raw/nand.ko] undefined!
-> >>
-> >> Fix this by casting the result of the 64-bit division to the type of the
-> >> dividend.
-> >>
-> >> Fixes: 8878b126df769831 ("mtd: nand: add ->exec_op() implementation")
-> >> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> >> ---
-> >> This fixes the root cause of the link failure seen with
-> >> m68k/allmodconfig since commit 3057fcef385348fe ("mtd: rawnand: Make
-> >> sure we wait tWB before polling the STATUS reg").
-> >>
-> >> An alternative mitigation was posted as "[PATCH] m68k: Implement
-> >> ndelay() as an inline function to force type checking/casting"
-> >> (https://lkml.org/lkml/2018/5/13/102).
-> >> ---
-> >>  include/linux/mtd/rawnand.h | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> >> index 5dad59b312440a9c..d06dc428ea0102ae 100644
-> >> --- a/include/linux/mtd/rawnand.h
-> >> +++ b/include/linux/mtd/rawnand.h
-> >> @@ -871,7 +871,7 @@ struct nand_op_instr {
-> >>  #define __DIVIDE(dividend, divisor) ({                                       \
-> >>       sizeof(dividend) == sizeof(u32) ?                               \
-> >>               DIV_ROUND_UP(dividend, divisor) :                       \
-> >> -             DIV_ROUND_UP_ULL(dividend, divisor);                    \
-> >> +             (__typeof__(dividend))DIV_ROUND_UP_ULL(dividend, divisor); \  
-> >
-> > Hm, it's a bit hard to follow when you place the cast here. One could
-> > wonder why a cast to (__typeof__(dividend)) is needed since
-> > DIV_ROUND_UP_ULL() already returns a (__typeof__(dividend)) type.  
-> 
-> DIV_ROUND_UP_ULL() does not return __typeof__(dividend), but
-> unsigned long long.
+On Mon, May 14, 2018 at 10:06 AM, Linus Walleij
+<linus.walleij@linaro.org> wrote:
+> As we augmented the regulator core to accept a GPIO descriptor instead
+> of a GPIO number, we can augment the fixed GPIO regulator to look up
+> and pass that descriptor directly from device tree or board GPIO
+> descriptor look up tables.
+>
+> Some boards just auto-enumerate their fixed regulator platform devices
+> and I have assumed they get names like "fixed-regulator.0" but it's
+> pretty hard to guess this. I need some testing from board maintainers to
+> be sure. Other boards are straight forward, using just plain
+> "fixed-regulator" (ID -1) or "fixed-regulator.1" hammering down the
+> device ID.
+>
+> The OMAP didn't have proper label names on its GPIO chips so I have fixed
+> this with a separate patch to the GPIO tree, see
+> commit 088413bc0bd5f5fb66ca22a19d66a49d7154ba4c
+> "gpio: omap: Give unique labels to each GPIO bank/chip"
+>
+> It seems the da9055 and da9211 has never got around to actually passing
+> any enable gpio into its platform data (not the in-tree code anyway) so we
+> can just decide to simply pass a descriptor instead.
+>
+> The fixed GPIO-controlled regulator in mach-pxa/ezx.c was confusingly named
+> "*_dummy_supply_device" while it is a very real device backed by a GPIO
+> line. There is nothing dummy about it at all, so I renamed it with the
+> infix *_regulator_* as part of this patch set.
+>
+> For the patch hunk hitting arch/blackfin I would say I do not expect
+> testing, review or ACKs anymore so if it works, it works.
+>
+> The hunk hitting the x86 BCM43xx driver is especially tricky as the number
+> comes out of SFI which is a mystery to me. I definately need someone to
+> look at this. (Hi Andy.)
 
-Except if you entered this branch, that means you passed an unsigned
-long long dividend (AKA u64), otherwise you would go in DIV_ROUND_UP().
-Am I missing something?
+Thanks for your patch!
 
-> 
-> > How about:
-> >
-> >         /*
-> >          * Cast to type of dividend is needed here to guarantee that the
-> >          * result won't be an unsigned long long when the dividend is an
-> >          * unsigned long, which is what the compiler does when it sees a  
-> 
-> s/an unsigned long/32-bit/
-> 
-> >          * ternary operator with 2 different return types.
-> >          */
-> >         (__typeof__(dividend))(sizeof(dividend) == sizeof(u32) ?        \
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be> # SuperH pinctrl/GPIO maintainer
 
-To be completely safe and handle cases where dividend is an unsigned
-short or an unsigned, we should probably have:
+IIRC, Jacopo (CC) has an Ecovec24.
 
-	(__typeof__(dividend))(sizeof(dividend) == sizeof(unsigned long long) ?	\
-			       DIV_ROUND_UP_ULL(dividend, divisor) :
-			       DIV_ROUND_UP(dividend, divisor));
+> --- a/arch/sh/boards/mach-ecovec24/setup.c
+> +++ b/arch/sh/boards/mach-ecovec24/setup.c
+> @@ -633,7 +633,6 @@ static struct regulator_init_data cn12_power_init_data = {
+>  static struct fixed_voltage_config cn12_power_info = {
+>         .supply_name = "CN12 SD/MMC Vdd",
+>         .microvolts = 3300000,
+> -       .gpio = GPIO_PTB7,
+>         .enable_high = 1,
+>         .init_data = &cn12_power_init_data,
+>  };
+> @@ -646,6 +645,16 @@ static struct platform_device cn12_power = {
+>         },
+>  };
+>
+> +static struct gpiod_lookup_table cn12_power_gpiod_table = {
+> +       .dev_id = "reg-fixed-voltage.0",
+> +       .table = {
+> +               /* Offset 7 on port B */
+> +               GPIO_LOOKUP("sh7724_pfc", GPIO_PTB7,
+> +                           "enable", GPIO_ACTIVE_HIGH),
+> +               { },
+> +       },
+> +};
+> +
+>  #if defined(CONFIG_MMC_SDHI) || defined(CONFIG_MMC_SDHI_MODULE)
+>  /* SDHI0 */
+>  static struct regulator_consumer_supply sdhi0_power_consumers[] =
+> @@ -665,7 +674,6 @@ static struct regulator_init_data sdhi0_power_init_data = {
+>  static struct fixed_voltage_config sdhi0_power_info = {
+>         .supply_name = "CN11 SD/MMC Vdd",
+>         .microvolts = 3300000,
+> -       .gpio = GPIO_PTB6,
+>         .enable_high = 1,
+>         .init_data = &sdhi0_power_init_data,
+>  };
+> @@ -678,6 +686,16 @@ static struct platform_device sdhi0_power = {
+>         },
+>  };
+>
+> +static struct gpiod_lookup_table sdhi0_power_gpiod_table = {
+> +       .dev_id = "reg-fixed-voltage.1",
+> +       .table = {
+> +               /* Offset 6 on port B */
+> +               GPIO_LOOKUP("sh7724_pfc", GPIO_PTB6,
+> +                           "enable", GPIO_ACTIVE_HIGH),
+> +               { },
+> +       },
+> +};
+> +
+>  static struct tmio_mmc_data sdhi0_info = {
+>         .chan_priv_tx   = (void *)SHDMA_SLAVE_SDHI0_TX,
+>         .chan_priv_rx   = (void *)SHDMA_SLAVE_SDHI0_RX,
 
-> >                                DIV_ROUND_UP(dividend, divisor) :        \
-> >                                DIV_ROUND_UP_ULL(dividend, divisor));  
-> 
-> Looks fine to me, too.
-> 
-> > Actually, I'm not even sure we care about the truncation that could
-> > happen on an unsigned long long -> unsigned long cast because the
-> > delays we express here will anyway be hundreds of nanosecs/millisecs,
-> > so nothing close to the billions of nanosecs/millisecs you can express
-> > with an unsigned long.
-> >
-> > So, maybe we should just do:
-> >
-> >         (unsigned long)(sizeof(dividend) == sizeof(u32) ?               \
-> >                         DIV_ROUND_UP(dividend, divisor) :               \
-> >                         DIV_ROUND_UP_ULL(dividend, divisor));
-> >
-> > to make things more readable.  
-> 
-> That would break callers who pass a 64-bit dividend, and expect to receive
-> a 64-bit quotient back (on 32-bit systems).
-> Calling e.g. PSEC_TO_NSEC(1000000000000ULL) is valid, passing the
-> result to ndelay() isn't ;-)
+No calls to gpiod_add_lookup_table() to add to arch_setup()?
 
-Well, theoretically, yes it's possible, in practice, we only ever pass
-u32 types to PSEC_TO_NSEC() and u64 types to PSEC_TO_MSEC(), so why
-bother.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
