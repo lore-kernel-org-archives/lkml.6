@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752830AbeENL2R (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:28:17 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:43413 "EHLO
+        id S1752814AbeENL2Q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:28:16 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:48465 "EHLO
         srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752631AbeENL2M (ORCPT
+        with ESMTP id S1752614AbeENL2M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 May 2018 07:28:12 -0400
 From: Luca Ceresoli <luca@lucaceresoli.net>
@@ -12,9 +12,9 @@ To: linux-media@vger.kernel.org
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org, Luca Ceresoli <luca@lucaceresoli.net>,
         Hans Verkuil <hverkuil@xs4all.nl>
-Subject: [PATCH v2 4/5] media: docs: selection: improve formatting
-Date: Mon, 14 May 2018 13:27:26 +0200
-Message-Id: <1526297247-20881-4-git-send-email-luca@lucaceresoli.net>
+Subject: [PATCH v2 3/5] media: docs: selection: rename files to something meaningful
+Date: Mon, 14 May 2018 13:27:25 +0200
+Message-Id: <1526297247-20881-3-git-send-email-luca@lucaceresoli.net>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1526297247-20881-1-git-send-email-luca@lucaceresoli.net>
 References: <1526297247-20881-1-git-send-email-luca@lucaceresoli.net>
@@ -32,83 +32,68 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split section "Comparison with old cropping API" in paragraphs for
-easier reading and improve visible links text.
+These files have an automatically-generated numbering. Rename them
+with a name that suggests their meaning.
 
+Reported-by: Hans Verkuil <hverkuil@xs4all.nl>
 Cc: Hans Verkuil <hverkuil@xs4all.nl>
 Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 
 ---
 
-Changed v1 -> v2: nothing.
+Changed v1 -> v2:
+ - fix commit message typos (Hans)
 ---
- .../media/uapi/v4l/selection-api-vs-crop-api.rst   | 55 ++++++++++++----------
- 1 file changed, 29 insertions(+), 26 deletions(-)
+ .../{selection-api-004.rst => selection-api-configuration.rst} |  0
+ .../v4l/{selection-api-006.rst => selection-api-examples.rst}  |  0
+ .../v4l/{selection-api-002.rst => selection-api-intro.rst}     |  0
+ .../v4l/{selection-api-003.rst => selection-api-targets.rst}   |  0
+ .../{selection-api-005.rst => selection-api-vs-crop-api.rst}   |  0
+ Documentation/media/uapi/v4l/selection-api.rst                 | 10 +++++-----
+ 6 files changed, 5 insertions(+), 5 deletions(-)
+ rename Documentation/media/uapi/v4l/{selection-api-004.rst => selection-api-configuration.rst} (100%)
+ rename Documentation/media/uapi/v4l/{selection-api-006.rst => selection-api-examples.rst} (100%)
+ rename Documentation/media/uapi/v4l/{selection-api-002.rst => selection-api-intro.rst} (100%)
+ rename Documentation/media/uapi/v4l/{selection-api-003.rst => selection-api-targets.rst} (100%)
+ rename Documentation/media/uapi/v4l/{selection-api-005.rst => selection-api-vs-crop-api.rst} (100%)
 
-diff --git a/Documentation/media/uapi/v4l/selection-api-vs-crop-api.rst b/Documentation/media/uapi/v4l/selection-api-vs-crop-api.rst
-index 2ad30a49184f..ba1064a244a0 100644
---- a/Documentation/media/uapi/v4l/selection-api-vs-crop-api.rst
-+++ b/Documentation/media/uapi/v4l/selection-api-vs-crop-api.rst
-@@ -6,31 +6,34 @@
- Comparison with old cropping API
- ********************************
+diff --git a/Documentation/media/uapi/v4l/selection-api-004.rst b/Documentation/media/uapi/v4l/selection-api-configuration.rst
+similarity index 100%
+rename from Documentation/media/uapi/v4l/selection-api-004.rst
+rename to Documentation/media/uapi/v4l/selection-api-configuration.rst
+diff --git a/Documentation/media/uapi/v4l/selection-api-006.rst b/Documentation/media/uapi/v4l/selection-api-examples.rst
+similarity index 100%
+rename from Documentation/media/uapi/v4l/selection-api-006.rst
+rename to Documentation/media/uapi/v4l/selection-api-examples.rst
+diff --git a/Documentation/media/uapi/v4l/selection-api-002.rst b/Documentation/media/uapi/v4l/selection-api-intro.rst
+similarity index 100%
+rename from Documentation/media/uapi/v4l/selection-api-002.rst
+rename to Documentation/media/uapi/v4l/selection-api-intro.rst
+diff --git a/Documentation/media/uapi/v4l/selection-api-003.rst b/Documentation/media/uapi/v4l/selection-api-targets.rst
+similarity index 100%
+rename from Documentation/media/uapi/v4l/selection-api-003.rst
+rename to Documentation/media/uapi/v4l/selection-api-targets.rst
+diff --git a/Documentation/media/uapi/v4l/selection-api-005.rst b/Documentation/media/uapi/v4l/selection-api-vs-crop-api.rst
+similarity index 100%
+rename from Documentation/media/uapi/v4l/selection-api-005.rst
+rename to Documentation/media/uapi/v4l/selection-api-vs-crop-api.rst
+diff --git a/Documentation/media/uapi/v4l/selection-api.rst b/Documentation/media/uapi/v4l/selection-api.rst
+index e4e623824b30..390233f704a3 100644
+--- a/Documentation/media/uapi/v4l/selection-api.rst
++++ b/Documentation/media/uapi/v4l/selection-api.rst
+@@ -9,8 +9,8 @@ Cropping, composing and scaling -- the SELECTION API
+ .. toctree::
+     :maxdepth: 1
  
--The selection API was introduced to cope with deficiencies of previous
--:ref:`API <crop>`, that was designed to control simple capture
--devices. Later the cropping API was adopted by video output drivers. The
--ioctls are used to select a part of the display were the video signal is
--inserted. It should be considered as an API abuse because the described
--operation is actually the composing. The selection API makes a clear
--distinction between composing and cropping operations by setting the
--appropriate targets. The V4L2 API lacks any support for composing to and
--cropping from an image inside a memory buffer. The application could
--configure a capture device to fill only a part of an image by abusing
--V4L2 API. Cropping a smaller image from a larger one is achieved by
--setting the field ``bytesperline`` at struct
--:c:type:`v4l2_pix_format`.
--Introducing an image offsets could be done by modifying field ``m_userptr``
--at struct
--:c:type:`v4l2_buffer` before calling
--:ref:`VIDIOC_QBUF`. Those operations should be avoided because they are not
--portable (endianness), and do not work for macroblock and Bayer formats
--and mmap buffers. The selection API deals with configuration of buffer
-+The selection API was introduced to cope with deficiencies of the
-+older :ref:`CROP API <crop>`, that was designed to control simple
-+capture devices. Later the cropping API was adopted by video output
-+drivers. The ioctls are used to select a part of the display were the
-+video signal is inserted. It should be considered as an API abuse
-+because the described operation is actually the composing. The
-+selection API makes a clear distinction between composing and cropping
-+operations by setting the appropriate targets.
-+
-+The V4L2 API lacks any support for composing to and cropping from an
-+image inside a memory buffer. The application could configure a
-+capture device to fill only a part of an image by abusing V4L2
-+API. Cropping a smaller image from a larger one is achieved by setting
-+the field ``bytesperline`` at struct :c:type:`v4l2_pix_format`.
-+Introducing an image offsets could be done by modifying field
-+``m_userptr`` at struct :c:type:`v4l2_buffer` before calling
-+:ref:`VIDIOC_QBUF <VIDIOC_QBUF>`. Those operations should be avoided
-+because they are not portable (endianness), and do not work for
-+macroblock and Bayer formats and mmap buffers.
-+
-+The selection API deals with configuration of buffer
- cropping/composing in a clear, intuitive and portable way. Next, with
- the selection API the concepts of the padded target and constraints
--flags are introduced. Finally, struct :c:type:`v4l2_crop`
--and struct :c:type:`v4l2_cropcap` have no reserved
--fields. Therefore there is no way to extend their functionality. The new
--struct :c:type:`v4l2_selection` provides a lot of place
--for future extensions. Driver developers are encouraged to implement
--only selection API. The former cropping API would be simulated using the
--new one.
-+flags are introduced. Finally, struct :c:type:`v4l2_crop` and struct
-+:c:type:`v4l2_cropcap` have no reserved fields. Therefore there is no
-+way to extend their functionality. The new struct
-+:c:type:`v4l2_selection` provides a lot of place for future
-+extensions.
-+
-+Driver developers are encouraged to implement only selection API. The
-+former cropping API would be simulated using the new one.
+-    selection-api-002
+-    selection-api-003
+-    selection-api-004
+-    selection-api-005
+-    selection-api-006
++    selection-api-intro.rst
++    selection-api-targets.rst
++    selection-api-configuration.rst
++    selection-api-vs-crop-api.rst
++    selection-api-examples.rst
 -- 
 2.7.4
