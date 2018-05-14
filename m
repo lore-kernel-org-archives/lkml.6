@@ -1,42 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoCefw+lPqr6ASdARBLHg9H+w5iy6Ms0i/AWXn7znNxVd3aX0/5gt8cT7s66X1isJ3x1tdd
-ARC-Seal: i=1; a=rsa-sha256; t=1526281094; cv=none;
+X-Google-Smtp-Source: AB8JxZp1yZo+36MoSeCMz4CfzTrAyBbol2cnZ4Iogh6JMEgTb6pEsxovJU4OWl80/lLNxWGe2w0F
+ARC-Seal: i=1; a=rsa-sha256; t=1526281091; cv=none;
         d=google.com; s=arc-20160816;
-        b=04IHdrHdkhtimDaiP2OF0SqE6qWlm6JxUtwU9DFiN7ac1fl9n53+ekqyIYNtwTWdyo
-         jVnvEP1E5Cy3hqWu539nt8n/hP3HJP8jn8BOK6o7XWh4ZiQsjWTaQb3P0J8S4wwcbSH7
-         k4kMe6vb0e2sB7R+7B7k/L5SKxmuxsEncg0ND5X2qEaPK69dVanSvLWHA+0wnA7zvuCA
-         mIA9EETCTfIOlwwLAAn6Ak+ISaIljP9NPJQHEB36WXYhfFXruIPPYMyfuncKpx8QLBAt
-         ROMzQvwQan8DAlhhRQl2AuqSZRldjfJEhe+vYXmVAkrEfQeXIq7TIR1GsIDWe6ejyHBX
-         UI2w==
+        b=085mnolgUz6oCUh/n9Zrde2Y394y+XbO0jdgDbc+FjtET3QwPg34GXvzmNgszcDOpU
+         Uj+zJ1s49notLslnDLMWnxfiht51RzKcbWKDj8yuhZUKJlL67U059Xu7QvGHA/mDEh4v
+         uZWcQDRFM+kDTqCCmWdTtTFF27K2gf1ET3cMNAnCZgVYONhJmBZ8kxTGyN9yaFxUpEEW
+         oiCEJBjEn4p7orMVKW24umJI1T+JJyIcvVWiVTyEZhKFkJr40p7C1tfLPSsfBdqPf8dS
+         Md40624IBv6Y5EwXZdpFStNPNb0rrPfCeHHnvqNel4QvRNk/+nzfyhggTjXJ0WQtc7Rm
+         Huhg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ypq26hywklYOHEPLo9TGcGHNHSRJbuGPfoqm5FShIHA=;
-        b=xj354pZS0yZeJi0ivWk7xHtghyY0P3IfPEV9Y5Oz3ip8YhM/mtt9UW4EbdR31is6T3
-         CmvARhRsa13r2TRR4bLlnSUF+OH+sY2+SRs+ZNTD0K+bupoa7pVni3lDXjgWKvyYTpnB
-         mWmobnSQlzC4z5yEV11pgKpLnSN1KPI9BGlkMZuRIUYIUdrNPLRi7BBXj3LtUvzFRQ8i
-         mIwRnGh4oWzxiMHW19f/ga4T03LMzvv8NQ257G05m6lbFO8ObvQ82p4WzGyr1sJINjo7
-         T5SVvT3X4vzgckoweJPw4qmToSw8i28YXnQ1X3NP3z+9+S5vh6WSKcMiotQgqzbL7GXv
-         e6lA==
+        bh=rvm9Q/XQ6BXYGRSIvXMzmxCGiBD3eRiJhMKii7TQ+zI=;
+        b=WPARChlVcHyRvmc6GAfPeqnwdWac/ASpAepNeSCoWntJv4r28+5IMt8iYAHpUSb9qL
+         BMUzTinlEHHVmjQQQdA1UHv20huLrXdQYnhtSb8vvaoxNYsRykAEAcRkTln37+DQA0ex
+         ymZzpA77b0J3trFbFnZfRpgaC/KIaUNP82og/fYt8PRiQuPDnAwxoNMtEg1tEoNCw1bc
+         7YETHLw5fR7KasI03YRqBC11E4I5uAxkaxik+h/+qgrpQ1du+LWe8B43e/conT7ogCUN
+         zNZI7KMOSqGkuAhu+6yrSTWYrs6ekJPgqr+EZxud03XVt77tVTgvn2g0L+udwhhuhPHE
+         9b+w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=sLeHa8rD;
+       dkim=pass header.i=@kernel.org header.s=default header.b=12bH4ULD;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=sLeHa8rD;
+       dkim=pass header.i=@kernel.org header.s=default header.b=12bH4ULD;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com,
-	Michal Hocko <mhocko@suse.com>,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.16 16/72] memcg: fix per_node_info cleanup
-Date: Mon, 14 May 2018 08:48:33 +0200
-Message-Id: <20180514064823.726404952@linuxfoundation.org>
+	syzbot+dc5ca0e4c9bfafaf2bae@syzkaller.appspotmail.com,
+	Yonghong Song <yhs@fb.com>,
+	Daniel Borkmann <daniel@iogearbox.net>
+Subject: [PATCH 4.16 15/72] bpf/tracing: fix a deadlock in perf_event_detach_bpf_prog
+Date: Mon, 14 May 2018 08:48:32 +0200
+Message-Id: <20180514064823.686485175@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -46,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421541789119667?=
-X-GMAIL-MSGID: =?utf-8?q?1600421724593199600?=
+X-GMAIL-THRID: =?utf-8?q?1600421722275400984?=
+X-GMAIL-MSGID: =?utf-8?q?1600421722275400984?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,45 +52,243 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Yonghong Song <yhs@fb.com>
 
-commit 4eaf431f6f71bbed40a4c733ffe93a7e8cedf9d9 upstream.
+commit 3a38bb98d9abdc3856f26b5ed4332803065cd7cf upstream.
 
-syzbot has triggered a NULL ptr dereference when allocation fault
-injection enforces a failure and alloc_mem_cgroup_per_node_info
-initializes memcg->nodeinfo only half way through.
+syzbot reported a possible deadlock in perf_event_detach_bpf_prog.
+The error details:
+  ======================================================
+  WARNING: possible circular locking dependency detected
+  4.16.0-rc7+ #3 Not tainted
+  ------------------------------------------------------
+  syz-executor7/24531 is trying to acquire lock:
+   (bpf_event_mutex){+.+.}, at: [<000000008a849b07>] perf_event_detach_bpf_prog+0x92/0x3d0 kernel/trace/bpf_trace.c:854
 
-But __mem_cgroup_free still tries to free all per-node data and
-dereferences pn->lruvec_stat_cpu unconditioanlly even if the specific
-per-node data hasn't been initialized.
+  but task is already holding lock:
+   (&mm->mmap_sem){++++}, at: [<0000000038768f87>] vm_mmap_pgoff+0x198/0x280 mm/util.c:353
 
-The bug is quite unlikely to hit because small allocations do not fail
-and we would need quite some numa nodes to make struct
-mem_cgroup_per_node large enough to cross the costly order.
+  which lock already depends on the new lock.
 
-Link: http://lkml.kernel.org/r/20180406100906.17790-1-mhocko@kernel.org
-Reported-by: syzbot+8a5de3cce7cdc70e9ebe@syzkaller.appspotmail.com
-Fixes: 00f3ca2c2d66 ("mm: memcontrol: per-lruvec stats infrastructure")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+  the existing dependency chain (in reverse order) is:
+
+  -> #1 (&mm->mmap_sem){++++}:
+       __might_fault+0x13a/0x1d0 mm/memory.c:4571
+       _copy_to_user+0x2c/0xc0 lib/usercopy.c:25
+       copy_to_user include/linux/uaccess.h:155 [inline]
+       bpf_prog_array_copy_info+0xf2/0x1c0 kernel/bpf/core.c:1694
+       perf_event_query_prog_array+0x1c7/0x2c0 kernel/trace/bpf_trace.c:891
+       _perf_ioctl kernel/events/core.c:4750 [inline]
+       perf_ioctl+0x3e1/0x1480 kernel/events/core.c:4770
+       vfs_ioctl fs/ioctl.c:46 [inline]
+       do_vfs_ioctl+0x1b1/0x1520 fs/ioctl.c:686
+       SYSC_ioctl fs/ioctl.c:701 [inline]
+       SyS_ioctl+0x8f/0xc0 fs/ioctl.c:692
+       do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+       entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+  -> #0 (bpf_event_mutex){+.+.}:
+       lock_acquire+0x1d5/0x580 kernel/locking/lockdep.c:3920
+       __mutex_lock_common kernel/locking/mutex.c:756 [inline]
+       __mutex_lock+0x16f/0x1a80 kernel/locking/mutex.c:893
+       mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:908
+       perf_event_detach_bpf_prog+0x92/0x3d0 kernel/trace/bpf_trace.c:854
+       perf_event_free_bpf_prog kernel/events/core.c:8147 [inline]
+       _free_event+0xbdb/0x10f0 kernel/events/core.c:4116
+       put_event+0x24/0x30 kernel/events/core.c:4204
+       perf_mmap_close+0x60d/0x1010 kernel/events/core.c:5172
+       remove_vma+0xb4/0x1b0 mm/mmap.c:172
+       remove_vma_list mm/mmap.c:2490 [inline]
+       do_munmap+0x82a/0xdf0 mm/mmap.c:2731
+       mmap_region+0x59e/0x15a0 mm/mmap.c:1646
+       do_mmap+0x6c0/0xe00 mm/mmap.c:1483
+       do_mmap_pgoff include/linux/mm.h:2223 [inline]
+       vm_mmap_pgoff+0x1de/0x280 mm/util.c:355
+       SYSC_mmap_pgoff mm/mmap.c:1533 [inline]
+       SyS_mmap_pgoff+0x462/0x5f0 mm/mmap.c:1491
+       SYSC_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+       SyS_mmap+0x16/0x20 arch/x86/kernel/sys_x86_64.c:91
+       do_syscall_64+0x281/0x940 arch/x86/entry/common.c:287
+       entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+  other info that might help us debug this:
+
+   Possible unsafe locking scenario:
+
+         CPU0                    CPU1
+         ----                    ----
+    lock(&mm->mmap_sem);
+                                 lock(bpf_event_mutex);
+                                 lock(&mm->mmap_sem);
+    lock(bpf_event_mutex);
+
+   *** DEADLOCK ***
+  ======================================================
+
+The bug is introduced by Commit f371b304f12e ("bpf/tracing: allow
+user space to query prog array on the same tp") where copy_to_user,
+which requires mm->mmap_sem, is called inside bpf_event_mutex lock.
+At the same time, during perf_event file descriptor close,
+mm->mmap_sem is held first and then subsequent
+perf_event_detach_bpf_prog needs bpf_event_mutex lock.
+Such a senario caused a deadlock.
+
+As suggested by Daniel, moving copy_to_user out of the
+bpf_event_mutex lock should fix the problem.
+
+Fixes: f371b304f12e ("bpf/tracing: allow user space to query prog array on the same tp")
+Reported-by: syzbot+dc5ca0e4c9bfafaf2bae@syzkaller.appspotmail.com
+Signed-off-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memcontrol.c |    3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/bpf.h      |    4 ++--
+ kernel/bpf/core.c        |   45 +++++++++++++++++++++++++++++----------------
+ kernel/trace/bpf_trace.c |   25 +++++++++++++++++++++----
+ 3 files changed, 52 insertions(+), 22 deletions(-)
 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4108,6 +4108,9 @@ static void free_mem_cgroup_per_node_inf
- {
- 	struct mem_cgroup_per_node *pn = memcg->nodeinfo[node];
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -335,8 +335,8 @@ int bpf_prog_array_copy_to_user(struct b
+ void bpf_prog_array_delete_safe(struct bpf_prog_array __rcu *progs,
+ 				struct bpf_prog *old_prog);
+ int bpf_prog_array_copy_info(struct bpf_prog_array __rcu *array,
+-			     __u32 __user *prog_ids, u32 request_cnt,
+-			     __u32 __user *prog_cnt);
++			     u32 *prog_ids, u32 request_cnt,
++			     u32 *prog_cnt);
+ int bpf_prog_array_copy(struct bpf_prog_array __rcu *old_array,
+ 			struct bpf_prog *exclude_prog,
+ 			struct bpf_prog *include_prog,
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -1572,13 +1572,32 @@ int bpf_prog_array_length(struct bpf_pro
+ 	return cnt;
+ }
  
-+	if (!pn)
-+		return;
++static bool bpf_prog_array_copy_core(struct bpf_prog **prog,
++				     u32 *prog_ids,
++				     u32 request_cnt)
++{
++	int i = 0;
 +
- 	free_percpu(pn->lruvec_stat_cpu);
- 	kfree(pn);
++	for (; *prog; prog++) {
++		if (*prog == &dummy_bpf_prog.prog)
++			continue;
++		prog_ids[i] = (*prog)->aux->id;
++		if (++i == request_cnt) {
++			prog++;
++			break;
++		}
++	}
++
++	return !!(*prog);
++}
++
+ int bpf_prog_array_copy_to_user(struct bpf_prog_array __rcu *progs,
+ 				__u32 __user *prog_ids, u32 cnt)
+ {
+ 	struct bpf_prog **prog;
+ 	unsigned long err = 0;
+-	u32 i = 0, *ids;
+ 	bool nospc;
++	u32 *ids;
+ 
+ 	/* users of this function are doing:
+ 	 * cnt = bpf_prog_array_length();
+@@ -1595,16 +1614,7 @@ int bpf_prog_array_copy_to_user(struct b
+ 		return -ENOMEM;
+ 	rcu_read_lock();
+ 	prog = rcu_dereference(progs)->progs;
+-	for (; *prog; prog++) {
+-		if (*prog == &dummy_bpf_prog.prog)
+-			continue;
+-		ids[i] = (*prog)->aux->id;
+-		if (++i == cnt) {
+-			prog++;
+-			break;
+-		}
+-	}
+-	nospc = !!(*prog);
++	nospc = bpf_prog_array_copy_core(prog, ids, cnt);
+ 	rcu_read_unlock();
+ 	err = copy_to_user(prog_ids, ids, cnt * sizeof(u32));
+ 	kfree(ids);
+@@ -1683,22 +1693,25 @@ int bpf_prog_array_copy(struct bpf_prog_
+ }
+ 
+ int bpf_prog_array_copy_info(struct bpf_prog_array __rcu *array,
+-			     __u32 __user *prog_ids, u32 request_cnt,
+-			     __u32 __user *prog_cnt)
++			     u32 *prog_ids, u32 request_cnt,
++			     u32 *prog_cnt)
+ {
++	struct bpf_prog **prog;
+ 	u32 cnt = 0;
+ 
+ 	if (array)
+ 		cnt = bpf_prog_array_length(array);
+ 
+-	if (copy_to_user(prog_cnt, &cnt, sizeof(cnt)))
+-		return -EFAULT;
++	*prog_cnt = cnt;
+ 
+ 	/* return early if user requested only program count or nothing to copy */
+ 	if (!request_cnt || !cnt)
+ 		return 0;
+ 
+-	return bpf_prog_array_copy_to_user(array, prog_ids, request_cnt);
++	/* this function is called under trace/bpf_trace.c: bpf_event_mutex */
++	prog = rcu_dereference_check(array, 1)->progs;
++	return bpf_prog_array_copy_core(prog, prog_ids, request_cnt) ? -ENOSPC
++								     : 0;
+ }
+ 
+ static void bpf_prog_free_deferred(struct work_struct *work)
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -876,6 +876,7 @@ int perf_event_query_prog_array(struct p
+ {
+ 	struct perf_event_query_bpf __user *uquery = info;
+ 	struct perf_event_query_bpf query = {};
++	u32 *ids, prog_cnt, ids_len;
+ 	int ret;
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+@@ -884,15 +885,31 @@ int perf_event_query_prog_array(struct p
+ 		return -EINVAL;
+ 	if (copy_from_user(&query, uquery, sizeof(query)))
+ 		return -EFAULT;
+-	if (query.ids_len > BPF_TRACE_MAX_PROGS)
++
++	ids_len = query.ids_len;
++	if (ids_len > BPF_TRACE_MAX_PROGS)
+ 		return -E2BIG;
++	ids = kcalloc(ids_len, sizeof(u32), GFP_USER | __GFP_NOWARN);
++	if (!ids)
++		return -ENOMEM;
++	/*
++	 * The above kcalloc returns ZERO_SIZE_PTR when ids_len = 0, which
++	 * is required when user only wants to check for uquery->prog_cnt.
++	 * There is no need to check for it since the case is handled
++	 * gracefully in bpf_prog_array_copy_info.
++	 */
+ 
+ 	mutex_lock(&bpf_event_mutex);
+ 	ret = bpf_prog_array_copy_info(event->tp_event->prog_array,
+-				       uquery->ids,
+-				       query.ids_len,
+-				       &uquery->prog_cnt);
++				       ids,
++				       ids_len,
++				       &prog_cnt);
+ 	mutex_unlock(&bpf_event_mutex);
+ 
++	if (copy_to_user(&uquery->prog_cnt, &prog_cnt, sizeof(prog_cnt)) ||
++	    copy_to_user(uquery->ids, ids, ids_len * sizeof(u32)))
++		ret = -EFAULT;
++
++	kfree(ids);
+ 	return ret;
  }
