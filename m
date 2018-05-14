@@ -1,29 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753382AbeENMls (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:41:48 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44607 "EHLO
+        id S1753387AbeENMmR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:42:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59753 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752930AbeENMlo (ORCPT
+        with ESMTP id S1752930AbeENMmN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:41:44 -0400
-Date: Mon, 14 May 2018 05:41:20 -0700
+        Mon, 14 May 2018 08:42:13 -0400
+Date: Mon, 14 May 2018 05:41:50 -0700
 From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-86b9eea230edf4c67d4d4a70fba9b74505867a25@git.kernel.org>
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        dave.hansen@linux.intel.com, linuxram@us.ibm.com, shuah@kernel.org,
-        mpe@ellerman.id.au, akpm@linux-foundation.org, dave.hansen@intel.com,
-        hpa@zytor.com, torvalds@linux-foundation.org, mingo@kernel.org,
-        peterz@infradead.org
-Reply-To: mpe@ellerman.id.au, akpm@linux-foundation.org, dave.hansen@intel.com,
-        hpa@zytor.com, mingo@kernel.org, torvalds@linux-foundation.org,
-        peterz@infradead.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        dave.hansen@linux.intel.com, linuxram@us.ibm.com, shuah@kernel.org
-In-Reply-To: <20180509171340.E63EF7DA@viggo.jf.intel.com>
-References: <20180509171340.E63EF7DA@viggo.jf.intel.com>
+Message-ID: <tip-a50093d60464dd51d1ae0c2267b0abe9e1de77f3@git.kernel.org>
+Cc: hpa@zytor.com, mpe@ellerman.id.au, dave.hansen@linux.intel.com,
+        peterz@infradead.org, dave.hansen@intel.com,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        shuah@kernel.org, mingo@kernel.org, akpm@linux-foundation.org,
+        linuxram@us.ibm.com, tglx@linutronix.de
+Reply-To: akpm@linux-foundation.org, linuxram@us.ibm.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        dave.hansen@intel.com, peterz@infradead.org, mingo@kernel.org,
+        shuah@kernel.org, dave.hansen@linux.intel.com, mpe@ellerman.id.au,
+        hpa@zytor.com
+In-Reply-To: <20180509171342.846B9B2E@viggo.jf.intel.com>
+References: <20180509171342.846B9B2E@viggo.jf.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/pkeys/selftests: Stop using assert()
-Git-Commit-ID: 86b9eea230edf4c67d4d4a70fba9b74505867a25
+Subject: [tip:x86/urgent] x86/pkeys/selftests: Remove dead debugging code,
+ fix dprint_in_signal
+Git-Commit-ID: a50093d60464dd51d1ae0c2267b0abe9e1de77f3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,17 +38,21 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  86b9eea230edf4c67d4d4a70fba9b74505867a25
-Gitweb:     https://git.kernel.org/tip/86b9eea230edf4c67d4d4a70fba9b74505867a25
+Commit-ID:  a50093d60464dd51d1ae0c2267b0abe9e1de77f3
+Gitweb:     https://git.kernel.org/tip/a50093d60464dd51d1ae0c2267b0abe9e1de77f3
 Author:     Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate: Wed, 9 May 2018 10:13:40 -0700
+AuthorDate: Wed, 9 May 2018 10:13:42 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 14 May 2018 11:14:45 +0200
 
-x86/pkeys/selftests: Stop using assert()
+x86/pkeys/selftests: Remove dead debugging code, fix dprint_in_signal
 
-If we use assert(), the program "crashes".  That can be scary to users,
-so stop doing it.  Just exit with a >0 exit code instead.
+There is some noisy debug code at the end of the signal handler.  It was
+disabled by an early, unconditional "return".  However, that return also
+hid a dprint_in_signal=0, which kept dprint_in_signal=1 and effectively
+locked us into permanent dprint_in_signal=1 behavior.
+
+Remove the return and the dead code, fixing dprint_in_signal.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -58,45 +64,36 @@ Cc: Ram Pai <linuxram@us.ibm.com>
 Cc: Shuah Khan <shuah@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180509171340.E63EF7DA@viggo.jf.intel.com
+Link: http://lkml.kernel.org/r/20180509171342.846B9B2E@viggo.jf.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/testing/selftests/x86/protection_keys.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ tools/testing/selftests/x86/protection_keys.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
 diff --git a/tools/testing/selftests/x86/protection_keys.c b/tools/testing/selftests/x86/protection_keys.c
-index a0f0a732784b..8537a7cfe1cc 100644
+index 8537a7cfe1cc..5f5aedb80e7b 100644
 --- a/tools/testing/selftests/x86/protection_keys.c
 +++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -72,10 +72,9 @@ extern void abort_hooks(void);
- 				test_nr, iteration_nr);	\
- 		dprintf0("errno at assert: %d", errno);	\
- 		abort_hooks();			\
--		assert(condition);		\
-+		exit(__LINE__);			\
- 	}					\
- } while (0)
--#define raw_assert(cond) assert(cond)
- 
- void cat_into_file(char *str, char *file)
- {
-@@ -87,12 +86,17 @@ void cat_into_file(char *str, char *file)
- 	 * these need to be raw because they are called under
- 	 * pkey_assert()
- 	 */
--	raw_assert(fd >= 0);
-+	if (fd < 0) {
-+		fprintf(stderr, "error opening '%s'\n", str);
-+		perror("error: ");
-+		exit(__LINE__);
-+	}
-+
- 	ret = write(fd, str, strlen(str));
- 	if (ret != strlen(str)) {
- 		perror("write to file failed");
- 		fprintf(stderr, "filename: '%s' str: '%s'\n", file, str);
--		raw_assert(0);
-+		exit(__LINE__);
- 	}
- 	close(fd);
+@@ -325,22 +325,6 @@ void signal_handler(int signum, siginfo_t *si, void *vucontext)
+ 	dprintf1("WARNING: set PRKU=0 to allow faulting instruction to continue\n");
+ 	pkru_faults++;
+ 	dprintf1("<<<<==================================================\n");
+-	return;
+-	if (trapno == 14) {
+-		fprintf(stderr,
+-			"ERROR: In signal handler, page fault, trapno = %d, ip = %016lx\n",
+-			trapno, ip);
+-		fprintf(stderr, "si_addr %p\n", si->si_addr);
+-		fprintf(stderr, "REG_ERR: %lx\n",
+-				(unsigned long)uctxt->uc_mcontext.gregs[REG_ERR]);
+-		exit(1);
+-	} else {
+-		fprintf(stderr, "unexpected trap %d! at 0x%lx\n", trapno, ip);
+-		fprintf(stderr, "si_addr %p\n", si->si_addr);
+-		fprintf(stderr, "REG_ERR: %lx\n",
+-				(unsigned long)uctxt->uc_mcontext.gregs[REG_ERR]);
+-		exit(2);
+-	}
+ 	dprint_in_signal = 0;
  }
+ 
