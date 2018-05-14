@@ -1,38 +1,42 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrxHerk8gdtoKBQp/gQcu5Xcl783+u+sagmpT7sZOP6zNBfNVfFdbUlY3vMTHYLdGFAGZjT
-ARC-Seal: i=1; a=rsa-sha256; t=1526280856; cv=none;
+X-Google-Smtp-Source: AB8JxZrmnRLQ63ctuZRVbyaKcig5mfiC90l0HvlYJwZvexBGRupLQr8oEeDrVGtzB+jxSc5z50E2
+ARC-Seal: i=1; a=rsa-sha256; t=1526280854; cv=none;
         d=google.com; s=arc-20160816;
-        b=kg29SaZFvBQzV1cjiTSHDV0CrE36iTVGjk7JBp3e7Oxy22/EyOBghBgISEjeEQIcx3
-         /q4YysKiT5RyxXHFZKvdcpW/HilJBzeyxM9NO5xdtpsItz2dDkChTK2FLd167dO2N7MN
-         KCYVDUyNUkb3tTwIdv9FwBt8LqDDvyP9grm2krrdGwb0f4ZBFfiosnV0OK3EKzux5zrR
-         Avw0jfyrm8fqhD00gB8qpQEEcyEHQeiL6LLK7uhLw8WT/vqx0yXwceWw0gI/lQX2lS4C
-         JI+o3nJ9gvFfi0XVlOOTi86Xlwm/YnSdVaYUQ8fIzgagvFO9+k/GelFkAaJxXMvkNXYO
-         jamw==
+        b=QAX68hq0wwi/ss14e7X4irEU7D+BsLjXHdvfHKeeh1K7AH7f3P0EcNG10tXdYGbPth
+         ON41XQN433zvv5AGEIG1RDyg0EgoVEk9Wx7ZW8MaXTAE2YfLeokaMJEXFj4BCVaiVt3z
+         +SDLjNV4fmSmpCNkwdcksbQyZJOYng5TXqxdAh1ufIvnYKYQQx2KMX6vmkVWCI45rqIB
+         1A6jLrSeru/Rqhtu78CrQpxXEDZadDz6fXnsDgGjgAaKI1n/Lk1t1sItWyvbxlaHBRVd
+         OjdljiTpEvLSbFN7BxGYSFZawnh58/rBqdoJSQNdH0WPUr6EmspJeffI7iiDwTXP/ebG
+         VtqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=GLJOOT0Lj6DKcZNIZUBKOJDVIIG14bWOFFwib5U+9G0=;
-        b=Mgu/sCh7ySu0SbfhhKqCWWmIceIeDWM375gM+ab2rFvmtoPLU6sXZN+pVFfX5sMr36
-         VfSimfiJ2qewf3OvUJ6WkzELFo/hpB10eApTz+31Dewzv/lLkpV9eFerupwgY9tho9T7
-         O5SCRSr7H52T9Od8TZg7DDP9MJq33wSt9eUuSIKy7f4tIWV7aP0PWeZBunzvbeEIO4aS
-         VTNwxKNleb6tNmom/iURrGG3BMuPasoLgR1S3cQoP2sDoyFBwZ2EZOqTdtxElMvo8BPL
-         An9M8LWqL/EYIeuYUMgKop7xVkv3iK5+NwyJs4uqteNJ6Lx/htdvI7Xi8RPk0d1TV6uj
-         QW+w==
+        bh=oob/RSUTJjkXRsLbABs7WaHQ7224e6Xfg2pRXPJEmbI=;
+        b=zBvt5Qxkt1fvhKuQD8JJj5FAgzWKmKfmXgf1OXCBIboSZ3vas6gZwI32TIN7ugBfHl
+         UYi5bTMOJGBRM84WD6Xpwui75hhPLd7hHjqDhBf/WUk7A6ADLmSCX8B5QA/hRAZE8GHY
+         rzVgXRHsITSs5qDmlG0hIgq2065BiFyOnpFy5KYAESZuVzm3US/gmyL78arC0tX0uXRs
+         k3+ERY3rY7SRqUMj6GAf74d5isabQYx3vVg6jILTE2HfBjHGM8ZFSH9wkcrq1joP7gUc
+         udV2XrUT6LhY2Ph6n+MpIdHq9ndWthuEJaZTqjcGhj/8LncSRnkArz25RwAX/z1lVwL2
+         lM0Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=G149DzPr;
+       dkim=pass header.i=@kernel.org header.s=default header.b=LMRZqqip;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=G149DzPr;
+       dkim=pass header.i=@kernel.org header.s=default header.b=LMRZqqip;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 26/36] net: atm: Fix potential Spectre v1
-Date: Mon, 14 May 2018 08:49:00 +0200
-Message-Id: <20180514064806.271076142@linuxfoundation.org>
+	Florent Flament <contact@florentflament.com>,
+	Pavel Petrovic <ppetrovic@acm.org>,
+	"=?UTF-8?q?S=C3=A9rgio=20M . =20Basto?=" <sergio@serjux.com>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH 4.9 25/36] drm/i915: Fix drm:intel_enable_lvds ERROR message in kernel log
+Date: Mon, 14 May 2018 08:48:59 +0200
+Message-Id: <20180514064806.204410220@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064804.252823817@linuxfoundation.org>
 References: <20180514064804.252823817@linuxfoundation.org>
@@ -42,8 +46,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421380423998410?=
-X-GMAIL-MSGID: =?utf-8?q?1600421475532602377?=
+X-GMAIL-THRID: =?utf-8?q?1600421473062509095?=
+X-GMAIL-MSGID: =?utf-8?q?1600421473062509095?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,59 +55,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Florent Flament <contact@florentflament.com>
 
-commit acf784bd0ce257fe43da7ca266f7a10b837479d2 upstream.
+commit e8f48f96db7e482995743f461b3e8a5c1a102533 upstream.
 
-ioc_data.dev_num can be controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Fix `[drm:intel_enable_lvds] *ERROR* timed out waiting for panel to
+power on` in kernel log at boot time.
 
-This issue was detected with the help of Smatch:
-net/atm/lec.c:702 lec_vcc_attach() warn: potential spectre issue
-'dev_lec'
+Toshiba Satellite Z930 laptops needs between 1 and 2 seconds to power
+on its screen during Intel i915 DRM initialization. This currently
+results in a `[drm:intel_enable_lvds] *ERROR* timed out waiting for
+panel to power on` message appearing in the kernel log during boot
+time and when stopping the machine.
 
-Fix this by sanitizing ioc_data.dev_num before using it to index
-dev_lec. Also, notice that there is another instance in which array
-dev_lec is being indexed using ioc_data.dev_num at line 705:
-lec_vcc_added(netdev_priv(dev_lec[ioc_data.dev_num]),
+This change increases the timeout of the `intel_enable_lvds` function
+from 1 to 5 seconds, letting enough time for the Satellite 930 LCD
+screen to power on, and suppressing the error message from the kernel
+log.
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
+This patch has been successfully tested on Linux 4.14 running on a
+Toshiba Satellite Z930.
 
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+[vsyrjala: bump the timeout from 2 to 5 seconds to match the DP
+ code and properly cover the max hw timeout of ~4 seconds, and
+ drop the comment about the specific machine since this is not
+ a particulary surprising issue, nor specific to that one machine]
 
+Signed-off-by: Florent Flament <contact@florentflament.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Pavel Petrovic <ppetrovic@acm.org>
+Cc: Sérgio M. Basto <sergio@serjux.com>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=103414
+References: https://bugzilla.kernel.org/show_bug.cgi?id=57591
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180419160700.19828-1-ville.syrjala@linux.intel.com
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+(cherry picked from commit 280b54ade5914d3b4abe4f0ebe083ddbd4603246)
+Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/atm/lec.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/intel_lvds.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/atm/lec.c
-+++ b/net/atm/lec.c
-@@ -41,6 +41,9 @@ static unsigned char bridge_ula_lec[] =
- #include <linux/module.h>
- #include <linux/init.h>
+--- a/drivers/gpu/drm/i915/intel_lvds.c
++++ b/drivers/gpu/drm/i915/intel_lvds.c
+@@ -321,7 +321,8 @@ static void intel_enable_lvds(struct int
  
-+/* Hardening for Spectre-v1 */
-+#include <linux/nospec.h>
+ 	I915_WRITE(PP_CONTROL(0), I915_READ(PP_CONTROL(0)) | PANEL_POWER_ON);
+ 	POSTING_READ(lvds_encoder->reg);
+-	if (intel_wait_for_register(dev_priv, PP_STATUS(0), PP_ON, PP_ON, 1000))
 +
- #include "lec.h"
- #include "lec_arpc.h"
- #include "resources.h"
-@@ -697,8 +700,10 @@ static int lec_vcc_attach(struct atm_vcc
- 	bytes_left = copy_from_user(&ioc_data, arg, sizeof(struct atmlec_ioc));
- 	if (bytes_left != 0)
- 		pr_info("copy from user failed for %d bytes\n", bytes_left);
--	if (ioc_data.dev_num < 0 || ioc_data.dev_num >= MAX_LEC_ITF ||
--	    !dev_lec[ioc_data.dev_num])
-+	if (ioc_data.dev_num < 0 || ioc_data.dev_num >= MAX_LEC_ITF)
-+		return -EINVAL;
-+	ioc_data.dev_num = array_index_nospec(ioc_data.dev_num, MAX_LEC_ITF);
-+	if (!dev_lec[ioc_data.dev_num])
- 		return -EINVAL;
- 	vpriv = kmalloc(sizeof(struct lec_vcc_priv), GFP_KERNEL);
- 	if (!vpriv)
++	if (intel_wait_for_register(dev_priv, PP_STATUS(0), PP_ON, PP_ON, 5000))
+ 		DRM_ERROR("timed out waiting for panel to power on\n");
+ 
+ 	intel_panel_enable_backlight(intel_connector);
