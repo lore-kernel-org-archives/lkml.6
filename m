@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752348AbeENDP4 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 23:15:56 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:46374 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752039AbeENDPz (ORCPT
+        id S1752386AbeENDQG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 23:16:06 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44129 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752191AbeENDQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 23:15:55 -0400
-X-Google-Smtp-Source: AB8JxZpZ4/SINVjBQPDsE2Ng3ZAxvTUoLZjUDQRz99QVhyb8NWCpl0cSEJmqR543S2QHM+EExUanjA==
+        Sun, 13 May 2018 23:16:01 -0400
+X-Google-Smtp-Source: AB8JxZpKzvH2A8Fu/x9tcC3kCvDk0mA+R7AITfHxPtZXJ1fd9qfjrVGmuPC8bvLTG+feGM7fuaJMEA==
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 To: linux-kernel@vger.kernel.org
 Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
@@ -17,38 +17,58 @@ Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
         kernel-team@android.com
-Subject: [PATCH RFC 0/8] rcu fixes, clean ups for rcu/dev
-Date: Sun, 13 May 2018 20:15:33 -0700
-Message-Id: <20180514031541.67247-1-joel@joelfernandes.org>
+Subject: [PATCH RFC 1/8] rcu: Add comment documenting how rcu_seq_snap works
+Date: Sun, 13 May 2018 20:15:34 -0700
+Message-Id: <20180514031541.67247-2-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+In-Reply-To: <20180514031541.67247-1-joel@joelfernandes.org>
+References: <20180514031541.67247-1-joel@joelfernandes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-Here are some fixes, clean ups and some code comments changes mostly
-for the new funnel locking, gp_seq changes and some tracing. Its based
-on latest rcu/dev branch.
+rcu_seq_snap may be tricky for someone looking at it for the first time.
+Lets document how it works with an example to make it easier.
 
-thanks,
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ kernel/rcu/rcu.h | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-- Joel
-
-Joel Fernandes (Google) (8):
-  rcu: Add comment documenting how rcu_seq_snap works
-  rcu: Clarify usage of cond_resched for tasks-RCU
-  rcu: Add back the cpuend tracepoint
-  rcu: Get rid of old c variable from places in tree RCU
-  rcu: Use rcu_node as temporary variable in funnel locking loop
-  rcu: Add back the Startedleaf tracepoint
-  rcu: trace CleanupMore condition only if needed
-  rcu: Fix cpustart tracepoint gp_seq number
-
- include/linux/rcupdate.h   | 11 +++--
- include/trace/events/rcu.h | 19 ++++----
- kernel/rcu/rcu.h           | 24 +++++++++-
- kernel/rcu/tree.c          | 92 +++++++++++++++++++++++---------------
- 4 files changed, 97 insertions(+), 49 deletions(-)
-
+diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+index 003671825d62..fc3170914ac7 100644
+--- a/kernel/rcu/rcu.h
++++ b/kernel/rcu/rcu.h
+@@ -91,7 +91,29 @@ static inline void rcu_seq_end(unsigned long *sp)
+ 	WRITE_ONCE(*sp, rcu_seq_endval(sp));
+ }
+ 
+-/* Take a snapshot of the update side's sequence number. */
++/*
++ * Take a snapshot of the update side's sequence number.
++ *
++ * This function predicts what the grace period number will be the next
++ * time an RCU callback will be executed, given the current grace period's
++ * number. This can be gp+1 if RCU is idle, or gp+2 if a grace period is
++ * already in progress.
++ *
++ * We do this with a single addition and masking.
++ * For example, if RCU_SEQ_STATE_MASK=1 and the least significant bit (LSB) of
++ * the seq is used to track if a GP is in progress or not, its sufficient if we
++ * add (2+1) and mask with ~1. Let's see why with an example:
++ *
++ * Say the current seq is 6 which is 0b110 (gp is 3 and state bit is 0).
++ * To get the next GP number, we have to at least add 0b10 to this (0x1 << 1)
++ * to account for the state bit. However, if the current seq is 7 (gp is 3 and
++ * state bit is 1), then it means the current grace period is already in
++ * progress so the next time the callback will run is at the end of grace
++ * period number gp+2. To account for the extra +1, we just overflow the LSB by
++ * adding another 0x1 and masking with ~0x1. In case no GP was in progress (RCU
++ * is idle), then the addition of the extra 0x1 and masking will have no
++ * effect. This is calculated as below.
++ */
+ static inline unsigned long rcu_seq_snap(unsigned long *sp)
+ {
+ 	unsigned long s;
 -- 
 2.17.0.441.gb46fe60e1d-goog
