@@ -1,39 +1,38 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoWkCJ3PEZn2e5XPS7JsxXJMNROIeZ60kyj+ad3hmMiLF/jf6Yl0BFBBLYWq9nZbG32ScMr
-ARC-Seal: i=1; a=rsa-sha256; t=1526281031; cv=none;
+X-Google-Smtp-Source: AB8JxZoVhwaLqUzDuILb1WcvODzmD0jNU4dbt4zBasCePLtSRMPvqfnpyRLDFczvYDSlra1GdYHu
+ARC-Seal: i=1; a=rsa-sha256; t=1526281028; cv=none;
         d=google.com; s=arc-20160816;
-        b=F7brFsyzjwo/waXHPNPH0gvBrFpw9RO33MqdLRgLLZ9aOl2G81ST8ryEzdSz43l2eZ
-         p2fC2VKTxPNp1qMWOYNU8YgelFVMnysuKLE3BQVm0KoE99Fdvv94vCCt1eBS3wmfNLm1
-         s8IW6A3N2tbTVdvzIkS4Uyf8t52l0+3w+FQPw6YqAAZ0phAOk5UkLdftT+SRIUqalJ2n
-         bPme/fQ1XKXXVSZHyp1b2WQg82jktglUizYnq8M+jCYg5JS/j6PMQRl7Lq+NMbq1SPFu
-         CtLXPQyKvikb7wodGoZ1zCNIcGlyr3CnhEqrRBSgq/StqjFhTQ37IV/0+Y/nVTgARpUe
-         YGWQ==
+        b=0ogSJaSaQmT1Bk3k9+WuKbe0k/Vw3LgT1YvptKmWAMlYkqraQLz7nN5j6sNopijFVK
+         kt+pfd+5/itntE8NO1FKsPLB9mu0kdhJkYBNUtos0Sf3uU7wXv0Az/+orC4p8w+Pc+fB
+         lvc/u1wvUThJbNsMtXDjZcP/uEBqtD4AUhnBPvmllFcZsgb0gosYx3GDpSNeNUqEcHG/
+         kE3ZDSF2Quz3xLgYDemrHfZYNXUKdYo5sohDS4YxsT3mG7PxZKwqBIZG2J+N96Z5L3Ax
+         Myxva8IAHCoJ2LDkKnI9AsiGQ53dhKvPDImAb2nyqGt8boxUjyBAWFa2vAo4EohRnRHZ
+         BfGg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ffFH83pEkIU8RHDkNFvgD5JAInJD66XuuxUQ4j5ePj4=;
-        b=SOK7xxxHGmeTt1e6+L69xzcBwbCwkmlUNi03S8zaVUzc0woUurc0ykBEcj0FFsfUtW
-         xiUrt7w3Fyf0iNgNsRuCULFexb0RDL03mfnGdpj9Tdym4LaR9zGFM7A8ajAaiGFWtLd/
-         641YX3KJW9NNxrHnaptM1WdccXkWu/JAUru6M6A4+NE97fLYef8KeKE7Jkw84D5GQaxW
-         +zw6I9Ecva7ZZunH+kQVWvAdVxMKGxK0I3JMR84uhZOXSHZ8e3C2JudZ32zCULs528WM
-         z5bpuZlYXkmIDK9q9durLUrTdyKg7/aZr7q/he2z+QM8OYUCHBBAIdPdRq5VS0JImo9Y
-         Nzww==
+        bh=deoTjP/dIci2kmkjOJOaV26UU90KZyaOKTuiv1JU6O0=;
+        b=MPY0+Lk+LO1OQCpHyyXNF+OAREbVoCwpzbNp6WYnaUKsXfP5VY/iiNRU4fkpdzw9pn
+         aeXsk0rPflaD30JLoH2iWvmnHRkpi8LG0UIsN/Dj8bV/YWF2SAhPJjqAHzMenYTpMYOO
+         swJra3gaqOpHH6q5GbIpCE/YG5FFG/QC+9gCZWoq0vh9GI5rANk8J48fVlXB3O7N5FUg
+         t3unK24yrE2xfT01SXZ4SVxw7N8AT7ojnUTfqySS/vhDIlyCc10kffWBwJTrWlY3zZFK
+         0km43Qcds2D4MSkH4lhRPcFiZWk2GDhSHNxKTTpV/9QBWIx8N/p+X/rIcL1ptOxUASUR
+         H4fg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=wYDB/0eB;
+       dkim=pass header.i=@kernel.org header.s=default header.b=uTu4VHBD;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=wYDB/0eB;
+       dkim=pass header.i=@kernel.org header.s=default header.b=uTu4VHBD;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Steve French <smfrench@gmail.com>,
-	Ronnie Sahlberg <lsahlber@redhat.com>,
-	Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.14 53/62] smb3: directory sync should not return an error
-Date: Mon, 14 May 2018 08:49:09 +0200
-Message-Id: <20180514064819.435588113@linuxfoundation.org>
+	Jens Axboe <axboe@kernel.dk>,
+	Keith Busch <keith.busch@intel.com>
+Subject: [PATCH 4.14 52/62] nvme: add quirk to force medium priority for SQ creation
+Date: Mon, 14 May 2018 08:49:08 +0200
+Message-Id: <20180514064819.371599594@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421658029253120?=
-X-GMAIL-MSGID: =?utf-8?q?1600421658029253120?=
+X-GMAIL-THRID: =?utf-8?q?1600421655845291506?=
+X-GMAIL-MSGID: =?utf-8?q?1600421655845291506?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,51 +51,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steve French <smfrench@gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-commit 6e70c267e68d77679534dcf4aaf84e66f2cf1425 upstream.
+commit 9abd68ef454c824bfd18629033367b4382b5f390 upstream.
 
-As with NFS, which ignores sync on directory handles,
-fsync on a directory handle is a noop for CIFS/SMB3.
-Do not return an error on it.  It breaks some database
-apps otherwise.
+Some P3100 drives have a bug where they think WRRU (weighted round robin)
+is always enabled, even though the host doesn't set it. Since they think
+it's enabled, they also look at the submission queue creation priority. We
+used to set that to MEDIUM by default, but that was removed in commit
+81c1cd98351b. This causes various issues on that drive. Add a quirk to
+still set MEDIUM priority for that controller.
 
-Signed-off-by: Steve French <smfrench@gmail.com>
-CC: Stable <stable@vger.kernel.org>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Fixes: 81c1cd98351b ("nvme/pci: Don't set reserved SQ create flags")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifsfs.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/nvme/host/nvme.h |    5 +++++
+ drivers/nvme/host/pci.c  |   12 +++++++++++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -1045,6 +1045,18 @@ out:
- 	return rc;
- }
- 
-+/*
-+ * Directory operations under CIFS/SMB2/SMB3 are synchronous, so fsync()
-+ * is a dummy operation.
-+ */
-+static int cifs_dir_fsync(struct file *file, loff_t start, loff_t end, int datasync)
-+{
-+	cifs_dbg(FYI, "Sync directory - name: %pD datasync: 0x%x\n",
-+		 file, datasync);
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -80,6 +80,11 @@ enum nvme_quirks {
+ 	 * Supports the LighNVM command set if indicated in vs[1].
+ 	 */
+ 	NVME_QUIRK_LIGHTNVM			= (1 << 6),
 +
-+	return 0;
-+}
-+
- static ssize_t cifs_copy_file_range(struct file *src_file, loff_t off,
- 				struct file *dst_file, loff_t destoff,
- 				size_t len, unsigned int flags)
-@@ -1173,6 +1185,7 @@ const struct file_operations cifs_dir_op
- 	.copy_file_range = cifs_copy_file_range,
- 	.clone_file_range = cifs_clone_file_range,
- 	.llseek = generic_file_llseek,
-+	.fsync = cifs_dir_fsync,
++	/*
++	 * Set MEDIUM priority on SQ creation
++	 */
++	NVME_QUIRK_MEDIUM_PRIO_SQ		= (1 << 7),
  };
  
- static void
+ /*
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -947,10 +947,19 @@ static int adapter_alloc_cq(struct nvme_
+ static int adapter_alloc_sq(struct nvme_dev *dev, u16 qid,
+ 						struct nvme_queue *nvmeq)
+ {
++	struct nvme_ctrl *ctrl = &dev->ctrl;
+ 	struct nvme_command c;
+ 	int flags = NVME_QUEUE_PHYS_CONTIG;
+ 
+ 	/*
++	 * Some drives have a bug that auto-enables WRRU if MEDIUM isn't
++	 * set. Since URGENT priority is zeroes, it makes all queues
++	 * URGENT.
++	 */
++	if (ctrl->quirks & NVME_QUIRK_MEDIUM_PRIO_SQ)
++		flags |= NVME_SQ_PRIO_MEDIUM;
++
++	/*
+ 	 * Note: we (ab)use the fact the the prp fields survive if no data
+ 	 * is attached to the request.
+ 	 */
+@@ -2523,7 +2532,8 @@ static const struct pci_device_id nvme_i
+ 		.driver_data = NVME_QUIRK_STRIPE_SIZE |
+ 				NVME_QUIRK_DEALLOCATE_ZEROES, },
+ 	{ PCI_VDEVICE(INTEL, 0xf1a5),	/* Intel 600P/P3100 */
+-		.driver_data = NVME_QUIRK_NO_DEEPEST_PS },
++		.driver_data = NVME_QUIRK_NO_DEEPEST_PS |
++				NVME_QUIRK_MEDIUM_PRIO_SQ },
+ 	{ PCI_VDEVICE(INTEL, 0x5845),	/* Qemu emulated controller */
+ 		.driver_data = NVME_QUIRK_IDENTIFY_CNS, },
+ 	{ PCI_DEVICE(0x1c58, 0x0003),	/* HGST adapter */
