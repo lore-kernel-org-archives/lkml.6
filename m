@@ -1,75 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753304AbeENRiQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:38:16 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36348 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753032AbeENRiP (ORCPT
+        id S1752000AbeENRqz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:46:55 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:45384 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750760AbeENRqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:38:15 -0400
-X-Google-Smtp-Source: AB8JxZoPCtKgkQXpZBJgFDwgKiEtv8N2ynMsKNVsJd4HELjLDtj0ARF2ZAauoHGXrpbw4sFIxe40HColEVGmfRG1B4U=
+        Mon, 14 May 2018 13:46:53 -0400
+X-Google-Smtp-Source: AB8JxZqvRLBEQIJfM5PQzWsw1N1yPaz8FZAVyXSSfWONclzsYaScxLP8HgXezJ8ehkqNZpFwYDxLiA==
+Date: Mon, 14 May 2018 10:46:49 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Amit Kucheria <amit.kucheria@linaro.org>
+Cc: Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Linux PM list <linux-pm@vger.kernel.org>, devicetree@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] thermal: qcom: tsens: Allow number of sensors to come
+ from DT
+Message-ID: <20180514174649.GM14924@minitux>
+References: <20180507235339.8836-1-bjorn.andersson@linaro.org>
+ <CAHLCerN9zQEJK4WoV6BY6hga2BxwzMsyScWnTdYcLgEk0Bjg4w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180514172849.27224-1-josef.simanek@gmail.com>
-References: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn> <20180514172849.27224-1-josef.simanek@gmail.com>
-From: =?UTF-8?B?Sm9zZWYgxaBpbcOhbmVr?= <josef.simanek@gmail.com>
-Date: Mon, 14 May 2018 19:38:13 +0200
-Message-ID: <CAFp7Qwq02F66GpNCgeJx7H6VuRK9-kXs5E125m+SYWzR2+9GKw@mail.gmail.com>
-Subject: Re: media: uvcvideo: Support realtek's UVC 1.5 device
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHLCerN9zQEJK4WoV6BY6hga2BxwzMsyScWnTdYcLgEk0Bjg4w@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4EHcNX9020471
 
-I'm really sorry, but this message was originally meant to be sent
-(and was already also sent) to linux-media. Please ignore here.
+On Mon 14 May 07:45 PDT 2018, Amit Kucheria wrote:
 
-2018-05-14 19:28 GMT+02:00 Josef Šimánek <josef.simanek@gmail.com>:
->
-> > The length of UVC 1.5 video control is 48, and it id 34 for UVC 1.1.
-> > Change it to 48 for UVC 1.5 device,
-> > and the UVC 1.5 device can be recognized.
-> >
-> > More changes to the driver are needed for full UVC 1.5 compatibility.
-> > However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have
-> > been reported to work well.
-> >
-> > Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
-> > Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> Hello! I have sucessfully tested this patch on Kernel 4.16.1 (Fedora 28) with Dell XPS 9370
-> using following device (output from lsusb):
->
-> Bus 001 Device 002: ID 0bda:58f4 Realtek Semiconductor Corp.
->
-> You can also find related dmesg output at https://bugs.launchpad.net/dell-sputnik/+bug/1763748/comments/35
->
-> Tested-by: Josef Šimánek <josef.simanek@gmail.com>
-> > Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> > ---
-> >  drivers/media/usb/uvc/uvc_video.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> > index aa0082f..32dfb32 100644
-> > --- a/drivers/media/usb/uvc/uvc_video.c
-> > +++ b/drivers/media/usb/uvc/uvc_video.c
-> > @@ -171,6 +171,8 @@ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
-> >       int ret;
-> >
-> >       size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
-> > +     if (stream->dev->uvc_version >= 0x0150)
-> > +             size = 48;
-> >       if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
-> >                       query == UVC_GET_DEF)
-> >               return -EIO;
-> > @@ -259,6 +261,8 @@ static int uvc_set_video_ctrl(struct uvc_streaming *stream,
-> >       int ret;
-> >
-> >       size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
-> > +     if (stream->dev->uvc_version >= 0x0150)
-> > +             size = 48;
-> >       data = kzalloc(size, GFP_KERNEL);
-> >       if (data == NULL)
-> >               return -ENOMEM;
+> On Tue, May 8, 2018 at 2:53 AM, Bjorn Andersson
+> <bjorn.andersson@linaro.org> wrote:
+> > For platforms that has multiple copies of the TSENS hardware block it's
+> > necessary to be able to specify the number of sensors per block in DeviceTree.
+> 
+> I assume you want to replace the hardcoded num_sensors values in the
+> tsens-xxxx.c files with values in device tree atleast on platforms
+> that use devicetree?
+> 
+
+Right, e.g. in msm8998 we have two blocks with 12 and 8 sensors
+respectively. With the patch we will overwrite the num_sensors with a
+value from DT, iff specified.
+
+As probe will fail if num_sensors is 0 we can reuse ops_8996 and just
+not provide num_sensors for 8998, hence requiring it to be specified in
+DT.
+
+
+PS. Looking at the register spec 8996 too seems to have two tsens
+blocks, so in order to access sensors off the second bank this patch
+would be needed (and would work and be backwards compatible).
+
+Regards,
+Bjorn
