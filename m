@@ -1,119 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753398AbeENRgx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:36:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35446 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752474AbeENRgv (ORCPT
+        id S1753132AbeENRhy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:37:54 -0400
+Received: from mail-wr0-f169.google.com ([209.85.128.169]:37396 "EHLO
+        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752405AbeENRhw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:36:51 -0400
-Date: Mon, 14 May 2018 10:38:16 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc: linux-kernel@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, byungchul.park@lge.com,
-        kernel-team@android.com
-Subject: Re: [PATCH RFC 1/8] rcu: Add comment documenting how rcu_seq_snap
- works
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180514031541.67247-1-joel@joelfernandes.org>
- <20180514031541.67247-2-joel@joelfernandes.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514031541.67247-2-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18051417-0056-0000-0000-0000044E24CA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009025; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032264; UDB=6.00527713; IPR=6.00811396;
- MB=3.00021110; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 17:36:48
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051417-0057-0000-0000-000008923850
-Message-Id: <20180514173816.GA26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805140177
+        Mon, 14 May 2018 13:37:52 -0400
+X-Google-Smtp-Source: AB8JxZpmSbaeg8z5xBcvRrywyvFyeTMNcSr/IHWy87CkCkkFhlWHsuOixW6CSpSlTqZIDJ04TBJM5Q==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH BUGFIX] block, bfq: postpone rq preparation to insert or
+ merge
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <4ea9999a-e316-f0bc-a99f-70cd0e901e55@kernel.dk>
+Date: Mon, 14 May 2018 19:37:48 +0200
+Cc: Bart Van Assche <bart.vanassche@wdc.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "bfq-iosched@googlegroups.com" <bfq-iosched@googlegroups.com>,
+        "oleksandr@natalenko.name" <oleksandr@natalenko.name>
+Message-Id: <121C9095-504D-42BB-AD23-C7733E2849DF@linaro.org>
+References: <20180504171701.6876-1-paolo.valente@linaro.org>
+ <d534de4765c0fbcc7bcd858c1d2f40391ece19ac.camel@wdc.com>
+ <8B9DC3A2-0DB0-4EEB-AFB2-C4D6560B7A4A@linaro.org>
+ <4ea9999a-e316-f0bc-a99f-70cd0e901e55@kernel.dk>
+To: Jens Axboe <axboe@kernel.dk>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4EHc02W020393
 
-On Sun, May 13, 2018 at 08:15:34PM -0700, Joel Fernandes (Google) wrote:
-> rcu_seq_snap may be tricky for someone looking at it for the first time.
-> Lets document how it works with an example to make it easier.
+
+
+> Il giorno 14 mag 2018, alle ore 19:31, Jens Axboe <axboe@kernel.dk> ha scritto:
 > 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  kernel/rcu/rcu.h | 24 +++++++++++++++++++++++-
->  1 file changed, 23 insertions(+), 1 deletion(-)
+> On 5/14/18 11:16 AM, Paolo Valente wrote:
+>> 
+>> 
+>>> Il giorno 10 mag 2018, alle ore 18:14, Bart Van Assche <bart.vanassche@wdc.com> ha scritto:
+>>> 
+>>> On Fri, 2018-05-04 at 19:17 +0200, Paolo Valente wrote:
+>>>> When invoked for an I/O request rq, [ ... ]
+>>> 
+>>> Tested-by: Bart Van Assche <bart.vanassche@wdc.com>
+>>> 
+>>> 
+>>> 
+>> 
+>> Any decision for this fix, Jens?
 > 
-> diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
-> index 003671825d62..fc3170914ac7 100644
-> --- a/kernel/rcu/rcu.h
-> +++ b/kernel/rcu/rcu.h
-> @@ -91,7 +91,29 @@ static inline void rcu_seq_end(unsigned long *sp)
->  	WRITE_ONCE(*sp, rcu_seq_endval(sp));
->  }
+> Guess I didn't reply, but I did commit this on Thursday.
 > 
-> -/* Take a snapshot of the update side's sequence number. */
-> +/*
-> + * Take a snapshot of the update side's sequence number.
-> + *
-> + * This function predicts what the grace period number will be the next
-> + * time an RCU callback will be executed, given the current grace period's
-> + * number. This can be gp+1 if RCU is idle, or gp+2 if a grace period is
-> + * already in progress.
 
-How about something like this?
+Great, thank you!
 
-	This function returns the earliest value of the grace-period
-	sequence number that will indicate that a full grace period has
-	elapsed since the current time.  Once the grace-period sequence
-	number has reached this value, it will be safe to invoke all
-	callbacks that have been registered prior to the current time.
-	This value is the current grace-period number plus two to the
-	power of the number of low-order bits reserved for state, then
-	rounded up to the next value in which the state bits are all zero.
+Paolo
 
-> + *
-> + * We do this with a single addition and masking.
-
-Please either fold this sentence into rest of the paragraph or add a
-blank line after it.
-
-> + * For example, if RCU_SEQ_STATE_MASK=1 and the least significant bit (LSB) of
-> + * the seq is used to track if a GP is in progress or not, its sufficient if we
-> + * add (2+1) and mask with ~1. Let's see why with an example:
-> + *
-> + * Say the current seq is 6 which is 0b110 (gp is 3 and state bit is 0).
-> + * To get the next GP number, we have to at least add 0b10 to this (0x1 << 1)
-> + * to account for the state bit. However, if the current seq is 7 (gp is 3 and
-> + * state bit is 1), then it means the current grace period is already in
-> + * progress so the next time the callback will run is at the end of grace
-> + * period number gp+2. To account for the extra +1, we just overflow the LSB by
-> + * adding another 0x1 and masking with ~0x1. In case no GP was in progress (RCU
-> + * is idle), then the addition of the extra 0x1 and masking will have no
-> + * effect. This is calculated as below.
-> + */
-
-Having the explicit numbers is good, but please use RCU_SEQ_STATE_MASK=3,
-since that is the current value.  One alternative (or perhaps addition)
-is to have a short table of numbers showing the mapping from *sp to the
-return value.  (I started from such a table when writing this function,
-for whatever that is worth.)
-
-						Thanx, Paul
-
->  static inline unsigned long rcu_seq_snap(unsigned long *sp)
->  {
->  	unsigned long s;
 > -- 
-> 2.17.0.441.gb46fe60e1d-goog
+> Jens Axboe
 > 
