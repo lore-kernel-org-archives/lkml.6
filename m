@@ -1,95 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753706AbeENMyR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:54:17 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42825 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753601AbeENMyP (ORCPT
+        id S1753635AbeENMzd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:55:33 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51080 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753532AbeENMzb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:54:15 -0400
-Date: Mon, 14 May 2018 05:48:21 -0700
-From: tip-bot for Frederic Weisbecker <tipbot@zytor.com>
-Message-ID: <tip-30d723340c30ff9afe200ef5ecbbdc77e6d1f816@git.kernel.org>
-Cc: mpe@ellerman.id.au, torvalds@linux-foundation.org,
-        benh@kernel.crashing.org, frederic@kernel.org, dalias@libc.org,
-        deller@gmx.de, tony.luck@intel.com, paulus@samba.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, fenghua.yu@intel.com,
-        tglx@linutronix.de, peterz@infradead.org, mingo@kernel.org,
-        schwidefsky@de.ibm.com, bigeasy@linutronix.de,
-        heiko.carstens@de.ibm.com, ysato@users.sourceforge.jp,
-        davem@davemloft.net, jejb@parisc-linux.org
-Reply-To: fenghua.yu@intel.com, hpa@zytor.com, peterz@infradead.org,
-        mingo@kernel.org, tglx@linutronix.de, bigeasy@linutronix.de,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, davem@davemloft.net,
-        jejb@parisc-linux.org, ysato@users.sourceforge.jp,
-        torvalds@linux-foundation.org, mpe@ellerman.id.au,
-        benh@kernel.crashing.org, frederic@kernel.org, dalias@libc.org,
-        tony.luck@intel.com, deller@gmx.de, linux-kernel@vger.kernel.org,
-        paulus@samba.org
-In-Reply-To: <1525786706-22846-4-git-send-email-frederic@kernel.org>
-References: <1525786706-22846-4-git-send-email-frederic@kernel.org>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] softirq/sh: Use nmi_count() on /proc/interrupts
- print out
-Git-Commit-ID: 30d723340c30ff9afe200ef5ecbbdc77e6d1f816
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 14 May 2018 08:55:31 -0400
+X-Google-Smtp-Source: AB8JxZpPrS7ObB4QaDBrsc+A8Kji9c4GdatLlM1RdbCC5JRLjp1lSXpyHp9hGe/dAxtfrgaDlVxzrA==
+Date: Mon, 14 May 2018 14:55:27 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: sumeet p <srplinux2008@gmail.com>
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org, rui.zhang@intel.com,
+        edubezval@gmail.com, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH V2] thermal: tegra: soctherm: add const to struct
+ thermal_cooling_device_ops
+Message-ID: <20180514125527.GK18312@ulmo>
+References: <1526147228-5317-1-git-send-email-srplinux2008@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x+RZeZVNR8VILNfK"
 Content-Disposition: inline
+In-Reply-To: <1526147228-5317-1-git-send-email-srplinux2008@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  30d723340c30ff9afe200ef5ecbbdc77e6d1f816
-Gitweb:     https://git.kernel.org/tip/30d723340c30ff9afe200ef5ecbbdc77e6d1f816
-Author:     Frederic Weisbecker <frederic@kernel.org>
-AuthorDate: Tue, 8 May 2018 15:38:18 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 14 May 2018 11:25:27 +0200
 
-softirq/sh: Use nmi_count() on /proc/interrupts print out
+--x+RZeZVNR8VILNfK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Use nmi_count() instead of accessing directly the irq_stat structure.
-Its implementation is going to change to use per-CPU, so defer the guts
-to standard API instead.
+On Sat, May 12, 2018 at 11:17:08PM +0530, sumeet p wrote:
+> Correct the typecast with const to struct thermal_cooling_device_ops.
+> It is the last argument to the function thermal_of_cooling_device_register
+> and this argument is of type const. So, declare this structure
+> thermal_cooling_device_ops as constant.
+>=20
+> Signed-off-by: sumeet p <srplinux2008@gmail.com>
+> ---
+> Changes in V2:
+> - Updated Signed-off-by with correct name.
+>=20
+> ---
+>  drivers/thermal/tegra/soctherm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Helge Deller <deller@gmx.de>
-Cc: James E.J. Bottomley <jejb@parisc-linux.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Rich Felker <dalias@libc.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Link: http://lkml.kernel.org/r/1525786706-22846-4-git-send-email-frederic@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/sh/kernel/irq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-diff --git a/arch/sh/kernel/irq.c b/arch/sh/kernel/irq.c
-index 245dbeb20afe..5717c7cbdd97 100644
---- a/arch/sh/kernel/irq.c
-+++ b/arch/sh/kernel/irq.c
-@@ -44,7 +44,7 @@ int arch_show_interrupts(struct seq_file *p, int prec)
- 
- 	seq_printf(p, "%*s: ", prec, "NMI");
- 	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", irq_stat[j].__nmi_count);
-+		seq_printf(p, "%10u ", nmi_count(j));
- 	seq_printf(p, "  Non-maskable interrupts\n");
- 
- 	seq_printf(p, "%*s: %10u\n", prec, "ERR", atomic_read(&irq_err_count));
+--x+RZeZVNR8VILNfK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5hz8ACgkQ3SOs138+
+s6FzTw//UHE9kxWKN65Ox6rnF9i4OjP0s00iyS+VHqUde2M9s/yhhFVCKAYwoSy3
+lft31j7hHDsVmKDy243aUJrRZ8epvVR3t28wVnDYuS77pvFi6YWxvzaY5UrHrKIk
+F0w71k39Xv9OKTCC5v0/vgDUvJcJlhu16AzCBq5DojrfUBP4YgEEngicSFMQCTfG
+TRowsWuCgqU4zvLeKRlC6RjG1k+ynIa7e+ddBhg5nfJabf0dUm7pCPepWnQ83/av
+4eCoVB1eD8UEiYE9CqI85R/gjIR4LFkGEbQVK+2gMaugkwjNkJ9CRXPXZ0NuS9ws
+MTDs5Lt44YAe3ricmrJXcOre3yH1UWla+a6AcCgzlciQUzdWOloec1r7jNMXZSiR
+V5mP+/ocvBdzrw+fu71grKVwJvoTb406LvSLYd3qL34NHaPHLc20pmGWmXxgSTvk
+2ym7obQjHh8iLS3HFwyUbqkbVN2UbOwZeE7wyaKTzMncCfs+7uLML0CCZ99Fiwb4
+StiFFb4EefYiuDa0Ihs57Mf/eh79VMpuCYNQxy4SNTNyyhEH8LNQEr+8Dtj6Emcx
+SAqlt34CpQtu03zACeQErCFixFuB1nNr8fgbQ7oXC6mX3g5Z1KLW+ZGAc0oyLyh5
+rjUJ6bXfUe1tnxk3vfGBhXQ19iZcvbo7VP4BUm1qFnSTia7RId8=
+=9eRK
+-----END PGP SIGNATURE-----
+
+--x+RZeZVNR8VILNfK--
