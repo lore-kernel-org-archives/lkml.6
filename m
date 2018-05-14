@@ -1,53 +1,197 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752021AbeENCrb (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 22:47:31 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:45776 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751219AbeENCra (ORCPT
+        id S1752053AbeENCt2 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 22:49:28 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:59654 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751219AbeENCt0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 22:47:30 -0400
-Date: Mon, 14 May 2018 03:47:27 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: syzbot <syzbot+481ad819c717f6b78df9@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        gregkh@linuxfoundation.org, tj@kernel.org
-Subject: Re: general protection fault in kernfs_kill_sb (2)
-Message-ID: <20180514024726.GB30522@ZenIV.linux.org.uk>
-References: <0000000000008fa9d3056c053291@google.com>
- <14892403-d680-dc5d-1927-bc4a279514fb@I-love.SAKURA.ne.jp>
+        Sun, 13 May 2018 22:49:26 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
+        <niklas.soderlund@ragnatech.se>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, horms@verge.net.au,
+        geert@glider.be, magnus.damm@gmail.com, robh+dt@kernel.org,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: draak: Describe HDMI input
+Date: Mon, 14 May 2018 05:49:41 +0300
+Message-ID: <26780153.JLo9OE30iv@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180513125755.GQ18974@bigcity.dyn.berto.se>
+References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org> <1526032802-14376-4-git-send-email-jacopo+renesas@jmondi.org> <20180513125755.GQ18974@bigcity.dyn.berto.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14892403-d680-dc5d-1927-bc4a279514fb@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4E2nYfo010278
 
-On Sun, May 13, 2018 at 11:19:46AM +0900, Tetsuo Handa wrote:
+Hello,
 
-> This is what I reported at
-> https://groups.google.com/d/msg/syzkaller-bugs/ISOJlV2I2QM/qHslGMi3AwAJ .
+On Sunday, 13 May 2018 15:57:55 EEST Niklas Söderlund wrote:
+> On 2018-05-11 12:00:02 +0200, Jacopo Mondi wrote:
+> > Describe HDMI input connected to VIN4 interface for R-Car D3 Draak
+> > development board.
+> > 
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> > 
+> >  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 68 +++++++++++++++++++++
+> >  1 file changed, 68 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> > b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index d03f194..e0ce462
+> > 100644
+> > --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> > +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+> > @@ -59,6 +59,17 @@
+> > 
+> >  		};
+> >  	
+> >  	};
+> > 
+> > +	hdmi-in {
+> > +		compatible = "hdmi-connector";
+> > +		type = "a";
+> > +
+> > +		port {
+> > +			hdmi_con_in: endpoint {
+> > +				remote-endpoint = <&adv7612_in>;
+> > +			};
+> > +		};
+> > +	};
+> > +
+> > 
+> >  	memory@48000000 {
+> >  	
+> >  		device_type = "memory";
+> >  		/* first 128MB is reserved for secure area. */
+> > 
+> > @@ -142,6 +153,11 @@
+> > 
+> >  		groups = "usb0";
+> >  		function = "usb0";
+> >  	
+> >  	};
+> > 
+> > +
+> > +	vin4_pins: vin4 {
+> > +		groups = "vin4_data24", "vin4_sync", "vin4_clk", "vin4_clkenb";
+> > +		function = "vin4";
+> > +	};
+> > 
+> >  };
+> >  
+> >  &i2c0 {
+> > 
+> > @@ -154,6 +170,35 @@
+> > 
+> >  		reg = <0x50>;
+> >  		pagesize = <8>;
+> >  	
+> >  	};
+> > 
+> > +
+> > +	hdmi-decoder@4c {
+> > +		compatible = "adi,adv7612";
+> > +		reg = <0x4c>;
+> > +		default-input = <0>;
+> > +
+> > +		ports {
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +
+> > +			port@0 {
+> > +				reg = <0>;
+> > +				adv7612_in: endpoint {
+> > +					remote-endpoint = <&hdmi_con_in>;
+> > +				};
+> > +			};
+> > +
+> > +			port@2 {
+> > +				reg = <2>;
+> > +				adv7612_out: endpoint {
+> > +					pclk-sample = <0>;
+> > +					hsync-active = <0>;
+> > +					vsync-active = <0>;
 > 
-> We are currently waiting for comments from Al Viro.
+> This differs from the Gen2 DT bindings which is a very similar hardware
+> setup using the same components. Defining these properties will make the
+> bus marked as V4L2_MBUS_PARALLEL instead of V4L2_MBUS_BT656.
+> 
+> This will change how the hardware is configured for capture if the media
+> bus is in a UYVY format, see VNMC_INF register in rvin_setup(). Maybe
+> this it not an issue here but still I'm curious to why this differ
+> between Gen2 and Gen3 :-)
+> 
+> > +
+> > +					remote-endpoint = <&vin4_in>;
+> > +				};
+> > +			};
+> > +		};
+> > +	};
+> > 
+> >  };
+> >  
+> >  &i2c1 {
+> > 
+> > @@ -246,3 +291,26 @@
+> > 
+> >  	timeout-sec = <60>;
+> >  	status = "okay";
+> >  
+> >  };
+> > 
+> > +
+> > +&vin4 {
+> > +	pinctrl-0 = <&vin4_pins>;
+> > +	pinctrl-names = "default";
+> > +
+> > +	status = "okay";
+> > +
+> > +	ports {
+> > +		#address-cells = <1>;
+> > +		#size-cells = <0>;
+> > +
+> > +		port@0 {
+> > +			reg = <0>;
+> > +
+> > +			vin4_in: endpoint {
+> > +				hsync-active = <0>;
+> > +				vsync-active = <0>;
+> 
+> Comparing this to the Gen2 bindings some properties are missing,
+> 
+> bus-width = <24>;
+> pclk-sample = <1>;
+> data-active = <1>;
+> 
+> This is not a big deal as the VIN driver don't use these properties so
+> no functional change should come of this but still a difference.
 
-1) the damn thing is unusable without javashit.  Which gets about
-the same reaction as sending something.doc in attachment.  Please,
-find a less obnoxious way to archive the thing (or to generate
-URLs that would work without that garbage).
+I think the VIN DT bindings should be updated to explicitly list the endpoint 
+properties that are mandatory, optional, or not allowed.
 
-2) deactivate_locked_super() *WILL* be called when fill_super() fails.
-Live with it; it allows to simplify a whole lot of cleanup logics
-in various filesystems.  Again, we are not going for a model where
-->kill_sb() is not called for something returned by sget().
-Rationale: rarely exercised paths tend to rot, so anything that increases
-the duplication of bits and pieces of normal teardown into failure exits
-of foo_fill_super() is a bloody bad idea.  If anything, we want to take
-a lot of stuff out of ->put_super() instances directly into ->kill_sb()
-ones, precisely because ->put_super() is only called for fully set up
-filesystems.
+> Over all I'm happy with this change but before I add my tag I would like
+> to understand why it differs from the Gen2 configuration for the adv7612
+> properties.
+> 
+> Also on a side not it is possible with hardware switches on the board
+> switch the VIN4 source to a completely different pipeline CVBS connector
+> -> adv7180 -> VIN4. But I think it's best we keep the HDMI as default as
+> this seems to be how the boards are shipped. But maybe mentioning this
+> in the commit message would not hurt if you end-up resending the patch.
+> 
+> > +
+> > +				remote-endpoint = <&adv7612_out>;
+> > +			};
+> > +		};
+> > +	};
+> > +};
 
-3) kernfs needs to be fixed.  The rest of the dropped commits were
-made redundant by 8e04944f0ea8; this one wasn't.  Mea culpa.
+-- 
+Regards,
+
+Laurent Pinchart
