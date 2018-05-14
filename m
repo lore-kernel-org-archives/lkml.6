@@ -1,106 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932606AbeENPFM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 11:05:12 -0400
-Received: from foss.arm.com ([217.140.101.70]:44604 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754530AbeENPFD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 11:05:03 -0400
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
-        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
-        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        id S1753866AbeENPIC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 11:08:02 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37772 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752787AbeENPIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 11:08:01 -0400
+Date: Mon, 14 May 2018 10:07:59 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Jiri Slaby <jslaby@suse.cz>
+Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
         x86@kernel.org
-Subject: Re: [PATCH v10 02/25] x86/mm: define ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
-        <1523975611-15978-3-git-send-email-ldufour@linux.vnet.ibm.com>
-        <87sh72jtmn.fsf@e105922-lin.cambridge.arm.com>
-        <c289a58f-8afa-34c7-2624-c7bd2f6fcf48@linux.vnet.ibm.com>
-Date: Mon, 14 May 2018 16:05:01 +0100
-In-Reply-To: <c289a58f-8afa-34c7-2624-c7bd2f6fcf48@linux.vnet.ibm.com>
-        (Laurent Dufour's message of "Mon, 14 May 2018 16:47:39 +0200")
-Message-ID: <87o9hi46si.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+Subject: Re: [PATCH v2 6/6] x86/stacktrace: orc, mark it as reliable
+Message-ID: <20180514150759.n6xfl4u33vu5stj4@treble>
+References: <20180514140653.23678-1-jslaby@suse.cz>
+ <20180514140653.23678-6-jslaby@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180514140653.23678-6-jslaby@suse.cz>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Laurent Dufour <ldufour@linux.vnet.ibm.com> writes:
+On Mon, May 14, 2018 at 04:06:53PM +0200, Jiri Slaby wrote:
+> In SUSE, we need a reliable stack unwinder for kernel live patching, but
+> we do not want to enable frame pointers for performance reasons. So
+> after the previous patches to make the ORC reliable, mark ORC as a
+> reliable stack unwinder on x86.
+> 
+> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> ---
+>  arch/x86/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 47e7f582f86a..e4199fbcc7f2 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -181,7 +181,7 @@ config X86
+>  	select HAVE_PERF_USER_STACK_DUMP
+>  	select HAVE_RCU_TABLE_FREE
+>  	select HAVE_REGS_AND_STACK_ACCESS_API
+> -	select HAVE_RELIABLE_STACKTRACE		if X86_64 && UNWINDER_FRAME_POINTER && STACK_VALIDATION
+> +	select HAVE_RELIABLE_STACKTRACE		if X86_64 && (UNWINDER_FRAME_POINTER || UNWINDER_ORC) && STACK_VALIDATION
+>  	select HAVE_STACK_VALIDATION		if X86_64
+>  	select HAVE_SYSCALL_TRACEPOINTS
+>  	select HAVE_UNSTABLE_SCHED_CLOCK
 
-> On 08/05/2018 13:04, Punit Agrawal wrote:
->> Hi Laurent,
->> 
->> Laurent Dufour <ldufour@linux.vnet.ibm.com> writes:
->> 
->>> Set ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT which turns on the
->>> Speculative Page Fault handler when building for 64bit.
->>>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
->>> ---
->>>  arch/x86/Kconfig | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->>> index d8983df5a2bc..ebdeb48e4a4a 100644
->>> --- a/arch/x86/Kconfig
->>> +++ b/arch/x86/Kconfig
->>> @@ -30,6 +30,7 @@ config X86_64
->>>  	select MODULES_USE_ELF_RELA
->>>  	select X86_DEV_DMA_OPS
->>>  	select ARCH_HAS_SYSCALL_WRAPPER
->>> +	select ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
->> 
->> I'd suggest merging this patch with the one making changes to the
->> architectural fault handler towards the end of the series.
->> 
->> The Kconfig change is closely tied to the architectural support for SPF
->> and makes sense to be in a single patch.
->> 
->> If there's a good reason to keep them as separate patches, please move
->> the architecture Kconfig changes after the patch adding fault handler
->> changes.
->> 
->> It's better to enable the feature once the core infrastructure is merged
->> rather than at the beginning of the series to avoid potential bad
->> fallout from incomplete functionality during bisection.
->
-> Indeed bisection was the reason why Andrew asked me to push the configuration
-> enablement on top of the series (https://lkml.org/lkml/2017/10/10/1229).
+Maybe clarify the subject here as well:
 
-The config options have gone through another round of splitting (between
-core and architecture) since that comment. I agree that it still makes
-sense to define the core config - CONFIG_SPECULATIVE_PAGE_FAULT early
-on.
+  x86/stacktrace: Enable HAVE_RELIABLE_STACKTRACE for the ORC unwinder
 
-Just to clarify, my suggestion was to only move the architecture configs
-further down.
-
->
-> I also think it would be better to have the architecture enablement in on patch
-> but that would mean that the code will not be build when bisecting without the
-> latest patch adding the per architecture code.
-
-I don't see that as a problem. But if I'm in the minority, I am OK with
-leaving things as they are as well.
-
-Thanks,
-Punit
+-- 
+Josh
