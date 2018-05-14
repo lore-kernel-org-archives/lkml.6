@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752078AbeENG2D (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 02:28:03 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33306 "EHLO
+        id S1752060AbeENG2B (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 02:28:01 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:35605 "EHLO
         mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752038AbeENG17 (ORCPT
+        with ESMTP id S1752010AbeENG15 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 02:27:59 -0400
-X-Google-Smtp-Source: AB8JxZoWTuGYcTbs/tp9VrF5bQ/V9PGRpv1Z5qmHJBJqdPSlMLVp9/hWJyK9GMoT3E94wAjDPpo+RA==
+        Mon, 14 May 2018 02:27:57 -0400
+X-Google-Smtp-Source: AB8JxZrqQWK4QTwyN6vXX0HesQ1k84uBOm1lNEaaP+KgYCPf6lgE1Nx3ivdCX/tjVqbiIaPwtLsddQ==
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
 To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, jgross@suse.com,
@@ -15,9 +15,9 @@ To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         tiwai@suse.com
 Cc: andr2000@gmail.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v3 4/6] ALSA: xen-front: Implement handling of shared buffers
-Date: Mon, 14 May 2018 09:27:40 +0300
-Message-Id: <20180514062742.25879-5-andr2000@gmail.com>
+Subject: [PATCH v3 3/6] ALSA: xen-front: Implement Xen event channel handling
+Date: Mon, 14 May 2018 09:27:39 +0300
+Message-Id: <20180514062742.25879-4-andr2000@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514062742.25879-1-andr2000@gmail.com>
 References: <20180514062742.25879-1-andr2000@gmail.com>
@@ -27,67 +27,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Implement shared buffer handling according to the
-para-virtualized sound device protocol at xen/interface/io/sndif.h:
-  - manage buffer memory
-  - handle granted references
-  - handle page directories
+Handle Xen event channels:
+  - create for all configured streams and publish
+    corresponding ring references and event channels in Xen store,
+    so backend can connect
+  - implement event channels interrupt handlers
+  - create and destroy event channels with respect to Xen bus state
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 ---
- sound/xen/Makefile              |   3 +-
- sound/xen/xen_snd_front.c       |   8 ++
- sound/xen/xen_snd_front_shbuf.c | 193 ++++++++++++++++++++++++++++++++
- sound/xen/xen_snd_front_shbuf.h |  36 ++++++
- 4 files changed, 239 insertions(+), 1 deletion(-)
- create mode 100644 sound/xen/xen_snd_front_shbuf.c
- create mode 100644 sound/xen/xen_snd_front_shbuf.h
+ sound/xen/Makefile                |   3 +-
+ sound/xen/xen_snd_front.c         |   9 +-
+ sound/xen/xen_snd_front.h         |   5 +
+ sound/xen/xen_snd_front_evtchnl.c | 494 ++++++++++++++++++++++++++++++
+ sound/xen/xen_snd_front_evtchnl.h |  95 ++++++
+ 5 files changed, 604 insertions(+), 2 deletions(-)
+ create mode 100644 sound/xen/xen_snd_front_evtchnl.c
+ create mode 100644 sound/xen/xen_snd_front_evtchnl.h
 
 diff --git a/sound/xen/Makefile b/sound/xen/Makefile
-index 03c669984000..f028bc30af5d 100644
+index 06705bef61fa..03c669984000 100644
 --- a/sound/xen/Makefile
 +++ b/sound/xen/Makefile
-@@ -2,6 +2,7 @@
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0 OR MIT
  
  snd_xen_front-objs := xen_snd_front.o \
- 		      xen_snd_front_cfg.o \
--		      xen_snd_front_evtchnl.o
-+		      xen_snd_front_evtchnl.o \
-+		      xen_snd_front_shbuf.o
+-		      xen_snd_front_cfg.o
++		      xen_snd_front_cfg.o \
++		      xen_snd_front_evtchnl.o
  
  obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
 diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
-index 277214d4fd0a..cdf66ea516c4 100644
+index 70fa91683c71..277214d4fd0a 100644
 --- a/sound/xen/xen_snd_front.c
 +++ b/sound/xen/xen_snd_front.c
-@@ -11,6 +11,7 @@
- #include <linux/delay.h>
- #include <linux/module.h>
+@@ -18,9 +18,11 @@
+ #include <xen/interface/io/sndif.h>
  
-+#include <xen/page.h>
- #include <xen/platform_pci.h>
- #include <xen/xen.h>
- #include <xen/xenbus.h>
-@@ -191,6 +192,13 @@ static int __init xen_drv_init(void)
- 	if (!xen_has_pv_devices())
- 		return -ENODEV;
+ #include "xen_snd_front.h"
++#include "xen_snd_front_evtchnl.h"
  
-+	/* At the moment we only support case with XEN_PAGE_SIZE == PAGE_SIZE */
-+	if (XEN_PAGE_SIZE != PAGE_SIZE) {
-+		pr_err(XENSND_DRIVER_NAME ": different kernel and Xen page sizes are not supported: XEN_PAGE_SIZE (%lu) != PAGE_SIZE (%lu)\n",
-+		       XEN_PAGE_SIZE, PAGE_SIZE);
-+		return -ENODEV;
-+	}
-+
- 	pr_info("Initialising Xen " XENSND_DRIVER_NAME " frontend driver\n");
- 	return xenbus_register_frontend(&xen_driver);
+ static void xen_snd_drv_fini(struct xen_snd_front_info *front_info)
+ {
++	xen_snd_front_evtchnl_free_all(front_info);
  }
-diff --git a/sound/xen/xen_snd_front_shbuf.c b/sound/xen/xen_snd_front_shbuf.c
+ 
+ static int sndback_initwait(struct xen_snd_front_info *front_info)
+@@ -32,7 +34,12 @@ static int sndback_initwait(struct xen_snd_front_info *front_info)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return 0;
++	/* create event channels for all streams and publish */
++	ret = xen_snd_front_evtchnl_create_all(front_info, num_streams);
++	if (ret < 0)
++		return ret;
++
++	return xen_snd_front_evtchnl_publish_all(front_info);
+ }
+ 
+ static int sndback_connect(struct xen_snd_front_info *front_info)
+diff --git a/sound/xen/xen_snd_front.h b/sound/xen/xen_snd_front.h
+index b52226cb30bc..9d0c92100c7b 100644
+--- a/sound/xen/xen_snd_front.h
++++ b/sound/xen/xen_snd_front.h
+@@ -13,9 +13,14 @@
+ 
+ #include "xen_snd_front_cfg.h"
+ 
++struct xen_snd_front_evtchnl_pair;
++
+ struct xen_snd_front_info {
+ 	struct xenbus_device *xb_dev;
+ 
++	int num_evt_pairs;
++	struct xen_snd_front_evtchnl_pair *evt_pairs;
++
+ 	struct xen_front_cfg_card cfg;
+ };
+ 
+diff --git a/sound/xen/xen_snd_front_evtchnl.c b/sound/xen/xen_snd_front_evtchnl.c
 new file mode 100644
-index 000000000000..6845dbc7fdf5
+index 000000000000..1faafff08807
 --- /dev/null
-+++ b/sound/xen/xen_snd_front_shbuf.c
-@@ -0,0 +1,193 @@
++++ b/sound/xen/xen_snd_front_evtchnl.c
+@@ -0,0 +1,494 @@
 +// SPDX-License-Identifier: GPL-2.0 OR MIT
 +
 +/*
@@ -98,195 +123,496 @@ index 000000000000..6845dbc7fdf5
 + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 + */
 +
++#include <xen/events.h>
++#include <xen/grant_table.h>
 +#include <xen/xen.h>
 +#include <xen/xenbus.h>
 +
-+#include "xen_snd_front_shbuf.h"
++#include "xen_snd_front.h"
++#include "xen_snd_front_cfg.h"
++#include "xen_snd_front_evtchnl.h"
 +
-+grant_ref_t xen_snd_front_shbuf_get_dir_start(struct xen_snd_front_shbuf *buf)
++static irqreturn_t evtchnl_interrupt_req(int irq, void *dev_id)
 +{
-+	if (!buf->grefs)
-+		return GRANT_INVALID_REF;
++	struct xen_snd_front_evtchnl *channel = dev_id;
++	struct xen_snd_front_info *front_info = channel->front_info;
++	struct xensnd_resp *resp;
++	RING_IDX i, rp;
 +
-+	return buf->grefs[0];
++	if (unlikely(channel->state != EVTCHNL_STATE_CONNECTED))
++		return IRQ_HANDLED;
++
++	mutex_lock(&channel->ring_io_lock);
++
++again:
++	rp = channel->u.req.ring.sring->rsp_prod;
++	/* Ensure we see queued responses up to rp. */
++	rmb();
++
++	/*
++	 * Assume that the backend is trusted to always write sane values
++	 * to the ring counters, so no overflow checks on frontend side
++	 * are required.
++	 */
++	for (i = channel->u.req.ring.rsp_cons; i != rp; i++) {
++		resp = RING_GET_RESPONSE(&channel->u.req.ring, i);
++		if (resp->id != channel->evt_id)
++			continue;
++		switch (resp->operation) {
++		case XENSND_OP_OPEN:
++			/* fall through */
++		case XENSND_OP_CLOSE:
++			/* fall through */
++		case XENSND_OP_READ:
++			/* fall through */
++		case XENSND_OP_WRITE:
++			/* fall through */
++		case XENSND_OP_TRIGGER:
++			channel->u.req.resp_status = resp->status;
++			complete(&channel->u.req.completion);
++			break;
++		case XENSND_OP_HW_PARAM_QUERY:
++			channel->u.req.resp_status = resp->status;
++			channel->u.req.resp.hw_param =
++					resp->resp.hw_param;
++			complete(&channel->u.req.completion);
++			break;
++
++		default:
++			dev_err(&front_info->xb_dev->dev,
++				"Operation %d is not supported\n",
++				resp->operation);
++			break;
++		}
++	}
++
++	channel->u.req.ring.rsp_cons = i;
++	if (i != channel->u.req.ring.req_prod_pvt) {
++		int more_to_do;
++
++		RING_FINAL_CHECK_FOR_RESPONSES(&channel->u.req.ring,
++					       more_to_do);
++		if (more_to_do)
++			goto again;
++	} else {
++		channel->u.req.ring.sring->rsp_event = i + 1;
++	}
++
++	mutex_unlock(&channel->ring_io_lock);
++	return IRQ_HANDLED;
 +}
 +
-+void xen_snd_front_shbuf_clear(struct xen_snd_front_shbuf *buf)
++static irqreturn_t evtchnl_interrupt_evt(int irq, void *dev_id)
 +{
-+	memset(buf, 0, sizeof(*buf));
++	struct xen_snd_front_evtchnl *channel = dev_id;
++	struct xensnd_event_page *page = channel->u.evt.page;
++	u32 cons, prod;
++
++	if (unlikely(channel->state != EVTCHNL_STATE_CONNECTED))
++		return IRQ_HANDLED;
++
++	mutex_lock(&channel->ring_io_lock);
++
++	prod = page->in_prod;
++	/* Ensure we see ring contents up to prod. */
++	virt_rmb();
++	if (prod == page->in_cons)
++		goto out;
++
++	/*
++	 * Assume that the backend is trusted to always write sane values
++	 * to the ring counters, so no overflow checks on frontend side
++	 * are required.
++	 */
++	for (cons = page->in_cons; cons != prod; cons++) {
++		struct xensnd_evt *event;
++
++		event = &XENSND_IN_RING_REF(page, cons);
++		if (unlikely(event->id != channel->evt_id++))
++			continue;
++
++		switch (event->type) {
++		case XENSND_EVT_CUR_POS:
++			/* Do nothing at the moment. */
++			break;
++		}
++	}
++
++	page->in_cons = cons;
++	/* Ensure ring contents. */
++	virt_wmb();
++
++out:
++	mutex_unlock(&channel->ring_io_lock);
++	return IRQ_HANDLED;
 +}
 +
-+void xen_snd_front_shbuf_free(struct xen_snd_front_shbuf *buf)
++void xen_snd_front_evtchnl_flush(struct xen_snd_front_evtchnl *channel)
++{
++	int notify;
++
++	channel->u.req.ring.req_prod_pvt++;
++	RING_PUSH_REQUESTS_AND_CHECK_NOTIFY(&channel->u.req.ring, notify);
++	if (notify)
++		notify_remote_via_irq(channel->irq);
++}
++
++static void evtchnl_free(struct xen_snd_front_info *front_info,
++			 struct xen_snd_front_evtchnl *channel)
++{
++	unsigned long page = 0;
++
++	if (channel->type == EVTCHNL_TYPE_REQ)
++		page = (unsigned long)channel->u.req.ring.sring;
++	else if (channel->type == EVTCHNL_TYPE_EVT)
++		page = (unsigned long)channel->u.evt.page;
++
++	if (!page)
++		return;
++
++	channel->state = EVTCHNL_STATE_DISCONNECTED;
++	if (channel->type == EVTCHNL_TYPE_REQ) {
++		/* Release all who still waits for response if any. */
++		channel->u.req.resp_status = -EIO;
++		complete_all(&channel->u.req.completion);
++	}
++
++	if (channel->irq)
++		unbind_from_irqhandler(channel->irq, channel);
++
++	if (channel->port)
++		xenbus_free_evtchn(front_info->xb_dev, channel->port);
++
++	/* End access and free the page. */
++	if (channel->gref != GRANT_INVALID_REF)
++		gnttab_end_foreign_access(channel->gref, 0, page);
++	else
++		free_page(page);
++
++	memset(channel, 0, sizeof(*channel));
++}
++
++void xen_snd_front_evtchnl_free_all(struct xen_snd_front_info *front_info)
 +{
 +	int i;
 +
-+	if (buf->grefs) {
-+		for (i = 0; i < buf->num_grefs; i++)
-+			if (buf->grefs[i] != GRANT_INVALID_REF)
-+				gnttab_end_foreign_access(buf->grefs[i],
-+							  0, 0UL);
-+		kfree(buf->grefs);
++	if (!front_info->evt_pairs)
++		return;
++
++	for (i = 0; i < front_info->num_evt_pairs; i++) {
++		evtchnl_free(front_info, &front_info->evt_pairs[i].req);
++		evtchnl_free(front_info, &front_info->evt_pairs[i].evt);
 +	}
-+	kfree(buf->directory);
-+	free_pages_exact(buf->buffer, buf->buffer_sz);
-+	xen_snd_front_shbuf_clear(buf);
++
++	kfree(front_info->evt_pairs);
++	front_info->evt_pairs = NULL;
 +}
 +
-+/*
-+ * number of grant references a page can hold with respect to the
-+ * xensnd_page_directory header
-+ */
-+#define XENSND_NUM_GREFS_PER_PAGE ((XEN_PAGE_SIZE - \
-+		offsetof(struct xensnd_page_directory, gref)) / \
-+		sizeof(grant_ref_t))
-+
-+static void fill_page_dir(struct xen_snd_front_shbuf *buf,
-+			  int num_pages_dir)
++static int evtchnl_alloc(struct xen_snd_front_info *front_info, int index,
++			 struct xen_snd_front_evtchnl *channel,
++			 enum xen_snd_front_evtchnl_type type)
 +{
-+	struct xensnd_page_directory *page_dir;
-+	unsigned char *ptr;
-+	int i, cur_gref, grefs_left, to_copy;
++	struct xenbus_device *xb_dev = front_info->xb_dev;
++	unsigned long page;
++	grant_ref_t gref;
++	irq_handler_t handler;
++	char *handler_name = NULL;
++	int ret;
 +
-+	ptr = buf->directory;
-+	grefs_left = buf->num_grefs - num_pages_dir;
-+	/*
-+	 * skip grant references at the beginning, they are for pages granted
-+	 * for the page directory itself
-+	 */
-+	cur_gref = num_pages_dir;
-+	for (i = 0; i < num_pages_dir; i++) {
-+		page_dir = (struct xensnd_page_directory *)ptr;
-+		if (grefs_left <= XENSND_NUM_GREFS_PER_PAGE) {
-+			to_copy = grefs_left;
-+			page_dir->gref_dir_next_page = GRANT_INVALID_REF;
-+		} else {
-+			to_copy = XENSND_NUM_GREFS_PER_PAGE;
-+			page_dir->gref_dir_next_page = buf->grefs[i + 1];
-+		}
-+
-+		memcpy(&page_dir->gref, &buf->grefs[cur_gref],
-+		       to_copy * sizeof(grant_ref_t));
-+
-+		ptr += XEN_PAGE_SIZE;
-+		grefs_left -= to_copy;
-+		cur_gref += to_copy;
++	memset(channel, 0, sizeof(*channel));
++	channel->type = type;
++	channel->index = index;
++	channel->front_info = front_info;
++	channel->state = EVTCHNL_STATE_DISCONNECTED;
++	channel->gref = GRANT_INVALID_REF;
++	page = get_zeroed_page(GFP_KERNEL);
++	if (!page) {
++		ret = -ENOMEM;
++		goto fail;
 +	}
-+}
 +
-+static int grant_references(struct xenbus_device *xb_dev,
-+			    struct xen_snd_front_shbuf *buf,
-+			    int num_pages_dir, int num_pages_buffer,
-+			    int num_grefs)
-+{
-+	grant_ref_t priv_gref_head;
-+	unsigned long frame;
-+	int ret, i, j, cur_ref;
-+	int otherend_id;
++	handler_name = kasprintf(GFP_KERNEL, "%s-%s", XENSND_DRIVER_NAME,
++				 type == EVTCHNL_TYPE_REQ ?
++				 XENSND_FIELD_RING_REF :
++				 XENSND_FIELD_EVT_RING_REF);
++	if (!handler_name) {
++		ret = -ENOMEM;
++		goto fail;
++	}
 +
-+	ret = gnttab_alloc_grant_references(num_grefs, &priv_gref_head);
-+	if (ret)
-+		return ret;
++	mutex_init(&channel->ring_io_lock);
 +
-+	buf->num_grefs = num_grefs;
-+	otherend_id = xb_dev->otherend_id;
-+	j = 0;
++	if (type == EVTCHNL_TYPE_REQ) {
++		struct xen_sndif_sring *sring = (struct xen_sndif_sring *)page;
 +
-+	for (i = 0; i < num_pages_dir; i++) {
-+		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
-+		if (cur_ref < 0) {
-+			ret = cur_ref;
++		init_completion(&channel->u.req.completion);
++		mutex_init(&channel->u.req.req_io_lock);
++		SHARED_RING_INIT(sring);
++		FRONT_RING_INIT(&channel->u.req.ring, sring, XEN_PAGE_SIZE);
++
++		ret = xenbus_grant_ring(xb_dev, sring, 1, &gref);
++		if (ret < 0) {
++			channel->u.req.ring.sring = NULL;
 +			goto fail;
 +		}
 +
-+		frame = xen_page_to_gfn(virt_to_page(buf->directory +
-+						     XEN_PAGE_SIZE * i));
-+		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
-+		buf->grefs[j++] = cur_ref;
-+	}
-+
-+	for (i = 0; i < num_pages_buffer; i++) {
-+		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
-+		if (cur_ref < 0) {
-+			ret = cur_ref;
++		handler = evtchnl_interrupt_req;
++	} else {
++		ret = gnttab_grant_foreign_access(xb_dev->otherend_id,
++						  virt_to_gfn((void *)page), 0);
++		if (ret < 0)
 +			goto fail;
-+		}
 +
-+		frame = xen_page_to_gfn(virt_to_page(buf->buffer +
-+						     XEN_PAGE_SIZE * i));
-+		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
-+		buf->grefs[j++] = cur_ref;
++		channel->u.evt.page = (struct xensnd_event_page *)page;
++		gref = ret;
++		handler = evtchnl_interrupt_evt;
 +	}
 +
-+	gnttab_free_grant_references(priv_gref_head);
-+	fill_page_dir(buf, num_pages_dir);
++	channel->gref = gref;
++
++	ret = xenbus_alloc_evtchn(xb_dev, &channel->port);
++	if (ret < 0)
++		goto fail;
++
++	ret = bind_evtchn_to_irq(channel->port);
++	if (ret < 0) {
++		dev_err(&xb_dev->dev,
++			"Failed to bind IRQ for domid %d port %d: %d\n",
++			front_info->xb_dev->otherend_id, channel->port, ret);
++		goto fail;
++	}
++
++	channel->irq = ret;
++
++	ret = request_threaded_irq(channel->irq, NULL, handler,
++				   IRQF_ONESHOT, handler_name, channel);
++	if (ret < 0) {
++		dev_err(&xb_dev->dev, "Failed to request IRQ %d: %d\n",
++			channel->irq, ret);
++		goto fail;
++	}
++
++	kfree(handler_name);
 +	return 0;
 +
 +fail:
-+	gnttab_free_grant_references(priv_gref_head);
++	if (page)
++		free_page(page);
++	kfree(handler_name);
++	dev_err(&xb_dev->dev, "Failed to allocate ring: %d\n", ret);
 +	return ret;
 +}
 +
-+static int alloc_int_buffers(struct xen_snd_front_shbuf *buf,
-+			     int num_pages_dir, int num_pages_buffer,
-+			     int num_grefs)
++int xen_snd_front_evtchnl_create_all(struct xen_snd_front_info *front_info,
++				     int num_streams)
 +{
-+	buf->grefs = kcalloc(num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
-+	if (!buf->grefs)
++	struct xen_front_cfg_card *cfg = &front_info->cfg;
++	struct device *dev = &front_info->xb_dev->dev;
++	int d, ret = 0;
++
++	front_info->evt_pairs =
++			kcalloc(num_streams,
++				sizeof(struct xen_snd_front_evtchnl_pair),
++				GFP_KERNEL);
++	if (!front_info->evt_pairs)
 +		return -ENOMEM;
 +
-+	buf->directory = kcalloc(num_pages_dir, XEN_PAGE_SIZE, GFP_KERNEL);
-+	if (!buf->directory)
++	/* Iterate over devices and their streams and create event channels. */
++	for (d = 0; d < cfg->num_pcm_instances; d++) {
++		struct xen_front_cfg_pcm_instance *pcm_instance;
++		int s, index;
++
++		pcm_instance = &cfg->pcm_instances[d];
++
++		for (s = 0; s < pcm_instance->num_streams_pb; s++) {
++			index = pcm_instance->streams_pb[s].index;
++
++			ret = evtchnl_alloc(front_info, index,
++					    &front_info->evt_pairs[index].req,
++					    EVTCHNL_TYPE_REQ);
++			if (ret < 0) {
++				dev_err(dev, "Error allocating control channel\n");
++				goto fail;
++			}
++
++			ret = evtchnl_alloc(front_info, index,
++					    &front_info->evt_pairs[index].evt,
++					    EVTCHNL_TYPE_EVT);
++			if (ret < 0) {
++				dev_err(dev, "Error allocating in-event channel\n");
++				goto fail;
++			}
++		}
++
++		for (s = 0; s < pcm_instance->num_streams_cap; s++) {
++			index = pcm_instance->streams_cap[s].index;
++
++			ret = evtchnl_alloc(front_info, index,
++					    &front_info->evt_pairs[index].req,
++					    EVTCHNL_TYPE_REQ);
++			if (ret < 0) {
++				dev_err(dev, "Error allocating control channel\n");
++				goto fail;
++			}
++
++			ret = evtchnl_alloc(front_info, index,
++					    &front_info->evt_pairs[index].evt,
++					    EVTCHNL_TYPE_EVT);
++			if (ret < 0) {
++				dev_err(dev, "Error allocating in-event channel\n");
++				goto fail;
++			}
++		}
++	}
++	if (ret < 0)
 +		goto fail;
 +
-+	buf->buffer_sz = num_pages_buffer * XEN_PAGE_SIZE;
-+	buf->buffer = alloc_pages_exact(buf->buffer_sz, GFP_KERNEL);
-+	if (!buf->buffer)
-+		goto fail;
-+
++	front_info->num_evt_pairs = num_streams;
 +	return 0;
 +
 +fail:
-+	kfree(buf->grefs);
-+	buf->grefs = NULL;
-+	kfree(buf->directory);
-+	buf->directory = NULL;
-+	return -ENOMEM;
++	xen_snd_front_evtchnl_free_all(front_info);
++	return ret;
 +}
 +
-+int xen_snd_front_shbuf_alloc(struct xenbus_device *xb_dev,
-+			      struct xen_snd_front_shbuf *buf,
-+			      unsigned int buffer_sz)
++static int evtchnl_publish(struct xenbus_transaction xbt,
++			   struct xen_snd_front_evtchnl *channel,
++			   const char *path, const char *node_ring,
++			   const char *node_chnl)
 +{
-+	int num_pages_buffer, num_pages_dir, num_grefs;
++	struct xenbus_device *xb_dev = channel->front_info->xb_dev;
 +	int ret;
 +
-+	xen_snd_front_shbuf_clear(buf);
-+
-+	num_pages_buffer = DIV_ROUND_UP(buffer_sz, XEN_PAGE_SIZE);
-+	/* number of pages the page directory consumes itself */
-+	num_pages_dir = DIV_ROUND_UP(num_pages_buffer,
-+				     XENSND_NUM_GREFS_PER_PAGE);
-+	num_grefs = num_pages_buffer + num_pages_dir;
-+
-+	ret = alloc_int_buffers(buf, num_pages_dir,
-+				num_pages_buffer, num_grefs);
-+	if (ret < 0)
++	/* Write control channel ring reference. */
++	ret = xenbus_printf(xbt, path, node_ring, "%u", channel->gref);
++	if (ret < 0) {
++		dev_err(&xb_dev->dev, "Error writing ring-ref: %d\n", ret);
 +		return ret;
++	}
 +
-+	ret = grant_references(xb_dev, buf, num_pages_dir, num_pages_buffer,
-+			       num_grefs);
-+	if (ret < 0)
++	/* Write event channel ring reference. */
++	ret = xenbus_printf(xbt, path, node_chnl, "%u", channel->port);
++	if (ret < 0) {
++		dev_err(&xb_dev->dev, "Error writing event channel: %d\n", ret);
 +		return ret;
++	}
 +
-+	fill_page_dir(buf, num_pages_dir);
 +	return 0;
 +}
-diff --git a/sound/xen/xen_snd_front_shbuf.h b/sound/xen/xen_snd_front_shbuf.h
++
++int xen_snd_front_evtchnl_publish_all(struct xen_snd_front_info *front_info)
++{
++	struct xen_front_cfg_card *cfg = &front_info->cfg;
++	struct xenbus_transaction xbt;
++	int ret, d;
++
++again:
++	ret = xenbus_transaction_start(&xbt);
++	if (ret < 0) {
++		xenbus_dev_fatal(front_info->xb_dev, ret,
++				 "starting transaction");
++		return ret;
++	}
++
++	for (d = 0; d < cfg->num_pcm_instances; d++) {
++		struct xen_front_cfg_pcm_instance *pcm_instance;
++		int s, index;
++
++		pcm_instance = &cfg->pcm_instances[d];
++
++		for (s = 0; s < pcm_instance->num_streams_pb; s++) {
++			index = pcm_instance->streams_pb[s].index;
++
++			ret = evtchnl_publish(xbt,
++					      &front_info->evt_pairs[index].req,
++					      pcm_instance->streams_pb[s].xenstore_path,
++					      XENSND_FIELD_RING_REF,
++					      XENSND_FIELD_EVT_CHNL);
++			if (ret < 0)
++				goto fail;
++
++			ret = evtchnl_publish(xbt,
++					      &front_info->evt_pairs[index].evt,
++					      pcm_instance->streams_pb[s].xenstore_path,
++					      XENSND_FIELD_EVT_RING_REF,
++					      XENSND_FIELD_EVT_EVT_CHNL);
++			if (ret < 0)
++				goto fail;
++		}
++
++		for (s = 0; s < pcm_instance->num_streams_cap; s++) {
++			index = pcm_instance->streams_cap[s].index;
++
++			ret = evtchnl_publish(xbt,
++					      &front_info->evt_pairs[index].req,
++					      pcm_instance->streams_cap[s].xenstore_path,
++					      XENSND_FIELD_RING_REF,
++					      XENSND_FIELD_EVT_CHNL);
++			if (ret < 0)
++				goto fail;
++
++			ret = evtchnl_publish(xbt,
++					      &front_info->evt_pairs[index].evt,
++					      pcm_instance->streams_cap[s].xenstore_path,
++					      XENSND_FIELD_EVT_RING_REF,
++					      XENSND_FIELD_EVT_EVT_CHNL);
++			if (ret < 0)
++				goto fail;
++		}
++	}
++	ret = xenbus_transaction_end(xbt, 0);
++	if (ret < 0) {
++		if (ret == -EAGAIN)
++			goto again;
++
++		xenbus_dev_fatal(front_info->xb_dev, ret,
++				 "completing transaction");
++		goto fail_to_end;
++	}
++	return 0;
++fail:
++	xenbus_transaction_end(xbt, 1);
++fail_to_end:
++	xenbus_dev_fatal(front_info->xb_dev, ret, "writing XenStore");
++	return ret;
++}
++
++void xen_snd_front_evtchnl_pair_set_connected(struct xen_snd_front_evtchnl_pair *evt_pair,
++					      bool is_connected)
++{
++	enum xen_snd_front_evtchnl_state state;
++
++	if (is_connected)
++		state = EVTCHNL_STATE_CONNECTED;
++	else
++		state = EVTCHNL_STATE_DISCONNECTED;
++
++	mutex_lock(&evt_pair->req.ring_io_lock);
++	evt_pair->req.state = state;
++	mutex_unlock(&evt_pair->req.ring_io_lock);
++
++	mutex_lock(&evt_pair->evt.ring_io_lock);
++	evt_pair->evt.state = state;
++	mutex_unlock(&evt_pair->evt.ring_io_lock);
++}
++
++void xen_snd_front_evtchnl_pair_clear(struct xen_snd_front_evtchnl_pair *evt_pair)
++{
++	mutex_lock(&evt_pair->req.ring_io_lock);
++	evt_pair->req.evt_next_id = 0;
++	mutex_unlock(&evt_pair->req.ring_io_lock);
++
++	mutex_lock(&evt_pair->evt.ring_io_lock);
++	evt_pair->evt.evt_next_id = 0;
++	mutex_unlock(&evt_pair->evt.ring_io_lock);
++}
++
+diff --git a/sound/xen/xen_snd_front_evtchnl.h b/sound/xen/xen_snd_front_evtchnl.h
 new file mode 100644
-index 000000000000..d28e97c47b2c
+index 000000000000..cbe51fd1ec15
 --- /dev/null
-+++ b/sound/xen/xen_snd_front_shbuf.h
-@@ -0,0 +1,36 @@
++++ b/sound/xen/xen_snd_front_evtchnl.h
+@@ -0,0 +1,95 @@
 +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
 +
 +/*
@@ -297,31 +623,90 @@ index 000000000000..d28e97c47b2c
 + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 + */
 +
-+#ifndef __XEN_SND_FRONT_SHBUF_H
-+#define __XEN_SND_FRONT_SHBUF_H
++#ifndef __XEN_SND_FRONT_EVTCHNL_H
++#define __XEN_SND_FRONT_EVTCHNL_H
 +
-+#include <xen/grant_table.h>
++#include <xen/interface/io/sndif.h>
 +
-+#include "xen_snd_front_evtchnl.h"
++struct xen_snd_front_info;
 +
-+struct xen_snd_front_shbuf {
-+	int num_grefs;
-+	grant_ref_t *grefs;
-+	u8 *directory;
-+	u8 *buffer;
-+	size_t buffer_sz;
++#ifndef GRANT_INVALID_REF
++/*
++ * FIXME: usage of grant reference 0 as invalid grant reference:
++ * grant reference 0 is valid, but never exposed to a PV driver,
++ * because of the fact it is already in use/reserved by the PV console.
++ */
++#define GRANT_INVALID_REF	0
++#endif
++
++/* Timeout in ms to wait for backend to respond. */
++#define VSND_WAIT_BACK_MS	3000
++
++enum xen_snd_front_evtchnl_state {
++	EVTCHNL_STATE_DISCONNECTED,
++	EVTCHNL_STATE_CONNECTED,
 +};
 +
-+grant_ref_t xen_snd_front_shbuf_get_dir_start(struct xen_snd_front_shbuf *buf);
++enum xen_snd_front_evtchnl_type {
++	EVTCHNL_TYPE_REQ,
++	EVTCHNL_TYPE_EVT,
++};
 +
-+int xen_snd_front_shbuf_alloc(struct xenbus_device *xb_dev,
-+			      struct xen_snd_front_shbuf *buf,
-+			      unsigned int buffer_sz);
++struct xen_snd_front_evtchnl {
++	struct xen_snd_front_info *front_info;
++	int gref;
++	int port;
++	int irq;
++	int index;
++	/* State of the event channel. */
++	enum xen_snd_front_evtchnl_state state;
++	enum xen_snd_front_evtchnl_type type;
++	/* Either response id or incoming event id. */
++	u16 evt_id;
++	/* Next request id or next expected event id. */
++	u16 evt_next_id;
++	/* Shared ring access lock. */
++	struct mutex ring_io_lock;
++	union {
++		struct {
++			struct xen_sndif_front_ring ring;
++			struct completion completion;
++			/* Serializer for backend IO: request/response. */
++			struct mutex req_io_lock;
 +
-+void xen_snd_front_shbuf_clear(struct xen_snd_front_shbuf *buf);
++			/* Latest response status. */
++			int resp_status;
++			union {
++				struct xensnd_query_hw_param hw_param;
++			} resp;
++		} req;
++		struct {
++			struct xensnd_event_page *page;
++			/* This is needed to handle XENSND_EVT_CUR_POS event. */
++			struct snd_pcm_substream *substream;
++		} evt;
++	} u;
++};
 +
-+void xen_snd_front_shbuf_free(struct xen_snd_front_shbuf *buf);
++struct xen_snd_front_evtchnl_pair {
++	struct xen_snd_front_evtchnl req;
++	struct xen_snd_front_evtchnl evt;
++};
 +
-+#endif /* __XEN_SND_FRONT_SHBUF_H */
++int xen_snd_front_evtchnl_create_all(struct xen_snd_front_info *front_info,
++				     int num_streams);
++
++void xen_snd_front_evtchnl_free_all(struct xen_snd_front_info *front_info);
++
++int xen_snd_front_evtchnl_publish_all(struct xen_snd_front_info *front_info);
++
++void xen_snd_front_evtchnl_flush(struct xen_snd_front_evtchnl *evtchnl);
++
++void xen_snd_front_evtchnl_pair_set_connected(struct xen_snd_front_evtchnl_pair *evt_pair,
++					      bool is_connected);
++
++void xen_snd_front_evtchnl_pair_clear(struct xen_snd_front_evtchnl_pair *evt_pair);
++
++#endif /* __XEN_SND_FRONT_EVTCHNL_H */
 -- 
 2.17.0
