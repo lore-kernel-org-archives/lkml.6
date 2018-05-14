@@ -1,113 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752697AbeENRGZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:06:25 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41658 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751596AbeENRGW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:06:22 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Philippe CORNU <philippe.cornu@st.com>
-Cc: Rob Herring <robh@kernel.org>, Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>, David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yannick FERTRE <yannick.fertre@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings/display/bridge: sii902x: add optional power supplies
-Date: Mon, 14 May 2018 20:06:38 +0300
-Message-ID: <1617167.qDJKxXFJBi@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <7fe8e766-56f5-38a3-b4dd-b44d4a5bdcf8@st.com>
-References: <20180425075314.19137-1-philippe.cornu@st.com> <3518575.OAoTTXDygq@avalon> <7fe8e766-56f5-38a3-b4dd-b44d4a5bdcf8@st.com>
+        id S1752896AbeENROe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:14:34 -0400
+Received: from foss.arm.com ([217.140.101.70]:46836 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751498AbeENROd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 13:14:33 -0400
+Date: Mon, 14 May 2018 18:14:28 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+        dave.martin@arm.com, james.morse@arm.com, linux@dominikbrodowski.net,
+        linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
+        viro@zeniv.linux.org.uk, will.deacon@arm.com
+Subject: Re: [PATCH 13/18] kernel: add kcompat_sys_{f,}statfs64()
+Message-ID: <20180514171427.qyietn3fhilwokb2@lakrids.cambridge.arm.com>
+References: <20180514094640.27569-1-mark.rutland@arm.com>
+ <20180514094640.27569-14-mark.rutland@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180514094640.27569-14-mark.rutland@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philippe,
-
-On Monday, 14 May 2018 12:22:16 EEST Philippe CORNU wrote:
-> On 04/26/2018 12:05 AM, Laurent Pinchart wrote:
-> > On Wednesday, 25 April 2018 20:11:23 EEST Rob Herring wrote:
-> >> On Wed, Apr 25, 2018 at 04:17:25PM +0300, Laurent Pinchart wrote:
-> >>> On Wednesday, 25 April 2018 15:20:04 EEST Philippe CORNU wrote:
-> >>>> On 04/25/2018 11:01 AM, Laurent Pinchart wrote:
-> >>>>> On Wednesday, 25 April 2018 10:53:13 EEST Philippe Cornu wrote:
-> >>>>>> Add optional power supplies using the description found in
-> >>>>>> "SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
-> >>>>>>
-> >>>>>> There is a single 1v2 supply voltage named vcc12 from which cvcc12
-> >>>>>> (digital core) and avcc12 (TMDS analog) are derived because
-> >>>>>> according to this data sheet:
-> >>>>>> "cvcc12 and avcc12 can be derived from the same power source"
-> >>>>>
-> >>>>> Shouldn't the power supplies be mandatory, as explained by Mark in
-> >>>>> https://lists.freedesktop.org/archives/dri-devel/2018-April/
-> >>>>> 172400.html ?
-> >>>>
-> >>>> Laurent,
-> >>>> Many thanks Laurent for your comment, I understood the merge of the
-> >>>> two 1v2 power supplies but missed the "mandatory" part... maybe because
-> >>>> this patch (with optional power supplies) already got the reviewed-by
-> >>>> from Rob, I thought the discussion thread you pointed out was
-> >>>> applicable "only" to totally new driver documentation.
-> >>>>
-> >>>> So, on my side, as a "new user" of sii902x IC, no problem to put these
-> >>>> power supplies as mandatory instead of optional properties but I would
-> >>>> like to be sure this is applicable to both old and new bindings doc :
-> >>>> )
-> >>>
-> >>> We obviously need to retain backward compatibility, so on the driver
-> >>> side you need to treat those power supplies as optional. From a DT
-> >>> bindings point of view, however, I think they should be mandatory for
-> >>> new DT.
-> >>
-> >> We don't really have a way to describe these 3 conditions (required for
-> >> all, optional for all, and required for new). So generally we make
-> >> additions optional. The exception sometimes is if we update all the dts
-> >> files.
-> > 
-> > Can't we just make it mandatory in the bindings, as long as we treat it
-> > as optional in drivers ?
+On Mon, May 14, 2018 at 10:46:35AM +0100, Mark Rutland wrote:
+> Using this helper allows us to avoid the in-kernel calls to the
+> compat_sys_{f,}statfs64() sycalls, as are necessary for parameter
+> mangling in arm64's compat handling.
 > 
-> How to progress on this patch? Do you have any suggestions?
+> Following the example of ksys_* functions, kcompat_sys_* functions are
+> intended to be a drop-in replacement for their compat_sys_*
+> counterparts, with the same calling convention.
+> 
+> This is necessary to enable conversion of arm64's syscall handling to
+> use pt_regs wrappers.
 
-By seeing what Rob thinks about my proposal above ? :-)
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index 6723ea51ec99..e0bf3e4bb897 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -59,6 +59,7 @@ struct tms;
+>  struct utimbuf;
+>  struct mq_attr;
+>  struct compat_stat;
+> +struct compat_statfs64;
+>  struct compat_timeval;
+>  struct robust_list_head;
+>  struct getcpu_cache;
+> @@ -1150,6 +1151,13 @@ unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
+>  ssize_t ksys_readahead(int fd, loff_t offset, size_t count);
+>  unsigned int ksys_personality(unsigned int personality);
+>  
+> +#ifdef CONFIG_COMPAT
+> +int kcompat_sys_statfs64(const char __user * pathname, compat_size_t sz,
+> +		     struct compat_statfs64 __user * buf);
+> +int kcompat_sys_fstatfs64(unsigned int fd, compat_size_t sz,
+> +			  struct compat_statfs64 __user * buf);
+> +#endif
 
-> >>>> Rob,
-> >>>> could you please confirm these power supply properties should be
-> >>>> "mandatory"? if yes, should we then modify other optional properties
-> >>>> like the reset-gpios too in the future?
-> >>>
-> >>> The GPIOs properties are different in my opinion, as there's no
-> >>> requirement to connect for instance the reset pin to a GPIO controllable
-> >>> by the SoC. The pin could be hardwired to VCC, or connected to a system
-> >>> reset that is automatically managed without SoC intervention. The power
-> >>> supplies, however, are mandatory, in the sense that the chip will not
-> >>> work if you leave the power supplies unconnected.
-> >>
-> >> DT only needs to describe what matters to s/w. If a regulator is
-> >> fixed and you don't need to know its voltage (or other read-only
-> >> parameters), then there's not much point in putting it in DT.
-> >>
-> >> I'd probably base this more at a platform level and you either use
-> >> regulator binding or you don't. It's perfectly valid that you want to do
-> >> things like regulator setup, pin ctrl and muxing setup, etc. all in
-> >> firmware and the OS doesn't touch any of that.
-> >>
-> >> That's all a big can of worms which we shouldn't solve on this 2 line
-> >> change. I think this change is fine as-is, so:
-> >>
-> >> Reviewed-by: Rob Herring <robh@kernel.org>
+I've moved these to <linux/compat.h>, so that they live with the rest of
+the compat syscall stuff. That should avoid build failures the kbuild
+test robot picked up where compat_size_t wasn't dfined.
 
--- 
-Regards,
-
-Laurent Pinchart
+Thanks,
+Mark.
