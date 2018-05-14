@@ -1,30 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753331AbeENMoN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:44:13 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44811 "EHLO
+        id S1753374AbeENMom (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:44:42 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33509 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752678AbeENMoL (ORCPT
+        with ESMTP id S1752933AbeENMok (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:44:11 -0400
-Date: Mon, 14 May 2018 05:43:46 -0700
+        Mon, 14 May 2018 08:44:40 -0400
+Date: Mon, 14 May 2018 05:43:16 -0700
 From: tip-bot for Dave Hansen <tipbot@zytor.com>
-Message-ID: <tip-6af17cf89e99b64cf1f660bf848755442ab2f047@git.kernel.org>
-Cc: hpa@zytor.com, linux-kernel@vger.kernel.org, linuxram@us.ibm.com,
-        shuah@kernel.org, dave.hansen@intel.com, torvalds@linux-foundation.org,
-        mpe@ellerman.id.au, tglx@linutronix.de, mingo@kernel.org,
-        akpm@linux-foundation.org, dave.hansen@linux.intel.com,
-        peterz@infradead.org
-Reply-To: mpe@ellerman.id.au, torvalds@linux-foundation.org,
-        dave.hansen@intel.com, shuah@kernel.org, linuxram@us.ibm.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com,
-        dave.hansen@linux.intel.com, peterz@infradead.org,
-        akpm@linux-foundation.org, mingo@kernel.org, tglx@linutronix.de
-In-Reply-To: <20180509171348.9EEE4BEF@viggo.jf.intel.com>
-References: <20180509171348.9EEE4BEF@viggo.jf.intel.com>
+Message-ID: <tip-3fcd2b2d928904cbf30b01e2c5e4f1dd2f9ab262@git.kernel.org>
+Cc: peterz@infradead.org, mingo@kernel.org, hpa@zytor.com,
+        akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, mpe@ellerman.id.au,
+        dave.hansen@intel.com, dave.hansen@linux.intel.com, shuah@kernel.org,
+        linuxram@us.ibm.com, tglx@linutronix.de
+Reply-To: peterz@infradead.org, mingo@kernel.org, mpe@ellerman.id.au,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org, hpa@zytor.com,
+        torvalds@linux-foundation.org, linuxram@us.ibm.com, tglx@linutronix.de,
+        shuah@kernel.org, dave.hansen@linux.intel.com, dave.hansen@intel.com
+In-Reply-To: <20180509171347.C64AB733@viggo.jf.intel.com>
+References: <20180509171347.C64AB733@viggo.jf.intel.com>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/pkeys/selftests: Add PROT_EXEC test
-Git-Commit-ID: 6af17cf89e99b64cf1f660bf848755442ab2f047
+Subject: [tip:x86/urgent] x86/pkeys/selftests: Factor out "instruction page"
+Git-Commit-ID: 3fcd2b2d928904cbf30b01e2c5e4f1dd2f9ab262
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -37,19 +36,19 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6af17cf89e99b64cf1f660bf848755442ab2f047
-Gitweb:     https://git.kernel.org/tip/6af17cf89e99b64cf1f660bf848755442ab2f047
+Commit-ID:  3fcd2b2d928904cbf30b01e2c5e4f1dd2f9ab262
+Gitweb:     https://git.kernel.org/tip/3fcd2b2d928904cbf30b01e2c5e4f1dd2f9ab262
 Author:     Dave Hansen <dave.hansen@linux.intel.com>
-AuthorDate: Wed, 9 May 2018 10:13:48 -0700
+AuthorDate: Wed, 9 May 2018 10:13:47 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 14 May 2018 11:14:45 +0200
 
-x86/pkeys/selftests: Add PROT_EXEC test
+x86/pkeys/selftests: Factor out "instruction page"
 
-Under the covers, implement executable-only memory with
-protection keys when userspace calls mprotect(PROT_EXEC).
-
-But, we did not have a selftest for that.  Now we do.
+We currently have an execute-only test, but it is for
+the explicit mprotect_pkey() interface.  We will soon
+add a test for the implicit mprotect(PROT_EXEC)
+enterface.  We need this code in both tests.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -61,71 +60,51 @@ Cc: Ram Pai <linuxram@us.ibm.com>
 Cc: Shuah Khan <shuah@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180509171348.9EEE4BEF@viggo.jf.intel.com
+Link: http://lkml.kernel.org/r/20180509171347.C64AB733@viggo.jf.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- tools/testing/selftests/x86/protection_keys.c | 44 +++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ tools/testing/selftests/x86/protection_keys.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
 diff --git a/tools/testing/selftests/x86/protection_keys.c b/tools/testing/selftests/x86/protection_keys.c
-index 083ebd51b44e..8cb4fe58f381 100644
+index 7d95acd2aec3..083ebd51b44e 100644
 --- a/tools/testing/selftests/x86/protection_keys.c
 +++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -1303,6 +1303,49 @@ void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
- 	expected_pk_fault(pkey);
+@@ -1253,12 +1253,9 @@ void test_ptrace_of_child(int *ptr, u16 pkey)
+ 	free(plain_ptr_unaligned);
  }
  
-+void test_implicit_mprotect_exec_only_memory(int *ptr, u16 pkey)
+-void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
++void *get_pointer_to_instructions(void)
+ {
+ 	void *p1;
+-	int scratch;
+-	int ptr_contents;
+-	int ret;
+ 
+ 	p1 = ALIGN_PTR_UP(&lots_o_noops_around_write, PAGE_SIZE);
+ 	dprintf3("&lots_o_noops: %p\n", &lots_o_noops_around_write);
+@@ -1268,7 +1265,23 @@ void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
+ 	/* Point 'p1' at the *second* page of the function: */
+ 	p1 += PAGE_SIZE;
+ 
++	/*
++	 * Try to ensure we fault this in on next touch to ensure
++	 * we get an instruction fault as opposed to a data one
++	 */
+ 	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
++
++	return p1;
++}
++
++void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
 +{
 +	void *p1;
 +	int scratch;
 +	int ptr_contents;
 +	int ret;
 +
-+	dprintf1("%s() start\n", __func__);
-+
 +	p1 = get_pointer_to_instructions();
-+	lots_o_noops_around_write(&scratch);
-+	ptr_contents = read_ptr(p1);
-+	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
-+
-+	/* Use a *normal* mprotect(), not mprotect_pkey(): */
-+	ret = mprotect(p1, PAGE_SIZE, PROT_EXEC);
-+	pkey_assert(!ret);
-+
-+	dprintf2("pkru: %x\n", rdpkru());
-+
-+	/* Make sure this is an *instruction* fault */
-+	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
-+	lots_o_noops_around_write(&scratch);
-+	do_not_expect_pk_fault("executing on PROT_EXEC memory");
-+	ptr_contents = read_ptr(p1);
-+	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
-+	expected_pk_fault(UNKNOWN_PKEY);
-+
-+	/*
-+	 * Put the memory back to non-PROT_EXEC.  Should clear the
-+	 * exec-only pkey off the VMA and allow it to be readable
-+	 * again.  Go to PROT_NONE first to check for a kernel bug
-+	 * that did not clear the pkey when doing PROT_NONE.
-+	 */
-+	ret = mprotect(p1, PAGE_SIZE, PROT_NONE);
-+	pkey_assert(!ret);
-+
-+	ret = mprotect(p1, PAGE_SIZE, PROT_READ|PROT_EXEC);
-+	pkey_assert(!ret);
-+	ptr_contents = read_ptr(p1);
-+	do_not_expect_pk_fault("plain read on recently PROT_EXEC area");
-+}
-+
- void test_mprotect_pkey_on_unsupported_cpu(int *ptr, u16 pkey)
- {
- 	int size = PAGE_SIZE;
-@@ -1327,6 +1370,7 @@ void (*pkey_tests[])(int *ptr, u16 pkey) = {
- 	test_kernel_gup_of_access_disabled_region,
- 	test_kernel_gup_write_to_write_disabled_region,
- 	test_executing_on_unreadable_memory,
-+	test_implicit_mprotect_exec_only_memory,
- 	test_ptrace_of_child,
- 	test_pkey_syscalls_on_non_allocated_pkey,
- 	test_pkey_syscalls_bad_args,
+ 	lots_o_noops_around_write(&scratch);
+ 	ptr_contents = read_ptr(p1);
+ 	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
