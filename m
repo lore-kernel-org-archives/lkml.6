@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752536AbeENVLy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:11:54 -0400
-Received: from gofer.mess.org ([88.97.38.141]:33165 "EHLO gofer.mess.org"
+        id S1752574AbeENVMX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:12:23 -0400
+Received: from gofer.mess.org ([88.97.38.141]:33215 "EHLO gofer.mess.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752215AbeENVLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:11:05 -0400
+        id S1752137AbeENVLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 17:11:04 -0400
 From: Sean Young <sean@mess.org>
 To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alexei Starovoitov <ast@kernel.org>,
@@ -13,9 +13,9 @@ To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
         Matthias Reichl <hias@horus.com>,
         Devin Heitmueller <dheitmueller@kernellabs.com>
-Subject: [PATCH v1 3/4] media: rc bpf: move ir_raw_event to uapi
-Date: Mon, 14 May 2018 22:11:00 +0100
-Message-Id: <6ecdbd01b8c42c8784f2235c1e5109dac3dd86a5.1526331777.git.sean@mess.org>
+Subject: [PATCH v1 1/4] media: rc: introduce BPF_PROG_IR_DECODER
+Date: Mon, 14 May 2018 22:10:58 +0100
+Message-Id: <32a944171d5c48abf126259595b0088ce3122c91.1526331777.git.sean@mess.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <cover.1526331777.git.sean@mess.org>
 References: <cover.1526331777.git.sean@mess.org>
@@ -25,82 +25,204 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The context provided to a BPF_PROG_RAWIR_DECODER is a struct ir_raw_event;
-ensure user space has a a definition.
+Add support for BPF_PROG_IR_DECODER. This type of BPF program can call
+rc_keydown() to reported decoded IR scancodes, or rc_repeat() to report
+that the last key should be repeated.
 
 Signed-off-by: Sean Young <sean@mess.org>
 ---
- include/media/rc-core.h        | 19 +------------------
- include/uapi/linux/bpf_rcdev.h | 24 ++++++++++++++++++++++++
- 2 files changed, 25 insertions(+), 18 deletions(-)
- create mode 100644 include/uapi/linux/bpf_rcdev.h
+ drivers/media/rc/Kconfig          |  8 +++
+ drivers/media/rc/Makefile         |  1 +
+ drivers/media/rc/ir-bpf-decoder.c | 93 +++++++++++++++++++++++++++++++
+ include/linux/bpf_types.h         |  3 +
+ include/uapi/linux/bpf.h          | 16 +++++-
+ 5 files changed, 120 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/media/rc/ir-bpf-decoder.c
 
-diff --git a/include/media/rc-core.h b/include/media/rc-core.h
-index 6742fd86ff65..5d31e31d8ade 100644
---- a/include/media/rc-core.h
-+++ b/include/media/rc-core.h
-@@ -21,6 +21,7 @@
- #include <linux/kfifo.h>
- #include <linux/time.h>
- #include <linux/timer.h>
-+#include <uapi/linux/bpf_rcdev.h>
- #include <media/rc-map.h>
+diff --git a/drivers/media/rc/Kconfig b/drivers/media/rc/Kconfig
+index eb2c3b6eca7f..10ad6167d87c 100644
+--- a/drivers/media/rc/Kconfig
++++ b/drivers/media/rc/Kconfig
+@@ -120,6 +120,14 @@ config IR_IMON_DECODER
+ 	   remote control and you would like to use it with a raw IR
+ 	   receiver, or if you wish to use an encoder to transmit this IR.
  
- /**
-@@ -299,24 +300,6 @@ void rc_keydown_notimeout(struct rc_dev *dev, enum rc_proto protocol,
- void rc_keyup(struct rc_dev *dev);
- u32 rc_g_keycode_from_table(struct rc_dev *dev, u32 scancode);
++config IR_BPF_DECODER
++	bool "Enable IR raw decoder using BPF"
++	depends on BPF_SYSCALL
++	depends on RC_CORE=y
++	help
++	   Enable this option to make it possible to load custom IR
++	   decoders written in BPF.
++
+ endif #RC_DECODERS
  
--/*
-- * From rc-raw.c
-- * The Raw interface is specific to InfraRed. It may be a good idea to
-- * split it later into a separate header.
-- */
--struct ir_raw_event {
--	union {
--		u32             duration;
--		u32             carrier;
--	};
--	u8                      duty_cycle;
--
--	unsigned                pulse:1;
--	unsigned                reset:1;
--	unsigned                timeout:1;
--	unsigned                carrier_report:1;
--};
--
- #define DEFINE_IR_RAW_EVENT(event) struct ir_raw_event event = {}
- 
- static inline void init_ir_raw_event(struct ir_raw_event *ev)
-diff --git a/include/uapi/linux/bpf_rcdev.h b/include/uapi/linux/bpf_rcdev.h
+ menuconfig RC_DEVICES
+diff --git a/drivers/media/rc/Makefile b/drivers/media/rc/Makefile
+index 2e1c87066f6c..12e1118430d0 100644
+--- a/drivers/media/rc/Makefile
++++ b/drivers/media/rc/Makefile
+@@ -5,6 +5,7 @@ obj-y += keymaps/
+ obj-$(CONFIG_RC_CORE) += rc-core.o
+ rc-core-y := rc-main.o rc-ir-raw.o
+ rc-core-$(CONFIG_LIRC) += lirc_dev.o
++rc-core-$(CONFIG_IR_BPF_DECODER) += ir-bpf-decoder.o
+ obj-$(CONFIG_IR_NEC_DECODER) += ir-nec-decoder.o
+ obj-$(CONFIG_IR_RC5_DECODER) += ir-rc5-decoder.o
+ obj-$(CONFIG_IR_RC6_DECODER) += ir-rc6-decoder.o
+diff --git a/drivers/media/rc/ir-bpf-decoder.c b/drivers/media/rc/ir-bpf-decoder.c
 new file mode 100644
-index 000000000000..d8629ff2b960
+index 000000000000..aaa5e208b1a5
 --- /dev/null
-+++ b/include/uapi/linux/bpf_rcdev.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/* Copyright (c) 2018 Sean Young <sean@mess.org>
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of version 2 of the GNU General Public
-+ * License as published by the Free Software Foundation.
++++ b/drivers/media/rc/ir-bpf-decoder.c
+@@ -0,0 +1,93 @@
++// SPDX-License-Identifier: GPL-2.0
++// ir-bpf-decoder.c - handles bpf decoders
++//
++// Copyright (C) 2018 Sean Young <sean@mess.org>
++
++#include <linux/bpf.h>
++#include <linux/filter.h>
++#include "rc-core-priv.h"
++
++/*
++ * BPF interface for raw IR decoder
 + */
-+#ifndef _UAPI__LINUX_BPF_RCDEV_H__
-+#define _UAPI__LINUX_BPF_RCDEV_H__
-+
-+struct ir_raw_event {
-+	union {
-+		__u32           duration;
-+		__u32           carrier;
-+	};
-+	__u8                    duty_cycle;
-+
-+	unsigned                pulse:1;
-+	unsigned                reset:1;
-+	unsigned                timeout:1;
-+	unsigned                carrier_report:1;
++const struct bpf_prog_ops ir_decoder_prog_ops = {
 +};
 +
-+#endif /* _UAPI__LINUX_BPF_RCDEV_H__ */
++BPF_CALL_1(bpf_rc_repeat, struct ir_raw_event*, event)
++{
++	struct ir_raw_event_ctrl *ctrl;
++
++	ctrl = container_of(event, struct ir_raw_event_ctrl, prev_ev);
++
++	rc_repeat(ctrl->dev);
++	return 0;
++}
++
++static const struct bpf_func_proto rc_repeat_proto = {
++	.func	   = bpf_rc_repeat,
++	.gpl_only  = true, // rc_repeat is EXPORT_SYMBOL_GPL
++	.ret_type  = RET_VOID,
++	.arg1_type = ARG_PTR_TO_CTX,
++};
++
++BPF_CALL_4(bpf_rc_keydown, struct ir_raw_event*, event, u32, protocol,
++	   u32, scancode, u32, toggle)
++{
++	struct ir_raw_event_ctrl *ctrl;
++
++	ctrl = container_of(event, struct ir_raw_event_ctrl, prev_ev);
++	rc_keydown(ctrl->dev, protocol, scancode, toggle != 0);
++	return 0;
++}
++
++static const struct bpf_func_proto rc_keydown_proto = {
++	.func	   = bpf_rc_keydown,
++	.gpl_only  = true, // rc_keydown is EXPORT_SYMBOL_GPL
++	.ret_type  = RET_VOID,
++	.arg1_type = ARG_PTR_TO_CTX,
++	.arg2_type = ARG_ANYTHING,
++	.arg3_type = ARG_ANYTHING,
++	.arg4_type = ARG_ANYTHING,
++};
++
++static const struct bpf_func_proto *ir_decoder_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
++{
++	switch (func_id) {
++	case BPF_FUNC_rc_repeat:
++		return &rc_repeat_proto;
++	case BPF_FUNC_rc_keydown:
++		return &rc_keydown_proto;
++	case BPF_FUNC_map_lookup_elem:
++		return &bpf_map_lookup_elem_proto;
++	case BPF_FUNC_map_update_elem:
++		return &bpf_map_update_elem_proto;
++	case BPF_FUNC_map_delete_elem:
++		return &bpf_map_delete_elem_proto;
++	case BPF_FUNC_ktime_get_ns:
++		return &bpf_ktime_get_ns_proto;
++	case BPF_FUNC_tail_call:
++		return &bpf_tail_call_proto;
++	case BPF_FUNC_get_prandom_u32:
++		return &bpf_get_prandom_u32_proto;
++	default:
++		return NULL;
++	}
++}
++
++static bool ir_decoder_is_valid_access(int off, int size,
++				       enum bpf_access_type type,
++				       const struct bpf_prog *prog,
++				       struct bpf_insn_access_aux *info)
++{
++	if (type == BPF_WRITE)
++		return false;
++	if (off < 0 || off + size > sizeof(struct ir_raw_event))
++		return false;
++
++	return true;
++}
++
++const struct bpf_verifier_ops ir_decoder_verifier_ops = {
++	.get_func_proto  = ir_decoder_func_proto,
++	.is_valid_access = ir_decoder_is_valid_access
++};
+diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
+index 2b28fcf6f6ae..ee5355715ee0 100644
+--- a/include/linux/bpf_types.h
++++ b/include/linux/bpf_types.h
+@@ -25,6 +25,9 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_RAW_TRACEPOINT, raw_tracepoint)
+ #ifdef CONFIG_CGROUP_BPF
+ BPF_PROG_TYPE(BPF_PROG_TYPE_CGROUP_DEVICE, cg_dev)
+ #endif
++#ifdef CONFIG_IR_BPF_DECODER
++BPF_PROG_TYPE(BPF_PROG_TYPE_RAWIR_DECODER, ir_decoder)
++#endif
+ 
+ BPF_MAP_TYPE(BPF_MAP_TYPE_ARRAY, array_map_ops)
+ BPF_MAP_TYPE(BPF_MAP_TYPE_PERCPU_ARRAY, percpu_array_map_ops)
+diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+index c5ec89732a8d..6ad053e831c0 100644
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@ -137,6 +137,7 @@ enum bpf_prog_type {
+ 	BPF_PROG_TYPE_SK_MSG,
+ 	BPF_PROG_TYPE_RAW_TRACEPOINT,
+ 	BPF_PROG_TYPE_CGROUP_SOCK_ADDR,
++	BPF_PROG_TYPE_RAWIR_DECODER,
+ };
+ 
+ enum bpf_attach_type {
+@@ -755,6 +756,17 @@ union bpf_attr {
+  *     @addr: pointer to struct sockaddr to bind socket to
+  *     @addr_len: length of sockaddr structure
+  *     Return: 0 on success or negative error code
++ *
++ * int bpf_rc_keydown(ctx, protocol, scancode, toggle)
++ *	Report decoded scancode with toggle value
++ *	@ctx: pointer to ctx
++ *	@protocol: decoded protocol
++ *	@scancode: decoded scancode
++ *	@toggle: set to 1 if button was toggled, else 0
++ *
++ * int bpf_rc_repeat(ctx)
++ *	Repeat the last decoded scancode
++ *	@ctx: pointer to ctx
+  */
+ #define __BPF_FUNC_MAPPER(FN)		\
+ 	FN(unspec),			\
+@@ -821,7 +833,9 @@ union bpf_attr {
+ 	FN(msg_apply_bytes),		\
+ 	FN(msg_cork_bytes),		\
+ 	FN(msg_pull_data),		\
+-	FN(bind),
++	FN(bind),			\
++	FN(rc_repeat),			\
++	FN(rc_keydown),
+ 
+ /* integer value in 'imm' field of BPF_CALL instruction selects which helper
+  * function eBPF program intends to call
 -- 
 2.17.0
