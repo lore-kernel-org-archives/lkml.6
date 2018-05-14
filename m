@@ -1,46 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752203AbeENJC6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 05:02:58 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44070 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752165AbeENJCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 05:02:55 -0400
-Date: Mon, 14 May 2018 11:02:52 +0200
-From: Gerd Hoffmann <kraxel@redhat.com>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: airlied@linux.ie, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        virtualization@lists.linux-foundation.org,
-        dri-devel@lists.freedesktop.org, airlied@redhat.com,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH] gpu: drm: qxl: Adding new typedef vm_fault_t
-Message-ID: <20180514090252.a6mb2hszh25q7hm2@sirius.home.kraxel.org>
-References: <20180417133844.GA30256@jordon-HP-15-Notebook-PC>
- <20180423104924.ozalv7x5ppjifnxc@sirius.home.kraxel.org>
- <20180424121151.GX31310@phenom.ffwll.local>
- <20180424123513.53opt3ufe47i5db7@sirius.home.kraxel.org>
- <CAFqt6zYwCgzBkbeRFgOHGRaYT5EqaAybXQ5_E73cBLEc7Hzv8A@mail.gmail.com>
+        id S1752627AbeENJD4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 05:03:56 -0400
+Received: from smtp-out6.electric.net ([192.162.217.184]:57657 "EHLO
+        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752436AbeENJDv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 05:03:51 -0400
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'H. Peter Anvin'" <hpa@zytor.com>,
+        "'Alexey Dobriyan'" <adobriyan@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: RE: [PATCH] x86: pad assembly functions with INT3
+Thread-Topic: [PATCH] x86: pad assembly functions with INT3
+Thread-Index: AQHT5kvUTXOpwgS8vUa+aOfUWAYmp6QpLZRAgAGn0QCABCEG0A==
+Date: Mon, 14 May 2018 09:04:38 +0000
+Message-ID: <83866d054b27419c9d9dd97d9c66c3de@AcuMS.aculab.com>
+References: <20180507213755.GA32406@avx2>
+ <20fb84fd5eef4c45b2d38d0290235d5d@AcuMS.aculab.com>
+ <5c6762fe-5cbe-42ed-ac4e-a7144b8ef7ad@zytor.com>
+In-Reply-To: <5c6762fe-5cbe-42ed-ac4e-a7144b8ef7ad@zytor.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zYwCgzBkbeRFgOHGRaYT5EqaAybXQ5_E73cBLEc7Hzv8A@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4E94DBV012549
 
-  Hi,
-
-> > So my expectation that a backmerge happens anyway after -rc1/2 is in
-> > line with reality, it is just to be delayed this time.  I'll stay
-> > tuned ;)
+From: H. Peter Anvin
+> Sent: 11 May 2018 19:54
 > 
-> Is this patch already merged in drm-misc-next tree ?
+> On 05/10/18 09:39, David Laight wrote:
+> > From: Alexey Dobriyan
+> >> Sent: 07 May 2018 22:38
+> >>
+> >> Use INT3 instead of NOP. All that padding between functions is
+> >> an illegal area, no legitimate code should jump into it.
+> >>
+> >> I've checked x86_64 allyesconfig disassembly, all changes looks sane:
+> >> INT3 is only used after RET or unconditional JMP.
+> >
+> > I thought there was a performance penalty (on at least some cpu)
+> > depending on the number of and the actual instructions used for padding.
+> >
+> > I believe that is why gcc generates a small number of very long 'nop'
+> > instructions when padding code.
+> >
+> 
+> There is a performance penalty for using NOP instructions *in the
+> fallthrough case.*  In the case where the padding is never supposed to
+> be executed, which is what we're talking about here, it is irrelevant.
 
-Pushed now.
+Not completely irrelevant, the instructions stream gets fetched and decoded
+beyond the jmp/ret at the end of the function.
+At some point the cpu will decode the jmp/ret and fetch/decode from the
+target address.
+I guess it won't try to speculatively execute the 'pad' instructions
+- but you can never really tell!
 
-cheers,
-  Gerd
+	David
