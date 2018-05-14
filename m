@@ -1,60 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752024AbeENTty (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 15:49:54 -0400
-Received: from mail-qk0-f180.google.com ([209.85.220.180]:45233 "EHLO
-        mail-qk0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751422AbeENTtw (ORCPT
+        id S1752045AbeENTwI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 15:52:08 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46026 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751422AbeENTwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 15:49:52 -0400
-X-Google-Smtp-Source: AB8JxZpfdMEcQioyT7F3s093xDeGCgix8ojwTSk7lUdkXoy9ml8keNxkhBDUGUC/C3GJe15AECJJVNTz09gx0F+CfBk=
+        Mon, 14 May 2018 15:52:05 -0400
+X-Google-Smtp-Source: AB8JxZpQS/DZ7IUH4YDqSe/qW//O/S52rQYky9/tLvncAwjqhJ4QSAlxZuhTvfqmtzAdLCuBkARBwj4dT06LAB/QHzc=
 MIME-Version: 1.0
-In-Reply-To: <86c2bc2f-e622-9447-e4bb-b4ee37e2d44a@ti.com>
-References: <20180510174717.26540-1-dmurphy@ti.com> <20180510174717.26540-2-dmurphy@ti.com>
- <41267191-1308-6b9b-78fa-2893a525b49a@gmail.com> <17630aca-1225-df61-7a5d-a921ecd9c78c@ti.com>
- <86c2bc2f-e622-9447-e4bb-b4ee37e2d44a@ti.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 14 May 2018 22:49:51 +0300
-Message-ID: <CAHp75VcFR4zUOhRjNLN1nMirirVaK-WjYa5Kwa9dL__-bjnLuA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-To: Dan Murphy <dmurphy@ti.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Pavel Machek <pavel@ucw.cz>, "Andrew F. Davis" <afd@ti.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <33f131a40a50bd7532ed74ff51e3da920e9e8df5.1526173613.git.rgb@redhat.com>
+References: <cover.1526173613.git.rgb@redhat.com> <33f131a40a50bd7532ed74ff51e3da920e9e8df5.1526173613.git.rgb@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 14 May 2018 15:52:03 -0400
+Message-ID: <CAHC9VhSPY-49LppFRw9Vmupdw8b2ooMVzWmputdB0bKm3X0+FA@mail.gmail.com>
+Subject: Re: [PATCH ghak81 RFC V2 1/5] audit: normalize loginuid read access
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux NetDev Upstream Mailing List <netdev@vger.kernel.org>,
+        Netfilter Devel List <netfilter-devel@vger.kernel.org>,
+        Linux Security Module list
+        <linux-security-module@vger.kernel.org>,
+        Integrity Measurement Architecture
+        <linux-integrity@vger.kernel.org>,
+        SElinux list <selinux@tycho.nsa.gov>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 10:40 PM, Dan Murphy <dmurphy@ti.com> wrote:
-> On 05/11/2018 06:56 AM, Dan Murphy wrote:
-
->>>> +        ret = of_property_read_string(led->strobe_node, "label", &name);
-
->>>> +        ret = of_property_read_u32(led->strobe_node,
-
->>>> +        ret = of_property_read_u32(led->strobe_node,
-
->>> Common LED bindings state that flash-max-microamp and
->>> flash-max-timeout-us properties are mandatory.
->>
->> OK.
+On Sat, May 12, 2018 at 9:58 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> Recognizing that the loginuid is an internal audit value, use an access
+> function to retrieve the audit loginuid value for the task rather than
+> reaching directly into the task struct to get it.
 >
-> OK I looked at the max776973 driver and well if the flash-max-microamp and
-> flash-max-timeout-us nodes are missing it sets a default value for each if the
-> node is not present.
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+>  kernel/auditsc.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
 >
-> So should we remove this code from the Max77693 driver too and fail probe as being asked
-> in this driver?
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index 479c031..0d4e269 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -374,7 +374,7 @@ static int audit_field_compare(struct task_struct *tsk,
+>         case AUDIT_COMPARE_EGID_TO_OBJ_GID:
+>                 return audit_compare_gid(cred->egid, name, f, ctx);
+>         case AUDIT_COMPARE_AUID_TO_OBJ_UID:
+> -               return audit_compare_uid(tsk->loginuid, name, f, ctx);
+> +               return audit_compare_uid(audit_get_loginuid(tsk), name, f, ctx);
+>         case AUDIT_COMPARE_SUID_TO_OBJ_UID:
+>                 return audit_compare_uid(cred->suid, name, f, ctx);
+>         case AUDIT_COMPARE_SGID_TO_OBJ_GID:
+> @@ -385,7 +385,7 @@ static int audit_field_compare(struct task_struct *tsk,
+>                 return audit_compare_gid(cred->fsgid, name, f, ctx);
+>         /* uid comparisons */
+>         case AUDIT_COMPARE_UID_TO_AUID:
+> -               return audit_uid_comparator(cred->uid, f->op, tsk->loginuid);
+> +               return audit_uid_comparator(cred->uid, f->op, audit_get_loginuid(tsk));
+>         case AUDIT_COMPARE_UID_TO_EUID:
+>                 return audit_uid_comparator(cred->uid, f->op, cred->euid);
+>         case AUDIT_COMPARE_UID_TO_SUID:
+> @@ -394,11 +394,11 @@ static int audit_field_compare(struct task_struct *tsk,
+>                 return audit_uid_comparator(cred->uid, f->op, cred->fsuid);
+>         /* auid comparisons */
+>         case AUDIT_COMPARE_AUID_TO_EUID:
+> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->euid);
+> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->euid);
+>         case AUDIT_COMPARE_AUID_TO_SUID:
+> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->suid);
+> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->suid);
+>         case AUDIT_COMPARE_AUID_TO_FSUID:
+> -               return audit_uid_comparator(tsk->loginuid, f->op, cred->fsuid);
+> +               return audit_uid_comparator(audit_get_loginuid(tsk), f->op, cred->fsuid);
+>         /* euid comparisons */
+>         case AUDIT_COMPARE_EUID_TO_SUID:
+>                 return audit_uid_comparator(cred->euid, f->op, cred->suid);
+> @@ -611,7 +611,7 @@ static int audit_filter_rules(struct task_struct *tsk,
+>                                 result = match_tree_refs(ctx, rule->tree);
+>                         break;
+>                 case AUDIT_LOGINUID:
+> -                       result = audit_uid_comparator(tsk->loginuid, f->op, f->uid);
+> +                       result = audit_uid_comparator(audit_get_loginuid(tsk), f->op, f->uid);
+>                         break;
+>                 case AUDIT_LOGINUID_SET:
+>                         result = audit_comparator(audit_loginuid_set(tsk), f->op, f->val);
+> @@ -2281,14 +2281,14 @@ int audit_signal_info(int sig, struct task_struct *t)
+>         struct audit_aux_data_pids *axp;
+>         struct task_struct *tsk = current;
+>         struct audit_context *ctx = tsk->audit_context;
+> -       kuid_t uid = current_uid(), t_uid = task_uid(t);
+> +       kuid_t uid = current_uid(), auid, t_uid = task_uid(t);
+>
+>         if (auditd_test_task(t) &&
+>             (sig == SIGTERM || sig == SIGHUP ||
+>              sig == SIGUSR1 || sig == SIGUSR2)) {
+>                 audit_sig_pid = task_tgid_nr(tsk);
+> -               if (uid_valid(tsk->loginuid))
+> -                       audit_sig_uid = tsk->loginuid;
+> +               if (uid_valid(auid = audit_get_loginuid(tsk)))
+> +                       audit_sig_uid = auid;
+>                 else
+>                         audit_sig_uid = uid;
+>                 security_task_getsecid(tsk, &audit_sig_sid);
 
-I would also add that using device_property_*() API is much better
-then using OF specific one. It will help IoT / DIY entusiasts use them
-on non-DT platforms.
+A gentle reminder that you should try to make you patches as
+"checkpatch clean" as possible (see scripts/checkpatch.pl).  There are
+several 80-char warnings, which aren't fatal, but the big no-no is
+below:
 
+  ERROR: do not use assignment in if condition
+  #72: FILE: kernel/auditsc.c:2290:
+  +               if (uid_valid(auid = audit_get_loginuid(tsk)))
+
+... while I don't completely agree with everything checkpatch has to
+say, I definitely agree with checkpatch when it comes to assignments
+in if conditions.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+paul moore
+www.paul-moore.com
