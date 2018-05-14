@@ -1,162 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752691AbeENLZZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:25:25 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:35640 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752550AbeENLYh (ORCPT
+        id S1752709AbeENLZg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:25:36 -0400
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:55852 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752122AbeENLZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:24:37 -0400
-From: Richard Weinberger <richard@nod.at>
-To: linux-mtd@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>
-Subject: [PATCH 6/8] ubi: fastmap: Scan empty space if fastmap is preseeded
-Date: Mon, 14 May 2018 13:24:20 +0200
-Message-Id: <20180514112422.23988-7-richard@nod.at>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180514112422.23988-1-richard@nod.at>
-References: <20180514112422.23988-1-richard@nod.at>
+        Mon, 14 May 2018 07:25:34 -0400
+Subject: Re: [PATCH 1/5] media: docs: selection: fix typos
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <1522790146-16061-1-git-send-email-luca@lucaceresoli.net>
+ <e96a3e14-ccdb-a18b-816b-c4023853a4cb@xs4all.nl>
+ <de8178b4-dc95-7c43-0943-4418c5ee9a07@xs4all.nl>
+From: Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <9f1cc199-d2b3-d4c9-71c0-b6f8b0471e51@lucaceresoli.net>
+Date: Mon, 14 May 2018 13:25:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <de8178b4-dc95-7c43-0943-4418c5ee9a07@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The creation tool does not know the real size of the MTD, therefore the
-preseeded fastmap references only used PEBs.
-Free PEBs need to be discovered during the initial attach of the
-preseeded fastmap.
+Hi Hans,
 
-Signed-off-by: Richard Weinberger <richard@nod.at>
----
- drivers/mtd/ubi/fastmap.c | 109 +++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 103 insertions(+), 6 deletions(-)
+On 13/05/2018 11:19, Hans Verkuil wrote:
+> Hi Luca,
+> 
+> My apologies for the long delay in reviewing this.
+> 
+> It all looks very good and if you can post a v2 with these small issues
+> fixed, then I'll merge it for 4.18.
 
-diff --git a/drivers/mtd/ubi/fastmap.c b/drivers/mtd/ubi/fastmap.c
-index 0d1274b69274..5ec14fd70c13 100644
---- a/drivers/mtd/ubi/fastmap.c
-+++ b/drivers/mtd/ubi/fastmap.c
-@@ -400,6 +400,94 @@ static void unmap_peb(struct ubi_attach_info *ai, int pnum)
- 		}
- 	}
- }
-+/**
-+ * scan_empty_space - scan empty space.
-+ *
-+ * @ubi: UBI device object
-+ * @ai: attach info object
-+ * @start: PEB number where empty space is expected to start
-+ *
-+ * Is is the fastmap preseeded, it references only used PEBs, the creation
-+ * does not know the real MTD size. Therefore many PEBs are 0xff and unknown
-+ * to the fastmap. Scan for this PEBs during attach and make them known.
-+ * These PEBs are only allowed to be 0xff or have a valid EC header.
-+ * EC headers are allowed because the initial scan+erase operation could be
-+ * interrupted by a power cycle.
-+ */
-+static int scan_empty_space(struct ubi_device *ubi, struct ubi_attach_info *ai,
-+			    int start)
-+{
-+	int pnum, err, scrub, empty, image_seq;
-+	unsigned long long ec;
-+	struct ubi_ec_hdr *ech = NULL;
-+	struct ubi_vid_io_buf *vb = NULL;
-+	struct ubi_vid_hdr *vh;
-+
-+	err = -ENOMEM;
-+
-+	ech = kzalloc(ubi->ec_hdr_alsize, GFP_KERNEL);
-+	if (!ech)
-+		goto out;
-+
-+	vb = ubi_alloc_vid_buf(ubi, GFP_KERNEL);
-+	if (!vb)
-+		goto out;
-+
-+	vh = ubi_get_vid_hdr(vb);
-+
-+	for (pnum = start; pnum < ubi->peb_count; pnum++) {
-+		if (ubi_io_is_bad(ubi, pnum))
-+			continue;
-+
-+		scrub = empty = ec = 0;
-+		err = ubi_io_read_ec_hdr(ubi, pnum, ech, 0);
-+		switch (err) {
-+			case UBI_IO_FF_BITFLIPS:
-+				scrub = 1;
-+				/* fall through */
-+			case UBI_IO_FF:
-+				empty = 1;
-+				break;
-+			case UBI_IO_BITFLIPS:
-+				scrub = 1;
-+				/* fall through */
-+			case 0:
-+				ec = be64_to_cpu(ech->ec);
-+				image_seq = be32_to_cpu(ech->image_seq);
-+
-+				if (image_seq && (image_seq != ubi->image_seq)) {
-+					ubi_err(ubi, "bad image seq: 0x%x, expected: 0x%x",
-+						image_seq, ubi->image_seq);
-+					err = UBI_BAD_FASTMAP;
-+					goto out;
-+				}
-+				break;
-+			default:
-+				ubi_err(ubi, "Unable to read EC header in empty space: %i",
-+					err);
-+				err = UBI_BAD_FASTMAP;
-+				goto out;
-+		}
-+
-+		err = ubi_io_read_vid_hdr(ubi, pnum, vb, 0);
-+		if (err != UBI_IO_FF && err != UBI_IO_FF_BITFLIPS) {
-+			ubi_err(ubi, "Unexpected data in empty space: %i", err);
-+			err = UBI_BAD_FASTMAP;
-+			goto out;
-+		}
-+
-+		if (empty)
-+			add_aeb(ai, &ai->erase, pnum, ec, scrub);
-+		else
-+			add_aeb(ai, &ai->free, pnum, ec, scrub);
-+	}
-+
-+	err = 0;
-+out:
-+	kfree(ech);
-+	ubi_free_vid_buf(vb);
-+	return err;
-+}
- 
- /**
-  * scan_pool - scans a pool for changed (no longer empty PEBs).
-@@ -784,13 +872,22 @@ static int ubi_attach_fastmap(struct ubi_device *ubi,
- 		}
- 	}
- 
--	ret = scan_pool(ubi, ai, fmpl->pebs, pool_size, &max_sqnum, &free);
--	if (ret)
--		goto fail;
-+	if (!(fm->flags & UBI_FM_SB_PRESEEDED_FLG)) {
-+		ret = scan_pool(ubi, ai, fmpl->pebs, pool_size, &max_sqnum, &free);
-+		if (ret)
-+			goto fail;
- 
--	ret = scan_pool(ubi, ai, fmpl_wl->pebs, wl_pool_size, &max_sqnum, &free);
--	if (ret)
--		goto fail;
-+		ret = scan_pool(ubi, ai, fmpl_wl->pebs, wl_pool_size, &max_sqnum, &free);
-+		if (ret)
-+			goto fail;
-+	}
-+
-+	if (fm->flags & UBI_FM_SB_PRESEEDED_FLG) {
-+		int empty_start = fix_pnum(ai, be32_to_cpu(fmhdr->used_peb_count) + fm->used_blocks);
-+		ret = scan_empty_space(ubi, ai, empty_start);
-+		if (ret)
-+			goto fail;
-+	}
- 
- 	if (max_sqnum > ai->max_sqnum)
- 		ai->max_sqnum = max_sqnum;
+On its way!
+
+Thanks,
 -- 
-2.13.6
+Luca
