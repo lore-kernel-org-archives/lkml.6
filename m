@@ -1,121 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752646AbeENV6W (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:58:22 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:41527 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752044AbeENV6T (ORCPT
+        id S1752655AbeENV6e (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:58:34 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:41529 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752190AbeENV6V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:58:19 -0400
-X-Google-Smtp-Source: AB8JxZoD4ytNln7FBeyizcWRpqA2hxTx3yNTyDRRfOKmW0rKIcfJJ83v4gTy+T8I4yIW1EcVAljKyQ==
+        Mon, 14 May 2018 17:58:21 -0400
+X-Google-Smtp-Source: AB8JxZpMGI7Q14wFA0NgOK92eWtxjvyk1fW9PPm7u9HV2fuCihQKCaldah764nFgf5m7Joef6kGCOw==
 From: Thomas Hebb <tommyhebb@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Thomas Hebb <tommyhebb@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org (open list:PWM SUBSYSTEM)
-Subject: [PATCH 1/2] pwm: berlin: Don't use broken prescaler values
-Date: Mon, 14 May 2018 17:58:14 -0400
-Message-Id: <da60a97a0c6f754faa1f996334b3568ddb2f5ed0.1526334654.git.tommyhebb@gmail.com>
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Synaptics
+        Berlin SoC support),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH 2/2] ARM: dts: chromecast: use PWM for LEDs
+Date: Mon, 14 May 2018 17:58:15 -0400
+Message-Id: <90316a6c92204399a4fecfe7cd2a2b808548fa48.1526334654.git.tommyhebb@gmail.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <da60a97a0c6f754faa1f996334b3568ddb2f5ed0.1526334654.git.tommyhebb@gmail.com>
+References: <da60a97a0c6f754faa1f996334b3568ddb2f5ed0.1526334654.git.tommyhebb@gmail.com>
+In-Reply-To: <da60a97a0c6f754faa1f996334b3568ddb2f5ed0.1526334654.git.tommyhebb@gmail.com>
+References: <da60a97a0c6f754faa1f996334b3568ddb2f5ed0.1526334654.git.tommyhebb@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Six of the eight prescaler values available for Berlin PWM are not true
-prescalers but rather internal shifts that throw away the high bits of
-TCNT. Currently, we attempt to use those high bits, leading to erratic
-behavior. Restrict the prescaler configurations we select to only the
-two that respect the full range of TCNT.
-
-Tested on BG2CD.
+Control the Chromecast's two LEDs using PWM instead of GPIO pins. This
+allows for variable brightness.
 
 Signed-off-by: Thomas Hebb <tommyhebb@gmail.com>
 ---
- drivers/pwm/pwm-berlin.c | 45 ++++++++++++++++++++++------------------
- 1 file changed, 25 insertions(+), 20 deletions(-)
+ .../boot/dts/berlin2cd-google-chromecast.dts  | 20 ++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pwm/pwm-berlin.c b/drivers/pwm/pwm-berlin.c
-index 771859aca4be..7c8d6a168ceb 100644
---- a/drivers/pwm/pwm-berlin.c
-+++ b/drivers/pwm/pwm-berlin.c
-@@ -21,8 +21,18 @@
- #define BERLIN_PWM_EN			0x0
- #define  BERLIN_PWM_ENABLE		BIT(0)
- #define BERLIN_PWM_CONTROL		0x4
--#define  BERLIN_PWM_PRESCALE_MASK	0x7
--#define  BERLIN_PWM_PRESCALE_MAX	4096
-+/*
-+ * The prescaler claims to support 8 different moduli, configured using the
-+ * low three bits of PWM_CONTROL. (Sequentially, they are 1, 4, 8, 16, 64,
-+ * 256, 1024, and 4096.)  However, the moduli from 4 to 1024 appear to be
-+ * implemented by internally shifting TCNT left without adding additional
-+ * bits. So, the max TCNT that actually works for a modulus of 4 is 0x3fff;
-+ * for 8, 0x1fff; and so on. This means that those moduli are entirely
-+ * useless, as we could just do the shift ourselves. The 4096 modulus is
-+ * implemented with a real prescaler, so we do use that, but we treat it
-+ * as a flag instead of pretending the modulus is actually configurable.
-+ */
-+#define  BERLIN_PWM_PRESCALE_4096	0x7
- #define  BERLIN_PWM_INVERT_POLARITY	BIT(3)
- #define BERLIN_PWM_DUTY			0x8
- #define BERLIN_PWM_TCNT			0xc
-@@ -46,10 +56,6 @@ static inline struct berlin_pwm_chip *to_berlin_pwm_chip(struct pwm_chip *chip)
- 	return container_of(chip, struct berlin_pwm_chip, chip);
- }
+diff --git a/arch/arm/boot/dts/berlin2cd-google-chromecast.dts b/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
+index 54221f55bfa2..fb71e5436420 100644
+--- a/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
++++ b/arch/arm/boot/dts/berlin2cd-google-chromecast.dts
+@@ -66,18 +66,21 @@
+ 	};
  
--static const u32 prescaler_table[] = {
--	1, 4, 8, 16, 64, 256, 1024, 4096
--};
--
- static inline u32 berlin_pwm_readl(struct berlin_pwm_chip *chip,
- 				   unsigned int channel, unsigned long offset)
- {
-@@ -86,33 +92,32 @@ static int berlin_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm_dev,
- 			     int duty_ns, int period_ns)
- {
- 	struct berlin_pwm_chip *pwm = to_berlin_pwm_chip(chip);
--	unsigned int prescale;
-+	bool prescale_4096 = false;
- 	u32 value, duty, period;
--	u64 cycles, tmp;
-+	u64 cycles;
+ 	leds {
+-		compatible = "gpio-leds";
++		compatible = "pwm-leds";
++		pinctrl-0 = <&ledpwm_pmux>;
++		pinctrl-names = "default";
  
- 	cycles = clk_get_rate(pwm->clk);
- 	cycles *= period_ns;
- 	do_div(cycles, NSEC_PER_SEC);
+ 		white {
+ 			label = "white";
+-			gpios = <&portc 1 GPIO_ACTIVE_HIGH>;
+-			default-state = "keep";
++			pwms = <&pwm 0 600000 0>;
++			max-brightness = <255>;
++			linux,default-trigger = "default-on";
+ 		};
  
--	for (prescale = 0; prescale < ARRAY_SIZE(prescaler_table); prescale++) {
--		tmp = cycles;
--		do_div(tmp, prescaler_table[prescale]);
-+	if (cycles > BERLIN_PWM_MAX_TCNT) {
-+		prescale_4096 = true;
-+		cycles >>= 12; // Prescaled by 4096
+ 		red {
+ 			label = "red";
+-			gpios = <&portc 2 GPIO_ACTIVE_HIGH>;
+-			default-state = "keep";
++			pwms = <&pwm 1 600000 0>;
++			max-brightness = <255>;
+ 		};
+ 	};
+ };
+@@ -96,3 +99,10 @@
+ &usb_phy1 { status = "okay"; };
  
--		if (tmp <= BERLIN_PWM_MAX_TCNT)
--			break;
-+		if (cycles > BERLIN_PWM_MAX_TCNT)
-+			return -ERANGE;
- 	}
- 
--	if (tmp > BERLIN_PWM_MAX_TCNT)
--		return -ERANGE;
--
--	period = tmp;
--	cycles = tmp * duty_ns;
-+	period = cycles;
-+	cycles *= duty_ns;
- 	do_div(cycles, period_ns);
- 	duty = cycles;
- 
- 	value = berlin_pwm_readl(pwm, pwm_dev->hwpwm, BERLIN_PWM_CONTROL);
--	value &= ~BERLIN_PWM_PRESCALE_MASK;
--	value |= prescale;
-+	if (prescale_4096)
-+		value |= BERLIN_PWM_PRESCALE_4096;
-+	else
-+		value &= ~BERLIN_PWM_PRESCALE_4096;
- 	berlin_pwm_writel(pwm, pwm_dev->hwpwm, value, BERLIN_PWM_CONTROL);
- 
- 	berlin_pwm_writel(pwm, pwm_dev->hwpwm, duty, BERLIN_PWM_DUTY);
+ &usb1 { status = "okay"; };
++
++&soc_pinctrl {
++	ledpwm_pmux: ledpwm-pmux {
++		groups = "G0";
++		function = "pwm";
++	};
++};
 -- 
 2.17.0
