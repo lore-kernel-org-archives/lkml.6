@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-402196-1526281317-2-12868567647131413696
+X-Cyrus-Session-Id: sloti22d1t05-402196-1526281306-2-9586220390855635298
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526281315; b=ZvH8B1ivTY0RapHzBrEgLCx293HOB9Yeh8Pf+f715ETC9qmPn8
-    +ksZSRNeJtRQzbyJnlBsijYAnDsWDsBvzEP9T93gFp0QHKPT/DlNjWdKzm9OVPdY
-    Ly3KZsVWu5nQQ6nYbM0kzrZ9dVXDtbGWrvJtsrFs6ygfqGo3Xft9olAgxUk8gCyg
-    LiMUVztALKYzKZAtVkF0hKy/xc1wFGJp9vVsE4Dt5V1kTXqJm+ee13sSZ16qzYye
-    hAzGPDHFGjia+BOMjOLu9TgS4eCaGcBTLkr0uym342/lEHc0kLLjgxL3f0tyRBLJ
-    hCBEoLWqzkNvFEtecDPxlTPpJvuVvSCo3yEA==
+    1526281305; b=iZPHP8bJvWz+Sykv2eREWv1sH5ffVzu3pR7hv4vp0zAzB9rcJ2
+    swCciykPLbJAzMOn+bNUXGuWbCMbw3hyT/NMsgyRzzHhLjsEVuZ7n49LTZKOJAie
+    W+VzZbSN3p+Mif/KXTtV264fVUknaJaFy2t7HzN9Vu37cjQJCA3GGhKGZjHlnlUF
+    xq8BXZoOU8eeoIHP7PzL+HNaoQwAns2FhDJ+eO55cXZ4Uq8XF5jNzQ6zPI+dFj3d
+    IV+oQcczdmykk5J0Uv4nkxFGiIebaKNz97f6HFOA2AHo8/CDQJr8SpzSocVc4LQs
+    2WLwMN0W+Nk42MTahZLiWcwYNNMxzXEdLQoA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526281315; bh=oK6DjaLPIJgfWeRU2lp2W+AMxihQQt
-    Er+FjTJCPINLs=; b=WT9QLbGalI253iIYSiHJD50A1jpoey35aX6quAs1WfSPeo
-    hzAxUO5zrlRUBBUEVq4vUWYQjsRQv3/dTBX9eCUf2K2w9YQG+INBIUSqKlIjyNrq
-    inaCZCCNa5CdY4bnY7GbtikD0D879iGEhhf9dcEQJcznvc6LJ+fBmDybLCVnHTPO
-    hfZ+TvGlG2Sh0X4uzkCNU0YJBKgy0QjdIy94/l1kWNiJpG2TmFGB6/X6E5n2FxWx
-    ase1fKU1MUf5ZLbtXJ9TzzH8umhnWIf1ZDi7seOmKpwcnxjmP/FGynbvoKVo85QI
-    EopZ5hHgOP7o/r2YaPnze3FlnWuxWwTUFTpooAIw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526281305; bh=xd0OCqXUvadRJ7UbDrbKlorJR6H6bp
+    ieRDKUywcMWBg=; b=QuCVt0o/yqRFh4ZJJjD9lD4nE9U1sfuhBEJNmGqrhNQ3iu
+    RocB0oCdO8thSxI5dCAPd9UfZoMIlhpeVCENy2OAZGjaroxTYwndTKUWHc6DdeK+
+    WP8GT7aPEWshDoPmE98V63v9PUZYpnJRNCSox1rSQKd64Aw+I0jxxJqKiAyvDEc7
+    6dmavgWteYNlE8OeZHYqeOUpx6WGXV1p/RNAxeLPsnOA4GwfCdgka0IMp5dzt5mm
+    NE0xw+LIiIoaEeJfdV7XoWTSZ0Y+oxMenF10If+Tqsu+tQcfJIdWk/V2jKuto4IN
+    tiM/ePFKg1GnByg8kh0rbtJq7T4ZCBlIUWr+PclA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=bCFq0ZMD x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=Ib9nyfQY x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=bCFq0ZMD x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=Ib9nyfQY x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,34 +64,32 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDcKZw0Fa4oV9Dysl/MRdN3WRzWGtgBJjLY3qXCitMwt7MFDvYM8jP/va+R9Xxlnq/G7hclBWtfiXqsa/sMfyIilgOwR+3z4Q2fj9iaIiBy5U8IOzZS3
-    E2y7y6AWzHhFe+HQyZHkgLuQK77n1JRgwvE0AJQLXhDkvCi2jKlDwCsUyMUyyqf2d7C59b71YBntEgQMEOWvuXtEJ+fGIOSByrx1zmuCygKrQq+U0ZRMYM8n
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfEAw8dO2k2+/C04/un9gZtYas/xSNbCArOSr0/CQnThwQg6seK3P11y08TILCwvxCdsbHb3a1uz0jnElz7mGXveJRnZWj9Zcd/HBVNNVdNaZdBHk0Cd/
+    Dkz6pBmdf+mWoGmo+rj/hfjPBgxd2pxRkxvG5thIx5kG0/PKbzmOWvmk+s7wPZOnDAwMJXaFMtuACpeiXruadCUJdkMJpj5463bBfdK6CPZvnMld3NKK6ciW
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=QtX7IHQTAAAA:8 a=20KFwNOVAAAA:8 a=ag1SF4gXAAAA:8
-    a=N82DllkQ5cT1b0L5LWQA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=iAbFv2jvUoy42RkRxxYv:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=P-IC7800AAAA:8 a=ag1SF4gXAAAA:8 a=tkUzE5cn9Rhtpyxa_UAA:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=d3PnA9EDa4IxuAV0gXij:22
+    a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754216AbeENHAt (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 03:00:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37578 "EHLO mail.kernel.org"
+        id S932151AbeENHAx (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 03:00:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754173AbeENHAq (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 03:00:46 -0400
+        id S1754173AbeENHAv (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 14 May 2018 03:00:51 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Duckeck <m.duckeck@kunbus.de>,
-        Akshay Bhat <akshay.bhat@timesys.com>,
-        Casey Fitzpatrick <casey.fitzpatrick@timesys.com>,
-        Stef Walter <stefw@redhat.com>, Karel Zak <kzak@redhat.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.16 37/72] can: hi311x: Acquire SPI lock on ->do_get_berr_counter
-Date: Mon, 14 May 2018 08:48:54 +0200
-Message-Id: <20180514064824.770300229@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.16 39/72] mtd: rawnand: marvell: pass ms delay to wait_op
+Date: Mon, 14 May 2018 08:48:56 +0200
+Message-Id: <20180514064824.850524187@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -109,88 +107,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-commit 5cec9425b41dcf834c3d48776900d6acb7e96f38 upstream.
+commit b76401fc4ba720f0f38f7b1f9d54d5c2308bc18d upstream.
 
-hi3110_get_berr_counter() may run concurrently to the rest of the driver
-but neglects to acquire the lock protecting access to the SPI device.
-As a result, it and the rest of the driver may clobber each other's tx
-and rx buffers.
+marvell_nfc_wait_op() expects the delay to be expressed in milliseconds
+but nand_sdr_timings uses picoseconds. Use PSEC_TO_MSEC when passing
+tPROG_max to marvell_nfc_wait_op().
 
-We became aware of this issue because transmission of packets with
-"cangen -g 0 -i -x" frequently hung.  It turns out that agetty executes
-->do_get_berr_counter every few seconds via the following call stack:
-
-    CPU: 2 PID: 1605 Comm: agetty
-    [<7f3f7500>] (hi3110_get_berr_counter [hi311x])
-    [<7f130204>] (can_fill_info [can_dev])
-    [<80693bc0>] (rtnl_fill_ifinfo)
-    [<806949ec>] (rtnl_dump_ifinfo)
-    [<806b4834>] (netlink_dump)
-    [<806b4bc8>] (netlink_recvmsg)
-    [<8065f180>] (sock_recvmsg)
-    [<80660f90>] (___sys_recvmsg)
-    [<80661e7c>] (__sys_recvmsg)
-    [<80661ec0>] (SyS_recvmsg)
-    [<80108b20>] (ret_fast_syscall+0x0/0x1c)
-
-agetty listens to netlink messages in order to update the login prompt
-when IP addresses change (if /etc/issue contains \4 or \6 escape codes):
-https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git/commit/?id=e36deb6424e8
-
-It's a useful feature, though it seems questionable that it causes CAN
-bit error statistics to be queried.
-
-Be that as it may, if hi3110_get_berr_counter() is invoked while a frame
-is sent by hi3110_hw_tx(), bogus SPI transfers like the following may
-occur:
-
-    => 12 00             (hi3110_get_berr_counter() wanted to transmit
-                          EC 00 to query the transmit error counter,
-                          but the first byte was overwritten by
-                          hi3110_hw_tx_frame())
-
-    => EA 00 3E 80 01 FB (hi3110_hw_tx_frame() wanted to transmit a
-                          frame, but the first byte was overwritten by
-                          hi3110_get_berr_counter() because it wanted
-                          to query the receive error counter)
-
-This sequence hangs the transmission because the driver believes it has
-sent a frame and waits for the interrupt signaling completion, but in
-reality the chip has never sent away the frame since the commands it
-received were malformed.
-
-Fix by acquiring the SPI lock in hi3110_get_berr_counter().
-
-I've scrutinized the entire driver for further unlocked SPI accesses but
-found no others.
-
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>
-Cc: Akshay Bhat <akshay.bhat@timesys.com>
-Cc: Casey Fitzpatrick <casey.fitzpatrick@timesys.com>
-Cc: Stef Walter <stefw@redhat.com>
-Cc: Karel Zak <kzak@redhat.com>
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Reviewed-by: Akshay Bhat <akshay.bhat@timesys.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Fixes: 02f26ecf8c772 ("mtd: nand: add reworked Marvell NAND controller driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/spi/hi311x.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mtd/nand/marvell_nand.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/can/spi/hi311x.c
-+++ b/drivers/net/can/spi/hi311x.c
-@@ -427,8 +427,10 @@ static int hi3110_get_berr_counter(const
- 	struct hi3110_priv *priv = netdev_priv(net);
- 	struct spi_device *spi = priv->spi;
+--- a/drivers/mtd/nand/marvell_nand.c
++++ b/drivers/mtd/nand/marvell_nand.c
+@@ -1070,7 +1070,7 @@ static int marvell_nfc_hw_ecc_hmg_do_wri
+ 		return ret;
  
-+	mutex_lock(&priv->hi3110_lock);
- 	bec->txerr = hi3110_read(spi, HI3110_READ_TEC);
- 	bec->rxerr = hi3110_read(spi, HI3110_READ_REC);
-+	mutex_unlock(&priv->hi3110_lock);
- 
- 	return 0;
+ 	ret = marvell_nfc_wait_op(chip,
+-				  chip->data_interface.timings.sdr.tPROG_max);
++				  PSEC_TO_MSEC(chip->data_interface.timings.sdr.tPROG_max));
+ 	return ret;
  }
+ 
+@@ -1490,7 +1490,7 @@ static int marvell_nfc_hw_ecc_bch_write_
+ 	}
+ 
+ 	ret = marvell_nfc_wait_op(chip,
+-				  chip->data_interface.timings.sdr.tPROG_max);
++				  PSEC_TO_MSEC(chip->data_interface.timings.sdr.tPROG_max));
+ 
+ 	marvell_nfc_disable_hw_ecc(chip);
+ 
