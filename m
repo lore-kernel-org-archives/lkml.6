@@ -1,120 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752138AbeENS3A (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 14:29:00 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:45436 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751894AbeENS25 (ORCPT
+        id S1752082AbeENScX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 14:32:23 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:32795 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751498AbeENScV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 14:28:57 -0400
-X-Google-Smtp-Source: AB8JxZqYauPhzJGGoNnTi1LsIiY60RvOSVnFc5IrvVy2wjPQiLSitzac0eI0jjW/LVF8N/dGWtW3bv9T0y3zjcv9xh4=
+        Mon, 14 May 2018 14:32:21 -0400
+Date: Mon, 14 May 2018 20:32:19 +0200
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+        <u.kleine-koenig@pengutronix.de>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH 12/21] i2c: imx: make use of i2c_8bit_addr_from_msg
+Message-ID: <20180514183219.oqjaopmicx4ngmxw@pengutronix.de>
+References: <20180514145330.4857-1-peda@axentia.se>
+ <20180514145330.4857-13-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <CABeXuvomY6EYxdPrbMymqBkw0fnYernvOhU0R9By0aKihHYTuA@mail.gmail.com>
-References: <20180512045921.18311-1-deepa.kernel@gmail.com>
- <20180512045921.18311-7-deepa.kernel@gmail.com> <CAGXu5jLFHSE12La25QEvZawdBm84cLavtTD5LAA6MqeqBmbYuw@mail.gmail.com>
- <CABeXuvpi_dm6TE3pH_KGehgNwW177hJFBmR8u29w6KJH1aA1Kg@mail.gmail.com>
- <CAGXu5jJpO+z8k_=UuVY9WAeiEgABQg4gWE6nz82BX0_UhaPUWw@mail.gmail.com>
- <CABeXuvrO5XLD5QhBPui-v_G6JX=FgcaZLOL0C6B40f4oCyqOWg@mail.gmail.com>
- <CAGXu5jLdPMK_EN5wekwbusaKzYOwsFCsFmy7coOEqxB-sGv+JQ@mail.gmail.com> <CABeXuvomY6EYxdPrbMymqBkw0fnYernvOhU0R9By0aKihHYTuA@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 14 May 2018 11:28:56 -0700
-X-Google-Sender-Auth: YWHSH-X7dgMhf3NeXE9oVeizB6g
-Message-ID: <CAGXu5jLynz_Z5P7DcdspGfgAO2Hv5P9Dh6JE2yy_hvDRDrMJVw@mail.gmail.com>
-Subject: Re: [PATCH 6/6] vfs: change inode times to use struct timespec64
-To: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>, anton@tuxera.com,
-        Felipe Balbi <balbi@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        David Howells <dhowells@redhat.com>, David Sterba <dsterba@suse.com>,
-        David Woodhouse <dwmw2@infradead.org>, Christoph Hellwig <hch@lst.de>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Mike Marshall <hubcap@omnibond.com>, Jan Kara <jack@suse.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Harkes <jaharkes@cs.cmu.edu>,
-        Jiri Slaby <jslaby@suse.com>, Mark Fasheh <mark@fasheh.com>,
-        Miklos Szeredi <miklos@szeredi.hu>, Nicolas Pitre <nico@linaro.org>,
-        reiserfs-devel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        Sage Weil <sage@redhat.com>, Steve French <sfrench@samba.org>,
-        Steven Whitehouse <swhiteho@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        "Ted Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180514145330.4857-13-peda@axentia.se>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 11:23 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> On Mon, May 14, 2018 at 10:53 AM, Kees Cook <keescook@chromium.org> wrote:
->> On Mon, May 14, 2018 at 10:25 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->>> On Mon, May 14, 2018 at 9:30 AM, Kees Cook <keescook@chromium.org> wrote:
->>>> On Sun, May 13, 2018 at 9:05 PM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->>>>> Kees mentioned that he wants to merge a patch to pstore that changes
->>>>> it to use timespec64 internally for 4.17:
->>>>> https://lkml.org/lkml/2018/5/13/3
->>>>
->>>> I'm still working on a v2 for pstore. What is the correct
->>>> cross-architecture format string for timespec64's tv_sec? In your
->>>> other patches, you're using %lld and a (long long) cast. I'd really
->>>> like to avoid the need for casts.
->>>
->>> We cannot really avoid it for now.
->>> struct timespec64 is defined this way for now:
->>>
->>> struct timespec {
->>> __kernel_time_t tv_sec; /* seconds */
->>> long tv_nsec; /* nanoseconds */
->>> };
->>>
->>> #if __BITS_PER_LONG == 64
->>> /* this trick allows us to optimize out timespec64_to_timespec */
->>> # define timespec64 timespec
->>>
->>> #else
->>>
->>> struct timespec64 {
->>> time64_t tv_sec; /* seconds */
->>> long tv_nsec; /* nanoseconds */
->>> };
->>>
->>> #endif
->>>
->>> This will all lead to tv_sec being long on a 64 bit architecture and
->>> long long on a 32 bit architecture.
->>> So there is no way of avoiding the cast for now.
->>>
->>> We plan to get rid of this trick and to have a single definition for
->>> timespec64. But, that cleanup is planned for later when we cleanup all
->>> struct timespec uses internally.
->>
->> Can we do something like:
->>
->> #if __BITS_PER_LONG == 64
->> # define TVSEC_FMT "%ld"
->> #else
->> # define TVSEC_FMT "%lld"
->> #endif
->>
->> so we can do stuff like:  sprintf(buf, "seconds: " KTIME_FMT, time->tv_sec)
->>
->> ? It seems easier to clean up than casts.
->
-> We have already introduced these casts in many places now.
-> It would be easier to do the clean up if they all follow a similar
-> pattern. ( I could probably write a coccinelle script that is not very
-> long).
-> But, it would be not much trouble if you wanted to follow this for pstore.
->
-> We also contemplated adding a format specifier for time. But, I think
-> we deferred it until we have a uniform way of using time internally.
+On Mon, May 14, 2018 at 04:53:21PM +0200, Peter Rosin wrote:
+> Because it looks neater.
+> i2c_imx_dma_write and i2c_imx_write are always called with a
+> write in msgs->flags, and i2c_imx_read with a read.
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Okay, fair enough. :) I will get my pstore v2 ready with casts. Thanks!
-
--Kees
+Best regards
+Uwe
 
 -- 
-Kees Cook
-Pixel Security
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
