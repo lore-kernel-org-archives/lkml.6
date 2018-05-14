@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1572352-1526340762-2-1597640660285122001
+X-Cyrus-Session-Id: sloti22d1t05-1572352-1526340763-2-2447484506942754371
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: 
@@ -8,22 +8,22 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526340762; b=h6WxgyfHEdeHc2Glu6mSPnWjqegRDQibWHo4Aj+7WsMaVR3yj6
-    N48nvZ5dY4YUpjt7GvRe2gbRSvLmhU7ubgiWqOr381ggaTW2E7AEJDwY6TqLdPJ1
-    RoKZWrRAa+6TQunk5c5Z2Acma0gS5KIeeVTjY0iB1CnualrSTB52tKZOWv8Ob2Vd
-    3M3HB5un03+I/iGlfbtvIsx2myI/T7vRhJ2vlv5cjWI3q687SZjpAVGTRVS0dNRi
-    Taoa6KC57/u8irBb5+fUcaKXnJY+zDD9qEBSPuksLwADp4DGrvP75Msas+E88KJr
-    GP5N22+zAYY99wo/n4JIZA6q5Abhn6HHt7Kw==
+    1526340762; b=iIjydBcVnlt6YuGykE2eeB8JzJWeZeaXu6Yno0wlLxEADgPQ1G
+    Aa+R6YoiHnIF7TxSO6aqZIwcpO0SbA4+xwO8/26FB22pPj9DRx18NLk4xMtIft4l
+    thhULCEH9K3iK9oY64YxwOtbWguxgEccBBXrfiALwM0zFfpyTbIc/00F1fHjgVo7
+    M9FBEqdINwzdXqlKwWMH0y+N95agIWdlF0oLNNKZG+Ey67vdxCSqIhAg1Ff5rz6t
+    4LigrCYI1JpRDfFdTpLx4tbaxCDT292aa9Sz5Yu7PHSYYyum1eyUnoHJY/R3SmgW
+    xi6Sn74ic/jrTb1dpForKnf2A81TRt7drMWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:in-reply-to
-    :references:message-id:sender:list-id; s=fm2; t=1526340762; bh=E
-    oi4/HEo3/ZfqBVx7vnwYVuXVz5pxsGfLZ/yRqsF4Dg=; b=GyqM/DB6aZXbaguHr
-    EI0YJsxRLJssjAdF/7rQn3MsFjNu6W0kHw2yu6BcTk20wLyLRNyuEkhBNcoxfWl6
-    ZEbCA1DHW9qfj34JAffUpwwEj9AVk97evBdZhdHj9NkxzgHq8i2NtpvCX8lmSCR+
-    Qu2eZm/dtZ9lY9FHfBGDn0gKCQHYcKFzjAiv8Z/M1yN0fBSbrzi9xEbLceWy4RuD
-    Nz8brxlDt0kKUFVsBRWTrhj63VNUTZWjsvhWV3scW/MFuLYu93zqrNQkW7KeVA8C
-    DUrQYwgBXw3gx1BewYCvS7YjMMxmu8VIDLpjZ8CKcinLDkR+G5Juemw8NsIWr2Bc
-    xK8FA==
+    :references:message-id:sender:list-id; s=fm2; t=1526340762; bh=t
+    NueCzY7xqIuR6y/OgRIdPT/2dYDO83uD68opOX+PyA=; b=J4qYDies2Ydoz279t
+    nVL3V3Zb3DU77n7vLE7bA7T7gwN4tbAe5lFr3sNn45jbfcC4tqKhzo6uExzIyr9P
+    U9e4lVB7PBqEkC47xznzX7WiYnt0L+tDyqoNUbKqaBTm6o436C0vU8fIF0+LqdIP
+    xx5kMtBDOrxxR6RTMpJ1TIdoe9DUTVn+lbPEe+AXxJEsUz+zzJQItX5yNq+JM0FT
+    bLH79XMOYrjel2fZYrOURCGl63k0CbjVEMUYTkgwsBYT73ZZzNl+erXPUdanZ8jw
+    5sZ5gXD/4PulJRBIYZhT/s9xkJO95dXzwcG50s2t1FY5UkxkC8xvJt/YHn85PIpg
+    lzcXQ==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none)
@@ -39,7 +39,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linux.vnet.ibm.com header.result=pass
     header_org.domain=ibm.com header_org.result=pass
     header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
@@ -56,21 +56,22 @@ Authentication-Results: mx6.messagingengine.com;
       header.domain=linux.vnet.ibm.com header.result=pass
       header_org.domain=ibm.com header_org.result=pass
       header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFCK9VkCw6X/SIECg1z/ksOmzJ4ASCtfz/KuEFsjIVHgSbxF7xhb4OSUn/kyQZmBfEVRoQmC6Lu3KYwDIpgyMX0MYAUaAGSi0f8CZydZF53keuRoZ/ow
-    AJWKItdkrUnyGjr7H90utXVGbtXyGYzADUDaPIphu3QDceGJKNylNwDXYQNV2h3baGKFu3OrOWqvQEr//hht3PP/ThPy/+Eig6DKds2etq0vZ0XD7aAAZXRz
+X-CM-Envelope: MS4wfFCK9VkCw6X/SIECg1z/ksOmzJ4ASCtfz/KuEFsjIVHgSbxF7xhb4OSUn/kyQZmBfEVRoQmC6Lu3KYwDIpgyMX0MYAUaAGSi0f8CZydZF53kSJtI9gyE
+    n6hMEbeJQqbgkl9e+QWCEe/xwqD8GUd07teAyAiljzBwNzUVSEsKZRRfa20L0U/4xa9ef+zzxrVmzZtO9XujAqswxFizLyhofWE5vIZEesnYq76YSutN9qA0
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
-    a=VnNF1IyMAAAA:8 a=DGVp42UCY6lLdWa1cXcA:9
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=pGLkceISAAAA:8
+    a=VnNF1IyMAAAA:8 a=rWxYv37JJcz0kMPLFtwA:9 a=VMpyODe1Uoos0Z8B:21
+    a=pyZeGBqIJIY4p1he:21 a=ExYj8_QAJ_gO5D1l:21
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752375AbeENXch (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 14 May 2018 19:32:37 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40138 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752385AbeENXcd (ORCPT
+        id S1752376AbeENXcj (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 14 May 2018 19:32:39 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51866 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752405AbeENXcd (ORCPT
         <rfc822;linux-arch@vger.kernel.org>);
         Mon, 14 May 2018 19:32:33 -0400
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
@@ -80,22 +81,21 @@ Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com,
         will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
         npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
         luc.maranget@inria.fr, akiyks@gmail.com,
-        Paolo Bonzini <pbonzini@redhat.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH memory-model 04/19] tools/memory-model: Fix cheat sheet typo
-Date: Mon, 14 May 2018 16:33:42 -0700
+Subject: [PATCH memory-model 01/19] tools/memory-model: Rename link and rcu-path to rcu-link and rb
+Date: Mon, 14 May 2018 16:33:39 -0700
 X-Mailer: git-send-email 2.5.2
 In-Reply-To: <20180514233328.GA7601@linux.vnet.ibm.com>
 References: <20180514233328.GA7601@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18051423-0052-0000-0000-000002EE72F6
+x-cbid: 18051423-2213-0000-0000-000002A53F81
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009026; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032383; UDB=6.00527784; IPR=6.00811514;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032383; UDB=6.00527784; IPR=6.00811515;
  MB=3.00021114; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 23:32:31
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051423-0053-0000-0000-00005CAF434F
-Message-Id: <1526340837-12222-4-git-send-email-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18051423-2214-0000-0000-00005A1EAEC4
+Message-Id: <1526340837-12222-1-git-send-email-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -109,27 +109,229 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-"RWM" should be "RMW".
+This patch makes a simple non-functional change to the RCU portion of
+the Linux Kernel Memory Consistency Model by renaming the "link" and
+"rcu-path" relations to "rcu-link" and "rb", respectively.
 
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+The name "link" was an unfortunate choice, because it was too generic
+and subject to confusion with other meanings of the same word, which
+occur quite often in LKMM documentation.  The name "rcu-path" is not
+very appropriate, because the relation is analogous to the
+happens-before (hb) and propagates-before (pb) relations -- although
+that fact won't become apparent until the second patch in this series.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Acked-by: Andrea Parri <parri.andrea@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- tools/memory-model/Documentation/cheatsheet.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/memory-model/Documentation/explanation.txt | 93 ++++++++++++------------
+ tools/memory-model/linux-kernel.cat              | 16 ++--
+ 2 files changed, 55 insertions(+), 54 deletions(-)
 
-diff --git a/tools/memory-model/Documentation/cheatsheet.txt b/tools/memory-model/Documentation/cheatsheet.txt
-index 956b1ae4aafb..c0eafdaddfa4 100644
---- a/tools/memory-model/Documentation/cheatsheet.txt
-+++ b/tools/memory-model/Documentation/cheatsheet.txt
-@@ -1,6 +1,6 @@
-                                   Prior Operation     Subsequent Operation
-                                   ---------------  ---------------------------
--                               C  Self  R  W  RWM  Self  R  W  DR  DW  RMW  SV
-+                               C  Self  R  W  RMW  Self  R  W  DR  DW  RMW  SV
-                               --  ----  -  -  ---  ----  -  -  --  --  ---  --
+diff --git a/tools/memory-model/Documentation/explanation.txt b/tools/memory-model/Documentation/explanation.txt
+index a727c82bd434..1a387d703212 100644
+--- a/tools/memory-model/Documentation/explanation.txt
++++ b/tools/memory-model/Documentation/explanation.txt
+@@ -27,7 +27,7 @@ Explanation of the Linux-Kernel Memory Consistency Model
+   19. AND THEN THERE WAS ALPHA
+   20. THE HAPPENS-BEFORE RELATION: hb
+   21. THE PROPAGATES-BEFORE RELATION: pb
+-  22. RCU RELATIONS: link, gp-link, rscs-link, and rcu-path
++  22. RCU RELATIONS: rcu-link, gp-link, rscs-link, and rb
+   23. ODDS AND ENDS
  
- Store, e.g., WRITE_ONCE()            Y                                       Y
+ 
+@@ -1451,8 +1451,8 @@ they execute means that it cannot have cycles.  This requirement is
+ the content of the LKMM's "propagation" axiom.
+ 
+ 
+-RCU RELATIONS: link, gp-link, rscs-link, and rcu-path
+------------------------------------------------------
++RCU RELATIONS: rcu-link, gp-link, rscs-link, and rb
++---------------------------------------------------
+ 
+ RCU (Read-Copy-Update) is a powerful synchronization mechanism.  It
+ rests on two concepts: grace periods and read-side critical sections.
+@@ -1509,8 +1509,8 @@ y, which occurs before the end of the critical section, did not
+ propagate to P1 before the end of the grace period, violating the
+ Guarantee.
+ 
+-In the kernel's implementations of RCU, the business about stores
+-propagating to every CPU is realized by placing strong fences at
++In the kernel's implementations of RCU, the requirements for stores
++to propagate to every CPU are fulfilled by placing strong fences at
+ suitable places in the RCU-related code.  Thus, if a critical section
+ starts before a grace period does then the critical section's CPU will
+ execute an smp_mb() fence after the end of the critical section and
+@@ -1523,19 +1523,19 @@ executes.
+ What exactly do we mean by saying that a critical section "starts
+ before" or "ends after" a grace period?  Some aspects of the meaning
+ are pretty obvious, as in the example above, but the details aren't
+-entirely clear.  The LKMM formalizes this notion by means of a
+-relation with the unfortunately generic name "link".  It is a very
+-general relation; among other things, X ->link Z includes cases where
+-X happens-before or is equal to some event Y which is equal to or
+-comes before Z in the coherence order.  Taking Y = Z, this says that
+-X ->rfe Z implies X ->link Z, and taking Y = X, it says that X ->fr Z
+-and X ->co Z each imply X ->link Z.
+-
+-The formal definition of the link relation is more than a little
++entirely clear.  The LKMM formalizes this notion by means of the
++rcu-link relation.  rcu-link encompasses a very general notion of
++"before": Among other things, X ->rcu-link Z includes cases where X
++happens-before or is equal to some event Y which is equal to or comes
++before Z in the coherence order.  When Y = Z this says that X ->rfe Z
++implies X ->rcu-link Z.  In addition, when Y = X it says that X ->fr Z
++and X ->co Z each imply X ->rcu-link Z.
++
++The formal definition of the rcu-link relation is more than a little
+ obscure, and we won't give it here.  It is closely related to the pb
+ relation, and the details don't matter unless you want to comb through
+ a somewhat lengthy formal proof.  Pretty much all you need to know
+-about link is the information in the preceding paragraph.
++about rcu-link is the information in the preceding paragraph.
+ 
+ The LKMM goes on to define the gp-link and rscs-link relations.  They
+ bring grace periods and read-side critical sections into the picture,
+@@ -1543,32 +1543,33 @@ in the following way:
+ 
+ 	E ->gp-link F means there is a synchronize_rcu() fence event S
+ 	and an event X such that E ->po S, either S ->po X or S = X,
+-	and X ->link F.  In other words, E and F are connected by a
+-	grace period followed by an instance of link.
++	and X ->rcu-link F.  In other words, E and F are linked by a
++	grace period followed by an instance of rcu-link.
+ 
+ 	E ->rscs-link F means there is a critical section delimited by
+ 	an rcu_read_lock() fence L and an rcu_read_unlock() fence U,
+ 	and an event X such that E ->po U, either L ->po X or L = X,
+-	and X ->link F.  Roughly speaking, this says that some event
+-	in the same critical section as E is connected by link to F.
+-
+-If we think of the link relation as standing for an extended "before",
+-then E ->gp-link F says that E executes before a grace period which
+-ends before F executes.  (In fact it says more than this, because it
+-includes cases where E executes before a grace period and some store
+-propagates to F's CPU before F executes and doesn't propagate to some
+-other CPU until after the grace period ends.)  Similarly,
+-E ->rscs-link F says that E is part of (or before the start of) a
+-critical section which starts before F executes.
++	and X ->rcu-link F.  Roughly speaking, this says that some
++	event in the same critical section as E is linked by rcu-link
++	to F.
++
++If we think of the rcu-link relation as standing for an extended
++"before", then E ->gp-link F says that E executes before a grace
++period which ends before F executes.  (In fact it covers more than
++this, because it also includes cases where E executes before a grace
++period and some store propagates to F's CPU before F executes and
++doesn't propagate to some other CPU until after the grace period
++ends.)  Similarly, E ->rscs-link F says that E is part of (or before
++the start of) a critical section which starts before F executes.
+ 
+ Putting this all together, the LKMM expresses the Grace Period
+ Guarantee by requiring that there are no cycles consisting of gp-link
+-and rscs-link connections in which the number of gp-link instances is
+->= the number of rscs-link instances.  It does this by defining the
+-rcu-path relation to link events E and F whenever it is possible to
+-pass from E to F by a sequence of gp-link and rscs-link connections
+-with at least as many of the former as the latter.  The LKMM's "rcu"
+-axiom then says that there are no events E such that E ->rcu-path E.
++and rscs-link links in which the number of gp-link instances is >= the
++number of rscs-link instances.  It does this by defining the rb
++relation to link events E and F whenever it is possible to pass from E
++to F by a sequence of gp-link and rscs-link links with at least as
++many of the former as the latter.  The LKMM's "rcu" axiom then says
++that there are no events E with E ->rb E.
+ 
+ Justifying this axiom takes some intellectual effort, but it is in
+ fact a valid formalization of the Grace Period Guarantee.  We won't
+@@ -1585,10 +1586,10 @@ rcu_read_unlock() fence events delimiting the critical section in
+ question, and let S be the synchronize_rcu() fence event for the grace
+ period.  Saying that the critical section starts before S means there
+ are events E and F where E is po-after L (which marks the start of the
+-critical section), E is "before" F in the sense of the link relation,
+-and F is po-before the grace period S:
++critical section), E is "before" F in the sense of the rcu-link
++relation, and F is po-before the grace period S:
+ 
+-	L ->po E ->link F ->po S.
++	L ->po E ->rcu-link F ->po S.
+ 
+ Let W be the store mentioned above, let Z come before the end of the
+ critical section and witness that W propagates to the critical
+@@ -1600,12 +1601,12 @@ some event X which is po-after S.  Symbolically, this amounts to:
+ 
+ The fr link from Y to W indicates that W has not propagated to Y's CPU
+ at the time that Y executes.  From this, it can be shown (see the
+-discussion of the link relation earlier) that X and Z are connected by
+-link, yielding:
++discussion of the rcu-link relation earlier) that X and Z are related
++by rcu-link, yielding:
+ 
+-	S ->po X ->link Z ->po U.
++	S ->po X ->rcu-link Z ->po U.
+ 
+-These formulas say that S is po-between F and X, hence F ->gp-link Z
++The formulas say that S is po-between F and X, hence F ->gp-link Z
+ via X.  They also say that Z comes before the end of the critical
+ section and E comes after its start, hence Z ->rscs-link F via E.  But
+ now we have a forbidden cycle: F ->gp-link Z ->rscs-link F.  Thus the
+@@ -1635,13 +1636,13 @@ time with statement labels added to the memory access instructions:
+ 	}
+ 
+ 
+-If r2 = 0 at the end then P0's store at X overwrites the value
+-that P1's load at Z reads from, so we have Z ->fre X and thus
+-Z ->link X.  In addition, there is a synchronize_rcu() between Y and
+-Z, so therefore we have Y ->gp-link X.
++If r2 = 0 at the end then P0's store at X overwrites the value that
++P1's load at Z reads from, so we have Z ->fre X and thus Z ->rcu-link X.
++In addition, there is a synchronize_rcu() between Y and Z, so therefore
++we have Y ->gp-link X.
+ 
+ If r1 = 1 at the end then P1's load at Y reads from P0's store at W,
+-so we have W ->link Y.  In addition, W and X are in the same critical
++so we have W ->rcu-link Y.  In addition, W and X are in the same critical
+ section, so therefore we have X ->rscs-link Y.
+ 
+ This gives us a cycle, Y ->gp-link X ->rscs-link Y, with one gp-link
+diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+index df97db03b6c2..cdf682859d4e 100644
+--- a/tools/memory-model/linux-kernel.cat
++++ b/tools/memory-model/linux-kernel.cat
+@@ -100,22 +100,22 @@ let rscs = po ; crit^-1 ; po?
+  * one but two non-rf relations, but only in conjunction with an RCU
+  * read-side critical section.
+  *)
+-let link = hb* ; pb* ; prop
++let rcu-link = hb* ; pb* ; prop
+ 
+ (* Chains that affect the RCU grace-period guarantee *)
+-let gp-link = gp ; link
+-let rscs-link = rscs ; link
++let gp-link = gp ; rcu-link
++let rscs-link = rscs ; rcu-link
+ 
+ (*
+  * A cycle containing at least as many grace periods as RCU read-side
+  * critical sections is forbidden.
+  *)
+-let rec rcu-path =
++let rec rb =
+ 	gp-link |
+ 	(gp-link ; rscs-link) |
+ 	(rscs-link ; gp-link) |
+-	(rcu-path ; rcu-path) |
+-	(gp-link ; rcu-path ; rscs-link) |
+-	(rscs-link ; rcu-path ; gp-link)
++	(rb ; rb) |
++	(gp-link ; rb ; rscs-link) |
++	(rscs-link ; rb ; gp-link)
+ 
+-irreflexive rcu-path as rcu
++irreflexive rb as rcu
 -- 
 2.5.2
