@@ -1,29 +1,29 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-701366-1526299097-2-3958848633367566203
+X-Cyrus-Session-Id: sloti22d1t05-545174-1526291237-2-4685937566151268298
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: 
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526299097; b=BeOJV5tx8O+rS3eRxtTZdIaIECsmpRbaDyBIQa6AV2Fu8WhEBh
-    1O9bdx1ZWvp4MxjmBqZtcVoGSIWWktjPpBZxgAWlHQGiPGOZXrHaRSbSzwpEBVhF
-    DLtz9ea62hR4vY3f8aJkSc4DrFYBaSvtPSBtT5AKkx2sN1rmlO6GeUp2XlM1bWoe
-    xEoKsjB4c+hVWzY3PbRX+456ZoDZAbZkCWCwzZnmUP5e1GywOExJPMSZrLmdq4QI
-    3QWO+OZxISgzJGafCih9CuyCxyxRXIStPUj9eScbMY0Xe/1bMc7xGDUplI9gJIOh
-    vDWfKQC4GUwgw2/ZhVPAjyy1vEL4nZjf61tQ==
+    1526291237; b=MQefU7EH58jBlxFjWDly2NpeqfPVROp6tqbCrc1jcd1TG0o6c4
+    xNsj8YCtIcDJsgdObUGKfJduKrKmW/uO2WUb7ooLxX9FzgUcyqdZI9UbMxtm95Nf
+    e/wTqvi4JSs9jyD+S9G3LEpE8wfkrk7OPY5G5fALZREvNDmrVVuKOjogJB1dQtOJ
+    xj4xHOqhv7+jeyxIzPgG5fa3w2ENtB8d1X5WLnjVcupLkAWHnOvMz5Y7H0L7Gt8J
+    CrSJARMYAdUbP04a6j3Z1LbAy71zXkCCOCW18dcEn71uORclK6lcBbWz/4uTrdOt
+    VO1STiHiEQl2LB3aUimJSQYRDxjZigOTxutg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526299097; bh=rdqIMK0fc0ue3y68Bm9Tu77hBWh8qZ
-    FOd9q20oKxFBk=; b=ML7uynVvwKTLYv4YjD4c6YvgGza/jggieYdkq09ci1Jg+v
-    4gFAdEF+hFvu3BGAklgJIUHYXTi9fWi8/OEfLYyenRJCnVdWstqeDfsqqZhubYId
-    88e0LDuwYVPrDsXq7z3dVtBwwrUSMr72q878djQpT1wej7ZE7p7Zd+QibV9m+ET5
-    weKn1MccbdYAgC4DaBESl4MvnHU2TI8W3pQ3kP7ylu5z98FgbZzYmfiOdN6rNuxI
-    9fkBCcv6RtvNCo3XXEpvaHai4lMo7AvZQGvggPQCgqWSUuWbBpffYAFL002ypKhn
-    ighOfIQ8pkJ1UfRt2J7HYAC2vK1KH8jPTu3G9Y4A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1526291237; bh=
+    S/BtI+vFnbNkUeV2dn+BUNh+xhM1JE/AKSCA9TJ8X+o=; b=CYVVYyCaoAlfUbW2
+    kbpJnHdSMadnjvrChk8ToBWU89DMJIMgG2U/a3Qj6YDdf5Qgo/0fAfHoQT2zo4fL
+    CoV4qV6xauUsSQ9uUra048d5sXYI02glB8ckVSpKDFrNp20ohHz40Buq0j55m55f
+    xdn5wAjbY5xXLLLr8h07S9EqEp7l1/HKpw3oJSDQKf6RvvJbdXPN8r7Qe5sKBkZx
+    3hc0FNQ9zd4J0HCWQrjI60cNclDmir5x0zREDNQH8WPV7cw7/mTwu2xo2fLbHoyS
+    iEK46431ow6xZuMuUiUx3F0924F30xzm6dS60msvzCgyl8RQCOn615cELeolDXCt
+    zB8A3Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -35,8 +35,8 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=arm.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
@@ -49,126 +49,96 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=arm.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEB+1ntIRLn4OLh7JekUHwhC0vXZUfeTNHP1cXWK7/Wg3jt/7VO1V9iwsCyGcBNEQJt7qdpUarke9GyiZQDyBsk/ew2oTDBTvZbRdReCKWqdNAdSRp6K
-    InxQNLby26fhBHNENpQ5b/C85q4FA7EFosI8f82B+eJBabVVvZd9RqiAMRGghePyjJluwmUjjUE4ZRaGFV5ELY02R2rbbkZnKzsLRHtre2uhdLRJfMS86GPn
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=HPKU4i4SiSdbk1Wbcb8A:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfMWCm6XpQhz3RWtGmu7/cxNwakqxx68d/TyX0XM0qr1PlSGr8s6eVwOa9GMjpcSS+GWk8gxC0LT07zheS0M+Y6UMvhIR+a56IDD0RezkOpuwp0EMRWv3
+    NYMF2tr0tyLYmDVLtSa79PWHRevqer1R89CfBBlej7cYBlDEjmXAUWad1j7xJENjibFL4jOuB9ZeN1qgj6sCH8lxH0g8fS6hf7GKY6XL+AByotTzW0XHa5vH
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=7CQSdrXTAAAA:8
+    a=Ls1vWjZSrxAP00rdME4A:9 a=a-qgeE7W1pNrGK8U0ZQC:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752288AbeENL6N (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 14 May 2018 07:58:13 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40978 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751387AbeENL6N (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 May 2018 07:58:13 -0400
-Date: Mon, 14 May 2018 12:58:05 +0100
+        id S1752200AbeENJrP (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 14 May 2018 05:47:15 -0400
+Received: from foss.arm.com ([217.140.101.70]:38192 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752021AbeENJrO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 May 2018 05:47:14 -0400
 From: Mark Rutland <mark.rutland@arm.com>
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        james.morse@arm.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 10/18] arm64: convert native/compat syscall entry to C
-Message-ID: <20180514115805.bdlcxsw6q3xsbjb7@lakrids.cambridge.arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+        dave.martin@arm.com, james.morse@arm.com,
+        linux@dominikbrodowski.net, linux-fsdevel@vger.kernel.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        viro@zeniv.linux.org.uk, will.deacon@arm.com
+Subject: [PATCH 02/18] arm64: move SCTLR_EL{1,2} assertions to <asm/sysreg.h>
+Date: Mon, 14 May 2018 10:46:24 +0100
+Message-Id: <20180514094640.27569-3-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180514094640.27569-1-mark.rutland@arm.com>
 References: <20180514094640.27569-1-mark.rutland@arm.com>
- <20180514094640.27569-11-mark.rutland@arm.com>
- <20180514110729.GF7753@e103592.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514110729.GF7753@e103592.cambridge.arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 14, 2018 at 12:07:30PM +0100, Dave Martin wrote:
-> On Mon, May 14, 2018 at 10:46:32AM +0100, Mark Rutland wrote:
+Currently we assert that the SCTLR_EL{1,2}_{SET,CLEAR} bits are
+self-consistent with an assertion in config_sctlr_el1(). This is a bit
+unusual, since config_sctlr_el1() doesn't make use of these definitions,
+and is far away from the definitions themselves.
 
-> > diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
-> > index 5df857e32b48..4706f841e758 100644
-> > --- a/arch/arm64/kernel/syscall.c
-> > +++ b/arch/arm64/kernel/syscall.c
-> > @@ -6,7 +6,9 @@
-> >  #include <linux/ptrace.h>
-> >  
-> >  #include <asm/daifflags.h>
-> > +#include <asm/fpsimd.h>
-> >  #include <asm/thread_info.h>
-> > +#include <asm/unistd.h>
-> >  
-> >  long do_ni_syscall(struct pt_regs *regs);
-> >  
-> > @@ -41,8 +43,8 @@ static inline bool has_syscall_work(unsigned long flags)
-> >  int syscall_trace_enter(struct pt_regs *regs);
-> >  void syscall_trace_exit(struct pt_regs *regs);
-> >  
-> > -asmlinkage void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
-> > -			       syscall_fn_t syscall_table[])
-> > +static void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
-> > +			   syscall_fn_t syscall_table[])
-> >  {
-> >  	unsigned long flags = current_thread_info()->flags;
-> >  
-> > @@ -79,3 +81,37 @@ asmlinkage void el0_svc_common(struct pt_regs *regs, int scno, int sc_nr,
-> >  trace_exit:
-> >  	syscall_trace_exit(regs);
-> >  }
-> > +
-> > +static inline void sve_user_reset(void)
-> 
-> Static function with no caller...
+We can use the CPP #error directive to have equivalent assertions in
+<asm/sysreg.h>, next to the definitions of the set/clear bits, which is
+a bit clearer and simpler.
 
-Ugh, this was intended to be called below in el0_svc_handler().
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ arch/arm64/include/asm/sysreg.h | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-> > +{
-> > +	if (!system_supports_sve())
-> > +		return;
-> > +
-> > +	/*
-> > +	 * task_fpsimd_load() won't be called to update CPACR_EL1 in
-> > +	 * ret_to_user unless TIF_FOREIGN_FPSTATE is still set, which only
-> > +	 * happens if a context switch or kernel_neon_begin() or context
-> > +	 * modification (sigreturn, ptrace) intervenes.
-> > +	 * So, ensure that CPACR_EL1 is already correct for the fast-path case.
-> > +	 */
-> > +	if (test_and_clear_thread_flag(TIF_SVE))
-> > +		sve_user_disable();
-> 
-> sve_user_disable() is already inline, and incorporates the if()
-> internally via sysreg_clear_set().
-> 
-> So, should this just be
-> 
-> 	clear_thread_flag(TIF_SVE);
-> 	sve_user_disable();
-
-Sure. That does mean we'll unconditionally read cpacr_el1, but I assume
-you're happy with that. I'll note the difference in the commit message.
-
-> > +}
-> > +
-> > +extern syscall_fn_t sys_call_table[];
-> > +
-> > +asmlinkage void el0_svc_handler(struct pt_regs *regs)
-> > +{
-> 
-> if (system_supports_sve()) ?
-> 
-> > +	sve_user_disable();
-> 
-> Or should this be replaced by a call to sve_user_reset()?
-> 
-> I suspect the latter, since we do want to be clearing TIF_SVE here too.
-
-Yes, this was mean to be sve_user_reset().
-
-Thanks,
-Mark.
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index 6171178075dc..bd1d1194a5e7 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -452,9 +452,9 @@
+ 			 SCTLR_ELx_SA     | SCTLR_ELx_I    | SCTLR_ELx_WXN | \
+ 			 ENDIAN_CLEAR_EL2 | SCTLR_EL2_RES0)
+ 
+-/* Check all the bits are accounted for */
+-#define SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != ~0)
+-
++#if (SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != 0xffffffff
++#error "Inconsistent SCTLR_EL2 set/clear bits"
++#endif
+ 
+ /* SCTLR_EL1 specific flags. */
+ #define SCTLR_EL1_UCI		(1 << 26)
+@@ -492,8 +492,9 @@
+ 			 SCTLR_EL1_UMA | SCTLR_ELx_WXN     | ENDIAN_CLEAR_EL1 |\
+ 			 SCTLR_EL1_RES0)
+ 
+-/* Check all the bits are accounted for */
+-#define SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != ~0)
++#if (SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != 0xffffffff
++#error "Inconsistent SCTLR_EL1 set/clear bits"
++#endif
+ 
+ /* id_aa64isar0 */
+ #define ID_AA64ISAR0_TS_SHIFT		52
+@@ -732,9 +733,6 @@ static inline void config_sctlr_el1(u32 clear, u32 set)
+ {
+ 	u32 val;
+ 
+-	SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS;
+-	SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS;
+-
+ 	val = read_sysreg(sctlr_el1);
+ 	val &= ~clear;
+ 	val |= set;
+-- 
+2.11.0
