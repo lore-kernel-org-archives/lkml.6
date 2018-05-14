@@ -1,28 +1,28 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpNGDFbGFdTDfX9BLfnf/l7jvkCLQr6erau0IXJ/w82gPqvyssK5bxgjeeSYeAFse/tEJWw
-ARC-Seal: i=1; a=rsa-sha256; t=1526282394; cv=none;
+X-Google-Smtp-Source: AB8JxZoE3Y5QfsKJrFzZOEEbxFhyWdqhFmzMaWNHH32eK176NwDPSSra/NXjWz0BXKKLqoxj5t0B
+ARC-Seal: i=1; a=rsa-sha256; t=1526282391; cv=none;
         d=google.com; s=arc-20160816;
-        b=gdptvC1R8KhfJRP8f9W7qNjtGjfpCxpre7nlJ6GHInVQGFP5k1mFF1DcUkeEWceP/P
-         CgC4EmxF/aCp1e5LZzWdc0SnUaj84Rkl+m3EqL5BNYNSOJ1rnbzNY7dz5QbyvVQmT/Yg
-         qVkkzsNX/K18s+lJbaXP5qMq1c7n7HW/JOPnQUWoIzGemmpx7+a342q0bJ/RCZkGgxOY
-         uZWhJuGMQhREsdE8n3aM4tceRRjy9CEtgEUSy5eibdj1Faf3VQ9ED8HPc6oLIfHxYiX1
-         wM6E8tjl74Z+hYSRMNvyV7E6bx9d+Ivk39uHf25SO6cssPz40RAUOI+hUvlB8DpyMD9r
-         dFTw==
+        b=wGVe4a6TfWvanwEYWTS0Z776WD76OqIO68YOe+lTqz9r/NzET5hgKuDoPkVP7nk31K
+         NuSLbEOJ0b7/vEt6deGPQhcnxJXiM5MPkO41DFmptLkw+mgP4Clhdcbeh/sof2Nkapx/
+         +uU71kUjb45tW46QikXuucYht/TXBsMY6U9uFE/V2NbmIPLS0lU+3jdMqtbuZwl4CqPU
+         ZyTG0BndzfEwwKmpddxh+Z8D7bpmcyp9Q2Njp8z+Ej8LVLWtb+UaJlN4XYUSetsdM2lB
+         hg4yH1J3GpvDgs3mFkdHqD4LigBxwxz9z1ew/X+AhW07w0js5HUUWL9ifsrJ182MDUL8
+         qxrA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=CYSUTY3n79BkXQIU5fgnF17V6I8HyKMnIjucrd+0kig=;
-        b=p5fQhrjhY4UM1sSh39MVrGUdUn3eiC5pSv3sk2wEjI1MwYzb/IjOw6/n+76R+lubwc
-         LEUYPvulbhV47uE4Z1JGMuJSFwE+0+uyolwxCBJRzHgezcIU2CQMZwce+vLfehJuUpIN
-         jsMKggW7vCV9sKA2LuMWZWsBoekvY9v6Bl/OrdqE2bbqGAvoJkGbwDr8kh4CFrjqvz3A
-         rpWKfbDHeWIldT9WVA64LhV4OtUHs58FPdU6gt70sKSzdqo5ypMGSreQmfjSbxQyK25T
-         RZNFOKctBnc6/O57UgpKr2jaWFIYvQ9c4oLfYslVXeQGTbEgmY8nlj70RI8d3/c0s7p+
-         X8MQ==
+        bh=2jXZ0b7DEYcuDMTAsCESXmHzHc1xZzzH1Wwp5bErQ+s=;
+        b=Tp9f5eAuXCGQfZD0SxbuouERXf6FRgMuvMcxZEssvTeChiaduyR03g6drp+Vhi7Pmt
+         twGsfICbO0/Z3UdFPRHpVwRyv7+3wCM4gZnEPztXe3WP0Wi8Mvf6aIDSMtUbBq29mFKi
+         6t8Oa0W1b2VzDqxa+hoHwfrIFSaJYARIZbnxzEmtcfPVu7PUaa3owQiWI7sdswPPDF6n
+         sP8fQ8HfGkcVFPk+2M5lZbbjuHQ+MOQ7oeGrcxbMluW+cQP1AnkqdTn4QwuYOSNTpKMT
+         T4nDjoYfwlJoKsbDgicl6TsfvnLTvcDNnF5vRL7KyI7PJrDcBX8teYDGcBPq0W54v19j
+         K9ZQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=QGTru99h;
+       dkim=pass header.i=@kernel.org header.s=default header.b=OYc5D9AE;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=QGTru99h;
+       dkim=pass header.i=@kernel.org header.s=default header.b=OYc5D9AE;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -38,9 +38,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Vince Weaver <vincent.weaver@maine.edu>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.16 71/72] perf/core: Fix possible Spectre-v1 indexing for ->aux_pages[]
-Date: Mon, 14 May 2018 08:49:28 +0200
-Message-Id: <20180514064828.057552342@linuxfoundation.org>
+Subject: [PATCH 4.16 70/72] perf/x86/msr: Fix possible Spectre-v1 indexing in the MSR driver
+Date: Mon, 14 May 2018 08:49:27 +0200
+Message-Id: <20180514064828.005763748@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -50,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600422462427122236?=
-X-GMAIL-MSGID: =?utf-8?q?1600423088113803226?=
+X-GMAIL-THRID: =?utf-8?q?1600422459223722103?=
+X-GMAIL-MSGID: =?utf-8?q?1600423085245038606?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,12 +61,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-commit 4411ec1d1993e8dbff2898390e3fed280d88e446 upstream.
+commit 06ce6e9b6d6c09d4129c6e24a1314a395d816c10 upstream.
 
-> kernel/events/ring_buffer.c:871 perf_mmap_to_page() warn: potential spectre issue 'rb->aux_pages'
+> arch/x86/events/msr.c:178 msr_event_init() warn: potential spectre issue 'msr' (local cap)
 
-Userspace controls @pgoff through the fault address. Sanitize the
-array index before doing the array dereference.
+Userspace controls @attr, sanitize cfg (attr->config) before using it
+to index an array.
 
 Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -83,29 +83,37 @@ Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/events/ring_buffer.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/events/msr.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/kernel/events/ring_buffer.c
-+++ b/kernel/events/ring_buffer.c
-@@ -14,6 +14,7 @@
- #include <linux/slab.h>
- #include <linux/circ_buf.h>
- #include <linux/poll.h>
+--- a/arch/x86/events/msr.c
++++ b/arch/x86/events/msr.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/perf_event.h>
 +#include <linux/nospec.h>
+ #include <asm/intel-family.h>
  
- #include "internal.h"
+ enum perf_msr_id {
+@@ -158,9 +159,6 @@ static int msr_event_init(struct perf_ev
+ 	if (event->attr.type != event->pmu->type)
+ 		return -ENOENT;
  
-@@ -867,8 +868,10 @@ perf_mmap_to_page(struct ring_buffer *rb
- 			return NULL;
+-	if (cfg >= PERF_MSR_EVENT_MAX)
+-		return -EINVAL;
+-
+ 	/* unsupported modes and filters */
+ 	if (event->attr.exclude_user   ||
+ 	    event->attr.exclude_kernel ||
+@@ -171,6 +169,11 @@ static int msr_event_init(struct perf_ev
+ 	    event->attr.sample_period) /* no sampling */
+ 		return -EINVAL;
  
- 		/* AUX space */
--		if (pgoff >= rb->aux_pgoff)
--			return virt_to_page(rb->aux_pages[pgoff - rb->aux_pgoff]);
-+		if (pgoff >= rb->aux_pgoff) {
-+			int aux_pgoff = array_index_nospec(pgoff - rb->aux_pgoff, rb->aux_nr_pages);
-+			return virt_to_page(rb->aux_pages[aux_pgoff]);
-+		}
- 	}
++	if (cfg >= PERF_MSR_EVENT_MAX)
++		return -EINVAL;
++
++	cfg = array_index_nospec((unsigned long)cfg, PERF_MSR_EVENT_MAX);
++
+ 	if (!msr[cfg].attr)
+ 		return -EINVAL;
  
- 	return __perf_mmap_to_page(rb, pgoff);
