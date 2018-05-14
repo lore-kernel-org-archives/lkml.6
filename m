@@ -1,94 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752538AbeENL32 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:29:28 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:42843 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752095AbeENL3Y (ORCPT
+        id S1752505AbeENLcL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:32:11 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:37837 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751198AbeENLcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:29:24 -0400
-From: Faiz Abbas <faiz_abbas@ti.com>
-Subject: MMC performance degradation due to too many requests
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Message-ID: <0ea1d2bf-fa0f-4b3d-556a-5dca5afbf2a9@ti.com>
-Date: Mon, 14 May 2018 17:00:56 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 14 May 2018 07:32:09 -0400
+X-Google-Smtp-Source: AB8JxZqRHpJaPiQJqJEInLgrtVtIXtSCcn6TSO9BFWhLc1IVt5tkJj+wb90gCUWOUvxDuooxwGh0Okm1qQ4hRLBkdpA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20180514095022.nfp7vuepz4kfshni@quack2.suse.cz>
+References: <CAOQ4uxgxP-0OZzT866=RR5rGQZ89EOy-mFF50v_5Y644OrV7tA@mail.gmail.com>
+ <20180513160404.GA19620@redhat.com> <20180514095022.nfp7vuepz4kfshni@quack2.suse.cz>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 14 May 2018 14:32:08 +0300
+Message-ID: <CAOQ4uxiKQDB-5iFztNz8wPECi5fKMPxEi5cxaKM_zRc9yeticQ@mail.gmail.com>
+Subject: Re: DEBUG_RWSEMS warning from thaw_super()
+To: Jan Kara <jack@suse.cz>
+Cc: Oleg Nesterov <oleg@redhat.com>, Waiman Long <longman@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Everyone,
+On Mon, May 14, 2018 at 12:50 PM, Jan Kara <jack@suse.cz> wrote:
+> On Sun 13-05-18 18:04:04, Oleg Nesterov wrote:
+>> On 05/13, Amir Goldstein wrote:
+>> >
+>> > Since kernel v4.17-rc1 and DEBUG_RWSEMS, I see the
+>> > warning below after filesystem freeze/thaw.
+>> >
+>> > This is a case where one process acquires a bunch of rwsem
+>> > and another process releases them.
+>> >
+>> > To convey this use case to lockdep, freeze_super() calls
+>> > lockdep_sb_freeze_release() on exit and thaw_super()
+>> > calls lockdep_sb_freeze_acquire() on entry.
+>>
+>> This was already discussed, but I forgot the result...
+>>
+>> So once again, why we can't simply update percpu_rwsem_acquire() ?
+>> Or we can check CONFIG_RWSEM_SPIN_ON_OWNER to match percpu_rwsem_release(),
+>> but CONFIG_DEBUG_RWSEMS explains the purpose better.
+>
+> Yeah, what you suggests seems reasonable to me. So feel free to add:
+>
+> Acked-by: Jan Kara <jack@suse.cz>
+>
 
-I am debugging a performance degradation issue in some SD cards which
-happened around 4.13 kernel on TI's AM335x-evm.
+How about this version? A bit more prudent and also addresses the
+TODO in commit 55cc156505f2 ("percpu-rwsem: introduce
+percpu_rwsem_release() and percpu_rwsem_acquire()")
 
-I compare the time taken for a simple dd command (after dropping
-caches) to run between kernel versions 4.13 and 4.14. I see that there
-is a consistent 15-20% reduction in speed. The amount of decrease
-depends on the card used.
-
-command:
-# echo 3 > /proc/sys/vm/drop_caches; dd if=/dev/zero of=/dev/mmcblk1p2
-bs=1M count=100;
-
-
-v4.13
-~22s for 100M transfer
-
-v4.14
-~28s for 100M transfer
-
-Also, I see many times the number of interrupts for mmc1 in 4.14.
-
-v4.14
- 34:      2122       INTC  64 Level     mmc1
-
-v4.13
-162:       457       INTC  64 Level     mmc1
-
-This increase of interrupts also exists in the latest kernel.
-
-I also printed out the size of the DMA transfers in the omap_hsmmc
-driver during the dd command. I see that the maximum size of the dma
-transfer has decreased from 1 MB to 256kB between 4.13 and 4.14.
-
-Full log:
-
-v4.13
-https://pastebin.ubuntu.com/p/gK2k9GZcNd/
-
-v4.14
-https://pastebin.ubuntu.com/p/3YzCbQ79rk/
-
-It looks like something has started splitting the request into 4 times
-as many smaller buffers and this is what is causing the performance
-decrease.
-
-I also ran the ftrace function profile tool on mmc* and blk* functions
-and see that the function mmc_blk_issue_rq() is where the program spends
-most of its time and the calls to that and other related functions have
-increased around 4 times with the average time per call being reduced.
-
-Function profile Log:
-
-v4.13
-https://pastebin.ubuntu.com/p/R5JG6FpTvy/
-
-v4.14
-https://pastebin.ubuntu.com/p/Kc6QYYwYcN/
-
-I am not sure why calls to mmc_blk_issue_rq() have increased by so much.
-Any ideas why this could be happening?
-
+Sorry for spaces instead of tabs, I'll re-post properly if this is acked.
 
 Thanks,
-Faiz
+Amir.
+
+-----
+diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
+index b1f37a89e368..323d5ba6a60d 100644
+--- a/include/linux/percpu-rwsem.h
++++ b/include/linux/percpu-rwsem.h
+@@ -127,13 +127,16 @@ extern void percpu_free_rwsem(struct
+percpu_rw_semaphore *);
+ #define percpu_rwsem_assert_held(sem)                          \
+        lockdep_assert_held(&(sem)->rw_sem)
+
++extern void percpu_rwsem_set_user_owned(struct percpu_rw_semaphore *sem);
++extern void percpu_rwsem_set_owner(struct percpu_rw_semaphore *sem);
++
+ static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
+                                        bool read, unsigned long ip)
+ {
+        lock_release(&sem->rw_sem.dep_map, 1, ip);
+ #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
+        if (!read)
+-               sem->rw_sem.owner = NULL;
++               percpu_rwsem_set_user_owned(sem);
+ #endif
+ }
+
+@@ -141,6 +144,10 @@ static inline void percpu_rwsem_acquire(struct
+percpu_rw_semaphore *sem,
+                                        bool read, unsigned long ip)
+ {
+        lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
++#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
++       if (!read)
++               percpu_rwsem_set_owner(sem);
++#endif
+ }
+
+ #endif
+diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
+index 883cf1b92d90..afa65915541f 100644
+--- a/kernel/locking/percpu-rwsem.c
++++ b/kernel/locking/percpu-rwsem.c
+@@ -7,6 +7,8 @@
+ #include <linux/sched.h>
+ #include <linux/errno.h>
+
++#include "rwsem.h"
++
+ int __percpu_init_rwsem(struct percpu_rw_semaphore *sem,
+                        const char *name, struct lock_class_key *rwsem_key)
+ {
+@@ -190,3 +192,17 @@ void percpu_up_write(struct percpu_rw_semaphore *sem)
+        rcu_sync_exit(&sem->rss);
+ }
+ EXPORT_SYMBOL_GPL(percpu_up_write);
++
++void percpu_rwsem_set_user_owned(struct percpu_rw_semaphore *sem)
++{
++       DEBUG_RWSEMS_WARN_ON(sem->rw_sem.owner != current);
++       sem->rw_sem.owner = RWSEM_USER_OWNED;
++}
++EXPORT_SYMBOL_GPL(percpu_rwsem_set_user_owned);
++
++void percpu_rwsem_set_owner(struct percpu_rw_semaphore *sem)
++{
++       DEBUG_RWSEMS_WARN_ON(sem->rw_sem.owner != RWSEM_USER_OWNED);
++       sem->rw_sem.owner = current;
++}
++EXPORT_SYMBOL_GPL(percpu_rwsem_set_user_owned);
+diff --git a/kernel/locking/rwsem.h b/kernel/locking/rwsem.h
+index a17cba8d94bb..f686596ec033 100644
+--- a/kernel/locking/rwsem.h
++++ b/kernel/locking/rwsem.h
+@@ -11,10 +11,14 @@
+  *  2) RWSEM_READER_OWNED
+  *     - lock is currently or previously owned by readers (lock is free
+  *       or not set by owner yet)
+- *  3) Other non-zero value
++ *  3) RWSEM_USER_OWNED
++ *     - lock is currently owned by userspace (previously owned by writer
++ *       and should be handed over to a new writer before being freed)
++ *  4) Other non-zero value
+  *     - a writer owns the lock
+  */
+ #define RWSEM_READER_OWNED     ((struct task_struct *)1UL)
++#define RWSEM_USER_OWNED       ((struct task_struct *)2UL)
+
+ #ifdef CONFIG_DEBUG_RWSEMS
+ # define DEBUG_RWSEMS_WARN_ON(c)       DEBUG_LOCKS_WARN_ON(c)
