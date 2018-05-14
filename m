@@ -1,139 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752419AbeENIHr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:07:47 -0400
-Received: from mail-db5eur01on0077.outbound.protection.outlook.com ([104.47.2.77]:65238
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751941AbeENIHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:07:44 -0400
-From: Samarth Parikh <Samarth.Parikh@arm.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sudipto Paul <Sudipto.Paul@arm.com>,
-        Arvind Chauhan <Arvind.Chauhan@arm.com>,
-        "samarthp@ymail.com" <samarthp@ymail.com>,
-        Deepak Pandey <Deepak.Pandey@arm.com>,
-        Sudeep Holla <Sudeep.Holla@arm.com>
-Subject: Re: [PATCH] mailbox: arm_mhu: add support for mhuv2
-Thread-Topic: [PATCH] mailbox: arm_mhu: add support for mhuv2
-Thread-Index: AQHT4eVPQJOcUiD4dEqNXHokADsBGqQcV5mAgBL2JgA=
-Date: Mon, 14 May 2018 08:07:39 +0000
-Message-ID: <FDE42FCD-8E61-4EE5-8893-6A9E7E7D64AC@arm.com>
-References: <1525245244-15336-1-git-send-email-samarth.parikh@arm.com>
- <CABb+yY00AJ3ZBAU3R-=eaLJfBooY23JAiPaYxi=8MdCczKmZHw@mail.gmail.com>
-In-Reply-To: <CABb+yY00AJ3ZBAU3R-=eaLJfBooY23JAiPaYxi=8MdCczKmZHw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Samarth.Parikh@arm.com;
-x-originating-ip: [217.140.105.40]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM5PR0801MB1364;7:D5X8f5CCbZDW54EvCb0OUmWR7mC+Wo1nmzoCj4yoHo/eHAXdBk91fa7jH5e57py6yLLiiwW4XdCsLByVF2V15VZOZ8WoDpeO0rKeW6Av437My5uVG7BjQCP9QyGdfvAsLwnFKEgnsSDycRzive8/uaQFG3ELXqyTtwOawneOtJjPtZRCTgMwCYbC/v478cIplTWL/aSt5+vOWI3+WUt3RTDnIprWATvuCkb1IysbZXJlDxcuRO9pfZHyhOdz3KmJ
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7153060)(7193020);SRVR:AM5PR0801MB1364;
-x-ms-traffictypediagnostic: AM5PR0801MB1364:
-x-microsoft-antispam-prvs: <AM5PR0801MB13642F3082D5B79C9D4AA1829C9C0@AM5PR0801MB1364.eurprd08.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:AM5PR0801MB1364;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0801MB1364;
-x-forefront-prvs: 067270ECAF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39380400002)(39850400004)(396003)(346002)(376002)(199004)(189003)(40434004)(81166006)(83716003)(6486002)(105586002)(6436002)(3846002)(106356001)(6116002)(86362001)(82746002)(5250100002)(8936002)(36756003)(15650500001)(76176011)(486006)(81156014)(14454004)(11346002)(5890100001)(68736007)(4326008)(2616005)(478600001)(5660300001)(476003)(99286004)(3660700001)(305945005)(25786009)(186003)(8676002)(446003)(39060400002)(66066001)(72206003)(7736002)(53546011)(6506007)(59450400001)(6246003)(6512007)(33656002)(2900100001)(1411001)(6916009)(3280700002)(54906003)(26005)(316002)(2906002)(229853002)(102836004)(97736004)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0801MB1364;H:AM5PR0801MB1250.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: e5Omhb+o0DfeMvTahCWFTVbEZozz6OsjkTk4GvbQ1UI+FuyF1nfH4x3zztky61zPtoOXSX/y9JjMEcz+LbzyGOO+86YrXXJZkB3D4aLtten0cxAE3aflu75kMM/3SI28v2ICcemZl2X+L0rkAMc/QrO6uO21Xe0nz4eTAafY4CCgMAO2jIMc+2Galf9b1eSk
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1C87BE056CAF6049BFEF94DEE845069B@eurprd08.prod.outlook.com>
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 8acffd5d-8301-4a37-4867-08d5b971c33f
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8acffd5d-8301-4a37-4867-08d5b971c33f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2018 08:07:40.0159
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0801MB1364
+        id S1752453AbeENIIN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:08:13 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:36108 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752038AbeENIHd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 04:07:33 -0400
+X-Google-Smtp-Source: AB8JxZpSrf99RtoaFi480CqAMgGGVuFd9UWIU87HGK93DpWNEjMo3C6Mm/LR00fhnCTpuMDUHEXauA==
+From: Linus Walleij <linus.walleij@linaro.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 19/19 v3] ARM: s3c64xx: Tidy up handling of regulator GPIO lookups
+Date: Mon, 14 May 2018 10:06:40 +0200
+Message-Id: <20180514080640.12515-20-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180514080640.12515-1-linus.walleij@linaro.org>
+References: <20180514080640.12515-1-linus.walleij@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4E87sam008433
 
-Hi Jassi,
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-As suggested by you, I have moved the MHUv2 related changes to a new file arm_mhu_v2.c. I have sent an updated patch, can you please review it?
+Rather than unconditionally registering the GPIO lookup table only do so
+for devices that require it.
 
-Regards,
-Samarth
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+[Fixed up to also handle wm5102 and wm5102 reva]
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v2->v3:
+- Including this in my patch series.
+---
+ arch/arm/mach-s3c64xx/mach-crag6410-module.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-﻿On 02/05/18, 5:34 PM, "Jassi Brar" <jassisinghbrar@gmail.com> wrote:
-
-    On Wed, May 2, 2018 at 12:44 PM, Samarth Parikh <samarth.parikh@arm.com> wrote:
-    > Hi Jassi,
-    >
-    > I am resending the patch for review, in case you have missed my previous
-    > patch. Can you please go through it and let me know your thoughts on
-    > the same?
-    >
-    You don't want this to go into git log :)
-    If your patch isn't looked into for more than 2weeks (or longer if
-    merge window is not near), please just ping as a reply to original
-    submission.
-    Anyways....
-
-    > ARM has launched a next version of MHU i.e. MHUv2 with its latest
-    > subsystems. The main change is that the MHUv2 is now a distributed IP
-    > with different peripheral views (registers) for the sender and receiver.
-    >
-    > Another main difference is that MHUv1 duplex channels are now split into
-    > simplex/half duplex in MHUv2. MHUv2 has a configurable number of
-    > communication channels. There is a capability register (MSG_NO_CAP) to
-    > find out how many channels are available in a system.
-    >
-    > The register offsets have also changed for STAT, SET & CLEAR registers
-    > from 0x0, 0x8 & 0x10 in MHUv1 to 0x0, 0xC & 0x8 in MHUv2 respectively.
-    >
-    > 0x0    0x4  0x8  0xC             0x1F
-    > ------------------------....-----
-    > | STAT |    |    | SET |    |   |
-    > ------------------------....-----
-    >       Transmit Channel
-    >
-    > 0x0    0x4  0x8   0xC            0x1F
-    > ------------------------....-----
-    > | STAT |    | CLR |    |    |   |
-    > ------------------------....-----
-    >         Receive Channel
-    >
-    > The MHU controller can request the receiver to wake-up and once the
-    > request is removed, the receiver may go back to sleep, but the MHU
-    > itself does not actively puts a receiver to sleep.
-    >
-    > So, in order to wake-up the receiver when the sender wants to send data,
-    > the sender has to set ACCESS_REQUEST register first in order to wake-up
-    > receiver, state of which can be detected using ACCESS_READY register.
-    > ACCESS_REQUEST has an offset of 0xF88 & ACCESS_READY has an offset
-    > of 0xF8C and are accessible only on any sender channel.
-    >
-    > This patch adds necessary changes required to support the older
-    > version of MHU & the latest MHUv2 controller. This patch also need an
-    > update in DT binding for ARM MHU as we need a second register base
-    > (tx base) which would be used as the send channel base.
-    >
-    > Signed-off-by: Samarth Parikh <samarth.parikh@arm.com>
-    > ---
-    >  drivers/mailbox/arm_mhu.c | 163 ++++++++++++++++++++++++++++++++++++++++++----
-    >  1 file changed, 151 insertions(+), 12 deletions(-)
-    >
-    The original driver is 195 loc, this patch makes it almost double the size.
-    Also there have been controllers (resembling closer to MHU than this
-    one) with separate drivers. So I think we should simply create another
-    arm_mhu_v2.c ?
-
-    Cheers!
-
-
-IMPORTANT NOTICE: The contents of this email and any attachments are confidential and may also be privileged. If you are not the intended recipient, please notify the sender immediately and do not disclose the contents to any other person, use it for any purpose, or store or copy the information in any medium. Thank you.
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+index 76c4855a03bc..56ec212442ad 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+@@ -328,6 +328,8 @@ static const struct {
+ 	int num_i2c_devs;
+ 	const struct spi_board_info *spi_devs;
+ 	int num_spi_devs;
++
++	struct gpiod_lookup_table *gpiod_table;
+ } gf_mods[] = {
+ 	{ .id = 0x01, .rev = 0xff, .name = "1250-EV1 Springbank" },
+ 	{ .id = 0x02, .rev = 0xff, .name = "1251-EV1 Jura" },
+@@ -362,13 +364,16 @@ static const struct {
+ 	  .i2c_devs = wm1255_devs, .num_i2c_devs = ARRAY_SIZE(wm1255_devs) },
+ 	{ .id = 0x3c, .rev = 0xff, .name = "1273-EV1 Longmorn" },
+ 	{ .id = 0x3d, .rev = 0xff, .name = "1277-EV1 Littlemill",
+-	  .i2c_devs = wm1277_devs, .num_i2c_devs = ARRAY_SIZE(wm1277_devs) },
++	  .i2c_devs = wm1277_devs, .num_i2c_devs = ARRAY_SIZE(wm1277_devs),
++	  .gpiod_table = &wm8994_gpiod_table },
+ 	{ .id = 0x3e, .rev = 0, .name = "WM5102-6271-EV1-CS127 Amrut",
+ 	  .spi_devs = wm5102_reva_spi_devs,
+-	  .num_spi_devs = ARRAY_SIZE(wm5102_reva_spi_devs) },
++	  .num_spi_devs = ARRAY_SIZE(wm5102_reva_spi_devs),
++	  .gpiod_table = &wm5102_reva_gpiod_table },
+ 	{ .id = 0x3e, .rev = -1, .name = "WM5102-6271-EV1-CS127 Amrut",
+ 	  .spi_devs = wm5102_spi_devs,
+-	  .num_spi_devs = ARRAY_SIZE(wm5102_spi_devs) },
++	  .num_spi_devs = ARRAY_SIZE(wm5102_spi_devs),
++	  .gpiod_table = &wm5102_gpiod_table },
+ 	{ .id = 0x3f, .rev = -1, .name = "WM2200-6271-CS90-M-REV1",
+ 	  .i2c_devs = wm2200_i2c, .num_i2c_devs = ARRAY_SIZE(wm2200_i2c) },
+ };
+@@ -391,10 +396,6 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
+ 					    rev == gf_mods[i].rev))
+ 			break;
+ 
+-	gpiod_add_lookup_table(&wm5102_reva_gpiod_table);
+-	gpiod_add_lookup_table(&wm5102_gpiod_table);
+-	gpiod_add_lookup_table(&wm8994_gpiod_table);
+-
+ 	if (i < ARRAY_SIZE(gf_mods)) {
+ 		dev_info(&i2c->dev, "%s revision %d\n",
+ 			 gf_mods[i].name, rev + 1);
+@@ -408,6 +409,9 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
+ 
+ 		spi_register_board_info(gf_mods[i].spi_devs,
+ 					gf_mods[i].num_spi_devs);
++
++		if (gf_mods[i].gpiod_table)
++			gpiod_add_lookup_table(gf_mods[i].gpiod_table);
+ 	} else {
+ 		dev_warn(&i2c->dev, "Unknown module ID 0x%x revision %d\n",
+ 			 id, rev + 1);
+-- 
+2.17.0
