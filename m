@@ -1,48 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752649AbeENRXz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:23:55 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33796 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751198AbeENRXy (ORCPT
+        id S1752792AbeENRYS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:24:18 -0400
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:36737 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752700AbeENRYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:23:54 -0400
-From: Colin King <colin.king@canonical.com>
-To: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
-        linux-mips@linux-mips.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: fix spelling mistake: "cop_unsuable" -> "cop_unusable"
-Date: Mon, 14 May 2018 18:23:50 +0100
-Message-Id: <20180514172350.26601-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 14 May 2018 13:24:16 -0400
+X-Google-Smtp-Source: AB8JxZrJeFq+mkiMfHA2MX5Foye4xmwIzMOqFdkDPlthtuc2Ebk+UtF8+WXDzg/eKGx7G5iUXEGUSvjWHRT+DQCwGcw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180503175401.GD29205@thunk.org>
+References: <CAHhAz+hrmLiRJ77cM=CYj+iyH8aUJ64R6FtAwGqqB2pOS0n0aQ@mail.gmail.com>
+ <20180503175401.GD29205@thunk.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 14 May 2018 20:24:15 +0300
+Message-ID: <CAHp75Ve8DF=CUV7XLdKScdjyOJUs9fWTn3o4_7TKFmOxONqDdw@mail.gmail.com>
+Subject: Re: serial: custom baud rate
+To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Muni Sekhar <munisekharrms@gmail.com>,
+        linux-serial <linux-serial@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, May 3, 2018 at 8:54 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> On Thu, May 03, 2018 at 06:09:13PM +0530, Muni Sekhar wrote:
 
-Trivial fix to spelling mistake in debugfs_entries text
+> See the setserial man page:t
+>
+>         https://linux.die.net/man/8/setserial
+>
+> Not all serial devices support the spd_cust and divisor, however.  In
+> general
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- arch/mips/kvm/mips.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Oh, please, do not advertise this old hack.
 
-diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
-index 2549fdd27ee1..0f725e9cee8f 100644
---- a/arch/mips/kvm/mips.c
-+++ b/arch/mips/kvm/mips.c
-@@ -45,7 +45,7 @@ struct kvm_stats_debugfs_item debugfs_entries[] = {
- 	{ "cache",	  VCPU_STAT(cache_exits),	 KVM_STAT_VCPU },
- 	{ "signal",	  VCPU_STAT(signal_exits),	 KVM_STAT_VCPU },
- 	{ "interrupt",	  VCPU_STAT(int_exits),		 KVM_STAT_VCPU },
--	{ "cop_unsuable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
-+	{ "cop_unusable", VCPU_STAT(cop_unusable_exits), KVM_STAT_VCPU },
- 	{ "tlbmod",	  VCPU_STAT(tlbmod_exits),	 KVM_STAT_VCPU },
- 	{ "tlbmiss_ld",	  VCPU_STAT(tlbmiss_ld_exits),	 KVM_STAT_VCPU },
- 	{ "tlbmiss_st",	  VCPU_STAT(tlbmiss_st_exits),	 KVM_STAT_VCPU },
+We have BOTHER that what people should use in new code.
+
 -- 
-2.17.0
+With Best Regards,
+Andy Shevchenko
