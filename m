@@ -1,37 +1,40 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo3x1bLONN05TsjGpRYJRmRdHybwppuhP0jQ7xxet2zsVD2Fljc3p4pCZaqroTl8PCeZsfq
-ARC-Seal: i=1; a=rsa-sha256; t=1526281139; cv=none;
+X-Google-Smtp-Source: AB8JxZrgItjC93D60ossq5WlcMFWZgm9dsFZsK55IUmOglTNj0UgojxzeIbl0TYthOytgTF/NYme
+ARC-Seal: i=1; a=rsa-sha256; t=1526281136; cv=none;
         d=google.com; s=arc-20160816;
-        b=QtSeMg0hwlZIVYrFipSvPQN/3LFm4gJ3A53Ae42E1nRTtZZ8GqFQ8ZKPfTi810+Tf9
-         hmj5xTwlVEPMFK77HCLWzdyggRIW1/viu/6Kak/Bcpc44AjDC5e99YwirUOHeFqb8VRh
-         FFQ/w3CEfISSJ86w1i7Uq43RRt7QjcSiJ+mdwoTnhSwbXtMzhHmdU9jYlIXLg5He+Dfj
-         XFV1uLmAmr1+uCjD7pKcEBihJ7tNe/VIvtXjZUMvKUGXtCYxs+kvofrFaC+R1jznFY1s
-         n5VFUEhAmUDCW7SCVBrXqNxZd/NGUAwVdQRlfatC2c7O/JQtrPsRNatcr4v9d+m3rEfI
-         vbIA==
+        b=QnhhQ8+LMHjOOmzRuic2uPcWUDLdszAm6oajVE4vlBBWhD04/o2nm8p9j4k3SjzA9d
+         Dj567f4cAaIj7KZPeCgcEV14kITirY10g/v7NqitItu671PVNRRqgDXWwXvkYEjXyIqg
+         ik4ixRiAZOkJS3Ruh2+WRyu4SW7RuvA4UCxEkodnb9KoAsMN5GceofTbeWHH66SAFZv5
+         l0P2KdS2jS2ZrwnMQQHvhx/PxIp5uSXdX1YcAZ+RIkyhnUjiSVKUGdrcHn1DDyEckPwa
+         rtXQYjJB+7F0bRSriFU6YbPVQOwXvdL/k5roFtudBjgynoGG2ZKs/JOps1OUnKV5eM44
+         aDgQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ok06PHvbIPgaIdAse4aL1lCNnYR+vnUFOQsYyBec5Rk=;
-        b=PnIwDYR5Fr+XfQwMRh7OCU5butAZGQTURx8byuMfUq6Rfihj84v+KTmy9FjpDvnnTp
-         /0TRMLeECSNKd1vbUDP/iqos3pzYUhnlMXXMkjkBaz9BYbk7ok236rOibSOxWOY8+rTi
-         +iyR02Uoo5CbtI2txGVkeHL0LF9G+yJVpn3Tf23UJxDQOKNr0l9LzD6fPscCydanHK38
-         Jpr3Vr3ixC5R0gOh9sm5WbLqBcVwhCeZta1wYFAkQ7U+26MKI5tmEQ7D22kb6U6YwmWh
-         D8akkG4Q9rbVFBuFXR6sQN3wmUuvdzTRWnSNjUaVm8/OWzy/dUnJy8xvkx49QLJ14zo0
-         w3kw==
+        bh=8LQ1adNbsFDwTHeUYht1oewRgfB6ujfoj79NmxHiDfU=;
+        b=XzGV4iPjliWvA+2sr6WYCBxOvtlWyOUEXtbKR3WoWwtAEGkIH6vsoeL/fxigaRb4Ut
+         elZUsVBND9E+ckgaKqUa6HYDsdy34lwQIEsBMgtfVv1UreP8K0yBUOjukEppurfb94H/
+         b0vYso6IZ9O8NNVYgCftoRcHQAJ9s4V6wasn2ZX63ytHpckggV5CT2Y6sMlHwy8KziOy
+         Pkx6HGqkG9OvzzMO7ejeFW2CJUdJCmAhyx4kYb1K0cS4Rhkb/5f7kP7DXJIRhVz18BrK
+         +hAyR0Mx9WIDN7kJRbtlq5PLCVMX2n2GLNc0NE0j43gqUFbiYpRcXyyYtgjG1YeER6hu
+         FvGQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=TGUdQt+u;
+       dkim=pass header.i=@kernel.org header.s=default header.b=eAMWp2aj;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=TGUdQt+u;
+       dkim=pass header.i=@kernel.org header.s=default header.b=eAMWp2aj;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.16 30/72] tracing: Fix regex_match_front() to not over compare the test string
-Date: Mon, 14 May 2018 08:48:47 +0200
-Message-Id: <20180514064824.348630867@linuxfoundation.org>
+	Tero Kristo <t-kristo@ti.com>,
+	Christophe Lyon <christophe.lyon@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>
+Subject: [PATCH 4.16 03/72] clk: ti: fix flag space conflict with clkctrl clocks
+Date: Mon, 14 May 2018 08:48:20 +0200
+Message-Id: <20180514064823.181891833@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -41,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421234253584189?=
-X-GMAIL-MSGID: =?utf-8?q?1600421772215527923?=
+X-GMAIL-THRID: =?utf-8?q?1600421768900399456?=
+X-GMAIL-MSGID: =?utf-8?q?1600421768900399456?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -50,39 +53,53 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+From: Tero Kristo <t-kristo@ti.com>
 
-commit dc432c3d7f9bceb3de6f5b44fb9c657c9810ed6d upstream.
+commit 269bd202bc0fd04e841cb123867fd3f49e04ace9 upstream.
 
-The regex match function regex_match_front() in the tracing filter logic,
-was fixed to test just the pattern length from testing the entire test
-string. That is, it went from strncmp(str, r->pattern, len) to
-strcmp(str, r->pattern, r->len).
+The introduction of support for CLK_SET_RATE_PARENT flag for clkctrl
+clocks used a generic clock flag, which causes a conflict with the
+rest of the clkctrl flags, namely the NO_IDLEST flag. This can cause
+boot failures on certain platforms where this flag is introduced, by
+omitting the wait for the clockctrl module to be fully enabled before
+proceeding with rest of the code.
 
-The issue is that str is not guaranteed to be nul terminated, and if r->len
-is greater than the length of str, it can access more memory than is
-allocated.
+Fix this by moving all the clkctrl specific flags to their own bit-range.
 
-The solution is to add a simple test if (len < r->len) return 0.
-
-Cc: stable@vger.kernel.org
-Fixes: 285caad415f45 ("tracing/filters: Fix MATCH_FRONT_ONLY filter matching")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Fixes: 49159a9dc3da ("clk: ti: add support for CLK_SET_RATE_PARENT flag")
+Reported-by: Christophe Lyon <christophe.lyon@linaro.org>
+Tested-by: Tony Lindgren <tony@atomide.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Cc: Sam Protsenko <semen.protsenko@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_events_filter.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/ti/clock.h |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/kernel/trace/trace_events_filter.c
-+++ b/kernel/trace/trace_events_filter.c
-@@ -338,6 +338,9 @@ static int regex_match_full(char *str, s
+--- a/drivers/clk/ti/clock.h
++++ b/drivers/clk/ti/clock.h
+@@ -74,6 +74,11 @@ enum {
+ #define CLKF_CORE			(1 << 9)
+ #define CLKF_J_TYPE			(1 << 10)
  
- static int regex_match_front(char *str, struct regex *r, int len)
- {
-+	if (len < r->len)
-+		return 0;
++/* CLKCTRL flags */
++#define CLKF_SW_SUP			BIT(5)
++#define CLKF_HW_SUP			BIT(6)
++#define CLKF_NO_IDLEST			BIT(7)
 +
- 	if (strncmp(str, r->pattern, r->len) == 0)
- 		return 1;
- 	return 0;
+ #define CLK(dev, con, ck)		\
+ 	{				\
+ 		.lk = {			\
+@@ -183,10 +188,6 @@ extern const struct omap_clkctrl_data am
+ extern const struct omap_clkctrl_data dm814_clkctrl_data[];
+ extern const struct omap_clkctrl_data dm816_clkctrl_data[];
+ 
+-#define CLKF_SW_SUP	BIT(0)
+-#define CLKF_HW_SUP	BIT(1)
+-#define CLKF_NO_IDLEST	BIT(2)
+-
+ typedef void (*ti_of_clk_init_cb_t)(void *, struct device_node *);
+ 
+ struct clk *ti_clk_register(struct device *dev, struct clk_hw *hw,
