@@ -1,67 +1,85 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526298333; cv=none;
+Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZqtAs/MUW5b5w8uXnu+Y0cO0TnWcqYptszLBTpaJQa0Qnf0Hj5ghqEID9gib8ihyGqgUUU7
+ARC-Seal: i=1; a=rsa-sha256; t=1526280655; cv=none;
         d=google.com; s=arc-20160816;
-        b=ctZp0oZouFTpr2/fzxYsWurqH76xlP/OQCi0kV6njY0a6+b6t7c5PBTO6wONWPfJA0
-         PEdvYseJHJk+6WlO7jmyZf4PvNgiwAKjYyoCKRqujNhgVBG4hF1XEZCU44bO/BdVGIYv
-         9wWXvSLQsKjjD/l+xOAXZzRxIv5Hr12wL1kXsjyPTW/AsHJoVw5YV0nhWgwwfL8fi2XW
-         e12xPr24gDnYSu8mi+IAu+0Mg22y6BBkuVthSHCw2ieB7ZDoT6QTG8TMGSx8O0RrS54H
-         nkCe26F+gMv+g5eZW1CPwzstsAeGXsga0v9sWEdxVe/1Ipdba94k4jHR01SSqyQfMwiE
-         ylSg==
+        b=Q77PDfQk8aSvz35qjxnPF2McFh342aA50xXz2v/27JnpTcPipFtbzUHrgx4m/QLXyj
+         EGHjNHX4+o50Zse3KcN1JeczdeXLy/Dqp+yz2U2tieJHWup9391sqCIJTkgthDWJ+pj3
+         j/MqkXU5gnOfvgL604btXMM0gTkYHF7vBnpXQUgqA7F78E40TXWmE8tPnsib0WOAFjUc
+         KJNi1SiQ8BSOEDP0JCnPPikCUQsFscvEnxWOemuA/lMkRw9uPHB8M+sKQdvFSoJwzcAG
+         JtuqPP1LziSbqUCx6L72pH+ljdDwuY8qHS2KDrzVPAMCFncZQ7xIDg2cH8b28fZCVT6C
+         B/2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=iXNjM28VtVrgttnatNFsOODRXFhdYenoKNHeBMFJzW4=;
-        b=eeD2JOfpzF3VDq65J/OOILCBFqa6IjFkmZdaHgJLKmeBA0dIkPrWNHlu0mx+VbrK8P
-         z+zfBfCa/NaDytkksRaXiUuL9TIufb6+Cfjo0b20CMay5wylcZmhaXJ5b0q8ZTI15VzQ
-         QOMFJK3UYvnps+W2B03JYze8s7cFQs6r/ulHVpab9xm9VllTN6ok0e1qzAAMS5POk3LZ
-         jA79cI1SgEbisIDnf0F60hIVNSIe/Bb+3aMAR/Di6hK5eYiMRz6ab8oTL3meClZ8SdA6
-         Nt1LryJDk88uti63V8/fTwAx8fdyEubjiFpwuEbioAzOvGvfiTJpedX+QMdLmJertqnz
-         0i+A==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=HULEOkqJA9+WXIUEnom4jRudNobmNGdIC30lM51kEnc=;
+        b=nNNQcYYBWiDx7jUY9NrPdvjuSMO7lZAmx2wxuTeNvwZQsSyMfAkwZ9DTrV9QGtaobC
+         AVD1cUkZ3MH/qg7lFQB0glDauSvZf+A/u5aMtEts/jGiyPLVKiMMyHKZ1MzUU8qlQZf5
+         JlsTwqy7lP5dNhhcVs4OD20JAvGmS8l2yrGKyAJI6OOmiN05Ppzurs/KW9+fUJRvkHcw
+         JiD2+/g2H0QyGYELQ529RNs2GndIt1qz9B1XEiN363tzXZJC8jFpJndWaj9m1h2hls45
+         MQZaFOEyaxM9xdVa9HfsBtut46CM4GcczXW0hfmNr+ZofKREznLqw3oqpCBe3WkdMgd8
+         o3uQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       dkim=pass header.i=@kernel.org header.s=default header.b=mjK1ZBJ6;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZplA0DWXlRYY7ZEiNHQeVsa4Ip0KBV5Z1Uy5so4kNyxUHWajTePuxI775BnCuDY0eOrMh3B0A==
-Message-ID: <5af976dc.1c69fb81.b5d25.dea9@mx.google.com>
-Date: Mon, 14 May 2018 04:45:32 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-3.18.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v3.18.108-24-ge49426a0ea55
+       dkim=pass header.i=@kernel.org header.s=default header.b=mjK1ZBJ6;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Bin Liu <b-liu@ti.com>
+Subject: [PATCH 3.18 11/23] usb: musb: host: fix potential NULL pointer dereference
+Date: Mon, 14 May 2018 08:48:40 +0200
+Message-Id: <20180514064704.533830969@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064704.046463679@linuxfoundation.org>
 References: <20180514064704.046463679@linuxfoundation.org>
-Subject: Re: [PATCH 3.18 00/23] 3.18.109-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600421228954413853?=
-X-GMAIL-MSGID: =?utf-8?q?1600439801608108428?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1600421264645591183?=
+X-GMAIL-MSGID: =?utf-8?q?1600421264645591183?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-3.18.y boot: 57 boots: 0 failed, 57 passed (v3.18.108-24-ge=
-49426a0ea55)
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--3.18.y/kernel/v3.18.108-24-ge49426a0ea55/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-3.18.=
-y/kernel/v3.18.108-24-ge49426a0ea55/
+------------------
 
-Tree: stable-rc
-Branch: linux-3.18.y
-Git Describe: v3.18.108-24-ge49426a0ea55
-Git Commit: e49426a0ea55769beb5106053bc70e453c8919a2
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 24 unique boards, 11 SoC families, 13 builds out of 167
+From: Bin Liu <b-liu@ti.com>
+
+commit 2b63f1329df2cd814c1f8353fae4853ace6521d1 upstream.
+
+musb_start_urb() doesn't check the pass-in parameter if it is NULL.  But
+in musb_bulk_nak_timeout() the parameter passed to musb_start_urb() is
+returned from first_qh(), which could be NULL.
+
+So wrap the musb_start_urb() call here with a if condition check to
+avoid the potential NULL pointer dereference.
+
+Fixes: f283862f3b5c ("usb: musb: NAK timeout scheme on bulk TX endpoint")
+Cc: stable@vger.kernel.org # v3.7+
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ drivers/usb/musb/musb_host.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -1002,7 +1002,9 @@ static void musb_bulk_nak_timeout(struct
+ 			/* set tx_reinit and schedule the next qh */
+ 			ep->tx_reinit = 1;
+ 		}
+-		musb_start_urb(musb, is_in, next_qh);
++
++		if (next_qh)
++			musb_start_urb(musb, is_in, next_qh);
+ 	}
+ }
+ 
