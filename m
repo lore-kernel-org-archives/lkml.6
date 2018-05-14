@@ -1,13 +1,13 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1429261-1526333170-8-10378038677511069873
+X-Cyrus-Session-Id: sloti22d1t05-1429261-1526333170-5-8293394579617410777
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.248, FREEMAIL_FROM 0.001,
   HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enrosk.us-ascii,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
@@ -15,57 +15,57 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526333169; b=BgIqG4lkmtIbJPwFkLLt067XXzXwO0+DBBX5ypK38CC7OiGyri
-    wGF2pQFnTxbVjTfSZZHlqOGQnKndkoG28PEVUT+LR3UM68hZ1mdjj+domKx4VIgA
-    HjKvVheakMzmZG6ZzTLtKKmL1nmYuvDcwe08MJ5UhYWUegQ07uIGYmc7PN08dQPL
-    FCVgpg0+ftBEDRz5F1buR862VpwmzoZGojqNtgeglc7DK7N6zbSZy0eAIkS2e/5A
-    w86L5IXeV6LD0g7LjL6Nng3iZGGhiqrP6um/Y27sqsAomG5Z1VtUBkB/ZM63mM9F
-    9KDmzgbcsuHcCoKWcX/XbPmsHNTTXQMfjkNQ==
+    1526333169; b=VstbDZbPi0WyqdWA7nFM/UwJrU+L2/PBNo47fu/gCWzXpf0uwd
+    ErTZPIBewW3nXsu+6XsDqG1LOT+VXxgVjU0XUPz8YKWYdHqD8YC0/ChJnq2BKTb7
+    CWEscvQ/UOsp2rn9UU9LkGK2sSIxtwyR+M4YsYu7OH2jrr+oK7KbkXpwV1ihKEky
+    PqTzaU88qaVTZph1snfo8egf4lHicOqJmVa2q0b6QFlhrWq1d9RiOHQQ7Gzmp001
+    6l0vugzxGhxgKSgHXcdDBDrKs8AzDxzpwgwL0w7HMf6FJtfCbEMzxJwDHTSLhxU7
+    cjm6Btsxwg5Pl5xvusBlTJZM6JRzU9IjgcKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:subject:date:message-id
     :in-reply-to:references:list-id:list-unsubscribe:list-archive
     :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526333169; bh=rlqOL
-    skf0nLtWF6qBf5ijLTu7RiWtiqxD3s9NEH8vPc=; b=fxkhblFZ03VEWfJ3FdMfM
-    S7tiXL04rPK2uoX10Jkz19ebloq7wng8lWQozciDA6nJNDk4sd7ED907YdR+BAcn
-    aaVJ1HdhoDCwILTupDT2IqEA0j1PFVgEss+vTyJ6wxrVkm0IJ2r6Ih2GtB7tMr+I
-    u9RgVx3sonYS7/8LtqwAyASK9MZ0B6yDnuk72ravCnoMFC8W8EBUQCO2zaDMx5GE
-    t1VstorAbW743FG9y2l3iNMxVLJpxY7X5Vb9iXO/CRBAyTizGJ+6uZTddmJmkGAQ
-    siyqR6Qy/HU0CkA6ZxVsFhx4p8J2dD4FXB4h6flO9HM0LFg0X2bpsZx/QV/C7QqE
-    A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1526333169; bh=MG9LX
+    54QpkkpJnHd7zSCPGeWz/BtoBNHKHMPr5tdF0w=; b=M7wRUL8BSvy7SVkWVKaJY
+    hdDdTwFLPcjKDul1I6RYimKjW5BlL4NqDUnaIo7OCPLVuOHC1tz2EFaa6AfmJ07G
+    LKCtkxcZXFUl+9OocBXzHe+yxz1Cy9eqmaB283Q9rM/33WsltEjebe5Vmn7KcOnh
+    pMsoHSkTZ5AcknBN4yU+2Z7FxiP5vgjHVrJ+/kSYk2KkKwqUe+lQpgkP6NvJeMvM
+    subTY+Nmg70FQ3RtC9x8TBL8P9qlVxZ9P15DBP4L9yKKeGSnTe1jlpUfE/cUYGC5
+    ZUHeBtx1yV/aJ8idSNGgf2jyWr4USae5GZBTnxtMeT/0cq6H9E/d8Rw5dcVLXq92
+    g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=guuugUZ3 x-bits=2048
+    header.d=gmail.com header.i=@gmail.com header.b=OQFX3u8E x-bits=2048
     x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=hemlock.osuosl.org;
+    smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
     x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=cpWMZ4zO;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    header.d=1e100.net header.i=@1e100.net header.b=Obo8sZJj;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=guuugUZ3 x-bits=2048
+      header.d=gmail.com header.i=@gmail.com header.b=OQFX3u8E x-bits=2048
       x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=hemlock.osuosl.org;
+      smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
     x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=cpWMZ4zO;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+      header.d=1e100.net header.i=@1e100.net header.b=Obo8sZJj;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
       header_is_org_domain=yes;
@@ -73,24 +73,24 @@ Authentication-Results: mx5.messagingengine.com;
       bits=128/128;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOwIdPj3Z6/HcJ1i0ULaSRJTwZyuuwQflbuCt7gwoDdCFFzp7sQXa/Yptvn1pTrHof5tHy/hCdU7HKm9sCr6XgxA0E/wC2DkPzkP6JFvzxozmbT1ioj1
-    dhuVwaLNFxClxuKS+tllwMlVL3/Jzha3CSIODySXdkkPVEkI4j5fVDY8H5xN/GwT7TaJNHbZUBviV+cA1PbyGaMTyGpayl12RUfe1NjKmn8WUpD/Xq4VU9tZ
-    y27ar2r+8vAplxPFY1cnaw==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+X-CM-Envelope: MS4wfPuXJrY8tc3Uxm3mNEMQYEZD8voEspxNf6XytPmOuGV2wLObXshNcorD9e5jjdhQf/J6D1VY5dPfhFrsJf5AFNNYGCzpEOfs1uvAVxGttuhFHgL58R6S
+    mzmYfOQIu7iqvHvN4YjvCiAOzO/ttvOagsM/eH9Tm+EdbCLLLskXVuWBMHM58+TueqdkJftYSJSD6ErDyVUt2y1HWwg+sI9/VA4rnROiKwIf+ZUlIv562u8i
+    UpJVQLZTuvJn53PizcPt6w==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
     a=o_dtBaZDOvUA:10 a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=26EkWuy_hZEYXS-WM60A:9 a=CjuIK1q_8ugA:10
+    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=kU4s23jLbwnobF-mIQwA:9 a=CjuIK1q_8ugA:10
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AB8JxZooS0VcuSyHY48VyeQ2Nt311dM51T+zJX8Y7idZtFkKa0URx8z6tTB6P5s5aNhpThsUbNNPfQ==
+X-Google-Smtp-Source: AB8JxZqsD/KbdC0RFyMvgehX/XtdCtDNCjoDYKpn2+CHEvEEDB3OhEs8341Twbz+I6Z3wEcxLG1tBw==
 From: John Whitmore <johnfwhitmore@gmail.com>
 To: gregkh@linuxfoundation.org
-Subject: [PATCH 23/27] drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc:
- removed unnecessary parentheses
-Date: Mon, 14 May 2018 22:24:30 +0100
-Message-Id: <20180514212434.17514-24-johnfwhitmore@gmail.com>
+Subject: [PATCH 19/27] drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc:
+ removed extra blank lines
+Date: Mon, 14 May 2018 22:24:26 +0100
+Message-Id: <20180514212434.17514-20-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180514212434.17514-1-johnfwhitmore@gmail.com>
 References: <20180514212434.17514-1-johnfwhitmore@gmail.com>
@@ -117,50 +117,167 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 Coding style edit to clear the checkpatch.pl check:
-CHECK: Unnecessary parentheses around ...
+CHECK: Please don't use multiple blank lines
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ .../staging/rtl8192u/ieee80211/rtl819x_HTProc.c    | 24 ----------------------
+ 1 file changed, 24 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-index 5c45d37a8f0e..86507155a54b 100644
+index b138057c619e..b076ff66bc8f 100644
 --- a/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
 +++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_HTProc.c
-@@ -534,7 +534,7 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
- 		u8	EWC11NHTCap[] = {0x00, 0x90, 0x4c, 0x33};	// For 11n EWC definition, 2007.07.17, by Emily
+@@ -266,7 +266,6 @@ u16 HTHalfMcsToDataRate(struct ieee80211_device *ieee,	u8	nMcsRate)
+ 	return MCS_DATA_RATE[is40MHz][isShortGI][(nMcsRate&0x7f)];
+ }
  
- 		memcpy(posHTCap, EWC11NHTCap, sizeof(EWC11NHTCap));
--		pCapELE = (PHT_CAPABILITY_ELE)&(posHTCap[4]);
-+		pCapELE = (PHT_CAPABILITY_ELE)&posHTCap[4];
- 	} else {
+-
+ u16 HTMcsToDataRate(struct ieee80211_device *ieee, u8 nMcsRate)
+ {
+ 	PRT_HIGH_THROUGHPUT	pHTInfo = ieee->pHTInfo;
+@@ -321,8 +320,6 @@ u16  TxCountToDataRate(struct ieee80211_device *ieee, u8 nDataRate)
+ 	}
+ }
+ 
+-
+-
+ bool IsHTHalfNmodeAPs(struct ieee80211_device *ieee)
+ {
+ 	bool			retValue = false;
+@@ -401,7 +398,6 @@ static u8 HTIOTActIsDisableMCS14(struct ieee80211_device *ieee, u8 *PeerMacAddr)
+ 	return 0;
+ }
+ 
+-
+ /**
+  * Function:	HTIOTActIsDisableMCS15
+  *
+@@ -514,7 +510,6 @@ void HTResetIOTSetting(
+ 	pHTInfo->IOTPeer = HT_IOT_PEER_UNKNOWN;
+ }
+ 
+-
+ /*******************************************************************************
+  *function:  Construct Capablility Element in Beacon... if HTEnable is turned on
+  *   input:  struct ieee80211_device*	ieee
+@@ -546,7 +541,6 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
  		pCapELE = (PHT_CAPABILITY_ELE)posHTCap;
  	}
-@@ -1084,10 +1084,10 @@ void HTInitializeHTInfo(struct ieee80211_device *ieee)
+ 
+-
+ 	//HT capability info
+ 	pCapELE->AdvCoding		= 0; // This feature is not supported now!!
+ 	if (ieee->GetHalfNmodeSupportByAPsHandler(ieee->dev))
+@@ -569,7 +563,6 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
+ 	pCapELE->PSMP			= 0; // Do not support now!!
+ 	pCapELE->LSigTxopProtect	= 0; // Do not support now!!
+ 
+-
+ 	//MAC HT parameters info
+ 	// TODO: Nedd to take care of this part
+ 	IEEE80211_DEBUG(IEEE80211_DL_HT, "TX HT cap/info ele BW=%d MaxAMSDUSize:%d DssCCk:%d\n", pCapELE->ChlWidth, pCapELE->MaxAMSDUSize, pCapELE->DssCCk);
+@@ -605,7 +598,6 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
+ 	//Extended HT Capability Info
+ 	memset(&pCapELE->ExtHTCapInfo, 0, 2);
+ 
+-
+ 	//TXBF Capabilities
+ 	memset(pCapELE->TxBFCap, 0, 4);
+ 
+@@ -617,8 +609,6 @@ void HTConstructCapabilityElement(struct ieee80211_device *ieee, u8 *posHTCap, u
+ 	else
+ 		*len = 26 + 2;
+ 
+-
+-
+ //	IEEE80211_DEBUG_DATA(IEEE80211_DL_DATA | IEEE80211_DL_HT, posHTCap, *len -2);
+ 
+ 	//Print each field in detail. Driver should not print out this message by default
+@@ -667,7 +657,6 @@ void HTConstructInfoElement(struct ieee80211_device *ieee, u8 *posHTInfo, u8 *le
+ 
+ 		memset(pHTInfoEle->BasicMSC, 0, 16);
+ 
+-
+ 		*len = 22 + 2; //same above
+ 
+ 	} else {
+@@ -745,7 +734,6 @@ void HTConstructRT2RTAggElement(struct ieee80211_device *ieee, u8 *posRT2RTAgg,
+ #endif
+ }
+ 
+-
+ /*******************************************************************************
+  *function:  Pick the right Rate Adaptive table to use
+  *   input:  struct ieee80211_device*	ieee
+@@ -851,8 +839,6 @@ u8 HTGetHighestMCSRate(struct ieee80211_device *ieee, u8 *pMCSRateSet, u8 *pMCSF
+ 	return (mcsRate|0x80);
+ }
+ 
+-
+-
+ /*
+  *
+  * 1.Filter our operation rate set with AP's rate set
+@@ -924,7 +910,6 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
+ 	else
+ 		pPeerHTInfo = (PHT_INFORMATION_ELE)(pHTInfo->PeerHTInfoBuf);
+ 
+-
+ 	////////////////////////////////////////////////////////
+ 	// Configurations:
+ 	////////////////////////////////////////////////////////
+@@ -957,7 +942,6 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
+ 	pHTInfo->bCurSuppCCK = pHTInfo->bRegSuppCCK &&
+ 			       (pPeerHTCap->DssCCk == 1);
+ 
+-
+ 	//
+ 	// Config and configure A-MSDU setting
+ 	//
+@@ -970,7 +954,6 @@ void HTOnAssocRsp(struct ieee80211_device *ieee)
+ 	else
+ 		pHTInfo->nCurrent_AMSDU_MaxSize = pHTInfo->nAMSDU_MaxSize;
+ 
+-
+ 	//
+ 	// Config A-MPDU setting
+ 	//
+@@ -1102,8 +1085,6 @@ void HTInitializeHTInfo(struct ieee80211_device *ieee)
+ 	pHTInfo->CurrentMPDUDensity = pHTInfo->MPDU_Density;
  	pHTInfo->CurrentAMPDUFactor = pHTInfo->AMPDU_Factor;
  
+-
+-
  	// Initialize all of the parameters related to 11n
--	memset((void *)(&(pHTInfo->SelfHTCap)), 0, sizeof(pHTInfo->SelfHTCap));
--	memset((void *)(&(pHTInfo->SelfHTInfo)), 0, sizeof(pHTInfo->SelfHTInfo));
--	memset((void *)(&(pHTInfo->PeerHTCapBuf)), 0, sizeof(pHTInfo->PeerHTCapBuf));
--	memset((void *)(&(pHTInfo->PeerHTInfoBuf)), 0, sizeof(pHTInfo->PeerHTInfoBuf));
-+	memset((void *)(&pHTInfo->SelfHTCap), 0, sizeof(pHTInfo->SelfHTCap));
-+	memset((void *)(&pHTInfo->SelfHTInfo), 0, sizeof(pHTInfo->SelfHTInfo));
-+	memset((void *)(&pHTInfo->PeerHTCapBuf), 0, sizeof(pHTInfo->PeerHTCapBuf));
-+	memset((void *)(&pHTInfo->PeerHTInfoBuf), 0, sizeof(pHTInfo->PeerHTInfoBuf));
+ 	memset((void *)(&(pHTInfo->SelfHTCap)), 0, sizeof(pHTInfo->SelfHTCap));
+ 	memset((void *)(&(pHTInfo->SelfHTInfo)), 0, sizeof(pHTInfo->SelfHTInfo));
+@@ -1216,7 +1197,6 @@ void HTResetSelfAndSavePeerSetting(struct ieee80211_device *ieee,	struct ieee802
+ 		if (bIOTAction)
+ 			pHTInfo->IOTAction |= HT_IOT_ACT_DISABLE_ALL_2SS;
  
- 	pHTInfo->bSwBwInProgress = false;
- 	pHTInfo->ChnlOp = CHNLOP_NONE;
-@@ -1103,7 +1103,7 @@ void HTInitializeHTInfo(struct ieee80211_device *ieee)
+-
+ 		bIOTAction = HTIOTActIsDisableEDCATurbo(ieee, pNetwork->bssid);
+ 		if (bIOTAction)
+ 			pHTInfo->IOTAction |= HT_IOT_ACT_DISABLE_EDCA_TURBO;
+@@ -1228,8 +1208,6 @@ void HTResetSelfAndSavePeerSetting(struct ieee80211_device *ieee,	struct ieee802
+ 		bIOTAction = HTIOTActIsCCDFsync(pNetwork->bssid);
+ 		if (bIOTAction)
+ 			pHTInfo->IOTAction |= HT_IOT_ACT_CDD_FSYNC;
+-
+-
+ 	} else {
+ 		pHTInfo->bCurrentHTSupport = false;
+ 		pHTInfo->bCurrentRT2RTAggregation = false;
+@@ -1290,8 +1268,6 @@ void HTSetConnectBwMode(struct ieee80211_device *ieee, HT_CHANNEL_WIDTH	Bandwidt
+ 	if (!pHTInfo->bRegBW40MHz)
+ 		return;
  
- 	//MCS rate initialized here
- 	{
--		u8 *RegHTSuppRateSets = &(ieee->RegHTSuppRateSet[0]);
-+		u8 *RegHTSuppRateSets = &ieee->RegHTSuppRateSet[0];
- 
- 		RegHTSuppRateSets[0] = 0xFF;	//support MCS 0~7
- 		RegHTSuppRateSets[1] = 0xFF;	//support MCS 8~15
+-
+-
+ 	// To reduce dummy operation
+ //	if((pHTInfo->bCurBW40MHz==false && Bandwidth==HT_CHANNEL_WIDTH_20) ||
+ //	   (pHTInfo->bCurBW40MHz==true && Bandwidth==HT_CHANNEL_WIDTH_20_40 && Offset==pHTInfo->CurSTAExtChnlOffset))
 -- 
 2.16.3
 
