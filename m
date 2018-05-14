@@ -1,67 +1,167 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526303132; cv=none;
-        d=google.com; s=arc-20160816;
-        b=Kks5Jh3kNqyoNiworQHl4yacBJ5YJIE1fLg3/cxVuNrGutWs74SHXrToXTPtPvqj7f
-         2qIL/w/fw/ZvzU471do8Ar2QUzwr88V7AnF9yHr/FXhf9kbcB84HJ9p/ogGKdJ7hWezO
-         c/SLajO3Z/j1FpWfgdHsROdjK7FT02PCq2baCgJWaxGjpQOHDDXrdVl9ikWyKu8YWAoH
-         JZRtsNQ8e3/hZUZuoyOlAku5sIFXKbiZHtTAuqWo/+V0AxG8qWTBQTeQIDTf3Oauuohg
-         CjBjPzcyu2941cAA3WRZJp8aedylF+Z81so8lNI2G1aiY4BAmhhz8QrXKaQmvtyLKi3Y
-         n/gg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=uG2RXDwU/PZNJbERO0BeEMKM7qmA5VQUdYtCUoXhweE=;
-        b=Jl9Ana8j7jfArqCQeO7G+rpEOli2Nwf86NtTNDbd6LzqyyMyLr7bNMys8Egbfnz44M
-         IQHURZhsrmmrara4KqwkpcT25WsRqDl6L1qnxNlz68o7wQMoQa4YvA9HvHx/AXE6tUX9
-         DlfwNGKVSPtw2fk0kuFqaxSGkrCkdYfjmpHGYGzxSzorwIPF8iYDxd7486CAVvTL4RbE
-         2S2aHhcwHGLVEJmgMrNUX52+Ogn9rQmAFUJ8Qmfmvc2fYjLv7+ihFuZeFaZOBXqgvMgb
-         3NCmtjELTFjdeQYGwUJSx7R2tI4E8/DmXyRRvAW6dJutYWozTv+9z63hvSyZvahxkoYQ
-         N5DQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZoWFJ7uIJFFyCerQMM89Z1PP4S88VgK9VBh29F/8t55B4mOF2sEd2qdH0UMEGoHftslPBv3zQ==
-Message-ID: <5af9899c.1c69fb81.a2c63.2124@mx.google.com>
-Date: Mon, 14 May 2018 06:05:32 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.9.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.9.99-37-g126d655643a8
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-402196-1526282387-2-15588009780439892671
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1526282387; b=CVVK5wnMzvyBXVT2Iz8w8RpkDU3NImd9SstCYMemCOIYgtW4qF
+    HNJxISs4W1MJ/r4fRj9FPXuvTaSOEerUO0omEPY5kKJoa8foZJZGEqG/hAxlh/wM
+    YJxZgBefchOob/h/e8eqZq4Qiug5rLjNFgOPpOhon4h0Y8REr2YxJmTmj3riV68p
+    verYoZlC4expfd6cDNmKWONDtSRwh0aOhP1Y0xl8PaXrgzAI8kQAJgBjgUWLK2b+
+    WdUJQS24h7Sq1F1lUAOOO1JRm5XTxa/53sXaBjQ051SOhyv5hJbIt891WlLgMA+R
+    8l2TCk4D8lAjA/AFJ6Tov3RBLDfy3CZNo0gA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1526282387; bh=+KCrMuDBKHutP7zGale80YtB9k5Kov
+    WO8qEJzIgt4AY=; b=GB3ahglaaOrP9d8qQ60YTF6po7ukD9GUv/NXDi3CN3c7lG
+    BFqLmQ4w4nktBfy2omX30bDdDmPb9RCNCLvMrq/DslekYof70SP3RgISixayMxMs
+    bL+n7AbgyT3bATQZ83YFFCCt35klbu0vBQtXcOwmawtcLkJHEEIdXJnbh9qm4Te6
+    Nlcl/sbBwFBDiSA9YyjkMQI/UCxYNLrnp2p9vwXdmg4/EMOEaDR6oh5cICuU1yhH
+    93HLIJC/U63dlBBGsEyoWVvbDy4M8PwDkcxFpNM8ko6dicrhSUF/2U+Mn7dyd+Vy
+    V/nlul43sSmULGIU1uEtRuNkFZxSeCuqoVDmgkhA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=wbWxOrIc x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linuxfoundation.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=wbWxOrIc x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=linuxfoundation.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linuxfoundation.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfMdOYCXhN3bmc0ETgbHKqoKbDXxSh8+YppkISsyyOxXa2jDlaVIcirbYWgG+KOurhOlUlPLs7p9LIQoLmxX5e5nDPC1mSIyM/5pVXPVoarmHUlvn2jFG
+    Wan2u3dwgkWBuSBNMgCODOL7uhObZACV1oaAirEhXb0A8uxi2e8MPUmdpIRMXCrzMHL4rnXJWWqvz0q92ryyVgTiU2oVDJ9Cxzg7Lh1WO12mXWv3AhCMHyVI
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=JfrnYn6hAAAA:8 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
+    a=20KFwNOVAAAA:8 a=Z4Rwk6OoAAAA:8 a=1XWaLZrsAAAA:8 a=ag1SF4gXAAAA:8
+    a=OMEiYflpKRaexh0MKCsA:9 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=HkZW87K1Qel5hWWM3VKY:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753552AbeENHTb (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 03:19:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41688 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753513AbeENHT3 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 14 May 2018 03:19:29 -0400
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 35/36] perf/core: Fix possible Spectre-v1 indexing for ->aux_pages[]
+Date: Mon, 14 May 2018 08:49:09 +0200
+Message-Id: <20180514064806.974014887@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064804.252823817@linuxfoundation.org>
 References: <20180514064804.252823817@linuxfoundation.org>
-Subject: Re: [PATCH 4.9 00/36] 4.9.100-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600421456902813173?=
-X-GMAIL-MSGID: =?utf-8?q?1600444833967077779?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.9.y boot: 98 boots: 0 failed, 98 passed (v4.9.99-37-g126d=
-655643a8)
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.9.y/kernel/v4.9.99-37-g126d655643a8/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
-/kernel/v4.9.99-37-g126d655643a8/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.9.y
-Git Describe: v4.9.99-37-g126d655643a8
-Git Commit: 126d655643a828cd86fd7d8e154aa397bd08b31b
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 48 unique boards, 21 SoC families, 16 builds out of 183
+From: Peter Zijlstra <peterz@infradead.org>
+
+commit 4411ec1d1993e8dbff2898390e3fed280d88e446 upstream.
+
+> kernel/events/ring_buffer.c:871 perf_mmap_to_page() warn: potential spectre issue 'rb->aux_pages'
+
+Userspace controls @pgoff through the fault address. Sanitize the
+array index before doing the array dereference.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <stable@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ kernel/events/ring_buffer.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/kernel/events/ring_buffer.c
++++ b/kernel/events/ring_buffer.c
+@@ -14,6 +14,7 @@
+ #include <linux/slab.h>
+ #include <linux/circ_buf.h>
+ #include <linux/poll.h>
++#include <linux/nospec.h>
+ 
+ #include "internal.h"
+ 
+@@ -844,8 +845,10 @@ perf_mmap_to_page(struct ring_buffer *rb
+ 			return NULL;
+ 
+ 		/* AUX space */
+-		if (pgoff >= rb->aux_pgoff)
+-			return virt_to_page(rb->aux_pages[pgoff - rb->aux_pgoff]);
++		if (pgoff >= rb->aux_pgoff) {
++			int aux_pgoff = array_index_nospec(pgoff - rb->aux_pgoff, rb->aux_nr_pages);
++			return virt_to_page(rb->aux_pages[aux_pgoff]);
++		}
+ 	}
+ 
+ 	return __perf_mmap_to_page(rb, pgoff);
