@@ -1,94 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754468AbeENPDY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 11:03:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42032 "EHLO mx1.redhat.com"
+        id S1754502AbeENPEl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 11:04:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752608AbeENPDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 11:03:23 -0400
-Date: Mon, 14 May 2018 10:03:14 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Jiri Slaby <jslaby@suse.cz>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org
-Subject: Re: [PATCH v2 2/6] x86/stacktrace: make clear the success paths
-Message-ID: <20180514150314.3nok4q7eufi3vgql@treble>
-References: <20180514140653.23678-1-jslaby@suse.cz>
- <20180514140653.23678-2-jslaby@suse.cz>
+        id S1752613AbeENPEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 11:04:39 -0400
+Date: Mon, 14 May 2018 11:04:36 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>, Joel Fernandes <joelaf@google.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>, linux-rt-users@vger.kernel.org,
+        kernel-team@lge.com
+Subject: Re: [RFC][PATCH 06/10] tracing: Add trigger file for trace_markers
+ tracefs/ftrace/print
+Message-ID: <20180514110436.336b214b@gandalf.local.home>
+In-Reply-To: <20180514031322.GB9220@sejong>
+References: <20180511194927.190877137@goodmis.org>
+        <20180511195340.876528094@goodmis.org>
+        <20180514031322.GB9220@sejong>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180514140653.23678-2-jslaby@suse.cz>
-User-Agent: NeoMutt/20180323
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 04:06:49PM +0200, Jiri Slaby wrote:
-> Make clear which path is for user tasks and for kthreads and idle
-> tasks. This will allow easier plug-in of ORC unwinder in the next
-> patches.
+On Mon, 14 May 2018 12:13:22 +0900
+Namhyung Kim <namhyung@kernel.org> wrote:
+
+> On Fri, May 11, 2018 at 03:49:33PM -0400, Steven Rostedt wrote:
+> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> > 
+> > Allow writing to the trace_markers file initiate triggers defined in
+> > tracefs/ftrace/print/trigger file. This will allow of user space to trigger
+> > the same type of triggers (including histograms) that the trace events use.
+> > 
+> > Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > Cc: Clark Williams <williams@redhat.com>
+> > Cc: Karim Yaghmour <karim.yaghmour@opersys.com>
+> > Cc: Brendan Gregg <bgregg@netflix.com>
+> > Suggested-by: Joel Fernandes <joelaf@google.com>
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > ---  
 > 
-> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: x86@kernel.org
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> ---
->  arch/x86/kernel/stacktrace.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
+> [SNIP]
+> > diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+> > index e3a658bac10f..de3fce14cd00 100644
+> > --- a/kernel/trace/trace_entries.h
+> > +++ b/kernel/trace/trace_entries.h
+> > @@ -230,7 +230,7 @@ FTRACE_ENTRY(bprint, bprint_entry,
+> >  	FILTER_OTHER
+> >  );
+> >  
+> > -FTRACE_ENTRY(print, print_entry,
+> > +FTRACE_ENTRY_REG(print, print_entry,
+> >  
+> >  	TRACE_PRINT,
+> >  
+> > @@ -242,7 +242,9 @@ FTRACE_ENTRY(print, print_entry,
+> >  	F_printk("%ps: %s",
+> >  		 (void *)__entry->ip, __entry->buf),
+> >  
+> > -	FILTER_OTHER
+> > +	FILTER_OTHER,
+> > +
+> > +	 ftrace_event_register  
 > 
-> diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
-> index 8948b7d9c064..3a4602c2324f 100644
-> --- a/arch/x86/kernel/stacktrace.c
-> +++ b/arch/x86/kernel/stacktrace.c
-> @@ -104,16 +104,18 @@ __save_stack_trace_reliable(struct stack_trace *trace,
->  
->  		regs = unwind_get_entry_regs(&state, NULL);
->  		if (regs) {
-> +			/* Success path for user tasks */
-> +			if (user_mode(regs))
-> +				goto success;
-> +
->  			/*
->  			 * Kernel mode registers on the stack indicate an
->  			 * in-kernel interrupt or exception (e.g., preemption
->  			 * or a page fault), which can make frame pointers
->  			 * unreliable.
->  			 */
-> -			if (!user_mode(regs))
-> -				return -EINVAL;
->  
-> -			break;
-> +			return -EINVAL;
->  		}
->  
->  		addr = unwind_get_return_address(&state);
-> @@ -138,6 +140,11 @@ __save_stack_trace_reliable(struct stack_trace *trace,
->  		return -EINVAL;
->  	}
->  
-> +	/* Success path for non-user tasks, i.e. kthreads and idle tasks */
-> +	if (!(task->flags & (PF_KTHREAD | PF_IDLE)))
-> +		return -EINVAL;
-> +
-> +success:
->  	if (trace->nr_entries < trace->max_entries)
->  		trace->entries[trace->nr_entries++] = ULONG_MAX;
->  
-> -- 
-> 2.16.3
+> I wonder this is still needed since you added __find_event_file()
+> which ignores the reg field.  Maybe I'm missing something..
+
+No, that's not the reason for it. The reason is due to the
+event_trigger_callback() function. I'll update the changelog to specify
+this.
+
+We have something like:
+
+ # echo snapshot > events/ftrace/print/trigger
+
+Which will do:
+
+  event_trigger_write() {
+    event_trigger_regex_write() {
+      trigger_process_regex() {
+        for p in trigger_commands {
+          p->func(); /* trigger_snapshot_cmd->func */
+            event_trigger_callback() {
+              cmd_ops->reg() /* register_trigger() */ {
+                trace_event_trigger_enable_disable() {
+                  trace_event_enable_disable() {
+                    call->class->reg();
+
+Without this patch, we jump to NULL and BOOM!
+                
+
 > 
+> Anyway it looks whitespace damaged.
+>
 
-The unwind_error() check is now getting skipped on the user mode
-success path.  It would probably be safer to check it at the very top of
-the loop so that it always gets checked.
+Thanks, I'll fix it up.
 
-Also the subject can be "clarified" a bit:
-
-  x86/stacktrace: Clarify the reliable success paths
-
--- 
-Josh
+-- Steve
