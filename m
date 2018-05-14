@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752512AbeENVAC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:00:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50900 "EHLO mail.kernel.org"
+        id S1752575AbeENVAJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:00:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752159AbeENU77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752280AbeENU77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 May 2018 16:59:59 -0400
-Message-Id: <20180514205957.505228054@goodmis.org>
+Message-Id: <20180514205957.633659366@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Mon, 14 May 2018 16:58:46 -0400
+Date: Mon, 14 May 2018 16:58:47 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
@@ -22,105 +22,95 @@ Cc: Ingo Molnar <mingo@kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v2 01/14] tracing: Do not reference event data in post call triggers
+Subject: [PATCH v2 02/14] tracing: Add __find_event_file() to find event files without
+ restrictions
 References: <20180514205845.017925650@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0001-tracing-Do-not-reference-event-data-in-post-call-tri.patch
+Content-Disposition: inline; filename=0002-tracing-Add-__find_event_file-to-find-event-files-wi.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Trace event triggers can be called before or after the event has been
-committed. If it has been called after the commit, there's a possibility
-that the event no longer exists. Currently, the two post callers is the
-trigger to disable tracing (traceoff) and the one that will record a stack
-dump (stacktrace). Neither of them reference the trace event entry record,
-as that would lead to a race condition that could pass in corrupted data.
+By adding the function __find_event_file() that can search for files without
+restrictions, such as if the event associated with the file has a reg
+function, or if it has the "ignore" flag set, the files that are associated
+to ftrace internal events (like trace_marker and function events) can be
+found and used.
 
-To prevent any other users of the post data triggers from using the trace
-event record, pass in NULL to the post call trigger functions for the event
-record, as they should never need to use them in the first place.
+find_event_file() still returns a "filtered" file, as most callers need a
+valid trace event file. One created by the trace_events.h macros and not one
+created for parsing ftrace specific events.
 
-This does not fix any bug, but prevents bugs from happening by new post call
-trigger users.
-
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- include/linux/trace_events.h        | 3 +--
- kernel/trace/trace.h                | 4 ++--
- kernel/trace/trace_events_trigger.c | 6 ++----
- 3 files changed, 5 insertions(+), 8 deletions(-)
+ kernel/trace/trace.h        |  3 +++
+ kernel/trace/trace_events.c | 22 +++++++++++++++++-----
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 2bde3eff564c..d1c442d9bd85 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -435,8 +435,7 @@ event_triggers_call(struct trace_event_file *file, void *rec,
- 		    struct ring_buffer_event *event);
- extern void
- event_triggers_post_call(struct trace_event_file *file,
--			 enum event_trigger_type tt,
--			 void *rec, struct ring_buffer_event *event);
-+			 enum event_trigger_type tt);
- 
- bool trace_event_ignore_this_pid(struct trace_event_file *trace_file);
- 
 diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 6fb46a06c9dc..24b666891eaf 100644
+index 24b666891eaf..8ecca43d6aea 100644
 --- a/kernel/trace/trace.h
 +++ b/kernel/trace/trace.h
-@@ -1334,7 +1334,7 @@ event_trigger_unlock_commit(struct trace_event_file *file,
- 		trace_buffer_unlock_commit(file->tr, buffer, event, irq_flags, pc);
+@@ -1454,6 +1454,9 @@ extern void trace_event_enable_tgid_record(bool enable);
+ extern int event_trace_add_tracer(struct dentry *parent, struct trace_array *tr);
+ extern int event_trace_del_tracer(struct trace_array *tr);
  
- 	if (tt)
--		event_triggers_post_call(file, tt, entry, event);
-+		event_triggers_post_call(file, tt);
- }
- 
- /**
-@@ -1367,7 +1367,7 @@ event_trigger_unlock_commit_regs(struct trace_event_file *file,
- 						irq_flags, pc, regs);
- 
- 	if (tt)
--		event_triggers_post_call(file, tt, entry, event);
-+		event_triggers_post_call(file, tt);
- }
- 
- #define FILTER_PRED_INVALID	((unsigned short)-1)
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index d251cabcf69a..cc4148bfc01a 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -97,7 +97,6 @@ EXPORT_SYMBOL_GPL(event_triggers_call);
-  * event_triggers_post_call - Call 'post_triggers' for a trace event
-  * @file: The trace_event_file associated with the event
-  * @tt: enum event_trigger_type containing a set bit for each trigger to invoke
-- * @rec: The trace entry for the event
-  *
-  * For each trigger associated with an event, invoke the trigger
-  * function registered with the associated trigger command, if the
-@@ -108,8 +107,7 @@ EXPORT_SYMBOL_GPL(event_triggers_call);
-  */
- void
- event_triggers_post_call(struct trace_event_file *file,
--			 enum event_trigger_type tt,
--			 void *rec, struct ring_buffer_event *event)
-+			 enum event_trigger_type tt)
- {
- 	struct event_trigger_data *data;
- 
-@@ -117,7 +115,7 @@ event_triggers_post_call(struct trace_event_file *file,
- 		if (data->paused)
- 			continue;
- 		if (data->cmd_ops->trigger_type & tt)
--			data->ops->func(data, rec, event);
-+			data->ops->func(data, NULL, NULL);
++extern struct trace_event_file *__find_event_file(struct trace_array *tr,
++						  const char *system,
++						  const char *event);
+ extern struct trace_event_file *find_event_file(struct trace_array *tr,
+ 						const char *system,
+ 						const char *event);
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 05c7172c6667..caf76355f0a3 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -2473,8 +2473,9 @@ __trace_add_event_dirs(struct trace_array *tr)
  	}
  }
- EXPORT_SYMBOL_GPL(event_triggers_post_call);
+ 
++/* Returns any file that matches the system and event */
+ struct trace_event_file *
+-find_event_file(struct trace_array *tr, const char *system,  const char *event)
++__find_event_file(struct trace_array *tr, const char *system, const char *event)
+ {
+ 	struct trace_event_file *file;
+ 	struct trace_event_call *call;
+@@ -2485,10 +2486,7 @@ find_event_file(struct trace_array *tr, const char *system,  const char *event)
+ 		call = file->event_call;
+ 		name = trace_event_name(call);
+ 
+-		if (!name || !call->class || !call->class->reg)
+-			continue;
+-
+-		if (call->flags & TRACE_EVENT_FL_IGNORE_ENABLE)
++		if (!name || !call->class)
+ 			continue;
+ 
+ 		if (strcmp(event, name) == 0 &&
+@@ -2498,6 +2496,20 @@ find_event_file(struct trace_array *tr, const char *system,  const char *event)
+ 	return NULL;
+ }
+ 
++/* Returns valid trace event files that match system and event */
++struct trace_event_file *
++find_event_file(struct trace_array *tr, const char *system, const char *event)
++{
++	struct trace_event_file *file;
++
++	file = __find_event_file(tr, system, event);
++	if (!file || !file->event_call->class->reg ||
++	    file->event_call->flags & TRACE_EVENT_FL_IGNORE_ENABLE)
++		return NULL;
++
++	return file;
++}
++
+ #ifdef CONFIG_DYNAMIC_FTRACE
+ 
+ /* Avoid typos */
 -- 
 2.17.0
