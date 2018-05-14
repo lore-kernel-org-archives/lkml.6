@@ -1,120 +1,252 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752731AbeENLn1 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:43:27 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:60256 "EHLO
+        id S1752758AbeENLnf (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:43:35 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:60303 "EHLO
         mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752659AbeENLnW (ORCPT
+        with ESMTP id S1752659AbeENLn3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:43:22 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180514114319epoutp031c7a8e124f9a215cd3ce325c9f5d9441~ugCBNIUyo1742717427epoutp03W
-X-AuditID: b6c32a39-8bdff70000000fed-c1-5af976572f43
+        Mon, 14 May 2018 07:43:29 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180514114327epoutp03781ad74c88d1bdd11608138c6e1198c7~ugCIeJ_cu1739517395epoutp03c
+X-AuditID: b6c32a46-145ff70000001024-6e-5af9765edca1
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To: Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>
 Cc: Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH 04/14] thermal: ti-soc-thermal: cleanup COUNTER feature
- handling for OMAP5
-Date: Mon, 14 May 2018 13:42:11 +0200
-Message-id: <1526298141-14045-5-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 05/14] thermal: ti-soc-thermal: remove redundant methods
+ from struct ti_bandgap_data
+Date: Mon, 14 May 2018 13:42:12 +0200
+Message-id: <1526298141-14045-6-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsWy7bCmvm542c8ogzOXNCw2zljPajH/yjVW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsWy7bCmmW5c2c8ogz8nJS02zljPajH/yjVW
         i1Pbm5gsLu+aw2Yxe0k/i8Xn3iOMFk8e9rE5sHvsnHWX3WPxnpdMHn1bVjF6HL+xncnj8ya5
-        ANYoLpuU1JzMstQifbsEroy+tWeZC14LV7Reu8/SwLhYsIuRk0NCwETixMOX7F2MXBxCAjsY
-        JZauPs0C4XxnlOj5f5O1i5EDrOrbTj+I+G5Gif53K9kgnF+MEtfunmYHGcUmYCUxsX0VI4gt
-        IuAmMWvJHzCbWWAqo8SmCfUgtrBAjMTMK0/ZQGwWAVWJNWemg/XyCnhIvJ3eywpxkpzEyWOT
-        wWxOAU+JDe0vwZZJCExgk5i79gsjRJGLxMJNn5kgbGGJV8e3sENcKi1x6agtRH0zo8S3HXuY
-        IWomMErsWS8EYVtLHD5+kRXiOD6Jd197oL7klehogyrxkHh/upMNwnaUeH5mG9TDcxgljtw9
-        zTSBUWoBI8MqRrHUguLc9NRiwwJTveLE3OLSvHS95PzcTYzgqNSy3MF47JzPIUYBDkYlHt6A
-        5T+ihFgTy4orcw8xSnAwK4nw7jb6GSXEm5JYWZValB9fVJqTWnyIUZqDRUmcd47S1yghgfTE
-        ktTs1NSC1CKYLBMHp1QDY9r7aAHmrB1J51+42s54sfb0JY8/d/XZXe4+CP8mrrOowS63xveb
-        r4P11akHS2fIzVW+zOF23phptlUPz+Rrf1at39WctWdFAWt5bOTn2VZOTp9v3FWWeB8st4ut
-        Pddm05cdmVGLJm/85bJ875b7RV7ee54GvfZ9P3FiTtOyy60/ed9+UG7wT1BiKc5INNRiLipO
-        BABgLWecxgIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphluLIzCtJLcpLzFFi42I5/e+xgG542c8og+2bpCw2zljPajH/yjVW
+        ANYoLpuU1JzMstQifbsEroxdLfsYC07bVPzc8pW9gXGrcRcjJ4eEgIlE7+9TTF2MXBxCAjsY
+        JTZ09EI53xkl9n26xtzFyAFWNXWnOER8N6PE4w23GUG6hQR+MUocvOANYrMJWElMbF8FFhcR
+        cJOYteQPmM0sMJVRYtOEehBbWCBNYuO8acwgNouAqsSa9Z/AbF4BD4n+FWvYIC6Skzh5bDIr
+        iM0p4Cmxof0lG8hiCYEpbBIHNi5jhihykbj7p5kFwhaWeHV8CzuELS3xbNVGRoiGZkaJbzv2
+        QDVMYJTYs14IwraWOHz8IivEdXwSHYf/skN8ySvR0QZV4iFx/9IKJgjbUWLRlNMsEN/PAXpm
+        exv7BEapBYwMqxjFUguKc9NTi40KjPSKE3OLS/PS9ZLzczcxgqNSy20H45JzPocYBTgYlXh4
+        A5b/iBJiTSwrrsw9xCjBwawkwrvb6GeUEG9KYmVValF+fFFpTmrxIUZpDhYlcd41Sl+jhATS
+        E0tSs1NTC1KLYLJMHJxSDYzHGlOf5dzgOM7Idm9nuvj+B+UTevzMd4gemXRTc07kspaes9bX
+        fwt5C296POWl8AmHB21qnlNnXPGSs3X+ITz5cqqA/IY3oapLDmx0fbKg4qFph86KMC8d8a92
+        X5gzftzYOf/fKb/K0AnS+3V/lHBLlzrwLUjI1J2Wc2X2tszUtMd3LlziY7ujxFKckWioxVxU
+        nAgA8OAAxcYCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmluLIzCtJLcpLzFFi42I5/e+xgG5s2c8og1l3zC02zljPajH/yjVW
         i1Pbm5gsLu+aw2Yxe0k/i8Xn3iOMFk8e9rE5sHvsnHWX3WPxnpdMHn1bVjF6HL+xncnj8ya5
-        ANYoLpuU1JzMstQifbsEroy+tWeZC14LV7Reu8/SwLhYsIuRg0NCwETi206/LkYuDiGBnYwS
-        u78fZoNwfjFKdLbsYu9i5ORgE7CSmNi+ihHEFhFwk5i15A8jSBGzwFRGicmfTrGBJIQFYiRm
-        XnkKZrMIqEqsOTMdrJlXwEPi7fReVhBbQkBO4uSxyWA2p4CnxIb2l2D1QkA1t3+3sE1g5FnA
-        yLCKUTK1oDg3PbfYqMAwL7Vcrzgxt7g0L10vOT93EyMwjLYd1urbwXh/SfwhRgEORiUe3hUr
-        f0QJsSaWFVfmHmKU4GBWEuHdbfQzSog3JbGyKrUoP76oNCe1+BCjNAeLkjjv7bxjkUIC6Ykl
-        qdmpqQWpRTBZJg5OqQbGyAnLAl4XvFsQuj/+xQcnD/YTrDv77wWZhgl8kTrc8NhS5sf/CeE6
-        e+bc2/Rux47Lkul7f09qXF9YNWf9tt+7nKc67+r4tk2ocrPt21zTeU33Lq5fr61xVXDhlpev
-        XRx11zn9k5pwzOix5/qS1C3tsnGuOWuzMrIf8ThO8zaUFzm8+JaYxVujBCWW4oxEQy3mouJE
-        AOuUJB4fAgAA
-X-CMS-MailID: 20180514114319epcas1p1921a83c1baaaf1e6f94283f462022dc5
+        ANYoLpuU1JzMstQifbsEroxdLfsYC07bVPzc8pW9gXGrcRcjB4eEgInE1J3iXYycHEICOxkl
+        br0o6WLkArJ/MUpsaNrABJJgE7CSmNi+ihHEFhFwk5i15A8jSBGzwFRGicmfTrGBJIQF0iTe
+        TfvHDmKzCKhKrFn/iRnE5hXwkOhfsQasRkJATuLkscmsIDangKfEhvaXbBCbPSRu/25hm8DI
+        s4CRYRWjZGpBcW56brFRgVFearlecWJucWleul5yfu4mRmAQbTus1b+D8fGS+EOMAhyMSjy8
+        Act/RAmxJpYVV+YeYpTgYFYS4d1t9DNKiDclsbIqtSg/vqg0J7X4EKM0B4uSOC9//rFIIYH0
+        xJLU7NTUgtQimCwTB6dUAyO7eUP7kbMbtyZ5hnSd9d15+VaGGf+T6x96tH7LTWm6ffFUZIpF
+        x33tm86Zl3jn3Q3eVWGy2KHzy6L7+jsOShkoRhpKJz4+2/zs/oyYNTvvaPf3brZSkHy9fFvR
+        +enyFw/5PT61X4SrNeP6jIvJuc9Dbvdv0Z4VvfpLts7pZ1/XRszxz3eW/vJOiaU4I9FQi7mo
+        OBEAynWKMx4CAAA=
+X-CMS-MailID: 20180514114326epcas2p2e27987b5be7a1fe614114466c6cf30f8
 X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20180514114319epcas1p1921a83c1baaaf1e6f94283f462022dc5
-X-RootMTR: 20180514114319epcas1p1921a83c1baaaf1e6f94283f462022dc5
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20180514114326epcas2p2e27987b5be7a1fe614114466c6cf30f8
+X-RootMTR: 20180514114326epcas2p2e27987b5be7a1fe614114466c6cf30f8
 References: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180514114319epcas1p1921a83c1baaaf1e6f94283f462022dc5@epcas1p1.samsung.com>
+        <CGME20180514114326epcas2p2e27987b5be7a1fe614114466c6cf30f8@epcas2p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-OMAP5 sensors don't claim COUNTER feature support (they use
-COUNTER_DELAY feature instead) so there is no need to set fields
-of struct temp_sensor_registers which are only used for COUNTER
-feature.
+* Include ti-thermal.h header in ti-bandgap.c.
+
+* ->expose_sensor and ->remove_sensor methods are always defined
+  and set to ti_thermal_[expose,remove]_sensor() so we can use
+  these functions directly (dummy functions will be provided in
+  case of CONFIG_TI_THERMAL=n).
+
+* ->report_temperature is defined only when TALERT feature is
+  supported so it also redundant - it is only used when TALERT
+  feature is enabled and the method is always defined to
+  ti_thermal_report_sensor_temperature() (dummy function will
+  be provided in case of CONFIG_TI_THERMAL=n).
 
 There should be no functional changes caused by this patch.
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/thermal/ti-soc-thermal/omap5-thermal-data.c | 9 ---------
- drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h   | 3 ---
- 2 files changed, 12 deletions(-)
+ drivers/thermal/ti-soc-thermal/dra752-thermal-data.c |  3 ---
+ drivers/thermal/ti-soc-thermal/omap3-thermal-data.c  |  6 ------
+ drivers/thermal/ti-soc-thermal/omap4-thermal-data.c  |  8 --------
+ drivers/thermal/ti-soc-thermal/omap5-thermal-data.c  |  3 ---
+ drivers/thermal/ti-soc-thermal/ti-bandgap.c          | 20 ++++++++------------
+ drivers/thermal/ti-soc-thermal/ti-bandgap.h          |  6 ------
+ 6 files changed, 8 insertions(+), 38 deletions(-)
 
+diff --git a/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c b/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c
+index e8ab7e5..c854642 100644
+--- a/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c
++++ b/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c
+@@ -336,9 +336,6 @@
+ 	.conv_table = dra752_adc_to_temp,
+ 	.adc_start_val = DRA752_ADC_START_VALUE,
+ 	.adc_end_val = DRA752_ADC_END_VALUE,
+-	.expose_sensor = ti_thermal_expose_sensor,
+-	.remove_sensor = ti_thermal_remove_sensor,
+-	.report_temperature = ti_thermal_report_sensor_temperature,
+ 	.sensors = {
+ 		{
+ 		.registers = &dra752_mpu_temp_sensor_registers,
+diff --git a/drivers/thermal/ti-soc-thermal/omap3-thermal-data.c b/drivers/thermal/ti-soc-thermal/omap3-thermal-data.c
+index f536680..cc6498e 100644
+--- a/drivers/thermal/ti-soc-thermal/omap3-thermal-data.c
++++ b/drivers/thermal/ti-soc-thermal/omap3-thermal-data.c
+@@ -80,9 +80,6 @@
+ 	.conv_table = omap34xx_adc_to_temp,
+ 	.adc_start_val = 0,
+ 	.adc_end_val = 127,
+-	.expose_sensor = ti_thermal_expose_sensor,
+-	.remove_sensor = ti_thermal_remove_sensor,
+-
+ 	.sensors = {
+ 		{
+ 		.registers = &omap34xx_mpu_temp_sensor_registers,
+@@ -148,9 +145,6 @@
+ 	.conv_table = omap36xx_adc_to_temp,
+ 	.adc_start_val = 0,
+ 	.adc_end_val = 127,
+-	.expose_sensor = ti_thermal_expose_sensor,
+-	.remove_sensor = ti_thermal_remove_sensor,
+-
+ 	.sensors = {
+ 		{
+ 		.registers = &omap36xx_mpu_temp_sensor_registers,
+diff --git a/drivers/thermal/ti-soc-thermal/omap4-thermal-data.c b/drivers/thermal/ti-soc-thermal/omap4-thermal-data.c
+index 85ba9dc..14d9fe2 100644
+--- a/drivers/thermal/ti-soc-thermal/omap4-thermal-data.c
++++ b/drivers/thermal/ti-soc-thermal/omap4-thermal-data.c
+@@ -72,8 +72,6 @@
+ 	.conv_table = omap4430_adc_to_temp,
+ 	.adc_start_val = OMAP4430_ADC_START_VALUE,
+ 	.adc_end_val = OMAP4430_ADC_END_VALUE,
+-	.expose_sensor = ti_thermal_expose_sensor,
+-	.remove_sensor = ti_thermal_remove_sensor,
+ 	.sensors = {
+ 		{
+ 		.registers = &omap4430_mpu_temp_sensor_registers,
+@@ -202,9 +200,6 @@
+ 	.conv_table = omap4460_adc_to_temp,
+ 	.adc_start_val = OMAP4460_ADC_START_VALUE,
+ 	.adc_end_val = OMAP4460_ADC_END_VALUE,
+-	.expose_sensor = ti_thermal_expose_sensor,
+-	.remove_sensor = ti_thermal_remove_sensor,
+-	.report_temperature = ti_thermal_report_sensor_temperature,
+ 	.sensors = {
+ 		{
+ 		.registers = &omap4460_mpu_temp_sensor_registers,
+@@ -233,9 +228,6 @@
+ 	.conv_table = omap4460_adc_to_temp,
+ 	.adc_start_val = OMAP4460_ADC_START_VALUE,
+ 	.adc_end_val = OMAP4460_ADC_END_VALUE,
+-	.expose_sensor = ti_thermal_expose_sensor,
+-	.remove_sensor = ti_thermal_remove_sensor,
+-	.report_temperature = ti_thermal_report_sensor_temperature,
+ 	.sensors = {
+ 		{
+ 		.registers = &omap4460_mpu_temp_sensor_registers,
 diff --git a/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c b/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
-index 8191bae..e384be1 100644
+index e384be1..843faa7 100644
 --- a/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
 +++ b/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
-@@ -41,9 +41,6 @@
- 	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
- 	.mask_freeze_mask = OMAP5430_MASK_FREEZE_MPU_MASK,
+@@ -273,9 +273,6 @@
+ 	.conv_table = omap5430_adc_to_temp,
+ 	.adc_start_val = OMAP5430_ADC_START_VALUE,
+ 	.adc_end_val = OMAP5430_ADC_END_VALUE,
+-	.expose_sensor = ti_thermal_expose_sensor,
+-	.remove_sensor = ti_thermal_remove_sensor,
+-	.report_temperature = ti_thermal_report_sensor_temperature,
+ 	.sensors = {
+ 		{
+ 		.registers = &omap5430_mpu_temp_sensor_registers,
+diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+index 097328d..3ac74fe 100644
+--- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
++++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+@@ -42,6 +42,7 @@
+ #include <linux/io.h>
  
--	.bgap_counter = OMAP5430_BGAP_CTRL_OFFSET,
--	.counter_mask = OMAP5430_COUNTER_MASK,
--
- 	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_MPU_OFFSET,
- 	.threshold_thot_mask = OMAP5430_T_HOT_MASK,
- 	.threshold_tcold_mask = OMAP5430_T_COLD_MASK,
-@@ -77,9 +74,6 @@
- 	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
- 	.mask_freeze_mask = OMAP5430_MASK_FREEZE_GPU_MASK,
+ #include "ti-bandgap.h"
++#include "ti-thermal.h"
  
--	.bgap_counter = OMAP5430_BGAP_CTRL_OFFSET,
--	.counter_mask = OMAP5430_COUNTER_MASK,
--
- 	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_GPU_OFFSET,
- 	.threshold_thot_mask = OMAP5430_T_HOT_MASK,
- 	.threshold_tcold_mask = OMAP5430_T_COLD_MASK,
-@@ -114,9 +108,6 @@
- 	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
- 	.mask_freeze_mask = OMAP5430_MASK_FREEZE_CORE_MASK,
+ static int ti_bandgap_force_single_read(struct ti_bandgap *bgp, int id);
  
--	.bgap_counter = OMAP5430_BGAP_CTRL_OFFSET,
--	.counter_mask = OMAP5430_COUNTER_MASK,
--
- 	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_CORE_OFFSET,
- 	.threshold_thot_mask = OMAP5430_T_HOT_MASK,
- 	.threshold_tcold_mask = OMAP5430_T_COLD_MASK,
-diff --git a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-index dcbf903..223c7a8 100644
---- a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-@@ -93,9 +93,6 @@
- #define OMAP5430_MASK_HOT_MPU_MASK			BIT(1)
- #define OMAP5430_MASK_COLD_MPU_MASK			BIT(0)
+@@ -248,8 +249,7 @@ static irqreturn_t ti_bandgap_talert_irq_handler(int irq, void *data)
+ 			t_hot, t_cold);
  
--/* OMAP5430.BANDGAP_COUNTER */
--#define OMAP5430_COUNTER_MASK				(0xffffff << 0)
--
- /* OMAP5430.BANDGAP_THRESHOLD */
- #define OMAP5430_T_HOT_MASK				(0x3ff << 16)
- #define OMAP5430_T_COLD_MASK				(0x3ff << 0)
+ 		/* report temperature to whom may concern */
+-		if (bgp->conf->report_temperature)
+-			bgp->conf->report_temperature(bgp, i);
++		ti_thermal_report_sensor_temperature(bgp, i);
+ 	}
+ 	spin_unlock(&bgp->lock);
+ 
+@@ -1017,12 +1017,10 @@ int ti_bandgap_probe(struct platform_device *pdev)
+ 				goto remove_sensors;
+ 		}
+ 
+-		if (bgp->conf->expose_sensor) {
+-			domain = bgp->conf->sensors[i].domain;
+-			ret = bgp->conf->expose_sensor(bgp, i, domain);
+-			if (ret)
+-				goto remove_last_cooling;
+-		}
++		domain = bgp->conf->sensors[i].domain;
++		ret = ti_thermal_expose_sensor(bgp, i, domain);
++		if (ret)
++			goto remove_last_cooling;
+ 	}
+ 
+ 	/*
+@@ -1048,8 +1046,7 @@ int ti_bandgap_probe(struct platform_device *pdev)
+ 	for (i--; i >= 0; i--) {
+ 		if (bgp->conf->sensors[i].unregister_cooling)
+ 			bgp->conf->sensors[i].unregister_cooling(bgp, i);
+-		if (bgp->conf->remove_sensor)
+-			bgp->conf->remove_sensor(bgp, i);
++		ti_thermal_remove_sensor(bgp, i);
+ 	}
+ 	ti_bandgap_power(bgp, false);
+ disable_clk:
+@@ -1079,8 +1076,7 @@ int ti_bandgap_remove(struct platform_device *pdev)
+ 		if (bgp->conf->sensors[i].unregister_cooling)
+ 			bgp->conf->sensors[i].unregister_cooling(bgp, i);
+ 
+-		if (bgp->conf->remove_sensor)
+-			bgp->conf->remove_sensor(bgp, i);
++		ti_thermal_remove_sensor(bgp, i);
+ 	}
+ 
+ 	ti_bandgap_power(bgp, false);
+diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.h b/drivers/thermal/ti-soc-thermal/ti-bandgap.h
+index 68d39ad..809dbdc 100644
+--- a/drivers/thermal/ti-soc-thermal/ti-bandgap.h
++++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.h
+@@ -313,9 +313,6 @@ struct ti_temp_sensor {
+  * @fclock_name: clock name of the functional clock
+  * @div_ck_name: clock name of the clock divisor
+  * @sensor_count: count of temperature sensor within this bandgap device
+- * @report_temperature: callback to report thermal alert to thermal API
+- * @expose_sensor: callback to export sensor to thermal API
+- * @remove_sensor: callback to destroy sensor from thermal API
+  * @sensors: array of sensors present in this bandgap instance
+  *
+  * This is a data structure which should hold most of the static configuration
+@@ -332,9 +329,6 @@ struct ti_bandgap_data {
+ 	char				*fclock_name;
+ 	char				*div_ck_name;
+ 	int				sensor_count;
+-	int (*report_temperature)(struct ti_bandgap *bgp, int id);
+-	int (*expose_sensor)(struct ti_bandgap *bgp, int id, char *domain);
+-	int (*remove_sensor)(struct ti_bandgap *bgp, int id);
+ 
+ 	/* this needs to be at the end */
+ 	struct ti_temp_sensor		sensors[];
 -- 
 1.9.1
