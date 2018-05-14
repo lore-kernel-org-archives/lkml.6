@@ -1,38 +1,37 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqJu0Du/PIcuzuHGedTyskS2sD3wH03c/yUUkWULMBEtxQ9K2rMM/nFxHwELngd6SzEJyo3
-ARC-Seal: i=1; a=rsa-sha256; t=1526280760; cv=none;
+X-Google-Smtp-Source: AB8JxZpDq0/cudeKr6PNJokV37KSbvOv5hcXJ942TkXOixvSxr47uV9PTwAcZzUeprMbRcHLwaw8
+ARC-Seal: i=1; a=rsa-sha256; t=1526280757; cv=none;
         d=google.com; s=arc-20160816;
-        b=e7hHeydyi5J0v38wjyidPNrMPPlxpBfZFvlo4oVhiAvmax1XlZ9J6x2uOv6xDFcrft
-         naVv2Fnb1zjZPlaA4sIbcvz0pBbcA7my1kkkEhW1pzaAgXhpeNTIATBDCd+UaeTzJsdx
-         qYJpNucGny6gLIsDOhDUZPts1mP3w3ub23c5yT2N33lnn8LFNn3gAJ0kQlbwQu1U4lYw
-         aX1+txJSMRz8EgF+ZpLcN5DT32w5txrFBjZbulIZRK3vL75xxZmlgfeGT0tUTUJucfa6
-         hkRSuaNZ4ttFs3xQ74xR/Mpz0xtvPR2uTcEBPW1d0yPxqS778iNJlbmeP4ANV88Ns/eN
-         zf6g==
+        b=Hf5GXi6biPKAORWzq1YsHNofSprgOQx2ivwrkdaNbxG8fsix4bXcI3sDhbLLCELBZe
+         G1xJ0ey9djGaU4mSR7FTxQDg6wSFxThWbyBbUKnSs2T3jv87dzXfFRASy4rKJ1TxL8XG
+         PQG2u1ISXwmn5nVKXGbJyHegqy0cmkhYQVfWbxs4FC3TQDB5l9NusmLAckh5DnEmXimR
+         5p4pVv61mOaoqOiKI+EyETmnaZ1SgbzuAnojQjzO8sL0V1TeWHR6U5AXAk6YwmBCj0uJ
+         gZNelRHcxnZsd/IPesrnzC58vOhjDxr1avgt82sbTKxVLwrL+okhtpzqwOCE6zU9BSht
+         4ETA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=dvc/5EEZUeO5ZpnUe/j3qnPdfjeMvalPNcifJKO9vSE=;
-        b=kVErAOmRny56O/yWi/OsRvBR183WC5lJADTF8ZNSU0JvYWMFvixFgrVKHR3EVXA3lh
-         wG6G5dlBpeRUrQ7gBveJqMXX9736QrxT0pSW2fb74yqdKTpw8F41CjJXALiSZTizuNxu
-         C77xFc6AURdO+xmkLwWfdm8+teiPh/GSi+9QyXWyiEoh1LZKaxwY9bY0x+YgFvmS7jWW
-         cO47GBBuIOQ1pgrRTCHtjDQDAYgVZ0ugCATmSf7Ub6d3FtJSdIkFR308Yq8zHjEwFg9q
-         rbElb2Sge72zPV/eUhbSHe/9TjhWRB7ocUgcuf4uuQd1IKM572zaIiUOyPs1P/kAEunj
-         8aPQ==
+        bh=PKxXLNibukgVUVDPzcyZrTNqIZrIfOglXNnF5dgYag4=;
+        b=ZTCVWikNHYBEr93xO67W/4eUgJWaj2DlbyDUT+jBLYIBoEtOzTjPUoKLUprd5rGbLr
+         fafPGLjtbIUm2rtIYTUjN+IBatlkIWaA0/s39QhPC2SCEtgtgxnZicg9r0ZyFkT4QrUi
+         7luC+kXe49ojXjUh3Yfjg7d9vldOxKvF3TY+yIPT6Z5uO4Buy8EFC1KIq/FZwYr8MQfI
+         pvwFnouFV7Xnlq2vDZyt61mPOe60RdbTx0OMC87IhmL/iIoXQnTHc6ULsNfqWCxBh2op
+         aW3X3qSJut92zL0Qo9EiMTxmVKQs6bUaw56KadM7E/d7+crnmHG/NLSD8P3m6insaIdd
+         jBWA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=X3xtPfnA;
+       dkim=pass header.i=@kernel.org header.s=default header.b=DIueHqYt;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=X3xtPfnA;
+       dkim=pass header.i=@kernel.org header.s=default header.b=DIueHqYt;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Jimmy Assarsson <extja@kvaser.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.4 47/56] can: kvaser_usb: Increase correct stats counter in kvaser_usb_rx_can_msg()
-Date: Mon, 14 May 2018 08:48:52 +0200
-Message-Id: <20180514064759.179348714@linuxfoundation.org>
+	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.4 46/56] tracing: Fix regex_match_front() to not over compare the test string
+Date: Mon, 14 May 2018 08:48:51 +0200
+Message-Id: <20180514064759.044491014@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421236759746459?=
-X-GMAIL-MSGID: =?utf-8?q?1600421375007614836?=
+X-GMAIL-THRID: =?utf-8?q?1600421234253584189?=
+X-GMAIL-MSGID: =?utf-8?q?1600421372066307073?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,29 +50,39 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Jimmy Assarsson <extja@kvaser.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 6ee00865ffe4e8c8ba4a68d26db53c7ec09bbb89 upstream.
+commit dc432c3d7f9bceb3de6f5b44fb9c657c9810ed6d upstream.
 
-Increase rx_dropped, if alloc_can_skb() fails, not tx_dropped.
+The regex match function regex_match_front() in the tracing filter logic,
+was fixed to test just the pattern length from testing the entire test
+string. That is, it went from strncmp(str, r->pattern, len) to
+strcmp(str, r->pattern, r->len).
 
-Signed-off-by: Jimmy Assarsson <extja@kvaser.com>
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+The issue is that str is not guaranteed to be nul terminated, and if r->len
+is greater than the length of str, it can access more memory than is
+allocated.
+
+The solution is to add a simple test if (len < r->len) return 0.
+
+Cc: stable@vger.kernel.org
+Fixes: 285caad415f45 ("tracing/filters: Fix MATCH_FRONT_ONLY filter matching")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/usb/kvaser_usb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_events_filter.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/can/usb/kvaser_usb.c
-+++ b/drivers/net/can/usb/kvaser_usb.c
-@@ -1175,7 +1175,7 @@ static void kvaser_usb_rx_can_msg(const
+--- a/kernel/trace/trace_events_filter.c
++++ b/kernel/trace/trace_events_filter.c
+@@ -322,6 +322,9 @@ static int regex_match_full(char *str, s
  
- 	skb = alloc_can_skb(priv->netdev, &cf);
- 	if (!skb) {
--		stats->tx_dropped++;
-+		stats->rx_dropped++;
- 		return;
- 	}
- 
+ static int regex_match_front(char *str, struct regex *r, int len)
+ {
++	if (len < r->len)
++		return 0;
++
+ 	if (strncmp(str, r->pattern, r->len) == 0)
+ 		return 1;
+ 	return 0;
