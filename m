@@ -1,186 +1,207 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752447AbeENSzv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 14:55:51 -0400
-Received: from sonic306-27.consmr.mail.ne1.yahoo.com ([66.163.189.89]:36603
-        "EHLO sonic306-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751515AbeENSzs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 14:55:48 -0400
-X-YMail-OSG: i4_OKgMVM1mIRrau39lVN6Z4N9SywQvPXouXLntToVtsHZ65MrdhWE8PvOMiW1f
- eVoyzAWlY90PHMq5dv3Iogr8jqUP4Dd1O_BYLia36RjXQOLwT4_i6876Q4UOee_MAIAV7JaVny6U
- rrhGuWruW2NE9.ySf_AjvsZUT4P1KOKVu6hVYxB3gIsnqt98vlTGCNBUO3KRxYfzm9OdyPfoa8dZ
- XW95CcKHgiYGYNaVs5lNAnf6UAPhR1Qm3ujUgcLMtadG7lRyJM.rG4ue_wua3ZNpWVcoMaSLYopa
- aqyMoKe4MzEq5grnP8iY0PgONcgWFgonrOQeTbxCGPe9jDcQQ_luE_hp1OOsw1w1M1hlZ.0Pu5uV
- rRW2DlXj5whTAYWUp1qZ15ZGea5HDGs1h950oswnOwrAbbgSHi9nyHl9zAkoERIC.e2Hdk9vMRYK
- JoXmHZ.UAvkc_FLh5JHTa7exdZd6SgzLs.dQYLq8LDEm4kPCwHlWQ3HTUatpXqNiEyLJCGuEj_l1
- oivWk9ixGJXEooMomz2fzo526ZXeGw24R5_obakkt6one5pS3bHNFTJi9hD9PKFueBS1bVvDzzSN
- yxFUqeZtnVmwZbpS_lk2EC.cs799u9Bd04toFWHwBNU813MlwFoAWcUgUoE_vcZqLNsh_0l0KrH6
- u_JyxHbZmKXo57FGy2SNyuyQyfcSJ04y2
-Subject: Re: [PATCH 20/23] LSM: Move common usercopy into
-To: Stephen Smalley <sds@tycho.nsa.gov>,
-        LSM <linux-security-module@vger.kernel.org>,
-        LKLM <linux-kernel@vger.kernel.org>, Paul Moore <paul@paul-moore.com>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        James Morris <jmorris@namei.org>
-References: <7e8702ce-2598-e0a3-31a2-bc29157fb73d@schaufler-ca.com>
- <cb3455a2-b957-8a9a-f056-35f97fe51e71@schaufler-ca.com>
- <a9e6b33b-3d17-2535-5798-bc092e8559c3@tycho.nsa.gov>
- <992325e2-0f53-0b3d-ddd2-f4f8ba7ccf89@tycho.nsa.gov>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <0c6ec4e0-1562-8f30-09e9-9de0109b2cbc@schaufler-ca.com>
-Date: Mon, 14 May 2018 11:55:41 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <992325e2-0f53-0b3d-ddd2-f4f8ba7ccf89@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1752469AbeENS4L (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 14:56:11 -0400
+Received: from mga06.intel.com ([134.134.136.31]:55031 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751855AbeENSw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 14:52:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,401,1520924400";
+   d="scan'208";a="39244621"
+From: Fenghua Yu <fenghua.yu@intel.com>
+To: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@linux.intel.com>,
+        "Ashok Raj" <ashok.raj@intel.com>,
+        "Ravi V Shankar" <ravi.v.shankar@intel.com>,
+        "Tony Luck" <tony.luck@intel.com>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Rafael Wysocki" <rafael.j.wysocki@intel.com>,
+        "Arjan van de Ven" <arjan@infradead.org>,
+        "Alan Cox" <alan@linux.intel.com>
+Cc: "x86" <x86@kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH 01/15] x86/split_lock: Add CONFIG and enumerate #AC exception for split locked access feature
+Date: Mon, 14 May 2018 11:52:11 -0700
+Message-Id: <1526323945-211107-2-git-send-email-fenghua.yu@intel.com>
+X-Mailer: git-send-email 2.5.0
+In-Reply-To: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
+References: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/14/2018 9:53 AM, Stephen Smalley wrote:
-> On 05/14/2018 11:12 AM, Stephen Smalley wrote:
->> On 05/10/2018 08:55 PM, Casey Schaufler wrote:
->>> From: Casey Schaufler <casey@schaufler-ca.com>
->>> Date: Thu, 10 May 2018 15:54:25 -0700
->>> Subject: [PATCH 20/23] LSM: Move common usercopy into
->>>  security_getpeersec_stream
->>>
->>> The modules implementing hook for getpeersec_stream
->>> don't need to be duplicating the copy-to-user checks.
->>> Moving the user copy part into the infrastructure makes
->>> the security module code simpler and reduces the places
->>> where user copy code may go awry.
->>>
->>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>> ---
->>>  include/linux/lsm_hooks.h  | 10 ++++------
->>>  include/linux/security.h   |  6 ++++--
->>>  security/apparmor/lsm.c    | 28 ++++++++++------------------
->>>  security/security.c        | 17 +++++++++++++++--
->>>  security/selinux/hooks.c   | 22 +++++++---------------
->>>  security/smack/smack_lsm.c | 19 ++++++++-----------
->>>  6 files changed, 48 insertions(+), 54 deletions(-)
->>>
->>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->>> index 81504623afb4..84bc9ec01931 100644
->>> --- a/include/linux/lsm_hooks.h
->>> +++ b/include/linux/lsm_hooks.h
->>> @@ -841,9 +841,8 @@
->>>   *	SO_GETPEERSEC.  For tcp sockets this can be meaningful if the
->>>   *	socket is associated with an ipsec SA.
->>>   *	@sock is the local socket.
->>> - *	@optval userspace memory where the security state is to be copied.
->>> - *	@optlen userspace int where the module should copy the actual length
->>> - *	of the security state.
->>> + *	@optval the security state.
->>> + *	@optlen the actual length of the security state.
->>>   *	@len as input is the maximum length to copy to userspace provided
->>>   *	by the caller.
->>>   *	Return 0 if all is well, otherwise, typical getsockopt return
->>> @@ -1674,9 +1673,8 @@ union security_list_options {
->>>  	int (*socket_setsockopt)(struct socket *sock, int level, int optname);
->>>  	int (*socket_shutdown)(struct socket *sock, int how);
->>>  	int (*socket_sock_rcv_skb)(struct sock *sk, struct sk_buff *skb);
->>> -	int (*socket_getpeersec_stream)(struct socket *sock,
->>> -					char __user *optval,
->>> -					int __user *optlen, unsigned int len);
->>> +	int (*socket_getpeersec_stream)(struct socket *sock, char **optval,
->>> +					int *optlen, unsigned int len);
->>>  	int (*socket_getpeersec_dgram)(struct socket *sock,
->>>  					struct sk_buff *skb,
->>>  					struct secids *secid);
->>> diff --git a/include/linux/security.h b/include/linux/security.h
->>> index ab70064c283f..712d138e0148 100644
->>> --- a/include/linux/security.h
->>> +++ b/include/linux/security.h
->>> @@ -1369,8 +1369,10 @@ static inline int security_sock_rcv_skb(struct sock *sk,
->>>  	return 0;
->>>  }
->>>  
->>> -static inline int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
->>> -						    int __user *optlen, unsigned len)
->>> +static inline int security_socket_getpeersec_stream(struct socket *sock,
->>> +						    char __user *optval,
->>> +						    int __user *optlen,
->>> +						    unsigned int len)
->>>  {
->>>  	return -ENOPROTOOPT;
->>>  }
->>> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
->>> index 90453dbb4fac..7444cfa689b3 100644
->>> --- a/security/apparmor/lsm.c
->>> +++ b/security/apparmor/lsm.c
->>> @@ -1017,10 +1017,8 @@ static struct aa_label *sk_peer_label(struct sock *sk)
->>>   *
->>>   * Note: for tcp only valid if using ipsec or cipso on lan
->>>   */
->>> -static int apparmor_socket_getpeersec_stream(struct socket *sock,
->>> -					     char __user *optval,
->>> -					     int __user *optlen,
->>> -					     unsigned int len)
->>> +static int apparmor_socket_getpeersec_stream(struct socket *sock, char **optval,
->>> +					     int *optlen, unsigned int len)
->>>  {
->>>  	char *name;
->>>  	int slen, error = 0;
->>> @@ -1037,22 +1035,16 @@ static int apparmor_socket_getpeersec_stream(struct socket *sock,
->>>  				 FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
->>>  				 FLAG_HIDDEN_UNCONFINED, GFP_KERNEL);
->>>  	/* don't include terminating \0 in slen, it breaks some apps */
->>> -	if (slen < 0) {
->>> +	if (slen < 0)
->>>  		error = -ENOMEM;
->>> -	} else {
->>> -		if (slen > len) {
->>> -			error = -ERANGE;
->>> -		} else if (copy_to_user(optval, name, slen)) {
->>> -			error = -EFAULT;
->>> -			goto out;
->>> -		}
->>> -		if (put_user(slen, optlen))
->>> -			error = -EFAULT;
->>> -out:
->>> -		kfree(name);
->>> -
->>> +	else if (slen > len)
->>> +		error = -ERANGE;
->>> +	else {
->>> +		*optlen = slen;
->>> +		*optval = name;
->>>  	}
->>> -
->>> +	if (error)
->>> +		kfree(name);
->>>  done:
->>>  	end_current_label_crit_section(label);
->>>  
->>> diff --git a/security/security.c b/security/security.c
->>> index cbe1a497ec5a..6144ff52d862 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -1924,8 +1924,21 @@ EXPORT_SYMBOL(security_sock_rcv_skb);
->>>  int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
->>>  				      int __user *optlen, unsigned len)
->>>  {
->>> -	return call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
->>> -				optval, optlen, len);
->>> +	char *tval = NULL;
->>> +	u32 tlen;
->>> +	int rc;
->>> +
->>> +	rc = call_int_hook(socket_getpeersec_stream, -ENOPROTOOPT, sock,
->>> +			   &tval, &tlen, len);
->>> +	if (rc == 0) {
->>> +		tlen = strlen(tval) + 1;
->> Why are you recomputing tlen here from what the module provided, and further presuming it must be nul-terminated?
-> Also, at least for SELinux, we copy out the length even when returning ERANGE, and libselinux uses that to realloc the buffer and try again.
+Add CONFIG_SPLIT_LOCK_AC (default: y, dependent on X86 and CPU_SUP_INTEL)
+to control inclusion of the feature.
 
-All points acked and will be repaired. Thanks.
+Bit 29 in MSR TEST_CTL 0x33 can only be set on processors that support
+the feature. On processors not supporting the feature, the bit is reserved
+i.e. can not be set as one) or the MSR doesn't exist.
+
+To detect the feature, attempt to set the bit in the MSR. If the writing
+succeeds, the feature is available. Otherwise, the feature is not
+supported on this platform.
+
+And the enumeration happens before SMP so all processors can use
+enumerated result when SMP boots.
+
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+---
+ arch/x86/Kconfig                 | 12 ++++++++
+ arch/x86/include/asm/cpu.h       |  5 ++++
+ arch/x86/include/asm/msr-index.h |  5 ++++
+ arch/x86/kernel/cpu/Makefile     |  1 +
+ arch/x86/kernel/cpu/common.c     |  1 +
+ arch/x86/kernel/cpu/split_lock.c | 62 ++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 86 insertions(+)
+ create mode 100644 arch/x86/kernel/cpu/split_lock.c
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index c07f492b871a..38baf5fb8556 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -448,6 +448,18 @@ config INTEL_RDT
+ 
+ 	  Say N if unsure.
+ 
++config SPLIT_LOCK_AC
++	bool "#AC exception for split locked accesses support"
++	default y
++	depends on X86 && CPU_SUP_INTEL
++	help
++	  Select to support #AC exception for split locked accesses. More
++	  detailed information about the feature can be found in
++	  Intel Architecture Instruction Set Extensions and Future Feature
++	  Programming Reference.
++
++	  Say N if unsure.
++
+ if X86_32
+ config X86_BIGSMP
+ 	bool "Support for big SMP systems with more than 8 CPUs"
+diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
+index adc6cc86b062..c73b6d369047 100644
+--- a/arch/x86/include/asm/cpu.h
++++ b/arch/x86/include/asm/cpu.h
+@@ -40,4 +40,9 @@ int mwait_usable(const struct cpuinfo_x86 *);
+ unsigned int x86_family(unsigned int sig);
+ unsigned int x86_model(unsigned int sig);
+ unsigned int x86_stepping(unsigned int sig);
++#ifdef CONFIG_SPLIT_LOCK_AC
++int __init enumerate_split_lock(void);
++#else /* CONFIG_SPLIT_LOCK_AC */
++static inline int enumerate_split_lock(void) { return 0; }
++#endif /* CONFIG_SPLIT_LOCK_AC */
+ #endif /* _ASM_X86_CPU_H */
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 53d5b1b9255e..c791190c8c71 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -39,6 +39,11 @@
+ 
+ /* Intel MSRs. Some also available on other CPUs */
+ 
++#define MSR_TEST_CTL					0x00000033
++#define MSR_TEST_CTL_ENABLE_AC_SPLIT_LOCK_SHIFT		29
++#define MSR_TEST_CTL_ENABLE_AC_SPLIT_LOCK		BIT(29)
++#define MSR_TEST_CTL_DISABLE_LOCK_ASSERT_SPLIT_LOCK	BIT(31)
++
+ #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
+ #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
+ #define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index a66229f51b12..1b633450e372 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -44,6 +44,7 @@ obj-$(CONFIG_MICROCODE)			+= microcode/
+ obj-$(CONFIG_X86_LOCAL_APIC)		+= perfctr-watchdog.o
+ 
+ obj-$(CONFIG_HYPERVISOR_GUEST)		+= vmware.o hypervisor.o mshyperv.o
++obj-$(CONFIG_SPLIT_LOCK_AC)		+= split_lock.o
+ 
+ ifdef CONFIG_X86_FEATURE_NAMES
+ quiet_cmd_mkcapflags = MKCAP   $@
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index ce243f7d2d4e..7684e82e254f 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1008,6 +1008,7 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 	 */
+ 	setup_clear_cpu_cap(X86_FEATURE_PCID);
+ #endif
++	enumerate_split_lock();
+ }
+ 
+ void __init early_cpu_init(void)
+diff --git a/arch/x86/kernel/cpu/split_lock.c b/arch/x86/kernel/cpu/split_lock.c
+new file mode 100644
+index 000000000000..2ab28419e080
+--- /dev/null
++++ b/arch/x86/kernel/cpu/split_lock.c
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Enable #AC exception for split locked accesses
++ *
++ * Copyright (C) 2018 Intel Corporation
++ *
++ * Author:
++ *	Fenghua Yu <fenghua.yu@intel.com>
++ */
++
++#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
++
++#include <linux/printk.h>
++#include <asm/msr.h>
++
++static bool split_lock_ac_supported;
++
++/*
++ * On processors not supporting #AC exception for split lock feature,
++ * MSR_TEST_CTL may not exist or MSR_TEST_CTL exists but the bit 29 is
++ * reserved.
++ *
++ * MSR_TEST_CTL exists and the bit 29 can be set as one only on processors
++ * that support the feature.
++ *
++ * To enumerate #AC exception for split lock feature, try to set bit 29 as
++ * one in MSR_TEST_CTL. If the bit is successfully set as 1, the feature
++ * is supported and the variable split_lock_ac_supported is set as true.
++ * Otherwise, the feature is not available.
++ */
++void __init enumerate_split_lock(void)
++{
++	u32 l, h, l_orig;
++	int ret;
++
++	/* Attempt to read the MSR. If the MSR doesn't exist, reading fails. */
++	ret = rdmsr_safe(MSR_TEST_CTL, &l, &h);
++	if (ret)
++		return;
++
++	l_orig = l;
++
++	/* Turn on the split lock bit */
++	l |= MSR_TEST_CTL_ENABLE_AC_SPLIT_LOCK;
++
++	/* Set the bit in the MSR */
++	ret = wrmsr_safe(MSR_TEST_CTL, l, h);
++	if (ret)
++		return;
++
++	/* When coming to here, the feature is supported on this platform. */
++	split_lock_ac_supported = true;
++
++	/*
++	 *
++	 * Need to restore split lock setting to original BIOS setting before
++	 * leaving.
++	 */
++	wrmsr(MSR_TEST_CTL, l_orig, h);
++
++	pr_info("#AC exception for split locked accesses is supported\n");
++}
+-- 
+2.5.0
