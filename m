@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752602AbeENHql (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:46:41 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58133 "EHLO
+        id S1752641AbeENHrN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:47:13 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40901 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752510AbeENHqj (ORCPT
+        with ESMTP id S1752418AbeENHrK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:46:39 -0400
-Date: Mon, 14 May 2018 00:46:18 -0700
+        Mon, 14 May 2018 03:47:10 -0400
+Date: Mon, 14 May 2018 00:46:47 -0700
 From: tip-bot for Yazen Ghannam <tipbot@zytor.com>
-Message-ID: <tip-dc2d26e4b667c8005c58669e71de3efd17f4390f@git.kernel.org>
-Cc: yazen.ghannam@amd.com, ard.biesheuvel@linaro.org,
-        matt@codeblueprint.co.uk, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        torvalds@linux-foundation.org, hpa@zytor.com, tglx@linutronix.de
-Reply-To: tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, peterz@infradead.org, mingo@kernel.org,
-        ard.biesheuvel@linaro.org, matt@codeblueprint.co.uk,
+Message-ID: <tip-a9c1e3e791409e35207277b7873efc756b6fb625@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
+        torvalds@linux-foundation.org, tglx@linutronix.de, hpa@zytor.com,
+        mingo@kernel.org, matt@codeblueprint.co.uk, peterz@infradead.org,
         yazen.ghannam@amd.com
-In-Reply-To: <20180504060003.19618-7-ard.biesheuvel@linaro.org>
-References: <20180504060003.19618-7-ard.biesheuvel@linaro.org>
+Reply-To: hpa@zytor.com, mingo@kernel.org, matt@codeblueprint.co.uk,
+        yazen.ghannam@amd.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
+        torvalds@linux-foundation.org, tglx@linutronix.de
+In-Reply-To: <20180504060003.19618-8-ard.biesheuvel@linaro.org>
+References: <20180504060003.19618-8-ard.biesheuvel@linaro.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/core] efi: Decode UEFI-defined IA32/X64 Error Structure
- GUIDs
-Git-Commit-ID: dc2d26e4b667c8005c58669e71de3efd17f4390f
+Subject: [tip:efi/core] efi: Decode IA32/X64 Cache, TLB, and Bus Check
+ structures
+Git-Commit-ID: a9c1e3e791409e35207277b7873efc756b6fb625
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,24 +36,24 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dc2d26e4b667c8005c58669e71de3efd17f4390f
-Gitweb:     https://git.kernel.org/tip/dc2d26e4b667c8005c58669e71de3efd17f4390f
+Commit-ID:  a9c1e3e791409e35207277b7873efc756b6fb625
+Gitweb:     https://git.kernel.org/tip/a9c1e3e791409e35207277b7873efc756b6fb625
 Author:     Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate: Fri, 4 May 2018 07:59:52 +0200
+AuthorDate: Fri, 4 May 2018 07:59:53 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 14 May 2018 08:57:47 +0200
+CommitDate: Mon, 14 May 2018 08:57:48 +0200
 
-efi: Decode UEFI-defined IA32/X64 Error Structure GUIDs
+efi: Decode IA32/X64 Cache, TLB, and Bus Check structures
 
-For easier handling, match the known IA32/X64 error structure GUIDs to
-enums.
+Print the common fields of the Cache, TLB, and Bus check structures.The
+fields of these three check types are the same except for a few more
+fields in the Bus check structure. The remaining Bus check structure
+fields will be decoded in a following patch.
 
-Also, print out the name of the matching Error Structure Type.
-
-Only print the GUID for unknown types.
-
-GUIDs taken from UEFI 2.7 section N.2.4.2.1 IA32/X64 Processor Error
-Information Structure.
+Based on UEFI 2.7,
+Table 254. IA32/X64 Cache Check Structure
+Table 255. IA32/X64 TLB Check Structure
+Table 256. IA32/X64 Bus Check Structure
 
 Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
@@ -62,85 +62,137 @@ Cc: Matt Fleming <matt@codeblueprint.co.uk>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180504060003.19618-7-ard.biesheuvel@linaro.org
+Link: http://lkml.kernel.org/r/20180504060003.19618-8-ard.biesheuvel@linaro.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/firmware/efi/cper-x86.c | 47 +++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 45 insertions(+), 2 deletions(-)
+ drivers/firmware/efi/cper-x86.c | 99 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 98 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-x86.c
-index e0633a103fcf..5438097b93ac 100644
+index 5438097b93ac..f70c46f7a4db 100644
 --- a/drivers/firmware/efi/cper-x86.c
 +++ b/drivers/firmware/efi/cper-x86.c
-@@ -11,17 +11,53 @@
- #define VALID_CPUID_INFO		BIT_ULL(1)
- #define VALID_PROC_ERR_INFO_NUM(bits)	(((bits) & GENMASK_ULL(7, 2)) >> 2)
- 
-+#define INFO_ERR_STRUCT_TYPE_CACHE					\
-+	GUID_INIT(0xA55701F5, 0xE3EF, 0x43DE, 0xAC, 0x72, 0x24, 0x9B,	\
-+		  0x57, 0x3F, 0xAD, 0x2C)
-+#define INFO_ERR_STRUCT_TYPE_TLB					\
-+	GUID_INIT(0xFC06B535, 0x5E1F, 0x4562, 0x9F, 0x25, 0x0A, 0x3B,	\
-+		  0x9A, 0xDB, 0x63, 0xC3)
-+#define INFO_ERR_STRUCT_TYPE_BUS					\
-+	GUID_INIT(0x1CF3F8B3, 0xC5B1, 0x49a2, 0xAA, 0x59, 0x5E, 0xEF,	\
-+		  0x92, 0xFF, 0xA6, 0x3C)
-+#define INFO_ERR_STRUCT_TYPE_MS						\
-+	GUID_INIT(0x48AB7F57, 0xDC34, 0x4f6c, 0xA7, 0xD3, 0xB0, 0xB5,	\
-+		  0xB0, 0xA7, 0x43, 0x14)
-+
- #define INFO_VALID_CHECK_INFO		BIT_ULL(0)
- #define INFO_VALID_TARGET_ID		BIT_ULL(1)
- #define INFO_VALID_REQUESTOR_ID		BIT_ULL(2)
+@@ -30,6 +30,25 @@
  #define INFO_VALID_RESPONDER_ID		BIT_ULL(3)
  #define INFO_VALID_IP			BIT_ULL(4)
  
-+enum err_types {
-+	ERR_TYPE_CACHE = 0,
-+	ERR_TYPE_TLB,
-+	ERR_TYPE_BUS,
-+	ERR_TYPE_MS,
-+	N_ERR_TYPES
++#define CHECK_VALID_TRANS_TYPE		BIT_ULL(0)
++#define CHECK_VALID_OPERATION		BIT_ULL(1)
++#define CHECK_VALID_LEVEL		BIT_ULL(2)
++#define CHECK_VALID_PCC			BIT_ULL(3)
++#define CHECK_VALID_UNCORRECTED		BIT_ULL(4)
++#define CHECK_VALID_PRECISE_IP		BIT_ULL(5)
++#define CHECK_VALID_RESTARTABLE_IP	BIT_ULL(6)
++#define CHECK_VALID_OVERFLOW		BIT_ULL(7)
++
++#define CHECK_VALID_BITS(check)		(((check) & GENMASK_ULL(15, 0)))
++#define CHECK_TRANS_TYPE(check)		(((check) & GENMASK_ULL(17, 16)) >> 16)
++#define CHECK_OPERATION(check)		(((check) & GENMASK_ULL(21, 18)) >> 18)
++#define CHECK_LEVEL(check)		(((check) & GENMASK_ULL(24, 22)) >> 22)
++#define CHECK_PCC			BIT_ULL(25)
++#define CHECK_UNCORRECTED		BIT_ULL(26)
++#define CHECK_PRECISE_IP		BIT_ULL(27)
++#define CHECK_RESTARTABLE_IP		BIT_ULL(28)
++#define CHECK_OVERFLOW			BIT_ULL(29)
++
+ enum err_types {
+ 	ERR_TYPE_CACHE = 0,
+ 	ERR_TYPE_TLB,
+@@ -52,11 +71,81 @@ static enum err_types cper_get_err_type(const guid_t *err_type)
+ 		return N_ERR_TYPES;
+ }
+ 
++static const char * const ia_check_trans_type_strs[] = {
++	"Instruction",
++	"Data Access",
++	"Generic",
 +};
 +
-+static enum err_types cper_get_err_type(const guid_t *err_type)
++static const char * const ia_check_op_strs[] = {
++	"generic error",
++	"generic read",
++	"generic write",
++	"data read",
++	"data write",
++	"instruction fetch",
++	"prefetch",
++	"eviction",
++	"snoop",
++};
++
++static inline void print_bool(char *str, const char *pfx, u64 check, u64 bit)
 +{
-+	if (guid_equal(err_type, &INFO_ERR_STRUCT_TYPE_CACHE))
-+		return ERR_TYPE_CACHE;
-+	else if (guid_equal(err_type, &INFO_ERR_STRUCT_TYPE_TLB))
-+		return ERR_TYPE_TLB;
-+	else if (guid_equal(err_type, &INFO_ERR_STRUCT_TYPE_BUS))
-+		return ERR_TYPE_BUS;
-+	else if (guid_equal(err_type, &INFO_ERR_STRUCT_TYPE_MS))
-+		return ERR_TYPE_MS;
-+	else
-+		return N_ERR_TYPES;
++	printk("%s%s: %s\n", pfx, str, (check & bit) ? "true" : "false");
++}
++
++static void print_err_info(const char *pfx, u8 err_type, u64 check)
++{
++	u16 validation_bits = CHECK_VALID_BITS(check);
++
++	if (err_type == ERR_TYPE_MS)
++		return;
++
++	if (validation_bits & CHECK_VALID_TRANS_TYPE) {
++		u8 trans_type = CHECK_TRANS_TYPE(check);
++
++		printk("%sTransaction Type: %u, %s\n", pfx, trans_type,
++		       trans_type < ARRAY_SIZE(ia_check_trans_type_strs) ?
++		       ia_check_trans_type_strs[trans_type] : "unknown");
++	}
++
++	if (validation_bits & CHECK_VALID_OPERATION) {
++		u8 op = CHECK_OPERATION(check);
++
++		/*
++		 * CACHE has more operation types than TLB or BUS, though the
++		 * name and the order are the same.
++		 */
++		u8 max_ops = (err_type == ERR_TYPE_CACHE) ? 9 : 7;
++
++		printk("%sOperation: %u, %s\n", pfx, op,
++		       op < max_ops ? ia_check_op_strs[op] : "unknown");
++	}
++
++	if (validation_bits & CHECK_VALID_LEVEL)
++		printk("%sLevel: %llu\n", pfx, CHECK_LEVEL(check));
++
++	if (validation_bits & CHECK_VALID_PCC)
++		print_bool("Processor Context Corrupt", pfx, check, CHECK_PCC);
++
++	if (validation_bits & CHECK_VALID_UNCORRECTED)
++		print_bool("Uncorrected", pfx, check, CHECK_UNCORRECTED);
++
++	if (validation_bits & CHECK_VALID_PRECISE_IP)
++		print_bool("Precise IP", pfx, check, CHECK_PRECISE_IP);
++
++	if (validation_bits & CHECK_VALID_RESTARTABLE_IP)
++		print_bool("Restartable IP", pfx, check, CHECK_RESTARTABLE_IP);
++
++	if (validation_bits & CHECK_VALID_OVERFLOW)
++		print_bool("Overflow", pfx, check, CHECK_OVERFLOW);
 +}
 +
  void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
  {
  	int i;
  	struct cper_ia_err_info *err_info;
- 	char newpfx[64];
-+	u8 err_type;
+-	char newpfx[64];
++	char newpfx[64], infopfx[64];
+ 	u8 err_type;
  
  	if (proc->validation_bits & VALID_LAPIC_ID)
- 		printk("%sLocal APIC_ID: 0x%llx\n", pfx, proc->lapic_id);
-@@ -38,8 +74,15 @@ void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
- 	for (i = 0; i < VALID_PROC_ERR_INFO_NUM(proc->validation_bits); i++) {
- 		printk("%sError Information Structure %d:\n", pfx, i);
- 
--		printk("%sError Structure Type: %pUl\n", newpfx,
--		       &err_info->err_type);
-+		err_type = cper_get_err_type(&err_info->err_type);
-+		printk("%sError Structure Type: %s\n", newpfx,
-+		       err_type < ARRAY_SIZE(cper_proc_error_type_strs) ?
-+		       cper_proc_error_type_strs[err_type] : "unknown");
-+
-+		if (err_type >= N_ERR_TYPES) {
-+			printk("%sError Structure Type: %pUl\n", newpfx,
-+			       &err_info->err_type);
-+		}
- 
+@@ -87,6 +176,14 @@ void cper_print_proc_ia(const char *pfx, const struct cper_sec_proc_ia *proc)
  		if (err_info->validation_bits & INFO_VALID_CHECK_INFO) {
  			printk("%sCheck Information: 0x%016llx\n", newpfx,
+ 			       err_info->check_info);
++
++			if (err_type < N_ERR_TYPES) {
++				snprintf(infopfx, sizeof(infopfx), "%s ",
++					 newpfx);
++
++				print_err_info(infopfx, err_type,
++					       err_info->check_info);
++			}
+ 		}
+ 
+ 		if (err_info->validation_bits & INFO_VALID_TARGET_ID) {
