@@ -1,47 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752090AbeENTY5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 15:24:57 -0400
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:33315 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750760AbeENTY4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 15:24:56 -0400
-X-Google-Smtp-Source: AB8JxZq7qFDi2oSdxVZq1yZTdBJI2LysibDBi06/l0YqsK4lr++tsrPN5+83oTjxBQFR5CxyVPpl1WTmrWG1hQ0LMF8=
+        id S1752061AbeENTaO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 15:30:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55980 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750750AbeENTaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 15:30:13 -0400
+Date: Mon, 14 May 2018 12:30:11 -0700
+From: Shaohua Li <shli@kernel.org>
+To: Gioh Kim <gi-oh.kim@profitbricks.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] md/raid1: add error handling of read error from FailFast
+ device
+Message-ID: <20180514193011.krnxl2mkgkrwg47r@kernel.org>
+References: <20180502110811.10886-1-gi-oh.kim@profitbricks.com>
 MIME-Version: 1.0
-In-Reply-To: <bd9f9811-bec7-5394-30d4-5db833ecf5b4@kernel.dk>
-References: <20180509013358.16399-1-kent.overstreet@gmail.com> <bd9f9811-bec7-5394-30d4-5db833ecf5b4@kernel.dk>
-From: Kent Overstreet <kent.overstreet@gmail.com>
-Date: Mon, 14 May 2018 15:24:53 -0400
-Message-ID: <CAC7rs0vTjxkiM3yUuReO848_i7SOD7ZD4NOHcP9bFoxK706-Bg@mail.gmail.com>
-Subject: Re: [PATCH 00/10] Misc block layer patches for bcachefs
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180502110811.10886-1-gi-oh.kim@profitbricks.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks!
+On Wed, May 02, 2018 at 01:08:11PM +0200, Gioh Kim wrote:
+> Current handle_read_error() function calls fix_read_error()
+> only if md device is RW and rdev does not include FailFast flag.
+> It does not handle a read error from a RW device including
+> FailFast flag.
+> 
+> I am not sure it is intended. But I found that write IO error
+> sets rdev faulty. The md module should handle the read IO error and
+> write IO error equally. So I think read IO error should set rdev faulty.
+> 
+> Signed-off-by: Gioh Kim <gi-oh.kim@profitbricks.com>
+> ---
+>  drivers/md/raid1.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index e9e3308cb0a7..4445179aa4c8 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -2474,6 +2474,8 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
+>  		fix_read_error(conf, r1_bio->read_disk,
+>  			       r1_bio->sector, r1_bio->sectors);
+>  		unfreeze_array(conf);
+> +	} else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
+> +		md_error(mddev, rdev);
+>  	} else {
+>  		r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
+>  	}
+> -- 
+> 2.14.1
 
-On Mon, May 14, 2018 at 3:24 PM, Jens Axboe <axboe@kernel.dk> wrote:
-> On 5/8/18 7:33 PM, Kent Overstreet wrote:
->>  - Add separately allowed mempools, biosets: bcachefs uses both all over the
->>    place
->>
->>  - Bit of utility code - bio_copy_data_iter(), zero_fill_bio_iter()
->>
->>  - bio_list_copy_data(), the bi_next check - defensiveness because of a bug I
->>    had fun chasing down at one point
->>
->>  - add some exports, because bcachefs does dio its own way
->>  - show whether fua is supported in sysfs, because I don't know of anything that
->>    exports whether the _block layer_ specifically thinks fua is supported.
->
-> Thanks Kent, applied for 4.18 with the update patch 1.
->
-> --
-> Jens Axboe
->
+Looks reasonable, applied! 
