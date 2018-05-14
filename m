@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-402196-1526281486-2-11931190570268727047
+X-Cyrus-Session-Id: sloti22d1t05-289078-1526281479-2-4284188719068308789
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526281485; b=AxqnJ+udIN+j4MoeRpx8D4rswTG9lbvLb17iFmBm7qYlQBTHam
-    KDNIr3gt9/2PLMhR2gX0K7b0P+kR39df5ziLVkeWcTukXLPmcWQ3jO/C+cgA5lU1
-    eNPkxazt/tNUmveGTDxxRRLhaOYDTHOJYxuXCbM1zyo1rnJoyQxyTbgZrvPWxk0J
-    /zh30QsDIm6PDn5UqCYWLQRxVjNmYFc0N85T5X5JaW0+n3CRz5uK7ZPHxsqA/AXD
-    MmNXvtznqDVufVse3aV41TxqLJRGmyDR+4rvPpfBdWAAGaotRTWQvGPXQ4MXgQqA
-    RXULzNZQ98WwOX1R1ubuB6/XwfR03R+mutcA==
+    1526281478; b=gkegq6VB+8ECD9klhHWIXm3ku2WY99mZdsonFvQwujfmHORzao
+    R1r5APqK5uNZkyX03R5a7JuvSrQTVh6sdFrO1JxYWsyFNYzvcAcYaYwMEK/++Ouu
+    069c0cSp0MU/NJWX4rRyheeVO5qLS/7rqCeNOKto+hcLjrTiTYjgXTFld8J7X9LZ
+    TkUaLnx8QgM+wK8tOG5j7CHSliISMnhs6A+UQ5sWl8Ska/kTmnnKVaUcwp57skRL
+    PYoQnkR7ODn6WHd4wV3GEorVqTruzxzWe77MvdQXdFADaIxSw6XuMS0ZF3gi8aaN
+    vmJ3OlH05WQORUntrOXSNGtZP/2r5miwpS2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526281485; bh=SdXfadypTXpTBr1mPXOzQhWqAgN6hN
-    dHQS8a6fS8MGU=; b=hpf+BAis4sDH/ycBE2AQp/GSxeX6subny+AoYwUke4mjnO
-    JGF+4j4lUsgkm7pRth69c1wnczHnNZm+lWb/KPsB7r1iBzvOljfQfudFWe5UhEec
-    sDtQCS6mcgUKKJkpOXXpLESPbQ08h2ruatIeKh00ZPrIdI53xDPHJlnMfz/+ib/D
-    HHfd22kjizZMmJuq4Ow3enBZmBzFQ2SxepOqRTlDb9FZT5dZUKhcxzsKEX+j6fxk
-    FxYXXcEBeu1lKLqfGtalj+1woX+c+Q8OnTwAbZZil+lj6iLCM4yiyZUQhptcF0i3
-    ugSddIdUG8ihLyudXzifhICe+/Mvz7Bl5xr7TBcQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526281478; bh=TJ9YoNaes7BYwc1lem3uIbojh5MGRb
+    uO9RvbMiEf+9o=; b=XkVjUo5xc1XK0QyTKChcrrCTnkZ28pygMm4T/0vTyZ4qP1
+    l0Q4coGhLlUK1+OfDfChzK3lsYyhJzAtovJyq7KOkncVEnBN45DfWsXqyGzxFKqa
+    8w+RT650hALOboTuPnXxXVC5G+S4LtFOdl5i0Bp1LyyZNyKbQbTNuv1eDKOHCiHE
+    jvMb+YgZ77PNcdIJZEXEmuDI8J/McwUqobXChhlI/HQnOCx1E2Wr/gCOKhlu6Fad
+    p9v/VngYybVZ7+5/8GAumDFfTvPnSqCADHW3bzGKhHYdF2G6Gx4auvKlI3v2ze/O
+    SoRQz9BG16mSibPlFvQVu5swmd2lGniLxdBRW+Jg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=pM3LRjTa x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=zmjPZ1Sg x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=pM3LRjTa x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=zmjPZ1Sg x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,30 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCtSsPbzNCQbirS3MI9rfjSy5RGushP3VqTEyqqLg+2qgI5xMoLQWh9ijixMAiR7ydKQz80Hik6Yh7lGMa5HsZ+M/eZR5IuHYX/2FsmBfIBALNO7g5j1
-    Ft+AM7U52uHFx+YL9ZCDYIrkoF0nNS6NUk+WTgn30M2/7odFiC9f/jjsgdDAdphxOYsXI9MkBe9WjXpLK4u0btxWjXhlNG7ubyTHoIs+AuG75LXaKn8CapVw
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIP3JpQPUmV2BRJ028hsRtJLxtcgCMb/S+4pRf3QrWPHBmgpQpMDapX1CEzxaV5/3MhgokiDe9bm5vUibhpl1CRCdhp/7uZgg2ZP1scs6JLKDTLLrb3v
+    BPgQQB+T6l+ryxRTEFXLrSZE5o+NMH2zV1nqPgJ+TLsHhlJtaNA0ZeOuv6wQImH63Yi0flRMJLRZEqaG7W1jmOt6PjJCGXMjweX5+GrG97M/Ew7dYPHhWlXV
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=DfNHnWVPAAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8 a=QyXUC8HyAAAA:8
-    a=ag1SF4gXAAAA:8 a=YQl0GWw6Zf5YOcMYI_UA:9 a=QEXdDO2ut3YA:10
-    a=rjTVMONInIDnV1a_A2c_:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=QyXUC8HyAAAA:8 a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
+    a=my_lbr29hPUGU-qXvBYA:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754113AbeENG77 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 02:59:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36816 "EHLO mail.kernel.org"
+        id S1754116AbeENHAE (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 03:00:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932099AbeENG75 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 02:59:57 -0400
+        id S1753673AbeENHAC (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 14 May 2018 03:00:02 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.16 52/72] PCI / PM: Always check PME wakeup capability for runtime wakeup support
-Date: Mon, 14 May 2018 08:49:09 +0200
-Message-Id: <20180514064825.714164841@linuxfoundation.org>
+Subject: [PATCH 4.16 54/72] cpufreq: schedutil: Avoid using invalid next_freq
+Date: Mon, 14 May 2018 08:49:11 +0200
+Message-Id: <20180514064826.549591047@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -107,65 +105,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 8feaec33b9868582654cd3d5355225dcb79aeca6 upstream.
+commit 97739501f207efe33145b918817f305b822987f8 upstream.
 
-USB controller ASM1042 stops working after commit de3ef1eb1cd0 (PM /
-core: Drop run_wake flag from struct dev_pm_info).
+If the next_freq field of struct sugov_policy is set to UINT_MAX,
+it shouldn't be used for updating the CPU frequency (this is a
+special "invalid" value), but after commit b7eaf1aab9f8 (cpufreq:
+schedutil: Avoid reducing frequency of busy CPUs prematurely) it
+may be passed as the new frequency to sugov_update_commit() in
+sugov_update_single().
 
-The device in question is not power managed by platform firmware,
-furthermore, it only supports PME# from D3cold:
-Capabilities: [78] Power Management version 3
-       Flags: PMEClk- DSI- D1- D2- AuxCurrent=55mA PME(D0-,D1-,D2-,D3hot-,D3cold+)
-       Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+Fix that by adding an extra check for the special UINT_MAX value
+of next_freq to sugov_update_single().
 
-Before commit de3ef1eb1cd0, the device never gets runtime suspended.
-After that commit, the device gets runtime suspended to D3hot, which can
-not generate any PME#.
-
-usb_hcd_pci_probe() unconditionally calls device_wakeup_enable(), hence
-device_can_wakeup() in pci_dev_run_wake() always returns true.
-
-So pci_dev_run_wake() needs to check PME wakeup capability as its first
-condition.
-
-In addition, change wakeup flag passed to pci_target_state() from false
-to true, because we want to find the deepest state different from D3cold
-that the device can still generate PME#. In this case, it's D0 for the
-device in question.
-
-Fixes: de3ef1eb1cd0 (PM / core: Drop run_wake flag from struct dev_pm_info)
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: 4.13+ <stable@vger.kernel.org> # 4.13+
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Fixes: b7eaf1aab9f8 (cpufreq: schedutil: Avoid reducing frequency of busy CPUs prematurely)
+Reported-by: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: 4.12+ <stable@vger.kernel.org> # 4.12+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/pci.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/sched/cpufreq_schedutil.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -2125,16 +2125,16 @@ bool pci_dev_run_wake(struct pci_dev *de
- {
- 	struct pci_bus *bus = dev->bus;
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -290,7 +290,8 @@ static void sugov_update_single(struct u
+ 		 * Do not reduce the frequency if the CPU has not been idle
+ 		 * recently, as the reduction is likely to be premature then.
+ 		 */
+-		if (busy && next_f < sg_policy->next_freq) {
++		if (busy && next_f < sg_policy->next_freq &&
++		    sg_policy->next_freq != UINT_MAX) {
+ 			next_f = sg_policy->next_freq;
  
--	if (device_can_wakeup(&dev->dev))
--		return true;
--
- 	if (!dev->pme_support)
- 		return false;
- 
- 	/* PME-capable in principle, but not from the target power state */
--	if (!pci_pme_capable(dev, pci_target_state(dev, false)))
-+	if (!pci_pme_capable(dev, pci_target_state(dev, true)))
- 		return false;
- 
-+	if (device_can_wakeup(&dev->dev))
-+		return true;
-+
- 	while (bus->parent) {
- 		struct pci_dev *bridge = bus->self;
- 
+ 			/* Reset cached freq as next_freq has changed */
