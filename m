@@ -1,102 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751578AbeENFmD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 01:42:03 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:35244 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750760AbeENFmC (ORCPT
+        id S1751954AbeENFq6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 01:46:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38186 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751198AbeENFq5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 01:42:02 -0400
-X-Google-Smtp-Source: AB8JxZpCnvoEcst0Z84T9/+2QEAAwinQvf9YqBC8HIIO6x2xr+fTyzUY9G4w1iKfDkvL8EnNAm08KGrO+xgnjbFghQ34AwHAt1Vw
+        Mon, 14 May 2018 01:46:57 -0400
+Subject: Re: general protection fault in rds_ib_get_mr
+To: Eric Biggers <ebiggers3@gmail.com>, linux-rdma@vger.kernel.org,
+        rds-devel@oss.oracle.com
+Cc: syzbot <syzbot+b51c77ef956678a65834@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <089e082ce58896ad350567ee4825@google.com>
+ <20180513211058.GE677@sol.localdomain>
+From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <27665604-6a26-36e2-3a58-9c8b3d9eab80@oracle.com>
+Date: Sun, 13 May 2018 22:46:37 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Date: Sun, 13 May 2018 22:42:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e677b9056c23f12f@google.com>
-Subject: general protection fault in shmem_unused_huge_count
-From: syzbot <syzbot+d2586fde8fdcead3647f@syzkaller.appspotmail.com>
-To: hughd@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180513211058.GE677@sol.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8892 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=812
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805140061
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 5/13/18 2:10 PM, Eric Biggers wrote:
+> On Wed, Mar 21, 2018 at 09:00:01AM -0700, syzbot wrote:
 
-syzbot found the following crash on:
-
-HEAD commit:    3eb2ce825ea1 Linux 4.16-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16bd9d93800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8addcf4530d93e53
-dashboard link: https://syzkaller.appspot.com/bug?extid=d2586fde8fdcead3647f
-compiler:       gcc (GCC) 7.1.1 20170620
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d2586fde8fdcead3647f@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 9915 Comm: syz-executor3 Not tainted 4.16.0-rc7+ #3
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-RIP: 0010:shmem_unused_huge_count+0x8e/0x100 mm/shmem.c:561
-RSP: 0018:ffff8801b0e9f460 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 1ffff100361d3e8d RCX: ffffffff8195e5e7
-RDX: 0000000000000021 RSI: ffff8801b0e9f778 RDI: 0000000000000108
-RBP: ffff8801b0e9f4e0 R08: 0000000000000000 R09: 1ffff100361d3e76
-R10: ffff8801b0e9f378 R11: 0000000000000001 R12: 0000000000000000
-R13: dffffc0000000000 R14: ffff8801b4c5cdf0 R15: 0000000000000000
-FS:  0000000000d5a940(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000d5ac10 CR3: 00000001d8120003 CR4: 00000000001606f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  super_cache_count+0x96/0x280 fs/super.c:131
-  do_shrink_slab mm/vmscan.c:310 [inline]
-  shrink_slab.part.46+0x30c/0xe80 mm/vmscan.c:475
-  shrink_slab+0x9d/0xb0 mm/vmscan.c:442
-  shrink_node+0x51e/0xf70 mm/vmscan.c:2556
-  shrink_zones mm/vmscan.c:2728 [inline]
-  do_try_to_free_pages+0x383/0x1020 mm/vmscan.c:2790
-  try_to_free_mem_cgroup_pages+0x44d/0xb40 mm/vmscan.c:3079
-  reclaim_high.constprop.64+0x1e2/0x330 mm/memcontrol.c:1862
-  mem_cgroup_handle_over_high+0x8d/0x130 mm/memcontrol.c:1887
-  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
-  exit_to_usermode_loop+0x242/0x2f0 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath+0x487/0x550 arch/x86/entry/common.c:265
-  ret_from_fork+0x15/0x50 arch/x86/entry/entry_64.S:399
-RIP: 0033:0x452f5a
-RSP: 002b:00007ffdaa5ef700 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
-RAX: 0000000000000000 RBX: 00007ffdaa5ef700 RCX: 0000000000452f5a
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
-RBP: 00007ffdaa5ef740 R08: 0000000000000001 R09: 0000000000d5a940
-R10: 0000000000d5ac10 R11: 0000000000000246 R12: 0000000000000001
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000001380
-Code: c1 e8 03 42 80 3c 28 00 75 6f 4d 8b a4 24 80 06 00 00 48 b8 00 00 00  
-00 00 fc ff df 49 8d bc 24 08 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
-75 5e 48 8d 7d a8 48 ba 00 00 00 00 00 fc ff df 49
-RIP: __read_once_size include/linux/compiler.h:188 [inline] RSP:  
-ffff8801b0e9f460
-RIP: shmem_unused_huge_count+0x8e/0x100 mm/shmem.c:561 RSP: ffff8801b0e9f460
----[ end trace 8116f40602cb9839 ]---
+[...]
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> Still reproducible on Linus' tree (commit 66e1c94db3cd4) and linux-next
+> (next-20180511).  Here's a simplified reproducer:
+> 
+Thanks for the test case !!
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Regards,
+Santosh
