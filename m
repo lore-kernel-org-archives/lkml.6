@@ -1,27 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753629AbeENMxP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:53:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57279 "EHLO
+        id S1753643AbeENMxV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:53:21 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42357 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752142AbeENMxN (ORCPT
+        with ESMTP id S1753512AbeENMxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:53:13 -0400
-Date: Mon, 14 May 2018 05:52:50 -0700
-From: tip-bot for Alexey Dobriyan <tipbot@zytor.com>
-Message-ID: <tip-1153933703d927b3d4874c0bc801de32b1b58be9@git.kernel.org>
-Cc: tglx@linutronix.de, mingo@kernel.org, torvalds@linux-foundation.org,
-        hpa@zytor.com, adobriyan@gmail.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org
-Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org,
-        adobriyan@gmail.com, hpa@zytor.com, torvalds@linux-foundation.org,
-        mingo@kernel.org, tglx@linutronix.de
-In-Reply-To: <20180507213937.GB32406@avx2>
-References: <20180507213937.GB32406@avx2>
+        Mon, 14 May 2018 08:53:18 -0400
+Date: Mon, 14 May 2018 05:52:20 -0700
+From: tip-bot for Frederic Weisbecker <tipbot@zytor.com>
+Message-ID: <tip-48bda43eabb8d086204f543cf8bbad696b8c6391@git.kernel.org>
+Cc: mpe@ellerman.id.au, jejb@parisc-linux.org,
+        torvalds@linux-foundation.org, ysato@users.sourceforge.jp,
+        fenghua.yu@intel.com, benh@kernel.crashing.org, mingo@kernel.org,
+        tony.luck@intel.com, heiko.carstens@de.ibm.com, paulus@samba.org,
+        linux-kernel@vger.kernel.org, schwidefsky@de.ibm.com,
+        bigeasy@linutronix.de, hpa@zytor.com, dalias@libc.org,
+        frederic@kernel.org, deller@gmx.de, tglx@linutronix.de,
+        peterz@infradead.org, davem@davemloft.net
+Reply-To: benh@kernel.crashing.org, mingo@kernel.org, fenghua.yu@intel.com,
+        ysato@users.sourceforge.jp, linux-kernel@vger.kernel.org,
+        paulus@samba.org, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        tony.luck@intel.com, mpe@ellerman.id.au, torvalds@linux-foundation.org,
+        jejb@parisc-linux.org, deller@gmx.de, frederic@kernel.org,
+        dalias@libc.org, davem@davemloft.net, tglx@linutronix.de,
+        peterz@infradead.org, bigeasy@linutronix.de, hpa@zytor.com
+In-Reply-To: <1525786706-22846-12-git-send-email-frederic@kernel.org>
+References: <1525786706-22846-12-git-send-email-frederic@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/asm] x86/asm/64: Micro-optimize __clear_user() - Use
- immediate constants
-Git-Commit-ID: 1153933703d927b3d4874c0bc801de32b1b58be9
+Subject: [tip:irq/core] softirq/s390: Move default mutators of overwritten
+ softirq mask to s390
+Git-Commit-ID: 48bda43eabb8d086204f543cf8bbad696b8c6391
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,55 +43,74 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1153933703d927b3d4874c0bc801de32b1b58be9
-Gitweb:     https://git.kernel.org/tip/1153933703d927b3d4874c0bc801de32b1b58be9
-Author:     Alexey Dobriyan <adobriyan@gmail.com>
-AuthorDate: Tue, 8 May 2018 00:39:37 +0300
+Commit-ID:  48bda43eabb8d086204f543cf8bbad696b8c6391
+Gitweb:     https://git.kernel.org/tip/48bda43eabb8d086204f543cf8bbad696b8c6391
+Author:     Frederic Weisbecker <frederic@kernel.org>
+AuthorDate: Tue, 8 May 2018 15:38:26 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 14 May 2018 11:38:51 +0200
+CommitDate: Mon, 14 May 2018 11:25:28 +0200
 
-x86/asm/64: Micro-optimize __clear_user() - Use immediate constants
+softirq/s390: Move default mutators of overwritten softirq mask to s390
 
-Save two registers. Adding constants should be just as fast as adding registers.
+s390 is now the last architecture that entirely overwrites
+local_softirq_pending() and uses the according default definitions of
+set_softirq_pending() and or_softirq_pending().
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Just move these to s390 to debloat the generic code complexity.
+
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Helge Deller <deller@gmx.de>
+Cc: James E.J. Bottomley <jejb@parisc-linux.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180507213937.GB32406@avx2
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Rich Felker <dalias@libc.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Link: http://lkml.kernel.org/r/1525786706-22846-12-git-send-email-frederic@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/lib/usercopy_64.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ arch/s390/include/asm/hardirq.h | 2 ++
+ include/linux/interrupt.h       | 7 -------
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
-index 75d3776123cc..a624dcc4de10 100644
---- a/arch/x86/lib/usercopy_64.c
-+++ b/arch/x86/lib/usercopy_64.c
-@@ -23,13 +23,13 @@ unsigned long __clear_user(void __user *addr, unsigned long size)
- 	asm volatile(
- 		"	testq  %[size8],%[size8]\n"
- 		"	jz     4f\n"
--		"0:	movq %[zero],(%[dst])\n"
--		"	addq   %[eight],%[dst]\n"
-+		"0:	movq $0,(%[dst])\n"
-+		"	addq   $8,%[dst]\n"
- 		"	decl %%ecx ; jnz   0b\n"
- 		"4:	movq  %[size1],%%rcx\n"
- 		"	testl %%ecx,%%ecx\n"
- 		"	jz     2f\n"
--		"1:	movb   %b[zero],(%[dst])\n"
-+		"1:	movb   $0,(%[dst])\n"
- 		"	incq   %[dst]\n"
- 		"	decl %%ecx ; jnz  1b\n"
- 		"2:\n"
-@@ -40,8 +40,7 @@ unsigned long __clear_user(void __user *addr, unsigned long size)
- 		_ASM_EXTABLE(0b,3b)
- 		_ASM_EXTABLE(1b,2b)
- 		: [size8] "=&c"(size), [dst] "=&D" (__d0)
--		: [size1] "r"(size & 7), "[size8]" (size / 8), "[dst]"(addr),
--		  [zero] "r" (0UL), [eight] "r" (8UL));
-+		: [size1] "r"(size & 7), "[size8]" (size / 8), "[dst]"(addr));
- 	clac();
- 	return size;
- }
+diff --git a/arch/s390/include/asm/hardirq.h b/arch/s390/include/asm/hardirq.h
+index a296c6acfd07..dfbc3c6c0674 100644
+--- a/arch/s390/include/asm/hardirq.h
++++ b/arch/s390/include/asm/hardirq.h
+@@ -14,6 +14,8 @@
+ #include <asm/lowcore.h>
+ 
+ #define local_softirq_pending() (S390_lowcore.softirq_pending)
++#define set_softirq_pending(x) (S390_lowcore.softirq_pending = (x))
++#define or_softirq_pending(x)  (S390_lowcore.softirq_pending |= (x))
+ 
+ #define __ARCH_IRQ_STAT
+ #define __ARCH_HAS_DO_SOFTIRQ
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 7a11f73c5c3b..eeceac3376fc 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -442,13 +442,6 @@ extern bool force_irqthreads;
+ #define set_softirq_pending(x)	(__this_cpu_write(local_softirq_pending_ref, (x)))
+ #define or_softirq_pending(x)	(__this_cpu_or(local_softirq_pending_ref, (x)))
+ 
+-#else /* local_softirq_pending */
+-
+-#ifndef __ARCH_SET_SOFTIRQ_PENDING
+-#define set_softirq_pending(x) (local_softirq_pending() = (x))
+-#define or_softirq_pending(x)  (local_softirq_pending() |= (x))
+-#endif
+-
+ #endif /* local_softirq_pending */
+ 
+ /* Some architectures might implement lazy enabling/disabling of
