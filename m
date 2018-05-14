@@ -1,92 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751894AbeENFgP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 01:36:15 -0400
-Received: from ozlabs.org ([203.11.71.1]:50251 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750760AbeENFgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 01:36:13 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 14 May 2018 15:36:10 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Shuah Khan <shuah@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the kselftest tree with the kvm-fixes
- tree
-Message-ID: <20180514153610.37d0a458@canb.auug.org.au>
+        id S1751578AbeENFmD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 01:42:03 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:35244 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750760AbeENFmC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 01:42:02 -0400
+X-Google-Smtp-Source: AB8JxZpCnvoEcst0Z84T9/+2QEAAwinQvf9YqBC8HIIO6x2xr+fTyzUY9G4w1iKfDkvL8EnNAm08KGrO+xgnjbFghQ34AwHAt1Vw
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/+yblz34.BS4w.Gk=FzewM2/"; protocol="application/pgp-signature"
+Date: Sun, 13 May 2018 22:42:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e677b9056c23f12f@google.com>
+Subject: general protection fault in shmem_unused_huge_count
+From: syzbot <syzbot+d2586fde8fdcead3647f@syzkaller.appspotmail.com>
+To: hughd@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/+yblz34.BS4w.Gk=FzewM2/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi Shuah,
+syzbot found the following crash on:
 
-Today's linux-next merge of the kselftest tree got a conflict in:
+HEAD commit:    3eb2ce825ea1 Linux 4.16-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16bd9d93800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8addcf4530d93e53
+dashboard link: https://syzkaller.appspot.com/bug?extid=d2586fde8fdcead3647f
+compiler:       gcc (GCC) 7.1.1 20170620
 
-  tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
+Unfortunately, I don't have any reproducer for this crash yet.
 
-between commit:
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+d2586fde8fdcead3647f@syzkaller.appspotmail.com
 
-  bcb2b94ae010 ("KVM: selftests: exit with 0 status code when tests cannot =
-be run")
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 9915 Comm: syz-executor3 Not tainted 4.16.0-rc7+ #3
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+RIP: 0010:shmem_unused_huge_count+0x8e/0x100 mm/shmem.c:561
+RSP: 0018:ffff8801b0e9f460 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 1ffff100361d3e8d RCX: ffffffff8195e5e7
+RDX: 0000000000000021 RSI: ffff8801b0e9f778 RDI: 0000000000000108
+RBP: ffff8801b0e9f4e0 R08: 0000000000000000 R09: 1ffff100361d3e76
+R10: ffff8801b0e9f378 R11: 0000000000000001 R12: 0000000000000000
+R13: dffffc0000000000 R14: ffff8801b4c5cdf0 R15: 0000000000000000
+FS:  0000000000d5a940(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000d5ac10 CR3: 00000001d8120003 CR4: 00000000001606f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  super_cache_count+0x96/0x280 fs/super.c:131
+  do_shrink_slab mm/vmscan.c:310 [inline]
+  shrink_slab.part.46+0x30c/0xe80 mm/vmscan.c:475
+  shrink_slab+0x9d/0xb0 mm/vmscan.c:442
+  shrink_node+0x51e/0xf70 mm/vmscan.c:2556
+  shrink_zones mm/vmscan.c:2728 [inline]
+  do_try_to_free_pages+0x383/0x1020 mm/vmscan.c:2790
+  try_to_free_mem_cgroup_pages+0x44d/0xb40 mm/vmscan.c:3079
+  reclaim_high.constprop.64+0x1e2/0x330 mm/memcontrol.c:1862
+  mem_cgroup_handle_over_high+0x8d/0x130 mm/memcontrol.c:1887
+  tracehook_notify_resume include/linux/tracehook.h:193 [inline]
+  exit_to_usermode_loop+0x242/0x2f0 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
+  syscall_return_slowpath+0x487/0x550 arch/x86/entry/common.c:265
+  ret_from_fork+0x15/0x50 arch/x86/entry/entry_64.S:399
+RIP: 0033:0x452f5a
+RSP: 002b:00007ffdaa5ef700 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: 0000000000000000 RBX: 00007ffdaa5ef700 RCX: 0000000000452f5a
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffdaa5ef740 R08: 0000000000000001 R09: 0000000000d5a940
+R10: 0000000000d5ac10 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000001380
+Code: c1 e8 03 42 80 3c 28 00 75 6f 4d 8b a4 24 80 06 00 00 48 b8 00 00 00  
+00 00 fc ff df 49 8d bc 24 08 01 00 00 48 89 fa 48 c1 ea 03 <80> 3c 02 00  
+75 5e 48 8d 7d a8 48 ba 00 00 00 00 00 fc ff df 49
+RIP: __read_once_size include/linux/compiler.h:188 [inline] RSP:  
+ffff8801b0e9f460
+RIP: shmem_unused_huge_count+0x8e/0x100 mm/shmem.c:561 RSP: ffff8801b0e9f460
+---[ end trace 8116f40602cb9839 ]---
 
-from the kvm-fixes tree and commit:
 
-  13911360966d ("selftests: kvm: return Kselftest Skip code for skipped tes=
-ts")
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-from the kselftest tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
-index aaa633263b2c,62fb73699eb6..000000000000
---- a/tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
-+++ b/tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
-@@@ -189,8 -191,8 +191,8 @@@ int main(int argc, char *argv[]
-  	struct kvm_cpuid_entry2 *entry =3D kvm_get_supported_cpuid_entry(1);
- =20
-  	if (!(entry->ecx & CPUID_VMX)) {
- -		printf("nested VMX not enabled, skipping test");
- +		fprintf(stderr, "nested VMX not enabled, skipping test\n");
-- 		exit(KSFT_SKIP);
-+ 		return KSFT_SKIP;
-  	}
- =20
-  	vm =3D vm_create_default_vmx(VCPU_ID, (void *) l1_guest_code);
-
---Sig_/+yblz34.BS4w.Gk=FzewM2/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr5IEoACgkQAVBC80lX
-0GysCQf9Ft+UykX1jerJYzvh5B7OnrUSHlniBk1GE6w5V2e9bZkFEOhNPX3QkF3E
-bX9keMzyxmJS+e14TglmlIHK4+r7tOltWNbPRi5hIST8ewpqbq4Pj2G85rpqmLNU
-CQWyKGmVkPmmq0SgqhjazU4t/68GmIg1/C4hBNV8pKPruO5uy3aOdd1hqY1ZNMCq
-5D29irqA+ZHMXoFmHJu9TzqT18w49xG3TUnarACUuApgdRsPcAFPNwRowHdzGI2K
-eHYqCpgfUQrwLvw2bUV4ex5f2zEePhn6/VL59G8dAJEQwJzOXWj5legtwp7sY9v/
-r9I6LWlaPej4KcqzLBM+EeGqBsxy3A==
-=18fp
------END PGP SIGNATURE-----
-
---Sig_/+yblz34.BS4w.Gk=FzewM2/--
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
