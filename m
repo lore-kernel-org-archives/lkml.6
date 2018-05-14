@@ -1,65 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754424AbeENPCo convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 11:02:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60159 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754394AbeENPCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 11:02:43 -0400
-Date: Mon, 14 May 2018 17:02:40 +0200
-From: Jean Delvare <jdelvare@suse.de>
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: i801: fix unused-function warning
-Message-ID: <20180514170240.0b72a2d2@endymion>
-In-Reply-To: <20180514093326.30314-1-anders.roxell@linaro.org>
-References: <20180510152719.6e37b10e@endymion>
-        <20180514093326.30314-1-anders.roxell@linaro.org>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S1754448AbeENPDF convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 11:03:05 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48538 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752937AbeENPDD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 11:03:03 -0400
+From: Loic PALLARDY <loic.pallardy@st.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+CC: "ohad@wizery.com" <ohad@wizery.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
+Subject: RE: [PATCH v3 08/13] remoteproc: add prepare and unprepare ops
+Thread-Topic: [PATCH v3 08/13] remoteproc: add prepare and unprepare ops
+Thread-Index: AQHTsXm9dYPIVY3zHU+69HELf8b3rKQobfSAgAdYTlA=
+Date: Mon, 14 May 2018 15:03:00 +0000
+Message-ID: <b4d9dfbdc6684e59bec149f80897bd42@SFHDAG7NODE2.st.com>
+References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
+ <1519921440-21356-9-git-send-email-loic.pallardy@st.com>
+ <20180510005249.GF29093@builder>
+In-Reply-To: <20180510005249.GF29093@builder>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.51]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 14 May 2018 11:33:26 +0200, Anders Roxell wrote:
-> With CONFIG_PM, we get a harmless build warning:
-> drivers/i2c/busses/i2c-i801.c:1723:12: warning: ‘i801_resume’ defined but not used [-Wunused-function]
->  static int i801_resume(struct device *dev)
->             ^~~~~~~~~~~
-> drivers/i2c/busses/i2c-i801.c:1714:12: warning: ‘i801_suspend’ defined but not used [-Wunused-function]
->  static int i801_suspend(struct device *dev)
->             ^~~~~~~~~~~~
-> 
-> Follow design pattern from other drivers like i2c-brcmstb, i2c-mpc,
-> i2c-ocores, i2c-pnx, i2c-puv3, i2c-st, i2c-stu300 and i2c-mux-pca954x
-> and changing the ifdef CONFIG_PM to CONFIG_PM_SLEEP.
-> 
-> Fixes: a9c8088c7988 ("i2c: i801: Don't restore config registers on runtime PM")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  drivers/i2c/busses/i2c-i801.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
-> index ed07f9002710..954fb3f3b7fc 100644
-> --- a/drivers/i2c/busses/i2c-i801.c
-> +++ b/drivers/i2c/busses/i2c-i801.c
-> @@ -1710,7 +1710,7 @@ static void i801_shutdown(struct pci_dev *dev)
->  	pci_write_config_byte(dev, SMBHSTCFG, priv->original_hstcfg);
->  }
->  
-> -#ifdef CONFIG_PM
-> +#ifdef CONFIG_PM_SLEEP
->  static int i801_suspend(struct device *dev)
->  {
->  	struct pci_dev *pci_dev = to_pci_dev(dev);
 
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
 
-Thanks,
--- 
-Jean Delvare
-SUSE L3 Support
+> -----Original Message-----
+> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
+> Sent: Thursday, May 10, 2018 2:53 AM
+> To: Loic PALLARDY <loic.pallardy@st.com>
+> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
+> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
+> benjamin.gaignard@linaro.org
+> Subject: Re: [PATCH v3 08/13] remoteproc: add prepare and unprepare ops
+> 
+> On Thu 01 Mar 08:23 PST 2018, Loic Pallardy wrote:
+> 
+> > On some SoC architecture, it is needed to enable HW like
+> > clock, bus, regulator, memory region... before loading
+> > co-processor firmware.
+> >
+> > This patch introduces prepare and unprepare ops to execute
+> > platform specific function before firmware loading and after
+> > stop execution.
+> >
+> > Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
+> > ---
+> >  drivers/remoteproc/remoteproc_core.c | 20 +++++++++++++++++++-
+> >  include/linux/remoteproc.h           |  4 ++++
+> >  2 files changed, 23 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/remoteproc/remoteproc_core.c
+> b/drivers/remoteproc/remoteproc_core.c
+> > index 7a500cb..0ebbc4f 100644
+> > --- a/drivers/remoteproc/remoteproc_core.c
+> > +++ b/drivers/remoteproc/remoteproc_core.c
+> > @@ -1058,12 +1058,22 @@ static int rproc_fw_boot(struct rproc *rproc,
+> const struct firmware *fw)
+> >  		return ret;
+> >  	}
+> >
+> > +	/* Prepare rproc for firmware loading if needed */
+> > +	if (rproc->ops->prepare) {
+> > +		ret = rproc->ops->prepare(rproc);
+> > +		if (ret) {
+> > +			dev_err(dev, "can't prepare rproc %s: %d\n",
+> > +				rproc->name, ret);
+> > +			goto disable_iommu;
+> > +		}
+> > +	}
+> 
+> We do allow drivers to implement custom versions of parse_fw() - and
+> they can call the resource-table-parse-fw from the custom function.
+> 
+> So with the proposed refactoring in patch 9 I would like for parse_fw()
+> to call back into the core to fill out the resource lists and then
+> before jumping to rproc_start() we loop over the allocator functions.
+
+Agree
+Regards,
+Loic
+> 
+> > +
+> >  	rproc->bootaddr = rproc_get_boot_addr(rproc, fw);
+> >
+> >  	/* load resource table */
+> >  	ret = rproc_load_rsc_table(rproc, fw);
+> >  	if (ret)
+> > -		goto disable_iommu;
+> > +		goto unprepare_rproc;
+> >
+> >  	/* reset max_notifyid */
+> >  	rproc->max_notifyid = -1;
+> > @@ -1086,6 +1096,10 @@ static int rproc_fw_boot(struct rproc *rproc,
+> const struct firmware *fw)
+> >  	kfree(rproc->cached_table);
+> >  	rproc->cached_table = NULL;
+> >  	rproc->table_ptr = NULL;
+> > +unprepare_rproc:
+> > +	/* release HW resources if needed */
+> > +	if (rproc->ops->unprepare)
+> > +		rproc->ops->unprepare(rproc);
+> >  disable_iommu:
+> >  	rproc_disable_iommu(rproc);
+> >  	return ret;
+> > @@ -1331,6 +1345,10 @@ void rproc_shutdown(struct rproc *rproc)
+> >  	/* clean up all acquired resources */
+> >  	rproc_resource_cleanup(rproc);
+> >
+> > +	/* release HW resources if needed */
+> > +	if (rproc->ops->unprepare)
+> > +		rproc->ops->unprepare(rproc);
+> 
+> And this would then be handled by the rproc_resource_cleanup() function,
+> looping over all resources and calling release().
+> 
+> Regards,
+> Bjorn
