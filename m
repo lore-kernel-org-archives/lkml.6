@@ -1,163 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752883AbeENMAZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:00:25 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:45624 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752043AbeENMAV (ORCPT
+        id S1752871AbeENMB4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:01:56 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:45904 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752153AbeENMBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:00:21 -0400
-X-Google-Smtp-Source: AB8JxZq/g2AMXho3D++mJGqxDJDvL3HdAZqOsbDrEEbz6O9bIVQK3M0bhu5JlzV4G4NEMRTf1ni+HDm+3QfJ+TQmgtQ=
+        Mon, 14 May 2018 08:01:53 -0400
+X-Google-Smtp-Source: AB8JxZrGeiTX3fgh+FKVW3o9AqWe6uiw2IoITo/atZ6bDw5g10EWt5hO+fr4kdkJ/HEtBM9Yb8SOPw==
+Subject: Re: [PATCH v1] mfd: tps6586x: Move interrupt handling into workqueue
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180513211842.7819-1-digetx@gmail.com>
+ <20180514115135.GG18312@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <739706a9-4925-a7a0-686e-8d352ece4bac@gmail.com>
+Date: Mon, 14 May 2018 15:01:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180514134607.5dfb8d51@bbrezillon>
-References: <1526294977-32303-1-git-send-email-geert@linux-m68k.org>
- <20180514132324.595b63eb@bbrezillon> <CAMuHMdUSHc2o5zXbZje89jo2dxTYv8pzcVSz-gYWh7KdZKwQeA@mail.gmail.com>
- <20180514134607.5dfb8d51@bbrezillon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 May 2018 14:00:19 +0200
-X-Google-Sender-Auth: YyvbDOQAJG_AHGqfjAF60bRPl4Q
-Message-ID: <CAMuHMdVhAAGiGjGMCe26kyLAPqrvTfukADhipd8apk8UNBAXiA@mail.gmail.com>
-Subject: Re: [PATCH] mtd: nand: Fix return type of __DIVIDE() when called with 32-bit
-To: Boris Brezillon <boris.brezillon@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        "Linux/m68k" <linux-m68k@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180514115135.GG18312@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
-
-On Mon, May 14, 2018 at 1:46 PM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> On Mon, 14 May 2018 13:32:30 +0200
-> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> On Mon, May 14, 2018 at 1:23 PM, Boris Brezillon
->> <boris.brezillon@bootlin.com> wrote:
->> > On Mon, 14 May 2018 12:49:37 +0200
->> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> >> The __DIVIDE() macro checks whether it is called with a 32-bit or 64-bit
->> >> dividend, to select the appropriate divide-and-round-up routine.
->> >> As the check uses the ternary operator, the result will always be
->> >> promoted to a type that can hold both results, i.e. unsigned long long.
->> >>
->> >> When using this result in a division on a 32-bit system, this may lead
->> >> to link errors like:
->> >>
->> >>     ERROR: "__udivdi3" [drivers/mtd/nand/raw/nand.ko] undefined!
->> >>
->> >> Fix this by casting the result of the 64-bit division to the type of the
->> >> dividend.
->> >>
->> >> Fixes: 8878b126df769831 ("mtd: nand: add ->exec_op() implementation")
->> >> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
->> >> ---
->> >> This fixes the root cause of the link failure seen with
->> >> m68k/allmodconfig since commit 3057fcef385348fe ("mtd: rawnand: Make
->> >> sure we wait tWB before polling the STATUS reg").
->> >>
->> >> An alternative mitigation was posted as "[PATCH] m68k: Implement
->> >> ndelay() as an inline function to force type checking/casting"
->> >> (https://lkml.org/lkml/2018/5/13/102).
->> >> ---
->> >>  include/linux/mtd/rawnand.h | 2 +-
->> >>  1 file changed, 1 insertion(+), 1 deletion(-)
->> >>
->> >> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
->> >> index 5dad59b312440a9c..d06dc428ea0102ae 100644
->> >> --- a/include/linux/mtd/rawnand.h
->> >> +++ b/include/linux/mtd/rawnand.h
->> >> @@ -871,7 +871,7 @@ struct nand_op_instr {
->> >>  #define __DIVIDE(dividend, divisor) ({                                       \
->> >>       sizeof(dividend) == sizeof(u32) ?                               \
->> >>               DIV_ROUND_UP(dividend, divisor) :                       \
->> >> -             DIV_ROUND_UP_ULL(dividend, divisor);                    \
->> >> +             (__typeof__(dividend))DIV_ROUND_UP_ULL(dividend, divisor); \
->> >
->> > Hm, it's a bit hard to follow when you place the cast here. One could
->> > wonder why a cast to (__typeof__(dividend)) is needed since
->> > DIV_ROUND_UP_ULL() already returns a (__typeof__(dividend)) type.
+On 14.05.2018 14:51, Thierry Reding wrote:
+> On Mon, May 14, 2018 at 12:18:42AM +0300, Dmitry Osipenko wrote:
+>> Reading of status register within the interrupt handler fails with -EAGAIN
+>> if I2C is busy with handling some other request at the same time. Move the
+>> actual interrupt handling into a workqueue to avoid the unfortunate I2C
+>> failure and to avoid hanging CPU in interrupt up to 1 second (transfer
+>> timeout in the Tegra I2C driver).
 >>
->> DIV_ROUND_UP_ULL() does not return __typeof__(dividend), but
->> unsigned long long.
->
-> Except if you entered this branch, that means you passed an unsigned
-> long long dividend (AKA u64), otherwise you would go in DIV_ROUND_UP().
-> Am I missing something?
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/mfd/tps6586x.c | 40 +++++++++++++++++++++++++++++-----------
+>>  1 file changed, 29 insertions(+), 11 deletions(-)
+> 
+> Could this not be achieved with a threaded interrupt handler?
+> 
+> Thierry
+> 
 
-Sure, inside that branch, it does.
-But the compiler considers the whole ternary operator construction, i.e.
-both branches.
-
->> > How about:
->> >
->> >         /*
->> >          * Cast to type of dividend is needed here to guarantee that the
->> >          * result won't be an unsigned long long when the dividend is an
->> >          * unsigned long, which is what the compiler does when it sees a
->>
->> s/an unsigned long/32-bit/
->>
->> >          * ternary operator with 2 different return types.
->> >          */
->> >         (__typeof__(dividend))(sizeof(dividend) == sizeof(u32) ?        \
->
-> To be completely safe and handle cases where dividend is an unsigned
-> short or an unsigned, we should probably have:
->
->         (__typeof__(dividend))(sizeof(dividend) == sizeof(unsigned long long) ? \
-
-"> sizeof(u32)"?
-
-/me starts to think about uint128_t...
-
-
->                                DIV_ROUND_UP_ULL(dividend, divisor) :
->                                DIV_ROUND_UP(dividend, divisor));
->
->> >                                DIV_ROUND_UP(dividend, divisor) :        \
->> >                                DIV_ROUND_UP_ULL(dividend, divisor));
->>
->> Looks fine to me, too.
->>
->> > Actually, I'm not even sure we care about the truncation that could
->> > happen on an unsigned long long -> unsigned long cast because the
->> > delays we express here will anyway be hundreds of nanosecs/millisecs,
->> > so nothing close to the billions of nanosecs/millisecs you can express
->> > with an unsigned long.
->> >
->> > So, maybe we should just do:
->> >
->> >         (unsigned long)(sizeof(dividend) == sizeof(u32) ?               \
->> >                         DIV_ROUND_UP(dividend, divisor) :               \
->> >                         DIV_ROUND_UP_ULL(dividend, divisor));
->> >
->> > to make things more readable.
->>
->> That would break callers who pass a 64-bit dividend, and expect to receive
->> a 64-bit quotient back (on 32-bit systems).
->> Calling e.g. PSEC_TO_NSEC(1000000000000ULL) is valid, passing the
->> result to ndelay() isn't ;-)
->
-> Well, theoretically, yes it's possible, in practice, we only ever pass
-> u32 types to PSEC_TO_NSEC() and u64 types to PSEC_TO_MSEC(), so why
-> bother.
-
-True. But __DIVIDE() sounds too generic to add such unobvious limitations.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Seems yes. I completely forgot about the threaded interrupt handlers existence.
+Thank you very much for the suggestion, I'll try with the threaded IRQ and send
+v2 if it will be fine.
