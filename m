@@ -1,184 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753856AbeENN6K (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 09:58:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44872 "EHLO mx1.redhat.com"
+        id S932253AbeENOAX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:00:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35058 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753835AbeENN6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 09:58:05 -0400
-Date: Mon, 14 May 2018 09:58:03 -0400
-From: Vivek Goyal <vgoyal@redhat.com>
-To: Miklos Szeredi <mszeredi@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>
-Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org, Paul Moore <pmoore@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: [PATCH v2 22/35] vfs: don't open real
-Message-ID: <20180514135803.GA2777@redhat.com>
-References: <20180507083807.28792-1-mszeredi@redhat.com>
- <20180507083807.28792-23-mszeredi@redhat.com>
- <20180511185430.GE6044@redhat.com>
- <20180511194248.GF6044@redhat.com>
+        id S1752743AbeENOAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 10:00:20 -0400
+Date: Mon, 14 May 2018 16:00:16 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Halil Pasic <pasic@linux.ibm.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 1/1] s390: vfio-ccw: push down unsupported IDA check
+Message-ID: <20180514160016.3b689728.cohuck@redhat.com>
+In-Reply-To: <d0eb5f47-bb71-f615-3780-e753a22daf5b@linux.ibm.com>
+References: <20180509173647.61367-1-pasic@linux.ibm.com>
+        <20180514135554.29569999.cohuck@redhat.com>
+        <d0eb5f47-bb71-f615-3780-e753a22daf5b@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180511194248.GF6044@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 03:42:48PM -0400, Vivek Goyal wrote:
-> On Fri, May 11, 2018 at 02:54:30PM -0400, Vivek Goyal wrote:
-> > On Mon, May 07, 2018 at 10:37:54AM +0200, Miklos Szeredi wrote:
-> > > Let overlayfs do its thing when opening a file.
-> > > 
-> > > This enables stacking and fixes the corner case when a file is opened for
-> > > read, modified through a writable open, and data is read from the read-only
-> > > file.  After this patch the read-only open will not return stale data even
-> > > in this case.
+On Mon, 14 May 2018 15:37:17 +0200
+Halil Pasic <pasic@linux.ibm.com> wrote:
+
+> On 05/14/2018 01:55 PM, Cornelia Huck wrote:
+> > On Wed,  9 May 2018 19:36:47 +0200
+> > Halil Pasic <pasic@linux.ibm.com> wrote:
+> >   
+> >> There is at least one relevant control program (CP) that don't set the  
 > > 
-> > [CC Dan, Steven, Paul, linux-security-module list]
+> > I'd prefer not to talk about 'control program' here, as it is not a
+> > term commonly used in Linux. Call it 'guest'?
 > > 
-> > Hi Miklos,
+> > Also, s/don't/doesn't/
 > > 
-> > I was running selinux-testsuite and one of the tests seems to fail. I
-> > think this is side effect of installing overlay inode in file->f_inode
-> > instead of real underlying inode.
-> > 
-> > Following test is failing.
-> > 
-> > sub test_90_1 {
-> >     print "Attempting to enter domain with bad entrypoint, should fail.\n";
-> >     $result = system(
-> > "runcon -t test_overlay_client_t -l s0:c10,c20 $basedir/container1/merged/badentrypoint >/dev/null 2>&1"
-> >     );
-> >     ok($result);
-> >     return;
-> > }
+> >   
 > 
-> I am wondering, shouldn't do_open_execat() have failed. It should have called
-> into inode_permission(MAY_EXEC). And then ovl_inode_permission()
-> will in turn call inode_permission(realinode, MAY_EXEC) with mounter's
-> creds. Shouldn't selinux_inode_permission() have returned that mounter
-> does not have MAY_EXEC permission on inode.
+> I will use guest instead.
+> 
+> >> IDA flags in the ORB as we would like them, but never uses any IDA. So
+> >> instead of saying -EOPNOTSUPP when observing an ORB such that a channel
+> >> program specified by it could be a not supported one, let us say
+> >> -EOPNOTSUPP only if the channel program is a not supported one.
+> >>
+> >> Of course, the real solution would be doing proper translation for all
+> >> IDA. This is possible, but given the current code not straight forward.  
+> > 
+> > I agree, this seems useful for now, but we really need to support the
+> > different ida flags to be fully architecture compliant.
+> >   
+> 
+> I think this support is deeply buried in Dong Jia's backlog. FWIW
+> I'm unaware of any (relevant) exploiter (guest) for the old IDA.
+> Thus testing could also prove challenging, that is require extra
+> test code. So given the estimated pain/gain ratio I don't see this
+> coming soon.
 
-Ok, I noticed that current policy in tests gives exec permission to 
-mounter for ro_t file and that's why inode_permission(MAY_EXEC) does
-not fail.
-
-can_exec(test_overlay_mounter_t, test_overlay_files_ro_t)
-
-Talked to Dan and he mentioned that he was trying to test entrypoint
-failure (and not exec failure) and that's whey he might have allowed exec
-to mounter.
-
-I think that current entrypoint test's expectations are wrong.
-User process sees overlay inode lablel which is rwx_t and that means
-overlay layer will allow entrypoint into that executable. This will be the
-behavior on a normal file system where underlying file's label will be
-completely overridden by context=.
-
-So in my opinion, we should modify testsuite and not run this test with
-context= mounts.
-
-Only little thing to argue is that should we check if mounter has the
-permission for this entrypoint. And currently SELinux checks are not
-two level checks. So this can be implemented once SELinux is made
-aware of multiple levels (if we ever do that).
-
-Thanks
-Vivek
+Yes, the only practical outcome from implementing this is that we can
+claim architecture compliance. Would be good if we could do that, but
+as long as there are more pressing issues around...
 
 > 
-> Dan, I am wondering if this is a selinux policy issue? In my testing
-> on upstream kernel, do_open_execat() succeeds and it fails much later.
-> I am wondering why that's the case. Is it expected.
+> With my QEMU changes related to this patch we will also get the full
+> IDA support as soon as the kernel is there.
+
+Nod.
+
 > 
-> Thanks
-> Vivek
+> >>
+> >> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+> >> Tested-by: Jason J. Herne <jjherne@linux.ibm.com>
+> >> ---
+> >>
+> >> QEMU counterpart comming soon.
+> >> ---
+> >>   drivers/s390/cio/vfio_ccw_cp.c | 19 ++++++++++++++++---
+> >>   1 file changed, 16 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
+> >> index 2c7550797ec2..adfff492dc83 100644
+> >> --- a/drivers/s390/cio/vfio_ccw_cp.c
+> >> +++ b/drivers/s390/cio/vfio_ccw_cp.c
+> >> @@ -365,6 +365,9 @@ static void cp_unpin_free(struct channel_program *cp)
+> >>    * This is the chain length not considering any TICs.
+> >>    * You need to do a new round for each TIC target.
+> >>    *
+> >> + * The program is also validated for absence of not yet supported
+> >> + * indirect data addressing scenarios.
+> >> + *
+> >>    * Returns: the length of the ccw chain or -errno.
+> >>    */
+> >>   static int ccwchain_calc_length(u64 iova, struct channel_program *cp)
+> >> @@ -391,6 +394,14 @@ static int ccwchain_calc_length(u64 iova, struct channel_program *cp)
+> >>   	do {
+> >>   		cnt++;
+> >>   
+> >> +		/*
+> >> +		 * 2k byte block IDAWs (fmt1 or fmt2) are not yet supported.
+> >> +		 * There are however CPs that don't use IDA at all, and can
+> >> +		 * benefit from not failing until failure is eminent.  
+> > 
+> > The second sentence is confusing (What is 'CP' referring to here?
+> > 'Control program' or struct channel_program?)  
 > 
+> Control program. I was under impression that in mainframe context CP
+> mostly stands for control program.
+
+Yes, but it is very confusing as there is also a variable named 'cp' in
+this function.
+
 > 
 > > 
-> > Basically, this test has an executable named "badentrypoint" with selinux
-> > label "unconfined_u:object_r:test_overlay_files_ro_t:s0". And we mount
-> > overlay with context=unconfined_u:object_r:test_overlay_files_rwx_t:s0:c10,c20
+> > What about:
 > > 
-> > So effectively overlay inode of "badentrypoint" now gets the label
-> > specified by "context=".
+> > "As we don't want to fail direct addressing even if the orb specified
+> > one of the unsupported formats, we defer checking for IDAWs in
+> > unsupported formats to here."  
+> 
+> Was the second sentence only confusing because of CP? I'm not perfectly
+> satisfied with your version either:
+> * 'fail direct addressing even if the orb specified one of the unsupported formats'
+>     I wanted to say: 'hey it does not matter what format for IDA the orb implies
+>     if the channel program does not use any IDA at all'. That could be paraphrased
+>     as channel programs using direct addressing exclusively. But failing the direct
+>     addressing does not fit for me.
+
+But that's effectively what happens now, no? We reject the orb out of
+hand due to unsupported flags that do not have any relevance for the
+channel program in that case.
+
+Or maybe 'channel programs using direct addressing only'?
+
+> * 'defer' is IMHO trivial from the perspective that we used to fence the unsupported
+>     scenarios earlier (by just looking at the orb). But if one just reads the new code
+>     defer does not make much sense to me.
+
+I think it still makes sense if you look at how the functions are
+called.
+
+> 
+> But no strong opinions here. If you think your version is the way to go I
+> will just take it.
+
+I certainly don't want to dictate things :)
+
+> 
+> >   
+> >> +		 */
+> >> +		if ((!cp->orb.cmd.c64 || cp->orb.cmd.i2k) && ccw_is_idal(ccw))
+> >> +			return -EOPNOTSUPP;
+> >> +
+> >>   		if ((!ccw_is_chain(ccw)) && (!ccw_is_tic(ccw)))
+> >>   			break;
+> >>   
+> >> @@ -656,10 +667,8 @@ int cp_init(struct channel_program *cp, struct device *mdev, union orb *orb)
+> >>   	/*
+> >>   	 * XXX:
+> >>   	 * Only support prefetch enable mode now.
+> >> -	 * Only support 64bit addressing idal.
+> >> -	 * Only support 4k IDAW.
+> >>   	 */
+> >> -	if (!orb->cmd.pfch || !orb->cmd.c64 || orb->cmd.i2k)
+> >> +	if (!orb->cmd.pfch)
+> >>   		return -EOPNOTSUPP;
+> >>   
+> >>   	INIT_LIST_HEAD(&cp->ccwchain_list);
+> >> @@ -688,6 +697,10 @@ int cp_init(struct channel_program *cp, struct device *mdev, union orb *orb)
+> >>   	ret = ccwchain_loop_tic(chain, cp);
+> >>   	if (ret)
+> >>   		cp_unpin_free(cp);
+> >> +	/* It is safe to force: if not set but idals used
+> >> +	 * ccwchain_calc_length returns an error.  
 > > 
-> > I think intent of test is that this file's real label is "...ro_t". That
-> > means this file is not supposed to be executed and any attempt to execute
-> > it should be denied.
+> > s/returns/already returned/ ?
+> >   
+> 
+> Yes we can do that. I think returns is also grammatical. Present simple
+> can be used for expressing something that is always true.
+
+I think it makes it clearer that we already checked earlier in the call
+sequence.
+
+> 
+> >> +	 */
+> >> +	cp->orb.cmd.c64 = 1;
+> >>   
+> >>   	return ret;
+> >>   }  
 > > 
-> > Currently test works and execution fails with following avc.
-> > 
-> > AVC avc:  denied  { entrypoint } for  pid=1425 comm="runcon" path="/root/git/selinux-testsuite/tests/overlay/container1/merged/badentrypoint" dev="dm-0" ino=34515261 scontext=unconfined_u:unconfined_r:test_overlay_client_t:s0:c10,c20 tcontext=unconfined_u:object_r:test_overlay_files_ro_t:s0 tclass=file permissive=0
-> > 
-> > But with new patches, this test starts passing. 
-> > 
-> > I think currently selinux_bprm_set_creds() returns error. It does
-> > checks on inode returned by file_inode() and as of now that inode is
-> > real inode and that inode has real lable of "...ro_t" and permission
-> > to execute that file is denied.
-> > 
-> > But after the patches file_inode() returns overlay inode. Which has
-> > the label specified by context= mount option "...rwx_t". And that
-> > label allows executing file, so file execution is not blocked by
-> > selinux.
-> > 
-> > I feel that even now code is working accidently. Ideally our theme was
-> > that task's credential as checked against overlay inode and mounter's
-> > creds are checked against underlying inode to determine if certain
-> > permission is allowed. So ideally mounter should not have been allwed
-> > to execute a file of type "...ro_t". But we don't have that workflow
-> > and VFS calls into selinux and selinux checks the underlying file's
-> > label against task.
-> > 
-> > It worked so far but the moment we install overlay inode in file, selinux
-> > checks it against overlay inode label and allows permission to execute and
-> > mounter is never checked against real inode.
-> > 
-> > I am not sure what's the right solution. So far selinux is not aware of
-> > two levels of checks and if two levels of checks are to be performed, it
-> > somehow needs to be enforced by overlay and call same hook on two levels.
-> > 
-> > Thought of atleast starting a conversation on this.
-> > 
-> > Thanks
-> > Vivek
-> > 
-> > 
-> > > 
-> > > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > > ---
-> > >  fs/open.c | 7 +------
-> > >  1 file changed, 1 insertion(+), 6 deletions(-)
-> > > 
-> > > diff --git a/fs/open.c b/fs/open.c
-> > > index 6e52fd6fea7c..244cd2ecfefd 100644
-> > > --- a/fs/open.c
-> > > +++ b/fs/open.c
-> > > @@ -897,13 +897,8 @@ EXPORT_SYMBOL(file_path);
-> > >  int vfs_open(const struct path *path, struct file *file,
-> > >  	     const struct cred *cred)
-> > >  {
-> > > -	struct dentry *dentry = d_real(path->dentry, NULL, file->f_flags, 0);
-> > > -
-> > > -	if (IS_ERR(dentry))
-> > > -		return PTR_ERR(dentry);
-> > > -
-> > >  	file->f_path = *path;
-> > > -	return do_dentry_open(file, d_backing_inode(dentry), NULL, cred);
-> > > +	return do_dentry_open(file, d_backing_inode(path->dentry), NULL, cred);
-> > >  }
-> > >  
-> > >  /**
-> > > -- 
-> > > 2.14.3
-> > > 
-> > > --
-> > > To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
-> > > the body of a message to majordomo@vger.kernel.org
-> > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > The patch looks sane, I have only issues with the description/comments.
+> >   
+> 
+> Thanks for having a look. Please give me short feedback about the one
+> open point and I will respin with the requested changes.
+
+Does anybody else have feedback?
