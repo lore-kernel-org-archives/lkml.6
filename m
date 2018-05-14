@@ -1,66 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752547AbeENVeA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:34:00 -0400
-Received: from ozlabs.org ([203.11.71.1]:47709 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752363AbeENVd5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:33:57 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 15 May 2018 07:33:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zhi Wang <zhi.a.wang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>
-Subject: linux-next: Signed-off-by missing for commits in the drm-intel tree
-Message-ID: <20180515073349.6efabb21@canb.auug.org.au>
+        id S1752687AbeENVeH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:34:07 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:51714 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752173AbeENVeE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 17:34:04 -0400
+X-Google-Smtp-Source: AB8JxZpspsHs5GhzoUdoUKiOO1q2aU/9LE8/BgwtQjJ0lIWi5HmKn3rJ5PG/jA2VgEJbXUNjHkc2Lm5d+ABLTVFx3h0=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_TI0gA6aNcqaWj2eNPbpFU1"; protocol="application/pgp-signature"
+In-Reply-To: <1526306235-29755-1-git-send-email-geert@linux-m68k.org>
+References: <1526306235-29755-1-git-send-email-geert@linux-m68k.org>
+From: Martijn Coenen <maco@android.com>
+Date: Mon, 14 May 2018 23:34:03 +0200
+Message-ID: <CAB0TPYHGa-yOMLWdxvSMV942as+ygpHOUR4W9tpDFGmufoimqw@mail.gmail.com>
+Subject: Re: [PATCH] m68k/uaccess: Revive 64-bit get_user()
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k <linux-m68k@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/_TI0gA6aNcqaWj2eNPbpFU1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 14, 2018 at 3:57 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> Revive support for 64-bit get_user(), which was disabled in commit
+> d94af931af42152e ("[PATCH] m68k: clean up uaccess.h") due to a "broken"
+> typeof in (then brand new) gcc-4.1.
+>
+>   - Keep on using u64 for the temporary, as __typeof__() doesn't drop
+>     the const qualifier,
+>   - Move it into a union (like mips32 does) to get rid of the cast, as
+>     using get_user() to fetch a __user pointer would cause a "cast to
+>     pointer from integer of different size" warning otherwise.
 
-Hi all,
+Can't vouch for the existing asm, but the changes to it look good to
+me otherwise.
 
-Commits
+>
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-  cb8ba171ae6c ("drm/i915/gvt: let force_to_nonpriv cmd handler only valid =
-for LRI cmd")
-  0438a1059877 ("drm/i915/gvt: do not return error on handling force_to_non=
-priv registers")
-  3d8b9e258b9d ("drm/i915/gvt: let NOPID be the default value of force_to_n=
-onpriv registers")
-  b99f514f5dfa ("drm/i915/gvt: Remove disable_warn_untrack and print untrac=
-ked mmio with debug level")
+Acked-by: Martijn Coenen <maco@android.com>
 
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/_TI0gA6aNcqaWj2eNPbpFU1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6AL0ACgkQAVBC80lX
-0Gw5Jgf/TBz3S1c+Sk4txq2RsY/Z6VFvLoaFCQDs2FLG+aPhLcHIh5K1+gzhnJGy
-bo9Aw0T7llGqQ0W3jthluG/qVVciSZZTc4ISXhazUNsJqTuLLucC6TvfGnbjcYM6
-KMI7wwCfOf4OKne/HU58H02fe1g1cpfG+ilNODp/EcfuNaC/iqQMiu9f5+eqmdac
-miJ2Ilu2CBY+br6hb+lFPHmCggD1+UDw/ZvFv/Iu0gglRAi5rbrAMRpx07A4wi45
-AMq59dcVkdsgpDPVcS3jJi4FdDEORjezhLd+8fDF/I5i4j8HxfuUKrUkZveM+cA4
-uYNA2BnEJjcVTXl+DVEpZAWkHt/HAw==
-=V/Ve
------END PGP SIGNATURE-----
-
---Sig_/_TI0gA6aNcqaWj2eNPbpFU1--
+> ---
+>  arch/m68k/include/asm/uaccess_mm.h | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/m68k/include/asm/uaccess_mm.h b/arch/m68k/include/asm/uaccess_mm.h
+> index 75c172e909acdf18..c4cb889660aa0c35 100644
+> --- a/arch/m68k/include/asm/uaccess_mm.h
+> +++ b/arch/m68k/include/asm/uaccess_mm.h
+> @@ -141,10 +141,12 @@ asm volatile ("\n"                                        \
+>         case 4:                                                         \
+>                 __get_user_asm(__gu_err, x, ptr, u32, l, r, -EFAULT);   \
+>                 break;                                                  \
+> -/*     case 8: disabled because gcc-4.1 has a broken typeof            \
+> -           {                                                           \
+> -               const void *__gu_ptr = (ptr);                           \
+> -               u64 __gu_val;                                           \
+> +       case 8: {                                                       \
+> +               const void *__gu_ptr = (ptr);                           \
+> +               union {                                                 \
+> +                       u64 l;                                          \
+> +                       __typeof__(*(ptr)) t;                           \
+> +               } __gu_val;                                             \
+>                 asm volatile ("\n"                                      \
+>                         "1:     "MOVES".l       (%2)+,%1\n"             \
+>                         "2:     "MOVES".l       (%2),%R1\n"             \
+> @@ -162,13 +164,13 @@ asm volatile ("\n"                                        \
+>                         "       .long   1b,10b\n"                       \
+>                         "       .long   2b,10b\n"                       \
+>                         "       .previous"                              \
+> -                       : "+d" (__gu_err), "=&r" (__gu_val),            \
+> +                       : "+d" (__gu_err), "=&r" (__gu_val.l),          \
+>                           "+a" (__gu_ptr)                               \
+>                         : "i" (-EFAULT)                                 \
+>                         : "memory");                                    \
+> -               (x) = (__force typeof(*(ptr)))__gu_val;                 \
+> +               (x) = __gu_val.t;                                       \
+>                 break;                                                  \
+> -           }   */                                                      \
+> +       }                                                               \
+>         default:                                                        \
+>                 __gu_err = __get_user_bad();                            \
+>                 break;                                                  \
+> --
+> 2.7.4
+>
