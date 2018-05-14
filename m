@@ -1,53 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752160AbeENRx4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:53:56 -0400
-Received: from mail-pl0-f54.google.com ([209.85.160.54]:46922 "EHLO
-        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751515AbeENRxx (ORCPT
+        id S1752185AbeENRyi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:54:38 -0400
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:34332 "EHLO
+        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751515AbeENRyh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:53:53 -0400
-X-Google-Smtp-Source: AB8JxZp43iUfbtl3UjO9votRI9bV52LInDHYp7H45+yWJELOxJTuOs5LEpzSLQFj1A0G4ecokZSEfw==
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: use memcpy_mcsafe() for copy_to_iter() (was: Re: [PATCH v3 0/9] Series short description)
-From: Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15E302)
-In-Reply-To: <CAPcyv4j2HQH1wdsGGWUAiXEKXeoMUWN_HeUEMmkv8PG7RUTtfw@mail.gmail.com>
-Date: Mon, 14 May 2018 10:53:51 -0700
-Cc: Ingo Molnar <mingo@kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
+        Mon, 14 May 2018 13:54:37 -0400
+X-Google-Smtp-Source: AB8JxZpY8IrL875ioX8AQFO2OU0+WP2rGd9ZvavBbd4DVrmzukDq3uxwNrW3rL5tXmV2jHFMPs0OymIVt0ZZU3DJTMA=
+MIME-Version: 1.0
+In-Reply-To: <20180510140311.02805561@bbrezillon>
+References: <1525920400-11392-1-git-send-email-Jane.Wan@nokia.com> <20180510140311.02805561@bbrezillon>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 14 May 2018 20:54:36 +0300
+Message-ID: <CAHp75VcET7PZYfeRkmiP=n_xCnDzEFYS98ZLjszc1fHjdfDF2A@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] mtd: rawnand: use bit-wise majority to recover the
+ contents of ONFI parameter
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Jane Wan <Jane.Wan@nokia.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        prabhakar.kushwaha@nxp.com, Shawn Guo <shawnguo@kernel.org>,
+        jagdish.gediya@nxp.com, Shreeya Patel <shreeya.patel23498@gmail.com>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        =?utf-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Message-Id: <3CEE65FC-2314-4837-9854-80E73ECBF0EE@amacapital.net>
-References: <CAPcyv4g5p72aiXYh8Tf03tvZq8HNYmTFU95PJGG1iQ4JHcr9PA@mail.gmail.com> <20180514072603.GA14099@gmail.com> <CAPcyv4j2HQH1wdsGGWUAiXEKXeoMUWN_HeUEMmkv8PG7RUTtfw@mail.gmail.com>
-To: Dan Williams <dan.j.williams@intel.com>
+        ties.bos@nokia.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4EHs1an027094
+
+On Thu, May 10, 2018 at 3:03 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+
+>> +#define GET_BIT(bit, val)   (((val) >> (bit)) & 0x01)
+>
+> Not sure we need that macro, see below.
+
++1. We have too many nice helpers for bit manipulations
+(for_each_set_bit() as an example).
 
 
+>                         for (k = 0; k < nbufs; k++) {
+>                                 const u8 *srcbuf = srcbufs[j];
+>
+>                                 if (srcbuf[i] & BIT(k))
+>                                         m++;
+>                         }
 
-> On May 14, 2018, at 8:52 AM, Dan Williams <dan.j.williams@intel.com> wrote:
-> 
+...which is effectively hweightXX().
 
-> 
-> I think "happy" is a strong word when it comes to x86 machine check
-> handling. My interpretation is that he and Andy acquiesced that this
-> is about the best we can do with dax+mce as things stand today.
+>> -     p = kzalloc(sizeof(*p), GFP_KERNEL);
+>> +     p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
+>>       if (!p)
+>>               return -ENOMEM;
+
+...which is kcalloc().
 
 
-Agreed. I think it’s plausible that we could do slightly better for MCEs related to bad memory accessed through the direct map, but the code would be complicated and miserable to test, and it’s not even clear that it would materially decrease the chance that we survive as compared to these patches.
+-- 
+With Best Regards,
+Andy Shevchenko
