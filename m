@@ -1,79 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751961AbeENFQN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 01:16:13 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34530 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750810AbeENFQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 01:16:12 -0400
-Date: Mon, 14 May 2018 06:15:55 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Alexander Popov <alex.popov@linux.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: Clear the stack
-Message-ID: <20180514051555.bpbydgr56hyffjch@salmiak>
-References: <20180502203326.9491-1-labbott@redhat.com>
- <20180502203326.9491-3-labbott@redhat.com>
- <20180503071917.xm2xvgagvzkworay@salmiak>
- <dd6ad26c-1d2c-88f3-8f01-e68d2b31d6ea@linux.com>
- <20180504110907.c2dw33kjmyybso6t@lakrids.cambridge.arm.com>
- <4badae50-be9b-2c6d-854b-57ab48664800@linux.com>
- <71199506-b46b-5f91-e489-e6450b6d1067@linux.com>
- <20180511161317.57k6prl54xjmsit3@lakrids.cambridge.arm.com>
- <f180b312-d1cf-3992-4e89-9632c1674cd6@linux.com>
+        id S1751894AbeENFgP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 01:36:15 -0400
+Received: from ozlabs.org ([203.11.71.1]:50251 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750760AbeENFgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 01:36:13 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 14 May 2018 15:36:10 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Shuah Khan <shuah@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the kselftest tree with the kvm-fixes
+ tree
+Message-ID: <20180514153610.37d0a458@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f180b312-d1cf-3992-4e89-9632c1674cd6@linux.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/+yblz34.BS4w.Gk=FzewM2/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 13, 2018 at 11:40:07AM +0300, Alexander Popov wrote:
-> It seems that previously I was very "lucky" to accidentally have those MIN_STACK_LEFT,
-> call trace depth and oops=panic together to experience a hang on stack overflow
-> during BUG().
-> 
-> 
-> When I run my test in a loop _without_ VMAP_STACK, I manage to corrupt the neighbour
-> processes with BUG() handling overstepping the stack boundary. It's a pity, but
-> I have an idea.
+--Sig_/+yblz34.BS4w.Gk=FzewM2/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I think that in the absence of VMAP_STACK, there will always be cases where we
-*could* corrupt a neighbouring stack, but I agree that trying to minimize that
-possibility would be good.
+Hi Shuah,
 
-> In kernel/sched/core.c we already have:
-> 
-> #ifdef CONFIG_SCHED_STACK_END_CHECK
->   	if (task_stack_end_corrupted(prev))
-> 		panic("corrupted stack end detected inside scheduler\n");
-> #endif
-> 
-> So what would you think if I do the following in check_alloca():
-> 
-> 	if (size >= stack_left) {
-> #if !defined(CONFIG_VMAP_STACK) && defined(CONFIG_SCHED_STACK_END_CHECK)
-> 		panic("alloca over the kernel stack boundary\n");
-> #else
-> 		BUG();
-> #endif
+Today's linux-next merge of the kselftest tree got a conflict in:
 
-Given this is already out-of-line, how about we always use panic(), regardless
-of VMAP_STACK and SCHED_STACK_END_CHECK? i.e. just
+  tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
 
-	if (unlikely(size >= stack_left))
-		panic("alloca over the kernel stack boundary");
+between commit:
 
-If we have VMAP_STACK selected, and overflow during the panic, it's the same as
-if we overflowed during the BUG(). It's likely that panic() will use less stack
-space than BUG(), and the compiler can put the call in a slow path that
-shouldn't affect most calls, so in all cases it's likely preferable.
+  bcb2b94ae010 ("KVM: selftests: exit with 0 status code when tests cannot =
+be run")
 
-Thanks,
-Mark.
+from the kvm-fixes tree and commit:
+
+  13911360966d ("selftests: kvm: return Kselftest Skip code for skipped tes=
+ts")
+
+from the kselftest tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
+index aaa633263b2c,62fb73699eb6..000000000000
+--- a/tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
++++ b/tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
+@@@ -189,8 -191,8 +191,8 @@@ int main(int argc, char *argv[]
+  	struct kvm_cpuid_entry2 *entry =3D kvm_get_supported_cpuid_entry(1);
+ =20
+  	if (!(entry->ecx & CPUID_VMX)) {
+ -		printf("nested VMX not enabled, skipping test");
+ +		fprintf(stderr, "nested VMX not enabled, skipping test\n");
+- 		exit(KSFT_SKIP);
++ 		return KSFT_SKIP;
+  	}
+ =20
+  	vm =3D vm_create_default_vmx(VCPU_ID, (void *) l1_guest_code);
+
+--Sig_/+yblz34.BS4w.Gk=FzewM2/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr5IEoACgkQAVBC80lX
+0GysCQf9Ft+UykX1jerJYzvh5B7OnrUSHlniBk1GE6w5V2e9bZkFEOhNPX3QkF3E
+bX9keMzyxmJS+e14TglmlIHK4+r7tOltWNbPRi5hIST8ewpqbq4Pj2G85rpqmLNU
+CQWyKGmVkPmmq0SgqhjazU4t/68GmIg1/C4hBNV8pKPruO5uy3aOdd1hqY1ZNMCq
+5D29irqA+ZHMXoFmHJu9TzqT18w49xG3TUnarACUuApgdRsPcAFPNwRowHdzGI2K
+eHYqCpgfUQrwLvw2bUV4ex5f2zEePhn6/VL59G8dAJEQwJzOXWj5legtwp7sY9v/
+r9I6LWlaPej4KcqzLBM+EeGqBsxy3A==
+=18fp
+-----END PGP SIGNATURE-----
+
+--Sig_/+yblz34.BS4w.Gk=FzewM2/--
