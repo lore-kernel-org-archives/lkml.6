@@ -1,49 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752354AbeENIfD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:35:03 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:45859 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752086AbeENIfB (ORCPT
+        id S1752386AbeENIfo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:35:44 -0400
+Received: from mail-ua0-f171.google.com ([209.85.217.171]:39274 "EHLO
+        mail-ua0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752105AbeENIfm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:35:01 -0400
-X-Google-Smtp-Source: AB8JxZpwSKPt8DJlHiMkGyupOEWPyT4npjgdJXiBWvuSiZN2thkxjK/Om6OycKlL0W48Bw1BXWopZA==
-Date: Mon, 14 May 2018 10:34:55 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        rjw@rjwysocki.net, viresh.kumar@linaro.org, rui.zhang@intel.com,
-        edubezval@gmail.com, Linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 1/3] thermal: imx: remove cpufreq cooling registration
-Message-ID: <20180514083455.GE29062@mai>
-References: <1526285359-17978-1-git-send-email-Anson.Huang@nxp.com>
+        Mon, 14 May 2018 04:35:42 -0400
+X-Google-Smtp-Source: AB8JxZqvboZjiC+rhG1Y9JlfEPQmZ4QdB5LDqCyxnX/5q8I0KszlrgIADGlN9oQETfpOse19GrmZxOoeNAzHEyjh9HA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1526285359-17978-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1526286669-484-1-git-send-email-geert@linux-m68k.org>
+References: <1526286669-484-1-git-send-email-geert@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 May 2018 10:35:40 +0200
+X-Google-Sender-Auth: zpbSCyaMtcMb7vClbxVRsQZo7-U
+Message-ID: <CAMuHMdUoDmXZy+fF_-op6Pk8gdaOFDvzvpDOkXcZ3uvTpqVKOg@mail.gmail.com>
+Subject: Re: Build regressions/improvements in v4.17-rc5
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux-sh list <linux-sh@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 04:09:17PM +0800, Anson Huang wrote:
-> This patch removes cpufreq cooling registration in
-> thermal .probe function, cpufreq cooling should be
-> done in cpufreq driver when it is ready.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
+On Mon, May 14, 2018 at 10:31 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> JFYI, when comparing v4.17-rc5[1] to v4.17-rc4[3], the summaries are:
+>   - build errors: +4/-1
 
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+  + /kisskb/src/arch/sh/boards/mach-landisk/setup.c: error: implicit
+declaration of function 'ioremap_prot'
+[-Werror=implicit-function-declaration]:  => 64:2
+
+sh-randconfig
+
+Probably not a regression, but I haven't seen this one before.
+
+  + error: "__udivdi3" [drivers/mtd/nand/raw/nand.ko] undefined!:  => N/A
+
+m68k-allmodconfig
+
+Patch available.
+
+> [1] http://kisskb.ellerman.id.au/kisskb/head/67b8d5c7081221efa252e111cd52532ec6d4266f/ (244 out of 246 configs)
+> [3] http://kisskb.ellerman.id.au/kisskb/head/75bc37fefc4471e718ba8e651aa74673d4e0a9eb/ (244 out of 246 configs)
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
