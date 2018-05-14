@@ -1,136 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752098AbeENSwb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 14:52:31 -0400
-Received: from mga06.intel.com ([134.134.136.31]:55031 "EHLO mga06.intel.com"
+        id S1752299AbeENSxg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 14:53:36 -0400
+Received: from gum.cmpxchg.org ([85.214.110.215]:50768 "EHLO gum.cmpxchg.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751626AbeENSw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 14:52:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,401,1520924400";
-   d="scan'208";a="39244618"
-From: Fenghua Yu <fenghua.yu@intel.com>
-To: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        "Ashok Raj" <ashok.raj@intel.com>,
-        "Ravi V Shankar" <ravi.v.shankar@intel.com>,
-        "Tony Luck" <tony.luck@intel.com>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Rafael Wysocki" <rafael.j.wysocki@intel.com>,
-        "Arjan van de Ven" <arjan@infradead.org>,
-        "Alan Cox" <alan@linux.intel.com>
-Cc: "x86" <x86@kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH 0/15] x86/split_lock: Enable #AC exception for split locked accesses
-Date: Mon, 14 May 2018 11:52:10 -0700
-Message-Id: <1526323945-211107-1-git-send-email-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.5.0
+        id S1750760AbeENSxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 14:53:33 -0400
+Date: Mon, 14 May 2018 14:55:20 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Christopher Lameter <cl@linux.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linuxfoundation.org>, Tejun Heo <tj@kernel.org>,
+        Balbir Singh <bsingharora@gmail.com>, Mike Galbraith <efault@gmx.de>,
+        Oliver Yang <yangoliver@me.com>, Shakeel Butt <shakeelb@google.com>,
+        xxx xxx <x.qendo@gmail.com>, Taras Kondratiuk <takondra@cisco.com>,
+        Daniel Walker <danielwa@cisco.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Ruslan Ruslichenko <rruslich@cisco.com>, kernel-team@fb.com
+Subject: Re: [PATCH 0/7] psi: pressure stall information for CPU, memory, and
+ IO
+Message-ID: <20180514185520.GA7398@cmpxchg.org>
+References: <20180507210135.1823-1-hannes@cmpxchg.org>
+ <010001635f4e8be9-94e7be7a-e75c-438c-bffb-5b56301c4c55-000000@email.amazonses.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <010001635f4e8be9-94e7be7a-e75c-438c-bffb-5b56301c4c55-000000@email.amazonses.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When executing an atomic instruction, sometimes the data access crosses
-the cache line boundary. This causes performance degradation. Intel
-introduces mechanism to detect such split lock issue via alignment check
-fault.
+On Mon, May 14, 2018 at 03:39:33PM +0000, Christopher Lameter wrote:
+> On Mon, 7 May 2018, Johannes Weiner wrote:
+> 
+> > What to make of this number? If CPU utilization is at 100% and CPU
+> > pressure is 0, it means the system is perfectly utilized, with one
+> > runnable thread per CPU and nobody waiting. At two or more runnable
+> > tasks per CPU, the system is 100% overcommitted and the pressure
+> > average will indicate as much. From a utilization perspective this is
+> > a great state of course: no CPU cycles are being wasted, even when 50%
+> > of the threads were to go idle (and most workloads do vary). From the
+> > perspective of the individual job it's not great, however, and they
+> > might do better with more resources. Depending on what your priority
+> > is, an elevated "some" number may or may not require action.
+> 
+> This looks awfully similar to loadavg. Problem is that loadavg gets
+> screwed up by tasks blocked waiting for I/O. Isnt there some way to fix
+> loadavg instead?
 
-Instructions that may cause split lock issue include lock add, lock btc,
-xchg, lsl, far call, ltr, etc.
+Counting iowaiting tasks is one thing, but there are a few more things
+that make it hard to use for telling the impact of CPU competition:
 
-To detect split lock, a new control bit (bit 29) in TEST_CTL MSR 0x33
-will be introduced in future x86 processors. When the bit 29 is set,
-the processor causes #AC(0) exception for split locked accesses at all
-CPL.
+- It's not normalized to available CPU count. The loadavg in isolation
+  doesn't mean anything, and you have to know the number of CPUs and
+  any CPU bindings / restrictions in effect, which presents at least
+  some difficulty when monitoring a big heterogeneous fleet.
 
-BIOS or hardware may set or clear the control bit depending on
-platforms. To avoid disturbing BIOS/hardware setting, by default,
-kernel keeps split lock BIOS setting.
+- The way it's sampled makes it impossible to use for latencies. You
+  could be mostly idle but periodically have herds of tasks competing
+  for the CPU for short, low-latency operations. Even if we changed
+  this in the implementation, you're still stuck with the interface
+  that has...
 
-Kernel can override BIOS setting by explicitly enabling or disabling
-the feature using kernel parameters "split_lock_ac=on" or
-"split_lock_ac=off".
+- ...a short-term load window of 1m. This is generally fairly coarse
+  for something that can be loaded and unloaded as abruptly as the CPU
 
-When an instruction accesses split locked data and triggers #AC
-exception, the faulting instruction is handled as follows:
-- the faulting instruction is re-executed when the instruction is
-  from kernel.
-- user process gets SIGBUS signal when the faulting instruction is
-  from the user process. This behavior can be changed to re-execute
-  the faulting user instruction by sysfs interface
-  /sys/kernel/split_lock/user_mode.
+I'm trying to fix these with a portable way of aggregating multi-cpu
+states, as well as tracking the true time spent in a state instead of
+sampling it. Plus a smaller short-term window of 10s, but that's
+almost irrelevant because I'm exporting the absolute state time clock
+so you can calculate your own averages over any time window you want.
 
-We do see #AC exception is triggered and causes system hang in BIOS path
-(e.g. during system reboot) after kernel enables the feature. Instead of
-debugging potential system hangs due to split locked accesses in various
-buggy BIOSes, kernel only maintains enabled feature in the kernel domain.
-Once it's out of the kernel domain (i.e. S3, S4, S5, efi runtime
-services, kexec, kdump, CPU offline, etc), kernel restores to BIOS
-setting. When returning from BIOS, kernel restores to kernel setting.
-
-Since kernel doesn't know when SMI comes, it's impossible for kernel
-to disable split lock #AC before entering SMI. So SMI handler may
-inherit kernel's split lock setting and kernel tester may end up
-debug split lock issues in SMI.
-
-In cases when user does want to detect and fix split lock #AC bang
-in BIOS (e.g. in real time), the user can enable split lock #AC
-using sysfs interface /sys/kernel/split_lock/bios.
-
-The bit 29 specification in MSR TEST_CTL is published in the latest
-Intel Architecture Instruction Set Extensions and Future Features
-Programming Reference.
-
-Tests:
-- /sys/kernel/split_lock/test_kernel (in patche 14) tests kernel
-  space split lock.
-- selftest (in patch 15) tests user space split lock.
-- perf traces two events exceptions:split_lock_user and exceptions:
-  split_lock_kernel.
-- S3, S4, S5, CPU hotplug, kexec tests with split lock eanbled.
-
-Fenghua Yu (15):
-  x86/split_lock: Add CONFIG and enumerate #AC exception for split
-    locked access feature
-  x86/split_lock: Set up #AC exception for split locked accesses
-  x86/split_lock: Handle #AC exception for split lock in kernel mode
-  x86/split_lock: Use non locked bit set instruction in set_cpu_cap
-  x86/split_lock: Use non atomic set and clear bit instructions to clear
-    cpufeature
-  x86/split_lock: Save #AC setting for split lock in BIOS in boot time
-    and restore the setting in reboot
-  x86/split_lock: Handle suspend/hibernate and resume
-  x86/split_lock: Set split lock during EFI runtime service
-  x86/split_lock: Explicitly enable or disable #AC for split locked
-    accesses
-  x86/split_lock: Add a sysfs interface to allow user to enable or
-    disable split lock during run time
-  x86/split_lock: Add sysfs interface to control user mode behavior
-  x86/split_lock: Add sysfs interface to show and control BIOS split
-    lock setting
-  x86/split_lock: Trace #AC exception for split lock
-  x86/split_lock: Add CONFIG and testing sysfs interface
-  x86/split_lock: Add split lock user space test in selftest
-
- Documentation/admin-guide/kernel-parameters.txt    |  11 +
- arch/x86/Kconfig                                   |  22 +
- arch/x86/include/asm/cpu.h                         |  14 +
- arch/x86/include/asm/cpufeature.h                  |   3 +-
- arch/x86/include/asm/efi.h                         |   5 +
- arch/x86/include/asm/msr-index.h                   |   5 +
- arch/x86/include/asm/trace/common.h                |   8 +
- arch/x86/include/asm/trace/exceptions.h            |  21 +-
- arch/x86/kernel/cpu/Makefile                       |   1 +
- arch/x86/kernel/cpu/common.c                       |   3 +
- arch/x86/kernel/cpu/cpuid-deps.c                   |  10 +-
- arch/x86/kernel/cpu/split_lock.c                   | 606 +++++++++++++++++++++
- arch/x86/kernel/traps.c                            |  12 +
- tools/testing/selftests/x86/Makefile               |   3 +-
- tools/testing/selftests/x86/split_lock_user_test.c | 187 +++++++
- 15 files changed, 901 insertions(+), 10 deletions(-)
- create mode 100644 arch/x86/kernel/cpu/split_lock.c
- create mode 100644 tools/testing/selftests/x86/split_lock_user_test.c
-
--- 
-2.5.0
+Since I'm using the same model and infrastructure for memory and IO
+load as well, IMO it makes more sense to present them in a coherent
+interface instead of trying to retrofit and change the loadavg file,
+which might not even be possible.
