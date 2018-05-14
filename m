@@ -1,197 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752053AbeENCt2 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 22:49:28 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59654 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751219AbeENCt0 (ORCPT
+        id S1752080AbeENCvS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 22:51:18 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:41402 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751219AbeENCvO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 22:49:26 -0400
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Niklas =?ISO-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>, horms@verge.net.au,
-        geert@glider.be, magnus.damm@gmail.com, robh+dt@kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: draak: Describe HDMI input
-Date: Mon, 14 May 2018 05:49:41 +0300
-Message-ID: <26780153.JLo9OE30iv@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180513125755.GQ18974@bigcity.dyn.berto.se>
-References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org> <1526032802-14376-4-git-send-email-jacopo+renesas@jmondi.org> <20180513125755.GQ18974@bigcity.dyn.berto.se>
+        Sun, 13 May 2018 22:51:14 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w4E2od7e000646, This message is accepted by code: ctloc85258
+From: Pkshih <pkshih@realtek.com>
+To: "jprvita@gmail.com" <jprvita@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>,
+        "jprvita@endlessm.com" <jprvita@endlessm.com>,
+        Birming Chiu <birming@realtek.com>,
+        "drake@endlessm.com" <drake@endlessm.com>,
+        Chaoming_Li <chaoming_li@realsil.com.cn>,
+        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
+        =?utf-8?B?6I6K5b2l5a6j?= <yhchuang@realtek.com>,
+        "derosier@gmail.com" <derosier@gmail.com>,
+        Steven Ting <steventing@realtek.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux@endlessm.com" <linux@endlessm.com>, Shaofu <shaofu@realtek.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Subject: Re: RTL8723BE performance regression
+Thread-Topic: RTL8723BE performance regression
+Thread-Index: AQHTy7eSN578mCBr2kKVBzf45sjLwaPvW7kAgAACkICAAAPHAIAru2GAgADJ6dD//7BOgIAI5T6AgAC1FQCAAlpegIAGsr0A
+Date: Mon, 14 May 2018 02:50:37 +0000
+Message-ID: <1526266228.3144.18.camel@realtek.com>
+References: <CA+A7VXX+z8FrDhzW2BQ6AGMJ=_j_53wkUL_YNgkreEbWSh+jCw@mail.gmail.com>
+         <afdf0498-c0a9-936c-0c9b-1b6da6eb5957@lwfinger.net>
+         <CA+A7VXWjWaSSUiX3h_rpFXrSwtUkynKR9tpvnsSe=DZrC+mF-Q@mail.gmail.com>
+         <059b40f0-b8e2-b55f-92d5-a859ba4204a4@lwfinger.net>
+         <CA+A7VXUUsZHD2gr9TBcV6jZBOPGZv7_vK-wWZ0MvGgiCnAiUgQ@mail.gmail.com>
+         <5B2DA6FDDF928F4E855344EE0A5C39D13BEC14C0@RTITMBSV07.realtek.com.tw>
+         <1525240713.3735.3.camel@realtek.com>
+         <CA+A7VXWywjTVeb3DTjVMVTUw-vjAjD+3XTuVNk8S=8D7W=MkPQ@mail.gmail.com>
+         <1525768634.2885.11.camel@realtek.com>
+         <CA+A7VXWhi24iw=TpoWQe6AY-pyvF6-C03dc+AN9kXeLPhLni+g@mail.gmail.com>
+In-Reply-To: <CA+A7VXWhi24iw=TpoWQe6AY-pyvF6-C03dc+AN9kXeLPhLni+g@mail.gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.69.146]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8D9CDFFA015BC74683313F251882B803@realtek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4E2nYfo010278
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4E2pNrT010290
 
-Hello,
+On Wed, 2018-05-09 at 13:33 -0700, João Paulo Rechi Vita wrote:
+> On Tue, May 8, 2018 at 1:37 AM, Pkshih <pkshih@realtek.com> wrote:
+> > On Mon, 2018-05-07 at 14:49 -0700, João Paulo Rechi Vita wrote:
+> >> On Tue, May 1, 2018 at 10:58 PM, Pkshih <pkshih@realtek.com> wrote:
+> >> > On Wed, 2018-05-02 at 05:44 +0000, Pkshih wrote:
+> >> >>
+> >> >> > -----Original Message-----
+> >> >> > From: João Paulo Rechi Vita [mailto:jprvita@gmail.com]
+> >> >> > Sent: Wednesday, May 02, 2018 6:41 AM
+> >> >> > To: Larry Finger
+> >> >> > Cc: Steve deRosier; 莊彥宣; Pkshih; Birming Chiu; Shaofu; Steven Ting; Chaoming_Li; Kalle
+> Valo;
+> >> >> > linux-wireless; Network Development; LKML; Daniel Drake; João Paulo Rechi Vita; linux@endl
+> ess
+> >> m.c
+> >> >> om
+> >> >> > Subject: Re: RTL8723BE performance regression
+> >> >> >
+> >> >> > On Tue, Apr 3, 2018 at 7:51 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> >> >> > > On 04/03/2018 09:37 PM, João Paulo Rechi Vita wrote:
+> >> >> > >>
+> >> >> > >> On Tue, Apr 3, 2018 at 7:28 PM, Larry Finger <Larry.Finger@lwfinger.net>
+> >> >> > >> wrote:
+> >> >> > >>
+> >> >> > >> (...)
+> >> >> > >>
+> >> >> > >>> As the antenna selection code changes affected your first bisection, do
+> >> >> > >>> you
+> >> >> > >>> have one of those HP laptops with only one antenna and the incorrect
+> >> >> > >>> coding
+> >> >> > >>> in the FUSE?
+> >> >> > >>
+> >> >> > >>
+> >> >> > >> Yes, that is why I've been passing ant_sel=1 during my tests -- this
+> >> >> > >> was needed to achieve a good performance in the past, before this
+> >> >> > >> regression. I've also opened the laptop chassis and confirmed the
+> >> >> > >> antenna cable is plugged to the connector labeled with "1" on the
+> >> >> > >> card.
+> >> >> > >>
+> >> >> > >>> If so, please make sure that you still have the same signal
+> >> >> > >>> strength for good and bad cases. I have tried to keep the driver and the
+> >> >> > >>> btcoex code in sync, but there may be some combinations of antenna
+> >> >> > >>> configuration and FUSE contents that cause the code to fail.
+> >> >> > >>>
+> >> >> > >>
+> >> >> > >> What is the recommended way to monitor the signal strength?
+> >> >> > >
+> >> >> > >
+> >> >> > > The btcoex code is developed for multiple platforms by a different group
+> >> >> > > than the Linux driver. I think they made a change that caused ant_sel to
+> >> >> > > switch from 1 to 2. At least numerous comments at
+> >> >> > > github.com/lwfinger/rtlwifi_new claimed they needed to make that change.
+> >> >> > >
+> >> >> > > Mhy recommended method is to verify the wifi device name with "iw dev". Then
+> >> >> > > using that device
+> >> >> > >
+> >> >> > > sudo iw dev <dev_name> scan | egrep "SSID|signal"
+> >> >> > >
+> >> >> >
+> >> >> > I have confirmed that the performance regression is indeed tied to
+> >> >> > signal strength: on the good cases signal was between -16 and -8 dBm,
+> >> >> > whereas in bad cases signal was always between -50 to - 40 dBm. I've
+> >> >> > also switched to testing bandwidth in controlled LAN environment using
+> >> >> > iperf3, as suggested by Steve deRosier, with the DUT being the only
+> >> >> > machine connected to the 2.4 GHz radio and the machine running the
+> >> >> > iperf3 server connected via ethernet.
+> >> >> >
+> >> >>
+> >> >> We have new experimental results in commit af8a41cccf8f46 ("rtlwifi: cleanup
+> >> >> 8723be ant_sel definition"). You can use the above commit and do the same
+> >> >> experiments (with ant_sel=0, 1 and 2) in your side, and then share your results.
+> >> >> Since performance is tied to signal strength, you can only share signal strength.
+> >> >>
+> >> >
+> >> > Please pay attention to cold reboot once ant_sel is changed.
+> >> >
+> >>
+> >> I've tested the commit mentioned above and it fixes the problem on top
+> >> of v4.16 (in addition to the latest wireless-drivers-next also been
+> >> fixed as it already contains such commit). On v4.15, we also need the
+> >> following commits before "af8a41cccf8f rtlwifi: cleanup 8723be ant_sel
+> >> definition" to have a good performance again:
+> >>
+> >>   874e837d67d0 rtlwifi: fill FW version and subversion
+> >>   a44709bba70f rtlwifi: btcoex: Add power_on_setting routine
+> >>   40d9dd4f1c5d rtlwifi: btcoex: Remove global variables from btcoex
+> >
+> > v4.15 isn't longterm version and had been EOL.
+> >
+> 
+> Right, but this is a performace regression in comparison to v4.11, so
+> if "af8a41cccf8f rtlwifi: cleanup 8723be ant_sel definition" is marked
+> for stable, shouldn't these other patches be brought as well? All
+> releases since v4.11 are probably affected, but honestly I don't have
+> a strong understanding of how the stable trees operate in situations
+> like this.
+> 
 
-On Sunday, 13 May 2018 15:57:55 EEST Niklas S�derlund wrote:
-> On 2018-05-11 12:00:02 +0200, Jacopo Mondi wrote:
-> > Describe HDMI input connected to VIN4 interface for R-Car D3 Draak
-> > development board.
-> > 
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> > 
-> >  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 68 +++++++++++++++++++++
-> >  1 file changed, 68 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> > b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts index d03f194..e0ce462
-> > 100644
-> > --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> > +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> > @@ -59,6 +59,17 @@
-> > 
-> >  		};
-> >  	
-> >  	};
-> > 
-> > +	hdmi-in {
-> > +		compatible = "hdmi-connector";
-> > +		type = "a";
-> > +
-> > +		port {
-> > +			hdmi_con_in: endpoint {
-> > +				remote-endpoint = <&adv7612_in>;
-> > +			};
-> > +		};
-> > +	};
-> > +
-> > 
-> >  	memory@48000000 {
-> >  	
-> >  		device_type = "memory";
-> >  		/* first 128MB is reserved for secure area. */
-> > 
-> > @@ -142,6 +153,11 @@
-> > 
-> >  		groups = "usb0";
-> >  		function = "usb0";
-> >  	
-> >  	};
-> > 
-> > +
-> > +	vin4_pins: vin4 {
-> > +		groups = "vin4_data24", "vin4_sync", "vin4_clk", "vin4_clkenb";
-> > +		function = "vin4";
-> > +	};
-> > 
-> >  };
-> >  
-> >  &i2c0 {
-> > 
-> > @@ -154,6 +170,35 @@
-> > 
-> >  		reg = <0x50>;
-> >  		pagesize = <8>;
-> >  	
-> >  	};
-> > 
-> > +
-> > +	hdmi-decoder@4c {
-> > +		compatible = "adi,adv7612";
-> > +		reg = <0x4c>;
-> > +		default-input = <0>;
-> > +
-> > +		ports {
-> > +			#address-cells = <1>;
-> > +			#size-cells = <0>;
-> > +
-> > +			port@0 {
-> > +				reg = <0>;
-> > +				adv7612_in: endpoint {
-> > +					remote-endpoint = <&hdmi_con_in>;
-> > +				};
-> > +			};
-> > +
-> > +			port@2 {
-> > +				reg = <2>;
-> > +				adv7612_out: endpoint {
-> > +					pclk-sample = <0>;
-> > +					hsync-active = <0>;
-> > +					vsync-active = <0>;
-> 
-> This differs from the Gen2 DT bindings which is a very similar hardware
-> setup using the same components. Defining these properties will make the
-> bus marked as V4L2_MBUS_PARALLEL instead of V4L2_MBUS_BT656.
-> 
-> This will change how the hardware is configured for capture if the media
-> bus is in a UYVY format, see VNMC_INF register in rvin_setup(). Maybe
-> this it not an issue here but still I'm curious to why this differ
-> between Gen2 and Gen3 :-)
-> 
-> > +
-> > +					remote-endpoint = <&vin4_in>;
-> > +				};
-> > +			};
-> > +		};
-> > +	};
-> > 
-> >  };
-> >  
-> >  &i2c1 {
-> > 
-> > @@ -246,3 +291,26 @@
-> > 
-> >  	timeout-sec = <60>;
-> >  	status = "okay";
-> >  
-> >  };
-> > 
-> > +
-> > +&vin4 {
-> > +	pinctrl-0 = <&vin4_pins>;
-> > +	pinctrl-names = "default";
-> > +
-> > +	status = "okay";
-> > +
-> > +	ports {
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +
-> > +		port@0 {
-> > +			reg = <0>;
-> > +
-> > +			vin4_in: endpoint {
-> > +				hsync-active = <0>;
-> > +				vsync-active = <0>;
-> 
-> Comparing this to the Gen2 bindings some properties are missing,
-> 
-> bus-width = <24>;
-> pclk-sample = <1>;
-> data-active = <1>;
-> 
-> This is not a big deal as the VIN driver don't use these properties so
-> no functional change should come of this but still a difference.
+see below.
 
-I think the VIN DT bindings should be updated to explicitly list the endpoint 
-properties that are mandatory, optional, or not allowed.
+> >>
+> >> Surprisingly, it seems forcing ant_sel=1 is not needed anymore on
+> >> these machines, as the shown by the numbers bellow (ant_sel=0 means
+> >> that actually no parameter was passed to the module). I have powered
+> >> off the machine and done a cold boot for every test. It seems
+> >> something have changed in the antenna auto-selection code since v4.11,
+> >> the latest point where I could confirm we definitely need to force
+> >> ant_sel=1. I've been trying to understand what causes this difference,
+> >> but haven't made progress on that so far, so any suggestions are
+> >> appreciated (we are trying to decide if we can confidently drop the
+> >> downstream DMI quirks for these specific machines).
+> >>
+> > I think your rtl8723be module programed correct efuse content, so it
+> > works properly with ant_sel=0, and quirk isn't required for your
+> > machine.
+> >
+> >>   w-d-n ant_sel=0: -14.00 dBm,  69.5 Mbps -> good
+> >>   w-d-n ant_sel=1: -10.00 dBm,  41.1 Mbps -> good
+> >>   w-d-n ant_sel=2: -44.00 dBm,   607 kbps -> bad
+> >>
+> >>   v4.16 ant_sel=0: -12.00 dBm,  63.0 Mbps -> good
+> >>   v4.16 ant_sel=1: - 8.00 dBm,  69.0 Mbps -> good
+> >>   v4.16 ant_sel=2: -50.00 dBm,   224 kbps -> bad
+> >>
+> >>   v4.15 ant_sel=0: - 8.00 dBm,  33.0 Mbps -> good
+> >>   v4.15 ant_sel=1: -10.00 dBm,  38.1 Mbps -> good
+> >>   v4.15 ant_sel=2: -48.00 dBm,   206 kbps -> bad
+> >>
+> >
+> > With your results, the efuse content is programmed as one or two antenna
+> > on AUX path.
+> >
+> 
+> With v4.11 I had good performance results on this very same machine
+> (thus same efuse contents) only when passing ant_sel=1, so there has
+> to be some change on the code that parses the efuse contents and
+> decides which antenna will be used.
+> 
 
-> Over all I'm happy with this change but before I add my tag I would like
-> to understand why it differs from the Gen2 configuration for the adv7612
-> properties.
-> 
-> Also on a side not it is possible with hardware switches on the board
-> switch the VIN4 source to a completely different pipeline CVBS connector
-> -> adv7180 -> VIN4. But I think it's best we keep the HDMI as default as
-> this seems to be how the boards are shipped. But maybe mentioning this
-> in the commit message would not hurt if you end-up resending the patch.
-> 
-> > +
-> > +				remote-endpoint = <&adv7612_out>;
-> > +			};
-> > +		};
-> > +	};
-> > +};
+Since btcoex control TDMA parameters for WiFi and BT, antenna related code
+is put in btcoex. That's why ant_sel is used by btcoex.
+In v4.12, we upgraded btcoex and firmware in order to yield better balance
+between WiFi and BT, meanwhile code flow had some changes. So, the single 
+commit af8a41cccf8f ("rtlwifi: cleanup 8723be ant_sel definition") won't 
+work on v4.11. In other words, if you want v4.11 work properly, you need to
+apply all changes of btcoex.
 
--- 
-Regards,
 
-Laurent Pinchart
+The parser of efuse isn't changed, and I think the reason why v4.11 needs
+ant_sel=1 is the same as above.
+
+Regards
+PK
