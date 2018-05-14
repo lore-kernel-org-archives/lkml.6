@@ -1,91 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753362AbeENMkM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:40:12 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39565 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752907AbeENMkK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:40:10 -0400
-Date: Mon, 14 May 2018 05:39:46 -0700
-From: tip-bot for Ingo Molnar <tipbot@zytor.com>
-Message-ID: <tip-73bb4d6cd192b8629c5125aaada9892d9fc986b6@git.kernel.org>
-Cc: hpa@zytor.com, dave.hansen@linux.intel.com,
-        torvalds@linux-foundation.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, peterz@infradead.org
-Reply-To: torvalds@linux-foundation.org, dave.hansen@linux.intel.com,
-        hpa@zytor.com, peterz@infradead.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <20180514085908.GA12798@gmail.com>
-References: <20180514085908.GA12798@gmail.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/mpx/selftests: Adjust the self-test to fresh
- distros that export the MPX ABI
-Git-Commit-ID: 73bb4d6cd192b8629c5125aaada9892d9fc986b6
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1752897AbeENMkk (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:40:40 -0400
+Received: from ozlabs.org ([203.11.71.1]:49301 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752011AbeENMki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 08:40:38 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 14 May 2018 22:40:06 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>
+Subject: Re: linux-next: Tree for May 14
+Message-ID: <20180514224006.06827f71@canb.auug.org.au>
+In-Reply-To: <CAHp75Vfs_Za5d8YLJ5FNJDmytRJE-P+q_Kds9V+ivBGy3v+p8g@mail.gmail.com>
+References: <20180514172042.093bd880@canb.auug.org.au>
+        <CAHp75Vfs_Za5d8YLJ5FNJDmytRJE-P+q_Kds9V+ivBGy3v+p8g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/HLu2GBtwTdRzKUVWCtipxYB"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  73bb4d6cd192b8629c5125aaada9892d9fc986b6
-Gitweb:     https://git.kernel.org/tip/73bb4d6cd192b8629c5125aaada9892d9fc986b6
-Author:     Ingo Molnar <mingo@kernel.org>
-AuthorDate: Mon, 14 May 2018 10:59:08 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 14 May 2018 11:14:45 +0200
+--Sig_/HLu2GBtwTdRzKUVWCtipxYB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-x86/mpx/selftests: Adjust the self-test to fresh distros that export the MPX ABI
+Hi Andy,
 
-Fix this warning:
+On Mon, 14 May 2018 10:26:07 +0300 Andy Shevchenko <andy.shevchenko@gmail.c=
+om> wrote:
+>
+> Hmm... It seems my message was buried in the pile of the thread WRT
+> fixes branches.
 
-  mpx-mini-test.c:422:0: warning: "SEGV_BNDERR" redefined
+No, I just didn't read enough email early enough this morning.
 
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: akpm@linux-foundation.org
-Cc: dave.hansen@intel.com
-Cc: linux-mm@kvack.org
-Cc: linuxram@us.ibm.com
-Cc: mpe@ellerman.id.au
-Cc: shakeelb@google.com
-Cc: shuah@kernel.org
-Link: http://lkml.kernel.org/r/20180514085908.GA12798@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/testing/selftests/x86/mpx-mini-test.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> Please, add our PDx86 fixes branch as well:
+> git://git.infradead.org/linux-platform-drivers-x86.git fixes
 
-diff --git a/tools/testing/selftests/x86/mpx-mini-test.c b/tools/testing/selftests/x86/mpx-mini-test.c
-index 9c0325e1ea68..50f7e9272481 100644
---- a/tools/testing/selftests/x86/mpx-mini-test.c
-+++ b/tools/testing/selftests/x86/mpx-mini-test.c
-@@ -368,6 +368,11 @@ static int expected_bnd_index = -1;
- uint64_t shadow_plb[NR_MPX_BOUNDS_REGISTERS][2]; /* shadow MPX bound registers */
- unsigned long shadow_map[NR_MPX_BOUNDS_REGISTERS];
- 
-+/* Failed address bound checks: */
-+#ifndef SEGV_BNDERR
-+# define SEGV_BNDERR	3
-+#endif
-+
- /*
-  * The kernel is supposed to provide some information about the bounds
-  * exception in the siginfo.  It should match what we have in the bounds
-@@ -419,8 +424,6 @@ void handler(int signum, siginfo_t *si, void *vucontext)
- 		br_count++;
- 		dprintf1("#BR 0x%jx (total seen: %d)\n", status, br_count);
- 
--#define SEGV_BNDERR     3  /* failed address bound checks */
--
- 		dprintf2("Saw a #BR! status 0x%jx at %016lx br_reason: %jx\n",
- 				status, ip, br_reason);
- 		dprintf2("si_signo: %d\n", si->si_signo);
+Added from tomorrow (called drivers-x86-fixes).
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+BTW, the drivers-x86 tree I have is
+
+https://github.com/dvhart/linux-pdx86.git#for-next
+
+and the contact is Darren Hart.  Is that expected?
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/HLu2GBtwTdRzKUVWCtipxYB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr5g6YACgkQAVBC80lX
+0GyEFgf+MwlBVSThFGIEcxXS73pJy10rOmY3u8zFWHxEwSgJ3pwlPne/QHpXpfBa
+WBR5rb6TWkVM1gyVtwiceuQAVMDLNq0hNsvvZfk9OfWFcp1nxeD25U6A8HafFJR6
+CvKrst6kKTMC9QZ6NEj7sJZHHmXIVl2JSBy0PsO8gfW3KUXzVueml6Z+2lult9PZ
+n7cUZFAb9iAcfd/3DWrcxSAh53/OT1bwfd/yYNlrEJdoZxl3iK64Gz5BAYUL3B3V
+/fRkiuPf1DKbPWrueVsc1ArWGjJkdLj/Hrxt1vkHFOXG52AaiBavfySQGakTQreG
+acQq40RgTssB5UvHf7h+R+GzsMIvEg==
+=ItA6
+-----END PGP SIGNATURE-----
+
+--Sig_/HLu2GBtwTdRzKUVWCtipxYB--
