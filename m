@@ -1,148 +1,254 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752706AbeENRV2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:21:28 -0400
-Received: from mail-sn1nam02on0055.outbound.protection.outlook.com ([104.47.36.55]:42255
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S1752556AbeENRVZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:21:25 -0400
+Received: from mail-bl2nam02on0088.outbound.protection.outlook.com ([104.47.38.88]:32817
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752118AbeENRUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:20:17 -0400
+        id S1751978AbeENRUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 13:20:25 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Gary.Hook@amd.com;
-Subject: [PATCH v7 0/2] Base enablement of IOMMU debugfs support
+Subject: [PATCH v7 1/2] iommu - Enable debugfs exposure of IOMMU driver
+ internals
 From: Gary R Hook <gary.hook@amd.com>
 To: iommu@lists.linux-foundation.org
 Cc: joro@8bytes.org, linux-kernel@vger.kernel.org
-Date: Mon, 14 May 2018 12:20:10 -0500
-Message-ID: <152631818082.18929.13970142119193316487.stgit@sosxen2.amd.com>
+Date: Mon, 14 May 2018 12:20:20 -0500
+Message-ID: <152631842046.18929.1205439632866632871.stgit@sosxen2.amd.com>
+In-Reply-To: <152631818082.18929.13970142119193316487.stgit@sosxen2.amd.com>
+References: <152631818082.18929.13970142119193316487.stgit@sosxen2.amd.com>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [165.204.78.1]
-X-ClientProxiedBy: SN6PR04CA0026.namprd04.prod.outlook.com
- (2603:10b6:805:3e::39) To MWHPR12MB1455.namprd12.prod.outlook.com
- (2603:10b6:301:f::8)
+X-ClientProxiedBy: SN1PR12CA0044.namprd12.prod.outlook.com
+ (2603:10b6:802:20::15) To DM5PR12MB1449.namprd12.prod.outlook.com
+ (2603:10b6:4:d::10)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR12MB1455;
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1455;3:+tdwdbvG7/YozzsXfaNQ46hvnJ6k1NGmqZJvYw7T3M452COo3m3x6ufbwJXy1+fWBDthho9Gfae8WuhgJuObl4f+a0E1Gpi0Kv64LqmIo/c8SpKpHT9J48pWILrRMfKYIOM+fefLpwad/Og3wCNIv7s6KAfbDDLOR6tVJz3K2TE2OXpbjBXcY1ga5D1yQDtsNNi0Fpzkk86aJ9X47x96Ggqw+NuB7AcMWJhA1cpDLvQsQ8soeIzIy40O/cyiDy54;25:nRVz6DLvoxmWhGHMxvfqN5PzDm+jvPQsjtGyldsHFOmC8WhQMXEfKTx+tiuiFTmgHKBwUtcvHsCI7uehA9YbaEqPm/Apo1I7uLkN6e9193B4DfkME5xKiCVGb8Ekk3caIZM69t7nuUoHdcdiHQlUeWf4HR9nY3xdAevop0K6GeDwUuhzjp+lj+4ISUNTShKHSxGte6QqWzsBhcRNHLGMW64MuPgRJrrzdrBav+uYAv61EaqVv9e3HJH09GNRZnbfTX3alkfJ/04AJTNC28Q0uxTC/FTj+Bk99wnH6UU4/X6BYZ3qcehBhmL2gn0tGwlzRlv6XVyJCflQyagR44NAaw==;31:ai3LjZ5lc4e1Tquf6Z8BEPqxrp6+ffzYQDpD5qxj2uobDx3/990jWCH8OXgGq7BW153+p+xM5Ci6ajn86fs/ZS8uczCHhNOlJgaDCWL44yIqfs3ImsWqHoDPWmHR4IymDWjWn+HWYvPdfsEqHzLTZ9uI8SdS7ch9SAwrsghi3wagpMLSYchKLFrBGNSZqyROPTGDIqGlhAwpPXlw1pcViGNyLj5pWF+o/U2hNam3AmY=
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1455:
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1455;20:RKTP3JrK3bj8scDCk07pMdLDdfEPYYDlt2x2laQR1y+EZjQrnLAjm3EB/zmpyBBMfFwHIu08oXDJopKwBFWOuT+uAgDEaqMGjmfmir8f1A9/BDIsyekq1dC8uihPdOPS6TGMmpm/ftqDnYln9BP8o0Sjw8ozx9H9XhDoEzO+BJiS7qw/6rRdrYpU2qAlnHdEPPgWxSQwSZlh7/BpNEdIdc9nib6ei1otZf7wXaoSj+zG2iwkdur+40xGxANP9uPNp1HHWEbDNt1jI6tKX68RxHKOoJjuFLI9gdJI0kXaG+F5xjxY2MA4AByQSSNISTtR9Rd0OWCWS4OocsCBG8cHEW8U1KWbF6OxNBv0Nm7EkVempRsrA+shNBQbh7slzDlM+GTFtcJW+VFG5NDIeN3Ch/bHLxrTIyCVfEPe8gEWLzZRAE+S3Wk+/rplci5o7H1ApZy1TK+HFg9e7JfEWbhQ0jwfHKUKccbl68aw+zXmQDPI+592TZvEWwzCSD1lfW9E;4:AOrkNcRaBkL34g/NKRgmOD4Lk6PBRXhrJXiaydsmnxFjhGc/BqLu5wEGjB9qyJST2n3qgDkY3KwnSucjlj1kpEZI+wMsoZjRxLbqaTVlA7n0XKtDWjAyf33mmJIVR2VhaD4LP2E8r+Ad13BFJd5i3dZ99M/LVdvU9zTH87GUB4rtpqca0lYe2Mg77LfNEu03gjeF83xV+mx7uAiFUSmVQv3aG7vkQvuhPnpkptCrQHfyw/4XgiZ+hxpO4/Pfi1gipf8Odf7s/XrlShv6Tb5nmw==
-X-Microsoft-Antispam-PRVS: <MWHPR12MB1455D9D7777FE27DE9EED5E3FD9C0@MWHPR12MB1455.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1449;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1449;3:spnS2ok72p3l3Oot9l3GOYx7A4uZhqoY9gvXfdxXdL1Rg/g3GRwF9pmQuRnineghJyIJxhvqGn+cUaooZj0aNeBYOTUtZx7xGrj0c0znRCe5fpExsX4rj2uQvWKfQeuJJF4GFPCmrdP9EK1eNDHJER+PFdXMFVaREkVIdI8lvVu4DZdfbIFwnX3vVy47hO8LPOCdyXhV6k53VPTfdnEp4PisAbYV/6kV9jXRMIaV8I0VMIrV09AjKUdkaHLHTzZ/;25:caqYtivl9x8q2oYGdmXlOpBi4fRndyKNG09YqErdPxQNvq17xJKwErZqKPh36nKO3Bg5YOn5Fl8A0LhEi3ZJID1Ndfu2pwP6rk9kOYmqi2Xm8FzdNsNGGVaY3Gqx12/cA4HMdk5ewDHuW3IE4hvovl3Q+DeA0p9oXwhMOYwPJPGHLRqSwZpUASvxZ0b2jV9sZzxWA78e8oNMPKDkTU9kDfSWoGwSBVWYEv3RGEKMDH3rZMO+gdQ8oN/WacurEcblBlvvi3lntXal2kyDdHEYVgwp5IGu9w3uHXmJNkKAdwtJW8HpkpF42Rf7+x8c7Mu9idS6rmV8u1K/W9UkAwMBpA==;31:dUWn3rTMlhhS88O7z8+CrHWOsGU/HjAbu18K/Aa63z291UmQq7ynSiN8LlxeZRK/kCWQqQXLqcKYGX89cVsrWSbvQvuuxie8xkWBTfw03pvZ0JfaMVOEkM2J1yPuPAt4TJGy+oFw1vd0T+1wdDc93ttdQ5BtVVlyrneO0mdvd95ZgrLmIzQEcRDTY5FLClh9tW5uBW0TwBtPWQY6eyyAzFdTFznKqzDLH5NdMg4qBpA=
+X-MS-TrafficTypeDiagnostic: DM5PR12MB1449:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1449;20:XqLXzxlHKTbDPyYFnPXdL918Czx2FctC2AmW7K4yx+I8dZhihy7SkNEI15grBrBTi7LtfP1D5IwXBH9jsQxRoSsAmp71tb7ueAAp+/yRLUM0TCuz/yDz+6AvcGzYHkj4ZekK75uDSV4/6yJccI2Rc59HjDEgxTj/86eTfxCCou+stQEHuzAZWWOBaJymz5deOutkvZX8A2RLmly5kthCBTzIe9qCBhxdgP2mCoHn4RzwqlNto5WSWyLH2o2RFdZyx7ge7KkQf9kjXey4hCLGXeYFxSisTi60anWmOuOLqeUcD9YzYmQaoIXpdit5sNM6W4KmjBVtDGAw3GLEXCJubdmWJCJOFL/wvCyr8k92l/b/0K9xEjfcFmZzu4cBdee+qeUuezikq0tBQW5+327BFK1L8XXRHXaFQPQsFIKvQJDNp0HNRhWl0e4SurulpccR/BfwbLlmqJD8XoC8wuxEPhyB+nXEVFfpAWe3lzagcDvp3SkyfSiq04DJH/xO3gMZ;4:qI8YaMuqoIHS8xp6uK0nbmPs4TTfzZ90ObFxwXrhBTInDR35WtkoLGfdx1lzLd0UQn6J1JtrMpw5N0Fw7Uj7FhQLKVVw2BBhih3cfTTi6gMudYAuNvWsdnQdxR2ZIsYjYcpotHvAj2gJJ7wr5oZz+DcsqwK/zGfC8aUvBJz+DsfJCIvALwf4qAYunShLesldAu9tM+iNwnvVd+EOvU/VuaWAljGwWfvtIjIHjJm5v4vwShm6tDnaXoYEI/Htl4M6WqKiRABGEBQ9mmr9oMbBNR251ZYMuoy0IEF43dsektX48AYmSQ7IEHlCMCzxk4ksjy6NJrBJfO2SDadyT0nRSg==
+X-Microsoft-Antispam-PRVS: <DM5PR12MB144968E19E9185C911EEA9DDFD9C0@DM5PR12MB1449.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192374486261705)(767451399110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:MWHPR12MB1455;BCL:0;PCL:0;RULEID:;SRVR:MWHPR12MB1455;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR12MB1449;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1449;
 X-Forefront-PRVS: 067270ECAF
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(39380400002)(366004)(39860400002)(199004)(189003)(52116002)(53416004)(6916009)(105586002)(956004)(7736002)(106356001)(26005)(8676002)(476003)(4326008)(2486003)(23676004)(25786009)(103116003)(6666003)(7696005)(316002)(486006)(59450400001)(68736007)(386003)(2906002)(305945005)(66066001)(3846002)(230700001)(47776003)(55016002)(53936002)(50466002)(2351001)(478600001)(81166006)(2361001)(16526019)(97736004)(81156014)(186003)(86362001)(5660300001)(8936002)(6116002)(58126008)(72206003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1455;H:sosxen2.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtNV0hQUjEyTUIxNDU1OzIzOnJpQUYrYmQ2bEFrL1Y4ektFQmduQ0JlaGRp?=
- =?utf-8?B?VG0vK1hjcmw5aDVGSFkwRnBsTHdpeHZHREhlNjBQTFhkWm1tYUkrWG9RM3NH?=
- =?utf-8?B?QjVpcmRmRXRGWGVjQUdXV0V1RTlsR0grd3UyVGwyRWdvcWs2dXRZSzhpS1I0?=
- =?utf-8?B?ZTZ3QXZQTm1DbzYwVG5kbkJwZ3hwMTkxWUlPQ0VkMy85Mzd3aXhVYzJtWnFt?=
- =?utf-8?B?Q3lEaDcrQ2phNGh2aWVwQ0U2cDc2WVVkVmd6dzk0WWU4aVpyUUw5V3FDUTFv?=
- =?utf-8?B?VlJRT3AwMEJZdXN3SzFhMXFUQzhpRm9HMzJRK1YxVVBSTEgwWHZUMmNXYU1W?=
- =?utf-8?B?OHprbndKc3FuZGR2MXRLNmlsMW5lYjIrcWQ4UFpxRlhvaFZ2bHpiNVBKRWZV?=
- =?utf-8?B?bzhxS2NMZVJ3Wk1GNmFob1RrU2lpWVN5M1pNelA1NVl1Y1RFeVcrc2xqRGlZ?=
- =?utf-8?B?S3JvazVIUWwrNzFodGkrTW9zUmUxM2d2WFhWRzJka2dQQXg5OURSdUJTdllh?=
- =?utf-8?B?Si8zbU9KVzhORFd2bzIvVjJiWFFzNERhTkxCOFU4SUZWLzI4TGxrZGg4UnFU?=
- =?utf-8?B?dncrR3huemt5VjVvOFVXcHdDSDFpUWhSS2J2eWtHRXBaZFY0bXJFQ3pLLzZZ?=
- =?utf-8?B?ZE4wSXQvOWQ4YVh4Rk1UdEplQWUwTnVtdHBpRXl6VEd6OXBHekd2TWF0Z3lv?=
- =?utf-8?B?RmVCaE1Pb1czdlgzUnB5c2pOeTluM2NLWEhRTTN6QXVZbWhERFlUS2syQSt2?=
- =?utf-8?B?ZloxSXNXUThXYWJjcGo0aXpSR1VvNzU3NjdGd1Vudm9kb05SUzZjTmFsYUNW?=
- =?utf-8?B?b2xEVnVrZCt3Q1AxeFZYNS8rbTA5SE5La0NsY2lQelFhbjVXa1BMNHBwcW5r?=
- =?utf-8?B?cldNSGViQlMweHE3M1RlZlp6QVl0OThVakMzcmNPU3E5SWZjWG9lM0RLWC9h?=
- =?utf-8?B?VzArS295NW94UXhTbGgrN2R6S3JrOHE3VzF1dEIvdWJ1WjhUMW5sSjI3Zjkv?=
- =?utf-8?B?YkxJNFVUTTRESXRJV0kvN1ZjaUV0Ukk2Y29xNFZrZW9hejl4SUErNWxibWNz?=
- =?utf-8?B?a3RESngxWHdXQkptNG5XS1dHL1loeVZkT3ZqUGZqZ3IwSW5Ma3paSzczK0Rr?=
- =?utf-8?B?OHRTSjRkQjh6cTJqMnZlYjVZa04xWWhzaHZqaU5Xcmpjb3E3aFJpZDBFNmNH?=
- =?utf-8?B?eGJlYldUbWFyZmMrUWlWYVZnMVFka0hNYW1rd1ljd0kwNUdDWEVtazBEeU5I?=
- =?utf-8?B?Vk1Id0NnYXFmVGU2SUw1cXhaN0w3WnJIUkF6SUNIRGpNMWl6cTdhQkYwRUQ4?=
- =?utf-8?B?c05TMnhrVFYrRllYY3dwaWRYSnVZYjdzNm4xekh4ZGg1dm9hdTl0d1BIOWFJ?=
- =?utf-8?B?TmhJVTYxdFJDdlRuaU8xUElMZ2ZocXpJUEdEWnN1aDNNYzNTMXBhWGhVNkhX?=
- =?utf-8?B?NS9rNlJNQ2E4UEd6aWwxa0gyc0kyWlJxbWlhZ256bGxuTk9jNFBqRU4wYVhU?=
- =?utf-8?B?TjVrRnMvYUhxM2xDOURnUGZDeVh2cjU3K1psdWgzRVRJZGtMTlNhb2hUMzJw?=
- =?utf-8?Q?FXHehOYRjqfmo8mMpFXBQlNQgijeEp7KggOpIMjE9cjI=3D?=
-X-Microsoft-Antispam-Message-Info: e75O1Uyy8/Nj3NSIlE2mpJCOzoa7Scaj60nmznzyHaT1VcvqjGxNM5/zlzmHrqaGAU2b/z7xGX6rkfVYR0mGqv8DR/Rv95TpMWkIBSRyYxPG8ad7AsYDIdko8IpofWO+Wf518EggpyEGRja95ZSU/P2xkqDpja8BRsmRyP1IPoZPu+YdtVATDebzXrRFkA8B
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1455;6:AXb1ldxSpGc1ROYpzqXDeqoYfdHL1e0CUb5ao/li/XGk03NsxQCdwjBhQwlxvMYSEyzHTxTLo9jQNxGfiUSlcdOOc4+ZgPuaJeR1ZXMZh3+gHzJIp0Ua6khEPHChJh9GaOkSFNK+YrbWfgzzSS+qdo6UOwcAEWUJ/oEth8kkTqWh/l5G5m/t9/5l7vy9e5RS/CjJgwVpHvoDMgAUHzUINoDEMrcd/IFoE7okXK8tq7ZM90L6Iqm5f4OUYThpRa7kLxzFakzuXMDw3MS0hGFk/mfLITvYTy7hsBzH3AScyIJ3d5yea0/18XZq0Ynnm0kawdiCwn7TdclfRRSC7+2pC6ss2niHaL9W9HMEsAfHRYyiHZfRsBMF6rAUjD84o2frIpVayNZ0IZDjEZkyMs+5x6CKyatR5y2sgrz+DoGOVFPrhkuoMTzWg6G+C3L2+3gdJCez6VUAS3RNNL4uOEt0wg==;5:B1t2SzGLQWejCSiR1UaAsCnhnrLHGgaBOUAutjlI9sz+JIwDKiS/6rbsEEM3XXwXZPezzkLzigNiCsWbsMJoH1o1SroZS9QPeR1dwnghXxC4qSrFdRFXo6LEo2lmCKB2HhX6sKs4F/Hg5bIRTS5GBeevtSYrP9XYZrbxecxUqaA=;24:G1dcha1GGYj89VBMTlQdd9zm7RAhSXxh2/6X2IB5+Z25J8/N7xSvkcEGqKBk5zpHlDxlXU6VWH+aRZl4yc6wUAMfYp5vKOCt1gETaE2/2I0=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39380400002)(39860400002)(366004)(396003)(199004)(189003)(476003)(50466002)(103116003)(106356001)(2361001)(47776003)(956004)(486006)(2351001)(305945005)(478600001)(7736002)(5660300001)(8936002)(8676002)(72206003)(446003)(6916009)(2906002)(11346002)(81156014)(105586002)(55016002)(66066001)(53416004)(97736004)(230700001)(53936002)(2486003)(23676004)(81166006)(3846002)(6116002)(316002)(7696005)(52116002)(26005)(58126008)(386003)(76176011)(59450400001)(4326008)(16526019)(186003)(25786009)(86362001)(68736007)(575784001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1449;H:sosxen2.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTVQUjEyTUIxNDQ5OzIzOlNKQlRCSElpclUwVnZ3dnpHc0lpNmZhS1ZI?=
+ =?utf-8?B?YTFaa0RFOCtrRzRBb1E5aDN1aWNOZE1qM1huZ3d4Mm1DaUpFVFExZFdWcFlZ?=
+ =?utf-8?B?c0MzeFFEbmxJNUJ1YXA4OGN5ci9UQjZoVWVoeXlxNGRhWncxeWZhejVkTThx?=
+ =?utf-8?B?bTZnWmwrNFJBMFJ5dktDbXVtUk4zMDRoamh6Qi9NdkFnNEZvRStkd3QzNGg2?=
+ =?utf-8?B?ak9RMUZzL2FDeXRSc2RuZGZhYllJakl5VmhTYTA2bWFmeTNnMTQwbGxzdlpZ?=
+ =?utf-8?B?MGV1UjYrYU1HV0w3UG8rMmpEb21RK25WSStjbXgwc1NlQ09yUDRqeFkzdkxU?=
+ =?utf-8?B?bW5PZ3hqSnp1ZWJHVjVySStrWW9DM2tZZmRYRVJheTZ2cEQ3K3Fnc2l2dUFh?=
+ =?utf-8?B?TTg3ZW5NUDJJUTQ4cHFLT1R4cXJIaUR3ZUlJbHZDM1VaUVpWWnBzRFhCVjJv?=
+ =?utf-8?B?K1pza1pSQzhxcVZXc0k5cXhXS25UQmZkTDIvdThaZE9VUFI1OXA0a25iTlM1?=
+ =?utf-8?B?bjBaTEJhd3o2VG56ckhISjkwV2c3YkVseUZaMnBDT3lpZ0M4TzhCdG95dmd2?=
+ =?utf-8?B?TzRCaVRkTWdOWXdxY3dZYWtnNWh2a29IZnhvTkdVRkFmeDNMb3I2bXJ3VWww?=
+ =?utf-8?B?YTI5SEhsbFpSWUQrTW54U1FZWkFxeStNb1lXTUE4MDRYZncvVkFsMlhNVDRH?=
+ =?utf-8?B?SzFUMnlKNThBTVdFL3lYQkZuM28rUHA1YXpLWlJEbWFlM3NuTFBqY2lDMDlB?=
+ =?utf-8?B?bTd5YmVIK2d3L3YvM1ZVZnQzRnVWdDhmSGJ4ak81T3NodDc1YXBNVUlsbEIy?=
+ =?utf-8?B?WFhHN1ZvWmo4ZDlJNElnZUxTQXZhcWxrOG9SUS9rSnpEMGFLYngva2ZEQ3Vn?=
+ =?utf-8?B?RVo2WFdHT0FmM21NS3N3Z3BTOWNDV053QndyTFFNenExelZ4dXpYcytsdWRq?=
+ =?utf-8?B?bGlveUFaRWFaZjE2UzcvdXAyOGlVaHdveWU3V0FaR1JpWGpoUVJUODZBeEFL?=
+ =?utf-8?B?aEkxUmwrczVBcGxod2dJZ3JuZ3pYdkZXeXptQ0JSK2xHSktzQ2xjU3FIZyt5?=
+ =?utf-8?B?UTdjdzU3V2ZJd3BRNytScEg1T2VBRnFaalFzK0FaODl2dDZNUnRIZnRQNVhO?=
+ =?utf-8?B?eXdiMnNXNGZpUWw0SllvekJSQ1dHaERUaTVYTmhwUDRKMGhYaEJ1MVVCcGJt?=
+ =?utf-8?B?bFdMT2pyMEtTbGlnaittL1pwMzlUQjV2M1c4d1lMc2k2MWFBV21FQjRuaWRm?=
+ =?utf-8?B?U0NOK1dGRmpMcjNDQlVzRzhhTXYrcW8yR1N2OHJ1Z010WU45R05xdlVINDVi?=
+ =?utf-8?B?Q256R1pGbWNlMy85M0djeG9PYjJHeDhWT2tpc1VPa2R0WGdKVVhzWGx4VVpx?=
+ =?utf-8?B?UnFmalNsSS9SVEw2aWpxdlhlVklIR294MGkzMUVBdGUwSCtNR0h1RzU2cTZQ?=
+ =?utf-8?B?UFYwd2dBc1B4dWZBNE1JMWhrbEdhMWJGNjY0M0FQTldBSmNjSTlKUU5Pc3Fs?=
+ =?utf-8?B?dzh3b2RqdUlPY3lINW1UVDFwVzRVemlCVkVDSVFJRHNsQmlhR2VGVm4rQUsy?=
+ =?utf-8?B?NXJsa2xGU0V6emRGbnE1dHVIUFk2R0VkMjRBYkhRZzFWWXFqb2w0YW5YWEtR?=
+ =?utf-8?B?a20ydWdXQzlGWWg0aDVidTg5d2x3UEQya2NvZjA4aDE0NlZhWE9sMWl4Wk1h?=
+ =?utf-8?Q?qi+Y1RtjIKco12C69M=3D?=
+X-Microsoft-Antispam-Message-Info: 27AOp0XTDsSIwszOfgfpR6pAe6/S+1GAsZlY0GwnDyaM5loAzX2Me3Ztiea25XXzEsFEOtIb9NbY0I49lWuWAoCVcviQFvU1o4KDsAaFCsrLAJA8bwEw9JeEVBxdMBzDRDCTzFlUJeJvcj0zjUczbSP+GlsTz3N8NqDd58KRIivqtMB0A63sp5kSyD1tUHgz
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1449;6:XolJDxozf1fbVfwKe1PTXCF+aU5tZC4jn5IWeKPm31G9FNKi+q1sgQjwzQHkky+MPXxJSp0suTJAkL3/yVKEHGVnHf3uExdwAGDSzswdkSgw5waCt2Fm1tavBMjs/TfVrd1TwJf0TYYwdqD0Cg7tbS2+GbC0P6dG1Q2EAwHW5MOpc8Ev/5pSQfD3zLKQj/FaZi9GsmDxdfkshOV7EtGRgAltfEB06R0w/RkVjmZ3pWsfpwS+S/tDUMWeNkAUS1BpQRPDpORwUaT7wbUfSJBOncgqPsj4pwXP2BU11v6GT/zmrx13DinuB4QBj6AaKSyC8QFmAZ1ZfMmZXzLK7dSlxpRXdc9NVqhpPq+aJ0BxKbYTNKARal7d4RQ1pssHXdBLkjUMMHZ0AhpsLRn4TRRvb/zFBmWwqwhlWFOvRpWkeTPFPjMqPkLDJ3X06tK1oiSvo2ia/LyJSXJSXQYyQSq8qQ==;5:1DvqCL2raGYm6wKC58U3Kar8OXTZ12Plqn7czmBRxr2Z0C9nc1zdthHubsXALcff/vrzSo8hFE69KiBdEsqum/maUPkcVQ0VUlspUq/HHesbrhtpyvfS8k4bCrCjZ8tN38oxTb8XXHKuShmJ1vvohpMaH043DHW1x18AYt8l+Gg=;24:0RYrUekds+qHZVnB3VCvRGkc4/9yTHb0AOvwLEPMxHTapzAE9mqf+f9KFrCzgSuIU6W2/52DYHecF4JRy05fwm8J91WgpdYOQgTAeTikJNw=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;MWHPR12MB1455;7:LdY6ogX8K2LEON4DY5fGQif3PgxFwEhQGYpSi1MueSabyh72x0oTpmS+XS2brOrZChvikkNo7drQKjm2fz02IgGOLpCMR/RbaJ6n7UXDHzifLaDbMBBtqBfDonWU4FZ0N6btD9u/iSXq+Y5t72c1swbCGf4SccuVKpqGmuoo7FGzvhggnmHN3FgoHHo/cPkEwm/gQndEOvJHUX4+ya13q+Qsb6xNWSdxHxdPQcmWJkUUOwhGtiRpi1yIgnTeUoV5;20:0iYRNX+NW3rQ9KrOHxfpUNtpqKaF7zHoLYj+KtyozLnDA/fO/5R3juhEX1Hu2OTqhIKTg7A+mwm1wfpLggpk1KMAmQnQqWAKWSTLrCUZ8qEmZNSbOaBphnC5ExiY0byHvoA58JssNgxIUECdgXt35+J3mUvZ0RpsQPf5uncmg+UBvIjYPOfyrERdJOpZaWG/GHlFWmZkm/fjr9I5YiUnqBpbJOzgrjoMqqNmTUq/mvWQO229fXuR3dMspieUMtES
-X-MS-Office365-Filtering-Correlation-Id: b9452059-809f-4336-7fa3-08d5b9bef51e
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1449;7:srpBX7IFHjVW63R7ouBMCn+JS2ccenISapsjInQhsQWh9A+DKpN8B/3iZ5MdUi+cP7SolZNhBXRmLCcyBeE47EcGEknFMVJV1XdvpiObdUF0GOs5jVOxl9HgLq7qX3MQrjSj0kY72z4oj/V/Urtx77ystNgOWgcbIIZXGq96E9yEJYhmXXPhdaEcb6pIIOGM1572ne2Cx5XRnYshf4Zwn4rSo6QJWjpHU5tOaaOwXw9aYDttXgxSPo5vsHhLjP2P;20:wkYx4Vbi24jjRptoTOYZTn4T0uLm4OCUsA2OY/DeWtNrZvpGWZsUo2C68SnX2ZiC1tsPbEzw/cuGQdZQUvJrWO5paih5977vAO1KbURpGzH1P/7xaxYRhUb3+xzrCUGMackBoMOuPHMW34B5kSuzzHVZaX1XrATPjFW1nIaDxieKgI13MoMasEef3GZVsaemZV7rM9gH0/bDGtKSxAx01/zS7xavjsCsdXCpt4AwDbAQuzFo65hu5JVVpdNepSSL
+X-MS-Office365-Filtering-Correlation-Id: de775ab0-7fdd-4fd8-8184-08d5b9befa54
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2018 17:20:14.5759 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9452059-809f-4336-7fa3-08d5b9bef51e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2018 17:20:23.4591 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: de775ab0-7fdd-4fd8-8184-08d5b9befa54
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1455
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1449
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These patches create a top-level function, called at IOMMU
-initialization, to create a debugfs directory for the IOMMU. Under
-this directory drivers may create and populate-specific directories
-for their device internals.
+Provide base enablement for using debugfs to expose internal data of an
+IOMMU driver. When called, create the /sys/kernel/debug/iommu directory.
 
-Patch 1: general IOMMU enablement
-Patch 2: basic AMD enablement to demonstrate linkage with patch 1
+Emit a strong warning at boot time to indicate that this feature is
+enabled.
 
-Introduce a new Kconfig parameter IOMMU_DEBUGFS to globally
-allow/disallow debugfs code to be built.
+This function is called from iommu_init, and creates the initial DebugFS
+directory. Drivers may then call iommu_debugfs_new_driver_dir() to
+instantiate a device-specific directory to expose internal data.
+It will return a pointer to the new dentry structure created in
+/sys/kernel/debug/iommu, or NULL in the event of a failure.
 
-The Makefile structure is intended to allow the use of a single
-switch for turning on DebugFS.
+Since the IOMMU driver can not be removed from the running system, there
+is no need for an "off" function.
 
-Changes since v6:
- - Rely on default Kconfig value for a bool
- - comment/doc fixes
- - use const where appropriate
- - fix inline declaration
-
-Changes since v5:
- - Added parameters names in declarations/definitions
- - Reformatted an inline definition
-
-Changes since v4:
- - Guard vendor-specific debugfs files in the Makefile
- - Call top-level routine from iommu_init()
- - Add function for instantiating a driver-specific directory
- - Change AMD driver code to use this new format
-
-Changes since v3:
- - Remove superfluous calls to debugfs_initialized()
- - Emit a warning exactly one time
- - Change the Kconfig name to IOMMU_DEBUGFS
- - Change the way debugfs modules are made
-
-Changes since v2:
- - Move a declaration to outside an ifdef
- - Remove a spurious blank line
-
-Changes since v1:
- - Remove debug cruft
- - Remove cruft produced by design change
- - Change the lock to a mutex
- - Coding style fixes
- - Add a comment to document the framework
-
+Signed-off-by: Gary R Hook <gary.hook@amd.com>
 ---
-
-Gary R Hook (2):
-      iommu - Enable debugfs exposure of IOMMU driver internals
-      iommu/amd: Add basic debugfs infrastructure for AMD IOMMU
-
-
- drivers/iommu/Kconfig             |   10 +++++
- drivers/iommu/Makefile            |    6 +++
- drivers/iommu/amd_iommu_debugfs.c |   39 ++++++++++++++++++++
- drivers/iommu/amd_iommu_init.c    |    6 ++-
- drivers/iommu/amd_iommu_proto.h   |    6 +++
- drivers/iommu/amd_iommu_types.h   |    3 ++
- drivers/iommu/iommu-debugfs.c     |   72 +++++++++++++++++++++++++++++++++++++
- drivers/iommu/iommu.c             |    2 +
- include/linux/iommu.h             |   11 ++++++
- 9 files changed, 153 insertions(+), 2 deletions(-)
- create mode 100644 drivers/iommu/amd_iommu_debugfs.c
+ drivers/iommu/Kconfig         |   10 ++++++
+ drivers/iommu/Makefile        |    1 +
+ drivers/iommu/iommu-debugfs.c |   72 +++++++++++++++++++++++++++++++++++++++++
+ drivers/iommu/iommu.c         |    2 +
+ include/linux/iommu.h         |   11 ++++++
+ 5 files changed, 96 insertions(+)
  create mode 100644 drivers/iommu/iommu-debugfs.c
 
---
+diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+index f3a21343e636..2eab6a849a0a 100644
+--- a/drivers/iommu/Kconfig
++++ b/drivers/iommu/Kconfig
+@@ -60,6 +60,16 @@ config IOMMU_IO_PGTABLE_ARMV7S_SELFTEST
+ 
+ endmenu
+ 
++config IOMMU_DEBUGFS
++	bool "Export IOMMU internals in DebugFS"
++	depends on DEBUG_FS
++	help
++	  Allows exposure of IOMMU device internals. This option enables
++	  the use of debugfs by IOMMU drivers as required. Devices can,
++	  at initialization time, cause the IOMMU code to create a top-level
++	  debug/iommu directory, and then populate a subdirectory with
++	  entries as required.
++
+ config IOMMU_IOVA
+ 	tristate
+ 
+diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+index 1fb695854809..74cfbc392862 100644
+--- a/drivers/iommu/Makefile
++++ b/drivers/iommu/Makefile
+@@ -2,6 +2,7 @@
+ obj-$(CONFIG_IOMMU_API) += iommu.o
+ obj-$(CONFIG_IOMMU_API) += iommu-traces.o
+ obj-$(CONFIG_IOMMU_API) += iommu-sysfs.o
++obj-$(CONFIG_IOMMU_DEBUGFS) += iommu-debugfs.o
+ obj-$(CONFIG_IOMMU_DMA) += dma-iommu.o
+ obj-$(CONFIG_IOMMU_IO_PGTABLE) += io-pgtable.o
+ obj-$(CONFIG_IOMMU_IO_PGTABLE_ARMV7S) += io-pgtable-arm-v7s.o
+diff --git a/drivers/iommu/iommu-debugfs.c b/drivers/iommu/iommu-debugfs.c
+new file mode 100644
+index 000000000000..bb1bf2d0ac51
+--- /dev/null
++++ b/drivers/iommu/iommu-debugfs.c
+@@ -0,0 +1,72 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * IOMMU debugfs core infrastructure
++ *
++ * Copyright (C) 2018 Advanced Micro Devices, Inc.
++ *
++ * Author: Gary R Hook <gary.hook@amd.com>
++ */
++
++#include <linux/pci.h>
++#include <linux/iommu.h>
++#include <linux/debugfs.h>
++
++static struct dentry *iommu_debugfs_dir;
++
++/**
++ * iommu_debugfs_setup - create the top-level iommu directory in debugfs
++ *
++ * Provide base enablement for using debugfs to expose internal data of an
++ * IOMMU driver. When called, this function creates the
++ * /sys/kernel/debug/iommu directory.
++ *
++ * Emit a strong warning at boot time to indicate that this feature is
++ * enabled.
++ *
++ * This function is called from iommu_init; drivers may then call
++ * iommu_debugfs_new_driver_dir() to instantiate a vendor-specific
++ * directory to be used to expose internal data.
++ */
++void iommu_debugfs_setup(void)
++{
++	if (!iommu_debugfs_dir) {
++		iommu_debugfs_dir = debugfs_create_dir("iommu", NULL);
++		if (iommu_debugfs_dir) {
++			pr_warn("\n");
++			pr_warn("*************************************************************\n");
++			pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **\n");
++			pr_warn("**                                                         **\n");
++			pr_warn("**  IOMMU DebugFS SUPPORT HAS BEEN ENABLED IN THIS KERNEL  **\n");
++			pr_warn("**                                                         **\n");
++			pr_warn("** This means that this kernel is built to expose internal **\n");
++			pr_warn("** IOMMU data structures, which may compromise security on **\n");
++			pr_warn("** your system.                                            **\n");
++			pr_warn("**                                                         **\n");
++			pr_warn("** If you see this message and you are not debugging the   **\n");
++			pr_warn("** kernel, report this immediately to your vendor!         **\n");
++			pr_warn("**                                                         **\n");
++			pr_warn("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **\n");
++			pr_warn("*************************************************************\n");
++		}
++	}
++}
++
++/**
++ * iommu_debugfs_new_driver_dir - create a vendor directory under debugfs/iommu
++ * @vendor: name of the vendor-specific subdirectory to create
++ *
++ * This function is called by an IOMMU driver to create the top-level debugfs
++ * directory for that driver.
++ *
++ * Return: upon success, a pointer to the dentry for the new directory.
++ *         NULL in case of failure.
++ */
++struct dentry *iommu_debugfs_new_driver_dir(const char *vendor)
++{
++	struct dentry *d_new;
++
++	d_new = debugfs_create_dir(vendor, iommu_debugfs_dir);
++
++	return d_new;
++}
++EXPORT_SYMBOL_GPL(iommu_debugfs_new_driver_dir);
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index d2aa23202bb9..350819f1c5e1 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1747,6 +1747,8 @@ static int __init iommu_init(void)
+ 					       NULL, kernel_kobj);
+ 	BUG_ON(!iommu_group_kset);
+ 
++	iommu_debugfs_setup();
++
+ 	return 0;
+ }
+ core_initcall(iommu_init);
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 19938ee6eb31..0933db261b9d 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -698,4 +698,15 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+ 
+ #endif /* CONFIG_IOMMU_API */
+ 
++#ifdef CONFIG_IOMMU_DEBUGFS
++void iommu_debugfs_setup(void);
++struct dentry *iommu_debugfs_new_driver_dir(const char *vendor);
++#else
++static inline void iommu_debugfs_setup(void) {}
++static inline struct dentry *iommu_debugfs_new_driver_dir(const char *vendor)
++{
++	return NULL;
++}
++#endif
++
+ #endif /* __LINUX_IOMMU_H */
