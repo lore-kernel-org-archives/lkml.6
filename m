@@ -1,39 +1,38 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqCXCQ73adRr+JulIGs6l5n7AExsSPmhTb1Erc9VizaoOT57UNM+Y8n9jZSdqTzSOEUNKtL
-ARC-Seal: i=1; a=rsa-sha256; t=1526281170; cv=none;
+X-Google-Smtp-Source: AB8JxZoB/qmb4MBG3kGxOJvnF/5+1UJXwqNh3578dfc38eXBlBc4bfitH4fyobhyhZMm1Pjg4Rqj
+ARC-Seal: i=1; a=rsa-sha256; t=1526281167; cv=none;
         d=google.com; s=arc-20160816;
-        b=x1kYAxNDIRL3+nozHZoDYq9hp+qsQezuIFEYpBVCUSbkh2QKNump2J0l0HzfqtgLam
-         OTCKcx0ghh0oWO0oCZsS7ul1j49WnNwXcDFkUfJvr2pYivEkR0UMkP1OS3ZsnbES4mOz
-         d4yCJTD3unZuJa9joCF1dtIPUHctMf32vML4Ywt9iPk46Nfvi2o7/wZU3CAWNpCFv5hh
-         QF/oyOYTHkUsPeY8uQKLOzQ/MnXM2LyyvuCSUsdao/Ewq4j6pD9PcClMnkKCOS26/kEo
-         Nx+ogIi+7svRjKNXgZTeRHc3fia3KTcB5/ZIYVAZNqkIu0qfqEuYo3zFXrHVkknuhS9T
-         bhhg==
+        b=kfwqNvl9zQ3QZoChh+GWbeCGjGyOad3K2PdySrnK8LqnjAojQIvHhwIffTX+3u+v03
+         x6B2cwMxEwzDWSldmre+HeGGeJv7+gm9enkA9pTAm4LSg9q/H67zOh4E69hkL2JiZG9R
+         yH+ehJ1HBXc67p6OdMo1fed3uJhCQ3UyarV5nxeEvAKLjXlwVvO0cmJsscA/31CO/XGM
+         wHVm2q8fWJ8H9G0QlMEZ2UrIhZjC4LckrRR7CzuAbo/bEvmEgCzIGiYKtYdl7Y8NQdm2
+         o9iOMK0jqDF//yYfSF6VI7jaCBGzPuhQUqY0/2qdk3f0D6ZLI8HaUplQnklAZpPrWv9O
+         FjNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=CkU7M9kUr11ZGdBLQArPDD4oWgpysD+Li9mi4W1vOUA=;
-        b=RbMiWWSo/7fcfXy1m+aBczqgZVWPlnIdvqDk40JqVqJFWGd4ohxDiITlBV/zIm6kvE
-         A28dqAHEK0soVwt5uRc9rcfrl6awr+uisIRfyhkOsrnBEwUVXn/V/NRSJc52wcwvwIF9
-         sQeJSRWV1DRFH9qKBaA4EERsnRfzMAEKq5goYVjVxwHFa4YCyoJRrENYDaaOrJas/tUo
-         7bGncTj3ILn3V7iQ9orBgkSeQrDXJnMtTZpJyFSxrUenkr/Pd/+2pzMVpXold7Mw9ykH
-         E4d69EkZoDEO2hcVrbukgxVu+zlNdhEhzuKpKGsFY+jkkQ/Wr6+UBXWy1iDwxsch+t+5
-         wEXw==
+        bh=qjfERe2xeMLg1BoZWkdCXM4uwpAYU0b1rr1IR/4WQcA=;
+        b=NHROOu6tQMv6spiOaT3ee8ORqMFr6/D9aBaexM2r1LLSJJzUHF+3bzHVPdvjcmwu5P
+         P9xDGQ0YNDelWsM2LVhq5WyGK+i7CGeSPwvsMNb0509gVxyFAkbmrRGL79WwDdxdke50
+         Wnl08HAfDI8lWzawZxclBvICPv7QQ7p2ox6rMjh0ktDw+w2Cptkl+t6psFmdN7Z1+3Xu
+         yAHxBadjXO4Z8TqDMxotsoNhdcmJBu1ypxKuWLiiK0spDYVpvn6YI3vk1q5KV3kriiha
+         XpgmdiEP+/GK4L9ocJIb83qpNe+Tp1ofYYuTnQ4JuFXo75eVR9e9XZXTp0vt8e/4dC7i
+         yCDA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=wleV3YWD;
+       dkim=pass header.i=@kernel.org header.s=default header.b=GXXjdM5A;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=wleV3YWD;
+       dkim=pass header.i=@kernel.org header.s=default header.b=GXXjdM5A;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	=?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.16 43/72] drm/ttm: Use GFP_TRANSHUGE_LIGHT for allocating huge pages
-Date: Mon, 14 May 2018 08:49:00 +0200
-Message-Id: <20180514064825.022994719@linuxfoundation.org>
+	Boris Brezillon <boris.brezillon@bootlin.com>,
+	Eric Anholt <eric@anholt.net>
+Subject: [PATCH 4.16 42/72] drm/vc4: Fix scaling of uni-planar formats
+Date: Mon, 14 May 2018 08:48:59 +0200
+Message-Id: <20180514064824.982426061@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421804879220288?=
-X-GMAIL-MSGID: =?utf-8?q?1600421804879220288?=
+X-GMAIL-THRID: =?utf-8?q?1600421470287342593?=
+X-GMAIL-MSGID: =?utf-8?q?1600421801684438869?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,74 +51,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Michel Dänzer <michel.daenzer@amd.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-commit da291320baec914f0bb4e65a9dccb86bd6c728f2 upstream.
+commit 9a0e9802217291e54c4dd1fc5462f189a4be14ec upstream.
 
-GFP_TRANSHUGE tries very hard to allocate huge pages, which can result
-in long delays with high memory pressure. I have observed firefox
-freezing for up to around a minute due to this while restic was taking
-a full system backup.
+When using uni-planar formats (like RGB), the scaling parameters are
+stored in plane 0, not plane 1.
 
-Since we don't really need huge pages, use GFP_TRANSHUGE_LIGHT |
-__GFP_NORETRY instead, in order to fail quickly when there are no huge
-pages available.
-
-Set __GFP_KSWAPD_RECLAIM as well, in order for huge pages to be freed
-up in the background if necessary.
-
-With these changes, I'm no longer seeing freezes during a restic backup.
-
+Fixes: fc04023fafec ("drm/vc4: Add support for YUV planes.")
 Cc: stable@vger.kernel.org
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180507121303.5610-1-boris.brezillon@bootlin.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/ttm/ttm_page_alloc.c     |   11 ++++++++---
- drivers/gpu/drm/ttm/ttm_page_alloc_dma.c |    3 ++-
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/vc4/vc4_plane.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/ttm/ttm_page_alloc.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc.c
-@@ -904,7 +904,8 @@ static int ttm_get_pages(struct page **p
- 			while (npages >= HPAGE_PMD_NR) {
- 				gfp_t huge_flags = gfp_flags;
- 
--				huge_flags |= GFP_TRANSHUGE;
-+				huge_flags |= GFP_TRANSHUGE_LIGHT | __GFP_NORETRY |
-+					__GFP_KSWAPD_RECLAIM;
- 				huge_flags &= ~__GFP_MOVABLE;
- 				huge_flags &= ~__GFP_COMP;
- 				p = alloc_pages(huge_flags, HPAGE_PMD_ORDER);
-@@ -1021,11 +1022,15 @@ int ttm_page_alloc_init(struct ttm_mem_g
- 				  GFP_USER | GFP_DMA32, "uc dma", 0);
- 
- 	ttm_page_pool_init_locked(&_manager->wc_pool_huge,
--				  GFP_TRANSHUGE	& ~(__GFP_MOVABLE | __GFP_COMP),
-+				  (GFP_TRANSHUGE_LIGHT | __GFP_NORETRY |
-+				   __GFP_KSWAPD_RECLAIM) &
-+				  ~(__GFP_MOVABLE | __GFP_COMP),
- 				  "wc huge", order);
- 
- 	ttm_page_pool_init_locked(&_manager->uc_pool_huge,
--				  GFP_TRANSHUGE	& ~(__GFP_MOVABLE | __GFP_COMP)
-+				  (GFP_TRANSHUGE_LIGHT | __GFP_NORETRY |
-+				   __GFP_KSWAPD_RECLAIM) &
-+				  ~(__GFP_MOVABLE | __GFP_COMP)
- 				  , "uc huge", order);
- 
- 	_manager->options.max_size = max_pages;
---- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-@@ -915,7 +915,8 @@ static gfp_t ttm_dma_pool_gfp_flags(stru
- 		gfp_flags |= __GFP_ZERO;
- 
- 	if (huge) {
--		gfp_flags |= GFP_TRANSHUGE;
-+		gfp_flags |= GFP_TRANSHUGE_LIGHT | __GFP_NORETRY |
-+			__GFP_KSWAPD_RECLAIM;
- 		gfp_flags &= ~__GFP_MOVABLE;
- 		gfp_flags &= ~__GFP_COMP;
- 	}
+--- a/drivers/gpu/drm/vc4/vc4_plane.c
++++ b/drivers/gpu/drm/vc4/vc4_plane.c
+@@ -557,7 +557,7 @@ static int vc4_plane_mode_set(struct drm
+ 	 * the scl fields here.
+ 	 */
+ 	if (num_planes == 1) {
+-		scl0 = vc4_get_scl_field(state, 1);
++		scl0 = vc4_get_scl_field(state, 0);
+ 		scl1 = scl0;
+ 	} else {
+ 		scl0 = vc4_get_scl_field(state, 1);
