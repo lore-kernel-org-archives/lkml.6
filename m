@@ -1,143 +1,161 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752740AbeENLIp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:08:45 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53697 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752544AbeENLIn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:08:43 -0400
-X-Google-Smtp-Source: AB8JxZogADvXOSmgxfTJYVS2Qz3a8XFBgijTvCdArKVxerDeNqGAaaZMt6Pafu880By0gb/xmLfbqQ==
-Subject: Re: [PATCH 1/2] x86/stacktrace: do not fail when regs on stack for
- ORC
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org
-References: <20171130195710.cu2lsa47kwnow2hi@treble>
- <73526a6b-5083-78f1-8f76-d5f3ac52f958@suse.cz>
- <20171218033749.ihpwkjh7qfnilj4s@treble>
- <20171220174544.g34v2lkjrz2r6kh7@treble>
- <bf832ed0-47f4-2e8c-f320-1f54bce76e5c@suse.cz>
- <20180416221653.bf3or5yarlame3co@treble>
- <20180419134222.truupyqhwcpnhuis@treble>
- <a27a7de0-cc28-cfc8-7d0b-7d284f5d5788@suse.cz>
- <20180510124916.ckgjtgmmcy33ahtd@treble>
- <16f714bb-1a32-9203-39d5-aab927fba6c9@suse.cz>
- <20180511151252.sihxdvl4ip7hjjoc@treble>
-From: Jiri Slaby <jslaby@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
- xsFNBE6S54YBEACzzjLwDUbU5elY4GTg/NdotjA0jyyJtYI86wdKraekbNE0bC4zV+ryvH4j
- rrcDwGs6tFVrAHvdHeIdI07s1iIx5R/ndcHwt4fvI8CL5PzPmn5J+h0WERR5rFprRh6axhOk
- rSD5CwQl19fm4AJCS6A9GJtOoiLpWn2/IbogPc71jQVrupZYYx51rAaHZ0D2KYK/uhfc6neJ
- i0WqPlbtIlIrpvWxckucNu6ZwXjFY0f3qIRg3Vqh5QxPkojGsq9tXVFVLEkSVz6FoqCHrUTx
- wr+aw6qqQVgvT/McQtsI0S66uIkQjzPUrgAEtWUv76rM4ekqL9stHyvTGw0Fjsualwb0Gwdx
- ReTZzMgheAyoy/umIOKrSEpWouVoBt5FFSZUyjuDdlPPYyPav+hpI6ggmCTld3u2hyiHji2H
- cDpcLM2LMhlHBipu80s9anNeZhCANDhbC5E+NZmuwgzHBcan8WC7xsPXPaiZSIm7TKaVoOcL
- 9tE5aN3jQmIlrT7ZUX52Ff/hSdx/JKDP3YMNtt4B0cH6ejIjtqTd+Ge8sSttsnNM0CQUkXps
- w98jwz+Lxw/bKMr3NSnnFpUZaxwji3BC9vYyxKMAwNelBCHEgS/OAa3EJoTfuYOK6wT6nadm
- YqYjwYbZE5V/SwzMbpWu7Jwlvuwyfo5mh7w5iMfnZE+vHFwp/wARAQABzSBKaXJpIFNsYWJ5
- IDxqaXJpc2xhYnlAZ21haWwuY29tPsLBewQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYCAwEC
- HgECF4AFAk6S6P4CGQEACgkQvSWxBAa0cEl1Sg//UMXp//d4lP57onXMC2y8gafT1ap/xuss
- IvXR+3jSdJCHRaUFTPY2hN0ahCAyBQq8puUa6zaXco5jIzsVjLGVfO/s9qmvBTKw9aP6eTU7
- 77RLssLlQYhRzh7vapRRp4xDBLvBGBv9uvWORx6dtRjh+e0J0nKKce8VEY+jiXv1NipWf+RV
- vg1gVbAjBnT+5RbJYtIDhogyuBFg14ECKgvy1Do6tg9Hr/kU4ta6ZBEUTh18Io7f0vr1Mlh4
- yl2ytuUNymUlkA/ExBNtOhOJq/B087SmGwSLmCRoo5VcRIYK29dLeX6BzDnmBG+mRE63IrKD
- kf/ZCIwZ7cSbZaGo+gqoEpIqu5spIe3n3JLZQGnF45MR+TfdAUxNQ4F1TrjWyg5Fo30blYYU
- z6+5tQbaDoBbcSEV9bDt6UOhCx033TrdToMLpee6bUAKehsUctBlfYXZP2huZ5gJxjINRnlI
- gKTATBAXF+7vMhgyZ9h7eARG6LOdVRwhIFUMGbRCCMXrLLnQf6oAHyVnsZU1+JWANGFBjsyy
- fRP2+d8TrlhzN9FoIGYiKjATR9CpJZoELFuKLfKOBsc7DfEBpsdusLT0vlzR6JaGae78Od5+
- ljzt88OGNyjCRIb6Vso0IqEavtGOcYG8R5gPhMV9n9/bCIVqM5KWJf/4mRaySZp7kcHyJSb0
- O6nOwU0ETpLnhgEQAM+cDWLL+Wvc9cLhA2OXZ/gMmu7NbYKjfth1UyOuBd5emIO+d4RfFM02
- XFTIt4MxwhAryhsKQQcA4iQNldkbyeviYrPKWjLTjRXT5cD2lpWzr+Jx7mX7InV5JOz1Qq+P
- +nJWYIBjUKhI03ux89p58CYil24Zpyn2F5cX7U+inY8lJIBwLPBnc9Z0An/DVnUOD+0wIcYV
- nZAKDiIXODkGqTg3fhZwbbi+KAhtHPFM2fGw2VTUf62IHzV+eBSnamzPOBc1XsJYKRo3FHNe
- LuS8f4wUe7bWb9O66PPFK/RkeqNX6akkFBf9VfrZ1rTEKAyJ2uqf1EI1olYnENk4+00IBa+B
- avGQ8UW9dGW3nbPrfuOV5UUvbnsSQwj67pSdrBQqilr5N/5H9z7VCDQ0dhuJNtvDSlTf2iUF
- Bqgk3smln31PUYiVPrMP0V4ja0i9qtO/TB01rTfTyXTRtqz53qO5dGsYiliJO5aUmh8swVpo
- tgK4/57h3zGsaXO9PGgnnAdqeKVITaFTLY1ISg+Ptb4KoliiOjrBMmQUSJVtkUXMrCMCeuPD
- GHo739Xc75lcHlGuM3yEB//htKjyprbLeLf1y4xPyTeeF5zg/0ztRZNKZicgEmxyUNBHHnBK
- HQxz1j+mzH0HjZZtXjGu2KLJ18G07q0fpz2ZPk2D53Ww39VNI/J9ABEBAAHCwV8EGAECAAkF
- Ak6S54YCGwwACgkQvSWxBAa0cEk3tRAAgO+DFpbyIa4RlnfpcW17AfnpZi9VR5+zr496n2jH
- /1ldwRO/S+QNSA8qdABqMb9WI4BNaoANgcg0AS429Mq0taaWKkAjkkGAT7mD1Q5PiLr06Y/+
- Kzdr90eUVneqM2TUQQbK+Kh7JwmGVrRGNqQrDk+gRNvKnGwFNeTkTKtJ0P8jYd7P1gZb9Fwj
- 9YLxjhn/sVIhNmEBLBoI7PL+9fbILqJPHgAwW35rpnq4f/EYTykbk1sa13Tav6btJ+4QOgbc
- ezWIwZ5w/JVfEJW9JXp3BFAVzRQ5nVrrLDAJZ8Y5ioWcm99JtSIIxXxt9FJaGc1Bgsi5K/+d
- yTKLwLMJgiBzbVx8G+fCJJ9YtlNOPWhbKPlrQ8+AY52Aagi9WNhe6XfJdh5g6ptiOILm330m
- kR4gW6nEgZVyIyTq3ekOuruftWL99qpP5zi+eNrMmLRQx9iecDNgFr342R9bTDlb1TLuRb+/
- tJ98f/bIWIr0cqQmqQ33FgRhrG1+Xml6UXyJ2jExmlO8JljuOGeXYh6ZkIEyzqzffzBLXZCu
- jlYQDFXpyMNVJ2ZwPmX2mWEoYuaBU0JN7wM+/zWgOf2zRwhEuD3A2cO2PxoiIfyUEfB9SSmf
- faK/S4xXoB6wvGENZ85Hg37C7WDNdaAt6Xh2uQIly5grkgvWppkNy4ZHxE+jeNsU7tg=
-Message-ID: <6931a360-c07e-140d-55d9-b1bb3334e1af@suse.cz>
-Date: Mon, 14 May 2018 13:08:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752259AbeENLRj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:17:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42916 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752039AbeENLRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 07:17:38 -0400
+Date: Mon, 14 May 2018 13:17:26 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>
+Subject: Re: Allwinner A64: Issue on external rtc clock to wifi chip
+Message-ID: <20180514111726.lnxpegipqklyetmv@flea>
+References: <CAMty3ZCNyuEwmLGdDZLM_9qKJ2NsT33rodug7ZpKAE-OHymVEg@mail.gmail.com>
+ <20180514075727.uxggyhmbahvhestx@flea>
+ <CAMty3ZDew=+zytKUx5+nX27CjCe0UfJpyYOy2s07NoJvbe57mQ@mail.gmail.com>
+ <20180514082744.ydmfg5mzsbol5onu@flea>
+ <CAMty3ZC3ggxkZwirpQ-aRP8Udg=aYypBArb0KcR0_Z0AG8wATA@mail.gmail.com>
+ <20180514090618.r5xc3elzpvfp47f4@flea>
+ <CAMty3ZCAWBHtemeeWcgLy5PoYLn10MwxpHdirqpsxFY3BA7=4g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180511151252.sihxdvl4ip7hjjoc@treble>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rwemxfhk4a6ebnef"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZCAWBHtemeeWcgLy5PoYLn10MwxpHdirqpsxFY3BA7=4g@mail.gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/11/2018, 05:12 PM, Josh Poimboeuf wrote:
-> I assume you're going to carry this as
-> part of your patches to enable HAVE_RELIABLE_STACKTRACE?
 
-Sure.
+--rwemxfhk4a6ebnef
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> --- a/tools/objtool/orc_dump.c
-> +++ b/tools/objtool/orc_dump.c
-> @@ -203,7 +203,8 @@ int orc_dump(const char *_objname)
->  
->  		print_reg(orc[i].bp_reg, orc[i].bp_offset);
->  
-> -		printf(" type:%s\n", orc_type_name(orc[i].type));
-> +		printf(" type:%s end:%d\n",
-> +		       orc_type_name(orc[i].type), orc[i].end);
+On Mon, May 14, 2018 at 03:12:49PM +0530, Jagan Teki wrote:
+> On Mon, May 14, 2018 at 2:36 PM, Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> > On Mon, May 14, 2018 at 02:34:22PM +0530, Jagan Teki wrote:
+> >> On Mon, May 14, 2018 at 1:57 PM, Maxime Ripard
+> >> <maxime.ripard@bootlin.com> wrote:
+> >> > On Mon, May 14, 2018 at 01:34:56PM +0530, Jagan Teki wrote:
+> >> >> On Mon, May 14, 2018 at 1:27 PM, Maxime Ripard
+> >> >> <maxime.ripard@bootlin.com> wrote:
+> >> >> > Hi,
+> >> >> >
+> >> >> > On Mon, May 14, 2018 at 12:37:49PM +0530, Jagan Teki wrote:
+> >> >> >> Hi Maxime and All,
+> >> >> >>
+> >> >> >> We are trying to bring-up AP6330 Wifi chip for A64 board. We not=
+iced
+> >> >> >> to have an external rtc clock has driven from wifi chip.
+> >> >> >>
+> >> >> >> So the devicetree is configured according to this as below.
+> >> >> >>
+> >> >> >> / {
+> >> >> >>         wifi_pwrseq: wifi-pwrseq {
+> >> >> >>                 compatible =3D "mmc-pwrseq-simple";
+> >> >> >>                 clocks =3D <&rtc 1>;
+> >> >> >>                 clock-names =3D "ext_clock";
+> >> >> >>                 reset-gpios =3D <&r_pio 0 2 GPIO_ACTIVE_LOW>; /*=
+ PL2 */
+> >> >> >>                 post-power-on-delay-ms =3D <400>;
+> >> >> >>         };
+> >> >> >> };
+> >> >> >>
+> >> >> >> &rtc {
+> >> >> >>         clock-output-names =3D "rtc-osc32k", "rtc-osc32k-out";
+> >> >> >>         clocks =3D <&osc32k>;
+> >> >> >>         #clock-cells =3D <1>;
+> >> >> >> };
+> >> >> >>
+> >> >> >> &mmc1 {
+> >> >> >>         pinctrl-names =3D "default";
+> >> >> >>         pinctrl-0 =3D <&mmc1_pins>;
+> >> >> >>         vmmc-supply =3D <&reg_dcdc1>;
+> >> >> >>         vqmmc-supply =3D <&reg_eldo1>;
+> >> >> >>         mmc-pwrseq =3D <&wifi_pwrseq>;
+> >> >> >>         bus-width =3D <4>;
+> >> >> >>         non-removable;
+> >> >> >>         status =3D "okay";
+> >> >> >>
+> >> >> >>         brcmf: wifi@1 {
+> >> >> >>                 reg =3D <1>;
+> >> >> >>                 compatible =3D "brcm,bcm4329-fmac";
+> >> >> >>                 interrupt-parent =3D <&r_pio>;
+> >> >> >>                 interrupts =3D <0 3 IRQ_TYPE_LEVEL_LOW>;  /* WL-=
+WAKE-AP: PL3 */
+> >> >> >>                 interrupt-names =3D "host-wake";
+> >> >> >>         };
+> >> >> >> };
+> >> >> >>
+> >> >> >> And observed rtc-osc32k-out clock is never enabled[1] and the va=
+lue of
+> >> >> >> LOSC_OUT_GATING is 0x0 which eventually not enabling
+> >> >> >> LOSC_OUT_GATING_EN
+> >> >> >>
+> >> >> >> Pls. let us know if we miss anything here?
+> >> >> >>
+> >> >> >> [1] https://paste.ubuntu.com/p/X2By4q8kD2/
+> >> >> >
+> >> >> > Could you paste your config and the logs from a boot to?
+> >> >>
+> >> >> .config
+> >> >> https://paste.ubuntu.com/p/w9w2KB7RFc/
+> >> >>
+> >> >> dmesg
+> >> >> https://paste.ubuntu.com/p/mrZGk5bWRR/
+> >> >
+> >> > This is kind of weird. Have you tested with a 4.17 kernel? We have
+> >> > runtime_pm changes lined up in next, so that might be a regression
+> >> > there, even though we tested it with Quentin at some point.
+> >>
+> >> This is 4.17-rc4 do you want to try it on 4.16 ?
+> >
+> > No, this is next-20180503. Please try with 4.17-rc4
+>=20
+> Couldn't find any different in behaviour [2]
+>=20
+> [2] https://paste.ubuntu.com/p/m3PGBwrv6W/
 
-Maybe just " type:%s%s\n" and »orc[i].end ? " END" : ""«?
+It's hard to tell without the board, but have you looked at the return
+value of devm_clk_get in the pwrseq code?
 
->  	}
->  
->  	elf_end(elf);
-> diff --git a/tools/objtool/orc_gen.c b/tools/objtool/orc_gen.c
-> index 18384d9be4e1..229c12e3fcf6 100644
-> --- a/tools/objtool/orc_gen.c
-> +++ b/tools/objtool/orc_gen.c
-> @@ -86,6 +86,7 @@ int create_orc(struct objtool_file *file)
->  		orc->sp_offset = cfa->offset;
->  		orc->bp_offset = bp->offset;
->  		orc->type = insn->state.type;
-> +		orc->end = insn->state.end;
+Enabling the clk ftrace events would also help.
 
-So you moved the assignment below of 'if (cfa->base == CFI_UNDEFINED)' –
-this assignment will never happen, as I have just verified.
+Maxime
 
---- a/tools/objtool/orc_gen.c
-+++ b/tools/objtool/orc_gen.c
-@@ -31,6 +31,8 @@ int create_orc(struct objtool_file *file)
-                struct cfi_reg *cfa = &insn->state.cfa;
-                struct cfi_reg *bp = &insn->state.regs[CFI_BP];
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-+               orc->end = insn->state.end;
-+
-                if (cfa->base == CFI_UNDEFINED) {
-                        orc->sp_reg = ORC_REG_UNDEFINED;
-                        continue;
-@@ -86,7 +88,6 @@ int create_orc(struct objtool_file *file)
-                orc->sp_offset = cfa->offset;
-                orc->bp_offset = bp->offset;
-                orc->type = insn->state.type;
--               orc->end = insn->state.end;
-        }
+--rwemxfhk4a6ebnef
+Content-Type: application/pgp-signature; name="signature.asc"
 
-        return 0;
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlr5cEUACgkQ0rTAlCFN
+r3SGOg//U+w+Ojukr19zd4krXZ6U5Whz9g0rxvaLjGZGM/EzSOe4ZFxlB52TgjgQ
+Vb/c0BxR+LL2oBxO8sWYIgHpy7IOAm6AS3M6uhTyMFk7XrKBJ72LVfpd1mPoh780
+tTZbUT2Lx7ecuosYalSLN06GfXEbMlhc415MCiKHPELLwIDpgXeVi0UEYahkzskP
+BdsULGQGwMDHO3+vjUTcSSl9ByrboISua974SMONklEBe3757toLmzAonqEOoVNb
+UhSl97BX5v1+ZtZQArEtQ6XFse7CZdyRZXxUrHxy/cB+ByeRiUSX7zr+4UKnd23n
+DbYtTk0zhZbaM8Hs4/x0XSijizSstwNZctUTCamFIhInAaqmgEf6pebqy3GKCtw5
+9edYXMWPPfb7O16ad1UvwJ2oPnumRkqZpzPeuJELV9TratoVa/HDNk3N3acZm+Ri
+ZxdL8GjhRM2fVNg0eW3bTOH+U+UrLoX0NtrUyyK2mKdwtCx3MNWGkLR/JlKQYejx
+OjRnF9kNumqaWvY3gBayyb1dm84Ev/zEiX4u3UKLOoeCzXJLSEsOpGfp+A5qNic2
+BuyOGoLQ9BIg3Q+Gde8tYOgJBrQAJL6uSWwQCon1RMFcYHJXwaXa6+SBoCcyYo58
+LuSW0oM18A93l024nOw9l7mP5sGfPvPhErcE2hFxlbhuMqjFmu8=
+=rx9p
+-----END PGP SIGNATURE-----
 
-thanks,
--- 
-js
-suse labs
+--rwemxfhk4a6ebnef--
