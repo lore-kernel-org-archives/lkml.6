@@ -1,42 +1,40 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZobSg0zpmU+ubqarBUAg4RNQHkVEKv4Lkfr0PIibzifVGoQik7zijJHMIjltryl6kHokLsQ
-ARC-Seal: i=1; a=rsa-sha256; t=1526280927; cv=none;
+X-Google-Smtp-Source: AB8JxZpOwukKhvzrFjofd+tcutF2YGNi4Y7L1pDVMBtoYaZp029JYfntNvrXpPCCLLhdTpNbHfq5
+ARC-Seal: i=1; a=rsa-sha256; t=1526280924; cv=none;
         d=google.com; s=arc-20160816;
-        b=fUMsguE1sKi83M70PlQ0HEahMJW+AVblNs+bUBRRneMoCl7GVk3CJ/5pNkW4eR2NwV
-         IlHOOTQLXP+USHn+NdDEl42Lip2LN4XMHNqj2sPjSUySY8VdodsE3efpJWszZyUWv1UR
-         D5cSjObsgnrQruaXAld8VdygplXaGf9mnKZsaBXZI9UQiCAXhkZ0ec0AxRb2MuJ9r8jx
-         CecYw1XixCTBxcBvdHVKTj6YQkYs/5sKDhqXZgy2kbJs3kWb1skgmsVY+mVoboxk2eB+
-         nTHzLtCVWIu21XsHEQlvb5Plu8GhdXP+BaW7Zbya35NWxzYXd6j9IfQ6OBoS/RjEHcjA
-         6oUg==
+        b=ZByh3yDA1SmBCksLJ7GwwplOLcu7mdRXZktswXug3tkAH6TPkcn+8SyqwpulGxZC63
+         2xTxViodp7wxbBTuL8J8P+xn+DO4pzP2YQSEO01NbKR/j1ZVEeujQufClby124mzOsLx
+         /O/5ZRlmHVXowigoYLwzuZcLahqTDdM5aNj7d3Aa1uFiGoDPR6CX/Bd+AUZp1PI0z4Gp
+         vPGOG+FGEMUR5f98gQdiI5gwmgr1XgfmmM4+33GyfEejrTdg6gqoue6RUBKX0rdV+GYP
+         4JvzL15FpINOoq4aZ5FJ5opWLyMo9iUrxxE2xB1YDSjaQtvSyBstKkumz2L6MbAyqt9n
+         u71g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=DwOad4wtG48M8ONAwJbGMpFSqs6TaqLw3HXkimGJVAI=;
-        b=wSffw6372I6WbR1DGyjIdpEHLMakD9U6NzOpgoc4oqfraMLaBcdtsXZcb5hglvguaW
-         Rq/orvGdM810IA1fxvY8jJgixFa5XDHeW/qsVBy+bH74xI2gBXmaK5mesgkagiTh5bG4
-         GFoggOh5J2dBfAm05qNxmUZOk3zbTKRiFLuLP8hKJB+bJPnnxhc7yGsF/ySaRezzBQdd
-         1BPsZGRxoLgKRjWUgIkAfJ+gMf/j/FLUS9cvq6sFWbnjFYvkmvbEJGXukDNIcW7hLPUS
-         uDopvtnjRXgZHMkv5QI8fH7TdcFRc16kPzueHpwoiui+MCYLGb3eaGeBclwf0GZ4/hPp
-         VEgA==
+        bh=Jni7dW1BrTWuWgIm4vpVxyR5kRCEd0UXA7rqUHjeD3c=;
+        b=AncDtzY2aPHIAWtX/pMBrKugTv8Rk94zAbmn7hstXFw7rOzQewGJpANzgZGCKRAsGU
+         10rlq0u7M8F/KEiIA2YW3rugVs8EQTLV+zEzdbOpj2R73vnjO16QFPj6LEhri/Fqtlxn
+         OZaBM2LmxRRqUx1hjwYkwKBsjkHnBI2c9xOVpO24Wp82fbEL5t7/C58Vtr3mvFQsbn+3
+         t5uTfGzsgdpPI56zYNV3FiDh5NT3X8yM1QCP9MNxd1BO3asb9OtEQtvGAoRmd5T3YLTN
+         evl94pvFzGRmm1y+dwppuvr+xL/XDOaAUPvezMMucIao4iVHfRvAPvbB4s4U6Inm/w0f
+         8nAQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=mJLSQM+5;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ZIEBtFuz;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=mJLSQM+5;
+       dkim=pass header.i=@kernel.org header.s=default header.b=ZIEBtFuz;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	syzbot <syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com>,
-	Tejun Heo <tj@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 16/62] bdi: wake up concurrent wb_shutdown() callers.
-Date: Mon, 14 May 2018 08:48:32 +0200
-Message-Id: <20180514064817.309551494@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
+	Pavel Emelyanov <xemul@parallels.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 15/62] tcp: fix TCP_REPAIR_QUEUE bound checking
+Date: Mon, 14 May 2018 08:48:31 +0200
+Message-Id: <20180514064817.250728387@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -46,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421549344981628?=
-X-GMAIL-MSGID: =?utf-8?q?1600421549344981628?=
+X-GMAIL-THRID: =?utf-8?q?1600421256400782370?=
+X-GMAIL-MSGID: =?utf-8?q?1600421546473326218?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,66 +53,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 8236b0ae31c837d2b3a2565c5f8d77f637e824cc upstream.
+commit bf2acc943a45d2b2e8a9f1a5ddff6b6e43cc69d9 upstream.
 
-syzbot is reporting hung tasks at wait_on_bit(WB_shutting_down) in
-wb_shutdown() [1]. This seems to be because commit 5318ce7d46866e1d ("bdi:
-Shutdown writeback on all cgwbs in cgwb_bdi_destroy()") forgot to call
-wake_up_bit(WB_shutting_down) after clear_bit(WB_shutting_down).
+syzbot is able to produce a nasty WARN_ON() in tcp_verify_left_out()
+with following C-repro :
 
-Introduce a helper function clear_and_wake_up_bit() and use it, in order
-to avoid similar errors in future.
+socket(PF_INET, SOCK_STREAM, IPPROTO_IP) = 3
+setsockopt(3, SOL_TCP, TCP_REPAIR, [1], 4) = 0
+setsockopt(3, SOL_TCP, TCP_REPAIR_QUEUE, [-1], 4) = 0
+bind(3, {sa_family=AF_INET, sin_port=htons(20002), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
+sendto(3, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
+	1242, MSG_FASTOPEN, {sa_family=AF_INET, sin_port=htons(20002), sin_addr=inet_addr("127.0.0.1")}, 16) = 1242
+setsockopt(3, SOL_TCP, TCP_REPAIR_WINDOW, "\4\0\0@+\205\0\0\377\377\0\0\377\377\377\177\0\0\0\0", 20) = 0
+writev(3, [{"\270", 1}], 1)             = 1
+setsockopt(3, SOL_TCP, TCP_REPAIR_OPTIONS, "\10\0\0\0\0\0\0\0\0\0\0\0|\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 386) = 0
+writev(3, [{"\210v\r[\226\320t\231qwQ\204\264l\254\t\1\20\245\214p\350H\223\254;\\\37\345\307p$"..., 3144}], 1) = 3144
 
-[1] https://syzkaller.appspot.com/bug?id=b297474817af98d5796bc544e1bb806fc3da0e5e
+The 3rd system call looks odd :
+setsockopt(3, SOL_TCP, TCP_REPAIR_QUEUE, [-1], 4) = 0
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com>
-Fixes: 5318ce7d46866e1d ("bdi: Shutdown writeback on all cgwbs in cgwb_bdi_destroy()")
-Cc: Tejun Heo <tj@kernel.org>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This patch makes sure bound checking is using an unsigned compare.
+
+Fixes: ee9952831cfd ("tcp: Initial repair mode")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Pavel Emelyanov <xemul@parallels.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/wait_bit.h |   17 +++++++++++++++++
- mm/backing-dev.c         |    2 +-
- 2 files changed, 18 insertions(+), 1 deletion(-)
+ net/ipv4/tcp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/linux/wait_bit.h
-+++ b/include/linux/wait_bit.h
-@@ -259,4 +259,21 @@ int wait_on_atomic_t(atomic_t *val, int
- 	return out_of_line_wait_on_atomic_t(val, action, mode);
- }
- 
-+/**
-+ * clear_and_wake_up_bit - clear a bit and wake up anyone waiting on that bit
-+ *
-+ * @bit: the bit of the word being waited on
-+ * @word: the word being waited on, a kernel virtual address
-+ *
-+ * You can use this helper if bitflags are manipulated atomically rather than
-+ * non-atomically under a lock.
-+ */
-+static inline void clear_and_wake_up_bit(int bit, void *word)
-+{
-+	clear_bit_unlock(bit, word);
-+	/* See wake_up_bit() for which memory barrier you need to use. */
-+	smp_mb__after_atomic();
-+	wake_up_bit(word, bit);
-+}
-+
- #endif /* _LINUX_WAIT_BIT_H */
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -381,7 +381,7 @@ static void wb_shutdown(struct bdi_write
- 	 * the barrier provided by test_and_clear_bit() above.
- 	 */
- 	smp_wmb();
--	clear_bit(WB_shutting_down, &wb->state);
-+	clear_and_wake_up_bit(WB_shutting_down, &wb->state);
- }
- 
- static void wb_exit(struct bdi_writeback *wb)
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2601,7 +2601,7 @@ static int do_tcp_setsockopt(struct sock
+ 	case TCP_REPAIR_QUEUE:
+ 		if (!tp->repair)
+ 			err = -EPERM;
+-		else if (val < TCP_QUEUES_NR)
++		else if ((unsigned int)val < TCP_QUEUES_NR)
+ 			tp->repair_queue = val;
+ 		else
+ 			err = -EINVAL;
