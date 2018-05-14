@@ -1,97 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-402196-1526281038-3-15478475410503578606
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, RCVD_IN_DNSWL_HI -5,
-  SPF_PASS -0.001, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='198.145.29.99', Host='mail.kernel.org', Country='US', FromHeader='org',
-  MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526281037; b=a2cJ3P2jhbpKI2jNvJkA1iOFyzzo/w2ANVyIj4Z+yLIIJzb6QU
-    0+i/0QhrG/GDVwvygY8D29pcvWty29d1do+MFql4s0y5kFwRartVxZ23q0UINJfW
-    IgYO7vZdrEnbfoxj2j+KU7wdLs3sf4ilDvito3OHVibAkKjS7x0/XV2q7X2sWgAJ
-    1Ks/CIgo2lcPMT4BUvwEJfZG2dU0ehXbu0BUkYktaGUF3UrigCMpSZ9lmWmxLQoF
-    4AI5VKoW5ysTf4wan9ZuHuE3atVzKkIgOxnJzf6wKoad/Dhdr34M1zDJktfK8TRP
-    Qp8C9GT6iJEVEgjzJfAUK3Zvi5C9U7DqiFyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type; s=fm2; t=
-    1526281037; bh=mIFVSJb2lUA6h1QEhIvvY72lg7TZy6hlxiAthGaC5aQ=; b=h
-    TzPm63iq+g4GrJToqTzkBZKmrSyrqBNjXJ/ql/wcnLXFR6jDdN9tfb6UbLXnYZHb
-    t+t1dJLGybHlwHPgO8vJ7hy4PWboPNMjLg2ZhfUMSNPihBzemCFb0qJIyL3lsmC4
-    hsB6PpDIcZ7c0kvMcakyf433Cb8SPFgQtsiwkBQocZYuAYgbY3ty6TeT1nd5am+7
-    TySVugx8IgKQomZWNNNtHcFKnwc4PhiW045I0W3zQI8c2k9ZSXdA9AgBukCNnVlB
-    Mg0BIXW/mHLdq1cd3UT1YZCam4NRg2z+YeoKUI2p1cKuXYwgl+39s155mxuk4HRL
-    HoycEswJeSJ6sC9x/5Xvw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=J563QtLU x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=pass
-    smtp.mailfrom="SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org"
-    smtp.helo=mail.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=linuxfoundation.org
-    header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=J563QtLU x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,d=none) header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=198.145.29.99 (mail.kernel.org);
-    spf=pass
-      smtp.mailfrom="SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org"
-      smtp.helo=mail.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mail.kernel.org x-ptr-lookup=mail.kernel.org;
-    x-return-mx=pass smtp.domain=kernel.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=linuxfoundation.org
-      header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfF1Og+4FACrP2e92kzigUdUqYn3MFNzFgyzUPPujBE+GkGxfuELt4DlmWjt4d4zCoQS0kUT+7NoOi5xXKroRRCM8WNS+0dpGTVwv3hvAMQUCIRKcLX2y
-    n3WxgtMmY6l/8wjeyzqElcPXoa2/UqaCFJ/pTgOq+Nnumh+ghILL596idBZwwVkRKcj1nSWLsB/I3LJuRZ03ERAYVItMzNmVUbr+d5XZnqKIZvCdtiNoAEQc
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=czNdAM+YcK12vDHDihaDnQ==:117
-    a=czNdAM+YcK12vDHDihaDnQ==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=Z4Rwk6OoAAAA:8 a=JfrnYn6hAAAA:8 a=FOH2dFAWAAAA:8
-    a=gnbuhwpKAAAA:8 a=ag1SF4gXAAAA:8 a=jgO6SH3aC7yEc3PU-okA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=HkZW87K1Qel5hWWM3VKY:22 a=1CNFftbPRP8L7MoqJWF3:22
-    a=i3VuKzQdj-NEYjvDI-p3:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-X-Remote-Delivered-To: security@kernel.org
+X-Google-Smtp-Source: AB8JxZoWkCJ3PEZn2e5XPS7JsxXJMNROIeZ60kyj+ad3hmMiLF/jf6Yl0BFBBLYWq9nZbG32ScMr
+ARC-Seal: i=1; a=rsa-sha256; t=1526281031; cv=none;
+        d=google.com; s=arc-20160816;
+        b=F7brFsyzjwo/waXHPNPH0gvBrFpw9RO33MqdLRgLLZ9aOl2G81ST8ryEzdSz43l2eZ
+         p2fC2VKTxPNp1qMWOYNU8YgelFVMnysuKLE3BQVm0KoE99Fdvv94vCCt1eBS3wmfNLm1
+         s8IW6A3N2tbTVdvzIkS4Uyf8t52l0+3w+FQPw6YqAAZ0phAOk5UkLdftT+SRIUqalJ2n
+         bPme/fQ1XKXXVSZHyp1b2WQg82jktglUizYnq8M+jCYg5JS/j6PMQRl7Lq+NMbq1SPFu
+         CtLXPQyKvikb7wodGoZ1zCNIcGlyr3CnhEqrRBSgq/StqjFhTQ37IV/0+Y/nVTgARpUe
+         YGWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=ffFH83pEkIU8RHDkNFvgD5JAInJD66XuuxUQ4j5ePj4=;
+        b=SOK7xxxHGmeTt1e6+L69xzcBwbCwkmlUNi03S8zaVUzc0woUurc0ykBEcj0FFsfUtW
+         xiUrt7w3Fyf0iNgNsRuCULFexb0RDL03mfnGdpj9Tdym4LaR9zGFM7A8ajAaiGFWtLd/
+         641YX3KJW9NNxrHnaptM1WdccXkWu/JAUru6M6A4+NE97fLYef8KeKE7Jkw84D5GQaxW
+         +zw6I9Ecva7ZZunH+kQVWvAdVxMKGxK0I3JMR84uhZOXSHZ8e3C2JudZ32zCULs528WM
+         z5bpuZlYXkmIDK9q9durLUrTdyKg7/aZr7q/he2z+QM8OYUCHBBAIdPdRq5VS0JImo9Y
+         Nzww==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=wYDB/0eB;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=wYDB/0eB;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Song Liu <songliubraving@fb.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	security@kernel.org,
-	=?UTF-8?q?=E8=8C=83=E9=BE=99=E9=A3=9E?= <long7573@126.com>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 55/62] tracing/uprobe_event: Fix strncpy corner case
-Date: Mon, 14 May 2018 08:49:11 +0200
-Message-Id: <20180514064819.539389393@linuxfoundation.org>
+	Steve French <smfrench@gmail.com>,
+	Ronnie Sahlberg <lsahlber@redhat.com>,
+	Pavel Shilovsky <pshilov@microsoft.com>
+Subject: [PATCH 4.14 53/62] smb3: directory sync should not return an error
+Date: Mon, 14 May 2018 08:49:09 +0200
+Message-Id: <20180514064819.435588113@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -100,6 +42,9 @@ X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1600421658029253120?=
+X-GMAIL-MSGID: =?utf-8?q?1600421658029253120?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -107,36 +52,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Steve French <smfrench@gmail.com>
 
-commit 50268a3d266ecfdd6c5873d62b2758d9732fc598 upstream.
+commit 6e70c267e68d77679534dcf4aaf84e66f2cf1425 upstream.
 
-Fix string fetch function to terminate with NUL.
-It is OK to drop the rest of string.
+As with NFS, which ignores sync on directory handles,
+fsync on a directory handle is a noop for CIFS/SMB3.
+Do not return an error on it.  It breaks some database
+apps otherwise.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: security@kernel.org
-Cc: 范龙飞 <long7573@126.com>
-Fixes: 5baaa59ef09e ("tracing/probes: Implement 'memory' fetch method for uprobes")
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Steve French <smfrench@gmail.com>
+CC: Stable <stable@vger.kernel.org>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_uprobe.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/cifs/cifsfs.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -152,6 +152,8 @@ static void FETCH_FUNC_NAME(memory, stri
- 		return;
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -1045,6 +1045,18 @@ out:
+ 	return rc;
+ }
  
- 	ret = strncpy_from_user(dst, src, maxlen);
-+	if (ret == maxlen)
-+		dst[--ret] = '\0';
++/*
++ * Directory operations under CIFS/SMB2/SMB3 are synchronous, so fsync()
++ * is a dummy operation.
++ */
++static int cifs_dir_fsync(struct file *file, loff_t start, loff_t end, int datasync)
++{
++	cifs_dbg(FYI, "Sync directory - name: %pD datasync: 0x%x\n",
++		 file, datasync);
++
++	return 0;
++}
++
+ static ssize_t cifs_copy_file_range(struct file *src_file, loff_t off,
+ 				struct file *dst_file, loff_t destoff,
+ 				size_t len, unsigned int flags)
+@@ -1173,6 +1185,7 @@ const struct file_operations cifs_dir_op
+ 	.copy_file_range = cifs_copy_file_range,
+ 	.clone_file_range = cifs_clone_file_range,
+ 	.llseek = generic_file_llseek,
++	.fsync = cifs_dir_fsync,
+ };
  
- 	if (ret < 0) {	/* Failed to fetch string */
- 		((u8 *)get_rloc_data(dest))[0] = '\0';
+ static void
