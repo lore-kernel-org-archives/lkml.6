@@ -1,145 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753885AbeENOQv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:16:51 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37754 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752207AbeENOQs (ORCPT
+        id S1753908AbeENOQ6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:16:58 -0400
+Received: from mail-wr0-f171.google.com ([209.85.128.171]:35441 "EHLO
+        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752207AbeENOQz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:16:48 -0400
-X-Google-Smtp-Source: AB8JxZrBG/eSPECm1oG8ONowNjQOOPYFPtc394kCaiRWAAkX3fNpFPDapu49bziCJ7kRIiTVgwWV1g==
-Message-ID: <1526307405.2897.29.camel@baylibre.com>
-Subject: Re: [PATCH 6/7] clk: meson: axg: document bindings for the audio
- clock controller
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Mon, 14 May 2018 16:16:45 +0200
-In-Reply-To: <20180501143715.GA20023@rob-hp-laptop>
-References: <20180425163304.10852-1-jbrunet@baylibre.com>
-         <20180425163304.10852-7-jbrunet@baylibre.com>
-         <20180501143715.GA20023@rob-hp-laptop>
+        Mon, 14 May 2018 10:16:55 -0400
+X-Google-Smtp-Source: AB8JxZprJAaFLg6VwyiK94IUPgHwynqYzpt+wN/dQAAMoghrBYE4JgNj+V0qqvo0WcotGwrSDLKeufHgZ0Zp63MLi34=
+MIME-Version: 1.0
+In-Reply-To: <20180514125856.GR12217@hirez.programming.kicks-ass.net>
+References: <CAEJqkgjMMMwK0Y7xSJCGVnbPor1MirA30HrN=U2EsGZNRQFs8A@mail.gmail.com>
+ <20180514072355.GB12198@hirez.programming.kicks-ass.net> <CAEJqkgh2C_t+pq72Y8uOLYk7nCCtFRnrt1La0hsJL2taa4k35g@mail.gmail.com>
+ <20180514125856.GR12217@hirez.programming.kicks-ass.net>
+From: Gabriel C <nix.or.die@gmail.com>
+Date: Mon, 14 May 2018 16:16:23 +0200
+Message-ID: <CAEJqkggEAj+DfsYDKiKJFqn9gfsbZcZ52D1TY13RVh-ZomngWw@mail.gmail.com>
+Subject: Re: commit bd9240a18edfbfa72e957fc2ba831cf1f13ea073 seems to break
+ with intel-ucode 20180425
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: kevin.b.stanton@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-05-01 at 09:37 -0500, Rob Herring wrote:
-> On Wed, Apr 25, 2018 at 06:33:03PM +0200, Jerome Brunet wrote:
-> > Add documentation for the device tree bindings of the audio clock
-> > controller of the A113 based SoCs
-> > 
-> 
-> The preferred subject prefix for bindings is 'dt/bindings: clock: ...'
+2018-05-14 14:58 GMT+02:00 Peter Zijlstra <peterz@infradead.org>:
+> On Mon, May 14, 2018 at 02:15:44PM +0200, Gabriel C wrote:
+>> http://ftp.frugalware.org/pub/other/people/crazy/ucode/cpuinfo-ucode-20180312
+>> http://ftp.frugalware.org/pub/other/people/crazy/ucode/cpuinfo-ucode-20180425
+>
+> That's 0xc2 and 0x9e respectively, for the microcode revision.
+>
+> For model 78 (INTEL_FAM6_SKYLAKE_MOBILE) we need at least 0xb2.
+>
+> Now, obviously 0xc2 is in fact larger than 0xb2, however 0x9e is
+> smaller and it is rightfully complaining.
+>
+> Now, I have (debian testing):
+>
+> $ apt-cache show intel-microcode
+> Package: intel-microcode
+> Version: 3.20180425.1
+>
+> $ hexdump /lib/firmware/intel-ucode/06-4e-03 | head
+> 0000000 0001 0000 00c2 0000 2017 1116 06e3 0004
+> 0000010 f699 c6c6 0001 0000 00c0 0000 83d0 0001
+> 0000020 8400 0001 0000 0000 0000 0000 0000 0000
+>
+> Which gives 0xc2 as version for your CPU.
+>
+> If I download microcode-20180425.tgz from:
+>
+>   https://downloadcenter.intel.com/download/27776/Linux-Processor-Microcode-Data-File
+>
+> I again get 0xc2 for 06-4e-03.
+>
+> So please double check your package...
 
-Noted, I suppose meant 'dt-bindings: clocks: ..." which seems to used half of
-the times
-The rest use 'clk: {platform}: ...'
+Yes hexdump matches here too.
 
-> 
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> >  .../bindings/clock/amlogic,axg-audio-clkc.txt      | 56 ++++++++++++++++++++++
-> >  1 file changed, 56 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-> > new file mode 100644
-> > index 000000000000..1b989ceda567
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-> > @@ -0,0 +1,56 @@
-> > +* Amlogic AXG Audio Clock Controllers
-> > +
-> > +The Amlogic AXG audio clock controller generates and supplies clock to the
-> > +other elements of the audio subsystem, such as fifos, i2s, spdif and pdm
-> > +devices.
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible	: should be "amlogic,axg-audio-clkc" for the A113X and A113D
-> > +- reg		: physical base address of the clock controller and length of
-> > +		  memory mapped region.
-> > +- clocks	: a list of phandle + clock-specifier pairs for the clocks listed
-> > +		  in clock-names.
-> > +- clock-names	: must contain the following:
-> > +		  * "pclk" - Main peripheral bus clock
-> > +		  may contain the following:
-> > +		  * "mst_in[0-7]" - 8 input plls to generate clock signals
-> 
-> Unless the sources don't exist, then you should always have the clocks. 
-> It should not be based on whether you are using them or not.
+I've build a initramfs with the files from microcode-20180425.tgz (
+with distro packages removed ) with the same result.
 
-This is not really the point. The parent controller may or may not provide some
-of the PLL. This was the case during the development of the controller when the
-HIFI pll was not available simply because there was no driver for it.
+Maybe dracut is doing something stupid .. but  I'm not sure what since
+the setup does not change just the ucode files.
 
-Whatever the reason for an input clock to be missing, this clock controller may
-continue to serve its purpose even if some input plls are not provided/available
-which is why these are not "mandatory"
+I'll try to find out.
 
-> 
-> > +		  * "slv_sclk[0-9]" - 10 slave bit clocks provided by external
-> > +				      components.
-> > +		  * "slv_lrclk[0-9]" - 10 slave sample clocks provided by external
-> > +				       components.
-> 
-> I'm guessing these may come from pins that aren't connected, so being 
-> optional is fine.
-> 
-> > +- reset		: phandle of the internal reset line
-> 
-> resets
-> 
-> > +- #clock-cells	: should be 1.
-> > +
-> > +Each clock is assigned an identifier and client nodes can use this identifier
-> > +to specify the clock which they consume. All available clocks are defined as
-> > +preprocessor macros in the dt-bindings/clock/axg-audio-clkc.h header and can be
-> > +used in device tree sources.
-> > +
-> > +Example:
-> > +
-> > +clkc_audio: clock-controller {
-> 
-> Needs a unit address.
-> 
-> > +	compatible = "amlogic,axg-audio-clkc";
-> > +	reg = <0x0 0x0 0x0 0xb4>;
-> > +	#clock-cells = <1>;
-> > +
-> > +	clocks = <&clkc CLKID_AUDIO>,
-> > +		 <&clkc CLKID_MPLL0>,
-> > +		 <&clkc CLKID_MPLL1>,
-> > +		 <&clkc CLKID_MPLL2>,
-> > +		 <&clkc CLKID_MPLL3>,
-> > +		 <&clkc CLKID_HIFI_PLL>,
-> > +		 <&clkc CLKID_FCLK_DIV3>,
-> > +		 <&clkc CLKID_FCLK_DIV4>,
-> > +		 <&clkc CLKID_GP0_PLL>;
-> > +	clock-names = "pclk",
-> > +		      "mst_in0",
-> > +		      "mst_in1",
-> > +		      "mst_in2",
-> > +		      "mst_in3",
-> > +		      "mst_in4",
-> > +		      "mst_in5",
-> > +		      "mst_in6",
-> > +		      "mst_in7";
-> > +	resets = <&reset RESET_AUDIO>;
-> > +};
-> > -- 
-> > 2.14.3
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>> Loading microcode manually is working
+>
+> IIRC late loading doesn't re-evaluate any of this. If you down-grade you
+> can 'wreck' your system.
+>
+>> Also initramfs is made with dracut and his early microcode option.
+>
+> Yes, early microcode should be the right thing.
+
+I try to build an kernel with  built-in ucode file without a initrd
+and figure whatever that works.
