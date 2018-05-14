@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753232AbeENM2e (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:28:34 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:57850 "EHLO
+        id S1753281AbeENM3q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:29:46 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:57916 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752333AbeENM2c (ORCPT
+        by vger.kernel.org with ESMTP id S1752477AbeENM3p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:28:32 -0400
+        Mon, 14 May 2018 08:29:45 -0400
 From: <hpreg@vmware.com>
 To: <netdev@vger.kernel.org>
 CC: Regis Duchesne <hpreg@vmware.com>, Ronak Doshi <doshir@vmware.com>,
         "VMware, Inc." <pv-drivers@vmware.com>,
         open list <linux-kernel@vger.kernel.org>
 Subject: [PATCH net 1/2] vmxnet3: set the DMA mask before the first DMA map operation
-Date: Mon, 14 May 2018 08:28:26 -0400
-Message-ID: <1526300907-79831-1-git-send-email-hpreg@vmware.com>
+Date: Mon, 14 May 2018 08:14:34 -0400
+Message-ID: <1526300075-78296-1-git-send-email-hpreg@vmware.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
