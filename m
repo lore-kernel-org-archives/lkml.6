@@ -1,56 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753821AbeENG6J (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 02:58:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55388 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753782AbeENG6C (ORCPT
+        id S1753934AbeENHM7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:12:59 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:52615 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752196AbeENHM5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 02:58:02 -0400
-Date: Mon, 14 May 2018 08:57:55 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Xiao Guangrong <guangrong.xiao@gmail.com>, rostedt@goodmis.org,
-        Lai Jiangshan <jiangshanlai@gmail.com>, stefani@seibold.net,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Is read barrier missed in kfifo?
-Message-ID: <20180514065755.GM12217@hirez.programming.kicks-ass.net>
-References: <5382d3a8-08e0-5429-0cd3-36f9c69197e1@gmail.com>
- <20180511083242.GJ12217@hirez.programming.kicks-ass.net>
- <20180511162053.GY26088@linux.vnet.ibm.com>
+        Mon, 14 May 2018 03:12:57 -0400
+Date: Mon, 14 May 2018 09:12:46 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] x86/io: Define readq()/writeq() to use 64-bit type
+In-Reply-To: <CAHp75Vc7uFDbHcf+mbaBxu2adiDD9CY7Z-fhn5E_3dZDZiTYoA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1805140910480.1582@nanos.tec.linutronix.de>
+References: <20180503102810.59657-1-andriy.shevchenko@linux.intel.com> <alpine.DEB.2.21.1805132007200.1582@nanos.tec.linutronix.de> <CAHp75Vc7uFDbHcf+mbaBxu2adiDD9CY7Z-fhn5E_3dZDZiTYoA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180511162053.GY26088@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 09:20:53AM -0700, Paul E. McKenney wrote:
-> On Fri, May 11, 2018 at 10:32:42AM +0200, Peter Zijlstra wrote:
-> > On Fri, May 11, 2018 at 03:25:18PM +0800, Xiao Guangrong wrote:
-> > > 
-> > > Hi,
-> > > 
-> > > Currently, there is no read barrier between reading the index
-> > > (kfifo.in) and fetching the real data from the fifo.
-> > > 
-> > > I am afraid that will cause the vfifo is observed as not empty
-> > > however the data is not actually ready for read. Right?
-> > 
-> > That code is decidedly dodgy indeed. I can only see smp_wmb() but no
-> > matching barriers at all -- therefore the code is almost certainly as
-> > good as not having any barriers at all.
-> > 
-> > I would suggest you try and convert the code to smp_store_release() and
-> > smp_load_acquire() while you're at it.
+On Sun, 13 May 2018, Andy Shevchenko wrote:
+> On Sun, May 13, 2018 at 9:09 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > On Thu, 3 May 2018, Andy Shevchenko wrote:
+> >>  #ifdef CONFIG_X86_64
+> >>
+> >> -build_mmio_read(readq, "q", unsigned long, "=r", :"memory")
+> >> -build_mmio_read(__readq, "q", unsigned long, "=r", )
+> >> -build_mmio_write(writeq, "q", unsigned long, "r", :"memory")
+> >> -build_mmio_write(__writeq, "q", unsigned long, "r", )
+> >> +build_mmio_read(readq, "q", unsigned long long, "=r", :"memory")
+> >> +build_mmio_read(__readq, "q", unsigned long long, "=r", )
+> >> +build_mmio_write(writeq, "q", unsigned long long, "r", :"memory")
+> >> +build_mmio_write(__writeq, "q", unsigned long long, "r", )
+> >
+> > What's wrong with u64 which we use for expressing io access to a 64bit wide
+> > resource?
 > 
-> Isn't this one of the places where we rely on control dependencies?
+> Same answer as per v1, i.e. I would like to be consistent with other
+> types in this file (unsigned int for readl() and similar for the
+> rest).
+> If we would need them, we might change at once for all accessors.
 
-Then it bloody well should have a comment. But at least one side of the
-fifo needs a read barrier I think. We can rely on a ctrl-dep on the
-write side, where we read the head/tail values, compute space and then
-conditionally allow writes to happen.
+I don;t think we need to fixup everything in one go. Having the patch which
+addresses the issue at hand first using u64 makes a lot of sense on its own.
 
-But on the read side it's all reads and ctrl-dep doesn't help anything.
+Changing the other instances can be done as a follow up patch. Having
+explicit with types for such kind of accessors makes a lot of sense.
+
+Thanks,
+
+	tglx
