@@ -1,92 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752900AbeENRZT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 13:25:19 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:41134 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752828AbeENRZM (ORCPT
+        id S1752965AbeENR3R (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 13:29:17 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:46057 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752915AbeENR3P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 13:25:12 -0400
-X-Google-Smtp-Source: AB8JxZqOIrFlUB8KFFQs8N0mHMlRILocd4YxuMCmmvFrxNbg/ybMzhDpL3ATq3/VNqjUEubFLfYU+g==
-Date: Mon, 14 May 2018 10:25:08 -0700
-From: Eric Biggers <ebiggers3@gmail.com>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: KVM list <kvm@vger.kernel.org>, karahmed@amazon.de,
-        the arch/x86 maintainers <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: CONFIG_KCOV causing crash in svm_vcpu_run()
-Message-ID: <20180514172508.GC252575@gmail.com>
-References: <20180514030007.GH677@sol.localdomain>
- <20180514030205.GI677@sol.localdomain>
- <CACT4Y+bV3HQTZ5+ugQmukiiJBkhN_FWqPRuNRYRbe6xoKstWVA@mail.gmail.com>
+        Mon, 14 May 2018 13:29:15 -0400
+X-Google-Smtp-Source: AB8JxZo35CV9/behbsaK3oJu5aQ1GVpRPaxlUhg8OTJNaa42xWaLN+mxC8L9PE13zhFVEbO4fyuP2Q==
+From: =?UTF-8?q?Josef=20=C5=A0im=C3=A1nek?= <josef.simanek@gmail.com>
+To: ming_qian@realsil.com.cn
+Cc: linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Josef=20=C5=A0im=C3=A1nek?= <josef.simanek@gmail.com>
+Subject: RE: media: uvcvideo: Support realtek's UVC 1.5 device
+Date: Mon, 14 May 2018 19:28:49 +0200
+Message-Id: <20180514172849.27224-1-josef.simanek@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
+References: <1525831988-32017-1-git-send-email-ming_qian@realsil.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+bV3HQTZ5+ugQmukiiJBkhN_FWqPRuNRYRbe6xoKstWVA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 07:14:41AM +0200, Dmitry Vyukov wrote:
-> On Mon, May 14, 2018 at 5:02 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> > Sorry, messed up address for KVM mailing list.  See message below.
-> >
-> > On Sun, May 13, 2018 at 08:00:07PM -0700, Eric Biggers wrote:
-> >> With CONFIG_KCOV=y and an AMD processor, running the following program crashes
-> >> the kernel with no output (I'm testing in a VM, so it's using nested
-> >> virtualization):
-> >>
-> >>       #include <fcntl.h>
-> >>       #include <linux/kvm.h>
-> >>       #include <sys/ioctl.h>
-> >>
-> >>       int main()
-> >>       {
-> >>               int dev, vm, cpu;
-> >>               char page[4096] __attribute__((aligned(4096))) = { 0 };
-> >>               struct kvm_userspace_memory_region memreg = {
-> >>                       .memory_size = 4096,
-> >>                       .userspace_addr = (unsigned long)page,
-> >>               };
-> >>               dev = open("/dev/kvm", O_RDONLY);
-> >>               vm = ioctl(dev, KVM_CREATE_VM, 0);
-> >>               cpu = ioctl(vm, KVM_CREATE_VCPU, 0);
-> >>               ioctl(vm, KVM_SET_USER_MEMORY_REGION, &memreg);
-> >>               ioctl(cpu, KVM_RUN, 0);
-> >>       }
-> >>
-> >> It bisects down to commit b2ac58f90540e39 ("KVM/SVM: Allow direct access to
-> >> MSR_IA32_SPEC_CTRL").  The bug is apparently that due to the new code for
-> >> managing the SPEC_CTRL MSR, __sanitizer_cov_trace_pc() is being called from
-> >> svm_vcpu_run() before the host's MSR_GS_BASE has been restored, which causes a
-> >> crash somehow.  The following patch fixes it, though I don't know that it's the
-> >> right solution; maybe KCOV should be disabled in the function instead, or maybe
-> >> there's a more fundamental problem.  What do people think?
+> The length of UVC 1.5 video control is 48, and it id 34 for UVC 1.1.
+> Change it to 48 for UVC 1.5 device,
+> and the UVC 1.5 device can be recognized.
 > 
+> More changes to the driver are needed for full UVC 1.5 compatibility.
+> However, at least the UVC 1.5 Realtek RTS5847/RTS5852 cameras have
+> been reported to work well.
 > 
-> If __sanitizer_cov_trace_pc() crashes, I would expect there must be
-> few more of them here:
-> 
-> if (unlikely(!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL)))
->     svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
-> 
-> if (svm->spec_ctrl)
->     native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
-> 
-> Compiler inserts these callbacks into every basic block/edge.. Aren't there?
-> 
-> Unfortunately we don't have an attribute that disables instrumentation
-> of a single function. This is currently possible only on file level.
-> 
+> Signed-off-by: ming_qian <ming_qian@realsil.com.cn>
+> Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Hello! I have sucessfully tested this patch on Kernel 4.16.1 (Fedora 28) with Dell XPS 9370
+using following device (output from lsusb):
 
-Yes, due to the code dealing with MSR_IA32_SPEC_CTRL, there were several calls
-to __sanitizer_cov_trace_pc() before the write to MSR_GS_BASE.  The patch I
-tested moves the write to MSR_GS_BASE to before all of them, so it's once again
-the first thing after the asm block.  Again I'm not sure it's the proper
-solution, but it did make it stop crashing.
+Bus 001 Device 002: ID 0bda:58f4 Realtek Semiconductor Corp.
 
-Also I'm guessing this isn't specific to nested virtualization; I just didn't
-have KCOV enabled on the host, thus the host didn't crash.
+You can also find related dmesg output at https://bugs.launchpad.net/dell-sputnik/+bug/1763748/comments/35
 
-- Eric
+Tested-by: Josef Šimánek <josef.simanek@gmail.com>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  drivers/media/usb/uvc/uvc_video.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
+> index aa0082f..32dfb32 100644
+> --- a/drivers/media/usb/uvc/uvc_video.c
+> +++ b/drivers/media/usb/uvc/uvc_video.c
+> @@ -171,6 +171,8 @@ static int uvc_get_video_ctrl(struct uvc_streaming *stream,
+>  	int ret;
+>  
+>  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+> +	if (stream->dev->uvc_version >= 0x0150)
+> +		size = 48;
+>  	if ((stream->dev->quirks & UVC_QUIRK_PROBE_DEF) &&
+>  			query == UVC_GET_DEF)
+>  		return -EIO;
+> @@ -259,6 +261,8 @@ static int uvc_set_video_ctrl(struct uvc_streaming *stream,
+>  	int ret;
+>  
+>  	size = stream->dev->uvc_version >= 0x0110 ? 34 : 26;
+> +	if (stream->dev->uvc_version >= 0x0150)
+> +		size = 48;
+>  	data = kzalloc(size, GFP_KERNEL);
+>  	if (data == NULL)
+>  		return -ENOMEM;
