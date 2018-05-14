@@ -1,87 +1,90 @@
-Return-Path: <foo00@h08.hostsharing.net>
-X-Google-Smtp-Source: AB8JxZqibleloTmVVat87XGdSuf3LG6yYF+SrL/i8m+y6FN7jn6T8RlwnsHbMPn8uQm+qI2rPyK1
-ARC-Seal: i=1; a=rsa-sha256; t=1526300298; cv=none;
+Return-Path: <andriy.shevchenko@linux.intel.com>
+X-Google-Smtp-Source: AB8JxZrvKuY4Tmw+QTX4tQ/zAMvGbkvTsxbP+O7e0Duy+0xwZiHzvO47hUbAhCDc6gBu0WKKgYe6
+ARC-Seal: i=1; a=rsa-sha256; t=1526302093; cv=none;
         d=google.com; s=arc-20160816;
-        b=dSgPCSP+vaoLoF24SQlOifvX8cMXQKNKrSjHtE+TlPirHJsQ8b0jH+aWuFhnfmn7z0
-         VpLGNn1NBrmiN/qXyuHY4TwGVd0nfq6/rNzM5RyXz676XAWQy0RkxRZsiCrI7GybD9s+
-         VuT11EcyRftSxu/Kkw49H9BcbcBw0ulffTlIaq5eS6kDELVeaPSne5aFSagF+JHgdAv1
-         Es/Y3uFm6a6onIhYxNKbHx6aO7bKDTJLjNJ1jufv//0f56Xt9VmfRdSN+IZG83ZIM+oE
-         tOfdhHqCI7b6UnmsP4POPPyvahVnGauTrNlTeXoYy3xF+QJQFWFFYubQxi9s/a8aXZBv
-         ah2g==
+        b=xi/61u8aDurUszFVI5G7aw39cRgPAHcq+U/9dIsaUV8eZibqsuhIO2T8Yg4hhAolkz
+         J9QVOEbbg09i05EcHMHWYCTpBx7HeQlA9MexHdVRnCzFhx6OKTVAQVy1FpWT/KAB5Rno
+         v7NQbJ+c62Truq7L6TUiQKf6VFQfXWolJ0cdOK73cYs11qrT4O6+uY5RVztXl+Rg0vjP
+         UJD+mO9dI7SF66BjbrBUAOkQYDCp9ftTpeGmMlgOyBf50PllM42f32rJMbzlgLQN0gN8
+         A4+jT3Y4lS2E6faEBZs6FzxjgzJGajA68v/QRirQRFGh/488sacS3xEzkGqhWLgdFj4p
+         erIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=TA24t/eaGEsU1g3O7C6JeYjjvqfrAWx7wiD4/S7BK/g=;
-        b=nZdm9lqWJZeuXi+uGeasq7kYquw/ojj0Nz+3rP4qrl3rxh4yPgkL/GC2n65Dhtnkt/
-         XQa7OwU5IE3hSeqDBfcsuYkGdiOuIMbAxLWy0FOckwPdLUl66hP4DP902O9rslbyMK8V
-         39/rV3R1dH5CraxGcEXquH/FwXbgBIBZJeOrYFDMRexjofRnYhO7gwN1k3W7hGwJclc2
-         i0I0FrmD+vA8LykSd/nyJaXUXWiSVZGtiol/W5haLAYw08obd+3ZfRGmZMSKmYKP/6fG
-         9e6u17t6HdssDtoR82bb40NI1ZGimmEqzpsmB85oyaaioxKDk8Eyt8t84e5SfTTskQi5
-         calw==
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:date:cc:to:from:subject:message-id
+         :arc-authentication-results;
+        bh=O7KjCUOJdX55x3ohWccSCtkuaCMHKTNcJkwQwlq7pVE=;
+        b=NPU2x6+S4QtlrPU61/SVTeN4vXlkW8yd0r/sG90YDNRqdSqNkDEhjy65juxCAINwQR
+         8KYu67cmwCukXuh1wD1Dn/6tsW/PqN83/EcN8ol+4gnzpSZx5xdCBUPQeNsF9dk5or2t
+         gTR4z0gOOH1Yy/ePpg2SMsmsQxuTz0yoMnaodSufACO8lB0fwI+gz1Of8pSd8JArWMCs
+         QP7dqOKl+sHehbhmZ2aXudQmdAfT1NHDdEpK4S7yvxet1BAy1sR8JNltBavkbXXfwo7H
+         b15FYRZuQeyFIboZl0U3DIszkfHNPEvaz0lr34EpPfH4gYqgjHduNizcPHojAUTc4i59
+         Z/Vw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of foo00@h08.hostsharing.net designates 83.223.95.100 as permitted sender) smtp.mailfrom=foo00@h08.hostsharing.net
+       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of foo00@h08.hostsharing.net designates 83.223.95.100 as permitted sender) smtp.mailfrom=foo00@h08.hostsharing.net
-Date: Mon, 14 May 2018 14:18:17 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	linux-efi@vger.kernel.org,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,400,1520924400";
+   d="scan'208";a="41635000"
+Message-ID: <f2109d06a0755dd2d9dc807c1e13dd2c19903905.camel@linux.intel.com>
 Subject: Re: [PATCH v2] device property: Get rid of union aliasing
-Message-ID: <20180514121817.GA27869@wunner.de>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+ linux-efi@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J . Wysocki"
+ <rjw@rjwysocki.net>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Date: Mon, 14 May 2018 15:48:09 +0300
+In-Reply-To: <20180514121817.GA27869@wunner.de>
 References: <20180508131547.44366-1-andriy.shevchenko@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180508131547.44366-1-andriy.shevchenko@linux.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+	 <20180514121817.GA27869@wunner.de>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599901902158233534?=
-X-GMAIL-MSGID: =?utf-8?q?1600441861581307301?=
+X-GMAIL-MSGID: =?utf-8?q?1600443744229834588?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 08, 2018 at 04:15:47PM +0300, Andy Shevchenko wrote:
-> --- a/drivers/firmware/efi/apple-properties.c
-> +++ b/drivers/firmware/efi/apple-properties.c
-> @@ -13,6 +13,9 @@
->   *
->   * You should have received a copy of the GNU General Public License
->   * along with this program; if not, see <http://www.gnu.org/licenses/>.
-> + *
-> + * FIXME: The approach is still based on union aliasing and should be
-> + * replaced by a proper resource provider.
+On Mon, 2018-05-14 at 14:18 +0200, Lukas Wunner wrote:
+> On Tue, May 08, 2018 at 04:15:47PM +0300, Andy Shevchenko wrote:
+> > --- a/drivers/firmware/efi/apple-properties.c
+> > +++ b/drivers/firmware/efi/apple-properties.c
+> > @@ -13,6 +13,9 @@
+> >   *
+> >   * You should have received a copy of the GNU General Public
+> > License
+> >   * along with this program; if not, see <http://www.gnu.org/license
+> > s/>.
+> > + *
+> > + * FIXME: The approach is still based on union aliasing and should
+> > be
+> > + * replaced by a proper resource provider.
+> 
+> Why?  All Apple EFI properties are either boolean or u8 arrays.
+> You've correctly changed this file to always supply u8 arrays,
+> so I don't see where union aliasing is happening here?
 
-Why?  All Apple EFI properties are either boolean or u8 arrays.
-You've correctly changed this file to always supply u8 arrays,
-so I don't see where union aliasing is happening here?
+Okay, for now I can see only Thunderbolt user of these properties (is it
+correct?) in upstream which uses u8 arrays indeed.
 
-Thanks,
+Though the implementation is quite fragile in this sense, because it
+doesn't discourage people to use device_property_read_string() in case
+when it's indeed a string (I saw these kind of properties in the very
+dump you posted on your GH page).
 
-Lukas
+So, I can agree that is "not happening _right_now_", but I can't agree
+on the implementation robustness.
 
->   */
->  
->  #define pr_fmt(fmt) "apple-properties: " fmt
-> @@ -96,12 +99,13 @@ static void __init unmarshal_key_value_pairs(struct dev_header *dev_header,
->  		entry[i].name = key;
->  		entry[i].length = val_len - sizeof(val_len);
->  		entry[i].is_array = !!entry[i].length;
-> -		entry[i].pointer.raw_data = ptr + key_len + sizeof(val_len);
-> +		entry[i].type = DEV_PROP_U8;
-> +		entry[i].pointer.u8_data = ptr + key_len + sizeof(val_len);
->  
->  		if (dump_properties) {
->  			dev_info(dev, "property: %s\n", entry[i].name);
->  			print_hex_dump(KERN_INFO, pr_fmt(), DUMP_PREFIX_OFFSET,
-> -				16, 1, entry[i].pointer.raw_data,
-> +				16, 1, entry[i].pointer.u8_data,
->  				entry[i].length, true);
->  		}
->  
+I can change a wording of the commit message and the FIXME, but _leave_
+FIXME in place b/c of above.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
