@@ -1,131 +1,67 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-878196-1526306274-2-17573819654048303488
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526306273; b=B8yqT1hJYctF4Y8BErYRLZkyElGazNHElVwArxlDd8lKMjFnHV
-    c2I8A08ZGDD9A3E1kzShwgZmoKTF+1W50DjPpCil6JCR2i6CD/lKpUW3O6cOhhgf
-    vTVcg9WtShbl1xwBhCqxaXNsCSfi/NTaNV/uD60LKmHCuXuk2TC4ENys5F7zk3/T
-    cLrEMZM8ULd26O0swFrNgVCKxGjhg3zronXATwAd5aknmyl37DnQwpR+Ufhagfq9
-    67RM1MhNa8+JBxGti9pQ1NP6bUgs5YXsCQqFsOn1frwG7T7HrPsU07WTYQbN1sNa
-    wIwXz4YCmZ2O2oNXXvye01KaPB5VXmO9kotw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526306273; bh=YX9XG6zenBdDc6q+zqaMtdHHa1YHEE
-    niAePImvJlQFA=; b=UhMbrTv70ps5XhibBPo80G7A8HoL09JLvqIyBRtz/wmkQs
-    K9RgJRqF+eM5UjIJaRuru/teDzpbFD8fnOIVx0dm8hLZP3IRGsveZjrXujjhDUhI
-    6ggY+q+KfGWCjI84rJylqNwSXwOO55BOzhm5dbjMgHEpVApf2wY6oOSIZtvIdBqC
-    FKBsZzzTpVDDkDYChDPa1WgiK8A8BXdBs9bLYurw3i3LFiPr3Je5ObwzJH7fjJGK
-    m0XW2XZANmsACJUZCIkLEx4AIHbcJpSus10qpx5jJjMfy/y5ycNOLeRLTwN61zzw
-    E6hJErgOyeFT5k0TPpT2KYl2zKMvaCmrBIVR8YOg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=EiK5aeKL x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=EiK5aeKL x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBFPAGKB9j55Ktk5yB6NxsZMs3yswVXWQhejhfkuhDLeIR0RLZLEyDuKfpk/X+KOGTpAIlQ7Fca1T+P27YL0vUWFK5EpGxDvpnxMZunY1fi5I9mMVKRI
-    uWG/qzLtNXY0IhThjoHIo+u9Jhps56iFk/cXfPb3qcjhjqCNRCpZjBNtj4GIW98XHa361PGOiagsQnWvLVUgDEj0afYuekMBZFFJQHPhjaBLmb+2+uZCKE70
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=0U73VwB4dlIA:10
-    a=VUJBJC2UJ8kA:10 a=ag1SF4gXAAAA:8 a=VwQbUJbxAAAA:8 a=qfd2YHwZ0bTNW4XGlakA:9
-    a=CjuIK1q_8ugA:10 a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932341AbeENN5e (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 09:57:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932125AbeENN5c (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 09:57:32 -0400
-Date: Mon, 14 May 2018 15:56:22 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Harsh Shandilya <harsh@prjkt.io>
-Cc: linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 3.18 00/23] 3.18.109-stable review
-Message-ID: <20180514135622.GB2220@kroah.com>
-References: <20180514064704.046463679@linuxfoundation.org>
- <BCB46BB5-7FF1-40C3-AC7F-548194797025@prjkt.io>
+Return-Path: <bot@kernelci.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1526298333; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ctZp0oZouFTpr2/fzxYsWurqH76xlP/OQCi0kV6njY0a6+b6t7c5PBTO6wONWPfJA0
+         PEdvYseJHJk+6WlO7jmyZf4PvNgiwAKjYyoCKRqujNhgVBG4hF1XEZCU44bO/BdVGIYv
+         9wWXvSLQsKjjD/l+xOAXZzRxIv5Hr12wL1kXsjyPTW/AsHJoVw5YV0nhWgwwfL8fi2XW
+         e12xPr24gDnYSu8mi+IAu+0Mg22y6BBkuVthSHCw2ieB7ZDoT6QTG8TMGSx8O0RrS54H
+         nkCe26F+gMv+g5eZW1CPwzstsAeGXsga0v9sWEdxVe/1Ipdba94k4jHR01SSqyQfMwiE
+         ylSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
+         :mime-version:date:message-id:arc-authentication-results;
+        bh=iXNjM28VtVrgttnatNFsOODRXFhdYenoKNHeBMFJzW4=;
+        b=eeD2JOfpzF3VDq65J/OOILCBFqa6IjFkmZdaHgJLKmeBA0dIkPrWNHlu0mx+VbrK8P
+         z+zfBfCa/NaDytkksRaXiUuL9TIufb6+Cfjo0b20CMay5wylcZmhaXJ5b0q8ZTI15VzQ
+         QOMFJK3UYvnps+W2B03JYze8s7cFQs6r/ulHVpab9xm9VllTN6ok0e1qzAAMS5POk3LZ
+         jA79cI1SgEbisIDnf0F60hIVNSIe/Bb+3aMAR/Di6hK5eYiMRz6ab8oTL3meClZ8SdA6
+         Nt1LryJDk88uti63V8/fTwAx8fdyEubjiFpwuEbioAzOvGvfiTJpedX+QMdLmJertqnz
+         0i+A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=bot@kernelci.org
+X-Google-Smtp-Source: AB8JxZplA0DWXlRYY7ZEiNHQeVsa4Ip0KBV5Z1Uy5so4kNyxUHWajTePuxI775BnCuDY0eOrMh3B0A==
+Message-ID: <5af976dc.1c69fb81.b5d25.dea9@mx.google.com>
+Date: Mon, 14 May 2018 04:45:32 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BCB46BB5-7FF1-40C3-AC7F-548194797025@prjkt.io>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: linux-3.18.y
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v3.18.108-24-ge49426a0ea55
+In-Reply-To: <20180514064704.046463679@linuxfoundation.org>
+References: <20180514064704.046463679@linuxfoundation.org>
+Subject: Re: [PATCH 3.18 00/23] 3.18.109-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org
+From: kernelci.org bot <bot@kernelci.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
+ shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
+ lkft-triage@lists.linaro.org, stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1600421228954413853?=
+X-GMAIL-MSGID: =?utf-8?q?1600439801608108428?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 14, 2018 at 02:42:28PM +0530, Harsh Shandilya wrote:
-> 
-> 
-> On 14 May 2018 12:18:29 PM IST, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> >This is the start of the stable review cycle for the 3.18.109 release.
-> >There are 23 patches in this series, all will be posted as a response
-> >to this one.  If anyone has any issues with these being applied, please
-> >let me know.
-> >
-> >Responses should be made by Wed May 16 06:46:49 UTC 2018.
-> >Anything received after that time might be too late.
-> >
-> >The whole patch series can be found in one patch at:
-> >	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.109-rc1.gz
-> >or in the git tree and branch at:
-> >	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> >linux-3.18.y
-> >and the diffstat can be found below.
-> >
-> >thanks,
-> >
-> >greg k-h
-> 
-> Merged and compiled on my OnePlus 3T, no immediate regressions. Thanks for the update!
+stable-rc/linux-3.18.y boot: 57 boots: 0 failed, 57 passed (v3.18.108-24-ge=
+49426a0ea55)
 
-Great, thanks for testing and letting me know.
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-3.18.y/kernel/v3.18.108-24-ge49426a0ea55/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-3.18.=
+y/kernel/v3.18.108-24-ge49426a0ea55/
 
-greg k-h
+Tree: stable-rc
+Branch: linux-3.18.y
+Git Describe: v3.18.108-24-ge49426a0ea55
+Git Commit: e49426a0ea55769beb5106053bc70e453c8919a2
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 24 unique boards, 11 SoC families, 13 builds out of 167
+
+---
+For more info write to <info@kernelci.org>
