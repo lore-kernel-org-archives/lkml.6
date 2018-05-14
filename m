@@ -1,64 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752312AbeENUvL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 16:51:11 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:58702 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752041AbeENUvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 16:51:10 -0400
-Date: Mon, 14 May 2018 22:51:05 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-        Allan Nielsen <Allan.Nielsen@microsemi.com>, razvan.stefanescu@nxp.com,
-        po.liu@nxp.com, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
-Subject: Re: [PATCH net-next v3 7/7] MAINTAINERS: Add entry for Microsemi
- Ethernet switches
-Message-ID: <20180514205105.GE1057@lunn.ch>
-References: <20180514200500.2953-1-alexandre.belloni@bootlin.com>
- <20180514200500.2953-8-alexandre.belloni@bootlin.com>
+        id S1752176AbeENUv5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 16:51:57 -0400
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:34242 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752042AbeENUv4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 16:51:56 -0400
+X-Google-Smtp-Source: AB8JxZrNeMPlsMdmLgWW5Pd+VeYSOjhbSHJKVRhhmJJkSFRMNAHDuXwt/1UtT2UCjfBdjHOBCglcTQ==
+Subject: Re: [RFCv2 PATCH 0/3] Salted build ids via linker sections
+To: Andy Lutomirski <luto@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Mark Wielaard <mjw@fedoraproject.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>,
+        linux-kbuild@vger.kernel.org
+References: <20180329180112.11055-1-labbott@redhat.com>
+ <1522413619.15770.88.camel@fedoraproject.org>
+ <CAK7LNAR5ZtwWH1SPMJeVpPkB38+9FyZOAG4AmS7NQ8NqCo_t9Q@mail.gmail.com>
+ <CALCETrWNrk-5GPEamVSwtnTxCOV4foreRUu789ZcOzykd0DYPA@mail.gmail.com>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <42e86b87-b09e-c3e9-8328-7fa418efb627@redhat.com>
+Date: Mon, 14 May 2018 13:51:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514200500.2953-8-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CALCETrWNrk-5GPEamVSwtnTxCOV4foreRUu789ZcOzykd0DYPA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 10:05:00PM +0200, Alexandre Belloni wrote:
-> Add myself as a maintainer for the Microsemi Ethernet switches.
+On 05/07/2018 07:49 PM, Andy Lutomirski wrote:
+> On Sun, May 6, 2018 at 11:59 PM Masahiro Yamada <
+> yamada.masahiro@socionext.com> wrote:
 > 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
-
-
-> ---
->  MAINTAINERS | 6 ++++++
->  1 file changed, 6 insertions(+)
+>> 2018-03-30 21:40 GMT+09:00 Mark Wielaard <mjw@fedoraproject.org>:
+>>> On Thu, 2018-03-29 at 11:01 -0700, Laura Abbott wrote:
+>>>> I'm still mostly looking for feedback whether
+>>>> this would be acceptable for merging or if we should just persue a
+>>>> --build-id-salt in binutils.
+>>>
+>>> Personally I would go with this approach. It seems simple and it might
+>>> take years before a new linker option is available everywhere.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0a1410d5a621..b632deb3f503 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9280,6 +9280,12 @@ F:	include/linux/cciss*.h
->  F:	include/uapi/linux/cciss*.h
->  F:	Documentation/scsi/smartpqi.txt
->  
-> +MICROSEMI ETHERNET SWITCH DRIVER
-> +M:	Alexandre Belloni <alexandre.belloni@bootlin.com>
-> +L:	netdev@vger.kernel.org
-> +S:	Supported
-> +F:	drivers/net/ethernet/mscc/
-> +
->  MICROSOFT SURFACE PRO 3 BUTTON DRIVER
->  M:	Chen Yu <yu.c.chen@intel.com>
->  L:	platform-driver-x86@vger.kernel.org
-> -- 
-> 2.17.0
 > 
+>> Indeed.  This series is easier than --build-id-salt.
+> 
+>> If you do not see any better solution, I can accept this.
+> 
+> 
+>> BTW, when I read
+>> https://fedoraproject.org/wiki/Changes/ParallelInstallableDebuginfo
+>> I thought "we could reverse the symlink direction from debug file to
+>> build-id file)"
+>> sensible (but I understand it is not easy to change this way).
+> 
+> 
+>> If two packages share an identical image,
+>> one package can borrow the image from the other,
+>> then the storage space will be saved.
+> 
+>> So, having identical ID should be advantage,
+>> but we actually see only disadvantage...
+> 
+> 
+> 
+> 
+>>> To simplify things I think you could just always add the extra vdso
+>>> .comment initialized to something like KERNELRELEASE. Which distros
+>>> seem to update anyway to include their build number, so they wouldn't
+>>> need to do anything special to "update the build salt".
+>>>
+> 
+> That's what I was thinking, too.  Would that solve Fedora's problem?
+> 
+
+Yes, that seems reasonable.
