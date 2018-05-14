@@ -1,28 +1,28 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoicDYbDjjNBBqjT1yLX7vZrKZks4qAG4h2n8gSb2/l4uQ1UA6K8kdqVmwD/3iZAjfIe811
-ARC-Seal: i=1; a=rsa-sha256; t=1526282366; cv=none;
+X-Google-Smtp-Source: AB8JxZqtGQab3PQL5We7c7Mc3VA9oUGV4zARbK7XuWCqYFzacr7HOHWaJSiQ7qLZMTVDoEnQ6Hg+
+ARC-Seal: i=1; a=rsa-sha256; t=1526282363; cv=none;
         d=google.com; s=arc-20160816;
-        b=VyJipCn/mPHPfZiJQ1xGQboUGYMszqGr7tBeAdnap90XgUZLcWe08m/oEBsYhu3No+
-         PCTNhPPG21MRmoAGn+vnEGulWjDBmD109XySkBnNzpQ6uDE6wHyEctrVzCaphIDLh1lc
-         nfYgIyZIvYFa9fb0/gizF7arb0/ClQLy/aAfnhjHAV8UgFJ44r2FWw+KDWtFAez5SVSr
-         ozHRqwRSum97wfe6W83vQiAny4ntQNCmKVTyLxiAHDZhJCgTOFzeqjJjViZGqCT9mmCH
-         V+4Gb4Xqv28uvULYSaYrlsfdVHflV5IwDsyxPOwvIM4vMUKFJnLpMPI28A7HuVybxYDp
-         fbtQ==
+        b=ct0h6I90cOdl6mR56oEdx0okY0HQhxN6emQTvrwx5zo2RzU7F81/+rd/eXnGZPZzK/
+         PybTgYSM93QiaVIZo6yZtqf0PLGXG8E5NcHbUzcyARC3J6AVNoWSqj9xjUG1HLoC/hb3
+         wTG8uo7E6YT6mS2KQHmIeptbrRMlGiubo7ZYCuGDq8rs/zeKkb/X0nalSh+T0j2cB7gh
+         7LoxBL0ShObO9weqwlUElMJqNmnF3qC7fdcIKHwlD2TN4U3bA98Q1l2A6/kX0xnxwL0I
+         pLJ0RMLbc9tcQ7Jsc1XkveNFUVCpR5NBPOBM8wQRdYgdlbbMx8oAWovF3l98hMA7W6NA
+         dbkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Oxh3MCBhFC3ma/EQzO+gzY81FqA/zAOW28JJ/NKfMJA=;
-        b=vKKDfbPykP3VmhcEOG83vitsT571srYxR0V1UUDj9FASrN0tRqdMplDUonKTGFaiPD
-         ETs728wRwJeUXKz1dxAm42+I0t6J/lfxZIXMMgzuiq15AnlTmCrZe4DDjJl8cNBOVJXa
-         GklUW5eIOuthRhqnoicezl7zwLsO2Rsq13WDUhoTDrDaFSB3sOYzqGyGJ+kHzZ+7eBdG
-         k/eczR+lgR3jWyYiyeeHtc2Q+wYhpRND1HXT+oTu+JDS0yqIHE1WbXjhP2SJxLbUgOcg
-         WwQp7SzQvG2F1vJue7GmPShUnIVMohq8gYcbeFDmkB8/qS3b+YkEXVerrLb/t/1Tzai6
-         yiWA==
+        bh=1BvlFt2dhqMnMl0ncF0J87D5GDN5KTkPt3pLnsSfa7A=;
+        b=AOj/EGtJp6E78KqKEAtK+Z4MCWWTFbNEuFNiBsOwBGfQnAZny/yuS3yBi4Io17RVuo
+         znzfJEvPTeP8g640ZK+FtAO0F2EBVRspsfGQ/SYRLpPbGzNu2Y6AeDvollBOIhpVWN3F
+         y+fq6hcBkIJ2xN8uhA04B0641eGcDTOotUxoRR1Au6rDQ7i0nrD+9Z64Jna0xQCc+yC2
+         qYEkFJPSFipQ08nOefeV1NYZ5TRqGJLY7Y8A52thzK8MkjC66fA+H+lsKV5VRK5M/i7i
+         TsVpvfjc2ZssElNZjMQGyfs6eqWdBepD49BxLqNfc3yeisW9ypUntm8pgmt0Ot8UZqlr
+         Oo8A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=DbZHOjG4;
+       dkim=pass header.i=@kernel.org header.s=default header.b=xCSkDfGe;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=DbZHOjG4;
+       dkim=pass header.i=@kernel.org header.s=default header.b=xCSkDfGe;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -38,9 +38,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Vince Weaver <vincent.weaver@maine.edu>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 34/36] perf/x86/msr: Fix possible Spectre-v1 indexing in the MSR driver
-Date: Mon, 14 May 2018 08:49:08 +0200
-Message-Id: <20180514064806.875211318@linuxfoundation.org>
+Subject: [PATCH 4.9 33/36] perf/x86/cstate: Fix possible Spectre-v1 indexing for pkg_msr
+Date: Mon, 14 May 2018 08:49:07 +0200
+Message-Id: <20180514064806.797623501@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064804.252823817@linuxfoundation.org>
 References: <20180514064804.252823817@linuxfoundation.org>
@@ -50,8 +50,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600422459223722103?=
-X-GMAIL-MSGID: =?utf-8?q?1600423058708754128?=
+X-GMAIL-THRID: =?utf-8?q?1600422456852165802?=
+X-GMAIL-MSGID: =?utf-8?q?1600423055859843928?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,9 +61,9 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-commit 06ce6e9b6d6c09d4129c6e24a1314a395d816c10 upstream.
+commit a5f81290ce475489fa2551c01a07470c1a4c932e upstream.
 
-> arch/x86/events/msr.c:178 msr_event_init() warn: potential spectre issue 'msr' (local cap)
+> arch/x86/events/intel/cstate.c:307 cstate_pmu_event_init() warn: potential spectre issue 'pkg_msr' (local cap)
 
 Userspace controls @attr, sanitize cfg (attr->config) before using it
 to index an array.
@@ -83,36 +83,24 @@ Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/msr.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/x86/events/intel/cstate.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/events/msr.c
-+++ b/arch/x86/events/msr.c
-@@ -1,4 +1,5 @@
+--- a/arch/x86/events/intel/cstate.c
++++ b/arch/x86/events/intel/cstate.c
+@@ -90,6 +90,7 @@
+ #include <linux/module.h>
+ #include <linux/slab.h>
  #include <linux/perf_event.h>
 +#include <linux/nospec.h>
+ #include <asm/cpu_device_id.h>
  #include <asm/intel-family.h>
- 
- enum perf_msr_id {
-@@ -136,9 +137,6 @@ static int msr_event_init(struct perf_ev
- 	if (event->attr.type != event->pmu->type)
- 		return -ENOENT;
- 
--	if (cfg >= PERF_MSR_EVENT_MAX)
--		return -EINVAL;
--
- 	/* unsupported modes and filters */
- 	if (event->attr.exclude_user   ||
- 	    event->attr.exclude_kernel ||
-@@ -149,6 +147,11 @@ static int msr_event_init(struct perf_ev
- 	    event->attr.sample_period) /* no sampling */
- 		return -EINVAL;
- 
-+	if (cfg >= PERF_MSR_EVENT_MAX)
-+		return -EINVAL;
-+
-+	cfg = array_index_nospec((unsigned long)cfg, PERF_MSR_EVENT_MAX);
-+
- 	if (!msr[cfg].attr)
- 		return -EINVAL;
- 
+ #include "../perf_event.h"
+@@ -300,6 +301,7 @@ static int cstate_pmu_event_init(struct
+ 	} else if (event->pmu == &cstate_pkg_pmu) {
+ 		if (cfg >= PERF_CSTATE_PKG_EVENT_MAX)
+ 			return -EINVAL;
++		cfg = array_index_nospec((unsigned long)cfg, PERF_CSTATE_PKG_EVENT_MAX);
+ 		if (!pkg_msr[cfg].attr)
+ 			return -EINVAL;
+ 		event->hw.event_base = pkg_msr[cfg].msr;
