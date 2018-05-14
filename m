@@ -1,5 +1,5 @@
 Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-616870-1526293493-2-4090259823661001045
+X-Cyrus-Session-Id: sloti22d1t05-616870-1526293479-2-10352798935972793110
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526293493; b=KD7N9jPXCqlsZyFu6r+Hbh3FXrIJ7gdEs9DaUum+k4uEqKdSnJ
-    X8fldD86vDFS8Iylp2Dv27OxsgxEkuSiScGxP9q7yglN5ILTaP2HhZe/e/H1owQG
-    6W8R5PROG93HhJgHgBlxRB50wQPIr6Qu1DxSLg9ytwlVS3WdjrX3vh7rPiUFKgyi
-    iaWfp/KBsl78WSrHb0zOxR/9Jnq1OQH5YntW2Inw8H4kPYIO56eywoO6SGoYk8BH
-    8/g1Im9c3ehdnA7ErkqksmOqgjJ7tiBwgjDRAlZrBosSX7CYTwgtNXk4tCkJbOb8
-    GZo3EXJ3Eg4XZ0viqubgzARvY8PXeNjFpJ7g==
+    1526293478; b=UaEuHIpGgNE1Kr5r+TWstlSfIbVDLkbyYzfGCzM1K/DVUPAnPY
+    9lfb3wQ89OiO5rA26XSS/BZRF0XQgcfPkNopgqggDekklVaRFBUEUfs3TaT7KYkG
+    2ewz+Gk7kIZP75+E4WwnI2jdbkopFlwl9gip5ZwSH0Re/g4L6xvG0z1jvZ1OBHzZ
+    dxEDc6VzrqYBix1r4Q4QgKhWempoiOIH85oFYS8LJOao41c3U1VMT235CyQB6YLm
+    8awqPNSteVlIS3Y05sn0VNb8SoBJslbinGBcvj52kX3nLI7kE9dMNPFmuEQKOG7C
+    sDcwss453ReYYmas4S6NrxRe8cr4Z2/8In3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526293493; bh=6SrU6/xk162TvKkSNROU2tW8Xukf8J
-    +UpFo4Ge1uBfU=; b=IhSWwvb4A7jvaeyhoNNRzMJty3hTcYyJd/IGA8gYxdxFG0
-    Nr7AwWD5leE83nT5IcVzNpEgWBxi4tmF4zS3okCA5XOUnAmySBRL+lGa008tI8P8
-    4qoZnw1VtkmkEsc+m1RzM82BYiuJH6IDc/3utJA1paR6L/1liUPKjR2tXMhCJmF+
-    C3wPHz9Ga1BmDVUkWeYHvebjvLIk9mOdTgESIzKNbF2p5wRysaRf/e4Z9xKQkvxw
-    N1tS0CZLWNfQ2xCVU2MX44ojWsyeE9QfjV4UyVxwLzpL+73CBHm69D+Q3IQqHfEF
-    +rPMQ2SN1YyYUGtqqwjR4SOEHRp3YNtuEtA1kZ0Q==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526293478; bh=4nIZyQVZPOvUN5Bj0dvDWHoEfOd+nd
+    85Mp96I1w5Uik=; b=en40Q9xWdHfvczNinmBeL2WMG8HM9IaWdTItZ5e/8cU30p
+    QWTTQFR/tNd4T4d7EXda0/0JBDAHfoWZCw2YkIRWEXEizTPtcvlACdyti+y3ALMI
+    4deqBUnTOjtk9XfO5KQAXwmoL5O12+wdn3Qo+qRjKRHlzdXAmyZH+jE9ZtYVwY93
+    HZy1tx6XLecWz1SL7hbZz9x6/dZi578SKZlHD3l/8E/Kf2TCMBggmrydOyd8pvaY
+    hT872olMUQYTQLwXzgDhn487mbkzKb2+9wOyBZOz94nAWSF5HlRXCF1oAX65pCTS
+    jzMcX68PoNWTRMoWOOks9lLF1kc9y6dtfzv4aF0w==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -43,7 +43,7 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     header.domain=mediatek.com header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
@@ -59,23 +59,23 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCa8O9/+LbfxbD2XZiCyWDjP27Zpu58ZYS+gzE13fCAiiYGNawN7S75Y/xpXYSRsTGv8FP2RuM1kCpccrrdmKdREJuaS2RXpfXYd8RlSCTbi5Bq/+2L6
-    QpGNUE2vkm0DFb3Y74DdLgYEQosaUMDX0JGSXiV+6PEr7Z9aG/JpYWjrOHSf9KSFukkJIZKvGKZKaCgbINwML+uQZrLtGvYJLe+yu4Fr9+T1IV9z1/fG8zTa
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfK4XKGxu8837iCUAnHNKVRgcPvPRwTpXCxRyM0HPJY8xE3oTIx8qkMlpaInurs4F6A6LvibCHatDT55cvbgIkF9KE/OqvzE9OLPaDJTGsGvw66nYVV/U
+    85EUqCY35tLJ/2jVW4HGipi5rL2yoEmceE/efl7/du8AGBT0CahEsD4EjF9NGTFh0hCOtRQKnIjwbrIhtgEa+vnmohqvSqjoZokZe0CWgDiXxHR9+AUhK05N
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=mpaa-ttXAAAA:8
-    a=VwQbUJbxAAAA:8 a=JMjz8RqtuzTeefZ7teIA:9 a=x8gzFH9gYPwA:10
+    a=VwQbUJbxAAAA:8 a=AYVfP_-Pn8nHgOjBFCMA:9 a=x8gzFH9gYPwA:10
     a=6heAxKwa5pAsJatQ0mat:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751487AbeENKXH (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 06:23:07 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:65344 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752104AbeENKXF (ORCPT
+        id S1752149AbeENKXK (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 06:23:10 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:51059 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752130AbeENKXI (ORCPT
         <rfc822;linux-serial@vger.kernel.org>);
-        Mon, 14 May 2018 06:23:05 -0400
-X-UUID: 714c24f60d744622a54be3a01275e90f-20180514
+        Mon, 14 May 2018 06:23:08 -0400
+X-UUID: cf05d103c80349fb9a711ea56b58613a-20180514
 From: Erin Lo <erin.lo@mediatek.com>
 To: Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -91,9 +91,9 @@ CC: <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
         <mars.cheng@mediatek.com>
-Subject: [PATCH v2 1/4] dt-bindings: arm: Add bindings for Mediatek MT8183 SoC Platform
-Date: Mon, 14 May 2018 18:22:28 +0800
-Message-ID: <1526293351-32794-2-git-send-email-erin.lo@mediatek.com>
+Subject: [PATCH v2 2/4] dt-bindings: mtk-sysirq: Add compatible for Mediatek MT8183
+Date: Mon, 14 May 2018 18:22:29 +0800
+Message-ID: <1526293351-32794-3-git-send-email-erin.lo@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526293351-32794-1-git-send-email-erin.lo@mediatek.com>
 References: <1526293351-32794-1-git-send-email-erin.lo@mediatek.com>
@@ -106,32 +106,26 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This adds dt-binding documentation of cpu for Mediatek MT8183.
+This adds dt-binding documentation of SYSIRQ for Mediatek MT8183 SoC
+Platform.
 
 Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 ---
- Documentation/devicetree/bindings/arm/mediatek.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../devicetree/bindings/interrupt-controller/mediatek,sysirq.txt         | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek.txt b/Documentation/devicetree/bindings/arm/mediatek.txt
-index 7d21ab3..2754535 100644
---- a/Documentation/devicetree/bindings/arm/mediatek.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek.txt
-@@ -19,6 +19,7 @@ compatible: Must contain one of
-    "mediatek,mt8127"
-    "mediatek,mt8135"
-    "mediatek,mt8173"
-+   "mediatek,mt8183"
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+index 07bf0b9..5ff48a8 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+@@ -5,6 +5,7 @@ interrupt.
  
- 
- Supported boards:
-@@ -73,3 +74,6 @@ Supported boards:
- - MTK mt8173 tablet EVB:
-     Required root node properties:
-       - compatible = "mediatek,mt8173-evb", "mediatek,mt8173";
-+- Evaluation board for MT8183:
-+    Required root node properties:
-+      - compatible = "mediatek,mt8183-evb", "mediatek,mt8183";
+ Required properties:
+ - compatible: should be
++	"mediatek,mt8183-sysirq", "mediatek,mt6577-sysirq": for MT8183
+ 	"mediatek,mt8173-sysirq", "mediatek,mt6577-sysirq": for MT8173
+ 	"mediatek,mt8135-sysirq", "mediatek,mt6577-sysirq": for MT8135
+ 	"mediatek,mt8127-sysirq", "mediatek,mt6577-sysirq": for MT8127
 -- 
 1.9.1
 
