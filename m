@@ -1,163 +1,83 @@
-Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpN9RnrhE0UH/W7aK5IwnlLDtc10C1MqltwVVfvx2ZMIP0o4g8ki6vb2VSiEGAe7cUQrM67
-ARC-Seal: i=1; a=rsa-sha256; t=1526280595; cv=none;
+Return-Path: <ahiliation@yahoo.co.in>
+X-Google-Smtp-Source: AB8JxZqOPsauYw0abfZPas6lEX8HOoGFviZ7zwO8hLmALNE4CIX6M2bY3NwlHsoT4FNHoJKokSGM
+ARC-Seal: i=1; a=rsa-sha256; t=1526334913; cv=none;
         d=google.com; s=arc-20160816;
-        b=N286nurERnqw34dBajTSAxXTgGYSKOGCdU+EUwPdEGMh5vX/b+n5jf5yb6F1Un3nqc
-         oAlKAZ2ZdT+mgpoYhuBgi1xyPNOTw3VoahMDUlQqeg08ZHZLw7BtDn1vLCWj4SueIRn/
-         XveRn4oKphNyHc/KZ+yX7iUFuYJMDiS5AryHXzv6RlhVFH4UnHcrDwKur/9LjEDROQHq
-         VUFhWj0A3vEdFSV3sBnfJQrQBHMUJYgxUaLo1uXpLpXQD0mqdrSpjQC+vc4JPG9kEBth
-         LKNPL73anUfYE1xkINHufzdfAbz7GyKflDeHPLgycjYW9vTU3Qw1JJ4JC8Benw6WjjaF
-         i6sw==
+        b=imZwu7oBjVRhGHt4+0KKyzcBrSD6cWvwdUaVVgPFaT++jPwWmdJCVV8vgO9l3jo2d8
+         LV2AgEHKt23ArRO9C91ForVLyz96QTYlwJrOwOQY3L57bZ8RBwCY789upgsNGpZxklsS
+         apmV0+jzICJwrWWRhdf9Jm7bP24/dQkV+IfoSgM4obBHIx+3ZidO9BFb/p8BHw8+t/P8
+         3a6cL0WNXdfOJdRxEiZwSI+uONd7yRxZ3PURxrpCXSnLLvMJvRjnW5Axd1kkkCuZ6XkD
+         yBqfjS+9Ae283i60ZFv+Ox24mXB9He33nEOQYu/XpslAuPVLS1A7E2H+r4VflaOXa3BJ
+         S4vg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:in-reply-to:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=95JgR/cCMwLcmY0Wy5y5NuESw6EFSOC3EL6iOVlsBXs=;
-        b=vMwOOz83yWtMdHBKWHa01YkSFiWsAd79aR2OoJBgUAq4HRlYZElTnL+gOSxOv2OweR
-         L6JLXYuck0CJzwPnr6QRGQmdg77zojQl6hkytYaM0FTgsDFrs/KBI/DF8DdKsOVQ8et5
-         KVk4wODnaK+dEVT7OCjEACPNaRz0iAQugsj3EiwVxcqVS1r8/BIsgM40eJmaGKXLn9r+
-         APTbSxAeux5NbQ2CdUjNVE4KwJa2okufan/Ia8JkWVn5g+IyRVHcN9nZ3DZhbR+V3tPd
-         XvvlAjWu/qQl42i5fykaX6JbunMARN3dVmhL8UDIzeHI+nKEp9LelEzRPEyUq+4Q6xfV
-         aNAA==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=4Ugpn4mrtJm7ENiNBt+Bnq8KamOJl5RnkThZJENqjVQ=;
+        b=l9hk/KauD6HxibUXd86v/Vlc8tShz7OiTtg7RBI6522bPS+eeDuzkYVuCFDabaUV/i
+         LjAMZEtcyGvEWpfKi/+qWxFv88hMw1lHQ7EUTbbzK6ijsyg+7NFZYQLOD90H8jRaqOmR
+         UejfqUM8iC+ZEUkl5AxhAqpmALRdrTtPIeloPiBAg7cDD6vU9fnX3DsvvvX0aD3cDMdo
+         PmbABKFLS+pIXOovHDRZkA8YopsXGvlxmAp00WITPU8znjlS+oeakXdj2UOI5Fsi8qTN
+         cgWjfsNBmunpGDJ9zD/xmDs5MMv/P8SRf/J3qvwK9cFBuKCe0PxruKQQ4U8oTjl/k7UA
+         uSYA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=rkAHuY7o;
-       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
+       dkim=pass header.i=@yahoo.co.in header.s=s2048 header.b=SMqpmDeO;
+       spf=pass (google.com: domain of ahiliation@yahoo.co.in designates 106.10.242.41 as permitted sender) smtp.mailfrom=ahiliation@yahoo.co.in;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=yahoo.co.in
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=rkAHuY7o;
-       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 3.18 10/23] USB: serial: visor: handle potential invalid device configuration
-Date: Mon, 14 May 2018 08:48:39 +0200
-Message-Id: <20180514064704.497600777@linuxfoundation.org>
+       dkim=pass header.i=@yahoo.co.in header.s=s2048 header.b=SMqpmDeO;
+       spf=pass (google.com: domain of ahiliation@yahoo.co.in designates 106.10.242.41 as permitted sender) smtp.mailfrom=ahiliation@yahoo.co.in;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=yahoo.co.in
+X-YMail-OSG: LvrKWPcVM1nMavrPr491I2YjjgLKRkwqKDV82oSapzkBYzJJiA.eYUxIfTm61se
+ GjvDbDtCUkIyItlBsDrpVbKNTNdPn6P_U6P39NYL9qYFkEwDgE1CW2nV.3N7nRYrRkITnHl6bVx8
+ I4MMngNT3WkmUD8YnG.gfn2wUpZwI1QPafmEe_1E4DMAp0gYeD0xPTk0CyryTI8aa30pTCI20rxw
+ 3A6sP2x9I04G_GgcWyLuqLH300AuJF1eZ.opHz6wcwHw.kPPaSJsIUCpFEDft3GyFkGmy1RCg1m5
+ .UVq8g4y16QA6iXvY5jTgMA5zudJzB_0W6KXPSaH1WmQ6jU9Mc8zyBwYaT46FPXL2N.l8L_bKk5.
+ ZlqqJktbK6LsTyqzM5Cg.GsMLYHvzqmVf5llD1O2CeqI0jnMFQEFKysLQpRd8swGJNIT96O0TPNF
+ amQDMRmrPB6HuP5He6uvoppBM0j6227bzANdf2ScnaSZlvroiLxChke6VkKadM_tShp5tpTn3VdA
+ KhZoTN3vSu7NtL8Z_ChlGIKqZNz_H9rwfqocYlOyxo5R24OUG8AyjD1iHqI1HpWdl2JRpBZJNVN2
+ dpZDYXS5MrS.Z1PfjJFiwiQ2xZf6MAeagHGYeLD3YYoNuyYz.BqQuzstpPk5q9668uSObvUPvjwQ
+ GK84R_o6Wcj.iwTbrSXYsC1H3_kBSOcvl
+From: Jeffrin Jose T <ahiliation@yahoo.co.in>
+To: shuah@kernel.org,
+	kstewart@linuxfoundation.org,
+	tglx@linutronix.de,
+	pombredanne@nexb.com,
+	gregkh@linuxfoundation.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeffrin Jose T <ahiliation@yahoo.co.in>,
+	Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
+Subject: [PATCH 49/49] selftest: intel_pstate: More accurate error message and also a debug support message from aperf.c
+Date: Tue, 15 May 2018 03:24:54 +0530
+Message-Id: <20180514215454.9337-1-ahiliation@yahoo.co.in>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180514064704.046463679@linuxfoundation.org>
-References: <20180514064704.046463679@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421202448697883?=
-X-GMAIL-MSGID: =?utf-8?q?1600421202448697883?=
+X-GMAIL-THRID: =?utf-8?q?1600478158436689024?=
+X-GMAIL-MSGID: =?utf-8?q?1600478158436689024?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+Fix for  aperf.c to produce the path of the file which is in mention
+during error report.CONFIG_X86_MSR=m support requirement is also mentioned.
 
-------------------
-
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-commit 4842ed5bfcb9daf6660537d70503c18d38dbdbb8 upstream.
-
-If we get an invalid device configuration from a palm 3 type device, we
-might incorrectly parse things, and we have the potential to crash in
-"interesting" ways.
-
-Fix this up by verifying the size of the configuration passed to us by
-the device, and only if it is correct, will we handle it.
-
-Note that this also fixes an information leak of slab data.
-
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Reviewed-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[ johan: add comment about the info leak ]
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
 ---
- drivers/usb/serial/visor.c |   69 ++++++++++++++++++++++-----------------------
- 1 file changed, 35 insertions(+), 34 deletions(-)
+ tools/testing/selftests/intel_pstate/aperf.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/serial/visor.c
-+++ b/drivers/usb/serial/visor.c
-@@ -338,47 +338,48 @@ static int palm_os_3_probe(struct usb_se
- 		goto exit;
+diff --git a/tools/testing/selftests/intel_pstate/aperf.c b/tools/testing/selftests/intel_pstate/aperf.c
+index d21edea9c560..da98c1673f08 100644
+--- a/tools/testing/selftests/intel_pstate/aperf.c
++++ b/tools/testing/selftests/intel_pstate/aperf.c
+@@ -41,7 +41,9 @@ int main(int argc, char **argv) {
+ 	fd = open(msr_file_name, O_RDONLY);
+ 
+ 	if (fd == -1) {
+-		perror("Failed to open");
++		printf("Failed to open /dev/cpu/%d/msr:", cpu);
++		printf(" No such file or directory:");
++		printf(" Make sure CONFIG_X86_MSR=m support is Enabled\n");
+ 		return 1;
  	}
  
--	if (retval == sizeof(*connection_info)) {
--			connection_info = (struct visor_connection_info *)
--							transfer_buffer;
--
--		num_ports = le16_to_cpu(connection_info->num_ports);
--		for (i = 0; i < num_ports; ++i) {
--			switch (
--			   connection_info->connections[i].port_function_id) {
--			case VISOR_FUNCTION_GENERIC:
--				string = "Generic";
--				break;
--			case VISOR_FUNCTION_DEBUGGER:
--				string = "Debugger";
--				break;
--			case VISOR_FUNCTION_HOTSYNC:
--				string = "HotSync";
--				break;
--			case VISOR_FUNCTION_CONSOLE:
--				string = "Console";
--				break;
--			case VISOR_FUNCTION_REMOTE_FILE_SYS:
--				string = "Remote File System";
--				break;
--			default:
--				string = "unknown";
--				break;
--			}
--			dev_info(dev, "%s: port %d, is for %s use\n",
--				serial->type->description,
--				connection_info->connections[i].port, string);
--		}
-+	if (retval != sizeof(*connection_info)) {
-+		dev_err(dev, "Invalid connection information received from device\n");
-+		retval = -ENODEV;
-+		goto exit;
- 	}
--	/*
--	* Handle devices that report invalid stuff here.
--	*/
-+
-+	connection_info = (struct visor_connection_info *)transfer_buffer;
-+
-+	num_ports = le16_to_cpu(connection_info->num_ports);
-+
-+	/* Handle devices that report invalid stuff here. */
- 	if (num_ports == 0 || num_ports > 2) {
- 		dev_warn(dev, "%s: No valid connect info available\n",
- 			serial->type->description);
- 		num_ports = 2;
- 	}
- 
-+	for (i = 0; i < num_ports; ++i) {
-+		switch (connection_info->connections[i].port_function_id) {
-+		case VISOR_FUNCTION_GENERIC:
-+			string = "Generic";
-+			break;
-+		case VISOR_FUNCTION_DEBUGGER:
-+			string = "Debugger";
-+			break;
-+		case VISOR_FUNCTION_HOTSYNC:
-+			string = "HotSync";
-+			break;
-+		case VISOR_FUNCTION_CONSOLE:
-+			string = "Console";
-+			break;
-+		case VISOR_FUNCTION_REMOTE_FILE_SYS:
-+			string = "Remote File System";
-+			break;
-+		default:
-+			string = "unknown";
-+			break;
-+		}
-+		dev_info(dev, "%s: port %d, is for %s use\n",
-+			serial->type->description,
-+			connection_info->connections[i].port, string);
-+	}
- 	dev_info(dev, "%s: Number of ports: %d\n", serial->type->description,
- 		num_ports);
- 
+-- 
+2.17.0
