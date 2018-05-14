@@ -1,228 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752574AbeENVMX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:12:23 -0400
-Received: from gofer.mess.org ([88.97.38.141]:33215 "EHLO gofer.mess.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752137AbeENVLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:11:04 -0400
-From: Sean Young <sean@mess.org>
-To: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
-        Matthias Reichl <hias@horus.com>,
-        Devin Heitmueller <dheitmueller@kernellabs.com>
-Subject: [PATCH v1 1/4] media: rc: introduce BPF_PROG_IR_DECODER
-Date: Mon, 14 May 2018 22:10:58 +0100
-Message-Id: <32a944171d5c48abf126259595b0088ce3122c91.1526331777.git.sean@mess.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1526331777.git.sean@mess.org>
-References: <cover.1526331777.git.sean@mess.org>
-In-Reply-To: <cover.1526331777.git.sean@mess.org>
-References: <cover.1526331777.git.sean@mess.org>
+        id S1752357AbeENVQi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:16:38 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34358 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752129AbeENVQe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 17:16:34 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh+dt@kernel.org>,
+        Will Deacon <will.deacon@arm.com>, Heiko Stuebner <heiko@sntech.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+        David Airlie <airlied@linux.ie>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Derek Basehore <dbasehore@chromium.org>, linux-clk@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        Lin Huang <hl@rock-chips.com>, kernel@collabora.com,
+        Sean Paul <seanpaul@chromium.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 01/10] devfreq: rockchip-dfi: Move GRF definitions to a common place.
+Date: Mon, 14 May 2018 23:16:01 +0200
+Message-Id: <20180514211610.26618-2-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180514211610.26618-1-enric.balletbo@collabora.com>
+References: <20180514211610.26618-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for BPF_PROG_IR_DECODER. This type of BPF program can call
-rc_keydown() to reported decoded IR scancodes, or rc_repeat() to report
-that the last key should be repeated.
+Some rk3399 GRF (Generic Register Files) definitions can be used for
+different drivers. Move these definitions to a common include so we
+don't need to duplicate these definitions.
 
-Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
- drivers/media/rc/Kconfig          |  8 +++
- drivers/media/rc/Makefile         |  1 +
- drivers/media/rc/ir-bpf-decoder.c | 93 +++++++++++++++++++++++++++++++
- include/linux/bpf_types.h         |  3 +
- include/uapi/linux/bpf.h          | 16 +++++-
- 5 files changed, 120 insertions(+), 1 deletion(-)
- create mode 100644 drivers/media/rc/ir-bpf-decoder.c
 
-diff --git a/drivers/media/rc/Kconfig b/drivers/media/rc/Kconfig
-index eb2c3b6eca7f..10ad6167d87c 100644
---- a/drivers/media/rc/Kconfig
-+++ b/drivers/media/rc/Kconfig
-@@ -120,6 +120,14 @@ config IR_IMON_DECODER
- 	   remote control and you would like to use it with a raw IR
- 	   receiver, or if you wish to use an encoder to transmit this IR.
+ drivers/devfreq/event/rockchip-dfi.c | 23 +++++++----------------
+ include/soc/rockchip/rk3399_grf.h    | 21 +++++++++++++++++++++
+ 2 files changed, 28 insertions(+), 16 deletions(-)
+ create mode 100644 include/soc/rockchip/rk3399_grf.h
+
+diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event/rockchip-dfi.c
+index 22b113363ffc..2fbbcbeb644f 100644
+--- a/drivers/devfreq/event/rockchip-dfi.c
++++ b/drivers/devfreq/event/rockchip-dfi.c
+@@ -26,6 +26,8 @@
+ #include <linux/list.h>
+ #include <linux/of.h>
  
-+config IR_BPF_DECODER
-+	bool "Enable IR raw decoder using BPF"
-+	depends on BPF_SYSCALL
-+	depends on RC_CORE=y
-+	help
-+	   Enable this option to make it possible to load custom IR
-+	   decoders written in BPF.
++#include <soc/rockchip/rk3399_grf.h>
 +
- endif #RC_DECODERS
+ #define RK3399_DMC_NUM_CH	2
  
- menuconfig RC_DEVICES
-diff --git a/drivers/media/rc/Makefile b/drivers/media/rc/Makefile
-index 2e1c87066f6c..12e1118430d0 100644
---- a/drivers/media/rc/Makefile
-+++ b/drivers/media/rc/Makefile
-@@ -5,6 +5,7 @@ obj-y += keymaps/
- obj-$(CONFIG_RC_CORE) += rc-core.o
- rc-core-y := rc-main.o rc-ir-raw.o
- rc-core-$(CONFIG_LIRC) += lirc_dev.o
-+rc-core-$(CONFIG_IR_BPF_DECODER) += ir-bpf-decoder.o
- obj-$(CONFIG_IR_NEC_DECODER) += ir-nec-decoder.o
- obj-$(CONFIG_IR_RC5_DECODER) += ir-rc5-decoder.o
- obj-$(CONFIG_IR_RC6_DECODER) += ir-rc6-decoder.o
-diff --git a/drivers/media/rc/ir-bpf-decoder.c b/drivers/media/rc/ir-bpf-decoder.c
+ /* DDRMON_CTRL */
+@@ -43,18 +45,6 @@
+ #define DDRMON_CH1_COUNT_NUM		0x3c
+ #define DDRMON_CH1_DFI_ACCESS_NUM	0x40
+ 
+-/* pmu grf */
+-#define PMUGRF_OS_REG2	0x308
+-#define DDRTYPE_SHIFT	13
+-#define DDRTYPE_MASK	7
+-
+-enum {
+-	DDR3 = 3,
+-	LPDDR3 = 6,
+-	LPDDR4 = 7,
+-	UNUSED = 0xFF
+-};
+-
+ struct dmc_usage {
+ 	u32 access;
+ 	u32 total;
+@@ -83,16 +73,17 @@ static void rockchip_dfi_start_hardware_counter(struct devfreq_event_dev *edev)
+ 	u32 ddr_type;
+ 
+ 	/* get ddr type */
+-	regmap_read(info->regmap_pmu, PMUGRF_OS_REG2, &val);
+-	ddr_type = (val >> DDRTYPE_SHIFT) & DDRTYPE_MASK;
++	regmap_read(info->regmap_pmu, RK3399_PMUGRF_OS_REG2, &val);
++	ddr_type = (val >> RK3399_PMUGRF_DDRTYPE_SHIFT) &
++		    RK3399_PMUGRF_DDRTYPE_MASK;
+ 
+ 	/* clear DDRMON_CTRL setting */
+ 	writel_relaxed(CLR_DDRMON_CTRL, dfi_regs + DDRMON_CTRL);
+ 
+ 	/* set ddr type to dfi */
+-	if (ddr_type == LPDDR3)
++	if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR3)
+ 		writel_relaxed(LPDDR3_EN, dfi_regs + DDRMON_CTRL);
+-	else if (ddr_type == LPDDR4)
++	else if (ddr_type == RK3399_PMUGRF_DDRTYPE_LPDDR4)
+ 		writel_relaxed(LPDDR4_EN, dfi_regs + DDRMON_CTRL);
+ 
+ 	/* enable count, use software mode */
+diff --git a/include/soc/rockchip/rk3399_grf.h b/include/soc/rockchip/rk3399_grf.h
 new file mode 100644
-index 000000000000..aaa5e208b1a5
+index 000000000000..0f94034e2e9a
 --- /dev/null
-+++ b/drivers/media/rc/ir-bpf-decoder.c
-@@ -0,0 +1,93 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// ir-bpf-decoder.c - handles bpf decoders
-+//
-+// Copyright (C) 2018 Sean Young <sean@mess.org>
-+
-+#include <linux/bpf.h>
-+#include <linux/filter.h>
-+#include "rc-core-priv.h"
-+
++++ b/include/soc/rockchip/rk3399_grf.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
 +/*
-+ * BPF interface for raw IR decoder
++ * Rockchip Generic Register Files definitions
++ *
++ * Copyright (c) 2018, Collabora Ltd.
++ * Author: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 + */
-+const struct bpf_prog_ops ir_decoder_prog_ops = {
-+};
 +
-+BPF_CALL_1(bpf_rc_repeat, struct ir_raw_event*, event)
-+{
-+	struct ir_raw_event_ctrl *ctrl;
++#ifndef __SOC_RK3399_GRF_H
++#define __SOC_RK3399_GRF_H
 +
-+	ctrl = container_of(event, struct ir_raw_event_ctrl, prev_ev);
++/* PMU GRF Registers */
++#define RK3399_PMUGRF_OS_REG2		0x308
++#define RK3399_PMUGRF_DDRTYPE_SHIFT	13
++#define RK3399_PMUGRF_DDRTYPE_MASK	7
++#define RK3399_PMUGRF_DDRTYPE_DDR3	3
++#define RK3399_PMUGRF_DDRTYPE_LPDDR2	5
++#define RK3399_PMUGRF_DDRTYPE_LPDDR3	6
++#define RK3399_PMUGRF_DDRTYPE_LPDDR4	7
 +
-+	rc_repeat(ctrl->dev);
-+	return 0;
-+}
-+
-+static const struct bpf_func_proto rc_repeat_proto = {
-+	.func	   = bpf_rc_repeat,
-+	.gpl_only  = true, // rc_repeat is EXPORT_SYMBOL_GPL
-+	.ret_type  = RET_VOID,
-+	.arg1_type = ARG_PTR_TO_CTX,
-+};
-+
-+BPF_CALL_4(bpf_rc_keydown, struct ir_raw_event*, event, u32, protocol,
-+	   u32, scancode, u32, toggle)
-+{
-+	struct ir_raw_event_ctrl *ctrl;
-+
-+	ctrl = container_of(event, struct ir_raw_event_ctrl, prev_ev);
-+	rc_keydown(ctrl->dev, protocol, scancode, toggle != 0);
-+	return 0;
-+}
-+
-+static const struct bpf_func_proto rc_keydown_proto = {
-+	.func	   = bpf_rc_keydown,
-+	.gpl_only  = true, // rc_keydown is EXPORT_SYMBOL_GPL
-+	.ret_type  = RET_VOID,
-+	.arg1_type = ARG_PTR_TO_CTX,
-+	.arg2_type = ARG_ANYTHING,
-+	.arg3_type = ARG_ANYTHING,
-+	.arg4_type = ARG_ANYTHING,
-+};
-+
-+static const struct bpf_func_proto *ir_decoder_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
-+{
-+	switch (func_id) {
-+	case BPF_FUNC_rc_repeat:
-+		return &rc_repeat_proto;
-+	case BPF_FUNC_rc_keydown:
-+		return &rc_keydown_proto;
-+	case BPF_FUNC_map_lookup_elem:
-+		return &bpf_map_lookup_elem_proto;
-+	case BPF_FUNC_map_update_elem:
-+		return &bpf_map_update_elem_proto;
-+	case BPF_FUNC_map_delete_elem:
-+		return &bpf_map_delete_elem_proto;
-+	case BPF_FUNC_ktime_get_ns:
-+		return &bpf_ktime_get_ns_proto;
-+	case BPF_FUNC_tail_call:
-+		return &bpf_tail_call_proto;
-+	case BPF_FUNC_get_prandom_u32:
-+		return &bpf_get_prandom_u32_proto;
-+	default:
-+		return NULL;
-+	}
-+}
-+
-+static bool ir_decoder_is_valid_access(int off, int size,
-+				       enum bpf_access_type type,
-+				       const struct bpf_prog *prog,
-+				       struct bpf_insn_access_aux *info)
-+{
-+	if (type == BPF_WRITE)
-+		return false;
-+	if (off < 0 || off + size > sizeof(struct ir_raw_event))
-+		return false;
-+
-+	return true;
-+}
-+
-+const struct bpf_verifier_ops ir_decoder_verifier_ops = {
-+	.get_func_proto  = ir_decoder_func_proto,
-+	.is_valid_access = ir_decoder_is_valid_access
-+};
-diff --git a/include/linux/bpf_types.h b/include/linux/bpf_types.h
-index 2b28fcf6f6ae..ee5355715ee0 100644
---- a/include/linux/bpf_types.h
-+++ b/include/linux/bpf_types.h
-@@ -25,6 +25,9 @@ BPF_PROG_TYPE(BPF_PROG_TYPE_RAW_TRACEPOINT, raw_tracepoint)
- #ifdef CONFIG_CGROUP_BPF
- BPF_PROG_TYPE(BPF_PROG_TYPE_CGROUP_DEVICE, cg_dev)
- #endif
-+#ifdef CONFIG_IR_BPF_DECODER
-+BPF_PROG_TYPE(BPF_PROG_TYPE_RAWIR_DECODER, ir_decoder)
 +#endif
- 
- BPF_MAP_TYPE(BPF_MAP_TYPE_ARRAY, array_map_ops)
- BPF_MAP_TYPE(BPF_MAP_TYPE_PERCPU_ARRAY, percpu_array_map_ops)
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index c5ec89732a8d..6ad053e831c0 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -137,6 +137,7 @@ enum bpf_prog_type {
- 	BPF_PROG_TYPE_SK_MSG,
- 	BPF_PROG_TYPE_RAW_TRACEPOINT,
- 	BPF_PROG_TYPE_CGROUP_SOCK_ADDR,
-+	BPF_PROG_TYPE_RAWIR_DECODER,
- };
- 
- enum bpf_attach_type {
-@@ -755,6 +756,17 @@ union bpf_attr {
-  *     @addr: pointer to struct sockaddr to bind socket to
-  *     @addr_len: length of sockaddr structure
-  *     Return: 0 on success or negative error code
-+ *
-+ * int bpf_rc_keydown(ctx, protocol, scancode, toggle)
-+ *	Report decoded scancode with toggle value
-+ *	@ctx: pointer to ctx
-+ *	@protocol: decoded protocol
-+ *	@scancode: decoded scancode
-+ *	@toggle: set to 1 if button was toggled, else 0
-+ *
-+ * int bpf_rc_repeat(ctx)
-+ *	Repeat the last decoded scancode
-+ *	@ctx: pointer to ctx
-  */
- #define __BPF_FUNC_MAPPER(FN)		\
- 	FN(unspec),			\
-@@ -821,7 +833,9 @@ union bpf_attr {
- 	FN(msg_apply_bytes),		\
- 	FN(msg_cork_bytes),		\
- 	FN(msg_pull_data),		\
--	FN(bind),
-+	FN(bind),			\
-+	FN(rc_repeat),			\
-+	FN(rc_keydown),
- 
- /* integer value in 'imm' field of BPF_CALL instruction selects which helper
-  * function eBPF program intends to call
 -- 
 2.17.0
