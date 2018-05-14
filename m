@@ -1,31 +1,31 @@
 Return-Path: <baolin.wang@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526288221; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1526288211; cv=none;
         d=google.com; s=arc-20160816;
-        b=KZUV8SLj3sKh7xVigvzEQ02MSxsJEZFoTBZwqcOdLFKdRSZQhzsVnvIPX4NLQIp3wF
-         uBfCeb095OFbpEva6PgTSONMUI2KEjNeQk5AEaodwm1jZHmJvLermma83BK7NCOeAJ7/
-         9qEOkibVo97WRzVpZ+OOoRAFn+vDvNytktCIwyCjy2bM2fb9cE38gQymd8EbfhSh8N5y
-         mvFcYPd7QGtTfQWJYzF+Kow0fEmyDP9zTxllXDfugUM2AJISUMa1GS/TPSTAPWgt7Z9L
-         x2Ok7RmZd9YEvapKzkli2FRc/bbNKewtSVZ2hcM2QUy+2h8zp65nbDZgQjHDk9+49/a3
-         gNNg==
+        b=bOfEeH0tMkFqh/jt4TU2wEck1gPUZjjDTan9w8lv8BXWI+PmHL2vR2Ek3eQbw7Q5/J
+         5YEJkZMHoCjRql+FG++ZbXp/9aoLRZS0l762AHpdH9Bo3gC5PEr/JFEtaSf5/L8F1/CX
+         etTBfxxtmQO2aVfxnnVI2ptflTBACW2E34vSOzgFWRftUKjbhn0wqGQdU2YJnWL22FGG
+         ycBoIgL5+6ZYJn3iIrEtJAdEzCgX7DFZG3Ojm+t0Z2OegwLLhaQ/QmOD0rD5DyzFsR6m
+         naSOcb02w/9Upl9dAs+dDpSco1v9UH+VHEl+a1Ew88qBCgdMYZ1AGbBOqMoQGAt7PsKj
+         5uNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=JFxtoPTIwMJxvyCd3hwanD0Gfpl/C9hHnauJqDpF+Pw=;
-        b=ahJ5j6Lw4nFZQm5G2Q378iBR/wkppMRZKA0+CUIh5l6NRdLW0Wp5442u+w2BXpMWbE
-         ZFVJxaKxFe11qKh/9T/X6tkJCIbjWqPpwXKPMFLTbAk3hT4ChUnp9U3ImL318SpMuUd2
-         swfxu0HcnFoDrzWQOvO6O2Q7GiBkmbQPzLMAT/LvLNkhkujDmG1K9qnWfWN8m6erVyLl
-         Z7DRCHhVadDBlHaA+JvcQ8jnTIueev0x4ty9imlaFaxuTff2Lkc9dxpa7deeXbOVwf/9
-         pmWlz2r3lAEnLJrz1CNadCaFrhKXH+vmDZfs1Q2bRv3XmFah764K6f8CBfndlYo6fINE
-         YhYA==
+        bh=Eel7Cy1vzjSfGnvDW7hlCZjLq+FDPDHooRhbIXHnQjA=;
+        b=AGiNvAaNgoieo13WQChnaJAj8KxbH99ViiN+lJuPIfbqaOwIvRckQLQkSpjKtF4xC2
+         VTmaHpaBIgr1xVZoEjR7OdnFSB+JyxYOqinRStPyxRoAEW7759Dzodmm2KQ2sL27BuGo
+         BcucNXUtcQNrl9X5wv1quF33QqXWuPgIMlMcoKhRn0JYJPKdS3tGpmB/NVHgajUCM80P
+         r85+OosQUDsgJUbd9sBrM2UpADNZViyBicZRlpUxuZCX1D5kVMEYW9v1Rw8ipuzdN8xN
+         02EniHTlBcpLr4URbZ+KEZvpJi+bxf1qQH7jGKLXxduFuqxotEW6YHuOwhbu5iZU85/v
+         IiJQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Lks8eZND;
+       dkim=pass header.i=@linaro.org header.s=google header.b=T1bQBNI3;
        spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=Lks8eZND;
+       dkim=pass header.i=@linaro.org header.s=google header.b=T1bQBNI3;
        spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZqJqrkpqUjChhz+cXXKxmxgAaOH1itX8BY6d+zuE+pHfRQUCNQWxrJ6eLWAz63O4iru9mMMTA==
+X-Google-Smtp-Source: AB8JxZpdNQik0jChNqY6KcTP2cM/CssVWVYNluBZ6mhnQXBoMPBFg5q1HsTiEbQZ63sbAmdhPie37w==
 From: Baolin Wang <baolin.wang@linaro.org>
 To: tglx@linutronix.de,
 	john.stultz@linaro.org,
@@ -61,68 +61,92 @@ Cc: baolin.wang@linaro.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-omap@vger.kernel.org
-Subject: [RFC PATCH 06/10] clocksource: arm_arch_timer: Register the persistent clock
-Date: Mon, 14 May 2018 16:55:32 +0800
-Message-Id: <f7f053cc1ffbef881642bc8755f0d73b370b0d36.1526285602.git.baolin.wang@linaro.org>
+Subject: [RFC PATCH 05/10] arm: time: Remove the persistent clock support for ARM
+Date: Mon, 14 May 2018 16:55:31 +0800
+Message-Id: <8d74ba31d4d2b14f21bea7a9cbc4f029bc59f60f.1526285602.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
 References: <cover.1526285602.git.baolin.wang@linaro.org>
 In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
 References: <cover.1526285602.git.baolin.wang@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600429198447922047?=
-X-GMAIL-MSGID: =?utf-8?q?1600429198447922047?=
+X-GMAIL-THRID: =?utf-8?q?1600429188107850734?=
+X-GMAIL-MSGID: =?utf-8?q?1600429188107850734?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Register the persistent clock to compensate the suspend time for OS time,
-if the ARM counter clocksource will not be stopped in suspend state.
+We have converted all drivers to use common persistent clock framework
+to compensate the suspend time, so we can remove the persistent clock,
+which only supports the ARM architecture.
+
+Moreover there are no drivers will register read_boot_clock64(), so
+remove it too.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/clocksource/Kconfig          |    1 +
- drivers/clocksource/arm_arch_timer.c |   10 ++++++++++
- 2 files changed, 11 insertions(+)
+ arch/arm/include/asm/mach/time.h |    4 ----
+ arch/arm/kernel/time.c           |   36 ------------------------------------
+ 2 files changed, 40 deletions(-)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index d7dddcc..884719c 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -308,6 +308,7 @@ config ARC_TIMERS_64BIT
+diff --git a/arch/arm/include/asm/mach/time.h b/arch/arm/include/asm/mach/time.h
+index 0f79e4d..3cbcafc 100644
+--- a/arch/arm/include/asm/mach/time.h
++++ b/arch/arm/include/asm/mach/time.h
+@@ -12,8 +12,4 @@
  
- config ARM_ARCH_TIMER
- 	bool
-+	select PERSISTENT_CLOCK
- 	select TIMER_OF if OF
- 	select TIMER_ACPI if ACPI
+ extern void timer_tick(void);
  
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
-index 57cb2f0..671be63 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -32,6 +32,7 @@
- #include <asm/virt.h>
- 
- #include <clocksource/arm_arch_timer.h>
-+#include <linux/persistent_clock.h>
- 
- #undef pr_fmt
- #define pr_fmt(fmt) "arch_timer: " fmt
-@@ -950,6 +951,15 @@ static void __init arch_counter_register(unsigned type)
- 
- 	/* 56 bits minimum, so we assume worst case rollover */
- 	sched_clock_register(arch_timer_read_counter, 56, arch_timer_rate);
-+
-+	/*
-+	 * Register the persistent clock if the clocksource will not be stopped
-+	 * in suspend state.
-+	 */
-+	if (!arch_counter_suspend_stop)
-+		persistent_clock_init_and_register(arch_timer_read_counter,
-+						   CLOCKSOURCE_MASK(56),
-+						   arch_timer_rate, 0);
+-typedef void (*clock_access_fn)(struct timespec64 *);
+-extern int register_persistent_clock(clock_access_fn read_boot,
+-				     clock_access_fn read_persistent);
+-
+ #endif
+diff --git a/arch/arm/kernel/time.c b/arch/arm/kernel/time.c
+index cf2701c..713905c 100644
+--- a/arch/arm/kernel/time.c
++++ b/arch/arm/kernel/time.c
+@@ -76,42 +76,6 @@ void timer_tick(void)
  }
+ #endif
  
- static void arch_timer_stop(struct clock_event_device *clk)
+-static void dummy_clock_access(struct timespec64 *ts)
+-{
+-	ts->tv_sec = 0;
+-	ts->tv_nsec = 0;
+-}
+-
+-static clock_access_fn __read_persistent_clock = dummy_clock_access;
+-static clock_access_fn __read_boot_clock = dummy_clock_access;
+-
+-void read_persistent_clock64(struct timespec64 *ts)
+-{
+-	__read_persistent_clock(ts);
+-}
+-
+-void read_boot_clock64(struct timespec64 *ts)
+-{
+-	__read_boot_clock(ts);
+-}
+-
+-int __init register_persistent_clock(clock_access_fn read_boot,
+-				     clock_access_fn read_persistent)
+-{
+-	/* Only allow the clockaccess functions to be registered once */
+-	if (__read_persistent_clock == dummy_clock_access &&
+-	    __read_boot_clock == dummy_clock_access) {
+-		if (read_boot)
+-			__read_boot_clock = read_boot;
+-		if (read_persistent)
+-			__read_persistent_clock = read_persistent;
+-
+-		return 0;
+-	}
+-
+-	return -EINVAL;
+-}
+-
+ void __init time_init(void)
+ {
+ 	if (machine_desc->init_time) {
 -- 
 1.7.9.5
