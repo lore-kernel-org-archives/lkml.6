@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752041AbeENG15 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 02:27:57 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40495 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751871AbeENG1y (ORCPT
+        id S1752078AbeENG2D (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 02:28:03 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:33306 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752038AbeENG17 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 02:27:54 -0400
-X-Google-Smtp-Source: AB8JxZoqpS/HfwBszfKVg2HrssIA0hQGHka871Uv5RR0syy7YHDb26SvhzibBcVUJqCB7S9FCFMYMQ==
+        Mon, 14 May 2018 02:27:59 -0400
+X-Google-Smtp-Source: AB8JxZoWTuGYcTbs/tp9VrF5bQ/V9PGRpv1Z5qmHJBJqdPSlMLVp9/hWJyK9GMoT3E94wAjDPpo+RA==
 From: Oleksandr Andrushchenko <andr2000@gmail.com>
 To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, jgross@suse.com,
@@ -15,9 +15,9 @@ To: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         tiwai@suse.com
 Cc: andr2000@gmail.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v3 1/6] ALSA: xen-front: Introduce Xen para-virtualized sound frontend driver
-Date: Mon, 14 May 2018 09:27:37 +0300
-Message-Id: <20180514062742.25879-2-andr2000@gmail.com>
+Subject: [PATCH v3 4/6] ALSA: xen-front: Implement handling of shared buffers
+Date: Mon, 14 May 2018 09:27:40 +0300
+Message-Id: <20180514062742.25879-5-andr2000@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514062742.25879-1-andr2000@gmail.com>
 References: <20180514062742.25879-1-andr2000@gmail.com>
@@ -27,88 +27,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Introduce skeleton of the para-virtualized Xen sound
-frontend driver.
-
-Initial handling for Xen bus states: implement
-Xen bus state machine for the frontend driver according to
-the state diagram and recovery flow from sound para-virtualized
-protocol: xen/interface/io/sndif.h.
+Implement shared buffer handling according to the
+para-virtualized sound device protocol at xen/interface/io/sndif.h:
+  - manage buffer memory
+  - handle granted references
+  - handle page directories
 
 Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
 ---
- sound/Kconfig             |   2 +
- sound/Makefile            |   2 +-
- sound/xen/Kconfig         |  10 ++
- sound/xen/Makefile        |   5 +
- sound/xen/xen_snd_front.c | 196 ++++++++++++++++++++++++++++++++++++++
- sound/xen/xen_snd_front.h |  18 ++++
- 6 files changed, 232 insertions(+), 1 deletion(-)
- create mode 100644 sound/xen/Kconfig
- create mode 100644 sound/xen/Makefile
- create mode 100644 sound/xen/xen_snd_front.c
- create mode 100644 sound/xen/xen_snd_front.h
+ sound/xen/Makefile              |   3 +-
+ sound/xen/xen_snd_front.c       |   8 ++
+ sound/xen/xen_snd_front_shbuf.c | 193 ++++++++++++++++++++++++++++++++
+ sound/xen/xen_snd_front_shbuf.h |  36 ++++++
+ 4 files changed, 239 insertions(+), 1 deletion(-)
+ create mode 100644 sound/xen/xen_snd_front_shbuf.c
+ create mode 100644 sound/xen/xen_snd_front_shbuf.h
 
-diff --git a/sound/Kconfig b/sound/Kconfig
-index 6833db9002ec..1140e9988fc5 100644
---- a/sound/Kconfig
-+++ b/sound/Kconfig
-@@ -96,6 +96,8 @@ source "sound/x86/Kconfig"
- 
- source "sound/synth/Kconfig"
- 
-+source "sound/xen/Kconfig"
-+
- endif # SND
- 
- endif # !UML
-diff --git a/sound/Makefile b/sound/Makefile
-index 99d8c31262c8..797ecdcd35e2 100644
---- a/sound/Makefile
-+++ b/sound/Makefile
-@@ -5,7 +5,7 @@
- obj-$(CONFIG_SOUND) += soundcore.o
- obj-$(CONFIG_DMASOUND) += oss/dmasound/
- obj-$(CONFIG_SND) += core/ i2c/ drivers/ isa/ pci/ ppc/ arm/ sh/ synth/ usb/ \
--	firewire/ sparc/ spi/ parisc/ pcmcia/ mips/ soc/ atmel/ hda/ x86/
-+	firewire/ sparc/ spi/ parisc/ pcmcia/ mips/ soc/ atmel/ hda/ x86/ xen/
- obj-$(CONFIG_SND_AOA) += aoa/
- 
- # This one must be compilable even if sound is configured out
-diff --git a/sound/xen/Kconfig b/sound/xen/Kconfig
-new file mode 100644
-index 000000000000..4f1fceea82d2
---- /dev/null
-+++ b/sound/xen/Kconfig
-@@ -0,0 +1,10 @@
-+# ALSA Xen drivers
-+
-+config SND_XEN_FRONTEND
-+	tristate "Xen para-virtualized sound frontend driver"
-+	depends on XEN
-+	select SND_PCM
-+	select XEN_XENBUS_FRONTEND
-+	help
-+	  Choose this option if you want to enable a para-virtualized
-+	  frontend sound driver for Xen guest OSes.
 diff --git a/sound/xen/Makefile b/sound/xen/Makefile
-new file mode 100644
-index 000000000000..4507ef3c27fd
---- /dev/null
+index 03c669984000..f028bc30af5d 100644
+--- a/sound/xen/Makefile
 +++ b/sound/xen/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0 OR MIT
-+
-+snd_xen_front-objs := xen_snd_front.o
-+
-+obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
+@@ -2,6 +2,7 @@
+ 
+ snd_xen_front-objs := xen_snd_front.o \
+ 		      xen_snd_front_cfg.o \
+-		      xen_snd_front_evtchnl.o
++		      xen_snd_front_evtchnl.o \
++		      xen_snd_front_shbuf.o
+ 
+ obj-$(CONFIG_SND_XEN_FRONTEND) += snd_xen_front.o
 diff --git a/sound/xen/xen_snd_front.c b/sound/xen/xen_snd_front.c
-new file mode 100644
-index 000000000000..bbbe2767b565
---- /dev/null
+index 277214d4fd0a..cdf66ea516c4 100644
+--- a/sound/xen/xen_snd_front.c
 +++ b/sound/xen/xen_snd_front.c
-@@ -0,0 +1,196 @@
+@@ -11,6 +11,7 @@
+ #include <linux/delay.h>
+ #include <linux/module.h>
+ 
++#include <xen/page.h>
+ #include <xen/platform_pci.h>
+ #include <xen/xen.h>
+ #include <xen/xenbus.h>
+@@ -191,6 +192,13 @@ static int __init xen_drv_init(void)
+ 	if (!xen_has_pv_devices())
+ 		return -ENODEV;
+ 
++	/* At the moment we only support case with XEN_PAGE_SIZE == PAGE_SIZE */
++	if (XEN_PAGE_SIZE != PAGE_SIZE) {
++		pr_err(XENSND_DRIVER_NAME ": different kernel and Xen page sizes are not supported: XEN_PAGE_SIZE (%lu) != PAGE_SIZE (%lu)\n",
++		       XEN_PAGE_SIZE, PAGE_SIZE);
++		return -ENODEV;
++	}
++
+ 	pr_info("Initialising Xen " XENSND_DRIVER_NAME " frontend driver\n");
+ 	return xenbus_register_frontend(&xen_driver);
+ }
+diff --git a/sound/xen/xen_snd_front_shbuf.c b/sound/xen/xen_snd_front_shbuf.c
+new file mode 100644
+index 000000000000..6845dbc7fdf5
+--- /dev/null
++++ b/sound/xen/xen_snd_front_shbuf.c
+@@ -0,0 +1,193 @@
 +// SPDX-License-Identifier: GPL-2.0 OR MIT
 +
 +/*
@@ -119,198 +98,195 @@ index 000000000000..bbbe2767b565
 + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 + */
 +
-+#include <linux/delay.h>
-+#include <linux/module.h>
-+
-+#include <xen/platform_pci.h>
 +#include <xen/xen.h>
 +#include <xen/xenbus.h>
 +
-+#include <xen/interface/io/sndif.h>
++#include "xen_snd_front_shbuf.h"
 +
-+#include "xen_snd_front.h"
-+
-+static void xen_snd_drv_fini(struct xen_snd_front_info *front_info)
++grant_ref_t xen_snd_front_shbuf_get_dir_start(struct xen_snd_front_shbuf *buf)
 +{
++	if (!buf->grefs)
++		return GRANT_INVALID_REF;
++
++	return buf->grefs[0];
 +}
 +
-+static int sndback_initwait(struct xen_snd_front_info *front_info)
++void xen_snd_front_shbuf_clear(struct xen_snd_front_shbuf *buf)
 +{
-+	return 0;
++	memset(buf, 0, sizeof(*buf));
 +}
 +
-+static int sndback_connect(struct xen_snd_front_info *front_info)
++void xen_snd_front_shbuf_free(struct xen_snd_front_shbuf *buf)
 +{
-+	return 0;
++	int i;
++
++	if (buf->grefs) {
++		for (i = 0; i < buf->num_grefs; i++)
++			if (buf->grefs[i] != GRANT_INVALID_REF)
++				gnttab_end_foreign_access(buf->grefs[i],
++							  0, 0UL);
++		kfree(buf->grefs);
++	}
++	kfree(buf->directory);
++	free_pages_exact(buf->buffer, buf->buffer_sz);
++	xen_snd_front_shbuf_clear(buf);
 +}
 +
-+static void sndback_disconnect(struct xen_snd_front_info *front_info)
++/*
++ * number of grant references a page can hold with respect to the
++ * xensnd_page_directory header
++ */
++#define XENSND_NUM_GREFS_PER_PAGE ((XEN_PAGE_SIZE - \
++		offsetof(struct xensnd_page_directory, gref)) / \
++		sizeof(grant_ref_t))
++
++static void fill_page_dir(struct xen_snd_front_shbuf *buf,
++			  int num_pages_dir)
 +{
-+	xen_snd_drv_fini(front_info);
-+	xenbus_switch_state(front_info->xb_dev, XenbusStateInitialising);
-+}
++	struct xensnd_page_directory *page_dir;
++	unsigned char *ptr;
++	int i, cur_gref, grefs_left, to_copy;
 +
-+static void sndback_changed(struct xenbus_device *xb_dev,
-+			    enum xenbus_state backend_state)
-+{
-+	struct xen_snd_front_info *front_info = dev_get_drvdata(&xb_dev->dev);
-+	int ret;
++	ptr = buf->directory;
++	grefs_left = buf->num_grefs - num_pages_dir;
++	/*
++	 * skip grant references at the beginning, they are for pages granted
++	 * for the page directory itself
++	 */
++	cur_gref = num_pages_dir;
++	for (i = 0; i < num_pages_dir; i++) {
++		page_dir = (struct xensnd_page_directory *)ptr;
++		if (grefs_left <= XENSND_NUM_GREFS_PER_PAGE) {
++			to_copy = grefs_left;
++			page_dir->gref_dir_next_page = GRANT_INVALID_REF;
++		} else {
++			to_copy = XENSND_NUM_GREFS_PER_PAGE;
++			page_dir->gref_dir_next_page = buf->grefs[i + 1];
++		}
 +
-+	dev_dbg(&xb_dev->dev, "Backend state is %s, front is %s\n",
-+		xenbus_strstate(backend_state),
-+		xenbus_strstate(xb_dev->state));
++		memcpy(&page_dir->gref, &buf->grefs[cur_gref],
++		       to_copy * sizeof(grant_ref_t));
 +
-+	switch (backend_state) {
-+	case XenbusStateReconfiguring:
-+		/* fall through */
-+	case XenbusStateReconfigured:
-+		/* fall through */
-+	case XenbusStateInitialised:
-+		/* fall through */
-+		break;
-+
-+	case XenbusStateInitialising:
-+		/* Recovering after backend unexpected closure. */
-+		sndback_disconnect(front_info);
-+		break;
-+
-+	case XenbusStateInitWait:
-+		/* Recovering after backend unexpected closure. */
-+		sndback_disconnect(front_info);
-+
-+		ret = sndback_initwait(front_info);
-+		if (ret < 0)
-+			xenbus_dev_fatal(xb_dev, ret, "initializing frontend");
-+		else
-+			xenbus_switch_state(xb_dev, XenbusStateInitialised);
-+		break;
-+
-+	case XenbusStateConnected:
-+		if (xb_dev->state != XenbusStateInitialised)
-+			break;
-+
-+		ret = sndback_connect(front_info);
-+		if (ret < 0)
-+			xenbus_dev_fatal(xb_dev, ret, "initializing frontend");
-+		else
-+			xenbus_switch_state(xb_dev, XenbusStateConnected);
-+		break;
-+
-+	case XenbusStateClosing:
-+		/*
-+		 * In this state backend starts freeing resources,
-+		 * so let it go into closed state first, so we can also
-+		 * remove ours.
-+		 */
-+		break;
-+
-+	case XenbusStateUnknown:
-+		/* fall through */
-+	case XenbusStateClosed:
-+		if (xb_dev->state == XenbusStateClosed)
-+			break;
-+
-+		sndback_disconnect(front_info);
-+		break;
++		ptr += XEN_PAGE_SIZE;
++		grefs_left -= to_copy;
++		cur_gref += to_copy;
 +	}
 +}
 +
-+static int xen_drv_probe(struct xenbus_device *xb_dev,
-+			 const struct xenbus_device_id *id)
++static int grant_references(struct xenbus_device *xb_dev,
++			    struct xen_snd_front_shbuf *buf,
++			    int num_pages_dir, int num_pages_buffer,
++			    int num_grefs)
 +{
-+	struct xen_snd_front_info *front_info;
++	grant_ref_t priv_gref_head;
++	unsigned long frame;
++	int ret, i, j, cur_ref;
++	int otherend_id;
 +
-+	front_info = devm_kzalloc(&xb_dev->dev,
-+				  sizeof(*front_info), GFP_KERNEL);
-+	if (!front_info)
++	ret = gnttab_alloc_grant_references(num_grefs, &priv_gref_head);
++	if (ret)
++		return ret;
++
++	buf->num_grefs = num_grefs;
++	otherend_id = xb_dev->otherend_id;
++	j = 0;
++
++	for (i = 0; i < num_pages_dir; i++) {
++		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
++		if (cur_ref < 0) {
++			ret = cur_ref;
++			goto fail;
++		}
++
++		frame = xen_page_to_gfn(virt_to_page(buf->directory +
++						     XEN_PAGE_SIZE * i));
++		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
++		buf->grefs[j++] = cur_ref;
++	}
++
++	for (i = 0; i < num_pages_buffer; i++) {
++		cur_ref = gnttab_claim_grant_reference(&priv_gref_head);
++		if (cur_ref < 0) {
++			ret = cur_ref;
++			goto fail;
++		}
++
++		frame = xen_page_to_gfn(virt_to_page(buf->buffer +
++						     XEN_PAGE_SIZE * i));
++		gnttab_grant_foreign_access_ref(cur_ref, otherend_id, frame, 0);
++		buf->grefs[j++] = cur_ref;
++	}
++
++	gnttab_free_grant_references(priv_gref_head);
++	fill_page_dir(buf, num_pages_dir);
++	return 0;
++
++fail:
++	gnttab_free_grant_references(priv_gref_head);
++	return ret;
++}
++
++static int alloc_int_buffers(struct xen_snd_front_shbuf *buf,
++			     int num_pages_dir, int num_pages_buffer,
++			     int num_grefs)
++{
++	buf->grefs = kcalloc(num_grefs, sizeof(*buf->grefs), GFP_KERNEL);
++	if (!buf->grefs)
 +		return -ENOMEM;
 +
-+	front_info->xb_dev = xb_dev;
-+	dev_set_drvdata(&xb_dev->dev, front_info);
++	buf->directory = kcalloc(num_pages_dir, XEN_PAGE_SIZE, GFP_KERNEL);
++	if (!buf->directory)
++		goto fail;
 +
-+	return xenbus_switch_state(xb_dev, XenbusStateInitialising);
++	buf->buffer_sz = num_pages_buffer * XEN_PAGE_SIZE;
++	buf->buffer = alloc_pages_exact(buf->buffer_sz, GFP_KERNEL);
++	if (!buf->buffer)
++		goto fail;
++
++	return 0;
++
++fail:
++	kfree(buf->grefs);
++	buf->grefs = NULL;
++	kfree(buf->directory);
++	buf->directory = NULL;
++	return -ENOMEM;
 +}
 +
-+static int xen_drv_remove(struct xenbus_device *dev)
++int xen_snd_front_shbuf_alloc(struct xenbus_device *xb_dev,
++			      struct xen_snd_front_shbuf *buf,
++			      unsigned int buffer_sz)
 +{
-+	struct xen_snd_front_info *front_info = dev_get_drvdata(&dev->dev);
-+	int to = 100;
++	int num_pages_buffer, num_pages_dir, num_grefs;
++	int ret;
 +
-+	xenbus_switch_state(dev, XenbusStateClosing);
++	xen_snd_front_shbuf_clear(buf);
 +
-+	/*
-+	 * On driver removal it is disconnected from XenBus,
-+	 * so no backend state change events come via .otherend_changed
-+	 * callback. This prevents us from exiting gracefully, e.g.
-+	 * signaling the backend to free event channels, waiting for its
-+	 * state to change to XenbusStateClosed and cleaning at our end.
-+	 * Normally when front driver removed backend will finally go into
-+	 * XenbusStateInitWait state.
-+	 *
-+	 * Workaround: read backend's state manually and wait with time-out.
-+	 */
-+	while ((xenbus_read_unsigned(front_info->xb_dev->otherend, "state",
-+				     XenbusStateUnknown) != XenbusStateInitWait) &&
-+				     to--)
-+		msleep(10);
++	num_pages_buffer = DIV_ROUND_UP(buffer_sz, XEN_PAGE_SIZE);
++	/* number of pages the page directory consumes itself */
++	num_pages_dir = DIV_ROUND_UP(num_pages_buffer,
++				     XENSND_NUM_GREFS_PER_PAGE);
++	num_grefs = num_pages_buffer + num_pages_dir;
 +
-+	if (!to) {
-+		unsigned int state;
++	ret = alloc_int_buffers(buf, num_pages_dir,
++				num_pages_buffer, num_grefs);
++	if (ret < 0)
++		return ret;
 +
-+		state = xenbus_read_unsigned(front_info->xb_dev->otherend,
-+					     "state", XenbusStateUnknown);
-+		pr_err("Backend state is %s while removing driver\n",
-+		       xenbus_strstate(state));
-+	}
++	ret = grant_references(xb_dev, buf, num_pages_dir, num_pages_buffer,
++			       num_grefs);
++	if (ret < 0)
++		return ret;
 +
-+	xen_snd_drv_fini(front_info);
-+	xenbus_frontend_closed(dev);
++	fill_page_dir(buf, num_pages_dir);
 +	return 0;
 +}
-+
-+static const struct xenbus_device_id xen_drv_ids[] = {
-+	{ XENSND_DRIVER_NAME },
-+	{ "" }
-+};
-+
-+static struct xenbus_driver xen_driver = {
-+	.ids = xen_drv_ids,
-+	.probe = xen_drv_probe,
-+	.remove = xen_drv_remove,
-+	.otherend_changed = sndback_changed,
-+};
-+
-+static int __init xen_drv_init(void)
-+{
-+	if (!xen_domain())
-+		return -ENODEV;
-+
-+	if (!xen_has_pv_devices())
-+		return -ENODEV;
-+
-+	pr_info("Initialising Xen " XENSND_DRIVER_NAME " frontend driver\n");
-+	return xenbus_register_frontend(&xen_driver);
-+}
-+
-+static void __exit xen_drv_fini(void)
-+{
-+	pr_info("Unregistering Xen " XENSND_DRIVER_NAME " frontend driver\n");
-+	xenbus_unregister_driver(&xen_driver);
-+}
-+
-+module_init(xen_drv_init);
-+module_exit(xen_drv_fini);
-+
-+MODULE_DESCRIPTION("Xen virtual sound device frontend");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("xen:" XENSND_DRIVER_NAME);
-+MODULE_SUPPORTED_DEVICE("{{ALSA,Virtual soundcard}}");
-diff --git a/sound/xen/xen_snd_front.h b/sound/xen/xen_snd_front.h
+diff --git a/sound/xen/xen_snd_front_shbuf.h b/sound/xen/xen_snd_front_shbuf.h
 new file mode 100644
-index 000000000000..4ae204b23d32
+index 000000000000..d28e97c47b2c
 --- /dev/null
-+++ b/sound/xen/xen_snd_front.h
-@@ -0,0 +1,18 @@
++++ b/sound/xen/xen_snd_front_shbuf.h
+@@ -0,0 +1,36 @@
 +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
 +
 +/*
@@ -321,13 +297,31 @@ index 000000000000..4ae204b23d32
 + * Author: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 + */
 +
-+#ifndef __XEN_SND_FRONT_H
-+#define __XEN_SND_FRONT_H
++#ifndef __XEN_SND_FRONT_SHBUF_H
++#define __XEN_SND_FRONT_SHBUF_H
 +
-+struct xen_snd_front_info {
-+	struct xenbus_device *xb_dev;
++#include <xen/grant_table.h>
++
++#include "xen_snd_front_evtchnl.h"
++
++struct xen_snd_front_shbuf {
++	int num_grefs;
++	grant_ref_t *grefs;
++	u8 *directory;
++	u8 *buffer;
++	size_t buffer_sz;
 +};
 +
-+#endif /* __XEN_SND_FRONT_H */
++grant_ref_t xen_snd_front_shbuf_get_dir_start(struct xen_snd_front_shbuf *buf);
++
++int xen_snd_front_shbuf_alloc(struct xenbus_device *xb_dev,
++			      struct xen_snd_front_shbuf *buf,
++			      unsigned int buffer_sz);
++
++void xen_snd_front_shbuf_clear(struct xen_snd_front_shbuf *buf);
++
++void xen_snd_front_shbuf_free(struct xen_snd_front_shbuf *buf);
++
++#endif /* __XEN_SND_FRONT_SHBUF_H */
 -- 
 2.17.0
