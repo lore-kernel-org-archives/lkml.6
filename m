@@ -1,28 +1,28 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqRcvrap+LK8IUAvkog1rcmaoA+Sp30deBBImMxaVy+Ce+YHkXZfbm5KNxSEPg+Okdpwzxe
-ARC-Seal: i=1; a=rsa-sha256; t=1526282280; cv=none;
+X-Google-Smtp-Source: AB8JxZqiaanNBvWHFpeITBFoZuhR/hKY6eJlU59fefIfOIC2os8s2vFgvXLZaBpuEJEfL/9Zlvfi
+ARC-Seal: i=1; a=rsa-sha256; t=1526282277; cv=none;
         d=google.com; s=arc-20160816;
-        b=twnAqo5SwYdzKc2kh+pqoFDpFopoDkxwo6Swcoh7z+Y6BiiWlsyndyBCFkhttjhK1p
-         PiwhcKzHsJuyoR/DJviG4ai5sLDWE1Eh1P0ES45pxePWonKlxXkOcm2zdsUqVXgJCfPp
-         WaIzJ9q699NZvQGSBkQxNlVADWt3TL0jUT6losbSASlPGOB0zHNM2j+2H4NAN0AeKg3R
-         dfTHoiEe7kv/jh8Oaqy+GPSrb800XByBPrGNzHowQM4tgURNgvFovG9LjivNzj1+Z9GY
-         FyDg8ibt8v9Su22vMSHgFToxLeDZe/nPwthabIHkiw1nwIakc7MwF0OZcbXTJhygtI9X
-         9Eow==
+        b=wAvCnqxV3/F0RiMGmUEk+MkupAuzPZgr0kX52MB7KgAr3SzMr51ranjXZOMtS/zscY
+         fPkut50zoti4XFqRKmLaPOkUkWsR9xIgHq4WIVk3Zh5iM4AX0nR3ToQGpR1sgQLCSewi
+         MjxsQhL1z6v1qLjGw7q0nRcR0z3fa7fgBzzPhuOazvnvLNouF0QG09eSSGVI9lTJfcDw
+         9hOVX0ZcvkhGdJiW59nIJNjSO516sTbFa2iK6pQVVVzXDJLziRh1cImxkFFmH79BTQUe
+         2lN7IcTcUDHyeak39reVS5nGoy96yCtVjivv2CKkndalPx2/sk+7Nigc/jCnlpyjjSGN
+         6YfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=cGvSfjbFpLQ1mB3+43ZvFEsS+pxtleeNMD+LPlVNTyw=;
-        b=LYtGMPuCveD8+HpcuKAMclsu9+Gm1iXmCdZ+COOzf2odIYHekpNpWLrbQig07Gy8lT
-         IHMTpIrrW2LZpvwDTWd9byH4zBeyZuxE5C1SpgnKwpJE99IPbCLxFW+AOIe1H8l+h+5G
-         pGaVigBAfCP6PRrg/e2ezFtFyOnXq3ssxmY88cETU6Am0Hpvp06NIcSODMsywMwtz1Qi
-         QbBBbjMTb2rh2nl19izBDXrn4oO+1yNfChkNRcKYppf66v+UVQKB78g5tD4YHzwmj67w
-         ihTTABCaLFZb0ChwtjPemth7EdKz0+bgTgAlYZbSjHLp2i/WiHZ2GuR22+Yw32eddTV5
-         XAxA==
+        bh=tNOQp0bbxzoxSSRoNYvADxoVkm/bWb1b1p5MToOhC9I=;
+        b=RZtiCrbIduKnV57wI7JFvgTZ8sJxZ7q8fmaH/6DdBOeXagwN9Ae5DoZXaJK/7G/uxN
+         y/HFE2ryM+v/VZOt4g6cHtdryjrJ1GhRk36YeCkJbQM+m8nQarLZ9CiNbRLNEvK5ZnoE
+         HfRpQ4fU2Ux/QX3iGF9w1e7tU/ElwZ5zxRo9B9P7FS1XVGtkl/N9R4gMRzS7xFlYekZj
+         uc13BsFee35KGpnWLN9xZQ+kpTuiVWmInOGSEEFJfqOJhc+KgzoMvNMmgc1/qDQdHJPB
+         OYL6dvkOIMZszErzpMZFGwu7KHD30QSSk++HNnQ7PO8K0pfiWbIFeXfBUPa3xGaZvXx5
+         wdqA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=oadTAZC/;
+       dkim=pass header.i=@kernel.org header.s=default header.b=1D/v/poS;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=oadTAZC/;
+       dkim=pass header.i=@kernel.org header.s=default header.b=1D/v/poS;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -30,17 +30,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Dan Carpenter <dan.carpenter@oracle.com>,
 	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Jiri Olsa <jolsa@redhat.com>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
-	Stephane Eranian <eranian@google.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Vince Weaver <vincent.weaver@maine.edu>,
 	Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 56/62] perf/x86: Fix possible Spectre-v1 indexing for hw_perf_event cache_*
-Date: Mon, 14 May 2018 08:49:12 +0200
-Message-Id: <20180514064819.591828085@linuxfoundation.org>
+Subject: [PATCH 4.14 54/62] sched/autogroup: Fix possible Spectre-v1 indexing for sched_prio_to_weight[]
+Date: Mon, 14 May 2018 08:49:10 +0200
+Message-Id: <20180514064819.484188159@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -50,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600422453930408065?=
-X-GMAIL-MSGID: =?utf-8?q?1600422968160565504?=
+X-GMAIL-THRID: =?utf-8?q?1600422964745996071?=
+X-GMAIL-MSGID: =?utf-8?q?1600422964745996071?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -61,55 +56,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-commit ef9ee4ad38445a30909c48998624861716f2a994 upstream.
+commit 354d7793070611b4df5a79fbb0f12752d0ed0cc5 upstream.
 
-> arch/x86/events/core.c:319 set_ext_hw_attr() warn: potential spectre issue 'hw_cache_event_ids[cache_type]' (local cap)
-> arch/x86/events/core.c:319 set_ext_hw_attr() warn: potential spectre issue 'hw_cache_event_ids' (local cap)
-> arch/x86/events/core.c:328 set_ext_hw_attr() warn: potential spectre issue 'hw_cache_extra_regs[cache_type]' (local cap)
-> arch/x86/events/core.c:328 set_ext_hw_attr() warn: potential spectre issue 'hw_cache_extra_regs' (local cap)
+> kernel/sched/autogroup.c:230 proc_sched_autogroup_set_nice() warn: potential spectre issue 'sched_prio_to_weight'
 
-Userspace controls @config which contains 3 (byte) fields used for a 3
-dimensional array deref.
+Userspace controls @nice, sanitize the array index.
 
 Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <stable@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
+Cc: <stable@kernel.org>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/events/core.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/sched/autogroup.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -304,17 +304,20 @@ set_ext_hw_attr(struct hw_perf_event *hw
+--- a/kernel/sched/autogroup.c
++++ b/kernel/sched/autogroup.c
+@@ -7,6 +7,7 @@
+ #include <linux/utsname.h>
+ #include <linux/security.h>
+ #include <linux/export.h>
++#include <linux/nospec.h>
  
- 	config = attr->config;
+ unsigned int __read_mostly sysctl_sched_autogroup_enabled = 1;
+ static struct autogroup autogroup_default;
+@@ -213,7 +214,7 @@ int proc_sched_autogroup_set_nice(struct
+ 	static unsigned long next = INITIAL_JIFFIES;
+ 	struct autogroup *ag;
+ 	unsigned long shares;
+-	int err;
++	int err, idx;
  
--	cache_type = (config >>  0) & 0xff;
-+	cache_type = (config >> 0) & 0xff;
- 	if (cache_type >= PERF_COUNT_HW_CACHE_MAX)
+ 	if (nice < MIN_NICE || nice > MAX_NICE)
  		return -EINVAL;
-+	cache_type = array_index_nospec(cache_type, PERF_COUNT_HW_CACHE_MAX);
+@@ -231,7 +232,9 @@ int proc_sched_autogroup_set_nice(struct
  
- 	cache_op = (config >>  8) & 0xff;
- 	if (cache_op >= PERF_COUNT_HW_CACHE_OP_MAX)
- 		return -EINVAL;
-+	cache_op = array_index_nospec(cache_op, PERF_COUNT_HW_CACHE_OP_MAX);
+ 	next = HZ / 10 + jiffies;
+ 	ag = autogroup_task_get(p);
+-	shares = scale_load(sched_prio_to_weight[nice + 20]);
++
++	idx = array_index_nospec(nice + 20, 40);
++	shares = scale_load(sched_prio_to_weight[idx]);
  
- 	cache_result = (config >> 16) & 0xff;
- 	if (cache_result >= PERF_COUNT_HW_CACHE_RESULT_MAX)
- 		return -EINVAL;
-+	cache_result = array_index_nospec(cache_result, PERF_COUNT_HW_CACHE_RESULT_MAX);
- 
- 	val = hw_cache_event_ids[cache_type][cache_op][cache_result];
- 
+ 	down_write(&ag->lock);
+ 	err = sched_group_set_shares(ag->tg, shares);
