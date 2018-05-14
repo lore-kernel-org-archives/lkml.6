@@ -1,38 +1,38 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrR2308uaeSNtwUVz9Z6UvDjd/xxkLgIX5JULS2I0pi2CSfidY6PB7J4BzaOygRtxmyhXh5
-ARC-Seal: i=1; a=rsa-sha256; t=1526280668; cv=none;
+X-Google-Smtp-Source: AB8JxZoOWhSH73E236gqoEp3AxpinmprwGgjzDTJn+iv6mmteaABgcuKMIER5E2z2g6LydoCR6w1
+ARC-Seal: i=1; a=rsa-sha256; t=1526280666; cv=none;
         d=google.com; s=arc-20160816;
-        b=dHWqMjf0+GrbZXsck6GQgDyh747E5W7Q+gZWyezBO1M+rH9grLU03Z5XNGfcGWFAn/
-         4Udy/I4nN3W8dFYzaLOvFSxEzYV2WJeGQ+xe2onSYb9WerxYN0ATIBf60pRCEFr5TLCh
-         Tiphun4N+YONW/Yc6P4qXYimEjPGmirm0NzeYl7+vNL7jhagGwJoX5Zk/5WCof/O5RTA
-         zi17TdKiXBg7vQ2AF6nQq/xJ+sKIiWLgtPzgbplP4+nmZxh+xr9B1Tg9Tbl8Jbpy2BiJ
-         am4WY6wTEYKQ+4E9CmsVeI+6EAsA8Cu1qu50nZcL2M/yy8CowxJ00uhJTvGNgOF3IoxD
-         XzdA==
+        b=sgLcyIotBJM7JowOcP1TghNLfRGOfM96zToko3bylREplUKVM3RjpTOJrreyGGt1tW
+         O5Qpt0gSzwfSpB3FEhWMQVc8S9SY5/CuI3+BdvfP/uO52abbjquc2YtvwcGM5LHuZ2Ry
+         jWZxyRgUqYktHGI53EwEeq5m0kLxtJGuUGNj2AvKRsIwgpYgd3/KXr4/wR/DgdAROBov
+         wrKUvWijIFBWN1lx2Ctme6vi1ygcDJ7E1TSt2ZpnzKB0nR9dULnO2jkGHqAKi+fNdAuo
+         2y1sOyX1MdyHlYPHYYhW0EM5EQQ2iObNb84eK9TtcX9kVPAiwSyZSs3Vy8zVvr3rJCTn
+         i0hw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=R/vljVRSEqJBoX9TUyiqQQaOSfgybLGJMgZeOz5eoZ8=;
-        b=W2UOi9kl+2sK2shaoDmZ2MRgd2bExQnLNVVC3lGCB/6A/6FsIkytGi0QHC0CvByJfk
-         6KwLPxavz/oJkGR8nXT/J9Pp89n/H3zYdnNe/uWs8eWzyrucKqK5IuIa2CtWz+ZOpWSV
-         m0gza198y6IOr1qu+oJhPAm30FnVYEVYJGzyc18CEPnEnIPODrIIrrmNc+neahSDsTZ5
-         oO8N9DHgRi+J0aEBwgSQmhW6qPWdAx6RsKKplxY2xh77y82QC1d1RA3JHO4uMqX7lukG
-         toug94fNXgi8PssbhO+smg37mnHbkgOXOweu6qQ0DFAwOwRU9u2sEtElZkWXYuGn5BoN
-         0j5A==
+        bh=Yn/fXH4In//uZIU+AUOD0v7jQv3KMzJ9Xh1QmONrnIc=;
+        b=vO4nwRwINKhyXhNzB7NZ5ILhqPh+hr4oV0QA0JhpKX7r3nPiwRGwdWPcEGb7qz6ZAk
+         gEQd9rk2QNF8Dm815USi+kY90Xi6TzrhnDBDuVJncP7X2YIb0ojLeqXna6L39TRLeK0E
+         0lbl+4NhiA3jfFL87PTI7WlyMaNiHWqKUA2szyQt6lhgnXr31r/IioJvo9B/9bWS2njB
+         w7lWRbxAgUe0ENat7azXoXshdF4KxqHZ0q26pbm3mGlBvH6qPjKCGv0MbY0wo99SFk0F
+         S+f6Efhvu70nMNHs3D1N2jP9y8FWcfJVZe7Yjiwf8yvcH7w4sPlvPDJ5GSZ5sFh2Z0Ut
+         ztQg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=TZfk0a3X;
+       dkim=pass header.i=@kernel.org header.s=default header.b=jWP2TkSx;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=TZfk0a3X;
+       dkim=pass header.i=@kernel.org header.s=default header.b=jWP2TkSx;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	DaeRyong Jeong <threeearcat@gmail.com>,
+	syzbot+1dac3a4f6bc9c1c675d4@syzkaller.appspotmail.com,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 13/56] ALSA: seq: Fix races at MIDI encoding in snd_virmidi_output_trigger()
-Date: Mon, 14 May 2018 08:48:18 +0200
-Message-Id: <20180514064756.323603786@linuxfoundation.org>
+Subject: [PATCH 4.4 12/56] ALSA: pcm: Check PCM state at xfern compat ioctl
+Date: Mon, 14 May 2018 08:48:17 +0200
+Message-Id: <20180514064756.256536571@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421213805070323?=
-X-GMAIL-MSGID: =?utf-8?q?1600421278536961649?=
+X-GMAIL-THRID: =?utf-8?q?1600421211019570544?=
+X-GMAIL-MSGID: =?utf-8?q?1600421275865036610?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,49 +53,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit 8f22e52528cc372b218b5f100457469615c733ce upstream.
+commit f13876e2c33a657a71bcbb10f767c0951b165020 upstream.
 
-The sequencer virmidi code has an open race at its output trigger
-callback: namely, virmidi keeps only one event packet for processing
-while it doesn't protect for concurrent output trigger calls.
+Since snd_pcm_ioctl_xfern_compat() has no PCM state check, it may go
+further and hit the sanity check pcm_sanity_check() when the ioctl is
+called right after open.  It may eventually spew a kernel warning, as
+triggered by syzbot, depending on kconfig.
 
-snd_virmidi_output_trigger() tries to process the previously
-unfinished event before starting encoding the given MIDI stream, but
-this is done without any lock.  Meanwhile, if another rawmidi stream
-starts the output trigger, this proceeds further, and overwrites the
-event package that is being processed in another thread.  This
-eventually corrupts and may lead to the invalid memory access if the
-event type is like SYSEX.
+The lack of PCM state check there was just an oversight.  Although
+it's no real crash, the spurious kernel warning is annoying, so let's
+add the proper check.
 
-The fix is just to move the spinlock to cover both the pending event
-and the new stream.
-
-The bug was spotted by a new fuzzer, RaceFuzzer.
-
-BugLink: http://lkml.kernel.org/r/20180426045223.GA15307@dragonet.kaist.ac.kr
-Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
+Reported-by: syzbot+1dac3a4f6bc9c1c675d4@syzkaller.appspotmail.com
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/seq/seq_virmidi.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/core/pcm_compat.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/core/seq/seq_virmidi.c
-+++ b/sound/core/seq/seq_virmidi.c
-@@ -174,12 +174,12 @@ static void snd_virmidi_output_trigger(s
- 			}
- 			return;
- 		}
-+		spin_lock_irqsave(&substream->runtime->lock, flags);
- 		if (vmidi->event.type != SNDRV_SEQ_EVENT_NONE) {
- 			if (snd_seq_kernel_client_dispatch(vmidi->client, &vmidi->event, in_atomic(), 0) < 0)
--				return;
-+				goto out;
- 			vmidi->event.type = SNDRV_SEQ_EVENT_NONE;
- 		}
--		spin_lock_irqsave(&substream->runtime->lock, flags);
- 		while (1) {
- 			count = __snd_rawmidi_transmit_peek(substream, buf, sizeof(buf));
- 			if (count <= 0)
+--- a/sound/core/pcm_compat.c
++++ b/sound/core/pcm_compat.c
+@@ -426,6 +426,8 @@ static int snd_pcm_ioctl_xfern_compat(st
+ 		return -ENOTTY;
+ 	if (substream->stream != dir)
+ 		return -EINVAL;
++	if (substream->runtime->status->state == SNDRV_PCM_STATE_OPEN)
++		return -EBADFD;
+ 
+ 	if ((ch = substream->runtime->channels) > 128)
+ 		return -EINVAL;
