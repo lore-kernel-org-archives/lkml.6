@@ -1,62 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751927AbeENADm (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 20:03:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52286 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750991AbeENADl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 20:03:41 -0400
-Date: Mon, 14 May 2018 09:03:36 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>, Josef Bacik <jbacik@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [RFC PATCH -tip 2/4] kprobes: Remove jprobe generic code
-Message-Id: <20180514090336.e6f3ec9e750cc14faf38714c@kernel.org>
-In-Reply-To: <alpine.DEB.2.21.1805132154220.1582@nanos.tec.linutronix.de>
-References: <152578658468.31022.8952561651556318637.stgit@devbox>
-        <152578664349.31022.13591383815605124106.stgit@devbox>
-        <alpine.DEB.2.21.1805132154220.1582@nanos.tec.linutronix.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1751584AbeENAK4 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 20:10:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43568 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751031AbeENAKz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 20:10:55 -0400
+To: linux-scsi <linux-scsi@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] scsi: clean up generated file scsi_devinfo_tbl.c
+Message-ID: <6e64c815-43dd-3945-6c58-66b1e0533403@infradead.org>
+Date: Sun, 13 May 2018 17:10:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 13 May 2018 21:55:38 +0200 (CEST)
-Thomas Gleixner <tglx@linutronix.de> wrote:
+From: Randy Dunlap <rdunlap@infradead.org>
 
-> On Tue, 8 May 2018, Masami Hiramatsu wrote:
-> 
-> > Remove jprobe arch independent generic code
-> > from kernel/kprobes.c.
-> 
-> # git grep register_jprobes
-> include/linux/kprobes.h:static inline int register_jprobes(struct jprobe **jps, int num)
-> include/linux/kprobes.h:static inline void unregister_jprobes(struct jprobe **jps, int num)
-> kernel/test_kprobes.c:  ret = register_jprobes(jps, 2);
-> kernel/test_kprobes.c:          pr_err("register_jprobes returned %d\n", ret);
-> kernel/test_kprobes.c:  unregister_jprobes(jps, 2);
-> 
-> You forgot to remove a few things ...
+"make clean" should remove the generated file "scsi_devinfo_tbl.c",
+so list it in the clean-files variable so that the file gets
+cleaned up.
 
-Ah, thoes are already disabled (with #if 0) but it is better to remove it first.
+Fixes: 345e29608b4b ("scsi: scsi: Export blacklist flags to sysfs")
 
-Thanks!
+Cc: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+ drivers/scsi/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Thanks,
-> 
-> 	tglx
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+--- linux-4.17-rc4.orig/drivers/scsi/Makefile
++++ linux-4.17-rc4/drivers/scsi/Makefile
+@@ -182,7 +182,7 @@ zalon7xx-objs	:= zalon.o ncr53c8xx.o
+ NCR_Q720_mod-objs	:= NCR_Q720.o ncr53c8xx.o
+ 
+ # Files generated that shall be removed upon make clean
+-clean-files :=	53c700_d.h 53c700_u.h
++clean-files :=	53c700_d.h 53c700_u.h scsi_devinfo_tbl.c
+ 
+ $(obj)/53c700.o $(MODVERDIR)/$(obj)/53c700.ver: $(obj)/53c700_d.h
+ 
