@@ -1,38 +1,39 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpOQ1S0JrWRYPjBoknc7i0DWDTW2RFJ0BcW5h2qGGgiS9P5AwVJq0YozHePkCTEhxz0C/4O
-ARC-Seal: i=1; a=rsa-sha256; t=1526281133; cv=none;
+X-Google-Smtp-Source: AB8JxZoWQCss4PA8Vsiw275amUjWtFUgj1M76MUKIkYAvByFpg2rRu9rL8QkMPL9meF7VujEb7Jd
+ARC-Seal: i=1; a=rsa-sha256; t=1526281130; cv=none;
         d=google.com; s=arc-20160816;
-        b=kGa/sUQGHeImzdQMlXHN2cvz8hf18Az6gcSXv8E+8XyO2JULMryJ9sKPytxfJ2OEcA
-         OdgZfSx3vRIGS3CLojkm9nqid4eEqVmM11BuN8jFs7q30FP4Jbdm3UQQB5LDlyFZV5Ot
-         ICaZAnUSxW1gf/AJl9PDE7fXsTAjarK6qoc7iwc2NzhXDHRROY3BItVA0pXQslGQpDUe
-         0cO/VlbmMhfcbaEYOqbb+TJ0QsjOlyYuPdGQNBWTGVi+L70VFHbDvkP/S4pBk4PdgCiU
-         LqBbOXQ7K/qEK7praL9H0iP4gMTZAMfeirPGoZafrLlvTm8U5HmgT40rvuhFbnl63bMw
-         I23Q==
+        b=V8PPS7wR6LKHuMulJqGdRoe4w3vW75DevEtKXqryCDwuMuGtncLVlJaOZ0cHLezIs5
+         fOmLpQpd39IM75nvxUCpWkjCr1SLJURQfOy6XJLnYDD6xTNuc03qKUq17FQKuA2fBwLN
+         JIm1LPr2G9a3Ml2gk5dRdGOkxgyv3jSiK6w6g2JRMKfGFJ9AjUEU1DVuRTXzz22SOwBj
+         SvAnuoYVR82Jfw8uGpy7V9AO2XgZ35jVBd+4M04dfjtwSG175FmWgY+6Z4/U0KjyEDAX
+         jjh5zd4yMzX2I/DlYonGPlpxrNFYlrakNi/k9Wz+v4pbWHiEm7DZdKcY7kM2yMF+QO87
+         7rYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=DfNd84cZK7g/1hqSDiIcO7Nx7akfoX5R2O21l+XTTkQ=;
-        b=z1Qc5Zldrne6e+CBQMCki39MaELsl6NWWnsq+EZ0vLRcC65AInWGPv4u6XBCOD7N7x
-         Ixg2gadc9H/hpa8PS0ynrOegd8fxbgEZUTE1Culs1cBNxbX7KmdBdfImBc845uQJt+wl
-         IpeRiiwANZRDPQqL4BcBdJDyDzMcbjT2ulnFtCOjzfrclA8MMWqKF5+YXKV2L7eO7Gmw
-         oum1Ah6hgLKv5rBU6Ladv7g8JVNCSZ30A2I+2GZAe/Jq5lljSLfiH8CwaxjiAD3Z7iYm
-         hFvb5R4FWS+C++aUhdsjtbSNEOhoXSqakwjDxyhiYnQsd0sJHzO7GBNo56GLZ/7Ty26Q
-         fZjw==
+        bh=gt+uI2yTzW1OqzbmdHbQXsYsxnEaWWeem5jtx+IvpFc=;
+        b=zFBxfPasKX8dABjs0SA/fGACpepqzhy2Ki3BZpCzHheupdjUsPdaqeFTZBmcN/bXEi
+         VL6MfsvMaV2TKBkBoqWjw3May4nWBpK9bKpmePQUgNchGUH0C/tWw0yFaQ9c3kuElK1/
+         /H5lUCdbreYp7ae6Ro4oz59ucY0AdYoglCg/VWTtqpwdCyKBB+T13t+oVCPydWHhCE7T
+         E1ua/G0BZcM9v9Lnt9fFANINFPx4gGHqIN2DKw2ontHFymH/GJKRFG4npHwQqc3Qot3W
+         jycqTJv3bi6bTySNu2iM7IeHK36Z/i3eo1mQ5C9pmzM0QIRQxgyAkFrF1cK1JUdVpdcY
+         xOwA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=W8YhqZ1n;
+       dkim=pass header.i=@kernel.org header.s=default header.b=LVeWmUqq;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=W8YhqZ1n;
+       dkim=pass header.i=@kernel.org header.s=default header.b=LVeWmUqq;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.16 29/72] dm integrity: use kvfree for kvmallocd memory
-Date: Mon, 14 May 2018 08:48:46 +0200
-Message-Id: <20180514064824.298486484@linuxfoundation.org>
+	"Richard W.M. Jones" <rjones@redhat.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.16 28/72] libata: Apply NOLPM quirk for SanDisk SD7UB3Q*G1001 SSDs
+Date: Mon, 14 May 2018 08:48:45 +0200
+Message-Id: <20180514064824.248043941@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421635763781439?=
-X-GMAIL-MSGID: =?utf-8?q?1600421765787615700?=
+X-GMAIL-THRID: =?utf-8?q?1600421262061858656?=
+X-GMAIL-MSGID: =?utf-8?q?1600421763135003626?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,30 +52,43 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit fc8cec113904a47396bf0a1afc62920d66319d36 upstream.
+commit 184add2ca23ce5edcac0ab9c3b9be13f91e7b567 upstream.
 
-Use kvfree instead of kfree because the array is allocated with kvmalloc.
+Richard Jones has reported that using med_power_with_dipm on a T450s
+with a Sandisk SD7UB3Q256G1001 SSD (firmware version X2180501) is
+causing the machine to hang.
 
-Fixes: 7eada909bfd7a ("dm: add integrity target")
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Switching the LPM to max_performance fixes this, so it seems that
+this Sandisk SSD does not handle LPM well.
+
+Note in the past there have been bug-reports about the following
+Sandisk models not working with min_power, so we may need to extend
+the quirk list in the future: name - firmware
+Sandisk SD6SB2M512G1022I   - X210400
+Sandisk SD6PP4M-256G-1006  - A200906
+
+Cc: stable@vger.kernel.org
+Cc: Richard W.M. Jones <rjones@redhat.com>
+Reported-and-tested-by: Richard W.M. Jones <rjones@redhat.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-integrity.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/ata/libata-core.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/md/dm-integrity.c
-+++ b/drivers/md/dm-integrity.c
-@@ -2440,7 +2440,7 @@ static void dm_integrity_free_journal_sc
- 	unsigned i;
- 	for (i = 0; i < ic->journal_sections; i++)
- 		kvfree(sl[i]);
--	kfree(sl);
-+	kvfree(sl);
- }
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4549,6 +4549,9 @@ static const struct ata_blacklist_entry
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM |
+ 						ATA_HORKAGE_NOLPM, },
  
- static struct scatterlist **dm_integrity_alloc_journal_scatterlist(struct dm_integrity_c *ic, struct page_list *pl)
++	/* Sandisk devices which are known to not handle LPM well */
++	{ "SanDisk SD7UB3Q*G1001",	NULL,	ATA_HORKAGE_NOLPM, },
++
+ 	/* devices that don't properly handle queued TRIM commands */
+ 	{ "Micron_M500_*",		NULL,	ATA_HORKAGE_NO_NCQ_TRIM |
+ 						ATA_HORKAGE_ZERO_AFTER_TRIM, },
