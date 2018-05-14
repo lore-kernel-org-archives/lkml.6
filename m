@@ -1,99 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752482AbeENXAL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 19:00:11 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48704 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752359AbeENXAG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 19:00:06 -0400
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org
-Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will.deacon@arm.com,
-        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-        akiyks@gmail.com, Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH memory-model 2/3] arm64: Remove smp_mb() from arch_spin_is_locked()
-Date: Mon, 14 May 2018 16:01:28 -0700
-X-Mailer: git-send-email 2.5.2
-In-Reply-To: <20180514230105.GA6421@linux.vnet.ibm.com>
-References: <20180514230105.GA6421@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18051423-0008-0000-0000-000003076B86
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009026; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032372; UDB=6.00527777; IPR=6.00811504;
- MB=3.00021114; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 23:00:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051423-0009-0000-0000-0000393FFE43
-Message-Id: <1526338889-7003-2-git-send-email-paulmck@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805140227
+        id S1752498AbeENXJa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 19:09:30 -0400
+Received: from ozlabs.org ([203.11.71.1]:54205 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752414AbeENXJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 19:09:28 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 15 May 2018 09:09:01 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoph Hellwig <hch@lst.de>, Olof Johansson <olof@lixom.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the samsung-krzk tree with the
+ dma-mapping tree
+Message-ID: <20180515090901.74c9429e@canb.auug.org.au>
+In-Reply-To: <20180510091634.7fb3aaf2@canb.auug.org.au>
+References: <20180510091634.7fb3aaf2@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/GMW0qBhCSwxNPm2W8A8H_3S"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
+--Sig_/GMW0qBhCSwxNPm2W8A8H_3S
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Commit 38b850a73034f ("arm64: spinlock: order spin_{is_locked,unlock_wait}
-against local locks") added an smp_mb() to arch_spin_is_locked(), in order
-"to ensure that the lock value is always loaded after any other locks have
-been taken by the current CPU", and reported one example (the "insane case"
-in ipc/sem.c) relying on such guarantee.
+Hi all,
 
-It is however understood that spin_is_locked() is not required to provide
-such an ordering guarantee (a guarantee that is currently not provided by
-all the implementations/archs), and that callers relying on such ordering
-should instead insert suitable memory barriers before acting on the result
-of spin_is_locked().
+On Thu, 10 May 2018 09:16:34 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the samsung-krzk tree got a conflict in:
+>=20
+>   arch/arm/mach-exynos/Kconfig
+>=20
+> between commit:
+>=20
+>   4965a68780c5 ("arch: define the ARCH_DMA_ADDR_T_64BIT config symbol in =
+lib/Kconfig")
+>=20
+> from the dma-mapping tree and commit:
+>=20
+>   c5deb598089c ("ARM: exynos: Remove support for Exynos5440")
+>=20
+> from the samsung-krzk tree.
+>=20
+> I fixed it up (the latter removed the whole section modified by
+> the former, so I just removed the section) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-Following a recent auditing [1] of the callers of {,raw_}spin_is_locked(),
-revealing that none of them are relying on the ordering guarantee anymore,
-this commit removes the leading smp_mb() from the primitive thus reverting
-38b850a73034f.
+This is now a conflict between the arm-soc tree and the dma-mapping tree.
 
-[1] https://marc.info/?l=linux-kernel&m=151981440005264&w=2
-    https://marc.info/?l=linux-kernel&m=152042843808540&w=2
-    https://marc.info/?l=linux-kernel&m=152043346110262&w=2
+--=20
+Cheers,
+Stephen Rothwell
 
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
----
- arch/arm64/include/asm/spinlock.h | 5 -----
- 1 file changed, 5 deletions(-)
+--Sig_/GMW0qBhCSwxNPm2W8A8H_3S
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-diff --git a/arch/arm64/include/asm/spinlock.h b/arch/arm64/include/asm/spinlock.h
-index ebdae15d665d..26c5bd7d88d8 100644
---- a/arch/arm64/include/asm/spinlock.h
-+++ b/arch/arm64/include/asm/spinlock.h
-@@ -122,11 +122,6 @@ static inline int arch_spin_value_unlocked(arch_spinlock_t lock)
- 
- static inline int arch_spin_is_locked(arch_spinlock_t *lock)
- {
--	/*
--	 * Ensure prior spin_lock operations to other locks have completed
--	 * on this CPU before we test whether "lock" is locked.
--	 */
--	smp_mb(); /* ^^^ */
- 	return !arch_spin_value_unlocked(READ_ONCE(*lock));
- }
- 
--- 
-2.5.2
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6Fw0ACgkQAVBC80lX
+0GzaRQgAhplWggt/EOx/th8EogHsYGQ62l0YeXwMjc7E5A2kUAo4JLNS/79hOL+w
+Kp1YoB3Yph38T0LyfqycMb6ibup5wemtRhr8PkDm9JJlqdSmhIMxTWv85qbYSJL3
+cDOX4eIap1KHL+/+SCMlNNQGyUGo6ihgvXbUZhehh/9R5fYZWYBahLGdwynByJog
+f9XLk8zJwPm93IRpJ7tMKN/miW5WiezD3Fv7Nqc3JjRWePKuW5gQEvP4pDgo7FEV
+h7P6FvRZnOwxCNutPyevCKH3PYnzFPQMOlEvGFmuTljEAZeGTS5U0slRn159U4kA
+UmZ1aBuiDMEb831JX4xRS4mfwvdEgw==
+=KATa
+-----END PGP SIGNATURE-----
+
+--Sig_/GMW0qBhCSwxNPm2W8A8H_3S--
