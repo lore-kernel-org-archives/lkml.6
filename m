@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752324AbeENDZG (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 23:25:06 -0400
-Received: from regular1.263xmail.com ([211.150.99.139]:41495 "EHLO
+        id S1752362AbeENDZe (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 23:25:34 -0400
+Received: from regular1.263xmail.com ([211.150.99.141]:36346 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752151AbeENDZE (ORCPT
+        with ESMTP id S1752102AbeENDZd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 23:25:04 -0400
+        Sun, 13 May 2018 23:25:33 -0400
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -17,7 +17,7 @@ X-RL-SENDER: zhangqing@rock-chips.com
 X-FST-TO: heiko@sntech.de
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: zhangqing@rock-chips.com
-X-UNIQUE-TAG: <89a145d37861abd1f27f0164970335ee>
+X-UNIQUE-TAG: <ac3c02e349a28766a0d89d7f991468bf>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: Elaine Zhang <zhangqing@rock-chips.com>
@@ -28,9 +28,9 @@ Cc: devicetree@vger.kernel.org, rjw@rjwysocki.net, khilman@kernel.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         wxt@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
         huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v2 06/13] dt-bindings: add binding for rk3128 power domains
-Date: Mon, 14 May 2018 11:30:26 +0800
-Message-Id: <1526268626-11855-1-git-send-email-zhangqing@rock-chips.com>
+Subject: [PATCH v2 07/13] soc: rockchip: power-domain: add power domain support for rk3128
+Date: Mon, 14 May 2018 11:30:53 +0800
+Message-Id: <1526268653-18036-1-git-send-email-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1526268455-9133-1-git-send-email-zhangqing@rock-chips.com>
 References: <1526268455-9133-1-git-send-email-zhangqing@rock-chips.com>
@@ -38,41 +38,68 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add binding documentation for the power domains
-found on Rockchip RK3128 SoCs.
+This driver is modified to support RK3128 SoC.
 
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- Documentation/devicetree/bindings/soc/rockchip/power_domain.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/soc/rockchip/pm_domains.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt b/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt
-index 79924ee9ae86..9a3f5fd36a80 100644
---- a/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt
-+++ b/Documentation/devicetree/bindings/soc/rockchip/power_domain.txt
-@@ -6,6 +6,7 @@ powered up/down by software based on different application scenes to save power.
- Required properties for power domain controller:
- - compatible: Should be one of the following.
- 	"rockchip,rk3036-power-controller" - for RK3036 SoCs.
-+	"rockchip,rk3128-power-controller" - for RK3128 SoCs.
- 	"rockchip,rk3288-power-controller" - for RK3288 SoCs.
- 	"rockchip,rk3328-power-controller" - for RK3328 SoCs.
- 	"rockchip,rk3366-power-controller" - for RK3366 SoCs.
-@@ -19,6 +20,7 @@ Required properties for power domain controller:
- Required properties for power domain sub nodes:
- - reg: index of the power domain, should use macros in:
- 	"include/dt-bindings/power/rk3036-power.h" - for RK3036 type power domain.
-+	"include/dt-bindings/power/rk3128-power.h" - for RK3128 type power domain.
- 	"include/dt-bindings/power/rk3288-power.h" - for RK3288 type power domain.
- 	"include/dt-bindings/power/rk3328-power.h" - for RK3328 type power domain.
- 	"include/dt-bindings/power/rk3366-power.h" - for RK3366 type power domain.
-@@ -96,6 +98,7 @@ containing a phandle to the power device node and an index specifying which
- power domain to use.
- The index should use macros in:
- 	"include/dt-bindings/power/rk3036-power.h" - for rk3036 type power domain.
-+	"include/dt-bindings/power/rk3128-power.h" - for rk3128 type power domain.
- 	"include/dt-bindings/power/rk3288-power.h" - for rk3288 type power domain.
- 	"include/dt-bindings/power/rk3328-power.h" - for rk3328 type power domain.
- 	"include/dt-bindings/power/rk3366-power.h" - for rk3366 type power domain.
+diff --git a/drivers/soc/rockchip/pm_domains.c b/drivers/soc/rockchip/pm_domains.c
+index 01d4ba26a054..99a2dd8a7801 100644
+--- a/drivers/soc/rockchip/pm_domains.c
++++ b/drivers/soc/rockchip/pm_domains.c
+@@ -19,6 +19,7 @@
+ #include <linux/regmap.h>
+ #include <linux/mfd/syscon.h>
+ #include <dt-bindings/power/rk3036-power.h>
++#include <dt-bindings/power/rk3128-power.h>
+ #include <dt-bindings/power/rk3288-power.h>
+ #include <dt-bindings/power/rk3328-power.h>
+ #include <dt-bindings/power/rk3366-power.h>
+@@ -720,6 +721,14 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
+ 	[RK3036_PD_SYS]		= DOMAIN_RK3036(8, 22, 29, false),
+ };
+ 
++static const struct rockchip_domain_info rk3128_pm_domains[] = {
++	[RK3128_PD_CORE]	= DOMAIN_RK3288(0, 0, 4, false),
++	[RK3128_PD_MSCH]	= DOMAIN_RK3288(-1, -1, 6, true),
++	[RK3128_PD_VIO]		= DOMAIN_RK3288(3, 3, 2, false),
++	[RK3128_PD_VIDEO]	= DOMAIN_RK3288(2, 2, 1, false),
++	[RK3128_PD_GPU]		= DOMAIN_RK3288(1, 1, 3, false),
++};
++
+ static const struct rockchip_domain_info rk3288_pm_domains[] = {
+ 	[RK3288_PD_VIO]		= DOMAIN_RK3288(7, 7, 4, false),
+ 	[RK3288_PD_HEVC]	= DOMAIN_RK3288(14, 10, 9, false),
+@@ -796,6 +805,17 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
+ 	.domain_info = rk3036_pm_domains,
+ };
+ 
++static const struct rockchip_pmu_info rk3128_pmu = {
++	.pwr_offset = 0x04,
++	.status_offset = 0x08,
++	.req_offset = 0x0c,
++	.idle_offset = 0x10,
++	.ack_offset = 0x10,
++
++	.num_domains = ARRAY_SIZE(rk3128_pm_domains),
++	.domain_info = rk3128_pm_domains,
++};
++
+ static const struct rockchip_pmu_info rk3288_pmu = {
+ 	.pwr_offset = 0x08,
+ 	.status_offset = 0x0c,
+@@ -875,6 +895,10 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
+ 		.data = (void *)&rk3036_pmu,
+ 	},
+ 	{
++		.compatible = "rockchip,rk3128-power-controller",
++		.data = (void *)&rk3128_pmu,
++	},
++	{
+ 		.compatible = "rockchip,rk3288-power-controller",
+ 		.data = (void *)&rk3288_pmu,
+ 	},
 -- 
 1.9.1
