@@ -1,77 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932300AbeENN5V (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 09:57:21 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:60016 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932125AbeENN5T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 09:57:19 -0400
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: linux-m68k@vger.kernel.org
-Cc: Martijn Coenen <maco@android.com>,
-        Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] m68k/uaccess: Revive 64-bit get_user()
-Date: Mon, 14 May 2018 15:57:15 +0200
-Message-Id: <1526306235-29755-1-git-send-email-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.7.4
+        id S1753832AbeENN6D (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 09:58:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54243 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753758AbeENN6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 09:58:01 -0400
+Date: Mon, 14 May 2018 15:57:59 +0200
+From: Jan Kara <jack@suse.cz>
+To: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: viro@zeniv.linux.org.uk, tglx@linutronix.de, arnd@arndb.de,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        y2038@lists.linaro.org, jack@suse.com
+Subject: Re: [PATCH 5/6] udf: Simplify calls to udf_disk_stamp_to_time
+Message-ID: <20180514135759.r4jxnw7mp3h6ak36@quack2.suse.cz>
+References: <20180512045921.18311-1-deepa.kernel@gmail.com>
+ <20180512045921.18311-6-deepa.kernel@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180512045921.18311-6-deepa.kernel@gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Revive support for 64-bit get_user(), which was disabled in commit
-d94af931af42152e ("[PATCH] m68k: clean up uaccess.h") due to a "broken"
-typeof in (then brand new) gcc-4.1.
+Hello,
 
-  - Keep on using u64 for the temporary, as __typeof__() doesn't drop
-    the const qualifier,
-  - Move it into a union (like mips32 does) to get rid of the cast, as
-    using get_user() to fetch a __user pointer would cause a "cast to
-    pointer from integer of different size" warning otherwise.
+On Fri 11-05-18 21:59:20, Deepa Dinamani wrote:
+> Subsequent patches in the series convert inode timestamps
+> to use struct timespec64 instead of struct timespec as
+> part of solving the y2038 problem.
+> 
+> commit fd3cfad374d4 ("udf: Convert udf_disk_stamp_to_time() to use mktime64()")
+> eliminated the NULL return condition from udf_disk_stamp_to_time().
+> udf_time_to_disk_time() is always called with a valid dest pointer and
+> the return value is ignored.
+> Further, caller can as well check the dest pointer being passed in rather
+> than return argument.
+> Make both the functions return void.
+> 
+> This will make the inode timestamp conversion simpler.
+> 
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> Cc: jack@suse.com
 
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- arch/m68k/include/asm/uaccess_mm.h | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+I'm fine with this. Just one bug below:
 
-diff --git a/arch/m68k/include/asm/uaccess_mm.h b/arch/m68k/include/asm/uaccess_mm.h
-index 75c172e909acdf18..c4cb889660aa0c35 100644
---- a/arch/m68k/include/asm/uaccess_mm.h
-+++ b/arch/m68k/include/asm/uaccess_mm.h
-@@ -141,10 +141,12 @@ asm volatile ("\n"					\
- 	case 4:								\
- 		__get_user_asm(__gu_err, x, ptr, u32, l, r, -EFAULT);	\
- 		break;							\
--/*	case 8:	disabled because gcc-4.1 has a broken typeof		\
-- 	    {								\
-- 		const void *__gu_ptr = (ptr);				\
-- 		u64 __gu_val;						\
-+	case 8: {							\
-+		const void *__gu_ptr = (ptr);				\
-+		union {							\
-+			u64 l;						\
-+			__typeof__(*(ptr)) t;				\
-+		} __gu_val;						\
- 		asm volatile ("\n"					\
- 			"1:	"MOVES".l	(%2)+,%1\n"		\
- 			"2:	"MOVES".l	(%2),%R1\n"		\
-@@ -162,13 +164,13 @@ asm volatile ("\n"					\
- 			"	.long	1b,10b\n"			\
- 			"	.long	2b,10b\n"			\
- 			"	.previous"				\
--			: "+d" (__gu_err), "=&r" (__gu_val),		\
-+			: "+d" (__gu_err), "=&r" (__gu_val.l),		\
- 			  "+a" (__gu_ptr)				\
- 			: "i" (-EFAULT)					\
- 			: "memory");					\
--		(x) = (__force typeof(*(ptr)))__gu_val;			\
-+		(x) = __gu_val.t;					\
- 		break;							\
--	    }	*/							\
-+	}								\
- 	default:							\
- 		__gu_err = __get_user_bad();				\
- 		break;							\
+> diff --git a/fs/udf/super.c b/fs/udf/super.c
+> index 0d27d41f5c6e..bd0ae64bc31c 100644
+> --- a/fs/udf/super.c
+> +++ b/fs/udf/super.c
+> @@ -862,6 +862,9 @@ static int udf_load_pvoldesc(struct super_block *sb, sector_t block)
+>  	struct buffer_head *bh;
+>  	uint16_t ident;
+>  	int ret = -ENOMEM;
+> +#ifdef UDFFS_DEBUG
+> +	struct timestamp *ts;
+> +#endif
+>  
+>  	outstr = kmalloc(128, GFP_NOFS);
+>  	if (!outstr)
+> @@ -880,15 +883,14 @@ static int udf_load_pvoldesc(struct super_block *sb, sector_t block)
+>  
+>  	pvoldesc = (struct primaryVolDesc *)bh->b_data;
+>  
+> -	if (udf_disk_stamp_to_time(&UDF_SB(sb)->s_record_time,
+> -			      pvoldesc->recordingDateAndTime)) {
+> +	udf_disk_stamp_to_time(&UDF_SB(sb)->s_record_time,
+> +			      pvoldesc->recordingDateAndTime);
+>  #ifdef UDFFS_DEBUG
+> -		struct timestamp *ts = &pvoldesc->recordingDateAndTime;
+> -		udf_debug("recording time %04u/%02u/%02u %02u:%02u (%x)\n",
+> -			  le16_to_cpu(ts->year), ts->month, ts->day, ts->hour,
+> -			  ts->minute, le16_to_cpu(ts->typeAndTimezone));
+> +	*ts = &pvoldesc->recordingDateAndTime;
+
+This should be 'ts ='.
+
+Do you prefer me taking this patch through my tree or will you carry it as
+a part of your series?
+
+								Honza
 -- 
-2.7.4
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
