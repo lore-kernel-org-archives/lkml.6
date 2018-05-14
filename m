@@ -1,182 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752587AbeENHr4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:47:56 -0400
-Received: from mail-eopbgr30077.outbound.protection.outlook.com ([40.107.3.77]:63808
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752310AbeENHrv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:47:51 -0400
-From: Yinbo Zhu <yinbo.zhu@nxp.com>
-To: Leo Li <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Catalin Marinas )" <catalin.marinas@arm.com>,
-        "Will Deacon )" <will.deacon@arm.com>,
-        "Lorenzo Pieralisi )" <lorenzo.pieralisi@arm.com>
-CC: Xiaobo Xie <xiaobo.xie@nxp.com>, Ran Wang <ran.wang_1@nxp.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Shawn Guo <shawnguo@kernel.org>,
-        Madalin-cristian Bucur <madalin.bucur@nxp.com>,
-        "Z.q. Hou" <zhiqiang.hou@nxp.com>, Jerry Huang <jerry.huang@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>, Qiang Zhao <qiang.zhao@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Jiaheng Fan <jiaheng.fan@nxp.com>, Po Liu <po.liu@nxp.com>,
-        Nipun Gupta <nipun.gupta@nxp.com>,
-        =?utf-8?B?SG9yaWEgR2VhbnTEgw==?= <horia.geanta@nxp.com>,
-        Priyanka Jain <priyanka.jain@nxp.com>, Sumit Garg <sumit.garg@nxp.com>,
-        costi <constantin.tudor@freescale.com>,
-        Bogdan Purcareata <bogdan.purcareata@nxp.com>,
-        "open list:CLOCKSOURCE, CLOCKEVENT DRIVERS"
-        <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:FREESCALE SOC DRIVERS" <linuxppc-dev@lists.ozlabs.org>,
-        Andy Tang <andy.tang@nxp.com>, Ying Zhang <ying.zhang22455@nxp.com>
-Subject: RE: [PATCH 3/9] soc: fsl: set rcpm bit for FTM
-Thread-Topic: [PATCH 3/9] soc: fsl: set rcpm bit for FTM
-Thread-Index: AQHT6NlaIDu3kVsLXEyLUnaiWWDj6KQqwW0AgAPgnxA=
-Date: Mon, 14 May 2018 07:47:45 +0000
-Message-ID: <HE1PR0401MB1945EAD443377803A9F9EA5CE99C0@HE1PR0401MB1945.eurprd04.prod.outlook.com>
-References: <20180511033530.7931-1-yinbo.zhu@nxp.com>
- <20180511033530.7931-3-yinbo.zhu@nxp.com>
- <AM4PR0401MB16995DFED0376ACE0DD5E7A78F9F0@AM4PR0401MB1699.eurprd04.prod.outlook.com>
-In-Reply-To: <AM4PR0401MB16995DFED0376ACE0DD5E7A78F9F0@AM4PR0401MB1699.eurprd04.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yinbo.zhu@nxp.com;
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0401MB2010;7:B0tO1HmpQSL/jA5SISDsvrELwkY11oV495c+l2iVQh3nhromhJQy3kb/xC9WovPtP/9Y3sO78vDmf+Mlibmru1bFLUMZhALIn9cEBaZ7zmcWsKKwf9rNdGdRHn/Ve0NptzKKUgr9EKOPCD9Hao4qpuv6uflufsBX+cuuN/D2Y6kob8QFzVR8xVKduevuNGoTkEBPagawiZqwtkadazXeU3cRIdCse2K0tscVRTiKuJYcydhWk5c8JH3TBEd9VFNq
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:HE1PR0401MB2010;
-x-ms-traffictypediagnostic: HE1PR0401MB2010:
-x-microsoft-antispam-prvs: <HE1PR0401MB20106FD5CD31838F1B0BE98BE99C0@HE1PR0401MB2010.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(65623756079841)(185117386973197)(788757137089)(101931422205132)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(6072148)(201708071742011);SRVR:HE1PR0401MB2010;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0401MB2010;
-x-forefront-prvs: 067270ECAF
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(39860400002)(39380400002)(396003)(13464003)(189003)(199004)(66066001)(99286004)(11346002)(9686003)(446003)(7736002)(3660700001)(6306002)(3280700002)(6246003)(229853002)(6436002)(25786009)(53936002)(102836004)(2906002)(105586002)(7696005)(8936002)(305945005)(5250100002)(53546011)(33656002)(110136005)(6506007)(2900100001)(106356001)(97736004)(316002)(478600001)(7416002)(8676002)(486006)(476003)(55016002)(76176011)(74316002)(26005)(86362001)(3846002)(44832011)(68736007)(966005)(81166006)(81156014)(54906003)(5660300001)(4326008)(14454004)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0401MB2010;H:HE1PR0401MB1945.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: xCvebRothdrbJ8DQpwlQU4SW1raVtdFC7b3VshMWtHq1RkpUaGdAVNUFNawMSbDRaD8MRfsW8DG00d/ubqGq2OSIAfQOnm1+j6+Qs4br6+cRpi1YKM+eto2LInUGVghny/0KHgVAZsjAfbbT8/MLVudVNnje6ILwzAWfVaobAiJyYtjBIFAGnBpQjxcIfxdp
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
+        id S1752584AbeENHsN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:48:13 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51033 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752265AbeENHsI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 03:48:08 -0400
+Date: Mon, 14 May 2018 00:47:48 -0700
+From: tip-bot for Yazen Ghannam <tipbot@zytor.com>
+Message-ID: <tip-a32bc29ed19776ef6827d6336847de9a0b7a8dc5@git.kernel.org>
+Cc: yazen.ghannam@amd.com, mingo@kernel.org, peterz@infradead.org,
+        matt@codeblueprint.co.uk, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, tglx@linutronix.de,
+        torvalds@linux-foundation.org
+Reply-To: torvalds@linux-foundation.org, tglx@linutronix.de,
+        ard.biesheuvel@linaro.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        matt@codeblueprint.co.uk, yazen.ghannam@amd.com, peterz@infradead.org,
+        mingo@kernel.org
+In-Reply-To: <20180504060003.19618-10-ard.biesheuvel@linaro.org>
+References: <20180504060003.19618-10-ard.biesheuvel@linaro.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:efi/core] efi: Decode IA32/X64 MS Check structure
+Git-Commit-ID: a32bc29ed19776ef6827d6336847de9a0b7a8dc5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: d83abb11-daf7-4280-a0fc-08d5b96efb9e
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d83abb11-daf7-4280-a0fc-08d5b96efb9e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2018 07:47:45.8997
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0401MB2010
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4E7m1MQ008013
 
+Commit-ID:  a32bc29ed19776ef6827d6336847de9a0b7a8dc5
+Gitweb:     https://git.kernel.org/tip/a32bc29ed19776ef6827d6336847de9a0b7a8dc5
+Author:     Yazen Ghannam <yazen.ghannam@amd.com>
+AuthorDate: Fri, 4 May 2018 07:59:55 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 14 May 2018 08:57:48 +0200
 
+efi: Decode IA32/X64 MS Check structure
 
------Original Message-----
-From: Leo Li 
-Sent: 2018年5月12日 1:00
-To: Yinbo Zhu <yinbo.zhu@nxp.com>; Yinbo Zhu <yinbo.zhu@nxp.com>; Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>; Catalin Marinas ) <catalin.marinas@arm.com>; Will Deacon ) <will.deacon@arm.com>; Lorenzo Pieralisi ) <lorenzo.pieralisi@arm.com>
-Cc: Xiaobo Xie <xiaobo.xie@nxp.com>; Ran Wang <ran.wang_1@nxp.com>; Daniel Lezcano <daniel.lezcano@linaro.org>; Thomas Gleixner <tglx@linutronix.de>; Shawn Guo <shawnguo@kernel.org>; Madalin-cristian Bucur <madalin.bucur@nxp.com>; Z.q. Hou <zhiqiang.hou@nxp.com>; Jerry Huang <jerry.huang@nxp.com>; M.h. Lian <minghuan.lian@nxp.com>; Qiang Zhao <qiang.zhao@nxp.com>; Fabio Estevam <fabio.estevam@nxp.com>; Jiaheng Fan <jiaheng.fan@nxp.com>; Po Liu <po.liu@nxp.com>; Nipun Gupta <nipun.gupta@nxp.com>; Horia Geantă <horia.geanta@nxp.com>; Priyanka Jain <priyanka.jain@nxp.com>; Sumit Garg <sumit.garg@nxp.com>; costi <constantin.tudor@freescale.com>; Bogdan Purcareata <bogdan.purcareata@nxp.com>; open list:CLOCKSOURCE, CLOCKEVENT DRIVERS <linux-kernel@vger.kernel.org>; open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS <devicetree@vger.kernel.org>; linux-arm-kernel@lists.infradead.org; open list:FREESCALE SOC DRIVERS <linuxppc-dev@lists.ozlabs.org>; Andy Tang <andy.tang@nxp.com>; Ying Zhang <ying.zhang22455@nxp.com>
-Subject: RE: [PATCH 3/9] soc: fsl: set rcpm bit for FTM
+The IA32/X64 MS Check structure varies from the other Check structures
+in the the bit positions of its fields, and it includes an additional
+"Error Type" field.
 
+Decode the MS Check structure in a separate function.
 
+Based on UEFI 2.7 Table 257. IA32/X64 MS Check Field Description.
 
-> -----Original Message-----
-> From: Yinbo Zhu [mailto:yinbo.zhu@nxp.com]
-> Sent: Thursday, May 10, 2018 10:35 PM
-> To: Yinbo Zhu <yinbo.zhu@nxp.com>; Rob Herring <robh+dt@kernel.org>; 
-> Mark Rutland <mark.rutland@arm.com>; Catalin Marinas ) 
-> <catalin.marinas@arm.com>; Will Deacon ) <will.deacon@arm.com>; 
-> Lorenzo Pieralisi ) <lorenzo.pieralisi@arm.com>; Leo Li 
-> <leoyang.li@nxp.com>
-> Cc: Xiaobo Xie <xiaobo.xie@nxp.com>; Ran Wang <ran.wang_1@nxp.com>; 
-> Daniel Lezcano <daniel.lezcano@linaro.org>; Thomas Gleixner 
-> <tglx@linutronix.de>; Shawn Guo <shawnguo@kernel.org>; 
-> Madalin-cristian Bucur <madalin.bucur@nxp.com>; Z.q. Hou 
-> <zhiqiang.hou@nxp.com>; Jerry Huang <jerry.huang@nxp.com>; M.h. Lian 
-> <minghuan.lian@nxp.com>; Qiang Zhao <qiang.zhao@nxp.com>; Fabio 
-> Estevam <fabio.estevam@nxp.com>; Jiaheng Fan <jiaheng.fan@nxp.com>; Po 
-> Liu <po.liu@nxp.com>; Nipun Gupta <nipun.gupta@nxp.com>; Horia Geantă 
-> <horia.geanta@nxp.com>; Priyanka Jain <priyanka.jain@nxp.com>; Sumit 
-> Garg <sumit.garg@nxp.com>; costi <constantin.tudor@freescale.com>; 
-> Bogdan Purcareata <bogdan.purcareata@nxp.com>; Meng Yi 
-> <meng.yi@nxp.com>; Wang Dongsheng <dongsheng.wang@nxp.com>; open 
-> list:CLOCKSOURCE, CLOCKEVENT DRIVERS <linux-kernel@vger.kernel.org>; 
-> open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS 
-> <devicetree@vger.kernel.org>; linux-arm-kernel@lists.infradead.org; 
-> open list:FREESCALE SOC DRIVERS <linuxppc-dev@lists.ozlabs.org>; Andy 
-> Tang <andy.tang@nxp.com>; Ying Zhang <ying.zhang22455@nxp.com>
-> Subject: [PATCH 3/9] soc: fsl: set rcpm bit for FTM
-> 
-> From: Zhang Ying-22455 <ying.zhang22455@nxp.com>
-> 
-> Set RCPM for FTM when using FTM as wakeup source. Because the RCPM 
-> module of each platform has different big-end and little-end mode, 
-> there need to set RCPM depending on the platform.
-> 
-> Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
-> ---
->  .../devicetree/bindings/timer/fsl,ftm-timer.txt    |    7 ++
->  drivers/soc/fsl/layerscape/ftm_alarm.c             |   92 ++++++++++++++++++-
->  2 files changed, 94 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/timer/fsl,ftm-timer.txt
-> b/Documentation/devicetree/bindings/timer/fsl,ftm-timer.txt
-> index aa8c402..15ead58 100644
-> --- a/Documentation/devicetree/bindings/timer/fsl,ftm-timer.txt
-> +++ b/Documentation/devicetree/bindings/timer/fsl,ftm-timer.txt
-> @@ -3,6 +3,13 @@ Freescale FlexTimer Module (FTM) Timer  Required
-> properties:
-> 
->  - compatible : should be "fsl,ftm-timer"
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180504060003.19618-10-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ drivers/firmware/efi/cper-x86.c | 55 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 54 insertions(+), 1 deletion(-)
 
->Hi Yingbo,
-
->This is a change that breaks backward compatibility and not acceptable.
-Hi leo,
-
-This patch if I keep the change as inner patch and push it to dash-linnux but I will not push it to upstream, It's okay?
-As far as I know, there was a other patch and file for replace the file and that the patch is already on the upstream 
-https://patchwork.kernel.org/patch/9391293/
-
-> + Possible compatibles for ARM:
-> +     "fsl,ls1012a-ftm"
-> +     "fsl,ls1021a-ftm"
-> +     "fsl,ls1043a-ftm"
-> +     "fsl,ls1046a-ftm"
-> +     "fsl,ls1088a-ftm"
-> +     "fsl,ls208xa-ftm"
->  - reg : Specifies base physical address and size of the register sets for the
->    clock event device and clock source device.
->  - interrupts : Should be the clock event device interrupt.
-> diff --git a/drivers/soc/fsl/layerscape/ftm_alarm.c
-> b/drivers/soc/fsl/layerscape/ftm_alarm.c
-> index 6f9882f..811dcfa 100644
-> --- a/drivers/soc/fsl/layerscape/ftm_alarm.c
-> +++ b/drivers/soc/fsl/layerscape/ftm_alarm.c
-
->There is no such file in the mainline kernel.  So it looks like the patch set is
-
-> based on some internal git repo instead of the upstream Linux kernel.  This kind of patches
-
-> shouldn't be sent to the upstream mailing list for review.
-
->Regards,
-
->Leo
-This patch will not to upstream.
-
-Regards,
-
-Yinbo.
+diff --git a/drivers/firmware/efi/cper-x86.c b/drivers/firmware/efi/cper-x86.c
+index 5e6716564dba..356b8d326219 100644
+--- a/drivers/firmware/efi/cper-x86.c
++++ b/drivers/firmware/efi/cper-x86.c
+@@ -57,6 +57,20 @@
+ #define CHECK_BUS_TIME_OUT		BIT_ULL(32)
+ #define CHECK_BUS_ADDR_SPACE(check)	(((check) & GENMASK_ULL(34, 33)) >> 33)
+ 
++#define CHECK_VALID_MS_ERR_TYPE		BIT_ULL(0)
++#define CHECK_VALID_MS_PCC		BIT_ULL(1)
++#define CHECK_VALID_MS_UNCORRECTED	BIT_ULL(2)
++#define CHECK_VALID_MS_PRECISE_IP	BIT_ULL(3)
++#define CHECK_VALID_MS_RESTARTABLE_IP	BIT_ULL(4)
++#define CHECK_VALID_MS_OVERFLOW		BIT_ULL(5)
++
++#define CHECK_MS_ERR_TYPE(check)	(((check) & GENMASK_ULL(18, 16)) >> 16)
++#define CHECK_MS_PCC			BIT_ULL(19)
++#define CHECK_MS_UNCORRECTED		BIT_ULL(20)
++#define CHECK_MS_PRECISE_IP		BIT_ULL(21)
++#define CHECK_MS_RESTARTABLE_IP		BIT_ULL(22)
++#define CHECK_MS_OVERFLOW		BIT_ULL(23)
++
+ enum err_types {
+ 	ERR_TYPE_CACHE = 0,
+ 	ERR_TYPE_TLB,
+@@ -111,17 +125,56 @@ static const char * const ia_check_bus_addr_space_strs[] = {
+ 	"Other Transaction",
+ };
+ 
++static const char * const ia_check_ms_error_type_strs[] = {
++	"No Error",
++	"Unclassified",
++	"Microcode ROM Parity Error",
++	"External Error",
++	"FRC Error",
++	"Internal Unclassified",
++};
++
+ static inline void print_bool(char *str, const char *pfx, u64 check, u64 bit)
+ {
+ 	printk("%s%s: %s\n", pfx, str, (check & bit) ? "true" : "false");
+ }
+ 
++static void print_err_info_ms(const char *pfx, u16 validation_bits, u64 check)
++{
++	if (validation_bits & CHECK_VALID_MS_ERR_TYPE) {
++		u8 err_type = CHECK_MS_ERR_TYPE(check);
++
++		printk("%sError Type: %u, %s\n", pfx, err_type,
++		       err_type < ARRAY_SIZE(ia_check_ms_error_type_strs) ?
++		       ia_check_ms_error_type_strs[err_type] : "unknown");
++	}
++
++	if (validation_bits & CHECK_VALID_MS_PCC)
++		print_bool("Processor Context Corrupt", pfx, check, CHECK_MS_PCC);
++
++	if (validation_bits & CHECK_VALID_MS_UNCORRECTED)
++		print_bool("Uncorrected", pfx, check, CHECK_MS_UNCORRECTED);
++
++	if (validation_bits & CHECK_VALID_MS_PRECISE_IP)
++		print_bool("Precise IP", pfx, check, CHECK_MS_PRECISE_IP);
++
++	if (validation_bits & CHECK_VALID_MS_RESTARTABLE_IP)
++		print_bool("Restartable IP", pfx, check, CHECK_MS_RESTARTABLE_IP);
++
++	if (validation_bits & CHECK_VALID_MS_OVERFLOW)
++		print_bool("Overflow", pfx, check, CHECK_MS_OVERFLOW);
++}
++
+ static void print_err_info(const char *pfx, u8 err_type, u64 check)
+ {
+ 	u16 validation_bits = CHECK_VALID_BITS(check);
+ 
++	/*
++	 * The MS Check structure varies a lot from the others, so use a
++	 * separate function for decoding.
++	 */
+ 	if (err_type == ERR_TYPE_MS)
+-		return;
++		return print_err_info_ms(pfx, validation_bits, check);
+ 
+ 	if (validation_bits & CHECK_VALID_TRANS_TYPE) {
+ 		u8 trans_type = CHECK_TRANS_TYPE(check);
