@@ -1,319 +1,265 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752870AbeENLn6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:43:58 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:60418 "EHLO
+        id S1752957AbeENLpB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:45:01 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:60399 "EHLO
         mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752825AbeENLnx (ORCPT
+        with ESMTP id S1752822AbeENLnt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:43:53 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180514114351epoutp031b4d8d6854b0ab61ad47b3ac1562fe75~ugCebCWRH1916519165epoutp03S
-X-AuditID: b6c32a39-8bdff70000000fed-fb-5af97677f8e9
+        Mon, 14 May 2018 07:43:49 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180514114347epoutp03f197dded2f88d73a98e57760d6d8c5bb~ugCbBQGqP1918619186epoutp03I
+X-AuditID: b6c32a37-511ff70000001030-eb-5af9767277d8
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To: Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>
 Cc: Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
         linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH 12/14] thermal: ti-soc-thermal: add ->adc_to_mcelsius method
-Date: Mon, 14 May 2018 13:42:19 +0200
-Message-id: <1526298141-14045-13-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 11/14] thermal: ti-soc-thermal: use OMAP5 register tables
+ for DRA752
+Date: Mon, 14 May 2018 13:42:18 +0200
+Message-id: <1526298141-14045-12-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCmvm552c8og+1/mC02zljPajH/yjVW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEIsWRmVeSWpSXmKPExsWy7bCmnm5R2c8og/83jCw2zljPajH/yjVW
         i1Pbm5gsLu+aw2Yxe0k/i8Xn3iOMFk8e9rE5sHvsnHWX3WPxnpdMHn1bVjF6HL+xncnj8ya5
-        ANYoLpuU1JzMstQifbsErozlGyYxFrz0qHh07yFLA+Nh6y5GTg4JAROJdRteM3cxcnEICexg
-        lPi+upkdwvnOKHHsxx1GmKquw88YIRK7gRKne1lAEkICvxglfn3OBLHZBKwkJravAmsQEXCT
-        mLXkD5jNLDCVUWLThHoQW1jAR+L6y2tsIDaLgKrEjqlLmEBsXgFPifsv/rNALJOTOHlsMiuI
-        zQkU39D+kg1ksYRAD5vEgwkP2CGKXCTuLL8NdZ2wxKvjW4DiHEC2tMSlo7YQ9c2MEt927GGG
-        qJnAKLFnvRCEbS1x+PhFVojj+CTefe1hhejllehogyrxkGj80wC1ylHi2eNNzBD/zgH6ZanC
-        BEapBYwMqxjFUguKc9NTiw0LTPWKE3OLS/PS9ZLzczcxgmNSy3IH47FzPocYBTgYlXh4A5b/
+        ANYoLpuU1JzMstQifbsEroyH2w6wF3Q4VWzecYClgXG3ZRcjJ4eEgInE0gdXmLoYuTiEBHYw
+        SnR+/c8K4XxnlNjZ28wOUzWxfQcjRGI3o8SUvWugqn4xSiy7eYIRpIpNwAqoahWYLSLgJjFr
+        yR8wm1lgKqPEpgn1ILawQJjE5gm7gOIcHCwCqhLzN0WBhHkFPCXuvtnACLFMTuLkscmsIDYn
+        UHxD+0s2kF0SAj1sEusWrwPrlRBwkfiyLhqiXlji1fEt7BBhaYlLR20hypsZJb7t2MMMUTOB
+        UWLPeiEI21ri8PGLrBCn8Um8+9rDCtHLK9HRBlXiIXFlywwWCNtRYvaeWewQ785hlHjycgHL
+        BEapBYwMqxjFUguKc9NTiw0LjPWKE3OLS/PS9ZLzczcxgmNSy3wH44ZzPocYBTgYlXh4A5b/
         iBJiTSwrrsw9xCjBwawkwrvb6GeUEG9KYmVValF+fFFpTmrxIUZpDhYlcd45Sl+jhATSE0tS
-        s1NTC1KLYLJMHJxSDYwhNgkFK8u+9yltvbnD9WGS9Zq3Lycohmv6TTAJC3FJqj31VuyxodTn
-        OR+rlqwx4DnBIvPKKnuifbXVrZTDEQmdrs8N/r1I4z+3Ytf6vV9UwpOKPMLUCns91S5qnd13
-        4Lf8xJ/CyglPHx8ouWa/9W2Yh4qW6lS2SfrH9VZque+aGrTh2g5DpVVKLMUZiYZazEXFiQDr
-        vNYGxQIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42I5/e+xgG5Z2c8ogz/7jC02zljPajH/yjVW
+        s1NTC1KLYLJMHJxSDYyzj2SvPbqv6S53Yod2nNaGzQk/kgzmzjA/cGdnw5cnJYn83jzHUwJk
+        NBLiloQySd9bKBDu/e5yUgoPX0fQlMXmfRHP7N+180YE/S7NOeS5dbrsrNgLLiIWJcaXK5P4
+        TMrLOptXvovMq4icOXk2b9J7yZ+FlzaYnq0ufcPFH9o/K1fXR7fKWomlOCPRUIu5qDgRAEPg
+        nAfFAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphluLIzCtJLcpLzFFi42I5/e+xgG5R2c8og9+PFC02zljPajH/yjVW
         i1Pbm5gsLu+aw2Yxe0k/i8Xn3iOMFk8e9rE5sHvsnHWX3WPxnpdMHn1bVjF6HL+xncnj8ya5
-        ANYoLpuU1JzMstQifbsErozlGyYxFrz0qHh07yFLA+Nh6y5GTg4JAROJrsPPGLsYuTiEBHYy
-        Sszovc8K4fxilJg64SgrSBWbgJXExPZVjCC2iICbxKwlf8A6mAWmMkpM/nSKDSQhLOAjcf3l
-        NTCbRUBVYsfUJUwgNq+Ap8T9F/9ZINbJSZw8NhlsKCdQfEP7S7B6IQEPidu/W9gmMPIsYGRY
-        xSiZWlCcm55bbFRgmJdarlecmFtcmpeul5yfu4kRGEjbDmv17WC8vyT+EKMAB6MSD++KlT+i
-        hFgTy4orcw8xSnAwK4nw7jb6GSXEm5JYWZValB9fVJqTWnyIUZqDRUmc93besUghgfTEktTs
-        1NSC1CKYLBMHp1QDo9SE/xo+ExecbNi7LWquWW6FnZOs07bVy+WqPl756vadS8EmtkvjhPkK
-        xU9tyxhMlBY8nt+dKevryHnyZUPNqqvXqzW+1x/Ukm4XbN7p0TLLWnF3lV/alY97w4N2uW2Z
-        /onbT8o/deUS5tVVfDJebKw/bu7/sOlz6pF1v2Q8t5p989JP/sc5U4mlOCPRUIu5qDgRAEpr
-        RMYgAgAA
-X-CMS-MailID: 20180514114350epcas1p2d29cfa8de6b19096d91362c91feb2dc5
+        ANYoLpuU1JzMstQifbsEroyH2w6wF3Q4VWzecYClgXG3ZRcjJ4eEgInExPYdjF2MXBxCAjsZ
+        Jc5uhnF+MUpsa7/ABlLFJmAFVLWKEcQWEXCTmLXkD1gRs8BURonJn06BFQkLhEmsbzvK3sXI
+        wcEioCoxf1MUSJhXwFPi7psNjBDb5CROHpvMCmJzAsU3tL8EaxUS8JC4/buFbQIjzwJGhlWM
+        kqkFxbnpucVGBYZ5qeV6xYm5xaV56XrJ+bmbGIFhtO2wVt8OxvtL4g8xCnAwKvHwrlj5I0qI
+        NbGsuDL3EKMEB7OSCO9uo59RQrwpiZVVqUX58UWlOanFhxilOViUxHlv5x2LFBJITyxJzU5N
+        LUgtgskycXBKNTC2hAuJusx/u/toBD9nS29S57bv94/G+r2cH9FnvHNRcM7ew2fN31/n/P29
+        tlWD8eDr6/EXis5/KY33lPixJ8H8wNeYsJAlKtd2Blm99N4amb6erdZYafGii7ZL1zKYvBbX
+        fG7nx+wxZceBDl2ZBqeXHadU77FH6dg+sOWyzb3zkzdZrEx96wolluKMREMt5qLiRAA0Uwd2
+        HwIAAA==
+X-CMS-MailID: 20180514114346epcas1p4a59f6760861791ae53eac48975c9172a
 X-Msg-Generator: CA
 CMS-TYPE: 101P
-X-CMS-RootMailID: 20180514114350epcas1p2d29cfa8de6b19096d91362c91feb2dc5
-X-RootMTR: 20180514114350epcas1p2d29cfa8de6b19096d91362c91feb2dc5
+X-CMS-RootMailID: 20180514114346epcas1p4a59f6760861791ae53eac48975c9172a
+X-RootMTR: 20180514114346epcas1p4a59f6760861791ae53eac48975c9172a
 References: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20180514114350epcas1p2d29cfa8de6b19096d91362c91feb2dc5@epcas1p2.samsung.com>
+        <CGME20180514114346epcas1p4a59f6760861791ae53eac48975c9172a@epcas1p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Add ->adc_to_mcelsius method to struct ti_bandgap_data and
-  use it if present in ti_bandgap_adc_to_mcelsius().
-
-* Implement ->adc_to_mcelsius for DRA752 and remove no longer
-  needed dra752_adc_to_temp[].
+OMAP5 register tables for MPU, GPU & CORE sensors are almost
+identical to these for DRA752 (OMAP5 ones also set value for
+.tshut_threshold but it is used only when TSHUT_CONFIG feature
+is enabled and DRA752 doesn't enable it) so just use them also
+for DRA752 instead of duplicating them.
 
 There should be no functional changes caused by this patch.
 
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- drivers/thermal/ti-soc-thermal/dra752-bandgap.h    |   3 +
- .../thermal/ti-soc-thermal/dra752-thermal-data.c   | 157 ++++-----------------
- .../thermal/ti-soc-thermal/omap5-thermal-data.c    |   5 +-
- drivers/thermal/ti-soc-thermal/ti-bandgap.c        |   3 +
- drivers/thermal/ti-soc-thermal/ti-bandgap.h        |   2 +
- 5 files changed, 38 insertions(+), 132 deletions(-)
+ drivers/thermal/ti-soc-thermal/Makefile            |  2 +-
+ drivers/thermal/ti-soc-thermal/dra752-bandgap.h    |  4 ++
+ .../thermal/ti-soc-thermal/dra752-thermal-data.c   | 75 +---------------------
+ .../thermal/ti-soc-thermal/omap5-thermal-data.c    |  8 ++-
+ 4 files changed, 13 insertions(+), 76 deletions(-)
 
+diff --git a/drivers/thermal/ti-soc-thermal/Makefile b/drivers/thermal/ti-soc-thermal/Makefile
+index f180ebe..aa1c38d 100644
+--- a/drivers/thermal/ti-soc-thermal/Makefile
++++ b/drivers/thermal/ti-soc-thermal/Makefile
+@@ -2,7 +2,7 @@
+ obj-$(CONFIG_TI_SOC_THERMAL)		+= ti-soc-thermal.o
+ ti-soc-thermal-y			:= ti-bandgap.o
+ ti-soc-thermal-$(CONFIG_TI_THERMAL)	+= ti-thermal-common.o
+-ti-soc-thermal-$(CONFIG_DRA752_THERMAL)	+= dra752-thermal-data.o
++ti-soc-thermal-$(CONFIG_DRA752_THERMAL)	+= dra752-thermal-data.o omap5-thermal-data.o
+ ti-soc-thermal-$(CONFIG_OMAP3_THERMAL)	+= omap3-thermal-data.o
+ ti-soc-thermal-$(CONFIG_OMAP4_THERMAL)	+= omap4-thermal-data.o
+ ti-soc-thermal-$(CONFIG_OMAP5_THERMAL)	+= omap5-thermal-data.o
 diff --git a/drivers/thermal/ti-soc-thermal/dra752-bandgap.h b/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-index c39af38..8eb155a 100644
+index b9d65b4..c39af38 100644
 --- a/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
 +++ b/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-@@ -88,4 +88,7 @@
- extern struct temp_sensor_registers omap5430_gpu_temp_sensor_registers;
- extern struct temp_sensor_registers omap5430_core_temp_sensor_registers;
+@@ -84,4 +84,8 @@
+ #define DRA752_BANDGAP_STATUS_2_HOT_DSPEVE_MASK			BIT(1)
+ #define DRA752_BANDGAP_STATUS_2_COLD_DSPEVE_MASK		BIT(0)
  
-+extern int
-+omap5430_adc_to_temp[OMAP5430_ADC_END_VALUE - OMAP5430_ADC_START_VALUE + 1];
++extern struct temp_sensor_registers omap5430_mpu_temp_sensor_registers;
++extern struct temp_sensor_registers omap5430_gpu_temp_sensor_registers;
++extern struct temp_sensor_registers omap5430_core_temp_sensor_registers;
 +
  #endif /* __DRA752_BANDGAP_H */
 diff --git a/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c b/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c
-index dcc0b10..87b4d97 100644
+index de412a2..dcc0b10 100644
 --- a/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c
 +++ b/drivers/thermal/ti-soc-thermal/dra752-thermal-data.c
-@@ -84,135 +84,31 @@
- 	.max_freq = OMAP5430_MAX_FREQ,
+@@ -31,29 +31,6 @@
+  */
+ 
+ /*
+- * DRA752 CORE thermal sensor register offsets and bit-fields
+- */
+-static struct temp_sensor_registers
+-dra752_core_temp_sensor_registers = {
+-	.temp_sensor_ctrl = OMAP5430_TEMP_SENSOR_CORE_OFFSET,
+-	.bgap_tempsoff_mask = OMAP5430_BGAP_TEMPSOFF_MASK,
+-	.bgap_eocz_mask = OMAP5430_BGAP_TEMP_SENSOR_EOCZ_MASK,
+-	.bgap_dtemp_mask = OMAP5430_BGAP_TEMP_SENSOR_DTEMP_MASK,
+-	.bgap_mask_ctrl = OMAP5430_BGAP_CTRL_OFFSET,
+-	.mask_hot_mask = OMAP5430_MASK_HOT_CORE_MASK,
+-	.mask_cold_mask = OMAP5430_MASK_COLD_CORE_MASK,
+-	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
+-	.mask_freeze_mask = OMAP5430_MASK_FREEZE_CORE_MASK,
+-	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_CORE_OFFSET,
+-	.bgap_status = OMAP5430_BGAP_STATUS_OFFSET,
+-	.status_hot_mask = OMAP5430_HOT_CORE_FLAG_MASK,
+-	.status_cold_mask = OMAP5430_COLD_CORE_FLAG_MASK,
+-	.ctrl_dtemp_1 = OMAP5430_BGAP_DTEMP_CORE_1_OFFSET,
+-	.ctrl_dtemp_2 = OMAP5430_BGAP_DTEMP_CORE_2_OFFSET,
+-	.bgap_efuse = OMAP5430_FUSE_OPP_BGAP_CORE,
+-};
+-
+-/*
+  * DRA752 IVA thermal sensor register offsets and bit-fields
+  */
+ static struct temp_sensor_registers
+@@ -77,29 +54,6 @@
+ };
+ 
+ /*
+- * DRA752 MPU thermal sensor register offsets and bit-fields
+- */
+-static struct temp_sensor_registers
+-dra752_mpu_temp_sensor_registers = {
+-	.temp_sensor_ctrl = OMAP5430_TEMP_SENSOR_MPU_OFFSET,
+-	.bgap_tempsoff_mask = OMAP5430_BGAP_TEMPSOFF_MASK,
+-	.bgap_eocz_mask = OMAP5430_BGAP_TEMP_SENSOR_EOCZ_MASK,
+-	.bgap_dtemp_mask = OMAP5430_BGAP_TEMP_SENSOR_DTEMP_MASK,
+-	.bgap_mask_ctrl = OMAP5430_BGAP_CTRL_OFFSET,
+-	.mask_hot_mask = OMAP5430_MASK_HOT_MPU_MASK,
+-	.mask_cold_mask = OMAP5430_MASK_COLD_MPU_MASK,
+-	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
+-	.mask_freeze_mask = OMAP5430_MASK_FREEZE_MPU_MASK,
+-	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_MPU_OFFSET,
+-	.bgap_status = OMAP5430_BGAP_STATUS_OFFSET,
+-	.status_hot_mask = OMAP5430_HOT_MPU_FLAG_MASK,
+-	.status_cold_mask = OMAP5430_COLD_MPU_FLAG_MASK,
+-	.ctrl_dtemp_1 = OMAP5430_BGAP_DTEMP_MPU_1_OFFSET,
+-	.ctrl_dtemp_2 = OMAP5430_BGAP_DTEMP_MPU_2_OFFSET,
+-	.bgap_efuse = OMAP5430_FUSE_OPP_BGAP_MPU,
+-};
+-
+-/*
+  * DRA752 DSPEVE thermal sensor register offsets and bit-fields
+  */
+ static struct temp_sensor_registers
+@@ -122,29 +76,6 @@
+ 	.bgap_efuse = DRA752_STD_FUSE_OPP_BGAP_DSPEVE_OFFSET,
  };
  
 -/*
-- * DRA752 : Temperature values in milli degree celsius
-- * ADC code values from 540 to 945
+- * DRA752 GPU thermal sensor register offsets and bit-fields
 - */
--static int
--dra752_adc_to_temp[OMAP5430_ADC_END_VALUE - OMAP5430_ADC_START_VALUE + 1] = {
--	/* Index 540 - 549 */
--	-40000, -40000, -40000, -40000, -39800, -39400, -39000, -38600, -38200,
--	-37800,
--	/* Index 550 - 559 */
--	-37400, -37000, -36600, -36200, -35800, -35300, -34700, -34200, -33800,
--	-33400,
--	/* Index 560 - 569 */
--	-33000, -32600, -32200, -31800, -31400, -31000, -30600, -30200, -29800,
--	-29400,
--	/* Index 570 - 579 */
--	-29000, -28600, -28200, -27700, -27100, -26600, -26200, -25800, -25400,
--	-25000,
--	/* Index 580 - 589 */
--	-24600, -24200, -23800, -23400, -23000, -22600, -22200, -21800, -21400,
--	-21000,
--	/* Index 590 - 599 */
--	-20500, -19900, -19400, -19000, -18600, -18200, -17800, -17400, -17000,
--	-16600,
--	/* Index 600 - 609 */
--	-16200, -15800, -15400, -15000, -14600, -14200, -13800, -13400, -13000,
--	-12500,
--	/* Index 610 - 619 */
--	-11900, -11400, -11000, -10600, -10200, -9800, -9400, -9000, -8600,
--	-8200,
--	/* Index 620 - 629 */
--	-7800, -7400, -7000, -6600, -6200, -5800, -5400, -5000, -4500,
--	-3900,
--	/* Index 630 - 639 */
--	-3400, -3000, -2600, -2200, -1800, -1400, -1000, -600, -200,
--	200,
--	/* Index 640 - 649 */
--	600, 1000, 1400, 1800, 2200, 2600, 3000, 3400, 3900,
--	4500,
--	/* Index 650 - 659 */
--	5000, 5400, 5800, 6200, 6600, 7000, 7400, 7800, 8200,
--	8600,
--	/* Index 660 - 669 */
--	9000, 9400, 9800, 10200, 10600, 11000, 11400, 11800, 12200,
--	12700,
--	/* Index 670 - 679 */
--	13300, 13800, 14200, 14600, 15000, 15400, 15800, 16200, 16600,
--	17000,
--	/* Index 680 - 689 */
--	17400, 17800, 18200, 18600, 19000, 19400, 19800, 20200, 20600,
--	21000,
--	/* Index 690 - 699 */
--	21400, 21900, 22500, 23000, 23400, 23800, 24200, 24600, 25000,
--	25400,
--	/* Index 700 - 709 */
--	25800, 26200, 26600, 27000, 27400, 27800, 28200, 28600, 29000,
--	29400,
--	/* Index 710 - 719 */
--	29800, 30200, 30600, 31000, 31400, 31900, 32500, 33000, 33400,
--	33800,
--	/* Index 720 - 729 */
--	34200, 34600, 35000, 35400, 35800, 36200, 36600, 37000, 37400,
--	37800,
--	/* Index 730 - 739 */
--	38200, 38600, 39000, 39400, 39800, 40200, 40600, 41000, 41400,
--	41800,
--	/* Index 740 - 749 */
--	42200, 42600, 43100, 43700, 44200, 44600, 45000, 45400, 45800,
--	46200,
--	/* Index 750 - 759 */
--	46600, 47000, 47400, 47800, 48200, 48600, 49000, 49400, 49800,
--	50200,
--	/* Index 760 - 769 */
--	50600, 51000, 51400, 51800, 52200, 52600, 53000, 53400, 53800,
--	54200,
--	/* Index 770 - 779 */
--	54600, 55000, 55400, 55900, 56500, 57000, 57400, 57800, 58200,
--	58600,
--	/* Index 780 - 789 */
--	59000, 59400, 59800, 60200, 60600, 61000, 61400, 61800, 62200,
--	62600,
--	/* Index 790 - 799 */
--	63000, 63400, 63800, 64200, 64600, 65000, 65400, 65800, 66200,
--	66600,
--	/* Index 800 - 809 */
--	67000, 67400, 67800, 68200, 68600, 69000, 69400, 69800, 70200,
--	70600,
--	/* Index 810 - 819 */
--	71000, 71500, 72100, 72600, 73000, 73400, 73800, 74200, 74600,
--	75000,
--	/* Index 820 - 829 */
--	75400, 75800, 76200, 76600, 77000, 77400, 77800, 78200, 78600,
--	79000,
--	/* Index 830 - 839 */
--	79400, 79800, 80200, 80600, 81000, 81400, 81800, 82200, 82600,
--	83000,
--	/* Index 840 - 849 */
--	83400, 83800, 84200, 84600, 85000, 85400, 85800, 86200, 86600,
--	87000,
--	/* Index 850 - 859 */
--	87400, 87800, 88200, 88600, 89000, 89400, 89800, 90200, 90600,
--	91000,
--	/* Index 860 - 869 */
--	91400, 91800, 92200, 92600, 93000, 93400, 93800, 94200, 94600,
--	95000,
--	/* Index 870 - 879 */
--	95400, 95800, 96200, 96600, 97000, 97500, 98100, 98600, 99000,
--	99400,
--	/* Index 880 - 889 */
--	99800, 100200, 100600, 101000, 101400, 101800, 102200, 102600, 103000,
--	103400,
--	/* Index 890 - 899 */
--	103800, 104200, 104600, 105000, 105400, 105800, 106200, 106600, 107000,
--	107400,
--	/* Index 900 - 909 */
--	107800, 108200, 108600, 109000, 109400, 109800, 110200, 110600, 111000,
--	111400,
--	/* Index 910 - 919 */
--	111800, 112200, 112600, 113000, 113400, 113800, 114200, 114600, 115000,
--	115400,
--	/* Index 920 - 929 */
--	115800, 116200, 116600, 117000, 117400, 117800, 118200, 118600, 119000,
--	119400,
--	/* Index 930 - 939 */
--	119800, 120200, 120600, 121000, 121400, 121800, 122200, 122600, 123000,
--	123400,
--	/* Index 940 - 945 */
--	123800, 124200, 124600, 124900, 125000, 125000,
+-static struct temp_sensor_registers
+-dra752_gpu_temp_sensor_registers = {
+-	.temp_sensor_ctrl = OMAP5430_TEMP_SENSOR_GPU_OFFSET,
+-	.bgap_tempsoff_mask = OMAP5430_BGAP_TEMPSOFF_MASK,
+-	.bgap_eocz_mask = OMAP5430_BGAP_TEMP_SENSOR_EOCZ_MASK,
+-	.bgap_dtemp_mask = OMAP5430_BGAP_TEMP_SENSOR_DTEMP_MASK,
+-	.bgap_mask_ctrl = OMAP5430_BGAP_CTRL_OFFSET,
+-	.mask_hot_mask = OMAP5430_MASK_HOT_GPU_MASK,
+-	.mask_cold_mask = OMAP5430_MASK_COLD_GPU_MASK,
+-	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
+-	.mask_freeze_mask = OMAP5430_MASK_FREEZE_GPU_MASK,
+-	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_GPU_OFFSET,
+-	.bgap_status = OMAP5430_BGAP_STATUS_OFFSET,
+-	.status_hot_mask = OMAP5430_HOT_GPU_FLAG_MASK,
+-	.status_cold_mask = OMAP5430_COLD_GPU_FLAG_MASK,
+-	.ctrl_dtemp_1 = OMAP5430_BGAP_DTEMP_GPU_1_OFFSET,
+-	.ctrl_dtemp_2 = OMAP5430_BGAP_DTEMP_GPU_2_OFFSET,
+-	.bgap_efuse = OMAP5430_FUSE_OPP_BGAP_GPU,
 -};
-+static int dra752_adc_to_mcelsius(struct ti_bandgap *bgp, int adc_val, int *t)
-+{
-+	const struct ti_bandgap_data *conf = bgp->conf;
-+
-+	/* look up for temperature in the table and return the temperature */
-+	if (adc_val < conf->adc_start_val || adc_val > conf->adc_end_val)
-+		return -ERANGE;
-+
-+	switch (adc_val) {
-+	case 588:
-+		*t = -21800;	/* -21600 */
-+		break;
-+	case 689:
-+		*t = 21000;	/* 21100 */
-+		break;
-+	case 937:
-+		*t = 122200;	/* 122400 */
-+		break;
-+	default:
-+		*t = bgp->conf->conv_table[adc_val - conf->adc_start_val];
-+		break;
-+	}
-+
-+	return 0;
-+}
- 
- /* DRA752 data */
- const struct ti_bandgap_data dra752_data = {
-@@ -223,9 +119,10 @@
- 			TI_BANDGAP_FEATURE_ERRATA_814,
- 	.fclock_name = "l3instr_ts_gclk_div",
- 	.div_ck_name = "l3instr_ts_gclk_div",
--	.conv_table = dra752_adc_to_temp,
-+	.conv_table = omap5430_adc_to_temp,
- 	.adc_start_val = OMAP5430_ADC_START_VALUE,
+-
+ /* Thresholds and limits for DRA752 temperature sensor */
+ static struct temp_sensor_data dra752_temp_sensor_data = {
+ 	.t_hot = OMAP5430_T_HOT,
+@@ -297,7 +228,7 @@
  	.adc_end_val = OMAP5430_ADC_END_VALUE,
-+	.adc_to_mcelsius = dra752_adc_to_mcelsius,
  	.sensors = {
  		{
- 		.registers = &omap5430_mpu_temp_sensor_registers,
+-		.registers = &dra752_mpu_temp_sensor_registers,
++		.registers = &omap5430_mpu_temp_sensor_registers,
+ 		.ts_data = &dra752_temp_sensor_data,
+ 		.domain = "cpu",
+ 		.register_cooling = ti_thermal_register_cpu_cooling,
+@@ -306,14 +237,14 @@
+ 		.constant_pcb = DRA752_GRADIENT_CONST_W_PCB,
+ 		},
+ 		{
+-		.registers = &dra752_gpu_temp_sensor_registers,
++		.registers = &omap5430_gpu_temp_sensor_registers,
+ 		.ts_data = &dra752_temp_sensor_data,
+ 		.domain = "gpu",
+ 		.slope_pcb = DRA752_GRADIENT_SLOPE_W_PCB,
+ 		.constant_pcb = DRA752_GRADIENT_CONST_W_PCB,
+ 		},
+ 		{
+-		.registers = &dra752_core_temp_sensor_registers,
++		.registers = &omap5430_core_temp_sensor_registers,
+ 		.ts_data = &dra752_temp_sensor_data,
+ 		.domain = "core",
+ 		.slope_pcb = DRA752_GRADIENT_SLOPE_W_PCB,
 diff --git a/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c b/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
-index fce6e30..63e95df 100644
+index defa714..fce6e30 100644
 --- a/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
 +++ b/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
-@@ -124,13 +124,13 @@ struct temp_sensor_registers
- 	.min_freq = OMAP5430_MIN_FREQ,
- 	.max_freq = OMAP5430_MAX_FREQ,
- };
-+#endif /* CONFIG_OMAP5_THERMAL */
- 
+@@ -28,7 +28,7 @@
  /*
-  * OMAP54xx ES2.0 : Temperature values in milli degree celsius
-  * ADC code values from 540 to 945
+  * OMAP5430 MPU thermal sensor register offset and bit-fields
   */
--static int
--omap5430_adc_to_temp[
-+int omap5430_adc_to_temp[
- 	OMAP5430_ADC_END_VALUE - OMAP5430_ADC_START_VALUE + 1] = {
- 	/* Index 540 - 549 */
- 	-40000, -40000, -40000, -40000, -39800, -39400, -39000, -38600, -38200,
-@@ -230,6 +230,7 @@ struct temp_sensor_registers
- 	123800, 124200, 124600, 124900, 125000, 125000,
+-static struct temp_sensor_registers
++struct temp_sensor_registers
+ omap5430_mpu_temp_sensor_registers = {
+ 	.temp_sensor_ctrl = OMAP5430_TEMP_SENSOR_MPU_OFFSET,
+ 	.bgap_tempsoff_mask = OMAP5430_BGAP_TEMPSOFF_MASK,
+@@ -57,7 +57,7 @@
+ /*
+  * OMAP5430 GPU thermal sensor register offset and bit-fields
+  */
+-static struct temp_sensor_registers
++struct temp_sensor_registers
+ omap5430_gpu_temp_sensor_registers = {
+ 	.temp_sensor_ctrl = OMAP5430_TEMP_SENSOR_GPU_OFFSET,
+ 	.bgap_tempsoff_mask = OMAP5430_BGAP_TEMPSOFF_MASK,
+@@ -87,7 +87,7 @@
+ /*
+  * OMAP5430 CORE thermal sensor register offset and bit-fields
+  */
+-static struct temp_sensor_registers
++struct temp_sensor_registers
+ omap5430_core_temp_sensor_registers = {
+ 	.temp_sensor_ctrl = OMAP5430_TEMP_SENSOR_CORE_OFFSET,
+ 	.bgap_tempsoff_mask = OMAP5430_BGAP_TEMPSOFF_MASK,
+@@ -114,6 +114,7 @@
+ 	.bgap_efuse = OMAP5430_FUSE_OPP_BGAP_CORE,
  };
  
 +#ifdef CONFIG_OMAP5_THERMAL
- /* OMAP54xx ES2.0 data */
- const struct ti_bandgap_data omap5430_data = {
- 	.features = TI_BANDGAP_FEATURE_TSHUT_CONFIG |
-diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-index 4d45160..e483792 100644
---- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-+++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-@@ -309,6 +309,9 @@ int ti_bandgap_adc_to_mcelsius(struct ti_bandgap *bgp, int adc_val, int *t)
- {
- 	const struct ti_bandgap_data *conf = bgp->conf;
- 
-+	if (conf->adc_to_mcelsius)
-+		return conf->adc_to_mcelsius(bgp, adc_val, t);
-+
- 	/* look up for temperature in the table and return the temperature */
- 	if (adc_val < conf->adc_start_val || adc_val > conf->adc_end_val)
- 		return -ERANGE;
-diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.h b/drivers/thermal/ti-soc-thermal/ti-bandgap.h
-index 4d5b54a..76c3361 100644
---- a/drivers/thermal/ti-soc-thermal/ti-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.h
-@@ -330,6 +330,8 @@ struct ti_bandgap_data {
- 	char				*div_ck_name;
- 	int				sensor_count;
- 
-+	int (*adc_to_mcelsius)(struct ti_bandgap *bgp, int adc_val, int *t);
-+
- 	/* this needs to be at the end */
- 	struct ti_temp_sensor		sensors[];
+ /* Thresholds and limits for OMAP5430 MPU/GPU/CORE temperature sensor */
+ static struct temp_sensor_data omap5430_temp_sensor_data = {
+ 	.tshut_hot = OMAP5430_TSHUT_HOT,
+@@ -266,3 +267,4 @@
+ 	},
+ 	.sensor_count = 3,
  };
++#endif /* CONFIG_OMAP5_THERMAL */
 -- 
 1.9.1
