@@ -1,29 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752483AbeENHxn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:53:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:45035 "EHLO
+        id S1752304AbeENHyE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:54:04 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53265 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752081AbeENHxi (ORCPT
+        with ESMTP id S1750917AbeENHyA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:53:38 -0400
-Date: Mon, 14 May 2018 00:53:02 -0700
-From: tip-bot for Claudio Scordino <tipbot@zytor.com>
-Message-ID: <tip-bb4e30a48045c9cc16c4efe447489542750397cc@git.kernel.org>
-Cc: hpa@zytor.com, juri.lelli@redhat.com, corbet@lwn.net, mingo@kernel.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, efault@gmx.de, claudio@evidence.eu.com,
-        luca.abeni@santannapisa.it, tglx@linutronix.de
-Reply-To: efault@gmx.de, peterz@infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, mingo@kernel.org, corbet@lwn.net,
-        juri.lelli@redhat.com, hpa@zytor.com, torvalds@linux-foundation.org
-In-Reply-To: <1522741362-4542-1-git-send-email-claudio@evidence.eu.com>
-References: <1522741362-4542-1-git-send-email-claudio@evidence.eu.com>
+        Mon, 14 May 2018 03:54:00 -0400
+Date: Mon, 14 May 2018 00:53:38 -0700
+From: tip-bot for Tetsuo Handa <tipbot@zytor.com>
+Message-ID: <tip-0f736a52e4be86476eec1d5adbcbd9c2809ac4b4@git.kernel.org>
+Cc: penguin-kernel@I-love.SAKURA.ne.jp, mingo@kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, torvalds@linux-foundation.org,
+        peterz@infradead.org, linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, tglx@linutronix.de,
+        mingo@kernel.org, torvalds@linux-foundation.org, hpa@zytor.com
+In-Reply-To: <1523011279-8206-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+References: <1523011279-8206-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/deadline/Documentation: Add overrun signal
- and GRUB-PA documentation
-Git-Commit-ID: bb4e30a48045c9cc16c4efe447489542750397cc
+Subject: [tip:locking/core] locking/lockdep: Use for_each_process_thread()
+ for debug_show_all_locks()
+Git-Commit-ID: 0f736a52e4be86476eec1d5adbcbd9c2809ac4b4
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,85 +34,107 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bb4e30a48045c9cc16c4efe447489542750397cc
-Gitweb:     https://git.kernel.org/tip/bb4e30a48045c9cc16c4efe447489542750397cc
-Author:     Claudio Scordino <claudio@evidence.eu.com>
-AuthorDate: Tue, 3 Apr 2018 09:42:42 +0200
+Commit-ID:  0f736a52e4be86476eec1d5adbcbd9c2809ac4b4
+Gitweb:     https://git.kernel.org/tip/0f736a52e4be86476eec1d5adbcbd9c2809ac4b4
+Author:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+AuthorDate: Fri, 6 Apr 2018 19:41:18 +0900
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 14 May 2018 09:12:27 +0200
+CommitDate: Mon, 14 May 2018 09:15:02 +0200
 
-sched/deadline/Documentation: Add overrun signal and GRUB-PA documentation
+locking/lockdep: Use for_each_process_thread() for debug_show_all_locks()
 
-Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
+debug_show_all_locks() tries to grab the tasklist_lock for two seconds, but
+calling while_each_thread() without tasklist_lock held is not safe.
+
+See the following commit for more information:
+
+  4449a51a7c281602 ("vm_is_stack: use for_each_thread() rather then buggy while_each_thread()")
+
+Change debug_show_all_locks() from "do_each_thread()/while_each_thread()
+with possibility of missing tasklist_lock" to "for_each_process_thread()
+with RCU", and add a call to touch_all_softlockup_watchdogs() like
+show_state_filter() does.
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Juri Lelli <juri.lelli@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luca Abeni <luca.abeni@santannapisa.it>
-Cc: Mike Galbraith <efault@gmx.de>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Link: http://lkml.kernel.org/r/1522741362-4542-1-git-send-email-claudio@evidence.eu.com
+Link: http://lkml.kernel.org/r/1523011279-8206-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/scheduler/sched-deadline.txt | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+ kernel/locking/lockdep.c | 43 ++++++++-----------------------------------
+ 1 file changed, 8 insertions(+), 35 deletions(-)
 
-diff --git a/Documentation/scheduler/sched-deadline.txt b/Documentation/scheduler/sched-deadline.txt
-index 8ce78f82ae23..b14e03ff3528 100644
---- a/Documentation/scheduler/sched-deadline.txt
-+++ b/Documentation/scheduler/sched-deadline.txt
-@@ -49,7 +49,7 @@ CONTENTS
- 2.1 Main algorithm
- ------------------
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 023386338269..94f4d21ff66d 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -4451,8 +4451,6 @@ EXPORT_SYMBOL_GPL(debug_check_no_locks_held);
+ void debug_show_all_locks(void)
+ {
+ 	struct task_struct *g, *p;
+-	int count = 10;
+-	int unlock = 1;
  
-- SCHED_DEADLINE uses three parameters, named "runtime", "period", and
-+ SCHED_DEADLINE [18] uses three parameters, named "runtime", "period", and
-  "deadline", to schedule tasks. A SCHED_DEADLINE task should receive
-  "runtime" microseconds of execution time every "period" microseconds, and
-  these "runtime" microseconds are available within "deadline" microseconds
-@@ -117,6 +117,10 @@ CONTENTS
-          scheduling deadline = scheduling deadline + period
-          remaining runtime = remaining runtime + runtime
+ 	if (unlikely(!debug_locks)) {
+ 		pr_warn("INFO: lockdep is turned off.\n");
+@@ -4460,30 +4458,8 @@ void debug_show_all_locks(void)
+ 	}
+ 	pr_warn("\nShowing all locks held in the system:\n");
  
-+ The SCHED_FLAG_DL_OVERRUN flag in sched_attr's sched_flags field allows a task
-+ to get informed about runtime overruns through the delivery of SIGXCPU
-+ signals.
-+
+-	/*
+-	 * Here we try to get the tasklist_lock as hard as possible,
+-	 * if not successful after 2 seconds we ignore it (but keep
+-	 * trying). This is to enable a debug printout even if a
+-	 * tasklist_lock-holding task deadlocks or crashes.
+-	 */
+-retry:
+-	if (!read_trylock(&tasklist_lock)) {
+-		if (count == 10)
+-			pr_warn("hm, tasklist_lock locked, retrying... ");
+-		if (count) {
+-			count--;
+-			pr_cont(" #%d", 10-count);
+-			mdelay(200);
+-			goto retry;
+-		}
+-		pr_cont(" ignoring it.\n");
+-		unlock = 0;
+-	} else {
+-		if (count != 10)
+-			pr_cont(" locked it.\n");
+-	}
+-
+-	do_each_thread(g, p) {
++	rcu_read_lock();
++	for_each_process_thread(g, p) {
+ 		/*
+ 		 * It's not reliable to print a task's held locks
+ 		 * if it's not sleeping (or if it's not the current
+@@ -4491,19 +4467,16 @@ retry:
+ 		 */
+ 		if (p->state == TASK_RUNNING && p != current)
+ 			continue;
+-		if (p->lockdep_depth)
+-			lockdep_print_held_locks(p);
+-		if (!unlock)
+-			if (read_trylock(&tasklist_lock))
+-				unlock = 1;
++		if (!p->lockdep_depth)
++			continue;
++		lockdep_print_held_locks(p);
+ 		touch_nmi_watchdog();
+-	} while_each_thread(g, p);
++		touch_all_softlockup_watchdogs();
++	}
++	rcu_read_unlock();
  
- 2.2 Bandwidth reclaiming
- ------------------------
-@@ -279,6 +283,19 @@ CONTENTS
-     running_bw is incremented.
- 
- 
-+2.3 Energy-aware scheduling
-+------------------------
-+
-+ When cpufreq's schedutil governor is selected, SCHED_DEADLINE implements the
-+ GRUB-PA [19] algorithm, reducing the CPU operating frequency to the minimum
-+ value that still allows to meet the deadlines. This behavior is currently
-+ implemented only for ARM architectures.
-+
-+ A particular care must be taken in case the time needed for changing frequency
-+ is of the same order of magnitude of the reservation period. In such cases,
-+ setting a fixed CPU frequency results in a lower amount of deadline misses.
-+
-+
- 3. Scheduling Real-Time Tasks
- =============================
- 
-@@ -505,6 +522,12 @@ CONTENTS
-   17 - L. Abeni, G. Lipari, A. Parri, Y. Sun, Multicore CPU reclaiming: parallel
-        or sequential?. In Proceedings of the 31st Annual ACM Symposium on Applied
-        Computing, 2016.
-+  18 - J. Lelli, C. Scordino, L. Abeni, D. Faggioli, Deadline scheduling in the
-+       Linux kernel, Software: Practice and Experience, 46(6): 821-839, June
-+       2016.
-+  19 - C. Scordino, L. Abeni, J. Lelli, Energy-Aware Real-Time Scheduling in
-+       the Linux Kernel, 33rd ACM/SIGAPP Symposium On Applied Computing (SAC
-+       2018), Pau, France, April 2018.
- 
- 
- 4. Bandwidth management
+ 	pr_warn("\n");
+ 	pr_warn("=============================================\n\n");
+-
+-	if (unlock)
+-		read_unlock(&tasklist_lock);
+ }
+ EXPORT_SYMBOL_GPL(debug_show_all_locks);
+ #endif
