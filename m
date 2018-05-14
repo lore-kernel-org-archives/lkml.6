@@ -1,36 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753608AbeENMwP (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:52:15 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47021 "EHLO
+        id S932118AbeENMwn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:52:43 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53681 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753339AbeENMwN (ORCPT
+        with ESMTP id S1753445AbeENMwm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:52:13 -0400
-Date: Mon, 14 May 2018 05:51:23 -0700
+        Mon, 14 May 2018 08:52:42 -0400
+Date: Mon, 14 May 2018 05:51:51 -0700
 From: tip-bot for Frederic Weisbecker <tipbot@zytor.com>
-Message-ID: <tip-424f7d3e3b950c88a4127b7dfa78ea54e287413e@git.kernel.org>
-Cc: tony.luck@intel.com, tglx@linutronix.de, dalias@libc.org,
-        bigeasy@linutronix.de, mingo@kernel.org, deller@gmx.de, hpa@zytor.com,
-        ysato@users.sourceforge.jp, heiko.carstens@de.ibm.com,
-        paulus@samba.org, benh@kernel.crashing.org, fenghua.yu@intel.com,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        jejb@parisc-linux.org, schwidefsky@de.ibm.com, frederic@kernel.org,
-        torvalds@linux-foundation.org, peterz@infradead.org,
-        mpe@ellerman.id.au
-Reply-To: frederic@kernel.org, mpe@ellerman.id.au, peterz@infradead.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        schwidefsky@de.ibm.com, jejb@parisc-linux.org, davem@davemloft.net,
-        fenghua.yu@intel.com, benh@kernel.crashing.org, paulus@samba.org,
-        heiko.carstens@de.ibm.com, ysato@users.sourceforge.jp, hpa@zytor.com,
-        deller@gmx.de, mingo@kernel.org, bigeasy@linutronix.de,
-        dalias@libc.org, tglx@linutronix.de, tony.luck@intel.com
-In-Reply-To: <1525786706-22846-10-git-send-email-frederic@kernel.org>
-References: <1525786706-22846-10-git-send-email-frederic@kernel.org>
+Message-ID: <tip-1a8bc8f8d6a7980a999975edbd29578fbce09359@git.kernel.org>
+Cc: schwidefsky@de.ibm.com, fenghua.yu@intel.com, mingo@kernel.org,
+        heiko.carstens@de.ibm.com, tglx@linutronix.de, tony.luck@intel.com,
+        paulus@samba.org, jejb@parisc-linux.org, bigeasy@linutronix.de,
+        deller@gmx.de, dalias@libc.org, mpe@ellerman.id.au,
+        torvalds@linux-foundation.org, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, benh@kernel.crashing.org, hpa@zytor.com,
+        peterz@infradead.org, frederic@kernel.org, ysato@users.sourceforge.jp
+Reply-To: fenghua.yu@intel.com, schwidefsky@de.ibm.com, dalias@libc.org,
+        deller@gmx.de, bigeasy@linutronix.de, jejb@parisc-linux.org,
+        paulus@samba.org, tony.luck@intel.com, tglx@linutronix.de,
+        mingo@kernel.org, heiko.carstens@de.ibm.com,
+        torvalds@linux-foundation.org, davem@davemloft.net, mpe@ellerman.id.au,
+        frederic@kernel.org, ysato@users.sourceforge.jp, peterz@infradead.org,
+        hpa@zytor.com, benh@kernel.crashing.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1525786706-22846-11-git-send-email-frederic@kernel.org>
+References: <1525786706-22846-11-git-send-email-frederic@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:irq/core] softirq/sparc: Switch to generic
+Subject: [tip:irq/core] softirq/x86: Switch to generic
  local_softirq_pending() implementation
-Git-Commit-ID: 424f7d3e3b950c88a4127b7dfa78ea54e287413e
+Git-Commit-ID: 1a8bc8f8d6a7980a999975edbd29578fbce09359
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -43,17 +42,17 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  424f7d3e3b950c88a4127b7dfa78ea54e287413e
-Gitweb:     https://git.kernel.org/tip/424f7d3e3b950c88a4127b7dfa78ea54e287413e
+Commit-ID:  1a8bc8f8d6a7980a999975edbd29578fbce09359
+Gitweb:     https://git.kernel.org/tip/1a8bc8f8d6a7980a999975edbd29578fbce09359
 Author:     Frederic Weisbecker <frederic@kernel.org>
-AuthorDate: Tue, 8 May 2018 15:38:24 +0200
+AuthorDate: Tue, 8 May 2018 15:38:25 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 14 May 2018 11:25:28 +0200
 
-softirq/sparc: Switch to generic local_softirq_pending() implementation
+softirq/x86: Switch to generic local_softirq_pending() implementation
 
-Benefit from the generic softirq mask implementation that rely on per-CPU
-mutators instead of working with raw operators on top of this_cpu_ptr().
+Remove the ad-hoc implementation, the generic code now allows us not to
+reinvent the wheel.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Acked-by: Thomas Gleixner <tglx@linutronix.de>
@@ -72,25 +71,28 @@ Cc: Rich Felker <dalias@libc.org>
 Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Link: http://lkml.kernel.org/r/1525786706-22846-10-git-send-email-frederic@kernel.org
+Link: http://lkml.kernel.org/r/1525786706-22846-11-git-send-email-frederic@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/sparc/include/asm/hardirq_64.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/hardirq.h | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/sparc/include/asm/hardirq_64.h b/arch/sparc/include/asm/hardirq_64.h
-index 6aba904819a4..75b92bfe04b5 100644
---- a/arch/sparc/include/asm/hardirq_64.h
-+++ b/arch/sparc/include/asm/hardirq_64.h
-@@ -10,8 +10,9 @@
- #include <asm/cpudata.h>
+diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
+index 5ea2afd4c871..740a428acf1e 100644
+--- a/arch/x86/include/asm/hardirq.h
++++ b/arch/x86/include/asm/hardirq.h
+@@ -50,14 +50,6 @@ DECLARE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
  
- #define __ARCH_IRQ_STAT
--#define local_softirq_pending() \
--	(*this_cpu_ptr(&__cpu_data.__softirq_pending))
-+
-+#define local_softirq_pending_ref \
-+	__cpu_data.__softirq_pending
+ #define inc_irq_stat(member)	this_cpu_inc(irq_stat.member)
  
- void ack_bad_irq(unsigned int irq);
+-#define local_softirq_pending()	this_cpu_read(irq_stat.__softirq_pending)
+-
+-#define __ARCH_SET_SOFTIRQ_PENDING
+-
+-#define set_softirq_pending(x)	\
+-		this_cpu_write(irq_stat.__softirq_pending, (x))
+-#define or_softirq_pending(x)	this_cpu_or(irq_stat.__softirq_pending, (x))
+-
+ extern void ack_bad_irq(unsigned int irq);
  
+ extern u64 arch_irq_stat_cpu(unsigned int cpu);
