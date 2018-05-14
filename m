@@ -1,132 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752373AbeENLYK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 07:24:10 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:55209 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752060AbeENLYJ (ORCPT
+        id S1752530AbeENLYe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 07:24:34 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:35550 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752434AbeENLYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 07:24:09 -0400
-Subject: Re: [PATCH 2/5] media: docs: clarify relationship between crop and
- selection APIs
-To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <1522790146-16061-1-git-send-email-luca@lucaceresoli.net>
- <1522790146-16061-2-git-send-email-luca@lucaceresoli.net>
- <fca47fb0-a299-af1d-4485-268907bb1007@xs4all.nl>
-From: Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <fefa4941-4465-ccb8-81be-d411c515c710@lucaceresoli.net>
-Date: Mon, 14 May 2018 13:24:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <fca47fb0-a299-af1d-4485-268907bb1007@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Mon, 14 May 2018 07:24:33 -0400
+From: Richard Weinberger <richard@nod.at>
+To: linux-mtd@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>
+Subject: [PATCH 0/8] ubi: fastmap: Support for preseeded fastmap
+Date: Mon, 14 May 2018 13:24:14 +0200
+Message-Id: <20180514112422.23988-1-richard@nod.at>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
+This series implements support for preseeded fastmaps.
+A preseeded fastmap is a fastmap created by tools such as ubinize.
+That way fastmap deployment is less painful.
 
-thanks for the review.
+I will send a v2 series for sure since I'm still testing the approach,
+so far none of my tests explodes.
 
-On 13/05/2018 11:12, Hans Verkuil wrote:
-> On 04/03/2018 11:15 PM, Luca Ceresoli wrote:
->> Having two somewhat similar and largely overlapping APIs is confusing,
->> especially since the older one appears in the docs before the newer
->> and most featureful counterpart.
->>
->> Clarify all of this in several ways:
->>  - swap the two sections
->>  - give a name to the two APIs in the section names
->>  - add a note at the beginning of the CROP API section
->>
->> Also remove a note that is incorrect (correct wording is in
->> vidioc-cropcap.rst).
->>
->> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
->> Based on info from: Hans Verkuil <hverkuil@xs4all.nl>
->> Cc: Hans Verkuil <hverkuil@xs4all.nl>
->> ---
->>  Documentation/media/uapi/v4l/common.rst            |  2 +-
->>  Documentation/media/uapi/v4l/crop.rst              | 21 ++++++++++++---------
->>  Documentation/media/uapi/v4l/selection-api-005.rst |  2 ++
->>  Documentation/media/uapi/v4l/selection-api.rst     |  4 ++--
->>  4 files changed, 17 insertions(+), 12 deletions(-)
->>
->> diff --git a/Documentation/media/uapi/v4l/common.rst b/Documentation/media/uapi/v4l/common.rst
->> index 13f2ed3fc5a6..5f93e71122ef 100644
->> --- a/Documentation/media/uapi/v4l/common.rst
->> +++ b/Documentation/media/uapi/v4l/common.rst
->> @@ -41,6 +41,6 @@ applicable to all devices.
->>      extended-controls
->>      format
->>      planar-apis
->> -    crop
->>      selection-api
->> +    crop
->>      streaming-par
->> diff --git a/Documentation/media/uapi/v4l/crop.rst b/Documentation/media/uapi/v4l/crop.rst
->> index 182565b9ace4..83fa16eb347e 100644
->> --- a/Documentation/media/uapi/v4l/crop.rst
->> +++ b/Documentation/media/uapi/v4l/crop.rst
->> @@ -2,9 +2,18 @@
->>  
->>  .. _crop:
->>  
->> -*************************************
->> -Image Cropping, Insertion and Scaling
->> -*************************************
->> +*****************************************************
->> +Image Cropping, Insertion and Scaling -- the CROP API
->> +*****************************************************
->> +
->> +.. note::
->> +
->> +   The CROP API is mostly superseded by the newer :ref:`SELECTION API
->> +   <selection-api>`. The new API should be preferred in most cases,
->> +   with the exception of pixel aspect ratio detection, which is
->> +   implemented by :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` and has no
->> +   equivalent in the SELECTION API. See :ref:`selection-vs-crop` for a
->> +   comparison of the two APIs.
->>  
->>  Some video capture devices can sample a subsection of the picture and
->>  shrink or enlarge it to an image of arbitrary size. We call these
->> @@ -40,12 +49,6 @@ support scaling or the :ref:`VIDIOC_G_CROP <VIDIOC_G_CROP>` and
->>  :ref:`VIDIOC_S_CROP <VIDIOC_G_CROP>` ioctls. Their size (and position
->>  where applicable) will be fixed in this case.
->>  
->> -.. note::
->> -
->> -   All capture and output devices must support the
->> -   :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` ioctl such that applications
->> -   can determine if scaling takes place.
-> 
-> This note should be rewritten, not deleted:
-> 
-> 	All capture and output devices that support the CROP or SELECTION API
-> 	will also support the :ref:`VIDIOC_CROPCAP <VIDIOC_CROPCAP>` ioctl.
+Richard Weinberger (8):
+  ubi: fastmap: Add support for flags
+  ubi: fastmap: Add UBI_FM_SB_PRESEEDED_FLG flag
+  ubi: fastmap: Implement PEB fixup
+  ubi: fastmap: Handle bad block count for preseeded fastmap case
+  ubi: fastmap: Fixup pool sizes for preseeded fastmaps
+  ubi: fastmap: Scan empty space if fastmap is preseeded
+  ubi: fastmap: Relax size check
+  ubi: Fix assert in ubi_wl_init
 
-I don't remember exactly the reationale for this removal, perhaps it's
-that I added a note above with similar content. But reading that again
-now I realize the added not does not clearly state "VIDIOC_CROPCAP is
-mandatory".
+ drivers/mtd/ubi/attach.c    |   1 +
+ drivers/mtd/ubi/fastmap.c   | 244 ++++++++++++++++++++++++++++++++++++++++----
+ drivers/mtd/ubi/ubi-media.h |  15 ++-
+ drivers/mtd/ubi/ubi.h       |   4 +
+ drivers/mtd/ubi/wl.c        |   5 +-
+ 5 files changed, 243 insertions(+), 26 deletions(-)
 
-Thus I added the updated note to v2 as you suggested.
-
-Bye,
 -- 
-Luca
+2.13.6
