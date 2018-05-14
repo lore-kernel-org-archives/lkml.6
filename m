@@ -1,156 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752136AbeENIWJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:22:09 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58817 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751954AbeENIWF (ORCPT
+        id S1752146AbeENIYj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:24:39 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:37987 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751961AbeENIYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:22:05 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180514082202euoutp01baaea2a78cc77650b366e7124efad5b8~udSRcXzZj1327313273euoutp01R
-X-AuditID: cbfec7f5-b45ff700000028a9-cf-5af947298de4
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-From: Andrzej Hajda <a.hajda@samsung.com>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] PM / core: refactor PM_OPS initializers
-Date: Mon, 14 May 2018 10:21:46 +0200
-Message-id: <20180514082146.4318-1-a.hajda@samsung.com>
-X-Mailer: git-send-email 2.17.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHIsWRmVeSWpSXmKPExsWy7djP87qa7j+jDC43WVncWneO1eLvpGPs
-        FhtnrGe1mDVlL5PF5V1z2Cw+9x5htFh75C67xd1TR9kszpy+xOrA6fH71yRGj8V7XjJ5bLna
-        zuLRt2UVo8eK1d/ZPT5vkgtgi+KySUnNySxLLdK3S+DKOLF+DUvBdamKIxO/sjYwXhHrYuTk
-        kBAwkbh1dRlLFyMXh5DACkaJDXNfMIEkhAQ+M0rc+ycDU7R2zmRWiKJljBLb/n5lAUnwCghK
-        /Jh8D8jm4GAWkJc4cikbJMwsoCmxdfd6doj6/4wSkxb2sIMk2IASfzffZANJiAgsZZS4PPUN
-        2FRmgbWMEj9a9rOBVAkLWEg8/7SaDWQqi4CqxJx1RRDLzCX23VjFDnGRvMSz6fPANkgI7GGT
-        mNq0mA0i4SKx7+chFghbWOLV8S1QDTISnR0HmSDsaombL5pYIJo7GCXu/26HaraWOHz8IivE
-        D3wSk7ZNZwY5QkKAV6KjTQiixEOi58MORgjbUWLe/ePQ4IqV2LRgAfMERplZSAEzCxEws5AC
-        ZgEj8ypG8dTS4tz01GLjvNRyveLE3OLSvHS95PzcTYzAVHH63/GvOxj3/Uk6xCjAwajEw7ti
-        5Y8oIdbEsuLK3EOMEhzMSiK8u41+RgnxpiRWVqUW5ccXleakFh9ilOZgURLnjdOoixISSE8s
-        Sc1OTS1ILYLJMnFwSjUwylesVT01M0rs8+W3WhyTYrymrjnMnPw+PPka45Xe+Rcm9XzqTwk7
-        MsP1NnfGvcSO/3s8Xh9YY8yqk+T4Z7ZsPF8T796wxy6y1fnTrghtr1ye/zHEecvFM1siNiVs
-        Nz1z89jT9uqOoHlM/L+i88snfZmVc0HwhneyjFVNsqXljcvr/k9Y+yfXV4mlOCPRUIu5qDgR
-        AC5coRQRAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCLMWRmVeSWpSXmKPExsVy+t/xq7qa7j+jDH6elbK4te4cq8XfScfY
-        LTbOWM9qMWvKXiaLy7vmsFl87j3CaLH2yF12i7unjrJZnDl9idWB0+P3r0mMHov3vGTy2HK1
-        ncWjb8sqRo8Vq7+ze3zeJBfAFsVlk5Kak1mWWqRvl8CVcWL9GpaC61IVRyZ+ZW1gvCLWxcjJ
-        ISFgIrF2zmTWLkYuDiGBJYwSv249YgNJ8AoISvyYfI+li5GDg1lAXuLIpWyQMLOAusSkeYuY
-        IeobmSR+bVvKApJgE9CU+Lv5JliviMBSRoljd+VAipgF1jJKvL3TzgiSEBawkHj+aTUbyFAW
-        AVWJOeuKIHaZS+y7sYod4iB5iWfT57FPYOSdheSMWQhnzEJyxgJG5lWMIqmlxbnpucWGesWJ
-        ucWleel6yfm5mxiBYbvt2M/NOxgvbQw+xCjAwajEw7ti5Y8oIdbEsuLK3EOMEhzMSiK8u41+
-        RgnxpiRWVqUW5ccXleakFh9ilOZgURLnPW9QGSUkkJ5YkpqdmlqQWgSTZeLglGpgnJoffjhH
-        tv9m/dQdys6HFyhOK9jSbuqxXFzC6P4BVq1tRxSP3D7Yrdyhw7A/aNKLyyWF8xbe+iW7dW7F
-        7FDmCvbTbem6+43zcybI3Txzm8nl0SS2lfVJpZOE9FOjTBZMbLPV0DjlMEnSQYuH55v18vvX
-        3cRXHrnx6e+bA2eV31i/8vEv8TmQpcRSnJFoqMVcVJwIAFB4w7tXAgAA
-X-CMS-MailID: 20180514082201eucas1p1549ae992aeeef0906a2cccb5da96533f
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180514082201eucas1p1549ae992aeeef0906a2cccb5da96533f
-X-RootMTR: 20180514082201eucas1p1549ae992aeeef0906a2cccb5da96533f
-References: <CGME20180514082201eucas1p1549ae992aeeef0906a2cccb5da96533f@eucas1p1.samsung.com>
+        Mon, 14 May 2018 04:24:33 -0400
+X-Google-Smtp-Source: AB8JxZqFREfHICQu6UFOO8XSKJ5tYCK4EqcmiWEqhkCtvo1eCMeNiLtMxiwFKVY7pI4HX8gfiTVHGwA/nM6PVTVducI=
+MIME-Version: 1.0
+From: Jinpu Wang <jinpu.wang@profitbricks.com>
+Date: Mon, 14 May 2018 10:24:11 +0200
+Message-ID: <CAMGffEkW-bXTJ7RoYER9uu4nSYKEfopTsWy87V9GUSojjhJ6dg@mail.gmail.com>
+Subject: Re: [PATCH] md/raid1: add error handling of read error from FailFast device
+To: Shaohua Li <shli@kernel.org>
+Cc: Gi-Oh Kim <gi-oh.kim@profitbricks.com>, linux-raid@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4E8OllS008703
 
-With current implementation of PM_OPS initializers users should annotate
-all PM callbacks with __maybe_unused attribute to prevent compiler from
-complaining in case respective option is not enabled. Using ternary
-operator with IS_ENABLED(symbol) as a condition allows to avoid marking
-these functions with __maybe_unused.
-Solution was tested successfully with multiple versions of gcc since
-4.9.4 up to 7.2.1. No functional changes has been observed and callbacks
-were compiled out if not used, as before.
+On Wed, May 9, 2018 at 10:58 AM, Jack Wang <jack.wang.usish@gmail.com> wrote:
+> ---------- Forwarded message ----------
+> From: Gioh Kim <gi-oh.kim@profitbricks.com>
+> Date: 2018-05-02 13:08 GMT+02:00
+> Subject: [PATCH] md/raid1: add error handling of read error from FailFast device
+> To: shli@kernel.org
+> 抄送： linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, Gioh Kim
+> <gi-oh.kim@profitbricks.com>
+>
+>
+> Current handle_read_error() function calls fix_read_error()
+> only if md device is RW and rdev does not include FailFast flag.
+> It does not handle a read error from a RW device including
+> FailFast flag.
+>
+> I am not sure it is intended. But I found that write IO error
+> sets rdev faulty. The md module should handle the read IO error and
+> write IO error equally. So I think read IO error should set rdev faulty.
+>
+> Signed-off-by: Gioh Kim <gi-oh.kim@profitbricks.com>
+> ---
+>  drivers/md/raid1.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index e9e3308cb0a7..4445179aa4c8 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -2474,6 +2474,8 @@ static void handle_read_error(struct r1conf
+> *conf, struct r1bio *r1_bio)
+>                 fix_read_error(conf, r1_bio->read_disk,
+>                                r1_bio->sector, r1_bio->sectors);
+>                 unfreeze_array(conf);
+> +       } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
+> +               md_error(mddev, rdev);
+>         } else {
+>                 r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
+>         }
+> --
+> 2.14.1
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- include/linux/pm.h | 61 ++++++++++++++++++----------------------------
- 1 file changed, 24 insertions(+), 37 deletions(-)
-
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index e723b78d8357..59f333922c15 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -313,50 +313,37 @@ struct dev_pm_ops {
- 	int (*runtime_idle)(struct device *dev);
- };
- 
--#ifdef CONFIG_PM_SLEEP
-+#define PM_SLEEP_PTR(ptr) (IS_ENABLED(CONFIG_PM_SLEEP) ? (ptr) : NULL)
-+#define PM_PTR(ptr) (IS_ENABLED(CONFIG_PM) ? (ptr) : NULL)
-+
- #define SET_SYSTEM_SLEEP_PM_OPS(suspend_fn, resume_fn) \
--	.suspend = suspend_fn, \
--	.resume = resume_fn, \
--	.freeze = suspend_fn, \
--	.thaw = resume_fn, \
--	.poweroff = suspend_fn, \
--	.restore = resume_fn,
--#else
--#define SET_SYSTEM_SLEEP_PM_OPS(suspend_fn, resume_fn)
--#endif
-+	.suspend = PM_SLEEP_PTR(suspend_fn), \
-+	.resume = PM_SLEEP_PTR(resume_fn), \
-+	.freeze = PM_SLEEP_PTR(suspend_fn), \
-+	.thaw = PM_SLEEP_PTR(resume_fn), \
-+	.poweroff = PM_SLEEP_PTR(suspend_fn), \
-+	.restore = PM_SLEEP_PTR(resume_fn),
- 
--#ifdef CONFIG_PM_SLEEP
- #define SET_LATE_SYSTEM_SLEEP_PM_OPS(suspend_fn, resume_fn) \
--	.suspend_late = suspend_fn, \
--	.resume_early = resume_fn, \
--	.freeze_late = suspend_fn, \
--	.thaw_early = resume_fn, \
--	.poweroff_late = suspend_fn, \
--	.restore_early = resume_fn,
--#else
--#define SET_LATE_SYSTEM_SLEEP_PM_OPS(suspend_fn, resume_fn)
--#endif
-+	.suspend_late = PM_SLEEP_PTR(suspend_fn), \
-+	.resume_early = PM_SLEEP_PTR(resume_fn), \
-+	.freeze_late = PM_SLEEP_PTR(suspend_fn), \
-+	.thaw_early = PM_SLEEP_PTR(resume_fn), \
-+	.poweroff_late = PM_SLEEP_PTR(suspend_fn), \
-+	.restore_early = PM_SLEEP_PTR(resume_fn),
- 
--#ifdef CONFIG_PM_SLEEP
- #define SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(suspend_fn, resume_fn) \
--	.suspend_noirq = suspend_fn, \
--	.resume_noirq = resume_fn, \
--	.freeze_noirq = suspend_fn, \
--	.thaw_noirq = resume_fn, \
--	.poweroff_noirq = suspend_fn, \
--	.restore_noirq = resume_fn,
--#else
--#define SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(suspend_fn, resume_fn)
--#endif
-+	.suspend_noirq = PM_SLEEP_PTR(suspend_fn), \
-+	.resume_noirq = PM_SLEEP_PTR(resume_fn), \
-+	.freeze_noirq = PM_SLEEP_PTR(suspend_fn), \
-+	.thaw_noirq = PM_SLEEP_PTR(resume_fn), \
-+	.poweroff_noirq = PM_SLEEP_PTR(suspend_fn), \
-+	.restore_noirq = PM_SLEEP_PTR(resume_fn),
- 
--#ifdef CONFIG_PM
- #define SET_RUNTIME_PM_OPS(suspend_fn, resume_fn, idle_fn) \
--	.runtime_suspend = suspend_fn, \
--	.runtime_resume = resume_fn, \
--	.runtime_idle = idle_fn,
--#else
--#define SET_RUNTIME_PM_OPS(suspend_fn, resume_fn, idle_fn)
--#endif
-+	.runtime_suspend = PM_PTR(suspend_fn), \
-+	.runtime_resume = PM_PTR(resume_fn), \
-+	.runtime_idle = PM_PTR(idle_fn),
- 
- /*
-  * Use this if you want to use the same suspend and resume callbacks for suspend
+Patch looks good to me!
+Reviewed-by: Jack Wang <jinpu.wang@profitbricks.com>
 -- 
-2.17.0
+Jack Wang
+Linux Kernel Developer
+
+ProfitBricks GmbH
+Greifswalder Str. 207
+D - 10405 Berlin
+
+Tel:       +49 30 577 008  042
+Fax:      +49 30 577 008 299
+Email:    jinpu.wang@profitbricks.com
+URL:      https://www.profitbricks.de
+
+Sitz der Gesellschaft: Berlin
+Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
+Geschäftsführer: Achim Weiss, Matthias Steinberg, Christoph Steffens
