@@ -1,119 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753373AbeENP5R convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 11:57:17 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:31002 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752973AbeENP5N (ORCPT
+        id S1754721AbeENQG5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 12:06:57 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35690 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753401AbeENQGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 11:57:13 -0400
-From: Loic PALLARDY <loic.pallardy@st.com>
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-CC: "ohad@wizery.com" <ohad@wizery.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
-Subject: RE: [PATCH v3 11/13] remoteproc: create vdev subdevice with specific
- dma memory pool
-Thread-Topic: [PATCH v3 11/13] remoteproc: create vdev subdevice with specific
- dma memory pool
-Thread-Index: AQHTsXm/k4UVGYSNwU6IBCvhmFj8G6QocaSAgAdg7BA=
-Date: Mon, 14 May 2018 15:57:08 +0000
-Message-ID: <1964b4422c324eb9a7d712ad1d278b55@SFHDAG7NODE2.st.com>
-References: <1519921440-21356-1-git-send-email-loic.pallardy@st.com>
- <1519921440-21356-12-git-send-email-loic.pallardy@st.com>
- <20180510010601.GJ29093@builder>
-In-Reply-To: <20180510010601.GJ29093@builder>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.51]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 14 May 2018 12:06:55 -0400
+Date: Mon, 14 May 2018 09:08:21 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Christoph Hellwig <hch@infradead.org>, Hannes Reinecke <hare@suse.de>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] nvme: fix lockdep warning in
+ nvme_mpath_clear_current_path
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180514121312.13624-1-jthumshirn@suse.de>
+ <20180514124230.GA654@infradead.org>
+ <20180514125725.uobtf2nf4corisea@linux-x5ow.site>
+ <20180514133849.GV26088@linux.vnet.ibm.com>
+ <20180514135622.3fks4w7c6joqxbqp@linux-x5ow.site>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180514135622.3fks4w7c6joqxbqp@linux-x5ow.site>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18051416-0008-0000-0000-000003074A05
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009024; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032234; UDB=6.00527695; IPR=6.00811366;
+ MB=3.00021109; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 16:06:52
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051416-0009-0000-0000-0000393F1BF7
+Message-Id: <20180514160821.GW26088@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_04:,,
  signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805140164
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: Bjorn Andersson [mailto:bjorn.andersson@linaro.org]
-> Sent: Thursday, May 10, 2018 3:06 AM
-> To: Loic PALLARDY <loic.pallardy@st.com>
-> Cc: ohad@wizery.com; linux-remoteproc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Arnaud POULIQUEN <arnaud.pouliquen@st.com>;
-> benjamin.gaignard@linaro.org
-> Subject: Re: [PATCH v3 11/13] remoteproc: create vdev subdevice with
-> specific dma memory pool
+On Mon, May 14, 2018 at 03:56:22PM +0200, Johannes Thumshirn wrote:
+> On Mon, May 14, 2018 at 06:38:49AM -0700, Paul E. McKenney wrote:
+> > On Mon, May 14, 2018 at 02:57:25PM +0200, Johannes Thumshirn wrote:
+> > > On Mon, May 14, 2018 at 05:42:30AM -0700, Christoph Hellwig wrote:
+> > > > >  extern unsigned int nvme_io_timeout;
+> > > > >  #define NVME_IO_TIMEOUT	(nvme_io_timeout * HZ)
+> > > > > @@ -454,7 +455,9 @@ static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
+> > > > >  {
+> > > > >  	struct nvme_ns_head *head = ns->head;
+> > > > >  
+> > > > > -	if (head && ns == srcu_dereference(head->current_path, &head->srcu))
+> > > > > +	if (head &&
+> > > > > +	    ns == rcu_dereference_protected(head->current_path,
+> > > > > +				lockdep_is_held(&ns->ctrl->subsys->lock)))
+> > > > >  		rcu_assign_pointer(head->current_path, NULL);
+> > > > >  }
+> > > > >  struct nvme_ns *nvme_find_path(struct nvme_ns_head *head);
+> > > > 
+> > > > We don't really dereference it at all in fact, but just check the
+> > > > pointers for equality.  I wonder if there is a better way to do this,
+> > > > as my ANA patches add a caller without the lock (and withou SRU
+> > > > protection either now that I think of it) - for a pure pointer compare
+> > > > we really should not need any sort of protection.
+> > > 
+> > > Uff maybe, but are you sure a comparison of two pointer is always
+> > > atomic (on all architectures)?
+> > > 
+> > > Paul, can you shed some light on us mere mortal, whether the above
+> > > rcu_dereference_protected() is needed or if a simple ns ==
+> > > head->current_path is sufficient.
+> > 
+> > One approach is the following:
+> > 
+> > static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
+> > {
+> > 	struct nvme_ns_head *head = ns->head;
+> >  
+> > 	if (head && ns == rcu_access_pointer(head->current_path))
+> > 		rcu_assign_pointer(head->current_path, NULL);
+> > }
 > 
-> On Thu 01 Mar 08:23 PST 2018, Loic Pallardy wrote:
-> > @@ -479,6 +481,41 @@ static int rproc_handle_vdev(struct rproc *rproc,
-> struct fw_rsc_vdev *rsc,
-> >  			goto unwind_vring_allocations;
-> >  	}
-> >
-> > +	/* Initialise vdev subdevice */
-> > +	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
-> > +	rvdev->dev.parent = rproc->dev.parent;
-> > +	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev-
-> >dev.parent), name);
-> > +	dev_set_drvdata(&rvdev->dev, rvdev);
-> > +	dma_set_coherent_mask(&rvdev->dev, DMA_BIT_MASK(32));
-> > +
-> > +	ret = device_register(&rvdev->dev);
-> > +	if (ret)
-> > +		goto unwind_vring_allocations;
-> > +
-> > +	/* Try to find dedicated vdev buffer carveout */
-> > +	carveout = rproc_find_carveout_by_name(rproc, name);
-> > +
-> > +	if (carveout) {
-> > +		phys_addr_t pa;
-> > +
-> > +		if (carveout->va) {
-> > +			dev_warn(dev, "vdev %d buffer carveout already
-> mapped\n",
-> > +				 rvdev->index);
-> > +			pa = rproc_va_to_pa(carveout->va);
-> > +		} else {
-> > +			/* Use dma address as carveout no memmapped yet
-> */
-> > +			pa = (phys_addr_t)carveout->dma;
-> > +		}
-> > +
-> > +		/* Associate vdev buffer memory pool to vdev subdevice */
-> > +		ret = dmam_declare_coherent_memory(&rvdev->dev, pa,
-> > +						   carveout->da,
-> > +						   carveout->len,
-> > +
-> DMA_MEMORY_EXCLUSIVE);
-> > +		if (ret < 0)
-> > +			goto unregister_device;
-> > +	}
-> > +
-> 
-> So with this there will be one more device between rproc->dev and the
-> virtio dev, for the sake of memory management. So e.g. a rpmsg device
-> will still need to allocate memory from dev->parent->parent; which now
-> possibly has a specific dma_mem.
+> Yes that's what I have now as well, and it tests fine.
 
-Yes it is a new sub device between virtio dev and rproc dev, but this device owns memory region dedicated to this vdev
-So, rpmsg device will allocate from dev->parent, not from dev->parent->parent.
+Very good!  If it turns out to be useful, you can of course directly
+use lockdep_assert_held() to verify that the lock is held.
 
-> 
-> Is it not possible to assign the memory to the vdev->dev and allow the
-> virtio devices can allocate memory from their parent device?
-No sure to catch your point.
-Who should be the parent device? Rproc dev itself? Doesn't fit well if you want to handle 2 different vdev with specific memory region for each of them.
+							Thanx, Paul
 
-Regards,
-Loic
+> > Without the rcu_access_pointer(), sparse (and thus the 0-day test robot)
+> > will complain that you are accessing an RCU-protected pointer without
+> > using RCU.  However, rcu_access_pointer() won't ever give any lockdep
+> > splats about there being no RCU read-side critical section.
+> > 
+> > You might still want rcu_dereference_protected() because it will yell
+> > at you if the lock is not held.  Yes, the comparison will still be valid
+> > without the lock (at least at the exact moment when the load occurred),
+> > but the rcu_assign_pointer() might be a bit problematic if that lock is
+> > not held, right?
+> > 
+> > But it is your guys' code, so I must defer to you for the intent.
+> > 
+> > 							Thanx, Paul
+> > 
+> > 
+> > _______________________________________________
+> > Linux-nvme mailing list
+> > Linux-nvme@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-nvme
 > 
-> Regards,
-> Bjorn
+> -- 
+> Johannes Thumshirn                                          Storage
+> jthumshirn@suse.de                                +49 911 74053 689
+> SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
+> Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+> 
