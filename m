@@ -1,78 +1,184 @@
-Return-Path: <yamada.masahiro@socionext.com>
-X-Google-Smtp-Source: AB8JxZrzR1bfdCmIjesbNvWsdSE53ljkCOeLKmxwiHHuW13RVMoH7xfSoZ2S7d/4GduqHNKUwN85
-ARC-Seal: i=1; a=rsa-sha256; t=1526350976; cv=none;
+Return-Path: <baolin.wang@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1526288167; cv=none;
         d=google.com; s=arc-20160816;
-        b=zS1evjSmramZRgsizxEQi6UIELvxUyRL3Xts2fIoSKFF6bCVli3xUZ6IsFo6iUrVeE
-         xQDLU6KrJDSVpsRzf/swV6skDPVT8sFamEktZHGuyaLBSA+zHabE/+zvew6I1eZbuhrC
-         7WykA+zUga9mffcTKNaGXv8XOIJ378Pw7rAOYZ8WW66+QvIDbN4zChcd8haIZRxFGibu
-         RqNo9FwY8JM9kfWl01qB/AzrGxruPhcNu5ckZrctQvzNbSRg46xSsDqU0xvoCfhVcfc7
-         8V00DBICb+K5e6uq2k6rQVRsx/+qPmazDid6cJaPl1ykbMxYCM79SM1Q53O+zA2gXW+7
-         6WOg==
+        b=U3qdbFr0ym47GxZiuo5zDWsUEMs1EI8v60g8vIZV51Una1VZbZ95otYJugIH5yJNuw
+         Hpr/DkCvjEVOZ1OuwE3EDLx2dlmBxNf9GCerQFg+YRtewU/KtntSzYTJ4IlYICI1r67/
+         xZ9oiQYd8KMD3vniAZgL1GihDjClmRVgurIM8G+dNXY9MkqPjehc/Jb5mY9Ond+gjXy3
+         3oChrBiSL/Ds3GTYZibNO2jCiu2zuEPXLtLbCSQQND7FRBnNsigpnPtBZd9OBNwtthWa
+         z42tr2xhG/7IXMUP0FJmi6Jz6NC2HwrDirpu8wYzvce76UpxN6jlRbKfyJOB14BNRLVB
+         jpBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:dkim-filter:arc-authentication-results;
-        bh=UF+Gpa4q4xjQvULts7NW+NpmdolTsyJ90uLestxfclI=;
-        b=NSFpoOsGWE6iBWla4sHkxqtSFlKNUJJRWtZYFfxxPXULPxT1RhgCbYb/00vUFNB8R6
-         SQSQWkNSSMy2AxXe1y7X1bXpKSeoLPERl/kqU+4otaXoeOEgpF5rarg59nWrAdGwTxq5
-         s2yrcvpln5de+Ly8Do+HgEFs5y6Q5Y2Zrcel2tP+sWeIOzWmE28Cck9/VTV2TEkwjAVt
-         3ZXqZopS3kVtmEkD2nKgxCuGI7PEKhxjnnOrquH02weriL+G6q4RQvNsEylsx+4f8quH
-         WRI2WL7EW+7toV3B9TWVYraNwZ64d+lpcOZShjzMDYodtISwMZ3l6cFVGBNlIkxaIm3v
-         gFgw==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=YUFJIUoY3B3ZtQsKdHonvy3g7YnxVyJWIrER/dt+G5E=;
+        b=N5uRrrQmnopoU59MxVsrMu/QXXLFriTb5Erhea4ssw6vPND/gkoplDcCFiduCns2AP
+         JrjZwwtoyWbwdBWMPzxQSEsGBlBYnSaVNv885npE0i8vWCNsvuH7Ur9+psMYQOC8WGDC
+         ZYCJu7J+iD2eKMsF50PPTy/8fGRYCgQzg34atj4KBnbpx2rWffqW/EjcPD4Sho+v+Vlq
+         LdonNTUhEsr4nJK1rtB3l6OftnL56hepyO8rJa46dgueq6pXE4iA5GCMP/716Pjy9Elo
+         qUMFplRaLvX6G8tKPFZ0c9vzyHd1pfh2UP4NQ+VR61kRGeBb26JZiGJ3NqS3W6+h/7M6
+         17Ow==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=ZoJFuJzL;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.79 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=AfdjUSlB;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@nifty.com header.s=dec2015msa header.b=ZoJFuJzL;
-       spf=softfail (google.com: domain of transitioning yamada.masahiro@socionext.com does not designate 210.131.2.79 as permitted sender) smtp.mailfrom=yamada.masahiro@socionext.com
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w4F2M8PI020933
-X-Nifty-SrcIP: [153.142.97.92]
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Lihao Liang <lianglihao@huawei.com>, linux-kernel@vger.kernel.org,
-        Pekka Enberg <penberg@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 2/3] types: define aligned_ types based on uapi header
-Date: Tue, 15 May 2018 11:22:04 +0900
-Message-Id: <1526350925-14922-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1526350925-14922-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1526350925-14922-1-git-send-email-yamada.masahiro@socionext.com>
+       dkim=pass header.i=@linaro.org header.s=google header.b=AfdjUSlB;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZoUTif3IrgjRAcddxrmVR+4AVUdYDHUFyepLtYtTzPvfjGiYTRzBkW4uwRzGJMF4jLAFVLxlQ==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: tglx@linutronix.de,
+	john.stultz@linaro.org,
+	daniel.lezcano@linaro.org,
+	arnd@arndb.de,
+	tony@atomide.com,
+	aaro.koskinen@iki.fi,
+	linux@armlinux.org.uk,
+	mark.rutland@arm.com,
+	marc.zyngier@arm.com
+Cc: baolin.wang@linaro.org,
+	broonie@kernel.org,
+	paulmck@linux.vnet.ibm.com,
+	mlichvar@redhat.com,
+	rdunlap@infradead.org,
+	kstewart@linuxfoundation.org,
+	gregkh@linuxfoundation.org,
+	pombredanne@nexb.com,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	heiko@sntech.de,
+	linus.walleij@linaro.org,
+	viresh.kumar@linaro.org,
+	mingo@kernel.org,
+	hpa@zytor.com,
+	peterz@infradead.org,
+	douly.fnst@cn.fujitsu.com,
+	len.brown@intel.com,
+	rajvi.jingar@intel.com,
+	alexandre.belloni@bootlin.com,
+	x86@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org
+Subject: [RFC PATCH 00/10] Add persistent clock support
+Date: Mon, 14 May 2018 16:55:26 +0800
+Message-Id: <cover.1526285602.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600495001042384627?=
-X-GMAIL-MSGID: =?utf-8?q?1600495001042384627?=
+X-GMAIL-THRID: =?utf-8?q?1600429141477472075?=
+X-GMAIL-MSGID: =?utf-8?q?1600429141477472075?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-<uapi/linux/types.h> has the same typedefs except that it prefixes
-them with double-underscore for user space.  Use them for the kernel
-space typedefs.
+Hi,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+We will meet below issues when compensating the suspend time for the timekeeping.
 
- include/linux/types.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+1. We have too many different ways of dealing with persistent timekeeping
+across architectures, so it is hard for one driver to compatable with different
+architectures.
 
-diff --git a/include/linux/types.h b/include/linux/types.h
-index ec13d02..be15897 100644
---- a/include/linux/types.h
-+++ b/include/linux/types.h
-@@ -115,9 +115,9 @@ typedef		__s64		int64_t;
- #endif
- 
- /* this is a special 64bit data type that is 8-byte aligned */
--#define aligned_u64 __u64 __attribute__((aligned(8)))
--#define aligned_be64 __be64 __attribute__((aligned(8)))
--#define aligned_le64 __le64 __attribute__((aligned(8)))
-+#define aligned_u64		__aligned_u64
-+#define aligned_be64		__aligned_be64
-+#define aligned_le64		__aligned_le64
- 
- /**
-  * The type used for indexing onto a disc or disc partition.
+2. On some platforms (such as Spreadtrum platform), we registered the high
+resolution timer as one clocksource to update the OS time, but the high
+resolution timer will be stopped in suspend state. So we use another one
+always-on timer (but low resolution) to calculate the suspend time to
+compensate the OS time. Though we can register the always-on timer as one
+clocksource, we need re-calculate the mult/shift with one larger conversion
+range to calculate the suspend time and need update the clock in case of
+running over the always-on timer.
+
+More duplicate code will be added if other platforms meet this case.
+
+3. Now we have 3 sources that could be used to compensate the OS time:
+Nonstop clocksource during suspend, persistent clock and rtc device,
+which is complicated. Another hand is that the nonstop clocksource can
+risk wrapping if the suspend time is too long, so we need one mechanism
+to wake up the system before the nonstop clocksource wrapping.
+
+According to above issues, we can introduce one common persistent clock
+framework to compatable with different architectures, in future we will
+remove the persistent clock implementation for each architecture. Also
+this framework will implement common code to help drivers to register easily.
+Moreover if we converted all SUSPEND_NONSTOP clocksource to register to
+be one persistent clock, we can remove the SUSPEND_NONSTOP clocksource
+accounting in timekeeping, which means we can only compensate the OS time
+from persistent clock and RTC.
+
+Will be appreciated for any comments. Thank you all.
+
+
+Arnd posted some comments as below last time, but we did not get a general
+consensus, so I post them again.
+
+Arnd said:
+
+"I was planning to discuss this with Daniel and John during Linaro Connect,
+but that didn't happen, so I'd like to bring up the bigger picture here again.
+
+Today, we have a number of subsystem-type interfaces that deal with
+time keeping in the wider sense (I might be missing some):
+ - clock source
+ - clock event
+ - sched clock
+ - real time clock
+ - ptp clock
+ - persistent clock
+
+The first five have separate registration interfaces and may all refer
+to different hardware blocks, or (more commonly) have some overlap
+in the hardware. The fifth one is generalized by your series, without it
+it's really architecture specific (as the other ones were one one point).
+
+Are we happy with that structure in the long run? One of my earlier
+comments on this series was that I thought it should be combined with
+the clocksource registration, but upon talking to Baolin about it more,
+I realized that this just follows the same structure that we have for the
+others.
+
+In theory, we could have a more abstract way of registering a clock
+hardware that interfaces with any combination of the six subsystems
+I mentioned above, with a superset of the subsystem specific structures
+and a set of flags that indicate what a particular device is usable for.
+
+Combining all six might be a bit too much (in particular rtc, though
+it clearly overlaps the persistent-clk case), but what your general
+ideas on where we should be heading? Is it worth reworking the
+core kernel portion of the subsystems to simplify the individual
+drivers?"
+
+Baolin Wang (10):
+  time: Add persistent clock support
+  clocksource: sprd: Add one persistent timer for Spreadtrum platform
+  arm: omap: Convert 32K counter to use persistent clock
+  clocksource: tegra20_timer: Remove register_persistent_clock() API
+  arm: time: Remove the persistent clock support for ARM
+  clocksource: arm_arch_timer: Register the persistent clock
+  clocksource: timer-ti-32k: Register the persistent clock
+  clocksource: time-pistachio: Register the persistent clock
+  x86: tsc: Register the persistent clock
+  time: timekeeping: Remove time compensating from nonstop clocksources
+
+ arch/arm/include/asm/mach/time.h     |    4 -
+ arch/arm/kernel/time.c               |   36 -------
+ arch/arm/plat-omap/Kconfig           |    1 +
+ arch/arm/plat-omap/counter_32k.c     |   44 ++-------
+ arch/x86/Kconfig                     |    1 +
+ arch/x86/kernel/tsc.c                |   16 +++
+ drivers/clocksource/Kconfig          |    4 +
+ drivers/clocksource/arm_arch_timer.c |   10 ++
+ drivers/clocksource/tegra20_timer.c  |   12 ++-
+ drivers/clocksource/time-pistachio.c |    3 +
+ drivers/clocksource/timer-sprd.c     |   80 +++++++++++++++
+ drivers/clocksource/timer-ti-32k.c   |    4 +
+ include/linux/persistent_clock.h     |   21 ++++
+ kernel/time/Kconfig                  |    4 +
+ kernel/time/Makefile                 |    1 +
+ kernel/time/persistent_clock.c       |  180 ++++++++++++++++++++++++++++++++++
+ kernel/time/timekeeping.c            |   19 +---
+ 17 files changed, 345 insertions(+), 95 deletions(-)
+ create mode 100644 include/linux/persistent_clock.h
+ create mode 100644 kernel/time/persistent_clock.c
+
 -- 
-2.7.4
+1.7.9.5
