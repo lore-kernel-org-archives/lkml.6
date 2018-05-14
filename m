@@ -1,39 +1,40 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpfrDYhkjv11xGMYIlQNDtnVDwjDtCinqEsj+Npsm1Ui+GEvJqbXm6oiUA0vJhN91gGiDck
-ARC-Seal: i=1; a=rsa-sha256; t=1526280649; cv=none;
+X-Google-Smtp-Source: AB8JxZrQu8POMdmk1JnrJYWOCegYMJ9zux4z0bYCryEFu8b/n1Pm9dUNhUgEXHTMlz7vXwcdOTQt
+ARC-Seal: i=1; a=rsa-sha256; t=1526280647; cv=none;
         d=google.com; s=arc-20160816;
-        b=nCqrwFaS9uBsapoFwflKmu6KSbV/vl2ZbVNdHZQfL1BrNQ1CYfIEmYsyo9qtg3HjYV
-         fFvY0ydttiD0C90w4wHF49kuEBYwaEd6XmEepUMteuywaVuLdML6kKAXFncBflsW7DNT
-         X5roeT5lAliQzW30SgCiaKAnrtzvfNJz2ZBx7hmhrWYVKTnx+YtwnfoHRuJC+kYoNaip
-         +ZhxQ12C5ivzubAdyrzRu0GpXSO7yzZ4wQf0eVfSfSb1afmVQf1CwWTVlZNM01ahOiuc
-         LdZuvegaLoEmtc2WTNSuR0krnII7d0hNPn57gVXfemMZzxvZwoSYoPv3DUw9o/BXCSxF
-         jf+g==
+        b=IjeR9/s7bXfNY4hIKvkueGL2AOMgbEtIUikmpSICgXmFZBqhOlyWw6XnAkV1sPOcTK
+         Ywtw7L09OR/ORUjR6M98T7G3jgNVnksI6roRodzg7o+7SsHdarE9dOJi0h3J5niAazwr
+         Lua8RvEXyPvr54qqjD3a/olZi0ZZjykzzPrhT8M8JpIr7xwT8zMqZjEuJTVsol9thFzc
+         XDHBsI+jbM1fB5v9dQpd9hrLMRdnQtjXLqP3aYz/K/gg9H7eQZ93wuW2S2RNjXXNQSAm
+         ncJ5SETOD8tpxNZqlE6IigAkzUwZOrVTWHZ9x/CSewhwJ8DfpdR/C3IYPZ9fXamV6k1Z
+         fdQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=fZVXLC3VDJls9S/qd7Jx3lALqc0HkS3A4mf+JG7aeMw=;
-        b=RpwVue5p1li8qQMovw04PX15mqGcWt7UK4qwL6wMJf0p9nKaZqZazJIlwsOLCQZG/c
-         HGRJcNxE+JrFCVAsKHAP6454zDgKWpJpBwA9WlRAeyQcrY+KFtq9Uzxy35rf97jcsY+U
-         cAIdZ0Oexx7B78h6aYce0EQJpHcg89Re2BfV33d/MnLM22ngqK5SWkMFZ2UepJLqwPpC
-         o0022WvxKMm918ozQ3PvILzjydl/JpOu7anO3cTnLwsbh/n0nCjg4YGdJcx0VaZUAKni
-         dt6fRr2qTtIQl2tJIbBi6CvEBD7MslxK2iPY9lcta6W4sdnzfCRUX1NUT+UPXZLqdvbW
-         9XUA==
+        bh=FBiGbWWyH8C+oUoWWUe7dtrWKHZmIgPT/w3PIt4e2Aw=;
+        b=E8LyCBBLYQVX8n386cTef9kz1IwewTDeg1IEkA2jxxhb5zqiYTiUTVuBtyWd8/mN0J
+         Yp1rJ7lwT2mCeVTEDfuaX2xBdHldurws8PwKjJG/2SQ91x32StN3lTHPLm1/RIOfFuIr
+         wb3kMfWuWyWz/cVmaV6zM85wWCYZDZs0TphREcHUYsrxgbSELBA1fLUjuyt79nfBtk5e
+         1/HCYLnMDWshADsUUvhoy3/qrSBF1exe4bjr1ZewofNdAYO9VQnsv2MXiZ6EIIES1Isu
+         QRca4jBjmOeieDUlV61LjUPt/TtI2zYkoxMhCuUpDDHCiFpJ5JPQN0meRCFIgRQVEGpT
+         oTYQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=FAC6DATL;
+       dkim=pass header.i=@kernel.org header.s=default header.b=KLnI4ZxJ;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=FAC6DATL;
+       dkim=pass header.i=@kernel.org header.s=default header.b=KLnI4ZxJ;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Johan Hovold <johan@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 3.18 19/23] rfkill: gpio: fix memory leak in probe error path
-Date: Mon, 14 May 2018 08:48:48 +0200
-Message-Id: <20180514064704.856469248@linuxfoundation.org>
+	Eric Dumazet <edumazet@google.com>,
+	syzbot <syzkaller@googlegroups.com>,
+	Pavel Emelyanov <xemul@parallels.com>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 18/23] tcp: fix TCP_REPAIR_QUEUE bound checking
+Date: Mon, 14 May 2018 08:48:47 +0200
+Message-Id: <20180514064704.818700522@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064704.046463679@linuxfoundation.org>
 References: <20180514064704.046463679@linuxfoundation.org>
@@ -43,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421258890786882?=
-X-GMAIL-MSGID: =?utf-8?q?1600421258890786882?=
+X-GMAIL-THRID: =?utf-8?q?1600421256400782370?=
+X-GMAIL-MSGID: =?utf-8?q?1600421256400782370?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,44 +53,48 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 4bf01ca21e2e0e4561d1a03c48c3d740418702db upstream.
+commit bf2acc943a45d2b2e8a9f1a5ddff6b6e43cc69d9 upstream.
 
-Make sure to free the rfkill device in case registration fails during
-probe.
+syzbot is able to produce a nasty WARN_ON() in tcp_verify_left_out()
+with following C-repro :
 
-Fixes: 5e7ca3937fbe ("net: rfkill: gpio: convert to resource managed allocation")
-Cc: stable <stable@vger.kernel.org>	# 3.13
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+socket(PF_INET, SOCK_STREAM, IPPROTO_IP) = 3
+setsockopt(3, SOL_TCP, TCP_REPAIR, [1], 4) = 0
+setsockopt(3, SOL_TCP, TCP_REPAIR_QUEUE, [-1], 4) = 0
+bind(3, {sa_family=AF_INET, sin_port=htons(20002), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
+sendto(3, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"...,
+	1242, MSG_FASTOPEN, {sa_family=AF_INET, sin_port=htons(20002), sin_addr=inet_addr("127.0.0.1")}, 16) = 1242
+setsockopt(3, SOL_TCP, TCP_REPAIR_WINDOW, "\4\0\0@+\205\0\0\377\377\0\0\377\377\377\177\0\0\0\0", 20) = 0
+writev(3, [{"\270", 1}], 1)             = 1
+setsockopt(3, SOL_TCP, TCP_REPAIR_OPTIONS, "\10\0\0\0\0\0\0\0\0\0\0\0|\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 386) = 0
+writev(3, [{"\210v\r[\226\320t\231qwQ\204\264l\254\t\1\20\245\214p\350H\223\254;\\\37\345\307p$"..., 3144}], 1) = 3144
+
+The 3rd system call looks odd :
+setsockopt(3, SOL_TCP, TCP_REPAIR_QUEUE, [-1], 4) = 0
+
+This patch makes sure bound checking is using an unsigned compare.
+
+Fixes: ee9952831cfd ("tcp: Initial repair mode")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Pavel Emelyanov <xemul@parallels.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/rfkill/rfkill-gpio.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/ipv4/tcp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/rfkill/rfkill-gpio.c
-+++ b/net/rfkill/rfkill-gpio.c
-@@ -134,13 +134,18 @@ static int rfkill_gpio_probe(struct plat
- 
- 	ret = rfkill_register(rfkill->rfkill_dev);
- 	if (ret < 0)
--		return ret;
-+		goto err_destroy;
- 
- 	platform_set_drvdata(pdev, rfkill);
- 
- 	dev_info(&pdev->dev, "%s device registered.\n", rfkill->name);
- 
- 	return 0;
-+
-+err_destroy:
-+	rfkill_destroy(rfkill->rfkill_dev);
-+
-+	return ret;
- }
- 
- static int rfkill_gpio_remove(struct platform_device *pdev)
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2461,7 +2461,7 @@ static int do_tcp_setsockopt(struct sock
+ 	case TCP_REPAIR_QUEUE:
+ 		if (!tp->repair)
+ 			err = -EPERM;
+-		else if (val < TCP_QUEUES_NR)
++		else if ((unsigned int)val < TCP_QUEUES_NR)
+ 			tp->repair_queue = val;
+ 		else
+ 			err = -EINVAL;
