@@ -1,79 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753747AbeENM7l (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:59:41 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35611 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753590AbeENM7j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:59:39 -0400
-X-Google-Smtp-Source: AB8JxZroPcmly/NFZY/6pjCznp5IzDjq4GnbaE/1RUyq9CSOeYyEsXyDZnPb+Ew3Q7BX7+rpbD8D7g==
-Date: Mon, 14 May 2018 14:59:36 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: airlied@linux.ie, jonathanh@nvidia.com,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: Re: [PATCH] gpu: drm: tegra: Adding new typedef vm_fault_t
-Message-ID: <20180514125936.GL18312@ulmo>
-References: <20180417134755.GA30291@jordon-HP-15-Notebook-PC>
+        id S932124AbeENNDw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 09:03:52 -0400
+Received: from mga12.intel.com ([192.55.52.136]:15755 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752463AbeENNDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 09:03:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,400,1520924400";
+   d="scan'208";a="199203450"
+Subject: Re: [PATCH RFC 07/19] perf tools: Workaround missing maps for x86_64
+ KPTI entry trampolines
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+References: <1525866228-30321-1-git-send-email-adrian.hunter@intel.com>
+ <1525866228-30321-8-git-send-email-adrian.hunter@intel.com>
+ <20180509170717.GI13491@kernel.org>
+ <363DA0ED52042842948283D2FC38E4649C13DE9E@IRSMSX106.ger.corp.intel.com>
+ <20180510201542.GD4311@kernel.org> <20180510201922.GE4311@kernel.org>
+ <20180510204700.GF4311@kernel.org>
+ <291c0615-2b5c-0076-faeb-720df9ab5c84@intel.com>
+ <20180511144526.GQ13491@kernel.org>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <b698fcd5-be86-4c94-3af5-f23b49203c4e@intel.com>
+Date: Mon, 14 May 2018 16:02:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="9/GiYV45wF7IL3Iq"
-Content-Disposition: inline
-In-Reply-To: <20180417134755.GA30291@jordon-HP-15-Notebook-PC>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180511144526.GQ13491@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/05/18 17:45, Arnaldo Carvalho de Melo wrote:
+> Em Fri, May 11, 2018 at 02:18:01PM +0300, Adrian Hunter escreveu:
+>> On 10/05/18 23:47, Arnaldo Carvalho de Melo wrote:
+>>> Em Thu, May 10, 2018 at 05:19:22PM -0300, Arnaldo Carvalho de Melo escreveu:
+>>>> Em Thu, May 10, 2018 at 05:15:42PM -0300, Arnaldo Carvalho de Melo escreveu:
+>>>>> Em Thu, May 10, 2018 at 07:08:37PM +0000, Hunter, Adrian escreveu:
+>>>>>> Let me know if you want me to post the workaround patches separately,
+>>>>>> otherwise I will wait a bit before sending the patches again.
+>>>
+>>>>> I'll see if I went thru all of the patches already...
+>>>  
+>>>> So I looked at the patches posted and one comment is about the terse
+>>>> commit logs for some of the kcore_copy patches, for instance:
+>>>  
+>>>> --------------------
+>>>>  In preparation to add more program headers, get rid of kernel_map and
+>>>> modules_map.
+>>>> --------------------
+>>>  
+>>>> Can't this be made a bit more verbose? Lemme re-read the patch...
+>>>
+>>> So you had just one pointers to the kernel map and a module_maps, and
+>>> then this is replaced by kcore_copy__map() that instead of populating
+>>> those fields that are being removed:
+>>>
+>>> -       struct phdr_data kernel_map;
+>>> -       struct phdr_data modules_map;
+>>>
+>>> Will allocate and add "struct phdr_data" instances to the
+>>> kcore_copy_info->phdrs list, so I propose, to follow convention used
+>>> elsewhere in tools/perf/ that you rename kcore_copy__map() to
+>>>
+>>>   kcore_copy_info__addnew(kci, fields)
+>>>
+>>> I would do it as:
+>>>
+>>> struct phdr_data *phdr_data__new(fields)
+>>> {
+>>> 	return  zalloc() + init fields;
+>>> }
+>>>
+>>> struct phdr_data *kcore_copy_info__addnew(kci, fields)
+>>> {
+>>> 	struct phdr_data *pd = phdr_data__new(fields);
+>>>
+>>> 	if (pd)
+>>> 		list_add(&pd->list, &kci->phdrs)
+>>> }
+>>>
+>>> Also please rename pd->list to pd->node, to clarify that it is a node in
+>>> some list, not a list.
+>>>
+>>> The commit log list then could reflect that somehow, with something
+>>> around:
+>>>
+>>> ----------------------
+>>>
+>>> Move ->kernel_map and ->modules_map to newly allocated entries in the
+>>> ->phdrs list.
+>>>
+>>> ----------------------
+>>>
+>>> wdyt?
+>>
+>> I have done the changes but still have kcore_copy__map() calling
+>> kcore_copy_info__addnew().  The changes have been pushed to the same branch.
+> 
+> Thanks! I'll process a perf/urgent round and then go over your updated
+> tree to get it tested on a skylake machine and merged to perf/core,
 
---9/GiYV45wF7IL3Iq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I changed some terminology 'x86_64 KPTI' -> 'x86 PTI' as requested by Ingo,
+and pushed to a new branch perf-tools-kpti-v0.
 
-On Tue, Apr 17, 2018 at 07:17:55PM +0530, Souptick Joarder wrote:
-> Use new return type vm_fault_t for fault handler. For
-> now, this is just documenting that the function returns
-> a VM_FAULT value rather than an errno. Once all instances
-> are converted, vm_fault_t will become a distinct type.
->=20
-> Reference id -> 1c8f422059ae ("mm: change return type to
-> vm_fault_t")
->=20
-> Previously vm_insert_page() returns err which driver
-> mapped into VM_FAULT_* type. The new function=20
-> vmf_insert_page() will replace this inefficiency by
-> returning VM_FAULT_* type.
->=20
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> ---
->  drivers/gpu/drm/tegra/gem.c | 18 ++----------------
->  1 file changed, 2 insertions(+), 16 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---9/GiYV45wF7IL3Iq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5iDgACgkQ3SOs138+
-s6EEXg//bokguGEBwwTSDuDaSFIZw0Z+9pB2xoBEjsQXRZBQrKl/oZHAMbPGfkK4
-Wwa9hHqjvJ0w1nzBEQrVGZGB9bWGOoxExRz6gL560NcpFfgPUz00KIyszMZl90KJ
-eqnoC7N9RrnZ0mLE00S6dIf5QliY16djVK1Eb7S0ftKkmH/H38ntW6WNsq2AEgiH
-WcWmw26SC9uQjuDH7SpLVxrP6DGMwq4mgRfbrlqVRzYecjjQ8FD7ifX8rwhL0dLV
-zr9yhekFV/nEjtkVYWO2BWk6Qbx50qscWJITkTsQX/sibwuG+gs8y5WSH1Yt7nDh
-KmBnrX1mhayHZ9h6G3O4gncMEc4hculEwfw/yGznlfI3ljAyqVFU0RI8HpOXgDBP
-vMKm/J4ngaOnjM/27/uZTQTFoUx/DJnN6H9F8yUFEgzbzqe7EDorSpQCoJYD0rCC
-ZccMg5FJWZ67ui4q7fZ5hNm8UijO1XnBdqZbLfaAMZFaaeCZcuQAPy5MxMlvxZs8
-yXSR9agnvWQZx5/2YgurZCnztUAv9UHmENNsdKtQzLB07jxdOTpGwdVZMUe9eZjB
-ckmstNCZSBJ/GaqxzsFRAqWAei3dG3ECmEy4YPfPWdY0Gt+GtcRtJti+e6XRp5J7
-x42wcJXo0Gb6uuQTUrqoMpoRHGRh+Xeqgna4fGlG/nYe5dhdY1g=
-=9X7O
------END PGP SIGNATURE-----
-
---9/GiYV45wF7IL3Iq--
+	http://git.infradead.org/users/ahunter/linux-perf.git/shortlog/refs/heads/perf-tools-kpti-v0
