@@ -1,102 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752105AbeENS7u (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 14:59:50 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:40727 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752019AbeENS7s (ORCPT
+        id S1752153AbeENTCE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 15:02:04 -0400
+Received: from isilmar-4.linta.de ([136.243.71.142]:55682 "EHLO
+        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbeENTCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 14:59:48 -0400
-X-Google-Smtp-Source: AB8JxZrAGzLPk2abw8PkHFoxLJlUbDtobGGitONvNQJyWFAIbFvOabpm2gq6ezJExZF4aEuNMqXvFx+OW/Dq+4adM+4=
+        Mon, 14 May 2018 15:02:02 -0400
+Date: Mon, 14 May 2018 20:00:29 +0200
+From: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        catalin.marinas@arm.com, dave.martin@arm.com, james.morse@arm.com,
+        linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
+        viro@zeniv.linux.org.uk, will.deacon@arm.com
+Subject: Re: [PATCH 08/18] arm64: convert raw syscall invocation to C
+Message-ID: <20180514180029.GA23250@light.dominikbrodowski.net>
+References: <20180514094640.27569-1-mark.rutland@arm.com>
+ <20180514094640.27569-9-mark.rutland@arm.com>
 MIME-Version: 1.0
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <28df5659605d7b2ace94deca3b831b462183303f.1525964381.git.joe@perches.com>
-References: <cover.1525964381.git.joe@perches.com> <28df5659605d7b2ace94deca3b831b462183303f.1525964381.git.joe@perches.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 14 May 2018 14:59:46 -0400
-Message-ID: <CAHC9VhRS1ww3Hv44p3W3C7WBoefrU2shQM4UHL8b6MK1kHso3g@mail.gmail.com>
-Subject: Re: [PATCH 01/18] kernel: Use pr_fmt
-To: Joe Perches <joe@perches.com>
-Cc: Eric Paris <eparis@redhat.com>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>, Jessica Yu <jeyu@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>, Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-audit@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180514094640.27569-9-mark.rutland@arm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 10, 2018 at 11:45 AM, Joe Perches <joe@perches.com> wrote:
-> Sometime in the future, it would be useful to convert pr_fmt from a
-> default simple define to use a default prefix with KBUILD_MODNAME.
->
-> There are files in kernel/ that use pr_<level>, some with an embedded
-> prefix, that also do not have a specific pr_fmt define.
->
-> Add pr_fmt for those files.
->
-> There are some differences in output as some messages are now prefixed
-> with their KBUILD_MODNAME.
->
-> Miscellanea:
->
-> o Align multiline statements to open parenthesis
-> o Wrap and realign arguments to 80 columns where sensible
-> o Coalesce formats
->
-> Signed-off-by: Joe Perches <joe@perches.com>
-> ---
->  kernel/acct.c          |  2 ++
->  kernel/async.c         | 14 ++++++------
->  kernel/audit_tree.c    |  2 +-
->  kernel/backtracetest.c |  8 +++----
->  kernel/crash_core.c    | 29 ++++++++++++++-----------
->  kernel/exit.c          |  2 ++
->  kernel/hung_task.c     | 13 +++++------
->  kernel/kprobes.c       | 20 ++++++++++-------
->  kernel/module.c        | 59 +++++++++++++++++++++++---------------------------
->  kernel/panic.c         |  3 +++
->  kernel/params.c        | 13 ++++++-----
->  kernel/pid.c           |  2 ++
->  kernel/profile.c       |  2 ++
->  kernel/range.c         |  2 +-
->  kernel/relay.c         |  5 ++++-
->  kernel/seccomp.c       |  4 +++-
->  kernel/signal.c        | 10 +++++----
->  kernel/smpboot.c       |  5 ++++-
->  kernel/taskstats.c     |  4 +++-
->  kernel/torture.c       |  6 +++--
->  kernel/tracepoint.c    |  3 +++
->  kernel/workqueue.c     |  2 ++
->  22 files changed, 122 insertions(+), 88 deletions(-)
+> +static void __invoke_syscall(struct pt_regs *regs, syscall_fn_t syscall_fn)
+> +{
+> +	regs->regs[0] = syscall_fn(regs->regs[0], regs->regs[1],
+> +				   regs->regs[2], regs->regs[3],
+> +				   regs->regs[4], regs->regs[5]);
+> +}
 
-The audit change looks fine to me, thanks Joe.
+Any specific reason to have this in a separate function? This seems to be
+called only from one instance, namely
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+> +asmlinkage void invoke_syscall(struct pt_regs *regs, int scno, int sc_nr,
+> +			       syscall_fn_t syscall_table[])
+> +{
+> +	if (scno < sc_nr) {
+> +		syscall_fn_t syscall_fn;
+> +		syscall_fn = syscall_table[array_index_nospec(scno, sc_nr)];
+> +		__invoke_syscall(regs, syscall_fn);
+> +	} else {
+> +		regs->regs[0] = do_ni_syscall(regs);
+> +	}
+> +}
 
-> diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
-> index 67e6956c0b61..f34f90b4a346 100644
-> --- a/kernel/audit_tree.c
-> +++ b/kernel/audit_tree.c
-> @@ -739,7 +739,7 @@ static int audit_launch_prune(void)
->         prune_thread = kthread_run(prune_tree_thread, NULL,
->                                 "audit_prune_tree");
->         if (IS_ERR(prune_thread)) {
-> -               pr_err("cannot start thread audit_prune_tree");
-> +               pr_err("cannot start thread audit_prune_tree\n");
->                 prune_thread = NULL;
->                 return -ENOMEM;
->         }
+and result in a one-liner in the last patch of the series.
 
--- 
-paul moore
-www.paul-moore.com
+Thanks,
+	Dominik
