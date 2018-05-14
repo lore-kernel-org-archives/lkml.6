@@ -1,62 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752151AbeENWI5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 18:08:57 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34935 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752038AbeENWIz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 18:08:55 -0400
-X-Google-Smtp-Source: AB8JxZpEwsQNmtPj/YzQVpHn9DKtPQAjOQAtAgqqcbKtxtoa71V1tMVhqmxOuTtrmGriUBJYfkzITg==
-Date: Tue, 15 May 2018 01:08:52 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [tip:x86/pti 14/14] arch/x86/mm/mem_encrypt_boot.o: warning:
- objtool: .text+0x51: unreachable instruction
-Message-ID: <20180514220852.GA8281@avx2>
-References: <201805142145.FPNj1BCK%fengguang.wu@intel.com>
+        id S1752161AbeENWKI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 18:10:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36930 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751978AbeENWKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 18:10:06 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <201805142145.FPNj1BCK%fengguang.wu@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+To: "moderated list:ARM64 PORT AARCH64 ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh+dt@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Yossi Mansharoff <yossim@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1523973390-2387-1-git-send-email-yossim@codeaurora.org>
+Cc: Yossi Mansharoff <yossim@codeaurora.org>
+References: <1523973390-2387-1-git-send-email-yossim@codeaurora.org>
+Message-ID: <152633580491.34267.3508281594437081335@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2] arm64: dts: qcom: Collapse usb support into one node
+Date: Mon, 14 May 2018 15:10:04 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4EMACJT012292
 
-On Mon, May 14, 2018 at 09:44:48PM +0800, kbuild test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/pti
-> head:   51bad67ffbce0aaa44579f84ef5d05597054ec6a
-> commit: 51bad67ffbce0aaa44579f84ef5d05597054ec6a [14/14] x86/asm: Pad assembly functions with INT3 instructions
-> config: x86_64-randconfig-x018-201819 (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-> reproduce:
->         git checkout 51bad67ffbce0aaa44579f84ef5d05597054ec6a
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
+Quoting Yossi Mansharoff (2018-04-17 06:56:30)
+> We currently have three device nodes for the same USB hardware
+> block, as evident by the reuse of the same reg address multiple
+> times. Now that the chipidea driver fully supports OTG with the
+> MSM wrapper we can collapse all these nodes into one USB device
+> node, reflecting the true nature of the hardware.
+
+None of this makes sense. Commit text is totally bogus now.
+
 > 
-> All warnings (new ones prefixed by >>):
-> 
-> >> arch/x86/mm/mem_encrypt_boot.o: warning: objtool: .text+0x51: unreachable instruction
-> >> arch/x86/xen/xen-asm.o: warning: objtool: .text+0x1a: unreachable instruction
+> diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
+> index 9ff8487..1505921 100644
+> --- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
+> @@ -371,18 +372,18 @@
+>                         adp-disable;
+>                         hnp-disable;
+>                         srp-disable;
+> -                       dr_mode = "host";
+> -                       pinctrl-names = "default";
+> -                       pinctrl-0 = <&usb_sw_sel_pm>;
+> +                       mux-controls = <&usb_switch>;
+> +                       mux-control-names = "usb_switch";
+> +
+>                         ulpi {
+>                                 phy {
+>                                         v1p8-supply = <&pm8916_l7>;
+>                                         v3p3-supply = <&pm8916_l13>;
+> -                                       extcon = <&usb_id>;
+>                                 };
+>                         };
+>                 };
+>  
+> +
 
-There are warnings:
+Why the newline?
 
-	arch/x86/lib/clear_page_64.o: warning: objtool: .text+0xb: unreachable instruction
+>                 lpass@7708000 {
+>                         status = "okay";
+>                 };
+> @@ -512,11 +513,17 @@
+>  
+>         usb_id: usb-id {
+>                 compatible = "linux,extcon-usb-gpio";
+> -               vbus-gpio = <&msmgpio 121 GPIO_ACTIVE_HIGH>;
+> +               id-gpio = <&msmgpio 121 GPIO_ACTIVE_HIGH>;
 
-	0000000000000000 <clear_page_rep>:
-	   0:   b9 00 02 00 00          mov    ecx,0x200
-	   5:   31 c0                   xor    eax,eax
-	   7:   f3 48 ab                rep stos QWORD PTR es:[rdi],rax
-	   a:   c3                      ret
-  ===>	   b:   cc                      int3
-	   c:   cc                      int3
-	   d:   cc                      int3
-	   e:   cc                      int3
-	   f:   cc                      int3
-	
-	0000000000000010 <clear_page_orig>:
+Hmm?
 
-But both function are annotated with ENTRY/ENDPROC.
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&usb_id_default>;
+>         };
+>  
+> +       usb_switch: usb-switch {
+> +               compatible = "gpio-mux";
+
+Needs a better compatible string for the actual mux part. The gpio-mux
+can come after that because it's generic, but it's good to record the
+actual mux part too.
+
+> +               mux-gpios = <&pm8916_gpios 4 GPIO_ACTIVE_HIGH>;
+> +               #mux-control-cells = <0>;
+> +       };
