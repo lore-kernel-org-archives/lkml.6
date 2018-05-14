@@ -1,97 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752057AbeENTku (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 15:40:50 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:64964 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751422AbeENTks (ORCPT
+        id S1752089AbeENTma (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 15:42:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60088 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751865AbeENTm1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 15:40:48 -0400
-Subject: Re: [PATCH v5 2/2] leds: lm3601x: Introduce the lm3601x LED driver
-From: Dan Murphy <dmurphy@ti.com>
-To: Jacek Anaszewski <jacek.anaszewski@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <pavel@ucw.cz>, <afd@ti.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>
-References: <20180510174717.26540-1-dmurphy@ti.com>
- <20180510174717.26540-2-dmurphy@ti.com>
- <41267191-1308-6b9b-78fa-2893a525b49a@gmail.com>
- <17630aca-1225-df61-7a5d-a921ecd9c78c@ti.com>
-Message-ID: <86c2bc2f-e622-9447-e4bb-b4ee37e2d44a@ti.com>
-Date: Mon, 14 May 2018 14:40:29 -0500
+        Mon, 14 May 2018 15:42:27 -0400
+Subject: Re: [PATCH v5 05/13] s390: vfio-ap: register matrix device with VFIO
+ mdev framework
+To: Halil Pasic <pasic@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-6-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <5471b194-d7ca-c9c6-132e-fa9539fe44f0@linux.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Mon, 14 May 2018 15:42:18 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <17630aca-1225-df61-7a5d-a921ecd9c78c@ti.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <5471b194-d7ca-c9c6-132e-fa9539fe44f0@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-TM-AS-GCONF: 00
+x-cbid: 18051419-0020-0000-0000-00000DED847E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009025; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000260; SDB=6.01032306; UDB=6.00527738; IPR=6.00811438;
+ MB=3.00021111; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 19:42:26
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051419-0021-0000-0000-0000615EFB3C
+Message-Id: <4688078d-3e13-5201-582f-52576b25defa@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805140197
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
-
-On 05/11/2018 06:56 AM, Dan Murphy wrote:
-<snip>
-
->>> +    }
->>> +
->>> +    if (led->strobe_node) {
->>> +        ret = of_property_read_string(led->strobe_node, "label", &name);
->>> +        if (!ret)
->>> +            snprintf(led->strobe, sizeof(led->strobe),
->>> +                "%s:%s", led->strobe_node->name, name);
->>> +        else
->>> +            snprintf(led->strobe, sizeof(led->strobe),
->>> +                "%s::strobe", led->strobe_node->name);
->>> +
->>> +        ret = of_property_read_u32(led->strobe_node,
->>> +                    "flash-max-microamp",
->>> +                    &led->strobe_current_max);
->>> +        if (ret < 0) {
->>> +            led->strobe_current_max = LM3601X_MIN_STROBE_I_MA;
->>> +            dev_warn(&led->client->dev,
->>> +                 "flash-max-microamp DT property missing\n");
->>> +        }
->>> +
->>> +        ret = of_property_read_u32(led->strobe_node,
->>> +                    "flash-max-timeout-us",
->>> +                    &led->max_strobe_timeout);
->>> +        if (ret < 0) {
->>> +            led->max_strobe_timeout = strobe_timeouts[0].reg_val;
->>> +            dev_warn(&led->client->dev,
->>> +                 "flash-max-timeout-us DT property missing\n");
->>> +        }
+On 05/11/2018 01:18 PM, Halil Pasic wrote:
+>
+>
+> On 05/07/2018 05:11 PM, Tony Krowiak wrote:
+>> Registers the matrix device created by the VFIO AP device
+>> driver with the VFIO mediated device framework.
+>> Registering the matrix device will create the sysfs
+>> structures needed to create mediated matrix devices
+>> each of which will be used to configure the AP matrix
+>> for a guest and connect it to the VFIO AP device driver.
 >>
->> Common LED bindings state that flash-max-microamp and
->> flash-max-timeout-us properties are mandatory.
-> 
-> OK.
+> [..]
+>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
+>> b/drivers/s390/crypto/vfio_ap_ops.c
+>> new file mode 100644
+>> index 0000000..d7d36fb
+>> --- /dev/null
+>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>> @@ -0,0 +1,106 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +/*
+>> + * Adjunct processor matrix VFIO device driver callbacks.
+>> + *
+>> + * Copyright IBM Corp. 2017
+>> + * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+>> + *
+>> + */
+>> +#include <linux/string.h>
+>> +#include <linux/vfio.h>
+>> +#include <linux/device.h>
+>> +#include <linux/list.h>
+>> +#include <linux/ctype.h>
+>> +
+>> +#include "vfio_ap_private.h"
+>> +
+>> +#define VFOP_AP_MDEV_TYPE_HWVIRT "passthrough"
+>> +#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
+>> +
+>> +static int vfio_ap_mdev_create(struct kobject *kobj, struct 
+>> mdev_device *mdev)
+>> +{
+>> +    struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
+>> +
+>> +    ap_matrix->available_instances--;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static int vfio_ap_mdev_remove(struct mdev_device *mdev)
+>> +{
+>> +    struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
+>> +
+>> +    ap_matrix->available_instances++;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>
+> The above functions seem to be called with the lock of this 
+> auto-generated
+> mdev parent device held. That's why we don't have to care about 
+> synchronization
+> ourselves, right?
 
-OK I looked at the max776973 driver and well if the flash-max-microamp and
-flash-max-timeout-us nodes are missing it sets a default value for each if the
-node is not present.
+I would assume as much. The comments for the 'struct mdev_parent_ops' in
+include/linux/mdev.h do not mention anything about synchronization, nor 
+did I
+see any locking or synchronization in the vfio_ccw implementation after 
+which
+I modeled my code, so frankly it is something I did not consider.
 
-So should we remove this code from the Max77693 driver too and fail probe as being asked
-in this driver?
+>
+>
+> A small comment in the code could be helpful for mdev non-experts. 
+> Hell, I would
+> even consider documenting it for all mdev -- took me some time to 
+> figure out.
 
-Dan
+You may want to bring this up with the VFIO mdev maintainers, but I'd be 
+happy to
+include a comment in the functions in question if you think it important.
 
-> 
->>
->>> +
->>> +        lm3601x_init_flash_timeout(led);
+>
+>
+> [..]
+>
+>
+>> +int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
+>> +{
+>> +    int ret;
+>> +
+>> +    ret = mdev_register_device(&ap_matrix->device, 
+>> &vfio_ap_matrix_ops);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ap_matrix->available_instances = AP_MATRIX_MAX_AVAILABLE_INSTANCES;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix)
+>> +{
+>> +    ap_matrix->available_instances--;
+>
+> What is this for? I don't understand.
 
-<snip>
+To control the number of mediated devices one can create for the matrix 
+device.
+Once the max is reached, the mdev framework will not allow creation of 
+another
+mediated device until one is removed. This counter keeps track of the number
+of instances that can be created. This is documented with the mediated
+framework. You may want to take a look at:
 
->>>
->>
-> 
-> 
+Documentation/vfio-mediated-device.txt
+Documentation/vfio.txt
+Documentation/virtual/kvm/devices/vfio.txt
 
-
--- 
-------------------
-Dan Murphy
+>
+>
+> Regards,
+> Halil
+>
+>> + mdev_unregister_device(&ap_matrix->device);
+>> +}
