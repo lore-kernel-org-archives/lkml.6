@@ -1,39 +1,40 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqnKyd9BlYwkn5XHxIiTvXnv/7p8UirY6oMs9rGS0Bwe9h7Vtga3xQG3PEOczlqbaL6PABB
-ARC-Seal: i=1; a=rsa-sha256; t=1526280701; cv=none;
+X-Google-Smtp-Source: AB8JxZraWDW80ws2bRpMnveJT9wfUgMalC+wBIWbuxdTf/c+c5ua3MORhJBwkgRSNfJp9zp90Q0e
+ARC-Seal: i=1; a=rsa-sha256; t=1526280698; cv=none;
         d=google.com; s=arc-20160816;
-        b=Zw9DceWZTU6EIYvBAnrlwSfoo8aY9XrLkV2WYc3pV0BWx688wW04n3q0x/CmRuoKQA
-         nP5IWFbELHEdUqIpqUWaiWR5sg/sag4oPrLujQtYeRQimPdwMyGPMIaR1vCpi/1kjWrH
-         r6+OBxotvNjq0cMwkmn5+wR6ttg0KMvoWyJ9tFS4Rkn/tnYZ94X1OLCQre5vyVRiXTev
-         80kgosWJq9hQR/s1KKVmvkMTApUZhwWDqD8hEdrLylUBQt19ru+Qk1F6HQlQUAPhbact
-         nKLfDmFS/2ebTvuwm9O/RFuGH2jUeFVrYy/cQKcFPbc7A0Q1TXN0GiFKgBh/VXIOMJmi
-         1hTQ==
+        b=hvAowXhxB+NoO/7IHZPVg62r0K+4BZfz2ofRc032AjEBlfAEpsg1HGn4vWxKJz3uS8
+         zqQQKZR5ZZdhHAdgVyjiUZlkHHMWbEPBiA5eCNOMQM/W1E973H5VW9Wj6SDt0FDdnPX+
+         GqapBUgn9zIKJ5ilpvIjc65UYheWfsx1n/ELNCQxrjLOIQRla4gS0QNSriu77W1zNsbI
+         Q+U87zlYTi0OwhsksjSXIY88g3PuUIGiZaJwXXQGVjMhzyaeQNkrA/fkIJo7RF6vUjKs
+         vfBJrpE2+ftHGlojrk5ft8o7penezS6hwf7WABfyTkC3NPWoQntXGWDB9QdXkmjOG701
+         k7cA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=FmJX+tzWI5hox0QQQgRHLzfsJ4WGv4JSKpqsv/apHUs=;
-        b=Y13NvsxnkeHLkQP0kflOZ1qRUjhpOMME20iGmmmnCLf7AsDNQ8xUUGO+Q/g9kvGABI
-         9UDJy6VYHoCNa2+d5nRaK3A14yciz0OjUBaaN9HjsnJnAiGT2SITsDrDa8ZU4Gt0lVCY
-         hG9JUphuyP0C+mUcLuMTfZqVul82SY9rERXQcf0QmuXmCdSghZhZ9f9VrBFIbqeUrWOs
-         bo65tMoDWYt9kj2Kmz+PjxqirlyHR+KI3nmILl0nzH4HXHeqzFebDCd87IJlVu04npBc
-         3bghWPRLE5F5ee3MuoXd/dpSW70+7YGTqCXPxf4kRv4FxniAeGudqiNUAzjSzS4kXBI7
-         wjXw==
+        bh=UV/1CUvJvMfnmgt7oFns/x94mOPPipHoc9WKAtuob0A=;
+        b=xiGKCRInqk/66bAPUBrhjAlbJr5mjl5RgxRf5JcVYuuXaZJtf5tzTHMdIljNUAfinc
+         aVFxvFsEwr58MCXXMaBxX/2MHtjOIGuMOCCmUHVxy2k46ItiFZmYIAiz8HFMqPmOLIWP
+         37x+oXEBxqHp8Gyj5UyK66GaXHcY0ARWV4EwFvKKkwVNsvsCIpKr3Z3YX0Ta4a9ciyTt
+         ljU5PCgtHn2pzFbS0opPYUYxou0YjaYUdEPfNhymUX6FdVfICIEJ4llCK80ftMF3PWMS
+         4cKwPFQrve7V1FZ8DNbWNV5vlo58bP03+mYT3smXCePJmnNVLbjE1nK0pRQDvPRpYXCh
+         +qjw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=HEuYfq7k;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EOcvXf7e;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=HEuYfq7k;
+       dkim=pass header.i=@kernel.org header.s=default header.b=EOcvXf7e;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Thomas Hellstrom <thellstrom@vmware.com>,
-	Deepak Rawat <drawat@vmware.com>,
-	Sinclair Yeh <syeh@vmware.com>
-Subject: [PATCH 4.4 24/56] drm/vmwgfx: Fix a buffer object leak
-Date: Mon, 14 May 2018 08:48:29 +0200
-Message-Id: <20180514064757.216460871@linuxfoundation.org>
+	Majd Dibbiny <majd@mellanox.com>,
+	Danit Goldberg <danitg@mellanox.com>,
+	Leon Romanovsky <leonro@mellanox.com>,
+	Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.4 23/56] IB/mlx5: Use unlimited rate when static rate is not supported
+Date: Mon, 14 May 2018 08:48:28 +0200
+Message-Id: <20180514064757.125686335@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064754.853201981@linuxfoundation.org>
 References: <20180514064754.853201981@linuxfoundation.org>
@@ -43,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421312576078246?=
-X-GMAIL-MSGID: =?utf-8?q?1600421312576078246?=
+X-GMAIL-THRID: =?utf-8?q?1600421309673322005?=
+X-GMAIL-MSGID: =?utf-8?q?1600421309673322005?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,31 +53,56 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+From: Danit Goldberg <danitg@mellanox.com>
 
-commit 13f149d47392782baafd96d54d4e65f3b5ca342f upstream.
+commit 4f32ac2e452c2180cd2df581cbadac183e27ecd0 upstream.
 
-A buffer object leak was introduced when fixing a premature buffer
-object release. Fix this.
+Before the change, if the user passed a static rate value different
+than zero and the FW doesn't support static rate,
+it would end up configuring rate of 2.5 GBps.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 73a88250b709 ("Fix a destoy-while-held mutex problem.")
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-Reviewed-by: Deepak Rawat <drawat@vmware.com>
-Reviewed-by: Sinclair Yeh <syeh@vmware.com>
+Fix this by using rate 0; unlimited, in cases where FW
+doesn't support static rate configuration.
+
+Cc: <stable@vger.kernel.org> # 3.10
+Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
+Reviewed-by: Majd Dibbiny <majd@mellanox.com>
+Signed-off-by: Danit Goldberg <danitg@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/infiniband/hw/mlx5/qp.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
-@@ -1991,6 +1991,7 @@ void vmw_kms_helper_resource_finish(stru
- 		vmw_kms_helper_buffer_finish(res->dev_priv, NULL, ctx->buf,
- 					     out_fence, NULL);
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -1352,18 +1352,18 @@ enum {
  
-+	vmw_dmabuf_unreference(&ctx->buf);
- 	vmw_resource_unreserve(res, false, NULL, 0);
- 	mutex_unlock(&res->dev_priv->cmdbuf_mutex);
+ static int ib_rate_to_mlx5(struct mlx5_ib_dev *dev, u8 rate)
+ {
+-	if (rate == IB_RATE_PORT_CURRENT) {
++	if (rate == IB_RATE_PORT_CURRENT)
+ 		return 0;
+-	} else if (rate < IB_RATE_2_5_GBPS || rate > IB_RATE_300_GBPS) {
++
++	if (rate < IB_RATE_2_5_GBPS || rate > IB_RATE_300_GBPS)
+ 		return -EINVAL;
+-	} else {
+-		while (rate != IB_RATE_2_5_GBPS &&
+-		       !(1 << (rate + MLX5_STAT_RATE_OFFSET) &
+-			 MLX5_CAP_GEN(dev->mdev, stat_rate_support)))
+-			--rate;
+-	}
+ 
+-	return rate + MLX5_STAT_RATE_OFFSET;
++	while (rate != IB_RATE_PORT_CURRENT &&
++	       !(1 << (rate + MLX5_STAT_RATE_OFFSET) &
++		 MLX5_CAP_GEN(dev->mdev, stat_rate_support)))
++		--rate;
++
++	return rate ? rate + MLX5_STAT_RATE_OFFSET : rate;
  }
+ 
+ static int mlx5_set_path(struct mlx5_ib_dev *dev, const struct ib_ah_attr *ah,
