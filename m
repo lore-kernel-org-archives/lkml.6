@@ -1,67 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752340AbeENVZH (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:25:07 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:33827 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752295AbeENVZE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 17:25:04 -0400
-X-Google-Smtp-Source: AB8JxZrR37cCjN/i7OmlLAyArRNeceQebRlNoV47K80WiMQh1zyAtW78OriX0CZE395dEg5DxvSqzlsc4Nhx1D1ynhA=
-MIME-Version: 1.0
-In-Reply-To: <20180511162028.20616-4-brgl@bgdev.pl>
-References: <20180511162028.20616-1-brgl@bgdev.pl> <20180511162028.20616-4-brgl@bgdev.pl>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 May 2018 23:25:03 +0200
-X-Google-Sender-Auth: 0lvLFBwuzPEV9jqPwONVplMw8Jk
-Message-ID: <CAMuHMdW+Ma4BE61+U0J5bBaBG6i3Nf9Ei9h0WVzY+gn84469pw@mail.gmail.com>
-Subject: Re: [PATCH 03/12] platform/early: export platform_match() locally
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Rosin <peda@axentia.se>, Jiri Slaby <jslaby@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Magnus Damm <magnus.damm@gmail.com>, Johan Hovold <johan@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        id S1752547AbeENVeA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:34:00 -0400
+Received: from ozlabs.org ([203.11.71.1]:47709 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752363AbeENVd5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 17:33:57 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 15 May 2018 07:33:49 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        Zhi Wang <zhi.a.wang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>
+Subject: linux-next: Signed-off-by missing for commits in the drm-intel tree
+Message-ID: <20180515073349.6efabb21@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/_TI0gA6aNcqaWj2eNPbpFU1"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 11, 2018 at 6:20 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> We will use this function to match devices in the early platform core
-> code. Export it locally in drivers/base.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+--Sig_/_TI0gA6aNcqaWj2eNPbpFU1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi all,
 
-Gr{oetje,eeting}s,
+Commits
 
-                        Geert
+  cb8ba171ae6c ("drm/i915/gvt: let force_to_nonpriv cmd handler only valid =
+for LRI cmd")
+  0438a1059877 ("drm/i915/gvt: do not return error on handling force_to_non=
+priv registers")
+  3d8b9e258b9d ("drm/i915/gvt: let NOPID be the default value of force_to_n=
+onpriv registers")
+  b99f514f5dfa ("drm/i915/gvt: Remove disable_warn_untrack and print untrac=
+ked mmio with debug level")
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+are missing a Signed-off-by from their committer.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/_TI0gA6aNcqaWj2eNPbpFU1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6AL0ACgkQAVBC80lX
+0Gw5Jgf/TBz3S1c+Sk4txq2RsY/Z6VFvLoaFCQDs2FLG+aPhLcHIh5K1+gzhnJGy
+bo9Aw0T7llGqQ0W3jthluG/qVVciSZZTc4ISXhazUNsJqTuLLucC6TvfGnbjcYM6
+KMI7wwCfOf4OKne/HU58H02fe1g1cpfG+ilNODp/EcfuNaC/iqQMiu9f5+eqmdac
+miJ2Ilu2CBY+br6hb+lFPHmCggD1+UDw/ZvFv/Iu0gglRAi5rbrAMRpx07A4wi45
+AMq59dcVkdsgpDPVcS3jJi4FdDEORjezhLd+8fDF/I5i4j8HxfuUKrUkZveM+cA4
+uYNA2BnEJjcVTXl+DVEpZAWkHt/HAw==
+=V/Ve
+-----END PGP SIGNATURE-----
+
+--Sig_/_TI0gA6aNcqaWj2eNPbpFU1--
