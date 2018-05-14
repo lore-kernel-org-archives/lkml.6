@@ -1,51 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752024AbeENTgo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 15:36:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47432 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751422AbeENTgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 15:36:42 -0400
-Subject: Re: [PATCH] locking/rwsem: Add up_write_non_owner() for
- percpu_up_write()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>
-References: <1522852646-2196-1-git-send-email-longman@redhat.com>
- <20180409112013.GA23240@redhat.com>
- <38c89c59-5ff0-20df-2628-880db397006e@redhat.com>
- <20180409142208.GA25893@redhat.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <63c13bd6-7f42-7d3f-3cda-f989f6982ae4@redhat.com>
-Date: Mon, 14 May 2018 15:36:41 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1752079AbeENThq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 15:37:46 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:35899 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751927AbeENTho (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 15:37:44 -0400
+X-ME-Helo: [192.168.43.42]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 14 May 2018 21:37:41 +0200
+X-ME-IP: 77.136.42.172
+Subject: Re: [PATCH] net/mlx5: Use 'kvfree()' for memory allocated by
+ 'kvzalloc()'
+To: David Miller <davem@davemloft.net>
+Cc: saeedm@mellanox.com, matanb@mellanox.com, leon@kernel.org,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Newsgroups: gmane.linux.kernel,gmane.linux.network,gmane.linux.drivers.rdma,gmane.linux.kernel.janitors
+References: <20180512170925.23690-1-christophe.jaillet@wanadoo.fr>
+ <20180514.145642.989041199343505570.davem@davemloft.net>
+From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+Message-ID: <72339a77-1740-e081-06bc-8295687f80b8@wanadoo.fr>
+Date: Mon, 14 May 2018 21:37:38 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180409142208.GA25893@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <20180514.145642.989041199343505570.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/09/2018 10:22 AM, Oleg Nesterov wrote:
-> On 04/09, Waiman Long wrote:
->> On 04/09/2018 07:20 AM, Oleg Nesterov wrote:
->>> Hmm. Can you look at lockdep_sb_freeze_release() and lockdep_sb_freeze_acquire()?
->> These 2 functions are there to deal with the lockdep code.
-> Plus they clearly document why sem->owner check is not right when it comes
-> to super_block->s_writers[]. Not only freeze and thaw can be called by
-> different processes, we need to return to user-space with rwsem held for
-> writing.
+Le 14/05/2018 à 20:56, David Miller a écrit :
+> From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Date: Sat, 12 May 2018 19:09:25 +0200
+> 
+>> 'out' is allocated with 'kvzalloc()'. 'kvfree()' must be used to free it.
+>>
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> 
+> Saeed, I assume I will see this in one of your forthcoming pull
+> requests.
+> 
+> Thanks.
+> 
 
-Sorry for the late reply as I was busy on other work.
+I've send a v2 with additional 'kvfree()' fixes.
 
-I have just sent out a v2 patch to hopefully address your concern.
-Please let me know your thought on that.
-
-Thanks,
-Longman
+CJ
