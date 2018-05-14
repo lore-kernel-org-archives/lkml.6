@@ -1,163 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932206AbeENQmC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 12:42:02 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:51844 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753215AbeENQmA (ORCPT
+        id S932315AbeENQoS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 12:44:18 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34476 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752429AbeENQoQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 12:42:00 -0400
-Subject: Re: [PATCH V2] mlx4_core: allocate ICM memory in page size chunks
-To: Tariq Toukan <ttoukan.linux@gmail.com>, tariqt@mellanox.com,
-        davem@davemloft.net, haakon.bugge@oracle.com, yanjun.zhu@oracle.com
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180511192318.22342-1-qing.huang@oracle.com>
- <2797ac27-022c-0818-388c-e4a6131ad1ca@gmail.com>
-From: Qing Huang <qing.huang@oracle.com>
-Message-ID: <ff9c44ca-eaae-cb3e-4c69-e9e3cbb72ca1@oracle.com>
-Date: Mon, 14 May 2018 09:41:49 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 14 May 2018 12:44:16 -0400
+X-Google-Smtp-Source: AB8JxZpKRIDlst0AcvI4ZzjHeCyTTpSUORYwWyzPk+6bPqGOsOMbASFMmfM4r8aCfPaeaTtavcsIeg==
 MIME-Version: 1.0
-In-Reply-To: <2797ac27-022c-0818-388c-e4a6131ad1ca@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8893 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=9 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805140170
+In-Reply-To: <CAMty3ZAOVg6EZoMi=LRuKEcrnDM_tzYfK1WnBN-_d-pmjNS6Nw@mail.gmail.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-4-jagan@amarulasolutions.com> <CAGb2v66MKooAAroCzYdsXZDY0Oh66Dydpy59xj80QfiY+5mz_A@mail.gmail.com>
+ <CAMty3ZAOVg6EZoMi=LRuKEcrnDM_tzYfK1WnBN-_d-pmjNS6Nw@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 14 May 2018 09:43:51 -0700
+X-Gmail-Original-Message-ID: <CAGb2v64tGLyYTG63VvHiXfhif0wiDCNKoBKbjEs+Jm5-6CNxXw@mail.gmail.com>
+Message-ID: <CAGb2v64tGLyYTG63VvHiXfhif0wiDCNKoBKbjEs+Jm5-6CNxXw@mail.gmail.com>
+Subject: Re: [PATCH 03/21] clk: sunxi-ng: Enable DE2_CCU for Allwinner 64-bit SoCs
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 5/13/2018 2:00 AM, Tariq Toukan wrote:
+On Mon, May 14, 2018 at 1:20 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> On Tue, May 1, 2018 at 9:53 PM, Chen-Yu Tsai <wens@csie.org> wrote:
+>> On Mon, Apr 30, 2018 at 7:40 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+>>> Allwinner 64-bit SoC like H5/A64 has DE2 CCU so enable them
+>>> as default.
+>>>
+>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>> ---
+>>>  drivers/clk/sunxi-ng/Kconfig | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+>>> index 79dfd296c3d1..1fffd3bf6ff3 100644
+>>> --- a/drivers/clk/sunxi-ng/Kconfig
+>>> +++ b/drivers/clk/sunxi-ng/Kconfig
+>>> @@ -58,6 +58,8 @@ config SUN8I_V3S_CCU
+>>>
+>>>  config SUN8I_DE2_CCU
+>>>         bool "Support for the Allwinner SoCs DE2 CCU"
+>>> +       default ARM64 && ARCH_SUNXI
+>>> +       depends on (DRM_SUN4I && (ARM64 && ARCH_SUNXI)) || COMPILE_TEST
+>>
+>> There is no reason to depend on DRM_SUN4I. There is no compile dependency.
 >
->
-> On 11/05/2018 10:23 PM, Qing Huang wrote:
->> When a system is under memory presure (high usage with fragments),
->> the original 256KB ICM chunk allocations will likely trigger kernel
->> memory management to enter slow path doing memory compact/migration
->> ops in order to complete high order memory allocations.
->>
->> When that happens, user processes calling uverb APIs may get stuck
->> for more than 120s easily even though there are a lot of free pages
->> in smaller chunks available in the system.
->>
->> Syslog:
->> ...
->> Dec 10 09:04:51 slcc03db02 kernel: [397078.572732] INFO: task
->> oracle_205573_e:205573 blocked for more than 120 seconds.
->> ...
->>
->> With 4KB ICM chunk size on x86_64 arch, the above issue is fixed.
->>
->> However in order to support smaller ICM chunk size, we need to fix
->> another issue in large size kcalloc allocations.
->>
->> E.g.
->> Setting log_num_mtt=30 requires 1G mtt entries. With the 4KB ICM chunk
->> size, each ICM chunk can only hold 512 mtt entries (8 bytes for each mtt
->> entry). So we need a 16MB allocation for a table->icm pointer array to
->> hold 2M pointers which can easily cause kcalloc to fail.
->>
->> The solution is to use vzalloc to replace kcalloc. There is no need
->> for contiguous memory pages for a driver meta data structure (no need
->> of DMA ops).
->>
->> Signed-off-by: Qing Huang <qing.huang@oracle.com>
->> Acked-by: Daniel Jurgens <danielj@mellanox.com>
->> Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
->> ---
->> v2 -> v1: adjusted chunk size to reflect different architectures.
->>
->>   drivers/net/ethernet/mellanox/mlx4/icm.c | 14 +++++++-------
->>   1 file changed, 7 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/mellanox/mlx4/icm.c 
->> b/drivers/net/ethernet/mellanox/mlx4/icm.c
->> index a822f7a..ccb62b8 100644
->> --- a/drivers/net/ethernet/mellanox/mlx4/icm.c
->> +++ b/drivers/net/ethernet/mellanox/mlx4/icm.c
->> @@ -43,12 +43,12 @@
->>   #include "fw.h"
->>     /*
->> - * We allocate in as big chunks as we can, up to a maximum of 256 KB
->> - * per chunk.
->> + * We allocate in page size (default 4KB on many archs) chunks to 
->> avoid high
->> + * order memory allocations in fragmented/high usage memory situation.
->>    */
->>   enum {
->> -    MLX4_ICM_ALLOC_SIZE    = 1 << 18,
->> -    MLX4_TABLE_CHUNK_SIZE    = 1 << 18
->> +    MLX4_ICM_ALLOC_SIZE    = 1 << PAGE_SHIFT,
->> +    MLX4_TABLE_CHUNK_SIZE    = 1 << PAGE_SHIFT
->
-> Which is actually PAGE_SIZE.
+> Since this CCU is for DE2 I've make DRM_SUN4I for that matter, any problem?
 
-Yes, we wanted to avoid high order memory allocations.
-
-> Also, please add a comma at the end of the last entry.
-
-Hmm..., followed the existing code style and checkpatch.pl didn't 
-complain about the comma.
+Users may very well be just using simplefb, but with all the clock drivers
+enabled. That is a valid, if very limited, use case. So again, you should
+not limit this driver based on DRM_SUN4I. There is no compile dependency.
 
 >
->>   };
->>     static void mlx4_free_icm_pages(struct mlx4_dev *dev, struct 
->> mlx4_icm_chunk *chunk)
->> @@ -400,7 +400,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, 
->> struct mlx4_icm_table *table,
->>       obj_per_chunk = MLX4_TABLE_CHUNK_SIZE / obj_size;
->>       num_icm = (nobj + obj_per_chunk - 1) / obj_per_chunk;
->>   -    table->icm      = kcalloc(num_icm, sizeof(*table->icm), 
->> GFP_KERNEL);
->> +    table->icm      = vzalloc(num_icm * sizeof(*table->icm));
->
-> Why not kvzalloc ?
-
-I think table->icm pointer array doesn't really need physically 
-contiguous memory. Sometimes high order
-memory allocation by kmalloc variants may trigger slow path and cause 
-tasks to be blocked.
-
-Thanks,
-Qing
-
->
->>       if (!table->icm)
->>           return -ENOMEM;
->>       table->virt     = virt;
->> @@ -446,7 +446,7 @@ int mlx4_init_icm_table(struct mlx4_dev *dev, 
->> struct mlx4_icm_table *table,
->>               mlx4_free_icm(dev, table->icm[i], use_coherent);
->>           }
->>   -    kfree(table->icm);
->> +    vfree(table->icm);
->>         return -ENOMEM;
->>   }
->> @@ -462,5 +462,5 @@ void mlx4_cleanup_icm_table(struct mlx4_dev *dev, 
->> struct mlx4_icm_table *table)
->>               mlx4_free_icm(dev, table->icm[i], table->coherent);
->>           }
->>   -    kfree(table->icm);
->> +    vfree(table->icm);
->>   }
 >>
+>> Also, this is needed on SUN8I as well, pretty much anything with DE 2.0.
+>> So you shouldn't limit it to ARM64. That pretty much breaks things for
+>> people with A83T's or H3's. In fact you should enable it by default for
+>> these as well.
 >
-> Thanks for your patch.
->
-> I need to verify there is no dramatic performance degradation here.
-> You can prepare and send a v3 in the meanwhile.
->
-> Thanks,
-> Tariq
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> True, I've skipped SUN8I since this series for A64.
+
+And yet you are breaking existing users, which is a big no-no.
+
+ChenYu
