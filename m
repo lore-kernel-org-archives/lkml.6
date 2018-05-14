@@ -1,112 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752030AbeENBLV (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 21:11:21 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:42467 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751739AbeENBLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 21:11:20 -0400
-From: songxiaowei <songxiaowei@hisilicon.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "chenyao (F)" <chenyao11@huawei.com>
-CC: Wangbinghui <wangbinghui@hisilicon.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, "xuwei (O)" <xuwei5@huawei.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        id S1751903AbeENBXD (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 21:23:03 -0400
+Received: from regular1.263xmail.com ([211.150.99.130]:38599 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751153AbeENBXC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 21:23:02 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: djw@t-chip.com.cn
+X-FST-TO: linux-arm-kernel@lists.infradead.org
+X-SENDER-IP: 183.57.25.242
+X-LOGIN-NAME: djw@t-chip.com.cn
+X-UNIQUE-TAG: <190720c9aa907ec11ddbf1dbe58729fc>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH v1 3/5] arm64: dts: rockchip: Add gpio-syscon10 to rk3328
+To: Rob Herring <robh+dt@kernel.org>
+Cc: "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Wayne Chou <zxf@t-chip.com.cn>, Heiko Stuebner <heiko@sntech.de>,
+        devicetree@vger.kernel.org, David Wu <david.wu@rock-chips.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        William Wu <william.wu@rock-chips.com>,
+        Sugar Zhang <sugar.zhang@rock-chips.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rocky Hao <rocky.hao@rock-chips.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        "Will Deacon" <will.deacon@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "dimitrysh@google.com" <dimitrysh@google.com>,
-        "guodong.xu@linaro.org" <guodong.xu@linaro.org>,
-        Suzhuangluan <suzhuangluan@hisilicon.com>,
-        Kongfei <kongfei@hisilicon.com>
-Subject: reply: [PATCH v3 1/2] PCI: kirin: Add MSI support
-Thread-Topic: reply: [PATCH v3 1/2] PCI: kirin: Add MSI support
-Thread-Index: AdPrH5Q8xBT++ws5TAyeUvElIhaCSw==
-Date: Mon, 14 May 2018 01:11:10 +0000
-Message-ID: <99B4C6BADD9E3241B25E52B02BA737C54127E3BF@DGGEMA505-MBS.china.huawei.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.142.52.233]
-Content-Type: text/plain; charset="utf-8"
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>
+References: <1525943800-14095-1-git-send-email-djw@t-chip.com.cn>
+ <1525943800-14095-4-git-send-email-djw@t-chip.com.cn>
+ <CAL_JsqLK6S0iA=K1o=gpuJAxD6HxCSzHaJ6ZchuCz=GZ-Zb=Dg@mail.gmail.com>
+From: Levin Du <djw@t-chip.com.cn>
+Message-ID: <5218da3c-40d3-a44f-2b82-13cd4c522a1f@t-chip.com.cn>
+Date: Mon, 14 May 2018 09:22:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAL_JsqLK6S0iA=K1o=gpuJAxD6HxCSzHaJ6ZchuCz=GZ-Zb=Dg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4E1BSwL003004
 
-Hi, Andy Shevchenko
 
-Yao is on maternity leave, and I'll take over the job after discussing with her.
 
-> -----邮件原件-----
-> 发件人: Andy Shevchenko [mailto:andy.shevchenko@gmail.com]
-> 发送时间: 2018年5月14日 7:16
-> 收件人: chenyao (F) <chenyao11@huawei.com>
-> 抄送: songxiaowei <songxiaowei@hisilicon.com>; Wangbinghui
-> <wangbinghui@hisilicon.com>; Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>;
-> Bjorn Helgaas <bhelgaas@google.com>; xuwei (O) <xuwei5@huawei.com>;
-> Rob Herring <robh+dt@kernel.org>; Mark Rutland <mark.rutland@arm.com>;
-> Catalin Marinas <catalin.marinas@arm.com>; Will Deacon
-> <will.deacon@arm.com>; linux-pci@vger.kernel.org; Linux Kernel Mailing List
-> <linux-kernel@vger.kernel.org>; linux-arm Mailing List
-> <linux-arm-kernel@lists.infradead.org>; devicetree
-> <devicetree@vger.kernel.org>; dimitrysh@google.com;
-> guodong.xu@linaro.org; Suzhuangluan <suzhuangluan@hisilicon.com>; Kongfei
-> <kongfei@hisilicon.com>
-> 主题: Re: [PATCH v3 1/2] PCI: kirin: Add MSI support
-> 
-> On Fri, May 11, 2018 at 12:15 PM, Yao Chen <chenyao11@huawei.com> wrote:
-> > Add support for MSI.
-> 
-> 
-> > +       int ret;
-> > +
-> > +       if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> 
-> > +               pci->pp.msi_irq = platform_get_irq(pdev, 0);
-> > +               if (pci->pp.msi_irq < 0) {
-> > +                       dev_err(&pdev->dev, "failed to get MSI IRQ
-> (%d)\n",
-> > +                               pci->pp.msi_irq);
-> 
-> > +                       return -ENODEV;
-> 
-> Why shadowing actual error code?
-[songxiaowei]  Sorry, I can't get your point about this, would you explain it for me.
-> 
-> > +               }
-> > +               ret = devm_request_irq(&pdev->dev, pci->pp.msi_irq,
-> > +                                      kirin_pcie_msi_irq_handler,
-> > +                                      IRQF_SHARED |
-> IRQF_NO_THREAD,
-> > +                                      "kirin_pcie_msi", &pci->pp);
-> > +               if (ret) {
-> > +                       dev_err(&pdev->dev, "failed to request MSI
-> IRQ %d\n",
-> > +                               pci->pp.msi_irq);
-> > +                       return ret;
-> > +               }
-> 
-> It would be easy to read and maintain if this would be a separate function.
-[songxiaowei] Yes, a separate function will be better, and I'll fix it.
-> 
-> > +       }
-> 
-> 
-> 
-> --
-> With Best Regards,
-> Andy Shevchenko
+On 2018-05-11 8:22 PM, Rob Herring wrote:
+> On Thu, May 10, 2018 at 4:16 AM,  <djw@t-chip.com.cn> wrote:
+>> From: Levin Du <djw@t-chip.com.cn>
+>>
+>> Adding a new gpio controller named "gpio-syscon10" to rk3328, providing
+>> access to the pins defined in the syscon GRF_SOC_CON10.
+>>
+>> Boards using these special pins to control regulators or LEDs, can now
+>> utilize existing drivers like gpio-regulator and leds-gpio.
+>>
+>> Signed-off-by: Levin Du <djw@t-chip.com.cn>
+>>
+>> ---
+>>
+>> Changes in v1:
+>> - Split from V0 and add to rk3328.dtsi for general use.
+>>
+>>   arch/arm64/boot/dts/rockchip/rk3328.dtsi | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+>> index b8e9da1..73a822d 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+>> @@ -309,6 +309,12 @@
+>>                          mode-loader = <BOOT_BL_DOWNLOAD>;
+>>                  };
+>>
+>> +               gpio_syscon10: gpio-syscon10 {
+> GPIO controller nodes should be named just 'gpio'.
 
-Thanks a lot,
+'gpio' is a general name, and there're already gpio0~gpio3 for pinctrl 
+GPIOs.
 
-Best Regards,
-Xiaowei Song
+>> +                       compatible = "rockchip,gpio-syscon";
+>> +                       gpio-controller;
+>> +                       #gpio-cells = <2>;
+>> +                       gpio,syscon-dev = <0 0x0428 0>;
+> This property is not documented and takes a phandle.
+See PATCH1 which allows fetching syscon from parent node .
+This is also documented in 
+Documentation/devicetree/bindings/gpio/rockchip,gpio-syscon.txt
+in PATCH2.
+
+Thanks
+Levin
