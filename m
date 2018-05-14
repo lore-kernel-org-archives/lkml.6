@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932646AbeENOaF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:30:05 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35085 "EHLO
+        id S932630AbeENOaD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:30:03 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35127 "EHLO
         mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753968AbeENO1l (ORCPT
+        with ESMTP id S1753971AbeENO1l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 May 2018 10:27:41 -0400
 From: Vlad Buslov <vladbu@mellanox.com>
@@ -15,9 +15,9 @@ Cc: davem@davemloft.net, jhs@mojatatu.com, xiyou.wangcong@gmail.com,
         edumazet@google.com, vladbu@mellanox.com, keescook@chromium.org,
         linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
         coreteam@netfilter.org, kliteyn@mellanox.com
-Subject: [PATCH 06/14] net: sched: implement reference counted action release
-Date: Mon, 14 May 2018 17:27:07 +0300
-Message-Id: <1526308035-12484-7-git-send-email-vladbu@mellanox.com>
+Subject: [PATCH 08/14] net: sched: account for temporary action reference
+Date: Mon, 14 May 2018 17:27:09 +0300
+Message-Id: <1526308035-12484-9-git-send-email-vladbu@mellanox.com>
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
 References: <1526308035-12484-1-git-send-email-vladbu@mellanox.com>
@@ -25,187 +25,45 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement helper function to delete action using new action ops delete
-function implemented by each action for lockless execution.
+tca_get_fill function has 'bind' and 'ref' arguments that get passed
+down to action dump function. These arguments values are subtracted from
+actual reference and bind counter values before writing them to skb.
 
-Implement action put function that releases reference to action and frees
-it if necessary. Refactor action deletion code to use new put function and
-not to rely on rtnl lock. Remove rtnl lock assertions that are no longer
-needed.
+In order to prevent concurrent action delete, RTM_GETACTION handler
+acquires a reference to action before 'dumping' it and releases it
+afterwards. This reference is temporal and should not be accounted by
+userspace clients. (both logically and to preserver current API
+behavior)
+
+Use existing infrastructure of tca_get_fill arguments to subtract that
+temporary reference and not expose it to userspace.
 
 Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
 ---
- net/sched/act_api.c | 98 ++++++++++++++++++++++++++++++++++++++++++++---------
- net/sched/cls_api.c |  1 -
- 2 files changed, 82 insertions(+), 17 deletions(-)
+ net/sched/act_api.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/net/sched/act_api.c b/net/sched/act_api.c
-index 9459cce..d324a4c 100644
+index 3f02cd1..2772276e 100644
 --- a/net/sched/act_api.c
 +++ b/net/sched/act_api.c
-@@ -90,21 +90,39 @@ static void free_tcf(struct tc_action *p)
- 	kfree(p);
- }
- 
--static void tcf_idr_remove(struct tcf_idrinfo *idrinfo, struct tc_action *p)
-+static void tcf_action_cleanup(struct tc_action *p)
- {
--	spin_lock_bh(&idrinfo->lock);
--	idr_remove(&idrinfo->action_idr, p->tcfa_index);
--	spin_unlock_bh(&idrinfo->lock);
-+	if (p->ops->cleanup)
-+		p->ops->cleanup(p);
-+
- 	gen_kill_estimator(&p->tcfa_rate_est);
- 	free_tcf(p);
- }
- 
-+static int __tcf_action_put(struct tc_action *p, bool bind)
-+{
-+	struct tcf_idrinfo *idrinfo = p->idrinfo;
-+
-+	if (refcount_dec_and_lock(&p->tcfa_refcnt, &idrinfo->lock)) {
-+		if (bind)
-+			atomic_dec(&p->tcfa_bindcnt);
-+		idr_remove(&idrinfo->action_idr, p->tcfa_index);
-+		spin_unlock(&idrinfo->lock);
-+
-+		tcf_action_cleanup(p);
-+		return 1;
-+	}
-+
-+	if (bind)
-+		atomic_dec(&p->tcfa_bindcnt);
-+
-+	return 0;
-+}
-+
- int __tcf_idr_release(struct tc_action *p, bool bind, bool strict)
- {
- 	int ret = 0;
- 
--	ASSERT_RTNL();
--
- 	/* Release with strict==1 and bind==0 is only called through act API
- 	 * interface (classifiers always bind). Only case when action with
- 	 * positive reference count and zero bind count can exist is when it was
-@@ -118,18 +136,11 @@ int __tcf_idr_release(struct tc_action *p, bool bind, bool strict)
- 	 * are acceptable.
- 	 */
- 	if (p) {
--		if (bind)
--			atomic_dec(&p->tcfa_bindcnt);
--		else if (strict && atomic_read(&p->tcfa_bindcnt) > 0)
-+		if (!bind && strict && atomic_read(&p->tcfa_bindcnt) > 0)
- 			return -EPERM;
- 
--		if (atomic_read(&p->tcfa_bindcnt) <= 0 &&
--		    refcount_dec_and_test(&p->tcfa_refcnt)) {
--			if (p->ops->cleanup)
--				p->ops->cleanup(p);
--			tcf_idr_remove(p->idrinfo, p);
-+		if (__tcf_action_put(p, bind))
- 			ret = ACT_P_DELETED;
--		}
- 	}
- 
- 	return ret;
-@@ -576,6 +587,11 @@ int tcf_action_destroy(struct list_head *actions, int bind)
- 	return ret;
- }
- 
-+static int tcf_action_put(struct tc_action *p)
-+{
-+	return __tcf_action_put(p, false);
-+}
-+
- int
- tcf_action_dump_old(struct sk_buff *skb, struct tc_action *a, int bind, int ref)
- {
-@@ -975,6 +991,26 @@ static struct tc_action *tcf_action_get_1(struct net *net, struct nlattr *nla,
- 	return ERR_PTR(err);
- }
- 
-+static int tcf_action_del_1(struct net *net, char *kind, u32 index,
-+			    struct netlink_ext_ack *extack)
-+{
-+	const struct tc_action_ops *ops;
-+	int err = -EINVAL;
-+
-+	ops = tc_lookup_action_n(kind);
-+	if (!ops) {
-+		NL_SET_ERR_MSG(extack, "Specified TC action not found");
-+		goto err_out;
-+	}
-+
-+	if (ops->delete)
-+		err = ops->delete(net, index);
-+
-+	module_put(ops->owner);
-+err_out:
-+	return err;
-+}
-+
- static int tca_action_flush(struct net *net, struct nlattr *nla,
- 			    struct nlmsghdr *n, u32 portid,
- 			    struct netlink_ext_ack *extack)
-@@ -1052,6 +1088,36 @@ static int tca_action_flush(struct net *net, struct nlattr *nla,
- 	return err;
- }
- 
-+static int tcf_action_delete(struct net *net, struct list_head *actions,
-+			     struct netlink_ext_ack *extack)
-+{
-+	int ret;
-+	struct tc_action *a, *tmp;
-+	char kind[IFNAMSIZ];
-+	u32 act_index;
-+
-+	list_for_each_entry_safe(a, tmp, actions, list) {
-+		const struct tc_action_ops *ops = a->ops;
-+
-+		/* Actions can be deleted concurrently
-+		 * so we must save their type and id to search again
-+		 * after reference is released.
-+		 */
-+		strncpy(kind, a->ops->kind, sizeof(kind) - 1);
-+		act_index = a->tcfa_index;
-+
-+		list_del(&a->list);
-+		if (tcf_action_put(a))
-+			module_put(ops->owner);
-+
-+		/* now do the delete */
-+		ret = tcf_action_del_1(net, kind, act_index, extack);
-+		if (ret < 0)
-+			return ret;
-+	}
-+	return 0;
-+}
-+
- static int
- tcf_del_notify(struct net *net, struct nlmsghdr *n, struct list_head *actions,
- 	       u32 portid, size_t attr_size, struct netlink_ext_ack *extack)
-@@ -1072,7 +1138,7 @@ tcf_del_notify(struct net *net, struct nlmsghdr *n, struct list_head *actions,
- 	}
- 
- 	/* now do the delete */
--	ret = tcf_action_destroy(actions, 0);
-+	ret = tcf_action_delete(net, actions, extack);
- 	if (ret < 0) {
- 		NL_SET_ERR_MSG(extack, "Failed to delete TC action");
+@@ -935,7 +935,7 @@ tcf_get_notify(struct net *net, u32 portid, struct nlmsghdr *n,
+ 	if (!skb)
+ 		return -ENOBUFS;
+ 	if (tca_get_fill(skb, actions, portid, n->nlmsg_seq, 0, event,
+-			 0, 0) <= 0) {
++			 0, 1) <= 0) {
+ 		NL_SET_ERR_MSG(extack, "Failed to fill netlink attributes while adding TC action");
  		kfree_skb(skb);
-diff --git a/net/sched/cls_api.c b/net/sched/cls_api.c
-index bcba94b..00b88e5 100644
---- a/net/sched/cls_api.c
-+++ b/net/sched/cls_api.c
-@@ -1417,7 +1417,6 @@ void tcf_exts_destroy(struct tcf_exts *exts)
- #ifdef CONFIG_NET_CLS_ACT
- 	LIST_HEAD(actions);
+ 		return -EINVAL;
+@@ -1125,7 +1125,7 @@ tcf_del_notify(struct net *net, struct nlmsghdr *n, struct list_head *actions,
+ 		return -ENOBUFS;
  
--	ASSERT_RTNL();
- 	tcf_exts_to_list(exts, &actions);
- 	tcf_action_destroy(&actions, TCA_ACT_UNBIND);
- 	kfree(exts->actions);
+ 	if (tca_get_fill(skb, actions, portid, n->nlmsg_seq, 0, RTM_DELACTION,
+-			 0, 1) <= 0) {
++			 0, 2) <= 0) {
+ 		NL_SET_ERR_MSG(extack, "Failed to fill netlink TC action attributes");
+ 		kfree_skb(skb);
+ 		return -EINVAL;
 -- 
 2.7.5
