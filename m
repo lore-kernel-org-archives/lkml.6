@@ -1,31 +1,31 @@
 Return-Path: <baolin.wang@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526288211; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1526288202; cv=none;
         d=google.com; s=arc-20160816;
-        b=bOfEeH0tMkFqh/jt4TU2wEck1gPUZjjDTan9w8lv8BXWI+PmHL2vR2Ek3eQbw7Q5/J
-         5YEJkZMHoCjRql+FG++ZbXp/9aoLRZS0l762AHpdH9Bo3gC5PEr/JFEtaSf5/L8F1/CX
-         etTBfxxtmQO2aVfxnnVI2ptflTBACW2E34vSOzgFWRftUKjbhn0wqGQdU2YJnWL22FGG
-         ycBoIgL5+6ZYJn3iIrEtJAdEzCgX7DFZG3Ojm+t0Z2OegwLLhaQ/QmOD0rD5DyzFsR6m
-         naSOcb02w/9Upl9dAs+dDpSco1v9UH+VHEl+a1Ew88qBCgdMYZ1AGbBOqMoQGAt7PsKj
-         5uNg==
+        b=YE8cJwUtM/MfAojOetmmL6OOasRcIUUATPrtJBNNIej4YUWf2ZP7lMIVxI+gQCcj3e
+         WzUCJqbguTdk9BG7lDl1M7MLx0fe7A/NaMitB4GJ5XaUrJDA2yrgkXculfrbCEqFm0Ba
+         uphPW7oOCoUQxYnIGiWraUAczq5VVQ+vl63sRactmhwI/zO29sZqDev8X8afhMJBHhAc
+         altcuwVo/fvnRNQYM32l2xhAZxQ6jbes8MzvdxPj6jHoEFRd21ulYbXKvQIoNk3nDrkz
+         dtyVAu/XMYhM5E3oa6Mge6fcLT74z9JcSlokqeum5phzJ9PDVY6+KaOiKcW8B0KlOHbp
+         eGJw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Eel7Cy1vzjSfGnvDW7hlCZjLq+FDPDHooRhbIXHnQjA=;
-        b=AGiNvAaNgoieo13WQChnaJAj8KxbH99ViiN+lJuPIfbqaOwIvRckQLQkSpjKtF4xC2
-         VTmaHpaBIgr1xVZoEjR7OdnFSB+JyxYOqinRStPyxRoAEW7759Dzodmm2KQ2sL27BuGo
-         BcucNXUtcQNrl9X5wv1quF33QqXWuPgIMlMcoKhRn0JYJPKdS3tGpmB/NVHgajUCM80P
-         r85+OosQUDsgJUbd9sBrM2UpADNZViyBicZRlpUxuZCX1D5kVMEYW9v1Rw8ipuzdN8xN
-         02EniHTlBcpLr4URbZ+KEZvpJi+bxf1qQH7jGKLXxduFuqxotEW6YHuOwhbu5iZU85/v
-         IiJQ==
+        bh=sa47kacdk4A6CY2LuxKzGslqtwVkcT70aRUQGxEH/o8=;
+        b=IOdkd59pCYe0RcvvHKeAgBAxGOf8uYSVoRkstLIxE+q4e84k97DEoSdmMv6J2n/hiX
+         IdZapcevA03Ojk6eUHx9EqgGS2GGBgpE6IAkRWLOzCfHYbCIItWoR9sf2YIECEm7alOR
+         EXImkLdwcGE0TrYFL9gFbhknR2JLdG1chivdHDJSp5n1+KnsX8jJmuEcH8AdxF8IBuv/
+         y3r7Tcf38145+3LPeb7uU6uBeP7TNUbVqxSEy0p83iIFNNr1pS/YoTyUtRz/37GUWL6V
+         6UYLn4fpCdAtA+B29hg1uhWggipBmI42wb+2Osb/Z9qFMSb6QjkyTxakSo8MtN1P/dbd
+         5zgA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=T1bQBNI3;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Z58Go2DS;
        spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=T1bQBNI3;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Z58Go2DS;
        spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZpdNQik0jChNqY6KcTP2cM/CssVWVYNluBZ6mhnQXBoMPBFg5q1HsTiEbQZ63sbAmdhPie37w==
+X-Google-Smtp-Source: AB8JxZpy61xOTfR7I7HJgI0+5v1fcI9Tf//da1QXFbrWIQJGSb4UvSRZrsVk7C40HRqPTmconwaprQ==
 From: Baolin Wang <baolin.wang@linaro.org>
 To: tglx@linutronix.de,
 	john.stultz@linaro.org,
@@ -61,92 +61,70 @@ Cc: baolin.wang@linaro.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-omap@vger.kernel.org
-Subject: [RFC PATCH 05/10] arm: time: Remove the persistent clock support for ARM
-Date: Mon, 14 May 2018 16:55:31 +0800
-Message-Id: <8d74ba31d4d2b14f21bea7a9cbc4f029bc59f60f.1526285602.git.baolin.wang@linaro.org>
+Subject: [RFC PATCH 04/10] clocksource: tegra20_timer: Remove register_persistent_clock() API
+Date: Mon, 14 May 2018 16:55:30 +0800
+Message-Id: <ee93d3f510b1840199f6c9afe8cb08c82d3afcf2.1526285602.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
 References: <cover.1526285602.git.baolin.wang@linaro.org>
 In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
 References: <cover.1526285602.git.baolin.wang@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600429188107850734?=
-X-GMAIL-MSGID: =?utf-8?q?1600429188107850734?=
+X-GMAIL-THRID: =?utf-8?q?1600429179008861466?=
+X-GMAIL-MSGID: =?utf-8?q?1600429179008861466?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-We have converted all drivers to use common persistent clock framework
-to compensate the suspend time, so we can remove the persistent clock,
-which only supports the ARM architecture.
+We will convert all drivers to use persistent clock framework to compensate
+the suspend time for OS time, instead of using the register_persistent_clock()
+API in ARM architecture.
 
-Moreover there are no drivers will register read_boot_clock64(), so
-remove it too.
+So this patch removes the register_persistent_clock() and implement its
+function to read persistent clock.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- arch/arm/include/asm/mach/time.h |    4 ----
- arch/arm/kernel/time.c           |   36 ------------------------------------
- 2 files changed, 40 deletions(-)
+ drivers/clocksource/tegra20_timer.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/include/asm/mach/time.h b/arch/arm/include/asm/mach/time.h
-index 0f79e4d..3cbcafc 100644
---- a/arch/arm/include/asm/mach/time.h
-+++ b/arch/arm/include/asm/mach/time.h
-@@ -12,8 +12,4 @@
- 
- extern void timer_tick(void);
- 
--typedef void (*clock_access_fn)(struct timespec64 *);
--extern int register_persistent_clock(clock_access_fn read_boot,
--				     clock_access_fn read_persistent);
--
- #endif
-diff --git a/arch/arm/kernel/time.c b/arch/arm/kernel/time.c
-index cf2701c..713905c 100644
---- a/arch/arm/kernel/time.c
-+++ b/arch/arm/kernel/time.c
-@@ -76,42 +76,6 @@ void timer_tick(void)
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index c337a81..97a34cb 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -124,7 +124,7 @@ static u64 tegra_rtc_read_ms(void)
  }
- #endif
  
--static void dummy_clock_access(struct timespec64 *ts)
--{
--	ts->tv_sec = 0;
--	ts->tv_nsec = 0;
--}
--
--static clock_access_fn __read_persistent_clock = dummy_clock_access;
--static clock_access_fn __read_boot_clock = dummy_clock_access;
--
--void read_persistent_clock64(struct timespec64 *ts)
--{
--	__read_persistent_clock(ts);
--}
--
--void read_boot_clock64(struct timespec64 *ts)
--{
--	__read_boot_clock(ts);
--}
--
--int __init register_persistent_clock(clock_access_fn read_boot,
--				     clock_access_fn read_persistent)
--{
--	/* Only allow the clockaccess functions to be registered once */
--	if (__read_persistent_clock == dummy_clock_access &&
--	    __read_boot_clock == dummy_clock_access) {
--		if (read_boot)
--			__read_boot_clock = read_boot;
--		if (read_persistent)
--			__read_persistent_clock = read_persistent;
--
--		return 0;
--	}
--
--	return -EINVAL;
--}
--
- void __init time_init(void)
+ /*
+- * tegra_read_persistent_clock64 -  Return time from a persistent clock.
++ * read_persistent_clock64 -  Return time from a persistent clock.
+  *
+  * Reads the time from a source which isn't disabled during PM, the
+  * 32k sync timer.  Convert the cycles elapsed since last read into
+@@ -133,10 +133,16 @@ static u64 tegra_rtc_read_ms(void)
+  * tegra_rtc driver could be executing to avoid race conditions
+  * on the RTC shadow register
+  */
+-static void tegra_read_persistent_clock64(struct timespec64 *ts)
++void read_persistent_clock64(struct timespec64 *ts)
  {
- 	if (machine_desc->init_time) {
+ 	u64 delta;
+ 
++	if (!rtc_base) {
++		ts->tv_sec = 0;
++		ts->tv_nsec = 0;
++		return;
++	}
++
+ 	last_persistent_ms = persistent_ms;
+ 	persistent_ms = tegra_rtc_read_ms();
+ 	delta = persistent_ms - last_persistent_ms;
+@@ -259,6 +265,6 @@ static int __init tegra20_init_rtc(struct device_node *np)
+ 	else
+ 		clk_prepare_enable(clk);
+ 
+-	return register_persistent_clock(NULL, tegra_read_persistent_clock64);
++	return 0;
+ }
+ TIMER_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
 -- 
 1.7.9.5
