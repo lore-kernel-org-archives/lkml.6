@@ -1,28 +1,28 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpa7F4kuwOw8ufZdd2r/DIaZY7O8QfUZiudtAM9Ly1ghZHhvA86mwOYTZwsE9yRJcEmgl8D
-ARC-Seal: i=1; a=rsa-sha256; t=1526280639; cv=none;
+X-Google-Smtp-Source: AB8JxZohVrTXm2IKHS+s59+fcvebWBVkav+CoO99U/VqjYciv7rdlyNAsrj3QmqFsyYHDaUeY4WL
+ARC-Seal: i=1; a=rsa-sha256; t=1526280636; cv=none;
         d=google.com; s=arc-20160816;
-        b=QdPjf0x/BBInTMFtyyjxokbPU3HxJu1df3sr1d9ParTJP5GT7WRKPiKLReeC16wZBO
-         Fn8EJwOFhUZRl6aUA8+tmH+XFxbqNWC928b767GvSVkDszU2L8eeSAlNmOMbpUSDAUKi
-         syBK7OY846Pg8VT1iOzIK5w+0nbBImbR2CW/bGmgwAfB/EbcCJmtLG4KutnTSPQZPY3f
-         DO/kuKTwH8I9YIOTVcq7tJmLabV1YM3id3/FOttyX4w/C1nYyo9jycFbEZXzlOtmbGI1
-         bsS3eT7MK4JKnPH0URgiqt6dxAfTcY+ZyUngIC+oJetM2GKC//G0cdtm8JIysFOuvp8s
-         MSkg==
+        b=UzyDcdRV5QS/OISVFnd/+VJ97AeiOrUcAb4yQmLIX+yDEu8QbwjNTrBcorR+wXwEbz
+         fByPb+HFxUDpmkLvUl0b0+Du+yi7J3MxgUwfTjjnepv1xJLlcuISsdS+Fac73WJ9jv8x
+         6MODyFRAgwSkGC6QESaaV650Krzn7uYBq4hCfUsUYFt9CyHPCUl3fdu9pWmqerkuDw09
+         YKNlqnbljdlUCQzMBneoAhkeCgWZiykBi8DjRQ3VdNGFwOJxlgtviF8z1rdvCMtR7ycV
+         3jBFyFOKvhSfuDAQ8+l1lRCqZCaDbr0aAtOYkV5AmMKqsoxYfsCNkyNknoIRbDniG1LI
+         B6ig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=HYfFOJL8fn2baxeDOk7Hmu8Ya+1MD8xFLZCr1P+od1c=;
-        b=Cl+KYd+8HXo+Dzdb4baXnpnc5vee9GSEuA/AJ8JzdDt9XBhjOEVZsqtPcBS9vqPZp7
-         N9GWbyRLI3aoHdjVy/LTr5kK3dZJxxELz7JdxNAD9/mJFilSNqPEG1YAIcafBF2YrhuM
-         kfhNF1JTy9UHtfX+faEm5C4dnL8zz+tz3tKpfSmj/qp/GlLuKSkQAXKhhfhBJ0HCMNhG
-         s1HTEkbdRe7jKEdBMx81pq4ACSSQRURkTr96ijYmc31DPGYSbL/9ymfVmtiF7yIAaY0C
-         hnFgRcPQSnajPZcTsM2fZypWsYVhZO4CwVhoh9N2ZbdlYdXy8FAi/7yXQ2nwdeaGqEKL
-         BwCQ==
+        bh=9U6DQ5OfVD4Yi87ysk4PbDYyrltKqliSuYv8tXT/Myc=;
+        b=LNos0swO/adFlWbS5NuhzdO8JPRc3cyZLIWblgSvlHOmLrYR89T8IIVI4ZokVJy/1g
+         R1JNDckjKeDmrxrF01jrUXM2xD4Hy8qxpUN9v/yCBY5vmiFoIYXZIfOHc50ehr0F89UE
+         6YX8xgm6X94WEQoNy7Y6QeG5Dvh2sEwTS8ZH0vG4tev4eyg/Z/dtWso3gg24Rd+kRkZT
+         GW6CydJl2PQf9UnaEOYxLDlpo1mj8HU+KzChBPUPjisESS4mXPav53FTlomTo6ahl8Q6
+         mjE77qcOdQVm3W3vJr/Mf/RWpnyZFaMTpvCF0Pp19opughomDk4cRed85kjwBzsGspzW
+         C2bA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=yCANs8fI;
+       dkim=pass header.i=@kernel.org header.s=default header.b=kZHfCiAg;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=yCANs8fI;
+       dkim=pass header.i=@kernel.org header.s=default header.b=kZHfCiAg;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Eric Dumazet <edumazet@google.com>,
 	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 15/23] net: fix uninit-value in __hw_addr_add_ex()
-Date: Mon, 14 May 2018 08:48:44 +0200
-Message-Id: <20180514064704.698768457@linuxfoundation.org>
+Subject: [PATCH 3.18 14/23] net: initialize skb->peeked when cloning
+Date: Mon, 14 May 2018 08:48:43 +0200
+Message-Id: <20180514064704.662614756@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064704.046463679@linuxfoundation.org>
 References: <20180514064704.046463679@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421247484712480?=
-X-GMAIL-MSGID: =?utf-8?q?1600421247484712480?=
+X-GMAIL-THRID: =?utf-8?q?1600421244637782425?=
+X-GMAIL-MSGID: =?utf-8?q?1600421244637782425?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,52 +54,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Dumazet <edumazet@google.com>
 
-commit 77d36398d99f2565c0a8d43a86fd520a82e64bb8 upstream.
+commit b13dda9f9aa7caceeee61c080c2e544d5f5d85e5 upstream.
 
-syzbot complained :
+syzbot reported __skb_try_recv_from_queue() was using skb->peeked
+while it was potentially unitialized.
 
-BUG: KMSAN: uninit-value in memcmp+0x119/0x180 lib/string.c:861
-CPU: 0 PID: 3 Comm: kworker/0:0 Not tainted 4.16.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: ipv6_addrconf addrconf_dad_work
-Call Trace:
- __dump_stack lib/dump_stack.c:17 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:53
- kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
- __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
- memcmp+0x119/0x180 lib/string.c:861
- __hw_addr_add_ex net/core/dev_addr_lists.c:60 [inline]
- __dev_mc_add+0x1c2/0x8e0 net/core/dev_addr_lists.c:670
- dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
- igmp6_group_added+0x2db/0xa00 net/ipv6/mcast.c:662
- ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
- addrconf_join_solict net/ipv6/addrconf.c:2078 [inline]
- addrconf_dad_begin net/ipv6/addrconf.c:3828 [inline]
- addrconf_dad_work+0x427/0x2150 net/ipv6/addrconf.c:3954
- process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2113
- worker_thread+0x113c/0x24f0 kernel/workqueue.c:2247
- kthread+0x539/0x720 kernel/kthread.c:239
+We need to clear it in __skb_clone()
 
-Fixes: f001fde5eadd ("net: introduce a list of device addresses dev_addr_list (v6)")
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/core/dev_addr_lists.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/core/skbuff.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/core/dev_addr_lists.c
-+++ b/net/core/dev_addr_lists.c
-@@ -57,8 +57,8 @@ static int __hw_addr_add_ex(struct netde
- 		return -EINVAL;
- 
- 	list_for_each_entry(ha, &list->list, list) {
--		if (!memcmp(ha->addr, addr, addr_len) &&
--		    ha->type == addr_type) {
-+		if (ha->type == addr_type &&
-+		    !memcmp(ha->addr, addr, addr_len)) {
- 			if (global) {
- 				/* check if addr is already used as global */
- 				if (ha->global_use)
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -779,6 +779,7 @@ static struct sk_buff *__skb_clone(struc
+ 	n->hdr_len = skb->nohdr ? skb_headroom(skb) : skb->hdr_len;
+ 	n->cloned = 1;
+ 	n->nohdr = 0;
++	n->peeked = 0;
+ 	n->destructor = NULL;
+ 	C(tail);
+ 	C(end);
