@@ -1,54 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932744AbeENPYd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 11:24:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53668 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932486AbeENPYc (ORCPT
+        id S932750AbeENPZT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 11:25:19 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56472 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932486AbeENPZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 11:24:32 -0400
-Date: Mon, 14 May 2018 17:24:28 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] perf/ring_buffer: ensure atomicity and order of updates
-Message-ID: <20180514152428.GS12217@hirez.programming.kicks-ass.net>
-References: <20180510130632.34497-1-mark.rutland@arm.com>
- <20180511105931.yyarmtz2gjkbuq2a@lakrids.cambridge.arm.com>
- <20180511162229.GK12217@hirez.programming.kicks-ass.net>
- <20180514110532.kihs5ilrs67kvq7e@lakrids.cambridge.arm.com>
- <20180514112815.GP12217@hirez.programming.kicks-ass.net>
- <20180514150213.GK12235@hirez.programming.kicks-ass.net>
- <20180514152022.z3hnkkj3rbcabtyy@lakrids.cambridge.arm.com>
+        Mon, 14 May 2018 11:25:17 -0400
+Subject: Re: [PATCH v10 09/25] mm: protect VMA modifications using VMA
+ sequence count
+To: Minchan Kim <minchan@kernel.org>
+Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+ <1523975611-15978-10-git-send-email-ldufour@linux.vnet.ibm.com>
+ <20180423071941.GD114098@rodete-desktop-imager.corp.google.com>
+From: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Date: Mon, 14 May 2018 17:25:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180514152022.z3hnkkj3rbcabtyy@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180423071941.GD114098@rodete-desktop-imager.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18051415-0020-0000-0000-0000041D1A40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18051415-0021-0000-0000-000042B22A18
+Message-Id: <3f655c5b-bc0d-1766-d0a0-5645a8bf27ab@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805140157
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 04:20:23PM +0100, Mark Rutland wrote:
-
-> > @@ -10499,6 +10523,9 @@ SYSCALL_DEFINE5(perf_event_open,
-> >  		goto err_cred;
-> >  	}
-> >  
-> > +	if (in_compat_syscall())
-> > +		event->event_caps |= PERF_EV_CAP_COMPAT;
-> > +
+On 23/04/2018 09:19, Minchan Kim wrote:
+> On Tue, Apr 17, 2018 at 04:33:15PM +0200, Laurent Dufour wrote:
+>> The VMA sequence count has been introduced to allow fast detection of
+>> VMA modification when running a page fault handler without holding
+>> the mmap_sem.
+>>
+>> This patch provides protection against the VMA modification done in :
+>> 	- madvise()
+>> 	- mpol_rebind_policy()
+>> 	- vma_replace_policy()
+>> 	- change_prot_numa()
+>> 	- mlock(), munlock()
+>> 	- mprotect()
+>> 	- mmap_region()
+>> 	- collapse_huge_page()
+>> 	- userfaultd registering services
+>>
+>> In addition, VMA fields which will be read during the speculative fault
+>> path needs to be written using WRITE_ONCE to prevent write to be split
+>> and intermediate values to be pushed to other CPUs.
+>>
+>> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+>> ---
+>>  fs/proc/task_mmu.c |  5 ++++-
+>>  fs/userfaultfd.c   | 17 +++++++++++++----
+>>  mm/khugepaged.c    |  3 +++
+>>  mm/madvise.c       |  6 +++++-
+>>  mm/mempolicy.c     | 51 ++++++++++++++++++++++++++++++++++-----------------
+>>  mm/mlock.c         | 13 ++++++++-----
+>>  mm/mmap.c          | 22 +++++++++++++---------
+>>  mm/mprotect.c      |  4 +++-
+>>  mm/swap_state.c    |  8 ++++++--
+>>  9 files changed, 89 insertions(+), 40 deletions(-)
+>>
+>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>> index c486ad4b43f0..aeb417f28839 100644
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+>> @@ -1136,8 +1136,11 @@ static ssize_t clear_refs_write(struct file *file, const char __user *buf,
+>>  					goto out_mm;
+>>  				}
+>>  				for (vma = mm->mmap; vma; vma = vma->vm_next) {
+>> -					vma->vm_flags &= ~VM_SOFTDIRTY;
+>> +					vm_write_begin(vma);
+>> +					WRITE_ONCE(vma->vm_flags,
+>> +						   vma->vm_flags & ~VM_SOFTDIRTY);
+>>  					vma_set_page_prot(vma);
+>> +					vm_write_end(vma);
 > 
-> After a native perf_event_open, you could pass the fd (or exec) to
-> another task that was compat (or vice-versa), so this wouldn't work in
-> that case (crazy as it may be).
+> trivial:
 > 
-> I don't have a better suggestion at present, though.
+> I think It's tricky to maintain that VMA fields to be read during SPF should be
+> (READ|WRITE_ONCE). I think we need some accessor to read/write them rather than
+> raw accessing like like vma_set_page_prot. Maybe spf prefix would be helpful. 
+> 
+> 	vma_spf_set_value(vma, vm_flags, val);
+> 
+> We also add some markers in vm_area_struct's fileds to indicate that
+> people shouldn't access those fields directly.
+> 
+> Just a thought.
 
-As discussed on IRC, we could trigger off of the buffer size; if the
-buffer is <4G the &= UINT_MAX is harmless, if the buffer is larger, you
-have to be using a 64bit thingy anyway.
+At the beginning I was liking that idea but...
 
-Flipping the overflow functions around on attach/detach to buffers is a
-little more dodgy, but could be done I suppose.
+I'm not sure this will change a lot the code, most of the time the
+vm_write_begin()/end() are surrounding part of code larger than one VMA
+structure's field change. For this particular case and few others this will be
+applicable but that's not the majority.
+
+Thanks,
+Laurent.
+
+> 
+> 
+>>  				}
+>>  				downgrade_write(&mm->mmap_sem);
+> 
+> 
+>> diff --git a/mm/swap_state.c b/mm/swap_state.c
+>> index fe079756bb18..8a8a402ed59f 100644
+>> --- a/mm/swap_state.c
+>> +++ b/mm/swap_state.c
+>> @@ -575,6 +575,10 @@ static unsigned long swapin_nr_pages(unsigned long offset)
+>>   * the readahead.
+>>   *
+>>   * Caller must hold down_read on the vma->vm_mm if vmf->vma is not NULL.
+>> + * This is needed to ensure the VMA will not be freed in our back. In the case
+>> + * of the speculative page fault handler, this cannot happen, even if we don't
+>> + * hold the mmap_sem. Callees are assumed to take care of reading VMA's fields
+> 
+> I guess reader would be curious on *why* is safe with SPF.
+> Comment about the why could be helpful for reviewer.
+> 
+>> + * using READ_ONCE() to read consistent values.
+>>   */
+>>  struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
+>>  				struct vm_fault *vmf)
+>> @@ -668,9 +672,9 @@ static inline void swap_ra_clamp_pfn(struct vm_area_struct *vma,
+>>  				     unsigned long *start,
+>>  				     unsigned long *end)
+>>  {
+>> -	*start = max3(lpfn, PFN_DOWN(vma->vm_start),
+>> +	*start = max3(lpfn, PFN_DOWN(READ_ONCE(vma->vm_start)),
+>>  		      PFN_DOWN(faddr & PMD_MASK));
+>> -	*end = min3(rpfn, PFN_DOWN(vma->vm_end),
+>> +	*end = min3(rpfn, PFN_DOWN(READ_ONCE(vma->vm_end)),
+>>  		    PFN_DOWN((faddr & PMD_MASK) + PMD_SIZE));
+>>  }
+>>  
+>> -- 
+>> 2.7.4
+>>
+> 
