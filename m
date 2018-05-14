@@ -1,28 +1,28 @@
 Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZq++NgdjwbS7Oi1DG6AW11qin/tJ6jROrrO+leU8kG/g68J9liFrcogT8HgbiYgqR87dffV
-ARC-Seal: i=1; a=rsa-sha256; t=1526280975; cv=none;
+X-Google-Smtp-Source: AB8JxZpCA+PDS6Yw83sIxeOvrJvsQaBAFxiPKqYNwiqPltQHS+zDzmOjJX3Cc92PdnPRXyOC/9Fa
+ARC-Seal: i=1; a=rsa-sha256; t=1526280972; cv=none;
         d=google.com; s=arc-20160816;
-        b=xGBxm+ofx3u4iZ+Nxo2APg2/t/rTlvCNnyCOATIGqT2Wj3x7fraD2g9PbgIlherF7j
-         2Grvvi/hbiLwYU6ptzQp8FEt0406s0AacE0hEyfRiVnj80NJH4WFajIUTOWyz1JzAvsh
-         b107s3Ro1ZccbWZq/b8/oYaFcwJCGPhC9VAQn9QE+ZJCi+x0wwXKE5kChasc/ij39lv2
-         6Fikw8RJa80NliqxSzDmzetF8awfRyvsc/Tbd7APQiJ20Cmc0ahUr7Khn3i7YxTmapl9
-         2B/7ndJpDTRuMqcf5Mpob7/YLFFM7HJIKDDr/bP/W+yGDuBhxWqVzTEu3jbxE+VmgtSv
-         ow5A==
+        b=YlUT6qfaI9d3vdrJkslUTfSG5vyXwJnmvWKwXnW7vO5ifyWmFDtMypiwaT4YfGQOh1
+         So1z1ZCTJizXwO2HV6nVfOiHToCtiHfQLtbiGXNQJ46upCG0hAJHiTgHZZHj7acxysEj
+         PUJjTTk6vCqVyD5FR7UEdou5mGYmAQmY5/CxOCJAVRtxxxw/vXcYvXPrLxFpIVqoB85L
+         9zGyD+kwRt/5aN0XW6upwVPGWiNEb8yHmyX6i/CNVpq+mZNxZvzxUjGOqXtLd0EZWoLA
+         xNrFQ769UwweBmXeDxhQutDgMDixOVx3F0YTjieA+uo8qS/DGGSbXJyF6+8D+R8rfgVW
+         n7EQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=090TrP8eiAeu7f45te5uzczf6SVo09jY0cN1mgrEpw4=;
-        b=HTzpQw6SCyLROge0l5gteR8ZzaOIEss6nPhVC+2WjWI6iSWSFwyDXEB3+K0sD6JQ/R
-         omHy0RC4I6BycDYb5Ofn1C8tM7ItB6jcugeWMHP6FE/zjvbx5wcvuVK0G/71vLdj/qyv
-         2GFmLWjYdBhWyL7TUTDCSj+VBySTS2v4xMvR1syN2EQwSw30B4iL9MIUjU6yJrgc/fza
-         FhS4Kgo6eV64VAb1Wuu0/CExK0lruZXMk2siC50MAqEBB8GbN6PvtKlo3mUxLOq+3Mmv
-         Ar/HK5nV+JS1+rn1VHAV7a61DpepQPPgDbVeL4+mTur7A+n8+nU9QBL+Dy1cG/wRVvYp
-         K+Dw==
+        bh=8DkJNe7GlzxLl93vqn2Y+fnYjEidxzqiwCRMKT6YI1I=;
+        b=Hlg0U3Vl9xU4Jd2zrEtBdkEYz3cX9OggM7LWcOVrdQ6IxoPBuQftbEczu/zQarxfqr
+         a4FKflQtuX4+VYIafHysoE09Q1H0gTsIcM2j79xdhfqId7n3BjvDaauLy2lMoLhY69yX
+         jsFFLiMWeUb7213gmzARI/zwnANRMgMracKF2VvroE/AvtY3SHT43pRo7koT4E1QVBvh
+         JG8XscU/SjBBdUQMjKmaazy8rNZOxjYw83AD9VEHoSoTrsHqnZmDHB/wTZtX8oKIEHP+
+         4PhlWKPsNDL41MeLlSzMo90JRtfRhre4L9lurq88FjPvf9gSWvte4DJkJ3jw8YugpwJH
+         bMwg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=b9T8TZtX;
+       dkim=pass header.i=@kernel.org header.s=default header.b=KbM7R0lR;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=b9T8TZtX;
+       dkim=pass header.i=@kernel.org header.s=default header.b=KbM7R0lR;
        spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
@@ -31,9 +31,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Eric Dumazet <edumazet@google.com>,
 	syzbot <syzkaller@googlegroups.com>,
 	"David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 09/62] dccp: initialize ireq->ir_mark
-Date: Mon, 14 May 2018 08:48:25 +0200
-Message-Id: <20180514064816.955865917@linuxfoundation.org>
+Subject: [PATCH 4.14 08/62] net: fix uninit-value in __hw_addr_add_ex()
+Date: Mon, 14 May 2018 08:48:24 +0200
+Message-Id: <20180514064816.912949940@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064816.436958006@linuxfoundation.org>
 References: <20180514064816.436958006@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1600421418810944624?=
-X-GMAIL-MSGID: =?utf-8?q?1600421599986833494?=
+X-GMAIL-THRID: =?utf-8?q?1600421247484712480?=
+X-GMAIL-MSGID: =?utf-8?q?1600421597317165070?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,150 +54,52 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Eric Dumazet <edumazet@google.com>
 
-commit b855ff827476adbdc2259e9895681d82b7b26065 upstream.
+commit 77d36398d99f2565c0a8d43a86fd520a82e64bb8 upstream.
 
-syzbot reported an uninit-value read of skb->mark in iptable_mangle_hook()
+syzbot complained :
 
-Thanks to the nice report, I tracked the problem to dccp not caring
-of ireq->ir_mark for passive sessions.
-
-BUG: KMSAN: uninit-value in ipt_mangle_out net/ipv4/netfilter/iptable_mangle.c:66 [inline]
-BUG: KMSAN: uninit-value in iptable_mangle_hook+0x5e5/0x720 net/ipv4/netfilter/iptable_mangle.c:84
-CPU: 0 PID: 5300 Comm: syz-executor3 Not tainted 4.16.0+ #81
+BUG: KMSAN: uninit-value in memcmp+0x119/0x180 lib/string.c:861
+CPU: 0 PID: 3 Comm: kworker/0:0 Not tainted 4.16.0+ #82
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: ipv6_addrconf addrconf_dad_work
 Call Trace:
  __dump_stack lib/dump_stack.c:17 [inline]
  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:676
- ipt_mangle_out net/ipv4/netfilter/iptable_mangle.c:66 [inline]
- iptable_mangle_hook+0x5e5/0x720 net/ipv4/netfilter/iptable_mangle.c:84
- nf_hook_entry_hookfn include/linux/netfilter.h:120 [inline]
- nf_hook_slow+0x158/0x3d0 net/netfilter/core.c:483
- nf_hook include/linux/netfilter.h:243 [inline]
- __ip_local_out net/ipv4/ip_output.c:113 [inline]
- ip_local_out net/ipv4/ip_output.c:122 [inline]
- ip_queue_xmit+0x1d21/0x21c0 net/ipv4/ip_output.c:504
- dccp_transmit_skb+0x15eb/0x1900 net/dccp/output.c:142
- dccp_xmit_packet+0x814/0x9e0 net/dccp/output.c:281
- dccp_write_xmit+0x20f/0x480 net/dccp/output.c:363
- dccp_sendmsg+0x12ca/0x12d0 net/dccp/proto.c:818
- inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:764
- sock_sendmsg_nosec net/socket.c:630 [inline]
- sock_sendmsg net/socket.c:640 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
- __sys_sendmsg net/socket.c:2080 [inline]
- SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
- SyS_sendmsg+0x54/0x80 net/socket.c:2087
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x455259
-RSP: 002b:00007f1a4473dc68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f1a4473e6d4 RCX: 0000000000455259
-RDX: 0000000000000000 RSI: 0000000020b76fc8 RDI: 0000000000000015
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000004f0 R14: 00000000006fa720 R15: 0000000000000000
+ memcmp+0x119/0x180 lib/string.c:861
+ __hw_addr_add_ex net/core/dev_addr_lists.c:60 [inline]
+ __dev_mc_add+0x1c2/0x8e0 net/core/dev_addr_lists.c:670
+ dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
+ igmp6_group_added+0x2db/0xa00 net/ipv6/mcast.c:662
+ ipv6_dev_mc_inc+0xe9e/0x1130 net/ipv6/mcast.c:914
+ addrconf_join_solict net/ipv6/addrconf.c:2078 [inline]
+ addrconf_dad_begin net/ipv6/addrconf.c:3828 [inline]
+ addrconf_dad_work+0x427/0x2150 net/ipv6/addrconf.c:3954
+ process_one_work+0x12c6/0x1f60 kernel/workqueue.c:2113
+ worker_thread+0x113c/0x24f0 kernel/workqueue.c:2247
+ kthread+0x539/0x720 kernel/kthread.c:239
 
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
- kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
- __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
- ip_queue_xmit+0x1e35/0x21c0 net/ipv4/ip_output.c:502
- dccp_transmit_skb+0x15eb/0x1900 net/dccp/output.c:142
- dccp_xmit_packet+0x814/0x9e0 net/dccp/output.c:281
- dccp_write_xmit+0x20f/0x480 net/dccp/output.c:363
- dccp_sendmsg+0x12ca/0x12d0 net/dccp/proto.c:818
- inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:764
- sock_sendmsg_nosec net/socket.c:630 [inline]
- sock_sendmsg net/socket.c:640 [inline]
- ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
- __sys_sendmsg net/socket.c:2080 [inline]
- SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
- SyS_sendmsg+0x54/0x80 net/socket.c:2087
- do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:293 [inline]
- kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:684
- __msan_chain_origin+0x69/0xc0 mm/kmsan/kmsan_instr.c:521
- inet_csk_clone_lock+0x503/0x580 net/ipv4/inet_connection_sock.c:797
- dccp_create_openreq_child+0x7f/0x890 net/dccp/minisocks.c:92
- dccp_v4_request_recv_sock+0x22c/0xe90 net/dccp/ipv4.c:408
- dccp_v6_request_recv_sock+0x290/0x2000 net/dccp/ipv6.c:414
- dccp_check_req+0x7b9/0x8f0 net/dccp/minisocks.c:197
- dccp_v4_rcv+0x12e4/0x2630 net/dccp/ipv4.c:840
- ip_local_deliver_finish+0x6ed/0xd40 net/ipv4/ip_input.c:216
- NF_HOOK include/linux/netfilter.h:288 [inline]
- ip_local_deliver+0x43c/0x4e0 net/ipv4/ip_input.c:257
- dst_input include/net/dst.h:449 [inline]
- ip_rcv_finish+0x1253/0x16d0 net/ipv4/ip_input.c:397
- NF_HOOK include/linux/netfilter.h:288 [inline]
- ip_rcv+0x119d/0x16f0 net/ipv4/ip_input.c:493
- __netif_receive_skb_core+0x47cf/0x4a80 net/core/dev.c:4562
- __netif_receive_skb net/core/dev.c:4627 [inline]
- process_backlog+0x62d/0xe20 net/core/dev.c:5307
- napi_poll net/core/dev.c:5705 [inline]
- net_rx_action+0x7c1/0x1a70 net/core/dev.c:5771
- __do_softirq+0x56d/0x93d kernel/softirq.c:285
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
- kmem_cache_alloc+0xaab/0xb90 mm/slub.c:2756
- reqsk_alloc include/net/request_sock.h:88 [inline]
- inet_reqsk_alloc+0xc4/0x7f0 net/ipv4/tcp_input.c:6145
- dccp_v4_conn_request+0x5cc/0x1770 net/dccp/ipv4.c:600
- dccp_v6_conn_request+0x299/0x1880 net/dccp/ipv6.c:317
- dccp_rcv_state_process+0x2ea/0x2410 net/dccp/input.c:612
- dccp_v4_do_rcv+0x229/0x340 net/dccp/ipv4.c:682
- dccp_v6_do_rcv+0x16d/0x1220 net/dccp/ipv6.c:578
- sk_backlog_rcv include/net/sock.h:908 [inline]
- __sk_receive_skb+0x60e/0xf20 net/core/sock.c:513
- dccp_v4_rcv+0x24d4/0x2630 net/dccp/ipv4.c:874
- ip_local_deliver_finish+0x6ed/0xd40 net/ipv4/ip_input.c:216
- NF_HOOK include/linux/netfilter.h:288 [inline]
- ip_local_deliver+0x43c/0x4e0 net/ipv4/ip_input.c:257
- dst_input include/net/dst.h:449 [inline]
- ip_rcv_finish+0x1253/0x16d0 net/ipv4/ip_input.c:397
- NF_HOOK include/linux/netfilter.h:288 [inline]
- ip_rcv+0x119d/0x16f0 net/ipv4/ip_input.c:493
- __netif_receive_skb_core+0x47cf/0x4a80 net/core/dev.c:4562
- __netif_receive_skb net/core/dev.c:4627 [inline]
- process_backlog+0x62d/0xe20 net/core/dev.c:5307
- napi_poll net/core/dev.c:5705 [inline]
- net_rx_action+0x7c1/0x1a70 net/core/dev.c:5771
- __do_softirq+0x56d/0x93d kernel/softirq.c:285
-
+Fixes: f001fde5eadd ("net: introduce a list of device addresses dev_addr_list (v6)")
 Signed-off-by: Eric Dumazet <edumazet@google.com>
 Reported-by: syzbot <syzkaller@googlegroups.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/dccp/ipv4.c |    1 +
- net/dccp/ipv6.c |    1 +
- 2 files changed, 2 insertions(+)
+ net/core/dev_addr_lists.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/dccp/ipv4.c
-+++ b/net/dccp/ipv4.c
-@@ -614,6 +614,7 @@ int dccp_v4_conn_request(struct sock *sk
- 	ireq = inet_rsk(req);
- 	sk_rcv_saddr_set(req_to_sk(req), ip_hdr(skb)->daddr);
- 	sk_daddr_set(req_to_sk(req), ip_hdr(skb)->saddr);
-+	ireq->ir_mark = inet_request_mark(sk, skb);
- 	ireq->ireq_family = AF_INET;
- 	ireq->ir_iif = sk->sk_bound_dev_if;
+--- a/net/core/dev_addr_lists.c
++++ b/net/core/dev_addr_lists.c
+@@ -57,8 +57,8 @@ static int __hw_addr_add_ex(struct netde
+ 		return -EINVAL;
  
---- a/net/dccp/ipv6.c
-+++ b/net/dccp/ipv6.c
-@@ -351,6 +351,7 @@ static int dccp_v6_conn_request(struct s
- 	ireq->ir_v6_rmt_addr = ipv6_hdr(skb)->saddr;
- 	ireq->ir_v6_loc_addr = ipv6_hdr(skb)->daddr;
- 	ireq->ireq_family = AF_INET6;
-+	ireq->ir_mark = inet_request_mark(sk, skb);
- 
- 	if (ipv6_opt_accepted(sk, skb, IP6CB(skb)) ||
- 	    np->rxopt.bits.rxinfo || np->rxopt.bits.rxoinfo ||
+ 	list_for_each_entry(ha, &list->list, list) {
+-		if (!memcmp(ha->addr, addr, addr_len) &&
+-		    ha->type == addr_type) {
++		if (ha->type == addr_type &&
++		    !memcmp(ha->addr, addr, addr_len)) {
+ 			if (global) {
+ 				/* check if addr is already used as global */
+ 				if (ha->global_use)
