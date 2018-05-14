@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752577AbeENIiK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 04:38:10 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:35735 "EHLO
+        id S1752401AbeENIiu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 04:38:50 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:6743 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752306AbeENIiH (ORCPT
+        by vger.kernel.org with ESMTP id S1752077AbeENIit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 04:38:07 -0400
+        Mon, 14 May 2018 04:38:49 -0400
 From: Vincent ABRIOU <vincent.abriou@st.com>
 To: Philippe CORNU <philippe.cornu@st.com>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -17,16 +17,14 @@ CC: Andrzej Hajda <a.hajda@samsung.com>,
         Yannick FERTRE <yannick.fertre@st.com>,
         Benjamin Gaignard <benjamin.gaignard@linaro.org>,
         Alexandre TORGUE <alexandre.torgue@st.com>
-Subject: Re: [PATCH 2/4] drm/panel: otm8009a: fix glitches by moving backlight
- enable to otm8009a_enable()
-Thread-Topic: [PATCH 2/4] drm/panel: otm8009a: fix glitches by moving
- backlight enable to otm8009a_enable()
-Thread-Index: AQHT2wzqkLCOwWi9IUOdtAQUq28LHqQu5hAA
-Date: Mon, 14 May 2018 08:37:52 +0000
-Message-ID: <14a3dc6e-0a59-7c63-5195-95d6c1da7c54@st.com>
+Subject: Re: [PATCH 3/4] drm/panel: otm8009a: no message if probe success
+Thread-Topic: [PATCH 3/4] drm/panel: otm8009a: no message if probe success
+Thread-Index: AQHT2wzqXrNowIPaWE2a7Boc8iR3PaQu5kOA
+Date: Mon, 14 May 2018 08:38:35 +0000
+Message-ID: <b662fc6e-b4e6-4b23-e913-fea25159236d@st.com>
 References: <20180423141054.13128-1-philippe.cornu@st.com>
- <20180423141054.13128-3-philippe.cornu@st.com>
-In-Reply-To: <20180423141054.13128-3-philippe.cornu@st.com>
+ <20180423141054.13128-4-philippe.cornu@st.com>
+In-Reply-To: <20180423141054.13128-4-philippe.cornu@st.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -37,7 +35,7 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-exchange-transport-fromentityheader: Hosted
 x-originating-ip: [10.75.127.46]
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <65224F9E2C7AED4B877E66B47ACE102D@st.com>
+Content-ID: <343578B29212A34990A4A8B7D9E5C82B@st.com>
 MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_02:,,
  signatures=0
@@ -45,7 +43,7 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4E8cEdu008857
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4E8cvRl008869
 
 Hi Philippe,
 
@@ -55,51 +53,56 @@ BR
 Vincent
 
 On 04/23/2018 04:10 PM, Philippe Cornu wrote:
-> The backlight 1st update was in the otm8009a_prepare() function
-> for a bad reason: backlight was not working in video mode and the
-> otm8009a_prepare() is in command mode for the init sequence. As the
-> backlight is now fixed (no lpm), it is good to put it back in the
-> otm8009a_enable() function, avoiding also image glitches visible
-> on some "slow" devices.
+> Remove the message in case of probe success. This comes from
+> a suggestion followed in the recent integration of the
+> raydium rm68200 panel.
 > 
 > Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
 > ---
->   drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 17 ++++++++++-------
->   1 file changed, 10 insertions(+), 7 deletions(-)
+>   drivers/gpu/drm/panel/panel-orisetech-otm8009a.c | 11 ++---------
+>   1 file changed, 2 insertions(+), 9 deletions(-)
 > 
 > diff --git a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-> index 0fd2e0144d2b..de4a16d5275c 100644
+> index de4a16d5275c..4c638b7b9943 100644
 > --- a/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
 > +++ b/drivers/gpu/drm/panel/panel-orisetech-otm8009a.c
-> @@ -330,13 +330,6 @@ static int otm8009a_prepare(struct drm_panel *panel)
+> @@ -14,8 +14,6 @@
+>   #include <linux/regulator/consumer.h>
+>   #include <video/mipi_display.h>
 >   
->   	ctx->prepared = true;
+> -#define DRV_NAME "orisetech_otm8009a"
+> -
+>   #define OTM8009A_BACKLIGHT_DEFAULT	240
+>   #define OTM8009A_BACKLIGHT_MAX		255
 >   
-> -	/*
-> -	 * Power on the backlight. Note: end-user still controls brightness
-> -	 * Note: ctx->prepared must be true before updating the backlight.
-> -	 */
-> -	ctx->bl_dev->props.power = FB_BLANK_UNBLANK;
-> -	backlight_update_status(ctx->bl_dev);
+> @@ -461,7 +459,7 @@ static int otm8009a_probe(struct mipi_dsi_device *dsi)
+>   	ctx->panel.dev = dev;
+>   	ctx->panel.funcs = &otm8009a_drm_funcs;
+>   
+> -	ctx->bl_dev = backlight_device_register(DRV_NAME "_backlight", dev, ctx,
+> +	ctx->bl_dev = backlight_device_register(dev_name(dev), dev, ctx,
+>   						&otm8009a_backlight_ops, NULL);
+>   	if (IS_ERR(ctx->bl_dev)) {
+>   		dev_err(dev, "failed to register backlight device\n");
+> @@ -483,11 +481,6 @@ static int otm8009a_probe(struct mipi_dsi_device *dsi)
+>   		return ret;
+>   	}
+>   
+> -	DRM_INFO(DRV_NAME "_panel %ux%u@%u %ubpp dsi %udl - ready\n",
+> -		 default_mode.hdisplay, default_mode.vdisplay,
+> -		 default_mode.vrefresh,
+> -		 mipi_dsi_pixel_format_to_bpp(dsi->format), dsi->lanes);
 > -
 >   	return 0;
 >   }
 >   
-> @@ -344,6 +337,16 @@ static int otm8009a_enable(struct drm_panel *panel)
->   {
->   	struct otm8009a *ctx = panel_to_otm8009a(panel);
->   
-> +	if (ctx->enabled)
-> +		return 0;
-> +
-> +	/*
-> +	 * Power on the backlight. Note: end-user still controls brightness
-> +	 * Note: ctx->prepared must be true before updating the backlight.
-> +	 */
-> +	ctx->bl_dev->props.power = FB_BLANK_UNBLANK;
-> +	backlight_update_status(ctx->bl_dev);
-> +
->   	ctx->enabled = true;
->   
->   	return 0;
+> @@ -513,7 +506,7 @@ static struct mipi_dsi_driver orisetech_otm8009a_driver = {
+>   	.probe  = otm8009a_probe,
+>   	.remove = otm8009a_remove,
+>   	.driver = {
+> -		.name = DRV_NAME "_panel",
+> +		.name = "panel-orisetech-otm8009a",
+>   		.of_match_table = orisetech_otm8009a_of_match,
+>   	},
+>   };
 > 
