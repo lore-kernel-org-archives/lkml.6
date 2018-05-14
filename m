@@ -1,171 +1,126 @@
-Return-Path: <krzk@kernel.org>
-X-Google-Smtp-Source: AB8JxZoIzf0bsJk8maZexVlF9kApk3eiazBGqPItXQB6sWXLKit0R31PNwNTAs5R33KdKSaD4aQb
-ARC-Seal: i=1; a=rsa-sha256; t=1526293044; cv=none;
+Return-Path: <s.nawrocki@samsung.com>
+X-Google-Smtp-Source: AB8JxZrwTGh6gYwz8jc8r87ywO5LdMYKFi0kVofY6HMiwDq/8yD2+iANpz69tKw/j15tr28v7KSi
+ARC-Seal: i=1; a=rsa-sha256; t=1526300577; cv=none;
         d=google.com; s=arc-20160816;
-        b=0yuJDdP2szZEH9EOWNHD34KBXGuizwuf+HZ6AutXKGwJepa6zxMJLSv6XkU4ugJltj
-         qZg1nFsy6NzBUUbAMpO21Jv0wrsq2DZDRjHBbBHmvr0WhCIfJXBbfWj/APnczOQd6oXA
-         Zb4qbBxg6ENhiUg7xa8uDmvkhMJFeMsh7IMPR9SKz8e2Lf6BHO410xaEfbmy8TeJO2zr
-         hrSOrLHaVjlnqkZxNq2Ha6H6wuAnwlhASmQWI1gkVQbNlrxs6+HOI1ip2zEnkSUIk3fV
-         VD8xj2Xh4+lEdvYHfP+6zSZvfdwL9Wo15HAKXJSgX1QOQ9XktRXoQOXsntSg7dFpsJrq
-         oMMQ==
+        b=M+7k2hUchKrvrIvzi7q51YNkZPJT9TqX61kiHo7IjOmhspXregyPuT2Efio0XjdEhR
+         6TJwvqdc1uqf4grc+wugsxNZXg0j6m0DNduxWD/o5yHWm1kiHj3uMWi5DZHq38VnvKKg
+         iE0S7TSQ02KrRicgsUFg27PM/WSMfUbnfpExmuNjvPZVsJq+IavQua7Ay87W4qFru30i
+         3ATA+UFq5AvsjnQwPV9PP3nsvlLThawAZIU4siehLTC1mpgJcRrkJm8+1L9xd5mRs6F5
+         1ExkVBKsS4bwpB0TqJm5KZacscsweeyxSVEVLZ9iMsajnk6GzrmJckafyL8hF3XZxAp5
+         giTQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature
-         :arc-authentication-results;
-        bh=YTjdE1vzwEA9Ra2oTc4dERO4yHSDjy53YrJDx1ik+pE=;
-        b=WD8R7Hg8e4D0Lu/jDOvSgs1LLWE9zdIWGy70fXOcib/H2eH3ysLeF8Enx4w1FVFLhL
-         7TEatalsuGVUO8A9I9cDkSQiWd38TzAYtWoz7Yi6qJUqEWPvnsoxklbOletlrnR8OiHj
-         JFmv2ukI7oCBB9JrJi4BG1rkUNhjjWp22Jd5IY0DcFDTgojrvrVUfGg8O5jvmOJWh0j2
-         YOyymNMWYjV8K6utkEKmcEio0dh3isn3xywF3iigiWQiIpZde/jRP3SdiAOiBw7eBGKe
-         vfXbHimUA7zOLkhCmqRuPOZwSJg92v3/GaoRENGoChmjaHXyYjxGlz7efDzB5uhpUZyk
-         fysQ==
+        h=references:cms-type:content-transfer-encoding:content-language
+         :in-reply-to:mime-version:user-agent:date:message-id:from:cc:to
+         :subject:dkim-signature:dkim-filter:arc-authentication-results;
+        bh=gvsJPo3gF72I28fB9cWu7/Nhheen46tOGhuj00Fll6M=;
+        b=bITyWDlckv9Kv778vmAGzfP76dgcblEeaiVDohRARjx3DmToz29XGEhUBAo/fS+f8s
+         Mv4o9QfuyDm3ts+9MocnZuvkSH0y2rlRkjcP2vggURyk1pHsRiGwr3Qqwv6lteSk2oJI
+         6YfE5dg54SVd/xYBAIgHWK320ivKniJlOPi3vYJKTL98SFbp7dZ4A+EQ4fs6nCogYqXJ
+         i5N+mAFwdDcuP3OWnTK9KELaje2MhQlAl5BIltewxZuCGb67aQzBvPNPxmo+jxuvfKVQ
+         XYKGJXbJo/D/geb5RaYN0Jz9hNbQKLd/pryYHKbeafT4MdWv1N8TY59FmbROXKYoO1Ug
+         njWA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=JYg+jNqO;
-       spf=pass (google.com: domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=LFbaxD0T;
+       spf=pass (google.com: domain of s.nawrocki@samsung.com designates 203.254.224.24 as permitted sender) smtp.mailfrom=s.nawrocki@samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=JYg+jNqO;
-       spf=pass (google.com: domain of krzk@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=krzk@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-MIME-Version: 1.0
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Mon, 14 May 2018 12:17:21 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPfD8gZR8nZkmAr=Ldt3xESuFocQLnMtrDsNZu=ba55jcw@mail.gmail.com>
-Message-ID: <CAJKOXPfD8gZR8nZkmAr=Ldt3xESuFocQLnMtrDsNZu=ba55jcw@mail.gmail.com>
-Subject: [FAIL bisect] Sound card probe error
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Mark Brown <broonie@kernel.org>,
-	Inki Dae <inki.dae@samsung.com>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@samsung.com header.s=mail20170921 header.b=LFbaxD0T;
+       spf=pass (google.com: domain of s.nawrocki@samsung.com designates 203.254.224.24 as permitted sender) smtp.mailfrom=s.nawrocki@samsung.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=samsung.com
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180514122255epoutp016a5b151e5458093e5fb870c9d7961c98~ugkmCldgQ3153631536epoutp01D
+X-AuditID: b6c32a38-70fff7000000105c-bb-5af97f9fa27a
+Subject: Re: [FAIL bisect] Sound card probe error
+To: Krzysztof Kozlowski <krzk@kernel.org>, Ulf Hansson
+	<ulf.hansson@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+	<rafael.j.wysocki@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>,
+	Mark Brown <broonie@kernel.org>, Inki Dae <inki.dae@samsung.com>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andrzej
+	Hajda <a.hajda@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <b193b8a0-ad25-1895-8f8d-ffab97261dc1@samsung.com>
+Date: Mon, 14 May 2018 14:22:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+	Thunderbird/52.7.0
+MIME-version: 1.0
+In-reply-to: <CAJKOXPfD8gZR8nZkmAr=Ldt3xESuFocQLnMtrDsNZu=ba55jcw@mail.gmail.com>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-GB
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7bCmnu78+p9RBneWilncWneO1WLqwyds
+	Fs2L17NZTLo/gcXi/PkN7BabHl9jtbi8aw6bxYzz+5gs1h65y27xeMVbdovja8MduD0W73nJ
+	5LFpVSebx51re9g89s9dw+6xeUm9R9+WVYwenzfJBbBHcdmkpOZklqUW6dslcGX8m/uQveAM
+	d8WX52uYGhh3cHYxcnJICJhIXFw+m7mLkYtDSGAHo8TnnX8YIZzvjBK7v5xjgama/egtC0Ri
+	N6PE8VfP2CGc+4wSc34sAKsSFjCU+P2pAaidg0NEIFDizEJhkBpmgQnMEj3rLzKD1LAB1fQe
+	7WMEsXkF7CTuvZzNBmKzCKhKrL6yECwuKhAh0fT8JztEjaDEj8n3wOZzCgRL/O9eDRZnFtCU
+	ePFlEguELS5x7P5NRghbXmLzmrfMEFf/ZpM4cdYe5B4JAReJUxdkIcLCEq+Ob2GHCEtLXDpq
+	CxGuluhs6wJ7S0KghVHiz7RLbBAJa4nDxy+yQoznk3j3tYcVopdXoqNNCKLEQ6L98iYmiLCj
+	xJHjopDQWcIocX31YfYJjHKzkDwzC8kDs5A8MAvJAwsYWVYxiqUWFOempxYbFpjoFSfmFpfm
+	pesl5+duYgQnIi2LHYx7zvkcYhTgYFTi4Q1Y/iNKiDWxrLgy9xCjBAezkgjvbqOfUUK8KYmV
+	ValF+fFFpTmpxYcYpTlYlMR55yh9jRISSE8sSc1OTS1ILYLJMnFwSjUwVqZIzl23SbC4Tu0l
+	bzeblIvnyv07O2zzFP088jdsOD2Lv2a62vKrfgtqqlIvLpmyyqagQO3FyYNRh1w8+bJz7+wy
+	39SkqKYQsfL8s8rZngtqtxwsYbO/WTTn3e8bZfmL7lu09NxaFXYs6VGJ10XhB/datNPT+V41
+	b0+e76v7be1L9u+elfP4lViKMxINtZiLihMBFaS/jUADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnkeLIzCtJLcpLzFFi42I5/e+xgO68+p9RBm2dQha31p1jtZj68Amb
+	RfPi9WwWk+5PYLE4f34Du8Wmx9dYLS7vmsNmMeP8PiaLtUfusls8XvGW3eL42nAHbo/Fe14y
+	eWxa1cnmcefaHjaP/XPXsHtsXlLv0bdlFaPH501yAexRXDYpqTmZZalF+nYJXBn/5j5kLzjD
+	XfHl+RqmBsYdnF2MnBwSAiYSsx+9ZQGxhQR2Mkr8WhXexcgFZD9klNjy4RQTSEJYwFDi96cG
+	RhBbRMBfYuK5biaQImaBScwSn3dOY4boWMYosW72FLAqNqCO3qN9YDavgJ3EvZez2UBsFgFV
+	idVXFoLFRQUiJO6d/8QGUSMo8WPyPbAzOAWCJS4d2g40lANog7rElCm5IGFmAXGJY/dvMkLY
+	8hKb17xlnsAoMAtJ9yyEjllIOmYh6VjAyLKKUTK1oDg3PbfYqMAwL7Vcrzgxt7g0L10vOT93
+	EyMwerYd1urbwXh/SfwhRgEORiUe3hUrf0QJsSaWFVfmHmKU4GBWEuHdbfQzSog3JbGyKrUo
+	P76oNCe1+BCjNAeLkjjv7bxjkUIC6YklqdmpqQWpRTBZJg5OqQbGqgrBf7dXKz933K18f13C
+	ZtuIn50cEW9qF4aGTNT7zvKQsyJ4kta0tvPzPPKFjQ7Gex6Yb7jbL/Dq87rbhqWHjq8seGOX
+	xWy27e0q9vpfG54xTjvBvePH4bg0J92yXSdZ7zB9XCVZt9DBMnPhf2HpW5yR7XOPv2XODohw
+	/8xyY5uBYLbjLQ5DJZbijERDLeai4kQAqRlQ/ZoCAAA=
+X-CMS-MailID: 20180514122254epcas1p344b9c7c39046efb2db52ed62a0bca661
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20180514101728epcas4p3108760546a415b36252df93dfe38e0fb
+X-RootMTR: 20180514101728epcas4p3108760546a415b36252df93dfe38e0fb
+References: <CGME20180514101728epcas4p3108760546a415b36252df93dfe38e0fb@epcas4p3.samsung.com>
+	<CAJKOXPfD8gZR8nZkmAr=Ldt3xESuFocQLnMtrDsNZu=ba55jcw@mail.gmail.com>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1600434255100788752?=
-X-GMAIL-MSGID: =?utf-8?q?1600434255100788752?=
+X-GMAIL-MSGID: =?utf-8?q?1600442154417763811?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi All,
+Hi,
 
-I experienced an issue on today's next 20180514. Found on Odroid XU3
-board (Exynos5422, ARMv7, octa-core) with exynos_defconfig.
+On 05/14/2018 12:17 PM, Krzysztof Kozlowski wrote:
 
-1. No sound card is probed:
-[    6.717698] ALSA device list:
-[    6.719303]   No soundcards found.
-(expected: #0: Odroid-XU3)
+> Bisected to:
+> 8c123c14bbba4add148536b6d47a9226deda2f7a is the first bad commit
+> commit 8c123c14bbba4add148536b6d47a9226deda2f7a
+> Author: Ulf Hansson <ulf.hansson@linaro.org>
+> Date:   Thu Apr 26 10:53:06 2018 +0200
+> 
+>     driver core: Respect all error codes from dev_pm_domain_attach()
+> 
+>     The limitation of being able to check only for -EPROBE_DEFER from
+>     dev_pm_domain_attach() has been removed. Hence let's respect all error
+>     codes and bail out accordingly.
+> 
+>     Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>     Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>     Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
+The DRM driver creates the HDMI codec but its registration fails, due
+to some missing clocks. The clock are missing because the exynos5-subcmu
+driver probing fails.
 
-2. Oops happens:
-[  OK  ] Started udev Kernel Device Manager.
-Unable to handle kernel paging request at virtual address c0f324ac
-[   36.229430] [<c05764ac>] (platform_drv_probe) from [<c0573fd8>]
-(driver_probe_device+0x2e0/0x4b4)
-[   36.238258] [<c0573fd8>] (driver_probe_device) from [<c0571fb8>]
-(bus_for_each_drv+0x74/0xb8)
-[   36.246746] [<c0571fb8>] (bus_for_each_drv) from [<c0573bb0>]
-(__device_attach+0xd4/0x168)
-[   36.254974] [<c0573bb0>] (__device_attach) from [<c0572e78>]
-(bus_probe_device+0x88/0x90)
-[   36.263121] [<c0572e78>] (bus_probe_device) from [<c0573434>]
-(deferred_probe_work_func+0x64/0x184)
-[   36.272144] [<c0573434>] (deferred_probe_work_func) from
-[<c0146950>] (process_one_work+0x220/0x8e8)
-[   36.281236] [<c0146950>] (process_one_work) from [<c0147050>]
-(worker_thread+0x38/0x584)
-[   36.289293] [<c0147050>] (worker_thread) from [<c014d96c>]
-(kthread+0x138/0x168)
-[   36.296652] [<c014d96c>] (kthread) from [<c01010b4>]
-(ret_from_fork+0x14/0x20)
+[    0.678578] exynos5-subcmu: probe of GSC failed with error -17
+[    0.679250] exynos5-subcmu: probe of MFC failed with error -17
+[    0.679992] exynos5-subcmu: probe of DISP failed with error -17
 
+The exynos5-subcmu driver before registering platform device makes 
+of_genpd_add_device() call, so in platform_drv_probe() dev_pm_domain_attach()
+call will fail, as dev->pm_domain is already set. Previously the error
+was masked by code removed in the above commit and platform_drv_probe()
+was could complete successfully.
 
-3. No DRM device is probed/found.
-
-I could not find any specific reasons of this failure (like earlier
-failures... except some probe deferrals which are happening almost
-alwats).
-
-Full kernel log of issue:
-http://www.krzk.eu/#/builders/1/builds/1978/steps/10/logs/serial0
-Example of good boot:
-http://www.krzk.eu/#/builders/1/builds/1953/steps/10/logs/serial0
-\
-Bisected to:
-8c123c14bbba4add148536b6d47a9226deda2f7a is the first bad commit
-commit 8c123c14bbba4add148536b6d47a9226deda2f7a
-Author: Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu Apr 26 10:53:06 2018 +0200
-
-    driver core: Respect all error codes from dev_pm_domain_attach()
-
-    The limitation of being able to check only for -EPROBE_DEFER from
-    dev_pm_domain_attach() has been removed. Hence let's respect all error
-    codes and bail out accordingly.
-
-    Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-    Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-:040000 040000 26c27c583ac4557a3982b4a6bf6b3b4ff8386449
-997a872ddca1c876024cf49c3e7fc68d15cd8fed M drivers
-
-
-bisect log:
-git bisect start
-# good: [66e1c94db3cd4e094de66a6be68c3ab6d17e0c52] Merge branch
-'x86-pti-for-linus' of
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-git bisect good 66e1c94db3cd4e094de66a6be68c3ab6d17e0c52
-# bad: [af37b24ae6b3e7eac272417c9af591c58baa8f93] Add linux-next
-specific files for 20180514
-git bisect bad af37b24ae6b3e7eac272417c9af591c58baa8f93
-# bad: [0e9cda8f772f6c66693629b383d33a63a8333b48] Merge
-remote-tracking branch 'bluetooth/master'
-git bisect bad 0e9cda8f772f6c66693629b383d33a63a8333b48
-# good: [a458037d65ab42098252b52889543fb836226d33] Merge
-remote-tracking branch 'jc_docs/docs-next'
-git bisect good a458037d65ab42098252b52889543fb836226d33
-# good: [a37fb855f6e8e9eafac046721393f68f48eb5f91] net: dsa: fix
-added_by_user switchdev notification
-git bisect good a37fb855f6e8e9eafac046721393f68f48eb5f91
-# bad: [3ee48ebb5dfef1a167b15ab9a4168134837b6e7c] Merge
-remote-tracking branch 'pm/linux-next'
-git bisect bad 3ee48ebb5dfef1a167b15ab9a4168134837b6e7c
-# good: [89eaaf2d19a6cfff0a16014405c2a65b5257b8a1] media: lgdt330x:
-don't use an uninitialized state
-git bisect good 89eaaf2d19a6cfff0a16014405c2a65b5257b8a1
-# good: [89eaaf2d19a6cfff0a16014405c2a65b5257b8a1] media: lgdt330x:
-don't use an uninitialized state
-git bisect good 89eaaf2d19a6cfff0a16014405c2a65b5257b8a1
-# good: [6d2eaece20ffe783cdbcedd7ef2d6ae51d846d33] media: xilinx:
-regroup caps on querycap
-git bisect good 6d2eaece20ffe783cdbcedd7ef2d6ae51d846d33
-# bad: [91965db07c20058e207e8ea14a47fe0ec891896d] Merge branch
-'pm-core' into linux-next
-git bisect bad 91965db07c20058e207e8ea14a47fe0ec891896d
-# bad: [e298050322459ccd8aaa0f7edd422f630ce4e9b4] Merge branch
-'pm-domains' into linux-next
-git bisect bad e298050322459ccd8aaa0f7edd422f630ce4e9b4
-# good: [097b29f3e6f5ec6781e5e3048e4a285edd79c357] Merge branch
-'pm-cpufreq-sched' into linux-next
-git bisect good 097b29f3e6f5ec6781e5e3048e4a285edd79c357
-# good: [4d73e6885c07847488201e8df4da9ed56c25e21b] amba: Respect all
-error codes from dev_pm_domain_attach()
-git bisect good 4d73e6885c07847488201e8df4da9ed56c25e21b
-# bad: [ecbc0460e7f16aca23f6dd34527fbf751eaf1453] mmc: sdio: Respect
-all error codes from dev_pm_domain_attach()
-git bisect bad ecbc0460e7f16aca23f6dd34527fbf751eaf1453
-# bad: [f24b7891ddbf4f1d509253d6e0bcfdcfbdadf4fd] i2c: Respect all
-error codes from dev_pm_domain_attach()
-git bisect bad f24b7891ddbf4f1d509253d6e0bcfdcfbdadf4fd
-# bad: [8c123c14bbba4add148536b6d47a9226deda2f7a] driver core: Respect
-all error codes from dev_pm_domain_attach()
-git bisect bad 8c123c14bbba4add148536b6d47a9226deda2f7a
-# first bad commit: [8c123c14bbba4add148536b6d47a9226deda2f7a] driver
-core: Respect all error codes from dev_pm_domain_attach()
-
-Let me know if you need any more data.
-
-Best regards,
-Krzysztof
+-- 
+Regards,
+Sylwester
