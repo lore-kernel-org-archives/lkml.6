@@ -1,31 +1,31 @@
 Return-Path: <baolin.wang@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526288233; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1526288221; cv=none;
         d=google.com; s=arc-20160816;
-        b=Bc9OV15Zht3WZMUzEpVXiDedMPn3stfxLqgkVdlQDlIhP8MjbDyTI2gq/8rNjLylKG
-         AhhzFBuCliR0tL5L0JtOm1UniZfz7mbXYLXEEculXQAfoCuN7kfElJkCk8M4vEIwK3IT
-         +A6gys8aZMtQbteGhzOU5iBY6GVpggWeytzpm7OD/y+vwmP3WayiDx/fYFb3i2QJrgVw
-         GKs58fUGZbOas6EMJEDIbEqkvCmnoLiw8g7dNep3jMs9L9mCJ6dxU7NF1iLAGQ0oO9u+
-         8nloa9/H+Nf8bsqUeNlmJKsSjx6a2VMLrJCdFp5s644phekNbfPv4VR8t+G3QqKTygrl
-         wdSQ==
+        b=KZUV8SLj3sKh7xVigvzEQ02MSxsJEZFoTBZwqcOdLFKdRSZQhzsVnvIPX4NLQIp3wF
+         uBfCeb095OFbpEva6PgTSONMUI2KEjNeQk5AEaodwm1jZHmJvLermma83BK7NCOeAJ7/
+         9qEOkibVo97WRzVpZ+OOoRAFn+vDvNytktCIwyCjy2bM2fb9cE38gQymd8EbfhSh8N5y
+         mvFcYPd7QGtTfQWJYzF+Kow0fEmyDP9zTxllXDfugUM2AJISUMa1GS/TPSTAPWgt7Z9L
+         x2Ok7RmZd9YEvapKzkli2FRc/bbNKewtSVZ2hcM2QUy+2h8zp65nbDZgQjHDk9+49/a3
+         gNNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=NPxlDCjOk7gpJ7ywY/IgHfUOCSQRmo1KxQ6z9d2/zdU=;
-        b=sEH3CITiSh3HS5nU4M49/aZcXPFJOWrh2nfcxBHIF4ftwpwW9euvmWj6Bu17xrerzg
-         SCxytMw8TtP+m4XCfUYenjSFzko3ix/HHql8hnjN9l59pm8ErWm8y+/C+VXo8tJZAMsJ
-         t0/xde834lhki1IHPTLeoL/Y/cl5KbjshMs/52fUAaQVUXnRLt4bje0Lyjd9KfOqq3ZW
-         OjynqaO6kkJmdIgJHENeWOZWV9Gpm+CLMz6FAqXGe6U9oCa0Y11zNLukna6+LDwAYNuV
-         XEz0S5oXPTlpGm3C2/meLQE4DCzi8fy25iVJv2wgxS3nr/YIprUNXrNP8gFFwstFqBzt
-         rMpw==
+        bh=JFxtoPTIwMJxvyCd3hwanD0Gfpl/C9hHnauJqDpF+Pw=;
+        b=ahJ5j6Lw4nFZQm5G2Q378iBR/wkppMRZKA0+CUIh5l6NRdLW0Wp5442u+w2BXpMWbE
+         ZFVJxaKxFe11qKh/9T/X6tkJCIbjWqPpwXKPMFLTbAk3hT4ChUnp9U3ImL318SpMuUd2
+         swfxu0HcnFoDrzWQOvO6O2Q7GiBkmbQPzLMAT/LvLNkhkujDmG1K9qnWfWN8m6erVyLl
+         Z7DRCHhVadDBlHaA+JvcQ8jnTIueev0x4ty9imlaFaxuTff2Lkc9dxpa7deeXbOVwf/9
+         pmWlz2r3lAEnLJrz1CNadCaFrhKXH+vmDZfs1Q2bRv3XmFah764K6f8CBfndlYo6fINE
+         YhYA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=UgkJ7DPr;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Lks8eZND;
        spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=UgkJ7DPr;
+       dkim=pass header.i=@linaro.org header.s=google header.b=Lks8eZND;
        spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZpVkW/3+zxblhObhwqITAxggXU+3pn3SN4lD/8SKbxsncUQkxkzBY3Df9n3WyUWJnvuXOuXdw==
+X-Google-Smtp-Source: AB8JxZqJqrkpqUjChhz+cXXKxmxgAaOH1itX8BY6d+zuE+pHfRQUCNQWxrJ6eLWAz63O4iru9mMMTA==
 From: Baolin Wang <baolin.wang@linaro.org>
 To: tglx@linutronix.de,
 	john.stultz@linaro.org,
@@ -61,62 +61,68 @@ Cc: baolin.wang@linaro.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-omap@vger.kernel.org
-Subject: [RFC PATCH 07/10] clocksource: timer-ti-32k: Register the persistent clock
-Date: Mon, 14 May 2018 16:55:33 +0800
-Message-Id: <353359ad77f87c01e9cc5a5fce382dbf6e9318e6.1526285602.git.baolin.wang@linaro.org>
+Subject: [RFC PATCH 06/10] clocksource: arm_arch_timer: Register the persistent clock
+Date: Mon, 14 May 2018 16:55:32 +0800
+Message-Id: <f7f053cc1ffbef881642bc8755f0d73b370b0d36.1526285602.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
 References: <cover.1526285602.git.baolin.wang@linaro.org>
 In-Reply-To: <cover.1526285602.git.baolin.wang@linaro.org>
 References: <cover.1526285602.git.baolin.wang@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600429210432259974?=
-X-GMAIL-MSGID: =?utf-8?q?1600429210432259974?=
+X-GMAIL-THRID: =?utf-8?q?1600429198447922047?=
+X-GMAIL-MSGID: =?utf-8?q?1600429198447922047?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Since the 32K counter is always available, then we can register the
-persistent clock to compensate the suspend time for the OS time.
+Register the persistent clock to compensate the suspend time for OS time,
+if the ARM counter clocksource will not be stopped in suspend state.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/clocksource/Kconfig        |    1 +
- drivers/clocksource/timer-ti-32k.c |    4 ++++
- 2 files changed, 5 insertions(+)
+ drivers/clocksource/Kconfig          |    1 +
+ drivers/clocksource/arm_arch_timer.c |   10 ++++++++++
+ 2 files changed, 11 insertions(+)
 
 diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 884719c..ed19757 100644
+index d7dddcc..884719c 100644
 --- a/drivers/clocksource/Kconfig
 +++ b/drivers/clocksource/Kconfig
-@@ -262,6 +262,7 @@ config CLKSRC_TI_32K
- 	bool "Texas Instruments 32.768 Hz Clocksource" if COMPILE_TEST
- 	depends on GENERIC_SCHED_CLOCK
- 	select TIMER_OF if OF
+@@ -308,6 +308,7 @@ config ARC_TIMERS_64BIT
+ 
+ config ARM_ARCH_TIMER
+ 	bool
 +	select PERSISTENT_CLOCK
- 	help
- 	  This option enables support for Texas Instruments 32.768 Hz clocksource
- 	  available on many OMAP-like platforms.
-diff --git a/drivers/clocksource/timer-ti-32k.c b/drivers/clocksource/timer-ti-32k.c
-index 880a861..353ff9d 100644
---- a/drivers/clocksource/timer-ti-32k.c
-+++ b/drivers/clocksource/timer-ti-32k.c
-@@ -41,6 +41,7 @@
- #include <linux/clocksource.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
+ 	select TIMER_OF if OF
+ 	select TIMER_ACPI if ACPI
+ 
+diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+index 57cb2f0..671be63 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -32,6 +32,7 @@
+ #include <asm/virt.h>
+ 
+ #include <clocksource/arm_arch_timer.h>
 +#include <linux/persistent_clock.h>
  
- /*
-  * 32KHz clocksource ... always available, on pretty most chips except
-@@ -120,6 +121,9 @@ static int __init ti_32k_timer_init(struct device_node *np)
- 	}
+ #undef pr_fmt
+ #define pr_fmt(fmt) "arch_timer: " fmt
+@@ -950,6 +951,15 @@ static void __init arch_counter_register(unsigned type)
  
- 	sched_clock_register(omap_32k_read_sched_clock, 32, 32768);
-+	persistent_clock_init_and_register(omap_32k_read_sched_clock,
-+					   CLOCKSOURCE_MASK(32), 32768, 0);
+ 	/* 56 bits minimum, so we assume worst case rollover */
+ 	sched_clock_register(arch_timer_read_counter, 56, arch_timer_rate);
 +
- 	pr_info("OMAP clocksource: 32k_counter at 32768 Hz\n");
++	/*
++	 * Register the persistent clock if the clocksource will not be stopped
++	 * in suspend state.
++	 */
++	if (!arch_counter_suspend_stop)
++		persistent_clock_init_and_register(arch_timer_read_counter,
++						   CLOCKSOURCE_MASK(56),
++						   arch_timer_rate, 0);
+ }
  
- 	return 0;
+ static void arch_timer_stop(struct clock_event_device *clk)
 -- 
 1.7.9.5
