@@ -1,130 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753485AbeENMr3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:47:29 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36713 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753281AbeENMr0 (ORCPT
+        id S1753500AbeENMsM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:48:12 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:41503 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752732AbeENMsJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:47:26 -0400
-X-Google-Smtp-Source: AB8JxZpr9K+Npawv0osAQst3BWH+qxkdXcHag7sqN/n5MkjpuDKttQIi9/bOQi2XwX/qtVSSmn6xOg==
-Date: Mon, 14 May 2018 14:47:23 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, Wolfram Sang <wsa@the-dreams.de>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Shardar Shariff Md <smohammed@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] i2c: tegra: Remove suspend-resume
-Message-ID: <20180514124723.GJ18312@ulmo>
-References: <20180513211347.7187-1-digetx@gmail.com>
- <20180514115933.GH18312@ulmo>
- <d83fc1f7-d5e5-4211-1cd8-babcabdd9c4b@nvidia.com>
+        Mon, 14 May 2018 08:48:09 -0400
+X-Google-Smtp-Source: AB8JxZo9tHe57kC1Tx+8eZUrSdR2065tuETZ+bJiQfKW7la3Fwr4N+vE0NT5uGHw8sF/vfwpXJJ9K7UG0nJu1w2zrac=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="BEa57a89OpeoUzGD"
-Content-Disposition: inline
-In-Reply-To: <d83fc1f7-d5e5-4211-1cd8-babcabdd9c4b@nvidia.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180514141339.43a09786@bbrezillon>
+References: <1526294977-32303-1-git-send-email-geert@linux-m68k.org>
+ <20180514132324.595b63eb@bbrezillon> <CAMuHMdUSHc2o5zXbZje89jo2dxTYv8pzcVSz-gYWh7KdZKwQeA@mail.gmail.com>
+ <20180514134607.5dfb8d51@bbrezillon> <CAMuHMdVhAAGiGjGMCe26kyLAPqrvTfukADhipd8apk8UNBAXiA@mail.gmail.com>
+ <20180514141339.43a09786@bbrezillon>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 May 2018 14:48:08 +0200
+X-Google-Sender-Auth: 3hwdzsi5j9oMsScj6kKTye6ReSM
+Message-ID: <CAMuHMdVVhuriVvvQqPLmf2ADA1JR=vjNMj8FDjcX0r=D9fPRhA@mail.gmail.com>
+Subject: Re: [PATCH] mtd: nand: Fix return type of __DIVIDE() when called with 32-bit
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: MTD Maling List <linux-mtd@lists.infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        "Linux/m68k" <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Boris,
 
---BEa57a89OpeoUzGD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, May 14, 2018 at 2:13 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Mon, 14 May 2018 14:00:19 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> On Mon, May 14, 2018 at 1:46 PM, Boris Brezillon
+>> <boris.brezillon@bootlin.com> wrote:
+>> > On Mon, 14 May 2018 13:32:30 +0200
+>> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> >> On Mon, May 14, 2018 at 1:23 PM, Boris Brezillon
+>> >> <boris.brezillon@bootlin.com> wrote:
+>> >> > On Mon, 14 May 2018 12:49:37 +0200
+>> >> > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> >> >> The __DIVIDE() macro checks whether it is called with a 32-bit or 64-bit
+>> >> >> dividend, to select the appropriate divide-and-round-up routine.
+>> >> >> As the check uses the ternary operator, the result will always be
+>> >> >> promoted to a type that can hold both results, i.e. unsigned long long.
+>> >> >>
+>> >> >> When using this result in a division on a 32-bit system, this may lead
+>> >> >> to link errors like:
+>> >> >>
+>> >> >>     ERROR: "__udivdi3" [drivers/mtd/nand/raw/nand.ko] undefined!
+>> >> >>
+>> >> >> Fix this by casting the result of the 64-bit division to the type of the
+>> >> >> dividend.
+>> >> >>
+>> >> >> Fixes: 8878b126df769831 ("mtd: nand: add ->exec_op() implementation")
+>> >> >> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>> >> >> ---
+>> >> >> This fixes the root cause of the link failure seen with
+>> >> >> m68k/allmodconfig since commit 3057fcef385348fe ("mtd: rawnand: Make
+>> >> >> sure we wait tWB before polling the STATUS reg").
+>> >> >>
+>> >> >> An alternative mitigation was posted as "[PATCH] m68k: Implement
+>> >> >> ndelay() as an inline function to force type checking/casting"
+>> >> >> (https://lkml.org/lkml/2018/5/13/102).
+>> >> >> ---
+>> >> >>  include/linux/mtd/rawnand.h | 2 +-
+>> >> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >> >>
+>> >> >> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+>> >> >> index 5dad59b312440a9c..d06dc428ea0102ae 100644
+>> >> >> --- a/include/linux/mtd/rawnand.h
+>> >> >> +++ b/include/linux/mtd/rawnand.h
+>> >> >> @@ -871,7 +871,7 @@ struct nand_op_instr {
+>> >> >>  #define __DIVIDE(dividend, divisor) ({                                       \
+>> >> >>       sizeof(dividend) == sizeof(u32) ?                               \
+>> >> >>               DIV_ROUND_UP(dividend, divisor) :                       \
+>> >> >> -             DIV_ROUND_UP_ULL(dividend, divisor);                    \
+>> >> >> +             (__typeof__(dividend))DIV_ROUND_UP_ULL(dividend, divisor); \
+>> >> >
+>> >> > Hm, it's a bit hard to follow when you place the cast here. One could
+>> >> > wonder why a cast to (__typeof__(dividend)) is needed since
+>> >> > DIV_ROUND_UP_ULL() already returns a (__typeof__(dividend)) type.
+>> >>
+>> >> DIV_ROUND_UP_ULL() does not return __typeof__(dividend), but
+>> >> unsigned long long.
+>> >
+>> > Except if you entered this branch, that means you passed an unsigned
+>> > long long dividend (AKA u64), otherwise you would go in DIV_ROUND_UP().
+>> > Am I missing something?
+>>
+>> Sure, inside that branch, it does.
+>> But the compiler considers the whole ternary operator construction, i.e.
+>> both branches.
+>
+> Yes, and that's my point. The (__typeof__(dividend)) when placed like
+> you did is ambiguous. It looks like you're doing a useless cast, while
+> what you're actually fixing is the case where dividend is an u32 (AKA
+> unsigned long), and from the reader PoV, the code you're fixing
+> shouldn't even be reached. Hence my suggestion to move the case one
+> level up and add a comment ;-).
 
-On Mon, May 14, 2018 at 05:51:58PM +0530, Laxman Dewangan wrote:
->=20
->=20
-> On Monday 14 May 2018 05:29 PM, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Mon, May 14, 2018 at 12:13:47AM +0300, Dmitry Osipenko wrote:
-> > > Nothing prevents I2C clients to access I2C while Tegra's driver is be=
-ing
-> > > suspended, this results in -EBUSY error returned to the clients and t=
-hat
-> > > may have unfortunate consequences. In particular this causes problems
-> > > for the TPS6586x MFD driver which emits hundreds of "failed to read
-> > > interrupt status" error messages on resume from suspend. This happens=
- if
-> > > TPS6586X is used to wake system from suspend by the expired RTC alarm
-> > > timer because TPS6586X is an I2C device driver and its IRQ handler re=
-ads
-> > > the status register while Tegra's I2C driver is suspended, i.e. just =
-after
-> > > kernel enabled IRQ's during of resume-from-suspend process.
-> > >=20
-> > > Note that the removed tegra_i2c_resume() invoked tegra_i2c_init() whi=
-ch
-> > > performs HW reset. That seems was also not entirely correct because m=
-oving
-> > > tegra_i2c_resume to an earlier stage of resume-from-suspend process c=
-auses
-> > > I2C transfer to fail in the case of TPS6586X. It is fine to remove the
-> > > HW-reinitialization for now because it should be only needed in a cas=
-e of
-> > > using lowest power-mode during suspend, which upstream kernel doesn't
-> > > support.
-> > >=20
-> > > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > > Cc: <stable@vger.kernel.org>
-> > > ---
-> > >   drivers/i2c/busses/i2c-tegra.c | 33 -------------------------------=
---
-> > >   1 file changed, 33 deletions(-)
-> > Shardar, Laxman, any thoughts on this? The is_suspended thing looks to
-> > me like a workaround of some sort that may not be needed if clients have
-> > proper suspend/resume implementations. Even without suspend/resume
-> > support in client drivers, the driver core should resume devices in the
-> > right order (I2C adapter before any of the clients), so I don't see any
-> > cases where the is_suspended logic would be useful.
-> >=20
->=20
-> Our I2C driver is based on the interrupt. So we have converted the
-> suspend/resume to suspend_noirq and reseume_noirq so that we will not all=
-ow
-> the transfer when system interrupt disabled in downstream.
->           SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resu=
-me)
+OK.
 
-That seems to me like it shouldn't be necessary. If all clients are
-properly suspended, then when the I2C controller gets suspended there
-should be no pending transfers. That's provided that the driver model
-properly orders suspend of clients vs. their controller. I think it
-didn't use to do that (especially when deferred probing was involved)
-but I remember that getting fixed sometime in the last couple of years.
+>> >> > How about:
+>> >> >
+>> >> >         /*
+>> >> >          * Cast to type of dividend is needed here to guarantee that the
+>> >> >          * result won't be an unsigned long long when the dividend is an
+>> >> >          * unsigned long, which is what the compiler does when it sees a
+>> >>
+>> >> s/an unsigned long/32-bit/
+>> >>
+>> >> >          * ternary operator with 2 different return types.
+>> >> >          */
+>> >> >         (__typeof__(dividend))(sizeof(dividend) == sizeof(u32) ?        \
+>> >
+>> > To be completely safe and handle cases where dividend is an unsigned
+>> > short or an unsigned, we should probably have:
+>> >
+>> >         (__typeof__(dividend))(sizeof(dividend) == sizeof(unsigned long long) ? \
+>>
+>> "> sizeof(u32)"?
+>>
+>> /me starts to think about uint128_t...
+>
+>         sizeof(dividend) <= sizeof(unsigned long) ?
+>         DIV_ROUND_UP(dividend, divisor) :
+>         DIV_ROUND_UP_ULL(dividend, divisor);
+>
+> Problem solved :-)
 
-> In shutdown path, where interrupt disabled and still need i2c, we use the
-> bit-bang method via GPIO for i2c transfer.
+BTW, this will still fail (silently) with uint128_t. But we don't care.
 
-Do we really need to bit-bang the GPIOs? Couldn't the I2C controller
-operate in a polling mode where only the interrupt was disabled but we
-still polled the status register to know when a transfer was finished?
+And it will do the right thing when passed an unsigned long on 64-bit
+systems.
 
-Thierry
+> Is the following version okay?
 
---BEa57a89OpeoUzGD
-Content-Type: application/pgp-signature; name="signature.asc"
+I think it is.
 
------BEGIN PGP SIGNATURE-----
+Thanks!
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlr5hVsACgkQ3SOs138+
-s6GL5Q/8Cl1aMjNKGqcGrhayr5QbjG5arrOLj90/fmCnVgZrX2XkCny8MkbXvPcz
-q/HNi2TRBwvaBOfGGODKM3NtTsxmMWmpSmDS1AChaVtyI0YLLbcof20dJylv4WAY
-RqSp3aDJs6254RjN3TUg5E2MlHA/f+sNeOyaL91j1XfN77dCGiqI4i7AflFfWJp+
-0s5r+hwGOGvt+BBXc6NZQlGM4M8TKwWDYSM+ae+nccKJSBcQo7Mjns/49vnOUD4G
-6Sd6zk5gceNokgK6YEWzGU/YmK06kDwkJU3HMFJ2XP6wzNgj+ayL10YJTv9Tjep1
-sO3vLYv9H62uoaFsNWXBXDpkwiMv+wgJGjderVeO4q/aF5SNm7K3iZdssoxQ3buH
-9zVFWWLR+ZkVPmnLRVnWlqmijaA0C1ISAVat5fG8SuQZdz43/ilBjlCO11EIDfcL
-a5wqYlsHpDrd5Aw7g/1fX0WxYiHRggV77+5eCTPPOceQEtweY+S1T9flBYeMGzOm
-KF53+gvwZ2x8HS3cOlb6GlU68RHDa0fk+pHkOimzyPs7+xdVucyzsTfynLuNAqXG
-2VQ/tkUgDq1+AHfkAy1FedpQc9/rEbzNT2UL0ZFLjMBaaxFt6+NBPFAjmNKLsyTu
-NrNV7eopWVtIkjtIafV1/zyRHjFq8mlfqCttcu2pj2//zIcw8CY=
-=cpLT
------END PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
---BEa57a89OpeoUzGD--
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
