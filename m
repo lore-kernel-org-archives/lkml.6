@@ -1,78 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752038AbeENDMD (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 23:12:03 -0400
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:33094 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751953AbeENDMC (ORCPT
+        id S1752076AbeENDNK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 23:13:10 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:57679 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752019AbeENDNJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 23:12:02 -0400
+        Sun, 13 May 2018 23:13:09 -0400
 X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: byungchul.park@lge.com
-X-Original-SENDERIP: 10.177.220.135
-X-Original-MAILFROM: byungchul.park@lge.com
-Subject: Re: [PATCH] rcu: Report a quiescent state when it's exactly in the
- state
-To: Steven Rostedt <rostedt@goodmis.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>, jiangshanlai@gmail.com,
-        josh@joshtriplett.org, mathieu.desnoyers@efficios.com,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com,
-        peterz@infradead.org
-References: <1526027434-21237-1-git-send-email-byungchul.park@lge.com>
- <3af4cec0-4019-e3ac-77f9-8631252fb6da@lge.com>
- <20180511161746.GX26088@linux.vnet.ibm.com>
- <20180511224138.GA89902@joelaf.mtv.corp.google.com>
- <20180512050824.GF26088@linux.vnet.ibm.com>
- <20180512063037.GC192642@joelaf.mtv.corp.google.com>
- <20180512144119.GJ26088@linux.vnet.ibm.com>
- <20180512132647.2923f7cf@gandalf.local.home>
-From: Byungchul Park <byungchul.park@lge.com>
-Message-ID: <f35aa0d8-3bbf-0900-7bcd-81ba6e03fe86@lge.com>
-Date: Mon, 14 May 2018 12:11:59 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+X-Original-MAILFROM: namhyung@kernel.org
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date: Mon, 14 May 2018 12:13:22 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Clark Williams <williams@redhat.com>,
+        Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Brendan Gregg <bgregg@netflix.com>, Joel Fernandes <joelaf@google.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>, linux-rt-users@vger.kernel.org,
+        kernel-team@lge.com
+Subject: Re: [RFC][PATCH 06/10] tracing: Add trigger file for trace_markers
+ tracefs/ftrace/print
+Message-ID: <20180514031322.GB9220@sejong>
+References: <20180511194927.190877137@goodmis.org>
+ <20180511195340.876528094@goodmis.org>
 MIME-Version: 1.0
-In-Reply-To: <20180512132647.2923f7cf@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180511195340.876528094@goodmis.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018-05-13 오전 2:26, Steven Rostedt wrote:
-> On Sat, 12 May 2018 07:41:19 -0700
-> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+On Fri, May 11, 2018 at 03:49:33PM -0400, Steven Rostedt wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
->> Don't get me wrong, this discussion was quite useful to me.  We probably
->> need to at least change the comments, and perhaps the code as well.  But
->> I agree that we need input from Peter and Steven to make much more forward
->> progress.
+> Allow writing to the trace_markers file initiate triggers defined in
+> tracefs/ftrace/print/trigger file. This will allow of user space to trigger
+> the same type of triggers (including histograms) that the trace events use.
 > 
-> It's the weekend so I skimmed more than read this thread, but I will
-> just add this.
-> 
-> The table Joel posted is interesting, and perhaps we should keep things
-> consistent with that. But that said, with respect to task-RCU, as
-> nothing on a trampoline should ever call cond_resched() (and perhaps I
-> should add code in lockdep that verifies this), we just want a
-> quiescent state that tells us that the task has left the trampoline. A
-> cond_resched() should be one of those points that does.
-> 
-> It really has nothing to do with scheduling or preemption. The issue is
-> that if a task is on a trampoline and gets preempted, there's no
-> knowing when it is off that trampoline where we can free it. We need to
-> have places in the kernel that we know is a quiescent state to move
-> task-RCU forward. cond_resched() seems to be one of them. schedule
-> itself can not be, because it can be called from an interrupt preempting
-> a task while it is on the trampoline.
+> Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+> Cc: Clark Williams <williams@redhat.com>
+> Cc: Karim Yaghmour <karim.yaghmour@opersys.com>
+> Cc: Brendan Gregg <bgregg@netflix.com>
+> Suggested-by: Joel Fernandes <joelaf@google.com>
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
 
-Exactly. I think Steven explained how we should consider them exactly.
+[SNIP]
+> diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+> index e3a658bac10f..de3fce14cd00 100644
+> --- a/kernel/trace/trace_entries.h
+> +++ b/kernel/trace/trace_entries.h
+> @@ -230,7 +230,7 @@ FTRACE_ENTRY(bprint, bprint_entry,
+>  	FILTER_OTHER
+>  );
+>  
+> -FTRACE_ENTRY(print, print_entry,
+> +FTRACE_ENTRY_REG(print, print_entry,
+>  
+>  	TRACE_PRINT,
+>  
+> @@ -242,7 +242,9 @@ FTRACE_ENTRY(print, print_entry,
+>  	F_printk("%ps: %s",
+>  		 (void *)__entry->ip, __entry->buf),
+>  
+> -	FILTER_OTHER
+> +	FILTER_OTHER,
+> +
+> +	 ftrace_event_register
 
-> -- Steve
--- 
+I wonder this is still needed since you added __find_event_file()
+which ignores the reg field.  Maybe I'm missing something..
+
+Anyway it looks whitespace damaged.
+
 Thanks,
-Byungchul
+Namhyung
+
+
+>  );
+>  
+>  FTRACE_ENTRY(raw_data, raw_data_entry,
+> diff --git a/kernel/trace/trace_export.c b/kernel/trace/trace_export.c
+> index d842f1eadfe5..45630a76ed3a 100644
+> --- a/kernel/trace/trace_export.c
+> +++ b/kernel/trace/trace_export.c
+> @@ -14,6 +14,13 @@
+>  
+>  #include "trace_output.h"
+>  
+> +/* Stub function for events with triggers */
+> +static int ftrace_event_register(struct trace_event_call *call,
+> +				 enum trace_reg type, void *data)
+> +{
+> +	return 0;
+> +}
+> +
+>  #undef TRACE_SYSTEM
+>  #define TRACE_SYSTEM	ftrace
+>  
+> -- 
+> 2.17.0
+> 
+> 
