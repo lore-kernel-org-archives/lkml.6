@@ -1,90 +1,112 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1526305533; cv=none;
+Return-Path: <SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZpzvHVIydKSKSUqH4Vplft+Kine8YrAuI5JHbzJ6r7jyGSf3vMPWaw1jN5IfK5CVcH3IkHP
+ARC-Seal: i=1; a=rsa-sha256; t=1526282396; cv=none;
         d=google.com; s=arc-20160816;
-        b=W6rnhqczdWk/mAY5XRZU4Dmk9PC0R9NKyMJ2IfW7qQ9LgQl6gZ7GjLOLWa5NwauMNV
-         s2ehAcj9itagqzocM9rGALqydSits97WETc3GeMdHk2uQj53Q1vBDKxHAtuHReqVwGH/
-         J8s4BGIo0en+JpeGsZiZcFBKkz30jUY0sGpdetMA63OXgQSbwRUmWU1kaKAsIdu9Zb0s
-         TTSiUCFEB2TDc3/JkiGYib+xU05q4UQLcOITVYVVWsZQ1V6BRH3n6YVdt4k1yVuvpeQG
-         cfw8SkNVia4B8h4L+8mFZ0dMW6VlgQilFXm/fr/lJCXewk2tgsGv+/dCWyWG+PDIGF8q
-         tLsw==
+        b=ATt79FuF+Jjvvootmbed9ysIatVitGYFgCYq9ha9TteobeGlprgtBQGPkp9wMH39CY
+         JBfsBhxG4W1tDZYUa+vG3/50Hl328zkOLEOOkqEVQdnji1vkf4lNAcD+qMPrs422ryJ5
+         PHR958p89kt91qE9EcgekQD+qpGK4lFMMvsW54MQiVH9NfENY/Ns3SQpmGQJnkJc6Fhh
+         cRM39bH8NKpDs7MBYoSkobkNHQ9sJu2QQxnR1Uv1H0S1w0WwZOO2QMMkdlikRZXxXvs8
+         LVJDlalWufa1JdCEtOOw/cBE9mpJu+SyB1bm6FdeLpI5t9LmvVeolM/sKE+CbKv8a+U+
+         CQgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=+fcRRK5GwGlrtvleFjUFBaW08gPhHJ7a1h1ubqLamMo=;
-        b=RTTGI53YoXFbs8nviBrw8QE0f5CcFEDTzjjDqziDzezAyek2d7zAHdNSx0eGJ9PDvg
-         qdVbLLqeAYM0Cdy9XMqj0QULHAVS457iDxMLhYXQol5OMMFhcrtHqosFGC5KK0vn/4L5
-         Svfx7FlX78+0UnIKY6I5gBhA3g4tx3YwM4g0wHY4FYPbyRYRvbjXB1fB8wGLo+M4uzf8
-         Pu8e5qBMuYdOyNY88ujau5yYOSly8A20V4xjAf2NOuWjHRHeNmtQ3YPkIvF0+2vvjjbV
-         pgleQOJhE1J0jsnBKzDKc/rglziRpkQKngdSUvz0rnqo5aMaQl4yrxAzJzUhKYptiro1
-         Sd4w==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=a6KI1gIF8jCOpzGNI/YP1UohhiE3JD+xSvwwip8hxxg=;
+        b=FuU77av345Z7RmRznZadH3A33fUIlJuZdCJiRaTXpRU8hBGnJwLSFWInGwZ6EopDTw
+         pxFywscS7h6DvTcLbIEO7M9mdYRSBeSFe3P33JbFZFvGeGNLkvGPExkRPQz+CBJ4/IH0
+         lCy1baWHI6aQft+0UiygHCGk4eBtGLOzrgyV6tP24xO6ANcILJ7SGr5AsCd5DFIjMfoj
+         FIKEyj5l16DnIMOsBy02ekRgVW40NY/PQL64OOdflMLSdcjW/Hw4HufKHj2DkOEweLUC
+         tEDp2fi8P4wEJnMMlmc5DTX9dGpTtsqIIRHiRrsiJ7b4m1ddBuwH2wxZYaoRTS9CjJWc
+         B7rQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       dkim=pass header.i=@kernel.org header.s=default header.b=vFYZ3Lmp;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZpdOccuIGWG8gFZLV8F4ZOTo1xlv2P7xBAeYdG4pLwxOHgkBNb9lRhuY4Yba5E7QstYBN+AAg==
-Message-ID: <5af992fc.1c69fb81.e0e22.239a@mx.google.com>
-Date: Mon, 14 May 2018 06:45:32 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.16.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.16.8-73-gdaccae8696e8
+       dkim=pass header.i=@kernel.org header.s=default header.b=vFYZ3Lmp;
+       spf=pass (google.com: domain of srs0=ywzk=ib=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=ywzk=IB=linuxfoundation.org=gregkh@kernel.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@oracle.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Stephane Eranian <eranian@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vince Weaver <vincent.weaver@maine.edu>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.16 72/72] perf/x86: Fix possible Spectre-v1 indexing for x86_pmu::event_map()
+Date: Mon, 14 May 2018 08:49:29 +0200
+Message-Id: <20180514064828.121897585@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
-Subject: Re: [PATCH 4.16 00/72] 4.16.9-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600421792741096129?=
-X-GMAIL-MSGID: =?utf-8?q?1600447350818547129?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1600422464525970940?=
+X-GMAIL-MSGID: =?utf-8?q?1600423090479059529?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.16.y boot: 102 boots: 2 failed, 100 passed (v4.16.8-73-gd=
-accae8696e8)
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.16.y/kernel/v4.16.8-73-gdaccae8696e8/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.16.=
-y/kernel/v4.16.8-73-gdaccae8696e8/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.16.y
-Git Describe: v4.16.8-73-gdaccae8696e8
-Git Commit: daccae8696e8b0a3b166b0a86a20095c25c08929
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 55 unique boards, 22 SoC families, 15 builds out of 186
+From: Peter Zijlstra <peterz@infradead.org>
 
-Boot Regressions Detected:
+commit 46b1b577229a091b137831becaa0fae8690ee15a upstream.
 
-arm:
+> arch/x86/events/intel/cstate.c:307 cstate_pmu_event_init() warn: potential spectre issue 'pkg_msr' (local cap)
+> arch/x86/events/intel/core.c:337 intel_pmu_event_map() warn: potential spectre issue 'intel_perfmon_event_map'
+> arch/x86/events/intel/knc.c:122 knc_pmu_event_map() warn: potential spectre issue 'knc_perfmon_event_map'
+> arch/x86/events/intel/p4.c:722 p4_pmu_event_map() warn: potential spectre issue 'p4_general_events'
+> arch/x86/events/intel/p6.c:116 p6_pmu_event_map() warn: potential spectre issue 'p6_perfmon_event_map'
+> arch/x86/events/amd/core.c:132 amd_pmu_event_map() warn: potential spectre issue 'amd_perfmon_event_map'
 
-    exynos_defconfig:
-        exynos5250-snow:
-            lab-collabora: new failure (last pass: v4.16.8-23-g8339bc61b873)
+Userspace controls @attr, sanitize @attr->config before passing it on
+to x86_pmu::event_map().
 
-    qcom_defconfig:
-        qcom-apq8064-cm-qs600:
-            lab-baylibre-seattle: new failure (last pass: v4.16.8-23-g8339b=
-c61b873)
-
-Boot Failures Detected:
-
-arm:
-
-    exynos_defconfig
-        exynos5250-snow: 1 failed lab
-
-    qcom_defconfig
-        qcom-apq8064-cm-qs600: 1 failed lab
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <stable@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ arch/x86/events/core.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -27,6 +27,7 @@
+ #include <linux/cpu.h>
+ #include <linux/bitops.h>
+ #include <linux/device.h>
++#include <linux/nospec.h>
+ 
+ #include <asm/apic.h>
+ #include <asm/stacktrace.h>
+@@ -424,6 +425,8 @@ int x86_setup_perfctr(struct perf_event
+ 	if (attr->config >= x86_pmu.max_events)
+ 		return -EINVAL;
+ 
++	attr->config = array_index_nospec((unsigned long)attr->config, x86_pmu.max_events);
++
+ 	/*
+ 	 * The generic map:
+ 	 */
