@@ -1,87 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753832AbeENN6D (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 09:58:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54243 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753758AbeENN6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 09:58:01 -0400
-Date: Mon, 14 May 2018 15:57:59 +0200
-From: Jan Kara <jack@suse.cz>
-To: Deepa Dinamani <deepa.kernel@gmail.com>
-Cc: viro@zeniv.linux.org.uk, tglx@linutronix.de, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        y2038@lists.linaro.org, jack@suse.com
-Subject: Re: [PATCH 5/6] udf: Simplify calls to udf_disk_stamp_to_time
-Message-ID: <20180514135759.r4jxnw7mp3h6ak36@quack2.suse.cz>
-References: <20180512045921.18311-1-deepa.kernel@gmail.com>
- <20180512045921.18311-6-deepa.kernel@gmail.com>
+        id S1753856AbeENN6K (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 09:58:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44872 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753835AbeENN6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 09:58:05 -0400
+Date: Mon, 14 May 2018 09:58:03 -0400
+From: Vivek Goyal <vgoyal@redhat.com>
+To: Miklos Szeredi <mszeredi@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>
+Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-security-module@vger.kernel.org, Paul Moore <pmoore@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Subject: Re: [PATCH v2 22/35] vfs: don't open real
+Message-ID: <20180514135803.GA2777@redhat.com>
+References: <20180507083807.28792-1-mszeredi@redhat.com>
+ <20180507083807.28792-23-mszeredi@redhat.com>
+ <20180511185430.GE6044@redhat.com>
+ <20180511194248.GF6044@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180512045921.18311-6-deepa.kernel@gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180511194248.GF6044@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Fri 11-05-18 21:59:20, Deepa Dinamani wrote:
-> Subsequent patches in the series convert inode timestamps
-> to use struct timespec64 instead of struct timespec as
-> part of solving the y2038 problem.
+On Fri, May 11, 2018 at 03:42:48PM -0400, Vivek Goyal wrote:
+> On Fri, May 11, 2018 at 02:54:30PM -0400, Vivek Goyal wrote:
+> > On Mon, May 07, 2018 at 10:37:54AM +0200, Miklos Szeredi wrote:
+> > > Let overlayfs do its thing when opening a file.
+> > > 
+> > > This enables stacking and fixes the corner case when a file is opened for
+> > > read, modified through a writable open, and data is read from the read-only
+> > > file.  After this patch the read-only open will not return stale data even
+> > > in this case.
+> > 
+> > [CC Dan, Steven, Paul, linux-security-module list]
+> > 
+> > Hi Miklos,
+> > 
+> > I was running selinux-testsuite and one of the tests seems to fail. I
+> > think this is side effect of installing overlay inode in file->f_inode
+> > instead of real underlying inode.
+> > 
+> > Following test is failing.
+> > 
+> > sub test_90_1 {
+> >     print "Attempting to enter domain with bad entrypoint, should fail.\n";
+> >     $result = system(
+> > "runcon -t test_overlay_client_t -l s0:c10,c20 $basedir/container1/merged/badentrypoint >/dev/null 2>&1"
+> >     );
+> >     ok($result);
+> >     return;
+> > }
 > 
-> commit fd3cfad374d4 ("udf: Convert udf_disk_stamp_to_time() to use mktime64()")
-> eliminated the NULL return condition from udf_disk_stamp_to_time().
-> udf_time_to_disk_time() is always called with a valid dest pointer and
-> the return value is ignored.
-> Further, caller can as well check the dest pointer being passed in rather
-> than return argument.
-> Make both the functions return void.
+> I am wondering, shouldn't do_open_execat() have failed. It should have called
+> into inode_permission(MAY_EXEC). And then ovl_inode_permission()
+> will in turn call inode_permission(realinode, MAY_EXEC) with mounter's
+> creds. Shouldn't selinux_inode_permission() have returned that mounter
+> does not have MAY_EXEC permission on inode.
+
+Ok, I noticed that current policy in tests gives exec permission to 
+mounter for ro_t file and that's why inode_permission(MAY_EXEC) does
+not fail.
+
+can_exec(test_overlay_mounter_t, test_overlay_files_ro_t)
+
+Talked to Dan and he mentioned that he was trying to test entrypoint
+failure (and not exec failure) and that's whey he might have allowed exec
+to mounter.
+
+I think that current entrypoint test's expectations are wrong.
+User process sees overlay inode lablel which is rwx_t and that means
+overlay layer will allow entrypoint into that executable. This will be the
+behavior on a normal file system where underlying file's label will be
+completely overridden by context=.
+
+So in my opinion, we should modify testsuite and not run this test with
+context= mounts.
+
+Only little thing to argue is that should we check if mounter has the
+permission for this entrypoint. And currently SELinux checks are not
+two level checks. So this can be implemented once SELinux is made
+aware of multiple levels (if we ever do that).
+
+Thanks
+Vivek
+
 > 
-> This will make the inode timestamp conversion simpler.
+> Dan, I am wondering if this is a selinux policy issue? In my testing
+> on upstream kernel, do_open_execat() succeeds and it fails much later.
+> I am wondering why that's the case. Is it expected.
 > 
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> Cc: jack@suse.com
-
-I'm fine with this. Just one bug below:
-
-> diff --git a/fs/udf/super.c b/fs/udf/super.c
-> index 0d27d41f5c6e..bd0ae64bc31c 100644
-> --- a/fs/udf/super.c
-> +++ b/fs/udf/super.c
-> @@ -862,6 +862,9 @@ static int udf_load_pvoldesc(struct super_block *sb, sector_t block)
->  	struct buffer_head *bh;
->  	uint16_t ident;
->  	int ret = -ENOMEM;
-> +#ifdef UDFFS_DEBUG
-> +	struct timestamp *ts;
-> +#endif
->  
->  	outstr = kmalloc(128, GFP_NOFS);
->  	if (!outstr)
-> @@ -880,15 +883,14 @@ static int udf_load_pvoldesc(struct super_block *sb, sector_t block)
->  
->  	pvoldesc = (struct primaryVolDesc *)bh->b_data;
->  
-> -	if (udf_disk_stamp_to_time(&UDF_SB(sb)->s_record_time,
-> -			      pvoldesc->recordingDateAndTime)) {
-> +	udf_disk_stamp_to_time(&UDF_SB(sb)->s_record_time,
-> +			      pvoldesc->recordingDateAndTime);
->  #ifdef UDFFS_DEBUG
-> -		struct timestamp *ts = &pvoldesc->recordingDateAndTime;
-> -		udf_debug("recording time %04u/%02u/%02u %02u:%02u (%x)\n",
-> -			  le16_to_cpu(ts->year), ts->month, ts->day, ts->hour,
-> -			  ts->minute, le16_to_cpu(ts->typeAndTimezone));
-> +	*ts = &pvoldesc->recordingDateAndTime;
-
-This should be 'ts ='.
-
-Do you prefer me taking this patch through my tree or will you carry it as
-a part of your series?
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Thanks
+> Vivek
+> 
+> 
+> > 
+> > Basically, this test has an executable named "badentrypoint" with selinux
+> > label "unconfined_u:object_r:test_overlay_files_ro_t:s0". And we mount
+> > overlay with context=unconfined_u:object_r:test_overlay_files_rwx_t:s0:c10,c20
+> > 
+> > So effectively overlay inode of "badentrypoint" now gets the label
+> > specified by "context=".
+> > 
+> > I think intent of test is that this file's real label is "...ro_t". That
+> > means this file is not supposed to be executed and any attempt to execute
+> > it should be denied.
+> > 
+> > Currently test works and execution fails with following avc.
+> > 
+> > AVC avc:  denied  { entrypoint } for  pid=1425 comm="runcon" path="/root/git/selinux-testsuite/tests/overlay/container1/merged/badentrypoint" dev="dm-0" ino=34515261 scontext=unconfined_u:unconfined_r:test_overlay_client_t:s0:c10,c20 tcontext=unconfined_u:object_r:test_overlay_files_ro_t:s0 tclass=file permissive=0
+> > 
+> > But with new patches, this test starts passing. 
+> > 
+> > I think currently selinux_bprm_set_creds() returns error. It does
+> > checks on inode returned by file_inode() and as of now that inode is
+> > real inode and that inode has real lable of "...ro_t" and permission
+> > to execute that file is denied.
+> > 
+> > But after the patches file_inode() returns overlay inode. Which has
+> > the label specified by context= mount option "...rwx_t". And that
+> > label allows executing file, so file execution is not blocked by
+> > selinux.
+> > 
+> > I feel that even now code is working accidently. Ideally our theme was
+> > that task's credential as checked against overlay inode and mounter's
+> > creds are checked against underlying inode to determine if certain
+> > permission is allowed. So ideally mounter should not have been allwed
+> > to execute a file of type "...ro_t". But we don't have that workflow
+> > and VFS calls into selinux and selinux checks the underlying file's
+> > label against task.
+> > 
+> > It worked so far but the moment we install overlay inode in file, selinux
+> > checks it against overlay inode label and allows permission to execute and
+> > mounter is never checked against real inode.
+> > 
+> > I am not sure what's the right solution. So far selinux is not aware of
+> > two levels of checks and if two levels of checks are to be performed, it
+> > somehow needs to be enforced by overlay and call same hook on two levels.
+> > 
+> > Thought of atleast starting a conversation on this.
+> > 
+> > Thanks
+> > Vivek
+> > 
+> > 
+> > > 
+> > > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > > ---
+> > >  fs/open.c | 7 +------
+> > >  1 file changed, 1 insertion(+), 6 deletions(-)
+> > > 
+> > > diff --git a/fs/open.c b/fs/open.c
+> > > index 6e52fd6fea7c..244cd2ecfefd 100644
+> > > --- a/fs/open.c
+> > > +++ b/fs/open.c
+> > > @@ -897,13 +897,8 @@ EXPORT_SYMBOL(file_path);
+> > >  int vfs_open(const struct path *path, struct file *file,
+> > >  	     const struct cred *cred)
+> > >  {
+> > > -	struct dentry *dentry = d_real(path->dentry, NULL, file->f_flags, 0);
+> > > -
+> > > -	if (IS_ERR(dentry))
+> > > -		return PTR_ERR(dentry);
+> > > -
+> > >  	file->f_path = *path;
+> > > -	return do_dentry_open(file, d_backing_inode(dentry), NULL, cred);
+> > > +	return do_dentry_open(file, d_backing_inode(path->dentry), NULL, cred);
+> > >  }
+> > >  
+> > >  /**
+> > > -- 
+> > > 2.14.3
+> > > 
+> > > --
+> > > To unsubscribe from this list: send the line "unsubscribe linux-unionfs" in
+> > > the body of a message to majordomo@vger.kernel.org
+> > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
