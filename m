@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752466AbeENVGz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 17:06:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51174 "EHLO mail.kernel.org"
+        id S1752189AbeENVHK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:07:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752377AbeENVAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752350AbeENVAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 May 2018 17:00:00 -0400
-Message-Id: <20180514205958.208255343@goodmis.org>
+Message-Id: <20180514205958.061558690@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Mon, 14 May 2018 16:58:51 -0400
+Date: Mon, 14 May 2018 16:58:50 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Ingo Molnar <mingo@kernel.org>,
@@ -21,162 +21,56 @@ Cc: Ingo Molnar <mingo@kernel.org>,
         Joel Fernandes <joel@joelfernandes.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
-        linux-rt-users@vger.kernel.org, Joel Fernandes <joelaf@google.com>
-Subject: [PATCH v2 06/14] tracing: Add trigger file for trace_markers tracefs/ftrace/print
+        linux-rt-users@vger.kernel.org
+Subject: [PATCH v2 05/14] tracing: Do not show filter file for ftrace internal events
 References: <20180514205845.017925650@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0006-tracing-Add-trigger-file-for-trace_markers-tracefs-f.patch
+Content-Disposition: inline; filename=0005-tracing-Do-not-show-filter-file-for-ftrace-internal-.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-Allow writing to the trace_markers file initiate triggers defined in
-tracefs/ftrace/print/trigger file. This will allow of user space to trigger
-the same type of triggers (including histograms) that the trace events use.
+The filter file in the ftrace internal events, like in
+/sys/kernel/tracing/events/ftrace/function/filter is not attached to any
+functionality. Do not create them as they are meaningless.
 
-Had to create a ftrace_event_register() function that will become the
-trace_marker print event's reg() function. This is required because of how
-triggers are enabled:
+In the future, if an ftrace internal event gets filter functionality, then
+it will need to create it directly.
 
-  event_trigger_write() {
-    event_trigger_regex_write() {
-      trigger_process_regex() {
-        for p in trigger_commands {
-          p->func(); /* trigger_snapshot_cmd->func */
-            event_trigger_callback() {
-              cmd_ops->reg() /* register_trigger() */ {
-                trace_event_trigger_enable_disable() {
-                  trace_event_enable_disable() {
-                    call->class->reg();
-
-Without the reg() function, the trigger code will call a NULL pointer and
-crash the system.
-
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Clark Williams <williams@redhat.com>
-Cc: Karim Yaghmour <karim.yaghmour@opersys.com>
-Cc: Brendan Gregg <bgregg@netflix.com>
-Suggested-by: Joel Fernandes <joelaf@google.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c         | 17 +++++++++++++++++
- kernel/trace/trace.h         |  1 +
- kernel/trace/trace_entries.h |  6 ++++--
- kernel/trace/trace_export.c  |  7 +++++++
- 4 files changed, 29 insertions(+), 2 deletions(-)
+ kernel/trace/trace_events.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index e0d6ffb76985..f11b89fa5049 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6074,6 +6074,7 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
- {
- 	struct trace_array *tr = filp->private_data;
- 	struct ring_buffer_event *event;
-+	enum event_trigger_type tt = ETT_NONE;
- 	struct ring_buffer *buffer;
- 	struct print_entry *entry;
- 	unsigned long irq_flags;
-@@ -6122,6 +6123,12 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
- 		written = cnt;
- 	len = cnt;
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 5b647904a65b..14ff4ff3caab 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -2007,16 +2007,18 @@ event_create_dir(struct dentry *parent, struct trace_event_file *file)
+ 			return -1;
+ 		}
+ 	}
+-	trace_create_file("filter", 0644, file->dir, file,
+-			  &ftrace_event_filter_fops);
  
-+	if (tr->trace_marker_file && !list_empty(&tr->trace_marker_file->triggers)) {
-+		/* do not add \n before testing triggers, but add \0 */
-+		entry->buf[cnt] = '\0';
-+		tt = event_triggers_call(tr->trace_marker_file, entry, event);
+ 	/*
+ 	 * Only event directories that can be enabled should have
+-	 * triggers.
++	 * triggers or filters.
+ 	 */
+-	if (!(call->flags & TRACE_EVENT_FL_IGNORE_ENABLE))
++	if (!(call->flags & TRACE_EVENT_FL_IGNORE_ENABLE)) {
++		trace_create_file("filter", 0644, file->dir, file,
++				  &ftrace_event_filter_fops);
++
+ 		trace_create_file("trigger", 0644, file->dir, file,
+ 				  &event_trigger_fops);
 +	}
-+
- 	if (entry->buf[cnt - 1] != '\n') {
- 		entry->buf[cnt] = '\n';
- 		entry->buf[cnt + 1] = '\0';
-@@ -6130,6 +6137,9 @@ tracing_mark_write(struct file *filp, const char __user *ubuf,
  
- 	__buffer_unlock_commit(buffer, event);
- 
-+	if (tt)
-+		event_triggers_post_call(tr->trace_marker_file, tt);
-+
- 	if (written > 0)
- 		*fpos += written;
- 
-@@ -7896,6 +7906,7 @@ static __init void create_trace_instances(struct dentry *d_tracer)
- static void
- init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
- {
-+	struct trace_event_file *file;
- 	int cpu;
- 
- 	trace_create_file("available_tracers", 0444, d_tracer,
-@@ -7928,6 +7939,12 @@ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
- 	trace_create_file("trace_marker", 0220, d_tracer,
- 			  tr, &tracing_mark_fops);
- 
-+	file = __find_event_file(tr, "ftrace", "print");
-+	if (file && file->dir)
-+		trace_create_file("trigger", 0644, file->dir, file,
-+				  &event_trigger_fops);
-+	tr->trace_marker_file = file;
-+
- 	trace_create_file("trace_marker_raw", 0220, d_tracer,
- 			  tr, &tracing_mark_raw_fops);
- 
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 2414fd72dedd..c7fa58d31a84 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -259,6 +259,7 @@ struct trace_array {
- 	struct trace_options	*topts;
- 	struct list_head	systems;
- 	struct list_head	events;
-+	struct trace_event_file *trace_marker_file;
- 	cpumask_var_t		tracing_cpumask; /* only trace on set CPUs */
- 	int			ref;
- #ifdef CONFIG_FUNCTION_TRACER
-diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
-index e3a658bac10f..1d67464ed95e 100644
---- a/kernel/trace/trace_entries.h
-+++ b/kernel/trace/trace_entries.h
-@@ -230,7 +230,7 @@ FTRACE_ENTRY(bprint, bprint_entry,
- 	FILTER_OTHER
- );
- 
--FTRACE_ENTRY(print, print_entry,
-+FTRACE_ENTRY_REG(print, print_entry,
- 
- 	TRACE_PRINT,
- 
-@@ -242,7 +242,9 @@ FTRACE_ENTRY(print, print_entry,
- 	F_printk("%ps: %s",
- 		 (void *)__entry->ip, __entry->buf),
- 
--	FILTER_OTHER
-+	FILTER_OTHER,
-+
-+	ftrace_event_register
- );
- 
- FTRACE_ENTRY(raw_data, raw_data_entry,
-diff --git a/kernel/trace/trace_export.c b/kernel/trace/trace_export.c
-index d842f1eadfe5..45630a76ed3a 100644
---- a/kernel/trace/trace_export.c
-+++ b/kernel/trace/trace_export.c
-@@ -14,6 +14,13 @@
- 
- #include "trace_output.h"
- 
-+/* Stub function for events with triggers */
-+static int ftrace_event_register(struct trace_event_call *call,
-+				 enum trace_reg type, void *data)
-+{
-+	return 0;
-+}
-+
- #undef TRACE_SYSTEM
- #define TRACE_SYSTEM	ftrace
- 
+ #ifdef CONFIG_HIST_TRIGGERS
+ 	trace_create_file("hist", 0444, file->dir, file,
 -- 
 2.17.0
