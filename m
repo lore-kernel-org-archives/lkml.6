@@ -1,242 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752280AbeENKXd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 06:23:33 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35780 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752249AbeENKX3 (ORCPT
+        id S1752358AbeENKYF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 06:24:05 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:34337 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752334AbeENKYA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 06:23:29 -0400
-X-Google-Smtp-Source: AB8JxZpUbcDeGUDYbKs5P8CdgNNV8v5GAeX2mIbzBVscLIRXOMOTwvKmGhYHhGILlyx5w6Qsji3OJA==
-Date: Mon, 14 May 2018 12:23:26 +0200
-From: Niklas =?iso-8859-1?Q?S=F6derlund?=
-        <niklas.soderlund@ragnatech.se>
-To: jacopo mondi <jacopo@jmondi.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, horms@verge.net.au, geert@glider.be,
-        magnus.damm@gmail.com, robh+dt@kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: draak: Describe HDMI input
-Message-ID: <20180514102326.GG30519@bigcity.dyn.berto.se>
-References: <1526032802-14376-1-git-send-email-jacopo+renesas@jmondi.org>
- <1526032802-14376-4-git-send-email-jacopo+renesas@jmondi.org>
- <20180513125755.GQ18974@bigcity.dyn.berto.se>
- <20180514073520.GA5956@w540>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180514073520.GA5956@w540>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Mon, 14 May 2018 06:24:00 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180514102358epoutp046ddb89e4ed8750d0751327953b2efb9f~ue8uqm3SD2036020360epoutp04g
+X-AuditID: b6c32a36-b6dff70000001027-64-5af963bc27a5
+Mime-Version: 1.0
+Subject: RE: [PATCH v4 6/6] devfreq: rk3399_dmc: fix spelling mistakes.
+Reply-To: myungjoo.ham@samsung.com
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+To: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "dbasehore@chromium.org" <dbasehore@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dianders@google.com" <dianders@google.com>,
+        "groeck@chromium.org" <groeck@chromium.org>,
+        "kernel@collabora.com" <kernel@collabora.com>,
+        "hl@rock-chips.com" <hl@rock-chips.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20180509125749.31318-7-enric.balletbo@collabora.com>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20180514102355epcms1p5baf3df2741827f9b9bf3e1de37e27880@epcms1p5>
+Date: Mon, 14 May 2018 19:23:55 +0900
+X-CMS-MailID: 20180514102355epcms1p5baf3df2741827f9b9bf3e1de37e27880
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-MTR: 20180514102355epcms1p5baf3df2741827f9b9bf3e1de37e27880
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBJsWRmVeSWpSXmKPExsWy7bCmnu6e5J9RBrefsVm8PKRpcf3Lc1aL
+        V5v3sFnMP3KO1WLB9pVMFmtuH2K0OPVqGbPF/0evWS1+bDjFbLH5XA+rxdmmN+wWl3fNYbP4
+        3HuE0aJ17xF2i+Nrwx34PWY3XGTx2HF3CaPHgk2lHptWdbJ53Lm2h83j76z9LB59W1Yxemy/
+        No/Z4/MmuQDOqFSbjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58A
+        XbfMHKD7lRTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2StGGhkZ6hgbmekZGQNo41srIFKgk
+        ITXj6elf7AUrmSsWnGlla2C8y9TFyMkhIWAi0dS2g7WLkYtDSGAHo8TrGbPYuxg5OHgFBCX+
+        7hAGqREWcJe4ffEmM4gtJKAk0XBzHzNEXF+i48E2RhCbTUBXYuuGuywgc0QEJjJKHLvcBjaU
+        WWAZi8TJbWdYILbxSsxofwplS0tsX74VrJtTwEniWPMXRoi4qMTN1W/ZYez3x+ZDxUUkWu+d
+        ZYawBSUe/NwNFZeSePJ2IVR9vcT1z4uYQBZLCExglPh94z9UQl/i0ZXZbCA2r4CvxOUvzawg
+        X7IIqEp87PGBKHGRaJm3F6ycWUBeYvvbOcwgJcwCmhLrd+nDnN+w8Tc7JttW4tuxG0wQrXwS
+        7772sMLU7Jj3BBrQahKHdi+BqpeROD19IfMERuVZiKCehWTxLITFCxiZVzGKpRYU56anFhsW
+        GOkVJ+YWl+al6yXn525iBKdiLbMdjIvO+RxiFOBgVOLhDVj+I0qINbGsuDL3EKMEB7OSCO9u
+        o59RQrwpiZVVqUX58UWlOanFhxhNgd6fyCwlmpwPzBN5JfGGpkbGxsYWJoZmpoaGSuK8c5S+
+        RgkJpCeWpGanphakFsH0MXFwSjUwulf7m/DP+p1neH+Rx+sJtjGOQnU/HEQuS2QxF96N0b+w
+        tWidv7mV9lJtubKTe2/y908P+eycsu/CKZsVCom5H9lCZzEdcT9YW/Xb2OjmGpsvXz48Oap0
+        1M/k+SSXGxJr9tevYvtS7vp+epPKo/Dv29nmvrmh9+Bn+Rah49qlU5I5r+3/KJ/op8RSnJFo
+        qMVcVJwIABFjLRjbAwAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180509125806epcas3p42927285eece7f031ad7c9e422ee0a43c
+X-RootMTR: 20180509125806epcas3p42927285eece7f031ad7c9e422ee0a43c
+References: <20180509125749.31318-7-enric.balletbo@collabora.com>
+        <20180509125749.31318-1-enric.balletbo@collabora.com>
+        <CGME20180509125806epcas3p42927285eece7f031ad7c9e422ee0a43c@epcms1p5>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+>Fix some spelling mistakes in error and debug messages.
+>
+>Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>---
+>
+>Changes in v4:
+>- [6/6] Introduce this new patch that fixes some spelling.
+>
+>Changes in v3: None
+>Changes in v2: None
+>
+> drivers/devfreq/rk3399_dmc.c | 12 ++++++------
+> 1 file changed, 6 insertions(+), 6 deletions(-)
 
-On 2018-05-14 09:39:34 +0200, Jacopo Mondi wrote:
-> Hi Niklas,
-> 
-> On Sun, May 13, 2018 at 02:57:55PM +0200, Niklas Söderlund wrote:
-> > Hi Jacopo,
-> >
-> > Thanks for your patch.
-> >
-> > On 2018-05-11 12:00:02 +0200, Jacopo Mondi wrote:
-> > > Describe HDMI input connected to VIN4 interface for R-Car D3 Draak
-> > > development board.
-> > >
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > ---
-> > >  arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 68 ++++++++++++++++++++++++++
-> > >  1 file changed, 68 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> > > index d03f194..e0ce462 100644
-> > > --- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> > > +++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-> > > @@ -59,6 +59,17 @@
-> > >  		};
-> > >  	};
-> > >
-> > > +	hdmi-in {
-> > > +		compatible = "hdmi-connector";
-> > > +		type = "a";
-> > > +
-> > > +		port {
-> > > +			hdmi_con_in: endpoint {
-> > > +				remote-endpoint = <&adv7612_in>;
-> > > +			};
-> > > +		};
-> > > +	};
-> > > +
-> > >  	memory@48000000 {
-> > >  		device_type = "memory";
-> > >  		/* first 128MB is reserved for secure area. */
-> > > @@ -142,6 +153,11 @@
-> > >  		groups = "usb0";
-> > >  		function = "usb0";
-> > >  	};
-> > > +
-> > > +	vin4_pins: vin4 {
-> > > +		groups = "vin4_data24", "vin4_sync", "vin4_clk", "vin4_clkenb";
-> > > +		function = "vin4";
-> > > +	};
-> > >  };
-> > >
-> > >  &i2c0 {
-> > > @@ -154,6 +170,35 @@
-> > >  		reg = <0x50>;
-> > >  		pagesize = <8>;
-> > >  	};
-> > > +
-> > > +	hdmi-decoder@4c {
-> > > +		compatible = "adi,adv7612";
-> > > +		reg = <0x4c>;
-> > > +		default-input = <0>;
-> > > +
-> > > +		ports {
-> > > +			#address-cells = <1>;
-> > > +			#size-cells = <0>;
-> > > +
-> > > +			port@0 {
-> > > +				reg = <0>;
-> > > +				adv7612_in: endpoint {
-> > > +					remote-endpoint = <&hdmi_con_in>;
-> > > +				};
-> > > +			};
-> > > +
-> > > +			port@2 {
-> > > +				reg = <2>;
-> > > +				adv7612_out: endpoint {
-> > > +					pclk-sample = <0>;
-> > > +					hsync-active = <0>;
-> > > +					vsync-active = <0>;
-> >
-> > This differs from the Gen2 DT bindings which is a very similar hardware
-> > setup using the same components. Defining these properties will make the
-> > bus marked as V4L2_MBUS_PARALLEL instead of V4L2_MBUS_BT656.
-> 
-> And that's what we want....
-> 
-> >
-> > This will change how the hardware is configured for capture if the media
-> > bus is in a UYVY format, see VNMC_INF register in rvin_setup(). Maybe
-> > this it not an issue here but still I'm curious to why this differ
-> > between Gen2 and Gen3 :-)
-> 
-> Actually this won't impact the VIN configuration as this is the
-> 'remote endpoint' from VIN perspective and the properties used to
-> configure the interface are the ones in the 'local endpoint'.
-
-You are right, sorry for the confusion and thanks for educating me :-)
-
-> 
-> >
-> > > +
-> > > +					remote-endpoint = <&vin4_in>;
-> > > +				};
-> > > +			};
-> > > +		};
-> > > +	};
-> > >  };
-> > >
-> > >  &i2c1 {
-> > > @@ -246,3 +291,26 @@
-> > >  	timeout-sec = <60>;
-> > >  	status = "okay";
-> > >  };
-> > > +
-> > > +&vin4 {
-> > > +	pinctrl-0 = <&vin4_pins>;
-> > > +	pinctrl-names = "default";
-> > > +
-> > > +	status = "okay";
-> > > +
-> > > +	ports {
-> > > +		#address-cells = <1>;
-> > > +		#size-cells = <0>;
-> > > +
-> > > +		port@0 {
-> > > +			reg = <0>;
-> > > +
-> > > +			vin4_in: endpoint {
-> > > +				hsync-active = <0>;
-> > > +				vsync-active = <0>;
-> >
-> > Comparing this to the Gen2 bindings some properties are missing,
-> >
-> > bus-width = <24>;
-> > pclk-sample = <1>;
-> > data-active = <1>;
-> 
-> The VIN driver does not parse them, so there is no value in having
-> them there, if not confusing people as it happened to me reading the
-> Gen2 DT.
-
-I have no objection removing them. Trying to understand why the 
-description differed from Gen2.
-
-> 
-> >
-> > This is not a big deal as the VIN driver don't use these properties so
-> > no functional change should come of this but still a difference.
-> 
-> Exactly.
-> 
-> On a side note. I have not seen a way to configure the pixel clock
-> sampling level in the interface datasheet. The register used to
-> configure synchronism signals polarities is VnDMR2, and there I read
-> we can configure HSYNC/VSYNC and CLOCKENB (which is data enable, not
-> pixel clock) polarities. Is it configured through some other
-> register?
-
-I have not seen such a register no.
-
-> >
-> > Over all I'm happy with this change but before I add my tag I would like
-> > to understand why it differs from the Gen2 configuration for the adv7612
-> > properties.
-> >
-> > Also on a side not it is possible with hardware switches on the board
-> > switch the VIN4 source to a completely different pipeline CVBS connector
-> > -> adv7180 -> VIN4. But I think it's best we keep the HDMI as default as
-> > this seems to be how the boards are shipped. But maybe mentioning this
-> > in the commit message would not hurt if you end-up resending the patch.
-> 
-> Oh I see. SW-49 to SW-52 enables the HDMI input, SW53-SW54 CVBS one.
-> And actually, reading the 'initial setting of slide switches' in the
-> Draak board manual, it turns out that the board default configuration
-> is with CVBS input selected... What should we do here? reflect
-> defaults in the DT, or prioritize HDMI?
-
-I feel this is a question for Laurent. My feeling for how we handled 
-this in other cases is to go with the board default settings. I'm 
-however sure there are exceptions to the rule. So maybe we should go 
-with the most useful (what ever that is) configuration?
-
-> 
-> Thanks
->    j
-> 
-> >
-> > > +
-> > > +				remote-endpoint = <&adv7612_out>;
-> > > +			};
-> > > +		};
-> > > +	};
-> > > +};
-> > > --
-> > > 2.7.4
-> > >
-> >
-> > --
-> > Regards,
-> > Niklas Söderlund
-
-
-
--- 
-Regards,
-Niklas Söderlund
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
