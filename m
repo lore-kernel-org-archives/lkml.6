@@ -1,23 +1,23 @@
 Return-Path: <luwei.kang@intel.com>
-X-Google-Smtp-Source: AB8JxZpw5ihCKSo+eBxJAVuaT8Ms/XuimZw9RTaVv1jCoxULhzAKyYO6MlkNSYVKtr08eh+ysDdt
-ARC-Seal: i=1; a=rsa-sha256; t=1526288629; cv=none;
+X-Google-Smtp-Source: AB8JxZpcALYV3ez/c0+6/v8nn60IQNQ+bI2Ousf3jJaIHDlJusei1fbjJu297+k+CS1t0b2AupPx
+ARC-Seal: i=1; a=rsa-sha256; t=1526288624; cv=none;
         d=google.com; s=arc-20160816;
-        b=ArASQCb/HWDsqyhdtsVswEgqJVCjPY8ws8wASaXqrh4V6b5zQ4XC3wFjBTmuUPLUib
-         z7FjXpDl2JpCoSdSqMRyKQWeV3uDtGTvBu0M2bb37TTuO87JQfOICFyhHUYjrDvvJJHq
-         thxH7mSPLxq9UnZ4aNC55dJ4Y1k67jxlhINSWq4uM75kuzP4DIhlBu02z+UgyXIOftMj
-         c8ass4QWHv1sQniYgRg3bT68c+pifrWsCXkfomwsT00N/mjj4J+6+E/Lb/vGTP0ERZqs
-         thk0tIdzoQu2pb2Ly2MZOY6Sv+CIPY2pAeHLuAM96QsbUDW9MGJE2wgAjJHffgZy4YU7
-         eMOw==
+        b=n0aKYkTvQS2YA2lIWogPF8sXjyO/7XhYnQV2woMtytqYWTu1hsGApDn76yvHZ6EqE3
+         jiYaqPdROvuxX+RpsB3SzI3LAx6i+C0rJqBd9JoVskR9GnXBpbO1EgdmZAgVohmAni9n
+         qZGOQHaBK3iUcMYCX0l43MQN1iGzts4MOvoh6vrqoQFqYMJhkYYOW55X3bUGKHVQfb+4
+         pGG8WWmA6KYbE5tpKb9k622C6tbQhnWSBILYQOQnUbQs7931eHptDOlkpS9fcKoovPI2
+         gWDw28pdeK3JNcr1Hxms+81BqUEMly3Cp+k2kh5+LemyVqzDWxdNQyJfeHz8D/f6qmww
+         xaIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=R4+wRut1Xg8c8aS+O6cnIQI8PthC3Jsa62XRQAoLc20=;
-        b=Jg4WbWzQBFyRcTXYiYamSb+SNxWXeA3D5b866M+qFnlD94kFUUSoKH6Efw/aod0V8E
-         szZofKI9hi6lrzuimEVPCqBccUrieGObB8ZszINFWo/hQuuDX5weZMvCsrODslIVam/Z
-         xqMkNLITiHP+BbZOgToHuUz0wWQzqPRDtZ1ectE61F+XrkeKdHdMBi27k5BRPlu9MFGg
-         Ff1m2KV8FPjrjtY+M9fyzYHmPLPLU5Jt911536PyC1jC3XJUJpp2SpE70k/m/vcfrrDo
-         BFQ1Aq8CblOSKl9xTMMzKw9seblq0tQxaG8BTOZltlM/S4iDZl+Ce3S/NZCs3MLgq8Gz
-         Vb0A==
+        bh=oRLnxTEOfsqScAP04o2s1OgepAZMo3cuwRMZ1Ox5taI=;
+        b=jnHmbnSpFMThL6aJN1BGIDRCzBaIc/+oEWZaY20wOHmlKLE/vhMcK7bHOjwzZFc+Zc
+         tJzjECT3RXnfF02anmp4UBEBtZ/prGluKy51rfldVuHdwZv13aFBNAbLmbEBmlA9bJvn
+         RUlBgEeEQxvurVgRbqtYWgr+P4C7IxUmD/IhtgFqZH5XZIRrQUv9TrKrFM8Xiqr2H0gE
+         QfyLzwVY3j5sN1H4jCJAFYIhfib0T6cbp04tgvlcmAlfsawEwxoRpEQVuzWhrIdaBbvW
+         3iyARYKu2rfpomh2t+6V225fRGNWvelfAuCgWK1jSNEzLfOTuiCjlZCSDYtLGR8XCtMY
+         rCRA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of luwei.kang@intel.com designates 134.134.136.20 as permitted sender) smtp.mailfrom=luwei.kang@intel.com
 Authentication-Results: mx.google.com;
@@ -26,7 +26,7 @@ X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,399,1520924400";
-   d="scan'208";a="39701991"
+   d="scan'208";a="39701980"
 From: Luwei Kang <luwei.kang@intel.com>
 To: kvm@vger.kernel.org
 Cc: tglx@linutronix.de,
@@ -52,54 +52,77 @@ Cc: tglx@linutronix.de,
 	yu.c.zhang@linux.intel.com,
 	joro@8bytes.org,
 	Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v8 12/12] KVM: x86: Disable Intel Processor Trace when VMXON in L1 guest
-Date: Mon, 14 May 2018 18:57:12 +0800
-Message-Id: <1526295432-20640-13-git-send-email-luwei.kang@intel.com>
+Subject: [PATCH v8 11/12] KVM: x86: Set intercept for Intel PT MSRs read/write
+Date: Mon, 14 May 2018 18:57:11 +0800
+Message-Id: <1526295432-20640-12-git-send-email-luwei.kang@intel.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1526295432-20640-1-git-send-email-luwei.kang@intel.com>
 References: <1526295432-20640-1-git-send-email-luwei.kang@intel.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1600429625880390868?=
-X-GMAIL-MSGID: =?utf-8?q?1600429625880390868?=
+X-GMAIL-THRID: =?utf-8?q?1600429621378647463?=
+X-GMAIL-MSGID: =?utf-8?q?1600429621378647463?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Currently, Intel Processor Trace do not support tracing in L1 guest
-VMX operation(IA32_VMX_MISC[bit 14] is 0). As mentioned in SDM,
-on these type of processors, execution of the VMXON instruction will
-clears IA32_RTIT_CTL.TraceEn and any attempt to write IA32_RTIT_CTL
-causes a general-protection exception (#GP).
+From: Chao Peng <chao.p.peng@linux.intel.com>
 
+Disable intercept Intel PT MSRs only when Intel PT is
+enabled in guest. But MSR_IA32_RTIT_CTL will alway be
+intercept.
+
+Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 ---
- arch/x86/kvm/vmx.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/x86/kvm/vmx.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 170cd48..7ace11a 100644
+index d04b235..170cd48 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -3996,7 +3996,8 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		break;
- 	case MSR_IA32_RTIT_CTL:
- 		if ((pt_mode != PT_MODE_HOST_GUEST) ||
--			vmx_rtit_ctl_check(vcpu, data))
-+			vmx_rtit_ctl_check(vcpu, data) ||
-+			vmx->nested.vmxon)
+@@ -947,6 +947,7 @@ static bool nested_vmx_is_page_fault_vmexit(struct vmcs12 *vmcs12,
+ static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu);
+ static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
+ 							  u32 msr, int type);
++static void pt_set_intercept_for_msr(struct vcpu_vmx *vmx, bool flag);
+ 
+ static DEFINE_PER_CPU(struct vmcs *, vmxarea);
+ static DEFINE_PER_CPU(struct vmcs *, current_vmcs);
+@@ -3998,6 +3999,7 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 			vmx_rtit_ctl_check(vcpu, data))
  			return 1;
  		vmcs_write64(GUEST_IA32_RTIT_CTL, data);
- 		pt_set_intercept_for_msr(vmx, !(data & RTIT_CTL_TRACEEN));
-@@ -8089,6 +8090,11 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
- 	if (ret)
- 		return ret;
- 
-+	if (pt_mode == PT_MODE_HOST_GUEST) {
-+		vmx->pt_desc.guest.ctl = 0;
-+		pt_set_intercept_for_msr(vmx, 1);
-+	}
-+
- 	nested_vmx_succeed(vcpu);
- 	return kvm_skip_emulated_instruction(vcpu);
++		pt_set_intercept_for_msr(vmx, !(data & RTIT_CTL_TRACEEN));
+ 		vmx->pt_desc.guest.ctl = data;
+ 		break;
+ 	case MSR_IA32_RTIT_STATUS:
+@@ -5819,6 +5821,27 @@ static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu)
+ 	vmx->msr_bitmap_mode = mode;
  }
+ 
++static void pt_set_intercept_for_msr(struct vcpu_vmx *vmx, bool flag)
++{
++	unsigned long *msr_bitmap = vmx->vmcs01.msr_bitmap;
++	u32 i;
++
++	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_RTIT_STATUS,
++							MSR_TYPE_RW, flag);
++	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_RTIT_OUTPUT_BASE,
++							MSR_TYPE_RW, flag);
++	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_RTIT_OUTPUT_MASK,
++							MSR_TYPE_RW, flag);
++	vmx_set_intercept_for_msr(msr_bitmap, MSR_IA32_RTIT_CR3_MATCH,
++							MSR_TYPE_RW, flag);
++	for (i = 0; i < vmx->pt_desc.addr_range; i++) {
++		vmx_set_intercept_for_msr(msr_bitmap,
++			MSR_IA32_RTIT_ADDR0_A + i * 2, MSR_TYPE_RW, flag);
++		vmx_set_intercept_for_msr(msr_bitmap,
++			MSR_IA32_RTIT_ADDR0_B + i * 2, MSR_TYPE_RW, flag);
++	}
++}
++
+ static bool vmx_get_enable_apicv(struct kvm_vcpu *vcpu)
+ {
+ 	return enable_apicv;
 -- 
 1.8.3.1
