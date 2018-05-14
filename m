@@ -1,39 +1,207 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752485AbeENS4s (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 14:56:48 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:40154 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752129AbeENS4p (ORCPT
+        id S1752049AbeENS7Q (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 14:59:16 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:37387 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751449AbeENS7O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 14:56:45 -0400
-Date: Mon, 14 May 2018 14:56:42 -0400 (EDT)
-Message-Id: <20180514.145642.989041199343505570.davem@davemloft.net>
-To: christophe.jaillet@wanadoo.fr
-Cc: saeedm@mellanox.com, matanb@mellanox.com, leon@kernel.org,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] net/mlx5: Use 'kvfree()' for memory allocated by
- 'kvzalloc()'
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180512170925.23690-1-christophe.jaillet@wanadoo.fr>
-References: <20180512170925.23690-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Mon, 14 May 2018 14:59:14 -0400
+From: Philippe CORNU <philippe.cornu@st.com>
+To: Andrzej Hajda <a.hajda@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: Yannick FERTRE <yannick.fertre@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: Re: [PATCH v2 2/2] drm/bridge: sii902x: add optional power supplies
+Thread-Topic: [PATCH v2 2/2] drm/bridge: sii902x: add optional power supplies
+Thread-Index: AQHT3GqO5f7596VGtE+CsIvlD/pnwKQu9GaAgAAPUwCAAI0XgA==
+Date: Mon, 14 May 2018 18:58:48 +0000
+Message-ID: <8ed2cfcd-df26-fa9c-c45d-7bf4020f0faa@st.com>
+References: <20180425075314.19137-1-philippe.cornu@st.com>
+ <20180425075314.19137-3-philippe.cornu@st.com>
+ <CGME20180514093922epcas2p4090c2d4819b470f2618ba4a333cecb2c@epcas2p4.samsung.com>
+ <f299c615-d884-341c-e1da-2fe030e411ba@st.com>
+ <69a9da79-63df-6d0a-52e3-729ec8937484@samsung.com>
+In-Reply-To: <69a9da79-63df-6d0a-52e3-729ec8937484@samsung.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.47]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FBAB2A577EEEDA4F8F9255273EA942AC@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4EIxLmu015496
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Sat, 12 May 2018 19:09:25 +0200
+Hi Andrzej,
 
-> 'out' is allocated with 'kvzalloc()'. 'kvfree()' must be used to free it.
+On 05/14/2018 12:33 PM, Andrzej Hajda wrote:
+> On 14.05.2018 11:38, Philippe CORNU wrote:
+>> Hi Laurent, Archit, Andrzej & Yannick,
+>>
+>> Do you have any comments on this v2 driver part?
+>> (more details regarding v1/v2 differences in the cover letter
+>> https://www.spinics.net/lists/dri-devel/msg174137.html)
+>>
+>> Thank you,
+>> Philippe :-)
+>>
+>>
+>> On 04/25/2018 09:53 AM, Philippe Cornu wrote:
+>>> Add the optional power supplies using the description found in
+>>> "SiI9022A/SiI9024A HDMI Transmitter Data Sheet (August 2016)".
+>>>
+>>> The sii902x input IOs are not "io safe" so it is important to
+>>> enable/disable voltage regulators during probe/remove phases to
+>>> avoid damages.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> What exactly does it mean? Ie I understand that the chip has some
+> limitations, but why enabling/disabling regulators in probe/remove
+> should solve it?
 
-Saeed, I assume I will see this in one of your forthcoming pull
-requests.
+thank you for your comment.
 
-Thanks.
+And sorry for the "bad" explanation in the 2nd paragraph about the fact 
+that inputs are not "io safe". I added this 2nd paragraph in v2 
+following a good comment from Laurent on adding the management of the 
+regulators outside the probe/remove for a better power consumption 
+management (enable/disable regulators only when the ic is used for 
+displaying something for instance...). But after a deeper analysis, I 
+realized that the only way to improve the power consumption is to 
+implement & test the sii902x various sleep modes, that is out-of-scope 
+of this small patch and also out-of-scope of my test board I use on 
+which the sii902x bridge ic power consumption is very low compare to the 
+rest of the system...
+
+I will remove this "explanation" in v3 as it creates confusion.
+
+Many thanks,
+Philippe :-)
+
+> 
+> Regards
+> Andrzej
+> 
+>>>
+>>> Signed-off-by: Philippe Cornu <philippe.cornu@st.com>
+>>> ---
+>>>    drivers/gpu/drm/bridge/sii902x.c | 38 ++++++++++++++++++++++++++++++++++----
+>>>    1 file changed, 34 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+>>> index 60373d7eb220..c367d7b91ade 100644
+>>> --- a/drivers/gpu/drm/bridge/sii902x.c
+>>> +++ b/drivers/gpu/drm/bridge/sii902x.c
+>>> @@ -24,6 +24,7 @@
+>>>    #include <linux/i2c.h>
+>>>    #include <linux/module.h>
+>>>    #include <linux/regmap.h>
+>>> +#include <linux/regulator/consumer.h>
+>>>    
+>>>    #include <drm/drmP.h>
+>>>    #include <drm/drm_atomic_helper.h>
+>>> @@ -86,6 +87,7 @@ struct sii902x {
+>>>    	struct drm_bridge bridge;
+>>>    	struct drm_connector connector;
+>>>    	struct gpio_desc *reset_gpio;
+>>> +	struct regulator_bulk_data supplies[2];
+>>>    };
+>>>    
+>>>    static inline struct sii902x *bridge_to_sii902x(struct drm_bridge *bridge)
+>>> @@ -392,23 +394,42 @@ static int sii902x_probe(struct i2c_client *client,
+>>>    		return PTR_ERR(sii902x->reset_gpio);
+>>>    	}
+>>>    
+>>> +	sii902x->supplies[0].supply = "iovcc";
+>>> +	sii902x->supplies[1].supply = "vcc12";
+>>> +	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(sii902x->supplies),
+>>> +				      sii902x->supplies);
+>>> +	if (ret) {
+>>> +		dev_err(dev, "Failed to get power supplies: %d\n", ret);
+>>> +		return ret;
+>>> +	}
+>>> +
+>>> +	ret = regulator_bulk_enable(ARRAY_SIZE(sii902x->supplies),
+>>> +				    sii902x->supplies);
+>>> +	if (ret) {
+>>> +		dev_err(dev, "Failed to enable power supplies: %d\n", ret);
+>>> +		return ret;
+>>> +	}
+>>> +
+>>> +	usleep_range(10000, 20000);
+>>> +
+>>>    	sii902x_reset(sii902x);
+>>>    
+>>>    	ret = regmap_write(sii902x->regmap, SII902X_REG_TPI_RQB, 0x0);
+>>>    	if (ret)
+>>> -		return ret;
+>>> +		goto err_disable_regulator;
+>>>    
+>>>    	ret = regmap_bulk_read(sii902x->regmap, SII902X_REG_CHIPID(0),
+>>>    			       &chipid, 4);
+>>>    	if (ret) {
+>>>    		dev_err(dev, "regmap_read failed %d\n", ret);
+>>> -		return ret;
+>>> +		goto err_disable_regulator;
+>>>    	}
+>>>    
+>>>    	if (chipid[0] != 0xb0) {
+>>>    		dev_err(dev, "Invalid chipid: %02x (expecting 0xb0)\n",
+>>>    			chipid[0]);
+>>> -		return -EINVAL;
+>>> +		ret = -EINVAL;
+>>> +		goto err_disable_regulator;
+>>>    	}
+>>>    
+>>>    	/* Clear all pending interrupts */
+>>> @@ -424,7 +445,7 @@ static int sii902x_probe(struct i2c_client *client,
+>>>    						IRQF_ONESHOT, dev_name(dev),
+>>>    						sii902x);
+>>>    		if (ret)
+>>> -			return ret;
+>>> +			goto err_disable_regulator;
+>>>    	}
+>>>    
+>>>    	sii902x->bridge.funcs = &sii902x_bridge_funcs;
+>>> @@ -434,6 +455,12 @@ static int sii902x_probe(struct i2c_client *client,
+>>>    	i2c_set_clientdata(client, sii902x);
+>>>    
+>>>    	return 0;
+>>> +
+>>> +err_disable_regulator:
+>>> +	regulator_bulk_disable(ARRAY_SIZE(sii902x->supplies),
+>>> +			       sii902x->supplies);
+>>> +
+>>> +	return ret;
+>>>    }
+>>>    
+>>>    static int sii902x_remove(struct i2c_client *client)
+>>> @@ -443,6 +470,9 @@ static int sii902x_remove(struct i2c_client *client)
+>>>    
+>>>    	drm_bridge_remove(&sii902x->bridge);
+>>>    
+>>> +	regulator_bulk_disable(ARRAY_SIZE(sii902x->supplies),
+>>> +			       sii902x->supplies);
+>>> +
+>>>    	return 0;
+>>>    }
+>>>    
+> 
+> 
