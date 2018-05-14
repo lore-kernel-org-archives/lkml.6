@@ -1,82 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754361AbeENHCg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:02:36 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:36783 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754173AbeENHCf (ORCPT
+        id S1754217AbeENHIF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:08:05 -0400
+Received: from mail-io0-f170.google.com ([209.85.223.170]:45326 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753913AbeENHHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:02:35 -0400
-X-Google-Smtp-Source: AB8JxZqHP2Ysx+kGaDQNNlurcZ1/JP+9a3oRrEImEYI4c98aWIkOvLYUVdHabWldEGmyrHkA3AC6FwbE85sXWmEowCM=
+        Mon, 14 May 2018 03:07:50 -0400
+X-Google-Smtp-Source: AB8JxZr8VkgIgE2/MxoKJnj8FLyUFVlBdqdMACIL0NpLtHw6/F71FAl7F8S6C3vNxYsOD4ScVC6ODsrnAHtCf8CdVRc=
 MIME-Version: 1.0
-In-Reply-To: <20180514065744.GD16596@gmail.com>
-References: <20180504060003.19618-1-ard.biesheuvel@linaro.org>
- <20180504060003.19618-13-ard.biesheuvel@linaro.org> <20180514065744.GD16596@gmail.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Mon, 14 May 2018 09:02:34 +0200
-Message-ID: <CAKv+Gu8QVR_BFLMKttqfmCMqXU13grwr846oftFysB8B0CJCZw@mail.gmail.com>
-Subject: Re: [PATCH 12/17] efi: fix efi_pci_io_protocol32 prototype for mixed mode
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Mon, 14 May 2018 12:37:49 +0530
+Message-ID: <CAMty3ZCNyuEwmLGdDZLM_9qKJ2NsT33rodug7ZpKAE-OHymVEg@mail.gmail.com>
+Subject: Allwinner A64: Issue on external rtc clock to wifi chip
+To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 May 2018 at 08:57, Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
->> Mixed mode allows a kernel built for x86_64 to interact with 32-bit
->> EFI firmware, but requires us to define all struct definitions carefully
->> when it comes to pointer sizes. efi_pci_io_protocol32 currently uses a
->> void* for the 'romimage' field, which will be interpreted as a 64-bit
->> field on such kernels, potentially resulting in bogus memory references
->> and subsequent crashes.
->
-> Yeah, so the first confusion I ran into is:
->
->  s/efi_pci_io_protocol32
->   /efi_pci_io_protocol_32
->
-> Once I found it in the code I made this change:
->
->  s/efi: fix efi_pci_io_protocol32 prototype for mixed mode
->   /efi: Fix 'struct efi_pci_io_protocol32' definition for mixed mode
->
-> Because we normally use the 'prototype' name for function declarations, not for
-> data type definitions. Adding 'struct' and putting it between quotes makes it
-> obvious at a glance that we are talking about a structure definition here.
->
+Hi Maxime and All,
 
-OK.
+We are trying to bring-up AP6330 Wifi chip for A64 board. We noticed
+to have an external rtc clock has driven from wifi chip.
 
-> BTW., since it's marked -stable, due to:
->
->  > potentially resulting in bogus memory references
->  > and subsequent crashes.
->
-> I'm moving it to efi/urgent: the principle here is that if a patch is urgent
-> enough for -stable then it should generally not wait for the next merge window.
->
+So the devicetree is configured according to this as below.
 
-The issue was found by inspection rather than a crash report, so I was
-in doubt about this.
+/ {
+        wifi_pwrseq: wifi-pwrseq {
+                compatible = "mmc-pwrseq-simple";
+                clocks = <&rtc 1>;
+                clock-names = "ext_clock";
+                reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
+                post-power-on-delay-ms = <400>;
+        };
+};
 
-> Also, because this actually fixes a crash, I extended the title to spell this out
-> more clearly:
->
->   Subject: efi: Avoid potential crashes, fix the 'struct efi_pci_io_protocol_32' definition for mixed mode
->
-> ... which also makes it easier for maintainers of older stable kernels to decide
-> whether to backport the patch or not.
->
+&rtc {
+        clock-output-names = "rtc-osc32k", "rtc-osc32k-out";
+        clocks = <&osc32k>;
+        #clock-cells = <1>;
+};
 
-OK.
+&mmc1 {
+        pinctrl-names = "default";
+        pinctrl-0 = <&mmc1_pins>;
+        vmmc-supply = <&reg_dcdc1>;
+        vqmmc-supply = <&reg_eldo1>;
+        mmc-pwrseq = <&wifi_pwrseq>;
+        bus-width = <4>;
+        non-removable;
+        status = "okay";
 
-> Anyway, the patch is looking good otherwise, no need to resend.
->
-> Thanks,
->
->         Ingo
+        brcmf: wifi@1 {
+                reg = <1>;
+                compatible = "brcm,bcm4329-fmac";
+                interrupt-parent = <&r_pio>;
+                interrupts = <0 3 IRQ_TYPE_LEVEL_LOW>;  /* WL-WAKE-AP: PL3 */
+                interrupt-names = "host-wake";
+        };
+};
+
+And observed rtc-osc32k-out clock is never enabled[1] and the value of
+LOSC_OUT_GATING is 0x0 which eventually not enabling
+LOSC_OUT_GATING_EN
+
+Pls. let us know if we miss anything here?
+
+[1] https://paste.ubuntu.com/p/X2By4q8kD2/
+
+Jagan.
+
+-- 
+Jagan Teki
+Senior Linux Kernel Engineer | Amarula Solutions
+U-Boot, Linux | Upstream Maintainer
+Hyderabad, India.
