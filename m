@@ -1,55 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752351AbeENJYD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 05:24:03 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43201 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751449AbeENJYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 05:24:01 -0400
-From: <liuqifa@huawei.com>
-To: <davem@davemloft.net>, <dsahern@gmail.com>, <maheshb@google.com>,
-        <weiyongjun1@huawei.com>, <maowenan@huawei.com>,
-        <dingtianhong@huawei.com>, <liuqifa@huawei.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] ipvlan: flush arp table when mac address changed
-Date: Mon, 14 May 2018 17:22:56 +0800
-Message-ID: <20180514092256.10940-1-liuqifa@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1752490AbeENJ0N (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 05:26:13 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37361 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752430AbeENJ0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 05:26:11 -0400
+Date: Mon, 14 May 2018 11:26:00 +0200
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        kishon@ti.com, gregory.clement@bootlin.com, andrew@lunn.ch,
+        jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next v2 02/13] net: phy: sfp: handle non-wired SFP
+ connectors
+Message-ID: <20180514092600.GA20663@kwain>
+References: <20180504135643.23466-1-antoine.tenart@bootlin.com>
+ <20180504135643.23466-3-antoine.tenart@bootlin.com>
+ <20180508115247.GF16141@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.68.80]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180508115247.GF16141@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Keefe Liu <liuqifa@huawei.com>
+Hi Russell,
 
-When master device's mac has been changed, the
-commit <32c10bbfe914> "ipvlan: always use the current L2
-addr of the master" makes the IPVlan devices's mac changed
-also, but it doesn't flush the IPVlan's arp table.
+On Tue, May 08, 2018 at 12:52:47PM +0100, Russell King - ARM Linux wrote:
+> On Fri, May 04, 2018 at 03:56:32PM +0200, Antoine Tenart wrote:
+> > SFP connectors can be solder on a board without having any of their pins
+> > (LOS, i2c...) wired. In such cases the SFP link state cannot be guessed,
+> > and the overall link status reporting is left to other layers.
+> > 
+> > In order to achieve this, a new SFP_DEV status is added, named UNKNOWN.
+> > This mode is set when it is not possible for the SFP code to get the
+> > link status and as a result the link status is reported to be always UP
+> > from the SFP point of view.
+> 
+> This looks weird to me.  SFP_DEV_* states track the netdevice up/down
+> state and have little to do with whether LOS or MODDEF0 are implemented.
 
-Signed-off-by: Keefe Liu <liuqifa@huawei.com>
----
- drivers/net/ipvlan/ipvlan_main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+That's right.
 
-diff --git a/drivers/net/ipvlan/ipvlan_main.c b/drivers/net/ipvlan/ipvlan_main.c
-index 450eec2..4377c26 100644
---- a/drivers/net/ipvlan/ipvlan_main.c
-+++ b/drivers/net/ipvlan/ipvlan_main.c
-@@ -792,8 +792,10 @@ static int ipvlan_device_event(struct notifier_block *unused,
- 		break;
- 
- 	case NETDEV_CHANGEADDR:
--		list_for_each_entry(ipvlan, &port->ipvlans, pnode)
-+		list_for_each_entry(ipvlan, &port->ipvlans, pnode) {
- 			ether_addr_copy(ipvlan->dev->dev_addr, dev->dev_addr);
-+			call_netdevice_notifiers(NETDEV_CHANGEADDR, ipvlan->dev);
-+		}
- 		break;
- 
- 	case NETDEV_PRE_TYPE_CHANGE:
+> I think it would be better to have a new SFP_MOD_* and to force
+> sm_mod_state to that in this circumstance.
+
+The idea was to avoid depending on the state machine, as this could be
+difficult to maintain in the future (it's hard to tell exactly what are
+all the possible paths). But I get your point about SFP_DEV_.
+
+I can have a look at adding a new SFP_MOD_, or I could add a broken flag
+into 'struct sfp', although having a SFP_MOD_ would be proper.
+
+Before doing so, we should decide whether or not this approach is valid,
+as there were comments from Florian and Andrew asking for a fixed-link
+solution. I think fixed-link wouldn't be perfect from the user point of
+view, but I understand the point. If we go with fixed-link, then this
+patch can be dropped (the two others net: sfp: patches could be kept).
+
+What do you think?
+
+Thanks,
+Antoine
+
 -- 
-1.8.3.1
+Antoine Ténart, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
