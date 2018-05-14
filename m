@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-402196-1526281436-2-8704791809064055864
+X-Cyrus-Session-Id: sloti22d1t05-289078-1526281392-2-12845850446209576126
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526281435; b=g6SUDZoBqMiqheO7mKL7txoO2pCO/ZjDu0wxuUlM7t9xp5Ir9D
-    BCvTI+RvArYnL8b1aGZVX8psLWrWjP5qqcQwZSgr8T8v3fjFqGcDKfaUihmbYcE9
-    HHN+UASF+HXutk7134EYI8Grwflmd5GpKQQtSCPW5eyxkKYYw4w0JCQIEut/Mu1u
-    MHMd/AcYezCO/+jMprw4O+nPfJn8YtXPZI+IsZpaT36bX12J9K74lnAhtfCIbDSa
-    q7z05BgMBZ3DFOpvTLC7Jm89w/BBTUqpTEODPmw6mYwU3/71qPh7CT+zAWLLWk9Y
-    /oZiHmbIEVYySL1THnh9gyj+my7i8hGBF/1A==
+    1526281391; b=QMCL2h4kR4yQSww57yisale9xpC5H7HruYkOmWowp0155hlVsL
+    KeTnnsQJWGxpaQk3zdNlBLzcNmk+zb4IzQhd58DbkYqMlCdDQ6zmSfo1LfyPZWJ6
+    2zvfovEhcCocvzGo1mc29aoNNhDyPLedhfK7UTf6BLdUdaJ9wfGVZIjVNfv6YfIt
+    yl477caODD53gh2yH+14JzbqQq0eejmlUFEsHU4lfySSgyI7RlUu0qEXvCC7jWvE
+    M6R1Go/VGWHGtZGlqNIh4aiilw/W30NW4gSAFihZ8n4Z1yDqv/312fmXWK7MW0mv
+    M2OgyPL3QUv5rTPM4OV1bsdwReJFuMB2Tqkw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1526281435; bh=z5Q4LBXTHyFQLgYIVGwVDf22BZXKlk
-    +5srYr25zYvk8=; b=hR8vfQKV2jYf7cAgO891/Lbay1ngRAaYXYTIvok0fEdhTq
-    QHNC3B3bWfctCJt5X7g0FcB0Fv58AnNUIF2y7XQwDB7dG7ECd26Mu66WVX7Cwu/z
-    dCRSvSjWZcUVe0gyfbZ5xWJ28o82xtVTKvw35aJvwecVoGGVajzVbDaDGegFD8Cr
-    zLDQCzgml6dnIf/h86ovYpk8YA+4/XERbQutBWTOUdvPCW6FSWF3/oFZTw3KCWev
-    xM3ud2j2xfzwPxV6UbeLQm+RmNHZLh8CoaeaWfmBfzmpqX1v+uCzC1XsSQR5sds2
-    2E2CarUV8kpsQ6HSzvxfDZsiWdBGJjusZJOjuYxQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1526281391; bh=wfFxVKZ0jVm//tg9qg8Woxpck7/5Ht
+    AuNrc9M8t3cvY=; b=ahDKMcl6GiReJLQ36bGkZK9PGh6w0lW+uHV1fXha/Q2iF+
+    cEExz0ZpLAP9BX09walADRwTy5T7YToKCCOfG82BZvCmoKDGPjtfF6olPExaAkjv
+    yI56ztl6BA0N1d1/8C+fyOMxHQBnK1hvTwQTAoXyN/Aa5iTjfT9E8/aVxOEUFtWY
+    SKSu2MGOEyboIPOR9wpTd60Z7AeRw/gBS8O952SWZzdhjfHHRAji31Hak4u21yPx
+    8kblRlCDwqXV//M+s/YmlDPsspxYG0A6+koHCsTn5JX9x60NKg/vTWHShCRiHyFX
+    9TFzvDhSLnZaZdH9+55KCy0aasGdI56112mnb96A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=za1WtHNq x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=hdOGiFmz x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=za1WtHNq x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=hdOGiFmz x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,32 +64,29 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLcBHl43ErUcUD92ZlUjBFWcmcADNuEmApIWVYhDd132kh59svgC39vOz3XQNz599m03qTr7v6KSg8LLhNmlzr5ea9di6siqbUf37UadFOLdjtd00BNX
-    EU7qLc9qV1NmyUyKeDff1nTc68MrmSH1ESkOm+nu1qmj5SuTEJKwZyfreiV0e9vREjArf5uzP//9Z9jvw8fAiIOJcHxVkQ1JH5sDtI1OgvuJeN0dJQqZkTGH
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIvQzZeZQEQ8Wc7W/w/4F9rcIUH2UPzKQMSmo61isO0C+kvjwC8CuNaUGM6d0CdsIQaiwJWMhCYfITTmLwQSGQvzLGrAIssrElK+NKKGIpI/3dsj6FXE
+    6HkgyrLEGN5pgJd1UudhVH3GUbLeZPjwrY20z8pLlTScoS+szZnOePfTtZg3M/4RzoRm9Uoia7K7iZDEcywuqXA60ZnGK7FgtlBlhN63o9JmVmJU0oQfTLgc
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=hD80L64hAAAA:8 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=ag1SF4gXAAAA:8
-    a=hFfk2Y0vsrRpaPXOunYA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=ag1SF4gXAAAA:8 a=v7_0Sr9Y0SOqTs3S9F8A:9
+    a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753144AbeENHDk (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 14 May 2018 03:03:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37194 "EHLO mail.kernel.org"
+        id S932070AbeENHC6 (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 14 May 2018 03:02:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754118AbeENHAT (ORCPT <rfc822;stable@vger.kernel.org>);
-        Mon, 14 May 2018 03:00:19 -0400
+        id S1753921AbeENHAY (ORCPT <rfc822;stable@vger.kernel.org>);
+        Mon, 14 May 2018 03:00:24 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-Subject: [PATCH 4.16 60/72] thermal: exynos: Propagate error value from tmu_read()
-Date: Mon, 14 May 2018 08:49:17 +0200
-Message-Id: <20180514064827.220213835@linuxfoundation.org>
+        stable@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>
+Subject: [PATCH 4.16 61/72] nvme: add quirk to force medium priority for SQ creation
+Date: Mon, 14 May 2018 08:49:18 +0200
+Message-Id: <20180514064827.293635921@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180514064823.033169170@linuxfoundation.org>
 References: <20180514064823.033169170@linuxfoundation.org>
@@ -107,51 +104,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-commit c8da6cdef57b459ac0fd5d9d348f8460a575ae90 upstream.
+commit 9abd68ef454c824bfd18629033367b4382b5f390 upstream.
 
-tmu_read() in case of Exynos4210 might return error for out of bound
-values. Current code ignores such value, what leads to reporting critical
-temperature value. Add proper error code propagation to exynos_get_temp()
-function.
+Some P3100 drives have a bug where they think WRRU (weighted round robin)
+is always enabled, even though the host doesn't set it. Since they think
+it's enabled, they also look at the submission queue creation priority. We
+used to set that to MEDIUM by default, but that was removed in commit
+81c1cd98351b. This causes various issues on that drive. Add a quirk to
+still set MEDIUM priority for that controller.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-CC: stable@vger.kernel.org # v4.6+
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Fixes: 81c1cd98351b ("nvme/pci: Don't set reserved SQ create flags")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/thermal/samsung/exynos_tmu.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/nvme/host/nvme.h |    5 +++++
+ drivers/nvme/host/pci.c  |   12 +++++++++++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
 
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -892,6 +892,7 @@ static void exynos7_tmu_control(struct p
- static int exynos_get_temp(void *p, int *temp)
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -83,6 +83,11 @@ enum nvme_quirks {
+ 	 * Supports the LighNVM command set if indicated in vs[1].
+ 	 */
+ 	NVME_QUIRK_LIGHTNVM			= (1 << 6),
++
++	/*
++	 * Set MEDIUM priority on SQ creation
++	 */
++	NVME_QUIRK_MEDIUM_PRIO_SQ		= (1 << 7),
+ };
+ 
+ /*
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1091,10 +1091,19 @@ static int adapter_alloc_cq(struct nvme_
+ static int adapter_alloc_sq(struct nvme_dev *dev, u16 qid,
+ 						struct nvme_queue *nvmeq)
  {
- 	struct exynos_tmu_data *data = p;
-+	int value, ret = 0;
++	struct nvme_ctrl *ctrl = &dev->ctrl;
+ 	struct nvme_command c;
+ 	int flags = NVME_QUEUE_PHYS_CONTIG;
  
- 	if (!data || !data->tmu_read || !data->enabled)
- 		return -EINVAL;
-@@ -899,12 +900,16 @@ static int exynos_get_temp(void *p, int
- 	mutex_lock(&data->lock);
- 	clk_enable(data->clk);
- 
--	*temp = code_to_temp(data, data->tmu_read(data)) * MCELSIUS;
-+	value = data->tmu_read(data);
-+	if (value < 0)
-+		ret = value;
-+	else
-+		*temp = code_to_temp(data, value) * MCELSIUS;
- 
- 	clk_disable(data->clk);
- 	mutex_unlock(&data->lock);
- 
--	return 0;
-+	return ret;
- }
- 
- #ifdef CONFIG_THERMAL_EMULATION
+ 	/*
++	 * Some drives have a bug that auto-enables WRRU if MEDIUM isn't
++	 * set. Since URGENT priority is zeroes, it makes all queues
++	 * URGENT.
++	 */
++	if (ctrl->quirks & NVME_QUIRK_MEDIUM_PRIO_SQ)
++		flags |= NVME_SQ_PRIO_MEDIUM;
++
++	/*
+ 	 * Note: we (ab)use the fact that the prp fields survive if no data
+ 	 * is attached to the request.
+ 	 */
+@@ -2684,7 +2693,8 @@ static const struct pci_device_id nvme_i
+ 		.driver_data = NVME_QUIRK_STRIPE_SIZE |
+ 				NVME_QUIRK_DEALLOCATE_ZEROES, },
+ 	{ PCI_VDEVICE(INTEL, 0xf1a5),	/* Intel 600P/P3100 */
+-		.driver_data = NVME_QUIRK_NO_DEEPEST_PS },
++		.driver_data = NVME_QUIRK_NO_DEEPEST_PS |
++				NVME_QUIRK_MEDIUM_PRIO_SQ },
+ 	{ PCI_VDEVICE(INTEL, 0x5845),	/* Qemu emulated controller */
+ 		.driver_data = NVME_QUIRK_IDENTIFY_CNS, },
+ 	{ PCI_DEVICE(0x1c58, 0x0003),	/* HGST adapter */
