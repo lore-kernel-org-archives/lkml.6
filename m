@@ -1,54 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751584AbeENAK4 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 20:10:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43568 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751031AbeENAKz (ORCPT
+        id S1751978AbeENALe (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 20:11:34 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:51310 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751104AbeENALd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 20:10:55 -0400
-To: linux-scsi <linux-scsi@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] scsi: clean up generated file scsi_devinfo_tbl.c
-Message-ID: <6e64c815-43dd-3945-6c58-66b1e0533403@infradead.org>
-Date: Sun, 13 May 2018 17:10:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Sun, 13 May 2018 20:11:33 -0400
+Date: Sun, 13 May 2018 20:11:31 -0400 (EDT)
+Message-Id: <20180513.201131.1649805811466916646.davem@davemloft.net>
+To: rahul.lakkireddy@chelsio.com
+Cc: netdev@vger.kernel.org, kexec@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+        stephen@networkplumber.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, ganeshgr@chelsio.com,
+        nirranjan@chelsio.com, indranil@chelsio.com
+Subject: Re: [PATCH net-next v8 0/3] kernel: add support to collect
+ hardware logs in crash recovery kernel
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <cover.1525253481.git.rahul.lakkireddy@chelsio.com>
+References: <cover.1525253481.git.rahul.lakkireddy@chelsio.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
 
-"make clean" should remove the generated file "scsi_devinfo_tbl.c",
-so list it in the clean-files variable so that the file gets
-cleaned up.
+I'm deferring this patch series.
 
-Fixes: 345e29608b4b ("scsi: scsi: Export blacklist flags to sysfs")
+If we can't get a reasonable review from an interested party in 10+
+days, that is not reasonable.
 
-Cc: Hannes Reinecke <hare@suse.de>
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
----
- drivers/scsi/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Resubmit this once someone reviews it properly.
 
---- linux-4.17-rc4.orig/drivers/scsi/Makefile
-+++ linux-4.17-rc4/drivers/scsi/Makefile
-@@ -182,7 +182,7 @@ zalon7xx-objs	:= zalon.o ncr53c8xx.o
- NCR_Q720_mod-objs	:= NCR_Q720.o ncr53c8xx.o
- 
- # Files generated that shall be removed upon make clean
--clean-files :=	53c700_d.h 53c700_u.h
-+clean-files :=	53c700_d.h 53c700_u.h scsi_devinfo_tbl.c
- 
- $(obj)/53c700.o $(MODVERDIR)/$(obj)/53c700.ver: $(obj)/53c700_d.h
- 
+Thank you.
