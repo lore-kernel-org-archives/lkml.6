@@ -1,116 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752575AbeENVAJ (ORCPT <rfc822;w@1wt.eu>);
+        id S1752594AbeENVAL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 17:00:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48592 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752280AbeENVAJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 14 May 2018 17:00:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51026 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752280AbeENU77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 16:59:59 -0400
-Message-Id: <20180514205957.633659366@goodmis.org>
-User-Agent: quilt/0.63-1
-Date: Mon, 14 May 2018 16:58:47 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Clark Williams <williams@redhat.com>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Yann Ylavic <ylavic.dev@gmail.com>,
-        linux-rt-users@vger.kernel.org
-Subject: [PATCH v2 02/14] tracing: Add __find_event_file() to find event files without
- restrictions
-References: <20180514205845.017925650@goodmis.org>
+Subject: Re: [PATCH v7 2/2] iommu/amd: Add basic debugfs infrastructure for
+ AMD IOMMU
+To: Gary R Hook <gary.hook@amd.com>, iommu@lists.linux-foundation.org
+Cc: joro@8bytes.org, linux-kernel@vger.kernel.org
+References: <152631818082.18929.13970142119193316487.stgit@sosxen2.amd.com>
+ <152631842907.18929.8819955271544326298.stgit@sosxen2.amd.com>
+ <ba2bb6f7-77ea-4431-af0f-d20c19820d5d@infradead.org>
+ <5e45f38e-cb45-d4a1-f351-30543f787290@amd.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <938d5a51-0aa8-0d28-84e3-ce007e73c173@infradead.org>
+Date: Mon, 14 May 2018 14:00:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0002-tracing-Add-__find_event_file-to-find-event-files-wi.patch
+In-Reply-To: <5e45f38e-cb45-d4a1-f351-30543f787290@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+On 05/14/2018 01:00 PM, Gary R Hook wrote:
+> On 05/14/2018 12:50 PM, Randy Dunlap wrote:
+>> On 05/14/2018 10:20 AM, Gary R Hook wrote:
+>>> Implement a skeleton framework for debugfs support in the
+>>> AMD IOMMU.
+>>>
+>>> Signed-off-by: Gary R Hook <gary.hook@amd.com>
+>>> ---
+>>>   drivers/iommu/Makefile            |    5 +++++
+>>>   drivers/iommu/amd_iommu_debugfs.c |   39 +++++++++++++++++++++++++++++++++++++
+>>>   drivers/iommu/amd_iommu_init.c    |    6 ++++--
+>>>   drivers/iommu/amd_iommu_proto.h   |    6 ++++++
+>>>   drivers/iommu/amd_iommu_types.h   |    3 +++
+>>>   5 files changed, 57 insertions(+), 2 deletions(-)
+>>>   create mode 100644 drivers/iommu/amd_iommu_debugfs.c
+>>>
+>>> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+>>> index 74cfbc392862..dd980f7dd8b6 100644
+>>> --- a/drivers/iommu/Makefile
+>>> +++ b/drivers/iommu/Makefile
+>>> @@ -30,3 +30,8 @@ obj-$(CONFIG_EXYNOS_IOMMU) += exynos-iommu.o
+>>>   obj-$(CONFIG_FSL_PAMU) += fsl_pamu.o fsl_pamu_domain.o
+>>>   obj-$(CONFIG_S390_IOMMU) += s390-iommu.o
+>>>   obj-$(CONFIG_QCOM_IOMMU) += qcom_iommu.o
+>>> +
+>>> +# This ensures that only the required files are compiled
+>>> +ifeq ($(CONFIG_IOMMU_DEBUGFS), y)
+>>
+>> Most Makefiles don't use a space before the 'y', but since you tested it,
+>> I guess either way works.
+> 
+> Pretty sure whitespace isn't used as a delimiter in this construct. I could be mistaken. But yes, it's perfectly serviceable.
+> 
+>> But why do this in the Makefile at all?  Why not just add another Kconfig
+>> symbol and simplify the Makefile?
+>>
+>>> +obj-$(CONFIG_AMD_IOMMU) += amd_iommu_debugfs.o
+>>> +endif
+> 
+> 
+> This was brought up a few weeks ago in, I believe, version 3 of this patch. That question was discussed (because that's what I did the first time out), and _someone_ _else_ asked about why I didn't just do it the way I've done it here.
 
-By adding the function __find_event_file() that can search for files without
-restrictions, such as if the event associated with the file has a reg
-function, or if it has the "ignore" flag set, the files that are associated
-to ftrace internal events (like trace_marker and function events) can be
-found and used.
+Sorry I missed it.  I would have been glad to chime in at that time.
 
-find_event_file() still returns a "filtered" file, as most callers need a
-valid trace event file. One created by the trace_events.h macros and not one
-created for parsing ftrace specific events.
+> Everyone has a preference.
+> 
+> I chose to simplify the choices and avoid multiple symbols, instead opting for two switches: choose your device, and decide on Debug FS enablement for it. IMO Very simple.
+> 
+> I can't fathom a scenario where this wouldn't work. Is there one?
 
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace.h        |  3 +++
- kernel/trace/trace_events.c | 22 +++++++++++++++++-----
- 2 files changed, 20 insertions(+), 5 deletions(-)
+Probably not.
 
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 24b666891eaf..8ecca43d6aea 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1454,6 +1454,9 @@ extern void trace_event_enable_tgid_record(bool enable);
- extern int event_trace_add_tracer(struct dentry *parent, struct trace_array *tr);
- extern int event_trace_del_tracer(struct trace_array *tr);
- 
-+extern struct trace_event_file *__find_event_file(struct trace_array *tr,
-+						  const char *system,
-+						  const char *event);
- extern struct trace_event_file *find_event_file(struct trace_array *tr,
- 						const char *system,
- 						const char *event);
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 05c7172c6667..caf76355f0a3 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -2473,8 +2473,9 @@ __trace_add_event_dirs(struct trace_array *tr)
- 	}
- }
- 
-+/* Returns any file that matches the system and event */
- struct trace_event_file *
--find_event_file(struct trace_array *tr, const char *system,  const char *event)
-+__find_event_file(struct trace_array *tr, const char *system, const char *event)
- {
- 	struct trace_event_file *file;
- 	struct trace_event_call *call;
-@@ -2485,10 +2486,7 @@ find_event_file(struct trace_array *tr, const char *system,  const char *event)
- 		call = file->event_call;
- 		name = trace_event_name(call);
- 
--		if (!name || !call->class || !call->class->reg)
--			continue;
--
--		if (call->flags & TRACE_EVENT_FL_IGNORE_ENABLE)
-+		if (!name || !call->class)
- 			continue;
- 
- 		if (strcmp(event, name) == 0 &&
-@@ -2498,6 +2496,20 @@ find_event_file(struct trace_array *tr, const char *system,  const char *event)
- 	return NULL;
- }
- 
-+/* Returns valid trace event files that match system and event */
-+struct trace_event_file *
-+find_event_file(struct trace_array *tr, const char *system, const char *event)
-+{
-+	struct trace_event_file *file;
-+
-+	file = __find_event_file(tr, system, event);
-+	if (!file || !file->event_call->class->reg ||
-+	    file->event_call->flags & TRACE_EVENT_FL_IGNORE_ENABLE)
-+		return NULL;
-+
-+	return file;
-+}
-+
- #ifdef CONFIG_DYNAMIC_FTRACE
- 
- /* Avoid typos */
+But we used to have ugly, messy, convoluted makefiles with very little config help.
+Then we got better kconfig tools (well, arguably :) and then the makefiles were
+cleaned up and simplified a lot (or A LOT!).  We shouldn't want to go back there.
+
 -- 
-2.17.0
+~Randy
