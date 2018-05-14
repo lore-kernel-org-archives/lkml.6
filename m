@@ -1,65 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932461AbeENOHB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 10:07:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55002 "EHLO mx2.suse.de"
+        id S932507AbeENOHW (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 10:07:22 -0400
+Received: from foss.arm.com ([217.140.101.70]:43404 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932143AbeENOG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 10:06:57 -0400
-From: Jiri Slaby <jslaby@suse.cz>
-To: mingo@redhat.com
-Cc: linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        x86@kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH v2 4/6] x86/stacktrace: do not fail for ORC with regs on stack
-Date: Mon, 14 May 2018 16:06:51 +0200
-Message-Id: <20180514140653.23678-4-jslaby@suse.cz>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180514140653.23678-1-jslaby@suse.cz>
-References: <20180514140653.23678-1-jslaby@suse.cz>
+        id S932413AbeENOHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 10:07:20 -0400
+Date: Mon, 14 May 2018 15:07:15 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Alexander Popov <alex.popov@linux.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: Clear the stack
+Message-ID: <20180514140714.sfmvfpwco63eomor@lakrids.cambridge.arm.com>
+References: <dd6ad26c-1d2c-88f3-8f01-e68d2b31d6ea@linux.com>
+ <20180504110907.c2dw33kjmyybso6t@lakrids.cambridge.arm.com>
+ <4badae50-be9b-2c6d-854b-57ab48664800@linux.com>
+ <71199506-b46b-5f91-e489-e6450b6d1067@linux.com>
+ <20180511161317.57k6prl54xjmsit3@lakrids.cambridge.arm.com>
+ <f180b312-d1cf-3992-4e89-9632c1674cd6@linux.com>
+ <20180514051555.bpbydgr56hyffjch@salmiak>
+ <6c311899-7131-d21b-10f6-d2ba7380a392@linux.com>
+ <20180514100639.v3erlzbuv2e4awfh@lakrids.cambridge.arm.com>
+ <c5bebf0b-9667-5725-2800-97c5a85635c4@linux.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5bebf0b-9667-5725-2800-97c5a85635c4@linux.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-save_stack_trace_reliable now returns "non reliable" when there are
-kernel pt_regs on stack. This means an interrupt or exception happened
-somewhere down the route. It is a problem for the frame pointer
-unwinder, because the frame might not have been set up yet when the irq
-happened, so the unwinder might fail to unwind from the interrupted
-function.
+On Mon, May 14, 2018 at 04:53:12PM +0300, Alexander Popov wrote:
+> On 14.05.2018 13:06, Mark Rutland wrote:
+> > I think it is reasonable to panic() here even with CONFIG_VMAP_STACK
+> > selected.
+> 
+> It's too tough for CONFIG_VMAP_STACK on x86 - the system can proceed to live.
+> Anyway, the check_alloca() code will not be shared between x86 and arm64, I've
+> described the reasons in this thread. So I can have BUG() for CONFIG_VMAP_STACK
+> on x86 and Laura can consistently use panic() on arm64.
 
-With ORC, this is not a problem, as ORC has out-of-band data. We can
-find ORC data even for the IP in the interrupted function and always
-unwind one level up reliably.
+If we need arch-specific implementations anyway, then that's fine by me.
 
-So lift the check to apply only when CONFIG_FRAME_POINTER is enabled.
+> >> So we should not do it in check_alloca() as well, just use BUG() and
+> >> hope for the best.
+> > 
+> > Regardless of whether we BUG() or panic(), we're hoping for the best.
+> > 
+> > Consistently using panic() here will keep things simpler, so any failure
+> > reported will be easier to reason about, and easier to debug.
+> 
+> Let me keep BUG() for !CONFIG_SCHED_STACK_END_CHECK. I beware of using panic()
+> by default, let distro/user decide this. I remember very well how I was shouted
+> at, when this one was merged:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ce6fa91b93630396ca220c33dd38ffc62686d499
 
-[v2]
-- rewrite the code in favor of Josh's suggestions
+Sure; my comments needn't hold up your patches.
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
----
- arch/x86/kernel/stacktrace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
-index e0169b128523..32983bf642d1 100644
---- a/arch/x86/kernel/stacktrace.c
-+++ b/arch/x86/kernel/stacktrace.c
-@@ -115,7 +115,8 @@ __save_stack_trace_reliable(struct stack_trace *trace,
- 			 * unreliable.
- 			 */
- 
--			return -EINVAL;
-+			if (IS_ENABLED(CONFIG_FRAME_POINTER))
-+				return -EINVAL;
- 		}
- 
- 		addr = unwind_get_return_address(&state);
--- 
-2.16.3
+Thanks,
+Mark.
