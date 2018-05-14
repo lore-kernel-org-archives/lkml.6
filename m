@@ -1,90 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752431AbeENKGz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 06:06:55 -0400
-Received: from foss.arm.com ([217.140.101.70]:38930 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752084AbeENKGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 06:06:51 -0400
-Date: Mon, 14 May 2018 11:06:46 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        james.morse@arm.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 05/18] arm64: kill change_cpacr()
-Message-ID: <20180514100645.GA7753@e103592.cambridge.arm.com>
-References: <20180514094640.27569-1-mark.rutland@arm.com>
- <20180514094640.27569-6-mark.rutland@arm.com>
+        id S1752534AbeENKHP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 06:07:15 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38910 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752038AbeENKGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 06:06:47 -0400
+Date: Mon, 14 May 2018 11:06:40 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Alexander Popov <alex.popov@linux.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: Clear the stack
+Message-ID: <20180514100639.v3erlzbuv2e4awfh@lakrids.cambridge.arm.com>
+References: <20180502203326.9491-3-labbott@redhat.com>
+ <20180503071917.xm2xvgagvzkworay@salmiak>
+ <dd6ad26c-1d2c-88f3-8f01-e68d2b31d6ea@linux.com>
+ <20180504110907.c2dw33kjmyybso6t@lakrids.cambridge.arm.com>
+ <4badae50-be9b-2c6d-854b-57ab48664800@linux.com>
+ <71199506-b46b-5f91-e489-e6450b6d1067@linux.com>
+ <20180511161317.57k6prl54xjmsit3@lakrids.cambridge.arm.com>
+ <f180b312-d1cf-3992-4e89-9632c1674cd6@linux.com>
+ <20180514051555.bpbydgr56hyffjch@salmiak>
+ <6c311899-7131-d21b-10f6-d2ba7380a392@linux.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180514094640.27569-6-mark.rutland@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <6c311899-7131-d21b-10f6-d2ba7380a392@linux.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 10:46:27AM +0100, Mark Rutland wrote:
-> Now that we have sysreg_clear_set(), we can use this instead of
-> change_cpacr().
+On Mon, May 14, 2018 at 12:35:25PM +0300, Alexander Popov wrote:
+> On 14.05.2018 08:15, Mark Rutland wrote:
+> > On Sun, May 13, 2018 at 11:40:07AM +0300, Alexander Popov wrote:
+> >> So what would you think if I do the following in check_alloca():
+> >>
+> >> 	if (size >= stack_left) {
+> >> #if !defined(CONFIG_VMAP_STACK) && defined(CONFIG_SCHED_STACK_END_CHECK)
+> >> 		panic("alloca over the kernel stack boundary\n");
+> >> #else
+> >> 		BUG();
+> >> #endif
+> > 
+> > Given this is already out-of-line, how about we always use panic(), regardless
+> > of VMAP_STACK and SCHED_STACK_END_CHECK? i.e. just
+> > 
+> > 	if (unlikely(size >= stack_left))
+> > 		panic("alloca over the kernel stack boundary");
+> > 
+> > If we have VMAP_STACK selected, and overflow during the panic, it's the same as
+> > if we overflowed during the BUG(). It's likely that panic() will use less stack
+> > space than BUG(), and the compiler can put the call in a slow path that
+> > shouldn't affect most calls, so in all cases it's likely preferable.
 > 
-> Note that the order of the set and clear arguments differs between
-> change_cpacr() and sysreg_clear_set(), so these are flipped as part of
-> the conversion. Also, sve_user_enable() redundantly clears
-> CPACR_EL1_ZEN_EL0EN before setting it; this is removed for clarity.
+> I'm sure that maintainers and Linus will strongly dislike my patch if I always
+> use panic() here. panic() kills the whole kernel and we shouldn't use it when we
+> can safely continue to work.
 > 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Dave Martin <dave.martin@arm.com>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
+> Let me describe my logic. So let's have size >= stack_left on a thread stack.
+> 
+> 1. If CONFIG_VMAP_STACK is enabled, we can safely use BUG(). Even if BUG()
+> handling overflows the thread stack into the guard page, handle_stack_overflow()
+> is called and the neighbour memory is not corrupted. The kernel can proceed to live.
 
-Looks right to me.
+On arm64 with CONFIG_VMAP_STACK, a stack overflow will result in a
+panic(). My understanding was that the same is true on x86.
 
-Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+> 2. If CONFIG_VMAP_STACK is disabled, BUG() handling can corrupt the neighbour
+> kernel memory and cause the undefined behaviour of the whole kernel. I see it on
+> my lkdtm test. That is a cogent reason for panic().
 
-> ---
->  arch/arm64/kernel/fpsimd.c | 13 ++-----------
->  1 file changed, 2 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-> index 87a35364e750..088940387a4d 100644
-> --- a/arch/arm64/kernel/fpsimd.c
-> +++ b/arch/arm64/kernel/fpsimd.c
-> @@ -172,23 +172,14 @@ static void *sve_pffr(struct task_struct *task)
->  		sve_ffr_offset(task->thread.sve_vl);
->  }
->  
-> -static void change_cpacr(u64 val, u64 mask)
-> -{
-> -	u64 cpacr = read_sysreg(CPACR_EL1);
-> -	u64 new = (cpacr & ~mask) | val;
-> -
-> -	if (new != cpacr)
-> -		write_sysreg(new, CPACR_EL1);
-> -}
-> -
->  static void sve_user_disable(void)
->  {
-> -	change_cpacr(0, CPACR_EL1_ZEN_EL0EN);
-> +	sysreg_clear_set(cpacr_el1, CPACR_EL1_ZEN_EL0EN, 0);
->  }
->  
->  static void sve_user_enable(void)
->  {
-> -	change_cpacr(CPACR_EL1_ZEN_EL0EN, CPACR_EL1_ZEN_EL0EN);
-> +	sysreg_clear_set(cpacr_el1, 0, CPACR_EL1_ZEN_EL0EN);
->  }
->  
->  /*
-> -- 
-> 2.11.0
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+In this case, panic() can also corrupt the neighbour stack, and could
+also fail.
+
+When CONFIG_VMAP_STACK is not selected, a stack overflow simply cannot
+be handled reliably -- while panic() may be more likely to succeed, it
+is not gauranteed to.
+
+> 2.a. If CONFIG_SCHED_STACK_END_CHECK is enabled, the kernel already does panic()
+> when STACK_END_MAGIC is corrupted. So we will _not_ break the safety policy if
+> we do panic() in a similar situation in check_alloca().
+
+Sure, I'm certainly happy with panic() here.
+
+> 2.b. If CONFIG_SCHED_STACK_END_CHECK is disabled, the user has some real reasons
+> not to do panic() when the kernel stack is corrupted. 
+
+I believe that CONFIG_SCHED_STACK_END_CHECK is seen as a debug feature,
+and hence people don't select it. I strongly doubt that people have
+reasons to disable it other than not wanting the overhead associated
+with debug features.
+
+I think it is reasonable to panic() here even with CONFIG_VMAP_STACK
+selected.
+
+> So we should not do it in check_alloca() as well, just use BUG() and
+> hope for the best.
+
+Regardless of whether we BUG() or panic(), we're hoping for the best.
+
+Consistently using panic() here will keep things simpler, so any failure
+reported will be easier to reason about, and easier to debug.
+
+Thanks,
+Mark.
