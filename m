@@ -1,90 +1,97 @@
-Return-Path: <tglx@linutronix.de>
-X-Google-Smtp-Source: AB8JxZo64JUlK3GMiedfWqY1XF08F92c4KQqtW/iBHN0aOoiZ2OO8DdYw6qGjUlDt68IRPDTbgT1
-ARC-Seal: i=1; a=rsa-sha256; t=1525601131; cv=none;
+Return-Path: <natechancellor@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1526323845; cv=none;
         d=google.com; s=arc-20160816;
-        b=OGT3lJn7AYOUvj4TO1xOj8ajHt/86wHxvsBv4eKD44MsAVFqvsqufr2Kl1ebQDt6nD
-         D8P+KG5BGv19WSpJCF2PzT9VZZtiC2jHwsCHBBVDEVx7/Ihv1jmoAGdoSPPIN/ujMilI
-         Fk1PFJeJWbq6dB+W6ojfPkt0DESNF0JWYkW88V1zyp7UUOx5fRYN6Il7K4lhbxXpPRC/
-         wZBMth4XslSN5fiFOgtRoaudBW64ajeOYcnoX929nUdsUvEHlKA2Nb6Unh6FLMLqZtYH
-         egLqNgTJC4ltUnHCmL4ldsXXP8yE3tNaKDwei7cSI03wrvByvYADV9rjrNPLfZfCd8W4
-         zO5w==
+        b=UflDps7JoHarPtsRIBeDUkhOrLqDEMXYlo5Edpu8Uie65k+lPO7IuvydxDzLEs3kF2
+         KPdoYkKq9F2ke81LplTG+EiRKdk8AAcePjbrCzfSgFf7aa3pptt8E0KUtZ7XhR+kJlgc
+         wgdhoePXU52f3vcXkI/EkbVkRWsq7AFZcdJ7QWLPiVJ8gwDSdl6eGDgv88Heki+LWpBv
+         e/m0RD88mbc1M6Kf7B7Hm7FUeB+Oyp8fQK2clb8B5RvqhvCvaTwRHIUmvj3wzU6UW2aE
+         /rXhI+OqIOl1/NBHhDtRq3jRG+g2PEhPLpoWtGC6KSk1amc2e3EZADAmHA5drfcOqNi9
+         XOhw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:arc-authentication-results;
-        bh=CKShoNw859JoAcxSWO2dnXa71IpHxX03Ho909swdfL4=;
-        b=tajLdnM9ae2xp7aMY0aGDxEZD/FXfw/GrpZliPoBpFrZaOL/yLjuDnDEvgljpcM6pQ
-         vQy+KCjerbwRIAwW9urs4S8NubqTnqTCbvb45wa2FO1HfYU/NvQCbdUk7pOTJ+es8NOo
-         uPBw+J+uUhtlRh3My7JMbfCrfLUNTvoYEJoZD4BWYegqX/M9UzIdm3GA45Ro7UkaO6nn
-         pSPv75yGKc89FmRgrn5Bnzc8RQsv9qwS6HFCspwJd4sPS0Fz7y1D18I5a7J+ls6ZaXfc
-         n3I0urMMA7TZHLmWUAPs4iKPKvgO2PzS4d26Z9eMJUx8k2rLxwbcQzc6vwZYa0tyt2Ok
-         dXOw==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=+Gj/qVgzlXI3uT9KjcF83v7SvQtEDhrbk1NormCD/sA=;
+        b=kZ1BNED2J/Z4BFeOxBEH0P2kYH1z2xmCG71/fP3Tf6b5/yDpQoY8WJSPRxYc3kVMkB
+         6YklFPaLve8iyC94Yy1ezSOIOCU5xgDSh4rjGI9V3iBh12cYfCAEJm1EMDobmmttVNlE
+         oWKv12AKY6ruwYOywfjU11d/k6gprhcl7DVJX8Oe52lsankrQb+EJ65jmi9oZsqxBp7q
+         zqBYKr7kDRMXqunsaJEz9nO3FiCOJ9zwWwcovZoIoUPV+gmXaa1nkjcg13uWQxReQbNF
+         Rr8yK57HUy29o/uofU14rqictMotpulpX79idsqSHVk0vXn1p/tYTPDdhOoLuPRdGwDK
+         lXDA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 146.0.238.70 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Hf6tZCnR;
+       spf=pass (google.com: domain of natechancellor@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=natechancellor@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 146.0.238.70 as permitted sender) smtp.mailfrom=tglx@linutronix.de
-Date: Sun, 6 May 2018 12:04:31 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Kees Cook <keescook@chromium.org>
-cc: Dave Hansen <dave.hansen@linux.intel.com>,
-    Linus Torvalds <torvalds@linux-foundation.org>,
-    Alexander Popov <alex.popov@linux.com>,
-    Kernel Hardening <kernel-hardening@lists.openwall.com>,
-    PaX Team <pageexec@freemail.hu>, Brad Spengler <spender@grsecurity.net>,
-    Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-    Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>,
-    Mark Rutland <mark.rutland@arm.com>,
-    Ard Biesheuvel <ard.biesheuvel@linaro.org>, Borislav Petkov <bp@alien8.de>,
-    Richard Sandiford <richard.sandiford@arm.com>,
-    "H . Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>,
-    "Dmitry V . Levin" <ldv@altlinux.org>, Emese Revfy <re.emese@gmail.com>,
-    Jonathan Corbet <corbet@lwn.net>,
-    Andrey Ryabinin <aryabinin@virtuozzo.com>,
-    "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-    Thomas Garnier <thgarnie@google.com>,
-    Andrew Morton <akpm@linux-foundation.org>,
-    Alexei Starovoitov <ast@kernel.org>, Josef Bacik <jbacik@fb.com>,
-    Masami Hiramatsu <mhiramat@kernel.org>,
-    Nicholas Piggin <npiggin@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
-    "David S . Miller" <davem@davemloft.net>,
-    Ding Tianhong <dingtianhong@huawei.com>,
-    David Woodhouse <dwmw@amazon.co.uk>, Josh Poimboeuf <jpoimboe@redhat.com>,
-    Steven Rostedt <rostedt@goodmis.org>,
-    Dominik Brodowski <linux@dominikbrodowski.net>,
-    Juergen Gross <jgross@suse.com>,
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    Dan Williams <dan.j.williams@intel.com>,
-    Mathias Krause <minipli@googlemail.com>,
-    Vikas Shivappa <vikas.shivappa@linux.intel.com>,
-    Kyle Huey <me@kylehuey.com>, Dmitry Safonov <dsafonov@virtuozzo.com>,
-    Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
-    Florian Weimer <fweimer@redhat.com>,
-    Boris Lukashev <blukashev@sempervictus.com>, X86 ML <x86@kernel.org>,
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v11 2/6] x86/entry: Add STACKLEAK erasing the kernel
- stack at the end of syscalls
-In-Reply-To: <CAGXu5jJ1rPmb_fs=iN5x6fTMtew8+jxrb=VxQQwiPLYzjxE07g@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1805061204060.1685@nanos.tec.linutronix.de>
-References: <1523024546-6150-1-git-send-email-alex.popov@linux.com> <1523024546-6150-3-git-send-email-alex.popov@linux.com> <4e668302-8754-3f4e-3372-d0d7ba30cfa3@linux.intel.com> <CAGXu5jJ_0e63QSv0YZsQoT_=zN8U-83nwxrQ10h=QjszbHK-aQ@mail.gmail.com>
- <alpine.DEB.2.21.1805021041260.1668@nanos.tec.linutronix.de> <CAGXu5j+4Rj3oOH_iHhfD9sMMa2hRVm_dp9oA6YKhN9omhjdtEg@mail.gmail.com> <alpine.DEB.2.21.1805021438470.1560@nanos.tec.linutronix.de> <CAGXu5jJDwLfg0LPYkYKZcgqwbej-xVUB+6rSaLE+OvKQxy-Y9w@mail.gmail.com>
- <CAGXu5jJ1rPmb_fs=iN5x6fTMtew8+jxrb=VxQQwiPLYzjxE07g@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Hf6tZCnR;
+       spf=pass (google.com: domain of natechancellor@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=natechancellor@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZoHvFia0+DQUevdWoL+Og4UIlxBoga79F5y8HnREPbNLsh6dhH441jbB2q6jvTRvz+4uNefYw==
+From: Nathan Chancellor <natechancellor@gmail.com>
+To: devel@driverdev.osuosl.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Laura Abbott <labbott@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+	Martijn Coenen <maco@android.com>,
+	Todd Kjos <tkjos@android.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] staging: android: ion: Check return value of ion_buffer_kmap_get
+Date: Mon, 14 May 2018 11:50:44 -0700
+Message-Id: <20180514185044.19367-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.17.0
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597007022879408472?=
-X-GMAIL-MSGID: =?utf-8?q?1599708732251432384?=
+X-GMAIL-THRID: =?utf-8?q?1600466552340337405?=
+X-GMAIL-MSGID: =?utf-8?q?1600466552340337405?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 2 May 2018, Kees Cook wrote:
-> On Wed, May 2, 2018 at 5:51 AM, Kees Cook <keescook@chromium.org> wrote:
-> I think it'd be better for this to go via my tree with your Ack (where
-> I can carry the plugin, lkdtm, x86, and arm64 changes). How does that
-> sound?
+GCC warns that vaddr is set but unused. Check the return value of
+ion_buffer_kmap_get to make vaddr useful and make sure everything
+is properly configured before beginning a DMA.
 
-Works for me.
+Suggested-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/staging/android/ion/ion.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+index d10b60fe4a29..af682cbde767 100644
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -315,6 +315,7 @@ static int ion_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
+ 	struct ion_buffer *buffer = dmabuf->priv;
+ 	void *vaddr;
+ 	struct ion_dma_buf_attachment *a;
++	int ret = 0;
+ 
+ 	/*
+ 	 * TODO: Move this elsewhere because we don't always need a vaddr
+@@ -322,6 +323,10 @@ static int ion_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
+ 	if (buffer->heap->ops->map_kernel) {
+ 		mutex_lock(&buffer->lock);
+ 		vaddr = ion_buffer_kmap_get(buffer);
++		if (IS_ERR(vaddr)) {
++			ret = PTR_ERR(vaddr);
++			goto unlock;
++		}
+ 		mutex_unlock(&buffer->lock);
+ 	}
+ 
+@@ -330,9 +335,10 @@ static int ion_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
+ 		dma_sync_sg_for_cpu(a->dev, a->table->sgl, a->table->nents,
+ 				    direction);
+ 	}
+-	mutex_unlock(&buffer->lock);
+ 
+-	return 0;
++unlock:
++	mutex_unlock(&buffer->lock);
++	return ret;
+ }
+ 
+ static int ion_dma_buf_end_cpu_access(struct dma_buf *dmabuf,
+-- 
+2.17.0
