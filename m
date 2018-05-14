@@ -1,69 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752102AbeENCvo (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 13 May 2018 22:51:44 -0400
-Received: from ozlabs.org ([203.11.71.1]:49965 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751984AbeENCvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 13 May 2018 22:51:42 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 14 May 2018 12:51:39 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: linux-next: build warning after merge of the block tree
-Message-ID: <20180514125139.459a058d@canb.auug.org.au>
+        id S1752039AbeENC6D (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 13 May 2018 22:58:03 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:43594 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751953AbeENC6C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 13 May 2018 22:58:02 -0400
+X-Google-Smtp-Source: AB8JxZrpEPAOg8ddLnHVf3IZp06VPal2swQYFpQpzz8+FSIPn5iDwdu9P6BjgfyHqCX5HEAUyMP0Kw==
+Date: Sun, 13 May 2018 20:00:07 -0700
+From: Eric Biggers <ebiggers3@gmail.com>
+To: linux-kvm@vger.kernel.org, dvyukov@google.com, karahmed@amazon.de
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: CONFIG_KCOV causing crash in svm_vcpu_run()
+Message-ID: <20180514030007.GH677@sol.localdomain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vkAwqzOFvi=RYL4MGC/Bm=="; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/vkAwqzOFvi=RYL4MGC/Bm==
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+With CONFIG_KCOV=y and an AMD processor, running the following program crashes
+the kernel with no output (I'm testing in a VM, so it's using nested
+virtualization):
 
-Hi all,
+	#include <fcntl.h>
+	#include <linux/kvm.h>
+	#include <sys/ioctl.h>
 
-After merging the block tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+	int main()
+	{
+		int dev, vm, cpu;
+		char page[4096] __attribute__((aligned(4096))) = { 0 };
+		struct kvm_userspace_memory_region memreg = {
+			.memory_size = 4096,
+			.userspace_addr = (unsigned long)page,
+		};
+		dev = open("/dev/kvm", O_RDONLY);
+		vm = ioctl(dev, KVM_CREATE_VM, 0);
+		cpu = ioctl(vm, KVM_CREATE_VCPU, 0);
+		ioctl(vm, KVM_SET_USER_MEMORY_REGION, &memreg);
+		ioctl(cpu, KVM_RUN, 0);
+	}
 
-drivers/memstick/core/mspro_block.c: In function 'mspro_block_init_disk':
-drivers/memstick/core/mspro_block.c:1173:24: warning: unused variable 'host=
-' [-Wunused-variable]
-  struct memstick_host *host =3D card->host;
-                        ^~~~
-drivers/memstick/core/ms_block.c: In function 'msb_init_disk':
-drivers/memstick/core/ms_block.c:2097:24: warning: unused variable 'host' [=
--Wunused-variable]
-  struct memstick_host *host =3D card->host;
-                        ^~~~
+It bisects down to commit b2ac58f90540e39 ("KVM/SVM: Allow direct access to
+MSR_IA32_SPEC_CTRL").  The bug is apparently that due to the new code for
+managing the SPEC_CTRL MSR, __sanitizer_cov_trace_pc() is being called from
+svm_vcpu_run() before the host's MSR_GS_BASE has been restored, which causes a
+crash somehow.  The following patch fixes it, though I don't know that it's the
+right solution; maybe KCOV should be disabled in the function instead, or maybe
+there's a more fundamental problem.  What do people think?
 
-Introduced by commit
-
-  7c2d748e8476 ("memstick: don't call blk_queue_bounce_limit")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/vkAwqzOFvi=RYL4MGC/Bm==
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr4+bsACgkQAVBC80lX
-0Gy3Ogf/ZMmpZ7jEVr1JdpXD9VKzSLFUKAhizk+xPukkakGaFHBwbfa30yrZlPv/
-6Uy++2VBa3eEnWD+mZAkntQmL9MBYhC3dIxIvJJ5z5WXJ3IVoKouABhlmPIubhi3
-YQCx7RBi69IudrPNVhPu0IMsEhLrLM/cZnMJ+rmM4cCibkm116JJWHdojIaV/c5p
-SKo/tbYWEmMNpYSMSNAxFRwE80lKh1AMSEefGedTTM2M5g1cjojBF/Me9lDSOi9B
-JZHFtsjVkiNBgaSlsQ3w6krNviwMQ+MAR5LJ9Hw0mp3D4D4LKi/K3tzrDCkhLkI7
-kdYj0Tko+icXYQKnvYqacNh6Dj5Acg==
-=yhI6
------END PGP SIGNATURE-----
-
---Sig_/vkAwqzOFvi=RYL4MGC/Bm==--
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 1fc05e428aba8..d35ef241e66d8 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -5652,6 +5652,15 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
+ #endif
+ 		);
+ 
++#ifdef CONFIG_X86_64
++	wrmsrl(MSR_GS_BASE, svm->host.gs_base);
++#else
++	loadsegment(fs, svm->host.fs);
++#ifndef CONFIG_X86_32_LAZY_GS
++	loadsegment(gs, svm->host.gs);
++#endif
++#endif
++
+ 	/*
+ 	 * We do not use IBRS in the kernel. If this vCPU has used the
+ 	 * SPEC_CTRL MSR it may have left it on; save the value and
+@@ -5676,15 +5685,6 @@ static void svm_vcpu_run(struct kvm_vcpu *vcpu)
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
+ 
+-#ifdef CONFIG_X86_64
+-	wrmsrl(MSR_GS_BASE, svm->host.gs_base);
+-#else
+-	loadsegment(fs, svm->host.fs);
+-#ifndef CONFIG_X86_32_LAZY_GS
+-	loadsegment(gs, svm->host.gs);
+-#endif
+-#endif
+-
+ 	reload_tss(vcpu);
+ 
+ 	local_irq_disable();
