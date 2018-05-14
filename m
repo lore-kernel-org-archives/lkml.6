@@ -1,64 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753588AbeENH0L (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 03:26:11 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:44790 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753452AbeENH0I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 03:26:08 -0400
-X-Google-Smtp-Source: AB8JxZokMIyNXylofZztpoM/1UrYqClcffi1RzkMomHXe15XxA1ZI3R0m/RQgWqc8VOSNOV3WSd6syU7pKMlHPm86S4=
-MIME-Version: 1.0
-In-Reply-To: <20180514172042.093bd880@canb.auug.org.au>
-References: <20180514172042.093bd880@canb.auug.org.au>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 14 May 2018 10:26:07 +0300
-Message-ID: <CAHp75Vfs_Za5d8YLJ5FNJDmytRJE-P+q_Kds9V+ivBGy3v+p8g@mail.gmail.com>
-Subject: Re: linux-next: Tree for May 14
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        id S1752931AbeENHjr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 03:39:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43028 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752732AbeENHjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 03:39:44 -0400
+Message-ID: <1526283581.4411.2.camel@redhat.com>
+Subject: Re: [PATCH] ipvlan: flush arp table when mac address changed
+From: Paolo Abeni <pabeni@redhat.com>
+To: liuqifa@huawei.com, davem@davemloft.net, dsahern@gmail.com,
+        maheshb@google.com, weiyongjun1@huawei.com, maowenan@huawei.com,
+        dingtianhong@huawei.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 14 May 2018 09:39:41 +0200
+In-Reply-To: <20180512110037.9116-1-liuqifa@huawei.com>
+References: <20180512110037.9116-1-liuqifa@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 14, 2018 at 10:20 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Changes since 20180511:
->
-> New trees: btrfs-fixes
->         vfs-fixes
->         dma-mapping-fixes
->
-> The f2fs tree gained a conflict against the vfs-fixes tree.
->
-> The bpf-next tree gained a conflict against the bpf tree.
->
-> The rcu tree gained a conflict against Linus' tree.
->
-> The kselftest tree gained a conflict against the kvm-fixes tree.
->
-> Non-merge commits (relative to Linus' tree): 5724
->  5580 files changed, 217262 insertions(+), 101414 deletions(-)
->
-> ----------------------------------------------------------------------------
->
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" and checkout or reset to the new
-> master.
+Hi,
 
-Hmm... It seems my message was buried in the pile of the thread WRT
-fixes branches.
+On Sat, 2018-05-12 at 19:00 +0800, liuqifa@huawei.com wrote:
+> From: Keefe Liu <liuqifa@huawei.com>
+> 
+> When master device's mac has been changed, the
+> commit <32c10bbfe914> "ipvlan: always use the current L2
+> addr of the master" makes the IPVlan devices's mac changed
+> also, but it doesn't flush the IPVlan's arp table.
+> 
+> Signed-off-by: Keefe Liu <liuqifa@huawei.com>
+> ---
+>  drivers/net/ipvlan/ipvlan_main.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ipvlan/ipvlan_main.c b/drivers/net/ipvlan/ipvlan_main.c
+> index 450eec2..a1edfe1 100644
+> --- a/drivers/net/ipvlan/ipvlan_main.c
+> +++ b/drivers/net/ipvlan/ipvlan_main.c
+> @@ -7,6 +7,8 @@
+>   *
+>   */
+>  
+> +#include <net/neighbour.h>
+> +#include <net/arp.h>
+>  #include "ipvlan.h"
+>  
+>  static unsigned int ipvlan_netid __read_mostly;
+> @@ -792,8 +794,10 @@ static int ipvlan_device_event(struct notifier_block *unused,
+>  		break;
+>  
+>  	case NETDEV_CHANGEADDR:
+> -		list_for_each_entry(ipvlan, &port->ipvlans, pnode)
+> +		list_for_each_entry(ipvlan, &port->ipvlans, pnode) {
+>  			ether_addr_copy(ipvlan->dev->dev_addr, dev->dev_addr);
+> +			neigh_changeaddr(&arp_tbl, ipvlan->dev);
+> +		}
 
-Please, add our PDx86 fixes branch as well:
-git://git.infradead.org/linux-platform-drivers-x86.git fixes
+Why don't using:
 
--- 
-With Best Regards,
-Andy Shevchenko
+ call_netdevice_notifiers(NETDEV_CHANGEADDR, ipvlan->dev);
+
+instead?
+
+that is what other stacked device - bridge and vlans - are currently
+doing in the same scenario.
+
+Thanks,
+
+Paolo
