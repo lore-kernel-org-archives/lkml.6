@@ -1,134 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752776AbeENMMc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 14 May 2018 08:12:32 -0400
-Received: from mail-ua0-f178.google.com ([209.85.217.178]:33945 "EHLO
-        mail-ua0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752037AbeENMMb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 14 May 2018 08:12:31 -0400
-X-Google-Smtp-Source: AB8JxZpt7qCTM0tWll7Aj3TslyBvaLAkbzQiFt6hFPz7w4U869z5KwHKZi2yF9/Dey8rKIh4TcfRvEkpk2NnCPMQFE4=
-MIME-Version: 1.0
-In-Reply-To: <CAOuPNLgRHCasmsXTVwcy5ohq8TYjbr4MThxm4Q-HFWihJ7ARww@mail.gmail.com>
-References: <CAOuPNLjqJVsPOVPCnswtFyXudAJ88_F0QVUq-Z6qWE=UpH0mBA@mail.gmail.com>
- <5af57fea.1c69fb81.885f0.2377.GMRIR@mx.google.com> <CAOuPNLgbT59h=Jm5YiOCbrqFkDokJ8xutQ_OkpsFYzKazKhTHg@mail.gmail.com>
- <20180511123915.GC16141@n2100.armlinux.org.uk> <f6f7b18644136323f4485d6123b330d0dde207a4.camel@pengutronix.de>
- <CAOuPNLgRHCasmsXTVwcy5ohq8TYjbr4MThxm4Q-HFWihJ7ARww@mail.gmail.com>
-From: Pintu Kumar <pintu.ping@gmail.com>
-Date: Mon, 14 May 2018 17:42:29 +0530
-Message-ID: <CAOuPNLiFr3qbNVAwF4wj2aAG0UXRVsgRo-8JfaKFCsoL+Ggk9w@mail.gmail.com>
-Subject: Re: Delivery Status Notification (Failure)
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kernelnewbies@kernelnewbies.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1753047AbeENMN1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 14 May 2018 08:13:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45603 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752870AbeENMNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 14 May 2018 08:13:25 -0400
+From: Johannes Thumshirn <jthumshirn@suse.de>
+To: Keith Busch <keith.busch@intel.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
+        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+Subject: [PATCH] nvme: fix lockdep warning in nvme_mpath_clear_current_path
+Date: Mon, 14 May 2018 14:13:12 +0200
+Message-Id: <20180514121312.13624-1-jthumshirn@suse.de>
+X-Mailer: git-send-email 2.16.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+When running blktest's nvme/005 with a lockdep enabled kernel the test
+case fails due to the following lockdep splat in dmesg:
 
-Is there any work around possible to set IRQ affinity for some GPIO interrupt ?
-How to avoid CPU0 to receive the current GPIO interrupt ?
-How do we assign GPIO interrupts to any CPU other than CPU0 ?
-Is it possible to isolate CPU0 for a sometime, from my GPIO driver so
-that GPIO interrupt can be served by another CPU ?
+[   18.206166] =============================
+[   18.207286] WARNING: suspicious RCU usage
+[   18.208417] 4.17.0-rc5 #881 Not tainted
+[   18.209487] -----------------------------
+[   18.210612] drivers/nvme/host/nvme.h:457 suspicious rcu_dereference_check() usage!
+[   18.213486]
+[   18.213486] other info that might help us debug this:
+[   18.213486]
+[   18.214745]
+[   18.214745] rcu_scheduler_active = 2, debug_locks = 1
+[   18.215798] 3 locks held by kworker/u32:5/1102:
+[   18.216535]  #0:         (ptrval) ((wq_completion)"nvme-wq"){+.+.}, at: process_one_work+0x152/0x5c0
+[   18.217983]  #1:         (ptrval) ((work_completion)(&ctrl->scan_work)){+.+.}, at: process_one_work+0x152/0x5c0
+[   18.219584]  #2:         (ptrval) (&subsys->lock#2){+.+.}, at: nvme_ns_remove+0x43/0x1c0 [nvme_core]
+[   18.221037]
+[   18.221037] stack backtrace:
+[   18.221721] CPU: 12 PID: 1102 Comm: kworker/u32:5 Not tainted 4.17.0-rc5 #881
+[   18.222830] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+[   18.224451] Workqueue: nvme-wq nvme_scan_work [nvme_core]
+[   18.225308] Call Trace:
+[   18.225704]  dump_stack+0x78/0xb3
+[   18.226224]  nvme_ns_remove+0x1a3/0x1c0 [nvme_core]
+[   18.226975]  nvme_validate_ns+0x87/0x850 [nvme_core]
+[   18.227749]  ? blk_queue_exit+0x69/0x110
+[   18.228358]  ? blk_queue_exit+0x81/0x110
+[   18.228960]  ? direct_make_request+0x1a0/0x1a0
+[   18.229649]  nvme_scan_work+0x212/0x2d0 [nvme_core]
+[   18.230411]  process_one_work+0x1d8/0x5c0
+[   18.231037]  ? process_one_work+0x152/0x5c0
+[   18.231705]  worker_thread+0x45/0x3e0
+[   18.232282]  kthread+0x101/0x140
+[   18.232788]  ? process_one_work+0x5c0/0x5c0
 
-Need your inputs to decide whether it is still possible to set
-affinity for GPIO interrupt, or its impossible ?
+The only caller of nvme_mpath_clear_current_path() is nvme_ns_remove()
+which holds the subsys lock so it's likely a false positive, but using
+rcu_dereference_protected() tells lockdep we're holding the lock.
 
+Fixes: 32acab3181c7 ("nvme: implement multipath access to nvme subsystems")
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+---
+ drivers/nvme/host/nvme.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Thanks,
-Pintu
-
-
-
-On Fri, May 11, 2018 at 8:07 PM, Pintu Kumar <pintu.ping@gmail.com> wrote:
-> On Fri, May 11, 2018 at 6:34 PM, Lucas Stach <l.stach@pengutronix.de> wrote:
->> Am Freitag, den 11.05.2018, 13:39 +0100 schrieb Russell King - ARM Linux:
->>> On Fri, May 11, 2018 at 05:07:37PM +0530, Pintu Kumar wrote:
->>> > Hi,
->>> >
->>> > I need one help.
->>> > I am using i.MX7 Sabre board with kernel version 4.1.15
->>> >
->>> > Let's say I am interested in GPIO number: 21
->>> > I wanted to set CPU affinity for particular GPIO->IRQ number, so I
->>> > tried the below steps:
->>> > root@10:~# echo 21 > /sys/class/gpio/export
->>> > root@10:~# echo "rising" > /sys/class/gpio/gpio21/edge
->>> > root@10:~# cat /proc/interrupts | grep 21
->>> >   47: 0 0 gpio-mxc 21 Edge gpiolib
->>> > root@10:~# cat /sys/class/gpio/gpio21/direction
->>> > in
->>> > root@10:~# cat /proc/irq/47/smp_affinity
->>> > 3
->>> > root@10:~# echo 2 > /proc/irq/47/smp_affinity
->>> > -bash: echo: write error: Input/output error
->>> >
->>> > But I get input/output error.
->>> > When I debug further, found that irq_can_set_affinity is returning 0:
->>> > [    0.000000] genirq: irq_can_set_affinity (0): balance: 1,
->>> > irq_data.chip: a81b7e48, irq_set_affinity:   (null)
->>> > [    0.000000] write_irq_affinity: FAIL
->>> >
->>> > I also tried first setting /proc/irq/default_smp_affinity to 2 (from 3).
->>> > This change is working, but the smp_affinity setting for the new IRQ
->>> > is not working.
->>> >
->>> > When I try to set smp_affinity for mmc0, then it works.
->>> > # cat /proc/interrupts | grep mmc
->>> > 295:         55          0     GPCV2  22 Edge      mmc0
->>> > 296:          0          0     GPCV2  23 Edge      mmc1
->>> > 297:         52          0     GPCV2  24 Edge      mmc2
->>> >
->>> > root@10:~# echo 2 > /proc/irq/295/smp_affinity
->>> > root@10:~#
->>> >
->>> >
->>> > So, I wanted to know what are the conditions for which setting
->>> > smp_affinity for an IRQ will work ?
->>> >
->>> > Is there any way by which I can set CPU affinity to a GPIO -> IRQ ?
->>> > Whether, irq_set_affinity_hint() will work in this case ?
->>>
->>> IRQ affinity is only supported where interrupts are _directly_ wired to
->>> the GIC.  It's the GIC which does the interrupt steering to the CPU
->>> cores.
->>>
->>> Interrupts on downstream interrupt controllers (such as GPCV2) have no
->>> ability to be directed independently to other CPUs - the only possible
->>> way to change the mapping is to move _all_ interrupts on that controller,
->>> and any downstream chained interrupts at GIC level.
->>>
->>> Hence why Interrupt 295 has no irq_set_affinity function: there is no way
->>> for the interrupt controller itself to change the affinity of the input
->>> interrupt.
->>
->> The GPCv2 though is a secondary IRQ controller which has a 1:1 mapping
->> of its input IRQs to the upstream GIC IRQ lines. Affinity can thus be
->> handled by forwarding the request to the GIC by
->> irq_chip_set_affinity_parent().
->>
->> As this is handled correctly in the upstream kernel since the first
->> commit introducing support for the GPCv2, it seems the issue is only
->> present in some downstream kernel.
->>
->
-> OK. Thanks so much for your reply.
->
-> I saw some of the drivers using irq_set_affinity_hint() to force the
-> IRQ affinity to a particular CPU.
-> This is the sample:
-> {
-> cpumask_clear(mask);
-> cpumask_set_cpu(cpu, mask);
-> irq_set_affinity_hint(irq, mask);
-> }
->
-> Whether this logic will work for a particular GPIO pin ?
->
->
->> Regards,
->> Lucas
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 17d2f7cf3fed..ca034434ebb9 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -22,6 +22,7 @@
+ #include <linux/lightnvm.h>
+ #include <linux/sed-opal.h>
+ #include <linux/fault-inject.h>
++#include <linux/rcupdate.h>
+ 
+ extern unsigned int nvme_io_timeout;
+ #define NVME_IO_TIMEOUT	(nvme_io_timeout * HZ)
+@@ -454,7 +455,9 @@ static inline void nvme_mpath_clear_current_path(struct nvme_ns *ns)
+ {
+ 	struct nvme_ns_head *head = ns->head;
+ 
+-	if (head && ns == srcu_dereference(head->current_path, &head->srcu))
++	if (head &&
++	    ns == rcu_dereference_protected(head->current_path,
++				lockdep_is_held(&ns->ctrl->subsys->lock)))
+ 		rcu_assign_pointer(head->current_path, NULL);
+ }
+ struct nvme_ns *nvme_find_path(struct nvme_ns_head *head);
+-- 
+2.16.3
